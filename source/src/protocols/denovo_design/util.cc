@@ -79,33 +79,45 @@ bool same_pose( core::pose::Pose const & pose1, core::pose::Pose const & pose2 )
 }
 
 /// @brief creates a poly-ala pose where every non-gly, non-cyd, protein residue except those in the given set are converted to alanine
+/// @details If keep_chirality is true, the D-amino acids are mutated to D-alanine.
 void construct_poly_ala_pose(
 	core::pose::Pose & pose,
 	bool const keep_disulf,
 	std::set< core::Size > const & set1,
-	std::set< core::Size > const & set2 )
-{
+	std::set< core::Size > const & set2,
+	bool const keep_chirality
+) {
 	std::set< core::Size > setunion = set1;
 	for ( std::set< core::Size >::const_iterator r=set2.begin(), endr=set2.end(); r!=endr; ++r ) {
 		setunion.insert( *r );
 	}
-	construct_poly_ala_pose( pose, keep_disulf, setunion );
+	construct_poly_ala_pose( pose, keep_disulf, setunion, keep_chirality );
 }
 
 /// @brief creates a poly-ala pose where every non-gly, non-cyd, protein residue except those in the given set are converted to alanine
+/// @details If keep_chirality is true, the D-amino acids are mutated to D-alanine.
 void construct_poly_ala_pose(
 	core::pose::Pose & pose,
 	bool const keep_disulf,
-	std::set< core::Size > const & res_set )
-{
+	std::set< core::Size > const & res_set,
+	bool const keep_chirality
+) {
 	utility::vector1< core::Size > positions;
+	utility::vector1< core::Size > d_positions;
+
 	for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
 		if ( pose.residue(i).is_protein() && ( res_set.find(i) != res_set.end() ) ) {
-			positions.push_back(i);
+			if(!keep_chirality || !pose.residue(i).type().is_d_aa()) positions.push_back(i);
+			else if( keep_chirality && pose.residue(i).type().is_d_aa()) d_positions.push_back(i);
 		}
 		if ( !keep_disulf && ( pose.residue(i).type().is_disulfide_bonded() ) ) {
-			protocols::simple_moves::MutateResidue mut( i, "ALA" );
-			mut.apply( pose );
+			if(pose.residue(i).type().is_l_aa() || !keep_chirality) {
+				protocols::simple_moves::MutateResidue mut( i, "ALA" );
+				mut.apply( pose );
+			} else {
+				protocols::simple_moves::MutateResidue mut( i, "DALA" );
+				mut.apply( pose );
+			}
 		}
 	}
 	protocols::toolbox::pose_manipulation::construct_poly_ala_pose(
@@ -113,6 +125,13 @@ void construct_poly_ala_pose(
 			false, // bool keep_pro,
 			true, // bool keep_gly,
 			keep_disulf ); // bool keep_disulfide_cys
+	if(keep_chirality && d_positions.size() > 0) {
+		protocols::toolbox::pose_manipulation::construct_poly_d_ala_pose(
+				pose, d_positions,
+				false, // bool keep_pro,
+				true, // bool keep_gly,
+				keep_disulf ); // bool keep_disulfide_cys
+	}
 }
 
 core::pack::task::residue_selector::ResidueSelectorCOP

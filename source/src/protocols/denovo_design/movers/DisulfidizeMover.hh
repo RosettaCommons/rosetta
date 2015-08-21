@@ -41,8 +41,13 @@ public:
 	typedef utility::vector1< std::pair< core::Size, core::Size > > DisulfideList;
 	typedef std::list< core::pose::PoseOP > PoseList;
 
-	/// @brief default constructor
+	/// @brief Default constructor
+	///
 	DisulfidizeMover();
+
+	/// @brief Copy constructor
+	///
+	DisulfidizeMover( DisulfidizeMover const &src );
 
 	/// @brief virtual constructor to allow derivation
 	virtual ~DisulfidizeMover();
@@ -145,7 +150,17 @@ public:
 			core::pose::Pose const & pose,
 			core::Size const res1,
 			core::Size const res2,
-			core::scoring::disulfides::DisulfideMatchingPotential const & disulfPot ) const;
+			core::scoring::disulfides::DisulfideMatchingPotential const & disulfPot,
+			bool const mirror
+	) const;
+	
+	/// @brief Returns true if this is a mixed D/L disulfide, false otherwise.
+	///
+	bool mixed_disulfide (
+		core::pose::Pose const &pose,
+		core::Size const res1,
+		core::Size const res2
+	) const;
 
 public: //mutators
 	/// @brief sets the selector for set 1 -- disulfides will connect residues in set 1 to residues in set 2
@@ -160,8 +175,14 @@ public: //mutators
 	/// @brief sets the maximum allowed per-disulfide dslf_fa13 score (default=0.0)
 	void set_max_disulf_score( core::Real const maxscoreval );
 
-	/// @brief sets the maximum allowed "match-rt-limit" (default=2.0)
+	/// @brief sets the maximum allowed "match-rt-limit" (default=1.0)
+	/// @details Changed from default=2.0 by VKM on 19 Aug 2015 after fixing major bug in
+	/// DisulfideMatchPotential.
 	void set_match_rt_limit( core::Real const matchrtval );
+
+	/// @brief Set the types of cysteines that we design with:
+	/// @details By default, we use only L-cysteine (not D-cysteine).
+	void set_cys_types( bool const lcys, bool const dcys );
 
 protected:
 	/// @brief Identifies disulfides for a given input pose
@@ -183,6 +204,14 @@ private:   // other data
 	/// @brief disulfides connect residues from set1 to residues from set2
 	core::pack::task::residue_selector::ResidueSelectorCOP set1_selector_;
 	core::pack::task::residue_selector::ResidueSelectorCOP set2_selector_;
+
+	/// @brief Can disulfides involve L-cystine?
+	/// @details Default true
+	bool allow_l_cys_;
+
+	/// @brief Can disulfides involve D-cystine?
+	/// @details Default false
+	bool allow_d_cys_;
 
 };
 

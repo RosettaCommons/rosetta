@@ -54,8 +54,8 @@ public:
 			core::conformation::Residue const & res2,
 									core::Energy & match_t,
 									core::Energy & match_r,
-									core::Energy & match_rt
-
+									core::Energy & match_rt,
+									bool const mirror=false /*For scoring mirror-image disulfides (DCYS-DCYS)*/
 			) const;
 
 	// Not used by scoring machinery, exists so that other apps can compute the score directly
@@ -70,7 +70,9 @@ private:
 	core::kinematics::RT
 	disulfide_RT(
 			core::conformation::Residue const& res1,
-			core::conformation::Residue const& res2) const;
+			core::conformation::Residue const& res2,
+			bool const mirror=false
+	) const;
 
 private:
 

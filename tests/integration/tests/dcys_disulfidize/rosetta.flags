@@ -1,0 +1,7 @@
+-in:file:s inputs/rsmn.pdb
+-parser:protocol inputs/input.xml
+-extra_res_fa d-caa/DASP.params d-caa/DGLU.params d-caa/DPHE.params d-caa/DHIS.params d-caa/DHIS_D.params d-caa/DILE.params d-caa/DLYS.params d-caa/DMET.params d-caa/DASN.params d-caa/DPRO.params d-caa/DGLN.params d-caa/DARG.params d-caa/DSER.params d-caa/DTHR.params d-caa/DVAL.params d-caa/DTRP.params d-caa/DTYR.params d-caa/DLEU.params d-caa/DALA.params d-caa/DCYS.params d-caa/DCYD.params
+-dump_connect_info
+-connect_info_cutoff 0
+-nstruct 8
+-mute protocols.flxbb.LayerDesignOperation core.kinematics.AtomTree

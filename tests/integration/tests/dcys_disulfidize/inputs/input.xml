@@ -1,0 +1,349 @@
+<ROSETTASCRIPTS>
+    
+<SCOREFXNS>
+          
+	<SFXN1 weights="fldsgn_cen">
+		<Reweight scoretype="cenpack" weight="1.0" />
+		<Reweight scoretype="hbond_sr_bb" weight="1.0" />
+		<Reweight scoretype="hbond_lr_bb" weight="1.0" />
+		<Reweight scoretype="atom_pair_constraint" weight="1.0" />
+		<Reweight scoretype="angle_constraint" weight="1.0" />
+		<Reweight scoretype="dihedral_constraint" weight="1.0" />
+	</SFXN1>
+    
+     <SFXN_STD weights= "inputs/talaris2013_cst_modified.wts" />
+     
+     <SFXN_hbond_bb weights="empty.wts" symmetric=0>
+         <Reweight scoretype=hbond_sr_bb weight=1.17/>
+         <Reweight scoretype=hbond_lr_bb weight=1.17/>
+     </SFXN_hbond_bb>
+</SCOREFXNS>
+<TASKOPERATIONS>
+    <ReadResfile name=resfile1 filename="inputs/resfile1.txt" />
+    <DisallowIfNonnative name=nocysgly resnum=0 disallow_aas="CG" />
+    <DisallowIfNonnative name=nocys resnum=0 disallow_aas="C" />
+    <LayerDesign name=laydesign make_pymol_script=0 use_sidechain_neighbors=1 />
+
+    ######### layer selection for assessment #########
+    <LayerDesign name="layer_core_boundary_SCN" layer="core_boundary" pore_radius="2.0" verbose="true" use_sidechain_neighbors="True" />
+    
+    ############## select CYS residues ###############
+    <OperateOnCertainResidues name="no_repack_non-disulf" >
+        <PreventRepackingRLT/>
+        <ResidueName3Isnt name3="CYS,CYD" />
+    </OperateOnCertainResidues>
+    
+    ############ miscellaneous for design ############
+    <LimitAromaChi2 name="limitchi2" include_trp="1" />
+    <OperateOnCertainResidues name="no_design_disulf" >
+        <RestrictToRepackingRLT />
+        <ResidueName3Is name3="CYS,CYD" />
+    </OperateOnCertainResidues>
+    
+    ########### layer selection for design ###########
+    <LayerDesign name="layer_all_noALA" layer="core_boundary_surface_Nterm_Cterm" verbose="True" use_sidechain_neighbors="True" >
+        <core>
+            <all aa="VA" ncaa_append="DVA,DAL" />
+        </core>
+        <boundary>
+            <all aa="AS" ncaa_append="DAL,DSE" />
+        </boundary>
+        <surface>
+            <all aa="S" ncaa_append="DSE" />
+        </surface>
+    </LayerDesign>
+    <LayerDesign name="layer_all" layer="core_boundary_surface_Nterm_Cterm" verbose="True" use_sidechain_neighbors="True" >
+        <core>
+            <all aa="VA" exclude="A" ncaa_append="DVA,DAL" />
+        </core>
+        <boundary>
+            <all aa="AS" ncaa_append="DAL,DSE" />
+        </boundary>
+        <surface>
+            <all aa="S" ncaa_append="DSE" />
+        </surface>
+    </LayerDesign>
+</TASKOPERATIONS>
+<FILTERS>
+    <ResidueCount name=cys_count_1 residue_types="CYS" min_residue_count=2 confidence=1 />
+    <ResidueCount name=cys_count_2 residue_types="CYS" min_residue_count=4 confidence=0 />
+    FragmentLookupFilter name="faulty_fragments" lookup_name="source_fragments_4_mer" store_path="/lab/databases/VALL_clustered/backbone_profiler_database_06032014" lookup_mode="first" chain="1" threshold="999999" confidence="1" />
+    SecondaryStructureHasResidue name="ss_contributes_core" secstruct_fraction_threshold="1.0" res_check_task_operations="layer_core_boundary_SCN" required_restypes="VILMFYW" nres_required_per_secstruct="1" filter_helix="1" filter_sheet="1" filter_loop="0" min_helix_length="4" min_sheet_length="3" min_loop_length="1" confidence="0" />
+
+</FILTERS>
+<MOVERS>
+    
+    <PeptideStubMover name=intial_stub reset=true>
+        <Append resname="GLY" />
+        <Append resname="GLY" />
+        <Append resname="ALA" />
+        <Append resname="ALA" />
+        <Append resname="ALA" />
+        <Append resname="ALA" />
+        <Append resname="ALA" />
+        <Append resname="ALA" />
+        <Append resname="ALA" />
+        <Append resname="ALA" />
+        <Append resname="ALA" />
+        <Append resname="ALA" />
+        <Append resname="GLY" />
+        <Append resname="GLY" />
+        <Append resname="GLY" />
+        <Append resname="DALA" />
+        <Append resname="DALA" />
+        <Append resname="DALA" />
+        <Append resname="DALA" />
+        <Append resname="DALA" />
+        <Append resname="DALA" />
+        <Append resname="DALA" />
+        <Append resname="DALA" />
+        <Append resname="DALA" />
+        <Append resname="DALA" />
+        <Append resname="GLY" />
+        
+    </PeptideStubMover>
+
+    <DeclareBond name=peptide_bond1 res1=1 atom1="N" atom2="C" res2=26 add_termini=true />
+    
+    <SetTorsion name=torsion1>
+        <Torsion residue=ALL torsion_name=omega angle=180.0 />
+        <Torsion residue=11,12,13 torsion_name=rama angle=rama_biased/>
+        <Torsion residue=3,4,5,6,7,8,9,10,11,12 torsion_name=phi angle=-64.8/>
+        <Torsion residue=3,4,5,6,7,8,9,10,11,12 torsion_name=psi angle=-41.0/>
+        <Torsion residue=16,17,18,19,20,21,22,23,24,25 torsion_name=phi angle=64.8/>
+        <Torsion residue=16,17,18,19,20,21,22,23,24,25 torsion_name=psi angle=41.0/>
+    </SetTorsion>
+    
+    <GeneralizedKIC name=genkic1 closure_attempts=50 name=genkic1 selector="lowest_energy_selector" stop_when_solution_found=false stop_if_no_solution=10 selector_scorefunction="SFXN_hbond_bb" >
+        
+        <AddResidue res_index=13 />
+        <AddResidue res_index=14 />
+        <AddResidue res_index=15 />
+        <AddResidue res_index=16 />
+        <AddResidue res_index=17 />
+        <AddResidue res_index=18 />
+        <AddResidue res_index=19 />
+        <AddResidue res_index=20 />
+        <AddResidue res_index=21 />
+        <AddResidue res_index=22 />
+        <AddResidue res_index=23 />
+        <AddResidue res_index=24 />
+        <AddResidue res_index=25 />
+        <AddResidue res_index=26 />
+        <AddResidue res_index=1 />
+        <AddResidue res_index=2 />
+       
+        <SetPivots atom1="CA" atom2="CA" atom3="CA" res1=13 res2=16 res3=2 />
+        
+        <CloseBond prioratom_res=26 prioratom="CA" res1=26 atom1="C" res2=1 atom2="N" followingatom="CA" followingatom_res=1 angle1=116.199993 angle2=121.69997 bondlength=1.32865 randomize_flanking_torsions=false />
+        
+        <AddPerturber effect="set_dihedral">
+            <AddAtoms atom1="C" res1=26 res2=1 atom2="N" />
+            <AddValue value=180.0 />
+        </AddPerturber>
+        
+        <AddPerturber effect="randomize_alpha_backbone_by_rama">
+        <AddResidue index=13 />
+        <AddResidue index=14 />
+        <AddResidue index=15 />
+        <AddResidue index=26/>
+        <AddResidue index=1/>
+        <AddResidue index=2/>
+        </AddPerturber>
+        
+        AddPerturber effect="set_backbone_bin" bin="A">
+            AddResidue index=17 />
+        /AddPerturber>
+            
+        
+        <AddFilter type="loop_bump_check" />
+        AddFilter type="backbone_bin" bin_params_file="ABBA" residue=13 bin="B" />
+        AddFilter type="backbone_bin" bin_params_file="ABBA" residue=14 bin="A" />
+        AddFilter type="backbone_bin" bin_params_file="ABBA" residue=15 bin="B" />
+        AddFilter type="backbone_bin" bin_params_file="ABBA" residue=26 bin="B" />
+        AddFilter type="backbone_bin" bin_params_file="ABBA" residue=1 bin="A" />
+        AddFilter type="backbone_bin" bin_params_file="ABBA" residue=2 bin="B" />
+        
+    </GeneralizedKIC>
+    
+   
+    
+    <FastDesign name=fdesign2 scorefxn=SFXN_STD repeats=1 task_operations=resfile1,no_design_disulf,nocys ramp_down_constraints=false>
+        
+        <MoveMap name=fdesign_mm>
+            <Chain number=1 chi=true bb=true />
+            
+        </MoveMap>
+        
+    </FastDesign>
+    
+    <FastDesign name=fdesign1 scorefxn=SFXN_STD repeats=1 task_operations=resfile1,layer_all,no_design_disulf,nocysgly ramp_down_constraints=false>
+        
+        <MoveMap name=fdesign_mm>
+            <Chain number=1 chi=true bb=true />
+            
+        </MoveMap>
+        
+    </FastDesign>
+    
+    
+    <FastDesign name=fdesign8 scorefxn=SFXN_STD repeats=1 task_operations=resfile1,layer_all,no_design_disulf,nocys ramp_down_constraints=false>
+        
+        <MoveMap name=fdesign_mm>
+            <Chain number=1 chi=true bb=true />
+            
+        </MoveMap>
+        
+    </FastDesign>
+    
+    <CreateTorsionConstraint name=peptide_torsion_constraint>
+        <Add res1=26 res2=26 res3=1 res4=1 atom1="CA" atom2="C" atom3="N" atom4="CA" cst_func="CIRCULARHARMONIC 3.141592654 0.005" />
+        <Add res1=26 res2=26 res3=1 res4=1 atom1="O" atom2="C" atom3="N" atom4="H" cst_func="CIRCULARHARMONIC 3.141592654 0.005" />
+    </CreateTorsionConstraint>
+    
+    <CreateAngleConstraint name=peptide_angle_constraints>
+        <Add res1=26 atom1="CA" res_center=26 atom_center="C" res2=1 atom2="N" cst_func="CIRCULARHARMONIC 2.02807247 0.005" />
+        <Add res1=26 atom1="C" res_center=1 atom_center="N" res2=1 atom2="CA" cst_func="CIRCULARHARMONIC 2.12406565 0.005" />
+    </CreateAngleConstraint>
+    
+    <CreateDistanceConstraint name=N_To_C_dist_cst>
+        <Add res1=26 res2=1 atom1="C" atom2="N" cst_func="HARMONIC 1.32865 0.01" />
+    </CreateDistanceConstraint>
+    
+    <ClearConstraintsMover name=clear_csts />
+    
+     <RemodelMover name="remodel" build_disulf="True" use_match_rt="True" use_disulf_fa_score="True" disulf_fa_max="-0.25" relax_bb_for_disulf="False" quick_and_dirty="True" match_rt_limit="2.0" bypass_fragments="True" min_disulfides=1 max_disulfides=2 min_loop=2 keep_current_disulfides="True" />
+    
+    <Disulfidize name="disulf" use_l_cys=true use_d_cys=true min_disulfides="1" max_disulfides="2" max_disulf_score="15" match_rt_limit="2" min_loop="3" />
+    
+    
+    <MultiplePoseMover name="disulfidizer" >
+        <SELECT>
+        </SELECT>
+        
+        <ROSETTASCRIPTS>
+            IMPORT movers="peptide_torsion_constraint,peptide_angle_constraints,fdesign8,peptide_bond1" taskoperations="layer_all,no_design_disulf,nocys,layer_core_boundary_SCN" />
+            <SCOREFXNS>
+                <SFXN_STD weights= "inputs/talaris2013_cst_modified.wts" />
+            </SCOREFXNS>
+            <TASKOPERATIONS>
+                <ReadResfile name=resfile1 filename="inputs/resfile1.txt" />
+                <DisallowIfNonnative name=nocysgly resnum=0 disallow_aas="CG" />
+                <DisallowIfNonnative name=nocys resnum=0 disallow_aas="C" />
+                <LayerDesign name=laydesign make_pymol_script=0 use_sidechain_neighbors=1 />
+                
+                ######### layer selection for assessment #########
+                <LayerDesign name="layer_core_boundary_SCN" layer="core_boundary" pore_radius="2.0" verbose="true" use_sidechain_neighbors="True" />
+                
+                ############## select CYS residues ###############
+                <OperateOnCertainResidues name="no_repack_non-disulf" >
+                    <PreventRepackingRLT/>
+                    <ResidueName3Isnt name3="CYS,CYD" />
+                </OperateOnCertainResidues>
+                
+                ############ miscellaneous for design ############
+                <LimitAromaChi2 name="limitchi2" include_trp="1" />
+                <OperateOnCertainResidues name="no_design_disulf" >
+                    <RestrictToRepackingRLT />
+                    <ResidueName3Is name3="CYS,CYD" />
+                </OperateOnCertainResidues>
+                
+                ########### layer selection for design ###########
+                <LayerDesign name="layer_all_noALA" layer="core_boundary_surface_Nterm_Cterm" verbose="True" use_sidechain_neighbors="True" >
+                    <core>
+                        <all aa="VA" exclude="A" ncaa_append="DVA,DAL" />
+                    </core>
+                    <boundary>
+                        <all aa="AS" ncaa_append="DAL,DSE" />
+                    </boundary>
+                    <surface>
+                        <all aa="S" ncaa_append="DSE" />
+                    </surface>
+                </LayerDesign>
+                <LayerDesign name="layer_all" layer="core_boundary_surface_Nterm_Cterm" verbose="True" use_sidechain_neighbors="True" >
+                    <core>
+                        <all aa="VA" exclude="A" ncaa_append="DVA,DAL" />
+                    </core>
+                    <boundary>
+                        <all aa="AS" ncaa_append="DAL,DSE" />
+                    </boundary>
+                    <surface>
+                        <all aa="S" ncaa_append="DSE" />
+                    </surface>
+                </LayerDesign>
+            </TASKOPERATIONS>
+            
+            <MOVERS>
+                <CreateTorsionConstraint name=peptide_torsion_constraint>
+                    <Add res1=26 res2=26 res3=1 res4=1 atom1="CA" atom2="C" atom3="N" atom4="CA" cst_func="CIRCULARHARMONIC 3.141592654 0.005" />
+                    Add res1=26 res2=26 res3=1 res4=1 atom1="O" atom2="C" atom3="N" atom4="H" cst_func="CIRCULARHARMONIC 3.141592654 0.005" />
+                </CreateTorsionConstraint>
+                
+                <CreateAngleConstraint name=peptide_angle_constraints>
+                    <Add res1=26 atom1="CA" res_center=26 atom_center="C" res2=1 atom2="N" cst_func="CIRCULARHARMONIC 2.02807247 0.005" />
+                    <Add res1=26 atom1="C" res_center=1 atom_center="N" res2=1 atom2="CA" cst_func="CIRCULARHARMONIC 2.12406565 0.005" />
+                </CreateAngleConstraint>
+                
+                <CreateDistanceConstraint name=N_To_C_dist_cst>
+                    <Add res1=26 res2=1 atom1="C" atom2="N" cst_func="HARMONIC 1.32865 0.01" />
+                </CreateDistanceConstraint>
+                
+                <FastDesign name=fdesign8 scorefxn=SFXN_STD repeats=1 task_operations=layer_all,resfile1,no_design_disulf,nocys ramp_down_constraints=false>
+                    
+                    <MoveMap name=fdesign_mm>
+                        <Chain number=1 chi=true bb=true />
+                        
+                    </MoveMap>
+                    
+                </FastDesign>
+                
+                <DeclareBond name=peptide_bond1 res1=1 atom1="N" atom2="C" res2=26 add_termini=true />
+
+            </MOVERS>
+            <PROTOCOLS>
+                
+                Add filter=cys_count_1 />
+                <Add mover=peptide_torsion_constraint />
+                <Add mover=peptide_angle_constraints />
+                <Add mover=N_To_C_dist_cst />
+                <Add mover=fdesign8 />
+                <Add mover=peptide_bond1 />
+                Add filter=faulty_fragments />
+                Add filter=ss_contributes_core />
+
+            </PROTOCOLS>
+        </ROSETTASCRIPTS>
+    </MultiplePoseMover>
+    
+    
+    LoopOver name="disulfide_loop" mover_name="disulfidizer" iterations="1" drift="0" ms_whenfail="FAIL_DO_NOT_RETRY" />
+</MOVERS>
+<PROTOCOLS>
+	<Add mover=intial_stub />
+    <Add mover=torsion1 />
+    <Add mover=peptide_bond1 />
+    <Add mover=genkic1 />
+    Add filter=genkicfilter1 />
+    <Add mover=peptide_torsion_constraint />
+    <Add mover=peptide_angle_constraints />
+    <Add mover=N_To_C_dist_cst />
+    Add mover=fdesign1 />
+    Add mover=remodel />
+    Add filter=cys_count_1 />
+    
+    Add mover=fdesign1 />
+    Add mover=remodel />
+    Add mover=fdesign1 />
+    Add mover=remodel />
+    Add filter=cys_count_2 />
+    Add mover=fdesign8 />
+    Add mover=peptide_bond1 />
+    Add filter_name="faulty_fragments"/>
+    Add filter_name="faulty_fragments_tolerant"/>
+    Add filter_name="ss_contributes_core" />
+    Add filter_name="dslf_quality_check" />
+    <Add mover="disulf" />
+    <Add mover_name="disulfidizer" />
+</PROTOCOLS>
+
+</ROSETTASCRIPTS>

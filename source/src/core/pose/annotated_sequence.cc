@@ -697,7 +697,7 @@ get_rsd_type_from_aa_legacy( chemical::ResidueTypeSet const & residue_set,
 // you are brilliant enough to add the :disulfide yourself?
 chemical::ResidueTypeCOP
 handle_disulfide_variant_name_for_backwards_compatibility( chemical::ResidueTypeSet const & residue_set,
-																													 std::string const fullname )
+																													 std::string const &fullname )
 {
 
 	tr << tr.Red << "If you really need to use this code and want to speed it up, please contact rhiju [at] stanford.edu about quickly rewriting using chemical::ResidueTypeFinder." << tr.Reset << std::endl;

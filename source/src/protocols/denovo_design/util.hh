@@ -46,17 +46,23 @@ namespace denovo_design {
 bool same_pose( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
 
 /// @brief creates a poly-ala pose where every non-gly, non-cyd, protein residue except those in the given set are converted to alanine
+/// @details If keep_chirality is true, the D-amino acids are mutated to D-alanine.
 void construct_poly_ala_pose(
 	core::pose::Pose & pose,
 	bool const keep_disulf,
 	std::set< core::Size > const & set1,
-	std::set< core::Size > const & set2 );
+	std::set< core::Size > const & set2,
+	bool const keep_chirality=false
+);
 
 /// @brief creates a poly-ala pose where every non-gly, non-cyd, protein residue except those in the given set are converted to alanine
+/// @details If keep_chirality is true, the D-amino acids are mutated to D-alanine.
 void construct_poly_ala_pose(
 	core::pose::Pose & pose,
 	bool const keep_disulf,
-	std::set< core::Size > const & res_set );
+	std::set< core::Size > const & res_set,
+	bool const keep_chirality=false
+);
 
 core::pack::task::residue_selector::ResidueSelectorCOP
 get_residue_selector( basic::datacache::DataMap const & data, std::string const & name );

@@ -43,6 +43,9 @@
 
 static thread_local basic::Tracer TR( "protocols.denovo_design.DisulfidizeMover.cxxtest" );
 
+//Uncomment the following line to dump PDBs, to debug:
+//#define test_protocols_denovo_design_DisulfidizeMoverTests_dump_pdbs
+
 // --------------- Test Class --------------- //
 class DisulfidizeMoverTests : public CxxTest::TestSuite {
 public:
@@ -74,14 +77,31 @@ public:
 
 		utility::vector1< core::pose::PoseOP > poses;
 		poses.push_back( runpose );
+
+#ifdef test_protocols_denovo_design_DisulfidizeMoverTests_dump_pdbs
+		runpose->dump_pdb("temp_0000.pdb"); //For debugging only
+#endif
+
 		core::pose::PoseOP additional = disulf.get_additional_output();
+		
+#ifdef test_protocols_denovo_design_DisulfidizeMoverTests_dump_pdbs
+		core::Size temp(0);
+#endif
+		
 		while ( additional ) {
+#ifdef test_protocols_denovo_design_DisulfidizeMoverTests_dump_pdbs
+			++temp;
+			char name[256];
+			sprintf(name, "temp_%04lu.pdb", temp);
+			std::string namestr(name);
+			additional->dump_pdb(namestr);
+#endif
 			poses.push_back( additional );
 			additional = disulf.get_additional_output();
 		}
 
 		// there should be three results
-		TS_ASSERT_EQUALS( poses.size(), 3 );
+		TS_ASSERT_EQUALS( poses.size(), 57 );
 
 		// each should have disulfides
 		std::set< core::Size > num_disulf;
@@ -185,10 +205,10 @@ public:
 		core::scoring::disulfides::DisulfideMatchingPotential disulfPot;
 		m1.apply( *posecopy );
 		m2.apply( *posecopy );
-		TS_ASSERT( !disulf.check_disulfide_match_rt( *posecopy, 30, 46, disulfPot ) );
+		TS_ASSERT( !disulf.check_disulfide_match_rt( *posecopy, 30, 46, disulfPot, false ) );
 		m1.apply( *posecopy );
 		m2.apply( *posecopy );
-		TS_ASSERT( disulf.check_disulfide_match_rt( *posecopy, 47, 30, disulfPot ) );
+		TS_ASSERT( disulf.check_disulfide_match_rt( *posecopy, 47, 30, disulfPot, false ) );
 
 		core::pack::task::residue_selector::ResidueSubset residueset1( input_pose.total_residue(), true );
 		core::pack::task::residue_selector::ResidueSubset residueset2( input_pose.total_residue(), true );
@@ -196,18 +216,35 @@ public:
 		TR << residueset2[1] << std::endl;
 		DisulfidizeMover::DisulfideList disulfs =
 			disulf.find_possible_disulfides( input_pose, residueset1, residueset2 );
+		
+		TR << "Pair\tRes1\tRes2" << std::endl;	
+		for(core::Size i=1, imax=disulfs.size(); i<=imax; ++i) {
+			TR << i << "\t" << disulfs[i].first << "\t" << disulfs[i].second << std::endl;
+		}
 
-		TS_ASSERT_EQUALS( disulfs.size(), 2 );
-		TS_ASSERT_EQUALS( disulfs[1].first, 5 );
-		TS_ASSERT_EQUALS( disulfs[1].second, 26 );
-		TS_ASSERT_EQUALS( disulfs[2].first, 30 );
-		TS_ASSERT_EQUALS( disulfs[2].second, 47 );
+#ifdef test_protocols_denovo_design_DisulfidizeMoverTests_dump_pdbs			
+		input_pose.dump_pdb("disulfidize_temp.pdb");
+#endif
+
+		TS_ASSERT_EQUALS( disulfs.size(), 6 );
+		TS_ASSERT_EQUALS( disulfs[1].first, 2 );
+		TS_ASSERT_EQUALS( disulfs[1].second, 15 );
+		TS_ASSERT_EQUALS( disulfs[2].first, 3 );
+		TS_ASSERT_EQUALS( disulfs[2].second, 22 );
+		TS_ASSERT_EQUALS( disulfs[3].first, 3 );
+		TS_ASSERT_EQUALS( disulfs[3].second, 43 );
+		TS_ASSERT_EQUALS( disulfs[4].first, 5 );
+		TS_ASSERT_EQUALS( disulfs[4].second, 26 );
+		TS_ASSERT_EQUALS( disulfs[5].first, 30 );
+		TS_ASSERT_EQUALS( disulfs[5].second, 47 );
+		TS_ASSERT_EQUALS( disulfs[6].first, 39 );
+		TS_ASSERT_EQUALS( disulfs[6].second, 46 );
 
 		DisulfidizeMover::DisulfideList empty_disulfide_list;
 		utility::vector1< DisulfidizeMover::DisulfideList > disulfide_configurations =
 			disulf.recursive_multiple_disulfide_former( empty_disulfide_list, disulfs );
 
-		TS_ASSERT_EQUALS( disulfide_configurations.size(), 3 );
+		TS_ASSERT_EQUALS( disulfide_configurations.size(), 36 );
 
 
 		// test recursive function
@@ -221,7 +258,7 @@ public:
 			disulf.recursive_multiple_disulfide_former( tmplist, mylist );
 
 		TS_ASSERT_EQUALS( all_combinations.size(), 11 );
-		TR << "ALl combinations: " << all_combinations << std::endl;
+		TR << "All combinations: " << all_combinations << std::endl;
 	}
 
 };

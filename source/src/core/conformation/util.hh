@@ -315,13 +315,18 @@ setup_corresponding_atoms(
 	conformation::Residue const & rsd2
 );
 
-/// @brief Replace a CYS with a CYD or vice-versa for changing disulfide bonds.
+/// @brief Switch the disulfide state of a disulfide-forming residue (e.g. CYS->CYD or CYD->CYS or
+/// DCYD->DCYS or DCYS->DCYD or whatnot).
 /// @param[in] index Position of the residue to replace.
 /// @param[in] cys_type_name3 The 3-letter name of the cys type to use: either CYS
-///  or CYD.
+///  or CYD.  DEPRECATED and kept only for backward-compatibility.
 /// @param[inout] conf The conformation to modify
 /// @return true if the replacement was successful, false otherwise.
-bool change_cys_state( Size const index, std::string cys_type_name3, core::conformation::Conformation & conf );
+bool change_cys_state(
+	Size const index,
+	std::string const &cys_type_name3,   //DEPRECATED and kept only for backward-compatibility.
+	core::conformation::Conformation & conf
+);
 
 /// @brief Find whether there is a disulfide defined between two residues
 bool is_disulfide_bond( core::conformation::Conformation const& conformation, core::Size residueA_pos, core::Size residueB_pos);
@@ -331,7 +336,13 @@ void disulfide_bonds( core::conformation::Conformation const& conformation, util
 
 /// @brief Introduce cysteines at the specified location and define a disulfide bond between them.
 /// @details Does not do the repacking & minimization required to place the disulfide correctly.
-void form_disulfide(core::conformation::Conformation & conformation, core::Size lower_res, core::Size upper_res);
+void form_disulfide(
+	core::conformation::Conformation & conformation,
+	core::Size lower_res,
+	core::Size upper_res,
+	bool const preserve_d_residues=false,
+	bool const force_d_residues=false
+);
 
 /// @brief Helper function for the form_disulfide function.
 /// @details This function ensures that as a residue is mutated to a disulfide-bonding residue type,
@@ -340,7 +351,9 @@ void form_disulfide(core::conformation::Conformation & conformation, core::Size 
 void form_disulfide_helper(
 	core::conformation::Conformation &conformation,
 	core::Size const lower_res,
-	core::chemical::ResidueTypeSetCOP restype_set
+	core::chemical::ResidueTypeSetCOP restype_set,
+	bool const preserve_d_residues,
+	bool const force_d_residues
 );
 
 id::NamedAtomID

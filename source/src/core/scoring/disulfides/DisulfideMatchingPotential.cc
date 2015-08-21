@@ -77,17 +77,17 @@ DisulfideMatchingPotential::score_disulfide(
 		Residue const & res2,
 		Energy & match_t,
 		Energy & match_r,
-		Energy & match_rt
+		Energy & match_rt,
+		bool const mirror /*For scoring mirror-image disulfides (DCYS-DCYS)*/
 		) const
 {
 
 	const core::Real probe_radius( basic::options::option[ basic::options::OptionKeys::score::disulf_matching_probe ] );
 
-	//Calculate the distances and angles of this disulfide
-	core::kinematics::RT scoring_RT(disulfide_RT(res1, res2));
+	//Calculate the distances and angles of this disulfide, mirroring it if so specified
+	core::kinematics::RT const scoring_RT( disulfide_RT(res1, res2, mirror) );
 
-	utility::vector1< core::kinematics::RT >
-		db_disulfides( matching_database_.get_all_disulfides() );
+	utility::vector1< core::kinematics::RT > db_disulfides( matching_database_.get_all_disulfides() );
 
 	float mt_dist, mr_dist, mrt_dist; //best distance observed
 	float r_dist, rt_dist; //current distance being compared
@@ -108,11 +108,14 @@ DisulfideMatchingPotential::score_disulfide(
 	//std::cout << "CHECKING " << db_disulfides.size() << " " << mt_dist << " " << mr_dist << " " << mrt_dist << " " << std::endl;
 
 	for ( Size d = 2; d <= db_disulfides.size(); ++d ) {
-
-		float t_dist = std::sqrt( scoring_RT.get_translation().distance_squared( db_disulfides[1].get_translation() ));
-		r_dist = std::sqrt( scoring_RT.get_rotation().col(1).distance_squared( db_disulfides[1].get_rotation().col(1) ) +
-			                  scoring_RT.get_rotation().col(2).distance_squared( db_disulfides[1].get_rotation().col(2) ) +
-											  scoring_RT.get_rotation().col(3).distance_squared( db_disulfides[1].get_rotation().col(3) ) );
+		/*
+			As far as I can tell, the following four lines were broken before, calculating the same thing for every iteration of this for loop.
+			VKM, 17 Aug 2015.
+		*/
+		float t_dist = std::sqrt( scoring_RT.get_translation().distance_squared( db_disulfides[d].get_translation() ));
+		r_dist = std::sqrt( scoring_RT.get_rotation().col(1).distance_squared( db_disulfides[d].get_rotation().col(1) ) +
+			                  scoring_RT.get_rotation().col(2).distance_squared( db_disulfides[d].get_rotation().col(2) ) +
+											  scoring_RT.get_rotation().col(3).distance_squared( db_disulfides[d].get_rotation().col(3) ) );
 		rt_dist = core::kinematics::distance( scoring_RT, db_disulfides[d] );
 
 		//std::cout << "HEYO " << d << " " << mt_dist << " " << mr_dist << " " << mrt_dist << " " << t_dist << " " << r_dist << " " << rt_dist << std::endl;
@@ -121,12 +124,6 @@ DisulfideMatchingPotential::score_disulfide(
 		if (( r_dist <= mr_dist ) && ( t_dist <= probe_radius )) mr_dist = r_dist;
 		if (( rt_dist <= mrt_dist ) && ( t_dist <= probe_radius )) mrt_dist = rt_dist;
 	}
-
-	//	if (mrt_dist > 1.0) {
-	//		mrt_dist -= 1;
-	//	} else {
-	//		mrt_dist = 0;
-	//	}
 
 	match_t = mt_dist;
 	match_r = mr_dist;
@@ -182,36 +179,38 @@ Energy DisulfideMatchingPotential::compute_matching_energy( pose::Pose const & p
 core::kinematics::RT
 DisulfideMatchingPotential::disulfide_RT(
 		Residue const& res1,
-		Residue const& res2 ) const
-{
+		Residue const& res2,
+		bool const mirror
+) const {
+
+	core::Real const mirrormult( mirror ? -1.0 : 1.0 );
+
 	Size const MAX_POS( 5 );
 	ObjexxFCL::FArray2D_float Epos1(3, MAX_POS), Epos2(3,MAX_POS);
 
-	Epos1(1,2) = res1.atom(res1.atom_index("CA")).xyz()(1);
-	Epos1(2,2) = res1.atom(res1.atom_index("CA")).xyz()(2);
-	Epos1(3,2) = res1.atom(res1.atom_index("CA")).xyz()(3);
+	Epos1(1,2) = res1.atom(res1.atom_index("CA")).xyz().x() * mirrormult;
+	Epos1(2,2) = res1.atom(res1.atom_index("CA")).xyz().y();
+	Epos1(3,2) = res1.atom(res1.atom_index("CA")).xyz().z();
 
-	Epos1(1,1) = res1.atom(res1.atom_index("N")).xyz()(1);
-	Epos1(2,1) = res1.atom(res1.atom_index("N")).xyz()(2);
-	Epos1(3,1) = res1.atom(res1.atom_index("N")).xyz()(3);
+	Epos1(1,1) = res1.atom(res1.atom_index("N")).xyz().x() * mirrormult;
+	Epos1(2,1) = res1.atom(res1.atom_index("N")).xyz().y();
+	Epos1(3,1) = res1.atom(res1.atom_index("N")).xyz().z();
 
-	Epos1(1,4) = res1.atom(res1.atom_index("C")).xyz()(1);
-	Epos1(2,4) = res1.atom(res1.atom_index("C")).xyz()(2);
-	Epos1(3,4) = res1.atom(res1.atom_index("C")).xyz()(3);
+	Epos1(1,4) = res1.atom(res1.atom_index("C")).xyz().x() * mirrormult;
+	Epos1(2,4) = res1.atom(res1.atom_index("C")).xyz().y();
+	Epos1(3,4) = res1.atom(res1.atom_index("C")).xyz().z();
 
-	Epos2(1,2) = res2.atom(res2.atom_index("CA")).xyz()(1);
-	Epos2(2,2) = res2.atom(res2.atom_index("CA")).xyz()(2);
-	Epos2(3,2) = res2.atom(res2.atom_index("CA")).xyz()(3);
+	Epos2(1,2) = res2.atom(res2.atom_index("CA")).xyz().x() * mirrormult;
+	Epos2(2,2) = res2.atom(res2.atom_index("CA")).xyz().y();
+	Epos2(3,2) = res2.atom(res2.atom_index("CA")).xyz().z();
 
-	Epos2(1,1) = res2.atom(res2.atom_index("N")).xyz()(1);
-	Epos2(2,1) = res2.atom(res2.atom_index("N")).xyz()(2);
-	Epos2(3,1) = res2.atom(res2.atom_index("N")).xyz()(3);
+	Epos2(1,1) = res2.atom(res2.atom_index("N")).xyz().x() * mirrormult;
+	Epos2(2,1) = res2.atom(res2.atom_index("N")).xyz().y();
+	Epos2(3,1) = res2.atom(res2.atom_index("N")).xyz().z();
 
-	Epos2(1,4) = res2.atom(res2.atom_index("C")).xyz()(1);
-	Epos2(2,4) = res2.atom(res2.atom_index("C")).xyz()(2);
-	Epos2(3,4) = res2.atom(res2.atom_index("C")).xyz()(3);
-
-	//core::scoring::disulfides::RT_helper helper;
+	Epos2(1,4) = res2.atom(res2.atom_index("C")).xyz().x() * mirrormult;
+	Epos2(2,4) = res2.atom(res2.atom_index("C")).xyz().y();
+	Epos2(3,4) = res2.atom(res2.atom_index("C")).xyz().z();
 
 	core::kinematics::RT this_RT(RT_helper::RT_from_epos(Epos1,Epos2));
 

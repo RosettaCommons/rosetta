@@ -18,6 +18,9 @@ INCLUDE(../build/${LINK_RULES}.build.cmake)
 INCLUDE(../build/build.settings.cmake)
 INCLUDE(../build/build.post.cmake)
 
+########### Uncomment the following if you only want to build RosettaScripts:
+#INCLUDE( ../build/apps/rosetta_scripts.cmake )
+
 ############ Top level binaries
 INCLUDE( ../build/apps.all.cmake )
 INCLUDE( ../build/pilot_apps.all.cmake )

@@ -225,7 +225,7 @@ public:
 
 	/// @brief Check if a base type (like "SER") generates any types with another name3 (like "SEP")
 	bool
-	generates_patched_residue_type_with_name3( std::string const base_residue_name, std::string const name3 ) const;
+	generates_patched_residue_type_with_name3( std::string const &base_residue_name, std::string const &name3 ) const;
 
 	/// @brief Gets all types with the given aa type and variants
 	/// @details The number of variants must match exactly.
@@ -355,7 +355,7 @@ private:
 	make_sure_instantiated( ResidueTypeCOPs const & rsd_types ) const;
 
 	void
-	figure_out_last_patch_from_name( std::string const rsd_name,
+	figure_out_last_patch_from_name( std::string const &rsd_name,
 																	 std::string & rsd_name_base,
 																	 std::string & patch_name ) const;
 

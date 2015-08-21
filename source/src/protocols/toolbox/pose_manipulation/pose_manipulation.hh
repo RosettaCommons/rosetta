@@ -53,9 +53,20 @@ void
 construct_poly_ala_pose(
 	core::pose::Pose & pose,
 	utility::vector1< core::Size > const & positions,
-	bool keep_pro,
-	bool keep_gly,
-	bool keep_disulfide_cys
+	bool const keep_pro,
+	bool const keep_gly,
+	bool const keep_disulfide_cys
+);
+
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+/// @brief puts in D-ala residues at the positions specified in the 'positions' input array
+void
+construct_poly_d_ala_pose(
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > const & positions,
+	bool const keep_pro,
+	bool const keep_gly,
+	bool const keep_disulfide_cys
 );
 
 /// @author Possu Huang ( possu@uw.edu)
@@ -65,9 +76,9 @@ construct_poly_uniq_restype_pose(
   core::pose::Pose & pose,
   utility::vector1< core::Size > const & positions,
   core::chemical::ResidueType const & restype,
-  bool keep_pro,
-  bool keep_gly,
-  bool keep_disulfide_cys
+  bool const keep_pro,
+  bool const keep_gly,
+  bool const keep_disulfide_cys
 );
 
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu ), Oct 09
