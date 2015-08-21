@@ -9,7 +9,7 @@
 
 /// @file   protocols/toolbox/task_operations/PreventResiduesFromRepackingOperation.hh
 /// @brief  TaskOperation class that prevents a vector of residues indices from repacking
-/// 	    parsed as a string that is comma delimited "," 
+/// 	    parsed as a string that is comma delimited ","
 /// @author Eva-Maria Strauch (evas01@uw.edu)
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_PreventResiduesFromRepackingOperation_hh
@@ -42,13 +42,13 @@ public:
 	typedef RestrictOperationsBase parent;
 
 	PreventResiduesFromRepackingOperation();
-	
+
 	PreventResiduesFromRepackingOperation( utility::vector1 < core::Size > residues );
-  
+
 	utility::vector1< core::Size > get_residues() const;
 
   void set_residues( utility::vector1  < core::Size > residues_vec );
-	
+
 	virtual ~PreventResiduesFromRepackingOperation();
 
 	virtual TaskOperationOP clone() const;
@@ -59,9 +59,13 @@ public:
 
 	virtual void parse_tag( TagCOP, DataMap & );
 
+	std::string reference_pdb_id() const{ return reference_pdb_id_; }
+	void reference_pdb_id( std::string const s ){ reference_pdb_id_ = s; }
+
 private:
 	std::string unparsed_residues_;
 	utility::vector1<core::Size> residues_;
+	std::string reference_pdb_id_; // reference pdb against which to compute the residue numbering, so if you write 72A the taskop would translate to 63
 };
 
 } //namespace protocols

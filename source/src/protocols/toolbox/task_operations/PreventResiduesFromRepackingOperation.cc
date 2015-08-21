@@ -14,6 +14,9 @@
 // Unit Headers
 #include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperation.hh>
 #include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperationCreator.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/selection.hh>
 
 // Project Headers
 
@@ -51,10 +54,10 @@ using namespace core::pack::task::operation;
 PreventResiduesFromRepackingOperation::PreventResiduesFromRepackingOperation() {}
 
 PreventResiduesFromRepackingOperation::PreventResiduesFromRepackingOperation( utility::vector1 < core::Size > residues )
-      : parent(), residues_( residues )
+      : parent(), residues_( residues ), reference_pdb_id_( "" )
 {
 }
-	
+
 PreventResiduesFromRepackingOperation::~PreventResiduesFromRepackingOperation() {}
 
 core::pack::task::operation::TaskOperationOP
@@ -71,16 +74,17 @@ core::pack::task::operation::TaskOperationOP PreventResiduesFromRepackingOperati
 void
 PreventResiduesFromRepackingOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
-	runtime_assert( residues_.size() != 0 );
-	
+	if( residues_.size() == 0 )// do nothing
+		return;
+
 	core::pack::task::operation::PreventRepacking pp;
 	for( core::Size i = 1; i<=residues_.size(); ++i )
 		pp.include_residue( residues_[i] );
-	
+
 	pp.apply( pose, task );
 }
 
-	
+
 utility::vector1< core::Size >
 PreventResiduesFromRepackingOperation::get_residues() const
 {
@@ -96,20 +100,32 @@ PreventResiduesFromRepackingOperation::set_residues( utility::vector1  < core::S
           residues_.push_back( item );
 }
 
-	
+
 void
 PreventResiduesFromRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 {
+  			reference_pdb_id_ = tag->getOption< std::string >( "reference_pdb_id", "" );
+				if( tag->getOption< std::string >( "residues" ) == "-1" ){
+					residues_.clear();
+					TR<<"No residues specified to prevent repacking. I'm doing nothing"<<std::endl;
+					return;
+				}
         unparsed_residues_ = tag->getOption< std::string >( "residues" ) ;
         if( unparsed_residues_ != "" ){
+
+					core::pose::Pose reference_pose;
+					if( reference_pdb_id_ != "" )
+						core::import_pose::pose_from_pdb( reference_pose, reference_pdb_id_ );
 
           utility::vector1< std::string > const res_keys( utility::string_split( unparsed_residues_ , ',' ) );
           utility::vector1< core::Size > residues_vector;
           residues_.clear();
 
           BOOST_FOREACH( std::string const key, res_keys ){
-            Size const res( utility::string2int( key ) );
-            TR.Debug<<"not designing residue: "<< key  <<std::endl;
+						Size res( utility::string2int( key ) );
+						if( reference_pdb_id_ != "" )
+							res = core::pose::parse_resnum( key, reference_pose );
+            TR.Debug<<"Prevent repack on residue: "<< key  <<" which is translated to residue "<<res<<std::endl;
             residues_.push_back( res );
           }
         }
