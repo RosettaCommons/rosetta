@@ -34,7 +34,8 @@ class Runner:
 
     def log_error(self, message):
         self.output += message
-        if not Options.quiet_errors: print message
+        if not Options.quiet_errors:
+            sys.stderr.write( message + "\n")
 
     def mfork(self):
         ''' Check if number of child process is below Options.jobs. And if it is - fork the new process and return its pid.
@@ -46,7 +47,7 @@ class Runner:
                     self.jobs.remove(p)
                 elif r[0] == p :  # process ended, but with error. Special case: we will have to wait for all process to terminate and call system exit.
                     for p in self.jobs: os.waitpid(p, 0)
-                    print 'Some of the processes terminated abnormally!'
+                    sys.stderr.write('Some of the processes terminated abnormally!\n')
                     sys.exit(1)
 
             if len(self.jobs) >= Options.jobs: time.sleep(.5)
@@ -56,7 +57,9 @@ class Runner:
         #while True:
         try:
             pid = os.fork()
-        except OSError as e: print 'Error: os.fork() failure: {0}'.format(e);  sys.exit(1)
+        except OSError as e:
+            sys.stderr.write('Error: os.fork() failure: {0}\n'.format(e))
+            sys.exit(1)
 
 
         if pid: self.jobs.append(pid) # We are parent!
@@ -64,7 +67,7 @@ class Runner:
 
 
     def signal_handler(self, signal_, f):
-        print 'Ctrl-C pressed... killing child jobs...'
+        sys.stderr('Ctrl-C pressed... killing child jobs...\n')
         for pid in self.jobs:
             os.killpg(os.getpgid(pid), signal.SIGKILL)
 
@@ -85,9 +88,10 @@ class Runner:
 
         if output_file:
             with file(output_file, 'w') as f: f.write(output);  f.write(errors)
-            print errors
+            sys.stderr.write( errors )
         else:
-            print output; print errors
+            sys.stdout.write( output )
+            sys.stderr.write( errors )
 
         #exit_code = os.waitpid(p.pid, 0)[1]
         exit_code = p.returncode
@@ -235,7 +239,7 @@ def main(args):
     if len(args) > 0:
         tests = args
     else:
-        print "Must specify file name with command lines to run!"
+        sys.stderr("Must specify file name with command lines to run!\n")
         sys.exit(1)
 
     R = Runner()

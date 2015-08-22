@@ -478,7 +478,7 @@ ResidueTypeSet::name_map( std::string const & name_in ) const
 
 /// @brief Check if a base type (like "SER") generates any types with another name3 (like "SEP")
 bool
-ResidueTypeSet::generates_patched_residue_type_with_name3( std::string const &base_residue_name, std::string const &name3 ) const
+ResidueTypeSet::generates_patched_residue_type_with_name3( std::string const & base_residue_name, std::string const & name3 ) const
 {
 	if ( name3_generated_by_base_residue_name_.find( base_residue_name ) ==
 			name3_generated_by_base_residue_name_.end() ) return false;
@@ -551,7 +551,7 @@ ResidueTypeSet::make_sure_instantiated( utility::vector1< ResidueTypeCOP > const
 
 //////////////////////////////////////////////////////////////////////////////
 void
-ResidueTypeSet::figure_out_last_patch_from_name( std::string const &rsd_name,
+ResidueTypeSet::figure_out_last_patch_from_name( std::string const & rsd_name,
 	std::string & rsd_name_base,
 	std::string & patch_name ) const
 {

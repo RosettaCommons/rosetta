@@ -46,7 +46,7 @@ mkdir -p ${CACHEDIR}
 
 find ./ -name '*.cc' | sed "s|^|${CPPCHECK_DIR}/cppcheck_single.py ${COMPILETYPE} |g" > ${CACHEDIR}/commands.txt
 
-../../tests/benchmark/util/parallel.py -q -j ${JOBS} ${CACHEDIR}/commands.txt 
+../../tests/benchmark/util/parallel.py -q -j ${JOBS} ${CACHEDIR}/commands.txt > /dev/null # only the error output.
 
 find ${CACHEDIR}/ -name '*.cppcheck' -exec cat {} \; > ${CACHEDIR}/all_lines.txt
 

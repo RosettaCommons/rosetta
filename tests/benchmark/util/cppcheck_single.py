@@ -60,7 +60,7 @@ def check_cache_file( filename, compile_type ):
 
     last_run = os.path.getmtime( cache_filename )
 
-    if os.path.getmtime( filename ) > last_run:
+    if os.path.getmtime( filename ) > last_run or os.path.getmtime( "cppcheck_suppressions.txt" ) > last_run:
         os.remove( cache_filename )
         return
 
@@ -76,8 +76,7 @@ def check_cache_file( filename, compile_type ):
     for fn in output[1:]:
         if fn == '\\':
             continue
-        modtime = os.path.getmtime( fn )
-        if modtime > last_run:
+        if os.path.getmtime( fn ) > last_run:
             os.remove( cache_filename )
             return
 

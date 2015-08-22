@@ -136,7 +136,7 @@ get_rsd_type_from_aa_legacy( chemical::ResidueTypeSet const & residue_set,
 
 core::chemical::ResidueTypeCOP
 handle_disulfide_variant_name_for_backwards_compatibility( core::chemical::ResidueTypeSet const & residue_set,
-	std::string const &fullname );
+	std::string const & fullname );
 
 
 } // namespace core
