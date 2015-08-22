@@ -34,7 +34,6 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <devel/init.hh>
 #include <numeric/conversions.hh>
 #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>

@@ -26,7 +26,6 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
@@ -125,7 +124,6 @@ using utility::io::ozstream;
 using utility::file_basename;
 using utility::vector1;
 using std::endl;
-using core::import_pose::pose_from_pdb;
 using numeric::geometry::hashing::Real3;
 using numeric::geometry::hashing::Real6;
 using core::pose::xyzStripeHashPoseCOP;
