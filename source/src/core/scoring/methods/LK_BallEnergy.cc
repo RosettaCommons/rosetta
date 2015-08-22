@@ -1670,7 +1670,7 @@ LK_BallEnergy::finalize_total_energy(
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			resvect.push_back( & pose.residue( ii ) );
 		}
-		Real dsq(0.0);
+
 		for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
 			conformation::Residue const & rsd1( *resvect[i] );
 			LKB_ResidueInfo const & rsd1_info( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
