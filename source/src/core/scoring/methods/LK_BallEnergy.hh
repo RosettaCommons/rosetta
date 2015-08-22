@@ -317,6 +317,27 @@ public:
 	) const {}
 
 	virtual
+	void
+	finalize_total_energy(
+		pose::Pose & pose,
+		ScoreFunction const &,
+		EnergyMap & totals
+	) const;
+
+	virtual
+	void
+	eval_atom_derivative(
+		id::AtomID const & id,
+		pose::Pose const & pose,
+		kinematics::DomainMap const &, // domain_map,
+		ScoreFunction const & sfxn,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
+
+
+	virtual
 	Distance
 	atomic_interaction_cutoff() const;
 

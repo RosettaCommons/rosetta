@@ -199,7 +199,6 @@ public:
 				TR << "MIN TIME: " << time << " sec \n";
 			} else {
 				core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
-				options.nblist_auto_update( false );
 				core::optimization::AtomTreeMinimizer minimizer;
 				TR << "TORSION MINTEST: " << "\n";
 				TR << "start score: " << (*scorefxn)(pose) << "\n";

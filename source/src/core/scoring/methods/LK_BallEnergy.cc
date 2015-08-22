@@ -27,6 +27,8 @@
 #include <core/scoring/ResidueNeighborList.hh>
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
@@ -372,21 +374,24 @@ compute_and_store_pose_waters(
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool
-LK_BallEnergy::minimize_in_whole_structure_context( pose::Pose const & ) const
+LK_BallEnergy::minimize_in_whole_structure_context( pose::Pose const &pose ) const
 {
-	return false;
+	//return false;
+	return pose.energies().use_nblist_auto_update();
 }
 
 
 void
 LK_BallEnergy::setup_for_minimizing_for_residue(
 	conformation::Residue const & rsd,
-	pose::Pose const &, // pose,
+	pose::Pose const & pose,
 	ScoreFunction const &, // scorefxn,
 	kinematics::MinimizerMapBase const &, // min_map,
 	ResSingleMinimizationData & resdata
 ) const
 {
+	if ( pose.energies().use_nblist_auto_update() ) return;
+
 	LKB_ResidueInfo & info( retrieve_nonconst_lkb_resdata( resdata ) );
 	info.initialize( rsd.type() );
 	info.build_waters( rsd );
@@ -396,7 +401,7 @@ void
 LK_BallEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const &, // rsd1,
 	conformation::Residue const &, // rsd2,
-	pose::Pose const &,
+	pose::Pose const & pose,
 	ScoreFunction const &, //scorefxn,
 	kinematics::MinimizerMapBase const &, // min_map,
 	ResSingleMinimizationData const & res1data,
@@ -404,6 +409,7 @@ LK_BallEnergy::setup_for_minimizing_for_residue_pair(
 	ResPairMinimizationData & pairdata
 ) const
 {
+	if ( pose.energies().use_nblist_auto_update() ) return;
 
 	LKB_ResPairMinData & lkb_pairdata( retrieve_nonconst_lkb_pairdata( pairdata ) );
 	lkb_pairdata.initialize( retrieve_lkb_resdata_ptr( res1data ),
@@ -420,11 +426,13 @@ LK_BallEnergy::requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose 
 void
 LK_BallEnergy::setup_for_scoring_for_residue(
 	conformation::Residue const & rsd,
-	pose::Pose const &,// pose,
+	pose::Pose const & pose,
 	ScoreFunction const &, // sfxn,
 	ResSingleMinimizationData & resdata
 ) const
 {
+	if ( pose.energies().use_nblist_auto_update() ) return;
+
 	LKB_ResidueInfo & info( retrieve_nonconst_lkb_resdata( resdata ) );
 	if ( !info.matches_residue_type( rsd.type() ) ) {
 		std::cout << "LK_BallEnergy::setup_for_scoring_for_residue:: lkb-info mismatch: " << info.residue_type().name() << ' ' <<
@@ -716,11 +724,13 @@ LK_BallEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	ResPairMinimizationData const & pairdata,
-	pose::Pose const &,// pose,
+	pose::Pose const & pose,
 	ScoreFunction const &,
 	EnergyMap & emap
 ) const
 {
+	if ( pose.energies().use_nblist_auto_update() ) return;
+
 	LKB_ResPairMinData const & lkb_pairdata( retrieve_lkb_pairdata( pairdata ) );
 
 	residue_pair_energy( rsd1, lkb_pairdata.res1_data(), rsd2, lkb_pairdata.res2_data(), emap );
@@ -1131,6 +1141,7 @@ LK_BallEnergy::residue_pair_energy(
 					lk_desolvation_of_atom1_by_atom2 = cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] );
 					lk_desolvation_of_atom2_by_atom1 = cp_weight * ( ( 1. - frac ) * solv2_[ l1 ] + frac * solv2_[ l1+1 ] );
 				}
+//TR << "pair " << rsd1.seqpos() << "." << atom1 << " : " << rsd2.seqpos() << "." << atom2 << std::endl;
 				accumulate_single_atom_contributions( atom1, atom1_type_index, atom1_waters, atom1_weights,
 					rsd1, atom2_type_index, atom2_xyz,
 					lk_desolvation_of_atom1_by_atom2, emap );
@@ -1573,6 +1584,8 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 	utility::vector1< DerivVectorPair > & r2_at_derivs
 ) const
 {
+	if ( pose.energies().use_nblist_auto_update() ) return;
+
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 	debug_assert( r1_at_derivs.size() >= rsd1.natoms() );
 	debug_assert( r2_at_derivs.size() >= rsd2.natoms() );
@@ -1587,12 +1600,8 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 	//ResiduePairNeighborList const & nblist
 	// ( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( etab_pair_nblist )) );
 
-	//fpd  there are two possible ways nblist may be stored
 	ResiduePairNeighborList const & nblist =
-		utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( etab_classic_intrares_pair_nblist )) ?
-		static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( etab_classic_intrares_pair_nblist )) :
 		static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( etab_pair_nblist ));
-
 
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
@@ -1632,10 +1641,181 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 				r1_at_derivs[ atom1 ].f2() += f2;
 				r2_at_derivs[ atom2 ].f1() += -1*f1;
 				r2_at_derivs[ atom2 ].f2() += -1*f2;
+
 			}
 		}
 	}
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
+}
+
+
+//
+//fpd this function is only called during nblist auto update
+void
+LK_BallEnergy::finalize_total_energy(
+	pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap & totals
+) const
+{
+	if ( pose.energies().use_nblist() && pose.energies().use_nblist_auto_update() ) {
+		EnergyMap tbenergy_map;
+		// add in contributions from the nblist atom-pairs
+		NeighborList const & nblist ( pose.energies().nblist( EnergiesCacheableDataType::ETABLE_NBLIST ) );
+		nblist.check_domain_map( pose.energies().domain_map() );
+
+		/// Trick to avoid calls to Conformation::residue()
+		utility::vector1< conformation::Residue const * > resvect;
+		resvect.reserve( pose.total_residue() );
+		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			resvect.push_back( & pose.residue( ii ) );
+		}
+		Real dsq(0.0);
+		for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+			conformation::Residue const & rsd1( *resvect[i] );
+			LKB_ResidueInfo const & rsd1_info( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
+			utility::vector1< Vectors > const & rsd1_waters( rsd1_info.waters() );
+			utility::vector1< utility::vector1< Real > > const & rsd1_atom_wts( rsd1_info.atom_weights() );
+
+			for ( Size ii=1, ii_end=rsd1.nheavyatoms(); ii<= ii_end; ++ii ) {
+				Vectors const & atom1_waters( rsd1_waters[ ii ] );
+				Vector const & atom1_xyz( rsd1.xyz( ii ) );
+				Size const atom1_type_index( rsd1.atom( ii ).type() );
+				utility::vector1< Real > const & atom1_weights( rsd1_atom_wts[ii] );
+
+				AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,ii) );
+				for ( AtomNeighbors::const_iterator nbr=nbrs.begin(),
+						nbr_end=nbrs.end(); nbr!= nbr_end; ++nbr ) {
+					Size const  j( nbr->rsd() );
+					Size const jj( nbr->atomno() );
+
+					conformation::Residue const & rsd2( *resvect[j] );
+
+					if ( rsd2.atom_is_hydrogen(jj) ) continue;
+					if ( i == j ) continue;
+
+					LKB_ResidueInfo const & rsd2_info( retrieve_lkb_residue_info( pose, rsd2.seqpos() ) );
+					utility::vector1< Vectors > const & rsd2_waters( rsd2_info.waters() );
+					utility::vector1< utility::vector1< Real > > const & rsd2_atom_wts( rsd2_info.atom_weights() );
+					utility::vector1< Real > const & atom2_weights( rsd2_atom_wts[jj] );
+
+					Vectors const & atom2_waters( rsd2_waters[ jj ] );
+					Vector const & atom2_xyz( rsd2.xyz( jj ) );
+
+					if ( atom1_waters.empty() && atom2_waters.empty() ) continue;
+
+					Real const cp_weight( nbr->weight_func()*nbr->weight() );  // fpd is this correct (same CP as etable)
+
+					Real const d2( atom1_xyz.distance_squared( atom2_xyz ) );
+
+					if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
+
+					Real lk_desolvation_of_atom1_by_atom2, lk_desolvation_of_atom2_by_atom1;
+					Size const atom2_type_index( rsd2.atom( jj ).type() );
+					if ( slim_etable_ ) {
+						etable_->analytic_lk_energy( rsd1.atom( ii ), rsd2.atom( jj ), lk_desolvation_of_atom1_by_atom2,
+							lk_desolvation_of_atom2_by_atom1 );
+						lk_desolvation_of_atom1_by_atom2 *= cp_weight;
+						lk_desolvation_of_atom2_by_atom1 *= cp_weight;
+
+					} else {
+						// setup for solvation Etable lookups
+						Real const d2_bin = d2 * etable_bins_per_A2_;
+						int disbin = static_cast< int >( d2_bin ) + 1;
+						Real frac = d2_bin - ( disbin - 1 );
+						int const l1 = solv1_.index( disbin, atom2_type_index, atom1_type_index );
+
+						lk_desolvation_of_atom1_by_atom2 = cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] );
+						lk_desolvation_of_atom2_by_atom1 = cp_weight * ( ( 1. - frac ) * solv2_[ l1 ] + frac * solv2_[ l1+1 ] );
+					}
+
+					accumulate_single_atom_contributions( ii, atom1_type_index, atom1_waters, atom1_weights,
+						rsd1, atom2_type_index, atom2_xyz,
+						lk_desolvation_of_atom1_by_atom2, tbenergy_map );
+
+					accumulate_single_atom_contributions( jj, atom2_type_index, atom2_waters, atom2_weights,
+						rsd2, atom1_type_index, atom1_xyz,
+						lk_desolvation_of_atom2_by_atom1, tbenergy_map );
+				}
+			}
+		}
+		totals += tbenergy_map;
+	}
+
+}
+
+
+//
+//fpd this function is only called during nblist auto update
+void
+LK_BallEnergy::eval_atom_derivative(
+	id::AtomID const & id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const &, // domain_map,
+	ScoreFunction const & , //sfxn, // needed for non-nblist minimization
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
+) const
+{
+	Size const idresid = id.rsd();
+
+	conformation::Residue const & rsd1( pose.residue(idresid) );
+	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_residue_info( pose, idresid ) );
+
+	Size const heavyatom1( id.atomno() );
+	if ( rsd1.atom_is_hydrogen( id.atomno() )) return;
+
+	if ( pose.energies().use_nblist() ) {
+		scoring::AtomNeighbors const & nbrs ( pose.energies().nblist( EnergiesCacheableDataType::ETABLE_NBLIST ).atom_neighbors( id ) );
+
+		for ( scoring::AtomNeighbors::const_iterator it2=nbrs.begin(), it2e=nbrs.end(); it2 != it2e; ++it2 ) {
+			scoring::AtomNeighbor const & nbr( *it2 );
+			Size const nbrresid = nbr.rsd();
+
+			if (nbrresid == idresid) continue;
+
+			conformation::Residue const & rsd2( pose.residue(nbrresid) );
+			LKB_ResidueInfo const & rsd2_info( retrieve_lkb_residue_info( pose, nbrresid ) );
+
+			Size const heavyatom2( nbr.atomno() );
+			if ( rsd2.atom_is_hydrogen( heavyatom2 ) ) continue;
+			Real const cp_weight( nbr.weight() );  // do not use nbr->weight_func() here
+			Real const d2( rsd1.xyz( heavyatom1 ).distance_squared( rsd2.xyz( heavyatom2 ) ) );
+
+			if ( ( d2 >= safe_max_dis2_ ) || ( d2 == Real(0.0) ) ) continue; // no contribution
+
+			Size const n1( rsd1.heavyatom_has_polar_hydrogens(heavyatom1) ?
+				1 + rsd1.type().number_bonded_hydrogens(heavyatom1) : 1 );
+			Size const n2( rsd2.heavyatom_has_polar_hydrogens(heavyatom2) ?
+				1 + rsd2.type().number_bonded_hydrogens(heavyatom2) : 1 );
+
+			for ( Size iii=1; iii<= n1; ++iii ) {
+				Size atom1( heavyatom1 );
+				if ( iii >= 2 ) {
+					atom1 = rsd1.attached_H_begin(heavyatom1)+iii-2;
+					runtime_assert( rsd1.atom_is_hydrogen(atom1) && rsd1.atom_base(atom1) == heavyatom1 );
+					if ( !rsd1.atom_is_polar_hydrogen(atom1) ) continue;
+				}
+				for ( Size jjj=1; jjj<= n2; ++jjj ) {
+					Size atom2( heavyatom2 );
+					if ( jjj >= 2 ) {
+						atom2 = rsd2.attached_H_begin(heavyatom2)+jjj-2;
+						runtime_assert( rsd2.atom_is_hydrogen(atom2) && rsd2.atom_base(atom2) == heavyatom2 );
+						if ( !rsd2.atom_is_polar_hydrogen(atom2) ) continue;
+					}
+
+					Vector f1(0,0,0),f2(0,0,0);
+					sum_deriv_contributions_for_atom_pair( d2, atom1, rsd1, rsd1_info, atom2, rsd2, rsd2_info, pose, weights,
+						cp_weight, f1, f2 );
+					F1 += f1;
+					F2 += f2;
+				}
+			}
+		}
+	} else {
+		utility_exit_with_message("non-nblist minimize!");
+	}
 }
 
 
