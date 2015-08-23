@@ -1153,6 +1153,8 @@ CC	NH2	CT2	HA	0.0000	1	0.00
 CT2	CT2	NH2	H	0.0000	1	0.00
 HA	CT2	NH2	H   0.0000	1	0.00
 
+# Added for trans-ACPC
+CT2	CT2	C	N	1.25	3	180.00
 
 # For cyclization, maybe?
 #stubbed

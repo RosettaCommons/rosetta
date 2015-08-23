@@ -28,6 +28,8 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/conformation/ResidueFactory.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -109,7 +111,7 @@ SingleBasicRotamerLibrary::assign_random_rotamer_with_bias(
 
 void
 SingleBasicRotamerLibrary::fill_rotamer_vector(
-	pose::Pose const &,
+	pose::Pose const &pose,
 	scoring::ScoreFunction const &,
 	pack::task::PackerTask const & task,
 	graph::GraphCOP,
@@ -137,7 +139,31 @@ SingleBasicRotamerLibrary::fill_rotamer_vector(
 
 		rotamers.reserve( rotamers.size() + proton_chi_chisets.size() );
 		for ( Size ii = 1; ii <= proton_chi_chisets.size(); ++ii ) {
-			conformation::ResidueOP rotamer( existing_residue.clone() ); // TODO: What if exisiting_residue and concrete_residue are different types?
+			conformation::ResidueOP rotamer;
+			if ( existing_residue.type().name() == concrete_residue->name() ) {
+				rotamer = existing_residue.clone(); //Clone the existing residue if the types match.  (Copies chi angles).
+			} else { //Otherwise, build a new residue and align to the existing residue if the types do not match.
+				rotamer = core::conformation::ResidueFactory::create_residue( *concrete_residue, existing_residue, pose.conformation(), false ) ;
+				//Copy the side-chain chi values if possible:
+				for ( core::Size ichi=1, ichimax=rotamer->nchi(); ichi<=ichimax; ++ichi ) {
+					if ( ichi > existing_residue.nchi() ) {
+						rotamer->set_chi(ichi, 0.0); //Initialize to zero so that values won't be random.
+						continue;
+					}
+					core::conformation::Residue::AtomIndices const & chi_atoms( rotamer->type().chi_atoms( ichi ) );
+					core::conformation::Residue::AtomIndices const & existing_chi_atoms( existing_residue.type().chi_atoms( ichi ) );
+
+					if ( existing_residue.atom_name(existing_chi_atoms[1]) == rotamer->atom_name(chi_atoms[1]) &&
+							existing_residue.atom_name(existing_chi_atoms[2]) == rotamer->atom_name(chi_atoms[2]) &&
+							existing_residue.atom_name(existing_chi_atoms[3]) == rotamer->atom_name(chi_atoms[3]) &&
+							existing_residue.atom_name(existing_chi_atoms[4]) == rotamer->atom_name(chi_atoms[4])
+							) {
+						rotamer->set_chi(ichi, existing_residue.chi(ichi));
+					} else {
+						rotamer->set_chi(ichi, 0.0); //Initialize to zero in the absence of anything better that we can do.
+					}
+				}
+			}
 			for ( Size jj = 1; jj <= concrete_residue->n_proton_chi(); ++jj ) {
 				Size jj_protchi = concrete_residue->proton_chi_2_chi( jj );
 				rotamer->set_chi(jj_protchi, proton_chi_chisets[ ii ]->chi[ jj_protchi ] );

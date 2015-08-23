@@ -29,6 +29,8 @@
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/RingConformerSet.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 // Basic headers
 #include <basic/basic.hh>
@@ -764,6 +766,8 @@ void
 Residue::place( Residue const & src, Conformation const & conformation, bool preserve_c_beta )
 {
 	using kinematics::Stub;
+	using namespace basic::options;
+
 	Size first_scatom( rsd_type_.first_sidechain_atom() );
 	if ( first_scatom >= 1 && first_scatom <= rsd_type_.nheavyatoms() ) {
 		// not all backbone -- need to do some orienting
@@ -785,7 +789,15 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 		// coded more robustly by modifying orient_onto_residue() properly.
 
 		if ( !rsd_type_.atom_is_backbone(i) && !(rsd_type_.atom_name(i) == " O2'") && !(rsd_type_.atom_name(i) == "HO2'") ) continue;
-		if ( src.has( rsd_type_.atom_name(i) ) ) {
+		if ( src.has( rsd_type_.atom_name(i) ) &&
+				( (!rsd_type_.is_polymer() ) ||
+				(!rsd_type_.atom_is_hydrogen(i)) ||
+				rsd_type_.icoor(i).depends_on_polymer_lower() ||
+				rsd_type_.icoor(i).depends_on_polymer_upper() ||
+				(rsd_type_.is_lower_terminus() && rsd_type_.icoor(i).stub_atom1().atomno() == 1)
+				/*Force rebuild of mainchain hydrogens that don't depend on polymer lower or upper and aren't N-terminal amide protons.  Logic below ensures that hydrogen positions are preserved if they don't deviate by more than a threshhold from ideal. VKM 21 Aug 2015.*/
+				)
+				) {
 			atoms()[i].xyz( src.atom( src.atom_index( rsd_type_.atom_name(i) ) ).xyz() );
 		} else {
 			missing[i] = true;
@@ -794,6 +806,27 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 	}
 
 	if ( any_missing ) fill_missing_atoms( missing, conformation );
+
+	//Check mainchain hydrogens, which are currently in idealized positions distinct from the input position.
+	//If they deviate from less than a threshhold value from the input position, preserve the input position;
+	//otherwise, keep the idealized position.
+	if ( rsd_type_.is_polymer() ) {
+		core::Real const thresh_sq( static_cast<core::Real>( pow(static_cast<core::Real>(option[OptionKeys::packing::mainchain_h_rebuild_threshold]()),2.0) ) );
+		for ( core::Size i=1, imax=natoms(); i<=imax; ++i ) {
+			if ( !rsd_type_.atom_is_hydrogen(i) ) continue; //Skip non-hydrogen atoms.
+			if ( !rsd_type_.atom_is_backbone(i) && !(rsd_type_.atom_name(i) == " O2'") && !(rsd_type_.atom_name(i) == "HO2'") ) continue; //Skip non-backbone atoms, preserving special-case RNA atoms.
+			if ( !src.has( rsd_type_.atom_name(i) ) ) continue; //Skip if the source residue doesn't have this atom type.
+
+			// If the idealized position is less than the threshold from the source position, or it's polymer connection-dependent...
+			if ( atoms()[i].xyz().distance_squared( src.atom( src.atom_index( rsd_type_.atom_name(i) ) ).xyz() ) < thresh_sq ||
+					rsd_type_.icoor(i).depends_on_polymer_lower() ||
+					rsd_type_.icoor(i).depends_on_polymer_upper() ||
+					(rsd_type_.is_lower_terminus() && rsd_type_.icoor(i).stub_atom1().atomno() == 1) //Damn -- sort of special case: protons on n-terminus
+					) {
+				atoms()[i].xyz( src.atom( src.atom_index( rsd_type_.atom_name(i) ) ).xyz() ); // ...then move it back to the source position
+			}
+		}
+	}
 
 	if ( preserve_c_beta ) {
 		// after superposition, adjust the sidechain atoms by aligning the CA-CB bond

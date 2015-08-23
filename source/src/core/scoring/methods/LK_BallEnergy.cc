@@ -1141,7 +1141,7 @@ LK_BallEnergy::residue_pair_energy(
 					lk_desolvation_of_atom1_by_atom2 = cp_weight * ( ( 1. - frac ) * solv1_[ l1 ] + frac * solv1_[ l1+1 ] );
 					lk_desolvation_of_atom2_by_atom1 = cp_weight * ( ( 1. - frac ) * solv2_[ l1 ] + frac * solv2_[ l1+1 ] );
 				}
-//TR << "pair " << rsd1.seqpos() << "." << atom1 << " : " << rsd2.seqpos() << "." << atom2 << std::endl;
+				//TR << "pair " << rsd1.seqpos() << "." << atom1 << " : " << rsd2.seqpos() << "." << atom2 << std::endl;
 				accumulate_single_atom_contributions( atom1, atom1_type_index, atom1_waters, atom1_weights,
 					rsd1, atom2_type_index, atom2_xyz,
 					lk_desolvation_of_atom1_by_atom2, emap );
@@ -1764,7 +1764,7 @@ LK_BallEnergy::eval_atom_derivative(
 	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_residue_info( pose, idresid ) );
 
 	Size const heavyatom1( id.atomno() );
-	if ( rsd1.atom_is_hydrogen( id.atomno() )) return;
+	if ( rsd1.atom_is_hydrogen( id.atomno() ) ) return;
 
 	if ( pose.energies().use_nblist() ) {
 		scoring::AtomNeighbors const & nbrs ( pose.energies().nblist( EnergiesCacheableDataType::ETABLE_NBLIST ).atom_neighbors( id ) );
@@ -1773,7 +1773,7 @@ LK_BallEnergy::eval_atom_derivative(
 			scoring::AtomNeighbor const & nbr( *it2 );
 			Size const nbrresid = nbr.rsd();
 
-			if (nbrresid == idresid) continue;
+			if ( nbrresid == idresid ) continue;
 
 			conformation::Residue const & rsd2( pose.residue(nbrresid) );
 			LKB_ResidueInfo const & rsd2_info( retrieve_lkb_residue_info( pose, nbrresid ) );

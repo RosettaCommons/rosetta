@@ -84,8 +84,8 @@ METHYLATED_CTERMINUS
 ALPHA_AA
 BETA_AA
 GAMMA_AA
-L_AA
-D_AA
+L_AA #Chirality, strictly for L-alpha amino acids (e.g. L-alanine, L-histidine).  Not for beta- or gamma-amino acids, or for anything else with multiple possible mainchain chiral centres.
+D_AA #Chirality, strictly for D-alpha amino acids (e.g. D-alanine, D-histidine).  Not for beta- or gamma-amino acids, or for anything else with multiple possible mainchain chiral centres.
 TAUTOMER
 
 

@@ -1385,6 +1385,10 @@ Options = Option_Group( '',
 		Option( 'soft_rep_design', 'Boolean',
 			desc="Use larger LJ radii for softer potential"
 			),
+		Option( 'mainchain_h_rebuild_threshold', 'Real',
+			desc='Cutoff for rebuilding mainchain hydrogens during rotamer generation during packing.  If the position of the hydrogen is less than the threshold from its ideal position, it is not rebuilt.  Default 0.75 A.',
+			default='0.75'
+		),
 		##Option( 'read_hetero_h2o', 'Boolean',
 		##       desc="Read native water from pdb file. Calculate the energy between native water and protein atoms. Output native water information"
 		##),

@@ -339,7 +339,7 @@ RotamerSet_::build_rotamers_for_concrete(
 				}
 			}
 		} else {
-			if ( concrete_residue->aa() != core::chemical::aa_gly && concrete_residue->aa() != core::chemical::aa_ala ) {
+			if ( tt.visible() && concrete_residue->aa() != core::chemical::aa_gly && concrete_residue->aa() != core::chemical::aa_ala ) {
 				// Suppress printing of info message in common known null-return cases
 				tt << "Using simple Rotamer generation logic for " << concrete_residue->name() << std::endl;
 			}
@@ -347,10 +347,11 @@ RotamerSet_::build_rotamers_for_concrete(
 			rotlib->fill_rotamer_vector( pose, scorefxn, task, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, suggested_rotamers);
 		}
 
-		tt.Debug <<
+		if ( tt.Debug.visible() ) { tt.Debug <<
 			"Existing residue: " << existing_residue.name() <<
 			" Concrete residue: " << concrete_residue->name() <<
 			" Total number of rotamers suggested: " << suggested_rotamers.size() << std::endl;
+		}
 
 		// virtual side-chains
 		// not ready for design yet.
