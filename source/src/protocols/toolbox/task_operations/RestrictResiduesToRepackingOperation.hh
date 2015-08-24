@@ -60,7 +60,7 @@ public:
 	virtual void parse_tag( TagCOP, DataMap & );
 
 	std::string reference_pdb_id() const{ return reference_pdb_id_; }
-	void reference_pdb_id( std::string const s ){ reference_pdb_id_ = s; }
+	void reference_pdb_id( std::string const & s ){ reference_pdb_id_ = s; }
 
 private:
 	std::string unparsed_residues_;
