@@ -58,8 +58,8 @@ void StructureDependentPeakCalibrator::generate_constraints() {
 	core::scoring::constraints::ConstraintOP dummy( NULL );
 	core::pose::Pose dummy_pose;
 	core::Size ct( 1 );
-	runtime_assert( structures_.size() )
-		core::pose::Pose const& pose( **(structures_.begin()) );
+	runtime_assert( structures_.size() );
+	core::pose::Pose const& pose( **(structures_.begin()) );
 	for ( utility::vector1< CrossPeakOP >::const_iterator it = peaks().begin(); it != peaks().end(); ++it, ++ct ) {
 		(*it)->create_fa_and_cen_constraint( constraints_[ ct ], dummy, pose, dummy_pose, 1, 0.0 /*padding*/, true /*only fa cst*/ );
 	}

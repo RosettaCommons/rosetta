@@ -204,9 +204,9 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 		}
 		TR << "template segments to align and calculate RMSD on:\n" << template_segm << "\nquery segments to align and calculate RMSD on:\n" << query_segm << std::endl;
 		TR << "Found " << template_segm.size() << " residues to calculate RMSD over" << std::endl;
-		runtime_assert_msg( template_segm.size() > 10 , "there must be more that 10 residues to calculate RMSD over" )
-			// align and calculate RMSD over the above calculated segments
-			utility::vector1< numeric::xyzVector< core::Real > >  query_coords( Ca_coords( pose, template_segm ) );
+		runtime_assert_msg( template_segm.size() > 10 , "there must be more that 10 residues to calculate RMSD over" );
+		// align and calculate RMSD over the above calculated segments
+		utility::vector1< numeric::xyzVector< core::Real > >  query_coords( Ca_coords( pose, template_segm ) );
 		utility::vector1< numeric::xyzVector< core::Real > >  template_coords( Ca_coords( *reference_pose_, query_segm ) );
 		numeric::xyzMatrix< core::Real > rotation;
 		numeric::xyzVector< core::Real > to_init_center, to_fit_center;

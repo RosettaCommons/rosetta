@@ -483,12 +483,12 @@ public:
 		partition_(partition),
 		total_partitions_(total_partitions)
 	{
-		runtime_assert(partition < total_partitions)
-			}
+		runtime_assert(partition < total_partitions);
+	}
 
-			virtual utility::vector1<core::kinematics::Stub> Searchpoints()
-			{
-			utility::vector1<core::kinematics::Stub> sourcepoints = source_pattern_->Searchpoints();
+	virtual utility::vector1<core::kinematics::Stub> Searchpoints()
+	{
+		utility::vector1<core::kinematics::Stub> sourcepoints = source_pattern_->Searchpoints();
 
 		utility::vector1<core::kinematics::Stub> searchpoints;
 		searchpoints.reserve((sourcepoints.size() / total_partitions_) + 1);

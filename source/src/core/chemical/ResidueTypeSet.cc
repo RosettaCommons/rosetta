@@ -493,9 +493,9 @@ ResidueTypeSet::make_sure_instantiated( ResidueTypeCOP const & rsd_type ) const
 {
 	if ( rsd_type->finalized() ) return false;
 
-	runtime_assert( on_the_fly_ )
-		// get name (which holds patch information)
-		std::string rsd_name_base, patch_name;
+	runtime_assert( on_the_fly_ );
+	// get name (which holds patch information)
+	std::string rsd_name_base, patch_name;
 	figure_out_last_patch_from_name( rsd_type->name(), rsd_name_base, patch_name );
 	if ( patch_name.size() == 0 ) utility_exit_with_message( "Problem: " + rsd_type->name() + " not instantiated." );
 

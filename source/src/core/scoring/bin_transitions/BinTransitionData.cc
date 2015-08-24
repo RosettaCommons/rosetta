@@ -1036,9 +1036,9 @@ void BinTransitionData::set_n_bins( core::Size const n_bins_i, core::Size const 
 	if ( matrix_initialized() && TR.Warning.visible() ) TR.Warning << "Warning: re-initializing probability matrix in BinTransitionData object!" << std::endl;
 
 	runtime_assert_string_msg( n_mainchain_torsions_i_ > 0 && n_mainchain_torsions_iplus1_ > 0,
-		"In core::scoring::bin_transitions::BinTransitionData::set_n_bins(): the number of mainchain torsions for residues i and i+1 must be set before calling this function." )
+		"In core::scoring::bin_transitions::BinTransitionData::set_n_bins(): the number of mainchain torsions for residues i and i+1 must be set before calling this function." );
 
-		runtime_assert_string_msg( n_bins_i > 0, "In core::scoring::bin_transitions::BinTransitionData::set_n_bins(): The number of bins for the ith residue must be greater than zero!"  );
+	runtime_assert_string_msg( n_bins_i > 0, "In core::scoring::bin_transitions::BinTransitionData::set_n_bins(): The number of bins for the ith residue must be greater than zero!"  );
 	runtime_assert_string_msg( n_bins_iplus1 > 0, "In core::scoring::bin_transitions::BinTransitionData::set_n_bins(): The number of bins for the i plus 1st residue must be greater than zero!"  );
 
 	//Set number of bins for residues i and i+1:

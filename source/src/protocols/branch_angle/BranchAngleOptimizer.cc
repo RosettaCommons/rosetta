@@ -93,9 +93,9 @@ BranchAngleOptimizer::~BranchAngleOptimizer()
 BranchAngleOptimizer const &
 BranchAngleOptimizer::operator=(BranchAngleOptimizer const & /*src*/)
 {
-	runtime_assert(false)
+	runtime_assert(false);
 
-		return *this;
+	return *this;
 }
 
 core::scoring::mm::MMBondAngleResidueTypeParamSetOP

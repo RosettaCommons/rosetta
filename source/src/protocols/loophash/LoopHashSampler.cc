@@ -122,11 +122,11 @@ bool is_valid_backbone(
 	bool &filter_beta,
 	bool &filter_gly
 ){
-	runtime_assert( phi.size() == psi.size() )
+	runtime_assert( phi.size() == psi.size() );
 
-		// Check phi/psi angles against the sequence
-		// Pose counts residues starting from one, so offset that
-		filter_pro = false;
+	// Check phi/psi angles against the sequence
+	// Pose counts residues starting from one, so offset that
+	filter_pro = false;
 	filter_beta = false;
 	filter_gly = false;
 
