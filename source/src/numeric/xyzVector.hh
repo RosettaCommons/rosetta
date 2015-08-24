@@ -2465,7 +2465,6 @@ not_equal_length( xyzVector< T > const & a, xyzVector< T > const & b );
 // template< typename T >
 // std::ostream & operator <<(std::ostream & os, xyzVector< T > const & v) { os << "[x=" << v.x() << ", y=" << v.y() << ", z=" << v.z() << "]"; }
 
-
 } // namespace numeric
 
 namespace ObjexxFCL {
@@ -2485,14 +2484,6 @@ struct FArrayTraits < numeric::xyzVector< T > >
 		return numeric::xyzVector< T >(0,0,0); // Use all zeros
 	}
 }; // FArrayTraits
-
-// stream operator for show function
-template< typename T >
-std::ostream &operator<< (std::ostream &os, numeric::xyzVector< T > const &vector)
-{
-	vector.show(os);
-	return os;
-}
 
 }
 

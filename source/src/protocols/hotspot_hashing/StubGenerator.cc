@@ -36,6 +36,9 @@
 
 #include <utility/vector1.hh>
 
+#include <numeric/xyzVector.io.hh>
+
+
 namespace protocols {
 namespace hotspot_hashing {
 

@@ -75,7 +75,7 @@ public:
 	};
 };
 
-inline std::ostream& operator << ( std::ostream& os, EXCN_Base& excn ) {
+inline std::ostream& operator << ( std::ostream& os, EXCN_Base const & excn ) {
 	excn.show( os );
 	return os;
 }

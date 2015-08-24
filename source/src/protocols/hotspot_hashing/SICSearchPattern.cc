@@ -41,6 +41,8 @@
 #include <protocols/hotspot_hashing/SearchPattern.hh>
 #include <protocols/hotspot_hashing/SICSearchPattern.hh>
 
+#include <numeric/xyzVector.io.hh>
+
 namespace protocols {
 namespace hotspot_hashing {
 

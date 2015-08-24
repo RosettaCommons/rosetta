@@ -398,6 +398,25 @@ private:
 	std::string buf_;
 };
 
+
+#ifdef NDEBUG
+template <class T>
+Tracer & operator <<( Tracer & TR, T const & entry ) {
+	std::ostream &t(TR);
+    if( TR.visible() ) { t << entry; }
+    return TR;
+}
+
+
+template <class T>
+Tracer::TracerProxy & operator <<( Tracer::TracerProxy & TR, T const & entry ) {
+	std::ostream &t(TR);
+    if( TR.visible() ) { t << entry; }
+    return TR;
+}
+#endif
+
+
 } // namespace basic
 
 #endif // INCLUDED_basic_tracer_hh
