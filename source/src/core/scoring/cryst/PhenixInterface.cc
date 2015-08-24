@@ -438,7 +438,7 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 				// convert CYS->CYD
 				core::conformation::Residue newCys = rsd_i;
 				chemical::ResidueTypeSet const & residue_type_set = newCys.type().residue_type_set();
-				chemical::ResidueTypeCOPs const & possible_types = residue_type_set.name3_map( "CYS" );
+				chemical::ResidueTypeCOPs const & possible_types = residue_type_set.name3_map_DO_NOT_USE( "CYS" );
 				utility::vector1< std::string > variant_types = newCys.type().properties().get_list_of_variants();
 				variant_types.erase( std::find( variant_types.begin(), variant_types.end(), "DISULFIDE" ) );
 
