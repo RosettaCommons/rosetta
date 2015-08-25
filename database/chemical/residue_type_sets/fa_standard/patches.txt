@@ -1,4 +1,5 @@
 ## protein standard
+patches/D_AA.txt
 patches/CtermProteinFull.txt
 patches/NtermProteinFull.txt
 patches/protein_cutpoint_upper.txt

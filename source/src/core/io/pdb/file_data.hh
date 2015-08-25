@@ -487,7 +487,9 @@ get_rsd_type(
 	bool const is_lower_terminus,
 	bool const is_upper_terminus,
 	bool const is_branch_point,
-	bool const is_branch_lower_terminus );
+	bool const is_branch_lower_terminus,
+	bool const is_d_aa,
+	bool const is_l_aa );
 
 chemical::ResidueTypeCOP
 get_rsd_type_legacy(

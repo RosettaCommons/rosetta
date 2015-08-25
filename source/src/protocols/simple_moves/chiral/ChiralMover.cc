@@ -56,14 +56,15 @@ namespace chiral {
 
 ResidueType const & get_chiral_residue_type( ResidueType const & rt, Chirality chirality )
 {
+	chemical::ResidueTypeSet const & residue_type_set = rt.residue_type_set();
 	//kdrew: first letters of a residuetype name (before '_p') are the letter code for the aa and is what is stored in the map
 	//std::string base_name;
 	//std::string patch_name;
 
 	//kdrew: use for finding base_name instead of substr
 	std::string const base_name( residue_type_base_name( rt ) );
-	std::string const patch_name( residue_type_all_patches_name( rt ) );
-	TR << "base_name: " << base_name << " patch_name: " << patch_name << std::endl;
+	//std::string const patch_name( residue_type_all_patches_name( rt ) );
+	TR << "base_name: " << base_name /*<< " patch_name: " << patch_name */<< std::endl;
 
 	//kdrew: is residuetype patched?
 	//Size base_end_pos = rt.name().find("_p");
@@ -82,25 +83,23 @@ ResidueType const & get_chiral_residue_type( ResidueType const & rt, Chirality c
 	//}
 
 	TR << "restype: " << rt.name() << " " << rt.aa() << std::endl;
-	std::string chiral_name = rt.chiral_equivalent_name();
-	if ( rt.is_l_aa() && chirality != L_CHIRALITY ) {
-		TR << "chiral_name: " << chiral_name << std::endl;
-		chiral_name.append( patch_name );
-		TR << "chiral_name(patched): " << chiral_name << std::endl;
-		ResidueTypeSetCOP fa_standard(ChemicalManager::get_instance()->residue_type_set(FA_STANDARD));
-		ResidueType const & d_rsd_type( fa_standard->name_map( chiral_name ) );
-		return d_rsd_type;
-	} else if ( rt.is_d_aa() && chirality != D_CHIRALITY ) {
-		TR << "chiral_name: " << chiral_name << std::endl;
-		chiral_name.append( patch_name );
-		TR << "chiral_name(patched): " << chiral_name << std::endl;
-		ResidueTypeSetCOP fa_standard(ChemicalManager::get_instance()->residue_type_set(FA_STANDARD));
-		ResidueType const & d_rsd_type( fa_standard->name_map( chiral_name ) );
-		return d_rsd_type;
-	} else {
-		TR << " possibly achiral (ex GLY) or params file is missing a chiral name entry" <<  std::endl;
+	//std::string chiral_name = rt.chiral_equivalent_name();
+	utility::vector1< std::string > variant_types = rt.properties().get_list_of_variants();
+
+	if ( !rt.is_l_aa() && !rt.is_d_aa() ) {
+		TR << " possibly achiral (ex GLY)" <<  std::endl;
 		return rt;
 	}
+
+	// Prepend or remove D depending on targeting.
+	if ( chirality == L_CHIRALITY && rt.is_d_aa() ) {
+		return residue_type_set.name_map( rt.name().substr( 1 ) );
+	} else if ( chirality == D_CHIRALITY && rt.is_l_aa() ) {
+		return residue_type_set.name_map( "D"+rt.name() );
+	}
+
+	// if all else fails, return original rt
+	return rt;
 }
 
 /*

@@ -35,6 +35,8 @@
 
 //C++ header
 #include <stdio.h>
+// amw remove me
+#include <iomanip>
 
 namespace core {
 namespace scoring {
@@ -100,6 +102,9 @@ RamachandranEnergy::residue_energy(
 		} else {
 			potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi );
 		}
+		//std::cout << "Phi " << std::fixed << std::setprecision( 16 ) << rsd.mainchain_torsions()[1] << std::endl;
+		//std::cout << "Psi " << std::fixed << std::setprecision( 16 ) << rsd.mainchain_torsions()[2] << std::endl;
+		//std::cout << "Residue energy for " << rsd.name() << " is " << std::fixed << std::setprecision( 16 ) << rama_score << std::endl;
 		emap[ rama ] += rama_score;
 	}
 }
@@ -142,8 +147,12 @@ RamachandranEnergy::eval_residue_dof_derivative(
 				potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi );
 				deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
 			}
+			//std::cout << "Phi " << std::fixed << std::setprecision( 16 ) << rsd.mainchain_torsions()[1] << std::endl;
+			//std::cout << "Psi " << std::fixed << std::setprecision( 16 ) << rsd.mainchain_torsions()[2] << std::endl;
+			//std::cout << "Residue deriv for " << rsd.name() << " is " << deriv << std::endl;
 		}
 	}
+
 	// note that the atomtree PHI dofs are in radians
 	// use degrees since dE/dangle has angle in denominator
 	return numeric::conversions::degrees( weights[ rama ] * deriv );

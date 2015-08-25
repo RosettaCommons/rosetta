@@ -51,6 +51,7 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		core_init_with_additional_options( "-mute core.io.pdb -mute core.conformation -in::file::fullatom" );
+		//core_init_with_additional_options( "-out:level 4000 -in::file::fullatom" );
 
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.

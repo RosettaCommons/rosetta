@@ -558,7 +558,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv_bbdep(
 	debug_assert( ! bbind_nrchi_scoring_ );
 
 	//Multiplier for D-amino acids:
-	const core::Real d_multiplier = core::chemical::is_canonical_D_aa( rsd.aa() ) ? -1.0 : 1.0;
+	const core::Real d_multiplier = rsd.has_property( "D_AA" ) ? -1.0 : 1.0;
 
 	parent::eval_rotameric_energy_deriv( rsd, scratch, eval_deriv ); //This has been updated to allow scoring of D-amino acids.
 
@@ -654,7 +654,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::bbdep_nrchi_score(
 	Real nrchi = rsd.chi( T + 1 );
 	core::Real d_multiplier = 1.0; //A multiplier for D-amino acid angles.  -1.0 if D-amino acid, 1.0 otherwise.
 
-	if ( core::chemical::is_canonical_D_aa( rsd.aa() ) ) {
+	if ( rsd.has_property( "D_AA" ) ) {
 		nrchi *= -1.0; //Invert chi if this is a D-amino acid
 		d_multiplier = -1.0;
 	}
@@ -909,7 +909,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector_bbdep(
 
 	//Determine whether this is a D-amino acid:
 	core::Real d_multiplier = 1.0;
-	if ( core::chemical::is_canonical_D_aa( existing_residue.aa() ) ) d_multiplier = -1.0;
+	if ( existing_residue.has_property( "D_AA" ) ) d_multiplier = -1.0;
 
 	/// Save backbone interpolation data for reuse
 	utility::fixedsizearray1< Real, N > bbs = parent::get_bbs_from_rsd( existing_residue );

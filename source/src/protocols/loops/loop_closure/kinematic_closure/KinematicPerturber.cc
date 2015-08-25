@@ -256,6 +256,10 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 			} else { //Default case -- if this is an alpha-amino acid:
 				core::Real rama_phi, rama_psi;
 				rama_.random_phipsi_from_rama(pose.aa(cur_res), rama_phi, rama_psi);
+				if ( pose.residue(cur_res).has_property( "D_AA" ) ) {
+					rama_phi *= -1.0;
+					rama_psi *= -1.0;
+				}
 				torsions[i++]=rama_phi; // phi
 				torsions[i++]=rama_psi; // psi
 				i++; // leave omega alone
@@ -713,6 +717,11 @@ NeighborDependentTorsionSamplingKinematicPerturber::perturb_chain(
 			// -- for now, do a coin flip on which one to use, though later we should implement this such that each side has an individual perturber, and we call both with equal likelihood (should have fewer ifs)
 			static_cast<int>( numeric::random::rg().uniform()*2 ) ? rama_.random_phipsi_from_rama_left(pose.aa(cur_res-1), pose.aa(cur_res),rama_phi, rama_psi) : rama_.random_phipsi_from_rama_right(pose.aa(cur_res), pose.aa(cur_res+1), rama_phi, rama_psi);
 
+			if ( pose.residue(cur_res).has_property( "D_AA" ) ) {
+				rama_phi *= -1.0;
+				rama_psi *= -1.0;
+			}
+
 			torsions[i++]=rama_phi; // phi
 			torsions[i++]=rama_psi; // psi
 
@@ -900,6 +909,10 @@ TorsionRestrictedKinematicPerturber::perturb_chain(
 			//here we only care about the phi/psi-based torsion bin, omega is set below
 			core::conformation::ppo_torsion_bin remapped_torbin = remap_cis_omega_torsion_bins_to_trans( predefined_torsions_[(i-4)/3 + torsion_string_offset] );
 			rama_.random_phipsi_from_rama_by_torsion_bin(pose.aa(cur_res), rama_phi, rama_psi, remapped_torbin );
+			if ( pose.residue(cur_res).has_property( "D_AA" ) ) {
+				rama_phi *= -1.0;
+				rama_psi *= -1.0;
+			}
 
 			torsions[i++]=rama_phi; // phi
 			torsions[i++]=rama_psi; // psi
@@ -1226,6 +1239,7 @@ BaseTabooPerturber::perturb_chain(
 
 			//rama_.random_phipsi_from_rama_by_torsion_bin(pose.aa(cur_res), rama_phi, rama_psi, toupper(torsion_string[(i-4)/3 + torsion_string_offset])); //here we only care about the phi/psi-based torsion bin, omega is set below
 			get_random_phi_psi_for_residue( pose, cur_res, torsion_string[ (i-4)/3 + torsion_string_offset ], rama_phi, rama_psi );
+			// This function is given the AA. Therefore, it needs no correction.
 
 			torsions[i++]=rama_phi; // phi
 			torsions[i++]=rama_psi; // psi
@@ -1406,6 +1420,11 @@ TabooSamplingKinematicPerturber::get_random_phi_psi_for_residue(
 {
 	core::conformation::ppo_torsion_bin remapped_torbin = core::conformation::remap_cis_omega_torsion_bins_to_trans( torbin );
 	rama_.random_phipsi_from_rama_by_torsion_bin( pose.aa(resid), phi, psi, remapped_torbin );
+	if ( pose.residue( resid ).has_property( "D_AA" ) ) {
+		phi *= -1.0;
+		psi *= -1.0;
+	}
+
 }
 
 
@@ -1451,6 +1470,11 @@ NeighborDependentTabooSamplingKinematicPerturber::get_random_phi_psi_for_residue
 	} else {
 		rama_.random_phipsi_from_rama_by_torsion_bin_left( pose.aa(resid-1), pose.aa(resid), phi, psi, remapped_torbin );
 	}
+	if ( pose.residue( resid ).has_property( "D_AA" ) ) {
+		phi *= -1.0;
+		psi *= -1.0;
+	}
+
 }
 
 

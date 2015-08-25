@@ -1,4 +1,4 @@
 -in:file:fasta xml/start.fasta
 -out:prefix test1_
 -parser:protocol xml/D-aa_test.xml
--extra_res_fa d-caa/DSER.params d-caa/DPRO.params d-caa/DASN.params
+#-extra_res_fa d-caa/DSER.params d-caa/DPRO.params d-caa/DASN.params

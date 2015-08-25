@@ -17,7 +17,7 @@ BOND  N    H
 BOND  CA   C  
 BOND  CA   CB 
 BOND  C    O  
-PROPERTIES PROTEIN AROMATIC
+PROPERTIES PROTEIN AROMATIC L_AA
 NBR_ATOM CEN
 # APL CB to sidechain heavyatom distance -- max observed at residue 74 in ubiquitin
 NBR_RADIUS 4.910 

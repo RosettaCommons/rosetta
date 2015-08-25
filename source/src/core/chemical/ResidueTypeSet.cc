@@ -396,9 +396,23 @@ ResidueTypeSet::apply_patches(
 				if ( instantiate ) {
 					runtime_assert( rsd_type.finalized() );
 				}
-				ResidueTypeCOP new_rsd_type( p->apply( rsd_type, instantiate ) );
+				// AMW: this used to be a COP but it can't be because of this D thing.
+				ResidueTypeOP new_rsd_type( p->apply( rsd_type, instantiate ) );
 				if ( new_rsd_type != 0 ) {
+					//std::cout << "amw apply_patches Checking on igroup for res " << new_rsd_type->name() << ": " << new_rsd_type->interchangeability_group() << std::endl;
 					residue_types_.push_back( new_rsd_type );
+					// Horrifying, but we NEED D amino acids to be considered base residue types
+					// This is why:
+					// 1. get_residue_type_with_variant_added asks the ResidueTypeFinder for
+					// the base residue type e.g. ALA then adds the variant
+					// 2. D can't be a variant or else we can't design to a D (even from gly)
+					// 3. so D isn't in the list of variants so it isn't added
+					if ( new_rsd_type->name() == "D" + rsd_type.name() ) {
+						// AMW don't new_rsd_type->finalize();
+						new_rsd_type->residue_type_set( rsd_type.residue_type_set().get_self_weak_ptr() );
+						base_residue_types_.push_back( new_rsd_type );
+					}
+
 					if ( new_rsd_type->name3() != rsd_type.name3() ) {
 						// name3 is often used to figure out base_residue_type on which to apply patches; sometimes it switches, e.g., CYS-->CYD,
 						// and we need to know that.
@@ -556,9 +570,15 @@ ResidueTypeSet::figure_out_last_patch_from_name( std::string const & rsd_name,
 	std::string & patch_name ) const
 {
 	Size pos = rsd_name.find_last_of( PATCH_LINKER );
-	runtime_assert( pos != std::string::npos );
-	rsd_name_base = rsd_name.substr( 0, pos );
-	patch_name    = rsd_name.substr( pos + 1 );
+	if ( pos != std::string::npos ) {
+		rsd_name_base = rsd_name.substr( 0, pos );
+		patch_name    = rsd_name.substr( pos + 1 );
+	} else {
+		// For D patch, it's the first letter.
+		rsd_name_base = rsd_name.substr( 1 );
+		patch_name    = "D";
+
+	}
 }
 
 /// @details helper function used during replacing residue types after, e.g., orbitals. Could possibly expand to update all maps.
@@ -893,7 +913,14 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 		target_variants.push_back( ResidueProperties::get_string_from_variant( new_type ) );
 	}
 
-	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
+	// the desired set of properties:
+	utility::vector1< std::string > target_properties( init_rsd.properties().get_list_of_properties() );
+	/*utility::vector1< ResidueProperty > tp;
+	for ( Size i = 1; i <= target_properties.size(); ++i ) {
+	tp.push_back( ResidueProperties::get_property_from_string( target_properties[ i ] ) );
+	}*/
+
+	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name )./*properties( tp ).*/variants( target_variants ).get_representative_type();
 
 	if ( rsd_type == 0 ) {
 		utility_exit_with_message( "unable to find desired variant residue: " + init_rsd.name() + " " + base_name + " " +
@@ -989,12 +1016,15 @@ ResidueTypeSet::place_adducts()
 void
 ResidueTypeSet::add_residue_type( ResidueTypeOP new_type )
 {
+	new_type->residue_type_set( get_self_weak_ptr() );
+
 	if ( option[ OptionKeys::in::add_orbitals] ) {
 		orbitals::AssignOrbitals add_orbitals_to_residue(new_type);
 		add_orbitals_to_residue.assign_orbitals();
 	}
 	residue_types_.push_back( new_type );
 	if ( residue_type_base_name( *new_type ) == new_type->name() ) base_residue_types_.push_back( new_type );
+
 	add_residue_type_to_maps( new_type );
 	aas_defined_.sort();
 	aas_defined_.unique();

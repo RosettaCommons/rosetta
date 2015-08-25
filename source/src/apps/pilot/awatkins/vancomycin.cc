@@ -226,11 +226,11 @@ int main ( int argc, char* argv[] )
 		core::chemical::ResidueTypeSetCOP residue_set_cap = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueType const & dleu_type = residue_set_cap->name_map( "DLEU:NtermProteinMethylated" );
 		//ResidueType const & dleu_type = residue_set_cap->name_map( "DTRP:NtermProteinMethylated" );
-		ResidueType const & V01_type = residue_set_cap->name_map( "V01:aryl-O-conjugated" );
+		ResidueType const & V01_type = residue_set_cap->name_map( "DV01:aryl-O-conjugated" );
 		ResidueType const & asn_type = residue_set_cap->name_map( "ASN" );
 		//ResidueType const & asn_type = residue_set_cap->name_map( "LYS" );
-		ResidueType const & V02_type = residue_set_cap->name_map( "V02:aryl-O-conjugated:phg_cd1_conjugation:phg_cd2_conjugation" );
-		ResidueType const & V02_type2 = residue_set_cap->name_map( "V02:phg_cd1_conjugation" );
+		ResidueType const & V02_type = residue_set_cap->name_map( "DV02:aryl-O-conjugated:phg_cd1_conjugation:phg_cd2_conjugation" );
+		ResidueType const & V02_type2 = residue_set_cap->name_map( "DV02:phg_cd1_conjugation" );
 		ResidueType const & V04_type = residue_set_cap->name_map( "V04:aryl-O-conjugated" );
 		ResidueType const & V03_type = residue_set_cap->name_map( "V03:CtermProteinFull:aryl-C-conjugated" );
 		//ResidueType const & V03_type = residue_set_cap->name_map( "V03:aryl-C-conjugated" );
@@ -342,7 +342,7 @@ int main ( int argc, char* argv[] )
 		TR << "Just those branch res "<< std::endl;
 		Pose vanc2;
 		vanc2.append_residue_by_jump( *new Residue( residue_set_cap->name_map( "GLY:NtermProteinFull" ), true ), 1 );
-		vanc2.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "V02:aryl-O-conjugated" ), true ), true );
+		vanc2.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "DV02:aryl-O-conjugated" ), true ), true );
 		vanc2.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "GLY:CtermProteinFull" ), true ), true );
 		TR << "Appending by jump" << std::endl;
 		vanc2.append_residue_by_jump( *new Residue( residue_set_cap->name_map( "->2)-beta-D-Glcp:branch_lower_terminus" ), true ), 2 );

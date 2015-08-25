@@ -19,6 +19,7 @@
 
 // Project headers
 #include <core/chemical/Atom.hh>
+#include <core/chemical/AA.hh>
 #include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 #include <core/chemical/Bond.hh>
 
@@ -816,6 +817,152 @@ ConnectSulfurAndMakeVirtualProton::apply( ResidueType & rsd ) const {
 	return x;
 }
 
+bool
+ChiralFlipNaming::apply( ResidueType & rsd ) const {
+
+	if ( rsd.aa() <= aa_tyr ) {
+		rsd.aa( get_D_equivalent( rsd.aa() ) );
+
+		if ( rsd.aa() == aa_dal ) {
+			rsd.name3( "DAL" );
+			rsd.interchangeability_group( "DAL" );
+			//std::cout << "igroup is " << rsd.interchangeability_group() << std::endl;
+		} else if ( rsd.aa() == aa_dcs ) {
+			//( igroup == "DCYS" || igroup == "CYS" ) {
+			rsd.name3( "DCS" );
+			rsd.interchangeability_group( "DCS" );
+		} else if ( rsd.aa() == aa_das ) {
+			//( igroup == "DASP" || igroup == "ASP" ) {
+			rsd.name3( "DAS" );
+			rsd.interchangeability_group( "DAS" );
+		} else if ( rsd.aa() == aa_dgu ) {
+			//( igroup == "DGLU" || igroup == "GLU" ) {
+			rsd.name3( "DGU" );
+			rsd.interchangeability_group( "DGU" );
+		} else if ( rsd.aa() == aa_dph ) {
+			//( igroup == "DPHE" || igroup == "PHE" ) {
+			rsd.name3( "DPH" );
+			rsd.interchangeability_group( "DPH" );
+		} else if ( rsd.aa() == aa_dhi ) {
+			//( igroup == "DHIS" || igroup == "HIS" ) {
+			rsd.name3( "DHI" );
+			rsd.interchangeability_group( "DHI" );
+		} else if ( rsd.aa() == aa_dil ) {
+			//( igroup == "DILE" || igroup == "ILE" ) {
+			rsd.name3( "DIL" );
+			rsd.interchangeability_group( "DIL" );
+		} else if ( rsd.aa() == aa_dly ) {
+			//( igroup == "DLYS" || igroup == "LYS" ) {
+			rsd.name3( "DLY" );
+			rsd.interchangeability_group( "DLY" );
+		} else if ( rsd.aa() == aa_dle ) {
+			//( igroup == "DLEU" || igroup == "LEU" ) {
+			rsd.name3( "DLE" );
+			rsd.interchangeability_group( "DLE" );
+		} else if ( rsd.aa() == aa_dme ) {
+			//( igroup == "DMET" || igroup == "MET" ) {
+			rsd.name3( "DME" );
+			rsd.interchangeability_group( "DME" );
+		} else if ( rsd.aa() == aa_dan ) {
+			//( igroup == "DASN" || igroup == "ASN" ) {
+			rsd.name3( "DAN" );
+			rsd.interchangeability_group( "DAN" );
+		} else if ( rsd.aa() == aa_dpr ) {
+			//( igroup == "DPRO" || igroup == "PRO" ) {
+			rsd.name3( "DPR" );
+			rsd.interchangeability_group( "DPR" );
+		} else if ( rsd.aa() == aa_dgn ) {
+			//( igroup == "DGLN" || igroup == "GLN" ) {
+			rsd.name3( "DGN" );
+			rsd.interchangeability_group( "DGN" );
+		} else if ( rsd.aa() == aa_dar ) {
+			//( igroup == "DARG" || igroup == "ARG" ) {
+			rsd.name3( "DAR" );
+			rsd.interchangeability_group( "DAR" );
+		} else if ( rsd.aa() == aa_dse ) {
+			//( igroup == "DSER" || igroup == "SER" ) {
+			rsd.name3( "DSE" );
+			rsd.interchangeability_group( "DSE" );
+		} else if ( rsd.aa() == aa_dth ) {
+			//( igroup == "DTHR" || igroup == "THR" ) {
+			rsd.name3( "DTH" );
+			rsd.interchangeability_group( "DTH" );
+		} else if ( rsd.aa() == aa_dva ) {
+			//( igroup == "DVAL" || igroup == "VAL" ) {
+			rsd.name3( "DVA" );
+			rsd.interchangeability_group( "DVA" );
+		} else if ( rsd.aa() == aa_dtr ) {
+			//( igroup == "DTRP" || igroup == "TRP" ) {
+			rsd.name3( "DTR" );
+			rsd.interchangeability_group( "DTR" );
+		} else if ( rsd.aa() == aa_dty ) {
+			//( igroup == "DTYR" || igroup == "TYR" ) {
+			rsd.name3( "DTY" );
+			rsd.interchangeability_group( "DTY" );
+		}
+
+	} else {
+		// e.g. DHLU, DC01--will be caught later and set to DAL etc. for canonicals
+		rsd.interchangeability_group( "D" + rsd.name().substr( 0, rsd.name().find(":") ) );
+	}
+	//tr << rsd.aa() << std::endl;
+	return false;
+}
+
+
+bool
+ChiralFlipAtoms::apply( ResidueType & rsd ) const {
+
+	// So I think I need to separately process shadow atoms.
+	// The reason is because they're 0 from something
+	// so I think maybe I should delete and re-add them to a residue?
+
+	//tr << "In chiralflipatoms apply " << std::endl;
+	
+	// Flip each
+	//rsd.debug_dump_icoor();
+	rsd.delete_property( "L_AA" );
+	rsd.add_property( "D_AA" );
+
+	if ( rsd.natoms() < 4 ) return true;
+	for ( core::Size ii = 2; ii <= rsd.natoms(); ++ii ) {
+		//pretty_print_atomicoor(std::cout, rsd.icoor( ii ), rsd );
+
+		AtomICoor icoor1 = rsd.icoor( ii );
+		
+		std::string n1 = icoor1.stub_atom1().is_polymer_upper() ? "UPPER" :
+			( icoor1.stub_atom1().is_polymer_lower() ? "LOWER" :
+			( icoor1.stub_atom1().atomno() == 0 ? " N  " : rsd.atom( icoor1.stub_atom1().atomno() ).name() ) );
+		std::string n2 = icoor1.stub_atom2().is_polymer_upper() ? "UPPER" :
+			( icoor1.stub_atom2().is_polymer_lower() ? "LOWER" :
+			( icoor1.stub_atom2().atomno() == 0 ? " N  " : rsd.atom( icoor1.stub_atom2().atomno() ).name() ) );
+		std::string n3 = icoor1.stub_atom3().is_polymer_upper() ? "UPPER" :
+			( icoor1.stub_atom3().is_polymer_lower() ? "LOWER" :
+			( icoor1.stub_atom3().atomno() == 0 ? " N  " : rsd.atom( icoor1.stub_atom3().atomno() ).name() ) );
+
+		rsd.set_icoor( rsd.atom( ii ).name(),
+			-1.0*icoor1.phi(),
+			icoor1.theta(),
+			icoor1.d(),
+			n1, n2, n3 );
+
+		//pretty_print_atomicoor(std::cout, rsd.icoor( ii ), rsd );
+	}
+
+	rsd.finalize();
+	rsd.fill_ideal_xyz_from_icoor();
+	
+	rsd.finalize();
+	//rsd.debug_dump_icoor();
+	// AMW: The unpatched type does not typically set these because they are unneeded
+	// Since this is now a D-aa and it needs to hijack other rotamers, it needs them
+	// (Maybe it would use them without; who knows! Don't think so, though.)
+	//is backbone aa ness handled elsewhere?
+	//rsd.backbone_aa( rsd.name() );
+
+	return false;
+}
+
 PatchOperationOP
 patch_operation_from_patch_file_line( std::string const & line ) {
 	using numeric::conversions::radians;
@@ -1073,6 +1220,12 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		}
 	} else if ( tag == "CONNECT_SULFUR_AND_MAKE_VIRTUAL_PROTON" ) {
 		return PatchOperationOP( new ConnectSulfurAndMakeVirtualProton() );
+	} else if ( tag == "CHIRAL_FLIP_NAMING" ) {
+		return PatchOperationOP( new ChiralFlipNaming );//( atom1, atom2 ) );
+	} else if ( tag == "CHIRAL_FLIP_ATOMS" ) {
+		//std::string atom1, atom2;
+		//l >> atom1 >> atom2;
+		return PatchOperationOP( new ChiralFlipAtoms );//( atom1, atom2 ) );
 	}
 	tr.Warning << "patch_operation_from_patch_file_line: bad line: " << line << std::endl;
 

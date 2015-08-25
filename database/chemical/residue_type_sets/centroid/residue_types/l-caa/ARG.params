@@ -19,7 +19,7 @@ BOND  N    H
 BOND  CA   C  
 BOND  CA   CB 
 BOND  C    O  
-PROPERTIES PROTEIN POLAR CHARGED
+PROPERTIES PROTEIN POLAR CHARGED L_AA
 NBR_ATOM CEN
 # APL CB to sidechain heavyatom distance -- max observed at residue 74 in ubiquitin
 NBR_RADIUS 5.640 

@@ -121,7 +121,6 @@ ResidueType::ResidueType(
 	name_(),
 	name3_(),
 	name1_(),
-	chiral_equivalent_name_( name_ ),
 	interchangeability_group_(),
 	root_atom_( ResidueType::null_vertex ),
 	nbr_atom_( ResidueType::null_vertex ),
@@ -224,7 +223,6 @@ ResidueType::operator=( ResidueType const & residue_type )
 	name_ = residue_type.name_;
 	name3_ = residue_type.name3_;
 	name1_ = residue_type.name1_;
-	chiral_equivalent_name_ = residue_type.chiral_equivalent_name_;
 	interchangeability_group_ = residue_type.interchangeability_group_;
 	root_atom_ = residue_type.root_atom_;
 	nbr_atom_ = residue_type.nbr_atom_;
@@ -1766,6 +1764,8 @@ ResidueType::add_property( std::string const & property )
 
 	properties_->set_property( property, true );
 
+	// AMW: as of 8/18/15, L_AA and D_AA no longer imply ALPHA_AA.
+
 	// Special "umbrella cases"
 	// FIXME: There really shouldn't be as many umbrella cases, IMO. ~Labonte
 	if ( property == "PROTEIN" ) {
@@ -1779,11 +1779,11 @@ ResidueType::add_property( std::string const & property )
 	} else if ( property == "L_AA" ) {
 		properties_->set_property( PROTEIN, true );
 		properties_->set_property( POLYMER, true );
-		properties_->set_property( ALPHA_AA, true );
+		//properties_->set_property( ALPHA_AA, true );
 	} else if ( property == "D_AA" ) {
 		properties_->set_property( PROTEIN, true );
 		properties_->set_property( POLYMER, true );
-		properties_->set_property( ALPHA_AA, true );
+		//properties_->set_property( ALPHA_AA, true );
 	} else if ( property == "DNA" ) {
 		properties_->set_property( POLYMER, true );
 	} else if ( property == "RNA" ) {
@@ -2907,32 +2907,32 @@ ResidueType::perform_checks()
 	msg << "One or more internal errors have occurred in residue type setup:" << std::endl;
 
 	if ( is_metal() && (1 > nheavyatoms_ || is_virtual(1) ) ) {
-		msg << "A metal residue type has a non-metal atom as atom 1." << std::endl;
+		msg << "A metal residue type " << name() << " has a non-metal atom as atom 1." << std::endl;
 		checkspass=false;
 	}
 
 	if ( is_metalbinding() && metal_binding_atoms_.size()==0 ) {
-		msg << "A metal-binding residue has no metal binding atoms listed in its params file (PROPERTIES METALBINDING "
+		msg << "A metal-binding residue " << name() << " has no metal binding atoms listed in its params file (PROPERTIES METALBINDING "
 			"without METAL_BINDING_ATOMS list)." << std::endl;
 		checkspass=false;
 	} else if ( !is_metalbinding() && metal_binding_atoms_.size()>0 ) {
-		msg << "A residue that has not been declared as a metal-binding residue has metal binding atoms listed in its "
+		msg << "A residue " << name() << " that has not been declared as a metal-binding residue has metal binding atoms listed in its "
 			"params file (METAL_BINDING_ATOMS list without PROPERTIES METALBINDING)." << std::endl;
 		checkspass=false;
 	}
 
 	if ( properties_->has_property( ALPHA_AA ) && properties_->has_property( BETA_AA ) ) {
-		msg << "Error!  A residue type specifies that it is both an alpha and a beta amino acid in its params file." <<
+		msg << "Error!  A residue type " << name() << " specifies that it is both an alpha and a beta amino acid in its params file." <<
 			std::endl;
 		checkspass=false;
 	}
 	if ( properties_->has_property( L_AA ) && properties_->has_property( D_AA ) ) {
-		msg << "Error!  A residue type specifies that it is both an L-amino acid and a D-amino acid in its params "
+		msg << "Error!  A residue type " << name() << " specifies that it is both an L-amino acid and a D-amino acid in its params "
 			"file." << std::endl;
 		checkspass=false;
 	}
 	if ( (backbone_aa_ != core::chemical::aa_unk) && ! properties_->has_property( ALPHA_AA ) ) {
-		msg << "Error!  A residue type specifies a standard alpha amino acid to use as a template for backbone scoring"
+		msg << "Error!  A residue type " << name() << " specifies a standard alpha amino acid to use as a template for backbone scoring"
 			" (rama and p_aa_pp scoring functions) without specifying that it is itself an alpha amino acid "
 			"(PROPERTIES ALPHA_AA)." << std::endl;
 		checkspass=false;

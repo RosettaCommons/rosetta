@@ -1,5 +1,5 @@
 -chemical:patch_selectors aryl-C-conjugated NtermProteinMethylated aryl-O-conjugated  phg_cd1_conjugation phg_cd2_conjugation
--extra_res_fa d-caa/DLEU.params d-ncaa/V01.params d-ncaa/V02.params l-ncaa/V03.params l-ncaa/V04.params
+-extra_res_fa l-ncaa/V01.params l-ncaa/V02.params l-ncaa/V03.params l-ncaa/V04.params
 -read_pdb_link_records 
 -include_sugars 
 -override_rsd_type_limit 

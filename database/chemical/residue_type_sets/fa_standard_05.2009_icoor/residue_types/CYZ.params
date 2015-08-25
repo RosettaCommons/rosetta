@@ -30,8 +30,8 @@ BOND  CB   SG
 BOND  CB  1HB 
 BOND  CB  2HB 
 BOND  SG   VHG 
-CHI 1  N    CA   CB   SG 
-PROPERTIES PROTEIN
+CHI 1  N    CA   CB   SG
+PROPERTIES PROTEIN L_AA
 NBR_ATOM CB
 # APL O to CB distance -- max O-CB observed in ubiquitin
 NBR_RADIUS 3.4473

@@ -36,7 +36,7 @@ BEGIN_CASE ## PROLINE #################################################
 
 ## these define which residues match this case
 BEGIN_SELECTOR
-AA PRO
+NAME3 PRO
 END_SELECTOR
 
 ## these are the operations involved

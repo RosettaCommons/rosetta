@@ -1,3 +1,4 @@
+patches/D_AA.txt
 patches/CtermProteinFull.txt
 patches/NtermProteinFull.txt
 patches/LowerDNA.txt

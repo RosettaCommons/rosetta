@@ -746,9 +746,42 @@ public:
 	/// @brief constructor
 	ConnectSulfurAndMakeVirtualProton() {};
 
+	bool
+	apply( ResidueType & rsd ) const;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Execute chiral flip (primarily: at CA)
+class ChiralFlipNaming : public PatchOperation {
+public:
+	/// @brief constructor
+	ChiralFlipNaming() {}// std::string const atom1, std::string const atom2 ): atom1_( atom1 ), atom2_( atom2 ) {};
+
+	virtual
+	bool
+	applies_to_placeholder() const { return true; }
+
 	/// @brief set the NCAA rotamer library path in the residue type
 	bool
 	apply( ResidueType & rsd ) const;
+private:
+	//std::string atom1_;
+	//std::string atom2_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Execute chiral flip (primarily: at CA)
+class ChiralFlipAtoms : public PatchOperation {
+public:
+	/// @brief constructor
+	ChiralFlipAtoms() {}// std::string const atom1, std::string const atom2 ): atom1_( atom1 ), atom2_( atom2 ) {};
+	/// @brief set the NCAA rotamer library path in the residue type
+
+	bool
+	apply( ResidueType & rsd ) const;
+private:
+	//std::string atom1_;
+	//std::string atom2_;
 };
 
 /// @brief  Virtual constructor, returns 0 if no match

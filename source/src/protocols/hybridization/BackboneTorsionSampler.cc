@@ -136,6 +136,10 @@ void BackboneTorsionSampler::perturb(core::pose::Pose & pose,
 				core::scoring::Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
 
 				rama.random_phipsi_from_rama( pose.residue_type(ires).aa(), phi, psi);
+				if ( pose.residue( ires ).has_property( "D_AA" ) ) {
+					phi *= -1.0;
+					psi *= -1.0;
+				}
 			} else {
 				phi = (2.* numeric::random::rg().uniform() - 1.) * max_delta_torsion + pose.phi(ires);
 				psi = (2.* numeric::random::rg().uniform() - 1.) * max_delta_torsion + pose.psi(ires);

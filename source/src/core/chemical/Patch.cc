@@ -266,6 +266,8 @@ PatchCase::apply( ResidueType const & rsd_in, bool const instantiate /* = true *
 		}
 	}
 
+	//std::cout << "amw PatchCase::apply Checking on igroup for res " << rsd->name() << ": " << rsd->interchangeability_group() << std::endl;
+
 	return rsd;
 }
 
@@ -449,14 +451,28 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 							iter_end = types_.end(); iter != iter_end; ++iter ) {
 						patched_rsd_type->add_variant_type( *iter );
 					}
-					std::string name_new = patched_rsd_type->name() + PATCH_LINKER + name_;
+					// AMW: Special case for the D patch. In ONLY THIS CASE,
+					// application of the D patch prepends the letter D. No :
+					std::string name_new;
+					if ( name_ == "D" ) {
+						name_new = "D" + patched_rsd_type->name();
+					} else {
+						name_new = patched_rsd_type->name() + PATCH_LINKER + name_;
+					}
 					patched_rsd_type->name( name_new );
+					//std::cout << "amw Patch::apply Checking on igroup for res " << patched_rsd_type->name() << ": " << patched_rsd_type->interchangeability_group() << std::endl;
 				}
+
+				//std::cout << "amw Patch::apply after renaming Checking on igroup for res " << patched_rsd_type->name() << ": " << patched_rsd_type->interchangeability_group() << std::endl;
+
 				if ( instantiate ) {
 					patched_rsd_type->finalize();
 					tr.Debug << "successfully patched: " << rsd_type.name() <<
 						" to: " << patched_rsd_type->name() << std::endl;
 				}
+
+				//std::cout << "amw Patch::apply after finalize Checking on igroup for res " << patched_rsd_type->name() << ": " << patched_rsd_type->interchangeability_group() << std::endl;
+
 				return patched_rsd_type;
 			}
 		}

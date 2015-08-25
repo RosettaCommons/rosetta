@@ -192,10 +192,11 @@ ResidueTypeFinder::apply_filters_after_patches( ResidueTypeCOPs rsd_types,
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 vector1< ResidueTypeCOP >
-ResidueTypeFinder::apply_patches_recursively( vector1< ResidueTypeCOP > const & rsd_types,
+ResidueTypeFinder::apply_patches_recursively(
+	vector1< ResidueTypeCOP > const & rsd_types,
 	Size const patch_number,
-	bool const get_first_totally_ok_residue_type /*= false*/ ) const
-{
+	bool const get_first_totally_ok_residue_type /*= false*/
+) const {
 
 	ResidueTypeCOPs rsd_types_new = rsd_types;
 	PatchCOP patch = residue_type_set_.patches()[ patch_number ];
@@ -219,9 +220,11 @@ ResidueTypeFinder::apply_patches_recursively( vector1< ResidueTypeCOP > const & 
 			fixes_name3( patch, rsd_type ) );
 
 		if ( apply_patch ) {
-
+			//std::cout << "amw patch name was " << patch->name();
 			ResidueTypeCOP rsd_type_new_placeholder = patch->apply( *rsd_type, false /*instantiate*/ );
+			//std::cout << "amw placeholder RT name was " << rsd_type_new_placeholder->name();
 			ResidueTypeCOP rsd_type_new( rsd_type->residue_type_set().name_map( rsd_type_new_placeholder->name() ).get_self_ptr() );
+			//std::cout << "amw used name map to get " << rsd_type_new->name();
 
 			rsd_types_new.push_back( rsd_type_new );
 		}
@@ -356,8 +359,7 @@ ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-ResidueTypeFinder::fixes_name3( PatchCOP patch,
-	ResidueTypeCOP rsd_type ) const
+ResidueTypeFinder::fixes_name3( PatchCOP patch, ResidueTypeCOP rsd_type ) const
 {
 	if ( name3_.size() > 0 &&
 			rsd_type->name3() != name3_ &&
@@ -370,8 +372,7 @@ ResidueTypeFinder::fixes_name3( PatchCOP patch,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-ResidueTypeFinder::adds_any_property( PatchCOP patch,
-	ResidueTypeCOP rsd_type ) const
+ResidueTypeFinder::adds_any_property( PatchCOP patch, ResidueTypeCOP rsd_type ) const
 {
 	vector1< std::string> const & added_properties( patch->adds_properties( *rsd_type ) );
 	for ( Size n = 1; n <= added_properties.size(); n++ ) {
@@ -384,8 +385,7 @@ ResidueTypeFinder::adds_any_property( PatchCOP patch,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-ResidueTypeFinder::deletes_any_property( PatchCOP patch,
-	ResidueTypeCOP rsd_type ) const
+ResidueTypeFinder::deletes_any_property( PatchCOP patch, ResidueTypeCOP rsd_type ) const
 {
 	vector1< std::string> const & deleted_properties( patch->deletes_properties( *rsd_type ) );
 	for ( Size n = 1; n <= deleted_properties.size(); n++ ) {
@@ -398,8 +398,7 @@ ResidueTypeFinder::deletes_any_property( PatchCOP patch,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-ResidueTypeFinder::deletes_any_variant( PatchCOP patch,
-	ResidueTypeCOP rsd_type ) const
+ResidueTypeFinder::deletes_any_variant( PatchCOP patch, ResidueTypeCOP rsd_type ) const
 {
 	vector1< std::string > const & deleted_variants( patch->deletes_variants( *rsd_type ) );
 	for ( Size n = 1; n <= deleted_variants.size(); n++ ) {
@@ -425,8 +424,7 @@ ResidueTypeFinder::matches_any_patch_name( PatchCOP patch ) const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // check for any matching atom name -- that's a good sign that we should check out this residue_type.
 bool
-ResidueTypeFinder::matches_any_atom_name( PatchCOP patch,
-	ResidueTypeCOP rsd_type ) const
+ResidueTypeFinder::matches_any_atom_name( PatchCOP patch, ResidueTypeCOP rsd_type ) const
 {
 	vector1< std::string > new_atom_names = patch->adds_atoms( *rsd_type );
 	for ( Size m = 1; m <= new_atom_names.size(); m++ ) {
@@ -438,8 +436,7 @@ ResidueTypeFinder::matches_any_atom_name( PatchCOP patch,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // This may not work with custom variants. Crap.
 ResidueTypeCOPs
-ResidueTypeFinder::filter_all_variants_matched( ResidueTypeCOPs const & rsd_types,
-	bool const allow_extra_variants /* = false */ ) const
+ResidueTypeFinder::filter_all_variants_matched( ResidueTypeCOPs const & rsd_types, bool const allow_extra_variants /* = false */ ) const
 {
 	ResidueTypeCOPs filtered_rsd_types = rsd_types;
 	filtered_rsd_types = check_candidate_has_all_variant_sets( filtered_rsd_types );

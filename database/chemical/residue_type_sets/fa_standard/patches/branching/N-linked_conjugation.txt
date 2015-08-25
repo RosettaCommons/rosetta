@@ -22,7 +22,7 @@ END_SELECTOR
 BEGIN_CASE  ## Lysine #########################################################
 
 BEGIN_SELECTOR
-AA LYS
+AA LYS DLY
 END_SELECTOR
 
 # have to delete all protons because bad geometry

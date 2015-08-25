@@ -37,8 +37,9 @@ using std::map;
 class RmsUtilTest : public CxxTest::TestSuite {
 public:
 	void setUp() {
+		// AMW: no longer have to separately load D amino acids
 		core_init_with_additional_options( //Load the D-amino acids for this test.
-			"-no_optH -extra_res_fa d-caa/DALA.params d-caa/DASP.params d-caa/DGLU.params d-caa/DPHE.params d-caa/DHIS.params d-caa/DHIS_D.params d-caa/DILE.params d-caa/DLYS.params d-caa/DLEU.params d-caa/DMET.params d-caa/DASN.params d-caa/DPRO.params d-caa/DGLN.params d-caa/DARG.params d-caa/DSER.params d-caa/DTHR.params d-caa/DVAL.params d-caa/DTRP.params d-caa/DTYR.params"
+			"-no_optH "//-extra_res_fa d-caa/DALA.params d-caa/DASP.params d-caa/DGLU.params d-caa/DPHE.params d-caa/DHIS.params d-caa/DHIS_D.params d-caa/DILE.params d-caa/DLYS.params d-caa/DLEU.params d-caa/DMET.params d-caa/DASN.params d-caa/DPRO.params d-caa/DGLN.params d-caa/DARG.params d-caa/DSER.params d-caa/DTHR.params d-caa/DVAL.params d-caa/DTRP.params d-caa/DTYR.params"
 		);
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.

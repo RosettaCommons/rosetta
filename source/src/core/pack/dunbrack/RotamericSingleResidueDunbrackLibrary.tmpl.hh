@@ -464,7 +464,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::rotamer_energy_deriv(
 	Real score = eval_rotameric_energy_deriv( rsd, scratch, true );
 
 	//Multiplier for D-amino acids:
-	const core::Real d_multiplier = core::chemical::is_canonical_D_aa( rsd.aa() ) ? -1.0 : 1.0;
+	const core::Real d_multiplier = rsd.has_property( "D_AA" ) ? -1.0 : 1.0;
 
 	if ( score != score ) { // NaN check
 		score = 0;
@@ -1093,7 +1093,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector(
 	RotamerLibraryScratchSpace scratch;
 
 	///Determine whether this is a D-amino acid:
-	core::Real d_multiplier = core::chemical::is_canonical_D_aa( existing_residue.aa() ) ? -1.0 : 1.0;
+	const core::Real d_multiplier = existing_residue.has_property( "D_AA" ) ? -1.0 : 1.0;
 
 	/// Save backbone interpolation data for reuse
 	utility::fixedsizearray1< Real, N > bbs = get_bbs_from_rsd( existing_residue );

@@ -1,0 +1,46 @@
+ATOM      1  N   GLY A   1       0.000   0.000   0.000  1.00  0.00           N  
+ATOM      2  CA  GLY A   1      -1.458   0.000   0.000  1.00  0.00           C  
+ATOM      3  C   GLY A   1      -2.009   1.420   0.000  1.00  0.00           C  
+ATOM      4  O   GLY A   1      -1.382   2.340  -0.526  1.00  0.00           O  
+ATOM      5 1H   GLY A   1       0.334  -0.943   0.000  1.00  0.00           H  
+ATOM      6 2H   GLY A   1       0.334   0.471  -0.816  1.00  0.00           H  
+ATOM      7 3H   GLY A   1       0.334   0.471   0.816  1.00  0.00           H  
+ATOM      8 1HA  GLY A   1      -1.822  -0.535   0.877  1.00  0.00           H  
+ATOM      9 2HA  GLY A   1      -1.822  -0.535  -0.876  1.00  0.00           H  
+ATOM     10  N   NLU A   2      -3.186   1.593   0.593  1.00  0.00           N  
+ATOM     11  CA  NLU A   2      -3.829   2.883   0.670  1.00  0.00           C  
+ATOM     12  C   NLU A   2      -4.916   2.787   1.734  1.00  0.00           C  
+ATOM     13  O   NLU A   2      -4.853   1.984   2.630  1.00  0.00           O  
+ATOM     14  CB  NLU A   2      -4.391   3.371  -0.680  1.00  0.00           C  
+ATOM     15  CG  NLU A   2      -5.517   2.520  -1.269  1.00  0.00           C  
+ATOM     16  CD  NLU A   2      -5.904   2.969  -2.680  1.00  0.00           C  
+ATOM     17  CE  NLU A   2      -4.848   2.616  -3.725  1.00  0.00           C  
+ATOM     18  H   NLU A   2      -3.701   0.818   0.943  1.00  0.00           H  
+ATOM     19  HA  NLU A   2      -4.286   3.072  -0.294  1.00  0.00           H  
+ATOM     20 1HB  NLU A   2      -3.555   3.404  -1.370  1.00  0.00           H  
+ATOM     21 2HB  NLU A   2      -4.734   4.397  -0.556  1.00  0.00           H  
+ATOM     22 1HG  NLU A   2      -6.392   2.558  -0.627  1.00  0.00           H  
+ATOM     23 2HG  NLU A   2      -5.206   1.480  -1.298  1.00  0.00           H  
+ATOM     24 1HD  NLU A   2      -6.852   2.513  -2.959  1.00  0.00           H  
+ATOM     25 2HD  NLU A   2      -6.071   4.044  -2.684  1.00  0.00           H  
+ATOM     26 1HE  NLU A   2      -4.682   1.543  -3.769  1.00  0.00           H  
+ATOM     27 2HE  NLU A   2      -3.895   3.087  -3.495  1.00  0.00           H  
+ATOM     28 3HE  NLU A   2      -5.147   2.946  -4.716  1.00  0.00           H  
+ATOM     29  N   GLY A   3      -5.930   3.663   1.616  1.00  0.00           N  
+ATOM     30  CA  GLY A   3      -7.045   3.676   2.554  1.00  0.00           C  
+ATOM     31  C   GLY A   3      -7.645   5.071   2.679  1.00  0.00           C  
+ATOM     32  O   GLY A   3      -7.616   5.856   1.732  1.00  0.00           O  
+ATOM     33  OXT GLY A   3      -8.154   5.415   3.710  1.00  0.00           O  
+ATOM     34  H   GLY A   3      -5.919   4.329   0.857  1.00  0.00           H  
+ATOM     35 1HA  GLY A   3      -6.703   3.334   3.531  1.00  0.00           H  
+ATOM     36 2HA  GLY A   3      -7.810   2.975   2.220  1.00  0.00           H  
+TER                                                                             
+# All scores below are weighted scores, not raw scores.
+#BEGIN_POSE_ENERGIES_TABLE dnlu_0001.pdb
+label fa_atr fa_rep fa_sol fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref total
+weights 0.8 0.44 0.75 0.004 0.7 1 1.17 1.17 1.17 1.1 1 0.2 0.5 0.56 0.32 1 NA
+pose -0.92335 0.35206 0.76013 0.12477 0.09898 0 0 0 0 0 0 0.88934 0.00218 0.61964 -0.05149 0.28105 2.15332
+GLY:NtermProteinFull_1 -0.23851 0.0139 0.15353 0.00022 0.03398 0 0 0 0 0 0 0 1e-05 0 0 0.14053 0.10364
+NLU_2 -0.42953 0.17603 0.36029 0.12436 0.06345 0 0 0 0 0 0 0.88934 0.00218 0.61964 -0.05149 0 1.75426
+GLY:CtermProteinFull_3 -0.2553 0.16213 0.24631 0.0002 0.00156 0 0 0 0 0 0 0 0 0 0 0.14053 0.29542
+#END_POSE_ENERGIES_TABLE dnlu_0001.pdb

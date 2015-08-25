@@ -8,7 +8,7 @@ TYPES ACETYLATION
 
 BEGIN_SELECTOR
 PROPERTY PROTEIN
-AA CYS
+NAME3 CYS DCS
 NOT VARIANT_TYPE ACETYLATION
 
 #The following are necessary to prevent patching of CYD, CYV, and CYX (the patch is meant for CYS only)

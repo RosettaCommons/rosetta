@@ -58,6 +58,11 @@ void Rama2bPerturber::perturb_subset(
 				pose.aa(residue), pose.aa(residue + 1), phi, psi);
 		}
 
+		if ( pose.residue( residue ).has_property( "D_AA" ) ) {
+			phi *= -1.0;
+			psi *= -1.0;
+		}
+
 		problem->perturb_phi(residue, phi, DEGREES);
 		problem->perturb_psi(residue, psi, DEGREES);
 	}

@@ -1,0 +1,22 @@
+## D_AA patch
+
+NAME D
+
+#############################################################################################
+## general requirements
+##   L amino acids
+#############################################################################################
+BEGIN_SELECTOR
+PROPERTY L_AA
+END_SELECTOR
+
+
+BEGIN_CASE 
+
+CHIRAL_FLIP_NAMING
+CHIRAL_FLIP_ATOMS
+
+DELETE_PROPERTY L_AA
+ADD_PROPERTY D_AA
+
+END_CASE

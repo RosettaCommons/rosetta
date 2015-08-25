@@ -922,10 +922,6 @@ read_topology_file(
 				adduct_phi, adduct_theta, adduct_d,
 				atom1, atom2, atom3 );
 			rsd->add_adduct( new_adduct );
-		} else if ( tag == "CHIRAL_EQUIVALENT_NAME" ) {
-			std::string cen;
-			l >> cen;
-			rsd->chiral_equivalent_name( cen );
 		} else if ( tag == "ROTAMERS" ) {
 			using namespace core::chemical::rotamers;
 			if ( rsd->rotamer_library_specification() ) {

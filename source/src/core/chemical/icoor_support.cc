@@ -320,6 +320,8 @@ fill_ideal_xyz_from_icoor(
 	std::queue< VD > atom_queue;
 	VIterPair allverts( boost::vertices( graph ) );
 	for ( VIter iter(allverts.first); iter != allverts.second; ++iter ) {
+		// AMW: skip virtual atoms?
+		//if ( restype.is_virtual( restype.atom_index( *iter ) ) ) continue;
 		atom_queue.push( *iter );
 		// For debug:
 		restype.set_ideal_xyz( *iter, Vector(99.44, 99.44, 99.44) );
@@ -351,6 +353,24 @@ fill_ideal_xyz_from_icoor(
 		AtomICoor const & icoor( restype.icoor(child_atom) );
 
 		ICoorAtomID parent_stub( icoor.stub_atom(1) ), angle_stub( icoor.stub_atom(2) ), torsion_stub( icoor.stub_atom(3) );
+		/*
+		if ( parent_stub.atomno() == 0 ) {
+			TR << "U/L ";
+		} else {
+			TR << restype.atom_name( parent_stub.atomno() ) << " ";
+		}
+		if ( angle_stub.atomno() == 0 ) {
+			TR << "U/L ";
+		} else {
+			TR << restype.atom_name( angle_stub.atomno() ) << " ";
+		}
+		if ( torsion_stub.atomno() == 0 ) {
+			TR << "U/L ";
+		} else {
+			TR << restype.atom_name( torsion_stub.atomno() ) << " ";
+		}
+		TR << std::endl;
+		*/
 		core::Real phi( icoor.phi() ), theta( icoor.theta() ), d( icoor.d() );
 		//debug_assert( restype.has(parent_atom) && restype.has(angle_atom) );
 		if ( child_atom == parent_stub.vertex() ) { // root atom

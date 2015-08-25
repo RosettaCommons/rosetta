@@ -249,6 +249,11 @@ void SetTorsion::apply( Pose & pose ) {
 							assert(pose.residue(resnum).aa()!=core::chemical::aa_unk);
 							Real phi, psi;
 							rama.random_phipsi_from_rama( pose.residue_type(resnum).aa(), phi, psi); //TODO -- use backbone_aa
+							if ( pose.residue( resnum ).has_property( "D_AA" ) ) {
+								phi *= -1.0;
+								psi *= -1.0;
+							}
+
 							pose.set_phi( resnum, phi );
 							pose.set_psi( resnum, psi );
 						} else {

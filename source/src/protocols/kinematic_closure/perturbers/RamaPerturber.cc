@@ -44,6 +44,10 @@ void RamaPerturber::perturb_subset(
 
 	BOOST_FOREACH ( Size residue, residues ) {
 		rama.random_phipsi_from_rama(pose.aa(residue), phi, psi);
+		if ( pose.residue( residue ).has_property( "D_AA" ) ) {
+			phi *= -1.0;
+			psi *= -1.0;
+		}
 		problem->perturb_phi(residue, phi, DEGREES);
 		problem->perturb_psi(residue, psi, DEGREES);
 	}
