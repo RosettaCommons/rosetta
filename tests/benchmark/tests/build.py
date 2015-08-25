@@ -27,8 +27,9 @@ tests = dict(
     release   = NT(command='./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
     static    = NT(command='./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
 
-    ninja_debug   = NT(command='./ninja_build.py debug -remake -j{jobs}', incremental=True),
-    ninja_release = NT(command='./ninja_build.py release -remake -j{jobs}', incremental=True),
+    ninja_debug    = NT(command='./ninja_build.py debug -remake -j{jobs}', incremental=True),
+    ninja_release  = NT(command='./ninja_build.py release -remake -j{jobs}', incremental=True),
+    ninja_graphics = NT(command='./ninja_build.py graphics -remake -j{jobs}', incremental=True),
 
     PyRosetta = NT(command='BuildPyRosetta.sh -u --monolith -j{jobs}', incremental=True),
 
@@ -36,6 +37,7 @@ tests = dict(
     levels    = NT(command='./update_options.sh && python version.py && cd src && python ./../../../tools/python_cc_reader/library_levels.py', incremental=False),
 
     cppcheck  = NT(command='cd src && bash ../../tests/benchmark/util/do_cppcheck.sh -j {jobs} -e "{extras}"', incremental=False),
+
 )
 
 # def set_up():
