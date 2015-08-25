@@ -622,27 +622,30 @@ merge_two_poses( pose::Pose & pose,
 		Size const k = working_res[ n ];
 		ResidueOP rsd;
 		bool after_cutpoint( false );
+		bool rsd_from_2(false);
 		if ( working_res1.has_value( k ) ) {
 			Size const j = working_res1.index( k );
 			if ( j == 1 || pose1.fold_tree().is_cutpoint( j-1 ) ) after_cutpoint = true;
 			rsd = pose1.residue( j ).clone();
+			rsd_from_2=false;
 		} else {
 			runtime_assert( working_res2.has_value( k ) );
 			Size const j = working_res2.index( k );
 			if ( j == 1 || pose2.fold_tree().is_cutpoint( j-1 ) ) after_cutpoint = true;
 			rsd = pose2.residue( j ).clone();
+			rsd_from_2=true;
 		}
 
 		if ( connect_residues_by_bond && k == lower_merge_res ) {
-			rsd = remove_variant_type_from_residue( *rsd, chemical::UPPER_TERMINUS_VARIANT, pose ); // got to be safe.
-			rsd = remove_variant_type_from_residue( *rsd, chemical::THREE_PRIME_PHOSPHATE, pose ); // got to be safe.
-			rsd = remove_variant_type_from_residue( *rsd, chemical::C_METHYLAMIDATION, pose ); // got to be safe.
+			rsd = remove_variant_type_from_residue( *rsd, chemical::UPPER_TERMINUS_VARIANT, (rsd_from_2 ? pose2 : pose1) ); // got to be safe.
+			rsd = remove_variant_type_from_residue( *rsd, chemical::THREE_PRIME_PHOSPHATE, (rsd_from_2 ? pose2 : pose1) ); // got to be safe.
+			rsd = remove_variant_type_from_residue( *rsd, chemical::C_METHYLAMIDATION, (rsd_from_2 ? pose2 : pose1) ); // got to be safe.
 		}
 		if ( connect_residues_by_bond && k == upper_merge_res ) {
 			runtime_assert( after_cutpoint );
-			rsd = remove_variant_type_from_residue( *rsd, chemical::LOWER_TERMINUS_VARIANT, pose ); // got to be safe.
-			rsd = remove_variant_type_from_residue( *rsd, chemical::FIVE_PRIME_PHOSPHATE, pose ); // got to be safe.
-			rsd = remove_variant_type_from_residue( *rsd, chemical::N_ACETYLATION, pose ); // got to be safe.
+			rsd = remove_variant_type_from_residue( *rsd, chemical::LOWER_TERMINUS_VARIANT, (rsd_from_2 ? pose2 : pose1) ); // got to be safe.
+			rsd = remove_variant_type_from_residue( *rsd, chemical::FIVE_PRIME_PHOSPHATE, (rsd_from_2 ? pose2 : pose1) ); // got to be safe.
+			rsd = remove_variant_type_from_residue( *rsd, chemical::N_ACETYLATION, (rsd_from_2 ? pose2 : pose1) ); // got to be safe.
 			after_cutpoint = false; // we're merging after all.
 		}
 		if ( n == 1 || !after_cutpoint ) {
