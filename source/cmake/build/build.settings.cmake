@@ -149,7 +149,6 @@ if( ${COMPILER} STREQUAL "clang" )
 	)
 endif()
 
-
 if(APPLE AND ${COMPILER} STREQUAL "clang")
     list( REMOVE_ITEM compile
 	-stdlib=libstdc++
@@ -263,16 +262,29 @@ if( EXTRAS )
 		find_package( OpenGL REQUIRED )
 		include_directories( /usr/X11R6/include )
 		link_directories( /usr/X11R6/lib )
+		set( cxx
+			    -std=c++98
+			    -isystem external/boost_1_55_0/
+			    -isystem external/include/
+			    -isystem external/dbio/
+
+	        )
+		REMOVE_DEFINITIONS(-DCXX11)
+		REMOVE_DEFINITIONS(-DPTR_STD)
 		list( APPEND defines
 				-DGL_GRAPHICS
 				-DMAC
+				-DPTR_MODERN
+				-DPTR_BOOST
 		)
-		list( APPEND link
+		set( link
+				-stdlib=libstdc++
 				-framework GLUT
 				-framework OpenGL
 				-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib
 		)
-		list( APPEND shlink
+		set( shlink
+				-stdlib=libstdc++
 				-framework GLUT
 				-framework OpenGL
 				-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib
@@ -300,7 +312,7 @@ if( EXTRAS )
 	endif()
 
 	# "linux, graphics"
-	if( UNIX AND ${EXTRAS} STREQUAL "graphics" )
+	if( UNIX AND NOT APPLE AND ${EXTRAS} STREQUAL "graphics" )
 		list( APPEND defines
 				-DGL_GRAPHICS
 		)
