@@ -39,7 +39,7 @@ PEPTOID
 CARBOHYDRATE
 LIPID
 SRI # New class of artificial heteropolymers. ~VMulligan
-TRIAZOLEMER # Another new class of artificial heteropolymers. ~Vmulligan
+TRIAZOLE_LINKER # Another new class of artificial heteropolymers. ~Vmulligan
 METAL  # This residue type is a metal ion.
 SURFACE
 WATER

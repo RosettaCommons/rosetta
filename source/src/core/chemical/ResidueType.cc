@@ -1889,7 +1889,7 @@ ResidueType::is_sri() const
 bool
 ResidueType::is_triazolemer() const
 {
-	return properties_->has_property( TRIAZOLEMER );
+	return properties_->has_property( TRIAZOLE_LINKER );
 }
 
 
