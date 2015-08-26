@@ -833,11 +833,17 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 	} //loop over all mcfis
 
 
+	// This is a new sort which will hopefully reduce instability in match_* integration tests.
+	utility::vector1< std::pair< std::string, core::chemical::ResidueTypeCOP > > restype_temp_set_with_name;
+	for ( Size n = 1; n <= restype_temp_set.size(); n++ ) restype_temp_set_with_name.push_back( std::make_pair( restype_temp_set[ n ]->name(), restype_temp_set[ n ] ) );
+	std::sort( restype_temp_set_with_name.begin(), restype_temp_set_with_name.end() );
+	//	for ( Size n = 1; n <= restype_temp_set.size(); n++ ) tr << n << " original order: " << restype_temp_set[ n ]->name() << " new order " <<  (restype_temp_set_with_name[ n ].second)->name() << std::endl;
+
 	//finally put all the restypes into the storage vector
-	for ( utility::vector1< core::chemical::ResidueTypeCOP >::iterator
-			set_it = restype_temp_set.begin();
-			set_it != restype_temp_set.end(); ++set_it ) {
-		upstream_restypes_.push_back( *set_it );
+	for ( utility::vector1< std::pair< std::string, core::chemical::ResidueTypeCOP > >::iterator
+			set_it = restype_temp_set_with_name.begin();
+			set_it != restype_temp_set_with_name.end(); ++set_it ) {
+		upstream_restypes_.push_back( (*set_it).second );
 	}
 }
 
