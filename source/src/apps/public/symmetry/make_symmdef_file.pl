@@ -217,7 +217,11 @@ if ($cryst_mode == 1) {
 	if ( length ($pdbfile) > 0 ) {
 		###
 		### Input PDB file
-		open (PDB, $pdbfile) || die "Cannot open $pdbfile.";
+        if ($pdbfile =~ "\.gz$") {
+		    open (PDB, "gunzip -c $pdbfile | ") || die "Cannot open $pdbfile.";
+        } else {
+            open (PDB, $pdbfile) || die "Cannot open $pdbfile.";
+        }
 		while (<PDB>) {
 			chomp;
 			if (/^CRYST1/) {
@@ -335,8 +339,13 @@ if ($cryst_mode == 1) {
 
 	# get CoM
 	$CoM = [ $CoM->[0]/$nAtms , $CoM->[1]/$nAtms , $CoM->[2]/$nAtms ];
+# else, not cryst mode?
 } else {
-	open (PDB, $pdbfile) || die "Cannot open $pdbfile.";
+    if ($pdbfile =~ "\.gz$") {
+		open (PDB, "gunzip -c $pdbfile | ") || die "Cannot open $pdbfile.";
+    } else {
+        open (PDB, $pdbfile) || die "Cannot open $pdbfile.";
+    }
 	while (<PDB>) {
 		chomp;
 		if (/^ATOM/ || /^HETATM/) {
