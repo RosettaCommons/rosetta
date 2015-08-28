@@ -57,10 +57,10 @@ SSPredictionFilter::SSPredictionFilter()
 
 // value constructor
 SSPredictionFilter::SSPredictionFilter( core::Real const threshold,
-	std::string const cmd,
-	std::string const blueprint_filename,
+	std::string const & cmd,
+	std::string const & blueprint_filename,
 	bool const use_probability,
-	bool const mismatch_probability)
+	bool const mismatch_probability )
 : protocols::filters::Filter( "SSPrediction" ),
 	threshold_( threshold ),
 	cmd_( cmd ),
