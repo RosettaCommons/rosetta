@@ -60,6 +60,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <cstdio>
+#include <cctype>
 #include <utility>
 
 using namespace basic::options;
@@ -681,6 +682,11 @@ remap_names_on_geometry( NameBimap & mapping,
 		std::string & elem( aigraph[ aivd ].element );
 		if ( elem == "  " ||  elem == "" ) {
 			aigraph[ aivd ].element = aigraph[ aivd ].name.substr(0,2); // First two letters of the atom name - typically this is the element code.
+			// AMW: WHAT?! It could also be a number! (e.g. 1H in NtermProteinFull)
+			if ( isdigit( int( aigraph[ aivd ].name.at(0) ) ) ) {
+				aigraph[ aivd ].element = aigraph[ aivd ].name.substr(1,1);
+			}
+			
 		}
 		name_aivd_map[ iter->name ] = aivd;
 		small_order.push_back( aivd );
