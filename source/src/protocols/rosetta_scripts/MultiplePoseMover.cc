@@ -76,8 +76,12 @@ MultiplePoseMover::MultiplePoseMover() :
 	rosetta_scripts_tag_(/* NULL */),
 	selector_tag_(/* NULL */),
 	previous_mover_(/* NULL */),
+	selectors_(),
+	pose_input_cache_(),
+	pose_output_cache_(),
 	poses_input_(0),
-	poses_output_(0)
+	poses_output_(0),
+	selector_filters_()
 {
 }
 

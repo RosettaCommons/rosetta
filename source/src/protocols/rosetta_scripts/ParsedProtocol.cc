@@ -121,6 +121,7 @@ ParsedProtocol::apply( Pose & pose )
 	}
 
 	try {
+		last_mover_=protocols::moves::MoverOP(); //Reset this
 
 		protocols::moves::Mover::set_last_move_status( protocols::moves::FAIL_RETRY );
 		//  pose.update_residue_neighbors();
