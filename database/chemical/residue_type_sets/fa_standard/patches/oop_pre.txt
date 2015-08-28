@@ -64,16 +64,20 @@ SET_ICOOR VZP  -120.7064	70.5547		1.50	CYP N 1HYP #180 - 109.4453
 #kdrew: setup connection to oop_pre
 ADD_CONNECT CYP ICOOR  41.5503   66.5161   1.4592  N  CA  C
 
-ADD_ATOM  H   HNbb H    0.31
-ADD_BOND  N   H
-# dihedral and angle taken from OOP_MONOMER_PUCKUP_CHI1300_OPT.pdb, distance coordinates taken from n-term residue, should minimize n-term structure
-SET_ICOOR H -84.35 66.6 1.02 N CA C
+# This is N-terminal. A piperazine has a first protonation pka of >9!
+# Modification made to retain protonation August 25, 2015.
 
-#kdrew: raises assertion on line 1135 of ResidueType.cc, unless NOT VARIANT_TYPE CUTPOINT_UPPER
 DELETE_ATOM 3H
-DELETE_ATOM 2H
-DELETE_ATOM 1H
 
+# Ensure proper charges
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+SET_ATOMIC_CHARGE N -0.07
+SET_FORMAL_CHARGE  N  +1
+
+# dihedral and angle taken from OOP_MONOMER_PUCKUP_CHI1300_OPT.pdb, distance coordinates taken from n-term residue, should minimize n-term structure
+SET_ICOOR 1H -84.35 66.6 1.02 N CA C
+SET_ICOOR 2H -120   66.6 1.02 N CA 1H
 
 END_CASE
 

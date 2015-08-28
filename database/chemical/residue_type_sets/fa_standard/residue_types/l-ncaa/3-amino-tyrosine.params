@@ -25,6 +25,11 @@ ATOM 1HE2 Haro HP   0.13
 ATOM 1HZ1 Hpol H    0.44
 ATOM 2HZ1 Hpol H    0.44
 ATOM 1HT  Hpol H    0.44
+
+# You will note that NZ1 is not protonated. This is correct! The pka of this
+# amine is around 4.8. Wong, Shen S. Chemistry of Protein Conjugation and
+# Cross-Linking. CRC Press, 1991.
+
 BOND  N    H  
 BOND  N    CA 
 BOND  CB   CA 
