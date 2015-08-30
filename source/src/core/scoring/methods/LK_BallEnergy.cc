@@ -667,7 +667,7 @@ LK_BallEnergy::get_lk_fractional_contribution(
 }
 
 
-/// This guy is used during scoring if we are not minimizing
+/// This guy is used during scoring if we are not minimizing, or inside linmem_ig packing and things like that...
 void
 LK_BallEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -677,15 +677,25 @@ LK_BallEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-	/// there shouldn't be any data stashed in these residues....
-	debug_assert( rsd1.data_ptr() == 0 ||
-		!rsd1.data_ptr()->has( conformation::residue_datacache::LK_BALL_INFO ) );
-	debug_assert( rsd2.data_ptr() == 0 ||
-		!rsd2.data_ptr()->has( conformation::residue_datacache::LK_BALL_INFO ) );
-	LKB_ResidueInfo const & info1( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
-	LKB_ResidueInfo const & info2( retrieve_lkb_residue_info( pose, rsd2.seqpos() ) );
-	residue_pair_energy( rsd1, info1, rsd2, info2, emap );
-	//residue_pair_energy( rsd1, info1.waters(), rsd2, info2.waters(), emap );
+	/// there might be data stashed in these residues if we came through certain packing routes
+	using conformation::residue_datacache::LK_BALL_INFO;
+	if ( rsd1.data_ptr() != 0 && rsd1.data_ptr()->has( LK_BALL_INFO ) ) {
+		debug_assert( dynamic_cast< LKB_ResidueInfo const * > ( rsd1.data_ptr()->get_raw_const_ptr( LK_BALL_INFO )));
+		debug_assert( rsd2.data_ptr() != 0 &&
+			rsd2.data_ptr()->get_const_ptr( LK_BALL_INFO ) != 0 &&
+			dynamic_cast< LKB_ResidueInfo const * > ( rsd2.data_ptr()->get_raw_const_ptr( LK_BALL_INFO )));
+
+		residue_pair_energy( rsd1,
+			*( dynamic_cast< LKB_ResidueInfo const * >( rsd1.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
+			rsd2,
+			*( dynamic_cast< LKB_ResidueInfo const * >( rsd2.data_ptr()->get_raw_const_ptr( LK_BALL_INFO ))),
+			emap );
+	} else {
+		debug_assert( rsd2.data_ptr() == 0 || !rsd2.data_ptr()->has( LK_BALL_INFO ) );
+		LKB_ResidueInfo const & info1( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
+		LKB_ResidueInfo const & info2( retrieve_lkb_residue_info( pose, rsd2.seqpos() ) );
+		residue_pair_energy( rsd1, info1, rsd2, info2, emap );
+	}
 }
 
 void
