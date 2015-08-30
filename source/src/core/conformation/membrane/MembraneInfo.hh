@@ -62,12 +62,6 @@ class MembraneInfo : public utility::pointer::ReferenceCount {
 
 public: // Constructors & Setup
 
-	/// @brief Create a default version of MembraneInfo (DONT USE)
-	/// @details Initializes all data members to dummy or empty values
-	/// Use the fully specified constructors instead. MembraneInfo is a
-	/// data container but is NOT responsible for initialization.
-	MembraneInfo();
-
 	/// @brief Create MembraneInfo from initialized data
 	/// @details Creates a MembraneInfo object by linking the conformation
 	/// to the pose, specify the  membrane residue number, membrane jump number,
@@ -182,6 +176,14 @@ public: // topology of TM spans and lipophilicity
 	/// of exposure to lipid. Data calcualted via the run_lips.pl script
 	/// and provided by the user on the commandline if applicable
 	LipidAccInfoOP lipid_acc_data() const;
+
+private: // default constructor
+
+  /// @brief Create a default version of MembraneInfo (DONT USE)
+	/// @details Initializes all data members to dummy or empty values
+	/// Use the fully specified constructors instead. MembraneInfo is a
+	/// data container but is NOT responsible for initialization.
+	MembraneInfo();
 
 private: // data
 
