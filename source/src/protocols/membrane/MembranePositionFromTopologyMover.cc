@@ -59,28 +59,19 @@ namespace membrane {
 using namespace core;
 using namespace core::pose;
 
-/// @brief Defualt Constructor
+/// @brief Default Constructor
 /// @details Compute the embedding of the pose based on xyz coordinates
 /// and spanning topology provided in MembraneInfo
 MembranePositionFromTopologyMover::MembranePositionFromTopologyMover() :
 	protocols::moves::Mover(),
-	structure_based_( true )
-{}
-
-/// @brief Custom Constructor - for Pyrosetta
-/// @details Compute the embedding of the pose - if structure_based is
-/// true do this based on xyz coordinates. If structure_based is false,
-/// compute based on sequence.
-MembranePositionFromTopologyMover::MembranePositionFromTopologyMover( bool structure_based ) :
-	protocols::moves::Mover(),
-	structure_based_( structure_based )
+	anchor_at_res1_( true )
 {}
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover
 MembranePositionFromTopologyMover::MembranePositionFromTopologyMover( MembranePositionFromTopologyMover const & src ) :
 	protocols::moves::Mover( src ),
-	structure_based_( src.structure_based_ )
+	anchor_at_res1_( src.anchor_at_res1_ )
 {}
 
 /// @brief Destructor
@@ -112,8 +103,8 @@ MembranePositionFromTopologyMover::parse_my_tag(
 	core::pose::Pose const &
 ) {
 
-	if ( tag->hasOption( "structure_based" ) ) {
-		structure_based_ = tag->getOption< bool >("structure_based");
+	if ( tag->hasOption( "anchor_at_res1" ) ) {
+		anchor_at_res1_ = tag->getOption< bool >("anchor_at_res1");
 	}
 
 }
@@ -140,11 +131,20 @@ MembranePositionFromTopologyMoverCreator::mover_name() {
 /// Mover Methods ///
 /////////////////////
 
+/// @brief Anchor membrane at residue 1, default is true
+void MembranePositionFromTopologyMover::anchor_at_res1( bool truefalse ) {
+	anchor_at_res1_ = truefalse;
+}
+
 /// @brief Update Membrane position in pose
-/// @details Compute membrane posiiton based on sequence or structure
+/// @details Compute membrane posiiton based on structure
 /// and then call pose.update_membrane_position() to update the membrane position
 void
 MembranePositionFromTopologyMover::apply( Pose & pose ) {
+
+	using namespace core;
+	using namespace protocols::membrane;
+	using namespace protocols::membrane::geometry;
 
 	// Check pose is a membrane pose
 	if ( ! pose.conformation().is_membrane() ) {
@@ -154,22 +154,38 @@ MembranePositionFromTopologyMover::apply( Pose & pose ) {
 		utility_exit_with_message("The SpanningTopology object in MembraneInfo is empty!" );
 	}
 
-	// starting foldtree
-	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
-	pose.fold_tree().show( TR );
+	// remember foldtree
 	core::kinematics::FoldTree orig_ft = pose.fold_tree();
 
-	TR << "Computing initial membrane position from structure..." << std::endl;
+	// if membrane not at root, reorder foldtree to have pose TM COM at root
+	if ( is_membrane_fixed( pose ) ) {
+		TR << "Reordering foldtree:" << std::endl;
+		core::kinematics::FoldTree ft = pose.fold_tree();
+		core::Size anchor;
 
-	using namespace core;
-	using namespace protocols::membrane;
-	using namespace protocols::membrane::geometry;
+		// for simple reorder
+		if ( anchor_at_res1_ == true ) {
+			anchor = 1;
+		} else {
+			// resetting the foldtree to anchor at the pose TM COM
+			anchor = create_membrane_foldtree_anchor_pose_tmcom( pose );
+		}
+
+		// reorder foldtree
+		ft.reorder( anchor );
+		pose.fold_tree( ft );
+	}
+
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
 
 	// Initialize starting vectors
 	Vector normal( 0, 0, 0 );
 	Vector center( 0, 0, 0 );
 
 	// Compute position from pose
+	TR << "Computing initial membrane position from structure..." << std::endl;
 	compute_structure_based_embedding( pose, center, normal );
 
 	// Update membrane position - shift normal along center
@@ -177,7 +193,7 @@ MembranePositionFromTopologyMover::apply( Pose & pose ) {
 
 	// reset foldtree and show final one
 	pose.fold_tree( orig_ft );
-	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	TR << "Final foldtree after reset: Is membrane fixed? " << is_membrane_fixed( pose ) << std::endl;
 	pose.fold_tree().show( TR );
 
 } // apply

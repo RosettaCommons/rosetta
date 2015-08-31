@@ -51,16 +51,10 @@ public:
 	/// Constructors ///
 	////////////////////
 
-	/// @brief Defualt Constructor
+	/// @brief Default Constructor
 	/// @details Compute the embedding of the pose based on xyz coordinates
 	/// and spanning topology provided in MembraneInfo
 	MembranePositionFromTopologyMover();
-
-	/// @brief Custom Constructor - for Pyrosetta
-	/// @details Compute the embedding of the pose - if structure_based is
-	/// true do this based on xyz coordinates. If structure_based is false,
-	/// compute based on sequence.
-	MembranePositionFromTopologyMover( bool structure_based );
 
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover
@@ -100,10 +94,13 @@ public:
 	/// @brief Get the name of this mover
 	virtual std::string get_name() const;
 
+	/// @brief Anchor membrane at residue 1, default is true
+	void anchor_at_res1( bool truefalse );
+
 private: // data
 
-	// Structure or sequence based?
-	bool structure_based_;
+	// Anchor membrane residue at residue 1
+	bool anchor_at_res1_;
 
 };
 

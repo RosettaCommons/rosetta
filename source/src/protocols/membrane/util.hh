@@ -162,10 +162,27 @@ is_membrane_moveable_by_itself( Pose & pose );
 /// residue. Should perform checks before doing this!
 void reorder_membrane_foldtree( pose::Pose & pose );
 
+/// @brief Create a membrane foldtree with an interface
+/// @details Currently only works for two-body-docking. Both partners can have
+///   multiple chains in any order, the anchoring happens at the TM COM
+///   of each chain
+///
+///       __________________________________________
+///      |________________  _________________       |
+///      |________   iJ   ||________         |      |
+///      |        |       ||        |        |      |
+/// -------  -------  -------  -------  -------  M=root
+///  chain1   chain2   chain3   chain4 ...
+///
+///  iJ = interface jump, will be returned from the function
+///
+core::Size create_membrane_docking_foldtree_from_partners( Pose & pose, std::string const partners );
+
 /// @brief Create membrane foldtree from scratch
 /// @details The foldtree is setup such that the membrane is at the root and
 ///   anchored at the first chain COM residue with jumps from the
 ///   first chain COM to each chain COM; requires the membrane to be present
+///   Returns the root anchoring point, i.e. rsd nearest chain COM of chain 1
 ///
 ///     ________________________________
 ///    |__________________________      |
@@ -174,26 +191,52 @@ void reorder_membrane_foldtree( pose::Pose & pose );
 ///    |        |        |        |     |
 /// -------  -------  -------  -------  M=root
 ///  chain1   chain2   chain3   chain4 ...
-void create_membrane_foldtree_anchor_com( Pose & pose );
+core::Size create_membrane_foldtree_anchor_com( Pose & pose );
 
 /// @brief Create membrane foldtree from scratch
 /// @details The foldtree is setup such that the membrane is at the root and
 ///   anchored at the first chain TRANSMEMBRANE COM residue with jumps from the
 ///   first chain COM to each chain TRANSMEMBRANE COM;
 ///   requires the membrane to be present
+///   Returns the root anchoring point, i.e. rsd nearest chain TM COM of
+///   chain 1
 ///
-///     ________________________________
-///    |__________________________      |
-///    |_________________         |     |
-///    |________         |        |     |
-///    |        |        |        |     |
+///       ________________________________
+///      |__________________________      |
+///      |_________________         |     |
+///      |________         |        |     |
+///      |        |        |        |     |
 /// -------  -------  -------  -------  M=root
 ///  chain1   chain2   chain3   chain4 ...
+core::Size create_membrane_foldtree_anchor_tmcom( Pose & pose );
 
-void create_membrane_foldtree_anchor_tmcom( Pose & pose );
+/// @brief Create membrane foldtree from scratch
+/// @details The foldtree is setup such that the membrane is at the root and
+///   anchored at the residue closest to the pose TM COM with jumps from there
+///   to each chain TRANSMEMBRANE COM; requires the membrane to be present;
+///   Returns the root anchoring point, i.e. rsd nearest pose TM COM that
+///   can be in any chain
+///
+///                _______________________
+///               |_________________      |
+///               |________         |     |
+///       ________|        |        |     |
+///      |        |        |        |     |
+/// -------  -------  -------  -------  M=root
+///  chain1   chain2   chain3   chain4 ...
+core::Size create_membrane_foldtree_anchor_pose_tmcom( Pose & pose );
 
 /// @brief Helper function to create membrane foldtrees
+/// @details The anchors vector is a vector of anchor residues in all chains,
+///   one per chain. This function assumes that the first entry in the
+///   vector is the root anchor point to which all other chains are
+///   connected;
 void create_membrane_foldtree_from_anchors( Pose & pose, utility::vector1< core::Size > anchors );
+
+/// @brief Helper function to create membrane foldtrees
+/// @details Returns the residues closest to the COMs for each chain
+utility::vector1< core::Size > get_anchor_points_for_tmcom( Pose & pose );
+
 
 ///////////////////////////////////////////////////////////
 // Utilities for accessing dssp, z coords and chain info //
@@ -265,6 +308,13 @@ EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP
 ///    down means upstream and downstream
 void update_partner_embeddings( pose::Pose const & pose, core::Size const jumpnum, EmbeddingDef & emb_up, EmbeddingDef & emb_down );
 
+/// @brief Pose transmembrane center-of-mass
+/// @details Gets the coordinates of the TM span center-of-mass
+///   This only looks at the span start and end residues for
+///   calculation of the TM span COM, this should be faster than the
+///   real thing though
+core::Vector pose_tm_com( pose::Pose const & pose );
+
 /// @brief Chain center-of-mass
 /// @details Gets the coordinates of the chain center-of-mass
 core::Vector chain_com( pose::Pose const & pose, int chain );
@@ -273,6 +323,13 @@ core::Vector chain_com( pose::Pose const & pose, int chain );
 /// @details Gets the coordinates of the chain center-of-mass but only the TM regions
 core::Vector chain_tm_com( pose::Pose const & pose, int chain );
 
+/// @brief Residue closest to pose transmembrane center-of-mass
+/// @details Gets the coordinates of the residue closest to TM span center-of-mass
+///   This only looks at the span start and end residues for
+///   calculation of the TM span COM, this should be faster than the
+///   real thing though
+core::Size rsd_closest_to_pose_tm_com( pose::Pose const & pose );
+
 /// @brief Residue closest to chain center-of-mass
 /// @details Gets the residue number closest to the chain center-of-mass
 core::Size rsd_closest_to_chain_com( pose::Pose const & pose, int chain );
@@ -280,6 +337,7 @@ core::Size rsd_closest_to_chain_com( pose::Pose const & pose, int chain );
 /// @brief Residue closest to chain TM center-of-mass
 /// @details Gets the residue number closest to the chain TM center-of-mass
 core::Size rsd_closest_to_chain_tm_com( pose::Pose const & pose, int chainid );
+
 
 //////////////////////
 // Membrane vectors //

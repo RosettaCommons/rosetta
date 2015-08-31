@@ -215,8 +215,11 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 
 	// initializations
 	register_options();
+	TR << "register: partners " << partners_ << std::endl;
 	init_from_cmd();
+	TR << "init: partners " << partners_ << std::endl;
 	finalize_setup( pose );
+	TR << "finalize: partners " << partners_ << std::endl;
 
 	// starting foldtree
 	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
@@ -540,6 +543,8 @@ MPFindInterfaceMover::init_from_cmd() {
 		partners_ = option[ OptionKeys::docking::partners ]();
 	}
 
+	TR << "init: partners " << partners_ << std::endl;
+
 	// native
 	if ( option[ OptionKeys::in::file::native ].user() ) {
 		core::import_pose::pose_from_pdb( native_, option[ OptionKeys::in::file::native ]() );
@@ -593,30 +598,13 @@ void MPFindInterfaceMover::finalize_setup( Pose & pose ) {
 	///////////////////// SET MEMBRANE TO ROOT ///////////////////////
 
 	// get foldtree from partners (setup_foldtree) and movable jump
-	// we are using this function to add the membrane add the anchor point
+	// we are using this functon to add the membrane add the anchor point
 	// closest to COM
-	setup_foldtree( pose, partners_, jumps_);
-	jump_ = jumps_[1];
-	TR << "jump_ from foldtree: " << jump_ << std::endl;
-
-	// get anchor point for membrane from jump; I think this is residue closest to
-	// COM of the upstream partner
-	int anchor = pose.fold_tree().upstream_jump_residue( jump_ );
-	TR << "anchor point: " << anchor << std::endl;
-
-	// Add Membrane, appends MEM as jump1
-	core::kinematics::FoldTree ft = pose.fold_tree();
-	pose.fold_tree().show( TR );
-	AddMembraneMoverOP add_memb( new AddMembraneMover( anchor, 0 ) );
+	AddMembraneMoverOP add_memb( new AddMembraneMover() );
 	add_memb->apply( pose );
-	pose.fold_tree().show( TR );
-
-	// reorder foldtree to have membrane at root
-	ft.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
-	pose.fold_tree( ft );
-	TR << "reordered foltree: " << std::endl;
-	pose.fold_tree().show( TR );
-	TR << "jump: " << jump_ << std::endl;
+	jump_ = create_membrane_docking_foldtree_from_partners( pose, partners_ );
+	TR << "interface jump_ from foldtree: " << jump_ << std::endl;
+	TR << "membrane jump: " << pose.conformation().membrane_info()->membrane_jump() << std::endl;
 
 	//////////////// TOPOLOGY //////////////////////
 

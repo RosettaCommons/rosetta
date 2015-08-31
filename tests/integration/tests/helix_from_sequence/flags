@@ -1,3 +1,2 @@
 -in:file:fasta inputs/caln_tm.fasta
 -mp:setup:transform_into_membrane 1
--mp:transform:optimize_embedding 1

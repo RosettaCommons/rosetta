@@ -9,10 +9,8 @@
 
 /// @file  protocols/membrane/TransformIntoMembraneMover.hh
 /// @brief  Transform a pose into a membrane coordinate frame
-/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
 /// @author     JKLeman (julia.koehler1982@gmail.com)
-///    CAUTION: THIS MOVER ONLY WORKS FOR A FIXED MEMBRANE WHERE THE
-///    MEMBRANE VIRTUAL RESIDUE IS AT THE ROOT OF THE FOLDTREE!!!
+/// @author  Rebecca Faye Alford (rfalford12@gmail.com)
 /// Last Modified: 6/11/15
 /// #RosettaMPMover
 
@@ -53,8 +51,8 @@ public:
 	/// Constructors  ///
 	/////////////////////
 
-	/// @brief Transform the protein into a default membrane
-	/// @details Transform the protein into default membrane, protein
+	/// @brief Transform the protein into a membrane defined by MEM
+	/// @details Transform the protein into membrane defined by MEM, protein
 	/// embedding computed from structure and spanfile
 	TransformIntoMembraneMover();
 
@@ -65,7 +63,7 @@ public:
 	TransformIntoMembraneMover( core::Size jump );
 
 	/// @brief Transform the protein with a user-specified protein embedding into
-	/// a default membrane
+	/// a default membrane (defined by MEM)
 	/// @details Transform the protein with a user-defined embedding (might have
 	/// been optimized before) into the default membrane
 	TransformIntoMembraneMover( EmbeddingDefOP current_embedding );
@@ -77,7 +75,7 @@ public:
 
 	/// @brief Transform the protein into user-specified membrane coordinates
 	/// @details Transform the protein into a user-defined membrane, protein
-	/// embedding is computed from structure and spanfile
+	/// embedding is given
 	TransformIntoMembraneMover( EmbeddingDefOP current_embedding, Vector new_mem_cntr, Vector new_mem_norm );
 
 	/// @brief Copy Constructor
@@ -112,9 +110,6 @@ public:
 	/// @brief Use the default membrane (cntr 0,0,0 and normal 0,0,1) instead
 	///   of the membrane from the MEM coordinates stored in MembraneInfo
 	void use_default_membrane( bool truefalse );
-
-	/// @brief Optimize the embedding with the highres scorefunction
-	void optimize_embedding( bool truefalse );
 
 	/// @brief Get the name of this Mover (TransformIntoMembraneMover)
 	virtual std::string get_name() const;
@@ -154,9 +149,6 @@ private: // data
 
 	// use default membrane of (center 0,0,0 and normal 0,0,1)
 	bool use_default_membrane_;
-
-	// optimize embedding with the scorefunction
-	bool optimize_embedding_;
 
 	// user-defined membrane
 	bool user_defined_membrane_;

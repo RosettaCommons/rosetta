@@ -104,8 +104,8 @@ public: // test functions
 		// get membrane center and normal
 		core::Vector mem_cntr1 = pose_.conformation().membrane_info()->membrane_center();
 		core::Vector mem_norm1 = pose_.conformation().membrane_info()->membrane_normal();
-		Vector cntr_after(0.0, 0.0, 1.8);
-		Vector norm_after(0.2273, -0.2273, 0.9469);
+		Vector cntr_after(0.0, 0.0, 2.2);
+		Vector norm_after(0.1874, -0.1874, 0.9642);
 
 		// compare after
 		TS_ASSERT( position_equal_within_delta( mem_cntr1, cntr_after, 0.001 ) );

@@ -878,8 +878,12 @@ write_additional_pdb_data(
 
 	// added by rebecca --> Normalized MEM lines. Useful for visualizing the boundaries of
 	// the membrane by coupling the NORM and THK coordinates
-	if ( pose.conformation().is_membrane() &&
-			option[ OptionKeys::mp::output::normalize_to_thk ]() ) {
+	bool normalize_to_thk( true );
+	if ( option[ OptionKeys::mp::output::normalize_to_thk ].user() ) {
+		normalize_to_thk = option[ OptionKeys::mp::output::normalize_to_thk ]();
+	}
+
+	if ( pose.conformation().is_membrane() && normalize_to_thk == true ) {
 
 		// Grab membrane residue & current data
 		core::Size resid( pose.conformation().membrane_info()->membrane_rsd_num() );
@@ -890,10 +894,14 @@ write_additional_pdb_data(
 		// Actually normalize the membrane residue to thk
 		norm.normalize( thkn );
 
+		// MEM normalized to 15 has new chain
+		char curr_chain = pose.pdb_info()->chain( pose.total_residue() );
+		char new_chain = (char)((int) curr_chain + 1);
+
 		// Get rsdid, current chain,
-		out << "HETATM XXXX THKN MEM X" << I(4,resid) << "    " << F(8, 3, thkn) << "   0.000   0.000 \n";
-		out << "HETATM XXXX CNTR MEM X" << I(4,resid) << "    " << F(8, 3, cntr.x()) << F(8, 3, cntr.y()) << F(8, 3, cntr.z()) << "\n";
-		out << "HETATM XXXX NORM MEM X" << I(4,resid) << "    " << F(8, 3, norm.x()) << F(8, 3, norm.y()) << F(8, 3, norm.z()) << "\n";
+		out << "HETATM XXXX THKN MEM " << new_chain << I(4,resid+1) << "    " << F(8, 3, thkn) << "   0.000   0.000 \n";
+		out << "HETATM XXXX CNTR MEM " << new_chain << I(4,resid+1) << "    " << F(8, 3, cntr.x()) << F(8, 3, cntr.y()) << F(8, 3, cntr.z()) << "\n";
+		out << "HETATM XXXX NORM MEM " << new_chain << I(4,resid+1) << "    " << F(8, 3, norm.x()) << F(8, 3, norm.y()) << F(8, 3, norm.z()) << "\n";
 
 		//              HETATM XXXX THKN MEM X  81      15.000   0.000   0.000
 		//    HETATM XXXX CNTR MEM X  81       0.000   0.000   0.000

@@ -8,7 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file    helix_from_sequence.cc
-/// @details last Modified: 7/14/2015
+/// @details Creates a helix pose from the sequence only, works for soluble and
+///    membrane proteins; the latter will be transformed into the membrane
 /// @author  JKLeman (julia.koehler1982@gmail.com)
 
 // App headers
@@ -94,22 +95,6 @@ bool read_membrane() {
 
 ////////////////////////////////////////////////////////////////////////////
 
-// optimize the positionin the membrane using the scorefunction?
-//bool opt_membrane() {
-//
-// bool optimize( false );
-//
-// if ( option[OptionKeys::mp::setup::optimize1].user() ){
-//  optimize = option[OptionKeys::mp::setup::optimize1]();
-//  TR << "Pose embedding in the membrane will be optimized using the membrane scorefunction" <<  std::endl;
-// }
-//
-// return optimize;
-//
-//} // optimize membrane
-
-////////////////////////////////////////////////////////////////////////////
-
 // create an ideal helix from the fasta and dump it
 void helix_from_sequence() {
 
@@ -118,7 +103,6 @@ void helix_from_sequence() {
 
 	// is it a membrane protein?
 	bool mem = read_membrane();
-	// bool opt = opt_membrane();
 
 	// initialize pose
 	core::pose::Pose pose;
@@ -128,8 +112,8 @@ void helix_from_sequence() {
 	make_pose_from_sequence( pose, seq, "fa_standard" );
 	TR << "pose:total_residue: " << pose.total_residue() << std::endl;
 
-	// 2. need to set the PDBInfo object in the pose, because make_pose_from_sequence
-	// doesn't take care of that!
+	// 2. need to set the PDBInfo object in the pose, because
+	// make_pose_from_sequence doesn't take care of that!
 	PDBInfoOP pdbinfo( new PDBInfo( pose ) );
 	pose.pdb_info( pdbinfo );
 
@@ -143,7 +127,7 @@ void helix_from_sequence() {
 	// if a membrane protein: transform helix into membrane:
 	if ( mem == true ) {
 
-		// 1. create topology object
+		// 1. create topology object from first to last residue
 		SpanningTopologyOP topo( new SpanningTopology() );
 		topo->add_span( 1, pose.total_residue() );
 
@@ -151,24 +135,12 @@ void helix_from_sequence() {
 		AddMembraneMoverOP addmem( new AddMembraneMover( topo, 1, 0 ));
 		addmem->apply( pose );
 
-		// 3. optimize membrane position or at least transform into membrane
-		//  if ( opt == true ){
-		//   OptimizeMembranePositionMoverOP opt( new OptimizeMembranePositionMover() );
-		//   opt->apply( pose );
-		//
-		//   // transform into default membrane, keeping embedding relative to membrane
-		//   EmbeddingDefOP embed( pose.conformation().membrane->membrane_info()->center(), pose.conformation.membrane->membrane_info()->normal() );
-		//   TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( embed ) );
-		//   core::Vector center(0, 0, 0);
-		//   core::Vector normal(0, 0, 15);
-		//   TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal, true ) );
-		//   transform->apply( pose );
-		//
-		//  }
-		//  else {
+		// 3. transform into membrane
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
 		transform->apply( pose );
-		//  }
+
+		// TODO: find a way to optimize the embedding
+		//  transform->optimize_embedding( true );
 	}
 
 	// dump PDB

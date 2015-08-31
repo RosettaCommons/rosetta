@@ -99,6 +99,7 @@ public:
 
 	DockJumps & movable_jumps() { return movable_jumps_; }
 	DockJumps const & movable_jumps() const { return movable_jumps_; }
+	void set_movable_jumps( DockJumps movable_jumps ) { movable_jumps_ = movable_jumps; }
 	core::pack::task::TaskFactoryCOP task_factory();
 
 	// protocol functions

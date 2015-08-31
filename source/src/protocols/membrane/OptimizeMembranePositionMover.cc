@@ -10,7 +10,7 @@
 /// @brief      Optimizes the membrane position given the high-res score function
 /// @details Optimizes the membrane position given the smooth high-res score
 ///    function; scans the center along the normal around the initial center
-///    in 0.1A steps; scans the normal in 0.2degree steps along arches
+///    in 0.1A steps; scans the normal in 0.2 degree steps along arches
 ///    over the x-axis, y-axis, xy-direction, -xy-direction; outcome is
 ///    deterministic
 /// @author     JKLeman (julia.koehler1982@gmail.com)
@@ -30,8 +30,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/util.hh>
-#include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 #include <protocols/membrane/SetMembranePositionMover.hh>
+#include <protocols/membrane/TransformIntoMembraneMover.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
@@ -176,29 +176,40 @@ void OptimizeMembranePositionMover::apply( Pose & pose ) {
 	using namespace protocols::membrane;
 	using namespace protocols::membrane::geometry;
 
-	TR << "Optimizing membrane position using scorefunction " << *sfxn_ << std::endl;
+	// transform the pose into the default membrane
+	// this needs to happen first because the membrane center and normal are varied
+	// around the membrane default values - this is much easier code-wise and
+	// mathematically
+	TR << "Start OptimizeMembranePositionMover, transforming into membrane" << std::endl;
+	TR << "WARNING: the membrane information in the MEM residue is lost!!!" << std::endl;
+	core::Vector center( 0, 0, 0 );
+	core::Vector normal( 0, 0, 1 );
+	TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal ) );
+	transform->use_default_membrane( true );
+	transform->apply( pose );
 
-	// remember original foldtree
-	ft_ = pose.fold_tree();
+	// remember foldtree
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
 
-	// reorder foldtree with residue 1 as root of the foldtree
-	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	// if membrane at root, reorder foldtree to have pose TM COM at root
+	if ( is_membrane_fixed( pose ) ) {
+		TR << "Reordering foldtree:" << std::endl;
+		core::Size anchor( create_membrane_foldtree_anchor_pose_tmcom( pose ) );
+		core::kinematics::FoldTree ft = pose.fold_tree();
+		ft.reorder( anchor );
+		pose.fold_tree( ft );
+	}
+
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << is_membrane_fixed( pose ) << std::endl;
 	pose.fold_tree().show( TR );
-	core::kinematics::FoldTree foldtree = pose.fold_tree();
-	foldtree.reorder( 1 );
-	pose.fold_tree( foldtree );
 
-	// show foldtree
-	TR << "foldtree reordered" << std::endl;
-	pose.fold_tree().show(std::cout);
+	TR << "Optimizing membrane position using scorefunction " << sfxn_->get_name() << std::endl;
 
-	// compute initial membrane position from structure
-	MembranePositionFromTopologyMoverOP initmem( new MembranePositionFromTopologyMover( true ) );
-	initmem->apply( pose );
-
-	// show foldtree
-	TR << "foldtree after MembranePositionFromTopologyMover" << std::endl;
-	pose.fold_tree().show(std::cout);
+	// initial score of the pose
+	// final score from center search
+	core::Real initial_score( sfxn_->score( pose ) );
+	TR << "Initial score before search: " << initial_score << std::endl;
 
 	// optimize membrane center
 	optimize_membrane_center( pose );
@@ -206,10 +217,9 @@ void OptimizeMembranePositionMover::apply( Pose & pose ) {
 	// optimize membrane normal
 	optimize_membrane_normal( pose );
 
-	// reset foldtree to original one
-	pose.fold_tree( ft_ );
-	TR << "foldtree reset to original one" << std::endl;
-	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree after reset: Is membrane fixed? " << is_membrane_fixed( pose ) << std::endl;
 	pose.fold_tree().show( TR );
 
 }// apply
@@ -234,7 +244,8 @@ void OptimizeMembranePositionMover::set_defaults() {
 	// create scorefxn
 	sfxn_ = ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
 
-	// starting z and angle and their stepsizes
+	// starting z and angle and their stepsizes, this requires the protein to be
+	// transformed into membrane coordinates first!!!
 	starting_z_ = -10.0;
 	stepsize_z_ = 0.1;
 	stepsize_angle_ = 0.5;
@@ -255,9 +266,6 @@ void OptimizeMembranePositionMover::optimize_membrane_center( Pose & pose ) {
 	// starting membrane center
 	TR << "Optimizing membrane center" << std::endl;
 	TR << "Starting MemInfo center: " << pose.conformation().membrane_info()->membrane_center().to_string() << std::endl;
-
-	// get components of center vector
-	core::Vector center( pose.conformation().membrane_info()->membrane_center() );
 
 	// initialize new center
 	core::Vector new_center;
@@ -299,7 +307,6 @@ void OptimizeMembranePositionMover::optimize_membrane_center( Pose & pose ) {
 
 			best_z_ = new_z;
 			score_best_ = score_new;
-			//   TR << "best center: " << new_center.to_string() << " with score " << score_new << std::endl;
 		}
 
 		// set old score to this one
@@ -340,7 +347,6 @@ void OptimizeMembranePositionMover::optimize_membrane_normal( Pose & pose ) {
 	core::Vector new_normal;
 
 	// score the pose
-	// core::Real score_old = score_best_;
 	core::Real score_new = score_best_;
 
 	// sample an arch over several different axes / directions
@@ -394,11 +400,7 @@ void OptimizeMembranePositionMover::optimize_membrane_normal( Pose & pose ) {
 
 				best_normal_ = new_normal;
 				score_best_ = score_new;
-				//    TR << "best normal: " << best_normal_.to_string() << " with score " << score_best_ << std::endl;
 			}
-
-			// set old score to this one
-			//   score_old = score_new;
 		}
 	}
 

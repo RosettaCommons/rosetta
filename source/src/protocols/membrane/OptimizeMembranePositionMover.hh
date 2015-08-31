@@ -10,7 +10,7 @@
 /// @brief      Optimizes the membrane position given the high-res score function
 /// @details Optimizes the membrane position given the smooth high-res score
 ///    function; scans the center along the normal around the initial center
-///    in 0.1A steps; scans the normal in 0.2degree steps along arches
+///    in 0.1A steps; scans the normal in 0.2 degree steps along arches
 ///    over the x-axis, y-axis, xy-direction, -xy-direction; outcome is
 ///    deterministic
 /// @author     JKLeman (julia.koehler1982@gmail.com)

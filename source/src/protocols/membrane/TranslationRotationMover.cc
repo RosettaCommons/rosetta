@@ -203,35 +203,42 @@ TranslationMover::apply( Pose & pose ) {
 	using namespace core::conformation::membrane;
 	using namespace protocols::membrane::geometry;
 
-	TR << "Translating the pose" << std::endl;
+	// checking input
+	core::Vector zero( 0, 0, 0 );
+	if ( translation_vector_ == zero ) {
+		TR << "WARNING: Old and new centers are identical. Skipping rotation!" << std::endl;
+	} else {
 
-	// starting foldtree
-	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
-	pose.fold_tree().show( TR );
-	core::kinematics::FoldTree orig_ft = pose.fold_tree();
+		TR << "Translating the pose" << std::endl;
 
-	// if pose is membrane pose and jump is undefined, use membrane jump as default
-	if ( jumpnum_ == 0 && pose.conformation().is_membrane() ) {
-		jumpnum_ = pose.conformation().membrane_info()->membrane_jump();
-	} else if ( jumpnum_ == 0 && ! pose.conformation().is_membrane() ) {
-		jumpnum_ = 2;
+		// starting foldtree
+		TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+		pose.fold_tree().show( TR );
+		core::kinematics::FoldTree orig_ft = pose.fold_tree();
+
+		// if pose is membrane pose and jump is undefined, use membrane jump as default
+		if ( jumpnum_ == 0 && pose.conformation().is_membrane() ) {
+			jumpnum_ = pose.conformation().membrane_info()->membrane_jump();
+		} else if ( jumpnum_ == 0 && ! pose.conformation().is_membrane() ) {
+			jumpnum_ = 2;
+		}
+
+		// get upstream stub ( =MEM for fixed membrane or pose for fixed pose )
+		core::kinematics::Stub up_stub = pose.conformation().upstream_jump_stub( jumpnum_ );
+
+		// get length of vector
+		Real length = translation_vector_.length();
+
+		// create jump, translate it along axis
+		core::kinematics::Jump flexible_jump = pose.jump( jumpnum_ );
+		flexible_jump.translation_along_axis( up_stub, translation_vector_, length );
+		pose.set_jump( jumpnum_, flexible_jump );
+
+		// reset foldtree and show final one
+		pose.fold_tree( orig_ft );
+		TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+		pose.fold_tree().show( TR );
 	}
-
-	// get upstream stub ( =MEM for fixed membrane or pose for fixed pose )
-	core::kinematics::Stub up_stub = pose.conformation().upstream_jump_stub( jumpnum_ );
-
-	// get length of vector
-	Real length = translation_vector_.length();
-
-	// create jump, translate it along axis
-	core::kinematics::Jump flexible_jump = pose.jump( jumpnum_ );
-	flexible_jump.translation_along_axis( up_stub, translation_vector_, length );
-	pose.set_jump( jumpnum_, flexible_jump );
-
-	// reset foldtree and show final one
-	pose.fold_tree( orig_ft );
-	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
-	pose.fold_tree().show( TR );
 
 }// apply
 
@@ -406,41 +413,48 @@ RotationMover::apply( Pose & pose ) {
 	using namespace core::conformation::membrane;
 	using namespace protocols::membrane::geometry;
 
-	TR << "Rotating the pose..." << std::endl;
+	// checking input
+	core::Vector diff = new_normal_ - old_normal_;
+	core::Vector zero( 0, 0, 0 );
+	if ( diff == zero ) {
+		TR << "WARNING: Old and new normal are identical. Skipping rotation!" << std::endl;
+	} else {
+		TR << "Rotating the pose..." << std::endl;
 
-	// starting foldtree
-	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
-	pose.fold_tree().show( TR );
-	core::kinematics::FoldTree orig_ft = pose.fold_tree();
+		// starting foldtree
+		TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+		pose.fold_tree().show( TR );
+		core::kinematics::FoldTree orig_ft = pose.fold_tree();
 
-	// normalize the new normal
-	new_normal_.normalize();
+		// normalize the new normal
+		new_normal_.normalize();
 
-	// if pose membrane pose, use membrane jump as default
-	if ( jumpnum_ == 0 && pose.conformation().is_membrane() ) {
-		jumpnum_ = pose.conformation().membrane_info()->membrane_jump();
-	} else if ( jumpnum_ == 0 && ! pose.conformation().is_membrane() ) {
-		jumpnum_ = 2;
+		// if pose membrane pose, use membrane jump as default
+		if ( jumpnum_ == 0 && pose.conformation().is_membrane() ) {
+			jumpnum_ = pose.conformation().membrane_info()->membrane_jump();
+		} else if ( jumpnum_ == 0 && ! pose.conformation().is_membrane() ) {
+			jumpnum_ = 2;
+		}
+
+		// get upstream stub ( =MEM )
+		core::kinematics::Stub up_stub = pose.conformation().upstream_jump_stub( jumpnum_ );
+
+		// get rotation axis = perpendicular of two normals
+		// order of vectors is crucial!
+		Vector rot_axis = cross( old_normal_, new_normal_ );
+
+		// get rotation angle
+		Real angle = numeric::conversions::degrees( angle_of( new_normal_, old_normal_ ) );
+
+		// do the actual rotation
+		rigid::RigidBodyDeterministicSpinMover spinmover = rigid::RigidBodyDeterministicSpinMover( jumpnum_, rot_axis, rot_center_, angle );
+		spinmover.apply( pose );
+
+		// reset foldtree and show final one
+		pose.fold_tree( orig_ft );
+		TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+		pose.fold_tree().show( TR );
 	}
-
-	// get upstream stub ( =MEM )
-	core::kinematics::Stub up_stub = pose.conformation().upstream_jump_stub( jumpnum_ );
-
-	// get rotation axis = perpendicular of two normals
-	// order of vectors is crucial!
-	Vector rot_axis = cross( old_normal_, new_normal_ );
-
-	// get rotation angle
-	Real angle = numeric::conversions::degrees( angle_of( new_normal_, old_normal_ ) );
-
-	// do the actual rotation
-	rigid::RigidBodyDeterministicSpinMover spinmover = rigid::RigidBodyDeterministicSpinMover( jumpnum_, rot_axis, rot_center_, angle );
-	spinmover.apply( pose );
-
-	// reset foldtree and show final one
-	pose.fold_tree( orig_ft );
-	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
-	pose.fold_tree().show( TR );
 
 }// apply
 

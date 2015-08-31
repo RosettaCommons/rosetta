@@ -1081,6 +1081,33 @@ utility::vector1< int > get_chains( core::pose::Pose const & pose ) {
 	return keys;
 }
 
+/// @brief compute last residue number of a chain
+core::Size chain_end_res( Pose const & pose, core::Size const chain ) {
+
+	// check whether chain exists in pose
+	if ( ! has_chain( chain, pose ) ) {
+		TR << "??? Chain should be " << chain << "???" << std::endl;
+		utility_exit_with_message("Cannot get chain end residue for chain that doesn't exist. Quitting");
+	}
+
+	int int_chain = static_cast< int >( chain );
+	int end_res(0);
+	int nres( static_cast< int > ( pose.total_residue() ) );
+
+	// go through residues
+	for ( int i = 1; i <= nres ; ++i ) {
+
+		if ( i == nres && pose.chain(i) == int_chain ) {
+			end_res = nres;
+		} else if ( pose.chain( i ) == int_chain && pose.chain( i+1 ) != int_chain ) {
+			end_res = i;
+		}
+	}
+
+	return static_cast< core::Size >( end_res );
+
+} // chain end residue number
+
 
 /// @brief renumber PDBInfo based on Conformation chains; each chain starts from 1
 /// @param[in,out] pose The Pose to modify.

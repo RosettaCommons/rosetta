@@ -68,7 +68,7 @@ using namespace protocols::membrane::geometry;
 
 /// @brief   Default Constructor
 /// @details  Gets the embeddings from the pose and topology
-VisualizeEmbeddingMover::VisualizeEmbeddingMover() : embeddings_() {
+VisualizeEmbeddingMover::VisualizeEmbeddingMover() : embeddings_( new Embedding() ) {
 	register_options();
 }
 
@@ -169,7 +169,7 @@ VisualizeEmbeddingMover::apply( Pose & pose ) {
 			EmbeddingOP emb( new Embedding( topo, pose ) );
 			embeddings_ = emb;
 		}
-		embeddings_->show();
+		embeddings_->show( TR );
 
 		// create empty object to push embedding residues back into
 		utility::vector1< ResidueOP > embedding_residues;

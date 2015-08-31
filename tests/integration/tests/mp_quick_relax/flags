@@ -1,5 +1,5 @@
 -in:file:s inputs/1AFO_AB.pdb
 -in:file:native inputs/1AFO_AB.pdb
 -mp:setup:spanfiles inputs/1AFO_AB.span
--mp:quickrelax:angle_max 2 \
--mp:quickrelax:nmoves nres \
+-mp:quickrelax:angle_max 2
+-mp:quickrelax:nmoves nres

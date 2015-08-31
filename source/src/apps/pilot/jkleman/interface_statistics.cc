@@ -37,6 +37,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 // Package Headers
 #include <core/scoring/sasa/SasaCalc.hh>
@@ -49,11 +50,16 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
+// External
+#include <ObjexxFCL/format.hh>
+
 // Utility Headers
 #include <utility/vector1.hh>
-#include <core/pose/util.hh>
 #include <utility/string_util.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/sasa/util.hh>
+#include <protocols/docking/util.hh>
+#include <protocols/membrane/util.hh>
 
 
 static basic::Tracer TR( "apps.pilot.jkleman.interface_statistics" );
@@ -74,7 +80,7 @@ public:
 	////////////////////
 
 	/// @brief Construct a Default Membrane Position Mover
-	MPInterfaceStatistics( Size jump );
+	MPInterfaceStatistics( Size jump = 0 );
 
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
@@ -128,31 +134,31 @@ private: // methods
 	/// @brief Get size of the interface
 	Real get_size( Pose & pose );
 
-	/// @brief Get charges for all states
+	/// @brief Get charge for all states
 	utility::vector1< SSize > get_charge( Pose & pose );
 
-	/// @brief Get charges for all states
+	/// @brief Get avg charge for all states
 	utility::vector1< Real > get_avg_charge( Pose & pose );
 
 	/// @brief Get number of charged residues for all states
 	utility::vector1< Size > get_number_charges( Pose & pose );
 
-	/// @brief Get number of charged residues for all states
+	/// @brief Get avg number of charged residues for all states
 	utility::vector1< Real > get_avg_number_charges( Pose & pose );
 
 	/// @brief Get hydrophobicity for all states (UHS, Koehler & Meiler, Proteins, 2008)
 	utility::vector1< Real > get_hydrophobicity( Pose & pose );
 
-	/// @brief Get average hydrophobicity for all states (UHS, Koehler & Meiler, Proteins, 2008)
+	/// @brief Get avg hydrophobicity for all states (UHS, Koehler & Meiler, Proteins, 2008)
 	utility::vector1< Real > get_avg_hydrophobicity( Pose & pose );
 
-	/// @brief Get number of contacts
+	/// @brief Get number of residues in each state, this is what we are normalizing with
 	utility::vector1< Size > get_number_of_residues( Pose & pose );
 
 	/// @brief Get surface complementarity
 	Real get_surface_complementarity( Pose & pose );
 
-	/// @brief Get size of residues for all states
+	/// @brief Get avg residue size (in number of atoms) for all states
 	utility::vector1< Real > get_residue_size( Pose & pose );
 
 	/// @brief Get number of Hbonds across interface
@@ -164,8 +170,17 @@ private: // methods
 	/// @brief Get in/out orientation
 	Real get_inout_orientation( Pose & pose );
 
+	/// @brief Get AA statistics
+	/// @details These are counts, outer vector is over 6 bins, inner vector
+	///   over 20 AAs
+	utility::vector1< utility::vector1< Size > > get_aa_statistics( Pose & pose );
+
 	/// @brief Add output to scorefile
 	void add_to_scorefile( Pose & pose );
+
+	/// @brief Print amino acid statistics
+	/// @details Doesn't print to scorefile, too many columns; prints to out
+	void print_aa_statistics( Pose & pose );
 
 	/// @brief fill vectors with data
 	void fill_vectors_with_data( Pose & pose );
@@ -181,11 +196,14 @@ private: // data
 	/// @brief Partners;
 	std::string partners_;
 
+	/// @brief Membrane protein?
+	bool membrane_;
+
+	/// @brief scorefunction
+	core::scoring::ScoreFunctionOP sfxn_;
+
 	/// @brief Are residues in the membrane?
 	utility::vector1< bool > in_mem_;
-
-	// /// @brief What is the charge of the residues?
-	// utility::vector1< bool > charge_;
 
 	/// @brief Are the residues in the interface?
 	utility::vector1< bool > intf_;
@@ -205,7 +223,12 @@ MPInterfaceStatistics::MPInterfaceStatistics( Size jump ) :
 	Mover(),
 	jump_( jump ),
 	interface_(),
-	partners_()
+	partners_(),
+	membrane_(),
+	sfxn_(),
+	in_mem_(),
+	intf_(),
+	exposed_()
 {}
 
 /// @brief Copy Constructor
@@ -214,7 +237,12 @@ MPInterfaceStatistics::MPInterfaceStatistics( MPInterfaceStatistics const & src 
 	Mover( src ),
 	jump_( src.jump_ ),
 	interface_( src.interface_ ),
-	partners_( src.partners_ )
+	partners_( src.partners_ ),
+	membrane_( src.membrane_ ),
+	sfxn_( src.sfxn_ ),
+	in_mem_( src.in_mem_ ),
+	intf_( src.intf_ ),
+	exposed_( src.exposed_ )
 {}
 
 /// @brief Assignment Operator
@@ -248,24 +276,51 @@ MPInterfaceStatistics::get_name() const {
 void MPInterfaceStatistics::apply( Pose & pose ) {
 
 	using namespace protocols::membrane;
+	using namespace protocols::docking;
 
 	TR << "Calling MPInterfaceStatistics" << std::endl;
 
 	register_options();
 	init_from_cmd();
 
-	// add membrane
-	AddMembraneMoverOP addmem( new AddMembraneMover() );
-	addmem->apply( pose );
+	// if membrane protein
+	if ( membrane_ == true ) {
 
-	// Check the pose is a membrane protein
-	if ( ! pose.conformation().is_membrane() ) {
-		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
+		// add membrane
+		AddMembraneMoverOP addmem( new AddMembraneMover() );
+		addmem->apply( pose );
+
+		// create scorefunction and score the pose
+		// this isn't really the main objective of the application, but if we are
+		// writing a scorefile anyway, we might as well...
+		sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
+
+		// get jump from partners
+		if ( jump_ == 0 ) {
+
+			// get foldtree from partners (setup_foldtree) and movable jump
+			// foldtree will have jump from 1st partner COM to 2nd partner COM
+			jump_ = create_membrane_docking_foldtree_from_partners( pose, partners_ );
+			TR << "membrane interface jump_ from foldtree: " << jump_ << std::endl;
+		}
+	} else {
+		// create scorefunction and score the pose
+		// this isn't really the main objective of the application, but if we are
+		// writing a scorefile anyway, we might as well...
+		sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "talaris2014.wts" );
+
+		// get jump from partners
+		if ( jump_ == 0 ) {
+
+			// set up soluble foldtree and get interface jump
+			utility::vector1< int > jumps;
+			setup_foldtree( pose, partners_, jumps );
+			jump_ = jumps[1];
+			TR << "soluble protein interface jump_ from foldtree: " << jump_ << std::endl;
+		}
 	}
 
-	// create scorefunction and score the pose
-	core::scoring::ScoreFunctionOP highres_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
-	( *highres_sfxn )( pose );
+	( *sfxn_ )( pose );
 
 	// calculate interface
 	interface_ = Interface( jump_ );
@@ -276,6 +331,9 @@ void MPInterfaceStatistics::apply( Pose & pose ) {
 
 	// add measures to scorefile
 	add_to_scorefile( pose );
+
+	// print AA statistics
+	print_aa_statistics( pose );
 
 	// other ideas:
 	// Compute a ruggedness factor of the interface???
@@ -288,6 +346,7 @@ void MPInterfaceStatistics::apply( Pose & pose ) {
 void MPInterfaceStatistics::register_options() {
 
 	using namespace basic::options;
+	option.add_relevant( OptionKeys::mp::setup::spanfiles );
 	option.add_relevant( OptionKeys::docking::partners );
 
 } // register options
@@ -297,10 +356,19 @@ void MPInterfaceStatistics::init_from_cmd() {
 
 	using namespace basic::options;
 
+	membrane_ = false;
+
 	// docking partners
 	if ( option[ OptionKeys::docking::partners ].user() ) {
 		partners_ = option[ OptionKeys::docking::partners ]();
 	}
+
+	// membrane protein?
+	// docking partners
+	if ( option[ OptionKeys::mp::setup::spanfiles ].user() ) {
+		membrane_ = true;
+	}
+
 } // init from commandline
 
 /////////////////////////////////
@@ -656,7 +724,7 @@ utility::vector1< Real > MPInterfaceStatistics::get_avg_hydrophobicity( Pose & p
 //////////////////////////////////////////////////////////////////////
 
 
-/// @brief Get number of residues in each bin
+/// @brief Get number of residues in each bin, this is what we are normalizing by
 utility::vector1< Size > MPInterfaceStatistics::get_number_of_residues( Pose & pose ) {
 
 	Size tm_int( 0 );
@@ -880,6 +948,92 @@ Real MPInterfaceStatistics::get_inout_orientation( Pose & pose ) {
 
 //////////////////////////////////////////////////////////////////////
 
+/// @brief Get AA statistics
+/// @details These are counts, outer vector is over 6 bins, inner vector
+///   over 20 AAs
+utility::vector1< utility::vector1< Size > >
+MPInterfaceStatistics::get_aa_statistics( Pose & pose ) {
+
+	// initialize vectors with 20 zeros
+	utility::vector1< Size > tm_int( 20, 0 );
+	utility::vector1< Size > tm_nonint( 20, 0 );
+	utility::vector1< Size > tm_core( 20, 0 );
+	utility::vector1< Size > sol_int( 20, 0 );
+	utility::vector1< Size > sol_nonint( 20, 0 );
+	utility::vector1< Size > sol_core( 20, 0 );
+
+	// create a max of the amino acids and it's index in the vector
+	std::map< char, Size > aa_index;
+
+	// polar
+	aa_index[ 'C' ] = 1;
+	aa_index[ 'N' ] = 2;
+	aa_index[ 'Q' ] = 3;
+	aa_index[ 'S' ] = 4;
+	aa_index[ 'T' ] = 5;
+
+	// charged
+	aa_index[ 'D' ] = 6;
+	aa_index[ 'E' ] = 7;
+	aa_index[ 'K' ] = 8;
+	aa_index[ 'R' ] = 9;
+
+	// hydrophobic
+	aa_index[ 'A' ] = 10;
+	aa_index[ 'G' ] = 11;
+	aa_index[ 'I' ] = 12;
+	aa_index[ 'L' ] = 13;
+	aa_index[ 'M' ] = 14;
+	aa_index[ 'P' ] = 15;
+	aa_index[ 'V' ] = 16;
+
+	// aromatic
+	aa_index[ 'F' ] = 17;
+	aa_index[ 'H' ] = 18;
+	aa_index[ 'W' ] = 19;
+	aa_index[ 'Y' ] = 20;
+
+	// go through residues
+	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
+
+		// increase counter at the correct place
+		if ( exposed_[i] && intf_[i] && in_mem_[i] ) {
+			tm_int[ aa_index[ pose.residue( i ).name1() ] ] += 1;
+		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] ) {
+			// interface, sol
+			sol_int[ aa_index[ pose.residue( i ).name1() ] ] += 1;
+		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] ) {
+			// not interface, mem
+			tm_nonint[ aa_index[ pose.residue( i ).name1() ] ] += 1;
+		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] ) {
+			// not interface, sol
+			sol_nonint[ aa_index[ pose.residue( i ).name1() ] ] += 1;
+		} else if ( !exposed_[i] && in_mem_[i] ) {
+			// core, mem
+			tm_core[ aa_index[ pose.residue( i ).name1() ] ] += 1;
+		} else if ( !exposed_[i] && !in_mem_[i] ) {
+			// core, sol
+			sol_core[ aa_index[ pose.residue( i ).name1() ] ] += 1;
+		}
+	}
+
+	// define overall vector
+	utility::vector1< utility::vector1< Size > > aa_stats;
+
+	// write counts into vector
+	aa_stats.push_back( tm_int );
+	aa_stats.push_back( tm_nonint );
+	aa_stats.push_back( tm_core );
+	aa_stats.push_back( sol_int );
+	aa_stats.push_back( sol_nonint );
+	aa_stats.push_back( sol_core );
+
+	return aa_stats;
+
+} // get AA statistics
+
+//////////////////////////////////////////////////////////////////////
+
 /// @brief Add output to scorefile
 void MPInterfaceStatistics::add_to_scorefile( Pose & pose ) {
 
@@ -1033,6 +1187,36 @@ void MPInterfaceStatistics::add_to_scorefile( Pose & pose ) {
 
 } // add_to_scorefile
 
+/// @brief Print amino acid statistics
+/// @details Doesn't print to scorefile, too many columns; prints to out
+void MPInterfaceStatistics::print_aa_statistics( Pose & pose ) {
+
+	using namespace ObjexxFCL::format;
+
+	// get statistics
+	utility::vector1< utility::vector1< Size > > aa_cnts = get_aa_statistics( pose );
+
+	TR << ">region      C    N    Q    S    T    D    E    K    R    A    G    I    L    M    P    V    F    H    W    Y" << std::endl;
+
+	// iterate over regions
+	for ( Size i = 1; i <= aa_cnts.size(); ++i ) {
+
+		// print regions
+		i == 1 ? TR << ">tm-int  " :
+			i == 2 ? TR << ">tm-nint " :
+			i == 3 ? TR << ">tm-core " :
+			i == 4 ? TR << ">so-int  " :
+			i == 5 ? TR << ">so-nint " : TR << ">so-core ";
+
+		// iterate over amino acids
+		for ( Size aa = 1; aa <= aa_cnts[i].size(); ++aa ) {
+			TR << I( 5, aa_cnts[ i ][ aa ] );
+		}
+		TR << std::endl;
+	}
+
+} // print AA statistics
+
 /// @brief Fill vectors with data
 void MPInterfaceStatistics::fill_vectors_with_data( Pose & pose ) {
 
@@ -1045,7 +1229,11 @@ void MPInterfaceStatistics::fill_vectors_with_data( Pose & pose ) {
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
 
 		// is residue in the membrane?
-		bool in_mem = pose.conformation().membrane_info()->in_membrane( i );
+		// default for soluble proteins, special for membrane protein
+		bool in_mem( false );
+		if ( membrane_ == true ) {
+			in_mem = pose.conformation().membrane_info()->in_membrane( i );
+		}
 		in_mem_.push_back( in_mem );
 
 		// is the residue in the interface?
@@ -1073,7 +1261,7 @@ main( int argc, char * argv [] )
 		// initialize options, RNG, and factory-registrators
 		devel::init(argc, argv);
 
-		MPInterfaceStatisticsOP mpis( new MPInterfaceStatistics( 1 ) );
+		MPInterfaceStatisticsOP mpis( new MPInterfaceStatistics() );
 		JobDistributor::get_instance()->go(mpis);
 	}
 catch ( utility::excn::EXCN_Base const & e ) {

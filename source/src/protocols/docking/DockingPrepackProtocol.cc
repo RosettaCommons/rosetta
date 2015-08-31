@@ -169,14 +169,34 @@ void DockingPrepackProtocol::setup_pack_operation_movers()
 }
 
 void DockingPrepackProtocol::finalize_setup( pose::Pose & pose ) {
-	// Robin Notes!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// setup_foldtree asserts movable jumps to be atleast 1
-	// I am not sure how the partner flag & movable_jumps communicate
-	// What if the the partner flag is A_B_C and movable jumps is 1
-	/// May need to write a method to change the number of movable
-	// jumps based on the partner flag!!!!
-	// Possible breaking of code, needs to get changed later
-	docking::setup_foldtree( pose, partners(), movable_jumps() );
+
+	// create a membrane protein from the pose
+	if ( membrane_ ) {
+		membrane::AddMembraneMoverOP add_mem( new membrane::AddMembraneMover() );
+		add_mem->apply( pose );
+
+		// set the foldtree for membrane proteins
+		core::Size dock_jump = create_membrane_docking_foldtree_from_partners( pose, partners() );
+
+		// set DockJumps in DockingHighres protocol
+		DockJumps dock_jumps;
+		dock_jumps.push_back( static_cast< int >( dock_jump ) );
+		set_movable_jumps( dock_jumps );
+
+		// get correct scorefunction for membrane proteins and set it in the parent class
+		core::scoring::ScoreFunctionOP mem_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
+		set_scorefxn( mem_sfxn );
+	} else {
+
+		// Robin Notes!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// setup_foldtree asserts movable jumps to be atleast 1
+		// I am not sure how the partner flag & movable_jumps communicate
+		// What if the the partner flag is A_B_C and movable jumps is 1
+		/// May need to write a method to change the number of movable
+		// jumps based on the partner flag!!!!
+		// Possible breaking of code, needs to get changed later
+		docking::setup_foldtree( pose, partners(), movable_jumps() );
+	}
 	tf2()->set_prepack_only(true);
 	tf2()->create_and_attach_task_factory( this, pose );
 	setup_pack_operation_movers();
@@ -184,18 +204,7 @@ void DockingPrepackProtocol::finalize_setup( pose::Pose & pose ) {
 
 void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 {
-	// create a membrane protein from the pose
-	if ( membrane_ ) {
-		membrane::AddMembraneMoverOP add_mem( new membrane::AddMembraneMover() );
-		add_mem->apply( pose );
-
-		// get correct scorefunction for membrane proteins and set it in the parent class
-		core::scoring::ScoreFunctionOP mem_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
-		set_scorefxn( mem_sfxn );
-	}
-
 	finalize_setup(pose);
-
 	score_and_output("initial",pose);
 
 	//Move each partners away from the others

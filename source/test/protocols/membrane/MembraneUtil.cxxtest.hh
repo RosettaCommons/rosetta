@@ -577,7 +577,6 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( embed7->center(), center7, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( embed7->normal(), normal7, 0.001 ) );
 
-
 	}
 
 	// compute_structure_based_embedding
@@ -1094,6 +1093,116 @@ public: // test functions
 		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 4 ), 491 );
 
 	} // create membrane foldtree anchor TM COM
+
+	// pose TM COM
+	void test_pose_tm_COM() {
+
+		TS_TRACE("=========Test pose TM center-of-mass");
+		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+
+		// call AddMembraneMover for spanfile
+		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
+		addmem->apply(pose);
+
+		// call test function
+		core::Vector pose_tm_com_shouldbe( -0.429458, 0.476042, -1.84529 );
+		core::Vector pose_tm_com_is( pose_tm_com( pose ) );
+
+		// test
+		position_equal_within_delta( pose_tm_com_is, pose_tm_com_shouldbe , 0.001 );
+
+	} // pose TM COM
+
+	// residue closest to pose TM COM
+	void test_rsd_closest_pose_tm_COM() {
+
+		TS_TRACE("=========Test residue closest to pose TM center-of-mass");
+		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+
+		// call AddMembraneMover for spanfile
+		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
+		addmem->apply(pose);
+
+		// test
+		TS_ASSERT_EQUALS( rsd_closest_to_pose_tm_com( pose ), 54 );
+
+	} // rsd closest to pose TM COM
+
+	// create membrane foldtree anchor TM COM with root anchor at pose TM COM
+	void test_create_membrane_foldtree_anchor_pose_tmcom() {
+
+		TS_TRACE("=========Test create membrane foldtree anchor at TM center-of-mass and pose TM COM");
+		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+
+		// call AddMembraneMover for spanfile
+		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
+		addmem->apply(pose);
+
+		// create foldtree
+		create_membrane_foldtree_anchor_pose_tmcom( pose );
+
+		// test
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 1 ), 557 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 1 ), 54 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 2 ), 54 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 2 ), 158 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 3 ), 54 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 3 ), 352 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 4 ), 54 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 4 ), 491 );
+
+	} // create membrane foldtree anchor TM COM
+
+
+	// create membrane foldtree anchor TM COM with root anchor at pose TM COM
+	void test_create_membrane_docking_foldtree_from_partners() {
+
+		TS_TRACE("=========Test create membrane docking foldtree from partners");
+		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+
+		// call AddMembraneMover for spanfile
+		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
+		addmem->apply(pose);
+
+		// create foldtree
+		core::Size i_jump = create_membrane_docking_foldtree_from_partners( pose, "KL_MN" );
+
+		// test
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 1 ), 557 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 1 ), 19 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 2 ), 19 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 2 ), 158 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 3 ), 352 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 3 ), 491 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 4 ), 19 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 4 ), 352 );
+		TS_ASSERT_EQUALS( i_jump, 4 );
+
+	} // create membrane docking foldtree from partners
 
 private:
 

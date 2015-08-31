@@ -1,0 +1,3 @@
+-in:file:s inputs/3EFF_TR.pdb
+-mp:setup:spanfiles inputs/3EFF_TR.span
+-mp::visualize::embedding 1

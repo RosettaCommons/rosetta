@@ -1,3 +1,2 @@
 -in:file:s inputs/1C3W_TR_A.pdb
 -mp:setup:spanfiles inputs/1C3W_A.span
--mp:output:normalize_to_thk

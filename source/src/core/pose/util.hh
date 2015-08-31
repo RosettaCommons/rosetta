@@ -269,6 +269,9 @@ std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose );
 /// @brief Get all the chains from conformation
 utility::vector1< int > get_chains( core::pose::Pose const & pose );
 
+/// @brief compute last residue number of a chain
+core::Size chain_end_res( Pose const & pose, core::Size const chain );
+
 /// @brief renumber PDBInfo based on Conformation chains; each chain starts from 1
 /// @param[in,out] pose The Pose to modify.
 /// @param[in] fix_chains If true, the procedure will attempt to fix any empty record

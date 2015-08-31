@@ -245,6 +245,7 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 	// find membrane position around the protein
 	if ( mem_from_topo_ ) {
 		MembranePositionFromTopologyMoverOP mempos( new MembranePositionFromTopologyMover() );
+		mempos->anchor_at_res1( false );
 		mempos->apply( pose );
 	}
 

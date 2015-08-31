@@ -42,16 +42,12 @@ cd %(workdir)s
 # in this directory too:
 #
 
-### UNCOMMENT THE LINES BETWEEN THE ### TO RE-ENABLE THIS TEST ~BDW
+[ -x %(bin)s/docking_prepack_protocol.%(binext)s ] || exit 1
+%(bin)s/docking_prepack_protocol.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log
 
-#[ -x %(bin)s/docking_prepack_protocol.%(binext)s ] || exit 1
-#%(bin)s/docking_prepack_protocol.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
-#    | egrep -vf ../../ignore_list \
-#    > log
-
-#test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
-
-### 
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 #
 # Or if you don't care whether the logging output changes:

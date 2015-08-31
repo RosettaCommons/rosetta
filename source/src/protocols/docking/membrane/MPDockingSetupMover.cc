@@ -325,7 +325,9 @@ void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector cent
 		// transform pose into membrane and optimize embedding beforehand
 		TR << "Transforming partner " << partner << " into the membrane, keeping the relation between optimized embedding and membrane." << std::endl;
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal ) );
-		transform->optimize_embedding( true );
+
+		// TODO: find way to optimize embedding here!!!
+		//  transform->optimize_embedding( true );
 		transform->apply( pose );
 
 	} else if ( ( ( optimize1_ == false ) && ( partner == 1 ) ) || ( ( optimize2_ == false ) && ( partner == 2 ) ) ) {
@@ -334,7 +336,9 @@ void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector cent
 
 		// transform pose into membrane, true for keep current embedding-membrane relation
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal ) );
-		transform->optimize_embedding( false );
+
+		// TODO: find way to optimize embedding here!!!
+		//  transform->optimize_embedding( false );
 		transform->apply( pose );
 
 		// tilt pose slightly with random flip angle, default jump is membrane jump
