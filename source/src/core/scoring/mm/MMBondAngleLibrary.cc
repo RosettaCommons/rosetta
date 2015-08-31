@@ -184,14 +184,10 @@ MMBondAngleLibrary::lookup (
 
 	TR << "No parameters for " << (*mm_atom_set)[atom1].name() << "-" << (*mm_atom_set)[atom2].name() << "-"
 		<< (*mm_atom_set)[atom3].name() << std::endl;
-	//return fully_assigned_mm_bondangle_library_.equal_range(
-	//  mm_bondangle_atom_tri( virt_atom_type, virt_atom_type, virt_atom_type ));
-	if ( ! basic::options::option[ basic::options::OptionKeys::MM::ignore_missing_bondangle_params ]() ) {
-		utility_exit_with_message("COULD NOT FIND BOND ANGLE PARAMS FOR " +
-			boost::lexical_cast<std::string>(atom1) + " " +
-			boost::lexical_cast<std::string>(atom2) + " " +
-			boost::lexical_cast<std::string>(atom3) );
-	}
+	utility_exit_with_message("COULD NOT FIND BOND ANGLE PARAMS FOR " +
+		boost::lexical_cast<std::string>(atom1) + " " +
+		boost::lexical_cast<std::string>(atom2) + " " +
+		boost::lexical_cast<std::string>(atom3) );
 
 	return mm_bondangle_library_citer_pair();  //< meaningless, just for removing gcc warning.
 }

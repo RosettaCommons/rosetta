@@ -918,7 +918,7 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 	// so I think maybe I should delete and re-add them to a residue?
 
 	//tr << "In chiralflipatoms apply " << std::endl;
-	
+
 	// Flip each
 	//rsd.debug_dump_icoor();
 	rsd.delete_property( "L_AA" );
@@ -929,7 +929,7 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 		//pretty_print_atomicoor(std::cout, rsd.icoor( ii ), rsd );
 
 		AtomICoor icoor1 = rsd.icoor( ii );
-		
+
 		std::string n1 = icoor1.stub_atom1().is_polymer_upper() ? "UPPER" :
 			( icoor1.stub_atom1().is_polymer_lower() ? "LOWER" :
 			( icoor1.stub_atom1().atomno() == 0 ? " N  " : rsd.atom( icoor1.stub_atom1().atomno() ).name() ) );
@@ -951,7 +951,7 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 
 	rsd.finalize();
 	rsd.fill_ideal_xyz_from_icoor();
-	
+
 	rsd.finalize();
 	//rsd.debug_dump_icoor();
 	// AMW: The unpatched type does not typically set these because they are unneeded

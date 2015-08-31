@@ -591,6 +591,8 @@ CT1  CT1  C      52.000   108.0000 ! ALLOW   ALI PEP POL ARO
                 ! Alanine Dipeptide ab initio calc's (LK)
 CT1  CT1  CC     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
                 ! adm jr. 4/05/91, for asn,asp,gln,glu and cters
+CA   CT1  CC     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
+                ! Copied from CT1-CT1-CC, VKM, 27 Aug. 2015 
 CT1  CT1  CT1   53.350    111.00    8.00   2.56100 ! ALLOW ALI
                 ! alkane update, adm jr., 3/2/92
 CT1  CT2  CA     51.800   107.5000 ! ALLOW   ALI ARO
@@ -605,6 +607,8 @@ CT1  CT2  CT1   58.350    113.50   11.16   2.56100 ! ALLOW   ALI
                 ! alkane frequencies (MJF), alkane geometries (SF)
 CT1  NH1  C      50.000   120.0000 ! ALLOW   ALI PEP POL ARO
                 ! NMA Vib Modes (LK)
+CT1  CA   CA     45.800   122.3000 ! ALLOW   ALI ARO
+                ! Copied from CT2-CA-CA, VKM, 27 Aug. 2015 
 CT2  CA   CA     45.800   122.3000 ! ALLOW   ALI ARO
                 ! PARALLH19 (JES)
 CT2  CPB  CPA    65.000   126.7400 ! ALLOW HEM
@@ -661,6 +665,8 @@ CT3  CT1  CT1   53.350    108.50    8.00   2.56100 ! ALLOW   ALI
                 ! alkane update, adm jr., 3/2/92
 CT3  CT1  CT2   53.350    114.00    8.00   2.56100 ! ALLOW   ALI
                 ! alkane update, adm jr., 3/2/92
+CT3  CT1  CA    53.350    114.00    8.00   2.56100 ! ALLOW   ALI
+                ! Copied from CT3-CT1-CT2, VKM, 27 Aug. 2015
 CT3  CT1  CT3   53.350    114.00    8.00   2.56100 ! ALLOW   ALI
                 ! alkane update, adm jr., 3/2/92
 CT3  CT2  CA     51.800   107.5000 ! ALLOW   ALI ARO
@@ -681,6 +687,8 @@ CT3  OS   CD    40.000    109.60   30.00   2.26510 ! ALLOW  POL PEP
                 ! adm jr. 5/02/91, acetic acid pure solvent
 CT3  S    CT2    34.000    95.0000 ! ALLOW   ALI SUL ION
                 ! expt. MeEtS,    3/26/92 (FL)
+CC   S    CT2    34.000    95.0000 ! ALLOW   ALI SUL ION
+                ! Copied from CT3-S-CT2, VKM 27 Aug 2015.
 CY   CPT  CA    160.000   130.6000 ! ALLOW   ARO
                 !adm jr., 12/30/91, for jwk
 CY   CPT  CPT   110.000   107.4000 ! ALLOW   ARO
@@ -721,6 +729,8 @@ H    NY   CPT    28.000   126.0000 ! ALLOW   ARO
                 !adm jr., 12/30/91, for jwk
 H    OH1  CA     65.000   108.0000 ! ALLOW   ALC ARO
                 ! JES 8/25/89 phenol
+CC   OH1  CA     65.000   108.0000 ! ALLOW   ALC ARO
+                ! Copied from H-OH1-CA, VKM, 27 Aug. 2015.  BE VERY SUSPICIOUS OF THIS.  Only makes sense in weird EnzDes context. 
 H    OH1  CD     55.000   115.0000 ! ALLOW   ALC ARO PEP POL
                 ! adm jr. 5/02/91, acetic acid pure solvent
 H    OH1  CT1    57.500   106.0000 ! ALLOW   ALC ARO ALI
@@ -767,6 +777,8 @@ HA   CT1  CD    33.000    109.50   30.00   2.16300 ! ALLOW   ALI PEP POL ARO
                 ! adm jr. 5/02/91, acetic acid pure solvent
 HA   CT1  CT1   34.500    110.10   22.53   2.17900 ! ALLOW   ALI
                 ! alkane update, adm jr., 3/2/92
+HA   CT1  CA    34.500    110.10   22.53   2.17900 ! ALLOW   ALI
+                ! Copied from HA-CT1-CT1, VKM, 27 Aug 2015. 
 HA   CT1  CT2   34.500    110.10   22.53   2.17900 ! ALLOW   ALI
                 ! alkane update, adm jr., 3/2/92
 HA   CT1  CT3   34.500    110.10   22.53   2.17900 ! ALLOW   ALI
@@ -853,6 +865,8 @@ HB   CT1  C      50.000   109.5000 ! ALLOW  PEP
                 ! Alanine Dipeptide ab initio calc's (LK)
 HB   CT1  CC     50.000   109.5000 ! ALLOW  PEP POL
                 ! adm jr. 4/05/91, for asn,asp,gln,glu and cters
+HA   CT1  CC     50.000   109.5000 ! ALLOW  PEP POL
+                ! Copied from HB-CT1-CC, VKM, 27 Aug. 2015 
 HB   CT1  CD     50.000   109.5000 ! ALLOW  PEP POL
                 ! adm jr. 5/02/91, acetic acid pure solvent
 HB   CT1  CT1    35.000   111.0000 ! ALLOW  PEP
@@ -915,6 +929,8 @@ HR3  CPH1 CPH1  25.000    130.00   20.00   2.20000 ! ALLOW ARO
                 ! adm jr., 3/24/92, maintain old aliphatic H VDW params
 HS   S    CT2    38.800    95.0000 ! ALLOW   SUL ION ALI
                 ! methanethiol pure solvent, adm jr., 6/22/92
+HS   S    CC     38.800    95.0000 ! ALLOW   SUL ION ALI
+                ! Copied from HS-S-CT2, VKM, 27 Aug 2015.
 HS   S    CT3    43.000    95.0000 ! ALLOW   SUL ION ALI
                 ! methanethiol pure solvent, adm jr., 6/22/92
 HT   OT   HT     55.000   104.5200 ! ALLOW WAT
@@ -1117,6 +1133,16 @@ O    CC   CP1    80.000   118.0000 ! ALLOW ALI PEP POL ARO PRO
                 ! 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
 O    CC   CT1   15.000    121.00   50.00   2.44000 ! ALLOW   ALI PEP POL ARO
                 ! adm jr. 4/10/91, acetamide update
+OH1  CC   CT1   15.000    121.00   50.00   2.44000 ! ALLOW   ALI PEP POL ARO
+                ! Copied from O-CC-CT1.  BE SUSPICIOUS OF THIS.  VKM, 27 Aug 2015.
+OH1  CC   OC    15.000    121.00   50.00   2.44000 ! ALLOW   ALI PEP POL ARO
+                ! Copied from O-CC-CT1.  BE SUSPICIOUS OF THIS.  VKM, 27 Aug 2015.
+S    CC   CT1   15.000    121.00   50.00   2.44000 ! ALLOW   ALI PEP POL ARO
+                ! Copied from O-CC-CT1.  BE SUSPICIOUS OF THIS.  VKM, 27 Aug 2015.
+S    CC   OH1   15.000    121.00   50.00   2.44000 ! ALLOW   ALI PEP POL ARO
+                ! Copied from O-CC-CT1.  BE SUSPICIOUS OF THIS.  VKM, 27 Aug 2015.
+S    CC   OC    15.000    121.00   50.00   2.44000 ! ALLOW   ALI PEP POL ARO
+                ! Copied from O-CC-CT1.  BE SUSPICIOUS OF THIS.  VKM, 27 Aug 2015.
 O    CC   CT2   15.000    121.00   50.00   2.44000 ! ALLOW   ALI PEP POL ARO
                 ! adm jr. 4/10/91, acetamide update
 O    CC   CT3   15.000    121.00   50.00   2.44000 ! ALLOW   ALI PEP POL ARO

@@ -355,19 +355,19 @@ fill_ideal_xyz_from_icoor(
 		ICoorAtomID parent_stub( icoor.stub_atom(1) ), angle_stub( icoor.stub_atom(2) ), torsion_stub( icoor.stub_atom(3) );
 		/*
 		if ( parent_stub.atomno() == 0 ) {
-			TR << "U/L ";
+		TR << "U/L ";
 		} else {
-			TR << restype.atom_name( parent_stub.atomno() ) << " ";
+		TR << restype.atom_name( parent_stub.atomno() ) << " ";
 		}
 		if ( angle_stub.atomno() == 0 ) {
-			TR << "U/L ";
+		TR << "U/L ";
 		} else {
-			TR << restype.atom_name( angle_stub.atomno() ) << " ";
+		TR << restype.atom_name( angle_stub.atomno() ) << " ";
 		}
 		if ( torsion_stub.atomno() == 0 ) {
-			TR << "U/L ";
+		TR << "U/L ";
 		} else {
-			TR << restype.atom_name( torsion_stub.atomno() ) << " ";
+		TR << restype.atom_name( torsion_stub.atomno() ) << " ";
 		}
 		TR << std::endl;
 		*/

@@ -1,3 +1,4 @@
+#-out:level 500
 -remodel_protocol
 -remodel_secmatch
 -extra_res_fa inputs/D2N_aX.params
@@ -14,7 +15,6 @@
 -correct
 -use_input_sc
 -output_matchres_only false
--MM:ignore_missing_bondangle_params
 -mute protocols.BumpGrid protocols.forge.components.VarLengthBuild protocols.moves.MonteCarlo protocols.packstat.SimplePDB protocols.match.Matcher protocols.toolbox.RotamerSetOperations.RigidBodyMoveRotSetOps core.scoring.NeighborList core.pack.dunbrack.SingleLigandRotamerLibrary protocols.match.downstream.LigandConformerBuilder core.mm.MMBondAngleLibrary protocols.idealize core.fragment.picking_old
 -match:bump_tolerance 0.4
 -score:weights talaris2013_cst.wts

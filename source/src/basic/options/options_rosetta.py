@@ -2767,10 +2767,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		), # -mistakes:chemical
 	), # -mistakes
 
-	Option_Group( 'MM',
-		Option( 'ignore_missing_bondangle_params', 'Boolean', default = 'false', desc = 'ignore failed lookups for missing bond angle parameters' ),
-	), # MM
-
 	Option_Group( 'MonteCarlo',
 		Option( 'temp_initial', 'Real', default='2', lower='0.001', desc='initial temperature for Monte Carlo considerations' ),
 		Option( 'temp_final', 'Real', default='0.6', lower='0.001', desc='final temperature for Monte Carlo considerations' ),
