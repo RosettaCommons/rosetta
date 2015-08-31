@@ -44,6 +44,15 @@ CPPCHECK_DIR=../../tests/benchmark/util/
 CACHEDIR=../build/cppcheck/src/${COMPILETYPE}/
 mkdir -p ${CACHEDIR}
 
+#Delete any cppcheck cached files from source files which no longer exist.
+for f in `find ${CACHEDIR} -name '*.cppcheck'`; do
+    ccfile=${f#${CACHEDIR}}
+    ccfile=${ccfile%.cppcheck}
+    if [ ! -e $ccfile ]; then
+        rm $f
+    fi
+done
+
 find ./ -name '*.cc' | sed "s|^|${CPPCHECK_DIR}/cppcheck_single.py ${COMPILETYPE} |g" > ${CACHEDIR}/commands.txt
 
 ../../tests/benchmark/util/parallel.py -q -j ${JOBS} ${CACHEDIR}/commands.txt > /dev/null # only the error output.
