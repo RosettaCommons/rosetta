@@ -15,11 +15,13 @@ NOT VARIANT_TYPE HBS_PRE
 NOT VARIANT_TYPE OOP_PRE
 NOT VARIANT_TYPE OOP_POST
 NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
+NOT VARIANT_TYPE UPPERTERM_TRUNC_VARIANT
+NOT VARIANT_TYPE LOWERTERM_TRUNC_VARIANT
 NOT PROPERTY PHOSPHONATE
 NOT VARIANT_TYPE CUTPOINT_UPPER # problems with deleting H because CUTPOINT_UPPER uses H as stub
 # not impossible but future work
 NOT VARIANT_TYPE N_ACETYLATION 
-NOT VARIANT_TYPE METHYLATED_NTERM_VARIANT 
+NOT VARIANT_TYPE METHYLATED_NTERM_VARIANT  # 100% possible but later work.
 NOT VARIANT_TYPE ACETYLATED_NTERMINUS_VARIANT
 NOT AA PRO # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
 NOT NAME3 DPR # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
@@ -27,6 +29,9 @@ NOT NAME3 HPR # only primary amines can be cyclized in OOPs, also tricky to mode
 NOT NAME3 B19 # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
 NOT NAME3 C89 # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
 NOT NAME3 B59 # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
+NOT NAME3 0AZ
+NOT NAME3 HYP
+NOT NAME3 B3P
 END_SELECTOR
 
 ## now we search for a case that matches the residue, take the first one

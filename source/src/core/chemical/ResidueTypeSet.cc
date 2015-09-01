@@ -122,6 +122,9 @@ void ResidueTypeSet::init(
 
 			// kp don't consider files for protonation versions of the residues if flag pH_mode is not used
 			// to make sure even applications that use ResidueTypeSet directly never run into problems
+			// AMW: I have to exclude these purely for the Matcher--could a Matcher expert weigh in?
+			// At least they all work with mm_params etc. now.
+			// This just means that the "enumerate RTs" app should run with pH mode
 			bool no_proton_states = false;
 			if ( line.size() > 20 ) {
 				if ( ( !option[ OptionKeys::pH::pH_mode ].user() ) &&
@@ -132,22 +135,22 @@ void ResidueTypeSet::init(
 			if ( no_proton_states ) continue;
 
 			// Skip carbohydrate ResidueTypes unless included with include_sugars flag.
-			if ( ( ! option[ OptionKeys::in::include_sugars ] ) &&
-					( line.substr( 0, 27 ) == "residue_types/carbohydrates" ) ) {
-				continue;
-			}
+			//if ( ( ! option[ OptionKeys::in::include_sugars ] ) &&
+			//		( line.substr( 0, 27 ) == "residue_types/carbohydrates" ) ) {
+			//	continue;
+			//}
 
 			// Skip lipid ResidueTypes unless included with include_lipids flag.
-			if ( ( ! option[ OptionKeys::in::include_lipids ] ) &&
-					( line.substr( 0, 20 ) == "residue_types/lipids" ) ) {
-				continue;
-			}
+			//if ( ( ! option[ OptionKeys::in::include_lipids ] ) &&
+			//		( line.substr( 0, 20 ) == "residue_types/lipids" ) ) {
+			//	continue;
+			//}
 
 			//Skip mineral surface ResidueTypes unless included with surface_mode flag.
-			if ( (!option[OptionKeys::in::include_surfaces]) &&
-					(line.substr(0, 29) == "residue_types/mineral_surface") ) {
-				continue;
-			}
+			//if ( (!option[OptionKeys::in::include_surfaces]) &&
+			//		(line.substr(0, 29) == "residue_types/mineral_surface") ) {
+			//	continue;
+			//}
 
 			// Parse lines.
 			std::istringstream l( line );
@@ -220,18 +223,22 @@ void ResidueTypeSet::init(
 			line = utility::string_split( line, ' ' )[1];
 
 			// Skip branching/conjugation patches unless included with read_pdb_link_records flag.
+			// AMW: ultimately we don't want to skip these, but we have to for now:
+			// they possess missing atoms that screw up readin
 			if ( ( ! option[ OptionKeys::in::file::read_pdb_link_records ] ) &&
 					( line.substr( 0, 17 ) == "patches/branching" ) ) {
 				continue;
 			}
 
 			// Skip carbohydrate patches unless included with include_sugars flag.
-			if ( ( ! option[ OptionKeys::in::include_sugars ] ) &&
-					( line.substr( 0, 21 ) == "patches/carbohydrates" ) ) {
-				continue;
-			}
+			//if ( ( ! option[ OptionKeys::in::include_sugars ] ) &&
+			//		( line.substr( 0, 21 ) == "patches/carbohydrates" ) ) {
+			//	continue;
+			//}
 
 			// Skip this patch if the "patches_to_avoid" set contains the named patch.
+			// AMW: keeping this because "patches_to_avoid" is explicitly asked for
+			// on the command line.
 			utility::file::FileName fname( line );
 			if ( patches_to_avoid.find( fname.base() ) != patches_to_avoid.end() ) {
 				tr << "While generating ResidueTypeSet " << name_ <<
@@ -244,6 +251,7 @@ void ResidueTypeSet::init(
 
 		// kdrew: include list allows patches to be included while being commented out in patches.txt,
 		// useful for testing non-canonical patches.
+		// Retaining this just because maybe you haven't put your patch in the list yet
 		//tr << "include_patches activated? " <<
 		//  option[ OptionKeys::chemical::include_patches ].active() << std::endl;
 		if ( option[ OptionKeys::chemical::include_patches ].active() ) {

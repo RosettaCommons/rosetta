@@ -60,7 +60,7 @@ CHI 3  CE2  CZ   OH   HH
 PROTON_CHI 3 SAMPLES 2 0 180 EXTRA 1 20
 PROPERTIES PROTEIN AROMATIC
 NBR_ATOM CB
- APL CB to sidechain heavyatom distance -- max observed at residue 74 in ubiquitin
+# APL CB to sidechain heavyatom distance -- max observed at residue 74 in ubiquitin
 NBR_RADIUS 5.6694
 FIRST_SIDECHAIN_ATOM CB
 ACT_COORD_ATOMS CG CZ END

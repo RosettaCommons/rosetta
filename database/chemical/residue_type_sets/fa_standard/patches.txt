@@ -31,7 +31,7 @@ patches/VirtualBB.txt               # VIRTUAL_BB
 patches/VirtualProteinSideChain.txt # VIRTUAL_SIDE_CHAIN
 patches/N_acetylated.txt            # PEPTIDE_CAP
 patches/C_methylamidated.txt        # PEPTIDE_CAP
-#patches/NtermProteinMethylated.txt  # METHYLATED_NTERM_VARIANT
+patches/NtermProteinMethylated.txt  # METHYLATED_NTERM_VARIANT
 
 # RNA
 patches/nucleic/rna/5prime_phosphate.txt # TERMINAL_PHOSPHATE
@@ -67,28 +67,32 @@ patches/branching/phg_cd2_conjugation.txt
 #################################################################################################
 
 ## protein
-#patches/Cterm_amidation.txt
-#patches/VirtualProteinResidue.txt
-#patches/VirtualNterm.txt
+patches/Cterm_amidation.txt
+patches/VirtualProteinResidue.txt
+patches/VirtualNterm.txt
 
 ## terminal connection patches
 patches/CtermConnect.txt
 patches/NtermConnect.txt
 
 ##fpd
+## AMW: these two CANNOT be commented in because otherwise N and C termini
+## will never be filled in. Really, they do not belong in this file at all 
+## as a result. They are patched in ONLY with special flags.
 #patches/CtermTruncation.txt
 #patches/NtermTruncation.txt
 
 ##added by steven combs November 11 2010
+## Commented out because it does not appear to exist?!
 #patches/sc_orbitals.txt
 
 ## RNA
-#patches/nucleic/rna/BulgeRNA.txt
-#patches/nucleic/rna/3prime_end_OH.txt
-#patches/nucleic/rna/5prime_end_OH.txt
-#patches/nucleic/rna/5prime_end_phosphate.txt
-#patches/nucleic/rna/Protonated_H1_Adenosine.txt
-#patches/nucleic/rna/Virtual_Backbone_Except_C1prime.txt
+patches/nucleic/rna/BulgeRNA.txt
+patches/nucleic/rna/3prime_end_OH.txt
+patches/nucleic/rna/5prime_end_OH.txt
+patches/nucleic/rna/5prime_end_phosphate.txt
+patches/nucleic/rna/Protonated_H1_Adenosine.txt
+patches/nucleic/rna/Virtual_Backbone_Except_C1prime.txt
 
 ## Added by David P. Nannemann 29 Nov 2012
 patches/PtermProteinFull.txt
@@ -122,7 +126,7 @@ patches/tyr_diiodinated.txt
 ## Note (from rhiju): I added a TAUTOMER property to HIS_D which would allow its exclusion by the path
 ##  but I didn't implement yet on his_methylated.
 ##
-#patches/his_methylated.txt
+patches/his_methylated.txt
 
 ## patches for the MakeRotLib protocol
 patches/MethylatedProteinCterm.txt
@@ -157,14 +161,14 @@ patches/carbohydrates/N-R-3'-hydroxybutyryl-3-amination.txt
 patches/carbohydrates/5-acetylation.txt
 
 ## alternative backbones
-#patches/hbs_pre.txt
-#patches/hbs_post.txt
+patches/hbs_pre.txt
+patches/hbs_post.txt
 
-#patches/a3b_hbs_pre.txt
-#patches/a3b_hbs_post.txt
+patches/a3b_hbs_pre.txt
+patches/a3b_hbs_post.txt
 
-#patches/oop_pre.txt
-#patches/oop_post.txt
+patches/oop_pre.txt
+patches/oop_post.txt
 
 ## repulsive backbone
-#patches/ReplsBB.txt
+patches/ReplsBB.txt

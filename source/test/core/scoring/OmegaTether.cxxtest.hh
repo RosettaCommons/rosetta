@@ -51,7 +51,7 @@ class OmegaTetherTests : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
-		core_init_with_additional_options( "-extra_res_fa beta-peptide/B3A.params" );
+		core_init();
 		pose_ = core::pose::PoseOP( new core::pose::Pose );
 	}
 

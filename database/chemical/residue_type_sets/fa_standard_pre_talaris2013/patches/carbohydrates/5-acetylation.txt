@@ -1,0 +1,71 @@
+## full-atom 5-acetyl sugar patch
+## For now, this should only patch Neu to NeuAc.
+
+NAME 5-Ac
+TYPES C5_ACETYLAMINO_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+NOT VARIANT_TYPE C5_ACETYLAMINO_SUGAR
+VARIANT_TYPE C5_AMINO_SUGAR
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, remove hydrogens on amine.
+DELETE_ATOM 1HN5
+DELETE_ATOM 2HN5
+DELETE_ATOM 3HN5
+
+# Next, change the nitrogen atom type
+SET_ATOM_TYPE  N5  NH2O
+SET_MM_ATOM_TYPE  N5   NH1
+SET_ATOMIC_CHARGE  N5  -0.35
+
+# Next, add the new atoms
+ADD_ATOM  CN5 CObb C    0.22
+ADD_ATOM CAN5 CH3  CT3  0.01
+ADD_ATOM OCN5 OCbb O    -0.27
+ADD_ATOM  HN5 Hpol H    0.16
+ADD_ATOM 1HC5 Hapo HA   0.03   # 1st H on CA of the acetyl on N5
+ADD_ATOM 2HC5 Hapo HA   0.03
+ADD_ATOM 3HC5 Hapo HA   0.03
+
+# These atoms usually are named differently in the PDB, so add aliases.
+# These aliases assume a 9-membered sugar.  This will need to be fixed in the
+# future somehow. ~Labonte
+ADD_ATOM_ALIAS  CN5  C10
+ADD_ATOM_ALIAS CAN5  C11
+ADD_ATOM_ALIAS OCN5  O10
+
+ADD_BOND  N5   CN5
+ADD_BOND_TYPE  CN5 OCN5 DOUBLE
+ADD_BOND  CN5 CAN5
+ADD_BOND  N5   HN5
+ADD_BOND CAN5 1HC5
+ADD_BOND CAN5 2HC5
+ADD_BOND CAN5 3HC5
+
+REDEFINE_CHI 5  C4   C5   N5   CN5
+
+# Since the saccharide ResidueType we are patching can have any number of side
+# chains, we want to add the new torsion introduced by the patch to the end of
+# the current list of chis, i.e., CHI N+1.  We then wish to provide rotamer
+# samples for this new chi, which now has the index of N.
+ADD_CHI N+1  C5   N5   CN5 CAN5
+ADD_CHI_ROTAMER N    0 0
+ADD_CHI_ROTAMER N  180 0
+
+SET_ICOOR  CN5  -28.295   62.736  1.312  N5    C5    H5
+SET_ICOOR CAN5 -178.271   58.957  1.496  CN5   N5    C5
+SET_ICOOR OCN5    0.654   61.455  1.234  CN5   N5    C5
+SET_ICOOR  HN5  152.671   58.88   0.99   N5    C5    H5
+SET_ICOOR 1HC5   33.119   70.479  1.099 CAN5   CN5   N5
+SET_ICOOR 2HC5  -84.152   70.479  1.099 CAN5   CN5   N5
+SET_ICOOR 3HC5  157.255   70.479  1.099 CAN5   CN5   N5
+
+DELETE_VARIANT_TYPE C5_AMINO_SUGAR
+DELETE_PROPERTY AMINO_SUGAR
+ADD_PROPERTY ACETYLAMINO_SUGAR
+
+END_CASE

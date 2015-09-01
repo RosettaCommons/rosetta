@@ -94,6 +94,10 @@ public:
 			if ( restype->name() != core::chemical::residue_type_base_name( *restype ) ) {
 				continue; //Ignore patched residue types
 			}
+			// AMW: ignore mineral surface types. Can't handle these (for now?)
+			if ( restype->name() == "PHO" || restype->name() == "HYD" ||restype->name() == "CAL" ||restype->name() == "CO3" ) {
+				continue;
+			}
 			TR << "Gasteiger Typing " << restype->name() << std::endl;
 			core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 			//No tests, just make sure it doesn't crash.

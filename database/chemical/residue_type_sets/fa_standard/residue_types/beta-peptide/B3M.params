@@ -49,7 +49,7 @@ CHI 2  CA   CB   CG   SD
 CHI 3  CB   CG   SD   CE 
 PROPERTIES PROTEIN BETA_AA L_AA METALBINDING
 MAINCHAIN_ATOMS N CA CM C
->>>>>>> masterMETAL_BINDING_ATOMS SD
+METAL_BINDING_ATOMS SD O
 NBR_ATOM CB
 # APL CB to sidechain heavyatom distance -- max observed on residue 74 of ubiquitin
 NBR_RADIUS 4.1766

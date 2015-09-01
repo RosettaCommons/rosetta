@@ -712,6 +712,19 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief set the residue neighbor radius
+class SetAllAtomsRepulsive : public PatchOperation {
+public:
+	/// @brief constructor
+	SetAllAtomsRepulsive() {};
+
+	/// @brief set the residue neighbor atom
+	bool
+	apply( ResidueType & rsd ) const;
+
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Set orient atom selection mode.
 class SetOrientAtom : public PatchOperation {
 public:

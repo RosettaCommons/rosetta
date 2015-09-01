@@ -437,6 +437,11 @@ EnzCstTemplateRes::compatible_restype(
 	core::chemical::ResidueTypeCOP restype
 ) const
 {
+	// Protonation variants are not compatible (but a clever developer could
+	// maybe use them).
+	if ( restype->has_variant_type( core::chemical::PROTONATED ) || restype->has_variant_type( core::chemical::DEPROTONATED ) ) {
+		return false;
+	}
 	if ( !atom1_.empty() ) {
 		for ( core::Size ii = 1; ii <= atom1_.size(); ++ii ) {
 			if ( ! restype->has( atom1_[ii] ) ) {

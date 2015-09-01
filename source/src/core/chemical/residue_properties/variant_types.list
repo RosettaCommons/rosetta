@@ -206,6 +206,7 @@ HYDROXYLATION1  # used specifically for hydroxylated Pro
 HYDROXYLATION2  # used specifically for hydroxylated Pro
 
 REPLONLY  # Only the repulsive energy will be considered during structure calculations on this residue.
+REPLS_BB
 
 SC_FRAGMENT  # used by PlaceProbeMover.cc and hotspot hashing
 SHOVE_BB  # used by MapHotSpot.cc, HotspotStubSet.cc, ShoveResidueMover.cc, and TryRotamers.cc

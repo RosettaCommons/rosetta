@@ -255,9 +255,10 @@ END_CASE
 
 
 BEGIN_CASE ### THE MAL CASE ##########################################
-
+# Also applies to A04
+# really the "missing HA" case
 BEGIN_SELECTOR
-NAME3 MAL
+NAME3 MAL A04 A05 A24 A96 A97 A98 A99 B00 B01 B02 B03 B04 B05 B06 B07 B54 B56 B57 B58 B60 B61 B62 C15 C16
 END_SELECTOR
 
 ## these are the operations involved
@@ -339,48 +340,6 @@ ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 
 END_CASE
 
-BEGIN_CASE ## D-ALPHA-METHYL-PROLINE #################################################
-
-## these define which residues match this case
-BEGIN_SELECTOR
-NAME3 E59
-END_SELECTOR
-
-## these are the operations involved
-ADD_ATOM 1C   CH3 CT3 0.04
-ADD_ATOM 1CH1 Hapo HA 0.09
-ADD_ATOM 1CH2 Hapo HA 0.09
-ADD_ATOM 1CH3 Hapo HA 0.09
-ADD_ATOM 2H   Hpol HC 0.24
-ADD_BOND N 1C
-ADD_BOND 1C 1CH1
-ADD_BOND 1C 1CH2
-ADD_BOND 1C 1CH3
-ADD_BOND N 2H
-SET_POLYMER_CONNECT LOWER NONE
-
-## totally making these up:
-SET_ICOOR 1C -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 1CH1 -173.837646   71.360284    1.082267 1C N CA
-SET_ICOOR 1CH2  122.078056   66.682399    1.083159 1C N 1CH1
-SET_ICOOR 1CH3  120.977283   71.438584    1.084823 1C N 1CH2
-SET_ICOOR 2H -120 70.5 1 N CA 1C
-
-## modify properties of existing atoms
-SET_ATOM_TYPE N Nlys
-SET_MM_ATOM_TYPE N NP
-SET_ATOMIC_CHARGE N -0.07
-SET_ATOMIC_CHARGE CA 0.16
-SET_ATOMIC_CHARGE CD 0.16
-SET_ATOMIC_CHARGE 1HD 0.09
-SET_ATOMIC_CHARGE 2HD 0.09
-
-SET_FORMAL_CHARGE  N  +1
-
-ADD_PROPERTY LOWER_TERMINUS ## implies terminus
-
-END_CASE
-
 BEGIN_CASE ## HOMOPROLINE_CHAIR #################################################
 
 ## these define which residues match this case
@@ -399,43 +358,6 @@ SET_POLYMER_CONNECT LOWER NONE
 ## cyclohexo ring
 SET_ICOOR 1H 180 70.5 1.09 N CA C
 SET_ICOOR 2H  60 70.5 1 N CA 1H
-
-## modify properties of existing atoms
-SET_ATOM_TYPE N Nlys
-SET_MM_ATOM_TYPE N NP
-
-SET_FORMAL_CHARGE  N  +1
-
-ADD_PROPERTY LOWER_TERMINUS ## implies terminus
-
-END_CASE
-
-BEGIN_CASE ## D-HOMOPROLINE_CHAIR #################################################
-
-## these define which residues match this case
-BEGIN_SELECTOR
-NAME3 F29
-END_SELECTOR
-
-## these are the operations involved
-ADD_ATOM 1C   CH3 CT3 0.04
-ADD_ATOM 1CH1 Hapo HA 0.09
-ADD_ATOM 1CH2 Hapo HA 0.09
-ADD_ATOM 1CH3 Hapo HA 0.09
-ADD_ATOM 2H   Hpol HC 0.24
-ADD_BOND N 1C
-ADD_BOND 1C 1CH1
-ADD_BOND 1C 1CH2
-ADD_BOND 1C 1CH3
-ADD_BOND N 2H
-SET_POLYMER_CONNECT LOWER NONE
-
-## totally making these up:
-SET_ICOOR 1C 180 70.5 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 1CH1 -173.837646   71.360284    1.082267 1C N CA
-SET_ICOOR 1CH2  122.078056   66.682399    1.083159 1C N 1CH1
-SET_ICOOR 1CH3  120.977283   71.438584    1.084823 1C N 1CH2
-SET_ICOOR 2H -60 70.5 1 N CA 1C
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -484,43 +406,6 @@ ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 
 END_CASE
 
-BEGIN_CASE ## D-HOMOPROLINE_BOAT #################################################
-
-## these define which residues match this case
-BEGIN_SELECTOR
-NAME3 F28
-END_SELECTOR
-
-## these are the operations involved
-ADD_ATOM 1C   CH3 CT3 0.04
-ADD_ATOM 1CH1 Hapo HA 0.09
-ADD_ATOM 1CH2 Hapo HA 0.09
-ADD_ATOM 1CH3 Hapo HA 0.09
-ADD_ATOM 2H   Hpol HC 0.24
-ADD_BOND N 1C
-ADD_BOND 1C 1CH1
-ADD_BOND 1C 1CH2
-ADD_BOND 1C 1CH3
-ADD_BOND N 2H
-SET_POLYMER_CONNECT LOWER NONE
-
-## totally making these up:
-SET_ICOOR 1C 180 70.5 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 1CH1 -173.837646   71.360284    1.082267 1C N CA
-SET_ICOOR 1CH2  122.078056   66.682399    1.083159 1C N 1CH1
-SET_ICOOR 1CH3  120.977283   71.438584    1.084823 1C N 1CH2
-SET_ICOOR 2H -60 70.5 1 N CA 1C
-
-# modify properties of existing atoms
-SET_ATOM_TYPE N Nlys
-SET_MM_ATOM_TYPE N NP
-
-SET_FORMAL_CHARGE  N  +1
-
-ADD_PROPERTY LOWER_TERMINUS ## implies terminus
-
-END_CASE
-
 BEGIN_CASE ## 4-FLUOROR-PROLINE #################################################
 
 ## these define which residues match this case
@@ -555,8 +440,8 @@ SET_ATOMIC_CHARGE N -0.07
 SET_ATOMIC_CHARGE CA 0.16
 SET_ATOMIC_CHARGE HA 0.09
 SET_ATOMIC_CHARGE CD2 0.16
-SET_ATOMIC_CHARGE 1HD 0.09
-SET_ATOMIC_CHARGE 2HD 0.09
+SET_ATOMIC_CHARGE 1HD2 0.09
+SET_ATOMIC_CHARGE 2HD2 0.09
 
 SET_FORMAL_CHARGE  N  +1
 
@@ -564,48 +449,6 @@ ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 
 END_CASE
 
-BEGIN_CASE ## D-4-FLUORO-PROLINE #################################################
-
-## these define which residues match this case
-BEGIN_SELECTOR
-NAME3 E19
-END_SELECTOR
-
-## these are the operations involved
-ADD_ATOM 1C   CH3 CT3 0.04
-ADD_ATOM 1CH1 Hapo HA 0.09
-ADD_ATOM 1CH2 Hapo HA 0.09
-ADD_ATOM 1CH3 Hapo HA 0.09
-ADD_ATOM 2H   Hpol HC 0.24
-ADD_BOND N 1C
-ADD_BOND 1C 1CH1
-ADD_BOND 1C 1CH2
-ADD_BOND 1C 1CH3
-ADD_BOND N 2H
-SET_POLYMER_CONNECT LOWER NONE
-
-## totally making these up:
-SET_ICOOR 1C -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 1CH1 -173.837646   71.360284    1.082267 1C N CA
-SET_ICOOR 1CH2  122.078056   66.682399    1.083159 1C N 1CH1
-SET_ICOOR 1CH3  120.977283   71.438584    1.084823 1C N 1CH2
-SET_ICOOR 2H -120 70.5 1 N CA 1C
-
-## modify properties of existing atoms
-SET_ATOM_TYPE N Nlys
-SET_MM_ATOM_TYPE N NP
-SET_ATOMIC_CHARGE N -0.07
-SET_ATOMIC_CHARGE CA 0.16
-SET_ATOMIC_CHARGE HA 0.09
-SET_ATOMIC_CHARGE CD2 0.16
-SET_ATOMIC_CHARGE 1HD 0.09
-SET_ATOMIC_CHARGE 2HD 0.09
-
-SET_FORMAL_CHARGE  N  +1
-
-ADD_PROPERTY LOWER_TERMINUS ## implies terminus
-
-END_CASE
 BEGIN_CASE ## 4-FLUOROR-PROLINE_PUCK #################################################
 
 ## these define which residues match this case
@@ -640,8 +483,8 @@ SET_ATOMIC_CHARGE N -0.07
 SET_ATOMIC_CHARGE CA 0.16
 SET_ATOMIC_CHARGE HA 0.09
 SET_ATOMIC_CHARGE CD2 0.16
-SET_ATOMIC_CHARGE 1HD 0.09
-SET_ATOMIC_CHARGE 2HD 0.09
+SET_ATOMIC_CHARGE 1HD2 0.09
+SET_ATOMIC_CHARGE 2HD2 0.09
 
 SET_FORMAL_CHARGE  N  +1
 
@@ -650,50 +493,7 @@ ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 END_CASE
 
 BEGIN_CASE ## D-4-FLUORO-PROLINE #################################################
-
-## these define which residues match this case
-BEGIN_SELECTOR
-NAME3 F89
-END_SELECTOR
-
-## these are the operations involved
-ADD_ATOM 1C   CH3 CT3 0.04
-ADD_ATOM 1CH1 Hapo HA 0.09
-ADD_ATOM 1CH2 Hapo HA 0.09
-ADD_ATOM 1CH3 Hapo HA 0.09
-ADD_ATOM 2H   Hpol HC 0.24
-ADD_BOND N 1C
-ADD_BOND 1C 1CH1
-ADD_BOND 1C 1CH2
-ADD_BOND 1C 1CH3
-ADD_BOND N 2H
-SET_POLYMER_CONNECT LOWER NONE
-
-## totally making these up:
-SET_ICOOR 1C -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 1CH1 -173.837646   71.360284    1.082267 1C N CA
-SET_ICOOR 1CH2  122.078056   66.682399    1.083159 1C N 1CH1
-SET_ICOOR 1CH3  120.977283   71.438584    1.084823 1C N 1CH2
-SET_ICOOR 2H -120 70.5 1 N CA 1C
-
-## modify properties of existing atoms
-SET_ATOM_TYPE N Nlys
-SET_MM_ATOM_TYPE N NP
-SET_ATOMIC_CHARGE N -0.07
-SET_ATOMIC_CHARGE CA 0.16
-SET_ATOMIC_CHARGE HA 0.09
-SET_ATOMIC_CHARGE CD2 0.16
-SET_ATOMIC_CHARGE 1HD 0.09
-SET_ATOMIC_CHARGE 2HD 0.09
-
-SET_FORMAL_CHARGE  N  +1
-
-ADD_PROPERTY LOWER_TERMINUS ## implies terminus
-
-END_CASE
-
-BEGIN_CASE ## D-4-FLUORO-PROLINE #################################################
-
+## AMW: again, no clue.
 ## these define which residues match this case
 BEGIN_SELECTOR
 NAME3 CHC

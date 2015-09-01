@@ -531,6 +531,8 @@ SS   FE   NPH   100.0       90.0    !force constant a guess
 !
 CA   CA   CA    40.000    120.00   35.00   2.41620 ! ALLOW   ARO
                 ! JES 8/25/89
+CC   OH1  H      40.000    109.60   30.00   2.26510 ! ALLOW  POL PEP
+                ! AMW for protonated asp/glu from  adm jr. 5/02/91, acetic acid pure solvent
 CE1  CE1  CT2    48.00    123.50   !
                 ! for 2-butene, yin/adm jr., 12/95
 CE1  CE1  CT3    48.00    123.50   ! 
@@ -571,6 +573,10 @@ CPB  CPB  CE1    70.000   126.7500 ! ALLOW HEM
                 ! Heme (6-liganded): substituents (KK 05/13/91)
 CPB  CPB  CPA    30.800   106.5100 ! ALLOW HEM
                 ! Heme (6-liganded): porphyrin macrocycle (KK 05/13/91)
+CPH1 NR1  CT3   130.000   125.8800 ! ALLOW ARO ALI PEP POL
+                ! AMW methyl his from params
+CPH2 NR1  CT3   130.000   107.5000 ! ALLOW ARO
+                ! his, adm jr., 6/27/90
 CPH2 NR1  CPH1  130.000   107.5000 ! ALLOW ARO
                 ! his, adm jr., 6/27/90
 CPH2 NR2  CPH1  130.000   104.0000 ! ALLOW ARO
@@ -607,6 +613,14 @@ CT1  CT2  CT1   58.350    113.50   11.16   2.56100 ! ALLOW   ALI
                 ! alkane frequencies (MJF), alkane geometries (SF)
 CT1  NH1  C      50.000   120.0000 ! ALLOW   ALI PEP POL ARO
                 ! NMA Vib Modes (LK)
+CT1  NH1  CT2    50.000   113.4840 ! ALLOW   ALI PEP POL ARO
+                ! AMW from QM optimized HBS structure
+CT1  NP   HC    120.000   113.4000 ! ALLOW   ALI PEP POL ARO
+                ! AMW from/QM optimized OOP structure
+CT1  NP   CT2   120.000   113.4840 ! ALLOW   ALI PEP POL ARO
+                ! AMW from QM optimized OOP structure
+CT2  CC   OH1    61.632   122.3000 ! ALLOW   ALI PEP POL ARO
+                ! AMW for protonated state
 CT1  CA   CA     45.800   122.3000 ! ALLOW   ALI ARO
                 ! Copied from CT2-CA-CA, VKM, 27 Aug. 2015 
 CT2  CA   CA     45.800   122.3000 ! ALLOW   ALI ARO
@@ -631,6 +645,8 @@ CT2  CT2  CC     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
                 ! adm jr. 4/05/91, for asn,asp,gln,glu and cters
 CT2  CT2  CD     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
                 ! adm jr. 5/02/91, acetic acid pure solvent
+CT2  CT2  CE1    52.000   111.9220 ! ALLOW   ALI PEP POL ARO
+                ! AMW: from HBS opt by QM
 CT2  CT2  CPB    70.000   113.0000 ! ALLOW HEM
                 ! Heme (6-liganded): substituents (KK 05/13/91)
 CT2  CT2  CT1   58.350    113.50   11.16   2.56100 ! ALLOW   ALI
@@ -647,6 +663,10 @@ CT2  NC2  C      62.300   120.0000 ! ALLOW   ALI POL PEP ARO
                 ! 107.5->120.0 to make planar Arg (KK)
 CT2  NH1  C      50.000   120.0000 ! ALLOW   ALI PEP POL ARO
                 ! NMA Vib Modes (LK)
+CT2  NH1  CT2    50.000   113.4840 ! ALLOW   ALI PEP POL ARO
+                ! AMW hbs post on GLY from QM structure
+CT2  NP   CT2   120.000   113.4840 ! ALLOW   ALI PEP POL ARO
+                ! AMW from QM optimized OOP structure
 CT2  OS   CD    40.000    109.60   30.00   2.26510 ! ALLOW  POL PEP
                 ! adm jr. 5/02/91, acetic acid pure solvent
 CT3  CA   CA     45.800   122.3000 ! ALLOW   ALI ARO
@@ -913,6 +933,8 @@ HC   NP   CP3   33.000    109.50    4.00   2.05600 ! ALLOW POL ALI PRO
                 ! 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
 HC   NP   HC     51.000   107.5000 ! ALLOW PRO
                 ! 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
+HC   NP   CT2   33.000    109.50    4.0     2.05600 ! ALLOW POL ALI PRO
+                ! AMW: from HC NP CP1
 HP   CA   CA    30.000    120.00   22.00   2.15250 ! ALLOW   ARO
                 ! JES 8/25/89 benzene
 HP   CA   CPT   30.000    122.00   22.00   2.14600 ! ALLOW   ARO
@@ -1061,6 +1083,24 @@ NP   CP3  CP2    70.000   108.5000 ! ALLOW PRO
                 ! 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
 NP   CP3  HA     51.500   109.1500 ! ALLOW PEP PRO
                 ! 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
+NP   CT1  C      50.000   106.0000 ! ALLOW PEP PRO
+                ! AMW: for OOP pre from 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
+NP   CT1  CT1    70.000   108.5000 ! ALLOW PEP PRO
+                ! AMW: for OOP pre from 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
+NP   CT1  CT2    70.000   108.5000 ! ALLOW PEP PRO
+                ! AMW: for OOP pre from 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
+NP   CT1  CT3    70.000   108.5000 ! ALLOW PEP PRO
+                ! AMW: for OOP pre from 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
+NP   CT1  HB     51.500   107.5000 ! ALLOW ALI POL PEP PRO
+                ! AMW: for OOP pre from 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
+NP   CT2  HA     51.500   109.1500 ! ALLOW PEP PRO
+                ! AMW: for OOP pre from 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
+NP   CT2  C      50.000   106.0000 ! ALLOW PEP PRO
+                ! AMW: for OOP pre from 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
+NP   CT2  CT3    70.000   108.5000 ! ALLOW PEP PRO
+                ! AMW: for OOP pre from 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
+NP   CT2  HB     51.500   107.5000 ! ALLOW ALI POL PEP PRO
+                ! AMW: for OOP pre from 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
 NPH  CPA  CPB   122.000   111.5400 ! ALLOW HEM
                 ! Heme (6-liganded): porphyrin macrocycle (KK 05/13/91)
 NPH  CPA  CPM    88.000   124.3900 ! ALLOW HEM
@@ -1081,6 +1121,10 @@ NR1  CPH1 HR3   25.000    124.00   20.00   2.14000 ! ALLOW ARO
                 ! adm jr., 3/24/92, maintain old aliphatic H VDW params
 NR1  CPH2 HR1   25.000    122.50   20.00   2.14000 ! ALLOW ARO
                 ! his, adm jr., 6/27/90
+NR1  CPH2 NR1   130.000   112.5000 ! ALLOW ARO
+                ! his, adm jr., 6/27/90
+NR1  CT3  HA    130.000   109.5000 ! ALLOW ARO POL PEP
+                ! AMW methyl his from params
 NR2  CPH1 CPH1  130.000   110.0000 ! ALLOW ARO
                 ! his, ADM JR., 7/20/89
 NR2  CPH1 CT2    45.800   120.0000 ! ALLOW ARO
@@ -1171,6 +1215,8 @@ OC   CC   CT3   40.000    118.00   50.00   2.38800 ! ALLOW   ALI PEP POL ARO ION
                 ! adm jr. 7/23/91, correction, ACETATE (KK)
 OC   CC   OC   100.000    124.00   70.00   2.22500 ! ALLOW   POL ION PEP ARO
                 ! adm jr. 7/23/91, correction, ACETATE (KK)
+OC   CC   OH1  100.000    124.00   70.00   2.22500 ! ALLOW   POL ION PEP ARO
+                ! AMW: protonated asp/glu from adm jr. 7/23/91, correction, ACETATE (KK)
 OC   CT2  CT3    65.000   122.0000 ! ALLOW  ALC
                 ! ethoxide 6-31+G* geom/freq, adm jr., 6/1/92
 OC   CT2  HA     65.000   118.3000 ! ALLOW  ALC

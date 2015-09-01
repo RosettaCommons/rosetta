@@ -71,7 +71,6 @@ public:
 
 	void setUp() {
 		core_init();
-		basic::options::option[ basic::options::OptionKeys::chemical::include_patches](utility::tools::make_vector1( std::string("patches/oop_pre.txt"), std::string("patches/oop_post.txt") ) );
 
 		// create score function
 		scoring::ScoreFunctionOP score_fxn( get_score_function() );

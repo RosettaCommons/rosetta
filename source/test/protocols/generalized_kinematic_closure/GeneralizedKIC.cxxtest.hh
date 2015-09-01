@@ -38,7 +38,7 @@ public:
 
 	void setUp() {
 		// amw: no longer have to load Ds
-		core_init_with_additional_options( "-extra_res_fa" ); // d-caa/DALA.params" );
+		core_init(); // d-caa/DALA.params" );
 
 		scorefxn_ = core::scoring::get_score_function();
 		testpose_ = pdb1ubq5to13_poseop();

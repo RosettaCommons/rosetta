@@ -405,31 +405,31 @@ residue_types/peptoids/601.params
 #residue_types/gamma-peptide/4D3D2L_GALA.params
 
 ## Beta-peptide Types
-#residue_types/beta-peptide/B3A.params
-#residue_types/beta-peptide/B3C.params
-#residue_types/beta-peptide/B3D.params
-#residue_types/beta-peptide/B3E.params
-#residue_types/beta-peptide/B3F.params
-#residue_types/beta-peptide/B3G.params
-#residue_types/beta-peptide/B3H.params
-#residue_types/beta-peptide/B3I.params
-#residue_types/beta-peptide/B3K.params
-#residue_types/beta-peptide/B3L.params
-#residue_types/beta-peptide/B3M.params
-#residue_types/beta-peptide/B3N.params
-#residue_types/beta-peptide/B3O.params
-#residue_types/beta-peptide/B3P.params
-#residue_types/beta-peptide/B3Q.params
-#residue_types/beta-peptide/B3R.params
-#residue_types/beta-peptide/B3S.params
-#residue_types/beta-peptide/B3T.params
-#residue_types/beta-peptide/B3V.params
-#residue_types/beta-peptide/B3W.params
-#residue_types/beta-peptide/B3X.params
-#residue_types/beta-peptide/B3Y.params
-#residue_types/beta-peptide/cisACHC.params
-#residue_types/beta-peptide/cisACPC.params
-#residue_types/beta-peptide/transACPC.params
+residue_types/beta-peptide/B3A.params
+residue_types/beta-peptide/B3C.params
+residue_types/beta-peptide/B3D.params
+residue_types/beta-peptide/B3E.params
+residue_types/beta-peptide/B3F.params
+residue_types/beta-peptide/B3G.params
+residue_types/beta-peptide/B3H.params
+residue_types/beta-peptide/B3I.params
+residue_types/beta-peptide/B3K.params
+residue_types/beta-peptide/B3L.params
+residue_types/beta-peptide/B3M.params
+residue_types/beta-peptide/B3N.params
+residue_types/beta-peptide/B3O.params
+residue_types/beta-peptide/B3P.params
+residue_types/beta-peptide/B3Q.params
+residue_types/beta-peptide/B3R.params
+residue_types/beta-peptide/B3S.params
+residue_types/beta-peptide/B3T.params
+residue_types/beta-peptide/B3V.params
+residue_types/beta-peptide/B3W.params
+residue_types/beta-peptide/B3X.params
+residue_types/beta-peptide/B3Y.params
+residue_types/beta-peptide/cisACHC.params
+residue_types/beta-peptide/cisACPC.params
+residue_types/beta-peptide/transACPC.params
 
 ## Saccharide Types (require -include_sugars flag to be loaded in)
 ### Aldohexoses

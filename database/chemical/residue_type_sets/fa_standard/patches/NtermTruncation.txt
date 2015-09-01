@@ -16,11 +16,11 @@ NOT VARIANT_TYPE N_ACETYLATION
 NOT PROPERTY PHOSPHONATE
 END_SELECTOR
 
-BEGIN_CASE ## PROLINE #################################################
+BEGIN_CASE ## PROLINE AND D-PROLINE #####################################
 
 ## these define which residues match this case
 BEGIN_SELECTOR
-AA PRO
+AA PRO DPR
 END_SELECTOR
 
 ## these are the operations involved
@@ -30,11 +30,11 @@ ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 
 END_CASE
 
-BEGIN_CASE ## D-PROLINE #################################################
+BEGIN_CASE ## OTHER PROLINES ############################################
 
 ## these define which residues match this case
 BEGIN_SELECTOR
-AA DPR
+NAME3 B19 C89 B59 HPR 0AZ B3P
 END_SELECTOR
 
 ## these are the operations involved
@@ -43,7 +43,6 @@ SET_POLYMER_CONNECT LOWER NONE
 ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 
 END_CASE
-
 
 BEGIN_CASE #### glycine ################################################
 

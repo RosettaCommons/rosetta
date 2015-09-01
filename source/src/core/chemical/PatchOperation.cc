@@ -816,6 +816,20 @@ ConnectSulfurAndMakeVirtualProton::apply( ResidueType & rsd ) const {
 
 	return x;
 }
+/// @brief Add a connection to the residue's sulfur and make a virtual proton to track the position of the connection atom
+bool
+SetAllAtomsRepulsive::apply( ResidueType & rsd ) const {
+	
+	for ( Size i = 1; i <= rsd.natoms(); ++i ) {
+		if ( rsd.atom_is_hydrogen( i ) ) {
+			rsd.set_atom_type( rsd.atom_name( i ), "REPLS" );
+		} else {
+			rsd.set_atom_type( rsd.atom_name( i ), "HREPS" );
+		}
+	}
+	
+	return false;
+}
 
 bool
 ChiralFlipNaming::apply( ResidueType & rsd ) const {
@@ -1218,6 +1232,8 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 			tr.Warning << "Unknown SET_ORIENT ATOM tag: " << tag << std::endl;
 			return 0;
 		}
+	} else if ( tag == "SET_ALL_ATOMS_REPULSIVE" ) {
+		return PatchOperationOP( new SetAllAtomsRepulsive() );
 	} else if ( tag == "CONNECT_SULFUR_AND_MAKE_VIRTUAL_PROTON" ) {
 		return PatchOperationOP( new ConnectSulfurAndMakeVirtualProton() );
 	} else if ( tag == "CHIRAL_FLIP_NAMING" ) {

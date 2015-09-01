@@ -94,7 +94,7 @@ PROPERTIES PROTEIN BETA_AA L_AA AROMATIC METALBINDING
 MAINCHAIN_ATOMS N CA CM C
 METAL_BINDING_ATOMS O
 NBR_ATOM CB
- APL CB to sidechain heavyatom distance -- max observed at residue 74 in ubiquitin
+# APL CB to sidechain heavyatom distance -- max observed at residue 74 in ubiquitin
 NBR_RADIUS 5.3639
 FIRST_SIDECHAIN_ATOM CB
 ACT_COORD_ATOMS CD2 CE3 END

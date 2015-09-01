@@ -1,4 +1,3 @@
--include_patches patches/oop_pre.txt patches/oop_post.txt
 -s input/ala4_pep.pdb 
 #-resfile input/oop_dimer.res 
 -in:file:fullatom 

@@ -24,7 +24,7 @@ BOND  B1   B2
 CHI 1  N    CA   B1   B2 
 PROPERTIES PROTEIN AROMATIC
 NBR_ATOM B1
- APL B1 to sidechain heavyatom distance -- max observed at residue 74 in ubiquitin
+# APL B1 to sidechain heavyatom distance -- max observed at residue 74 in ubiquitin
 NBR_RADIUS 5.3639
 FIRST_SIDECHAIN_ATOM B1
 ACT_COORD_ATOMS B2 END

@@ -1,5 +1,3 @@
-# turn on patches
--include_patches patches/hbs_pre.txt patches/hbs_post.txt 
 # first chain is target, second chain is hbs
 -s ./input/mdm2_HBS_2_0010.pdb
 # production

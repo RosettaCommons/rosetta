@@ -68,7 +68,7 @@ public:
 	/// @details This test checks that we can impose the requirement that a pose contain exactly
 	/// three trans-ACPC residues.
 	void test_energy_eval_exactly_three_transACPC() {
-		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/methods/exactly_three_transACPC.comp -extra_res_fa beta-peptide/transACPC.params -mute all -unmute core.scoring.methods.AACompositionEnergy.cxxtest");
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/methods/exactly_three_transACPC.comp -mute all -unmute core.scoring.methods.AACompositionEnergy.cxxtest");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_exactly_three_transACPC()." << std::endl;
 			TR << "Test created 20 July 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
