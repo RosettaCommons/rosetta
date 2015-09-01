@@ -22,7 +22,7 @@ SET_ATOM_TYPE O2 VIRT
 SET_MM_ATOM_TYPE O2 VIRT
 SET_ATOMIC_CHARGE O2 0.00
 
-#Next, add the new atoms
+# Next, add the new atoms.
 ADD_ATOM  N2  Nlys NH3  -0.35  ## Is there simply an NH3 anywhere?
 ADD_ATOM 1HN2 Hpol HC   0.16   ## Get correct values here and below.
 ADD_ATOM 2HN2 Hpol HC   0.16

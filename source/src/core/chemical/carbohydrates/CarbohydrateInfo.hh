@@ -470,9 +470,6 @@ private: // Private methods ///////////////////////////////////////////////////
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 	void copy_data( CarbohydrateInfo & object_to_copy_to, CarbohydrateInfo const & object_to_copy_from );
 
-	// Return the number of carbon atoms (not counting R groups) in the ResidueType.
-	core::Size get_n_carbons() const;
-
 	// Read through all the properties.  Check for impossible cases.  If any property type is not set, the default
 	// value will be maintained.
 	void read_and_set_properties();

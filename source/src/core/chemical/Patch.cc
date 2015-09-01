@@ -478,7 +478,13 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 		}
 	}
 
-	utility_exit_with_message( "no patch applied? " + name_ + " to " + rsd_type.name() );
+	// I am commenting out this exit below, because I have patches with complicated selection criteria.  It can happen
+	// that a patch's main selector applies to a ResidueType yet none of the sub-cases apply.  This should not fail;
+	// the ResidueType should just be skipped.  If this point is reached, a null pointer is returned, which will be
+	// properly handled by ResidueTypeSet, which checks that the new ResidueType exists before adding it to the Set.
+	// If there is a genuine error in patching, the PatchOperations (or ResidueType) will error during the actual
+	// patching, so I believe this is completely safe. ~Labonte
+	//utility_exit_with_message( "no patch applied? " + name_ + " to " + rsd_type.name() );
 	return 0;
 }
 

@@ -1204,6 +1204,9 @@ public:
 		bool const update_xyz = false
 	);
 
+	/// @brief Reset the bond distance to an atom whose internal coordinates have already been set.
+	void reset_bond_distance_to_atom( std::string const & atm, core::Distance const d );
+
 	void assign_neighbor_atom();
 
 	/// @brief Assign internal coordinates from the set ideal xyz coordinates.
@@ -1397,6 +1400,9 @@ public:
 
 	/// @brief Adds a chi rotamer bin to the highest-indexed chi in the list of chis for this ResidueType.
 	void add_chi_rotamer_to_last_chi(core::Angle const mean, core::Angle const sdev);
+
+	/// @brief Delete all of the chi rotamer bins from the specified chi for this ResidueType.
+	void clear_chi_rotamers( core::uint const chi_no );
 
 	/// @brief Regenerate the rotatable chi bonds from the internal graph structure.
 	/// If the number of proton chi samples would exceed max_proton_chi_samples, don't add extra sampling to proton chis.

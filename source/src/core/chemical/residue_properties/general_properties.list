@@ -90,9 +90,15 @@ TAUTOMER
 
 
 # CARBOHYDRATE-SPECIFIC PROPERTIES
-# (For now, these are copied over from database/chemical/carbohydrates/
-# sugar_properties.list.  That file will be removed once I fully adapt sugars
-# to the new code. ~Labonte)
+## Size
+TRIOSE
+TETROSE
+PENTOSE
+HEXOSE
+HEPTOSE
+OCTOSE
+NONOSE
+
 ## Oxidation types
 ALDOSE
 KETOSE
@@ -134,5 +140,7 @@ AMINO_SUGAR
 ACETYLAMINO_SUGAR  # specific for N-acetylations
 ACETYL_SUGAR  # specific for O-acetylations
 R3PRIMEHYDROXYBUTYRYLAMINO_SUGAR
+SULFATED_SUGAR
+SULFOAMINO_SUGAR
 C_METHYLATED_SUGAR
 PHOSPHATE

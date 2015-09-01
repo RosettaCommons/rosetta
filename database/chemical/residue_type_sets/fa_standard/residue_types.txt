@@ -456,6 +456,13 @@ residue_types/carbohydrates/to4-alpha-Daup.params
 residue_types/carbohydrates/to3-beta-D-Manp.params
 residue_types/carbohydrates/to2-alpha-D-Manp.params
 residue_types/carbohydrates/to3-alpha-D-Manp.params
+residue_types/carbohydrates/to4-beta-L-Manp.params
+#### Idoses
+residue_types/carbohydrates/to4-alpha-L-Idop.params
+#### Guloses
+residue_types/carbohydrates/to4-beta-L-Gulp.params
+#### Altroses
+residue_types/carbohydrates/to4-beta-L-Altp.params
 ### Ketohexoses
 #### Psicoses
 residue_types/carbohydrates/to5-beta-D-Psip.params

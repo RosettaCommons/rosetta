@@ -84,8 +84,10 @@ get_glycosidic_bond_residues( Pose const & pose, uint const sequence_position )
 	ResidueCOP res_n( pose.residue( sequence_position ).get_self_ptr() );
 
 	if ( res_n->is_lower_terminus() ) {
-		TR.Warning << "Glycosidic torsions are undefined for the first polysaccharide residue of a chain unless part of"
-			" a branch." << endl;
+		if ( TR.Info.visible() ) {
+			TR.Info << "Glycosidic torsions are undefined for the first polysaccharide residue of a chain unless part "
+				"of a branch." << endl;
+		}
 		return make_pair( res_n, res_n );
 	}
 
@@ -144,7 +146,9 @@ get_reference_atoms_for_phi( Pose const & pose, uint const sequence_position )
 	AtomID ref4( residues.second->first_adjacent_heavy_atom( ref3.atomno() ), residues.second->seqpos() );
 	ids.push_back( ref4 );
 
-	TR.Debug << "Reference atoms for phi: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Reference atoms for phi: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
+	}
 
 	return ids;
 }
@@ -191,7 +195,9 @@ get_reference_atoms_for_psi( Pose const & pose, uint const sequence_position )
 	AtomID ref4( residues.second->atom_index( ref4_name ), residues.second->seqpos() );
 	ids.push_back( ref4 );
 
-	TR.Debug << "Reference atoms for psi: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Reference atoms for psi: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
+	}
 
 	return ids;
 }
@@ -245,7 +251,9 @@ get_reference_atoms_for_1st_omega( Pose const & pose, uint const sequence_positi
 	AtomID ref4( residues.second->atom_index( ref4_name ), residues.second->seqpos() );
 	ids.push_back( ref4 );
 
-	TR.Debug << "Reference atoms for omega: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Reference atoms for omega: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
+	}
 
 	return ids;
 }
@@ -299,18 +307,24 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 
 	// Find and align VOX, if applicable.
 	if ( res->carbohydrate_info()->is_cyclic() ) {
-		TR.Debug << "  Aligning VOX..." << endl;
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  Aligning VOX..." << endl;
+		}
 		uint const x( res->carbohydrate_info()->cyclic_oxygen() );
 		uint const OX( res->atom_index( res->carbohydrate_info()->cyclic_oxygen_name() ) );
 		uint const VOX( res->atom_index( "VO" + string( 1, x + '0' ) ) );
 
 		conf.set_xyz( AtomID( VOX, sequence_position ), conf.xyz( AtomID( OX, sequence_position ) ) );
-		TR.Debug << "  VOX aligned." << endl;
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  VOX aligned." << endl;
+		}
 	}
 
 	// Find and align OY and HOY, if applicable.
 	if ( ! res->is_lower_terminus() ) {
-		TR.Debug << "  Aligning OY and HOY..." << endl;
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  Aligning OY and HOY..." << endl;
+		}
 		uint const y( res->carbohydrate_info()->anomeric_carbon() );
 		uint const OY( res->atom_index( "O" + string( 1, y + '0') ) );
 		uint const HOY( res->atom_index( "HO" + string( 1, y + '0' ) ) );
@@ -321,22 +335,30 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 		uint const HOY_ref( parent_res->first_adjacent_heavy_atom( OY_ref ) );
 
 		conf.set_xyz( AtomID( HOY, sequence_position ), conf.xyz( AtomID( HOY_ref, parent_res_seqpos ) ) );
-		TR.Debug << "  HOY aligned with atom " << parent_res->atom_name( HOY_ref ) <<
-			" of residue " << parent_res_seqpos << endl;
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  HOY aligned with atom " << parent_res->atom_name( HOY_ref ) <<
+				" of residue " << parent_res_seqpos << endl;
 
-		TR.Debug << "   Updating torsions..." << endl;
+			TR.Debug << "   Updating torsions..." << endl;
+		}
 		ResidueCOP dummy( conf.residue( sequence_position ).get_self_ptr() );  // to trigger private method commented below
 		//conf.update_residue_torsions( res->seqpos(), false );
-		TR.Debug << "   Torsions updated." << endl;
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "   Torsions updated." << endl;
+		}
 
 		conf.set_xyz( AtomID( OY, sequence_position ), conf.xyz( AtomID( OY_ref, parent_res_seqpos ) ) );
-		TR.Debug << "  OY aligned with atom " << parent_res->atom_name( OY_ref ) <<
-			" of residue " << parent_res_seqpos << endl;
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  OY aligned with atom " << parent_res->atom_name( OY_ref ) <<
+				" of residue " << parent_res_seqpos << endl;
+		}
 	}
 
 	// Find and align HOZ(s), if applicable.
 	if ( ! res->is_upper_terminus() ) {
-		TR.Debug << "  Aligning HOZ..." << endl;
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  Aligning HOZ..." << endl;
+		}
 		uint const z( res->carbohydrate_info()->mainchain_glycosidic_bond_acceptor() );
 		uint const HOZ( res->atom_index( "HO" + string( 1, z + '0' ) ) );
 
@@ -345,7 +367,9 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 		uint const HOZ_ref( downstream_res->atom_index( downstream_res->carbohydrate_info()->anomeric_carbon_name() ) );
 
 		conf.set_xyz( AtomID( HOZ, sequence_position ), conf.xyz( AtomID( HOZ_ref, downstream_res_seqpos ) ) );
-		TR.Debug << "  HOZ aligned." << endl;
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "  HOZ aligned." << endl;
+		}
 	}
 	Size const n_branches( res->carbohydrate_info()->n_branches() );
 	for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
@@ -361,7 +385,9 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 		conf.set_xyz( AtomID( HOZ, sequence_position ), conf.xyz( AtomID( HOZ_ref, branch_res_seqpos ) ) );
 	}
 
-	TR.Debug << " All virtual atoms aligned." << endl;
+	if ( TR.Debug.visible() ) {
+		TR.Debug << " All virtual atoms aligned." << endl;
+	}
 }
 
 

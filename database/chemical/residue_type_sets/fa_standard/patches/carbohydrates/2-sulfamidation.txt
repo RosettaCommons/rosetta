@@ -1,0 +1,70 @@
+## full-atom 2-deoxy-2-sulfoamino sugar patch
+
+NAME 2-NHSO3-
+TYPES C2_SULFOAMINO_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+PROPERTY ALDOSE
+NOT UPPER_POSITION 2
+NOT VARIANT_TYPE C2_BRANCH_POINT
+NOT PROPERTY C2_MODIFIED
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, make into a deoxy sugar.
+SET_ATOM_TYPE HO2 VIRT
+SET_MM_ATOM_TYPE HO2 VIRT
+SET_ATOMIC_CHARGE HO2 0.00
+
+SET_ATOM_TYPE O2 VIRT
+SET_MM_ATOM_TYPE O2 VIRT
+SET_ATOMIC_CHARGE O2 0.00
+
+# Next, add the new atoms.
+ADD_ATOM  N2  NH2O  NH1 -0.37  # shouldn't really be an NH
+ADD_ATOM  S2  S     S    1.30
+ADD_ATOM 1OS2 OOC   O   -0.69
+ADD_ATOM 2OS2 OOC   O   -0.69
+ADD_ATOM 3OS2 OOC   O   -0.69
+ADD_ATOM  HN2 Hpol  H    0.31
+
+SET_FORMAL_CHARGE  S2  +2
+SET_FORMAL_CHARGE 1OS2 -1
+SET_FORMAL_CHARGE 2OS2 -1
+SET_FORMAL_CHARGE 3OS2 -1
+
+SET_MM_ATOM_TYPE H2 HB
+
+ADD_BOND  C2   N2
+ADD_BOND  N2   S2
+ADD_BOND  N2   HN2
+ADD_BOND  S2  1OS2
+ADD_BOND  S2  2OS2
+ADD_BOND  S2  3OS2
+
+REDEFINE_CHI 2  C1   C2   N2   S2
+
+# Since the saccharide ResidueType we are patching can have any number of side
+# chains, we want to add the new torsion introduced by the patch to the end of
+# the current list of chis, i.e., CHI N+1.  We then wish to provide rotamer
+# samples for this new chi, which now has the index of N.
+ADD_CHI N+1  C2   O2   S2  1OS2
+ADD_CHI_ROTAMER N    0 0
+ADD_CHI_ROTAMER N  180 0  # Because of the three-fold symmetry, that's it.
+
+# Using H2 to define 0 degree torsion angle, to place N2 at same position as
+# (now virtual) O2 allows us to have a single patch file for either (S) or (R)
+# stereochemistry.
+SET_ICOOR  N2     0.00       69.235       1.090034   C2    H2    O2 
+SET_ICOOR  S2  -166.642      66.780989    1.640768   N2    C2    H2
+SET_ICOOR 3OS2   76.253287   71.699521    1.527320   S2    N2    C2
+SET_ICOOR 1OS2 -120.671433   70.336944    1.524643   S2    N2   3OS2
+SET_ICOOR 2OS2 -119.450880   71.571943    1.531076   S2    N2   1OS2
+SET_ICOOR  HN2 -179.97       57.633       1.0695     N2    C2    S2
+
+ADD_PROPERTY C2_MODIFIED
+ADD_PROPERTY SULFOAMINO_SUGAR
+
+END_CASE

@@ -300,7 +300,6 @@ CarbohydrateInfo::init( core::chemical::ResidueTypeCAP residue_type_in )
 	cyclic_oxygen_name_ = "";
 	cyclic_oxygen_index_ = 0;
 	virtual_cyclic_oxygen_index_ = 0;
-	n_carbons_ = get_n_carbons();
 
 	ResidueTypeCOP residue_type( residue_type_ );
 	if ( residue_type->is_lower_terminus() ) {
@@ -342,26 +341,6 @@ CarbohydrateInfo::copy_data(
 	object_to_copy_to.has_exocyclic_linkage_ = object_to_copy_from.has_exocyclic_linkage_;
 }
 
-// Return the number of carbon atoms (not counting R groups) in the ResidueType.
-// For this to work properly, it is imperative that patch files and PDB files only label non-R-group carbons with
-// numerals.
-core::Size
-CarbohydrateInfo::get_n_carbons() const
-{
-	using namespace std;
-
-	core::chemical::ResidueTypeCOP residue_type( residue_type_ );
-	for ( uint carbon_num = MAX_C_SIZE_LIMIT; carbon_num >= MIN_C_SIZE_LIMIT; --carbon_num ) {
-		char carbon_num_char = '0' + carbon_num;  // quick way to convert int to char
-		if ( residue_type->has( string( 1, 'C' ) +
-				string( 1, carbon_num_char ) /*convert chars to strings to concatenate*/ ) ) {
-			return carbon_num;
-		}
-	}
-	utility_exit_with_message(
-		"This residue is not a sugar or else there is an error in C atom labeling in the .params file.");
-	return 0;  // will never be reached
-}
 
 // Read through all the properties.  Check for impossible cases.  If any property type is not set, the default
 // value will be maintained.
@@ -373,7 +352,7 @@ CarbohydrateInfo::read_and_set_properties()
 
 	ResidueTypeCOP residue_type( residue_type_ );
 	ResidueProperties const & properties( residue_type->properties() );
-	modifications_.resize( n_carbons_ );
+
 
 	// Start with general sugar properties:
 	// Oxidation type
@@ -385,6 +364,31 @@ CarbohydrateInfo::read_and_set_properties()
 		anomeric_carbon_name_ = "C2";
 	} else {
 		utility_exit_with_message( "A sugar must be EITHER an aldose OR a ketose; check the .params file." );
+	}
+
+	// Number of carbons
+	Size const n_chain_length_properties( properties.has_property( TRIOSE ) + properties.has_property( TETROSE ) +
+		properties.has_property( PENTOSE ) + properties.has_property( HEXOSE ) +
+		properties.has_property( HEPTOSE ) + properties.has_property( OCTOSE ) +
+		properties.has_property( NONOSE ) );
+	if ( n_chain_length_properties == 1 ) {
+		if ( properties.has_property( TRIOSE ) ) {
+			n_carbons_ = 3;
+		} else if ( properties.has_property( TETROSE ) ) {
+			n_carbons_ = 4;
+		} else if ( properties.has_property( PENTOSE ) ) {
+			n_carbons_ = 5;
+		} else if ( properties.has_property( HEXOSE ) ) {
+			n_carbons_ = 6;
+		} else if ( properties.has_property( HEPTOSE ) ) {
+			n_carbons_ = 7;
+		} else if ( properties.has_property( OCTOSE ) ) {
+			n_carbons_ = 8;
+		} else /* NONOSE */ {
+			n_carbons_ = 9;
+		}
+	} else {
+		utility_exit_with_message( "A sugar must have a single property designating length; check the .params file." );
 	}
 
 	// Stereochemistry
@@ -430,12 +434,14 @@ CarbohydrateInfo::read_and_set_properties()
 	}
 
 	// Next, look for modifications:
+	modifications_.resize( n_carbons_ );
+
 	// Modifications for Which the Position Is Inherent
 	if ( properties.has_property( GLYCOSIDE ) ) {
 		is_glycoside_ = true;
 	}
 	if ( properties.has_property( URONIC_ACID ) ) {
-		modifications_[ 1 ] = "uronic acid";
+		modifications_[ n_carbons_ ] = "uronic acid";
 	}
 
 	// Modifications with Positions

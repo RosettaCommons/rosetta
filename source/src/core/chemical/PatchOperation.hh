@@ -377,6 +377,23 @@ private:
 };
 
 
+///////////////////////////////////////////////////////////////////////////////
+/// @brief   A patch operation for clearing all rotamer bins from the chi of a ResidueType.
+/// @note    This is useful if one has redefined a chi.
+/// @author  Labonte <JWLabonte@jhu.edu>
+class ClearChiRotamers : public PatchOperation {
+public:
+	// Constructor
+	ClearChiRotamers( core::uint const chi_no_in );
+
+	/// @brief  Apply this patch to the given ResidueType.
+	virtual bool apply( ResidueType & rsd ) const;
+
+private:
+	core::uint chi_no_;
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief add an atom to ResidueType
 #if defined(WIN32) && !defined(WIN_PYROSETTA)
@@ -648,6 +665,24 @@ private:
 	std::string stub1_;
 	std::string stub2_;
 	std::string stub3_;
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief   A patch operation for resetting the length of a bond within a ResidueType.
+/// @note    This is useful for when an atom is rehybridized within a patch file.
+/// @author  Labonte <JWLabonte@jhu.edu>
+class ResetBondLength : public PatchOperation {
+public:
+	// Constructor
+	ResetBondLength( std::string const & atm_in, core::Distance d_in );
+
+	/// @brief  Apply this patch to the given ResidueType.
+	virtual bool apply( ResidueType & rsd ) const;
+
+private:
+	std::string atm_;
+	core::Distance d_;
 };
 
 

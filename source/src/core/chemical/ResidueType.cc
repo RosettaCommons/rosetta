@@ -1446,6 +1446,7 @@ ResidueType::add_chi( Size const chino,
 	}
 	chi_atoms_[chino] = atoms;
 	// Should we be clearing chi_rotamers_ here?
+	// No, I don't think so. ~Labonte
 	is_proton_chi_[chino] = false;
 	chi_2_proton_chi_[ chino ] = 0;
 }  // add_chi
@@ -1584,7 +1585,7 @@ ResidueType::add_chi_rotamer(
 	Real const sdev
 )
 {
-	if ( chi_rotamers_.size() < chino ) chi_rotamers_.resize( chino );
+	if ( chi_rotamers_.size() < chino ) { chi_rotamers_.resize( chino ); }
 	chi_rotamers_[chino].push_back( std::make_pair( mean, sdev ) );
 }
 
@@ -1600,6 +1601,18 @@ ResidueType::add_chi_rotamer_to_last_chi(core::Angle const mean, core::Angle con
 {
 	add_chi_rotamer(nchi(), mean, sdev);
 }
+
+
+// Delete all of the chi rotamer bins from the specified chi for this ResidueType.
+/// @details This method is useful if one has redefined a chi within a patch file such that the old rotamer bins need
+/// to be regenerated.
+/// @author  Labonte <JWLabonte@jhu.edu>
+void
+ResidueType::clear_chi_rotamers( core::uint const chi_no )
+{
+	chi_rotamers_[ chi_no ].clear();
+}
+
 
 /// @brief Regenerate the rotatable chi bonds from the internal graph structure.
 /// If the number of proton chi samples would exceed max_proton_chi_samples, don't add extra sampling to proton chis.
@@ -3280,6 +3293,30 @@ ResidueType::set_icoor(
 		set_ideal_xyz( atm, ic.build( *this ) );
 	}
 }
+
+
+// Reset the bond distance to an atom whose internal coordinates have already been set.
+/// @details Looks up the internal coordinates to build the given atom and then resets the bond distance, updating
+/// the xyz coordinates afterward.\n
+/// One cannot currently reset the bond distance of residue connections using this method.
+/// @param   <atm>: the string name of the atom
+/// @param   <d>: the new bond distance in angstroms
+/// @note    This method is primarily useful for patch operations, which may need to change the hybridization of an
+/// atom and thus the bond length from the atom to which it is attached.
+/// @author  Labonte <JWLabonte@jhu.edu>
+void
+ResidueType::reset_bond_distance_to_atom( std::string const & atm, core::Distance const d )
+{
+	AtomICoor const & atm_ic( icoor( atom_index( atm ) ) );
+	if ( atm_ic.is_internal() ) {
+		set_icoor( atm_ic.built_atom_vertex(), atm_ic.phi(), atm_ic.theta(), d,
+			atm_ic.stub_atom1().vertex(), atm_ic.stub_atom2().vertex(), atm_ic.stub_atom3().vertex(), true );
+	} else {
+		utility_exit_with_message( "ResidueType::reset_bond_distance_to_atom( std::string const & atm, "
+			"core:Distance const d ): This function cannot reset ResidueConnections." );
+	}
+}
+
 
 //set the orbital icoor data.
 void

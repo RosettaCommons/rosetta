@@ -426,9 +426,16 @@ ResidueTypeSet::apply_patches(
 						// and we need to know that.
 						name3_generated_by_base_residue_name_[ residue_type_base_name( rsd_type ) ].insert( new_rsd_type->name3() );
 					}
-				} else {
-					utility_exit_with_message( "Could not apply patch " + p->name() + " to " + rsd_type.name() );
 				}
+				// I am commenting out this exit below, because I have patches with complicated selection criteria.  It
+				// can happen that a patch's main selector applies to a ResidueType yet none of the sub-cases apply.
+				// This should not fail; the ResidueType should just be skipped.  If this point is reached, a null
+				// pointer is returned, which is properly handled by ResidueTypeSet directly above.  If there is a
+				// genuine error in patching, the PatchOperations (or ResidueType) will error during the actual
+				// patching, so I believe this is completely safe. ~Labonte
+				//} else {
+				//utility_exit_with_message( "Could not apply patch " + p->name() + " to " + rsd_type.name() );
+				//}
 			}
 		}
 	}

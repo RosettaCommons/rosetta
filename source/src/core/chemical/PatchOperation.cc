@@ -364,6 +364,27 @@ AddChiRotamer::apply( ResidueType & rsd ) const
 }
 
 
+// ClearChiRotamers ///////////////////////////////////////////////////////////
+
+ClearChiRotamers::ClearChiRotamers( core::uint const chi_no_in ) :
+	chi_no_( chi_no_in )
+{}
+
+/// @return  true on failure
+bool
+ClearChiRotamers::apply( ResidueType & rsd ) const
+{
+	if ( chi_no_ == 0 || chi_no_ > rsd.nchi() ) {
+		TR_PatchOperations.Debug << "ClearChiRotamers::apply failed: " <<
+			rsd.name() << " has no chi " << chi_no_ << std::endl;
+		return true; // failure
+	} else {
+		rsd.clear_chi_rotamers( chi_no_ ) ;
+		return false;  // success
+	}
+}
+
+
 // AddAtom ///////////////////////////////////////////////////////////////////
 #if defined(WIN32) && !defined(WIN_PYROSETTA)
 AddAtomWIN32::AddAtomWIN32(
@@ -678,6 +699,30 @@ SetICoor::apply( ResidueType & rsd ) const
 	return false;
 }
 
+
+// ResetBondLength ////////////////////////////////////////////////////////////
+
+ResetBondLength::ResetBondLength( std::string const & atm_in, core::Distance d_in ) :
+	atm_( atm_in ),
+	d_( d_in )
+{}
+
+/// @return  true on failure
+bool
+ResetBondLength::apply( ResidueType & rsd ) const
+{
+	if ( ! rsd.has( atm_ ) ) {
+		TR_PatchOperations.Debug << "ResetBondLength::apply failed: " <<
+			rsd.name() << " is missing atom " << atm_ << std::endl;
+		return true; // failure
+	} else {
+		rsd.reset_bond_distance_to_atom( atm_, d_ );
+		return false;  // success
+	}
+}
+
+
+// PrependMainchainAtom ///////////////////////////////////////////////////////
 
 PrependMainchainAtom::PrependMainchainAtom( std::string const & atom_name_in ) :
 	atom_name_( atom_name_in )
@@ -1127,6 +1172,11 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 			return PatchOperationOP( new AddChiRotamer(chino, mean, sdev) );
 		}
 
+	} else if ( tag == "CLEAR_CHI_ROTAMERS" ) {
+		l >> chino;
+		if ( l.fail() ) { return 0; }
+		return PatchOperationOP( new ClearChiRotamers( chino ) );
+
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
 	} else if ( tag == "ADD_BOND" ) {
@@ -1194,6 +1244,14 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		l >> atom_name >> phi >> theta >> d >> stub1 >> stub2 >> stub3;
 		if ( l.fail() ) utility_exit_with_message( line );
 		return PatchOperationOP( new SetICoor( atom_name, radians(phi), radians(theta), d, stub1, stub2, stub3 ) );
+
+	} else if ( tag == "RESET_BOND_LENGTH" ) {
+		core::Distance d;
+		l >> atom_name >> d;
+		if ( l.fail() ) {
+			utility_exit_with_message( "bad line in patchfile: " + line );
+		}
+		return PatchOperationOP( new ResetBondLength( atom_name, d ) );
 
 	} else if ( tag == "PREPEND_MAINCHAIN_ATOM" ) {
 		l >> atom_name;

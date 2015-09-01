@@ -103,7 +103,7 @@ main( int argc, char *argv[] )
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, psicose,
-			neuraminate, Lex, SLex, GalCer, Me_glycoside, maltobiose;
+			neuraminate, Lex, SLex, GalCer, target57, Me_glycoside, maltobiose;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -262,6 +262,22 @@ main( int argc, char *argv[] )
 		pose_from_pdb( GalCer, PATH + "GalCer.pdb" );
 
 		test_sugar( GalCer );
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing CAPRI Round 27 Target 57, a crazy, heparin-like hexamer with uronic acids, sulfates, and "
+			"sulfonamidos:" << endl;
+
+		pose_from_pdb( target57, PATH + "target57.pdb" );
+
+		//test_sugar( target57 );  // Gasteiger atom types don't work with sulfates yet.
+		cout << endl << target57 << endl;
+
+		cout << "Sequences:" << endl;
+		Size const n_chains( target57.conformation().num_chains() );
+		for ( core::uint i = 1; i <= n_chains; ++i ) {
+			cout << " Chain " << i << ": ";
+			cout << target57.chain_sequence( i ) << endl;
+		}
 
 		/*// FIXME
 		cout << "---------------------------------------------------------------------------------------------" << endl;
