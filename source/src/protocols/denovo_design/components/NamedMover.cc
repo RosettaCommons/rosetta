@@ -73,6 +73,71 @@ NamedMover::parse_my_tag(
 	}
 }
 
+/// @brief performs setup and applies loop building
+/// @details Steps to apply():
+/// 1. Pulls StructureData from the pose
+/// 2. setup_permutation() stores data about this connection which is not
+///    static for every apply() call
+/// 3. apply_permutation() uses the StructureData object to build the loop
+/// 4. check() checks the built loop
+void
+NamedMover::apply( core::pose::Pose & pose )
+{
+	if ( id().empty() ) {
+		std::stringstream err;
+		err << "A component of type " << get_name() << " has no name -- all NamedMover derivatives must have names." << std::endl;
+		throw utility::excn::EXCN_Msg_Exception( err.str() );
+	}
+
+	// preserve header always should be on
+	if ( !basic::options::option[basic::options::OptionKeys::run::preserve_header].value() ) {
+		throw utility::excn::EXCN_BadInput( "To use Tomponent classes properly, the -run:preserve_header option must be specified." );
+	}
+
+	set_last_move_status( protocols::moves::MS_SUCCESS );
+
+	StructureDataOP sd = StructureData::create_from_pose( pose, id() );
+	debug_assert( sd );
+
+	// try 100 times to produce a valid permutation
+	bool permutation_is_valid = false;
+	for ( core::Size i = 1; i <= 100; ++i ) {
+		protocols::moves::MoverStatus const setupstatus = setup_permutation( *sd );
+		if ( setupstatus != protocols::moves::MS_SUCCESS ) {
+			TR.Error << id() << ": setup_permutation failed, sd=" << *sd << std::endl;
+			continue;
+		}
+		if ( check_permutation( *sd ) ) {
+			permutation_is_valid = true;
+			break;
+		}
+	}
+	if ( !permutation_is_valid ) {
+		set_last_move_status( protocols::moves::FAIL_RETRY );
+		TR.Error << "Failed to generate a valid permutation from the user input." << std::endl;
+		return;
+	}
+
+	apply_permutation( *sd );
+	protocols::moves::MoverStatus const applystatus = get_last_move_status();
+	if ( applystatus != protocols::moves::MS_SUCCESS ) {
+		TR.Error << id() << ": apply_permutation failed, sd=" << *sd << std::endl;
+		set_last_move_status( applystatus );
+		return;
+	}
+
+	if ( ! check( *sd ) ) {
+		TR << id() << ": structure failed checks. Setting status to failure and not altering the pose." << std::endl;
+		TR.Debug << *sd << std::endl;
+		set_last_move_status( protocols::moves::FAIL_RETRY );
+		return;
+	}
+
+	debug_assert( sd->pose() );
+	sd->save_into_pose();
+	pose = *(sd->pose());
+}
+
 /// @brief adds prefix if necessary, returns result
 std::string
 NamedMover::add_parent_prefix( std::string const & s ) const

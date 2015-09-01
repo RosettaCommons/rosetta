@@ -48,6 +48,10 @@ FoldGraph::FoldGraph( StructureData const & perm, core::pose::PoseCOP pose ) :
 	utility::pointer::ReferenceCount()
 {
 	TR.Debug << "Constructing foldgraph for " << perm.id() << " : " << perm  << std::endl;
+	TR.Debug << "Chains:" << std::endl;
+	for ( core::Size i=1; i<=pose->total_residue(); ++i ) {
+		TR.Debug << pose->residue( i ).name() << " " << i << " : " << pose->chain( i ) << std::endl;
+	}
 	g_.drop_all_edges();
 	gpeptide_.drop_all_edges();
 	seg2node_.clear();
@@ -91,7 +95,7 @@ FoldGraph::FoldGraph( StructureData const & perm, core::pose::PoseCOP pose ) :
 	}
 
 	// add peptide edges
-	for ( StringList::const_iterator n = perm.segments_begin(), end = perm.segments_end(); n != end; ++n ) {
+	for ( StringList::const_iterator n = perm.segments_begin(); n != perm.segments_end(); ++n ) {
 		Segment const & resis = perm.segment(*n);
 		if ( !resis.has_free_lower_terminus() ) {
 			if ( pose->chain( resis.safe() ) == pose->chain( perm.segment( resis.lower_segment() ).safe() ) ) {

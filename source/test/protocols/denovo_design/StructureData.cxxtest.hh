@@ -18,6 +18,7 @@
 #include <test/protocols/init_util.hh>
 
 // Unit headers
+#include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 
 // Protocol headers
@@ -168,6 +169,33 @@ public:
 		std::string string3 = stream3.str();
 		boost::replace_all( string3, "UnitTest", "cat_sheet" );
 		TS_ASSERT_EQUALS( stream1.str(), string3 );
+	}
+
+	void test_delete_segment()
+	{
+		using namespace protocols::denovo_design;
+		using namespace protocols::denovo_design::components;
+		std::ifstream in_xml( "protocols/denovo_design/test_sd.xml" );
+
+		StructureDataOP perm = StructureData::create_from_xml( in_xml, "UnitTest" );
+		StructureDataOP orig = perm->clone();
+
+		for ( StringList::const_iterator c = perm->segments_begin(); c != perm->segments_end(); ++c ) {
+			TS_ASSERT( perm->segment( *c ).stop() >= perm->segment( *c ).start() );
+			TS_ASSERT( perm->segment( *c ).safe() >= perm->segment( *c ).start() );
+		}
+
+		// delete bb.h1_sheet -- it shouldn't mess up any residues
+		perm->delete_segment( "bb.h1_sheet" );
+		for ( StringList::const_iterator c = perm->segments_begin(); c != perm->segments_end(); ++c ) {
+			TS_ASSERT( orig->has_segment( *c ) );
+			TS_ASSERT( perm->segment( *c ).stop() >= perm->segment( *c ).start() );
+			TS_ASSERT( perm->segment( *c ).safe() >= perm->segment( *c ).start() );
+			TS_ASSERT_EQUALS( perm->segment( *c ).stop() - perm->segment( *c ).start(),
+				orig->segment( *c ).stop() - orig->segment( *c ).start() );
+			TS_ASSERT_EQUALS( perm->segment( *c ).safe() - perm->segment( *c ).start(),
+				orig->segment( *c ).safe() - orig->segment( *c ).start() );
+		}
 	}
 
 };

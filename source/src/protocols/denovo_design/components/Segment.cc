@@ -21,6 +21,7 @@
 //Protocols Headers
 
 //Core Headers
+#include <core/pose/Pose.hh>
 
 //Basic/Utility/Numeric Headers
 #include <basic/Tracer.hh>
@@ -267,7 +268,11 @@ Segment::set_nterm_included( bool const ntermval )
 		debug_assert( newabego.size() == abego_.size() + 1 );
 		abego_ = newabego;
 		start_ += 1;
+		saferes_ += 1;
 		stop_ += 1;
+		if ( cutpoint_ ) {
+			cutpoint_ += 1;
+		}
 	}
 	nterm_included_ = ntermval;
 }
@@ -294,7 +299,7 @@ Segment::delete_leading_residues()
 	std::string const newss = ss_.substr(pad,std::string::npos);
 	ss_ = newss;
 	utility::vector1< std::string > newabego( abego_.size() - pad );
-	std::copy( abego_.begin()+pad, abego_.end(), newabego.begin() );
+	std::copy( abego_.begin() + pad, abego_.end(), newabego.begin() );
 	abego_ = newabego;
 	nterm_included_ = true;
 	start_ = 1;

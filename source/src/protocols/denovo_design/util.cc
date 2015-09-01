@@ -219,11 +219,8 @@ void add_remark( core::pose::Remarks & remarks, core::Size const num, std::strin
 core::Size
 loop_stop_without_overlap( core::pose::Pose const & pose, core::Size stopres, core::Size const overlap )
 {
-	TR << "Loop stop " << stopres << " overlap " << overlap << std::endl;
-
 	// calculate start component without overlap
 	for ( core::Size i = 1; i <= overlap; ++i ) {
-		TR << "i=" << i << " Loop stop " << stopres << " overlap " << overlap << std::endl;
 		// see if this loop is lower-terminal
 		if ( ( stopres == 1 ) || //loop starts at first residue
 				( ! pose.residue( stopres-1 ).is_protein() ) || //residue before start is not protein
@@ -240,10 +237,8 @@ loop_stop_without_overlap( core::pose::Pose const & pose, core::Size stopres, co
 core::Size
 loop_start_without_overlap( core::pose::Pose const & pose, core::Size startres, core::Size const overlap )
 {
-	TR << "Loop start " << startres << " overlap " << overlap << std::endl;
 	// calculate start component without overlap
 	for ( core::Size i = 1; i <= overlap; ++i ) {
-		TR << "i=" << i << " Loop start " << startres << " overlap " << overlap << std::endl;
 		// see if this loop is upper-terminal
 		if ( ( startres == pose.total_residue() ) || // loop end at last residue
 				( !pose.residue( startres+1 ).is_protein() ) || // residue after end is not protein
@@ -286,8 +281,8 @@ int find_jump_rec(
 	core::kinematics::FoldTree const & ft,
 	int const residue )
 {
-	assert( residue > 0 );
-	assert( residue <= static_cast<int>(ft.nres()) );
+	debug_assert( residue > 0 );
+	debug_assert( residue <= static_cast<int>(ft.nres()) );
 
 	// if this residue is root, jump is 0
 	if ( ft.root() == residue ) {
@@ -295,14 +290,14 @@ int find_jump_rec(
 	}
 
 	// search for jump edges that contains this residue
-	for ( core::kinematics::FoldTree::const_iterator e=ft.begin(), ende=ft.end(); e!=ende; ++e ) {
+	for ( core::kinematics::FoldTree::const_iterator e = ft.begin(); e != ft.end(); ++e ) {
 		if ( ( e->label() > 0 ) && ( e->stop() == residue ) ) {
 			return e->label();
 		}
 	}
 
 	// search upstream for peptide edges containing this residue
-	for ( core::kinematics::FoldTree::const_iterator e=ft.begin(), ende=ft.end(); e!=ende; ++e ) {
+	for ( core::kinematics::FoldTree::const_iterator e = ft.begin(); e != ft.end(); ++e ) {
 		if ( e->label() < 0 ) {
 			if ( ( ( e->start() < residue ) && ( residue <= e->stop() ) ) ||
 					( ( e->stop() <= residue ) && ( residue < e->start() ) ) ) {

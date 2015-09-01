@@ -1,0 +1,64 @@
+<StructureData name="bb" multi="1" length="59" pose_length="61" >
+	<ResidueRange name="bb.sheet.s1" start="2" stop="6" safe="4" nterm="0" cterm="1" loop="0" mgroup="1" cutpoint="0" ss="LEEEEE" abego="XBBBBB" upper_segment="bb.sheet_h1" />
+	<ResidueRange name="bb.sheet_h1" start="7" stop="9" safe="8" nterm="1" cterm="1" loop="1" mgroup="4" cutpoint="0" ss="LLH" abego="ABA" lower_segment="bb.sheet.s1" upper_segment="bb.h1" />
+	<ResidueRange name="bb.h1" start="10" stop="25" safe="13" nterm="1" cterm="1" loop="0" mgroup="2" cutpoint="0" ss="HHHHHHHHHHHHHHHH" abego="AAAAAAAAAAAAAAAA" lower_segment="bb.sheet_h1" upper_segment="bb.h1_sheet" />
+	<ResidueRange name="bb.h1_sheet" start="26" stop="28" safe="27" nterm="1" cterm="1" loop="1" mgroup="6" cutpoint="0" ss="LLL" abego="BAA" lower_segment="bb.h1" upper_segment="bb.sheet.s2" />
+	<ResidueRange name="bb.sheet.s2" start="29" stop="35" safe="29" nterm="1" cterm="1" loop="0" mgroup="1" cutpoint="0" ss="EEEEEEE" abego="BBBBBBB" lower_segment="bb.h1_sheet" upper_segment="bb.sheet_h2" />
+	<ResidueRange name="bb.sheet_h2" start="36" stop="38" safe="37" nterm="1" cterm="1" loop="1" mgroup="7" cutpoint="0" ss="LLL" abego="BAB" lower_segment="bb.sheet.s2" upper_segment="bb.h2" />
+	<ResidueRange name="bb.h2" start="39" stop="52" safe="44" nterm="1" cterm="1" loop="0" mgroup="3" cutpoint="0" ss="HHHHHHHHHHHHHH" abego="AAAAAAAAAAAAAA" lower_segment="bb.sheet_h2" upper_segment="bb.h2_sheet" />
+	<ResidueRange name="bb.h2_sheet" start="53" stop="55" safe="54" nterm="1" cterm="1" loop="1" mgroup="5" cutpoint="0" ss="LLL" abego="GBB" lower_segment="bb.h2" upper_segment="bb.sheet.s3" />
+	<ResidueRange name="bb.sheet.s3" start="56" stop="60" safe="57" nterm="1" cterm="0" loop="0" mgroup="1" cutpoint="0" ss="EEEEEL" abego="BBBBBX" lower_segment="bb.h2_sheet" />
+	<Int name="bb#trials" value="1" />
+	<Int name="bb.h1_sheet#cut_resi" value="0" />
+	<Int name="bb.h1_sheet#length" value="3" />
+	<Int name="bb.h2_sheet#cut_resi" value="0" />
+	<Int name="bb.h2_sheet#length" value="3" />
+	<Int name="bb.sheet#nstrands" value="3" />
+	<Int name="bb.sheet.s1#orientation" value="1" />
+	<Int name="bb.sheet.s1#shift" value="0" />
+	<Int name="bb.sheet.s2#orientation" value="1" />
+	<Int name="bb.sheet.s2#shift" value="0" />
+	<Int name="bb.sheet.s3#orientation" value="1" />
+	<Int name="bb.sheet.s3#shift" value="2" />
+	<Int name="bb.sheet_h1#cut_resi" value="0" />
+	<Int name="bb.sheet_h1#length" value="3" />
+	<Int name="bb.sheet_h2#cut_resi" value="0" />
+	<Int name="bb.sheet_h2#length" value="3" />
+	<Str name="bb.h1_sheet#abego" value="BAA" />
+	<Str name="bb.h1_sheet#loop_lower" value="bb.h1_sheet" />
+	<Str name="bb.h1_sheet#loop_upper" value="bb.sheet.s2" />
+	<Str name="bb.h1_sheet#segment1" value="bb.h1" />
+	<Str name="bb.h1_sheet#segment1_lower" value="bb.sheet.s1" />
+	<Str name="bb.h1_sheet#segment2" value="bb.sheet.s2" />
+	<Str name="bb.h1_sheet#segment2_upper" value="bb.sheet.s3" />
+	<Str name="bb.h1_sheet#ss" value="LLL" />
+	<Str name="bb.h2_sheet#abego" value="GBB" />
+	<Str name="bb.h2_sheet#loop_lower" value="bb.h2_sheet" />
+	<Str name="bb.h2_sheet#loop_upper" value="bb.sheet.s3" />
+	<Str name="bb.h2_sheet#segment1" value="bb.h2" />
+	<Str name="bb.h2_sheet#segment1_lower" value="bb.sheet.s1" />
+	<Str name="bb.h2_sheet#segment2" value="bb.sheet.s3" />
+	<Str name="bb.h2_sheet#segment2_upper" value="bb.sheet.s3" />
+	<Str name="bb.h2_sheet#ss" value="LLL" />
+	<Str name="bb.sheet#lengths_shifts" value="5:0,7:0,5:2" />
+	<Str name="bb.sheet#orientations" value="111" />
+	<Str name="bb.sheet.s1#paired_strands" value=",bb.sheet.s2" />
+	<Str name="bb.sheet.s2#paired_strands" value="bb.sheet.s1,bb.sheet.s3" />
+	<Str name="bb.sheet.s3#paired_strands" value="bb.sheet.s2," />
+	<Str name="bb.sheet_h1#abego" value="ABA" />
+	<Str name="bb.sheet_h1#loop_lower" value="bb.sheet_h1" />
+	<Str name="bb.sheet_h1#loop_upper" value="bb.h1" />
+	<Str name="bb.sheet_h1#segment1" value="bb.sheet.s1" />
+	<Str name="bb.sheet_h1#segment1_lower" value="bb.sheet.s1" />
+	<Str name="bb.sheet_h1#segment2" value="bb.h1" />
+	<Str name="bb.sheet_h1#segment2_upper" value="bb.sheet.s3" />
+	<Str name="bb.sheet_h1#ss" value="LLH" />
+	<Str name="bb.sheet_h2#abego" value="BAB" />
+	<Str name="bb.sheet_h2#loop_lower" value="bb.sheet_h2" />
+	<Str name="bb.sheet_h2#loop_upper" value="bb.h2" />
+	<Str name="bb.sheet_h2#segment1" value="bb.sheet.s2" />
+	<Str name="bb.sheet_h2#segment1_lower" value="bb.sheet.s1" />
+	<Str name="bb.sheet_h2#segment2" value="bb.h2" />
+	<Str name="bb.sheet_h2#segment2_upper" value="bb.sheet.s3" />
+	<Str name="bb.sheet_h2#ss" value="LLL" />
+</StructureData>

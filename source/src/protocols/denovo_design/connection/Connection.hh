@@ -17,6 +17,7 @@
 #define INCLUDED_protocols_denovo_design_connection_Connection_hh
 
 // Unit headers
+#include <protocols/denovo_design/connection/Connection.fwd.hh>
 #include <protocols/denovo_design/components/NamedMover.hh>
 
 // Protocol headers
@@ -150,6 +151,11 @@ public:
 	/// apply_permutation() is called.
 	virtual protocols::moves::MoverStatus setup_permutation( components::StructureData & perm ) const;
 
+	/// @brief checks the generated StructureData object to ensure it fits with what the user wants
+	/// before building
+	/// @details default behavior is to always pass this check. Subclasses can implement more stringent checks.
+	virtual bool check_permutation( components::StructureData const & perm ) const;
+
 	/// @brief checks the inserted region vs. the desired ss/abego.  True if it matches, false otherwise
 	/// @details One can add checks by overriding this function
 	virtual bool check( components::StructureData const & perm ) const;
@@ -157,6 +163,15 @@ public:
 	/// @brief derived classes should return true if the Connection forms a polymer bond (e.g. peptide)
 	/// and false if it forms another type of chemical linkage (e.g. disulfide)
 	virtual bool polymer_connection() const = 0;
+
+	/// @brief derived classes can override this to check whether the given segments are connectable
+	/// the default implementation takes into account whether or not the connection performs
+	/// orientation
+	virtual bool are_connectable(
+		components::StructureData const & sd,
+		std::string const & segment1,
+		std::string const & segment2,
+		Motif const & motif ) const;
 
 	///////////////////////////////////////////////////////////////////////////
 	/// Methods for setting/getting data in StructureData Object
@@ -312,11 +327,15 @@ public:
 	/// @brief sets whether to allow components to connect to themselves to create cyclic peptides
 	inline void set_allow_cyclic( bool const cyc_val ) { allow_cyclic_ = cyc_val; }
 
+	/// @brief sets whether or not to extend SS elements to try to connect them,
+	///        or to use loop residues only. Default = true
+	void set_extend_ss( bool const extend_ss );
+
 	inline void set_connecting_bond_dist( core::Real const val ) { connecting_bond_dist_ = val; }
 
 public:
 	/// @brief Performs pre-build setup and makes loop residues
-	void setup( components::StructureData & perm );
+	void setup( components::StructureData & perm ) const;
 
 	/// @brief checks the inserted region vs. the desired ss/abego.  True if it matches, false otherwise
 	bool check_insert(
@@ -348,27 +367,13 @@ public:
 
 	/// @brief rearranges the pose and inserts loop residues to get ready for closure
 	/// returns a pair of the loop start residue and the loop end residue
-	void create_loop(
-		components::StructureData & perm,
-		std::string const & comp1_n,
-		std::string const & comp1_c,
-		std::string const & comp2_n,
-		std::string const & comp2_c );
+	void create_loop( components::StructureData & perm ) const;
 
 	/// @brief Given desired lengths, compute a set of idealized loop motifs via Nobu/Rie/YuRu rules
 	MotifList calc_idealized_motifs(
 		std::string const & abego1,
 		std::string const & abego2,
 		std::set< core::Size > const & len_set ) const;
-
-protected:
-	/// @brief moves jumps to unmoving, safe places, consolidate movable groups, builds loop residues
-	void setup(
-		components::StructureData & perm,
-		std::string const & comp1_n,
-		std::string const & comp1_c,
-		std::string const & comp2_n,
-		std::string const & comp2_c );
 
 private:
 	// component on the n-terminal side
@@ -396,6 +401,8 @@ private:
 	std::set< std::pair< std::string, std::string > > disallowed_pairs_;
 	// Tells whether or not to construct motifs based on Nobu/Rie/YuRu abego rules
 	bool idealized_abego_;
+	// Tells whether or not to include SS extensions in the loop length, or just build loop residues only (defualt=true)
+	bool extend_ss_;
 	// whether or not orientation is performed, or just connection (default=false)
 	bool performs_orientation_;
 	// whether or not to check abegos after loop construction
@@ -416,6 +423,13 @@ public:
 	virtual void apply_connection( components::StructureData & perm );
 
 	virtual bool polymer_connection() const { return true; }
+
+	/// @brief check whether the given segments are connectable
+	virtual bool are_connectable(
+		components::StructureData const & sd,
+		std::string const & segment1,
+		std::string const & segment2,
+		Motif const & motif ) const;
 };
 
 class StapleTomponents : public Connection {
@@ -550,6 +564,8 @@ public:
 		utility::vector1< core::Size > const & lres,
 		core::Size const pre_overlap ) const;
 };
+
+void staple_work_function( Connection const & conn, components::StructureData & perm );
 
 core::Real
 calc_approx_loop_length( std::string const & abego );

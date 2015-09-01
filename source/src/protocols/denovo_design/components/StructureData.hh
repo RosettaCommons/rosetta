@@ -74,7 +74,7 @@ public:
 	static StructureDataOP parse_remarks( core::pose::Remarks const & rem, std::string const & newid );
 
 	/// @brief creates a StructureData from an xml stringstream
-	static StructureDataOP create_from_xml( std::stringstream & xmltag, std::string const & newid );
+	static StructureDataOP create_from_xml( std::istream & xmltag, std::string const & newid );
 
 	// constants
 public:
@@ -181,16 +181,6 @@ public:
 	/// @brief merge all data and segments from "other" into this StructureData
 	void merge( StructureData const & other );
 
-	/// @brief adds a sub permutation and updates information
-	/*
-	void add_subperm( StructureDataCOP perm );
-	*/
-
-	/// @brief adds a sub permutation and updates information
-	/*
-	inline void clear_subperms() { sub_perms_.clear(); }
-	*/
-
 	/// @brief sets real number data
 	void set_data_int( std::string const & segment_id, std::string const & data_name, int const val );
 
@@ -235,8 +225,8 @@ public:
 	/// @details returns 0 if the foldtree is rooted at the segment, returns -1 if there is no jump pointing to the segment
 	int find_jump( std::string const & seg ) const;
 
-	/// @brief returns a set of segments which are all connected containing seg
-	std::set< std::string > connected_segments( std::string const & seg ) const;
+	/// @brief returns an ordered list of segments which are all connected containing seg
+	StringList connected_segments( std::string const & seg ) const;
 
 	/// @brief computes and returns a set of segments which are in the given movable group
 	utility::vector1< std::string > segments_in_movable_group( core::Size const group ) const;
@@ -245,10 +235,10 @@ public:
 	std::set< core::Size > movable_groups() const;
 
 	/// @brief counts and returns the number of movable residue groups
-	core::Size count_movable_groups() const;
-
-	/// @brief counts and returns the number of movable residue groups
 	core::Size movable_group( std::string const & id ) const;
+
+	/// @brief sets movable group of a segment
+	void set_movable_group( std::string const & id, core::Size const mg );
 
 	/// @brief returns segments which have free lower termini
 	utility::vector1< std::string > available_lower_termini() const;
@@ -277,6 +267,9 @@ public:
 	/// @brief returns residue range of the segment represented by given string
 	Segment const & segment( std::string const & id_val ) const;
 
+	/// @brief finds all segments that are loops
+	utility::vector1< std::string > loops() const;
+
 	/// @brief finds and returns whether each residue is a loop
 	utility::vector1< bool > loop_residues() const;
 
@@ -285,17 +278,6 @@ public:
 
 	/// @brief returns n and c terminal segments of the chain which includes seg
 	std::pair< std::string, std::string > termini( std::string const & seg ) const;
-
-	/*
-	/// @brief returns number of subcomponents
-	inline core::Size num_subperms() const { return sub_perms_.size(); }
-
-	/// @brief returns constant subcomponents
-	inline StructureDataCOP subperm( core::Size const i ) const { return sub_perms_[i]; }
-
-	/// @brief returns non-constant subcomponents
-	inline StructureDataOP subperm_nonconst( core::Size const i ) const { return sub_perms_[i]; }
-	*/
 
 	/// @brief tells if the segment given has an available lower terminus
 	bool has_free_lower_terminus( std::string const & id_val ) const;
@@ -632,6 +614,9 @@ protected:
 private:
 	/// @brief updates movable group numbering after a deletion -- deleted mg is passed
 	void update_movable_groups_after_deletion( core::Size const mg_old );
+
+	/// @brief chooses a new movable group which doesn't conflict with existing ones
+	core::Size choose_new_movable_group() const;
 
 	// member variables
 private:

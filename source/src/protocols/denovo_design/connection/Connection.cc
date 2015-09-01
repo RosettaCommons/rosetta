@@ -89,6 +89,7 @@ Connection::Connection() :
 	allow_cyclic_( false ),
 	connecting_bond_dist_( 1.5 ),
 	idealized_abego_( false ),
+	extend_ss_( true ),
 	performs_orientation_( false ),
 	check_abego_( true )
 {
@@ -140,6 +141,7 @@ Connection::parse_my_tag(
 	set_trials( tag->getOption< core::Size >( "trials", trials_ ) );
 	set_overlap( tag->getOption< core::Size >( "overlap", overlap_ ) );
 	set_idealized_abego( tag->getOption< bool >( "idealized_abego", idealized_abego_ ) );
+	set_extend_ss( tag->getOption< bool >( "extend_ss", extend_ss_ ) );
 
 	if ( tag->hasOption( "length" ) && tag->hasOption( "motif" ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Both lengths and motifs cannot be simultaneously specified in " + id());
@@ -175,6 +177,14 @@ void
 Connection::set_overlap( core::Size const overlap_val )
 {
 	overlap_ = overlap_val;
+}
+
+/// @brief sets whether or not to extend SS elements to try to connect them,
+///        or to use loop residues only. Default = true
+void
+Connection::set_extend_ss( bool const extend_ss )
+{
+	extend_ss_ = extend_ss;
 }
 
 /// @brief sets comp1 ids from a string
@@ -257,106 +267,143 @@ void note_rev_element_extensions(
 	}
 }
 
+Connection::MotifList
+extract_ideal_motifs(
+	utility::vector1< std::string > const & abegolist,
+	std::set< core::Size > const & lenset )
+{
+	Connection::MotifList retval;
+	for ( utility::vector1< std::string >::const_iterator abego = abegolist.begin(); abego != abegolist.end(); ++abego ) {
+		if ( lenset.find( abego->size() ) != lenset.end() ) {
+			Connection::Motif m;
+			for ( std::string::const_iterator c = abego->begin(); c != abego->end(); ++c ) {
+				m.add( 1, 'L', *c );
+			}
+			retval.push_back( m );
+		}
+	}
+	return retval;
+}
+
 /// @brief Given desired lengths, compute a set of idealized loop motifs via Nobu/Rie/YuRu rules
+/// @param extend_ss : If true, "extension" of SS elements by adding residues of the same abego type
+///                    is allowed. For example, connecting A-->A, you might get a 4-residue loop
+///                    of type A-ABGA-A. If false, only different abegos are allowed, and you might
+///                    get a 4-residue loop of type A-BGAB-A
 Connection::MotifList
 Connection::calc_idealized_motifs(
 	std::string const & abego1,
 	std::string const & abego2,
 	std::set< core::Size > const & lenset ) const
 {
-	static std::string const ab[] = {
-		"GB" ,    "GBA" ,    "BAA" , // Basic loops
-		"GBB",    "GBAB",    "BAAB", // Extend strand by one residue
-		"AGB" ,   "AGBA" ,   "ABAA" , // Extend helix by one residue
-		"AGBB",   "AGBAB",   "ABAAB",
-		"AAGB" ,  "AAGBA" ,  "AABAA" , // Extend helix by two residues
-		"AAGBB",  "AAGBAB",  "AABAAB",
-		"AAAGB" , "AAAGBA" , "AAABAA" , // Extend helix by three residues
-		"AAAGBB", "AAAGBAB", "AAABAAB" };
-	static core::Size const numAB = 24;
+	static utility::vector1< std::string > const ab_no_extension =
+		boost::assign::list_of
+		("GB") ("GBA") ("BAA");
 
-	static std::string const ba[] = {
-		"AB"   , "GBB"   , "BAB"   , "BGBB"   ,  // Basic loops plus extend strand by one residue
-		"ABA"  , "GBBA"  , "BABA"  , "BGBBA"  ,  // Extend helix by one residue
-		"ABAA" , "GBBAA" , "BABAA" , "BGBBAA" ,  // Extend helix by two residues
-		"ABAAA", "BGGAAA", "BABAAA", "BGBBAAA" };
-	static core::Size const numBA = 16;
+	static utility::vector1< std::string > const ba_no_extension =
+		boost::assign::list_of
+		("AB") ("GBB");
 
-	static std::string const bb[] = {
-		"GG" ,  "EA" ,  "AA" ,  "AAG" ,   // Basic loops
-		"BGG" , "BEA" , "BAA" , "BAAG" ,   // Extend first strand by one
-		"GGB",  "EAB",  "AAB",  "AAGB",   // Extend second strand by one
-		"BGGB", "BEAB", "BAAB", "BAAGB" }; // Extend both strands by one
-	static core::Size const numBB = 16;
+	static utility::vector1< std::string > const bb_no_extension =
+		boost::assign::list_of
+		("GG") ("EA") ("AA") ("AAG");
 
-	static std::string const alpha_alpha[] = {
-		"B", "AB", "AAB", "AAAB", "BA", "ABA", "AABA", "AAABA", "BAA", "ABAA",   // one-residue B and extensions
-		"AABAA", "AAABAA", "BAAA", "ABAAA", "AABAAA", "AAABAAA",
-		"G", "AG", "AAG", "AAAG", "GA", "AGA", "AAGA", "AAAGA", "GAA", "AGAA",   // one-residue G and extensions
-		"AAGAA", "AAAGAA", "GAAA", "AGAAA", "AAGAAA", "AAAGAAA",
-		"BB"   ,    "BG"   ,    "GB"   ,    "BAB"   ,    "BAG"   ,    "GAB"   ,  //loops not containing E or start/ending with A
-		"BBA"  ,    "BGA"  ,    "GBA"  ,    "BABA"  ,    "BAGA"  ,    "GABA"  ,  // Extend h2 by one residue
-		"BBAA" ,    "BGAA" ,    "GBAA" ,    "BABAA" ,    "BAGAA" ,    "GABAA" ,  // Extend h2 by two residues
-		"BBAAA",    "BGAAA",    "GBAAA",    "BABAAA",    "BAGAAA",    "GABAAA",  // Extend h2 by three residues
-		"ABB"   ,   "ABG"   ,   "AGB"   ,   "ABAB"   ,   "ABAG"   ,   "AGAB"   ,  // Extend h1 by one residue
-		"ABBA"  ,   "ABGA"  ,   "AGBA"  ,   "ABABA"  ,   "ABAGA"  ,   "AGABA"  ,  //
-		"ABBAA" ,   "ABGAA" ,   "AGBAA" ,   "ABABAA" ,   "ABAGAA" ,   "AGABAA" ,  //
-		"ABBAAA",   "ABGAAA",   "AGBAAA",   "ABABAAA",   "ABAGAAA",   "AGABAAA",  //
-		"AABB"   ,  "AABG"   ,  "AAGB"   ,  "AABAB"   ,  "AABAG"   ,  "AAGAB"   ,  // Extend h1 by two residue
-		"AABBA"  ,  "AABGA"  ,  "AAGBA"  ,  "AABABA"  ,  "AABAGA"  ,  "AAGABA"  ,  //
-		"AABBAA" ,  "AABGAA" ,  "AAGBAA" ,  "AABABAA" ,  "AABAGAA" ,  "AAGABAA" ,  //
-		"AABBAAA",  "AABGAAA",  "AAGBAAA",  "AABABAAA",  "AABAGAAA",  "AAGABAAA",  //
-		"AAABB"   , "AAABG"   , "AAAGB"   , "AAABAB"   , "AAABAG"   , "AAAGAB"   ,  // Extend h1 by three residue
-		"AAABBA"  , "AAABGA"  , "AAAGBA"  , "AAABABA"  , "AAABAGA"  , "AAAGABA"  ,  //
-		"AAABBAA" , "AAABGAA" , "AAAGBAA" , "AAABABAA" , "AAABAGAA" , "AAAGABAA" ,  //
-		"AAABBAAA", "AAABGAAA", "AAAGBAAA", "AAABABAAA", "AAABAGAAA", "AAAGABAAA" };
-	static core::Size const numAA = 96;
+	static utility::vector1< std::string > const aa_no_extension =
+		boost::assign::list_of
+		("B") ("G")
+		("BB") ("BG") ("GB") ("GG")
+		("BBB") ("BBG") ("BGB") ("BGG") ("BAB") ("BAG")
+		("GBB") ("GBG") ("GGB") ("GGG") ("GAB") ("GAG")
+		("BBBB") ("BBBG") ("BBGB") ("BBGG") ("BBAB") ("BBAG")
+		("BGBB") ("BGBG") ("BGGB") ("BGGG") ("BGAB") ("BGAG")
+		("BABB") ("BABG") ("BAGB") ("BAGG") ("BAAB") ("BAAG")
+		("GBBB") ("GBBG") ("GBGB") ("GBGG") ("GBAB") ("GBAG")
+		("GGBB") ("GGBG") ("GGGB") ("GGGG") ("GGAB") ("GGAG")
+		("GABB") ("GABG") ("GAGB") ("GAGG") ("GAAB") ("GAAG");
+
+	static utility::vector1< std::string > const ab =
+		boost::assign::list_of
+		(   "GB" )(   "GBA" )(   "BAA" ) // Basic loops
+		(   "GBB")(   "GBAB")(   "BAAB") // Extend strand by one residue
+		(  "AGB" )(  "AGBA" )(  "ABAA" ) // Extend helix by one residue
+		(  "AGBB")(  "AGBAB")(  "ABAAB")
+		( "AAGB" )( "AAGBA" )( "AABAA" ) // Extend helix by two residues
+		( "AAGBB")( "AAGBAB")( "AABAAB")
+		("AAAGB" )("AAAGBA" )("AAABAA" ) // Extend helix by three residues
+		("AAAGBB")("AAAGBAB")("AAABAAB");
+
+	static utility::vector1< std::string > const ba =
+		boost::assign::list_of
+		("AB"   )("GBB"   )("BAB"   )("BGBB"   )  // Basic loops plus extend strand by one residue
+		("ABA"  )("GBBA"  )("BABA"  )("BGBBA"  )  // Extend helix by one residue
+		("ABAA" )("GBBAA" )("BABAA" )("BGBBAA" )  // Extend helix by two residues
+		("ABAAA")("BGGAAA")("BABAAA")("BGBBAAA");
+
+	static utility::vector1< std::string > const bb =
+		boost::assign::list_of
+		( "GG" )( "EA" )( "AA" )( "AAG" )   // Basic loops
+		("BGG" )("BEA" )("BAA" )("BAAG" )   // Extend first strand by one
+		( "GGB")( "EAB")( "AAB")( "AAGB")   // Extend second strand by one
+		("BGGB")("BEAB")("BAAB")("BAAGB"); // Extend both strands by one
+
+	static utility::vector1< std::string > const alpha_alpha =
+		boost::assign::list_of
+		(   "B")("AB")("AAB")("AAAB")("BA")("ABA")("AABA")("AAABA")("BAA")("ABAA")   // one-residue B and extensions
+		( "AABAA")("AAABAA")("BAAA")("ABAAA")("AABAAA")("AAABAAA")
+		(   "G")("AG")("AAG")("AAAG")("GA")("AGA")("AAGA")("AAAGA")("GAA")("AGAA")   // one-residue G and extensions
+		( "AAGAA")("AAAGAA")("GAAA")("AGAAA")("AAGAAA")("AAAGAAA")
+		(   "BB"   )(   "BG"   )(   "GB"   )(   "BAB"   )(   "BAG"   )(   "GAB"   )  //loops not containing E or start/ending with A
+		(   "BBA"  )(   "BGA"  )(   "GBA"  )(   "BABA"  )(   "BAGA"  )(   "GABA"  )  // Extend h2 by one residue
+		(   "BBAA" )(   "BGAA" )(   "GBAA" )(   "BABAA" )(   "BAGAA" )(   "GABAA" )  // Extend h2 by two residues
+		(   "BBAAA")(   "BGAAA")(   "GBAAA")(   "BABAAA")(   "BAGAAA")(   "GABAAA")  // Extend h2 by three residues
+		(  "ABB"   )(  "ABG"   )(  "AGB"   )(  "ABAB"   )(  "ABAG"   )(  "AGAB"   )  // Extend h1 by one residue
+		(  "ABBA"  )(  "ABGA"  )(  "AGBA"  )(  "ABABA"  )(  "ABAGA"  )(  "AGABA"  )  //
+		(  "ABBAA" )(  "ABGAA" )(  "AGBAA" )(  "ABABAA" )(  "ABAGAA" )(  "AGABAA" )  //
+		(  "ABBAAA")(  "ABGAAA")(  "AGBAAA")(  "ABABAAA")(  "ABAGAAA")(  "AGABAAA")  //
+		( "AABB"   )( "AABG"   )( "AAGB"   )( "AABAB"   )( "AABAG"   )( "AAGAB"   )  // Extend h1 by two residue
+		( "AABBA"  )( "AABGA"  )( "AAGBA"  )( "AABABA"  )( "AABAGA"  )( "AAGABA"  )  //
+		( "AABBAA" )( "AABGAA" )( "AAGBAA" )( "AABABAA" )( "AABAGAA" )( "AAGABAA" )  //
+		( "AABBAAA")( "AABGAAA")( "AAGBAAA")( "AABABAAA")( "AABAGAAA")( "AAGABAAA")  //
+		("AAABB"   )("AAABG"   )("AAAGB"   )("AAABAB"   )("AAABAG"   )("AAAGAB"   )  // Extend h1 by three residue
+		("AAABBA"  )("AAABGA"  )("AAAGBA"  )("AAABABA"  )("AAABAGA"  )("AAAGABA"  )  //
+		("AAABBAA" )("AAABGAA" )("AAAGBAA" )("AAABABAA" )("AAABAGAA" )("AAAGABAA" )  //
+		("AAABBAAA")("AAABGAAA")("AAAGBAAA")("AAABABAAA")("AAABAGAAA")("AAAGABAAA");
 
 	MotifList retval;
 	// determine previous residue by abego type
 	if ( ( abego1 == "A" ) && ( abego2 == "A" ) ) {
-		for ( core::Size i=0; i<numAA; ++i ) {
-			if ( lenset.find( alpha_alpha[i].size() ) != lenset.end() ) {
-				Motif m;
-				for ( std::string::const_iterator c=alpha_alpha[i].begin(), endc=alpha_alpha[i].end(); c != endc; ++c ) {
-					m.add( 1, 'L', *c );
-				}
-				note_fwd_element_extensions( m.ss, m.abego, 'H', 'A' );
-				note_rev_element_extensions( m.ss, m.abego, 'H', 'A' );
-				retval.push_back(m);
+		if ( extend_ss_ ) {
+			retval = extract_ideal_motifs( alpha_alpha, lenset );
+			for ( MotifList::iterator m = retval.begin(); m != retval.end(); ++m ) {
+				note_fwd_element_extensions( m->ss, m->abego, 'H', 'A' );
+				note_rev_element_extensions( m->ss, m->abego, 'H', 'A' );
 			}
+		} else {
+			retval = extract_ideal_motifs( aa_no_extension, lenset );
 		}
 	} else if ( ( abego1 == "A" ) && ( abego2 == "B" ) ) {
-		for ( core::Size i=0; i<numAB; ++i ) {
-			if ( lenset.find( ab[i].size() ) != lenset.end() ) {
-				Motif m;
-				for ( std::string::const_iterator c=ab[i].begin(), endc=ab[i].end(); c != endc; ++c ) {
-					m.add( 1, 'L', *c );
-				}
-				note_fwd_element_extensions( m.ss, m.abego, 'H', 'A' );
-				retval.push_back(m);
+		if ( extend_ss_ ) {
+			retval = extract_ideal_motifs( ab, lenset );
+			for ( MotifList::iterator m = retval.begin(); m != retval.end(); ++m ) {
+				note_fwd_element_extensions( m->ss, m->abego, 'H', 'A' );
 			}
+		} else {
+			retval = extract_ideal_motifs( ab_no_extension, lenset );
 		}
 	} else if ( ( abego1 == "B" ) && ( abego2 == "A" ) ) {
-		for ( core::Size i=0; i<numBA; ++i ) {
-			if ( lenset.find( ba[i].size() ) != lenset.end() ) {
-				Motif m;
-				for ( std::string::const_iterator c=ba[i].begin(), endc=ba[i].end(); c != endc; ++c ) {
-					m.add( 1, 'L', *c );
-				}
-				note_rev_element_extensions( m.ss, m.abego, 'H', 'A' );
-				retval.push_back(m);
+		if ( extend_ss_ ) {
+			retval = extract_ideal_motifs( ba, lenset );
+			for ( MotifList::iterator m = retval.begin(); m != retval.end(); ++m ) {
+				note_rev_element_extensions( m->ss, m->abego, 'H', 'A' );
 			}
+		} else {
+			retval = extract_ideal_motifs( ba_no_extension, lenset );
 		}
 	} else if ( ( abego1 == "B" ) && ( abego2 == "B" ) ) {
-		for ( core::Size i=0; i<numBB; ++i ) {
-			if ( lenset.find( bb[i].size() ) != lenset.end() ) {
-				Motif m;
-				for ( std::string::const_iterator c=bb[i].begin(), endc=bb[i].end(); c != endc; ++c ) {
-					m.add( 1, 'L', *c );
-				}
-				retval.push_back(m);
-			}
+		if ( extend_ss_ ) {
+			retval = extract_ideal_motifs( bb, lenset );
+		} else {
+			retval = extract_ideal_motifs( bb_no_extension, lenset );
 		}
 	} else {
 		// by default, throw 'X' abegos
@@ -631,7 +678,7 @@ Connection::apply( core::pose::Pose & pose )
 protocols::moves::MoverStatus
 Connection::setup_permutation( components::StructureData & perm ) const
 {
-	assert( id() != "" );
+	debug_assert( id() != "" );
 	core::Real random = numeric::random::rg().uniform();
 	return setup_from_random( perm, random );
 }
@@ -668,8 +715,8 @@ Connection::apply_permutation( components::StructureData & perm )
 		perm.merge_segments( c1, c2, c1 );
 	}
 
-	if ( build_len(perm) > 0 ) {
-		perm.set_cutpoint( c1, cut_resi(perm) );
+	if ( build_len( perm ) > 0 ) {
+		perm.set_cutpoint( c1, cut_resi( perm ) );
 		if ( do_remodel() && perm.pose() ) {
 			protocols::moves::DsspMover dssp;
 			perm.apply_mover(dssp);
@@ -689,19 +736,7 @@ Connection::apply_permutation( components::StructureData & perm )
 
 /// @brief easier way to call setup() below
 void
-Connection::setup( components::StructureData & perm )
-{
-	setup( perm, comp1_lower(perm), lower_segment_id(perm), upper_segment_id(perm), comp2_upper(perm) );
-}
-
-/// @brief does jump setup work and creates loop residues
-void
-Connection::setup(
-	components::StructureData & perm,
-	std::string const & comp1_n,
-	std::string const & comp1_c,
-	std::string const & comp2_n,
-	std::string const & comp2_c )
+Connection::setup( components::StructureData & perm ) const
 {
 	// primary root is component 1, secondary root is component 2
 	utility::vector1< std::string > roots;
@@ -711,7 +746,8 @@ Connection::setup(
 	perm.consolidate_movable_groups( roots );
 
 	// make the loop
-	create_loop( perm, comp1_n, comp1_c, comp2_n, comp2_c );
+	create_loop( perm );
+
 	// only do variants/bond declaration if the pose exists
 	if ( perm.pose() ) {
 		// remove terminal variants
@@ -799,6 +835,37 @@ Connection::pair_allowed( std::string const & c1, std::string const & c2 ) const
 	return disallowed_pairs_.find( std::make_pair( add_parent_prefix(c1), add_parent_prefix(c2) ) ) == disallowed_pairs_.end();
 }
 
+/// @brief derived classes can override this to check whether the given segments are connectable
+/// the default implementation takes into account whether or not the connection performs
+/// orientation
+bool
+Connection::are_connectable(
+	components::StructureData const & sd,
+	std::string const & segment1,
+	std::string const & segment2,
+	Connection::Motif const & motif ) const
+{
+	// if we aren't doing remodel or orienting, don't use distance
+	bool const use_distance = !performs_orientation() && do_remodel() && sd.pose();
+
+	core::Real avg_dist = 0.0;
+	if ( use_distance ) {
+		avg_dist = calc_approx_loop_length(
+			sd.abego()[ sd.segment( segment1 ).stop() ] +
+			motif.abego +
+			sd.abego()[ sd.segment( segment2 ).start() ] );
+		avg_dist /= static_cast< core::Real >( motif.len );
+	}
+
+	return sd.are_connectable(
+		segment1,
+		segment2,
+		motif.len,
+		use_distance,
+		performs_orientation(),
+		allow_cyclic_, connecting_bond_dist(), avg_dist );
+}
+
 /// @brief sets up the connection mover based on the information in the permutation and a random number
 protocols::moves::MoverStatus
 Connection::setup_from_random( components::StructureData & perm, core::Real random ) const
@@ -853,8 +920,8 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 		err << perm << std::endl;
 		throw utility::excn::EXCN_Msg_Exception( err.str() );
 	}
-	assert( local_comp1_ids.size() > 0 );
-	assert( local_comp2_ids.size() > 0 );
+	debug_assert( local_comp1_ids.size() > 0 );
+	debug_assert( local_comp2_ids.size() > 0 );
 
 	std::set< core::Size > lenset;
 	if ( idealized_abego_ ) {
@@ -865,8 +932,8 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 
 	// which combinations of components and lengths are connectable
 	utility::vector1< utility::vector1< core::Size > > valid_idxs;
-	for ( core::Size i=1; i<=local_comp1_ids.size(); ++i ) {
-		for ( core::Size j=1; j<=local_comp2_ids.size(); ++j ) {
+	for ( core::Size i = 1; i <= local_comp1_ids.size(); ++i ) {
+		for ( core::Size j = 1; j <= local_comp2_ids.size(); ++j ) {
 			if ( !pair_allowed( local_comp1_ids[i], local_comp2_ids[j] ) ) {
 				TR.Debug << "c1, c2, len : connectable " << local_comp1_ids[i] << ", " << local_comp2_ids[j] << " DISALLOWED by user setting." << std::endl;
 				continue;
@@ -884,24 +951,8 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 			}
 			assert( motifs.size() > 0 );
 			for ( core::Size k=1; k<=motifs.size(); ++k ) {
-				// if we aren't doing remodel or orienting, don't use distance
-				bool const use_distance = !performs_orientation() && do_remodel() && perm.pose();
-				core::Real avg_dist = 0.0;
-				if ( use_distance ) {
-					avg_dist = calc_approx_loop_length(
-						perm.abego()[ perm.segment( local_comp1_ids[i] ).stop() ] +
-						motifs[k].abego +
-						perm.abego()[ perm.segment( local_comp2_ids[j] ).start() ] );
-					avg_dist /= static_cast< core::Real >( motifs[k].len );
-				}
-				if ( perm.are_connectable(
-						local_comp1_ids[i],
-						local_comp2_ids[j],
-						motifs[k].len,
-						use_distance,
-						performs_orientation(),
-						allow_cyclic_, connecting_bond_dist(), avg_dist ) ) {
-					TR << "c1, c2, len : connectable " << local_comp1_ids[i] << ", " << local_comp2_ids[j] << ", " << motifs[k] << std::endl;
+				if ( are_connectable( perm, local_comp1_ids[i], local_comp2_ids[j], motifs[k] ) ) {
+					TR.Debug << "c1, c2, len : connectable " << local_comp1_ids[i] << ", " << local_comp2_ids[j] << ", " << motifs[k] << std::endl;
 					utility::vector1< core::Size > params;
 					params.push_back( i );
 					params.push_back( j );
@@ -923,7 +974,6 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 	// remove anchors
 	std::string const & c1 = local_comp1_ids[ valid_idxs[combo_idx][1] ];
 	std::string const & c2 = local_comp2_ids[ valid_idxs[combo_idx][2] ];
-	TR << "C1=" << c1 << " C2=" << c2 << std::endl;
 
 	core::Size motifidx = valid_idxs[combo_idx][3];
 	MotifList motifs;
@@ -955,7 +1005,7 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 	set_loop_upper( perm, c2 );
 
 	// find cutpoint (relative to built loop) if it's not set
-	if ( motif.len && ( cut_resis_.size() > 0 ) && (!performs_orientation()) ) {
+	if ( motif.len && ( cut_resis_.size() > 0 ) && ( !performs_orientation() ) ) {
 		if ( cut_resis_.size() == 1 ) {
 			set_cut_resi( perm, cut_resis_[1] );
 		} else {
@@ -979,7 +1029,9 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 	perm.mark_connected( loop_lower( perm ), loop_upper( perm ) );
 
 	TR << "Going to connect " << loop_lower( perm ) << "-> " << loop_upper( perm )
-		<< " len=" << build_len( perm ) << " cut=" << cut_resi( perm ) << std::endl;
+		<< " len=" << build_len( perm ) << " cut=" << cut_resi( perm )
+		<< " ss=" << build_ss( perm ) << " abego=" << build_abego( perm ) << std::endl;
+
 	return protocols::moves::MS_SUCCESS;
 }
 
@@ -1009,31 +1061,61 @@ Connection::add_loop_residues(
 
 /// @brief adds loop residues based on build_len and cut_resi
 void
-Connection::create_loop(
-	components::StructureData & perm,
-	std::string const & comp1_n,
-	std::string const & comp1_c,
-	std::string const & comp2_n,
-	std::string const & comp2_c )
+Connection::create_loop( components::StructureData & perm ) const
 {
 	// list of loop residues to propagate
 	utility::vector1< core::Size > loop_residues;
 
 	// detect possible cyclic connection
-	std::set< std::string > chain1 = perm.connected_segments( comp1_c );
-	bool cyclic_connection = ( chain1.find( comp2_n ) != chain1.end() );
-	if ( ( !cyclic_connection ) && ( perm.segment(comp1_c).cterm_resi()+1 != perm.segment(comp2_n).nterm_resi() ) ) {
-		TR << "Moving so that " << comp1_n << "__" << comp1_c << " precedes " << comp2_n << "__" << comp2_c << std::endl;
-		perm.move_segment( comp1_n, comp1_c, comp2_n, comp2_c );
-	} else {
-		TR << "Not moving : " << comp1_n << "__" << comp1_c << " already precedes " << comp2_n << "__" << comp2_c << " cyclic: " << cyclic_connection << std::endl;
-		perm.move_jumps_to_safety();
-	}
-	if ( cyclic_connection ) {
-		TR << "Cyclic connection discovered: " << chain1 << " : " << perm << std::endl;
-	}
+	StringList const desired_order = perm.connected_segments( lower_segment_id( perm ) );
 
-	assert( cyclic_connection || ( perm.segment(comp1_c).cterm_resi()+1 == perm.segment(comp2_n).nterm_resi() ) );
+	TR << "Desired order=" << desired_order << std::endl;
+	StringList::const_iterator c1_start = desired_order.begin();
+	StringList::const_iterator c1_end = desired_order.end();
+	StringList::const_iterator c2_start = desired_order.end();
+	StringList::const_iterator c2_end = desired_order.end();
+
+	// find c1_end
+	StringList::const_iterator n = desired_order.begin();
+	++n;
+	for ( StringList::const_iterator s = desired_order.begin(); n != desired_order.end(); ++s, ++n ) {
+		if ( perm.segment( *s ).cterm_resi() + 1 != perm.segment( *n ).nterm_resi() ) {
+			c1_end = s;
+			break;
+		}
+	}
+	if ( c1_end != desired_order.end() ) {
+		c2_start = c1_end;
+		++c2_start;
+		while ( c2_start != desired_order.end() ) {
+			StringList::const_iterator n = c2_start;
+			++n;
+			for ( StringList::const_iterator s = c2_start; n != desired_order.end(); ++s, ++n ) {
+				if ( perm.segment( *s ).cterm_resi() + 1 != perm.segment( *n ).nterm_resi() ) {
+					c2_end = s;
+					break;
+				}
+			}
+			if ( c2_end == desired_order.end() ) {
+				TR << id() << ": " << "Moving " << *c2_start << "__" << *desired_order.rbegin()
+					<< " to after " << *c1_start << "__" << *c1_end << std::endl;
+				perm.move_segment( *c1_start, *c1_end, *c2_start, *desired_order.rbegin() );
+				c1_start = c2_start;
+				c1_end = c2_end;
+				c2_start = desired_order.end();
+				c2_end = desired_order.end();
+			} else {
+				TR << id() << ": " << "Moving " << *c2_start << "__" << *c2_end
+					<< " to after " << *c1_start << "__" << *c1_end << std::endl;
+				perm.move_segment( *c1_start, *c1_end, *c2_start, *c2_end );
+				c1_start = c2_start;
+				c1_end = c2_end;
+				c2_start = c2_end;
+				c2_end = desired_order.end();
+				++c2_start;
+			}
+		}
+	}
 
 	TR << "Cut resi is " << cut_resi(perm) << " out of " << build_len(perm) << std::endl;
 	core::Size prepend_residues = 0, append_residues = 0;
@@ -1041,7 +1123,7 @@ Connection::create_loop(
 	utility::vector1< std::string > prepend_abego, append_abego;
 
 	if ( cut_resi(perm) ) {
-		prepend_residues = build_len(perm)-cut_resi(perm);
+		prepend_residues = build_len(perm) - cut_resi(perm);
 		append_residues = cut_resi(perm);
 	} else {
 		prepend_residues = 0;
@@ -1050,23 +1132,23 @@ Connection::create_loop(
 
 	std::string const ss = build_ss(perm);
 	std::string const ab = build_abego(perm);
-	for ( core::Size i=1; i<=append_residues; ++i ) {
+	for ( core::Size i = 1; i <= append_residues; ++i ) {
 		append_ss += ss[i-1];
 		std::string achar = "";
 		achar += ab[i-1];
 		append_abego.push_back( achar );
 	}
-	for ( core::Size i=1; i<=prepend_residues; ++i ) {
+	for ( core::Size i = 1; i <= prepend_residues; ++i ) {
 		prepend_ss += ss[append_residues+i-1];
 		std::string achar = "";
 		achar += ab[append_residues+i-1];
 		prepend_abego.push_back( achar );
 	}
-	assert( append_residues == append_ss.size() );
-	assert( append_residues == append_abego.size() );
-	assert( prepend_residues == prepend_ss.size() );
-	assert( prepend_residues == prepend_abego.size() );
-	assert( append_residues + prepend_residues == build_len(perm) );
+	debug_assert( append_residues == append_ss.size() );
+	debug_assert( append_residues == append_abego.size() );
+	debug_assert( prepend_residues == prepend_ss.size() );
+	debug_assert( prepend_residues == prepend_abego.size() );
+	debug_assert( append_residues + prepend_residues == build_len(perm) );
 	if ( prepend_residues ) {
 		set_loop_upper( perm, id() + "_1" );
 		add_loop_residues( perm, upper_segment_id(perm), loop_upper(perm), prepend_residues, prepend_ss, prepend_abego, true );
@@ -1075,6 +1157,15 @@ Connection::create_loop(
 		set_loop_lower( perm, id() );
 		add_loop_residues( perm, lower_segment_id(perm), loop_lower(perm), append_residues, append_ss, append_abego, false );
 	}
+}
+
+/// @brief checks the generated StructureData object to ensure it fits with what the user wants
+/// before building
+/// @details default behavior is to always pass this check. Subclasses can implement more stringent checks.
+bool
+Connection::check_permutation( components::StructureData const & ) const
+{
+	return true;
 }
 
 /// @brief checks the inserted region vs. the desired ss/abego.  True if it matches, false otherwise
@@ -1153,7 +1244,7 @@ Connection::build_right( components::StructureData const & perm ) const
 GenericConnection::GenericConnection():
 	Connection()
 {
-	set_performs_orientation( false );
+	set_performs_orientation( true );
 }
 
 GenericConnection::~GenericConnection()
@@ -1182,10 +1273,28 @@ GenericConnection::clone() const
 void
 GenericConnection::apply_connection( components::StructureData & sd )
 {
-	// strip off terminal residues
-	sd.delete_trailing_residues( loop_lower( sd ) );
-	sd.delete_leading_residues( loop_upper( sd ) );
+	staple_work_function( *this, sd );
+}
 
+/// @brief check whether the given segments are connectable
+bool
+GenericConnection::are_connectable(
+	components::StructureData const & sd,
+	std::string const & segment1,
+	std::string const & segment2,
+	Motif const & motif ) const
+{
+	// performs orientation is false for GenericConnection because this connection
+	// doesn't care about movable groups
+	return sd.are_connectable(
+		segment1,
+		segment2,
+		motif.len,
+		false, // use distance
+		false, // performs orientation
+		allow_cyclic(),
+		connecting_bond_dist(),
+		core::Real( 0.0 ) ); // avg_dist, which is irrelevant if use_distance is false
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1268,42 +1377,52 @@ StapleTomponents::setup_permutation( components::StructureData & perm ) const
 	return retval;
 }
 
+void
+staple_work_function( Connection const & conn, components::StructureData & perm )
+{
+	std::string const & loop_lower = conn.loop_lower( perm );
+	std::string const & loop_upper = conn.loop_upper( perm );
+	std::string const & upper_segment_id = conn.upper_segment_id( perm );
+	if ( !perm.pose() ) {
+		perm.delete_trailing_residues( loop_lower );
+		perm.delete_leading_residues( loop_upper );
+		return;
+	}
+
+	int jump = perm.find_jump( upper_segment_id );
+	debug_assert( ( jump != 0 ) || conn.allow_cyclic() );
+
+	core::Real c1e_psi = perm.pose()->psi( perm.segment( loop_lower ).stop() );
+	core::Real c1e_omega = perm.pose()->omega( perm.segment( loop_lower ).stop() );
+	core::Real c2s_phi = perm.pose()->phi( perm.segment( loop_upper ).start() );
+
+	// move segment 2 and align with end of comp1
+	perm.align_segments( loop_lower, upper_segment_id );
+
+	TR << "aligned segments " << std::endl;
+	// delete residue(s) at c-terminus of N component and renumber
+	perm.delete_trailing_residues( loop_lower );
+	perm.delete_leading_residues( loop_upper );
+
+	// physically join the termini
+	perm.delete_jump_and_intervening_cutpoint( loop_lower, loop_upper );
+
+	perm.set_psi( perm.segment( loop_lower ).stop(), c1e_psi );
+	perm.set_omega( perm.segment( loop_lower ).stop(), c1e_omega );
+	perm.set_phi( perm.segment( loop_upper ).start(), c2s_phi );
+}
+
 /// @brief applies the loop building
 void
 StapleTomponents::apply_connection( components::StructureData & perm )
 {
-	if ( !perm.pose() ) {
-		perm.delete_trailing_residues( loop_lower(perm) );
-		perm.delete_leading_residues( loop_upper(perm) );
-		return;
-	}
+	staple_work_function( *this, perm );
 
-	core::pose::Pose const & pose = *(perm.pose());
-	int jump = perm.find_jump( upper_segment_id(perm) );
-	assert( ( jump != 0 ) || allow_cyclic() );
-
-	TR << "found jump " << std::endl;
-	core::Real c1e_psi = pose.psi( perm.segment(loop_lower(perm)).stop() );
-	core::Real c1e_omega = pose.omega( perm.segment(loop_lower(perm)).stop() );
-	core::Real c2s_phi = pose.phi( perm.segment(loop_upper(perm)).start() );
-
-	// move segment 2 and align with end of comp1
-	perm.align_segments( loop_lower(perm), upper_segment_id(perm) );
-
-	TR << "aligned segments " << std::endl;
-	// delete residue(s) at c-terminus of N component and renumber
-	perm.delete_trailing_residues( loop_lower(perm) );
-	perm.delete_leading_residues( loop_upper(perm) );
-
-	// physically join the termini
-	perm.delete_jump_and_intervening_cutpoint( loop_lower(perm), loop_upper(perm) );
-
-	perm.set_psi( perm.segment(loop_lower(perm)).stop(), c1e_psi );
-	perm.set_omega( perm.segment(loop_lower(perm)).stop(), c1e_omega );
-	perm.set_phi( perm.segment(loop_upper(perm)).start(), c2s_phi );
-
-	for ( core::Size i=perm.segment(lower_segment_id(perm)).stop(); i<=perm.segment(upper_segment_id(perm)).start(); ++i ) {
-		TR.Debug << "res " << i << " phi=" << perm.pose()->phi(i) << " psi=" << perm.pose()->psi(i) << " omega=" << perm.pose()->omega(i) << std::endl;
+	if ( perm.pose() ) {
+		for ( core::Size i = perm.segment( lower_segment_id(perm) ).stop();
+				i <= perm.segment( upper_segment_id(perm) ).start(); ++i ) {
+			TR.Debug << "res " << i << " phi=" << perm.pose()->phi(i) << " psi=" << perm.pose()->psi(i) << " omega=" << perm.pose()->omega(i) << std::endl;
+		}
 	}
 }
 

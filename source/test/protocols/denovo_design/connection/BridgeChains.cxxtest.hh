@@ -23,7 +23,6 @@
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/util.hh>
-#include <devel/denovo_design/components/util.hh>
 
 // Protocol headers
 #include <protocols/filters/Filter.hh>
@@ -57,6 +56,72 @@
 #include <protocols/denovo_design/test_utils.hh>
 
 static thread_local basic::Tracer TR( "protocols.denovo_design.connection.BridgeChains.cxxtest" );
+
+namespace denovo_design {
+namespace components {
+
+/// @brief computes the new residue number after one component is joined to another using chain termini instead of anchors
+core::Size new_resnum_termini(
+	core::Size const orig_resnum,
+	core::Size const css,
+	core::Size const cse,
+	core::Size const cms,
+	core::Size const cme,
+	core::Size const insert_length,
+	core::Size const c1_cut_residues,
+	core::Size const c2_cut_residues )
+{
+	if ( ( c2_cut_residues && ( orig_resnum == cms ) ) || ( c1_cut_residues && ( orig_resnum == cse ) ) ) {
+		return 0;
+	}
+	// before movable segment
+	if ( orig_resnum < cms ) {
+		// before or inside fixed segment
+		if ( orig_resnum <= cse ) {
+			return orig_resnum;
+			// after fixed segment
+		} else {
+			return orig_resnum + cme - cms - c2_cut_residues + insert_length;
+		}
+		// after movable segment
+	} else if ( orig_resnum > cme ) {
+		// before or inside fixed segment
+		if ( orig_resnum <= cse ) {
+			return orig_resnum - cme - 1 + cms;
+			// after fixed segment
+		} else {
+			return orig_resnum - c1_cut_residues - c2_cut_residues + insert_length;
+		}
+		// inside movable segment
+	} else {
+		// before fixed segment
+		if ( orig_resnum < css ) {
+			return cse - cme - c1_cut_residues - c2_cut_residues + orig_resnum + insert_length;
+			// after fixed segment
+		} else if ( orig_resnum > cse ) {
+			return cse - c1_cut_residues + orig_resnum - cms + insert_length;
+			// also inside fixed segment -- should never happen
+		} else {
+			utility_exit_with_message( boost::lexical_cast< std::string >(orig_resnum) + " is inside both the fixed and movable segments. Something is wrong..." );
+		}
+		return cse - c1_cut_residues + orig_resnum - cms + insert_length;
+	}
+}
+
+/// @brief computes the new residue number after one component is joined to another
+core::Size new_resnum(
+	core::Size const orig_resnum,
+	core::Size const ss,
+	core::Size const se,
+	core::Size const ms,
+	core::Size const me,
+	core::Size const insert_length )
+{
+	return new_resnum_termini( orig_resnum, ss-1, se+1, ms-1, me+1, insert_length, 1, 1 );
+}
+
+}
+}
 
 // --------------- Test Class --------------- //
 class BridgeChainsTests : public CxxTest::TestSuite {
@@ -147,8 +212,8 @@ public:
 		TS_ASSERT_EQUALS( conn.get_last_move_status(), protocols::moves::MS_SUCCESS );
 		TS_ASSERT_EQUALS( perm->find_jump( conn.lower_segment_id(*perm) ), 0 );
 		TS_ASSERT_EQUALS(
-				perm->pose()->fold_tree().downstream_jump_residue( perm->find_jump( conn.upper_segment_id(*perm) ) ),
-				perm->segment("rot_comp.rot_comp2.catalytic.2").safe() );
+			perm->pose()->fold_tree().downstream_jump_residue( perm->find_jump( conn.upper_segment_id(*perm) ) ),
+			perm->segment("rot_comp.rot_comp2.catalytic.2").safe() );
 
 		// do connecting
 		conn.apply_connection( *perm );
@@ -205,9 +270,9 @@ public:
 		core::Size const ms = orig->lower_anchor("rot_comp.rot_comp2.catalytic.2");
 		core::Size const me = orig->upper_anchor("rot_comp.rot_comp2.catalytic.2");
 		core::Vector xyz1 = orig->pose()->residue(2).xyz("CA");
-		core::Vector xyz2 = new_pose->residue( devel::denovo_design::components::new_resnum( 2, ss, se, ms, me, 4 ) ).xyz("CA");
+		core::Vector xyz2 = new_pose->residue( denovo_design::components::new_resnum( 2, ss, se, ms, me, 4 ) ).xyz("CA");
 		for ( core::Size i=1; i<=orig->pose()->total_residue(); ++i ) {
-			core::Size const new_res( devel::denovo_design::components::new_resnum( i, ss, se, ms, me, 4 ) );
+			core::Size const new_res( denovo_design::components::new_resnum( i, ss, se, ms, me, 4 ) );
 			TR.Debug << "i=" << i << " new=" << new_res << std::endl;
 			if ( ! new_res ) {
 				continue;
@@ -260,7 +325,7 @@ public:
 		TS_ASSERT_EQUALS( conn.build_len(*perm), 5 );
 		TS_ASSERT_EQUALS( perm->find_jump("2"), 0 );
 		TS_ASSERT_EQUALS( perm->pose()->fold_tree().downstream_jump_residue( perm->find_jump("1") ),
-				perm->segment( "1" ).safe() );
+			perm->segment( "1" ).safe() );
 		TS_ASSERT_EQUALS( conn.build_abego(*perm), "XXXXX" );
 		TS_ASSERT_EQUALS( conn.build_ss(*perm), "LLLLL" );
 		TS_ASSERT_EQUALS( conn.build_len(*perm), 5 );

@@ -138,6 +138,7 @@ sources = {
 	],
 
 	"denovo_design/connection" :[
+		"BridgeChains",
 		"Connection",
 	],
 
@@ -488,6 +489,11 @@ testinputfiles = [
 	"comparative_modeling/4gat_protein.pdb",
 	"denovo_design/disulf_test.pdb",
 	"denovo_design/test_pdbcomp.pdb",
+	"denovo_design/test_sd.xml",
+	"denovo_design/connection/twohelix_structuredata.pdb",
+	"denovo_design/connection/test_input_loopremoved.pdb",
+	"denovo_design/connection/test_pdbcomp_BridgeChains.pdb",
+	"denovo_design/connection/test_bundle_disconnected.pdb",
 	"docking/DockingTest.pdb",
 	"docking/DockingDecoy.pdb",
 	"docking/DockingMultiChain.pdb",

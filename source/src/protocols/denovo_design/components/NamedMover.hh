@@ -20,6 +20,7 @@
 #include <protocols/denovo_design/components/NamedMover.fwd.hh>
 
 // Project headers
+#include <protocols/denovo_design/components/StructureData.fwd.hh>
 #include <protocols/denovo_design/types.hh>
 
 // Protocol headers
@@ -28,6 +29,8 @@
 // Core headers
 
 // Basic/Numeric/Utility Headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -52,6 +55,42 @@ public:
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose );
+
+	// virtual interface functions
+public:
+	/// @brief performs setup and applies loop building
+	/// @details Default steps to apply():
+	/// 1. Pulls StructureData from the pose
+	/// 2. setup_permutation() stores data about this connection which is not
+	///    static for every apply() call
+	/// 3. apply_permutation() uses the StructureData object to build the loop
+	/// 4. check() checks the built structure
+	virtual void apply( core::pose::Pose & pose );
+
+	/// @brief uses the StructureData to set up, builds structure, and updates permutation
+	/// @details Steps should be:
+	///  1. Use StructureData to collect information about the structure to be built
+	///  2. Build the pose as instructed by the StructureData object
+	///  3. Store the pose in the StructureData object
+	virtual void apply_permutation( StructureData & perm ) = 0;
+
+	/// @brief Choose and store build options in the StructureData object
+	/// @details You can store build-specified information (loop length, desired
+	/// abego, etc.) in the StructureData object which will be used later when
+	/// apply_permutation() is called.
+	/// This function SHOULD NOT engage in any pose modification
+	virtual protocols::moves::MoverStatus
+	setup_permutation( StructureData & perm ) const = 0;
+
+	/// @brief checks an unbuilt permutation modified by setup_permutation to see if it is acceptable for building
+	virtual bool check_permutation( StructureData const & perm ) const = 0;
+
+	/// @brief checks the built StructureData vs. the desired params.
+	/// @details should return true if it matches, false otherwise
+	virtual bool check( StructureData const & perm ) const = 0;
+
+public:
+	// member functions
 
 	/// @brief returns an identifier for this mover
 	std::string const & id() const;

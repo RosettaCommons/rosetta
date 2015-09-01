@@ -25,6 +25,8 @@
 // Project headers
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/util.hh>
+#include <protocols/denovo_design/connection/BridgeChains.hh>
 
 // Protocol headers
 #include <protocols/matdes/SymDofMover.hh>
@@ -43,6 +45,9 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+
+// Boost headers
+#include <boost/assign.hpp>
 
 // C++ headers
 static thread_local basic::Tracer TR( "protocols.denovo_design.Connection.cxxtest" );
@@ -207,5 +212,152 @@ public:
 		TS_ASSERT_EQUALS( conn.build_left( *sd2 ), sd2->segment( conn.loop_lower( *sd2 ) ).nterm_resi() - 4 );
 		TS_ASSERT_EQUALS( conn.build_right( *sd2 ), sd2->segment( conn.loop_upper( *sd2 ) ).cterm_resi() + 4 );
 	}
+
+	void test_ideal_abego_no_extension()
+	{
+		using namespace protocols::denovo_design;
+		using namespace protocols::denovo_design::components;
+		using namespace protocols::denovo_design::connection;
+		core::pose::Pose input_pose;
+		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/test_pdbcomp.pdb" );
+		StructureDataOP sd = StructureData::create_from_pose( input_pose, "UnitTest" );
+
+		ConnectionOP conn( new BridgeTomponents() );
+		TS_ASSERT( conn );
+		conn->set_id( "bridge" );
+
+		// choose some lengths
+		conn->set_cut_resis( "3" );
+		conn->set_lengths( "3:4" );
+		for ( Connection::MotifList::const_iterator m = conn->motifs().begin(); m != conn->motifs().end(); ++m ) {
+			TS_ASSERT( (m->len == core::Size( 3 )) || (m->len == core::Size( 4 )) );
+		}
+
+		// select some idealized motifs
+		std::set< core::Size > const length_set = boost::assign::list_of (3)(4);
+		std::set< std::string > const expected = boost::assign::list_of
+			("GBB")("BAB")("BGBB")("ABA")("GBBA")("BABA")("ABAA");
+
+		Connection::MotifList motifs = conn->calc_idealized_motifs( "B", "A", length_set );
+		for ( Connection::MotifList::const_iterator m = motifs.begin(); m != motifs.end(); ++m ) {
+			TR << "Testing for " << m->abego << std::endl;
+			TS_ASSERT( expected.find( m->abego ) != expected.end() );
+		}
+
+		// now don't do extension
+		conn->set_extend_ss( false );
+		std::set< std::string > const expected_noextend = boost::assign::list_of
+			("GBB");
+		motifs = conn->calc_idealized_motifs( "B", "A", length_set );
+		TS_ASSERT_EQUALS( motifs.size(), 1 );
+		for ( Connection::MotifList::const_iterator m = motifs.begin(); m != motifs.end(); ++m ) {
+			TR << "Testing for " << m->abego << std::endl;
+			TS_ASSERT( expected_noextend.find( m->abego ) != expected_noextend.end() );
+		}
+	}
+
+	void test_check_abego() {
+		using namespace protocols::denovo_design;
+		using namespace protocols::denovo_design::components;
+		using namespace protocols::denovo_design::connection;
+		core::pose::Pose input_pose;
+		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/connection/test_bundle_disconnected.pdb" );
+		StructureDataOP poseperm = StructureData::create_from_pose( input_pose, "UnitTest" );
+		TS_ASSERT( poseperm );
+
+		protocols::moves::DsspMover dssp;
+		dssp.apply( input_pose );
+		TR << "SS: " << input_pose.secstruct() << std::endl;
+		TS_ASSERT_EQUALS( input_pose.secstruct(), poseperm->ss() );
+
+		BridgeChainsOP conn( new BridgeChains() );
+		conn->set_id( "loop1" );
+		conn->set_motifs( "2HA-3LX" );
+		conn->set_comp1_ids( "UnitTest.1" );
+		conn->set_comp2_ids( "UnitTest.2" );
+		conn->set_trials( 5 );
+		conn->set_cut_resi( *poseperm, 2 );
+		conn->set_check_abego( true );
+
+		// check proper loop abego and ss
+		conn->setup_permutation( *poseperm );
+		conn->setup( *poseperm );
+		TS_ASSERT_EQUALS( poseperm->segment( "loop1" ).ss(), "HHL" );
+		TS_ASSERT_EQUALS( abego_str( poseperm->segment( "loop1" ).abego() ), "AAX" );
+		TS_ASSERT_EQUALS( poseperm->segment( "loop1_1" ).ss(), "LLLL" );
+		TS_ASSERT_EQUALS( abego_str( poseperm->segment( "loop1_1" ).abego() ), "XXXX" );
+		TR << *poseperm << std::endl;
+		poseperm->delete_leading_residues( "loop1_1" );
+		poseperm->delete_trailing_residues( "loop1" );
+		poseperm->merge_segments( "loop1", "loop1_1", "loop1" );
+		TS_ASSERT( !poseperm->has_segment( "loop1_1" ) );
+		TS_ASSERT( poseperm->has_segment( "loop1" ) );
+		TS_ASSERT_EQUALS( poseperm->segment( "loop1" ).ss(), "HHLLL" );
+		TS_ASSERT_EQUALS( abego_str( poseperm->segment( "loop1" ).abego() ), "AAXXX" );
+
+		// run fake "check" of abego/ss
+		std::string pose_ss = poseperm->ss();
+		utility::vector1< std::string > pose_abego = poseperm->abego();
+		std::string const insert_ss = poseperm->segment( "loop1" ).ss();
+		utility::vector1< std::string > const insert_abego = poseperm->segment( "loop1" ).abego();
+		TS_ASSERT( check_insert_ss_and_abego( pose_ss, pose_abego, insert_ss, insert_abego, poseperm->segment("loop1").nterm_resi() ) );
+		pose_ss[15] = 'L';
+		TS_ASSERT( !check_insert_ss_and_abego( pose_ss, pose_abego, insert_ss, insert_abego, poseperm->segment("loop1").nterm_resi() ) );
+		pose_ss[15] = 'H';
+		pose_abego[16] = 'X';
+		TS_ASSERT( !check_insert_ss_and_abego( pose_ss, pose_abego, insert_ss, insert_abego, poseperm->segment("loop1").nterm_resi() ) );
+	}
+
+	void test_rebuild_connection() {
+		using namespace protocols::denovo_design;
+		using namespace protocols::denovo_design::components;
+		using namespace protocols::denovo_design::connection;
+
+		// create input
+		core::pose::Pose input_pose;
+		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/connection/test_input_loopremoved.pdb" );
+		StructureDataOP perm = StructureData::create_from_pose( input_pose, "UnitTest" );
+		assert( perm );
+		assert( perm->pose() );
+
+		BridgeChainsOP origconn( new BridgeChains() );
+		origconn->set_id( "loop1" );
+		origconn->set_lengths( "6" );
+		origconn->set_comp1_ids( "2" );
+		origconn->set_comp2_ids( "3" );
+		origconn->set_trials( 1 );
+		origconn->set_check_abego( false );
+		origconn->set_do_remodel( false );
+		origconn->apply( input_pose );
+
+		StructureDataOP cached = StructureData::create_from_pose( input_pose, "UnitTest" );
+		TS_ASSERT_EQUALS( origconn->build_len(*cached), 6 );
+		TS_ASSERT_EQUALS( origconn->build_ss(*cached), "LLLLLL" );
+		TS_ASSERT_EQUALS( origconn->build_abego(*cached), "XXXXXX" );
+
+		BridgeChainsOP newconn( new BridgeChains() );
+		newconn->set_id( "loop1" );
+		newconn->set_comp1_ids( "UnitTest.2" );
+		newconn->set_comp2_ids( "UnitTest.3" );
+		newconn->set_motifs( "1EB-1LB-1LA-1LB-1HA,1EB-1LG-1LB-2HA" );
+		newconn->set_trials( 1 );
+		newconn->set_check_abego( false );
+		newconn->set_do_remodel( false );
+		newconn->setup_from_random( *perm, 0.0001 );
+		TS_ASSERT_EQUALS( newconn->loop_lower(*perm), "UnitTest.2" );
+		TS_ASSERT_EQUALS( newconn->loop_upper(*perm), "UnitTest.3" );
+		TS_ASSERT_EQUALS( newconn->build_len(*perm), 5 );
+		TS_ASSERT_EQUALS( newconn->build_ss(*perm), "ELLLH" );
+		TS_ASSERT_EQUALS( newconn->build_abego(*perm), "BBABA" );
+		newconn->apply_permutation( *perm );
+
+		TR << "Perm=" << *perm << std::endl;
+		newconn->setup_from_random( *perm, 0.9999 );
+		TS_ASSERT_EQUALS( newconn->loop_lower(*perm), "UnitTest.2" );
+		TS_ASSERT_EQUALS( newconn->loop_upper(*perm), "UnitTest.3" );
+		TS_ASSERT_EQUALS( newconn->build_len(*perm), 5 );
+		TS_ASSERT_EQUALS( newconn->build_ss(*perm), "ELLHH" );
+		TS_ASSERT_EQUALS( newconn->build_abego(*perm), "BGBAA" );
+	};
 };
 
