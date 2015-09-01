@@ -314,7 +314,7 @@ core::conformation::ResidueOP
 get_mg_rsd() {
 	using namespace core::chemical;
 	// stick following in a get_single_mg_pose function.
-	ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	return core::conformation::ResidueFactory::create_residue ( *( rsd_set->get_representative_type_name3( " MG" ) ) );
 }
 

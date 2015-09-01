@@ -79,7 +79,7 @@ mg_modeler_test()
 
 	std::string const file_path( option[ in::path::pdb ]( 1 ) );
 	vector1< std::string > const input_pdb_files( option[ in::file::s ]() );
-	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" ) );
+	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 	vector1< Size > input_pdb_mg_res = option[ magnesium::mg_res ]();
 	Pose pose;
 

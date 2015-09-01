@@ -74,7 +74,7 @@ FromScratchMover::apply( core::pose::Pose & pose,
 		new_sequence += newrestype;
 	}
 
-	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( modeler::rna::just_modeling_RNA( full_sequence ) ? FA_RNA : FA_STANDARD ) );
+	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	PoseOP new_pose( new Pose );
 	make_pose_from_sequence( *new_pose, new_sequence, *rsd_set );
 

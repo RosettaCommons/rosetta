@@ -347,7 +347,7 @@ setup_pose ( pose::Pose & pose){
 
 	if (len1 == 0) utility_exit_with_message( "User need to specify at least -seq1 !!" );
 
-	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna_phenix" );
+	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	pose::make_pose_from_sequence( pose, total_seq, *rsd_set );
 
 	static std::pair < Backbone_Torsion,  Nucleoside_Torsion > const ideal_torsions = ideal_A_form_torsions();

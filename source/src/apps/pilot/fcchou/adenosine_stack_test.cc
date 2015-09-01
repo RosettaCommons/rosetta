@@ -152,7 +152,7 @@ methane_pair_score_test()
 
 	//////////////////////////////////////////////////
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	// Read in pose with two methane. "Z" = ligand. Note need flag:
 	//         -extra_res_fa CH4.params -s two_methane.pdb

@@ -238,8 +238,8 @@ int universal_main(
 		core::chemical::ResidueTypeSetCOP rsd_set;
 		if ( option[ in::file::fullatom ]() ) {
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-		} else if ( option[ in::file::residue_type_set ]() == "rna"  || option[ out::file::residue_type_set ]() == "rna"  ) {
-			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+		} else if ( option[ in::file::residue_type_set ]() == core::chemical::FA_STANDARD  || option[ out::file::residue_type_set ]() == core::chemical::FA_STANDARD  ) {
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		} else {
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 		}

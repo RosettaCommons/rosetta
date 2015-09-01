@@ -52,7 +52,6 @@ public:
 	bool no_optH() const;
 	bool pack_missing_sidechains() const;
 	bool read_fold_tree() const;
-	bool rna() const;
 	bool skip_set_reasonable_fold_tree() const;
 	std::string const & residue_type_set() const;
 	bool set_up_metal_bonds() const;
@@ -68,7 +67,6 @@ public:
 	void set_no_optH( bool no_optH );
 	void set_pack_missing_sidechains( bool pack_missing_sidechains );
 	void set_read_fold_tree( bool read_fold_tree );
-	void set_rna( bool rna );
 	void set_skip_set_reasonable_fold_tree( bool skip_set_reasonable_fold_tree );
 	void set_residue_type_set( std::string const & residue_type_set );
 	void set_set_up_metal_bonds( bool invalue );
@@ -87,7 +85,6 @@ private:
 	bool no_optH_;
 	bool pack_missing_sidechains_;
 	bool read_fold_tree_;
-	bool rna_;
 	bool skip_set_reasonable_fold_tree_;
 	bool set_up_metal_bonds_;
 	core::Real metal_bond_LJ_multiplier_;

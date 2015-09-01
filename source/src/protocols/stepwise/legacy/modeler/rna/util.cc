@@ -388,7 +388,7 @@ import_pose_from_silent_file( core::pose::Pose & import_pose, std::string const 
 	using namespace core::conformation;
 
 	static const ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance() ->
-		residue_type_set( core::chemical::FA_RNA ) );
+		residue_type_set( core::chemical::FA_STANDARD ) );
 
 	core::io::silent::SilentFileData silent_file_data;
 	silent_file_data.read_file( silent_file );

@@ -58,7 +58,7 @@ pack_polar_hydrogens()
 
 	// Following could be generalized to fa_standard, after recent unification, but
 	// probably should wait for on-the-fly residue type generation.
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna_phenix" );
+	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	// Following could go to a FullModelSetup class.
 	// read starting pose(s) from disk

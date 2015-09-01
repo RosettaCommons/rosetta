@@ -842,7 +842,7 @@ rhiju_pdbstats()
 
 	ResidueTypeSetCAP rsd_set;
 	if ( option[rna_stack]() ){
-  	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+  	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	} else {
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 

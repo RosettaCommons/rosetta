@@ -250,7 +250,7 @@ multiple_variant_type_test(){
 		using namespace protocols::stepwise::sampling::rna;
 
 		ResidueTypeSetCAP rsd_set;
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 		std::string pdb_tag= option[ in::file::s ]()[1] ;
 
@@ -302,7 +302,7 @@ align_pdbs_function(pose::Pose const static_pose,
 	using namespace protocols::stepwise::sampling::rna;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	std::cout << "alignment_RMSD_cutoff= " << alignment_RMSD_cutoff << std::endl;
 
@@ -418,7 +418,7 @@ convert_silent_file_to_pose_data_list(std::string const silent_file){
 	using namespace core::scoring;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 
 	core::import_pose::pose_stream::SilentFilePoseInputStreamOP silent_file_stream;
@@ -574,7 +574,7 @@ hermann_phase_two_minimize(){
 	clock_t const time_start( clock() );
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	protocols::farna::RNA_LoopCloser rna_loop_closer;
 
@@ -1213,7 +1213,7 @@ hermann_phase_two(){
 	using namespace core::scoring;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1398,7 +1398,7 @@ journal_club_syn_chi(){
 		using namespace core::kinematics;
 
 		ResidueTypeSetCAP rsd_set;
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 		std::string sequence="g";
 		pose::Pose pose;
@@ -1439,7 +1439,7 @@ calculate_theoretical_RNA_length(){
 	using namespace core::kinematics;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	//Create a trinucleotide
 	std::string sequence="auu";
 	pose::Pose pose;
@@ -1521,7 +1521,7 @@ calculate_bulge_length_distribution(){
 	using namespace core::kinematics;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	//Create a trinucleotide
 	std::string sequence="auu";
 	pose::Pose pose;
@@ -1579,7 +1579,7 @@ calculate_theoretical_RNA_length_with_bond_angle_dependence(){
 		using namespace core::kinematics;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	//Create a trinucleotide
 	std::string sequence="auu";
 	pose::Pose pose;
@@ -2978,7 +2978,7 @@ cluster_rotamers(bool const second_stage,
 	clock_t const time_start( clock() );
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	//Create a dinucleotide
 
@@ -3358,7 +3358,7 @@ rna_idealize_test() {
 	utility::vector1 <std::string> pdb_files ( option[ in::file::s ]() );
 
 	core::chemical::ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	bool const close_chainbreaks = option[ idl_close_chainbreaks ];
 

@@ -256,7 +256,7 @@ setup_one_chain_pose ( pose::Pose & pose, bool is_virtualize = true ) {
 	using namespace protocols::stepwise::sampling::rna;
 	using namespace chemical::rna;
 
-	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	bool is_add_virt_res = option[ add_virt_res ]();
 	std::string sequence = option[ seq ]();

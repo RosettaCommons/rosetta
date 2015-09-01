@@ -140,7 +140,7 @@ nucleobase_probe_score_test()
 	using namespace core::id;
 
 	//////////////////////////////////////////////////
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	// Read in pose with two methane. "Z" = ligand. Note need flag:
 	//         -extra_res_fa CH4.params -s two_methane.pdb
@@ -386,7 +386,7 @@ quick_score_test(){
 
 	//////////////////////////////////////////////////
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	// Read in pose with two methane. "Z" = ligand. Note need flag:
 	//         -extra_res_fa CH4.params -s two_methane.pdb

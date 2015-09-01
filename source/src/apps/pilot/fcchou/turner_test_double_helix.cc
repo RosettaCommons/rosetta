@@ -421,7 +421,7 @@ setup_double_helix_pose ( pose::Pose & pose){
 	using namespace chemical::rna;
 	using namespace optimization;
 
-	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	std::string sequence = "";
 	if ( option[ seq ].user() ) sequence = option[ seq ]();
 	if ( sequence.size() % 2 != 0) {

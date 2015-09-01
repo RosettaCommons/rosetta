@@ -344,7 +344,7 @@ rna_thread_test(){
 	//Read in template pdb.
 	Pose pose;
 	std::string template_file = option[ in::file::s ][1];
-	core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	core::import_pose::pose_from_pdb( pose, *rsd_set, template_file );
 	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 

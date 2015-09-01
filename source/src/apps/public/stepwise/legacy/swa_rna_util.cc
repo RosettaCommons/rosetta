@@ -462,7 +462,7 @@ align_pdbs(){
 	using namespace protocols::stepwise::modeler::rna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	if ( !option[ in::file::native ].user() ) utility_exit_with_message( "User must supply in::file::native!" );
 	if ( !option[ in::file::s ].user() ) utility_exit_with_message( "User must supply in::file::s!" );
@@ -585,7 +585,7 @@ calculate_pairwise_RMSD(){
 
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	if ( !option[ in::file::native ].user() ) utility_exit_with_message( "User must supply in::file::native!" );
 	if ( !option[ in::file::s ].user() ) utility_exit_with_message( "User must supply in::file::s!" );
@@ -704,7 +704,7 @@ import_and_dump_pdb(){
 	if ( option[ in::file::s ].user() == false ) utility_exit_with_message( "User must supply in::file::s!" );
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	utility::vector1< std::string > const pdb_file_list = option[ in::file::s ]();
 
@@ -741,7 +741,7 @@ o2prime_packer(){
 	using namespace core::id;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	// core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "single_strand_benchmark" );
 
@@ -802,7 +802,7 @@ mutate_residue( pose::Pose & pose, Size const seq_num, std::string const & res_n
 	// using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	pose::Pose start_pose = pose;
 
@@ -837,7 +837,7 @@ mutate_residues_wrapper()
 	using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
@@ -880,7 +880,7 @@ slice_ellipsoid_envelope(){
 	clock_t const time_start( clock() );
 	/////////////////////////
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	core::scoring::ScoreFunctionOP scorefxn = create_scorefxn(); //replace this on Jun 11, 2010
 
@@ -1138,7 +1138,7 @@ slice_sample_res_and_surrounding(){
 	clock_t const time_start( clock() );
 	/////////////////////////
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	core::scoring::ScoreFunctionOP scorefxn = create_scorefxn(); //replace this on Jun 11, 2010
 
@@ -1323,7 +1323,7 @@ pdb_to_silent_file(){
 	using namespace core::pose;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	SilentFileData silent_file_data;
 
 	pose::Pose viewer_pose;
@@ -1426,7 +1426,7 @@ rna_fullatom_minimize_test()
 
 	/////////////////////////
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 
 	if ( option[ in::file::silent ].user() &&  option[ input_tag_list ].user() ) {
@@ -1598,13 +1598,6 @@ main( int argc, char * argv [] )
 		// setup
 		////////////////////////////////////////////////////////////////////////////
 		core::init::init( argc, argv );
-
-		option[ OptionKeys::chemical::include_patches ].push_back( "VIRTUAL_RIBOSE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" ); // 5prime_phosphate and 3prime_phosphate
-		option[ OptionKeys::chemical::include_patches ].push_back( "patches/nucleic/rna/Virtual_RNA_Residue.txt" );
-		option[ OptionKeys::chemical::include_patches ].push_back( "patches/nucleic/rna/Virtual_Phosphate.txt" );
-		option[ OptionKeys::chemical::include_patches ].push_back( "patches/nucleic/rna/Protonated_H1_Adenosine.txt" );
-		option[ OptionKeys::chemical::include_patches ].push_back( "patches/nucleic/rna/Virtual_Backbone_Except_C1prime.txt" );
 
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup

@@ -300,7 +300,7 @@ define_states_test(){
 	using namespace core::io::silent;
 	using namespace protocols::swa;
 
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	// Create C-G base pair.
 	Pose pose;

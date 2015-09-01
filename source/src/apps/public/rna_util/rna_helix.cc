@@ -116,7 +116,7 @@ rna_build_helix_test(){
 
 	bool const is_use_phenix_geo = option[ basic::options::OptionKeys::rna::corrected_geo] ();
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	pose::Pose pose;
 	std::string sequence_to_build;

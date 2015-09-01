@@ -292,31 +292,8 @@ ChemicalManager::residue_type_set( std::string tag )
 
 	using namespace basic;
 
-	//There are a few experimental RNA residue type sets under
-	//consideration.  The long term plan is to fold these into
-	//fa_standard.  In the short term, override in ChemicalManager to
-	//detect their use (via cmdline flag) and override base RNA to
-	//something fancier.  Since these are covered by an override, they
-	//are NOT covered by proper global-data-string tags RNA_PHENIX and
-	//RNA_PROT_ERRASER.  SML & FC
-	//
-	// I put RNA into fa_standard -- we should remove this craziness -- rhiju, 2014.
-	//
-	if ( tag == "rna" ) {
-		using basic::options::OptionKeys::rna::corrected_geo;
-		using basic::options::OptionKeys::rna::rna_prot_erraser;
-		bool const use_corrected_rna_geo = basic::options::option[ corrected_geo ].value();
-		bool const use_RNA_and_protein = basic::options::option[ rna_prot_erraser ].value();
-		if ( use_corrected_rna_geo && !use_RNA_and_protein ) {
-			tag = "rna_phenix";
-		} else if ( use_corrected_rna_geo && use_RNA_and_protein ) {
-			tag = "rna_prot_erraser";
-		} else if ( !use_corrected_rna_geo && use_RNA_and_protein ) {
-			utility_exit_with_message("cannot use -rna:rna_prot_erraser without -rna:corrected_geo");
-		} else {
-			tag = "rna_legacy";
-		}
-	} //if ( tag == "rna" ) {
+	// no longer supporting legacy (uncorrected) rna bond params -- probably should deprecate this option entirely.
+	runtime_assert ( basic::options::option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 
 	ResidueTypeSets::const_iterator iter;
 	{ // scope for the ReadLockGuard
@@ -613,8 +590,6 @@ std::string const CENTROID_ROT( "centroid_rot" );
 std::string const COARSE_TWO_BEAD( "coarse_two_bead" );
 /// @brief tag name for querying hybrid fullatom+centroid chemical type set.
 std::string const HYBRID_FA_STANDARD_CENTROID( "hybrid_fa_standard_centroid" );
-/// @brief tag name for querying RNA chemical type set.
-std::string const FA_RNA = "rna";
 /// @brief tag name for querying COARSE_RNA chemical type set.
 std::string const COARSE_RNA( "coarse_rna" );
 

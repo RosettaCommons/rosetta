@@ -191,7 +191,6 @@ pose_from_pdb(
 )
 {
 	ImportPoseOptions options;
-	if ( residue_set.name() == core::chemical::FA_RNA ) options.set_rna( true );
 	pose_from_pdb(pose, residue_set, filenames_string, options, read_fold_tree);
 }
 
@@ -265,8 +264,6 @@ pose_from_pdb(
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
 	);
 
-	if ( options.rna() ) residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
-
 	core::import_pose::pose_from_pdb( pose, *residue_set, filename, options, read_fold_tree );
 }
 
@@ -321,7 +318,6 @@ poses_from_pdbs(
 	using core::pose::Pose;
 
 	ImportPoseOptions options;
-	if ( residue_set.name() == core::chemical::FA_RNA ) options.set_rna( true );
 
 	vector1< Pose > poses;
 	typedef vector1< string >::const_iterator vec_it;
@@ -401,7 +397,6 @@ pose_from_pdb(
 )
 {
 	ImportPoseOptions options;
-	if ( residue_set.name() == core::chemical::FA_RNA ) options.set_rna( true );
 	pose_from_pdb( poses, residue_set, filename, options, read_fold_tree );
 }
 
@@ -520,7 +515,6 @@ pose_from_pdbstring(
 	std::string const & filename
 ){
 	ImportPoseOptions options;
-	if ( residue_set.name() == core::chemical::FA_RNA ) options.set_rna( true );
 	pose_from_pdbstring( pose, pdbcontents, residue_set, options, filename );
 }
 
@@ -572,7 +566,6 @@ void build_pose(
 )
 {
 	ImportPoseOptions options; // read from the command line
-	if ( residue_set.name() == core::chemical::FA_RNA ) options.set_rna( true );
 	build_pose( fd, pose, residue_set, options);
 }
 

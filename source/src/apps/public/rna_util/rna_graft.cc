@@ -97,7 +97,7 @@ get_pose_and_numbering( std::string const & pdb_file, pose::Pose & pose, utility
 	using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	import_pose::pose_from_pdb( pose, *rsd_set,  pdb_file );
 
@@ -354,7 +354,7 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 	}
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	make_pose_from_sequence( pose_target, sequence_target, *rsd_set );
 
 	// Copy in non-virtual atoms from pose1;

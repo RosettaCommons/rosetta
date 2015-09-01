@@ -87,7 +87,7 @@ void RNA_IdealCoord::init() {
 	if ( chemical::ChemicalManager::get_instance()->has_residue_type_set( chemical::FA_STANDARD ) ) {
 		rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::FA_STANDARD);
 	} else {
-		rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::FA_RNA);
+		rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::FA_STANDARD);
 	}
 	for ( Size i = 1; i <= pdb_file_list.size(); ++i ) {
 		PoseOP ref_pose( new Pose() );

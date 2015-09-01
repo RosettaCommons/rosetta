@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 		//std::cout << "Hello, Rosetta World!" << std::endl;
 		//std::cout << "I just imported my first pose into Rosetta." << std::endl;
 		//std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
-		/*chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+		/*chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		pose_from_pdb(test_pose, *rsd_set, "/home/boon/data/test_rna.pdb");
 		protocols::farna::make_phosphate_nomenclature_matches_mini( test_pose );
 		// setup a packer task

@@ -922,7 +922,7 @@ RNA_LowResolutionPotential::setup_precise_zeta_cutoffs( chemical::AA const & na_
 	using namespace core::chemical;
 	using namespace core::conformation;
 
-	ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	RNA_CentroidInfo rna_centroid_info;
 
 	ResidueOP rsd = ResidueFactory::create_residue( *( rsd_set->get_representative_type_aa( na_rad ) ) );
@@ -2151,7 +2151,7 @@ RNA_LowResolutionPotential::initialize_atom_numbers_for_backbone_score_calculati
 
 	using namespace core::chemical;
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	// will Guanosine work?
 	fill_atom_numbers_for_backbone_oxygens( rsd_set, na_rgu );

@@ -363,7 +363,7 @@ initialize_base_pair( pose::Pose & pose,
 	using namespace protocols::stepwise::modeler::rna;
 	using namespace chemical::rna;
 
-	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	// Create C-G base pair.
 	make_pose_from_sequence( pose, option[ seq ](),	*rsd_set );
@@ -1330,7 +1330,7 @@ setup_two_base_pair_pose( pose::Pose & pose ){
 	using namespace protocols::stepwise::modeler::rna;
 	using namespace chemical::rna;
 
-	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	make_pose_from_sequence( pose, "ccgg", *rsd_set );
 
 	FoldTree f( 4 );
@@ -2236,7 +2236,7 @@ setup_two_base_pair_pose_with_chainbreak( pose::Pose & pose,
 	using namespace protocols::stepwise::modeler::rna;
 
 	/////////////////////////////////////////////////////////////////
-	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	std::string sequence = "ccgg";
 	if ( option[ seq ].user() ) sequence = option[ seq ]();
 	make_pose_from_sequence( pose, sequence, *rsd_set );
@@ -2472,7 +2472,7 @@ base_pair_to_base_pair_test(){
 	utility::vector1< InputStreamWithResidueInfoOP > input_streams;
 
 	protocols::stepwise::initialize_input_streams( input_streams );
-	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	input_streams[1]->set_rsd_set( rsd_set );
 	input_streams[2]->set_rsd_set( rsd_set );
 
@@ -2639,7 +2639,7 @@ sample_state_to_state(
 	PoseOP native_pose;
 	if ( option[ in::file::native ].user() )	{
 		native_pose = new Pose;
-		ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+		ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		io::pdb::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
 		rna_loop_close_sampler.set_native_pose( native_pose );
 	}
@@ -2897,7 +2897,7 @@ setup_dinucleotide_pose( pose::Pose & pose ){
 	using namespace protocols::stepwise::modeler::rna;
 	using namespace chemical::rna;
 
-	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	std::string sequence = "cc";
 	if ( option[ seq ].user() ) sequence = option[ seq ]();
@@ -3107,7 +3107,7 @@ delta_chi_correction_test(){
 	using namespace chemical::rna;
 	using namespace protocols::stepwise::modeler::rna;
 
-	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
 	if ( option[ score::weights ].user() ) scorefxn = get_score_function();

@@ -548,7 +548,7 @@ correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size 
 	using namespace core::id;
 	using namespace core::io::pdb;
 
-	static const ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_RNA );
+	static const ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	chemical::AA res_aa = aa_from_name( "RAD" );
 	ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->get_representative_type_aa( res_aa ) ) );

@@ -290,7 +290,7 @@ get_icoor(){
   using namespace core::kinematics;
   using namespace protocols::farna;
 
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna_phenix" );
+	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	Pose pose;
 	core::pose::make_pose_from_sequence( pose, "aaa", *rsd_set );
 

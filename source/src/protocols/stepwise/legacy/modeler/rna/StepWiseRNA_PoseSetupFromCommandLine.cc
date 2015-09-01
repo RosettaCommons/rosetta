@@ -500,7 +500,7 @@ setup_simple_full_length_rna_working_parameters(){
 	using namespace core::pose;
 	using namespace core::chemical;
 
-	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA ) );
+	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 
 	/////////////////////////////////////////////////////
 	if ( !option[ in::file::fasta].user() ) utility_exit_with_message( "Must supply in::file::fasta!" );
@@ -868,7 +868,7 @@ setup_pose_setup_class( stepwise::modeler::working_parameters::StepWiseWorkingPa
 	using namespace core::scoring;
 	using namespace protocols::stepwise::modeler::rna;
 
-	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA ) );
+	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 
 	// Read in native_pose.
 	PoseOP native_pose;

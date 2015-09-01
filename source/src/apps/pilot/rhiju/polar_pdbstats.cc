@@ -266,7 +266,7 @@ polar_pdbstats_test()
 	Size total_residues( 0 );
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	std::string line;
 	while ( 	getline( instream, line )  ) {

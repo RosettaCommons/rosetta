@@ -876,7 +876,7 @@ SilentFileData::read_silent_struct_type_from_remark(
 				( line.find ("BINARY SILENTFILE" ) != std::string::npos ) ) {
 			silent_struct_type_ = "binary";
 			changed = true;
-		} else if ( header && ( line.find( "RNA" ) != std::string::npos || option[ in::file::residue_type_set ]() == "rna") &&
+		} else if ( header && ( line.find( "RNA" ) != std::string::npos ) &&
 				silent_struct_type_ != "binary_rna" && silent_struct_type_ != "rna" ) {
 			silent_struct_type_ = "rna";
 			changed = true;

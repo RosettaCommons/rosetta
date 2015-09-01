@@ -227,7 +227,7 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 	SilentFileData silent_file_data;
 
 	static const ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance() ->
-		residue_type_set( core::chemical::FA_RNA ) );
+		residue_type_set( core::chemical::FA_STANDARD ) );
 
 	Size NUM_trials = 10;
 	Real const local_angle_bin_size = 20;

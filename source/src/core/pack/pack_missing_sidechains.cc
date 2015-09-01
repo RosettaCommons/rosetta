@@ -51,14 +51,14 @@ pack_missing_sidechains(
 	core::id::AtomID_Mask const & missing
 )
 {
+	utility::vector1_bool repackable;
+	bool something_to_pack = figure_out_repackable_residues( pose, missing, repackable );
+	if ( !something_to_pack ) return;
+
 	//build a PackerTask to control rotamer_trials
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 	task->initialize_from_command_line();
 	task->restrict_to_repacking();
-
-	utility::vector1_bool repackable;
-	bool something_to_pack = figure_out_repackable_residues( pose, missing, repackable );
-	if ( !something_to_pack ) return;
 
 	//task is set up
 	task->restrict_to_residues(repackable);

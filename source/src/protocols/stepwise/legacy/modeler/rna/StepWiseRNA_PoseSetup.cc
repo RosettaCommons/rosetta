@@ -87,7 +87,7 @@ namespace rna {
 //////////////////////////////////////////////////////////////////////////
 //constructor!
 StepWiseRNA_PoseSetup::StepWiseRNA_PoseSetup( stepwise::modeler::working_parameters::StepWiseWorkingParametersOP & working_parameters ):
-	rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_RNA ) ),
+	rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ),
 	working_parameters_( working_parameters ),
 	copy_DOF_( false ),
 	verbose_( true ),

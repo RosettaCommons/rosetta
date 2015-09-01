@@ -348,7 +348,7 @@ figure_out_icoord_test( ){
 	using namespace core::chemical;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	// Create an extended pose from scratch.
 	pose::Pose extended_pose;
@@ -452,7 +452,7 @@ rna_fullatom_score_test()
 	using namespace core::io::silent;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	if ( option[fa_standard] ) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
@@ -807,7 +807,7 @@ rna_fullatom_minimize_test()
 	using namespace core::io::silent;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	if ( option[fa_standard] ) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	std::string const silent_file = option[ out::file::silent  ]();
@@ -912,7 +912,7 @@ rna_fullatom_multiscore_test()
 	using namespace core::id;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	if ( option[fa_standard] ) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
@@ -987,7 +987,7 @@ convert_to_native_test()
 	using namespace core::io::silent;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	if ( option[fa_standard] ) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
@@ -1024,7 +1024,7 @@ rna_fullatom_minimize_silent_test()
 	using namespace core::io::silent;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	std::string const infile  = option[ in::file::silent  ][1];
 	std::string const outfile = option[ out::file::silent  ]();
@@ -1116,7 +1116,7 @@ rna_o2prime_test()
 	using namespace core::io::silent;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	std::string const silent_file = option[ out::file::silent  ]();
 	// Silent file setup?
@@ -1173,7 +1173,7 @@ rna_lores_score_test()
 	using namespace core::scoring;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 
 	//Score these suckers.
@@ -1209,7 +1209,7 @@ rna_lores_score_silent_test()
 	using namespace core::io::silent;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	//Score these suckers.
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
@@ -1303,7 +1303,7 @@ pymol_struct_type_test()
 	using namespace core::scoring;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	pose::Pose pose;
 	std::string infile  = option[ in::file::s ][1];
@@ -1355,7 +1355,7 @@ rna_design_gap_test()
 	using namespace core::scoring::methods;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
@@ -1447,7 +1447,7 @@ print_internal_coord_test()
 	std::string pdb_file  = option[ in::file::s ][1];
 	import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
 	/////////////////////////////////////////
-	if ( option[ rsd_type_set]() == "rna" ) {
+	if ( option[ rsd_type_set]() == core::chemical::FA_STANDARD ) {
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 		core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 	}
@@ -1576,7 +1576,7 @@ rna_assemble_test() {
 	using namespace core::scoring;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	pose::Pose extended_pose;
 
@@ -1757,7 +1757,7 @@ rna_idealize_test() {
 	utility::vector1 <std::string> pdb_files ( option[ in::file::s ]() );
 
 	core::chemical::ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	bool const close_chainbreaks = option[ idl_close_chainbreaks ];
 
@@ -1841,7 +1841,7 @@ rna_torsion_check_test(){
 	using namespace core::scoring;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	pose::Pose pose;
 
@@ -1893,7 +1893,7 @@ rna_close_chainbreaks_test(){
 	using namespace core::optimization;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	// Just a check.
 	ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
@@ -1967,7 +1967,7 @@ rna_jumping_test(){
 	using namespace core::scoring;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	pose::PoseOP native_pose_OP( new pose::Pose );
 	pose::Pose & native_pose = *native_pose_OP;
@@ -2462,7 +2462,7 @@ create_rna_benchmark_test(){
 	initialize_pymol_colors();
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	utility::vector1< std::string > const infiles( option[ in::file::s ]() );
 
@@ -2543,7 +2543,7 @@ rna_chain_closure_test()
 	using namespace basic::options::OptionKeys;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	std::string infile  = option[ in::file::s ][1];
 
@@ -2678,7 +2678,7 @@ rna_backbone_rebuild_test()
 	using namespace core::id;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	std::string infile  = option[ in::file::s ][1];
 
@@ -2885,7 +2885,7 @@ rna_filter_base_pairs_test()
 	using namespace core::io::silent;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	std::string const infile  = option[ in::file::silent  ][1];
 	std::string const outfile  = option[ out::file::silent  ]();
@@ -2947,7 +2947,7 @@ crazy_minimize_test()
 	using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	std::string const silent_file = option[ out::file::silent  ]();
 	// Silent file setup?
@@ -3065,7 +3065,7 @@ sasa_test()
 	using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
 
@@ -3497,7 +3497,7 @@ dinucleotide_test()
 	using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	pose::Pose pose;
 	std::string sequence = "cc";
@@ -3675,7 +3675,7 @@ build_next_nucleotide_test()
 	using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	// Read in reference
 	pose::Pose pose_start, pose_reference;
@@ -4010,7 +4010,7 @@ rotamerize_rna_test()
 	using namespace core::chemical::rna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	pose::Pose source_pose,pose;
 	std::string infile  = option[ in ::file::s ][1];
@@ -4143,7 +4143,7 @@ calc_rmsd_test()
 	using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
 	pose::Pose native_pose;
@@ -4554,7 +4554,7 @@ sugar_geometry_RNA_test()
 	using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
 
@@ -4610,7 +4610,7 @@ sugar_frag_RNA_test()
 	using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 
 	pose::Pose pose;
@@ -4657,7 +4657,7 @@ color_by_geom_sol_RNA_test()
 	using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
@@ -4758,7 +4758,7 @@ rna_stats_test()
 	using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
 	std::string const silent_file = option[ out::file::silent  ]();
@@ -4807,7 +4807,7 @@ files_for_openMM_test(){
 	using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 	std::string const pdb_file = pdb_files[1];
@@ -4932,7 +4932,7 @@ print_secstruct_test(){
 	using namespace core::pose;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	pose::Pose pose;
 	std::string infile  = option[ in ::file::s ][1];
@@ -4958,7 +4958,7 @@ print_all_torsions_test(){
 	using namespace core::id;
 	using namespace chemical::rna;
 
-	ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( FA_RNA ) );
+	ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 
 	pose::Pose pose;
 	std::string infile  = option[ in ::file::s ][1];
@@ -5222,7 +5222,7 @@ main( int argc, char * argv [] )
 		NEW_OPT( params_file, "Input file for pairings", "default.prm" );
 		NEW_OPT( data_file, "Input file for pairings", "default.prm" );
 		NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
-		NEW_OPT( rsd_type_set, "Input file for RNA assembly", "rna" );
+		NEW_OPT( rsd_type_set, "Input file for RNA assembly", core::chemical::FA_STANDARD );
 		NEW_OPT( files_for_openMM, "get files ready for openMM", false );
 		NEW_OPT( print_secstruct, "print secondary structure", false );
 		NEW_OPT( print_torsions, "print RNA torsions", false );

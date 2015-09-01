@@ -75,7 +75,7 @@ cluster_test(){
 	stepwise_clusterer.set_cluster_by_all_atom_rmsd( true );
 	stepwise_clusterer.set_score_diff_cut( option[ score_diff_cut ] );
 	stepwise_clusterer.set_rename_tags( true /*option[ rename_tags ]*/ );
-	stepwise_clusterer.set_rsd_type_set( "rna" );
+	stepwise_clusterer.set_rsd_type_set( core::chemical::FA_STANDARD );
 	stepwise_clusterer.set_auto_tune( option[ auto_tune ] );
 
 	stepwise_clusterer.cluster();

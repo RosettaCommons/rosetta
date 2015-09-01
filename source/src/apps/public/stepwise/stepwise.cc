@@ -87,8 +87,7 @@ stepwise_monte_carlo()
 	using namespace utility::file;
 
 	bool const just_RNA = just_modeling_RNA( option[ in::file::fasta ]() );
-	// following toggles to FA_RNA for speed; if ResidueTypeSet instantiation can be accelerated, OK to always use FA_STANDARD.
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( just_RNA ? FA_RNA : FA_STANDARD);
+	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) scorefxn = get_score_function();

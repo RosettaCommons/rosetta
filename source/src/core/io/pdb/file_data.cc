@@ -2010,13 +2010,15 @@ pose_from_pose(
 }
 
 ///////////////////////////////////////////////////////////////////////
-// @brief currently does fixups of RNA/DNA.
+// @brief currently does fixups of RNA/DNA. Could also add other 'special case' fixups here.
 void
 fixup_rinfo_based_on_residue_type_set(  utility::vector1< ResidueInformation > & rinfos,
-	chemical::ResidueTypeSet const & residue_set ){
-	bool const force_RNA = ( residue_set.name() == core::chemical::FA_RNA  ||
-		residue_set.name() == "rna_phenix" );
-	convert_nucleic_acid_residue_info_to_standard( rinfos, force_RNA );
+	chemical::ResidueTypeSet const & /* residue_set */ ){
+	// As of Aug 2015, deprecating RNA-only residue type set. That means that
+	//  PDBs that are mostly RNA but have deoxy residues will be read in as such, and should be handled
+	//  appropriately by the applications, not here inside file_data.cc. -- rhiju
+	//bool const force_RNA = false;
+	convert_nucleic_acid_residue_info_to_standard( rinfos /*, force_RNA*/ );
 }
 
 

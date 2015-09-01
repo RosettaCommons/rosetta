@@ -1299,7 +1299,7 @@ process_input_file( std::string const & input_file,
 	using namespace protocols::farna;
 
 	core::chemical::ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	if ( is_pdb ) {
 

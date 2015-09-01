@@ -78,7 +78,7 @@ rna_pose_from_string(
 	std::string const & pdbstring
 )
 {
-	return pose_from_string( pdbstring, "rna" );
+	return pose_from_string( pdbstring, core::chemical::FA_STANDARD );
 }
 
 
@@ -116,7 +116,7 @@ rna_poseop_from_string(
 	std::string const & pdbstring
 )
 {
-	return poseop_from_string( pdbstring, "rna" );
+	return poseop_from_string( pdbstring, core::chemical::FA_STANDARD );
 }
 
 inline

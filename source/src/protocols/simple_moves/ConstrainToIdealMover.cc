@@ -669,7 +669,7 @@ ConstrainToIdealMover::create_pose_reference(
 {
 	using namespace core::chemical;
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD /*"rna"*/ );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	make_pose_from_sequence( pose_reference, pose.annotated_sequence(), *rsd_set );
 	apply_ideal_coordinates_for_alternative_pucker( pose, pose_reference );
 }

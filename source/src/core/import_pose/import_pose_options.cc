@@ -74,7 +74,6 @@ void ImportPoseOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_no_optH( tag->getOption< bool >( "no_optH", 0 ));
 	set_pack_missing_sidechains( tag->getOption< bool >( "pack_missing_sidechains", 1 ));
 	set_read_fold_tree( tag->getOption< bool >( "read_fold_tree", 0 ));
-	set_rna( tag->getOption< bool >( "rna", 0 ));
 	set_skip_set_reasonable_fold_tree( tag->getOption< bool >( "skip_set_reasonable_fold_tree", 0 ));
 	set_residue_type_set( tag->getOption< std::string >( "residue_type_set", "fa_standard" ));
 	set_set_up_metal_bonds( tag->getOption<bool>("auto_setup_metals", false) );
@@ -90,7 +89,6 @@ bool ImportPoseOptions::membrane() const { return membrane_; }
 bool ImportPoseOptions::no_optH() const { return no_optH_; }
 bool ImportPoseOptions::pack_missing_sidechains() const { return pack_missing_sidechains_; }
 bool ImportPoseOptions::read_fold_tree() const { return read_fold_tree_; }
-bool ImportPoseOptions::rna() const { return rna_; }
 bool ImportPoseOptions::skip_set_reasonable_fold_tree() const { return skip_set_reasonable_fold_tree_; }
 bool ImportPoseOptions::set_up_metal_bonds() const { return set_up_metal_bonds_;}
 bool ImportPoseOptions::set_up_metal_constraints() const { return (set_up_metal_bonds_ && (metal_bond_dist_constraint_multiplier_ > 1.0e-10  || metal_bond_angle_constraint_multiplier_ > 1.0e-10 ) );}
@@ -107,7 +105,6 @@ void ImportPoseOptions::set_membrane( bool membrane ) { membrane_ = membrane; }
 void ImportPoseOptions::set_no_optH( bool no_optH ) { no_optH_ = no_optH; }
 void ImportPoseOptions::set_pack_missing_sidechains( bool pack_missing_sidechains ) { pack_missing_sidechains_ = pack_missing_sidechains; }
 void ImportPoseOptions::set_read_fold_tree( bool read_fold_tree ) { read_fold_tree_ = read_fold_tree; }
-void ImportPoseOptions::set_rna( bool rna ) { rna_ = rna; }
 void ImportPoseOptions::set_skip_set_reasonable_fold_tree( bool skip_set_reasonable_fold_tree ) { skip_set_reasonable_fold_tree_ = skip_set_reasonable_fold_tree; }
 void ImportPoseOptions::set_set_up_metal_bonds( bool invalue ) {set_up_metal_bonds_ = invalue; return;}
 void ImportPoseOptions::set_metal_bond_LJ_multiplier(core::Real invalue ) { metal_bond_LJ_multiplier_ = invalue; return;}
@@ -139,7 +136,6 @@ void ImportPoseOptions::init_from_options()
 	set_no_optH( option[ packing::no_optH ]());
 	set_pack_missing_sidechains( option[ packing::pack_missing_sidechains ].value());
 	set_read_fold_tree( false ); // no option for this parameter - it can only be set to true if you call pose_from_pdd.
-	set_rna(option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set]()  == "rna");
 	set_skip_set_reasonable_fold_tree( option[ run::skip_set_reasonable_fold_tree ].value());
 
 	set_set_up_metal_bonds( option[in::auto_setup_metals].user() );

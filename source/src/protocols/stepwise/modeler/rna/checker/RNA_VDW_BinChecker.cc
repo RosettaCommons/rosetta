@@ -520,7 +520,7 @@ RNA_VDW_BinChecker::create_VDW_rep_screen_pose( VDW_RepScreeninfo & VDW_rep_scre
 	using namespace core::chemical;
 
 
-	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA ) );
+	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 
 	TR.Debug << "importing VDW_rep_screen_pose: " << VDW_rep_screen_info.pose_name << std::endl;
 	if ( VDW_rep_screen_info.pose_name == "" ) utility_exit_with_message( VDW_rep_screen_info.pose_name == "" );

@@ -55,7 +55,7 @@ rna_suitename()
 	using namespace protocols::farna;
 
 	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	// input stream
 	PoseInputStreamOP input;
