@@ -60,7 +60,8 @@ ADDUCT
 SC_ORBITALS
 
 ## Qualitative Properties
-POLAR
+POLAR #This is for clearly polar side-chains (DEHKNQRST).  Note that it excludes glycine, alanine, cysteine, and proline (as well as very hydrophobic residues with polar groups, like tryptophan or tyrosine).
+HYDROPHOBIC #This is for clearly hydrophobic side-chains (FMILYVW).  Note that it also excludes glycine, alanine, cysteine, and proline.  The union of POLAR and HYDROPHOBIC does NOT include all amino acids.
 CHARGED
 AROMATIC
 CYCLIC
@@ -84,8 +85,8 @@ METHYLATED_CTERMINUS
 ALPHA_AA
 BETA_AA
 GAMMA_AA
-L_AA #Chirality, strictly for L-alpha amino acids (e.g. L-alanine, L-histidine).  Not for beta- or gamma-amino acids, or for anything else with multiple possible mainchain chiral centres.
-D_AA #Chirality, strictly for D-alpha amino acids (e.g. D-alanine, D-histidine).  Not for beta- or gamma-amino acids, or for anything else with multiple possible mainchain chiral centres.
+L_AA #Chirality.  This is defined as the chirality of the first chiral mainchain atom closest to the LOWER_CONNECT -- so a trisubstituted 2D,3D,4L-gamma-amino acid would be considered an L_AA.
+D_AA #Chirality.  This is defined as the chirality of the first chiral mainchain atom closest to the LOWER_CONNECT -- so a trisubstituted 2L,3L,4D-gamma-amino acid would be considered a D_AA.
 TAUTOMER
 
 
