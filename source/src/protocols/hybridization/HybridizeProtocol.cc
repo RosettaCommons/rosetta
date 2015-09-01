@@ -74,6 +74,11 @@
 #include <core/fragment/util.hh>
 
 #include <core/sequence/util.hh>
+#include <core/sequence/Sequence.hh>
+#include <core/sequence/SWAligner.hh>
+#include <core/sequence/SimpleScoringScheme.hh>
+#include <core/sequence/ScoringScheme.hh>
+#include <core/sequence/SequenceAlignment.hh>
 
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
@@ -737,14 +742,16 @@ void HybridizeProtocol::add_template(
 // validate input templates match input sequence
 // TO DO: if only sequences mismatch try realigning
 void HybridizeProtocol::validate_template(
-	std::string filename,
-	std::string fasta,
-	core::pose::PoseOP template_pose)
+		std::string filename,
+		std::string fasta,
+		core::pose::PoseOP template_pose,
+		bool & align_pdb_info)
 {
 	core::Size nres_fasta = fasta.length(), nres_templ = template_pose->total_residue();
 	core::Size next_ligand = nres_fasta+1; // ligands must be sequentially numbered
 
-	for ( core::Size i=1; i<=nres_templ; ++i ) {
+	bool requires_alignment = false;
+	for (core::Size i=1; i<=nres_templ; ++i) {
 		char templ_aa = template_pose->residue(i).name1();
 		core::Size i_fasta = template_pose->pdb_info()->number(i);
 
@@ -771,10 +778,37 @@ void HybridizeProtocol::validate_template(
 				TR.Error << "Sequence mismatch between input fasta and template " << filename
 					<< " at residue " << i_fasta << std::endl;
 				TR.Error << "   Expected: " << fasta_aa << "   Saw: " << templ_aa << std::endl;
-				utility_exit();
+				if(!align_pdb_info) utility_exit();
+				requires_alignment = true;
+				break;
 			}
 		}
 	}
+	if(requires_alignment){
+			TR.Error << "THE PDB INFO IS NOT IN SYNC WITH THE FASTA. ATTEMPTING TO RESOLVE THE ISSUE AUTOMATICALLY" << std::endl;
+			//this block code shouldn't be needed since hybrid needs asymmetric poses anyway but it doesn't hurt
+			core::pose::Pose pose_for_seq;
+			core::pose::symmetry::extract_asymmetric_unit(*template_pose, pose_for_seq, false);
+
+			core::sequence::SequenceOP full_length_seq( new core::sequence::Sequence( fasta, "target" ));
+			core::sequence::SequenceOP t_pdb_seq( new core::sequence::Sequence( pose_for_seq.sequence(), "pose_seq" ));
+			core::sequence::SWAligner sw_align;
+			core::sequence::ScoringSchemeOP ss(  new core::sequence::SimpleScoringScheme(120, 0, -100, 0));
+			core::sequence::SequenceAlignment fasta2template;
+
+			fasta2template = sw_align.align(full_length_seq, t_pdb_seq, ss);
+			core::id::SequenceMapping sequencemap = fasta2template.sequence_mapping(1,2);
+			sequencemap.reverse();
+			for(Size i=1; i<=template_pose->total_residue(); i++){
+					Size pdbnumber = template_pose->pdb_info()->number(i);
+					if(pdbnumber != sequencemap[i]){
+							Size fastanumber = sequencemap[i];
+							template_pose->pdb_info()->number(i,fastanumber);
+					}		
+			}		
+	}else{
+			align_pdb_info = false;
+	}		
 }
 
 
@@ -1653,11 +1687,16 @@ HybridizeProtocol::parse_my_tag(
 			std::string cst_fn = (*tag_it)->getOption<std::string>( "cst_file", "AUTO" );  // should this be NONE?
 			core::Real weight = (*tag_it)->getOption<core::Real>( "weight", 1 );
 			std::string symm_file = (*tag_it)->getOption<std::string>( "symmdef", "" );
+			bool align_pdb_info = (*tag_it)->getOption<bool>( "auto_align", true );
 
 			add_template(template_fn, cst_fn, symm_file, weight);
 
 			// validate here since we have the pose (add_template does not) ... could do this in apply as well (?)
-			validate_template( template_fn, fasta, templates_[templates_.size()] );
+			validate_template( template_fn, fasta, templates_[templates_.size()], align_pdb_info );
+			if(align_pdb_info){
+					bool referencebool = false;
+					validate_template( template_fn, fasta, templates_[templates_.size()], referencebool );
+			}		
 		}
 
 		// strand pairings

@@ -65,7 +65,8 @@ public:
 	void validate_template(
 		std::string filename,
 		std::string fasta,
-		core::pose::PoseOP template_pose
+		core::pose::PoseOP template_pose,
+		bool & align_pdb_info
 	);
 
 	// pick a starting template using assigned weights
