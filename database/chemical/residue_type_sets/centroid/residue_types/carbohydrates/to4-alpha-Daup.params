@@ -1,44 +1,43 @@
-NAME ->4)-beta-D-Galp      # ->4)-beta-D-galactopyranosyl
-IO_STRING Gal Z            # Note lower case!
+NAME ->4)-alpha-Daup3Me
+IO_STRING Dau Z
 TYPE POLYMER
+VARIANT C2_DEOXY_SUGAR C3_DEOXY_SUGAR C6_DEOXY_SUGAR
 AA UNK
 
 # Main-chain atoms:
-ATOM  C1  CH1  CT1   0.18  # anomeric carbon
-ATOM  C2  CH1  CT1   0.13
-ATOM  C3  CH1  CT1   0.11
-ATOM  C4  CH1  CT1   0.11
-ATOM  O4  OH    OS  -0.38
+ATOM  C1  CH1  CT1   0.17  # anomeric carbon
+ATOM  C2  CH1  CT1   0.14
+ATOM  C3  CH2  CT2  -0.18.
+ATOM  C4  CH1  CT1   0.04
+ATOM  O4  OH    OS  -0.26
 # Other backbone heavy atoms:
-ATOM  C5  CH1  CT1   0.11
-ATOM  O5  OOC   OS  -0.34
-ATOM_ALIAS  O5   O  
+ATOM  C5  CH1  CT1   0.04
+ATOM  O5  OOC   OS  -0.26
 ATOM  VO5 VIRT VIRT  0.00  # to O5; allows for consistent chi angles
 ATOM  VC1 VIRT VIRT  0.00  # to C1; required for ring flipping
 # Side-chain heavy atoms:
 ATOM  O1  VIRT VIRT  0.00  # for internal res, virtual to previous residue; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
-ATOM  O2  OH   OH1  -0.39
-ATOM  O3  OH   OH1  -0.39
-ATOM  C6  CH2  CT2   0.07
-ATOM  O6  OH   OH1  -0.39
+ATOM  O2  VIRT VIRT  0.00  # allows for consistent chi angles
+ATOM  N3  Nlys NH3  -0.35  ## Is there simply an NH3 anywhere?
+ATOM  C6  CH3  CT3  -0.27
+ATOM  O6  VIRT VIRT  0.00  # allows for consistent chi angles
 # Hydrogens:
-ATOM  H1  Hapo  HA   0.10
+ATOM  H1  Hapo  HA   0.09
 ATOM  HO1 VIRT VIRT  0.00  # for internal res, virtual; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
-ATOM_ALIAS  HO1  H1O 
-ATOM  H2  Hapo  HA   0.07
-ATOM  HO2 Hpol  H    0.21
-ATOM_ALIAS  HO2  H2O 
-ATOM  H3  Hapo  HA   0.07
-ATOM  HO3 Hpol  H    0.21
-ATOM_ALIAS  HO3  H3O 
-ATOM  H4  Hapo  HA   0.07
+ATOM 1H2  Hapo  HA   0.09  # may be switched with 2H2, one is defined as pro-R, the other as proS
+ATOM 2H2  Hapo  HA   0.09  # may be switched with 1H2, one is defined as pro-R, the other as proS
+ATOM  HO2 VIRT VIRT  0.21  # allows for consistent chi angles
+ATOM  H3  Hapo  HA   0.09
+ATOM 1HN3 Hpol HC   0.16   ## Get correct values here and below.
+ATOM 2HN3 Hpol HC   0.16
+ATOM 3HN3 Hpol HC   0.16
+ATOM  H4  Hapo  HA   0.09
 ATOM  HO4 VIRT VIRT  0.00  # to next residue; allows for consistent chi angles
-ATOM_ALIAS  HO4  H4O 
-ATOM  H5  Hapo  HA   0.07
-ATOM 1H6  Hapo  HA   0.06  # pro-S
-ATOM 2H6  Hapo  HA   0.06  # pro-R
-ATOM  HO6 Hpol  H    0.21
-ATOM_ALIAS  HO6  H6O 
+ATOM  H5  Hapo  HA   0.09
+ATOM 1H6  Hapo  HA   0.09
+ATOM 2H6  Hapo  HA   0.09
+ATOM 3H6  Hapo  HA   0.09
+ATOM  HO6 VIRT VIRT  0.00  # allows for consistent chi angles
 
 LOWER_CONNECT C1
 UPPER_CONNECT O4
@@ -57,18 +56,26 @@ BOND  O5   VC1             # cyclic bond
 BOND  C5   C6
 BOND  C1   O1
 BOND  C2   O2
-BOND  C3   O3
+BOND  C3   N3
 BOND  C6   O6
 BOND  C1   H1
 BOND  O1   HO1
-BOND  C2   H2
+BOND  C2  1H2
+BOND  C2  2H2
 BOND  O2   HO2
 BOND  C3   H3
-BOND  O3   HO3
+#BOND  C3  CC3
+#BOND CC3  1H33
+#BOND CC3  2H33
+#BOND CC3  3H33
+BOND  N3  1HN3
+BOND  N3  2HN3
+BOND  N3  3HN3
 BOND  C4   H4
 BOND  C5   H5
-BOND  C6  1H6              # pro-S
-BOND  C6  2H6              # pro-R
+BOND  C6  1H6
+BOND  C6  2H6
+BOND  C6  3H6
 BOND  O6   HO6
 
 VIRTUAL_SHADOW VO5   O5
@@ -81,35 +88,23 @@ CHI_ROTAMERS 1 120 0
 CHI_ROTAMERS 1 180 0
 CHI_ROTAMERS 1 240 0
 CHI_ROTAMERS 1 300 0
-CHI 2  C1   C2   O2   HO2
+CHI 2  C1   C2   O2   HO2  # meaningless chi; this is just a placeholder
+CHI 3  C2   C3   N3  1HN3
 CHI_ROTAMERS 2   0 0
 CHI_ROTAMERS 2  60 0
 CHI_ROTAMERS 2 120 0
 CHI_ROTAMERS 2 180 0
 CHI_ROTAMERS 2 240 0
 CHI_ROTAMERS 2 300 0
-CHI 3  C2   C3   O3   HO3
-CHI_ROTAMERS 3   0 0
-CHI_ROTAMERS 3  60 0
-CHI_ROTAMERS 3 120 0
-CHI_ROTAMERS 3 180 0
-CHI_ROTAMERS 3 240 0
-CHI_ROTAMERS 3 300 0
 CHI 4  C3   C4   O4   HO4  # duplicates BB 4
-CHI 5  C4   C5   C6   O6
-CHI_ROTAMERS 5   0 0
-CHI_ROTAMERS 5  60 0
-CHI_ROTAMERS 5 120 0
-CHI_ROTAMERS 5 180 0
-CHI_ROTAMERS 5 240 0
-CHI_ROTAMERS 5 300 0
-CHI 6  C5   C6   O6   HO6
-CHI_ROTAMERS 6   0 0
-CHI_ROTAMERS 6  60 0
-CHI_ROTAMERS 6 120 0
-CHI_ROTAMERS 6 180 0
-CHI_ROTAMERS 6 240 0
-CHI_ROTAMERS 6 300 0
+CHI 5  C4   C5   C6  3H6
+CHI_ROTAMERS 2   0 0
+CHI_ROTAMERS 2  60 0
+CHI_ROTAMERS 2 120 0
+CHI_ROTAMERS 2 180 0
+CHI_ROTAMERS 2 240 0
+CHI_ROTAMERS 2 300 0
+CHI 6  C5   C6   O6   HO6  # meaningless chi; this is just a placeholder
 NU 1  VO5  C1   C2   C3    # duplicates BB 1, but defined differently
 NU 2  C1   C2   C3   C4    # duplicates BB 2
 NU 3  C2   C3   C4   C5    # duplicates BB 3
@@ -118,10 +113,10 @@ NU 5  C4   C5   O5   VC1
 #NU 6 is across the CUT_BOND
 LOWEST_RING_CONFORMER  4C1
 
-PROPERTIES  POLAR CYCLIC CARBOHYDRATE ALDOSE HEXOSE D_SUGAR PYRANOSE BETA_SUGAR
+PROPERTIES  POLAR CYCLIC CARBOHYDRATE ALDOSE HEXOSE L_SUGAR PYRANOSE ALPHA_SUGAR DEOXY_SUGAR C2_MODIFIED C3_MODIFIED C6_MODIFIED AMINO_SUGAR CHARGED
 
 NBR_ATOM  C4
-NBR_RADIUS 6.924169
+NBR_RADIUS 6.924169        # as calculated for beta-D-Galp
 
 MAINCHAIN_ATOMS  C1 C2 C3 C4 O4
 FIRST_SIDECHAIN_ATOM O1
@@ -142,19 +137,24 @@ ICOOR_INTERNAL  LOWER -178.882118   73.093678    1.393201   C1    C2    C3
 # now the side-chain heavy atoms
 ICOOR_INTERNAL    O1  -178.882118   73.093678    1.393201   C1    C2    C3
 ICOOR_INTERNAL    O2   118.860412   71.031502    1.358465   C2    C1    C3
-ICOOR_INTERNAL    O3  -123.094309   72.342817    1.440460   C3    C2    C4
-ICOOR_INTERNAL    C6  -179.288386   67.562812    1.540525   C5    C4    C3
+ICOOR_INTERNAL    N3   123.094309   72.342817    1.440460   C3    C2    C4
+ICOOR_INTERNAL    C6   179.288386   67.562812    1.540525   C5    C4    C3
 ICOOR_INTERNAL    O6   -62.797083   67.644322    1.449102   C6    C5    C4
 # now all the Hs
 ICOOR_INTERNAL    H1   118.769708   70.067067    1.105096   C1    C2    O1
 ICOOR_INTERNAL    HO1  -60.137396   68.024989    0.994980   O1    C1    C2
-ICOOR_INTERNAL    H2   120.538751   70.262779    1.098302   C2    C1    O2
+ICOOR_INTERNAL   1H2   120.538751   70.262779    1.098302   C2    C1    O2
+ICOOR_INTERNAL   2H2  -118.043401   69.840524    1.100932   C2    C1   1H2
 ICOOR_INTERNAL    HO2 -179.445405   72.039553    0.990268   O2    C2    C1
-ICOOR_INTERNAL    H3  -118.043401   69.840524    1.100932   C3    C2    O3
-ICOOR_INTERNAL    HO3  178.810585   72.973678    0.980355   O3    C3    C2
+ICOOR_INTERNAL    H3  -118.769708   70.067067    1.105096   C3    C2    O4
+#ICOOR_INTERNAL    HO3  178.810585   72.973678    0.980355   O3    C3    C2
+ICOOR_INTERNAL	1HN3   152.671000   58.88   0.99   N3    C3    H3
+ICOOR_INTERNAL	2HN3    32.671000   58.88   0.99   N3    C3    H3
+ICOOR_INTERNAL	3HN3   -87.329000   58.88   0.99   N3    C3    H3
 ICOOR_INTERNAL    H4   119.664061   69.328520    1.100938   C4    C3    C5
 ICOOR_INTERNAL    HO4 -120.000011   64.875311    1.0        O4    C4    C3
 ICOOR_INTERNAL    H5  -121.577784   70.228640    1.100631   C5    C4    C6
 ICOOR_INTERNAL   1H6  -119.421753   71.347852    1.103722   C6    C5    O6
 ICOOR_INTERNAL   2H6  -118.970223   71.452404    1.099201   C6    C5   1H6
+ICOOR_INTERNAL   3H6  -120.057998   70.477416    1.089801   C6    C5   2H6
 ICOOR_INTERNAL    HO6 -176.382127   69.133630    1.044317   O6    C6    C5

@@ -1,0 +1,68 @@
+## full-atom 3-methyl-3-deoxy sugar patch
+
+NAME 3-Me
+#TYPES C3_METHYL_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+PROPERTY ALDOSE
+END_SELECTOR
+
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 Dau
+END_SELECTOR
+
+
+# First, remove the remaining H
+SET_ATOM_TYPE H3 VIRT
+SET_MM_ATOM_TYPE H3 VIRT
+SET_ATOMIC_CHARGE H3 0.00
+
+#Next, add the new atoms
+ADD_ATOM CC3  CH3   CT3 -0.27  #Methylation
+ADD_ATOM 1H33 Hapo  HA   0.09
+ADD_ATOM 2H33 Hapo  HA   0.09
+ADD_ATOM 3H33 Hapo  HA   0.09
+
+ADD_BOND  C3  CC3
+ADD_BOND CC3  1H33
+ADD_BOND CC3  2H33
+ADD_BOND CC3  3H33
+
+# Using H3 to define 0 degree torsion angle, to place CC3 at same position as (now virtual) H3 allows us to have a single patch file for either (S) or (R) stereochemistry.
+
+SET_ICOOR  CC3     0.00    69.235  1.334  C3   N3    H3
+SET_ICOOR   1H33 -119.421753   71.347852    1.103722   CC3   C3    C2
+SET_ICOOR   2H33 -118.970223   71.452404    1.099201   CC3   C3   1H33
+SET_ICOOR   3H33 -120.057998   70.477416    1.089801   CC3   C3   2H33
+
+END_CASE
+
+
+BEGIN_CASE
+
+# First, remove the remaining H
+#SET_ATOM_TYPE H3 VIRT
+#SET_MM_ATOM_TYPE H3 VIRT
+#SET_ATOMIC_CHARGE H3 0.00
+
+#Next, add the new atoms
+#ADD_ATOM CC3  CH3   CT3 -0.27  #Methylation
+#ADD_ATOM 1H33 Hapo  HA   0.09
+#ADD_ATOM 2H33 Hapo  HA   0.09
+#ADD_ATOM 3H33 Hapo  HA   0.09
+
+#ADD_BOND  C3  CC3
+#ADD_BOND CC3  1H33
+#ADD_BOND CC3  2H33
+#ADD_BOND CC3  3H33
+
+# Using H3 to define 0 degree torsion angle, to place CC3 at same position as (now virtual) H3 allows us to have a single patch file for either (S) or (R) stereochemistry.
+
+#SET_ICOOR  CC3     0.00    69.235  1.334  C3   H3    N3
+#SET_ICOOR   1H33 -119.421753   71.347852    1.103722   CC3   C3    C2
+#SET_ICOOR   2H33 -118.970223   71.452404    1.099201   CC3   C3   1H33
+#SET_ICOOR   3H33 -120.057998   70.477416    1.089801   CC3   C3   2H33
+
+END_CASE

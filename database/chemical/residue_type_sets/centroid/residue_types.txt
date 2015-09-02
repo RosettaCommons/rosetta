@@ -61,6 +61,7 @@ residue_types/carbohydrates/to4-alpha-D-Glcp.params
 residue_types/carbohydrates/to4-beta-D-Glcp.params
 residue_types/carbohydrates/to4-beta-D-Quip.params
 residue_types/carbohydrates/to6-alpha-D-Glcp.params
+residue_types/carbohydrates/to2-beta-D-Glcp.params
 #### Galactoses
 residue_types/carbohydrates/to2-beta-D-Galp.params
 residue_types/carbohydrates/to3-alpha-D-Galp.params
@@ -70,10 +71,19 @@ residue_types/carbohydrates/to4-beta-D-Galp.params
 residue_types/carbohydrates/to6-beta-D-Galp.params
 residue_types/carbohydrates/to4-alpha-L-Fucp.params
 residue_types/carbohydrates/to4-alpha-D-Abep.params
+residue_types/carbohydrates/to4-alpha-Daup.params
+#residue_types/carbohydrates/to4-vanc.params  # When this becomes to4-alpha-Daup.params, it should live here, since Dau is a dideoxygalactosamine.
 #### Mannoses
 residue_types/carbohydrates/to3-beta-D-Manp.params
 residue_types/carbohydrates/to2-alpha-D-Manp.params
 residue_types/carbohydrates/to3-alpha-D-Manp.params
+residue_types/carbohydrates/to4-beta-L-Manp.params
+#### Idoses
+residue_types/carbohydrates/to4-alpha-L-Idop.params
+#### Guloses
+residue_types/carbohydrates/to4-beta-L-Gulp.params
+#### Altroses
+residue_types/carbohydrates/to4-beta-L-Altp.params
 ### Ketohexoses
 #### Psicoses
 residue_types/carbohydrates/to5-beta-D-Psip.params
