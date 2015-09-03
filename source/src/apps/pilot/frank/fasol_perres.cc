@@ -200,8 +200,10 @@ public:
 								fa_sol_i += weight*fasol1;
 
 								if ( !atom1_waters.empty() ) {
+									Size dummy_size;
+									Real dummy_real;
 									Real const fasol1_lkball =
-										fasol1 * lkb.get_lk_fractional_contribution( atom2_xyz, rsd2.atom(jatm).type(), atom1_waters );
+										fasol1 * lkb.get_lk_fractional_contribution( atom2_xyz, rsd2.atom(jatm).type(), atom1_waters, dummy_size, dummy_real );
 									lk_ball_i += weightLKb * ( atom1_wts[1] * fasol1 + atom1_wts[2] * fasol1_lkball );
 								}
 

@@ -72,12 +72,6 @@ public:
 	Vector
 	build( conformation::Residue const & rsd ) const;
 
-	// fpd get the derivative of water movement w.r.t. base atom movement
-	// fpd SLOW!
-	void
-	derivatives( conformation::Residue const & rsd,
-		numeric::xyzMatrix <Real> &dw_da1, numeric::xyzMatrix <Real> &dw_da2, numeric::xyzMatrix <Real> &dw_da3 ) const;
-
 	Size atom1() const { return atom1_; }
 	Size atom2() const { return atom2_; }
 	Size atom3() const { return atom3_; }
@@ -124,30 +118,15 @@ public:
 	void
 	build_waters( conformation::Residue const & rsd );
 
-	// fpd const access to the water builders (to identify stub atoms)
-	WaterBuilders const &
-	get_water_builder( conformation::Residue const & rsd , Size heavyatom ) const;
-
 	utility::vector1< Vectors > const &
 	waters() const { return waters_; }
-
-	//fpd deriv of water position w.r.t. atom 1
-	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > const &
-	atom1_derivs() const { return dwater_datom1_; }
-
-	//fpd deriv of water position w.r.t. atom 2
-	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > const &
-	atom2_derivs() const { return dwater_datom2_; }
-
-	//fpd deriv of water position w.r.t. atom 3
-	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > const &
-	atom3_derivs() const { return dwater_datom3_; }
 
 	bool
 	has_waters() const { return has_waters_; }
 
 	utility::vector1< utility::vector1< Real > > const &
 	atom_weights() const { return atom_weights_; }
+
 
 	void
 	remove_irrelevant_waters(
@@ -163,7 +142,7 @@ public:
 	reset_arrays_danger_expert_only();
 
 	bool
-	matches_residue_type( chemical::ResidueType const & rsd_type ) const { return ( rsd_type_ == &(rsd_type) ); }
+	matches_residue_type( chemical::ResidueType const & rsd_type ) { return ( rsd_type_ == &(rsd_type) ); }
 
 	chemical::ResidueType const &
 	residue_type() const { return *rsd_type_; }
@@ -192,9 +171,6 @@ private:
 private:
 	chemical::ResidueType const * rsd_type_; // bad form
 	utility::vector1< Vectors > waters_;
-	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > dwater_datom1_;
-	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > dwater_datom2_;
-	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > dwater_datom3_;
 	utility::vector1< utility::vector1< Real > > atom_weights_;
 	bool has_waters_;
 

@@ -31,8 +31,6 @@
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/coulomb/Coulomb.hh>
 #include <core/scoring/etable/Etable.hh>
-#include <core/scoring/elec/GroupElec.hh>
-#include <core/scoring/elec/FA_GrpElecEnergy.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -285,10 +283,6 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 	core::scoring::methods::LK_BallEnergy lkb( reference_scorefxn->energy_method_options() );
 	lkb.setup_for_scoring(pose, *reference_scorefxn);
 
-	// GroupElec
-	core::scoring::elec::FA_GrpElecEnergy grpelec( reference_scorefxn->energy_method_options() );
-	grpelec.setup_for_scoring(pose, *reference_scorefxn);
-
 	utility::vector1< Multivec > dEros_i_dvars;
 	utility::vector1< core::scoring::ScoreType > term_i;
 
@@ -296,7 +290,6 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 	// used for:
 	//  a) verbose output
 	//  b) normalization for non-etable derivs
-
 	for ( int ii=1; ii<=(int)core::scoring::n_score_types; ++ii ) {
 		if ( reference_scorefxn->get_weight( (core::scoring::ScoreType)ii ) == 0.0 ) continue;
 
@@ -306,8 +299,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 		working_scorefxn->set_weight( (core::scoring::ScoreType)ii , reference_scorefxn->get_weight( (core::scoring::ScoreType)ii )  );
 
 		// lk ball hack
-		if ( (core::scoring::ScoreType)ii == lk_ball_wtd ||
-				(core::scoring::ScoreType)ii == fa_grpelec ) {
+		if ( (core::scoring::ScoreType)ii == lk_ball_wtd ) {
 			working_scorefxn->set_weight( fa_atr, 1e-9 );
 		}
 
@@ -324,7 +316,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 
 	// compute the total gradient sum
 	core::Size natoms = dEros_dvars.size()/3;  // integer division, numerator is always divisible by 3
-	core::Real gradsum( 0.0 );
+	core::Real gradsum=0.0;
 
 	for ( core::Size ii_atm=0; ii_atm<natoms; ++ii_atm ) {
 		id::AtomID id = min_map.get_atom( ii_atm+1 );
@@ -384,9 +376,10 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 				// other terms
 				for ( int jj=1; jj<=(int)term_i.size(); ++jj ) {
 					if ( term_i[jj] == fa_rep || term_i[jj] == fa_atr || term_i[jj] == fa_sol ) continue;
-					if ( term_i[jj] == fa_elec ) continue;
+					if ( term_i[jj] == fa_elec || term_i[jj] == fa_grpelec ) continue;
 					if ( term_i[jj] == fa_intra_rep || term_i[jj] == fa_intra_atr || term_i[jj] == fa_intra_sol ) continue;
 					if ( term_i[jj] == fa_intra_rep_xover4 || term_i[jj] == fa_intra_atr_xover4 || term_i[jj] == fa_intra_sol_xover4 ) continue;
+					if ( term_i[jj] == lk_ball_wtd ) continue;
 
 					numeric::xyzVector< core::Real > grad_ij(dEros_i_dvars[jj][3*ii_atm+1], dEros_i_dvars[jj][3*ii_atm+2], dEros_i_dvars[jj][3*ii_atm+3]);
 					norm += grad_ij.length();
@@ -433,10 +426,12 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 	methods::EnergyMethodOptions e_opts = sfxn->energy_method_options();
 	Etable etable = *( ScoringManager::get_instance()->etable( e_opts ).lock() ); // copy
 
+	// TO DO: update to group elec / intra elec
 	core::Real fa_atr_wt = sfxn->get_weight( core::scoring::fa_atr );
 	core::Real fa_rep_wt = sfxn->get_weight( core::scoring::fa_rep );
 	core::Real fa_sol_wt = sfxn->get_weight( core::scoring::fa_sol );
 	core::Real fa_elec_wt = sfxn->get_weight( core::scoring::fa_elec );
+	//core::Real fa_gpelec_wt = sfxn->get_weight( core::scoring::fa_grpelec );
 
 	core::Real fa_intra_atr_wt = sfxn->get_weight( core::scoring::fa_intra_atr );
 	core::Real fa_intra_rep_wt = sfxn->get_weight( core::scoring::fa_intra_rep );
@@ -446,16 +441,24 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 	core::Real fa_intra_rep_x4_wt = sfxn->get_weight( core::scoring::fa_intra_rep_xover4 );
 	core::Real fa_intra_sol_x4_wt = sfxn->get_weight( core::scoring::fa_intra_sol_xover4 );
 
+	core::Real lk_ball_wtd_wt = sfxn->get_weight( core::scoring::lk_ball_wtd );
+
 	Size ires = atmid.rsd();
 	Size iatm = atmid.atomno();
 	core::conformation::Residue const & rsd1( pose.residue(ires) );
+
+	// lkball
+	core::scoring::methods::LK_BallEnergy lkb(e_opts);
+	LKB_PoseInfo const & lkbposeinfo
+		( static_cast< LKB_PoseInfo const & >( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) ) );
+	LKB_ResidueInfo const &lkbinfo1 = lkbposeinfo[ires];
 
 	// needed for electrostatic calcs
 	Coulomb coulomb( sfxn->energy_method_options() );
 	coulomb.initialize();
 
 	// get inter-res etable energies
-	if ( fa_atr_wt>0 || fa_rep_wt>0 || fa_sol_wt>0 || fa_elec_wt>0 ) {
+	if ( fa_atr_wt>0 || fa_rep_wt>0 || fa_sol_wt>0 || fa_elec_wt>0 || lk_ball_wtd_wt>0 ) {
 		for ( graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(ires)->const_edge_list_begin(),
 				irue = energy_graph.get_node(ires)->const_edge_list_end();
@@ -466,13 +469,16 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 
 			if ( ires == jres ) continue;
 
+			LKB_ResidueInfo const &lkbinfo2 = lkbposeinfo[jres];
+
 			// count pair - assume 4 for now (actually 3 for ligands/RNA or if rama is off)
-			CountPairFunctionOP cpfxn =	CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+			CountPairFunctionOP cpfxn =
+				CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
 			for ( Size jatm=1; jatm<= rsd2.natoms(); ++jatm ) {
 				core::Real weight=1.0;
 				core::Size path_dist;
-				core::Real d_faatr=0, d_farep=0, d_fasol=0, d_faelec=0, invD; //, dummy;
+				core::Real d_faatr=0, d_farep=0, d_fasol=0, d_faelec=0, d_lkball=0, invD;
 				if ( cpfxn->count( iatm, jatm, weight, path_dist ) ) {
 					etable.analytic_etable_derivatives(rsd1.atom(iatm), rsd2.atom(jatm),  d_faatr, d_farep, d_fasol, invD );
 
@@ -481,14 +487,19 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 
 					d_faelec = coulomb.eval_dfa_elecE_dr_over_r( dis2, rsd1.atomic_charge(iatm), rsd2.atomic_charge(jatm) );
 
-					// to do: split lk_ball into per-atom contributions as well (this requires some thought ...)
+					Vector f1(0,0,0),f2(0,0,0);
+					lkb.sum_deriv_contributions_for_atom_pair(
+						dis2, iatm, rsd1, lkbinfo1, jatm, rsd2, lkbinfo2, pose, sfxn->weights(),
+						weight, f1, f2 );
 
-					// sum
+					d_lkball = f2.length() /weight;
+
 					norm += symmscale * weight *(
 						fa_atr_wt*std::abs(d_faatr) +
 						fa_rep_wt*std::abs(d_farep) +
 						fa_sol_wt*std::abs(d_fasol) +
-						dis*fa_elec_wt*std::abs(d_faelec));
+						dis*fa_elec_wt*std::abs(d_faelec) +
+						lk_ball_wtd_wt*std::abs(d_lkball));
 				}
 			}
 		}
