@@ -1390,7 +1390,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 
 			// derivatives for the desolvated atoms
 			// dR/datom1 = dR/dwater * dwater/datom1
-			core::Real dwater = f2.length();
+			//core::Real dwater = f2.length();
 			//Real denom = dwater*dwater*dwater;
 			{
 				Size atom1 = rsd1_info.get_water_builder( rsd1 , heavyatom1 )[i].atom1();
