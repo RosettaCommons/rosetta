@@ -686,7 +686,7 @@ remap_names_on_geometry( NameBimap & mapping,
 			if ( isdigit( int( aigraph[ aivd ].name.at(0) ) ) ) {
 				aigraph[ aivd ].element = aigraph[ aivd ].name.substr(1,1);
 			}
-			
+
 		}
 		name_aivd_map[ iter->name ] = aivd;
 		small_order.push_back( aivd );

@@ -623,7 +623,7 @@ bool BluePrintBDR::centroid_build(
 	}
 
 	core::scoring::constraints::ConstraintSet cst ( *pose.constraint_set() );
-	cst.show(std::cout);
+	if ( TR.visible() ) cst.show(TR);
 
 	vlb_->apply( pose );
 

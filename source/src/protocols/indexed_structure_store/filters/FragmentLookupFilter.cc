@@ -97,7 +97,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 	std::vector<core::Size> lookup_residue;
 
 	core::pose::Pose target_pose = pose;
-	TR << boost::format("apply( pose=<%s residues> )") % target_pose.n_residue() << std::endl;
+	if ( TR.visible() ) TR << boost::format("apply( pose=<%s residues> )") % target_pose.n_residue() << std::endl;
 	//Apply to a particular chain
 
 	if ( b_target_chain_ ) {
@@ -106,7 +106,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 			utility_exit_with_message(" FragmentLookupFilter invalid chain" );
 		}
 		target_pose = *pose.split_by_chain(target_chain_);
-		TR << boost::format("apply mod by chain! (Now pose=<%s residues> )") % target_pose.n_residue() << std::endl;
+		if ( TR.visible() ) TR << boost::format("apply mod by chain! (Now pose=<%s residues> )") % target_pose.n_residue() << std::endl;
 	}
 
 	if ( lookup_mode_ == First ) {
@@ -117,7 +117,7 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 
 	float elapsed_seconds = (clock() - start_t) / CLOCKS_PER_SEC;
 
-	TR << boost::format("lookup returned results: %s seconds: %s") % lookup_result.size() % elapsed_seconds << std::endl;
+	if ( TR.visible() ) TR << boost::format("lookup returned results: %s seconds: %s") % lookup_result.size() % elapsed_seconds << std::endl;
 
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "\n";

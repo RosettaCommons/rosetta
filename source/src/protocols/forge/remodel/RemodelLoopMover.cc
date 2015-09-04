@@ -3050,7 +3050,7 @@ bool RemodelLoopMover::check_closure_criteria(
 					all_loops_pass &= ( cbreak <= max_linear_chainbreak_ );
 				}
 
-				if ( show_in_tracer ) {
+				if ( show_in_tracer && TR.visible() ) {
 					TR << format % l->start() % l->stop() % l->cut() % cbreak << std::endl;
 				}
 			}
@@ -3062,7 +3062,7 @@ bool RemodelLoopMover::check_closure_criteria(
 
 	// boost::format here does not appear to be doing what I want it to do...
 	// The format string is probably borked.
-	if ( show_in_tracer ) {
+	if ( show_in_tracer && TR.visible() ) {
 		TR << format % "start" % "stop" % "cut" % "cbreak" << std::endl;
 	}
 
@@ -3075,7 +3075,7 @@ bool RemodelLoopMover::check_closure_criteria(
 			all_loops_pass &= ( cbreak <= max_linear_chainbreak_ );
 		}
 
-		if ( show_in_tracer ) {
+		if ( show_in_tracer && TR.visible() ) {
 			TR << format % l->start() % l->stop() % l->cut() % cbreak << std::endl;
 		}
 	}

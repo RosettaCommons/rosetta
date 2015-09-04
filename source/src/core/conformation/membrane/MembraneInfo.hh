@@ -179,7 +179,7 @@ public: // topology of TM spans and lipophilicity
 
 private: // default constructor
 
-  /// @brief Create a default version of MembraneInfo (DONT USE)
+	/// @brief Create a default version of MembraneInfo (DONT USE)
 	/// @details Initializes all data members to dummy or empty values
 	/// Use the fully specified constructors instead. MembraneInfo is a
 	/// data container but is NOT responsible for initialization.

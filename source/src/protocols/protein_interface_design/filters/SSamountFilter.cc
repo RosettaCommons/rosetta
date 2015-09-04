@@ -105,7 +105,7 @@ SSamountFilter::compute( core::pose::Pose const & pose ) const
 
 	core::pose::Pose target_pose = pose;
 
-	TR << boost::format("apply( pose=<%s residues> )") % target_pose.n_residue() << std::endl;
+	if ( TR.visible() ) TR << boost::format("apply( pose=<%s residues> )") % target_pose.n_residue() << std::endl;
 	//Apply to a particular chain
 
 	if ( b_target_chain_ ) {
@@ -114,7 +114,7 @@ SSamountFilter::compute( core::pose::Pose const & pose ) const
 			utility_exit_with_message(" FragmentLookupFilter invalid chain" );
 		}
 		target_pose = *pose.split_by_chain(target_chain_);
-		TR << boost::format("apply mod by chain! (Now pose=<%s residues> )") % target_pose.n_residue() << std::endl;
+		if ( TR.visible() ) TR << boost::format("apply mod by chain! (Now pose=<%s residues> )") % target_pose.n_residue() << std::endl;
 	}
 	//Use reduced DSSP notation to calculate SS (notation is 'H','E','L',' ')
 	core::scoring::dssp::Dssp dssp_profile(target_pose);

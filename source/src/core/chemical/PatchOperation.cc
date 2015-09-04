@@ -864,7 +864,7 @@ ConnectSulfurAndMakeVirtualProton::apply( ResidueType & rsd ) const {
 /// @brief Add a connection to the residue's sulfur and make a virtual proton to track the position of the connection atom
 bool
 SetAllAtomsRepulsive::apply( ResidueType & rsd ) const {
-	
+
 	for ( Size i = 1; i <= rsd.natoms(); ++i ) {
 		if ( rsd.atom_is_hydrogen( i ) ) {
 			rsd.set_atom_type( rsd.atom_name( i ), "REPLS" );
@@ -872,7 +872,7 @@ SetAllAtomsRepulsive::apply( ResidueType & rsd ) const {
 			rsd.set_atom_type( rsd.atom_name( i ), "HREPS" );
 		}
 	}
-	
+
 	return false;
 }
 

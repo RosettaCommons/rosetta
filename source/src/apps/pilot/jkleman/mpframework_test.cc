@@ -287,85 +287,85 @@ public:
 		//  visemb->apply( pose );
 
 	}
-		////////////////////////////////////////////////////////////////////////////////
-		//
-		//  // MPQuickRelaxProtocol
-		//
-		//  // get job for adding rmsd to scorefile
-		//  protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-		//
-		//  // read native
-		//  core::pose::Pose native_;
-		//  if( option[ OptionKeys::in::file::native ].user() ) {
-		//   core::import_pose::pose_from_pdb( native_, option[ OptionKeys::in::file::native ]() );
-		//   addmem->apply( native_ );
-		//  }
-		//
-		//  // create scorefunction
-		//  ScoreFunctionOP sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
-		//
-		//  // starting position: shake up the protein
-		//  using namespace core::kinematics;
-		//  MoveMapOP mm( new MoveMap() );
-		//  mm->set_bb( true );
-		//  mm->set_chi( true );
-		//  TR << "shaking up the protein for a random starting position" << std::endl;
-		//
-		//  // get number of residues
-		//  Size nres( nres_protein( pose ) );
-		//
-		//  // set small and shearmover
-		//  using namespace protocols::simple_moves;
-		//  core::Real kT = 1.0;
-		//  SmallMoverOP small( new SmallMover( mm, kT, nres ) );
-		//  small->angle_max( 1.0 );
-		//  small->apply( pose );
-		//
-		//  ShearMoverOP shear( new ShearMover( mm, kT, nres ) );
-		//  shear->angle_max( 1.0 );
-		//  shear->apply( pose );
-		//
-		//  // create MC object
-		//  protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *sfxn_, 1.0 ) );
-		//
-		//  // initialize AtomTreeMinimizer
-		//  core::optimization::MinimizerOptions min_opts( "lbfgs_armijo_atol", 0.01, true );
-		//  core::optimization::AtomTreeMinimizer atm;
-		//
-		//  // do this for a certain number of iterations
-		//  // since both the packer and especially minimization takes a while, just do one
-		//  for ( Size i = 1; i <= 1; ++i ){
-		//
-		//   // run small and shearmover again
-		//   TR << "SmallMover and ShearMover..." << std::endl;
-		//   small->apply( pose );
-		//   shear->apply( pose );
-		//
-		//   // packing
-		//   TR << "Packing rotamers..." << std::endl;
-		//   using namespace core::pack::task;
-		//   PackerTaskOP repack = TaskFactory::create_packer_task( pose );
-		//   repack->restrict_to_repacking();
-		//   core::pack::pack_rotamers( pose, *sfxn_, repack );
-		//
-		//   // minimize
-		//   TR << "Minimizing..." << std::endl;
-		//   atm.run( pose, *mm, *sfxn_, min_opts );
-		//
-		//   // evaluate Boltzmann
-		//   mc->boltzmann( pose );
-		//   TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
-		//
-		//  } // number of iterations for search
-		//
-		//  // superimpose poses with native
-		//  using namespace protocols::simple_moves;
-		//  SuperimposeMoverOP super( new SuperimposeMover( native_, 1, nres, 1, nres, true ) );
-		//  super->apply( pose );
-		//
-		//  // calculate and store the rmsd in the score file
-		//  using namespace core::scoring;
-		//  job->add_string_real_pair("rms", bb_rmsd( pose, native_ ));
+	////////////////////////////////////////////////////////////////////////////////
+	//
+	//  // MPQuickRelaxProtocol
+	//
+	//  // get job for adding rmsd to scorefile
+	//  protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
+	//
+	//  // read native
+	//  core::pose::Pose native_;
+	//  if( option[ OptionKeys::in::file::native ].user() ) {
+	//   core::import_pose::pose_from_pdb( native_, option[ OptionKeys::in::file::native ]() );
+	//   addmem->apply( native_ );
+	//  }
+	//
+	//  // create scorefunction
+	//  ScoreFunctionOP sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
+	//
+	//  // starting position: shake up the protein
+	//  using namespace core::kinematics;
+	//  MoveMapOP mm( new MoveMap() );
+	//  mm->set_bb( true );
+	//  mm->set_chi( true );
+	//  TR << "shaking up the protein for a random starting position" << std::endl;
+	//
+	//  // get number of residues
+	//  Size nres( nres_protein( pose ) );
+	//
+	//  // set small and shearmover
+	//  using namespace protocols::simple_moves;
+	//  core::Real kT = 1.0;
+	//  SmallMoverOP small( new SmallMover( mm, kT, nres ) );
+	//  small->angle_max( 1.0 );
+	//  small->apply( pose );
+	//
+	//  ShearMoverOP shear( new ShearMover( mm, kT, nres ) );
+	//  shear->angle_max( 1.0 );
+	//  shear->apply( pose );
+	//
+	//  // create MC object
+	//  protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *sfxn_, 1.0 ) );
+	//
+	//  // initialize AtomTreeMinimizer
+	//  core::optimization::MinimizerOptions min_opts( "lbfgs_armijo_atol", 0.01, true );
+	//  core::optimization::AtomTreeMinimizer atm;
+	//
+	//  // do this for a certain number of iterations
+	//  // since both the packer and especially minimization takes a while, just do one
+	//  for ( Size i = 1; i <= 1; ++i ){
+	//
+	//   // run small and shearmover again
+	//   TR << "SmallMover and ShearMover..." << std::endl;
+	//   small->apply( pose );
+	//   shear->apply( pose );
+	//
+	//   // packing
+	//   TR << "Packing rotamers..." << std::endl;
+	//   using namespace core::pack::task;
+	//   PackerTaskOP repack = TaskFactory::create_packer_task( pose );
+	//   repack->restrict_to_repacking();
+	//   core::pack::pack_rotamers( pose, *sfxn_, repack );
+	//
+	//   // minimize
+	//   TR << "Minimizing..." << std::endl;
+	//   atm.run( pose, *mm, *sfxn_, min_opts );
+	//
+	//   // evaluate Boltzmann
+	//   mc->boltzmann( pose );
+	//   TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
+	//
+	//  } // number of iterations for search
+	//
+	//  // superimpose poses with native
+	//  using namespace protocols::simple_moves;
+	//  SuperimposeMoverOP super( new SuperimposeMover( native_, 1, nres, 1, nres, true ) );
+	//  super->apply( pose );
+	//
+	//  // calculate and store the rmsd in the score file
+	//  using namespace core::scoring;
+	//  job->add_string_real_pair("rms", bb_rmsd( pose, native_ ));
 
 	////////////////////////////////////////////////////////////////////////////////
 

@@ -81,9 +81,9 @@ public:
 		//TR << A(width, rss) << I(width,rs->residue_types_DO_NOT_USE().size()) << endl;
 
 		// FA_RNA residue type set removed in favor of FA_STANDARD.
-		//		rss = FA_RNA;
-		//		rs = ChemicalManager::get_instance()->residue_type_set(rss );
-		//		TR << A(width, rss) << I(width,rs->residue_types_DO_NOT_USE().size()) << endl;
+		//  rss = FA_RNA;
+		//  rs = ChemicalManager::get_instance()->residue_type_set(rss );
+		//  TR << A(width, rss) << I(width,rs->residue_types_DO_NOT_USE().size()) << endl;
 
 	}
 
