@@ -363,8 +363,8 @@ public:
 		Vector const & atom2_xyz,
 		Size const atom2_type_index,
 		Vectors const & atom1_waters,
-		Size & closest_water,
-		Real & closest_water_dis2
+		utility::vector1< Real > & d_weighted_d2_d_di,  // per water contribution
+		Real & weighted_water_dis2
 	) const;
 	Real
 	get_lk_fractional_contribution(
@@ -372,6 +372,7 @@ public:
 		Size const atom2_type_index,
 		Vectors const & atom1_waters
 	) const;
+
 	/// for external use
 	Real
 	eval_lk_ball_fraction_deriv(
@@ -420,35 +421,33 @@ public:
 
 
 	void
-	sum_deriv_contributions_for_atom_pair_one_way(
-		Size const atom1,
+	sum_deriv_contributions_for_heavyatom_pair_one_way(
+		Size const heavyatom1,
 		conformation::Residue const & rsd1,
-		Vectors const & atom1_waters,
-		Vectors const & heavyatom1_waters,
-		utility::vector1< Real > const & atom1_wts,
-		Size const atom2,
+		LKB_ResidueInfo const & rsd1_info,
+		Size const heavyatom2,
 		conformation::Residue const & rsd2,
-		scoring::EnergyMap const & weights,
+		EnergyMap const & weights,
 		Real const weight_factor,
 		Real const d2,
-		Vector & F1,
-		Vector & F2
+		utility::vector1< DerivVectorPair > & r1_at_derivs,
+		utility::vector1< DerivVectorPair > & r2_at_derivs
 	) const;
 
 	void
-	sum_deriv_contributions_for_atom_pair(
+	sum_deriv_contributions_for_heavyatom_pair(
 		Real const d2,
-		Size const atom1,
+		Size const heavyatom1,
 		conformation::Residue const & rsd1,
 		LKB_ResidueInfo const & rsd1_info,
-		Size const atom2,
+		Size const heavyatom2,
 		conformation::Residue const & rsd2,
 		LKB_ResidueInfo const & rsd2_info,
-		pose::Pose const & pose,
-		scoring::EnergyMap const & weights,
+		pose::Pose const &,
+		EnergyMap const & weights,
 		Real const cp_weight,
-		Vector & F1,
-		Vector & F2
+		utility::vector1< DerivVectorPair > & r1_at_derivs,
+		utility::vector1< DerivVectorPair > & r2_at_derivs
 	) const;
 
 
@@ -489,7 +488,7 @@ private:
 	bool const slim_etable_;
 	bool const use_intra_dna_cp_crossover_4_;
 
-	static Real const ramp_width_A2_;
+	Real const ramp_width_A2_, multi_water_fade_;
 	utility::vector1< Real > d2_low_;
 	utility::vector1< bool > atom_type_is_charged_;
 

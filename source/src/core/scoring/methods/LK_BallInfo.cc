@@ -125,6 +125,35 @@ WaterBuilder::build( conformation::Residue const & rsd ) const
 	return kinematics::Stub( rsd.xyz( atom1_ ), rsd.xyz( atom2_ ), rsd.xyz( atom3_ ) ).local2global( xyz_local_ );
 }
 
+// fpd get the derivative of water movement w.r.t. base atom movement
+// fpd too slow?
+void
+WaterBuilder::derivatives(
+	conformation::Residue const & rsd,
+	numeric::xyzMatrix <Real> &dw_da1,
+	numeric::xyzMatrix <Real> &dw_da2,
+	numeric::xyzMatrix <Real> &dw_da3 ) const
+{
+	Real NUM_H = 1e-8; //?
+	Vector w000=kinematics::Stub( rsd.xyz( atom1_ ), rsd.xyz( atom2_ ), rsd.xyz( atom3_ ) ).local2global( xyz_local_ );
+	Vector w100=kinematics::Stub( rsd.xyz( atom1_ )+Vector(NUM_H,0.0,0.0), rsd.xyz( atom2_ ), rsd.xyz( atom3_ ) ).local2global( xyz_local_ );
+	Vector w010=kinematics::Stub( rsd.xyz( atom1_ )+Vector(0.0,NUM_H,0.0), rsd.xyz( atom2_ ), rsd.xyz( atom3_ ) ).local2global( xyz_local_ );
+	Vector w001=kinematics::Stub( rsd.xyz( atom1_ )+Vector(0.0,0.0,NUM_H), rsd.xyz( atom2_ ), rsd.xyz( atom3_ ) ).local2global( xyz_local_ );
+
+	Vector w200=kinematics::Stub( rsd.xyz( atom1_ ), rsd.xyz( atom2_ )+Vector(NUM_H,0.0,0.0), rsd.xyz( atom3_ ) ).local2global( xyz_local_ );
+	Vector w020=kinematics::Stub( rsd.xyz( atom1_ ), rsd.xyz( atom2_ )+Vector(0.0,NUM_H,0.0), rsd.xyz( atom3_ ) ).local2global( xyz_local_ );
+	Vector w002=kinematics::Stub( rsd.xyz( atom1_ ), rsd.xyz( atom2_ )+Vector(0.0,0.0,NUM_H), rsd.xyz( atom3_ ) ).local2global( xyz_local_ );
+
+	Vector w300=kinematics::Stub( rsd.xyz( atom1_ ), rsd.xyz( atom2_ ), rsd.xyz( atom3_ )+Vector(NUM_H,0.0,0.0) ).local2global( xyz_local_ );
+	Vector w030=kinematics::Stub( rsd.xyz( atom1_ ), rsd.xyz( atom2_ ), rsd.xyz( atom3_ )+Vector(0.0,NUM_H,0.0) ).local2global( xyz_local_ );
+	Vector w003=kinematics::Stub( rsd.xyz( atom1_ ), rsd.xyz( atom2_ ), rsd.xyz( atom3_ )+Vector(0.0,0.0,NUM_H) ).local2global( xyz_local_ );
+
+	dw_da1.col_x( (w100-w000) / NUM_H ); dw_da1.col_y( (w010-w000) / NUM_H ); dw_da1.col_z( (w001-w000) / NUM_H );
+	dw_da2.col_x( (w200-w000) / NUM_H ); dw_da2.col_y( (w020-w000) / NUM_H ); dw_da2.col_z( (w002-w000) / NUM_H );
+	dw_da3.col_x( (w300-w000) / NUM_H ); dw_da3.col_y( (w030-w000) / NUM_H ); dw_da3.col_z( (w003-w000) / NUM_H );
+
+}
+
 /// The next two functions were taken from protocols/water/rotamer_building_functions.cc with slight modifications
 ///
 Vector
@@ -371,8 +400,7 @@ LKB_ResidueInfo::initialize_residue_type( ResidueType const & rsd_type ) const
 
 	TR.Trace << "initialize_residue_type: " << rsd_type.name() << std::endl;
 
-	bool const sidechain_only( true );
-	//! basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ] );
+	bool const sidechain_only = !(basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ]());
 
 	ResidueType const * const address( &rsd_type );
 	debug_assert( ! water_builder_map_.count( address ) );
@@ -580,20 +608,52 @@ LKB_ResidueInfo::build_waters( Residue const & rsd )
 		WaterBuilders const & water_builders( it->second[ i ] );
 		for ( Size j=1, j_end = water_builders.size(); j<= j_end; ++j ) {
 			waters_[i][j] = water_builders[j].build( rsd );
+			water_builders[j].derivatives( rsd , dwater_datom1_[i][j] , dwater_datom2_[i][j] , dwater_datom3_[i][j] );
 		}
 	}
 }
 
+WaterBuilders const &
+LKB_ResidueInfo::get_water_builder( conformation::Residue const & rsd , Size heavyatom ) const
+{
+	if ( !this->matches_residue_type( rsd.type() ) ) {
+		utility_exit_with_message("LKB_ResidueInfo::get_water_builder: mismatch: "+rsd_type_->name()+" "+rsd.type().name() );
+	}
+
+	if ( !has_waters_ ) {
+		utility_exit_with_message("LKB_ResidueInfo::get_water_builder: no water builders!");
+	}
+
+	// waters_ array has already been dimensioned properly
+	ResidueType const * const address( &( rsd.type() ) );
+
+	WaterBuilderMap::const_iterator it( water_builder_map_.find( address ) );
+	if ( it == water_builder_map_.end() ) {
+		utility_exit_with_message("LKB_ResidueInfo::initialize has not been called");
+	}
+
+	if ( heavyatom > it->second.size() ) {
+		utility_exit_with_message("LKB_ResidueInfo::get_water_builder called on unrecognized atom");
+	}
+
+	return it->second[ heavyatom ];
+}
+
+
+
 /// resize the waters_ array
 /// set has_waters_
 /// setup atom_weights_
-
+///fpd setup dwater_datom*_
 void
 LKB_ResidueInfo::initialize( ResidueType const & rsd )
 {
 	rsd_type_ = &rsd;
 
 	waters_.clear(); waters_.resize( rsd.nheavyatoms() );
+	dwater_datom1_.clear(); dwater_datom1_.resize( rsd.nheavyatoms() );
+	dwater_datom2_.clear(); dwater_datom2_.resize( rsd.nheavyatoms() );
+	dwater_datom3_.clear(); dwater_datom3_.resize( rsd.nheavyatoms() );
 	has_waters_ = false;
 
 	ResidueType const * const address( &rsd );
@@ -608,9 +668,15 @@ LKB_ResidueInfo::initialize( ResidueType const & rsd )
 		WaterBuilders const & water_builders( it->second[ i ] );
 		if ( water_builders.empty() ) {
 			waters_[i].clear();
+			dwater_datom1_[i].clear();
+			dwater_datom2_[i].clear();
+			dwater_datom3_[i].clear();
 		} else {
 			has_waters_ = true;
 			waters_[i].resize( water_builders.size() );
+			dwater_datom1_[i].resize( water_builders.size() );
+			dwater_datom2_[i].resize( water_builders.size() );
+			dwater_datom3_[i].resize( water_builders.size() );
 		}
 	}
 
