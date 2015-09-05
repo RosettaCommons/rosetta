@@ -194,8 +194,8 @@ ChainbreakEnergy::eval_atom_derivative(
 			match = true;
 
 			// Case 5: The moving atom is the 2nd main-chain atom on the downstream residue across the cutpoint and
-			// should superimpose with virtual atom OVL2 from the upstream residue.
-		} else if ( id.atomno() == upper_rsd.mainchain_atoms()[ 2 ] ) {
+			// should superimpose with virtual atom OVL2 from the upstream residue, IF the residue is not a sugar.
+		} else if ( id.atomno() == upper_rsd.mainchain_atoms()[ 2 ] && ! upper_rsd.is_carbohydrate() ) {
 			xyz_fixed = lower_rsd.atom( "OVL2" ).xyz();
 			match = true;
 

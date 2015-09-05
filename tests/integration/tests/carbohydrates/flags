@@ -2,6 +2,6 @@
 -include_lipids
 -read_pdb_link_records
 -write_pdb_link_records
--out:levels core.chemical.RingConformerSet:500
+-mute all
 -unmute core.chemical.carbohydrates
 -glycam_pdb_format

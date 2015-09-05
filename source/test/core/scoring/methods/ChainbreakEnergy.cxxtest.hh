@@ -14,23 +14,19 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-// Unit headers
-
-#include <platform/types.hh>
-
 // Package Headers
 #include <test/util/deriv_funcs.hh>
 #include <test/util/pose_funcs.hh>
 #include <test/util/pdb1ubq.hh>
 #include <test/core/init_util.hh>
 
+// Project headers
 #include <core/chemical/VariantType.hh>
-
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/util.hh>
+#include <core/pose/annotated_sequence.hh>
 
-
-//Auto Headers
+// Utility headers
 #include <utility/vector1.hh>
 
 
@@ -50,7 +46,7 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init();
+		core_init_with_additional_options( "-include_sugars" );
 	}
 
 	// Shared finalization goes here.
@@ -93,6 +89,31 @@ public:
 		adv.simple_deriv_check( true, 1e-6 );
 	}
 
+	void test_chainbreak_deriv_check_with_sugars()
+	{
+		using namespace core::chemical;
+		using namespace core::kinematics;
+		using namespace core::pose;
+		using namespace core::scoring;
+
+		Pose pose;
+		make_pose_from_saccharide_sequence( pose, "Glcp-Glcp-Glcp-Glcp-Glcp-Glcp", "fa_standard" );
+		for ( core::uint i = 1; i < 6; ++i ) {
+			// Make extended.
+			pose.set_phi( i, 100.0 );
+			pose.set_psi( i, 220.0 );
+		}
+		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, 3 );
+		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, 4 );
+
+		ScoreFunction sfxn;
+		sfxn.set_weight( chainbreak, 0.5 );
+		TS_ASSERT_DELTA( sfxn( pose ), 0.0, 1e-3 );
+
+		MoveMap movemap( create_movemap_to_allow_all_torsions() );
+		AtomDerivValidator adv( pose, sfxn, movemap );
+		adv.simple_deriv_check( true, 1e-6 );
+	}
 };
 
 
