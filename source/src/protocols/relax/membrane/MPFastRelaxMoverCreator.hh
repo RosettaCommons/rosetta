@@ -15,7 +15,6 @@
 ///             full atom membrane energy function.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
-/// @note       Last Modified: 12/2/14
 
 #ifndef INCLUDED_protocols_relax_membrane_MPFastRelaxMoverCreator_hh
 #define INCLUDED_protocols_relax_membrane_MPFastRelaxMoverCreator_hh

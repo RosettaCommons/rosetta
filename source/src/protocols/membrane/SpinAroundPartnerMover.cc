@@ -58,11 +58,6 @@ static basic::Tracer TR( "protocols.membrane.SpinAroundPartnerMover" );
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-using namespace protocols::moves;
-
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -71,7 +66,8 @@ using namespace protocols::moves;
 /// @details Defaults: jump = 1, sampling range = 100
 ///    Sampling range of 100 means that both x and y are sampled from
 ///    -100 to +100 before calling DockingSlideIntoContact
-SpinAroundPartnerMover::SpinAroundPartnerMover() : protocols::moves::Mover()
+SpinAroundPartnerMover::SpinAroundPartnerMover() : 
+	protocols::moves::Mover()
 {
 	set_defaults();
 	register_options();
@@ -79,7 +75,8 @@ SpinAroundPartnerMover::SpinAroundPartnerMover() : protocols::moves::Mover()
 
 /// @brief Custom Constructor
 /// @details User can specify jump number
-SpinAroundPartnerMover::SpinAroundPartnerMover( Size jump_num )
+SpinAroundPartnerMover::SpinAroundPartnerMover( core::Size jump_num ) : 
+	protocols::moves::Mover()
 {
 	set_defaults();
 	register_options();
@@ -89,7 +86,10 @@ SpinAroundPartnerMover::SpinAroundPartnerMover( Size jump_num )
 
 /// @brief Custom constructor
 /// @details User can specify jump number and sampling range
-SpinAroundPartnerMover::SpinAroundPartnerMover( Size jump_num, Size range )
+SpinAroundPartnerMover::SpinAroundPartnerMover( 
+	core::Size jump_num, 
+	core::Size range 
+	) : protocols::moves::Mover()
 {
 	set_defaults();
 	register_options();
@@ -101,7 +101,8 @@ SpinAroundPartnerMover::SpinAroundPartnerMover( Size jump_num, Size range )
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-SpinAroundPartnerMover::SpinAroundPartnerMover( SpinAroundPartnerMover const & src ) : protocols::moves::Mover( src ),
+SpinAroundPartnerMover::SpinAroundPartnerMover( SpinAroundPartnerMover const & src ) 
+	: protocols::moves::Mover( src ),
 	jump_( src.jump_ ),
 	rand_range_( src.rand_range_ ),
 	range_( src.range_ ),
@@ -110,7 +111,8 @@ SpinAroundPartnerMover::SpinAroundPartnerMover( SpinAroundPartnerMover const & s
 {}
 
 /// @brief Assignment Operator
-SpinAroundPartnerMover & SpinAroundPartnerMover::operator = ( SpinAroundPartnerMover const & src ) {
+SpinAroundPartnerMover & 
+SpinAroundPartnerMover::operator = ( SpinAroundPartnerMover const & src ) {
 
 	// Abort self-assignment.
 	if ( this == &src ) {
@@ -189,21 +191,22 @@ void SpinAroundPartnerMover::random_range( bool yesno ) {
 }
 
 /// @brief Set x position
-void SpinAroundPartnerMover::set_x( Real x ) {
+void SpinAroundPartnerMover::set_x( core::Real x ) {
 	x_ = x;
 	rand_range_ = false;
 }
 
 /// @brief Set y position
-void SpinAroundPartnerMover::set_y( Real y ) {
+void SpinAroundPartnerMover::set_y( core::Real y ) {
 	y_ = y;
 	rand_range_ = false;
 }
 
 
 /// @brief Flip the downstream partner in the membrane
-void SpinAroundPartnerMover::apply( Pose & pose ) {
+void SpinAroundPartnerMover::apply( core::pose::Pose & pose ) {
 
+	using namespace core; 
 	using namespace numeric;
 	using namespace core::conformation::membrane;
 	using namespace protocols::rigid;
@@ -258,7 +261,8 @@ void SpinAroundPartnerMover::apply( Pose & pose ) {
 /////////////////////
 
 /// @brief Register Options from Command Line
-void SpinAroundPartnerMover::register_options() {
+void 
+SpinAroundPartnerMover::register_options() {
 
 	using namespace basic::options;
 	option.add_relevant( OptionKeys::mp::setup::spanfiles );
@@ -266,7 +270,8 @@ void SpinAroundPartnerMover::register_options() {
 }
 
 /// @brief Set default values
-void SpinAroundPartnerMover::set_defaults() {
+void 
+SpinAroundPartnerMover::set_defaults() {
 
 	jump_ = 1;
 	rand_range_ = true;

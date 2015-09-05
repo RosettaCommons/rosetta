@@ -37,11 +37,6 @@
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace protocols::moves;
-using namespace core::kinematics;
-
 class MPMutateRelaxMover : public protocols::moves::Mover {
 
 public:
@@ -90,7 +85,7 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Mutate residue and then quick relax the membrane protein
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 private: // methods
 
@@ -131,13 +126,13 @@ private: // methods
 
 	/// @brief Check mutant file for errors
 	/// @details If Rosetta doesn't start crying, you're good to go
-	void check_mutant_file( Pose & pose );
+	void check_mutant_file( core::pose::Pose & pose );
 
 	/// @brief Convert one-letter code to three-letter code
 	std::string one2three( std::string one );
 
 	/// @brief Create output filename
-	std::string output_filename( std::string mutation_tag, Size counter );
+	std::string output_filename( std::string mutation_tag, core::Size counter );
 
 private: // data
 
@@ -148,13 +143,13 @@ private: // data
 	utility::vector1< utility::vector1< std::string > > wt_res_;
 
 	/// @brief Pose residue numbers to mutate
-	utility::vector1< utility::vector1< Size > > resn_;
+	utility::vector1< utility::vector1< core::Size > > resn_;
 
 	/// @brief Residue identities to mutate into, three letter code
 	utility::vector1< utility::vector1< std::string > > new_res_;
 
 	/// @brief Number of iterations the mover runs on the inside
-	Size iter_;
+	core::Size iter_;
 
 	/// @brief Protein name for dumping PDBs
 	std::string protein_;

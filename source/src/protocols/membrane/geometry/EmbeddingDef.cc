@@ -38,10 +38,6 @@ namespace protocols {
 namespace membrane {
 namespace geometry {
 
-using namespace core;
-using namespace core::conformation::membrane;
-using namespace protocols::membrane;
-
 /// @brief Default Constructor
 EmbeddingDef::EmbeddingDef() :
 	utility::pointer::ReferenceCount(),
@@ -57,8 +53,12 @@ EmbeddingDef::EmbeddingDef( core::Vector const center, core::Vector const normal
 {}
 
 /// @brief Constructor from pose, two residue numbers, and bool if in positive z-direction
-EmbeddingDef::EmbeddingDef( core::pose::Pose const & pose, core::Size start, core::Size end, bool pos_z ) :
-	utility::pointer::ReferenceCount(),
+EmbeddingDef::EmbeddingDef( 
+	core::pose::Pose const & pose, 
+	core::Size start, 
+	core::Size end, \
+	bool pos_z 
+	) : utility::pointer::ReferenceCount(),
 	center_( 0, 0, 0 ),
 	normal_( 0, 0, 1 )
 {
@@ -153,7 +153,12 @@ bool EmbeddingDef::equals( EmbeddingDef const & other ) const {
 /// @brief Embedding object from span
 /// @details Takes the CA coords of two residues and calculates center and normal
 ///    from this.
-void EmbeddingDef::from_span( core::pose::Pose const & pose, core::Size const start, core::Size const end ) {
+void 
+EmbeddingDef::from_span( 
+	core::pose::Pose const & pose, 
+	core::Size const start, 
+	core::Size const end 
+) {
 
 	TR << "Computing membrane embedding from TMspan " << start << " to " << end << std::endl;
 
@@ -187,7 +192,8 @@ void EmbeddingDef::from_span( core::pose::Pose const & pose, core::Size const st
 /// @brief Embedding object from span
 /// @details Takes the CA coords of two residues and calculates center and normal
 ///    from this. Normal always shows in positive z-direction!
-void EmbeddingDef::from_span_positive_z( core::pose::Pose const & pose, core::Size start, core::Size end ) {
+void 
+EmbeddingDef::from_span_positive_z( core::pose::Pose const & pose, core::Size start, core::Size end ) {
 
 	TR << "Computing membrane embedding from TMspan " << start << " to " << end << std::endl;
 

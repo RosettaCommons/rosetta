@@ -40,12 +40,6 @@
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace protocols::moves;
-using namespace core::kinematics;
-using namespace core::scoring;
-
 class MPQuickRelaxMover : public protocols::moves::Mover {
 
 public:
@@ -60,10 +54,14 @@ public:
 
 	/// @brief Custom Constructor
 	/// @details nmoves is a string because it can either be "nres" or an integer
-	MPQuickRelaxMover( Real angle_max, std::string nmoves );
+	MPQuickRelaxMover( core::Real angle_max, std::string nmoves );
 
 	/// @brief Custom Constructor
-	MPQuickRelaxMover( Real angle_max, std::string nmoves, MoveMapOP movemap );
+	MPQuickRelaxMover( 
+		core::Real angle_max, 
+		std::string nmoves, 
+		core::kinematics::MoveMapOP movemap
+		);
 
 	/// @brief Copy Constructor
 	MPQuickRelaxMover( MPQuickRelaxMover const & src );
@@ -101,7 +99,7 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Flip the downstream partner in the membrane
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	/// @brief Run AddMembraneMover before?
 	/// @details If you want to keep your anchor point for MEM, then pick no
@@ -132,22 +130,22 @@ private: // methods
 private: // data
 
 	/// @brief Native
-	PoseOP native_;
+	core::pose::PoseOP native_;
 
 	/// @brief Maximum allowed dihedral angle change for Small and ShearMover
-	Real angle_max_;
+	core::Real angle_max_;
 
 	/// @brief Number of moves Small and ShearMover can make
 	/// @details moves_ is a string and can take 'nres' as well as a number
 	///    nmoves_ is the actual number that is taken after conversion
 	std::string moves_;
-	Size nmoves_;
+	core::Size nmoves_;
 
 	/// @brief Movemap for Small and ShearMover
-	MoveMapOP movemap_;
+	core::kinematics::MoveMapOP movemap_;
 
 	/// @brief Scorefxn
-	ScoreFunctionOP sfxn_;
+	core::scoring::ScoreFunctionOP sfxn_;
 
 	/// @brief constraint filename
 	std::string cst_file_;

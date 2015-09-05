@@ -63,11 +63,6 @@ static basic::Tracer TR( "protocols.membrane.OptimizeMembranePositionMover" );
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-using namespace protocols::moves;
-
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -284,10 +279,10 @@ void OptimizeMembranePositionMover::optimize_membrane_center( Pose & pose ) {
 	score_best_ = score_old;
 
 	// get iterations
-	Size iterations = nearest_size( abs_difference( starting_z_, 0.0 ) * 2 / stepsize_z_ );
+	core::Size iterations = nearest_size( abs_difference( starting_z_, 0.0 ) * 2 / stepsize_z_ );
 
 	// drag along the z axis and score
-	for ( Size i = 1; i <= iterations; ++i ) {
+	for ( core::Size i = 1; i <= iterations; ++i ) {
 
 		// drag z through the membrane
 		new_z += stepsize_z_;
@@ -350,12 +345,12 @@ void OptimizeMembranePositionMover::optimize_membrane_normal( Pose & pose ) {
 	core::Real score_new = score_best_;
 
 	// sample an arch over several different axes / directions
-	for ( Size j = 1; j <= 4; ++j ) {
+	for ( core::Size j = 1; j <= 4; ++j ) {
 
 		angle = 45;
 
 		// sample angles
-		for ( Size i = 1; i <= 180; ++i ) {
+		for ( core::Size i = 1; i <= 180; ++i ) {
 
 			// increase angle by 1 degree
 			angle += stepsize_angle_;

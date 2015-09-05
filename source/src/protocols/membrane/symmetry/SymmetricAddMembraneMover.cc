@@ -18,7 +18,6 @@
 ///             should both return true
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
-/// @note       Last Modified (2/9/15)
 
 #ifndef INCLUDED_protocols_membrane_symmetry_SymmetricAddMembraneMover_cc
 #define INCLUDED_protocols_membrane_symmetry_SymmetricAddMembraneMover_cc
@@ -87,11 +86,6 @@ namespace protocols {
 namespace membrane {
 namespace symmetry {
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-using namespace protocols::moves;
-
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -131,7 +125,7 @@ SymmetricAddMembraneMover::SymmetricAddMembraneMover(
 /// SpanningTopology to be set in MembraneInfo. Calls the analagous
 /// parent constructor in AddMembraneMover
 SymmetricAddMembraneMover::SymmetricAddMembraneMover(
-	SpanningTopologyOP topology
+	core::conformation::membrane::SpanningTopologyOP topology
 ) :
 	protocols::membrane::AddMembraneMover( topology )
 {
@@ -188,8 +182,8 @@ SymmetricAddMembraneMover::parse_my_tag(
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
-) {
-}
+) 
+{}
 
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
@@ -281,8 +275,9 @@ SymmetricAddMembraneMover::init_from_cmd() {
 /// as the anchoring residue and nres_complex+1 as tne new sequence position
 /// Not equivalent to an append_by_jump!
 core::Size
-SymmetricAddMembraneMover::add_membrane_virtual( Pose & pose ) {
+SymmetricAddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 
+	using namespace core; 
 	using namespace core::conformation;
 	using namespace core::conformation::symmetry;
 	using namespace core::chemical;
@@ -348,7 +343,7 @@ SymmetricAddMembraneMover::add_membrane_virtual( Pose & pose ) {
 /// @details If there is an MEM residue in the PDB at the end of the pose
 /// with property MEMBRANE, return a vector of all of those residues.
 utility::vector1< core::SSize >
-SymmetricAddMembraneMover::check_pdb_for_mem( Pose & ) {
+SymmetricAddMembraneMover::check_pdb_for_mem( core::pose::Pose & ) {
 
 	// initialize vector for membrane residues found in PDB
 	utility::vector1< core::Size > mem_rsd;

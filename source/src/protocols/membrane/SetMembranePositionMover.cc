@@ -50,18 +50,13 @@ static thread_local basic::Tracer TR( "protocols.membrane.SetMembranePositionMov
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace protocols::membrane;
-using namespace protocols::simple_moves;
-using namespace core::conformation::membrane;
-
 ////////////////////
 /// Constructors ///
 ////////////////////
 
 /// @brief Construct a Default Membrane Position Mover
 SetMembranePositionMover::SetMembranePositionMover() :
-	Mover(),
+	protocols::moves::Mover(),
 	center_( 0, 0, 0 ),
 	normal_( 0, 0, 1 )
 {}
@@ -69,8 +64,8 @@ SetMembranePositionMover::SetMembranePositionMover() :
 /// @brief Custom Constructor
 /// @details Specify a new membrane center and normal
 /// to move this position to
-SetMembranePositionMover::SetMembranePositionMover( Vector center, Vector normal ) :
-	Mover(),
+SetMembranePositionMover::SetMembranePositionMover( core::Vector center, core::Vector normal ) :
+	protocols::moves::Mover(),
 	center_( center ),
 	normal_( normal )
 {}
@@ -78,7 +73,7 @@ SetMembranePositionMover::SetMembranePositionMover( Vector center, Vector normal
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
 SetMembranePositionMover::SetMembranePositionMover( SetMembranePositionMover const & src ) :
-	Mover( src ),
+	protocols::moves::Mover( src ),
 	center_( src.center_ ),
 	normal_( src.normal_ )
 {}
@@ -116,7 +111,7 @@ SetMembranePositionMover::get_name() const {
 /// @brief Translate the membrane position in this pose
 /// to the new center position, and rotate to new normal
 void
-SetMembranePositionMover::apply( Pose & pose ) {
+SetMembranePositionMover::apply( core::pose::Pose & pose ) {
 
 	using namespace numeric;
 	using namespace core::kinematics;
@@ -199,22 +194,22 @@ SetMembranePositionMoverCreator::mover_name() {
 
 /// @brief Construct a Default Membrane Position Mover
 SetMembraneNormalMover::SetMembraneNormalMover() :
-	Mover(),
+	protocols::moves::Mover(),
 	normal_( 0, 0, 1 )
 {}
 
 /// @brief Custom Constructor
 /// @details Specify a new membrane normal
 /// to move this position to
-SetMembraneNormalMover::SetMembraneNormalMover( Vector normal ) :
-	Mover(),
+SetMembraneNormalMover::SetMembraneNormalMover( core::Vector normal ) :
+	protocols::moves::Mover(),
 	normal_( normal )
 {}
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
 SetMembraneNormalMover::SetMembraneNormalMover( SetMembraneNormalMover const & src ) :
-	Mover( src ),
+	protocols::moves::Mover( src ),
 	normal_( src.normal_ )
 {}
 
@@ -250,7 +245,7 @@ SetMembraneNormalMover::get_name() const {
 /// @brief Apply Rotation move to Membrane
 /// @brief Rotate membrane position to new normal
 void
-SetMembraneNormalMover::apply( Pose & pose ) {
+SetMembraneNormalMover::apply( core::pose::Pose & pose ) {
 
 	using namespace numeric;
 	using namespace core::kinematics;
@@ -262,8 +257,8 @@ SetMembraneNormalMover::apply( Pose & pose ) {
 	}
 
 	// Compute Rotation Axis - CrossProd between Current & New Normal axis
-	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
-	Vector current_center( pose.conformation().membrane_info()->membrane_center() );
+	core::Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
+	core::Vector current_center( pose.conformation().membrane_info()->membrane_center() );
 
 	pose.conformation().update_membrane_position( current_center, normal_ );
 
@@ -295,7 +290,7 @@ SetMembraneNormalMover::parse_my_tag(
 	core::pose::Pose const &
 ) {
 
-	Vector center_dummy(0,0,0);
+	core::Vector center_dummy(0,0,0);
 	read_center_normal_from_tag( center_dummy, normal_, tag );
 
 }
@@ -326,21 +321,21 @@ SetMembraneNormalMoverCreator::mover_name() {
 
 /// @brief Construct a Default Membrane Position Mover
 SetMembraneCenterMover::SetMembraneCenterMover() :
-	Mover(),
+	protocols::moves::Mover(),
 	center_( 0, 0, 0 )
 {}
 
 /// @brief Custom Constructor
 /// @details Specify a new membrane center to move to
-SetMembraneCenterMover::SetMembraneCenterMover( Vector center ) :
-	Mover(),
+SetMembraneCenterMover::SetMembraneCenterMover( core::Vector center ) :
+	protocols::moves::Mover(),
 	center_( center )
 {}
 
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
 SetMembraneCenterMover::SetMembraneCenterMover( SetMembraneCenterMover const & src ) :
-	Mover( src ),
+	protocols::moves::Mover( src ),
 	center_( src.center_ )
 {}
 
@@ -377,7 +372,7 @@ SetMembraneCenterMover::get_name() const {
 /// @brief Translate the membrane position in this pose
 /// to the new center position, and rotate to new normal
 void
-SetMembraneCenterMover::apply( Pose & pose ) {
+SetMembraneCenterMover::apply( core::pose::Pose & pose ) {
 
 	using namespace numeric;
 	using namespace core::kinematics;
@@ -389,7 +384,7 @@ SetMembraneCenterMover::apply( Pose & pose ) {
 	}
 
 	// Get current normal
-	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
+	core::Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 
 	// Apply translation
 	pose.conformation().update_membrane_position( center_, current_normal );
@@ -422,7 +417,7 @@ SetMembraneCenterMover::parse_my_tag(
 	core::pose::Pose const &
 ) {
 
-	Vector normal_dummy(0,0,0);
+	core::Vector normal_dummy(0,0,0);
 	read_center_normal_from_tag( center_, normal_dummy, tag );
 
 }

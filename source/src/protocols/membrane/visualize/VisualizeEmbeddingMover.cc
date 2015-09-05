@@ -58,23 +58,19 @@ namespace protocols {
 namespace membrane {
 namespace visualize {
 
-using namespace core;
-using namespace core::pose;
-using namespace protocols::membrane::geometry;
-
 ////////////////////
 /// Constructors ///
 ////////////////////
 
 /// @brief   Default Constructor
 /// @details  Gets the embeddings from the pose and topology
-VisualizeEmbeddingMover::VisualizeEmbeddingMover() : embeddings_( new Embedding() ) {
+VisualizeEmbeddingMover::VisualizeEmbeddingMover() : embeddings_( new protocols::membrane::geometry::Embedding() ) {
 	register_options();
 }
 
 /// @brief   Constructor from embedding
 /// @details  Visualizes defined embedding
-VisualizeEmbeddingMover::VisualizeEmbeddingMover( EmbeddingOP embedding ) :
+VisualizeEmbeddingMover::VisualizeEmbeddingMover( protocols::membrane::geometry::EmbeddingOP embedding ) :
 	embeddings_( embedding ) {
 	register_options();
 }
@@ -143,8 +139,12 @@ VisualizeEmbeddingMoverCreator::mover_name() {
 /////////////////////
 
 void
-VisualizeEmbeddingMover::apply( Pose & pose ) {
+VisualizeEmbeddingMover::apply( core::pose::Pose & pose ) {
 
+        using namespace core; 
+	using namespace core::conformation; 
+	using namespace protocols::membrane::geometry; 
+        using namespace core::conformation::membrane; 
 	using namespace core::kinematics;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -234,9 +234,10 @@ VisualizeEmbeddingMover::register_options() {
 }
 
 /// @brief create virtual residue for visualization in PDB file
-ResidueOP
-VisualizeEmbeddingMover::create_embedding_virtual( Vector center, Vector normal, bool fullatom ) {
+core::conformation::ResidueOP
+VisualizeEmbeddingMover::create_embedding_virtual( core::Vector center, core::Vector normal, bool fullatom ) {
 
+        using namespace core; 
 	using namespace core::conformation;
 	using namespace core::chemical;
 

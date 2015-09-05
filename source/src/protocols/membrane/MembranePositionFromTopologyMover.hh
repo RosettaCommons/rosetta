@@ -38,9 +38,6 @@
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-
 /// @brief Compute the initial position of the membrane based upon sequence
 /// or structure
 class MembranePositionFromTopologyMover : public protocols::moves::Mover {

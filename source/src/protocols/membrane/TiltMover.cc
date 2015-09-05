@@ -59,11 +59,6 @@ static basic::Tracer TR( "protocols.membrane.TiltMover" );
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-using namespace protocols::moves;
-
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -71,7 +66,8 @@ using namespace protocols::moves;
 /// @brief Default Constructor
 /// @details Defaults: jump = 1, angle = random, axis =
 /// axis perpendicular to axis connecting protein embedding centers
-TiltMover::TiltMover() : protocols::moves::Mover()
+TiltMover::TiltMover() : 
+	protocols::moves::Mover()
 {
 	set_defaults();
 	register_options();
@@ -79,7 +75,8 @@ TiltMover::TiltMover() : protocols::moves::Mover()
 
 /// @brief Custom Constructor
 /// @details User can specify jump number
-TiltMover::TiltMover( Size jump_num )
+TiltMover::TiltMover( core::Size jump_num ) : 
+	protocols::moves::Mover()
 {
 	set_defaults();
 	register_options();
@@ -89,7 +86,8 @@ TiltMover::TiltMover( Size jump_num )
 
 /// @brief Custom constructor
 /// @details User can specify jump number and angle
-TiltMover::TiltMover( Size jump_num, Real angle )
+TiltMover::TiltMover( core::Size jump_num, core::Real angle ) : 
+	protocols::moves::Mover()
 {
 	set_defaults();
 	register_options();
@@ -101,7 +99,8 @@ TiltMover::TiltMover( Size jump_num, Real angle )
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-TiltMover::TiltMover( TiltMover const & src ) : protocols::moves::Mover( src ),
+TiltMover::TiltMover( TiltMover const & src ) : 
+	protocols::moves::Mover( src ),
 	jump_num_( src.jump_num_ ),
 	angle_( src.angle_ ),
 	random_angle_( src.random_angle_ )
@@ -182,8 +181,9 @@ TiltMover::get_name() const {
 }
 
 /// @brief Flip the downstream partner in the membrane
-void TiltMover::apply( Pose & pose ) {
+void TiltMover::apply( core::pose::Pose & pose ) {
 
+	using namespace core; 
 	using namespace numeric;
 	using namespace core::conformation::membrane;
 	using namespace protocols::rigid;

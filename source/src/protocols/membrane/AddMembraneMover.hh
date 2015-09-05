@@ -53,11 +53,6 @@
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-using namespace protocols::moves;
-
 /// @brief Initialize the RosettaMP framework by adding membrane components to the pose
 class AddMembraneMover : public protocols::moves::Mover {
 
@@ -87,7 +82,7 @@ public: // Constructors & General Setup
 	/// the z axis. Use a defualt lipid type DOPC. Load spanning topology from the user
 	/// specified spanning topology
 	AddMembraneMover(
-		SpanningTopologyOP topology,
+		core::conformation::membrane::SpanningTopologyOP topology,
 		core::Size anchor_rsd=1,
 		core::Size membrane_rsd=0
 	);
@@ -114,8 +109,8 @@ public: // Constructors & General Setup
 	/// @brief Create a membrane positioned at "init_center" and aligned with
 	/// "init_normal". Use a defualt lipid type DOPC.
 	AddMembraneMover(
-		Vector init_center,
-		Vector init_normal,
+		core::Vector init_center,
+		core::Vector init_normal,
 		std::string spanfile = "",
 		core::Size membrane_rsd = 0
 	);
@@ -132,7 +127,7 @@ public: // Mover methods, getters & setters
 	virtual std::string get_name() const;
 
 	/// @brief Initialize the RosettaMP elements with this pose
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	/// @brief Return the current path to the spanfile held
 	/// by this mover
@@ -169,23 +164,21 @@ public: // Rosetta Scripts Methods
 	);
 
 	/// @brief Helper Method - Add a membrane virtual residue
-	virtual Size add_membrane_virtual( Pose & pose );
+	virtual Size add_membrane_virtual( core::pose::Pose & pose );
 
 private: // Setup Methods
 
 	/// @brief Initialize Membrane Residue given pose
-	virtual Size initialize_membrane_residue( Pose & pose, core::Size membrane_rsd );
+	virtual Size initialize_membrane_residue( core::pose::Pose & pose, core::Size membrane_rsd );
 
 	/// @brief Helper Method - Check for Membrane residue already in the PDB
-	virtual utility::vector1< core::SSize > check_pdb_for_mem( Pose & pose );
+	virtual utility::vector1< core::SSize > check_pdb_for_mem( core::pose::Pose & pose );
 
 	/// @brief Register options from JD2
 	void register_options();
 
 	/// @brief Initialize Mover options from the comandline
 	void init_from_cmd();
-
-
 
 private:
 
@@ -194,7 +187,7 @@ private:
 
 	// SpanningTopology
 	std::string spanfile_;
-	SpanningTopologyOP topology_;
+	core::conformation::membrane::SpanningTopologyOP topology_;
 
 	// Lipid Accessibility Info - Lips Files
 	std::string lipsfile_;

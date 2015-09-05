@@ -34,8 +34,6 @@ namespace core {
 namespace conformation {
 namespace membrane {
 
-using namespace core;
-
 /// @brief      Membrane Lipid Accessibility Data
 /// @details    Stores lipid accessibility data derived from OCTOPUS spanning file
 ///             and psiblast search using run_lips.pl script

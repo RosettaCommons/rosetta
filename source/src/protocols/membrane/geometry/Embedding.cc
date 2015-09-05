@@ -54,22 +54,21 @@ namespace protocols {
 namespace membrane {
 namespace geometry {
 
-using namespace core;
-using namespace core::conformation::membrane;
-
 ////////////////////
 /// Constructors ///
 ////////////////////
 
 /// @brief Constructs empty object
 Embedding::Embedding() :
+	utility::pointer::ReferenceCount(),
 	embeddings_(),
 	total_embed_()
 {}
 
 /// @brief Construction from single EmbeddingDef object
-Embedding::Embedding( EmbeddingDef const & embedding ) {
-
+Embedding::Embedding( EmbeddingDef const & embedding ) : 
+	utility::pointer::ReferenceCount()
+{
 	EmbeddingDefOP copy( new EmbeddingDef( embedding ) );
 	embeddings_.push_back( copy );
 	total_embed_ = copy;
@@ -78,7 +77,10 @@ Embedding::Embedding( EmbeddingDef const & embedding ) {
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Constructs bogus object from topology
-Embedding::Embedding( SpanningTopology const & topology, Real radius ) :
+Embedding::Embedding( 
+	core::conformation::membrane::SpanningTopology const & topology, 
+	core::Real radius 
+	) : utility::pointer::ReferenceCount(),
 	embeddings_()
 {
 	// initialize embedding objects
@@ -92,7 +94,7 @@ Embedding::Embedding( SpanningTopology const & topology, Real radius ) :
 	core::Real increment = 360 / topology.nspans();
 
 	// get position around a circle
-	for ( Size i = 1; i <= topology.nspans(); ++i ) {
+	for ( core::Size i = 1; i <= topology.nspans(); ++i ) {
 
 		core::Real alpha = radians( increment * i );
 		core::Real x = radius * cos( alpha );
@@ -123,7 +125,10 @@ Embedding::Embedding( SpanningTopology const & topology, Real radius ) :
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Constructs from topology and pose
-Embedding::Embedding( SpanningTopology const & topology, Pose const & pose ){
+Embedding::Embedding( 
+	core::conformation::membrane::SpanningTopology const & topology, 
+	core::pose::Pose const & pose 
+) {
 
 	TR << "Constructing Embedding object from topology and pose" << std::endl;
 
@@ -190,6 +195,8 @@ void Embedding::show( std::ostream & out ) const {
 // invert all normals in Embedding object
 void Embedding::invert() {
 
+	using namespace core; 
+
 	// go through vector of EmbeddingDefs and invert the normals
 	for ( Size i = 1; i <= embeddings_.size(); ++i ) {
 		if ( embeddings_[i]->normal().length() > 0 ) {
@@ -204,14 +211,14 @@ void Embedding::invert() {
 }
 
 // number of span embeddings in object
-Size Embedding::nspans() const {
+core::Size Embedding::nspans() const {
 	return embeddings_.size();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 // get span embedding by number
-EmbeddingDefOP Embedding::embedding( Size span_number ) const {
+EmbeddingDefOP Embedding::embedding( core::Size span_number ) const {
 
 	if ( span_number <= embeddings_.size() ) {
 		return embeddings_[ span_number ];
@@ -261,7 +268,12 @@ EmbeddingDefOP Embedding::total_embed() const {
 }// chain_embedding
 
 // from TMspans, they are all in a similar direction as the first TM span!
-utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopology const & topology, Pose const & pose ){
+utility::vector1< EmbeddingDefOP > 
+Embedding::from_spans( 
+	core::conformation::membrane::SpanningTopology const & topology, 
+	core::pose::Pose const & pose 
+) {
+	using namespace core; 
 
 	TR << "Computing membrane embedding from TMspans: " << std::endl;
 
@@ -270,36 +282,36 @@ utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopology const
 	}
 
 	// get first embedding for comparison of inside/out orientation
-	Size start1( topology.span( 1 )->start() );
-	Size end1( topology.span( 1 )->end() );
+	core::Size start1( topology.span( 1 )->start() );
+	core::Size end1( topology.span( 1 )->end() );
 
 	// create embedding object and fill it from span for first embedding object in positive z direction
 	EmbeddingDef embedding1 = EmbeddingDef( pose, start1, end1 );
-	Vector const center1 = embedding1.center();
-	Vector const normal1 = embedding1.normal();
+	core::Vector const center1 = embedding1.center();
+	core::Vector const normal1 = embedding1.normal();
 	// TR << "first span center and normal: " << center1.to_string() << ", " << normal1.to_string() << std::endl;
 
 	// go through TMspans, compute dihedral angle and add to Embedding object
 	// this needs to start from 1 because otherwise the first EmbeddingDef isn't
 	// added to the overall Embedding
-	for ( Size i = 1; i <= topology.nspans(); ++i ) {
+	for ( core::Size i = 1; i <= topology.nspans(); ++i ) {
 
 		// residues
-		Size start( topology.span( i )->start() );
-		Size end( topology.span( i )->end() );
+		core::Size start( topology.span( i )->start() );
+		core::Size end( topology.span( i )->end() );
 
 		// create embedding object and fill it from span
 		EmbeddingDefOP embedding( new EmbeddingDef( pose, start, end ) );
-		Vector center = embedding->center();
-		Vector normal = embedding->normal();
+		core::Vector center = embedding->center();
+		core::Vector normal = embedding->normal();
 		//  TR << "center: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
 
 		// calculate points for dihedral angle calculation
-		Vector p1 = center1 + normal1;
-		Vector p  = embedding->center() + embedding->normal();
+		core::Vector p1 = center1 + normal1;
+		core::Vector p  = embedding->center() + embedding->normal();
 
 		// calculate dihedral angle between normals of first object and this one
-		Real dih( numeric::dihedral_degrees( p1, center1, center, p ) );
+		core::Real dih( numeric::dihedral_degrees( p1, center1, center, p ) );
 		//  TR << "dihedral angle to first span: " << dih << std::endl;
 
 		// check if angle of normal is < 100 degrees to first normal
@@ -309,7 +321,7 @@ utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopology const
 			embeddings_.push_back( embedding );
 		} else {
 			// add inverted embedding to embedding object
-			Vector new_normal( normal.negated() );
+			core::Vector new_normal( normal.negated() );
 			EmbeddingDefOP new_embed( new EmbeddingDef( center, new_normal ) );
 			embeddings_.push_back( new_embed );
 		}

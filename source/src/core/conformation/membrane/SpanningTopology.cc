@@ -51,8 +51,6 @@ namespace core {
 namespace conformation {
 namespace membrane {
 
-using namespace core;
-
 ////////////////////
 /// Constructors ///
 ////////////////////
@@ -70,7 +68,7 @@ SpanningTopology::SpanningTopology() :
 /// @details Use transmembrane spans provided to consturct a spanning topology object
 SpanningTopology::SpanningTopology(
 	std::string spanfile,
-	Size total_residues
+	core::Size total_residues
 ) : utility::pointer::ReferenceCount(),
 	topology_()
 {
@@ -81,10 +79,10 @@ SpanningTopology::SpanningTopology(
 /// @brief Custom Constructor - Transmembrane Spans from xyz coords
 /// @details Use coordinates of residue CA and thickness to determine the spanning regions in the pose
 SpanningTopology::SpanningTopology(
-	utility::vector1< Real > res_z_coord,
-	utility::vector1< Size > chainID,
+	utility::vector1< core::Real > res_z_coord,
+	utility::vector1< core::Size > chainID,
 	utility::vector1< char > secstruct,
-	Real thickness
+	core::Real thickness
 ) : utility::pointer::ReferenceCount(),
 	topology_()
 {
@@ -125,7 +123,7 @@ SpanningTopology::~SpanningTopology(){}
 
 /// @brief fill from spanfile
 /// @details fill object from spanfile, can be used after creating empty object
-void SpanningTopology::fill_from_spanfile( std::string spanfile, Size total_residues ){
+void SpanningTopology::fill_from_spanfile( std::string spanfile, core::Size total_residues ){
 
 	TR << "Filling membrane spanning topology from spanfile " << spanfile << std::endl;
 	create_from_spanfile( spanfile, total_residues );
@@ -133,8 +131,8 @@ void SpanningTopology::fill_from_spanfile( std::string spanfile, Size total_resi
 }// fill from spanfile
 
 // fill from structure - can be used after creating empty object
-void SpanningTopology::fill_from_structure( utility::vector1< Real > res_z_coord,
-	utility::vector1< Size > chainID,
+void SpanningTopology::fill_from_structure( utility::vector1< core::Real > res_z_coord,
+	utility::vector1< core::Size > chainID,
 	utility::vector1< char > secstruct,
 	Real thickness ) {
 	TR << "Filling membrane spanning topology from structure with thickness " << thickness << std::endl;
@@ -159,7 +157,7 @@ void SpanningTopology::show( std::ostream & ) const {
 	TR << "Number of residues in spanfile: " << nres_topo_ << std::endl;
 
 	// print individual spans
-	for ( Size i = 1; i <= topology_.size(); ++i ) {
+	for ( core::Size i = 1; i <= topology_.size(); ++i ) {
 		TR << "Span " << i << ": start: " << topology_[ i ]->start();
 		TR << ", end: " << topology_[ i ]->end() << std::endl;
 	}
@@ -170,7 +168,7 @@ void SpanningTopology::show( std::ostream & ) const {
 SpanningTopology & SpanningTopology::concatenate_topology( SpanningTopology const & topo ){
 
 	// add spans
-	for ( Size i = 1; i <= topo.nspans(); ++i ) {
+	for ( core::Size i = 1; i <= topo.nspans(); ++i ) {
 		SpanOP span( topo.span( i ) );
 		span->shift( nres_topo_ );
 		topology_.push_back( span );
@@ -198,7 +196,7 @@ void SpanningTopology::write_spanfile( std::string output_filename ) const {
 	oz << "n2c" << std::endl;
 
 	// print spans
-	for ( Size i = 1; i <= topology_.size(); ++i ) {
+	for ( core::Size i = 1; i <= topology_.size(); ++i ) {
 		oz << "\t" << topology_[i]->start() << "\t" << topology_[i]->end() << std::endl;
 	}
 	oz.close();
@@ -213,7 +211,7 @@ utility::vector1< SpanOP >
 SpanningTopology::get_spans() const { return topology_; } // get topology
 
 // add span to end of SpanningTopology object, doesn't reorder
-void SpanningTopology::add_span( Span const & span, Size offset ){
+void SpanningTopology::add_span( Span const & span, core::Size offset ){
 	SpanOP new_span ( new Span( span ) );
 	new_span->shift( offset );
 	topology_.push_back( new_span );
@@ -223,7 +221,7 @@ void SpanningTopology::add_span( Span const & span, Size offset ){
 //////////////////////////////////////////////////////////////////////////////
 
 // add span to end of SpanningTopology object, doesn't reorder
-void SpanningTopology::add_span( Size start, Size end, Size offset ){
+void SpanningTopology::add_span( core::Size start, core::Size end, core::Size offset ){
 	SpanOP span( new Span( start+offset, end+offset ) );
 	topology_.push_back( span );
 	nres_topo_ += end - start + 1;
@@ -256,10 +254,10 @@ SpanningTopology::nspans() const { return topology_.size(); } // total_spans
 
 /// @brief Is the residue in the membrane region?
 /// @details Return true if this residue is in a transmembrane span
-bool SpanningTopology::in_span( Size resnum ) const {
+bool SpanningTopology::in_span( core::Size resnum ) const {
 
 	// go through spans and check whether residue is in spans
-	for ( Size i = 1; i <= nspans(); ++i ) {
+	for ( core::Size i = 1; i <= nspans(); ++i ) {
 		if ( resnum >= span(i)->start() && resnum <= span(i)->end() ) {
 			return true;
 		}
@@ -275,7 +273,7 @@ bool SpanningTopology::in_span( Size resnum ) const {
 /// @brief Does the span cross the membrane
 /// @details Determine if the membrane spanning region crosses the whole membrane
 bool
-SpanningTopology::spanning( utility::vector1< Real > res_z_coord, Span const & span ) const {
+SpanningTopology::spanning( utility::vector1< core::Real > res_z_coord, Span const & span ) const {
 
 	// z coordinates of start and end both negative?
 	if ( res_z_coord[ span.start() ] < 0 && res_z_coord[ span.end() ] < 0 ) {
@@ -300,7 +298,7 @@ bool SpanningTopology::is_valid() const {
 	bool valid( false );
 
 	// check all spans
-	for ( Size i = 1; i <= topology_.size(); ++i ) {
+	for ( core::Size i = 1; i <= topology_.size(); ++i ) {
 
 		// if any spans invalid, return false
 		if ( topology_[i]->is_valid() == false ) {
@@ -310,7 +308,7 @@ bool SpanningTopology::is_valid() const {
 	}
 
 	// check if spans are in increasing order
-	for ( Size i = 1; i <= topology_.size(); ++i ) {
+	for ( core::Size i = 1; i <= topology_.size(); ++i ) {
 		if ( i > 1 &&
 				( topology_[ i-1 ]->start() > topology_[ i ]->start() ||
 				topology_[ i-1 ]->end() > topology_[ i ]->end() ) ) {
@@ -337,7 +335,7 @@ Size SpanningTopology::nres_topo() const {
 
 /// @brief Create spanning topology object from spanfile
 SpanningTopology
-SpanningTopology::create_from_spanfile( std::string spanfile, Size nres ){
+SpanningTopology::create_from_spanfile( std::string spanfile, core::Size nres ){
 
 	// Setup vars for reading spanfile using izstream
 	std::string line;
@@ -354,8 +352,8 @@ SpanningTopology::create_from_spanfile( std::string spanfile, Size nres ){
 	// Read line which includes number of tm spans and total resnum
 	getline( stream, line );
 	std::istringstream l( line );
-	Size total_tmhelix;
-	Size total_residues_in_span_file;
+	core::Size total_tmhelix;
+	core::Size total_residues_in_span_file;
 
 	l >> total_tmhelix >> total_residues_in_span_file;
 	nres_topo_ = total_residues_in_span_file;
@@ -389,11 +387,11 @@ SpanningTopology::create_from_spanfile( std::string spanfile, Size nres ){
 	getline( stream, line );
 
 	// For each line of the file, get spanning region info
-	for ( Size i = 1; i <= total_tmhelix; ++i ) {
+	for ( core::Size i = 1; i <= total_tmhelix; ++i ) {
 
 		getline( stream, line );
 		std::istringstream l( line );
-		Size start, end;
+		core::Size start, end;
 		l >> start >> end;
 
 		// add to chain topology
@@ -421,8 +419,8 @@ SpanningTopology::create_from_spanfile( std::string spanfile, Size nres ){
 /// @brief Create span object from structure
 SpanningTopology
 SpanningTopology::create_from_structure(
-	utility::vector1< Real > res_z_coord,
-	utility::vector1< Size > chainID,
+	utility::vector1< core::Real > res_z_coord,
+	utility::vector1< core::Size > chainID,
 	utility::vector1< char > secstruct,
 	Real thickness )
 {
@@ -438,7 +436,7 @@ SpanningTopology::create_from_structure(
 	}
 
 	// At each z-coord, get membrane position, then add to spans vector
-	for ( Size j = 1; j <= res_z_coord.size(); ++j ) {
+	for ( core::Size j = 1; j <= res_z_coord.size(); ++j ) {
 
 		TR.Debug << "going through residue " << j << std::endl;
 
@@ -453,15 +451,15 @@ SpanningTopology::create_from_structure(
 	}
 
 	// more variables
-	Size num_spans( 0 );
-	Size start(1);
-	Size end(1);
-	Size prev_start(0);
-	Size prev_end(0);
-	Real dir_prev(1.0);
+	core::Size num_spans( 0 );
+	core::Size start(1);
+	core::Size end(1);
+	core::Size prev_start(0);
+	core::Size prev_end(0);
+	core::Real dir_prev(1.0);
 
 	// go through newly written vector and identify spans
-	for ( Size j = 1; j <= spans.size()-1; ++j ) {
+	for ( core::Size j = 1; j <= spans.size()-1; ++j ) {
 
 		// add start
 		if ( spans[ j ] == false && spans[ j+1 ] == true ) {
@@ -482,7 +480,7 @@ SpanningTopology::create_from_structure(
 			if ( prev_start != 0 ) {
 				dir_prev = res_z_coord[ prev_end ] - res_z_coord[ prev_start ];
 			}
-			Real dir_this = res_z_coord[ end ] - res_z_coord[ start ];
+			core::Real dir_this = res_z_coord[ end ] - res_z_coord[ start ];
 			bool parallel( false );
 
 			// check if they are "parallel"
@@ -492,8 +490,8 @@ SpanningTopology::create_from_structure(
 			}
 
 			// compute projection: if to short, span is amphipathic and won't be added
-			Size length = end - start + 1;
-			Real z_dist = numeric::abs_difference( res_z_coord[ end ], res_z_coord[ start ] );
+			core::Size length = end - start + 1;
+			core::Real z_dist = numeric::abs_difference( res_z_coord[ end ], res_z_coord[ start ] );
 
 			// if span is longer than 3 residues, and it's not ampipathic, it will be added
 			if ( length >= 3 && z_dist > 5 ) {
@@ -558,7 +556,7 @@ std::ostream & operator << ( std::ostream & os, SpanningTopology const & spans )
 	os << "Total # of TM spans: " << spans.nspans() << std::endl;
 
 	// print individual spans
-	for ( Size i = 1; i <= spans.nspans(); ++i ) {
+	for ( core::Size i = 1; i <= spans.nspans(); ++i ) {
 		os << "Span " << i << ": start: " << spans.get_spans()[ i ]->start();
 		os << ", end: " << spans.get_spans()[ i ]->end() << std::endl;
 	}

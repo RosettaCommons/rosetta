@@ -36,11 +36,6 @@
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace protocols::membrane::geometry;
-using namespace protocols::moves;
-
 /// @brief Transform a pose into membrane coordinates based on the current
 ///   embedding of the protein
 class TransformIntoMembraneMover : public protocols::moves::Mover {
@@ -66,17 +61,26 @@ public:
 	/// a default membrane (defined by MEM)
 	/// @details Transform the protein with a user-defined embedding (might have
 	/// been optimized before) into the default membrane
-	TransformIntoMembraneMover( EmbeddingDefOP current_embedding );
+	TransformIntoMembraneMover( 
+		protocols::membrane::geometry::EmbeddingDefOP current_embedding 
+		);
 
 	/// @brief Transform the protein into user-specified membrane coordinates
 	/// @details Transform the protein into a user-defined membrane, protein
 	/// embedding is computed from structure and spanfile
-	TransformIntoMembraneMover( Vector new_mem_cntr, Vector new_mem_norm );
+	TransformIntoMembraneMover( 
+		core::Vector new_mem_cntr, 
+		core::Vector new_mem_norm 
+		);
 
 	/// @brief Transform the protein into user-specified membrane coordinates
 	/// @details Transform the protein into a user-defined membrane, protein
-	/// embedding is given
-	TransformIntoMembraneMover( EmbeddingDefOP current_embedding, Vector new_mem_cntr, Vector new_mem_norm );
+	/// embedding is computed from structure and spanfile
+	TransformIntoMembraneMover( 
+		protocols::membrane::geometry::EmbeddingDefOP current_embedding, 
+		core::Vector new_mem_cntr, 
+		core::Vector new_mem_norm 
+		);
 
 	/// @brief Copy Constructor
 	TransformIntoMembraneMover( TransformIntoMembraneMover const & src );
@@ -115,7 +119,7 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Move the pose into membrane coordinate frame
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 private: // methods
 
@@ -138,14 +142,14 @@ private: // methods
 private: // data
 
 	// Jump used for the move
-	Size jump_;
+	core::Size jump_;
 
 	// new membrane coordinates to transform into
-	Vector new_mem_cntr_;
-	Vector new_mem_norm_;
+	core::Vector new_mem_cntr_;
+	core::Vector new_mem_norm_;
 
 	// Embedding of the protein prior to transformation
-	EmbeddingDefOP current_embedding_;
+	protocols::membrane::geometry::EmbeddingDefOP current_embedding_;
 
 	// use default membrane of (center 0,0,0 and normal 0,0,1)
 	bool use_default_membrane_;

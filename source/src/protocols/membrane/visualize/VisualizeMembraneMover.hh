@@ -39,10 +39,6 @@ namespace protocols {
 namespace membrane {
 namespace visualize {
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation;
-
 /// @brief Add membrane planes to the pose represented by
 ///   2 layers of MEM virtual residues
 class VisualizeMembraneMover : public protocols::moves::Mover {
@@ -61,7 +57,11 @@ public:
 	/// @brief    Construct with User specified spacing & width
 	/// @details  Construct membranes with a given spacing and
 	///     width in angstroms
-	VisualizeMembraneMover( Real spacing, Real width, Real thicnkess );
+	VisualizeMembraneMover( 
+		core::Real spacing,
+		core::Real width, 
+		core::Real thicnkess 
+	);
 
 	/// @brief Copy Constructor
 	/// @details Creates a deep copy of the visualize membrane mover class
@@ -101,7 +101,7 @@ public:
 	/// @brief    Apply Visualize Transform "Move"
 	/// @details  Adds a series of virtiaul residues to the pose given a
 	///     spacing and width specified at construction time
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	/// @brief   Return the name of this mover
 	virtual std::string get_name() const;
@@ -122,18 +122,17 @@ private:
 	/// @brief Create a Membrane Residue
 	/// @details Given a centered position and residue typeset, return
 	/// a ResidueOP with the xyz coordinate pos, type MEM, from typeset given
-	ResidueOP
-	create_membrane_virtual( Vector pos, bool fullatom );
+	core::conformation::ResidueOP
+	create_membrane_virtual( core::Vector pos, bool fullatom );
 
 private:
 
 	// Spacing and width of VRTs defining planes
-	Real spacing_;
-	Real width_;
+	core::Real spacing_;
+	core::Real width_;
 
 	// Set membrane thicnkess to visualize
-	Real thickness_;
-
+	core::Real thickness_;
 
 };
 

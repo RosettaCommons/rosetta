@@ -48,12 +48,6 @@ namespace protocols {
 namespace membrane {
 namespace symmetry {
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-using namespace protocols::membrane;
-using namespace protocols::moves;
-
 class SymmetricAddMembraneMover : public protocols::membrane::AddMembraneMover {
 
 public:
@@ -81,7 +75,9 @@ public:
 	/// at center=(0, 0, 0), normal=(0, 0, 1). Uses the user provided
 	/// SpanningTopology to be set in MembraneInfo. Calls the analagous
 	/// parent constructor in AddMembraneMover
-	SymmetricAddMembraneMover( SpanningTopologyOP topology );
+	SymmetricAddMembraneMover( 
+		core::conformation::membrane::SpanningTopologyOP topology
+	);
 
 	/// @brief Custom Constructor for SymmetricAddMembraneMover
 	/// @details Creates a membrane pose, setting the membrane center
@@ -135,14 +131,14 @@ public:
 	/// Not equivalent to an append_by_jump!
 	virtual
 	core::Size
-	add_membrane_virtual( Pose & pose );
+	add_membrane_virtual( core::pose::Pose & pose );
 
 	/// @brief Helper Method - Check for Membrane residue already in the PDB
 	/// @details If there is an MEM residue in the PDB at the end of the pose
 	/// with property MEMBRANE, return a vector of all of those residues.
 	virtual
 	utility::vector1< core::SSize >
-	check_pdb_for_mem( Pose & pose );
+	check_pdb_for_mem( core::pose::Pose & pose );
 
 private:
 

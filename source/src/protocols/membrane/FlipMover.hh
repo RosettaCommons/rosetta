@@ -40,10 +40,6 @@
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace protocols::moves;
-
 /// @brief Takes a pose and flips the downstream partner around the axis between
 ///   the COMs of the partners, projected into the membrane plane.
 ///   CAUTION: THIS MOVER ONLY WORKS FOR A FIXED MEMBRANE WHERE THE
@@ -63,19 +59,19 @@ public:
 
 	/// @brief Custom Constructor
 	/// @details User can specify jump number
-	FlipMover( Size jump_num );
+	FlipMover( core::Size jump_num );
 
 	/// @brief Custom constructor
 	/// @details User can specify jump number and rotation axis
-	FlipMover( Size jump_num, Vector axis );
+	FlipMover( core::Size jump_num, core::Vector axis );
 
 	/// @brief Custom constructor
 	/// @details User can specify jump number and angle
-	FlipMover( Size jump_num, Real angle );
+	FlipMover( core::Size jump_num, core::Real angle );
 
 	/// @brief Custom constructor
 	/// @details User can specify jump number and rotation axis
-	FlipMover( Size jump_num, Vector axis, Real angle );
+	FlipMover( core::Size jump_num, core::Vector axis, core::Real angle );
 
 	/// @brief Copy Constructor
 	FlipMover( FlipMover const & src );
@@ -113,7 +109,7 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Flip the downstream partner in the membrane
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	/// @brief Set Random flip angle between 135 and 225 degrees to keep
 	///   protein oriented in the membrane correctly
@@ -121,7 +117,7 @@ public:
 
 	/// @brief Set angle range
 	/// @details Maximum angle deviation from 180 degrees
-	void set_range( Real max_angle_dev );
+	void set_range( core::Real max_angle_dev );
 
 private: // methods
 
@@ -139,19 +135,19 @@ private: // methods
 private: // data
 
 	/// @brief Jump number
-	Size jump_num_;
+	core::Size jump_num_;
 
 	/// @brief Rotation axis
-	Vector axis_;
+	core::Vector axis_;
 
 	/// @brief Rotation angle in degrees
-	Real angle_;
+	core::Real angle_;
 
 	/// @brief Random flip angle between 135 and 225 degrees in the membrane
 	bool random_angle_;
 
 	/// @brief Maximum angle deviation from 180 degrees
-	Real max_angle_dev_;
+	core::Real max_angle_dev_;
 };
 
 } // membrane

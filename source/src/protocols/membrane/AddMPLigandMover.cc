@@ -55,12 +55,6 @@ static thread_local basic::Tracer TR( "protocols.membrane.AddMPLigandMover" );
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::conformation::membrane;
-using namespace core::kinematics;
-using namespace core::pose;
-using namespace protocols::membrane;
-
 ////////////////////
 /// Constructors ///
 ////////////////////
@@ -70,6 +64,7 @@ using namespace protocols::membrane;
 /// for refinement at the last residue as a default.
 /// DO NOT USE
 AddMPLigandMover::AddMPLigandMover() :
+	protocols::moves::Mover(),
 	closest_rsd_( 0 ),
 	ligand_seqpos_( 0 )
 {}
@@ -78,6 +73,7 @@ AddMPLigandMover::AddMPLigandMover() :
 /// @details Attach ligand downstream in the foldtree of the
 /// closest residue to the binding pocket
 AddMPLigandMover::AddMPLigandMover( core::Size closest_rsd, core::Size ligand_seqpos ) :
+	protocols::moves::Mover(),
 	closest_rsd_( closest_rsd ),
 	ligand_seqpos_( ligand_seqpos )
 {}
@@ -85,7 +81,7 @@ AddMPLigandMover::AddMPLigandMover( core::Size closest_rsd, core::Size ligand_se
 /// @brief Copy Constructor
 /// @details Mkae a deep copy of this mover
 AddMPLigandMover::AddMPLigandMover( AddMPLigandMover const & src ) :
-	Mover( src ),
+	protocols::moves::Mover( src ),
 	closest_rsd_( src.closest_rsd_ ),
 	ligand_seqpos_( src.ligand_seqpos_ )
 {}
@@ -155,7 +151,9 @@ AddMPLigandMoverCreator::mover_name() {
 
 /// @brief Mover Apply Method
 void
-AddMPLigandMover::apply( Pose & pose ) {
+AddMPLigandMover::apply( core::pose::Pose & pose ) {
+
+	using namespace core::kinematics; 
 
 	// Check the pose is a membrane framework pose
 	if ( !pose.conformation().is_membrane() ) {

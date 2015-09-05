@@ -96,7 +96,7 @@ public: // constructors
 	/////////////////////
 
 	/// @brief Mover Apply Method
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	/// @brief Show the name of this mvoer
 	virtual std::string get_name() const;

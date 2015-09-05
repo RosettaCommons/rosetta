@@ -60,9 +60,9 @@ LipidAccInfo::LipidAccInfo( std::string lipsfile ) {
 	TR << "Initializing lips exposure info using " << lipsfile << std::endl;
 
 	// Initialize local vars
-	Size num_of_csts( 0 );
-	Size resnum;
-	Real exposure;
+	core::Size num_of_csts( 0 );
+	core::Size resnum;
+	core::Real exposure;
 
 	// Initialize izstream
 	std::string line;

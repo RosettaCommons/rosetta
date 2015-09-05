@@ -32,8 +32,6 @@ namespace core {
 namespace conformation {
 namespace membrane {
 
-using namespace core;
-
 class Span : public utility::pointer::ReferenceCount {
 
 public: // constructors
@@ -45,7 +43,7 @@ public: // constructors
 
 	/// @brief Custom Constructor - Construct new span
 	/// @details Constructor from start and end
-	Span( Size start, Size end );
+	Span( core::Size start, core::Size end );
 
 	/// @brief Copy Consturctor
 	/// @details Make a deep copy of this object
@@ -63,19 +61,19 @@ public: // getters
 
 	/// @brief Get start position
 	/// @details Get the Starting Position of a transmembrane span
-	Size start() const;
+	core::Size start() const;
 
 	/// @brief Get end position
 	/// @details Get the end position of a transmembrane span
-	Size end() const;
+	core::Size end() const;
 
 
 	/// @brief Get residue closest to center
-	Size center() const;
+	core::Size center() const;
 
 	/// @brief Shift by offset
 	/// @details Shift the transmembrane span by a user-provided offset
-	void shift( Size offset );
+	void shift( core::Size offset );
 
 	/// @brief Show This Span
 	/// @details Show the information in this span. TODO: Should override base method
@@ -92,8 +90,8 @@ public: // getters
 private: // data
 
 	// Specify start/end position of a transmembrane span
-	Size start_;
-	Size end_;
+	core::Size start_;
+	core::Size end_;
 
 };
 

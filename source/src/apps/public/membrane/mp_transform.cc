@@ -59,12 +59,6 @@
 using basic::Error;
 using basic::Warning;
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation;
-using namespace core::conformation::membrane;
-using namespace protocols::membrane::geometry;
-
 static basic::Tracer TR( "apps.public.membrane.mp_transform" );
 
 ///////////////////////////////////////////////////////////////////
@@ -103,7 +97,11 @@ main( int argc, char * argv [] ) {
 		using namespace protocols::jd2;
 		using namespace basic::options;
 		using namespace protocols::membrane;
+		using namespace core;
+		using namespace core::pose;
+		using namespace protocols::moves;
 		using namespace protocols::membrane::visualize;
+		using namespace protocols::membrane::geometry; 
 
 		devel::init(argc, argv);
 

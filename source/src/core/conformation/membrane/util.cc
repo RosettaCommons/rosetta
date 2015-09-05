@@ -35,8 +35,6 @@ namespace core {
 namespace conformation {
 namespace membrane {
 
-using namespace core;
-
 // read spanfiles
 utility::vector1< std::string > spanfile_names(){
 

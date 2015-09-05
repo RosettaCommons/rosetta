@@ -63,15 +63,12 @@ namespace core {
 namespace conformation {
 namespace membrane {
 
-using namespace core::conformation;
-using namespace core::kinematics;
-
 /// @brief Create a default version of MembraneInfo (DONT USE)
 /// @details Initializes all data members to dummy or empty values
 /// Use the fully specified constructors instead. MembraneInfo is a
 /// data container but is NOT responsible for initialization.
 MembraneInfo::MembraneInfo() :
-	conformation_( *(new Conformation()) ),
+	conformation_( *(new core::conformation::Conformation()) ),
 	thickness_( 0 ),
 	steepness_( 0 ),
 	membrane_rsd_num_( 0 ),
@@ -84,7 +81,7 @@ MembraneInfo::MembraneInfo() :
 /// spanning topology object and optional lipophilicity data. Thickness and
 /// steepness are currently constants
 MembraneInfo::MembraneInfo(
-	Conformation & conformation,
+	core::conformation::Conformation & conformation,
 	core::Size membrane_pos,
 	core::SSize membrane_jump,
 	SpanningTopologyOP topology
@@ -104,7 +101,7 @@ MembraneInfo::MembraneInfo(
 /// spanning topology object and optional lipophilicity data. Thickness and
 /// steepness are currently constants
 MembraneInfo::MembraneInfo(
-	Conformation & conformation,
+	core::conformation::Conformation & conformation,
 	core::Size membrane_pos,
 	core::SSize membrane_jump,
 	LipidAccInfoOP lips,
@@ -168,8 +165,8 @@ MembraneInfo::show(std::ostream & output ) const {
 	output << "Membrane Spanning Topology " << std::endl;
 
 	// Grab membrane center/normal
-	Vector center( membrane_center() );
-	Vector normal( membrane_normal() );
+	core::Vector center( membrane_center() );
+	core::Vector normal( membrane_normal() );
 
 	// Show Current Membrane Position
 	output << "Membrane Center: " << center.x() << " " << center.y() << " " << center.z() << std::endl;
@@ -206,7 +203,7 @@ MembraneInfo::membrane_steepness() const {
 /// @brief Membrane center
 /// @details Returns the xyzVector describing the center of the membrane
 /// This is the same as the MPct atom of the membrane (MEM) residue.
-Vector
+core::Vector
 MembraneInfo::membrane_center() const  {
 
 	return conformation_.residue( membrane_rsd_num() ).xyz( membrane::center );
@@ -216,11 +213,11 @@ MembraneInfo::membrane_center() const  {
 /// @details Returns the membrane normal, which describes the membrane
 /// orientation. This is the same as the xyzVector in the MPnm atom
 /// in the membrane residue.
-Vector
+core::Vector
 MembraneInfo::membrane_normal() const {
 
-	Vector normal_tracked = conformation_.residue( membrane_rsd_num() ).xyz( membrane::normal );
-	Vector normal = normal_tracked - membrane_center();
+	core::Vector normal_tracked = conformation_.residue( membrane_rsd_num() ).xyz( membrane::normal );
+	core::Vector normal = normal_tracked - membrane_center();
 
 	return normal.normalize();
 }
@@ -244,11 +241,11 @@ MembraneInfo::in_membrane( core::Size resnum ) const {
 /// @details Calculate the z coordinate of the residue, projected onto
 /// the membrane normal axis. Objective is to maintain correct coordinates
 /// in relative coordinate frame.
-Real
+core::Real
 MembraneInfo::residue_z_position( core::Size resnum ) const {
 
 	// Compute z_position
-	Vector const & xyz( conformation_.residue( resnum ).atom( "CA" ).xyz() );
+	core::Vector const & xyz( conformation_.residue( resnum ).atom( "CA" ).xyz() );
 
 	// membrane normal is normalized to 15, that's why dividing it here by 15
 	core::Vector normalized_to_1( membrane_normal() );
@@ -261,11 +258,11 @@ MembraneInfo::residue_z_position( core::Size resnum ) const {
 /// @details Calculate the z coordinate of the atom, projected onto
 /// the membrane normal axis. Objective is to maintain correct coordinates
 /// in relative coordinate frame.
-Real
+core::Real
 MembraneInfo::atom_z_position( core::Size resnum, core::Size atomnum ) const {
 
 	// Compute z_position
-	Vector const & xyz( conformation_.residue( resnum ).atom( atomnum ).xyz() );
+	core::Vector const & xyz( conformation_.residue( resnum ).atom( atomnum ).xyz() );
 
 	// membrane normal is normalized to 15, that's why dividing it here by 15
 	core::Vector normalized_to_1( membrane_normal() );
@@ -300,7 +297,7 @@ MembraneInfo::set_membrane_jump( core::SSize jumpnum ) {
 /// @brief Somewhat weak check that a membrane foldtree is valid. Use checks in
 /// protocols/membrane/util.hh instead!
 bool
-MembraneInfo::check_membrane_fold_tree( FoldTree const & ft_in ) const {
+MembraneInfo::check_membrane_fold_tree( core::kinematics::FoldTree const & ft_in ) const {
 
 	// Check regular fold tree
 	if ( ! ft_in.check_fold_tree() ) {
@@ -354,8 +351,8 @@ std::ostream & operator << ( std::ostream & os, MembraneInfo const & mem_info )
 {
 
 	// Grab membrane position from the pose
-	Vector center( mem_info.membrane_center() );
-	Vector normal( mem_info.membrane_normal() );
+	core::Vector center( mem_info.membrane_center() );
+	core::Vector normal( mem_info.membrane_normal() );
 
 	// Grab a const version of spanning topology
 	os << "Membrane residue located at position " << mem_info.membrane_rsd_num();

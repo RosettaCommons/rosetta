@@ -97,11 +97,6 @@ static thread_local basic::Tracer TR( "protocols.membrane.AddMembraneMover" );
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-using namespace protocols::moves;
-
 // Constructors & Setup methods
 
 /// @brief Create a default RosettaMP membrane setup
@@ -111,7 +106,7 @@ AddMembraneMover::AddMembraneMover() :
 	protocols::moves::Mover(),
 	include_lips_( false ),
 	spanfile_(),
-	topology_( new SpanningTopology() ),
+	topology_( new core::conformation::membrane::SpanningTopology() ),
 	lipsfile_(),
 	anchor_rsd_( 1 ),
 	membrane_rsd_( 0 ),
@@ -132,7 +127,7 @@ AddMembraneMover::AddMembraneMover( core::Size membrane_rsd ) :
 	protocols::moves::Mover(),
 	include_lips_( false ),
 	spanfile_(),
-	topology_( new SpanningTopology() ),
+	topology_( new core::conformation::membrane::SpanningTopology() ),
 	lipsfile_(),
 	anchor_rsd_( 1 ),
 	membrane_rsd_( membrane_rsd ),
@@ -157,7 +152,7 @@ AddMembraneMover::AddMembraneMover(
 	protocols::moves::Mover(),
 	include_lips_( false ),
 	spanfile_( spanfile ),
-	topology_( new SpanningTopology() ),
+	topology_( new core::conformation::membrane::SpanningTopology() ),
 	lipsfile_(),
 	anchor_rsd_( 1 ),
 	membrane_rsd_( membrane_rsd ),
@@ -176,7 +171,7 @@ AddMembraneMover::AddMembraneMover(
 /// the z axis. Use a defualt lipid type DOPC. Load spanning topology from the user
 /// specified spanning topology
 AddMembraneMover::AddMembraneMover(
-	SpanningTopologyOP topology,
+	core::conformation::membrane::SpanningTopologyOP topology,
 	core::Size anchor_rsd,
 	core::Size membrane_rsd
 ) :
@@ -207,7 +202,7 @@ AddMembraneMover::AddMembraneMover(
 	protocols::moves::Mover(),
 	include_lips_( false ),
 	spanfile_( "" ),
-	topology_( new SpanningTopology() ),
+	topology_( new core::conformation::membrane::SpanningTopology() ),
 	lipsfile_(),
 	anchor_rsd_( anchor_rsd ),
 	membrane_rsd_( membrane_rsd ),
@@ -233,7 +228,7 @@ AddMembraneMover::AddMembraneMover(
 	protocols::moves::Mover(),
 	include_lips_( true ),
 	spanfile_( spanfile ),
-	topology_( new SpanningTopology() ),
+	topology_( new core::conformation::membrane::SpanningTopology() ),
 	lipsfile_( lips_acc ),
 	anchor_rsd_( 1 ),
 	membrane_rsd_( membrane_rsd ),
@@ -251,15 +246,15 @@ AddMembraneMover::AddMembraneMover(
 /// @brief Create a membrane positioned at "init_center" and aligned with
 /// "init_normal". Use a defualt lipid type DOPC.
 AddMembraneMover::AddMembraneMover(
-	Vector init_center,
-	Vector init_normal,
+	core::Vector init_center,
+	core::Vector init_normal,
 	std::string spanfile,
 	core::Size membrane_rsd
 ) :
 	protocols::moves::Mover(),
 	include_lips_( false ),
 	spanfile_( spanfile ),
-	topology_( new SpanningTopology() ),
+	topology_( new core::conformation::membrane::SpanningTopology() ),
 	lipsfile_( "" ),
 	anchor_rsd_( 1 ),
 	membrane_rsd_( membrane_rsd ),
@@ -425,7 +420,7 @@ AddMembraneMover::apply( Pose & pose ) {
 	TR << "=====================================================================" << std::endl;
 
 	// Step 1: Initialize the Membrane residue
-	Size membrane_pos = initialize_membrane_residue( pose, membrane_rsd_ );
+	core::Size membrane_pos = initialize_membrane_residue( pose, membrane_rsd_ );
 
 	// Step 2: Initialize the spanning topology
 	if ( topology_->nres_topo() == 0 ) {
@@ -433,8 +428,8 @@ AddMembraneMover::apply( Pose & pose ) {
 			topology_->fill_from_spanfile( spanfile_, pose.total_residue() );
 		} else {
 			// get pose info to create topology from structure
-			std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( pose ) );
-			utility::vector1< Real > z_coord = pose_info.first;
+			std::pair< utility::vector1< core::Real >, utility::vector1< core::Size > > pose_info( get_chain_and_z( pose ) );
+			utility::vector1< core::Real > z_coord = pose_info.first;
 			utility::vector1< Size > chainID = pose_info.second;
 			utility::vector1< char > secstruct( get_secstruct( pose ) );
 
@@ -445,14 +440,14 @@ AddMembraneMover::apply( Pose & pose ) {
 
 	// Step 3: Initialize the membrane Info Object
 	// Options: Will initialize with or without a lipid acc object
-	Size numjumps = pose.fold_tree().num_jump();
+	core::Size numjumps = pose.fold_tree().num_jump();
 	MembraneInfoOP mem_info;
 	if ( !include_lips_ ) {
 		mem_info = MembraneInfoOP(
-			new MembraneInfo( pose.conformation(),  static_cast< Size >( membrane_pos ), numjumps, topology_ ) );
+			new MembraneInfo( pose.conformation(),  static_cast< core::Size >( membrane_pos ), numjumps, topology_ ) );
 	} else {
 		LipidAccInfoOP lips( new LipidAccInfo( lipsfile_ ) );
-		mem_info = MembraneInfoOP( new MembraneInfo( pose.conformation(), static_cast< Size >( membrane_pos ), numjumps, lips, topology_ ) );
+		mem_info = MembraneInfoOP( new MembraneInfo( pose.conformation(), static_cast< core::Size >( membrane_pos ), numjumps, lips, topology_ ) );
 	}
 
 	// Step 4: Add membrane info object to the pose conformation
@@ -466,7 +461,7 @@ AddMembraneMover::apply( Pose & pose ) {
 
 		// slide the membrane jump to match the desired anchor point
 		core::kinematics::FoldTree ft = pose.fold_tree();
-		Size memjump = pose.conformation().membrane_info()->membrane_jump();
+		core::Size memjump = pose.conformation().membrane_info()->membrane_jump();
 		ft.slide_jump( memjump, anchor_rsd_, membrane_pos );
 		pose.fold_tree( ft );
 	}
@@ -546,8 +541,8 @@ AddMembraneMover::init_from_cmd() {
 }
 
 /// @brief Initialize Membrane Residue given pose
-Size
-AddMembraneMover::initialize_membrane_residue( Pose & pose, core::Size membrane_pos ) {
+core::Size
+AddMembraneMover::initialize_membrane_residue( core::pose::Pose & pose, core::Size membrane_pos ) {
 
 	// Start by assuming no membrane residue is provided. Check several possibilities
 	// before setting up a new virtual residue
@@ -575,7 +570,7 @@ AddMembraneMover::initialize_membrane_residue( Pose & pose, core::Size membrane_
 			user_defined_ = true;
 
 			// Case 4: If membrane found and agrees with user specified value, accept
-		} else if ( static_cast< SSize >( membrane_rsd_ ) == found_mem_rsds[1] ) {
+		} else if ( static_cast< core::SSize >( membrane_rsd_ ) == found_mem_rsds[1] ) {
 
 			TR << "Adding membrane residue from PDB at residue number " << membrane_rsd_ << std::endl;
 			membrane_pos = membrane_rsd_;
@@ -600,14 +595,15 @@ AddMembraneMover::initialize_membrane_residue( Pose & pose, core::Size membrane_
 }
 
 /// @brief Helper Method - Add a membrane virtual residue
-Size
-AddMembraneMover::add_membrane_virtual( Pose & pose ) {
+core::Size
+AddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 
 	TR << "Adding a membrane residue representing the position of the membrane after residue " << pose.total_residue() << std::endl;
 
 	using namespace protocols::membrane;
 	using namespace core::conformation;
 	using namespace core::chemical;
+	using namespace core::kinematics; 
 
 	// Grab the current residue typeset and create a new residue
 	ResidueTypeSetCOP const & residue_set(
@@ -641,7 +637,7 @@ AddMembraneMover::add_membrane_virtual( Pose & pose ) {
 
 /// @brief Helper Method - Check for Membrane residue already in the PDB
 utility::vector1< core::SSize >
-AddMembraneMover::check_pdb_for_mem( Pose & pose ) {
+AddMembraneMover::check_pdb_for_mem( core::pose::Pose & pose ) {
 
 	// initialize vector for membrane residues found in PDB
 	utility::vector1< core::Size > mem_rsd;
@@ -654,7 +650,7 @@ AddMembraneMover::check_pdb_for_mem( Pose & pose ) {
 				pose.residue( i ).has_property( "MEMBRANE" ) ) {
 
 			TR << "Found membrane residue " << i << " in PDB." << std::endl;
-			mem_rsd.push_back( static_cast< SSize >( i ) );
+			mem_rsd.push_back( static_cast< core::SSize >( i ) );
 		}
 	}
 

@@ -39,12 +39,6 @@
 using basic::Error;
 using basic::Warning;
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation;
-using namespace core::conformation::membrane;
-using namespace protocols::membrane::geometry;
-
 static basic::Tracer TR( "apps.pilot.jkleman.transform_into_membrane" );
 
 int
@@ -53,6 +47,7 @@ main( int argc, char * argv [] ) {
 
 		using namespace protocols::jd2;
 		using namespace protocols::membrane;
+		using namespace protocols::moves; 
 
 		devel::init(argc, argv);
 

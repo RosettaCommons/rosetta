@@ -19,8 +19,6 @@
 ///             AddMembraneMover unit test, only checking this on 1afo for now.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
-/// @note       Last Modified (2/11/14)
-
 
 // Test Headers
 #include <cxxtest/TestSuite.h>

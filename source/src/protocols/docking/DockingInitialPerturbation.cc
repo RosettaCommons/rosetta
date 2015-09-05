@@ -516,7 +516,7 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 		// this is stupid, but I don't know how else to fix this
 
 		// create EmbeddinDef objects
-		EmbeddingDef emb_up, emb_down;
+		protocols::membrane::geometry::EmbeddingDef emb_up, emb_down;
 		update_partner_embeddings( pose, rb_jump_, emb_up, emb_down );
 		TR << "center1: " << emb_up.center().to_string() << std::endl;
 		TR << "center2: " << emb_down.center().to_string() << std::endl;

@@ -56,10 +56,7 @@ static thread_local basic::Tracer TR( "protocols.membrane.MembranePositionMoverF
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-
-/// @brief Default Constructor
+/// @brief Defualt Constructor
 /// @details Compute the embedding of the pose based on xyz coordinates
 /// and spanning topology provided in MembraneInfo
 MembranePositionFromTopologyMover::MembranePositionFromTopologyMover() :
@@ -140,7 +137,7 @@ void MembranePositionFromTopologyMover::anchor_at_res1( bool truefalse ) {
 /// @details Compute membrane posiiton based on structure
 /// and then call pose.update_membrane_position() to update the membrane position
 void
-MembranePositionFromTopologyMover::apply( Pose & pose ) {
+MembranePositionFromTopologyMover::apply( core::pose::Pose & pose ) {
 
 	using namespace core;
 	using namespace protocols::membrane;

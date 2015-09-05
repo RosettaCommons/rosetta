@@ -30,7 +30,6 @@
 #include <core/conformation/membrane/Span.hh>
 #endif
 
-
 // Package Header
 #include <core/types.hh>
 
@@ -48,8 +47,6 @@ namespace core {
 namespace conformation {
 namespace membrane {
 
-using namespace core::conformation::membrane;
-
 class SpanningTopology : public utility::pointer::ReferenceCount {
 
 public: // constructors
@@ -62,14 +59,14 @@ public: // constructors
 	/// @details Use transmembrane spans provided to consturct a spanning topology object
 	SpanningTopology(
 		std::string spanfile,
-		Size total_residues = 0
+		core::Size total_residues = 0
 	);
 
 	/// @brief Custom Constructor - Transmembrane Spans from xyz coords
 	/// @details Use coordinates of residue CA and thickness to determine the spanning regions in the pose
 	SpanningTopology(
-		utility::vector1< Real > res_z_coord,
-		utility::vector1< Size > chainID,
+		utility::vector1< core::Real > res_z_coord,
+		utility::vector1< core::Size > chainID,
 		utility::vector1< char > secstruct,
 		Real thickness
 	);
@@ -106,17 +103,17 @@ public: // methods
 	utility::vector1< SpanOP > get_spans() const;
 
 	// get number of spans
-	Size nspans() const;
+	core::Size nspans() const;
 
 	// get span by number
-	SpanOP span( Size span_number ) const;
+	SpanOP span( core::Size span_number ) const;
 
 	// fill from spanfile - can be used after creating empty object
-	void fill_from_spanfile( std::string spanfile, Size total_residues = 0 );
+	void fill_from_spanfile( std::string spanfile, core::Size total_residues = 0 );
 
 	// fill from structure - can be used after creating empty object
-	void fill_from_structure( utility::vector1< Real > res_z_coord,
-		utility::vector1< Size > chainID,
+	void fill_from_structure( utility::vector1< core::Real > res_z_coord,
+		utility::vector1< core::Size > chainID,
 		utility::vector1< char > secstruct,
 		Real thickness );
 
@@ -124,10 +121,10 @@ public: // methods
 	SpanningTopology & concatenate_topology( SpanningTopology const & topo );
 
 	// add span to end of SpanningTopology object, doesn't reorder
-	void add_span( Span const & span, Size offset = 0 );
+	void add_span( Span const & span, core::Size offset = 0 );
 
 	// add span to end of SpanningTopology object, doesn't reorder
-	void add_span( Size start, Size end, Size offset = 0 );
+	void add_span( core::Size start, core::Size end, core::Size offset = 0 );
 
 	// reorder spans, for instance after adding one
 	void reorder_spans();
@@ -137,25 +134,25 @@ public: // methods
 	//////////////////
 
 	// is residue in membrane?
-	bool in_span( Size residue ) const;
+	bool in_span( core::Size residue ) const;
 
 	// does the span cross z=0, i.e. really spanning the membrane?
-	bool spanning( utility::vector1< Real > res_z_coord, Span const & span ) const;
+	bool spanning( utility::vector1< core::Real > res_z_coord, Span const & span ) const;
 
 	/// @brief Determine if this Spanning Topology Object is Valid
 	/// @details Check that spans still span the membrane
 	bool is_valid() const;
 
 	// return number of residues in spanfile - for checking
-	Size nres_topo() const;
+	core::Size nres_topo() const;
 
 private: // methods
 
 	/// @brief Create spanning topology object from spanfile
-	SpanningTopology create_from_spanfile( std::string spanfile, Size nres);
+	SpanningTopology create_from_spanfile( std::string spanfile, core::Size nres);
 
 	/// @brief Create Transmembrane SPan OBject from structure
-	SpanningTopology create_from_structure( utility::vector1< Real > res_z_coord, utility::vector1< Size > chainID, utility::vector1< char > secstruct, Real thickness = 15 );
+	SpanningTopology create_from_structure( utility::vector1< core::Real > res_z_coord, utility::vector1< core::Size > chainID, utility::vector1< char > secstruct, core::Real thickness = 15 );
 
 private: // data
 
@@ -163,7 +160,7 @@ private: // data
 	utility::vector1< SpanOP > topology_;
 
 	// nres from the spanfile; keep track for checks
-	Size nres_topo_;
+	core::Size nres_topo_;
 
 }; // class SpanningTopology
 

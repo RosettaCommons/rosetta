@@ -36,8 +36,6 @@ namespace protocols {
 namespace membrane {
 namespace geometry {
 
-using namespace core;
-
 /// @brief Embedding Setup Helper Class
 class EmbeddingDef : public utility::pointer::ReferenceCount {
 

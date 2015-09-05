@@ -56,10 +56,6 @@ static basic::Tracer TR( "protocols.membrane.MPMutateRelaxMover" );
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace protocols::membrane;
-
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -159,9 +155,11 @@ MPMutateRelaxMover::get_name() const {
 /////////////////////
 
 /// @brief Mutate residue and then quick relax the membrane protein
-void MPMutateRelaxMover::apply( Pose & pose ) {
+void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 
 	using namespace utility;
+	using namespace core::pose; 
+	using namespace core::scoring; 
 	using namespace protocols::membrane;
 	using namespace protocols::simple_moves;
 	using namespace core::scoring;
@@ -197,13 +195,13 @@ void MPMutateRelaxMover::apply( Pose & pose ) {
 	Pose working_pose;
 
 	// construct counter
-	Size counter(0);
+	core::Size counter(0);
 
 	// create scorefunction
 	ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
 
 	// go through each construct (i.e. outer vector)
-	for ( Size c = 1; c <= wt_res_.size(); ++c ) {
+	for ( core::Size c = 1; c <= wt_res_.size(); ++c ) {
 
 		TR << "going through construct " << c << std::endl;
 
@@ -351,7 +349,7 @@ void MPMutateRelaxMover::read_mutant_file() {
 	utility::vector1< std::string > lines = get_lines_from_file_data( mutant_file_ );
 
 	// go through lines
-	for ( Size i = 1; i <= lines.size(); ++i ) {
+	for ( core::Size i = 1; i <= lines.size(); ++i ) {
 
 		// add mutants in line to private data vectors
 		add_mutant_to_vectors( lines[ i ] );
@@ -369,18 +367,18 @@ void MPMutateRelaxMover::add_mutant_to_vectors( std::string mutations ) {
 
 	// initialize line vectors
 	utility::vector1< std::string > wildtypes;
-	utility::vector1< Size > seqids;
+	utility::vector1< core::Size > seqids;
 	utility::vector1< std::string > mutants;
 
 	// initialize single point variables
 	std::string wt, mut;
-	Size seqid;
+	core::Size seqid;
 
 	// split string by whitespace
 	utility::vector1< std::string > all_mutants = split_whitespace( mutations );
 
 	// iterate over columns in the line
-	for ( Size col = 1; col <= all_mutants.size(); ++col ) {
+	for ( core::Size col = 1; col <= all_mutants.size(); ++col ) {
 
 		std::string wt_id_mut = all_mutants[ col ];
 
@@ -390,7 +388,7 @@ void MPMutateRelaxMover::add_mutant_to_vectors( std::string mutations ) {
 
 		// get residue number
 		utility::vector1< std::string > tmp;
-		for ( Size i = 1; i <= wt_id_mut.size()-2; ++i ) {
+		for ( core::Size i = 1; i <= wt_id_mut.size()-2; ++i ) {
 			tmp.push_back( to_string( wt_id_mut[ i ] ) );
 		}
 
@@ -415,16 +413,16 @@ void MPMutateRelaxMover::add_mutant_to_vectors( std::string mutations ) {
 
 /// @brief Check mutant file for errors
 /// @details If Rosetta doesn't start crying, you're good to go
-void MPMutateRelaxMover::check_mutant_file( Pose & pose ) {
+void MPMutateRelaxMover::check_mutant_file( core::pose::Pose & pose ) {
 
 	using namespace utility;
 	TR << "checking mutant file" << std::endl;
 
 	// go through outer loop
-	for ( Size i = 1; i <= wt_res_.size(); ++i ) {
+	for ( core::Size i = 1; i <= wt_res_.size(); ++i ) {
 
 		// go through inner loop
-		for ( Size j = 1; j <= wt_res_[ i ].size(); ++j ) {
+		for ( core::Size j = 1; j <= wt_res_[ i ].size(); ++j ) {
 
 			// check whether wt residue has the same identity in the pose
 			if ( wt_res_[ i ][ j ] != to_string( pose.residue_type( resn_[ i ][ j ] ).name1() ) ) {
@@ -493,7 +491,7 @@ std::string MPMutateRelaxMover::one2three( std::string one ) {
 	tlc.push_back( "TYR" );
 
 	// do the conversion
-	for ( Size i = 1; i <= 20; ++i ) {
+	for ( core::Size i = 1; i <= 20; ++i ) {
 		if ( olc[ i ] == one ) {
 			return tlc[ i ];
 		}
@@ -506,7 +504,7 @@ std::string MPMutateRelaxMover::one2three( std::string one ) {
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Create output filename
-std::string MPMutateRelaxMover::output_filename( std::string mutation_tag, Size counter ) {
+std::string MPMutateRelaxMover::output_filename( std::string mutation_tag, core::Size counter ) {
 
 	using namespace basic::options;
 	using namespace utility;

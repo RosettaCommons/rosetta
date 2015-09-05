@@ -30,15 +30,14 @@ namespace protocols {
 namespace membrane {
 namespace symmetry {
 
-using namespace core;
-using namespace core::conformation::membrane;
-using namespace core::pose;
-
 /// @brief Symmetrize Spans
 /// @details Create a spanning topology to reflect the full symmetric
 /// complex instead of just the asymmetric unit
-SpanningTopologyOP
-symmetrize_spans( Pose & pose, SpanningTopology & topology );
+core::conformation::membrane::SpanningTopologyOP
+symmetrize_spans( 
+	core::pose::Pose & pose, 
+	core::conformation::membrane::SpanningTopology & topology 
+	);
 
 } // symmetry
 } // membrane

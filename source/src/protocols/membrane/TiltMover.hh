@@ -63,11 +63,11 @@ public:
 
 	/// @brief Custom Constructor
 	/// @details User can specify jump number
-	TiltMover( Size jump_num );
+	TiltMover( core::Size jump_num );
 
 	/// @brief Custom constructor
 	/// @details User can specify jump number and angle
-	TiltMover( Size jump_num, Real angle );
+	TiltMover( core::Size jump_num, core::Real angle );
 
 	/// @brief Copy Constructor
 	TiltMover( TiltMover const & src );
@@ -105,7 +105,7 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Flip the downstream partner in the membrane
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	/// @brief Set Random tilt angle between -20 and 20 degrees to keep
 	///   protein oriented in the membrane correctly
@@ -126,7 +126,7 @@ private: // methods
 private: // data
 
 	/// @brief Jump number
-	Size jump_num_;
+	core::Size jump_num_;
 
 	/// @brief Rotation angle in degrees
 	int angle_;

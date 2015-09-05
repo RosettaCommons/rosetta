@@ -43,10 +43,6 @@
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace protocols::moves;
-
 class OptimizeMembranePositionMover : public protocols::moves::Mover {
 
 public:
@@ -95,7 +91,7 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Flip the downstream partner in the membrane
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 private: // methods
 
@@ -110,10 +106,10 @@ private: // methods
 	void set_defaults();
 
 	/// @brief optimize membrane center
-	void optimize_membrane_center( Pose & pose );
+	void optimize_membrane_center( core::pose::Pose & pose );
 
 	/// @brief Optimize membrane normal
-	void optimize_membrane_normal( Pose & pose );
+	void optimize_membrane_normal( core::pose::Pose & pose );
 
 private: // data
 
@@ -123,16 +119,16 @@ private: // data
 
 	/// @brief Scorefunction
 	core::scoring::ScoreFunctionOP sfxn_;
-	Real score_best_;
+	core::Real score_best_;
 
 	/// @brief center search
-	Real starting_z_;
-	Real best_z_;
-	Real stepsize_z_;
+	core::Real starting_z_;
+	core::Real best_z_;
+	core::Real stepsize_z_;
 	core::Vector best_center_;
 
 	/// @brief Normal search
-	Real stepsize_angle_;
+	core::Real stepsize_angle_;
 	core::Vector best_normal_;
 
 };

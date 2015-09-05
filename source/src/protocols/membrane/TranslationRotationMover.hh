@@ -83,7 +83,7 @@ public:
 	/// @brief Custom Constructor
 	/// @details User can specify a translation vector
 	TranslationMover(
-		Vector translation_vector
+		core::Vector translation_vector
 	);
 
 
@@ -91,8 +91,8 @@ public:
 	/// @details User can specify a translation vector and a jump number;
 	///   operation happens on the downstream stub
 	TranslationMover(
-		Vector translation_vector,
-		Size jumpnum
+		core::Vector translation_vector,
+		core::Size jumpnum
 	);
 
 	/// @brief Copy Constructor
@@ -128,7 +128,7 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Translate the pose along the defined vector
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 private: // methods
 
@@ -150,10 +150,10 @@ private: // methods
 private: // data
 
 	// translation vector
-	Vector translation_vector_;
+	core::Vector translation_vector_;
 
 	// jump number
-	Size jumpnum_;
+	core::Size jumpnum_;
 
 };
 
@@ -182,9 +182,9 @@ public:
 	/// @details User can specify an old normal, a new normal, and a new center
 	///   around which the rotation takes place
 	RotationMover(
-		Vector old_normal,
-		Vector new_normal,
-		Vector rot_center
+		core::Vector old_normal,
+		core::Vector new_normal,
+		core::Vector rot_center
 	);
 
 
@@ -193,10 +193,10 @@ public:
 	///   around which the rotation takes place on this particular jump;
 	///   operation happens on the downstream stub
 	RotationMover(
-		Vector old_normal,
-		Vector new_normal,
-		Vector rot_center,
-		Size jumpnum
+		core::Vector old_normal,
+		core::Vector new_normal,
+		core::Vector rot_center,
+		core::Size jumpnum
 	);
 
 	/// @brief Copy Constructor
@@ -232,7 +232,7 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Rotate the pose - see above
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 private: // methods
 
@@ -254,12 +254,12 @@ private: // methods
 private: // data
 
 	// vectors and point defining the rotation
-	Vector old_normal_;
-	Vector new_normal_;
-	Vector rot_center_;
+	core::Vector old_normal_;
+	core::Vector new_normal_;
+	core::Vector rot_center_;
 
 	// jump number
-	Size jumpnum_;
+	core::Size jumpnum_;
 
 };
 
@@ -285,10 +285,10 @@ public:
 	/// @details User can specify an old normal and center and a new normal
 	///   and center
 	TranslationRotationMover(
-		Vector old_center,
-		Vector old_normal,
-		Vector new_center,
-		Vector new_normal
+		core::Vector old_center,
+		core::Vector old_normal,
+		core::Vector new_center,
+		core::Vector new_normal
 	);
 
 
@@ -296,11 +296,11 @@ public:
 	/// @details User can specify an old normal and center and a new normal
 	///   and center and a jump; the downstream stub will be rotated
 	TranslationRotationMover(
-		Vector old_center,
-		Vector old_normal,
-		Vector new_center,
-		Vector new_normal,
-		Size jumpnum
+		core::Vector old_center,
+		core::Vector old_normal,
+		core::Vector new_center,
+		core::Vector new_normal,
+		core::Size jumpnum
 	);
 
 	/// @brief Copy Constructor
@@ -336,7 +336,7 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Translate the pose along the defined vector
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 private: // methods
 
@@ -358,13 +358,13 @@ private: // methods
 private: // data
 
 	// TranslationRotation vector
-	Vector old_center_;
-	Vector old_normal_;
-	Vector new_center_;
-	Vector new_normal_;
+	core::Vector old_center_;
+	core::Vector old_normal_;
+	core::Vector new_center_;
+	core::Vector new_normal_;
 
 	// jump number
-	Size jumpnum_;
+	core::Size jumpnum_;
 
 };
 

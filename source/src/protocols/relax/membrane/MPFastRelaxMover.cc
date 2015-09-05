@@ -61,10 +61,6 @@ namespace protocols {
 namespace relax {
 namespace membrane {
 
-using namespace core::pose;
-using namespace protocols::membrane::geometry;
-using namespace protocols::membrane;
-
 // Note - precondition: add membrane mover has already been
 // called on this pose!
 
@@ -76,15 +72,15 @@ using namespace protocols::membrane;
 /// @details Do normal fast relax protocol with the
 /// membrane energy function and custom foldtree
 MPFastRelaxMover::MPFastRelaxMover() :
-	Mover(),
+	protocols::moves::Mover(),
 	relax_protocol_( generate_relax_from_cmd() ),
 	sfxn_( 0 )
 {}
 
 /// @brief Allow the user to set a custom sfxn from
 /// the PyRosetta Interface
-MPFastRelaxMover::MPFastRelaxMover( ScoreFunctionOP sfxn ) :
-	Mover(),
+MPFastRelaxMover::MPFastRelaxMover( core::scoring::ScoreFunctionOP sfxn ) :
+	protocols::moves::Mover(),
 	relax_protocol_( generate_relax_from_cmd() ),
 	sfxn_( sfxn )
 {}
@@ -94,7 +90,9 @@ MPFastRelaxMover::~MPFastRelaxMover() {}
 
 /// @brief Show the current setup of this protocol
 void
-MPFastRelaxMover::show_protocol( Pose & pose ) {
+MPFastRelaxMover::show_protocol( core::pose::Pose & pose ) {
+
+	using namespace core; 
 
 	// Get the membrane position
 	Vector center( pose.conformation().membrane_info()->membrane_center() );
@@ -161,11 +159,12 @@ MPFastRelaxMoverCreator::mover_name() {
 
 /// @brief Apply fast relax - do the actual protocol
 void
-MPFastRelaxMover::apply( Pose & pose ) {
+MPFastRelaxMover::apply( core::pose::Pose & pose ) {
 
 	using namespace core::kinematics;
 	using namespace core::scoring;
 	using namespace protocols::membrane;
+	using namespace core; 
 
 	// Check the pose is a membrane protein before proceeding
 	if ( !pose.conformation().is_membrane() ) {
@@ -215,8 +214,9 @@ MPFastRelaxMover::get_name() const {
 /// is anchored at the center of mass of the chain. Also recreates
 /// other jumps in the protein
 void
-MPFastRelaxMover::setup_relax_foldtree( Pose & pose ) {
+MPFastRelaxMover::setup_relax_foldtree( core::pose::Pose & pose ) {
 
+	using namespace core; 
 	using namespace protocols::membrane;
 	using namespace core::kinematics;
 
@@ -244,7 +244,7 @@ MPFastRelaxMover::setup_relax_foldtree( Pose & pose ) {
 
 	// Rebuild chain jumps in order
 	++njumps;
-	Size chain_begin(0), chain_end(0);
+	core::Size chain_begin(0), chain_end(0);
 	// i == 1: not possible if I am a membrane pose
 	// i == 2: i am a membrane pose, but don't rebuild my membrane jump
 	// i == 3: 2 real polymer chains, 1 for the membrane...now start counting

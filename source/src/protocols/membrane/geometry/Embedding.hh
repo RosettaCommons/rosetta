@@ -45,10 +45,6 @@ namespace protocols {
 namespace membrane {
 namespace geometry {
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-
 class Embedding : public utility::pointer::ReferenceCount {
 
 public: // constructors
@@ -61,17 +57,22 @@ public: // constructors
 	Embedding( EmbeddingDef const & embedding );
 
 	/// @brief Constructs bogus object from topology
-	Embedding( SpanningTopology const & topology, Real radius );
+	Embedding( 
+		core::conformation::membrane::SpanningTopology const & topology, 
+		core::Real radius );
 
 	/// @brief Custom Constructor - from topology & structure
 	/// @details Construct Embedding from Structure & Topology
-	Embedding( SpanningTopology const & topology, Pose const & pose );
+	Embedding( 
+		core::conformation::membrane::SpanningTopology const & topology, 
+		core::pose::Pose const & pose );
 
 	/// @brief Copy Constructor
 	Embedding( Embedding const & Embedding );
 
 	/// @brief Assignment Operator
-	Embedding & operator = ( Embedding const & src );
+	Embedding & 
+	operator = ( Embedding const & src );
 
 	/// @brief Destructor
 	~Embedding();
@@ -85,10 +86,10 @@ public: // methods
 	void invert();
 
 	// number of span embeddings in object
-	Size nspans() const;
+	core::Size nspans() const;
 
 	// get span embedding by number
-	EmbeddingDefOP embedding( Size span_number ) const;
+	EmbeddingDefOP embedding( core::Size span_number ) const;
 
 	// add span embedding
 	void add_span_embedding( EmbeddingDefOP span_embed );
@@ -107,7 +108,11 @@ public: // methods
 	//////////////////////
 
 	// from TMspans
-	utility::vector1< EmbeddingDefOP > from_spans( SpanningTopology const & topology, Pose const & pose );
+	utility::vector1< EmbeddingDefOP > 
+	from_spans( 
+		core::conformation::membrane::SpanningTopology const & topology, 
+		core::pose::Pose const & pose 
+	);
 
 private: // data
 

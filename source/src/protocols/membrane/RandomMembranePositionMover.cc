@@ -50,7 +50,7 @@ namespace membrane {
 
 /// @brief Construct a Default Membrane Position Mover
 RandomPositionRotationMover::RandomPositionRotationMover() :
-	Mover(),
+	protocols::moves::Mover(),
 	rot_mag_( 4.0 ),
 	rb_jump_( 1 )
 {}
@@ -58,10 +58,10 @@ RandomPositionRotationMover::RandomPositionRotationMover() :
 /// @brief Custom Constructor
 /// @details Specify an order of magnitude to rotate
 RandomPositionRotationMover::RandomPositionRotationMover(
-	Real rot_mag,
+	core::Real rot_mag,
 	core::SSize rb_jump
 ) :
-	Mover(),
+	protocols::moves::Mover(),
 	rot_mag_( rot_mag ),
 	rb_jump_( rb_jump )
 {}
@@ -69,7 +69,7 @@ RandomPositionRotationMover::RandomPositionRotationMover(
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
 RandomPositionRotationMover::RandomPositionRotationMover( RandomPositionRotationMover const & src ) :
-	Mover( src ),
+	protocols::moves::Mover( src ),
 	rot_mag_( src.rot_mag_ ),
 	rb_jump_( src.rb_jump_ )
 {}
@@ -121,9 +121,9 @@ RandomPositionRotationMover::apply( Pose & pose ) {
 	}
 
 	// Compute random rotation
-	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
+	core::Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 	current_normal.normalize();
-	Real theta = 2*numeric::random::rg().uniform() * rot_mag_;
+	core::Real theta = 2*numeric::random::rg().uniform() * rot_mag_;
 
 	// Apply Uniform Rotation
 	UniformRotationMoverOP rotate( new UniformRotationMover( theta, current_normal, rb_jump_ ) );
@@ -139,7 +139,7 @@ RandomPositionRotationMover::apply( Pose & pose ) {
 
 /// @brief Construct a Default Random Position Mover
 RandomPositionTranslationMover::RandomPositionTranslationMover() :
-	Mover(),
+	protocols::moves::Mover(),
 	trans_mag_( 2.0 ),
 	rb_jump_( 1 )
 {}
@@ -147,10 +147,10 @@ RandomPositionTranslationMover::RandomPositionTranslationMover() :
 /// @brief Custom Constructor
 /// @details Specify a magnitude of translation
 RandomPositionTranslationMover::RandomPositionTranslationMover(
-	Real trans_mag,
-	SSize rb_jump
+	core::Real trans_mag,
+	core::SSize rb_jump
 ) :
-	Mover(),
+	protocols::moves::Mover(),
 	trans_mag_( trans_mag ),
 	rb_jump_( rb_jump )
 {}
@@ -159,7 +159,7 @@ RandomPositionTranslationMover::RandomPositionTranslationMover(
 /// @brief Copy Constructor
 /// @details Make a deep copy of this mover object
 RandomPositionTranslationMover::RandomPositionTranslationMover( RandomPositionTranslationMover const & src ) :
-	Mover( src ),
+	protocols::moves::Mover( src ),
 	trans_mag_( src.trans_mag_ ),
 	rb_jump_( src.rb_jump_ )
 {}
@@ -195,8 +195,9 @@ RandomPositionTranslationMover::get_name() const {
 /// @brief Apply Translation to membrane position
 /// @brief Translate membrane position to new center
 void
-RandomPositionTranslationMover::apply( Pose & pose ) {
+RandomPositionTranslationMover::apply( core::pose::Pose & pose ) {
 
+	using namespace core; 
 	using namespace protocols::simple_moves;
 
 	// Check the pose is a membrane protein

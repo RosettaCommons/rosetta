@@ -54,9 +54,6 @@ namespace core {
 namespace conformation {
 namespace membrane {
 
-using namespace core::conformation;
-using namespace core::kinematics;
-
 /// @brief MembraneInfo describes the membrane bilayer and its relationship with the protein
 class MembraneInfo : public utility::pointer::ReferenceCount {
 
@@ -68,7 +65,7 @@ public: // Constructors & Setup
 	/// spanning topology object and optional lipophilicity data. Thickness and
 	/// steepness are currently constants
 	MembraneInfo(
-		Conformation & conformation,
+		core::conformation::Conformation & conformation,
 		core::Size membrane_pos,
 		core::SSize membrane_jump,
 		SpanningTopologyOP topology
@@ -80,7 +77,7 @@ public: // Constructors & Setup
 	/// spanning topology object and optional lipophilicity data. Thickness and
 	/// steepness are currently constants
 	MembraneInfo(
-		Conformation & conformation,
+		core::conformation::Conformation & conformation,
 		core::Size membrane_pos,
 		core::SSize membrane_jump,
 		LipidAccInfoOP lips,
@@ -115,13 +112,13 @@ public: // membrane position & orientation
 	/// @brief Membrane center
 	/// @details Returns the xyzVector describing the center of the membrane
 	/// This is the same as the MPct atom of the membrane (MEM) residue.
-	Vector membrane_center() const;
+	core::Vector membrane_center() const;
 
 	/// @brief Membrane normal
 	/// @details Returns the membrane normal, which describes the membrane
 	/// orientation. This is the same as the xyzVector in the MPnm atom
 	/// in the membrane residue.
-	Vector membrane_normal() const;
+	core::Vector membrane_normal() const;
 
 	/// @brief Is residue in the membrane? Takes CA coordinate
 	/// @details Uses the thickness stored in MembraneInfon and the residue_z_position
@@ -131,24 +128,26 @@ public: // membrane position & orientation
 	/// @details Calculate the z coordinate of the residue, projected onto
 	/// the membrane normal axis. Objective is to maintain correct coordinates
 	/// in relative coordinate frame.
-	Real
+	core::Real
 	residue_z_position( core::Size resnum ) const;
 
 	/// @brief Compute atom position relative to membrane normal
 	/// @details Calculate the z coordinate of the atom, projected onto
 	/// the membrane normal axis. Objective is to maintain correct coordinates
 	/// in relative coordinate frame.
-	Real
+	core::Real
 	atom_z_position( core::Size resnum, core::Size atomnum ) const;
 
 	/// @brief Sequence position of the membrane residue
 	/// @details Return the residue number of MEM (rsd.seqpos()) in the pose
-	core::Size membrane_rsd_num() const;
+	core::Size 
+	membrane_rsd_num() const;
 
 	/// @brief Indeitifier for the membrane jump
 	/// @details Returns an integer (core::Size) denoting the jump number in the foldtree
 	/// representing the jump relating the membrane residue to the rest of the molecule
-	core::SSize membrane_jump() const;
+	core::SSize 
+	membrane_jump() const;
 
 	/// @brief Allow a protocol to set a new jump number for the membrane jump
 	/// @details Set the membrane jump number (core::SSize)
@@ -157,7 +156,7 @@ public: // membrane position & orientation
 
 	/// @brief Somewhat weak check that a membrane foldtree is valid. Use checks in
 	/// protocols/membrane/util.hh instead!
-	bool check_membrane_fold_tree( FoldTree const & ft_in ) const;
+	bool check_membrane_fold_tree( core::kinematics::FoldTree const & ft_in ) const;
 
 public: // topology of TM spans and lipophilicity
 
@@ -188,7 +187,7 @@ private: // default constructor
 private: // data
 
 	// Keep track of the Pose's conformation
-	Conformation& conformation_;
+	core::conformation::Conformation& conformation_;
 
 	// Fullatom constants
 	core::Real thickness_;

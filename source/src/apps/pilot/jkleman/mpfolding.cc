@@ -150,7 +150,7 @@ private: // data
 	// SpanningTopologyOP loops_;
 
 	// foldtree
-	FoldTreeOP foldtree_;
+	core::kinematics::FoldTreeOP foldtree_;
 
 	// add membrane mover
 	// protocols::membrane::AddMembraneMoverOP add_membrane_mover_;

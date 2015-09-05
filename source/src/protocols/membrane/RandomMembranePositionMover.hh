@@ -35,14 +35,11 @@
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace protocols::moves;
 
 /// @brief Random Position Rotation Move
 /// @details Rotate the orientation of the membrane position to a new
 /// normal position. Angle chosen randomnly - moved from current axis
-class RandomPositionRotationMover : public Mover {
+class RandomPositionRotationMover : public protocols::moves::Mover {
 
 public:
 
@@ -56,7 +53,7 @@ public:
 	/// @brief Custom Constructor
 	/// @details Specify an order of magnitude to rotate
 	RandomPositionRotationMover(
-		Real rot_mag,
+		core::Real rot_mag,
 		core::SSize rb_jump
 	);
 
@@ -80,12 +77,12 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Apply Rotation
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 private:
 
 	// Store new normal
-	Real rot_mag_;
+	core::Real rot_mag_;
 
 	// Store jump num
 	core::SSize rb_jump_;
@@ -93,7 +90,7 @@ private:
 };
 
 /// @brief Random Position Translation Move
-class RandomPositionTranslationMover : public Mover {
+class RandomPositionTranslationMover : public protocols::moves::Mover {
 
 public:
 
@@ -107,8 +104,8 @@ public:
 	/// @brief Custom Constructor
 	/// @details Specify a magnitude of translation
 	RandomPositionTranslationMover(
-		Real trans_mag,
-		SSize rb_jump = 2
+		core::Real trans_mag,
+		core::SSize rb_jump = 2
 	);
 
 	/// @brief Copy Constructor
@@ -132,12 +129,12 @@ public:
 
 	/// @brief Apply Translation to membrane position
 	/// @brief Translate membrane position to new center
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 private:
 
 	// Store trans mag
-	Real trans_mag_;
+	core::Real trans_mag_;
 
 	// Store jump num
 	core::SSize rb_jump_;

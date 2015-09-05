@@ -64,11 +64,6 @@ static basic::Tracer TR( "protocols.membrane.TransformIntoMembraneMover" );
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-using namespace protocols::moves;
-
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -77,10 +72,15 @@ using namespace protocols::moves;
 /// @details Transform the protein into membrane defined by MEM, protein
 /// embedding computed from structure and spanfile
 TransformIntoMembraneMover::TransformIntoMembraneMover() :
+	protocols::moves::Mover(),
 	jump_( 0 ),
 	new_mem_cntr_( 0, 0, 0 ),
 	new_mem_norm_( 0, 0, 1 ),
-	current_embedding_( new EmbeddingDef( core::Vector (0, 0, 0), core::Vector (0, 0, 99999) ) ),
+	current_embedding_( 
+		new protocols::membrane::geometry::EmbeddingDef( 
+			core::Vector (0, 0, 0), 
+			core::Vector (0, 0, 99999) ) 
+		),
 	use_default_membrane_( false ),
 	user_defined_membrane_( false )
 {}
@@ -89,11 +89,16 @@ TransformIntoMembraneMover::TransformIntoMembraneMover() :
 // Use custom jump to transform protein into membrane
 // Using user-specified jump, transform the downstream partner
 // into default membrane, partner embedding computed from structure & spanfile
-TransformIntoMembraneMover::TransformIntoMembraneMover( core::Size jump ) :
+TransformIntoMembraneMover::TransformIntoMembraneMover( core::Size jump ) : 
+	protocols::moves::Mover(),
 	jump_( jump ),
 	new_mem_cntr_( 0, 0, 0 ),
 	new_mem_norm_( 0, 0, 1 ),
-	current_embedding_( new EmbeddingDef( core::Vector (0, 0, 0), core::Vector (0, 0, 99999) ) ),
+	current_embedding_( 
+		new protocols::membrane::geometry::EmbeddingDef( 
+			core::Vector (0, 0, 0), 
+			core::Vector (0, 0, 99999) ) 
+		),
 	use_default_membrane_( false ),
 	user_defined_membrane_( false )
 {}
@@ -102,7 +107,9 @@ TransformIntoMembraneMover::TransformIntoMembraneMover( core::Size jump ) :
 /// a default membrane (defined by MEM)
 /// @details Transform the protein with a user-defined embedding (might have
 /// been optimized before) into the default membrane
-TransformIntoMembraneMover::TransformIntoMembraneMover( EmbeddingDefOP current_embedding ) :
+TransformIntoMembraneMover::TransformIntoMembraneMover( 
+	protocols::membrane::geometry::EmbeddingDefOP current_embedding ) : 
+	protocols::moves::Mover(),
 	jump_( 0 ),
 	new_mem_cntr_( 0, 0, 0 ),
 	new_mem_norm_( 0, 0, 1 ),
@@ -114,11 +121,18 @@ TransformIntoMembraneMover::TransformIntoMembraneMover( EmbeddingDefOP current_e
 /// @brief Transform the protein into user-specified membrane coordinates
 /// @details Transform the protein into a user-defined membrane, protein
 /// embedding is computed from structure and spanfile
-TransformIntoMembraneMover::TransformIntoMembraneMover( Vector new_mem_cntr, Vector new_mem_norm ) :
+TransformIntoMembraneMover::TransformIntoMembraneMover( 
+	core::Vector new_mem_cntr, 
+	core::Vector new_mem_norm ) :
+	protocols::moves::Mover(),
 	jump_( 0 ),
 	new_mem_cntr_( new_mem_cntr ),
 	new_mem_norm_( new_mem_norm ),
-	current_embedding_( new EmbeddingDef( core::Vector (0, 0, 0), core::Vector (0, 0, 99999) ) ),
+	current_embedding_( 
+		new protocols::membrane::geometry::EmbeddingDef( 
+			core::Vector (0, 0, 0), 
+			core::Vector (0, 0, 99999) ) 
+		),
 	use_default_membrane_( false ),
 	user_defined_membrane_( true )
 {}
@@ -126,7 +140,11 @@ TransformIntoMembraneMover::TransformIntoMembraneMover( Vector new_mem_cntr, Vec
 /// @brief Transform the protein into user-specified membrane coordinates
 /// @details Transform the protein into a user-defined membrane, protein
 /// embedding is computed from structure and spanfile
-TransformIntoMembraneMover::TransformIntoMembraneMover( EmbeddingDefOP current_embedding, Vector new_mem_cntr, Vector new_mem_norm ) :
+TransformIntoMembraneMover::TransformIntoMembraneMover( 
+	protocols::membrane::geometry::EmbeddingDefOP current_embedding, 
+	core::Vector new_mem_cntr, 
+	core::Vector new_mem_norm ) :
+	protocols::moves::Mover(),
 	jump_( 0 ),
 	new_mem_cntr_( new_mem_cntr ),
 	new_mem_norm_( new_mem_norm ),
@@ -232,8 +250,9 @@ TransformIntoMembraneMover::get_name() const {
 
 /// @brief Move the pose into membrane coordinate frame
 void
-TransformIntoMembraneMover::apply( Pose & pose ) {
+TransformIntoMembraneMover::apply( core::pose::Pose & pose ) {
 
+	using namespace core; 
 	using namespace numeric;
 	using namespace core::kinematics;
 	using namespace core::conformation::membrane;

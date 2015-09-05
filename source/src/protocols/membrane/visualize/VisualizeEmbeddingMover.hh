@@ -38,11 +38,6 @@ namespace protocols {
 namespace membrane {
 namespace visualize {
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation;
-using namespace protocols::membrane::geometry;
-
 /// @brief Adds virtual residues to visualize span embeddings of the membrane protein
 class VisualizeEmbeddingMover : public protocols::moves::Mover {
 
@@ -58,7 +53,7 @@ public:
 
 	/// @brief   Constructor from embedding
 	/// @details  Visualizes defined embedding
-	VisualizeEmbeddingMover( EmbeddingOP embedding );
+        VisualizeEmbeddingMover( protocols::membrane::geometry::EmbeddingOP embedding );
 
 	/// @brief Copy Constructor for deep copying
 	VisualizeEmbeddingMover( VisualizeEmbeddingMover const & src );
@@ -85,7 +80,7 @@ public:
 	/////////////////////
 
 	/// @brief   Apply visualization
-	virtual void apply( Pose & pose );
+        virtual void apply( core::pose::Pose & pose );
 
 	/// @brief   Return the name of this mover
 	virtual std::string get_name() const;
@@ -102,13 +97,13 @@ private:
 	/// @brief Create a Membrane Residue
 	/// @details Given a centered position and residue typeset, return
 	/// a ResidueOP with the xyz coordinate pos, type EMB, from typeset given
-	ResidueOP
-	create_embedding_virtual( Vector center, Vector normal, bool fullatom );
+        core::conformation::ResidueOP
+	create_embedding_virtual( core::Vector center, core::Vector normal, bool fullatom );
 
 private:
 
 	// Embedding object containing (multiple) EmbeddingDefinition(s)
-	EmbeddingOP embeddings_;
+        protocols::membrane::geometry::EmbeddingOP embeddings_;
 };
 
 } // visualize

@@ -35,8 +35,6 @@ namespace core {
 namespace conformation {
 namespace membrane {
 
-using namespace core;
-
 ////////////////////
 /// Constructors ///
 ////////////////////
@@ -52,7 +50,7 @@ Span::Span() :
 
 /// @brief Custom Constructor - Construct new span
 /// @details Constructor from start and end
-Span::Span( Size start, Size end ) :
+Span::Span( core::Size start, core::Size end ) :
 	utility::pointer::ReferenceCount(),
 	start_( start ),
 	end_( end )
@@ -92,26 +90,26 @@ Span::~Span(){}
 
 /// @brief Get start position
 /// @details Get the Starting Position of a transmembrane span
-Size
+core::Size
 Span::start() const {
 	return start_;
 }
 
 /// @brief Get end position
 /// @details Get the end position of a transmembrane span
-Size
+core::Size
 Span::end() const {
 	return end_;
 }
 
 /// @brief get residue closest to center
-Size Span::center() const {
+core::Size Span::center() const {
 	return ( ( start_ + end_ ) / 2 );
 }
 
 /// @brief Shift by offset
 /// @details Shift the transmembrane span by a user-provided offset
-void Span::shift( Size offset ) {
+void Span::shift( core::Size offset ) {
 	start_ += offset;
 	end_ += offset;
 	not_valid();
@@ -144,7 +142,7 @@ bool Span::is_valid() const {
 	}
 
 	// define length
-	Size length = end_ - start_ + 1;
+	core::Size length = end_ - start_ + 1;
 
 	// short span
 	if ( length <= 5 ) {

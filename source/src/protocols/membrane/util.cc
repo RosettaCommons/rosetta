@@ -95,13 +95,6 @@ using basic::Warning;
 namespace protocols {
 namespace membrane {
 
-using namespace numeric;
-using namespace core;
-using namespace core::scoring;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-using namespace protocols::membrane::geometry;
-
 /////////////////////////////////////////////////////////////////////////
 // Methods for calculating rmsds between protein transmembrane regions //
 /////////////////////////////////////////////////////////////////////////
@@ -112,7 +105,13 @@ using namespace protocols::membrane::geometry;
 /// object Do not superimpose the poses. Takes a native pose and
 /// current pose
 core::Real
-mem_bb_rmsd_no_super( Pose & native_pose, Pose & pose ) {
+mem_bb_rmsd_no_super( 
+	core::pose::Pose & native_pose, 
+	core::pose::Pose & pose 
+) {
+
+	using namespace core::conformation::membrane; 
+	using namespace core::scoring; 
 
 	// Check that pose is actually a membrane pose
 	if ( ! pose.conformation().is_membrane() ) {
@@ -137,7 +136,13 @@ mem_bb_rmsd_no_super( Pose & native_pose, Pose & pose ) {
 /// transmembrane regions, as defined by the spanning topology object.
 /// Do not superimpose the poses. Takes a native pose & current pose
 core::Real
-mem_all_atom_rmsd_no_super( Pose & native_pose, Pose & pose ) {
+mem_all_atom_rmsd_no_super( 
+	core::pose::Pose & native_pose, 
+	core::pose::Pose & pose 
+) {
+
+	using namespace core::conformation::membrane; 
+	using namespace core::scoring; 
 
 	// Check that pose is actually a membrane pose
 	if ( ! pose.conformation().is_membrane() ) {
@@ -145,7 +150,7 @@ mem_all_atom_rmsd_no_super( Pose & native_pose, Pose & pose ) {
 	}
 
 	// Pick transmembrane spanning regions
-	SpanningTopologyOP topology( pose.conformation().membrane_info()->spanning_topology() );
+	core::conformation::membrane::SpanningTopologyOP topology( pose.conformation().membrane_info()->spanning_topology() );
 	ObjexxFCL::FArray1D_bool tm_regions ( pose.total_residue(), false );
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( topology->in_span(i) ) {
@@ -162,7 +167,13 @@ mem_all_atom_rmsd_no_super( Pose & native_pose, Pose & pose ) {
 /// in the transmembrane regions, as defined by the spanning topology
 /// object Superimpose the poses. Takes a native pose and current pose
 core::Real
-mem_bb_rmsd_with_super( Pose & native_pose, Pose & pose ) {
+mem_bb_rmsd_with_super( 
+	core::pose::Pose & native_pose, 
+	core::pose::Pose & pose 
+) {
+
+	using namespace core::conformation::membrane; 
+	using namespace core::scoring; 
 
 	// Check that pose is actually a membrane pose
 	if ( ! pose.conformation().is_membrane() ) {
@@ -187,7 +198,13 @@ mem_bb_rmsd_with_super( Pose & native_pose, Pose & pose ) {
 /// transmembrane regions, as defined by the spanning topology object.
 /// Superimpose the poses. Takes a native pose & current pose
 core::Real
-mem_all_atom_rmsd_with_super( Pose & native_pose, Pose & pose )  {
+mem_all_atom_rmsd_with_super( 
+	core::pose::Pose & native_pose, 
+	core::pose::Pose & pose 
+)  {
+
+	using namespace core::conformation::membrane; 
+	using namespace core::scoring; 
 
 	// Check that pose is actually a membrane pose
 	if ( ! pose.conformation().is_membrane() ) {
@@ -216,7 +233,13 @@ mem_all_atom_rmsd_with_super( Pose & native_pose, Pose & pose )  {
 /// axis through the helix and the membrane normal. Works for relatively
 /// straight helices but less accurate for kinks. Takes a pose & span number
 core::Real
-calc_helix_tilt_angle( Pose & pose, core::Size span_no ) {
+calc_helix_tilt_angle( 
+	core::pose::Pose & pose, 
+	core::Size span_no 
+) {
+
+	using namespace core; 
+	using namespace core::conformation::membrane; 
 
 	// Get membrane normal from membrane info
 	Vector normal( pose.conformation().membrane_info()->membrane_normal() );
@@ -242,7 +265,13 @@ calc_helix_tilt_angle( Pose & pose, core::Size span_no ) {
 /// describing its geometry relative to the memrbane normal. Takes a pose &
 /// span number. Not a good approx for helices with kinks.
 core::Vector
-calc_helix_axis( Pose & pose, core::Size span_no ) {
+calc_helix_axis( 
+	core::pose::Pose & pose, 
+	core::Size span_no 
+) {
+
+	using namespace core; 
+	using namespace core::conformation::membrane; 
 
 	// Get the span from the pose
 	SpanOP helix_span( pose.conformation().membrane_info()->spanning_topology()->span( span_no ) );
@@ -325,7 +354,10 @@ calc_angle_rmsd( core::Real measured_angle, core::Real ref_angle ) {
 /// the membrane is currently fixed, meaning it is setup as the
 /// root in the FoldTree and has no upstream children. Takes a pose.
 bool
-is_membrane_fixed( Pose & pose ) {
+is_membrane_fixed( core::pose::Pose & pose ) {
+
+	using namespace core::conformation::membrane; 
+	using namespace core::kinematics; 
 
 	if ( ! pose.conformation().is_membrane() ) {
 		utility_exit_with_message("Pose is not a membrane pose. Quitting.");
@@ -350,7 +382,7 @@ is_membrane_fixed( Pose & pose ) {
 /// the membrane is moveable, but when moved, won't cause anything in the
 /// protein to move (i.e. independently moveable). Takes a pose.
 bool
-is_membrane_moveable_by_itself( Pose & pose ) {
+is_membrane_moveable_by_itself( core::pose::Pose & pose ) {
 
 	using namespace core::kinematics;
 
@@ -372,7 +404,7 @@ is_membrane_moveable_by_itself( Pose & pose ) {
 
 		// Iterate through the edge list and check that only one jump
 		// connects to the membrane residue
-		for ( kinematics::FoldTree::const_iterator it = current_ft.begin(), it_end = current_ft.end(); it != it_end; ++it ) {
+		for ( core::kinematics::FoldTree::const_iterator it = current_ft.begin(), it_end = current_ft.end(); it != it_end; ++it ) {
 
 			// If a an edge is a jump edge that is not the membrane jump
 			// but has a start or end point that is the membrane rsd,
@@ -392,7 +424,7 @@ is_membrane_moveable_by_itself( Pose & pose ) {
 /// @brief Set membrane residue to root of foldtree
 /// @details Naively sets the root of the foldtree to be the membrane
 /// residue. Should perform checks before doing this!
-void reorder_membrane_foldtree( pose::Pose & pose ) {
+void reorder_membrane_foldtree( core::pose::Pose & pose ) {
 
 	// get foldtree from pose
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
@@ -420,9 +452,11 @@ void reorder_membrane_foldtree( pose::Pose & pose ) {
 ///
 ///  iJ = interface jump, will be returned from the function
 ///
-core::Size create_membrane_docking_foldtree_from_partners( Pose & pose, std::string const partners ) {
+core::Size create_membrane_docking_foldtree_from_partners( core::pose::Pose & pose, std::string const partners ) {
 
 	using namespace utility;
+	using namespace core;
+	using namespace core::kinematics; 
 
 	// check that partners isn't empty
 	if ( partners.size() == 0 || partners == "_" ) {
@@ -521,9 +555,10 @@ core::Size create_membrane_docking_foldtree_from_partners( Pose & pose, std::str
 ///    |        |        |        |     |
 /// -------  -------  -------  -------  M=root
 ///  chain1   chain2   chain3   chain4 ...
-core::Size create_membrane_foldtree_anchor_com( Pose & pose ) {
+core::Size create_membrane_foldtree_anchor_com( core::pose::Pose & pose ) {
 
 	using namespace core::kinematics;
+	using namespace core::pose; 
 
 	// if pose not membrane pose, cry
 	if ( ! pose.conformation().is_membrane() ) {
@@ -566,7 +601,7 @@ core::Size create_membrane_foldtree_anchor_com( Pose & pose ) {
 ///      |        |        |        |     |
 /// -------  -------  -------  -------  M=root
 ///  chain1   chain2   chain3   chain4 ...
-core::Size create_membrane_foldtree_anchor_tmcom( Pose & pose ) {
+	core::Size create_membrane_foldtree_anchor_tmcom( core::pose::Pose & pose ) {
 
 	using namespace core::kinematics;
 
@@ -601,9 +636,10 @@ core::Size create_membrane_foldtree_anchor_tmcom( Pose & pose ) {
 ///      |        |        |        |     |
 /// -------  -------  -------  -------  M=root
 ///  chain1   chain2   chain3   chain4 ...
-core::Size create_membrane_foldtree_anchor_pose_tmcom( Pose & pose ) {
+core::Size create_membrane_foldtree_anchor_pose_tmcom( core::pose::Pose & pose ) {
 
 	using namespace core::kinematics;
+	using namespace core::pose; 
 
 	// if pose not membrane pose, cry
 	if ( ! pose.conformation().is_membrane() ) {
@@ -649,9 +685,13 @@ core::Size create_membrane_foldtree_anchor_pose_tmcom( Pose & pose ) {
 ///   one per chain. This function assumes that the first entry in the
 ///   vector is the root anchor point to which all other chains are
 ///   connected;
-void create_membrane_foldtree_from_anchors( Pose & pose, utility::vector1< core::Size > anchors ) {
+void create_membrane_foldtree_from_anchors( 
+	core::pose::Pose & pose, 
+	utility::vector1< core::Size > anchors 
+) {
 
 	using namespace core::kinematics;
+	using namespace core::pose; 
 
 	// if pose not membrane pose, cry
 	if ( ! pose.conformation().is_membrane() ) {
@@ -707,7 +747,7 @@ void create_membrane_foldtree_from_anchors( Pose & pose, utility::vector1< core:
 
 /// @brief Helper function to create membrane foldtrees
 /// @details Returns the residues closest to the COMs for each chain
-utility::vector1< core::Size > get_anchor_points_for_tmcom( Pose & pose ) {
+utility::vector1< core::Size > get_anchor_points_for_tmcom( core::pose::Pose & pose ) {
 
 	// get anchor points for jumps: get all chainids
 	utility::vector1< int > chains = get_chains( pose );
@@ -735,7 +775,7 @@ utility::vector1< core::Size > get_anchor_points_for_tmcom( Pose & pose ) {
 /// Returns a std::pair of two vectors: the first a vector1 of z
 /// coordinates and the second a vector1 of chainIDs for CA atoms
 std::pair< utility::vector1< core::Real >, utility::vector1< core::Real > >
-get_chain_and_z( pose::Pose const & pose ) {
+get_chain_and_z( core::pose::Pose const & pose ) {
 
 	TR.Debug << "get_pose_info" << std::endl;
 	using namespace core::pose;
@@ -762,7 +802,7 @@ get_chain_and_z( pose::Pose const & pose ) {
 /// @brief  Get dssp defined secondary structure from the pose
 /// @details Given a pose, grab a vector of characters describing the secondary
 /// structure at each residue position in the pose, defined by DSSP
-utility::vector1< char > get_secstruct( pose::Pose & pose ) {
+utility::vector1< char > get_secstruct( core::pose::Pose & pose ) {
 
 	TR.Debug << "get_secstruct" << std::endl;
 	using namespace core::pose;
@@ -793,11 +833,13 @@ utility::vector1< char > get_secstruct( pose::Pose & pose ) {
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology
 void compute_structure_based_embedding(
-	pose::Pose const & pose,
-	SpanningTopology const & topology,
-	Vector & center,
-	Vector & normal
+	core::pose::Pose const & pose,
+	core::conformation::membrane::SpanningTopology const & topology,
+	core::Vector & center,
+	core::Vector & normal
 ) {
+
+	using namespace protocols::membrane::geometry; 
 
 	// create EmbeddingDef to return
 	EmbeddingDefOP embed = compute_structure_based_embedding( pose, topology );
@@ -812,10 +854,12 @@ void compute_structure_based_embedding(
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology, uses topology from MembraneInfo
 void compute_structure_based_embedding(
-	pose::Pose const & pose,
-	Vector & center,
-	Vector & normal
+	core::pose::Pose const & pose,
+	core::Vector & center,
+	core::Vector & normal
 ) {
+
+	using namespace core::conformation::membrane; 
 
 	// get topology from MembraneInfo
 	SpanningTopology topo( *pose.conformation().membrane_info()->spanning_topology() );
@@ -827,7 +871,11 @@ void compute_structure_based_embedding(
 
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology
-EmbeddingDefOP compute_structure_based_embedding( pose::Pose const & pose, SpanningTopology const & topo ){
+protocols::membrane::geometry::EmbeddingDefOP 
+compute_structure_based_embedding( 
+	core::pose::Pose const & pose, 
+	core::conformation::membrane::SpanningTopology const & topo 
+) {
 
 	using namespace protocols::membrane::geometry;
 	using namespace core::conformation::membrane;
@@ -847,7 +895,10 @@ EmbeddingDefOP compute_structure_based_embedding( pose::Pose const & pose, Spann
 
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology, uses topology from MembraneInfo
-EmbeddingDefOP compute_structure_based_embedding( pose::Pose const & pose ){
+protocols::membrane::geometry::EmbeddingDefOP 
+compute_structure_based_embedding( core::pose::Pose const & pose ){
+
+	using namespace core::conformation::membrane;
 
 	// get topology from MembraneInfo
 	SpanningTopology topo( *pose.conformation().membrane_info()->spanning_topology() );
@@ -860,7 +911,11 @@ EmbeddingDefOP compute_structure_based_embedding( pose::Pose const & pose ){
 /// @details The embeddings can be computed either from pose and topology or they
 ///   can be optimized differently; the function correlates each EmbeddingDef
 ///   object in embeddings with a span object in the pose's topology
-EmbeddingOP compute_embeddings_by_chain( pose::Pose const & pose ) {
+protocols::membrane::geometry::EmbeddingOP 
+compute_embeddings_by_chain( core::pose::Pose const & pose ) {
+
+	using namespace core::conformation::membrane; 
+	using namespace protocols::membrane::geometry; 
 
 	// get topology from pose
 	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
@@ -888,7 +943,10 @@ EmbeddingOP compute_embeddings_by_chain( pose::Pose const & pose ) {
 
 /// @brief Average EmbeddingDefs as they are without vector inversion accounting for topology
 /// @details Get average center and normal from a vector of EmbeddingDefs
-EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > const parts ) {
+protocols::membrane::geometry::EmbeddingDefOP 
+average_embeddings( utility::vector1< protocols::membrane::geometry::EmbeddingDefOP > const parts ) {
+
+	using namespace protocols::membrane::geometry; 
 
 	// Initialize vars
 	core::Vector center(0, 0, 0);
@@ -911,15 +969,20 @@ EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > const part
 
 /// @brief Average EmbeddingDefs after first inverting some vectors accounting for topology
 /// @details Get average center and normal from a vector of EmbeddingDefs
-EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP > const parts ) {
+protocols::membrane::geometry::EmbeddingDefOP 
+average_antiparallel_embeddings( 
+	utility::vector1< protocols::membrane::geometry::EmbeddingDefOP > const parts 
+) {
+
+	using namespace protocols::membrane::geometry; 
 
 	// Initialize vars
 	core::Vector center(0, 0, 0);
 	core::Vector normal(0, 0, 0);
 
 	// embedding of first span
-	Vector const center1 = parts[1]->center();
-	Vector const normal1 = parts[1]->normal();
+	core::Vector const center1 = parts[1]->center();
+	core::Vector const normal1 = parts[1]->normal();
 
 	// Compute resulting center and normal
 	for ( core::Size i = 1 ; i <= parts.size(); ++i ) {
@@ -930,8 +993,8 @@ EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP
 		center += parts[i]->center();
 
 		// calculate points for angle calculation
-		Vector p1 = center1 + normal1;
-		Vector p  = center1 + parts[i]->normal();
+		core::Vector p1 = center1 + normal1;
+		core::Vector p  = center1 + parts[i]->normal();
 
 		// calculate  angle between normals of first object and this one
 		core::Real angle( numeric::angle_degrees( p1, center1, p ) );
@@ -961,7 +1024,16 @@ EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP
 /// @details Requires the jump number between the partners, the topology will
 ///    be taken from MembraneInfo and will be split accordingly; up and
 ///    down means upstream and downstream
-void update_partner_embeddings( pose::Pose const & pose, core::Size const jumpnum, EmbeddingDef & emb_up, EmbeddingDef & emb_down ) {
+void 
+update_partner_embeddings( 
+	core::pose::Pose const & pose, 
+	core::Size const jumpnum, 
+	protocols::membrane::geometry::EmbeddingDef & emb_up, 
+	protocols::membrane::geometry::EmbeddingDef & emb_down 
+) {
+
+	using namespace protocols::membrane::geometry; 
+	using namespace core::conformation::membrane; 
 
 	// SpanningTopology objects
 	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
@@ -988,7 +1060,9 @@ void update_partner_embeddings( pose::Pose const & pose, core::Size const jumpnu
 ///   This only looks at the span start and end residues for
 ///   calculation of the TM span COM, this should be faster than the
 ///   real thing though
-core::Vector pose_tm_com( pose::Pose const & pose ) {
+	core::Vector pose_tm_com( core::pose::Pose const & pose ) {
+
+	using namespace core::conformation::membrane; 
 
 	// get topology from MembraneInfo
 	SpanningTopologyOP topo( pose.conformation().membrane_info()->spanning_topology() );
@@ -1019,7 +1093,10 @@ core::Vector pose_tm_com( pose::Pose const & pose ) {
 
 /// @brief Chain center-of-mass
 /// @details Gets the coordinates of the chain center-of-mass
-core::Vector chain_com( pose::Pose const & pose, int chainid ) {
+core::Vector 
+chain_com( core::pose::Pose const & pose, int chainid ) {
+
+	using namespace core::pose; 
 
 	// split pose by chain
 	PoseOP pose_chain( pose.split_by_chain( chainid ) );
@@ -1036,7 +1113,9 @@ core::Vector chain_com( pose::Pose const & pose, int chainid ) {
 /// @brief Chain center-of-mass of TM regions
 /// @details Gets the coordinates of the chain center-of-mass but only the TM regions
 ///   BE AWARE THAT THE LAST CHAIN FOR MEMBRANE PROTEINS IS THE MEMBRANE RESIDUE!!!
-core::Vector chain_tm_com( pose::Pose const & pose, int chain ) {
+core::Vector chain_tm_com( core::pose::Pose const & pose, int chain ) {
+
+	using namespace core::conformation::membrane; 
 
 	// check that the chain isn't the membrane residue
 	if ( chain == pose.chain( pose.conformation().membrane_info()->membrane_rsd_num() ) ) {
@@ -1075,7 +1154,7 @@ core::Vector chain_tm_com( pose::Pose const & pose, int chain ) {
 	}
 
 	// create subpose of chain TM regions from the PDB into a new pose
-	Pose subpose = Pose();
+	core::pose::Pose subpose = core::pose::Pose();
 	pdbslice( subpose, pose, splice_rsd );
 
 	// compute COM of the newly created pose
@@ -1093,7 +1172,7 @@ core::Vector chain_tm_com( pose::Pose const & pose, int chain ) {
 ///   This only looks at the span start and end residues for
 ///   calculation of the TM span COM, this should be faster than the
 ///   real thing though
-core::Size rsd_closest_to_pose_tm_com( pose::Pose const & pose ) {
+core::Size rsd_closest_to_pose_tm_com( core::pose::Pose const & pose ) {
 
 	// get pose TM com
 	core::Vector com( pose_tm_com( pose ) );
@@ -1109,7 +1188,7 @@ core::Size rsd_closest_to_pose_tm_com( pose::Pose const & pose ) {
 
 /// @brief Residue closest to chain center-of-mass
 /// @details Gets the residue number closest to the chain center-of-mass
-core::Size rsd_closest_to_chain_com( pose::Pose const & pose, int chainid ) {
+core::Size rsd_closest_to_chain_com( core::pose::Pose const & pose, int chainid ) {
 
 	// check that the chain isn't the membrane residue
 	if ( chainid == pose.chain( pose.conformation().membrane_info()->membrane_rsd_num() ) ) {
@@ -1146,7 +1225,7 @@ core::Size rsd_closest_to_chain_com( pose::Pose const & pose, int chainid ) {
 
 /// @brief Residue closest to chain TM center-of-mass
 /// @details Gets the residue number closest to the chain TM center-of-mass
-core::Size rsd_closest_to_chain_tm_com( pose::Pose const & pose, int chainid ) {
+core::Size rsd_closest_to_chain_tm_com( core::pose::Pose const & pose, int chainid ) {
 
 	// compute chain TM com
 	core::Vector com = chain_tm_com( pose, chainid );
@@ -1187,12 +1266,14 @@ void check_vector( core::Vector const vector ) {
 			vector.y() < -1000 || vector.y() > 1000 ||
 			vector.z() < -1000 || vector.z() > 1000 ) {
 
-		throw new conformation::membrane::EXCN_Illegal_Arguments("Unreasonable range for center or normal! Check your input vectors!");
+		throw new core::conformation::membrane::EXCN_Illegal_Arguments("Unreasonable range for center or normal! Check your input vectors!");
 	}
 }// check_vector
 
 /// @brief Normalize normal vector to length 15 for visualization
-void membrane_normal_to_length_15( pose::Pose & pose ){
+void membrane_normal_to_length_15( core::pose::Pose & pose ){
+
+	using namespace core; 
 
 	// get center and normal
 	Vector center = pose.conformation().membrane_info()->membrane_center();
@@ -1207,11 +1288,12 @@ void membrane_normal_to_length_15( pose::Pose & pose ){
 
 /// @brief Calculates translation axis lying in the membrane (= projection axis
 ///   between embedding centers)
-core::Vector const membrane_axis( pose::Pose & pose, int jumpnum )
+core::Vector const membrane_axis( core::pose::Pose & pose, int jumpnum )
 {
 	using namespace core::pose;
 	using namespace numeric;
 	using numeric::cross;
+	using namespace protocols::membrane::geometry; 
 
 	// get embedding between partners
 	EmbeddingDef emb_up, emb_down;
@@ -1249,13 +1331,13 @@ core::Vector const membrane_axis( pose::Pose & pose, int jumpnum )
 /// BEWARE: this does not work for splitting topology by spans! It only works
 /// chainwise
 void split_topology_by_jump(
-	Pose const & pose,     // full pose
+	core::pose::Pose const & pose,     // full pose
 	core::Size const jumpnum,     // jump number to split on
-	SpanningTopology const & topo,  // topology to split
-	Pose & pose_up,      // upstream partner after pose splitting
-	Pose & pose_down,     // downstream partner after pose splitting
-	SpanningTopology & topo_up,   // topology of upstream pose
-	SpanningTopology & topo_down  // topology of downstream pose
+	core::conformation::membrane::SpanningTopology const & topo,  // topology to split
+	core::pose::Pose & pose_up,      // upstream partner after pose splitting
+	core::pose::Pose & pose_down,     // downstream partner after pose splitting
+	core::conformation::membrane::SpanningTopology & topo_up,   // topology of upstream pose
+	core::conformation::membrane::SpanningTopology & topo_down  // topology of downstream pose
 ) {
 	// can't split pose by membrane jump, partition_pose_by_jump function will fail
 	if ( jumpnum == static_cast< core::Size > ( pose.conformation().membrane_info()->membrane_jump() ) ) {
@@ -1300,11 +1382,11 @@ void split_topology_by_jump(
 /// BEWARE: this does not work for splitting topology by spans! It only works
 /// chainwise
 void split_topology_by_jump_noshift(
-	pose::Pose const & pose,  // full pose
+	core::pose::Pose const & pose,  // full pose
 	core::Size const jumpnum,    // jump number to split on
-	SpanningTopologyOP topo, // topology to split
-	SpanningTopologyOP topo_up,  // topology of upstream pose
-	SpanningTopologyOP topo_down // topology of downstream pose
+	core::conformation::membrane::SpanningTopologyOP topo, // topology to split
+	core::conformation::membrane::SpanningTopologyOP topo_up,  // topology of upstream pose
+	core::conformation::membrane::SpanningTopologyOP topo_down // topology of downstream pose
 ) {
 	// can't split pose by membrane jump, partition_pose_by_jump function will fail
 	if ( jumpnum == static_cast< core::Size > ( pose.conformation().membrane_info()->membrane_jump() ) ) {
@@ -1342,7 +1424,13 @@ void split_topology_by_jump_noshift(
 
 /// @brief Split topology by chain
 /// @details Split topology by chain and give vector of topology objects
-utility::vector1< SpanningTopologyOP > split_topology_by_chain_noshift( pose::Pose const & pose, SpanningTopologyOP const topo ) {
+utility::vector1< core::conformation::membrane::SpanningTopologyOP > 
+split_topology_by_chain_noshift( 
+	core::pose::Pose const & pose, 
+	core::conformation::membrane::SpanningTopologyOP const topo 
+) {
+
+	using namespace core::conformation::membrane; 
 
 	// initialize variables
 	utility::vector1< SpanningTopologyOP > topos;
@@ -1390,7 +1478,9 @@ utility::vector1< SpanningTopologyOP > split_topology_by_chain_noshift( pose::Po
 /// accross membrane framework movers that use the same tricks for vectors.
 /// Takes two Vector references and a Tag&
 void
-read_center_normal_from_tag( Vector & center, Vector & normal, utility::tag::TagCOP tag ) {
+read_center_normal_from_tag( core::Vector & center, core::Vector & normal, utility::tag::TagCOP tag ) {
+
+	using namespace core; 
 
 	// Read in membrane center & normal
 	if ( tag->hasOption( "center" ) ) {
@@ -1425,7 +1515,7 @@ read_center_normal_from_tag( Vector & center, Vector & normal, utility::tag::Tag
 /// from mp:setup:center and mp:setup:normal. Intended to reduce IO code duplication
 /// in membrane framework movers.
 void
-read_center_normal_from_cmd( Vector & center, Vector & normal ) {
+read_center_normal_from_cmd( core::Vector & center, core::Vector & normal ) {
 
 	using namespace basic::options;
 

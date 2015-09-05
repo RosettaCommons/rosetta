@@ -36,9 +36,6 @@ namespace protocols {
 namespace relax {
 namespace membrane {
 
-using namespace core::pose;
-using namespace core::scoring;
-
 class MPFastRelaxMover : public protocols::moves::Mover {
 
 public:
@@ -54,7 +51,7 @@ public:
 
 	/// @brief Allow the user to set a custom sfxn from
 	/// the PyRosetta Interface
-	MPFastRelaxMover( ScoreFunctionOP sfxn );
+	MPFastRelaxMover( core::scoring::ScoreFunctionOP sfxn );
 
 	/// @brief Destructor
 	virtual ~MPFastRelaxMover();
@@ -64,11 +61,11 @@ public:
 	/// is anchored at the center of mass of the chain. Also recreates
 	/// other jumps in the protein
 	void
-	setup_relax_foldtree( Pose & pose );
+	setup_relax_foldtree( core::pose::Pose & pose );
 
 	/// @brief Show protocol settings
 	/// @details Show the current setup of this fast relax mover
-	void show_protocol( Pose & pose );
+	void show_protocol( core::pose::Pose & pose );
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
@@ -81,7 +78,8 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
-	void parse_my_tag(
+	void 
+	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
@@ -94,7 +92,7 @@ public:
 	/////////////////////
 
 	/// @brief Apply fast relax - do the actual protocol
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	/// @brief Get name (MPFastRelaxMover)
 	/// @details Get the name of this mover
@@ -106,7 +104,7 @@ private: // data
 	RelaxProtocolBaseOP relax_protocol_;
 
 	// Set custon sfxn
-	ScoreFunctionOP sfxn_;
+	core::scoring::ScoreFunctionOP sfxn_;
 
 }; // class MPFastRelaxMover
 

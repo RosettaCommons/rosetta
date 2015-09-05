@@ -58,6 +58,7 @@ public:
 	/// @brief Setup
 	void setUp()
 	{
+		using namespace core::pose; 
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane::geometry;
 		using namespace protocols::membrane;
@@ -77,7 +78,7 @@ public:
 		// Test angle between single helix and normal azis is 0 after transformation
 		// Case: TM domain of the M2 proton channel (single helix)
 
-		m2_pose_ = PoseOP( new Pose() );
+		m2_pose_ = core::pose::PoseOP( new Pose() );
 		core::import_pose::pose_from_pdb( *m2_pose_, "protocols/membrane/1mp6.pdb" );
 		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
 		add_memb1->apply( *m2_pose_ );

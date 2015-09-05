@@ -36,11 +36,8 @@
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace protocols::moves;
-
 /// @brief Membrane Position Translation-Rotation Mover
-class SetMembranePositionMover : public Mover {
+class SetMembranePositionMover : public protocols::moves::Mover {
 
 public:
 
@@ -54,7 +51,7 @@ public:
 	/// @brief Custom Constructor
 	/// @details Specify a new membrane center and normal
 	/// to move this position to
-	SetMembranePositionMover( Vector center, Vector normal );
+	SetMembranePositionMover( core::Vector center, core::Vector normal );
 
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
@@ -78,7 +75,7 @@ public:
 	/// @brief Apply Rotation/Translation to Membrane
 	/// @brief Translate the membrane position in this pose
 	/// to the new center position, and rotate to new normal
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
@@ -102,15 +99,15 @@ public:
 private:
 
 	// Store new normal/center pair
-	Vector center_;
-	Vector normal_;
+	core::Vector center_;
+	core::Vector normal_;
 
 };
 
 /// @brief Membrane Position Rotation Move
 /// @details Rotate the orientation of the membrane position to a new
 /// normal position. Applies rotation to jump
-class SetMembraneNormalMover : public Mover {
+class SetMembraneNormalMover : public protocols::moves::Mover {
 
 public:
 
@@ -124,7 +121,7 @@ public:
 	/// @brief Custom Constructor
 	/// @details Specify a new normal to rotate membranes to
 	/// to move this position to
-	SetMembraneNormalMover( Vector normal );
+	SetMembraneNormalMover( core::Vector normal );
 
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
@@ -147,7 +144,7 @@ public:
 
 	/// @brief Apply Rotation to Membrane
 	/// @brief Rotate the membrane to the new normal position
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
@@ -171,13 +168,13 @@ public:
 private:
 
 	// Store new normal
-	Vector normal_;
+	core::Vector normal_;
 
 };
 
 /// @brief Membrane Position Translation Move
 /// @details Translate the center of the membrane stub ot the specified position
-class SetMembraneCenterMover : public Mover {
+class SetMembraneCenterMover : public protocols::moves::Mover {
 
 public:
 
@@ -190,7 +187,7 @@ public:
 
 	/// @brief Custom Constructor
 	/// @details Specify a new center position to translate this stub to
-	SetMembraneCenterMover( Vector center );
+	SetMembraneCenterMover( core::Vector center );
 
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
@@ -213,7 +210,7 @@ public:
 
 	/// @brief Apply Translation to membrane position
 	/// @brief Translate membrane position to new center
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	///////////////////////////////
 	/// Rosetta Scripts Methods ///
@@ -237,7 +234,7 @@ public:
 private:
 
 	// Store new center
-	Vector center_;
+	core::Vector center_;
 
 };
 

@@ -72,11 +72,6 @@ static basic::Tracer TR( "protocols.membrane.MPQuickRelaxMover" );
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace protocols::membrane;
-using namespace core::kinematics;
-
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -85,7 +80,7 @@ using namespace core::kinematics;
 /// @details Defaults: dih angle_max = 1, nmoves = nres, movemap = bb and all chi
 MPQuickRelaxMover::MPQuickRelaxMover() :
 	protocols::moves::Mover(),
-	movemap_( new MoveMap() )
+	movemap_( new core::kinematics::MoveMap() )
 {
 	set_defaults();
 	register_options();
@@ -93,9 +88,9 @@ MPQuickRelaxMover::MPQuickRelaxMover() :
 }
 
 /// @brief Custom Constructor
-MPQuickRelaxMover::MPQuickRelaxMover( Real angle_max, std::string nmoves ) :
+MPQuickRelaxMover::MPQuickRelaxMover( core::Real angle_max, std::string nmoves ) :
 	protocols::moves::Mover(),
-	movemap_( new MoveMap() )
+	movemap_( new core::kinematics::MoveMap() )
 {
 	set_defaults();
 	register_options();
@@ -106,9 +101,12 @@ MPQuickRelaxMover::MPQuickRelaxMover( Real angle_max, std::string nmoves ) :
 }
 
 /// @brief Custom constructor
-MPQuickRelaxMover::MPQuickRelaxMover( Real angle_max, std::string nmoves, MoveMapOP movemap ) :
+MPQuickRelaxMover::MPQuickRelaxMover( 
+	core::Real angle_max, 
+	std::string nmoves, 
+	core::kinematics::MoveMapOP movemap ) :
 	protocols::moves::Mover(),
-	movemap_( new MoveMap() )
+	movemap_( new core::kinematics::MoveMap() )
 {
 	set_defaults();
 	register_options();
@@ -212,7 +210,7 @@ MPQuickRelaxMover::get_name() const {
 
 /// @brief Run a quick relax on a membrane protein
 /// @details Requires AddMembraneMover to be run beforehand
-void MPQuickRelaxMover::apply( Pose & pose ) {
+void MPQuickRelaxMover::apply( core::pose::Pose & pose ) {
 
 	using namespace protocols::membrane;
 	using namespace protocols::simple_moves;
@@ -220,6 +218,7 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 	using namespace core::pack::task;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
+	using namespace core::kinematics; 
 
 	TR << "Running MPQuickRelax protocol..." << std::endl;
 
@@ -235,7 +234,7 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 	core::kinematics::FoldTree orig_ft = pose.fold_tree();
 
 	// get number of residues and number of moves
-	Size nres( nres_protein( pose ) );
+	core::Size nres( nres_protein( pose ) );
 	if ( moves_ == "nres" ) {
 		nmoves_ = nres;
 	} else {
@@ -271,7 +270,7 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 	TR << "Choosing starting position: shake up the protein - Waka waka ..." << std::endl;
 
 	// set small and shearmover
-	Real kT = 1.0;
+	core::Real kT = 1.0;
 	SmallMoverOP small( new SmallMover( movemap_, kT, nmoves_ ) );
 	small->angle_max( angle_max_ );
 	small->apply( pose );
@@ -303,12 +302,12 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 
 	// do this for a certain number of iterations
 	// since both the packer and especially minimization takes a while, just do one for now
-	Size breakpoint( 0 );
+	core::Size breakpoint( 0 );
 
 	// score the pose
-	Real tot_score = ( *sfxn_ )( pose );
-	Real fa_rep = pose.energies().total_energies()[ scoring::fa_rep ];
-	Real fa_atr = pose.energies().total_energies()[ scoring::fa_atr ];
+	core::Real tot_score = ( *sfxn_ )( pose );
+	core::Real fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
+	core::Real fa_atr = pose.energies().total_energies()[ core::scoring::fa_atr ];
 
 	// if fa_rep exceeds threshold (number of residues of the protein, as empirically determined)
 	// or score is greater than 0, keep continuing
@@ -365,7 +364,7 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 
 		// score the pose
 		tot_score = ( *sfxn_ )( pose );
-		fa_rep = pose.energies().total_energies()[ scoring::fa_rep ];
+		fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
 		pose.energies().show_total_headers( TR );
 		TR << std::endl;
 		pose.energies().show_totals( TR );
@@ -378,7 +377,7 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 	// reset the weight in the scorefunction to what it was before (for mpsmooth)
 	sfxn_->set_weight( core::scoring::fa_rep, 0.44);
 	tot_score = ( *sfxn_ )( pose );
-	fa_rep = pose.energies().total_energies()[ scoring::fa_rep ];
+	fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
 	TR << "Final score: " << tot_score << " final fa_rep: " << fa_rep << std::endl;
 
 	// superimpose poses with native

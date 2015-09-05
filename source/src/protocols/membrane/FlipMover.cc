@@ -60,11 +60,6 @@ static basic::Tracer TR( "protocols.membrane.FlipMover" );
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-using namespace protocols::moves;
-
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -80,7 +75,7 @@ FlipMover::FlipMover() : protocols::moves::Mover()
 
 /// @brief Custom Constructor
 /// @details User can specify jump number
-FlipMover::FlipMover( Size jump_num )
+FlipMover::FlipMover( core::Size jump_num )
 {
 	set_defaults();
 	register_options();
@@ -90,7 +85,7 @@ FlipMover::FlipMover( Size jump_num )
 
 /// @brief Custom constructor
 /// @details User can specify jump number and rotation axis
-FlipMover::FlipMover( Size jump_num, Vector axis )
+FlipMover::FlipMover( core::Size jump_num, core::Vector axis )
 {
 	set_defaults();
 	register_options();
@@ -101,7 +96,7 @@ FlipMover::FlipMover( Size jump_num, Vector axis )
 
 /// @brief Custom constructor
 /// @details User can specify jump number and angle
-FlipMover::FlipMover( Size jump_num, Real angle )
+FlipMover::FlipMover( core::Size jump_num, core::Real angle )
 {
 	set_defaults();
 	register_options();
@@ -112,7 +107,7 @@ FlipMover::FlipMover( Size jump_num, Real angle )
 
 /// @brief Custom constructor
 /// @details User can specify jump number and rotation axis
-FlipMover::FlipMover( Size jump_num, Vector axis, Real angle )
+FlipMover::FlipMover( core::Size jump_num, core::Vector axis, core::Real angle )
 {
 	set_defaults();
 	register_options();
@@ -207,9 +202,10 @@ FlipMover::get_name() const {
 }
 
 /// @brief Flip the downstream partner in the membrane
-void FlipMover::apply( Pose & pose ) {
+void FlipMover::apply( core::pose::Pose & pose ) {
 
 	using namespace numeric;
+	using namespace core::pose; 
 	using namespace core::conformation::membrane;
 	using namespace protocols::rigid;
 	using namespace protocols::membrane::geometry;
@@ -267,7 +263,7 @@ void FlipMover::apply( Pose & pose ) {
 		}
 
 		// rotation center is embedding center of downstream pose
-		Vector rot_center = emb_pose_down->center();
+		core::Vector rot_center = emb_pose_down->center();
 
 		TR << "jump_num_: " << jump_num_ << std::endl;
 		TR << "axis_: " << axis_.to_string() << std::endl;
@@ -291,7 +287,7 @@ void FlipMover::apply( Pose & pose ) {
 
 		// axis is axis between membrane center and pose embedding center
 		EmbeddingDefOP embedding( compute_structure_based_embedding( pose ) );
-		Vector rot_center( embedding->center() );
+		core::Vector rot_center( embedding->center() );
 
 		TR << "jump_num_: " << jump_num_ << std::endl;
 		TR << "axis_: " << axis_.to_string() << std::endl;
@@ -318,7 +314,7 @@ void FlipMover::set_random_membrane_flip_angle() {
 
 /// @brief Set angle range
 /// @details Maximum angle deviation from 180 degrees
-void FlipMover::set_range( Real max_angle_dev ) {
+void FlipMover::set_range( core::Real max_angle_dev ) {
 	max_angle_dev_ = max_angle_dev;
 }
 

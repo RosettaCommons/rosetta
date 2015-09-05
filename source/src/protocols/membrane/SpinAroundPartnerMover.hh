@@ -61,17 +61,18 @@ public:
 
 	/// @brief Custom Constructor
 	/// @details User can specify jump number
-	SpinAroundPartnerMover( Size jump_num );
+	SpinAroundPartnerMover( core::Size jump_num );
 
 	/// @brief Custom constructor
 	/// @details User can specify jump number and sampling range
-	SpinAroundPartnerMover( Size jump_num, Size range );
+	SpinAroundPartnerMover( core::Size jump_num, core::Size range );
 
 	/// @brief Copy Constructor
 	SpinAroundPartnerMover( SpinAroundPartnerMover const & src );
 
 	/// @brief Assignment Operator
-	SpinAroundPartnerMover & operator = ( SpinAroundPartnerMover const & src );
+	SpinAroundPartnerMover & 
+	operator = ( SpinAroundPartnerMover const & src );
 
 	/// @brief Destructor
 	virtual ~SpinAroundPartnerMover();
@@ -103,16 +104,16 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Flip the downstream partner in the membrane
-	virtual void apply( Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	/// @brief Set random range
 	void random_range( bool yesno );
 
 	/// @brief Set x position
-	void set_x( Real x );
+	void set_x( core::Real x );
 
 	/// @brief Set y position
-	void set_y( Real y );
+	void set_y( core::Real y );
 
 private: // methods
 
@@ -129,17 +130,17 @@ private: // methods
 private: // data
 
 	/// @brief Jump number
-	Size jump_;
+	core::Size jump_;
 
 	// @brief Random range
 	bool rand_range_;
 
 	/// @brief Sampling range
-	Size range_;
+	core::Size range_;
 
 	/// @brief Set x and y position
-	Real x_;
-	Real y_;
+	core::Real x_;
+	core::Real y_;
 
 };
 

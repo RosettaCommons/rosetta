@@ -65,11 +65,6 @@ static basic::Tracer TR( "protocols.membrane.TranslationRotationMover" );
 namespace protocols {
 namespace membrane {
 
-using namespace core;
-using namespace core::pose;
-using namespace core::conformation::membrane;
-using namespace protocols::moves;
-
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -91,7 +86,7 @@ TranslationMover::TranslationMover() :
 /// @brief Custom Constructor
 /// @details User can specify a translation vector
 TranslationMover::TranslationMover(
-	Vector translation_vector
+	core::Vector translation_vector
 ) :
 	protocols::moves::Mover(),
 	translation_vector_( translation_vector ),
@@ -104,8 +99,8 @@ TranslationMover::TranslationMover(
 /// @brief Custom Constructor
 /// @details User can specify a translation vector and jumpnum
 TranslationMover::TranslationMover(
-	Vector translation_vector,
-	Size jumpnum
+	core::Vector translation_vector,
+	core::Size jumpnum
 ) :
 	protocols::moves::Mover(),
 	translation_vector_( translation_vector ),
@@ -198,8 +193,9 @@ TranslationMover::get_name() const {
 
 /// @brief Translate the pose along the defined vector
 void
-TranslationMover::apply( Pose & pose ) {
+TranslationMover::apply( core::pose::Pose & pose ) {
 
+	using namespace core; 
 	using namespace core::conformation::membrane;
 	using namespace protocols::membrane::geometry;
 
@@ -227,7 +223,7 @@ TranslationMover::apply( Pose & pose ) {
 		core::kinematics::Stub up_stub = pose.conformation().upstream_jump_stub( jumpnum_ );
 
 		// get length of vector
-		Real length = translation_vector_.length();
+		core::Real length = translation_vector_.length();
 
 		// create jump, translate it along axis
 		core::kinematics::Jump flexible_jump = pose.jump( jumpnum_ );
@@ -299,9 +295,9 @@ RotationMover::RotationMover() :
 /// @details User can specify an old normal, a new normal, and a new center
 ///   around which the rotation takes place
 RotationMover::RotationMover(
-	Vector old_normal,
-	Vector new_normal,
-	Vector rot_center
+	core::Vector old_normal,
+	core::Vector new_normal,
+	core::Vector rot_center
 ) :
 	protocols::moves::Mover(),
 	old_normal_( old_normal ),
@@ -318,10 +314,10 @@ RotationMover::RotationMover(
 ///   around which the rotation takes place on this particular jump;
 ///   operation happens on the downstream stub
 RotationMover::RotationMover(
-	Vector old_normal,
-	Vector new_normal,
-	Vector rot_center,
-	Size jumpnum
+	core::Vector old_normal,
+	core::Vector new_normal,
+	core::Vector rot_center,
+	core::Size jumpnum
 ) :
 	protocols::moves::Mover(),
 	old_normal_( old_normal ),
@@ -439,12 +435,12 @@ RotationMover::apply( Pose & pose ) {
 		// get upstream stub ( =MEM )
 		core::kinematics::Stub up_stub = pose.conformation().upstream_jump_stub( jumpnum_ );
 
-		// get rotation axis = perpendicular of two normals
-		// order of vectors is crucial!
-		Vector rot_axis = cross( old_normal_, new_normal_ );
+	// get rotation axis = perpendicular of two normals
+	// order of vectors is crucial!
+	core::Vector rot_axis = cross( old_normal_, new_normal_ );
 
-		// get rotation angle
-		Real angle = numeric::conversions::degrees( angle_of( new_normal_, old_normal_ ) );
+	// get rotation angle
+	core::Real angle = numeric::conversions::degrees( angle_of( new_normal_, old_normal_ ) );
 
 		// do the actual rotation
 		rigid::RigidBodyDeterministicSpinMover spinmover = rigid::RigidBodyDeterministicSpinMover( jumpnum_, rot_axis, rot_center_, angle );
@@ -506,10 +502,10 @@ TranslationRotationMover::TranslationRotationMover() :
 /// @brief Custom Constructor
 /// @details User can specify a TranslationRotation vector
 TranslationRotationMover::TranslationRotationMover(
-	Vector old_center,
-	Vector old_normal,
-	Vector new_center,
-	Vector new_normal
+	core::Vector old_center,
+	core::Vector old_normal,
+	core::Vector new_center,
+	core::Vector new_normal
 ) :
 	protocols::moves::Mover(),
 	old_center_( old_center ),
@@ -525,11 +521,11 @@ TranslationRotationMover::TranslationRotationMover(
 /// @brief Custom Constructor
 /// @details User can specify a TranslationRotation vector and jumpnum
 TranslationRotationMover::TranslationRotationMover(
-	Vector old_center,
-	Vector old_normal,
-	Vector new_center,
-	Vector new_normal,
-	Size jumpnum
+	core::Vector old_center,
+	core::Vector old_normal,
+	core::Vector new_center,
+	core::Vector new_normal,
+	core::Size jumpnum
 ) :
 	protocols::moves::Mover(),
 	old_center_( old_center ),
@@ -641,7 +637,7 @@ TranslationRotationMover::apply( Pose & pose ) {
 	}
 
 	// translate pose
-	Vector translation_vector = new_center_ - old_center_;
+	core::Vector translation_vector = new_center_ - old_center_;
 	if ( translation_vector.length() != 0 ) {
 		TranslationMoverOP translate( new TranslationMover( translation_vector, jumpnum_ ) );
 		translate->apply( pose );
