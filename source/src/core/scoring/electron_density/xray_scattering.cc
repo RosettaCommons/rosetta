@@ -63,14 +63,16 @@ OneGaussianScattering get_A( std::string elt ) {
 			elt_db["C"]  = OneGaussianScattering(  6.00000, 7.10668);
 			elt_db["N"]  = OneGaussianScattering(  5.28737, 6.03448);
 			elt_db["O"]  = OneGaussianScattering(  4.74213, 5.17616);
-			elt_db["Na"] = OneGaussianScattering( 11.42607, 6.58734);
-			elt_db["Mg"] = OneGaussianScattering( 12.45197, 7.34364);
+			elt_db["NA"] = OneGaussianScattering( 11.42607, 6.58734);
+			elt_db["MG"] = OneGaussianScattering( 12.45197, 7.34364);
 			elt_db["P"]  = OneGaussianScattering( 13.12395, 7.48955);
 			elt_db["S"]  = OneGaussianScattering( 12.34197, 7.05366);
 			elt_db["K"]  = OneGaussianScattering( 21.48425, 7.09360);
-			elt_db["Ca"] = OneGaussianScattering( 23.70586, 7.47775);
-			elt_db["Fe"] = OneGaussianScattering( 17.13431, 5.96932);
-			elt_db["Ni"] = OneGaussianScattering( 15.70905, 5.56662);
+			elt_db["CA"] = OneGaussianScattering( 23.70586, 7.47775);
+			elt_db["FE"] = OneGaussianScattering( 17.13431, 5.96932);
+			elt_db["CO"] = OneGaussianScattering( 15.70905, 5.56662);	// copied from NI
+			elt_db["NI"] = OneGaussianScattering( 15.70905, 5.56662);	
+			elt_db["ZN"] = OneGaussianScattering( 15.70905, 5.56662);	// copied from NI
 			elt_db["X"]  = OneGaussianScattering(
 				static_cast<int>(
 				6.0*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()),
@@ -80,14 +82,16 @@ OneGaussianScattering get_A( std::string elt ) {
 			elt_db["C"]  = OneGaussianScattering(  6.0, 4.88398);
 			elt_db["N"]  = OneGaussianScattering(  7.0, 5.08400);
 			elt_db["O"]  = OneGaussianScattering(  8.0, 4.92866);
-			elt_db["Na"] = OneGaussianScattering( 11.0, 3.53009);
-			elt_db["Mg"] = OneGaussianScattering( 12.0, 3.11369);
+			elt_db["NA"] = OneGaussianScattering( 11.0, 3.53009);
+			elt_db["MG"] = OneGaussianScattering( 12.0, 3.11369);
 			elt_db["P"]  = OneGaussianScattering( 15.0, 2.89121);
 			elt_db["S"]  = OneGaussianScattering( 16.0, 3.03431);
 			elt_db["K"]  = OneGaussianScattering( 19.0, 3.32509);
-			elt_db["Ca"] = OneGaussianScattering( 20.0, 3.25370);
-			elt_db["Fe"] = OneGaussianScattering( 26.0, 3.10464);
-			elt_db["Ni"] = OneGaussianScattering( 28.0, 2.95223);
+			elt_db["CA"] = OneGaussianScattering( 20.0, 3.25370);
+			elt_db["FE"] = OneGaussianScattering( 26.0, 3.10464);
+			elt_db["CO"] = OneGaussianScattering( 28.0, 2.95223); // copied from NI
+			elt_db["NI"] = OneGaussianScattering( 28.0, 2.95223);
+			elt_db["ZN"] = OneGaussianScattering( 28.0, 2.95223); // copied from NI
 			elt_db["X"]  = OneGaussianScattering(
 				static_cast<int>(
 				6.0*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()),
