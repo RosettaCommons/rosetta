@@ -1741,11 +1741,8 @@ build_pose_as_is1(
 	//initialized causes integration test changes
 	core::pose::initialize_disulfide_bonds(pose);
 
-	//kdrew: if detect_oops flag is set, initialize oops
-	// This option should probably be moved to FileDataOptions. ~Labonte
-	if ( basic::options::option[ basic::options::OptionKeys::in::detect_oops ].user() ) {
-		core::pose::ncbb::initialize_oops(pose);
-	}
+	// AMW: initialize triazolamers, oops, and hbs by default.
+	core::pose::ncbb::initialize_ncbbs( pose );
 
 	if ( pose.n_residue()>1 ) { // 1 residue fragments for ligand design.
 		pose.conformation().detect_pseudobonds();

@@ -115,6 +115,7 @@ void A3BHbsPatcher::apply( core::pose::Pose & pose )
 		//*new_type = rsd;
 		conformation::Residue replace_res_pre( *rsd, true );
 		replace_res_pre.set_all_chi(pose.residue(hbs_pre_pos_).chi());
+		replace_res_pre.residue_connection_partner( 2, hbs_post_pos_, 3 );
 		//replace_res_pre.mainchain_torsions(pose.residue(hbs_pre_pos_).mainchain_torsions());
 		//replace_res_pre.update_residue_connection_mapping();
 		pose.replace_residue( hbs_pre_pos_, replace_res_pre, true );
@@ -144,6 +145,7 @@ void A3BHbsPatcher::apply( core::pose::Pose & pose )
 		//*new_type = rsd;
 		conformation::Residue replace_res_post( *rsd, true );
 		replace_res_post.set_all_chi(pose.residue(hbs_post_pos_).chi());
+		replace_res_post.residue_connection_partner( 3, hbs_pre_pos_, 2 );
 		//replace_res_pre.update_residue_connection_mapping();
 
 		//replace_res_pre.mainchain_torsions(pose.residue(hbs_pre_pos_).mainchain_torsions());

@@ -629,9 +629,11 @@ Residue::orient_onto_residue_peptoid (
 	// AMW: I am recombining these conditionals in a relatively byzantine way to attempt to maintain their order
 	// I don't know the last time they should have worked, but various checks in here break in the current state
 	// first residue of chain
+	//TR << " orienting " << src.type().name() << " onto " << type().name() << std::endl;
 	if ( src.type().is_lower_terminus() || src.has_variant_type( chemical::NTERM_CONNECT ) ) {
 		//std::cout << "DEBUG LT" << std::endl;
 		// NtermConnect (cyclic)
+		//std::cout << "Num chains is " << conformation.num_chains() << " src.chain() is " << src.chain() << " conformation.size() is " << conformation.size() << " this chain end is " << conformation.chain_end( src.chain() )  << std::endl;
 		Residue const cterm_residue = ( conformation.num_chains() == 2 || src.chain() == conformation.num_chains() - 1 ) ?
 			conformation.residue( conformation.size() ) :
 			conformation.residue( conformation.chain_end( src.chain() ) );
@@ -653,7 +655,8 @@ Residue::orient_onto_residue_peptoid (
 			//AtomICoor icoor ( (*this).type().lower_connect().icoor() );
 			// Put it where the lower connect WOULD be put...
 			// we can't actually summon lower connect because it's a lower terminal type!
-			nbr1_xyz = stub.spherical( 167.209, 52.954, 1.367000 );
+			// AMW: nonsense! we have cterm_residue for that!
+			nbr1_xyz = cterm_residue.atom( cterm_residue.atom_index( bb_co ) ).xyz(); //stub.spherical( 167.209, 52.954, 1.367000 );
 
 			// AcetylatedPeptoidNterm
 		} else if ( src.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
@@ -681,7 +684,7 @@ Residue::orient_onto_residue_peptoid (
 			nbr2_xyz = atom( atom_index( bb_ca ) ).xyz();
 			src_nbr2_xyz = src.atom( src.atom_index( bb_ca ) ).xyz();
 
-			// nbr1: peptoid CO, src CO ( CO is the atom that prepends the N in the acetylated varient type)
+			// nbr1: peptoid CA1, src CA1
 			nbr1_xyz = atom( atom_index( sc_ca ) ).xyz();
 			src_nbr1_xyz = src.atom( src.atom_index( sc_ca ) ).xyz();
 

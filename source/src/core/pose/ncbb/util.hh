@@ -17,6 +17,7 @@
 
 // Unit header
 #include <core/pose/Pose.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -34,8 +35,10 @@ namespace ncbb {
 // @brief initializes ncbbs in pose, returns residue numbers of oops
 utility::vector1< core::Size > initialize_ncbbs( Pose & pose);
 // @brief initializes oops in pose, returns residue numbers of oops
-utility::vector1< core::Size > initialize_oops( Pose & pose);
+utility::vector1< core::Size > initialize_oops( Pose & pose); 
 utility::vector1< core::Size > initialize_hbs( Pose & pose);
+/// @brief  Add constraints to keep triazole closed
+void add_triazole_constraint( core::pose::Pose & pose, core::Size triazole_seq_position );
 /// @brief  Add constraints to keep oligooxopiperazine (oop) ring closed, default values (distance = 1.5, std = 0.05)
 void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position );
 /// @brief  Add constraints to keep oligooxopiperazine (oop) ring closed
@@ -48,6 +51,9 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_seq_position, c
 void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size oop_seq_position );
 /// @brief  Add constraints to keep a3b hydrogen bond surrogate (hbs) ring closed
 void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size hbs_seq_position, core::Real distance, core::Real std );
+	
+void constrain_ring_atoms( core::pose::Pose & pose, utility::vector1< core::id::AtomID > ids );
+
 
 }  // namespace ncbb
 }  // namespace pose

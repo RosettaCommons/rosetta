@@ -23,6 +23,8 @@ NOT VARIANT_TYPE CUTPOINT_UPPER # problems with deleting H because CUTPOINT_UPPE
 NOT VARIANT_TYPE N_ACETYLATION 
 NOT VARIANT_TYPE METHYLATED_NTERM_VARIANT  # 100% possible but later work.
 NOT VARIANT_TYPE ACETYLATED_NTERMINUS_VARIANT
+NOT VARIANT_TYPE HYDROXYLATION1 # PRO variants that resist selection by NAME3
+NOT VARIANT_TYPE HYDROXYLATION2 # PRO variants that resist selection by NAME3
 NOT AA PRO # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
 NOT NAME3 DPR # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
 NOT NAME3 HPR # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
@@ -65,7 +67,8 @@ SET_ICOOR CYP   41.5503   66.5161   1.4592  N  CA  C
 SET_ICOOR 1HYP  57.5499	69.9817  0.9764  CYP   N  CA
 #kdrew: set 2nd H relative to 1st H
 SET_ICOOR 2HYP  119.1912	70.066 0.9903  CYP   N  1HYP
-SET_ICOOR VZP  -120.7064	70.5547		1.50	CYP N 1HYP #180 - 109.4453
+#SET_ICOOR VZP  -120.7064	70.5547		1.50	CYP N 1HYP #180 - 109.4453
+SET_ICOOR VZP  -120.7064	70.5547		1.518685	CYP N 1HYP #180 - 109.4453
 #kdrew: setup connection to oop_pre
 ADD_CONNECT CYP ICOOR  41.5503   66.5161   1.4592  N  CA  C
 

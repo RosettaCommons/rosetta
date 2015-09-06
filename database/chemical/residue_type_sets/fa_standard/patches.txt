@@ -175,5 +175,8 @@ patches/a3b_hbs_post.txt
 patches/oop_pre.txt
 patches/oop_post.txt
 
+patches/triazolamerN.txt
+patches/triazolamerC.txt
+
 ## repulsive backbone
 patches/ReplsBB.txt

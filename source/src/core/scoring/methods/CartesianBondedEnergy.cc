@@ -2197,7 +2197,8 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
 		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
 		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
-		debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+		// amw: for triazolamers let's try just that
+		//debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd1params.upper_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
@@ -2313,7 +2314,8 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
 		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
 		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
-		debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+		// amw: for triazolamers let's try just that
+		//debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd2params.lower_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
@@ -2433,7 +2435,8 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
 		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
 		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
-		debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+		// amw: for triazolamers let's try just that
+		//debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		/////////////
 		/// finally, compute the bondlength across the interface
@@ -2943,7 +2946,8 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
 		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
 		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
-		debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+		// amw: for triazolamers let's try just that
+		//debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd1params.upper_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
@@ -3065,7 +3069,8 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
 		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
 		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
-		debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+		// amw: for triazolamers let's try just that
+		//debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd2params.lower_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
@@ -3183,7 +3188,8 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
 		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
 		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
-		debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
+		// amw: for triazolamers let's try just that
+		//debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		// lookup Kd and d0
 		CartBondedParametersCOP len_params = rsd2params.cprev_n_bond_length_params();

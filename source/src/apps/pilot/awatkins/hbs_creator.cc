@@ -247,7 +247,14 @@ HbsCreatorMover::apply(
 
 	// presently the final residue in the pose is the terminal residue of the hbs
 	// replace with terminal variant
-	conformation::Residue term( restype_set->get_residue_type_with_variant_added(pose.residue(pose.total_residue()).type(), chemical::METHYLATED_CTERMINUS_VARIANT), true );
+	// AMW: This means that you have to clear other possible Cterm variant assignments
+	// from this residue.
+	conformation::Residue term( restype_set->get_residue_type_with_variant_added(
+			restype_set->get_residue_type_with_variant_removed(
+					pose.residue(pose.total_residue()).type(),
+					chemical::UPPER_TERMINUS_VARIANT ),
+			chemical::METHYLATED_CTERMINUS_VARIANT), true );
+	
 	term.set_all_chi(pose.residue(pose.total_residue()).chi());
 	//replace_res_post.mainchain_torsions(pose.residue(oop_post_pos_).mainchain_torsions());
 
@@ -290,11 +297,11 @@ HbsCreatorMover::apply(
 
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 			if ( pdb_info->chain(i) == hbs_chain ) { //i != ( ( unsigned ) ( option[ hbs_creator::hbs_final_res ].value() ) ) ) {
-				//if ( pose.residue_type( i ).is_l_aa() ) {
-				TR << "setting small movable resid: "<< i<<std::endl;
-				//kdrew: commenting out because small mover fails randomly
-				pert_pep_mm->set_bb( i );
-				//}
+				if ( pose.residue_type( i ).is_l_aa() ) {
+					TR << "setting small movable resid: "<< i<<std::endl;
+					//kdrew: commenting out because small mover fails randomly
+					pert_pep_mm->set_bb( i );
+				}
 			}
 		}
 
@@ -353,17 +360,25 @@ HbsCreatorMover::apply(
 
 		// create move map for minimization
 		kinematics::MoveMapOP mm( new kinematics::MoveMap() );
-		mm->set_bb( true );
 		mm->set_chi( true );
 		//mm->set_jump( 1, true );
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( pose.pdb_info()->chain(i) == hbs_chain ) {
+				TR << "Can move " << i << " bb " << std::endl;
+				mm->set_bb( i, true);
+			} else {
+				mm->set_bb( i, false );
+			}
+		}
 
+		TR << *mm << std::endl;
 		score_fxn->set_weight( atom_pair_constraint, 0.5 );
 		score_fxn->set_weight( dihedral_constraint, 0.5 );
 		score_fxn->set_weight( angle_constraint, 0.5 );
 
 		// create minimization mover
 		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
-		minM->cartesian( true );
+		//minM->cartesian( true );
 		minM->apply( pose );
 
 		score_fxn->set_weight( atom_pair_constraint, 1 );

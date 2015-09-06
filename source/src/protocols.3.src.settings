@@ -713,6 +713,10 @@ sources = {
 		"SymShakeStructureMover",
 		"TaskAwareSymMinMover",
 	],
+	"protocols/simple_moves/triazolamer": [
+		"TriazolamerMover",
+		"TriazolamerRandomSmallMover",
+	],
 	"protocols/ss_prediction/":[
 		"SS_predictor",
 	],

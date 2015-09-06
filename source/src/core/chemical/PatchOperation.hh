@@ -715,7 +715,23 @@ public:
 private:
 	std::string atom_name_;
 };
+				 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief replace a mainchain atom
+class ReplaceMainchainAtom : public PatchOperation {
+public:
+	/// @brief constructor
+	ReplaceMainchainAtom( std::string const & target, std::string const & new_atom );
 
+	/// @brief set an atom to be the last mainchain atom
+	bool
+	apply( ResidueType & rsd ) const;
+
+private:
+	std::string target_;
+	std::string new_atom_;
+};
+				 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief set the residue neighbor atom
 class SetNbrAtom : public PatchOperation {

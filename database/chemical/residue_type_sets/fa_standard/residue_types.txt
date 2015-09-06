@@ -287,7 +287,7 @@ residue_types/peptoids/001.params
 #residue_types/peptoids/020.params
 #
 residue_types/peptoids/101.params
-#residue_types/peptoids/102.params
+residue_types/peptoids/102.params
 #residue_types/peptoids/103.params
 #residue_types/peptoids/104.params
 ##residue_types/peptoids/105.params	# MAJOR: Missing MM atom types for nitro group, chi3 is not a proton chi, and something ales is up with chi3
@@ -318,7 +318,7 @@ residue_types/peptoids/101.params
 #residue_types/peptoids/130.params
 ##residue_types/peptoids/131.params	# MAJOR: No MM atom type for ring nitrogen (but try toppar_all22_prot_pyridines.str or possibly NR2)
 #
-#residue_types/peptoids/201.params
+residue_types/peptoids/201.params
 #residue_types/peptoids/202.params
 #residue_types/peptoids/203.params
 #residue_types/peptoids/204.params
@@ -482,6 +482,12 @@ residue_types/lipids/sphingosine.params
 residue_types/lipids/linoleate.params
 ### Synthetic Adducts
 residue_types/lipids/ONonOMe.params
+
+## Terminal types
+residue_types/terminal/ACE.params
+residue_types/terminal/NME.params
+residue_types/terminal/BZO.params
+residue_types/terminal/BZA.params
 
 ## Extras
 residue_types/extra/C.params

@@ -209,7 +209,8 @@ HBS_PRE  # used for hydrogen bond surrogates
 HBS_POST  # used for hydrogen bond surrogates
 A3B_HBS_PRE  # used for a3b hydrogen bond surrogates
 A3B_HBS_POST  # used for a3b hydrogen bond surrogates
-
+TRIAZOLAMERN
+TRIAZOLAMERC
 
 # MISCELLANEOUS VARIANTS
 DISULFIDE

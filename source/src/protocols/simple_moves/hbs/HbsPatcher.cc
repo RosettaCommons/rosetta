@@ -160,10 +160,20 @@ void HbsPatcher::apply( core::pose::Pose & pose )
 			target_variants.push_back( "HBS_PRE" );
 			target_variants.push_back( "LOWER_TERMINUS_VARIANT" );
 		}
-
+		if ( pre_base_type.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT )) {
+			target_variants.erase( std::find( target_variants.begin(), target_variants.end(), "ACETYLATED_NTERMINUS_VARIANT" ) );
+		}
+		if ( pre_base_type.has_variant_type( chemical::METHYLATED_NTERM_VARIANT )) {
+			target_variants.erase( std::find( target_variants.begin(), target_variants.end(), "METHYLATED_NTERM_VARIANT" ) );
+		}
+		if ( pre_base_type.has_variant_type( chemical::N_ACETYLATION )) {
+			target_variants.erase( std::find( target_variants.begin(), target_variants.end(), "N_ACETYLATION" ) );
+		}
+		
 		ResidueTypeCOP rsd = ResidueTypeFinder( *restype_set ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
 		conformation::Residue replace_res_pre( *rsd, true );
 		replace_res_pre.set_all_chi(pose.residue(hbs_pre_pos_).chi());
+		replace_res_pre.residue_connection_partner( 2, hbs_post_pos_, 3 );
 		//replace_res_pre.mainchain_torsions(pose.residue(hbs_pre_pos_).mainchain_torsions());
 		//replace_res_pre.update_residue_connection_mapping();
 		pose.replace_residue( hbs_pre_pos_, replace_res_pre, true );
@@ -193,6 +203,7 @@ void HbsPatcher::apply( core::pose::Pose & pose )
 		//*new_type = rsd;
 		conformation::Residue replace_res_post( *rsd, true );
 		replace_res_post.set_all_chi(pose.residue(hbs_post_pos_).chi());
+		replace_res_post.residue_connection_partner( 3, hbs_pre_pos_, 2 );
 		//replace_res_pre.update_residue_connection_mapping();
 		//replace_res_pre.mainchain_torsions(pose.residue(hbs_pre_pos_).mainchain_torsions());
 

@@ -60,8 +60,9 @@ protocols::make_rot_lib::MakeRotLibJobInputter::MakeRotLibJobInputter() :
 	TR << "Instantiate MakeRotLibJobInputter" << std::endl;
 
 	// add ACE and NME residues even if they're not uncommented!
-	option[ in::file::extra_res_fa ].push_back( utility::file::FileName( std::string( "terminal/ACE.params" ) ) );
-	option[ in::file::extra_res_fa ].push_back( utility::file::FileName( std::string( "terminal/NME.params" ) ) );
+	// Don't do this! They are uncommented!!
+	//option[ in::file::extra_res_fa ].push_back( utility::file::FileName( std::string( "terminal/ACE.params" ) ) );
+	//option[ in::file::extra_res_fa ].push_back( utility::file::FileName( std::string( "terminal/NME.params" ) ) );
 
 	mrlod_ = MakeRotLibOptionsDataOP( new MakeRotLibOptionsData( option[ OptionKeys::make_rot_lib::options_file ].value() ) );
 }

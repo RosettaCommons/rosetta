@@ -435,7 +435,7 @@ void make_pose_from_sequence(
 				new_rsd->aa() == chemical::aa_vrt ||
 				new_rsd->aa() == chemical::aa_h2o ||
 				jump_to_next ) {
-			if ( ( new_rsd->aa() == chemical::aa_unk  && !new_rsd->is_polymer() ) || new_rsd->aa() == chemical::aa_vrt ) {
+			if ( ( new_rsd->aa() == chemical::aa_unk && !new_rsd->is_polymer() ) || new_rsd->aa() == chemical::aa_vrt ) {
 				//fpd tr.Warning << "found unknown aminoacid or X in sequence at position " << i <<  std::endl;
 				//fpd if ( i< ie ) {
 				//fpd  utility_exit_with_message( "found unknown aminoacid or X in sequence\n this leads to a seg-fault if we keep going...\n");

@@ -465,7 +465,7 @@ MMTorsionEnergy::eval_atom_derivative(
 		chemical::dihedral_atom_set const & ii_dihed( restype.dihedral( diheds[ ii ] ) );
 		debug_assert( ii_dihed.key1() == atomno || ii_dihed.key2() == atomno || ii_dihed.key3() == atomno  || ii_dihed.key4() == atomno );
 
-		//TR << "  1. Deriv for angle# " << angs[ ii ] << " between " << ii_bangle.key1() << " " << ii_bangle.key2()  << " " << ii_bangle.key3() << std::endl;
+		//TR << "  1. Deriv for dihed# " << diheds[ ii ] << " between " << restype.atom_name( ii_dihed.key1() ) << " " << restype.atom_name( ii_dihed.key2() )  << " " << restype.atom_name( ii_dihed.key3() ) << " " << restype.atom_name( ii_dihed.key4() ) << std::endl;
 
 		Size const mmat1 = restype.atom( ii_dihed.key1()).mm_atom_type_index();
 		Size const mmat2 = restype.atom( ii_dihed.key2()).mm_atom_type_index();
@@ -527,13 +527,17 @@ MMTorsionEnergy::eval_atom_derivative(
 
 			/// Find the neighbor residue and atom
 			Size const ii_neighb      = res.residue_connection_partner( ii_resconn );
+			
+			//TR << " conn is " << ii_resconn << " and neighb is " << ii_neighb << std::endl;
+			if ( ii_neighb == 0 ) continue;
+			
 			Size const neighb_resconn = res.residue_connection_conn_id( ii_resconn );
 			conformation::Residue const & neighb_res( pose.residue( ii_neighb ));
 			chemical::ResidueType const & neighb_restype( pose.residue_type( ii_neighb ) );
 			Size const neighb_atom    = neighb_restype.residue_connection( neighb_resconn ).atomno();
 
 
-			//TR << "  2a. Deriv for interres angle between (" << ii_neighb << "," << neighb_atom << ") " << ii_pair.key1()  << " " << ii_pair.key2() << std::endl;
+			//TR << "  2a. Deriv for interres dihedral between (" << ii_neighb << "," << neighb_restype.atom_name( neighb_atom ) << ") " << restype.atom_name( ii_triple.key1() )  << " " << restype.atom_name( ii_triple.key2() ) << " " << restype.atom_name( ii_triple.key3() ) << std::endl;
 
 			Size const mmat1 = neighb_restype.atom( neighb_atom ).mm_atom_type_index();
 			Size const mmat2 = restype.atom( ii_triple.key1()).mm_atom_type_index();
@@ -608,6 +612,8 @@ MMTorsionEnergy::eval_atom_derivative(
 			for ( Size jj = 1; jj <= neighb_atoms_wi1_bond_of_ii.size(); ++jj ) {
 				chemical::two_atom_set neighb_pair( neighb_atoms_wi1_bond_of_ii[ jj ] );
 				debug_assert( neighb_pair.key1() == neighb_atom1 );
+			
+				//TR << "  2b. Deriv for interres dihedral between (" << ii_neighb << "," << neighb_restype.atom_name( neighb_pair.key1() ) << " " << neighb_restype.atom_name( neighb_pair.key2() ) << ") " << restype.atom_name( ii_pair.key1() )  << " " << restype.atom_name( ii_pair.key2() ) << std::endl;
 
 				Size const mmat4 = neighb_restype.atom( neighb_pair.key2() ).mm_atom_type_index();
 
@@ -670,7 +676,7 @@ MMTorsionEnergy::eval_atom_derivative(
 				Size const neighb_atom3 = neighb_triple.key3();
 				Size const mmat4 = neighb_restype.atom( neighb_atom3 ).mm_atom_type_index();
 
-				//TR << "  2c. Deriv for interres angle between (" << ii_neighb << "," << neighb_atom2 << ") ("<< ii_neighb << "," << neighb_atom1 << ") " << atomno << std::endl;
+				//TR << "  2c. Deriv for interres dihedral between (" << ii_neighb << "," << neighb_restype.atom_name( neighb_atom1 ) << neighb_restype.atom_name( neighb_atom2 ) << " " << neighb_restype.atom_name( neighb_atom3 )<< ") " << restype.atom_name( atomno ) << std::endl;
 
 
 				Vector f1(0.0), f2(0.0);

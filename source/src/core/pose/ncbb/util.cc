@@ -63,19 +63,26 @@ initialize_ncbbs (
 
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
 		// now we return both PRE and POST locations...
-		if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1 ) {
+		if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1) {
 			ncbb_seq_positions.push_back( i );
 			core::pose::ncbb::add_oop_constraint(pose, i);
 		}
-		if ( pose.residue(i).has_variant_type(chemical::OOP_POST)== 1 ) {
+		if ( pose.residue(i).has_variant_type(chemical::OOP_POST)== 1) {
 			ncbb_seq_positions.push_back( i );
 		}
-		if ( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1 ) {
+		if ( pose.residue(i).has_variant_type(chemical::TRIAZOLAMERC) == 1) {
+			ncbb_seq_positions.push_back( i );
+			core::pose::ncbb::add_triazole_constraint(pose, i);
+		}
+		if ( pose.residue(i).has_variant_type(chemical::TRIAZOLAMERN)== 1) {
+			ncbb_seq_positions.push_back( i );
+		}
+		if ( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1) {
 			ncbb_seq_positions.push_back( i );
 			hbs = 1;
 			core::pose::ncbb::add_hbs_constraint(pose, i);
 		}
-		if ( pose.residue(i).has_variant_type(chemical::HBS_POST)== 1 ) {
+		if ( pose.residue(i).has_variant_type(chemical::HBS_POST) == 1) {
 			ncbb_seq_positions.push_back( i );
 			hbs = 0;
 		}
@@ -114,7 +121,7 @@ initialize_hbs (
 
 void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size a3b_hbs_pre_position )
 {
-	add_a3b_hbs_constraint( pose, a3b_hbs_pre_position, 1.52, 0.05 );
+	add_a3b_hbs_constraint( pose, a3b_hbs_pre_position, 1.479871, 0.05 );
 }
 
 void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, core::Real distance, core::Real std )
@@ -162,9 +169,118 @@ void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_positio
 
 }
 
+void
+constrain_ring_atoms( core::pose::Pose & pose, utility::vector1< core::id::AtomID > ids ) {
+
+	using namespace core;
+	using namespace scoring;
+	using namespace func;
+	using namespace constraints;
+
+	using namespace core::id;
+
+	CircularHarmonicFuncOP chf( new CircularHarmonicFunc( 0, 0.01 ) );
+	CircularHarmonicFuncOP ahf( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi() * ( ids.size() - 2 ) / ids.size(), 0.01 ) );
+	for ( Size i = 1; i <= ids.size(); ++i ) {
+		pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+				ids[ ( i ) % ids.size() + 1 ],
+				ids[ (i+1) % ids.size() + 1 ],
+				ids[ (i+2) % ids.size() + 1 ],
+				ids[ (i+3) % ids.size() + 1 ], chf ) ) );
+			
+		pose.add_constraint( AngleConstraintOP( new AngleConstraint(
+				ids[ ( i ) % ids.size() + 1 ],
+				ids[ (i+1) % ids.size() + 1 ],
+				ids[ (i+2) % ids.size() + 1 ], ahf ) ) );
+	}
+}
+
+void add_triazole_constraint( core::pose::Pose & pose, core::Size i /* triazole_position */)
+{
+	using namespace core::id;
+	using namespace core::scoring;
+	using namespace core::scoring::func;
+	using namespace core::scoring::constraints;
+	runtime_assert_msg( pose.residue( i ).has_variant_type(core::chemical::TRIAZOLAMERC), "residue must have TRIAZOLAMERC variant type" );
+	runtime_assert_msg( pose.residue( i+1 ).has_variant_type(core::chemical::TRIAZOLAMERN), "next residue must have TRIAZOLAMERN variant type" );
+
+	HarmonicFuncOP hf( new HarmonicFunc( 1.347, 0.05 ) );
+	HarmonicFuncOP zf( new HarmonicFunc( 0.000, 0.01 ) );
+	CircularHarmonicFuncOP chf( new CircularHarmonicFunc( 0, 0.01 ) );
+	CircularHarmonicFuncOP chf180( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.01 ) );
+	CircularHarmonicFuncOP ahf1( new CircularHarmonicFunc( 130.1*numeric::NumericTraits<float>::pi()/180.0, 0.01 ) );
+	CircularHarmonicFuncOP ahf2( new CircularHarmonicFunc( 122.6*numeric::NumericTraits<float>::pi()/180.0, 0.01 ) );
+
+	std::string cai   = pose.residue(  i  ).is_protein() ? "CA" : "CH3";
+	std::string caip1 = pose.residue( i+1 ).is_protein() ? "CA" : "CH3";
+
+	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
+			AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
+			AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ), hf ) ) );
+	
+	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
+			AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
+			AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ), hf ) ) );
+	
+	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
+			AtomID( pose.residue( i   ).atom_index(  "CT1" ), i   ),
+			AtomID( pose.residue( i+1 ).atom_index( "VCT1" ), i+1 ), zf ) ) );
+	
+	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
+			AtomID( pose.residue( i   ).atom_index( "VNT3" ), i   ),
+			AtomID( pose.residue( i+1 ).atom_index(  "NT3" ), i+1 ), zf ) ) );
+	
+	// exo bonds to triazolamers
+	pose.add_constraint( AngleConstraintOP( new AngleConstraint(
+			AtomID( pose.residue( i   ).atom_index(  cai  ), i   ),
+			AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
+			AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ), ahf2 ) ) );
+	
+	pose.add_constraint( AngleConstraintOP( new AngleConstraint(
+			AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
+			AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
+			AtomID( pose.residue( i+1 ).atom_index( caip1 ), i+1 ), ahf1 ) ) );
+	
+	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+			AtomID( pose.residue( i+1 ).atom_index( caip1 ), i+1 ),
+			AtomID( pose.residue( i   ).atom_index( "CT2" ), i  ),
+			AtomID( pose.residue( i+1 ).atom_index( "NT2" ), i+1 ),
+			AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ), chf ) ) );
+	
+	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+			AtomID( pose.residue( i   ).atom_index(  cai  ), i   ),
+			AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ),
+			AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
+			AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ), chf ) ) );
+	
+	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+			AtomID( pose.residue( i+1 ).atom_index( caip1 ), i+1 ),
+			AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
+			AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
+			AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ), chf180 ) ) );
+	
+	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
+			AtomID( pose.residue( i   ).atom_index(  cai  ), i   ),
+			AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
+			AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ),
+			AtomID( pose.residue( i+1 ).atom_index( "NT2" ), i+1 ), chf180 ) ) );
+	
+	utility::vector1< AtomID > ids;
+	ids.push_back( AtomID( pose.residue( i+1 ).atom_index( "NT2" ), i+1 ) );
+	ids.push_back( AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ) );
+	ids.push_back( AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ) );
+	ids.push_back( AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ) );
+	ids.push_back( AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ) );
+	constrain_ring_atoms( pose, ids );
+	
+	TR << "added atom pair constraint to triazole with distance: 1.347 and std 0.05" << std::endl;
+	TR << "and atom pair constraints to the virtual atoms" << std::endl;
+		
+}
+
 void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position )
 {
-	add_hbs_constraint( pose, hbs_pre_position, 1.52, 0.05 );
+	add_hbs_constraint( pose, hbs_pre_position, 1.479871, 0.05 );
 }
 
 void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, core::Real distance, core::Real std )
@@ -197,7 +313,7 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 	ConstraintCOP angle( ConstraintOP( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 ) ) );
 	ConstraintCOP angle2( ConstraintOP( new AngleConstraint( aidN, aidCZH, aidCYH, ang_func3 ) ) );
 	ConstraintCOP dihedral( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func ) ) );
-	ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func2 ) ) );
+	//ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func2 ) ) );
 
 	pose.add_constraint( atompair );
 	pose.add_constraint( atompair2 );
@@ -205,7 +321,7 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 	pose.add_constraint( angle );
 	pose.add_constraint( angle2 );
 	pose.add_constraint( dihedral );
-	pose.add_constraint( dihedral2 );
+	//pose.add_constraint( dihedral2 );
 
 	TR << "added atom pair constraint to hbs with distance: " << distance << " and std: "<< std << std::endl;
 	TR << "and atom pair constraints with the virtual atoms" << std::endl;
@@ -228,10 +344,11 @@ initialize_oops(
 }
 
 // Add constraints to keep oligooxopiperazine (oop) ring closed, default values (distance = 1.5, std = 0.05)
+// ??? oop should be 1.518685 according to params and QM optimized oop_dimer_llll!
 /// @details Overloaded function which defines default values, calls more general add_oop_constraint function
 void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position )
 {
-	add_oop_constraint( pose, oop_seq_position, 1.5, 0.05 );
+	add_oop_constraint( pose, oop_seq_position, 1.518685, 0.05 );
 }
 
 // Add constraints to keep oligooxopiperazine (oop) ring closed
@@ -243,7 +360,7 @@ void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, c
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
 
-	runtime_assert_msg ( pose.residue(oop_seq_position).has_variant_type(chemical::OOP_PRE) == 1, "residue must have OOP_PRE variant type" );
+	runtime_assert_msg( pose.residue(oop_seq_position).has_variant_type(chemical::OOP_PRE) == 1, "residue must have OOP_PRE variant type" );
 
 	//kdrew: add constraint
 	core::scoring::func::HarmonicFuncOP harm_func( new core::scoring::func::HarmonicFunc( distance, std ) );

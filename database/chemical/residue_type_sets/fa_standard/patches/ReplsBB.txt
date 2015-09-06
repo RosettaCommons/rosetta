@@ -5,6 +5,8 @@ TYPES  REPLS_BB
 
 BEGIN_SELECTOR
 PROPERTY PROTEIN
+NOT VARIANT_TYPE TRIAZOLAMERN # Just because it would add geometrically more
+NOT VARIANT_TYPE TRIAZOLAMERC # patch cases. When we rewrite this patch entirely...
 END_SELECTOR
 
 

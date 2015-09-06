@@ -60,7 +60,8 @@ SET_ICOOR CZP   178.2517   65.00   1.467  N  CA  LOWER
 SET_ICOOR 1HZP	38.5309	70.42   0.98  CZP   N  CA
 ##kdrew: set 2nd H relative to 1st H
 SET_ICOOR 2HZP  -117.853  70.493   0.9863  CZP   N  1HZP
-SET_ICOOR VYP   121.46708	69.0358	1.50	CZP	N	1HZP
+#SET_ICOOR VYP   121.46708	69.0358	1.50	CZP	N	1HZP
+SET_ICOOR VYP   121.46708	69.0358	1.518685	CZP	N	1HZP
 #kdrew: setup connection to oop_pre, icoors are bogus (following example from CtermConnect which has C relative to itself?)
 ADD_CONNECT CZP ICOOR  180.0  60.0   1.467  CZP	N  CA
 
