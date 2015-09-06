@@ -248,7 +248,7 @@ LocalRelax::get_neighbor_graph(
 			protein_residues.push_back( i );
 		}
 	}
-	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose( "ALA", pose_working, protein_residues, false, false, false );
+	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose( "ALA", pose_working, protein_residues, false, false, true );
 
 	neighbor.clear();
 	neighbor.resize( nres );
