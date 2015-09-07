@@ -426,7 +426,7 @@ BridgeChains::segments_fixed( components::StructureData const & perm ) const
 	std::stack< std::string > ids;
 	ids.push( lower_segment_id(perm) );
 	while ( ids.size() ) {
-		std::string const & test_id = ids.top();
+		std::string const test_id = ids.top();
 		ids.pop();
 		TR.Debug << "looking at " << test_id << " group " << perm.segment(test_id).movable_group << std::endl;
 		visited.insert( test_id );
@@ -445,7 +445,7 @@ BridgeChains::segments_fixed( components::StructureData const & perm ) const
 	visited.clear();
 	ids.push( upper_segment_id(perm) );
 	while ( ids.size() ) {
-		std::string const & test_id = ids.top();
+		std::string const test_id = ids.top();
 		ids.pop();
 		TR.Debug << "looking2 at " << test_id << " group " << perm.segment(test_id).movable_group << std::endl;
 		visited.insert( test_id );
