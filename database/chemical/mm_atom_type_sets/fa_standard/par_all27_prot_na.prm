@@ -533,6 +533,10 @@ CA   CA   CA    40.000    120.00   35.00   2.41620 ! ALLOW   ARO
                 ! JES 8/25/89
 CC   OH1  H      40.000    109.60   30.00   2.26510 ! ALLOW  POL PEP
                 ! AMW for protonated asp/glu from  adm jr. 5/02/91, acetic acid pure solvent
+CC   CT1  NR2    40.000    109.60   30.00   2.26510 ! ALLOW POL PEP
+                ! AMW for triazolamer C CA NT1
+CC   CT2  NR2    40.000    109.60   30.00   2.26510 ! ALLOW POL PEP
+                ! AMW for GLY triazolamer C CA NT1
 CE1  CE1  CT2    48.00    123.50   !
                 ! for 2-butene, yin/adm jr., 12/95
 CE1  CE1  CT3    48.00    123.50   ! 
@@ -601,6 +605,10 @@ CA   CT1  CC     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
                 ! Copied from CT1-CT1-CC, VKM, 27 Aug. 2015 
 CT1  CT1  CT1   53.350    111.00    8.00   2.56100 ! ALLOW ALI
                 ! alkane update, adm jr., 3/2/92
+CT1  CT1  NR2   53.350    111.00    8.00   2.56100 ! ALLOW   ALI
+                ! AMW: for ILE/THR cys triazolamer alkane update, adm jr., 3/2/92
+CT1  CT1  CPH1   52.000   108.0000 ! ALLOW   ALI PEP POL ARO
+                ! AMW: for triazolamer from adm jr. 5/02/91, acetic acid pure solvent
 CT1  CT2  CA     51.800   107.5000 ! ALLOW   ALI ARO
                 ! PARALLH19 (JES)
 CT1  CT2  CC     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
@@ -611,6 +619,8 @@ CT1  CT2  CPH1   58.350   113.0000 ! ALLOW ARO
                 ! his, ADM JR., 7/22/89, from CT2CT2CT, U-B omitted
 CT1  CT2  CT1   58.350    113.50   11.16   2.56100 ! ALLOW   ALI
                 ! alkane frequencies (MJF), alkane geometries (SF)
+CT1  CPH1 CPH1  58.350    120.00   11.16   2.56100 ! ALLOW PEP POL ARO  ALI
+                ! AMW CA-CT1-CT2 triazolamer, from alkane frequencies (MJF), alkane geometries (SF)
 CT1  NH1  C      50.000   120.0000 ! ALLOW   ALI PEP POL ARO
                 ! NMA Vib Modes (LK)
 CT1  NH1  CT2    50.000   113.4840 ! ALLOW   ALI PEP POL ARO
@@ -619,6 +629,10 @@ CT1  NP   HC    120.000   113.4000 ! ALLOW   ALI PEP POL ARO
                 ! AMW from/QM optimized OOP structure
 CT1  NP   CT2   120.000   113.4840 ! ALLOW   ALI PEP POL ARO
                 ! AMW from QM optimized OOP structure
+CT1  NR2  NZ2   120.000   126.0000 ! ALLOW   ALI PEP POL ARO
+                ! AMW for triazolamer CA-NT1-NT2... (360 - 108)/2
+CT2  NR2  NZ2   120.000   126.0000 ! ALLOW   ALI PEP POL ARO
+                ! AMW for GLY triazolamer CA-NT1-NT2... (360 - 108)/2
 CT2  CC   OH1    61.632   122.3000 ! ALLOW   ALI PEP POL ARO
                 ! AMW for protonated state
 CT1  CA   CA     45.800   122.3000 ! ALLOW   ALI ARO
@@ -637,8 +651,12 @@ CT2  CT1  CC     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
                 ! adm jr. 4/05/91, for asn,asp,gln,glu and cters
 CT2  CT1  CD     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
                 ! adm jr. 5/02/91, acetic acid pure solvent
+CT2  CT1  CPH1   52.000   108.0000 ! ALLOW   ALI PEP POL ARO
+                ! AMW: for triazolamer from adm jr. 5/02/91, acetic acid pure solvent
 CT2  CT1  CT1   53.350    111.00    8.00   2.56100 ! ALLOW   ALI
                 ! alkane update, adm jr., 3/2/92
+CT2  CT1  NR2   53.350    111.00    8.00   2.56100 ! ALLOW   ALI
+                ! AMW: for cys triazolamer alkane update, adm jr., 3/2/92
 CT2  CT2  C      52.000   108.0000 ! ALLOW   ALI PEP POL ARO
                 ! from CT2  CT1  C, for lactams, adm jr.
 CT2  CT2  CC     52.000   108.0000 ! ALLOW   ALI PEP POL ARO
@@ -687,8 +705,12 @@ CT3  CT1  CT2   53.350    114.00    8.00   2.56100 ! ALLOW   ALI
                 ! alkane update, adm jr., 3/2/92
 CT3  CT1  CA    53.350    114.00    8.00   2.56100 ! ALLOW   ALI
                 ! Copied from CT3-CT1-CT2, VKM, 27 Aug. 2015
+CT3  CT1  NR2   53.350    114.00    8.00   2.56100 ! ALLOW ALI PEP POL ARO
+                ! AMW: triazolamer CB-CA-NT1?
 CT3  CT1  CT3   53.350    114.00    8.00   2.56100 ! ALLOW   ALI
                 ! alkane update, adm jr., 3/2/92
+CT3  CT1  CPH1   58.350   113.0000 ! ALLOW ARO
+                ! AMW: triazolamer, from his, ADM JR., 7/22/89, from CT2CT2CT, U-B omitted
 CT3  CT2  CA     51.800   107.5000 ! ALLOW   ALI ARO
                 ! ethylbenzene, adm jr., 3/7/92
 CT3  CT2  CPH1   58.350   113.0000 ! ALLOW ARO
@@ -787,6 +809,8 @@ HA   CPM  CPA    12.700   117.4400 ! ALLOW HEM
                 ! Heme (6-liganded): porphyrin macrocycle (KK 05/13/91)
 HA   CPM  FE      0.000   180.0000 ! ALLOW HEM
                 ! Heme (6-liganded): for "ic para" only (KK 05/13/91)
+HA   CPH1 CPH1   35.000   120.0000 ! ALLOW PEP PRO ALI ARO
+                ! AMW triazolamer HT2 CT2 CT1 from 6-31g* AcProNH2, ProNH2, 6-31g*//3-21g AcProNHCH3 RLD 4/23/93
 HA   CS   CT3   34.600    110.10   22.53   2.17900 ! ALLOW SUL
                 ! ethylthiolate 6-31+G* geom/freq, adm jr., 6/1/92
 HA   CS   HA    35.500    108.40   14.00   1.77500 ! ALLOW SUL
@@ -889,20 +913,28 @@ HA   CT1  CC     50.000   109.5000 ! ALLOW  PEP POL
                 ! Copied from HB-CT1-CC, VKM, 27 Aug. 2015 
 HB   CT1  CD     50.000   109.5000 ! ALLOW  PEP POL
                 ! adm jr. 5/02/91, acetic acid pure solvent
+HB   CT1  CPH1   50.000   109.5000 ! ALLOW  PEP POL
+                ! AMW triazolamer, from adm jr. 5/02/91, acetic acid pure solvent
 HB   CT1  CT1    35.000   111.0000 ! ALLOW  PEP
                 ! Alanine Dipeptide ab initio calc's (LK)
 HB   CT1  CT2    35.000   111.0000 ! ALLOW  PEP
                 ! Alanine Dipeptide ab initio calc's (LK)
 HB   CT1  CT3    35.000   111.0000 ! ALLOW  PEP
                 ! Alanine Dipeptide ab initio calc's (LK)
+HB   CT1  NR2    35.000   111.0000 ! ALLOW  PEP
+                ! AMW: triazolamer HA-CA-NT1 from Alanine Dipeptide ab initio calc's (LK)
 HB   CT2  C      50.000   109.5000 ! ALLOW  PEP
                 ! Alanine Dipeptide ab initio calc's (LK)
 HB   CT2  CC     50.000   109.5000 ! ALLOW  PEP POL
                 ! adm jr. 4/05/91, for asn,asp,gln,glu and cters
 HB   CT2  CD     50.000   109.5000 ! ALLOW  PEP POL
                 ! adm jr. 5/02/91, acetic acid pure solvent
+HB   CT2  CPH1   50.000   109.5000 ! ALLOW  PEP POL
+                ! AMW GLY triazolamer, from adm jr. 5/02/91, acetic acid pure solvent
 HB   CT2  HB     36.000   115.0000 ! ALLOW   PEP
                 ! Alanine Dipeptide ab initio calc's (LK)
+HB   CT2  NR2    35.000   111.0000 ! ALLOW  PEP
+                ! AMW: GLY triazolamer HA-CA-NT1 from Alanine Dipeptide ab initio calc's (LK)
 HB   CT3  C      50.000   109.5000 ! ALLOW  PEP
                 ! Alanine Dipeptide ab initio calc's (LK)
 HC   NC2  C      49.000   120.0000 ! ALLOW   POL PEP ARO
@@ -1001,6 +1033,8 @@ NH1  CT1  CC     50.000   107.0000 ! ALLOW   PEP POL ARO ALI
                 ! adm jr. 4/05/91, for asn,asp,gln,glu and cters
 NH1  CT1  CD     50.000   107.0000 ! ALLOW   PEP POL ARO ALI
                 ! adm jr. 5/02/91, acetic acid pure solvent
+NH1  CT1  CPH1   50.000   107.0000 ! ALLOW   PEP POL ARO ALI
+                ! AMW triazolamer N CA CT1
 NH1  CT1  CT1    70.000   113.5000 ! ALLOW   ALI PEP POL ARO
                 ! Alanine Dipeptide ab initio calc's (LK)
 NH1  CT1  CT2    70.000   113.5000 ! ALLOW   ALI PEP POL ARO
@@ -1015,6 +1049,8 @@ NH1  CT2  CC     50.000   107.0000 ! ALLOW   PEP POL ARO ALI
                 ! adm jr. 5/20/92, for asn,asp,gln,glu and cters
 NH1  CT2  CD     50.000   107.0000 ! ALLOW   PEP POL ARO ALI
                 ! adm jr. 5/02/91, acetic acid pure solvent
+NH1  CT2  CPH1   50.000   107.0000 ! ALLOW   PEP POL ARO ALI
+                ! AMW GLY triazolamer N CA CT1
 NH1  CT2  CT2    70.000   113.5000 ! ALLOW   ALI PEP POL ARO
                 ! from NH1  CT1  CT2, for lactams, adm jr.
 NH1  CT2  HA     51.500   109.5000 ! ALLOW   ALI PEP POL ARO
@@ -1047,6 +1083,8 @@ NH3  CT1  C      43.700   110.0000 ! ALLOW   PEP POL ARO ALI
                 ! new aliphatics, adm jr., 2/3/92
 NH3  CT1  CC     43.700   110.0000 ! ALLOW   PEP POL ARO ALI
                 ! adm jr. 4/05/91, for asn,asp,gln,glu and cters
+NH3  CT1  CPH1    43.700   110.0000 ! ALLOW   PEP POL ARO ALI
+                ! AMW: for triazolamer Cterm from adm jr. 4/05/91, for asn,asp,gln,glu and cters
 NH3  CT1  CT1    67.700   110.0000 ! ALLOW   ALI POL
                 ! new aliphatics, adm jr., 2/3/92
 NH3  CT1  CT2    67.700   110.0000 ! ALLOW   ALI POL
@@ -1061,6 +1099,8 @@ NH3  CT2  CC     43.700   110.0000 ! ALLOW   PEP POL ARO ALI
                 ! adm jr. 4/05/91, for asn,asp,gln,glu and cters
 NH3  CT2  CD     43.700   110.0000 ! ALLOW   PEP POL ARO ALI
                 ! adm jr. 5/02/91, acetic acid pure solvent
+NH3  CT2  CPH1    43.700   110.0000 ! ALLOW   PEP POL ARO ALI
+                ! AMW: for GLY triazolamer Cterm from adm jr. 4/05/91, for asn,asp,gln,glu and cters
 NH3  CT2  CT2    67.700   110.0000 ! ALLOW   ALI POL
                 ! alanine (JCS)
 NH3  CT2  HA    45.000    107.50   35.00   2.10100 ! ALLOW   ALI POL
@@ -1135,6 +1175,16 @@ NR2  CPH2 HR1   25.000    125.00   20.00   2.12000 ! ALLOW ARO
                 ! his, adm jr., 6/27/90
 NR2  CPH2 NR1   130.000   112.5000 ! ALLOW ARO
                 ! his, adm jr., 6/27/90
+NR2  CT1  C     130.000   112.5000 ! ALLOW ARO POL PEP
+                ! AMW: added for triazolamer
+NR2  CT1  CPH1  130.000   112.5000 ! ALLOW ARO POL PEP
+                ! AMW: added for triazolamer
+NR2  CT2  C     130.000   112.5000 ! ALLOW ARO POL PEP
+                ! AMW: added for GLY triazolamer
+NR2  CT2  CPH1  130.000   112.5000 ! ALLOW ARO POL PEP
+                ! AMW: added for GLY triazolamer
+NR2  NZ2  NZ1   130.000   108.0000 ! ALLOW ARO POL PEP
+                ! AMW: triazolamer
 NR2  FE   CM     50.000   180.0000 ! ALLOW HEM
                 ! Heme (6-liganded): ligand links (KK 05/13/91)
 NR2  FE   NPH    50.000    90.0000 ! ALLOW HEM

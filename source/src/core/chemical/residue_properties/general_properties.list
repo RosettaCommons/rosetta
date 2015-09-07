@@ -35,6 +35,7 @@ LIGAND
 PROTEIN  # TODO: Change this to AMINO_ACID, since that's what it really means. ~Labonte
 DNA
 RNA
+PNA
 PEPTOID
 CARBOHYDRATE
 LIPID

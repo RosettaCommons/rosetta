@@ -1188,6 +1188,10 @@ NH1	CT1	C	C	0.0000	1	0.00
 CT3	CT1	C	C	0.0000	1	0.00 
 HB	CT1	C	C	0.0000	1	0.00
 
+
+# PNA
+N	CT2	C	NH1 0.6000	1	0.00
+
 # for 1,2,3-triazole on lysine
 HA   CT2  NR2 NZ2  14      1     0.00
 CT2  CT2  NR2 NZ2  0.2300  2   180.00

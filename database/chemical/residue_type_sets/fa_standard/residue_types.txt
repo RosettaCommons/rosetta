@@ -491,3 +491,10 @@ residue_types/terminal/BZA.params
 
 ## Extras
 residue_types/extra/C.params
+
+## Peptide nucleic acids
+residue_types/pna/APN.params
+residue_types/pna/CPN.params
+residue_types/pna/GPN.params
+residue_types/pna/TPN.params
+residue_types/pna/UPN.params
