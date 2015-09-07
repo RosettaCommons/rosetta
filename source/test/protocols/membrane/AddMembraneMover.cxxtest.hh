@@ -11,7 +11,7 @@
 ///
 /// @brief   Unit Test: Add membrane mover
 /// @details The add membrane mover sets up an anchored membrane fold tree, is responsible for
-///			 adding the membrane residue and passing correct information to MembraneInfo for setup.
+///    adding the membrane residue and passing correct information to MembraneInfo for setup.
 ///
 /// @author  Rebecca Alford (rfalford12@gmail.com)
 
@@ -36,7 +36,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 
-using namespace core; 
+using namespace core;
 using namespace core::kinematics;
 using namespace core::conformation;
 using namespace core::conformation::membrane;

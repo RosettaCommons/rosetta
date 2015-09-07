@@ -101,9 +101,9 @@ MPQuickRelaxMover::MPQuickRelaxMover( core::Real angle_max, std::string nmoves )
 }
 
 /// @brief Custom constructor
-MPQuickRelaxMover::MPQuickRelaxMover( 
-	core::Real angle_max, 
-	std::string nmoves, 
+MPQuickRelaxMover::MPQuickRelaxMover(
+	core::Real angle_max,
+	std::string nmoves,
 	core::kinematics::MoveMapOP movemap ) :
 	protocols::moves::Mover(),
 	movemap_( new core::kinematics::MoveMap() )
@@ -218,7 +218,7 @@ void MPQuickRelaxMover::apply( core::pose::Pose & pose ) {
 	using namespace core::pack::task;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
-	using namespace core::kinematics; 
+	using namespace core::kinematics;
 
 	TR << "Running MPQuickRelax protocol..." << std::endl;
 

@@ -110,27 +110,27 @@ int
 main( int argc, char* argv[] )
 {
 	try {
-		
+
 		devel::init(argc, argv);
 
 		// create score function
 		scoring::ScoreFunctionOP score_fxn( scoring::get_score_function() );
 		scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
-		
+
 		if ( score_fxn->has_zero_weight( atom_pair_constraint ) ) {
 			score_fxn->set_weight( atom_pair_constraint, 0.1 );
 		}
-		
+
 		if ( score_fxn->has_zero_weight( dihedral_constraint ) ) {
 			score_fxn->set_weight( dihedral_constraint, 0.1 );
 		}
-		
+
 		if ( score_fxn->has_zero_weight( angle_constraint ) ) {
 			score_fxn->set_weight( angle_constraint, 0.1 );
 		}
-		
+
 		chemical::ResidueTypeSetCOP restype_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-		
+
 		Pose pose;
 		make_pose_from_sequence( pose, "X[201:NtermPeptoidFull]A[DALA]GAAAAAA[ALA:MethylatedCtermProteinFull]", *restype_set, false );
 		//make_pose_from_sequence( pose, "A[ALA:NtermProteinFull]AGAAAAAA[ALA:MethylatedCtermProteinFull]", *restype_set, false );
@@ -140,67 +140,67 @@ main( int argc, char* argv[] )
 		using namespace core::scoring::constraints;
 		using namespace core::scoring::func;
 		using namespace core::id;
-		
+
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-			
+
 			if ( i  < pose.total_residue() - 3 ) {
 				pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint( AtomID( pose.residue( i ).atom_index( "O" ), i ),
-												 AtomID( pose.residue( i+4 ).atom_index( "H" ), i+4 ),
-												 HarmonicFuncOP( new HarmonicFunc( 1.8, 0.1 ) ) ) ) );
+					AtomID( pose.residue( i+4 ).atom_index( "H" ), i+4 ),
+					HarmonicFuncOP( new HarmonicFunc( 1.8, 0.1 ) ) ) ) );
 			}
 			// constrain non pre-peptoid omega
 			if ( i < pose.total_residue() && !pose.residue(i+1).type().is_peptoid() ) {
 				pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( AtomID( pose.residue( i ).atom_index( "CA" ), i ),
-																				  AtomID( pose.residue( i ).atom_index( "C"  ), i ),
-																				  AtomID( pose.residue( i+1 ).atom_index( "N"  ), i+1 ),
-																				  AtomID( pose.residue( i+1 ).atom_index( "CA"  ), i+1 ),
-																				  CircularHarmonicFuncOP( new CircularHarmonicFunc( 3.14159, 0.04 ) ) ) ) );
+					AtomID( pose.residue( i ).atom_index( "C"  ), i ),
+					AtomID( pose.residue( i+1 ).atom_index( "N"  ), i+1 ),
+					AtomID( pose.residue( i+1 ).atom_index( "CA"  ), i+1 ),
+					CircularHarmonicFuncOP( new CircularHarmonicFunc( 3.14159, 0.04 ) ) ) ) );
 			}
-			
-			
+
+
 			// super loose dihedral constraints non pre-peptoid omega
 			if ( i > 1 && i < pose.total_residue() ) {
 				pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( AtomID( pose.residue( i ).atom_index( "N" ), i ),
-																				  AtomID( pose.residue( i ).atom_index( "CA"  ), i ),
-																				  AtomID( pose.residue( i ).atom_index( "C"  ), i ),
-																				  AtomID( pose.residue( i+1 ).atom_index( "N"  ), i+1 ),
-																				  CircularHarmonicFuncOP( new CircularHarmonicFunc( -45.0*3.14159/180, 0.2 ) ) ) ) );
+					AtomID( pose.residue( i ).atom_index( "CA"  ), i ),
+					AtomID( pose.residue( i ).atom_index( "C"  ), i ),
+					AtomID( pose.residue( i+1 ).atom_index( "N"  ), i+1 ),
+					CircularHarmonicFuncOP( new CircularHarmonicFunc( -45.0*3.14159/180, 0.2 ) ) ) ) );
 			}
-			
+
 			if ( i > 1 ) {
 				pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( AtomID( pose.residue( i-1 ).atom_index( "C" ), i-1 ),
-																				  AtomID( pose.residue( i ).atom_index( "N"  ), i ),
-																				  AtomID( pose.residue( i ).atom_index( "CA"  ), i ),
-																				  AtomID( pose.residue( i ).atom_index( "C"  ), i ),
-																				  CircularHarmonicFuncOP( new CircularHarmonicFunc( -65.0*3.14159/180, 0.2 ) ) ) ) );
+					AtomID( pose.residue( i ).atom_index( "N"  ), i ),
+					AtomID( pose.residue( i ).atom_index( "CA"  ), i ),
+					AtomID( pose.residue( i ).atom_index( "C"  ), i ),
+					CircularHarmonicFuncOP( new CircularHarmonicFunc( -65.0*3.14159/180, 0.2 ) ) ) ) );
 			}
-			
+
 			pose.set_phi( i, -65 );
 			pose.set_psi( i, -45 );
 			pose.set_omega( i, 180 );
 		}
 		pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint( AtomID( pose.residue( pose.total_residue() - 3 ).atom_index( "O" ), pose.total_residue() - 3 ),
-																		  AtomID( pose.residue( pose.total_residue() ).atom_index( "HM" ), pose.total_residue() ),
-																		  HarmonicFuncOP( new HarmonicFunc( 1.8, 0.1 ) ) ) ) );
-		
+			AtomID( pose.residue( pose.total_residue() ).atom_index( "HM" ), pose.total_residue() ),
+			HarmonicFuncOP( new HarmonicFunc( 1.8, 0.1 ) ) ) ) );
+
 		pose.add_constraint( DihedralConstraintOP( new DihedralConstraint( AtomID( pose.residue( pose.total_residue() ).atom_index( "N" ), pose.total_residue() ),
-																			  AtomID( pose.residue( pose.total_residue() ).atom_index( "CA"  ), pose.total_residue() ),
-																			  AtomID( pose.residue( pose.total_residue() ).atom_index( "C"  ), pose.total_residue() ),
-																			  AtomID( pose.residue( pose.total_residue() ).atom_index( "NM"  ), pose.total_residue() ),
-																			  CircularHarmonicFuncOP( new CircularHarmonicFunc( -45.0*3.14159/180, 0.2 ) ) ) ) );
-		
+			AtomID( pose.residue( pose.total_residue() ).atom_index( "CA"  ), pose.total_residue() ),
+			AtomID( pose.residue( pose.total_residue() ).atom_index( "C"  ), pose.total_residue() ),
+			AtomID( pose.residue( pose.total_residue() ).atom_index( "NM"  ), pose.total_residue() ),
+			CircularHarmonicFuncOP( new CircularHarmonicFunc( -45.0*3.14159/180, 0.2 ) ) ) ) );
+
 		pose.dump_pdb( "first.pdb");
-		
+
 		// create move map for minimization
 		kinematics::MoveMapOP mm( new kinematics::MoveMap() );
 		mm->set_chi( true );
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 			mm->set_bb( i, true);
 		}
-		
+
 		TR << *mm << std::endl;
 		//pose.conformation().declare_chemical_bond( 1, "CYH", 3, "CZH" );
-		
+
 		// create minimization mover
 		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 		minM->cartesian( true );
@@ -212,19 +212,19 @@ main( int argc, char* argv[] )
 			//score_fxn->set_weight( atom_pair_constraint, 0 );
 			//score_fxn->set_weight( dihedral_constraint, 0 );
 			score_fxn->set_weight( angle_constraint, 0 );
-			
+
 			minM->apply( pose );
 		}
-		
+
 		pose.dump_pdb( "second.pdb");
-		
+
 		HbsPatcher hp( 1 );
 		hp.apply( pose );
 		pose::ncbb::initialize_ncbbs(pose);
-		
+
 		pose.dump_pdb( "third.pdb");
 		pose.conformation().declare_chemical_bond( 1, "CYH", 3, "CZH" );
-		
+
 		// create minimization mover
 		for ( Real wt = 0.1; wt <= 1; wt += 0.1 ) {
 			score_fxn->set_weight( atom_pair_constraint, wt );
@@ -233,11 +233,11 @@ main( int argc, char* argv[] )
 			//score_fxn->set_weight( atom_pair_constraint, 0 );
 			//score_fxn->set_weight( dihedral_constraint, 0 );
 			score_fxn->set_weight( angle_constraint, 0 );
-			
+
 			minM->apply( pose );
 		}
 		pose.dump_pdb( "fourth.pdb");
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;

@@ -3,4 +3,5 @@
 -dump_connect_info
 -connect_info_cutoff 0
 -nstruct 8
+-jd2:failed_job_exception false
 -mute protocols.flxbb.LayerDesignOperation core.kinematics.AtomTree

@@ -57,11 +57,11 @@ public:
 	MPQuickRelaxMover( core::Real angle_max, std::string nmoves );
 
 	/// @brief Custom Constructor
-	MPQuickRelaxMover( 
-		core::Real angle_max, 
-		std::string nmoves, 
+	MPQuickRelaxMover(
+		core::Real angle_max,
+		std::string nmoves,
 		core::kinematics::MoveMapOP movemap
-		);
+	);
 
 	/// @brief Copy Constructor
 	MPQuickRelaxMover( MPQuickRelaxMover const & src );

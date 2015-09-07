@@ -195,7 +195,7 @@ TranslationMover::get_name() const {
 void
 TranslationMover::apply( core::pose::Pose & pose ) {
 
-	using namespace core; 
+	using namespace core;
 	using namespace core::conformation::membrane;
 	using namespace protocols::membrane::geometry;
 
@@ -435,12 +435,12 @@ RotationMover::apply( Pose & pose ) {
 		// get upstream stub ( =MEM )
 		core::kinematics::Stub up_stub = pose.conformation().upstream_jump_stub( jumpnum_ );
 
-	// get rotation axis = perpendicular of two normals
-	// order of vectors is crucial!
-	core::Vector rot_axis = cross( old_normal_, new_normal_ );
+		// get rotation axis = perpendicular of two normals
+		// order of vectors is crucial!
+		core::Vector rot_axis = cross( old_normal_, new_normal_ );
 
-	// get rotation angle
-	core::Real angle = numeric::conversions::degrees( angle_of( new_normal_, old_normal_ ) );
+		// get rotation angle
+		core::Real angle = numeric::conversions::degrees( angle_of( new_normal_, old_normal_ ) );
 
 		// do the actual rotation
 		rigid::RigidBodyDeterministicSpinMover spinmover = rigid::RigidBodyDeterministicSpinMover( jumpnum_, rot_axis, rot_center_, angle );

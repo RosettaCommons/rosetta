@@ -57,10 +57,10 @@ public:
 	/// @brief    Construct with User specified spacing & width
 	/// @details  Construct membranes with a given spacing and
 	///     width in angstroms
-	VisualizeMembraneMover( 
+	VisualizeMembraneMover(
 		core::Real spacing,
-		core::Real width, 
-		core::Real thicnkess 
+		core::Real width,
+		core::Real thicnkess
 	);
 
 	/// @brief Copy Constructor

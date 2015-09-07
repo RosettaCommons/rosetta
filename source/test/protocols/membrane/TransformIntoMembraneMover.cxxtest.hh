@@ -58,7 +58,7 @@ public:
 	/// @brief Setup
 	void setUp()
 	{
-		using namespace core::pose; 
+		using namespace core::pose;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane::geometry;
 		using namespace protocols::membrane;

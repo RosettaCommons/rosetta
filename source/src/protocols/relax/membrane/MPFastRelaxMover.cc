@@ -92,7 +92,7 @@ MPFastRelaxMover::~MPFastRelaxMover() {}
 void
 MPFastRelaxMover::show_protocol( core::pose::Pose & pose ) {
 
-	using namespace core; 
+	using namespace core;
 
 	// Get the membrane position
 	Vector center( pose.conformation().membrane_info()->membrane_center() );
@@ -164,7 +164,7 @@ MPFastRelaxMover::apply( core::pose::Pose & pose ) {
 	using namespace core::kinematics;
 	using namespace core::scoring;
 	using namespace protocols::membrane;
-	using namespace core; 
+	using namespace core;
 
 	// Check the pose is a membrane protein before proceeding
 	if ( !pose.conformation().is_membrane() ) {
@@ -216,7 +216,7 @@ MPFastRelaxMover::get_name() const {
 void
 MPFastRelaxMover::setup_relax_foldtree( core::pose::Pose & pose ) {
 
-	using namespace core; 
+	using namespace core;
 	using namespace protocols::membrane;
 	using namespace core::kinematics;
 

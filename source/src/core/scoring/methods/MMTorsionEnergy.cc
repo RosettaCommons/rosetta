@@ -527,10 +527,10 @@ MMTorsionEnergy::eval_atom_derivative(
 
 			/// Find the neighbor residue and atom
 			Size const ii_neighb      = res.residue_connection_partner( ii_resconn );
-			
+
 			//TR << " conn is " << ii_resconn << " and neighb is " << ii_neighb << std::endl;
 			if ( ii_neighb == 0 ) continue;
-			
+
 			Size const neighb_resconn = res.residue_connection_conn_id( ii_resconn );
 			conformation::Residue const & neighb_res( pose.residue( ii_neighb ));
 			chemical::ResidueType const & neighb_restype( pose.residue_type( ii_neighb ) );
@@ -612,7 +612,7 @@ MMTorsionEnergy::eval_atom_derivative(
 			for ( Size jj = 1; jj <= neighb_atoms_wi1_bond_of_ii.size(); ++jj ) {
 				chemical::two_atom_set neighb_pair( neighb_atoms_wi1_bond_of_ii[ jj ] );
 				debug_assert( neighb_pair.key1() == neighb_atom1 );
-			
+
 				//TR << "  2b. Deriv for interres dihedral between (" << ii_neighb << "," << neighb_restype.atom_name( neighb_pair.key1() ) << " " << neighb_restype.atom_name( neighb_pair.key2() ) << ") " << restype.atom_name( ii_pair.key1() )  << " " << restype.atom_name( ii_pair.key2() ) << std::endl;
 
 				Size const mmat4 = neighb_restype.atom( neighb_pair.key2() ).mm_atom_type_index();

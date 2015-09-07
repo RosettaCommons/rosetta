@@ -150,10 +150,9 @@ void GeneralizedKICselector::set_selector_type( std::string const &stypename) {
 ////////////////////////////////////////////////////////////////////////////////
 
 
-/// @brief Applies a selector type to choose a solution and set a loop pose.
-/// @details  Since the selector applies the preselection mover (if defined) and respects its exit status, it is possible that there will be no
-/// successful solution after application of that mover.  In that case, this function returns "false"; otherwise, it returns "true".
-/// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
+/// @brief Applies a selector type to choose a solution, and returns index of chosen solution.
+/// @details  Returns zero if some error occurs.  Should always return a nonzero integer, though.
+/// @param[in,out] pose -- The loop to be closed.
 /// @param[in] original_pose -- The original pose.  Can be used for reference by selectors.
 /// @param[in] residue_map -- Mapping of (loop residue, original pose residue).
 /// @param[in] tail_residue_map -- Mapping of (tail residue index in pose, tail residue index in original_pose).
@@ -163,21 +162,19 @@ void GeneralizedKICselector::set_selector_type( std::string const &stypename) {
 /// @param[in] bondlengths -- Matrix of [closure attempt #][solution #][bondlength #] with bond length for each bond in the chain.  A selector will pick one solution.
 /// @param[in] nsol_for_attempt -- List of the number of solutions for each attempt.
 /// @param[in] total_solutions -- Total number of solutions found.
-/// @param[in] pre_selection_mover -- Pointer to a mover applied to each solution before applying the selector.
-/// @param[in] preselection_mover_exists -- Boolean that determines whether a mover has been specified.
-bool GeneralizedKICselector::apply (
-	core::pose::Pose &pose,
+/// @param[in] solutions -- Reference to vector of owning pointers of poses representing solutions, with pre-selection filters already applied.
+core::Size GeneralizedKICselector::apply (
+	core::pose::Pose const &pose,
 	core::pose::Pose const &original_pose, //The original pose
 	utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
-	utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map, //mapping of (tail residue index in pose, tail residue index in original_pose)
+	utility::vector1 <std::pair <core::Size, core::Size> > const &/*tail_residue_map*/, //mapping of (tail residue index in pose, tail residue index in original_pose)
 	utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, //torsions for each atom
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, //bond angle for each atom
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, //bond length for each atom
 	utility::vector1 <core::Size> const &nsol_for_attempt,
 	core::Size const total_solutions,
-	protocols::moves::MoverOP pre_selection_mover,
-	bool const preselection_mover_exists
+	utility::vector1 <core::pose::PoseCOP> const &solutions
 ) const {
 
 	TR << "Choosing GeneralizedKIC solution." << std::endl;
@@ -186,52 +183,45 @@ bool GeneralizedKICselector::apply (
 	}
 
 	//Indices that specify where the solution will be found:
-	core::Size chosen_attempt_number=0;
-	core::Size chosen_solution = 0;
+	core::Size chosen_solution(0);
 
 	switch( selectortype_ ) {
 	case random_selector :
-		apply_random_selector( nsol_for_attempt, total_solutions, chosen_attempt_number, chosen_solution );
+		apply_random_selector( total_solutions, chosen_solution );
 		break;
 	case lowest_energy_selector :
-		apply_lowest_energy_selector( nsol_for_attempt, total_solutions, chosen_attempt_number,
-			chosen_solution, selector_sfxn_, residue_map, tail_residue_map, atomlist, torsions, bondangles,
-			bondlengths, pose, original_pose, boltzmann_kbt_, pre_selection_mover, preselection_mover_exists, false
+		apply_lowest_energy_selector( nsol_for_attempt, total_solutions, chosen_solution, selector_sfxn_,
+			pose, original_pose, boltzmann_kbt_, false, solutions
 		);
 		break;
 	case boltzmann_energy_selector :
-		apply_lowest_energy_selector( nsol_for_attempt, total_solutions, chosen_attempt_number,
-			chosen_solution, selector_sfxn_, residue_map, tail_residue_map, atomlist, torsions, bondangles,
-			bondlengths, pose, original_pose, boltzmann_kbt_, pre_selection_mover, preselection_mover_exists, true
+		apply_lowest_energy_selector( nsol_for_attempt, total_solutions, chosen_solution, selector_sfxn_,
+			pose, original_pose, boltzmann_kbt_, true, solutions
 		); //Recycle this function from lowest_energy_selector to avoid code duplication
 		break;
 	case lowest_rmsd_selector :
-		apply_lowest_rmsd_selector( nsol_for_attempt, total_solutions, chosen_attempt_number,
-			chosen_solution, residue_map, atomlist, torsions, bondangles, bondlengths, pose, preselection_mover_exists
+		apply_lowest_rmsd_selector( nsol_for_attempt, total_solutions, chosen_solution, residue_map,
+			atomlist, torsions, bondangles, bondlengths, pose
 		);
 		break;
 	case lowest_delta_torsion_selector :
-		apply_lowest_delta_torsion_selector( nsol_for_attempt, total_solutions, chosen_attempt_number,
-			chosen_solution, atomlist, torsions, pose, preselection_mover_exists
+		apply_lowest_delta_torsion_selector( nsol_for_attempt, total_solutions, chosen_solution,
+			atomlist, torsions, pose
 		);
 		break;
 	default :
-		TR.Warning << "Warning!  No selector specified for GeneralizedKICselector::apply.  The loop pose could not be updated!  No solution chosen!" << std::endl;
+		TR.Warning << "Warning!  No selector specified for GeneralizedKICselector::apply.  The loop pose could not be selected!  No solution chosen!" << std::endl;
 		return false;
 		break;
 	}
 
-	if ( chosen_attempt_number!=0 && chosen_solution!=0 ) {
-		set_loop_pose ( pose, atomlist, torsions[chosen_attempt_number][chosen_solution], bondangles[chosen_attempt_number][chosen_solution], bondlengths[chosen_attempt_number][chosen_solution]);
-	} else {
-		if ( TR.visible() ) {
-			TR << "Although one or more GeneralizedKIC solutions were passed to the GeneralizedKICselector, the pre-selection mover exited with failed status for all of these.  No solution will be returned." << std::endl;
-			TR.flush();
-		}
-		return false;
+	if ( chosen_solution==0 ) {
+		TR.Error << "Internal error -- no solution could be selected.  No solution will be returned." << std::endl;
+		TR.Error.flush();
+		return 0;
 	}
 
-	return true;
+	return chosen_solution;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -245,32 +235,10 @@ bool GeneralizedKICselector::apply (
 /// @brief Applies a random_selector selector.
 /// @details This picks a solution randomly from the solutions that passed filters.
 void GeneralizedKICselector::apply_random_selector(
-	utility::vector1<core::Size> const &nsol_for_attempt,
 	core::Size const total_solutions,
-	core::Size &chosen_attempt_number,
 	core::Size &chosen_solution
 ) const {
-	core::Size solutionnumber = static_cast<core::Size>(numeric::random::rg().random_range(1, total_solutions)); //Pick a random solution
-
-	core::Size accumulator=0;
-	for ( core::Size i=1, imax=nsol_for_attempt.size(); i<=imax; ++i ) {
-		accumulator+=nsol_for_attempt[i];
-		if ( accumulator>=solutionnumber ) { //If we've passed the random number we picked, the solution is in this interval
-			accumulator -= nsol_for_attempt[i]; //Back up and look for it.
-			chosen_attempt_number = i;
-			for ( core::Size j=1; j<=nsol_for_attempt[i]; ++j ) {
-				++accumulator;
-				if ( accumulator==solutionnumber ) {
-					chosen_solution=j;
-					break;
-				}
-			}
-			break;
-		}
-	}
-
-	assert(chosen_attempt_number!=0 && chosen_solution!=0); //We should have picked an attempt number and a solution within that attempt at this point.
-
+	chosen_solution = static_cast<core::Size>(numeric::random::rg().random_range(1, total_solutions)); //Pick a random solution
 	return;
 }
 
@@ -280,23 +248,15 @@ void GeneralizedKICselector::apply_random_selector(
 /// example, since side-chains will not be repacked by default prior to invoking this selector).  If the
 /// use_boltzmann parameter is set to true, the function randomly selects a solution weighted by exp(-E/kbt).
 void GeneralizedKICselector::apply_lowest_energy_selector(
-	utility::vector1<core::Size> const &nsol_for_attempt,
-	core::Size const /*total_solutions*/,
-	core::Size &chosen_attempt_number,
+	utility::vector1<core::Size> const &/*nsol_for_attempt*/,
+	core::Size const total_solutions,
 	core::Size &chosen_solution,
 	core::scoring::ScoreFunctionOP sfxn,
-	utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map,
-	utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map,
-	utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
-	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions,
-	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles,
-	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths,
 	core::pose::Pose const &ref_loop_pose,
 	core::pose::Pose const &ref_pose,
 	core::Real const &boltzmann_kbt,
-	protocols::moves::MoverOP pre_selection_mover,
-	bool const preselection_mover_exists,
-	bool const use_boltzmann
+	bool const use_boltzmann,
+	utility::vector1 <core::pose::PoseCOP> const &solutions
 ) const {
 	using namespace protocols::generalized_kinematic_closure;
 
@@ -305,7 +265,6 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 
 	//Variables for finding the lowest energy:
 	core::Real lowest_energy = 0.0;
-	core::Size lowest_energy_attempt = 0;
 	core::Size lowest_energy_solution = 0;
 
 	//Variables for randomly selecting weighted by exp(-E/kbt):
@@ -316,40 +275,24 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 	core::pose::Pose fullpose = ref_pose;
 	core::pose::Pose looppose = ref_loop_pose;
 
-	for ( core::Size i=1, imax=nsol_for_attempt.size(); i<=imax; ++i ) { //Loop through all attempts
-		if ( nsol_for_attempt[i]==0 ) continue;
-		for ( core::Size j=1; j<=nsol_for_attempt[i]; ++j ) { //Loop through all solutions for this attempt
-			fullpose = ref_pose;
-			looppose = ref_loop_pose;
-			set_loop_pose( looppose, atomlist, torsions[i][j], bondangles[i][j], bondlengths[i][j]);
-			copy_loop_pose_to_original( fullpose, looppose, residue_map, tail_residue_map);
-			if ( preselection_mover_exists ) {
-				if ( TR.Debug.visible() ) TR.Debug << "Applying preselection mover to solution " << j << " from closure attempt " << i << "." << std::endl;
-				pre_selection_mover->apply(fullpose);
-				if ( pre_selection_mover->get_last_move_status()!=protocols::moves::MS_SUCCESS ) {
-					if ( TR.visible() ) TR << "Preselection mover failed.  Discarding this solution and moving to next." << std::endl;
-					continue;
-				}
+	for ( core::Size i=1; i<=total_solutions; ++i ) { //Loop through all attempts
+		core::pose::PoseOP temppose( solutions[i]->clone() ); //Copy the ith solution.
+		(*my_sfxn)(*temppose);
+		if ( !use_boltzmann ) { //If we're just finding the lowest-energy solution:
+			TR.Debug << "Scoring solution " << i << ".  E = " << temppose->energies().total_energy() << std::endl;
+			if ( lowest_energy_solution==0 || temppose->energies().total_energy() < lowest_energy ) {
+				lowest_energy = temppose->energies().total_energy();
+				lowest_energy_solution = i;
 			}
-			(*my_sfxn)(fullpose);
-			if ( !use_boltzmann ) { //If we're just finding the lowest-energy solution:
-				TR.Debug << "Scoring solution " << j << " from closure attempt " << i << ".  E = " << fullpose.energies().total_energy() << std::endl;
-				if ( lowest_energy_attempt==0 || fullpose.energies().total_energy() < lowest_energy ) {
-					lowest_energy=fullpose.energies().total_energy();
-					lowest_energy_attempt=i;
-					lowest_energy_solution=j;
-				}
-			} else { //If we're randomly picking weighted by Boltzmann factors:
-				boltzmann_factors.push_back( exp(-fullpose.energies().total_energy() / boltzmann_kbt) );
-				boltzmann_factor_accumulator += boltzmann_factors[boltzmann_factors.size()]; //For normalization
-				TR.Debug << "Scoring solution " << j << " from closure attempt " << i << ".  E = " << fullpose.energies().total_energy() << "  exp(-E/kbt) = " << boltzmann_factors[boltzmann_factors.size()] << std::endl;
-			}
+		} else { //If we're randomly picking weighted by Boltzmann factors:
+			boltzmann_factors.push_back( exp( -1.0*( temppose->energies().total_energy() ) / boltzmann_kbt) );
+			boltzmann_factor_accumulator += boltzmann_factors[boltzmann_factors.size()]; //For normalization
+			TR.Debug << "Scoring solution " << i << " from closure attempt " << i << ".  E = " << temppose->energies().total_energy() << "  exp(-E/kbt) = " << boltzmann_factors[boltzmann_factors.size()] << std::endl;
 		}
-	}
+	} //End loop through all attempts.
 
 	if ( !use_boltzmann ) { //If we're picking the lowest-energy solution:
 		TR.Debug << "Lowest energy found = " << lowest_energy << std::endl;
-		chosen_attempt_number = lowest_energy_attempt;
 		chosen_solution = lowest_energy_solution;
 	} else { //If we're choosing randomly
 		bool breaknow=false;
@@ -361,18 +304,13 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 			//Loop through all solutions, accumulate the normalized Boltzmann factors, and break when we reach the bin
 			//that contains the random number chosen above.  (Since the bin widths correspond to the normalized Boltzmann
 			//factors, the probability of picking a given bin is proportional to the Boltzmann factors).
-			for ( core::Size i=1, imax=nsol_for_attempt.size(); i<=imax; ++i ) {
-				for ( core::Size j=1; j<=nsol_for_attempt[i]; ++j ) {
-					++counter;
-					accumulator+=boltzmann_factors[counter]/boltzmann_factor_accumulator;
-					if ( accumulator > randnum ) { //We've found the appropriate bin
-						chosen_attempt_number=i;
-						chosen_solution=j;
-						breaknow=true;
-						break;
-					}
+			for ( core::Size i=1; i<=total_solutions; ++i ) {
+				++counter;
+				accumulator+=boltzmann_factors[counter]/boltzmann_factor_accumulator;
+				if ( accumulator > randnum ) { //We've found the appropriate bin
+					chosen_solution=i;
+					break;
 				}
-				if ( breaknow ) break;
 			}
 			if ( !breaknow ) TR.Debug << "Boltzmann energy selector did not converge.  Trying again.  Final accumulator= " << accumulator << " randnum=" << randnum << std::endl; //DELETE
 		}
@@ -390,21 +328,19 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 void GeneralizedKICselector::apply_lowest_rmsd_selector(
 	utility::vector1<core::Size> const &nsol_for_attempt,
 	core::Size const /*total_solutions*/,
-	core::Size &chosen_attempt_number,
 	core::Size &chosen_solution,
 	utility::vector1 <std::pair <core::Size, core::Size> > const &/*residue_map*/,
 	utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions,
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles,
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths,
-	core::pose::Pose const &ref_loop_pose,
-	bool const preselection_mover_exists
+	core::pose::Pose const &ref_loop_pose
 ) const {
 	using namespace protocols::generalized_kinematic_closure;
 	using namespace ObjexxFCL;
 	using namespace numeric::model_quality;
 
-	if ( preselection_mover_exists ) TR.Warning << "Warning!  A preselection mover was specified, but this is incompatible with the lowest_rmsd_selector." << std::endl;
+	core::Size soln_counter(0);
 
 	//Copies of the loop pose and the full pose:
 	core::pose::Pose looppose = ref_loop_pose;
@@ -412,7 +348,6 @@ void GeneralizedKICselector::apply_lowest_rmsd_selector(
 	//Vars for finding lowest RMSD:
 	core::Real rmsd_current = 0.0;
 	core::Real rmsd_lowest = 0.0;
-	core::Size attempt_lowest = 0;
 	core::Size solution_lowest = 0;
 
 	//FArray2D of chain atoms in the reference pose (for RMSD calculation):
@@ -435,6 +370,8 @@ void GeneralizedKICselector::apply_lowest_rmsd_selector(
 
 	for ( core::Size i=1, imax=nsol_for_attempt.size(); i<=imax; ++i ) { //Loop through all attempts
 		for ( core::Size j=1; j<=nsol_for_attempt[i]; ++j ) { //Loop through all solutions to this attempt
+			++soln_counter; //Increment the solution counter
+
 			//Set the loop pose to the current solution:
 			set_loop_pose( looppose, atomlist, torsions[i][j], bondangles[i][j], bondlengths[i][j] );
 
@@ -451,15 +388,13 @@ void GeneralizedKICselector::apply_lowest_rmsd_selector(
 			rmsd_current = rms_wrapper(atomlist.size()-6, ref_chain, cur_chain);
 			TR.Debug << "Attempt " << i << " solution " << j << " rmsd=" << rmsd_current << std::endl;
 
-			if ( attempt_lowest==0 || rmsd_current < rmsd_lowest ) {
+			if ( soln_counter==1 || rmsd_current < rmsd_lowest ) {
 				rmsd_lowest=rmsd_current;
-				attempt_lowest=i;
-				solution_lowest=j;
+				solution_lowest=soln_counter;
 			}
 		}
 	}
 
-	chosen_attempt_number=attempt_lowest;
 	chosen_solution=solution_lowest;
 
 	TR.flush();
@@ -474,27 +409,26 @@ void GeneralizedKICselector::apply_lowest_rmsd_selector(
 void GeneralizedKICselector::apply_lowest_delta_torsion_selector(
 	utility::vector1<core::Size> const &nsol_for_attempt,
 	core::Size const /*total_solutions*/,
-	core::Size &chosen_attempt_number,
 	core::Size &chosen_solution,
 	utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions,
-	core::pose::Pose const &ref_pose,
-	bool const preselection_mover_exists
+	core::pose::Pose const &ref_pose
 ) const {
 	using namespace protocols::generalized_kinematic_closure;
 	using namespace ObjexxFCL;
 	using namespace numeric::model_quality;
 
-	if ( preselection_mover_exists ) TR.Warning << "Warning!  A preselection mover was specified, but this is incompatible with the lowest_delta_torsion_selector." << std::endl;
+	core::Size soln_counter(0);
 
 	//Vars for finding lowest RMSD:
 	core::Real dtor_current = 0.0;
 	core::Real dtor_lowest = 0.0;
-	core::Size attempt_lowest = 0;
 	core::Size solution_lowest = 0;
 
 	for ( core::Size i=1, imax=nsol_for_attempt.size(); i<=imax; ++i ) { //Loop through all attempts
 		for ( core::Size j=1; j<=nsol_for_attempt[i]; ++j ) { //Loop through all solutions to this attempt
+			//Increment solution counter
+			++soln_counter;
 			//Calculate delta torsion
 			dtor_current = 0;
 			//actually only 6 tors change, but we don't know the pivot at this point, do we?
@@ -509,15 +443,13 @@ void GeneralizedKICselector::apply_lowest_delta_torsion_selector(
 			}
 			TR << "Attempt " << i << " solution " << j << " dtor=" << dtor_current << std::endl;
 
-			if ( attempt_lowest==0 || dtor_current < dtor_lowest ) {
+			if ( soln_counter==1 || dtor_current < dtor_lowest ) {
 				dtor_lowest=dtor_current;
-				attempt_lowest=i;
-				solution_lowest=j;
+				solution_lowest=soln_counter;
 			}
 		}
 	}
 
-	chosen_attempt_number=attempt_lowest;
 	chosen_solution=solution_lowest;
 
 	TR.flush();

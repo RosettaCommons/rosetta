@@ -93,12 +93,13 @@ GeneralizedKIC::GeneralizedKIC():
 	filterlist_(),
 	selector_( selector::GeneralizedKICselectorOP( new selector::GeneralizedKICselector ) ),
 	n_closure_attempts_(2000),
-	n_closure_attempts_is_a_maximum_(false),
+	min_solution_count_(0),
 	rosettascripts_filter_(),
 	rosettascripts_filter_exists_(false),
 	pre_selection_mover_(),
 	pre_selection_mover_exists_(false),
-	ntries_before_giving_up_(0)
+	ntries_before_giving_up_(0),
+	solutions_()
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
@@ -123,12 +124,13 @@ GeneralizedKIC::GeneralizedKIC( GeneralizedKIC const &src ):
 	filterlist_(), //Will be cloned
 	selector_( src.selector_->clone() ), //Cloned!
 	n_closure_attempts_(src.n_closure_attempts_),
-	n_closure_attempts_is_a_maximum_(src.n_closure_attempts_is_a_maximum_),
+	min_solution_count_(src.min_solution_count_),
 	rosettascripts_filter_(src.rosettascripts_filter_), //Not cloned!
 	rosettascripts_filter_exists_(src.rosettascripts_filter_exists_),
 	pre_selection_mover_(src.pre_selection_mover_), //Not cloned!
 	pre_selection_mover_exists_(src.pre_selection_mover_exists_),
-	ntries_before_giving_up_(src.ntries_before_giving_up_)
+	ntries_before_giving_up_(src.ntries_before_giving_up_),
+	solutions_() //Copied below.
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {
 	//Clone elements in the perturber list
@@ -141,6 +143,12 @@ GeneralizedKIC::GeneralizedKIC( GeneralizedKIC const &src ):
 	filterlist_.clear();
 	for ( core::Size i=1, imax=src.filterlist_.size(); i<=imax; ++i ) {
 		filterlist_.push_back( src.filterlist_[i]->clone() );
+	}
+
+	//Clone elements (poses) in solutions list.  Note -- potentially memory-expensive!.
+	solutions_.clear();
+	for ( core::Size i=1; i<=src.solutions_.size(); ++i ) {
+		solutions_.push_back( src.solutions_[i]->clone() );
 	}
 
 	return;
@@ -171,6 +179,8 @@ protocols::moves::MoverOP GeneralizedKIC::fresh_instance() const {
 /// @brief Actually apply the mover to the pose.
 void GeneralizedKIC::apply (core::pose::Pose & pose)
 {
+	clear_stored_solutions(); //Wipe any solution poses that have been stored.
+
 	if ( loopresidues_.size()==0 ) {
 		utility_exit_with_message("Error!  GeneralizedKIC apply() function called without setting a loop to be closed.\n");
 	}
@@ -191,32 +201,21 @@ void GeneralizedKIC::apply (core::pose::Pose & pose)
 	addupperanchor(perturbedloop_pose, pose);
 	addtailgeometry(perturbedloop_pose, pose, build_ideal_geometry_, residue_map, tail_residue_map);
 
-	last_run_successful_ = doKIC(perturbedloop_pose, pose, residue_map, tail_residue_map);
+	core::Size solution_index(0); //Storage for the index of the solution chosen by the selector.
+
+	last_run_successful_ = doKIC(perturbedloop_pose, pose, residue_map, tail_residue_map, solution_index);
 	if ( rosettascripts_filter_exists_ ) rosettascripts_filter_->set_value(last_run_successful_);
 
-	if ( last_run_successful_ ) {
+	if ( last_run_successful_ && solution_index!=0 ) {
 		if ( TR.visible() ) { TR << "Closure successful." << std::endl; TR.flush();}
-		//perturbedloop_pose.dump_pdb("temp.pdb"); //DELETE ME -- for debugging only
-		copy_loop_pose_to_original( pose, perturbedloop_pose, residue_map, tail_residue_map);
-		if ( preselection_mover_exists() ) {
-			if ( TR.visible() ) { TR << "Re-applying preselection mover." << std::endl; TR.flush();}
-			pre_selection_mover_->apply(pose);
-			if ( pre_selection_mover_->get_last_move_status()!=protocols::moves::MS_SUCCESS ) {
-				if ( TR.visible() ) {
-					TR << "Warning!  Re-applied preselection mover failed.  GenKIC failure." << std::endl;
-					TR.flush();
-				}
-				set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
-			} else {
-				set_last_move_status( protocols::moves::MS_SUCCESS );
-			}
-		} else {
-			set_last_move_status( protocols::moves::MS_SUCCESS );
-		}
+		pose = *solutions_[solution_index]; //Set the pose to the solution.
+		set_last_move_status( protocols::moves::MS_SUCCESS );
 	} else {
 		if ( TR.visible() ) { TR << "Closure unsuccessful." << std::endl; TR.flush();}
 		set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 	}
+
+	clear_stored_solutions(); //Wipe any solution poses that have been stored.
 
 	return;
 }
@@ -261,7 +260,12 @@ GeneralizedKIC::parse_my_tag(
 	}
 	set_ntries_before_giving_up(tag->getOption<core::Size>("stop_if_no_solution", 0)); //Number of tries to make before stopping if no solution has been found yet.
 	if ( tag->hasOption("closure_attempts") ) set_closure_attempts( tag->getOption<core::Size>("closure_attempts", 2000) );
-	if ( tag->hasOption("stop_when_solution_found") ) set_n_closure_attempts_is_a_maximum( tag->getOption<bool>("stop_when_solution_found", false) );
+
+	//Check for depreciated option:
+	runtime_assert_string_msg ( !tag->hasOption("stop_when_solution_found"),
+		"Error encountered when parsing options for GeneralizedKIC: The \"stop_when_solution_found\" option has been removed.  Instead, you can use \"stop_when_n_solutions_found\", which takes an integer rather than a boolean and stops after at least N solutions have been found." );
+	if ( tag->hasOption("stop_when_n_solutions_found") ) set_min_solution_count( tag->getOption<core::Size>("stop_when_n_solutions_found", 0) );
+
 	if ( tag->hasOption("pre_selection_mover") ) {
 		protocols::moves::MoverOP curmover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "pre_selection_mover" ), movers );
 		set_preselection_mover(curmover);
@@ -1382,13 +1386,14 @@ void GeneralizedKIC::addupperanchor(
 
 /// @brief Do the actual kinematic closure.
 /// @details Inputs are pose (the loop to be closed), original_pose (the reference pose, unchanged by operation), residue_map (the mapping of
-/// residues from pose to original_pose) and tail_residue_map (the mapping of tail residues from pose to original_pose).  Output is pose (the
-/// loop to be closed, in a new, closed conformation if successful) and a boolean value indicating success or failure.
+/// residues from pose to original_pose) and tail_residue_map (the mapping of tail residues from pose to original_pose).  Output is the index
+/// of the solution in the solutions_ vector.
 bool GeneralizedKIC::doKIC(
-	core::pose::Pose &pose,
+	core::pose::Pose const &pose,
 	core::pose::Pose const &original_pose,
 	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
-	utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map
+	utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map,
+	core::Size &solution_index
 ) {
 	using namespace core::id;
 	using namespace numeric::kinematic_closure;
@@ -1437,10 +1442,30 @@ bool GeneralizedKIC::doKIC(
 		//Filter solutions found.  This decrements nsol as solutions are eliminated, and deletes solutions from the t_ang, b_ang, and b_len vectors.
 		if ( nsol>0 ) filter_solutions(original_pose, pose, residue_map, tail_residue_map, atomlist_, t_ang[iattempt], b_ang[iattempt], b_len[iattempt], nsol );
 
+		//Only at this point do we actually build poses:
+		for ( core::Size j=1, jmax=nsol; j<=jmax; ++j ) {
+			core::pose::PoseOP curpose( original_pose.clone() ); //Clone the original pose.
+			core::pose::PoseOP looppose( pose.clone() ); //Clone the loop pose.
+			set_loop_pose( *looppose, atomlist_, t_ang[iattempt][j], b_ang[iattempt][j], b_len[iattempt][j]);
+			copy_loop_pose_to_original( *curpose, *looppose, residue_map, tail_residue_map);
+			//Apply preselection movers.
+			if ( preselection_mover_exists() ) {
+				TR << "Applying pre-selection mover to solution " << j << " from attempt " << iattempt << "." << std::endl;
+				pre_selection_mover_->apply( *curpose );
+				if ( pre_selection_mover_->get_last_move_status()!=protocols::moves::MS_SUCCESS ) {
+					TR << "Preselection mover failed!  Continuing to next solution." << std::endl;
+					--nsol;
+					continue;
+				}
+			}
+			TR << "Storing solution " << j << " from attempt " << iattempt << "." << std::endl;
+			add_solution(curpose);
+		}
+
 		total_solution_count += static_cast<core::Size>(nsol);
 		nsol_for_attempt[iattempt] = static_cast<core::Size>(nsol);
 
-		if ( n_closure_attempts_is_a_maximum() && nsol > 0 ) break;
+		if ( total_solution_count >= min_solution_count() ) break;
 
 		if ( get_ntries_before_giving_up()==iattempt && total_solution_count==0 ) break; //Give up now if we've attempted a certain number of tries and found nothing.
 
@@ -1449,8 +1474,10 @@ bool GeneralizedKIC::doKIC(
 	// Apply the selector here.  This ultimately picks a single solution and sets pose (the loop pose) to the conformation for that solution, but doesn't touch the original pose.
 	// Preselection movers are also applied by select_solution(), though the loop pose returned will NOT have this applied.
 	bool selector_success(false);
+	solution_index=0;
 	if ( total_solution_count>0 ) {
-		selector_success=select_solution ( pose, original_pose, residue_map, tail_residue_map, atomlist_, t_ang, b_ang, b_len, nsol_for_attempt, total_solution_count );
+		solution_index=select_solution ( pose, original_pose, residue_map, tail_residue_map, atomlist_, t_ang, b_ang, b_len, nsol_for_attempt, total_solution_count );
+		selector_success=(solution_index!=0);
 	}
 
 	return (total_solution_count>0 && selector_success);
@@ -1726,9 +1753,10 @@ void GeneralizedKIC::filter_solutions(
 
 }
 
-/// @brief Applies the selector to choose a solution and set a loop pose.
-/// @details  If the selector could not select a solution (e.g. if the preselection mover returned failed status for every solution), this function returns "false"; otherwise, "true".
-/// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
+/// @brief Applies the selector to choose a solution.
+/// @details  If the selector could not select a solution (e.g. if the preselection mover returned failed status for every solution), this function returns 0;
+/// otherwise, returns the index of the solution in the solutions_ vector.
+/// @param[in,out] pose -- The loop to be closed.
 /// @param[in] original_pose -- The original pose.  Can be used for reference by selectors.
 /// @param[in] residue_map -- Mapping of (loop residue, original pose residue).
 /// @param[in] tail_residue_map -- Mapping of (tail residue index in pose, tail residue index in original_pose).
@@ -1738,8 +1766,8 @@ void GeneralizedKIC::filter_solutions(
 /// @param[in] bondlengths -- Matrix of [closure attempt #][solution #][bondlength #] with bond length for each bond in the chain.  A selector will pick one solution.
 /// @param[in] nsol_for_attempt -- List of the number of solutions for each attempt.
 /// @param[in] total_solutions -- Total number of solutions found.
-bool GeneralizedKIC::select_solution (
-	core::pose::Pose &pose,
+core::Size GeneralizedKIC::select_solution (
+	core::pose::Pose const &pose,
 	core::pose::Pose const &original_pose, //The original pose
 	utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
 	utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map, //mapping of (tail residue index in pose, tail residue index in original_pose)
@@ -1750,7 +1778,7 @@ bool GeneralizedKIC::select_solution (
 	utility::vector1 <core::Size> const &nsol_for_attempt,
 	core::Size const total_solutions
 ) const {
-	return selector_->apply(pose, original_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths, nsol_for_attempt, total_solutions, pre_selection_mover_, preselection_mover_exists());
+	return selector_->apply(pose, original_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths, nsol_for_attempt, total_solutions, solutions_);
 }
 
 /// @brief Trims extra atoms from the start and end of the atom list, if the first and last pivots are not the fifth and fifth-last atoms, respectively.
@@ -1773,12 +1801,6 @@ void GeneralizedKIC::prune_extra_atoms( utility::vector1 <core::Size> &pivots )
 		//TR.Debug << "Removing last " << extra_at_end << " atoms from the atom list." << std::endl ; //DELETE ME
 		for ( core::Size i=1; i<=extra_at_end; ++i ) atomlist_.erase(atomlist_.end()-1); //Erase the last extra_at_end atoms
 	}
-
-	//DEBUGGING OUTPUT ONLY -- DELETE ME:
-	//for(core::Size i=1; i<=atomlist_.size(); ++i) {
-	// TR.Debug << i << " atom=" << atomlist_[i].first.atomno() << " res=" << atomlist_[i].first.rsd() << std::endl;
-	//}
-	//TR.Debug.flush();
 
 	return;
 }

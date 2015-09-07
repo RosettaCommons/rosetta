@@ -71,7 +71,7 @@ public:
 	SpinAroundPartnerMover( SpinAroundPartnerMover const & src );
 
 	/// @brief Assignment Operator
-	SpinAroundPartnerMover & 
+	SpinAroundPartnerMover &
 	operator = ( SpinAroundPartnerMover const & src );
 
 	/// @brief Destructor

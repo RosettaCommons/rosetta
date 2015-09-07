@@ -96,8 +96,8 @@ void LinearChainbreakEnergy::initialize(Size allowable_sequence_sep) {
 }
 
 core::Real LinearChainbreakEnergy::do_score_dev( core::conformation::Residue const & lower_rsd,
-		core::conformation::Residue const & upper_rsd,
-		core::Size const nbb ) const
+	core::conformation::Residue const & upper_rsd,
+	core::Size const nbb ) const
 {
 	Distance score_dev( 0.0 );
 
@@ -110,17 +110,17 @@ core::Real LinearChainbreakEnergy::do_score_dev( core::conformation::Residue con
 		score_dev *= 1.5;  // Normalize the score with that of non-carbohydrate chain breaks.
 	} else {
 		score_dev +=
-				upper_rsd.atom( upper_rsd.mainchain_atoms()[ 2 ] ).xyz().distance( lower_rsd.atom( "OVL2" ).xyz() );
+			upper_rsd.atom( upper_rsd.mainchain_atoms()[ 2 ] ).xyz().distance( lower_rsd.atom( "OVL2" ).xyz() );
 	}
 
 	return score_dev;
 }
 
 core::Real LinearChainbreakEnergy::do_score_ovp( core::conformation::Residue const & lower_rsd,
-		core::conformation::Residue const & upper_rsd,
-		core::Size const nbb,
-		core::Size const cutpoint,
-		core::pose::Pose const & pose) const
+	core::conformation::Residue const & upper_rsd,
+	core::Size const nbb,
+	core::Size const cutpoint,
+	core::pose::Pose const & pose) const
 {
 	using core::id::AtomID;
 	using core::kinematics::Stub;
@@ -130,23 +130,23 @@ core::Real LinearChainbreakEnergy::do_score_ovp( core::conformation::Residue con
 	// now compute the overlap score: this is done by comparing the stub   (lower side )  C, | N, CA (upper side)
 	// the stub for the lower_rsd is already in the atom-tree at atom "OVL2 == CA*"
 	Stub lower_stub( pose.conformation().atom_tree().atom(
-			AtomID( pose.residue( cutpoint ).atom_index( "OVL2" ), cutpoint ) ).get_stub() );
+		AtomID( pose.residue( cutpoint ).atom_index( "OVL2" ), cutpoint ) ).get_stub() );
 
 	// the upper stub... let's just compute it for now...
 	// could be gained from AtomID( NamedAtomID( "OVU1", cutpoint+1 ).get_stub()
 	// and then the correct reversal...
 	Stub upper_stub( upper_rsd.atom( upper_rsd.mainchain_atoms()[ 2 ]).xyz(),  // CA
-			upper_rsd.atom( upper_rsd.mainchain_atoms()[ 1 ] ).xyz(),          // N
-			upper_rsd.atom( "OVU1" ).xyz() );                                  // virtual C
+		upper_rsd.atom( upper_rsd.mainchain_atoms()[ 1 ] ).xyz(),          // N
+		upper_rsd.atom( "OVU1" ).xyz() );                                  // virtual C
 
 	//for double-checking... ( debug )
 	Stub manual_lower_stub( lower_rsd.atom( "OVL2" ).xyz(),                // virtual CA
-			lower_rsd.atom( "OVL1" ).xyz(),                                // virtual N
-			lower_rsd.atom( lower_rsd.mainchain_atoms()[ nbb ] ).xyz() );  // C
+		lower_rsd.atom( "OVL1" ).xyz(),                                // virtual N
+		lower_rsd.atom( lower_rsd.mainchain_atoms()[ nbb ] ).xyz() );  // C
 
 	if ( distance( lower_stub, manual_lower_stub ) > 0.01 ) {
 		tr.Warning << "WARNING: mismatch between manual computed and atom-tree stub: "
-				<< lower_stub << " " << manual_lower_stub << std::endl;
+			<< lower_stub << " " << manual_lower_stub << std::endl;
 	}
 
 	return
@@ -158,8 +158,8 @@ core::Real LinearChainbreakEnergy::do_score_ovp( core::conformation::Residue con
 /// called at the end of energy evaluation
 /// In this case (LinearChainbreakEnergy), all the calculation is done here
 void LinearChainbreakEnergy::finalize_total_energy( pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals ) const
+	ScoreFunction const &,
+	EnergyMap & totals ) const
 {
 	using core::Size;
 	using conformation::Residue;
@@ -224,13 +224,13 @@ F1 and F2 are not zeroed -- contributions from this atom are
 just summed in
 **/
 void LinearChainbreakEnergy::eval_atom_derivative(
-		id::AtomID const & id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const &, // domain_map,
-		ScoreFunction const &, // sfxn,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
+	id::AtomID const & id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const &, // domain_map,
+	ScoreFunction const &, // sfxn,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
 ) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

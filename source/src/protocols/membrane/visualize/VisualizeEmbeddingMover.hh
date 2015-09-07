@@ -53,7 +53,7 @@ public:
 
 	/// @brief   Constructor from embedding
 	/// @details  Visualizes defined embedding
-        VisualizeEmbeddingMover( protocols::membrane::geometry::EmbeddingOP embedding );
+	VisualizeEmbeddingMover( protocols::membrane::geometry::EmbeddingOP embedding );
 
 	/// @brief Copy Constructor for deep copying
 	VisualizeEmbeddingMover( VisualizeEmbeddingMover const & src );
@@ -80,7 +80,7 @@ public:
 	/////////////////////
 
 	/// @brief   Apply visualization
-        virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
 	/// @brief   Return the name of this mover
 	virtual std::string get_name() const;
@@ -97,13 +97,13 @@ private:
 	/// @brief Create a Membrane Residue
 	/// @details Given a centered position and residue typeset, return
 	/// a ResidueOP with the xyz coordinate pos, type EMB, from typeset given
-        core::conformation::ResidueOP
+	core::conformation::ResidueOP
 	create_embedding_virtual( core::Vector center, core::Vector normal, bool fullatom );
 
 private:
 
 	// Embedding object containing (multiple) EmbeddingDefinition(s)
-        protocols::membrane::geometry::EmbeddingOP embeddings_;
+	protocols::membrane::geometry::EmbeddingOP embeddings_;
 };
 
 } // visualize

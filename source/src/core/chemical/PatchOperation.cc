@@ -765,28 +765,28 @@ AppendMainchainAtom::apply( ResidueType & rsd ) const
 	}
 	return false;
 }
-						   
+
 ReplaceMainchainAtom::ReplaceMainchainAtom( std::string const & target, std::string const & new_atom ) :
 	target_( target ),
 	new_atom_( new_atom )
 {}
-						   
+
 bool
 ReplaceMainchainAtom::apply( ResidueType & rsd ) const
 {
 	if ( !rsd.has( target_ ) ) {
 		TR_PatchOperations.Debug << "ReplaceMainchainAtom::apply failed: " <<
-		rsd.name() << " is missing atom " << target_ <<	std::endl;
+			rsd.name() << " is missing atom " << target_ << std::endl;
 		return true; // failure
 	} else {
 		AtomIndices new_mainchain_atoms( rsd.mainchain_atoms() );
 		for ( Size i = 1; i <= new_mainchain_atoms.size(); ++i ) {
 			std::string mainchain_atom_name = rsd.atom_name( new_mainchain_atoms[ i ] );
 			mainchain_atom_name.erase( std::remove_if( mainchain_atom_name.begin(),
-													   mainchain_atom_name.end(),
-													  ::isspace ),
-									  mainchain_atom_name.end() );
-			
+				mainchain_atom_name.end(),
+				::isspace ),
+				mainchain_atom_name.end() );
+
 			if ( mainchain_atom_name == target_ ) {
 				new_mainchain_atoms[ i ] = rsd.atom_index( new_atom_ );
 				break;

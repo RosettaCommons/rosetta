@@ -315,7 +315,7 @@ TrizaolamerDockDesignMinimizeMover::apply(
 	//of distance from the singular hbs_seq_position
 	//and blanket constrain the three other positions.
 	//TODO that...
-	
+
 	core::pose::ncbb::initialize_ncbbs( pose );
 	utility::vector1< core::Size > triazolamer_seq_positions;
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
@@ -331,12 +331,12 @@ TrizaolamerDockDesignMinimizeMover::apply(
 		}
 		//pert_pep_mm->set_bb( i, false );
 		//if ( hbs_seq_position>0 && hbs_seq_position <= i ) {
-		//	hbs_length++;
+		// hbs_length++;
 		//}
 	}
 	//assert(hbs_seq_position != 0);
-	
-	
+
+
 	// create small and shear movers
 	simple_moves::SmallMoverOP pert_pep_small( new simple_moves::SmallMover( pert_pep_mm, option[ tddm::pert_pep_small_temp ].value(), 1 ) );
 	pert_pep_small->angle_max( 'H', option[ tddm::pert_pep_small_H ].value() );
@@ -537,7 +537,7 @@ TrizaolamerDockDesignMinimizeMover::apply(
 
 		// create a pack rotamers mover for the final design
 		simple_moves::PackRotamersMoverOP final_desn_pr( new simple_moves::PackRotamersMover( score_fxn, final_desn_pt, 10 ) );
-		
+
 		// design with final pr mover
 		final_desn_pr->apply( pose );
 

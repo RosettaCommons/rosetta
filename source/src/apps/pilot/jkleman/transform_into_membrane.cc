@@ -47,7 +47,7 @@ main( int argc, char * argv [] ) {
 
 		using namespace protocols::jd2;
 		using namespace protocols::membrane;
-		using namespace protocols::moves; 
+		using namespace protocols::moves;
 
 		devel::init(argc, argv);
 

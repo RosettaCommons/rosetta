@@ -186,11 +186,11 @@ public:
 
 	/// @brief Get the selector (the algorithm controlling how a solution will be chosen
 	/// from among the solutions passing filters).
-	selector::selector_type get_selector_type () const { return selector_->get_selector_type(); }
+	inline selector::selector_type get_selector_type () const { return selector_->get_selector_type(); }
 
 	/// @brief Get the name of the selector (the algorithm controlling how a solution will be chosen
 	/// from among the solutions passing filters).
-	std::string get_selector_type_name () const { return selector_->get_selector_type_name( selector_->get_selector_type() ); }
+	inline std::string get_selector_type_name () const { return selector_->get_selector_type_name( selector_->get_selector_type() ); }
 
 
 	/// @brief Add a new perturber to the list of perturbers.
@@ -349,7 +349,7 @@ public:
 	/// @details Perturbation, closure, and filtering is carried out for every closure
 	/// attempt.  Successful closures from ALL attempts are then selected from by
 	/// selectors.
-	core::Size get_closure_attempts() const { return n_closure_attempts_; }
+	inline core::Size get_closure_attempts() const { return n_closure_attempts_; }
 
 	/// @brief Sets number of tries before giving up.
 	/// @details If this is set to 0, then no such check is made.
@@ -360,21 +360,30 @@ public:
 	/// @brief Gets number of tries before giving up.
 	/// @details The algorithm tries n_closure_attempts_ times if and only if at least one solution is found in the first
 	/// ntries_before_giving_up_ attempts.
-	core::Size get_ntries_before_giving_up () const { return ntries_before_giving_up_; }
+	inline core::Size get_ntries_before_giving_up () const { return ntries_before_giving_up_; }
 
 
-	/// @brief Returns whether the number of closure attempts is a maximum number of attempts.
-	/// @details If true, attempts are made until a solution is found OR n_closure_attempts_ is
-	/// reached.  If false, n_closure_attempts_ attempts are made, and then a solution is chosen
-	/// from among the successful solutions (if any).
-	bool n_closure_attempts_is_a_maximum() const { return n_closure_attempts_is_a_maximum_; }
+	/// @brief Gets the number of solutions that must be found before stopping prematurely (i.e.
+	/// before n_closure_attempts_ is reached).
+	/// @details If nonzero, attempts are made until the specified number of solutions are found OR
+	/// n_closure_attempts_ is reached (or we give up because ntries_before_giving_up_ is reached
+	/// without finding any solutions).  If zero, n_closure_attempts_ attempts are made, and then
+	/// a solution is chosen from among the successful solutions (or we give up because
+	/// ntries_before_giving_up_ is reached without finding any solutions.
+	inline core::Size min_solution_count() const { return min_solution_count_; }
 
 
-	/// @brief Sets whether the number of closure attempts is a maximum number of attempts.
-	/// @details If true, attempts are made until a solution is found OR n_closure_attempts_ is
-	/// reached.  If false, n_closure_attempts_ attempts are made, and then a solution is chosen
-	/// from among the successful solutions (if any).
-	void set_n_closure_attempts_is_a_maximum(bool const is_max) { n_closure_attempts_is_a_maximum_ = is_max; return; }
+	/// @brief Sets the number of solutions that must be found before stopping prematurely (i.e.
+	/// before n_closure_attempts_ is reached).
+	/// @details If nonzero, attempts are made until the specified number of solutions are found OR
+	/// n_closure_attempts_ is reached (or we give up because ntries_before_giving_up_ is reached
+	/// without finding any solutions).  If zero, n_closure_attempts_ attempts are made, and then
+	/// a solution is chosen from among the successful solutions (or we give up because
+	/// ntries_before_giving_up_ is reached without finding any solutions.
+	void set_min_solution_count(bool const count_in) { min_solution_count_ = count_in; return; }
+	/// @brief Clear the stored solution poses.
+	///
+	inline void clear_stored_solutions() { solutions_.clear(); }
 
 private:
 
@@ -456,11 +465,12 @@ private:
 	core::Size n_closure_attempts_;
 
 
-	/// @brief Should n_closure_attempts_ be the number attempted, or a maximum
-	/// number of attempts?  If false, n_closure_attempts_ attempts are made, and
-	/// then a solution is chosen.  If true, attempts are made until a solution
-	/// is found OR n_closure_attempts_ is reached.
-	bool n_closure_attempts_is_a_maximum_;
+	/// @brief If greater than zero, GenKIC will seek solutinons until it has at least
+	/// this number of solutions.  If it is zero, then GenKIC will seek solutions until
+	/// n_closure_attempts_ is reached, or until ntries_before_giving_up_ is reached
+	/// without finding a solution.
+	/// @details Zero by default.
+	core::Size min_solution_count_;
 
 
 	/// @brief Owning pointer for the RosettaScripts ContingentFilter associated with this mover, if there is one.
@@ -484,6 +494,10 @@ private:
 	/// The algorithm tries n_closure_attempts_ times if and only if at least one solution is found in the first
 	/// ntries_before_giving_up_ attempts.
 	core::Size ntries_before_giving_up_;
+
+	/// @brief Vector of owning pointers to solutions.  Used for temporary storage.
+	///
+	utility::vector1 < core::pose::PoseOP > solutions_;
 
 	////////////////////////////////////////////////////////////////////////////////
 	//          PRIVATE FUNCTIONS                                                 //
@@ -572,13 +586,14 @@ private:
 
 	/// @brief Do the actual kinematic closure.
 	/// @details Inputs are pose (the loop to be closed), original_pose (the reference pose, unchanged by operation), residue_map (the mapping of
-	/// residues from pose to original_pose) and tail_residue_map (the mapping of tail residues from pose to original_pose).  Output is pose (the
-	/// loop to be closed, in a new, closed conformation if successful) and a boolean value indicating success or failure.
+	/// residues from pose to original_pose) and tail_residue_map (the mapping of tail residues from pose to original_pose).  Output is the index
+	/// of the solution in the solutions_ vector.
 	bool doKIC(
-		core::pose::Pose &pose,
+		core::pose::Pose const &pose,
 		core::pose::Pose const &original_pose,
 		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
-		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map
+		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map,
+		core::Size &solution_index
 	);
 
 
@@ -653,9 +668,10 @@ private:
 		int &nsol
 	) const;
 
-	/// @brief Applies the selector to choose a solution and set a loop pose.
-	/// @details  If the selector could not select a solution (e.g. if the preselection mover returned failed status for every solution), this function returns "false"; otherwise, "true".
-	/// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
+	/// @brief Applies the selector to choose a solution.
+	/// @details  If the selector could not select a solution (e.g. if the preselection mover returned failed status for every solution), this function returns 0;
+	/// otherwise, returns the index of the solution in the solutions_ vector.
+	/// @param[in,out] pose -- The loop to be closed.
 	/// @param[in] original_pose -- The original pose.  Can be used for reference by selectors.
 	/// @param[in] residue_map -- Mapping of (loop residue, original pose residue).
 	/// @param[in] tail_residue_map -- Mapping of (tail residue index in pose, tail residue index in original_pose).
@@ -665,8 +681,8 @@ private:
 	/// @param[in] bondlengths -- Matrix of [closure attempt #][solution #][bondlength #] with bond length for each bond in the chain.  A selector will pick one solution.
 	/// @param[in] nsol_for_attempt -- List of the number of solutions for each attempt.
 	/// @param[in] total_solutions -- Total number of solutions found.
-	bool select_solution (
-		core::pose::Pose &pose,
+	core::Size select_solution (
+		core::pose::Pose const &pose,
 		core::pose::Pose const &original_pose, //The original pose
 		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
 		utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map, //mapping of (tail residue index in pose, tail residue index in original_pose)
@@ -689,6 +705,13 @@ private:
 	/// @brief Returns whether a preselection mover has been specified.
 	///
 	bool preselection_mover_exists() const { return pre_selection_mover_exists_; }
+
+	/// @brief Add a solution to the solutions list.
+	/// @details Stores an owning pointer to a pose.
+	inline void add_solution( core::pose::PoseOP pose_in ) {
+		solutions_.push_back(pose_in);
+		return;
+	}
 
 };
 

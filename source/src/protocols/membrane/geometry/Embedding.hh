@@ -57,21 +57,21 @@ public: // constructors
 	Embedding( EmbeddingDef const & embedding );
 
 	/// @brief Constructs bogus object from topology
-	Embedding( 
-		core::conformation::membrane::SpanningTopology const & topology, 
+	Embedding(
+		core::conformation::membrane::SpanningTopology const & topology,
 		core::Real radius );
 
 	/// @brief Custom Constructor - from topology & structure
 	/// @details Construct Embedding from Structure & Topology
-	Embedding( 
-		core::conformation::membrane::SpanningTopology const & topology, 
+	Embedding(
+		core::conformation::membrane::SpanningTopology const & topology,
 		core::pose::Pose const & pose );
 
 	/// @brief Copy Constructor
 	Embedding( Embedding const & Embedding );
 
 	/// @brief Assignment Operator
-	Embedding & 
+	Embedding &
 	operator = ( Embedding const & src );
 
 	/// @brief Destructor
@@ -108,10 +108,10 @@ public: // methods
 	//////////////////////
 
 	// from TMspans
-	utility::vector1< EmbeddingDefOP > 
-	from_spans( 
-		core::conformation::membrane::SpanningTopology const & topology, 
-		core::pose::Pose const & pose 
+	utility::vector1< EmbeddingDefOP >
+	from_spans(
+		core::conformation::membrane::SpanningTopology const & topology,
+		core::pose::Pose const & pose
 	);
 
 private: // data

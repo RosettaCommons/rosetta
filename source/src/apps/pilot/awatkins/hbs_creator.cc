@@ -250,11 +250,11 @@ HbsCreatorMover::apply(
 	// AMW: This means that you have to clear other possible Cterm variant assignments
 	// from this residue.
 	conformation::Residue term( restype_set->get_residue_type_with_variant_added(
-			restype_set->get_residue_type_with_variant_removed(
-					pose.residue(pose.total_residue()).type(),
-					chemical::UPPER_TERMINUS_VARIANT ),
-			chemical::METHYLATED_CTERMINUS_VARIANT), true );
-	
+		restype_set->get_residue_type_with_variant_removed(
+		pose.residue(pose.total_residue()).type(),
+		chemical::UPPER_TERMINUS_VARIANT ),
+		chemical::METHYLATED_CTERMINUS_VARIANT), true );
+
 	term.set_all_chi(pose.residue(pose.total_residue()).chi());
 	//replace_res_post.mainchain_torsions(pose.residue(oop_post_pos_).mainchain_torsions());
 

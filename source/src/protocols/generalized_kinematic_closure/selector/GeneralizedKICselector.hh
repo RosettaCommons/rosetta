@@ -113,10 +113,9 @@ public:
 	/// @brief Returns the Boltzmann temperature used by this selector.
 	core::Real get_boltzmann_temp() const { return boltzmann_kbt_; }
 
-	/// @brief Applies a selector type to choose a solution and set a loop pose.
-	/// @details  Since the selector applies the preselection mover (if defined) and respects its exit status, it is possible that there will be no
-	/// successful solution after application of that mover.  In that case, this function returns "false"; otherwise, it returns "true".
-	/// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
+	/// @brief Applies a selector type to choose a solution, and returns index of chosen solution.
+	/// @details  Returns zero if some error occurs.  Should always return a nonzero integer, though.
+	/// @param[in,out] pose -- The loop to be closed.
 	/// @param[in] original_pose -- The original pose.  Can be used for reference by selectors.
 	/// @param[in] residue_map -- Mapping of (loop residue, original pose residue).
 	/// @param[in] tail_residue_map -- Mapping of (tail residue index in pose, tail residue index in original_pose).
@@ -126,10 +125,9 @@ public:
 	/// @param[in] bondlengths -- Matrix of [closure attempt #][solution #][bondlength #] with bond length for each bond in the chain.  A selector will pick one solution.
 	/// @param[in] nsol_for_attempt -- List of the number of solutions for each attempt.
 	/// @param[in] total_solutions -- Total number of solutions found.
-	/// @param[in] pre_selectoin_mover -- Pointer to a mover applied to each solution before applying the selector.
-	/// @param[in] preselection_mover_exists -- Boolean that determines whether a mover has been specified.
-	bool apply (
-		core::pose::Pose &pose,
+	/// @param[in] solutions -- Reference to vector of owning pointers of poses representing solutions, with pre-selection filters already applied.
+	core::Size apply (
+		core::pose::Pose const &pose,
 		core::pose::Pose const &original_pose, //The original pose
 		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
 		utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map, //mapping of (tail residue index in pose, tail residue index in original_pose)
@@ -139,8 +137,7 @@ public:
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, //bond length for each atom
 		utility::vector1 <core::Size> const &nsol_for_attempt,
 		core::Size const total_solutions,
-		protocols::moves::MoverOP pre_selection_mover,
-		bool const preselection_mover_exists
+		utility::vector1 <core::pose::PoseCOP> const &solutions
 	) const;
 
 
@@ -173,9 +170,7 @@ private:
 	/// @brief Applies a random_selector selector.
 	/// @details This picks a solution randomly from the solutions that passed filters.
 	void apply_random_selector(
-		utility::vector1<core::Size> const &nsol_for_attempt,
 		core::Size const total_solutions,
-		core::Size &chosen_attempt_number,
 		core::Size &chosen_solution
 	) const;
 
@@ -186,50 +181,38 @@ private:
 	void apply_lowest_energy_selector(
 		utility::vector1<core::Size> const &nsol_for_attempt,
 		core::Size const total_solutions,
-		core::Size &chosen_attempt_number,
 		core::Size &chosen_solution,
 		core::scoring::ScoreFunctionOP sfxn,
-		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map,
-		utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map,
-		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions,
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles,
-		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths,
 		core::pose::Pose const &ref_loop_pose,
 		core::pose::Pose const &ref_pose,
 		core::Real const &boltzmann_kbt,
-		protocols::moves::MoverOP pre_selection_mover,
-		bool const preselection_mover_exists,
-		bool const use_boltzmann
+		bool const use_boltzmann,
+		utility::vector1 <core::pose::PoseCOP> const &solutions
 	) const;
 
 	/// @brief Applies a lowest_rmsd_selector selector.
 	/// @details This picks the solution with the lowest RMSD from the starting pose.
 	void apply_lowest_rmsd_selector(
 		utility::vector1<core::Size> const &nsol_for_attempt,
-		core::Size const total_solutions,
-		core::Size &chosen_attempt_number,
+		core::Size const /*total_solutions*/,
 		core::Size &chosen_solution,
-		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map,
+		utility::vector1 <std::pair <core::Size, core::Size> > const &/*residue_map*/,
 		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions,
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles,
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths,
-		core::pose::Pose const &ref_loop_pose,
-		bool const preselection_mover_exists
+		core::pose::Pose const &ref_loop_pose
 	) const;
 
 	/// @brief Applies a lowest_delta_torsion_selector.
 	/// @details This picks the solution with the lowest RMSD from the starting pose.
 	void apply_lowest_delta_torsion_selector(
 		utility::vector1<core::Size> const &nsol_for_attempt,
-		core::Size const total_solutions,
-		core::Size &chosen_attempt_number,
+		core::Size const /*total_solutions*/,
 		core::Size &chosen_solution,
 		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions,
-		core::pose::Pose const &pose,
-		bool const preselection_mover_exists
+		core::pose::Pose const &ref_pose
 	) const;
 
 }; //GeneralizedKICselector class

@@ -141,10 +141,10 @@ VisualizeEmbeddingMoverCreator::mover_name() {
 void
 VisualizeEmbeddingMover::apply( core::pose::Pose & pose ) {
 
-        using namespace core; 
-	using namespace core::conformation; 
-	using namespace protocols::membrane::geometry; 
-        using namespace core::conformation::membrane; 
+	using namespace core;
+	using namespace core::conformation;
+	using namespace protocols::membrane::geometry;
+	using namespace core::conformation::membrane;
 	using namespace core::kinematics;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -237,7 +237,7 @@ VisualizeEmbeddingMover::register_options() {
 core::conformation::ResidueOP
 VisualizeEmbeddingMover::create_embedding_virtual( core::Vector center, core::Vector normal, bool fullatom ) {
 
-        using namespace core; 
+	using namespace core;
 	using namespace core::conformation;
 	using namespace core::chemical;
 

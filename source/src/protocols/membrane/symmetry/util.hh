@@ -34,10 +34,10 @@ namespace symmetry {
 /// @details Create a spanning topology to reflect the full symmetric
 /// complex instead of just the asymmetric unit
 core::conformation::membrane::SpanningTopologyOP
-symmetrize_spans( 
-	core::pose::Pose & pose, 
-	core::conformation::membrane::SpanningTopology & topology 
-	);
+symmetrize_spans(
+	core::pose::Pose & pose,
+	core::conformation::membrane::SpanningTopology & topology
+);
 
 } // symmetry
 } // membrane

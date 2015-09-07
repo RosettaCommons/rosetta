@@ -197,7 +197,7 @@ RandomPositionTranslationMover::get_name() const {
 void
 RandomPositionTranslationMover::apply( core::pose::Pose & pose ) {
 
-	using namespace core; 
+	using namespace core;
 	using namespace protocols::simple_moves;
 
 	// Check the pose is a membrane protein

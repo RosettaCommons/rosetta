@@ -63,26 +63,26 @@ initialize_ncbbs (
 
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
 		// now we return both PRE and POST locations...
-		if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1) {
+		if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1 ) {
 			ncbb_seq_positions.push_back( i );
 			core::pose::ncbb::add_oop_constraint(pose, i);
 		}
-		if ( pose.residue(i).has_variant_type(chemical::OOP_POST)== 1) {
+		if ( pose.residue(i).has_variant_type(chemical::OOP_POST)== 1 ) {
 			ncbb_seq_positions.push_back( i );
 		}
-		if ( pose.residue(i).has_variant_type(chemical::TRIAZOLAMERC) == 1) {
+		if ( pose.residue(i).has_variant_type(chemical::TRIAZOLAMERC) == 1 ) {
 			ncbb_seq_positions.push_back( i );
 			core::pose::ncbb::add_triazole_constraint(pose, i);
 		}
-		if ( pose.residue(i).has_variant_type(chemical::TRIAZOLAMERN)== 1) {
+		if ( pose.residue(i).has_variant_type(chemical::TRIAZOLAMERN)== 1 ) {
 			ncbb_seq_positions.push_back( i );
 		}
-		if ( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1) {
+		if ( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1 ) {
 			ncbb_seq_positions.push_back( i );
 			hbs = 1;
 			core::pose::ncbb::add_hbs_constraint(pose, i);
 		}
-		if ( pose.residue(i).has_variant_type(chemical::HBS_POST) == 1) {
+		if ( pose.residue(i).has_variant_type(chemical::HBS_POST) == 1 ) {
 			ncbb_seq_positions.push_back( i );
 			hbs = 0;
 		}
@@ -183,15 +183,15 @@ constrain_ring_atoms( core::pose::Pose & pose, utility::vector1< core::id::AtomI
 	CircularHarmonicFuncOP ahf( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi() * ( ids.size() - 2 ) / ids.size(), 0.01 ) );
 	for ( Size i = 1; i <= ids.size(); ++i ) {
 		pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
-				ids[ ( i ) % ids.size() + 1 ],
-				ids[ (i+1) % ids.size() + 1 ],
-				ids[ (i+2) % ids.size() + 1 ],
-				ids[ (i+3) % ids.size() + 1 ], chf ) ) );
-			
+			ids[ ( i ) % ids.size() + 1 ],
+			ids[ (i+1) % ids.size() + 1 ],
+			ids[ (i+2) % ids.size() + 1 ],
+			ids[ (i+3) % ids.size() + 1 ], chf ) ) );
+
 		pose.add_constraint( AngleConstraintOP( new AngleConstraint(
-				ids[ ( i ) % ids.size() + 1 ],
-				ids[ (i+1) % ids.size() + 1 ],
-				ids[ (i+2) % ids.size() + 1 ], ahf ) ) );
+			ids[ ( i ) % ids.size() + 1 ],
+			ids[ (i+1) % ids.size() + 1 ],
+			ids[ (i+2) % ids.size() + 1 ], ahf ) ) );
 	}
 }
 
@@ -215,56 +215,56 @@ void add_triazole_constraint( core::pose::Pose & pose, core::Size i /* triazole_
 	std::string caip1 = pose.residue( i+1 ).is_protein() ? "CA" : "CH3";
 
 	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
-			AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
-			AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ), hf ) ) );
-	
+		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ), hf ) ) );
+
 	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
-			AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
-			AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ), hf ) ) );
-	
+		AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ), hf ) ) );
+
 	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
-			AtomID( pose.residue( i   ).atom_index(  "CT1" ), i   ),
-			AtomID( pose.residue( i+1 ).atom_index( "VCT1" ), i+1 ), zf ) ) );
-	
+		AtomID( pose.residue( i   ).atom_index(  "CT1" ), i   ),
+		AtomID( pose.residue( i+1 ).atom_index( "VCT1" ), i+1 ), zf ) ) );
+
 	pose.add_constraint( AtomPairConstraintOP( new AtomPairConstraint(
-			AtomID( pose.residue( i   ).atom_index( "VNT3" ), i   ),
-			AtomID( pose.residue( i+1 ).atom_index(  "NT3" ), i+1 ), zf ) ) );
-	
+		AtomID( pose.residue( i   ).atom_index( "VNT3" ), i   ),
+		AtomID( pose.residue( i+1 ).atom_index(  "NT3" ), i+1 ), zf ) ) );
+
 	// exo bonds to triazolamers
 	pose.add_constraint( AngleConstraintOP( new AngleConstraint(
-			AtomID( pose.residue( i   ).atom_index(  cai  ), i   ),
-			AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
-			AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ), ahf2 ) ) );
-	
+		AtomID( pose.residue( i   ).atom_index(  cai  ), i   ),
+		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ), ahf2 ) ) );
+
 	pose.add_constraint( AngleConstraintOP( new AngleConstraint(
-			AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
-			AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
-			AtomID( pose.residue( i+1 ).atom_index( caip1 ), i+1 ), ahf1 ) ) );
-	
+		AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
+		AtomID( pose.residue( i+1 ).atom_index( caip1 ), i+1 ), ahf1 ) ) );
+
 	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
-			AtomID( pose.residue( i+1 ).atom_index( caip1 ), i+1 ),
-			AtomID( pose.residue( i   ).atom_index( "CT2" ), i  ),
-			AtomID( pose.residue( i+1 ).atom_index( "NT2" ), i+1 ),
-			AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ), chf ) ) );
-	
+		AtomID( pose.residue( i+1 ).atom_index( caip1 ), i+1 ),
+		AtomID( pose.residue( i   ).atom_index( "CT2" ), i  ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT2" ), i+1 ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ), chf ) ) );
+
 	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
-			AtomID( pose.residue( i   ).atom_index(  cai  ), i   ),
-			AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ),
-			AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
-			AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ), chf ) ) );
-	
+		AtomID( pose.residue( i   ).atom_index(  cai  ), i   ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ),
+		AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
+		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ), chf ) ) );
+
 	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
-			AtomID( pose.residue( i+1 ).atom_index( caip1 ), i+1 ),
-			AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
-			AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
-			AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ), chf180 ) ) );
-	
+		AtomID( pose.residue( i+1 ).atom_index( caip1 ), i+1 ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
+		AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
+		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ), chf180 ) ) );
+
 	pose.add_constraint( DihedralConstraintOP( new DihedralConstraint(
-			AtomID( pose.residue( i   ).atom_index(  cai  ), i   ),
-			AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
-			AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ),
-			AtomID( pose.residue( i+1 ).atom_index( "NT2" ), i+1 ), chf180 ) ) );
-	
+		AtomID( pose.residue( i   ).atom_index(  cai  ), i   ),
+		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT2" ), i+1 ), chf180 ) ) );
+
 	utility::vector1< AtomID > ids;
 	ids.push_back( AtomID( pose.residue( i+1 ).atom_index( "NT2" ), i+1 ) );
 	ids.push_back( AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ) );
@@ -272,10 +272,10 @@ void add_triazole_constraint( core::pose::Pose & pose, core::Size i /* triazole_
 	ids.push_back( AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ) );
 	ids.push_back( AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ) );
 	constrain_ring_atoms( pose, ids );
-	
+
 	TR << "added atom pair constraint to triazole with distance: 1.347 and std 0.05" << std::endl;
 	TR << "and atom pair constraints to the virtual atoms" << std::endl;
-		
+
 }
 
 void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position )

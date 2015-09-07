@@ -158,8 +158,8 @@ MPMutateRelaxMover::get_name() const {
 void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 
 	using namespace utility;
-	using namespace core::pose; 
-	using namespace core::scoring; 
+	using namespace core::pose;
+	using namespace core::scoring;
 	using namespace protocols::membrane;
 	using namespace protocols::simple_moves;
 	using namespace core::scoring;

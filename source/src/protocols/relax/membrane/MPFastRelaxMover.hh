@@ -78,7 +78,7 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	/// @brief Pase Rosetta Scripts Options for this Mover
-	void 
+	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,

@@ -70,9 +70,9 @@ OneGaussianScattering get_A( std::string elt ) {
 			elt_db["K"]  = OneGaussianScattering( 21.48425, 7.09360);
 			elt_db["CA"] = OneGaussianScattering( 23.70586, 7.47775);
 			elt_db["FE"] = OneGaussianScattering( 17.13431, 5.96932);
-			elt_db["CO"] = OneGaussianScattering( 15.70905, 5.56662);	// copied from NI
-			elt_db["NI"] = OneGaussianScattering( 15.70905, 5.56662);	
-			elt_db["ZN"] = OneGaussianScattering( 15.70905, 5.56662);	// copied from NI
+			elt_db["CO"] = OneGaussianScattering( 15.70905, 5.56662); // copied from NI
+			elt_db["NI"] = OneGaussianScattering( 15.70905, 5.56662);
+			elt_db["ZN"] = OneGaussianScattering( 15.70905, 5.56662); // copied from NI
 			elt_db["X"]  = OneGaussianScattering(
 				static_cast<int>(
 				6.0*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()),

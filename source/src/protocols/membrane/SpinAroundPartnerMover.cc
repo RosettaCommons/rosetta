@@ -66,7 +66,7 @@ namespace membrane {
 /// @details Defaults: jump = 1, sampling range = 100
 ///    Sampling range of 100 means that both x and y are sampled from
 ///    -100 to +100 before calling DockingSlideIntoContact
-SpinAroundPartnerMover::SpinAroundPartnerMover() : 
+SpinAroundPartnerMover::SpinAroundPartnerMover() :
 	protocols::moves::Mover()
 {
 	set_defaults();
@@ -75,7 +75,7 @@ SpinAroundPartnerMover::SpinAroundPartnerMover() :
 
 /// @brief Custom Constructor
 /// @details User can specify jump number
-SpinAroundPartnerMover::SpinAroundPartnerMover( core::Size jump_num ) : 
+SpinAroundPartnerMover::SpinAroundPartnerMover( core::Size jump_num ) :
 	protocols::moves::Mover()
 {
 	set_defaults();
@@ -86,10 +86,10 @@ SpinAroundPartnerMover::SpinAroundPartnerMover( core::Size jump_num ) :
 
 /// @brief Custom constructor
 /// @details User can specify jump number and sampling range
-SpinAroundPartnerMover::SpinAroundPartnerMover( 
-	core::Size jump_num, 
-	core::Size range 
-	) : protocols::moves::Mover()
+SpinAroundPartnerMover::SpinAroundPartnerMover(
+	core::Size jump_num,
+	core::Size range
+) : protocols::moves::Mover()
 {
 	set_defaults();
 	register_options();
@@ -101,8 +101,8 @@ SpinAroundPartnerMover::SpinAroundPartnerMover(
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
-SpinAroundPartnerMover::SpinAroundPartnerMover( SpinAroundPartnerMover const & src ) 
-	: protocols::moves::Mover( src ),
+SpinAroundPartnerMover::SpinAroundPartnerMover( SpinAroundPartnerMover const & src )
+: protocols::moves::Mover( src ),
 	jump_( src.jump_ ),
 	rand_range_( src.rand_range_ ),
 	range_( src.range_ ),
@@ -111,7 +111,7 @@ SpinAroundPartnerMover::SpinAroundPartnerMover( SpinAroundPartnerMover const & s
 {}
 
 /// @brief Assignment Operator
-SpinAroundPartnerMover & 
+SpinAroundPartnerMover &
 SpinAroundPartnerMover::operator = ( SpinAroundPartnerMover const & src ) {
 
 	// Abort self-assignment.
@@ -206,7 +206,7 @@ void SpinAroundPartnerMover::set_y( core::Real y ) {
 /// @brief Flip the downstream partner in the membrane
 void SpinAroundPartnerMover::apply( core::pose::Pose & pose ) {
 
-	using namespace core; 
+	using namespace core;
 	using namespace numeric;
 	using namespace core::conformation::membrane;
 	using namespace protocols::rigid;
@@ -261,7 +261,7 @@ void SpinAroundPartnerMover::apply( core::pose::Pose & pose ) {
 /////////////////////
 
 /// @brief Register Options from Command Line
-void 
+void
 SpinAroundPartnerMover::register_options() {
 
 	using namespace basic::options;
@@ -270,7 +270,7 @@ SpinAroundPartnerMover::register_options() {
 }
 
 /// @brief Set default values
-void 
+void
 SpinAroundPartnerMover::set_defaults() {
 
 	jump_ = 1;

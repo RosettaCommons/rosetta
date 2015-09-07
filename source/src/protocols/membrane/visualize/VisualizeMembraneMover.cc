@@ -78,9 +78,9 @@ VisualizeMembraneMover::VisualizeMembraneMover() :
 /// @brief    Construct with User specified spacing & width
 /// @details  Construct membranes with a given spacing and
 ///     width in angstroms
-VisualizeMembraneMover::VisualizeMembraneMover( 
-	core::Real spacing, 
-	core::Real width, 
+VisualizeMembraneMover::VisualizeMembraneMover(
+	core::Real spacing,
+	core::Real width,
 	core::Real thickness ) :
 	protocols::moves::Mover(),
 	spacing_( spacing ),
@@ -141,7 +141,7 @@ VisualizeMembraneMover::parse_my_tag(
 	core::pose::Pose const &
 ) {
 
-	using namespace core; 
+	using namespace core;
 
 	// Read in spacing option
 	if ( tag->hasOption( "spacing" ) ) {
@@ -185,9 +185,9 @@ VisualizeMembraneMoverCreator::mover_name() {
 void
 VisualizeMembraneMover::apply( core::pose::Pose & pose ) {
 
-	using namespace core; 
+	using namespace core;
 	using namespace core::kinematics;
-	using namespace core::conformation; 
+	using namespace core::conformation;
 
 	TR << "Adding membrane planes represented as virtual residues to pose" << std::endl;
 
@@ -281,7 +281,7 @@ VisualizeMembraneMover::init_from_cmd() {
 core::conformation::ResidueOP
 VisualizeMembraneMover::create_membrane_virtual( core::Vector pos, bool fullatom ) {
 
-	using namespace core; 
+	using namespace core;
 	using namespace core::conformation;
 	using namespace core::chemical;
 

@@ -101,7 +101,7 @@ main( int argc, char * argv [] ) {
 		using namespace core::pose;
 		using namespace protocols::moves;
 		using namespace protocols::membrane::visualize;
-		using namespace protocols::membrane::geometry; 
+		using namespace protocols::membrane::geometry;
 
 		devel::init(argc, argv);
 

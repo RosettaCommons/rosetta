@@ -74,7 +74,7 @@ public:
 
 		//Set options:
 		genkic->set_closure_attempts(25000); //Try a maximum of 25000 times.
-		genkic->set_n_closure_attempts_is_a_maximum(true); //Stop when a solution is found.
+		genkic->set_min_solution_count(1); //Stop when a solution is found.
 
 		//Add a lowest_energy selector:
 		genkic->set_selector_type("lowest_energy_selector");
@@ -132,7 +132,7 @@ public:
 
 		//Set options:
 		genkic->set_closure_attempts(25000); //Try a maximum of 25000 times.
-		genkic->set_n_closure_attempts_is_a_maximum(true); //Stop when a solution is found.
+		genkic->set_min_solution_count(1); //Stop when a solution is found.
 
 		//Add a lowest_energy selector:
 		genkic->set_selector_type("lowest_energy_selector");

@@ -75,7 +75,7 @@ public:
 	/// at center=(0, 0, 0), normal=(0, 0, 1). Uses the user provided
 	/// SpanningTopology to be set in MembraneInfo. Calls the analagous
 	/// parent constructor in AddMembraneMover
-	SymmetricAddMembraneMover( 
+	SymmetricAddMembraneMover(
 		core::conformation::membrane::SpanningTopologyOP topology
 	);
 

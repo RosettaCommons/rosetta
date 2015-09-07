@@ -140,13 +140,13 @@ public: // membrane position & orientation
 
 	/// @brief Sequence position of the membrane residue
 	/// @details Return the residue number of MEM (rsd.seqpos()) in the pose
-	core::Size 
+	core::Size
 	membrane_rsd_num() const;
 
 	/// @brief Indeitifier for the membrane jump
 	/// @details Returns an integer (core::Size) denoting the jump number in the foldtree
 	/// representing the jump relating the membrane residue to the rest of the molecule
-	core::SSize 
+	core::SSize
 	membrane_jump() const;
 
 	/// @brief Allow a protocol to set a new jump number for the membrane jump

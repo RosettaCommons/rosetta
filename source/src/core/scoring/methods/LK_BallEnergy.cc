@@ -620,14 +620,14 @@ LK_BallEnergy::get_lk_fractional_contribution(
 
 	weighted_d2_water_delta = 0.0;
 	Real d2_delta;
-	for ( Size idx = 1; idx <= atom1_waters.size(); ++idx) {
+	for ( Size idx = 1; idx <= atom1_waters.size(); ++idx ) {
 		d2_delta = atom2_xyz.distance_squared( atom1_waters[idx] ) - d2_low;
 		d_weighted_d2_d_di[idx] = exp( -d2_delta/multi_water_fade_ );
 		weighted_d2_water_delta += d_weighted_d2_d_di[idx];
 		//TR << "d2_delta = " << d2_delta << std::endl;
 	}
 
-	for ( Size idx = 1; idx <= atom1_waters.size(); ++idx) {
+	for ( Size idx = 1; idx <= atom1_waters.size(); ++idx ) {
 		d_weighted_d2_d_di[idx] /= weighted_d2_water_delta;
 	}
 
@@ -1373,7 +1373,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 	// we only do this if this term hasn't already been captured by one of our dependent hydrogens
 	// we assume that for heavyatoms with dependent polar hydrogens, every water belongs to one of the hydrogens
 	if ( weighted_water_d2 < ramp_width_A2_ && weighted_water_d2 > 0.0 ) {
-		for (Size i=1; i<=atom1_waters.size(); ++i) {
+		for ( Size i=1; i<=atom1_waters.size(); ++i ) {
 			Vector const & atom1_water_xyz( atom1_waters[ i ] );
 
 			// update f1 and f2 to reflect water-atom2 as the interaction
@@ -1737,12 +1737,12 @@ LK_BallEnergy::eval_atom_derivative(
 		LKB_ResidueInfo const & rsd1_info( retrieve_lkb_residue_info( pose, rsd1.seqpos() ) );
 		scoring::AtomNeighbors const & nbrs ( pose.energies().nblist( EnergiesCacheableDataType::ETABLE_NBLIST ).atom_neighbors( id ) );
 		// part 1: all polar atoms desolvated by this atom (heavyatoms only)
-		if (!rsd1.atom_is_hydrogen( atom1 )) {
+		if ( !rsd1.atom_is_hydrogen( atom1 ) ) {
 			for ( scoring::AtomNeighbors::const_iterator it2=nbrs.begin(), it2e=nbrs.end(); it2 != it2e; ++it2 ) {
 				scoring::AtomNeighbor const & nbr( *it2 );
 				Size const nbrresid = nbr.rsd();
 				Real const cp_weight( nbr.weight() );  // do not use nbr->weight_func() here
-				if (nbrresid == idresid) continue; // no intra
+				if ( nbrresid == idresid ) continue; // no intra
 
 				conformation::Residue const & rsd2( pose.residue(nbrresid) );
 				LKB_ResidueInfo const & rsd2_info( retrieve_lkb_residue_info( pose, nbrresid ) );
@@ -1762,20 +1762,20 @@ LK_BallEnergy::eval_atom_derivative(
 		}
 
 		// part 2: all polar groups on rsd1 this atom is a part of
-		for (Size i=1; i<=rsd1.nheavyatoms(); ++i) {
+		for ( Size i=1; i<=rsd1.nheavyatoms(); ++i ) {
 			Size nwaters = rsd1_info.waters()[i].size();
-			if (nwaters == 0) continue;
+			if ( nwaters == 0 ) continue;
 
-			WaterBuilders const &	builder = rsd1_info.get_water_builder( rsd1 , i );
+			WaterBuilders const & builder = rsd1_info.get_water_builder( rsd1 , i );
 
 			bool need_to_calculate = false;
-			for (Size j=1; j<=nwaters && !need_to_calculate; ++j) {
-				if (builder[j].atom1() == atom1 || builder[j].atom2() == atom1 || builder[j].atom3() == atom1) {
+			for ( Size j=1; j<=nwaters && !need_to_calculate; ++j ) {
+				if ( builder[j].atom1() == atom1 || builder[j].atom2() == atom1 || builder[j].atom3() == atom1 ) {
 					need_to_calculate = true;
 				}
 			}
 
-			if (!need_to_calculate) continue;
+			if ( !need_to_calculate ) continue;
 
 			scoring::AtomNeighbors const & nbrs2 (
 				pose.energies().nblist( EnergiesCacheableDataType::ETABLE_NBLIST ).atom_neighbors( id::AtomID( i ,idresid) ) );
@@ -1784,7 +1784,7 @@ LK_BallEnergy::eval_atom_derivative(
 				Size const nbrresid = nbr.rsd();
 				Real const cp_weight( nbr.weight() );  // do not use nbr->weight_func() here
 
-				if (nbrresid == idresid) continue; // no intra
+				if ( nbrresid == idresid ) continue; // no intra
 
 				conformation::Residue const & rsd2( pose.residue(nbrresid) );
 

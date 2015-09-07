@@ -229,8 +229,8 @@ void SetTorsion::apply( Pose & pose ) {
 
 				if ( torsion_name(iset) == "phi" ) {
 					if ( pose.residue(resnum).type().is_alpha_aa()
-						|| pose.residue(resnum).type().is_beta_aa()
-						|| pose.residue(resnum).type().is_peptoid() ) {
+							|| pose.residue(resnum).type().is_beta_aa()
+							|| pose.residue(resnum).type().is_peptoid() ) {
 						pose.set_phi( resnum, angle(iset, pose.phi(resnum)) );
 					}
 				} else if ( torsion_name(iset) == "theta" ) {
@@ -239,14 +239,14 @@ void SetTorsion::apply( Pose & pose ) {
 					}
 				} else if ( torsion_name(iset) == "psi" ) {
 					if ( pose.residue(resnum).type().is_alpha_aa()
-						|| pose.residue(resnum).type().is_beta_aa()
-						|| pose.residue(resnum).type().is_peptoid() ) {
+							|| pose.residue(resnum).type().is_beta_aa()
+							|| pose.residue(resnum).type().is_peptoid() ) {
 						pose.set_psi( resnum, angle(iset, pose.psi(resnum)) );
 					}
 				} else if ( torsion_name(iset) == "omega" ) {
 					if ( pose.residue(resnum).type().is_alpha_aa()
-						|| pose.residue(resnum).type().is_beta_aa()
-						|| pose.residue(resnum).type().is_peptoid() ) {
+							|| pose.residue(resnum).type().is_beta_aa()
+							|| pose.residue(resnum).type().is_peptoid() ) {
 						pose.set_omega( resnum, angle(iset, pose.omega(resnum)) );
 					} //TODO -- beta-amino acids.
 				} else if ( torsion_name(iset) == "rama" ) {

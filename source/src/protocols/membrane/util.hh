@@ -79,9 +79,9 @@ namespace membrane {
 /// object Do not superimpose the poses. Takes a native pose and
 /// current pose
 core::Real
-mem_bb_rmsd_no_super( 
+mem_bb_rmsd_no_super(
 	core::pose::Pose & native_pose,
-	core::pose::Pose & pose 
+	core::pose::Pose & pose
 );
 
 /// @brief Compute all-atom RMSD between TM regions - don't superimpose
@@ -89,9 +89,9 @@ mem_bb_rmsd_no_super(
 /// transmembrane regions, as defined by the spanning topology object.
 /// Do not superimpose the poses. Takes a native pose & current pose
 core::Real
-mem_all_atom_rmsd_no_super( 
-	core::pose::Pose & native_pose, 
-	core::pose::Pose & pose 
+mem_all_atom_rmsd_no_super(
+	core::pose::Pose & native_pose,
+	core::pose::Pose & pose
 );
 
 /// @brief Compute backbone RMSD between TM regions - do superimpose
@@ -100,9 +100,9 @@ mem_all_atom_rmsd_no_super(
 /// topology object Superimpose the poses. Takes a native pose and
 /// current pose
 core::Real
-mem_bb_rmsd_with_super( 
-	core::pose::Pose & native_pose, 
-	core::pose::Pose & pose 
+mem_bb_rmsd_with_super(
+	core::pose::Pose & native_pose,
+	core::pose::Pose & pose
 );
 
 /// @brief Compute all-atom RMSD between TM regions - do superimpose
@@ -110,9 +110,9 @@ mem_bb_rmsd_with_super(
 /// transmembrane regions, as defined by the spanning topology object.
 /// Superimpose the poses. Takes a native pose & current pose
 core::Real
-mem_all_atom_rmsd_with_super( 
-	core::pose::Pose & native_pose, 
-	core::pose::Pose & pose 
+mem_all_atom_rmsd_with_super(
+	core::pose::Pose & native_pose,
+	core::pose::Pose & pose
 );
 
 //////////////////////////////////////////////////////////////////
@@ -268,7 +268,7 @@ utility::vector1< char > get_secstruct( core::pose::Pose & pose );
 
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology
-void 
+void
 compute_structure_based_embedding(
 	core::pose::Pose const & pose,
 	core::conformation::membrane::SpanningTopology const & topology,
@@ -278,7 +278,7 @@ compute_structure_based_embedding(
 
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology, uses topology from MembraneInfo
-void 
+void
 compute_structure_based_embedding(
 	core::pose::Pose const & pose,
 	core::Vector & center,
@@ -288,9 +288,9 @@ compute_structure_based_embedding(
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
 /// topology
 protocols::membrane::geometry::EmbeddingDefOP
-compute_structure_based_embedding( 
-	core::pose::Pose const & pose, 
-	core::conformation::membrane::SpanningTopology const & topo 
+compute_structure_based_embedding(
+	core::pose::Pose const & pose,
+	core::conformation::membrane::SpanningTopology const & topo
 );
 
 /// @brief Compute Membrane Center/Normal from Membrane Spanning
@@ -304,29 +304,29 @@ compute_structure_based_embedding( core::pose::Pose const & pose );
 ///   object in embeddings with a span object in the pose's topology;
 ///   The bool means whether embeddings in Embedding object are
 ///   antiparallel or not
-protocols::membrane::geometry::EmbeddingOP 
+protocols::membrane::geometry::EmbeddingOP
 compute_embeddings_by_chain( core::pose::Pose const & pose );
 
 /// @brief Average EmbeddingDefs as they are (without vector inversion accounting for topology)
 /// @details Get average center and normal from a vector of EmbeddingDefs
-protocols::membrane::geometry::EmbeddingDefOP 
+protocols::membrane::geometry::EmbeddingDefOP
 average_embeddings( utility::vector1< protocols::membrane::geometry::EmbeddingDefOP > const parts );
 
 /// @brief Average EmbeddingDefs after first inverting some vectors accounting for topology
 /// @details Get average center and normal from a vector of EmbeddingDefs
-protocols::membrane::geometry::EmbeddingDefOP 
-average_antiparallel_embeddings( 
+protocols::membrane::geometry::EmbeddingDefOP
+average_antiparallel_embeddings(
 	utility::vector1< protocols::membrane::geometry::EmbeddingDefOP > const parts );
 
 /// @brief Update embedding of the partners after a move
 /// @details Requires the jump number between the partners, the topology will
 ///    be taken from MembraneInfo and will be split accordingly; up and
 ///    down means upstream and downstream
-void 
-update_partner_embeddings( 
-	core::pose::Pose const & pose, 
-	core::Size const jumpnum, 
-	protocols::membrane::geometry::EmbeddingDef & emb_up, 
+void
+update_partner_embeddings(
+	core::pose::Pose const & pose,
+	core::Size const jumpnum,
+	protocols::membrane::geometry::EmbeddingDef & emb_up,
 	protocols::membrane::geometry::EmbeddingDef & emb_down );
 
 /// @brief Pose transmembrane center-of-mass
@@ -412,11 +412,11 @@ void split_topology_by_jump_noshift(
 
 /// @brief Split topology by chain
 /// @details Split topology by chain and give vector of topology objects
-utility::vector1< core::conformation::membrane::SpanningTopologyOP > 
-split_topology_by_chain_noshift( 
-	core::pose::Pose const & pose, 
-	core::conformation::membrane::SpanningTopologyOP const topo 
-	);
+utility::vector1< core::conformation::membrane::SpanningTopologyOP >
+split_topology_by_chain_noshift(
+	core::pose::Pose const & pose,
+	core::conformation::membrane::SpanningTopologyOP const topo
+);
 
 
 /////////////////////////////////////////////

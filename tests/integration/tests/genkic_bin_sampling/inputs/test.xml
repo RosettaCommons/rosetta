@@ -57,7 +57,7 @@
 	
 		<DeclareBond name=endbond atom1=C res1=20 atom2=N res2=1 />
 		
-		<GeneralizedKIC name=genkic1 closure_attempts=2000 stop_when_solution_found=1 selector=lowest_energy_selector selector_scorefunction=tala >
+		<GeneralizedKIC name=genkic1 closure_attempts=2000 stop_when_n_solutions_found=1 selector=lowest_energy_selector selector_scorefunction=tala >
 			<AddResidue res_index=4 />
 			<AddResidue res_index=5 />
 			<AddResidue res_index=6 />

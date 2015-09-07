@@ -603,7 +603,7 @@ AddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 	using namespace protocols::membrane;
 	using namespace core::conformation;
 	using namespace core::chemical;
-	using namespace core::kinematics; 
+	using namespace core::kinematics;
 
 	// Grab the current residue typeset and create a new residue
 	ResidueTypeSetCOP const & residue_set(

@@ -61,26 +61,26 @@ public:
 	/// a default membrane (defined by MEM)
 	/// @details Transform the protein with a user-defined embedding (might have
 	/// been optimized before) into the default membrane
-	TransformIntoMembraneMover( 
-		protocols::membrane::geometry::EmbeddingDefOP current_embedding 
-		);
+	TransformIntoMembraneMover(
+		protocols::membrane::geometry::EmbeddingDefOP current_embedding
+	);
 
 	/// @brief Transform the protein into user-specified membrane coordinates
 	/// @details Transform the protein into a user-defined membrane, protein
 	/// embedding is computed from structure and spanfile
-	TransformIntoMembraneMover( 
-		core::Vector new_mem_cntr, 
-		core::Vector new_mem_norm 
-		);
+	TransformIntoMembraneMover(
+		core::Vector new_mem_cntr,
+		core::Vector new_mem_norm
+	);
 
 	/// @brief Transform the protein into user-specified membrane coordinates
 	/// @details Transform the protein into a user-defined membrane, protein
 	/// embedding is computed from structure and spanfile
-	TransformIntoMembraneMover( 
-		protocols::membrane::geometry::EmbeddingDefOP current_embedding, 
-		core::Vector new_mem_cntr, 
-		core::Vector new_mem_norm 
-		);
+	TransformIntoMembraneMover(
+		protocols::membrane::geometry::EmbeddingDefOP current_embedding,
+		core::Vector new_mem_cntr,
+		core::Vector new_mem_norm
+	);
 
 	/// @brief Copy Constructor
 	TransformIntoMembraneMover( TransformIntoMembraneMover const & src );

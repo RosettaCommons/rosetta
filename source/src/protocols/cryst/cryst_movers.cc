@@ -467,7 +467,7 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 			if ( ires == jres ) continue;
 
 			// count pair - assume 4 for now (actually 3 for ligands/RNA or if rama is off)
-			CountPairFunctionOP cpfxn =	CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+			CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
 			for ( Size jatm=1; jatm<= rsd2.natoms(); ++jatm ) {
 				core::Real weight=1.0;

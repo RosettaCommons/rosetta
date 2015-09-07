@@ -102,7 +102,7 @@ using namespace basic::options::OptionKeys;
 
 void
 perturb_and_rescore( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sfxn ) {
-	
+
 	using namespace core;
 	using namespace id;
 
@@ -115,72 +115,72 @@ perturb_and_rescore( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sfx
 	//sfxn->set_weight( scoring::dihedral_constraint, 0 );
 
 	for ( Size j = 1; j <= 10; ++j ) {
-		
+
 		Real initial_score = ( *sfxn )( pose );
 		std::cout << "Perturbation " << j << " / 10: initial score " << initial_score << std::endl;
-		
+
 		pose::Pose copy_pose = pose;
-		
+
 		for ( Size i = 1; i <= pose.n_residue()-2; ++i ) {
 			Real phi_like = pose.conformation().torsion_angle(
-					// replacing w/ equiv that is in atom tree
-					AtomID( pose.residue( i+1 ).atom_index( /*"CT2"*/"NT2" ), i+1 ),
-					AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
-					AtomID( pose.residue( i+1 ).atom_index( "CA"  ), i+1 ),
-					AtomID( pose.residue( i+1 ).atom_index( /*"CT1"*/"C" ), i+1 ) );
-			
+				// replacing w/ equiv that is in atom tree
+				AtomID( pose.residue( i+1 ).atom_index( /*"CT2"*/"NT2" ), i+1 ),
+				AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
+				AtomID( pose.residue( i+1 ).atom_index( "CA"  ), i+1 ),
+				AtomID( pose.residue( i+1 ).atom_index( /*"CT1"*/"C" ), i+1 ) );
+
 			pose.conformation().set_torsion_angle(
-					AtomID( pose.residue( i+1 ).atom_index( /*"CT2"*/"NT2" ), i+1 ),
-					AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
-					AtomID( pose.residue( i+1 ).atom_index( "CA"  ), i+1 ),
-					AtomID( pose.residue( i+1 ).atom_index( /*"CT1"*/"C" ), i+1 ),
-					phi_like + numeric::random::rg().gaussian() * 2.0 );
+				AtomID( pose.residue( i+1 ).atom_index( /*"CT2"*/"NT2" ), i+1 ),
+				AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
+				AtomID( pose.residue( i+1 ).atom_index( "CA"  ), i+1 ),
+				AtomID( pose.residue( i+1 ).atom_index( /*"CT1"*/"C" ), i+1 ),
+				phi_like + numeric::random::rg().gaussian() * 2.0 );
 		}
 		/*Size i = pose.n_residue()-1;
 		Real phi_like = pose.conformation().torsion_angle(
-				AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
-				AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
-				AtomID( pose.residue( i+1 ).atom_index( "CH3" ), i+1 ),
-				AtomID( pose.residue( i+1 ).atom_index( "CT1" ), i+1 ) );
-		
+		AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
+		AtomID( pose.residue( i+1 ).atom_index( "CH3" ), i+1 ),
+		AtomID( pose.residue( i+1 ).atom_index( "CT1" ), i+1 ) );
+
 		pose.conformation().set_torsion_angle(
-				AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
-				AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
-				AtomID( pose.residue( i+1 ).atom_index( "CH3" ), i+1 ),
-				AtomID( pose.residue( i+1 ).atom_index( "CT1" ), i+1 ),
-				phi_like + numeric::random::rg().gaussian() * 20.0 );
-*/
-		
+		AtomID( pose.residue( i   ).atom_index( "CT2" ), i   ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT1" ), i+1 ),
+		AtomID( pose.residue( i+1 ).atom_index( "CH3" ), i+1 ),
+		AtomID( pose.residue( i+1 ).atom_index( "CT1" ), i+1 ),
+		phi_like + numeric::random::rg().gaussian() * 20.0 );
+		*/
+
 		for ( Size i = 2; i <= pose.n_residue()-1; ++i ) {
 
 			Real psi_like = pose.conformation().torsion_angle(
-					AtomID( pose.residue( i   ).atom_index( "NT1" ), i   ),
-					AtomID( pose.residue( i   ).atom_index( "CA"  ), i   ),
-					AtomID( pose.residue( i   ).atom_index( /*"CT1"*/"C" ), i   ),
-					AtomID( pose.residue( i+1 ).atom_index( /*"NT3"*/"N" ), i+1 ) );
-															  
+				AtomID( pose.residue( i   ).atom_index( "NT1" ), i   ),
+				AtomID( pose.residue( i   ).atom_index( "CA"  ), i   ),
+				AtomID( pose.residue( i   ).atom_index( /*"CT1"*/"C" ), i   ),
+				AtomID( pose.residue( i+1 ).atom_index( /*"NT3"*/"N" ), i+1 ) );
+
 			pose.conformation().set_torsion_angle(
-					AtomID( pose.residue( i   ).atom_index( "NT1" ), i   ),
-					AtomID( pose.residue( i   ).atom_index( "CA"  ), i   ),
-					AtomID( pose.residue( i   ).atom_index( /*"CT1"*/"C" ), i   ),
-					AtomID( pose.residue( i+1 ).atom_index( /*"NT3"*/"N" ), i+1 ),
-					psi_like + numeric::random::rg().gaussian() * 2.0 );
+				AtomID( pose.residue( i   ).atom_index( "NT1" ), i   ),
+				AtomID( pose.residue( i   ).atom_index( "CA"  ), i   ),
+				AtomID( pose.residue( i   ).atom_index( /*"CT1"*/"C" ), i   ),
+				AtomID( pose.residue( i+1 ).atom_index( /*"NT3"*/"N" ), i+1 ),
+				psi_like + numeric::random::rg().gaussian() * 2.0 );
 		}
 		/*i = 1;
 		Real psi_like = pose.conformation().torsion_angle(
-					AtomID( pose.residue( i   ).atom_index( "NT1" ), i   ),
-					AtomID( pose.residue( i   ).atom_index( "CH3" ), i   ),
-					AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
-					AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ) );
-		
+		AtomID( pose.residue( i   ).atom_index( "NT1" ), i   ),
+		AtomID( pose.residue( i   ).atom_index( "CH3" ), i   ),
+		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ) );
+
 		pose.conformation().set_torsion_angle(
-					AtomID( pose.residue( i   ).atom_index( "NT1" ), i   ),
-					AtomID( pose.residue( i   ).atom_index( "CH3" ), i   ),
-					AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
-					AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ),
-					psi_like + numeric::random::rg().gaussian() * 20.0 );
+		AtomID( pose.residue( i   ).atom_index( "NT1" ), i   ),
+		AtomID( pose.residue( i   ).atom_index( "CH3" ), i   ),
+		AtomID( pose.residue( i   ).atom_index( "CT1" ), i   ),
+		AtomID( pose.residue( i+1 ).atom_index( "NT3" ), i+1 ),
+		psi_like + numeric::random::rg().gaussian() * 20.0 );
 		*/
-		
+
 		core::Real new_score = ( *sfxn )( pose );
 		std::cout << "Perturbation " << j << " / 10: new score " << new_score << std::endl;
 
@@ -196,7 +196,7 @@ perturb_and_rescore( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sfx
 			std::cout << "Perturbation " << j << " / 10: accepted thermally" << std::endl;
 		}
 	}
-	
+
 	sfxn->set_weight( scoring::atom_pair_constraint, apc_wt );
 	sfxn->set_weight( scoring::angle_constraint, ang_wt );
 	sfxn->set_weight( scoring::dihedral_constraint, dih_wt );
@@ -204,20 +204,20 @@ perturb_and_rescore( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sfx
 }
 
 class TriazoleCreator : public Mover {
-	
+
 public:
-	
+
 	//default ctor
 	TriazoleCreator(): Mover("A3BPeptideBuilder"){}
-	
+
 	//default dtor
 	virtual ~TriazoleCreator(){}
-	
+
 	//methods
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const { return "TriazoleCreator"; }
-	
+
 };
 
 typedef utility::pointer::shared_ptr< TriazoleCreator > TriazoleCreatorOP;
@@ -227,12 +227,12 @@ int main ( int argc, char* argv[] )
 {
 	try {
 		//option[ chemical::patch_selectors ].push_back( "CTERM_AMIDATION" );
-		
+
 		devel::init(argc, argv);
 
 		TriazoleCreatorOP builder( new TriazoleCreator() );
 		protocols::jd2::JobDistributor::get_instance()->go( builder );
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
@@ -243,7 +243,7 @@ void
 TriazoleCreator::apply(
 	core::pose::Pose & pose
 ) {
-	
+
 	using namespace core;
 	using namespace utility;
 	using namespace scoring;
@@ -256,7 +256,7 @@ TriazoleCreator::apply(
 	using namespace core::id;
 	using namespace core::pack;
 	using namespace core::pack::task;
-	
+
 	//first, load the file of residue types to get min energies for.
 
 	//now do initialization stuff.
@@ -267,10 +267,10 @@ TriazoleCreator::apply(
 	task_factory->push_back( rtrop );
 
 	ScoreFunctionOP scorefxn = get_score_function();
-	
-	
-	
-	
+
+
+
+
 	//Get the residue set we are drawing from.
 	core::chemical::ResidueTypeSetCOP residue_set_cap = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
@@ -303,11 +303,11 @@ TriazoleCreator::apply(
 	//HarmonicFuncOP zf( new HarmonicFunc( 0.000, 0.01 ) );
 	//CircularHarmonicFuncOP chf( new CircularHarmonicFunc( 0, 0.01 ) );
 	for ( Size i = 1; i <= pose.total_residue() - 1; ++i ) {
-		
+
 		pose.conformation().declare_chemical_bond( i, "CT1", i+1, "NT3" );
 		core::pose::ncbb::add_triazole_constraint( pose, i );
 	}
-	
+
 	// create movemap for peptide
 	kinematics::MoveMapOP pert_mm( new kinematics::MoveMap() );
 	pert_mm->set_bb( 1, true );
@@ -315,38 +315,38 @@ TriazoleCreator::apply(
 	pert_mm->set_bb( pose.n_residue(), true );
 	pert_mm->set_chi( pose.n_residue(), true );
 
-    for ( Size i = 1+1; i <= pose.n_residue()-1; ++i ) {
-		
+	for ( Size i = 1+1; i <= pose.n_residue()-1; ++i ) {
+
 		pert_mm->set_bb( i, true );
-		
+
 		pose.set_phi(   i, -135 );
 		pose.set_psi(   i,  135 );
 		pose.set_omega( i,  180 );
-    }
+	}
 
 	pose.conformation().detect_bonds();
 	//pose.conformation().detect_pseudobonds();
 	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		pose.conformation().update_polymeric_connection(i);
 	}
-	
+
 	protocols::simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( pert_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 	desn_min->cartesian( true );
-	
-    std::cout << "Dump initial" << std::endl;
+
+	std::cout << "Dump initial" << std::endl;
 	pose.dump_scored_pdb( "B3A_initial.pdb", *scorefxn);
 	Real wt = 0.001;
 	for ( Size i = 1; i <= 1000; ++i ) {
-		
+
 		//perturb_and_rescore( pose, scorefxn );
-		
+
 		scorefxn->set_weight( core::scoring::atom_pair_constraint, wt*2 );
 		scorefxn->set_weight( core::scoring::angle_constraint, wt );
 		scorefxn->set_weight( core::scoring::dihedral_constraint, wt );
 		desn_min->apply( pose );
 		wt += 0.001;
 	}
-	
+
 	for ( Size i = 1; i <= 500; ++i ) {
 		wt -= 0.001;
 		scorefxn->set_weight( core::scoring::atom_pair_constraint, wt*2 );
@@ -354,7 +354,7 @@ TriazoleCreator::apply(
 		scorefxn->set_weight( core::scoring::dihedral_constraint, wt );
 		desn_min->apply( pose );
 	}
-	
+
 	std::cout << "Dump initial min" << std::endl;
 	pose.dump_scored_pdb( "B3A_min.pdb", *scorefxn);
 }

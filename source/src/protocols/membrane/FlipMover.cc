@@ -205,7 +205,7 @@ FlipMover::get_name() const {
 void FlipMover::apply( core::pose::Pose & pose ) {
 
 	using namespace numeric;
-	using namespace core::pose; 
+	using namespace core::pose;
 	using namespace core::conformation::membrane;
 	using namespace protocols::rigid;
 	using namespace protocols::membrane::geometry;

@@ -6,4 +6,3 @@ cd ../
 cd build_debug/
 cmake ./
 make -j 4
-

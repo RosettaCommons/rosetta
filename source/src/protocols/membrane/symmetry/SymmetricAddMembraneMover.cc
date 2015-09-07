@@ -182,7 +182,7 @@ SymmetricAddMembraneMover::parse_my_tag(
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
-) 
+)
 {}
 
 /// @brief Create a new copy of this mover
@@ -277,7 +277,7 @@ SymmetricAddMembraneMover::init_from_cmd() {
 core::Size
 SymmetricAddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 
-	using namespace core; 
+	using namespace core;
 	using namespace core::conformation;
 	using namespace core::conformation::symmetry;
 	using namespace core::chemical;

@@ -80,9 +80,9 @@ static basic::Tracer TR("PeptidomimeticEnsembles");
 
 // application specific options
 namespace peptidomimetic_ensembles {
-	// pert options
-	StringOptionKey const mimetic_sequence ( "peptidomimetic_ensembles::mimetic_sequence" );
-	BooleanOptionKey const cartesian_min ( "peptidomimetic_ensembles::cartesian_min" );
+// pert options
+StringOptionKey const mimetic_sequence ( "peptidomimetic_ensembles::mimetic_sequence" );
+BooleanOptionKey const cartesian_min ( "peptidomimetic_ensembles::cartesian_min" );
 }
 
 bool margin (
@@ -102,7 +102,7 @@ void gradual_minimization(
 		sfxn->set_weight( core::scoring::atom_pair_constraint, wt );
 		sfxn->set_weight( core::scoring::angle_constraint,     wt);
 		sfxn->set_weight( core::scoring::dihedral_constraint,  wt );
-		
+
 		min->apply( pose );
 	}
 }
@@ -116,7 +116,7 @@ main( int argc, char *argv[] )
 
 		// initialize core
 		devel::init( argc, argv );
-		
+
 		std::string seq = option[ peptidomimetic_ensembles::mimetic_sequence ].value();
 		scoring::ScoreFunctionOP score_fxn = scoring::get_score_function();
 		core::chemical::ResidueTypeSetCOP residue_set_cap = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
@@ -137,19 +137,19 @@ main( int argc, char *argv[] )
 		}
 		// Okay, now sample.
 		pose.dump_pdb( "init.pdb" );
-		
+
 		protocols::simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( pert_mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 		desn_min->cartesian( option[ peptidomimetic_ensembles::cartesian_min ].value() );
 
 		gradual_minimization( pose, desn_min, score_fxn );
 		pose.dump_pdb( "min.pdb" );
-		
-		
+
+
 		score_fxn->set_weight( core::scoring::atom_pair_constraint, 1 );
 		score_fxn->set_weight( core::scoring::angle_constraint, 1.0 );
 		score_fxn->set_weight( core::scoring::dihedral_constraint, 1 );//10.0 );
 
-		
+
 		utility::vector1< Pose > poses;
 		utility::vector1< Real > scores;
 		Size ns = option[ out::nstruct ].value();
@@ -164,14 +164,14 @@ main( int argc, char *argv[] )
 				} else {
 					copy_pose.conformation().set_torsion( id::TorsionID( i, id::BB, pose.residue(i).mainchain_torsions().size() ), 180 );
 				}
-				
+
 			}
-			
+
 			desn_min->apply( copy_pose );
 			poses.push_back( copy_pose );
 			scores.push_back( ( *score_fxn )( copy_pose ) );
 		}
-		
+
 		// Find best score
 		Pose ref_pose = poses[ arg_min( scores ) ];
 		utility::vector1< Real > rmsds;
@@ -183,7 +183,7 @@ main( int argc, char *argv[] )
 		}
 
 		ref_pose.dump_pdb( "done.pdb" );
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;

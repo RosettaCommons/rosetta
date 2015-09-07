@@ -153,7 +153,7 @@ AddMPLigandMoverCreator::mover_name() {
 void
 AddMPLigandMover::apply( core::pose::Pose & pose ) {
 
-	using namespace core::kinematics; 
+	using namespace core::kinematics;
 
 	// Check the pose is a membrane framework pose
 	if ( !pose.conformation().is_membrane() ) {

@@ -36,7 +36,7 @@
 		
 		<DeclareBond name=bond1 res1=18 atom1=C res2=1 atom2=N />
 		
-		<GeneralizedKIC name=close1 selector=lowest_energy_selector selector_scorefunction=tala closure_attempts=2000 stop_when_solution_found=true >
+		<GeneralizedKIC name=close1 selector=lowest_energy_selector selector_scorefunction=tala closure_attempts=2000 stop_when_n_solutions_found=1 >
 			<AddResidue res_index=3 />
 			<AddResidue res_index=4 />
 			<AddResidue res_index=5 />
@@ -78,7 +78,7 @@
 			<AddFilter type=loop_bump_check />
 		</GeneralizedKIC>
 
-		<GeneralizedKIC name=genkic2 selector=lowest_rmsd_selector closure_attempts=2000 stop_when_solution_found=true >
+		<GeneralizedKIC name=genkic2 selector=lowest_rmsd_selector closure_attempts=2000 stop_when_n_solutions_found=1 >
 			<AddResidue res_index=5 />
 			<AddResidue res_index=6 />
 			<AddResidue res_index=7 />

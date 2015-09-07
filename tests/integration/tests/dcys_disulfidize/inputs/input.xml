@@ -114,7 +114,7 @@
         <Torsion residue=16,17,18,19,20,21,22,23,24,25 torsion_name=psi angle=41.0/>
     </SetTorsion>
     
-    <GeneralizedKIC name=genkic1 closure_attempts=50 name=genkic1 selector="lowest_energy_selector" stop_when_solution_found=false stop_if_no_solution=10 selector_scorefunction="SFXN_hbond_bb" >
+    <GeneralizedKIC name=genkic1 closure_attempts=50 name=genkic1 selector="lowest_energy_selector" stop_when_n_solutions_found=0 stop_if_no_solution=10 selector_scorefunction="SFXN_hbond_bb" >
         
         <AddResidue res_index=13 />
         <AddResidue res_index=14 />

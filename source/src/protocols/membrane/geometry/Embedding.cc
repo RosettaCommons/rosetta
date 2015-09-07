@@ -66,7 +66,7 @@ Embedding::Embedding() :
 {}
 
 /// @brief Construction from single EmbeddingDef object
-Embedding::Embedding( EmbeddingDef const & embedding ) : 
+Embedding::Embedding( EmbeddingDef const & embedding ) :
 	utility::pointer::ReferenceCount()
 {
 	EmbeddingDefOP copy( new EmbeddingDef( embedding ) );
@@ -77,10 +77,10 @@ Embedding::Embedding( EmbeddingDef const & embedding ) :
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Constructs bogus object from topology
-Embedding::Embedding( 
-	core::conformation::membrane::SpanningTopology const & topology, 
-	core::Real radius 
-	) : utility::pointer::ReferenceCount(),
+Embedding::Embedding(
+	core::conformation::membrane::SpanningTopology const & topology,
+	core::Real radius
+) : utility::pointer::ReferenceCount(),
 	embeddings_()
 {
 	// initialize embedding objects
@@ -125,9 +125,9 @@ Embedding::Embedding(
 ////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Constructs from topology and pose
-Embedding::Embedding( 
-	core::conformation::membrane::SpanningTopology const & topology, 
-	core::pose::Pose const & pose 
+Embedding::Embedding(
+	core::conformation::membrane::SpanningTopology const & topology,
+	core::pose::Pose const & pose
 ) {
 
 	TR << "Constructing Embedding object from topology and pose" << std::endl;
@@ -195,7 +195,7 @@ void Embedding::show( std::ostream & out ) const {
 // invert all normals in Embedding object
 void Embedding::invert() {
 
-	using namespace core; 
+	using namespace core;
 
 	// go through vector of EmbeddingDefs and invert the normals
 	for ( Size i = 1; i <= embeddings_.size(); ++i ) {
@@ -268,12 +268,12 @@ EmbeddingDefOP Embedding::total_embed() const {
 }// chain_embedding
 
 // from TMspans, they are all in a similar direction as the first TM span!
-utility::vector1< EmbeddingDefOP > 
-Embedding::from_spans( 
-	core::conformation::membrane::SpanningTopology const & topology, 
-	core::pose::Pose const & pose 
+utility::vector1< EmbeddingDefOP >
+Embedding::from_spans(
+	core::conformation::membrane::SpanningTopology const & topology,
+	core::pose::Pose const & pose
 ) {
-	using namespace core; 
+	using namespace core;
 
 	TR << "Computing membrane embedding from TMspans: " << std::endl;
 
