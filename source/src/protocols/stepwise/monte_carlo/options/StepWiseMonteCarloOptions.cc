@@ -47,6 +47,7 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	allow_internal_hinge_moves_( true ),
 	allow_internal_local_moves_( true ),
 	cycles_( 500 ),
+	add_proposal_density_factor_( 1.0 ),
 	add_delete_frequency_( 0.5 ),
 	submotif_frequency_( 0.5 ),
 	docking_frequency_( 0.2 ),
@@ -118,6 +119,7 @@ StepWiseMonteCarloOptions::initialize_from_command_line() {
 	set_num_pose_minimize( option[ OptionKeys::stepwise::num_pose_minimize ]() );
 	set_erraser( option[ OptionKeys::stepwise::rna::erraser ]() );
 	set_cycles( option[ OptionKeys::stepwise::monte_carlo::cycles ]() );
+	set_add_proposal_density_factor( option[ OptionKeys::stepwise::monte_carlo::add_proposal_density_factor ]() );
 	set_add_delete_frequency( option[ OptionKeys::stepwise::monte_carlo::add_delete_frequency ]() );
 	set_submotif_frequency( option[ OptionKeys::stepwise::monte_carlo::submotif_frequency ]() );
 	set_docking_frequency( option[ OptionKeys::stepwise::monte_carlo::docking_frequency ]() );
@@ -190,6 +192,15 @@ StepWiseMonteCarloOptions::setup_modeler_options() const{
 	options_basic_new = options_basic_this;
 
 	// general
+	options->set_num_pose_minimize( 0 );
+	options->set_num_random_samples( num_random_samples() );
+	if ( num_pose_minimize() > 0 ) options->set_num_pose_minimize( num_pose_minimize() );
+	options->set_rmsd_screen( rmsd_screen() );
+	options->set_VDW_rep_screen_info( VDW_rep_screen_info() ); // caleb when you see a conflict, just get rid of this line.
+	options->set_atr_rep_screen( atr_rep_screen() );
+
+	// Might be smarter to inherit the following options from the same options parent class,
+	// instead of setting manually here, where we could forget something.
 	options->set_choose_random( !enumerate_ );
 	options->set_virtualize_packable_moieties_in_screening_pose( virtualize_packable_moieties_in_screening_pose() );
 	if ( preminimize_ ) options->set_use_packer_instead_of_rotamer_trials( true );  // to match SWA for proteins.

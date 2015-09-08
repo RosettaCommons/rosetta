@@ -59,10 +59,10 @@ core::io::silent::BinarySilentStruct
 get_binary_rna_silent_struct_safe_wrapper( core::pose::Pose const & const_pose, std::string const & tag, std::string const & silent_file, bool const write_score_only );
 
 void
-output_data( std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, working_parameters::StepWiseWorkingParametersCOP working_parameters_ );
+output_data( std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, working_parameters::StepWiseWorkingParametersCOP working_parameters_, bool const NAT_rmsd = true );
 
 void
-output_data( core::io::silent::SilentFileData& silent_file_data, std::string const & silent_file, std::string const & tag, bool const write_score_only, core::pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, working_parameters::StepWiseWorkingParametersCOP working_parameters_ );
+output_data( core::io::silent::SilentFileData& silent_file_data, std::string const & silent_file, std::string const & tag, bool const write_score_only, core::pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, working_parameters::StepWiseWorkingParametersCOP working_parameters_, bool const NAT_rmsd = true );
 
 
 } //rna

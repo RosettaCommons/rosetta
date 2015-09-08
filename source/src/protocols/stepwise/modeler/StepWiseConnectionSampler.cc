@@ -157,6 +157,7 @@ namespace protocols {
 namespace stepwise {
 namespace modeler {
 
+
 //Constructor
 StepWiseConnectionSampler::StepWiseConnectionSampler( working_parameters::StepWiseWorkingParametersCOP & working_parameters ):
 	working_parameters_( working_parameters ), // may deprecate
@@ -309,6 +310,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	// at first, don't copy in dofs for sugar/backbone (i.e., residue alternative), because those copy_dofs take extra computation;
 	//  just apply rigid_body transformation.
 	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new SampleApplier( *screening_pose_, false /*apply_residue_alternative_sampler*/ ) ) );
+
 	AlignRMSD_ScreenerOP align_rmsd_screener;
 	if ( ( get_native_pose() != 0 ) && (moving_res_ != 0) &&
 			( options_->rmsd_screen() > 0.0 || options_->integration_test_mode() ) ) {
@@ -362,6 +364,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new RNA_ChainClosableGeometryScreener( rna_chain_closable_geometry_checkers_[ n ], screening_pose_, strict  /*strict*/ ) ) );
 	}
 
+	// Replaced with PartitionContactScreener. REMOVE THIS COMMENT IN MAR 2015 IF SWA RUNS ARE OK.
 	// RNA_AtrRepScreenerOP atr_rep_screener;
 	// if ( options_->atr_rep_screen() && atr_rep_checker_ ) {
 	//  atr_rep_screener = new RNA_AtrRepScreener( atr_rep_checker_, *screening_pose_ );
@@ -381,7 +384,8 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 
 	for ( Size n = 1; n <= protein_ccd_closers_.size(); n++ )  screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new ProteinCCD_ClosureScreener( protein_ccd_closers_[n], *protein_ccd_poses_[n] ) ) );
 
-	// screeners_.push_back( atr_rep_screener ); // really should be higher.
+	// really should be higher -- OK, moved up to PartitionContactScreener. REMOVE THIS COMMENT IN MAR 2015 IF SWA RUNS ARE OK.
+	// screeners_.push_back( atr_rep_screener );
 
 	// phosphate screener, o2prime screener, should be here.
 	master_packer_->add_packer_screeners( screeners_, pose, screening_pose_ );
@@ -402,6 +406,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new SampleApplier( pose ) ) );
 
 	// could be way earlier, and unified with RNA. Just ignore atoms at cutpoints that will be closed, and at moving suite.
+	// OK, moved up to PartitionContactScreener.  REMOVE THIS COMMENT IN MAR 2015 IF SWA RUNS ARE OK.
 	// if ( protein_connection_ /*&& !master_packer_->pack_all_side_chains()*/ && !protein_cutpoints_closed_.size() &&
 	//    options_->atr_rep_screen() ) {
 	//  protein_atr_rep_screening_pose_ = pose.clone();
@@ -486,16 +491,15 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	//  stepwise monte carlo runs.
 	// Could in principle instantiate for proteins too.
 	if ( !options_->choose_random() && !protein_connection_ && moving_res_ > 0 ) {
-		TR << "Creating VDW Bin Checker " << TR.Reset << std::endl;
-		VDW_bin_checker_ = RNA_VDW_BinCheckerOP( new RNA_VDW_BinChecker() );
+		TR << TR.Magenta << "Creating VDW Bin Checker " << TR.Reset << std::endl;
+		VDW_bin_checker_ = RNA_VDW_BinCheckerOP( new checker::RNA_VDW_BinChecker() );
 		VDW_bin_checker_->setup_using_working_pose( *screening_pose_, working_parameters_ );
 	}
 	if ( !user_input_VDW_bin_checker_ /* could be externally defined for speed */ && options_->VDW_rep_screen_info().size() > 0 ) {
-		TR << "Creating USER VDW Bin Checker " << TR.Reset << std::endl;
-		user_input_VDW_bin_checker_ = RNA_VDW_BinCheckerOP( new RNA_VDW_BinChecker() );
+		TR << TR.Magenta << "Creating USER VDW Bin Checker " << TR.Reset << std::endl;
+		user_input_VDW_bin_checker_ = RNA_VDW_BinCheckerOP( new RNA_VDW_BinChecker( pose ) );
 		options_->setup_options_for_VDW_bin_checker( user_input_VDW_bin_checker_ );
-		user_input_VDW_bin_checker_->setup_using_user_input_VDW_pose( options_->VDW_rep_screen_info(),
-			pose, working_parameters_ );
+		user_input_VDW_bin_checker_->setup_using_user_input_VDW_pose( options_->VDW_rep_screen_info(), pose, working_parameters_ );
 	}
 
 	virt_sugar_screening_pose_ = screening_pose_->clone(); //Hard copy. Used for trying out sugar at moving residue.

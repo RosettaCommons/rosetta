@@ -29,6 +29,7 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <numeric/random/random.hh>
@@ -291,14 +292,20 @@ AddMover::append_residue( pose::Pose & pose, Size const offset ){
 		}
 		actual_offset = res_to_add_in_full_model_numbering_ - k;
 		res_to_add = takeoff_res + 1;
+
+		if ( swa_move_.attachment_type() == JUMP_DOCK ) {
+			takeoff_res = res_to_build_off;
+		}
+
 		pose.insert_residue_by_jump( *new_rsd, res_to_add, takeoff_res,
 			default_jump_atom( pose.residue( takeoff_res ) ),
 			default_jump_atom( *new_rsd ) );
+
 		kinematics::FoldTree f = pose.fold_tree();
 		Size const jump_nr = f.jump_nr( takeoff_res, res_to_add );
 		f.slide_jump( jump_nr, res_to_build_off, res_to_add );
 		f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue( res_to_build_off ) ),
-			default_jump_atom( pose.residue( res_to_add ) ) );
+											default_jump_atom( pose.residue( res_to_add ) ) );
 		pose.fold_tree( f );
 
 		add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, res_to_add );
@@ -355,14 +362,21 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 		}
 		actual_offset = k - res_to_add_in_full_model_numbering_;
 		res_to_add = takeoff_res;
+
+		// not sure how to match logic in append_residue yet ..
+		//if ( swa_move_.attachment_type() == JUMP_DOCK ) {
+		// takeoff_res = res_to_build_off;
+		//}
+
 		pose.insert_residue_by_jump( *new_rsd, res_to_add, takeoff_res,
 			default_jump_atom( pose.residue( takeoff_res ) ),
 			default_jump_atom( *new_rsd ) );
+
 		kinematics::FoldTree f = pose.fold_tree();
 		Size const jump_nr = f.jump_nr( res_to_add, takeoff_res+1 );
 		f.slide_jump( jump_nr, res_to_add, res_to_build_off+1 );
 		f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue( res_to_add ) ),
-			default_jump_atom( pose.residue( res_to_build_off+1 ) ) );
+											default_jump_atom( pose.residue( res_to_build_off+1 ) ) );
 		pose.fold_tree( f );
 
 		if ( res_to_add_in_full_model_numbering_ > res_list[ res_to_build_off-1 ]+1 ) {
@@ -449,6 +463,8 @@ AddMover::setup_initial_torsions( pose::Pose & pose ){
 
 		// rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num_, sample_range_large_);
 		// if ( nucleoside_num_ > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num_, sample_range_large_);
+	} else if ( suite_num_ == 0 && swa_move_.is_jump() ) {
+		setup_initial_jump( pose );
 	}
 
 }
@@ -492,6 +508,41 @@ AddMover::get_add_res( StepWiseMove const & swa_move, pose::Pose const & pose ) 
 	runtime_assert( move_element.has_value( add_res ) );
 
 	return add_res;
+}
+
+void
+AddMover::setup_initial_jump( pose::Pose & pose ) {
+
+	using namespace core::kinematics;
+	using namespace core::pose::full_model_info;
+	using namespace core::chemical::rna;
+
+	// get the res to add in local numbering
+	FullModelInfo const & full_model_info = nonconst_full_model_info( pose );
+	Size const & res_to_add = full_model_info.full_to_sub( res_to_add_in_full_model_numbering_ );
+
+	// get parent res of res added, make sure they are connected by a jump ... is this necessary?
+	bool connected_by_jump;
+	FoldTree ft( pose.fold_tree() );
+	Size const & parent_res = ft.get_parent_residue( res_to_add, connected_by_jump );
+	int offset = static_cast<int>(parent_res) - static_cast<int>(res_to_add);
+	if ( std::abs(offset) > 1 ) {
+		runtime_assert( swa_move_.attachment_type() == JUMP_DOCK );
+	}
+	runtime_assert( connected_by_jump );
+
+	// create a new jump, and initialize its translation
+	Jump new_jump = Jump();
+	numeric::xyzVector< Real > t( 0.0, 0.0, 7.0 );
+	if ( swa_move_.attachment_type() == JUMP_DOCK  ) {
+		t = 2.0;
+	}
+	new_jump.set_translation( t );
+
+	// get jump number, and add the new jump into pose
+	Size const & jump_nr = ft.get_jump_that_builds_residue( res_to_add );
+	pose.set_jump( jump_nr, new_jump );
+
 }
 
 

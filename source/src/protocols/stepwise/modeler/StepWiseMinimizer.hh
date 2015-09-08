@@ -93,8 +93,17 @@ private:
 		core::pose::Pose const & pose,
 		core::Size const j );
 
+	void output_empty_minimizer_silent_file() const;
+
+	bool check_pose_list( core::pose::Pose const & pose );
+
+	void output_minimized_pose_list() const;
+
 	void
 	setup_vary_bond_geometry( core::pose::Pose & pose, core::kinematics::MoveMap & mm );
+
+	utility::vector1< core::Size >
+	figure_out_working_minimize_res( core::pose::Pose const & pose );
 
 private:
 
@@ -108,6 +117,8 @@ private:
 	utility::vector1< core::Size > working_fixed_res_;
 	utility::vector1< core::Size > working_calc_rms_res_;
 	utility::vector1< core::Size > working_pack_res_;
+	utility::vector1< core::Size > working_minimize_res_;
+
 
 	core::optimization::CartesianMinimizerOP cartesian_minimizer_;
 	core::optimization::AtomTreeMinimizerOP atom_tree_minimizer_;
@@ -115,6 +126,7 @@ private:
 	bool const allow_virtual_o2prime_hydrogens_;
 
 	protein::loop_close::StepWiseProteinCCD_CloserOP protein_ccd_closer_;
+	working_parameters::StepWiseWorkingParametersCOP working_parameters_; // needed only for legacy SWA RNA main output.
 
 	protocols::toolbox::AllowInsertOP allow_insert_; // a atom-centric version of the DOF-centric movemap.
 };

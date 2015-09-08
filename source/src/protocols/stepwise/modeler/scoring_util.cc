@@ -41,8 +41,13 @@ get_minimize_scorefxn( core::pose::Pose const & pose,
 	using namespace core::scoring;
 	ScoreFunctionOP minimize_scorefxn = scorefxn->clone();
 	if ( minimize_scorefxn->get_weight( atom_pair_constraint ) == 0.0 ) minimize_scorefxn->set_weight( atom_pair_constraint, 1.0 ); //go ahead and turn these on
-	if ( minimize_scorefxn->get_weight( coordinate_constraint) == 0.0 ) minimize_scorefxn->set_weight( coordinate_constraint, 1.0 ); // go ahead and turn these on
-	check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, minimize_scorefxn );
+	if ( minimize_scorefxn->get_weight( coordinate_constraint ) == 0.0 && options->coordinate_constraints_during_minimize() ) {
+		minimize_scorefxn->set_weight( coordinate_constraint, 1.0 ); // go ahead and turn these on
+	}
+	if ( options->coordinate_constraints_during_minimize() ) {
+		// this will exit with error if coordinate_constraints are not turned on
+		check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, minimize_scorefxn );
+	}
 	// minimize_scorefxn->set_weight( linear_chainbreak, 150.0 ); // original SWA protein value.
 	minimize_scorefxn->set_weight( linear_chainbreak, 5.0 ); // unify with RNA.
 	if ( options->turn_off_rna_chem_map_during_optimize() )  minimize_scorefxn->set_weight( rna_chem_map, 0.0 ); // Just for now...
@@ -88,6 +93,14 @@ core::scoring::ScoreFunctionCOP
 initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn,
 	pose::Pose const & /* put back in if we want to try contains_protein hack*/ ){
 
+
+	// NOTE:
+	// Modern solvation terms (i.e., geom_sol_fast, occ_sol_fitted, etc.) are not necessary for RNA packing.
+	// Although important for modeling DNA/RNA base stacking, they are too slow right now.
+	// In the case of RNA, packing only involves O2' hydroxyls; fa_sol is sufficient for such cases.
+	// The fa_sol term contains both lk_polar and lk_nonpolar terms.
+	// - Caleb Geniesse 12.08.2014
+
 	using namespace core::scoring;
 
 	// if ( !contains_protein( pose ) ) return initialize_o2prime_pack_scorefxn( sample_scorefxn );
@@ -97,8 +110,10 @@ initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn,
 
 	// hack for speed -- geom_sol & lk_nonpolar are too slow right now.
 	// [see also: O2PrimePacker]
-	if ( sample_scorefxn->has_nonzero_weight( geom_sol ) ||
-			sample_scorefxn->has_nonzero_weight( geom_sol_fast ) ) {
+	if ( sample_scorefxn->has_nonzero_weight( geom_sol )      ||
+			sample_scorefxn->has_nonzero_weight( geom_sol_fast ) ||
+			sample_scorefxn->has_nonzero_weight( occ_sol_fitted )||
+			sample_scorefxn->has_nonzero_weight( lk_polar )      ) {
 
 		Real lk_weight(  sample_scorefxn->get_weight( lk_nonpolar ) );
 		if ( sample_scorefxn->has_nonzero_weight( lk_nonpolar ) ) {
@@ -117,13 +132,15 @@ initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn,
 			pack_scorefxn->set_energy_method_options( *pack_energy_method_options );
 		}
 
-		pack_scorefxn->set_weight( geom_sol,      0.0 );
-		pack_scorefxn->set_weight( geom_sol_fast, 0.0 );
-		pack_scorefxn->set_weight( lk_nonpolar,   0.0 );
-		pack_scorefxn->set_weight( fa_sol,        lk_weight );
+		pack_scorefxn->set_weight( geom_sol,       0.0 );
+		pack_scorefxn->set_weight( geom_sol_fast,  0.0 );
+		pack_scorefxn->set_weight( occ_sol_fitted, 0.0 );
+		pack_scorefxn->set_weight( lk_polar,       0.0 );
+		pack_scorefxn->set_weight( lk_nonpolar,    0.0 );
+		pack_scorefxn->set_weight( fa_sol,         lk_weight );
 
 	} else {
-		runtime_assert( !pack_scorefxn->has_nonzero_weight( lk_nonpolar ) ); // only allow lk_nonpolar if with geom_sol.
+		runtime_assert( !pack_scorefxn->has_nonzero_weight( lk_nonpolar ) ); // only allow lk_nonpolar if with geom_sol or occ_sol_fitted.
 	}
 
 	if ( pack_scorefxn->has_nonzero_weight( free_dof ) ) {

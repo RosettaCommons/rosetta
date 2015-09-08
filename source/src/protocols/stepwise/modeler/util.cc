@@ -17,6 +17,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/farna/util.hh>
 
@@ -55,6 +56,9 @@
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
 #include <utility/stream_util.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <iostream>
 #include <fstream>
@@ -273,7 +277,7 @@ merge_disjoint_vectors( utility::vector1< Size > const & res_vector1,
 bool
 find_root_without_virtual_ribose( kinematics::FoldTree const & f, pose::Pose const & pose ){
 	for ( Size n = 1; n <= f.nres(); n++ ) {
-		if ( f.possible_root( n ) && !pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) ) {
+		if ( f.possible_root( n ) && !pose.residue_type( n ).has_variant_type( chemical::VIRTUAL_RIBOSE ) ) {
 			return n;
 		}
 	}
@@ -762,6 +766,7 @@ slice_out_pose( pose::Pose & pose,
 	sliced_out_full_model_info->clear_other_pose_list();
 	sliced_out_pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, sliced_out_full_model_info );
 	update_pose_objects_from_full_model_info( sliced_out_pose ); // for output pdb or silent file -- residue numbering.
+	rna::checker::set_vdw_cached_rep_screen_info_from_pose( sliced_out_pose, pose );
 
 	// remainder piece.
 	utility::vector1< Size > const residues_to_retain = get_other_residues( residues_to_delete, pose.total_residue() );
@@ -772,6 +777,7 @@ slice_out_pose( pose::Pose & pose,
 
 	full_model_info.set_res_list( apply_numbering( residues_to_retain, original_res_list )  );
 	update_pose_objects_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
+	rna::checker::set_vdw_cached_rep_screen_info_from_pose( pose, sliced_out_pose );
 
 }
 
@@ -889,8 +895,8 @@ Size
 check_jump_to_previous_residue_in_chain( pose::Pose const & pose, Size const i,
 	utility::vector1< Size > const & current_element,
 	FullModelInfo const & full_model_info ){
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-	utility::vector1< Size > const & chains_in_full_model = full_model_info.chains_in_full_model();
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+	utility::vector1< Size > const & chains_in_full_model = get_chains_full( pose );
 	return  check_jump_to_previous_residue_in_chain( pose, i, current_element, res_list, chains_in_full_model );
 }
 
@@ -928,8 +934,8 @@ Size
 check_jump_to_next_residue_in_chain( pose::Pose const & pose, Size const i,
 	utility::vector1< Size > const & current_element,
 	FullModelInfo const & full_model_info ){
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-	utility::vector1< Size > const & chains_in_full_model = full_model_info.chains_in_full_model();
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+	utility::vector1< Size > const & chains_in_full_model = get_chains_full( pose );
 	return  check_jump_to_next_residue_in_chain( pose, i, current_element, res_list, chains_in_full_model );
 }
 
@@ -987,7 +993,7 @@ fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) 
 		core::pose::correctly_add_cutpoint_variants( pose, res );
 
 		// leave virtual riboses in this should actually get instantiated by the modeler
-		// remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", res );
+		// remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_RIBOSE, res );
 
 	} else {
 
@@ -1235,6 +1241,7 @@ switch_focus_to_other_pose( pose::Pose & pose,
 	// OK, now shift focus! Hope this works.
 	pose = ( *other_pose ); // makes a copy.
 	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, new_full_model_info );
+	rna::checker::set_vdw_cached_rep_screen_info_from_pose( pose, *other_pose );
 
 	Real const score_after_switch_focus = ( scorefxn != 0 ) ? (*scorefxn)( pose ) : 0.0;
 
@@ -1245,7 +1252,11 @@ switch_focus_to_other_pose( pose::Pose & pose,
 	// }
 
 	if (  std::abs( score_before_switch_focus - score_after_switch_focus ) > 1.0e-3 ) {
-		utility_exit_with_message( "Energy change after switching pose focus: " + string_of( score_before_switch_focus ) + " to " +string_of( score_after_switch_focus ) );
+		std::string const msg = "Energy change after switching pose focus: " + string_of( score_before_switch_focus ) + " to " +string_of( score_after_switch_focus );
+		if ( !basic::options::option[ basic::options::OptionKeys::score::allow_complex_loop_graph ]() ) {
+			utility_exit_with_message( msg );
+		}
+		TR << TR.Red << "[WARNING] " << msg << TR.Reset << std::endl;
 	}
 
 
@@ -1445,12 +1456,12 @@ figure_out_moving_chain_breaks( pose::Pose const & pose,
 
 		// rewind to non-virtual residue closest to chainbreak
 		for ( five_prime_chain_break = n; five_prime_chain_break >= 1; five_prime_chain_break-- ) {
-			if ( !pose.residue_type( five_prime_chain_break ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) break;
+			if ( !pose.residue_type( five_prime_chain_break ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) break;
 		}
 
 		// fast-forward to non-virtual residue closest to chainbreak
 		for ( three_prime_chain_break = n+1; three_prime_chain_break <= pose.total_residue(); three_prime_chain_break++ ) {
-			if ( !pose.residue_type( three_prime_chain_break ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) break;
+			if ( !pose.residue_type( three_prime_chain_break ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) break;
 		}
 
 		five_prime_chain_breaks.push_back( five_prime_chain_break );
@@ -1461,8 +1472,8 @@ figure_out_moving_chain_breaks( pose::Pose const & pose,
 		if ( gap_size == 0 ) {
 			runtime_assert( five_prime_chain_break == n ); // no rewind past bulges
 			runtime_assert( three_prime_chain_break == n + 1 ); // no fast forward past bulges
-			runtime_assert( pose.residue_type( five_prime_chain_break ).has_variant_type( "CUTPOINT_LOWER" ) );
-			runtime_assert( pose.residue_type( three_prime_chain_break ).has_variant_type( "CUTPOINT_UPPER" ) );
+			runtime_assert( pose.residue_type( five_prime_chain_break ).has_variant_type( chemical::CUTPOINT_LOWER ) );
+			runtime_assert( pose.residue_type( three_prime_chain_break ).has_variant_type( chemical::CUTPOINT_UPPER ) );
 			cutpoints_closed.push_back( n );
 		}
 
@@ -1548,7 +1559,7 @@ figure_out_moving_partition_res( pose::Pose const & pose,
 
 	utility::vector1< Size > moving_partition_res_all;
 	for ( Size n = 1; n <= moving_res_list.size(); n++ ) {
-		if ( pose.residue_type( moving_res_list[n] ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) continue; // legacy insanity from SWA 'dinucleotide' move.
+		if ( pose.residue_type( moving_res_list[n] ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue; // legacy insanity from SWA 'dinucleotide' move.
 		utility::vector1< Size > moving_partition_res = figure_out_moving_partition_res( pose, moving_res_list[n] );
 		for ( Size i = 1; i <= moving_partition_res.size(); i++ ) {
 			if ( !moving_partition_res_all.has_value( moving_partition_res[i] ) ) moving_partition_res_all.push_back( moving_partition_res[i] );

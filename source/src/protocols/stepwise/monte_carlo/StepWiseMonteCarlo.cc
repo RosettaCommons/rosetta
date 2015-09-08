@@ -188,13 +188,16 @@ StepWiseMonteCarlo::initialize_for_movie( pose::Pose const & pose ){
 	TR << "Going to make: " << dirname << std::endl;
 	create_directory( dirname );
 
+	Pose pose_copy = pose;
+	setPoseExtraScore(pose_copy, "frame", 0);
+
 	movie_file_trial_    = out_path_ + "movie/" + model_tag_ + "_trial.out";
 	if ( file_exists( movie_file_trial_ ) ) std::remove( movie_file_trial_.c_str() );
-	output_movie( pose, 0, "TRIAL", movie_file_trial_ );
+	output_movie( pose_copy, 0, "TRIAL", movie_file_trial_ );
 
 	movie_file_accepted_ = out_path_ + "movie/" + model_tag_ + "_accepted.out";
 	if ( file_exists( movie_file_accepted_ ) ) std::remove( movie_file_accepted_.c_str() );
-	output_movie( pose, 0, "ACCEPTED", movie_file_accepted_ );
+	output_movie( pose_copy, 0, "ACCEPTED", movie_file_accepted_ );
 
 }
 
@@ -204,6 +207,7 @@ void
 StepWiseMonteCarlo::output_movie( pose::Pose const & pose, Size const k, std::string const tag, std::string const & movie_file ){
 	if ( !options_->make_movie() ) return;
 	Pose pose_copy = pose;
+	setPoseExtraScore(pose_copy, "frame", k);
 	output_to_silent_file( tag + "_" + lead_zero_string_of( k, 6 ), movie_file, pose_copy, get_native_pose() );
 }
 

@@ -87,16 +87,16 @@ namespace rna {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-output_data( std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, working_parameters::StepWiseWorkingParametersCOP working_parameters_ ){
+output_data( std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, working_parameters::StepWiseWorkingParametersCOP working_parameters_, bool const NAT_rmsd /*= true*/){
 	static core::io::silent::SilentFileData silent_file_data;
-	output_data( silent_file_data, silent_file, tag, write_score_only, pose, native_poseCOP, working_parameters_ );
+	output_data( silent_file_data, silent_file, tag, write_score_only, pose, native_poseCOP, working_parameters_, NAT_rmsd );
 }
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Accept the job_parameter instead.
 void
-output_data( core::io::silent::SilentFileData& silent_file_data, std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, working_parameters::StepWiseWorkingParametersCOP working_parameters_ ){
+output_data( core::io::silent::SilentFileData& silent_file_data, std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, working_parameters::StepWiseWorkingParametersCOP working_parameters_ , bool const NAT_rmsd /*= true*/){
 
 	using namespace core::io::silent;
 	using namespace core::scoring;
@@ -175,13 +175,17 @@ output_data( core::io::silent::SilentFileData& silent_file_data, std::string con
 				align_poses( curr_pose_no_variants, tag + "_no_variants", ( *native_poseCOP ), "native",  working_best_alignment );
 			}
 
-			s.add_energy( "NAT_rmsd", rmsd_over_residue_list( curr_pose_no_variants,
-				*native_poseCOP,
-				calc_rms_res,
-				full_to_sub,
-				is_prepend_map,
-				false /*verbose*/,
-				true /*ignore_virtual_atom*/ ) );
+			if ( NAT_rmsd ) {
+				s.add_energy( "NAT_rmsd", rmsd_over_residue_list( curr_pose_no_variants,
+					*native_poseCOP,
+					calc_rms_res,
+					full_to_sub,
+					is_prepend_map,
+					false /*verbose*/,
+					true /*ignore_virtual_atom*/ ) );
+			} else if ( !s.has_energy( "all_rms" ) ) {
+				s.add_energy( "all_rms", rms_at_corresponding_heavy_atoms( pose, *native_poseCOP ) );
+			}
 
 		}
 	}

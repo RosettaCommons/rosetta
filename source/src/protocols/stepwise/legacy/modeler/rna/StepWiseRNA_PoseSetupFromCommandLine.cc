@@ -511,8 +511,7 @@ setup_simple_full_length_rna_working_parameters(){
 	/////////////Read in sequence.///////////////////////
 
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
-	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
-	std::string const full_sequence = fasta_sequence->sequence();
+	std::string const full_sequence = core::sequence::read_fasta_file_and_concatenate( fasta_file );
 	core::Size const nres = full_sequence.length();
 
 	/////////////////////////////////////////////////////
@@ -727,8 +726,7 @@ setup_rna_working_parameters( bool check_for_previously_closed_cutpoint_with_inp
 	// Read in sequence.
 	if ( !option[ in::file::fasta ].user() ) utility_exit_with_message( "Must supply in::file::fasta!" );
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
-	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
-	std::string const full_sequence = fasta_sequence->sequence();
+	std::string const full_sequence = core::sequence::read_fasta_file_and_concatenate( fasta_file );
 	core::Size const nres = full_sequence.length();
 
 	if ( !option[ OptionKeys::full_model::sample_res ].user() ) utility_exit_with_message( "Must supply sample_res!" );

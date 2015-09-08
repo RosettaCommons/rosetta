@@ -145,7 +145,6 @@ build_full_model( pose::Pose const & start_pose ){
 	return full_model_pose;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 std::string
 get_move_type_string( mover::StepWiseMove const & swa_move ) {

@@ -55,7 +55,6 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-
 	virtual
 	void
 	residue_energy(
@@ -81,6 +80,10 @@ public:
 	virtual
 	core::Size version() const;
 
+	// methods
+private:
+
+	bool is_RNA_bulge( conformation::Residue const & rsd ) const;
 
 	// data
 private:

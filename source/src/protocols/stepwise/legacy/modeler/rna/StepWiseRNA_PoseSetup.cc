@@ -19,6 +19,7 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/sugar/util.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/farna/util.hh>
@@ -129,7 +130,9 @@ StepWiseRNA_PoseSetup::apply( core::pose::Pose & pose ) {
 
 	if ( working_parameters_->add_virt_res_as_root() ) add_aa_virt_rsd_as_root( pose ); //Fang's electron density code.
 
+	// These should be called explicitly by the object (i.e., stepwise_rna_pose_setup->setup_full_model_info( pose ) )
 	setup_full_model_info( pose );
+	setup_vdw_cached_rep_screen_info( pose );
 
 	if ( output_pdb_ ) pose.dump_pdb( "start.pdb" );
 
@@ -1013,6 +1016,7 @@ StepWiseRNA_PoseSetup::setup_full_model_info( pose::Pose & pose ) const {
 	}
 	if ( working_parameters_->add_virt_res_as_root() ) fixed_domain.push_back( 1 );
 	full_model_parameters->set_parameter( FIXED_DOMAIN, fixed_domain );
+	full_model_parameters->set_parameter( INPUT_DOMAIN, fixed_domain );
 
 	// extra_minimize_res was never in use in RNA modeling -- everything was set via -fixed_res or -minimize_res flags, which
 	// get loaded in StepWiseRNA_PoseSetupFromCommandLine.
@@ -1026,6 +1030,14 @@ StepWiseRNA_PoseSetup::setup_full_model_info( pose::Pose & pose ) const {
 	full_model_info->set_full_model_parameters( full_model_parameters );
 	set_full_model_info( pose, full_model_info );
 }
+
+////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_PoseSetup::setup_vdw_cached_rep_screen_info( pose::Pose & pose ) const {
+	using namespace checker;
+	fill_vdw_cached_rep_screen_info_from_command_line( pose );
+}
+
 
 
 } //rna

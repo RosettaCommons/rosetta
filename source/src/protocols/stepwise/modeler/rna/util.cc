@@ -444,7 +444,7 @@ setup_suite_atom_id_map( pose::Pose const & pose_1, pose::Pose const & pose_2, S
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 id::AtomID_Map < id::AtomID >
-create_aligment_id_map_legacy( pose::Pose & mod_pose, pose::Pose const & ref_pose, utility::vector1< core::Size > const & rmsd_residue_list, bool const base_only ){
+create_alignment_id_map_legacy( pose::Pose & mod_pose, pose::Pose const & ref_pose, utility::vector1< core::Size > const & rmsd_residue_list, bool const base_only ){
 	using namespace chemical;
 
 	id::AtomID_Map < id::AtomID > atom_ID_map;
@@ -493,7 +493,7 @@ align_poses( core::pose::Pose & moving_pose, std::string const & moving_tag, cor
 	}
 
 	//align current_pose to pose_output_list.
-	id::AtomID_Map < id::AtomID > const & alignment_atom_id_map = create_aligment_id_map_legacy( moving_pose, static_pose, working_best_alignment, base_only );
+	id::AtomID_Map < id::AtomID > const & alignment_atom_id_map = create_alignment_id_map_legacy( moving_pose, static_pose, working_best_alignment, base_only );
 	core::scoring::superimpose_pose( moving_pose, static_pose, alignment_atom_id_map );
 
 	if ( check_for_messed_up_structure( moving_pose, moving_tag ) ) {
@@ -1331,7 +1331,7 @@ check_for_messed_up_structure( core::pose::Pose const & pose, std::string const 
 
 		//   TR.Debug << " tag= " << tag << " seq_num= " << seq_num << " delta= " << delta << " chi= " << chi << " nu_2= " << nu_2 << " nu_1= " << nu_1 << std::endl;
 
-		if ( ( delta >  - 0.01 && delta < 0.01 ) || ( nu_2 >  - 0.01 && nu_2 < 0.01 ) || ( nu_1 >  - 0.01 && nu_1 < 0.01 ) ) { //observation is that messed up structure will have delta value of zero
+		if ( ( delta >  - 0.001 && delta < 0.001 ) || ( nu_2 >  - 0.001 && nu_2 < 0.001 ) || ( nu_1 >  - 0.001 && nu_1 < 0.001 ) ) { //observation is that messed up structure will have delta value of zero
 			TR.Debug << "Warning: " << tag << " is probably a messed up pose, will be ignored" << std::endl;
 			TR.Debug << " seq_num = " << seq_num << " delta = " << delta << " chi = " << chi << " nu_2 = " << nu_2 << " nu_1 = " << nu_1 << std::endl;
 			if ( ( rsd.has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) ||

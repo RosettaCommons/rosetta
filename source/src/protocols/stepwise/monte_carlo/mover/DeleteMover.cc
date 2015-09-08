@@ -20,6 +20,7 @@
 #include <protocols/stepwise/modeler/rna/phosphate/util.hh>
 #include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <protocols/stepwise/modeler/util.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -166,6 +167,7 @@ DeleteMover::remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
 		if ( pose_is_alone ) {
 			TR << TR.Red << "EMPTY POSE! Keeping the pose with number of residues " << pose.total_residue() << TR.Reset << std::endl;
 
+			core::pose::PoseCOP old_pose_cop = pose.clone();
 			FullModelInfoOP new_full_model_info = nonconst_full_model_info( pose ).clone_info();
 			// Rosetta's Pose object craps out if it is blank.
 			// Still want to have blank poses represent fully random chain in stepwise monte carlo,
@@ -181,6 +183,7 @@ DeleteMover::remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
 			new_full_model_info->clear_res_list();
 			new_full_model_info->clear_other_pose_list();
 			set_full_model_info( pose, new_full_model_info );
+			modeler::rna::checker::set_vdw_cached_rep_screen_info_from_pose( pose, *old_pose_cop );
 		} else {
 			FullModelInfo & new_full_model_info = nonconst_full_model_info( pose );
 			Size const remainder_pose_idx = new_full_model_info.get_idx_for_other_pose_with_residue( res_in_remainder_pose );

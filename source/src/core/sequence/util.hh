@@ -58,6 +58,12 @@ utility::vector1< SequenceOP > read_fasta_file( std::string const & filename );
 utility::vector1< std::string > read_fasta_file_str( std::string const & filename );
 std::string read_fasta_file_return_str( std::string const & filename );
 
+/// @brief Return a string of concatenated SequenceCOP sequences
+std::string get_concatenated_sequence( utility::vector1< SequenceCOP > const & fasta_sequences );
+
+/// @brief Read fasta file and concatenate sequences
+std::string read_fasta_file_and_concatenate( std::string const & filename );
+
 /// @brief Read in a SequenceMapping from a file. File
 /// format is super-simple, it just contains single
 /// lines like this that claim that residue resi and

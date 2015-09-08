@@ -126,8 +126,8 @@ private:
 	core::Size max_tries_multiplier_for_ccd_;
 	bool atr_rep_screen_;
 	core::Real rmsd_screen_;
-
 	utility::vector1< std::string > VDW_rep_screen_info_;
+
 	bool output_minimized_pose_list_;
 	bool output_cluster_size_;
 	std::string min_type_;

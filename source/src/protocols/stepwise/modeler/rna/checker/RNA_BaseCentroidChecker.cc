@@ -180,7 +180,7 @@ RNA_BaseCentroidChecker::Initialize_terminal_res( pose::Pose const & pose ){
 		for ( Size m = 1; m <= nres; m++ ) {
 
 			if ( ( is_moving_res_( terminal_res )  && is_moving_res_( m ) ) ||
-					( is_fixed_res_(  terminal_res )  && is_fixed_res_(  m ) ) ) {
+					( is_fixed_res_(  terminal_res )  && is_fixed_res_( m ) ) ) {
 				stacked_on_terminal_res_in_original_pose_( terminal_res, m )  = check_base_stack( terminal_res, m );
 			}
 		}
@@ -479,7 +479,7 @@ RNA_BaseCentroidChecker::check_that_terminal_res_are_unstacked( bool const verbo
 		// what is this? seems gratuitous -- rhiju.
 		for ( Size m = 1; m <= fixed_residues_.size(); m++ ) {
 			Size const & fixed_res = fixed_residues_[ m ];
-			if ( !is_fixed_res_[ fixed_res ] ) continue; // in -tether_jump condition, is_fixed_res may be 0 at fixed_res. Confusing.
+			if ( !is_fixed_res_( fixed_res ) ) continue; // in -tether_jump condition, is_fixed_res may be 0 at fixed_res. Confusing.
 			if ( verbose ) TR << "about to check stack: " << terminal_res << " " << fixed_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) << " " << check_base_stack( terminal_res, fixed_res, verbose  ) << std::endl;
 			if ( !stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) &&
 					check_base_stack( terminal_res, fixed_res, verbose  ) ) return false;

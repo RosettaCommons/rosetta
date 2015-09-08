@@ -17,6 +17,7 @@
 #include <protocols/stepwise/modeler/StepWiseModeler.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/chemical/util.hh>
@@ -101,6 +102,8 @@ FromScratchMover::update_full_model_info_and_switch_focus_to_new_pose( pose::Pos
 	if ( pose.total_residue() > 1 ) new_full_model_info->add_other_pose( pose.clone() );
 	set_full_model_info( new_pose, new_full_model_info );
 	update_pose_objects_from_full_model_info( new_pose ); // for output pdb or silent file -- residue numbering.
+
+	modeler::rna::checker::set_vdw_cached_rep_screen_info_from_pose( new_pose, pose );
 
 	pose = new_pose; // switch focus to new pose.
 }

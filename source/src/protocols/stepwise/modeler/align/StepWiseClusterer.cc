@@ -99,7 +99,7 @@ StepWiseClusterer::apply( pose::Pose const & pose ) {
 	if ( silent_file_.size() > 0 )  monte_carlo::output_to_silent_file( "X_" + ObjexxFCL::lead_zero_string_of( count_++, 6 ), silent_file_, pose );
 
 	if ( check_screen_and_kick_out_displaced_model( pose ) ) {
-		//   TR << "Inserting into list. Score:  " << total_energy_from_pose( pose ) << "  rmsd " << rmsd_ << "  cutoff: " << cluster_rmsd_ << "  list size " << pose_list_.size() << "  max_decoys " << max_decoys_ << std::endl;
+		//TR << "Inserting into list. Score:  " << total_energy_from_pose( pose ) << "  rmsd " << rmsd_ << "  cutoff: " << cluster_rmsd_ << "  list size " << pose_list_.size() << "  max_decoys " << max_decoys_ << std::endl;
 		pose_list_.push_back( pose.clone() );
 		if ( output_cluster_size_ ) setPoseExtraScore( *pose_list_[ pose_list_.size() ], "cluster_size", cluster_size_ );
 		sort_pose_list();

@@ -793,7 +793,7 @@ RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, st
 		}
 
 		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-			protocols::stepwise::modeler::align::create_aligment_id_map_legacy( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
+			protocols::stepwise::modeler::align::create_alignment_id_map_legacy( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
 
 		TR << "Aligning pose to native." << std::endl;
 

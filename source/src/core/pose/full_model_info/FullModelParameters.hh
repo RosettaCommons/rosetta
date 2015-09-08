@@ -170,6 +170,7 @@ public:
 	void
 	read_cst_file( std::string const cst_file );
 
+
 	scoring::constraints::ConstraintSetCOP cst_set() const;
 
 	void

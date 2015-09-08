@@ -13,8 +13,8 @@
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_core_pose_full_model_info_FullModelInfoSetupFromCommandLine_HH
-#define INCLUDED_core_pose_full_model_info_FullModelInfoSetupFromCommandLine_HH
+#ifndef INCLUDED_protocols_stepwise_setup_FullModelInfoSetupFromCommandLine_HH
+#define INCLUDED_protocols_stepwise_setup_FullModelInfoSetupFromCommandLine_HH
 
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

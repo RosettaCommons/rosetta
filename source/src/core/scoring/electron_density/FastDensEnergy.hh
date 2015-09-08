@@ -97,7 +97,7 @@ public:
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
-
+	///
 	virtual void
 	finalize_total_energy(
 		pose::Pose & ,

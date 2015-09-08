@@ -120,6 +120,9 @@ StepWiseMasterMover::apply( pose::Pose & pose,
 	Real const reverse_proposal_probability = reverse_stepwise_move_selector->proposal_probability( reverse_move );
 	proposal_density_ratio_ = ( reverse_proposal_probability / forward_proposal_probability );
 
+	// bias the acceptance of add moves, default factor is 1.0
+	if ( stepwise_move.move_type() == ADD ) proposal_density_ratio_ *= options_->add_proposal_density_factor();
+
 	return;
 }
 
@@ -190,9 +193,13 @@ StepWiseMasterMover::apply_legacy( pose::Pose & pose ) {
 		success_ = resample_mover_->apply( pose, move_type_string_ );
 	}
 
+	// bias the acceptance of add moves, default factor is 1.0
+	if ( move_type_string_ == "add" ) proposal_density_ratio_ *= options_->add_proposal_density_factor();
+
 	// this is probably deprecated now -- we may try to optimize minimization in the future,
 	// but that will almost certainly require minimizing more than single residues.
 	if ( minimize_single_res_ ) move_type_string_ += "-minsngl";
+
 	return true;
 }
 

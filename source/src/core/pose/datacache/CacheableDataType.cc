@@ -99,6 +99,7 @@ CacheableDataType::initialize_name_map() {
 	name2enum_()["NCS_RESIDUE_MAPPING"] = NCS_RESIDUE_MAPPING;
 	name2enum_()["FLOATING_POINT_CLOUD_INFO"] = FLOATING_POINT_CLOUD_INFO;
 	name2enum_()["CDR_CLUSTER_INFO"] = CDR_CLUSTER_INFO;
+	name2enum_()["VDW_REP_SCREEN_INFO"] = VDW_REP_SCREEN_INFO;
 
 	debug_assert( name2enum_().size() == CacheableDataType::num_cacheable_data_types );
 

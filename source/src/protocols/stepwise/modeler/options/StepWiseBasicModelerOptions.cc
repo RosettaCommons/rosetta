@@ -63,6 +63,7 @@ StepWiseBasicModelerOptions::initialize_variables(){
 	dump_ = false;
 	skip_minimize_ = false;
 	disallow_realign_ = false;
+	coordinate_constraints_during_minimize_ = true;
 	virtualize_packable_moieties_in_screening_pose_ = false;
 }
 

@@ -103,6 +103,7 @@ StepWiseRNA_ModelerOptions::initialize_variables(){
 	minimizer_rename_tag_ = false;
 	tether_jump_ = true;
 	turn_off_rna_chem_map_during_optimize_ = true;
+	rna_legacy_output_mode_ = false;
 	allow_rebuild_bulge_mode_ = true;
 }
 

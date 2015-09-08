@@ -474,6 +474,7 @@ FileData::append_residue(
 		ai.z = atom.xyz()(3);
 		ai.occupancy = 1.0; // dummy occupancy, can be overridden by PDBInfo
 
+
 		// Output with pdb-specific info if possible.
 		if ( use_PDB ) {
 			if ( pdb_info->is_het( rsd.seqpos(), j ) ) { // override standard het only if .is_het() is true
@@ -482,6 +483,12 @@ FileData::append_residue(
 			ai.altLoc = pdb_info->alt_loc( rsd.seqpos(), j );
 			ai.occupancy = pdb_info->occupancy( rsd.seqpos(), j );
 			ai.temperature = pdb_info->temperature( rsd.seqpos(), j );
+		}
+
+		if ( option[ OptionKeys::out::file::output_virtual_zero_occ ]() ) {
+			if ( rsd.atom_type(j).is_virtual() ) {
+				ai.occupancy = 0.0;
+			}
 		}
 
 		// Element

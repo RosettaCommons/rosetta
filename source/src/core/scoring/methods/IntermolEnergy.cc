@@ -117,7 +117,6 @@ IntermolEnergy::get_num_chains_frozen( pose::Pose const & pose ) const {
 	return ( num_chains - max( connection_domains ) );
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 IntermolEnergy::eval_atom_derivative(

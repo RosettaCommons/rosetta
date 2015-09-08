@@ -428,8 +428,12 @@ Minimizer::dfpmin_armijo(
 							HESSIN(j,i) = 0.0;
 						}
 						if ( HESSIN(i,i) < 0.01 ) HESSIN(i,i) = 0.01;
-						std::cerr << "HESSIN for (i,i): " << i << ' ' << HESSIN(i,i) << std::endl;
-						std::cerr << "G for (i): " << i << ' ' << G[i] << std::endl;
+						if ( !options_.silent() ) {
+							TR.Warning << "HESSIN for (i,i): " << i << ' ' << HESSIN(i,i) << std::endl;
+							TR.Warning << "G for (i): " << i << ' ' << G[i] << std::endl;
+						}
+						// std::cerr << "HESSIN for (i,i): " << i << ' ' << HESSIN(i,i) << std::endl;
+						// std::cerr << "G for (i): " << i << ' ' << G[i] << std::endl;
 						XI[i] = -HESSIN(i,i)*G[i];
 						line_min->_deriv_sum += XI[i]*G[i];
 					}

@@ -9,7 +9,7 @@
 
 /// @file RNA_VDW_BinChecker.hh
 /// @brief
-/// @details
+/// @detailed
 ///
 /// @author Parin Sripkaddevong
 
@@ -18,8 +18,14 @@
 #define INCLUDED_protocols_stepwise_rna_RNA_VDW_BinChecker_hh
 
 
+
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh> /*For core::Size and Torsion_Info*/
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_RepScreenInfo.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.fwd.hh>
+#include <protocols/stepwise/modeler/rna/checker/VDW_Grid.hh>
+
+
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -43,49 +49,16 @@ namespace modeler {
 namespace rna {
 namespace checker {
 
-struct Atom_Bin{
-	int x;
-	int y;
-	int z;
-};
 
-
-class VDW_RepScreeninfo{
-
-public:
-
-	VDW_RepScreeninfo():
-		input_string( "" ),
-		pose_name( "" ),
-		in_root_partition( false ),
-		import_ID( 0 )
-	{
-		VDW_align_res.clear();
-		working_align_res.clear();
-		full_align_res.clear();
-		VDW_ignore_res.clear();
-	}
-
-	~VDW_RepScreeninfo(){};
-
-public:
-
-	utility::vector1< core::Size > VDW_align_res;
-	utility::vector1< core::Size > working_align_res;
-	utility::vector1< core::Size > full_align_res;
-	utility::vector1< core::Size > VDW_ignore_res;
-	core::pose::Pose VDW_pose;
-	std::string input_string;
-	std::string pose_name;
-	bool in_root_partition;
-	core::Size import_ID;
-
-};
-
+// Atom_Bin is now declared in VDW_Grid.hh
+// struct Atom_Bin{ int x; int y; int z; };
 
 class RNA_VDW_BinChecker: public utility::pointer::ReferenceCount {
 
 public:
+
+	//constructor that is initialized with pose!
+	RNA_VDW_BinChecker( core::pose::Pose const & pose );
 
 	//constructor!
 	RNA_VDW_BinChecker();
@@ -98,7 +71,8 @@ public:
 
 
 	void
-	setup_using_user_input_VDW_pose( utility::vector1< std::string > const & VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose, working_parameters::StepWiseWorkingParametersCOP const & working_parameters );
+	setup_using_user_input_VDW_pose( utility::vector1< std::string > const & All_VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose, working_parameters::StepWiseWorkingParametersCOP const & working_parameters );
+
 
 	void
 	setup_using_working_pose( core::pose::Pose const & const_working_pose, working_parameters::StepWiseWorkingParametersCOP const & working_parameters );
@@ -117,7 +91,7 @@ public:
 		numeric::xyzVector< core::Real > const & reference_xyz,
 		bool const verbose = false );
 	void
-	create_VDW_screen_bin( utility::vector1< VDW_RepScreeninfo > const & VDW_rep_screen_info_list,
+	create_VDW_screen_bin( utility::vector1< VDW_RepScreenInfo > const & VDW_rep_screen_info_list,
 		numeric::xyzVector< core::Real > const & reference_xyz,
 		bool const verbose );
 
@@ -128,6 +102,7 @@ public:
 		utility::vector1< bool > const list_of_is_prepend,
 		numeric::xyzVector< core::Real > const & reference_xyz,
 		bool const verbose );
+
 
 
 	//fast version
@@ -178,7 +153,10 @@ private:
 	check_atom_bin_in_range( Atom_Bin const & atom_pos_bin );
 
 	core::Vector
-	get_reference_xyz( core::pose::Pose const & pose, core::Size const reference_res, bool const verbose = false );
+	get_reference_xyz( core::pose::Pose const & pose, core::Size const reference_res/*,bool const verbose = false*/ );
+
+	core::Vector
+	get_reference_xyz_average( core::pose::Pose const & pose );
 
 	void
 	set_reference_xyz( numeric::xyzVector< core::Real > const & reference_xyz );
@@ -220,13 +198,18 @@ private:
 		bool const verbose ) const;
 
 	void
-	create_VDW_rep_screen_pose( VDW_RepScreeninfo & VDW_rep_screen_info, //This function update this class!
+	read_in_VDW_rep_screen_pose( VDW_RepScreenInfo & VDW_rep_screen_info ) const;
+
+
+	void
+	create_VDW_rep_screen_pose( VDW_RepScreenInfo & VDW_rep_screen_info, //This function update this class!
 		core::pose::Pose const & working_pose,
 		std::map< core::Size, core::Size > & full_to_sub,
 		bool const verbose ) const;
 
 
 private:
+
 
 	core::Real max_distance_;
 	core::Real atom_bin_size_;
@@ -240,24 +223,27 @@ private:
 	bool is_VDW_screen_bin_setup_;
 	bool user_inputted_VDW_screen_pose_;
 
-	//Still working...
-	utility::vector1< utility::vector1< utility::vector1< bool > > > VDW_screen_bin_;
+	VDW_GridCOP VDW_screen_bin_;
+	utility::vector1< Atom_Bin > occupied_xyz_bins_;
 	numeric::xyzVector< core::Real > reference_xyz_;
 
 	core::Real VDW_rep_alignment_RMSD_CUTOFF_;
 	bool tolerate_off_range_atom_bin_;
 	int num_atom_pos_bin_out_of_range_message_outputted_;
 
-
 	bool VDW_rep_screen_with_physical_pose_verbose_;
 	core::Real physical_pose_clash_dist_cutoff_;
 
 	utility::vector1< std::string > VDW_rep_ignore_matching_res_;
-
 	bool use_VDW_rep_pose_for_screening_;
 
-	utility::vector1< VDW_RepScreeninfo > VDW_rep_screen_info_list_;
+	utility::vector1< VDW_RepScreenInfo > VDW_rep_screen_info_list_;
+
 	bool output_pdb_;
+	bool optimize_memory_usage_;
+	bool optimize_speed_;
+	bool verbose_;
+
 
 };
 

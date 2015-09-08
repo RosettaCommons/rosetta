@@ -80,7 +80,7 @@ LoopGraph::LoopGraph():
 	protein_gaussian_variance_per_residue_( 3.0 * 3.0 ), // in Angstroms^2
 	loop_fixed_cost_( basic::options::option[ basic::options::OptionKeys::score::loop_fixed_cost ]() ), // -0.29 default, in Rosetta energy units
 	total_energy_( 0.0 ),
-	error_out_on_complex_cycles_( true ),
+	error_out_on_complex_cycles_( !basic::options::option[ basic::options::OptionKeys::score::allow_complex_loop_graph ]() ),
 	has_just_simple_cycles_( true )
 {
 }

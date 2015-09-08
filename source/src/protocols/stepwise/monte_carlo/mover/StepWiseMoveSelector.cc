@@ -1384,9 +1384,9 @@ StepWiseMoveSelector::figure_out_attachment( Size const moving_res, Size const a
 	} else if ( moving_res == attached_res + 2 &&
 			chains_full[ moving_res ] == chains_full[ attached_res ] ) {
 		attachment = Attachment( attached_res, JUMP_TO_PREV_IN_CHAIN );
-		//} else if ( moving_res == attached_res + 2 &&
-		//      chains_full[ moving_res ] == chains_full[ attached_res ] ) {
-		// attachment = Attachment( attached_res, JUMP_TO_NEXT_IN_CHAIN );
+	} else if ( moving_res == attached_res - 2 &&
+			chains_full[ moving_res ] == chains_full[ attached_res ] ) {
+		attachment = Attachment( attached_res, JUMP_TO_NEXT_IN_CHAIN );
 	} else {
 		runtime_assert( dock_domain_map[ moving_res ] != dock_domain_map[ attached_res ] );
 		attachment = Attachment( attached_res, JUMP_DOCK );

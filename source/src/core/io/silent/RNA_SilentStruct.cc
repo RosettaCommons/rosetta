@@ -257,6 +257,9 @@ bool RNA_SilentStruct::init_from_lines(
 			} else if ( iter->substr(0,9) == "SEQUENCE:" ) {
 				//tr.Warning << "skipping duplicate sequence declaration " << std::endl;
 				continue;
+			} else if ( iter->substr(0,19) == "ANNOTATED_SEQUENCE:" ) {
+				//tr.Warning << "skipping duplicate sequence declaration " << std::endl;
+				continue;
 			} else if ( iter->substr(0,6) == "REMARK" ) {
 				//tr.Warning << "skipping duplicate sequence declaration " << std::endl;
 				continue;

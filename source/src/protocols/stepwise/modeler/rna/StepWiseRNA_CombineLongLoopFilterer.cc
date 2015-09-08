@@ -103,12 +103,17 @@ StepWiseRNA_CombineLongLoopFilterer::StepWiseRNA_CombineLongLoopFilterer( workin
 	worst_combine_score_(  - 999999.99 ), //Feb 02, 2012;
 	//score_diff_cut_(1000000.0), //Remove all score filtering on Jan 12, 2012
 	contact_dist_cutoff_(  - 1.0 ), //two atoms are considered in contact if their VDW radius edge is within 1.0 Angstrom of each other
-	clash_dist_cutoff_( 0.8 ),    //two atoms are considered clash if their VDW radius edge overlap by 0.8 Angstrom.
+	// CHANGE clash_dist_cutoff_ from 0.8 to 1.2 to match that of the RNA_VDW_BinChecker
+	//clash_dist_cutoff_( 0.8 ),    //two atoms are considered clash if their VDW radius edge overlap by 0.8 Angstrom.
 	//0.8 is appropriate for VDW clash screen, although value about 1.2 would be more appropriate if we consider minimum H-bond distance
 	//See checker::RNA_VDW_BinChecker.cc for details.
+	clash_dist_cutoff_( 1.2 ), // (Used to be 0.8 before April 13, 2015)
+
 	//  num_contact_cutoff_(9), //num of contact between the two sides before discarding pose (Used to be 1 before Nov 18, 2010)
 	num_contact_cutoff_( 1 ), //num of contact between the two sides before discarding pose (Used to be 1 before Nov 18, 2010)
-	num_clash_cutoff_( 1 ), // num of clash between the two sides before discarding pose.
+	// CHANGE num_clash_cutoff_ from 1 to 3 to match that of the RNA_VDW_BinChecker
+	//  num_clash_cutoff_( 1 ), // num of clash between the two sides before discarding pose. (Used to be 1 before April 13, 2015)
+	num_clash_cutoff_( 3 ), // num of clash between the two sides before discarding pose. (Used to be 1 before April 13, 2015)
 	max_pose_data_list_size_( 200 ),
 	side_ONE_NUM_pose_list_( 0 ),
 	side_TWO_NUM_pose_list_( 0 ),
@@ -871,7 +876,7 @@ StepWiseRNA_CombineLongLoopFilterer::is_virt_sample_sugar_tag( std::string const
 		//consistency check!
 		if ( tag_token[3] != "sample" ) utility_exit_with_message( "tag_token[3] != \"sample\" for tag = " + tag );
 
-		if ( tag_token[4] != "sugar" ) utility_exit_with_message( "tag_token[4] != \"sugar\" for tag = " + tag );
+		if ( tag_token[4] != "sugar" && tag_token[4] != "sugarVIRT" ) utility_exit_with_message( "tag_token[4] != \"sugar\" for tag = " + tag );
 
 		return true;
 

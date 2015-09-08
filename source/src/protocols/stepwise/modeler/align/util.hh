@@ -66,12 +66,12 @@ superimpose_pose_legacy(
 
 // This should be deprecated in favor of StepWisePoseAligner
 core::id::AtomID_Map< core::id::AtomID >
-create_aligment_id_map_legacy( core::pose::Pose const & mod_pose, core::pose::Pose const & ref_pose,
+create_alignment_id_map_legacy( core::pose::Pose const & mod_pose, core::pose::Pose const & ref_pose,
 	utility::vector1< core::Size > const & superimpose_res );
 
 // This should be deprecated in favor of StepWisePoseAligner
 core::id::AtomID_Map< core::id::AtomID >
-create_aligment_id_map_legacy( core::pose::Pose const & mod_pose,
+create_alignment_id_map_legacy( core::pose::Pose const & mod_pose,
 	core::pose::Pose const & ref_pose,
 	std::map< core::Size, core::Size > res_map );
 

@@ -16,6 +16,7 @@
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <protocols/stepwise/modeler/util.hh> // for reroot
 #include <protocols/stepwise/modeler/rna/util.hh> // for virtualize_free_rna_moieties
+#include <protocols/stepwise/modeler/rna/checker/VDW_CachedRepScreenInfo.hh> // for fill_vdw_cached_rep_screen_info_from_command_line
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
@@ -190,6 +191,7 @@ initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSe
 	}
 
 	fill_full_model_info_from_command_line( input_poses );  //FullModelInfo (minimal object needed for add/delete)
+	modeler::rna::checker::fill_vdw_cached_rep_screen_info_from_command_line( *input_poses[1] );
 	return input_poses[1];
 }
 
@@ -237,18 +239,6 @@ fill_full_model_info_from_command_line( pose::Pose & pose, vector1< PoseOP > & o
 
 	nonconst_full_model_info( pose ).set_other_pose_list( other_pose_ops );
 
-}
-
-///////////////////////////////////////////////////////////////////////////////////////
-// move following into SequenceOP object, or util.hh.
-///////////////////////////////////////////////////////////////////////////////////////
-std::string
-get_concatenated_sequence( vector1< core::sequence::SequenceCOP > const & fasta_sequences ) {
-	std::string sequence;
-	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
-		sequence += fasta_sequences[n]->sequence();
-	}
-	return sequence;
 }
 
 vector1< Size >
@@ -385,7 +375,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	vector1< core::sequence::SequenceOP > fasta_sequences = core::sequence::read_fasta_file( fasta_file );
 	//std::map< Size, std::string > non_standard_residues  = parse_out_non_standard_residues( fasta_sequences /*will reduce to one-letter*/ );
 
-	std::string const desired_sequence           = get_concatenated_sequence( fasta_sequences );
+	std::string const desired_sequence           = core::sequence::get_concatenated_sequence( fasta_sequences );
 
 	FullModelParametersOP full_model_parameters( new FullModelParameters( desired_sequence ) );
 	vector1< char > conventional_chains;

@@ -130,13 +130,13 @@ superimpose_pose_legacy(
 	pose::Pose const & ref_pose,
 	std::map< Size, Size > const & res_map )
 {
-	id::AtomID_Map< id::AtomID > atom_ID_map = create_aligment_id_map_legacy( mod_pose, ref_pose, res_map );
+	id::AtomID_Map< id::AtomID > atom_ID_map = create_alignment_id_map_legacy( mod_pose, ref_pose, res_map );
 	return scoring::superimpose_pose( mod_pose, ref_pose, atom_ID_map );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 id::AtomID_Map< id::AtomID >
-create_aligment_id_map_legacy( pose::Pose const & mod_pose,
+create_alignment_id_map_legacy( pose::Pose const & mod_pose,
 	pose::Pose const & ref_pose,
 	utility::vector1< core::Size > const & superimpose_res ){
 
@@ -147,12 +147,12 @@ create_aligment_id_map_legacy( pose::Pose const & mod_pose,
 		res_map[ seq_num ] = seq_num;
 	}
 
-	return create_aligment_id_map_legacy( mod_pose, ref_pose, res_map );
+	return create_alignment_id_map_legacy( mod_pose, ref_pose, res_map );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 id::AtomID_Map< id::AtomID >
-create_aligment_id_map_legacy( pose::Pose const & mod_pose,
+create_alignment_id_map_legacy( pose::Pose const & mod_pose,
 	pose::Pose const & ref_pose,
 	std::map< core::Size, core::Size > res_map ){
 

@@ -163,8 +163,14 @@ private:
 	void
 	add_aa_virt_rsd_as_root( pose::Pose & pose );
 
+public:
+
 	void
 	setup_full_model_info( pose::Pose & pose ) const;
+
+	void
+	setup_vdw_cached_rep_screen_info( pose::Pose & pose ) const;
+
 
 private:
 

@@ -19,11 +19,13 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
+
 #include <core/kinematics/FoldTree.hh>
 
 #include <numeric/random/random.hh>
 
 #include <basic/database/open.hh>
+
 #include <utility/file/file_sys_util.hh>
 #include <basic/Tracer.hh>
 
@@ -98,6 +100,7 @@ PrecomputedLibraryMover::initialize_from_directory( std::string const dir_name )
 ///////////////////////////////////////////////////////////////////
 // for now, only can apply precomputed library moves to
 //  poses that are totally 'free' -- could be generalized easily.
+
 //
 // Appropriate generalization is in SubMotifLibrary!
 //
@@ -127,6 +130,7 @@ PrecomputedLibraryMover::apply( core::pose::Pose & pose ) const {
 	SilentStructOP silent_struct = numeric::random::rg().random_element( library->structure_list() );
 
 	Pose pose_scratch;
+
 	silent_struct->fill_pose( pose_scratch, pose.residue( 1 ).residue_type_set() );
 	pose.conformation() = pose_scratch.conformation();
 

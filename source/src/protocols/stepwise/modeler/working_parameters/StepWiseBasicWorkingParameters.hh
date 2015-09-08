@@ -92,6 +92,10 @@ public:
 		if ( full_to_sub_.find( i ) != full_to_sub_.end() ) return full_to_sub_.find( i )->second;
 		return 0;
 	}
+	core::Size sub_to_full( Size const i ) const {
+		if ( sub_to_full_.find( i ) != sub_to_full_.end() ) return sub_to_full_.find( i )->second;
+		return 0;
+	}
 	utility::vector1< Size > apply_full_to_sub_mapping( utility::vector1< Size > const & res_vector);
 	Size apply_full_to_sub_mapping( Size const res ) const; // unify with full_to_sub;
 	std::map< core::Size, core::Size >

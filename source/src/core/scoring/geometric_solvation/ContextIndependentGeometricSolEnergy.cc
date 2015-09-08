@@ -140,7 +140,7 @@ ContextIndependentGeometricSolEnergy::setup_for_packing(
 
 
 void
-ContextIndependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+ContextIndependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & /*scorefxn*/ ) const
 {
 	pose.update_residue_neighbors();
 }
@@ -301,14 +301,14 @@ ContextIndependentGeometricSolEnergy::residue_pair_energy(
 
 		emap[ geom_sol_fast ] += evaluator_->geometric_sol_one_way_sc(rsd1, rsd2, pose) +
 			evaluator_->geometric_sol_one_way_sc(rsd2, rsd1, pose);
-	}  else {
+
+	} else {
 
 		EnergyMap emap_local;
 		evaluator_->residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap_local );
 		emap[ geom_sol_fast ] += emap_local[ geom_sol ];
 
 	}
-
 }
 
 bool
@@ -319,7 +319,7 @@ ContextIndependentGeometricSolEnergy::minimize_in_whole_structure_context( pose:
 
 void
 ContextIndependentGeometricSolEnergy::finalize_total_energy(
-	pose::Pose &,
+	pose::Pose & /*pose*/,
 	ScoreFunction const &,
 	EnergyMap & totals
 ) const

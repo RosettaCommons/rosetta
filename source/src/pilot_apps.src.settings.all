@@ -166,6 +166,9 @@ sources = {
 	],
 
 	# C ######################################################################
+	"pilot/calebgeniesse" : [
+		"build_full_model",
+    ],
 	"pilot/chen" : [
 		"simple_dna_regression_test", # /* ???,Documentation Location,Demo Location */
 	],

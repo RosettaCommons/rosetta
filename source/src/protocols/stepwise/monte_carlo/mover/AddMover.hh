@@ -112,6 +112,10 @@ private:
 	Size
 	get_add_res( StepWiseMove const & swa_move, pose::Pose const & pose ) const;
 
+	void
+	setup_initial_jump( core::pose::Pose & pose );
+
+
 private:
 
 	core::chemical::ResidueTypeSetCAP rsd_set_;

@@ -69,7 +69,7 @@ FullModelParameters::FullModelParameters( std::string const full_sequence ):
 	}
 }
 
-//Constructor
+//Constructorx
 FullModelParameters::FullModelParameters( std::string const full_sequence,
 	utility::vector1< Size > const & cutpoint_open_in_full_model,
 	utility::vector1< Size > const & res_numbers_in_pose ):
@@ -349,6 +349,7 @@ FullModelParameters::conventional_to_full( int const res_num ) const {
 			found_match = true;
 		}
 	}
+
 	runtime_assert( found_match );
 	return res_num_in_full_numbering;
 }
@@ -611,6 +612,7 @@ FullModelParameters::update_pose_and_cst_set_from_cst_string( chemical::ResidueT
 	pdb_info->set_chains( conventional_chains_ );
 	full_model_pose->pdb_info( pdb_info );
 	full_model_pose_for_constraints_ = full_model_pose;
+
 
 	ConstraintSetOP full_model_cst_set( new ConstraintSet );
 	ConstraintIO::read_constraints_new( data, full_model_cst_set, *full_model_pose );

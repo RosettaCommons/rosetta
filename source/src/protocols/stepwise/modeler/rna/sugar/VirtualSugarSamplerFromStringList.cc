@@ -20,10 +20,13 @@
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/sugar/SugarModeling.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.hh>
 
 #include <fstream>
 #include <ObjexxFCL/string.functions.hh>
@@ -70,13 +73,16 @@ VirtualSugarSamplerFromStringList::apply( core::pose::Pose & pose ){
 	using namespace core::id;
 	using namespace core::scoring;
 	using namespace core::conformation;
+	using namespace core::pose::full_model_info;
 
 	output_title_text( "Enter VirtualSugarSampler::sample_virtual_sugar", TR );
 
 	// why all this rigamarole? -- rhiju
 	ConformationOP copy_conformation = pose.conformation().clone();
+	FullModelInfoOP copy_full_model_info = nonconst_full_model_info( pose ).clone_info();
 	pose::Pose new_pose;
 	new_pose.set_new_conformation( copy_conformation );
+	set_full_model_info( new_pose, copy_full_model_info );
 	pose = new_pose;
 	tag_into_pose( pose, "" );
 
@@ -234,6 +240,7 @@ VirtualSugarSamplerFromStringList::output_pose_data_list( utility::vector1< pose
 		std::string pose_tag = tag_ + "_sample_sugar" + tag_from_pose( *pose_data_list[n]);
 		if ( working_parameters_->gap_size() == 0 ) utility_exit_with_message( "working_parameters_->gap_size() == 0" );
 		( *scorefxn_ )( pose );
+
 
 		output_data( silent_file_out_, pose_tag, false, pose, working_parameters_->working_native_pose(), working_parameters_ );
 	}

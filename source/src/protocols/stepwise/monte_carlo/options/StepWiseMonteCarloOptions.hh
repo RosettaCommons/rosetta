@@ -112,6 +112,9 @@ public:
 	core::Size const & cycles() const { return cycles_; }
 	void set_cycles( core::Size const & setting ){ cycles_ = setting; }
 
+	core::Real const & add_proposal_density_factor() const { return add_proposal_density_factor_; }
+	void set_add_proposal_density_factor( core::Real const & setting ){ add_proposal_density_factor_ = setting; }
+
 	core::Real const & add_delete_frequency() const { return add_delete_frequency_; }
 	void set_add_delete_frequency( core::Real const & setting ){ add_delete_frequency_ = setting; }
 
@@ -232,6 +235,7 @@ private:
 	bool allow_internal_hinge_moves_;
 	bool allow_internal_local_moves_;
 	core::Size cycles_;
+	core::Real add_proposal_density_factor_;
 	core::Real add_delete_frequency_;
 	core::Real submotif_frequency_;
 	core::Real docking_frequency_;

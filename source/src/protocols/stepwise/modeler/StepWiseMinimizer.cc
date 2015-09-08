@@ -26,7 +26,9 @@
 #include <protocols/stepwise/modeler/scoring_util.hh>
 #include <protocols/stepwise/modeler/protein/util.hh>
 #include <protocols/stepwise/modeler/polar_hydrogens/util.hh>
+#include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/legacy/modeler/protein/util.hh> // for output_pose_list, maybe should deprecate soon
+#include <protocols/stepwise/monte_carlo/util.hh> // for output_to_silent_file, for RNA
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/simple_moves/ConstrainToIdealMover.hh>
 #include <core/id/AtomID.hh>
@@ -38,13 +40,17 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/tools/make_vector1.hh>
-
+#include <utility/vector1.functions.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/file/file_sys_util.hh>
+#include <fstream>
 
 static thread_local basic::Tracer TR( "protocols.stepwise.modeler.StepWiseMinimizer" );
 using ObjexxFCL::format::F;
@@ -82,16 +88,21 @@ StepWiseMinimizer::StepWiseMinimizer( utility::vector1< pose::PoseOP > const & p
 	working_fixed_res_( working_parameters->working_fixed_res() ),
 	working_calc_rms_res_( working_parameters->working_calc_rms_res() ), // only for output -- may deprecate.
 	allow_virtual_o2prime_hydrogens_( options->allow_virtual_o2prime_hydrogens() && !options->o2prime_legacy_mode() ),
-	protein_ccd_closer_( protein::loop_close::StepWiseProteinCCD_CloserOP( new protein::loop_close::StepWiseProteinCCD_Closer( working_parameters ) ) )
+	protein_ccd_closer_( protein::loop_close::StepWiseProteinCCD_CloserOP( new protein::loop_close::StepWiseProteinCCD_Closer( working_parameters ) ) ),
+	working_parameters_( working_parameters ) // needed only for legacy SWA RNA main output.
 {
 	set_native_pose( working_parameters->working_native_pose() );
 	runtime_assert( !options_->skip_coord_constraints() );
 	runtime_assert( !options_->skip_minimize() );
 	runtime_assert( !options_->move_jumps_between_chains() );
+	runtime_assert( pose_list.size() > 0 || options_->rna_legacy_output_mode() );
+
 	// note this choice -- found that 5 really is necessary for protein stepwise monte carlo. can't minimize all due to slowdown.
 	if ( pose_list_.size() > 0 && options_->choose_random() && num_pose_minimize_ == 0 /*asking this class for default*/ ) {
 		num_pose_minimize_ =  ( protein::contains_protein( *pose_list[1] ) ? 5 : 1 );
 	}
+
+	working_minimize_res_.clear();
 }
 
 //Destructor
@@ -101,7 +112,8 @@ StepWiseMinimizer::~StepWiseMinimizer()
 //////////////////////////////////////////////////////////////////////////
 void
 StepWiseMinimizer::apply( core::pose::Pose & pose ) {
-	if ( pose_list_.size() == 0 ) pose_list_ = make_vector1( pose.clone() );
+
+	if ( !check_pose_list( pose ) ) return;
 
 	setup_minimizers();
 	setup_scorefxns( pose );
@@ -109,11 +121,8 @@ StepWiseMinimizer::apply( core::pose::Pose & pose ) {
 	do_full_minimizing( pose );
 	do_clustering( pose );
 
-	// could probably deprecate soon, or at least use a function unified with RNA.
-	if ( options_->output_minimized_pose_list() ) {
-		stepwise::legacy::modeler::protein::output_pose_list( pose_list_, get_native_pose(),
-			options_->silent_file(), working_calc_rms_res_ );
-	}
+	output_minimized_pose_list();
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -123,7 +132,9 @@ StepWiseMinimizer::do_clustering( pose::Pose & pose ){
 	StepWiseClusterer clusterer( options_ );
 	clusterer.set_pose_list( pose_list_ );
 	clusterer.set_max_decoys( pose_list_.size() );
-	clusterer.set_calc_rms_res( working_moving_res_ );
+
+	working_minimize_res_ = figure_out_working_minimize_res( pose );
+	clusterer.set_calc_rms_res( working_minimize_res_ );
 
 	if ( pose_list_.size() > 1 && clusterer.cluster_rmsd() > 0.0 ) TR << "Will cluster "  << pose_list_.size() << " poses with cluster radius " << clusterer.cluster_rmsd() << std::endl;
 	clusterer.cluster();
@@ -243,11 +254,10 @@ StepWiseMinimizer::close_chainbreaks( pose::Pose & pose, kinematics::MoveMap & m
 //////////////////////////////////////////////////////////////////////////
 void
 StepWiseMinimizer::get_move_map_and_allow_insert( core::kinematics::MoveMap & mm, pose::Pose const & pose ){
-	utility::vector1< Size > working_minimize_res;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) { if ( !working_fixed_res_.has_value( n ) ) working_minimize_res.push_back( n );}
+	working_minimize_res_ = figure_out_working_minimize_res( pose );
 	bool const move_takeoff_torsions = !options_->disable_sampling_of_loop_takeoff();
 	allow_insert_ = toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) ); // can come in handy later...
-	movemap::figure_out_stepwise_movemap( mm, allow_insert_, pose, working_minimize_res, move_takeoff_torsions );
+	movemap::figure_out_stepwise_movemap( mm, allow_insert_, pose, working_minimize_res_, move_takeoff_torsions );
 	output_movemap( mm, pose, TR.Debug );
 }
 
@@ -303,6 +313,104 @@ StepWiseMinimizer::setup_vary_bond_geometry( core::pose::Pose & pose, core::kine
 		simple_moves::setup_vary_polar_hydrogen_geometry( mm, pose, allow_insert_ );
 	}
 }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////                                                                         void
+void
+StepWiseMinimizer::output_empty_minimizer_silent_file() const {
+
+	if ( utility::file::file_exists( options_->silent_file() ) ) utility_exit_with_message( options_->silent_file() + " already exist!" );
+
+	std::ofstream outfile;
+	outfile.open( options_->silent_file().c_str() ); //Opening the file with this command removes all prior content..
+
+	outfile << "StepWiseMinimizer:: num_pose_outputted == 0, empty silent_file!\n"; //specific key signal to SWA_modeler_post_process.py
+
+	outfile.flush();
+	outfile.close();
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////                                                                         void
+bool
+StepWiseMinimizer::check_pose_list( core::pose::Pose const & pose ){
+	if ( pose_list_.size() == 0 ) {
+		// Required for legacy mode
+		if ( options_->rna_legacy_output_mode() ) {
+			TR.Debug << "pose_list_.size() == 0, early exit from StepWiseMinimizer::apply" << std::endl;
+			output_empty_minimizer_silent_file();
+			return false;
+		} else {
+			pose_list_ = make_vector1( pose.clone() );
+			return true;
+		}
+	}
+	return true;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////                                                                         void
+// the minimizer really should not be outputting anything -- this is historical from Parin's
+// stepwise assembly code from 2009-2010.
+// could probably deprecate soon along with swa_rna_main and swa_protein_main.
+void
+StepWiseMinimizer::output_minimized_pose_list() const{
+	if ( options_->output_minimized_pose_list() ) {
+		if ( options_->rna_legacy_output_mode() ) {
+			// copied from StepWiseRNA_VirtualSugarSamplerFromStringList -- trying to be consistent with that crazy old thing.
+			//    output_data( silent_file_out_, pose_tag, false, pose, working_parameters_->working_native_pose(), working_parameters_ );
+			for ( Size n = 1; n <= pose_list_.size(); n++ ) {
+				Pose & pose = ( *pose_list_[n] ); //set viewer_pose;
+				std::string const tag = "S_"+ ObjexxFCL::string_of( n-1 /* start with zero */);
+				stepwise::modeler::rna::output_data( options_->silent_file(),
+					tag,
+					false /* write score only*/,
+					pose,
+					get_native_pose(),
+					working_parameters_,
+					true /*NAT_rmsd*/  );
+			}
+		} else if ( !protein::contains_protein( *pose_list_[1] ) ) {
+			for ( Size n = 1; n <= pose_list_.size(); n++ ) {
+				Pose & pose = ( *pose_list_[n] ); //set viewer_pose;
+				std::string const tag = "S_"+ ObjexxFCL::string_of( n-1 /* start with zero */);
+				stepwise::monte_carlo::output_to_silent_file( tag,
+					options_->silent_file(),
+					pose,
+					get_native_pose(),
+					false /*superimpose_over_all*/,
+					true /*rms_fill*/ );
+			}
+		} else { // well its protein legacy output mode then...
+			stepwise::legacy::modeler::protein::output_pose_list( pose_list_,
+				get_native_pose(),
+				options_->silent_file(),
+				working_calc_rms_res_  );
+
+		}
+	}
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////                                                                         void
+utility::vector1< core::Size >
+StepWiseMinimizer::figure_out_working_minimize_res( core::pose::Pose const & pose ) {
+	using namespace core::pose::full_model_info;
+	utility::vector1< core::Size > working_minimize_res;
+	utility::vector1< core::Size > const & working_extra_minimize_res(
+	     const_full_model_info( pose ).extra_minimize_res()
+  );
+
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		if ( !working_fixed_res_.has_value( n ) ||
+				 working_extra_minimize_res.has_value( n ) ) {
+			working_minimize_res.push_back( n );
+		}
+	}
+	return working_minimize_res;
+}
+
 
 
 } //modeler

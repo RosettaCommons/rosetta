@@ -16,6 +16,8 @@
 #include <core/scoring/rna/RNA_BulgeEnergyCreator.hh>
 
 // Package Headers
+#include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -71,31 +73,42 @@ RNA_BulgeEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 // methods for ContextIndependentOneBodyEnergies
 /////////////////////////////////////////////////////////////////////////////
+/// @brief Check for variant types that indicate rsd is an rna_bulge
+bool
+RNA_BulgeEnergy::is_RNA_bulge( conformation::Residue const & rsd ) const
+{
+	if ( !rsd.is_RNA() ) return false;
+	if ( rsd.has_variant_type( chemical::BULGE ) ) return true;
+	if ( rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return true;
+	return false;
+}
 
-/// @details Allocate the scratch space object on the stack to
-/// alieviate thread-safety concerns.  Scratch does not use new.
+
+/// @brief Give entropic bonuses for rna_bulge residues
 void
 RNA_BulgeEnergy::residue_energy(
 	conformation::Residue const & rsd,
-	pose::Pose const &,
+	pose::Pose const & pose,
 	EnergyMap & emap
 ) const
 {
 
-	if ( !rsd.is_RNA() ) return;
+	if ( !is_RNA_bulge( rsd ) ) return;
 
-	if ( rsd.has_variant_type( chemical::BULGE ) ) {
-		emap[ rna_bulge ] += bulge_bonus_;
+	if ( rna_bulge_bonus_once_per_loop_ && rsd.seqpos() > 1 ) {
+		conformation::Residue const & prev_rsd = pose.residue(rsd.seqpos() - 1);
+		if ( rsd.chain() == prev_rsd.chain() && is_RNA_bulge( prev_rsd ) ) {
+			return;
+		}
 	}
 
-	if ( rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) {
-		emap[ rna_bulge ] += bulge_bonus_;
-	}
+	emap[ rna_bulge ] += bulge_bonus_;
 
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
+/// @brief Give entropic bonuses for "missing" residues in the pose
 void
 RNA_BulgeEnergy::finalize_total_energy(
 	pose::Pose & pose,

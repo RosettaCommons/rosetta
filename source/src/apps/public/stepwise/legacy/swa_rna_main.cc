@@ -210,6 +210,7 @@ swa_rna_sample()
 	working_parameters::StepWiseWorkingParametersOP working_parameters = setup_rna_working_parameters( true  /*check_for_previously_closed_cutpoint_with_input_pose */ );
 	working_parameters::StepWiseWorkingParametersCOP working_parameters_COP( working_parameters );
 	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class( working_parameters );
+
 	stepwise_rna_pose_setup->apply( pose );
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
 	PoseCOP native_pose = working_parameters_COP->working_native_pose();
@@ -235,6 +236,9 @@ swa_rna_sample()
 	stepwise_options->initialize_from_command_line();
 	stepwise_options->set_output_minimized_pose_list( !multiple_shots );
 	stepwise_options->set_disallow_realign( true );
+	stepwise_options->set_rna_legacy_output_mode( true );
+	stepwise_options->set_coordinate_constraints_during_minimize( false );
+
 	Pose start_pose = pose;
 
 	for ( Size n = 1; n <= num_struct; n++ ) {
@@ -308,7 +312,7 @@ swa_rna_cluster(){
 
 		std::string const input_silent_file = silent_files_in[n];
 
-		if ( is_nonempty_input_silent_file( input_silent_file, "empty filtered silent_file since no non - empty sampler silent_file." ) ) {
+		if ( is_nonempty_input_silent_file( input_silent_file, "empty filtered silent_file since no non-empty sampler silent_file." ) ) {
 			std::cout << "adding input_silent_file " << input_silent_file << " to non_empty_silent_files_in " << std::endl;
 			non_empty_silent_files_in.push_back( input_silent_file );
 		}
@@ -437,6 +441,7 @@ rna_sample_virtual_sugar(){ //July 19th, 2011...rebuild the bulge nucleotides af
 	working_parameters::StepWiseWorkingParametersCOP working_parameters_COP( working_parameters );
 	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class( working_parameters, false /*COPY DOF*/ );
 
+
 	utility::vector1< std::string > const sample_virtual_sugar_string_list = option[ sample_virtual_sugar_list ]();
 	utility::vector1< std::string > input_tags;
 	utility::vector1< std::string > silent_files_in;
@@ -450,6 +455,8 @@ rna_sample_virtual_sugar(){ //July 19th, 2011...rebuild the bulge nucleotides af
 	pose::Pose pose;
 	import_pose_from_silent_file( pose, silent_files_in[ 1 ], input_tags[1] );
 	protocols::farna::assert_phosphate_nomenclature_matches_mini( pose );
+	stepwise_rna_pose_setup->setup_full_model_info( pose );
+	stepwise_rna_pose_setup->setup_vdw_cached_rep_screen_info( pose );
 	stepwise_rna_pose_setup->update_fold_tree_at_virtual_sugars( pose );
 
 	std::string const silent_file_out = option[ out::file::silent  ]();
@@ -667,13 +674,17 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 
 	/////Copy the conformation but nothing else. No energy and no cache data (having cache data can cause problem with column_name order in output silent_file!)//////
 	/////OK...this should also copy the virtual_types and the fold_tree?//////////////////////////////////////////////////////////////////////////////////////////////
+	///// Should this also copy the full_model_info????? -- Caleb 12.11.2014
 	//Pose output_pose=start_pose;
 	ConformationOP copy_conformation( new Conformation() );
-
 	( *copy_conformation ) = start_pose.conformation();
 
 	pose::Pose output_pose;
 	output_pose.set_new_conformation( copy_conformation );
+
+	// using namespace core::pose::full_model_info;
+	//FullModelInfoOP copy_full_model_info = nonconst_full_model_info( start_pose ).clone_info();
+	//set_full_model_info( output_pose, copy_full_model_info );
 
 	if ( output_pose.total_residue() != total_res ) utility_exit_with_message( "output_pose.total_residue() != total_res" );
 

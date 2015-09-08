@@ -185,6 +185,9 @@ public:
 	bool const & turn_off_rna_chem_map_during_optimize() const { return turn_off_rna_chem_map_during_optimize_; }
 	void set_turn_off_rna_chem_map_during_optimize( bool const & setting ){ turn_off_rna_chem_map_during_optimize_ = setting; }
 
+	bool const & rna_legacy_output_mode() const { return rna_legacy_output_mode_; }
+	void set_rna_legacy_output_mode( bool const & setting ){ rna_legacy_output_mode_ = setting; }
+
 	bool const & allow_rebuild_bulge_mode() const { return allow_rebuild_bulge_mode_; }
 	void set_allow_rebuild_bulge_mode( bool const & setting ){ allow_rebuild_bulge_mode_ = setting; }
 
@@ -235,6 +238,7 @@ private:
 	bool minimizer_rename_tag_;
 	bool tether_jump_;
 	bool turn_off_rna_chem_map_during_optimize_;
+	bool rna_legacy_output_mode_;
 	bool allow_rebuild_bulge_mode_;
 };
 

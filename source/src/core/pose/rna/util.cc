@@ -963,6 +963,7 @@ apply_Aform_torsions( pose::Pose & pose, Size const n ){
 	apply_pucker(pose, n, NORTH, false /*skip_same_state*/, true /*use_phenix_geo_*/);
 }
 
+
 //////////////////////////////////////////////////////////////////////////////////////
 ChiState
 get_residue_base_state( core::pose::Pose const & pose, Size const seq_num ){

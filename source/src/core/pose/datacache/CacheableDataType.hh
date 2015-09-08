@@ -93,12 +93,15 @@ public:
 		FAELEC_CONTEXT_DATA,
 		WRITEABLE_DATA,
 		CDR_CLUSTER_INFO, // antibody/clusters/CDRClusterSet.cc ( Cacheable Antibody CDR Cluster Information)
+		VDW_REP_SCREEN_INFO, // for stepwise modeling -- grid of peripheral regions that are sterically disallowed.
 
-		// *** IMPORTANT ***
+
 		// The 'num_cacheable_data_types' below must be the last enum, and must
-		// always be set equal to the (last-1) enum.  If you append a new enum
-		// to the list, remember to change the value below!
-		num_cacheable_data_types = CDR_CLUSTER_INFO
+		// always be set equal to the (last-2) enum. The 'dummy_cacheable_data_type'
+		// below must be the (last-1) enum, so that 'num_cacheable_data_types' does
+		// NOT require a manual update everytime a new cachaeable_data_type is added.
+		dummy_cacheable_data_type,
+		num_cacheable_data_types = dummy_cacheable_data_type - 1
 	};
 
 	static std::string get_name( CacheableDataType::Enum datatype);

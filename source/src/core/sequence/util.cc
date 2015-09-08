@@ -205,6 +205,28 @@ std::string read_fasta_file_return_str( std::string const & filename ) {
 	return sequences;
 } // read_fasta_file
 
+///////////////////////////////////////////////////////////////////////////////////////
+/// @brief Return a string of concatenated SequenceCOP sequences
+/// @details moved from stepwise/setup/FullModelInfoSetupFromCommandLine.cc
+///////////////////////////////////////////////////////////////////////////////////////
+std::string
+get_concatenated_sequence( vector1< SequenceCOP > const & fasta_sequences ) {
+	std::string sequence;
+	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
+		sequence += fasta_sequences[n]->sequence();
+	}
+	return sequence;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+/// @brief Read fasta file and concatenate sequences
+///////////////////////////////////////////////////////////////////////////////////////
+std::string
+read_fasta_file_and_concatenate( std::string const & filename ) {
+	vector1< SequenceOP > fasta_sequences = read_fasta_file( filename );
+	std::string sequence = get_concatenated_sequence( fasta_sequences );
+	return sequence;
+}
 
 core::sequence::DerivedSequenceMapping simple_mapping_from_file( std::string const & filename ) {
 	// file I/O stuff

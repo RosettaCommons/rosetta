@@ -278,6 +278,7 @@ StepWiseModeler::initialize_scorefunctions( pose::Pose const & pose ){
 ////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseModeler::look_for_precompute_move( pose::Pose & pose ) {
+
 	//////////////////////////////////////////////////////////////
 	// This should now be deprecated in favor of SubMotifLibrary!
 	//              -- rhiju, feb 2015
