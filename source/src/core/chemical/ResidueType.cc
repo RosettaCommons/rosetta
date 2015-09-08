@@ -102,6 +102,7 @@ ResidueType::ResidueType(
 	atom_types_( atom_types ),
 	elements_( elements ),
 	mm_atom_types_( mm_atom_types ),
+	gasteiger_atom_types_(),
 	orbital_types_( orbital_types),
 	conformer_set_(/* NULL */),
 	residue_type_set_( /* 0 */ ),
@@ -117,6 +118,7 @@ ResidueType::ResidueType(
 	low_ring_conformers_(),
 	properties_( ResiduePropertiesOP( new ResidueProperties( this ) ) ),
 	aa_( aa_unk ),
+	rotamer_aa_( aa_unk ),
 	backbone_aa_( aa_unk ),
 	name_(),
 	name3_(),
@@ -133,6 +135,7 @@ ResidueType::ResidueType(
 	n_non_polymeric_residue_connections_( 0 ),
 	n_polymeric_residue_connections_( 0 ),
 	carbohydrate_info_(/* NULL */),
+	rings_and_their_edges_(),
 	nbr_atom_indices_( 0 ),
 	finalized_(false),
 	nondefault_(false),
@@ -158,21 +161,21 @@ ResidueType::operator=( ResidueType const & residue_type )
 	atom_types_ = residue_type.atom_types_;
 	elements_ = residue_type.elements_;
 	mm_atom_types_ = residue_type.mm_atom_types_;
+	gasteiger_atom_types_ = residue_type.gasteiger_atom_types_;
 	orbital_types_ = residue_type.orbital_types_;
 	conformer_set_ = residue_type.conformer_set_;
 	residue_type_set_ = residue_type.residue_type_set_;
-	graph_ = residue_type.graph_;
-	// vd_to_index_();
+	graph_ = residue_type.graph_; // copying Will change the VDs
+	vd_to_index_.clear(); // must be regenerated for new VDs
 	atom_base_ = residue_type.atom_base_;
 	abase2_ = residue_type.abase2_;
-	//  ordered_atoms_(), // This must be regenerated to hold the new vertex_descriptors
+	ordered_atoms_.clear(); // This must be regenerated to hold the new vertex_descriptors
 	orbitals_ = residue_type.orbitals_;
 	nheavyatoms_ = residue_type.nheavyatoms_;
 	n_hbond_acceptors_ = residue_type.n_hbond_acceptors_;
 	n_hbond_donors_ = residue_type.n_hbond_donors_;
 	n_backbone_heavyatoms_ = residue_type.n_backbone_heavyatoms_;
 	first_sidechain_hydrogen_ = residue_type.first_sidechain_hydrogen_;
-	//orbital_bonded_neighbor_ = residue_type.orbital_bonded_neighbor_;
 	bonded_neighbor_ = residue_type.bonded_neighbor_;
 	bonded_neighbor_type_ = residue_type.bonded_neighbor_type_;
 	cut_bond_neighbor_ = residue_type.cut_bond_neighbor_;
@@ -210,7 +213,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	proton_chi_extra_samples_ = residue_type.proton_chi_extra_samples_;
 	nu_atoms_ = residue_type.nu_atoms_;
 	path_distance_ = residue_type.path_distance_;
-	//  atom_name_to_vd_(), /// This must be regenerated below to hold the new new vertex_descriptors
+	atom_name_to_vd_.clear(); // This must be regenerated below to hold the new vertex_descriptors
 	atom_aliases_ = residue_type.atom_aliases_;
 	orbitals_index_ = residue_type.orbitals_index_;
 	chi_rotamers_ = residue_type.chi_rotamers_;
@@ -219,6 +222,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	low_ring_conformers_ = residue_type.low_ring_conformers_;
 	properties_ = ResiduePropertiesOP( new ResidueProperties( *residue_type.properties_, this ) );
 	aa_ = residue_type.aa_;
+	rotamer_aa_ = residue_type.rotamer_aa_;
 	backbone_aa_ = residue_type.backbone_aa_;
 	name_ = residue_type.name_;
 	name3_ = residue_type.name3_;
@@ -244,6 +248,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	rna_residue_type_ = residue_type.rna_residue_type_;
 	// CarbohydrateInfo has a back-pointer to ResidueType and must be reset during finalize
 	carbohydrate_info_ = 0; /* NULL */
+	//rings_and_their_edges_=residue_type.rings_and_their_edges_; //Apparently updated below
 	atom_base_indices_ = residue_type.atom_base_indices_;
 	abase2_indices_ = residue_type.abase2_indices_;
 	chi_atoms_indices_ = residue_type.chi_atoms_indices_;
@@ -319,6 +324,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 		atom_name_to_vd_.insert( NameVDPair( iter->first, vd) );
 	}
 	// Setup the temporary ordered_atoms_ vector for refactor
+	// VKM, 5 Sept 2015: I'm not sure the code below is working as desired.  Valgrind issues might be caused here.
 	VDs::const_iterator begin = residue_type.ordered_atoms_.begin();
 	VDs::const_iterator const end = residue_type.ordered_atoms_.end();
 	for ( ; begin != end; ++begin ) {
