@@ -32,6 +32,7 @@
 #include <core/fragment/JumpSRFD.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/func/Func.hh>
+#include <core/scoring/dssp/util.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 
 // ObjexxFCL Headers
@@ -417,7 +418,7 @@ JumpSample::steal_orientation_and_pleating( core::pose::Pose &native_pose ) {
 		tr.Info << "detect orientation and pleating for jump " << jump_nr <<" from " << p.Pos1() << " to " << p.Pos2() << std::endl;
 		//compute_orientation_and_pleating
 		core::Size orientation, pleating;
-		get_pleating( native_pose, p.Pos1(), p.Pos2(), orientation, pleating );
+		core::scoring::dssp::get_pleating( native_pose, p.Pos1(), p.Pos2(), orientation, pleating );
 		p.Orientation(orientation);
 		p.Pleating(pleating);
 		tr.Info << "orientation is " << p.Orientation() << " pleating is " << p.Pleating() << std::endl;

@@ -206,9 +206,6 @@ sources = {
 		"ThreeHelixRepeatGraph",
 		"util",
 	],
-	"devel/simple_options": [
-		"option",
-	],
         "devel/splice": [
 				"AddFoldUnit",
 				"AlignEndsMover",
