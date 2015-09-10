@@ -114,11 +114,15 @@ public:
 public:
 
 	/// @brief default constructor
+	///
 	LayerDesignOperation();
 
 	/// @brief value constructor
+	///
 	LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, bool dsgn_surface );
 
+	/// @brief Copy constructor.
+	///
 	LayerDesignOperation( LayerDesignOperation const & rval );
 
 	/// @brief destructor
@@ -264,6 +268,14 @@ private:
 
 	void init_nc_layerdefinitions( std::string const & layer_name );
 
+	/// @brief Set whether this TaskOperation uses a whole, symmetric pose to define layers (true) or
+	/// just the asymmetric unit (false).  Default is false.
+	void set_use_symmetry( bool const val ) { use_symmetry_=val; return; }
+
+	/// @brief Get whether this TaskOperation uses a whole, symmetric pose to define layers (true) or
+	/// just the asymmetric unit (false).
+	inline bool use_symmetry() const { return use_symmetry_; }
+
 private:
 
 	/// @brief utility function to transform a vector of position into a pymol selection command
@@ -314,6 +326,11 @@ private:
 
 	// for defining secondary structure
 	protocols::jd2::parser::BluePrintOP blueprint_;
+
+	/// @brief Should LayerDesign work with symmetry?  Default false.
+	/// @details If false (default), the asymmetric unit is extracted and used for layer setup.
+	/// If true, the whole, symmetric pose is used for layer setup.
+	bool use_symmetry_;
 };
 
 // utility class for chaining together task operations

@@ -90,7 +90,7 @@ public:
 	/// @details  Note that this might not be the first residue in linear sequence, if the residues were put in in non-
 	/// sequential order or the residue numbering has changed.
 	virtual
-	core::conformation::ResidueOP first_residue() const {
+	inline core::conformation::ResidueOP first_residue() const {
 		debug_assert( residue_list_.size() >= 1);
 		return residue_list_[1];
 	}
@@ -99,27 +99,43 @@ public:
 	/// @details  Note that this might not be the last residue in linear sequence, if the residues were put in in non-
 	/// sequential order or the residue numbering has changed.
 	virtual
-	core::conformation::ResidueOP last_residue() const {
+	inline core::conformation::ResidueOP last_residue() const {
 		debug_assert( residue_list_.size() >= 1);
 		return residue_list_[residue_list_.size()];
+	}
+	
+	/// @brief Get the index of the first residue.
+	/// @details MUST BE REWRITTEN when the OP issue is resolved.
+	virtual
+	inline core::Size first_residue_index() const {
+		debug_assert( residue_list_.size() >=1 );
+		return residue_list_[1]->seqpos();
+	}
+
+	/// @brief Get the index of the last residue.
+	/// @details MUST BE REWRITTEN when the OP issue is resolved.
+	virtual
+	inline core::Size last_residue_index() const {
+		debug_assert( residue_list_.size() >=1 );
+		return residue_list_[residue_list_.size()]->seqpos();
 	}
 
 	/// @brief Returns the number (count) of residues that these parameters describe.
 	///
 	virtual
-	core::Size n_residue() const {
+	inline core::Size n_residue() const {
 		return residue_list_.size();
 	}
 
 	/// @brief Clears the list of residues that these parameters describe.
 	///
 	virtual
-	void reset_residue_list() { residue_list_.clear(); return; }
+	inline void reset_residue_list() { residue_list_.clear(); return; }
 
 	/// @brief Assign an element in the residue list to be an owning pointer to an existing residue.
 	///
 	virtual
-	void set_residue( core::Size const index, core::conformation::ResidueOP existing_residue ) {
+	inline void set_residue( core::Size const index, core::conformation::ResidueOP existing_residue ) {
 		debug_assert( index > 0 && index <= residue_list_.size() );
 		residue_list_[index] = existing_residue;
 		return;

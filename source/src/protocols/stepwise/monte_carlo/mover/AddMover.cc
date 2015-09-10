@@ -305,7 +305,7 @@ AddMover::append_residue( pose::Pose & pose, Size const offset ){
 		Size const jump_nr = f.jump_nr( takeoff_res, res_to_add );
 		f.slide_jump( jump_nr, res_to_build_off, res_to_add );
 		f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue( res_to_build_off ) ),
-											default_jump_atom( pose.residue( res_to_add ) ) );
+			default_jump_atom( pose.residue( res_to_add ) ) );
 		pose.fold_tree( f );
 
 		add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, res_to_add );
@@ -376,7 +376,7 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 		Size const jump_nr = f.jump_nr( res_to_add, takeoff_res+1 );
 		f.slide_jump( jump_nr, res_to_add, res_to_build_off+1 );
 		f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue( res_to_add ) ),
-											default_jump_atom( pose.residue( res_to_build_off+1 ) ) );
+			default_jump_atom( pose.residue( res_to_build_off+1 ) ) );
 		pose.fold_tree( f );
 
 		if ( res_to_add_in_full_model_numbering_ > res_list[ res_to_build_off-1 ]+1 ) {

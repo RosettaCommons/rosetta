@@ -112,6 +112,7 @@ CombinedTaskOperation::apply(core::pose::Pose const & pose, PackerTask & task) c
 
 
 /// @brief default constructor
+///
 LayerDesignOperation::LayerDesignOperation():
 	TaskOperation(),
 	add_helix_capping_( true ),
@@ -122,12 +123,14 @@ LayerDesignOperation::LayerDesignOperation():
 	make_pymol_script_( false ),
 	ignore_pikaa_natro_( false ),
 	srbl_( toolbox::SelectResiduesByLayerOP( new toolbox::SelectResiduesByLayer ) ),
-	blueprint_( /* NULL */ )
+	blueprint_( /* NULL */ ),
+	use_symmetry_(false)
 {
 	set_default_layer_residues();
 }
 
 /// @brief value constructor
+///
 LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, bool dsgn_surface ):
 	TaskOperation(),
 	add_helix_capping_( true ),
@@ -138,13 +141,17 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	make_pymol_script_( false ),
 	ignore_pikaa_natro_( false ),
 	srbl_( toolbox::SelectResiduesByLayerOP( new toolbox::SelectResiduesByLayer ) ),
-	blueprint_( /* NULL */ )
+	blueprint_( /* NULL */ ),
+	use_symmetry_(false)
 {
 	design_layer( dsgn_core, dsgn_boundary, dsgn_surface );
 	set_default_layer_residues();
 }
 
-LayerDesignOperation::LayerDesignOperation( LayerDesignOperation const & rval ): core::pack::task::operation::TaskOperation(rval),
+/// @brief Copy constructor.
+///
+LayerDesignOperation::LayerDesignOperation( LayerDesignOperation const & rval ):
+	core::pack::task::operation::TaskOperation(rval),
 	add_helix_capping_( rval.add_helix_capping_ ),
 	use_original_( rval.use_original_ ),
 	repack_non_designed_residues_( rval.repack_non_designed_residues_ ),
@@ -159,7 +166,8 @@ LayerDesignOperation::LayerDesignOperation( LayerDesignOperation const & rval ):
 	layer_operation_( rval.layer_operation_ ),
 	task_layers_( rval.task_layers_ ),
 	srbl_( rval.srbl_ ),
-	blueprint_( rval.blueprint_ )
+	blueprint_( rval.blueprint_ ),
+	use_symmetry_(rval.use_symmetry_)
 {
 }
 
@@ -613,8 +621,13 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 
 	// symmetry check
 	if ( core::pose::symmetry::is_symmetric( input_pose ) ) {
-		if ( TR.visible() ) TR << "Symmetry detected, extracting asymmetric unit." << std::endl;
-		core::pose::symmetry::extract_asymmetric_unit( input_pose, pose , false );
+		if ( use_symmetry() ) {
+			TR << "Symmetry detected; will be used in defining layers." << std::endl;
+			pose=input_pose;
+		} else {
+			TR << "Symmetry detected, extracting asymmetric unit." << std::endl;
+			core::pose::symmetry::extract_asymmetric_unit( input_pose, pose , false );
+		}
 	} else {
 		pose = input_pose;
 	}
@@ -881,6 +894,8 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	if ( tag->hasOption( "blueprint" ) ) {
 		blueprint_ = protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( tag->getOption< std::string >("blueprint") ) );
 	}
+
+	set_use_symmetry( tag->getOption<bool>("use_symmetry", false) );
 
 	set_verbose( tag->getOption< bool >( "verbose", false ) );
 	set_restrict_restypes( tag->getOption< bool >( "restrict_restypes", true ) );

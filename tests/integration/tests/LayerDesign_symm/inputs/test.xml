@@ -1,0 +1,61 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" symmetric=1 />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+
+      <LayerDesign name=layerdes layer=core_boundary_surface use_sidechain_neighbors=true core=2 surface=1 use_symmetry=true >
+         <core>
+           <all aa="V" />
+         </core>
+         <boundary>
+           <all aa="A" />
+         </boundary>
+         <surface>
+           <all aa="S" />
+         </surface>
+      </LayerDesign>
+
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<MakeBundle name=mkbundle r0=4.75 omega0=2.5 delta_omega0=0 delta_omega1=0 delta_t=0 use_degrees=1
+			set_dihedrals=true set_bondlengths=true set_bondangles=true
+			residue_name=ALA crick_params_file=alpha_helix_100 helix_length=20 >
+			<Helix />
+			Helix delta_omega0=180 invert=true />
+		</MakeBundle>
+		
+		<DeclareBond name=add_termini atom1=C atom2=N res1=1 res2=2 add_termini=true />
+		
+		<AtomTree name=foldtree1 fold_tree_file="inputs/foldtree1.txt" />
+		<AtomTree name=foldtree1_symm fold_tree_file="inputs/foldtree2.txt" />
+		
+		<SetupForSymmetry name=make_symm definition="inputs/c2.symm" />
+
+		<FastDesign name=fdes repeats=1 scorefxn=tala task_operations=layerdes >
+			<MoveMap name=fdes_mm>
+				<Span begin=1 end=40 bb=1 chi=1 />
+				<Jump number=1 setting=1 />
+				<Jump number=2 setting=1 />
+				<Jump number=3 setting=1 />
+				<Jump number=4 setting=1 />
+			</MoveMap>
+		</FastDesign>
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=mkbundle />
+		<Add mover=add_termini />
+		Add mover=foldtree1 />
+		<Add mover=foldtree1_symm />
+		<Add mover=make_symm />
+		<Add mover=fdes />
+		<Add mover=fdes />
+		<Add mover=fdes />
+	</PROTOCOLS>
+	<OUTPUT scorefxn=tala />
+</ROSETTASCRIPTS>
