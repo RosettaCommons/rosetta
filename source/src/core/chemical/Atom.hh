@@ -114,6 +114,9 @@ public:
 	Size const& atom_type_index() const { return atom_type_index_; }
 	Size const& mm_atom_type_index() const { return mm_atom_type_index_; }
 	ElementCOP element_type() const {return element_;}
+	/// @brief Convenience function to go directly to the element enum
+	core::chemical::element::Elements element() const;
+
 	gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type() const;
 	int const& formal_charge() const { return formal_charge_; }
 	Real const& charge() const { return charge_; }

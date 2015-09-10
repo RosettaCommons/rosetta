@@ -474,7 +474,7 @@ public:
 			}
 			if ( mistake ) {
 				core::chemical::sdf::MolWriter writer;
-				writer.output_residue("core/chemical/"+ filename + "_orig.mol", core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( *restype_ref, true) ) ) );
+				writer.output_residue("core/chemical/"+ filename + "_orig.mol", restype_ref );
 				writer.output_residue("core/chemical/"+ filename + "_after.mol", restype );
 
 				TR << "### For Restype Before " << std::endl;

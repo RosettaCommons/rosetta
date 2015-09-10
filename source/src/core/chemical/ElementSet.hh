@@ -18,6 +18,7 @@
 // Unit headers
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/Element.fwd.hh>
+#include <core/chemical/Elements.hh>
 
 // Project headers
 
@@ -55,16 +56,23 @@ public:
 		return elements_.size();
 	}
 
-
 	/// @brief Check if there is an element_type associated with an element_symbol string
 	bool
 	contains_element_type( std::string const & element_symbol ) const;
+
+	/// @brief Lookup the element index by the element enum
+	Size
+	element_index( core::chemical::element::Elements ele ) const;
 
 	/// @brief Lookup the element index by the element_symbol string
 	Size
 	element_index( std::string const & element_symbol ) const;
 
-	/// @brief Lookup the element index by the element_symbol string
+	/// @brief Lookup the element index by the element enum;
+	ElementCOP
+	element( core::chemical::element::Elements ele ) const;
+
+	/// @brief Lookup the element object by the element_symbol string
 	ElementCOP
 	element( std::string const & element_symbol ) const;
 

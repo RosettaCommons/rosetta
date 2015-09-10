@@ -125,6 +125,15 @@ Atom & Atom::operator =(Atom const & rhs){
 	return *this;
 }
 
+core::chemical::element::Elements
+Atom::element() const {
+	if ( ! element_ ) {
+		return core::chemical::element::UnknownElement;
+	} else {
+		return element_->element();
+	}
+}
+
 gasteiger::GasteigerAtomTypeDataCOP Atom::gasteiger_atom_type() const { return gasteiger_atom_type_; }
 
 void Atom::gasteiger_atom_type( core::chemical::gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type ) { gasteiger_atom_type_ = gasteiger_atom_type; }

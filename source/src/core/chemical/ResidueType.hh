@@ -741,6 +741,7 @@ public:
 	gasteiger::GasteigerAtomTypeDataCOP
 	gasteiger_atom_type( Size const atomno ) const;
 
+	gasteiger::GasteigerAtomTypeSetCOP gasteiger_atom_typeset() const;
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -1002,6 +1003,10 @@ public:
 	VD
 	add_atom( std::string const & atom_name = "" );
 
+
+	VD
+	add_atom(Atom const & atom, AtomICoor const & icoor);
+
 	// Undefined, commenting out to fix PyRosetta build  void add_atom(Atom const & atom);
 
 	/// @brief flag an atom for deletion by adding its index to the delete_atom_ list
@@ -1045,6 +1050,13 @@ public:
 	void
 	set_gasteiger_atom_type(
 		std::string const & atom_name,
+		std::string const & gasteiger_atom_type_name
+	);
+
+	/// @brief set gasteiger atom type
+	void
+	set_gasteiger_atom_type(
+		VD atom,
 		std::string const & gasteiger_atom_type_name
 	);
 

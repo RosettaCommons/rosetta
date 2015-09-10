@@ -58,7 +58,27 @@ MolWriter::MolWriter(std::string const & ctab_mode) : line_header_("M  V30 ")
 	}
 }
 
-void MolWriter::output_residue(utility::io::ozstream & output_stream, core::conformation::ResidueCOP residue)
+void
+MolWriter::output_residue(std::ostream & output_stream, core::conformation::ResidueCOP residue) {
+	output_residue( output_stream, *residue);
+}
+
+void
+MolWriter::output_residue(std::ostream & output_stream, core::chemical::ResidueTypeCOP residue_type) {
+	output_residue( output_stream, *residue_type);
+}
+
+void
+MolWriter::output_residue(std::string const & file_name,core::conformation::ResidueCOP residue) {
+	output_residue( file_name, *residue);
+}
+
+void
+MolWriter::output_residue(std::string const & file_name, core::chemical::ResidueTypeCOP residue_type) {
+	output_residue( file_name, *residue_type);
+}
+
+void MolWriter::output_residue(std::ostream & output_stream, core::conformation::Residue const & residue)
 {
 	std::list<std::string> prepared_lines;
 	std::list<std::string> metadata = this->compose_metadata(residue);
@@ -91,18 +111,17 @@ void MolWriter::output_residue(utility::io::ozstream & output_stream, core::conf
 
 }
 
-
-void MolWriter::output_residue(utility::io::ozstream & output_stream, core::chemical::ResidueTypeOP residue_type)
+void MolWriter::output_residue(std::ostream & output_stream, core::chemical::ResidueType const & residue_type)
 {
 	using namespace core::conformation;
-	ResidueCOP residue_ptr( ResidueOP( new Residue(*residue_type,false) ) );
+	ResidueCOP residue_ptr( ResidueOP( new Residue(residue_type,false) ) );
 	//core::conformation::ResidueCOP residue_ptr= &residue;
 	//std::cout <<residue_ptr->name3() <<std::endl;
 	output_residue(output_stream,residue_ptr);
 }
 
 
-void MolWriter::output_residue(std::string file_name,core::conformation::ResidueCOP residue)
+void MolWriter::output_residue(std::string const & file_name,core::conformation::Residue const & residue)
 {
 	utility::io::ozstream outfile;
 
@@ -115,7 +134,7 @@ void MolWriter::output_residue(std::string file_name,core::conformation::Residue
 }
 
 
-void MolWriter::output_residue(std::string file_name, core::chemical::ResidueTypeOP residue_type)
+void MolWriter::output_residue(std::string const & file_name, core::chemical::ResidueType const & residue_type)
 {
 	utility::io::ozstream outfile;
 	outfile.open(file_name.c_str(), std::ios::out | std::ios::binary);
@@ -126,20 +145,20 @@ void MolWriter::output_residue(std::string file_name, core::chemical::ResidueTyp
 	outfile.close();
 }
 
-std::list<std::string> MolWriter::compose_metadata(core::conformation::ResidueCOP residue)
+std::list<std::string> MolWriter::compose_metadata(core::conformation::Residue const & residue)
 {
 	std::list<std::string> lines;
 
-	std::string const name_line = residue->name()+"\n";
+	std::string const name_line = residue.name()+"\n";
 	//for specification see page 12 and 35 of the sybl molfile specification document
 	std::string const info_line = "  Rosetta           3D                              \n";
-	std::string const name3_line = residue->name3()+"\n";
+	std::string const name3_line = residue.name3()+"\n";
 	std::string counts_line;
 	if ( ctab_mode_ == V2000 ) {
 
 		counts_line = str(boost::format("%|1|%|2|%|3|%|4|%|5|%|6|%|7|%|8|%|9|%|10|%|11|%|12|\n") %
-			boost::io::group(setfill(' '),dec,setw(3),residue->natoms()) % //atom count
-			boost::io::group(setfill(' '),dec,setw(3),residue->type().nbonds()) % //bond count
+			boost::io::group(setfill(' '),dec,setw(3),residue.natoms()) % //atom count
+			boost::io::group(setfill(' '),dec,setw(3),residue.type().nbonds()) % //bond count
 			boost::io::group(setfill(' '),dec,setw(3),0) % //number of atom lists
 			boost::io::group(setfill(' '),dec,setw(3),0) % //obselete field
 			boost::io::group(setfill(' '),dec,setw(3),0) %  // chiral flag
@@ -164,14 +183,14 @@ std::list<std::string> MolWriter::compose_metadata(core::conformation::ResidueCO
 	return lines;
 }
 
-std::list<std::string> MolWriter::compose_ctab(core::conformation::ResidueCOP residue)
+std::list<std::string> MolWriter::compose_ctab(core::conformation::Residue const & residue)
 {
 	std::list<std::string> lines;
 	std::string begin_header = line_header_+"BEGIN CTAB\n";
 	std::string end_header = line_header_+"END CTAB\n";
 
-	core::Size n_atoms = residue->natoms();
-	core::Size n_bonds = residue->type().nbonds();
+	core::Size n_atoms = residue.natoms();
+	core::Size n_bonds = residue.type().nbonds();
 
 	std::string counts = line_header_+"COUNTS "+ utility::to_string<core::Size>(n_atoms)+" "+
 		utility::to_string<core::Size>(n_bonds)+" " + "0" + " " + "0" + " "+ "0"+"\n";
@@ -199,7 +218,7 @@ std::list<std::string> MolWriter::compose_ctab(core::conformation::ResidueCOP re
 	return lines;
 }
 
-std::list<std::string> MolWriter::compose_atoms(core::conformation::ResidueCOP residue)
+std::list<std::string> MolWriter::compose_atoms(core::conformation::Residue const & residue)
 {
 	std::list<std::string> lines;
 	std::string begin_header = line_header_+"BEGIN ATOM"+"\n";
@@ -208,10 +227,10 @@ std::list<std::string> MolWriter::compose_atoms(core::conformation::ResidueCOP r
 	if ( ctab_mode_ == V3000 ) {
 		lines.push_back(begin_header);
 	}
-	for ( core::Size index = 1; index <= residue->natoms(); ++index ) {
-		core::Vector xyz_coords(residue->xyz(index));
-		core::chemical::AtomType const atom_type = residue->atom_type(index);
-		core::chemical::ResidueType const & residue_type = residue->type();
+	for ( core::Size index = 1; index <= residue.natoms(); ++index ) {
+		core::Vector xyz_coords(residue.xyz(index));
+		core::chemical::AtomType const & atom_type = residue.atom_type(index);
+		core::chemical::ResidueType const & residue_type = residue.type();
 		std::string element = atom_type.element();
 		//Rosetta stores elements as allcaps for whatever reason, this will turn CL -> Cl
 		if ( element.size() == 2 ) {
@@ -263,7 +282,7 @@ std::list<std::string> MolWriter::compose_atoms(core::conformation::ResidueCOP r
 	return lines;
 }
 
-std::list<std::string> MolWriter::compose_bonds(core::conformation::ResidueCOP residue)
+std::list<std::string> MolWriter::compose_bonds(core::conformation::Residue const & residue)
 {
 	std::list<std::string> lines;
 	std::string begin_header = line_header_+"BEGIN BOND"+"\n";
@@ -279,9 +298,9 @@ std::list<std::string> MolWriter::compose_bonds(core::conformation::ResidueCOP r
 
 
 	utility::vector1<BondData> bond_data_set;
-	for ( core::Size index = 1; index <= residue->natoms(); ++index ) {
-		core::chemical::AtomIndices const bonded_neighbors = residue->bonded_neighbor(index);
-		utility::vector1<core::chemical::BondName> const bonded_neighbor_types = residue->type().bonded_neighbor_types(index);
+	for ( core::Size index = 1; index <= residue.natoms(); ++index ) {
+		core::chemical::AtomIndices const bonded_neighbors = residue.bonded_neighbor(index);
+		utility::vector1<core::chemical::BondName> const bonded_neighbor_types = residue.type().bonded_neighbor_types(index);
 		debug_assert(bonded_neighbors.size()== bonded_neighbor_types.size());
 
 		for ( core::Size neighbor_index = 1; neighbor_index <= bonded_neighbors.size(); ++neighbor_index ) {
@@ -326,9 +345,8 @@ std::list<std::string> MolWriter::compose_bonds(core::conformation::ResidueCOP r
 	return lines;
 }
 
-std::list<std::string> MolWriter::compose_properties(core::conformation::ResidueCOP residue)
+std::list<std::string> MolWriter::compose_properties(core::conformation::Residue const & residue)
 {
-	runtime_assert( residue != 0 );
 	std::list<std::string> lines;
 	if ( ctab_mode_ == V3000 ) {
 		// Properties block is V2000 specific.
@@ -338,8 +356,8 @@ std::list<std::string> MolWriter::compose_properties(core::conformation::Residue
 	////////////
 	// Charges:
 	utility::vector1< core::Size > charged_atoms;
-	for ( core::Size ii(1); ii <= residue->natoms(); ++ii ) {
-		if ( residue->type().atom(ii).formal_charge() != 0 ) {
+	for ( core::Size ii(1); ii <= residue.natoms(); ++ii ) {
+		if ( residue.type().atom(ii).formal_charge() != 0 ) {
 			charged_atoms.push_back( ii );
 		}
 	}
@@ -352,7 +370,7 @@ std::list<std::string> MolWriter::compose_properties(core::conformation::Residue
 		for ( core::Size n(b); n < end; ++n ) {
 			line.append( boost::str( boost::format(" %3d %3d")
 				% charged_atoms[n]
-				% residue->type().atom(charged_atoms[n]).formal_charge() ));
+				% residue.type().atom(charged_atoms[n]).formal_charge() ));
 		}
 		line.append( "\n" );
 		lines.push_back( line );
@@ -364,14 +382,14 @@ std::list<std::string> MolWriter::compose_properties(core::conformation::Residue
 	return lines;
 }
 
-std::list<std::string> MolWriter::compose_typeinfo(core::conformation::ResidueCOP residue)
+std::list<std::string> MolWriter::compose_typeinfo(core::conformation::Residue const & residue)
 {
 	std::list<std::string> lines;
 
 	std::string header = "> <Rosetta AtomTypes>\n";
 	std::string type_data = "";
-	core::chemical::ResidueType const & residue_type = residue->type();
-	for ( core::Size index =1; index <= residue->natoms(); ++index ) {
+	core::chemical::ResidueType const & residue_type = residue.type();
+	for ( core::Size index =1; index <= residue.natoms(); ++index ) {
 		std::string atom_type_name = residue_type.atom_type(index).name();
 		std::string data_string = "("+utility::to_string<core::Size>(index)+","+atom_type_name+") ";
 		type_data.append(data_string);
@@ -385,19 +403,19 @@ std::list<std::string> MolWriter::compose_typeinfo(core::conformation::ResidueCO
 	return lines;
 }
 
-std::list<std::string> MolWriter::compose_nbr_atom(core::conformation::ResidueCOP residue)
+std::list<std::string> MolWriter::compose_nbr_atom(core::conformation::Residue const & residue)
 {
 	std::list<std::string> lines;
 
 	std::string header = "> <Rosetta nbr_atom>\n";
-	std::string nbr_atom = utility::to_string<core::Size>(residue->nbr_atom()) + "\n";
+	std::string nbr_atom = utility::to_string<core::Size>(residue.nbr_atom()) + "\n";
 
 	lines.push_back(header);
 	lines.push_back(nbr_atom);
 	lines.push_back("\n");
 
 	std::string header2 = "> <Rosetta nbr_radius>\n";
-	std::string nbr_radius = utility::to_string<core::Real>(residue->nbr_radius()) + "\n";
+	std::string nbr_radius = utility::to_string<core::Real>(residue.nbr_radius()) + "\n";
 
 	lines.push_back(header2);
 	lines.push_back(nbr_radius);
@@ -406,21 +424,21 @@ std::list<std::string> MolWriter::compose_nbr_atom(core::conformation::ResidueCO
 	return lines;
 }
 
-std::list<std::string> MolWriter::compose_naming(core::conformation::ResidueCOP residue)
+std::list<std::string> MolWriter::compose_naming(core::conformation::Residue const & residue)
 {
-	core::chemical::ResidueType const & restype( residue->type() );
+	core::chemical::ResidueType const & restype( residue.type() );
 	std::list<std::string> lines;
 
 	std::string header = "> <Rosetta Name>\n";
-	std::string name = residue->name() + "\n";
+	std::string name = residue.name() + "\n";
 
 	lines.push_back(header);
 	lines.push_back(name);
 	lines.push_back("\n");
 
-	if ( residue->name3() != residue->name().substr(0,3) || residue->name1() != 'Z' ) {
+	if ( residue.name3() != residue.name().substr(0,3) || residue.name1() != 'Z' ) {
 		std::string header2 = "> <Rosetta IO_string>\n";
-		std::string io_string = residue->name3() + ' ' + residue->name1() + "\n";
+		std::string io_string = residue.name3() + ' ' + residue.name1() + "\n";
 
 		lines.push_back(header2);
 		lines.push_back(io_string);
@@ -446,9 +464,9 @@ std::list<std::string> MolWriter::compose_naming(core::conformation::ResidueCOP 
 	return lines;
 }
 
-std::list<std::string> MolWriter::compose_rosetta_properties(core::conformation::ResidueCOP residue)
+std::list<std::string> MolWriter::compose_rosetta_properties(core::conformation::Residue const & residue)
 {
-	core::chemical::ResidueType const & restype( residue->type() );
+	core::chemical::ResidueType const & restype( residue.type() );
 	std::list<std::string> lines;
 
 	utility::vector1< std::string > const & properties( restype.properties().get_list_of_properties() );

@@ -24,6 +24,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
+#include <core/chemical/residue_io.hh>
 
 #include <core/types.hh>
 
@@ -50,6 +51,17 @@ void dump_resgraph( Graph const & graph ) {
 			TR << " " << graph[ boost::target( *eitr, graph ) ].name();
 		}
 		TR << std::endl;
+	}
+}
+
+void dump_gast_types( core::chemical::ResidueType const & restype ) {
+	for ( core::Size ii(1); ii <= restype.natoms(); ++ii ) {
+		TR << ii << " Atom " << restype.atom_name(ii) << " " ;
+		if ( restype.atom(ii).gasteiger_atom_type() ) {
+			TR << restype.atom(ii).gasteiger_atom_type()->get_name() << std::endl;
+		} else {
+			TR << " unassigned" << std::endl;
+		}
 	}
 }
 
@@ -111,8 +123,7 @@ public:
 		restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "ASP" ) ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
-		// This is being typed as a free amine, rather than as an amide (because we don't have connection info)
-		TS_ASSERT_EQUALS( restype->atom("N").gasteiger_atom_type()->get_name(), "N_Te2TeTeTe" );
+		TS_ASSERT_EQUALS( restype->atom("N").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" ); //Special Cased
 		TS_ASSERT_EQUALS( restype->atom("CA").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" );
 		TS_ASSERT_EQUALS( restype->atom("C").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
 		TS_ASSERT_EQUALS( restype->atom("O").gasteiger_atom_type()->get_name(), "O_Tr2Tr2TrPi" );
@@ -124,6 +135,22 @@ public:
 		TS_ASSERT_EQUALS( restype->atom("HA").gasteiger_atom_type()->get_name(), "H_S" );
 		TS_ASSERT_EQUALS( restype->atom("1HB").gasteiger_atom_type()->get_name(), "H_S" );
 		TS_ASSERT_EQUALS( restype->atom("2HB").gasteiger_atom_type()->get_name(), "H_S" );
+
+		restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "GLY:NtermProteinFull" ) ) );
+		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
+
+		TS_ASSERT_EQUALS( restype->atom("N").gasteiger_atom_type()->get_name(), "N_TeTeTeTe" ); //Not special cased, protonated amine
+		TS_ASSERT_EQUALS( restype->atom("CA").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" );
+		TS_ASSERT_EQUALS( restype->atom("C").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
+		TS_ASSERT_EQUALS( restype->atom("O").gasteiger_atom_type()->get_name(), "O_Tr2Tr2TrPi" );
+
+		restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "GLY:CtermProteinFull" ) ) );
+		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
+
+		TS_ASSERT_EQUALS( restype->atom("N").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" ); // Still special cased
+		TS_ASSERT_EQUALS( restype->atom("CA").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" );
+		TS_ASSERT_EQUALS( restype->atom("C").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
+		TS_ASSERT_EQUALS( restype->atom("O").gasteiger_atom_type()->get_name(), "O_Tr2Tr2TrPi" ); //Still trigonal
 
 		restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "GLN" ) ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
@@ -237,6 +264,194 @@ public:
 
 		TS_ASSERT_EQUALS( restype->atom("NV").gasteiger_atom_type()->get_name(), "FAKE" );
 		TS_ASSERT_EQUALS( restype->atom("CD").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" );
+	}
+
+	void test_charge_states() {
+		using namespace core::chemical;
+		ChemicalManager * cm(ChemicalManager::get_instance());
+		std::string const tag(FA_STANDARD);
+		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
+		ElementSetCOP element_types = cm->element_set("default");
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
+		orbitals::OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
+		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
+
+		///////////// Thiolate
+
+		core::chemical::ResidueTypeOP thiolate_test = read_topology_file("core/chemical/gasteiger/THI.params",
+			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+
+		core::chemical::gasteiger::assign_gasteiger_atom_types( *thiolate_test, atom_type_set_, /*keep_existing=*/ false );
+
+		TS_ASSERT_EQUALS( thiolate_test->atom("S1").gasteiger_atom_type()->get_name(), "S_Te2Te2Te2Te" ); // Negatively charged singly bonded sulfur
+
+	}
+
+	// Test to make sure we do decent typing when presented with a residue with missing hydrogens.
+	// The items are know corner cases.
+	void test_implicit_hydrogens() {
+		using namespace core::chemical;
+		ChemicalManager * cm(ChemicalManager::get_instance());
+		std::string const tag(FA_STANDARD);
+		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
+		ElementSetCOP element_types = cm->element_set("default");
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
+		orbitals::OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
+		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
+
+		///////////// Sulfurs
+
+		core::chemical::ResidueTypeOP sulfur_test = read_topology_file("core/chemical/gasteiger/GST.params",
+			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+
+		core::chemical::gasteiger::assign_gasteiger_atom_types( *sulfur_test, atom_type_set_, /*keep_existing=*/ false );
+
+		TS_ASSERT_EQUALS( sulfur_test->atom("S1").gasteiger_atom_type()->get_name(), "S_TeTeTeTePiPi" ); // Sulfone, 1 implicit hydrogen
+		TS_ASSERT_EQUALS( sulfur_test->atom("S2").gasteiger_atom_type()->get_name(), "S_Tr2Tr2TrPi" ); // Thioketone
+		TS_ASSERT_EQUALS( sulfur_test->atom("S3").gasteiger_atom_type()->get_name(), "S_Te2Te2TeTe" ); // Thiol, 1 implicit hydrogen
+		//TS_ASSERT_EQUALS( sulfur_test->atom("S4").gasteiger_atom_type()->get_name(), "S_Tr2TrTrPi" ); // Sulfoxide, 1 implicit hydrogen (double bonded)
+		//RM: Rosetta agrees with BCL, but I think this should probably be S_Te2TeTeTePi for double bonded, or S_Te2TeTeTe if S-O charge separated form.
+
+		//TS_ASSERT_EQUALS( sulfur_test->atom("S5").gasteiger_atom_type()->get_name(), "S_Tr2Tr2TrPi" );
+		// S5 was N=S=O, for a 2 implicit hydrogen sulfone, but both Rosetta and BCL choked on it - I had to remove the oxygen
+
+		//TS_ASSERT_EQUALS( sulfur_test->atom("S6").gasteiger_atom_type()->get_name(), "S_Tr2Tr2TrPi" ); // N=S
+		// S6 was intended to be a 2 implicit hydrogen sulfoxide (see above), but in retrospect it can't be distinquished from a thioketone-type compound.
+
+		///////////// Sulfoxides
+
+		core::chemical::ResidueTypeOP sulfoxide_test = read_topology_file("core/chemical/gasteiger/SXX.params",
+			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+
+		core::chemical::gasteiger::assign_gasteiger_atom_types( *sulfoxide_test, atom_type_set_, /*keep_existing=*/ false );
+
+		TS_ASSERT_EQUALS( sulfoxide_test->atom("S1").gasteiger_atom_type()->get_name(), "S_Te2TeTeTePi" ); // Sulfoxide, double bonded
+		TS_ASSERT_EQUALS( sulfoxide_test->atom("S2").gasteiger_atom_type()->get_name(), "S_Te2TeTeTe" );   // Sulfoxide, charge separated
+		TS_ASSERT_EQUALS( sulfoxide_test->atom("O1").gasteiger_atom_type()->get_name(), "O_Tr2Tr2TrPi" );  // Sulfoxide, double bonded
+		TS_ASSERT_EQUALS( sulfoxide_test->atom("O2").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); // Sulfoxide, charge separated
+
+		///////////// Phosphates/Phosphines
+
+		core::chemical::ResidueTypeOP phos_test = read_topology_file("core/chemical/gasteiger/PXX.params",
+			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+
+		core::chemical::gasteiger::assign_gasteiger_atom_types( *phos_test, atom_type_set_, /*keep_existing=*/ false );
+
+		TS_ASSERT_EQUALS( phos_test->atom("P3").gasteiger_atom_type()->get_name(), "P_Te2TeTeTe" ); // Phosphine, 2 implicit hydrogen
+		TS_ASSERT_EQUALS( phos_test->atom("P4").gasteiger_atom_type()->get_name(), "P_Te2TeTeTe" ); // Phosphine, 1 implicit hydrogen
+		TS_ASSERT_EQUALS( phos_test->atom("P5").gasteiger_atom_type()->get_name(), "P_Te2TeTeTe" ); // Phosphine, 0 implicit hydrogen
+
+		//TS_ASSERT_EQUALS( phos_test->atom("P6").gasteiger_atom_type()->get_name(), "P_Tr2TrTrPi" );  // Phosphate, 2 implicit hydrogen
+		// P6 can't be distinguished from a phosphine-like compound lacking hydrogens
+
+		//TS_ASSERT_EQUALS( phos_test->atom("P1").gasteiger_atom_type()->get_name(), "P_TrTrTrPi" );   // Phosphate, 1 implicit hydrogen
+		//RM: Rosetta agrees with BCL, but I think this should probably be P_TeTeTeTePi with an implicit hydrogen instead of a "carboxylate" like hybridization
+
+		TS_ASSERT_EQUALS( phos_test->atom("P2").gasteiger_atom_type()->get_name(), "P_TeTeTeTePi" ); // Phosphate, 0 implicit hydrogen
+
+		//////////// Nitrogens
+
+		core::chemical::ResidueTypeOP nitr_test = read_topology_file("core/chemical/gasteiger/NXX.params",
+			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+
+		core::chemical::gasteiger::assign_gasteiger_atom_types( *nitr_test, atom_type_set_, /*keep_existing=*/ false );
+
+		TS_ASSERT_EQUALS( nitr_test->atom("N1").gasteiger_atom_type()->get_name(), "N_Te2TeTeTe" ); // (uncharged) Amine, 2 implicit hydrogen
+		TS_ASSERT_EQUALS( nitr_test->atom("N2").gasteiger_atom_type()->get_name(), "N_Te2TeTeTe" ); // (uncharged) Amine, 1 implicit hydrogen
+		TS_ASSERT_EQUALS( nitr_test->atom("N3").gasteiger_atom_type()->get_name(), "N_Te2TeTeTe" ); // (uncharged) Amine, 0 implicit hydrogen
+
+		TS_ASSERT_EQUALS( nitr_test->atom("N4").gasteiger_atom_type()->get_name(), "N_Tr2TrTrPi" ); // Nitroso, no impilict hydrogens
+
+		TS_ASSERT_EQUALS( nitr_test->atom("N5").gasteiger_atom_type()->get_name(), "N_TrTrTrPiPi" ); // Nitro, two double bonded oxygens
+		TS_ASSERT_EQUALS( nitr_test->atom("N6").gasteiger_atom_type()->get_name(), "N_TrTrTrPi" );   // Nitro, charge separated
+
+		//////////// Azides
+
+		core::chemical::ResidueTypeOP azo_test = read_topology_file("core/chemical/gasteiger/AZO.params",
+			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+
+		core::chemical::gasteiger::assign_gasteiger_atom_types( *azo_test, atom_type_set_, /*keep_existing=*/ false );
+
+		TS_ASSERT_EQUALS( azo_test->atom("N1").gasteiger_atom_type()->get_name(), "N_Tr2TrTrPi" ); // -*N*=[N+]=[N-] (two doubles)
+		TS_ASSERT_EQUALS( azo_test->atom("N4").gasteiger_atom_type()->get_name(), "N_DiDiPiPi" ); // -N=*[N+]*=[N-]
+		TS_ASSERT_EQUALS( azo_test->atom("N3").gasteiger_atom_type()->get_name(), "N_Di2DiPi2Pi" ); // -N=[N+]=*[N-]*
+		// RM: I would have though N_Tr2Tr2TrPi, but the sp(Di) hybridization probably works better with resonance forms
+
+		TS_ASSERT_EQUALS( azo_test->atom("N2").gasteiger_atom_type()->get_name(), "N_Te2Te2TeTe" ); // -*[N-]*-[N+]#N  (single-triple)
+		TS_ASSERT_EQUALS( azo_test->atom("N5").gasteiger_atom_type()->get_name(), "N_DiDiPiPi" ); // -[N-]-*[N+]*#N
+		TS_ASSERT_EQUALS( azo_test->atom("N6").gasteiger_atom_type()->get_name(), "N_Di2DiPiPi" ); // -[N-]-[N+]#*N*
+
+	}
+
+
+	// Test various oxides, particularly in the case of formal charge separation
+	void test_oxides() {
+		using namespace core::chemical;
+		ChemicalManager * cm(ChemicalManager::get_instance());
+		std::string const tag(FA_STANDARD);
+		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
+		ElementSetCOP element_types = cm->element_set("default");
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
+		orbitals::OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
+		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
+
+		///////////// Sulfates and Sulfites
+
+		core::chemical::ResidueTypeOP sulfur_test = read_topology_file("core/chemical/gasteiger/SOx.params",
+			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+
+		core::chemical::gasteiger::assign_gasteiger_atom_types( *sulfur_test, atom_type_set_, /*keep_existing=*/ false, /*allow_unknown=*/ true );
+
+		dump_gast_types( *sulfur_test );
+
+		// Regular sulfate
+		TS_ASSERT_EQUALS( sulfur_test->atom("S1").gasteiger_atom_type()->get_name(), "S_TeTeTeTePiPi" );
+		TS_ASSERT_EQUALS( sulfur_test->atom("O1").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //S-O(-)
+		TS_ASSERT_EQUALS( sulfur_test->atom("O5").gasteiger_atom_type()->get_name(), "O_Tr2Tr2TrPi" );  //S=O
+		TS_ASSERT_EQUALS( sulfur_test->atom("O6").gasteiger_atom_type()->get_name(), "O_Tr2Tr2TrPi" );  //S=O
+		// Sulfate, 1 oxygen charge separated
+		TS_ASSERT_EQUALS( sulfur_test->atom("S2").gasteiger_atom_type()->get_name(), "S_TeTeTeTePi" );
+		TS_ASSERT_EQUALS( sulfur_test->atom("O7").gasteiger_atom_type()->get_name(), "O_Tr2Tr2TrPi" );  //S=O
+		TS_ASSERT_EQUALS( sulfur_test->atom("O8").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //S-O(-)
+		TS_ASSERT_EQUALS( sulfur_test->atom("O9").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //S-O(-)
+		// Sulfate, 2 oxygen charge separated
+		TS_ASSERT_EQUALS( sulfur_test->atom("S3").gasteiger_atom_type()->get_name(), "S_TeTeTeTe" );
+		TS_ASSERT_EQUALS( sulfur_test->atom("O2").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" );  //S-O(-)
+		TS_ASSERT_EQUALS( sulfur_test->atom("O10").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //S-O(-)
+		TS_ASSERT_EQUALS( sulfur_test->atom("O11").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //S-O(-)
+		// Regular sulfite
+		TS_ASSERT_EQUALS( sulfur_test->atom("S4").gasteiger_atom_type()->get_name(), "S_Te2TeTeTePi" );
+		TS_ASSERT_EQUALS( sulfur_test->atom("O3").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //S-O(-)
+		TS_ASSERT_EQUALS( sulfur_test->atom("O12").gasteiger_atom_type()->get_name(), "O_Tr2Tr2TrPi" ); //S=O
+		// Sulfite, charge separated
+		TS_ASSERT_EQUALS( sulfur_test->atom("S5").gasteiger_atom_type()->get_name(), "S_Te2TeTeTe" );
+		TS_ASSERT_EQUALS( sulfur_test->atom("O4").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" );  //S-O(-)
+		TS_ASSERT_EQUALS( sulfur_test->atom("O13").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //S-O(-)
+
+		core::chemical::ResidueTypeOP phosphorus_test = read_topology_file("core/chemical/gasteiger/POx.params",
+			atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+
+		core::chemical::gasteiger::assign_gasteiger_atom_types( *phosphorus_test, atom_type_set_, /*keep_existing=*/ false, /*allow_unknown=*/ true );
+
+		/// Regular phosphate
+		TS_ASSERT_EQUALS( phosphorus_test->atom("P1").gasteiger_atom_type()->get_name(), "P_TeTeTeTePi" );
+		TS_ASSERT_EQUALS( phosphorus_test->atom("O1").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //P-O(-)
+		TS_ASSERT_EQUALS( phosphorus_test->atom("O3").gasteiger_atom_type()->get_name(), "O_Tr2Tr2TrPi" );  //P=O
+		TS_ASSERT_EQUALS( phosphorus_test->atom("O4").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //P-O(-)
+		// Phosphate, charge separated
+		TS_ASSERT_EQUALS( phosphorus_test->atom("P2").gasteiger_atom_type()->get_name(), "P_TeTeTeTe" );
+		TS_ASSERT_EQUALS( phosphorus_test->atom("O5").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //P-O(-)
+		TS_ASSERT_EQUALS( phosphorus_test->atom("O6").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //P-O(-)
+		TS_ASSERT_EQUALS( phosphorus_test->atom("O7").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //P-O(-)
+		// Phosphonite
+		TS_ASSERT_EQUALS( phosphorus_test->atom("P3").gasteiger_atom_type()->get_name(), "P_Te2TeTeTe" );
+		TS_ASSERT_EQUALS( phosphorus_test->atom("O8").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //P-O(-)
+		TS_ASSERT_EQUALS( phosphorus_test->atom("O9").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" );  //P-O(-)
+		// Phosphonite, protonated
+		TS_ASSERT_EQUALS( phosphorus_test->atom("P4").gasteiger_atom_type()->get_name(), "P_TeTeTeTe" );
+		TS_ASSERT_EQUALS( phosphorus_test->atom("O2").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" );  //P-O(-)
+		TS_ASSERT_EQUALS( phosphorus_test->atom("O10").gasteiger_atom_type()->get_name(), "O_Te2Te2Te2Te" ); //P-O(-)
+
 	}
 
 };

@@ -100,6 +100,7 @@ S_DiDiPi2Pi2 S 1 2 0 pi nb23 17.42 6.8 nan nan nan nan nan
 S_Tr2Tr2TrPi S 2 1 2 pi3 nb 16.33 5.43 12.7 2.76 nan nan 3.729 
 S_Tr2TrTrPi2 S 2 2 1 pi nb3 16.27 5.49 nan nan nan nan 2.7 
 S_Te2Te2TeTe S 3 2 2 pi nb 15.5 4.77 nan nan 27.728 13.638 3 
+S_Te2Te2Te2Te S 3 1 3 pi nb nan nan nan nan nan nan nan 
 Cl_S2P2P2P Cl 0 0 0 pi3 nb012 15.03 3.73 nan nan 26.368 13.378 2.315 
 Cl_SP2P2P2 Cl 0 0 0 pi0 nb123 24.02 14.45 nan nan 26.368 13.378 2.315 
 K_S K 0 0 0 pi0 nb 4.341 1.95 nan nan nan nan nan 
@@ -197,3 +198,8 @@ Mg_ Mg 0 0 0 pi nb nan nan nan nan nan nan nan
 Zn_ Zn 0 0 0 pi nb nan nan nan nan nan nan nan
 Co_ Co 0 0 0 pi nb nan nan nan nan nan nan nan
 Cu_ Cu 0 0 0 pi nb nan nan nan nan nan nan nan
+# The following were added by Rocco Moretti to be able to 
+# type some of the odder structure representation
+S_TeTeTeTePi S 3 4 0 pi3 nb nan nan nan nan nan nan nan 
+S_TeTeTeTe S 3 4 0 pi nb nan nan nan nan nan nan nan
+#

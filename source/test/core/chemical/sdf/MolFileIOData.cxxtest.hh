@@ -674,10 +674,10 @@ public:
 						core::chemical::ResidueType const & rsd1( *rtvec[1] );
 						core::chemical::ResidueType const & rsd2( *rsd_ref );
 						core::chemical::sdf::MolWriter write;
+						write.output_residue( rsd1.name() + "_rsd1.sdf", rsd1 );
+						write.output_residue( rsd2.name() + "_rsd2.sdf", rsd2 );
 						core::conformation::ResidueCOP residue1( core::conformation::ResidueOP( new core::conformation::Residue( rsd1, true ) ) );
 						core::conformation::ResidueCOP residue2( core::conformation::ResidueOP( new core::conformation::Residue( rsd2, true ) ) );
-						write.output_residue( rsd1.name() + "_rsd1.sdf", residue1 );
-						write.output_residue( rsd2.name() + "_rsd2.sdf", residue2 );
 						core::pose::Pose test_pose;
 						test_pose.append_residue_by_jump( *residue1, 1 );
 						test_pose.dump_pdb( rsd1.name() + "_rsd1.pdb" );

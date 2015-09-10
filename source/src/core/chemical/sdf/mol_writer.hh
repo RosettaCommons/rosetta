@@ -32,11 +32,17 @@ class MolWriter
 public:
 	MolWriter();
 	MolWriter(std::string const & ctab_mode);
-	void output_residue(utility::io::ozstream & output_stream, core::conformation::ResidueCOP residue);
-	void output_residue(utility::io::ozstream & output_stream, core::chemical::ResidueTypeOP residue_type);
+	void output_residue(std::ostream & output_stream, core::conformation::Residue const & residue);
+	void output_residue(std::ostream & output_stream, core::chemical::ResidueType const & residue_type);
 
-	void output_residue(std::string const file_name,core::conformation::ResidueCOP residue);
-	void output_residue(std::string const file_name, core::chemical::ResidueTypeOP residue_type);
+	void output_residue(std::string const & file_name,core::conformation::Residue const & residue);
+	void output_residue(std::string const & file_name, core::chemical::ResidueType const & residue_type);
+
+	void output_residue(std::ostream & output_stream, core::conformation::ResidueCOP residue);
+	void output_residue(std::ostream & output_stream, core::chemical::ResidueTypeCOP residue_type);
+
+	void output_residue(std::string const & file_name,core::conformation::ResidueCOP residue);
+	void output_residue(std::string const & file_name, core::chemical::ResidueTypeCOP residue_type);
 
 	inline void set_job_data(std::map<std::string,std::string> const & job_data)
 	{
@@ -47,15 +53,15 @@ private:
 
 	enum CtabMode {V2000,V3000};
 
-	std::list<std::string> compose_metadata(core::conformation::ResidueCOP residue);
-	std::list<std::string> compose_ctab(core::conformation::ResidueCOP residue);
-	std::list<std::string> compose_atoms(core::conformation::ResidueCOP residue);
-	std::list<std::string> compose_bonds(core::conformation::ResidueCOP residue);
-	std::list<std::string> compose_properties(core::conformation::ResidueCOP residue);
-	std::list<std::string> compose_typeinfo(core::conformation::ResidueCOP residue);
-	std::list<std::string> compose_nbr_atom(core::conformation::ResidueCOP residue);
-	std::list<std::string> compose_naming(core::conformation::ResidueCOP residue);
-	std::list<std::string> compose_rosetta_properties(core::conformation::ResidueCOP residue);
+	std::list<std::string> compose_metadata(core::conformation::Residue const & residue);
+	std::list<std::string> compose_ctab(core::conformation::Residue const & residue);
+	std::list<std::string> compose_atoms(core::conformation::Residue const & residue);
+	std::list<std::string> compose_bonds(core::conformation::Residue const & residue);
+	std::list<std::string> compose_properties(core::conformation::Residue const & residue);
+	std::list<std::string> compose_typeinfo(core::conformation::Residue const & residue);
+	std::list<std::string> compose_nbr_atom(core::conformation::Residue const & residue);
+	std::list<std::string> compose_naming(core::conformation::Residue const & residue);
+	std::list<std::string> compose_rosetta_properties(core::conformation::Residue const &  residue);
 	std::list<std::string> compose_job_info();
 
 	//utility::io::ozstream output_stream_;
@@ -63,6 +69,13 @@ private:
 	std::map<std::string,std::string> job_data_;
 	CtabMode ctab_mode_;
 };
+
+template< class Input_t >
+void
+output_residue(std::ostream & output_stream, Input_t residue ) {
+	MolWriter writer;
+	writer.output_residue( output_stream, residue );
+}
 
 }
 }

@@ -102,6 +102,15 @@ ElementSet::contains_element_type( std::string const & element_symbol ) const
 }
 
 
+/// @brief Lookup the element index by the element enum
+Size
+ElementSet::element_index( core::chemical::element::Elements ele ) const
+{
+	// Probably not the most efficient way to do things, but ...
+	return element_index( core::chemical::element::name_from_elements( ele ) );
+}
+
+
 /// @brief Lookup the element index by the element_symbol string
 Size
 ElementSet::element_index( std::string const & element_symbol ) const
@@ -120,6 +129,13 @@ ElementSet::element_index( std::string const & element_symbol ) const
 		utility_exit_with_message( "unrecognized element_symbol '"+element_symbol+"'" );
 	}
 	return iter->second;
+}
+
+/// @brief Lookup the element index by the element enum
+ElementCOP
+ElementSet::element( core::chemical::element::Elements ele ) const
+{
+	return elements_[ element_index( ele ) ];
 }
 
 /// @brief Lookup the element index by the element_symbol string

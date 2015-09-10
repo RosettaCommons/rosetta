@@ -963,6 +963,36 @@ ResidueType::add_atom(
 	return v;
 }
 
+VD
+ResidueType::add_atom(Atom const & atom, AtomICoor const & icoor){
+	finalized_ = false;
+
+	VD v = graph_.add_vertex(atom);
+	std::string atom_name( atom.name());
+	if ( atom_name.size() ) {
+		assert(atom_name_to_vd_.find(atom_name) == atom_name_to_vd_.end());
+		assert(atom_name_to_vd_.find( strip_whitespace(atom_name)) == atom_name_to_vd_.end());
+		atom_name_to_vd_[ atom_name ] = v;
+		atom_name_to_vd_[ strip_whitespace( atom_name ) ] = v;
+	}
+
+	ordered_atoms_.push_back(v);
+
+	// allocate space for the new atom !!!!!!!!!!!!!!!!!!!!!!
+	// eg, in the atom/resconn map
+	assert( atom_2_residue_connection_map_.size() == ordered_atoms_.size()-1 );
+
+	atom_2_residue_connection_map_.resize( ordered_atoms_.size() );
+	bonded_neighbor_.resize(ordered_atoms_.size());
+	bonded_neighbor_type_.resize(ordered_atoms_.size());
+	vd_to_index_[v] = ordered_atoms_.size();
+	atom_base_[v] =v;  // base defaults to self
+	icoor_[v] =  icoor;
+
+	return v;
+
+}
+
 
 /// @brief flag an atom for deletion by adding its index to the delete_atom_ list
 void
@@ -1099,11 +1129,26 @@ ResidueType::set_gasteiger_atom_type(
 	std::string const & gasteiger_atom_type_name
 )
 {
-	if ( ! gasteiger_atom_types_ ) {
-		gasteiger_atom_types_ = ChemicalManager::get_instance()->gasteiger_atom_type_set();
+	set_gasteiger_atom_type( atom_name_to_vd_[atom_name] ,gasteiger_atom_type_name);
+}
+
+/// @brief set gasteiger atom type
+void
+ResidueType::set_gasteiger_atom_type(
+	VD atom,
+	std::string const & gasteiger_atom_type_name
+)
+{
+	gasteiger::GasteigerAtomTypeDataCOP gasteiger_type;
+	if ( gasteiger_atom_type_name == "" ) {
+		gasteiger_type = 0;
+	} else {
+		if ( ! gasteiger_atom_types_ ) {
+			gasteiger_atom_types_ = ChemicalManager::get_instance()->gasteiger_atom_type_set();
+		}
+		gasteiger_type = gasteiger_atom_types_->atom_type( gasteiger_atom_type_name );
 	}
-	gasteiger::GasteigerAtomTypeDataCOP gasteiger_type = gasteiger_atom_types_->atom_type( gasteiger_atom_type_name );
-	Atom & a = graph_[ atom_name_to_vd_[atom_name] ];
+	Atom & a = graph_[ atom ];
 	a.gasteiger_atom_type( gasteiger_type );
 }
 
@@ -1112,6 +1157,11 @@ gasteiger::GasteigerAtomTypeDataCOP
 ResidueType::gasteiger_atom_type( Size const atomno ) const
 {
 	return graph_[ ordered_atoms_[atomno] ].gasteiger_atom_type();
+}
+
+
+gasteiger::GasteigerAtomTypeSetCOP ResidueType::gasteiger_atom_typeset() const {
+	return gasteiger_atom_types_;
 }
 
 VD
@@ -3768,6 +3818,7 @@ ResidueType::debug_dump_icoor() const
 	for ( Size ii = 1 ; ii <= natoms() ; ++ii ) {
 		tr.Debug << " Atom name: " << atom_name( ii ) << "vertex: " << atom_vertex( ii ) << " ideal xyz " << atom(ii).ideal_xyz()[0] << "  " << atom(ii).ideal_xyz()[1] << "  " << atom(ii).ideal_xyz()[2] << std::endl;
 	}
+	pretty_print_atomicoor(tr.Debug, *this);
 }
 
 

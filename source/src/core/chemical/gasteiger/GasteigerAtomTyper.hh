@@ -39,7 +39,10 @@ namespace gasteiger {
 
 class PossibleAtomTypesForAtom; // Forward declaration
 
-void assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAtomTypeSetCOP gasteiger_atom_type_set, bool keep_existing);
+void assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAtomTypeSetCOP gasteiger_atom_type_set, bool keep_existing, bool allow_unknown = false);
+
+/// @breif Version which gets typeset from ResidueType, or just uses default
+void assign_gasteiger_atom_types( core::chemical::ResidueType & restype, bool keep_existing = true, bool allow_unknown = false);
 
 PossibleAtomTypesForAtom GetPossibleTypesForAtom(
 	core::chemical::RealResidueGraph const & graph,

@@ -28,6 +28,9 @@
 #include <core/chemical/Atom.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/Bond.hh>
+#include <core/chemical/ResidueConnection.hh>
+
+#include <core/chemical/sdf/mol_writer.hh>
 
 #include <core/types.hh>
 
@@ -233,7 +236,7 @@ PossibleAtomTypesForAtom::FindPossibleAtomTypesForAtom
 	TR.Error << "Search string '" << primary_search_string << "' not found in "
 		<< (IN_AROMATIC_RING?"aromatic":"non-aromatic") << " database having "
 		<< (IN_AROMATIC_RING?s_element_bonds_in_arom_ring_to_types_map.size():s_atomic_env_outside_arom_ring_to_types_map.size()) << " entries." << std::endl;
-	utility_exit_with_message("No gasgteiger atom types exist for atom.");
+	//utility_exit_with_message("No gasgteiger atom types exist for atom.");
 	return PossibleAtomTypesForAtom(); // To silence warnings
 }
 
@@ -831,7 +834,7 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenThreeSingle( const core::chemical
 		return;
 	}
 	const core::Size unsaturated_neighbor_count( CountUnsaturatedNeighbors( graph, atomVD ));
-	if ( unsaturated_neighbor_count == 2 ) { // RM: Should this be >= ?
+	if ( unsaturated_neighbor_count >= 2 ) {
 		// Node 2 2+ unsaturated neighbors Trigonal (Accuracy: 99.5%, 11070 cases)
 		// 2+ unsaturated neighbors guarantees that maximal orbital overlap will be achieved with trigonal geometry
 		SetToType( gasteiger_atom_type_set_->atom_type("N_TrTrTrPi2"));
@@ -1103,7 +1106,18 @@ bool PossibleAtomTypesForAtom::IsBondedToAHalogen( const core::chemical::RealRes
 	return false;
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void assign_gasteiger_atom_types( core::chemical::ResidueType & restype, bool keep_existing /*= true*/, bool allow_unknown /*= false*/) {
+	GasteigerAtomTypeSetCOP typeset( restype.gasteiger_atom_typeset() );
+	if ( ! typeset ) {
+		typeset = core::chemical::ChemicalManager::get_instance()->gasteiger_atom_type_set();
+		assert( typeset );
+		restype.set_gasteiger_typeset( typeset );
+	}
+	assign_gasteiger_atom_types( restype, typeset, keep_existing, allow_unknown );
+}
 
 /// @brief Assign gasteiger atom types to the atoms in restype.
 /// If "keep_existing" is true keep any already-assigned types
@@ -1127,7 +1141,7 @@ bool PossibleAtomTypesForAtom::IsBondedToAHalogen( const core::chemical::RealRes
 /// * The bridge nitrogens of fused ring structures like PO5, C7M and AZQ are typed trig versus gasteiger tet.
 
 void
-assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAtomTypeSetCOP gasteiger_atom_type_set, bool keep_existing) {
+assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAtomTypeSetCOP gasteiger_atom_type_set, bool keep_existing, bool allow_unknown /* = false */) {
 	debug_assert( gasteiger_atom_type_set );
 	// This functionality was taken from AtomsCompleteStandardizer
 
@@ -1157,7 +1171,9 @@ assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAto
 			core::Size connections( restype.n_residue_connections_for_atom( restype.atom_index(*iter) ) );
 			// This makes the (probably justifilable) assumption that VDs for the main graph can be converted simply to VDs of the filtered graph.
 			PossibleAtomTypes[ *iter ] = GetPossibleTypesForAtom( real_graph, *iter, gasteiger_atom_type_set, connections);
-			if ( ! PossibleAtomTypes[ *iter ].GetMostStableType() ) {
+			if ( ! allow_unknown && ! PossibleAtomTypes[ *iter ].GetMostStableType() ) {
+				TR.Error << "Cannot find appropriate gasteiger type for atom" << restype.atom_name(*iter) << std::endl;
+				sdf::output_residue( std::cerr, restype );
 				utility_exit_with_message("Cannot find appropriate gasteiger type for atom.");
 			}
 		}
@@ -1173,13 +1189,28 @@ assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAto
 			miter->second.Finalize( real_graph, miter->first );
 			restype.atom(miter->first).gasteiger_atom_type( miter->second.GetMostStableType() );
 			// TODO: reset the formal charge if there isn't one already.
+		} else if ( allow_unknown ) {
+			restype.atom(miter->first).gasteiger_atom_type( 0 ); //
 		} else {
+			TR.Error << "Cannot find appropriate gasteiger type for atom " << restype.atom_name(miter->first) << std::endl;
+			sdf::output_residue( std::cerr, restype );
 			utility_exit_with_message("Cannot find appropriate gasteiger type for atom.");
 		}
 	}
 
 	//# SetConjugationOfBondTypes();
 	//# DetermineUnknownBondOrders();
+
+	// Special case for N-terminal lower connection.
+	// We assume that connections are going to be primarily used by connection to a C-terminal carbonyl
+	// This will turn what is typed separately as an amine (N_Te2TeTeTe) atom into an amide (N_TrTrTrPi2).
+	if ( restype.is_polymer() && restype.lower_connect_id() != 0 ) {
+		VD lower_connect_vd = restype.lower_connect().vertex();
+		assert( lower_connect_vd != ResidueType::null_vertex );
+		if ( restype.atom( lower_connect_vd ).gasteiger_atom_type()->get_name() == "N_Te2TeTeTe" ) {
+			restype.atom( lower_connect_vd ).gasteiger_atom_type( gasteiger_atom_type_set->atom_type("N_TrTrTrPi2") );
+		}
+	}
 }
 
 //! @brief get all atom types matching a given atom considering its bonds
@@ -1238,11 +1269,15 @@ PossibleAtomTypesForAtom GetPossibleTypesForAtom(
 	// We'll just assume that they don't have implict hydrogens.
 	// (For Rosetta any hydrogens should be explicit anyway.)
 	if ( ! utility::is_undefined( e_config.valence_electrons_sp() ) ) {
-		const size_t valence_e( e_config.valence_electrons_sp() - formal_charge);
+		const int valence_e( e_config.valence_electrons_sp() - formal_charge);
 
 		// Find the total number of unpaired valence electrons of *itr_atom
-		const int unpaired_valence_e( std::min( valence_e, e_config.max_valence_electrons_sp() - valence_e));
-		implicit_hydrogens = unpaired_valence_e - nr_e_in_bonds;
+		const int unpaired_valence_e(
+			nr_e_in_bonds > 4
+			? std::max( valence_e, int( e_config.max_valence_electrons_sp()) - valence_e)
+			: std::min( valence_e, int( e_config.max_valence_electrons_sp()) - valence_e)
+		);
+		implicit_hydrogens = std::min( int( 4 - nr_bonds), unpaired_valence_e - int(nr_e_in_bonds));
 	}
 
 	// Note: Most implicit hydrogen issues I've seen have been due to misplaced/missing formal charges on atoms,
