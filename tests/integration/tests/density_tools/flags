@@ -1,0 +1,6 @@
+-in:file:s inputs/fragment.pdb
+-edensity:mapfile inputs/fragment.mrc
+-edensity:mapreso 4.0
+-nresbins 40
+-verbose
+-perres

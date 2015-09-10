@@ -334,7 +334,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 				for ( Size jres=1; jres<=tmpl.total_residue(); ++jres ) {
 					if ( tmpl.residue(jres).is_protein() || tmpl.residue(jres).aa() == core::chemical::aa_vrt ) continue;
 
-					core::Size jres_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(ires) : ires;
+					core::Size jres_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(jres) : jres;
 					if ( symm_info && !symm_info->bb_is_independent(jres_tgt) ) {
 						jres_tgt = symm_info->bb_follows( jres_tgt );
 					}
@@ -653,12 +653,17 @@ create_fragment_set( core::pose::Pose const & pose, core::Size len, core::Size n
 
 	// pick from vall based on template SS + target sequence
 	for ( core::Size j=1; j<=nres_tgt-len+1; ++j ) {
+		bool protein_only = true;
+		for ( core::Size k=j; k<j+len; ++k ) {   // it's alright if the last residue is a cutpoint
+			protein_only &= pose.residue(k).is_protein(  );
+		}
+
 		bool crosses_cut = false;
 		for ( core::Size k=j; k<j+len-1; ++k ) {   // it's alright if the last residue is a cutpoint
 			crosses_cut |= pose.fold_tree().is_cutpoint( k );
 		}
 
-		if ( !crosses_cut ) {
+		if ( !crosses_cut && protein_only ) {
 			core::fragment::FrameOP frame( new core::fragment::Frame( j, len ) );
 			frame->add_fragment(
 				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa(
@@ -684,12 +689,17 @@ create_fragment_set_no_ssbias( core::pose::Pose const & pose, core::Size len, co
 
 	// pick from vall based on template SS + target sequence
 	for ( core::Size j=1; j<=nres_tgt-len+1; ++j ) {
+		bool protein_only = true;
+		for ( core::Size k=j; k<j+len; ++k ) {   // it's alright if the last residue is a cutpoint
+			protein_only &= pose.residue(k).is_protein(  );
+		}
+
 		bool crosses_cut = false;
 		for ( core::Size k=j; k<j+len-1; ++k ) {   // it's alright if the last residue is a cutpoint
 			crosses_cut |= pose.fold_tree().is_cutpoint( k );
 		}
 
-		if ( !crosses_cut ) {
+		if ( !crosses_cut && protein_only ) {
 			core::fragment::FrameOP frame( new core::fragment::Frame( j, len ) );
 			frame->add_fragment(
 				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa(
@@ -721,6 +731,10 @@ create_fragment_set_no_ssbias( core::pose::Pose const & pose, std::set<core::Siz
 		bool legalpos = true;
 		for ( core::Size k=j; k<j+len-1; ++k ) {
 			legalpos &= !pose.fold_tree().is_cutpoint( k );
+		}
+
+		for ( core::Size k=j; k<j+len; ++k ) {
+			legalpos &= pose.residue(k).is_protein(  );
 		}
 
 		// allow 1 position feathering

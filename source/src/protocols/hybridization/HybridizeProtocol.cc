@@ -82,6 +82,7 @@
 
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/util.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -719,9 +720,7 @@ void HybridizeProtocol::add_template(
 	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose);
 	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 4);
 
-	if ( chunks.num_loop() == 0 ) {
-		chunks = contigs;
-	}
+	if ( chunks.num_loop() == 0 ) chunks = contigs;
 
 	TR.Debug << "Chunks from template\n" << chunks << std::endl;
 	TR.Debug << "Contigs from template\n" << contigs << std::endl;
@@ -841,6 +840,9 @@ void HybridizeProtocol::domain_parse_templates(core::Size nres) {
 		for ( Size iloops=1; iloops<=domains_all_templ_[i_template].size(); ++iloops ) {
 			for ( Size iloop=1; iloop<=domains_all_templ_[i_template][iloops].num_loop(); ++iloop ) {
 				Size seqpos_start_pose = templates_[i_template]->pdb_info()->number(domains_all_templ_[i_template][iloops][iloop].start());
+
+				if ( seqpos_start_pose > nres ) continue; // sometimes dna can do this
+
 				domains_all_templ_[i_template][iloops][iloop].set_start( seqpos_start_pose );
 
 				Size seqpos_stop_pose = templates_[i_template]->pdb_info()->number(domains_all_templ_[i_template][iloops][iloop].stop());
@@ -1205,14 +1207,25 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		mm->set_chi ( true );
 		mm->set_jump( true );
 
+		//fpd -- in positions where no fragment insertions are allowed, also allow no minimization
+		if (residue_sample_template_.size() > 0 && residue_sample_abinitio_.size() > 0) {
+			for ( int i=1; i<=(int)nres_tgt; ++i ) {
+				if ( !residue_sample_template_[i] && !residue_sample_abinitio_[i]) {
+					TR << "locking residue " << i << std::endl;
+					mm->set_bb  ( i, false );
+					mm->set_chi ( i, false );
+				}
+			}
+		}
+
+		if ( core::pose::symmetry::is_symmetric(pose) ) {
+			core::pose::symmetry::make_symmetric_movemap( pose, *mm );
+		}
+
 		// stage "2.5" .. minimize with centroid energy + full-strength cart bonded
 		if ( !option[cm::hybridize::skip_stage2]() ) {
 			core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 			core::optimization::CartesianMinimizer minimizer;
-			core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-			if ( core::pose::symmetry::is_symmetric(pose) ) {
-				core::pose::symmetry::make_symmetric_movemap( pose, *mm );
-			}
 			Size n_min_cycles =(Size) (200.*stage25_increase_cycles_);
 			options_lbfgs.max_iter(n_min_cycles);
 			(*stage2_scorefxn_)(pose); minimizer.run( pose, *mm, *stage2_scorefxn_, options_lbfgs );
@@ -1222,7 +1235,15 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		if ( batch_relax_ > 0 ) {
 			// set disulfides before going to FA
 			if ( disulf_file_.length() > 0 ) {
-				// manual disulfide
+				// delete current disulfides
+				for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+					if ( !pose.residue(i).is_protein() ) continue;
+					if ( pose.residue(i).type().is_disulfide_bonded() ) {
+						core::conformation::change_cys_state( i, "CYS", pose.conformation() );
+					}
+				}
+
+				// manually add new ones
 				TR << " add disulfide: " << std::endl;
 				basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].value(disulf_file_);
 				core::pose::initialize_disulfide_bonds(pose);
@@ -1563,7 +1584,7 @@ HybridizeProtocol::parse_my_tag(
 		realign_domains_stage2_ = tag->getOption< bool >( "realign_domains_stage2" );
 	}
 	if ( tag->hasOption( "add_non_init_chunks" ) ) {
-		add_non_init_chunks_ = tag->getOption< core::Size >( "add_non_init_chunks" );
+		add_non_init_chunks_ = tag->getOption< core::Real >( "add_non_init_chunks" );
 	}
 	if ( tag->hasOption( "frag_1mer_insertion_weight" ) ) {
 		frag_1mer_insertion_weight_ = tag->getOption< core::Real >( "frag_1mer_insertion_weight" );

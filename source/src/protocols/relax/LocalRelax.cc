@@ -240,16 +240,6 @@ LocalRelax::get_neighbor_graph(
 
 	core::Size nres = pose.total_residue();
 
-	// make pose polyA
-	Pose pose_working = pose;
-	utility::vector1< Size > protein_residues;
-	for ( Size i=1, i_end = nres; i<= i_end; ++i ) {
-		if ( pose.residue( i ).is_protein() ) {
-			protein_residues.push_back( i );
-		}
-	}
-	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose( "ALA", pose_working, protein_residues, false, false, true );
-
 	neighbor.clear();
 	neighbor.resize( nres );
 
@@ -258,16 +248,23 @@ LocalRelax::get_neighbor_graph(
 		neighbor[i].resize(nres, false);
 		neighbor[i][i] = true;
 
-		conformation::Residue const & rsd1( pose_working.residue( i ) );
+		conformation::Residue const & rsd1( pose.residue( i ) );
 		for ( Size j=1, j_end = nres; j<= j_end; ++j ) {
-			conformation::Residue const & rsd2( pose_working.residue( j ) );
+			conformation::Residue const & rsd2( pose.residue( j ) );
 
 			if ( i==j ) continue;
 			if ( !rsd1.is_protein() || !rsd2.is_protein() ) continue;
 
-			core::Real dist = (rsd1.atom("CB").xyz() - rsd2.atom("CB").xyz()).length();
-			core::Real angle1 = numeric::angle_degrees(rsd1.atom("CA").xyz(), rsd1.atom("CB").xyz(), rsd2.atom("CB").xyz() ) ;
-			core::Real angle2 = numeric::angle_degrees(rsd1.atom("CB").xyz(), rsd2.atom("CB").xyz(), rsd2.atom("CA").xyz() ) ;
+			core::Real dist, angle1, angle2;
+
+			if (rsd1.aa() == core::chemical::aa_gly || rsd2.aa() == core::chemical::aa_gly) {
+				dist = (rsd1.atom("CA").xyz() - rsd2.atom("CA").xyz()).length() - 2.8;
+				angle1 = angle2 = 180.0;
+			} else {
+				dist = (rsd1.atom("CB").xyz() - rsd2.atom("CB").xyz()).length();
+				angle1 = numeric::angle_degrees(rsd1.atom("CA").xyz(), rsd1.atom("CB").xyz(), rsd2.atom("CB").xyz() ) ;
+				angle2 = numeric::angle_degrees(rsd1.atom("CB").xyz(), rsd2.atom("CB").xyz(), rsd2.atom("CA").xyz() ) ;
+			}
 
 			core::Real angle_tgt = K*exp(b*dist);
 
@@ -329,7 +326,7 @@ LocalRelax::parse_my_tag(
 		utility::vector1< std::string > ramp_schedule_strs = utility::string_split ( ramp_schedule_str, ',' );
 		ramp_schedule_.clear();
 		for ( core::Size i=1; i<= ramp_schedule_strs.size(); ++i ) {
-			ramp_schedule_.push_back( atoi(ramp_schedule_strs[i].c_str()) );
+			ramp_schedule_.push_back( atof(ramp_schedule_strs[i].c_str()) );
 		}
 		runtime_assert( ramp_schedule_.size() >= 1);
 	}

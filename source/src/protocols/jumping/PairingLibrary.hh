@@ -21,6 +21,7 @@
 #define INCLUDED_protocols_jumping_PairingLibrary_hh
 
 // Unit Headers
+#include <protocols/jumping/PairingLibrary.fwd.hh>
 
 // Package Headers
 

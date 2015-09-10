@@ -521,9 +521,13 @@ protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose) {
 	using protocols::loops::Loops;
 	Loops chunks;
 
+	//fpd don't include ligand
+	core::Size nres = pose.total_residue();
+	while ( nres>1 && !pose.residue(nres).is_protein() ) nres--;
+
 	Loop new_loop;
 	new_loop.set_start(1);
-	new_loop.set_stop(pose.total_residue());
+	new_loop.set_stop(nres);
 	chunks.add_loop(new_loop);
 
 	chunks = split_by_resSeq(pose, chunks);

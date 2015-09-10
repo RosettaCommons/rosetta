@@ -121,7 +121,8 @@ sources = {
 		"docking_protocol",
 	],
 	"public/electron_density": [
-		"loops_from_density",
+		"denovo_density",
+		"density_tools",
 		"mr_protocols",
 	],
 	"public/enzdes": [

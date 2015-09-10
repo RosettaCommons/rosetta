@@ -136,7 +136,7 @@ private:
 	core::Size max_registry_shift_;
 
 	bool add_hetatm_, realign_domains_, realign_domains_stage2_, no_global_frame_, linmin_only_;
-	core::Size add_non_init_chunks_;
+	core::Real add_non_init_chunks_;
 	bool seqfrags_only_, nofragbias_, skip_long_min_;
 	core::Real hetatm_self_cst_weight_, hetatm_prot_cst_weight_;
 	core::scoring::ScoreFunctionOP stage1_scorefxn_, stage2_scorefxn_, fa_scorefxn_;

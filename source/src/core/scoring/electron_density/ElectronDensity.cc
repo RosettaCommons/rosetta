@@ -405,199 +405,44 @@ numeric::xyzVector<core::Real> ElectronDensity::dens_grad (
 }
 
 //////////////////////
-// poseSHT
-// read into pose
-// return poseCoefR, poseCoefI, pose_CenterOfMass (pre_trans)
-numeric::xyzVector< core::Real > ElectronDensity::poseSHT (
-	pose::Pose const &pose,
-	core::Size &nRsteps,
-	ObjexxFCL::FArray3D< double > &sigR,
-	ObjexxFCL::FArray3D< double > &poseCoefR,
-	ObjexxFCL::FArray3D< double > &poseCoefI,
-	core::Size bandwidth )
-{
+// mapSphericalSamples
+// - resample the map in spherical slices around a pose
+void ElectronDensity::mapSphericalSamples (
+	ObjexxFCL::FArray3D< double > &mapShellR,
+	core::Size nRsteps, core::Real delR, core::Size B,
+	numeric::xyzVector< core::Real > center
+) {
 
-	core::Size B=bandwidth; // should be controllable
-	core::Real delRsteps=2.0;
-
-	// get nRsteps from approximate radius and center of pose
-	utility::vector1< numeric::xyzVector< Real > > atmList;
-	numeric::xyzVector< Real > massSum(0.0,0.0,0.0);
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
-		conformation::Residue const & rsd( pose.residue(i) );
-		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
-		// use every atom ...
-		for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
-			conformation::Atom const & atom( rsd.atom(j) );
-			atmList.push_back(atom.xyz());
-			massSum += atom.xyz();
-		}
-	}
-	int nAtms=atmList.size();
-	massSum /= nAtms; // center_of_mass = mass_sum / nAtms
-	core::Real maxSize = 0;
-	for ( Size i=1; i<=atmList.size(); ++i ) {
-		maxSize = std::max( maxSize, massSum.distance_squared(atmList[i]) );
-	}
-	maxSize = std::sqrt( maxSize )+std::min(ATOM_MASK, 5.0);
-	//nRsteps = (int)std::floor(maxSize/delRsteps + 0.5);
-
-
-	// initialize the SHT (Spherical Harmonic Transform)
-	//numeric::fourier::SHT SOFT(B, nRsteps, delRsteps);
-	numeric::fourier::SHT SOFT(B, nRsteps);
-
-	// precompute sines & cosines
-	// wangyr: it's the most time-consuming step
-	utility::vector1<core::Real> cT,cG, sT,sG;
-	cT.resize(2*B); cG.resize(2*B); sT.resize(2*B); sG.resize(2*B);
-	for ( Size t=1; t<=2*B; ++t ) {
-		core::Real theta = (2.0*t-1.0)*M_PI/(4*B);
-		sT[t] = sin(theta);
-		cT[t] = cos(theta);
-	}
-	for ( Size p=1; p<=2*B; ++p ) {
-		core::Real phi = (2.0*p-2.0)*M_PI/(2*B);
-		sG[p] = sin(phi);
-		cG[p] = cos(phi);
-	}
-
-	//////////////////
-	// pose -> spherical harmonics
-	// 1. one models each atom with a Gaussian sphere of density
-	// 2. interpolate this calculated density in cencentric spherical shells
-	// (extending out to D Ang in 1 Ang steps)
-	//////////////////
-	core::Real k=square(M_PI/reso); // the higher resolution (the smaller the number, the broader the density map would be)
-	core::Real C=pow(k/M_PI,1.5);
-
-	sigR.dimension(  2*B, 2*B, nRsteps );
-	sigR = 0.0;
-
-	// for each atom
-	for ( int i=1; i<=nAtms; ++i ) {
-		atmList[i] -= massSum;
-
-		// wangyr: this is for rare cases where in crystallographic density sometimes they have some clashes ( atomR < 1e-5 )
-		core::Real atomR = atmList[i].length();
-		if ( atomR < 1e-5 ) {
-			// uniform contribution to inner shells
-			for ( Size ridx=1; ridx<=nRsteps; ++ridx ) {
-				core::Real atomD = ridx * delRsteps;
-				if ( atomD < ATOM_MASK ) {
-					core::Real atomH = C * exp(-k*atomD*atomD); // <-- this is the place to calculate density
-					for ( Size t=1; t<=2*B; ++t ) {
-						for ( Size p=1; p<=2*B; ++p ) {
-							sigR(p,t,ridx) += atomH;
-						}
-					}
-				}
-			}
-			continue;
-		}
-		// wangyr: the place where it's working
-		core::Real beta = acos( atmList[i][2] / atomR );
-		core::Real gamma = atan2( atmList[i][0] , atmList[i][1] );   // x and y switched from usual convention for SOFT
-
-		core::Real st1 = sin(beta);
-		core::Real sg1 = sin(gamma);
-		core::Real ct1 = cos(beta);
-		core::Real cg1 = cos(gamma);
-
-		for ( Size ridx=1; ridx<=nRsteps; ++ridx ) {
-			core::Real shellR = ridx * delRsteps;
-			for ( Size t=1; t<=2*B; ++t ) {
-				core::Real minAtomD =  atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]+ct1*cT[t]);
-				if ( minAtomD>ATOM_MASK*ATOM_MASK ) continue;
-				for ( Size p=1; p<=2*B; ++p ) {
-					core::Real atomD = atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]*(sg1*sG[p]+cg1*cG[p])+ct1*cT[t]);
-					if ( atomD < ATOM_MASK*ATOM_MASK ) {
-						core::Real atomH = C * exp(-k*atomD);
-						sigR(p,t,ridx) += atomH;
-					}
-				}
-			}
-		}
-	} // loop through each atom
-	SOFT.sharm_transform( sigR , poseCoefR, poseCoefI );
-	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
-		ElectronDensity(sigR, 1.0, numeric::xyzVector< core::Real >(0,0,0), false).writeMRC( "Pose_sigR.mrc" );
-	}
-
-	return -massSum;
-}
-
-
-//////////////////////
-// mapSHT
-// - sample map and do spherical harmonic
-// - given fragment poseCoefR poseCoefI, calculate the correlation score between SphericalHarmonic_pose and SphericalHarmonic_map
-core::Real ElectronDensity::mapSHT (
-	core::Real const & no_density_score,
-	core::Size & nRsteps,
-	double &map_s,
-	double &map_s2,
-	double &pose_s,
-	double &pose_s2,
-	ObjexxFCL::FArray3D< double > & poseCoefR,
-	ObjexxFCL::FArray3D< double > & poseCoefI,
-	numeric::xyzMatrix<core::Real> & rotation,
-	numeric::xyzVector<core::Real> & pre_trans,
-	numeric::xyzVector<core::Real> & post_trans,
-	numeric::xyzVector<core::Real> MyCenterOfMass,
-	core::Size bandwidth )
-{
 	// make sure map is loaded
 	if ( !isLoaded ) {
-		TR << "![ ERROR ]  ElectronDensity::fastAlignPose called but no map is loaded!" << std::endl;
+		TR << "![ ERROR ]  ElectronDensity::mapSHT called but no map is loaded!" << std::endl;
 		exit(1);
 	}
 
-	// initialize the SHT (Spherical Harmonic Transform)
-	core::Size B=bandwidth;
-	core::Real delRsteps=2.0;
-
-	//numeric::fourier::SHT SOFT(B, nRsteps, delRsteps);
-	numeric::fourier::SHT SOFT(B, nRsteps);
-	ObjexxFCL::FArray3D< double > mapCoefR, mapCoefI;
-
-	//////////////////
-	// map -> spherical harmonics
-	//////////////////
 	numeric::xyzVector< core::Real > cartOffset, idxX;
 	core::Real theta, phi, r;
-	//ObjexxFCL::FArray3D< double > coeffs_density;
 	if ( coeffs_density_.u1()*coeffs_density_.u2()*coeffs_density_.u3() == 0 ) {
-		spline_coeffs( density , coeffs_density_ ); // density in - get
+		spline_coeffs( density , coeffs_density_ );
 	}
-	ObjexxFCL::FArray3D< double > sigSphSpline;
-	sigSphSpline.dimension(2*B,2*B,nRsteps);
 
-	// override the given centerOfMass from density data
-	// the original centerOfMass ( from density.u1(), density.u2(), density.u3() ) is index coordinate system
-	centerOfMass = MyCenterOfMass;
+	mapShellR.dimension(2*B,2*B,nRsteps);
 
 	// idx_com1: index coord
-	numeric::xyzVector<core::Real> idx_com1 ( centerOfMass[0] ,
-		centerOfMass[1] ,
-		centerOfMass[2] );
-	//std::cout << "idx_com1" << idx_com1 << std::endl;
-	numeric::xyzVector<core::Real> idx_com2 ( centerOfMass[0] + origin[0] - 1 ,
-		centerOfMass[1] + origin[1] - 1 ,
-		centerOfMass[2] + origin[2] - 1 );
-	//std::cout << "idx_com2" << idx_com2 << std::endl;
+	numeric::xyzVector<core::Real> idx_com1 ( center[0] , center[1] , center[2] );
+	numeric::xyzVector<core::Real> idx_com2 ( center[0] + origin[0] - 1 ,
+		center[1] + origin[1] - 1 ,
+		center[2] + origin[2] - 1 );
 
 	// resample
 	for ( Size r_idx=1; r_idx<=nRsteps; ++r_idx ) {
-		r = (core::Real) delRsteps*(r_idx);
-		//TR << "shell radius: " << r << std::endl;
+		r = (core::Real) delR*(r_idx);
 
 		for ( Size th_idx=1; th_idx<=2*B; ++th_idx ) {
 			theta = (2.0*th_idx - 1.0) * M_PI / (4.0*B);
 
 			for ( Size phi_idx=1; phi_idx<=2*B; ++phi_idx ) {
 				phi = (2.0*phi_idx - 2.0) * M_PI / (2.0*B);
-				// reverse X/Y for SOFT
+				// reverse X/Y -- needed for spharm xform
 				cartOffset[1] = r*cos(phi)*sin(theta);
 				cartOffset[0] = r*sin(phi)*sin(theta);
 				cartOffset[2] = r*cos(theta);
@@ -608,79 +453,11 @@ core::Real ElectronDensity::mapSHT (
 					fracX[2]*grid[2] );
 
 				idxX = idxX + idx_com1;
-				// the density map is interpolated on concentric spherical shell about the center of mass of the map
-				sigSphSpline(phi_idx, th_idx, r_idx) = interp_spline( coeffs_density_ , idxX );
 
-				//wangyr
-				//TR << "cartOffset   : " << cartOffset << std::endl;
-				//TR << "fracX        : " << fracX << std::endl;
-				//TR << "grid         : " << grid << std::endl;
-				//TR << "idx_com1     : " << idx_com1 << std::endl;
-				//TR << "idxX         : " << idxX << std::endl;
-				//TR << "interp_spline: " << interp_spline( coeffs_density_ , idxX ) << std::endl;
+				mapShellR(phi_idx, th_idx, r_idx) = interp_spline( coeffs_density_ , idxX );
 			}
 		}
 	}
-	TR << "sampling is done" << std::endl;
-	SOFT.sharm_transform(sigSphSpline, mapCoefR, mapCoefI);
-	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
-		ElectronDensity(sigSphSpline, 1.0, numeric::xyzVector< core::Real >(0,0,0), false).writeMRC( utility::to_string( centerOfMass[0] ) + "." + utility::to_string( centerOfMass[1] ) + "." + utility::to_string( centerOfMass[2] ) + ".sigSphSpline.mrc" );
-	}
-
-	//////////////////////////
-	// find optimal rotation
-	//////////////////////////
-	ObjexxFCL::FArray3D< double > so3_correlation;
-
-	// in order to report s and s2 after matching
-	TR << "SOFT.sph_standardize(mapCoefR, mapCoefI):  ";
-	SOFT.sph_standardize(mapCoefR, mapCoefI, map_s, map_s2);
-
-	// add a filter based on observation: 130411
-	//core::Real map_z_score = ( map_s-dens_min )/dens_stdev;
-	// in order to make the no_density_score value more map independent: use den_mean instead: 140401
-	// core::Real map_z_score = ( map_s-dens_mean )/dens_stdev;
-	//
-	// turn this back 140406
-	core::Real map_z_score = ( map_s-dens_min )/dens_stdev;
-	if ( map_z_score < no_density_score ) {
-		return 0.0;
-	}
-
-	TR << "SOFT.sph_standardize(poseCoefR, poseCoefI): ";
-	SOFT.sph_standardize(poseCoefR, poseCoefI, pose_s, pose_s2);
-
-	SOFT.so3_correlate(so3_correlation, mapCoefR,mapCoefI,  poseCoefR,poseCoefI);
-
-	core::Real maxval = -MAX_FLT, thisVal;
-	int maxloc = -1;
-	// wangyr: loop all the possible rotations 8*B*B
-	for ( int k=0 ; k<8*int(B)*int(B)*int(B) ; ++k ) {
-		thisVal = so3_correlation[k];
-		if ( thisVal >= maxval ) {
-			maxval = thisVal; maxloc = k;
-		}
-	}
-	// best rot
-	SOFT.idx_to_rot(maxloc , rotation);
-
-	// best trans
-	numeric::xyzVector< core::Real > mapCoM( idx_com2[0]/grid[0],idx_com2[1]/grid[1],idx_com2[2]/grid[2] );
-	mapCoM = f2c*mapCoM; // convert from fractional to cartician coordinates
-
-	TR << "Best rotational score of " << maxval << std::endl;
-
-	//pre_trans = -massSum; // center of mass of Pose (cartician space)
-	post_trans = mapCoM;  // center of mass of Map  (cartician space)
-
-	numeric::xyzVector< core::Real> eulerAngles;
-	SOFT.idx_to_euler(maxloc , eulerAngles);
-
-	TR << "   euler_angles = " << eulerAngles[0] << "," <<eulerAngles[1] << "," <<eulerAngles[2]  << std::endl;
-	TR << "   pre_trans = " << pre_trans[0] << "," <<pre_trans[1] << "," <<pre_trans[2]  << std::endl;
-	TR << "   post_trans = " << post_trans[0] << "," <<post_trans[1] << "," <<post_trans[2]  << std::endl;
-
-	return maxval;
 }
 
 
@@ -1852,11 +1629,12 @@ ElectronDensity::maxNominalRes() {
 void
 ElectronDensity::calcRhoC(
 	poseCoords const &pose,
-	core::Real radius,
+	core::Real highres_limit,
 	ObjexxFCL::FArray3D< double > &rhoC,
 	ObjexxFCL::FArray3D< double > &mask,
 	core::Real fixed_mask_B /* = -1 */,
-	core::Real B_upper_limit /* = 600 */ ) {
+	core::Real B_upper_limit /* = 600 */,
+	core::Real force_mask /*=-1*/ ) {
 
 	// get rho_c
 	rhoC.dimension(density.u1() , density.u2() , density.u3());
@@ -1894,6 +1672,11 @@ ElectronDensity::calcRhoC(
 			core::Real mK = sig_j.k( fixed_mask_B, B_upper_limit );
 			core::Real mC = sig_j.C( mK );
 			ATOM_MASK_SQS[i] = (1.0/mK) * (std::log( mC ) - std::log(1e-4));
+		}
+
+		// force mask
+		if ( force_mask>0 ) {
+			ATOM_MASK_SQS[i] = force_mask*force_mask;
 		}
 
 		// TO DO: OPTIONALLY control periodic/nonperiodic boundaries
@@ -1958,7 +1741,7 @@ ElectronDensity::calcRhoC(
 	}
 	std::cout << std::endl;
 
-	if ( radius == 0 ) return;
+	if ( highres_limit == 0 ) return;
 
 	// bandlimit mask at 'radius'
 	ObjexxFCL::FArray3D< std::complex<double> > Fmask;
@@ -1973,7 +1756,7 @@ ElectronDensity::calcRhoC(
 				core::Real S2c =  S2(H,K,L);
 
 				// exp fade
-				core::Real scale = exp(-S2c*(radius*radius));
+				core::Real scale = exp(-S2c*(highres_limit*highres_limit));
 				Fmask(x,y,z) *= scale;
 			}
 		}

@@ -1,0 +1,3 @@
+-mode score
+-in::file::silent inputs/frag.1.silent inputs/frag.2.silent inputs/frag.3.silent inputs/frag.4.silent inputs/frag.5.silent inputs/frag.6.silent inputs/frag.7.silent inputs/frag.8.silent inputs/frag.9.silent
+-scorefile scores

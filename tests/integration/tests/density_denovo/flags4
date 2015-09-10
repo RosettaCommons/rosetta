@@ -1,0 +1,5 @@
+-mode consensus
+-in::file::silent inputs/assembled.1_0001.silent inputs/assembled.1_0002.silent inputs/assembled.1_0003.silent inputs/assembled.1_0004.silent inputs/assembled.1_0005.silent
+-consensus_frac 1.0
+-energy_cut 0.05
+-mute core

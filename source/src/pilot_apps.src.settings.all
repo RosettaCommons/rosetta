@@ -305,12 +305,10 @@ sources = {
 		#"fast_densScore", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"perturb_bbg", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"torsional_potential_corrections", # /* Frank Dimaio,Documentation Location,Demo Location */
-		"density_tools", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"pdb_to_map", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"min_test", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"pdb_gen_cryst", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"cryst_design", # /* Frank Dimaio,Documentation Location,Demo Location */
-		#"cen_hybridize", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"cen_hybridize_ft", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"cen_relax", # /* Frank Dimaio,Documentation Location,Demo Location */
 	],
@@ -729,10 +727,10 @@ sources = {
 		#"fastrelax_replonly",
 		#"minimization_replonly",
 		#"score_jd2_replonly",
-        "place_fragments_into_density",
-        "assemble_placed_fragments",
-        "cal_overlap_scores",
-        "cal_nonoverlap_scores",
+        	#"place_fragments_into_density",
+        	#"assemble_placed_fragments",
+        	#"cal_overlap_scores",
+        	#"cal_nonoverlap_scores",
 	],
 	"pilot/rhiju" : [
 		"rna_test",

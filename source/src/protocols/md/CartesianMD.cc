@@ -365,17 +365,19 @@ CartesianMD::cst_on_pose_simple( pose::Pose &pose ) const
 	using namespace core::scoring::constraints;
 
 	// Remove all the constraints first
-	pose.remove_constraints();
+	//pose.remove_constraints();  // fpd ... move this below!
 
 	// First, add cst_file info into pose
 	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user() ) {
 		TR << "Set constraints from input file..." << std::endl;
+		pose.remove_constraints();
 		scoring::constraints::add_fa_constraints_from_cmdline_to_pose( pose );
 	}
 
 	// Next, set coordinate constraint if specified
 	if ( constrained_ ) {
 		TR << "Set constraints uniformly with stdev: " << cst_sdev_ << std::endl;
+		pose.remove_constraints();
 		Size nrsr( 0 );
 		for ( Size i_res = 1; i_res <= pose.total_residue(); ++i_res ) {
 			std::string resname = pose.residue(i_res).name();
@@ -610,6 +612,7 @@ void CartesianMD::do_minimize( core::pose::Pose &pose,
 		minimizer.run( pose, *movemap(), *scorefxn_, options );
 
 		Real score_after = scorefxn_->score( pose );
+		scorefxn_->show(TR, pose);
 		TR << "Energy before/after Min: " << score_before << " " << score_after << std::endl;
 
 	} else {

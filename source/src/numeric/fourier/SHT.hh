@@ -160,16 +160,7 @@ public:
 
 	/// @brief Standardize coefficients 'sigCoefR' and 'sigCoefI'
 	void sph_standardize( ObjexxFCL::FArray3D< double > & sigCoefR,
-		ObjexxFCL::FArray3D< double > & sigCoefI,
-		double & s,
-		double & s2);
-
-	/// @brief Standardize coefficients 'sigCoefR' and 'sigCoefI'
-	void sph_standardize( ObjexxFCL::FArray3D< double > & sigCoefR,
-		ObjexxFCL::FArray3D< double > & sigCoefI) {
-		double S,S2;
-		sph_standardize( sigCoefR, sigCoefI , S, S2 );
-	}
+		ObjexxFCL::FArray3D< double > & sigCoefI);
 
 	/// @brief Correlate two signals ('sigCoef' and 'tmpCoef') as a function of rotation of 'tmpCoef', result in 'so3_correlation'
 	void so3_correlate( ObjexxFCL::FArray3D< double > & so3_correlation,

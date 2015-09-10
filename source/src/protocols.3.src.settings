@@ -85,6 +85,7 @@ sources = {
 	"protocols/electron_density": [
 		"BfactorFittingMover",
 		"DensityMorphingMover",
+		"DockIntoDensityMover",
 		"ScaleMapIntensities",
 		"ReportFSC",
 		"SetupForDensityScoringMover",

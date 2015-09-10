@@ -104,7 +104,7 @@ BfactorMultifunc::BfactorMultifunc(
 	verbose_(verbose),
 	deriv_check_( deriv_check )
 {
-	B_EPS=0.0001;
+	B_EPS=0.001;
 
 	// map AtomIDs <-> indices
 	core::pose::initialize_atomid_map( atom_indices_, pose_in );
@@ -210,7 +210,6 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 		dens_score -= (moving_atoms_.size()/10.0) * core::scoring::electron_density::getDensityMap().getRSCC(rhoC_, rhoMask_);
 	}
 
-
 	// [[2]]  constraint score
 	core::Real cst_score=0;
 	core::Size nedge=0;
@@ -246,7 +245,13 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 					iru != irue; ++iru ) {
 				core::scoring::EnergyEdge const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
-				core::Size const j( edge->get_second_node_ind() );
+				core::Size const j( edge->get_other_ind(i) );
+				core::Size jasu = j;
+
+				if ( symm_info && !symm_info->bb_is_independent( j ) ) {
+					jasu = symm_info->bb_follows( j );
+				}
+
 				core::conformation::Residue const & rsd2 ( pose_copy.residue(j) );
 				if ( rsd2.aa() == core::chemical::aa_vrt ) continue;
 				core::Size natoms2 = rsd2.nheavyatoms();
@@ -256,8 +261,8 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 					core::Real B_k = pose_copy.pdb_info()->temperature( i, k );
 					if ( atom_indices_[core::id::AtomID(k,i)] == 0 ) continue;
 					for ( core::Size l = 1; l <= natoms2; ++l ) {
-						core::Real B_l = pose_copy.pdb_info()->temperature( j, l );
-						if ( atom_indices_[core::id::AtomID(l,j)] == 0 ) continue;
+						core::Real B_l = pose_copy.pdb_info()->temperature( jasu, l );
+						if ( atom_indices_[core::id::AtomID(l,jasu)] == 0 ) continue;
 
 						core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd2.atom( l ).xyz()).length();
 						if ( radius_exp_ != 1.0 ) dist_kl = std::pow( dist_kl, radius_exp_ );
@@ -275,7 +280,8 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 	if ( verbose_ ) {
 		//core::optimization::Multivec varsCopy = vars;
 		//std::cerr << "[score] evaluated " << natom << " atoms and " << nedge << " edges" << std::endl;
-		std::cerr << "[score] score = " << scorescale_* (wt_dens_*dens_score + wt_adp_*cst_score) << " [ " << dens_score*10.0/moving_atoms_.size() << " , " << cst_score << " ] " << std::endl;
+		std::cerr << "[score] score = " << scorescale_* (wt_dens_*dens_score + wt_adp_*cst_score)
+			<< " [ " << dens_score*10.0/moving_atoms_.size() << " , " << cst_score << " ] " << std::endl;
 	}
 
 	return ( scorescale_* (wt_dens_*dens_score + wt_adp_*cst_score) );
@@ -286,6 +292,7 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 	core::pose::Pose pose_copy = pose_;
 
 	multivec2poseBfacts( vars, pose_copy );
+	dE_dvars.clear();
 	dE_dvars.resize( vars.size(), 0.0 );
 
 	if ( !exact_ ) {
@@ -352,7 +359,13 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 					iru != irue; ++iru ) {
 				core::scoring::EnergyEdge const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
-				core::Size const j( edge->get_second_node_ind() );
+				core::Size const j( edge->get_other_ind(i) );
+				core::Size jasu = j;
+
+				if ( symm_info && !symm_info->bb_is_independent( j ) ) {
+					jasu = symm_info->bb_follows( j );
+				}
+
 				core::conformation::Residue const & rsd2 ( pose_copy.residue(j) );
 				if ( rsd2.aa() == core::chemical::aa_vrt ) continue;
 				core::Size natoms2 = rsd2.nheavyatoms();
@@ -363,15 +376,15 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 					if ( atom_indices_[core::id::AtomID(k,i)] == 0 ) continue;
 
 					for ( core::Size l = 1; l <= natoms2; ++l ) {
-						core::Real B_l = pose_copy.pdb_info()->temperature( j, l );
-						if ( atom_indices_[core::id::AtomID(l,j)] == 0 ) continue;
+						core::Real B_l = pose_copy.pdb_info()->temperature( jasu, l );
+						if ( atom_indices_[core::id::AtomID(l,jasu)] == 0 ) continue;
 
 						core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd2.atom( l ).xyz()).length();
 						if ( radius_exp_ != 1.0 ) dist_kl = std::pow( dist_kl, radius_exp_ );
 
 						if ( dist_kl < rmax_ ) {
 							core::Size atomK = atom_indices_[ core::id::AtomID( k,i ) ];
-							core::Size atomL = atom_indices_[ core::id::AtomID( l,j ) ];
+							core::Size atomL = atom_indices_[ core::id::AtomID( l,jasu ) ];
 
 							core::Real cst_kl = (B_k-B_l)*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS)*(B_k+B_l+B_EPS) );
 							core::Real dcst_dbk = -cst_kl + 2*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
@@ -389,7 +402,6 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 
 	if ( verbose_ ) {
 		core::Real score = (*this)(vars);
-		//std::cerr << "[deriv] evaluated " << vars.size() << " atoms and " << nedge << " edges" << std::endl;
 		std::cerr << "[deriv] score = " << score << std::endl;
 	}
 }
@@ -399,19 +411,20 @@ BfactorMultifunc::dump( core::optimization::Multivec const & x1, core::optimizat
 	// debug
 	if ( deriv_check_ ) {
 		core::optimization::Multivec varsCopy = x1;
+
 		core::optimization::Multivec dE_dvars;
 		this->dfunc(x1,dE_dvars);
 
 		core::Real score = (*this)(x1);
 		std::cerr << "[deriv] score = " << score << std::endl;
 		for ( core::Size i = 1; i <= x1.size(); ++i ) {
-			varsCopy[i]+=0.0001;
+			varsCopy[i]+=B_EPS;
 			core::Real scorep = (*this)(varsCopy);
-			varsCopy[i]-=0.0002;
+			varsCopy[i]-=2*B_EPS;
 			core::Real scoren = (*this)(varsCopy);
-			varsCopy[i]+=0.0001;
+			varsCopy[i]+=B_EPS;
 			std::cerr << "[deriv] x:" << i << "  B: " << x1[i] << "  A: " << dE_dvars[i] << "  N: "
-				<< (scorep-scoren)/0.0002 << "    r: " << 0.0002*dE_dvars[i]/(scorep-score) << std::endl;
+				<< (scorep-scoren)/2*B_EPS << "    r: " << 2*B_EPS*dE_dvars[i]/(scorep-scoren) << std::endl;
 		}
 	}
 }
@@ -461,7 +474,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 		pose.pdb_info( newinfo );
 	}
 
-	core::optimization::MinimizerOptions options( minimizer_, 1e-4, true, false, false );
+	core::optimization::MinimizerOptions options( minimizer_, 1e-4, true, deriv_check_, deriv_check_ );
 	options.max_iter(max_iter_);
 
 	// set up optimizer

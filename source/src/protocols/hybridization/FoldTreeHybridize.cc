@@ -390,11 +390,17 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	TR.Debug << "Chunks from initial template: " << std::endl;
 	TR.Debug << my_chunks << std::endl;
 
+	TR << "Steal chunks with rate = " << add_non_init_chunks_ << std::endl;
+
 	if ( add_non_init_chunks_ > 0 ) {
 		// (b) probabilistically sampled chunks from all other templates _outside_ these residues
 		utility::vector1< std::pair< core::Real, protocols::loops::Loop > >  wted_insertions_to_consider;
+		core::Size ntempl_with_chunks=0;
 		for ( core::Size itempl = 1; itempl<=template_chunks_.size(); ++itempl ) {
 			if ( itempl == initial_template_index_ ) continue;
+
+			if ( template_chunks_[itempl].num_loop() > 0 ) ntempl_with_chunks++;
+
 			for ( core::Size icontig = 1; icontig<=template_chunks_[itempl].num_loop(); ++icontig ) {
 				// remap
 				Size seqpos_start_target = template_poses_[itempl]->pdb_info()->number(template_chunks_[itempl][icontig].start());
@@ -414,38 +420,42 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 			}
 		}
 
-		// (c) randomly shuffle, then add each with given prob
-		TR.Debug << "Chunks from all template: " << std::endl;
-		TR.Debug << my_chunks << std::endl;
-		numeric::random::random_permutation( wted_insertions_to_consider, numeric::random::rg() );
+		if ( ntempl_with_chunks > 0 ) {
+			//core::Size nchunks = add_non_init_chunks_ * (wted_insertions_to_consider.size() / ntempl_with_chunks);
 
-		core::Size nchunks_taken = 0;
-		boost::math::poisson_distribution<> P( (core::Real) add_non_init_chunks_ );
-		core::Real selector = numeric::random::uniform();
+			// (c) randomly shuffle, then add each with given prob
+			TR.Debug << "Chunks from all template: " << std::endl;
+			TR.Debug << my_chunks << std::endl;
+			numeric::random::random_permutation( wted_insertions_to_consider, numeric::random::rg() );
 
-		for ( Size i=1; i<=wted_insertions_to_consider.size(); ++i ) {
-			// on average we want to take 'add_non_init_chunks_' chunks
-			// -- poisson distribution
-			if ( selector < boost::math::cdf(P,nchunks_taken) ) {
-				TR << "STOP after chunk " << nchunks_taken << " sel=" << selector << " cdf=" << boost::math::cdf(P,nchunks_taken) << std::endl;
-				break;
+			core::Size nchunks_taken = 0;
+			boost::math::poisson_distribution<> P( (core::Real) add_non_init_chunks_ );
+			core::Real selector = numeric::random::uniform();
+
+			for ( Size i=1; i<=wted_insertions_to_consider.size(); ++i ) {
+				// on average we want to take 'add_non_init_chunks_' chunks
+				// -- poisson distribution
+				if ( selector < boost::math::cdf(P,nchunks_taken) ) {
+					TR << "STOP after chunk " << nchunks_taken << " sel=" << selector << " cdf=" << boost::math::cdf(P,nchunks_taken) << std::endl;
+					break;
+				}
+
+				// ensure the insert is still valid
+				bool uncovered = true;
+				for ( Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop() && uncovered ; ++j ) {
+					uncovered &= !template_mask[j];
+				}
+
+				if ( !uncovered ) continue;
+
+				TR << "Steal chunk: " << wted_insertions_to_consider[i].second.start() << "," << wted_insertions_to_consider[i].second.stop() << std::endl;
+				my_chunks.add_loop( wted_insertions_to_consider[i].second );
+				for ( Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop(); ++j ) {
+					template_mask[j] = true;
+				}
+
+				nchunks_taken++;
 			}
-
-			// ensure the insert is still valid
-			bool uncovered = true;
-			for ( Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop() && uncovered ; ++j ) {
-				uncovered &= !template_mask[j];
-			}
-
-			if ( !uncovered ) continue;
-
-			TR << "Steal chunk: " << wted_insertions_to_consider[i].second.start() << "," << wted_insertions_to_consider[i].second.stop() << std::endl;
-			my_chunks.add_loop( wted_insertions_to_consider[i].second );
-			for ( Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop(); ++j ) {
-				template_mask[j] = true;
-			}
-
-			nchunks_taken++;
 		}
 	}
 

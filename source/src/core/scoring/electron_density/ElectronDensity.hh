@@ -114,33 +114,12 @@ public:
 	/// @brief Align a pose about a 2D rotation axis
 	numeric::xyzMatrix< core::Real > rotAlign2DPose( core::pose::Pose const &pose, std::string axis );
 
-	//
-	numeric::xyzVector< core::Real >
-	poseSHT(
-		pose::Pose const &pose,
-		core::Size &nRsteps,
-		ObjexxFCL::FArray3D< double > &sigR,
-		ObjexxFCL::FArray3D< double > &poseCoefR,
-		ObjexxFCL::FArray3D< double > &poseCoefI,
-		core::Size bandwidth=32
-	);
-
-	//
-	core::Real
-	mapSHT(
-		core::Real const & no_density_score,
-		core::Size &nRsteps,
-		double &map_s,
-		double &map_s2,
-		double &pose_s,
-		double &pose_s2,
-		ObjexxFCL::FArray3D< double > &poseCoefR,
-		ObjexxFCL::FArray3D< double > &poseCoefI,
-		numeric::xyzMatrix<core::Real> &rotation,
-		numeric::xyzVector<core::Real> &pre_trans,
-		numeric::xyzVector<core::Real> &post_trans,
-		numeric::xyzVector<core::Real> MyCenterOfMass,
-		core::Size bandwidth=32
+	/// @brief resample the map in spherical shells around a pose
+	void
+	mapSphericalSamples(
+		ObjexxFCL::FArray3D< double > &mapShellR,
+		core::Size nRsteps, core::Real delR, core::Size B,
+		numeric::xyzVector< core::Real > center
 	);
 
 	/// @brief Quickly matches a centroid pose into a low-resolution density map
@@ -224,11 +203,12 @@ public:
 	void
 	calcRhoC(
 		poseCoords const &pose,
-		core::Real radius,
+		core::Real highres_limit,
 		ObjexxFCL::FArray3D< double > &rhoC,
 		ObjexxFCL::FArray3D< double > &mask,
 		core::Real forceB = -1.0,
-		core::Real B_upper_limit = 600 );
+		core::Real B_upper_limit = 600,
+		core::Real force_mask = -1.0 );
 
 	core::Real
 	maxNominalRes();
@@ -548,6 +528,15 @@ public:
 	numeric::xyzVector<core::Real> get_cellDimensions() const { return cellDimensions; }
 	//ObjexxFCL::FArray3D< float > get_density_data_array() const { return density; }
 
+	// get S2 (reciprocal space dist^2)
+	double S2(int h, int k, int l) {
+		return ( h*h*RcellDimensions[0]*RcellDimensions[0]
+			+ k*k*RcellDimensions[1]*RcellDimensions[1]
+			+ l*l*RcellDimensions[2]*RcellDimensions[2]
+			+ 2*h*k*RcellDimensions[0]*RcellDimensions[1]*cosRcellAngles[2]
+			+ 2*h*l*RcellDimensions[0]*RcellDimensions[2]*cosRcellAngles[1]
+			+ 2*k*l*RcellDimensions[1]*RcellDimensions[2]*cosRcellAngles[0] );
+	}
 
 	///////////
 	// PRIVATE MEMBER FUNCTIONS
@@ -564,7 +553,6 @@ private:
 	// helper functions for map statistics
 	void computeGradients();
 	void computeStats();
-	int suggestRadius();
 
 	// helper functions for symmetry
 	void initializeSymmOps( utility::vector1< std::string > const & symList );
@@ -582,16 +570,6 @@ private:
 	// compute if not already computed
 	utility::vector1< ObjexxFCL::FArray3D< std::complex<double> > * > getFdrhoc( OneGaussianScattering S );
 
-	// get S2 (reciprocal space dist^2)
-	double S2(int h, int k, int l) {
-		return ( h*h*RcellDimensions[0]*RcellDimensions[0]
-			+ k*k*RcellDimensions[1]*RcellDimensions[1]
-			+ l*l*RcellDimensions[2]*RcellDimensions[2]
-			+ 2*h*k*RcellDimensions[0]*RcellDimensions[1]*cosRcellAngles[2]
-			+ 2*h*l*RcellDimensions[0]*RcellDimensions[2]*cosRcellAngles[1]
-			+ 2*k*l*RcellDimensions[1]*RcellDimensions[2]*cosRcellAngles[0] );
-	}
-
 	// volume of 1 voxel
 	double voxel_volume( ) {
 		return V / (grid[0]*grid[1]*grid[2]);
@@ -604,7 +582,7 @@ private:
 	// do we have a map loaded?
 	bool isLoaded;
 
-	// the density data array
+	// the density data array and spline coeffs
 	ObjexxFCL::FArray3D< float > density;
 	ObjexxFCL::FArray3D< double > coeffs_density_;
 
@@ -622,7 +600,7 @@ private:
 	bool legacy_;
 
 	bool DensScoreInMinimizer, ExactDerivatives;
-	core::Real NUM_DERIV_H, NUM_DERIV_H_CEN, PattersonB, PattersonMinR, PattersonMaxR;
+	core::Real NUM_DERIV_H, NUM_DERIV_H_CEN, PattersonMinR, PattersonMaxR;
 	ObjexxFCL::FArray3D< float > PattersonEpsilon;
 
 	// (patterson only) map resamped on p_calc grid
@@ -683,7 +661,7 @@ private:
 
 	// cache scoring-related statistics
 	utility::vector1<core::Real>  CCs;
-	core::Real CC_cen, CC_aacen, CC_pat;
+	core::Real CC_cen, CC_aacen;
 	utility::vector1< numeric::xyzVector< core::Real > > dCCdxs_cen;
 	utility::vector1< utility::vector1< numeric::xyzVector< core::Real > > > dCCdxs_aacen;
 	utility::vector1< utility::vector1< numeric::xyzVector< core::Real > > > dCCdxs_res;

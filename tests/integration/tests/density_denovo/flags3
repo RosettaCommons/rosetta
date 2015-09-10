@@ -1,0 +1,9 @@
+-mode assemble
+-nstruct 1
+-in::file::silent inputs/frag.1.silent inputs/frag.2.silent inputs/frag.3.silent inputs/frag.4.silent inputs/frag.5.silent inputs/frag.6.silent inputs/frag.7.silent inputs/frag.8.silent inputs/frag.9.silent
+-scorefile scores
+-assembly_weights 4 20 6
+-null_weight -150
+-out:file:silent assembled.1
+-scale_cycles 0.1
+-mute core

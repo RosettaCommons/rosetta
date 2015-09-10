@@ -555,8 +555,8 @@ void SHT::sharm_transform(
 		forwardS2( sigRslice, sigCoefRslice, sigCoefIslice);
 
 		for ( int i=0; i<bw*bw; ++i ) {
-			sigCoefR[r_idx*4*bw*bw + i] = sigCoefRslice[i];
-			sigCoefI[r_idx*4*bw*bw + i] = sigCoefIslice[i];
+			sigCoefR[r_idx*bw*bw + i] = sigCoefRslice[i];
+			sigCoefI[r_idx*bw*bw + i] = sigCoefIslice[i];
 		}
 	}
 }
@@ -580,8 +580,8 @@ void SHT::sharm_invTransform(
 
 	for ( int r_idx=0; r_idx<nRsteps; ++r_idx ) {
 		for ( int i=0; i<bw*bw; ++i ) {
-			sigCoefRslice[i] = sigCoefR[r_idx*4*bw*bw + i];
-			sigCoefIslice[i] = sigCoefI[r_idx*4*bw*bw + i];
+			sigCoefRslice[i] = sigCoefR[r_idx*bw*bw + i];
+			sigCoefIslice[i] = sigCoefI[r_idx*bw*bw + i];
 		}
 
 		inverseS2 ( sigCoefRslice, sigCoefIslice, sigRslice );
@@ -596,9 +596,7 @@ void SHT::sharm_invTransform(
 // wangyr: report s and s2 in order to debug
 void SHT::sph_standardize(
 	ObjexxFCL::FArray3D< double > & sigCoefR,
-	ObjexxFCL::FArray3D< double > & sigCoefI,
-	double & s,
-	double & s2
+	ObjexxFCL::FArray3D< double > & sigCoefI
 )
 {
 	// don't care if init() has been called
@@ -606,7 +604,7 @@ void SHT::sph_standardize(
 
 	double b_scaleFactor = sqrt(1.0/sqrt(0.015*B)); // this normalizes map s.t. correlation with itself ~ 1
 
-	double wt=0;
+	double wt=0, s, s2;
 	s = s2 = 0;
 
 	for ( int r_idx=1; r_idx<=R; ++r_idx ) {
@@ -1093,7 +1091,6 @@ SHT::setup_Pmls( ) {
 			}
 		}
 	}
-
 
 	// transpose
 	for ( int m=0; m<bw; m++ ) {

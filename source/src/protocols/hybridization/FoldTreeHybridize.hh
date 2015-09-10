@@ -101,7 +101,7 @@ public:
 	void set_stage1_2_cycles(core::Size stage1_2_cycles_in) { stage1_2_cycles_=stage1_2_cycles_in; }
 	void set_stage1_3_cycles(core::Size stage1_3_cycles_in) { stage1_3_cycles_=stage1_3_cycles_in; }
 	void set_stage1_4_cycles(core::Size stage1_4_cycles_in) { stage1_4_cycles_=stage1_4_cycles_in; }
-	void set_add_non_init_chunks(core::Size add_non_init_chunks_in) { add_non_init_chunks_=add_non_init_chunks_in; }
+	void set_add_non_init_chunks(core::Real add_non_init_chunks_in) { add_non_init_chunks_=add_non_init_chunks_in; }
 	void set_add_hetatm(
 		bool add_hetatm_in,
 		core::Real hetatm_self_cst_weight_in,
@@ -198,7 +198,7 @@ private:
 
 	core::Real chunk_insertion_weight_;
 
-	core::Size add_non_init_chunks_;
+	core::Real add_non_init_chunks_;
 	bool add_hetatm_;
 	core::Real hetatm_self_cst_weight_, hetatm_prot_cst_weight_;
 	core::Real frag_weight_aligned_; // fragment insertion to the aligned region, vs. unaligned region

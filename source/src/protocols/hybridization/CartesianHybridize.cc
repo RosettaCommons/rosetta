@@ -502,6 +502,15 @@ CartesianHybridize::apply( Pose & pose ) {
 	mm.set_chi ( true );
 	mm.set_jump( true );
 
+	//fpd -- in positions where no fragment insertions are allowed, also allow no minimization
+	for ( int i=1; i<=(int)nres_nonvirt; ++i ) {
+		if ( !residue_sample_template_[i] && !residue_sample_abinitio_[i]) {
+			TR << "locking residue " << i << std::endl;
+			mm.set_bb  ( i, false );
+			mm.set_chi ( i, false );
+		}
+	}
+
 	//fpd  --  this should really be automated somewhere
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::pose::symmetry::make_symmetric_movemap( pose, mm );

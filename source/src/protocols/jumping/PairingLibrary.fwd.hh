@@ -29,16 +29,16 @@ class PairingLibrary;
 class StandardPairingLibrary;
 
 // Types
-typedef  utility::pointer::owning_ptr< BasePairingLibrary >  BasePairingLibraryOP;
-typedef  utility::pointer::owning_ptr< BasePairingLibrary const >  BasePairingLibraryCOP;
+typedef  utility::pointer::shared_ptr< BasePairingLibrary >  BasePairingLibraryOP;
+typedef  utility::pointer::shared_ptr< BasePairingLibrary const >  BasePairingLibraryCOP;
 
 // Types
-typedef  utility::pointer::owning_ptr< PairingLibrary >  PairingLibraryOP;
-typedef  utility::pointer::owning_ptr< PairingLibrary const >  PairingLibraryCOP;
+typedef  utility::pointer::shared_ptr< PairingLibrary >  PairingLibraryOP;
+typedef  utility::pointer::shared_ptr< PairingLibrary const >  PairingLibraryCOP;
 
 // Types
-typedef  utility::pointer::owning_ptr< StandardPairingLibrary >  StandardPairingLibraryOP;
-typedef  utility::pointer::owning_ptr< StandardPairingLibrary const >  StandardPairingLibraryCOP;
+typedef  utility::pointer::shared_ptr< StandardPairingLibrary >  StandardPairingLibraryOP;
+typedef  utility::pointer::shared_ptr< StandardPairingLibrary const >  StandardPairingLibraryCOP;
 
 
 } // namespace jumping
