@@ -124,7 +124,7 @@ LayerDesignOperation::LayerDesignOperation():
 	ignore_pikaa_natro_( false ),
 	srbl_( toolbox::SelectResiduesByLayerOP( new toolbox::SelectResiduesByLayer ) ),
 	blueprint_( /* NULL */ ),
-	use_symmetry_(false)
+	use_symmetry_(true)
 {
 	set_default_layer_residues();
 }
@@ -142,7 +142,7 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	ignore_pikaa_natro_( false ),
 	srbl_( toolbox::SelectResiduesByLayerOP( new toolbox::SelectResiduesByLayer ) ),
 	blueprint_( /* NULL */ ),
-	use_symmetry_(false)
+	use_symmetry_(true)
 {
 	design_layer( dsgn_core, dsgn_boundary, dsgn_surface );
 	set_default_layer_residues();
@@ -622,7 +622,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	// symmetry check
 	if ( core::pose::symmetry::is_symmetric( input_pose ) ) {
 		if ( use_symmetry() ) {
-			TR << "Symmetry detected; will be used in defining layers." << std::endl;
+			TR << "Symmetry detected; will be used in defining layers.  (To disable this, set \"use_symmetry=false\" in RosettaScripts.)" << std::endl;
 			pose=input_pose;
 		} else {
 			TR << "Symmetry detected, extracting asymmetric unit." << std::endl;
@@ -895,7 +895,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 		blueprint_ = protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( tag->getOption< std::string >("blueprint") ) );
 	}
 
-	set_use_symmetry( tag->getOption<bool>("use_symmetry", false) );
+	set_use_symmetry( tag->getOption<bool>("use_symmetry", true) );
 
 	set_verbose( tag->getOption< bool >( "verbose", false ) );
 	set_restrict_restypes( tag->getOption< bool >( "restrict_restypes", true ) );
