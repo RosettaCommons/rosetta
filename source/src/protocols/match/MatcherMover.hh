@@ -20,7 +20,7 @@
 // Package headers
 
 // Project headers
-#include <protocols/moves/Mover.hh>
+#include <protocols/rosetta_scripts/MultiplePoseMover.hh>
 
 #include <core/types.hh>
 
@@ -33,7 +33,7 @@
 namespace protocols {
 namespace match {
 
-class MatcherMover : public protocols::moves::Mover {
+class MatcherMover : public protocols::rosetta_scripts::MultiplePoseMover {
 public:
 
 	typedef core::Real Real;
@@ -94,6 +94,8 @@ public:
 	set_match_positions(
 		utility::vector1< core::Size > const & match_positions );
 
+protected:
+	virtual bool process_pose( core::pose::Pose &, utility::vector1 < core::pose::PoseOP > & );
 
 private:
 

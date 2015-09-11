@@ -71,7 +71,7 @@ MatcherMoverCreator::mover_name()
 }
 
 MatcherMover::MatcherMover( bool incorporate_matches_into_pose ):
-	Mover( "MatcherMover" ),
+	protocols::rosetta_scripts::MultiplePoseMover(),
 	incorporate_matches_into_pose_( incorporate_matches_into_pose ),
 	ligres_(/* NULL */)
 {
@@ -82,8 +82,7 @@ MatcherMover::MatcherMover( bool incorporate_matches_into_pose ):
 MatcherMover::~MatcherMover(){}
 
 MatcherMover::MatcherMover( MatcherMover const & rval ) :
-	//utility::pointer::ReferenceCount(),
-	Mover( rval ),
+	protocols::rosetta_scripts::MultiplePoseMover( rval ),
 	incorporate_matches_into_pose_( rval.incorporate_matches_into_pose_ ),
 	ligres_( rval.ligres_ ),
 	match_positions_( rval.match_positions_ )
@@ -101,11 +100,15 @@ MatcherMover::MoverOP MatcherMover::fresh_instance() const
 	return MatcherMover::MoverOP( new MatcherMover() );
 }
 
-
 void
 MatcherMover::apply( core::pose::Pose & pose )
 {
+	protocols::rosetta_scripts::MultiplePoseMover::apply( pose );
+}
 
+bool
+MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::pose::PoseOP > & poselist )
+{
 	protocols::match::MatcherTaskOP mtask( new protocols::match::MatcherTask );
 
 	core::pose::Pose ligpose;
@@ -127,9 +130,6 @@ MatcherMover::apply( core::pose::Pose & pose )
 		}
 	}
 
-	//if ( option[ OptionKeys::match::ligand_rotamer_index ].user() ) {
-	// set_ligpose_rotamer( ligpose );
-	//}
 	Size cent, nbr1, nbr2;
 	ligres_->select_orient_atoms( cent, nbr1, nbr2 );
 
@@ -137,7 +137,6 @@ MatcherMover::apply( core::pose::Pose & pose )
 	tr << " " << ligres_->atom_name( cent );
 	tr << " " << ligres_->atom_name( nbr1 );
 	tr << " " << ligres_->atom_name( nbr2 ) << std::endl;
-	//pose.dump_pdb("pose_going_into_matcher.pdb");
 	mtask->set_upstream_pose( pose );
 
 	utility::vector1< core::id::AtomID > oats( 3 );
@@ -153,38 +152,57 @@ MatcherMover::apply( core::pose::Pose & pose )
 
 	if ( incorporate_matches_into_pose_ ) mtask->output_writer_name("PoseMatchOutputWriter");
 
-	time_t matcher_start_time = time(NULL);
+	time_t const matcher_start_time = time(NULL);
 	protocols::match::MatcherOP matcher( new protocols::match::Matcher );
 	matcher->initialize_from_task( *mtask );
 
-
 	protocols::match::output::MatchProcessorOP processor = protocols::match::output::ProcessorFactory::create_processor( matcher, mtask );
 
+	time_t find_hits_end_time = 0;
+	time_t processing_time = 0;
 	if ( matcher->find_hits() ) {
+		find_hits_end_time = time(NULL);
+		time_t process_start_time( time(NULL) );
 		matcher->process_matches( *processor );
-	}
+		processing_time = (long) (time(NULL) - process_start_time);
 
+	} else {
+		find_hits_end_time = time(NULL);
+	}
+	long find_hits_time = (long)(find_hits_end_time - matcher_start_time );
 	time_t matcher_end_time = time(NULL);
-	std::string success_str( processor->match_processing_successful() ? "successful." : "not sucessful." );
-	tr << "Matcher ran for " << (long)(matcher_end_time - matcher_start_time) << " seconds and was " << success_str << std::endl;
+	std::string const success_str( processor->match_processing_successful() ? "successful." : "not sucessful." );
+	tr << "Matcher ran for " << (long)(matcher_end_time - matcher_start_time)
+		<< " seconds, where finding hits took " << find_hits_time
+		<< " seconds and processing the matches took " << processing_time << " seconds. Matching was "
+		<< success_str << std::endl;
 
-	if ( processor->match_processing_successful() ) this->set_last_move_status( protocols::moves::MS_SUCCESS );
-	else {
-		this->set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
+	if ( !processor->match_processing_successful() ) {
+		set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 		pose = save_pose;
-		return;
+		return false;
 	}
+	this->set_last_move_status( protocols::moves::MS_SUCCESS );
 
 	if ( incorporate_matches_into_pose_ ) {
-		protocols::match::output::PoseMatchOutputWriterOP outputter( utility::pointer::static_pointer_cast< protocols::match::output::PoseMatchOutputWriter > ( processor->output_writer() ) );
+		protocols::match::output::PoseMatchOutputWriterOP outputter(
+			utility::pointer::static_pointer_cast< protocols::match::output::PoseMatchOutputWriter >( processor->output_writer() ) );
+		core::pose::Pose const origpose = pose;
 		outputter->insert_match_into_pose( pose );
-		// should make another mover to set these constraints  flo and nobu
-		//protocols::enzdes::AddOrRemoveMatchCsts addcsts = protocols::enzdes::AddOrRemoveMatchCsts();
-		//addcsts.set_cst_action(protocols::enzdes::ADD_NEW);
-		//addcsts.apply(pose);
+		core::Size const num_match_groups = outputter->match_groups_ushits().size();
+		for ( core::Size mgroup=1; mgroup<=num_match_groups; ++mgroup ) {
+			if ( mgroup == 1 ) {
+				outputter->insert_match_into_pose( pose, mgroup );
+				tr << "Incorporated match " << mgroup << " into pose." << std::endl;
+			} else {
+				core::pose::PoseOP matchedpose = origpose.clone();
+				outputter->insert_match_into_pose( *matchedpose, mgroup );
+				poselist.push_back( matchedpose );
+				tr << "Incorporated match " << mgroup << " into a stored pose." << std::endl;
+			}
+		}
 	}
-	//pose.dump_pdb("pose_coming_from_matcher.pdb");
-
+	return true;
 } //MatcherMover::apply function
 
 std::string

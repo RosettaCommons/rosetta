@@ -252,10 +252,6 @@ std::deque < core::pose::PoseOP > MultiplePoseMover::select_poses( std::deque < 
 /// @brief Rub sub-protocol on set of poses
 std::deque < core::pose::PoseOP > MultiplePoseMover::process_poses( std::deque < core::pose::PoseOP > & poses )
 {
-	if ( !rosetta_scripts_tag_ ) {
-		return poses;
-	}
-
 	// Collect additional poses first rather than adding them to selected_poses_ right away
 	// as it may invalidate the iterator pointer when memory location changes
 	std::deque < core::pose::PoseOP > selected_poses;
@@ -283,7 +279,7 @@ std::deque < core::pose::PoseOP > MultiplePoseMover::process_poses( std::deque <
 bool MultiplePoseMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::pose::PoseOP > & additional_poses )
 {
 	if ( !rosetta_scripts_tag_ ) {
-		return false;
+		return true;
 	}
 
 	protocols::rosetta_scripts::RosettaScriptsParser parser;

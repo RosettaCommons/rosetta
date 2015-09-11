@@ -364,7 +364,7 @@ public:
 			// Expecting 5 poses (1 + 4 additional ones)
 			int i = 1;
 			while ( mover->get_additional_output() ) ++i;
-			TS_ASSERT( i == 5 );
+			TS_ASSERT_EQUALS( i, 5 );
 
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
@@ -403,7 +403,7 @@ public:
 			// Expecting 5 poses (1 + 4 additional ones)
 			int i = 1;
 			while ( mover->get_additional_output() ) ++i;
-			TS_ASSERT( i == 5 );
+			TS_ASSERT_EQUALS( i, 5 );
 
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;
