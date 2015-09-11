@@ -370,16 +370,16 @@ LocalRelax::apply( core::pose::Pose & pose) {
 				}
 			}
 
-			utility::vector1<bool> shell0, shell1, visited(nres_asu, false);
+			utility::vector1<bool> shell0, shell1, visited(nres, false);
 
 			// mark non-packable as visited
 			for ( Size i=1; i<=nres; ++i ) {
 				if ( !ptask_resfile->pack_residue( i ) ) visited[i] = true;
+				if ( symminfo && !symminfo->bb_is_independent(i) ) visited[i] = true;
 			}
 
 			// main loop
 			while ( true ) {
-
 				// find most connected residue
 				Size maxneighb=0;
 				Size currres=0;
