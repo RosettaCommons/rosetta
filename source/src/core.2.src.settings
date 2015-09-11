@@ -50,9 +50,6 @@ sources = {
 		"ResidueTypeSet",
 		"ResidueTypeFinder",
 		"residue_support",
-		"ring_conformer_io",
-		"RingConformerManager",
-		"RingConformerSet",
 		"util",
 		"VariantType_mappings",
 	],
@@ -64,6 +61,13 @@ sources = {
 		#"ElectronConfiguration",
 		#"Element",
 		#"ElementTypeSet",
+	],
+
+	"core/chemical/rings": [
+		"ring_conformer_io",
+		"RingConformerManager",
+		"RingConformerSet",
+		"util",
 	],
 
 	"core/chemical/rna": [

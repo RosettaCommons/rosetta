@@ -19,7 +19,7 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
-#include <core/chemical/RingConformerSet.hh>
+#include <core/chemical/rings/RingConformerSet.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/VariantType.hh>
 

@@ -36,7 +36,7 @@
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
-#include <core/chemical/RingConformerSet.hh>
+#include <core/chemical/rings/RingConformerSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
@@ -201,6 +201,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	Hpos_polar_sc_ = residue_type.Hpos_polar_sc_;
 	all_bb_atoms_ = residue_type.all_bb_atoms_;
 	all_sc_atoms_ = residue_type.all_sc_atoms_;
+	ring_atoms_ = residue_type.ring_atoms_;
 	metal_binding_atoms_ = residue_type.metal_binding_atoms_;
 	disulfide_atom_name_ = residue_type.disulfide_atom_name_;
 	mainchain_atoms_ = residue_type.mainchain_atoms_;
@@ -1208,7 +1209,7 @@ ResidueType::orbital_type(int const orbital_index)const
 }
 
 // Return a pointer to the object containing the set of ring conformers possible for this saccharide.
-core::chemical::RingConformerSetCOP
+core::chemical::rings::RingConformerSetCOP
 ResidueType::ring_conformer_set() const
 {
 	return conformer_set_;
@@ -2594,6 +2595,7 @@ Derived data updated by this method:
 * Hpos_polar_sc_
 * all_bb_atoms_
 * all_sc_atoms_
+* ring_atoms_
 * abase2_
 * path_distance_
 * dihedral_atom_sets_
@@ -2634,6 +2636,7 @@ ResidueType::update_derived_data()
 	Hpos_polar_sc_.clear();
 	all_bb_atoms_.clear();
 	all_sc_atoms_.clear();
+	ring_atoms_.clear();
 
 	for ( Size i=1; i<= natoms(); ++i ) {
 		Atom const & atom(graph_[ ordered_atoms_[i]]); //get the atom that we are working on
@@ -2674,6 +2677,30 @@ ResidueType::update_derived_data()
 			}
 		}
 
+	}
+
+	// Set the ring atoms.
+	// The logic here is tricky. The nu torsion definitions contain all the ring atoms, of course.
+	// However, the first nu definition will include a virtual atom as its first atom, if defined properly.
+	// The last will include a virtual atom as its final atom and will not contain any atoms already included in
+	// earlier definitions.
+	// Hence, we can take the last three atoms indices from the first nu definition, and then the last index from the
+	// rest of the definitions except for the last, which we can completely ignore.
+	if ( properties_->has_property( CYCLIC ) ) {
+		Size const n_nus( nu_atoms_indices_.size() );
+		if ( ! graph_[ ordered_atoms_[ nu_atoms_indices_[ 1 ][ 1 ] ] ].is_virtual() ||
+				! graph_[ ordered_atoms_[ nu_atoms_indices_[ n_nus ][ 4 ] ] ].is_virtual() ) {
+			utility_exit_with_message( "The nu angles for this ResidueType are not properly defined.  "
+					"The first atom of the first nu and the last atom of the last nu must be virtual atoms." );
+		}
+		for ( uint j( 2 ); j <= 4; ++j ) {
+			ring_atoms_.push_back( nu_atoms_indices_[ 1 ][ j ] );
+		}
+		for ( uint i( 2 ); i < n_nus; ++i ) {
+			ring_atoms_.push_back( nu_atoms_indices_[ i ][ 4 ] );
+		}
+		// You always need 1 fewer nu angles to define a ring than the number of atoms in that ring.
+		debug_assert( ring_atoms_.size() == nu_atoms_indices_.size() + 1 );
 	}
 
 	// setup the hydrogen information
@@ -2933,15 +2960,11 @@ ResidueType::update_derived_data()
 	}
 
 	// Assign a set of possible ring conformations.
-	// Ring size is determined by the number of NU angles listed in the .params file, which should always be 2 less
+	// Ring size is determined by the number of NU angles listed in the .params file, which should always be 1 less
 	// than the size of the ring.
 	if ( properties_->has_property( CYCLIC ) ) {
-		// ring_size could be made a private datum, but it only really makes sense for monocyclics.  Since its only use
-		// for the time being is to set the proper RingConformerSet, I'll just leave it as a local variable here.
-		// ~Labonte
-		Size const ring_size( nu_atoms_indices_.size() + 1 );
-		conformer_set_ = RingConformerSetOP( new RingConformerSet(
-			ring_size, lowest_ring_conformer_, low_ring_conformers_ ) );
+		conformer_set_ = rings::RingConformerSetOP( new rings::RingConformerSet(
+				ring_atoms_.size(), lowest_ring_conformer_, low_ring_conformers_ ) );
 	}
 
 	if ( properties_->has_property( RNA ) ) { //reinitialize and RNA derived data.
@@ -3870,6 +3893,13 @@ ResidueType::show( std::ostream & output, bool output_atomic_details ) const
 	Size const n_bb_atoms( all_bb_atoms_.size() );
 	for ( uint i = 1; i <= n_bb_atoms; ++i ) {
 		output << ' ' << atom_name( all_bb_atoms_[ i ] );
+	}
+	output << endl;
+
+	output << " Ring atoms:  ";
+	Size const n_ring_atoms( ring_atoms_.size() );
+	for ( uint i = 1; i <= n_ring_atoms; ++i ) {
+		output << ' ' << atom_name( ring_atoms_[ i ] );
 	}
 	output << endl;
 

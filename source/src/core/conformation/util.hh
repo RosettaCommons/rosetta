@@ -28,6 +28,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/rings/AxEqDesignation.hh>
 
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
@@ -362,13 +363,6 @@ atom_id_to_named_atom_id(
 	conformation::Residue const & rsd
 );
 
-/* - undefinded, commenting out to make PyRosetta compile...
-id::AtomID
-named_atom_id_to_atom_id(
-id::AtomID const & atom_id,
-conformation::Residue const & rsd
-);
-*/
 
 id::AtomID
 named_atom_id_to_atom_id(
@@ -381,6 +375,16 @@ stub_id_to_named_stub_id(
 	id::StubID const & stub_id,
 	conformation::Residue const & rsd
 );
+
+
+/// @brief  Is the query atom in this residue axial or equatorial to the given ring or neither?
+chemical::rings::AxEqDesignation is_atom_axial_or_equatorial_to_ring(
+		Residue const & residue,
+		uint query_atom,
+		utility::vector1< uint > const & ring_atoms );
+
+/// @brief  Is the query atom in this residue axial or equatorial or neither?
+chemical::rings::AxEqDesignation is_atom_axial_or_equatorial( Residue const & residue, uint query_atom );
 
 } // conformation
 } // core

@@ -53,7 +53,7 @@
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
-#include <core/chemical/RingConformerSet.fwd.hh>
+#include <core/chemical/rings/RingConformerSet.fwd.hh>
 #include <core/chemical/VariantType.hh>
 
 // Project headers
@@ -419,6 +419,13 @@ public:
 	nu_atoms() const
 	{
 		return nu_atoms_indices_;
+	}
+
+	/// @brief Return list of indices of the atoms within this residue's cycle, not counting virtual atoms.
+	AtomIndices const &
+	ring_atoms() const
+	{
+		return ring_atoms_;
 	}
 
 	/// @brief Gets indices of all atoms that can form bonds to metals
@@ -802,7 +809,7 @@ public:
 
 	/// @brief    Return a pointer to the object containing the set of ring
 	/// conformers possible for this cyclic residue.
-	core::chemical::RingConformerSetCOP ring_conformer_set() const;
+	core::chemical::rings::RingConformerSetCOP ring_conformer_set() const;
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -2092,7 +2099,7 @@ private:
 	orbitals::OrbitalTypeSetCOP orbital_types_;
 
 	/// @brief The set of all possible ring conformers -- Derived, can be null
-	RingConformerSetOP conformer_set_;
+	rings::RingConformerSetOP conformer_set_;
 
 	/// @brief The owning ResidueTypeSet, if any. -- Primary, can be null.
 	/// @details Once added to a ResidueTypeSet, the ResidueType should be considered Fixed.
@@ -2248,6 +2255,9 @@ private:
 
 	/// @brief Indices of all sidechain atoms, hydrogens and heavyatoms -- Derived
 	AtomIndices all_sc_atoms_;
+
+	/// @brief Indices of all ring atoms, not counting virtual atoms -- Derived
+	AtomIndices ring_atoms_;
 
 	/// @brief Names of all of the atoms that are able to make a bond to a metal, for metal-binding residue types
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).

@@ -18,8 +18,8 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/RingConformer.hh>
-#include <core/chemical/RingConformerSet.hh>
+#include <core/chemical/rings/RingConformer.hh>
+#include <core/chemical/rings/RingConformerSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
@@ -213,7 +213,7 @@ RingConformationMover::apply( Pose & input_pose )
 
 	TR << "Selected residue " << res_num << ": " << res.name() << endl;
 
-	RingConformer conformer;
+	rings::RingConformer conformer;
 	if ( sample_all_conformers_ || ( ! res.type().ring_conformer_set()->low_energy_conformers_are_known() ) ) {
 		conformer = res.type().ring_conformer_set()->get_random_conformer();
 	} else /* default behavior */ {

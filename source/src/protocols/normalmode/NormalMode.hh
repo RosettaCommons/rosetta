@@ -167,21 +167,6 @@ private:
 		Vector const &Ra,
 		Real const Msum );
 
-
-	Real
-	pythag( Real a, Real b );
-
-	inline
-	Real
-	sign( Real a, Real b )
-	{ return b >= 0.0 ? std::fabs(a) : -std::fabs(a); }
-
-	void
-	svdcmp( utility::vector1< utility::vector1< Real > > &a,
-		Size const m, Size const n,
-		utility::vector1< Real > &w,
-		utility::vector1< utility::vector1< Real > > &v );
-
 	void
 	eigsrt( utility::vector1< utility::vector1 < Real > > &eigvec,
 		utility::vector1< Real > &eigval );

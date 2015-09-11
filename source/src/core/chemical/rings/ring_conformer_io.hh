@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/ring_conformer_io.hh
+/// @file    core/chemical/rings/ring_conformer_io.hh
 /// @brief   Database input/output function declarations for ring-conformer-specific data.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_core_chemical_ring_conformer_io_HH
-#define INCLUDED_core_chemical_ring_conformer_io_HH
+#ifndef INCLUDED_core_chemical_rings_ring_conformer_io_HH
+#define INCLUDED_core_chemical_rings_ring_conformer_io_HH
 
 // Unit header
-#include <core/chemical/RingConformer.hh>
+#include <core/chemical/rings/RingConformer.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -30,12 +30,14 @@
 
 namespace core {
 namespace chemical {
+namespace rings {
 
 /// @brief  Return a list of ring conformers, read from a database file.
 utility::vector1< RingConformer > read_conformers_from_database_file_for_ring_size( std::string const & filename,
 	core::Size ring_size );
 
+}  // namespace rings
 }  // namespace chemical
 }  // namespace core
 
-#endif  // INCLUDED_core_chemical_ring_conformer_io_HH
+#endif  // INCLUDED_core_chemical_rings_ring_conformer_io_HH

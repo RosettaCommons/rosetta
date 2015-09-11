@@ -36,6 +36,9 @@ sources = {
 		"kiss_fft_state",
 		"SHT",
 	],
+	"numeric/geometry": [
+		"ring_plane.functions",
+	],
 	"numeric/geometry/hashing": [
 		"SixDHasher",
 		"xyzStripeHash",
@@ -75,6 +78,7 @@ sources = {
 	],
     "numeric/linear_algebra": [
         "rgg",
+	"singular_value_decomposition",
     ],
 	"numeric/model_quality": [
 		"maxsub",

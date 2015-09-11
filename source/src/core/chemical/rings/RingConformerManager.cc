@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/RingConformerSet.cc
+/// @file    core/chemical/rings/RingConformerManager.cc
 /// @brief   Method definitions for RingConformerManager.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
 // Unit header
-#include <core/chemical/RingConformer.hh>
-#include <core/chemical/RingConformerManager.hh>
-#include <core/chemical/ring_conformer_io.hh>
+#include <core/chemical/rings/RingConformer.hh>
+#include <core/chemical/rings/RingConformerManager.hh>
+#include <core/chemical/rings/ring_conformer_io.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -41,7 +41,7 @@
 // Singleton set-up
 namespace utility {
 
-using core::chemical::RingConformerManager;
+using core::chemical::rings::RingConformerManager;
 
 #if defined MULTI_THREADED && defined CXX11
 template <> std::mutex utility::SingletonBase< RingConformerManager >::singleton_mutex_ {};
@@ -55,6 +55,7 @@ template <> RingConformerManager * utility::SingletonBase< RingConformerManager 
 
 namespace core {
 namespace chemical {
+namespace rings {
 
 using namespace core;
 
@@ -99,5 +100,6 @@ RingConformerManager::get_conformers_for_ring_size( core::Size ring_size )
 	return conformers_[ ring_size ];
 }
 
+}  // namespace rings
 }  // namespace chemical
 }  // namespace core

@@ -20,7 +20,7 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTyper.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-#include <core/chemical/RingConformerSet.hh>
+#include <core/chemical/rings/RingConformerSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>

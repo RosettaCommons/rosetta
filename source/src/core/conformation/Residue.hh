@@ -37,7 +37,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
-#include <core/chemical/RingConformer.hh>
+#include <core/chemical/rings/RingConformer.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>
 #include <core/types.hh>
 
@@ -773,6 +773,9 @@ public:
 	///     Pose
 	Size
 	connect_atom( Residue const & other ) const;
+
+	/// @brief  Get a list of heavy atoms connected to a given atom.
+	utility::vector1< uint > get_adjacent_heavy_atoms( uint const atom_index ) const;
 
 	/// @brief  Scan through the list of atoms connected to a given atom and return the 1st heavy atom found.
 	uint first_adjacent_heavy_atom( uint const atom_index ) const;
@@ -1553,7 +1556,7 @@ public:
 
 
 	/// @brief  Return the current RingConformer of this residue.
-	chemical::RingConformer const & ring_conformer() const;
+	chemical::rings::RingConformer const & ring_conformer() const;
 
 
 	/// @brief Returns the sequence position of this residue

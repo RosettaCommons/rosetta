@@ -27,7 +27,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/RingConformerSet.hh>
+#include <core/chemical/rings/RingConformerSet.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -309,7 +309,7 @@ Residue::carbohydrate_info() const
 
 
 // Return the current RingConformer of this residue.
-chemical::RingConformer const &
+chemical::rings::RingConformer const &
 Residue::ring_conformer() const
 {
 	PyAssert( rsd_type_.is_cyclic(), "Residue::ring_conformer(): This residue is not cyclic!" );
@@ -1153,6 +1153,27 @@ Residue::connect_atom( Residue const & other ) const
 	return 0;
 }
 
+// Get a list of heavy atoms connected to a given atom.
+/// @return The atom indices of all heavy atoms bonded to the given atom (by index)
+/// @author Labonte <JWLabonte@jhu.edu>
+utility::vector1< uint >
+Residue::get_adjacent_heavy_atoms( uint const atom_index ) const
+{
+	utility::vector1< uint > bonded_heavy_atom_indices;
+
+	// Get list of indices of all atoms connected to given connect atom.
+	utility::vector1< uint > const bonded_atom_indices( bonded_neighbor( atom_index ) );
+
+	// Search for heavy atoms.  (A residue connection is not an atom.)
+	Size const n_indices( bonded_atom_indices.size() );
+	for ( uint i( 1 ); i <= n_indices; ++i ) {
+		if ( ! atom_is_hydrogen( bonded_atom_indices[ i ] ) ) {
+			bonded_heavy_atom_indices.push_back( bonded_atom_indices[ i ] );
+		}
+	}
+	return bonded_heavy_atom_indices;
+}
+
 // Scan through the list of atoms connected to a given atom and return the 1st heavy atom found.
 /// @return The atom index of the 1st heavy atom next to the given atom (by index) or 0 if no heavy atom is found
 /// @remark This method is crucial for determining atoms defining non-standard torsion angles, such as those found
@@ -1161,18 +1182,13 @@ Residue::connect_atom( Residue const & other ) const
 uint
 Residue::first_adjacent_heavy_atom( uint const atom_index ) const
 {
-	// Get list of indices of all atoms connected to given connect atom.
-	utility::vector1< uint > const atom_indices( bonded_neighbor( atom_index ) );
+	utility::vector1< uint > const atom_indices( get_adjacent_heavy_atoms( atom_index ) );
 
-	// Search for heavy atoms.  (A residue connection is not an atom.)
-	Size const n_indices( atom_indices.size() );
-	for ( uint i( 1 ); i <= n_indices; ++i ) {
-		if ( ! atom_is_hydrogen( atom_indices[ i ] ) ) {
-			return atom_indices[ i ];
-		}
+	if ( atom_indices.empty() ) {
+		TR.Warning << "There are no adjacent heavy atoms to atom index " << atom_index << '!' << std::endl;
+		return 0;
 	}
-	TR.Warning << "There are no adjacent heavy atoms to atom index " << atom_index << '!' << std::endl;
-	return 0;
+	return atom_indices[ 1 ];
 }
 
 PseudoBondCollectionCOP

@@ -7,21 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/RingConformerManager.fwd.hh
+/// @file    core/chemical/rings/RingConformerManager.fwd.hh
 /// @brief   Forward declaration for RingConformerManager.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_core_chemical_RingConformerManager_FWD_HH
-#define INCLUDED_core_chemical_RingConformerManager_FWD_HH
+#ifndef INCLUDED_core_chemical_rings_RingConformerManager_FWD_HH
+#define INCLUDED_core_chemical_rings_RingConformerManager_FWD_HH
 
 namespace core {
 namespace chemical {
+namespace rings {
 
 /// @brief  A singleton class for handling static const ring conformer data.
 class RingConformerManager;
 
+}  // namespace rings
 }  // namespace chemical
 }  // namespace core
 
-#endif  // INCLUDED_core_chemical_RingConformerManager_FWD_HH
+#endif  // INCLUDED_core_chemical_rings_RingConformerManager_FWD_HH

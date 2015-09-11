@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file  ring_conformer_io.cxxtest.hh
+/// @file    test/core/chemical/rings/ring_conformer_io.cxxtest.hh
 /// @brief   Test suite for ring conformer database loading
 /// @author  Labonte <JWLabonte@jhu.edu>
 
@@ -17,8 +17,8 @@
 #include <test/core/init_util.hh>
 
 // Unit header
-#include <core/chemical/ring_conformer_io.hh>
-#include <core/chemical/RingConformerSet.hh>
+#include <core/chemical/rings/ring_conformer_io.hh>
+#include <core/chemical/rings/RingConformerSet.hh>
 
 // Utility header
 #include <utility/vector1.hh>
@@ -46,12 +46,12 @@ public:
 	{
 		using namespace std;
 		using namespace utility;
-		using namespace core::chemical;
+		using namespace core::chemical::rings;
 
 		TS_TRACE( "Testing read_conformers_from_database_file_for_ring_size() method." );
 
 		vector1< RingConformer > const conformers(
-			read_conformers_from_database_file_for_ring_size( "core/chemical/dummy_conformers.data", 8 ) );
+				read_conformers_from_database_file_for_ring_size( "core/chemical/rings/dummy_conformers.data", 8 ) );
 
 		TS_ASSERT_EQUALS( conformers.size(), 3);
 		TS_ASSERT_EQUALS( conformers[ 1 ].specific_name, "1F2" );

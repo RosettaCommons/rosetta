@@ -40,6 +40,7 @@ sources = {
 	],
 	"geometry" : [
 		"BoundingBox",
+		"ring_plane.functions",
 	],
 	"histograms" : [
 		"OneDHistogram",

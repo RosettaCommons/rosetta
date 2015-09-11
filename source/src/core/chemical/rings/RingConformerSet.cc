@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/RingConformerSet.cc
+/// @file    core/chemical/rings/RingConformerSet.cc
 /// @brief   Method definitions for RingConformerSet.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
 // Unit header
-#include <core/chemical/RingConformer.hh>
-#include <core/chemical/RingConformerSet.hh>
-#include <core/chemical/RingConformerManager.hh>
+#include <core/chemical/rings/RingConformer.hh>
+#include <core/chemical/rings/RingConformerSet.hh>
+#include <core/chemical/rings/RingConformerManager.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -35,11 +35,12 @@
 
 
 // Construct tracer.
-static thread_local basic::Tracer TR( "core.chemical.RingConformerSet" );
+static thread_local basic::Tracer TR( "core.chemical.rings.RingConformerSet" );
 
 
 namespace core {
 namespace chemical {
+namespace rings {
 
 using namespace core;
 
@@ -135,7 +136,7 @@ RingConformerSet::get_all_nondegenerate_conformers() const
 /// subsets.
 // AMW: cppcheck wants you to change to pass by reference; DO NOT
 RingConformer const &
-RingConformerSet::get_ideal_conformer_by_name( std::string const name ) const
+RingConformerSet::get_ideal_conformer_by_name( std::string const & name ) const
 {
 	using namespace std;
 
@@ -165,7 +166,7 @@ RingConformerSet::get_ideal_conformer_by_name( std::string const name ) const
 /// subsets.
 // AMW: cppcheck wants you to change to pass by reference; DO NOT
 RingConformer const &
-RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::Real > const parameters ) const
+RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::Real > const & parameters ) const
 {
 	using namespace std;
 	using namespace numeric;
@@ -264,7 +265,7 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 /// @note     This is slow, but it should not be called by most protocols, which will pull randomly from various
 /// subsets.
 RingConformer const &
-RingConformerSet::get_ideal_conformer_from_nus( utility::vector1< core::Angle > const angles ) const
+RingConformerSet::get_ideal_conformer_from_nus( utility::vector1< core::Angle > const & angles ) const
 {
 	using namespace std;
 	using namespace numeric;
@@ -434,5 +435,6 @@ operator<<( std::ostream & output, RingConformerSet const & object_to_output )
 	return output;
 }
 
+}  // namespace rings
 }  // namespace chemical
 }  // namespace core

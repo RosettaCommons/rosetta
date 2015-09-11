@@ -32,7 +32,7 @@
 // Project headers
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/RingConformer.hh>
+#include <core/chemical/rings/RingConformer.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -1104,9 +1104,9 @@ Pose::set_chi( Size const seqpos, Real const setting )
 
 // Set the given residue's ring conformation, if appropriate.
 /// @author  Labonte <JWLabonte@jhu.edu>
-/// @remark  See core/chemical/RingConformerSet.hh and .cc for more information about RingConformers.
+/// @remark  See core/chemical/rings/RingConformerSet.hh and .cc for more information about RingConformers.
 void
-Pose::set_ring_conformation( uint const seqpos, core::chemical::RingConformer const & conformer )
+Pose::set_ring_conformation( uint const seqpos, core::chemical::rings::RingConformer const & conformer )
 {
 	using namespace std;
 	using namespace id;
@@ -1116,11 +1116,11 @@ Pose::set_ring_conformation( uint const seqpos, core::chemical::RingConformer co
 
 	debug_assert( res.type().is_cyclic() );
 	PyAssert( ( seqpos <= total_residue() ),
-		"Pose::set_ring_conformation(uint const seqpos, core::chemical::RingConformer const &"
-		"conformer): variable seqpos is out of range!" );
+			"Pose::set_ring_conformation(uint const seqpos, core::chemical::rings::RingConformer const &"
+			"conformer): variable seqpos is out of range!" );
 	PyAssert( ( res.type().is_cyclic() ),
-		"Pose::set_ring_conformation(uint const seqpos, core::chemical::RingConformer const &"
-		"conformer): residue seqpos is not a cyclic residue!" );
+			"Pose::set_ring_conformation(uint const seqpos, core::chemical::rings::RingConformer const &"
+			"conformer): residue seqpos is not a cyclic residue!" );
 
 	// First, set the nus, which DEFINE the ideal ring conformer.
 	Size const n_nus( res.type().nu_atoms().size() );

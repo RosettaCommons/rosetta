@@ -32,7 +32,7 @@
 
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
-#include <core/chemical/RingConformerSet.hh>
+#include <core/chemical/rings/RingConformerSet.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>

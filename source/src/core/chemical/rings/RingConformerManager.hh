@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/RingConformerManager.hh
+/// @file    core/chemical/rings/RingConformerManager.hh
 /// @brief   Declarations and simple accessor/mutator definitions for RingConformerManager.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_core_chemical_RingConformerManager_HH
-#define INCLUDED_core_chemical_RingConformerManager_HH
+#ifndef INCLUDED_core_chemical_rings_RingConformerManager_HH
+#define INCLUDED_core_chemical_rings_RingConformerManager_HH
 
 // Unit header
-#include <core/chemical/RingConformer.hh>
-#include <core/chemical/RingConformerManager.fwd.hh>
+#include <core/chemical/rings/RingConformer.hh>
+#include <core/chemical/rings/RingConformerManager.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -32,6 +32,7 @@
 
 namespace core {
 namespace chemical {
+namespace rings {
 
 /// @details  This class is a singleton and manages RingConformer data that should only be read from the database one
 /// time and shared among all RingConformerSets.
@@ -61,7 +62,8 @@ private:  // Private data /////////////////////////////////////////////////////
 	std::map< core::uint, utility::vector1< RingConformer > > conformers_;
 };
 
+}  // namespace rings
 }  // namespace chemical
 }  // namespace core
 
-#endif  // INCLUDED_core_chemical_RingConformerManager_HH
+#endif  // INCLUDED_core_chemical_rings_RingConformerManager_HH

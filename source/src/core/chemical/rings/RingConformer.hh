@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/RingConformer.hh
+/// @file    core/chemical/rings/RingConformer.hh
 /// @brief   Definitions for RingConformer.
 /// @author  Labonte <JWLabonte@jhu.edu
 
 
-#ifndef INCLUDED_core_chemical_RingConformer_HH
-#define INCLUDED_core_chemical_RingConformer_HH
+#ifndef INCLUDED_core_chemical_rings_RingConformer_HH
+#define INCLUDED_core_chemical_rings_RingConformer_HH
 
 // Project header
 #include <core/types.hh>
@@ -27,6 +27,7 @@
 
 namespace core {
 namespace chemical {
+namespace rings {
 
 /// @brief  A structure for storing information for specific, idealized ring conformers.
 struct RingConformer {
@@ -47,7 +48,8 @@ struct RingConformer {
 	utility::vector1< core::Angle > tau_angles;
 };  // struct RingConformer
 
+}  // namespace rings
 }  // namespace chemical
 }  // namespace core
 
-#endif  // INCLUDED_core_chemical_RingConformer_HH
+#endif  // INCLUDED_core_chemical_rings_RingConformer_HH

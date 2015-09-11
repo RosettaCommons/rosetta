@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/RingConformerSet.hh
+/// @file    core/chemical/rings/RingConformerSet.hh
 /// @brief   Declarations and simple accessor/mutator definitions for RingConformerSet.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_core_chemical_RingConformerSet_HH
-#define INCLUDED_core_chemical_RingConformerSet_HH
+#ifndef INCLUDED_core_chemical_rings_RingConformerSet_HH
+#define INCLUDED_core_chemical_rings_RingConformerSet_HH
 
 // Unit header
-#include <core/chemical/RingConformer.hh>
-#include <core/chemical/RingConformerSet.fwd.hh>
+#include <core/chemical/rings/RingConformer.hh>
+#include <core/chemical/rings/RingConformerSet.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -33,6 +33,7 @@
 
 namespace core {
 namespace chemical {
+namespace rings {
 
 /// @brief  Enumerators for the three Cremer-Pople "ring-puckering" parameters used to describe 4-, 5-, and 6-membered
 /// ring conformers
@@ -81,17 +82,19 @@ public:
 	/// @brief  Return a list of all nondegenerate conformers in the set.
 	utility::vector1< RingConformer > const & get_all_nondegenerate_conformers() const;
 
-
+	// AMW: cppcheck wants you to change to pass by reference; DO NOT
+	// Why not? ~Labonte
 	/// @brief  Return the conformer corresponding to the requested name.
-	// AMW: cppcheck wants you to change to pass by reference; DO NOT
-	RingConformer const & get_ideal_conformer_by_name( std::string const name ) const;
+	RingConformer const & get_ideal_conformer_by_name( std::string const & name ) const;
 
-	/// @brief  Return the conformer that is the best fit for the provided Cremer-Pople parameters.
 	// AMW: cppcheck wants you to change to pass by reference; DO NOT
-	RingConformer const & get_ideal_conformer_by_CP_parameters( utility::vector1< core::Real > const parameters ) const;
+	// Why not? ~Labonte
+	/// @brief  Return the conformer that is the best fit for the provided Cremer-Pople parameters.
+	RingConformer const & get_ideal_conformer_by_CP_parameters( utility::vector1< core::Real > const & parameters ) const;
+
 
 	/// @brief  Return the conformer that is the best fit for the provided list of nu angles.
-	RingConformer const & get_ideal_conformer_from_nus( utility::vector1< core::Angle > const angles ) const;
+	RingConformer const & get_ideal_conformer_from_nus( utility::vector1< core::Angle > const & angles ) const;
 
 
 	/// @brief  Return the conformer that is known from studies (if available) to be the lowest energy ring conformer.
@@ -135,7 +138,8 @@ std::ostream & operator<<( std::ostream & output, RingConformer const & object_t
 
 std::ostream & operator<<( std::ostream & output, RingConformerSet const & object_to_output );
 
+}  // namespace rings
 }  // namespace chemical
 }  // namespace core
 
-#endif  // INCLUDED_core_chemical_RingConformerSet_HH
+#endif  // INCLUDED_core_chemical_rings_RingConformerSet_HH

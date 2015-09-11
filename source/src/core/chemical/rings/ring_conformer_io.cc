@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/ring_conformer_io.cc
+/// @file    core/chemical/rings/ring_conformer_io.cc
 /// @brief   Database input/output function definitions for ring-conformer-specific data.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
 // Unit header
-#include <core/chemical/ring_conformer_io.hh>
-#include <core/chemical/RingConformer.hh>
+#include <core/chemical/rings/ring_conformer_io.hh>
+#include <core/chemical/rings/RingConformer.hh>
 
 // Project header
 #include <core/types.hh>
@@ -31,11 +31,12 @@
 
 
 // Construct tracer.
-static thread_local basic::Tracer TR( "core.chemical.ring_conformer_io" );
+static thread_local basic::Tracer TR( "core.chemical.rings.ring_conformer_io" );
 
 
 namespace core {
 namespace chemical {
+namespace rings {
 
 // Return a list of ring conformers, read from a database file.
 utility::vector1< RingConformer >
@@ -88,11 +89,12 @@ read_conformers_from_database_file_for_ring_size( std::string const & filename, 
 
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "Read " << conformers.size() << " " <<
-			ring_size << "-membered ring conformers from the carbohydrate database." << endl;
+			ring_size << "-membered ring conformers from the database." << endl;
 	}
 
 	return conformers;
 }
 
+}  // namespace rings
 }  // namespace chemical
 }  // namespace core

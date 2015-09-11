@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file  RingConformerSet.cxxtest.hh
+/// @file    test/core/chemical/rings/RingConformerSet.cxxtest.hh
 /// @brief   Test suite for ring conformer set building and associated methods
 /// @author  Labonte <JWLabonte@jhu.edu>
 
@@ -16,7 +16,7 @@
 #include <test/core/init_util.hh>
 
 // Unit header
-#include <core/chemical/RingConformerSet.hh>
+#include <core/chemical/rings/RingConformerSet.hh>
 
 // Utility header
 #include <utility/vector1.hh>
@@ -34,7 +34,7 @@ public:
 		using namespace utility;
 		using namespace core::chemical;
 
-		core_init_with_additional_options( "-out:levels core.chemical.RingConformerSet:400" );
+		core_init_with_additional_options( "-out:levels core.chemical.rings.RingConformerSet:400" );
 
 		vector1< string > lows;
 
@@ -43,8 +43,8 @@ public:
 		lows.push_back( "3E" );
 		lows.push_back( "PINEAPPLE" );  // should be ignored by RingConformerSet
 
-		set5_ = core::chemical::RingConformerSetOP( new RingConformerSet( 5, "1E", lows ) );
-		set6_ = core::chemical::RingConformerSetOP( new RingConformerSet( 6, "", lows ) );  // should default to 4C1
+		set5_ = rings::RingConformerSetOP( new rings::RingConformerSet( 5, "1E", lows ) );
+		set6_ = rings::RingConformerSetOP( new rings::RingConformerSet( 6, "", lows ) );  // should default to 4C1
 	}
 
 	// Destruction
@@ -66,7 +66,7 @@ public:
 	void test_get_ideal_conformer_by_descriptor_methods()
 	{
 		using namespace core;
-		using namespace core::chemical;
+		using namespace core::chemical::rings;
 		using namespace utility;
 
 		TS_TRACE( "Testing get_ideal_conformer_by_name(), get_ideal_conformer_by_CP_parameters(), and "
@@ -240,7 +240,7 @@ public:
 		expected_lows.push_back( "2E" );
 		expected_lows.push_back( "3E" );
 
-		core::chemical::RingConformer random_conformer_from_low_energy_subset;
+		core::chemical::rings::RingConformer random_conformer_from_low_energy_subset;
 
 		random_conformer_from_low_energy_subset = set5_->get_random_local_min_conformer();
 		TS_ASSERT( expected_lows.contains( random_conformer_from_low_energy_subset.specific_name ) );
@@ -252,7 +252,7 @@ public:
 
 private:
 	// Private data ////////////////////////////////////////////////////////////
-	core::chemical::RingConformerSetOP set5_;
-	core::chemical::RingConformerSetOP set6_;
+	core::chemical::rings::RingConformerSetOP set5_;
+	core::chemical::rings::RingConformerSetOP set6_;
 
 };  // class RingConformerSetTests

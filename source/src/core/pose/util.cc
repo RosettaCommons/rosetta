@@ -2886,5 +2886,81 @@ is_upper_terminus( pose::Pose const & pose, Size const resid )
 		( pose.residue( resid ).is_upper_terminus() ) ); // explicit terminus variant @ end of loop
 }
 
+
+// Is the query atom in this pose residue axial or equatorial to the given ring or neither?
+/// @details This function calculates an average plane and determines whether the coordinates of a given atom are
+/// axial or equatorial to it (or neither).
+/// @param   <pose>:       The Pose containing the Residue in question.
+/// @param   <seqpos>:     The sequence position in the Pose of the Residue containing the atoms in question.
+/// @param   <query_atom>: The index of the atom in question.
+/// @param   <ring_atoms>: A list of indices for the atoms of a monocyclic ring system in sequence.
+/// @return  An AxEqDesignation enum type value: AXIAL, EQUATORIAL, or NEITHER
+/// @author  Labonte <JwLabonte@jhu.edu>
+chemical::rings::AxEqDesignation
+is_atom_axial_or_equatorial_to_ring(
+		Pose const & pose,
+		uint seqpos,
+		uint query_atom,
+		utility::vector1< uint > const & ring_atoms )
+{
+	return conformation::is_atom_axial_or_equatorial_to_ring( pose.residue( seqpos ), query_atom, ring_atoms );
+}
+
+// Is the query atom in this pose axial or equatorial to the given ring or neither?
+/// @details This function calculates an average plane and determines whether the coordinates of a given atom are
+/// axial or equatorial to it (or neither).
+/// @param   <pose>:       The Pose containing the atoms in question.
+/// @param   <query_atom>: The AtomID of the atom in question.
+/// @param   <ring_atoms>: A list of AtomIDs for the atoms of a monocyclic ring system in sequence.
+/// @return  An AxEqDesignation enum type value: AXIAL, EQUATORIAL, or NEITHER
+/// @author  Labonte <JwLabonte@jhu.edu>
+chemical::rings::AxEqDesignation
+is_atom_axial_or_equatorial_to_ring(
+		Pose const & pose,
+		id::AtomID const & query_atom,
+		utility::vector1< id::AtomID > const & ring_atoms )
+{
+	uint const seqpos( query_atom.rsd() );
+	Size const ring_size( ring_atoms.size() );
+	utility::vector1< uint > ring_atom_indices( ring_size );
+	for ( uint i( 1 ); i <= ring_size; ++i ) {
+		if ( ring_atoms[ i ].rsd() != seqpos ) {
+			TR.Warning << "Queried atom must be in the same residue as the ring atoms." << std::endl;
+			return chemical::rings::NEITHER;
+		}
+		ring_atom_indices[ i ] = ring_atoms[ i ].atomno();
+	}
+	return conformation::is_atom_axial_or_equatorial_to_ring(
+			pose.residue( seqpos ), query_atom.atomno(), ring_atom_indices );
+}
+
+// Is the query atom in this pose residue axial or equatorial or neither?
+/// @details This function calculates an average plane and determines whether the coordinates of a given atom are
+/// axial or equatorial to it (or neither).  The ring is requested from the Residue.
+/// @param   <pose>:       The Pose containing the Residue in question.
+/// @param   <seqpos>:     The sequence position in the Pose of the Residue containing the atoms in question.
+/// @param   <query_atom>: The index of the atom in question.
+/// @return  An AxEqDesignation enum type value: AXIAL, EQUATORIAL, or NEITHER
+/// @author  Labonte <JwLabonte@jhu.edu>
+chemical::rings::AxEqDesignation
+is_atom_axial_or_equatorial( Pose const & pose, uint seqpos, uint query_atom )
+{
+	return conformation::is_atom_axial_or_equatorial( pose.residue( seqpos ), query_atom );
+}
+
+// Is the query atom in this pose axial or equatorial or neither?
+/// @details This function calculates an average plane and determines whether the coordinates of a given atom are
+/// axial or equatorial to it (or neither).  The ring is requested from the corresponding Residue.
+/// @param   <pose>:       The Pose containing the atoms in question.
+/// @param   <query_atom>: The AtomID of the atom in question.
+/// @return  An AxEqDesignation enum type value: AXIAL, EQUATORIAL, or NEITHER
+/// @author  Labonte <JwLabonte@jhu.edu>
+chemical::rings::AxEqDesignation
+is_atom_axial_or_equatorial( Pose const & pose, id::AtomID const & query_atom )
+{
+	return conformation::is_atom_axial_or_equatorial( pose.residue( query_atom.rsd() ), query_atom.atomno() );
+}
+
+
 } // pose
 } // core

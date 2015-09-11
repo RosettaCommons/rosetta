@@ -31,6 +31,7 @@
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/IdealBondLengthSet.hh>
+#include <core/chemical/rings/util.hh>
 #include <core/chemical/rna/util.hh> // for default root atom -- there is a choice encoded below for DNA vs. RNA vs. proteins
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
@@ -42,16 +43,9 @@
 #include <core/kinematics/constants.hh>
 #include <core/kinematics/util.hh>
 
-
-// ObjexxFCL headers
-// #include <ObjexxFCL/FArray1A.hh>
-// #include <ObjexxFCL/FArray2A.hh>
-// #include <ObjexxFCL/FArray3A.hh>
-// #include <ObjexxFCL/format.hh>
-// #include <ObjexxFCL/string.functions.hh> // Pretty output
-
 // Numeric headers
 #include <numeric/util.hh>
+#include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 
 // Utility headers
@@ -2164,6 +2158,65 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 	}
 }
 
+
+// Is the query atom in this residue axial or equatorial to the given ring or neither?
+/// @details This function calculates an average plane and determines whether the coordinates of a given atom are
+/// axial or equatorial to it (or neither).  The attachment atom is auto-detected.
+/// @param   <residue>:    The Residue containing the atoms in question.
+/// @param   <query_atom>: The index of the atom in question.
+/// @param   <ring_atoms>: A list of indices for the atoms of a monocyclic ring system in sequence.
+/// @return  An AxEqDesignation enum type value: AXIAL, EQUATORIAL, or NEITHER
+/// @author  Labonte <JWLabonte@jhu.edu>
+chemical::rings::AxEqDesignation
+is_atom_axial_or_equatorial_to_ring(
+		Residue const & residue,
+		uint query_atom,
+		utility::vector1< uint > const & ring_atoms )
+{
+	using namespace utility;
+	using namespace numeric;
+
+	vector1< uint > const bonded_heavy_atoms( residue.get_adjacent_heavy_atoms( query_atom ) );
+	Size const n_bonded_heavy_atoms( bonded_heavy_atoms.size() );
+	for ( uint i( 1 ); i <= n_bonded_heavy_atoms; ++i ) {
+		if ( ring_atoms.contains( bonded_heavy_atoms[ i ] ) ) {
+			// We found an attachment point.
+			// Now we need to get the coordinates of all the important atoms and call the function that does the actual
+			// math.
+			xyzVector< Distance > const query_atom_coords( residue.xyz( query_atom ) );
+			xyzVector< Distance > const attachment_atom_coords( residue.xyz( bonded_heavy_atoms[ i ] ) );
+
+			Size const n_ring_atoms( ring_atoms.size() );
+			vector1< xyzVector< Distance > > ring_atom_coords( n_ring_atoms );
+			for ( uint j( 1 ); j <= n_ring_atoms; ++j ) {
+				ring_atom_coords[ j ] = residue.xyz( ring_atoms[ j ] );
+			}
+			return chemical::rings::is_atom_axial_or_equatorial_to_ring(
+					query_atom_coords, attachment_atom_coords, ring_atom_coords );
+		}
+	}
+	TR.Warning << "The attachment point for the query atom is not found in the ring; ";
+	TR.Warning << "an axial/equatorial designation is meaningless." << std::endl;
+	return chemical::rings::NEITHER;
+}
+
+// Is the query atom in this residue axial or equatorial or neither?
+/// @details This function calculates an average plane and determines whether the coordinates of a given atom are
+/// axial or equatorial to it (or neither).  The ring is requested from the Residue.
+/// @param   <residue>:    The Residue containing the atoms in question.
+/// @param   <query_atom>: The index of the atom in question.
+/// @return  An AxEqDesignation enum type value: AXIAL, EQUATORIAL, or NEITHER
+/// @author  Labonte <JWLabonte@jhu.edu>
+chemical::rings::AxEqDesignation
+is_atom_axial_or_equatorial( Residue const & residue, uint query_atom )
+{
+	chemical::ResidueType const & rsd_type( residue.type() );
+	if ( ! rsd_type.is_cyclic() ) {
+		TR.Warning << "Queried atom must be on a cyclic residue." << std::endl;
+		return chemical::rings::NEITHER;
+	}
+	return is_atom_axial_or_equatorial_to_ring( residue, query_atom, rsd_type.ring_atoms() );
+}
 
 } // namespace conformation
 } // namespace core
