@@ -155,10 +155,9 @@ public:
 				a_i.type(bur_type);
 
 				utility::vector1< numeric::xyzVector< core::Real > > const & atom1_waters( rsd1_waters[ iatm ] );
-				numeric::xyzVector< core::Real > const & atom1_xyz( rsd1.xyz( iatm ) );
+				//numeric::xyzVector< core::Real > const & atom1_xyz( rsd1.xyz( iatm ) );
 				utility::vector1< core::Real > const & atom1_wts( rsd1_atom_wts[iatm] );
 
-				core::chemical::AtomType const & at( rsd1.atom_type(iatm) );
 				Real const sasa_this_atom( atom_sasa[ core::id::AtomID( iatm, ires ) ] );
 				if (sasa_this_atom > option[fasol::max_sasa]) continue;
 
@@ -171,9 +170,9 @@ public:
 					core::conformation::Residue const &rsd2( pose.residue(jres) );
 					if (!rsd2.is_protein()) continue;
 
-					LKB_ResidueInfo const &lkbinfo2 = lkbposeinfo[jres];
-					utility::vector1< utility::vector1< numeric::xyzVector<Real> > > const & rsd2_waters( lkbinfo2.waters() );
-					utility::vector1< utility::vector1< Real > > const & rsd2_atom_wts( lkbinfo2.atom_weights() );
+					//LKB_ResidueInfo const &lkbinfo2 = lkbposeinfo[jres];
+					//utility::vector1< utility::vector1< numeric::xyzVector<Real> > > const & rsd2_waters( lkbinfo2.waters() );
+					//utility::vector1< utility::vector1< Real > > const & rsd2_atom_wts( lkbinfo2.atom_weights() );
 
 					// count pair
 					CountPairFunctionOP cpfxn =
@@ -189,7 +188,7 @@ public:
 
 						core::Size path_dist;
 						if ( cpfxn->count( iatm, jatm, weight, path_dist ) ) {
-							core::Real fasol1,fasol2, fasol1_lkball, ljatr, ljrep, lkjunk, dis2;
+							core::Real fasol1,fasol2, ljatr, ljrep, lkjunk, dis2;
 
 							etable.analytic_etable_evaluation( rsd1.atom(iatm), rsd2.atom(jatm), ljatr, ljrep, lkjunk, dis2);
 							fa_atr_i += 0.5*(weightA*ljatr);

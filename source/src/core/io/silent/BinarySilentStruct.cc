@@ -461,13 +461,13 @@ bool BinarySilentStruct::init_from_lines(
 			// [ hey wait, len23 assumed protein -- only look at atoms 1 and 2 -- rhiju ]
 			if ( currpos == 1 && !bitflip ) {
 				core::Real len_check12 = (atm_buff[1]-atm_buff[2]).length();
-				//core::Real len_check23 = (atm_buff[3]-atm_buff[2]).length();
-				if ( len_check12 < 0.5 || len_check12 > 2.0 ) { //|| len_check23 < 0.5 || len_check23 > 2.0 ) {
+				if ( len_check12 < 0.5 || len_check12 > 2.0 || !numeric::is_a_finitenumber( len_check12, 1.0, 0.0 ) ) {
 					utility::swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
+
 					// recheck; if not better flip back
 					len_check12 = (atm_buff[1]-atm_buff[2]).length();
-					//len_check23 = (atm_buff[3]-atm_buff[2]).length();
-					if ( len_check12 < 0.5 || len_check12 > 2.0 ) { //|| len_check23 < 0.5 || len_check23 > 2.0 ) {
+
+					if ( len_check12 < 0.5 || len_check12 > 2.0 || !numeric::is_a_finitenumber( len_check12, 1.0, 0.0 )) { //|| len_check23 < 0.5 || len_check23 > 2.0 ) {
 						utility::swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
 					} else {
 						tr.Warning << "Reading binary silent file with inverted endian-ness!  Will attempt to flip automatically. Tag: " << decoy_tag() << std::endl;
