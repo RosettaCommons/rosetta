@@ -376,8 +376,8 @@ public:  // Residues
 	inline
 	Residue const &
 	residue( Size seqpos ) const {
-		runtime_assert( seqpos >= 1 );
-		runtime_assert( seqpos <= size() );
+		runtime_assert_string_msg( seqpos >= 1, "Error in core::conformation::Conformation::residue(): The sequence position requested was 0.  Pose numbering starts at 1." );
+		runtime_assert_string_msg( seqpos <= size(), "Error in core::conformation::Conformation::residue(): The sequence position requested was greater than the number of residues in the pose." );
 		if ( residue_coordinates_need_updating_ ) update_residue_coordinates();
 		if ( residue_torsions_need_updating_ )    update_residue_torsions();
 		return *residues_[ seqpos ];
@@ -388,8 +388,8 @@ public:  // Residues
 	inline
 	ResidueOP
 	residue_op( Size seqpos ) {
-		runtime_assert( seqpos >= 1 );
-		runtime_assert( seqpos <= size() );
+    runtime_assert_string_msg( seqpos >= 1, "Error in core::conformation::Conformation::residue_op(): The sequence position requested was 0.  Pose numbering starts at 1." );
+    runtime_assert_string_msg( seqpos <= size(), "Error in core::conformation::Conformation::residue_op(): The sequence position requested was greater than the number of residues in the pose." );
 		if ( residue_coordinates_need_updating_ ) update_residue_coordinates();
 		if ( residue_torsions_need_updating_ )    update_residue_torsions();
 		return residues_[ seqpos ];
@@ -401,8 +401,8 @@ public:  // Residues
 	inline
 	ResidueCOP
 	residue_cop( Size seqpos ) const {
-		runtime_assert( seqpos >= 1 );
-		runtime_assert( seqpos <= size() );
+    runtime_assert_string_msg( seqpos >= 1, "Error in core::conformation::Conformation::residue_cop(): The sequence position requested was 0.  Pose numbering starts at 1." );
+    runtime_assert_string_msg( seqpos <= size(), "Error in core::conformation::Conformation::residue_cop(): The sequence position requested was greater than the number of residues in the pose." );
 		if ( residue_coordinates_need_updating_ ) update_residue_coordinates();
 		if ( residue_torsions_need_updating_ )    update_residue_torsions();
 		return residues_[ seqpos ];
