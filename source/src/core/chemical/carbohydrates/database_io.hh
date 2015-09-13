@@ -15,6 +15,9 @@
 #ifndef INCLUDED_core_chemical_carbohydrates_database_io_HH
 #define INCLUDED_core_chemical_carbohydrates_database_io_HH
 
+// Project header
+#include <core/types.hh>
+
 // C++ headers
 #include <map>
 #include <string>
@@ -27,6 +30,11 @@ namespace carbohydrates {
 /// @brief  Return a map of strings to strings, which are saccharide-specific 3-letter codes mapped to IUPAC roots, read
 /// from a database file.
 std::map< std::string, std::string > read_codes_and_roots_from_database_file( std::string const & filename );
+
+/// @brief  Return a map of Sizes to pairs of char and string, which are ring sizes mapped to 1-letter affixes and
+/// morphemes, respectively.
+std::map< core::Size, std::pair< char, std::string > > read_ring_sizes_and_morphemes_fromt_database_file(
+	std::string const & filename );
 
 }  // namespace carbohydrates
 }  // namespace chemical

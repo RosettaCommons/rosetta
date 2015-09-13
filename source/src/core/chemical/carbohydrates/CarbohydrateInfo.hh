@@ -67,12 +67,6 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 	virtual void show( std::ostream & output=std::cout ) const;
 
 
-	// Static constant data access
-	// TODO: Create a singleton to handle these functions.
-	/// @brief A list of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root.
-	static std::map< std::string, std::string > const & code_to_root_map();
-
-
 public: // Accessors/Mutators /////////////////////////////////////////////////
 	// Nomenclature
 	/// @brief  Return the full IUPAC name of the monosaccharide.
@@ -479,13 +473,6 @@ private: // Private methods ///////////////////////////////////////////////////
 
 	// Determine and set the full and abbreviated IUPAC names.
 	void determine_IUPAC_names();
-
-	// Get monosaccharide root name from the 3-letter code.
-	std::string
-	root_from_code( std::string const & code ) const
-	{
-		return code_to_root_map().find( code )->second;  // operator[] is not overloaded for const maps.
-	}
 
 
 private: // Private data //////////////////////////////////////////////////////

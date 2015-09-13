@@ -2,7 +2,7 @@
 # corresponding root.
 
 # THIS IS JUST A LIST FOR UNIT TESTING! The actual, current list is found in
-# the database: rosetta_databse/chemical/carbohydrates/codes_to_roots.map
+# the database: database/chemical/carbohydrates/codes_to_roots.map
 # If you edit this file, you must also edit database_io.cxxtest.hh.
 
 # ALDOSES

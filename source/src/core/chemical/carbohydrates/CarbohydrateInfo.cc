@@ -13,7 +13,7 @@
 
 // Unit header
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-#include <core/chemical/carbohydrates/database_io.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
 
 // Package headers
 #include <core/chemical/ResidueType.hh>
@@ -26,7 +26,6 @@
 // Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -120,23 +119,9 @@ CarbohydrateInfo::show( std::ostream & output ) const
 		suffix = "nonose";
 		break;
 	}
-	switch ( ring_size_ ) {
-	case 3 :
-		ring_form = "oxirose";
-		break;
-	case 4 :
-		ring_form = "oxetose";
-		break;
-	case 5 :
-		ring_form = "furanose";
-		break;
-	case 6 :
-		ring_form = "pyranose";
-		break;
-	case 7 :
-		ring_form = "septanose";
-		break;
-	}
+
+	ring_form = CarbohydrateInfoManager::morpheme_from_ring_size( ring_size_ ) + "ose";
+
 	for ( uint position = 1; position <= n_carbons_; ++position ) {
 		if ( modifications_[ position ] != "" ) {
 			modifications += string( "  " );
@@ -179,22 +164,6 @@ CarbohydrateInfo::show( std::ostream & output ) const
 }
 
 
-std::map< std::string, std::string > const &
-CarbohydrateInfo::code_to_root_map() {
-	using namespace std;
-
-	static map< string, string > *CODE_TO_ROOT_MAP = NULL;
-
-	// If statement ensures that the data is only created once, i.e., is constant.
-	if ( ! CODE_TO_ROOT_MAP ) {
-		CODE_TO_ROOT_MAP = new map< string, string >( read_codes_and_roots_from_database_file(
-			basic::database::full_name( "chemical/carbohydrates/codes_to_roots.map" ) ) );
-	}
-
-	return *CODE_TO_ROOT_MAP;
-}
-
-
 // Accessors/Mutators
 // Return the standard/common, non-residue, short name of the monosaccharide.
 std::string
@@ -204,7 +173,7 @@ CarbohydrateInfo::base_name() const
 
 	core::chemical::ResidueTypeCOP residue_type( residue_type_ );
 	string const & code = residue_type->name3();
-	string const & root = root_from_code( code );
+	string const & root = CarbohydrateInfoManager::root_from_code( code );
 
 	// First cover accepted trivial names.
 	if ( code == "Gly" ) {
@@ -546,7 +515,7 @@ CarbohydrateInfo::determine_IUPAC_names()
 
 	// Determine root.
 	string const & code = residue_type->name3();
-	string const & root = root_from_code( code );
+	string const & root = CarbohydrateInfoManager::root_from_code( code );
 
 	// Flag for special cases.
 	bool const is_Neu( code == "Neu" );
@@ -593,28 +562,13 @@ CarbohydrateInfo::determine_IUPAC_names()
 	// Determine suffix.
 	stringstream long_suffix( stringstream::out );
 	stringstream short_suffix( stringstream::out );
-	switch ( ring_size_ ) {
-	case 3 :
-		long_suffix << "ooxir";
-		break;
-	case 4 :
-		long_suffix << "ooxet";
-		break;
-	case 5 :
-		long_suffix << "ofuran";
-		short_suffix << 'f';
-		break;
-	case 6 :
-		if ( ! is_Neu ) {  // (For some odd reason, "opyran" is not used with Neu, though "p" is....)
-			long_suffix << "opyran";
-		}
-		short_suffix << 'p';
-		break;
-	case 7 :
-		long_suffix << "oseptan";
-		short_suffix << 's';
-		break;
+
+	// Ring form
+	if ( ! is_Neu ) {  // (For some odd reason, "opyran" is not used with Neu, though "p" is....)
+		long_suffix << 'o' << CarbohydrateInfoManager::morpheme_from_ring_size( ring_size_ );
 	}
+	short_suffix << CarbohydrateInfoManager::ring_affix_from_ring_size( ring_size_ );
+
 	if ( residue_type->is_lower_terminus() ) {
 		if ( is_glycoside_ ) {  // TODO: Extract name of R-group.
 			if ( is_uronic_acid() ) {

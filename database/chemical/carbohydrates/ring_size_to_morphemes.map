@@ -1,0 +1,22 @@
+# A list of ring sizes to the morphemes used in carbohydrate nomenclature.
+# Both the morpheme for the full name and the standard 1-letter abbreviation
+# are provided.
+
+# A map of pairs is created from this data for which the first element is the
+# 1-letter code and the second element is the full morpheme.  For example, a
+# 6-membered ring has the 1-letter code -p- affixed to the 3-letter code before
+# the affixes for any modifications, such as NAc.  The same 6-membered ring is
+# named as a pyranose, so the morpheme is -opyran-, and a 6-membered-ring
+# glucose is a glucopyranose (Glcp) while a 6-membered-ring glucosamine is a
+# glucopyranosamine (GlcpN).
+
+# Note that smaller rings do not have accepted 1-letter affixes.  This table
+# lists them as X, but this will be interpreted as a null char when read in.
+
+
+# Ring Size  1-Letter Affix  Morpheme
+          3               X  oxir
+          4               X  oxet
+          5               f  furan
+          6               p  pyran
+          7               s  septan

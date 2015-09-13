@@ -45,6 +45,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
 #include <core/chemical/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
@@ -269,7 +270,7 @@ FileData::store_link_record( Record & record )
 /// to extract the base (non-variant) ResidueType needed for a particular residue.
 /// @author   Labonte
 void
-FileData::store_heterogen_names(std::string const & hetID, std::string & text)
+FileData::store_heterogen_names( std::string const & hetID, std::string & text )
 {
 	using namespace std;
 	using namespace core::chemical::carbohydrates;
@@ -284,25 +285,25 @@ FileData::store_heterogen_names(std::string const & hetID, std::string & text)
 	}
 
 	// If the hetID is found in the map of Rosetta-allowed carbohydrate 3-letter codes....
-	if ( CarbohydrateInfo::code_to_root_map().count(hetID) ) {
-		strip_whitespace(text);
-		parse_heterogen_name_for_carbohydrate_residues(text);
+	if ( CarbohydrateInfoManager::is_valid_sugar_code( hetID ) ) {
+		strip_whitespace( text );
+		parse_heterogen_name_for_carbohydrate_residues( text );
 	} else {
 		// Search through current list of HETNAM records: append or create records as needed.
-		bool record_found = false;
-		Size const n_heterogen_names = heterogen_names.size();
-		for ( uint i = 1; i <= n_heterogen_names; ++i ) {
+		bool record_found( false );
+		Size const n_heterogen_names( heterogen_names.size() );
+		for ( uint i( 1 ); i <= n_heterogen_names; ++i ) {
 			// If a record already exists with this hetID, this is a continuation line; append.
-			if ( hetID == heterogen_names[i].first ) {
-				heterogen_names[i].second.append(rstripped_whitespace(text));
+			if ( hetID == heterogen_names[ i ].first ) {
+				heterogen_names[ i ].second.append( rstripped_whitespace( text ) );
 				record_found = true;
 				break;
 			}
 		}
-		if ( !record_found ) {
+		if ( ! record_found ) {
 			// Non-carbohydrate heterogen names are simply stored in the standard PDB way.
-			strip_whitespace(text);
-			heterogen_names.push_back(make_pair(hetID, text));
+			strip_whitespace( text );
+			heterogen_names.push_back( make_pair( hetID, text ) );
 		}
 	}
 }

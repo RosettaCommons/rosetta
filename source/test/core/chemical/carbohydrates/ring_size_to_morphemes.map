@@ -1,0 +1,11 @@
+# A list of ring sizes to the morphemes used in carbohydrate nomenclature.
+# Both the morpheme for the full name and the standard 1-letter abbreviation
+# are provided.
+
+# THIS IS JUST A LIST FOR UNIT TESTING! The actual, current list is found in
+# the database: database/chemical/carbohydrates/ring_sizes_to_morphemes.map
+# If you edit this file, you must also edit database_io.cxxtest.hh.
+
+# Ring Size  1-Letter Affix  Morpheme
+          3               X  oogabooga
+          4               w  ohwow

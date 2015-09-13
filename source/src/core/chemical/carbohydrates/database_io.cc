@@ -18,8 +18,9 @@
 // Project header
 #include <core/types.hh>
 
-// Utility header
+// Utility headers
 #include <utility/io/util.hh>
+#include <utility/exit.hh>
 
 // Basic header
 #include <basic/Tracer.hh>
@@ -63,6 +64,43 @@ read_codes_and_roots_from_database_file( std::string const & filename )
 	}
 
 	return codes_to_roots;
+}
+
+// Return a map of Sizes to pairs of char and string, which are ring sizes mapped to 1-letter affixes and morphemes,
+// respectively.
+std::map< core::Size, std::pair< char, std::string > >
+read_ring_sizes_and_morphemes_fromt_database_file( std::string const & filename )
+{
+	using namespace std;
+	using namespace utility;
+
+	vector1< string > const lines( io::get_lines_from_file_data( filename ) );
+	map< Size, pair< char, string > > ring_size_to_morphemes;
+
+	Size const n_lines( lines.size() );
+	for ( uint i( 1 ); i <= n_lines; ++i ) {
+		istringstream line_word_by_word( lines[ i ] );
+		Size key;  // The map key is the ring size.
+		char affix;  // The first element of the pair is a 1-letter affix, e.g., "f", for a "furanose".
+		string morpheme;  // The second element of the pair is the internal morpheme, e.g., "ofuran", for a "furanose".
+
+		line_word_by_word >> key >> affix >> morpheme;
+
+		if ( key < 3 ) {
+			utility_exit_with_message( "read_ring_sizes_and_morphemes_fromt_database_file: "
+				"invalid ring size; rings cannot have less than 3 atoms!" );
+		}
+		if ( affix == 'X' ) { affix = '\0'; }  // Some ring sizes don't have accepted affixes.
+
+		ring_size_to_morphemes[ key ] = make_pair( affix, morpheme );
+	}
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Read " << ring_size_to_morphemes.size() <<
+			" ring size mappings from the carbohydrate database." << endl;
+	}
+
+	return ring_size_to_morphemes;
 }
 
 }  // namespace carbohydrates

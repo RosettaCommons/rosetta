@@ -91,6 +91,7 @@ sources = {
 
 	"core/chemical/carbohydrates": [
 		"CarbohydrateInfo",
+		"CarbohydrateInfoManager",
 		"database_io",
 	],
 

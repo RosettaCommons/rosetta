@@ -269,15 +269,8 @@ main( int argc, char *argv[] )
 
 		pose_from_pdb( target57, PATH + "target57.pdb" );
 
-		//test_sugar( target57 );  // Gasteiger atom types don't work with sulfates yet.
-		cout << endl << target57 << endl;
+		test_sugar( target57 );
 
-		cout << "Sequences:" << endl;
-		Size const n_chains( target57.conformation().num_chains() );
-		for ( core::uint i = 1; i <= n_chains; ++i ) {
-			cout << " Chain " << i << ": ";
-			cout << target57.chain_sequence( i ) << endl;
-		}
 
 		/*// FIXME
 		cout << "---------------------------------------------------------------------------------------------" << endl;

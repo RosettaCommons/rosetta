@@ -377,6 +377,8 @@ testinputfiles = [
 	"chemical/carbohydrates/beta-psicose.pdb",
 	"chemical/carbohydrates/Lex.pdb",
 	"chemical/carbohydrates/codes_to_roots.map",
+	"chemical/carbohydrates/ring_size_to_morphemes.map",
+	"chemical/carbohydrates/ring_size_to_morphemes.bad_map",
 	"chemical/gasteiger/AZO.params",
 	"chemical/gasteiger/GST.params",
 	"chemical/gasteiger/NXX.params",

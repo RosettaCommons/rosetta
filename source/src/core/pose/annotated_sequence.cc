@@ -23,6 +23,7 @@
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
@@ -345,7 +346,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 				string const code( morpheme.substr( 0, 3 ) );
 				string suffix( morpheme.substr( 3 ) );
 
-				if ( ! CarbohydrateInfo::code_to_root_map().count( code ) ) {
+				if ( ! CarbohydrateInfoManager::is_valid_sugar_code( code ) ) {
 					utility_exit_with_message( "Saccharide sequence input error: "
 						"Unrecognized sugar 3-letter code." );
 				}
