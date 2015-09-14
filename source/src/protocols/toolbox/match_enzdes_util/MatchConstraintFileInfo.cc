@@ -18,6 +18,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
 #include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
 #include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
+#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <core/pack/rotamer_set/bb_independent_rotamers.hh>
 
 //#include <protocols/enzdes/EnzConstraintIO.hh>
@@ -287,11 +288,11 @@ MatchConstraintFileInfo::MatchConstraintFileInfo(
 MatchConstraintFileInfo::~MatchConstraintFileInfo() {}
 
 
-utility::vector1< core::chemical::ResidueTypeCOP > const &
+utility::vector1< core::chemical::ResidueTypeCOP > const
 MatchConstraintFileInfo::allowed_restypes( core::Size which_cstres ) const
 {
 	EnzCstTemplateResCOP template_res = this->enz_cst_template_res( which_cstres );
-	return template_res->allowed_res_types_pointers();
+	return sort_residue_type_pointers_by_name( template_res->allowed_res_types_pointers() );
 }
 
 utility::vector1< core::Size > const &
@@ -834,17 +835,7 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 
 
 	// This is a new sort which will hopefully reduce instability in match_* integration tests.
-	utility::vector1< std::pair< std::string, core::chemical::ResidueTypeCOP > > restype_temp_set_with_name;
-	for ( Size n = 1; n <= restype_temp_set.size(); n++ ) restype_temp_set_with_name.push_back( std::make_pair( restype_temp_set[ n ]->name(), restype_temp_set[ n ] ) );
-	std::sort( restype_temp_set_with_name.begin(), restype_temp_set_with_name.end() );
-	// for ( Size n = 1; n <= restype_temp_set.size(); n++ ) tr << n << " original order: " << restype_temp_set[ n ]->name() << " new order " <<  (restype_temp_set_with_name[ n ].second)->name() << std::endl;
-
-	//finally put all the restypes into the storage vector
-	for ( utility::vector1< std::pair< std::string, core::chemical::ResidueTypeCOP > >::iterator
-			set_it = restype_temp_set_with_name.begin();
-			set_it != restype_temp_set_with_name.end(); ++set_it ) {
-		upstream_restypes_.push_back( (*set_it).second );
-	}
+	upstream_restypes_ = sort_residue_type_pointers_by_name( restype_temp_set );
 }
 
 

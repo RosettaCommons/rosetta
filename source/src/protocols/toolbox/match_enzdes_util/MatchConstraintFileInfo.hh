@@ -184,8 +184,8 @@ public:  //atom and residue accessors
 		return this->enz_cst_template_res( which_cstres )->is_backbone(); }
 
 
-	/// @brief all chemically non-redundant restypes of the given restypes
-	utility::vector1< core::chemical::ResidueTypeCOP > const &
+	/// @brief all chemically non-redundant restypes of the given restypes. Note -- now sorted by name!
+	utility::vector1< core::chemical::ResidueTypeCOP > const
 	allowed_restypes( core::Size which_cstres ) const;
 
 	/// @brief which one of the residues (1 or 2 ) in this block
@@ -306,6 +306,7 @@ protected:
 		std::string tag,
 		utility::io::izstream & data
 	);
+
 
 	//data
 private:

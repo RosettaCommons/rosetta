@@ -24,6 +24,7 @@
 
 #include <core/types.hh>
 
+#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -272,6 +273,28 @@ get_last_protein_residue( core::pose::Pose const & pose )
 	runtime_assert( false );
 	return 0;
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< core::chemical::ResidueTypeCOP >
+sort_residue_type_pointers_by_name( utility::vector1< core::chemical::ResidueTypeCOP > const & restype_temp_set )
+{
+	utility::vector1< std::pair< std::string, core::chemical::ResidueTypeCOP > > restype_temp_set_with_name;
+	for ( core::Size n = 1; n <= restype_temp_set.size(); n++ ) restype_temp_set_with_name.push_back( std::make_pair( restype_temp_set[ n ]->name(), restype_temp_set[ n ] ) );
+	std::sort( restype_temp_set_with_name.begin(), restype_temp_set_with_name.end() );
+	// for ( Size n = 1; n <= restype_temp_set.size(); n++ ) tr << n << " original order: " << restype_temp_set[ n ]->name() << " new order " <<  (restype_temp_set_with_name[ n ].second)->name() << std::endl;
+
+	//finally put all the restypes into the storage vector
+	utility::vector1< core::chemical::ResidueTypeCOP > restype_set_sorted;
+	for ( utility::vector1< std::pair< std::string, core::chemical::ResidueTypeCOP > >::iterator
+			set_it = restype_temp_set_with_name.begin();
+			set_it != restype_temp_set_with_name.end(); ++set_it ) {
+		restype_set_sorted.push_back( (*set_it).second );
+	}
+
+	return restype_set_sorted;
+}
+
 
 }  // match_enzdes_util
 } // toolbox

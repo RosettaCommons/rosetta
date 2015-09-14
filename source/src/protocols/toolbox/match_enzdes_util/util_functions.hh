@@ -17,6 +17,7 @@
 
 #include <core/types.hh>
 
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -104,6 +105,12 @@ core::Size get_first_protein_residue( core::pose::Pose const & pose );
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // @brief finds the first non-ligand residue in the pose  (should be the N-terminus)
 core::Size get_last_protein_residue( core::pose::Pose const & pose );
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// @brief helper function, trying to prevent instabilty in tests due to arbitrary ordering of ResidueTypeCOP addresses.
+utility::vector1< core::chemical::ResidueTypeCOP >
+sort_residue_type_pointers_by_name( utility::vector1< core::chemical::ResidueTypeCOP > const & restype_temp_set );
 
 
 }  // match_enzdes_util
