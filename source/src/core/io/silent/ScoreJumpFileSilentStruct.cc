@@ -86,7 +86,7 @@ void ScoreJumpFileSilentStruct::print_conformation( std::ostream & output  ) con
 				it = fold_tree().begin(), it_end = fold_tree().end();
 				it != it_end; ++it
 				) {
-			output << *it << std::endl;
+			output << *it;
 		}
 		output << ' ' << decoy_tag() << "\n";
 	}
