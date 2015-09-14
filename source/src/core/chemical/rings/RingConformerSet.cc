@@ -199,11 +199,11 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 	switch ( ring_size_ ) {
 	case 4 :
 		utility_exit_with_message( "4-membered rings not yet handled in Rosetta; exiting." );
-		if ( parameters[ q ] > 0 ) {
+		//if ( parameters[ q ] > 0 ) {
 			// TODO
-		} else /* q < 0 */ {
+		//} else /* q < 0 */ {
 			// TODO
-		}
+		//}
 		break;
 	case 5 :
 		// Adjust input to the nearest 18th degree.
