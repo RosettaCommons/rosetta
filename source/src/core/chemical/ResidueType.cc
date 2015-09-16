@@ -2739,7 +2739,7 @@ ResidueType::update_derived_data()
 		if ( ! graph_[ ordered_atoms_[ nu_atoms_indices_[ 1 ][ 1 ] ] ].is_virtual() ||
 				! graph_[ ordered_atoms_[ nu_atoms_indices_[ n_nus ][ 4 ] ] ].is_virtual() ) {
 			utility_exit_with_message( "The nu angles for this ResidueType are not properly defined.  "
-					"The first atom of the first nu and the last atom of the last nu must be virtual atoms." );
+				"The first atom of the first nu and the last atom of the last nu must be virtual atoms." );
 		}
 		for ( uint j( 2 ); j <= 4; ++j ) {
 			ring_atoms_.push_back( nu_atoms_indices_[ 1 ][ j ] );
@@ -3012,7 +3012,7 @@ ResidueType::update_derived_data()
 	// than the size of the ring.
 	if ( properties_->has_property( CYCLIC ) ) {
 		conformer_set_ = rings::RingConformerSetOP( new rings::RingConformerSet(
-				ring_atoms_.size(), lowest_ring_conformer_, low_ring_conformers_ ) );
+			ring_atoms_.size(), lowest_ring_conformer_, low_ring_conformers_ ) );
 	}
 
 	if ( properties_->has_property( RNA ) ) { //reinitialize and RNA derived data.

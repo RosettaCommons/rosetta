@@ -21,9 +21,9 @@ namespace linear_algebra {
 
 void
 svdcmp( utility::vector1< utility::vector1< Real > > &a,
-	    Size const m, Size const n, 
-	    utility::vector1< Real > &w,
-	    utility::vector1< utility::vector1< Real > > &v );
+	Size const m, Size const n,
+	utility::vector1< Real > &w,
+	utility::vector1< utility::vector1< Real > > &v );
 
 
 } // end namespace linear_algebra

@@ -142,7 +142,7 @@ ReadCAsFromPDB( std::string pdbfile, utility::vector1< numeric::xyzVector<core::
 	std::ifstream inpdb(pdbfile.c_str());
 	std::string buf;
 
-	while (std::getline(inpdb, buf ) ) {
+	while ( std::getline(inpdb, buf ) ) {
 		if ( buf.substr(0,4)!="ATOM" && buf.substr(0,6)!="HETATM" ) continue;
 		if ( buf.substr(12,4) != " CA " ) continue;
 
@@ -167,8 +167,8 @@ struct CAtrace {
 
 	CAtrace(core::pose::Pose pose, std::string tag, core::Real score, core::Real rms) {
 		cas_.reserve( pose.total_residue() );
-		for (int i=1; i<=(int)pose.total_residue(); ++i) {
-			if (pose.residue(i).is_protein()) cas_.push_back( pose.residue(i).xyz(2) );
+		for ( int i=1; i<=(int)pose.total_residue(); ++i ) {
+			if ( pose.residue(i).is_protein() ) cas_.push_back( pose.residue(i).xyz(2) );
 		}
 		dens_score_ = score;
 		rms_ = rms;
@@ -188,14 +188,14 @@ struct FragID {
 		pos_=pos;
 		tag_=tag;
 	}
-    int pos_;
-    std::string tag_;
+	int pos_;
+	std::string tag_;
 };
 
 // ignores idx (pos/tag pair is unique)
 bool operator<(const FragID& x, const FragID& y)
 {
-    return boost::make_tuple(x.pos_,x.tag_) < boost::make_tuple(y.pos_,y.tag_);
+	return boost::make_tuple(x.pos_,x.tag_) < boost::make_tuple(y.pos_,y.tag_);
 }
 
 /// fpd
@@ -311,42 +311,42 @@ DockFragmentsMover::cluster_frags(core::fragment::FragSetOP fragments) {
 
 	core::fragment::FragSetOP fragments_clust = fragments->empty_clone();
 
-	for (core::fragment::ConstFrameIterator it = fragments->begin(); it != fragments->end(); ++it) {
+	for ( core::fragment::ConstFrameIterator it = fragments->begin(); it != fragments->end(); ++it ) {
 		core::fragment::Frame frame = **it;
 		core::fragment::FrameOP filteredframe = frame.clone();
 
 		core::Size nfrags_i = std::min( nfrags, frame.nr_frags() );
-		for(core::Size i_frag=1; i_frag<=nfrags_i; i_frag++) {
+		for ( core::Size i_frag=1; i_frag<=nfrags_i; i_frag++ ) {
 			core::fragment::FragDataCOP oldfrag = frame.fragment_ptr(i_frag);
 
 			bool addfrag=true;
 			core::Size storedfragcount = filteredframe->nr_frags();
-			for(core::Size j_frag=1; j_frag<=storedfragcount && addfrag; j_frag++) {
+			for ( core::Size j_frag=1; j_frag<=storedfragcount && addfrag; j_frag++ ) {
 				core::fragment::FragDataCOP storedfrag = filteredframe->fragment_ptr(j_frag);
 
 				core::Real error = 0;
 				core::Size ntors = 0;
-				for (core::Size i_res=1; i_res<=oldfrag->size(); ++i_res) {
+				for ( core::Size i_res=1; i_res<=oldfrag->size(); ++i_res ) {
 					core::fragment::BBTorsionSRFD const & frag_i =
 						dynamic_cast< core::fragment::BBTorsionSRFD const &> ( *(oldfrag->get_residue(i_res)) );
 					core::fragment::BBTorsionSRFD const & frag_j =
 						dynamic_cast< core::fragment::BBTorsionSRFD const &> ( *(storedfrag->get_residue(i_res)) );
 
-					for (core::Size i_tors=1; i_tors<=frag_i.nbb(); ++i_tors) {
+					for ( core::Size i_tors=1; i_tors<=frag_i.nbb(); ++i_tors ) {
 						core::Real err_i = (frag_i.torsion(i_tors) - frag_j.torsion(i_tors));
 						error += err_i*err_i;
 						ntors++;
 					}
 				}
 				core::Real RMS = std::sqrt(error/ntors);
-				if (RMS <= fragfilter) addfrag=false;
+				if ( RMS <= fragfilter ) addfrag=false;
 			}
 
-			if(addfrag) filteredframe->add_fragment(oldfrag);
+			if ( addfrag ) filteredframe->add_fragment(oldfrag);
 		}
 
 		TR.Debug << "pos " << (*it)->start() << " mer " << (*it)->length()
-		   << "  nfrags " << frame.nr_frags() << " -> " << filteredframe->nr_frags() << std::endl;
+			<< "  nfrags " << frame.nr_frags() << " -> " << filteredframe->nr_frags() << std::endl;
 
 		fragments_clust->add(filteredframe);
 	}
@@ -365,7 +365,7 @@ void DockFragmentsMover::process_fragfile() {
 	nmer_ = fragments->max_frag_length(); // assumes constant length fragments!
 
 	utility::vector1< int > nmer_target = basic::options::option[ frag_len ]();
-	if (nmer_target.size() == 0) {
+	if ( nmer_target.size() == 0 ) {
 		nmer_target.push_back(nmer_);
 		nmer_target.push_back(nmer_);
 	}
@@ -374,14 +374,14 @@ void DockFragmentsMover::process_fragfile() {
 	core::Size nmer_target_big = (core::Size) std::max( nmer_target[1],nmer_target[2] );
 	core::Size nmer_target_small = (core::Size) std::min( nmer_target[1],nmer_target[2] );
 
-	if (nmer_target_big<nmer_) {
+	if ( nmer_target_big<nmer_ ) {
 		TR << "Chopping to " << nmer_target_big << " mers" << std::endl;
 		fragments_small = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( nmer_target_big ) );
 		core::fragment::chop_fragments( *fragments, *fragments_small );
 		fragments = fragments_small->clone();
 	}
 
-	if (nmer_target_small<nmer_target_big) {
+	if ( nmer_target_small<nmer_target_big ) {
 		TR << "Chopping to " << nmer_target_small << " mers" << std::endl;
 		fragments_small = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( nmer_target_small ) );
 		core::fragment::chop_fragments( *fragments, *fragments_small );
@@ -396,11 +396,11 @@ void DockFragmentsMover::process_fragfile() {
 	core::fragment::FragSetOP fragsmallclust = cluster_frags( fragments_small );
 
 	// map resids to frames
-	for (core::fragment::ConstFrameIterator i = fragclust->begin(); i != fragclust->end(); ++i) {
+	for ( core::fragment::ConstFrameIterator i = fragclust->begin(); i != fragclust->end(); ++i ) {
 		core::Size position = (*i)->start();
 		library_[position] = **i;
 	}
-	for (core::fragment::ConstFrameIterator i = fragsmallclust->begin(); i != fragsmallclust->end(); ++i) {
+	for ( core::fragment::ConstFrameIterator i = fragsmallclust->begin(); i != fragsmallclust->end(); ++i ) {
 		core::Size position = (*i)->start();
 		libsmall_[position] = **i;
 	}
@@ -413,7 +413,7 @@ void DockFragmentsMover::run() {
 	// get sequence from fasta or native pdb if provided
 	std::string sequence;
 	core::pose::Pose native_pose;
-	if( option[ in::file::native ].user() ) {
+	if ( option[ in::file::native ].user() ) {
 		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]().name() );
 		sequence = native_pose.sequence();
 	} else {
@@ -428,31 +428,31 @@ void DockFragmentsMover::run() {
 	utility::vector1<bool> search_positions( sequence.length() , true );
 	utility::vector1<bool> steal_positions( sequence.length() , false );
 
-	if (basic::options::option[ pos ].user()) {
+	if ( basic::options::option[ pos ].user() ) {
 		utility::vector1< core::Size > inpos = basic::options::option[ pos ]();
-		for (core::Size i=1; i<=search_positions.size(); ++i) {
+		for ( core::Size i=1; i<=search_positions.size(); ++i ) {
 			search_positions[i] = (std::find( inpos.begin(), inpos.end(), i ) != inpos.end());
 		}
 	}
 
 	core::Real STRAND_LONGFRAG_CUT = 0.5; // if at least this percent of fragdata is extended, use shortfrags
 
-	for (std::map<core::Size, core::fragment::Frame>::iterator it=library_.begin(); it!=library_.end(); ++it) {
+	for ( std::map<core::Size, core::fragment::Frame>::iterator it=library_.begin(); it!=library_.end(); ++it ) {
 		core::Size idx = it->first;
 		core::fragment::Frame &f = it->second;
 
 		// foreach fragment
 		core::Size nres=0,nstrand=0;
-		for (core::Size i=1; i<=f.nr_frags(); ++i) {
+		for ( core::Size i=1; i<=f.nr_frags(); ++i ) {
 			core::fragment::FragData const &f_i = f.fragment( i );
-			for (core::Size j=1; j<=f_i.size(); ++j) {
+			for ( core::Size j=1; j<=f_i.size(); ++j ) {
 				nres++;
-				if (f_i.secstruct(j) == 'E') { nstrand++; }
+				if ( f_i.secstruct(j) == 'E' ) { nstrand++; }
 			}
 		}
 
 		core::Real strand_frac = ((core::Real)nstrand)/((core::Real)nres);
-		if (strand_frac > STRAND_LONGFRAG_CUT) {
+		if ( strand_frac > STRAND_LONGFRAG_CUT ) {
 			use_big[idx] = false;
 		}
 	}
@@ -469,16 +469,16 @@ void DockFragmentsMover::run() {
 
 		// adjust search positions
 		utility::vector1<bool> init_pose_covers(search_positions.size());
-		for (int i=1; i<=(int)initial_pose.total_residue(); ++i) {
+		for ( int i=1; i<=(int)initial_pose.total_residue(); ++i ) {
 			init_pose_covers[initial_pose.pdb_info()->number(i)] = true;
 			initial_pose_seqmap[initial_pose.pdb_info()->number(i)] = i;
 		}
-		for (int i=1; i<=(int)search_positions.size(); ++i) {
-			if (!search_positions[i]) continue;
+		for ( int i=1; i<=(int)search_positions.size(); ++i ) {
+			if ( !search_positions[i] ) continue;
 			core::Size nmer = use_big[i]? nmer_ : nmer_small_;
 
 			bool frag_i_covered = init_pose_covers[i];
-			for (int j=i+1; j<i+(int)nmer && frag_i_covered; ++j) {
+			for ( int j=i+1; j<i+(int)nmer && frag_i_covered; ++j ) {
 				frag_i_covered = frag_i_covered && init_pose_covers[j];
 			}
 
@@ -490,14 +490,14 @@ void DockFragmentsMover::run() {
 
 	//
 	TR << "Searching positions:";
-	for (int i=1; i<=(int)search_positions.size(); ++i) {
-		if (search_positions[i]) TR << " " << i;
+	for ( int i=1; i<=(int)search_positions.size(); ++i ) {
+		if ( search_positions[i] ) TR << " " << i;
 	}
 	TR << std::endl;
-	if (nsteal>0) {
+	if ( nsteal>0 ) {
 		TR << "Stealing positions:";
-		for (int i=1; i<=(int)search_positions.size(); ++i) {
-			if (steal_positions[i]) TR << " " << i;
+		for ( int i=1; i<=(int)search_positions.size(); ++i ) {
+			if ( steal_positions[i] ) TR << " " << i;
 		}
 		TR << std::endl;
 	}
@@ -515,12 +515,12 @@ void DockFragmentsMover::run() {
 	dock.setNormScores(option[ norm_scores ]());
 	dock.setClusterOversamp(option[ clust_oversample ]());
 	dock.setMaxRotPerTrans( 1 );
-	if (option[ out::file::silent ].user()) {
+	if ( option[ out::file::silent ].user() ) {
 		std::string silent_fn = option[ out::file::silent ]();
 		dock.setOutputSilent( silent_fn );
 	}
 	// read CA positions (if specified)
-	if (option[ ca_positions ].user()) {
+	if ( option[ ca_positions ].user() ) {
 		utility::vector1< numeric::xyzVector<core::Real> > cas;
 		ReadCAsFromPDB( option[ ca_positions ](), cas );
 		dock.predefine_search(cas);
@@ -528,10 +528,10 @@ void DockFragmentsMover::run() {
 	}
 
 	// for each position
-	for (std::map<core::Size, core::fragment::Frame>::iterator it=library_.begin(); it!=library_.end(); ++it) {
+	for ( std::map<core::Size, core::fragment::Frame>::iterator it=library_.begin(); it!=library_.end(); ++it ) {
 		core::Size idx = it->first;
 		core::fragment::Frame frame;
-		if (use_big[idx]) {
+		if ( use_big[idx] ) {
 			frame = library_[idx];
 		} else {
 			frame = libsmall_[idx];
@@ -539,14 +539,14 @@ void DockFragmentsMover::run() {
 
 		core::Size seq_pos = frame.start();
 		core::Size nmer_len = frame.length();
-		if( !search_positions[seq_pos] && !steal_positions[seq_pos]) continue;
+		if ( !search_positions[seq_pos] && !steal_positions[seq_pos] ) continue;
 
 		// create native_frag_pose from native_pose if native are provided
 		core::pose::PoseOP native_frag_pose ( new core::pose::Pose() ) ;
-		if( native_pose.total_residue() > 0 ) {
+		if ( native_pose.total_residue() > 0 ) {
 			utility::vector1< core::Size > positions;
 			core::kinematics::FoldTree fold_tree( nmer_len );
-			for ( core::Size irsd=seq_pos; irsd<seq_pos+nmer_len; ++irsd ){ positions.push_back( irsd ); }
+			for ( core::Size irsd=seq_pos; irsd<seq_pos+nmer_len; ++irsd ) { positions.push_back( irsd ); }
 			core::pose::create_subpose( native_pose, positions, fold_tree, *native_frag_pose ); // make native_frag_pose
 
 			// pass native to docking
@@ -572,7 +572,7 @@ void DockFragmentsMover::run() {
 				//std::string const pdbid ( frame->fragment( j ).pdbid() );
 				frags.push_back( frag_i );
 			}
-		} else if (steal_positions[seq_pos]) {
+		} else if ( steal_positions[seq_pos] ) {
 			dock.setPassThrough( true );
 			dock.setDoRefine( false );
 
@@ -580,7 +580,7 @@ void DockFragmentsMover::run() {
 
 			utility::vector1< core::Size > positions;
 			core::kinematics::FoldTree fold_tree( nmer_len );
-			for ( core::Size irsd=seq_pos; irsd<seq_pos+nmer_len; ++irsd ){
+			for ( core::Size irsd=seq_pos; irsd<seq_pos+nmer_len; ++irsd ) {
 				positions.push_back( initial_pose_seqmap[irsd] );
 			}
 			core::pose::create_subpose( initial_pose, positions, fold_tree, *steal_pose ); // make native_frag_pose
@@ -604,17 +604,17 @@ DockFragmentsMover::cut_from_map( core::pose::Pose const &pose ) {
 	core::Real mask_radius = 2; //?
 	poseCoords litePose;
 
-	for (int i = 1; i <= (int)pose.total_residue(); ++i) {
+	for ( int i = 1; i <= (int)pose.total_residue(); ++i ) {
 		core::conformation::Residue const & rsd_i ( pose.residue(i) );
 		bool skipres = ( rsd_i.aa() == core::chemical::aa_vrt );
-		for (int j = i-(int)edge_trim; j < (i+(int)edge_trim) && !skipres; ++j) {
-			if (j>=1 && j<=(int)pose.total_residue() && pose.fold_tree().is_cutpoint( j ) ) skipres=true;
+		for ( int j = i-(int)edge_trim; j < (i+(int)edge_trim) && !skipres; ++j ) {
+			if ( j>=1 && j<=(int)pose.total_residue() && pose.fold_tree().is_cutpoint( j ) ) skipres=true;
 		}
 
-		if (skipres) continue;
+		if ( skipres ) continue;
 
 		core::Size natoms = rsd_i.nheavyatoms();
-		for (core::Size j = 1; j <= natoms; ++j) {
+		for ( core::Size j = 1; j <= natoms; ++j ) {
 			core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 			poseCoord coord_j;
 			coord_j.x_ = rsd_i.xyz( j );
@@ -628,14 +628,16 @@ DockFragmentsMover::cut_from_map( core::pose::Pose const &pose ) {
 
 	// apply mask to map
 	ObjexxFCL::FArray3D< float > densnew = core::scoring::electron_density::getDensityMap().data();
-	for (int z=1; z<=(int)densnew.u3(); z++)
-	for (int y=1; y<=(int)densnew.u2(); y++)
-	for (int x=1; x<=(int)densnew.u1(); x++) {
-		densnew(x,y,z) *= (1-rhoMask(x,y,z));
+	for ( int z=1; z<=(int)densnew.u3(); z++ ) {
+		for ( int y=1; y<=(int)densnew.u2(); y++ ) {
+			for ( int x=1; x<=(int)densnew.u1(); x++ ) {
+				densnew(x,y,z) *= (1-rhoMask(x,y,z));
+			}
+		}
 	}
 	core::scoring::electron_density::getDensityMap().set( densnew );
 
-	if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]()) {
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
 		core::scoring::electron_density::getDensityMap().writeMRC( "trimmed.mrc" );
 	}
 }
@@ -688,7 +690,7 @@ void ScoreFragmentSetMover::run() {
 	utility::vector1< utility::vector1< CAtrace > > all_frags;
 
 	core::io::silent::SilentFileData sfd;
-	for (core::Size n=1; n<=insilent.size(); ++n) {
+	for ( core::Size n=1; n<=insilent.size(); ++n ) {
 		sfd.read_file( insilent[n] );
 	}
 
@@ -700,10 +702,10 @@ void ScoreFragmentSetMover::run() {
 		core::Real rms_i = iter->get_energy( "rms" );
 		core::Real rank_i = iter->get_energy( "dens_rank" );
 
-		if (option[ n_matches ].user() && (option[ n_matches ]+0.5) < rank_i) continue;
-		if (option[ cheat ].user() && rms_i > 2) continue;
+		if ( option[ n_matches ].user() && (option[ n_matches ]+0.5) < rank_i ) continue;
+		if ( option[ cheat ].user() && rms_i > 2 ) continue;
 
-		if (score_i<-999) score_i=1000.0; // hack
+		if ( score_i<-999 ) score_i=1000.0; // hack
 
 		runtime_assert( score_i != 0 ); //??
 
@@ -722,8 +724,8 @@ void ScoreFragmentSetMover::run() {
 		//if (mer_size==0) mer_size=ca_i.cas_.size();
 		//runtime_assert( mer_size == ca_i.cas_.size() );
 
-		if (all_frags.size() < resid) all_frags.resize( resid );
-		if (all_frags[resid].size() < rank_i) all_frags[resid].resize( rank_i );
+		if ( all_frags.size() < resid ) all_frags.resize( resid );
+		if ( all_frags[resid].size() < rank_i ) all_frags[resid].resize( rank_i );
 		all_frags[resid][rank_i] = ca_i;
 	}
 
@@ -732,10 +734,10 @@ void ScoreFragmentSetMover::run() {
 	core::Size nres = all_frags.size();
 	core::Size idx=1, type=1;
 	std::ofstream outscore( option[ scorefile ]().c_str(), std::ios::out | std::ios::binary );
-	for (core::Size i_res=1; i_res<=nres; ++i_res) {
+	for ( core::Size i_res=1; i_res<=nres; ++i_res ) {
 		TR << "1b: [" << i_res << "/" << nres << "]" << "\r" << std::flush;
 		core::Size nfrag_i = all_frags[i_res].size();
-		for (core::Size i_frag=1; i_frag<=nfrag_i; ++i_frag) {
+		for ( core::Size i_frag=1; i_frag<=nfrag_i; ++i_frag ) {
 			core::Real scalefactor = 9.0 / all_frags[i_res][i_frag].cas_.size();
 
 			core::Real dens_sc = scalefactor * all_frags[i_res][i_frag].dens_score_;
@@ -760,25 +762,25 @@ void ScoreFragmentSetMover::run() {
 
 	// then 2b
 	type = 2;
-	for (core::Size i_res=1; i_res<=nres; ++i_res) {
+	for ( core::Size i_res=1; i_res<=nres; ++i_res ) {
 		TR << "2b: [" << i_res << "/" << nres << "]" << "\r" << std::flush;
 		core::Size nfrag_i = all_frags[i_res].size();
 
-		for (core::Size j_res=i_res+1; j_res<=nres; ++j_res) {
+		for ( core::Size j_res=i_res+1; j_res<=nres; ++j_res ) {
 			core::Size nfrag_j = all_frags[j_res].size();
 			core::Size offset = j_res-i_res;
-			for (core::Size i_frag=1; i_frag<=nfrag_i; ++i_frag) {
-				for (core::Size j_frag=1; j_frag<=nfrag_j; ++j_frag) {
+			for ( core::Size i_frag=1; i_frag<=nfrag_i; ++i_frag ) {
+				for ( core::Size j_frag=1; j_frag<=nfrag_j; ++j_frag ) {
 					core::Real clash_sc = clash_score( all_frags[i_res][i_frag], all_frags[j_res][j_frag], offset );
 					core::Real overlap_sc = overlap_score( all_frags[i_res][i_frag], all_frags[j_res][j_frag], offset );
 					core::Real closability_sc = closability_score( all_frags[i_res][i_frag], all_frags[j_res][j_frag], offset );
 
 					//core::Real scalefactor =
-					//	(9.0 / all_frags[i_res][i_frag].cas_.size()) *
-					//	(9.0 / all_frags[j_res][j_frag].cas_.size());
-				 	//TR << i_res << "." << i_frag << " to " << j_res << "." << j_frag << ": " << clash_sc << " , " << overlap_sc << " , " << closability_sc << std::endl;
+					// (9.0 / all_frags[i_res][i_frag].cas_.size()) *
+					// (9.0 / all_frags[j_res][j_frag].cas_.size());
+					//TR << i_res << "." << i_frag << " to " << j_res << "." << j_frag << ": " << clash_sc << " , " << overlap_sc << " , " << closability_sc << std::endl;
 
-					if (std::abs(clash_sc)+std::abs(overlap_sc)+std::abs(closability_sc) > 1e-4) {
+					if ( std::abs(clash_sc)+std::abs(overlap_sc)+std::abs(closability_sc) > 1e-4 ) {
 						core::Size idxi = all_frags[i_res][i_frag].idx_;
 						core::Size idxj = all_frags[j_res][j_frag].idx_;
 
@@ -803,8 +805,8 @@ ScoreFragmentSetMover::overlap_score( CAtrace &pose1, CAtrace &pose2, core::Size
 	core::Size mersize = pose1.cas_.size();
 	core::Real overlap_ij = 0.0;
 
-	if (offset<mersize) {
-		for (int i=(int)(offset+1); i<=(int)mersize; ++i) {
+	if ( offset<mersize ) {
+		for ( int i=(int)(offset+1); i<=(int)mersize; ++i ) {
 			int j = i-offset;
 			core::Real dist = (pose1.cas_[i] - pose2.cas_[j]).length();
 
@@ -813,22 +815,23 @@ ScoreFragmentSetMover::overlap_score( CAtrace &pose1, CAtrace &pose2, core::Size
 
 			// check for clashes
 			//  if there are any clashes give a large penalty
-			for (int i=1; i<=(int)mersize; ++i) {
-				for (int j=1; j<=(int)mersize; ++j) {
+			for ( int i=1; i<=(int)mersize; ++i ) {
+				for ( int j=1; j<=(int)mersize; ++j ) {
 					int seqsep = offset-i+j;
-					if (seqsep >= 5 || seqsep <= -5) {
+					if ( seqsep >= 5 || seqsep <= -5 ) {
 						core::Real dist = (pose1.cas_[i] - pose2.cas_[j]).length_squared();
-						if (dist < clash_dist_*clash_dist_)
+						if ( dist < clash_dist_*clash_dist_ ) {
 							return 8.0; // should be nmer-1?
+						}
 					}
 				}
 			}
 
 			// sigmoid
 			core::Real overlap_ij_xyz = 2.0 / ( 1 + std::exp( -steepness_*(dist-overlap_width_)) ) - 1;
-            //core::Real overlap_ij_xyz = std::exp( -1*dist*steepness_);
+			//core::Real overlap_ij_xyz = std::exp( -1*dist*steepness_);
 			overlap_ij += overlap_ij_xyz;
-        }
+		}
 	}
 	return overlap_ij;
 }
@@ -837,14 +840,14 @@ core::Real
 ScoreFragmentSetMover::clash_score( CAtrace &pose1, CAtrace &pose2, core::Size offset ) {
 	core::Size mersize = pose1.cas_.size();
 	core::Real clash_ij = 0.0;
-	if (offset >= mersize) {
+	if ( offset >= mersize ) {
 		// fragments do not overlap -- use standard penalty
-		for (int i=1; i<=(int)mersize; ++i) {
-			for (int j=1; j<=(int)mersize; ++j) {
+		for ( int i=1; i<=(int)mersize; ++i ) {
+			for ( int j=1; j<=(int)mersize; ++j ) {
 				//if (i==(int)mersize && j==1 && offset==mersize) continue;
 
 				core::Real dist = (pose1.cas_[i] - pose2.cas_[j]).length_squared();
-				if (dist < clash_dist_*clash_dist_) clash_ij += 1.0;
+				if ( dist < clash_dist_*clash_dist_ ) clash_ij += 1.0;
 			}
 		}
 	}
@@ -858,10 +861,10 @@ ScoreFragmentSetMover::closability_score( CAtrace &pose1, CAtrace &pose2, core::
 	core::Size mersize = pose1.cas_.size();
 	core::Real close_ij = 0.0;
 
-	if (offset < mersize) return 0.0;
+	if ( offset < mersize ) return 0.0;
 
 	core::Size gap_size = offset - mersize + 1;
-	if (gap_size < gap_lengths_.size()) {
+	if ( gap_size < gap_lengths_.size() ) {
 		core::Real dist = (pose1.cas_[mersize] - pose2.cas_[1]).length();
 
 		if ( dist < gap_lengths_[gap_size] ) {
@@ -881,7 +884,7 @@ FragmentAssemblyMover::FragmentAssemblyMover() {
 	close_wt_ = 6.0;
 	dens_wt_ = 0.85;  //fd
 
-	if (option[ assembly_weights ].user() ){
+	if ( option[ assembly_weights ].user() ) {
 		overlap_wt_ = option[ assembly_weights ]()[1];
 		clash_wt_ = option[ assembly_weights ]()[2];
 		close_wt_ = option[ assembly_weights ]()[3];
@@ -895,10 +898,10 @@ FragmentAssemblyMover::score( bool verbose=false ) {
 	core::Size nres = assigned_frags.size();
 	core::Real score_total = 0.0;
 
-	for ( core::Size i=1; i<=nres; ++i) {
+	for ( core::Size i=1; i<=nres; ++i ) {
 		core::Real clash_i=0, overlap_i=0, close_i=0, dens_i=0, score_i=0, rms_i=0;
 
-		if (assigned_frags[i] == 0) {
+		if ( assigned_frags[i] == 0 ) {
 			score_total+=null_frag_; //null frag
 			dens_i = null_frag_;
 		} else {
@@ -907,8 +910,8 @@ FragmentAssemblyMover::score( bool verbose=false ) {
 			score_i = scores_1b[ assigned_frags[i] ];
 			rms_i = rmses[ assigned_frags[i] ];
 
-			for ( core::Size j=1; j<=nres; ++j) {
-				if (assigned_frags[j] != 0) {
+			for ( core::Size j=1; j<=nres; ++j ) {
+				if ( assigned_frags[j] != 0 ) {
 					score_i += 0.5*scores_2b[ assigned_frags[i] ][ assigned_frags[j] ];
 					score_total += 0.5*scores_2b[ assigned_frags[i] ][ assigned_frags[j] ];
 
@@ -918,7 +921,7 @@ FragmentAssemblyMover::score( bool verbose=false ) {
 				}
 			}
 		}
-		if (verbose) TR << "res " << i << ": " << rms_i << " " << score_i << " = " << clash_i << "/" << overlap_i << "/" << close_i << "/" << dens_i << std::endl;
+		if ( verbose ) TR << "res " << i << ": " << rms_i << " " << score_i << " = " << clash_i << "/" << overlap_i << "/" << close_i << "/" << dens_i << std::endl;
 	}
 	return score_total;
 }
@@ -926,7 +929,7 @@ FragmentAssemblyMover::score( bool verbose=false ) {
 
 void
 FragmentAssemblyMover::run( ) {
-	if( !option[ out::file::silent ].user() ) {
+	if ( !option[ out::file::silent ].user() ) {
 		TR << "Must specify an output file with -out::file::silent!" << std::endl;
 		return;
 	}
@@ -934,7 +937,7 @@ FragmentAssemblyMover::run( ) {
 	// read scorefile
 	std::ifstream inscore( option[ scorefile ]().c_str(), std::ios::in | std::ios::binary );
 	TR << "reading scorefile" << std::endl;
-	while (!inscore.eof()) {
+	while ( !inscore.eof() ) {
 		std::string tag;
 		core::Real dens_sc,clash_sc,overlap_sc,closability_sc, rms_i;
 		core::Size ires,jres,idxi,idxj;
@@ -948,9 +951,9 @@ FragmentAssemblyMover::run( ) {
 		core::Size type;
 		inscore.read( (char*)&type , sizeof(type) );
 
-		if (inscore.eof()) break;
+		if ( inscore.eof() ) break;
 
-		if (type==1) {
+		if ( type==1 ) {
 			char tagstr[32];
 			inscore.read( (char*)tagstr , 32*sizeof(char) ); // assumes max tag == 32 bytes
 			inscore.read( (char*)&idxi , sizeof(idxi) );
@@ -966,18 +969,18 @@ FragmentAssemblyMover::run( ) {
 			frag2idx[frag_i] = idxi;
 
 			// have to assume fragments are not ordered
-			if (ires > pos2frags.size()) pos2frags.resize(ires);
+			if ( ires > pos2frags.size() ) pos2frags.resize(ires);
 			pos2frags[ires].push_back( idxi );
 
-			if (idxi > scores_1b.size()) scores_1b.resize( idxi );
+			if ( idxi > scores_1b.size() ) scores_1b.resize( idxi );
 			scores_1b[idxi] = dens_wt_ * dens_sc;
 
-			if (idxi > rmses.size()) rmses.resize( idxi );
+			if ( idxi > rmses.size() ) rmses.resize( idxi );
 			rmses[idxi] = rms_i;
 
-		} else if (type==2) {
+		} else if ( type==2 ) {
 			// assumption: all 1body energies have been seen
-			if (scores_2b.size() == 0) {
+			if ( scores_2b.size() == 0 ) {
 				TR << "read " << allfrags.size() << " fragments" << std::endl;
 				TR << "reading 2b scores" << std::endl;
 				scores_2b.resize( allfrags.size(), utility::vector1<core::Real>(allfrags.size(),0) );
@@ -1019,7 +1022,7 @@ FragmentAssemblyMover::run( ) {
 	utility::vector1< core::pose::PoseOP > frags_sel(nres);
 	core::io::silent::SilentFileData sfd;
 	utility::vector1<utility::file::FileName> insilent = option[ in::file::silent ]();
-	for (core::Size n=1; n<=insilent.size(); ++n) {
+	for ( core::Size n=1; n<=insilent.size(); ++n ) {
 		sfd.read_file( insilent[n] );
 	}
 
@@ -1028,13 +1031,13 @@ FragmentAssemblyMover::run( ) {
 	core::Real sa_start_temp = 500.0, sa_end_temp=1.0;
 	core::Size sa_nsteps = 200, mc_nsteps = 25*nres*option[ scale_cycles ];
 
-	for (int rd=1; rd<=(int)nstruct; ++rd) {
+	for ( int rd=1; rd<=(int)nstruct; ++rd ) {
 		// MC
 		// initialize
 		core::Size nres = pos2frags.size();
 
 		// add null frags, initialize to it
-		for (int i=1; i<=(int)nres; ++i) {
+		for ( int i=1; i<=(int)nres; ++i ) {
 			pos2frags[i].push_back( 0 );
 		}
 		assigned_frags.resize( nres, 0 );
@@ -1045,7 +1048,7 @@ FragmentAssemblyMover::run( ) {
 		core::Real temp_scale = std::pow( sa_end_temp/sa_start_temp, 1.0/((core::Real)sa_nsteps) );
 
 		for ( core::Size temp_ctr=1; temp_ctr<=sa_nsteps; ++temp_ctr ) {
-			for ( core::Size step=1; step<=mc_nsteps; ++step ){
+			for ( core::Size step=1; step<=mc_nsteps; ++step ) {
 				int select_pos = numeric::random::random_range( 1, nres );
 
 				// calculate compatibility scores for all the cadidate placements at the given pos
@@ -1054,28 +1057,29 @@ FragmentAssemblyMover::run( ) {
 
 				utility::vector1<core::Real> frag_scores( n_frag_cands );
 				core::Real best_frag_score = 1e30, prob_sum = 0.0;
-				for ( int i=1; i<=(int)n_frag_cands; ++i) {
+				for ( int i=1; i<=(int)n_frag_cands; ++i ) {
 					frag_scores[i] = 0;
-					if (frag_cands[i] == 0) {
+					if ( frag_cands[i] == 0 ) {
 						frag_scores[i] = null_frag_;
 					} else {
 						frag_scores[i] = scores_1b[ frag_cands[i] ];
-						for ( core::Size pos=1; pos<=nres; ++pos ){
+						for ( core::Size pos=1; pos<=nres; ++pos ) {
 							int assigned_fragidx = assigned_frags[pos];
-							if ( assigned_fragidx != 0 && (int)pos != select_pos )
+							if ( assigned_fragidx != 0 && (int)pos != select_pos ) {
 								frag_scores[i] += scores_2b[ frag_cands[i] ][ assigned_fragidx ];
+							}
 						}
 					}
 
 					best_frag_score = std::min( frag_scores[i], best_frag_score );
 				}
 
-				for ( core::Size i=1; i<=n_frag_cands; ++i) {
+				for ( core::Size i=1; i<=n_frag_cands; ++i ) {
 					frag_scores[i] -= best_frag_score;
 					frag_scores[i] = std::exp( -std::min( frag_scores[i]/temp, 100.0 ) );
 
 					//if (option[ cheat_assem ]() && frag_cands[i] != 0 && rmses[ frag_cands[i] ]<4) {
-					//	frag_scores[i] *= 1e6;
+					// frag_scores[i] *= 1e6;
 					//}
 
 					prob_sum += frag_scores[i];
@@ -1093,7 +1097,7 @@ FragmentAssemblyMover::run( ) {
 			}
 			core::Real score_total = score( false );
 			core::Real nassigned = 0;
-			for ( core::Size i=1; i<=nres; ++i) { if (assigned_frags[i] != 0) nassigned++; }
+			for ( core::Size i=1; i<=nres; ++i ) { if ( assigned_frags[i] != 0 ) nassigned++; }
 
 			TR << "Finished temp = " << temp << " : score = " << score_total << " [" << nassigned << " assigned]" << std::endl;
 
@@ -1106,9 +1110,9 @@ FragmentAssemblyMover::run( ) {
 		utility::vector1< std::string > tags_to_fetch;
 		utility::vector1< core::Size > tag_indices;
 		TR << "Total score: " << score_total << std::endl;
-		for ( core::Size i=1; i<=nres; ++i) {
+		for ( core::Size i=1; i<=nres; ++i ) {
 			//TR << "   res " << i << "  frag " << assigned_frags[i];
-			if (assigned_frags[i] != 0) {
+			if ( assigned_frags[i] != 0 ) {
 				std::ostringstream oss;
 				oss << allfrags[assigned_frags[i]].tag_; // << "_" << i;
 				//TR << " (" << oss.str() << ")";
@@ -1122,7 +1126,7 @@ FragmentAssemblyMover::run( ) {
 		for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
 			std::string tag = iter->decoy_tag();
 			utility::vector1< std::string >::iterator tag_it = std::find( tags_to_fetch.begin(), tags_to_fetch.end(), tag );
-			if ( tag_it == tags_to_fetch.end()) continue;
+			if ( tag_it == tags_to_fetch.end() ) continue;
 			int index = std::distance (tags_to_fetch.begin(), tag_it)+1; // +1 for 1-indexing
 
 			// do something ...
@@ -1135,7 +1139,7 @@ FragmentAssemblyMover::run( ) {
 		// write silent file of saved fragments + averaged model
 		std::string outfile = option[ out::file::silent ]()+"_"+ObjexxFCL::right_string_of( rd, 4, '0' )+".silent";
 		core::io::silent::SilentFileData sfd_out( outfile, false, false, "binary" ); //true to store argv in silent file
-		for (core::Size i=1; i<=tags_to_fetch.size(); ++i) {
+		for ( core::Size i=1; i<=tags_to_fetch.size(); ++i ) {
 			core::Size idx = tag_indices[i];
 
 			core::io::silent::BinarySilentStruct silent_stream( *(frags_sel[idx]), tags_to_fetch[i] );
@@ -1160,7 +1164,7 @@ SolutionRescoreMover::run() {
 
 	// energy cut
 	utility::vector1<core::Real> allscores;
-	for (core::Size n=1; n<=insilent.size(); ++n) {
+	for ( core::Size n=1; n<=insilent.size(); ++n ) {
 		core::io::silent::SilentFileData sfd;
 		sfd.read_file( insilent[n] );
 
@@ -1174,7 +1178,7 @@ SolutionRescoreMover::run() {
 			core::Real score_i = iter->get_energy( "dens_score" );
 			core::Real rms_i = iter->get_energy( "rms" );
 
-			if (fields.size() < 2 || fields[1] == "empty") { // weird bug
+			if ( fields.size() < 2 || fields[1] == "empty" ) { // weird bug
 				//TR << "Skipping tag >" << tag << "<" << std::endl;
 				continue;
 			}
@@ -1198,7 +1202,7 @@ SolutionRescoreMover::run() {
 		ScoreFragmentSetMover scoring;
 
 		core::Real overlap_wt = 4.0, clash_wt = 20.0, close_wt = 6.0, dens_wt = 0.85;
-		if (option[ assembly_weights ].user() ){
+		if ( option[ assembly_weights ].user() ) {
 			overlap_wt = option[ assembly_weights ]()[1];
 			clash_wt = option[ assembly_weights ]()[2];
 			close_wt = option[ assembly_weights ]()[3];
@@ -1206,23 +1210,23 @@ SolutionRescoreMover::run() {
 
 		core::Real score=0.0, clash_score=0.0, close_score=0.0, overlap_score=0.0, dens_score=0.0;
 		core::Size ncorr = 0;
-		for (iter1 = all_frags.begin(); iter1 != all_frags.end(); iter1++) {
+		for ( iter1 = all_frags.begin(); iter1 != all_frags.end(); iter1++ ) {
 			core::Real overlap_i=0.0;
 			core::Real clash_i=0.0;
 			core::Real close_i=0.0;
 			core::Real dens_i = dens_wt * iter1->second.dens_score_;
 			core::Real rms = iter1->second.rms_;
 
-			if (rms < 2.0) ncorr++;
+			if ( rms < 2.0 ) ncorr++;
 
 			dens_score += dens_i;
 
 			//TR << iter1->second.tag_ << "  " << dens_i << std::endl;
-			for (iter2 = all_frags.begin(); iter2 != all_frags.end(); iter2++) {
-				if (iter1->first == iter2->first) continue;
+			for ( iter2 = all_frags.begin(); iter2 != all_frags.end(); iter2++ ) {
+				if ( iter1->first == iter2->first ) continue;
 
 				core::Real overlap_ij, clash_ij, close_ij;
-				if (iter2->first > iter1->first) {
+				if ( iter2->first > iter1->first ) {
 					core::Size offset = iter2->first-iter1->first;
 					overlap_ij = scoring.overlap_score(iter1->second, iter2->second, offset);
 					clash_ij = scoring.clash_score(iter1->second, iter2->second, offset);
@@ -1239,7 +1243,7 @@ SolutionRescoreMover::run() {
 				close_i += 0.5*close_wt * close_ij;
 
 				//if (overlap_ij != 0.0 || clash_ij != 0.0 || close_ij != 0.0) {
-				//	TR << "   " << iter1->second.tag_ << " : " << iter2->second.tag_ << "  " << overlap_ij << " / " << clash_ij << " / " << close_ij << std::endl;
+				// TR << "   " << iter1->second.tag_ << " : " << iter2->second.tag_ << "  " << overlap_ij << " / " << clash_ij << " / " << close_ij << std::endl;
 				//}
 			}
 			overlap_score += overlap_i;
@@ -1269,7 +1273,7 @@ ConsensusFragmentMover::run() {
 	// energy cut
 	utility::vector1<core::Real> allscores;
 	core::io::silent::SilentFileData sfd;
-	for (core::Size n=1; n<=insilent.size(); ++n) {
+	for ( core::Size n=1; n<=insilent.size(); ++n ) {
 		sfd.read_file( insilent[n] );
 	}
 
@@ -1283,12 +1287,12 @@ ConsensusFragmentMover::run() {
 
 	for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
 		core::Real score_i = iter->get_energy( "total_score" );
-		if (score_i > score_cut) continue;
+		if ( score_i > score_cut ) continue;
 
 		std::string tag = iter->decoy_tag();
 		utility::vector1< std::string > fields = utility::string_split( tag, '_' );
 
-		if (fields.size() < 2 || fields[1] == "empty") { // weird bug
+		if ( fields.size() < 2 || fields[1] == "empty" ) { // weird bug
 			TR << "Skipping tag >" << tag << "<" << std::endl;
 			continue;
 		}
@@ -1305,7 +1309,7 @@ ConsensusFragmentMover::run() {
 	// find largest fragment occupancy
 	core::Size maxcount = 0;
 	std::map< core::Size, utility::vector1< core::pose::PoseOP > >::iterator iter;
-	for (iter = all_frags.begin(); iter != all_frags.end(); iter++) {
+	for ( iter = all_frags.begin(); iter != all_frags.end(); iter++ ) {
 		maxcount = std::max( maxcount, iter->second.size() );
 	}
 	TR << "Highest frequency = " << maxcount << std::endl;
@@ -1318,16 +1322,16 @@ ConsensusFragmentMover::run() {
 	std::map< core::Size , numeric::xyzVector< core::Real > > ca_sum2;
 	std::map< core::Size , core::Size > rescounts;
 
-	for (iter = all_frags.begin(); iter != all_frags.end(); iter++) {
+	for ( iter = all_frags.begin(); iter != all_frags.end(); iter++ ) {
 		core::Size resid=iter->first;
-		if (iter->second.size() < maxcount) continue;
+		if ( iter->second.size() < maxcount ) continue;
 
-		for (int i=1; i<=(int)iter->second.size(); ++i) {
+		for ( int i=1; i<=(int)iter->second.size(); ++i ) {
 			core::pose::PoseOP frag_i = iter->second[i];
-			for (int j=1; j<=(int)frag_i->total_residue(); ++j) {
-				if (!frag_i->residue(j).is_protein()) continue;
+			for ( int j=1; j<=(int)frag_i->total_residue(); ++j ) {
+				if ( !frag_i->residue(j).is_protein() ) continue;
 				core::Size resid_j = resid+j-1;
-				if (rescounts.find( resid_j ) == rescounts.end() ) {
+				if ( rescounts.find( resid_j ) == rescounts.end() ) {
 					rescounts[resid_j] = 0;
 					ca_sum[resid_j] = c_sum[resid_j] = n_sum[resid_j] = o_sum[resid_j]
 						= numeric::xyzVector<core::Real>(0,0,0);
@@ -1357,7 +1361,7 @@ ConsensusFragmentMover::run() {
 
 	utility::vector1< int > pdb_numbering;
 	utility::vector1< char > pdb_chains;
-	for (res_iter = rescounts.begin(); res_iter != rescounts.end(); res_iter++) {
+	for ( res_iter = rescounts.begin(); res_iter != rescounts.end(); res_iter++ ) {
 		core::Size resid = res_iter->first;
 
 		n_sum[resid] /= rescounts[resid];
@@ -1365,25 +1369,25 @@ ConsensusFragmentMover::run() {
 		c_sum[resid] /= rescounts[resid];
 		o_sum[resid] /= rescounts[resid];
 
-		for (int j=0; j<3; ++j) {
+		for ( int j=0; j<3; ++j ) {
 			ca_sum2[resid][j] = ( ca_sum2[resid][j] / rescounts[resid] - ca_sum[resid][j]*ca_sum[resid][j] );
 		}
 		core::Real ca_var = ca_sum2[resid].length();
 		TR << "Residue " << resid << " stdev = " << ca_var << " pose = " << ca_sum[resid] << " count = " << rescounts[resid] << std::endl;
-		if (ca_var > option[ consensus_stdev ]) continue;  // TODO: make this a parameter
+		if ( ca_var > option[ consensus_stdev ] ) continue;  // TODO: make this a parameter
 
 		// find a fragment containing this residue
 		// this could be more efficient if we assume constant size
 		core::conformation::ResidueOP res_to_add;
 		bool done=false;
-		for (iter = all_frags.begin(); iter != all_frags.end() && !done; iter++) {
+		for ( iter = all_frags.begin(); iter != all_frags.end() && !done; iter++ ) {
 			core::Size resid_tgt=iter->first;
-			for (int i=1; i<=(int)iter->second.size() && !done; ++i) {
+			for ( int i=1; i<=(int)iter->second.size() && !done; ++i ) {
 				core::pose::PoseOP frag_i = iter->second[i];
-				for (int j=1; j<=(int)frag_i->total_residue() && !done; ++j) {
-					if (!frag_i->residue(j).is_protein()) continue;
+				for ( int j=1; j<=(int)frag_i->total_residue() && !done; ++j ) {
+					if ( !frag_i->residue(j).is_protein() ) continue;
 					int resid_j = resid_tgt+j-1;
-					if (resid_j == (int)resid) {
+					if ( resid_j == (int)resid ) {
 						done = true;
 
 						core::conformation::Residue old_rsd = frag_i->residue(j);
@@ -1414,7 +1418,7 @@ ConsensusFragmentMover::run() {
 			}
 		}
 
-		if (averaged_pose.total_residue() == 0 || resid != lastres-1) {
+		if ( averaged_pose.total_residue() == 0 || resid != lastres-1 ) {
 			averaged_pose.append_residue_by_bond( *res_to_add );
 		} else {
 			core::conformation::add_variant_type_to_conformation_residue(
@@ -1428,7 +1432,7 @@ ConsensusFragmentMover::run() {
 		pdb_chains.push_back('A');
 	}
 
-	if (averaged_pose.total_residue() == 0) {
+	if ( averaged_pose.total_residue() == 0 ) {
 		TR << "NO RESIDUES IN CONSENSUS ASSIGNMENT." << std::endl;
 	} else {
 		// make pdbinfo, set residues
@@ -1439,12 +1443,14 @@ ConsensusFragmentMover::run() {
 		averaged_pose.pdb_info()->obsolete( false );
 
 		// terminal variants
-		if (!averaged_pose.residue_type(1).has_variant_type( chemical::LOWER_TERMINUS_VARIANT ))
+		if ( !averaged_pose.residue_type(1).has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ) {
 			core::pose::add_variant_type_to_pose_residue( averaged_pose, chemical::LOWER_TERMINUS_VARIANT, 1 );
+		}
 		core::Size nres = averaged_pose.total_residue();
-		while (!averaged_pose.residue(nres).is_protein()) nres--;
-		if (!averaged_pose.residue_type(nres).has_variant_type( chemical::UPPER_TERMINUS_VARIANT ))
+		while ( !averaged_pose.residue(nres).is_protein() ) nres--;
+		if ( !averaged_pose.residue_type(nres).has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) {
 			core::pose::add_variant_type_to_pose_residue( averaged_pose, chemical::UPPER_TERMINUS_VARIANT, nres );
+		}
 
 		// sidechain + Hydrogens
 		id::AtomID_Mask missing( false );
@@ -1471,10 +1477,10 @@ ConsensusFragmentMover::run() {
 		mm.set_bb  ( true );
 		mm.set_chi ( true );
 		mm.set_jump( true );
-		if (scorefxn->get_weight( core::scoring::cart_bonded ) == 0) {
+		if ( scorefxn->get_weight( core::scoring::cart_bonded ) == 0 ) {
 			scorefxn->set_weight( core::scoring::cart_bonded, 0.5 );
 		}
-		if (scorefxn->get_weight( core::scoring::pro_close ) != 0) {
+		if ( scorefxn->get_weight( core::scoring::pro_close ) != 0 ) {
 			scorefxn->set_weight( core::scoring::pro_close, 0.0 );
 		}
 		core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.00001, true, false, false );
@@ -1537,15 +1543,15 @@ int main(int argc, char* argv[]) {
 		option[ in::missing_density_to_jump ].value(true);
 		option[ out::nooutput ].value(true);
 
-		if (option[mode]() == "place") {
+		if ( option[mode]() == "place" ) {
 			DockFragmentsMover().run();
-		} else if (option[mode]() == "score") {
+		} else if ( option[mode]() == "score" ) {
 			ScoreFragmentSetMover().run();
-		} else if (option[mode]() == "assemble") {
+		} else if ( option[mode]() == "assemble" ) {
 			FragmentAssemblyMover().run();
-		} else if (option[mode]() == "rescore") {
+		} else if ( option[mode]() == "rescore" ) {
 			SolutionRescoreMover().run();
-		} else if (option[mode]() == "consensus") {
+		} else if ( option[mode]() == "consensus" ) {
 			ConsensusFragmentMover().run();
 		} else {
 			TR << "Unknown mode " << option[mode]() << std::endl;

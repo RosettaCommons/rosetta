@@ -52,9 +52,9 @@ namespace rings {
 /// @return  An AxEqDesignation enum type value: AXIAL, EQUATORIAL, or NEITHER
 AxEqDesignation
 is_atom_axial_or_equatorial_to_ring(
-		Coords const & query_atom,
-		Coords const & attachment_atom,
-		utility::vector1< Coords > const & ring_atoms )
+	Coords const & query_atom,
+	Coords const & attachment_atom,
+	utility::vector1< Coords > const & ring_atoms )
 {
 	using namespace numeric;
 	using namespace numeric::constants::r;
@@ -70,13 +70,13 @@ is_atom_axial_or_equatorial_to_ring(
 		TR.Warning << "an axial/equatorial designation is meaningless." << std::endl;
 		return NEITHER;
 	}
-	
+
 	if ( ring_atoms.contains( query_atom ) ) {
 		TR.Warning << "The query atom cannot be a member of the ring; ";
 		TR.Warning << "an axial/equatorial designation is meaningless." << std::endl;
-		return NEITHER;	
+		return NEITHER;
 	}
-	
+
 	// Get the vector of the bond in question.
 	xyzVector< Distance > const bond( query_atom - attachment_atom );
 

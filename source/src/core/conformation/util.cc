@@ -2169,9 +2169,9 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 /// @author  Labonte <JWLabonte@jhu.edu>
 chemical::rings::AxEqDesignation
 is_atom_axial_or_equatorial_to_ring(
-		Residue const & residue,
-		uint query_atom,
-		utility::vector1< uint > const & ring_atoms )
+	Residue const & residue,
+	uint query_atom,
+	utility::vector1< uint > const & ring_atoms )
 {
 	using namespace utility;
 	using namespace numeric;
@@ -2192,7 +2192,7 @@ is_atom_axial_or_equatorial_to_ring(
 				ring_atom_coords[ j ] = residue.xyz( ring_atoms[ j ] );
 			}
 			return chemical::rings::is_atom_axial_or_equatorial_to_ring(
-					query_atom_coords, attachment_atom_coords, ring_atom_coords );
+				query_atom_coords, attachment_atom_coords, ring_atom_coords );
 		}
 	}
 	TR.Warning << "The attachment point for the query atom is not found in the ring; ";

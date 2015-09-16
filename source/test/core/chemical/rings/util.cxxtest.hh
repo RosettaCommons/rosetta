@@ -64,8 +64,8 @@ public:  // Test //////////////////////////////////////////////////////////////
 
 
 		TS_TRACE( "Testing that is_atom_axial_or_equatorial_to_ring() properly designates a ring substituent as axial, "
-				"equatorial, or neither." );
-				
+			"equatorial, or neither." );
+
 		// Definitions from IUPAC:
 		// * Axial:
 		//     "...[B]onds to ring atoms (and molecular entities attached to such bonds) are... axial... [if]
@@ -80,7 +80,7 @@ public:  // Test //////////////////////////////////////////////////////////////
 
 		{
 			TS_TRACE( " Testing chair conformation of 6-membered ring." );
-			
+
 			// 6-membered ring in a chair conformation
 			vector1< Coords > ring6( 6 );
 			ring6[ 1 ] = Coords( 0.0, 1.0, sin45over2 );
@@ -92,7 +92,7 @@ public:  // Test //////////////////////////////////////////////////////////////
 
 			// A "bond length" for this model system is exactly 3 over the square root of 8 or
 			// 3 times the square root of 2 over 4 or 3 times sin 45 over 2.
-			
+
 			// The C3 axis for this model system is the z axis.
 
 			// Perfectly axial coordinates for this chair would sit at the height of a tetrahedron resting on the xy
@@ -100,36 +100,36 @@ public:  // Test //////////////////////////////////////////////////////////////
 			// Perfectly equatorial coordinates would sit 1 additional bond length on the y axis.
 			// Realistically equatorial coordinates would sit at the the point of the tetrahedron.
 			Coords const axial_atom( 0.0, 1.0, sin45times2 ),
-					perfectly_equatorial_atom( 0.0, 1.0 + 3 * sin45over2, sin45over2 ),
-					realistically_equatorial_atom( 0.0, 2.0, 0.0 ),
-					neither_atom( 0.0, 1.5, sin45times2 / 2 ),  // just making something up for this one
-					attachment_atom( 0.0, 1.0, sin45over2 );
+				perfectly_equatorial_atom( 0.0, 1.0 + 3 * sin45over2, sin45over2 ),
+				realistically_equatorial_atom( 0.0, 2.0, 0.0 ),
+				neither_atom( 0.0, 1.5, sin45times2 / 2 ),  // just making something up for this one
+				attachment_atom( 0.0, 1.0, sin45over2 );
 
 			// The query atom is not attached to the ring.
 			TS_ASSERT( ! is_atom_axial_or_equatorial_to_ring( axial_atom, ZERO_VECTOR, ring6 ) );
-			
+
 			// The query atom is in the ring.
 			TS_ASSERT( ! is_atom_axial_or_equatorial_to_ring( attachment_atom, attachment_atom, ring6 ) );
 
 			// The query atom is in the middle of the ring.
 			//TS_ASSERT( ! is_atom_axial_or_equatorial_to_ring( ZERO_VECTOR, attachment_atom, ring6 ) );
-			
+
 			// The query atom is perfectly axial.
 			TS_ASSERT_EQUALS( is_atom_axial_or_equatorial_to_ring( axial_atom, attachment_atom, ring6 ), AXIAL );
-		
+
 			// The query atom is perfectly equatorial by definition, though not realistic.
 			TS_ASSERT_EQUALS( is_atom_axial_or_equatorial_to_ring(
-					perfectly_equatorial_atom, attachment_atom, ring6 ), EQUATORIAL );
-	
+				perfectly_equatorial_atom, attachment_atom, ring6 ), EQUATORIAL );
+
 			// The query atom is equatorial with realistic bond angles.
 			TS_ASSERT_EQUALS( is_atom_axial_or_equatorial_to_ring(
-					realistically_equatorial_atom, attachment_atom, ring6 ), EQUATORIAL );
+				realistically_equatorial_atom, attachment_atom, ring6 ), EQUATORIAL );
 
 			// The query atom is neither axial nor equatorial.
 			TS_ASSERT_EQUALS( is_atom_axial_or_equatorial_to_ring(
-					neither_atom, attachment_atom, ring6 ), NEITHER );
+				neither_atom, attachment_atom, ring6 ), NEITHER );
 		}
-		
+
 		{
 			TS_TRACE( " Testing boat conformation of 6-membered ring at position 1, a clearly defined case." );
 
@@ -153,21 +153,21 @@ public:  // Test //////////////////////////////////////////////////////////////
 			// Realistically axial coordinates would sit at y = 0, z = 1.5.
 			// Perfectly equatorial coordinates would sit 1 additional bond length on the y axis.
 			Coords const perfectly_axial_atom( 0.0, sin45over2, 0.5 + 3 * sin45over2 ),
-					realistically_axial_atom( 0.0, 0.0, 1.5  ),
-					equatorial_atom( 0.0, sin45times2, 0.5 ),
-					attachment_atom( 0.0, sin45over2, 0.5 );
+				realistically_axial_atom( 0.0, 0.0, 1.5  ),
+				equatorial_atom( 0.0, sin45times2, 0.5 ),
+				attachment_atom( 0.0, sin45over2, 0.5 );
 
 			// The query atom is perfectly axial by definition, though not realistic.
 			TS_ASSERT_EQUALS( is_atom_axial_or_equatorial_to_ring(
-					perfectly_axial_atom, attachment_atom, ring6 ), AXIAL );
-					
+				perfectly_axial_atom, attachment_atom, ring6 ), AXIAL );
+
 			// The query atom is axial with realistic bond angles.
 			TS_ASSERT_EQUALS( is_atom_axial_or_equatorial_to_ring(
-					realistically_axial_atom, attachment_atom, ring6 ), AXIAL );
-		
+				realistically_axial_atom, attachment_atom, ring6 ), AXIAL );
+
 			// The query atom is perfectly equatorial.
 			TS_ASSERT_EQUALS( is_atom_axial_or_equatorial_to_ring(
-					equatorial_atom, attachment_atom, ring6 ), EQUATORIAL );
+				equatorial_atom, attachment_atom, ring6 ), EQUATORIAL );
 		}
 
 		{
@@ -183,15 +183,15 @@ public:  // Test //////////////////////////////////////////////////////////////
 
 			// coordinates generated by Discovery Studio
 			Coords const axial_atom( 0.3466, 0.6964, 1.4156 ),
-					equatorial_atom( 0.3913, 1.7679, -0.0054 ),
-					attachment_atom( 0.2733, 0.7371, 0.3289 );
+				equatorial_atom( 0.3913, 1.7679, -0.0054 ),
+				attachment_atom( 0.2733, 0.7371, 0.3289 );
 
 			// The query atom is axial.
 			TS_ASSERT_EQUALS( is_atom_axial_or_equatorial_to_ring( axial_atom, attachment_atom, ring5 ), AXIAL );
-			
+
 			// The query atom is equatorial.
 			TS_ASSERT_EQUALS( is_atom_axial_or_equatorial_to_ring(
-					equatorial_atom, attachment_atom, ring5 ), EQUATORIAL );
+				equatorial_atom, attachment_atom, ring5 ), EQUATORIAL );
 		}
 
 		{
@@ -205,56 +205,56 @@ public:  // Test //////////////////////////////////////////////////////////////
 
 			// coordinates generated by Discovery Studio
 			Coords const neither_atom1( -1.76, 0.449, 0.458 ),
-					neither_atom2( -1.65, 0.541, -1.316  ),
-					attachment_atom( -1.114, 0.281, -0.404 );
+				neither_atom2( -1.65, 0.541, -1.316  ),
+				attachment_atom( -1.114, 0.281, -0.404 );
 
 			// The query atoms are neither axial nor equatorial.
 			TS_ASSERT_EQUALS( is_atom_axial_or_equatorial_to_ring(
-					neither_atom1, attachment_atom, ring3 ), NEITHER );
+				neither_atom1, attachment_atom, ring3 ), NEITHER );
 			TS_ASSERT_EQUALS( is_atom_axial_or_equatorial_to_ring(
-					neither_atom2, attachment_atom, ring3 ), NEITHER );
+				neither_atom2, attachment_atom, ring3 ), NEITHER );
 		}
-		
+
 		{
 			TS_TRACE( " Testing 2-membered \"ring\"." );
-		
+
 			// 2-membered "ring"
 			vector1< Coords > ring2( 2 );
 			ring2[ 1 ] = Coords( 0.0 );
-			ring2[ 2 ] = Coords( 1.0 );  // just a line segment	
-			
+			ring2[ 2 ] = Coords( 1.0 );  // just a line segment
+
 			Coords const query_atom( -0.5 ), attachment_atom( 0.0 );
-			
+
 			// The query atom is not attached to a ring.
 			TS_ASSERT( ! is_atom_axial_or_equatorial_to_ring( query_atom, attachment_atom, ring2 ) );
 		}
 	}
-	
+
 	// Confirm that axial and equatorial designations are properly assigned.
 	void test_is_atom_axial_or_equatorial()
 	{
 		using namespace core::chemical::rings;
 		using namespace core::pose;
-		
+
 		core_init_with_additional_options( "-include_sugars" );
-		
+
 		TS_TRACE( "Testing that is_atom_axial_or_equatorial() properly designates a ring substituent as axial, "
-				"equatorial, or neither, including its ability to find the ring atoms and attachment point." );
-		
+			"equatorial, or neither, including its ability to find the ring atoms and attachment point." );
+
 		Pose glucose, serine;
 		make_pose_from_saccharide_sequence( glucose, "alpha-D-Glcp", "fa_standard" );
 		make_pose_from_sequence( serine, "S", "fa_standard" );
-		
+
 		uint const O1_index( glucose.residue( 1 ).atom_index( " O1 " ) );
 		uint const O6_index( glucose.residue( 1 ).atom_index( " O6 " ) );
 		uint const OG_index( serine.residue( 1 ).atom_index( " OG " ) );
-		
+
 		// An alpha D-sugar has an axial attachement of its O1.
 		TS_ASSERT_EQUALS( is_atom_axial_or_equatorial( glucose, 1, O1_index ), AXIAL );
-		
+
 		// The O6 oxygen is exocyclic.
 		TS_ASSERT( ! is_atom_axial_or_equatorial( glucose, 1, O6_index ) );
-		
+
 		// A linear residue cannot have any axial or equatorial atoms.
 		TS_ASSERT( ! is_atom_axial_or_equatorial( serine, 1, OG_index ) );
 	}

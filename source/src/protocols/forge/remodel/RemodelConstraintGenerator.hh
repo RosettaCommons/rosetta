@@ -31,6 +31,7 @@
 #include <protocols/moves/Mover.hh>
 
 //utility headers
+#include <utility/excn/EXCN_Base.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
@@ -142,6 +143,14 @@ private:
 
 }; //class RemodelConstraintGenerator
 
+
+class EXCN_RemoveCstsFailed : public utility::excn::EXCN_Base {
+public:
+	EXCN_RemoveCstsFailed():
+		utility::excn::EXCN_Base()
+	{}
+	virtual void show( std::ostream & os ) const { os << "Remodel constraints somehow got lost along the way" << std::endl; }
+};
 
 } //namespace remodel
 } //namespace forge

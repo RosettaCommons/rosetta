@@ -257,7 +257,7 @@ LocalRelax::get_neighbor_graph(
 
 			core::Real dist, angle1, angle2;
 
-			if (rsd1.aa() == core::chemical::aa_gly || rsd2.aa() == core::chemical::aa_gly) {
+			if ( rsd1.aa() == core::chemical::aa_gly || rsd2.aa() == core::chemical::aa_gly ) {
 				dist = (rsd1.atom("CA").xyz() - rsd2.atom("CA").xyz()).length() - 2.8;
 				angle1 = angle2 = 180.0;
 			} else {

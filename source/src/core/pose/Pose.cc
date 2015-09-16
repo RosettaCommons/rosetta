@@ -1116,11 +1116,11 @@ Pose::set_ring_conformation( uint const seqpos, core::chemical::rings::RingConfo
 
 	debug_assert( res.type().is_cyclic() );
 	PyAssert( ( seqpos <= total_residue() ),
-			"Pose::set_ring_conformation(uint const seqpos, core::chemical::rings::RingConformer const &"
-			"conformer): variable seqpos is out of range!" );
+		"Pose::set_ring_conformation(uint const seqpos, core::chemical::rings::RingConformer const &"
+		"conformer): variable seqpos is out of range!" );
 	PyAssert( ( res.type().is_cyclic() ),
-			"Pose::set_ring_conformation(uint const seqpos, core::chemical::rings::RingConformer const &"
-			"conformer): residue seqpos is not a cyclic residue!" );
+		"Pose::set_ring_conformation(uint const seqpos, core::chemical::rings::RingConformer const &"
+		"conformer): residue seqpos is not a cyclic residue!" );
 
 	// First, set the nus, which DEFINE the ideal ring conformer.
 	Size const n_nus( res.type().nu_atoms().size() );

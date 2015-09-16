@@ -103,7 +103,7 @@ public:
 		debug_assert( residue_list_.size() >= 1);
 		return residue_list_[residue_list_.size()];
 	}
-	
+
 	/// @brief Get the index of the first residue.
 	/// @details MUST BE REWRITTEN when the OP issue is resolved.
 	virtual

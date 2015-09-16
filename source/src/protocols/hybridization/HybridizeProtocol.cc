@@ -1208,9 +1208,9 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		mm->set_jump( true );
 
 		//fpd -- in positions where no fragment insertions are allowed, also allow no minimization
-		if (residue_sample_template_.size() > 0 && residue_sample_abinitio_.size() > 0) {
+		if ( residue_sample_template_.size() > 0 && residue_sample_abinitio_.size() > 0 ) {
 			for ( int i=1; i<=(int)nres_tgt; ++i ) {
-				if ( !residue_sample_template_[i] && !residue_sample_abinitio_[i]) {
+				if ( !residue_sample_template_[i] && !residue_sample_abinitio_[i] ) {
 					TR << "locking residue " << i << std::endl;
 					mm->set_bb  ( i, false );
 					mm->set_chi ( i, false );

@@ -379,9 +379,9 @@ stub_id_to_named_stub_id(
 
 /// @brief  Is the query atom in this residue axial or equatorial to the given ring or neither?
 chemical::rings::AxEqDesignation is_atom_axial_or_equatorial_to_ring(
-		Residue const & residue,
-		uint query_atom,
-		utility::vector1< uint > const & ring_atoms );
+	Residue const & residue,
+	uint query_atom,
+	utility::vector1< uint > const & ring_atoms );
 
 /// @brief  Is the query atom in this residue axial or equatorial or neither?
 chemical::rings::AxEqDesignation is_atom_axial_or_equatorial( Residue const & residue, uint query_atom );

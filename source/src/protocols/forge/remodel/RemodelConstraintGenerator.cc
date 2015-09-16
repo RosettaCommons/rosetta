@@ -99,13 +99,14 @@ RemodelConstraintGenerator::remove_remodel_constraints_from_pose(
 {
 	core::scoring::constraints::ConstraintCOPs remodel_csts( csts_ );
 
+	TR << this->get_name() << " is about to try to remove " << remodel_csts.size() << " constraints." << std::endl;
 	//safeguard against an RCG not generating anything
 	if ( remodel_csts.size() == 0 ) return;
 
 	//TR << this->get_name() << " is about to try to remove " << remodel_csts.size() << " constraints." << std::endl;
 
 	if ( ! pose.remove_constraints( remodel_csts, true ) ) {
-		utility_exit_with_message("Remodel constraints somehow got lost among the way");
+		throw EXCN_RemoveCstsFailed();
 	}
 }
 

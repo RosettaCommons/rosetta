@@ -200,9 +200,9 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 	case 4 :
 		utility_exit_with_message( "4-membered rings not yet handled in Rosetta; exiting." );
 		//if ( parameters[ q ] > 0 ) {
-			// TODO
+		// TODO
 		//} else /* q < 0 */ {
-			// TODO
+		// TODO
 		//}
 		break;
 	case 5 :

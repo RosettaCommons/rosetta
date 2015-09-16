@@ -47,8 +47,8 @@ xyzVector< Real > const ZERO_VECTOR = xyzVector< Real >( 0.0 );
 /// lie in the same plane and B) that plane is oriented parallel to the given plane, R-squared will be zero.
 Real
 residual_squared_of_points_to_plane(
-		utility::vector1< xyzVector< Real > > const & point_coords,
-		xyzVector< Real > const & vector_normal_to_plane )
+	utility::vector1< xyzVector< Real > > const & point_coords,
+	xyzVector< Real > const & vector_normal_to_plane )
 {
 	// First, check that we actually have a plane with which to work.
 	if ( vector_normal_to_plane == ZERO_VECTOR ) {
@@ -94,8 +94,7 @@ bool are_coplanar(utility::vector1< xyzVector< Real > > const & ring_point_coord
 		ring_point_coords[ 2 ],ring_point_coords[ 3 ] );
 
 	// loop through the remaining points, check if vector from p1 to point is orthogonal to the normal vector of the plane
-	for ( Size i = 4; i <= ring_point_coords.size(); ++i )
-	{
+	for ( Size i = 4; i <= ring_point_coords.size(); ++i ) {
 		xyzVector< Real > point_to_origin = ring_point_coords[ i ] - origin;
 		if ( ( std::abs ( ( point_to_origin.dot( normal_vector ) ) ) > .001) ) { return false; }
 	}
@@ -120,8 +119,7 @@ vector_normal_to_ring_plane_of_best_fit( utility::vector1< xyzVector< Real > > c
 	// If we have perfectly coplanar points already (always true for 3 points, check if true for more) our linear system may be
 	// ill-conditioned.  In both these cases we can just make a plane from three points in the system instead
 	// of least squares regression
-	if ( co_planar_check && are_coplanar( ring_point_coords ) )
-	{
+	if ( co_planar_check && are_coplanar( ring_point_coords ) ) {
 		return make_plane_from_three_points(ring_point_coords[ 1 ], ring_point_coords[ 2 ], ring_point_coords[ 3 ] );
 	}
 
@@ -133,8 +131,7 @@ vector_normal_to_ring_plane_of_best_fit( utility::vector1< xyzVector< Real > > c
 	Size const n( 3 );  // 3 dimensions -- space!
 
 	vector1< vector1< Real > > centered_ring_point_coords( m, vector1< Real >( n,  _INITIAL_VALUE_ ) );
-	for ( Size i = 1; i <= ring_point_coords.size(); ++i )
-	{
+	for ( Size i = 1; i <= ring_point_coords.size(); ++i ) {
 		xyzVector< Real > centered_point = ring_point_coords[ i ] - centroid;
 		vector1< Real > & centered_point_vector1 = centered_ring_point_coords[ i ];
 		centered_point_vector1[ 1 ] = centered_point.x();

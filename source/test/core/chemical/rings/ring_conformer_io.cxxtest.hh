@@ -51,7 +51,7 @@ public:
 		TS_TRACE( "Testing read_conformers_from_database_file_for_ring_size() method." );
 
 		vector1< RingConformer > const conformers(
-				read_conformers_from_database_file_for_ring_size( "core/chemical/rings/dummy_conformers.data", 8 ) );
+			read_conformers_from_database_file_for_ring_size( "core/chemical/rings/dummy_conformers.data", 8 ) );
 
 		TS_ASSERT_EQUALS( conformers.size(), 3);
 		TS_ASSERT_EQUALS( conformers[ 1 ].specific_name, "1F2" );

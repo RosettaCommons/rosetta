@@ -2898,10 +2898,10 @@ is_upper_terminus( pose::Pose const & pose, Size const resid )
 /// @author  Labonte <JwLabonte@jhu.edu>
 chemical::rings::AxEqDesignation
 is_atom_axial_or_equatorial_to_ring(
-		Pose const & pose,
-		uint seqpos,
-		uint query_atom,
-		utility::vector1< uint > const & ring_atoms )
+	Pose const & pose,
+	uint seqpos,
+	uint query_atom,
+	utility::vector1< uint > const & ring_atoms )
 {
 	return conformation::is_atom_axial_or_equatorial_to_ring( pose.residue( seqpos ), query_atom, ring_atoms );
 }
@@ -2916,9 +2916,9 @@ is_atom_axial_or_equatorial_to_ring(
 /// @author  Labonte <JwLabonte@jhu.edu>
 chemical::rings::AxEqDesignation
 is_atom_axial_or_equatorial_to_ring(
-		Pose const & pose,
-		id::AtomID const & query_atom,
-		utility::vector1< id::AtomID > const & ring_atoms )
+	Pose const & pose,
+	id::AtomID const & query_atom,
+	utility::vector1< id::AtomID > const & ring_atoms )
 {
 	uint const seqpos( query_atom.rsd() );
 	Size const ring_size( ring_atoms.size() );
@@ -2931,7 +2931,7 @@ is_atom_axial_or_equatorial_to_ring(
 		ring_atom_indices[ i ] = ring_atoms[ i ].atomno();
 	}
 	return conformation::is_atom_axial_or_equatorial_to_ring(
-			pose.residue( seqpos ), query_atom.atomno(), ring_atom_indices );
+		pose.residue( seqpos ), query_atom.atomno(), ring_atom_indices );
 }
 
 // Is the query atom in this pose residue axial or equatorial or neither?

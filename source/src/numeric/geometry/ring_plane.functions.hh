@@ -35,15 +35,15 @@ extern xyzVector< Real > const ZERO_VECTOR;
 /// @brief Return the R-squared value, indicating how well one or more points lie in a given plane, if those points were
 /// shifted such that their centroid were at the origin.
 Real residual_squared_of_points_to_plane(
-		utility::vector1< xyzVector< Real > > const & point_coords,
-		xyzVector< Real > const & vector_normal_to_plane );
+	utility::vector1< xyzVector< Real > > const & point_coords,
+	xyzVector< Real > const & vector_normal_to_plane );
 
 bool are_coplanar( utility::vector1< xyzVector< Real > > const & ring_point_coords );
 
 /// @brief Return the vector normal to the plane of best fit of a ring.
 xyzVector< Real > vector_normal_to_ring_plane_of_best_fit(
-		utility::vector1< xyzVector< Real > > const & ring_point_coords,
-		bool co_planar_check = true );
+	utility::vector1< xyzVector< Real > > const & ring_point_coords,
+	bool co_planar_check = true );
 
 }  // namespace geometry
 }  // namespace numeric
