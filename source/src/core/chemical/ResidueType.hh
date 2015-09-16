@@ -1085,12 +1085,19 @@ public:
 	void
 	delete_act_coord_atom( std::string const & atom_name );
 
-	// @brief add a bond between atom1 and atom2, specifying a bond type (SingleBond, DoubleBond, TripleBond, AromaticBond)
+	/// @brief add a bond between atom1 and atom2, specifying a bond type (SingleBond, DoubleBond, TripleBond, AromaticBond)
 	void add_bond(std::string const & atom_name1, std::string const & atom_name2, BondName bondLabel = SingleBond);
 
-	// @brief add a bond between atom1 and atom2, specifying a bond type (SingleBond, DoubleBond, TripleBond, AromaticBond)
+	/// @brief add a bond between atom1 and atom2, specifying a bond type (SingleBond, DoubleBond, TripleBond, AromaticBond)
 	void add_bond(VD atom1, VD atom2, BondName bondLabel = SingleBond);
 
+	/// @brief  Change the bond type of the given bond from one type to another.
+	void change_bond_type(
+			std::string const & atom_name1,
+			std::string const & atom_name2,
+			BondName const old_bond_label,
+			BondName const new_bond_label );
+	
 	/// @brief add a bond between atom1 and atom2, if bond type is not specified, default to a SingleBond
 	void
 	add_cut_bond(

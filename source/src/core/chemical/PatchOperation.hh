@@ -499,6 +499,30 @@ private:
 };
 
 
+///////////////////////////////////////////////////////////////////////////////
+/// @brief   A patch operation for changing the bond type of a given bond.
+/// @note    See residue_io.cc for a description of bond types.
+/// @author  Labonte <JWLabonte@jhu.edu>
+class ChangeBondType : public PatchOperation {
+public:
+	// Constructor
+	ChangeBondType(
+			std::string const & atom1_in,
+			std::string const & atom2_in,
+			std::string const & old_bond_type_in,
+			std::string const & new_bond_type_in );
+
+	/// @brief  Apply this patch to the given ResidueType.
+	bool apply( ResidueType & rsd ) const;
+	
+private:
+	std::string atom1_;
+	std::string atom2_;
+	std::string old_bond_type_;
+	std::string new_bond_type_;
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief set an atom's charge
 class SetAtomicCharge : public PatchOperation {

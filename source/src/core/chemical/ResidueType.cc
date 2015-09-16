@@ -1389,6 +1389,54 @@ ResidueType::add_bond(VD atom1, VD atom2, BondName bondLabel /*=SingleBond*/)
 	debug_assert(added);
 }
 
+// Change the bond type of the given bond from one type to another.
+/// @author   Labonte <JWLabonte@jhu.edu>
+void
+ResidueType::change_bond_type(
+		std::string const & atom_name1,
+		std::string const & atom_name2,
+		BondName const old_bond_label,
+		BondName const new_bond_label )
+{
+	// Signal that we need to update the derived data.
+	finalized_ = false;
+
+	if ( ! ( has( atom_name1 ) || has( atom_name2 ) ) ) {
+		utility_exit_with_message( "change_bond_type: atoms " + atom_name1 + " and " + atom_name2 + " don't exist!" );
+	}
+	
+	// First, change the bond types stored for each atom across the bond.
+	core::uint const atom1( atom_index( atom_name1 ) );
+	core::uint const atom2( atom_index( atom_name2 ) );
+	
+	utility::vector1< BondName >::iterator it1, it2;
+	it1 = std::find( bonded_neighbor_type_[ atom1 ].begin(), bonded_neighbor_type_[ atom1 ].end(), old_bond_label );
+	if ( it1 == bonded_neighbor_type_[ atom1 ].end() ) {
+		utility_exit_with_message(
+				"change_bond_type: atom " + atom_name1 + " does not have the requested bond type!" );
+	}
+	it2 = std::find( bonded_neighbor_type_[ atom2 ].begin(), bonded_neighbor_type_[ atom2 ].end(), old_bond_label );
+	if ( it1 == bonded_neighbor_type_[ atom2 ].end() ) {
+		utility_exit_with_message(
+				"change_bond_type: atom " + atom_name2 + " does not have the requested bond type!" );
+	}
+	
+	bonded_neighbor_type_[ atom1 ].erase( it1 );
+	bonded_neighbor_type_[ atom2 ].erase( it2 );
+	bonded_neighbor_type_[ atom1 ].push_back( new_bond_label );
+	bonded_neighbor_type_[ atom2 ].push_back( new_bond_label );
+	
+	// Now, change the bond type stored in the edge of the atom graph.
+	NameVDMap::const_iterator source = atom_name_to_vd_.find( atom_name1 );
+	NameVDMap::const_iterator target = atom_name_to_vd_.find( atom_name2 );
+	debug_assert( source != atom_name_to_vd_.end() );
+	debug_assert( target != atom_name_to_vd_.end() );
+	VD const vd_source = source->second;
+	VD const vd_target = target->second;
+	graph_.remove_edge( vd_source, vd_target );
+	graph_.add_edge( vd_source, vd_target, Bond( -1, new_bond_label ) ); /// -1 means Bond distance not set here.
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief add an orbital bond between an atom and an orbital.
 /// @note NOTE!!!!! This is indexed based upon atoms, not orbitals. That means that in your params file

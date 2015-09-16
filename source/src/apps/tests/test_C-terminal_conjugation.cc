@@ -12,8 +12,8 @@
 // (c) TechTransfer, email: license@u.washington.edu.
 
 /// @file   test_C-terminal_conjugation.cc
-/// @brief  This is simple pilot app for testing the reverse-fold-tree generation code I am working on with Joe H.
-/// @author Labonte
+/// @brief  This is an integration test app for testing reverse-fold-tree generation code.
+/// @author Labonte <JWLabonte@jhu.edu>
 
 // includes
 #include <devel/init.hh>
