@@ -69,11 +69,11 @@ bool
 read_biounit(
 	string const & fname,
 	Pose & pose,
-	int  const & max_res,
-	bool const & DEBUG
+	int  max_res,
+	bool debug
 ){
 	vector1<Real> tmpvec1,tmpvec2;
-	return read_biounit(fname,pose,tmpvec1,tmpvec2,max_res,DEBUG);
+	return read_biounit(fname,pose,tmpvec1,tmpvec2,max_res, debug);
 }
 
 
@@ -83,13 +83,13 @@ read_biounit(
 	Pose & pose,
 	utility::vector1<Real> & bfactors,
 	utility::vector1<Real> & occupancy,
-	int  const & max_res,
-	bool const & DEBUG
+	int  max_res,
+	bool debug
 ){
 	std::map<int,char> tmpmap;
 	vector1<int> tmpvec;
 	int tmpint;
-	return read_biounit(fname,pose,bfactors,occupancy,tmpvec,tmpmap,tmpint,max_res,DEBUG);
+	return read_biounit(fname,pose,bfactors,occupancy,tmpvec,tmpmap,tmpint,max_res, debug);
 }
 
 
@@ -102,10 +102,10 @@ read_biounit(
 	vector1<int>  & pdbres,
 	std::map<int,char> & pdbchain,
 	int        & nresmodel1,
-	int  const & max_res,
-	bool const & DEBUG
+	int  max_res,
+	bool debug
 ){
-	if ( DEBUG ) cerr<<"my_read_biounit: reading pdb "<<fname<<endl;
+	if ( debug ) cerr<<"my_read_biounit: reading pdb "<<fname<<endl;
 	pdbchain.clear();
 	pdbres.clear();
 	try {
@@ -144,7 +144,7 @@ read_biounit(
 			if ( only_one_model ) break;
 		}
 		pose.conformation().detect_disulfides();
-		if ( DEBUG ) pose.dump_pdb(utility::file_basename(fname)+"_ha.pdb");
+		if ( debug ) pose.dump_pdb(utility::file_basename(fname)+"_ha.pdb");
 	} catch(...) {
 		return false;
 	}

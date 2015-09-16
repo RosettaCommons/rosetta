@@ -151,7 +151,8 @@ def py_rosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_dri
     memory = config['memory'];  jobs = config['cpu_count']
     if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
     #kind = dict(monolith='monolith', namespace='namespace')[ platform['options']['py'] ]  # simple validation: build kind should be ether monolith or namespace,
-    kind_option = '--monolith' if kind == 'monolith' else ''
+    #kind_option = '--monolith' if kind == 'monolith' else ''
+    kind_option = dict(monolith='--monolith', namespace='', monolith_debug='--monolith --debug', namespace_debug='--debug')[kind]
 
     TR = Tracer(verbose)
 
@@ -186,7 +187,7 @@ def py_rosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_dri
 
         #distr_file_list = os.listdir(buildings_path)
 
-        if debug: res, output = 0, 'release.py: debug is enabled, skippig test phase...\n'
+        if debug  or kind.endswith('debug'): res, output = 0, 'release.py: debug is enabled, skippig test phase...\n'
         else:
             res, output = execute('Running PyRosetta tests...', 'cd {buildings_path} && python TestBindings.py -j{jobs}'.format(buildings_path=buildings_path, jobs=jobs), return_='tuple')
 
@@ -310,4 +311,6 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     elif test =='binary': return rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='PyRosetta.monolith':  return py_rosetta_release('monolith',  rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='PyRosetta.namespace': return py_rosetta_release('namespace', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.monolith_debug':  return py_rosetta_release('monolith_debug',  rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.namespace_debug': return py_rosetta_release('namespace_debug', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Unknow PyRosetta test: {}!'.format(test))
