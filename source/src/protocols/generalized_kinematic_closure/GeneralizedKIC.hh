@@ -380,7 +380,7 @@ public:
 	/// without finding any solutions).  If zero, n_closure_attempts_ attempts are made, and then
 	/// a solution is chosen from among the successful solutions (or we give up because
 	/// ntries_before_giving_up_ is reached without finding any solutions.
-	void set_min_solution_count(bool const count_in) { min_solution_count_ = count_in; return; }
+	void set_min_solution_count(core::Size const count_in) { min_solution_count_ = count_in; return; }
 	/// @brief Clear the stored solution poses.
 	///
 	inline void clear_stored_solutions() { solutions_.clear(); }
@@ -712,6 +712,10 @@ private:
 		solutions_.push_back(pose_in);
 		return;
 	}
+	
+	/// @brief Return the number of stored solutions
+	///
+	inline core::Size total_stored_solutions() const { return solutions_.size(); }
 
 };
 

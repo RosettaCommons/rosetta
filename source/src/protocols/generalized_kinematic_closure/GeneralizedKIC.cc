@@ -1463,11 +1463,18 @@ bool GeneralizedKIC::doKIC(
 		}
 
 		total_solution_count += static_cast<core::Size>(nsol);
+		debug_assert(total_solution_count == total_stored_solutions());
 		nsol_for_attempt[iattempt] = static_cast<core::Size>(nsol);
 
-		if ( total_solution_count >= min_solution_count() ) break;
+		if ( min_solution_count()!=0 && total_solution_count >= min_solution_count() ) {
+			TR.Debug << "Total solutions=" << total_solution_count << " and min_solution_count=" << min_solution_count() << ".  Breaking from solution-seeking loop." << std::endl;
+			break;
+		}
 
-		if ( get_ntries_before_giving_up()==iattempt && total_solution_count==0 ) break; //Give up now if we've attempted a certain number of tries and found nothing.
+		if ( get_ntries_before_giving_up()==iattempt && total_solution_count==0 ) {
+			TR.Debug << "GenKIC is set to give up after " << get_ntries_before_giving_up() << " tries without a solution.  This is attempt " << iattempt << " and solution count is " << total_solution_count << ".  Giving up." << std::endl;
+			break; //Give up now if we've attempted a certain number of tries and found nothing.
+		}
 
 	} //End loop for closure attempts
 
