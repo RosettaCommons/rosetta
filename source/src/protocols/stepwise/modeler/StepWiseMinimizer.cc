@@ -393,18 +393,17 @@ StepWiseMinimizer::output_minimized_pose_list() const{
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////                                                                         void
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< core::Size >
 StepWiseMinimizer::figure_out_working_minimize_res( core::pose::Pose const & pose ) {
 	using namespace core::pose::full_model_info;
 	utility::vector1< core::Size > working_minimize_res;
-	utility::vector1< core::Size > const & working_extra_minimize_res(
-		const_full_model_info( pose ).extra_minimize_res()
-	);
+	FullModelInfo const & full_model_info( const_full_model_info( pose ) );
+	utility::vector1< core::Size > const working_extra_minimize_res( full_model_info.full_to_sub( full_model_info.extra_minimize_res() ) );
 
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( !working_fixed_res_.has_value( n ) ||
-				working_extra_minimize_res.has_value( n ) ) {
+				 working_extra_minimize_res.has_value( n ) ) {
 			working_minimize_res.push_back( n );
 		}
 	}
