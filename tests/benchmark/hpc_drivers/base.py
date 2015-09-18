@@ -75,7 +75,7 @@ class HPC_Driver:
 
     def execute(self, executable, arguments, working_dir, log_dir=None, name='_no_name_', memory=256, time=24, shell_wrapper=False, block=True):
         ''' Execute given command line on HPC cluster, must accumulate cpu hours in self.cpu_usage '''
-        if log_dir==None: log_dir=working_dir
+        if log_dir==None: log_dir=self.working_dir
 
         if shell_wrapper:
             shell_wrapper_sh = os.path.abspath(self.working_dir + '/hpc.{}.shell_wrapper.sh'.format(name))
