@@ -158,7 +158,12 @@ private:
 		Distance const stack_cutoff, Distance const dist_cutoff) const;
 
 	Vector
-	get_fa_stack_deriv( Vector const r_vec, Matrix const M_i ) const;
+	get_fa_stack_deriv(
+		Vector const r_vec,
+		Matrix const M_i,
+		Real const prefactor,
+		Distance const stack_cutoff,
+		Distance const dist_cutoff ) const;
 
 	Real
 	residue_pair_energy_one_way(
@@ -169,6 +174,23 @@ private:
 		Real     const & prefactor,
 		Distance const & stack_cutoff,
 		Distance const & dist_cutoff
+	) const;
+
+	virtual
+	void
+	eval_atom_derivative(
+		id::AtomID const & atom_id,
+		pose::Pose const & pose,
+		kinematics::DomainMap const & domain_map,
+		Vector & F1,
+		Vector & F2,
+		Real const fa_stack_weight,
+		Real const fa_stack_lower_weight,
+		Real const fa_stack_upper_weight,
+		Real const fa_stack_aro_weight,
+		Real const prefactor,
+		Distance const stack_cutoff,
+		Distance const dist_cutoff
 	) const;
 
 	bool

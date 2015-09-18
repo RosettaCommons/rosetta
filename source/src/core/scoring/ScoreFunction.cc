@@ -300,6 +300,11 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 			energy_method_options_->put_intra_into_total( true ); // also updates hbond_options
 		} else if ( tag == "INCLUDE_HB_DNA_DNA" ) {
 			energy_method_options_->hbond_options().exclude_DNA_DNA( false );
+		} else if ( tag == "FA_MAX_DIS" ) {
+			l >> real_value;
+			energy_method_options_->etable_options().max_dis = real_value;
+			reset_energy_methods(); // ensure that etable is recomputed.
+			score_function_info_current_ = false;
 		} else if ( tag == "ENLARGE_H_LJ_WDEPTH" ) {
 			energy_method_options_->etable_options().enlarge_h_lj_wdepth = true;
 			reset_energy_methods(); // ensure that etable is recomputed.

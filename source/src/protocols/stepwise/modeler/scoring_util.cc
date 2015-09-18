@@ -110,8 +110,9 @@ initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn,
 
 	// hack for speed -- geom_sol & lk_nonpolar are too slow right now.
 	// [see also: O2PrimePacker]
-	if ( sample_scorefxn->has_nonzero_weight( geom_sol )      ||
-			sample_scorefxn->has_nonzero_weight( geom_sol_fast ) ||
+	if ( sample_scorefxn->has_nonzero_weight( geom_sol ) ||
+			 sample_scorefxn->has_nonzero_weight( geom_sol_fast ) ||
+			 sample_scorefxn->has_nonzero_weight( lk_ball ) ||
 			sample_scorefxn->has_nonzero_weight( occ_sol_fitted )||
 			sample_scorefxn->has_nonzero_weight( lk_polar )      ) {
 
@@ -132,8 +133,9 @@ initialize_pack_scorefxn( core::scoring::ScoreFunctionCOP sample_scorefxn,
 			pack_scorefxn->set_energy_method_options( *pack_energy_method_options );
 		}
 
-		pack_scorefxn->set_weight( geom_sol,       0.0 );
-		pack_scorefxn->set_weight( geom_sol_fast,  0.0 );
+		pack_scorefxn->set_weight( geom_sol,      0.0 );
+		pack_scorefxn->set_weight( geom_sol_fast, 0.0 );
+		pack_scorefxn->set_weight( lk_ball,   0.0 );
 		pack_scorefxn->set_weight( occ_sol_fitted, 0.0 );
 		pack_scorefxn->set_weight( lk_polar,       0.0 );
 		pack_scorefxn->set_weight( lk_nonpolar,    0.0 );

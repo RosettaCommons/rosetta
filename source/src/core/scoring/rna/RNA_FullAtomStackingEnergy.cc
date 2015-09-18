@@ -160,13 +160,30 @@ RNA_FullAtomStackingEnergy::setup_for_minimizing(
 	//set_nres_mono(pose);
 
 	if ( pose.energies().use_nblist() ) {
+		////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// I think jyesselm put this in, but use of nblist is not activated -- need to define residue_pair_energy_ext(),
+		//   eval_residue_pair_derivatives(), use_extended_residue_pair_energy_interface(), etc.
+		//
+		// See, e.g., src/core/scoring/geom_sol/ContextDependentGeometricSolEnergy or src/core/scoring/magnesium/MgEnergy.cc
+		//
+		// Putting this in correctly could significantly accelerate RNA and RNA/protein code if we continue
+		//  use of fa_stack, fa_stack_sol, or fa_stack_lr.
+		//
+		// -- rhiju.
+		////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 		// stash our nblist inside the pose's energies object
 		Energies & energies( pose.energies() );
+
+		// untested -- rhiju
+		Distance const dist_cutoff = sfxn.has_nonzero_weight( fa_stack_lr ) ? lr_dist_cutoff_ : ( sfxn.has_nonzero_weight( fa_stack_sol ) ? sol_dist_cutoff_ : dist_cutoff_ );
 
 		// setup the atom-atom nblist
 		NeighborListOP nblist;
 		Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? basic::options::option[ basic::options::OptionKeys::run::nblist_autoupdate_narrow ] : 1.5;
-		Real const XX = dist_cutoff_ + 2 * tolerated_motion;
+		Real const XX = dist_cutoff + 2 * tolerated_motion;
 		nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX ) );
 		if ( pose.energies().use_nblist_auto_update() ) {
 			nblist->set_auto_update( tolerated_motion );
@@ -330,7 +347,7 @@ RNA_FullAtomStackingEnergy::check_base_base_OK(
 	if ( n > rsd2.nheavyatoms() ) return false;
 	if ( base_base_only_ && !rsd2.is_RNA() ) return false;
 	if ( base_base_only_ && n < rsd2.first_sidechain_atom() ) return false;
-	if ( base_base_only_ && n == rsd2.first_sidechain_atom() ) return false;
+	if ( base_base_only_ && n == rsd2.first_sidechain_atom() ) return false;  //2'-OH
 
 	return true;
 
@@ -349,6 +366,46 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 ) const
 {
 
+	// following repeats some calculations but is conceptually simplest.
+	eval_atom_derivative(
+		atom_id, pose, domain_map, F1, F2,
+		weights[ fa_stack ] + weights[ fa_stack_ext ],
+		weights[ fa_stack_lower ],
+		weights[ fa_stack_upper ],
+		weights[ fa_stack_aro ] /* aro -- legacy */,
+		prefactor_, stack_cutoff_, dist_cutoff_ );
+
+	eval_atom_derivative(
+		atom_id, pose, domain_map, F1, F2,
+		weights[ fa_stack_sol ] + weights[ fa_stack_ext ],
+		0.0, 0.0, 0.0,
+		sol_prefactor_, sol_stack_cutoff_, sol_dist_cutoff_ );
+
+	eval_atom_derivative(
+		atom_id, pose, domain_map, F1, F2,
+		weights[ fa_stack_lr ] + weights[ fa_stack_ext ],
+		0.0, 0.0, 0.0,
+		lr_prefactor_, lr_stack_cutoff_, lr_dist_cutoff_ );
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+RNA_FullAtomStackingEnergy::eval_atom_derivative(
+	id::AtomID const & atom_id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const & domain_map,
+	Vector & F1,
+	Vector & F2,
+	Real const fa_stack_weight,
+	Real const fa_stack_lower_weight,
+	Real const fa_stack_upper_weight,
+	Real const fa_stack_aro_weight,
+	Real const prefactor,
+	Distance const stack_cutoff,
+	Distance const dist_cutoff
+) const
+{
 	Size const i( atom_id.rsd() );
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
@@ -373,7 +430,7 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	// the neighbor/energy links
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
-	Real const dist_cutoff2( dist_cutoff_ * dist_cutoff_ );
+	Real const dist_cutoff2( dist_cutoff * dist_cutoff );
 
 	for ( graph::Graph::EdgeListConstIter
 			iter  = energy_graph.get_node( i )->const_edge_list_begin(),
@@ -410,11 +467,11 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 
 				if ( check_base_base_OK( rsd1, rsd2, m, n ) ) {
 
-					Vector const deriv = get_fa_stack_deriv( r, M_i /* must update to take in cutoffs */ );
+					Vector const deriv = get_fa_stack_deriv( r, M_i, prefactor, stack_cutoff, dist_cutoff );
 
-					Vector force_vector_i = weights[ fa_stack ] * deriv;
-					force_vector_i += weights[ fa_stack_lower ] * deriv;
-					if ( rsd1.atom_type( m ).is_aromatic() && rsd2.atom_type( n ).is_aromatic() ) force_vector_i += weights[ fa_stack_aro ] * deriv;
+					Vector force_vector_i = fa_stack_weight * deriv;
+					force_vector_i += fa_stack_lower_weight * deriv;
+					if ( rsd1.atom_type( m ).is_aromatic() && rsd2.atom_type( n ).is_aromatic() ) force_vector_i += fa_stack_aro_weight * deriv;
 
 					//Force/torque with which occluding atom j acts on "dipole" i.
 					F1 += -1.0 * cross( force_vector_i, heavy_atom_j );
@@ -426,11 +483,11 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 					// Note that this calculation is a repeat of some other calls to this function.
 					// Might make more sense to do some (alternative) bookkeeping, e.g. with _ext interface.
 
-					Vector const deriv = get_fa_stack_deriv( -r, M_j );
+					Vector const deriv = get_fa_stack_deriv( -r, M_j, prefactor, stack_cutoff, dist_cutoff );
 
-					Vector force_vector_j = weights[ fa_stack ] * deriv;
-					force_vector_j += weights[ fa_stack_upper ] * deriv;
-					if ( rsd1.atom_type( m ).is_aromatic() && rsd2.atom_type( n ).is_aromatic() ) force_vector_j += weights[ fa_stack_aro ] * deriv;
+					Vector force_vector_j = fa_stack_weight * deriv;
+					force_vector_j += fa_stack_upper_weight * deriv;
+					if ( rsd1.atom_type( m ).is_aromatic() && rsd2.atom_type( n ).is_aromatic() ) force_vector_j += fa_stack_aro_weight * deriv;
 
 					F1 += cross( force_vector_j, heavy_atom_i );
 					F2 += force_vector_j;
@@ -444,12 +501,16 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//get_fa_stack_deriv evaluates the fa_stack_score between a pair of atoms. (r_vec is the vector between them, M_i is the coordinate matrix of one of the base)
+//get_fa_stack_score evaluates the fa_stack_score between a pair of atoms. (r_vec is the vector between them, M_i is the coordinate matrix of one of the base)
 //This function is called by residue_pair_energy_one_way
 Real
-RNA_FullAtomStackingEnergy::get_fa_stack_score( Vector const r_vec, Matrix const M_i,
+RNA_FullAtomStackingEnergy::get_fa_stack_score(
+	Vector const r_vec,
+	Matrix const M_i,
 	Real const prefactor,
-	Distance const stack_cutoff, Distance const dist_cutoff) const
+	Distance const stack_cutoff,
+	Distance const dist_cutoff
+) const
 {
 
 	Vector const z_i = M_i.col_z();
@@ -483,7 +544,13 @@ RNA_FullAtomStackingEnergy::get_fa_stack_score( Vector const r_vec, Matrix const
 //get_fa_stack_deriv evaluates the fa_stack_deriv between a pair of atoms. (r_vec is the vector between them, M_i is the coordinate matrix of one of the base)
 //This function is called by eval_atom_derivative
 Vector
-RNA_FullAtomStackingEnergy::get_fa_stack_deriv( Vector const r_vec, Matrix const M_i ) const
+RNA_FullAtomStackingEnergy::get_fa_stack_deriv(
+	Vector const r_vec,
+	Matrix const M_i,
+	Real const prefactor,
+	Distance const stack_cutoff,
+	Distance const dist_cutoff
+) const
 {
 
 	//  Well, the energy is a function of the inter-atom distance and a special cos(angle)
@@ -506,13 +573,13 @@ RNA_FullAtomStackingEnergy::get_fa_stack_deriv( Vector const r_vec, Matrix const
 	/////////////////////////////////
 	//dE_dcoskappa
 	/////////////////////////////////
-	Real dE_dcoskappa  = prefactor_;
+	Real dE_dcoskappa  = prefactor;
 
 	//Orientation dependence
 	dE_dcoskappa *= 2 * cos_kappa ;
 
-	Distance b = r - stack_cutoff_;
-	Distance distance_scale = ( dist_cutoff_ - stack_cutoff_ );
+	Distance b = r - stack_cutoff;
+	Distance distance_scale = ( dist_cutoff - stack_cutoff );
 	b /= distance_scale;
 
 	Real b2( 0.0 ), b3( 0.0 );
@@ -527,7 +594,7 @@ RNA_FullAtomStackingEnergy::get_fa_stack_deriv( Vector const r_vec, Matrix const
 	/////////////////////////////////
 	//dE_dr
 	/////////////////////////////////
-	Real dE_dr  = prefactor_;
+	Real dE_dr  = prefactor;
 
 	//Orientation dependence
 	dE_dr *= cos_kappa * cos_kappa ;

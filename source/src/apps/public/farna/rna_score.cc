@@ -375,6 +375,11 @@ rna_score_test()
 		std::cout << "Outputting " << tag << " to silent file: " << silent_file << std::endl;
 		silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 
+		if ( option[ score::just_calc_rmsd ]() && tag.find( ".pdb" ) != std::string::npos ) {
+			std::string out_pdb_file = utility::replace_in( tag, ".pdb", ".sup.pdb" );
+			std::cout << "Creating: " << out_pdb_file << std::endl;
+			pose.dump_pdb( out_pdb_file );
+		}
 		if ( option[ color_by_score ]() ) {
 			do_color_by_score( pose );
 			pose.dump_pdb( "COLOR_BY_SCORE.pdb" );

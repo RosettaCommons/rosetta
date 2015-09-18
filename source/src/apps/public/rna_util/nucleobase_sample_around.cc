@@ -89,6 +89,8 @@ OPT_KEY( Boolean, center_on_OP2 )
 OPT_KEY( Boolean, sample_another_adenosine )
 OPT_KEY( Boolean, just_z )
 OPT_KEY( Boolean, just_xy )
+OPT_KEY( Boolean, just_xz )
+OPT_KEY( Boolean, just_yz )
 OPT_KEY( Boolean, quick_score )
 OPT_KEY( String, copy_adenosine_adenosine_file )
 OPT_KEY( String, nucleobase )
@@ -160,7 +162,8 @@ nucleobase_probe_score_test()
 	pose::add_variant_type_to_pose_residue( pose, VIRTUAL_RIBOSE, 1 );
 
 	rotate_into_nucleobase_frame( pose );
-	pose.dump_pdb( "a_rotated.pdb" );
+	std::string const out_prefix = option[ out::prefix]();
+	pose.dump_pdb(out_prefix +  "a_rotated.pdb" );
 
 	add_virtual_res(pose);
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();
@@ -234,7 +237,7 @@ nucleobase_probe_score_test()
 		}
 	}
 
-	pose.dump_pdb( "START.pdb" );
+	pose.dump_pdb(out_prefix +  "START.pdb" );
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 800, 800 );
 
 	//////////////////////////////////////////////////////////////////
@@ -246,15 +249,15 @@ nucleobase_probe_score_test()
 
 	jump.set_translation( Vector( 5.0, 0.0, 0.0 ) );
 	pose.set_jump( probe_jump_num, jump );
-	pose.dump_pdb( "shift_x.pdb" );
+	pose.dump_pdb( out_prefix + "shift_x.pdb" );
 
 	jump.set_translation( Vector( 0.0, 5.0, 0.0 ) );
 	pose.set_jump( probe_jump_num, jump );
-	pose.dump_pdb( "shift_y.pdb" );
+	pose.dump_pdb( out_prefix + "shift_y.pdb" );
 
 	jump.set_translation( Vector( 0.0, 0.0, 5.0 ) );
 	pose.set_jump( probe_jump_num, jump );
-	pose.dump_pdb( "shift_z.pdb" );
+	pose.dump_pdb( out_prefix + "shift_z.pdb" );
 
 	/// This is a code snippet to test if we are sampling water rotations properly -- could make this a little class,
 	//  and then include within translation scan.
@@ -285,17 +288,18 @@ nucleobase_probe_score_test()
 	Real const box_size = option[ xyz_size ]();
 	Real const translation_increment = option[ xyz_increment ]();
 	int box_bins = int( box_size/translation_increment );
+	bool const do_all = !option[ just_xy ]() && !option[ just_yz ]() && !option[ just_z ]() && !option[ just_xz ]();
 
 	using namespace core::io::silent;
 	SilentFileData silent_file_data;
 	utility::io::ozstream out;
 
-	if ( !option[ just_xy ]() || option[ just_z ]() ) {
+	if ( option[ just_z ]() || do_all ) {
 		//////////////////////////////////////////////
 		std::cout << "Doing Z scan..." << std::endl;
-		out.open( "score_z.table" );
+		out.open( out_prefix + "score_z.table" );
 		Size count( 0 );
-		std::string const silent_file( option[ out::file::silent ]() );
+		std::string const silent_file( out_prefix + option[ out::file::silent ]() );
 		for ( int i = -box_bins; i <= box_bins; ++i ) {
 			Real const x = 0.0;
 			Real const y = 0.0;
@@ -311,67 +315,70 @@ nucleobase_probe_score_test()
 		}
 		out.close();
 	}
-	if ( option[ just_z ]() ) return;
 
 
-	//////////////////////////////////////////////
-	std::cout << "Doing XY scan... Z =  0.0" << std::endl;
-	do_xy_scan( pose, scorefxn, "score_xy_0.table", 0.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
-
-
-	pose.dump_pdb( "best_xy.pdb");
-	scorefxn->show( std::cout, pose );
-	if ( option[ just_xy ]() ) return;
-
-
-	//////////////////////////////////////////////
-	std::cout << "Doing XY scan... Z = +1.5" << std::endl;
-	do_xy_scan( pose, scorefxn, "score_xy_1.5.table", 1.5, probe_jump_num, box_bins, translation_increment, sample_rotations );
-
-	std::cout << "Doing XY scan... Z = +3.0" << std::endl;
-	do_xy_scan( pose, scorefxn, "score_xy_3.table", 3.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
-
-	std::cout << "Doing XY scan... Z = +4.0" << std::endl;
-	do_xy_scan( pose, scorefxn, "score_xy_4.table", 4.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
-	// Following are exactly the same as +1.0 and +3.0 when modeling nucleobase.
-	//std::cout << "Doing XY scan... Z = -1.0" << std::endl;
-	// do_xy_scan( pose, scorefxn, "score_para_0_table", 1.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
-
-	// std::cout << "Doing XY scan... Z = -3.0" << std::endl;
-	// do_xy_scan( pose, scorefxn, "score_para_0_table", 3.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
-
-	//////////////////////////////////////////////
-	std::cout << "Doing XZ scan..." << std::endl;
-	out.open( "score_xz.table" );
-	for ( int i = -box_bins; i <= box_bins; ++i ) {
-		for ( int j = -box_bins; j <= box_bins; ++j ) {
-			Real const x = j * translation_increment;
-			Real const z = i * translation_increment;
-			Real const y = 0.0;
-			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( probe_jump_num, jump );
-			out << do_scoring( pose, scorefxn, sample_rotations, probe_jump_num ) << ' ' ;
-		}
-		out << std::endl;
+	if ( option[ just_xy ]() || do_all ) {
+		//////////////////////////////////////////////
+		std::cout << "Doing XY scan... Z =  0.0" << std::endl;
+		do_xy_scan( pose, scorefxn, out_prefix + "score_xy_0.table", 0.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
+		pose.dump_pdb( out_prefix + "best_xy.pdb");
+		scorefxn->show( std::cout, pose );
 	}
-	out.close();
 
-	//////////////////////////////////////////////
-	std::cout << "Doing YZ scan..." << std::endl;
-	out.open( "score_yz.table" );
-	for ( int i = -box_bins; i <= box_bins; ++i ) {
-		for ( int j = -box_bins; j <= box_bins; ++j ) {
-			Real const y = j * translation_increment;
-			Real const z = i * translation_increment;
-			Real const x = 0.0;
-			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( probe_jump_num, jump );
-			out << do_scoring( pose, scorefxn, sample_rotations, probe_jump_num ) << ' ' ;
-		}
-		out << std::endl;
+
+	if ( do_all ) {
+		//////////////////////////////////////////////
+		std::cout << "Doing XY scan... Z = +1.5" << std::endl;
+		do_xy_scan( pose, scorefxn, out_prefix + "score_xy_1.5.table", 1.5, probe_jump_num, box_bins, translation_increment, sample_rotations );
+
+		std::cout << "Doing XY scan... Z = +3.0" << std::endl;
+		do_xy_scan( pose, scorefxn, out_prefix + "score_xy_3.table", 3.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
+
+		std::cout << "Doing XY scan... Z = +4.0" << std::endl;
+		do_xy_scan( pose, scorefxn, out_prefix + "score_xy_4.table", 4.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
+		// Following are exactly the same as +1.0 and +3.0 when modeling nucleobase.
+		//std::cout << "Doing XY scan... Z = -1.0" << std::endl;
+		// do_xy_scan( pose, scorefxn, "score_para_0_table", 1.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
+
+		// std::cout << "Doing XY scan... Z = -3.0" << std::endl;
+		// do_xy_scan( pose, scorefxn, "score_para_0_table", 3.0, probe_jump_num, box_bins, translation_increment, sample_rotations );
 	}
-	out.close();
 
+	if ( option[ just_xz ]() || do_all ) {
+		//////////////////////////////////////////////
+		std::cout << "Doing XZ scan..." << std::endl;
+		out.open( out_prefix + "score_xz.table" );
+		for ( int i = -box_bins; i <= box_bins; ++i ) {
+			for ( int j = -box_bins; j <= box_bins; ++j ) {
+				Real const x = j * translation_increment;
+				Real const z = i * translation_increment;
+				Real const y = 0.0;
+				jump.set_translation( Vector( x, y, z ) ) ;
+				pose.set_jump( probe_jump_num, jump );
+				out << do_scoring( pose, scorefxn, sample_rotations, probe_jump_num ) << ' ' ;
+			}
+			out << std::endl;
+		}
+		out.close();
+	}
+
+	if ( option[ just_yz ]() || do_all ) {
+		//////////////////////////////////////////////
+		std::cout << "Doing YZ scan..." << std::endl;
+		out.open( out_prefix + "score_yz.table" );
+		for ( int i = -box_bins; i <= box_bins; ++i ) {
+			for ( int j = -box_bins; j <= box_bins; ++j ) {
+				Real const y = j * translation_increment;
+				Real const z = i * translation_increment;
+				Real const x = 0.0;
+				jump.set_translation( Vector( x, y, z ) ) ;
+				pose.set_jump( probe_jump_num, jump );
+				out << do_scoring( pose, scorefxn, sample_rotations, probe_jump_num ) << ' ' ;
+			}
+			out << std::endl;
+		}
+		out.close();
+	}
 
 }
 
@@ -442,8 +449,10 @@ main( int argc, char * argv [] )
 		NEW_OPT( sample_another_adenosine, "sample another adenosine as the 'probe'", false );
 		NEW_OPT( sample_phosphate, "use a phosphate (mimicking an RNA terminal phosphate) as the 'probe'", false );
 		NEW_OPT( center_on_OP2, "Define coordinate frame on phosphate to be centered on OP2, not on P", false );
-		NEW_OPT( just_xy, "Just scan x, y at z=0", false );
 		NEW_OPT( just_z, "Just scan z at x,y=0", false );
+		NEW_OPT( just_xy, "Just scan x, y at z=0", false );
+		NEW_OPT( just_xz, "Just scan x, z at y=0", false );
+		NEW_OPT( just_yz, "Just scan y, z at x=0", false );
 		NEW_OPT( quick_score, "alternative mode for checking geom_sol, etc.", false );
 		NEW_OPT( copy_adenosine_adenosine_file, "get rigid body relation between two adenosines from file", "" );
 		NEW_OPT( xyz_increment, "input parameter", 0.2 );

@@ -959,12 +959,12 @@ figure_out_motif_mode( utility::vector1< Size > & extra_min_res,
 			( working_res.size() > 0 && !working_res.has_value( m + 1 ) ) );
 		bool const right_after_chainbreak  = ( m == 1                 || cutpoint_open_in_full_model.has_value( m - 1 ) ||
 			( working_res.size() > 0 && !working_res.has_value( m - 1 )  ) );
-		bool const prev_moving = ( m > 1 && input_domain_map[ m - 1 ] == 0 && !right_after_chainbreak &&
-			( working_res.size() == 0 || working_res.has_value( m - 1 ) ) ) ||
-			( m  > 1 && ( input_domain_map[ m - 1 ] != input_domain_map[ m ] ) );
-		bool const next_moving = ( m < input_domain_map.size() && input_domain_map[ m + 1 ] == 0 && !right_before_chainbreak &&
-			( working_res.size() == 0 || working_res.has_value( m + 1 ) ) ) ||
-			( m  < input_domain_map.size() && ( input_domain_map[ m + 1 ] != input_domain_map[ m ] ) );
+		bool const prev_moving = !right_after_chainbreak && m > 1 &&
+			( ( input_domain_map[ m - 1 ] == 0  && ( working_res.size() == 0 || working_res.has_value( m - 1 ) ) ) ||
+				( input_domain_map[ m - 1 ] != input_domain_map[ m ] ) ) ;
+		bool const next_moving = m < input_domain_map.size() && !right_before_chainbreak &&
+		  ( ( input_domain_map[ m + 1 ] == 0 &&  ( working_res.size() == 0 || working_res.has_value( m + 1 ) ) ) ||
+				( input_domain_map[ m + 1 ] != input_domain_map[ m ] ) );
 		if ( ( right_after_chainbreak && !next_moving ) ||
 				( right_before_chainbreak && !prev_moving ) ) {
 			terminal_res.push_back( m );
@@ -976,7 +976,13 @@ figure_out_motif_mode( utility::vector1< Size > & extra_min_res,
 	}
 
 	//  if ( looks_like_reference_pose( input_domain_map ) ) return;
-	runtime_assert( extra_min_res_save.size() == 0 || extra_min_res == extra_min_res_save );
+	if ( extra_min_res_save.size() > 0 ) {
+		if ( extra_min_res != extra_min_res_save ) {
+			TR << TR.Red << "Auto-computed EXTRA_MIN_RES " << extra_min_res <<      TR.Reset << std::endl;
+			TR << TR.Red << "User-input    EXTRA_MIN_RES " << extra_min_res_save << TR.Reset << std::endl;
+		}
+		runtime_assert( extra_min_res_save.size() == 0 || extra_min_res == extra_min_res_save );
+	}
 	runtime_assert( terminal_res_save.size() == 0 || terminal_res == terminal_res_save );
 
 }
