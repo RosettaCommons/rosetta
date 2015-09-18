@@ -21,6 +21,8 @@
 //#include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 
 #include <utility/excn/Exceptions.hh>
@@ -48,12 +50,14 @@ main( int argc, char *argv[] )
 		devel::init( argc, argv );
 
 		// Import test poses.
-		Pose pose, O_linked_glycan_pose, conjugated_pose1, conjugated_pose2, conjugated_pose3;
+		Pose pose, O_linked_glycan_pose, O_linked_centroid_glycan_pose, conjugated_pose1, conjugated_pose2, conjugated_pose3;
 		pose_from_pdb( pose, INPATH + "test_normal1.pdb" );
 		pose_from_pdb( conjugated_pose1, INPATH + "test_c_conj1.pdb" );
 		pose_from_pdb( conjugated_pose2, INPATH + "UBQ_E2_0001.pdb" );
 		pose_from_pdb( conjugated_pose3, INPATH + "UBQ_E2_0003.pdb" );
 		pose_from_pdb( O_linked_glycan_pose, INPATH + "test_O_glycan.pdb" );
+		chemical::ResidueTypeSetCOP centroid_rts = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::CENTROID);
+		pose_from_pdb( O_linked_centroid_glycan_pose, *centroid_rts, INPATH + "test_O_glycan_centroid.pdb" );
 
 		cout << "PDB file without LINK record" << endl;
 		cout << pose << endl;
@@ -92,9 +96,18 @@ main( int argc, char *argv[] )
 		cout << "3: " << O_linked_glycan_pose.residue( 3 ).name() << endl;
 		cout << "4: " << O_linked_glycan_pose.residue( 4 ).name() << endl;
 
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "A centroid O-linked glycopeptide" << endl;
+		cout << "" << O_linked_centroid_glycan_pose << endl;
+		cout << "1: " << O_linked_centroid_glycan_pose.residue( 1 ).name() << endl;
+		cout << "2: " << O_linked_centroid_glycan_pose.residue( 2 ).name() << endl;
+		cout << "3: " << O_linked_centroid_glycan_pose.residue( 3 ).name() << endl;
+		cout << "4: " << O_linked_centroid_glycan_pose.residue( 4 ).name() << endl;
+
 		conjugated_pose1.dump_pdb( OUTPATH + "O-linked_Ubi_peptide.pdb" );
 		conjugated_pose3.dump_pdb( OUTPATH + "S-linked_Ubi_peptide.pdb" );
 		O_linked_glycan_pose.dump_pdb( OUTPATH + "O-linked_glycopeptide.pdb" );
+		O_linked_centroid_glycan_pose.dump_pdb( OUTPATH + "O-linked_centroid_glycopeptide.pdb" );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		cerr << "caught exception " << e.msg() << endl;
 		return -1;

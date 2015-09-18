@@ -428,6 +428,41 @@ Pose::append_residue_by_bond(
 }
 
 void
+Pose::append_residue_by_atoms(
+	conformation::Residue const & new_rsd,
+	bool const build_ideal_geometry,
+	std::string const & connect_atom,
+	Size const anchor_residue,
+	std::string const & anchor_connect_atom,
+	bool const start_new_chain /*= false*/,
+	bool const lookup_bond_length /*= false*/
+) {
+	energies_->clear();
+	int anchor_connection = -1;
+	int connection = -1;
+
+	// Determine both connections...
+	for ( Size ii = 1; ii <= residue( anchor_residue ).n_residue_connections(); ++ii ) {
+		if ( residue( anchor_residue ).atom_name( residue( anchor_residue ).residue_connect_atom_index( ii ) ) == anchor_connect_atom ) {
+			anchor_connection = ii;
+			break;
+		}
+	}
+	for ( Size ii = 1; ii <= new_rsd.n_residue_connections(); ++ii ) {
+		if ( new_rsd.atom_name( new_rsd.residue_connect_atom_index( ii ) ) == connect_atom ) {
+			connection = ii;
+			break;
+		}
+	}
+
+	if ( anchor_connection == -1 || connection == -1 ) {
+		utility_exit_with_message( "Can't append by these atoms, since they do not correspond to connections on the Residues in question!" );
+	}
+
+	conformation_->append_residue_by_bond( new_rsd, build_ideal_geometry, connection, anchor_residue, anchor_connection, start_new_chain, lookup_bond_length);
+}
+
+void
 Pose::insert_residue_by_jump(
 	Residue const & new_rsd_in,
 	Size const seqpos, // desired seqpos of new_rsd

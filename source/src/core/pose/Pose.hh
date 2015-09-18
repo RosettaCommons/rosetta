@@ -482,6 +482,28 @@ public:
 		bool const start_new_chain = false,
 		bool const lookup_bond_length = false
 	);
+	
+	/// @brief Appends  <new_rsd>  (a residue) to pose by a new bond to a given atom
+	///
+	/// @details This function effectively wraps append_residue_by_bond for an easier syntax. Instead
+	/// of having to know what the connection, anchor residue, and anchor connection are, we give the
+	/// atoms and query the ResidueType for the remaining information.
+	///
+	/// If build_ideal_bond is TRUE it will transform the coordinates of the new residue so that the bond
+	/// geometry of the new bond is ideal according to the icoor_internal data in the residues.
+	///
+	/// Otherwise the incoming coordinates of new_rsd are preserved.
+	void
+	append_residue_by_atoms(
+		conformation::Residue const & new_rsd,
+		bool const build_ideal_geometry,
+		std::string const & connect_atom,
+		Size const anchor_residue,
+		std::string const & anchor_connect_atom,
+		bool const start_new_chain = false,
+		bool const lookup_bond_length = false
+	);
+
 
 
 	/// This code sorely belongs in Pose.cc

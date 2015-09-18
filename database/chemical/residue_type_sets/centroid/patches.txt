@@ -12,6 +12,8 @@ patches/C_methylamidated.txt
 patches/RepulsiveOnly_centroid.txt
 patches/ser_phosphorylated.txt
 patches/thr_phosphorylated.txt
+patches/CtermConnect.txt
+patches/NtermConnect.txt
 
 # Command-line selected.
 patches/ShoveBB.txt
@@ -30,6 +32,13 @@ patches/nucleic/rna/Virtual_Phosphate.txt
 #patches/CtermTruncation.txt
 #patches/NtermTruncation.txt
 
+## Branching patches
+patches/branching/C-terminal_conjugation.txt
+patches/branching/S-linked_conjugation.txt
+patches/branching/N-linked_conjugation.txt
+patches/branching/O-linked_conjugation.txt
+patches/branching/sidechain_carboxyl_conjugation.txt
+
 ## carbohydrate patches (These are currently direct copies of the fa patches.)
 ### termini
 patches/carbohydrates/lower_terminus.txt
@@ -38,7 +47,7 @@ patches/carbohydrates/upper_terminus.txt
 ### cutpoints
 patches/carbohydrates/cutpoint_lower.txt
 patches/carbohydrates/cutpoint_upper.txt
-### branching (requires -read_pdb_link_records flag to patch)
+### patches/branching (requires -read_pdb_link_records flag to patch)
 patches/carbohydrates/N-linked_glycosylation.txt
 patches/carbohydrates/branch_lower_term.txt
 patches/carbohydrates/2-branch.txt
