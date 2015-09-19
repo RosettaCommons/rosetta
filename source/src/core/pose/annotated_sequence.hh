@@ -134,11 +134,6 @@ core::chemical::ResidueTypeCOP
 get_rsd_type_from_aa_legacy( chemical::ResidueTypeSet const & residue_set,
 	core::chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus );
 
-core::chemical::ResidueTypeCOP
-handle_disulfide_variant_name_for_backwards_compatibility( core::chemical::ResidueTypeSet const & residue_set,
-	std::string const & fullname );
-
-
 } // namespace core
 } // namespace pose
 

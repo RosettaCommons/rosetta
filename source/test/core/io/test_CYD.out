@@ -5,7 +5,7 @@ SCORE:     1.326     -0.566      0.449      0.815           0.005     -0.303    
 RES_NUM F:6 F:19 test_0001
 FOLD_TREE  EDGE 1 2 1  test_0001
 RT 0.751499 -0.645894 0.134424 -0.287795 -0.504294 -0.814163 0.593653 0.573156 -0.564861 0.96746 5.28248 -1.0762   test_0001
-ANNOTATED_SEQUENCE: C[CYD:CtermProteinFull:NtermProteinFull]C[CYD:CtermProteinFull:NtermProteinFull] test_0001
+ANNOTATED_SEQUENCE: C[CYS:CtermProteinFull:NtermProteinFull:disulfide]C[CYS:CtermProteinFull:NtermProteinFull:disulfide] test_0001
 NONCANONICAL_CONNECTION: 2  SG  1  SG 
 CHAIN_ENDINGS  1 test_0001
 Lpb2hCpa8gLUIwUkQ78BiCVjXfLUKcnkQqGzhCFXfcLksdkkQO0GiC9SnaL0yhskQYqThC9UBcLkcGakQ1NphCR2ugL0Of5kQxU5hC9UJkLExt+kQKPAiChL1iLkoxWkQldEiCF9KgLUNxHkQgqWhCpk6gLU71SkQfUkiCluZfLkoFpkQZLHhC53zgLUro1kQ0zthCpopfLkIdIlQ test_0001
