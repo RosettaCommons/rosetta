@@ -52,7 +52,6 @@
 #include <core/conformation/membrane/MembraneParams.hh>
 #include <core/conformation/parametric/ParametersSet.hh>
 #include <core/conformation/parametric/Parameters.hh>
-#include <core/io/pdb/file_data.hh>
 
 // Numeric headers
 #include <numeric/constants.hh>

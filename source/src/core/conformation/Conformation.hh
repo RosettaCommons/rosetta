@@ -56,7 +56,6 @@
 #include <core/conformation/parametric/ParametersSet.fwd.hh>
 #include <core/conformation/parametric/Parameters.hh>
 #include <core/conformation/parametric/Parameters.fwd.hh>
-#include <core/io/pdb/file_data.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
