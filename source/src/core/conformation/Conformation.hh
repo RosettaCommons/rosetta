@@ -56,6 +56,7 @@
 #include <core/conformation/parametric/ParametersSet.fwd.hh>
 #include <core/conformation/parametric/Parameters.hh>
 #include <core/conformation/parametric/Parameters.fwd.hh>
+#include <core/io/pdb/file_data.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
@@ -666,11 +667,12 @@ public:  // Bonds, Connections, Atoms, & Stubs
 		Size lr_conn_id,
 		Size upper_seqpos,
 		Size ur_conn_id);
-
-	/// @brief Detect existing disulfides from the protein structure.
+	
+	/// @brief Detect existing disulfides from the protein structure
+	/// using suggestions from the FileData (or not!)
 	virtual
 	void
-	detect_disulfides();
+	detect_disulfides( utility::vector1< std::pair< Size, Size > > const & disulfs = utility::vector1< std::pair< Size, Size > >() );
 
 	/// @brief Assigns disulfide bonds based on a pre-determined list
 	void

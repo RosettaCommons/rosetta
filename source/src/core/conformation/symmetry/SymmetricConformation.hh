@@ -229,7 +229,7 @@ public:
 
 	virtual
 	void
-	detect_disulfides();
+	detect_disulfides( utility::vector1< std::pair<Size, Size> > const & disulf_bonds = utility::vector1< std::pair< Size, Size > >() );
 
 
 private:

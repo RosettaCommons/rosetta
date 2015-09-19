@@ -163,6 +163,23 @@ struct LinkInformation {
 	core::Distance length;
 };  // struct LinkInformation
 
+/// @brief  A structure for storing information from PDB SSBOND records.
+/// @author Watkins
+struct SSBondInformation {
+	std::string resName1;
+	char chainID1;
+	int resSeq1;
+	char iCode1;
+	std::string resID1;  // a 6-character resID, as defined elsewhere in FileData (not from the PDB)
+	std::string resName2;
+	char chainID2;
+	int resSeq2;
+	char iCode2;
+	std::string resID2;
+	core::Distance length;
+	std::string sym1;
+	std::string sym2;
+};
 
 /// @brief FileData class. Hold data created from PDB file.
 class FileData
@@ -219,7 +236,13 @@ public:  // An instance of FileData should not preserve any 'state', so its data
 
 	// PDB Connectivity Annotation Section ////////////////////////////////////
 	// Data for SSBOND records should be declared here if ever implemented.
-
+	
+	// map for storing SSBOND records:
+	// key is 6-character resID of 1st residue in ssbond
+	// (A vector is needed because to futureproof if we ever handle weird disorder
+	// situations.)
+	std::map<std::string, utility::vector1<SSBondInformation> > ssbond_map;
+	
 	// map for storing LINK records:
 	// key is 6-character resID of 1st residue in link
 	// (A vector is needed because a single saccharide residue can have multiple branches.)
@@ -260,7 +283,9 @@ public:
 	/// calling this.
 	void fill_header_records(std::vector< Record > & VR) const;
 
-
+	/// @brief Store (non-standard) polymer linkages in a map.
+	void store_ssbond_record(Record & record);
+	
 	/// @brief Store (non-standard) polymer linkages in a map.
 	void store_link_record(Record & record);
 
@@ -295,10 +320,16 @@ public:
 	/// for a specified subset of residues
 	void init_from_pose( core::pose::Pose const & pose, utility::vector1< core::Size > const & residue_indices );
 
-	/// @brief Get parametric information from the Pose object and add it to the PDB remarks.
-	///
-	void get_parametric_info(pose::RemarksOP remarks, core::pose::Pose const & pose);
+	/// @brief Get connectivity annotation information from the Pose object and create LinkInformation and
+	/// SSBondInformation data as appropriate.
+	void get_connectivity_annotation_info( core::pose::Pose const & pose );
 
+	LinkInformation get_link_record( core::pose::Pose const & pose, core::Size ii, core::Size conn );
+	SSBondInformation get_ssbond_record( core::pose::Pose const & pose, core::Size ii, core::Size conn );
+	
+	/// @brief Get parametric information from the Pose object and add it to the PDB remarks.
+	void get_parametric_info(pose::RemarksOP remarks, core::pose::Pose const & pose);
+	
 	/// @brief Writes  <pose>  to a given stream in PDB file format
 	static void dump_pdb(
 		core::pose::Pose const & pose,
