@@ -1435,8 +1435,8 @@ build_pose_as_is1(
 		} else {
 			// Better method please.
 			// AMW: revised so it doesn't rely on hydrogens being present! d'oh.
-			// Explicitly exclude peptoids.
-			if ( xyz.find( " CA " ) != xyz.end() && xyz.find( " CA1" ) == xyz.end() ) {
+			// Explicitly exclude peptoids and PNAs.
+			if ( xyz.find( " CA " ) != xyz.end() && xyz.find( " CA1" ) == xyz.end() && xyz.find( " NG " ) == xyz.end() ) {
 				// There are four atoms bonded to CA.
 				if ( xyz.find( " Pbb" ) != xyz.end() ) {
 					// Phosphonate
