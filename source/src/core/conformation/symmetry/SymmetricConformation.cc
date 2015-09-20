@@ -936,7 +936,8 @@ SymmetricConformation::insert_conformation_by_jump(
 *  case a CB-CB distance of 3.72 A is optimal.
 */
 void
-SymmetricConformation::detect_disulfides( utility::vector1< std::pair<Size, Size> > const & disulf_bonds )
+//SymmetricConformation::detect_disulfides( utility::vector1< std::pair<Size, Size> > const & disulf_bonds )
+SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disulf_one, utility::vector1< Size > const & disulf_two )
 {
 	using namespace graph;
 	using namespace basic::options;
@@ -996,10 +997,11 @@ SymmetricConformation::detect_disulfides( utility::vector1< std::pair<Size, Size
 		// the (upper) edge list will automatically prevent double counting.
 		std::set< Size > processed_cys; // track cys that have already been processed
 		// Process given pairs first if any are available
-		for ( Size ii = 1; ii <= disulf_bonds.size(); ++ii ) {
+		//for ( Size ii = 1; ii <= disulf_bonds.size(); ++ii ) {
+		for ( Size ii = 1; ii <= disulf_one.size(); ++ii ) {
 			
-			Size ii_resid = disulf_bonds[ ii ].first;
-			Size best_neighbor = disulf_bonds[ ii ].second;
+			Size ii_resid = disulf_one[ ii ];
+			Size best_neighbor = disulf_two[ ii ];
 			Residue const & ii_res( residue( ii_resid ) );
 			Size ii_sg_atomno(0);
 			if ( ii_res.type().get_disulfide_atom_name() == "NONE" ) {

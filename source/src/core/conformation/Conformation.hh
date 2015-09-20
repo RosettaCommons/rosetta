@@ -671,7 +671,8 @@ public:  // Bonds, Connections, Atoms, & Stubs
 	/// using suggestions from the FileData (or not!)
 	virtual
 	void
-	detect_disulfides( utility::vector1< std::pair< Size, Size > > const & disulfs = utility::vector1< std::pair< Size, Size > >() );
+	//detect_disulfides( utility::vector1< std::pair< Size, Size > > const & disulfs = utility::vector1< std::pair< Size, Size > >() );
+	detect_disulfides( utility::vector1< Size > const & disulf_one = utility::vector1< Size >(), utility::vector1< Size > const & disulf_two = utility::vector1< Size >() );
 
 	/// @brief Assigns disulfide bonds based on a pre-determined list
 	void
