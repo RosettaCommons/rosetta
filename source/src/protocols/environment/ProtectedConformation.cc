@@ -474,9 +474,9 @@ void ProtectedConformation::replace_residue( Size const seqpos, core::conformati
 	Parent::replace_residue( seqpos, new_rsd, atom_pairs );
 }
 
-/*void ProtectedConformation::detect_disulfides() {
+void ProtectedConformation::detect_disulfides() {
 	Parent::detect_disulfides();
-}*/
+}
 
 void ProtectedConformation::set_stub_transform( core::id::StubID const& stub_id1,
 	core::id::StubID const& stub_id2,

@@ -666,13 +666,11 @@ public:  // Bonds, Connections, Atoms, & Stubs
 		Size lr_conn_id,
 		Size upper_seqpos,
 		Size ur_conn_id);
-	
-	/// @brief Detect existing disulfides from the protein structure
-	/// using suggestions from the FileData (or not!)
+
+	/// @brief Detect existing disulfides from the protein structure.
 	virtual
 	void
-	//detect_disulfides( utility::vector1< std::pair< Size, Size > > const & disulfs = utility::vector1< std::pair< Size, Size > >() );
-	detect_disulfides( utility::vector1< Size > const & disulf_one = utility::vector1< Size >(), utility::vector1< Size > const & disulf_two = utility::vector1< Size >() );
+	detect_disulfides();
 
 	/// @brief Assigns disulfide bonds based on a pre-determined list
 	void

@@ -229,7 +229,7 @@ public:
 
 	virtual
 	void
-	detect_disulfides( utility::vector1< Size > const & disulf_one = utility::vector1< Size >(), utility::vector1< Size > const & disulf_two = utility::vector1< Size >() );
+	detect_disulfides();
 
 
 private:

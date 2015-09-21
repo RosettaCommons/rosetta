@@ -936,8 +936,7 @@ SymmetricConformation::insert_conformation_by_jump(
 *  case a CB-CB distance of 3.72 A is optimal.
 */
 void
-//SymmetricConformation::detect_disulfides( utility::vector1< std::pair<Size, Size> > const & disulf_bonds )
-SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disulf_one, utility::vector1< Size > const & disulf_two )
+SymmetricConformation::detect_disulfides()
 {
 	using namespace graph;
 	using namespace basic::options;
@@ -996,86 +995,6 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 		// Note that since graph only stores upper neighbors iterating through
 		// the (upper) edge list will automatically prevent double counting.
 		std::set< Size > processed_cys; // track cys that have already been processed
-		// Process given pairs first if any are available
-		//for ( Size ii = 1; ii <= disulf_bonds.size(); ++ii ) {
-		for ( Size ii = 1; ii <= disulf_one.size(); ++ii ) {
-			
-			Size ii_resid = disulf_one[ ii ];
-			Size best_neighbor = disulf_two[ ii ];
-			Residue const & ii_res( residue( ii_resid ) );
-			Size ii_sg_atomno(0);
-			if ( ii_res.type().get_disulfide_atom_name() == "NONE" ) {
-				TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
-				utility_exit();
-			} else {
-				ii_sg_atomno = ii_res.type().atom_index( ii_res.type().get_disulfide_atom_name() );
-			}
-			
-			// Create disulfide bond using CYD residues.  Note that this will
-			// end up doing a dummy replace for already existing disulfides,
-			// but it doesn't necessarily hurt just in case something weird
-			// happened.
-			TR << "Found "<< (fullatom?"":"CEN ") << "disulfide between residues " << ii_resid << " " << best_neighbor << std::endl;
-			// amw: output whole name, not just CYS vs CYD, to be clear.
-			std::string ii_name_start = residues_[ ii_resid ]->type().name();
-			std::string bn_name_start = residues_[ best_neighbor ]->type().name();
-			// unless it's for cys/cyd itself, condense that part for integration test clarity.
-			if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
-				ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-			}
-			if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
-				bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-			}
-			
-			TR << "current variant for " << ii_resid   << " " << ii_name_start << std::endl;
-			TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
-			
-			bool const success_at_ii = conformation::change_cys_state( ii_resid, "CYD", *this )
-			&& residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
-			bool const success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this )
-			&& residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
-			
-			if ( !success_at_ii )   TR.Error << "ERROR: unable to create appropriate residue type for disulfide at resid " << ii_resid   << std::endl;
-			if ( !success_at_best_neighbor ) TR.Error << "ERROR: unable to create appropriate residue type for disulfide at resid " << best_neighbor << std::endl;
-			
-			ii_name_start = residues_[ ii_resid ]->type().name();
-			bn_name_start = residues_[ best_neighbor ]->type().name();
-			if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
-				ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-			}
-			if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
-				bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
-			}
-			TR << "current variant for " << ii_resid   << " " << ii_name_start << std::endl;
-			TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
-			
-			// Record SG-SG connections.
-			if ( success_at_ii && success_at_best_neighbor ) {
-				Residue const & ii_new_res( residue( ii_resid ) );
-				// ASSUMPTION Disulfide forming cystein SG atoms for exactly one inter-residue chemical bond.
-				Size ii_connid = ii_new_res.type().residue_connection_id_for_atom( ii_sg_atomno );
-				Size jj_resid  = best_neighbor;
-				Residue const & jj_res = residue( jj_resid );
-				Size jj_sg_atomno(0);
-				if ( jj_res.type().get_disulfide_atom_name() == "NONE" ) {
-					TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
-					utility_exit();
-				} else {
-					jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );
-				}
-				
-				Size jj_connid = jj_res.type().residue_connection_id_for_atom( jj_sg_atomno );
-				
-				residues_[ ii_resid ]->residue_connection_partner( ii_connid, jj_resid, jj_connid );
-				residues_[ jj_resid ]->residue_connection_partner( jj_connid, ii_resid, ii_connid );
-			}
-			
-			// mark both cys as processed
-			processed_cys.insert( ii_resid );
-			processed_cys.insert( best_neighbor );
-		}
-		
-		// Now do everything that remains!
 		for ( Size ii = 1; ii <= num_cys; ++ii ) {
 			Size const ii_resid = cysid_2_resid[ ii ];
 			if ( ii_resid > symm_info_->num_independent_residues() ) continue;
@@ -1221,6 +1140,8 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 			}
 		}
 	} // use option "-detect_disulf" to control this
+
+
 }
 
 

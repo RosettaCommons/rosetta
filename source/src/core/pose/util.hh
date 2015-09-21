@@ -635,15 +635,7 @@ initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, conformation::
 /// @brief detect and fix disulfide bonds
 void
 initialize_disulfide_bonds(
-	Pose & pose
-);
-
-/// @brief detect and fix disulfide bonds
-void
-initialize_disulfide_bonds(
-	Pose & pose,
-	io::pdb::FileData const & fd
-);
+	Pose & pose);
 
 /// @brief Returns a string giving the pose's tag if there is such a thing or "UnknownTag" otherwise.
 std::string extract_tag_from_pose( core::pose::Pose &pose );

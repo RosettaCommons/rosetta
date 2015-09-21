@@ -72,7 +72,6 @@ void parse_sequence(
 	Size last_index = 0; // zero means this one-letter name does not have a fullname specified in bracket.
 	bool in_bracket = false; // currently whether scanning fullname in bracket or not.
 
-	bool old_cyd_found = false;
 	for ( Size seqpos = 1; seqpos < sequence_in.length(); ++seqpos ) {
 		// inside the bracket will be the base name of this residue;
 		char aa = sequence_in[ seqpos ];
@@ -85,13 +84,13 @@ void parse_sequence(
 			continue;
 		} else if ( sequence_in[ seqpos ] == ']' ) { // bracket ends, save fullname and map its index
 			in_bracket = false;
-			// CYD -> CYS - this requires no support from other parts of the code
+			// handle old style nomenclature
 			if ( fullname.substr(0,3) == "CYD" ) {
-				fullname[2] = 'S';
-				old_cyd_found = true;
+				std::string new_name = "CYS:disulfide" + fullname.substr( 3, std::string::npos );
+				fullname_list.push_back( new_name );
+			} else {
+				fullname_list.push_back( fullname );
 			}
-			
-			fullname_list.push_back( fullname );
 			last_index = fullname_list.size();
 			continue;
 		}
@@ -105,12 +104,6 @@ void parse_sequence(
 			last_index = 0;
 		}
 	} // finish reading in the whole sequence.
-	// Warn if an old CYD was found
-	if ( old_cyd_found ) {
-		tr.Warning << "Found old-style CYD nomenclature!  ";
-		tr.Warning << "Renaming as CYS for Conformation::detect_disulfides to resolve" << std::endl;
-	}
-	
 	oneletter_to_fullname_index.push_back( last_index );
 }
 
@@ -135,7 +128,8 @@ Size get_sequence_len( std::string const & sequence_in ) {
 /// K[lys:NtermProteinFull]ADFGCH[HIS_D]QNVE[glu:CtermProteinFull]Z[ZN].
 /// This allows a pose to be constructed with full features from a silent output
 /// file, such as with distinguished HIS tautomers, various chain termini and
-/// cutpoint variants etc.
+/// cutpoint variants etc. Currently not working with disulfide variant CYD, but
+/// this is on to-do list.
 chemical::ResidueTypeCOPs residue_types_from_sequence(
 	std::string const & sequence_in,
 	chemical::ResidueTypeSet const & residue_set,
@@ -172,7 +166,11 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 			// The next call requires reference -> COP because ResidueTypeSet's
 			// methods are not yet consistent in handing out ref vs COP.
 			ResidueTypeCOP rsd_type;
-			rsd_type = residue_set.name_map( fullname_list[ index ] ).get_self_ptr();
+			if ( fullname_list[ index ].substr( 0, 13 ) == "CYS:disulfide" ) {
+				rsd_type = handle_disulfide_variant_name_for_backwards_compatibility( residue_set, fullname_list[ index ] );
+			} else {
+				rsd_type = residue_set.name_map( fullname_list[ index ] ).get_self_ptr();
+			}
 			requested_types.push_back( rsd_type );
 
 		} else {
@@ -690,6 +688,58 @@ get_rsd_type_from_aa_legacy( chemical::ResidueTypeSet const & residue_set,
 	}
 	return rsd_type_list[ best_index ];
 }
+
+
+// Can we deprecate this now? If we need it, could easily refactor with chemical::ResidueTypeFinder. -- rhiju
+// Following comments are from original code block:
+//
+// CYD hack: CYS:disulfide won't necessarily place the :disulfide in the right place
+// we can only reconcile this for SURE in the type level (no ordering)
+// so we turn it back into cys, then we add a variant type!
+// THIS work around sucks, but it is better than killing backwards compatibility, I guess.
+// BTW: I am assuming that if you are ambitious enough to make noncanonical
+// disulfide silent files with the C26 nomenclature in the last 6 months
+// you are brilliant enough to add the :disulfide yourself?
+chemical::ResidueTypeCOP
+handle_disulfide_variant_name_for_backwards_compatibility( chemical::ResidueTypeSet const & residue_set,
+	std::string const & fullname )
+{
+
+	tr << tr.Red << "If you really need to use this code and want to speed it up, please contact rhiju [at] stanford.edu about quickly rewriting using chemical::ResidueTypeFinder." << tr.Reset << std::endl;
+
+	//tr <<fullname_list[ index ] << std::endl;
+	std::string nm = "CYS"+fullname.substr( 13, std::string::npos );
+	//tr <<nm << std::endl;
+
+	chemical::ResidueType temp_type = residue_set.name_map( nm );
+
+	utility::vector1< std::string > variant_types = temp_type.properties().get_list_of_variants();
+	variant_types.push_back( "DISULFIDE" );
+
+	chemical::ResidueTypeCOPs possible_types = residue_set.name3_map_DO_NOT_USE( "CYS" );
+	// Run through all possible new residue types.
+	for ( chemical::ResidueTypeCOPs::const_iterator type_iter = possible_types.begin(), type_end = possible_types.end();
+			type_iter != type_end; ++type_iter ) {
+		bool perfect_match( true );
+
+		for ( Size kk = 1; kk <= variant_types.size(); ++kk ) {
+			//TR << "checking for variant type " << variant_types[ kk ]<< std::endl;
+			if ( ! (*type_iter)->has_variant_type( variant_types[ kk ] ) ) {
+				perfect_match = false;
+				break;
+			}
+		}
+
+		if ( perfect_match ) { // Do replacement.
+			return (**type_iter).get_self_ptr();
+		}
+	}
+
+	// should trigger an error:
+	return 0;
+}
+
+
 
 } // namespace core
 } // namespace pose

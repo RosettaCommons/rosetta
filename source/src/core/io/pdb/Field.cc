@@ -120,17 +120,16 @@ RecordRef & Field::getRecordCollection()
 			"SSBOND", utility::tools::make_map<string, Field>(
 			"type",     Field( 1,  6),
 			"serNum",   Field( 8, 10), // Integer
-			"resName1", Field(12, 14),
+			"CYS",      Field(12, 14),
 			"chainID1", Field(16, 16), // Character
-			"resSeq1",  Field(18, 21), // Integer
-			"iCode1",   Field(22, 22), // AChar
-			"resName2", Field(26, 28),
+			"seqNum1",  Field(18, 21), // Integer
+			"icode1",   Field(22, 22), // AChar
+			"CYS",      Field(26, 28),
 			"chainID2", Field(30, 30), // Character
-			"resSeq2",  Field(32, 35), // Integer
-			"iCode2",   Field(36, 36), // AChar
+			"seqNum2",  Field(32, 35), // Integer
+			"icode2",   Field(36, 36), // AChar
 			"sym1",     Field(60, 65), // SymOP
-			"sym2",     Field(67, 72), // SymOP
-			"length",   Field(74, 78)  // Real(5.2) 3.3 standard
+			"sym2",     Field(67, 72)  // SymOP
 			),
 			"LINK  ", utility::tools::make_map<string, Field>(
 			"type",     Field( 1,  6),

@@ -32,7 +32,7 @@ END_CASE
 ## now we search for a case that matches the residue, take the first one
 ## so put generic case last
 
-BEGIN_CASE #### PNA residues ################################################
+BEGIN_CASE #### glycine ################################################
 
 ## these define which residues match this case
 
