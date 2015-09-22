@@ -34,6 +34,9 @@
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 
+#include <core/conformation/Residue.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
 

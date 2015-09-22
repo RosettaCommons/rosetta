@@ -55,8 +55,12 @@ void __core_by_hand_ending__()
 
     wrap_vector1<core::pose::PoseOP,  CP_CNCR, CP_CCR>("vector1_PoseOP");
     wrap_vector1<core::pose::Pose,  CP_REF, CP_REF>("vector1_Pose");
-    
-    wrap_vector1< core::kinematics::Edge, CP_REF, CP_REF >( "vector1_Edge" );
+
+
+    wrap_vector1<core::conformation::ResidueOP, CP_CNCR, CP_CCR>("RotamerVector");
+    wrap_vector1<core::conformation::ResidueOP, CP_CNCR, CP_CCR>("vector1_ResidueOP");
+
+	wrap_vector1< core::kinematics::Edge, CP_REF, CP_REF >( "vector1_Edge" );
 
     //if( true ) { // This code never executed, but we need it so compiler create operator ostream << vector1[core::conformation::Atom]
     //	cout << vector1< core::conformation::Atom > () ;
