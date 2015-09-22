@@ -858,6 +858,7 @@ sources = {
 		#"whitney_repack_input",
 	],
 	"pilot/will" : [
+		#"scheme_v0_score",
 		#"motif_denovo_hb",
 		#"for_tim",
 		#"motif_hash_util",
