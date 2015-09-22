@@ -12,11 +12,8 @@
 
 METHOD_WEIGHTS ref  0.16 1.7 -0.67 -0.81 0.63 -0.17 0.56 0.24 -0.65 -0.1 -0.34 -0.89 0.02 -0.97 -0.98 -0.37 -0.27 0.29 0.91 0.51
 fa_atr 0.8
-fa_rep 0.0145
-lk_nonpolar 0.0363
-fa_elec 3.7308
-hbond_bb_sc 5.6065
-hbond_sc 1.4702
-occ_sol_fitted 1.7292
-
-
+fa_rep 0.3504
+fa_elec 1.6441
+hbond_bb_sc 4.084
+hbond_sc 0.8422
+occ_sol_fitted 1.162
