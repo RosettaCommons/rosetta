@@ -33,7 +33,8 @@
 	--Modified 11 Aug 2014:
 		--Added an option to ignore entire chains in the RMSD calculation.
 		--Added an option to skip PCA analysis.
-	-- TODO: fix memory issue with large structure list.
+	--Modified 21 Sept 2015:
+	    --Added an option to dump out only the first N clusters.
 ****************************************************************************************************/
 
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -112,6 +113,7 @@ OPT_KEY( Boolean, v_CB ) //Should beta carbons be used in Cartesian clustering?
 OPT_KEY( IntegerVector, v_ignoreresidue) //Residues to ignore in alignments.
 OPT_KEY( IntegerVector, v_ignorechain) //Chains to ignore in the RMSD calculation.
 OPT_KEY( Integer, v_limit_structures_per_cluster) //Structures to output per cluster.
+OPT_KEY( Integer, v_limit_clusters) //Max number of clusters to output
 OPT_KEY( Boolean, v_cyclic) //Is there a peptide bond between the N- and C-termini?  False by default.
 OPT_KEY( Boolean, v_cluster_cyclic_permutations) //Should cyclic permutations be clustered together?  False by default.
 OPT_KEY( Integer, v_cyclic_permutation_offset) //1 by default, meaning that every cyclic permutation is clustered if v_cluster_cyclic_permutations is true.  Values X > 1 mean that cyclic permutations shifted by X residues will be clustered.
@@ -137,7 +139,8 @@ void register_options() {
 	NEW_OPT ( v_CB, "If clustering by backbone Cartesian coordinates, should beta carbons be included?  Default true.", true);
 	NEW_OPT ( v_ignoreresidue, "List of residues to ignore in alignments for clustering.  Default empty list.", empty_vector);
 	NEW_OPT ( v_ignorechain, "List of chains to ignore in alignments for clustering.  Default empty list.", empty_vector);
-	NEW_OPT ( v_limit_structures_per_cluster, "Maximum number of structures to output per cluster.  Default no limit.", 0);
+	NEW_OPT ( v_limit_structures_per_cluster, "Maximum number of structures to output per cluster.  Default no limit (0).", 0);
+	NEW_OPT ( v_limit_clusters, "Maximum number of clusters to output.  Default no limit (0).", 0);
 	NEW_OPT ( v_cyclic, "If true, constraints are added to make a peptide bond between the N- and C-termini.  If false (default), the termini are free.  Default false.", false);
 	NEW_OPT ( v_cluster_cyclic_permutations, "If true, all cyclic permutations are tried when comparing two structures for clustering.  Requires \"-v_cyclic true\".  Default false.", false);
 	NEW_OPT ( v_cyclic_permutation_offset, "1 by default, meaning that every cyclic permutation is clustered if v_cluster_cyclic_permutations is true.  Values X > 1 mean that cyclic permutations shifted by X residues will be clustered.", 1);
@@ -1631,6 +1634,11 @@ int main( int argc, char * argv [] ) {
 		printf("Cyclic permutations will be tried when aligning structures during clustering (-v_cluster_cyclic_permutations flag).\n");
 	}
 
+	//Checking v_limit_clusters value:
+	if(option[v_limit_clusters]() < 0 ) {
+		printf("Error!  The -v_limit_clusters flag must be set to 0 or greater.  Crashing with no grace whastoever.\n");
+		fflush(stdout); exit(1);
+	}
 
 	//Parse the user-specified list of additional atoms to use in the RMSD calculation:
 	utility::vector1<core::id::NamedAtomID> extra_atom_list;
@@ -1803,6 +1811,10 @@ int main( int argc, char * argv [] ) {
 	printf("Cluster\tStructure\tFile_out\n");
 
 	for (core::Size i=1; i<=clusterlist_sortedbyenergy.size(); i++) {
+		if(option[v_limit_clusters]()!=0 && i > static_cast<core::Size>( option[v_limit_clusters]() ) ) {
+			printf("Maximum number of clusters for output reached.\n");
+			break;
+		}
 		core::pose::Pose pose1;
 		for(core::Size j=1; j<=clusterlist_sortedbyenergy[i].size(); j++) {
 			core::pose::Pose temppose;
