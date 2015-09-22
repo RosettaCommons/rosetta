@@ -263,6 +263,49 @@ FileData::store_link_record( Record & record )
 	}
 }
 
+// Store (non-standard) polymer linkages in a map. ////////////////////////////
+/// @author Watkins
+void
+FileData::store_ssbond_record( Record & record )
+{
+	using namespace std;
+	using namespace utility;
+	
+	SSBondInformation ssbond;
+	vector1< SSBondInformation > ssbonds;
+	
+	// Extract values from record fields.
+	ssbond.resName1 = record[ "resName1" ].value;
+	ssbond.chainID1 = record[ "chainID1" ].value[ 0 ];
+	ssbond.resSeq1 = atof( record[ "resSeq1" ].value.c_str() );
+	ssbond.iCode1 = record[ "iCode1" ].value[ 0 ];
+	
+	ssbond.resID1 = record[ "resSeq1" ].value + record[ "iCode1" ].value + record[ "chainID1" ].value;
+	
+	ssbond.resName2 = record[ "resName2" ].value;
+	ssbond.chainID2 = record[ "chainID2" ].value[ 0 ];
+	ssbond.resSeq2 = atof( record[ "resSeq2" ].value.c_str() );
+	ssbond.iCode2 = record[ "iCode2" ].value[ 0 ];
+	
+	ssbond.resID2 = record[ "resSeq2" ].value + record[ "iCode2" ].value + record[ "chainID2" ].value;
+	
+	// An old PDB standard would put two symmetry operations here;
+	// we do not support this (yet?)
+	
+	ssbond.length = atof( record[ "length" ].value.c_str() );  // bond length
+	
+	// If key is found in the links map, add this new linkage information to the links already keyed to this residue.
+	if ( ssbond_map.count( ssbond.resID1 ) ) {
+		ssbonds = ssbond_map[ ssbond.resID1 ];
+	}
+	ssbonds.push_back( ssbond );
+	
+	ssbond_map[ ssbond.resID1 ] = ssbonds;
+	
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "SSBOND record information stored successfully." << std::endl;
+	}
+}
 
 // Heterogen Information methods //////////////////////////////////////////////
 // Store heterogen name information in map.
@@ -538,60 +581,7 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 
 	// Get Connectivity Annotation Section information.
 	if ( options.write_pdb_link_records() ) {
-		using namespace utility;
-		using namespace id;
-		using namespace kinematics;
-		using namespace conformation;
-
-		FoldTree const & ft = pose.fold_tree();
-
-		FoldTree::const_iterator end_of_tree = ft.end();
-		for ( FoldTree::const_iterator edge = ft.begin(); edge != end_of_tree; ++edge ) {
-			if ( edge->is_chemical_bond() ) {
-				string const & start_atom = edge->start_atom();
-				string const & stop_atom = edge->stop_atom();
-				uint const start_num = edge->start();
-				uint const stop_num = edge->stop();
-
-				// TODO: Don't assume use of PDBInfo.
-				ResidueInformation start_res = get_residue_information(pose, start_num, pose.pdb_info() != NULL );
-				ResidueInformation stop_res = get_residue_information(pose, stop_num, pose.pdb_info() != NULL );
-
-				// Fill LinkInformation
-				LinkInformation link;
-				vector1<LinkInformation> links;
-
-				link.name1 = start_atom;
-				link.resName1 = start_res.resName;
-				link.chainID1 = start_res.chainID;
-				link.resSeq1 = start_res.resSeq;
-				link.iCode1 = start_res.iCode;
-				link.resID1 = start_res.resid();
-
-				link.name2 = stop_atom;
-				link.resName2 = stop_res.resName;
-				link.chainID2 = stop_res.chainID;
-				link.resSeq2 = stop_res.resSeq;
-				link.iCode2 = stop_res.iCode;
-				link.resID2 = stop_res.resid();
-
-				// Calculate bond distance.
-				uint start_atom_index = pose.residue(start_num).atom_index(start_atom);
-				uint stop_atom_index = pose.residue(stop_num).atom_index(stop_atom);
-				link.length = pose.conformation().bond_length(
-					AtomID(start_atom_index, start_num),
-					AtomID(stop_atom_index, stop_num));
-
-				// If key is found in the links map, add this new linkage information to the links already keyed to
-				// this residue.
-				if ( link_map.count(link.resID1) ) {
-					links = link_map[link.resID1];
-				}
-				links.push_back(link);
-
-				link_map[link.resID1] = links;
-			}
-		}
+		get_connectivity_annotation_info( pose );
 	}
 
 	// Get Crystallographic and Coordinate Transformation Section information.
@@ -608,6 +598,226 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 	for ( Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		append_residue( rsd, atom_index, pose, options.preserve_crystinfo() );
+	}
+}
+
+LinkInformation
+FileData::get_link_record( core::pose::Pose const & pose, core::Size ii, core::Size conn ) {
+
+	using namespace id;
+	LinkInformation link;
+	Size jj = pose.residue( ii ).connected_residue_at_resconn( conn );
+	Size jj_conn = pose.residue( ii ).residue_connection_conn_id( conn );
+	
+	link.name1 = pose.residue( ii ).atom_name( pose.residue( ii ).residue_connect_atom_index( conn ) );
+	link.resName1 = pose.residue( ii ).name3();
+	link.chainID1 = pose.pdb_info()->chain( ii );
+	link.resSeq1 = pose.pdb_info()->number( ii );
+	link.iCode1 = pose.pdb_info()->icode( ii );
+	std::stringstream ss;
+	ss.width(6);
+	ss << std::right << pose.pdb_info()->number( ii );
+	link.resID1 = ss.str() + link.iCode1 + link.chainID1;
+	
+	link.name2 =  pose.residue( jj ).atom_name( pose.residue( jj ).residue_connect_atom_index( jj_conn ) );
+	link.resName2 = pose.residue( jj ).name3();
+	link.chainID2 = pose.pdb_info()->chain( jj );
+	link.resSeq2 = pose.pdb_info()->number( jj );
+	link.iCode2 = pose.pdb_info()->icode( jj );
+	std::stringstream ss2;
+	ss2.width(6);
+	ss2 << std::right << pose.pdb_info()->number( jj );
+	link.resID2 = ss2.str() + link.iCode2 + link.chainID2;
+	
+	// Calculate bond distance.
+	uint start_atom_index = pose.residue( ii ).atom_index( link.name1 );
+	uint stop_atom_index = pose.residue( jj ).atom_index( link.name2 );
+	link.length = pose.conformation().bond_length(
+												  AtomID( start_atom_index, ii ),
+												  AtomID( stop_atom_index, jj ) );
+	return link;
+}
+	
+SSBondInformation
+FileData::get_ssbond_record( core::pose::Pose const & pose, core::Size ii, core::Size conn ) {
+
+	using namespace id;
+	SSBondInformation ssbond;
+	
+	Size jj = pose.residue( ii ).connected_residue_at_resconn( conn );
+	
+	ssbond.resName1 = pose.residue( ii ).name3();
+	ssbond.chainID1 = pose.pdb_info()->chain( ii );
+	ssbond.resSeq1 = pose.pdb_info()->number( ii );
+	ssbond.iCode1 = pose.pdb_info()->icode( ii );
+	std::stringstream ss;
+	ss.width(6);
+	ss << std::right << pose.pdb_info()->number( ii );
+	ssbond.resID1 = ss.str() + ssbond.iCode1 + ssbond.chainID1;
+	
+	ssbond.resName2 = pose.residue( jj ).name3();
+	ssbond.chainID2 = pose.pdb_info()->chain( jj );
+	ssbond.resSeq2 = pose.pdb_info()->number( jj );
+	ssbond.iCode2 = pose.pdb_info()->icode( jj );
+	std::stringstream ss2;
+	ss2.width(6);
+	ss2 << std::right << pose.pdb_info()->number( jj );
+	ssbond.resID2 = ss2.str() + ssbond.iCode2 + ssbond.chainID2;
+	
+	// Calculate bond distance.
+	uint start_atom_index = pose.residue( ii ).atom_index( pose.residue( ii ).type().get_disulfide_atom_name() );
+	uint stop_atom_index = pose.residue( jj ).atom_index( pose.residue( ii ).type().get_disulfide_atom_name() );
+	ssbond.length = pose.conformation().bond_length(
+													AtomID( start_atom_index, ii ),
+													AtomID( stop_atom_index, jj ) );
+	
+	return ssbond;
+}
+	
+// Get connectivity annotation information from the Pose object and create LinkInformation and
+// SSBondInformation data as appropriate.
+/// @author Watkins
+void FileData::get_connectivity_annotation_info( core::pose::Pose const & pose ) {
+
+	using namespace utility;
+	using namespace id;
+	using namespace kinematics;
+	using namespace conformation;
+	
+	// In the past, we walked through the fold_tree and found the termini of all
+	// the chemical edges.
+	// This technique is not very general because many complicated branched
+	// topologies would end up creating cycles and thus aren't included.
+	// Similarly, it doesn't permit the use of SSBOND records, as the
+	// FoldTree doesn't go through those (except in exotic and generally
+	// temporary circumstances.
+	
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		
+		if ( pose.residue( ii ).has_lower_connect() ) {
+			Size lower = pose.residue( ii ).lower_connect().index();
+			
+			// if bonded to not ii - 1 or bonded to not ii - 1's upper
+			if ( pose.residue( ii ).connected_residue_at_resconn( lower ) != ii - 1 ||
+				pose.residue( ii ).residue_connection_conn_id( lower ) != static_cast<Size>(pose.residue( ii - 1 ).upper_connect().index()) ) {
+				
+				vector1<LinkInformation> links;
+				LinkInformation link = get_link_record( pose, ii, lower );
+				
+				// If key is found in the links map, add this new linkage information to the links already keyed to
+				// this residue.
+				if ( link_map.count(link.resID1) ) {
+					links = link_map[link.resID1];
+				}
+				links.push_back(link);
+				
+				link_map[link.resID1] = links;
+
+			}
+		}
+		
+		if ( pose.residue( ii ).has_upper_connect() ) {
+			Size upper = pose.residue( ii ).upper_connect().index();
+			
+			// if bonded to not ii + 1 or bonded to not ii + 1's lower
+			if ( pose.residue( ii ).connected_residue_at_resconn( upper ) != ii + 1 ||
+				pose.residue( ii ).residue_connection_conn_id( upper ) != static_cast<Size>( pose.residue( ii + 1 ).lower_connect().index()) ) {
+				
+				// Escape if it's bonded to residue 1's lower--we don't want to double-count cyclization here.
+				// If jj < ii, we already counted it
+				if ( pose.residue( ii ).connected_residue_at_resconn( upper ) < ii ) continue;
+				
+				LinkInformation link = get_link_record( pose, ii, upper );
+				vector1<LinkInformation> links;
+				
+				// If key is found in the links map, add this new linkage information to the links already keyed to
+				// this residue.
+				if ( link_map.count(link.resID1) ) {
+					links = link_map[link.resID1];
+				}
+				links.push_back(link);
+				
+				link_map[link.resID1] = links;
+
+			}
+		}
+		
+		if ( pose.residue( ii ).n_non_polymeric_residue_connections() != 0 ) {
+			
+			for ( Size conn = pose.residue( ii ).n_polymeric_residue_connections()+1; conn <= pose.residue( ii ).n_residue_connections(); ++conn ) {
+				
+				Size jj = pose.residue( ii ).connected_residue_at_resconn( conn );
+				Size jj_conn = pose.residue( ii ).residue_connection_conn_id( conn );
+				
+				// Either LINK or SSBOND
+				// Note that it's not an SSBOND if you are a cysteine bonded
+				// to the UPPER of another cysteine!
+				// Are the two atoms both the get_disulfide_atom_name() of the
+				// connected residue types?
+				if ( ( pose.residue( ii ).type().has_property( chemical::DISULFIDE_BONDED ) || pose.residue( ii ).type().has_property( chemical::SIDECHAIN_THIOL ) ) &&
+					 ( pose.residue( jj ).type().has_property( chemical::DISULFIDE_BONDED ) || pose.residue( jj ).type().has_property( chemical::SIDECHAIN_THIOL ) ) &&
+						pose.residue( ii ).residue_connect_atom_index( conn ) ==
+						pose.residue( ii ).atom_index( pose.residue( ii ).type().get_disulfide_atom_name() ) &&
+						pose.residue( jj ).residue_connect_atom_index( jj_conn ) == 
+						pose.residue( ii ).atom_index( pose.residue( jj ).type().get_disulfide_atom_name() ) ) {
+					// Disulfide.
+					
+					// If jj < ii, we already counted it
+					if ( jj < ii ) continue;
+					
+					SSBondInformation ssbond = get_ssbond_record( pose, ii, conn );
+					vector1<SSBondInformation> ssbonds;
+
+					// If key is found in the links map, add this new linkage information to the links already keyed to
+					// this residue.
+					if ( ssbond_map.count(ssbond.resID1) ) {
+						ssbonds = ssbond_map[ssbond.resID1];
+					}
+					ssbonds.push_back(ssbond);
+					
+					ssbond_map[ssbond.resID1] = ssbonds;
+					
+				} else {
+					
+					LinkInformation link = get_link_record( pose, ii, conn );
+					vector1<LinkInformation> links;
+					
+					// If key is found in the links map, add this new linkage information to the links already keyed to
+					// this residue.
+					if ( link_map.count(link.resID1) ) {
+						links = link_map[link.resID1];
+					}
+					// If this link is found under the OTHER record...
+					bool skip = false;
+					if ( link_map.count( link.resID2 ) ) {
+						for ( Size i = 1; i <= link_map[link.resID2].size(); ++i ) {
+							if ( link.resID1 == link_map[link.resID2][i].resID2 ) {
+								skip = true;
+								break;
+							}
+						}
+					}
+					if ( skip )  continue;
+					// Make sure it isn't a dupe--for example, make sure that
+					// we didn't already push this back as a lower to upper thing.
+					// Right now, we assume you can't have two noncanonical connections to the same residue.
+					// This is not strictly necessarily true, but until we implement
+					// LinkInformation ==, it's good enough.
+					bool push_it = true;
+					for ( Size i = 1; i <= links.size(); ++i ) {
+						if ( ( link.resID1 == links[i].resID1 && link.resID2 == links[i].resID2 )
+							|| ( link.resID2 == links[i].resID1 && link.resID1 == links[i].resID2 ) ) {
+							push_it = false;
+						}
+					}
+					if ( push_it ) {
+						links.push_back(link);
+					}
+					
+					link_map[link.resID1] = links;
+				}
+			}
+		}
 	}
 }
 
@@ -1225,8 +1435,8 @@ build_pose_as_is1(
 		} else {
 			// Better method please.
 			// AMW: revised so it doesn't rely on hydrogens being present! d'oh.
-			// Explicitly exclude peptoids.
-			if ( xyz.find( " CA " ) != xyz.end() && xyz.find( " CA1" ) == xyz.end() ) {
+			// Explicitly exclude peptoids and PNAs.
+			if ( xyz.find( " CA " ) != xyz.end() && xyz.find( " CA1" ) == xyz.end() && xyz.find( " NG " ) == xyz.end() ) {
 				// There are four atoms bonded to CA.
 				if ( xyz.find( " Pbb" ) != xyz.end() ) {
 					// Phosphonate
@@ -1747,7 +1957,7 @@ build_pose_as_is1(
 	//mjo TODO: this can try to access pose->pdb_info() which is not yet
 	//initialized. Moving it after the pose->pdb_info has been
 	//initialized causes integration test changes
-	core::pose::initialize_disulfide_bonds(pose);
+	core::pose::initialize_disulfide_bonds(pose, fd);
 
 	// AMW: initialize triazolamers, oops, and hbs by default.
 	core::pose::ncbb::initialize_ncbbs( pose );

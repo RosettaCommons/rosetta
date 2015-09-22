@@ -1461,7 +1461,6 @@ Pose::clear()
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details save pose data to file with supplied file_name
-///
 bool
 Pose::dump_pdb(std::string const &file_name, std::string const & tag) const
 {

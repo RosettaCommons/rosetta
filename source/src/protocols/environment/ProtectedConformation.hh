@@ -165,7 +165,8 @@ public:
 	virtual void fix_disulfides( utility::vector1< std::pair<Size, Size> > );
 
 	// TODO: this method can fail in fullatom
-	virtual void detect_disulfides();
+	// This just uses the parent method anyway, and we need a default argument.
+	//virtual void detect_disulfides();
 
 	// TODO: decide what to do with direct xyz settings.
 	virtual void set_xyz( AtomID const & id, core::PointPosition const & position );

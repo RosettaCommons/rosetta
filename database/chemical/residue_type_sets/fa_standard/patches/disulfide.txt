@@ -18,6 +18,9 @@ BEGIN_SELECTOR
 NAME3 CYS
 END_SELECTOR
 
+# Handle backwards compatibility (indefinitely?) with CYD nomenclature
+SET_IO_STRING CYD
+
 ## these are the operations involved
 DELETE_ATOM HG
 DELETE_TERMINAL_CHI

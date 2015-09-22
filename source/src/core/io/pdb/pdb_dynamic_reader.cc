@@ -178,6 +178,14 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 			if ( options.read_link_records() ) {
 				fd.store_link_record( VR[ i ] );
 			}
+			
+			// Record contains disulfide linkage information from the Connectivity Annotation Section of the PDB
+			//file.
+		} else if ( record_type == "SSBOND" ) {
+			if ( options.read_link_records() ) {
+				// Use same flag; link records should use both.
+				fd.store_ssbond_record( VR[ i ] );
+			}
 
 			// Record contains multimodel PDBs as specified in the Coordinate Section of the PDB file..
 		} else if ( record_type == "MODEL " ) {

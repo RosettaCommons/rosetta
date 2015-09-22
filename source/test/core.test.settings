@@ -99,6 +99,7 @@ sources = {
 	"io/pdb" : [
 		"alt_codes_io",
 		"Field",
+		"file_data",
 		"file_data_fixup",
 		"HeaderInformationTests",
 		"NomenclatureManagerTests",
@@ -558,6 +559,9 @@ testinputfiles = [
 	"io/test_CYD.out",
 	"io/test_in.pdb",
 	"io/test_in_idealized.pdb",
+	"io/pdb/1BH4.pdb",
+	"io/pdb/4TTL.pdb",
+	"io/pdb/1e68_link.pdb",
 	"kinematics/test.pdb",
 	"optimization/test_in.pdb",
 	"optimization/symmetry/fibril.symm",
