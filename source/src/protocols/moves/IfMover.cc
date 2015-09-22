@@ -40,7 +40,7 @@
 namespace protocols {
 namespace moves {
 
-static thread_local basic::Tracer TR( "protocols.moves.IfMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.moves.IfMover" );
 
 std::string IfMoverCreator::mover_name() {
 	return "If";

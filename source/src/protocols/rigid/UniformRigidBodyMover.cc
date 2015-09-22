@@ -37,7 +37,7 @@ namespace rigid {
 
 int const NO_JUMP = 0;
 
-static thread_local basic::Tracer tr( "protocols.rigid.UniformRigidBodyMover", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "protocols.rigid.UniformRigidBodyMover", basic::t_info );
 
 using namespace core::environment;
 using namespace protocols::environment;

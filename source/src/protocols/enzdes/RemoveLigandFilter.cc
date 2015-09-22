@@ -39,7 +39,7 @@
 using namespace core;
 using namespace core::scoring;
 
-static thread_local basic::Tracer TR( "protocols.enzdes.RemoveLigandFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.enzdes.RemoveLigandFilter" );
 namespace protocols {
 namespace enzdes {
 

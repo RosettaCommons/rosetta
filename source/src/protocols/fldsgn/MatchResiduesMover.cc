@@ -43,7 +43,7 @@
 #include <boost/tuple/tuple_comparison.hpp>
 #include <boost/lexical_cast.hpp>
 
-static thread_local basic::Tracer TR( "protocols.fldsgn.MatchResiduesMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.MatchResiduesMover" );
 
 namespace protocols {
 namespace fldsgn {

@@ -34,7 +34,7 @@
 #include <core/kinematics/AtomTree.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.kinmatchFunGroupTK" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.kinmatchFunGroupTK" );
 
 namespace protocols {
 namespace kinmatch {

@@ -29,7 +29,7 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
-static thread_local basic::Tracer TR("protocols.antibody.constraints.ParatopeSiteConstraintMover");
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.constraints.ParatopeSiteConstraintMover");
 
 namespace protocols {
 namespace antibody {

@@ -49,7 +49,7 @@ using namespace core;
 using basic::T;
 
 
-static thread_local basic::Tracer TR( "protocols.rna.RNA_FragmentMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rna.RNA_FragmentMover" );
 
 namespace protocols {
 namespace farna {

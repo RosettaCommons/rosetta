@@ -77,7 +77,7 @@ OPT_1GRP_KEY( Boolean, msd, exclude_background_energies )
 
 using basic::t_info;
 using basic::t_debug;
-static thread_local basic::Tracer TR( "app.andrew.mpi_msd", t_info );
+static THREAD_LOCAL basic::Tracer TR( "app.andrew.mpi_msd", t_info );
 
 /*class SimpleDGBindAggregateFunction : public devel::pack_daemon::MultistateAggregateFunction
 {

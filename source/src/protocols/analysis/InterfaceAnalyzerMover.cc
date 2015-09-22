@@ -94,9 +94,9 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.analysis.InterfaceAnalyzerMover" );
-static thread_local basic::Tracer TRinterface( "protocols.analysis.InterfaceAnalyzerMover.interface_selection" );
-static thread_local basic::Tracer TRhbonds( "protocols.analysis.InterfaceAnalyzerMover.missing_hbonds" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.analysis.InterfaceAnalyzerMover" );
+static THREAD_LOCAL basic::Tracer TRinterface( "protocols.analysis.InterfaceAnalyzerMover.interface_selection" );
+static THREAD_LOCAL basic::Tracer TRhbonds( "protocols.analysis.InterfaceAnalyzerMover.missing_hbonds" );
 
 
 ///stupid helper function needed because ternary operator does not allow variable return types

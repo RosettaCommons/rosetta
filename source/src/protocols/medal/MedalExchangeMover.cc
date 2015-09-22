@@ -73,7 +73,7 @@ using protocols::loops::LoopsOP;
 using protocols::loops::LoopsCOP;
 using utility::vector1;
 
-static thread_local basic::Tracer TR( "protocols.medal.MedalExchangeMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.medal.MedalExchangeMover" );
 
 /// @detail Combines both sets of loops, sorting the result in increasing order of start position
 protocols::loops::LoopsCOP combine_loops(LoopsCOP aligned, LoopsCOP unaligned) {

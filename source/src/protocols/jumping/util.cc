@@ -68,7 +68,7 @@ using namespace pose;
 using namespace kinematics;
 
 
-static thread_local basic::Tracer tr( "protocols.jumping" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.jumping" );
 
 
 // if false pose does still contain jumps in the fold-tree

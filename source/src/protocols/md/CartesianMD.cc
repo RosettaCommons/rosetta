@@ -86,7 +86,7 @@ using namespace ObjexxFCL::format;
 namespace protocols {
 namespace md {
 
-static thread_local basic::Tracer TR( "protocols.md.Cartesian" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.md.Cartesian" );
 
 using namespace devel::md;
 using namespace core::optimization;

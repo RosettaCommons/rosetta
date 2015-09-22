@@ -72,7 +72,7 @@ typedef utility::vector1<core::Size> Sizes;
 typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 
-static thread_local basic::Tracer TR( "genmatch_d6_bpy" );
+static THREAD_LOCAL basic::Tracer TR( "genmatch_d6_bpy" );
 
 
 void myoptH(Pose & pose, ScoreFunctionOP sf) {

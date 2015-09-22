@@ -84,7 +84,7 @@
 #include <core/pack/task/ResfileReader.hh>
 //Auto Headers
 
-static thread_local basic::Tracer TR( "rescore_i213" );
+static THREAD_LOCAL basic::Tracer TR( "rescore_i213" );
 
 using core::Size;
 using core::Real;

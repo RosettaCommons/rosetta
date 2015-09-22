@@ -47,7 +47,7 @@
 
 //C++ Headers
 
-static thread_local basic::Tracer TR( "protocols.denovo_design.DisulfidizeMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.DisulfidizeMover" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

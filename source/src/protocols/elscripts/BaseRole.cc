@@ -61,7 +61,7 @@
 namespace protocols {
 namespace elscripts {
 
-static thread_local basic::Tracer TR( "protocols.elscripts.BaseRole" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.elscripts.BaseRole" );
 
 void lregister_BaseRole( lua_State * lstate ) {
 	luabind::module(lstate, "protocols")

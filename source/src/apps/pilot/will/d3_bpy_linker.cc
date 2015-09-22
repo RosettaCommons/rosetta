@@ -78,7 +78,7 @@ using std::endl;
 using core::import_pose::pose_from_pdb;
 using core::kinematics::Stub;
 
-static thread_local basic::Tracer TR( "D3BPYDIG" );
+static THREAD_LOCAL basic::Tracer TR( "D3BPYDIG" );
 static core::io::silent::SilentFileData sfd;
 
 // OPT_1GRP_KEY( FileVector, cxdock, bench2 )

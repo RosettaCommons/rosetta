@@ -20,7 +20,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <utility/exit.hh>
 
-static thread_local basic::Tracer TR( "protocols.elscripts.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.elscripts.util" );
 
 namespace protocols {
 namespace elscripts {

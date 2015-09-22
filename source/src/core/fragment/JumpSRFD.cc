@@ -47,7 +47,7 @@ namespace fragment {
 
 using namespace ObjexxFCL::format;
 
-static thread_local basic::Tracer tr( "core.fragment.JumpSRFD" );
+static THREAD_LOCAL basic::Tracer tr( "core.fragment.JumpSRFD" );
 using namespace core::id;
 //void DownJumpSRFD::get_stubs( pose::Pose const& pose, Size downstream_res_nr, id::StubID &up_stub, id::StubID &down_stub ) const {
 

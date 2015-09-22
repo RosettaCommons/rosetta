@@ -89,7 +89,7 @@
 
 //#include <apps/pilot/krishna/metrics.cc>
 
-static thread_local basic::Tracer TR( "apps.pilot.krishna.abbinding" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.krishna.abbinding" );
 
 using namespace core;
 

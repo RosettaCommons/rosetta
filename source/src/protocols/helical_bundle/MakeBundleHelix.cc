@@ -47,7 +47,7 @@ using basic::Warning;
 namespace protocols {
 namespace helical_bundle {
 
-static thread_local basic::Tracer TR("protocols.helical_bundle.MakeBundleHelix");
+static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.MakeBundleHelix");
 
 std::string
 MakeBundleHelixCreator::keyname() const

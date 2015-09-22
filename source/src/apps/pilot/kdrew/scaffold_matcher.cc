@@ -88,7 +88,7 @@ using namespace protocols;
 
 
 // tracer - used to replace cout
-static thread_local basic::Tracer TR( "Hotspot Placement" );
+static THREAD_LOCAL basic::Tracer TR( "Hotspot Placement" );
 
 namespace scaffold_matcher {
 BooleanOptionKey const pymol( "scaffold_matcher::pymol" );

@@ -75,7 +75,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 
-static thread_local basic::Tracer TR( "bcorreia_fold_from_loops" );
+static THREAD_LOCAL basic::Tracer TR( "bcorreia_fold_from_loops" );
 
 
 // Verifies if it is within the loop or a neighbor range

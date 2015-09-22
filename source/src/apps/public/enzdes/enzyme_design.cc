@@ -54,7 +54,7 @@
 #endif
 
 
-static thread_local basic::Tracer tr( "apps.public.enzdes.enzyme_design" );
+static THREAD_LOCAL basic::Tracer tr( "apps.public.enzdes.enzyme_design" );
 
 using namespace core;
 

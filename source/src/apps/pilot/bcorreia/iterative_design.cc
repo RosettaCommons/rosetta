@@ -56,7 +56,7 @@
 #include <core/pack/pack_rotamers.hh>
 
 #include <basic/Tracer.hh>
-static thread_local basic::Tracer TR( "apps.iterative_design" );
+static THREAD_LOCAL basic::Tracer TR( "apps.iterative_design" );
 
 // Utility Headers
 #include <utility/file/file_sys_util.hh> // file_exists

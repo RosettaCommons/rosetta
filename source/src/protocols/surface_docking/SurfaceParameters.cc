@@ -24,7 +24,7 @@
 // Basic Headers
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.surfaceDocking.SurfaceParameters" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.surfaceDocking.SurfaceParameters" );
 
 namespace protocols {
 namespace surface_docking {

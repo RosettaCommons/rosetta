@@ -37,7 +37,7 @@
 #include <numeric/random/random.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.membrane.RandomMembranePositionMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.RandomMembranePositionMover" );
 
 namespace protocols {
 namespace membrane {

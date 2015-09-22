@@ -32,7 +32,7 @@
 // C++ headers
 #include <utility/assert.hh>
 
-static thread_local basic::Tracer TR( "core.pack.task.residue_selector.SecondaryStructureSelector" );
+static THREAD_LOCAL basic::Tracer TR( "core.pack.task.residue_selector.SecondaryStructureSelector" );
 
 namespace core {
 namespace pack {

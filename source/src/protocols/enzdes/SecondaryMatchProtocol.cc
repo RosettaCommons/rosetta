@@ -70,7 +70,7 @@
 namespace protocols {
 namespace enzdes {
 
-static thread_local basic::Tracer tr( "protocols.enzdes.SecondaryMatchProtocol" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.SecondaryMatchProtocol" );
 
 SecondaryMatchProtocol::SecondaryMatchProtocol() :
 	EnzdesBaseProtocol(),

@@ -32,7 +32,7 @@
 #include <basic/Tracer.hh>
 
 
-static thread_local basic::Tracer tr( "core.scoring.rna.RNA_AtomVDW" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.rna.RNA_AtomVDW" );
 
 namespace core {
 namespace scoring {

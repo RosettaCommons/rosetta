@@ -29,7 +29,7 @@ namespace core {
 namespace chemical {
 
 
-static thread_local basic::Tracer tr( "core.chemical.ElementSet" );
+static THREAD_LOCAL basic::Tracer tr( "core.chemical.ElementSet" );
 
 ElementSet::ElementSet() {}
 

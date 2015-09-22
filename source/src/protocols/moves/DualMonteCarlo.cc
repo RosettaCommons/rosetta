@@ -36,7 +36,7 @@
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.moves.DualMonteCarlo" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.moves.DualMonteCarlo" );
 
 namespace protocols {
 namespace moves {

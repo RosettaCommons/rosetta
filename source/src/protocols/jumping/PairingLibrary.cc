@@ -76,7 +76,7 @@ template <> StandardPairingLibrary * utility::SingletonBase< StandardPairingLibr
 
 }
 
-static thread_local basic::Tracer tr( "protocols.jumping" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.jumping" );
 
 using core::Real;
 using namespace core;

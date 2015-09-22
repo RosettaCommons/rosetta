@@ -82,7 +82,7 @@ using utility::vector1;
 using cppdb::statement;
 using cppdb::result;
 
-static thread_local basic::Tracer TR( "protocols.features.RotamerFeatures" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.features.RotamerFeatures" );
 
 string
 RotamerFeatures::type_name() const {

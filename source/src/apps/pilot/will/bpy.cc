@@ -94,7 +94,7 @@ using core::id::DOF_ID;
 using core::scoring::ScoreFunctionOP;
 
 
-static thread_local basic::Tracer TR( "bpy" );
+static THREAD_LOCAL basic::Tracer TR( "bpy" );
 
 
 struct PoseWrap {

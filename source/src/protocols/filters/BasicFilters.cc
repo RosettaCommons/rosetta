@@ -44,7 +44,7 @@
 #include <utility/string_util.hh>
 
 //// C++ headers
-static thread_local basic::Tracer TR( "protocols.filters.Filter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.filters.Filter" );
 
 namespace protocols {
 namespace filters {

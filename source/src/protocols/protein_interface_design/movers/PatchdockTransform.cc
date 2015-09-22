@@ -32,7 +32,7 @@ namespace movers {
 using namespace std;
 using namespace core::scoring;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.PatchdockTransform" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PatchdockTransform" );
 
 std::string
 PatchdockTransformCreator::keyname() const

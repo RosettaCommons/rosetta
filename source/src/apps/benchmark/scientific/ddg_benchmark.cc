@@ -75,7 +75,7 @@ using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
 typedef std::vector<Real> ddGs;
-static thread_local basic::Tracer TR( "apps.pilot.yiliu.ddg" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.yiliu.ddg" );
 
 ///////////////////////////////////////////////////////////////////////////////
 // YAML helper function

@@ -36,7 +36,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static thread_local basic::Tracer TR( "protocols.simple_filters.TotalSasaFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.TotalSasaFilter" );
 
 protocols::filters::FilterOP
 TotalSasaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TotalSasaFilter ); }

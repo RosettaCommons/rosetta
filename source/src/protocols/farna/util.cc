@@ -77,7 +77,7 @@ using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 using basic::T;
 
-static thread_local basic::Tracer TR( "protocols.farna.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.farna.util" );
 
 namespace protocols {
 namespace farna {

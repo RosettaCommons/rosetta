@@ -72,7 +72,7 @@ using basic::Warning;
 namespace protocols {
 namespace rbsegment_relax {
 
-static thread_local basic::Tracer tr( "protocols.rbsegment_relax.RBSegment.AutoRBRelaxMover" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.rbsegment_relax.RBSegment.AutoRBRelaxMover" );
 
 ////////////////
 // stupid mover

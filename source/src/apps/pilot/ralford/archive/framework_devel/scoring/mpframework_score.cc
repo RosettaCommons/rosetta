@@ -43,7 +43,7 @@
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "apps.pilot.membrane.read_mp_pose" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.membrane.read_mp_pose" );
 
 void*
 my_main( void* )

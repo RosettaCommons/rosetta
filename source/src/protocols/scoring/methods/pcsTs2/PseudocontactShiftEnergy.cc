@@ -87,7 +87,7 @@ PseudocontactShiftEnergyCreator_Ts2::score_types_for_method() const {
 	return sts;
 }
 
-static thread_local basic::Tracer TR_PCS_Energy_Ts2( "protocols.scoring.methods.pcsTs2.PCS_Energy_Ts2" );
+static THREAD_LOCAL basic::Tracer TR_PCS_Energy_Ts2( "protocols.scoring.methods.pcsTs2.PCS_Energy_Ts2" );
 
 void
 PCS_Energy_Ts2::indicate_required_context_graphs( utility::vector1< bool > & ) const{

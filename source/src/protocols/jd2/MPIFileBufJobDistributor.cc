@@ -49,7 +49,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.jd2.MPIFileBufJobDistributor" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.MPIFileBufJobDistributor" );
 
 namespace protocols {
 namespace jd2 {

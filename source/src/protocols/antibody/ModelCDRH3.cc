@@ -38,7 +38,7 @@
 #include <core/conformation/util.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.antibody.ModelCDRH3" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.ModelCDRH3" );
 
 using namespace core;
 

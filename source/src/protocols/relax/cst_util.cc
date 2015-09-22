@@ -39,7 +39,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.relax.cst_util" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.relax.cst_util" );
 
 namespace protocols {
 namespace relax {

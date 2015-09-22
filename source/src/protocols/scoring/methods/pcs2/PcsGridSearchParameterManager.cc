@@ -50,7 +50,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static thread_local basic::Tracer TR_PcsGridSearchParameterManager( "protocols.scoring.methods.pcs.PcsGridSearchParameterManager" );
+static THREAD_LOCAL basic::Tracer TR_PcsGridSearchParameterManager( "protocols.scoring.methods.pcs.PcsGridSearchParameterManager" );
 
 // Singleton instance and mutex static data members
 namespace utility {

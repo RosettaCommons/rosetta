@@ -85,8 +85,8 @@ BundleReporterFilter::BundleReporterFilter( BundleReporterFilter const &src ) :
 {}
 
 
-static thread_local basic::Tracer TR( "protocols.helical_bundle.BundleReporterFilter" );
-static thread_local basic::Tracer TRReport( "protocols.helical_bundle.BundleReporterFilter.REPORT" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.helical_bundle.BundleReporterFilter" );
+static THREAD_LOCAL basic::Tracer TRReport( "protocols.helical_bundle.BundleReporterFilter.REPORT" );
 
 protocols::filters::FilterOP
 BundleReporterFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BundleReporterFilter ); }

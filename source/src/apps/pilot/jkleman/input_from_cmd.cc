@@ -45,7 +45,7 @@
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "apps.pilot.jkleman.input_from_cmd" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.input_from_cmd" );
 
 using namespace core;
 

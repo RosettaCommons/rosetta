@@ -103,7 +103,7 @@ using utility::file::FileName;
 //kdrew: this app alters chiral configuration of the given pdb strucure
 
 // tracer - used to replace cout
-static thread_local basic::Tracer TR( "LD_CONVERTER" );
+static THREAD_LOCAL basic::Tracer TR( "LD_CONVERTER" );
 
 // application specific options
 namespace ld_converter {

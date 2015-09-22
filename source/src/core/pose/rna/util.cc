@@ -47,7 +47,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
-static thread_local basic::Tracer TR( "core.pose.rna.RNA_Util" );
+static THREAD_LOCAL basic::Tracer TR( "core.pose.rna.RNA_Util" );
 
 // Utility headers
 

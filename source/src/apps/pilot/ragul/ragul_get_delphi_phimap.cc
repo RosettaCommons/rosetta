@@ -85,7 +85,7 @@ OPT_KEY( Integer, delphi_grid_size )
 OPT_KEY( Real, delphi_grid_spacing )
 
 
-static thread_local basic::Tracer TR( "apps.pilot.ragul_get_delphi_phimap.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ragul_get_delphi_phimap.main" );
 
 int main( int argc, char * argv [] ) {
 

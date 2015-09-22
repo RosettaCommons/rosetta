@@ -40,7 +40,7 @@
 #include <basic/options/option.hh>
 
 
-static thread_local basic::Tracer TR( "core.scoring.disulfides.CentroidMatchingPotential" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.disulfides.CentroidMatchingPotential" );
 
 
 using namespace core;

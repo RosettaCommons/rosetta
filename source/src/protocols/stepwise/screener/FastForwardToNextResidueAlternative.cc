@@ -18,7 +18,7 @@
 
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.screener.FastForwardToNextResidueAlternative" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.FastForwardToNextResidueAlternative" );
 
 namespace protocols {
 namespace stepwise {

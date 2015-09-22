@@ -66,7 +66,7 @@ using namespace core::scoring;
 #include <core/import_pose/import_pose.hh>
 
 #include <basic/Tracer.hh>
-static thread_local basic::Tracer TR( "pilot_apps.blivens.rotamerize_disulfides" );
+static THREAD_LOCAL basic::Tracer TR( "pilot_apps.blivens.rotamerize_disulfides" );
 
 int
 usage(string msg)

@@ -68,7 +68,7 @@
 #include <fstream>
 
 
-static thread_local basic::Tracer TR( "apps.backrub" );
+static THREAD_LOCAL basic::Tracer TR( "apps.backrub" );
 
 OPT_1GRP_KEY(Integer, backrub, ntrials)
 OPT_1GRP_KEY(Real, backrub, sc_prob)

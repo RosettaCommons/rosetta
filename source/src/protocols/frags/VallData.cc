@@ -35,7 +35,7 @@
 #include <basic/Tracer.hh> // tracer output
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-static thread_local basic::Tracer TR( "protocols.frags.VallData" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.frags.VallData" );
 
 namespace protocols {
 namespace frags {

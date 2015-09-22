@@ -42,7 +42,7 @@ namespace simple_filters {
 using namespace core;
 using namespace core::scoring;
 
-static thread_local basic::Tracer TR( "protocols.simple_filters.DisulfideEntropyFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.DisulfideEntropyFilter" );
 
 protocols::filters::FilterOP
 DisulfideEntropyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DisulfideEntropyFilter ); }

@@ -34,7 +34,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "apps.pilot.smlewis.sasa_qd" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.smlewis.sasa_qd" );
 
 class sasa_qdMover : public protocols::moves::Mover {
 public:

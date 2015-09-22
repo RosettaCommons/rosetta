@@ -76,7 +76,7 @@ using namespace basic::options;
 namespace core {
 namespace chemical {
 
-static thread_local basic::Tracer tr( "core.chemical.ResidueTypeSet" );
+static THREAD_LOCAL basic::Tracer tr( "core.chemical.ResidueTypeSet" );
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief c-tor from directory

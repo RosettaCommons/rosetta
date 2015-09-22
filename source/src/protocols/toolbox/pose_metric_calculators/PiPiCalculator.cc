@@ -44,7 +44,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.PiPiCalculator" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.PiPiCalculator" );
 
 namespace protocols {
 namespace toolbox {

@@ -53,7 +53,7 @@ using basic::t_warning;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static thread_local basic::Tracer TR( "core.scoring.constraints.SequenceProfileConstraint" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.SequenceProfileConstraint" );
 
 SequenceProfileConstraint::SequenceProfileConstraint()
 : Constraint( res_type_constraint ),

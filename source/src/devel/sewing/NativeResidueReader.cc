@@ -40,7 +40,7 @@
 namespace devel {
 namespace sewing {
 
-static thread_local basic::Tracer TR( "NativeResidueReader" );
+static THREAD_LOCAL basic::Tracer TR( "NativeResidueReader" );
 
 std::map<core::Size, utility::vector1<core::conformation::ResidueOP> >
 NativeResidueReader::generateResiduesFromFile(utility::file::FileName file){

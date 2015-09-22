@@ -46,7 +46,7 @@
 namespace protocols {
 namespace pack_daemon {
 
-static thread_local basic::Tracer TR( "protocols.pack_daemon.DynamicAggregateFunction" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.pack_daemon.DynamicAggregateFunction" );
 
 using namespace numeric::expression_parser;
 

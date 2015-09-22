@@ -78,7 +78,7 @@ using namespace protocols::simple_moves;
 using namespace protocols::rigid;
 
 
-static thread_local basic::Tracer TR( "apps.pilot.david_pocket_compare.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.david_pocket_compare.main" );
 
 /// General testing code
 int main( int argc, char * argv [] ) {

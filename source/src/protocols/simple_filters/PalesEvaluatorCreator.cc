@@ -56,7 +56,7 @@
 #endif
 
 
-static thread_local basic::Tracer tr( "protocols.evalution.PalesEvaluatorCreator" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.PalesEvaluatorCreator" );
 
 namespace protocols {
 namespace simple_filters {

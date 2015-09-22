@@ -67,8 +67,8 @@
 
 //using core::util::Error;
 //using core::util::Warning;
-static thread_local basic::Tracer TR( "PepMin" );
-static thread_local basic::Tracer TRdebug( "PepMin.debug" );
+static THREAD_LOCAL basic::Tracer TR( "PepMin" );
+static THREAD_LOCAL basic::Tracer TRdebug( "PepMin.debug" );
 
 using namespace core;
 using namespace std;

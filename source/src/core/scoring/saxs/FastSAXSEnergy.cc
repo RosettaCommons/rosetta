@@ -59,7 +59,7 @@ namespace scoring {
 namespace saxs {
 
 // tracer
-static thread_local basic::Tracer TR( "core.scoring.saxs.FastSAXSEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.saxs.FastSAXSEnergy" );
 
 // ref spectrum
 core::Real ref_spectrum[][21] = {

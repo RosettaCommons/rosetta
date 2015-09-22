@@ -43,7 +43,7 @@ using namespace core;
 using namespace protocols::stepwise::monte_carlo::mover;
 using namespace protocols::stepwise::monte_carlo::options;
 
-static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.StepWiseMonteCarlo" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.StepWiseMonteCarlo" );
 using ObjexxFCL::lead_zero_string_of;
 
 //////////////////////////////////////////////////////////////////////////

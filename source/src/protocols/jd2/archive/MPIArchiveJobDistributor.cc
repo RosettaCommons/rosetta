@@ -48,7 +48,7 @@
 //Auto Headers
 #include <utility/vector1.hh>
 
-static thread_local basic::Tracer tr( "protocols.jd2.MPIArchiveJobDistributor" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.MPIArchiveJobDistributor" );
 using basic::mem_tr;
 
 namespace protocols {

@@ -29,7 +29,7 @@ namespace protocols {
 namespace toolbox {
 namespace rotamer_set_operations {
 
-static thread_local basic::Tracer tr( "protocols.toolbox.RotamerSetOperations.SpecialRotamerRotSetOps" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.RotamerSetOperations.SpecialRotamerRotSetOps" );
 
 SpecialRotamerRSO::SpecialRotamerRSO( core::Size seqpos )
 : parent(),

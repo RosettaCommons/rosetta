@@ -36,7 +36,7 @@
 #include <sstream>
 #include <string>
 
-static thread_local basic::Tracer TR( "core.scoring.constraints.CircularSplineFunc" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.CircularSplineFunc" );
 
 namespace core {
 namespace scoring {

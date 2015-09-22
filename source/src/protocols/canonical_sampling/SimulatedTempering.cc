@@ -66,7 +66,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer tr( "protocols.canonical_sampling.SimulatedTempering" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.SimulatedTempering" );
 
 
 bool protocols::canonical_sampling::SimulatedTempering::options_registered_( false );

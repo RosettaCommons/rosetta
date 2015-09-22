@@ -45,7 +45,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.ForceDisulfidesMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ForceDisulfidesMover" );
 
 std::string
 ForceDisulfidesMoverCreator::keyname() const

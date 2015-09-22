@@ -33,7 +33,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "core.scoring.dssp" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.dssp" );
 
 namespace core {
 namespace scoring {

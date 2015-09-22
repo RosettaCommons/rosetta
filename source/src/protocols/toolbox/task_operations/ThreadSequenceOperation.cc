@@ -31,7 +31,7 @@
 
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.ThreadSequenceOperation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.ThreadSequenceOperation" );
 
 namespace protocols {
 namespace toolbox {

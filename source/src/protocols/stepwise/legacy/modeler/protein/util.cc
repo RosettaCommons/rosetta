@@ -47,7 +47,7 @@
 #include <utility/numbers.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.protein.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.legacy.modeler.protein.util" );
 
 using core::Real;
 using core::Size;

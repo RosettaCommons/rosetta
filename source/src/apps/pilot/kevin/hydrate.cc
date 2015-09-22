@@ -35,7 +35,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 */
 
-static thread_local basic::Tracer TR( "hydrate" );
+static THREAD_LOCAL basic::Tracer TR( "hydrate" );
 
 void place_water_acceptor(
     core::conformation::Residue const & rsd2,

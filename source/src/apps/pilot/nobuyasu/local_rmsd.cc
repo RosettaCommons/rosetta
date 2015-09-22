@@ -58,7 +58,7 @@ using namespace basic::options::OptionKeys;
 typedef core::Size Size;
 typedef std::string String;
 
-static thread_local basic::Tracer TR( "localrmsd" );
+static THREAD_LOCAL basic::Tracer TR( "localrmsd" );
 
 namespace localrmsd
 {

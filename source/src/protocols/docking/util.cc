@@ -37,7 +37,7 @@
 // C++ Headers
 #include <sstream>
 
-static thread_local basic::Tracer TR( "protocols.docking.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.docking.util" );
 
 namespace protocols {
 namespace docking {

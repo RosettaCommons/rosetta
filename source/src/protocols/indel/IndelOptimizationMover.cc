@@ -75,7 +75,7 @@ using basic::Warning;
 namespace protocols {
 namespace indel {
 
-static thread_local basic::Tracer TR("IndelOptimizationMover");
+static THREAD_LOCAL basic::Tracer TR("IndelOptimizationMover");
 
 void
 IndelOptimizationMover::apply(

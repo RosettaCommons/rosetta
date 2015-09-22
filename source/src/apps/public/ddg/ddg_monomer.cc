@@ -64,7 +64,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "apps.public.ddg.ddg_monomer" );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.ddg.ddg_monomer" );
 
 using namespace core;
 using namespace scoring;

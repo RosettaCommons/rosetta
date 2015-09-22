@@ -57,7 +57,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 using namespace core;
-static thread_local basic::Tracer TR( "devel.DenovoProteinDesign.SequenceFitnessMover" );
+static THREAD_LOCAL basic::Tracer TR( "devel.DenovoProteinDesign.SequenceFitnessMover" );
 
 namespace devel {
 namespace denovo_protein_design {

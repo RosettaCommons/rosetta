@@ -166,7 +166,7 @@ using core::import_pose::pose_from_pdb;
 ////////////////////////////////////////////////
 
 
-static thread_local basic::Tracer TR( "apps.pilot.phil.simple_dna_regression_test" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phil.simple_dna_regression_test" );
 
 /// @details  Show details of the internal DNA geometry
 void

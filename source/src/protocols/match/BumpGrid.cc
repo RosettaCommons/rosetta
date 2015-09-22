@@ -29,7 +29,7 @@
 namespace protocols {
 namespace match {
 
-static thread_local basic::Tracer TR( "protocols.BumpGrid" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.BumpGrid" );
 
 /// Creation and initialization
 Bool3DGrid::Bool3DGrid() :

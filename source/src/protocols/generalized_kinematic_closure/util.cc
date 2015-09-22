@@ -50,7 +50,7 @@ using basic::Warning;
 namespace protocols {
 namespace generalized_kinematic_closure {
 
-static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.generalized_kinematic_closure.util" );
 
 
 /// @brief Function to determine whether a value is in a list.

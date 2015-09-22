@@ -35,7 +35,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static thread_local basic::Tracer TR( "apps.pilot.bder.LigandBurial" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.bder.LigandBurial" );
 
 typedef numeric::xyzVector<core::Real> point;
 typedef point axis;

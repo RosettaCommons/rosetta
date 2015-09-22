@@ -50,8 +50,8 @@
 
 typedef numeric::xyzVector<core::Real> point;
 
-static thread_local basic::Tracer TR( "protocols.metal_interface.AddZincSiteConstraints" );
-static thread_local basic::Tracer TR_PYMOL( "TR_PYMOL" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.metal_interface.AddZincSiteConstraints" );
+static THREAD_LOCAL basic::Tracer TR_PYMOL( "TR_PYMOL" );
 
 using namespace core;
 using core::id::AtomID;

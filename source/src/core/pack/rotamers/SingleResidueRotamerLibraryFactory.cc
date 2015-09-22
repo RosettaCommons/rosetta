@@ -48,7 +48,7 @@ namespace core {
 namespace pack {
 namespace rotamers {
 
-static thread_local basic::Tracer TR("core.pack.rotamers.SingleResidueRotamerLibraryFactory");
+static THREAD_LOCAL basic::Tracer TR("core.pack.rotamers.SingleResidueRotamerLibraryFactory");
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

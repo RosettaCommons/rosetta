@@ -47,7 +47,7 @@ using namespace protocols::antibody::constraints;
 
 using utility::vector1;
 
-static thread_local basic::Tracer TR("protocols.antibody.AntibodyConstraintTests");
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.AntibodyConstraintTests");
 
 
 class AntibodyConstraintTests : public CxxTest::TestSuite {

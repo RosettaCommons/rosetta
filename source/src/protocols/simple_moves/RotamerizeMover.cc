@@ -55,7 +55,7 @@ using namespace conformation;
 
 using basic::Warning;
 using basic::t_warning;
-static thread_local basic::Tracer TR( "protocols.moves.RotamerizeMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.moves.RotamerizeMover" );
 
 /// RotamerizeMover
 

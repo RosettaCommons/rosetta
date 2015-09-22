@@ -110,7 +110,7 @@ using utility::file::FileName;
 
 
 // tracer
-static thread_local basic::Tracer TR( "PeptoidDesign" );
+static THREAD_LOCAL basic::Tracer TR( "PeptoidDesign" );
 
 // application specific options
 namespace peptoid_design {

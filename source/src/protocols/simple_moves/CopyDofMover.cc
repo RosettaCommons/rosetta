@@ -23,7 +23,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.CopyDofMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.CopyDofMover" );
 
 /////////////////////////////////////////////////////////////////////////////////////
 //

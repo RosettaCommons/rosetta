@@ -26,7 +26,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 
-static thread_local basic::Tracer TR( "protocols.toolbox.rigid_body.FloatingBaseUtil" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.rigid_body.FloatingBaseUtil" );
 
 using namespace core;
 using namespace core::pose;

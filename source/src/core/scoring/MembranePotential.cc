@@ -71,7 +71,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 
-static thread_local basic::Tracer TR( "core.scoring.MembranePotential" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.MembranePotential" );
 
 namespace core {
 namespace scoring {

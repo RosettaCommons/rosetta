@@ -41,7 +41,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "core.scoring.membrane.MPLipoEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.membrane.MPLipoEnergy" );
 
 namespace core {
 namespace scoring {

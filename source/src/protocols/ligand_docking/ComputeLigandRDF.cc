@@ -53,7 +53,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static thread_local basic::Tracer compute_rdf_tracer( "protocols.ligand_docking.ComputeLigandRDF" );
+static THREAD_LOCAL basic::Tracer compute_rdf_tracer( "protocols.ligand_docking.ComputeLigandRDF" );
 
 std::string
 ComputeLigandRDFCreator::keyname() const

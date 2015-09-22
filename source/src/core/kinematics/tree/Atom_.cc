@@ -40,7 +40,7 @@ namespace core {
 namespace kinematics {
 namespace tree {
 
-static thread_local basic::Tracer TR( "core.kinematics.tree.Atom_" );
+static THREAD_LOCAL basic::Tracer TR( "core.kinematics.tree.Atom_" );
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details get the input stub for building this atom first

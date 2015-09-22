@@ -40,7 +40,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols" );
+static THREAD_LOCAL basic::Tracer tr( "protocols" );
 using namespace core;
 
 void

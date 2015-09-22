@@ -46,7 +46,7 @@ namespace vall {
 
 // Tracer instance for this file
 // Named after the original location of this code
-static thread_local basic::Tracer TR( "core.fragment.picking_old.vall.vall_io" );
+static THREAD_LOCAL basic::Tracer TR( "core.fragment.picking_old.vall.vall_io" );
 
 
 /// @brief load standard Vall library from file

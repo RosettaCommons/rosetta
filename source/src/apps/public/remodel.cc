@@ -69,7 +69,7 @@ using namespace core;
 typedef std::string String;
 typedef std::vector< OptionKey const * > KeyVec;
 
-static thread_local basic::Tracer TR( "apps.public.remodel" );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.remodel" );
 
 
 std::string usage_string;

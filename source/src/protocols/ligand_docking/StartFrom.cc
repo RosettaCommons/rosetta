@@ -58,7 +58,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static thread_local basic::Tracer TR( "protocols.ligand_docking.StartFrom" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.StartFrom" );
 
 std::string
 StartFromCreator::keyname() const

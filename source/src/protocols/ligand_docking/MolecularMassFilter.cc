@@ -35,7 +35,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static thread_local basic::Tracer mass_tracer( "protocols.ligand_docking.MolecularMassFilter" );
+static THREAD_LOCAL basic::Tracer mass_tracer( "protocols.ligand_docking.MolecularMassFilter" );
 
 bool
 MolecularMassFilter::apply( core::pose::Pose const & pose ) const {

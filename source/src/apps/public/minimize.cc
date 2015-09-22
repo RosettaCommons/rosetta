@@ -55,7 +55,7 @@ using namespace core::scoring;
 
 using utility::vector1;
 
-static thread_local basic::Tracer TR( "minimize" );
+static THREAD_LOCAL basic::Tracer TR( "minimize" );
 
 class Minimize : public moves::Mover {
 

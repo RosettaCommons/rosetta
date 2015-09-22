@@ -66,7 +66,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.abinitio.Templates" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.Templates" );
 using namespace core;
 using namespace basic;
 using namespace basic::options;

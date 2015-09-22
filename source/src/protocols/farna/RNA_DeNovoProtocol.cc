@@ -111,7 +111,7 @@ namespace protocols {
 namespace farna {
 
 
-static thread_local basic::Tracer TR( "protocols.rna.RNA_DeNovoProtocol" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rna.RNA_DeNovoProtocol" );
 
 RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 	Size const nstruct,

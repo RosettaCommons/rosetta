@@ -46,7 +46,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static thread_local basic::Tracer TR( "khSandbox" );
+static THREAD_LOCAL basic::Tracer TR( "khSandbox" );
 
 
 //using namespace basic::options;

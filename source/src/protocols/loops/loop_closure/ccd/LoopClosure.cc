@@ -60,7 +60,7 @@ namespace ccd {
 using namespace core;
 using namespace pose;
 
-static thread_local basic::Tracer tr( "protocols.loops.loop_closure.ccd.LoopClosure" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.loops.loop_closure.ccd.LoopClosure" );
 
 LoopClosure::LoopClosure(
 	fragment::FragSetCOP fragset,

@@ -25,7 +25,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static thread_local basic::Tracer TR( "protocols.simple_filters.PoseComment" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.PoseComment" );
 
 protocols::filters::FilterOP
 PoseCommentFilterCreator::create_filter() const { return protocols::filters::FilterOP( new PoseComment ); }

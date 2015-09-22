@@ -52,7 +52,7 @@
 
 using namespace protocols::flexpep_docking;
 
-static thread_local basic::Tracer TR( "protocols.flexPepDockingLowRes" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.flexPepDockingLowRes" );
 
 
 //////////////////////////////////////////////

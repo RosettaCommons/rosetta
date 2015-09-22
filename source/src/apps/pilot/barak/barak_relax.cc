@@ -36,7 +36,7 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
-static thread_local basic::Tracer TR( "avital.stabilize" );
+static THREAD_LOCAL basic::Tracer TR( "avital.stabilize" );
 
 ///////////////////////////////////////////////////////////////////////////////
 int

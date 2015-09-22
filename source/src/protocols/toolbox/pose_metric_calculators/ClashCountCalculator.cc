@@ -38,7 +38,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
-static thread_local basic::Tracer tr( "protocols.metrics.ClashCountCalculator" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.metrics.ClashCountCalculator" );
 
 namespace protocols {
 namespace toolbox {

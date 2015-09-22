@@ -33,7 +33,7 @@ namespace core {
 namespace pack {
 namespace rotamers {
 
-static thread_local basic::Tracer TR( "core.pack.rotamers.SingleResidueRotamerLibrary" );
+static THREAD_LOCAL basic::Tracer TR( "core.pack.rotamers.SingleResidueRotamerLibrary" );
 
 SingleResidueRotamerLibrary::~SingleResidueRotamerLibrary()
 {}

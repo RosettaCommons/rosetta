@@ -42,7 +42,7 @@
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-static thread_local basic::Tracer TR( "apps.pilot.dna_motifs_collector" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.dna_motifs_collector" );
 
 // Utility Headers
 #include <utility/io/ozstream.hh>

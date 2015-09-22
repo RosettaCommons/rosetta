@@ -51,7 +51,7 @@ namespace protocols {
 namespace generalized_kinematic_closure {
 namespace filter {
 
-static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.filter.GeneralizedKICfilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.generalized_kinematic_closure.filter.GeneralizedKICfilter" );
 
 /// @brief Constructor for GeneralizedKICfilter.
 ///

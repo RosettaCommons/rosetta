@@ -131,7 +131,7 @@ namespace movers {
 
 using namespace protocols::moves;
 
-static thread_local basic::Tracer tr( "protocols.protein_interface_design.movers.SetupHotspotConstraintsLoopsMover" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.protein_interface_design.movers.SetupHotspotConstraintsLoopsMover" );
 
 std::string
 SetupHotspotConstraintsLoopsMoverCreator::keyname() const

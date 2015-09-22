@@ -19,7 +19,7 @@
 #include <numeric/random/random.hh>
 #include <utility/exit.hh>
 
-static thread_local basic::Tracer TR( "protocols.hybridization.WeightedFragmentSmoothTrialMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.WeightedFragmentSmoothTrialMover" );
 
 namespace protocols {
 namespace hybridization {

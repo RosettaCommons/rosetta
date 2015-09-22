@@ -48,7 +48,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.SetAtomTree" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.SetAtomTree" );
 
 std::string
 SetAtomTreeCreator::keyname() const

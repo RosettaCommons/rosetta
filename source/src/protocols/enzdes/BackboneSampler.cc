@@ -58,7 +58,7 @@
 namespace protocols {
 namespace enzdes {
 
-static thread_local basic::Tracer TR( "protocols.enzdes.BackboneSampler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.enzdes.BackboneSampler" );
 
 std::string
 BackboneSamplerCreator::keyname() const

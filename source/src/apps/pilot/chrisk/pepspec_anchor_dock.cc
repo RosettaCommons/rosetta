@@ -157,7 +157,7 @@ using utility::vector1;
 using std::string;
 using io::pdb::dump_pdb;
 
-static thread_local basic::Tracer TR( "apps.pilot.chrisk/pep_prep" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.chrisk/pep_prep" );
 
 //parse cst line as: name1 res1 x y z x0 sd tol
 struct pep_coord_cst {

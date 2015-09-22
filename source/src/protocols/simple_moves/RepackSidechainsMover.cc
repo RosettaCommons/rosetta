@@ -47,7 +47,7 @@ namespace simple_moves {
 
 using basic::Warning;
 using basic::t_warning;
-static thread_local basic::Tracer TR( "protocols.simple_moves.RepackSidechainsMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.RepackSidechainsMover" );
 
 /// RepackSidechainsMover
 

@@ -21,7 +21,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "protocols.simple_moves.SwitchChainOrderMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SwitchChainOrderMover" );
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>

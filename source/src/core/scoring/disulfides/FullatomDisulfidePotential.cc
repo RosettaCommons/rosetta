@@ -48,7 +48,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "core.scoring.disulfides.FullatomDisulfidePotential" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.disulfides.FullatomDisulfidePotential" );
 
 namespace core {
 namespace scoring {

@@ -39,7 +39,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-static thread_local basic::Tracer TR( "symdock_enum" );
+static THREAD_LOCAL basic::Tracer TR( "symdock_enum" );
 
 using core::Size;
 using core::Real;

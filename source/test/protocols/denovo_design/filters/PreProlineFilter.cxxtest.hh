@@ -40,7 +40,7 @@
 
 // C++ headers
 
-static thread_local basic::Tracer TR( "protocols.denovo_design.PreProlineFilterTests.cxxtest" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.PreProlineFilterTests.cxxtest" );
 
 // --------------- Test Class --------------- //
 class PreProlineFilterTests : public CxxTest::TestSuite {

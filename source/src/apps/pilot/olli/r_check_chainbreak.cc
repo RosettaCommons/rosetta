@@ -112,7 +112,7 @@
 namespace protocols {
 namespace abinitio {
 
-static thread_local basic::Tracer tr( "main" );
+static THREAD_LOCAL basic::Tracer tr( "main" );
 using namespace core;
 class Application {
 public:

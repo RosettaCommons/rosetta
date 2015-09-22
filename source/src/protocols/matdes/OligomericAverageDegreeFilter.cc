@@ -52,7 +52,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 //// C++ headers
-static thread_local basic::Tracer TR( "protocols.matdes.OligomericAverageDegreeFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.OligomericAverageDegreeFilter" );
 
 namespace protocols {
 namespace matdes {

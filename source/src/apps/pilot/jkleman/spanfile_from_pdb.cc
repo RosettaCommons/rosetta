@@ -60,7 +60,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::membrane;
 
-static thread_local basic::Tracer TR( "apps.pilot.jkleman.spanfile_from_pdb" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.spanfile_from_pdb" );
 
 ////////////////////////////////////////////////////////////////////////////////
 // vector show function

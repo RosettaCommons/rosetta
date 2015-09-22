@@ -64,7 +64,7 @@ using core::Real;
 using utility::vector1;
 using numeric::xyzVector;
 
-static thread_local basic::Tracer TR( "apps.pilot.lig_polar_sat" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.lig_polar_sat" );
 
 
 /// @brief returns the index in the residue of the atom designated to represent

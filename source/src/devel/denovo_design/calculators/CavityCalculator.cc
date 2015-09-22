@@ -37,7 +37,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static thread_local basic::Tracer TR( "devel.denovo_design.calculators.CavityCalculator" );
+static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.calculators.CavityCalculator" );
 
 namespace devel {
 namespace denovo_design {

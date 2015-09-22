@@ -98,7 +98,7 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 
-static thread_local basic::Tracer tr( "rsdtypeset_test" );
+static THREAD_LOCAL basic::Tracer tr( "rsdtypeset_test" );
 
 using ObjexxFCL::strip_whitespace;
 using ObjexxFCL::stripped_whitespace;

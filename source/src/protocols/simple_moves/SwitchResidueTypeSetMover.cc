@@ -19,7 +19,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "protocols.simple_moves.SwitchResidueTypeSetMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SwitchResidueTypeSetMover" );
 #include <utility/tag/Tag.hh>
 
 #include <core/chemical/ResidueType.hh>

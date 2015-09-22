@@ -81,7 +81,7 @@ using namespace scoring;
 using namespace moves;
 using namespace jd2;
 
-static thread_local basic::Tracer TR( "protocols.rosetta_scripts.RosettaScriptsParser" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.RosettaScriptsParser" );
 
 RosettaScriptsParser::RosettaScriptsParser() :
 	Parser()

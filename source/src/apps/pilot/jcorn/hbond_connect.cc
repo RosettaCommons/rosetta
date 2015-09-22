@@ -52,7 +52,7 @@
 
 //#include <copy>
 
-static thread_local basic::Tracer TR( "pilot_apps.interface_graph" );
+static THREAD_LOCAL basic::Tracer TR( "pilot_apps.interface_graph" );
 using namespace core;
 
 void

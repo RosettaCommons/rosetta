@@ -48,7 +48,7 @@ using namespace core;
 using namespace std;
 using utility::vector1;
 
-static thread_local basic::Tracer TR( "apps.pilot.blivens.create_disulf_file" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.blivens.create_disulf_file" );
 
 int
 usage(string msg)

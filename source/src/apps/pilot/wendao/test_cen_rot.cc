@@ -84,7 +84,7 @@ using namespace core::pack::task;
 using namespace core::pack::dunbrack;
 using namespace core::pack::dunbrack::cenrot;
 
-static thread_local basic::Tracer TR( "pilot.wendao.cenrot" );
+static THREAD_LOCAL basic::Tracer TR( "pilot.wendao.cenrot" );
 
 OPT_KEY(Boolean, debug_cenrot_min)
 

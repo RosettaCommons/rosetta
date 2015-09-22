@@ -50,7 +50,7 @@
 #endif
 
 
-static thread_local basic::Tracer tr( "protocols.evalution.PredictedBurialFnEvaluatorCreator" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.PredictedBurialFnEvaluatorCreator" );
 
 namespace protocols {
 namespace simple_filters {

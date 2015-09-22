@@ -196,7 +196,7 @@ OPT_KEY( String, template_pdb_name )
 OPT_KEY( String, template_target_resnum )
 OPT_KEY( String, comparison_target_resnum )
 
-static thread_local basic::Tracer TR( "apps.pilot.karen_pocket_compare.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.karen_pocket_compare.main" );
 
 /// General testing code
 int main( int argc, char * argv [] ) {

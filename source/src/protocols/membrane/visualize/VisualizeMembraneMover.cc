@@ -52,7 +52,7 @@
 #include <numeric/xyzVector.hh>
 #include <utility/tag/Tag.hh>
 
-static thread_local basic::Tracer TR( "protocols.membrane.visualize.VisualizeMembraneMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.visualize.VisualizeMembraneMover" );
 
 namespace protocols {
 namespace membrane {

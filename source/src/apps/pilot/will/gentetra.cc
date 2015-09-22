@@ -72,7 +72,7 @@
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
 
-static thread_local basic::Tracer TR( "gentetra" );
+static THREAD_LOCAL basic::Tracer TR( "gentetra" );
 static core::io::silent::SilentFileData sfd;
 
 

@@ -27,7 +27,7 @@
 
 // ObjexxFCL Headers
 
-static thread_local basic::Tracer tr( "protocols.environment.LocalPosition", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "protocols.environment.LocalPosition", basic::t_info );
 
 namespace core {
 namespace environment {

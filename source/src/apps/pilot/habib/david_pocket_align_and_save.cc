@@ -88,7 +88,7 @@ OPT_KEY( String, template_pdb_name )
 OPT_KEY( String, source_contact_list )
 OPT_KEY( String, template_contact_list )
 
-static thread_local basic::Tracer TR( "apps.pilot.david_pocket_align_and_save.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.david_pocket_align_and_save.main" );
 
 //set to store pdb info keys
 std::list <std::string> source_interface;

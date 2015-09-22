@@ -30,7 +30,7 @@
 #include <string>
 #include <sstream>
 
-static thread_local basic::Tracer TR( "utility.sql_database.Index" );
+static THREAD_LOCAL basic::Tracer TR( "utility.sql_database.Index" );
 
 namespace basic {
 namespace database {

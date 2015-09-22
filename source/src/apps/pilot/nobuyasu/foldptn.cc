@@ -70,7 +70,7 @@ using namespace basic::options::OptionKeys;
 typedef std::string String;
 
 
-static thread_local basic::Tracer TR( "foldptn" );
+static THREAD_LOCAL basic::Tracer TR( "foldptn" );
 
 class ThisApplication  {
 public:

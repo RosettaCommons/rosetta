@@ -71,7 +71,7 @@ using namespace core::io::silent;
 
 OPT_1GRP_KEY(Real,bb_cluster,cluster_radius)
 
-static thread_local basic::Tracer TR( "bb_cluster" );
+static THREAD_LOCAL basic::Tracer TR( "bb_cluster" );
 
 void do_align( core::pose::Pose const &pose1, core::pose::Pose const &pose2, core::Real &rms) {
 	//core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();

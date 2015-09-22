@@ -44,7 +44,7 @@ namespace core {
 namespace chemical {
 namespace rotamers {
 
-static thread_local basic::Tracer TR("core.chemical.rotamers.RotamerLibrarySpecificationFactory");
+static THREAD_LOCAL basic::Tracer TR("core.chemical.rotamers.RotamerLibrarySpecificationFactory");
 
 RotamerLibrarySpecificationFactory *
 RotamerLibrarySpecificationFactory::create_singleton_instance()

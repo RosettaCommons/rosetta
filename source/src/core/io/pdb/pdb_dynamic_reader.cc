@@ -51,7 +51,7 @@
 #include <algorithm>
 
 
-static thread_local basic::Tracer TR( "core.io.pdb.pdb_dynamic_reader" );
+static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.pdb_dynamic_reader" );
 
 namespace core {
 namespace io {

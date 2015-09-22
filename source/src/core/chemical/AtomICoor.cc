@@ -44,7 +44,7 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace core {
 namespace chemical {
 
-static thread_local basic::Tracer tw( "core.chemical.AtomICoor", basic::t_warning );
+static THREAD_LOCAL basic::Tracer tw( "core.chemical.AtomICoor", basic::t_warning );
 
 ICoorAtomID::ICoorAtomID():
 	type_( INTERNAL ),

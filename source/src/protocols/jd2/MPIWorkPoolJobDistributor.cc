@@ -49,7 +49,7 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-static thread_local basic::Tracer TR( "protocols.jd2.MPIWorkPoolJobDistributor" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.MPIWorkPoolJobDistributor" );
 
 namespace protocols {
 namespace jd2 {

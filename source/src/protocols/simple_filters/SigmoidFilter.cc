@@ -27,7 +27,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static thread_local basic::Tracer TR( "protocols.simple_filters.Sigmoid" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.Sigmoid" );
 
 protocols::filters::FilterOP
 SigmoidFilterCreator::create_filter() const { return protocols::filters::FilterOP( new Sigmoid ); }

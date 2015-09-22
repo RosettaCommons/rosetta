@@ -37,7 +37,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.topology.HelixPairing" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.topology.HelixPairing" );
 
 using namespace core;
 typedef std::string String;

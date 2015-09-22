@@ -32,7 +32,7 @@
 namespace devel {
 namespace mmt_msd {
 
-static thread_local basic::Tracer TR( "devel.mmt_msd.MMTPackingJob" );
+static THREAD_LOCAL basic::Tracer TR( "devel.mmt_msd.MMTPackingJob" );
 
 MMTPackingJob::MMTPackingJob() : running_time_( -1.0 ) {}
 MMTPackingJob::~MMTPackingJob() {}

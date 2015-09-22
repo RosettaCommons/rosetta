@@ -35,7 +35,7 @@ namespace core {
 namespace io {
 namespace silent {
 
-static thread_local basic::Tracer tr( "core.io.silent" );
+static THREAD_LOCAL basic::Tracer tr( "core.io.silent" );
 
 void
 gzip() {

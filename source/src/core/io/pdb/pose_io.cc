@@ -54,9 +54,9 @@ namespace pdb {
 
 
 // special Tracer instance acting as special param for all traced_dump_pdb functions
-static thread_local basic::Tracer TR_dump_pdb_dummy( "core.io.pdb.pose_io.dump_pdb_dummy" );
+static THREAD_LOCAL basic::Tracer TR_dump_pdb_dummy( "core.io.pdb.pose_io.dump_pdb_dummy" );
 
-static thread_local basic::Tracer TR( "core.io.pose_io" );
+static THREAD_LOCAL basic::Tracer TR( "core.io.pose_io" );
 
 using utility::vector1;
 

@@ -55,7 +55,7 @@ using namespace protocols::multistate_design;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static thread_local basic::Tracer TR( "app.sequence_tolerance" );
+static THREAD_LOCAL basic::Tracer TR( "app.sequence_tolerance" );
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh> // lead_zero_string_of

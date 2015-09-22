@@ -28,7 +28,7 @@
 #include <boost/algorithm/string.hpp>
 #include <alloca.h>
 
-static thread_local basic::Tracer TR( "elscripts" );
+static THREAD_LOCAL basic::Tracer TR( "elscripts" );
 
 #ifdef USEBOOSTMPI
 namespace mpi = boost::mpi;

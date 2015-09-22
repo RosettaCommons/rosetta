@@ -54,7 +54,7 @@
 
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR("protocols.antibody.constraints.CDRDihedralConstraintMover");
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.constraints.CDRDihedralConstraintMover");
 
 namespace protocols {
 namespace antibody {

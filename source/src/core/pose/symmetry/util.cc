@@ -60,7 +60,7 @@ namespace core {
 namespace pose {
 namespace symmetry {
 
-static thread_local basic::Tracer TR( "core.pose.symmetry.util" );
+static THREAD_LOCAL basic::Tracer TR( "core.pose.symmetry.util" );
 
 bool
 is_symmetric( scoring::Energies const & energies )

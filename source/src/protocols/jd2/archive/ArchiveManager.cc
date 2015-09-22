@@ -76,7 +76,7 @@
 #include <utility/vector1.hh>
 #include <boost/bind.hpp>
 
-static thread_local basic::Tracer tr( "protocols.jd2.Archive" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.Archive" );
 using basic::mem_tr;
 
 OPT_1GRP_KEY( File, iterative, input_pool )

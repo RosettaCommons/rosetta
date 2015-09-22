@@ -18,7 +18,7 @@
 #include <protocols/stepwise/sampler/StepWiseSamplerBase.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.screener.StepWiseResiduePairScreener" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.StepWiseResiduePairScreener" );
 
 namespace protocols {
 namespace stepwise {

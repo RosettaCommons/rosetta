@@ -30,7 +30,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.comparative_modeling.Align_RotamerEvaluator" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling.Align_RotamerEvaluator" );
 
 namespace protocols {
 namespace comparative_modeling {

@@ -19,7 +19,7 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.legacy.screener.RNA_AtrRepScreener" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.legacy.screener.RNA_AtrRepScreener" );
 
 using namespace protocols::stepwise::modeler::rna::checker;
 using namespace core;

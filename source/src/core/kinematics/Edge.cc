@@ -37,7 +37,7 @@
 namespace core {
 namespace kinematics {
 
-static thread_local basic::Tracer tr( "core.kinematics" );
+static THREAD_LOCAL basic::Tracer tr( "core.kinematics" );
 
 // PHIL -- need to update these routines to include atom info?
 // ANDREW -- made a stab at adding atom info to comparison operators and ostream operators; no guarantee

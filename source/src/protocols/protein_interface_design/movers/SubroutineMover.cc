@@ -33,7 +33,7 @@
 
 using namespace protocols::protein_interface_design;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.SubroutineMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.SubroutineMover" );
 
 namespace protocols {
 namespace protein_interface_design {

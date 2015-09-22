@@ -58,7 +58,7 @@
 #endif
 
 
-static thread_local basic::Tracer tr( "protocols.evaluation.ChiWellRmsdEvaluatorCreator" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.evaluation.ChiWellRmsdEvaluatorCreator" );
 
 namespace protocols {
 namespace simple_filters {

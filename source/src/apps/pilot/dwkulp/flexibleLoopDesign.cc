@@ -108,7 +108,7 @@ using core::import_pose::pose_from_pdb;
 double annealTemperature(double initialTemp, double finalTemp, int step, int totalsteps, int numAnnealCycles);
 void setup_fragment_mover(core::pose::Pose &_pose,    protocols::loops::Loop &_loop,   vector<vector<protocols::moves::MoverOP> > &_bbMovers, string _polyAminoAcidOverride);
 unsigned int hd(const std::string& s1, const std::string& s2); // hamming distance
-static thread_local basic::Tracer TR( "flexibleLoopDesign" );
+static THREAD_LOCAL basic::Tracer TR( "flexibleLoopDesign" );
 
 
 int main( int argc, char * argv[] ) {

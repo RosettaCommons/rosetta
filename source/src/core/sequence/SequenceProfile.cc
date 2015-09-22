@@ -40,7 +40,7 @@
 namespace core {
 namespace sequence {
 
-static thread_local basic::Tracer tr( "core.sequence.SequenceProfile" );
+static THREAD_LOCAL basic::Tracer tr( "core.sequence.SequenceProfile" );
 
 void SequenceProfile::read_from_checkpoint(
 	utility::file::FileName const & fn,

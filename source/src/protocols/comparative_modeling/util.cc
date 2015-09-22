@@ -78,7 +78,7 @@ namespace comparative_modeling {
 using utility::vector1;
 using std::string;
 
-static thread_local basic::Tracer tr( "protocols.comparative_modeling.util" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling.util" );
 
 core::id::SequenceMapping get_qt_mapping_general(
 	core::pose::Pose const & query_pose,

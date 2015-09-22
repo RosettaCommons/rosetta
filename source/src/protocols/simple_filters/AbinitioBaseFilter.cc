@@ -44,7 +44,7 @@
 
 //// C++ headers
 
-static thread_local basic::Tracer tr( "protocols.simple_filters.AbinitioBaseFilter" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.simple_filters.AbinitioBaseFilter" );
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;

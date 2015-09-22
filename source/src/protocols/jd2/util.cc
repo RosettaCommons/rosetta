@@ -73,7 +73,7 @@ void register_options() {
 }
 
 
-static thread_local basic::Tracer TR( "protocols.jd2.JobDistributor" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.JobDistributor" );
 
 //multithreaded case requires specia
 ///end parser interface, start Job Distributor interface/////////////

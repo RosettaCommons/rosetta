@@ -35,7 +35,7 @@
 
 
 // Construct tracer.
-static thread_local basic::Tracer TR( "core.chemical.rings.RingConformerSet" );
+static THREAD_LOCAL basic::Tracer TR( "core.chemical.rings.RingConformerSet" );
 
 
 namespace core {

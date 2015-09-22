@@ -27,7 +27,7 @@
 #include <utility/tag/Tag.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.DeleteChainsMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.DeleteChainsMover" );
 
 namespace protocols {
 namespace simple_moves {

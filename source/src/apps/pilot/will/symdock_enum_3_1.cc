@@ -105,7 +105,7 @@ typedef numeric::xyzVector<core::Real> Vec;
 typedef numeric::xyzMatrix<core::Real> Mat;
 typedef numeric::xyzVector<Real> Vecf;
 typedef numeric::xyzMatrix<Real> Matf;
-static thread_local basic::Tracer TR( "symdock_enum" );
+static THREAD_LOCAL basic::Tracer TR( "symdock_enum" );
 OPT_1GRP_KEY( Real , tcdock, intra )
 OPT_1GRP_KEY( Real , tcdock, intra1 )
 OPT_1GRP_KEY( Real , tcdock, intra2 )

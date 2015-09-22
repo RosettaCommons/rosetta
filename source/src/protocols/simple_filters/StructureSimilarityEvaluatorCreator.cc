@@ -54,7 +54,7 @@
 #endif
 
 
-static thread_local basic::Tracer tr( "protocols.evalution.StructureSimilarityEvaluatorCreator" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.StructureSimilarityEvaluatorCreator" );
 
 namespace protocols {
 namespace simple_filters {

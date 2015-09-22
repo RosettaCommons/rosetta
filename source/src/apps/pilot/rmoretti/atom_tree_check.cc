@@ -55,7 +55,7 @@
 
 using namespace basic::options;
 
-static thread_local basic::Tracer TR( "apps.atomtreeprint" );
+static THREAD_LOCAL basic::Tracer TR( "apps.atomtreeprint" );
 
 void tweak_coords( core::kinematics::tree::AtomOP atom) {
 	using namespace core::kinematics::tree;

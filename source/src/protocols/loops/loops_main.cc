@@ -80,7 +80,7 @@ namespace loops {
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
-static thread_local basic::Tracer tt( "protocols.loops.loops_main" );
+static THREAD_LOCAL basic::Tracer tt( "protocols.loops.loops_main" );
 
 
 void read_loop_fragments(

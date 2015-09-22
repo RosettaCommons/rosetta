@@ -98,7 +98,7 @@ LK_BallEnergyCreator::score_types_for_method() const {
 }
 
 
-static thread_local basic::Tracer TR("core.scoring.methods.LK_BallEnergy");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.methods.LK_BallEnergy");
 
 /// inline retrieval functions here:
 inline

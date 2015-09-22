@@ -57,7 +57,7 @@ using namespace utility;
 namespace protocols {
 namespace fibril {
 
-static thread_local basic::Tracer TR( "protocols.moves.symmetry.fibril_util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.moves.symmetry.fibril_util" );
 
 //lin functions for xyz coordinate
 bool

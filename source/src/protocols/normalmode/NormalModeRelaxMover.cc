@@ -58,7 +58,7 @@
 //#include <core/io/pdb/pose_io.hh>
 //#include <sys/time.h>
 
-static thread_local basic::Tracer TR( "protocols.normalmode.NormalModeRelaxMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.normalmode.NormalModeRelaxMover" );
 
 namespace protocols {
 namespace normalmode {

@@ -48,7 +48,7 @@
 
 // C++ headers
 
-static thread_local basic::Tracer TR_PcsEnergyController( "protocols.topology_broker.PcsEnergyController" );
+static THREAD_LOCAL basic::Tracer TR_PcsEnergyController( "protocols.topology_broker.PcsEnergyController" );
 
 namespace protocols {
 namespace topology_broker {

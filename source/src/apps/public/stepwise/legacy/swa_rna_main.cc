@@ -151,7 +151,7 @@ using namespace protocols::stepwise::legacy::modeler::rna;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
-static thread_local basic::Tracer TR( "swa_rna_main" );
+static THREAD_LOCAL basic::Tracer TR( "swa_rna_main" );
 
 OPT_KEY( Boolean, skip_clustering )
 OPT_KEY( Boolean, filter_for_previous_contact )

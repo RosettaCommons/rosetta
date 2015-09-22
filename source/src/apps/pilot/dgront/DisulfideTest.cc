@@ -24,7 +24,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option_macros.hh>
 
-static thread_local basic::Tracer tr( "DisulfideTest" );
+static THREAD_LOCAL basic::Tracer tr( "DisulfideTest" );
 
 void register_options() {
 

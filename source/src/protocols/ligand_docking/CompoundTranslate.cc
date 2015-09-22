@@ -38,7 +38,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static thread_local basic::Tracer translate_tracer( "protocols.ligand_docking.CompoundTranslate", basic::t_debug );
+static THREAD_LOCAL basic::Tracer translate_tracer( "protocols.ligand_docking.CompoundTranslate", basic::t_debug );
 
 
 std::string

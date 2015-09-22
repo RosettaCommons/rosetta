@@ -59,7 +59,7 @@
 //Auto Headers
 #include <core/conformation/Conformation.hh>
 
-static thread_local basic::Tracer TR( "protocols.hybridization.HybridizeFoldtreeDynamic" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.HybridizeFoldtreeDynamic" );
 
 namespace protocols {
 namespace hybridization {

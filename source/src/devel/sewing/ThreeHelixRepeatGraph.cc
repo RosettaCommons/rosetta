@@ -28,7 +28,7 @@
 namespace devel {
 namespace sewing {
 
-static thread_local basic::Tracer TR( "ThreeHelixRepeatGraph" );
+static THREAD_LOCAL basic::Tracer TR( "ThreeHelixRepeatGraph" );
 
 ThreeHelixRepeatGraph::ThreeHelixRepeatGraph(
 	utility::sql_database::sessionOP db_session

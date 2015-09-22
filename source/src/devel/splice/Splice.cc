@@ -132,11 +132,11 @@ namespace splice {
 
 using namespace core::conformation;
 
-static thread_local basic::Tracer TR( "devel.splice.Splice" );
-static thread_local basic::Tracer TR_ccd( "devel.splice.Splice_ccd" );
-static thread_local basic::Tracer TR_constraints( "devel.splice.Splice_constraints" );
-static thread_local basic::Tracer TR_pssm( "devel.splice.Splice_pssm" );
-static thread_local basic::Tracer TR_min( "devel.splice.Splice_min" );
+static THREAD_LOCAL basic::Tracer TR( "devel.splice.Splice" );
+static THREAD_LOCAL basic::Tracer TR_ccd( "devel.splice.Splice_ccd" );
+static THREAD_LOCAL basic::Tracer TR_constraints( "devel.splice.Splice_constraints" );
+static THREAD_LOCAL basic::Tracer TR_pssm( "devel.splice.Splice_pssm" );
+static THREAD_LOCAL basic::Tracer TR_min( "devel.splice.Splice_min" );
 std::string SpliceCreator::keyname() const {
 	return SpliceCreator::mover_name();
 }

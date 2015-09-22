@@ -30,7 +30,7 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
-static thread_local basic::Tracer tr( "SaxsSampler" );
+static THREAD_LOCAL basic::Tracer tr( "SaxsSampler" );
 
 void register_options() {
 

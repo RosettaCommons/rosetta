@@ -34,7 +34,7 @@
 #include <fstream>
 #include <cstdlib>
 
-static thread_local basic::Tracer TR( "protocols.denovo_design.filters.SSPredictionfilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.filters.SSPredictionfilter" );
 
 namespace protocols {
 namespace denovo_design {

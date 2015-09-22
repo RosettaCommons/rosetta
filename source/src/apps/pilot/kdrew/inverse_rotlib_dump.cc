@@ -82,7 +82,7 @@ using namespace protocols;
 
 
 // tracer - used to replace cout
-static thread_local basic::Tracer TR( "Inverse Rotamer Library Dumper" );
+static THREAD_LOCAL basic::Tracer TR( "Inverse Rotamer Library Dumper" );
 
 namespace inverse_rotlib_dump {
 

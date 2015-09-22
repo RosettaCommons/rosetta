@@ -40,7 +40,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static thread_local basic::Tracer MinimizeLigand_tracer( "protocols.ligand_docking.MinimizeLigand", basic::t_debug );
+static THREAD_LOCAL basic::Tracer MinimizeLigand_tracer( "protocols.ligand_docking.MinimizeLigand", basic::t_debug );
 
 MinimizeLigand::MinimizeLigand():
 	//utility::pointer::ReferenceCount(),

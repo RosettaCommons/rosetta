@@ -64,7 +64,7 @@ namespace import_pose {
 
 using namespace ObjexxFCL;
 
-static thread_local basic::Tracer tr( "core.io.silent.PDBSilentStruct" );
+static THREAD_LOCAL basic::Tracer tr( "core.io.silent.PDBSilentStruct" );
 
 PDBSilentStruct::PDBSilentStruct(
 	core::pose::Pose const & pose,

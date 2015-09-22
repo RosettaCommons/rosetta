@@ -62,7 +62,7 @@ typedef numeric::xyzMatrix<Real> Mat;
 
 typedef vector1< pair<Size,Real> > WtedClones;
 
-static thread_local basic::Tracer TR( "core.conformation.symmetry.SymmData" );
+static THREAD_LOCAL basic::Tracer TR( "core.conformation.symmetry.SymmData" );
 
 static std::string const NOPARENT = "NOPARENT";
 

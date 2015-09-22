@@ -44,7 +44,7 @@ using namespace ObjexxFCL::format;
 namespace devel {
 namespace enzdes {
 
-static thread_local basic::Tracer tr( "devel.enzdes.DesignSilentStruct" );
+static THREAD_LOCAL basic::Tracer tr( "devel.enzdes.DesignSilentStruct" );
 
 
 DesignSilentStruct::DesignSilentStruct(

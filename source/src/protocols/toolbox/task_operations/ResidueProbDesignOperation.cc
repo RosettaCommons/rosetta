@@ -22,7 +22,7 @@
 #include <numeric/random/random.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.ResidueProbDesignOperation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.ResidueProbDesignOperation" );
 
 namespace protocols {
 namespace toolbox {

@@ -35,7 +35,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
-static thread_local basic::Tracer TR( "devel.denovo_design.task_operations.DesignBySecondaryStructure" );
+static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.task_operations.DesignBySecondaryStructure" );
 
 namespace devel {
 namespace denovo_design {

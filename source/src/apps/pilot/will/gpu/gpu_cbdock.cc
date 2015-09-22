@@ -48,7 +48,7 @@
 #include <apps/pilot/will/gpu/gpu_mat_vec.hh>
 #include <apps/pilot/will/xyzStripeHashWithMeta.hh>
 
-static thread_local basic::Tracer TR( "gpu_cbdock" );
+static THREAD_LOCAL basic::Tracer TR( "gpu_cbdock" );
 
 
 struct xyzStripeHashWithMeta {

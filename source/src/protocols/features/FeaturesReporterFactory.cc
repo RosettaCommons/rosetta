@@ -50,7 +50,7 @@ using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 
-static thread_local basic::Tracer tr( "protocols.features.FeaturesReporterFactory" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.features.FeaturesReporterFactory" );
 
 #if defined MULTI_THREADED && defined CXX11
 std::atomic< FeaturesReporterFactory * > FeaturesReporterFactory::instance_( 0 );

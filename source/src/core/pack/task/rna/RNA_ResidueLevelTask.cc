@@ -17,7 +17,7 @@
 
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "core.pack.task.rna.RNA_ResidueLevelTask" );
+static THREAD_LOCAL basic::Tracer TR( "core.pack.task.rna.RNA_ResidueLevelTask" );
 
 namespace core {
 namespace pack {

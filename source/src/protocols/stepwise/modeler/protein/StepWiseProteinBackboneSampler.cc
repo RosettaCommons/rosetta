@@ -61,7 +61,7 @@ using core::Real;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static thread_local basic::Tracer TR( "protocols.stepwise.modeler.protein.StepWiseProteinBackboneSampler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.protein.StepWiseProteinBackboneSampler" );
 
 namespace protocols {
 namespace stepwise {

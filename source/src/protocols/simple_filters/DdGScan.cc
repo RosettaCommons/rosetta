@@ -68,7 +68,7 @@
 #include <protocols/simple_filters/DdGScan.hh>
 #include <protocols/simple_filters/DdGScanCreator.hh>
 
-static thread_local basic::Tracer TR( "protocols.simple_filters.DdGScan" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.DdGScan" );
 
 namespace protocols {
 namespace simple_filters {

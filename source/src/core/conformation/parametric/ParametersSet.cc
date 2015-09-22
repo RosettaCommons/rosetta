@@ -39,7 +39,7 @@ namespace core {
 namespace conformation {
 namespace parametric {
 
-static thread_local basic::Tracer TR( "core.conformation.parametric.ParametersSet" );
+static THREAD_LOCAL basic::Tracer TR( "core.conformation.parametric.ParametersSet" );
 
 /// @brief Constructor.
 ///

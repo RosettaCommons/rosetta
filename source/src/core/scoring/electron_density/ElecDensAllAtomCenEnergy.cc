@@ -79,7 +79,7 @@ ElecDensAllAtomCenEnergyCreator::score_types_for_method() const {
 }
 
 
-static thread_local basic::Tracer TR( "core.scoring.methods.ElecDensEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.ElecDensEnergy" );
 
 inline core::Real SQ( core::Real N ) { return N*N; }
 

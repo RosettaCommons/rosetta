@@ -49,7 +49,7 @@ namespace protocols {
 namespace relax {
 
 
-static thread_local basic::Tracer TR( "WorkUnit_BatchRelax" );
+static THREAD_LOCAL basic::Tracer TR( "WorkUnit_BatchRelax" );
 
 
 ///  WorkUnit_BatchRelax

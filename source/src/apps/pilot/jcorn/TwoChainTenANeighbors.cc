@@ -45,9 +45,9 @@ using namespace core;
 
 //using utility::vector1;
 
-static thread_local basic::Tracer TT( "pilot_apps.jcorn.two_chain_interface", basic::t_trace );
-static thread_local basic::Tracer TD( "pilot_apps.jcorn.two_chain_interface", basic::t_debug );
-static thread_local basic::Tracer TI( "pilot_apps.jcorn.two_chain_interface", basic::t_info );
+static THREAD_LOCAL basic::Tracer TT( "pilot_apps.jcorn.two_chain_interface", basic::t_trace );
+static THREAD_LOCAL basic::Tracer TD( "pilot_apps.jcorn.two_chain_interface", basic::t_debug );
+static THREAD_LOCAL basic::Tracer TI( "pilot_apps.jcorn.two_chain_interface", basic::t_info );
 
 class TwoChainTenANeighbors {
 

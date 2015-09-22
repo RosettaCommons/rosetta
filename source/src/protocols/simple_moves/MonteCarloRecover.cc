@@ -35,7 +35,7 @@
 
 //// C++ headers
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.MonteCarloRecover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MonteCarloRecover" );
 
 using namespace core;
 

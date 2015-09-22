@@ -87,7 +87,7 @@
 #include <cstdlib>
 #include <cmath>
 
-static thread_local basic::Tracer TR( "protocols.membrane.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.util" );
 
 using basic::Error;
 using basic::Warning;

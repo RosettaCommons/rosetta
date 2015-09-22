@@ -38,7 +38,7 @@ namespace movers {
 
 using namespace protocols::moves;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.SpinMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.SpinMover" );
 
 std::string SpinMoverCreator::keyname() const
 {

@@ -44,7 +44,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "core.mm.MMLJLibrary" );
+static THREAD_LOCAL basic::Tracer TR( "core.mm.MMLJLibrary" );
 
 /// @details Constructs a MMLJLibrary instance from a filename string and constant access pointer to an MMAtomTypeSet
 MMLJLibrary::MMLJLibrary(

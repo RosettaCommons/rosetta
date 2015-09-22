@@ -119,7 +119,7 @@ using utility::file::FileName;
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "calc_ssm_energies" );
+static THREAD_LOCAL basic::Tracer TR( "calc_ssm_energies" );
 
 OPT_1GRP_KEY(Boolean, ssm, interface)
 OPT_1GRP_KEY(Boolean, ssm, packing)

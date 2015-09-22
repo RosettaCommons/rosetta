@@ -65,7 +65,7 @@
 #include <utility/vector0.hh>
 
 
-static thread_local basic::Tracer TR( "sequence_recovery" );
+static THREAD_LOCAL basic::Tracer TR( "sequence_recovery" );
 
 using namespace core;
 using namespace protocols;

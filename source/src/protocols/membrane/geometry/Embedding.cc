@@ -48,7 +48,7 @@
 #include <string>
 #include <cstdlib>
 
-static thread_local basic::Tracer TR( "protocols.membrane.geometry.Embedding" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.geometry.Embedding" );
 
 namespace protocols {
 namespace membrane {

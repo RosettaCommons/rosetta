@@ -61,7 +61,7 @@ namespace core {
 namespace scoring {
 namespace electron_density {
 
-static thread_local basic::Tracer TR( "core.scoring.electron_density.FastDensEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.electron_density.FastDensEnergy" );
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////

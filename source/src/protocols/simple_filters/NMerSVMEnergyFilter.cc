@@ -49,7 +49,7 @@ using namespace core;
 using namespace utility;
 using namespace core::scoring;
 
-static thread_local basic::Tracer TR( "protocols.simple_filters.NMerSVMEnergyFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.NMerSVMEnergyFilter" );
 
 protocols::filters::FilterOP
 NMerSVMEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NMerSVMEnergyFilter ); }

@@ -87,7 +87,7 @@ using std::endl;
 using io::pdb::dump_pdb;
 using namespace ObjexxFCL::format;
 
-static thread_local basic::Tracer tt( "demo.phil.dna_design_test", basic::t_info );
+static THREAD_LOCAL basic::Tracer tt( "demo.phil.dna_design_test", basic::t_info );
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // rescale phosphate charges by desired amount

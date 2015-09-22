@@ -53,7 +53,7 @@
 #include <vector>
 
 
-static thread_local basic::Tracer tr( "protocols.abinitio.PairingStats" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.PairingStats" );
 using namespace core;
 using namespace basic;
 using namespace basic::options;

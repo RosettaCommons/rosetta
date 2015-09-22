@@ -54,7 +54,7 @@ namespace pack {
 namespace dunbrack {
 namespace cenrot {
 
-static thread_local basic::Tracer TR( "core.pack.dunbrack.cenrot" );
+static THREAD_LOCAL basic::Tracer TR( "core.pack.dunbrack.cenrot" );
 
 Size const CentroidRotamerSampleData::NUMBER_OF_PARAMS = 7;
 

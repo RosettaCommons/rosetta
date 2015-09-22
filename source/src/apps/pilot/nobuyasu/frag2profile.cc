@@ -43,7 +43,7 @@
 #include <fstream>
 #include <cmath>
 
-static thread_local basic::Tracer TR( "frag2profile" );
+static THREAD_LOCAL basic::Tracer TR( "frag2profile" );
 
 typedef core::Size Size;
 typedef std::string String;

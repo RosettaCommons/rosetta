@@ -78,7 +78,7 @@ using namespace basic::options::OptionKeys;
 #include <utility/excn/Exceptions.hh>
 
 
-static thread_local basic::Tracer TR( "pilot_apps.kuichan.design_disulfide" );
+static THREAD_LOCAL basic::Tracer TR( "pilot_apps.kuichan.design_disulfide" );
 
 int
 usage(char* msg)

@@ -40,7 +40,7 @@ using namespace std;
 using core::pose::Pose;
 using core::conformation::Residue;
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.sidechain_moves.SetChiMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.sidechain_moves.SetChiMover" );
 
 std::string
 SetChiMoverCreator::keyname() const

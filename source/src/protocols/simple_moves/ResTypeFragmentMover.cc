@@ -55,7 +55,7 @@ using namespace core;
 using namespace fragment;
 using namespace basic;
 
-static thread_local basic::Tracer tr( "protocols.simple_moves.ResTypeFragmentMover" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.simple_moves.ResTypeFragmentMover" );
 
 ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset):ClassicFragmentMover(fragset, std::string("ResTypeFragmentMover") ){}
 

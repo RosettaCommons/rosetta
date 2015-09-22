@@ -31,7 +31,7 @@ using namespace core;
 using namespace std;
 using namespace protocols::moves;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.LoopOver" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.LoopOver" );
 
 std::string
 LoopOverCreator::keyname() const

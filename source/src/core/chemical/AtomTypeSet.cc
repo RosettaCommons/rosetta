@@ -47,7 +47,7 @@ using namespace basic::options;
 namespace core {
 namespace chemical {
 
-static thread_local basic::Tracer tr( "core.chemical" );
+static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -36,7 +36,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobOutputter.hh>
 
-static thread_local basic::Tracer TR( "apps.pilot.nmarze.packing_angle" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.nmarze.packing_angle" );
 
 
 class PackingAngle : public protocols::moves::Mover {

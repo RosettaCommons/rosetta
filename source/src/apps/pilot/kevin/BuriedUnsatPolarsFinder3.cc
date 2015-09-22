@@ -54,7 +54,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static thread_local basic::Tracer TR( "apps.pilot.kevin.BuriedUnsatPolarsFinder3" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kevin.BuriedUnsatPolarsFinder3" );
 
 
 using namespace basic::options;

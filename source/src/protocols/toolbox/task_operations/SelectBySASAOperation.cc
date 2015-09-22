@@ -39,7 +39,7 @@
 
 // C++ Headers
 
-static thread_local basic::Tracer TR( "protocols.toolbox.task_operations.SelectBySASAOperation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.SelectBySASAOperation" );
 
 namespace protocols {
 namespace toolbox {

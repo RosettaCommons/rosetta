@@ -46,7 +46,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static thread_local basic::Tracer TR( "protocols.simple_filters.RelativePoseFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.RelativePoseFilter" );
 
 /// @brief default ctor
 RelativePoseFilter::RelativePoseFilter() :

@@ -62,7 +62,7 @@ template <> NomenclatureManager * utility::SingletonBase< NomenclatureManager >:
 
 
 // Construct tracer.
-static thread_local basic::Tracer TR( "core.io.pdb.NomenclatureManager" );
+static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.NomenclatureManager" );
 
 
 namespace core {

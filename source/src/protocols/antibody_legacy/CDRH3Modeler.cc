@@ -72,7 +72,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.antibody.CDRH3Modeler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.CDRH3Modeler" );
 
 namespace protocols {
 namespace antibody_legacy {

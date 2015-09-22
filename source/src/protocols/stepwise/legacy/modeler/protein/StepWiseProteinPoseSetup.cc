@@ -83,7 +83,7 @@ using namespace protocols::stepwise::modeler::protein;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.protein.StepWiseProteinPoseSetup" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.legacy.modeler.protein.StepWiseProteinPoseSetup" );
 
 //typedef std::map< core::Size, core::Size > ResMap;
 

@@ -74,7 +74,7 @@ namespace scoring {
 namespace methods {
 namespace pcs2 {
 
-static thread_local basic::Tracer TR_PcsEnergyParameterManager( "protocols.scoring.methods.pcs.PcsEnergyParameterManager" );
+static THREAD_LOCAL basic::Tracer TR_PcsEnergyParameterManager( "protocols.scoring.methods.pcs.PcsEnergyParameterManager" );
 
 PcsEnergyParameterManager *
 PcsEnergyParameterManager::create_singleton_instance()

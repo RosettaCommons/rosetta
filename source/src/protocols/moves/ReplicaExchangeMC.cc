@@ -24,7 +24,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.ReplicaExchangeMC" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.ReplicaExchangeMC" );
 
 namespace protocols {
 namespace moves {

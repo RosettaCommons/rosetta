@@ -40,7 +40,7 @@ using namespace std;
 using namespace core::scoring;
 using protocols::moves::ResId;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.SetTemperatureFactor" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.SetTemperatureFactor" );
 
 std::string
 SetTemperatureFactorCreator::keyname() const

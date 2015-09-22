@@ -44,7 +44,7 @@
 #include <string>
 #include <sstream>
 
-static thread_local basic::Tracer TR( "protocols.features.ProtocolFeatures" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.features.ProtocolFeatures" );
 
 namespace protocols {
 namespace features {

@@ -53,7 +53,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "protocols.simple_moves.PeptideStapleMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.PeptideStapleMover" );
 
 // C++ Headers
 #include <sstream>

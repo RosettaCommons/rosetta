@@ -26,7 +26,7 @@
 
 // C++ Headers
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.LoadUnboundRotMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.LoadUnboundRotMover" );
 
 namespace protocols {
 namespace simple_moves {

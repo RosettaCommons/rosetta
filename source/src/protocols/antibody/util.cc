@@ -77,7 +77,7 @@
 
 #include <math.h>
 
-static thread_local basic::Tracer TR( "antibody.util" );
+static THREAD_LOCAL basic::Tracer TR( "antibody.util" );
 
 
 

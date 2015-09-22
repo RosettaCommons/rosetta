@@ -52,7 +52,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.AddConstraintsToCurrentConformationMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.AddConstraintsToCurrentConformationMover" );
 
 namespace protocols {
 namespace simple_moves {

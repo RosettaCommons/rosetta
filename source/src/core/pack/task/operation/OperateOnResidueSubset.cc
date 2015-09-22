@@ -41,7 +41,7 @@ namespace operation {
 
 using basic::t_info;
 using basic::t_debug;
-static thread_local basic::Tracer TR( "core.pack.task.operation.OperateOnResidueSubset", t_info );
+static THREAD_LOCAL basic::Tracer TR( "core.pack.task.operation.OperateOnResidueSubset", t_info );
 
 OperateOnResidueSubset::OperateOnResidueSubset()
 : parent(),

@@ -31,7 +31,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-static thread_local basic::Tracer tr(
+static THREAD_LOCAL basic::Tracer tr(
 	"protocols.frag_picker.scores.TorsionBinSimilarity"
 );
 

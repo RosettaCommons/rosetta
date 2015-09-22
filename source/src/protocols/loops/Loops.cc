@@ -48,7 +48,7 @@ namespace loops {
 using namespace core;
 using namespace ObjexxFCL;
 
-static thread_local basic::Tracer tr( "loops" );
+static THREAD_LOCAL basic::Tracer tr( "loops" );
 
 Loops::Loops() : utility::pointer::ReferenceCount()
 {

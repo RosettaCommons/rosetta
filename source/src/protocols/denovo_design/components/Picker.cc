@@ -36,7 +36,7 @@
 
 //C++ Headers
 
-static thread_local basic::Tracer TR("protocols.denovo_design.components.Picker");
+static THREAD_LOCAL basic::Tracer TR("protocols.denovo_design.components.Picker");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

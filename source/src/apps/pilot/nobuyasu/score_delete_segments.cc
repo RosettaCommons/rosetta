@@ -60,7 +60,7 @@ using namespace basic::options::OptionKeys;
 typedef std::string String;
 
 
-static thread_local basic::Tracer TR( "pick_bab" );
+static THREAD_LOCAL basic::Tracer TR( "pick_bab" );
 
 class ThisApplication  {
 public:

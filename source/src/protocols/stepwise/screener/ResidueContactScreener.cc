@@ -18,7 +18,7 @@
 
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.screener.ResidueContactScreener" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.ResidueContactScreener" );
 
 namespace protocols {
 namespace stepwise {

@@ -28,7 +28,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-static thread_local basic::Tracer trAtomBasedConstraintsScore(
+static THREAD_LOCAL basic::Tracer trAtomBasedConstraintsScore(
 	"fragment.picking.scores.AtomBasedConstraintsScore");
 
 /// @param priority - the priority for this scoring method. The lower the priority, the later the score will be evaluated

@@ -63,7 +63,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.docking.DockMCMProtocol", basic::t_info );
+static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockMCMProtocol", basic::t_info );
 
 //     originally from dock_structure.cc Jeff Gray April 2001
 

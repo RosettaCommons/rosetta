@@ -36,7 +36,7 @@
 // C++ Headers
 #include <string>
 
-static thread_local basic::Tracer TR( "protocols.pose_selectors.ClusterPoseSelector" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.pose_selectors.ClusterPoseSelector" );
 
 namespace protocols {
 namespace pose_selectors {

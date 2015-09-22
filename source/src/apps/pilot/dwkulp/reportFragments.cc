@@ -109,7 +109,7 @@ typedef utility::pointer::owning_ptr< AnnotatedFragData const > AnnotatedFragDat
 
 void get_fragment_sets(core::pose::Pose &_pose, string _polyAminoAcidSequence,   utility::vector1<core::fragment::ConstantLengthFragSetOP> &fragSets);
 
-static thread_local basic::Tracer TR( "reportFragments" );
+static THREAD_LOCAL basic::Tracer TR( "reportFragments" );
 
 
 int main( int argc, char * argv[] ) {

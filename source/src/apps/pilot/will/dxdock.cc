@@ -87,7 +87,7 @@ using core::kinematics::Stub;
 using core::conformation::ResidueOP;
 
 
-static thread_local basic::Tracer TR( "dxdock" );
+static THREAD_LOCAL basic::Tracer TR( "dxdock" );
 static core::io::silent::SilentFileData sfd;
 
 #include <apps/pilot/will/sicfast.ihh>

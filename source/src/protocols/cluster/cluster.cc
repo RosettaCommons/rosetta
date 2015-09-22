@@ -67,7 +67,7 @@ using namespace pose;
 using namespace basic::options;
 using namespace evaluation;
 
-static thread_local basic::Tracer tr( "protocols.cluster" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.cluster" );
 
 
 std::map< std::string, core::Real > read_template_scores( const std::string & filename ){

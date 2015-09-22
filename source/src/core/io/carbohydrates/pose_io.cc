@@ -37,7 +37,7 @@
 
 
 // Construct tracer.
-static thread_local basic::Tracer TR( "core.io.carbohydrates.pose_io" );
+static THREAD_LOCAL basic::Tracer TR( "core.io.carbohydrates.pose_io" );
 
 
 namespace core {

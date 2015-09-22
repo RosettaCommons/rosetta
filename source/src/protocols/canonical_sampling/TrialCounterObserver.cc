@@ -33,7 +33,7 @@
 // C++ Headers
 #include <cmath>
 
-static thread_local basic::Tracer tr( "protocols.canonical_sampling.TrialCounter" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.TrialCounter" );
 
 namespace protocols {
 namespace canonical_sampling {

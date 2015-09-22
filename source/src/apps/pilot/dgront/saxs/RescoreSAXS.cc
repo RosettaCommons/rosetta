@@ -29,7 +29,7 @@
 
 using namespace core;
 
-static thread_local basic::Tracer trRescoreSAXS( "RescoreSAXS" );
+static THREAD_LOCAL basic::Tracer trRescoreSAXS( "RescoreSAXS" );
 
 
 void register_options() {

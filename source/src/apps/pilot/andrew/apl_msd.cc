@@ -39,7 +39,7 @@
 #include <basic/options/keys/ms.OptionKeys.gen.hh>
 
 using basic::t_info;
-static thread_local basic::Tracer TR( "app.andrew.apl_msd", t_info );
+static THREAD_LOCAL basic::Tracer TR( "app.andrew.apl_msd", t_info );
 
 class SimpleDGBindAggregateFunction : public devel::pack_daemon::MultistateAggregateFunction
 {

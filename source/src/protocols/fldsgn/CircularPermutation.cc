@@ -50,7 +50,7 @@
 namespace protocols {
 namespace fldsgn {
 
-static thread_local basic::Tracer TR( "protocols.fldsgn.CircularPermutation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.CircularPermutation" );
 
 std::string
 CircularPermutationCreator::keyname() const

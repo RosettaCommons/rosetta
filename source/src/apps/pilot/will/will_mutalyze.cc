@@ -90,7 +90,7 @@
 #include <basic/MetricValue.hh>
 //Auto Headers
 
-static thread_local basic::Tracer TR( "matdes::mutalyze" );
+static THREAD_LOCAL basic::Tracer TR( "matdes::mutalyze" );
 
 using std::string;
 using ObjexxFCL::string_of;

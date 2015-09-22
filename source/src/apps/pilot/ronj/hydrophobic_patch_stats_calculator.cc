@@ -68,7 +68,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "apps.pilot.ronj.hydrophobic_patch_stats_calculator" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ronj.hydrophobic_patch_stats_calculator" );
 
 using utility::file::FileName;
 using utility::file::file_basename;

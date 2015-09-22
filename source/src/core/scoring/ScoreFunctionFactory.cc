@@ -39,7 +39,7 @@
 
 using basic::T;
 
-static thread_local basic::Tracer tr( "core.scoring.ScoreFunctionFactory" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.ScoreFunctionFactory" );
 
 namespace core {
 namespace scoring {

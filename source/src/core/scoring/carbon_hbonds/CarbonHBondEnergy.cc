@@ -46,7 +46,7 @@
 #include <core/scoring/EnergyMap.hh>
 
 
-static thread_local basic::Tracer tr( "core.scoring.carbon_hbonds.CarbonHBondEnergy" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.carbon_hbonds.CarbonHBondEnergy" );
 
 
 namespace core {

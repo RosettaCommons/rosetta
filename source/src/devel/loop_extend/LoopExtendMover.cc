@@ -43,7 +43,7 @@
 
 using basic::T;
 
-static thread_local basic::Tracer tr( "devel.LoopExtend.LoopExtendMover" );
+static THREAD_LOCAL basic::Tracer tr( "devel.LoopExtend.LoopExtendMover" );
 
 
 namespace devel {

@@ -44,7 +44,7 @@
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.hybridization.ChunkTrialMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.ChunkTrialMover" );
 
 namespace protocols {
 namespace hybridization {

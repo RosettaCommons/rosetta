@@ -70,7 +70,7 @@ using namespace numeric::conversions;
 using core::pose::Pose;
 using core::conformation::Residue;
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.SetTorsion" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SetTorsion" );
 
 std::string
 SetTorsionCreator::keyname() const

@@ -85,7 +85,7 @@
 namespace protocols {
 namespace analysis {
 
-static thread_local basic::Tracer tracer( "protocols.analysis.PeptideDeriverFilter" );
+static THREAD_LOCAL basic::Tracer tracer( "protocols.analysis.PeptideDeriverFilter" );
 
 // BEGIN PeptideDeriverOutputterContainer implementation
 

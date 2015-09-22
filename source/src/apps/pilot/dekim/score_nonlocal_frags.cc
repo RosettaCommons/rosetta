@@ -73,7 +73,7 @@
 #include <protocols/simple_filters/DdgFilter.hh>
 
 
-static thread_local basic::Tracer TR( "main" );
+static THREAD_LOCAL basic::Tracer TR( "main" );
 
 using namespace protocols::moves;
 using namespace core::scoring;

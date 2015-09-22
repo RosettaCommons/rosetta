@@ -115,7 +115,7 @@
 #include <string>
 #include <cfloat>
 
-static thread_local basic::Tracer TR( "apps.pilot.constel.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.constel.main" );
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                    MAIN                                    //

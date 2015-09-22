@@ -49,7 +49,7 @@ int Dummy::n_dummies( 0 );
 
 Dummy *
 get_dummy() {
-	static thread_local Dummy * dummy( 0 );
+	static THREAD_LOCAL Dummy * dummy( 0 );
 	if ( dummy == 0 ) {
 		dummy = new Dummy;
 	}

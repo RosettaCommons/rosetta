@@ -75,7 +75,7 @@ using utility::vector1;
 using core::Size;
 using core::Real;
 
-static thread_local basic::Tracer tr( "evalFullLength" );
+static THREAD_LOCAL basic::Tracer tr( "evalFullLength" );
 
 
 Size ala_ct(const core::pose::Pose& pose){

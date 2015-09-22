@@ -23,7 +23,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.forge.remodel.remodelconstraintgenerator" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.remodelconstraintgenerator" );
 namespace protocols {
 namespace forge {
 namespace remodel {

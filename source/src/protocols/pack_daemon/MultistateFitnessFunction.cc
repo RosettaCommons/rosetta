@@ -37,7 +37,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.pack_daemon.MultistateFitnessFunction" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.pack_daemon.MultistateFitnessFunction" );
 
 namespace protocols {
 namespace pack_daemon {

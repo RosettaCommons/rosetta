@@ -36,7 +36,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictNonSurfaceToRepackingOperation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictNonSurfaceToRepackingOperation" );
 
 namespace protocols {
 namespace toolbox {

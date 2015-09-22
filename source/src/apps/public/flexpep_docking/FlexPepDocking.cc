@@ -69,7 +69,7 @@ using basic::Warning;
 
 
 //typedef utility::pointer::owning_ptr< BaseJobDistributor< BasicJobOP > > BaseJobDistributorOP
-static thread_local basic::Tracer TR( "pilot_apps.FlexPepDock" );
+static THREAD_LOCAL basic::Tracer TR( "pilot_apps.FlexPepDock" );
 
 
 ///////////////////////////////////////////////////////////////////////////////

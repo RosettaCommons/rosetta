@@ -35,7 +35,7 @@
 
 // C++ headers
 
-static thread_local basic::Tracer tr( "protocols.simple_filter.CamShiftEvaluator" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.simple_filter.CamShiftEvaluator" );
 
 namespace protocols {
 namespace simple_filters {

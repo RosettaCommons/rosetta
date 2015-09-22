@@ -60,7 +60,7 @@ using namespace basic;
 using namespace protocols::moves;
 
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.sidechain_moves.SidechainMCMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.sidechain_moves.SidechainMCMover" );
 
 namespace protocols {
 namespace simple_moves {

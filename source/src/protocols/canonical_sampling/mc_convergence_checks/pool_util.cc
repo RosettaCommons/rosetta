@@ -19,7 +19,7 @@
 #include <basic/Tracer.hh>
 
 
-static thread_local basic::Tracer TR( "HPool_util" );
+static THREAD_LOCAL basic::Tracer TR( "HPool_util" );
 
 #ifdef USEMPI
 #include <mpi.h>

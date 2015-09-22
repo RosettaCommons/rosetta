@@ -41,7 +41,7 @@ RNA_JumpLibrary::~RNA_JumpLibrary() {}
 RNA_PairingTemplate::~RNA_PairingTemplate() {}
 
 
-static thread_local basic::Tracer tr( "protocols.rna.RNA_JumpLibrary" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.rna.RNA_JumpLibrary" );
 
 //@brief constructor
 RNA_PairingTemplate::RNA_PairingTemplate(

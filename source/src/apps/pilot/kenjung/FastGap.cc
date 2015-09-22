@@ -55,7 +55,7 @@ using utility::vector1;
 using core::Size;
 using std::string;
 
-static thread_local basic::Tracer TR( "main" );
+static THREAD_LOCAL basic::Tracer TR( "main" );
 
 std::map< std::string, core::pose::Pose > poses_from_cmd_line(utility::vector1< std::string > const & fn_list){
 

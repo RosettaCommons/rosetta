@@ -57,7 +57,7 @@
 using namespace core;
 using namespace core::pose;
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.sidechain_moves.PerturbRotamerSidechainMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.sidechain_moves.PerturbRotamerSidechainMover" );
 
 namespace protocols {
 namespace simple_moves {

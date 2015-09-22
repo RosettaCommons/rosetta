@@ -38,7 +38,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-static thread_local basic::Tracer TRACER( "core.io.constraints" );
+static THREAD_LOCAL basic::Tracer TRACER( "core.io.constraints" );
 
 void AngleConstraint::show( std::ostream & out ) const {
 	out << "Angle";

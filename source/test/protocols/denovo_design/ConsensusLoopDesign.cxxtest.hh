@@ -38,7 +38,7 @@
 
 // C++ headers
 
-static thread_local basic::Tracer TR("protocols.denovo_design.ConsensusLoopDesignOperation.cxxtest");
+static THREAD_LOCAL basic::Tracer TR("protocols.denovo_design.ConsensusLoopDesignOperation.cxxtest");
 
 // --------------- Test Class --------------- //
 class ConsensusLoopDesignOperationTests : public CxxTest::TestSuite {

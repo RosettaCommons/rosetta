@@ -46,7 +46,7 @@
 #include <cstdlib>
 #include <algorithm> 
 
-static thread_local basic::Tracer TR( "membrane_scorefxn" );
+static THREAD_LOCAL basic::Tracer TR( "membrane_scorefxn" );
 
 using namespace protocols;
 

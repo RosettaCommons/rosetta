@@ -40,7 +40,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.antibody.RefineOneCDRLoop" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.RefineOneCDRLoop" );
 
 using namespace core;
 namespace protocols {

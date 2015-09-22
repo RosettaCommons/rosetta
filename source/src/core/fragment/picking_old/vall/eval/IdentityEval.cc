@@ -36,7 +36,7 @@ namespace eval {
 
 // static initialization
 
-static thread_local basic::Tracer TR( "core.fragment.picking_old.vall.eval.IdentityEval" );
+static THREAD_LOCAL basic::Tracer TR( "core.fragment.picking_old.vall.eval.IdentityEval" );
 
 
 /// @brief default constructor

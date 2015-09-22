@@ -78,7 +78,7 @@ typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 typedef utility::vector1<Vec> Vecs;
 
-static thread_local basic::Tracer TR( "FunGroupTK_test" );
+static THREAD_LOCAL basic::Tracer TR( "FunGroupTK_test" );
 
 inline Real const sqr(Real const r) { return r*r; }
 

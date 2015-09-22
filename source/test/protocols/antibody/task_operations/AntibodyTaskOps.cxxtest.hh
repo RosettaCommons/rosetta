@@ -55,7 +55,7 @@ using namespace core::pack::task::operation;
 using namespace core::pack::task;
 using utility::vector1;
 
-static thread_local basic::Tracer TR("protocols.antibody.task_operations.AntibodyTaskOps");
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.task_operations.AntibodyTaskOps");
 
 class AntibodyTaskOps: public CxxTest::TestSuite {
 

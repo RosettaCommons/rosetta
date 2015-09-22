@@ -23,7 +23,7 @@
 // Basic headers
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "apps.pilot.andrew.domain_assembly_jd2" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.andrew.domain_assembly_jd2" );
 
 int main( int argc, char * argv [] )
 {

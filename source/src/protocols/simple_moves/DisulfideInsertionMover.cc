@@ -53,7 +53,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.DisulfideInsertionMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.DisulfideInsertionMover" );
 
 /// @brief constructor with all parameters
 DisulfideInsertionMover::DisulfideInsertionMover(core::Size const peptide_chain,

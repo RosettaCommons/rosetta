@@ -83,7 +83,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer tr( "protocols.canonical_sampling.MetropolisHastingsMover" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.MetropolisHastingsMover" );
 
 namespace protocols {
 namespace canonical_sampling {

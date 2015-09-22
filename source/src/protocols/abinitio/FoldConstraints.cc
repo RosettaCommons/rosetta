@@ -58,7 +58,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.abinitio.foldconstraints", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.foldconstraints", basic::t_info );
 
 using core::scoring::constraints::ConstraintSet;
 using core::scoring::constraints::ConstraintSetOP;

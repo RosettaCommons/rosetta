@@ -65,7 +65,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "devel.denovo_design.FastDesign" );
+static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.FastDesign" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

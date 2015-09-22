@@ -60,7 +60,7 @@ namespace core {
 namespace pack {
 namespace task {
 
-static thread_local basic::Tracer T( "core.pack.task", basic::t_info );
+static THREAD_LOCAL basic::Tracer T( "core.pack.task", basic::t_info );
 
 
 void

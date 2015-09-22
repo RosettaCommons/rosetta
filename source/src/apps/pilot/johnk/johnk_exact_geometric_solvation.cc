@@ -50,7 +50,7 @@ OPT_KEY( Boolean, report_fitted )
 OPT_KEY( Boolean, report_orig_geosol )
 OPT_KEY( Boolean, report_exact )
 
-static thread_local basic::Tracer TR( "apps.pilot.johnk_exact_geometric_solvation.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.johnk_exact_geometric_solvation.main" );
 
 void dump_data( std::string const & fname, utility::vector1 <core::Real> & data ) {
   utility::io::ozstream outstream;

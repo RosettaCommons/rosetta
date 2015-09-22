@@ -63,7 +63,7 @@
 #include <numeric/random/random.hh>
 
 
-static thread_local basic::Tracer tr( "main" );
+static THREAD_LOCAL basic::Tracer tr( "main" );
 
 using namespace core;
 using namespace protocols;

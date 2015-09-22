@@ -64,7 +64,7 @@ using namespace basic::options::OptionKeys;
 typedef std::string String;
 
 
-static thread_local basic::Tracer TR( "pair_distance" );
+static THREAD_LOCAL basic::Tracer TR( "pair_distance" );
 
 class ThisApplication  {
 public:

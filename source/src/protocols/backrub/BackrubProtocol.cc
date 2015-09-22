@@ -86,7 +86,7 @@
 
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR("protocols.backrub.BackrubProtocol");
+static THREAD_LOCAL basic::Tracer TR("protocols.backrub.BackrubProtocol");
 
 namespace protocols {
 namespace backrub {

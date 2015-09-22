@@ -44,7 +44,7 @@ template <> SequenceFactory * utility::SingletonBase< SequenceFactory >::instanc
 namespace core {
 namespace sequence {
 
-static thread_local basic::Tracer tr( "core.sequence.SequenceFactory" );
+static THREAD_LOCAL basic::Tracer tr( "core.sequence.SequenceFactory" );
 
 SequenceFactory *
 SequenceFactory::create_singleton_instance()

@@ -41,7 +41,7 @@ namespace protocols {
 namespace indexed_structure_store {
 namespace filters {
 
-static thread_local basic::Tracer TR( "protocols.indexed_structure_store.filters.FragmentLookupFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.indexed_structure_store.filters.FragmentLookupFilter" );
 
 using namespace core::indexed_structure_store;
 

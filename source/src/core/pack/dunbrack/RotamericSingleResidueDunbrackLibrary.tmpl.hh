@@ -1805,7 +1805,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io::iz
 template < Size T, Size N >
 bool
 RotamericSingleResidueDunbrackLibrary< T, N >::operator ==( SingleResidueRotamerLibrary const & rhs) const {
-	static thread_local basic::Tracer TR( "core.pack.dunbrack.RotamericSingleResidueDunbrackLibrary" );
+	static THREAD_LOCAL basic::Tracer TR( "core.pack.dunbrack.RotamericSingleResidueDunbrackLibrary" );
 
 	// Raw pointer okay, we're just using it to check for conversion
 	RotamericSingleResidueDunbrackLibrary< T, N > const * ptr( dynamic_cast< RotamericSingleResidueDunbrackLibrary< T, N > const * > ( &rhs ) );

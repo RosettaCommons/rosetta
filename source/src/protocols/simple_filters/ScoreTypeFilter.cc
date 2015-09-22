@@ -52,7 +52,7 @@ using namespace core;
 using namespace core::scoring;
 using namespace ObjexxFCL::format;
 
-static thread_local basic::Tracer score_type_filter_tracer( "protocols.simple_filters.ScoreTypeFilter" );
+static THREAD_LOCAL basic::Tracer score_type_filter_tracer( "protocols.simple_filters.ScoreTypeFilter" );
 
 protocols::filters::FilterOP
 ScoreTypeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ScoreTypeFilter ); }

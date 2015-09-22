@@ -47,7 +47,7 @@ namespace constraints {
 /// @details Auto-generated virtual destructor
 ResidueConstraints::~ResidueConstraints() {}
 
-static thread_local basic::Tracer tr( "core.scoring.ConstraintSet" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.ConstraintSet" );
 
 ConstraintSet::ConstraintSet()
 :

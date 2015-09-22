@@ -71,7 +71,7 @@
 #include <utility/Binary_Util.hh>
 
 
-static thread_local basic::Tracer tr( "core.io.silent" );
+static THREAD_LOCAL basic::Tracer tr( "core.io.silent" );
 
 namespace core {
 namespace io {

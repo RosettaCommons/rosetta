@@ -41,7 +41,7 @@ namespace simple_moves {
 namespace symmetry {
 
 using namespace ObjexxFCL;
-static thread_local basic::Tracer TR( "protocols.simple_moves.symmetry.SymmetricRMSMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.symmetry.SymmetricRMSMover" );
 
 SymmetricRMSMover::SymmetricRMSMover()
 : protocols::moves::Mover("SymmetricRMSMover") {}

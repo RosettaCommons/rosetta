@@ -94,7 +94,7 @@
 namespace core {
 namespace pose {
 
-static thread_local basic::Tracer TR( "core.pose.util" );
+static THREAD_LOCAL basic::Tracer TR( "core.pose.util" );
 
 void
 append_pose_to_pose(

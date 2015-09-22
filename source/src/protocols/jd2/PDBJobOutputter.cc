@@ -49,7 +49,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.jd2.PDBJobOutputter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.PDBJobOutputter" );
 
 namespace protocols {
 namespace jd2 {

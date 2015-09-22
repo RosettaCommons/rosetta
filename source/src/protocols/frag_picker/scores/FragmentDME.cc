@@ -54,7 +54,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer trDMEScore(
+static THREAD_LOCAL basic::Tracer trDMEScore(
 	"protocols.frag_picker.scores.FragmentDME");
 
 FragmentDME::~FragmentDME() {}

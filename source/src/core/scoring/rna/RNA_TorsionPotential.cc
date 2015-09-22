@@ -102,7 +102,7 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 ///////////////////////////
 
 
-static thread_local basic::Tracer TR( "core.scoring.rna.RNA_TorsionPotential", basic::t_info );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.rna.RNA_TorsionPotential", basic::t_info );
 
 using namespace ObjexxFCL::format;
 using namespace core::chemical::rna;

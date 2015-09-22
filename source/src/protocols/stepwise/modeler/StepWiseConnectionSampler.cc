@@ -93,7 +93,7 @@
 //Req's on WIN32
 #include <protocols/stepwise/modeler/rna/sugar/SugarModeling.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.modeler.StepWiseConnectionSampler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.StepWiseConnectionSampler" );
 using namespace protocols::stepwise::modeler::rna;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

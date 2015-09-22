@@ -35,7 +35,7 @@
 #include <fstream>
 #include <boost/foreach.hpp>
 
-static thread_local basic::Tracer TR( "devel.denovo_design.GenericSimulatedAnnealer" );
+static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.GenericSimulatedAnnealer" );
 
 namespace devel {
 namespace denovo_design {

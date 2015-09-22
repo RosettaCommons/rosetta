@@ -37,7 +37,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
-static thread_local basic::Tracer TR( "protocols/toolbox/PoseMetricCalculators/PackstatCalculator" );
+static THREAD_LOCAL basic::Tracer TR( "protocols/toolbox/PoseMetricCalculators/PackstatCalculator" );
 
 namespace protocols {
 namespace toolbox {

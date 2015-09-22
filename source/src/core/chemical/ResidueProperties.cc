@@ -30,7 +30,7 @@
 
 
 // Construct tracer.
-static thread_local basic::Tracer TR( "core.chemical.ResidueProperties" );
+static THREAD_LOCAL basic::Tracer TR( "core.chemical.ResidueProperties" );
 
 
 namespace core {

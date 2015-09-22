@@ -27,7 +27,7 @@
 
 using namespace core;
 
-static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.RNA_ChainClosureChecker" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.RNA_ChainClosureChecker" );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Kind of weird. I think chain closure always 'passes', since it depends on angle and atom-pair

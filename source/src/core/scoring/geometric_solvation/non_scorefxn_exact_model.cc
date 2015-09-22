@@ -50,7 +50,7 @@
 
 //Vector dummy_res_energy_vector_;
 
-static thread_local basic::Tracer TR( "core.scoring.geometric_solvation.exact_model" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.geometric_solvation.exact_model" );
 
 namespace core {
 namespace scoring {

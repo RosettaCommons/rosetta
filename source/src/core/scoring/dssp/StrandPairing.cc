@@ -48,7 +48,7 @@
 #include <utility/vector1.hh>
 #include <boost/functional/hash.hpp>
 
-static thread_local basic::Tracer tr( "core.scoring.dssp" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.dssp" );
 
 using core::Real;
 using namespace core;

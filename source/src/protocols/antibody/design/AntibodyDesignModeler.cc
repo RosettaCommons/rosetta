@@ -64,7 +64,7 @@
 #include <utility/file/FileName.hh>
 #include <sstream>
 
-static thread_local basic::Tracer TR( "antibody.design.AntibodyDesignModeler" );
+static THREAD_LOCAL basic::Tracer TR( "antibody.design.AntibodyDesignModeler" );
 namespace protocols {
 namespace antibody {
 namespace design {

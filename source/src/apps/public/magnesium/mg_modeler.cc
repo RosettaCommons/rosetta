@@ -49,7 +49,7 @@ using namespace basic::options::OptionKeys;
 using utility::vector1;
 using io::pdb::dump_pdb;
 
-static thread_local basic::Tracer TR( "mg_modeler" );
+static THREAD_LOCAL basic::Tracer TR( "mg_modeler" );
 
 ///////////////////////////////////////////////////////////////////////////////
 //

@@ -29,7 +29,7 @@
 #include <basic/Tracer.hh>
 #include <iostream>
 
-static thread_local basic::Tracer trmain( "test" );
+static THREAD_LOCAL basic::Tracer trmain( "test" );
 
 OPT_1GRP_KEY(File, m, file)
 

@@ -60,7 +60,7 @@
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 
-static thread_local basic::Tracer TR( "protocols.antibody.design.AntibodyDesignProtocol" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.design.AntibodyDesignProtocol" );
 namespace protocols {
 namespace antibody {
 namespace design {

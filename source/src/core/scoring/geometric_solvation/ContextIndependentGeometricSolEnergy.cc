@@ -49,7 +49,7 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 
-static thread_local basic::Tracer TR( "core.scoring.geometric_solvation.ContextIndependentGeometricSolEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.geometric_solvation.ContextIndependentGeometricSolEnergy" );
 
 ///////////////////////////////////////////////////////////////////
 // See notes in GeometricSolEnergyEvaluator for what this does.

@@ -48,7 +48,7 @@ using basic::t_warning;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static thread_local basic::Tracer TR( "protocols.constraints_additional.SequenceCoupling1BDConstraint" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.constraints_additional.SequenceCoupling1BDConstraint" );
 
 SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint()
 :core::scoring::constraints::SequenceProfileConstraint( )

@@ -78,7 +78,7 @@ using basic::Warning;
 using basic::Error;
 
 // tracer
-static thread_local basic::Tracer TZ( "pilot_apps::ca_to_allatom" );
+static THREAD_LOCAL basic::Tracer TZ( "pilot_apps::ca_to_allatom" );
 
 // C++ headers
 #include <fstream>

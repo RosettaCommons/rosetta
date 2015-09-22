@@ -63,7 +63,7 @@ using utility::vector1;
 using core::Size;
 using std::string;
 
-static thread_local basic::Tracer TR( "protocols.loophash.FastGapMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.loophash.FastGapMover" );
 
 FastGapMover::FastGapMover() :
 	Mover("FastGapMover"),

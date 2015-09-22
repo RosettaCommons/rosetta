@@ -53,7 +53,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.scoring.InterchainPotential" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.scoring.InterchainPotential" );
 
 // Singleton instance and mutex static data members
 namespace utility {

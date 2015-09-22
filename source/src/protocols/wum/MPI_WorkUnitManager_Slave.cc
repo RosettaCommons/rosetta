@@ -42,7 +42,7 @@ using namespace ObjexxFCL::format;
 namespace protocols {
 namespace wum {
 
-static thread_local basic::Tracer TR( "MPI_WUM_Slave" );
+static THREAD_LOCAL basic::Tracer TR( "MPI_WUM_Slave" );
 
 
 MPI_WorkUnitManager_Slave::MPI_WorkUnitManager_Slave( core::Size my_master ):

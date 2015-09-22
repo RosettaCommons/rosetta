@@ -59,7 +59,7 @@
 namespace devel {
 namespace sewing {
 
-static thread_local basic::Tracer TR( "ProteinAssesmblyGraph" );
+static THREAD_LOCAL basic::Tracer TR( "ProteinAssesmblyGraph" );
 
 ProteinAssemblyGraph::ProteinAssemblyGraph(
 	utility::sql_database::sessionOP db_session

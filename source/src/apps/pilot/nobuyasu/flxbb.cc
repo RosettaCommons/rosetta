@@ -34,7 +34,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.flxbb" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.flxbb" );
 
 // option key includes
 //#include <basic/options/keys/in.OptionKeys.gen.hh>

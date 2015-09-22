@@ -29,7 +29,7 @@
 #include <basic/Tracer.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.metal_interface.ZincSiteFinder" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.metal_interface.ZincSiteFinder" );
 
 typedef numeric::xyzVector<core::Real> point;
 using namespace core;

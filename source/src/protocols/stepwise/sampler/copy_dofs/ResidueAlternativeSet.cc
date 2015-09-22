@@ -17,7 +17,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.sampler.copy_dofs.ResidueAlternativeSet" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.copy_dofs.ResidueAlternativeSet" );
 
 namespace protocols {
 namespace stepwise {

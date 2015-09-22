@@ -61,7 +61,7 @@ using namespace core::scoring;
 
 using utility::vector1;
 
-static thread_local basic::Tracer TR( "ediff" );
+static THREAD_LOCAL basic::Tracer TR( "ediff" );
 
 
 ///////////////////////////////////////////////////////////////////////////////

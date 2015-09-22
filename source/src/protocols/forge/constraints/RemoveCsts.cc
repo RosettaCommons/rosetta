@@ -31,7 +31,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.forge.constraints.RemoveCsts" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.forge.constraints.RemoveCsts" );
 
 namespace protocols {
 namespace forge {

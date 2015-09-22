@@ -43,7 +43,7 @@
 //#include <set>
 //#include <utility>
 
-static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.InterGroupNeighborsCalculator" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.InterGroupNeighborsCalculator" );
 
 namespace protocols {
 namespace toolbox {

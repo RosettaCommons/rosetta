@@ -31,7 +31,7 @@
 #include <utility/file/file_sys_util.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.iterative.HedgeArchive" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.iterative.HedgeArchive" );
 using basic::mem_tr;
 
 

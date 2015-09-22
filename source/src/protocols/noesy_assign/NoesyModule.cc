@@ -124,7 +124,7 @@ void protocols::noesy_assign::NoesyModule::register_options() {
 
 }
 
-static thread_local basic::Tracer tr( "protocols.noesy_assign.NoesyModule" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.NoesyModule" );
 
 using core::Real;
 using namespace core;

@@ -89,7 +89,7 @@
 #include <iostream>
 #include <fstream>
 
-static thread_local basic::Tracer tr( "unalignedEvaluate" );
+static THREAD_LOCAL basic::Tracer tr( "unalignedEvaluate" );
 using std::string;
 using std::map;
 using std::vector;

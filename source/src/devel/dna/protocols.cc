@@ -73,7 +73,7 @@ using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
 // file-scope -- prob bad
-static thread_local basic::Tracer tt( "devel.dna.protocols", basic::t_info );
+static THREAD_LOCAL basic::Tracer tt( "devel.dna.protocols", basic::t_info );
 
 
 ////////////////////////////////////////////////////////////////////////

@@ -123,7 +123,7 @@ using basic::Error;
 using basic::Warning;
 
 
-static thread_local basic::Tracer tr( "main" );
+static THREAD_LOCAL basic::Tracer tr( "main" );
 
 OPT_KEY( File, hotspots )
 OPT_KEY( File, filter_hotspots1 )

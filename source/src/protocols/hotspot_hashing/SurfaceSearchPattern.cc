@@ -38,7 +38,7 @@
 namespace protocols {
 namespace hotspot_hashing {
 
-static thread_local basic::Tracer TR( "protocols.hotspot_hashing.SurfaceSearchPattern" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.hotspot_hashing.SurfaceSearchPattern" );
 
 SurfaceSearchPattern::SurfaceSearchPattern(
 	core::pose::Pose const & source_pose,

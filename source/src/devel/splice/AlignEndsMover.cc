@@ -18,7 +18,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "devel.splice.AlignEndsMover" );
+static THREAD_LOCAL basic::Tracer TR( "devel.splice.AlignEndsMover" );
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>

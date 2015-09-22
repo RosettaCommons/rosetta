@@ -62,7 +62,7 @@ using std::stringstream;
 using core::pose::Pose;
 using core::scoring::ScoreFunctionCOP;
 
-static thread_local basic::Tracer tr( "protocols.rotamer_recovery.RotamerRecoveryFactory" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.rotamer_recovery.RotamerRecoveryFactory" );
 
 RotamerRecoveryFactory *
 RotamerRecoveryFactory::create_singleton_instance()

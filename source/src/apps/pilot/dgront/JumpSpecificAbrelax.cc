@@ -190,7 +190,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.abinitio.JumpSpecificAbrelax" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.JumpSpecificAbrelax" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //Definition of new OptionKeys

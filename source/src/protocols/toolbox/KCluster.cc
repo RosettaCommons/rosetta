@@ -46,7 +46,7 @@
 using namespace std;
 using namespace core;
 
-static thread_local basic::Tracer TR( "protocols.kcluster" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.kcluster" );
 
 namespace protocols {
 namespace toolbox {

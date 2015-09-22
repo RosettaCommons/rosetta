@@ -35,7 +35,7 @@ namespace protocols {
 namespace toolbox {
 namespace rotamer_set_operations {
 
-static thread_local basic::Tracer tr( "protocols.toolbox.RotamerSetOperations.RigidBodyMoveRotSetOps" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.RotamerSetOperations.RigidBodyMoveRotSetOps" );
 
 void
 RigidBodyMoveBaseRSO::alter_rotamer_set(

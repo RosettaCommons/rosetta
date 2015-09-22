@@ -63,7 +63,7 @@ namespace rbsegment_relax {
 
 using namespace core;
 
-static thread_local basic::Tracer TR( "protocols::moves::RBSegmentMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols::moves::RBSegmentMover" );
 
 
 /// @brief set up constraints from RB segs

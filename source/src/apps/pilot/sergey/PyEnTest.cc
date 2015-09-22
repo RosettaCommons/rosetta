@@ -41,7 +41,7 @@ using core::pose::Pose;
 using core::conformation::Residue;
 
 
-static thread_local basic::Tracer TR( "PyEnTest" );
+static THREAD_LOCAL basic::Tracer TR( "PyEnTest" );
 
 
 using namespace core;

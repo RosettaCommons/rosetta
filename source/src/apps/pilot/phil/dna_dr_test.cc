@@ -153,7 +153,7 @@ using std::endl;
 using io::pdb::dump_pdb;
 
 
-static thread_local basic::Tracer tt( "demo.phil.dna_dr_test", basic::t_info );
+static THREAD_LOCAL basic::Tracer tt( "demo.phil.dna_dr_test", basic::t_info );
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -127,7 +127,7 @@ namespace protocols {
 namespace farna {
 
 
-static thread_local basic::Tracer TR( "protocols.farna.RNA_StructureParameters" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.farna.RNA_StructureParameters" );
 
 using namespace core;
 

@@ -75,7 +75,7 @@ using core::Real;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.StepWiseRNA_CombineLongLoopFilterer" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.StepWiseRNA_CombineLongLoopFilterer" );
 
 namespace protocols {
 namespace stepwise {

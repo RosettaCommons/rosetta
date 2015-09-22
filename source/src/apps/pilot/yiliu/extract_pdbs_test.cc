@@ -61,7 +61,7 @@
 using basic::T;
 using basic::Warning;
 using basic::Error;
-static thread_local basic::Tracer TR( "apps.pilot.yiliu.silent" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.yiliu.silent" );
 // C++ headers
 #include <fstream>
 #include <iostream>

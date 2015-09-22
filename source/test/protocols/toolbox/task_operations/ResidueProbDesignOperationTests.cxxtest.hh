@@ -53,7 +53,7 @@ using namespace core::chemical;
 
 using utility::vector1;
 
-static thread_local basic::Tracer TR("ResidueProbDesignOperationTests");
+static THREAD_LOCAL basic::Tracer TR("ResidueProbDesignOperationTests");
 
 class ResidueProbDesignOperationTests: public CxxTest::TestSuite {
 	typedef std::map< core::chemical::AA, core::Real > AAProbabilities; //Map of an amino acid and it's probability.

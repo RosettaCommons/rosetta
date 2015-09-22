@@ -76,7 +76,7 @@ OPT_KEY( Boolean, show_scores )
 OPT_KEY( Boolean, dump_pdb )
 
 
-static thread_local basic::Tracer TR( "apps.pilot.calebgeniesse.build_full_model" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.calebgeniesse.build_full_model" );
 
 ///////////////////////////////////////////////////////////////////////////////
 void

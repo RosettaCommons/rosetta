@@ -38,7 +38,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer trGunnScore(
+static THREAD_LOCAL basic::Tracer trGunnScore(
 	"protocols.frag_picker.scores.GunnCostScore");
 
 GunnCostScore::~GunnCostScore() {}

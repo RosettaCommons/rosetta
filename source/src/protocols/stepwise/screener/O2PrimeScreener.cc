@@ -19,7 +19,7 @@
 
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.screener.O2PrimeScreener" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.O2PrimeScreener" );
 
 namespace protocols {
 namespace stepwise {

@@ -34,7 +34,7 @@
 namespace core {
 namespace fragment {
 
-static thread_local basic::Tracer tr( "core.fragment" );
+static THREAD_LOCAL basic::Tracer tr( "core.fragment" );
 
 FragID FrameList::fragID ( Size flat_nr ) {
 	Size passed_frags( 0 );

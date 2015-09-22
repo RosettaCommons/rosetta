@@ -35,7 +35,7 @@
 // C++ headers
 #include <string>
 
-static thread_local basic::Tracer TR( "protocols.matdes.SymDofMoverSampler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.SymDofMoverSampler" );
 
 // Singleton instance and mutex static data members
 namespace utility {

@@ -40,7 +40,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static thread_local basic::Tracer rotates_tracer( "protocols.ligand_docking.ligand_options.rotates", basic::t_debug );
+static THREAD_LOCAL basic::Tracer rotates_tracer( "protocols.ligand_docking.ligand_options.rotates", basic::t_debug );
 
 std::string
 RotatesCreator::keyname() const

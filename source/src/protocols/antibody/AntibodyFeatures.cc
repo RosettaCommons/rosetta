@@ -52,7 +52,7 @@
 
 #define boost_foreach BOOST_FOREACH
 
-static thread_local basic::Tracer TR( "protocols.antibody.AntibodyFeatures" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.AntibodyFeatures" );
 
 namespace protocols {
 namespace antibody {

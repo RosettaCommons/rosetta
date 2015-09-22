@@ -33,7 +33,7 @@ namespace protocols {
 namespace match {
 namespace downstream {
 
-static thread_local basic::Tracer TR( "protocols.match.downstream.SecondaryMatcherToDownstreamResidue" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.match.downstream.SecondaryMatcherToDownstreamResidue" );
 
 DownstreamBuilder::DownstreamBuilder() : parent(), bb_grid_( /* 0 */ ) {}
 

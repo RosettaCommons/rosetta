@@ -44,7 +44,7 @@
 //Req'd on WIN32
 #include <basic/datacache/WriteableCacheableMap.hh>
 
-static thread_local basic::Tracer tr( "protocols.abinitio.abscript.StructPerturberCM", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.abscript.StructPerturberCM", basic::t_info );
 
 namespace protocols {
 namespace abinitio {

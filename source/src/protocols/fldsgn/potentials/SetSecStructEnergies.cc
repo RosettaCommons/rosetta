@@ -55,7 +55,7 @@ namespace protocols {
 namespace fldsgn {
 namespace potentials {
 
-static thread_local basic::Tracer TR( "protocols.fldsgn.SetSecStructEnergies" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.SetSecStructEnergies" );
 
 std::string
 SetSecStructEnergiesCreator::keyname() const

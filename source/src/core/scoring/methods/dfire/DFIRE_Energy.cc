@@ -33,7 +33,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer TR( "core.scoring.methods.DFIRE_Energy" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.DFIRE_Energy" );
 
 namespace core {
 namespace scoring {

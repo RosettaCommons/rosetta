@@ -35,7 +35,7 @@ namespace interaction_graph {
 using namespace graph;
 using namespace scoring;
 
-static thread_local basic::Tracer TR( "core.pack.interaction_graph.SimpleInteractionGraph" );
+static THREAD_LOCAL basic::Tracer TR( "core.pack.interaction_graph.SimpleInteractionGraph" );
 
 SimpleNode::SimpleNode( Graph* owner, Size node_id ):
 	Node( owner, node_id  ),

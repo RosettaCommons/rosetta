@@ -41,7 +41,7 @@ PoseBalls::~PoseBalls() {}
 
 using namespace ObjexxFCL;
 
-static thread_local basic::Tracer TR( "core.scoring.packing.PoseBalls" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.packing.PoseBalls" );
 
 inline core::Real sqr ( core::Real x ) {
 	return x*x;

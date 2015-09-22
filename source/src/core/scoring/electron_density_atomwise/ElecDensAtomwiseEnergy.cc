@@ -47,7 +47,7 @@ namespace scoring {
 namespace electron_density_atomwise {
 
 using namespace core;
-static thread_local basic::Tracer TR( "core.scoring.electron_density_atomwise.ElecDensAtomwiseEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.electron_density_atomwise.ElecDensAtomwiseEnergy" );
 
 /// @details This must return a fresh instance of the ElecDensAtomwiseEnergy class,
 /// never an instance already in use

@@ -54,7 +54,7 @@
 
 using numeric::conversions::radians;
 
-static thread_local basic::Tracer TR( "atom_design" );
+static THREAD_LOCAL basic::Tracer TR( "atom_design" );
 
 using core::Size;
 using core::Real;

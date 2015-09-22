@@ -37,7 +37,7 @@
 #include <sstream>
 #include <string>
 
-static thread_local basic::Tracer TR( "core.scoring.constraints.SplineFunc" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.SplineFunc" );
 
 namespace core {
 namespace scoring {

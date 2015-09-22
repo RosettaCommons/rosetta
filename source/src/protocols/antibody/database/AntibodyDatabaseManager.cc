@@ -59,7 +59,7 @@
 #include <fstream>
 
 
-static thread_local basic::Tracer TR("antibody.database.AntibodyDatabaseManager");
+static THREAD_LOCAL basic::Tracer TR("antibody.database.AntibodyDatabaseManager");
 
 namespace protocols {
 namespace antibody {

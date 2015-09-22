@@ -94,7 +94,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.abinitio", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio", basic::t_info );
 
 using namespace core;
 using scoring::constraints::ConstraintSet;

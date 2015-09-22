@@ -31,7 +31,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static thread_local basic::Tracer buried_unsat_hbond_filter_tracer( "protocols.simple_filters.BuriedUnsatHbondFilter" );
+static THREAD_LOCAL basic::Tracer buried_unsat_hbond_filter_tracer( "protocols.simple_filters.BuriedUnsatHbondFilter" );
 
 protocols::filters::FilterOP
 BuriedUnsatHbondFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BuriedUnsatHbondFilter ); }

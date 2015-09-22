@@ -63,7 +63,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer trTmScore(
+static THREAD_LOCAL basic::Tracer trTmScore(
 	"protocols.frag_picker.scores.FragmentChunkCrms");
 
 FragmentChunkCrms::~FragmentChunkCrms() {}

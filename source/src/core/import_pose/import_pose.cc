@@ -71,7 +71,7 @@ using basic::Warning;
 using namespace core::io::pdb;
 using namespace ObjexxFCL;
 
-static thread_local basic::Tracer TR( "core.import_pose.import_pose" );
+static THREAD_LOCAL basic::Tracer TR( "core.import_pose.import_pose" );
 
 using utility::vector1;
 

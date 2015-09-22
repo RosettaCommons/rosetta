@@ -54,7 +54,7 @@
 #include <core/scoring/dssp/StrandPairing.hh>
 #include <fstream>
 
-static thread_local basic::Tracer tr( "protocols.abinitio.Templates" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.Templates" );
 using namespace core;
 using namespace basic;
 using namespace basic::options;

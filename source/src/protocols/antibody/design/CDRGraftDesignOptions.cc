@@ -33,7 +33,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-static thread_local basic::Tracer TR("protocols.antibody.design.CDRGraftDesignOptions");
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.design.CDRGraftDesignOptions");
 
 
 namespace protocols {

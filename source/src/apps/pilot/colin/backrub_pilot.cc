@@ -72,7 +72,7 @@
 #include <utility/keys/Key3Vector.hh>
 
 
-static thread_local basic::Tracer TR( "apps.backrub" );
+static THREAD_LOCAL basic::Tracer TR( "apps.backrub" );
 
 //JAB - This is a fork of Backrub, and looks like it acted as a test for the detailed balance paper and code.
 // It should probably be deprecated.

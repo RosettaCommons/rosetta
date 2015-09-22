@@ -42,7 +42,7 @@ namespace protocols {
 namespace simple_moves {
 namespace symmetry {
 
-static thread_local basic::Tracer TZ( "protocols.simple_moves.symmetry.SetupNCSMover" );
+static THREAD_LOCAL basic::Tracer TZ( "protocols.simple_moves.symmetry.SetupNCSMover" );
 
 // creators
 std::string

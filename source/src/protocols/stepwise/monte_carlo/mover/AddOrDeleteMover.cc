@@ -45,7 +45,7 @@ using namespace core::pose::full_model_info;
 //
 //////////////////////////////////////////////////////////////////////////
 
-static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.AddOrDeleteMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.AddOrDeleteMover" );
 
 namespace protocols {
 namespace stepwise {

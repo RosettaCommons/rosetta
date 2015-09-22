@@ -44,7 +44,7 @@
 //#include <string>
 //#include <sstream>
 
-static thread_local basic::Tracer TR( "protocols.jd2.FileJobOutputter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.FileJobOutputter" );
 
 namespace protocols {
 namespace jd2 {

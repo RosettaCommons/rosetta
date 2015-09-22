@@ -25,7 +25,7 @@
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer TR( "protocols.stepwise.options.StepWiseBasicOptions" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.options.StepWiseBasicOptions" );
 
 namespace protocols {
 namespace stepwise {

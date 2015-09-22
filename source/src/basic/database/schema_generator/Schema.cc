@@ -61,7 +61,7 @@ using basic::database::table_exists;
 using utility::mpi_rank;
 using cppdb::statement;
 
-static thread_local basic::Tracer TR( "basic.database.schema_generator.Schema" );
+static THREAD_LOCAL basic::Tracer TR( "basic.database.schema_generator.Schema" );
 
 
 Schema::Schema(std::string table_name):

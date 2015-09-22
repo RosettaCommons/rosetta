@@ -40,7 +40,7 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
 
-static thread_local basic::Tracer TR( "devel.matdes.Symmetrizer" );
+static THREAD_LOCAL basic::Tracer TR( "devel.matdes.Symmetrizer" );
 
 
 namespace devel {

@@ -33,7 +33,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static thread_local basic::Tracer tr( "protocols.simple_filters.ResidueIEFilter" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.simple_filters.ResidueIEFilter" );
 
 protocols::filters::FilterOP
 ResidueIEFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueIEFilter ); }

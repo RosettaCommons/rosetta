@@ -48,7 +48,7 @@ typedef protocols::moves::Mover Parent;
 namespace protocols {
 namespace nonlocal {
 
-static thread_local basic::Tracer TR( "protocols.nonlocal.SingleFragmentMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.nonlocal.SingleFragmentMover" );
 
 
 SingleFragmentMover::SingleFragmentMover() : Parent("SingleFragmentMover") {}

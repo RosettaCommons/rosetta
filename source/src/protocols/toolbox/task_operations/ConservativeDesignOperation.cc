@@ -25,7 +25,7 @@
 #include <basic/options/keys/task_operations.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
-static thread_local basic::Tracer TR( "protocols.toolbox.task_operations.ConservativeDesignOperation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.ConservativeDesignOperation" );
 
 namespace protocols {
 namespace toolbox {

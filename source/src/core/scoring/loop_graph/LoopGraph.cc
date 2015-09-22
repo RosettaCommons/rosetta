@@ -34,7 +34,7 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
-static thread_local basic::Tracer TR( "core.scoring.loop_graph.LoopGraph" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.loop_graph.LoopGraph" );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

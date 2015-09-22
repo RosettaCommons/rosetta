@@ -38,7 +38,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "core.scoring.ResidualDipolarCoupling_Rohl" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.ResidualDipolarCoupling_Rohl" );
 
 namespace core {
 namespace scoring {

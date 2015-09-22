@@ -54,7 +54,7 @@
 namespace protocols {
 namespace motifs {
 
-static thread_local basic::Tracer mt( "protocols.motifs.Motif", basic::t_info );
+static THREAD_LOCAL basic::Tracer mt( "protocols.motifs.Motif", basic::t_info );
 
 Motif::Motif(
 	std::string const resname1,

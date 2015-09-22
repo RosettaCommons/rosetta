@@ -61,7 +61,7 @@ using namespace protocols::moves;
 using namespace protocols::forge::build;
 using namespace protocols::forge::components;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.VLB" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.VLB" );
 
 std::string
 VLBCreator::keyname() const

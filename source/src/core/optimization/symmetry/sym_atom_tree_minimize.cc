@@ -64,7 +64,7 @@ namespace core {
 namespace optimization {
 namespace symmetry {
 
-static thread_local basic::Tracer TR( "core.optimization.symmetry.sym_atom_tree_minimize" );
+static THREAD_LOCAL basic::Tracer TR( "core.optimization.symmetry.sym_atom_tree_minimize" );
 
 typedef id::DOF_ID DOF_ID;
 

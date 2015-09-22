@@ -41,7 +41,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static thread_local basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
 
 protocols::filters::FilterOP
 DdgFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DdgFilter ); }

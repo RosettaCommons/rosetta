@@ -57,7 +57,7 @@
 //numeric headers
 
 
-static thread_local basic::Tracer tr( "protocols.loops.loop_closure.ccd.WidthFirstSlidingWindowLoopClosure" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.loops.loop_closure.ccd.WidthFirstSlidingWindowLoopClosure" );
 
 namespace protocols {
 namespace loops {

@@ -48,7 +48,7 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 
-static thread_local basic::Tracer tr( "apps.pilot.lsmgridprobe.cc" );
+static THREAD_LOCAL basic::Tracer tr( "apps.pilot.lsmgridprobe.cc" );
 
 namespace basic{
 	namespace options{

@@ -37,7 +37,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/util.hh>
 
-static thread_local basic::Tracer TR( "protocols.antibody.RefineBetaBarrel" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.RefineBetaBarrel" );
 
 using namespace core;
 namespace protocols {

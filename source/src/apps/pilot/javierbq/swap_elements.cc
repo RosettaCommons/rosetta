@@ -78,7 +78,7 @@
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer TR( "main" );
+static THREAD_LOCAL basic::Tracer TR( "main" );
 
 
 class ThisApplication  {

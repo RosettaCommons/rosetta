@@ -41,7 +41,7 @@
 
 
 using basic::Warning;
-static thread_local basic::Tracer TR( "protocols.jd2.FileSystemJobDistributor" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.FileSystemJobDistributor" );
 
 namespace protocols {
 namespace jd2 {

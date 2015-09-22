@@ -72,7 +72,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer tr( "protocols.canonical_sampling.HamiltonianExchange" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.HamiltonianExchange" );
 
 
 bool protocols::canonical_sampling::HamiltonianExchange::options_registered_( false );

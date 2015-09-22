@@ -28,7 +28,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.sparta" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.sparta" );
 
 namespace protocols {
 namespace sparta {

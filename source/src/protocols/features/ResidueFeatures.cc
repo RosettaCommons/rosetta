@@ -51,7 +51,7 @@
 namespace protocols {
 namespace features {
 
-static thread_local basic::Tracer TR( "protocols.features.ResidueFeatures" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.features.ResidueFeatures" );
 
 using std::string;
 using core::Size;

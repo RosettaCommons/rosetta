@@ -18,7 +18,7 @@
 
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.screener.RNA_ChainClosableGeometryScreener" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.RNA_ChainClosableGeometryScreener" );
 
 namespace protocols {
 namespace stepwise {

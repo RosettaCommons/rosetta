@@ -53,7 +53,7 @@ using basic::Error;
 using basic::Warning;
 
 
-static thread_local basic::Tracer TR( "protocols.docking.ConformerSwitchMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.docking.ConformerSwitchMover" );
 
 namespace protocols {
 namespace docking {

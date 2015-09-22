@@ -60,13 +60,13 @@
 #include <thread>
 
 using basic::Warning;
-static thread_local basic::Tracer TR( "protocols.jd2.MultiThreadedJobDistributor" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.MultiThreadedJobDistributor" );
 
 namespace protocols {
 namespace jd2 {
 
 
-thread_local RunningJobOP running_job_;
+THREAD_LOCAL RunningJobOP running_job_;
 
 void
 set_running_job( RunningJob const & job ) {

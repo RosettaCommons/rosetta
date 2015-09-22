@@ -53,7 +53,7 @@ using namespace core;
 using namespace fragment;
 using namespace basic;
 
-static thread_local basic::Tracer tr( "protocols.simple_moves.FragmentMover" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.simple_moves.FragmentMover" );
 
 FragmentMover::~FragmentMover() {}
 

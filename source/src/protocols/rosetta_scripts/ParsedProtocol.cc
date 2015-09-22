@@ -66,9 +66,9 @@
 namespace protocols {
 namespace rosetta_scripts {
 
-static thread_local basic::Tracer TR( "protocols.rosetta_scripts.ParsedProtocol" );
-static thread_local basic::Tracer TR_call_order( "protocols.rosetta_scripts.ParsedProtocol_call_order" );
-static thread_local basic::Tracer TR_report( "protocols.rosetta_scripts.ParsedProtocol.REPORT" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.ParsedProtocol" );
+static THREAD_LOCAL basic::Tracer TR_call_order( "protocols.rosetta_scripts.ParsedProtocol_call_order" );
+static THREAD_LOCAL basic::Tracer TR_report( "protocols.rosetta_scripts.ParsedProtocol.REPORT" );
 
 typedef core::Real Real;
 typedef core::pose::Pose Pose;

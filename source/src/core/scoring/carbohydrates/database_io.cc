@@ -29,7 +29,7 @@
 
 
 // Construct tracer.
-static thread_local basic::Tracer TR( "core.scoring.carbohydrates.database_io" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.carbohydrates.database_io" );
 
 
 namespace core {

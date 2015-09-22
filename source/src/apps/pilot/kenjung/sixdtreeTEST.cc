@@ -24,7 +24,7 @@ using basic::T;
 using namespace core;
 using namespace protocols::match;
 using namespace numeric::geometry;
-static thread_local basic::Tracer TR( "main" );
+static THREAD_LOCAL basic::Tracer TR( "main" );
 
 
 int

@@ -89,7 +89,7 @@ using Xform;
 using core::conformation::ResidueOP;
 
 
-static thread_local basic::Tracer TR( "dock_asym" );
+static THREAD_LOCAL basic::Tracer TR( "dock_asym" );
 static core::io::silent::SilentFileData sfd;
 
 #include <apps/pilot/will/sicfast.ihh>

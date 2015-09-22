@@ -52,7 +52,7 @@
 namespace core {
 namespace util {
 
-static thread_local basic::Tracer TS( "core.scoring.cryst.util" );
+static THREAD_LOCAL basic::Tracer TS( "core.scoring.cryst.util" );
 
 core::Real getMLweight(core::scoring::ScoreFunction & scorefxn,  core::pose::Pose & pose ) {
 	// if no movemap is specified assume everything can move

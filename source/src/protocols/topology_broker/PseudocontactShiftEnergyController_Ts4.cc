@@ -48,7 +48,7 @@
 // C++ headers
 
 
-static thread_local basic::Tracer tr_control( "protocols.topology_broker.PseudocontactShiftEnergyController_Ts4" );
+static THREAD_LOCAL basic::Tracer tr_control( "protocols.topology_broker.PseudocontactShiftEnergyController_Ts4" );
 
 namespace protocols {
 namespace topology_broker {

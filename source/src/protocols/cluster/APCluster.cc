@@ -21,7 +21,7 @@
 
 #include <cstdio>
 
-static thread_local basic::Tracer TR( "protocols.cluster.APCluster" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.cluster.APCluster" );
 
 namespace protocols {
 namespace cluster {

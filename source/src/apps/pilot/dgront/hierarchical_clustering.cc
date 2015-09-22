@@ -32,7 +32,7 @@
 
 #include <utility/excn/Exceptions.hh>
 
-static thread_local basic::Tracer TR( "cluster_anything" );
+static THREAD_LOCAL basic::Tracer TR( "cluster_anything" );
 
 OPT_1GRP_KEY( Integer, clustering, n )
 OPT_1GRP_KEY( String, clustering, distances )

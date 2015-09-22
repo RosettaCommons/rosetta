@@ -37,7 +37,7 @@ namespace ligand_docking {
 
 typedef utility::pointer::shared_ptr<core::grid::CartGrid<int> > CartGridIntOP;
 
-static thread_local basic::Tracer TR( "protocols.ligand_docking.grid_functions", basic::t_debug );
+static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.grid_functions", basic::t_debug );
 
 
 /// @details If score exceeds max_score, stop counting and return (faster).

@@ -26,7 +26,7 @@
 
 // C++ Headers
 
-static thread_local basic::Tracer utilTR( "test.protocols.denovo_design.test_utils.cc" );
+static THREAD_LOCAL basic::Tracer utilTR( "test.protocols.denovo_design.test_utils.cc" );
 
 namespace protocols {
 namespace denovo_design {

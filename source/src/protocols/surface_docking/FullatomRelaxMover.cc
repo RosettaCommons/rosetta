@@ -54,7 +54,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.SurfaceDocking.FullatomRelaxMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.SurfaceDocking.FullatomRelaxMover" );
 
 namespace protocols {
 namespace surface_docking {

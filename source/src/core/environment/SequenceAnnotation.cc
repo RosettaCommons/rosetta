@@ -29,7 +29,7 @@
 
 // ObjexxFCL Headers
 
-static thread_local basic::Tracer tr( "core.environment.SequenceAnnotation", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "core.environment.SequenceAnnotation", basic::t_info );
 
 namespace core {
 namespace environment {

@@ -40,7 +40,7 @@ namespace fiber_diffraction {
 
 using basic::T;
 using basic::Tracer;
-static thread_local basic::Tracer TR( "core.scoring.fiber_diffraction.FiberDiffraction" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.fiber_diffraction.FiberDiffraction" );
 
 using namespace core;
 using namespace basic::options;

@@ -47,7 +47,7 @@ namespace protocols {
 namespace loophash {
 
 
-static thread_local basic::Tracer TR( "WorkUnit_LoopHash" );
+static THREAD_LOCAL basic::Tracer TR( "WorkUnit_LoopHash" );
 
 
 WorkUnit_LoopHash::WorkUnit_LoopHash( core::Size start_ir, core::Size end_ir, core::Size ssid ):

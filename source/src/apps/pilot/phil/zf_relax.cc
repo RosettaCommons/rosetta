@@ -97,10 +97,10 @@ using utility::vector1;
 using std::string;
 
 
-static thread_local basic::Tracer tt( "demo.phil.zf_relax", basic::t_trace );
-static thread_local basic::Tracer td( "demo.phil.zf_relax", basic::t_debug );
-static thread_local basic::Tracer ti( "demo.phil.zf_relax", basic::t_info );
-static thread_local basic::Tracer tw( "demo.phil.zf_relax", basic::t_warning );
+static THREAD_LOCAL basic::Tracer tt( "demo.phil.zf_relax", basic::t_trace );
+static THREAD_LOCAL basic::Tracer td( "demo.phil.zf_relax", basic::t_debug );
+static THREAD_LOCAL basic::Tracer ti( "demo.phil.zf_relax", basic::t_info );
+static THREAD_LOCAL basic::Tracer tw( "demo.phil.zf_relax", basic::t_warning );
 
 
 ///////////////////////////////////////////////////////////////////////////////

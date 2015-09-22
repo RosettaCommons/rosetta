@@ -39,7 +39,7 @@ typedef vector1<Size> Sizes;
 typedef numeric::Xforms Xforms;
 typedef vector1<RigidScoreCOP> Scores;
 
-static thread_local basic::Tracer TR( "protocols.sic_dock.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sic_dock.util" );
 
 Real get_rg(core::pose::Pose const & pose){
 	Vec center_of_mass = center_of_geom(pose);

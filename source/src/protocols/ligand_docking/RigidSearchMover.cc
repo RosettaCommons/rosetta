@@ -34,7 +34,7 @@
 #include <ctime>
 #endif
 
-static thread_local basic::Tracer TR( "protocols.ligand_docking.RigidSearchMover", basic::t_debug );
+static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.RigidSearchMover", basic::t_debug );
 
 namespace protocols {
 namespace ligand_docking {

@@ -51,7 +51,7 @@
 namespace protocols {
 namespace jobdist {
 
-static thread_local basic::Tracer tr( "protocols.jobdist.not_universal_main" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.jobdist.not_universal_main" );
 
 bool pose_matches_user_tag(
 	core::pose::Pose & pose,

@@ -113,7 +113,7 @@
 
 #include <basic/prof.hh>
 
-static thread_local basic::Tracer TR( "pilot.wendao.bbmc" );
+static THREAD_LOCAL basic::Tracer TR( "pilot.wendao.bbmc" );
 
 //params for all
 OPT_1GRP_KEY(Integer, mc, ntrials) //how many steps

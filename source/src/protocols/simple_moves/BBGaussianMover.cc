@@ -50,7 +50,7 @@ using namespace numeric;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.BBGaussianMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.BBGaussianMover" );
 
 namespace protocols {
 namespace simple_moves {

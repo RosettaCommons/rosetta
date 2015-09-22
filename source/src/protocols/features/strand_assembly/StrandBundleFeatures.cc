@@ -61,7 +61,7 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
-static thread_local basic::Tracer TR( "protocols.features.strand_assembly.StrandBundleFeatures" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.features.strand_assembly.StrandBundleFeatures" );
 
 using namespace std;
 using namespace core;

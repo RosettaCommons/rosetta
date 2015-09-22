@@ -68,7 +68,7 @@ namespace loophash {
 
 using namespace protocols::wum;
 
-static thread_local basic::Tracer TR( "MPI.LHR" );
+static THREAD_LOCAL basic::Tracer TR( "MPI.LHR" );
 
 
 MPI_LoopHashRefine::MPI_LoopHashRefine( char machine_letter ):

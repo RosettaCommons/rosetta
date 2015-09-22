@@ -39,7 +39,7 @@
 
 // C++ headers
 
-static thread_local basic::Tracer TR( "apps.pilot_apps.sarel.hotspot_stub_constraint_test" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot_apps.sarel.hotspot_stub_constraint_test" );
 
 typedef core::Size Size;
 typedef core::Real Real;

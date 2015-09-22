@@ -65,7 +65,7 @@ typedef conformation::symmetry::SymmetricConformation SymmetricConformation;
 typedef conformation::symmetry::SymmetryInfo SymmetryInfo;
 
 
-static thread_local basic::Tracer TR( "core.pack.rotamer_trials" );
+static THREAD_LOCAL basic::Tracer TR( "core.pack.rotamer_trials" );
 
 utility::vector1< uint >
 symmetric_repackable_residues(

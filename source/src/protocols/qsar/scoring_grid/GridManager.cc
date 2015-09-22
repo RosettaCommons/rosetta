@@ -54,7 +54,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-static thread_local basic::Tracer GridManagerTracer( "protocols.qsar.scoring_grid.GridManager" );
+static THREAD_LOCAL basic::Tracer GridManagerTracer( "protocols.qsar.scoring_grid.GridManager" );
 
 #if defined MULTI_THREADED && defined CXX11
 std::atomic< GridManager * > GridManager::instance_( 0 );

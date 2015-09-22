@@ -56,7 +56,7 @@ namespace rigid {
 
 std::string const DOCKJUMP_TAG = "_dockjump";
 
-static thread_local basic::Tracer tr( "protocols.rigid.UniformRigidBodyCM", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "protocols.rigid.UniformRigidBodyCM", basic::t_info );
 
 using namespace core::environment;
 using namespace protocols::environment;

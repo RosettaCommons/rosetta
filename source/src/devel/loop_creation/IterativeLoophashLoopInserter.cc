@@ -62,7 +62,7 @@
 namespace devel {
 namespace loop_creation {
 
-static thread_local basic::Tracer TR( "protocols.loophash.IterativeLoophashLoopInserter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.loophash.IterativeLoophashLoopInserter" );
 
 //****CREATOR METHODS****//
 std::string

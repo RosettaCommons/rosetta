@@ -25,7 +25,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.o2prime.O2PrimePacker" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.o2prime.O2PrimePacker" );
 
 namespace protocols {
 namespace stepwise {

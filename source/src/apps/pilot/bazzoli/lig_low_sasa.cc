@@ -71,7 +71,7 @@ using core::Real;
 using core::pose::Pose;
 using std::string;
 
-static thread_local basic::Tracer TR( "apps.pilot.lig_low_sasa.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.lig_low_sasa.main" );
 
 
 /// @brief Returns the residue number of a residue in a pose.

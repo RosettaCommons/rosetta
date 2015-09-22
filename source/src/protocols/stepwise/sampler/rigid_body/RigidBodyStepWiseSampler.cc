@@ -45,7 +45,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 
-static thread_local basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodyStepWiseSampler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodyStepWiseSampler" );
 
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 static Real const RADS_PER_DEG = numeric::NumericTraits < Real > ::pi() / 180.;

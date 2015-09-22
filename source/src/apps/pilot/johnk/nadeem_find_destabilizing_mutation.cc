@@ -48,7 +48,7 @@ using namespace basic::options::OptionKeys;
 
 OPT_KEY( String, chain_for_destabilization )
 
-static thread_local basic::Tracer TR( "apps.pilot.nadeem_find_destabilizing_mutation.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.nadeem_find_destabilizing_mutation.main" );
 
 int
 main( int argc, char * argv [] )

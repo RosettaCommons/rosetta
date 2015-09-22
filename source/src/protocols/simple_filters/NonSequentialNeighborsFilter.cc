@@ -25,7 +25,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static thread_local basic::Tracer TR( "protocols.simple_filters.NonSequentialNeighborsFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.NonSequentialNeighborsFilter" );
 
 protocols::filters::FilterOP
 NonSequentialNeighborsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NonSequentialNeighborsFilter ); }

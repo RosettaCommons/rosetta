@@ -33,7 +33,7 @@
 namespace core {
 namespace sequence {
 
-static thread_local basic::Tracer tr( "core.sequence.SequenceCoupling" );
+static THREAD_LOCAL basic::Tracer tr( "core.sequence.SequenceCoupling" );
 
 /*
 void SequenceCoupling::profile(utility::vector1< utility::vector1< Real > > const & new_profile){

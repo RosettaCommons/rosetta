@@ -18,7 +18,7 @@
 #include <iostream>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.phosphate.PhosphateMove" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.phosphate.PhosphateMove" );
 
 namespace protocols {
 namespace stepwise {

@@ -39,7 +39,7 @@
 namespace protocols {
 namespace hotspot_hashing {
 
-static thread_local basic::Tracer TR( "protocols.hotspot_hashing.SearchPatternRotSetOp" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.hotspot_hashing.SearchPatternRotSetOp" );
 
 SearchPatternRotSetOp::SearchPatternRotSetOp( SearchPatternOP pattern ) :
 	protocols::toolbox::rotamer_set_operations::RigidBodyMoveBaseRSO(),

@@ -52,7 +52,7 @@ namespace scoring {
 namespace methods {
 namespace pcs2 {
 
-static thread_local basic::Tracer TR_PcsDataCenterManagerSingleton( "protocols.scoring.methods.pcs.PcsDataCenterManagerSingleton" );
+static THREAD_LOCAL basic::Tracer TR_PcsDataCenterManagerSingleton( "protocols.scoring.methods.pcs.PcsDataCenterManagerSingleton" );
 
 PcsDataCenterManagerSingleton::PcsDataCenterManagerSingleton(PcsEnergyParameterManager & pcs_e_p_m){
 

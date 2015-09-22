@@ -32,7 +32,7 @@ namespace protocols {
 namespace frag_picker {
 namespace quota {
 
-static thread_local basic::Tracer trABEGO_SS_Config(
+static THREAD_LOCAL basic::Tracer trABEGO_SS_Config(
 	"protocols.frag_picker.quota.ABEGO_SS_Config");
 
 ABEGO_SS_Config::ABEGO_SS_Config(std::string & file_name) : source_file_name_(file_name) {

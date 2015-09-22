@@ -53,7 +53,7 @@ using basic::Warning;
 namespace protocols {
 namespace generalized_kinematic_closure {
 
-static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.GeneralizedKIC" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.generalized_kinematic_closure.GeneralizedKIC" );
 
 std::string
 GeneralizedKICCreator::keyname() const

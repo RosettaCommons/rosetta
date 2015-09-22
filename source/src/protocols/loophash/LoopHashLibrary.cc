@@ -73,7 +73,7 @@ using namespace protocols::frag_picker;
 namespace protocols {
 namespace loophash {
 
-static thread_local basic::Tracer TR( "LoopHashLibrary" );
+static THREAD_LOCAL basic::Tracer TR( "LoopHashLibrary" );
 
 
 LoopHashLibrary::LoopHashLibrary( const utility::vector1< core::Size > &init_sizes, const core::Size num_partitions,

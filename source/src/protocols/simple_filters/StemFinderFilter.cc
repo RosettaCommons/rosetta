@@ -32,7 +32,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static thread_local basic::Tracer TR( "protocols.simple_filters.StemFinder" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.StemFinder" );
 
 protocols::filters::FilterOP
 StemFinderFilterCreator::create_filter() const { return protocols::filters::FilterOP( new StemFinder ); }

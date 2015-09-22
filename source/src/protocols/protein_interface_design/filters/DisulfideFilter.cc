@@ -52,7 +52,7 @@ using utility::vector1;
 using utility::vector1_int;
 using protocols::protein_interface_design::movers::DisulfideMover;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.DisulfideFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.DisulfideFilter" );
 
 const core::scoring::disulfides::CentroidDisulfidePotential DisulfideFilter::potential_;
 

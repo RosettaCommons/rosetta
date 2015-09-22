@@ -21,7 +21,7 @@
 #include <core/chemical/rna/util.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.screener.CentroidDistanceScreener" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.CentroidDistanceScreener" );
 
 using namespace core;
 using namespace protocols::stepwise::sampler;

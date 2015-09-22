@@ -52,7 +52,7 @@
 #include <sstream>
 
 // tracer
-static thread_local basic::Tracer TR( "PeptoidDihedralGrabber" );
+static THREAD_LOCAL basic::Tracer TR( "PeptoidDihedralGrabber" );
 
 // local options
 basic::options::BooleanOptionKey const cyclic( "cyclic" );

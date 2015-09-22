@@ -41,7 +41,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "core.io.constraints" );
+static THREAD_LOCAL basic::Tracer tr( "core.io.constraints" );
 
 
 namespace core {

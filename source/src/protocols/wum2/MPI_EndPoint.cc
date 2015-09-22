@@ -34,7 +34,7 @@ namespace wum2 {
 
 using namespace boost;
 
-static thread_local basic::Tracer TR( "protocols.wum2.MPI_EndPoint" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.wum2.MPI_EndPoint" );
 
 MPI_EndPoint::MPI_EndPoint( mpi::communicator world, function< boost::uint64_t () > role_available_mem  )
   : world_( world ),

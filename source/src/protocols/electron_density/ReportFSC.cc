@@ -45,7 +45,7 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
 
-static thread_local basic::Tracer TR( "protocols.electron_density.ReportFSC" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.ReportFSC" );
 
 namespace protocols {
 namespace electron_density {

@@ -62,7 +62,7 @@ OPT_KEY( Integer, central_relax_pdb_num1 )
 OPT_KEY( Integer, central_relax_pdb_num2 )
 OPT_KEY( Integer, central_relax_pdb_num3 )
 
-static thread_local basic::Tracer TR( "apps.pilot.justin_local_backrub.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.justin_local_backrub.main" );
 
 /// General testing code
 int

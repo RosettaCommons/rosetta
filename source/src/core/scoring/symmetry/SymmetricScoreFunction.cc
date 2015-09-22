@@ -62,7 +62,7 @@ namespace symmetry {
 
 using namespace conformation::symmetry;
 
-static thread_local basic::Tracer TR( "core.scoring.symmetry.SymmetricScoreFunction" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.symmetry.SymmetricScoreFunction" );
 ///////////////////////////////////////////////////////////////////////////////
 SymmetricScoreFunction::SymmetricScoreFunction():
 	ScoreFunction()

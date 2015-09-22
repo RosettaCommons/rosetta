@@ -37,7 +37,7 @@
 namespace protocols {
 namespace enzdes {
 
-static thread_local basic::Tracer tr( "protocols.enzdes.EnzdesFixBBProtocol" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.EnzdesFixBBProtocol" );
 
 EnzdesFixBBProtocol::EnzdesFixBBProtocol()
 : EnzdesBaseProtocol(),

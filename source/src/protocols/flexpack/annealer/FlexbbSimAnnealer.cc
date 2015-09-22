@@ -45,7 +45,7 @@ namespace flexpack {
 namespace annealer {
 
 
-static thread_local basic::Tracer TR( "protocols.flexpack.annealer.FlexbbSimAnnealer" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.flexpack.annealer.FlexbbSimAnnealer" );
 
 FlexbbSimAnnealer::FlexbbSimAnnealer(
 	ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,

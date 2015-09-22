@@ -104,7 +104,7 @@ using utility::file::FileName;
 //kdrew: this app adds hbs patches to the given pdb strucure
 
 // tracer - used to replace cout
-static thread_local basic::Tracer TR( "B3A_distro" );
+static THREAD_LOCAL basic::Tracer TR( "B3A_distro" );
 
 
 // application specific options

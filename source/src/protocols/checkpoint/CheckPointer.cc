@@ -76,7 +76,7 @@ using basic::Warning;
 namespace protocols {
 namespace checkpoint {
 
-static thread_local basic::Tracer TR( "protocols::checkpoint" );
+static THREAD_LOCAL basic::Tracer TR( "protocols::checkpoint" );
 
 using namespace core;
 

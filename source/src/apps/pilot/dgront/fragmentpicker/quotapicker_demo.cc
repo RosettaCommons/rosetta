@@ -46,7 +46,7 @@
 
 #include <utility/excn/Exceptions.hh>
 
-static thread_local basic::Tracer trace( "quotapicker_demo" );
+static THREAD_LOCAL basic::Tracer trace( "quotapicker_demo" );
 
 using namespace core;
 using namespace core::fragment;

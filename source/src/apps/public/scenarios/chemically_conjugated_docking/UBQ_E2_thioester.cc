@@ -105,7 +105,7 @@
 //tracers
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "apps.public.scenarios.chemically_conjugated_docking.UBQ_E2_thioester" );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.scenarios.chemically_conjugated_docking.UBQ_E2_thioester" );
 
 class UBQ_E2Mover : public protocols::moves::Mover {
 

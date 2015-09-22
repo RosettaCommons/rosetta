@@ -40,7 +40,7 @@
 
 // option key includes
 
-static thread_local basic::Tracer TR( "decoy_features" );
+static THREAD_LOCAL basic::Tracer TR( "decoy_features" );
 
 using namespace core;
 using namespace basic::options;

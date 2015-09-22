@@ -53,7 +53,7 @@ using namespace protocols::jobdist;
 using namespace protocols::moves;
 
 
-static thread_local basic::Tracer TT( "ncontact" );
+static THREAD_LOCAL basic::Tracer TT( "ncontact" );
 
 namespace ncontact
 {

@@ -57,7 +57,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "core.scoring.geometric_solvation.OccludedHbondSolEnergy" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.geometric_solvation.OccludedHbondSolEnergy" );
 
 namespace core {
 namespace scoring {

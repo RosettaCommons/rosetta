@@ -38,7 +38,7 @@
 #include <core/io/pdb/pose_io.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.antibody2" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.antibody2" );
 
 int
 main( int argc, char * argv [] )

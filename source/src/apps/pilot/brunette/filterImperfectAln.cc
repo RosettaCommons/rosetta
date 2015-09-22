@@ -53,7 +53,7 @@
 
 #include <map>
 
-static thread_local basic::Tracer tr( "filterImperfectAln" );
+static THREAD_LOCAL basic::Tracer tr( "filterImperfectAln" );
 
 using utility::vector1;
 using core::Size;

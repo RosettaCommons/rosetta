@@ -146,8 +146,8 @@ using namespace utility;
 
 using utility::vector1;
 
-static thread_local basic::Tracer TR( "protocols.optimize_weights.IterativeOptEDriver" );
-static thread_local basic::Tracer TR_VERBOSE( "protocols.optimize_weights.IterativeOptEDriver.verbose" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.optimize_weights.IterativeOptEDriver" );
+static THREAD_LOCAL basic::Tracer TR_VERBOSE( "protocols.optimize_weights.IterativeOptEDriver.verbose" );
 
 
 void attach_debugger();

@@ -51,7 +51,7 @@ using namespace protocols;
 using namespace core::scoring;
 using namespace protocols::scoring;
 
-static thread_local basic::Tracer tr( "devel.replica_docking.AddEncounterConstraintMover" );
+static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.AddEncounterConstraintMover" );
 
 std::string
 AddEncounterConstraintMoverCreator::keyname() const

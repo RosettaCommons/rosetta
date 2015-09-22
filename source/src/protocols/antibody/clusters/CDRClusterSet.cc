@@ -19,7 +19,7 @@
 #include <basic/datacache/DataCache.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR("protocols.antibody.clusters.CDRClusterSet");
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.clusters.CDRClusterSet");
 
 namespace protocols {
 namespace antibody {

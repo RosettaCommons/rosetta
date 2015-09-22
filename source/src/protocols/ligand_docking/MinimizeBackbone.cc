@@ -63,7 +63,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static thread_local basic::Tracer minimize_backbone_tracer( "protocols.ligand_docking.ligand_options.MinimizeBackbone", basic::t_debug );
+static THREAD_LOCAL basic::Tracer minimize_backbone_tracer( "protocols.ligand_docking.ligand_options.MinimizeBackbone", basic::t_debug );
 
 std::string
 MinimizeBackboneCreator::keyname() const

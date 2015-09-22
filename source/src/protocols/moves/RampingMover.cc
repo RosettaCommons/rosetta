@@ -47,7 +47,7 @@ using basic::Warning;
 namespace protocols {
 namespace moves {
 
-static thread_local basic::Tracer TR( "protocols.moves.RampingMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.moves.RampingMover" );
 
 RampingFunc::~RampingFunc() {}
 

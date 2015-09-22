@@ -43,7 +43,7 @@
 using ObjexxFCL::format::I;
 using namespace core::chemical::rna;
 
-static thread_local basic::Tracer tr( "core.scoring.rna.RNA_MgPointEnergy" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.rna.RNA_MgPointEnergy" );
 
 //////////////////////////////////////////////////////////////////////////////////////
 //

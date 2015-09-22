@@ -40,7 +40,7 @@
 // C++ headers
 #include <iostream>
 
-static thread_local basic::Tracer TR( "apps.pilot.ralford.membrane_ddG" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_ddG" );
 
 using protocols::membrane::ddG::MutationOP;
 

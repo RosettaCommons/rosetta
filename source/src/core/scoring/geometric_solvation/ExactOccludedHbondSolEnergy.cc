@@ -77,7 +77,7 @@
 
 //Vector dummy_res_energy_vector_;
 
-static thread_local basic::Tracer TR( "core.scoring.geometric_solvation.ExactOccludedHbondSolEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.geometric_solvation.ExactOccludedHbondSolEnergy" );
 
 // Singleton instance and mutex static data members
 namespace utility {

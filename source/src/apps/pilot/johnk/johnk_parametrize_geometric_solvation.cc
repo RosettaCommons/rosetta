@@ -68,7 +68,7 @@ OPT_KEY( String, atom_type )
 OPT_KEY( Real, occluding_radius )
 OPT_KEY( Real, water_entropy_scaling_factor )
 
-static thread_local basic::Tracer TR( "apps.pilot.johnk_parametrize_geometric_solvation.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.johnk_parametrize_geometric_solvation.main" );
 
 struct GridInfo
 {

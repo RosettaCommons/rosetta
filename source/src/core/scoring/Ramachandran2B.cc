@@ -63,7 +63,7 @@ namespace scoring {
 // @brief Auto-generated virtual destructor
 Ramachandran2B::~Ramachandran2B() {}
 
-static thread_local basic::Tracer T( "core.scoring.Ramachandran2B" );
+static THREAD_LOCAL basic::Tracer T( "core.scoring.Ramachandran2B" );
 
 Real const Ramachandran2B::binw_( 10.0 );
 

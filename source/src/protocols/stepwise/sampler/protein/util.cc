@@ -55,7 +55,7 @@
 
 using namespace core;
 
-static thread_local basic::Tracer TR( "protocols.sampler.protein.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.protein.util" );
 
 namespace protocols {
 namespace stepwise {

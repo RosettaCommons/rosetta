@@ -56,7 +56,7 @@ namespace pack {
 namespace rotamer_set {
 namespace symmetry {
 
-static thread_local basic::Tracer tt( "core.pack.rotamer_set.symmetry.SymmetricRotamerSet_", basic::t_info );
+static THREAD_LOCAL basic::Tracer tt( "core.pack.rotamer_set.symmetry.SymmetricRotamerSet_", basic::t_info );
 
 SymmetricRotamerSet_::SymmetricRotamerSet_()
 : RotamerSet_()

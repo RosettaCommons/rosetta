@@ -37,7 +37,7 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-static thread_local basic::Tracer TR( "protocols.enzdes.EnzdesSeqRecoveryCache" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.enzdes.EnzdesSeqRecoveryCache" );
 
 EnzdesSeqRecoveryCache::EnzdesSeqRecoveryCache() {
 	sequence_.clear();

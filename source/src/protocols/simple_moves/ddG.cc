@@ -85,7 +85,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.ddG" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.ddG" );
 
 moves::MoverOP ddGCreator::create_mover() const
 {

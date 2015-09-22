@@ -63,7 +63,7 @@
 #include <iostream>
 #include <map>
 
-static thread_local basic::Tracer TR( "core.scoring.MultipoleElecPotential" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.MultipoleElecPotential" );
 
 typedef numeric::xyzVector< core::Real > Vector;
 typedef numeric::xyzMatrix< core::Real > Matrix;

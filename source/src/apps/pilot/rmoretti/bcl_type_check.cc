@@ -42,7 +42,7 @@
 
 using namespace basic::options;
 
-static thread_local basic::Tracer TR( "apps.gasteiger_type_check" );
+static THREAD_LOCAL basic::Tracer TR( "apps.gasteiger_type_check" );
 
 int
 main( int argc, char * argv [] )

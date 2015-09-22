@@ -70,7 +70,7 @@ using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
 
-static thread_local basic::Tracer tr( "protocols.canonical_sampling.DbTrajectoryRecorder" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.DbTrajectoryRecorder" );
 // }}}1
 
 string DbTrajectoryRecorderCreator::keyname() const { // {{{1

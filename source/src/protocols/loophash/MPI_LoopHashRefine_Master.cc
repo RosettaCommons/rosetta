@@ -68,7 +68,7 @@ namespace loophash {
 
 using namespace protocols::wum;
 
-static thread_local basic::Tracer TR( "MPI.LHR.Master" );
+static THREAD_LOCAL basic::Tracer TR( "MPI.LHR.Master" );
 
 
 void

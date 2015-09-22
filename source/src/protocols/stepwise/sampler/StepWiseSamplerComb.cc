@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.sampler.StepWiseSamplerComb" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.StepWiseSamplerComb" );
 
 using namespace core;
 

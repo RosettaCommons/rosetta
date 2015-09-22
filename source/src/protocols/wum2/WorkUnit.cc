@@ -25,7 +25,7 @@ namespace protocols {
 namespace wum2 {
 
 
-static thread_local basic::Tracer TR( "protocols.wum2.WorkUnit" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.wum2.WorkUnit" );
 
 #ifdef USELUA
 void lregister_WorkUnit( lua_State * lstate ) {

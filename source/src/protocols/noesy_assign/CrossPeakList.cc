@@ -53,7 +53,7 @@
 #include <protocols/noesy_assign/PeakAssignment.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
 
 using core::Real;
 using namespace core;

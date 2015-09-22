@@ -59,7 +59,7 @@ namespace pcs2 {
 
 using namespace ObjexxFCL;
 
-static thread_local basic::Tracer TR_PcsDataLanthanide( "protocols.scoring.methods.pcs.PcsDataLanthanide" );
+static THREAD_LOCAL basic::Tracer TR_PcsDataLanthanide( "protocols.scoring.methods.pcs.PcsDataLanthanide" );
 
 PcsDataLanthanide::~PcsDataLanthanide(){
 }

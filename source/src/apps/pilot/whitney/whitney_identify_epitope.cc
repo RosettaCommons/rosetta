@@ -51,7 +51,7 @@ OPT_KEY( String, identify_epitope_chain )
 OPT_KEY( String, constant_score_chain )
 OPT_KEY( String, native_pdb )
 
-static thread_local basic::Tracer TR( "apps.pilot.whitney_identify_epitope.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.whitney_identify_epitope.main" );
 
 void add_scores (core::pose::Pose & pose,
 								 utility::vector1 <core::Real> scores,

@@ -78,7 +78,7 @@ namespace medal {
 
 typedef boost::function<void(const core::pose::Pose&)> Trigger;
 
-static thread_local basic::Tracer TR( "protocols.medal.MedalMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.medal.MedalMover" );
 
 void on_pose_accept(const core::pose::Pose& pose) {
 	using core::io::silent::SilentFileData;

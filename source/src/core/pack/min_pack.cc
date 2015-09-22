@@ -77,7 +77,7 @@ void compare_mingraph_and_energy_graph(
 	scoring::MinimizationGraph const & mingraph
 );
 
-static thread_local basic::Tracer TR( "core.pack.min_pack", basic::t_info );
+static THREAD_LOCAL basic::Tracer TR( "core.pack.min_pack", basic::t_info );
 
 scmin::SCMinMinimizerMapOP
 create_scmin_minimizer_map(

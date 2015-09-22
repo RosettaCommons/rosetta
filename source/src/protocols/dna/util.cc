@@ -81,7 +81,7 @@ using namespace rotamer_set;
 using namespace scoring;
 using namespace ObjexxFCL::format;
 
-static thread_local basic::Tracer TR( "protocols.dna.util", basic::t_info );
+static THREAD_LOCAL basic::Tracer TR( "protocols.dna.util", basic::t_info );
 
 typedef utility::vector1< std::string > Strings;
 

@@ -85,7 +85,7 @@
 
 #include <utility/excn/Exceptions.hh>
 
-static thread_local basic::Tracer TR( "apps.public.beta_strand_homodimer_design.homodimer_maker" );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.beta_strand_homodimer_design.homodimer_maker" );
 
 
 using namespace core;

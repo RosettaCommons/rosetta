@@ -19,7 +19,7 @@
 
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.sampler.rigid_body.ResidueListStepWiseSampler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rigid_body.ResidueListStepWiseSampler" );
 
 namespace protocols {
 namespace stepwise {

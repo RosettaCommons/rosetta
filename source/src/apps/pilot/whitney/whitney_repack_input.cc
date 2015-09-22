@@ -38,7 +38,7 @@
 using namespace core;
 using namespace core::scoring;
 
-static thread_local basic::Tracer TR( "apps.pilot.whitney_repack_input.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.whitney_repack_input.main" );
 
 
 /// General testing code

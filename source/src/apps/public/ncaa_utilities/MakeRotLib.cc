@@ -27,7 +27,7 @@
 // utility headers
 #include <utility/excn/Exceptions.hh>
 
-static thread_local basic::Tracer TR( "MakeRotLib" );
+static THREAD_LOCAL basic::Tracer TR( "MakeRotLib" );
 
 int
 main( int argc, char * argv [] )

@@ -85,7 +85,7 @@
 	typedef numeric::xyzMatrix<Real> Mat;
 	typedef utility::vector1<Vec> Vecs;
 
-static thread_local basic::Tracer TR( "test_ikrs" );
+static THREAD_LOCAL basic::Tracer TR( "test_ikrs" );
 
 core::io::silent::SilentFileData sfd;
 vector1<Reals> vecs2vv(Vecs const & v) {

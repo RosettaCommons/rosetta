@@ -46,7 +46,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.noesy_assign.assignments" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.assignments" );
 
 namespace protocols {
 namespace noesy_assign {

@@ -87,7 +87,7 @@
 
 #include <devel/cstEnergyBalance/minimalCstRelaxUtil.hh>
 
-static thread_local basic::Tracer tr( "minimalCstRelax" );
+static THREAD_LOCAL basic::Tracer tr( "minimalCstRelax" );
 
 using core::Size;
 using std::map;

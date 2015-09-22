@@ -48,7 +48,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.BoltzmannRotamerMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.BoltzmannRotamerMover" );
 
 bool compare_values(
 	const std::pair<core::Size, core::Real> &lhs,

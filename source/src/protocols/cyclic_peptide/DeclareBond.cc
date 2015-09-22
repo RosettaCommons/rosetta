@@ -40,7 +40,7 @@
 
 #include <stdio.h>
 
-static thread_local basic::Tracer TR( "protocols.cyclic_peptide.DeclareBond" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.DeclareBond" );
 
 namespace protocols {
 namespace cyclic_peptide {

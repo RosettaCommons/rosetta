@@ -42,7 +42,7 @@
 
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.DesignAroundOperation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.DesignAroundOperation" );
 
 namespace protocols {
 namespace toolbox {

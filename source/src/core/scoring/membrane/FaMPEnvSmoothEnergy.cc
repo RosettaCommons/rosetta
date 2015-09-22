@@ -53,7 +53,7 @@
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 // Auto using namespaces end
 
-static thread_local basic::Tracer TR( "core.scoring.membrane.FaMPEnvSmoothEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.membrane.FaMPEnvSmoothEnergy" );
 
 namespace core {
 namespace scoring {

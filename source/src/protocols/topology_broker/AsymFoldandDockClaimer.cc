@@ -45,7 +45,7 @@
 
 // Project Headers
 
-static thread_local basic::Tracer tr( "protocols.topo_broker.asym_fold_and_dock", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "protocols.topo_broker.asym_fold_and_dock", basic::t_info );
 
 namespace protocols {
 namespace topology_broker {

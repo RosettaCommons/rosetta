@@ -45,7 +45,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
-static thread_local basic::Tracer TR( "protocols.loops.loop_mover.refine.ShearMinCCDTrial" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.refine.ShearMinCCDTrial" );
 using namespace core;
 
 namespace protocols {

@@ -32,7 +32,7 @@
 namespace protocols {
 namespace rosetta_scripts {
 
-static thread_local basic::Tracer TR( "protocols.rosetta_scripts.PosePropertyReporterFactory" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.PosePropertyReporterFactory" );
 
 #if defined MULTI_THREADED && defined CXX11
 std::atomic< PosePropertyReporterFactory * > PosePropertyReporterFactory::instance_( 0 );

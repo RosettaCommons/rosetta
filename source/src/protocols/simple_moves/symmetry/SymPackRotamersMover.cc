@@ -40,7 +40,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.symmetry.SymPackRotamersMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.symmetry.SymPackRotamersMover" );
 
 // Utility Headers
 #include <utility/exit.hh>

@@ -47,7 +47,7 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
 
-static thread_local basic::Tracer TR( "protocols.matdes.SymDofMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.SymDofMover" );
 
 
 namespace protocols {

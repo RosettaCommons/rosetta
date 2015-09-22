@@ -73,7 +73,7 @@ namespace methods {
 LKB_ResidueInfo::~LKB_ResidueInfo() {}
 
 
-static thread_local basic::Tracer TR("core.scoring.methods.LK_BallInfo" );
+static THREAD_LOCAL basic::Tracer TR("core.scoring.methods.LK_BallInfo" );
 
 
 /// LAZY

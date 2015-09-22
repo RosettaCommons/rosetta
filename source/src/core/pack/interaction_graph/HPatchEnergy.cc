@@ -28,7 +28,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer TR( "core.pack.interaction_graph.HPatchEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.pack.interaction_graph.HPatchEnergy" );
 
 // C++ headers
 

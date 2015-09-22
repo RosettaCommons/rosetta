@@ -50,7 +50,7 @@ typedef SetupPoissonBoltzmannPotential SetupPB;
 typedef SetupPoissonBoltzmannPotentialCreator SetupPBCreator;
 typedef core::Size Size;
 
-static thread_local basic::Tracer TR( "protocols.pb_potential.SetupPoissonBoltzmannPotential" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.pb_potential.SetupPoissonBoltzmannPotential" );
 
 SetupPBCreator::SetupPoissonBoltzmannPotentialCreator()
 {}

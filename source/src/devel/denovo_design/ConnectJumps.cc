@@ -20,7 +20,7 @@
 // Basic Headers
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "devel.denovo_design.ConnectJumps" );
+static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.ConnectJumps" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -24,7 +24,7 @@ namespace neighbor {
 
 using core::Real;
 
-static thread_local basic::Tracer TR( "protocols.neighbor" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.neighbor" );
 
 
 /// @brief Neighborhood's constructor.

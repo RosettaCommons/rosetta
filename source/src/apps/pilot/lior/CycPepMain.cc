@@ -146,7 +146,7 @@ using basic::Error;
 using basic::Warning;
 
 //typedef utility::pointer::owning_ptr< BaseJobDistributor< BasicJobOP > > BaseJobDistributorOP
-static thread_local basic::Tracer TR( "pilot_apps.CycPepModeler" );
+static THREAD_LOCAL basic::Tracer TR( "pilot_apps.CycPepModeler" );
 
 // copied from
 int distribute_jobs(protocols::moves::Mover& mover, bool random_permutation)

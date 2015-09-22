@@ -36,7 +36,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "core.scoring.DistanceChainbreak", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.DistanceChainbreak", basic::t_info );
 
 namespace core {
 namespace scoring {

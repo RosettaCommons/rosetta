@@ -41,7 +41,7 @@ namespace core {
 namespace optimization {
 
 using namespace ObjexxFCL;
-static thread_local basic::Tracer TR( "core.optimization.NelderMeadSimplex" );
+static THREAD_LOCAL basic::Tracer TR( "core.optimization.NelderMeadSimplex" );
 
 // sort our vector list min->max
 struct sort_pred {

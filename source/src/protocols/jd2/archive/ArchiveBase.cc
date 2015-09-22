@@ -43,7 +43,7 @@
 
 //C++
 
-static thread_local basic::Tracer tr( "protocols.jd2.Archive" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.Archive" );
 using basic::mem_tr;
 // Utility headers
 #include <basic/options/option_macros.hh>

@@ -134,7 +134,7 @@ OPT_1GRP_KEY(Real, tors, smoothing)
 OPT_1GRP_KEY(Real, tors, cap)
 OPT_1GRP_KEY(Real, tors, scale)
 
-static thread_local basic::Tracer TR( "torsion.corrections" );
+static THREAD_LOCAL basic::Tracer TR( "torsion.corrections" );
 
 struct FragInfo {
 	FragInfo ( ) : weight_(0), center_(0) {}

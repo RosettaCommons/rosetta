@@ -57,7 +57,7 @@
 namespace protocols {
 namespace features {
 
-static thread_local basic::Tracer TR( "protocols.features.UnrecognizedAtomFeatures" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.features.UnrecognizedAtomFeatures" );
 
 using std::string;
 using std::map;

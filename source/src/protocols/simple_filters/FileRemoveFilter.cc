@@ -31,7 +31,7 @@ namespace simple_filters {
 using namespace core;
 using namespace core::scoring;
 
-static thread_local basic::Tracer TR( "protocols.simple_filters.FileRemoveFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.FileRemoveFilter" );
 
 protocols::filters::FilterOP
 FileRemoveFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FileRemoveFilter ); }

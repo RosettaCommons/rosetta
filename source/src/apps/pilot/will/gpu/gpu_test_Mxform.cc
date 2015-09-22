@@ -48,7 +48,7 @@
 #include <apps/pilot/will/will_util.ihh>
 #include <apps/pilot/will/mynamespaces.ihh>
 
-static thread_local basic::Tracer TR( "gpu_test" );
+static THREAD_LOCAL basic::Tracer TR( "gpu_test" );
 
 #include <apps/pilot/will/gpu/CL.hh>
 

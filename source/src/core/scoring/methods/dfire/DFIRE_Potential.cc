@@ -35,7 +35,7 @@ namespace dfire {
 // @brief Auto-generated virtual destructor
 DFIRE_Potential::~DFIRE_Potential() {}
 
-static thread_local basic::Tracer TR( "core.scoring.methods.DFIRE_Potential" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.DFIRE_Potential" );
 
 static Size const INVALID(999);
 

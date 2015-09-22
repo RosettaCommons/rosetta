@@ -51,7 +51,7 @@
 #include <utility/vector1.hh>
 
 // Named oddly to prevent name conflicts with including .cc files (who may wish to define their own tracer).
-static thread_local basic::Tracer hh_tr( "protocols.jumping", basic::t_info );
+static THREAD_LOCAL basic::Tracer hh_tr( "protocols.jumping", basic::t_info );
 
 namespace protocols {
 namespace jumping {

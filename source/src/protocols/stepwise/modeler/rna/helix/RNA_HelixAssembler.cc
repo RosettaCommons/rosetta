@@ -73,7 +73,7 @@ using namespace core;
 using ObjexxFCL::string_of;
 using basic::T;
 
-static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.helix.RNA_HelixAssembler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.helix.RNA_HelixAssembler" );
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 

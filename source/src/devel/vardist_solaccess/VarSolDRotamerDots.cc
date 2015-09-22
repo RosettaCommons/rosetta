@@ -58,7 +58,7 @@
 
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
-static thread_local basic::Tracer TR( "devel.vardist_solaccess" );
+static THREAD_LOCAL basic::Tracer TR( "devel.vardist_solaccess" );
 //static basic::Tracer TR_DS("core.pack.interaction_graph.RotamerDots.DotSphere");
 //static basic::Tracer TR_RD("core.pack.interaction_graph.RotamerDots.RotamerDots");
 //static basic::Tracer TR_RDC("core.pack.interaction_graph.RotamerDots.RotamerDotsCache");

@@ -135,7 +135,7 @@ typedef utility::vector1<Vec>    Vecs;
 using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 
-static thread_local basic::Tracer TR( "crossmatch_3e" );
+static THREAD_LOCAL basic::Tracer TR( "crossmatch_3e" );
 
 static core::io::silent::SilentFileData sfd;
 

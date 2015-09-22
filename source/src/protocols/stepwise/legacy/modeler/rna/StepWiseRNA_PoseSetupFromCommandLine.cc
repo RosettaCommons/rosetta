@@ -154,7 +154,7 @@ using io::pdb::dump_pdb;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 
-static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_PoseSetupFromCommandLine" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_PoseSetupFromCommandLine" );
 
 ///////////////////////////////////////////////////////////////////////////
 //

@@ -41,7 +41,7 @@ namespace protocols {
 namespace scoring {
 namespace methods {
 
-static thread_local basic::Tracer TR( "protocols.scoring.methods.InterchainEnvEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.scoring.methods.InterchainEnvEnergy" );
 
 /// @details This must return a fresh instance of the InterchainEnvEnergy class,
 /// never an instance already in use

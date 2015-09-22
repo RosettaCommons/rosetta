@@ -88,9 +88,9 @@
 #include <protocols/simple_moves/DesignRepackMover.hh>
 using namespace core::scoring;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceStubMover" );
-static thread_local basic::Tracer stats_TR( "STATS.PlaceStubMover" );
-static thread_local basic::Tracer TR_debug( "DEBUG.PlaceStubMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceStubMover" );
+static THREAD_LOCAL basic::Tracer stats_TR( "STATS.PlaceStubMover" );
+static THREAD_LOCAL basic::Tracer TR_debug( "DEBUG.PlaceStubMover" );
 
 
 namespace protocols {

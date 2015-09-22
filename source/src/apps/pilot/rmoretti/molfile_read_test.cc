@@ -43,7 +43,7 @@
 
 using namespace basic::options;
 
-static thread_local basic::Tracer TR( "apps.rosetta_retype_check" );
+static THREAD_LOCAL basic::Tracer TR( "apps.rosetta_retype_check" );
 
 int
 main( int argc, char * argv [] )

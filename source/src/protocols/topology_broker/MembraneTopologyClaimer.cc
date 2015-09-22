@@ -51,7 +51,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.topo_broker.membrane_topology", basic::t_info );
+static THREAD_LOCAL basic::Tracer TR( "protocols.topo_broker.membrane_topology", basic::t_info );
 
 namespace protocols {
 namespace topology_broker {

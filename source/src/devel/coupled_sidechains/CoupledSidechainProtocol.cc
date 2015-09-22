@@ -86,7 +86,7 @@ using namespace basic;
 using namespace protocols::moves;
 using namespace protocols;
 
-static thread_local basic::Tracer tr( "devel.coupled_sidechains.CoupledSidechainProtocol" );
+static THREAD_LOCAL basic::Tracer tr( "devel.coupled_sidechains.CoupledSidechainProtocol" );
 
 OPT_1GRP_KEY(Integer,rotamers,traj_interval)
 OPT_1GRP_KEY(Integer,rotamers,score_interval)

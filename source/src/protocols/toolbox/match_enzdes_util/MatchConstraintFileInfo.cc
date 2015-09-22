@@ -60,7 +60,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.toolbox.match_enzdes_util.MatchConstraintFileIfo" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.match_enzdes_util.MatchConstraintFileIfo" );
 
 namespace protocols {
 namespace toolbox {

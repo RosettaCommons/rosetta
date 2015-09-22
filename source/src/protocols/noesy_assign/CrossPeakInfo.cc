@@ -46,8 +46,8 @@
 #include <boost/functional/hash.hpp>
 
 
-static thread_local basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
-static thread_local basic::Tracer tr_labels( "protocols.noesy_assign.crosspeaks.labels" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
+static THREAD_LOCAL basic::Tracer tr_labels( "protocols.noesy_assign.crosspeaks.labels" );
 using core::Real;
 using namespace core;
 using namespace basic;

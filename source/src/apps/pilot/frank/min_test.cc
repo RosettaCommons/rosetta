@@ -102,7 +102,7 @@ OPT_1GRP_KEY(Boolean, min, pack)
 OPT_1GRP_KEY(Integer, min, repeats)
 OPT_1GRP_KEY(String, min, minimizer)
 
-static thread_local basic::Tracer TR( "min_test" );
+static THREAD_LOCAL basic::Tracer TR( "min_test" );
 
 bool rama_list_pred( const std::pair < core::Size, core::Real > &left, const std::pair < core::Size, core::Real > &right ) {
 	return left.second > right.second;

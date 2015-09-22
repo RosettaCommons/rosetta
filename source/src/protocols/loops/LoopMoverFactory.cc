@@ -62,7 +62,7 @@ using std::pair;
 using std::stringstream;
 using core::pose::Pose;
 
-static thread_local basic::Tracer tr( "protocols.loops.LoopMoverFactory" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.loops.LoopMoverFactory" );
 
 LoopMoverFactory *
 LoopMoverFactory::create_singleton_instance()

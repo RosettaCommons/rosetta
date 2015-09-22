@@ -53,7 +53,7 @@ using core::Real;
 //////////////////////////////////////////////////////////////////////////
 
 
-static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.RNA_AddDeleteMonteCarlo" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.RNA_AddDeleteMonteCarlo" );
 
 namespace protocols {
 namespace stepwise {

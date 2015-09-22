@@ -63,7 +63,7 @@
 #include <core/import_pose/import_pose.hh>
 
 
-static thread_local basic::Tracer TR( "surface_app" );
+static THREAD_LOCAL basic::Tracer TR( "surface_app" );
 
 using namespace core;
 using namespace protocols;

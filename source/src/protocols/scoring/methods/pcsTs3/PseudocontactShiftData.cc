@@ -62,8 +62,8 @@ namespace pcsTs3 {
 
 using namespace ObjexxFCL;
 
-static thread_local basic::Tracer TR_pcs_d_p_l_Ts3( "protocols.scoring.methods.pcsTs3.PCS_data_per_lanthanides_Ts3" );
-static thread_local basic::Tracer TR_pcs_d_Ts3( "protocols.scoring.methods.pcsTs3.PCS_data_Ts3" );
+static THREAD_LOCAL basic::Tracer TR_pcs_d_p_l_Ts3( "protocols.scoring.methods.pcsTs3.PCS_data_per_lanthanides_Ts3" );
+static THREAD_LOCAL basic::Tracer TR_pcs_d_Ts3( "protocols.scoring.methods.pcsTs3.PCS_data_Ts3" );
 
 PCS_data_per_lanthanides_Ts3::~PCS_data_per_lanthanides_Ts3(){
 }

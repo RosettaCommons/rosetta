@@ -27,7 +27,7 @@
 namespace protocols {
 namespace symmetric_docking {
 
-static thread_local basic::Tracer TR( "protocols.symmetric_docking.SymDockBaseProtocol" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.symmetric_docking.SymDockBaseProtocol" );
 
 SymDockBaseProtocol::SymDockBaseProtocol() :
 	Mover()

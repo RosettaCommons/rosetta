@@ -104,7 +104,7 @@
 //tracers
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR("apps.public.scenarios.chemically_conjugated_docking.UBQ_Gp_LYX-Cterm");
+static THREAD_LOCAL basic::Tracer TR("apps.public.scenarios.chemically_conjugated_docking.UBQ_Gp_LYX-Cterm");
 
 class UBQ_GTPaseMover : public protocols::moves::Mover {
 public:

@@ -104,7 +104,7 @@ using protocols::simple_moves::sidechain_moves::SidechainMoverOP;
 
 using utility::tools::make_vector1;
 typedef utility::vector1<Size> IndexList;
-static thread_local basic::Tracer tr( "apps.native_ensemble" );
+static THREAD_LOCAL basic::Tracer tr( "apps.native_ensemble" );
 
 // Options {{{1
 

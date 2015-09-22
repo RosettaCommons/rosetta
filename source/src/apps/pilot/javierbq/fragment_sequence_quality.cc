@@ -78,7 +78,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static thread_local basic::Tracer tr( "main" );
+static THREAD_LOCAL basic::Tracer tr( "main" );
 
 
 class ThisApplication  {

@@ -19,7 +19,7 @@
 
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer tr( "core.kinematics", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "core.kinematics", basic::t_info );
 
 namespace core {
 namespace kinematics {

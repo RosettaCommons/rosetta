@@ -36,7 +36,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "protocols.optimize_weights.OptEData" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.optimize_weights.OptEData" );
 
 using namespace core;
 using namespace scoring;

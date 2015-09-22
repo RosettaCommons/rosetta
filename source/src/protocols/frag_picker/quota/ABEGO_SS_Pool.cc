@@ -31,7 +31,7 @@ namespace protocols {
 namespace frag_picker {
 namespace quota {
 
-static thread_local basic::Tracer trABEGO_SS_Pool(
+static THREAD_LOCAL basic::Tracer trABEGO_SS_Pool(
 	"protocols.frag_picker.quota.ABEGO_SS_Pool");
 
 /// @brief Creates a pool of a given size and name

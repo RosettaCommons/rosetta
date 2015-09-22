@@ -47,7 +47,7 @@ template <> MessageListenerFactory * utility::SingletonBase< MessageListenerFact
 namespace basic {
 namespace message_listening {
 
-static thread_local basic::Tracer TR( "basic.message_listening.MessageListenerFactory" );
+static THREAD_LOCAL basic::Tracer TR( "basic.message_listening.MessageListenerFactory" );
 
 MessageListenerFactory *
 MessageListenerFactory::create_singleton_instance()

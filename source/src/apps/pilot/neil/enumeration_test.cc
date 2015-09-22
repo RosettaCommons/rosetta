@@ -63,7 +63,7 @@
 //Auto Headers
 
 
-static thread_local basic::Tracer TR( "enumeration_test" );
+static THREAD_LOCAL basic::Tracer TR( "enumeration_test" );
 
 
 using std::string;

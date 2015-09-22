@@ -91,7 +91,7 @@ using basic::Warning;
 namespace protocols {
 namespace electron_density {
 
-static thread_local basic::Tracer TR( "protocols.electron_density.DockIntoDensityMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.DockIntoDensityMover" );
 
 // non-superposed RMS
 core::Real

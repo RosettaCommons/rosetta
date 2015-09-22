@@ -48,10 +48,10 @@ using namespace core;
 using namespace ObjexxFCL;
 using utility::vector1;
 
-static thread_local basic::Tracer tt( "devel.dna.relax_util", basic::t_trace );
-static thread_local basic::Tracer td( "devel.dna.relax_util", basic::t_debug );
-static thread_local basic::Tracer ti( "devel.dna.relax_util", basic::t_info );
-static thread_local basic::Tracer tw( "devel.dna.relax_util", basic::t_warning );
+static THREAD_LOCAL basic::Tracer tt( "devel.dna.relax_util", basic::t_trace );
+static THREAD_LOCAL basic::Tracer td( "devel.dna.relax_util", basic::t_debug );
+static THREAD_LOCAL basic::Tracer ti( "devel.dna.relax_util", basic::t_info );
+static THREAD_LOCAL basic::Tracer tw( "devel.dna.relax_util", basic::t_warning );
 
 
 /// @details  Add constraints to the pose's constraint set that try to keep the dna chain connected

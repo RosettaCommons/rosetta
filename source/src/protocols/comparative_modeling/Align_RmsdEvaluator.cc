@@ -36,7 +36,7 @@
 #include <map>
 #include <string>
 
-static thread_local basic::Tracer tr( "protocols.comparative_modeling.Align_RmsdEvaluator" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling.Align_RmsdEvaluator" );
 
 namespace protocols {
 namespace comparative_modeling {

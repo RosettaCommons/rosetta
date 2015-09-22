@@ -81,7 +81,7 @@
 namespace devel {
 namespace loop_creation {
 
-static thread_local basic::Tracer TR( "devel.loop_creation.LoopCreationMover" );
+static THREAD_LOCAL basic::Tracer TR( "devel.loop_creation.LoopCreationMover" );
 
 using namespace core;
 

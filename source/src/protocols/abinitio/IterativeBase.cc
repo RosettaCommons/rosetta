@@ -120,7 +120,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-static thread_local basic::Tracer tr( "protocols.iterative" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.iterative" );
 using basic::mem_tr;
 
 

@@ -66,7 +66,7 @@ namespace pack {
 namespace dunbrack {
 namespace cenrot {
 
-static thread_local basic::Tracer TR("core.pack.dunbrack.cenrot.CenrotLibrary");
+static THREAD_LOCAL basic::Tracer TR("core.pack.dunbrack.cenrot.CenrotLibrary");
 
 CenrotLibrary *
 CenrotLibrary::create_singleton_instance()

@@ -40,7 +40,7 @@
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
-static thread_local basic::Tracer TR( "core.kinematics.FoldTree" );
+static THREAD_LOCAL basic::Tracer TR( "core.kinematics.FoldTree" );
 
 namespace core {
 namespace kinematics {

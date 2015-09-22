@@ -43,7 +43,7 @@
 
 #include <istream>
 
-static thread_local basic::Tracer TR( "protocols.cyclic_peptide.CreateDistanceConstraint" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.cyclic_peptide.CreateDistanceConstraint" );
 
 namespace protocols {
 namespace cyclic_peptide {

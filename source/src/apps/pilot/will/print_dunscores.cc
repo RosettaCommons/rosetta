@@ -62,7 +62,7 @@ using basic::options::option;
 typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 
-static thread_local basic::Tracer TR( "dunscores" );
+static THREAD_LOCAL basic::Tracer TR( "dunscores" );
 
 
 void run() {

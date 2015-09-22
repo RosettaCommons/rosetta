@@ -70,7 +70,7 @@ using namespace basic::options;
 // -- rhiju, 2014
 //
 //////////////////////////////////////////////////////
-static thread_local basic::Tracer TR( "core.scoring.rna.data.RNA_DMS_LowResolutionPotential" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.rna.data.RNA_DMS_LowResolutionPotential" );
 
 namespace core {
 namespace scoring {

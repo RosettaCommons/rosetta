@@ -67,7 +67,7 @@ using namespace core;
 using namespace core::pose;
 using utility::tools::make_vector1;
 
-static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.VirtualSugarSampler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.VirtualSugarSampler" );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

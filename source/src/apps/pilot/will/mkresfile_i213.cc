@@ -87,7 +87,7 @@
 #include <apps/pilot/will/will_util.ihh>
 
 
-static thread_local basic::Tracer TR( "mkresfile_i213" );
+static THREAD_LOCAL basic::Tracer TR( "mkresfile_i213" );
 
 using core::Size;
 using core::Real;

@@ -46,7 +46,7 @@ template <> StructureStoreManager * utility::SingletonBase< StructureStoreManage
 namespace core {
 namespace indexed_structure_store {
 
-static thread_local basic::Tracer TR( "core.indexed_structure_store.StructureStoreManager" );
+static THREAD_LOCAL basic::Tracer TR( "core.indexed_structure_store.StructureStoreManager" );
 
 using namespace basic::options;
 

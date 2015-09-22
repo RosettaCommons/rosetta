@@ -45,7 +45,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer trProfScoreDistWeight(
+static THREAD_LOCAL basic::Tracer trProfScoreDistWeight(
 	"protocols.frag_picker.scores.ProfileScoreDistWeight");
 
 void ProfileScoreDistWeight::do_caching(VallChunkOP chunk) {

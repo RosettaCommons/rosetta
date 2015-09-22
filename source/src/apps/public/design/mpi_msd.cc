@@ -110,7 +110,7 @@ default='0',
 
 using basic::t_info;
 using basic::t_debug;
-static thread_local basic::Tracer TR( "apps.public.design.mpi_msd", t_info );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.design.mpi_msd", t_info );
 
 /*class SimpleDGBindAggregateFunction : public protocols::pack_daemon::MultistateAggregateFunction
 {

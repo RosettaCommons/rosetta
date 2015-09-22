@@ -67,7 +67,7 @@ using namespace protocols::stepwise::modeler::rna;
 using core::Real;
 using basic::T;
 
-static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_Clusterer" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_Clusterer" );
 
 
 namespace protocols {

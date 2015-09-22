@@ -53,7 +53,7 @@ using namespace numeric;
 typedef numeric::xyzVector<core::Real> Vec;
 typedef numeric::xyzMatrix<core::Real> Mat;
 
-static thread_local basic::Tracer TR( "sym_multicomp_test" );
+static THREAD_LOCAL basic::Tracer TR( "sym_multicomp_test" );
 
 bool check_coords_match(
 	vector1<Vec> const & a,

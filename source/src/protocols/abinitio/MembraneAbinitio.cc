@@ -88,7 +88,7 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 //Auto using namespaces end
 
 
-static thread_local basic::Tracer tr( "protocols.membrane.abinitio", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "protocols.membrane.abinitio", basic::t_info );
 
 
 using core::Real;

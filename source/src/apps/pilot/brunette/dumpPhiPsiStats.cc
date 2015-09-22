@@ -56,7 +56,7 @@ using utility::vector1;
 using core::Size;
 using core::Real;
 
-static thread_local basic::Tracer tr( "dumpPhiPsiStats" );
+static THREAD_LOCAL basic::Tracer tr( "dumpPhiPsiStats" );
 
 
 int main( int argc, char * argv [] ) {

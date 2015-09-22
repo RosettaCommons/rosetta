@@ -24,7 +24,7 @@
 #include <numeric/random/random.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.iterative.VarianceStatistics" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.iterative.VarianceStatistics" );
 using basic::mem_tr;
 
 

@@ -55,7 +55,7 @@ using namespace core;
 using utility::vector1;
 typedef numeric::xyzMatrix< Real > Matrix;
 
-static thread_local basic::Tracer TR( "protocols.loops.loop_closure.ccd.ccd_closure" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_closure.ccd.ccd_closure" );
 
 // FIXME: This is duplicated code currently with that in the Mover.
 /// @param <coords>: an array of coordinates of the main-chain atoms for every residue in the Pose

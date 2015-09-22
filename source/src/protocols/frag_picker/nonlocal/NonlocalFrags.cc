@@ -72,7 +72,7 @@ namespace nonlocal {
 
 using namespace core;
 
-static thread_local basic::Tracer TR( "protocols.frag_picker.nonlocal.NonlocalFrags" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.frag_picker.nonlocal.NonlocalFrags" );
 
 void NonlocalFrags::register_options() {
 	using namespace basic::options;

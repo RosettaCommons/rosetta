@@ -140,7 +140,7 @@ using basic::T;
 using basic::Warning;
 using basic::Error;
 
-static thread_local basic::Tracer TR( "chrisk" );
+static THREAD_LOCAL basic::Tracer TR( "chrisk" );
 
 
 //local options

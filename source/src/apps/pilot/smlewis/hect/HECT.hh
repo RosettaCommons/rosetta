@@ -88,7 +88,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "apps.pilot.smlewis.HECT" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.smlewis.HECT" );
 
 namespace basic{ namespace options{ namespace OptionKeys{
 basic::options::IntegerOptionKey const e3_hinge_start_resnum("e3_hinge_start_resnum");

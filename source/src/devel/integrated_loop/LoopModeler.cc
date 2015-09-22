@@ -57,7 +57,7 @@ using namespace core;
 namespace protocols {
 namespace moves {
 
-static thread_local basic::Tracer TR( "devel.IntegratedLoop.LoopModeler" );
+static THREAD_LOCAL basic::Tracer TR( "devel.IntegratedLoop.LoopModeler" );
 
 
 //v typedef utility::vector1< protocols::Loop > Loops;

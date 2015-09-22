@@ -37,7 +37,7 @@ namespace scores {
 
 #define MAX_MOTIF_D2 64.0
 
-static thread_local basic::Tracer TR( "protocols.sic_dock.scores.MotifHashRigidScore" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sic_dock.scores.MotifHashRigidScore" );
 
 using core::Size;
 using core::Real;

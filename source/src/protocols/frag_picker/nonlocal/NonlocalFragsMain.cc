@@ -41,7 +41,7 @@ namespace protocols  {
 namespace frag_picker {
 namespace nonlocal {
 
-static thread_local basic::Tracer TR( "protocols.frag_picker.nonlocal.NonlocalFragsMain" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.frag_picker.nonlocal.NonlocalFragsMain" );
 
 using namespace std;
 

@@ -20,7 +20,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "devel.splice.RBInMover" );
+static THREAD_LOCAL basic::Tracer TR( "devel.splice.RBInMover" );
 #include <utility/tag/Tag.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/FoldTree.hh>

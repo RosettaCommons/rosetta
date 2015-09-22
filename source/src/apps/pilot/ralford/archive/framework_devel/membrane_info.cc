@@ -45,7 +45,7 @@
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "apps.pilot.ralford.membrane_foldtree" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_foldtree" );
 
 /// @brief Load Membrane Pose
 core::pose::PoseOP load_pose() {

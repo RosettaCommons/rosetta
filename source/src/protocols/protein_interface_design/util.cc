@@ -42,7 +42,7 @@
 #include <protocols/simple_filters/EnergyPerResidueFilter.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.util" );
 
 namespace protocols {
 namespace protein_interface_design {

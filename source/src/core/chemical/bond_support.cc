@@ -28,7 +28,7 @@
 namespace core {
 namespace chemical {
 
-static thread_local basic::Tracer TR( "core.chemical.bond_support" );
+static THREAD_LOCAL basic::Tracer TR( "core.chemical.bond_support" );
 
 /// @brief convert bond order or aromatic into the corresponding radius
 /// @param BOND_ORDER_OR_AROMATIC bond type in notation: 1=single, 2=double, 3=triple, 4=aromatic

@@ -32,7 +32,7 @@ using core::Real;
 using std::string;
 using utility::vector1;
 
-static thread_local basic::Tracer TR( "protocols.simple_filters.AngleToVector" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.AngleToVector" );
 
 protocols::filters::FilterOP
 AngleToVectorFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AngleToVector ); }

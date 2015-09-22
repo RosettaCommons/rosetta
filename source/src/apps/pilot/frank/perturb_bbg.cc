@@ -34,7 +34,7 @@
 #include <sstream>
 
 
-static thread_local basic::Tracer TR( "fpd_bbg" );
+static THREAD_LOCAL basic::Tracer TR( "fpd_bbg" );
 
 OPT_1GRP_KEY(Integer, bbg, ntrials)
 OPT_1GRP_KEY(Integer, bbg, nstride)

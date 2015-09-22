@@ -70,7 +70,7 @@ using utility::file::FileName;
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "apps.pilot.yiliu.DC" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.yiliu.DC" );
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -56,7 +56,7 @@
 
 // C++ headers
 
-static thread_local basic::Tracer tr( "protocols.simple_filter.ExternalEvaluator" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.simple_filter.ExternalEvaluator" );
 
 
 namespace protocols {

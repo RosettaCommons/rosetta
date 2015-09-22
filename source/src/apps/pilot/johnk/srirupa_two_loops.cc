@@ -63,7 +63,7 @@ OPT_KEY( Integer, relax1_final_resnum )
 OPT_KEY( Integer, relax2_start_resnum )
 OPT_KEY( Integer, relax2_final_resnum )
 
-static thread_local basic::Tracer TR( "apps.pilot.srirupa_two_loops.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.srirupa_two_loops.main" );
 
 /// General testing code
 int

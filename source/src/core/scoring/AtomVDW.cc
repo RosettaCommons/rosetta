@@ -42,7 +42,7 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 namespace core {
 namespace scoring {
 
-static thread_local basic::Tracer TR( "core.scoring.AtomVDW" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.AtomVDW" );
 
 
 /// @details ctor, reads data file. Need to configure to allow alternate tables/atom_sets

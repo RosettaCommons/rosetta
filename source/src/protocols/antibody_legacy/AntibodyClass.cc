@@ -31,7 +31,7 @@
 #include <core/pose/util.tmpl.hh>
 
 
-static thread_local basic::Tracer TR( "antibody" );
+static THREAD_LOCAL basic::Tracer TR( "antibody" );
 
 namespace protocols {
 namespace antibody_legacy {

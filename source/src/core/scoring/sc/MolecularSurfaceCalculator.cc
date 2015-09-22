@@ -51,7 +51,7 @@
 #include <map>
 #include <string>
 
-static thread_local basic::Tracer TR( "core.scoring.sc.MolecularSurfaceCalculator" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.sc.MolecularSurfaceCalculator" );
 
 using namespace core;
 

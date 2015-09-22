@@ -41,7 +41,7 @@ using namespace basic::options::OptionKeys;
 using namespace core;
 using namespace protocols::hotspot_hashing;
 
-static thread_local basic::Tracer TR( "pilot_apps.jcorn.hh_test" );
+static THREAD_LOCAL basic::Tracer TR( "pilot_apps.jcorn.hh_test" );
 FileOptionKey const hashfile( "hashfile" );
 StringOptionKey const residue( "residue");
 

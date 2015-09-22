@@ -63,7 +63,7 @@ using basic::Warning;
 
 using namespace core::membrane;
 
-static thread_local basic::Tracer TR( "apps.pilot.ralford.membrane_integration" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_integration" );
 
 ///// Individual Unit Tests ////////////
 

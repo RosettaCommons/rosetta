@@ -60,7 +60,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-static thread_local basic::Tracer tt( "core.pack.rotamer_set.RotamerSet_", basic::t_info );
+static THREAD_LOCAL basic::Tracer tt( "core.pack.rotamer_set.RotamerSet_", basic::t_info );
 
 RotamerSet_::RotamerSet_()
 :

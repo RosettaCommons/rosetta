@@ -59,7 +59,7 @@ using namespace core;
 using namespace fragment;
 using namespace ObjexxFCL;
 
-static thread_local basic::Tracer tr( "protocols.jumping" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.jumping" );
 
 
 FragSetOP

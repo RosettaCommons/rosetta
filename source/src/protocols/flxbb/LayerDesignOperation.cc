@@ -84,7 +84,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core;
 
-static thread_local basic::Tracer TR( "protocols.flxbb.LayerDesignOperation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.flxbb.LayerDesignOperation" );
 
 namespace protocols {
 namespace flxbb {

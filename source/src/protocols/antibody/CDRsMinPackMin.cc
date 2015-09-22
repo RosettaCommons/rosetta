@@ -50,7 +50,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.antibody.CDRsMinPackMin" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.CDRsMinPackMin" );
 using namespace core;
 
 namespace protocols {

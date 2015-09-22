@@ -106,7 +106,7 @@ using namespace core::pack::dunbrack;
 using namespace core::pack::dunbrack::cenrot;
 
 //////////////////////////////////////////////////////////////////
-static thread_local basic::Tracer TR( "pilot.wendao.cenrot" );
+static THREAD_LOCAL basic::Tracer TR( "pilot.wendao.cenrot" );
 
 void relax_cenrot_pose(core::pose::PoseOP &native_pose,
 	core::pose::Pose & p, std::string const &tag);

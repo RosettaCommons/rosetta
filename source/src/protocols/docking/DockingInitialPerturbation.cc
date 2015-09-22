@@ -74,7 +74,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.docking.DockingInitialPerturbation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockingInitialPerturbation" );
 static core::Size trans ( 1 ), rot ( 2 );
 
 using namespace core;

@@ -59,7 +59,7 @@ namespace silent {
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
-static thread_local basic::Tracer tr( "core.io.silent" );
+static THREAD_LOCAL basic::Tracer tr( "core.io.silent" );
 
 /////////////////////////////////////////////////////////////////////////
 // Following should be easy to generalize for protein, RNA, DNA.

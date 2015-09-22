@@ -78,7 +78,7 @@ using namespace core::pack::dunbrack;
 using namespace core::pack::dunbrack::cenrot;
 
 // declare
-static thread_local basic::Tracer TR( "pilot.wendao.cenrot" );
+static THREAD_LOCAL basic::Tracer TR( "pilot.wendao.cenrot" );
 utility::vector1<std::string> rot_type_list;
 utility::vector1<Size> rot_list_num;
 

@@ -22,7 +22,7 @@
 
 #include <unistd.h>
 
-static thread_local basic::Tracer TR( "ColorDemo" );
+static THREAD_LOCAL basic::Tracer TR( "ColorDemo" );
 
 int main( int argc, char * argv [] )
 {

@@ -110,7 +110,7 @@ using utility::file::FileName;
 //kdrew: this app adds hbs patches to the given pdb strucure
 
 // tracer - used to replace cout
-static thread_local basic::Tracer TR( "MikeLinkerMover" );
+static THREAD_LOCAL basic::Tracer TR( "MikeLinkerMover" );
 
 namespace azide_link_creator {
 IntegerOptionKey const lys_one ( "azide_link_creator::lys_one" );

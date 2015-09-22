@@ -47,7 +47,7 @@ OPT_1GRP_KEY( Real, tnm, scaling )
 OPT_1GRP_KEY( Integer, tnm, n_modes )
 OPT_1GRP_KEY( File, tnm, input_modes )
 
-static thread_local basic::Tracer TR( "protocols::TNMSampler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols::TNMSampler" );
 
 using namespace std;
 using ObjexxFCL::format::F;

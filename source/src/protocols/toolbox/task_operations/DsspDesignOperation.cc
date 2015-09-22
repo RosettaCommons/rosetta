@@ -44,7 +44,7 @@
 
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.DsspDesignOperation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.DsspDesignOperation" );
 
 namespace protocols {
 namespace toolbox {

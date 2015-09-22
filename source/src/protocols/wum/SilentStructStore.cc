@@ -104,7 +104,7 @@ bool find_SilentStructOPs::operator () (const core::io::silent::SilentStructOP& 
 }
 
 
-static thread_local basic::Tracer TR( "SilentStructStore" );
+static THREAD_LOCAL basic::Tracer TR( "SilentStructStore" );
 
 
 void

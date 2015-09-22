@@ -95,7 +95,7 @@ using protocols::scoring::ImplicitFastClashCheck;
 using core::pose::Pose;
 using core::conformation::ResidueOP;
 
-static thread_local basic::Tracer TR( "genI213" );
+static THREAD_LOCAL basic::Tracer TR( "genI213" );
 static core::io::silent::SilentFileData sfd;
 
 

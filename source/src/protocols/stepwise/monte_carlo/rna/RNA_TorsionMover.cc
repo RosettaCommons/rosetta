@@ -44,7 +44,7 @@ using core::Real;
 // updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
-static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.RNA_TorsionMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.RNA_TorsionMover" );
 
 namespace protocols {
 namespace stepwise {

@@ -32,7 +32,7 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-static thread_local basic::Tracer TR("core.pack.dunbrack.SingleResidueDunbrackLibraryCreator");
+static THREAD_LOCAL basic::Tracer TR("core.pack.dunbrack.SingleResidueDunbrackLibraryCreator");
 
 core::pack::rotamers::SingleResidueRotamerLibraryCOP
 SingleResidueDunbrackLibraryCreator::create( core::chemical::ResidueType const & restype) const {

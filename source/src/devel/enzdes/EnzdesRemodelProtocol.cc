@@ -101,7 +101,7 @@
 namespace devel {
 namespace enzdes {
 
-static thread_local basic::Tracer tr( "devel.enzdes.EnzdesRemodelProtocol" );
+static THREAD_LOCAL basic::Tracer tr( "devel.enzdes.EnzdesRemodelProtocol" );
 
 EnzdesRemodelProtocol::EnzdesRemodelProtocol() : EnzdesFlexBBProtocol() {
 	this->reduced_sfxn_->set_weight(core::scoring::backbone_stub_constraint, 1.0 );

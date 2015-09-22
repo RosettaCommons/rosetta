@@ -67,7 +67,7 @@ using basic::Warning;
 
 using namespace ObjexxFCL;
 
-static thread_local basic::Tracer TR( "core.scoring.etable" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.etable" );
 
 namespace core {
 namespace scoring {

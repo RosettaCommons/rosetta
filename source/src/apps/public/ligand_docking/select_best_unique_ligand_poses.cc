@@ -54,7 +54,7 @@
 
 #include <utility/excn/Exceptions.hh>
 
-static thread_local basic::Tracer TR( "apps.public.ligand_dock.select_best_unique_ligand_poses" );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.ligand_dock.select_best_unique_ligand_poses" );
 
 void
 go_main() {

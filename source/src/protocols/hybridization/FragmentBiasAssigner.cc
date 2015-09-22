@@ -51,7 +51,7 @@ namespace hybridization {
 
 using namespace core;
 
-static thread_local basic::Tracer fragbias_tr( "protocols.hybridization.FragmentBiasAssigner" );
+static THREAD_LOCAL basic::Tracer fragbias_tr( "protocols.hybridization.FragmentBiasAssigner" );
 
 FragmentBiasAssigner::
 FragmentBiasAssigner(

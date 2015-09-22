@@ -49,7 +49,7 @@
 using namespace core;
 using namespace core::scoring;
 
-static thread_local basic::Tracer TR( "protocols.enzdes.EnzRepackMinimize" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.enzdes.EnzRepackMinimize" );
 
 
 namespace protocols {

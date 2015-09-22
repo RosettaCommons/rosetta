@@ -53,7 +53,7 @@
 
 #include <basic/Tracer.hh>
 using basic::Tracer;
-static thread_local basic::Tracer TR( "protocols.features.WaterFeatures" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.features.WaterFeatures" );
 
 namespace protocols {
 namespace features {

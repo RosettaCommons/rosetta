@@ -63,7 +63,7 @@
 #include <string>
 //#include <iostream>
 
-static thread_local basic::Tracer tr( "protocols.noesy_assign.FragsToAtomDist" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.FragsToAtomDist" );
 
 core::Real half_adjust( core::Real in ) {
 	return floor(in+0.5);

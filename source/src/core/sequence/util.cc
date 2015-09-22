@@ -54,7 +54,7 @@ namespace sequence {
 using utility::vector1;
 using std::string;
 
-static thread_local basic::Tracer tr( "core.sequence" );
+static THREAD_LOCAL basic::Tracer tr( "core.sequence" );
 
 void read_all_alignments(const std::string& format,
 	const utility::vector1<std::string>& files,

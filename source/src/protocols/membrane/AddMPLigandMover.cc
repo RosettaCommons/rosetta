@@ -50,7 +50,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static thread_local basic::Tracer TR( "protocols.membrane.AddMPLigandMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.AddMPLigandMover" );
 
 namespace protocols {
 namespace membrane {

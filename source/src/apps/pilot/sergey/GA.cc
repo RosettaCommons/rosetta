@@ -47,7 +47,7 @@
 using core::Real;
 using core::Size;
 
-static thread_local basic::Tracer TR( "GA" );
+static THREAD_LOCAL basic::Tracer TR( "GA" );
 
 
 class CheeseFunction : public core::optimization::Multifunc

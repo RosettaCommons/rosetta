@@ -72,7 +72,7 @@
 #define DEG2RAD 0.0174532925199433
 #define RAD2DEG 57.295779513082323
 
-static thread_local basic::Tracer TSG( "spacegroup" );
+static THREAD_LOCAL basic::Tracer TSG( "spacegroup" );
 
 core::Real absfpart( core::Real x) {
 	return ( std::fabs( x-std::floor( x+0.5) ) );

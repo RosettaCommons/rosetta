@@ -36,7 +36,7 @@
 
 // c++ headers
 
-static thread_local basic::Tracer TR( "protocols.denovo_design.task_operations.ConsensusLoopDesign" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.task_operations.ConsensusLoopDesign" );
 
 namespace protocols {
 namespace denovo_design {

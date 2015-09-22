@@ -39,7 +39,7 @@
 #include <utility/vector1.hh>
 
 //// C++ headers
-static thread_local basic::Tracer tr( "protocols.fldsgn.filters.InterlockingAromaFilter" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.filters.InterlockingAromaFilter" );
 
 namespace protocols {
 namespace fldsgn {

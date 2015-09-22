@@ -50,7 +50,7 @@ using basic::Warning;
 namespace protocols {
 namespace helical_bundle {
 
-static thread_local basic::Tracer TR("protocols.helical_bundle.PerturbBundleHelix");
+static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.PerturbBundleHelix");
 
 std::string
 PerturbBundleHelixCreator::keyname() const

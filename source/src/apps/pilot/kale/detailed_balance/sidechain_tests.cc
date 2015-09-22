@@ -72,7 +72,7 @@ using protocols::simple_moves::sidechain_moves::SidechainMover;
 using protocols::simple_moves::sidechain_moves::SidechainMoverOP;
 using protocols::loops::Loop;
 
-static thread_local basic::Tracer TR( "apps.pilot.kale.monte_carlo" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kale.monte_carlo" );
 
 // Options {{{1
 OPT_2GRP_KEY(File, kale, in, pdb)

@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 //// C++ headers
-static thread_local basic::Tracer tr( "protocols.fldsgn.filters.FragQualFilter" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.filters.FragQualFilter" );
 
 namespace protocols {
 namespace fldsgn {

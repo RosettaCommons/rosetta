@@ -30,7 +30,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static thread_local basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
 
 // Singleton instance and mutex static data members
 namespace utility {

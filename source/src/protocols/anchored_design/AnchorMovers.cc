@@ -110,10 +110,10 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer T_design( "protocols.AnchoredDesign.AnchoredDesignMover" );
-static thread_local basic::Tracer T_perturb( "protocols.AnchoredDesign.AnchoredPerturbMover" );
-static thread_local basic::Tracer T_refine( "protocols.AnchoredDesign.AnchoredRefineMover" );
-static thread_local basic::Tracer T_shared( "protocols.AnchoredDesign.Anchor_Movers" );
+static THREAD_LOCAL basic::Tracer T_design( "protocols.AnchoredDesign.AnchoredDesignMover" );
+static THREAD_LOCAL basic::Tracer T_perturb( "protocols.AnchoredDesign.AnchoredPerturbMover" );
+static THREAD_LOCAL basic::Tracer T_refine( "protocols.AnchoredDesign.AnchoredRefineMover" );
+static THREAD_LOCAL basic::Tracer T_shared( "protocols.AnchoredDesign.Anchor_Movers" );
 
 namespace protocols {
 namespace anchored_design {

@@ -120,7 +120,7 @@ namespace znhash {
 /// @details Auto-generated virtual destructor
 FindZnCoordinatingResidues::~FindZnCoordinatingResidues() {}
 
-static thread_local basic::Tracer TR( "devel.znhash.SymmZnMoversAndTaskOps" );
+static THREAD_LOCAL basic::Tracer TR( "devel.znhash.SymmZnMoversAndTaskOps" );
 
 InitializeZNCoordinationConstraintMover::InitializeZNCoordinationConstraintMover() :
 	parent( "InitializeZNCoordinationConstraintMover" ),

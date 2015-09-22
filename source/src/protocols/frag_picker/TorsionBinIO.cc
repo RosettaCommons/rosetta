@@ -29,7 +29,7 @@ namespace frag_picker {
 
 using namespace core;
 
-static thread_local basic::Tracer tracer( "protocols.frag_picker.TorsionBinIO" );
+static THREAD_LOCAL basic::Tracer tracer( "protocols.frag_picker.TorsionBinIO" );
 
 TorsionBinIO::TorsionBinIO() {
 	bin_names_.push_back( 'A' );

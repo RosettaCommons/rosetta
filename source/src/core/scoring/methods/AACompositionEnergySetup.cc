@@ -47,7 +47,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-static thread_local basic::Tracer TR("core.scoring.methods.AACompositionEnergySetup");
+static THREAD_LOCAL basic::Tracer TR("core.scoring.methods.AACompositionEnergySetup");
 
 /**************************************************
 AACompositionPropertiesSet class:

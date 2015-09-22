@@ -70,7 +70,7 @@ using namespace core::conformation;
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
-static thread_local basic::Tracer TR( "pilot_apps.blivens.disulfide_handoff" );
+static THREAD_LOCAL basic::Tracer TR( "pilot_apps.blivens.disulfide_handoff" );
 
 int
 usage(char* msg)

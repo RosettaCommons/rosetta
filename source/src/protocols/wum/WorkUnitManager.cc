@@ -35,7 +35,7 @@
 namespace protocols {
 namespace wum {
 
-static thread_local basic::Tracer TR( "WorkUnitManager" );
+static THREAD_LOCAL basic::Tracer TR( "WorkUnitManager" );
 
 // 32 bit recognition integer to make sure we're infact about to read/write a WU to disk etc..
 const unsigned int WUB_magic_header_integer = 0xAF34B14C;

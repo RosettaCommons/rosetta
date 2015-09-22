@@ -64,7 +64,7 @@ MMBondAngleEnergyCreator::score_types_for_method() const {
 }
 
 
-static thread_local basic::Tracer TR( "core.mm.MMBondAngleEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.mm.MMBondAngleEnergy" );
 
 MMBondAngleEnergy::MMBondAngleEnergy( methods::EnergyMethodOptions const & options ):
 	parent( methods::EnergyMethodCreatorOP( new MMBondAngleEnergyCreator ) ),

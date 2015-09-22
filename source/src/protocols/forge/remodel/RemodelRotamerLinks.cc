@@ -43,7 +43,7 @@ using namespace operation;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static thread_local basic::Tracer TR( "protocols.forge.remodel.RemodelRotamerLinks", t_info );
+static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.RemodelRotamerLinks", t_info );
 
 TaskOperationOP RemodelRotamerLinksCreator::create_task_operation() const
 {

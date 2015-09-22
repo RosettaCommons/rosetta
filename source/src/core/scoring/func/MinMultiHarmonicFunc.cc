@@ -24,7 +24,7 @@ namespace core {
 namespace scoring {
 namespace func {
 
-static thread_local basic::Tracer trMinMultiHarmonicFunc( "fragment.picking.scores.MinMultiHarmonicFunc" );
+static THREAD_LOCAL basic::Tracer trMinMultiHarmonicFunc( "fragment.picking.scores.MinMultiHarmonicFunc" );
 
 MinMultiHarmonicFunc::MinMultiHarmonicFunc( utility::vector1<Real> const & x0_in, utility::vector1<Real> const & sd_in ) {
 	n_ = x0_in.size(); //number of harmonics to consider

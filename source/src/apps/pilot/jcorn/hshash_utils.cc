@@ -55,7 +55,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::hotspot_hashing;
 
-static thread_local basic::Tracer TR( "pilot_apps.jcorn.hshash_utils" );
+static THREAD_LOCAL basic::Tracer TR( "pilot_apps.jcorn.hshash_utils" );
 
 int
 main( int argc, char * argv [] )

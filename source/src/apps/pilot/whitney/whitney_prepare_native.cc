@@ -50,7 +50,7 @@ using namespace core::scoring;
 using namespace basic::options;
 using namespace core::optimization;
 
-static thread_local basic::Tracer TR( "apps.pilot.whitney_prepare_native.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.whitney_prepare_native.main" );
 
 
 /// General testing code

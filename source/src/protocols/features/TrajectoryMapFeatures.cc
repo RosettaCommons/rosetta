@@ -52,7 +52,7 @@
 namespace protocols {
 namespace features {
 
-static thread_local basic::Tracer TR( "protocols.features.TrajectoryMapFeatures" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.features.TrajectoryMapFeatures" );
 
 using std::string;
 using core::Size;

@@ -52,7 +52,7 @@
 
 // C++ headers
 
-static thread_local basic::Tracer tr( "protocols.constraints_additional.ConstraintEvaluator" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.constraints_additional.ConstraintEvaluator" );
 
 namespace protocols {
 namespace constraints_additional {

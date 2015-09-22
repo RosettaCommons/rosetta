@@ -77,7 +77,7 @@ using core::Size;
 using utility::vector1;
 
 /// Tracer instance for this file
-static thread_local basic::Tracer TR( "core.io.sequence_comparation.DesignContrast" );
+static THREAD_LOCAL basic::Tracer TR( "core.io.sequence_comparation.DesignContrast" );
 
 DesignContrast::DesignContrast(DesignContrast const & dc) {
 	list_file_names_ = dc.getListNames();

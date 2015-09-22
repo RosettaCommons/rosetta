@@ -47,7 +47,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.setup.FullModelInfoSetupFromCommandLine" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.setup.FullModelInfoSetupFromCommandLine" );
 
 using namespace core;
 using namespace core::pose;

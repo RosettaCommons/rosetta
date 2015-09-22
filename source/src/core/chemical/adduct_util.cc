@@ -29,7 +29,7 @@
 #include <utility/options/StringVectorOption.hh>
 
 
-static thread_local basic::Tracer TR( "core.chemical.adduct_util" );
+static THREAD_LOCAL basic::Tracer TR( "core.chemical.adduct_util" );
 
 namespace core {
 namespace chemical {

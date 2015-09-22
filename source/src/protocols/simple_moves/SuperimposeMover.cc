@@ -48,7 +48,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.SuperimposeMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SuperimposeMover" );
 
 std::string
 SuperimposeMoverCreator::keyname() const

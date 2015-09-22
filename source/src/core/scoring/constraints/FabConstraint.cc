@@ -36,7 +36,7 @@
 #include <core/conformation/Residue.hh>
 #include <string>
 
-static thread_local basic::Tracer TR( "core.scoring.constraints.FabConstraint" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.FabConstraint" );
 
 namespace core {
 namespace scoring {

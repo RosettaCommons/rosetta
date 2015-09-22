@@ -29,7 +29,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.AverageDegreeFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.AverageDegreeFilter" );
 
 /// @brief default ctor
 AverageDegreeFilter::AverageDegreeFilter() :

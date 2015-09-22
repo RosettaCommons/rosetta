@@ -40,7 +40,7 @@
 #include <apps/pilot/will/will_util.ihh>
 
 
-static thread_local basic::Tracer TR( "isct_test" );
+static THREAD_LOCAL basic::Tracer TR( "isct_test" );
 
 using core::Size;
 using core::Real;

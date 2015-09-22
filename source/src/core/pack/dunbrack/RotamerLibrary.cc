@@ -113,7 +113,7 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-static thread_local basic::Tracer TR( "core.pack.dunbrack.RotamerLibrary" );
+static THREAD_LOCAL basic::Tracer TR( "core.pack.dunbrack.RotamerLibrary" );
 
 using namespace core::pack::rotamers;
 

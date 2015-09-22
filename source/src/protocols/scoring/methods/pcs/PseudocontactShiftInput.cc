@@ -69,7 +69,7 @@ namespace scoring {
 namespace methods {
 namespace pcs {
 
-static thread_local basic::Tracer TR_PCS_d_i( "protocols.scoring.methods.pcs.PCS_data_input" );
+static THREAD_LOCAL basic::Tracer TR_PCS_d_i( "protocols.scoring.methods.pcs.PCS_data_input" );
 
 PCS_line_data::PCS_line_data() :
 	residue_num_(0),

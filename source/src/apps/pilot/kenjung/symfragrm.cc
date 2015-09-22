@@ -37,7 +37,7 @@ using namespace basic::options::OptionKeys;
 using namespace core;
 using namespace protocols::loophash;
 using namespace core::io::pdb;
-static thread_local basic::Tracer TR( "main" );
+static THREAD_LOCAL basic::Tracer TR( "main" );
 
 
 int

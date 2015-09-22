@@ -17,7 +17,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.TorsionSetMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.TorsionSetMover" );
 
 using namespace core;
 

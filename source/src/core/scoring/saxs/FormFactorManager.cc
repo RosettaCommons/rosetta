@@ -31,7 +31,7 @@ namespace core {
 namespace scoring {
 namespace saxs {
 
-static thread_local basic::Tracer trFormFactorManager( "core.scoring.saxs.FormFactorManager" );
+static THREAD_LOCAL basic::Tracer trFormFactorManager( "core.scoring.saxs.FormFactorManager" );
 
 FormFactorManager* FormFactorManager::singleton_;
 

@@ -65,9 +65,9 @@ using utility::vector1;
 using std::string;
 
 
-static thread_local basic::Tracer tt( "demo.phil.analyze_dna", basic::t_trace );
-static thread_local basic::Tracer td( "demo.phil.analyze_dna", basic::t_debug );
-static thread_local basic::Tracer ti( "demo.phil.analyze_dna", basic::t_info );
+static THREAD_LOCAL basic::Tracer tt( "demo.phil.analyze_dna", basic::t_trace );
+static THREAD_LOCAL basic::Tracer td( "demo.phil.analyze_dna", basic::t_debug );
+static THREAD_LOCAL basic::Tracer ti( "demo.phil.analyze_dna", basic::t_info );
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -44,7 +44,7 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
 
-static thread_local basic::Tracer TR( "protocols.electron_density.ScaleMapIntensities" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.ScaleMapIntensities" );
 
 namespace protocols {
 namespace electron_density {

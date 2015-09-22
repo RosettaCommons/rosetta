@@ -15,7 +15,7 @@
 #include <protocols/antibody/design/CDRClusterSequenceOperation.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR("protocols.antibody.design.CDRClusterSequenceOperation");
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.design.CDRClusterSequenceOperation");
 
 namespace protocols {
 namespace antibody {

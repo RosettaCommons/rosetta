@@ -20,7 +20,7 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.screener.AlignRMSD_Screener" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.AlignRMSD_Screener" );
 using namespace core;
 
 namespace protocols {

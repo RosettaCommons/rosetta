@@ -58,7 +58,7 @@
 namespace devel {
 namespace mmt_msd {
 
-static thread_local basic::Tracer TR( "devel.mmt_msd.MMTReceiver" );
+static THREAD_LOCAL basic::Tracer TR( "devel.mmt_msd.MMTReceiver" );
 
 StateData::StateData() {}
 StateData::~StateData() {}

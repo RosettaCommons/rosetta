@@ -67,7 +67,7 @@ OPT_1GRP_KEY(Boolean,cluster_hotspot_docking,ca)
 OPT_1GRP_KEY(String,cluster_hotspot_docking,prefix)
 OPT_1GRP_KEY(String,cluster_hotspot_docking,column)
 
-static thread_local basic::Tracer TR( "cluster_hotspot_docking" );
+static THREAD_LOCAL basic::Tracer TR( "cluster_hotspot_docking" );
 
 core::Real aa2sim_sc(core::pose::Pose pose1, core::pose::Pose pose2) {
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();

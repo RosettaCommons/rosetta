@@ -48,7 +48,7 @@ namespace protocols {
 namespace simple_moves {
 namespace bin_transitions {
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.bin_transitions.PerturbByBins" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.bin_transitions.PerturbByBins" );
 
 std::string
 PerturbByBinsCreator::keyname() const

@@ -39,7 +39,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static thread_local basic::Tracer TR( "pick_lowestscore_pose" );
+static THREAD_LOCAL basic::Tracer TR( "pick_lowestscore_pose" );
 
 typedef core::Size Size;
 typedef core::Real Real;

@@ -36,7 +36,7 @@ namespace rbsegment_relax {
 
 using namespace core;
 
-static thread_local basic::Tracer TR_seg( "RBSegment" );
+static THREAD_LOCAL basic::Tracer TR_seg( "RBSegment" );
 
 
 /////////////////////

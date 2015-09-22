@@ -36,7 +36,7 @@
 namespace protocols {
 namespace elscripts {
 
-static thread_local basic::Tracer TR( "protocols.elscripts.MPI_Master" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.elscripts.MPI_Master" );
 
 void lregister_MPI_Master( lua_State * lstate ) {
 	lregister_Master( lstate );

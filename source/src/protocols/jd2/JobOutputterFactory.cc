@@ -49,7 +49,7 @@ template <> JobOutputterFactory * utility::SingletonBase< JobOutputterFactory >:
 namespace protocols {
 namespace jd2 {
 
-static thread_local basic::Tracer TR( "protocols.jd2.JobOutputterFactory" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.JobOutputterFactory" );
 
 JobOutputterFactory *
 JobOutputterFactory::create_singleton_instance()

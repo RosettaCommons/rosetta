@@ -53,7 +53,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer trPhiPsiRmsd(
+static THREAD_LOCAL basic::Tracer trPhiPsiRmsd(
 	"protocols.frag_picker.scores.PhiPsiRmsd");
 
 PhiPsiRmsd::PhiPsiRmsd(Size priority, Real lowest_acceptable_value, bool use_lowest,

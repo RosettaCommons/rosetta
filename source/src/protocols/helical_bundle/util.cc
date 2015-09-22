@@ -59,7 +59,7 @@ using basic::Warning;
 namespace protocols {
 namespace helical_bundle {
 
-static thread_local basic::Tracer TR("protocols.helical_bundle.util");
+static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.util");
 
 /// @brief Actual write of the crick_params file data.
 /// @details Called by both write_minor_helix_params variants.

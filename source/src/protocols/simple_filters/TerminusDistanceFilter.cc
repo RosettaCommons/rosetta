@@ -60,7 +60,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static thread_local basic::Tracer TR( "protocols.simple_filters.TerminusDistanceFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_filters.TerminusDistanceFilter" );
 
 protocols::filters::FilterOP
 TerminusDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TerminusDistanceFilter ); }

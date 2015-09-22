@@ -27,7 +27,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::toolbox;
 
-static thread_local basic::Tracer TR( "test_cluster" );
+static THREAD_LOCAL basic::Tracer TR( "test_cluster" );
 
 void show_cluster_assignment(KClusterElementOP elem, KClusterData dat){
 	for(core::Size ii = 1; ii <= elem->get_ndata(); ii++ ){

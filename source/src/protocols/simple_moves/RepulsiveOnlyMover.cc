@@ -45,7 +45,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static thread_local basic::Tracer TR( "protocol.mover.RepulsiveOnlyMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocol.mover.RepulsiveOnlyMover" );
 
 
 /// RepulsiveOnlyMover; based on the protocols::moves::Mover basis class

@@ -38,7 +38,7 @@
 #include <core/import_pose/import_pose.hh>
 
 
-static thread_local basic::Tracer tr( "GunnTest" );
+static THREAD_LOCAL basic::Tracer tr( "GunnTest" );
 
 void register_options() {
 

@@ -55,7 +55,7 @@
 // unit test utility functions
 #include <protocols/denovo_design/test_utils.hh>
 
-static thread_local basic::Tracer TR( "protocols.denovo_design.connection.BridgeChains.cxxtest" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.connection.BridgeChains.cxxtest" );
 
 namespace denovo_design {
 namespace components {

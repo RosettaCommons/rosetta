@@ -41,7 +41,7 @@
 
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.ProteinInterfaceDesignOperation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.ProteinInterfaceDesignOperation" );
 
 namespace protocols {
 namespace toolbox {

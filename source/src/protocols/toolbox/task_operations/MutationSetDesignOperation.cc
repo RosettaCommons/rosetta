@@ -21,7 +21,7 @@
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 
-static thread_local basic::Tracer TR("protocols.toolbox.task_operations.MutationSetDesignOperation");
+static THREAD_LOCAL basic::Tracer TR("protocols.toolbox.task_operations.MutationSetDesignOperation");
 
 namespace protocols {
 namespace toolbox {

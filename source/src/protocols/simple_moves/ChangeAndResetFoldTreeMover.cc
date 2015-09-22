@@ -22,7 +22,7 @@
 #include <basic/Tracer.hh>
 
 
-static thread_local basic::Tracer TR("ChangeAndResetFoldTreeMover");
+static THREAD_LOCAL basic::Tracer TR("ChangeAndResetFoldTreeMover");
 
 namespace protocols {
 namespace simple_moves {

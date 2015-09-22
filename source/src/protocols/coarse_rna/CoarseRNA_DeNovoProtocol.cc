@@ -89,7 +89,7 @@ namespace protocols {
 namespace coarse_rna {
 
 
-static thread_local basic::Tracer TR( "protocols.coarse_rna.coarse_rna_denovo_protocol" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.coarse_rna.coarse_rna_denovo_protocol" );
 
 CoarseRNA_DeNovoProtocol::CoarseRNA_DeNovoProtocol(
 	Size const nstruct,

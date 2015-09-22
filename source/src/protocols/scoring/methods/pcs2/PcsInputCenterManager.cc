@@ -48,7 +48,7 @@ namespace scoring {
 namespace methods {
 namespace pcs2 {
 
-static thread_local basic::Tracer TR_PcsInputCenterManager( "protocols.scoring.methods.pcs.PcsInputCenterManager" );
+static THREAD_LOCAL basic::Tracer TR_PcsInputCenterManager( "protocols.scoring.methods.pcs.PcsInputCenterManager" );
 
 PcsInputCenterManager::PcsInputCenterManager(){
 	TR_PcsInputCenterManager << "Empty constructor called" << std::endl;

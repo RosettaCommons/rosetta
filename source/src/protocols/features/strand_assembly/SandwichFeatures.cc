@@ -49,7 +49,7 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
-static thread_local basic::Tracer TR( "protocols.features.strand_assembly.SandwichFeatures" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.features.strand_assembly.SandwichFeatures" );
 
 // for parse_my_tag
 using basic::datacache::DataMap;

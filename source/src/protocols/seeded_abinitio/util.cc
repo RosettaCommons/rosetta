@@ -37,7 +37,7 @@
 namespace protocols {
 namespace seeded_abinitio {
 
-static thread_local basic::Tracer TR( "protocols.seeded_abinitio.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.seeded_abinitio.util" );
 
 void
 superposition_transform(

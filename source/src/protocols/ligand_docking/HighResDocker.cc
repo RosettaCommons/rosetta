@@ -73,7 +73,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static thread_local basic::Tracer high_res_docker_tracer( "protocols.ligand_docking.ligand_options.Protocol", basic::t_debug );
+static THREAD_LOCAL basic::Tracer high_res_docker_tracer( "protocols.ligand_docking.ligand_options.Protocol", basic::t_debug );
 
 std::string
 HighResDockerCreator::keyname() const

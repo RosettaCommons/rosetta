@@ -74,7 +74,7 @@ namespace loops {
 namespace loop_mover {
 namespace perturb {
 
-static thread_local basic::Tracer TR( "protocols.loops.loop_mover.perturb.LoopMover_Perturb_QuickCCD" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.perturb.LoopMover_Perturb_QuickCCD" );
 
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;

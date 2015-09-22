@@ -66,7 +66,7 @@
 namespace protocols {
 namespace motifs {
 
-static thread_local basic::Tracer ms_tr( "protocols.motifs.MotifSearch", basic::t_info );
+static THREAD_LOCAL basic::Tracer ms_tr( "protocols.motifs.MotifSearch", basic::t_info );
 
 MotifSearch::~MotifSearch()
 {}

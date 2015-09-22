@@ -30,7 +30,7 @@ namespace rna {
 
 using namespace ObjexxFCL;
 
-static thread_local basic::Tracer TR( "core.chemical.rna.RNA_ResidueType" );
+static THREAD_LOCAL basic::Tracer TR( "core.chemical.rna.RNA_ResidueType" );
 
 ////////////////////////////////////////////////////////////
 

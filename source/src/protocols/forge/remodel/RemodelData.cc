@@ -39,7 +39,7 @@
 #include <string>
 
 
-static thread_local basic::Tracer TR_REMODEL( "protocols.forge.remodel.RemodelData" );
+static THREAD_LOCAL basic::Tracer TR_REMODEL( "protocols.forge.remodel.RemodelData" );
 
 using namespace basic::options;
 using namespace core;

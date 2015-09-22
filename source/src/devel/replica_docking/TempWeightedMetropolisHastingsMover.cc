@@ -29,7 +29,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer tr( "devel.replica_docking.TempWeightedMetropolisHastingsMover" );
+static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.TempWeightedMetropolisHastingsMover" );
 using namespace protocols::canonical_sampling;
 
 namespace devel {

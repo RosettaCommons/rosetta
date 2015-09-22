@@ -44,7 +44,7 @@
 #include <complex>
 
 
-static thread_local basic::Tracer TR( "protocols.jd2.MPIWorkPartitionJobDistributor" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.MPIWorkPartitionJobDistributor" );
 
 namespace protocols {
 namespace jd2 {

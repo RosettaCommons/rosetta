@@ -63,8 +63,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 ///////////////////////////////////////////////////
-static thread_local basic::Tracer TR( "protocols.simple_moves.GenericMonteCarloMover" );
-static thread_local basic::Tracer TR_energies( "protocols.simple_moves.GenericMonteCarloMover.individual_energies" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.GenericMonteCarloMover" );
+static THREAD_LOCAL basic::Tracer TR_energies( "protocols.simple_moves.GenericMonteCarloMover.individual_energies" );
 
 using namespace core;
 

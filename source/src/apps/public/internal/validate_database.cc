@@ -22,7 +22,7 @@
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-static thread_local basic::Tracer TR( "apps.public.validate_database" );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.validate_database" );
 
 /// @brief validate the Dunbrack binaries for the current option set.
 

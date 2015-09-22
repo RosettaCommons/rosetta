@@ -57,7 +57,7 @@ void register_options() {
 }
 
 
-static thread_local basic::Tracer tr( "main" );
+static THREAD_LOCAL basic::Tracer tr( "main" );
 int main( int argc, char** argv ) {
 	try{
   register_options();

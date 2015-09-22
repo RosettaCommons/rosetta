@@ -39,7 +39,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "apps.pilot.smlewis.Extender" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.smlewis.Extender" );
 
 namespace basic{ namespace options{ namespace OptionKeys{
 utility::options::FileOptionKey const extension("extension");

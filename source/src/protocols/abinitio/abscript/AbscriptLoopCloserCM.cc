@@ -69,7 +69,7 @@
 
 // ObjexxFCL Headers
 
-static thread_local basic::Tracer tr( "protocols.abinitio.abscript.AbscriptLoopCloserCM", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.abscript.AbscriptLoopCloserCM", basic::t_info );
 
 namespace protocols {
 namespace abinitio {

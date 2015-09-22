@@ -39,7 +39,7 @@
 #include <numeric/xyz.functions.hh>
 
 
-static thread_local basic::Tracer tr( "core.LocalCoordinateConstraint" );
+static THREAD_LOCAL basic::Tracer tr( "core.LocalCoordinateConstraint" );
 
 namespace core {
 namespace scoring {

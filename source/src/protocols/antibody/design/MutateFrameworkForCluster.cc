@@ -43,7 +43,7 @@
 
 #include <fstream>
 
-static thread_local basic::Tracer TR("protocols.antibody.designMutateFrameworkForCluster");
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.designMutateFrameworkForCluster");
 
 namespace protocols {
 namespace antibody {

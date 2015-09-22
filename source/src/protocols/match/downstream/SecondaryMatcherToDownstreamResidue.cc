@@ -52,7 +52,7 @@ namespace protocols {
 namespace match {
 namespace downstream {
 
-static thread_local basic::Tracer TR( "protocols.match.downstream.SecondaryMatcherToDownstreamResidue" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.match.downstream.SecondaryMatcherToDownstreamResidue" );
 
 SecondaryMatcherToDownstreamResidue::SecondaryMatcherToDownstreamResidue(
 	core::pose::PoseCOP upstream_pose,

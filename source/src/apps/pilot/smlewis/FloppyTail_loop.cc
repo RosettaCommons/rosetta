@@ -96,7 +96,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "apps.public.scenarios.FloppyTail" );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.scenarios.FloppyTail" );
 
 namespace basic{ namespace options{ namespace OptionKeys{
 basic::options::IntegerOptionKey const flexible_start_resnum("flexible_start_resnum");

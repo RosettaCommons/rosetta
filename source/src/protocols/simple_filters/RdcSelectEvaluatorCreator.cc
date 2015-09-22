@@ -41,7 +41,7 @@
 #endif
 
 
-static thread_local basic::Tracer tr( "protocols.evalution.RdcSelectEvaluatorCreator" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.evalution.RdcSelectEvaluatorCreator" );
 
 namespace protocols {
 namespace simple_filters {

@@ -59,7 +59,7 @@
 #include <boost/foreach.hpp>
 
 //Auto Headers
-static thread_local basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicMover" );
 
 using namespace numeric::kinematic_closure;
 using namespace core;

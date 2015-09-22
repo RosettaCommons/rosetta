@@ -50,7 +50,7 @@
 #include <boost/assign.hpp>
 
 // C++ headers
-static thread_local basic::Tracer TR( "protocols.denovo_design.Connection.cxxtest" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.Connection.cxxtest" );
 
 // --------------- Test Class --------------- //
 class ConnectionTests : public CxxTest::TestSuite {

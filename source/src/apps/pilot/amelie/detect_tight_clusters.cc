@@ -94,7 +94,7 @@ const core::Size rot_trials_iterations = 10;
 const core::Size env_quality_check_dist = 6; // no zero-occupancy or Rosetta-rebuilt atoms within this distance of any cluster atom
 const core::Size backrub_iterations = 10;
 
-static thread_local basic::Tracer TR( "apps.pilot.amelie.detect_tight_clusters" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.amelie.detect_tight_clusters" );
 
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, generate_output_structures) // (no semicolon here!) -- this would generate huge amounts of output, so by default it runs silently, only reporting which residues are involved in clusters
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, require_renumbered_structures) // requires numbering to match length of structures -- hack for making the output work with external tools like OSCARstar, but has some drawbacks (see below)

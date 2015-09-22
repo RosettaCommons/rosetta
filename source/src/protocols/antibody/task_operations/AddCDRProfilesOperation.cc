@@ -32,7 +32,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 
-static thread_local basic::Tracer TR("protocols.antibody.task_operations.AddCDRProfilesOperation");
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.task_operations.AddCDRProfilesOperation");
 
 namespace protocols {
 namespace antibody {

@@ -72,7 +72,7 @@ namespace pack {
 using namespace ObjexxFCL::format;
 
 
-static thread_local basic::Tracer TR( "core.pack.rtmin" );
+static THREAD_LOCAL basic::Tracer TR( "core.pack.rtmin" );
 
 //forward dec
 utility::vector1< uint >

@@ -45,7 +45,7 @@ namespace orbitals {
 /// @details Auto-generated virtual destructor
 OrbitalTypeSet::~OrbitalTypeSet() {}
 
-static thread_local basic::Tracer TR( "core.chemical.orbitals" );
+static THREAD_LOCAL basic::Tracer TR( "core.chemical.orbitals" );
 
 OrbitalTypeSet::OrbitalTypeSet(std::string const & directory)
 : directory_( directory )

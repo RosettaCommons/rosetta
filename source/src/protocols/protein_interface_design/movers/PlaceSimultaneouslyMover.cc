@@ -91,7 +91,7 @@
 using namespace core::scoring;
 using namespace protocols::protein_interface_design;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceSimultaneouslyMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceSimultaneouslyMover" );
 
 namespace protocols {
 namespace protein_interface_design {

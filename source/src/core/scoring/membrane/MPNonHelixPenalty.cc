@@ -52,7 +52,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static thread_local basic::Tracer TR( "core.scoring.membrane.MPNonHelix" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.membrane.MPNonHelix" );
 
 namespace core {
 namespace scoring {

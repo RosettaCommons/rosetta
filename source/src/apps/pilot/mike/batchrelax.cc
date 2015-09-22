@@ -59,7 +59,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer TR( "main" );
+static THREAD_LOCAL basic::Tracer TR( "main" );
 
 int
 main( int argc, char * argv [] )

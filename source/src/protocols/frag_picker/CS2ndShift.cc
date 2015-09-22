@@ -44,7 +44,7 @@ using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer tr( "protocols.frag_picker.SecondaryShiftCalculator" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.frag_picker.SecondaryShiftCalculator" );
 
 CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 	//Change to database files!

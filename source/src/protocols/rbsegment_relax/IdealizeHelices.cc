@@ -72,7 +72,7 @@ using basic::Warning;
 namespace protocols {
 namespace rbsegment_relax {
 
-static thread_local basic::Tracer TR( "protocols.rbsegment_relax.IdealizeHelices" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rbsegment_relax.IdealizeHelices" );
 
 using namespace protocols;
 using namespace core;

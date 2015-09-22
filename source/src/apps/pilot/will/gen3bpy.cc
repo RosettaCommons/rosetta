@@ -57,7 +57,7 @@
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
 
-static thread_local basic::Tracer TR( "gen3bpy" );
+static THREAD_LOCAL basic::Tracer TR( "gen3bpy" );
 static core::io::silent::SilentFileData sfd;
 
 

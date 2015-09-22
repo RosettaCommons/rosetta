@@ -62,7 +62,7 @@
 namespace devel {
 namespace domain_insertion {
 
-static thread_local basic::Tracer tr( "devel.domain_insertion.InsertionSiteTestMover" );
+static THREAD_LOCAL basic::Tracer tr( "devel.domain_insertion.InsertionSiteTestMover" );
 
 InsertionSiteTestMover::InsertionSiteTestMover()
 :

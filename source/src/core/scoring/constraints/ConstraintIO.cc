@@ -51,7 +51,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static thread_local basic::Tracer tr( "core.scoring.constraints.ConstraintsIO" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.constraints.ConstraintsIO" );
 
 // Singleton instance and mutex static data members
 namespace utility {

@@ -138,7 +138,7 @@ using basic::Warning;
 using utility::file::FileName;
 
 // tracer
-static thread_local basic::Tracer TR( "apps.pilot.doug" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.doug" );
 
 // application specific options
 namespace dddm {

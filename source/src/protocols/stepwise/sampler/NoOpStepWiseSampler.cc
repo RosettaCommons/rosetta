@@ -16,7 +16,7 @@
 
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.sampler.NoOpStepWiseSampler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.NoOpStepWiseSampler" );
 
 namespace protocols {
 namespace stepwise {

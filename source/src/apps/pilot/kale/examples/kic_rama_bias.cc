@@ -83,7 +83,7 @@ private:
 
 };
 
-static thread_local basic::Tracer TR(
+static THREAD_LOCAL basic::Tracer TR(
 		"protocols.loops.loop_closure.kinematic_closure.KinematicPerturber");
 
 UniformPerturber::UniformPerturber() // {{{1

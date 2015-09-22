@@ -76,7 +76,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.ub_e2c.ubi_e2c_modeler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.ub_e2c.ubi_e2c_modeler" );
 
 namespace protocols {
 namespace ub_e2c {

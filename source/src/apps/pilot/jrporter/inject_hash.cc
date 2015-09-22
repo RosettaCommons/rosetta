@@ -39,7 +39,7 @@
 #include <boost/functional/hash.hpp>
 
 
-static thread_local basic::Tracer tr( "main" );
+static THREAD_LOCAL basic::Tracer tr( "main" );
 
 
 class InjectorMover : public protocols::moves::Mover {

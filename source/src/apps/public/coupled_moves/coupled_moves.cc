@@ -58,7 +58,7 @@
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-static thread_local basic::Tracer TR( "apps.coupled_moves" );
+static THREAD_LOCAL basic::Tracer TR( "apps.coupled_moves" );
 
 OPT_1GRP_KEY(Integer, coupled_moves, ntrials)
 OPT_1GRP_KEY(Real, coupled_moves, mc_kt)

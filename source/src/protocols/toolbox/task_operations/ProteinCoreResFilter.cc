@@ -26,7 +26,7 @@
 
 // C++ Headers
 
-static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.ProteinCore" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.TaskOperations.ProteinCore" );
 
 namespace protocols {
 namespace toolbox {

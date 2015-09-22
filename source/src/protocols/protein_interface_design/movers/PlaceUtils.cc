@@ -71,7 +71,7 @@
 
 using namespace core::scoring;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceUtils" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceUtils" );
 
 namespace protocols {
 namespace protein_interface_design {

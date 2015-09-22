@@ -60,7 +60,7 @@ using basic::Warning;
 namespace protocols {
 namespace electron_density {
 
-static thread_local basic::Tracer TR( "protocols.electron_density.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.electron_density.util" );
 
 using namespace protocols;
 using namespace core;

@@ -42,7 +42,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.DumpPdb" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.DumpPdb" );
 
 std::string
 DumpPdbCreator::keyname() const

@@ -56,7 +56,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "apps.pilot.grant.AbInitio_MPI" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.grant.AbInitio_MPI" );
 
 namespace core{ namespace options{ namespace OptionKeys{
 

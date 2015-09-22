@@ -78,7 +78,7 @@ using namespace core;
 using namespace basic::options;
 using namespace ObjexxFCL;
 
-static thread_local basic::Tracer TR( "protocols.moves.ScoreMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.moves.ScoreMover" );
 
 namespace score_app { BooleanOptionKey linmin( "score_app:linmin" ); }
 

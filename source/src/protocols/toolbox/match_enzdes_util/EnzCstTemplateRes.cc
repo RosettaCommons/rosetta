@@ -47,7 +47,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzCstTemplateRes" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzCstTemplateRes" );
 
 namespace protocols {
 namespace toolbox {

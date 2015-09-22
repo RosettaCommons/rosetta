@@ -63,7 +63,7 @@ using std::string;
 using utility::tools::make_vector1;
 using utility::vector1;
 
-static thread_local basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopRefineInnerCycleFactory" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopRefineInnerCycleFactory" );
 
 void LoopRefineInnerCycleFactory::setup_known_types()
 {

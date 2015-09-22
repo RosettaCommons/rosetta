@@ -66,7 +66,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
-static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.BuriedUnsatisfiedPolarsCalculator" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.BuriedUnsatisfiedPolarsCalculator" );
 
 namespace protocols {
 namespace toolbox {

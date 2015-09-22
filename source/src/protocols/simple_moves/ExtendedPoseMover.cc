@@ -47,7 +47,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <core/kinematics/Jump.hh>
 
-static thread_local basic::Tracer tr( "protocols.simple_moves.ExtendedPoseMover" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.simple_moves.ExtendedPoseMover" );
 
 namespace protocols {
 namespace simple_moves {

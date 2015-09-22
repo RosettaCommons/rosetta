@@ -90,7 +90,7 @@ bool isUnique( utility::vector1<string> & str )
 	return true;
 }
 
-static thread_local basic::Tracer TR( "main" );
+static THREAD_LOCAL basic::Tracer TR( "main" );
 
 int main(int argc, char *argv[]) {
 

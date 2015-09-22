@@ -61,7 +61,7 @@ using namespace scoring;
 
 using basic::Warning;
 using basic::t_warning;
-static thread_local basic::Tracer TR( "protocols.enzdes.PackRotamersMoverPartGreedy" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.enzdes.PackRotamersMoverPartGreedy" );
 
 std::string
 PackRotamersMoverPartGreedyCreator::keyname() const

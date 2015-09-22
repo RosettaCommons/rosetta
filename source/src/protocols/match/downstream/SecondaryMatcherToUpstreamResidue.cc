@@ -50,7 +50,7 @@ namespace protocols {
 namespace match {
 namespace downstream {
 
-static thread_local basic::Tracer TR( "protocols.match.downstream.SecondaryMatcherToUpstreamResidue" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.match.downstream.SecondaryMatcherToUpstreamResidue" );
 
 struct hash_upstream_hit
 {

@@ -67,7 +67,7 @@ using namespace basic::options::OptionKeys;
 using namespace basic::options::OptionKeys::stepwise::monte_carlo;
 using utility::vector1;
 
-static thread_local basic::Tracer TR( "apps.pilot.rhiju.stepwise_monte_carlo" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.rhiju.stepwise_monte_carlo" );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void

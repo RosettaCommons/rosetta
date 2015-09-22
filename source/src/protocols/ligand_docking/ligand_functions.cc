@@ -38,7 +38,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static thread_local basic::Tracer TR( "protocols.ligand_docking.ligand_functions" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.ligand_functions" );
 
 /// @brief Helper function.
 core::scoring::constraints::ConstraintOP

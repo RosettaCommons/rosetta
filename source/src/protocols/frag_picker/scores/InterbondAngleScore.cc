@@ -45,7 +45,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-static thread_local basic::Tracer trInterbondAngleScore(
+static THREAD_LOCAL basic::Tracer trInterbondAngleScore(
 	"fragment.picking.scores.InterbondAngleScore");
 
 InterbondAngleScore::InterbondAngleScore(Size priority,

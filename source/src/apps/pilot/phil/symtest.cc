@@ -161,7 +161,7 @@
 // using namespace ObjexxFCL::format;
 // using core::import_pose::pose_from_pdb;
 // using io::pdb::dump_pdb; // deprecated though
-static thread_local basic::Tracer TR( "apps.pilot.phil.symtest" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phil.symtest" );
 
 
 ///////////////////////////////////////////////////////////////////////////////

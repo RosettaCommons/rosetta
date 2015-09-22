@@ -39,7 +39,7 @@
 namespace protocols {
 namespace helical_bundle {
 
-static thread_local basic::Tracer TR( "protocols.helical_bundle.BackboneGridSamplerHelper" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.helical_bundle.BackboneGridSamplerHelper" );
 
 /// @brief Constructor.
 ///

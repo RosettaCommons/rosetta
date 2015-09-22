@@ -84,7 +84,7 @@ namespace interaction_graph {
 
 //#define FILE_DEBUG 1
 
-static thread_local basic::Tracer TR( "core.pack.interaction_graph.SurfacePotential" );
+static THREAD_LOCAL basic::Tracer TR( "core.pack.interaction_graph.SurfacePotential" );
 
 const core::Size SurfacePotential::MAX_PATCH_SURFACE_AREA = 1200;
 const core::Real SurfacePotential::MAX_SURFACE_ENERGY = 25.0;

@@ -46,7 +46,7 @@
 //C++
 #include <cstdio>
 
-static thread_local basic::Tracer TR( "NodePairRmsdCalculator" );
+static THREAD_LOCAL basic::Tracer TR( "NodePairRmsdCalculator" );
 
 void
 generate_schema(

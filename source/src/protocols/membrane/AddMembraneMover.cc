@@ -92,7 +92,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static thread_local basic::Tracer TR( "protocols.membrane.AddMembraneMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.AddMembraneMover" );
 
 namespace protocols {
 namespace membrane {

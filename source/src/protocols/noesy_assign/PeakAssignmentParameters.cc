@@ -196,7 +196,7 @@ void PeakAssignmentParameters::register_options() {
 }
 
 
-static thread_local basic::Tracer tr( "protocols.noesy_assign.parameters" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.noesy_assign.parameters" );
 
 
 void PeakAssignmentParameters::set_options_from_cmdline( core::Size cycle_selector ) {

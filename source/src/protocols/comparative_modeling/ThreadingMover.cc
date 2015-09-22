@@ -74,7 +74,7 @@
 namespace protocols {
 namespace comparative_modeling {
 
-static thread_local basic::Tracer tr( "protocols.comparative_modeling.threading" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling.threading" );
 
 // Empty constructor
 ThreadingMover::ThreadingMover() : protocols::moves::Mover("ThreadingMover"),

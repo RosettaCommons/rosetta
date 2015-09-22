@@ -41,7 +41,7 @@
 #include <core/scoring/methods/vall_lookback/VallLookbackData.hh>
 
 //// C++ headers
-static thread_local basic::Tracer tr("protocols.filters.LeastNativeLike9merFilter");
+static THREAD_LOCAL basic::Tracer tr("protocols.filters.LeastNativeLike9merFilter");
 
 namespace protocols {
 namespace simple_filters {

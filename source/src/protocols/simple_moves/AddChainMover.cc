@@ -34,7 +34,7 @@
 #include <numeric/xyzVector.hh>
 #include <protocols/toolbox/superimpose.hh>
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.AddChainMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.AddChainMover" );
 
 namespace protocols {
 namespace simple_moves {

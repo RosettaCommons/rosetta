@@ -51,7 +51,7 @@ using basic::Error;
 using basic::Warning;
 
 //replaces cout
-static thread_local basic::Tracer tr( "apps.pilot.dan.LoopExtend" );
+static THREAD_LOCAL basic::Tracer tr( "apps.pilot.dan.LoopExtend" );
 
 /// @brief main method for loop extension.
 int

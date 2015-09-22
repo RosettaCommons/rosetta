@@ -61,7 +61,7 @@ using numeric::angle_radians;
 using numeric::principal_angle;
 using numeric::dihedral_radians;
 
-static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.RNA_AnalyticLoopCloser" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.RNA_AnalyticLoopCloser" );
 
 namespace protocols {
 namespace stepwise {

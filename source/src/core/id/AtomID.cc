@@ -30,7 +30,7 @@
 namespace core {
 namespace id {
 
-static thread_local basic::Tracer tr( "core.id.AtomID" );
+static THREAD_LOCAL basic::Tracer tr( "core.id.AtomID" );
 
 
 AtomID const &

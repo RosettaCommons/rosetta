@@ -45,7 +45,7 @@
 #include <cstdlib>
 #include <string>
 
-static thread_local basic::Tracer TR( "core.conformation.membrane.SpanningTopology" );
+static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.SpanningTopology" );
 
 namespace core {
 namespace conformation {

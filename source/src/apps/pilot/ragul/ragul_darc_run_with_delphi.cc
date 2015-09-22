@@ -85,7 +85,7 @@ OPT_KEY( Integer, delphi_grid_size )
 OPT_KEY( Real, delphi_grid_spacing )
 
 
-static thread_local basic::Tracer TR( "apps.pilot.ragul_run_darc_with_input_eggshell.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ragul_run_darc_with_input_eggshell.main" );
 
 int main( int argc, char * argv [] ) {
   try {

@@ -120,7 +120,7 @@ using ObjexxFCL::lead_zero_string_of;
 namespace protocols {
 namespace hotspot_hashing {
 typedef platform::Size Size;
-static thread_local basic::Tracer TR( "protocols.hotspot_hashing" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.hotspot_hashing" );
 
 HotspotStubSet::HotspotStubSet() :
 	ReferenceCount(),

@@ -38,7 +38,7 @@
 #include <utility/vector0.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.toolbox.task_operations.RestrictNativeResiduesOperation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.RestrictNativeResiduesOperation" );
 
 namespace protocols {
 namespace toolbox {

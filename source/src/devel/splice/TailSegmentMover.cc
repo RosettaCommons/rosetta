@@ -77,7 +77,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "devel.splice.TailSegmentMover" );
+static THREAD_LOCAL basic::Tracer TR( "devel.splice.TailSegmentMover" );
 
 namespace devel {
 namespace splice {

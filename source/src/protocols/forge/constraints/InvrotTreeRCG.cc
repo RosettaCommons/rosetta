@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.forge.constraints.InvrotTreeRCG" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.forge.constraints.InvrotTreeRCG" );
 
 namespace protocols {
 namespace forge {

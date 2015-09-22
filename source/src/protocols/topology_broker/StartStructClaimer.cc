@@ -51,7 +51,7 @@
 //// C++ headers
 
 
-static thread_local basic::Tracer tr( "protocols.topo_broker", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "protocols.topo_broker", basic::t_info );
 
 namespace protocols {
 namespace topology_broker {

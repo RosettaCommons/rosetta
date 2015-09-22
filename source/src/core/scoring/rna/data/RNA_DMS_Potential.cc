@@ -42,7 +42,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
-static thread_local basic::Tracer TR( "core.scoring.rna.data.RNA_DMS_Potential" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.rna.data.RNA_DMS_Potential" );
 
 using utility::tools::make_vector1;
 using utility::vector1;

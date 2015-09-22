@@ -23,7 +23,7 @@
 
 using namespace core;
 
-static thread_local basic::Tracer TR( "protocols.sampler.rna.RNA_MC_MultiSuite" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rna.RNA_MC_MultiSuite" );
 
 namespace protocols {
 namespace stepwise {

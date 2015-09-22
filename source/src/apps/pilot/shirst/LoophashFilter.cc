@@ -51,7 +51,7 @@
 
 #include <devel/init.hh>
 
-static thread_local basic::Tracer tr( "apps.pilot.LoophashFilter" );
+static THREAD_LOCAL basic::Tracer tr( "apps.pilot.LoophashFilter" );
 
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])

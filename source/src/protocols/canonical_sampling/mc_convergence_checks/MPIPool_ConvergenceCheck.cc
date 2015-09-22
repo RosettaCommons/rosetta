@@ -43,7 +43,7 @@ namespace protocols {
 namespace canonical_sampling{
 namespace mc_convergence_checks {
 
-static thread_local basic::Tracer tr( "MPIPool_ConvergenceCheck" );
+static THREAD_LOCAL basic::Tracer tr( "MPIPool_ConvergenceCheck" );
 
   //bool protocols::canonical_sampling::mc_convergence_checks::MPIPool_RMSD::options_registered_( false );
 

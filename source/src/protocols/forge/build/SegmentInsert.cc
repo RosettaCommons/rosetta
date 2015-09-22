@@ -50,7 +50,7 @@ namespace build {
 
 
 // static for this file
-static thread_local basic::Tracer TR( "protocols.forge.build.SegmentInsert" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.forge.build.SegmentInsert" );
 
 
 /// @brief default constructor

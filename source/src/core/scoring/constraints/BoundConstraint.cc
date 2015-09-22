@@ -26,7 +26,7 @@
 
 // Utility headers
 
-static thread_local basic::Tracer tr( "core.constraints.BoundFunc", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "core.constraints.BoundFunc", basic::t_info );
 
 // C++ headers
 

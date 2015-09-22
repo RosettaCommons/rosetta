@@ -34,7 +34,7 @@
 // C headers
 #include <time.h>
 
-static thread_local basic::Tracer TR( "protocols.denovo_design.filters.psipredinterface" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.filters.psipredinterface" );
 
 namespace protocols {
 namespace denovo_design {

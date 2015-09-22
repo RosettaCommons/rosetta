@@ -83,7 +83,7 @@ Try:
 
 #include <devel/init.hh>
 
-static thread_local basic::Tracer tr( "apps.pilot.TMHTopologySampler" );
+static THREAD_LOCAL basic::Tracer tr( "apps.pilot.TMHTopologySampler" );
 
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])

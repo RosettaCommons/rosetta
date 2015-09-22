@@ -60,7 +60,7 @@
 namespace devel {
 namespace mmt_msd {
 
-static thread_local basic::Tracer TR( "devel.mmt_msd.MMTDriver" );
+static THREAD_LOCAL basic::Tracer TR( "devel.mmt_msd.MMTDriver" );
 
 std::string
 sequence_from_entity(

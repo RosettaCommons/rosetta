@@ -56,8 +56,8 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.FilterScanFilter" );
-static thread_local basic::Tracer TR_residue_scan( "ResidueScan" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.FilterScanFilter" );
+static THREAD_LOCAL basic::Tracer TR_residue_scan( "ResidueScan" );
 
 /// @brief default ctor
 FilterScanFilter::FilterScanFilter() :

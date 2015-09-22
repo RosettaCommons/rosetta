@@ -29,7 +29,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "core.conformation.membrane.util" );
+static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.util" );
 
 namespace core {
 namespace conformation {

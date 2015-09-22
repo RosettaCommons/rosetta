@@ -34,7 +34,7 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
-static thread_local basic::Tracer tr( "core.scoring.solid_surface.SurfaceEnergies" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.solid_surface.SurfaceEnergies" );
 
 namespace core {
 namespace scoring {

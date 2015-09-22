@@ -30,7 +30,7 @@ namespace saxs {
 /// @details Auto-generated virtual destructor
 FormFactor::~FormFactor() {}
 
-static thread_local basic::Tracer trFormFactor( "core.scoring.saxs.FormFactor" );
+static THREAD_LOCAL basic::Tracer trFormFactor( "core.scoring.saxs.FormFactor" );
 
 FormFactor::FormFactor(std::string atom_name,std::string file_name) {
 

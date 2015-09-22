@@ -82,7 +82,7 @@
 
 #include <devel/cstEnergyBalance/minimalCstRelaxUtil.hh>
 
-static thread_local basic::Tracer tr( "minimalCstHomology" );
+static THREAD_LOCAL basic::Tracer tr( "minimalCstHomology" );
 
 using utility::vector1;
 using core::Size;

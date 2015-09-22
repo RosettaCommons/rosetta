@@ -77,7 +77,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 
-static thread_local basic::Tracer TR( "apps.pilot.rhiju.screen_phosphates" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.rhiju.screen_phosphates" );
 
 OPT_KEY( Boolean, screen_all_phosphates )
 OPT_KEY( Boolean, do_screening )

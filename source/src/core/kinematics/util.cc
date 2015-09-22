@@ -30,7 +30,7 @@
 namespace core {
 namespace kinematics {
 using namespace id;
-static thread_local basic::Tracer TR( "core.kinematics.util" );
+static THREAD_LOCAL basic::Tracer TR( "core.kinematics.util" );
 ///////////////////////////////////////////////////////////////////////////////
 // wrapper for the add_atom recursive function which doesn't know anything
 // about Residues

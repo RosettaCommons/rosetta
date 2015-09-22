@@ -69,7 +69,7 @@ using core::kinematics::Stub;
 using core::conformation::Residue;
 using core::Real;
 
-static thread_local basic::Tracer TR( "rblinker2_overlay_bound" );
+static THREAD_LOCAL basic::Tracer TR( "rblinker2_overlay_bound" );
 
 
 // inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {

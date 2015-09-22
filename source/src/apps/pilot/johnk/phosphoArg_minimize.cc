@@ -65,7 +65,7 @@ OPT_KEY( Real, phosphate_force_constant )
 */
 OPT_KEY( Boolean, do_minimization )
 
-static thread_local basic::Tracer TR( "apps.pilot.phosphoArg_minimize.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phosphoArg_minimize.main" );
 
 
 int

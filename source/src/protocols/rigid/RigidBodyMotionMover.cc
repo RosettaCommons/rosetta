@@ -48,7 +48,7 @@
 namespace protocols {
 namespace rigid {
 
-static thread_local basic::Tracer TR( "protocols.moves.RigidBodyMotionMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.moves.RigidBodyMotionMover" );
 
 double angle_between(const numeric::xyzVector<double>& a, const numeric::xyzVector<double>& b) {
 	double radians = std::acos(a.dot(b) / (a.length() * b.length()));

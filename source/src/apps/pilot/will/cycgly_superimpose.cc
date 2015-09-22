@@ -93,7 +93,7 @@ using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 using namespace basic::options;
 
-static thread_local basic::Tracer TR( "cycgly_superimpose" );
+static THREAD_LOCAL basic::Tracer TR( "cycgly_superimpose" );
 
 
 // OPT_1GRP_KEY(Real,probabilities,localbb)

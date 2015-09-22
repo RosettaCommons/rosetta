@@ -33,7 +33,7 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-static thread_local basic::Tracer GridBaseTracer( "protocols.qsar.scoring_grid.SingleGrid" );
+static THREAD_LOCAL basic::Tracer GridBaseTracer( "protocols.qsar.scoring_grid.SingleGrid" );
 
 
 SingleGrid::SingleGrid(std::string type) : type_(type),chain_('A')

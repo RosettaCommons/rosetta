@@ -143,7 +143,7 @@ namespace forge {
 namespace remodel {
 
 
-static thread_local basic::Tracer TR( "protocols.forge.remodel.RemodelMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.forge.remodel.RemodelMover" );
 
 // parser
 std::string

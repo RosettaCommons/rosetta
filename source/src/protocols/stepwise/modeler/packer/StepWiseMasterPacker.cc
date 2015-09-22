@@ -33,7 +33,7 @@
 
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.modeler.packer.StepWiseMasterPacker" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.packer.StepWiseMasterPacker" );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

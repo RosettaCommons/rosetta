@@ -677,7 +677,7 @@ static ResourceOptionsRegistrator< core::chemical::ResidueLoaderOptionsCreator >
 
 #endif
 
-static thread_local basic::Tracer TR( "core.init" );
+static THREAD_LOCAL basic::Tracer TR( "core.init" );
 
 using namespace numeric::random;
 using namespace basic::options;

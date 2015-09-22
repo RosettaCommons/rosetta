@@ -47,7 +47,7 @@ using namespace core;
 using utility::vector1;
 
 /// tracer object:
-static thread_local basic::Tracer tt( "devel.cartesian_frags.dna_util", basic::t_trace );
+static THREAD_LOCAL basic::Tracer tt( "devel.cartesian_frags.dna_util", basic::t_trace );
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -77,9 +77,9 @@
 // Utility headers
 
 
-static thread_local basic::Tracer TM( "TMemory" );
+static THREAD_LOCAL basic::Tracer TM( "TMemory" );
 
-static thread_local basic::Tracer TR_( "global" );
+static THREAD_LOCAL basic::Tracer TR_( "global" );
 
 
 void TracerDiskSpaceTest(void)

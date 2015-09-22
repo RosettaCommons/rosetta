@@ -68,7 +68,7 @@
 namespace protocols {
 namespace matdes {
 
-static thread_local basic::Tracer TR( "protocols.matdes.MatDesGreedyOptMutationMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.matdes.MatDesGreedyOptMutationMover" );
 using namespace core;
 using namespace chemical;
 using utility::vector1;

@@ -56,7 +56,7 @@ using core::Size;
 using core::Real;
 using core::pose::Pose;
 
-static thread_local basic::Tracer tr( "ouputrama" );
+static THREAD_LOCAL basic::Tracer tr( "ouputrama" );
 
 vector1< Real> calc_rama(Pose & pose){
     core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );

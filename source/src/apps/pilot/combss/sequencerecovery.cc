@@ -75,7 +75,7 @@
 #include <core/import_pose/import_pose.hh>
 
 
-static thread_local basic::Tracer TR( "seqrecovery" );
+static THREAD_LOCAL basic::Tracer TR( "seqrecovery" );
 
 using namespace core;
 using namespace protocols;

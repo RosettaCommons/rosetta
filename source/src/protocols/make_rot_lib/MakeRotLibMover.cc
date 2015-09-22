@@ -52,7 +52,7 @@
 namespace protocols {
 namespace make_rot_lib {
 
-static thread_local basic::Tracer TR( "protocols.make_rot_lib.MakeRotLibMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.make_rot_lib.MakeRotLibMover" );
 
 /// @brief Default constructor
 MakeRotLibMover::MakeRotLibMover() :

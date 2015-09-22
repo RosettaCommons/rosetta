@@ -34,7 +34,7 @@
 //Auto Headers
 
 
-static thread_local basic::Tracer tr( "protocols.jd2.LazySilentFileJobInputter" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.jd2.LazySilentFileJobInputter" );
 
 namespace protocols {
 namespace jd2 {

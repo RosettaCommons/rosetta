@@ -39,7 +39,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static thread_local basic::Tracer TR( "apps.pilot.bder.BuriedUnsatPolarsFinder" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.bder.BuriedUnsatPolarsFinder" );
 
 
 using namespace core;

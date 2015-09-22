@@ -37,7 +37,7 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
-static thread_local basic::Tracer TR("protocols.helical_bundle.FitSimpleHelixMultiFunc");
+static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.FitSimpleHelixMultiFunc");
 
 namespace protocols {
 namespace helical_bundle {

@@ -10,7 +10,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.moves.CycPepMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.moves.CycPepMover" );
 using namespace core;
 using namespace ObjexxFCL;
 

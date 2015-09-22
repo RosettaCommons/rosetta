@@ -52,7 +52,7 @@
 using namespace core;
 using basic::T;
 
-static thread_local basic::Tracer TR( "protocols.rna.RNA_BasePairClassifier" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rna.RNA_BasePairClassifier" );
 
 namespace core {
 namespace pose {

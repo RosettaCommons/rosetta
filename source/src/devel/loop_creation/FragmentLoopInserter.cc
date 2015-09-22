@@ -64,7 +64,7 @@
 namespace devel {
 namespace loop_creation {
 
-static thread_local basic::Tracer TR( "protocols.loophash.FragmentLoopInserter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.loophash.FragmentLoopInserter" );
 
 //****CREATOR METHODS****//
 std::string

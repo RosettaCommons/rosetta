@@ -137,7 +137,7 @@ using namespace core::pack::dunbrack;
 using namespace core::pack::dunbrack::cenrot;
 
 //////////////////////////////////////////////////////////////////
-static thread_local basic::Tracer TR( "pilot.wendao.cenrotjd2" );
+static THREAD_LOCAL basic::Tracer TR( "pilot.wendao.cenrotjd2" );
 
 utility::vector1<core::Size> nrecovery(20);
 utility::vector1<core::Size> n_total(20);

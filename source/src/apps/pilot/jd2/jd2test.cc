@@ -44,7 +44,7 @@
 OPT_1GRP_KEY( Boolean, jd2test, set_fail_no_retry )
 OPT_1GRP_KEY( Boolean, jd2test, set_fail_bad_input )
 
-static thread_local basic::Tracer TR( "jd2test" );
+static THREAD_LOCAL basic::Tracer TR( "jd2test" );
 
 ///local mover for testing purposes
 class JDtestmover : public protocols::moves::Mover {

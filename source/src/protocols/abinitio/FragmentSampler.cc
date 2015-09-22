@@ -70,7 +70,7 @@
 #include <iostream>
 
 
-static thread_local basic::Tracer tr( "protocols.abinitio" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio" );
 
 using core::Real;
 using namespace core;

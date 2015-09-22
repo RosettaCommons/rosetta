@@ -59,7 +59,7 @@
 // C++ headers
 #include <iostream>
 
-static thread_local basic::Tracer TR( "apps.pilot.ralford.membrane_relax2" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_relax2" );
 
 using namespace core; 
 using namespace protocols::moves;

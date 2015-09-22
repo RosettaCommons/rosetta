@@ -50,7 +50,7 @@ template <> JobInputterFactory * utility::SingletonBase< JobInputterFactory >::i
 namespace protocols {
 namespace jd2 {
 
-static thread_local basic::Tracer TR( "protocols.jd2.JobInputterFactory" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.JobInputterFactory" );
 
 JobInputterFactory *
 JobInputterFactory::create_singleton_instance()

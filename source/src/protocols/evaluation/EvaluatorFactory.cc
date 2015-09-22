@@ -64,7 +64,7 @@ using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 
-static thread_local basic::Tracer tr( "protocols.evaluator.EvaluatorFactory" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.evaluator.EvaluatorFactory" );
 
 
 EvaluatorFactory *

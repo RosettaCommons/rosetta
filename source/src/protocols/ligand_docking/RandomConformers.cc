@@ -45,7 +45,7 @@ namespace ligand_docking {
 ///////////////////////////////////////////////////////////////////////
 /// @brief
 
-static thread_local basic::Tracer random_conformer_tracer( "protocols.ligand_docking.ligand_options.RandomConformers", basic::t_debug );
+static THREAD_LOCAL basic::Tracer random_conformer_tracer( "protocols.ligand_docking.ligand_options.RandomConformers", basic::t_debug );
 
 std::string
 RandomConformersCreator::keyname() const

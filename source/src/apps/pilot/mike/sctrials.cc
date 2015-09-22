@@ -58,7 +58,7 @@ using namespace core::scoring;
 
 using utility::vector1;
 
-static thread_local basic::Tracer TR( "sctrials" );
+static THREAD_LOCAL basic::Tracer TR( "sctrials" );
 
 class ScTrials : public moves::Mover {
 

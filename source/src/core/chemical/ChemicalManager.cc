@@ -94,7 +94,7 @@ template <> ChemicalManager * utility::SingletonBase< ChemicalManager >::instanc
 namespace core {
 namespace chemical {
 
-static thread_local basic::Tracer TR( "core.chemical.ChemicalManager" );
+static THREAD_LOCAL basic::Tracer TR( "core.chemical.ChemicalManager" );
 
 /// @brief private constructor to guarantee the singleton
 ChemicalManager::ChemicalManager(){}

@@ -103,7 +103,7 @@ basic::options::RealOptionKey const scorefilter("scorefilter");
 //tracers
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "apps.pilot.smlewis.UBQ_UBQ_E2" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.smlewis.UBQ_UBQ_E2" );
 
 class UBQ_E2Mover : public protocols::moves::Mover {
 private: //enum for atomID vector

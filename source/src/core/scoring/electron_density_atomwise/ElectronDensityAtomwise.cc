@@ -74,7 +74,7 @@ using namespace basic::options;
 //#endif
 
 
-static thread_local basic::Tracer TR( "core.scoring.electron_density_atomwise.ElectronDensityAtomwise" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.electron_density_atomwise.ElectronDensityAtomwise" );
 
 
 /// null constructor

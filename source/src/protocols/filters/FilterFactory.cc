@@ -33,7 +33,7 @@ namespace protocols {
 namespace filters {
 
 
-static thread_local basic::Tracer TR( "protocols.filters.FilterFactory" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.filters.FilterFactory" );
 
 #if defined MULTI_THREADED && defined CXX11
 std::atomic< FilterFactory * > FilterFactory::instance_( 0 );

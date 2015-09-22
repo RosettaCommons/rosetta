@@ -51,7 +51,7 @@ using namespace basic::options::OptionKeys;
 
 OPT_KEY( String, ref_decoy )
 
-static thread_local basic::Tracer TR( "apps.pilot.johnk_interface_recompute_score_and_rmsd.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.johnk_interface_recompute_score_and_rmsd.main" );
 
 // NOTE: GLOBAL VARIABLE - this would better be done with a static (and could be used to ensure it's filled, too...)
 utility::vector1 <bool> interface;

@@ -97,7 +97,7 @@
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.docking.DockingProtocol" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.docking.DockingProtocol" );
 using namespace core;
 
 namespace protocols {

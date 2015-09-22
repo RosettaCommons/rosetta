@@ -148,7 +148,7 @@
 namespace protocols {
 namespace hybridization {
 
-static thread_local basic::Tracer TR( "protocols.hybridization.CartesianSampler" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.CartesianSampler" );
 
 /////////////
 // creator

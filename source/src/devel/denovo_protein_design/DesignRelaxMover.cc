@@ -62,7 +62,7 @@ using basic::Warning;
 using namespace core::scoring;
 using namespace basic::options;
 
-static thread_local basic::Tracer TR( "devel.DenovoProteinDesign.DesignRelaxMover" );
+static THREAD_LOCAL basic::Tracer TR( "devel.DenovoProteinDesign.DesignRelaxMover" );
 
 namespace devel {
 namespace denovo_protein_design {

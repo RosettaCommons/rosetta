@@ -47,7 +47,7 @@ namespace protocols {
 namespace loops {
 namespace loops_definers {
 
-static thread_local basic::Tracer TR( "protocols.loops.loops_definers.LoopsDefinerLoader" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.loops.loops_definers.LoopsDefinerLoader" );
 
 LoopsDefinerLoader::LoopsDefinerLoader() {}
 LoopsDefinerLoader::~LoopsDefinerLoader() {}

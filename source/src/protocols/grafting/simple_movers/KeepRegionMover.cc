@@ -23,7 +23,7 @@
 #include <utility/py/PyAssert.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.grafting.simple_movers.KeepRegionMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.grafting.simple_movers.KeepRegionMover" );
 
 namespace protocols {
 namespace grafting {

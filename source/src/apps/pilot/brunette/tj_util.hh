@@ -65,7 +65,7 @@ using core::pose::Pose;
 using core::Size;
 using core::Real;
 
-static thread_local basic::Tracer tr2( "brunette.tj_util" );
+static THREAD_LOCAL basic::Tracer tr2( "brunette.tj_util" );
 /// @brief inputs the sequence alignments and keeps them ordered the way they
 /// were in the alingment.filt file.
 

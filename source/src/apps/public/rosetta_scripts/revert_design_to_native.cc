@@ -58,7 +58,7 @@ RealOptionKey threshold( "revert_app:threshold" );
 BooleanOptionKey post_repack( "revert_app:post_repack" );
 }
 
-static thread_local basic::Tracer TR( "apps.public.rosetta_scripts.revert_design_to_native" );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.rosetta_scripts.revert_design_to_native" );
 
 ///////////////////////////////////////////////////////////////////////////////
 int

@@ -27,7 +27,7 @@
 namespace protocols {
 namespace filters {
 
-static thread_local basic::Tracer TR( "protocols.filters.ContingentFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.filters.ContingentFilter" );
 
 /// @brief default ctor
 ContingentFilter::ContingentFilter() :

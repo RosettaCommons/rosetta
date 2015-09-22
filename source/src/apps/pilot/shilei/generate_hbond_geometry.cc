@@ -91,7 +91,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "apps.pilot_apps.shilei.generate_hbond_geometry" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot_apps.shilei.generate_hbond_geometry" );
         
 using namespace core;
 using namespace core::pose;

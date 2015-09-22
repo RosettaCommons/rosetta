@@ -60,7 +60,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TRb( "rbsegmove_main" );
+static THREAD_LOCAL basic::Tracer TRb( "rbsegmove_main" );
 
 namespace protocols {
 // namespace rbsegment_relax {

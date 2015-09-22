@@ -27,7 +27,7 @@
 using namespace core;
 using namespace core::chemical::rna;
 
-static thread_local basic::Tracer TR( "protocols.sampler.rna.RNA_MC_Sugar" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sampler.rna.RNA_MC_Sugar" );
 
 namespace protocols {
 namespace stepwise {

@@ -25,7 +25,7 @@
 
 // Random number generator
 
-static thread_local basic::Tracer TR( "protocols.DME_FilterMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.DME_FilterMover" );
 
 
 #include <string>

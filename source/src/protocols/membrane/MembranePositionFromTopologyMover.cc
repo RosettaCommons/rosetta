@@ -51,7 +51,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.membrane.MembranePositionMoverFromTopologyMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.MembranePositionMoverFromTopologyMover" );
 
 namespace protocols {
 namespace membrane {

@@ -111,7 +111,7 @@
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
 
-static thread_local basic::Tracer TR( "genmatch_d6_bpy" );
+static THREAD_LOCAL basic::Tracer TR( "genmatch_d6_bpy" );
 
 
 void myoptH(Pose & pose, ScoreFunctionOP sf) {

@@ -57,7 +57,7 @@
 #include <string>
 #include <cmath>
 
-static thread_local basic::Tracer TR( "core.conformation.membrane.MembraneInfo" );
+static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.MembraneInfo" );
 
 namespace core {
 namespace conformation {

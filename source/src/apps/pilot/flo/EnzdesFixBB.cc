@@ -54,7 +54,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static thread_local basic::Tracer tr( "pilotapps.flo.EnzdesFixBB" );
+static THREAD_LOCAL basic::Tracer tr( "pilotapps.flo.EnzdesFixBB" );
 
 using namespace core;
 

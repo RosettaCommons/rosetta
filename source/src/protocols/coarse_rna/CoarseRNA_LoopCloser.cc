@@ -46,7 +46,7 @@
 
 using namespace core;
 
-static thread_local basic::Tracer TR( "protocols.coarse_rna.coarse_rna_loop_closer" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.coarse_rna.coarse_rna_loop_closer" );
 using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
 using core::id::AtomID;

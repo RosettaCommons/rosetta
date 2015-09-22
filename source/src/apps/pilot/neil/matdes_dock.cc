@@ -57,7 +57,7 @@
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
 
-static thread_local basic::Tracer TR( "matdes::dock" );
+static THREAD_LOCAL basic::Tracer TR( "matdes::dock" );
 
 using std::string;
 using ObjexxFCL::string_of;

@@ -35,7 +35,7 @@
 
 
 //// C++ headers
-static thread_local basic::Tracer tr( "protocols.simple_filters.RGFilter" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.simple_filters.RGFilter" );
 
 namespace protocols {
 namespace simple_filters {

@@ -35,7 +35,7 @@
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.antibody.design.AntibodySeqDesignTFCreator" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.design.AntibodySeqDesignTFCreator" );
 
 namespace protocols {
 namespace antibody {

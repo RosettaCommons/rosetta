@@ -48,7 +48,7 @@ using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 
-static thread_local basic::Tracer tr( "protocols.ligand_docking.rdf.RDFFunctionFactory" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.ligand_docking.rdf.RDFFunctionFactory" );
 
 RDFFunctionFactory * RDFFunctionFactory::instance_( 0 );
 

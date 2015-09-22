@@ -94,7 +94,7 @@ using basic::Warning;
 using utility::file::FileName;
 using utility::vector1;
 
-static thread_local basic::Tracer TR( "apps.pilot.momeara.HBondReporter" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.momeara.HBondReporter" );
 
 
 OPT_1GRP_KEY( String, HBondReporter, output )

@@ -40,7 +40,7 @@
 #include <string>
 
 
-static thread_local basic::Tracer tr( "protocols.iterative" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.iterative" );
 
 using core::Real;
 using namespace core;

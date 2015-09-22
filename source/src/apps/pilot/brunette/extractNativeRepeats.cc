@@ -81,7 +81,7 @@ using utility::vector1;
 using core::Size;
 using core::Real;
 
-static thread_local basic::Tracer TR( "extractNativeRepeats" );
+static THREAD_LOCAL basic::Tracer TR( "extractNativeRepeats" );
 
 void get_change_in_distance(const core::pose::Pose& pose,vector1<Real> & running_average_distance, vector1<Real> & change_in_distance, vector1<Real> & magnitude_of_change){
     Size local_smoothing_residues = 4;

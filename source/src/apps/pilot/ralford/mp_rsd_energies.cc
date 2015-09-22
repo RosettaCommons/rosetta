@@ -59,7 +59,7 @@
 
 #include <string>
 
-static thread_local basic::Tracer TR( "apps.pilot.ralford.membrane_rsd_energy_breakdown" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_rsd_energy_breakdown" );
 
 int
 main( int argc, char* argv [] ) {

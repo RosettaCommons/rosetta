@@ -27,7 +27,7 @@ using cppdb::result;
 using utility::sql_database::sessionOP;
 using utility::vector1;
 
-static thread_local basic::Tracer TR( "protocols.features.strand_assembly.CheckForSandwichFeatures" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.features.strand_assembly.CheckForSandwichFeatures" );
 
 //absolute_vec
 Real

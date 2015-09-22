@@ -28,7 +28,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::stepwise::modeler;
 
-static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.options.StepWiseMonteCarloOptions" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.options.StepWiseMonteCarloOptions" );
 
 namespace protocols {
 namespace stepwise {

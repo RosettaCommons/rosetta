@@ -53,7 +53,7 @@ typedef numeric::Xforms Xforms;
 
 // byp tilt 32.5
 
-static thread_local basic::Tracer TR( "protocols.sic_dock.scores.TrisBpyScore" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sic_dock.scores.TrisBpyScore" );
 
 static Vec   const N  ( 2.649,-1.227, 1.777);
 static Vec   const CA ( 3.946,-0.851, 1.187);

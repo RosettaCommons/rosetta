@@ -61,7 +61,7 @@ using namespace numeric::kdtree;
 typedef WrappedPrimitive< std::pair< char, char > > SS_Prediction;
 typedef utility::pointer::owning_ptr< SS_Prediction > SS_PredictionOP;
 
-static thread_local basic::Tracer tr( "density_grid" );
+static THREAD_LOCAL basic::Tracer tr( "density_grid" );
 
 ///////////////////////////////////////////////////////////////////////////////
 int

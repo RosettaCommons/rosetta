@@ -26,7 +26,7 @@
 #include <basic/Tracer.hh>
 
 
-static thread_local basic::Tracer tr( "devel.replica_docking.ModulatedMover" );
+static THREAD_LOCAL basic::Tracer tr( "devel.replica_docking.ModulatedMover" );
 
 namespace devel {
 namespace replica_docking {

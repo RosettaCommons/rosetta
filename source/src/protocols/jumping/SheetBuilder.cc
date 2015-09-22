@@ -54,7 +54,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.jumping" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.jumping" );
 
 namespace protocols {
 namespace jumping {

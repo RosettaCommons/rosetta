@@ -59,8 +59,8 @@ using basic::Warning;
 namespace protocols {
 namespace helical_bundle {
 
-static thread_local basic::Tracer TR("protocols.helical_bundle.BackboneGridSampler");
-static thread_local basic::Tracer TR_Results("protocols.helical_bundle.BackboneGridSampler.Results");
+static THREAD_LOCAL basic::Tracer TR("protocols.helical_bundle.BackboneGridSampler");
+static THREAD_LOCAL basic::Tracer TR_Results("protocols.helical_bundle.BackboneGridSampler.Results");
 
 std::string
 BackboneGridSamplerCreator::keyname() const

@@ -66,7 +66,7 @@
 
 #include <protocols/moves/PyMolMover.hh>
 
-static thread_local basic::Tracer tr( "protocols.general_abinitio", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "protocols.general_abinitio", basic::t_info );
 
 
 namespace protocols {

@@ -39,7 +39,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
-static thread_local basic::Tracer TR( "protocols.relax.AtomCoordinateCstMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.relax.AtomCoordinateCstMover" );
 
 namespace protocols {
 namespace relax {

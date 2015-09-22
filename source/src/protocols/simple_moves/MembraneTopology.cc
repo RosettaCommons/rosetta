@@ -35,7 +35,7 @@ using namespace std;
 
 using core::pose::Pose;
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.MembraneTopology" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.MembraneTopology" );
 
 std::string
 MembraneTopologyCreator::keyname() const

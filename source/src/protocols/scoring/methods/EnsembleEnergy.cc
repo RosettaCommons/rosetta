@@ -37,7 +37,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.scoring.methods.EnsembleEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.scoring.methods.EnsembleEnergy" );
 
 
 // C++

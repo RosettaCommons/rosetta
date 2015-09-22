@@ -39,7 +39,7 @@
 namespace core {
 namespace scoring {
 
-static thread_local basic::Tracer TR( "core.scoring.MembraneTopology" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.MembraneTopology" );
 
 MembraneTopology::MembraneTopology( MembraneTopology const & src ) :
 	CacheableData()

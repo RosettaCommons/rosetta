@@ -58,7 +58,7 @@ using std::stringstream;
 using utility::vector1;
 
 
-static thread_local basic::Tracer tr( "protocols.loops.loops_definers.LoopsDefinerFactory" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.loops.loops_definers.LoopsDefinerFactory" );
 
 LoopsDefinerFactory *
 LoopsDefinerFactory::create_singleton_instance()

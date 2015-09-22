@@ -27,7 +27,7 @@
 #include <boost/function.hpp>
 
 
-static thread_local basic::Tracer TR( "devel.matdes.SymmetrizerSampler" );
+static THREAD_LOCAL basic::Tracer TR( "devel.matdes.SymmetrizerSampler" );
 
 namespace devel {
 namespace matdes {

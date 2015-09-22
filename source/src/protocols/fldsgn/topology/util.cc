@@ -42,7 +42,7 @@
 
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
-static thread_local basic::Tracer TR( "protocols.topology.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.topology.util" );
 
 using namespace core;
 typedef std::string String;

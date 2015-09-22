@@ -52,7 +52,7 @@
 //#include <cstdlib>
 //#include <string>
 //#include <vector>
-static thread_local basic::Tracer tr( "core.fragment" );
+static THREAD_LOCAL basic::Tracer tr( "core.fragment" );
 
 namespace core {
 namespace fragment {

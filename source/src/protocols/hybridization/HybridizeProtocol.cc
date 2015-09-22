@@ -162,7 +162,7 @@
 
 #include <string>
 
-static thread_local basic::Tracer TR( "protocols.hybridization.HybridizeProtocol" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.HybridizeProtocol" );
 
 namespace protocols {
 namespace hybridization {

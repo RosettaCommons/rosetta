@@ -48,7 +48,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static thread_local basic::Tracer InterfaceScoreCalculator_tracer( "protocols.ligand_docking.ligand_options.InterfaceScoreCalculator", basic::t_debug );
+static THREAD_LOCAL basic::Tracer InterfaceScoreCalculator_tracer( "protocols.ligand_docking.ligand_options.InterfaceScoreCalculator", basic::t_debug );
 
 std::string
 InterfaceScoreCalculatorCreator::keyname() const

@@ -51,7 +51,7 @@
 //Auto Headers
 #include <core/scoring/EnergyGraph.hh>
 
-static thread_local basic::Tracer tr( "core.scoring.geometric_solvation.GeometricSolEnergy" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.geometric_solvation.GeometricSolEnergy" );
 
 //////////////////////////////////////////////////////////////////
 // All the good stuff is now in GeometricSolEnergyEvaluator, which is

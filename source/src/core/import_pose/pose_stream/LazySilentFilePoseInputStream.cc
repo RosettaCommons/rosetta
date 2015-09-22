@@ -47,7 +47,7 @@ namespace core {
 namespace import_pose {
 namespace pose_stream {
 
-static thread_local basic::Tracer tr( "core.io.pose_stream" );
+static THREAD_LOCAL basic::Tracer tr( "core.io.pose_stream" );
 
 typedef std::string string;
 typedef utility::file::FileName FileName;

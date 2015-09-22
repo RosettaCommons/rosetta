@@ -60,7 +60,7 @@
 using core::kinematics::Stub;
 using core::conformation::Residue;
 
-static thread_local basic::Tracer TR( "rblinker" );
+static THREAD_LOCAL basic::Tracer TR( "rblinker" );
 
 
 inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {

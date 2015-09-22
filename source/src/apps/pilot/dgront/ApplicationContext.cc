@@ -43,7 +43,7 @@
 #include <core/pose/annotated_sequence.hh>
 
 
-static thread_local basic::Tracer tr( "CustomAbinitio" );
+static THREAD_LOCAL basic::Tracer tr( "CustomAbinitio" );
 
 OPT_KEY( Boolean, start_native )
 OPT_KEY( File, sf )

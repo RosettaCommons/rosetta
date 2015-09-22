@@ -37,7 +37,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.BindingStrainFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.BindingStrainFilter" );
 
 /// @brief default ctor
 BindingStrainFilter::BindingStrainFilter() :

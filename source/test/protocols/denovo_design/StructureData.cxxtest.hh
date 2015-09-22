@@ -47,7 +47,7 @@
 
 // C++ headers
 
-static thread_local basic::Tracer TR("protocols.denovo_design.StructureData.cxxtest");
+static THREAD_LOCAL basic::Tracer TR("protocols.denovo_design.StructureData.cxxtest");
 
 // --------------- Test Class --------------- //
 class StructureDataTests : public CxxTest::TestSuite {

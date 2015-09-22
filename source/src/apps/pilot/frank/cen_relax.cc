@@ -50,7 +50,7 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 
-static thread_local basic::Tracer TR( "cen_relax" );
+static THREAD_LOCAL basic::Tracer TR( "cen_relax" );
 
 OPT_1GRP_KEY(Boolean, min, debug)
 

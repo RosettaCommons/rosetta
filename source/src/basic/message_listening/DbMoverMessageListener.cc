@@ -24,7 +24,7 @@
 namespace basic {
 namespace message_listening {
 
-static thread_local basic::Tracer TR( "basic.message_listening.DbMoverMessageListener" );
+static THREAD_LOCAL basic::Tracer TR( "basic.message_listening.DbMoverMessageListener" );
 
 DbMoverMessageListener::DbMoverMessageListener():
 	protocol_id_(0)

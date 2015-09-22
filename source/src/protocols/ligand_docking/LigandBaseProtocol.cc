@@ -85,7 +85,7 @@ namespace ligand_docking {
 using namespace ObjexxFCL;
 
 
-static thread_local basic::Tracer TR( "protocols.ligand_docking.LigandBaseProtocol" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.ligand_docking.LigandBaseProtocol" );
 
 
 LigandBaseProtocol::LigandBaseProtocol():

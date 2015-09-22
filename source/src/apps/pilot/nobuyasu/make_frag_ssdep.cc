@@ -36,7 +36,7 @@
 #include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>
 
-static thread_local basic::Tracer TR( "pick_fragments" );
+static THREAD_LOCAL basic::Tracer TR( "pick_fragments" );
 
 typedef core::Size Size;
 typedef std::string String;

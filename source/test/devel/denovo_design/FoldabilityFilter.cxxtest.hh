@@ -42,7 +42,7 @@
 
 // C++ headers
 #include <test/protocols/denovo_design/test_utils.hh>
-static thread_local basic::Tracer TR("devel.denovo_design.FoldabilityFilter.cxxtest");
+static THREAD_LOCAL basic::Tracer TR("devel.denovo_design.FoldabilityFilter.cxxtest");
 
 // Dummy class so that I can access protected functions
 class ProtectedFoldabilityFilter : public devel::denovo_design::filters::FoldabilityFilter {

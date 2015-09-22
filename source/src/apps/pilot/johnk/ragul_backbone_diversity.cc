@@ -61,7 +61,7 @@ using namespace basic::options::OptionKeys;
 OPT_KEY( Integer, relax_start_resnum )
 OPT_KEY( Integer, relax_final_resnum )
 
-static thread_local basic::Tracer TR( "apps.pilot.ragul_backbone_diversity.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ragul_backbone_diversity.main" );
 
 /// General testing code
 int

@@ -45,7 +45,7 @@ namespace protocols {
 namespace ligand_docking {
 
 
-static thread_local basic::Tracer transform_tracer( "protocols.ligand_docking.Transform" );
+static THREAD_LOCAL basic::Tracer transform_tracer( "protocols.ligand_docking.Transform" );
 
 std::string TransformCreator::keyname() const
 {

@@ -47,7 +47,7 @@ Frame::~Frame() {}
 using namespace kinematics;
 
 
-static thread_local basic::Tracer tr( "core.fragment" );
+static THREAD_LOCAL basic::Tracer tr( "core.fragment" );
 //pose::PoseOP Frame::my_static_pose_for_testing_ = NULL;
 void
 make_pose_from_sequence_(

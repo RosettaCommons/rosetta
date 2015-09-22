@@ -20,7 +20,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR("devel.splice.AddFoldUnitMover");
+static THREAD_LOCAL basic::Tracer TR("devel.splice.AddFoldUnitMover");
 
 #include <utility/tag/Tag.hh>
 #include <core/util/SwitchResidueTypeSet.hh>

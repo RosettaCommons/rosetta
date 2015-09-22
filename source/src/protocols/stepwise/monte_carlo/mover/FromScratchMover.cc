@@ -29,7 +29,7 @@
 //Req'd on WIN32
 #include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.FromScratchMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.FromScratchMover" );
 using namespace protocols::stepwise::modeler;
 
 namespace protocols {

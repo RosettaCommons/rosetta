@@ -49,7 +49,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static thread_local basic::Tracer grow_ligand_tracer( "protocols.ligand_docking.GrowLigand", basic::t_debug );
+static THREAD_LOCAL basic::Tracer grow_ligand_tracer( "protocols.ligand_docking.GrowLigand", basic::t_debug );
 
 std::string
 GrowLigandCreator::keyname() const

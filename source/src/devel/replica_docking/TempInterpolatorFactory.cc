@@ -48,7 +48,7 @@ template <> TempInterpolatorFactory * utility::SingletonBase< TempInterpolatorFa
 namespace devel {
 namespace replica_docking {
 
-static thread_local basic::Tracer TR( "devel.replica_docking.TempInterpolatorFactory" );
+static THREAD_LOCAL basic::Tracer TR( "devel.replica_docking.TempInterpolatorFactory" );
 
 TempInterpolatorFactory::TempInterpolatorFactory(){}
 

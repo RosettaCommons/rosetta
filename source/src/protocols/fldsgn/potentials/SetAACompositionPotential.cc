@@ -43,7 +43,7 @@ namespace fldsgn {
 namespace potentials {
 
 
-static thread_local basic::Tracer TR( "protocols.fldsgn.potentials.SetAACompositionPotential" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.fldsgn.potentials.SetAACompositionPotential" );
 
 
 /// @brief

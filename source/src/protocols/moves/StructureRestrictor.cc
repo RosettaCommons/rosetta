@@ -44,7 +44,7 @@ using namespace core;
 using namespace pose;
 using namespace protocols::jd2;
 
-static thread_local basic::Tracer TR_SR( "protocols.moves.StructureRestrictor" );
+static THREAD_LOCAL basic::Tracer TR_SR( "protocols.moves.StructureRestrictor" );
 
 namespace protocols {
 namespace moves {

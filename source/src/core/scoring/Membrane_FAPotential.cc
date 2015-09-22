@@ -45,7 +45,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-static thread_local basic::Tracer TR( "core.scoring.Membrane_FAEmbed" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.Membrane_FAEmbed" );
 
 namespace core {
 namespace scoring {

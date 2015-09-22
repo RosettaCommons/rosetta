@@ -24,7 +24,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-static thread_local basic::Tracer trAdaptiveScoreHistogram(
+static THREAD_LOCAL basic::Tracer trAdaptiveScoreHistogram(
 	"fragment.picking.scores.AdaptiveScoreHistogram");
 
 AdaptiveScoreHistogram::AdaptiveScoreHistogram(Real bin_size,Real initial_max_score) {

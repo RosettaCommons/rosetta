@@ -57,7 +57,7 @@ namespace movers {
 
 using namespace protocols::moves;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.LoopFinder" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.LoopFinder" );
 
 std::string
 LoopFinderCreator::keyname() const

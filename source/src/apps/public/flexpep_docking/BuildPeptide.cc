@@ -54,7 +54,7 @@ using basic::Error;
 using basic::Warning;
 
 
-static thread_local basic::Tracer TR( "BuildPeptide" );
+static THREAD_LOCAL basic::Tracer TR( "BuildPeptide" );
 
 using namespace core;
 using namespace basic::options;

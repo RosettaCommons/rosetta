@@ -31,7 +31,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
-static thread_local basic::Tracer TR("protocols.antibody.constraints.ParatopeEpitopeSiteConstraintMover");
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.constraints.ParatopeEpitopeSiteConstraintMover");
 
 namespace protocols {
 namespace antibody {

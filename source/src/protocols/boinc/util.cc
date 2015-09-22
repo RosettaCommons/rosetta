@@ -59,7 +59,7 @@
 namespace protocols {
 namespace boinc {
 
-static thread_local basic::Tracer tr( "core.boinc.util" );
+static THREAD_LOCAL basic::Tracer tr( "core.boinc.util" );
 
 
 /////////////////////////////////////////////////////////////////

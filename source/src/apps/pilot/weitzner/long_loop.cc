@@ -31,7 +31,7 @@ using namespace core;
 using namespace protocols::loops;
 using namespace protocols::forge::methods;
 
-static thread_local basic::Tracer TR( "pilot_apps.weitzner.long_loop" );
+static THREAD_LOCAL basic::Tracer TR( "pilot_apps.weitzner.long_loop" );
 
 LoopsOP
 read_loops_from_text_file() {

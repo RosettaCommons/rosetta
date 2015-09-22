@@ -24,7 +24,7 @@
 
 namespace basic {
 
-static thread_local basic::Tracer TR("basic.execute");
+static THREAD_LOCAL basic::Tracer TR("basic.execute");
 
 #ifdef WIN32
 #define popen  _popen

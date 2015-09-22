@@ -31,7 +31,7 @@
 
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer tr( "core.scoring.dna.DNAChiEnergy" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.dna.DNAChiEnergy" );
 
 namespace core {
 namespace scoring {

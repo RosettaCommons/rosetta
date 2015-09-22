@@ -27,7 +27,7 @@
 #include <utility/string_util.hh>
 
 // Tracer instance for this file
-static thread_local basic::Tracer TR( "core.io.pdb.file_data_options" );
+static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.file_data_options" );
 
 namespace core {
 namespace io {

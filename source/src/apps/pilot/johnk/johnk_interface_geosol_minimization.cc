@@ -77,7 +77,7 @@ OPT_KEY( Boolean, minimize_jump )
 OPT_KEY( Boolean, do_repack )
 OPT_KEY( Boolean, use_geosol )
 
-static thread_local basic::Tracer TR( "apps.pilot.johnk_test_interface_geosol_minimization.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.johnk_test_interface_geosol_minimization.main" );
 
 // NOTE: GLOBAL VARIABLE - this would better be done with a static (and could be used to ensure it's filled, too...)
 utility::vector1 <bool> interface;

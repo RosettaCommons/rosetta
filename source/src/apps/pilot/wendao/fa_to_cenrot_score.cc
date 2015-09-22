@@ -104,7 +104,7 @@ using namespace core::pack::dunbrack;
 using namespace core::pack::dunbrack::cenrot;
 
 //////////////////////////////////////////////////////////////////
-static thread_local basic::Tracer TR( "pilot.wendao.cenrot" );
+static THREAD_LOCAL basic::Tracer TR( "pilot.wendao.cenrot" );
 std::map<std::string, Real> masslst;
 
 utility::vector1<core::Size> nrecovery(20);

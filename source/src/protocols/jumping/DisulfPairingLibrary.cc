@@ -71,7 +71,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static thread_local basic::Tracer tr( "protocols.jumping" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.jumping" );
 
 // Singleton instance and mutex static data members
 namespace utility {

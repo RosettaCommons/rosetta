@@ -97,7 +97,7 @@ using std::endl;
 using core::import_pose::pose_from_pdb;
 using core::kinematics::Stub;
 
-static thread_local basic::Tracer tr( "hczndimer" );
+static THREAD_LOCAL basic::Tracer tr( "hczndimer" );
 static core::io::silent::SilentFileData sfd;
 
 vector1<pair<Real,Real> >

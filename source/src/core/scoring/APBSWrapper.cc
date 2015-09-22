@@ -34,7 +34,7 @@
 #include <apbs_driver.h>
 
 #endif
-static thread_local basic::Tracer TR( "core/scoring/APBSWrapper" );
+static THREAD_LOCAL basic::Tracer TR( "core/scoring/APBSWrapper" );
 
 namespace core {
 namespace scoring {

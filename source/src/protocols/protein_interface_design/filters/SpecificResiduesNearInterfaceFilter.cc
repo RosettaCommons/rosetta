@@ -48,7 +48,7 @@ using core::pack::task::TaskFactoryOP;
 using core::pack::task::PackerTaskCOP;
 using utility::vector1;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.SpecificResiduesNearInterfaceFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.SpecificResiduesNearInterfaceFilter" );
 
 ////////////  Creator ////////////////////////
 FilterOP

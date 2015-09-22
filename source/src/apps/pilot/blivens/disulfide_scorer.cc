@@ -65,7 +65,7 @@ using core::conformation::Residue;
 #include <core/import_pose/import_pose.hh>
 #include <protocols/jumping/StrandPairing.hh>
 
-static thread_local basic::Tracer TR( "pilot_apps.blivens.disulfide_scorer" );
+static THREAD_LOCAL basic::Tracer TR( "pilot_apps.blivens.disulfide_scorer" );
 
 int
 usage(char* msg)

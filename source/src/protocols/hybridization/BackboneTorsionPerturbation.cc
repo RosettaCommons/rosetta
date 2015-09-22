@@ -65,7 +65,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.hybridization.BackboneTorsionPerturbation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.BackboneTorsionPerturbation" );
 
 namespace protocols {
 namespace hybridization {

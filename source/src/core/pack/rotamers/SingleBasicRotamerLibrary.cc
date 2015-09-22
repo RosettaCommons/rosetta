@@ -40,7 +40,7 @@ namespace core {
 namespace pack {
 namespace rotamers {
 
-static thread_local basic::Tracer TR("core.pack.rotamers.SingleBasicRotamerLibrary");
+static THREAD_LOCAL basic::Tracer TR("core.pack.rotamers.SingleBasicRotamerLibrary");
 
 ///////////////////  Creator Functions ///////////////////////
 

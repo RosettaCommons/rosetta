@@ -105,7 +105,7 @@ using namespace protocols::frag_picker::scores;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer tr( "protocols.frag_picker.FragmentPicker" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.frag_picker.FragmentPicker" );
 
 FragmentPicker::~FragmentPicker() {}
 

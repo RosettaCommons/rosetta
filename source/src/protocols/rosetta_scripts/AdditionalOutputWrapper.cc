@@ -47,7 +47,7 @@
 namespace protocols {
 namespace rosetta_scripts {
 
-static thread_local basic::Tracer TR( "protocols.rosetta_scripts.AdditionalOutputWrapper" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.AdditionalOutputWrapper" );
 
 using namespace protocols::moves;
 

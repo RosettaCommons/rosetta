@@ -109,7 +109,7 @@ RmsdFilter::clone() const {
 	return protocols::filters::FilterOP( new RmsdFilter( *this ) );
 }
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.RmsdFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.RmsdFilter" );
 core::Real
 RmsdFilter::compute( core::pose::Pose const & pose ) const
 {

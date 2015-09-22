@@ -62,7 +62,7 @@
 //Req'd on WN32
 #include <basic/datacache/WriteableCacheableMap.hh>
 
-static thread_local basic::Tracer tr( "protocols.abinitio.abscript.RigidChunkCM", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio.abscript.RigidChunkCM", basic::t_info );
 
 namespace protocols {
 namespace abinitio {

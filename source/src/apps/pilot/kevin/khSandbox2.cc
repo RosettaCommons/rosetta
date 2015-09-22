@@ -42,7 +42,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static thread_local basic::Tracer TR( "apps.pilot.kevin.khSandbox2" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kevin.khSandbox2" );
 
 
 using namespace core;

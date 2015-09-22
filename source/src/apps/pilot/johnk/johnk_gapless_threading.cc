@@ -47,7 +47,7 @@ using namespace basic::options::OptionKeys;
 OPT_KEY( String, desired_sequence )
 OPT_KEY( Boolean, repack_preserved )
 
-static thread_local basic::Tracer TR( "apps.pilot.johnk_gapless_threading.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.johnk_gapless_threading.main" );
 
 /// General testing code
 int

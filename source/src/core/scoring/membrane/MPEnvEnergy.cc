@@ -50,7 +50,7 @@
 using namespace core::scoring;
 using namespace core::scoring::methods;
 
-static thread_local basic::Tracer TR( "core.membrane.MPEnvEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.membrane.MPEnvEnergy" );
 
 namespace core {
 namespace scoring {

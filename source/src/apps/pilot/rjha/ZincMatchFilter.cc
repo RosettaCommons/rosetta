@@ -43,7 +43,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static thread_local basic::Tracer TR( "apps.pilot.rjha.ZincMatchFilter" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.rjha.ZincMatchFilter" );
 
 typedef numeric::xyzVector<core::Real> point;
 typedef point axis;

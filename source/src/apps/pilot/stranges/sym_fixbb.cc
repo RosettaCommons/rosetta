@@ -48,7 +48,7 @@
 #include <basic/Tracer.hh>
 
 
-static thread_local basic::Tracer TR( "apps.pilot.stranges.sym_fixbb" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.stranges.sym_fixbb" );
 
 //local options
 namespace basic{ namespace options{ namespace OptionKeys{

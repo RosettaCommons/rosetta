@@ -101,7 +101,7 @@ using utility::file::FileName;
 
 
 // tracer - used to replace cout
-static thread_local basic::Tracer TR( "NCBB" );
+static THREAD_LOCAL basic::Tracer TR( "NCBB" );
 
 namespace protocols {
 namespace ncbb {

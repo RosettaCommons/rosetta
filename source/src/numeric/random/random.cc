@@ -38,7 +38,7 @@ namespace random {
 #ifdef CXX11
 // Use a "thread_local" declaration to ensure that the each thread has its own
 // random_generator pointer.
-thread_local RandomGeneratorOP random_generator( 0 );
+THREAD_LOCAL RandomGeneratorOP random_generator( 0 );
 #else
 static RandomGeneratorOP random_generator( 0 );
 #endif

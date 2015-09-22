@@ -44,7 +44,7 @@ template <> WriteableCacheableDataFactory * utility::SingletonBase< WriteableCac
 namespace basic {
 namespace datacache {
 
-static thread_local basic::Tracer tr( "basic.datacache.WriteableCacheableDataFactory", t_trace );
+static THREAD_LOCAL basic::Tracer tr( "basic.datacache.WriteableCacheableDataFactory", t_trace );
 
 WriteableCacheableDataFactory *
 WriteableCacheableDataFactory::create_singleton_instance()

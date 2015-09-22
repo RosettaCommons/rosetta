@@ -43,7 +43,7 @@
 #include <core/import_pose/import_pose.hh>
 
 
-static thread_local basic::Tracer tr( "DisulfideTest" );
+static THREAD_LOCAL basic::Tracer tr( "DisulfideTest" );
 
 void register_options() {
 

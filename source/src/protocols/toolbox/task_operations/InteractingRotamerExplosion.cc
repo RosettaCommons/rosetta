@@ -41,7 +41,7 @@
 #include <set>
 
 
-static thread_local basic::Tracer tr( "protocols.toolbox.TaskOperations.InteractingRotamerExplosion" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.TaskOperations.InteractingRotamerExplosion" );
 
 namespace protocols {
 namespace toolbox {

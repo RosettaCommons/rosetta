@@ -60,7 +60,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.antibody.GraftCDRLoopsProtocol" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.antibody.GraftCDRLoopsProtocol" );
 using namespace core;
 
 namespace protocols {

@@ -82,7 +82,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.HbondsToResidueFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.filters.HbondsToResidueFilter" );
 using core::pose::Pose;
 
 protocols::filters::FilterOP

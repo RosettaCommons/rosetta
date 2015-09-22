@@ -121,7 +121,7 @@
 #include <set>
 #include <list>
 
-static thread_local basic::Tracer TR( "protocols.hybridization.FoldTreeHybridize" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.hybridization.FoldTreeHybridize" );
 
 namespace protocols {
 namespace hybridization {

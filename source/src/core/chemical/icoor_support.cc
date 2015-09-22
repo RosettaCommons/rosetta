@@ -42,7 +42,7 @@
 namespace core {
 namespace chemical {
 
-static thread_local basic::Tracer TR( "core.chemical.icoor_support" );
+static THREAD_LOCAL basic::Tracer TR( "core.chemical.icoor_support" );
 
 class RerootRestypeVisitor: public boost::default_dfs_visitor {
 private:

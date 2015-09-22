@@ -33,7 +33,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static thread_local basic::Tracer TR( "protocols.filters.SavePoseConstraintToFileFilter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.filters.SavePoseConstraintToFileFilter" );
 
 /// @brief default ctor
 SavePoseConstraintToFileFilter::SavePoseConstraintToFileFilter() :

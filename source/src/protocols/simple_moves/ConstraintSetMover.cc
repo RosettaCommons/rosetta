@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.ConstraintSetMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ConstraintSetMover" );
 
 namespace protocols {
 namespace simple_moves {

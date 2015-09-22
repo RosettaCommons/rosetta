@@ -73,7 +73,7 @@
 
 #undef NDEBUG
 
-static thread_local basic::Tracer TR( "analyze_ddG_stability" );
+static THREAD_LOCAL basic::Tracer TR( "analyze_ddG_stability" );
 
 using namespace core;
 using namespace protocols;

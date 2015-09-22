@@ -10,7 +10,7 @@
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "apps.pilot.kale.examples.Tracer" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.kale.examples.Tracer" );
 
 int main(int argc, char* argv[]) {
 

@@ -75,7 +75,7 @@ namespace scoring {
 namespace methods {
 
 
-static thread_local basic::Tracer TR( "core.scoring.Rama2BOffsetEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.Rama2BOffsetEnergy" );
 
 //////////////////////
 /// EnergyMethod Creator

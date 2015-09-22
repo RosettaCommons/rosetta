@@ -72,7 +72,7 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-static thread_local basic::Tracer tr( "core.scoring.hbonds.hbonds" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.hbonds.hbonds" );
 
 /**
 This routine fills an hbond-set with hbonds. All hbonds are included,

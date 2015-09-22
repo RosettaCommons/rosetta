@@ -104,7 +104,7 @@
 #include <apps/pilot/will/mynamespaces.ihh>
 
 
-static thread_local basic::Tracer TR( "organopv" );
+static THREAD_LOCAL basic::Tracer TR( "organopv" );
 
 
 void add_apc(core::pose::Pose & pose, core::id::AtomID aid1, core::id::AtomID aid2, core::Real mean, core::Real sd,

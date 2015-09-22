@@ -39,7 +39,7 @@
 //Auto Headers
 #include <core/id/types.hh>
 
-static thread_local basic::Tracer TR( "core.scoring.constraints.NamedAngleConstraint" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.NamedAngleConstraint" );
 
 namespace core {
 namespace scoring {

@@ -45,7 +45,7 @@ using basic::Warning;
 using namespace core::conformation::membrane;
 using namespace core::membrane::geometry;
 
-static thread_local basic::Tracer TR( "apps.pilot.ralford.embed_mp_pose_from_topo" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.embed_mp_pose_from_topo" );
 
 void*
 my_main( void* )

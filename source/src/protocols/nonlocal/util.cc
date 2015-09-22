@@ -54,7 +54,7 @@
 namespace protocols {
 namespace nonlocal {
 
-static thread_local basic::Tracer TR( "protocols.nonlocal.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.nonlocal.util" );
 
 void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::LoopsOP chunks) {
 	using namespace basic::options;

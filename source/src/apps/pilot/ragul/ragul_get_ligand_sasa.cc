@@ -101,7 +101,7 @@ OPT_KEY( String, input_bound_pdb )
 OPT_KEY( String, input_unbound_pdb )
 OPT_KEY( String, input_ligand_pdb )
 
-static thread_local basic::Tracer TR( "apps.pilot.ragul_ligand_sasa.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ragul_ligand_sasa.main" );
 
 
 int main( int argc, char * argv [] ){

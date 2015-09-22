@@ -122,7 +122,7 @@ using namespace kinematics;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer TR( "bcorreia_fold_from_loops" );
+static THREAD_LOCAL basic::Tracer TR( "bcorreia_fold_from_loops" );
 
 
 //brief define_ut_point takes a loop file and a pose figures out how many and where the cutpoints should be based on secondary structure and the

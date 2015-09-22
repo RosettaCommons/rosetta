@@ -62,7 +62,7 @@
 namespace protocols {
 namespace features {
 
-static thread_local basic::Tracer TR( "protocols.features.StructureScoresFeatures" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.features.StructureScoresFeatures" );
 
 using std::string;
 using std::stringstream;

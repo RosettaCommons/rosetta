@@ -49,7 +49,7 @@ using core::chemical::chr_chains;
 namespace core {
 namespace pose {
 
-static thread_local basic::Tracer TR( "core.pose.PDBInfo" );
+static THREAD_LOCAL basic::Tracer TR( "core.pose.PDBInfo" );
 
 /// @brief default constructor, obsolete is *true*
 PDBInfo::PDBInfo() :

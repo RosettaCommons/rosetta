@@ -51,7 +51,7 @@ namespace hotspot_hashing
 namespace movers
 {
 
-static thread_local basic::Tracer TR( "protocols.hotspot_hashing.movers.PlaceSurfaceProbe" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.hotspot_hashing.movers.PlaceSurfaceProbe" );
 
 PlaceSurfaceProbe::PlaceSurfaceProbe() :
 	protocols::moves::Mover("PlaceSurfaceProbe"),

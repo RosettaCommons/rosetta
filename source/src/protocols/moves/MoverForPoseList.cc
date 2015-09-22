@@ -19,7 +19,7 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
-static thread_local basic::Tracer TR( "protocols.moves.MoverForPoseList" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.moves.MoverForPoseList" );
 
 namespace protocols {
 namespace moves {

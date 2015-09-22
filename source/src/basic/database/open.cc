@@ -46,7 +46,7 @@ using basic::Warning;
 namespace basic {
 namespace database {
 
-static thread_local basic::Tracer TR( "basic.io.database" );
+static THREAD_LOCAL basic::Tracer TR( "basic.io.database" );
 
 
 /// @brief Open a database file on a provided stream

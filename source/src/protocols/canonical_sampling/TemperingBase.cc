@@ -71,7 +71,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer tr( "protocols.canonical_sampling.TemperingBase" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.canonical_sampling.TemperingBase" );
 
 
 bool protocols::canonical_sampling::TemperingBase::options_registered_( false );

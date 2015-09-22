@@ -28,7 +28,7 @@
 // C++
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "core.scoring.methods.MissingEnergy" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.methods.MissingEnergy" );
 
 /////////////////////////////////////////////////////////////////////////////////////
 //

@@ -132,7 +132,7 @@ void register_options() {
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
 
-static thread_local basic::Tracer TR( "gensym_3bpy_from_dimer" );
+static THREAD_LOCAL basic::Tracer TR( "gensym_3bpy_from_dimer" );
 static core::io::silent::SilentFileData sfd;
 
 inline Real const sqr(Real const r) { return r*r; }

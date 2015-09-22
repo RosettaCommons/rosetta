@@ -45,7 +45,7 @@
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.rigid.RotateJumpAxisMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rigid.RotateJumpAxisMover" );
 
 namespace protocols {
 namespace rigid {

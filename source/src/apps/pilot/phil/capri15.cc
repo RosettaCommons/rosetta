@@ -162,7 +162,7 @@ using std::endl;
 using io::pdb::dump_pdb;
 
 
-static thread_local basic::Tracer TR( "apps.pilot.phil.loop_model" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phil.loop_model" );
 
 ////////////////////////////////////////////////
 // danger USING ////////////////////////////////

@@ -40,7 +40,7 @@
 #include <basic/Tracer.hh>
 #include <string>
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.SequenceProfileMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.SequenceProfileMover" );
 
 namespace protocols {
 namespace simple_moves {

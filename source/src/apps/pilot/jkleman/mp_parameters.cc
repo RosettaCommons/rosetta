@@ -44,7 +44,7 @@
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "apps.pilot.jkleman.mp_parameters" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.mp_parameters" );
 
 using namespace core;
 

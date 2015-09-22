@@ -31,7 +31,7 @@ namespace scoring {
 namespace constraints {
 
 
-static thread_local basic::Tracer TR( "core.scoring.constraints.ResidueTypeLinkingConstraint" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.ResidueTypeLinkingConstraint" );
 
 ResidueTypeLinkingConstraint::ResidueTypeLinkingConstraint():
 	Constraint( core::scoring::res_type_linking_constraint )

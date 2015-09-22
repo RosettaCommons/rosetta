@@ -49,7 +49,7 @@
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
 
-static thread_local basic::Tracer TR( "core.scoring.sasa.LeGrandSasa" );
+static THREAD_LOCAL basic::Tracer TR( "core.scoring.sasa.LeGrandSasa" );
 
 namespace core {
 namespace scoring {

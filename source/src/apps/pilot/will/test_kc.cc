@@ -44,7 +44,7 @@ typedef utility::vector1<int> ints;
 typedef utility::vector1<Real> reals;
 typedef utility::vector1<Vec>  vecs;
 
-static thread_local basic::Tracer TR( "test_kc" );
+static THREAD_LOCAL basic::Tracer TR( "test_kc" );
 
 vector1<reals> vecs2vv(vecs const & v) {
 	vector1<reals> vv;

@@ -35,7 +35,7 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 
-static thread_local basic::Tracer tr( "protocols.moves.MoverContainer" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.moves.MoverContainer" );
 
 
 namespace protocols {

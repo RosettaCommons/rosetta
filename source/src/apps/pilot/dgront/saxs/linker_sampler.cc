@@ -63,7 +63,7 @@
 
 #include <utility/excn/Exceptions.hh>
 
-static thread_local basic::Tracer TR( "linker_sampler" );
+static THREAD_LOCAL basic::Tracer TR( "linker_sampler" );
 
 OPT_1GRP_KEY( IntegerVector, assembly, link_centers )
 OPT_1GRP_KEY( IntegerVector, assembly, link_lengths )

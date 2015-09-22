@@ -56,7 +56,7 @@ using namespace ObjexxFCL::format;
 namespace protocols {
 namespace cartesian {
 
-static thread_local basic::Tracer TR( "core.optimization.md" );
+static THREAD_LOCAL basic::Tracer TR( "core.optimization.md" );
 
 float sqr(float t){ return t*t; }
 

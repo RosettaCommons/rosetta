@@ -48,7 +48,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::chemical;
 
-static thread_local basic::Tracer trProfScoreBlosum62(
+static THREAD_LOCAL basic::Tracer trProfScoreBlosum62(
 	"protocols.frag_picker.scores.ProfileScoreBlosum62");
 
 ProfileScoreBlosum62::~ProfileScoreBlosum62() {}

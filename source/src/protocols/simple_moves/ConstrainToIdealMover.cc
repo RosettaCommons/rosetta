@@ -78,7 +78,7 @@ using basic::Error;
 using basic::Warning;
 using namespace basic::options;
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.ConstrainToIdealMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.ConstrainToIdealMover" );
 
 namespace protocols {
 namespace simple_moves {

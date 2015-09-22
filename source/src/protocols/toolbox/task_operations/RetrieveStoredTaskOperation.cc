@@ -51,7 +51,7 @@
 
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "protocols.toolbox.task_operations.RetrieveStoredTaskOperation" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.RetrieveStoredTaskOperation" );
 
 namespace protocols {
 namespace toolbox {

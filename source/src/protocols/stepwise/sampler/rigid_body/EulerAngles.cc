@@ -21,7 +21,7 @@
 #include <cmath>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.swa.rna.EulerAngles" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.swa.rna.EulerAngles" );
 
 /////////////////////////////////////////////////////////////////
 // Yet another rotation matrix / euler angle object.

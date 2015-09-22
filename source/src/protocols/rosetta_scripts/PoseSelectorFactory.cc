@@ -46,7 +46,7 @@ template <> PoseSelectorFactory * utility::SingletonBase< PoseSelectorFactory >:
 namespace protocols {
 namespace rosetta_scripts {
 
-static thread_local basic::Tracer TR( "protocols.rosetta_scripts.PoseSelectorFactory" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.rosetta_scripts.PoseSelectorFactory" );
 
 PoseSelectorFactory *
 PoseSelectorFactory::create_singleton_instance()

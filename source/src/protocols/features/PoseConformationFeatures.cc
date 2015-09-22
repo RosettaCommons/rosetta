@@ -67,7 +67,7 @@
 namespace protocols {
 namespace features {
 
-static thread_local basic::Tracer TR( "protocols.features.PoseConformationFeatures" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.features.PoseConformationFeatures" );
 
 using std::string;
 using std::stringstream;

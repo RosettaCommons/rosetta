@@ -49,7 +49,7 @@ using basic::Warning;
 
 using namespace core::membrane;
 
-static thread_local basic::Tracer TR( "apps.pilot.ralford.framework_time_benchmark" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.framework_time_benchmark" );
 
 /// @brief Main Method
 int main( int argc, char* argv[] )

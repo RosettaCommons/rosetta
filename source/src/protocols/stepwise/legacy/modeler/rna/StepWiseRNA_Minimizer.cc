@@ -93,7 +93,7 @@ using namespace protocols::stepwise::modeler::rna;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_Minimizer" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_Minimizer" );
 
 namespace protocols {
 namespace stepwise {

@@ -43,7 +43,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "protocols.metal_interface.MatchGrafter" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.metal_interface.MatchGrafter" );
 
 typedef core::pose::Pose Pose;
 typedef numeric::xyzVector<core::Real> point;

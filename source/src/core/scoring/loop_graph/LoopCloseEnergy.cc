@@ -30,7 +30,7 @@
 #include <utility/vector1.hh>
 
 // C++
-static thread_local basic::Tracer tr( "core.scoring.loop_graph.LoopCloseEnergy" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.loop_graph.LoopCloseEnergy" );
 
 namespace core {
 namespace scoring {

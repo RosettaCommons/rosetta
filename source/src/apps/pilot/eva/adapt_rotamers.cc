@@ -51,7 +51,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "apps.pilot.eva.adapt_rotamers" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.eva.adapt_rotamers" );
 
 using namespace core;
 using namespace protocols::protein_interface_design;

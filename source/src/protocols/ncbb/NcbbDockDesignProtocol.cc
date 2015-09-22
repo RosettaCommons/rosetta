@@ -110,7 +110,7 @@ using utility::file::FileName;
 
 
 // tracer - used to replace cout
-static thread_local basic::Tracer TR( "NDDP" );
+static THREAD_LOCAL basic::Tracer TR( "NDDP" );
 
 namespace protocols {
 namespace ncbb {

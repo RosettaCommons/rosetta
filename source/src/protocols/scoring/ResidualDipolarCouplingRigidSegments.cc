@@ -45,7 +45,7 @@
 // option key includes
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 
-static thread_local basic::Tracer tr( "core.scoring.ResidualDipolarCouplingRigidSegments" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.ResidualDipolarCouplingRigidSegments" );
 
 namespace protocols {
 namespace scoring {

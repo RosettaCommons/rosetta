@@ -38,7 +38,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
-static thread_local basic::Tracer TR( "protocols.sasa_scores.sasapack" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.sasa_scores.sasapack" );
 
 
 namespace protocols {

@@ -55,7 +55,7 @@
 
 using namespace protocols::moves;
 
-static thread_local basic::Tracer TR( "apps.pilot.ralford.membrane_sampling" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.membrane_sampling" );
 
 /// @brief View membrane planes based on normal/center
 class MembraneSampleMover : public Mover {

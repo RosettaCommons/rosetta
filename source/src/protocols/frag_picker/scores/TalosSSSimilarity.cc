@@ -43,7 +43,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer trTalosSSSimilarity(
+static THREAD_LOCAL basic::Tracer trTalosSSSimilarity(
 	"protocols.frag_picker.scores.TalosSSSimilarity");
 
 bool TalosSSSimilarity::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {

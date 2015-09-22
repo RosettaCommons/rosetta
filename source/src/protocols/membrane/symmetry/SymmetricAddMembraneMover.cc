@@ -80,7 +80,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static thread_local basic::Tracer TR( "protocols.membrane.symmetry.SymmetricAddMembraneMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.membrane.symmetry.SymmetricAddMembraneMover" );
 
 namespace protocols {
 namespace membrane {

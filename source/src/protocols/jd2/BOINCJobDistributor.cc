@@ -55,7 +55,7 @@ If you got this message, something is wrong with your build settings.
 #include <basic/options/keys/OptionKeys.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.jd2.BOINCJobDistributor" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.BOINCJobDistributor" );
 
 
 namespace protocols {

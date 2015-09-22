@@ -61,7 +61,7 @@
 #include <core/scoring/EnergyGraph.hh>
 
 
-static thread_local basic::Tracer tr( "core.scoring.Energies" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.Energies" );
 
 using namespace ObjexxFCL::format;
 

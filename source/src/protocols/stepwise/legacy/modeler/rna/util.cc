@@ -27,7 +27,7 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.util" );
 
 using namespace protocols::stepwise::modeler;
 using namespace protocols::stepwise::modeler::rna;

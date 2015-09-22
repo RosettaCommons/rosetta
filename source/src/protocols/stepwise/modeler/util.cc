@@ -72,7 +72,7 @@ using namespace core;
 using ObjexxFCL::string_of;
 using utility::operator<<;
 
-static thread_local basic::Tracer TR( "protocols.stepwise.modeler.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.util" );
 
 //////////////////////////////////////////////////////////////////////////
 //

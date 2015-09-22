@@ -55,7 +55,7 @@ namespace protocols {
 namespace generalized_kinematic_closure {
 namespace selector {
 
-static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.selector.GeneralizedKICselector" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.generalized_kinematic_closure.selector.GeneralizedKICselector" );
 
 /// @brief Constructor for GeneralizedKICselector.
 GeneralizedKICselector::GeneralizedKICselector():

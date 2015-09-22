@@ -28,7 +28,7 @@
 // C++ Headers
 #include <cmath>
 
-static thread_local basic::Tracer TR( "protocols.moves.SimulatedTempering" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.moves.SimulatedTempering" );
 
 using namespace core;
 using namespace core::pose;

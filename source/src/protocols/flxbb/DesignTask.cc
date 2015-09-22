@@ -36,7 +36,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer TR( "protocols.flxbb.DesignTask" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.flxbb.DesignTask" );
 
 namespace protocols {
 namespace flxbb {

@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "protocols.stepwise.screener.SugarInstantiator" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.screener.SugarInstantiator" );
 
 using namespace protocols::stepwise::modeler::rna::sugar;
 

@@ -51,7 +51,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static thread_local basic::Tracer MoveMapBuilder_tracer( "protocols.ligand_docking.ligand_options.MoveMapBuilder", basic::t_debug );
+static THREAD_LOCAL basic::Tracer MoveMapBuilder_tracer( "protocols.ligand_docking.ligand_options.MoveMapBuilder", basic::t_debug );
 
 void
 set_jumps(

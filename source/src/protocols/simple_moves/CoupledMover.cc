@@ -47,7 +47,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR("protocols.simple_moves.CoupledMover");
+static THREAD_LOCAL basic::Tracer TR("protocols.simple_moves.CoupledMover");
 
 namespace protocols {
 namespace simple_moves {

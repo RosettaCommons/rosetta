@@ -55,7 +55,7 @@
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "apps.pilot.ralford.virtual_residue_tree" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ralford.virtual_residue_tree" );
 
 /// @brief Build Toy Pose
 core::pose::PoseOP build_toy_pose() {

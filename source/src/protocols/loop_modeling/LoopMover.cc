@@ -43,7 +43,7 @@ namespace loop_modeling {
 using namespace std;
 using core::kinematics::FoldTree;
 
-static thread_local basic::Tracer TR( "protocols.loop_modeling.LoopMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.loop_modeling.LoopMover" );
 const string ToolboxKeys::LOOPS = "loops";
 const string ToolboxKeys::SCOREFXN = "scorefxn";
 const string ToolboxKeys::TASK_FACTORY = "task_factory";

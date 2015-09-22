@@ -33,7 +33,7 @@
 namespace protocols {
 namespace loops {
 
-static thread_local basic::Tracer TR( "protocols.loops.FoldTreeFromLoopsWrapper" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.loops.FoldTreeFromLoopsWrapper" );
 
 FoldTreeFromLoops::FoldTreeFromLoops() :
 	Mover( FoldTreeFromLoopsCreator::mover_name() ), loop_str_( "" )

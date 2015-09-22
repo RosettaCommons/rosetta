@@ -59,7 +59,7 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzConstraintIO" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzConstraintIO" );
 
 namespace protocols {
 namespace toolbox {

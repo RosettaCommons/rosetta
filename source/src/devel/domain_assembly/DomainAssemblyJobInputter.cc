@@ -43,7 +43,7 @@
 
 // option key includes
 
-static thread_local basic::Tracer TR( "devel.domain_assembly.DomainAssemblyJobInputter" );
+static THREAD_LOCAL basic::Tracer TR( "devel.domain_assembly.DomainAssemblyJobInputter" );
 
 namespace devel {
 namespace domain_assembly {

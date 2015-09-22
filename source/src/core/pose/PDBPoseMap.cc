@@ -30,7 +30,7 @@
 namespace core {
 namespace pose {
 
-static thread_local basic::Tracer TR( "core.pose.PDBPoseMap" );
+static THREAD_LOCAL basic::Tracer TR( "core.pose.PDBPoseMap" );
 
 
 /// @brief default constructor

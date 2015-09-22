@@ -58,7 +58,7 @@ using namespace numeric::conversions;
 using core::pose::Pose;
 using core::conformation::Residue;
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.StorePoseSnapshot" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.StorePoseSnapshot" );
 
 std::string
 StorePoseSnapshotCreator::keyname() const

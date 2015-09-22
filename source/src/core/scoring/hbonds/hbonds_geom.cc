@@ -77,7 +77,7 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-static thread_local basic::Tracer tr( "core.scoring.hbonds.hbonds_geom" );
+static THREAD_LOCAL basic::Tracer tr( "core.scoring.hbonds.hbonds_geom" );
 
 Real DUMMY_DERIV(0.0);
 bool DUMMY_BOOL(false);

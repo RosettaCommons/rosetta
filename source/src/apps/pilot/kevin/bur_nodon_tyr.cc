@@ -61,7 +61,7 @@
 #include <utility/vector0.hh>
 
 
-static thread_local basic::Tracer TR( "bur_nodon_tyr" );
+static THREAD_LOCAL basic::Tracer TR( "bur_nodon_tyr" );
 
 using namespace core;
 using namespace protocols;

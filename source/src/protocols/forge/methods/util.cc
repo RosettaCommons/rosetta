@@ -72,7 +72,7 @@ namespace methods {
 
 
 // static
-static thread_local basic::Tracer TR( "protocols.forge.methods.util" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.forge.methods.util" );
 
 
 /// @brief perform union( root, i ) for all 'i' within the closed interval

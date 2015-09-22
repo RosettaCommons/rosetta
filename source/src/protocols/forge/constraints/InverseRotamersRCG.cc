@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.forge.constraints.InverseRotamersRCG" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.forge.constraints.InverseRotamersRCG" );
 
 namespace protocols {
 namespace forge {

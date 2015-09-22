@@ -52,7 +52,7 @@ namespace core {
 namespace pack {
 namespace rotamers {
 
-static thread_local basic::Tracer SRPL_TR( "core.pack.rotamers.SingleResiduePeptoidLibrary" );
+static THREAD_LOCAL basic::Tracer SRPL_TR( "core.pack.rotamers.SingleResiduePeptoidLibrary" );
 
 // static const Real MIN_ROT_PROB = 1.e-8; - KAB - unused variable
 

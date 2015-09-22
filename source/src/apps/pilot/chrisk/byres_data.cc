@@ -153,8 +153,8 @@ using basic::T;
 using basic::Warning;
 using basic::Error;
 
-static thread_local basic::Tracer TR( "chrisk.byres_data" );
-static thread_local basic::Tracer TR_unsat( "chrisk.unsat_calc" );
+static THREAD_LOCAL basic::Tracer TR( "chrisk.byres_data" );
+static THREAD_LOCAL basic::Tracer TR_unsat( "chrisk.unsat_calc" );
 
 
 //local options

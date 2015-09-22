@@ -65,7 +65,7 @@ using core::Real;
 using core::pose::Pose;
 using namespace core::sequence;
 
-static thread_local basic::Tracer tr( "calcFractionFolded" );
+static THREAD_LOCAL basic::Tracer tr( "calcFractionFolded" );
 
 Real two_region_rmsd(Pose & mod_pose, Pose const & ref_pose, SequenceAlignment aln, Size start_res, Size end_res, Size region2_start_res, Size region2_end_res){
 	using namespace core::sequence;

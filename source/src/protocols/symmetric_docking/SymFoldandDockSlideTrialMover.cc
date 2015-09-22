@@ -44,7 +44,7 @@
 namespace protocols {
 namespace symmetric_docking {
 
-static thread_local basic::Tracer TR( "protocols.moves.symmetry.SymFoldandDockSlideTrialMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.moves.symmetry.SymFoldandDockSlideTrialMover" );
 
 SymFoldandDockSlideTrialMover::SymFoldandDockSlideTrialMover()
 : Mover("SymFoldandDockSlideTrialMover") {

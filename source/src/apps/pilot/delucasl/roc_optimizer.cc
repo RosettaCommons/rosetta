@@ -63,7 +63,7 @@ OPT_1GRP_KEY(String,roc_opt,inactive_list)
 //OPT_1GRP_KEY(Integer,roc_opt,outer_cycles)
 
 
-static thread_local basic::Tracer roc_tracer( "ROC_optimizer" );
+static THREAD_LOCAL basic::Tracer roc_tracer( "ROC_optimizer" );
 
 
 class GridWeights {

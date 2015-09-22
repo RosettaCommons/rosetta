@@ -66,7 +66,7 @@ namespace protocols {
 namespace enzdes {
 namespace enzutil {
 
-static thread_local basic::Tracer tr( "protocols.enzdes.enzdes_util" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.enzdes_util" );
 
 bool
 is_catalytic_seqpos(

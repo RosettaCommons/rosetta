@@ -61,7 +61,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.backrub.BackrubSidechainMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.backrub.BackrubSidechainMover" );
 
 namespace protocols {
 namespace backrub {

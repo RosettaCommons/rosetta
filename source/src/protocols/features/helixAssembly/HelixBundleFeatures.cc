@@ -59,7 +59,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 
-static thread_local basic::Tracer TR( "protocols.features.helixAssembly.HelixBundleFeatures" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.features.helixAssembly.HelixBundleFeatures" );
 
 namespace protocols {
 namespace features {

@@ -71,7 +71,7 @@ using std::string;
 using std::map;
 using std::multimap;
 using core::pose::Pose;
-static thread_local basic::Tracer tr( "contact_map_from_homologs.main" );
+static THREAD_LOCAL basic::Tracer tr( "contact_map_from_homologs.main" );
 ///////////////////////////////////////////////////////////////////////////////
 /// @detail converts string to upper case
 ///////////////////////////////////////////////////////////////////////////////

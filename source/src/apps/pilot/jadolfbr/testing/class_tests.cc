@@ -122,7 +122,7 @@ public:
 };
 
 
-static thread_local basic::Tracer TR( "protocols.features.InterfaceFeaturesTests.cxxtest" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.features.InterfaceFeaturesTests.cxxtest" );
 
 using namespace protocols::features;
 

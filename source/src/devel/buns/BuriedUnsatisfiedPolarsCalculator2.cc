@@ -50,7 +50,7 @@
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 
-static thread_local basic::Tracer TR( "devel.buns.BuriedUnsatisfiedPolarsCalculator2" );
+static THREAD_LOCAL basic::Tracer TR( "devel.buns.BuriedUnsatisfiedPolarsCalculator2" );
 
 
 namespace devel {

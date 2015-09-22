@@ -38,7 +38,7 @@ using core::Real;
 using core::Size;
 using core::SSize;
 
-static thread_local basic::Tracer tr( "hle_predict" );
+static THREAD_LOCAL basic::Tracer tr( "hle_predict" );
 
 char get_label(vector1 <Real> ss_pred_pos){
 	char label = 'X';

@@ -68,7 +68,7 @@ using std::string;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 
-static thread_local basic::Tracer TR( "protocols.loophash.LoopHashDiversifier" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.loophash.LoopHashDiversifier" );
 
 ///****Creator Methods****///
 std::string

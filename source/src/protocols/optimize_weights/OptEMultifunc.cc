@@ -64,7 +64,7 @@ using namespace ObjexxFCL::format;
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static thread_local basic::Tracer TR( "protocols.optimize_weights.OptEMultifunc" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.optimize_weights.OptEMultifunc" );
 
 using namespace numeric::expression_parser;
 //#undef NDEBUG

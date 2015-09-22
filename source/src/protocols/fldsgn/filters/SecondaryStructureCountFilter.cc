@@ -35,7 +35,7 @@
 
 
 //// C++ headers
-static thread_local basic::Tracer tr( "protocols.fldsgn.filters.SecondaryStructureCountFilter" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.filters.SecondaryStructureCountFilter" );
 
 namespace protocols {
 namespace fldsgn {

@@ -79,7 +79,7 @@ using basic::t_error;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.ProteinInterfaceMultiStateDesignMover", t_info );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.ProteinInterfaceMultiStateDesignMover", t_info );
 
 std::string
 ProteinInterfaceMultiStateDesignMoverCreator::keyname() const

@@ -43,12 +43,12 @@
 
 
 /// Tracer instance for this file
-static thread_local basic::Tracer TR_NODE( "core.pack.surfaceig.node" );
-static thread_local basic::Tracer TR_EDGE( "core.pack.surfaceig.edge" );
-static thread_local basic::Tracer TR_BGNODE( "core.pack.surfaceig.bgnode" );
-static thread_local basic::Tracer TR_BGEDGE( "core.pack.surfaceig.bgedge" );
-static thread_local basic::Tracer TR_SIG( "core.pack.surfaceig.sig" );
-static thread_local basic::Tracer TR_STATS( "core.pack.surfaceig.stats" );
+static THREAD_LOCAL basic::Tracer TR_NODE( "core.pack.surfaceig.node" );
+static THREAD_LOCAL basic::Tracer TR_EDGE( "core.pack.surfaceig.edge" );
+static THREAD_LOCAL basic::Tracer TR_BGNODE( "core.pack.surfaceig.bgnode" );
+static THREAD_LOCAL basic::Tracer TR_BGEDGE( "core.pack.surfaceig.bgedge" );
+static THREAD_LOCAL basic::Tracer TR_SIG( "core.pack.surfaceig.sig" );
+static THREAD_LOCAL basic::Tracer TR_STATS( "core.pack.surfaceig.stats" );
 
 //#define DOUBLE_CHECK_COUNTS 1
 //#define FILE_DEBUG 1

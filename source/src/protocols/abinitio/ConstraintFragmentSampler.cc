@@ -54,7 +54,7 @@
 #include <utility/vector1.hh>
 
 
-static thread_local basic::Tracer tr( "protocols.abinitio" );
+static THREAD_LOCAL basic::Tracer tr( "protocols.abinitio" );
 
 using core::Real;
 using core::scoring::ScoreFunction;

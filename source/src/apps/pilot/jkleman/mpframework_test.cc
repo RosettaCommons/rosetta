@@ -95,7 +95,7 @@
 #include <iostream>
 #include <cstdlib>
 
-static thread_local basic::Tracer TR( "apps.pilot.jkleman.mpframework_test" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.mpframework_test" );
 
 using namespace core;
 using namespace core::pose;

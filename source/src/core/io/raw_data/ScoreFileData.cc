@@ -35,7 +35,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 
-static thread_local basic::Tracer TR( "core.io.raw_data.ScoreFileData" );
+static THREAD_LOCAL basic::Tracer TR( "core.io.raw_data.ScoreFileData" );
 
 using basic::T;
 using basic::Error;

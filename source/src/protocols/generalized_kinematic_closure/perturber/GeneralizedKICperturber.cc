@@ -57,7 +57,7 @@ namespace protocols {
 namespace generalized_kinematic_closure {
 namespace perturber {
 
-static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.perturber.GeneralizedKICperturber" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.generalized_kinematic_closure.perturber.GeneralizedKICperturber" );
 
 /// @brief Creator for GeneralizedKICperturber.
 GeneralizedKICperturber::GeneralizedKICperturber():

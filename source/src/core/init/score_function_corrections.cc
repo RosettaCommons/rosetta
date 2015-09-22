@@ -45,7 +45,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 //MaximCode:
-static thread_local basic::Tracer TR( "core.init.score_function_corrections" );
+static THREAD_LOCAL basic::Tracer TR( "core.init.score_function_corrections" );
 
 namespace core {
 namespace init {
@@ -92,7 +92,7 @@ pre_talaris_2013_behavior_settings::pre_talaris_2013_behavior_settings() :
 
 pre_talaris_2013_behavior_settings const restore_sc12_settings;
 
-static thread_local basic::Tracer TR( "core.init.score_function_corrections" );
+static THREAD_LOCAL basic::Tracer TR( "core.init.score_function_corrections" );
 
 void
 init_revert_to_pre_talaris_2013_mistake() {

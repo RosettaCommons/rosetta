@@ -84,7 +84,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.RNA_VDW_BinChecker" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.RNA_VDW_BinChecker" );
 
 using namespace core;
 

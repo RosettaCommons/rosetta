@@ -65,7 +65,7 @@ using namespace basic::options;
 using namespace core::scoring;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer TR( "apps.pilot.dump_pdb.main" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.dump_pdb.main" );
 
 
 int main( int argc, char * argv [] )

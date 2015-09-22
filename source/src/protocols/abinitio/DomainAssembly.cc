@@ -53,7 +53,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.DomainAssembly" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.protein_interface_design.movers.DomainAssembly" );
 
 std::string
 DomainAssemblyCreator::keyname() const

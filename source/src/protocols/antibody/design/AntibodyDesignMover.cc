@@ -76,7 +76,7 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
-static thread_local basic::Tracer TR("protocols.antibody.design.AntibodyDesignMover");
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.design.AntibodyDesignMover");
 
 namespace protocols {
 namespace antibody {

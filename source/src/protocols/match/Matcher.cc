@@ -77,7 +77,7 @@
 namespace protocols {
 namespace match {
 
-static thread_local basic::Tracer TR( "protocols.match.Matcher" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.match.Matcher" );
 
 /// Construction and Destruction
 Matcher::Matcher() :

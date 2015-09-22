@@ -72,7 +72,7 @@
 
 #include <basic/Tracer.hh>
 
-//static thread_local basic::Tracer TR( "core.graph.Graph" );
+//static THREAD_LOCAL basic::Tracer TR( "core.graph.Graph" );
 using namespace ObjexxFCL;
 
 namespace core {

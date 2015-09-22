@@ -48,7 +48,7 @@
 
 // option key includes
 
-static thread_local basic::Tracer tr( "protocols.environment.VirtResClaim", basic::t_info );
+static THREAD_LOCAL basic::Tracer tr( "protocols.environment.VirtResClaim", basic::t_info );
 
 namespace protocols {
 namespace environment {

@@ -53,7 +53,7 @@
 using namespace core;
 using basic::T;
 
-static thread_local basic::Tracer TR( "protocols.coarse_rna.coarse_rna_fragment_mover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.coarse_rna.coarse_rna_fragment_mover" );
 
 
 namespace protocols {

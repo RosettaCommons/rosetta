@@ -59,8 +59,8 @@ namespace protocols {
 namespace topology_broker {
 
 
-static thread_local basic::Tracer TR( "protocols.moves.RigidBodyMover" );
-static thread_local basic::Tracer TRBM( "protocols.moves.RigidBodyMover" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.moves.RigidBodyMover" );
+static THREAD_LOCAL basic::Tracer TRBM( "protocols.moves.RigidBodyMover" );
 
 RigidBodyRandomTMHMover::RigidBodyRandomTMHMover(){}
 RigidBodyRandomTMHMover::~RigidBodyRandomTMHMover(){}
