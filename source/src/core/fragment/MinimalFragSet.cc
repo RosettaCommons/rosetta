@@ -215,7 +215,7 @@ FrameIterator MinimalFragSet::nonconst_end() {
 }
 
 bool MinimalFragSet::empty() const {
-	return frames_.size()==0;
+	return frames_.empty();
 }
 
 

@@ -6,9 +6,7 @@
 -run:min_type dfpmin_armijo
 -run:min_tolerance 0.0001
 -adducts dna_major_groove_water
--mute all
--unmute protocols.dna apps protocols.loops core.io.pdb
--mute core.io.database
+-out:levels all:warning protocols.dna:info apps:info protocols.loops:info core.io.pdb:info
 -jd2:dd_parser
 -parser:protocol resfile.script
 -packing:resfile msoleft.resfile

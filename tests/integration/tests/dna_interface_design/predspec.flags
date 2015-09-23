@@ -12,9 +12,7 @@
 -extrachi_cutoff 1
 -sparse_pdb_output
 -adducts dna_major_groove_water
--mute all
--unmute protocols.dna.RestrictDesignToProteinDNAInterface protocols.dna.DnaInterfacePacker protocols.dna.Specificity apps protocols.loops core.io.pdb
--mute core.io.database
+-out:levels all:warning protocols.dna.RestrictDesignToProteinDNAInterface:info protocols.dna.DnaInterfacePacker:info protocols.dna.Specificity:info apps:info protocols.loops:info core.io.pdb:info
 -jd2:dd_parser
 -parser:protocol predspec.script
 -overwrite

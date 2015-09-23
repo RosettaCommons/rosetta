@@ -1404,11 +1404,11 @@ ResidueType::change_bond_type(
 	if ( ! ( has( atom_name1 ) || has( atom_name2 ) ) ) {
 		utility_exit_with_message( "change_bond_type: atoms " + atom_name1 + " and " + atom_name2 + " don't exist!" );
 	}
-	
+
 	// First, change the bond types stored for each atom across the bond.
 	core::uint const atom1( atom_index( atom_name1 ) );
 	core::uint const atom2( atom_index( atom_name2 ) );
-	
+
 	utility::vector1< BondName >::iterator it1, it2;
 	it1 = std::find( bonded_neighbor_type_[ atom1 ].begin(), bonded_neighbor_type_[ atom1 ].end(), old_bond_label );
 	if ( it1 == bonded_neighbor_type_[ atom1 ].end() ) {
@@ -1420,12 +1420,12 @@ ResidueType::change_bond_type(
 		utility_exit_with_message(
 				"change_bond_type: atom " + atom_name2 + " does not have the requested bond type!" );
 	}
-	
+
 	bonded_neighbor_type_[ atom1 ].erase( it1 );
 	bonded_neighbor_type_[ atom2 ].erase( it2 );
 	bonded_neighbor_type_[ atom1 ].push_back( new_bond_label );
 	bonded_neighbor_type_[ atom2 ].push_back( new_bond_label );
-	
+
 	// Now, change the bond type stored in the edge of the atom graph.
 	NameVDMap::const_iterator source = atom_name_to_vd_.find( atom_name1 );
 	NameVDMap::const_iterator target = atom_name_to_vd_.find( atom_name2 );
@@ -2605,7 +2605,13 @@ ResidueType::generate_atom_indices()
 			ICoorAtomID & stub_atom( icoor_[ ordered_atoms_[index] ].stub_atom( i )   );
 			if ( stub_atom.type() == ICoorAtomID::INTERNAL ) {
 				stub_atom.atomno(   vd_to_index_.find(stub_atom.vertex())->second ); //somewhat of a problem. if vertex doesnt exist the map constructor will create a value
-				debug_assert( stub_atom.atomno() ); // this will fail if we deleted a stub atom for some other atom
+				if( stub_atom.atomno() == 0 ) { // this will trigger if we deleted a stub atom for some other atom
+					tr.Error << "===============================================" << std::endl;
+					tr.Error << "Internal coordinates for " << name() << std::endl;
+					pretty_print_atomicoor(tr.Error, *this);
+					tr.Error << "===============================================" << std::endl;
+					utility_exit_with_message("ERROR: The internal coordinates of ResidueType '" + name() + "' depend on a missing atom!");
+				}
 			}
 		}
 	}

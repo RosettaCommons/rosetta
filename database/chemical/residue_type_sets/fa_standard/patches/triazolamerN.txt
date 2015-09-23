@@ -74,7 +74,10 @@ SET_ATOM_TYPE     N VIRT
 SET_MM_ATOM_TYPE  N VIRT
 SET_ATOMIC_CHARGE N 0.00
 
-DELETE_ATOM H
+# Bit of a hack - but some residue types have icoords which depend on H.
+SET_ATOM_TYPE     H VIRT
+SET_MM_ATOM_TYPE  H VIRT
+SET_ATOMIC_CHARGE H 0.00
 
 # Fix these based on where the C and N would still be!!
 SET_ICOOR NT1     0.000000	69.900000	1.459211  CH3	1HH3	 N
@@ -118,7 +121,10 @@ SET_ATOM_TYPE     N VIRT
 SET_MM_ATOM_TYPE  N VIRT
 SET_ATOMIC_CHARGE N 0.00
 
-DELETE_ATOM H
+# Bit of a hack - but some residue types have icoords which depend on H.
+SET_ATOM_TYPE     H VIRT
+SET_MM_ATOM_TYPE  H VIRT
+SET_ATOMIC_CHARGE H 0.00
 
 # Fix these based on where the C and N would still be!!
 SET_ICOOR NT1     0.000000	69.900000	1.459211  CA	C	N
