@@ -18,6 +18,7 @@
 #include <protocols/loop_modeling/LoopProtocol.fwd.hh>
 #include <protocols/loop_modeling/utilities/PrepareForCentroid.fwd.hh>
 #include <protocols/loop_modeling/utilities/PrepareForFullatom.fwd.hh>
+#include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //For friendship
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -136,6 +137,7 @@ public:
 	/// @brief Set the score function to be used for the centroid stage.
 	void set_cen_scorefxn(core::scoring::ScoreFunctionOP scorefxn);
 
+	friend class ::LoopModelerTests;
 
 private:
 

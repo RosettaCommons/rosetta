@@ -15,6 +15,7 @@
 #include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/loop_modeling/LoopProtocol.fwd.hh>
 #include <protocols/loop_modeling/utilities/LoopMoverGroup.fwd.hh>
+#include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //For friendship
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -262,6 +263,8 @@ public:
 	/// @details The temperature will be linearly interpolated between these
 	/// values during the simulation.
 	void set_temperature_schedule(Real start, Real stop);
+
+	friend class ::LoopModelerTests;
 
 private:
 	utilities::LoopMoverGroupOP protocol_;

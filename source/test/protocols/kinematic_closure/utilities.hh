@@ -10,9 +10,6 @@
 #ifndef INCLUDED_test_protocols_kinematic_closure_utilities_HH
 #define INCLUDED_test_protocols_kinematic_closure_utilities_HH
 
-#define private public
-#define protected public
-
 // Headers {{{1
 
 // Core headers

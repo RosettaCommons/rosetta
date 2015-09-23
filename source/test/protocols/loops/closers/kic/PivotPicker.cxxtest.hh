@@ -18,10 +18,6 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/closers/kic/PivotPicker.hh>
 
-// Make everything public.
-#define private public
-#define protected public
-
 using namespace protocols::loops::Loop;
 using namespace protocols::loops::closers::kic::PivotPicker;
 

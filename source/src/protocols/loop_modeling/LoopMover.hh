@@ -13,6 +13,7 @@
 // Unit headers
 #include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/LoopMover.fwd.hh>
+#include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //for friendship
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
@@ -250,6 +251,8 @@ protected:
 	/// @see LoopMover::add_child()
 	/// @see LoopMover::get_children()
 	Size count_children() const;
+
+	friend class ::LoopModelerTests;
 
 private:
 	LoopMoverOPs children_;

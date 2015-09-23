@@ -19,6 +19,7 @@
 
 // Unit headers
 #include <protocols/toolbox/task_operations/DsspDesignOperation.fwd.hh>
+#include <protocols/toolbox/task_operations/DsspDesignOperationTests.fwd.hh> //For friendship, to allow unit tests to work.
 
 // Core headers
 #include <core/types.hh>
@@ -46,6 +47,8 @@ namespace task_operations {
 /// @brief TaskOperation that can be used to restrict AAs allowed at each position
 /// based on DSSP-assigned secondary structure
 class DsspDesignOperation : public core::pack::task::operation::TaskOperation {
+	friend class ::DsspDesignOperationTests;
+
 public:
 
 	typedef core::pack::task::operation::TaskOperation parent;

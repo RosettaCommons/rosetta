@@ -14,6 +14,7 @@
 #include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/loop_modeling/LoopBuilder.fwd.hh>
+#include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //For friendship.
 
 // Core headers
 #include <core/fragment/FragSet.fwd.hh>
@@ -59,6 +60,8 @@ namespace loop_modeling {
 /// a smarter algorithm that preferentially builds into free space.
 
 class LoopBuilder : public LoopMover {
+
+	friend class ::LoopModelerTests;
 
 public:
 

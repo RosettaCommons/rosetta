@@ -10,9 +10,6 @@
 #ifndef INCLUDED_protocols_kinematic_closure_KinematicClosure_CXXTEST_HH
 #define INCLUDED_protocols_kinematic_closure_KinematicClosure_CXXTEST_HH
 
-#define private public
-#define protected public
-
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>

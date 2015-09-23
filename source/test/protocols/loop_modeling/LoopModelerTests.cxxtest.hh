@@ -7,9 +7,6 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#define private public
-#define protected public
-
 // Headers {{{1
 #include <cxxtest/TestSuite.h>
 #include <test/protocols/init_util.hh>
@@ -35,6 +32,7 @@
 #include <protocols/loop_modeling/utilities/PrepareForFullatom.hh>
 #include <protocols/loop_modeling/refiners/MinimizationRefiner.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
+#include <protocols/loop_modeling/LoopModelerTests.fwd.hh>
 
 // Utility headers
 #include <basic/datacache/DataMap.hh>

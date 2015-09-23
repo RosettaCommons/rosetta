@@ -9,8 +9,6 @@
 
 // @author Brian Koepnick (koepnick@uw.edu)
 
-#define private public
-
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/protocols/init_util.hh>

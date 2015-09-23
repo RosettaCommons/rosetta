@@ -9,9 +9,6 @@
 
 /// @author Kale Kundert (kale.kundert@ucsf.edu)
 
-#define private public
-#define protected public
-
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/protocols/init_util.hh>
