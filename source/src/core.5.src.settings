@@ -27,6 +27,7 @@ sources = {
 		"IndependentBBTorsionSRFD",
 		"JumpingFrame",
 		"JumpSRFD",
+		"MinimalFragSet",
 		"OrderedFragSet",
 		"SecondaryStructure",
 		"SecstructSRFD",

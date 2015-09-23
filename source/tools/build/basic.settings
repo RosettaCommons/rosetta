@@ -832,25 +832,15 @@ settings = {
             ],
             "libraries" : [
                 "boinc_graphics2",
-                "glut",
-                "GL",
-                "GLU",
-                "X11",
-                "Xext",
-                "Xxf86vm",
-                "dl"\
             ],
             "library_path" : [
                 "#external/boinc/api",
                 "#external/boinc/lib",
                 "#external/boinc/zip",
-                "/usr/X11R6/lib"
             ],
             "defines"  : [ "BOINC_GRAPHICS" ],
             "flags" : {
-                "link" : [
-                    "Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-                ],
+                "link" : [ "Wl,-Bdynamic -lglut"  ],
             },
         },
     },
@@ -1190,7 +1180,6 @@ settings = {
         "appends" : {
             "defines" : [
                 "USE_BOOST_THREAD",
-                "MULTI_THREADED"
             ],
             "libraries" : [
                 "pthread",

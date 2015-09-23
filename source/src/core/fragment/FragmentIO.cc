@@ -44,6 +44,7 @@
 
 // Auto Headers
 #include <core/fragment/ConstantLengthFragSet.hh>
+#include <core/fragment/MinimalFragSet.hh>
 #include <core/fragment/FrameIterator.hh>
 
 #include <utility/vector1.hh>
@@ -245,6 +246,16 @@ FragSetOP FragmentIO::read_data( std::string const& filename ) {
 			frags->read_fragment_file( filename, top_, ncopies_, bAnnotate_ );
 			frag_cache_[ filename ] = frags;
 			return frags;
+		} else if ( tag == "#" ) {
+			str >> tag;
+			if ( tag == "indexed" ) {
+				tr.Info << "minimal fragment fileformat detected! Calling indexed reader... "
+				        << std::endl;
+				MinimalFragSetOP frags( new MinimalFragSet );
+				frags->read_fragment_file( filename, top_, ncopies_ );
+				frag_cache_[ filename ] = frags;
+				return frags;
+			}
 		}
 
 		FrameList frames;

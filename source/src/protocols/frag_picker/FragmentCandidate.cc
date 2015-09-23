@@ -171,6 +171,11 @@ utility::vector1<FragmentCandidateOP> read_fragment_candidates(
 }
 
 
+void FragmentCandidate::print_fragment_index(std::ostream& out) {
+	VallResidueOP r = get_residue(1);
+	out << r->key() << " " << fragmentLength_ << std::endl;
+}
+
 /// @brief Prints fragment data, the output can be directly loaded to minirosetta
 void FragmentCandidate::print_fragment(std::ostream& out, scores::FragmentScoreMapOP sc, scores::FragmentScoreManagerOP ms) {
 	using namespace basic::options;

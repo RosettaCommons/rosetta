@@ -2669,8 +2669,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		),
 
 		# For transforming protein into the membrane
-		Option_Group( "transform", 
-			Option( "optimize_embedding", 'Boolean', desc="Use the scorefunction to optimize the embedding after an initial coarse grained setting" ), 
+		Option_Group( "transform",
+			Option( "optimize_embedding", 'Boolean', desc="Use the scorefunction to optimize the embedding after an initial coarse grained setting" ),
 		),
 
 		#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)
@@ -2708,8 +2708,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 		## Options for membrane specific output. Currently controlled by file_data, will eventually
 		## become an extension of JD2/JD3 - Added 8/3/15
-		Option_Group( 'output', 
-			Option( 'normalize_to_thk', 'Boolean', desc='Output an additional MEM resdiue data in the PDB where the membrane normal is scaled to match the current membrane thickness (Makes sense for IMM Models' ), 
+		Option_Group( 'output',
+			Option( 'normalize_to_thk', 'Boolean', desc='Output an additional MEM resdiue data in the PDB where the membrane normal is scaled to match the current membrane thickness (Makes sense for IMM Models' ),
 		),
 	),
 
@@ -5011,6 +5011,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'picking_old_max_score', 'Real', desc='maximal score allowed for fragments picked by the old vall (used by RosettaRemodel).', default='1000000.0'),
 		Option( 'write_sequence_only', 'Boolean', desc='Fragment picker will output fragment sequences only. This option is for creating structure based sequence profiles using the FragmentCrmsdResDepth score.', default='false'),
 		Option( 'output_silent', 'Boolean', desc='Fragment picker will output fragments into a silent file.', default='false'),
+		Option( 'output_index', 'Boolean', desc='Fragment picker will output fragments into an index file.', default='false'),
 		Option( 'score_output_silent', 'Boolean', desc='Fragment picker will output fragments into a silent file. Scores of relaxed fragments are added to the silent file.', default='false'),
 
 		Option_Group( 'scoring',

@@ -151,6 +151,8 @@ public:
 		return fragdata;
 	}
 
+	void print_fragment_index(std::ostream& out);
+
 	/// @brief Prints fragment data, the output can be directly loaded to minirosetta
 	void print_fragment(std::ostream& out, scores::FragmentScoreMapOP sc = NULL, scores::FragmentScoreManagerOP ms = NULL);
 

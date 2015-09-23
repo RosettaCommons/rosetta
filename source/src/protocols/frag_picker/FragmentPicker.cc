@@ -78,6 +78,7 @@
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/file/FileName.hh>
 
 #include <utility>
 #include <sstream>
@@ -663,8 +664,6 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 		if ( *it == CEN ) scale_factor = string_of(sidechain_contact_dist_cutoff_->scale_factor());
 	}
 	replace( scale_factor.begin(), scale_factor.end(), '.', '_' );
-	const std::string silent_out_file_name = prefix_ + "." + string_of(contacts_min_seq_sep_) + "." + string_of(sqrt(contacts_dist_cutoff_squared_)) + "." + scale_factor +
-		"." + string_of(n_frags_) + "." + string_of(fragment_size) + "mers.nonlocal_pairs.out";
 	core::io::silent::SilentFileData sfd;
 
 	// contacts output
@@ -715,6 +714,9 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 				}
 
 				if ( output_pair ) {
+
+					const std::string silent_out_file_name = prefix_ + "." + string_of(contacts_min_seq_sep_) + "." + string_of(sqrt(contacts_dist_cutoff_squared_)) + "." + scale_factor +
+						"." + string_of(n_frags_) + "." + string_of(fragment_size) + "mers.nonlocal_pairs.out";
 
 					// make pose from frag
 					utility::vector1<fragment::FragDataCOP> fragdatapair;
@@ -2024,9 +2026,8 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 		fragment_contacts( fragment_size, final_fragments );
 	}
 
-
 	std::string out_file_name = prefix_ + "." + string_of(n_frags_) + "." + string_of(fragment_size) + "mers";
-	std::string silent_out_file_name = out_file_name + ".out";
+
 	utility::io::ozstream output_file(out_file_name);
 	utility::io::ozstream output_info_file;
 	if ( option[frags::describe_fragments].user() ) {
@@ -2039,8 +2040,8 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 	for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
 		Size qPos = query_positions_[iqpos];
 		if ( qPos > maxqpos ) continue;
-		//  std::cerr << "h1 " << qPos << std::endl;
 		output_file << "position: " << I(12, qPos) << " neighbors:   " << I(10, final_fragments[qPos].size()) << std::endl << std::endl;
+
 		for ( Size fi = 1; fi <= final_fragments[qPos].size(); ++fi ) {
 			if ( option[frags::write_sequence_only]() ) {
 				final_fragments[qPos][fi].first->print_fragment_seq(output_file);
@@ -2071,8 +2072,30 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 	output_file.close();
 	output_info_file.close();
 
+	// index file output
+	if ( option[frags::output_index]() ) {
+		if (option[in::file::vall]().size() > 1) {
+			tr.Warning << "cannot output indexed fragment file, does not support more than one vall!" << std::endl;
+		} else {
+			std::string index_out_file_name = out_file_name + ".index";
+			utility::io::ozstream index_output_file(index_out_file_name);
+			utility::file::FileName vallfile(option[in::file::vall]()[1]);
+			index_output_file << "# indexed " << vallfile.bare_name() << std::endl;
+			for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
+				Size qPos = query_positions_[iqpos];
+				if ( qPos > maxqpos ) continue;
+				for ( Size fi = 1; fi <= final_fragments[qPos].size(); ++fi ) {
+					final_fragments[qPos][fi].first->print_fragment_index(index_output_file);
+				}
+				index_output_file << std::endl;
+			}
+			index_output_file.close();
+		}
+	}
+
 	// silent file output
 	if ( option[frags::output_silent]() || option[frags::score_output_silent]() ) {
+		std::string silent_out_file_name = out_file_name + ".out";
 		core::io::silent::SilentFileData sfd;
 		for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
 			Size qPos = query_positions_[iqpos];
