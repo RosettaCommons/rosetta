@@ -9,7 +9,9 @@
 
 /// @file protocols/simple_filters/ScoreTypeFilter.hh
 /// @brief definition of filter class ScoreTypeFilter.
-/// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu)
+/// @author Sarel Fleishman (sarelf@u.washington.edu)
+/// @author Jacob Corn (jecorn@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- Reworked a bit to make it easier to call this from code, outside of RosettaScripts.
 
 #ifndef INCLUDED_protocols_simple_filters_ScoreTypeFilter_hh
 #define INCLUDED_protocols_simple_filters_ScoreTypeFilter_hh
@@ -56,14 +58,25 @@ public:
 		return filters::FilterOP( new ScoreTypeFilter() );
 	}
 
+	/// @brief Sets the scorefunction.
+	/// @details Note that this filter stores a clone of the scorefunction.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	inline void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in ) { scorefxn_ = sfxn_in->clone(); return; }
+
+	/// @brief Sets the score term that will be used for scoring.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	inline void set_score_type( core::scoring::ScoreType const scoretype_in) { score_type_ = scoretype_in; return; };
+
+	/// @brief Sets the energy threshold used for filtering.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	inline void set_threshold( core::Real const &thresh_in) { score_type_threshold_ = thresh_in; return; }
+
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const &pose ) const;
 	virtual ~ScoreTypeFilter();
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks );
+
 private:
 	core::Real score_type_threshold_;
 	core::scoring::ScoreType score_type_;

@@ -1393,10 +1393,10 @@ ResidueType::add_bond(VD atom1, VD atom2, BondName bondLabel /*=SingleBond*/)
 /// @author   Labonte <JWLabonte@jhu.edu>
 void
 ResidueType::change_bond_type(
-		std::string const & atom_name1,
-		std::string const & atom_name2,
-		BondName const old_bond_label,
-		BondName const new_bond_label )
+	std::string const & atom_name1,
+	std::string const & atom_name2,
+	BondName const old_bond_label,
+	BondName const new_bond_label )
 {
 	// Signal that we need to update the derived data.
 	finalized_ = false;
@@ -1413,12 +1413,12 @@ ResidueType::change_bond_type(
 	it1 = std::find( bonded_neighbor_type_[ atom1 ].begin(), bonded_neighbor_type_[ atom1 ].end(), old_bond_label );
 	if ( it1 == bonded_neighbor_type_[ atom1 ].end() ) {
 		utility_exit_with_message(
-				"change_bond_type: atom " + atom_name1 + " does not have the requested bond type!" );
+			"change_bond_type: atom " + atom_name1 + " does not have the requested bond type!" );
 	}
 	it2 = std::find( bonded_neighbor_type_[ atom2 ].begin(), bonded_neighbor_type_[ atom2 ].end(), old_bond_label );
 	if ( it1 == bonded_neighbor_type_[ atom2 ].end() ) {
 		utility_exit_with_message(
-				"change_bond_type: atom " + atom_name2 + " does not have the requested bond type!" );
+			"change_bond_type: atom " + atom_name2 + " does not have the requested bond type!" );
 	}
 
 	bonded_neighbor_type_[ atom1 ].erase( it1 );
@@ -1982,24 +1982,6 @@ bool
 ResidueType::is_protein() const
 {
 	return properties_->has_property( PROTEIN );
-}
-
-bool
-ResidueType::is_alpha_aa() const
-{
-	return properties_->has_property( ALPHA_AA );
-}
-
-bool
-ResidueType::is_beta_aa() const
-{
-	return properties_->has_property( BETA_AA );
-}
-
-bool
-ResidueType::is_sri() const
-{
-	return properties_->has_property( SRI );
 }
 
 /// @brief Is this a triazolemer?

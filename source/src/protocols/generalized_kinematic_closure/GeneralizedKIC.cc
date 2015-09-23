@@ -421,6 +421,16 @@ GeneralizedKIC::parse_my_tag(
 				std::string const binname( (*tag_it)->getOption<std::string>("bin", "")  );
 				set_filter_bin(binname);
 				if ( TR.visible() ) TR << "Set the bin name for the backbone_bin filter to " << binname << "." << std::endl;
+			} else if ( filtertype=="alpha_aa_rama_check" ) {
+				//Residue number:
+				runtime_assert_string_msg( (*tag_it)->hasOption("residue"), "RosettaScript parsing error: when adding an alpha_aa_rama_check filter, the <AddFilter> group within a <GeneralizedKIC> block must have a \"residue=(&int)\" statement." );
+				core::Size const resnum( (*tag_it)->getOption<core::Size>("residue",0) );
+				set_filter_resnum(resnum);
+				if ( TR.visible() ) TR << "Set the residue number for alpha_aa_rama_check filter to " << resnum << "." << std::endl;
+
+				core::Real const cutoff_energy( (*tag_it)->getOption<core::Real>("rama_cutoff_energy", 0.3) );
+				set_filter_rama_cutoff_energy( cutoff_energy );
+				if ( TR.visible() ) TR << "Set the rama term cutoff energy for the alpha_aa_rama_check filter to " << cutoff_energy << std::endl;
 			}
 
 			//Loop through the sub-tags to find out what information we're adding to this filter, if any:
@@ -985,6 +995,30 @@ void GeneralizedKIC::set_filter_bin( std::string const &name_in )
 		utility_exit_with_message( "In GeneralizedKIC::set_filter_bin(): No filters have been defined!\n" );
 	}
 	set_filter_bin(filterlist_.size(), name_in);
+	return;
+}
+
+/// @brief Set the rama term cutoff energy for the alpha_aa_rama_check filter.
+///
+void GeneralizedKIC::set_filter_rama_cutoff_energy(
+	core::Size const filter_index,
+	core::Real const &cutoff_energy
+) {
+	if ( filter_index < 1 || filter_index >filterlist_.size() ) {
+		utility_exit_with_message( "In GeneralizedKIC::set_filter_rama_cutoff_energy(): Filter index is out of range.\n" );
+	}
+	filterlist_[filter_index]->set_rama_cutoff_energy(cutoff_energy);
+	return;
+}
+
+/// @brief Set the rama term cutoff energy for the alpha_aa_rama_check filter.
+/// @details This version acts on the last filter in the filter list.
+void GeneralizedKIC::set_filter_rama_cutoff_energy( core::Real const &cutoff_energy )
+{
+	if ( filterlist_.size() < 1 ) {
+		utility_exit_with_message( "In GeneralizedKIC::set_filter_rama_cutoff_energy(): No filters have been defined!\n" );
+	}
+	set_filter_rama_cutoff_energy( filterlist_.size(), cutoff_energy );
 	return;
 }
 

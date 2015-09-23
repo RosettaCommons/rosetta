@@ -55,6 +55,7 @@ enum filter_type {
 	loop_bump_check,
 	atom_pair_distance,
 	backbone_bin,
+	alpha_aa_rama_check,
 
 	unknown_filter, //Keep this second-to-last.
 	end_of_filter_list = unknown_filter //Keep this last.
@@ -132,19 +133,27 @@ public:
 
 	/// @brief Set the residue number that this filter acts on.
 	/// @details Only used by some filters.
-	void set_resnum( core::Size const val ) { resnum_ = val; return; }
+	inline void set_resnum( core::Size const val ) { resnum_ = val; return; }
 
 	/// @brief Get the residue number that this filter acts on.
 	/// @details Only used by some filters.
-	core::Size resnum( ) const { return resnum_; }
+	inline core::Size resnum( ) const { return resnum_; }
 
 	/// @brief Set the bin name for this filter.
 	/// @details Only used by some filters.
-	void set_binname( std::string const &name_in ) {bin_ = name_in; return; }
+	inline void set_binname( std::string const &name_in ) {bin_ = name_in; return; }
+
+	/// @brief Set the alpha_aa_rama_check filter's rama term cutoff energy.
+	/// @details Only used by alpha_aa_rama_check filter.
+	inline void set_rama_cutoff_energy( core::Real const &val ) { rama_threshhold_=val; return; }
+
+	/// @brief Get the alpha_aa_rama_check filter's rama term cutoff energy.
+	/// @details Only used by alpha_aa_rama_check filter.
+	inline core::Real rama_cutoff_energy( ) const { return rama_threshhold_; }
 
 	/// @brief Get the bin name for this filter.
 	/// @details Only used by some filters.
-	std::string binname( ) const { return bin_; }
+	inline std::string binname( ) const { return bin_; }
 
 	/// @brief Initializes the BinTransitionCalculator object and loads a bin_params file.
 	///
@@ -210,6 +219,10 @@ private:
 	/// @brief A parameter specifically for the backbone_bin filter.  The residue
 	/// that must lie within the mainchain torsion bin specified.
 	core::Size resnum_;
+
+	/// @brief A parameter specifically for the alpha_aa_rama_check filter.  Rama energy
+	/// above which the solution is rejected.  Set to 0.3 by default.
+	core::Real rama_threshhold_;
 
 	////////////////////////////////////////////////////////////////////////////////
 	//          PRIVATE FUNCTIONS                                                 //
@@ -290,6 +303,27 @@ private:
 	/// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
 	/// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
 	bool apply_backbone_bin(
+		core::pose::Pose const &original_pose,
+		core::pose::Pose const &loop_pose,
+		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+		utility::vector1 < std::pair <core::Size, core::Size> > const &tail_residue_map,
+		utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
+		utility::vector1 < core::Real > const &torsions,
+		utility::vector1 < core::Real > const &bondangles,
+		utility::vector1 < core::Real > const &bondlengths
+	) const;
+
+	/// @brief Calculates Ramachandran energy for an alpha-amino acid based on its phi/psi values.
+	/// @details Returns "true" for pass (below threshhold) and "false" for fail.
+	/// @param[in] original_pose -- The full, initial pose.
+	/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+	/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
+	/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
+	/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
+	/// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
+	/// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
+	/// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
+	bool apply_alpha_aa_rama_check(
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
 		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,

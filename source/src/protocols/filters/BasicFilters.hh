@@ -140,6 +140,21 @@ public:
 	void reset_filters();
 	void clear_reset_filters();
 
+	/// @brief Set the overall filter threshold.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	inline void set_threshold( core::Real const &val ) { threshold_=val; return; };
+
+	/// @brief Add a filter/weight pair to the list of filters that this filter combines.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	inline void add_filter(
+		FilterOP filter,
+		core::Real const &weight,
+		bool const clone_filter=true
+	) {
+		filterlist_.push_back( FilterWeightPair( (clone_filter ? filter->clone() : filter), weight) );
+		return;
+	}
+
 	void parse_my_tag(
 		utility::tag::TagCOP,
 		basic::datacache::DataMap &,

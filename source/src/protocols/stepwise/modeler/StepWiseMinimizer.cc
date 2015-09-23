@@ -403,7 +403,7 @@ StepWiseMinimizer::figure_out_working_minimize_res( core::pose::Pose const & pos
 
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( !working_fixed_res_.has_value( n ) ||
-				 working_extra_minimize_res.has_value( n ) ) {
+				working_extra_minimize_res.has_value( n ) ) {
 			working_minimize_res.push_back( n );
 		}
 	}

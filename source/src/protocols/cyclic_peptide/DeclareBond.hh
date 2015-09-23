@@ -14,6 +14,7 @@
 #ifndef INCLUDED_protocols_cyclic_peptide_DeclareBond_hh
 #define INCLUDED_protocols_cyclic_peptide_DeclareBond_hh
 
+#include <protocols/cyclic_peptide/DeclareBond.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 namespace protocols {

@@ -17,6 +17,8 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/scoring/Ramachandran.hh>
+#include <core/scoring/ScoringManager.hh>
 
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
@@ -63,7 +65,8 @@ GeneralizedKICfilter::GeneralizedKICfilter():
 	filter_params_string_(),
 	bin_transition_calculator_(),
 	bin_(""),
-	resnum_(0)
+	resnum_(0),
+	rama_threshhold_(0.3)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
@@ -78,7 +81,8 @@ GeneralizedKICfilter::GeneralizedKICfilter( GeneralizedKICfilter const &src ):
 	filter_params_string_( src.filter_params_string_ ),
 	bin_transition_calculator_( ), //CLONE this, below
 	bin_( src.bin_ ),
-	resnum_( src.resnum_ )
+	resnum_( src.resnum_ ),
+	rama_threshhold_( src.rama_threshhold_ )
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {
 	if ( src.bin_transition_calculator_ ) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
@@ -115,6 +119,9 @@ std::string GeneralizedKICfilter::get_filter_type_name( core::Size const filter_
 		break;
 	case backbone_bin :
 		returnstring = "backbone_bin";
+		break;
+	case alpha_aa_rama_check :
+		returnstring = "alpha_aa_rama_check";
 		break;
 	default :
 		returnstring = "unknown_filter";
@@ -317,6 +324,9 @@ bool GeneralizedKICfilter::apply (
 		break;
 	case backbone_bin :
 		return apply_backbone_bin( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths);
+		break;
+	case alpha_aa_rama_check :
+		return apply_alpha_aa_rama_check( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths );
 		break;
 	default :
 		break;
@@ -615,6 +625,61 @@ bool GeneralizedKICfilter::apply_backbone_bin(
 	}
 	return inbin;
 } //apply_backbone_bin
+
+/// @brief Calculates Ramachandran energy for an alpha-amino acid based on its phi/psi values.
+/// @details Returns "true" for pass (below threshhold) and "false" for fail.
+/// @param[in] original_pose -- The full, initial pose.
+/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
+/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
+/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
+/// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
+/// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
+/// @param[in] bondlengths -- A vector of bond lengths that the bridgeObjects function spat out.
+bool GeneralizedKICfilter::apply_alpha_aa_rama_check (
+	core::pose::Pose const &original_pose,
+	core::pose::Pose const &loop_pose,
+	utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+	utility::vector1 < std::pair <core::Size, core::Size> > const &,//tail_residue_map,
+	utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
+	utility::vector1 < core::Real > const &torsions,
+	utility::vector1 < core::Real > const &bondangles,
+	utility::vector1 < core::Real > const &bondlengths
+) const {
+	//Initial checks:
+	if ( resnum() < 1 || resnum() > original_pose.n_residue() ) {
+		utility_exit_with_message( "In GeneralizedKICfilter::apply_alpha_aa_rama_check(): Could not apply filter.  The residue was not specified, or is out of range." );
+	}
+	if ( !original_pose_residue_is_in_residue_map(resnum(), residue_map) ) {
+		utility_exit_with_message( "In GeneralizedKICfilter::apply_alpha_aa_rama_check(): The residue must be part of the loop being closed." );
+	}
+	if ( !original_pose.residue(resnum()).type().is_alpha_aa() ) {
+		utility_exit_with_message( "In GeneralizedKICfilter::apply_alpha_aa_rama_check(): Cannot apply to a non-alpha amino acid!" );
+	}
+
+	core::Size const curres( get_loop_index( resnum(), residue_map ) );
+
+	core::pose::Pose pose(loop_pose); //Make a copy of the loop pose
+	set_loop_pose (pose, atomlist, torsions, bondangles, bondlengths); //Set the loop pose to the current solution
+
+	core::scoring::Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran(); //Get the Rama scoring function
+	core::Real rama_out(0.0), drama_dphi(0.0), drama_dpsi(0.0);
+	rama.eval_rama_score_residue_nonstandard_connection(pose, pose.residue(curres), rama_out, drama_dphi, drama_dpsi);
+
+	rama_out = rama_out * 0.25;  //Multiplied by 0.25 to match talaris2014 weights.
+
+	bool const rama_passed( rama_out < rama_cutoff_energy() );
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Res" << original_pose.residue(resnum()).name3() << resnum() << " Rama_score=" << rama_out << " Rama_cutoff=" << rama_cutoff_energy();
+		if ( rama_passed ) {
+			TR.Debug << " PASSED" << std::endl;
+		} else {
+			TR.Debug << " FAILED" << std::endl;
+		}
+	}
+	return rama_passed;
+} //apply_alpha_aa_rama_check
 
 } //namespace filter
 } //namespace generalized_kinematic_closure

@@ -178,7 +178,7 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 			if ( options.read_link_records() ) {
 				fd.store_link_record( VR[ i ] );
 			}
-			
+
 			// Record contains disulfide linkage information from the Connectivity Annotation Section of the PDB
 			//file.
 		} else if ( record_type == "SSBOND" ) {

@@ -11,6 +11,7 @@
 /// @brief  A mover that applies a protocol parsed from a ROSETTASCRIPTS script
 /// @author Sarel Fleishman (sarelf@u.washington.edu)
 /// @author Luki Goldschmidt (lugo@uw.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- Modified this to facilitate use of ParsedProtocols to combine movers and filters in code outside of a RosettaScripts context.
 
 // Unit Headers
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
@@ -289,6 +290,24 @@ ParsedProtocol::end(){
 ParsedProtocol::const_iterator
 ParsedProtocol::end() const{
 	return movers_.end();
+}
+
+/// @brief Add a mover-filter pair.
+/// @details Indended for use OUTSIDE of a RosettaScripts context.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+ParsedProtocol::add_mover_filter_pair(
+	protocols::moves::MoverOP mover,
+	std::string const &mover_name,
+	protocols::filters::FilterOP filter,
+	bool const report_filter_at_end
+) {
+	protocols::moves::MoverOP mover_to_add( new protocols::moves::NullMover );
+	if ( mover ) mover_to_add = mover->clone();
+	protocols::filters::FilterOP filter_to_add( new protocols::filters::TrueFilter );
+	if ( filter ) filter_to_add = filter; //I don't know why the mover is cloned while the filter is not, but I'm keeping this consistent with the parse_my_tag function. VKM 17 Sept 2015.
+	movers_.push_back( MoverFilterPair( mover_to_add, mover_name, filter_to_add, report_filter_at_end ) );
+	return;
 }
 
 /// @details sets resid for the constituent filters and movers

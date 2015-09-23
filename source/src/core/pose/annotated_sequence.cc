@@ -90,7 +90,7 @@ void parse_sequence(
 				fullname[2] = 'S';
 				old_cyd_found = true;
 			}
-			
+
 			fullname_list.push_back( fullname );
 			last_index = fullname_list.size();
 			continue;
@@ -110,7 +110,7 @@ void parse_sequence(
 		tr.Warning << "Found old-style CYD nomenclature!  ";
 		tr.Warning << "Renaming as CYS for Conformation::detect_disulfides to resolve" << std::endl;
 	}
-	
+
 	oneletter_to_fullname_index.push_back( last_index );
 }
 

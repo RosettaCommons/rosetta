@@ -534,13 +534,14 @@ SymMinimizeInterface(
 std::list< core::Size >
 hbonded(
 	Pose const & in_pose, core::Size const target_residue, std::set< core::Size > const & binders,
-	bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb )
+	bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb, core::scoring::ScoreFunctionOP sfxn )
 {
 
 	using namespace core::scoring::hbonds;
 
 	std::list< core::Size > hbonded_list;
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
+	core::scoring::ScoreFunctionOP scorefxn( sfxn );
+	if ( !sfxn ) scorefxn=core::scoring::get_score_function();
 	Pose pose( in_pose );
 	(*scorefxn)(pose);
 
@@ -629,13 +630,13 @@ hbonded(
 std::list< core::Size >
 hbonded_atom (
 	Pose const & in_pose, core::Size const target_residue, std::string target_atom, std::set< core::Size > const & binders,
-	bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb )
+	bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb, core::scoring::ScoreFunctionOP sfxn )
 {
 
 	using namespace core::scoring::hbonds;
 
 	std::list< core::Size > hbonded_list;
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );
+	core::scoring::ScoreFunctionOP scorefxn( (sfxn ? sfxn : core::scoring::get_score_function()) );
 	Pose pose( in_pose );
 	(*scorefxn)(pose);
 

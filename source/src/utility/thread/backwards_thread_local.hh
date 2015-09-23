@@ -12,7 +12,7 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 /// @author Vikram K. Mulligan (vmullig@uw.edu) -- modified for clang 3.7.0 case.
 
-#if (!defined CXX11 || !defined MULTI_THREADED) 
+#if (!defined CXX11 || !defined MULTI_THREADED)
 //Case 1: thread_local keyword not defined
 #define THREAD_LOCAL
 

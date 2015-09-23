@@ -236,13 +236,13 @@ public:  // An instance of FileData should not preserve any 'state', so its data
 
 	// PDB Connectivity Annotation Section ////////////////////////////////////
 	// Data for SSBOND records should be declared here if ever implemented.
-	
+
 	// map for storing SSBOND records:
 	// key is 6-character resID of 1st residue in ssbond
 	// (A vector is needed because to futureproof if we ever handle weird disorder
 	// situations.)
 	std::map<std::string, utility::vector1<SSBondInformation> > ssbond_map;
-	
+
 	// map for storing LINK records:
 	// key is 6-character resID of 1st residue in link
 	// (A vector is needed because a single saccharide residue can have multiple branches.)
@@ -285,7 +285,7 @@ public:
 
 	/// @brief Store (non-standard) polymer linkages in a map.
 	void store_ssbond_record(Record & record);
-	
+
 	/// @brief Store (non-standard) polymer linkages in a map.
 	void store_link_record(Record & record);
 
@@ -326,10 +326,10 @@ public:
 
 	LinkInformation get_link_record( core::pose::Pose const & pose, core::Size ii, core::Size conn );
 	SSBondInformation get_ssbond_record( core::pose::Pose const & pose, core::Size ii, core::Size conn );
-	
+
 	/// @brief Get parametric information from the Pose object and add it to the PDB remarks.
 	void get_parametric_info(pose::RemarksOP remarks, core::pose::Pose const & pose);
-	
+
 	/// @brief Writes  <pose>  to a given stream in PDB file format
 	static void dump_pdb(
 		core::pose::Pose const & pose,

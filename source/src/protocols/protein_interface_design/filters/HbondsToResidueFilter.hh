@@ -15,6 +15,7 @@
 #ifndef INCLUDED_protocols_protein_interface_design_filters_HbondsToResidueFilter_hh
 #define INCLUDED_protocols_protein_interface_design_filters_HbondsToResidueFilter_hh
 
+#include <protocols/protein_interface_design/filters/HbondsToResidueFilter.fwd.hh>
 
 // Project Headers
 #include <core/scoring/ScoreFunction.hh>
@@ -93,7 +94,7 @@ public :
 
 	/// @brief Set the minimum number of H-bond partners that this residue must have for the filter to pass.
 	///
-	void set_partners( core::Size const val) {
+	inline void set_partners( core::Size const val) {
 		partners_=val;
 		return;
 	}
@@ -104,7 +105,7 @@ public :
 
 	/// @brief Set the threshhold for the hbond score term at which two residues are counted as being hydrogen bonded.
 	///
-	void set_energy_cutoff( core::Real const val) {
+	inline void set_energy_cutoff( core::Real const val) {
 		runtime_assert_string_msg( val<=0, "Error in HbondsToResidueFilter::set_energy_cutoff(): The energy cutoff must be less than or equal to zero." );
 		energy_cutoff_=val;
 		return;
@@ -116,15 +117,15 @@ public :
 
 	/// @brief Set whether to include backbone hydrogen bonds.
 	/// @details I'm not sure that this is implemented properly.  (VKM -- 6 July 2015).
-	void set_backbone( bool const val ) { backbone_ = val; return; }
+	inline void set_backbone( bool const val ) { backbone_ = val; return; }
 
 	/// @brief Set whether to include backbone hydrogen bonds.
 	/// @details I'm not sure that this is implemented properly.  (VKM -- 6 July 2015).
-	void set_sidechain( bool const val ) { sidechain_ = val; return; }
+	inline void set_sidechain( bool const val ) { sidechain_ = val; return; }
 
 	/// @brief Set whether to include backbone-backbone hydrogen bonds.
 	/// @details I'm not sure that this is implemented properly.  (VKM -- 6 July 2015).
-	void set_bb_bb( bool const val ) { bb_bb_ = val; return; }
+	inline void set_bb_bb( bool const val ) { bb_bb_ = val; return; }
 
 	/// @brief Get whether to include backbone hydrogen bonds.
 	/// @details I'm not sure that this is implemented properly.  (VKM -- 6 July 2015).
@@ -140,7 +141,16 @@ public :
 
 	/// @brief Set the residue number (as a string to be parsed at apply time).
 	///
-	void set_resnum( std::string const &input ) { resnum_=input; return; }
+	inline void set_resnum( std::string const &input ) { resnum_=input; return; }
+
+	/// @brief Set the residue number (as an integer -- Rosetta numbering).
+	inline void set_resnum( core::Size const val ) {
+		runtime_assert(val>0);
+		std::stringstream ss("");
+		ss << val;
+		set_resnum(ss.str());
+		return;
+	}
 
 	/// @brief Get the residue number (a string to be parsed at apply time).
 	///
@@ -148,7 +158,7 @@ public :
 
 	/// @brief Set whether hydrogen bonds from other chains should be counted.
 	///
-	void set_from_other_chains( bool const val ) { from_other_chains_=val; return; }
+	inline void set_from_other_chains( bool const val ) { from_other_chains_=val; return; }
 
 	/// @brief Get whether hydrogen bonds from other chains should be counted.
 	///
@@ -156,11 +166,22 @@ public :
 
 	/// @brief Set whether hydrogen bonds from the same chain should be counted.
 	///
-	void set_from_same_chain( bool const val ) { from_same_chain_=val; return; }
+	inline void set_from_same_chain( bool const val ) { from_same_chain_=val; return; }
 
 	/// @brief Get whether hydrogen bonds from the same chain should be counted.
 	///
 	inline bool from_same_chain() const { return from_same_chain_; }
+
+	/// @brief Set the scorefunction to use for hbond calculation.
+	///
+	inline void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in) {
+		if ( sfxn_in ) {
+			sfxn_ = sfxn_in->clone();
+		} else {
+			utility_exit_with_message("Error in protocols::protein_interface_design::filters::HbondsToResidueFilter::set_scorefxn(): Null pointer passed to function!");
+		}
+		return;
+	}
 
 private:
 
@@ -195,6 +216,10 @@ private:
 	/// @brief If true, hydrogen bonds from the same chain will be counted.  True by default.
 	///
 	bool from_same_chain_;
+
+	/// @brief Owning pointer to the scorefunction to use.
+	///
+	core::scoring::ScoreFunctionOP sfxn_;
 
 
 };

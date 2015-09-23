@@ -482,7 +482,7 @@ public:
 		bool const start_new_chain = false,
 		bool const lookup_bond_length = false
 	);
-	
+
 	/// @brief Appends  <new_rsd>  (a residue) to pose by a new bond to a given atom
 	///
 	/// @details This function effectively wraps append_residue_by_bond for an easier syntax. Instead

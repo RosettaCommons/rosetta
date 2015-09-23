@@ -56,11 +56,11 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		// These example lines are taken directly from the given examples at
 		// http://www.wwpdb.org/documentation/file-format-content/format33/sect6.html
 		string const sample_pdb_lines(
-				"LINK         O   GLY A  49                NA    NA A6001     1555   1555  2.98  \n"
-				"LINK         OG1 THR A  51                NA    NA A6001     1555   1555  2.72  \n"
-				"LINK         OD2 ASP A  66                NA    NA A6001     1555   1555  2.72  \n"
-				"LINK         NE  ARG A  68                NA    NA A6001     1555   1555  2.93  \n"
-				"LINK         C21 2EG A   7                 C22 2EG B  19     1555   1555  1.56  \n" );
+			"LINK         O   GLY A  49                NA    NA A6001     1555   1555  2.98  \n"
+			"LINK         OG1 THR A  51                NA    NA A6001     1555   1555  2.72  \n"
+			"LINK         OD2 ASP A  66                NA    NA A6001     1555   1555  2.72  \n"
+			"LINK         NE  ARG A  68                NA    NA A6001     1555   1555  2.93  \n"
+			"LINK         C21 2EG A   7                 C22 2EG B  19     1555   1555  1.56  \n" );
 
 		utility::vector1< Record > records( PDB_DReader::parse( sample_pdb_lines ) );
 
@@ -115,10 +115,10 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		// These example lines are taken directly from the given examples at
 		// http://www.wwpdb.org/documentation/file-format-content/format33/sect6.html
 		string const sample_pdb_lines(
-				"SSBOND   1 CYS A    6    CYS A  127                          1555   1555  2.03  \n"
-				"SSBOND   2 CYS A   30    CYS A  115                          1555   1555  2.07  \n"
-				"SSBOND   3 CYS A   64    CYS A   80                          1555   1555  2.06  \n"
-				"SSBOND   4 CYS A   76    CYS A   94                          1555   1555  2.04  \n" );
+			"SSBOND   1 CYS A    6    CYS A  127                          1555   1555  2.03  \n"
+			"SSBOND   2 CYS A   30    CYS A  115                          1555   1555  2.07  \n"
+			"SSBOND   3 CYS A   64    CYS A   80                          1555   1555  2.06  \n"
+			"SSBOND   4 CYS A   76    CYS A   94                          1555   1555  2.04  \n" );
 
 		utility::vector1< Record > records( PDB_DReader::parse( sample_pdb_lines ) );
 
@@ -129,10 +129,10 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		for ( core::uint i( 1 ); i <= n_records; ++i ) {
 			fd.store_ssbond_record( records[ i ] );
 		}
-		
+
 		map< string, vector1< SSBondInformation > > ssbond_map( fd.ssbond_map );
 		TS_ASSERT_EQUALS( ssbond_map.size(), 4 );
-	
+
 		TS_ASSERT( ssbond_map.count( "  30 A" ) );
 		TS_ASSERT_EQUALS( ssbond_map[ "  30 A" ].size(), 1 );
 		TS_ASSERT_EQUALS( ssbond_map[ "  30 A" ][ 1 ].resName1, "CYS" );
@@ -179,28 +179,28 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		// 4TTL is a cyclic peptide with two disulfides.
 		core::import_pose::pose_from_pdb( pose, "core/io/pdb/4TTL.pdb" );
-		
+
 		//core::import_pose::pose_from_pdb( pose, "core/io/pdb/1e68_link.pdb" );
-		
+
 		FileData fd;
-		
+
 		TS_ASSERT_EQUALS( fd.link_map.size(),   0 );
 		fd.get_connectivity_annotation_info( pose );
-		
+
 		TS_ASSERT_EQUALS( fd.ssbond_map.size(), 2 );
 		TS_ASSERT_EQUALS( fd.link_map.size(),   1 );
-		
+
 		// The following lines came directly from 1BH4:
-		//SSBOND   1 CYS A    1    CYS A   17                          1555   1555  2.02  
-		//SSBOND   2 CYS A    5    CYS A   19                          1555   1555  2.02  
-		//SSBOND   3 CYS A   10    CYS A   24                          1555   1555  2.02  
-		//LINK         N   CYS A   1                 C   PRO A  30     1555   1555  1.31  
-		
+		//SSBOND   1 CYS A    1    CYS A   17                          1555   1555  2.02
+		//SSBOND   2 CYS A    5    CYS A   19                          1555   1555  2.02
+		//SSBOND   3 CYS A   10    CYS A   24                          1555   1555  2.02
+		//LINK         N   CYS A   1                 C   PRO A  30     1555   1555  1.31
+
 		// The following lines came directly from 4TTL:
-		//SSBOND   1 CYS A    2    CYS A    8                          1555   1555  2.05  
-		//SSBOND   2 CYS A    3    CYS A   16                          1555   1555  2.03  
+		//SSBOND   1 CYS A    2    CYS A    8                          1555   1555  2.05
+		//SSBOND   2 CYS A    3    CYS A   16                          1555   1555  2.03
 		//LINK         N   GLY A   1                 C   GLY A  22     1555   1555  1.34
-		
+
 		// The following lines come directly from 1e68_link.pdb:
 		//LINK         N   MET A   1                 C   TRP A  70     1555   1555  1.33
 
@@ -210,7 +210,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TS_ASSERT_EQUALS( fd2.link_map.size(),   0 );
 		fd2.get_connectivity_annotation_info( pose2 );
-		
+
 		TS_ASSERT_EQUALS( fd2.ssbond_map.size(), 0 );
 		TS_ASSERT_EQUALS( fd2.link_map.size(),   1 );
 	}

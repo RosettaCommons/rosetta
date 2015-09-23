@@ -9,6 +9,7 @@
 
 /// @file protocols/rosetta_scripts/ParsedProtocol.hh
 /// @author Sarel Fleishman (sarelf@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- Modified this to facilitate use of ParsedProtocols to combine movers and filters in code outside of a RosettaScripts context.
 
 #ifndef INCLUDED_protocols_rosetta_scripts_ParsedProtocol_HH
 #define INCLUDED_protocols_rosetta_scripts_ParsedProtocol_HH
@@ -97,6 +98,17 @@ public:
 		runtime_assert( movers_.size() >= mover_number && mover_number > 0 );
 		return( movers_[ mover_number ] );
 	}
+
+	/// @brief Add a mover-filter pair.
+	/// @details Indended for use OUTSIDE of a RosettaScripts context.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void add_mover_filter_pair(
+		protocols::moves::MoverOP mover,
+		std::string const &mover_name,
+		protocols::filters::FilterOP filter,
+		bool const report_filter_at_end=false
+	);
+
 	void set_resid( core::Size const resid );
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new ParsedProtocol ); }

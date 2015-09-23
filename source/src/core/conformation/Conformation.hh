@@ -666,7 +666,7 @@ public:  // Bonds, Connections, Atoms, & Stubs
 		Size lr_conn_id,
 		Size upper_seqpos,
 		Size ur_conn_id);
-	
+
 	/// @brief Detect existing disulfides from the protein structure
 	/// using suggestions from the FileData (or not!)
 	virtual

@@ -2297,36 +2297,36 @@ initialize_disulfide_bonds(
 		pose.conformation().fix_disulfides( disulfides );
 	} else {
 		if ( option[ in::detect_disulf ].user() ?
-			option[ in::detect_disulf ]() : // detect_disulf true
-			pose.is_fullatom() // detect_disulf default but fa pose
-			) {
-			
+				option[ in::detect_disulf ]() : // detect_disulf true
+				pose.is_fullatom() // detect_disulf default but fa pose
+				) {
+
 			//utility::vector1< std::pair< Size, Size > > disulfs;
 			utility::vector1< Size > disulf_one;
 			utility::vector1< Size > disulf_two;
 
 			// Prepare a list of pose-numbered disulfides!
 			for ( std::map< std::string, utility::vector1< io::pdb::SSBondInformation > >::const_iterator
-				 ssbond = fd.ssbond_map.begin(), end = fd.ssbond_map.end(); ssbond != end; ++ssbond ) {
+					ssbond = fd.ssbond_map.begin(), end = fd.ssbond_map.end(); ssbond != end; ++ssbond ) {
 				// For now we really hope the vector1 is just a single element!
 				if ( ssbond->second.size() != 1 ) {
 					TR.Error << "Error: SSBond records list multiple disulfides for this residue!" << std::endl;
 					utility_exit();
 				}
-				
+
 				//disulfs.push_back( std::make_pair< Size, Size>(
-				//	pose.pdb_info()->pdb2pose( ssbond->second[1].chainID1, ssbond->second[1].resSeq1 ),
-				//	pose.pdb_info()->pdb2pose( ssbond->second[1].chainID2, ssbond->second[1].resSeq2 ) ) );
+				// pose.pdb_info()->pdb2pose( ssbond->second[1].chainID1, ssbond->second[1].resSeq1 ),
+				// pose.pdb_info()->pdb2pose( ssbond->second[1].chainID2, ssbond->second[1].resSeq2 ) ) );
 				disulf_one.push_back( pose.pdb_info()->pdb2pose( ssbond->second[1].chainID1, ssbond->second[1].resSeq1 ) );
 				disulf_two.push_back( pose.pdb_info()->pdb2pose( ssbond->second[1].chainID2, ssbond->second[1].resSeq2 ) );
 			}
-			
+
 			//pose.conformation().detect_disulfides( disulfs );
 			pose.conformation().detect_disulfides( disulf_one, disulf_two );
 		}
 	}
 }
-	
+
 std::string extract_tag_from_pose( core::pose::Pose &pose )
 {
 	//using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;

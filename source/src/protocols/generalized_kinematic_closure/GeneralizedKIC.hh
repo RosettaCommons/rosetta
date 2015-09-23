@@ -132,11 +132,11 @@ public:
 
 	/// @brief Get whether or not this mover builds ideal geometry for the loop, or uses the existing geometry,
 	/// imperfect bond lengths/angles and all.
-	bool get_build_ideal_geometry() { return build_ideal_geometry_; }
+	inline bool get_build_ideal_geometry() { return build_ideal_geometry_; }
 
 	/// @brief Returns whether or not the last call to apply() sucessfully closed the loop.  Defaults to false if
 	/// apply() hasn't yet been called.
-	bool last_run_successful() { return last_run_successful_; }
+	inline bool last_run_successful() { return last_run_successful_; }
 
 	/// @brief Tells GeneralizedKIC to close a bond, setting bond length, bond angle, and bond torsion values.  This
 	/// actually just adds appropriate set_dihedral, set_bondangle, and set_bondlength perturbers to the perturber
@@ -329,6 +329,14 @@ public:
 	/// @details This version acts on the last filter in the filter list.
 	void set_filter_bin( std::string const &name_in );
 
+	/// @brief Set the rama term cutoff energy for the alpha_aa_rama_check filter.
+	///
+	void set_filter_rama_cutoff_energy( core::Size const filter_index, core::Real const &cutoff_energy );
+
+	/// @brief Set the rama term cutoff energy for the alpha_aa_rama_check filter.
+	/// @details This version acts on the last filter in the filter list.
+	void set_filter_rama_cutoff_energy( core::Real const &cutoff_energy );
+
 	/// @brief Initialize a filter's BinTransitionCalculator object, and load a bin_params file.
 	///
 	void load_filter_bin_params( core::Size const filter_index, std::string const &bin_params_file );
@@ -381,9 +389,14 @@ public:
 	/// a solution is chosen from among the successful solutions (or we give up because
 	/// ntries_before_giving_up_ is reached without finding any solutions.
 	void set_min_solution_count(core::Size const count_in) { min_solution_count_ = count_in; return; }
+
 	/// @brief Clear the stored solution poses.
 	///
 	inline void clear_stored_solutions() { solutions_.clear(); }
+
+	/// @brief Sets the mover that will be applied to all solutions that pass filters prior to applying the selector.
+	///
+	void set_preselection_mover ( protocols::moves::MoverOP mover );
 
 private:
 
@@ -698,10 +711,6 @@ private:
 	///
 	void prune_extra_atoms( utility::vector1 <core::Size> &pivots );
 
-	/// @brief Sets the mover that will be applied to all solutions that pass filters prior to applying the selector.
-	///
-	void set_preselection_mover ( protocols::moves::MoverOP mover );
-
 	/// @brief Returns whether a preselection mover has been specified.
 	///
 	bool preselection_mover_exists() const { return pre_selection_mover_exists_; }
@@ -712,7 +721,7 @@ private:
 		solutions_.push_back(pose_in);
 		return;
 	}
-	
+
 	/// @brief Return the number of stored solutions
 	///
 	inline core::Size total_stored_solutions() const { return solutions_.size(); }

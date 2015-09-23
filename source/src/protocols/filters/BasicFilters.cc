@@ -422,7 +422,7 @@ CombinedFilter::parse_my_tag(
 	moves::Movers_map const &,
 	Pose const & )
 {
-	threshold_ = tag->getOption<core::Real>( "threshold", 0.0 );
+	set_threshold( tag->getOption<core::Real>( "threshold", 0.0 ) );
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
 	BOOST_FOREACH ( TagCOP tag_ptr, sub_tags ) {
 		core::Real weight(1.0);
@@ -442,7 +442,7 @@ CombinedFilter::parse_my_tag(
 			TR.Warning<<"***WARNING WARNING! Filter " << filter_name << " defined for CombinedValue not found in filter_list!!!! ***"<<std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("Filter "+filter_name+" not found in filter list.");
 		}
-		filterlist_.push_back( FilterWeightPair(filter, weight) );
+		add_filter( filter, weight, false /*filter was already cloned*/ );
 	}
 }
 

@@ -819,11 +819,6 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 		core::Real rama_phi=0;
 		core::Real rama_psi=0;
 		rama.random_phipsi_from_rama(loop_pose_copy.aa(loopindex), rama_phi, rama_psi);
-		// This check necessery because the aa is passed
-		if ( loop_pose_copy.residue( loopindex ).has_property( "D_AA" ) ) {
-			rama_phi *= -1;
-			rama_psi *= -1;
-		}
 		general_set_phi(loop_pose_copy, loopindex, rama_phi);
 		general_set_psi(loop_pose_copy, loopindex, rama_psi);
 

@@ -553,7 +553,7 @@ void add_user_constraints (
 
 	if(!option[v_cst_file].user()) return; //Do nothing if no constraint file is specified.
 
-	ConstraintSetMoverOP cst_maker = new ConstraintSetMover();
+	ConstraintSetMoverOP cst_maker( new ConstraintSetMover() );
 	std::string cstfile = option[v_cst_file]();
 
 	cst_maker->constraint_file(cstfile);
@@ -622,67 +622,67 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 	mypose.conformation().declare_chemical_bond(1, "N", mypose.n_residue(), "C"); //Declare a chemical bond between the N and C termini.
 
 	{//Peptide bond length constraint:
-		FuncOP harmfunc1 = new HarmonicFunc( 1.3288, 0.02);
-		ConstraintCOP distconst1 = new AtomPairConstraint (
+		FuncOP harmfunc1( new HarmonicFunc( 1.3288, 0.02) );
+		ConstraintCOP distconst1( new AtomPairConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ) ,
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				harmfunc1
-			);
+			) );
 		mypose.add_constraint (distconst1);
 	}
 
 	{	//Peptide dihedral angle constraints:
 		// (TODO -- change these if we sample a trans-proline.)
-		FuncOP circharmfunc1 = new CircularHarmonicFunc( PI, 0.02);
-		ConstraintCOP dihedconst1 = new DihedralConstraint (
+		FuncOP circharmfunc1( new CircularHarmonicFunc( PI, 0.02) );
+		ConstraintCOP dihedconst1( new DihedralConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("O") , mypose.n_residue() ),
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index(hstring) , 1) ,
 				circharmfunc1
-			);
-		ConstraintCOP dihedconst2 = new DihedralConstraint (
+			) );
+		ConstraintCOP dihedconst2( new DihedralConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index( (mypose.residue(mypose.n_residue()).has("CM")?"CM":"CA") ) , mypose.n_residue() ),
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index("CA") , 1) ,
 				circharmfunc1
-			);
+			) );
 
 		mypose.add_constraint (dihedconst1);
 		mypose.add_constraint (dihedconst2);
 	}
 
 	{	//Peptide bond angle constraints:
-		FuncOP circharmfunc2a = new CircularHarmonicFunc( CNCa_ANGLE/180.0*PI, 0.02);
-		FuncOP circharmfunc2b = new CircularHarmonicFunc( CNH_ANGLE/180.0*PI, 0.02);
-		FuncOP circharmfunc2c = new CircularHarmonicFunc( CaCN_ANGLE/180.0*PI, 0.02);
-		FuncOP circharmfunc2d = new CircularHarmonicFunc( OCN_ANGLE/180.0*PI, 0.02);
+		FuncOP circharmfunc2a( new CircularHarmonicFunc( CNCa_ANGLE/180.0*PI, 0.02) );
+		FuncOP circharmfunc2b( new CircularHarmonicFunc( CNH_ANGLE/180.0*PI, 0.02) );
+		FuncOP circharmfunc2c( new CircularHarmonicFunc( CaCN_ANGLE/180.0*PI, 0.02) );
+		FuncOP circharmfunc2d( new CircularHarmonicFunc( OCN_ANGLE/180.0*PI, 0.02) );
 
-		ConstraintCOP angleconst1 = new AngleConstraint (
+		ConstraintCOP angleconst1( new AngleConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index("CA") , 1) ,
 				circharmfunc2a
-			);
-		ConstraintCOP angleconst2 = new AngleConstraint (
+			) );
+		ConstraintCOP angleconst2( new AngleConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index(hstring) , 1) ,
 				circharmfunc2b
-			);
-		ConstraintCOP angleconst3 = new AngleConstraint (
+			) );
+		ConstraintCOP angleconst3( new AngleConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index( (mypose.residue(mypose.n_residue()).has("CM")?"CM":"CA") ) , mypose.n_residue() ),
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				circharmfunc2c
-			);
-		ConstraintCOP angleconst4 = new AngleConstraint (
+			) );
+		ConstraintCOP angleconst4( new AngleConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("O") , mypose.n_residue() ),
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				circharmfunc2d
-			);
+			) );
 
 		mypose.add_constraint (angleconst1);
 		mypose.add_constraint (angleconst2);
@@ -733,7 +733,7 @@ void perturb_bb_and_relax (
 	core::Real const cartweight = sfxn->get_weight(cart_bonded);
 	core::Real const procloseweight = sfxn->get_weight(pro_close);
 	core::optimization::MinimizerOptions minoptions("dfpmin_armijo_nonmonotone", 0.000001, true, false, false);
-	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_bb_true_range(1, pose.n_residue());
 	mm->set_chi_true_range(1, pose.n_residue());
 	mm->set_jump(false);
@@ -1249,7 +1249,7 @@ void transmit_additional_info (
 	utility::vector1 < core::Real > &datavector //input or output
 ) {
 	MPI_Status mpistatus;
-	double *dataarray = new double [numelements];
+	double *dataarray( new double [numelements] );
 	if(thisproc==fromproc) { //If this is the sending proc
 		for (core::Size i=1; i<=(core::Size)numelements; i++) dataarray[i-1]=(double)datavector[i]; //Store the data in the data array for transmission
 		MPI_Send(dataarray, numelements, MPI_DOUBLE, toproc, 0, MPI_COMM_WORLD); //Send the data
@@ -1286,7 +1286,7 @@ void receive_silent_struct (
 	} else {
 		MPI_Recv( &charlength, 1, MPI_UNSIGNED_LONG, fromproc, 0, MPI_COMM_WORLD, &mpistatus); //Receive the length of the char buffer
 	}
-	char* received_char = new char[charlength];
+	char* received_char( new char[charlength] );
 
 	if(broadcast) {
 		MPI_Bcast( received_char, charlength, MPI_CHAR, fromproc, MPI_COMM_WORLD); //Recieve the char sent by MPI_Bcast
@@ -1336,7 +1336,7 @@ void transmit_silent_struct (
 	std::string outstring = sb.str();
 	//printf("transmit_silent_struct from proc %i will send %s\n", thisproc, outstring.c_str()); fflush(stdout); //DELETE ME
 	unsigned long strlength = outstring.length()+1;
-	char *outchar = new char [strlength];
+	char *outchar( new char [strlength] );
 	sprintf(outchar, "%s", outstring.c_str());
 
 	if(broadcast) {
@@ -2073,11 +2073,11 @@ int main(int argc, char *argv[]) {
 		// -v_norepack_positions option has been used.
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
-		TaskFactoryOP frlx_tasks = new TaskFactory();
+		TaskFactoryOP frlx_tasks( new TaskFactory() );
 		frlx_tasks->push_back(new RestrictToRepacking());
 		if(option[v_norepack_positions]().size()>0) {
 			//If the user has specified that certain positions should not repack, set up a task operation here.
-			PreventRepackingOP norepack = new PreventRepacking();
+			PreventRepackingOP norepack( new PreventRepacking() );
 			for(core::Size i=1, imax=option[v_norepack_positions]().size(); i<=imax; ++i) {
 				norepack->include_residue( option[v_norepack_positions]()[i] );
 			}

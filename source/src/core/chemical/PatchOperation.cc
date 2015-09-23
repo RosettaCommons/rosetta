@@ -494,14 +494,14 @@ AddBondType::apply( ResidueType & rsd ) const
 // ChangeBondType /////////////////////////////////////////////////////////////
 
 ChangeBondType::ChangeBondType(
-		std::string const & atom1_in,
-		std::string const & atom2_in,
-		std::string const & old_bond_type_in,
-		std::string const & new_bond_type_in ) :
-		atom1_( atom1_in ),
-		atom2_( atom2_in ),
-		old_bond_type_( old_bond_type_in ),
-		new_bond_type_( new_bond_type_in )
+	std::string const & atom1_in,
+	std::string const & atom2_in,
+	std::string const & old_bond_type_in,
+	std::string const & new_bond_type_in ) :
+	atom1_( atom1_in ),
+	atom2_( atom2_in ),
+	old_bond_type_( old_bond_type_in ),
+	new_bond_type_( new_bond_type_in )
 {}
 
 /// @return  true on failure
@@ -511,7 +511,7 @@ bool
 ChangeBondType::apply( ResidueType & rsd ) const
 {
 	rsd.change_bond_type(
-			atom1_, atom2_, convert_to_BondName( old_bond_type_ ), convert_to_BondName( new_bond_type_ ) );
+		atom1_, atom2_, convert_to_BondName( old_bond_type_ ), convert_to_BondName( new_bond_type_ ) );
 	return false;  // success
 }
 
@@ -1254,7 +1254,7 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 			return 0;
 		}
 		return PatchOperationOP( new ChangeBondType( atom1, atom2, old_bond_type, bond_type ) );
-		
+
 	} else if ( tag == "ADD_CONNECT" ) {
 		std::string connect_atom;
 		l >> connect_atom;

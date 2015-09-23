@@ -18,13 +18,18 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
-namespace protein_interface_design{
+namespace protein_interface_design {
 namespace filters {
 
 // Forward
 class HbondsToResidueFilter;
+typedef utility::pointer::shared_ptr< HbondsToResidueFilter > HbondsToResidueFilterOP;
+typedef utility::pointer::shared_ptr< HbondsToResidueFilter const > HbondsToResidueFilterCOP;
+typedef utility::vector1<HbondsToResidueFilterOP> HbondsToResidueFilterOPs;
+typedef utility::vector1<HbondsToResidueFilterCOP> HbondsToResidueFilterCOPs;
 
 } // namespace filters
 } //namespace protein_interface_design

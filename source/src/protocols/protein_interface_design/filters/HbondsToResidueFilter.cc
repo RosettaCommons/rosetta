@@ -102,7 +102,8 @@ HbondsToResidueFilter::HbondsToResidueFilter() :
 	sidechain_(true),
 	bb_bb_(true),
 	from_other_chains_(true),
-	from_same_chain_(true)
+	from_same_chain_(true),
+	sfxn_()
 {}
 
 /// @brief Constructor
@@ -125,7 +126,8 @@ HbondsToResidueFilter::HbondsToResidueFilter(
 	sidechain_(sidechain),
 	bb_bb_(bb_bb),
 	from_other_chains_(from_other_chains),
-	from_same_chain_(from_same_chain)
+	from_same_chain_(from_same_chain),
+	sfxn_()
 {
 	std::stringstream resnumstr;
 	resnumstr << resnum;
@@ -145,7 +147,8 @@ HbondsToResidueFilter::HbondsToResidueFilter( HbondsToResidueFilter const &src )
 	sidechain_(src.sidechain_),
 	bb_bb_(src.bb_bb_),
 	from_other_chains_(src.from_other_chains_),
-	from_same_chain_(src.from_same_chain_)
+	from_same_chain_(src.from_same_chain_),
+	sfxn_( src.sfxn_->clone() )
 {}
 
 bool
@@ -163,8 +166,13 @@ HbondsToResidueFilter::apply( Pose const & pose ) const {
 }
 
 void
-HbondsToResidueFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & /*pose*/ )
-{
+HbondsToResidueFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &data,
+	filters::Filters_map const &,
+	moves::Movers_map const &,
+	core::pose::Pose const & /*pose*/
+) {
 	runtime_assert_string_msg( !tag->hasOption("res_num") && !tag->hasOption("pdb_num"), "Error in HbondsToResidueFilter::parse_my_tag():  The \"res_num\" and \"pdb_num\" options have been deprecated.  Use \"residue\" instead, and provide a Rosetta number (e.g. \"32\"), a PDB number (e.g. \"12B\"), or a reference pose number (e.g. \"refpose(snapshot1,17)+3\").");
 	runtime_assert_string_msg( tag->hasOption("residue"), "Error in HbondsToResidueFilter::parse_my_tag():  No \"residue\" option found in the options for the HbondsToResidue filter." );
 
@@ -174,6 +182,10 @@ HbondsToResidueFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache:
 	set_backbone( tag->getOption<bool>( "backbone", 0 ) );
 	set_sidechain( tag->getOption<bool>( "sidechain", 1 ) );
 	set_resnum( tag->getOption<std::string>( "residue" ) );
+
+	if ( tag->hasOption("scorefxn") ) {
+		set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
+	}
 
 	set_from_same_chain( tag->getOption<bool>( "from_same_chain", true ) );
 	set_from_other_chains( tag->getOption<bool>( "from_other_chains", true ) );
@@ -211,7 +223,11 @@ HbondsToResidueFilter::compute( Pose const & pose, core::Size const resnum_roset
 	using core::Size;
 
 	core::pose::Pose temp_pose( pose );
-	core::scoring::ScoreFunctionOP scorefxn(get_score_function() );
+	core::scoring::ScoreFunctionOP scorefxn( sfxn_ );
+	if ( !scorefxn ) {
+		TR << "No scorefunction loaded.  Getting global default scorefunction." << std::endl; //DELETE ME.
+		scorefxn=get_score_function();
+	}
 	(*scorefxn)(temp_pose);
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( temp_pose );
 
@@ -222,7 +238,7 @@ HbondsToResidueFilter::compute( Pose const & pose, core::Size const resnum_roset
 		if ( pose.chain(i) != pose.chain(resnum_rosetta) && !from_other_chains() ) continue; //Skip hbonds from different chains if the from_other_chain option is not set.
 		binders.insert( i );
 	}
-	std::list< Size> hbonded_res( hbonded( temp_pose, resnum_rosetta, binders, backbone_, sidechain_, energy_cutoff_, bb_bb_) );
+	std::list< Size> hbonded_res( hbonded( temp_pose, resnum_rosetta, binders, backbone_, sidechain_, energy_cutoff_, bb_bb_, scorefxn) );
 
 	return( hbonded_res.size() );
 }

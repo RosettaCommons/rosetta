@@ -1093,11 +1093,11 @@ public:
 
 	/// @brief  Change the bond type of the given bond from one type to another.
 	void change_bond_type(
-			std::string const & atom_name1,
-			std::string const & atom_name2,
-			BondName const old_bond_label,
-			BondName const new_bond_label );
-	
+		std::string const & atom_name1,
+		std::string const & atom_name2,
+		BondName const old_bond_label,
+		BondName const new_bond_label );
+
 	/// @brief add a bond between atom1 and atom2, if bond type is not specified, default to a SingleBond
 	void
 	add_cut_bond(
@@ -1512,15 +1512,29 @@ public:
 	/// @brief is protein?
 	bool is_protein() const;
 
-	/// @brief is this an alpha amino acid?
-	bool is_alpha_aa() const;
+	/// @brief Is this an alpha-amino acid?
+	///
+	inline bool is_alpha_aa() const {
+		return properties_->has_property( ALPHA_AA );
+	}
 
-	/// @brief is this a beta amino acid?
-	bool is_beta_aa() const;
+	/// @brief Is this a beta-amino acid?
+	///
+	inline bool is_beta_aa() const {
+		return properties_->has_property( BETA_AA );
+	}
+
+	/// @brief Is this a gamma-amino acid?
+	///
+	inline bool is_gamma_aa() const {
+		return properties_->has_property( GAMMA_AA );
+	}
 
 	/// @brief Is this one of SRI's special heteropolymer building blocks?
 	///
-	bool is_sri() const;
+	inline bool is_sri() const {
+		return properties_->has_property( SRI );
+	}
 
 	/// @brief Is this a triazolemer?
 	///

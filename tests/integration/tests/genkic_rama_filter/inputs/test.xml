@@ -1,0 +1,94 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<RestrictToRepacking name=repack_only />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+
+		<PeptideStubMover name=build1 reset=true>
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+			<Append resname="ALA" />
+		</PeptideStubMover>
+		
+		<SetTorsion name=tors1>
+			<Torsion torsion_name=omega residue=ALL angle=180 />
+		</SetTorsion>
+		
+		<DeclareBond name=bond1 res1=18 atom1=C res2=1 atom2=N />
+		
+		<GeneralizedKIC name=close1 selector=lowest_energy_selector selector_scorefunction=tala closure_attempts=2000 stop_when_n_solutions_found=1 >
+			<AddResidue res_index=3 />
+			<AddResidue res_index=4 />
+			<AddResidue res_index=5 />
+			<AddResidue res_index=6 />
+			<AddResidue res_index=7 />
+			<AddResidue res_index=8 />
+			<AddResidue res_index=9 />
+			<AddResidue res_index=10 />
+			<AddResidue res_index=11 />
+			<AddResidue res_index=12 />
+			<AddResidue res_index=13 />
+			<AddResidue res_index=14 />
+			<AddResidue res_index=15 />
+			<AddResidue res_index=16 />
+			<AddResidue res_index=17 />
+			<AddResidue res_index=18 />
+			<AddResidue res_index=1 />
+			<CloseBond res1=18 atom1=C res2=1 atom2=N bondlength=1.32 angle1=114 angle2=123 torsion=180 />
+			<SetPivots res1=3 atom1=CA res2=11 atom2=CA res3=1 atom3=CA />
+			<AddPerturber effect=randomize_alpha_backbone_by_rama >
+				<AddResidue index=3 />
+				<AddResidue index=4 />
+				<AddResidue index=5 />
+				<AddResidue index=6 />
+				<AddResidue index=7 />
+				<AddResidue index=8 />
+				<AddResidue index=9 />
+				<AddResidue index=10 />
+				<AddResidue index=11 />
+				<AddResidue index=12 />
+				<AddResidue index=13 />
+				<AddResidue index=14 />
+				<AddResidue index=15 />
+				<AddResidue index=16 />
+				<AddResidue index=17 />
+				<AddResidue index=18 />
+				<AddResidue index=1 />
+			</AddPerturber>
+			<AddFilter type=loop_bump_check />
+			<AddFilter type=alpha_aa_rama_check residue=3 rama_cutoff_energy=0.3 / >
+			<AddFilter type=alpha_aa_rama_check residue=11 rama_cutoff_energy=0.3 / >
+			<AddFilter type=alpha_aa_rama_check residue=1 rama_cutoff_energy=0.3 / >
+		</GeneralizedKIC>
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=build1 />
+		<Add mover=tors1 />
+		<Add mover=bond1 />
+		<Add mover=close1 />
+	</PROTOCOLS>
+	<OUTPUT scorefxn=tala />
+</ROSETTASCRIPTS>
