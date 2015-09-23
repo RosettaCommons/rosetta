@@ -1,4 +1,4 @@
-# This mostly follows 
+# This mostly follows
 # URL: http://cppcms.svn.sourceforge.net/svnroot/cppcms/cppdb/trunk/CMakeLists.txt
 # at revision -r1700
 
@@ -22,7 +22,7 @@ add_definitions(-DCPPDB_MINOR=3)
 add_definitions(-DCPPDB_PATCH=0)
 add_definitions(-DCPPDB_VERSION="0.3.0")
 
-# I don't know why thread safety and shared object loading were disabled, but I 
+# I don't know why thread safety and shared object loading were disabled, but I
 # had to reenable both options in order to use mysql from an MPI job.
 # kalekundert@ucsf.edu 2/10/14
 #add_definitions(-DCPPDB_DISABLE_THREAD_SAFETY)
@@ -41,7 +41,7 @@ if(NOT DISABLE_SQLITE)
 	add_definitions(-DSQLITE_THREADSAFE=0)
 
 	add_library(sqlite3 SHARED ${SQLITE3_SRC})
-        
+
         set(INTERNAL_SOURCES ${INTERNAL_SOURCES} ../../external/dbio/cppdb/sqlite3_backend.cpp)
         set(INTERNAL_LIBRARIES ${INTERNAL_LIBRARIES} sqlite3)
         add_definitions(-DCPPDB_WITH_SQLITE3)
@@ -63,9 +63,17 @@ set(CPPDB_SRC
 	${INTERNAL_SOURCES}
 	)
 
-add_library(cppdb SHARED ${CPPDB_SRC})
-set_target_properties(cppdb PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}" )
-set_target_properties(cppdb PROPERTIES LINK_FLAGS "${LINK_FLAGS}" )
+      add_library(cppdb SHARED ${CPPDB_SRC})
+
+# "gcc, 4.9"
+if( ${COMPILER} STREQUAL "gcc" AND ${CMAKE_CXX_COMPILER_VERSION} MATCHES ".*4[.]9[.]([0-9])*" )
+  # Fix cppdb linking error in recent versions of g++
+  set_target_properties(cppdb PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -fno-strict-aliasing -ldl" )
+  set_target_properties(cppdb PROPERTIES LINK_FLAGS "${LINK_FLAGS} -Wl,--no-as-needed -ldl" )
+else()
+  set_target_properties(cppdb PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}" )
+  set_target_properties(cppdb PROPERTIES LINK_FLAGS "${LINK_FLAGS}" )
+endif()
 
 foreach(LIB ${INTERNAL_LIBRARIES})
 	target_link_libraries(cppdb ${LIB})
