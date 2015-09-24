@@ -163,6 +163,7 @@
 #include <protocols/simple_filters/SAXSScoreFilter.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/simple_moves/RepulsiveOnlyMover.hh>
+#include <protocols/forge/methods/util.hh>
 
 //numeric headers
 #include <numeric/random/random.hh>
@@ -1294,6 +1295,11 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 	// initialize pose
 	generate_extended_pose( extended_pose, sequence_ );
 
+	// apply cyclic peptide constraints if the option is selected
+	if ( option[ OptionKeys::abinitio::cyclic_peptide ]() ){
+		protocols::forge::methods::cyclize_pose( extended_pose );
+	}
+
 	// apply a mover which calculates only repulsive energy on designate residues
 	protocols::simple_moves::RepulsiveOnlyMover replonly;
 	replonly.apply( extended_pose );
@@ -1966,6 +1972,11 @@ void AbrelaxApplication::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP
 			!option[ OptionKeys::abinitio::fastrelax ]() ) return;
 
 	// run relax if applicable
+
+	//add cyclic peptide constraints during relax stages if and only if the cyclic peptide is specified
+	if ( option[ OptionKeys::abinitio::cyclic_peptide ]() ){
+		protocols::forge::methods::cyclize_pose( pose );
+	}
 
 	// remove constraints if option is set
 	ConstraintSetOP orig_cst = NULL;

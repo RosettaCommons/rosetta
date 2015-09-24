@@ -3087,6 +3087,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'rerun',     'Boolean',    desc='go through intput structures and evaluate ( pca, rmsd, cst-energy )',     default='false' ),
 		Option( 'rmsd_residues',    'IntegerVector',     desc='give start and end residue for rmsd calcul.',     default='-1' ),
 		Option( 'start_native',      'Boolean',   desc='start from native structure (instead of extended)',     default='false' ),
+		Option( 'cyclic_peptide', 'Boolean',   desc='set up cyclic peptide (N-to-C cyclization) constraints for abinitio runs',     default='false' ),
 		Option( 'debug_structures', 'Boolean', desc="write structures to debug-out files", default='false' ),
 
 		Option( 'log_frags',               'File',         desc='fragment insertions (each trial) will be logged to file',     default='' ),
@@ -6029,6 +6030,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'centroid_mode',             'Boolean', desc="Use centroid relax protocol", default='false'),
 		Option( 'default_repeats',            'Integer', desc='Default number of repeats done by FastRelax. Has no effect if a custom script is used!', default='5' ),
 		Option( 'dualspace',                 'Boolean', desc='Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cart_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended.  Use of the -nonideal flag switches all these and sets up correct min cycles, minimizer type, etc.' ),
+		Option( 'cyclic_peptide',            'Boolean', desc='Set up N-to-C constraints in a cyclic peptide' ),
 
 		## Options for Sequence Relax
 		Option( 'ramady',                    'Boolean', desc='Run ramady code which aleviates stuck bad ramachandran energies', default='false' ),

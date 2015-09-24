@@ -78,6 +78,7 @@
 //#include <protocols/jobdist/Jobs.hh>
 //#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/forge/methods/util.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -459,6 +460,12 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 		if ( get_scorefxn()->get_weight( atom_pair_constraint ) == 0 ) {
 			get_scorefxn()->set_weight( atom_pair_constraint, 2.0 );
 		}
+	}
+
+	//cyclic
+
+	if ( option[ OptionKeys::relax::cyclic_peptide ]() ){
+		protocols::forge::methods::cyclize_pose( pose );
 	}
 
 } // setup_up_constraints

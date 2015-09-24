@@ -91,6 +91,7 @@ void register_common_options() {
 	option.add_relevant(OptionKeys::abinitio::return_full_atom);
 	option.add_relevant(OptionKeys::abinitio::rerun);
 	option.add_relevant(OptionKeys::abinitio::jdist_rerun);
+	option.add_relevant(OptionKeys::abinitio::cyclic_peptide);
 
 	// starting conditions
 	option.add_relevant(OptionKeys::abinitio::start_native);
