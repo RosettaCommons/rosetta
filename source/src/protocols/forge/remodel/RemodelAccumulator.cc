@@ -30,6 +30,7 @@
 #include <fstream>
 #include <sys/stat.h>
 #include <core/import_pose/import_pose.hh>
+#include <protocols/relax/util.hh>
 
 #include <utility/vector1.hh>
 
@@ -288,7 +289,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 			}
 
 			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user() ) { //all processes/constraints has to be applied to checkpointed files
-				protocols::forge::methods::cyclize_pose(dummyPose);
+				protocols::relax::cyclize_pose(dummyPose);
 			}
 
 			this->apply(dummyPose);

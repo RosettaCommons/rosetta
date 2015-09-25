@@ -1296,8 +1296,8 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 	generate_extended_pose( extended_pose, sequence_ );
 
 	// apply cyclic peptide constraints if the option is selected
-	if ( option[ OptionKeys::abinitio::cyclic_peptide ]() ){
-		protocols::forge::methods::cyclize_pose( extended_pose );
+	if ( option[ OptionKeys::abinitio::cyclic_peptide ]() ) {
+		protocols::relax::cyclize_pose( extended_pose );
 	}
 
 	// apply a mover which calculates only repulsive energy on designate residues
@@ -1974,8 +1974,8 @@ void AbrelaxApplication::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP
 	// run relax if applicable
 
 	//add cyclic peptide constraints during relax stages if and only if the cyclic peptide is specified
-	if ( option[ OptionKeys::abinitio::cyclic_peptide ]() ){
-		protocols::forge::methods::cyclize_pose( pose );
+	if ( option[ OptionKeys::abinitio::cyclic_peptide ]() ) {
+		protocols::relax::cyclize_pose( pose );
 	}
 
 	// remove constraints if option is set

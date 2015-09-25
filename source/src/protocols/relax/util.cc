@@ -18,6 +18,7 @@
 
 //Core Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh> //pba
 #include <core/scoring/MembraneTopology.hh> //pba
 #include <core/scoring/ScoreFunction.hh>
@@ -27,6 +28,9 @@
 #include <core/scoring/electron_density/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
 
 //Protocol Headers
 #include <protocols/relax/RelaxProtocolBase.hh>
@@ -152,6 +156,50 @@ void relax_pose( pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn, std:
 	protocol->set_current_tag( tag );
 	protocol->set_scorefxn( scorefxn );
 	protocol->apply( pose );
+}
+
+void fixH(core::pose::Pose & pose) {
+	for ( Size i = 1; i <= pose.n_residue(); ++i ) {
+		pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only(i);
+	}
+}
+
+
+void
+cyclize_pose(core::pose::Pose & pose) {
+	using namespace core;
+	using namespace core::pose;
+	using namespace core::scoring::constraints;
+	using namespace chemical;
+	using core::id::AtomID;
+	Size N = pose.n_residue();
+	for ( Size i = 1; i <= N; ++i ) {
+		if ( pose.residue(i).is_lower_terminus() ) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
+		if ( pose.residue(i).is_upper_terminus() ) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
+		if ( pose.residue(i).has_variant_type(CUTPOINT_UPPER) ) core::pose::remove_variant_type_from_pose_residue(pose,CUTPOINT_UPPER,i);
+		if ( pose.residue(i).has_variant_type(CUTPOINT_LOWER) ) core::pose::remove_variant_type_from_pose_residue(pose,CUTPOINT_LOWER,i);
+	}
+	if ( !pose.residue(1).has_variant_type(CUTPOINT_UPPER) ) {
+		core::pose::add_variant_type_to_pose_residue(pose,CUTPOINT_UPPER,1);
+	}
+	if ( !pose.residue(N).has_variant_type(CUTPOINT_LOWER) ) {
+		core::pose::add_variant_type_to_pose_residue(pose,CUTPOINT_LOWER,N);
+	}
+	pose.conformation().declare_chemical_bond( 1, "N", N, "C" );
+	fixH(pose);
+
+	pose.conformation().update_polymeric_connection(1);
+
+	using namespace core::scoring::constraints;
+	AtomID a1( pose.residue(1).atom_index(   "N"), 1 ), a2( pose.residue(pose.n_residue()).atom_index("OVL1"), pose.n_residue() );
+	AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.n_residue()).atom_index("OVL2"), pose.n_residue() );
+	AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.n_residue()).atom_index(   "C"), pose.n_residue() );
+	core::scoring::func::FuncOP fx1( new core::scoring::func::HarmonicFunc(0.0,0.1) );
+	pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(a1,a2,fx1) ) ));
+	core::scoring::func::FuncOP fx2( new core::scoring::func::HarmonicFunc(0.0,0.1) );
+	pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(b1,b2,fx2) ) ));
+	core::scoring::func::FuncOP fx3( new core::scoring::func::HarmonicFunc(0.0,0.1) );
+	pose.add_constraint(scoring::constraints::ConstraintCOP( scoring::constraints::ConstraintOP( new AtomPairConstraint(c1,c2,fx3) ) ));
 }
 
 }

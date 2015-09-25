@@ -269,11 +269,6 @@ apply_transformation(
 	numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
 );
 
-
-void
-cyclize_pose(core::pose::Pose & pose);
-
-
 } // namespace methods
 } // namespace forge
 } // namespace protocols

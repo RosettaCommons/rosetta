@@ -261,15 +261,15 @@ Residue::show( std::ostream & output, bool output_atomic_details ) const
 						// Is it axial or equatorial?
 						output << ' ' << atom_name( potential_substituents[ k ] ) << ": ";
 						switch ( is_atom_axial_or_equatorial_to_ring( *this, potential_substituents[ k ], ring_atoms ) ) {
-							case AXIAL:
-								output << "axial" << endl;
-								break;
-							case EQUATORIAL:
-								output << "equatorial" << endl;
-								break;
-							case NEITHER:
-								output << "neither axial nor equatorial" << endl;
-								break;
+						case AXIAL :
+							output << "axial" << endl;
+							break;
+						case EQUATORIAL :
+							output << "equatorial" << endl;
+							break;
+						case NEITHER :
+							output << "neither axial nor equatorial" << endl;
+							break;
 						}
 						break;
 					}
@@ -1351,30 +1351,30 @@ void
 Residue::set_tau( Size const nuno, Real const setting )
 {
 	Size base_id = nuno > nus_.size() ? 3 : 2;
-	
+
 	AtomIndices const & nu_atoms( rsd_type_.nu_atoms( ( nuno > nus_.size() ? nus_.size() : nuno ) ) );
-	
+
 	// get the current tau angle
 	Real const current_tau
-	( numeric::angle_degrees( atom( nu_atoms[ base_id-1 ] ).xyz(), atom( nu_atoms[ base_id ] ).xyz(), atom( nu_atoms[ base_id+1 ] ).xyz() ) );
-	
+		( numeric::angle_degrees( atom( nu_atoms[ base_id-1 ] ).xyz(), atom( nu_atoms[ base_id ] ).xyz(), atom( nu_atoms[ base_id+1 ] ).xyz() ) );
+
 	Vector const v12( atom( nu_atoms[ base_id ] ).xyz() - atom( nu_atoms[ base_id-1 ] ).xyz() );
 	Vector const v23( atom( nu_atoms[ base_id+1 ] ).xyz() - atom( nu_atoms[ base_id ] ).xyz() );
 	Vector const axis (v12.cross(v23).normalized());
-	
+
 	numeric::xyzMatrix< Real > const R
-	( numeric::rotation_matrix_degrees( axis, - setting + current_tau ) );
-	
+		( numeric::rotation_matrix_degrees( axis, - setting + current_tau ) );
+
 	Vector const nu_atom2_xyz( atom( nu_atoms[ base_id ] ).xyz() );
 	Vector const v( nu_atom2_xyz - R * nu_atom2_xyz );
-	
+
 	// apply the transform to all "downstream" atoms
 	apply_transform_downstream( nu_atoms[ base_id+1 ], R, v );
-	
+
 	//ASSERT_ONLY(Real const new_tau(numeric::angle_degrees(
-	//		atom( nu_atoms[ base_id-1 ] ).xyz(), atom( nu_atoms[ base_id ] ).xyz(), atom( nu_atoms[ base_id+1 ] ).xyz() )); )
+	//  atom( nu_atoms[ base_id-1 ] ).xyz(), atom( nu_atoms[ base_id ] ).xyz(), atom( nu_atoms[ base_id+1 ] ).xyz() )); )
 	//debug_assert( std::abs( basic::subtract_degree_angles( new_tau, setting ) ) < 1e-2 );
-	
+
 	update_actcoord();
 }
 
@@ -1383,58 +1383,58 @@ Residue::set_all_nu( utility::vector1< Real > const & nus, utility::vector1< Rea
 {
 	debug_assert( nus.size() == nus_.size() );
 	debug_assert( taus.size() == nus_.size()+1 );
-	
+
 	set_all_ring_nu( 1, nus_.size(), nus, taus );
 }
-	
+
 void
 Residue::set_all_ring_nu( Size first, Size last, utility::vector1< Real > const & nus, utility::vector1< Real > const & taus )
 {
 
 	debug_assert( nus.size() == last-first+1 );
 	debug_assert( taus.size() == last-first+2 );
-	
+
 	for ( Size nuno = first; nuno <= last; ++nuno ) {
-		
+
 		nus_[ nuno ] = nus[ nuno ];
-		
+
 		AtomIndices const & nu_atoms( rsd_type_.nu_atoms( nuno ) );
-		
+
 		// get the current nu angle
 		Real const current_nu
-		( numeric::dihedral_degrees( atom( nu_atoms[1] ).xyz(),
-									atom( nu_atoms[2] ).xyz(),
-									atom( nu_atoms[3] ).xyz(),
-									atom( nu_atoms[4] ).xyz() ) );
-		
+			( numeric::dihedral_degrees( atom( nu_atoms[1] ).xyz(),
+			atom( nu_atoms[2] ).xyz(),
+			atom( nu_atoms[3] ).xyz(),
+			atom( nu_atoms[4] ).xyz() ) );
+
 		Vector const axis
-		(( atom(nu_atoms[3]).xyz() - atom(nu_atoms[2]).xyz() ).normalized());
-		
+			(( atom(nu_atoms[3]).xyz() - atom(nu_atoms[2]).xyz() ).normalized());
+
 		numeric::xyzMatrix< Real > const R
-		( numeric::rotation_matrix_degrees( axis, nus[ nuno ] - current_nu ) );
-		
+			( numeric::rotation_matrix_degrees( axis, nus[ nuno ] - current_nu ) );
+
 		Vector const nu_atom3_xyz( atom( nu_atoms[3] ).xyz() );
 		Vector const v( nu_atom3_xyz - R * nu_atom3_xyz );
-		
+
 		// apply the transform to all "downstream" atoms
 		apply_transform_downstream( nu_atoms[3], R, v );
-		
+
 		ASSERT_ONLY(Real const new_nu
-					( numeric::dihedral_degrees( atom( nu_atoms[1] ).xyz(),
-												atom( nu_atoms[2] ).xyz(),
-												atom( nu_atoms[3] ).xyz(),
-												atom( nu_atoms[4] ).xyz() ) );)
-		debug_assert( std::abs( basic::subtract_degree_angles( new_nu, nus[ nuno ] ) ) <
-					 1e-2 );
-		
+			( numeric::dihedral_degrees( atom( nu_atoms[1] ).xyz(),
+			atom( nu_atoms[2] ).xyz(),
+			atom( nu_atoms[3] ).xyz(),
+			atom( nu_atoms[4] ).xyz() ) );)
+			debug_assert( std::abs( basic::subtract_degree_angles( new_nu, nus[ nuno ] ) ) <
+			1e-2 );
+
 		update_actcoord();//ek added 4/28/10
-		
+
 	}
-	
+
 	for ( Size nuno = 1; nuno <= nus.size(); ++nuno ) {
 		set_tau( nuno, taus[ nuno ] );
 	}
-	set_tau( nus.size()+1, taus[ nus.size()+1 ] );	
+	set_tau( nus.size()+1, taus[ nus.size()+1 ] );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1517,10 +1517,10 @@ Residue::apply_transform_downstream(
 	AtomIndices const & nbrs( rsd_type_.bonded_neighbor( atomno ) );
 	int const my_atom_base( rsd_type_.atom_base( atomno ) );
 	for ( Size i=1; i<= nbrs.size(); ++i ) {
-		
+
 		int const nbr( nbrs[i] );
 		int const nbr_base( rsd_type_.atom_base( nbr ) );
-		
+
 		if ( nbr_base == atomno ) {
 			if ( my_atom_base != nbr ) {
 				apply_transform_downstream( nbr, R, v );

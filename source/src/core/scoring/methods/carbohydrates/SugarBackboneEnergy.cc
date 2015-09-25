@@ -222,22 +222,22 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 
 		// Finally, check if it's axial or equatorial and call the appropriate function.
 		switch ( is_atom_axial_or_equatorial_to_ring( rsd, connect_atom, ring_atoms ) ) {
-			case AXIAL:
-				if ( torsion_id.torsion() % 2 == 0 ) {  // even
-					deriv = E_.evaluate_derivative( _2AX_3EQ_4AX_LINKS, psi );
-				} else /* odd */ {
-					deriv = E_.evaluate_derivative( _2EQ_3AX_4EQ_LINKS, psi );
-				}
-				break;
-			case EQUATORIAL:
-				if ( torsion_id.torsion() % 2 == 0 ) {  // even
-					deriv = E_.evaluate_derivative( _2EQ_3AX_4EQ_LINKS, psi );
-				} else /* odd */ {
-					deriv = E_.evaluate_derivative( _2AX_3EQ_4AX_LINKS, psi );
-				}
-				break;
-			case NEITHER:
-				break;
+		case AXIAL :
+			if ( torsion_id.torsion() % 2 == 0 ) {  // even
+				deriv = E_.evaluate_derivative( _2AX_3EQ_4AX_LINKS, psi );
+			} else /* odd */ {
+				deriv = E_.evaluate_derivative( _2EQ_3AX_4EQ_LINKS, psi );
+			}
+			break;
+		case EQUATORIAL :
+			if ( torsion_id.torsion() % 2 == 0 ) {  // even
+				deriv = E_.evaluate_derivative( _2EQ_3AX_4EQ_LINKS, psi );
+			} else /* odd */ {
+				deriv = E_.evaluate_derivative( _2AX_3EQ_4AX_LINKS, psi );
+			}
+			break;
+		case NEITHER :
+			break;
 		}
 	}
 	return weights[ sugar_bb ] * deriv;

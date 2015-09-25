@@ -2993,7 +2993,7 @@ is_atom_axial_or_equatorial_to_ring(
 /*chemical::rings::AxEqDesignation
 is_atom_axial_or_equatorial( Pose const & pose, uint seqpos, uint query_atom )
 {
-	return conformation::is_atom_axial_or_equatorial( pose.residue( seqpos ), query_atom );
+return conformation::is_atom_axial_or_equatorial( pose.residue( seqpos ), query_atom );
 }*/
 
 // Is the query atom in this pose axial or equatorial or neither?
@@ -3006,7 +3006,7 @@ is_atom_axial_or_equatorial( Pose const & pose, uint seqpos, uint query_atom )
 /*chemical::rings::AxEqDesignation
 is_atom_axial_or_equatorial( Pose const & pose, id::AtomID const & query_atom )
 {
-	return conformation::is_atom_axial_or_equatorial( pose.residue( query_atom.rsd() ), query_atom.atomno() );
+return conformation::is_atom_axial_or_equatorial( pose.residue( query_atom.rsd() ), query_atom.atomno() );
 }*/
 
 

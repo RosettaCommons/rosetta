@@ -1611,10 +1611,10 @@ ResidueType::add_chi(std::string const & atom_name1,
 // Add a nu (internal cyclic) angle defined by four atoms.
 void
 ResidueType::add_nu( core::uint const nu_index,
-		std::string const & atom_name1,
-		std::string const & atom_name2,
-		std::string const & atom_name3,
-		std::string const & atom_name4 )
+	std::string const & atom_name1,
+	std::string const & atom_name2,
+	std::string const & atom_name3,
+	std::string const & atom_name4 )
 {
 	// Signal that we need to update the derived data.
 	finalized_ = false;
@@ -2633,7 +2633,7 @@ ResidueType::generate_atom_indices()
 			ICoorAtomID & stub_atom( icoor_[ ordered_atoms_[index] ].stub_atom( i )   );
 			if ( stub_atom.type() == ICoorAtomID::INTERNAL ) {
 				stub_atom.atomno(   vd_to_index_.find(stub_atom.vertex())->second ); //somewhat of a problem. if vertex doesnt exist the map constructor will create a value
-				if( stub_atom.atomno() == 0 ) { // this will trigger if we deleted a stub atom for some other atom
+				if ( stub_atom.atomno() == 0 ) { // this will trigger if we deleted a stub atom for some other atom
 					tr.Error << "===============================================" << std::endl;
 					tr.Error << "Internal coordinates for " << name() << std::endl;
 					pretty_print_atomicoor(tr.Error, *this);
@@ -3020,7 +3020,7 @@ ResidueType::update_derived_data()
 		conformer_sets_.resize( n_rings() );
 		for ( uint i( 1 ); i <= n_rings(); ++i ) {
 			conformer_sets_[ i ] = rings::RingConformerSetOP( new rings::RingConformerSet(
-					ring_atoms_[ i ].size(), lowest_ring_conformer_[ i ], low_ring_conformers_[ i ] ) );
+				ring_atoms_[ i ].size(), lowest_ring_conformer_[ i ], low_ring_conformers_[ i ] ) );
 		}
 	}
 

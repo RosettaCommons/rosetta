@@ -97,6 +97,7 @@
 #include <protocols/forge/remodel/RemodelAccumulator.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.hh>
 
+#include <protocols/relax/util.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
@@ -1600,7 +1601,7 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 
 			//total hack (for now), see if the restypeset fails when initialized twice.
 			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user() ) {
-				protocols::forge::methods::cyclize_pose(pose);
+				protocols::relax::cyclize_pose(pose);
 			}
 
 			sfx->show(TR, pose);
@@ -1793,7 +1794,7 @@ bool RemodelMover::design_refine_cart_relax(
 			//total hack (for now), see if the restypeset fails when initialized
 			//twice.
 			if ( option[OptionKeys::remodel::RemodelLoopMover::cyclic_peptide].user() ) {
-				protocols::forge::methods::cyclize_pose(pose);
+				protocols::relax::cyclize_pose(pose);
 			}
 
 			//  sfx->show(TR, pose);

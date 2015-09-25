@@ -241,7 +241,7 @@ public:  // Test //////////////////////////////////////////////////////////////
 		core_init_with_additional_options( "-include_sugars" );
 
 		TS_TRACE( "Testing that is_atom_axial_or_equatorial() properly designates a ring substituent as axial, "
-			"equatorial, or neither, including its ability to find the ring atoms and attachment point." );
+		"equatorial, or neither, including its ability to find the ring atoms and attachment point." );
 
 		Pose glucose, serine;
 		make_pose_from_saccharide_sequence( glucose, "alpha-D-Glcp", "fa_standard" );

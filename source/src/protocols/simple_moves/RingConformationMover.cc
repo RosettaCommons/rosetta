@@ -224,7 +224,7 @@ RingConformationMover::apply( Pose & input_pose )
 		}
 
 		TR << "Selected the " << conformer.specific_name <<
-				" conformation to apply to ring " << ring_num << '.' << endl;
+			" conformation to apply to ring " << ring_num << '.' << endl;
 
 		TR << "Making move...." << endl;
 
