@@ -43,6 +43,21 @@ void relax_pose( core::pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn
 
 RelaxProtocolBaseOP generate_relax_from_cmd( bool NULL_if_no_cmd = false );
 
+
+/// @brief Rebuild all polymer bond-dependent atoms in the pose.
+/// @details Rewritten from an earlier, uglier function that manually placed H atom in non-pro.
+/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu).
+void
+fixH (
+	core::pose::Pose & pose
+);
+
+/// @brief Add terminal peptide bond and cyclic constraints to pose.
+/// @author Gaurav Bhardwaj, Baker laboratory
+/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu) -- moved from protocols/forge/methods/util.hh/cc
+void
+cyclize_pose(core::pose::Pose & pose);
+
 }
 } // protocols
 

@@ -1244,9 +1244,9 @@ public:
 
 	/// @brief Set the given residue and ring's ring conformation, if appropriate.
 	void set_ring_conformation(
-			uint const seqpos,
-			uint const ring_num,
-			core::chemical::rings::RingConformer const & conformer );
+		uint const seqpos,
+		uint const ring_num,
+		core::chemical::rings::RingConformer const & conformer );
 
 
 	/////////////////////////////////////////////////////////////////////////////
