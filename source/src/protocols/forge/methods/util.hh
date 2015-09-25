@@ -28,7 +28,6 @@
 #include <protocols/loops/Loops.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <protocols/relax/util.hh>
 
 // C++ headers
 #include <set>
@@ -270,13 +269,10 @@ apply_transformation(
 	numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
 );
 
+
 void
-cyclize_pose(
-	core::pose::Pose &pose
-) {
-	protocols::relax::cyclize_pose(pose);
-	return;
-}
+cyclize_pose(core::pose::Pose & pose);
+
 
 } // namespace methods
 } // namespace forge

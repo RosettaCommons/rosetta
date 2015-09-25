@@ -16,7 +16,6 @@
 
 #include <protocols/relax/cst_util.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
-#include <protocols/relax/util.hh>
 
 #include <protocols/relax/AtomCoordinateCstMover.hh>
 
@@ -33,6 +32,8 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
+//#include <core/scoring/rms_util.hh>
+//#include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <core/pose/util.hh>
 
@@ -74,7 +75,10 @@
 #include <basic/Tracer.hh>
 
 #include <core/conformation/Residue.hh>
+//#include <protocols/jobdist/Jobs.hh>
+//#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/forge/methods/util.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -460,8 +464,8 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 
 	//cyclic
 
-	if ( option[ OptionKeys::relax::cyclic_peptide ]() ) {
-		cyclize_pose( pose );
+	if ( option[ OptionKeys::relax::cyclic_peptide ]() ){
+		protocols::forge::methods::cyclize_pose( pose );
 	}
 
 } // setup_up_constraints

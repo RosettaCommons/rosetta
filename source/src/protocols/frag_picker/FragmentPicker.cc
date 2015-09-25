@@ -2074,7 +2074,7 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 
 	// index file output
 	if ( option[frags::output_index]() ) {
-		if ( option[in::file::vall]().size() > 1 ) {
+		if (option[in::file::vall]().size() > 1) {
 			tr.Warning << "cannot output indexed fragment file, does not support more than one vall!" << std::endl;
 		} else {
 			std::string index_out_file_name = out_file_name + ".index";

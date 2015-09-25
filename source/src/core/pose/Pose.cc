@@ -1142,9 +1142,9 @@ Pose::set_chi( Size const seqpos, Real const setting )
 /// @remark  See core/chemical/rings/RingConformerSet.hh and .cc for more information about RingConformers.
 void
 Pose::set_ring_conformation(
-	uint const seqpos,
-	uint const ring_num,
-	core::chemical::rings::RingConformer const & conformer )
+		uint const seqpos,
+		uint const ring_num,
+		core::chemical::rings::RingConformer const & conformer )
 {
 	using namespace std;
 	using namespace id;

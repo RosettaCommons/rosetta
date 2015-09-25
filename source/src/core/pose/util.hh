@@ -765,9 +765,9 @@ chemical::rings::AxEqDesignation is_atom_axial_or_equatorial_to_ring(
 
 /// @brief  Is the query atom in this pose axial or equatorial to the given ring or neither?
 /*chemical::rings::AxEqDesignation is_atom_axial_or_equatorial_to_ring(
-Pose const & pose,
-id::AtomID const & query_atom,
-utility::vector1< id::AtomID > const & ring_atoms );*/
+	Pose const & pose,
+	id::AtomID const & query_atom,
+	utility::vector1< id::AtomID > const & ring_atoms );*/
 
 
 /// @brief  Is the query atom in this pose residue axial or equatorial or neither?

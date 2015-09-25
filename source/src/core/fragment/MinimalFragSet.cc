@@ -162,7 +162,7 @@ void MinimalFragSet::read_fragment_file( std::string filename, Size top25, Size 
 		in >> vall_line_start >> fraglen;
 		Size vall_line_end = vall_line_start + fraglen - 1;
 		FragDataOP current_fragment( NULL );
-		current_fragment = FragDataOP( new FragData );
+    current_fragment = FragDataOP( new FragData );
 		for ( Size i = vall_line_start; i <= vall_line_end; i++ ) {
 			// set ss 'L' and aa 'G' just as placeholders to prevent run time error in
 			// GunnCost moves (fragment_as_pose method)

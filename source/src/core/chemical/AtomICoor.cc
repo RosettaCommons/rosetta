@@ -404,7 +404,7 @@ void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, Residue
 		ICoorAtomID icoorid( start.stub_atom(ii) );
 		switch( icoorid.type() ) {
 		case ICoorAtomID::INTERNAL :
-			if ( rsd_type.has( icoorid.vertex() ) ) {
+			if( rsd_type.has( icoorid.vertex() ) ) {
 				out << rsd_type.atom_name( icoorid.vertex() ) << "  ";
 			} else {
 				out << "(missing vd: " << icoorid.vertex() <<")  ";

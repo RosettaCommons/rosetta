@@ -250,7 +250,7 @@ FragSetOP FragmentIO::read_data( std::string const& filename ) {
 			str >> tag;
 			if ( tag == "indexed" ) {
 				tr.Info << "minimal fragment fileformat detected! Calling indexed reader... "
-					<< std::endl;
+				        << std::endl;
 				MinimalFragSetOP frags( new MinimalFragSet );
 				frags->read_fragment_file( filename, top_, ncopies_ );
 				frag_cache_[ filename ] = frags;

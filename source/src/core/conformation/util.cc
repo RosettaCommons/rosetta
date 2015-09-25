@@ -2210,15 +2210,15 @@ is_atom_axial_or_equatorial_to_ring(
 /*chemical::rings::AxEqDesignation
 is_atom_axial_or_equatorial( Residue const & residue, uint query_atom )
 {
-chemical::ResidueType const & rsd_type( residue.type() );
-if ( ! rsd_type.is_cyclic() ) {
-TR.Warning << "Queried atom must be on a cyclic residue." << std::endl;
-return chemical::rings::NEITHER;
-}
+	chemical::ResidueType const & rsd_type( residue.type() );
+	if ( ! rsd_type.is_cyclic() ) {
+		TR.Warning << "Queried atom must be on a cyclic residue." << std::endl;
+		return chemical::rings::NEITHER;
+	}
 
 
 
-return is_atom_axial_or_equatorial_to_ring( residue, query_atom, rsd_type.ring_atoms() );
+	return is_atom_axial_or_equatorial_to_ring( residue, query_atom, rsd_type.ring_atoms() );
 }*/
 
 } // namespace conformation
