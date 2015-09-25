@@ -85,6 +85,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/rings/RingConformerSet.hh>
 #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
@@ -1364,15 +1365,57 @@ RotamericSingleResidueDunbrackLibrary< T, N >::create_rotamers_from_chisets(
 		conformation::ResidueOP rotamer = conformation::ResidueFactory::create_residue(
 			*concrete_residue, existing_residue, pose.conformation(), rtask.preserve_c_beta() );
 		for ( Size jj = 1; jj <= (*chi_set)->chi.size(); ++jj ) rotamer->set_chi( jj, (*chi_set)->chi[ jj ] );
-
-		// apply an operation (or a filter) to this rotamer at build time
-		bool reject(false);
-		for ( pack::rotamer_set::RotamerOperations::const_iterator
+		
+		utility::vector1< conformation::ResidueOP > rotamer_conformers;
+		rotamer_conformers.push_back( rotamer );
+		
+		// Possible ring conformers.
+		if ( rotamer->type().is_cyclic() ) {
+			for ( Size rn = 1; rn <= rotamer->type().n_rings(); ++rn ) {
+				
+				if ( ! rotamer->type().ring_conformer_set(rn)->low_energy_conformers_are_known() ) continue;
+				
+				Size first_nu_for_ring = 1, last_nu_for_ring = rotamer->type().ring_atoms( rn ).size() - 1;
+				for ( Size rn2 = 1; rn2 < rn; ++rn2 ) {
+					first_nu_for_ring += rotamer->type().ring_atoms( rn2 ).size() - 1;
+					last_nu_for_ring += rotamer->type().ring_atoms( rn2 ).size() - 1;
+				}
+				
+				// This conceit--accumulating a vector of conformers
+				// and only evaluating once at the end--allows us to avoid the
+				// janky unknown depth for loop across number of rings.
+				for ( Size rc = 1; rc <= rotamer_conformers.size(); ++rc ) {
+					Size ring_atoms_in_backbone = 0;
+					for ( Size ri = 1; ri <= rotamer->type().ring_atoms( rn ).size(); ++ri ) {
+						if ( rotamer->type().atom_is_backbone( rotamer->type().ring_atoms( rn )[ ri ] ) ) {
+							++ring_atoms_in_backbone;
+						}
+					}
+					if ( ring_atoms_in_backbone > 1 ) continue;
+					
+					utility::vector1< chemical::rings::RingConformer > confs = rotamer->type().ring_conformer_set( rn )->get_local_min_conformers();
+					for ( Size i = 1; i <= confs.size(); ++i ) {
+						
+						conformation::ResidueOP conformer = conformation::ResidueOP( new conformation::Residue( *rotamer ) );
+						
+						//conformer->set_all_nu( confs[ i ].nu_angles, confs[ i ].tau_angles );
+						conformer->set_all_ring_nu( first_nu_for_ring, last_nu_for_ring, confs[ i ].nu_angles, confs[ i ].tau_angles );
+						
+						rotamer_conformers.push_back( conformer );
+					}
+				}
+			}
+		}
+		for ( Size ak = 1; ak <= rotamer_conformers.size(); ++ak ) {
+			// apply an operation (or a filter) to this rotamer at build time
+			bool reject(false);
+			for ( pack::rotamer_set::RotamerOperations::const_iterator
 				op( rtask.rotamer_operations().begin() );
 				op != rtask.rotamer_operations().end(); ++op ) {
-			reject |= ! (**op)( rotamer, pose, scorefxn, rtask, packer_neighbor_graph, *chi_set );
+				reject |= ! (**op)( rotamer_conformers[ak], pose, scorefxn, rtask, packer_neighbor_graph, *chi_set );
+			}
+			if ( !reject ) rotamers.push_back( rotamer_conformers[ak] );
 		}
-		if ( !reject ) rotamers.push_back( rotamer );
 	}
 }
 

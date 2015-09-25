@@ -13,7 +13,7 @@
 /// Phil Bradley
 /// Steven Combs
 /// Vikram K. Mulligan - properties for D-, beta- and other noncanonicals
-/// Jason W. Labonte (code related to properties, lipids, carbohydrates, and other non-AAs)
+/// Jason W. Labonte (code related to rings, properties, lipids, carbohydrates, and other non-AAs)
 
 // Unit headers
 #include <core/chemical/ResidueType.hh>
@@ -104,7 +104,6 @@ ResidueType::ResidueType(
 	mm_atom_types_( mm_atom_types ),
 	gasteiger_atom_types_(),
 	orbital_types_( orbital_types),
-	conformer_set_(/* NULL */),
 	residue_type_set_( /* 0 */ ),
 	graph_(),
 	orbitals_(),
@@ -114,8 +113,6 @@ ResidueType::ResidueType(
 	n_backbone_heavyatoms_(0),
 	first_sidechain_hydrogen_( 0 ),
 	rotamer_library_specification_( 0 ),
-	lowest_ring_conformer_( "" ),
-	low_ring_conformers_(),
 	properties_( ResiduePropertiesOP( new ResidueProperties( this ) ) ),
 	aa_( aa_unk ),
 	rotamer_aa_( aa_unk ),
@@ -163,7 +160,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	mm_atom_types_ = residue_type.mm_atom_types_;
 	gasteiger_atom_types_ = residue_type.gasteiger_atom_types_;
 	orbital_types_ = residue_type.orbital_types_;
-	conformer_set_ = residue_type.conformer_set_;
+	conformer_sets_ = residue_type.conformer_sets_;
 	residue_type_set_ = residue_type.residue_type_set_;
 	graph_ = residue_type.graph_; // copying Will change the VDs
 	vd_to_index_.clear(); // must be regenerated for new VDs
@@ -201,7 +198,6 @@ ResidueType::operator=( ResidueType const & residue_type )
 	Hpos_polar_sc_ = residue_type.Hpos_polar_sc_;
 	all_bb_atoms_ = residue_type.all_bb_atoms_;
 	all_sc_atoms_ = residue_type.all_sc_atoms_;
-	ring_atoms_ = residue_type.ring_atoms_;
 	metal_binding_atoms_ = residue_type.metal_binding_atoms_;
 	disulfide_atom_name_ = residue_type.disulfide_atom_name_;
 	mainchain_atoms_ = residue_type.mainchain_atoms_;
@@ -213,6 +209,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	proton_chi_samples_ = residue_type.proton_chi_samples_;
 	proton_chi_extra_samples_ = residue_type.proton_chi_extra_samples_;
 	nu_atoms_ = residue_type.nu_atoms_;
+	ring_atoms_ = residue_type.ring_atoms_;
 	path_distance_ = residue_type.path_distance_;
 	atom_name_to_vd_.clear(); // This must be regenerated below to hold the new vertex_descriptors
 	atom_aliases_ = residue_type.atom_aliases_;
@@ -254,6 +251,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	abase2_indices_ = residue_type.abase2_indices_;
 	chi_atoms_indices_ = residue_type.chi_atoms_indices_;
 	nu_atoms_indices_ = residue_type.nu_atoms_indices_;
+	ring_atoms_indices_ = residue_type.ring_atoms_indices_;
 	mainchain_atoms_indices_ = residue_type.mainchain_atoms_indices_;
 	nbr_atom_indices_ = residue_type.nbr_atom_indices_;
 	actcoord_atoms_indices_ = residue_type.actcoord_atoms_indices_;
@@ -354,7 +352,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 		atom_shadowed_[new_key] = new_value;
 	}
 
-	utility::vector1<utility::vector1<VD> >  old_chi_atoms(chi_atoms_);
+	utility::vector1<utility::vector1<VD> > old_chi_atoms(chi_atoms_);
 	chi_atoms_.clear();
 	//chi_atoms_.resize(old_chi_atoms.size());
 	for ( utility::vector1<utility::vector1<VD> >::const_iterator it= old_chi_atoms.begin(); it != old_chi_atoms.end(); ++it ) {
@@ -367,20 +365,32 @@ ResidueType::operator=( ResidueType const & residue_type )
 		chi_atoms_.push_back(new_vector);
 	}
 
-	utility::vector1<utility::vector1<VD> >  old_nu_atoms(nu_atoms_);
+	utility::vector1< utility::vector1< VD > > old_nu_atoms( nu_atoms_ );
 	nu_atoms_.clear();
-	//chi_atoms_.resize(old_chi_atoms.size());
-	for ( utility::vector1<utility::vector1<VD> >::const_iterator it= old_nu_atoms.begin(); it != old_nu_atoms.end(); ++it ) {
-		utility::vector1<VD> old_vector = *it;
-		debug_assert(old_vector.size() == 4);
-		utility::vector1<VD> new_vector;
+	for ( utility::vector1< utility::vector1< VD > >::const_iterator it = old_nu_atoms.begin();
+			it != old_nu_atoms.end(); ++it ) {
+		utility::vector1< VD > old_vector = *it;
+		debug_assert( old_vector.size() == 4 );
+		utility::vector1< VD > new_vector;
 		for ( Size i= 1; i<= old_vector.size(); ++i ) {
-			new_vector.push_back(old_to_new[old_vector[i]]);
+			new_vector.push_back( old_to_new[ old_vector[ i ] ] );
 		}
-		nu_atoms_.push_back(new_vector);
+		nu_atoms_.push_back( new_vector );
 	}
 
-	utility::vector1<VD> old_mainchain(mainchain_atoms_);
+	utility::vector1< utility::vector1< VD > > old_ring_atoms( ring_atoms_ );
+	ring_atoms_.clear();
+	for ( utility::vector1< utility::vector1< VD > >::const_iterator it = old_ring_atoms.begin();
+			it != old_ring_atoms.end(); ++it ) {
+		utility::vector1< VD > old_vector = *it;
+		utility::vector1< VD > new_vector;
+		for ( Size i( 1 ); i <= old_vector.size(); ++i ) {
+			new_vector.push_back( old_to_new[ old_vector[ i ] ] );
+		}
+		ring_atoms_.push_back( new_vector );
+	}
+
+	utility::vector1<VD> old_mainchain( mainchain_atoms_ );
 	mainchain_atoms_.clear();
 	for ( Size i= 1; i <= old_mainchain.size(); ++i ) {
 		mainchain_atoms_.push_back( old_to_new[ old_mainchain[i] ]);
@@ -1208,11 +1218,11 @@ ResidueType::orbital_type(int const orbital_index)const
 	return ( *orbital_types )[ orbitals_[ orbital_index ].orbital_type_index() ];
 }
 
-// Return a pointer to the object containing the set of ring conformers possible for this saccharide.
+// Return a pointer to the object containing the set of ring conformers possible for this residue's nth cycle.
 core::chemical::rings::RingConformerSetCOP
-ResidueType::ring_conformer_set() const
+ResidueType::ring_conformer_set( core::uint ring_num ) const
 {
-	return conformer_set_;
+	return conformer_sets_[ ring_num ];
 }
 
 void
@@ -1225,7 +1235,7 @@ ResidueType::clear_orbitals()
 	}
 }
 
-/// @note this does not set xyz coordiates for the added orbital but sets the index of the orbital and maps
+/// @note this does not set xyz coordinates for the added orbital but sets the index of the orbital and maps
 /// it to the type of orbital.
 void
 ResidueType::add_orbital(
@@ -1600,50 +1610,76 @@ ResidueType::add_chi(std::string const & atom_name1,
 
 // Add a nu (internal cyclic) angle defined by four atoms.
 void
-ResidueType::add_nu(core::uint const nu_index,
-	std::string const & atom_name1,
-	std::string const & atom_name2,
-	std::string const & atom_name3,
-	std::string const & atom_name4)
+ResidueType::add_nu( core::uint const nu_index,
+		std::string const & atom_name1,
+		std::string const & atom_name2,
+		std::string const & atom_name3,
+		std::string const & atom_name4 )
 {
 	// Signal that we need to update the derived data.
 	finalized_ = false;
 
-	if ( !has(atom_name1) || !has(atom_name2) || !has(atom_name3) || !has(atom_name4) ) {
-		utility_exit_with_message("ResidueType::add_nu: Requested atoms don't exist in this ResidueType!");
+	if ( ! has( atom_name1 ) || ! has( atom_name2 ) || ! has( atom_name3 ) || ! has( atom_name4 ) ) {
+		utility_exit_with_message( "ResidueType::add_nu: Requested atoms don't exist in this ResidueType!" );
 	}
 
-	utility::vector1<VD> atoms;
-	atoms.push_back(ordered_atoms_[atom_index(atom_name1)]);
-	atoms.push_back(ordered_atoms_[atom_index(atom_name2)]);
-	atoms.push_back(ordered_atoms_[atom_index(atom_name3)]);
-	atoms.push_back(ordered_atoms_[atom_index(atom_name4)]);
+	utility::vector1< VD > atoms;
+	atoms.push_back( ordered_atoms_[ atom_index( atom_name1 ) ] );
+	atoms.push_back( ordered_atoms_[ atom_index( atom_name2 ) ] );
+	atoms.push_back( ordered_atoms_[ atom_index( atom_name3 ) ] );
+	atoms.push_back( ordered_atoms_[ atom_index( atom_name4 ) ] );
 
 	if ( nu_atoms_.size() < nu_index ) {
-		nu_atoms_.resize(nu_index);
+		nu_atoms_.resize( nu_index );
 	}
-	nu_atoms_[nu_index] = atoms;
+	nu_atoms_[ nu_index ] = atoms;
 }
 
 
-// Set this cyclic residue's lowest-energy ring conformer by IUPAC name.
+// Add a ring definition.
 void
-ResidueType::set_lowest_energy_ring_conformer( std::string const & conformer )
+ResidueType::add_ring( core::uint const ring_num, utility::vector1< std::string > const & ring_atoms )
 {
 	// Signal that we need to update the derived data.
 	finalized_ = false;
 
-	lowest_ring_conformer_ = conformer;
+	Size const ring_size( ring_atoms.size() );
+	utility::vector1< VD > atoms( ring_size );
+	for ( uint i( 1 ); i <= ring_size; ++i ) {
+		if ( ! has( ring_atoms[ i ] ) ) {
+			utility_exit_with_message( "ResidueType::add_ring: Requested atoms don't exist in this ResidueType!" );
+		}
+		atoms[ i ] = ordered_atoms_[ atom_index( ring_atoms[ i ] ) ];
+	}
+
+	if ( ring_atoms_.size() < ring_num ) {
+		ring_atoms_.resize( ring_num );
+	}
+	if ( lowest_ring_conformer_.size() < ring_num ) {
+		lowest_ring_conformer_.resize( ring_num );
+	}
+	if ( low_ring_conformers_.size() < ring_num ) {
+		low_ring_conformers_.resize( ring_num );
+	}
+	ring_atoms_[ ring_num ] = atoms;
 }
 
-// Set this cyclic residue's low-energy ring conformers by IUPAC name.
+// Set this cyclic residue's lowest-energy ring conformer for the nth ring by IUPAC name.
 void
-ResidueType::set_low_energy_ring_conformers( utility::vector1< std::string > const & conformers )
+ResidueType::set_lowest_energy_ring_conformer( core::uint const ring_num, std::string const & conformer )
 {
 	// Signal that we need to update the derived data.
 	finalized_ = false;
+	lowest_ring_conformer_[ ring_num ] = conformer;
+}
 
-	low_ring_conformers_ = conformers;
+// Set this cyclic residue's low-energy ring conformers for the nth ring by IUPAC name.
+void
+ResidueType::set_low_energy_ring_conformers( core::uint const ring_num, utility::vector1< std::string > const & conformers )
+{
+	// Signal that we need to update the derived data.
+	finalized_ = false;
+	low_ring_conformers_[ ring_num ] = conformers;
 }
 
 
@@ -2449,6 +2485,7 @@ Derived data set in this method:
 * atom_base_indices_
 * chi_atoms_indices_
 * nu_atoms_indices_
+* ring_atoms_indices_
 * mainchain_atoms_indices_
 * nbr_atom_indices_
 * actcoord_atoms_indices_
@@ -2538,18 +2575,27 @@ ResidueType::generate_atom_indices()
 	utility::vector1<AtomIndices> chi_atoms;
 	for ( Size chino=1; chino <= chi_atoms_.size(); ++chino ) {
 		for ( Size atom_index=1; atom_index <= chi_atoms_[chino].size(); ++atom_index ) {
-			atoms.push_back( vd_to_index_.find( chi_atoms_[chino][atom_index] )->second) ;
+			atoms.push_back( vd_to_index_.find( chi_atoms_[chino][atom_index] )->second);
 		}
 		chi_atoms_indices_.push_back(atoms);
 		atoms.clear();
 	}
 	nu_atoms_indices_.clear();
 	atoms.clear();
-	for ( Size nu_no=1; nu_no <= nu_atoms_.size(); ++nu_no ) {
-		for ( Size atom_index=1; atom_index <= nu_atoms_[nu_no].size(); ++atom_index ) {
-			atoms.push_back( vd_to_index_.find( nu_atoms_[nu_no][atom_index] )->second) ;
+	for ( Size nu_no = 1; nu_no <= nu_atoms_.size(); ++nu_no ) {
+		for ( Size atom_index=1; atom_index <= nu_atoms_[ nu_no ].size(); ++atom_index ) {
+			atoms.push_back( vd_to_index_.find( nu_atoms_[ nu_no ][ atom_index ] )->second);
 		}
-		nu_atoms_indices_.push_back(atoms);
+		nu_atoms_indices_.push_back( atoms );
+		atoms.clear();
+	}
+	ring_atoms_indices_.clear();
+	atoms.clear();
+	for ( uint ring_no( 1 ); ring_no <= ring_atoms_.size(); ++ring_no ) {
+		for ( uint atom_index( 1 ); atom_index <= ring_atoms_[ ring_no ].size(); ++atom_index ) {
+			atoms.push_back( vd_to_index_.find( ring_atoms_[ ring_no ][ atom_index ] )->second);
+		}
+		ring_atoms_indices_.push_back( atoms );
 		atoms.clear();
 	}
 
@@ -2631,7 +2677,6 @@ Derived data updated by this method:
 * Hpos_polar_sc_
 * all_bb_atoms_
 * all_sc_atoms_
-* ring_atoms_
 * abase2_
 * path_distance_
 * dihedral_atom_sets_
@@ -2672,7 +2717,6 @@ ResidueType::update_derived_data()
 	Hpos_polar_sc_.clear();
 	all_bb_atoms_.clear();
 	all_sc_atoms_.clear();
-	ring_atoms_.clear();
 
 	for ( Size i=1; i<= natoms(); ++i ) {
 		Atom const & atom(graph_[ ordered_atoms_[i]]); //get the atom that we are working on
@@ -2713,30 +2757,6 @@ ResidueType::update_derived_data()
 			}
 		}
 
-	}
-
-	// Set the ring atoms.
-	// The logic here is tricky. The nu torsion definitions contain all the ring atoms, of course.
-	// However, the first nu definition will include a virtual atom as its first atom, if defined properly.
-	// The last will include a virtual atom as its final atom and will not contain any atoms already included in
-	// earlier definitions.
-	// Hence, we can take the last three atoms indices from the first nu definition, and then the last index from the
-	// rest of the definitions except for the last, which we can completely ignore.
-	if ( properties_->has_property( CYCLIC ) ) {
-		Size const n_nus( nu_atoms_indices_.size() );
-		if ( ! graph_[ ordered_atoms_[ nu_atoms_indices_[ 1 ][ 1 ] ] ].is_virtual() ||
-				! graph_[ ordered_atoms_[ nu_atoms_indices_[ n_nus ][ 4 ] ] ].is_virtual() ) {
-			utility_exit_with_message( "The nu angles for this ResidueType are not properly defined.  "
-				"The first atom of the first nu and the last atom of the last nu must be virtual atoms." );
-		}
-		for ( uint j( 2 ); j <= 4; ++j ) {
-			ring_atoms_.push_back( nu_atoms_indices_[ 1 ][ j ] );
-		}
-		for ( uint i( 2 ); i < n_nus; ++i ) {
-			ring_atoms_.push_back( nu_atoms_indices_[ i ][ 4 ] );
-		}
-		// You always need 1 fewer nu angles to define a ring than the number of atoms in that ring.
-		debug_assert( ring_atoms_.size() == nu_atoms_indices_.size() + 1 );
 	}
 
 	// setup the hydrogen information
@@ -2995,12 +3015,13 @@ ResidueType::update_derived_data()
 		}
 	}
 
-	// Assign a set of possible ring conformations.
-	// Ring size is determined by the number of NU angles listed in the .params file, which should always be 1 less
-	// than the size of the ring.
+	// Assign (a) set(s) of possible ring conformations.
 	if ( properties_->has_property( CYCLIC ) ) {
-		conformer_set_ = rings::RingConformerSetOP( new rings::RingConformerSet(
-			ring_atoms_.size(), lowest_ring_conformer_, low_ring_conformers_ ) );
+		conformer_sets_.resize( n_rings() );
+		for ( uint i( 1 ); i <= n_rings(); ++i ) {
+			conformer_sets_[ i ] = rings::RingConformerSetOP( new rings::RingConformerSet(
+					ring_atoms_[ i ].size(), lowest_ring_conformer_[ i ], low_ring_conformers_[ i ] ) );
+		}
 	}
 
 	if ( properties_->has_property( RNA ) ) { //reinitialize and RNA derived data.
@@ -3102,8 +3123,9 @@ atomic_charge          v1<Real>             add_atom
 bonded_neighbor_       v1<v1<int>>          add_bond
 bonded_neighbor_type   v1<v1<BondName>>     add_bond
 atom_base_             v1<int>              set_atom_base
-chi_atoms_             v1<v1<uint>>         add_chi
-nu_atoms_              v1<v1<uint>>         add_nu
+chi_atoms_indices      v1<v1<uint>>         add_chi
+nu_atoms_indices       v1<v1<uint>>         add_nu
+ring_atoms_indices     v1<v1<uint>>         add_ring
 properties_            ResidueProperties    add_property
 nbr_atom_              int                  nbr_atom( int )
 
@@ -3932,12 +3954,16 @@ ResidueType::show( std::ostream & output, bool output_atomic_details ) const
 	}
 	output << endl;
 
-	output << " Ring atoms:  ";
-	Size const n_ring_atoms( ring_atoms_.size() );
-	for ( uint i = 1; i <= n_ring_atoms; ++i ) {
-		output << ' ' << atom_name( ring_atoms_[ i ] );
+	if ( is_cyclic() ) {
+		for ( uint i( 1 ); i <= n_rings(); ++i ) {
+			output << " Ring atoms:  ";
+			Size const n_ring_atoms( ring_atoms_indices_[ i ].size() );
+			for ( uint j = 1; j <= n_ring_atoms; ++j ) {
+				output << ' ' << atom_name( ring_atoms_indices_[ i ][ j ] );
+			}
+			output << endl;
+		}
 	}
-	output << endl;
 
 	output << " Side-chain atoms:";
 	Size const n_sc_atoms( all_sc_atoms_.size() );

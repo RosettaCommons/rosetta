@@ -108,6 +108,7 @@ typedef utility::keys::Key4Tuple< Size, Size, Size, Size > dihedral_atom_set;
 /// atom_base_;
 /// chi_atoms_;
 /// nu_atoms_;
+/// ring_atoms_;
 /// mainchain_atoms_;
 /// nbr_atom_;
 /// actcoord_atoms_;
@@ -408,9 +409,9 @@ public:
 
 	/// @brief Return indices of the atoms used to define a given nu (internal ring) angle.
 	AtomIndices const &
-	nu_atoms(core::uint const nu_index) const
+	nu_atoms( core::uint const nu_index ) const
 	{
-		debug_assert(nu_index <= nu_atoms_indices_.size());
+		debug_assert( nu_index <= nu_atoms_indices_.size() );
 		return nu_atoms_indices_[nu_index];
 	}
 
@@ -421,12 +422,22 @@ public:
 		return nu_atoms_indices_;
 	}
 
-	/// @brief Return list of indices of the atoms within this residue's cycle, not counting virtual atoms.
+
+	/// @brief Return list of indices of the atoms within this residue's nth cycle, not counting virtual atoms.
 	AtomIndices const &
+	ring_atoms( uint const ring_num ) const
+	{
+		debug_assert( ring_num <= ring_atoms_indices_.size() );
+		return ring_atoms_indices_[ ring_num ];
+	}
+
+	/// @brief Return list of indices of the atoms within this residue's cycles, not counting virtual atoms.
+	utility::vector1< AtomIndices > const &
 	ring_atoms() const
 	{
-		return ring_atoms_;
+		return ring_atoms_indices_;
 	}
+
 
 	/// @brief Gets indices of all atoms that can form bonds to metals
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -808,8 +819,8 @@ public:
 	//////////////////////////////////////////////////////////////////////
 
 	/// @brief    Return a pointer to the object containing the set of ring
-	/// conformers possible for this cyclic residue.
-	core::chemical::rings::RingConformerSetCOP ring_conformer_set() const;
+	/// conformers possible for this residue's nth cycle.
+	core::chemical::rings::RingConformerSetCOP ring_conformer_set( core::uint ring_num ) const;
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -840,6 +851,13 @@ public:
 	n_nus() const
 	{
 		return nu_atoms_.size();
+	}
+
+	/// @brief  Return the number of rings in this residue.
+	Size
+	n_rings() const
+	{
+		return ring_atoms_.size();
 	}
 
 	/// @brief number of proton chis
@@ -1384,11 +1402,14 @@ public:
 		std::string const & atom_name4);
 
 
-	/// @brief  Set this cyclic residue's lowest-energy ring conformer by IUPAC name.
-	void set_lowest_energy_ring_conformer( std::string const & conformer );
+	/// @brief  Add a ring definition.
+	void add_ring( core::uint const ring_num, utility::vector1< std::string > const & ring_atoms );
 
-	/// @brief  Set this cyclic residue's low-energy ring conformers by IUPAC name.
-	void set_low_energy_ring_conformers( utility::vector1< std::string > const & conformers );
+	/// @brief  Set this cyclic residue's lowest-energy ring conformer for the nth ring by IUPAC name.
+	void set_lowest_energy_ring_conformer( core::uint const ring_num, std::string const & conformer );
+
+	/// @brief  Set this cyclic residue's low-energy ring conformers for the nth ring by IUPAC name.
+	void set_low_energy_ring_conformers( core::uint const ring_num, utility::vector1< std::string > const & conformers );
 
 
 	/// @brief redefine a chi angle based on four atoms
@@ -2119,8 +2140,9 @@ private:
 	/// @brief The set for OrbitalTypes. -- Primary, can be null.
 	orbitals::OrbitalTypeSetCOP orbital_types_;
 
-	/// @brief The set of all possible ring conformers -- Derived, can be null
-	rings::RingConformerSetOP conformer_set_;
+
+	/// @brief The sets of all possible ring conformers, one per ring -- Derived, can be null
+	utility::vector1< rings::RingConformerSetOP > conformer_sets_;
 
 	/// @brief The owning ResidueTypeSet, if any. -- Primary, can be null.
 	/// @details Once added to a ResidueTypeSet, the ResidueType should be considered Fixed.
@@ -2277,9 +2299,6 @@ private:
 	/// @brief Indices of all sidechain atoms, hydrogens and heavyatoms -- Derived
 	AtomIndices all_sc_atoms_;
 
-	/// @brief Indices of all ring atoms, not counting virtual atoms -- Derived
-	AtomIndices ring_atoms_;
-
 	/// @brief Names of all of the atoms that are able to make a bond to a metal, for metal-binding residue types
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	utility::vector1 < std::string > metal_binding_atoms_;
@@ -2313,8 +2332,11 @@ private:
 	/// @brief For a proton chi, how to handle extra ex_ levels -- Primary.
 	utility::vector1< utility::vector1< Real > > proton_chi_extra_samples_;
 
-	/// @brief indices of four atoms to build each nu angle -- Primary.
-	utility::vector1<utility::vector1<VD> > nu_atoms_;
+	/// @brief VDs of four atoms to build each nu angle -- Primary.
+	utility::vector1< utility::vector1< VD > > nu_atoms_;
+
+	/// @brief VDs of all ring atoms, not counting virtual atoms -- Primary
+	utility::vector1< utility::vector1< VD > > ring_atoms_;  // indexed by ring number
 
 	/// @brief number of bonds separated between any pair of atoms in this residue -- Derived.
 	utility::vector1< utility::vector1< int > > path_distance_;
@@ -2344,13 +2366,16 @@ private:
 
 	///////////////////////////////////////////////////////////////////////////
 
-	/// @brief   Lowest-energy ring conformer -- Primary
-	/// @details used for setting up the RingConformerSet
-	std::string lowest_ring_conformer_;
+	/// @brief The size of each ring in this residue -- Primary
+	utility::vector1< Size > ring_sizes_;  // indexed by ring number
 
-	/// @brief   Low-energy ring conformers -- Primary
-	/// @details used for setting up the RingConformerSet
-	utility::vector1< std::string > low_ring_conformers_;
+	/// @brief   Lowest-energy ring conformer for each ring -- Primary
+	/// @details used for setting up the RingConformerSets
+	utility::vector1< std::string > lowest_ring_conformer_;  // indexed by ring number
+
+	/// @brief   Low-energy ring conformers for each ring -- Primary
+	/// @details used for setting up the RingConformerSets
+	utility::vector1< utility::vector1< std::string > > low_ring_conformers_;  // indexed by ring number
 
 
 	///////////////////////////////////////////////////////////////////////////
@@ -2481,8 +2506,10 @@ private:
 	utility::vector1<Size> abase2_indices_;
 	/// @brief Index version of chi_atoms_ -- Derived
 	utility::vector1< AtomIndices > chi_atoms_indices_;
-	/// @brief Index version of nu_atoms__ -- Derived
-	utility::vector1<AtomIndices> nu_atoms_indices_;
+	/// @brief Index version of nu_atoms_ -- Derived
+	utility::vector1< AtomIndices > nu_atoms_indices_;
+	/// @brief Index version of ring_atoms_ -- Derived
+	utility::vector1< AtomIndices > ring_atoms_indices_;
 	/// @brief Index version of mainchain_atoms_ -- Derived
 	AtomIndices mainchain_atoms_indices_;
 	/// @brief Index version of nbr_atom_ -- Derived

@@ -745,18 +745,31 @@ read_topology_file(
 			uint nu_num;
 			l >> nu_num >> atom1 >> atom2 >> atom3 >> atom4;
 			rsd->add_nu(nu_num, atom1, atom2, atom3, atom4);
+		} else if ( tag == "ADD_RING" ) {
+			uint ring_num;
+			l >> ring_num;
+			utility::vector1< std::string > ring_atoms;
+			l >> atom1;
+			while ( !l.fail() ) {
+				ring_atoms.push_back( atom1 );
+				l >> atom1;
+			}
+			rsd->add_ring( ring_num, ring_atoms );
 		} else if ( tag == "LOWEST_RING_CONFORMER" ) {
+			uint ring_num;
 			std::string conformer;
-			l >> conformer;
-			rsd->set_lowest_energy_ring_conformer( conformer );
+			l >> ring_num >> conformer;
+			rsd->set_lowest_energy_ring_conformer( ring_num, conformer );
 		} else if ( tag == "LOW_RING_CONFORMERS" ) {
+			uint ring_num;
 			utility::vector1< std::string > conformers;
+			l >> ring_num;
 			l >> tag;
 			while ( ! l.fail() ) {
 				conformers.push_back( tag );
 				l >> tag;
 			}
-			rsd->set_low_energy_ring_conformers( conformers );
+			rsd->set_low_energy_ring_conformers( ring_num, conformers );
 		} else if ( tag == "PROTON_CHI" ) {
 			Size chino, nsamples, nextra_samples;
 			std::string dummy;

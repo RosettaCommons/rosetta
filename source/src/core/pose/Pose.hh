@@ -1242,9 +1242,11 @@ public:
 	jump( AtomID const & id ) const;
 
 
-	/// @brief Set the given residue's ring conformation, if appropriate.
-	void
-	set_ring_conformation( uint const seqpos, core::chemical::rings::RingConformer const & conformer );
+	/// @brief Set the given residue and ring's ring conformation, if appropriate.
+	void set_ring_conformation(
+			uint const seqpos,
+			uint const ring_num,
+			core::chemical::rings::RingConformer const & conformer );
 
 
 	/////////////////////////////////////////////////////////////////////////////

@@ -110,13 +110,16 @@ CHI_ROTAMERS 6 120 0
 CHI_ROTAMERS 6 180 0
 CHI_ROTAMERS 6 240 0
 CHI_ROTAMERS 6 300 0
+
+ADD_RING 1 C2 C3 C4 C5 C6 O6
+
 NU 1  VO6  C2   C3   C4    # duplicates BB 1, but defined differently
 NU 2  C2   C3   C4   C5    # duplicates BB 2
 NU 3  C3   C4   C5   C6    # duplicates BB 3, but defined differently
 NU 4  C4   C5   C6   O6
 NU 5  C5   C6   O6   VC2
 #NU 6 is across the CUT_BOND
-LOWEST_RING_CONFORMER  1C4  # in this case, actually 2C5
+LOWEST_RING_CONFORMER 1 1C4  # in this case, actually 2C5
 
 PROPERTIES  POLAR CYCLIC CARBOHYDRATE KETOSE HEXOSE D_SUGAR PYRANOSE BETA_SUGAR
 

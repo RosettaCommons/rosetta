@@ -19,6 +19,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/residue_datacache.hh>
 #include <core/conformation/orbitals/OrbitalXYZCoords.hh>
+#include <core/conformation/util.hh>
 
 // Project headers
 #include <core/kinematics/Stub.hh>
@@ -239,13 +240,44 @@ void
 Residue::show( std::ostream & output, bool output_atomic_details ) const
 {
 	using namespace std;
+	using namespace chemical::rings;
 
 	output << "Residue " << seqpos_ << ": ";
 	rsd_type_.show( output, output_atomic_details );
 	if ( rsd_type_.is_cyclic() ) {
-		output << "Ring Conformer: " << ring_conformer() << endl;
+		Size const n_rings( rsd_type_.n_rings() );
+		for ( core::uint i( 1 ); i <= n_rings; ++i ) {
+			output << "Ring Conformer: " << ring_conformer( i ) << endl;
+
+			AtomIndices const ring_atoms( rsd_type_.ring_atoms( i ) );
+			Size const n_ring_atoms( ring_atoms.size() );
+			for ( core::uint j( 1 ); j <= n_ring_atoms; ++j ) {
+				AtomIndices const potential_substituents( get_adjacent_heavy_atoms( ring_atoms[ j ] ) );
+				Size const n_potential_substituents( potential_substituents.size() );
+				for ( core::uint k( 1 ); k <= n_potential_substituents; ++k ) {
+					if ( ( ! ring_atoms.contains( potential_substituents[ k ] ) ) &&
+							( ! is_virtual( potential_substituents[ k ] ) ) ) {
+						// This atom must be exocyclic.
+						// Is it axial or equatorial?
+						output << ' ' << atom_name( potential_substituents[ k ] ) << ": ";
+						switch ( is_atom_axial_or_equatorial_to_ring( *this, potential_substituents[ k ], ring_atoms ) ) {
+							case AXIAL:
+								output << "axial" << endl;
+								break;
+							case EQUATORIAL:
+								output << "equatorial" << endl;
+								break;
+							case NEITHER:
+								output << "neither axial nor equatorial" << endl;
+								break;
+						}
+						break;
+					}
+				}
+			}
+		}
 	}
-	output << " Atom Coordinates:" << endl;
+	output << "Atom Coordinates:" << endl;
 	Size n_atoms = natoms();
 	for ( core::uint i = 1; i <= n_atoms; ++i ) {
 		conformation::Atom const & atom_coords( atoms_[ i ] );
@@ -310,12 +342,26 @@ Residue::carbohydrate_info() const
 
 // Return the current RingConformer of this residue.
 chemical::rings::RingConformer const &
-Residue::ring_conformer() const
+Residue::ring_conformer( core::uint const ring_num ) const
 {
-	PyAssert( rsd_type_.is_cyclic(), "Residue::ring_conformer(): This residue is not cyclic!" );
+	PyAssert( ( ring_num <= rsd_type_.n_rings() ),
+		"Residue::ring_conformer(core::uint const ring_num): variable ring_num is out of range!" );
 	debug_assert( rsd_type_.is_cyclic() );
 
-	return rsd_type_.ring_conformer_set()->get_ideal_conformer_from_nus( nus_ );
+	// First, figure out which nus belong to this ring.
+	Size n_nus_on_previous_rings( 0 );
+	for ( uint previous_ring_num( ring_num -1 ); previous_ring_num > 0; --previous_ring_num ) {
+		// ( Each ring has one fewer nus associated with it than the size of the ring. )
+		n_nus_on_previous_rings += rsd_type_.ring_atoms( previous_ring_num ).size() - 1;
+	}
+
+	Size const n_nus( rsd_type_.ring_atoms( ring_num ).size() - 1 );
+	utility::vector1< Angle > nus;
+	for ( uint i( 1 ); i <= n_nus; ++i ) {
+		nus.push_back( nus_[ n_nus_on_previous_rings + i ] );
+	}
+
+	return rsd_type_.ring_conformer_set( ring_num )->get_ideal_conformer_from_nus( nus_ );
 }
 
 
@@ -1301,6 +1347,95 @@ Residue::set_theta( int const chino, Real const setting ) {
 	update_actcoord();
 }
 
+void
+Residue::set_tau( Size const nuno, Real const setting )
+{
+	Size base_id = nuno > nus_.size() ? 3 : 2;
+	
+	AtomIndices const & nu_atoms( rsd_type_.nu_atoms( ( nuno > nus_.size() ? nus_.size() : nuno ) ) );
+	
+	// get the current tau angle
+	Real const current_tau
+	( numeric::angle_degrees( atom( nu_atoms[ base_id-1 ] ).xyz(), atom( nu_atoms[ base_id ] ).xyz(), atom( nu_atoms[ base_id+1 ] ).xyz() ) );
+	
+	Vector const v12( atom( nu_atoms[ base_id ] ).xyz() - atom( nu_atoms[ base_id-1 ] ).xyz() );
+	Vector const v23( atom( nu_atoms[ base_id+1 ] ).xyz() - atom( nu_atoms[ base_id ] ).xyz() );
+	Vector const axis (v12.cross(v23).normalized());
+	
+	numeric::xyzMatrix< Real > const R
+	( numeric::rotation_matrix_degrees( axis, - setting + current_tau ) );
+	
+	Vector const nu_atom2_xyz( atom( nu_atoms[ base_id ] ).xyz() );
+	Vector const v( nu_atom2_xyz - R * nu_atom2_xyz );
+	
+	// apply the transform to all "downstream" atoms
+	apply_transform_downstream( nu_atoms[ base_id+1 ], R, v );
+	
+	//ASSERT_ONLY(Real const new_tau(numeric::angle_degrees(
+	//		atom( nu_atoms[ base_id-1 ] ).xyz(), atom( nu_atoms[ base_id ] ).xyz(), atom( nu_atoms[ base_id+1 ] ).xyz() )); )
+	//debug_assert( std::abs( basic::subtract_degree_angles( new_tau, setting ) ) < 1e-2 );
+	
+	update_actcoord();
+}
+
+void
+Residue::set_all_nu( utility::vector1< Real > const & nus, utility::vector1< Real > const & taus )
+{
+	debug_assert( nus.size() == nus_.size() );
+	debug_assert( taus.size() == nus_.size()+1 );
+	
+	set_all_ring_nu( 1, nus_.size(), nus, taus );
+}
+	
+void
+Residue::set_all_ring_nu( Size first, Size last, utility::vector1< Real > const & nus, utility::vector1< Real > const & taus )
+{
+
+	debug_assert( nus.size() == last-first+1 );
+	debug_assert( taus.size() == last-first+2 );
+	
+	for ( Size nuno = first; nuno <= last; ++nuno ) {
+		
+		nus_[ nuno ] = nus[ nuno ];
+		
+		AtomIndices const & nu_atoms( rsd_type_.nu_atoms( nuno ) );
+		
+		// get the current nu angle
+		Real const current_nu
+		( numeric::dihedral_degrees( atom( nu_atoms[1] ).xyz(),
+									atom( nu_atoms[2] ).xyz(),
+									atom( nu_atoms[3] ).xyz(),
+									atom( nu_atoms[4] ).xyz() ) );
+		
+		Vector const axis
+		(( atom(nu_atoms[3]).xyz() - atom(nu_atoms[2]).xyz() ).normalized());
+		
+		numeric::xyzMatrix< Real > const R
+		( numeric::rotation_matrix_degrees( axis, nus[ nuno ] - current_nu ) );
+		
+		Vector const nu_atom3_xyz( atom( nu_atoms[3] ).xyz() );
+		Vector const v( nu_atom3_xyz - R * nu_atom3_xyz );
+		
+		// apply the transform to all "downstream" atoms
+		apply_transform_downstream( nu_atoms[3], R, v );
+		
+		ASSERT_ONLY(Real const new_nu
+					( numeric::dihedral_degrees( atom( nu_atoms[1] ).xyz(),
+												atom( nu_atoms[2] ).xyz(),
+												atom( nu_atoms[3] ).xyz(),
+												atom( nu_atoms[4] ).xyz() ) );)
+		debug_assert( std::abs( basic::subtract_degree_angles( new_nu, nus[ nuno ] ) ) <
+					 1e-2 );
+		
+		update_actcoord();//ek added 4/28/10
+		
+	}
+	
+	for ( Size nuno = 1; nuno <= nus.size(); ++nuno ) {
+		set_tau( nuno, taus[ nuno ] );
+	}
+	set_tau( nus.size()+1, taus[ nus.size()+1 ] );	
+}
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details this assumes that change propagates according to the information from
@@ -1382,8 +1517,10 @@ Residue::apply_transform_downstream(
 	AtomIndices const & nbrs( rsd_type_.bonded_neighbor( atomno ) );
 	int const my_atom_base( rsd_type_.atom_base( atomno ) );
 	for ( Size i=1; i<= nbrs.size(); ++i ) {
+		
 		int const nbr( nbrs[i] );
 		int const nbr_base( rsd_type_.atom_base( nbr ) );
+		
 		if ( nbr_base == atomno ) {
 			if ( my_atom_base != nbr ) {
 				apply_transform_downstream( nbr, R, v );

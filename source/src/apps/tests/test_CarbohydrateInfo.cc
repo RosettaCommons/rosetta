@@ -161,7 +161,7 @@ main( int argc, char *argv[] )
 
 		test_sugar( glucosamine );
 
-		cout << *glucosamine.residue( 1 ).type().ring_conformer_set();
+		cout << *glucosamine.residue( 1 ).type().ring_conformer_set( 1 );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
@@ -191,7 +191,7 @@ main( int argc, char *argv[] )
 
 		test_sugar( psicose );
 
-		cout << *psicose.residue( 1 ).type().ring_conformer_set();
+		cout << *psicose.residue( 1 ).type().ring_conformer_set( 1 );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

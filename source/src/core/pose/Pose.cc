@@ -1141,7 +1141,10 @@ Pose::set_chi( Size const seqpos, Real const setting )
 /// @author  Labonte <JWLabonte@jhu.edu>
 /// @remark  See core/chemical/rings/RingConformerSet.hh and .cc for more information about RingConformers.
 void
-Pose::set_ring_conformation( uint const seqpos, core::chemical::rings::RingConformer const & conformer )
+Pose::set_ring_conformation(
+		uint const seqpos,
+		uint const ring_num,
+		core::chemical::rings::RingConformer const & conformer )
 {
 	using namespace std;
 	using namespace id;
@@ -1151,16 +1154,23 @@ Pose::set_ring_conformation( uint const seqpos, core::chemical::rings::RingConfo
 
 	debug_assert( res.type().is_cyclic() );
 	PyAssert( ( seqpos <= total_residue() ),
-		"Pose::set_ring_conformation(uint const seqpos, core::chemical::rings::RingConformer const &"
-		"conformer): variable seqpos is out of range!" );
-	PyAssert( ( res.type().is_cyclic() ),
-		"Pose::set_ring_conformation(uint const seqpos, core::chemical::rings::RingConformer const &"
-		"conformer): residue seqpos is not a cyclic residue!" );
+		"Pose::set_ring_conformation(uint const seqpos, uint const ring_num, "
+		"core::chemical::rings::RingConformer const & conformer): variable seqpos is out of range!" );
+	PyAssert( ( ring_num <= res.type().n_rings() ),
+		"Pose::set_ring_conformation(uint const seqpos, uint const ring_num, "
+		"core::chemical::rings::RingConformer const & conformer): variable ring_num is out of range!" );
 
-	// First, set the nus, which DEFINE the ideal ring conformer.
-	Size const n_nus( res.type().nu_atoms().size() );
+	// First, figure out which nus belong to this ring.
+	Size n_nus_on_previous_rings( 0 );
+	for ( uint previous_ring_num( ring_num -1 ); previous_ring_num > 0; --previous_ring_num ) {
+		// ( Each ring has one fewer nus associated with it than the size of the ring. )
+		n_nus_on_previous_rings += res.type().ring_atoms( previous_ring_num ).size() - 1;
+	}
+
+	// Then, set the nus, which DEFINE the ideal ring conformer.
+	Size const n_nus( res.type().ring_atoms( ring_num ).size() - 1 );
 	for ( uint i( 1 ); i <= n_nus; ++i ) {
-		set_torsion( TorsionID( seqpos, NU, i ), conformer.nu_angles[ i ] );
+		set_torsion( TorsionID( seqpos, NU, n_nus_on_previous_rings + i ), conformer.nu_angles[ i ] );
 	}
 
 	// Then, set the taus, which result from ring strain.
@@ -1168,23 +1178,18 @@ Pose::set_ring_conformation( uint const seqpos, core::chemical::rings::RingConfo
 	for ( uint i( 1 ); i < n_taus; ++i ) {
 		// The reference atoms for the bond angle can be extracted from those used for the corresponding nu angle.
 		// For example, nu2 is defined as C1-C2-C3-C4, and tau 1 is defined as C1-C2-C3.
-		AtomID const ref1( res.type().nu_atoms( i )[ 1 ], seqpos );
-		AtomID const ref2( res.type().nu_atoms( i )[ 2 ], seqpos );
-		AtomID const ref3( res.type().nu_atoms( i )[ 3 ], seqpos );
+		AtomID const ref1( res.type().nu_atoms( n_nus_on_previous_rings + i )[ 1 ], seqpos );
+		AtomID const ref2( res.type().nu_atoms( n_nus_on_previous_rings + i )[ 2 ], seqpos );
+		AtomID const ref3( res.type().nu_atoms( n_nus_on_previous_rings + i )[ 3 ], seqpos );
 		conformation_->set_bond_angle( ref1, ref2, ref3, conversions::radians( conformer.tau_angles[ i ] ) );
 	}
 
 	// Since one fewer nus are stored than taus, we need the LAST 3 reference atoms from the last nu, instead of the
 	// 1st 3 atoms as we used above.
-	AtomID ref1( res.type().nu_atoms( n_nus )[ 2 ], seqpos );
-	AtomID ref2( res.type().nu_atoms( n_nus )[ 3 ], seqpos );
-	AtomID ref3( res.type().nu_atoms( n_nus )[ 4 ], seqpos );
+	AtomID ref1( res.type().nu_atoms( n_nus_on_previous_rings + n_nus )[ 2 ], seqpos );
+	AtomID ref2( res.type().nu_atoms( n_nus_on_previous_rings + n_nus )[ 3 ], seqpos );
+	AtomID ref3( res.type().nu_atoms( n_nus_on_previous_rings + n_nus )[ 4 ], seqpos );
 	conformation_->set_bond_angle( ref1, ref2, ref3, conversions::radians( conformer.tau_angles[ n_taus ] ) );
-
-	// Finally, fix the virtual alignment in the special case of saccharide residues.
-	if ( res.is_carbohydrate() ) {
-		carbohydrates::align_virtual_atoms_in_carbohydrate_residue( *this, seqpos );  // TODO: Where does this belong?
-	}
 }
 
 

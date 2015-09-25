@@ -103,12 +103,12 @@ is_atom_axial_or_equatorial_to_ring(
 	// EQUATORIAL: 70, 90
 	// NEITHER: 35, 45
 	// It looks like we can go with bins of:
-	// AXIAL: 0 +/- 25
-	// EQUATORIAL: 90 +/- 25
-	// NEITHER: 45 +/- 20
-	if ( theta < 25 * pi_over_180 ) {
+	// AXIAL: 0 +/- 30
+	// EQUATORIAL: 90 +/- 30
+	// NEITHER: 45 +/- 15
+	if ( theta < 30 * pi_over_180 ) {
 		return AXIAL;
-	} else if ( theta > 65 * pi_over_180 ) {
+	} else if ( theta > 60 * pi_over_180 ) {
 		// This atom could be in the middle of the ring, but that's not our problem.
 		return EQUATORIAL;
 	} else {

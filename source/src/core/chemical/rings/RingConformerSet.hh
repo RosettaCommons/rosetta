@@ -106,6 +106,7 @@ public:
 	/// @brief  Return a random conformer from the subset of conformers that are local minima.
 	RingConformer const & get_random_local_min_conformer() const;
 
+	utility::vector1< RingConformer > get_local_min_conformers() const;
 
 private:
 	// Private methods ///////////////////////////////////////////////////////////////////////////////////////////////

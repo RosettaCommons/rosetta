@@ -1555,8 +1555,8 @@ public:
 	}
 
 
-	/// @brief  Return the current RingConformer of this residue.
-	chemical::rings::RingConformer const & ring_conformer() const;
+	/// @brief  Return the current RingConformer of this residue's nth ring.
+	chemical::rings::RingConformer const & ring_conformer( core::uint const ring_num) const;
 
 
 	/// @brief Returns the sequence position of this residue
@@ -1936,6 +1936,16 @@ public:
 	void
 	set_theta( int const chino, Real const setting );
 
+	/// @brief  set_theta for nus
+	void
+	set_tau( Size const nuno, Real const setting );
+	
+	void
+	set_all_nu( utility::vector1< Real > const & nus, utility::vector1< Real > const & taus );
+	
+	void
+	set_all_ring_nu( Size start, Size end, utility::vector1< Real > const & nus, utility::vector1< Real > const & taus );
+	
 	/// @brief Sets this residue's chi angle  <chino>  to  <setting>
 	/// assuming that changes propagate according to the atom_base tree
 	void

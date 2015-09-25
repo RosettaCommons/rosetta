@@ -2207,7 +2207,7 @@ is_atom_axial_or_equatorial_to_ring(
 /// @param   <query_atom>: The index of the atom in question.
 /// @return  An AxEqDesignation enum type value: AXIAL, EQUATORIAL, or NEITHER
 /// @author  Labonte <JWLabonte@jhu.edu>
-chemical::rings::AxEqDesignation
+/*chemical::rings::AxEqDesignation
 is_atom_axial_or_equatorial( Residue const & residue, uint query_atom )
 {
 	chemical::ResidueType const & rsd_type( residue.type() );
@@ -2215,8 +2215,11 @@ is_atom_axial_or_equatorial( Residue const & residue, uint query_atom )
 		TR.Warning << "Queried atom must be on a cyclic residue." << std::endl;
 		return chemical::rings::NEITHER;
 	}
+
+
+
 	return is_atom_axial_or_equatorial_to_ring( residue, query_atom, rsd_type.ring_atoms() );
-}
+}*/
 
 } // namespace conformation
 } // namespace core

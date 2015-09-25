@@ -233,8 +233,8 @@ public:  // Standard Rosetta methods
 		for ( core::uint residue( first_ligand_residue_ ); residue <= n_residues; ++residue ) {
 			pose.set_phi( residue, numeric::random::rg().uniform() * 360 );
 			pose.set_psi( residue, numeric::random::rg().uniform() * 360 );
-			pose.set_ring_conformation(
-				residue, pose.residue( residue ).type().ring_conformer_set()->get_random_conformer() );
+			pose.set_ring_conformation( 1,
+				residue, pose.residue( residue ).type().ring_conformer_set( 1 )->get_random_conformer() );
 		}
 
 
@@ -243,8 +243,8 @@ public:  // Standard Rosetta methods
 		if ( idealize_rings_ ) {
 			cout << " Idealizing rings..." << endl;
 			for ( core::uint residue( first_ligand_residue_ ); residue <= n_residues; ++residue ) {
-				pose.set_ring_conformation(
-					residue, pose.residue( residue ).type().ring_conformer_set()->get_lowest_energy_conformer() );
+				pose.set_ring_conformation( 1,
+					residue, pose.residue( residue ).type().ring_conformer_set( 1 )->get_lowest_energy_conformer() );
 			}
 		}
 

@@ -213,20 +213,25 @@ RingConformationMover::apply( Pose & input_pose )
 
 	TR << "Selected residue " << res_num << ": " << res.name() << endl;
 
-	rings::RingConformer conformer;
-	if ( sample_all_conformers_ || ( ! res.type().ring_conformer_set()->low_energy_conformers_are_known() ) ) {
-		conformer = res.type().ring_conformer_set()->get_random_conformer();
-	} else /* default behavior */ {
-		conformer = res.type().ring_conformer_set()->get_random_local_min_conformer();
+	Size const n_rings( res.type().n_rings() );
+	for ( core::uint ring_num( 1 ); ring_num <= n_rings; ++ring_num ) {
+		rings::RingConformer conformer;
+		if ( sample_all_conformers_ ||
+				( ! res.type().ring_conformer_set( ring_num )->low_energy_conformers_are_known() ) ) {
+			conformer = res.type().ring_conformer_set( ring_num )->get_random_conformer();
+		} else /* default behavior */ {
+			conformer = res.type().ring_conformer_set( ring_num )->get_random_local_min_conformer();
+		}
+
+		TR << "Selected the " << conformer.specific_name <<
+				" conformation to apply to ring " << ring_num << '.' << endl;
+
+		TR << "Making move...." << endl;
+
+		input_pose.set_ring_conformation( res_num, ring_num, conformer );
 	}
 
-	TR << "Selected the " << conformer.specific_name << " conformation to apply." << endl;
-
-	TR << "Making move...." << endl;
-
-	input_pose.set_ring_conformation( res_num, conformer );
-
-	TR << "Move complete." << endl;
+	TR << "Move(s) complete." << endl;
 }
 
 

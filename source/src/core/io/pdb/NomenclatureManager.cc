@@ -86,7 +86,7 @@ NomenclatureManager::rosetta_names_from_pdb_code( std::string const & pdb_code )
 		if ( alt_code_pair != alt_codes.end() ) {  // Is there an alternate for this code?
 			// Get the value of this key/value pair.
 			pair< string, string > const & rosetta_names( alt_code_pair->second );
-			TR << "Accepting alternate code " << rosetta_names.first << " for " << pdb_code << '.' << endl;
+			TR << "Accepting alternate code " << pdb_code << " for " << rosetta_names.first << '.' << endl;
 			return rosetta_names;
 		}
 	}

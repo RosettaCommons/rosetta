@@ -104,14 +104,17 @@ CHI_ROTAMERS 4 240 0
 CHI_ROTAMERS 4 300 0
 CHI 5  C4   C5   C6   O6   # duplicates BB 5
 CHI 6  C5   C6   O6   HO6  # duplicates BB 6
+
+ADD_RING 1 C1 C2 C3 C4 C5 O5
+
 NU 1  VO5  C1   C2   C3    # duplicates BB 1, but defined differently
 NU 2  C1   C2   C3   C4    # duplicates BB 2
 NU 3  C2   C3   C4   C5    # duplicates BB 3
 NU 4  C3   C4   C5   O5    # duplicates BB 4, but defined differently
 NU 5  C4   C5   O5   VC1
 #NU 6 is across the CUT_BOND
-LOWEST_RING_CONFORMER  4C1
-LOW_RING_CONFORMERS  O3B 3S1 B14 5S1 2SO BO3 1S3 1S5 B25 OS2 1C4  # Ref: Mayes, et al. (2013) JACS 136, 1008.
+LOWEST_RING_CONFORMER 1 4C1
+LOW_RING_CONFORMERS 1 O3B 3S1 B14 5S1 2SO BO3 1S3 1S5 B25 OS2 1C4  # Ref: Mayes, et al. (2013) JACS 136, 1008.
 
 PROPERTIES  POLAR CYCLIC CARBOHYDRATE ALDOSE HEXOSE D_SUGAR PYRANOSE BETA_SUGAR
 

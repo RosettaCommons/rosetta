@@ -348,6 +348,12 @@ RingConformerSet::get_random_local_min_conformer() const
 	return energy_minima_conformers_[ i ];
 }
 
+// Return the subset of conformers that are local minima.
+utility::vector1< RingConformer >
+RingConformerSet::get_local_min_conformers() const
+{
+	return energy_minima_conformers_;
+}
 
 // Private methods ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Initialize data members for the given ring size.

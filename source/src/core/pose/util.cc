@@ -2990,11 +2990,11 @@ is_atom_axial_or_equatorial_to_ring(
 /// @param   <query_atom>: The index of the atom in question.
 /// @return  An AxEqDesignation enum type value: AXIAL, EQUATORIAL, or NEITHER
 /// @author  Labonte <JwLabonte@jhu.edu>
-chemical::rings::AxEqDesignation
+/*chemical::rings::AxEqDesignation
 is_atom_axial_or_equatorial( Pose const & pose, uint seqpos, uint query_atom )
 {
 	return conformation::is_atom_axial_or_equatorial( pose.residue( seqpos ), query_atom );
-}
+}*/
 
 // Is the query atom in this pose axial or equatorial or neither?
 /// @details This function calculates an average plane and determines whether the coordinates of a given atom are
@@ -3003,11 +3003,11 @@ is_atom_axial_or_equatorial( Pose const & pose, uint seqpos, uint query_atom )
 /// @param   <query_atom>: The AtomID of the atom in question.
 /// @return  An AxEqDesignation enum type value: AXIAL, EQUATORIAL, or NEITHER
 /// @author  Labonte <JwLabonte@jhu.edu>
-chemical::rings::AxEqDesignation
+/*chemical::rings::AxEqDesignation
 is_atom_axial_or_equatorial( Pose const & pose, id::AtomID const & query_atom )
 {
 	return conformation::is_atom_axial_or_equatorial( pose.residue( query_atom.rsd() ), query_atom.atomno() );
-}
+}*/
 
 
 } // pose
