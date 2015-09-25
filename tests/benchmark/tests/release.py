@@ -73,7 +73,10 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
 
     # We moving archive and pushing new revision to upstream only *after* all test runs passed
     shutil.move(archive, release_path+release_name+'.tar.bz2')
-    execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git push -f'.format(**vars()))
+    execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
+
+    execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
+
 
     results = {_StateKey_ : _S_finished_,  _ResultsKey_ : {},  _LogKey_ : '' }
     json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
@@ -139,7 +142,9 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
 
     # We moving archive and pushing new revision to upstream only *after* all test runs passed
     shutil.move(archive, release_path+release_name+'.tar.bz2')
-    execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git push -f'.format(**vars()))
+    execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
+
+    execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
 
     results = {_StateKey_ : _S_finished_,  _ResultsKey_ : {},  _LogKey_ : '' }
     json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
@@ -287,7 +292,9 @@ def py_rosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_dri
                     git_truncate = 'git checkout --orphan _temp_ {oldest_sha} && git commit -m "Truncating git history" && git rebase --onto _temp_ {oldest_sha} master && git checkout master && git branch -D _temp_'.format(**vars())  #
                     execute('Trimming git history...', 'cd {working_dir}/{git_repository_name} && {git_truncate}'.format(**vars()))
 
-                execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git push -f'.format(**vars()))
+                execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
+
+                execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
 
 
             #r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }

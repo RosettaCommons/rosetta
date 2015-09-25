@@ -760,6 +760,24 @@ def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_
 
             dir_list.append( (dir_name, files) )
 
+
+
+        for dir_name, _, _ in os.walk(dest+'/'+path):
+            for d in dir_list:
+                # print 'dest:', dest
+                # print 'dir_name:', dir_name
+
+                # print d[0], dir_name[len(dest)+1:]
+                # sys.exit(1)
+
+                if d[0] == dir_name[len(dest)+1:]:
+                    #print 'found:', dir_name
+                    break
+            else:
+                print_('Found stray dir in binaries:{} going to delete it...'.format(dir_name), color='red', bright=False)
+                shutil.rmtree(dir_name)
+
+
     #dir_list.sort(key=lambda x: -len(x[1]))  # sort dirs by number of files, most populated first. This should improve speed of multi-thread builds
     #for d, fs in dir_list: print len(fs), d
 

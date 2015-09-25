@@ -204,7 +204,7 @@ if config['basic']: import rosetta.logging_support as logging_support
 ###############################################################################
 # Constants and globals
 
-__version__ =  version.commit_id + ':' + version.commit  # rosetta.core.minirosetta_svn_version()
+PyRosettaVersion =  version.commit_id + ':' + version.commit  # rosetta.core.minirosetta_svn_version()
 
 # Create global '_PLATFORM' that will hold info of current system.
 if sys.platform.startswith("linux"):
@@ -388,7 +388,7 @@ def MPIJobDistributor(njobs, fun):
 
 
 def version():
-    return "PyRosetta 2014 [Rosetta 2014 " + __version__ + \
+    return "PyRosetta 2014 [Rosetta 2014 " + PyRosettaVersion + \
            "] retrieved from: %s" % rosetta.core.minirosetta_svn_url() + \
            "\n(C) Copyright Rosetta Commons Member Institutions." + \
            "\nCreated in JHU by Sergey Lyskov and PyRosetta Team.\n"
