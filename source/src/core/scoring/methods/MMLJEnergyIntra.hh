@@ -20,6 +20,9 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
+#include <basic/datacache/CacheableData.hh>
+#include <core/scoring/NeighborList.hh>
+#include <core/scoring/DerivVectorPair.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -36,6 +39,34 @@ namespace core {
 namespace scoring {
 namespace methods {
 
+class NeighborListData : public basic::datacache::CacheableData {
+public:
+	
+	NeighborListData( scoring::NeighborListOP nblist ) :
+		nblist_( nblist )
+	{}
+	
+	NeighborListData( NeighborListData const & src ) :
+		nblist_( src.nblist() )
+	{}
+	
+	basic::datacache::CacheableDataOP
+	clone() const { return basic::datacache::CacheableDataOP( new NeighborListData( *this ) ); }
+	
+	scoring::NeighborListOP
+	nblist() const { return nblist_; }
+	
+	void
+	nblist(	scoring::NeighborListOP nblist ) { nblist_ = nblist; }
+
+private:
+	//scoring::NeighborList nblist_;
+	scoring::NeighborListOP nblist_;
+};
+	
+typedef utility::pointer::shared_ptr< NeighborListData > NeighborListDataOP;
+typedef utility::pointer::shared_ptr< NeighborListData const > NeighborListDataCOP;
+	
 class MMLJEnergyIntra : public ContextIndependentTwoBodyEnergy {
 public:
 	typedef ContextIndependentTwoBodyEnergy  parent;
@@ -49,6 +80,10 @@ public:
 	EnergyMethodOP
 	clone() const;
 
+	virtual
+	bool
+	minimize_in_whole_structure_context( pose::Pose const & /*pose*/ ) const { return false; }
+	
 	void
 	setup_for_minimizing(
 		pose::Pose & pose,
@@ -56,7 +91,20 @@ public:
 		kinematics::MinimizerMapBase const & min_map
 	) const;
 
+	virtual
+	bool
+	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const & /*pose*/ ) const { return true; }
 
+	virtual
+	void
+	setup_for_minimizing_for_residue(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		kinematics::MinimizerMapBase const & minmap,
+		ResSingleMinimizationData & res_data_cache
+	) const;
+	
 	virtual
 	void
 	residue_pair_energy(
@@ -79,6 +127,16 @@ public:
 		Vector & F2
 	) const;
 
+	virtual
+	void
+	eval_intrares_derivatives(
+		conformation::Residue const & rsd,
+		ResSingleMinimizationData const & res_data_cache,
+		pose::Pose const & pose,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & atom_derivs
+	) const;
+	
 	virtual
 	bool
 	defines_intrares_energy( EnergyMap const & ) const;

@@ -52,10 +52,11 @@ public:
 
 	virtual
 	void
-	residue_energy(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose,
-		EnergyMap & emap ) const;
+	residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, EnergyMap & emap ) const;
+
+	virtual
+	bool
+	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
 
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;

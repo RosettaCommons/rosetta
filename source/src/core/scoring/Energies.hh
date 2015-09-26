@@ -472,6 +472,11 @@ public:
 	void
 	clear();
 
+	bool
+	use_nblist_of_type( EnergiesCacheableDataType::Enum const & type ) const
+	{
+		return ( nblist_.find( type ) != nblist_.end() );
+	}
 
 	bool
 	use_nblist() const

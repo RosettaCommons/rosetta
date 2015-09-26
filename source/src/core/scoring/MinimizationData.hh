@@ -34,6 +34,7 @@ namespace scoring {
 enum min_single_data{
 	etab_single_nblist = 1,
 	etab_classic_intrares_single_nblist,
+	mm_lj_intra_nblist,
 	cst_res_data,
 	lkb_res_data,
 	mp_res_data,

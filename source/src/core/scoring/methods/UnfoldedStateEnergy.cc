@@ -159,6 +159,7 @@ UnfoldedStateEnergy::residue_energy(
 
 void
 UnfoldedStateEnergy::indicate_required_context_graphs( utility::vector1< bool > & ) const {}
+
 core::Size
 UnfoldedStateEnergy::version() const
 {

@@ -22,6 +22,7 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/DerivVectorPair.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -51,6 +52,10 @@ public:
 	EnergyMethodOP
 	clone() const;
 
+	virtual
+	bool
+	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
+
 	/// setup for packing
 	virtual
 	void
@@ -72,7 +77,7 @@ public:
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		pose::Pose const &,
+		pose::Pose const & pose,
 		ScoreFunction const &,
 		EnergyMap & emap
 	) const;
@@ -104,6 +109,15 @@ public:
 		Vector & F2
 	) const;
 
+	virtual
+	void
+	eval_intrares_derivatives(
+		conformation::Residue const & rsd,
+		ResSingleMinimizationData const &,
+		pose::Pose const &,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & atom_derivs
+	) const;
 
 	/// @brief MMTorsionEnergy does not have an atomic interation threshold
 	virtual
