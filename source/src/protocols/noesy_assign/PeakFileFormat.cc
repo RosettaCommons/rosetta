@@ -552,17 +552,20 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 			if ( tag3.find(".") != std::string::npos ) return;
 		}
 		//only assign if all spins are assigned.
-		Size vals[ 5 ];
+		Size *vals = new Size [ncol+1>5?ncol+1:5]; // unfortunate
+		//Size vals[ncol+1>5?ncol+1:5]; // variable length arrays are not ISO compliant
 		for ( Size icol=1; icol<=ncol; ++icol ) {
 			Size val;
 			line_stream >> val;
 			if ( !line_stream ) {
 				if ( first ) {
 					new_peak_line = ""; //if first then it is maybe just a space at end of line...
+					delete [] vals;
 					return;
 				}
 				std::ostringstream errstr;
 				errstr << cp;
+				delete [] vals;
 				throw EXCN_FileFormat( "expected assignment value for " + errstr.str() );
 			} else {
 				if ( first ) tr.Trace << " read assignments: ";
@@ -589,6 +592,7 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 			tr.Trace << " add assignment " << std::endl;
 			cp.add_full_assignment( reorder );
 		}
+		delete [] vals;
 		std::string tag;
 		line_stream >> tag;
 		if ( !line_stream.good() ) {
