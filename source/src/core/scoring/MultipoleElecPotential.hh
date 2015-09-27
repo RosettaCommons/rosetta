@@ -110,14 +110,14 @@ public:
 	}
 
 	///
-	utility::vector1< Size > const &
+	utility::vector1< id::AtomID > const &
 	coord_frame_ref() const
 	{
 		return coord_frame_ref_;
 	}
 
 	///
-	Size
+	id::AtomID
 	coord_frame_ref( Size const atm ) const
 	{
 		return coord_frame_ref_[ atm ];
@@ -125,7 +125,7 @@ public:
 
 	///
 	void
-	set_coord_frame_ref( Size const atm, Size in_val )
+	set_coord_frame_ref( Size const atm, id::AtomID in_val )
 	{
 		coord_frame_ref_[ atm ] = in_val;
 	}
@@ -356,7 +356,7 @@ public:
 
 private:
 	utility::vector1< Size > type_;
-	utility::vector1< Size > coord_frame_ref_;
+	utility::vector1< id::AtomID > coord_frame_ref_;
 	utility::vector1< Real > monopole_;
 	utility::vector1< Real > rKirkwood_;
 	utility::vector1< Vector > dipole_;
@@ -578,12 +578,12 @@ public:
 		Real monopole_in,
 		Vector & dipole_in,
 		Matrix & quadrupole_in ) :
-		coord_type_( coord_type_in ),
-		atom_type_( atom_type_in ),
-		chirality_sign_( chirality_sign_in ),
-		monopole_( monopole_in ),
-		dipole_( dipole_in ),
-		quadrupole_( quadrupole_in ) {}
+	coord_type_( coord_type_in ),
+	atom_type_( atom_type_in ),
+	chirality_sign_( chirality_sign_in ),
+	monopole_( monopole_in ),
+	dipole_( dipole_in ),
+	quadrupole_( quadrupole_in ) {}
 
 	MultipoleParameterOP
 	clone() const
@@ -632,11 +632,11 @@ public:
 	/// ctor
 	MultipoleElecPotential():
 		// Dielectric constants for protein (Ep) and for solvent (Ew)
-		Ep( 4.0 ),
-		Ew( 80.0 ),
+		Ep( 1.0 ),
+		Ew( 78.3 ),
 		bohr( 0.52917721092 ),
 		use_polarization( true ),
-		use_gen_kirkwood( true ),
+		use_gen_kirkwood( false ),
 		default_variant_( "NONE" )
 	{ read_in_amoeba_parameters();
 		read_in_multipole_parameters();
@@ -679,8 +679,8 @@ public:
 	core::Size
 	amoeba_type_lookup(
 		std::string const & atomname,
-		std::string const & resname,
-		std::string const & variantname
+  	std::string const & resname,
+  	std::string const & variantname
 	) const;
 
 	/// called prior to scoring, eg
@@ -815,21 +815,26 @@ public:
 #endif
 
 	void
+	calculate_and_store_all_derivs(
+		pose::Pose const & pose
+	) const;
+
+	void
 	eval_residue_pair_derivatives(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		MultipoleElecResidueInfo const & mp1,
-		MultipoleElecResidueInfo const & mp2,
-		pose::Pose const & pose, // provides context
-		Real const & factor,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+			conformation::Residue const & rsd1,
+			conformation::Residue const & rsd2,
+			MultipoleElecResidueInfo const & mp1,
+			MultipoleElecResidueInfo const & mp2,
+			pose::Pose const & pose, // provides context
+			Real const & factor,
+			utility::vector1< DerivVectorPair > & r1_atom_derivs,
+			utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
 public:
 	// Dielectric constants for protein (Ep) and for solvent (Ew)
-	Real const Ep;
-	Real const Ew;
+	Real Ep;
+	Real Ew;
 	// Conversion from bohrs to angstroms
 	Real const bohr;
 	bool use_polarization;
@@ -839,8 +844,7 @@ private:
 	std::map< std::string, Size > type_lookup_;
 	std::string const default_variant_;
 	std::multimap< Size, MultipoleParameter::MultipoleParameterOP > multipole_info_;
-
-
+	mutable utility::vector1< utility::vector1< DerivVectorPair > > cached_atom_derivs_;
 
 };
 

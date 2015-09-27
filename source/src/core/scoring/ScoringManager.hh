@@ -37,6 +37,7 @@
 #include <core/scoring/SecondaryStructurePotential.fwd.hh>
 #include <core/scoring/SmoothEnvPairPotential.fwd.hh>
 #include <core/scoring/UnfoldedStatePotential.fwd.hh>
+#include <core/scoring/VdWTinkerPotential.fwd.hh>
 #include <core/scoring/WaterAdductHBondPotential.fwd.hh>
 
 #include <core/scoring/carbohydrates/CHIEnergyFunction.fwd.hh>
@@ -121,6 +122,8 @@ public:
 	PairEPotential const & get_PairEPotential() const;
 
 	GenBornPotential const & get_GenBornPotential() const;
+
+	VdWTinkerPotential const & get_VdWTinkerPotential() const;
 
 	MultipoleElecPotential const & get_MultipoleElecPotential( methods::EnergyMethodOptions const & options ) const;
 
@@ -276,6 +279,7 @@ private:
 private:
 
 	// WARNING -- if you add something here don't forget to initialize to 0 in the constructor
+	mutable VdWTinkerPotentialOP vdw_tinker_potential_;
 	mutable PairEPotentialOP pairE_potential_;
 	mutable RamachandranOP rama_;
 	mutable Ramachandran2BOP rama2b_;

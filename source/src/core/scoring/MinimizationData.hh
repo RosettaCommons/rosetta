@@ -37,6 +37,7 @@ enum min_single_data{
 	mm_lj_intra_nblist,
 	cst_res_data,
 	lkb_res_data,
+	vdw_res_data,
 	mp_res_data,
 	hbond_res_data,
 	n_min_single_data = hbond_res_data // keep this guy last
@@ -52,6 +53,7 @@ enum min_pair_data {
 	fa_dslf_respair_data,
 	fa_custom_pair_dist_data,
 	lkb_respair_data,
+	vdw_respair_data,
 	mp_respair_data,
 	mg_pair_nblist,
 	hbond_respair_data,

@@ -121,6 +121,7 @@
 #include <core/scoring/methods/FreeDOF_EnergyCreator.hh>
 #include <core/scoring/methods/HybridVDW_EnergyCreator.hh>
 #include <core/scoring/methods/GenBornEnergyCreator.hh>
+#include <core/scoring/methods/VdWTinkerEnergyCreator.hh>
 #include <core/scoring/methods/MultipoleElecEnergyCreator.hh>
 #include <core/scoring/facts/FACTSEnergyCreator.hh>
 #include <core/scoring/facts/FACTSEnergyCreator.hh>
@@ -441,6 +442,7 @@ static EnergyMethodRegistrator< scoring::methods::Fa_MbenvEnergyCreator > Fa_Mbe
 static EnergyMethodRegistrator< scoring::methods::Fa_MbsolvEnergyCreator > Fa_MbsolvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::FreeDOF_EnergyCreator > FreeDOF_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::GenBornEnergyCreator > GenBornEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::VdWTinkerEnergyCreator > VdWTinkerEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MultipoleElecEnergyCreator > MultipoleElecEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::FACTSEnergyCreator > FACTSEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::HybridVDW_EnergyCreator > HybridVDW_EnergyCreator_registrator;

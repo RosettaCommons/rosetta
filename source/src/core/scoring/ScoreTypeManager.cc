@@ -76,6 +76,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_atr_dummy" ] = fa_atr_dummy;
 	name2score_type_[ "fa_rep_dummy" ] = fa_rep_dummy;
 	name2score_type_[ "fa_sol_dummy" ] = fa_sol_dummy;
+	name2score_type_[ "fa_vdw_tinker" ] = fa_vdw_tinker;
 	name2score_type_[ "coarse_fa_atr" ] = coarse_fa_atr;
 	name2score_type_[ "coarse_fa_rep" ] = coarse_fa_rep;
 	name2score_type_[ "coarse_fa_sol" ] = coarse_fa_sol;

@@ -51,6 +51,7 @@ enum ScoreType {
 	fa_atr_dummy, // used in fa_intra 'classic' calculations
 	fa_rep_dummy,
 	fa_sol_dummy,
+	fa_vdw_tinker,
 	lk_hack,
 	lk_ball,
 	lk_ball_wtd,

@@ -74,6 +74,8 @@ EnergyMethodOptions::EnergyMethodOptions():
 	grpelec_context_dependent_( false ),
 	use_polarization_(true),
 	use_gen_kirkwood_(true),
+	protein_dielectric_( 1.0 ),
+	water_dielectric_( 78.3 ),
 	exclude_DNA_DNA_(true),
 	exclude_intra_res_protein_(true), // rosetta++ default
 	put_intra_into_total_(false ),
@@ -119,6 +121,8 @@ void EnergyMethodOptions::initialize_from_options() {
 	grpelec_context_dependent_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_context_dependent ]();
 	use_polarization_= basic::options::option[basic::options::OptionKeys::score::use_polarization]();
 	use_gen_kirkwood_= basic::options::option[basic::options::OptionKeys::score::use_gen_kirkwood]();
+	protein_dielectric_= basic::options::option[basic::options::OptionKeys::score::protein_dielectric]();
+	water_dielectric_= basic::options::option[basic::options::OptionKeys::score::water_dielectric]();
 	exclude_DNA_DNA_ = basic::options::option[basic::options::OptionKeys::dna::specificity::exclude_dna_dna](); // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	exclude_intra_res_protein_ = !basic::options::option[basic::options::OptionKeys::score::include_intra_res_protein]();
 	put_intra_into_total_ = basic::options::option[basic::options::OptionKeys::score::put_intra_into_total]();
@@ -181,6 +185,8 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		grpelec_context_dependent_ = src.grpelec_context_dependent_;
 		use_polarization_ = src.use_polarization_;
 		use_gen_kirkwood_ = src.use_gen_kirkwood_;
+		protein_dielectric_ = src.protein_dielectric_;
+		water_dielectric_ = src.water_dielectric_;
 		exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
 		exclude_intra_res_protein_ = src.exclude_intra_res_protein_;
 		put_intra_into_total_ = src.put_intra_into_total_;
@@ -444,6 +450,26 @@ EnergyMethodOptions::use_gen_kirkwood() const {
 void
 EnergyMethodOptions::use_gen_kirkwood( bool const setting ) {
 	use_gen_kirkwood_ = setting;
+}
+
+Real
+EnergyMethodOptions::protein_dielectric() const {
+	return protein_dielectric_;
+}
+
+void
+EnergyMethodOptions::protein_dielectric( Real const setting ) {
+	protein_dielectric_ = setting;
+}
+
+Real
+EnergyMethodOptions::water_dielectric() const {
+	return water_dielectric_;
+}
+
+void
+EnergyMethodOptions::water_dielectric( Real const setting ) {
+	water_dielectric_ = setting;
 }
 
 bool
@@ -754,6 +780,8 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.grpelec_context_dependent_ == b.grpelec_context_dependent_ ) &&
 		( a.use_polarization_ == b.use_polarization_ ) &&
 		( a.use_gen_kirkwood_ == b.use_gen_kirkwood_ ) &&
+		( a.protein_dielectric_ == b.protein_dielectric_ ) &&
+		( a.water_dielectric_ == b.water_dielectric_ ) &&
 		( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
 		( a.exclude_intra_res_protein_ == b.exclude_intra_res_protein_ ) &&
 		( a.put_intra_into_total_ == b.put_intra_into_total_ ) &&
@@ -826,6 +854,8 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 		<< (use_polarization_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: use_gen_kirkwood: "
 		<< (use_gen_kirkwood_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: protein_dielectric: " << protein_dielectric_ << std::endl;
+	out << "EnergyMethodOptions::show: water_dielectric: " << water_dielectric_ << std::endl;
 	out << "EnergyMethodOptions::show: exclude_DNA_DNA: "
 		<< (exclude_DNA_DNA_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: exclude_intra_res_protein: "
@@ -967,6 +997,12 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 
 	option_keys.push_back("use_gen_kirkwood");
 	option_values.push_back(use_gen_kirkwood_ ? "1" : "0");
+
+	option_keys.push_back("protein_dielectric");
+	option_values.push_back(boost::lexical_cast<std::string>(protein_dielectric_));
+
+	option_keys.push_back("water_dielectric");
+	option_values.push_back(boost::lexical_cast<std::string>(water_dielectric_));
 
 	option_keys.push_back("exclude_DNA_DNA");
 	option_values.push_back(exclude_DNA_DNA_ ? "1" : "0");

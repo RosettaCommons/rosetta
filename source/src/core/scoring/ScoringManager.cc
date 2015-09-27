@@ -39,6 +39,7 @@
 #include <core/scoring/OmegaTether.hh>
 #include <core/scoring/GenBornPotential.hh>
 #include <core/scoring/MultipoleElecPotential.hh>
+#include <core/scoring/VdWTinkerPotential.hh>
 #include <core/scoring/facts/FACTSPotential.hh>
 #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/rna/RNA_AtomVDW.hh>
@@ -128,6 +129,7 @@ ScoringManager::~ScoringManager() {}
 
 ///////////////////////////////////////////////////////////////////////////////
 ScoringManager::ScoringManager() :
+	vdw_tinker_potential_( /* 0 */ ),
 	pairE_potential_( /* 0 */ ),
 	rama_( /* 0 */ ),
 	rama2b_( /* 0 */ ),
@@ -175,6 +177,16 @@ ScoringManager::ScoringManager() :
 	DDP_lookup_table_(/* 0 */),
 	method_creator_map_( n_score_types, 0 )
 {}
+
+///////////////////////////////////////////////////////////////////////////////
+VdWTinkerPotential const &
+ScoringManager::get_VdWTinkerPotential() const
+{
+	if (vdw_tinker_potential_ == 0 ) {
+		vdw_tinker_potential_ = VdWTinkerPotentialOP( new VdWTinkerPotential() );
+	}
+	return *vdw_tinker_potential_;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 PairEPotential const &
@@ -328,6 +340,8 @@ ScoringManager::get_MultipoleElecPotential( methods::EnergyMethodOptions const &
 		multipole_elec_potential_ = MultipoleElecPotentialOP( new MultipoleElecPotential() );
 		multipole_elec_potential_->use_polarization = options.use_polarization();
 		multipole_elec_potential_->use_gen_kirkwood = options.use_gen_kirkwood();
+		multipole_elec_potential_->Ep = options.protein_dielectric();
+		multipole_elec_potential_->Ew = options.water_dielectric();
 	}
 	return *multipole_elec_potential_;
 }

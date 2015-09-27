@@ -228,6 +228,17 @@ public:
 	void
 	use_gen_kirkwood( bool setting );
 
+	Real
+	protein_dielectric() const;
+
+	void
+	protein_dielectric( Real setting );
+
+	Real
+	water_dielectric() const;
+
+	void
+	water_dielectric( Real setting );
 
 	bool
 	exclude_DNA_DNA() const;
@@ -491,6 +502,8 @@ private:
 	bool grpelec_context_dependent_;
 	bool use_polarization_;
 	bool use_gen_kirkwood_;
+	core::Real protein_dielectric_;
+	core::Real water_dielectric_;
 	bool exclude_DNA_DNA_;
 	bool exclude_intra_res_protein_;
 	bool put_intra_into_total_;

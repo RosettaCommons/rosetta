@@ -190,6 +190,7 @@ sources = {
 		"TwelveANeighborGraph",
 		"UnfoldedStatePotential",
 		"util",
+		"VdWTinkerPotential",
 		"WaterAdductHBondPotential",
 	],
 	"core/scoring/bin_transitions": [ #Moved from core.2 because this needs to use Rama fxns.
@@ -569,6 +570,7 @@ sources = {
 		"TwoBodyEnergy",
 		"UnfoldedStateEnergy",
 		"util",
+		"VdWTinkerEnergy",
 		"WaterAdductHBondEnergy",
 		"WaterAdductIntraEnergy",
 		"WholeStructureEnergy",
