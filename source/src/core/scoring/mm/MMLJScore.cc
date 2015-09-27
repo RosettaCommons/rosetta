@@ -51,7 +51,7 @@ MMLJScore::~MMLJScore() {}
 
 /// @details blah
 Energy
-MMLJScore::score( Size atom1, Size atom2, Size path_distance, Real distance ) const
+MMLJScore::score( Size atom1, Size atom2, Size path_distance, Real distance_sq ) const
 {
 	// lookup params
 	mm_lj_param_set atom1_params, atom2_params;
@@ -65,15 +65,17 @@ MMLJScore::score( Size atom1, Size atom2, Size path_distance, Real distance ) co
 
 	// calc score
 	Real epsilon( sqrt( atom1_params.key2() * atom2_params.key2() ) );
-	Real rmin_over_dist( ( atom1_params.key1() + atom2_params.key1() ) / distance );
-	Real score( epsilon * ( pow( rmin_over_dist, 12 ) - 2 * pow( rmin_over_dist, 6 ) ) );
+	Real rminsq_over_distsq( ( atom1_params.key1() + atom2_params.key1() ) * ( atom1_params.key1() + atom2_params.key1() ) / distance_sq );
+	Real rminsq_over_distsq_third = rminsq_over_distsq * rminsq_over_distsq * rminsq_over_distsq;
 
+	Real score = epsilon * rminsq_over_distsq_third * ( rminsq_over_distsq_third - 2 );
+	
 	return score;
 }
 
 /// @details blah
 Energy
-MMLJScore::deriv_score( Size atom1, Size atom2, Size path_distance, Real distance ) const
+MMLJScore::deriv_score( Size atom1, Size atom2, Size path_distance, Real distance_sq ) const
 {
 	// lookup params
 	mm_lj_param_set atom1_params, atom2_params;
@@ -87,13 +89,20 @@ MMLJScore::deriv_score( Size atom1, Size atom2, Size path_distance, Real distanc
 
 	// calc deriv
 	Real epsilon( sqrt( atom1_params.key2() * atom2_params.key2() ) );
-	Real rmin ( atom1_params.key1() + atom2_params.key1() );
-	Real deriv( 12 * epsilon * ( ( pow( rmin, 6 ) / pow( distance, 7 ) ) - ( pow( rmin, 12 ) / pow( distance, 13 ) ) ) );
+	Real rminsq( ( atom1_params.key1() + atom2_params.key1() ) * ( atom1_params.key1() + atom2_params.key1() ) );
+	Real rmin_sixth = rminsq * rminsq * rminsq;
+	Real rmin_twelfth = rmin_sixth * rmin_sixth;
+	Real inv_dist_sq = 1/distance_sq;
+	Real inv_dist_sixth = inv_dist_sq * inv_dist_sq * inv_dist_sq;
+	//Real inv_dist_seventh = inv_dist_sixth * sqrt( inv_dist_sq );
+	Real deriv = 6 * epsilon * inv_dist_sixth * ( rmin_sixth * inv_dist_sq - rmin_twelfth * inv_dist_sixth * inv_dist_sq );
+	
+	//Real deriv = 6 * epsilon * inv_dist_seventh * ( rmin_sixth - rmin_twelfth * inv_dist_sixth );
 
 	return deriv;
 }
 
-/// @derails blah
+/// @details Notably, this returns the minimum distance, NOT the minimum dist sq
 Real
 MMLJScore::min_dist( Size atom1, Size atom2, Size path_distance ) const
 {

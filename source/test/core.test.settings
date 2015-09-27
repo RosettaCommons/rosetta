@@ -300,6 +300,7 @@ sources = {
 		"MMBondAngleScore",
 		"MMTorsionLibrary",
 		"MMTorsionScore"
+		#"MMLJEnergy"
 	],
 	"scoring/nv" : [
 		"NVlookup",

@@ -234,6 +234,8 @@ public:
 		Size & path_dist
 	) const
 	{
+		// This is not computed higher up in the chain!
+		d2 = at1.xyz().distance_squared( at2.xyz() );
 		Real rep(0), atr(0);
 		potential_.score( at1.mm_atom_type(), at2.mm_atom_type(), path_dist, d2, rep, atr );
 		return rep + atr;

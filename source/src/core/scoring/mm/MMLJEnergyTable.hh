@@ -62,17 +62,18 @@ public:
 
 	/// @brief blah
 	void
-	score( Size atom1, Size atom2, Size & path_distance, Real & squared_distance, Real & rep, Real & atr ) const;
+	score( Size atom1, Size atom2, Size path_distance, Real squared_distance, Real & rep, Real & atr ) const;
 
 	/// @brief blah
 	void
-	deriv_score( Size atom1, Size atom2, Size & path_distance, Real & squared_distance, Real & rep, Real & atr  ) const;
+	deriv_score( Size atom1, Size atom2, Size path_distance, Real squared_distance, Real & rep, Real & atr  ) const;
 
 private:
 
 	/// @brief Local MMLJLibrary for looking up lj parameters
 	mm::MMLJScore mm_lj_score_;
 
+	/*
 	MMLJScoreTable mm_atom_pair_rep_energy_table_;
 	MMLJScoreTable mm_atom_pair_atr_energy_table_;
 	MMLJScoreTable mm_atom_pair_rep_deriv_table_;
@@ -82,10 +83,11 @@ private:
 	MMLJScoreTable mm_atom_pair_atr_three_bond_energy_table_;
 	MMLJScoreTable mm_atom_pair_rep_three_bond_deriv_table_;
 	MMLJScoreTable mm_atom_pair_atr_three_bond_deriv_table_;
-
+	*/
+	
 	Real max_dist_; // in angstrom squared
-	Real bin_dist_; // in angstrom squared
-	Size bins_per_angstrom_squared_;
+	//Real bin_dist_; // in angstrom squared
+	//Size bins_per_angstrom_squared_;
 
 	Real linear_switch_point; // percent of distance at minimum
 };

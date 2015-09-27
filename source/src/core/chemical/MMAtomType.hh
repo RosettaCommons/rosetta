@@ -42,8 +42,10 @@ public:
 	MMAtomType( std::string const & name_in):
 		name_( name_in ),
 		lj_radius_( 0.0 ),
+		lj_radius_sq_( 0.0 ),
 		lj_wdepth_( 0.0 ),
 		lj_three_bond_radius_( 0.0 ),
+		lj_three_bond_radius_sq_( 0.0 ),
 		lj_three_bond_wdepth_( 0.0 )
 	{}
 
@@ -52,12 +54,18 @@ public:
 
 	/// @brief Return the LJ radius of the atom type
 	Real lj_radius() const { return lj_radius_; }
+	
+	/// @brief Return the squared LJ radius of the atom type
+	Real lj_radius_sq() const { return lj_radius_sq_; }
 
 	/// @brief Return the LJ well depth of the atom type
 	Real lj_wdepth() const { return lj_wdepth_; }
 
 	/// @brief Return the LJ radius for use when atoms types are seperated by 3 bonds
 	Real lj_three_bond_radius() const { return lj_three_bond_radius_; }
+	
+	/// @brief Return the squaredLJ radius for use when atoms types are seperated by 3 bonds
+	Real lj_three_bond_radius_sq() const { return lj_three_bond_radius_sq_; }
 
 	/// @brief Return the LJ well depth for use when atoms types are seperated by 3 bonds
 	Real lj_three_bond_wdepth() const { return lj_three_bond_wdepth_; }
@@ -72,8 +80,10 @@ private:
 
 	/// @brief Lennard-Jones parameters
 	Real lj_radius_;
+	Real lj_radius_sq_;
 	Real lj_wdepth_;
 	Real lj_three_bond_radius_;
+	Real lj_three_bond_radius_sq_;
 	Real lj_three_bond_wdepth_;
 
 };

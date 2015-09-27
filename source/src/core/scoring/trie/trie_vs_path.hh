@@ -152,7 +152,7 @@ trie_vs_path(
 					}
 				} else {
 					++s_heavy_depth;
-					DistanceSquared d2;
+					DistanceSquared d2 = 0;
 
 					if ( count_pair( r.cp_data(), s.cp_data(), weight, path_dist ) ) {
 						e = score_function.heavyatom_heavyatom_energy(r.atom(), s.atom(), d2, path_dist);
