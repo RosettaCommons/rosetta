@@ -148,8 +148,12 @@ HbondsToResidueFilter::HbondsToResidueFilter( HbondsToResidueFilter const &src )
 	bb_bb_(src.bb_bb_),
 	from_other_chains_(src.from_other_chains_),
 	from_same_chain_(src.from_same_chain_),
-	sfxn_( src.sfxn_->clone() )
-{}
+	sfxn_( )
+{
+	if( src.sfxn_ ) {
+		sfxn_ = src.sfxn_->clone();
+	}
+}
 
 bool
 HbondsToResidueFilter::apply( Pose const & pose ) const {
