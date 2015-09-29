@@ -110,21 +110,21 @@ using utility::file::FileName;
 
 void
 examine_interval( Size i, Size j, Size path_distance, Real min, Real max, Real step, core::scoring::mm::MMLJEnergyTable const & mmljet ) {
-	
+
 	for ( Real d = min; d < max; d += step ) {
-		
+
 		// arbitrary factor, just so we don't spend SO much of our time zooming in
 		Size mult = 2;
 		Real rep1, atr1, drep1, datr1;
 		Real rep2, atr2, drep2, datr2;
-		
+
 		mmljet.score( i, j, path_distance, d, rep1, atr1 );
 		mmljet.deriv_score( i, j, path_distance, d, drep1, datr1 );
-		
+
 		Real d2 = d+step;
 		mmljet.score( i, j, path_distance, d2, rep2, atr2 );
 		mmljet.deriv_score( i, j, path_distance, d2, drep2, datr2 );
-		
+
 		Real ndrep = ( rep2-rep1 )/step;
 		Real ndatr = ( atr2-atr1 )/step;
 		Real drep = ( drep1 + drep2 ) / 2;
@@ -133,7 +133,7 @@ examine_interval( Size i, Size j, Size path_distance, Real min, Real max, Real s
 			std::cout << "Confirming possible issue ( " << ndrep << " vs " << drep << " ) between " << d << " " << d2 << " at " << step << " level." << std::endl;
 			examine_interval( i, j, path_distance, d-step/mult, d+step, step/mult, mmljet );
 		}
-		
+
 		if ( ndatr - datr > step*mult || ndatr - datr < -1*step*mult ) {
 			std::cout << "Confirming possible issue ( " << ndrep << " vs " << drep << " ) between " << d << " " << d2 << " at " << step << " level." << std::endl;
 			examine_interval( i, j, path_distance, d-step/mult, d+step, step/mult, mmljet );
@@ -145,11 +145,11 @@ int
 main( int argc, char* argv[] )
 {
 	try {
-		
+
 		devel::init(argc, argv);
 		std::cout.precision(10);
 		std::cout.setf( std::ios::fixed, std:: ios::floatfield );
-		
+
 		core::scoring::mm::MMLJEnergyTable mmljet;
 		core::scoring::mm::MMLJScore mmljs;
 
@@ -193,13 +193,13 @@ main( int argc, char* argv[] )
 								std::cout << i << " " << j << " atr" << "\t" << mmljs.min_dist( i, j, path_distance ) << "\t" << d << "\t" << ndatr << "\t" << datr << std::endl;
 							}
 						}
-						
+
 						//examine_interval( i, j, path_distance, d, d+step, step, mmljet );
 					}
 				}
 			}
 		}
-	
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;

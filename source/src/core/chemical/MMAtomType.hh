@@ -54,7 +54,7 @@ public:
 
 	/// @brief Return the LJ radius of the atom type
 	Real lj_radius() const { return lj_radius_; }
-	
+
 	/// @brief Return the squared LJ radius of the atom type
 	Real lj_radius_sq() const { return lj_radius_sq_; }
 
@@ -63,7 +63,7 @@ public:
 
 	/// @brief Return the LJ radius for use when atoms types are seperated by 3 bonds
 	Real lj_three_bond_radius() const { return lj_three_bond_radius_; }
-	
+
 	/// @brief Return the squaredLJ radius for use when atoms types are seperated by 3 bonds
 	Real lj_three_bond_radius_sq() const { return lj_three_bond_radius_sq_; }
 

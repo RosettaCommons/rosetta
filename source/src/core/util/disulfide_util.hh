@@ -38,7 +38,7 @@ namespace core {
 namespace util {
 
 /// @brief Rebuild a pair of cysteines (and possibly surrounding residues) so
-///  that they form a near-ideal disulfide bond
+///  that they form a near-ideal disulfide bond.  Supports symmetric poses.
 void rebuild_disulfide( core::pose::Pose & pose,
 	core::Size lower_res, core::Size upper_res,
 	core::pack::task::PackerTaskOP packer_task = 0,

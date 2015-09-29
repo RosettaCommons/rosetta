@@ -1223,6 +1223,38 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 	} // use option "-detect_disulf" to control this
 }
 
+/// @brief Declare that a chemical bond exists between two residues
+/// @details This updates all symmetry copies, so that each one has a chemical
+/// bond between the residues in question.
+/// @author Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
+void
+SymmetricConformation::declare_chemical_bond(
+	Size seqpos1,
+	std::string const & atom_name1,
+	Size seqpos2,
+	std::string const & atom_name2
+) {
+
+	//First, declare the bond (using the base class) for the specified residues:
+	TR << "Declaring chemical bond in symmetric conformation between res " << seqpos1 << ", atom \"" << atom_name1;
+	TR << "\" and res " << seqpos2 << ",  atom \"" << atom_name2 << "\"." << std::endl;
+	core::conformation::Conformation::declare_chemical_bond( seqpos1, atom_name1, seqpos2, atom_name2 );
+
+
+	//Given seqpos1 and seqpos2, get a list of all of the pairs of residues corresponding to these
+	//two residues:
+	utility::vector1 < std::pair < core::Size, core::Size > > const symm_res_pairs( symm_info_->map_symmetric_res_pairs(seqpos1, seqpos2) );
+
+	//Loop through and declare the bond for all of the copies using the base class.
+	//
+	for ( core::Size i=1, imax=symm_res_pairs.size(); i<=imax; ++i ) {
+		TR << "Declaring chemical bond in symmetric conformation between res " << symm_res_pairs[i].first << ", atom \"" << atom_name1;
+		TR << "\" and res " << symm_res_pairs[i].second << ",  atom \"" << atom_name2 << "\"." << std::endl;
+		core::conformation::Conformation::declare_chemical_bond( symm_res_pairs[i].first, atom_name1, symm_res_pairs[i].second, atom_name2 );
+	}
+
+	return;
+}
 
 }
 } // conformation

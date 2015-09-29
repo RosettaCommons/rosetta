@@ -1060,7 +1060,7 @@ SymmetryInfo::jump_follows( Size const seqpos ) const
 
 std::vector < std::pair < Size, Size > >
 SymmetryInfo::map_symmetric_res_pairs( Size res1, Size res2 )
-{
+const {
 	std::vector < std::pair < Size, Size > > map;
 	int delta ( res2 - res1 );
 	int mapped_res;

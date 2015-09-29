@@ -182,7 +182,7 @@ ScoringManager::ScoringManager() :
 VdWTinkerPotential const &
 ScoringManager::get_VdWTinkerPotential() const
 {
-	if (vdw_tinker_potential_ == 0 ) {
+	if ( vdw_tinker_potential_ == 0 ) {
 		vdw_tinker_potential_ = VdWTinkerPotentialOP( new VdWTinkerPotential() );
 	}
 	return *vdw_tinker_potential_;

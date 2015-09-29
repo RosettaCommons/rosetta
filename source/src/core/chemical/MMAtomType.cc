@@ -26,15 +26,15 @@ MMAtomType::set_parameter( std::string const & param, Real const setting )
 	if ( param == "LJ_RADIUS" ) {
 		lj_radius_ = setting;
 		lj_radius_sq_ = setting*setting;
-	//} else if ( param == "LJ_RADIUS_SQ" ) {
-	//	lj_radius_sq_ = setting;
+		//} else if ( param == "LJ_RADIUS_SQ" ) {
+		// lj_radius_sq_ = setting;
 	} else if ( param == "LJ_WDEPTH" ) {
 		lj_wdepth_ = setting;
 	} else if ( param == "LJ_3B_RADIUS" ) {
 		lj_three_bond_radius_ = setting;
 		lj_three_bond_radius_sq_ = setting*setting;
-	//} else if ( param == "LJ_3B_RADIUS_SQ" ) {
-	//	lj_three_bond_radius_sq_ = setting;
+		//} else if ( param == "LJ_3B_RADIUS_SQ" ) {
+		// lj_three_bond_radius_sq_ = setting;
 	} else if ( param == "LJ_3B_WDEPTH" ) {
 		lj_three_bond_wdepth_ = setting;
 	} else {

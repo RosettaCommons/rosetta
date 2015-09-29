@@ -98,33 +98,43 @@ public:
 		core::pose::Pose & pose,
 		core::Size const res1,
 		core::Size const res2,
-		bool const relax_bb ) const;
+		bool const relax_bb,
+		core::scoring::ScoreFunctionOP sfxn
+	) const;
 
 	/// @brief creates disulfides given the list of pairs given
 	void make_disulfides(
 		core::pose::Pose & pose,
 		DisulfideList const & disulf,
-		bool const relax_bb ) const;
+		bool const relax_bb,
+		core::scoring::ScoreFunctionOP sfxn
+	) const;
 
 	/// @brief temporarily tries building a disulfide between the given positions, scores, and restores the pose
 	core::Real build_and_score_disulfide(
 		core::pose::Pose & blank_pose,
-		core::scoring::ScoreFunctionOP sfxn,
+		core::scoring::ScoreFunctionOP sfxn_disulfonly,
+		core::scoring::ScoreFunctionOP sfxn_full,
 		const bool relax_bb,
 		core::Size const res1,
-		core::Size const res2 ) const;
+		core::Size const res2
+	) const;
 
 	/// @brief find disulfides in the given neighborhood
 	DisulfideList find_possible_disulfides(
 		core::pose::Pose const & pose,
 		core::pack::task::residue_selector::ResidueSubset const & residueset1,
-		core::pack::task::residue_selector::ResidueSubset const & residueset2 ) const;
+		core::pack::task::residue_selector::ResidueSubset const & residueset2,
+		core::scoring::ScoreFunctionOP sfxn
+	) const;
 
 	/// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2
 	DisulfideList find_possible_disulfides(
 		core::pose::Pose const & pose,
 		std::set< core::Size > const & set1,
-		std::set< core::Size > const & set2 ) const;
+		std::set< core::Size > const & set2,
+		core::scoring::ScoreFunctionOP sfxn
+	) const;
 
 	/// @brief checks seqpos to ensure that min_loop is satisfied
 	bool check_residue_type( core::pose::Pose const & pose, core::Size const res ) const;
@@ -143,7 +153,9 @@ public:
 		core::pose::Pose & pose,
 		core::Size const res1,
 		core::Size const res2,
-		core::scoring::ScoreFunctionOP sfxn ) const;
+		core::scoring::ScoreFunctionOP sfxn_disulfonly,
+		core::scoring::ScoreFunctionOP sfxn_full
+	) const;
 
 	/// @brief checks disulfide match rt
 	bool check_disulfide_match_rt(
@@ -184,6 +196,19 @@ public: //mutators
 	/// @details By default, we use only L-cysteine (not D-cysteine).
 	void set_cys_types( bool const lcys, bool const dcys );
 
+	/// @brief Set the scorefunction to use for scoring disulfides, minimizing, and repacking.
+	/// @details Clones the input scorefunction; does not copy it.
+	void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in);
+
+	/// @brief Given a list of disulfides and a symmetric pose, prune the list to remove symmetry
+	/// duplicates.
+	/// @details Does nothing if the pose is not symmetric.
+	/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu).
+	void prune_symmetric_disulfides (
+		core::pose::Pose const &pose,
+		DisulfideList & disulf_list
+	) const;
+
 protected:
 	/// @brief Identifies disulfides for a given input pose
 	virtual bool process_pose(
@@ -212,6 +237,12 @@ private:   // other data
 	/// @brief Can disulfides involve D-cystine?
 	/// @details Default false
 	bool allow_d_cys_;
+
+	/// @brief The scorefunction that we will use for:
+	/// -- scoring disulfides
+	/// -- repacking/minimizing disulfides
+	/// @details Set by user, or obtained from globals if null.
+	core::scoring::ScoreFunctionOP sfxn_;
 
 };
 

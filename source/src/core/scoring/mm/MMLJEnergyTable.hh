@@ -84,7 +84,7 @@ private:
 	MMLJScoreTable mm_atom_pair_rep_three_bond_deriv_table_;
 	MMLJScoreTable mm_atom_pair_atr_three_bond_deriv_table_;
 	*/
-	
+
 	Real max_dist_; // in angstrom squared
 	//Real bin_dist_; // in angstrom squared
 	//Size bins_per_angstrom_squared_;

@@ -16,6 +16,8 @@
 
 // Package headers
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/util.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/Stub.hh>
@@ -1989,28 +1991,30 @@ form_disulfide(
 		form_disulfide_helper(conformation, lower_res, restype_set, preserve_d_residues, force_d_residues); //This mutates the lower_res residue to a disulfide-forming variant, preserving other variant types in the process.
 	}
 	// Break existing disulfide bonds to upper
-	if ( conformation.residue( upper_res ).has_variant_type( chemical::DISULFIDE ) ) {
-		std::string ucatom = conformation.residue_type(lower_res).get_disulfide_atom_name();
-		Size const connect_atom( conformation.residue( upper_res ).atom_index( ucatom ) );
-		Size other_res( 0 );
-		Size conn(0);
-		for ( conn = conformation.residue( upper_res ).type().n_residue_connections(); conn >= 1; --conn ) {
-			if ( Size ( conformation.residue(upper_res).type().residue_connection(conn).atomno() ) == connect_atom ) {
-				other_res = conformation.residue( upper_res ).connect_map( conn ).resid();
-				break;
+	if ( !upper_is_symm_equivalent_of_lower( conformation, lower_res, upper_res ) ) { //If the upper residue is the symmetric equivalent of the lower residue, then we've already altered its disulfide type, and can skip the next few steps.
+		if ( conformation.residue( upper_res ).has_variant_type( chemical::DISULFIDE ) ) {
+			std::string ucatom = conformation.residue_type(lower_res).get_disulfide_atom_name();
+			Size const connect_atom( conformation.residue( upper_res ).atom_index( ucatom ) );
+			Size other_res( 0 );
+			Size conn(0);
+			for ( conn = conformation.residue( upper_res ).type().n_residue_connections(); conn >= 1; --conn ) {
+				if ( Size ( conformation.residue(upper_res).type().residue_connection(conn).atomno() ) == connect_atom ) {
+					other_res = conformation.residue( upper_res ).connect_map( conn ).resid();
+					break;
+				}
 			}
-		}
-		if ( other_res == 0 ) {
-			if ( TR.Error.visible() ) TR.Error << "Error: Residue " << upper_res << " was disulfide bonded but had no partner" << std::endl;
-			utility_exit();
-		}
+			if ( other_res == 0 ) {
+				if ( TR.Error.visible() ) TR.Error << "Error: Residue " << upper_res << " was disulfide bonded but had no partner" << std::endl;
+				utility_exit();
+			}
 
-		// Break the disulfide bond to lower_res
-		bool result = change_cys_state( other_res, "", conformation );
-		runtime_assert_msg(result,"Error removing disulfide variant from "+conformation.residue(other_res).name3());
-	} else {
-		form_disulfide_helper(conformation, upper_res, restype_set, preserve_d_residues, force_d_residues); //This mutates the upper_res residue to a disulfide-forming variant, preserving other variant types in the process.
-	}
+			// Break the disulfide bond to lower_res
+			bool result = change_cys_state( other_res, "", conformation );
+			runtime_assert_msg(result,"Error removing disulfide variant from "+conformation.residue(other_res).name3());
+		} else {
+			form_disulfide_helper(conformation, upper_res, restype_set, preserve_d_residues, force_d_residues); //This mutates the upper_res residue to a disulfide-forming variant, preserving other variant types in the process.
+		}
+	} //If !upper_is_symm_equivalent_of_lower()
 
 	// Both residues are now CYD
 	runtime_assert( conformation.residue(lower_res).has_variant_type(chemical::DISULFIDE) );
@@ -2077,6 +2081,36 @@ void form_disulfide_helper(
 	conformation.replace_residue(res_index, *lower_cyd, false /*backbone already oriented*/); // doug
 
 	return;
+}
+
+/// @brief Another helper function for the form_disulfide function.
+/// @details Returns true if and only if the conformation is symmetric and upper_res is a symmetric copy of lower_res.
+/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
+bool
+upper_is_symm_equivalent_of_lower(
+	core::conformation::Conformation const &conformation,
+	core::Size const lower_res,
+	core::Size const upper_res
+) {
+	core::conformation::symmetry::SymmetricConformationCOP sym_conf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::SymmetricConformation const >(conformation.get_self_ptr()) );
+	if ( !sym_conf ) return false;
+	//From now on, can assume conformation IS symmetric.
+
+	if ( sym_conf->Symmetry_Info()->bb_is_independent( lower_res ) ) {
+		if ( sym_conf->Symmetry_Info()->bb_is_independent( upper_res ) ) return false; //If both residues are independent, they're not equivalent.
+		if ( sym_conf->Symmetry_Info()->bb_follows( upper_res ) == lower_res ) return true;  //If the upper res follows the lower, then these ARE equivalent residues.
+		return false; //Otherwise they're not, if the lower res is independent.
+	}
+	//From now on, assume lower_res depends on something
+	if ( sym_conf->Symmetry_Info()->bb_is_independent( upper_res ) ) {
+		if ( sym_conf->Symmetry_Info()->bb_follows(lower_res) == upper_res ) return true; //If the lower res follows the upper, then these ARE equivalent residues.
+		return false; //Otherwise they're not, if the upper is independent.
+	}
+
+	//From now on, lower_res and upper_res can be assumed to depend on something.  If they depend on the same thing, they're equivalent.
+	if ( sym_conf->Symmetry_Info()->bb_follows(lower_res) == sym_conf->Symmetry_Info()->bb_follows(upper_res) ) return true;
+
+	return false;
 }
 
 /// @brief Find whether there is a disulfide defined between two residues

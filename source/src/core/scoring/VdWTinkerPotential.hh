@@ -311,8 +311,8 @@ public:
 	core::Size
 	amoeba_type_lookup(
 		std::string const & atomname,
-  	std::string const & resname,
-  	std::string const & variantname
+		std::string const & resname,
+		std::string const & variantname
 	) const;
 
 	/// called prior to scoring, eg
@@ -372,14 +372,14 @@ public:
 
 	void
 	eval_residue_pair_derivatives(
-			conformation::Residue const & rsd1,
-			conformation::Residue const & rsd2,
-			VdWTinkerResidueInfo const & mp1,
-			VdWTinkerResidueInfo const & mp2,
-			pose::Pose const & pose, // provides context
-			Real const & factor,
-			utility::vector1< DerivVectorPair > & r1_atom_derivs,
-			utility::vector1< DerivVectorPair > & r2_atom_derivs
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		VdWTinkerResidueInfo const & mp1,
+		VdWTinkerResidueInfo const & mp2,
+		pose::Pose const & pose, // provides context
+		Real const & factor,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
 public:

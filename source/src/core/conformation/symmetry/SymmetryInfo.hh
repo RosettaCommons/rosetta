@@ -119,7 +119,7 @@ public:
 	Size chi_follows( Size const seqpos ) const;
 	Size jump_follows( Size const seqpos ) const;
 
-	std::vector < std::pair < Size, Size > > map_symmetric_res_pairs( Size res1, Size res2 );
+	std::vector < std::pair < Size, Size > > map_symmetric_res_pairs( Size res1, Size res2 ) const;
 
 	bool bb_is_independent( Size const seqpos ) const;
 	bool chi_is_independent( Size const seqpos ) const;

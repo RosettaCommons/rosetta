@@ -28,11 +28,16 @@
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/pack/make_symmetric_task.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
+#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
 #include <basic/Tracer.hh>
 
@@ -61,8 +66,8 @@ using core::kinematics::MoveMap;
 using core::kinematics::MoveMapOP;
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.disulfide_util" );
 
-/// @details A convenience function for calling \c core::util:: rebuild_disulfide() with
-///  only a single disulfide bond
+/// @details A convenience function for calling core::util:: rebuild_disulfide() with
+///  only a single disulfide bond.  Supports symmetric poses.
 void
 rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
 	PackerTaskOP packer_task, ScoreFunctionOP packer_score,
@@ -70,6 +75,14 @@ rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
 {
 	vector1< pair<Size,Size> > disulfides;
 	disulfides.push_back(std::make_pair(lower_res,upper_res));
+	//If this is a symmetric pose, add the equivalent positions:
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformationCOP conf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::SymmetricConformation const >( pose.conformation_ptr() ) );
+		utility::vector1< std::pair <core::Size, core::Size > > const additional_disulfides( conf->Symmetry_Info()->map_symmetric_res_pairs(lower_res,upper_res) );
+		for ( core::Size i=1, imax=additional_disulfides.size(); i<=imax; ++i ) {
+			disulfides.push_back( additional_disulfides[i] );
+		}
+	}
 	core::util:: rebuild_disulfide(pose, disulfides, packer_task, packer_score, mm, minimizer_score);
 }
 
@@ -103,9 +116,6 @@ rebuild_disulfide( core::pose::Pose & pose,
 	core::scoring::ScoreFunctionOP packer_score,
 	core::kinematics::MoveMapOP mm,
 	core::scoring::ScoreFunctionOP minimizer_score )
-//void core::util:: rebuild_disulfide( Pose & pose, vector1<pair<Size, Size> > const& disulfides,
-//  PackerTaskOP packer_task, ScoreFunctionOP packer_score,
-//  MoveMapOP mm, ScoreFunctionOP minimizer_score )
 {
 	// Quick lookup of whether a residue is a disulfide or not
 	vector1<bool> is_disulf(pose.total_residue(), false);
@@ -163,11 +173,24 @@ rebuild_disulfide( core::pose::Pose & pose,
 
 	// REPACK
 	(*packer_score)(pose); // structure must be scored before rotamer_trials can be called
-	pack::pack_rotamers(pose, *packer_score, packer_task );
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		TR << "Performing symmetric packing on disulfides." << std::endl;
+		core::pack::symmetric_pack_rotamers(pose, *packer_score, packer_task);
+	} else {
+		pack::pack_rotamers(pose, *packer_score, packer_task );
+	}
 
 	using namespace core::optimization;
-	AtomTreeMinimizer().run( pose, *mm, *minimizer_score,
-		MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		TR << "Performing symmetric minimization on disulfides." << std::endl;
+		core::kinematics::MoveMapOP symm_mm( mm->clone() );
+		core::pose::symmetry::make_symmetric_movemap( pose, *symm_mm );
+		core::optimization::symmetry::SymAtomTreeMinimizer symm_minimizer;
+		(*minimizer_score)(pose);
+		symm_minimizer.run( pose, *symm_mm, *minimizer_score, MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
+	} else {
+		AtomTreeMinimizer().run( pose, *mm, *minimizer_score, MinimizerOptions( "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/ ) );
+	}
 
 	// update score
 	pose.update_residue_neighbors();

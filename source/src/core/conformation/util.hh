@@ -357,6 +357,16 @@ void form_disulfide_helper(
 	bool const force_d_residues
 );
 
+/// @brief Another helper function for the form_disulfide function.
+/// @details Returns true if and only if the conformation is symmetric and upper_res is a symmetric copy of lower_res.
+/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
+bool
+upper_is_symm_equivalent_of_lower(
+	core::conformation::Conformation const &conformation,
+	core::Size const lower_res,
+	core::Size const upper_res
+);
+
 id::NamedAtomID
 atom_id_to_named_atom_id(
 	id::AtomID const & atom_id,
@@ -378,6 +388,7 @@ stub_id_to_named_stub_id(
 
 
 /// @brief  Is the query atom in this residue axial or equatorial to the given ring or neither?
+///
 chemical::rings::AxEqDesignation is_atom_axial_or_equatorial_to_ring(
 	Residue const & residue,
 	uint query_atom,

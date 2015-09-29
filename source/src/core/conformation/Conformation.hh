@@ -558,6 +558,8 @@ public:  // Bonds, Connections, Atoms, & Stubs
 
 
 	/// @brief Declare that a chemical bond exists between two residues
+	///
+	virtual
 	void
 	declare_chemical_bond(
 		Size seqpos1,

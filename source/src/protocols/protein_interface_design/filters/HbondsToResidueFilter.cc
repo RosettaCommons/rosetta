@@ -150,7 +150,7 @@ HbondsToResidueFilter::HbondsToResidueFilter( HbondsToResidueFilter const &src )
 	from_same_chain_(src.from_same_chain_),
 	sfxn_( )
 {
-	if( src.sfxn_ ) {
+	if ( src.sfxn_ ) {
 		sfxn_ = src.sfxn_->clone();
 	}
 }

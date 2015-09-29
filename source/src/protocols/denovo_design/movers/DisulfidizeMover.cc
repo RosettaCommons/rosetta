@@ -26,14 +26,20 @@
 #include <protocols/simple_moves/MutateResidue.hh>
 
 //Core Headers
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pack/task/residue_selector/NeighborhoodResidueSelector.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
 #include <core/util/disulfide_util.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 //Basic Headers
 #include <basic/datacache/DataMap.hh>
@@ -81,18 +87,19 @@ DisulfidizeMoverCreator::mover_name()
 ///
 DisulfidizeMover::DisulfidizeMover() :
 	protocols::rosetta_scripts::MultiplePoseMover(),
-	match_rt_limit_( 1.0 ),
-	max_disulf_score_( -0.25 ),
+	match_rt_limit_( 2.0 ),
+	max_disulf_score_( 1.5 ),
 	min_loop_( 8 ),
 	min_disulfides_( 1 ),
 	max_disulfides_( 3 ),
 	include_current_ds_( false ),
 	keep_current_ds_( false ),
-	score_or_matchrt_( true ),
+	score_or_matchrt_( false ),
 	set1_selector_(),
 	set2_selector_(),
 	allow_l_cys_(true),
-	allow_d_cys_(false)
+	allow_d_cys_(false),
+	sfxn_()
 {
 	set_rosetta_scripts_tag( utility::tag::TagOP( new utility::tag::Tag() ) );
 }
@@ -112,8 +119,13 @@ DisulfidizeMover::DisulfidizeMover( DisulfidizeMover const &src ) :
 	set1_selector_( src.set1_selector_ ), //Copies the const owning pointer -- points to same object!
 	set2_selector_( src.set2_selector_ ), //Copies the const owning pointer -- points to same object!
 	allow_l_cys_( src.allow_l_cys_ ),
-	allow_d_cys_( src.allow_d_cys_ )
-{}
+	allow_d_cys_( src.allow_d_cys_ ),
+	sfxn_() //Cloned below, if it exists.  NULL pointer is possible, too.
+{
+	if ( src.sfxn_ ) {
+		sfxn_=src.sfxn_->clone(); //Copy the source scorefunction, if it exists.
+	}
+}
 
 /// @brief destructor - this class has no dynamic allocation, so
 DisulfidizeMover::~DisulfidizeMover()
@@ -178,6 +190,59 @@ DisulfidizeMover::set_cys_types( bool const lcys, bool const dcys ) {
 	return;
 }
 
+/// @brief Set the scorefunction to use for scoring disulfides, minimizing, and repacking.
+/// @details Clones the input scorefunction; does not copy it.
+void
+DisulfidizeMover::set_scorefxn(
+	core::scoring::ScoreFunctionCOP sfxn_in
+) {
+	sfxn_=sfxn_in->clone();
+	return;
+}
+
+/// @brief Given a list of disulfides and a symmetric pose, prune the list to remove symmetry
+/// duplicates.
+/// @details Does nothing if the pose is not symmetric.
+/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu).
+void
+DisulfidizeMover::prune_symmetric_disulfides (
+	core::pose::Pose const &pose,
+	DisulfideList & disulf_list
+) const {
+	//Number of disulfides in the input list:
+	core::Size const ndisulf(disulf_list.size());
+	if ( ndisulf < 2 ) return; //Nothing to prune.
+
+	//Output list (starts empty):
+	DisulfideList disulf_list_out;
+
+	//Get an owning pointer to the symmetric conformation:
+	core::conformation::symmetry::SymmetricConformationCOP symm_conf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::SymmetricConformation const >( pose.conformation_ptr() ) );
+	if ( !symm_conf ) return; //Do nothing if the conformation is not symmetric.
+
+	disulf_list_out.push_back( disulf_list[1] ); //Store the first disulfide (can't be redundant, since it's the first).
+
+	for ( core::Size i=2; i<ndisulf; ++i ) { //Loop through the input list, starting with the second entry.
+		utility::vector1 < std::pair < core::Size, core::Size > > const equivalent_positions( symm_conf->Symmetry_Info()->map_symmetric_res_pairs( disulf_list[i].first, disulf_list[i].second ) );
+		bool in_list(false);
+		for ( core::Size j=1, jmax=equivalent_positions.size(); j<=jmax; ++j ) {
+			for ( core::Size k=1; k<i; ++k ) {
+				if ( ( disulf_list[k].first == equivalent_positions[j].first && disulf_list[k].second == equivalent_positions[j].second) ||
+						( disulf_list[k].first == equivalent_positions[j].second && disulf_list[k].second == equivalent_positions[j].first) ) {
+					in_list=true;
+					break;
+				}
+			}
+			if ( in_list ) break;
+		}
+		if ( !in_list ) disulf_list_out.push_back( disulf_list[i] ); //Store this disulfide if it's not redundant.
+	}
+
+	disulf_list = disulf_list_out; //Replace the old disulf list.
+
+	return;
+}
+
 void
 DisulfidizeMover::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -186,6 +251,9 @@ DisulfidizeMover::parse_my_tag(
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
+	if ( tag->hasOption("scorefxn") ) {
+		set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
+	}
 	if ( tag->hasOption( "match_rt_limit" ) ) {
 		set_match_rt_limit( tag->getOption< core::Real >( "match_rt_limit" ) );
 	}
@@ -231,8 +299,16 @@ DisulfidizeMover::process_pose(
 	core::pose::Pose & pose,
 	utility::vector1 < core::pose::PoseOP > & additional_poses )
 {
+	bool const is_symmetric( core::pose::symmetry::is_symmetric(pose) ); //Is the pose symmetric?
+
+	core::scoring::ScoreFunctionOP sfxn( sfxn_ ? sfxn_->clone() : core::scoring::get_score_function() );
+	if ( is_symmetric ) {
+		runtime_assert_string_msg( core::pose::symmetry::is_symmetric(*sfxn), "Error in protocols::denovo_design::movers::DisulfidizeMover::process_pose().  A symmetric scorefunction must be provided for symmetric poses." );
+	}
+
 	DisulfideList current_ds = find_current_disulfides( pose );
-	if ( TR.visible() ) TR << "Current disulfides are: " << current_ds << std::endl;
+	if ( current_ds.size() > 0 ) { TR << "Current disulfides are: " << current_ds << std::endl; }
+	else { TR << "No disulfides were already present in the pose." << std::endl; }
 
 	if ( !keep_current_ds_ ) {
 		mutate_disulfides_to_ala( pose, current_ds ); //Updated for D-cys, VKM 17 Aug 2015.
@@ -249,11 +325,19 @@ DisulfidizeMover::process_pose(
 	}
 
 	// create initial list of possible disulfides between residue subset 1 and subset 2
-	DisulfideList disulf_partners = find_possible_disulfides( pose, subset1, subset2 ); //Updated for D-residues
+	DisulfideList disulf_partners = find_possible_disulfides( pose, subset1, subset2, sfxn ); //Updated for D-residues
 	if ( include_current_ds_ ) {
 		for ( DisulfideList::const_iterator ds=current_ds.begin(), endds=current_ds.end(); ds!=endds; ++ds ) {
 			disulf_partners.push_back( *ds );
 		}
+	}
+	if ( disulf_partners.size() > 0 ) TR << "Potential disulfides are: " << disulf_partners << std::endl;
+	else TR << "No potential disulfides found." << std::endl;
+
+	//If the pose is symmetric, prune the disulfide list to eliminate redundant disulfide pairs:
+	if ( disulf_partners.size() > 0  && is_symmetric ) {
+		prune_symmetric_disulfides( pose, disulf_partners );
+		TR << "After pruning disulfide symmetry copies, potential disulfides are: " << disulf_partners << std::endl;
 	}
 
 	if ( disulf_partners.size() == 0 ) {
@@ -291,7 +375,7 @@ DisulfidizeMover::process_pose(
 			}
 
 			core::pose::PoseOP disulf_copy_pose( pose.clone() );
-			make_disulfides( *disulf_copy_pose, *ds_config, false ); //Should be D-residue compatible.
+			make_disulfides( *disulf_copy_pose, *ds_config, false, sfxn ); //Should be D-residue compatible.
 			tag_disulfides( *disulf_copy_pose, *ds_config );
 			results.push_back( disulf_copy_pose );
 		}
@@ -434,8 +518,9 @@ DisulfidizeMover::DisulfideList
 DisulfidizeMover::find_possible_disulfides(
 	core::pose::Pose const & pose,
 	core::pack::task::residue_selector::ResidueSubset const & residueset1,
-	core::pack::task::residue_selector::ResidueSubset const & residueset2 ) const
-{
+	core::pack::task::residue_selector::ResidueSubset const & residueset2,
+	core::scoring::ScoreFunctionOP sfxn
+) const {
 	if ( TR.visible() ) TR << "FINDING DISULF" << std::endl;
 
 	// figure out which positions are "central" positions - I presume these are positions from which DS bonds can emanate.
@@ -460,7 +545,7 @@ DisulfidizeMover::find_possible_disulfides(
 		}
 	}
 	if ( TR.visible() ) TR << "]" << std::endl;
-	return find_possible_disulfides( pose, resid_set1, resid_set2 );
+	return find_possible_disulfides( pose, resid_set1, resid_set2, sfxn );
 }
 
 /// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2
@@ -468,8 +553,9 @@ DisulfidizeMover::DisulfideList
 DisulfidizeMover::find_possible_disulfides(
 	core::pose::Pose const & pose,
 	std::set< core::Size > const & set1,
-	std::set< core::Size > const & set2 ) const
-{
+	std::set< core::Size > const & set2,
+	core::scoring::ScoreFunctionOP sfxn
+) const {
 	DisulfideList disulf_partners;
 
 	// for "match-rt" scoring
@@ -479,7 +565,11 @@ DisulfidizeMover::find_possible_disulfides(
 	core::pose::Pose pose_copy = pose;
 	construct_poly_ala_pose( pose_copy, false, set1, set2 ); //Updated to work with D-residues.
 
-	core::scoring::ScoreFunctionOP sfxn_disulfide_only = core::scoring::ScoreFunctionOP(new core::scoring::ScoreFunction());
+	core::scoring::ScoreFunctionOP sfxn_disulfide_only (
+		core::pose::symmetry::is_symmetric(pose) ?
+		core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction() ) :
+		core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() )
+	);
 	sfxn_disulfide_only->set_weight(core::scoring::dslf_fa13, 1.0);
 
 	for ( std::set< core::Size >::const_iterator itr=set1.begin(), end=set1.end(); itr!=end; ++itr ) {
@@ -516,7 +606,7 @@ DisulfidizeMover::find_possible_disulfides(
 			}
 
 			// disulfide rosetta score
-			bool good_score = check_disulfide_score( pose_copy, *itr, *itr2, sfxn_disulfide_only ); //Updated for D-residues
+			bool good_score = check_disulfide_score( pose_copy, *itr, *itr2, sfxn_disulfide_only, sfxn ); //Updated for D-residues
 
 			// stop if we need good score AND matchrt
 			if ( !score_or_matchrt_ && !good_score ) {
@@ -583,8 +673,9 @@ DisulfidizeMover::make_disulfide(
 	core::pose::Pose & pose,
 	core::Size const res1,
 	core::Size const res2,
-	bool const relax_bb ) const
-{
+	bool const relax_bb,
+	core::scoring::ScoreFunctionOP sfxn
+) const {
 	if ( TR.Debug.visible() ) TR.Debug << "build_disulf between " << res1 << " and " << res2 << std::endl;
 	// create movemap which allows only chi to move
 	core::kinematics::MoveMapOP mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap());
@@ -596,9 +687,9 @@ DisulfidizeMover::make_disulfide(
 	core::conformation::form_disulfide( pose.conformation(), res1, res2, allow_d_cys_, !allow_l_cys_ ); //Updated for D-residues
 	core::util::rebuild_disulfide( pose, res1, res2,
 		NULL, //task
-		NULL, //sfxn
+		sfxn, //sfxn
 		mm, // movemap
-		NULL // min sfxn
+		sfxn // min sfxn
 	); //Seems already to work with D-residues
 }
 
@@ -607,10 +698,11 @@ void
 DisulfidizeMover::make_disulfides(
 	core::pose::Pose & pose,
 	DisulfidizeMover::DisulfideList const & disulf,
-	bool const relax_bb ) const
-{
+	bool const relax_bb,
+	core::scoring::ScoreFunctionOP sfxn
+) const {
 	for ( DisulfideList::const_iterator itr=disulf.begin(); itr != disulf.end(); ++itr ) {
-		make_disulfide( pose, (*itr).first, (*itr).second, relax_bb );
+		make_disulfide( pose, (*itr).first, (*itr).second, relax_bb, sfxn );
 	}
 }
 
@@ -618,12 +710,14 @@ DisulfidizeMover::make_disulfides(
 core::Real
 DisulfidizeMover::build_and_score_disulfide(
 	core::pose::Pose & blank_pose,
-	core::scoring::ScoreFunctionOP sfxn,
+	core::scoring::ScoreFunctionOP sfxn_disulfonly,
+	core::scoring::ScoreFunctionOP sfxn_full,
 	const bool relax_bb,
 	core::Size const res1,
 	core::Size const res2
 ) const {
-	assert( sfxn );
+	assert( sfxn_disulfonly );
+	assert( sfxn_full );
 	assert( res1 );
 	assert( res2 );
 	assert( res1 <= blank_pose.total_residue() );
@@ -635,9 +729,9 @@ DisulfidizeMover::build_and_score_disulfide(
 	core::conformation::Residue old_res1 = blank_pose.residue(res1);
 	core::conformation::Residue old_res2 = blank_pose.residue(res2);
 
-	make_disulfide( blank_pose, res1, res2, relax_bb );
+	make_disulfide( blank_pose, res1, res2, relax_bb, sfxn_full );
 
-	core::Real const score = (*sfxn)(blank_pose) * 0.50;
+	core::Real const score = (*sfxn_disulfonly)(blank_pose) * 0.50;
 
 	// restore saved residues
 	blank_pose.replace_residue(res1, old_res1, false);
@@ -691,12 +785,11 @@ DisulfidizeMover::check_disulfide_score(
 	core::pose::Pose & pose,
 	core::Size const res1,
 	core::Size const res2,
-	core::scoring::ScoreFunctionOP sfxn ) const
+	core::scoring::ScoreFunctionOP sfxn_disulfonly,
+	core::scoring::ScoreFunctionOP sfxn_full
+) const
 {
-	core::Real const disulfide_fa_score =
-		build_and_score_disulfide( pose, sfxn,
-		false, // relax bb
-		res1, res2 );
+	core::Real const disulfide_fa_score ( build_and_score_disulfide( pose, sfxn_disulfonly, sfxn_full, false /*relax_bb*/, res1, res2 ) );
 	if ( TR.visible() ) TR << "DISULF FA SCORE RES " << res1 << " " << res2 << " " << disulfide_fa_score << std::endl;
 	bool const retval = ( disulfide_fa_score <= max_disulf_score_ );
 	if ( TR.visible() && !retval ) {

@@ -88,20 +88,20 @@ VdWShouldItCount(
 	Size const & atm
 )
 {
-//		if( rsd.atom_name( atm ) == " CB " ||  rsd.atom_name( atm ) == " O  " )  {
-//		if( rsd.atom_name( atm ) == " CB " )  {
-//			return true;
-//		}
+	//  if( rsd.atom_name( atm ) == " CB " ||  rsd.atom_name( atm ) == " O  " )  {
+	//  if( rsd.atom_name( atm ) == " CB " )  {
+	//   return true;
+	//  }
 
 
-		if( rsd.seqpos() == 2 ) return false;
+	if ( rsd.seqpos() == 2 ) return false;
 
-//		if( rsd.atom_name( atm ) == " C  " ||  rsd.atom_name( atm ) == " O  " ||  rsd.atom_name( atm ) == " CB " ) {
-		if( rsd.atom_name( atm ) == " CB " ) {
-			return true;
-		} else {
-			return false;
-		}
+	//  if( rsd.atom_name( atm ) == " C  " ||  rsd.atom_name( atm ) == " O  " ||  rsd.atom_name( atm ) == " CB " ) {
+	if ( rsd.atom_name( atm ) == " CB " ) {
+		return true;
+	} else {
+		return false;
+	}
 
 }
 
@@ -132,10 +132,10 @@ VdWTinkerPoseInfo::VdWTinkerPoseInfo( VdWTinkerPoseInfo const & src ):
 		residue_info_[i] = src.residue_info_[i]->copy_clone();
 		if ( src.placeholder_residue_[i] ) {
 			placeholder_residue_[i] = src.placeholder_residue_[i]->clone();
- 			placeholder_info_[i] = src.placeholder_info_[i]->copy_clone();
+			placeholder_info_[i] = src.placeholder_info_[i]->copy_clone();
 		} else {
 			placeholder_residue_[i] = 0;
- 			placeholder_info_[i] = 0;
+			placeholder_info_[i] = 0;
 		}
 	}
 	being_packed_ = src.being_packed_;
@@ -199,9 +199,9 @@ VdWTinkerPotential::read_in_amoeba_parameters() {
 	// First read in vdw type parameters
 	/////////////////////////////////////
 	std::string type_file_name = basic::database::full_name( "chemical/amoeba/amoeba09_types.txt" );
-  std::ifstream types_file( type_file_name.c_str() );
-  std::string input_line;
-  while( getline( types_file, input_line ) ) {
+	std::ifstream types_file( type_file_name.c_str() );
+	std::string input_line;
+	while ( getline( types_file, input_line ) ) {
 		//TR << "Processing line: " << input_line << std::endl;
 		utility::vector1< std::string > tokens( utility::split_whitespace( input_line ) );
 		Size const num_tokens( tokens.size() );
@@ -222,18 +222,18 @@ void
 VdWTinkerPotential::read_in_vdw_tinker_parameters() {
 
 	std::string vdw_file_name = basic::database::full_name( "chemical/amoeba/amoeba09_vdw_params.txt" );
-  std::ifstream vdw_file( vdw_file_name.c_str() );
+	std::ifstream vdw_file( vdw_file_name.c_str() );
 	std::string input_line;
 
 	// Find the maximum vdw type number
-	while( getline( vdw_file, input_line ) ) {
+	while ( getline( vdw_file, input_line ) ) {
 
 		//TR << "Processing line: " << input_line << std::endl;
 
 		utility::vector1< std::string > tokens( utility::split_whitespace( input_line ) );
 		Size const num_tokens( tokens.size() );
 
-//		Size const vdw_type( static_cast<core::Size>( boost::lexical_cast< core::Size >( tokens[ 2 ] ) ) );
+		//  Size const vdw_type( static_cast<core::Size>( boost::lexical_cast< core::Size >( tokens[ 2 ] ) ) );
 		Real const vdw_radius( static_cast<core::Real>( boost::lexical_cast< core::Real >( tokens[ 3 ] ) ) );
 		Real const vdw_depth( static_cast<core::Real>( boost::lexical_cast< core::Real >( tokens[ 4 ] ) ) );
 		Real const vdw_reduce( num_tokens == 5 ? static_cast<core::Real>( boost::lexical_cast< core::Real >( tokens[ 5 ] ) ) : 1.0 );
@@ -259,8 +259,8 @@ VdWTinkerPotential::amoeba_type_lookup(
 ) const
 {
 
-  std::string const not_variant( "NONE" );
-  core::Size type( 0 );
+	std::string const not_variant( "NONE" );
+	core::Size type( 0 );
 
 	// Lookup default value w/o variant info
 	std::string tmp_key = atomname + resname;
@@ -269,29 +269,29 @@ VdWTinkerPotential::amoeba_type_lookup(
 
 	//TR << "Querying key X" << tmp_key << "X" << std::endl;
 	map_it = type_lookup_.find( tmp_key );
-	if(map_it != type_lookup_.end() ) {
+	if ( map_it != type_lookup_.end() ) {
 		type = map_it->second;
 	}
 
-	if( !utility::trimmed_compare( variantname, not_variant ) ) {
+	if ( !utility::trimmed_compare( variantname, not_variant ) ) {
 		std::string tmp_key2 = atomname + resname + variantname;
 		tmp_key2.erase( std::remove_if( tmp_key2.begin(), tmp_key2.end(), ::isspace ), tmp_key2.end() );
 		// Only overwrite default if an entry is found
 
 		//TR << "Querying key X" << tmp_key2 << "X" << std::endl;
 		map_it = type_lookup_.find( tmp_key2 );
-		if(map_it != type_lookup_.end() ) {
+		if ( map_it != type_lookup_.end() ) {
 			type = map_it->second;
 		}
 	}
 
 	// Give a holler if nothing has been found
 
-  if( type == 0 ) {
-    TR << "PROBLEM - NO VDW TYPE FOUND FOR " << atomname << " " << resname << " " << variantname << std::endl;
-  }
+	if ( type == 0 ) {
+		TR << "PROBLEM - NO VDW TYPE FOUND FOR " << atomname << " " << resname << " " << variantname << std::endl;
+	}
 
-  return type;
+	return type;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -302,32 +302,32 @@ VdWTinkerPotential::assign_residue_amoeba_type(
 	VdWTinkerResidueInfo & vdw
 ) const
 {
-		utility::vector1< std::string > parsed_resname( utility::string_split_simple( rsd.name(), ':' ) );
-		std::string resname( parsed_resname[1] );
+	utility::vector1< std::string > parsed_resname( utility::string_split_simple( rsd.name(), ':' ) );
+	std::string resname( parsed_resname[1] );
 
-		// Handle variants
-		std::string variantname( "NONE" );
-		if( parsed_resname.size() == 2 ) {
+	// Handle variants
+	std::string variantname( "NONE" );
+	if ( parsed_resname.size() == 2 ) {
 		//TR << "Using variant specialization " << parsed_resname[2] << std::endl;
-			variantname = parsed_resname[2];
-		} else if ( parsed_resname.size() > 2 ) {
-//			TR << "MULTIPLE VARIANT SITUATION -> NOT YET CODED!!!" << std::endl;
-//			TR << "Full resname is " << rsd.name() <<  std::endl;
-//			TR << "Using parsed resname " << parsed_resname[2] <<  std::endl;
-//			TR << "Using first variant name only!!!" << std::endl;
-			variantname = parsed_resname[2];
-			//for( Size ivar = 1 ; ivar <= parsed_resname.size() ; ++ivar ) {
-			//TR << "Residue info " << parsed_resname[ ivar ] << std::endl;
-			//}
-		}
+		variantname = parsed_resname[2];
+	} else if ( parsed_resname.size() > 2 ) {
+		//   TR << "MULTIPLE VARIANT SITUATION -> NOT YET CODED!!!" << std::endl;
+		//   TR << "Full resname is " << rsd.name() <<  std::endl;
+		//   TR << "Using parsed resname " << parsed_resname[2] <<  std::endl;
+		//   TR << "Using first variant name only!!!" << std::endl;
+		variantname = parsed_resname[2];
+		//for( Size ivar = 1 ; ivar <= parsed_resname.size() ; ++ivar ) {
+		//TR << "Residue info " << parsed_resname[ ivar ] << std::endl;
+		//}
+	}
 
-		for( Size j = 1 ; j <= rsd.natoms() ; j++ ) {
-			//TR << "Residue " << resname << " Atom " << rsd.atom_name( j )   << std::endl;
-			// Lookup amoeba type
-			core::Size this_type( amoeba_type_lookup( rsd.atom_name(j), resname, variantname ) );
-			//TR << "Found Amoeba VdW type " << this_type << std::endl;
-			vdw.nonconst_vdw_type( j ) = this_type;
-		}
+	for ( Size j = 1 ; j <= rsd.natoms() ; j++ ) {
+		//TR << "Residue " << resname << " Atom " << rsd.atom_name( j )   << std::endl;
+		// Lookup amoeba type
+		core::Size this_type( amoeba_type_lookup( rsd.atom_name(j), resname, variantname ) );
+		//TR << "Found Amoeba VdW type " << this_type << std::endl;
+		vdw.nonconst_vdw_type( j ) = this_type;
+	}
 }
 
 void
@@ -368,7 +368,7 @@ VdWTinkerPotential::setup_for_scoring(
 	pose::Pose & pose
 ) const
 {
-//	TR << "in setup_for_scoring use_nblist is " << pose.energies().use_nblist() << std::endl;
+	// TR << "in setup_for_scoring use_nblist is " << pose.energies().use_nblist() << std::endl;
 
 	VdWTinkerPoseInfoOP vdw_info;
 
@@ -382,18 +382,18 @@ VdWTinkerPotential::setup_for_scoring(
 		assign_all_amoeba_types( pose );
 	}
 
-//	TR << "In setup_for_scoring, past initialization" << std::endl;
+	// TR << "In setup_for_scoring, past initialization" << std::endl;
 
-		// These shouldn't be necessary, but I don't know how to
-		// transfer from RotamerSetInfo to ResidueInfo
-		// The lines with the extra indent are only necessary because
-		// RotamerSetInfo isn't automatically transferred to ResidueInfo
-		// after a repack.
+	// These shouldn't be necessary, but I don't know how to
+	// transfer from RotamerSetInfo to ResidueInfo
+	// The lines with the extra indent are only necessary because
+	// RotamerSetInfo isn't automatically transferred to ResidueInfo
+	// after a repack.
 
-		vdw_info->initialize( pose );
-		assign_all_amoeba_types( pose );
+	vdw_info->initialize( pose );
+	assign_all_amoeba_types( pose );
 
-//	TR << "Exiting setup_for_scoring" << std::endl;
+	// TR << "Exiting setup_for_scoring" << std::endl;
 
 }
 
@@ -412,7 +412,7 @@ VdWTinkerPotential::setup_for_packing(
 
 	// jjh Commenting out for now.  First need to get regular scoring done.  Worry
 	// about packing later.
-	#ifdef NOTDEF
+#ifdef NOTDEF
 	PROF_START( basic::GB_SETUP_FOR_PACKING );
 
 	VdWTinkerPoseInfoOP vdw_info;
@@ -437,7 +437,7 @@ VdWTinkerPotential::setup_for_packing(
 	pose.data().set( core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO, vdw_info );
 
 	PROF_STOP( basic::GB_SETUP_FOR_PACKING );
-	#endif
+#endif
 
 }
 
@@ -509,10 +509,10 @@ VdWTinkerPotential::get_res_res_vdw(
 		cpfxn = etable::count_pair::CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3 );
 	}
 
-	for( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
-		if( rsd1.is_virtual( atm1 ) ) continue;
+	for ( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
+		if ( rsd1.is_virtual( atm1 ) ) continue;
 
-//		if( !VdWShouldItCount( rsd1, atm1 ) ) continue;
+		//  if( !VdWShouldItCount( rsd1, atm1 ) ) continue;
 
 		Real const rad1( vdw_radius_[ vdw1.vdw_type( atm1 ) ] );
 		Real const dep1( vdw_depth_[ vdw1.vdw_type( atm1 ) ] );
@@ -520,7 +520,7 @@ VdWTinkerPotential::get_res_res_vdw(
 
 		// Hydrogens are shifted towards their heavy atom base
 		Vector p1;
-		if( rsd1.atom_is_hydrogen( atm1 ) ) {
+		if ( rsd1.atom_is_hydrogen( atm1 ) ) {
 			Vector delta( rsd1.xyz( atm1 ) - rsd1.xyz( rsd1.atom_base( atm1 ) ) );
 			delta *= red1;
 			p1 = rsd1.xyz( rsd1.atom_base( atm1 ) ) + delta;
@@ -528,12 +528,12 @@ VdWTinkerPotential::get_res_res_vdw(
 			p1 = rsd1.xyz( atm1 );
 		}
 
-		for( Size atm2 = (same_res ? atm1 : 1 ) ; atm2 <= natoms2 ; ++atm2 ) {
-			if( rsd2.is_virtual( atm2 ) ) continue;
+		for ( Size atm2 = (same_res ? atm1 : 1 ) ; atm2 <= natoms2 ; ++atm2 ) {
+			if ( rsd2.is_virtual( atm2 ) ) continue;
 
 			Real atom_atomE(0.0);
 
-//			if( !VdWShouldItCount( rsd2, atm2 ) ) continue;
+			//   if( !VdWShouldItCount( rsd2, atm2 ) ) continue;
 
 			Real const rad2( vdw_radius_[ vdw2.vdw_type( atm2 ) ] );
 			Real const dep2( vdw_depth_[ vdw2.vdw_type( atm2 ) ] );
@@ -541,7 +541,7 @@ VdWTinkerPotential::get_res_res_vdw(
 
 			// Hydrogens are shifted towards their heavy atom base
 			Vector p2;
-			if( rsd2.atom_is_hydrogen( atm2 ) ) {
+			if ( rsd2.atom_is_hydrogen( atm2 ) ) {
 				Vector delta( rsd2.xyz( atm2 ) - rsd2.xyz( rsd2.atom_base( atm2 ) ) );
 				delta *= red2;
 				p2 = rsd2.xyz( rsd2.atom_base( atm2 ) ) + delta;
@@ -571,10 +571,10 @@ VdWTinkerPotential::get_res_res_vdw(
 		}
 	}
 
-//	TR << "res-res energy between " << rsd1.seqpos() << " and " << rsd2.seqpos() << " is " << vdwE << std::endl;
+	// TR << "res-res energy between " << rsd1.seqpos() << " and " << rsd2.seqpos() << " is " << vdwE << std::endl;
 
-//	TR << "res-res interaction between residue " << rsd1.seqpos() << " and " << rsd2.seqpos() << std::endl;
-//	TR << "Returning vdwE of " << vdwE << std::endl;
+	// TR << "res-res interaction between residue " << rsd1.seqpos() << " and " << rsd2.seqpos() << std::endl;
+	// TR << "Returning vdwE of " << vdwE << std::endl;
 
 	return vdwE;
 }
@@ -583,14 +583,14 @@ VdWTinkerPotential::get_res_res_vdw(
 
 void
 VdWTinkerPotential::eval_residue_pair_derivatives(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		VdWTinkerResidueInfo const &,
-		VdWTinkerResidueInfo const &,
-		pose::Pose const & pose, // provides context
-		Real const & factor,
-		utility::vector1< DerivVectorPair > & r1_at_derivs,
-		utility::vector1< DerivVectorPair > & r2_at_derivs
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	VdWTinkerResidueInfo const &,
+	VdWTinkerResidueInfo const &,
+	pose::Pose const & pose, // provides context
+	Real const & factor,
+	utility::vector1< DerivVectorPair > & r1_at_derivs,
+	utility::vector1< DerivVectorPair > & r2_at_derivs
 ) const
 {
 	using namespace etable::count_pair;
@@ -622,10 +622,10 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 		cpfxn = etable::count_pair::CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_3 );
 	}
 
-	for( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
-		if( rsd1.is_virtual( atm1 ) ) continue;
+	for ( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
+		if ( rsd1.is_virtual( atm1 ) ) continue;
 
-//		if( !VdWShouldItCount( rsd1, atm1 ) ) continue;
+		//  if( !VdWShouldItCount( rsd1, atm1 ) ) continue;
 
 		Real const rad1( vdw_radius_[ vdw1.vdw_type( atm1 ) ] );
 		Real const dep1( vdw_depth_[ vdw1.vdw_type( atm1 ) ] );
@@ -633,7 +633,7 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 
 		// Hydrogens are shifted towards their heavy atom base
 		Vector p1;
-		if( rsd1.atom_is_hydrogen( atm1 ) ) {
+		if ( rsd1.atom_is_hydrogen( atm1 ) ) {
 			Vector delta( rsd1.xyz( atm1 ) - rsd1.xyz( rsd1.atom_base( atm1 ) ) );
 			delta *= red1;
 			p1 = rsd1.xyz( rsd1.atom_base( atm1 ) ) + delta;
@@ -641,10 +641,10 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 			p1 = rsd1.xyz( atm1 );
 		}
 
-		for( Size atm2 = (same_res ? atm1 : 1 ) ; atm2 <= natoms2 ; ++atm2 ) {
-			if( rsd2.is_virtual( atm2 ) ) continue;
+		for ( Size atm2 = (same_res ? atm1 : 1 ) ; atm2 <= natoms2 ; ++atm2 ) {
+			if ( rsd2.is_virtual( atm2 ) ) continue;
 
-//			if( !VdWShouldItCount( rsd2, atm2 ) ) continue;
+			//   if( !VdWShouldItCount( rsd2, atm2 ) ) continue;
 
 			Real const rad2( vdw_radius_[ vdw2.vdw_type( atm2 ) ] );
 			Real const dep2( vdw_depth_[ vdw2.vdw_type( atm2 ) ] );
@@ -652,7 +652,7 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 
 			// Hydrogens are shifted towards their heavy atom base
 			Vector p2;
-			if( rsd2.atom_is_hydrogen( atm2 ) ) {
+			if ( rsd2.atom_is_hydrogen( atm2 ) ) {
 				Vector delta( rsd2.xyz( atm2 ) - rsd2.xyz( rsd2.atom_base( atm2 ) ) );
 				delta *= red2;
 				p2 = rsd2.xyz( rsd2.atom_base( atm2 ) ) + delta;
@@ -678,8 +678,8 @@ VdWTinkerPotential::eval_residue_pair_derivatives(
 
 				Real const dEdr( -1.0*eff_dep*factor*( factor1*dfactor2 + factor2*dfactor1 )/eff_rad );
 
-//				Vector const & Rij( p2 - p1 );
-//				Real const dist2( Rij.magnitude_squared() );
+				//    Vector const & Rij( p2 - p1 );
+				//    Real const dist2( Rij.magnitude_squared() );
 				Vector const deriv_dr_f1( p2.cross_product( p1 ) );
 				Vector const deriv_dr_f2( p2 - p1 );
 

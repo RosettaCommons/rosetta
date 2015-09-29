@@ -231,6 +231,18 @@ public:
 	void
 	detect_disulfides( utility::vector1< Size > const & disulf_one = utility::vector1< Size >(), utility::vector1< Size > const & disulf_two = utility::vector1< Size >() );
 
+	/// @brief Declare that a chemical bond exists between two residues
+	/// @details This updates all symmetry copies, so that each one has a chemical
+	/// bond between the residues in question.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
+	virtual
+	void
+	declare_chemical_bond(
+		Size seqpos1,
+		std::string const & atom_name1,
+		Size seqpos2,
+		std::string const & atom_name2
+	);
 
 private:
 

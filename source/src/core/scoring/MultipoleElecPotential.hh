@@ -578,12 +578,12 @@ public:
 		Real monopole_in,
 		Vector & dipole_in,
 		Matrix & quadrupole_in ) :
-	coord_type_( coord_type_in ),
-	atom_type_( atom_type_in ),
-	chirality_sign_( chirality_sign_in ),
-	monopole_( monopole_in ),
-	dipole_( dipole_in ),
-	quadrupole_( quadrupole_in ) {}
+		coord_type_( coord_type_in ),
+		atom_type_( atom_type_in ),
+		chirality_sign_( chirality_sign_in ),
+		monopole_( monopole_in ),
+		dipole_( dipole_in ),
+		quadrupole_( quadrupole_in ) {}
 
 	MultipoleParameterOP
 	clone() const
@@ -679,8 +679,8 @@ public:
 	core::Size
 	amoeba_type_lookup(
 		std::string const & atomname,
-  	std::string const & resname,
-  	std::string const & variantname
+		std::string const & resname,
+		std::string const & variantname
 	) const;
 
 	/// called prior to scoring, eg
@@ -821,14 +821,14 @@ public:
 
 	void
 	eval_residue_pair_derivatives(
-			conformation::Residue const & rsd1,
-			conformation::Residue const & rsd2,
-			MultipoleElecResidueInfo const & mp1,
-			MultipoleElecResidueInfo const & mp2,
-			pose::Pose const & pose, // provides context
-			Real const & factor,
-			utility::vector1< DerivVectorPair > & r1_atom_derivs,
-			utility::vector1< DerivVectorPair > & r2_atom_derivs
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		MultipoleElecResidueInfo const & mp1,
+		MultipoleElecResidueInfo const & mp2,
+		pose::Pose const & pose, // provides context
+		Real const & factor,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
 public:

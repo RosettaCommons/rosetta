@@ -30,6 +30,7 @@
 #include <core/io/pdb/file_data.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
 
 // Utility headers
@@ -100,8 +101,8 @@ public:
 			additional = disulf.get_additional_output();
 		}
 
-		// there should be three results
-		TS_ASSERT_EQUALS( poses.size(), 57 );
+		// there should be five results
+		TS_ASSERT_EQUALS( poses.size(), 5 );
 
 		// each should have disulfides
 		std::set< core::Size > num_disulf;
@@ -188,7 +189,8 @@ public:
 		m2.apply( *posecopy );
 		TS_ASSERT_EQUALS( posecopy->residue(30).name3(), "ALA" );
 		TS_ASSERT_EQUALS( posecopy->residue(47).name3(), "ALA" );
-		disulf.make_disulfide( *posecopy, 30, 47, false );
+		core::scoring::ScoreFunctionOP sfxn_full( core::scoring::get_score_function() );
+		disulf.make_disulfide( *posecopy, 30, 47, false, sfxn_full );
 		TS_ASSERT_EQUALS( posecopy->residue(30).name(), "CYS:disulfide" );
 		TS_ASSERT_EQUALS( posecopy->residue(47).name(), "CYS:disulfide" );
 
@@ -197,10 +199,10 @@ public:
 		sfxn->set_weight( core::scoring::dslf_fa13, 1.0 );
 		m1.apply( *posecopy );
 		m2.apply( *posecopy );
-		TS_ASSERT( disulf.check_disulfide_score( *posecopy, 47, 30, sfxn ) );
+		TS_ASSERT( disulf.check_disulfide_score( *posecopy, 47, 30, sfxn, sfxn_full ) );
 		m1.apply( *posecopy );
 		m2.apply( *posecopy );
-		TS_ASSERT( !disulf.check_disulfide_score( *posecopy, 46, 30, sfxn ) );
+		TS_ASSERT( !disulf.check_disulfide_score( *posecopy, 46, 30, sfxn, sfxn_full ) );
 
 		// check match rt
 		core::scoring::disulfides::DisulfideMatchingPotential disulfPot;
@@ -216,7 +218,7 @@ public:
 		TS_ASSERT( residueset1[1] );
 		TR << residueset2[1] << std::endl;
 		DisulfidizeMover::DisulfideList disulfs =
-			disulf.find_possible_disulfides( input_pose, residueset1, residueset2 );
+			disulf.find_possible_disulfides( input_pose, residueset1, residueset2, sfxn_full );
 
 		TR << "Pair\tRes1\tRes2" << std::endl;
 		for ( core::Size i=1, imax=disulfs.size(); i<=imax; ++i ) {
@@ -227,25 +229,17 @@ public:
 		input_pose.dump_pdb("disulfidize_temp.pdb");
 #endif
 
-		TS_ASSERT_EQUALS( disulfs.size(), 6 );
-		TS_ASSERT_EQUALS( disulfs[1].first, 2 );
-		TS_ASSERT_EQUALS( disulfs[1].second, 15 );
-		TS_ASSERT_EQUALS( disulfs[2].first, 3 );
-		TS_ASSERT_EQUALS( disulfs[2].second, 22 );
-		TS_ASSERT_EQUALS( disulfs[3].first, 3 );
-		TS_ASSERT_EQUALS( disulfs[3].second, 43 );
-		TS_ASSERT_EQUALS( disulfs[4].first, 5 );
-		TS_ASSERT_EQUALS( disulfs[4].second, 26 );
-		TS_ASSERT_EQUALS( disulfs[5].first, 30 );
-		TS_ASSERT_EQUALS( disulfs[5].second, 47 );
-		TS_ASSERT_EQUALS( disulfs[6].first, 39 );
-		TS_ASSERT_EQUALS( disulfs[6].second, 46 );
+		TS_ASSERT_EQUALS( disulfs.size(), 2 );
+		TS_ASSERT_EQUALS( disulfs[1].first, 5 );
+		TS_ASSERT_EQUALS( disulfs[1].second, 26 );
+		TS_ASSERT_EQUALS( disulfs[2].first, 30 );
+		TS_ASSERT_EQUALS( disulfs[2].second, 47 );
 
 		DisulfidizeMover::DisulfideList empty_disulfide_list;
 		utility::vector1< DisulfidizeMover::DisulfideList > disulfide_configurations =
 			disulf.recursive_multiple_disulfide_former( empty_disulfide_list, disulfs );
 
-		TS_ASSERT_EQUALS( disulfide_configurations.size(), 36 );
+		TS_ASSERT_EQUALS( disulfide_configurations.size(), 3 );
 
 
 		// test recursive function

@@ -88,20 +88,20 @@ ShouldItCount(
 	Size const & atm
 )
 {
-//		if( rsd.atom_name( atm ) == " CB " ||  rsd.atom_name( atm ) == " O  " )  {
-//		if( rsd.atom_name( atm ) == " CB " )  {
-//			return true;
-//		}
+	//  if( rsd.atom_name( atm ) == " CB " ||  rsd.atom_name( atm ) == " O  " )  {
+	//  if( rsd.atom_name( atm ) == " CB " )  {
+	//   return true;
+	//  }
 
 
-		if( rsd.seqpos() == 2 ) return false;
+	if ( rsd.seqpos() == 2 ) return false;
 
-//		if( rsd.atom_name( atm ) == " C  " ||  rsd.atom_name( atm ) == " O  " ||  rsd.atom_name( atm ) == " CB " ) {
-		if( rsd.atom_name( atm ) == " CB " ) {
-			return true;
-		} else {
-			return false;
-		}
+	//  if( rsd.atom_name( atm ) == " C  " ||  rsd.atom_name( atm ) == " O  " ||  rsd.atom_name( atm ) == " CB " ) {
+	if ( rsd.atom_name( atm ) == " CB " ) {
+		return true;
+	} else {
+		return false;
+	}
 
 }
 
@@ -150,10 +150,10 @@ MultipoleElecResidueInfo::initialize( conformation::Residue const & rsd )
 		Efield_rf_induced_[ i ] = 0.0;
 		quadrupole_[ i ] = 0.0;
 		my_group_[ i ].clear();
-			if( rsd.xyz(i).x() != rsd.xyz(i).x() ) {
-				TR << "initialize stuff Problem in coord! " << rsd.seqpos() << " res " << rsd.name() << " atom " << rsd.atom_name( i ) << std::endl;
-				std::exit(1);
-			}
+		if ( rsd.xyz(i).x() != rsd.xyz(i).x() ) {
+			TR << "initialize stuff Problem in coord! " << rsd.seqpos() << " res " << rsd.name() << " atom " << rsd.atom_name( i ) << std::endl;
+			std::exit(1);
+		}
 	}
 }
 
@@ -171,10 +171,10 @@ MultipoleElecPoseInfo::MultipoleElecPoseInfo( MultipoleElecPoseInfo const & src 
 		residue_info_[i] = src.residue_info_[i]->copy_clone();
 		if ( src.placeholder_residue_[i] ) {
 			placeholder_residue_[i] = src.placeholder_residue_[i]->clone();
- 			placeholder_info_[i] = src.placeholder_info_[i]->copy_clone();
+			placeholder_info_[i] = src.placeholder_info_[i]->copy_clone();
 		} else {
 			placeholder_residue_[i] = 0;
- 			placeholder_info_[i] = 0;
+			placeholder_info_[i] = 0;
 		}
 	}
 	being_packed_ = src.being_packed_;
@@ -238,9 +238,9 @@ MultipoleElecPotential::read_in_amoeba_parameters() {
 	// First read in multipole parameters
 	/////////////////////////////////////
 	std::string type_file_name = basic::database::full_name( "chemical/amoeba/amoeba09_types.txt" );
-  std::ifstream types_file( type_file_name.c_str() );
-  std::string input_line;
-  while( getline( types_file, input_line ) ) {
+	std::ifstream types_file( type_file_name.c_str() );
+	std::string input_line;
+	while ( getline( types_file, input_line ) ) {
 		//TR << "Processing line: " << input_line << std::endl;
 		utility::vector1< std::string > tokens( utility::split_whitespace( input_line ) );
 		Size const num_tokens( tokens.size() );
@@ -250,7 +250,7 @@ MultipoleElecPotential::read_in_amoeba_parameters() {
 		utility::trim( atomname, " " );
 		//TR << "Atom name " << atomname << " Residue name " << tokens[3];
 		std::string new_key = atomname + tokens[3];
-		for( Size ivar = 1 ; ivar <= num_variant_qualifiers ; ++ivar ) {
+		for ( Size ivar = 1 ; ivar <= num_variant_qualifiers ; ++ivar ) {
 			new_key = new_key + tokens[4];
 			//TR << "   " << tokens[ ivar + 3 ];
 		}
@@ -267,7 +267,7 @@ void
 MultipoleElecPotential::read_in_multipole_parameters() {
 
 	std::string multipole_file_name = basic::database::full_name( "chemical/amoeba/amoeba09_multipole_params.txt" );
-  std::ifstream multipole_file( multipole_file_name.c_str() );
+	std::ifstream multipole_file( multipole_file_name.c_str() );
 	std::string input_line;
 
 	MultipoleAxisType axis;
@@ -278,7 +278,7 @@ MultipoleElecPotential::read_in_multipole_parameters() {
 
 	utility::vector1< int > type_keys( 4, 0 );
 
-	while( getline( multipole_file, input_line ) ) {
+	while ( getline( multipole_file, input_line ) ) {
 
 		//TR << "Processing line: " << input_line << std::endl;
 
@@ -291,12 +291,12 @@ MultipoleElecPotential::read_in_multipole_parameters() {
 		chirality_check = 1.0;
 
 		//TR << "Found " << num_tokens << " tokens in line: " << "\n" << input_line << "\n";
-		for( Size k = 1 ; k <= type_keys.size(); ++k ) {
+		for ( Size k = 1 ; k <= type_keys.size(); ++k ) {
 			type_keys[k] = 0.0;
 		}
 
 		// Read in the type keys
-		for( Size k = 1 ; k <= (num_tokens - 2) ; ++k ) {
+		for ( Size k = 1 ; k <= (num_tokens - 2) ; ++k ) {
 			type_keys[ k ] = static_cast<core::Size>( boost::lexical_cast< core::Size >( tokens[ k + 1 ] ) );
 		}
 
@@ -328,7 +328,7 @@ MultipoleElecPotential::read_in_multipole_parameters() {
 			//TR << "Three-fold axis definition" << std::endl;
 		} else {
 			axis = z_then_x;
-			if( type_keys[4] < 0 ) {
+			if ( type_keys[4] < 0 ) {
 				chirality_check = -1.0;
 				type_keys[4] = -type_keys[4];
 			}
@@ -362,7 +362,7 @@ MultipoleElecPotential::read_in_multipole_parameters() {
 		getline( multipole_file, input_line );
 
 		utility::vector1< Size > amoeba_type_keys( 4, 0 );
-		for( Size k = 1 ; k <= type_keys.size(); ++k ) {
+		for ( Size k = 1 ; k <= type_keys.size(); ++k ) {
 			amoeba_type_keys[k] = static_cast< Size >( type_keys[k] );
 		}
 
@@ -378,9 +378,9 @@ MultipoleElecPotential::read_in_multipole_parameters() {
 	// Next read in polarization parameters
 	///////////////////////////////////////
 	std::string polarization_file_name = basic::database::full_name( "chemical/amoeba/amoeba09_polarize_params.txt" );
-  std::ifstream polarization_file( polarization_file_name.c_str() );
+	std::ifstream polarization_file( polarization_file_name.c_str() );
 
-	while( getline( polarization_file, input_line ) ) {
+	while ( getline( polarization_file, input_line ) ) {
 		utility::vector1< std::string > tokens( utility::split_whitespace( input_line ) );
 		Size const num_tokens( tokens.size() );
 
@@ -393,13 +393,13 @@ MultipoleElecPotential::read_in_multipole_parameters() {
 		Real const thole( static_cast<core::Real>( boost::lexical_cast< core::Real >( tokens[4] ) ) );
 		utility::vector1< Size > group_members;
 
-		if( num_tokens > 4 ) {
-			for( Size k = 5 ; k <= num_tokens ; ++k ) {
+		if ( num_tokens > 4 ) {
+			for ( Size k = 5 ; k <= num_tokens ; ++k ) {
 				group_members.push_back(  static_cast<core::Size>( boost::lexical_cast< core::Size >( tokens[ k ] ) ) );
 			}
 			//TR << "This type has " << group_members.size() << " defined group types" << std::endl;
 			//for( Size k = 1 ; k <= group_members.size() ; ++k ) {
-			//	TR << " Type " << group_members[k] << "   ";
+			// TR << " Type " << group_members[k] << "   ";
 			//}
 			//TR << std::endl;
 		}
@@ -409,9 +409,9 @@ MultipoleElecPotential::read_in_multipole_parameters() {
 		std::pair<
 			std::multimap< Size, MultipoleParameter::MultipoleParameterOP >::const_iterator,
 			std::multimap< Size, MultipoleParameter::MultipoleParameterOP >::const_iterator >
-				key_range = multipole_info_.equal_range( this_type );
+			key_range = multipole_info_.equal_range( this_type );
 
-		for( std::multimap< Size, MultipoleParameter::MultipoleParameterOP >::const_iterator it = key_range.first ;
+		for ( std::multimap< Size, MultipoleParameter::MultipoleParameterOP >::const_iterator it = key_range.first ;
 				it != key_range.second; ++it ) {
 			MultipoleParameter::MultipoleParameterOP this_mp( it->second );
 			this_mp->polarity() = polarity;
@@ -427,29 +427,29 @@ MultipoleElecPotential::read_in_multipole_parameters() {
 
 void
 MultipoleElecPotential::find_params_and_neighbors(
-		core::pose::Pose const & pose,
-    MultipoleParameterOP & mp_param,
-		MultipoleElecResidueInfo & mp,
-    core::conformation::Residue const & rsd,
-    Size const j,
-    Size const this_type
+	core::pose::Pose const & pose,
+	MultipoleParameterOP & mp_param,
+	MultipoleElecResidueInfo & mp,
+	core::conformation::Residue const & rsd,
+	Size const j,
+	Size const this_type
 ) const
 {
 	using namespace id;
 
-	if( rsd.is_virtual( j ) ) return;
+	if ( rsd.is_virtual( j ) ) return;
 
 	// I feel dirty doing this, but I really need to know if this
 	// residue is part of the pose or just a rotamer.
 	bool const is_a_rotamer( &rsd != &(pose.residue( rsd.seqpos() )) );
 
-//	if( is_a_rotamer ) {
-//		TR << "I must be a rotamer!" << std::endl;
-//	} else {
-//		TR << "I am not a rotamer!" << std::endl;
-//	}
+	// if( is_a_rotamer ) {
+	//  TR << "I must be a rotamer!" << std::endl;
+	// } else {
+	//  TR << "I am not a rotamer!" << std::endl;
+	// }
 
-//	MultipoleElecPoseInfoCOP multipole_info;
+	// MultipoleElecPoseInfoCOP multipole_info;
 	MultipoleElecPoseInfo const & multipole_info( static_cast< MultipoleElecPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO)));
 
 	//multipole_info = utility::pointer::static_pointer_cast< MultipoleElecPoseInfoCOP const & >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) );
@@ -458,28 +458,28 @@ MultipoleElecPotential::find_params_and_neighbors(
 	std::pair<
 		std::multimap< Size, MultipoleParameter::MultipoleParameterOP >::const_iterator,
 		std::multimap< Size, MultipoleParameter::MultipoleParameterOP >::const_iterator >
-			key_range = multipole_info_.equal_range( this_type );
+		key_range = multipole_info_.equal_range( this_type );
 
 	mp.my_local_coord_frame( j ).clear();
 
-//	TR << "This type is " << this_type << std::endl;
+	// TR << "This type is " << this_type << std::endl;
 
-	for( std::multimap< Size, MultipoleParameter::MultipoleParameterOP >::const_iterator it = key_range.first ;
+	for ( std::multimap< Size, MultipoleParameter::MultipoleParameterOP >::const_iterator it = key_range.first ;
 			it != key_range.second; ++it ) {
 		MultipoleParameter::MultipoleParameterOP this_mp( it->second );
-//		TR << "Type is " << this_mp->coord_type() << "  Keys are " << it->second->atom_type()[1] << "   " << it->second->atom_type()[2] << "   " << it->second->atom_type()[3] << "   " << it->second->atom_type()[4] << std::endl;
+		//  TR << "Type is " << this_mp->coord_type() << "  Keys are " << it->second->atom_type()[1] << "   " << it->second->atom_type()[2] << "   " << it->second->atom_type()[3] << "   " << it->second->atom_type()[4] << std::endl;
 		// This part depends on the type of axis definition
 
 		// Make a vector of AtomIDs to hold the bonded neighbors for this atom
 		AtomID this_id( j, rsd.seqpos() );
-//		utility::vector1< AtomID > const & bonded( pose.conformation().bonded_neighbor_all_res( this_id ) );
+		//  utility::vector1< AtomID > const & bonded( pose.conformation().bonded_neighbor_all_res( this_id ) );
 		utility::vector1< AtomID > bonded;
-		if( is_a_rotamer ) {
-			for( Size idummy = 1 ; idummy <= rsd.nbrs( j ).size() ; ++idummy ) {
+		if ( is_a_rotamer ) {
+			for ( Size idummy = 1 ; idummy <= rsd.nbrs( j ).size() ; ++idummy ) {
 				bonded.push_back( AtomID( rsd.nbrs( j )[ idummy ], rsd.seqpos() ) );
 			}
 		} else {
-			 bonded = pose.conformation().bonded_neighbor_all_res( this_id );
+			bonded = pose.conformation().bonded_neighbor_all_res( this_id );
 		}
 
 		// Try to be clever here for corner cases.  For rare rotamers that require an atom
@@ -487,44 +487,44 @@ MultipoleElecPotential::find_params_and_neighbors(
 		// an AtomID to the bonded vector may work.  The cost is that 'bonded' can no longer
 		// be merely a reference to a vector, since it will be modified.  This involves copying.
 
-		if( is_a_rotamer &&
+		if ( is_a_rotamer &&
 				rsd.has_upper_connect() &&
 				( rsd.upper_connect_atom() == j ) &&
 				pose.residue( rsd.seqpos() + 1 ).has_lower_connect() ) {
-//			TR << "Adding a connection neighbor" << std::endl;
+			//   TR << "Adding a connection neighbor" << std::endl;
 			Size const nxt_atm( pose.residue( rsd.seqpos() + 1 ).lower_connect_atom() );
 			Residue const & nxt_rsd( pose.residue( rsd.seqpos() + 1 ) );
 			bonded.push_back( AtomID( nxt_atm, nxt_rsd.seqpos() ) );
 		}
 
-//		TR << "Atom has " << bonded.size() << " bonded neighbors" << std::endl;
-//		for( Size idummy = 1 ; idummy <= bonded.size() ; ++idummy ) {
-//			MultipoleElecResidueInfo const & chk_mp( multipole_info.residue_info( bonded[idummy].rsd() ) );
-//			if( is_a_rotamer && ( rsd.seqpos() == bonded[ idummy ].rsd() ) ) {
-//				TR << "Doing the rotamer thing" << std::endl;
-//				TR << "Atom name " << rsd.atom_name( bonded[idummy].atomno() )  << std::endl;
-//				TR << "Atom index " << bonded[idummy].atomno() << std::endl;
-//				TR << "Rot style Rsd, atom " << rsd.seqpos() << ", " << j << " bonded neighbor " << idummy << " is rsd " << bonded[idummy].rsd() << " atom " << rsd.atom_name( bonded[idummy].atomno() ) << " type " << mp.type( bonded[idummy].atomno() ) << std::endl;
-//			} else {
-//				TR << "Doing the residue thing" << std::endl;
-//				TR << "Rsd, atom " << rsd.seqpos() << ", " << j << " bonded neighbor " << idummy << " is rsd " << bonded[idummy].rsd() << " atom " << pose.residue(bonded[idummy].rsd()).atom_name( bonded[idummy].atomno() ) << " type " << chk_mp.type( bonded[idummy].atomno() ) << std::endl;
-//			}
-//		}
+		//  TR << "Atom has " << bonded.size() << " bonded neighbors" << std::endl;
+		//  for( Size idummy = 1 ; idummy <= bonded.size() ; ++idummy ) {
+		//   MultipoleElecResidueInfo const & chk_mp( multipole_info.residue_info( bonded[idummy].rsd() ) );
+		//   if( is_a_rotamer && ( rsd.seqpos() == bonded[ idummy ].rsd() ) ) {
+		//    TR << "Doing the rotamer thing" << std::endl;
+		//    TR << "Atom name " << rsd.atom_name( bonded[idummy].atomno() )  << std::endl;
+		//    TR << "Atom index " << bonded[idummy].atomno() << std::endl;
+		//    TR << "Rot style Rsd, atom " << rsd.seqpos() << ", " << j << " bonded neighbor " << idummy << " is rsd " << bonded[idummy].rsd() << " atom " << rsd.atom_name( bonded[idummy].atomno() ) << " type " << mp.type( bonded[idummy].atomno() ) << std::endl;
+		//   } else {
+		//    TR << "Doing the residue thing" << std::endl;
+		//    TR << "Rsd, atom " << rsd.seqpos() << ", " << j << " bonded neighbor " << idummy << " is rsd " << bonded[idummy].rsd() << " atom " << pose.residue(bonded[idummy].rsd()).atom_name( bonded[idummy].atomno() ) << " type " << chk_mp.type( bonded[idummy].atomno() ) << std::endl;
+		//   }
+		//  }
 
 		// First handle ions etc., that have no higher moments
-		if( this_mp->coord_type() == none ) {
+		if ( this_mp->coord_type() == none ) {
 			mp_param = this_mp;
 			return;
-		// Now handle atoms that have rotational symmetry
+			// Now handle atoms that have rotational symmetry
 		} else if ( this_mp->coord_type() == z_axis_only ) {
 			//TR << "Trying Z-axis only system" << std::endl;
 			// Find the first atom with the required amoeba type in the residue
-			for( Size ichk = 1 ; ichk <= bonded.size() ; ichk++ ) {
+			for ( Size ichk = 1 ; ichk <= bonded.size() ; ichk++ ) {
 				Size const chk_atom( bonded[ ichk ].atomno() );
 				Size const chk_res( bonded[ ichk ].rsd() );
 				bool use_local( is_a_rotamer && ( chk_res == rsd.seqpos() ) );
 				MultipoleElecResidueInfo const & chk_mp( use_local ? mp : multipole_info.residue_info( chk_res ) );
-				if( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
+				if ( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
 					mp_param = this_mp;
 					mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
 					//TR << "Found match!" << std::endl;
@@ -533,22 +533,22 @@ MultipoleElecPotential::find_params_and_neighbors(
 			}
 
 			continue;
-		// Now handle bisector systems
+			// Now handle bisector systems
 		} else if ( this_mp->coord_type() == bisector ) {
 			//TR << "Trying Bisector system" << std::endl;
 			// Find the first atom with the required amoeba type in the residue
-			for( Size ichk = 1 ; ichk <= bonded.size() ; ichk++ ) {
+			for ( Size ichk = 1 ; ichk <= bonded.size() ; ichk++ ) {
 				Size const chk_atom( bonded[ ichk ].atomno() );
 				Size const chk_res( bonded[ ichk ].rsd() );
 				bool use_local( is_a_rotamer && ( chk_res == rsd.seqpos() ) );
 				MultipoleElecResidueInfo const & chk_mp( use_local ? mp : multipole_info.residue_info( chk_res ) );
-				if( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
-					for( Size ichk2 = ichk + 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
+				if ( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
+					for ( Size ichk2 = ichk + 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
 						Size const chk_atom2( bonded[ ichk2 ].atomno() );
 						Size const chk_res2( bonded[ ichk2 ].rsd() );
 						bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
 						MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
-						if( this_mp->atom_type()[3] == chk_mp2.type( chk_atom2 ) ) {
+						if ( this_mp->atom_type()[3] == chk_mp2.type( chk_atom2 ) ) {
 							mp_param = this_mp;
 							mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
 							mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
@@ -562,24 +562,24 @@ MultipoleElecPotential::find_params_and_neighbors(
 		} else if ( this_mp->coord_type() == z_then_bisector ) {
 			//TR << "Trying Z-Then-Bisector system" << std::endl;
 			// In the current set, all involved atoms are one bond away
-			for( Size ichk = 1 ; ichk <= bonded.size() ; ichk++ ) {
+			for ( Size ichk = 1 ; ichk <= bonded.size() ; ichk++ ) {
 				Size const chk_atom( bonded[ ichk ].atomno() );
 				Size const chk_res( bonded[ ichk ].rsd() );
 				bool use_local( is_a_rotamer && ( chk_res == rsd.seqpos() ) );
 				MultipoleElecResidueInfo const & chk_mp( use_local ? mp : multipole_info.residue_info( chk_res ) );
-				if( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
-					for( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
+				if ( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
+					for ( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
 						Size const chk_atom2( bonded[ ichk2 ].atomno() );
 						Size const chk_res2( bonded[ ichk2 ].rsd() );
 						bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
 						MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
-						if( this_mp->atom_type()[3] == chk_mp2.type( chk_atom2 ) ) {
-							for( Size ichk3 = ichk2 + 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
+						if ( this_mp->atom_type()[3] == chk_mp2.type( chk_atom2 ) ) {
+							for ( Size ichk3 = ichk2 + 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
 								Size const chk_atom3( bonded[ ichk3 ].atomno() );
 								Size const chk_res3( bonded[ ichk3 ].rsd() );
 								bool use_local_3( is_a_rotamer && ( chk_res3 == rsd.seqpos() ) );
 								MultipoleElecResidueInfo const & chk_mp3( use_local_3 ? mp : multipole_info.residue_info( chk_res3 ) );
-								if( this_mp->atom_type()[4] == chk_mp3.type( chk_atom3 ) ) {
+								if ( this_mp->atom_type()[4] == chk_mp3.type( chk_atom3 ) ) {
 									mp_param = this_mp;
 									mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
 									mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
@@ -595,24 +595,24 @@ MultipoleElecPotential::find_params_and_neighbors(
 		} else if ( this_mp->coord_type() == three_fold ) {
 			//TR << "Trying Three-Fold system" << std::endl;
 			// In the current set, all involved atoms are one bond away
-			for( Size ichk = 1 ; ichk <= bonded.size() ; ichk++ ) {
+			for ( Size ichk = 1 ; ichk <= bonded.size() ; ichk++ ) {
 				Size const chk_atom( bonded[ ichk ].atomno() );
 				Size const chk_res( bonded[ ichk ].rsd() );
 				bool use_local( is_a_rotamer && ( chk_res == rsd.seqpos() ) );
 				MultipoleElecResidueInfo const & chk_mp( use_local ? mp : multipole_info.residue_info( chk_res ) );
-				if( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
-					for( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
+				if ( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
+					for ( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
 						Size const chk_atom2( bonded[ ichk2 ].atomno() );
 						Size const chk_res2( bonded[ ichk2 ].rsd() );
 						bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
 						MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
-						if( this_mp->atom_type()[3] == chk_mp2.type( chk_atom2 ) ) {
-							for( Size ichk3 = 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
+						if ( this_mp->atom_type()[3] == chk_mp2.type( chk_atom2 ) ) {
+							for ( Size ichk3 = 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
 								Size const chk_atom3( bonded[ ichk3 ].atomno() );
 								Size const chk_res3( bonded[ ichk3 ].rsd() );
 								bool use_local_3( is_a_rotamer && ( chk_res3 == rsd.seqpos() ) );
 								MultipoleElecResidueInfo const & chk_mp3( use_local_3 ? mp : multipole_info.residue_info( chk_res3 ) );
-								if( this_mp->atom_type()[4] == chk_mp3.type( chk_atom3 ) ) {
+								if ( this_mp->atom_type()[4] == chk_mp3.type( chk_atom3 ) ) {
 									mp_param = this_mp;
 									mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
 									mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
@@ -643,20 +643,20 @@ MultipoleElecPotential::find_params_and_neighbors(
 
 			//TR << "Trying Z-Then-X system" << std::endl;
 
-			for( Size ichk = 1 ; ichk <= bonded.size() ; ichk++ ) {
+			for ( Size ichk = 1 ; ichk <= bonded.size() ; ichk++ ) {
 				Size const chk_atom( bonded[ ichk ].atomno() );
 				Size const chk_res( bonded[ ichk ].rsd() );
 				bool use_local( is_a_rotamer && ( chk_res == rsd.seqpos() ) );
 				MultipoleElecResidueInfo const & chk_mp( use_local ? mp : multipole_info.residue_info( chk_res ) );
-				if( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
-					for( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
+				if ( this_mp->atom_type()[2] == chk_mp.type( chk_atom ) ) {
+					for ( Size ichk2 = 1 ; ichk2 <= bonded.size() ; ichk2++ ) {
 						Size const chk_atom2( bonded[ ichk2 ].atomno() );
 						Size const chk_res2( bonded[ ichk2 ].rsd() );
 						bool use_local_2( is_a_rotamer && ( chk_res2 == rsd.seqpos() ) );
 						MultipoleElecResidueInfo const & chk_mp2( use_local_2 ? mp : multipole_info.residue_info( chk_res2 ) );
-						if( ( this_mp->atom_type()[3] == chk_mp2.type( chk_atom2 ) ) &&
+						if ( ( this_mp->atom_type()[3] == chk_mp2.type( chk_atom2 ) ) &&
 								( ichk2 != ichk ) ) {
-							if( this_mp->atom_type()[4] == 0 ) {
+							if ( this_mp->atom_type()[4] == 0 ) {
 								// This is the simple, achiral case
 								mp_param = this_mp;
 								mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
@@ -665,12 +665,12 @@ MultipoleElecPotential::find_params_and_neighbors(
 								return;
 							} else {
 								// Chiral case - look for the third match
-								for( Size ichk3 = 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
+								for ( Size ichk3 = 1 ; ichk3 <= bonded.size() ; ichk3++ ) {
 									Size const chk_atom3( bonded[ ichk3 ].atomno() );
 									Size const chk_res3( bonded[ ichk3 ].rsd() );
 									bool use_local_3( is_a_rotamer && ( chk_res3 == rsd.seqpos() ) );
 									MultipoleElecResidueInfo const & chk_mp3( use_local_3 ? mp : multipole_info.residue_info( chk_res3 ) );
-									if( this_mp->atom_type()[4] == chk_mp3.type( chk_atom3 ) ) {
+									if ( this_mp->atom_type()[4] == chk_mp3.type( chk_atom3 ) ) {
 										mp_param = this_mp;
 										mp.my_local_coord_frame( j ).push_back( bonded[ ichk ] );
 										mp.my_local_coord_frame( j ).push_back( bonded[ ichk2 ] );
@@ -685,15 +685,15 @@ MultipoleElecPotential::find_params_and_neighbors(
 				}
 			}
 
-			for( Size iatom = 1 ; iatom <= rsd.natoms() ; ++iatom ) {
-				if( ( rsd.path_distance( j, iatom ) == 1 ) &&
+			for ( Size iatom = 1 ; iatom <= rsd.natoms() ; ++iatom ) {
+				if ( ( rsd.path_distance( j, iatom ) == 1 ) &&
 						( mp.type( iatom ) == this_mp->atom_type()[2] ) ) {
-					for( Size iatom2 = 1 ; iatom2 <= rsd.natoms() ; ++iatom2 ) {
-						if( ( ( rsd.path_distance( j, iatom2 )  == 1 ) ||
+					for ( Size iatom2 = 1 ; iatom2 <= rsd.natoms() ; ++iatom2 ) {
+						if ( ( ( rsd.path_distance( j, iatom2 )  == 1 ) ||
 								( rsd.path_distance( j, iatom2 ) == 2 ) ) &&
 								( mp.type( iatom2 ) == this_mp->atom_type()[3] ) &&
 								( iatom != iatom2 ) ) {
-							if( this_mp->atom_type()[4] == 0 ) {
+							if ( this_mp->atom_type()[4] == 0 ) {
 								// This is the simple, achiral case
 								mp_param = this_mp;
 								mp.my_local_coord_frame( j ).push_back( AtomID( iatom, rsd.seqpos()  ) );
@@ -702,8 +702,8 @@ MultipoleElecPotential::find_params_and_neighbors(
 								return;
 							} else {
 								// Chiral case - look for the third match
-								for( Size iatom3 = 1 ; iatom3 <= rsd.natoms() ; ++iatom3 ) {
-									if( ( ( rsd.path_distance( j, iatom3 )  == 1 ) ||
+								for ( Size iatom3 = 1 ; iatom3 <= rsd.natoms() ; ++iatom3 ) {
+									if ( ( ( rsd.path_distance( j, iatom3 )  == 1 ) ||
 											( rsd.path_distance( j, iatom3 ) == 2 ) ) &&
 											( mp.type( iatom3 ) == this_mp->atom_type()[4] ) ) {
 										mp_param = this_mp;
@@ -742,8 +742,8 @@ MultipoleElecPotential::amoeba_type_lookup(
 ) const
 {
 
-  std::string const not_variant( "NONE" );
-  core::Size type( 0 );
+	std::string const not_variant( "NONE" );
+	core::Size type( 0 );
 
 	// Lookup default value w/o variant info
 	std::string tmp_key = atomname + resname;
@@ -752,29 +752,29 @@ MultipoleElecPotential::amoeba_type_lookup(
 
 	//TR << "Querying key X" << tmp_key << "X" << std::endl;
 	map_it = type_lookup_.find( tmp_key );
-	if(map_it != type_lookup_.end() ) {
+	if ( map_it != type_lookup_.end() ) {
 		type = map_it->second;
 	}
 
-	if( !utility::trimmed_compare( variantname, not_variant ) ) {
+	if ( !utility::trimmed_compare( variantname, not_variant ) ) {
 		std::string tmp_key2 = atomname + resname + variantname;
 		tmp_key2.erase( std::remove_if( tmp_key2.begin(), tmp_key2.end(), ::isspace ), tmp_key2.end() );
 		// Only overwrite default if an entry is found
 
 		//TR << "Querying key X" << tmp_key2 << "X" << std::endl;
 		map_it = type_lookup_.find( tmp_key2 );
-		if(map_it != type_lookup_.end() ) {
+		if ( map_it != type_lookup_.end() ) {
 			type = map_it->second;
 		}
 	}
 
 	// Give a holler if nothing has been found
 
-  if( type == 0 ) {
-    TR << "PROBLEM - NO BIOTYPE FOUND FOR " << atomname << " " << resname << " " << variantname << std::endl;
-  }
+	if ( type == 0 ) {
+		TR << "PROBLEM - NO BIOTYPE FOUND FOR " << atomname << " " << resname << " " << variantname << std::endl;
+	}
 
-  return type;
+	return type;
 }
 
 
@@ -800,13 +800,13 @@ MultipoleElecPotential::align_residue_multipole_axes(
 	// Find all disallowed atoms in backbone
 	utility::vector1< Size > torsion_atoms;
 	chemical::AtomIndices mainchain( rsd.type().mainchain_atoms() );
-	for( Size iat = 1 ; iat <= mainchain.size() ; ++iat ) {
+	for ( Size iat = 1 ; iat <= mainchain.size() ; ++iat ) {
 		//TR << "Disallowing MC " << rsd.atom_name( mainchain[iat] ) << std::endl;
 		torsion_atoms.push_back( mainchain[iat] );
 	}
 
 	// Find all disallowed atoms in sidechain
-	for( Size ichi = 1 ; ichi <= rsd.nchi() ; ++ichi ) {
+	for ( Size ichi = 1 ; ichi <= rsd.nchi() ; ++ichi ) {
 		// The atoms that could be a problem are the central two.
 		//TR << "Disallowing SC " << rsd.atom_name( rsd.chi_atoms( ichi )[2] ) << std::endl;
 		torsion_atoms.push_back( rsd.chi_atoms( ichi )[2] );
@@ -814,16 +814,16 @@ MultipoleElecPotential::align_residue_multipole_axes(
 		torsion_atoms.push_back( rsd.chi_atoms( ichi )[3] );
 	}
 
-	for( Size iat = 1 ; iat <= rsd.natoms() ; ++iat ) {
-//			if( rsd.is_virtual( iat ) ) continue;
-			if( rsd.xyz(iat).x() != rsd.xyz(iat).x() ) {
-				TR << "align_mult_axes top stuff Problem in coord! " << rsd.seqpos() << " res " << rsd.name() << " atom " << rsd.atom_name( iat ) << std::endl;
-				std::exit(1);
-			}
+	for ( Size iat = 1 ; iat <= rsd.natoms() ; ++iat ) {
+		//   if( rsd.is_virtual( iat ) ) continue;
+		if ( rsd.xyz(iat).x() != rsd.xyz(iat).x() ) {
+			TR << "align_mult_axes top stuff Problem in coord! " << rsd.seqpos() << " res " << rsd.name() << " atom " << rsd.atom_name( iat ) << std::endl;
+			std::exit(1);
+		}
 		// Test for hydrogens and atoms that are not in the torsion path
-		if( rsd.atom_is_hydrogen( iat ) ||
+		if ( rsd.atom_is_hydrogen( iat ) ||
 				( std::find( torsion_atoms.begin(), torsion_atoms.end(), iat ) == torsion_atoms.end() )
-			 ) {
+				) {
 			//mp.set_coord_frame_ref( iat, rsd.atom_base( iat ) );
 			// A zero implies that no coordinate frame correction is required
 			// in the derivative calculation.
@@ -834,9 +834,9 @@ MultipoleElecPotential::align_residue_multipole_axes(
 			// Atoms in the torsion path.
 			// Loop backwards through bonded neighbors, the better to find hydrogens first
 			chemical::AtomIndices const my_nbrs( rsd.bonded_neighbor( iat ) );
-			for( Size inbr = my_nbrs.size() ; inbr >= 1 ; --inbr ) {
+			for ( Size inbr = my_nbrs.size() ; inbr >= 1 ; --inbr ) {
 				Size const nbr_index( my_nbrs[ inbr ] );
-				if( rsd.atom_is_hydrogen( nbr_index ) ) {
+				if ( rsd.atom_is_hydrogen( nbr_index ) ) {
 					id::AtomID nbr_atom( nbr_index, rsd.seqpos() );
 					mp.set_coord_frame_ref( iat, nbr_atom );
 					//TR << "Coord frame ref for " << rsd.atom_name( iat ) << " is " << rsd.atom_name( nbr_index ) << std::endl;
@@ -858,26 +858,26 @@ MultipoleElecPotential::align_residue_multipole_axes(
 			// Ok, can I find my options - that is, the upstream and downstream atoms
 			// in the torsion path?
 
-			if( mp.coord_frame_ref( iat ).atomno() == 0 ) {
+			if ( mp.coord_frame_ref( iat ).atomno() == 0 ) {
 
 				//TR << std::endl;
 				//TR << "Looking for ref atom for residue " << rsd.seqpos() << " index " << iat << std::endl;
 				//TR << "Details " << rsd.name3() << " position " << rsd.seqpos() << " and " << rsd.atom_name( iat ) << std::endl;
 
 				Size this_mc_index( 0 );
-				for( Size ichk = 1 ; ichk <= rsd.mainchain_atoms().size() ; ++ichk ) {
-					if( iat == rsd.mainchain_atom( ichk ) ) {
+				for ( Size ichk = 1 ; ichk <= rsd.mainchain_atoms().size() ; ++ichk ) {
+					if ( iat == rsd.mainchain_atom( ichk ) ) {
 						this_mc_index = ichk;
 						//TR << "This is mainchain atom " << ichk << " out of " << rsd.mainchain_atoms().size() << " total " << std::endl;
 					}
 				}
 
-				if( this_mc_index > 0 ) {
+				if ( this_mc_index > 0 ) {
 
 					// If we are the start, we need to go one residue earlier
 					Size lower_index;
 					Size lower_res;
-					if( this_mc_index == 1 ) {
+					if ( this_mc_index == 1 ) {
 						Residue const & lower_rsd( pose.residue( rsd.seqpos() - 1 ) );
 						lower_index = lower_rsd.mainchain_atom( lower_rsd.mainchain_atoms().size() );
 						lower_res = rsd.seqpos() - 1;
@@ -891,7 +891,7 @@ MultipoleElecPotential::align_residue_multipole_axes(
 					// If we are the end, we need to go one residue farther
 					Size upper_index;
 					Size upper_res;
-					if( this_mc_index == rsd.mainchain_atoms().size() ) {
+					if ( this_mc_index == rsd.mainchain_atoms().size() ) {
 						Residue const & upper_rsd( pose.residue( rsd.seqpos() + 1 ) );
 						upper_index = upper_rsd.mainchain_atom( 1 );
 						upper_res = rsd.seqpos() + 1;
@@ -915,16 +915,16 @@ MultipoleElecPotential::align_residue_multipole_axes(
 					//Residue const & parent_rsd( pose.residue( parent_atom_id.rsd() ) );
 					Size const parent_res( parent_atom_id.rsd() );
 					Size const parent_atm( parent_atom_id.atomno() );
-//					TR << "This atom's parent is " << parent_rsd.name3() << " position " << parent_rsd.seqpos() << " name " << parent_rsd.atom_name( parent_atom_id.atomno() ) << std::endl;
+					//     TR << "This atom's parent is " << parent_rsd.name3() << " position " << parent_rsd.seqpos() << " name " << parent_rsd.atom_name( parent_atom_id.atomno() ) << std::endl;
 
-					if( parent_res == upper_res && parent_atm == upper_index ) {
+					if ( parent_res == upper_res && parent_atm == upper_index ) {
 						id::AtomID nbr_atom( lower_index, lower_res );
 						mp.set_coord_frame_ref( iat, nbr_atom );
-//						TR << "Coord frame ref for " << rsd.atom_name( iat ) << " is " << nbr_atom << std::endl;
-					} else if(  parent_res == lower_res && parent_atm == lower_index ) {
+						//      TR << "Coord frame ref for " << rsd.atom_name( iat ) << " is " << nbr_atom << std::endl;
+					} else if (  parent_res == lower_res && parent_atm == lower_index ) {
 						id::AtomID nbr_atom( upper_index, upper_res );
 						mp.set_coord_frame_ref( iat, nbr_atom );
-//						TR << "Coord frame ref for " << rsd.atom_name( iat ) << " is " << nbr_atom << std::endl;
+						//      TR << "Coord frame ref for " << rsd.atom_name( iat ) << " is " << nbr_atom << std::endl;
 					} else {
 						TR << "Parent doesn't match either option!" << std::endl;
 						std::exit( 1 );
@@ -943,10 +943,10 @@ MultipoleElecPotential::align_residue_multipole_axes(
 		}
 	}
 
-	for( Size iat = 1 ; iat <= rsd.natoms() ; ++iat ) {
+	for ( Size iat = 1 ; iat <= rsd.natoms() ; ++iat ) {
 		// assert( mp.coord_frame_ref( iat ) != 0 );
-		if( mp.coord_frame_ref( iat ).atomno() == 0 ) {
-//			TR << "Whoops - no suitable neighbors for " << rsd.name() << " atom " << rsd.atom_name( iat ) << std::endl;
+		if ( mp.coord_frame_ref( iat ).atomno() == 0 ) {
+			//   TR << "Whoops - no suitable neighbors for " << rsd.name() << " atom " << rsd.atom_name( iat ) << std::endl;
 		}
 	}
 
@@ -954,14 +954,14 @@ MultipoleElecPotential::align_residue_multipole_axes(
 
 
 	// Rotate all dipole and quadrupole moments into the global frame
-	for( Size j = 1 ; j <= rsd.natoms() ; j++ ) {
-			if( rsd.xyz(j).x() != rsd.xyz(j).x() ) {
-				TR << "align_mult_axes pre stuff Problem in coord! " << rsd.seqpos() << " res " << rsd.name() << " atom " << rsd.atom_name( j ) << std::endl;
-				std::exit(1);
-			}
+	for ( Size j = 1 ; j <= rsd.natoms() ; j++ ) {
+		if ( rsd.xyz(j).x() != rsd.xyz(j).x() ) {
+			TR << "align_mult_axes pre stuff Problem in coord! " << rsd.seqpos() << " res " << rsd.name() << " atom " << rsd.atom_name( j ) << std::endl;
+			std::exit(1);
+		}
 		Size this_type( mp.type( j ) );
 		//TR << "Residue " << rsd.name3() << " Atom " << rsd.atom_name( j ) << " amoeba type is: " << this_type << std::endl;
-//		TR << "Residue " << rsd.name() << " Atom " << rsd.atom_name( j ) << " amoeba type is: " << this_type << std::endl;
+		//  TR << "Residue " << rsd.name() << " Atom " << rsd.atom_name( j ) << " amoeba type is: " << this_type << std::endl;
 		// This function finds multipole parameter set and atom numbers for
 		// the z, x, and y determining neighbor atoms - note that all neighbors
 		// are assumed to be in the same residue.
@@ -977,10 +977,10 @@ MultipoleElecPotential::align_residue_multipole_axes(
 
 		build_frame_and_rotate( pose, mp_param, j, mp, rsd );
 
-			if( rsd.xyz(j).x() != rsd.xyz(j).x() ) {
-				TR << "align_mult_axes post stuff Problem in coord! " << rsd.seqpos() << " res " << rsd.name() << " atom " << rsd.atom_name( j ) << std::endl;
-				std::exit(1);
-			}
+		if ( rsd.xyz(j).x() != rsd.xyz(j).x() ) {
+			TR << "align_mult_axes post stuff Problem in coord! " << rsd.seqpos() << " res " << rsd.name() << " atom " << rsd.atom_name( j ) << std::endl;
+			std::exit(1);
+		}
 
 		// Store the mp_param we found
 		mp.nonconst_mp_param(j) = mp_param;
@@ -1019,11 +1019,11 @@ MultipoleElecPotential::align_multipole_axes(
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
 		Residue const & rsd( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-		for( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
+		for ( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
 
 			Vector const & dipole( mp1.dipole( atm1 ) );
 
-			if( dipole != dipole ) {
+			if ( dipole != dipole ) {
 				TR << "align_multi_axis Problem in dipole! " << rsd.seqpos() << " res " << rsd.name() << " atom " << rsd.atom_name( atm1 ) << std::endl;
 				std::exit(1);
 			}
@@ -1042,14 +1042,14 @@ MultipoleElecPotential::align_multipole_axes(
 
 void
 MultipoleElecPotential::build_frame_and_rotate(
-core::pose::Pose const & pose,
-MultipoleParameterOP & mp_param,
-Size orig_atom,
-MultipoleElecResidueInfo & mp,
-core::conformation::Residue const & rsd
+	core::pose::Pose const & pose,
+	MultipoleParameterOP & mp_param,
+	Size orig_atom,
+	MultipoleElecResidueInfo & mp,
+	core::conformation::Residue const & rsd
 ) const
 {
-	if( rsd.is_virtual( orig_atom ) ) return;
+	if ( rsd.is_virtual( orig_atom ) ) return;
 
 	bool const is_a_rotamer( &rsd != &(pose.residue( rsd.seqpos() )) );
 
@@ -1062,9 +1062,9 @@ core::conformation::Residue const & rsd
 	Size const res2( atms.size() > 1 ? atms[2].rsd() : 0 );
 	Size const res3( atms.size() > 2 ? atms[3].rsd() : 0 );
 
-//	TR << "atms size is " << atms.size() << std::endl;
-//	TR << "atom numbers are  " << atom1 << "  " << atom2 << "  " << atom3 << std::endl;
-//	TR << "res  numbers are  " << res1 << "  " << res2 << "  " << res3 << std::endl;
+	// TR << "atms size is " << atms.size() << std::endl;
+	// TR << "atom numbers are  " << atom1 << "  " << atom2 << "  " << atom3 << std::endl;
+	// TR << "res  numbers are  " << res1 << "  " << res2 << "  " << res3 << std::endl;
 
 	Residue const & r1( is_a_rotamer && ( res1 == rsd.seqpos() ) ? rsd : pose.residue(res1) );
 	Residue const & r2( is_a_rotamer && ( res2 == rsd.seqpos() ) ? rsd : pose.residue(res2) );
@@ -1085,39 +1085,39 @@ core::conformation::Residue const & rsd
 	// is where the coordinate axes are frobbed from the input
 	// atom vectors.
 	switch( axis_type ) {
-		case none:
-			mp.nonconst_monopole( orig_atom ) = mp_param->monopole();
-			mp.nonconst_dipole( orig_atom ) = mp_param->dipole();
-			mp.nonconst_quadrupole( orig_atom ) = mp_param->quadrupole();
-			if( mp.dipole( orig_atom ) != mp.dipole( orig_atom ) ) {
-				TR << "Bad dipole for the none case" << std::endl;
-			}
-			return;
-		case z_axis_only:
-			vz = v1;
-			vx = Vector( numeric::random::uniform(), numeric::random::uniform(), numeric::random::uniform() );
-			vx.project_normal( vz ).normalized();
-			break;
-		case bisector:
-			vz = ( v1 + v2 ).normalized();
-			vx = v2.projected_normal( vz ).normalized();
-			break;
-		case z_then_bisector:
-			vz = v1;
-			vx = ( v2 + v3 ).normalized();
-			vx.project_normal( vz ).normalized();
-			break;
-		case z_then_x:
-			vz = v1;
-			vx = v2.projected_normal( vz ).normalized();
-			break;
-		case three_fold:
-			vz = ( v1 + v2 + v3 ).normalized();
-			vx = v2.projected_normal( vz ).normalized();
-			break;
-		default:
-			TR << "Error - unhandled axis type" << std::endl;
-			return;
+	case none :
+		mp.nonconst_monopole( orig_atom ) = mp_param->monopole();
+		mp.nonconst_dipole( orig_atom ) = mp_param->dipole();
+		mp.nonconst_quadrupole( orig_atom ) = mp_param->quadrupole();
+		if ( mp.dipole( orig_atom ) != mp.dipole( orig_atom ) ) {
+			TR << "Bad dipole for the none case" << std::endl;
+		}
+		return;
+	case z_axis_only :
+		vz = v1;
+		vx = Vector( numeric::random::uniform(), numeric::random::uniform(), numeric::random::uniform() );
+		vx.project_normal( vz ).normalized();
+		break;
+	case bisector :
+		vz = ( v1 + v2 ).normalized();
+		vx = v2.projected_normal( vz ).normalized();
+		break;
+	case z_then_bisector :
+		vz = v1;
+		vx = ( v2 + v3 ).normalized();
+		vx.project_normal( vz ).normalized();
+		break;
+	case z_then_x :
+		vz = v1;
+		vx = v2.projected_normal( vz ).normalized();
+		break;
+	case three_fold :
+		vz = ( v1 + v2 + v3 ).normalized();
+		vx = v2.projected_normal( vz ).normalized();
+		break;
+	default :
+		TR << "Error - unhandled axis type" << std::endl;
+		return;
 	}
 
 	// Now get the y-axis
@@ -1136,7 +1136,7 @@ core::conformation::Residue const & rsd
 	mp.nonconst_induced_rf_dipole( orig_atom ) = rotate * mp.stored_induced_rf_dipole( orig_atom );
 	mp.nonconst_quadrupole( orig_atom ) = rotate * mp_param->quadrupole() * rotate.transposed();
 
-	if( mp.dipole( orig_atom ) != mp.dipole( orig_atom ) ) {
+	if ( mp.dipole( orig_atom ) != mp.dipole( orig_atom ) ) {
 		TR << "Residue: " << rsd.name3() << " Atom: " << rsd.atom_name( orig_atom ) << std::endl;
 		TR << "Bad dipole from type dipole " << mp_param->dipole() << " and rotate matrix " << rotate << std::endl;
 		TR << "Other atoms res,atm: res " << res1 << " atm " << atom1 << " res2 " << res2 << " atm2 " << atom2 << " res3 " << res3 << " atm3 " << atom3 << std::endl;
@@ -1145,7 +1145,7 @@ core::conformation::Residue const & rsd
 
 	// Check chirality
 
-	if( axis_type == z_then_x && mp_param->atom_type()[4] != 0 ) {
+	if ( axis_type == z_then_x && mp_param->atom_type()[4] != 0 ) {
 		//TR << "Checking chirality!" << std::endl;
 		// Check chirality
 		Vector const chk1( rsd.xyz( orig_atom ) - pose.residue(res3).xyz( atom3 ) );
@@ -1153,8 +1153,8 @@ core::conformation::Residue const & rsd
 		Vector const chk3( pose.residue(res2).xyz( atom2 ) - pose.residue(res3).xyz( atom3 ) );
 
 		Vector const chk4( ( chk2.y()*chk3.z() - chk2.z()*chk3.y() ),
-											( chk3.y()*chk1.z() - chk3.z()*chk1.y() ),
-											( chk1.y()*chk2.z() - chk1.z()*chk2.y() ) );
+			( chk3.y()*chk1.z() - chk3.z()*chk1.y() ),
+			( chk1.y()*chk2.z() - chk1.z()*chk2.y() ) );
 
 		core::Real volume_check( chk1.x()*chk4.x() + chk2.x()*chk4.y() + chk3.x()*chk4.z() );
 
@@ -1164,7 +1164,7 @@ core::conformation::Residue const & rsd
 		//TR << "Check3 " << chk3 << std::endl;
 		//TR << "Cross " << chk4 << std::endl;
 
-		if( ( volume_check < 0.0 && mp_param->chirality_sign() > 0.0 ) ||
+		if ( ( volume_check < 0.0 && mp_param->chirality_sign() > 0.0 ) ||
 				( volume_check > 0.0 && mp_param->chirality_sign() < 0.0 ) ) {
 			// Invert all multipole components involving the y-axis
 			//TR << "Inverting chirality!" << std::endl;
@@ -1186,8 +1186,8 @@ core::conformation::Residue const & rsd
 	// TR << "Dipole: " << mp.dipole( orig_atom ) << std::endl;
 	//Matrix const & m( mp.quadrupole( orig_atom ));
 	//TR << "Quadrupole: " << m.xx() << ' ' <<  m.xy() << ' ' <<  m.xz() << ' '
-  // <<  m.yx() << ' ' <<  m.yy() << ' ' <<  m.yz() << ' '
-  // <<  m.zx() << ' ' <<  m.zy() << ' ' <<  m.zz() << std::endl;
+	// <<  m.yx() << ' ' <<  m.yy() << ' ' <<  m.yz() << ' '
+	// <<  m.zx() << ' ' <<  m.zy() << ' ' <<  m.zz() << std::endl;
 
 	return;
 }
@@ -1201,36 +1201,36 @@ MultipoleElecPotential::assign_residue_amoeba_type(
 	MultipoleElecResidueInfo & mp
 ) const
 {
-		utility::vector1< std::string > parsed_resname( utility::string_split_simple( rsd.name(), ':' ) );
-		std::string resname( parsed_resname[1] );
+	utility::vector1< std::string > parsed_resname( utility::string_split_simple( rsd.name(), ':' ) );
+	std::string resname( parsed_resname[1] );
 
-		// Handle variants
-		std::string variantname( "NONE" );
-		if( parsed_resname.size() == 2 ) {
+	// Handle variants
+	std::string variantname( "NONE" );
+	if ( parsed_resname.size() == 2 ) {
 		//TR << "Using variant specialization " << parsed_resname[2] << std::endl;
-			variantname = parsed_resname[2];
-		} else if ( parsed_resname.size() > 2 ) {
-//			TR << "MULTIPLE VARIANT SITUATION -> NOT YET CODED!!!" << std::endl;
-//			TR << "Full resname is " << rsd.name() <<  std::endl;
-//			TR << "Using parsed resname " << parsed_resname[2] <<  std::endl;
-//			TR << "Using first variant name only!!!" << std::endl;
-			variantname = parsed_resname[2];
-			//for( Size ivar = 1 ; ivar <= parsed_resname.size() ; ++ivar ) {
-			//TR << "Residue info " << parsed_resname[ ivar ] << std::endl;
-			//}
-		}
+		variantname = parsed_resname[2];
+	} else if ( parsed_resname.size() > 2 ) {
+		//   TR << "MULTIPLE VARIANT SITUATION -> NOT YET CODED!!!" << std::endl;
+		//   TR << "Full resname is " << rsd.name() <<  std::endl;
+		//   TR << "Using parsed resname " << parsed_resname[2] <<  std::endl;
+		//   TR << "Using first variant name only!!!" << std::endl;
+		variantname = parsed_resname[2];
+		//for( Size ivar = 1 ; ivar <= parsed_resname.size() ; ++ivar ) {
+		//TR << "Residue info " << parsed_resname[ ivar ] << std::endl;
+		//}
+	}
 
-		for( Size j = 1 ; j <= rsd.natoms() ; j++ ) {
-			if( rsd.xyz(j).x() != rsd.xyz(j).x() ) {
-				//TR << "assign_type stuff Problem in coord! " << rsd.seqpos() << " res " << rsd.name() << " atom " << rsd.atom_name( j ) << std::endl;
-				std::exit(1);
-			}
-//			TR << "Residue " << resname << " Atom " << rsd.atom_name( j )   << std::endl;
-			// Lookup amoeba type
-			core::Size this_type( amoeba_type_lookup( rsd.atom_name(j), resname, variantname ) );
-//			TR << "Found Amoeba type " << this_type << std::endl;
-			mp.set_type( j, this_type );
+	for ( Size j = 1 ; j <= rsd.natoms() ; j++ ) {
+		if ( rsd.xyz(j).x() != rsd.xyz(j).x() ) {
+			//TR << "assign_type stuff Problem in coord! " << rsd.seqpos() << " res " << rsd.name() << " atom " << rsd.atom_name( j ) << std::endl;
+			std::exit(1);
 		}
+		//   TR << "Residue " << resname << " Atom " << rsd.atom_name( j )   << std::endl;
+		// Lookup amoeba type
+		core::Size this_type( amoeba_type_lookup( rsd.atom_name(j), resname, variantname ) );
+		//   TR << "Found Amoeba type " << this_type << std::endl;
+		mp.set_type( j, this_type );
+	}
 }
 
 void
@@ -1292,21 +1292,21 @@ MultipoleElecPotential::determine_polarization_groups(
 	for ( Size res1 = 1 ; res1 <= nres; ++res1 ) {
 		Residue const & rsd1( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-		for( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
-			if( rsd1.xyz(atm1).x() != rsd1.xyz(atm1).x() ) {
+		for ( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
+			if ( rsd1.xyz(atm1).x() != rsd1.xyz(atm1).x() ) {
 				TR << "det_pol_groups Problem in coord! " << rsd1.seqpos() << " res " << rsd1.name() << " atom " << rsd1.atom_name( atm1 ) << std::endl;
 				std::exit(1);
 			}
 			Vector const old_value( mp1.induced_dipole( atm1 ) );
 			utility::vector1< id::AtomID > group;
 
-			if( rsd1.is_virtual( atm1 ) ) continue;
+			if ( rsd1.is_virtual( atm1 ) ) continue;
 
 			// Seed with directly bonded atoms
 			id::AtomID this_atom( atm1, res1 );
 			utility::vector1<core::id::AtomID> const & bonded_neighbors(
-					pose.conformation().bonded_neighbor_all_res( this_atom ) );
-			for( Size inbr = 1 ; inbr <= bonded_neighbors.size() ; inbr++ ) {
+				pose.conformation().bonded_neighbor_all_res( this_atom ) );
+			for ( Size inbr = 1 ; inbr <= bonded_neighbors.size() ; inbr++ ) {
 				id::AtomID nbr_atom( bonded_neighbors[inbr] );
 				Size atm2( nbr_atom.atomno() );
 				Size res2( nbr_atom.rsd() );
@@ -1314,8 +1314,8 @@ MultipoleElecPotential::determine_polarization_groups(
 				//if( nbr_res.is_virtual( atm2 ) ) continue;
 				MultipoleElecResidueInfo & nbr_mp( multipole_info->residue_info( res2 ) );
 				core::Size const nbr_type( nbr_mp.type( atm2 ) );
-				if( std::find( mp1.mp_param(atm1)->my_group_members().begin(), mp1.mp_param(atm1)->my_group_members().end(), nbr_type ) !=
-												mp1.mp_param(atm1)->my_group_members().end() ) {
+				if ( std::find( mp1.mp_param(atm1)->my_group_members().begin(), mp1.mp_param(atm1)->my_group_members().end(), nbr_type ) !=
+						mp1.mp_param(atm1)->my_group_members().end() ) {
 					group.push_back( nbr_atom );
 				}
 			}
@@ -1327,22 +1327,22 @@ MultipoleElecPotential::determine_polarization_groups(
 	for ( Size res1 = 1 ; res1 <= nres; ++res1 ) {
 		Residue const & rsd1( pose.residue( res1 ) );
 		//MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-		for( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
-			if( rsd1.is_virtual( atm1 ) ) continue;
+		for ( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
+			if ( rsd1.is_virtual( atm1 ) ) continue;
 
 			id::AtomID this_atom( atm1, res1 );
 			utility::vector1< id::AtomID > new_group( direct_group_neighbors[ this_atom ] );
 
 			// Walk atoms until exhausted
-			while( new_group.size() != 0 ) {
+			while ( new_group.size() != 0 ) {
 				utility::vector1< id::AtomID > work_group( new_group );
 				new_group.clear();
-				for( Size cur_nbr = 1 ; cur_nbr <= work_group.size() ; ++cur_nbr ) {
+				for ( Size cur_nbr = 1 ; cur_nbr <= work_group.size() ; ++cur_nbr ) {
 					id::AtomID cur_nbr_atm( work_group[ cur_nbr ] );
 					//TR << "Looking at bonded neighbors of " << pose.residue(cur_nbr_atm.rsd()).name() << " atom " << pose.residue(cur_nbr_atm.rsd()).atom_name( cur_nbr_atm.atomno() ) << std::endl;
 					// Now check out all of this atom's directly bonded neighbors
 					utility::vector1<core::id::AtomID> const & nbr_neighbors( direct_group_neighbors[ cur_nbr_atm ]  );
-					for( Size inbr = 1 ; inbr <= nbr_neighbors.size() ; inbr++ ) {
+					for ( Size inbr = 1 ; inbr <= nbr_neighbors.size() ; inbr++ ) {
 						id::AtomID nbr_atom( nbr_neighbors[inbr] );
 						//Size atm2( nbr_atom.atomno() );
 						//Size res2( nbr_atom.rsd() );
@@ -1352,9 +1352,9 @@ MultipoleElecPotential::determine_polarization_groups(
 						// To be added now, the type must be correct, and the AtomID can't
 						// already be in the current vector.
 						//TR << "Trying " << nbr_res.name() << " atom " << nbr_res.atom_name( atm2 ) << std::endl;
-						if( std::find( direct_group_neighbors[ this_atom ].begin(),
-															direct_group_neighbors[ this_atom ].end(), nbr_atom ) ==
-															direct_group_neighbors[ this_atom ].end() ) {
+						if ( std::find( direct_group_neighbors[ this_atom ].begin(),
+								direct_group_neighbors[ this_atom ].end(), nbr_atom ) ==
+								direct_group_neighbors[ this_atom ].end() ) {
 							//TR << "Found an indirect group member!" << std::endl;
 							direct_group_neighbors[ this_atom ].push_back( nbr_atom );
 							new_group.push_back( nbr_atom );
@@ -1369,7 +1369,7 @@ MultipoleElecPotential::determine_polarization_groups(
 	for ( Size res1 = 1 ; res1 <= nres; ++res1 ) {
 		Residue const & rsd1( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-		for( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
+		for ( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
 			id::AtomID this_atom( atm1, res1 );
 			//utility::vector1< id::AtomID > & group( direct_group_neighbors[ this_atom ] );
 
@@ -1377,12 +1377,12 @@ MultipoleElecPotential::determine_polarization_groups(
 
 			//TR << "Polarization group members for " << rsd1.name() << " atom " << rsd1.atom_name( atm1 ) << " are: " << std::endl;
 			// Silly, temporary output
-	//		for( Size inbr = 1 ; inbr <= group.size() ; ++inbr ) {
-	//			Size res2( group[ inbr ].rsd() );
-	//			Size atm2( group[ inbr ].atomno() );
-	//			Residue const & rsd2( pose.residue( res2 ) );
-	//			TR << "	" << rsd2.name() << " atom " << rsd2.atom_name( atm2 ) << std::endl;
-	//		}
+			//  for( Size inbr = 1 ; inbr <= group.size() ; ++inbr ) {
+			//   Size res2( group[ inbr ].rsd() );
+			//   Size atm2( group[ inbr ].atomno() );
+			//   Residue const & rsd2( pose.residue( res2 ) );
+			//   TR << " " << rsd2.name() << " atom " << rsd2.atom_name( atm2 ) << std::endl;
+			//  }
 		}
 	}
 
@@ -1410,7 +1410,7 @@ MultipoleElecPotential::calculate_fixed_fields_for_polarization(
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
 		Residue const & rsd( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-		for( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
+		for ( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
 			mp1.Efield_fixed( atm1 ) = 0.0;
 			mp1.Efield_rf_fixed( atm1 ) = 0.0;
 		}
@@ -1428,14 +1428,14 @@ MultipoleElecPotential::calculate_fixed_fields_for_polarization(
 	}
 
 	// Print out energy field values
-//	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
-//		Residue const & rsd1( pose.residue( res1 ) );
-//		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-//		for ( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
-//			TR << "Fixed Electric field for res " << res1 << " atom " << rsd1.atom_name( atm1 ) << " at position " << rsd1.xyz( atm1 ) << " is " << mp1.Efield_fixed( atm1 ) << std::endl;
-//			TR << "Fixed RF Electric field for res " << res1 << " atom " << rsd1.atom_name( atm1 ) << " at position " << rsd1.xyz( atm1 ) << " is " << mp1.Efield_rf_fixed( atm1 ) << " rkirk " << mp1.rKirkwood( atm1 ) << std::endl;
-//		}
-//	}
+	// for ( Size res1 = 1; res1 <= nres; ++res1 ) {
+	//  Residue const & rsd1( pose.residue( res1 ) );
+	//  MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
+	//  for ( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
+	//   TR << "Fixed Electric field for res " << res1 << " atom " << rsd1.atom_name( atm1 ) << " at position " << rsd1.xyz( atm1 ) << " is " << mp1.Efield_fixed( atm1 ) << std::endl;
+	//   TR << "Fixed RF Electric field for res " << res1 << " atom " << rsd1.atom_name( atm1 ) << " at position " << rsd1.xyz( atm1 ) << " is " << mp1.Efield_rf_fixed( atm1 ) << " rkirk " << mp1.rKirkwood( atm1 ) << std::endl;
+	//  }
+	// }
 
 	PROF_STOP( basic::MULTIPOLE_SETUP );
 }
@@ -1460,7 +1460,7 @@ MultipoleElecPotential::calculate_induced_fields_for_polarization(
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
 		Residue const & rsd( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-		for( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
+		for ( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
 			mp1.Efield_induced( atm1 ) = 0.0;
 		}
 	}
@@ -1477,13 +1477,13 @@ MultipoleElecPotential::calculate_induced_fields_for_polarization(
 	}
 
 	// Print out energy field values
-//	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
-//		Residue const & rsd1( pose.residue( res1 ) );
-//		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-//		for ( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
-//			TR << "Induced Electric field for res " << res1 << " atom " << rsd1.atom_name( atm1 ) << " at position " << rsd1.xyz( atm1 ) << " is " << mp1.Efield_induced( atm1 ) << std::endl;
-//		}
-//	}
+	// for ( Size res1 = 1; res1 <= nres; ++res1 ) {
+	//  Residue const & rsd1( pose.residue( res1 ) );
+	//  MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
+	//  for ( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
+	//   TR << "Induced Electric field for res " << res1 << " atom " << rsd1.atom_name( atm1 ) << " at position " << rsd1.xyz( atm1 ) << " is " << mp1.Efield_induced( atm1 ) << std::endl;
+	//  }
+	// }
 
 	PROF_STOP( basic::MULTIPOLE_SETUP );
 }
@@ -1508,7 +1508,7 @@ MultipoleElecPotential::clear_induced_fields(
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
 		Residue const & rsd( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-		for( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
+		for ( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
 			mp1.Efield_induced( atm1 ) = 0.0;
 		}
 	}
@@ -1526,13 +1526,13 @@ MultipoleElecPotential::store_induced_dipoles(
 
 	MultipoleElecPoseInfoOP multipole_info;
 
-		multipole_info = utility::pointer::static_pointer_cast< MultipoleElecPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) );
+	multipole_info = utility::pointer::static_pointer_cast< MultipoleElecPoseInfo >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) );
 
 	// Zero out the induced field members
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
 		Residue const & rsd( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-		for( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
+		for ( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
 			mp1.nonconst_stored_induced_dipole( atm1 ) = mp1.induced_dipole( atm1 );
 		}
 	}
@@ -1556,13 +1556,13 @@ MultipoleElecPotential::get_polarization_from_fields(
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
 		Residue const & rsd( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-		for( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
-			if( rsd.is_virtual( atm1 ) ) {
+		for ( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
+			if ( rsd.is_virtual( atm1 ) ) {
 				mp1.nonconst_induced_dipole( atm1 ) = 0.0;
 				continue;
 			}
 			Real const pol( mp1.mp_param( atm1 )->polarity() );
-			if( pol == 0.0 ) {
+			if ( pol == 0.0 ) {
 				mp1.nonconst_induced_dipole( atm1 ) = 0.0;
 			} else {
 
@@ -1579,7 +1579,7 @@ MultipoleElecPotential::get_polarization_from_fields(
 #endif
 
 				mp1.nonconst_induced_dipole( atm1 ) =  mp1.mp_param( atm1 )->polarity() *
-							( mp1.Efield_fixed( atm1 ) + mp1.Efield_rf_fixed( atm1 ) + mp1.Efield_induced( atm1 ) );
+					( mp1.Efield_fixed( atm1 ) + mp1.Efield_rf_fixed( atm1 ) + mp1.Efield_induced( atm1 ) );
 			}
 		}
 	}
@@ -1622,31 +1622,31 @@ MultipoleElecPotential::get_effective_radii(
 	for ( Size res1 = 1 ; res1 <= nres; ++res1 ) {
 		Residue const & rsd1( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-		for( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
+		for ( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
 			Real const rsolv1( bondi_scale*rsd1.atom_type( atm1 ).extra_parameter( GK_RADIUS_INDEX ) );
 			Real accum( pi43/std::pow( rsolv1, 3.0 ) );
-			if( rsolv1 == 0.0 || rsd1.is_virtual( atm1 ) ) continue;
+			if ( rsolv1 == 0.0 || rsd1.is_virtual( atm1 ) ) continue;
 			for ( Size res2 = 1 ; res2 <= nres; ++res2 ) {
 				Residue const & rsd2( pose.residue( res2 ) );
 				//MultipoleElecResidueInfo & mp2( multipole_info->residue_info( res2 ) );
-				for( Size atm2 = 1 ; atm2 <= rsd2.natoms() ; ++atm2 ) {
+				for ( Size atm2 = 1 ; atm2 <= rsd2.natoms() ; ++atm2 ) {
 					Real const rsolv2( bondi_scale*rsd2.atom_type( atm2 ).extra_parameter( GK_RADIUS_INDEX ) );
-					if( rsolv2 == 0.0 || rsd2.is_virtual( atm2 ) || ( res1 == res2 && atm1 == atm2 ) ) continue;
+					if ( rsolv2 == 0.0 || rsd2.is_virtual( atm2 ) || ( res1 == res2 && atm1 == atm2 ) ) continue;
 					Vector const Rij( rsd2.xyz( atm2 ) - rsd1.xyz( atm1 ) );
 					Real const dist( Rij.magnitude() );
 					Real const dist_squared( Rij.magnitude_squared() );
 					Real const sr2( hct_scale * rsolv2 );
 					Real const sr2_sqr( sr2 * sr2 );
 					Real lower( 0.0 );
-					if( (rsolv1 + dist) < sr2 ) {
+					if ( (rsolv1 + dist) < sr2 ) {
 						lower = rsolv1;
 						Real const upper( sr2 - dist );
 						accum += pi43*(1.0/std::pow(upper,3.0) - 1.0/std::pow(lower, 3.0));
 					}
 					Real const upper( dist + sr2 );
-					if( (rsolv1 + dist) < sr2 ) {
+					if ( (rsolv1 + dist) < sr2 ) {
 						lower = sr2 - dist;
-					} else if( dist < (rsolv1 + sr2) ) {
+					} else if ( dist < (rsolv1 + sr2) ) {
 						lower = rsolv1;
 					} else {
 						lower = dist - sr2;
@@ -1660,8 +1660,8 @@ MultipoleElecPotential::get_effective_radii(
 					Real const upperXdist ( upper * dist );
 					Real const upper4Xdist ( upper4 * dist );
 					accum -= numeric::constants::d::pi*(1.0/12.0)*
-								( ( 3.0*(dist_squared-sr2_sqr) + 6.0*upper2 - 8.0*upperXdist)/upper4Xdist -
-									( 3.0*(dist_squared-sr2_sqr) + 6.0*lower2 - 8.0*lowerXdist)/lower4Xdist );
+						( ( 3.0*(dist_squared-sr2_sqr) + 6.0*upper2 - 8.0*upperXdist)/upper4Xdist -
+						( 3.0*(dist_squared-sr2_sqr) + 6.0*lower2 - 8.0*lowerXdist)/lower4Xdist );
 
 				}
 			}
@@ -1672,14 +1672,14 @@ MultipoleElecPotential::get_effective_radii(
 	}
 
 	// Print out effective radii
-//	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
-//		Residue const & rsd1( pose.residue( res1 ) );
-//		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-//		for ( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
-//			Real const rsolv1( bondi_scale*rsd1.atom_type( atm1 ).extra_parameter( GK_RADIUS_INDEX ) );
-//			TR << "Effective radii for res " << res1 << " atom " << rsd1.atom_name( atm1 ) << " at position " << rsd1.xyz( atm1 ) << " is " << mp1.rKirkwood( atm1 ) << " from rsolv " << rsolv1 << std::endl;
-//		}
-//	}
+	// for ( Size res1 = 1; res1 <= nres; ++res1 ) {
+	//  Residue const & rsd1( pose.residue( res1 ) );
+	//  MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
+	//  for ( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
+	//   Real const rsolv1( bondi_scale*rsd1.atom_type( atm1 ).extra_parameter( GK_RADIUS_INDEX ) );
+	//   TR << "Effective radii for res " << res1 << " atom " << rsd1.atom_name( atm1 ) << " at position " << rsd1.xyz( atm1 ) << " is " << mp1.rKirkwood( atm1 ) << " from rsolv " << rsolv1 << std::endl;
+	//  }
+	// }
 
 	PROF_STOP( basic::MULTIPOLE_SETUP );
 }
@@ -1706,12 +1706,12 @@ MultipoleElecPotential::relax_induced_dipoles(
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
 		Residue const & rsd( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-		for( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
+		for ( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
 			Vector const old_value( mp1.induced_dipole( atm1 ) );
 			mp1.nonconst_induced_dipole( atm1 ) = (1.0-relax)*mp1.stored_induced_dipole( atm1 ) +  relax*mp1.induced_dipole( atm1 );
 
 			core::Real const this_diff( old_value.distance( mp1.induced_dipole( atm1 ) ) );
-			if( this_diff > max_diff ) {
+			if ( this_diff > max_diff ) {
 				max_diff = this_diff;
 			}
 		}
@@ -1734,7 +1734,7 @@ MultipoleElecPotential::induce_polarizable_dipoles(
 	//TR << "In induce_polarize_dipoles()" << std::endl;
 
 	// Early exit if polarization not wanted
-	if( !use_polarization ) {
+	if ( !use_polarization ) {
 		clear_induced_fields( pose );
 		return;
 	}
@@ -1767,7 +1767,7 @@ MultipoleElecPotential::induce_polarizable_dipoles(
 	// SOR factor
 	Real const relax( 0.40 );
 	Size iter( 0 );
-	while( ( max_diff > test_diff ) && ( iter < max_iters ) ) {
+	while ( ( max_diff > test_diff ) && ( iter < max_iters ) ) {
 		iter++;
 		// Store old values
 		store_induced_dipoles( pose );
@@ -1776,29 +1776,29 @@ MultipoleElecPotential::induce_polarizable_dipoles(
 		get_polarization_from_fields( pose );
 		// Relax towards new values from old, returning largest difference
 		max_diff = relax_induced_dipoles( pose, relax );
-//		if( ( iter % 10 ) == 1 ) {
-//			TR << "SOR iteration " << iter << " max_diff is " << max_diff << std::endl;
-//		}
+		//  if( ( iter % 10 ) == 1 ) {
+		//   TR << "SOR iteration " << iter << " max_diff is " << max_diff << std::endl;
+		//  }
 	}
 
-	if( iter == max_iters ) {
+	if ( iter == max_iters ) {
 		TR << "Warning in induce_polarizable_dipoles:  Exited SOR after " << max_iters <<
-					" iterations, without convergence!" << std::endl;
+			" iterations, without convergence!" << std::endl;
 	}
 
 	// Store the induced dipole in the local coord frame
 	for ( Size res1 = 1; res1 <= nres; ++res1 ) {
 		Residue const & rsd( pose.residue( res1 ) );
 		MultipoleElecResidueInfo & mp1( multipole_info->residue_info( res1 ) );
-		for( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
+		for ( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
 
-			if( rsd.is_virtual( atm1 ) ) {
+			if ( rsd.is_virtual( atm1 ) ) {
 				continue;
 			}
 
 			Vector const old_value( mp1.induced_dipole( atm1 ) );
-//			Real check_pdamp( mp1.mp_param( atm1 )->pdamp() );
-//			TR << "Induced dipole " << rsd.xyz( atm1 ) << " is " << mp1.induced_dipole( atm1 ) << " pdamp " << check_pdamp << std::endl;
+			//   Real check_pdamp( mp1.mp_param( atm1 )->pdamp() );
+			//   TR << "Induced dipole " << rsd.xyz( atm1 ) << " is " << mp1.induced_dipole( atm1 ) << " pdamp " << check_pdamp << std::endl;
 			mp1.nonconst_stored_induced_dipole( atm1 ) = (mp1.local_coord_matrix( atm1 ).inverse())*mp1.induced_dipole( atm1 );
 		}
 	}
@@ -1817,7 +1817,7 @@ MultipoleElecPotential::setup_for_scoring(
 {
 	PROF_START( basic::MULTIPOLE_SETUP );
 
-//	TR << "in setup_for_scoring use_nblist is " << pose.energies().use_nblist() << std::endl;
+	// TR << "in setup_for_scoring use_nblist is " << pose.energies().use_nblist() << std::endl;
 
 	MultipoleElecPoseInfoOP multipole_info;
 
@@ -1835,33 +1835,33 @@ MultipoleElecPotential::setup_for_scoring(
 		induce_polarizable_dipoles( pose );
 	}
 
-//	TR << "In setup_for_scoring, past initialization" << std::endl;
+	// TR << "In setup_for_scoring, past initialization" << std::endl;
 
-		// These shouldn't be necessary, but I don't know how to
-		// transfer from RotamerSetInfo to ResidueInfo
-		// The lines with the extra indent are only necessary because
-		// RotamerSetInfo isn't automatically transferred to ResidueInfo
-		// after a repack.
+	// These shouldn't be necessary, but I don't know how to
+	// transfer from RotamerSetInfo to ResidueInfo
+	// The lines with the extra indent are only necessary because
+	// RotamerSetInfo isn't automatically transferred to ResidueInfo
+	// after a repack.
 
-//		multipole_info->initialize( pose );
-//		assign_all_amoeba_types( pose );
+	//  multipole_info->initialize( pose );
+	//  assign_all_amoeba_types( pose );
 	align_multipole_axes( pose );
-//		determine_polarization_groups( pose );
-//		get_effective_radii( pose );
-//		induce_polarizable_dipoles( pose );
+	//  determine_polarization_groups( pose );
+	//  get_effective_radii( pose );
+	//  induce_polarizable_dipoles( pose );
 
 	if ( !pose.energies().use_nblist() ) {
-//
-//		//TR << "Getting induced dipoles" << std::endl;
-//		multipole_info->initialize( pose );
-//		assign_all_amoeba_types( pose );
-	align_multipole_axes( pose );
+		//
+		//  //TR << "Getting induced dipoles" << std::endl;
+		//  multipole_info->initialize( pose );
+		//  assign_all_amoeba_types( pose );
+		align_multipole_axes( pose );
 		determine_polarization_groups( pose );
 		get_effective_radii( pose );
 		induce_polarizable_dipoles( pose );
 	}
 
-//	TR << "Exiting setup_for_scoring" << std::endl;
+	// TR << "Exiting setup_for_scoring" << std::endl;
 
 	PROF_STOP( basic::MULTIPOLE_SETUP );
 }
@@ -1881,7 +1881,7 @@ MultipoleElecPotential::setup_for_packing(
 
 	// jjh Commenting out for now.  First need to get regular scoring done.  Worry
 	// about packing later.
-	#ifdef NOTDEF
+#ifdef NOTDEF
 	PROF_START( basic::GB_SETUP_FOR_PACKING );
 
 	MultipoleElecPoseInfoOP mp_info;
@@ -1906,7 +1906,7 @@ MultipoleElecPotential::setup_for_packing(
 	pose.data().set( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO, mp_info );
 
 	PROF_STOP( basic::GB_SETUP_FOR_PACKING );
-	#endif
+#endif
 
 }
 
@@ -1919,7 +1919,7 @@ MultipoleElecPotential::get_rotamers_multipole_info(
 ) const
 {
 
-//	mp_info_rotamers = utility::pointer::static_pointer_cast< MultipoleElecRotamerSetInfo >( rotamer_set.data().get_ptr( core::conformation::RotamerSetCacheableDataType::MULTIPOLE_ELEC_ROTAMER_SET_INFO ) );
+	// mp_info_rotamers = utility::pointer::static_pointer_cast< MultipoleElecRotamerSetInfo >( rotamer_set.data().get_ptr( core::conformation::RotamerSetCacheableDataType::MULTIPOLE_ELEC_ROTAMER_SET_INFO ) );
 
 	MultipoleElecRotamerSetInfoOP mp_info_rotamers( new MultipoleElecRotamerSetInfo( rotamer_set ) );
 
@@ -1953,7 +1953,7 @@ MultipoleElecPotential::get_rotamers_effective_radii(
 	MultipoleElecRotamerSetInfo & mp_info_rotamers
 		( rotamer_set.data().get< MultipoleElecRotamerSetInfo >( MULTIPOLE_ELEC_ROTAMER_SET_INFO ) );
 
-//	MultipoleElecRotamerSetInfoOP mp_info_rotamers( new MultipoleElecRotamerSetInfo( rotamer_set ) );
+	// MultipoleElecRotamerSetInfoOP mp_info_rotamers( new MultipoleElecRotamerSetInfo( rotamer_set ) );
 
 	for ( Size n=1; n<= rotamer_set.num_rotamers(); ++n ) {
 		get_single_rotamer_effective_radii( *rotamer_set.rotamer(n), pose, mp_info_pose, mp_info_rotamers.residue_info( n ) );
@@ -1984,37 +1984,37 @@ MultipoleElecPotential::get_single_rotamer_effective_radii(
 	Real const bondi_scale( 1.03 );
 
 	// Accumulate overlap between atoms
-	for( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
+	for ( Size atm1 = 1 ; atm1 <= rsd1.natoms() ; ++atm1 ) {
 		Real const rsolv1( bondi_scale*rsd1.atom_type( atm1 ).extra_parameter( GK_RADIUS_INDEX ) );
 		Real accum( pi43/std::pow( rsolv1, 3.0 ) );
-		if( rsolv1 == 0.0 || rsd1.is_virtual( atm1 ) ) {
+		if ( rsolv1 == 0.0 || rsd1.is_virtual( atm1 ) ) {
 			mp1.nonconst_rKirkwood( atm1 ) = 0.0;
 			continue;
 		}
 		for ( Size res2 = 1 ; res2 <= nres; ++res2 ) {
 			// Skip the residue at the same position the rotamer is in.
 			// Should replace this with the rotamer itself.
-			if( res2 == rsd1.seqpos() ) continue;
+			if ( res2 == rsd1.seqpos() ) continue;
 			Residue const & rsd2( pose.residue( res2 ) );
 			//MultipoleElecResidueInfo const & mp2( mp_info->residue_info( res2 ) );
-			for( Size atm2 = 1 ; atm2 <= rsd2.natoms() ; ++atm2 ) {
+			for ( Size atm2 = 1 ; atm2 <= rsd2.natoms() ; ++atm2 ) {
 				Real const rsolv2( bondi_scale*rsd2.atom_type( atm2 ).extra_parameter( GK_RADIUS_INDEX ) );
-				if( rsolv2 == 0.0 || rsd2.is_virtual( atm2 ) ) continue;
+				if ( rsolv2 == 0.0 || rsd2.is_virtual( atm2 ) ) continue;
 				Vector const Rij( rsd2.xyz( atm2 ) - rsd1.xyz( atm1 ) );
 				Real const dist( Rij.magnitude() );
 				Real const dist_squared( Rij.magnitude_squared() );
 				Real const sr2( hct_scale * rsolv2 );
 				Real const sr2_sqr( sr2 * sr2 );
 				Real lower( 0.0 );
-				if( (rsolv1 + dist) < sr2 ) {
+				if ( (rsolv1 + dist) < sr2 ) {
 					lower = rsolv1;
 					Real const upper( sr2 - dist );
 					accum += pi43*(1.0/std::pow(upper,3.0) - 1.0/std::pow(lower, 3.0));
 				}
 				Real const upper( dist + sr2 );
-				if( (rsolv1 + dist) < sr2 ) {
+				if ( (rsolv1 + dist) < sr2 ) {
 					lower = sr2 - dist;
-				} else if( dist < (rsolv1 + sr2) ) {
+				} else if ( dist < (rsolv1 + sr2) ) {
 					lower = rsolv1;
 				} else {
 					lower = dist - sr2;
@@ -2043,24 +2043,24 @@ MultipoleElecPotential::get_single_rotamer_effective_radii(
 #endif
 
 				accum -= numeric::constants::d::pi*(1.0/12.0)*
-							( ( 3.0*(dist_squared-sr2_sqr) + 6.0*upper2 - 8.0*upperXdist)/upper4Xdist -
-								( 3.0*(dist_squared-sr2_sqr) + 6.0*lower2 - 8.0*lowerXdist)/lower4Xdist );
+					( ( 3.0*(dist_squared-sr2_sqr) + 6.0*upper2 - 8.0*upperXdist)/upper4Xdist -
+					( 3.0*(dist_squared-sr2_sqr) + 6.0*lower2 - 8.0*lowerXdist)/lower4Xdist );
 
 			}
 		}
 		Real const prior_accum( accum );
-		if( accum < 0.0 ) {
+		if ( accum < 0.0 ) {
 			accum = 0.0001;
 		} else {
 			accum = std::pow( accum/pi43, third );
 		}
-		if( accum != accum ) {
+		if ( accum != accum ) {
 			TR << "Accum fail 2" << std::endl;
 			TR << "Prior accum was " << prior_accum << " pi43 is " << pi43 << " third is " << third << std::endl;
 		}
 		accum = ( accum < 0.0 ? 0.0001 : accum );
 		mp1.nonconst_rKirkwood( atm1 ) = 1.0 / accum;
-		if( mp1.nonconst_rKirkwood( atm1 ) != mp1.nonconst_rKirkwood( atm1 ) ) {
+		if ( mp1.nonconst_rKirkwood( atm1 ) != mp1.nonconst_rKirkwood( atm1 ) ) {
 			TR << "Problem in rotamer rkirk, accum was " << accum << std::endl;
 		}
 	}
@@ -2105,10 +2105,10 @@ get_damped_scale_factors(
 {
 	// Damping for scale factors
 	Real damp( mp_param1->pdamp() *  mp_param2->pdamp() );
-	if( damp != 0.0 ) {
+	if ( damp != 0.0 ) {
 		Real const pgamma( std::min( mp_param1->thole(), mp_param2->thole() ) );
 		damp = -pgamma * std::pow((dist/damp), 3);
-		if( damp > -50.0 ) {
+		if ( damp > -50.0 ) {
 			Real const expdamp( std::exp( damp ) );
 			scale3 = 1.0 - expdamp;
 			scale5 = 1.0 - expdamp*(1.0-damp);
@@ -2133,10 +2133,10 @@ get_damped_scale_factors_with_derivs(
 {
 	// Damping for scale factors
 	Real damp( mp_param1->pdamp() *  mp_param2->pdamp() );
-	if( damp != 0.0 ) {
+	if ( damp != 0.0 ) {
 		Real const pgamma( std::min( mp_param1->thole(), mp_param2->thole() ) );
 		damp = -pgamma * std::pow((dist/damp), 3);
-		if( damp > -50.0 ) {
+		if ( damp > -50.0 ) {
 			Real const expdamp( std::exp( damp ) );
 			scale3 = 1.0 - expdamp;
 			dscale3_dr = -3.0*damp*expdamp/dist;
@@ -2159,17 +2159,17 @@ same_polarization_group(
 	core::Size atm2
 )
 {
-	if( abs( static_cast<int>(rsd1.seqpos()) - static_cast<int>(rsd2.seqpos()) ) > 1 ) {
-		 return false;
+	if ( abs( static_cast<int>(rsd1.seqpos()) - static_cast<int>(rsd2.seqpos()) ) > 1 ) {
+		return false;
 	} else {
 		utility::vector1< id::AtomID > const & group( mp1.const_my_group( atm1 ) );
 		id::AtomID atm2_id( atm2, rsd2.seqpos() );
-		if( std::find( group.begin(), group.end(), atm2_id ) != group.end()  ) {
+		if ( std::find( group.begin(), group.end(), atm2_id ) != group.end()  ) {
 			return true;
 		} else {
 			return false;
 		}
-	 }
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2217,10 +2217,10 @@ MultipoleElecPotential::get_res_res_elecE(
 	Real const fd( coul * 2.0*(dprotein-dwater) / (1.0 + 2.0*dwater) );
 	Real const fq( coul * 3.0*(dprotein-dwater) / (2.0 + 3.0*dwater) );
 
-	for( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
-		if( rsd1.is_virtual( atm1 ) ) continue;
+	for ( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
+		if ( rsd1.is_virtual( atm1 ) ) continue;
 
-//		if( !ShouldItCount( rsd1, atm1 ) ) continue;
+		//  if( !ShouldItCount( rsd1, atm1 ) ) continue;
 
 		Real const q1( mp1.monopole( atm1 ) );
 		Vector const & p1( mp1.dipole( atm1 ) );
@@ -2228,12 +2228,12 @@ MultipoleElecPotential::get_res_res_elecE(
 		Matrix const & quad1( mp1.quadrupole( atm1 ) );
 		Real const rkirk1( mp1.rKirkwood( atm1 ) );
 
-		for( Size atm2 = (same_res ? atm1 : 1 ) ; atm2 <= natoms2 ; ++atm2 ) {
-			if( rsd2.is_virtual( atm2 ) ) continue;
+		for ( Size atm2 = (same_res ? atm1 : 1 ) ; atm2 <= natoms2 ; ++atm2 ) {
+			if ( rsd2.is_virtual( atm2 ) ) continue;
 
 			Real atom_atomE(0.0);
 
-//			if( !ShouldItCount( rsd2, atm2 ) ) continue;
+			//   if( !ShouldItCount( rsd2, atm2 ) ) continue;
 
 			// Assuming all the checks tell us to calculate the interaction
 			Vector rvec( rsd2.xyz( atm2 ) - rsd1.xyz( atm1 ) );
@@ -2246,36 +2246,36 @@ MultipoleElecPotential::get_res_res_elecE(
 			Vector const & p2( mp2.dipole( atm2 ) );
 			Vector const & ip2( mp2.induced_dipole( atm2 ) );
 
-				// Intermediate vectors
-				Vector int1( mp1.quadrupole( atm1 ) * rvec );
-				Vector int2( mp2.quadrupole( atm2 ) * rvec );
+			// Intermediate vectors
+			Vector int1( mp1.quadrupole( atm1 ) * rvec );
+			Vector int2( mp2.quadrupole( atm2 ) * rvec );
 
-				Real const sc2( p1.dot( p2 ) );
-				Real const sc3( p1.dot( rvec ) );
-				Real const sc4( p2.dot( rvec ) );
+			Real const sc2( p1.dot( p2 ) );
+			Real const sc3( p1.dot( rvec ) );
+			Real const sc4( p2.dot( rvec ) );
 
-				Real const psc2( ip1.dot( p2 ) + p1.dot( ip2 ) );
-				Real const psc3( ip1.dot( rvec ) );
-				Real const psc4( ip2.dot( rvec ) );
-				Real const sc5( int1.dot( rvec ) );
-				Real const sc6( int2.dot( rvec ) );
-				Real const sc7( int1.dot( p2 ) );
-				Real const sc8( int2.dot( p1 ) );
-				Real const sc9( int1.dot( int2 ) );
-				Real const sc10( 2.0 * ( quad1.xy()*quad2.xy() + quad1.xz()*quad2.xz() + quad1.yz()*quad2.yz() ) +
-													quad1.xx()*quad2.xx() + quad1.yy()*quad2.yy() + quad1.zz()*quad2.zz() );
+			Real const psc2( ip1.dot( p2 ) + p1.dot( ip2 ) );
+			Real const psc3( ip1.dot( rvec ) );
+			Real const psc4( ip2.dot( rvec ) );
+			Real const sc5( int1.dot( rvec ) );
+			Real const sc6( int2.dot( rvec ) );
+			Real const sc7( int1.dot( p2 ) );
+			Real const sc8( int2.dot( p1 ) );
+			Real const sc9( int1.dot( int2 ) );
+			Real const sc10( 2.0 * ( quad1.xy()*quad2.xy() + quad1.xz()*quad2.xz() + quad1.yz()*quad2.yz() ) +
+				quad1.xx()*quad2.xx() + quad1.yy()*quad2.yy() + quad1.zz()*quad2.zz() );
 
-				// Scalar products involving polarization
-				Real const psc7( int1.dot( ip2 ) );
-				Real const psc8( int2.dot( ip1 ) );
+			// Scalar products involving polarization
+			Real const psc7( int1.dot( ip2 ) );
+			Real const psc8( int2.dot( ip1 ) );
 
 
 			if ( cpfxn->count( atm1, atm2, weight, path_dist ) &&
 					(!same_res || (atm1 != atm2) ) ) {
 
 				Real polar_weight( weight > 0.0 ? 1.0 : 0.0 );
-				if( same_polarization_group( rsd1, mp1, atm1, rsd2, atm2 ) && weight == 0.4 ) {
-//					TR << "ENERGY USING SPECIAL POLAR WEIGHT" << std::endl;
+				if ( same_polarization_group( rsd1, mp1, atm1, rsd2, atm2 ) && weight == 0.4 ) {
+					//     TR << "ENERGY USING SPECIAL POLAR WEIGHT" << std::endl;
 					polar_weight = 0.5;
 				}
 
@@ -2298,7 +2298,7 @@ MultipoleElecPotential::get_res_res_elecE(
 				Real scale5( 1.0 );
 				Real scale7( 1.0 );
 				get_damped_scale_factors( mp1.mp_param( atm1 ), mp2.mp_param( atm2 ),
-						dist, scale3, scale5, scale7 );
+					dist, scale3, scale5, scale7 );
 
 				// gl functions involving polarization
 				Real const pgl1( q2*psc3 - q1*psc4 + psc2 );
@@ -2308,21 +2308,21 @@ MultipoleElecPotential::get_res_res_elecE(
 				Real const this_energy( gl0*rr1 + gl1*rr3 + gl2*rr5 + gl3*rr7 + gl4*rr9 );
 				Real const this_polarization_energy( scale3*pgl1*rr3 + scale5*pgl2*rr5 + scale7*pgl3*rr7 );
 
-//				TR << rsd1.xyz( atm1 ) << " and " << rsd2.xyz( atm2 ) << "\t" << 0.5*this_polarization_energy*polar_weight*332.063714 << "  " << polar_weight << std::endl;
+				//    TR << rsd1.xyz( atm1 ) << " and " << rsd2.xyz( atm2 ) << "\t" << 0.5*this_polarization_energy*polar_weight*332.063714 << "  " << polar_weight << std::endl;
 
-//				TR << "Interaction between " << rsd1.xyz( atm1 ) << " and " << rsd2.xyz( atm2 ) << std::endl;
-//				TR << "Energy " << this_energy << " will be weighted by " << weight << std::endl;
+				//    TR << "Interaction between " << rsd1.xyz( atm1 ) << " and " << rsd2.xyz( atm2 ) << std::endl;
+				//    TR << "Energy " << this_energy << " will be weighted by " << weight << std::endl;
 				//TR << "Polarization " << this_polarization_energy << " will be weighted by " << 0.5 * polar_weight << std::endl;
 
 				PolelecE += 0.5 * polar_weight * this_polarization_energy;
 
 				atom_atomE = 332.063714 * ( weight * this_energy + 0.5 * polar_weight * this_polarization_energy );
-//				atom_atomE = 332.063714 * ( 0.5 * polar_weight * this_polarization_energy );
-//				TR << rsd1.xyz( atm1 ) << " and " << rsd2.xyz( atm2 ) << "\t" << 0.5*this_polarization_energy*polar_weight*332.063714 << std::endl;
+				//    atom_atomE = 332.063714 * ( 0.5 * polar_weight * this_polarization_energy );
+				//    TR << rsd1.xyz( atm1 ) << " and " << rsd2.xyz( atm2 ) << "\t" << 0.5*this_polarization_energy*polar_weight*332.063714 << std::endl;
 			}
 
-			if( use_gen_kirkwood ){
-				if( rkirk1 == 0.0 || rkirk2 == 0.0 ) continue;
+			if ( use_gen_kirkwood ) {
+				if ( rkirk1 == 0.0 || rkirk2 == 0.0 ) continue;
 				Real const rs1_rs2( rkirk1 * rkirk2 );
 				Real const expterm( std::exp( -dist2/( gkc* rs1_rs2 ) ) );
 				Real const expc( expterm / gkc );
@@ -2341,49 +2341,49 @@ MultipoleElecPotential::get_res_res_elecE(
 				//Real const xr( rvec.x() );
 				//Real const yr( rvec.y() );
 				//Real const zr( rvec.z() );
-//				Real const xr2( xr*xr );
-//				Real const yr2( yr*yr );
-//				Real const zr2( zr*zr );
+				//    Real const xr2( xr*xr );
+				//    Real const yr2( yr*yr );
+				//    Real const zr2( zr*zr );
 
 				Real const rf_term_m_m( q1 * q2 * fm * gf );
 
 				Real const rf_term_m_d( -0.5* (
-							(fm*expc1+fd)*gf3*q1*sc4 - (fm*expc1+fd)*gf3*q2*sc3 +
-							0.5*( (fm*expc1+fd)*gf3*q1*psc4 - (fm*expc1+fd)*gf3*q2*psc3 )));
+					(fm*expc1+fd)*gf3*q1*sc4 - (fm*expc1+fd)*gf3*q2*sc3 +
+					0.5*( (fm*expc1+fd)*gf3*q1*psc4 - (fm*expc1+fd)*gf3*q2*psc3 )));
 
 				Real const rf_term_d_d( fd*( +gf3*sc2 + 0.5*gf3*psc2
-															- 3.0*gf5*expc1*sc3*sc4
-															- 1.5*gf5*expc1*sc3*psc4
-															- 1.5*gf5*expc1*psc3*sc4 ) );
+					- 3.0*gf5*expc1*sc3*sc4
+					- 1.5*gf5*expc1*sc3*psc4
+					- 1.5*gf5*expc1*psc3*sc4 ) );
 
 				Real const rf_term_m_q( 0.5*(
-						q1*sc6*(3.0*fq*gf5 + 3.0*expc1*expc1*fm*gf5 - fm*expcdexpc*gf3) +
-						q2*sc5*(3.0*fq*gf5 + 3.0*expc1*expc1*fm*gf5 - fm*expcdexpc*gf3)
-				) );
+					q1*sc6*(3.0*fq*gf5 + 3.0*expc1*expc1*fm*gf5 - fm*expcdexpc*gf3) +
+					q2*sc5*(3.0*fq*gf5 + 3.0*expc1*expc1*fm*gf5 - fm*expcdexpc*gf3)
+					) );
 
 				Real const rf_term_d_q( 0.5*(
 					( sc7 - sc8 )*( 6.0*fd*gf5*expc1 + 6.0*fq*gf5 )  +
 					( sc4*sc5 - sc3*sc6 )*( +3.0*fd*gf5*expcdexpc - 15.0*fd*gf7*expc1*expc1 -15.0*fq*gf7*expc1 )
-				) );
+					) );
 
 				Real const rf_term_id_q( 0.25*(
 					( psc7 - psc8 )*( 6.0*fd*gf5*expc1 + 6.0*fq*gf5 )  +
 					( psc4*sc5 - psc3*sc6 )*( +3.0*fd*gf5*expcdexpc - 15.0*fd*gf7*expc1*expc1 -15.0*fq*gf7*expc1 )
-				) );
+					) );
 
 				Real const rf_term_q_q(
-					fq*sc5*sc6*( 105.0*gf9*expc1*expc1 - 15.0*gf7*expcdexpc )			// quads fully dotted with rvec
-					-60.0*fq*sc9*gf7*expc1 					// product with quads touching
-					+ 6.0*fq*sc10*gf5			// element-wise product
+					fq*sc5*sc6*( 105.0*gf9*expc1*expc1 - 15.0*gf7*expcdexpc )   // quads fully dotted with rvec
+					-60.0*fq*sc9*gf7*expc1      // product with quads touching
+					+ 6.0*fq*sc10*gf5   // element-wise product
 				);
 
 				Real rf_energy( rf_term_m_m + rf_term_m_d + rf_term_d_d + rf_term_m_q + rf_term_d_q + rf_term_id_q + rf_term_q_q );
 
-				if( same_res && (atm1 == atm2 ) ) {
+				if ( same_res && (atm1 == atm2 ) ) {
 					rf_energy *= 0.5;
 				}
 
-//				TR << "RFE " << rsd1.xyz(atm1) << " " << rsd2.xyz(atm2) << " " << rf_energy << std::endl;
+				//    TR << "RFE " << rsd1.xyz(atm1) << " " << rsd2.xyz(atm2) << " " << rf_energy << std::endl;
 
 				atom_atomE += rf_energy;
 				RFelecE += rf_energy;
@@ -2393,12 +2393,12 @@ MultipoleElecPotential::get_res_res_elecE(
 		}
 	}
 
-//	TR << "res-res energy between " << rsd1.seqpos() << " and " << rsd2.seqpos() << " is " << elecE << std::endl;
-//	TR << "RF res-res energy between " << rsd1.seqpos() << " and " << rsd2.seqpos() << " is " << RFelecE << std::endl;
-//	TR << "Pol res-res energy between " << rsd1.seqpos() << " and " << rsd2.seqpos() << " is " << PolelecE << std::endl;
+	// TR << "res-res energy between " << rsd1.seqpos() << " and " << rsd2.seqpos() << " is " << elecE << std::endl;
+	// TR << "RF res-res energy between " << rsd1.seqpos() << " and " << rsd2.seqpos() << " is " << RFelecE << std::endl;
+	// TR << "Pol res-res energy between " << rsd1.seqpos() << " and " << rsd2.seqpos() << " is " << PolelecE << std::endl;
 
-//	TR << "res-res interaction between residue " << rsd1.seqpos() << " and " << rsd2.seqpos() << std::endl;
-//	TR << "Returning elecE of " << elecE << std::endl;
+	// TR << "res-res interaction between residue " << rsd1.seqpos() << " and " << rsd2.seqpos() << std::endl;
+	// TR << "Returning elecE of " << elecE << std::endl;
 
 	return elecE;
 }
@@ -2414,27 +2414,27 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 {
 	using namespace etable::count_pair;
 
-//	Size const GK_RADIUS_INDEX( rsd1.atom_type_set().extra_parameter_index( "GK_RADIUS" ) );
+	// Size const GK_RADIUS_INDEX( rsd1.atom_type_set().extra_parameter_index( "GK_RADIUS" ) );
 
 	Size natoms1 = rsd1.natoms();
 	Size natoms2 = rsd2.natoms();
 
 	bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
 
-//	etable::count_pair::CountPairFunctionOP cpfxn( 0 );
-//	if ( same_res ) {
-//		cpfxn = etable::count_pair::CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_34 );
-//	} else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
-//		cpfxn = etable::count_pair::CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_34 );
-//	} else {
-//		cpfxn = etable::count_pair::CountPairFunctionOP( new etable::count_pair::CountPairAll() );
-//	}
+	// etable::count_pair::CountPairFunctionOP cpfxn( 0 );
+	// if ( same_res ) {
+	//  cpfxn = etable::count_pair::CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_34 );
+	// } else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
+	//  cpfxn = etable::count_pair::CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_34 );
+	// } else {
+	//  cpfxn = etable::count_pair::CountPairFunctionOP( new etable::count_pair::CountPairAll() );
+	// }
 
-//	if ( same_res ) {
-//		cpfxn = etable::count_pair::CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_34 );
-//	} else {
-//		cpfxn = etable::count_pair::CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_34 );
-//	}
+	// if ( same_res ) {
+	//  cpfxn = etable::count_pair::CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_34 );
+	// } else {
+	//  cpfxn = etable::count_pair::CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_34 );
+	// }
 
 	// Members of a group
 	// do not polarize each other via their permanent multipole, although
@@ -2450,13 +2450,13 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 	Real const fd( 2.0*(dprotein-dwater) / (1.0 + 2.0*dwater) );
 	Real const fq( 3.0*(dprotein-dwater) / (2.0 + 3.0*dwater) );
 
-	for( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
+	for ( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
 		Real const q1( mp1.monopole( atm1 ) );
-		if( q1 == 0.0 || rsd1.is_virtual( atm1 ) ) continue;
+		if ( q1 == 0.0 || rsd1.is_virtual( atm1 ) ) continue;
 		Vector const & p1( mp1.dipole( atm1 ) );
 		Matrix const & quad1( mp1.quadrupole( atm1 ) );
 		Real const rkirk1( mp1.rKirkwood( atm1 ) );
-		for( Size atm2 = (same_res ? atm1 : 1 ) ; atm2 <= natoms2 ; ++atm2 ) {
+		for ( Size atm2 = (same_res ? atm1 : 1 ) ; atm2 <= natoms2 ; ++atm2 ) {
 
 			// Assuming the checks tell us to calculate the interaction
 			Vector rvec( rsd2.xyz( atm2 ) - rsd1.xyz( atm1 ) );
@@ -2464,15 +2464,15 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 
 			Real dist = sqrt( dist2 );
 			Real const q2( mp2.monopole( atm2 ) );
-			if( q2 == 0.0 || rsd2.is_virtual( atm2 ) ) continue;
+			if ( q2 == 0.0 || rsd2.is_virtual( atm2 ) ) continue;
 			Vector const & p2( mp2.dipole( atm2 ) );
 			Matrix const & quad2( mp2.quadrupole( atm2 ) );
 			Real const rkirk2( mp2.rKirkwood( atm2 ) );
 
-				// This is the direct field from permanent multipoles
-			if( !same_polarization_group( rsd1, mp1, atm1, rsd2, atm2 ) ) {
+			// This is the direct field from permanent multipoles
+			if ( !same_polarization_group( rsd1, mp1, atm1, rsd2, atm2 ) ) {
 
-				if( !same_res || ( atm1 != atm2 ) ) {
+				if ( !same_res || ( atm1 != atm2 ) ) {
 
 					// Intermediate vectors
 					Vector const int1( mp1.quadrupole( atm1 ) * rvec );
@@ -2489,7 +2489,7 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 					Real scale5( 1.0 );
 					Real scale7( 1.0 );
 					get_damped_scale_factors( mp1.mp_param( atm1 ), mp2.mp_param( atm2 ),
-							dist, scale3, scale5, scale7 );
+						dist, scale3, scale5, scale7 );
 
 					// inverse distances
 					Real const rr1( 1.0 / dist );
@@ -2509,9 +2509,9 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 				}
 			}
 
-			if( use_gen_kirkwood ) {
+			if ( use_gen_kirkwood ) {
 
-				if( rkirk1 == 0.0 || rkirk2 == 0.0 ) continue;
+				if ( rkirk1 == 0.0 || rkirk2 == 0.0 ) continue;
 
 				// This is the reaction field due to permanent multipoles
 				Real const rs1_rs2( rkirk1 * rkirk2 );
@@ -2524,7 +2524,7 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 				Real const gf3( gf2 * gf );
 				Real const gf5( gf3 * gf2 );
 				Real const gf7( gf5 * gf2 );
-//				Real A00( gf );
+				//    Real A00( gf );
 				Real A10( -gf3 );
 				Real A20( 3.0*gf5 );
 				Real A30( -15.0*gf7 );
@@ -2604,50 +2604,50 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 
 				Vector f1_dir( 0.0 );
 				f1_dir.x() = p2.x()*gux2 + p2.y()*gux3 + p2.z()*gux4
-											+ 0.5 * ( q2*gux1 + quad2.xx()*gux5 + quad2.yy()*gux8 + quad2.zz()*gux10
- 	                               + 2.0*(quad2.xy()*gux6+quad2.xz()*gux7 +quad2.yz()*gux9))
- 	                    + 0.5 * ( q2*gc2 + quad2.xx()*gqxx2 + quad2.yy()*gqyy2 + quad2.zz()*gqzz2
- 	                               + 2.0*(quad2.xy()*gqxy2+quad2.xz()*gqxz2 +quad2.yz()*gqyz2));
+					+ 0.5 * ( q2*gux1 + quad2.xx()*gux5 + quad2.yy()*gux8 + quad2.zz()*gux10
+					+ 2.0*(quad2.xy()*gux6+quad2.xz()*gux7 +quad2.yz()*gux9))
+					+ 0.5 * ( q2*gc2 + quad2.xx()*gqxx2 + quad2.yy()*gqyy2 + quad2.zz()*gqzz2
+					+ 2.0*(quad2.xy()*gqxy2+quad2.xz()*gqxz2 +quad2.yz()*gqyz2));
 
 				f1_dir.y() = p2.x()*guy2 + p2.y()*guy3 + p2.z()*guy4
-											+ 0.5 * ( q2*guy1 + quad2.xx()*guy5 + quad2.yy()*guy8 + quad2.zz()*guy10
- 	                               + 2.0*(quad2.xy()*guy6+quad2.xz()*guy7 +quad2.yz()*guy9))
- 	                    + 0.5 * ( q2*gc3 + quad2.xx()*gqxx3 + quad2.yy()*gqyy3 + quad2.zz()*gqzz3
- 	                               + 2.0*(quad2.xy()*gqxy3+quad2.xz()*gqxz3 +quad2.yz()*gqyz3));
+					+ 0.5 * ( q2*guy1 + quad2.xx()*guy5 + quad2.yy()*guy8 + quad2.zz()*guy10
+					+ 2.0*(quad2.xy()*guy6+quad2.xz()*guy7 +quad2.yz()*guy9))
+					+ 0.5 * ( q2*gc3 + quad2.xx()*gqxx3 + quad2.yy()*gqyy3 + quad2.zz()*gqzz3
+					+ 2.0*(quad2.xy()*gqxy3+quad2.xz()*gqxz3 +quad2.yz()*gqyz3));
 
 				f1_dir.z() = p2.x()*guz2 + p2.y()*guz3 + p2.z()*guz4
-											+ 0.5 * ( q2*guz1 + quad2.xx()*guz5 + quad2.yy()*guz8 + quad2.zz()*guz10
- 	                               + 2.0*(quad2.xy()*guz6+quad2.xz()*guz7 +quad2.yz()*guz9))
- 	                    + 0.5 * ( q2*gc4 + quad2.xx()*gqxx4 + quad2.yy()*gqyy4 + quad2.zz()*gqzz4
- 	                               + 2.0*(quad2.xy()*gqxy4+quad2.xz()*gqxz4 +quad2.yz()*gqyz4));
+					+ 0.5 * ( q2*guz1 + quad2.xx()*guz5 + quad2.yy()*guz8 + quad2.zz()*guz10
+					+ 2.0*(quad2.xy()*guz6+quad2.xz()*guz7 +quad2.yz()*guz9))
+					+ 0.5 * ( q2*gc4 + quad2.xx()*gqxx4 + quad2.yy()*gqyy4 + quad2.zz()*gqzz4
+					+ 2.0*(quad2.xy()*gqxy4+quad2.xz()*gqxz4 +quad2.yz()*gqyz4));
 
 				Vector f2_dir( 0.0 );
 				f2_dir.x() = p1.x()*gux2 + p1.y()*gux3 + p1.z()*gux4
-											- 0.5 * ( q1*gux1 + quad1.xx()*gux5 + quad1.yy()*gux8 + quad1.zz()*gux10
- 	                               + 2.0*(quad1.xy()*gux6+quad1.xz()*gux7 +quad1.yz()*gux9))
- 	                    - 0.5 * ( q1*gc2 + quad1.xx()*gqxx2 + quad1.yy()*gqyy2 + quad1.zz()*gqzz2
- 	                               + 2.0*(quad1.xy()*gqxy2+quad1.xz()*gqxz2 +quad1.yz()*gqyz2));
+					- 0.5 * ( q1*gux1 + quad1.xx()*gux5 + quad1.yy()*gux8 + quad1.zz()*gux10
+					+ 2.0*(quad1.xy()*gux6+quad1.xz()*gux7 +quad1.yz()*gux9))
+					- 0.5 * ( q1*gc2 + quad1.xx()*gqxx2 + quad1.yy()*gqyy2 + quad1.zz()*gqzz2
+					+ 2.0*(quad1.xy()*gqxy2+quad1.xz()*gqxz2 +quad1.yz()*gqyz2));
 
 				f2_dir.y() = p1.x()*guy2 + p1.y()*guy3 + p1.z()*guy4
-											- 0.5 * ( q1*guy1 + quad1.xx()*guy5 + quad1.yy()*guy8 + quad1.zz()*guy10
- 	                               + 2.0*(quad1.xy()*guy6+quad1.xz()*guy7 +quad1.yz()*guy9))
- 	                    - 0.5 * ( q1*gc3 + quad1.xx()*gqxx3 + quad1.yy()*gqyy3 + quad1.zz()*gqzz3
- 	                               + 2.0*(quad1.xy()*gqxy3+quad1.xz()*gqxz3 +quad1.yz()*gqyz3));
+					- 0.5 * ( q1*guy1 + quad1.xx()*guy5 + quad1.yy()*guy8 + quad1.zz()*guy10
+					+ 2.0*(quad1.xy()*guy6+quad1.xz()*guy7 +quad1.yz()*guy9))
+					- 0.5 * ( q1*gc3 + quad1.xx()*gqxx3 + quad1.yy()*gqyy3 + quad1.zz()*gqzz3
+					+ 2.0*(quad1.xy()*gqxy3+quad1.xz()*gqxz3 +quad1.yz()*gqyz3));
 
 				f2_dir.z() = p1.x()*guz2 + p1.y()*guz3 + p1.z()*guz4
-											- 0.5 * ( q1*guz1 + quad1.xx()*guz5 + quad1.yy()*guz8 + quad1.zz()*guz10
- 	                               + 2.0*(quad1.xy()*guz6+quad1.xz()*guz7 +quad1.yz()*guz9))
- 	                    - 0.5 * ( q1*gc4 + quad1.xx()*gqxx4 + quad1.yy()*gqyy4 + quad1.zz()*gqzz4
- 	                               + 2.0*(quad1.xy()*gqxy4+quad1.xz()*gqxz4 +quad1.yz()*gqyz4));
+					- 0.5 * ( q1*guz1 + quad1.xx()*guz5 + quad1.yy()*guz8 + quad1.zz()*guz10
+					+ 2.0*(quad1.xy()*guz6+quad1.xz()*guz7 +quad1.yz()*guz9))
+					- 0.5 * ( q1*gc4 + quad1.xx()*gqxx4 + quad1.yy()*gqyy4 + quad1.zz()*gqzz4
+					+ 2.0*(quad1.xy()*gqxy4+quad1.xz()*gqxz4 +quad1.yz()*gqyz4));
 
-				if( same_res && ( atm1 == atm2 ) ) {
+				if ( same_res && ( atm1 == atm2 ) ) {
 					f1_dir *= 0.5;
 					f2_dir *= 0.5;
 				}
 
-			//TR << "Pair rf " << rsd1.xyz(atm1) << " " << rsd2.xyz(atm2) << " " << f1_dir << " " << f2_dir << std::endl;
-			//TR << "Pair rf " << rsd1.xyz(atm1) << " " << rsd2.xyz(atm2) << " " << A01 << " " << A10 << " " << A11 << " "
-			//				<< A12 << " " << A20 << " " << A21 << std::endl;
+				//TR << "Pair rf " << rsd1.xyz(atm1) << " " << rsd2.xyz(atm2) << " " << f1_dir << " " << f2_dir << std::endl;
+				//TR << "Pair rf " << rsd1.xyz(atm1) << " " << rsd2.xyz(atm2) << " " << A01 << " " << A10 << " " << A11 << " "
+				//    << A12 << " " << A20 << " " << A21 << std::endl;
 
 				mp1.Efield_rf_fixed( atm1 ) += f1_dir;
 				mp2.Efield_rf_fixed( atm2 ) += f2_dir;
@@ -2686,10 +2686,10 @@ MultipoleElecPotential::calculate_res_res_induced_fields_for_polarization(
 	Real const dwater( Ew );
 	Real const fd( 2.0*(dprotein-dwater) / (1.0 + 2.0*dwater) );
 
-	for( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
+	for ( Size atm1 = 1 ; atm1 <= natoms1 ; ++atm1 ) {
 		Vector const & p1( mp1.induced_dipole( atm1 ) );
 		Real const rkirk1( mp1.rKirkwood( atm1 ) );
-		for( Size atm2 = (same_res ? atm1 : 1 ) ; atm2 <= natoms2 ; ++atm2 ) {
+		for ( Size atm2 = (same_res ? atm1 : 1 ) ; atm2 <= natoms2 ; ++atm2 ) {
 
 			Vector rvec( rsd2.xyz( atm2 ) - rsd1.xyz( atm1 ) );
 			Real dist2( rvec.magnitude_squared() );
@@ -2698,9 +2698,9 @@ MultipoleElecPotential::calculate_res_res_induced_fields_for_polarization(
 			Vector const & p2( mp2.induced_dipole( atm2 ) );
 			Real const rkirk2( mp2.rKirkwood( atm2 ) );
 
-			if( rkirk1 == 0.0 || rkirk2 == 0.0 || rsd1.is_virtual( atm1 ) || rsd2.is_virtual( atm2 ) ) continue;
+			if ( rkirk1 == 0.0 || rkirk2 == 0.0 || rsd1.is_virtual( atm1 ) || rsd2.is_virtual( atm2 ) ) continue;
 
-			if( !same_res || !(atm1 == atm2) ) {
+			if ( !same_res || !(atm1 == atm2) ) {
 				// Scalar products
 				//Real const sc2( p1.dot( p2 ) );
 				Real const sc3( p1.dot( rvec ) );
@@ -2715,7 +2715,7 @@ MultipoleElecPotential::calculate_res_res_induced_fields_for_polarization(
 				Real scale5( 1.0 );
 				Real scale7( 1.0 );
 				get_damped_scale_factors( mp1.mp_param( atm1 ), mp2.mp_param( atm2 ),
-						dist, scale3, scale5, scale7 );
+					dist, scale3, scale5, scale7 );
 
 				// inverse distances
 				Real rr1 = 1.0 / dist;
@@ -2729,16 +2729,16 @@ MultipoleElecPotential::calculate_res_res_induced_fields_for_polarization(
 				Vector const Efield_at_1_due_to_2( -rr3*p2 + sc4*rr5*rvec );
 				Vector const Efield_at_2_due_to_1( -rr3*p1 + sc3*rr5*rvec );
 
-//			TR << "Interaction between " << rsd1.xyz( atm1 ) << " and " << rsd2.xyz( atm2 ) << std::endl;
-//			TR << "Induced field at 1 is " << Efield_at_1_due_to_2 << std::endl;
-//			TR << "Induced field at 2 is " << Efield_at_2_due_to_1 << std::endl;
+				//   TR << "Interaction between " << rsd1.xyz( atm1 ) << " and " << rsd2.xyz( atm2 ) << std::endl;
+				//   TR << "Induced field at 1 is " << Efield_at_1_due_to_2 << std::endl;
+				//   TR << "Induced field at 2 is " << Efield_at_2_due_to_1 << std::endl;
 
 				// Accumulate
 				mp1.Efield_induced( atm1 ) += Efield_at_1_due_to_2;
 				mp2.Efield_induced( atm2 ) += Efield_at_2_due_to_1;
 			}
 
-			if( use_gen_kirkwood ) {
+			if ( use_gen_kirkwood ) {
 				// This is the reaction field due to permanent multipoles
 				Real const rs1_rs2( rkirk1 * rkirk2 );
 				Real const expterm( std::exp( -dist2/( gkc* rs1_rs2 ) ) );
@@ -2783,7 +2783,7 @@ MultipoleElecPotential::calculate_res_res_induced_fields_for_polarization(
 				f2_dir.y() = p1.x()*guy2 + p1.y()*guy3 + p1.z()*guy4;
 				f2_dir.z() = p1.x()*guz2 + p1.y()*guz3 + p1.z()*guz4;
 
-				if( same_res && ( atm1 == atm2 ) ) {
+				if ( same_res && ( atm1 == atm2 ) ) {
 					f1_dir *= 0.5;
 					f2_dir *= 0.5;
 				}
@@ -2804,30 +2804,30 @@ MultipoleElecPotential::calculate_res_res_induced_fields_for_polarization(
 
 void
 MultipoleElecPotential::calculate_and_store_all_derivs(
-		pose::Pose const & pose
+	pose::Pose const & pose
 ) const
 {
 	using namespace etable::count_pair;
 
 
-//	TR << "Precalculating all of the derivatives" << std::endl;
+	// TR << "Precalculating all of the derivatives" << std::endl;
 
 	MultipoleElecPoseInfo const & multipole_info( static_cast< MultipoleElecPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO)));
 
 	// Make sure the cache for the derivs is correctly sized
 	cached_atom_derivs_.resize( pose.total_residue() );
-	for( Size ires = 1 ; ires <= pose.total_residue() ; ++ires ) {
+	for ( Size ires = 1 ; ires <= pose.total_residue() ; ++ires ) {
 		Size const num_atoms( pose.residue( ires ).natoms() );
 		cached_atom_derivs_[ ires ].resize( num_atoms );
-		for( Size iat = 1 ; iat <= num_atoms ; ++iat ) {
+		for ( Size iat = 1 ; iat <= num_atoms ; ++iat ) {
 			cached_atom_derivs_[ ires ][ iat ].f1() = 0.0;
 			cached_atom_derivs_[ ires ][ iat ].f2() = 0.0;
 		}
 	}
 
 	// Now loop over all residue-residue combos
-	for( Size resi = 1 ; resi <= pose.total_residue() ; ++resi ) {
-		for( Size resj = resi ; resj <= pose.total_residue() ; ++resj ) {
+	for ( Size resi = 1 ; resi <= pose.total_residue() ; ++resi ) {
+		for ( Size resj = resi ; resj <= pose.total_residue() ; ++resj ) {
 
 			Residue const & rsd1( pose.residue( resi ) );
 			Residue const & rsd2( pose.residue( resj ) );
@@ -2837,11 +2837,11 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 
 			assert( pose.energies().use_nblist() );
 
-//			Size const resi( rsd1.seqpos() );
-//			Size const resj( rsd2.seqpos() );
+			//   Size const resi( rsd1.seqpos() );
+			//   Size const resj( rsd2.seqpos() );
 			bool const same_res( resi == resj );
 
-//	TR << "Calculating deriv for " << resi << " and " << resj << std::endl;
+			// TR << "Calculating deriv for " << resi << " and " << resj << std::endl;
 
 			CountPairFunctionOP cpfxn( 0 );
 			if ( same_res ) {
@@ -2850,11 +2850,11 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 				cpfxn = etable::count_pair::CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_34 );
 			}
 
-			for( Size atomi = 1 ; atomi <= rsd1.natoms() ; ++ atomi ) {
+			for ( Size atomi = 1 ; atomi <= rsd1.natoms() ; ++ atomi ) {
 
-				if( rsd1.is_virtual( atomi ) ) continue;
+				if ( rsd1.is_virtual( atomi ) ) continue;
 
-//				if( !ShouldItCount( rsd1, atomi ) ) continue;
+				//    if( !ShouldItCount( rsd1, atomi ) ) continue;
 
 				Vector const & xyzi( rsd1.xyz( atomi ) );
 				Real const qi( mp1.monopole( atomi ) );
@@ -2865,9 +2865,9 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 				Size const start_atom( same_res ? atomi : 1 );
 				for ( Size atomj=start_atom, atomj_end=rsd2.natoms(); atomj<= atomj_end; ++atomj ) {
 
-					if( rsd2.is_virtual( atomj ) ) continue;
+					if ( rsd2.is_virtual( atomj ) ) continue;
 
-//					if( !ShouldItCount( rsd2, atomj ) ) continue;
+					//     if( !ShouldItCount( rsd2, atomj ) ) continue;
 
 					Vector const & xyzj( rsd2.xyz(atomj) );
 					Vector const & Rij( xyzj - xyzi );
@@ -2880,8 +2880,8 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 					Vector const deriv_dr_f2( xyzj - xyzi );
 					Real const dist = sqrt( dist2 );
 
-						Vector const p1tot( p1 + 0.5*ip1 );
-						Vector const p2tot( p2 + 0.5*ip2 );
+					Vector const p1tot( p1 + 0.5*ip1 );
+					Vector const p2tot( p2 + 0.5*ip2 );
 
 					Vector const I1( quadi * Rij );
 					Vector const I2( quadj * Rij );
@@ -2903,25 +2903,25 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 					Real const pi_dot_r( p1.dot_product( Rij ) );
 					Real const pj_dot_r( p2.dot_product( Rij ) );
 
-						Vector Xaxis( 1.0, 0.0, 0.0 );
-						Vector Yaxis( 0.0, 1.0, 0.0 );
-						Vector Zaxis( 0.0, 0.0, 1.0 );
+					Vector Xaxis( 1.0, 0.0, 0.0 );
+					Vector Yaxis( 0.0, 1.0, 0.0 );
+					Vector Zaxis( 0.0, 0.0, 1.0 );
 
-						Vector const Ox( quadj * Xaxis );
-						Vector const Oy( quadj * Yaxis );
-						Vector const Oz( quadj * Zaxis );
-						Vector const Px( quadi * Xaxis );
-						Vector const Py( quadi * Yaxis );
-						Vector const Pz( quadi * Zaxis );
-						Vector const Rx( quadj * Px );
-						Vector const Ry( quadj * Py );
-						Vector const Rz( quadj * Pz );
-						Vector const Ux( quadi * Ox );
-						Vector const Uy( quadi * Oy );
-						Vector const Uz( quadi * Oz );
+					Vector const Ox( quadj * Xaxis );
+					Vector const Oy( quadj * Yaxis );
+					Vector const Oz( quadj * Zaxis );
+					Vector const Px( quadi * Xaxis );
+					Vector const Py( quadi * Yaxis );
+					Vector const Pz( quadi * Zaxis );
+					Vector const Rx( quadj * Px );
+					Vector const Ry( quadj * Py );
+					Vector const Rz( quadj * Pz );
+					Vector const Ux( quadi * Ox );
+					Vector const Uy( quadi * Oy );
+					Vector const Uz( quadi * Oz );
 
-						Real const T( 2.0 * ( quadi.xy()*quadj.xy() + quadi.xz()*quadj.xz() + quadi.yz()*quadj.yz() ) +
-													quadi.xx()*quadj.xx() + quadi.yy()*quadj.yy() + quadi.zz()*quadj.zz() );
+					Real const T( 2.0 * ( quadi.xy()*quadj.xy() + quadi.xz()*quadj.xz() + quadi.yz()*quadj.yz() ) +
+						quadi.xx()*quadj.xx() + quadi.yy()*quadj.yy() + quadi.zz()*quadj.zz() );
 
 
 					Real cp_weight( 1.0 );
@@ -2929,8 +2929,8 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 					if ( cpfxn->count( atomi, atomj, cp_weight, path_dist ) ) {
 
 						Real polar_weight( cp_weight > 0.0 ? 1.0 : 0.0 );
-						if( same_polarization_group( rsd1, mp1, atomi, rsd2, atomj ) && cp_weight == 0.4 ) {
-//						TR << "ENERGY USING SPECIAL POLAR WEIGHT" << std::endl;
+						if ( same_polarization_group( rsd1, mp1, atomi, rsd2, atomj ) && cp_weight == 0.4 ) {
+							//      TR << "ENERGY USING SPECIAL POLAR WEIGHT" << std::endl;
 							polar_weight = 0.5;
 						}
 
@@ -2975,10 +2975,10 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 						Real dscale5_dr( 0.0 );
 						Real dscale7_dr( 0.0 );
 						get_damped_scale_factors_with_derivs( mp1.mp_param( atomi ), mp2.mp_param( atomj ),
-								dist, scale3, scale5, scale7, dscale3_dr, dscale5_dr, dscale7_dr );
+							dist, scale3, scale5, scale7, dscale3_dr, dscale5_dr, dscale7_dr );
 
-///******** Begin correct derivatives
-///*** You can comment them out, but never, ever alter them
+						///******** Begin correct derivatives
+						///*** You can comment them out, but never, ever alter them
 						Real const beta( 15.0*inv_dist_6*pi_dot_r*pj_dot_r - 3.0*inv_dist_4*pi_dot_pj );
 
 						// monopole-monopole interaction derivative
@@ -2992,11 +2992,11 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 						// monopole-induced dipole interaction derivative
 						Real const m_id_energy( -qi*ipj_dot_r*inv_dist_4 ); // Includes extra dist factor
 						Vector const m_id_f1(  scale3*qi*inv_dist_3*ipj_cross_ri -
-											(3.0*scale3*qi*inv_dist_5*ipj_dot_r )*deriv_dr_f1 -
-											dscale3_dr*m_id_energy*deriv_dr_f1 );
+							(3.0*scale3*qi*inv_dist_5*ipj_dot_r )*deriv_dr_f1 -
+							dscale3_dr*m_id_energy*deriv_dr_f1 );
 						Vector const m_id_f2(  scale3*qi*inv_dist_3*ip2 -
-											(3.0*scale3*qi*inv_dist_5*ipj_dot_r )*deriv_dr_f2 -
-											dscale3_dr*m_id_energy*deriv_dr_f2 );
+							(3.0*scale3*qi*inv_dist_5*ipj_dot_r )*deriv_dr_f2 -
+							dscale3_dr*m_id_energy*deriv_dr_f2 );
 
 						// dipole-monopole interaction derivative
 						Vector const d_m_f1( -qj*inv_dist_3*pi_cross_rj + 3.0*qj*inv_dist_5*pi_dot_r*deriv_dr_f1 );
@@ -3005,11 +3005,11 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 						// induced dipole-monopole interaction derivative
 						Real const id_m_energy( qj*ipi_dot_r*inv_dist_4 );  // Includes extra dist factor
 						Vector const id_m_f1( -scale3*qj*inv_dist_3*ipi_cross_rj +
-													3.0*scale3*qj*inv_dist_5*ipi_dot_r*deriv_dr_f1 -
-													dscale3_dr*id_m_energy*deriv_dr_f1 );
+							3.0*scale3*qj*inv_dist_5*ipi_dot_r*deriv_dr_f1 -
+							dscale3_dr*id_m_energy*deriv_dr_f1 );
 						Vector const id_m_f2( -scale3*qj*inv_dist_3*ip1 +
-													3.0*scale3*qj*inv_dist_5*ipi_dot_r*deriv_dr_f2 -
-													dscale3_dr*id_m_energy*deriv_dr_f2 );
+							3.0*scale3*qj*inv_dist_5*ipi_dot_r*deriv_dr_f2 -
+							dscale3_dr*id_m_energy*deriv_dr_f2 );
 
 						// dipole-dipole interaction derivative
 						Vector const dp_f1( -1.0 * inv_dist_3 * pi_cross_pj - 3.0 * inv_dist_5 * pi_dot_r * pj_cross_r );
@@ -3082,102 +3082,102 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 
 						///*********** Quadrupole-dipole term 1
 						Vector const q_d_term1_f1( -6.0*inv_dist_5*I1.cross_product(p2) +
-																	30.0*inv_dist_7*I1.dot(p2)*deriv_dr_f1 -
-																	6.0*inv_dist_5*J1.cross_product(xyzj) );
+							30.0*inv_dist_7*I1.dot(p2)*deriv_dr_f1 -
+							6.0*inv_dist_5*J1.cross_product(xyzj) );
 						Vector const q_d_term1_f2( -6.0*inv_dist_5*J1 + 30.0*inv_dist_7*I1.dot(p2)*deriv_dr_f2 );
 						///*********** Dipole-quadrupole term 1
 						Vector const d_q_term1_f1( -6.0*inv_dist_5*I2.cross_product(p1) -
-																	30.0*inv_dist_7*I2.dot(p1)*deriv_dr_f1 +
-																	6.0*inv_dist_5*J2.cross_product(xyzi) );
+							30.0*inv_dist_7*I2.dot(p1)*deriv_dr_f1 +
+							6.0*inv_dist_5*J2.cross_product(xyzi) );
 						Vector const d_q_term1_f2( 6.0*inv_dist_5*J2 - 30.0*inv_dist_7*I2.dot(p1)*deriv_dr_f2 );
 
 						///*********** Quadrupole-dipole term 2
 						Vector const q_d_term2_f1( 15.0*inv_dist_7*S1*pj_cross_ri +
-														30.0*inv_dist_7*pj_dot_r*I1.cross_product( xyzj ) -
-														105.0*inv_dist_9*pj_dot_r*S1*deriv_dr_f1 );
+							30.0*inv_dist_7*pj_dot_r*I1.cross_product( xyzj ) -
+							105.0*inv_dist_9*pj_dot_r*S1*deriv_dr_f1 );
 						Vector const q_d_term2_f2( 15.0*inv_dist_7*S1*p2 +
-														30.0*inv_dist_7*pj_dot_r*I1 -
-														105.0*inv_dist_9*S1*pj_dot_r*deriv_dr_f2 );
+							30.0*inv_dist_7*pj_dot_r*I1 -
+							105.0*inv_dist_9*S1*pj_dot_r*deriv_dr_f2 );
 						///*********** Dipole-quadrupole term 2
 						Vector const d_q_term2_f1( -15.0*S2*inv_dist_7*pi_cross_rj -
-														30.0*pi_dot_r*inv_dist_7*I2.cross_product( xyzi ) +
-														105.0*pi_dot_r*S2*inv_dist_9*deriv_dr_f1 );
+							30.0*pi_dot_r*inv_dist_7*I2.cross_product( xyzi ) +
+							105.0*pi_dot_r*S2*inv_dist_9*deriv_dr_f1 );
 						Vector const d_q_term2_f2( -15.0*S2*inv_dist_7*p1 -
-														30.0*pi_dot_r*inv_dist_7*I2 +
-														105.0*pi_dot_r*S2*inv_dist_9*deriv_dr_f2 );
+							30.0*pi_dot_r*inv_dist_7*I2 +
+							105.0*pi_dot_r*S2*inv_dist_9*deriv_dr_f2 );
 
 						///*********** Quadrupole-induced dipole term 1
 						Real const q_id_energy_scale5( 6.0*I1.dot(ip2)*inv_dist_6 ); // extra dist factor from dr_dalpha
 						Vector const q_id_term1_f1( -6.0*scale5*inv_dist_5*I1.cross_product(ip2) +
-																	30.0*scale5*inv_dist_7*I1.dot(ip2)*deriv_dr_f1 -
-																	6.0*scale5*inv_dist_5*Ji1.cross_product(xyzj) -
-																	dscale5_dr*q_id_energy_scale5*deriv_dr_f1 );
+							30.0*scale5*inv_dist_7*I1.dot(ip2)*deriv_dr_f1 -
+							6.0*scale5*inv_dist_5*Ji1.cross_product(xyzj) -
+							dscale5_dr*q_id_energy_scale5*deriv_dr_f1 );
 						Vector const q_id_term1_f2( -6.0*scale5*inv_dist_5*Ji1 +
-																				30.0*scale5*inv_dist_7*I1.dot(ip2)*deriv_dr_f2 -
-																				dscale5_dr*q_id_energy_scale5*deriv_dr_f2 );
+							30.0*scale5*inv_dist_7*I1.dot(ip2)*deriv_dr_f2 -
+							dscale5_dr*q_id_energy_scale5*deriv_dr_f2 );
 						///*********** Induced dipole-quadrupole term 1
 						Real const id_q_energy_scale5( -6.0*I2.dot(ip1)*inv_dist_6 ); // extra dist factor from dr_dalpha
 						Vector const id_q_term1_f1( -6.0*scale5*inv_dist_5*I2.cross_product(ip1) -
-																	30.0*scale5*inv_dist_7*I2.dot(ip1)*deriv_dr_f1 +
-																	6.0*scale5*inv_dist_5*Ji2.cross_product(xyzi) -
-																	dscale5_dr*id_q_energy_scale5*deriv_dr_f1 );
+							30.0*scale5*inv_dist_7*I2.dot(ip1)*deriv_dr_f1 +
+							6.0*scale5*inv_dist_5*Ji2.cross_product(xyzi) -
+							dscale5_dr*id_q_energy_scale5*deriv_dr_f1 );
 						Vector const id_q_term1_f2( 6.0*scale5*inv_dist_5*Ji2 -
-																	30.0*scale5*inv_dist_7*I2.dot(ip1)*deriv_dr_f2 -
-																	dscale5_dr*id_q_energy_scale5*deriv_dr_f2 );
+							30.0*scale5*inv_dist_7*I2.dot(ip1)*deriv_dr_f2 -
+							dscale5_dr*id_q_energy_scale5*deriv_dr_f2 );
 
 						///*********** Quadrupole-induced dipole term 2
 						Real const q_id_energy_scale7( -15.0*ipj_dot_r*S1*inv_dist_8 ); // extra dist factor from dr_dalpha
 						Vector const q_id_term2_f1( 15.0*scale7*inv_dist_7*S1*ipj_cross_ri +
-														30.0*scale7*inv_dist_7*ipj_dot_r*I1.cross_product( xyzj ) -
-														105.0*scale7*inv_dist_9*ipj_dot_r*S1*deriv_dr_f1 -
-														dscale7_dr*q_id_energy_scale7*deriv_dr_f1 );
+							30.0*scale7*inv_dist_7*ipj_dot_r*I1.cross_product( xyzj ) -
+							105.0*scale7*inv_dist_9*ipj_dot_r*S1*deriv_dr_f1 -
+							dscale7_dr*q_id_energy_scale7*deriv_dr_f1 );
 						Vector const q_id_term2_f2( 15.0*scale7*inv_dist_7*S1*ip2 +
-														30.0*scale7*inv_dist_7*ipj_dot_r*I1 -
-														105.0*scale7*inv_dist_9*S1*ipj_dot_r*deriv_dr_f2 -
-														dscale7_dr*q_id_energy_scale7*deriv_dr_f2 );
+							30.0*scale7*inv_dist_7*ipj_dot_r*I1 -
+							105.0*scale7*inv_dist_9*S1*ipj_dot_r*deriv_dr_f2 -
+							dscale7_dr*q_id_energy_scale7*deriv_dr_f2 );
 						///*********** Induced dipole-quadrupole term 2
 						Real const id_q_energy_scale7( 15.0*ipi_dot_r*S2*inv_dist_8 ); // extra dist factor from dr_dalpha
 						Vector const id_q_term2_f1( -15.0*scale7*S2*inv_dist_7*ipi_cross_rj -
-														30.0*scale7*ipi_dot_r*inv_dist_7*I2.cross_product( xyzi ) +
-														105.0*scale7*ipi_dot_r*S2*inv_dist_9*deriv_dr_f1 -
-														dscale7_dr*id_q_energy_scale7*deriv_dr_f1 );
+							30.0*scale7*ipi_dot_r*inv_dist_7*I2.cross_product( xyzi ) +
+							105.0*scale7*ipi_dot_r*S2*inv_dist_9*deriv_dr_f1 -
+							dscale7_dr*id_q_energy_scale7*deriv_dr_f1 );
 						Vector const id_q_term2_f2( -15.0*scale7*S2*inv_dist_7*ip1 -
-														30.0*scale7*ipi_dot_r*inv_dist_7*I2 +
-														105.0*scale7*ipi_dot_r*S2*inv_dist_9*deriv_dr_f2 -
-														dscale7_dr*id_q_energy_scale7*deriv_dr_f2 );
+							30.0*scale7*ipi_dot_r*inv_dist_7*I2 +
+							105.0*scale7*ipi_dot_r*S2*inv_dist_9*deriv_dr_f2 -
+							dscale7_dr*id_q_energy_scale7*deriv_dr_f2 );
 
 						///*********** Quadrupole-quadrupole term sc9
 						Vector const q_q_term1_f1( 60.0*inv_dist_7*( K1.cross_product( xyzj ) + K2.cross_product( xyzi ) ) -
-														420.0*inv_dist_9*I1.dot( I2 )*deriv_dr_f1 +
-														60.0*inv_dist_7*I1.cross_product( I2 ) );
+							420.0*inv_dist_9*I1.dot( I2 )*deriv_dr_f1 +
+							60.0*inv_dist_7*I1.cross_product( I2 ) );
 						Vector const q_q_term1_f2( 60.0*inv_dist_7*(K1 + K2) -
-														420.0*inv_dist_9*I1.dot(I2)*deriv_dr_f2 );
+							420.0*inv_dist_9*I1.dot(I2)*deriv_dr_f2 );
 
 						///*********** Quadrupole-quadrupole term sc5*sc6
 						Vector const q_q_term2_f1( -210.0*inv_dist_9*(S1*I2.cross_product(xyzi) + S2*I1.cross_product(xyzj)) +
-														945.0*inv_dist_11*S1*S2*deriv_dr_f1 );
+							945.0*inv_dist_11*S1*S2*deriv_dr_f1 );
 						Vector const q_q_term2_f2( -210.0*inv_dist_9*(S1*I2 + S2*I1) +
-														945.0*inv_dist_11*S1*S2*deriv_dr_f2 );
+							945.0*inv_dist_11*S1*S2*deriv_dr_f2 );
 
 						///*********** Quadrupole-quadrupole term sc10
 						//Vector const q_q_term3_f1( 30.0*T*inv_dist_7*deriv_dr_f1 +
-						//							6.0*inv_dist_5*( Rx.cross_product( Xaxis ) + Ry.cross_product( Yaxis ) + Rz.cross_product( Zaxis ) +
-						//							Ox.cross_product( Px ) + Oy.cross_product( Py ) + Oz.cross_product( Pz ) ) );
+						//       6.0*inv_dist_5*( Rx.cross_product( Xaxis ) + Ry.cross_product( Yaxis ) + Rz.cross_product( Zaxis ) +
+						//       Ox.cross_product( Px ) + Oy.cross_product( Py ) + Oz.cross_product( Pz ) ) );
 						Vector const q_q_term3_f1( 30.0*T*inv_dist_7*deriv_dr_f1 +
-													12.0*inv_dist_5*( Rx.cross_product( Xaxis ) + Ry.cross_product( Yaxis ) + Rz.cross_product( Zaxis ) ) );
+							12.0*inv_dist_5*( Rx.cross_product( Xaxis ) + Ry.cross_product( Yaxis ) + Rz.cross_product( Zaxis ) ) );
 						Vector const q_q_term3_f2( 30.0*T*inv_dist_7*deriv_dr_f2 );
 
 						Vector const f1 = 332.063714 * cp_weight * ( m_m_f1 + m_d_f1 + d_m_f1 + d_d_f1 +
-											q_m_f1 + m_q_f1 + q_d_term1_f1 + d_q_term1_f1 + q_d_term2_f1 + d_q_term2_f1 +
-											q_q_term1_f1 + q_q_term2_f1 + q_q_term3_f1 ) +
-															332.063714 * 0.5 * polar_weight * ( m_id_f1 + id_m_f1 + id_d_f1 +
-											d_id_f1 + q_id_term1_f1 + id_q_term1_f1 + q_id_term2_f1 + id_q_term2_f1 );
+							q_m_f1 + m_q_f1 + q_d_term1_f1 + d_q_term1_f1 + q_d_term2_f1 + d_q_term2_f1 +
+							q_q_term1_f1 + q_q_term2_f1 + q_q_term3_f1 ) +
+							332.063714 * 0.5 * polar_weight * ( m_id_f1 + id_m_f1 + id_d_f1 +
+							d_id_f1 + q_id_term1_f1 + id_q_term1_f1 + q_id_term2_f1 + id_q_term2_f1 );
 
 						Vector const f2 = 332.063714 * cp_weight * ( m_m_f2 + m_d_f2 + d_m_f2 + d_d_f2 +
-											q_m_f2 + m_q_f2 + q_d_term1_f2 + d_q_term1_f2 + q_d_term2_f2 + d_q_term2_f2 +
-											q_q_term1_f2 + q_q_term2_f2 + q_q_term3_f2 ) +
-															332.063714 * 0.5 * polar_weight * ( m_id_f2 + id_m_f2 + id_d_f2 +
-											d_id_f2 + q_id_term1_f2 + id_q_term1_f2 + q_id_term2_f2 + id_q_term2_f2 );
+							q_m_f2 + m_q_f2 + q_d_term1_f2 + d_q_term1_f2 + q_d_term2_f2 + d_q_term2_f2 +
+							q_q_term1_f2 + q_q_term2_f2 + q_q_term3_f2 ) +
+							332.063714 * 0.5 * polar_weight * ( m_id_f2 + id_m_f2 + id_d_f2 +
+							d_id_f2 + q_id_term1_f2 + id_q_term1_f2 + q_id_term2_f2 + id_q_term2_f2 );
 
 #ifdef NOTDEF
 						Vector const f1 = 332.063714 * 0.5 * polar_weight * ( m_id_f1 + id_m_f1 + id_d_f1 +
@@ -3200,12 +3200,12 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 						Size const atomi_ref_res( mp1.coord_frame_ref( atomi ).rsd() );
 						Size const atomj_ref_res( mp2.coord_frame_ref( atomj ).rsd() );
 
-//						TR << "Ref info 1: res " << atomi_ref_res << " index " << atomi_ref_index << " 2: res " << atomj_ref_res << " index " << atomj_ref_index << std::endl;
+						//      TR << "Ref info 1: res " << atomi_ref_res << " index " << atomi_ref_index << " 2: res " << atomj_ref_res << " index " << atomj_ref_index << std::endl;
 
 						///************ BEGIN correct coordinate correction for simple dipole
 						///******* Do not ever change this stuff
 
-						if( atomi_ref_index != 0 ) {
+						if ( atomi_ref_index != 0 ) {
 							// This is the complete dipole coord frame correction derivative up through dipole-dipole terms
 							Vector dp_f1_at1( inv_dist_3 * pi_cross_pj - 3.0 * inv_dist_5 * pj_dot_r * pi_cross_r + qj*inv_dist_3*pi_cross_r );
 							Vector dq_f1_at1( 0.0 );
@@ -3214,8 +3214,8 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 							Vector dq_pol_f1_at1( 0.0 );
 
 							dp_pol_f1_at1 += ( inv_dist_3 * scale3 * ipi_cross_pj - 3.0 * scale5*inv_dist_5 * pj_dot_r * ipi_cross_r +
-																		inv_dist_3 * scale3 * pi_cross_ipj - 3.0 * scale5*inv_dist_5 * ipj_dot_r * pi_cross_r +
-																		scale3*qj*inv_dist_3*ipi_cross_r );
+								inv_dist_3 * scale3 * pi_cross_ipj - 3.0 * scale5*inv_dist_5 * ipj_dot_r * pi_cross_r +
+								scale3*qj*inv_dist_3*ipi_cross_r );
 							dq_pol_f1_at1 += ( 0.0 );
 
 							// This is the quadrupole correction through monopole-quadrupole
@@ -3244,21 +3244,21 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 
 							// This is the quadrupole correction for sc10
 							dq_f1_at1 += ( 12.0*inv_dist_5*( Ux.cross_product( Xaxis ) +
-												Uy.cross_product( Yaxis ) + Uz.cross_product( Zaxis ) ) );
+								Uy.cross_product( Yaxis ) + Uz.cross_product( Zaxis ) ) );
 
 							Vector const coord_frame_f1_at1 = 332.063714 * cp_weight * ( dp_f1_at1 + dq_f1_at1 ) +
-																			0.5 * 332.063714 * polar_weight * ( dp_pol_f1_at1 + dq_pol_f1_at1 );
+								0.5 * 332.063714 * polar_weight * ( dp_pol_f1_at1 + dq_pol_f1_at1 );
 
-//							Vector const coord_frame_f1_at1 = 0.5 * 332.063714 * polar_weight * scale3*qj*inv_dist_3*ipi_cross_r;
+							//       Vector const coord_frame_f1_at1 = 0.5 * 332.063714 * polar_weight * scale3*qj*inv_dist_3*ipi_cross_r;
 
-//							Vector const coord_frame_f1_at1 = 0.5 * 332.063714 * polar_weight * ( dp_pol_f1_at1 + dq_pol_f1_at1 );
+							//       Vector const coord_frame_f1_at1 = 0.5 * 332.063714 * polar_weight * ( dp_pol_f1_at1 + dq_pol_f1_at1 );
 
 							cached_atom_derivs_[ atomi_ref_res ][ atomi_ref_index ].f1() -= coord_frame_f1_at1;
 							cached_atom_derivs_[ resi ][ atomi ].f1() += coord_frame_f1_at1;
 
 						}
 
-						if( atomj_ref_index != 0 ) {
+						if ( atomj_ref_index != 0 ) {
 							// This is the complete dipole coord frame correction derivative up through dipole-dipole terms
 							Vector dp_f1_at2(   -1.0 * inv_dist_3 * pi_cross_pj - 3.0 * inv_dist_5 * pi_dot_r * pj_cross_r - qi*inv_dist_3*pj_cross_r );
 							Vector dq_f1_at2( 0.0 );
@@ -3267,8 +3267,8 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 							Vector dq_pol_f1_at2( 0.0 );
 
 							dp_pol_f1_at2 += ( -scale3*inv_dist_3 * ipi_cross_pj - 3.0 * scale5*inv_dist_5 * pi_dot_r * ipj_cross_r -
-																		scale3*inv_dist_3 * pi_cross_ipj - 3.0 * scale5*inv_dist_5 * ipi_dot_r * pj_cross_r -
-																		scale3*qi*inv_dist_3*ipj_cross_r );
+								scale3*inv_dist_3 * pi_cross_ipj - 3.0 * scale5*inv_dist_5 * ipi_dot_r * pj_cross_r -
+								scale3*qi*inv_dist_3*ipj_cross_r );
 							dq_pol_f1_at2 += ( 0.0 );
 
 							// This is the quadrupole correction through monopole-quadrupole
@@ -3297,14 +3297,14 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 
 							// This is the quadrupole correction for sc10
 							dq_f1_at2 += ( 12.0*inv_dist_5*( Rx.cross_product( Xaxis ) +
-																		Ry.cross_product( Yaxis ) + Rz.cross_product( Zaxis ) ) );
+								Ry.cross_product( Yaxis ) + Rz.cross_product( Zaxis ) ) );
 
 							Vector const coord_frame_f1_at2 = 332.063714 * cp_weight * ( dp_f1_at2 + dq_f1_at2 ) +
-																0.5 * 332.063714 * polar_weight * ( dp_pol_f1_at2 + dq_pol_f1_at2 );
+								0.5 * 332.063714 * polar_weight * ( dp_pol_f1_at2 + dq_pol_f1_at2 );
 
-//							Vector const coord_frame_f1_at2 = 0.5 * 332.063714 * polar_weight * -1.0 * scale3*qi*inv_dist_3*ipj_cross_r;
+							//       Vector const coord_frame_f1_at2 = 0.5 * 332.063714 * polar_weight * -1.0 * scale3*qi*inv_dist_3*ipj_cross_r;
 
-//							Vector const coord_frame_f1_at2 = 0.5 * 332.063714 * polar_weight * ( dp_pol_f1_at2 + dq_pol_f1_at2 );
+							//       Vector const coord_frame_f1_at2 = 0.5 * 332.063714 * polar_weight * ( dp_pol_f1_at2 + dq_pol_f1_at2 );
 
 							cached_atom_derivs_[ atomj_ref_res ][ atomj_ref_index ].f1() -= coord_frame_f1_at2;
 							cached_atom_derivs_[ resj ][ atomj ].f1() += coord_frame_f1_at2;
@@ -3323,7 +3323,7 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 					// But I think I'll eventually have to do it anyway.
 					//
 
-					if( use_gen_kirkwood && (!same_res || (atomi != atomj) ) ) {
+					if ( use_gen_kirkwood && (!same_res || (atomi != atomj) ) ) {
 						//Real const rf_scale( ( same_res and (atm1 == atm2 ) ? 0.5 : 1.0 ) );
 						Real const gkc( 2.455 );
 						Real const dprotein( Ep );
@@ -3335,7 +3335,7 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 						Real const rkirk1( mp1.rKirkwood( atomi ) );
 						Real const rkirk2( mp2.rKirkwood( atomj ) );
 
-						if( rkirk1 == 0.0 || rkirk2 == 0.0 ) continue;
+						if ( rkirk1 == 0.0 || rkirk2 == 0.0 ) continue;
 
 						Real const rs1_rs2( rkirk1 * rkirk2 );
 						Real const expterm( std::exp( -dist2/( gkc* rs1_rs2 ) ) );
@@ -3379,8 +3379,8 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 
 						Real const dot_prods( p1.dot(p2) + 0.5*ip1.dot(p2) + 0.5*p1.dot(ip2) );
 						Real const dot_r_prods( p1.dot(Rij)*p2.dot(Rij) +
-																		0.5*ip1.dot(Rij)*p2.dot(Rij) +
-																		0.5*p1.dot(Rij)*ip2.dot(Rij) );
+							0.5*ip1.dot(Rij)*p2.dot(Rij) +
+							0.5*p1.dot(Rij)*ip2.dot(Rij) );
 						Real const d_d_dr_part( -5.0*expc1*expc1*gf7 + expcdexpc*gf5 );
 
 						Vector const rf_d_d_f1(
@@ -3388,7 +3388,7 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 							fd*gf3*( p2.cross(p1tot) + 0.5*ip2.cross(p1) ) +
 							3.0*fd*dot_r_prods*d_d_dr_part*deriv_dr_f1 -
 							3.0*fd*expc1*gf5*( p1tot.dot(Rij)*xyzj.cross(p2) + p2tot.dot(Rij)*xyzj.cross(p1) +
-														0.5*p1.dot(Rij)*xyzj.cross(ip2) + 0.5*p2.dot(Rij)*xyzj.cross(ip1) ) -
+							0.5*p1.dot(Rij)*xyzj.cross(ip2) + 0.5*p2.dot(Rij)*xyzj.cross(ip1) ) -
 							3.0*fd*expc1*gf5*( p1tot.dot(Rij)*p2.cross(Rij) + 0.5*p1.dot(Rij)*ip2.cross(Rij) )
 						);
 
@@ -3396,13 +3396,13 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 							+3.0*fd*dot_prods*gf5*expc1*deriv_dr_f2 +
 							3.0*fd*dot_r_prods*d_d_dr_part*deriv_dr_f2 +
 							3.0*fd*expc1*gf5*( p1.dot(Rij)*p2 + p2.dot(Rij)*p1 + 0.5*p1.dot(Rij)*ip2 +
-												0.5*ip2.dot(Rij)*p1 + 0.5*ip1.dot(Rij)*p2 + 0.5*p2.dot(Rij)*ip1 )
+							0.5*ip2.dot(Rij)*p1 + 0.5*ip1.dot(Rij)*p2 + 0.5*p2.dot(Rij)*ip1 )
 						);
 
 						Real const R_m_q( 0.5*(3.0*fq*gf5 + 3.0*expc1*expc1*fm*gf5 - fm*expcdexpc*gf3) );
 						Real const dR_m_q( 0.5*( -15.0*fq*gf7*expc1 - 15.0*expc1*expc1*fm*gf7*expc1
-										+ 6.0*fm*gf5*expc1*expcdexpc + 3.0*fm*expcdexpc*gf5*expc1
-										- fm*gf3*expcdexpc*dexpc ) );
+							+ 6.0*fm*gf5*expc1*expcdexpc + 3.0*fm*expcdexpc*gf5*expc1
+							- fm*gf3*expcdexpc*dexpc ) );
 
 						Vector const rf_m_q_f1(
 							-(qi*S2 + qj*S1)*dR_m_q*deriv_dr_f1
@@ -3418,15 +3418,15 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 
 						Real const R2_d_q( 3.0*( fd*gf5*expcdexpc - 5.0*fd*gf7*expc1*expc1 - 5.0*fq*gf7*expc1 ) );
 						Real const dR2_d_q( 3.0*( fd*gf5*expcdexpc*dexpc -5.0*fd*expcdexpc*gf7*expc1
-								-10.0*fd*gf7*expcdexpc*expc1 + 35.0*fd*gf9*expc1*expc1*expc1
-								-5.0*fq*gf7*expcdexpc + 35.0*fq*gf9*expc1*expc1 ) );
+							-10.0*fd*gf7*expcdexpc*expc1 + 35.0*fd*gf9*expc1*expc1*expc1
+							-5.0*fq*gf7*expcdexpc + 35.0*fq*gf9*expc1*expc1 ) );
 
 						Vector const rf_d_q_f1(
 							-0.5*dR1_d_q*( I1.dot(p2tot) - I2.dot(p1tot) )*deriv_dr_f1
 							- 0.5*dR2_d_q*( p2tot.dot(Rij)*S1 - p1tot.dot(Rij)*S2 )*deriv_dr_f1
 							+ 0.5*R1_d_q*( xyzj.cross(J1tot) - xyzj.cross(J2tot) )
 							+ 0.5*R2_d_q*( 2.0*p2tot.dot(Rij)*xyzj.cross(I1) + S1*xyzj.cross(p2tot)
-														-2.0*p1tot.dot(Rij)*xyzj.cross(I2) - S2*xyzj.cross(p1tot) )
+							-2.0*p1tot.dot(Rij)*xyzj.cross(I2) - S2*xyzj.cross(p1tot) )
 							+ 0.5*R1_d_q*p2tot.cross(I1) + 0.5*R2_d_q*S1*p2tot.cross(Rij)
 							- 0.5*R1_d_q*( J2tot.cross(Rij) + I2.cross(p1tot) )
 							- R2_d_q*p1tot.dot(Rij)*I2.cross(Rij) );
@@ -3439,7 +3439,7 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 
 						Real const R1_q_q( fq*( 105.0*gf9*expc1*expc1 - 15.0*gf7*expcdexpc ) );
 						Real const dR1_q_q( fq*( 210.0*gf9*expc1*expcdexpc - 945.0*expc1*expc1*expc1*gf11
-								-15.0*gf7*expcdexpc*dexpc + 105.0*expcdexpc*gf9*expc1 ) );
+							-15.0*gf7*expcdexpc*dexpc + 105.0*expcdexpc*gf9*expc1 ) );
 
 						Real const R2_q_q( -60.0*fq*gf7*expc1 );
 						Real const dR2_q_q( -60.0*fq*( gf7*expcdexpc - 7.0*gf9*expc1*expc1 ) );
@@ -3481,27 +3481,27 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 						Size const atomi_ref_res( mp1.coord_frame_ref( atomi ).rsd() );
 						Size const atomj_ref_res( mp2.coord_frame_ref( atomj ).rsd() );
 
-						if( atomi_ref_index != 0 ) {
-					// This is the complete dipole coord frame correction derivative up through dipole-dipole terms
-//					Vector dp_f1_at1( inv_dist_3 * pi_cross_pj - 3.0 * inv_dist_5 * pj_dot_r * pi_cross_r + qj*inv_dist_3*pi_cross_r );
+						if ( atomi_ref_index != 0 ) {
+							// This is the complete dipole coord frame correction derivative up through dipole-dipole terms
+							//     Vector dp_f1_at1( inv_dist_3 * pi_cross_pj - 3.0 * inv_dist_5 * pj_dot_r * pi_cross_r + qj*inv_dist_3*pi_cross_r );
 							// monopole-dipole contribution
 							Vector dp_f1_at1( -0.5*r_factor*qj*Rij.cross( p1tot ) );
 							// dipole-dipole contribution
 							dp_f1_at1 += ( fd*gf3*( p1.cross(p2tot) + 0.5*ip1.cross(p2) )
-												-3.0*expc1*fd*gf5*( p2tot.dot(Rij)*p1.cross(Rij) + 0.5*(p2.dot(Rij)*ip1.cross(Rij) ) ) );
+								-3.0*expc1*fd*gf5*( p2tot.dot(Rij)*p1.cross(Rij) + 0.5*(p2.dot(Rij)*ip1.cross(Rij) ) ) );
 							Vector dq_f1_at1( 2.0*R_m_q*qj*I1.cross(Rij) );
 
 
 							dp_f1_at1 -= ( 0.5*( R1_d_q*p1tot.cross(I2) + R2_d_q*S2*p1tot.cross(Rij) ) );
 							dq_f1_at1 -= ( -0.5*R1_d_q*( J1tot.cross(Rij) + I1.cross(p2tot) )
-											- R2_d_q*p2tot.dot(Rij)*I1.cross(Rij) );
+								- R2_d_q*p2tot.dot(Rij)*I1.cross(Rij) );
 
 							// quad-quad parts 1 and 2
 							dq_f1_at1 += ( 2.0*R1_q_q*S2*I1.cross(Rij) );
 							dq_f1_at1 += ( R2_q_q*( K1.cross_product(Rij) + I1.cross_product(I2) ) );
 
 							dq_f1_at1 += ( 2.0*R3_q_q*( Ux.cross_product( Xaxis ) +
-												Uy.cross_product( Yaxis ) + Uz.cross_product( Zaxis ) ) );
+								Uy.cross_product( Yaxis ) + Uz.cross_product( Zaxis ) ) );
 
 
 							Vector const coord_frame_f1_at1 = ( dp_f1_at1 + dq_f1_at1 );
@@ -3510,18 +3510,18 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 							cached_atom_derivs_[ resi ][ atomi ].f1() += coord_frame_f1_at1;
 						}
 
-						if( atomj_ref_index != 0 ) {
+						if ( atomj_ref_index != 0 ) {
 							// monopole-dipole contribution
 							Vector dp_f1_at2( 0.5*r_factor*qi*Rij.cross( p2tot ) );
 							// dipole-dipole contribution
 							dp_f1_at2 += ( fd*gf3*( p2.cross(p1tot) + 0.5*ip2.cross(p1) )
-												-3.0*expc1*fd*gf5*( p1tot.dot(Rij)*p2.cross(Rij) + 0.5*(p1.dot(Rij)*ip2.cross(Rij) ) ) );
+								-3.0*expc1*fd*gf5*( p1tot.dot(Rij)*p2.cross(Rij) + 0.5*(p1.dot(Rij)*ip2.cross(Rij) ) ) );
 
 							Vector dq_f1_at2( 2.0*R_m_q*qi*I2.cross(Rij) );
 
 							dp_f1_at2 += ( 0.5*( R1_d_q*p2tot.cross(I1) + R2_d_q*S1*p2tot.cross(Rij) ) );
 							dq_f1_at2 += ( -0.5*R1_d_q*( J2tot.cross(Rij) + I2.cross(p1tot) )
-											- R2_d_q*p1tot.dot(Rij)*I2.cross(Rij) );
+								- R2_d_q*p1tot.dot(Rij)*I2.cross(Rij) );
 
 							// quad-quad parts 1 and 2
 							dq_f1_at2 += ( 2.0*R1_q_q*S1*I2.cross(Rij) );
@@ -3529,7 +3529,7 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 
 
 							dq_f1_at2 += ( 2.0*R3_q_q*( Rx.cross_product( Xaxis ) +
-																				Ry.cross_product( Yaxis ) + Rz.cross_product( Zaxis ) ) );
+								Ry.cross_product( Yaxis ) + Rz.cross_product( Zaxis ) ) );
 
 							Vector const coord_frame_f1_at2 = ( dp_f1_at2 + dq_f1_at2 );
 
@@ -3539,11 +3539,11 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 					}
 				}
 			}
-//			for( Size iat = 1 ; iat <= rsd1.natoms() ; ++iat ) {
-//				TR << "deriv for res1 atomno " << iat << " is f1 " << cached_atom_derivs_[1][ iat ] .f1() << " and f2 " << cached_atom_derivs_[1][ iat ].f2() << std::endl;
-//  		}
-//
-//		  std::exit(1);
+			//   for( Size iat = 1 ; iat <= rsd1.natoms() ; ++iat ) {
+			//    TR << "deriv for res1 atomno " << iat << " is f1 " << cached_atom_derivs_[1][ iat ] .f1() << " and f2 " << cached_atom_derivs_[1][ iat ].f2() << std::endl;
+			//    }
+			//
+			//    std::exit(1);
 
 
 		}
@@ -3555,14 +3555,14 @@ MultipoleElecPotential::calculate_and_store_all_derivs(
 // getting called in the intrares_deriv part.
 void
 MultipoleElecPotential::eval_residue_pair_derivatives(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & ,
-		MultipoleElecResidueInfo const &,
-		MultipoleElecResidueInfo const &,
-		pose::Pose const & , // provides context
-		Real const & factor,
-		utility::vector1< DerivVectorPair > & r1_at_derivs,
-		utility::vector1< DerivVectorPair > & 
+	conformation::Residue const & rsd1,
+	conformation::Residue const & ,
+	MultipoleElecResidueInfo const &,
+	MultipoleElecResidueInfo const &,
+	pose::Pose const & , // provides context
+	Real const & factor,
+	utility::vector1< DerivVectorPair > & r1_at_derivs,
+	utility::vector1< DerivVectorPair > &
 ) const
 {
 
@@ -3571,14 +3571,14 @@ MultipoleElecPotential::eval_residue_pair_derivatives(
 			TR << "Factor is " << factor << std::endl;
 #endif
 
-			for( Size iat = 1 ; iat <= rsd1.natoms() ; ++iat ) {
-				r1_at_derivs[ iat ].f1() += factor * cached_atom_derivs_[ rsd1.seqpos() ][ iat ].f1();
-				r1_at_derivs[ iat ].f2() += factor * cached_atom_derivs_[ rsd1.seqpos() ][ iat ].f2();
-			}
-//			for( Size iat = 1 ; iat <= rsd2.natoms() ; ++iat ) {
-//				r2_at_derivs[ iat ].f1() = factor * cached_atom_derivs_[ rsd2.seqpos() ][ iat ].f1();
-//				r2_at_derivs[ iat ].f2() = factor * cached_atom_derivs_[ rsd2.seqpos() ][ iat ].f2();
-//			}
+	for ( Size iat = 1 ; iat <= rsd1.natoms() ; ++iat ) {
+		r1_at_derivs[ iat ].f1() += factor * cached_atom_derivs_[ rsd1.seqpos() ][ iat ].f1();
+		r1_at_derivs[ iat ].f2() += factor * cached_atom_derivs_[ rsd1.seqpos() ][ iat ].f2();
+	}
+	//   for( Size iat = 1 ; iat <= rsd2.natoms() ; ++iat ) {
+	//    r2_at_derivs[ iat ].f1() = factor * cached_atom_derivs_[ rsd2.seqpos() ][ iat ].f1();
+	//    r2_at_derivs[ iat ].f2() = factor * cached_atom_derivs_[ rsd2.seqpos() ][ iat ].f2();
+	//   }
 
 
 }

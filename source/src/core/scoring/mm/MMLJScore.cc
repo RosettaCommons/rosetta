@@ -69,7 +69,7 @@ MMLJScore::score( Size atom1, Size atom2, Size path_distance, Real distance_sq )
 	Real rminsq_over_distsq_third = rminsq_over_distsq * rminsq_over_distsq * rminsq_over_distsq;
 
 	Real score = epsilon * rminsq_over_distsq_third * ( rminsq_over_distsq_third - 2 );
-	
+
 	return score;
 }
 
@@ -96,7 +96,7 @@ MMLJScore::deriv_score( Size atom1, Size atom2, Size path_distance, Real distanc
 	Real inv_dist_sixth = inv_dist_sq * inv_dist_sq * inv_dist_sq;
 	//Real inv_dist_seventh = inv_dist_sixth * sqrt( inv_dist_sq );
 	Real deriv = 6 * epsilon * inv_dist_sixth * ( rmin_sixth * inv_dist_sq - rmin_twelfth * inv_dist_sixth * inv_dist_sq );
-	
+
 	//Real deriv = 6 * epsilon * inv_dist_seventh * ( rmin_sixth - rmin_twelfth * inv_dist_sixth );
 
 	return deriv;
