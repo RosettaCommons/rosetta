@@ -32,6 +32,7 @@
 #include <basic/options/util.hh>
 
 #include <protocols/match/Matcher.hh>
+#include <protocols/match/MatcherMover.hh>
 #include <protocols/match/MatcherTask.hh>
 
 #include <protocols/match/output/ProcessorFactory.hh>
@@ -58,8 +59,9 @@
 void
 match_main();
 
-void
-set_ligpose_rotamer( core::pose::Pose & ligpose );
+/* moved to protocols/match/MatcherMover.cc as one step toward integrating match app with MatcherMover */
+//void
+//set_ligpose_rotamer( core::pose::Pose & ligpose );
 
 int main( int argc, char * argv [] )
 {
@@ -154,62 +156,6 @@ match_main()
 	long find_hits_time = (long)(find_hits_end_time - matcher_start_time );
 	time_t matcher_end_time = time(NULL);
 	T << "Matcher ran for " << (long)(matcher_end_time - matcher_start_time) << " seconds, where finding hits took " << find_hits_time << " seconds and processing the matches took " << processing_time << " seconds."  << std::endl;
-
-}
-
-void
-set_ligpose_rotamer( core::pose::Pose & ligpose )
-{
-
-	// Retrieve the rotamer library for this ligand;
-	// check that the requested ligand-rotamer-index is in-bounds.
-	// Relplace-residue on the ligpose with the rotamer from the library.
-
-	using namespace core;
-	using namespace core::conformation;
-	using namespace core::scoring;
-	using namespace core::pack::dunbrack;
-	using namespace core::pack::rotamers;
-
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	runtime_assert( ligpose.total_residue() == 1 ); // we're expecting a one-residue pose.
-
-	if ( option[ match::ligand_rotamer_index ] < 1 ) {
-		utility_exit_with_message( "Illegal rotamer index given in command line flag match::ligand_rotamer_index ("
-			+ utility::to_string( option[ match::ligand_rotamer_index ]() ) + ").  Must be greater than 0." );
-	}
-
-	SingleResidueRotamerLibraryFactory const & rotlib( *SingleResidueRotamerLibraryFactory::get_instance() );
-	SingleResidueRotamerLibraryCOP res_rotlib( rotlib.get( ligpose.residue_type( 1 ) ) );
-
-	if ( res_rotlib != 0 ) {
-		SingleLigandRotamerLibraryCOP lig_rotlib(
-			utility::pointer::dynamic_pointer_cast< SingleLigandRotamerLibrary const > ( res_rotlib ));
-
-		if ( lig_rotlib == 0 ) {
-			utility_exit_with_message( "Failed to retrieve a ligand rotamer library for "
-				+ ligpose.residue_type(1).name() + " after finding the flag match::ligand_rotamer_index <int> on the command line");
-		}
-
-		core::pack::rotamers::RotamerVector rot_vector;
-		lig_rotlib->build_base_rotamers( ligpose.residue_type( 1 ), rot_vector );
-		Size const nligrots = rot_vector.size();
-
-		if ( (Size) option[ match::ligand_rotamer_index ] > nligrots ) {
-			utility_exit_with_message( "Illegal rotamer index given in command line flag match::ligand_rotamer_index ("
-				+ utility::to_string( option[ match::ligand_rotamer_index ]() ) + "). Index exceeds the number"
-				" of ligand rotamers ( " + utility::to_string( nligrots ) + ")" );
-		}
-
-		ResidueCOP ligrot = rot_vector[ option[ match::ligand_rotamer_index ] ];
-		ligpose.replace_residue( 1, *ligrot, false );
-	} else {
-		utility_exit_with_message( "Failed to find ligand rotamer library for " +
-			ligpose.residue(1).name() + " after finding the flag -match::ligand_rotamer_index on the command line." );
-	}
 
 }
 

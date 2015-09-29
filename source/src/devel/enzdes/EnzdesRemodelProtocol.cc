@@ -1139,6 +1139,7 @@ EnzdesRemodelMover::secmatch_after_remodel(
 	utility::vector1< core::Size > match_positions;
 	for ( core::Size i = flex_region_->start(); i <= flex_region_->stop(); ++i ) match_positions.push_back( i );
 	for ( utility::vector1< core::Size >::const_iterator other_match_pos_it = non_remodel_match_pos_.begin(); other_match_pos_it != non_remodel_match_pos_.end(); ++other_match_pos_it ) match_positions.push_back( *other_match_pos_it );
+	matcher_mover->set_return_single_random_match( true );
 	matcher_mover->set_match_positions( match_positions );
 	matcher_mover->set_ligres( ligres );
 	matcher_mover->apply( pose );

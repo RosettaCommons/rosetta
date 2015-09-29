@@ -94,6 +94,12 @@ public:
 	set_match_positions(
 		utility::vector1< core::Size > const & match_positions );
 
+	/// @brief if set to true, a single random match will be returned.
+	/// @details The default behavior is to use the MultiplePoseMover framework
+	/// to return all matches
+	void
+	set_return_single_random_match( bool const single_random );
+
 protected:
 	virtual bool process_pose( core::pose::Pose &, utility::vector1 < core::pose::PoseOP > & );
 
@@ -102,11 +108,15 @@ private:
 	//dictates whether matches will be output to disk
 	//or one of them will be incorporated into the pose
 	bool incorporate_matches_into_pose_;
+	bool return_single_random_match_;
 
 	core::conformation::ResidueCOP ligres_;
 	utility::vector1< core::Size > match_positions_;
 
 };
+
+void
+set_ligpose_rotamer( core::pose::Pose & ligpose );
 
 }
 }

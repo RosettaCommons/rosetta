@@ -97,39 +97,39 @@ MMLJEnergyIntra::setup_for_minimizing_for_residue(
 	kinematics::MinimizerMapBase const & minmap,
 	ResSingleMinimizationData & res_data_cache
 ) const {
-	
+
 	// AMW: oh maybe the issue here is that we keep on calling it
 	// and putting the nblist in the pose over and over and this debug_assert
 	// that is failing is saying "hey there is already a nblist in here"
-	
+
 	if ( !pose.energies().use_nblist() ) return;
-	
+
 	//Return right now so we don't set the nblist again?
 	if ( pose.energies().use_nblist_of_type( EnergiesCacheableDataType::MM_LJ_INTRA_NBLIST ) ) return;
-	
+
 	// stash our nblist inside the pose's energies object
 	// get a reference to the MMLJLibrary we are using
 	core::scoring::mm::MMLJLibrary const & library = potential_.mm_lj_score().mm_lj_library();
-	
+
 	// setup the atom-atom nblist
 	NeighborListOP nblist( new NeighborList(
 		minmap.domain_map(),
 		library.nblist_dis2_cutoff_XX(),
 		library.nblist_dis2_cutoff_XH(),
 		library.nblist_dis2_cutoff_HH()) );
-	
+
 	if ( pose.energies().use_nblist_auto_update() ) {
 		// setting this to one angstrom fudge factor
 		nblist->set_auto_update( 1 ); // MAGIC NUMBER
 	}
-	
+
 	// this partially becomes the MMLJEnergy classes's responsibility
 	nblist->setup( pose, sfxn, *this );
-	
+
 	res_data_cache.set_data( mm_lj_intra_nblist, utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableData/*COP*/ >( NeighborListDataOP( new NeighborListData( nblist ) ) ) );
 	//std::cout << "In MMLJEnergyIntra setup_for_minimizing_for_residue()" << std::endl;
 }
-	
+
 void
 MMLJEnergyIntra::setup_for_minimizing(
 	pose::Pose & pose,
@@ -300,7 +300,7 @@ MMLJEnergyIntra::eval_atom_derivative(
 		utility_exit_with_message("non-nblist minimize!");
 	}
 }
-	
+
 void
 MMLJEnergyIntra::eval_intrares_derivatives(
 	conformation::Residue const & rsd,
@@ -312,7 +312,7 @@ MMLJEnergyIntra::eval_intrares_derivatives(
 	if ( !pose.energies().use_nblist() ) {
 		utility_exit_with_message("non-nblist minimize!");
 	}
-	
+
 	scoring::NeighborList const & nblist( *utility::pointer::dynamic_pointer_cast< const NeighborListData >( res_data_cache.get_data( mm_lj_intra_nblist ) )->nblist() );
 
 	for ( Size atomno = 1; atomno <= rsd.type().natoms(); ++atomno ) {
@@ -324,20 +324,20 @@ MMLJEnergyIntra::eval_intrares_derivatives(
 		for ( scoring::AtomNeighbors::const_iterator iter=nbrs.begin(), iter_end=nbrs.end(); iter != iter_end; ++iter ) {
 			scoring::AtomNeighbor const & nbr( *iter );
 			conformation::Atom const & atom2( pose.residue( nbr.rsd() ).atom( nbr.atomno() ) );
-				
+
 			// calculate f1 and f2
 			Vector f1( atom1.xyz().cross( atom2.xyz() ) );
 			Vector f2( atom1.xyz() - atom2.xyz() );
-	
+
 			// get count pair weight from neighbor list
 			// Real const cp_weight( nbr.weight() );
-	
+
 			// get distance
 			Real dist_squared( atom1.xyz().distance_squared( atom2.xyz() ) );
-	
+
 			// get path distance
 			Size path_dist( nbr.path_dist() );
-	
+
 			// calc deriv
 			Real drep(0), datr(0);
 			potential_.deriv_score( atom1.mm_type(), atom2.mm_type(), path_dist, dist_squared, drep, datr );

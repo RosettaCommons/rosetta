@@ -31,6 +31,8 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
+#include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/match.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -73,10 +75,11 @@ MatcherMoverCreator::mover_name()
 MatcherMover::MatcherMover( bool incorporate_matches_into_pose ):
 	protocols::rosetta_scripts::MultiplePoseMover(),
 	incorporate_matches_into_pose_( incorporate_matches_into_pose ),
+	return_single_random_match_( false ),
 	ligres_(/* NULL */)
 {
 	//we need this for the output to be correct
-	basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
+	basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value(true);
 }
 
 MatcherMover::~MatcherMover(){}
@@ -84,6 +87,7 @@ MatcherMover::~MatcherMover(){}
 MatcherMover::MatcherMover( MatcherMover const & rval ) :
 	protocols::rosetta_scripts::MultiplePoseMover( rval ),
 	incorporate_matches_into_pose_( rval.incorporate_matches_into_pose_ ),
+	return_single_random_match_( rval.return_single_random_match_ ),
 	ligres_( rval.ligres_ ),
 	match_positions_( rval.match_positions_ )
 {}
@@ -98,6 +102,12 @@ MatcherMover::MoverOP MatcherMover::clone() const
 MatcherMover::MoverOP MatcherMover::fresh_instance() const
 {
 	return MatcherMover::MoverOP( new MatcherMover() );
+}
+
+void
+MatcherMover::set_return_single_random_match( bool const single_random )
+{
+	return_single_random_match_ = single_random;
 }
 
 void
@@ -119,9 +129,13 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 			basic::options::option[ basic::options::OptionKeys::match::lig_name ] ) );
 	}
 
-	if ( !ligres_->type().is_ligand() ) std::cerr << "WARNING: downstream residue " << ligres_->type().name3() << " set in the matcher mover does not seem to be a ligand residue, matcher will likely not behave properly." << std::endl;
+	if ( !ligres_->type().is_ligand() ) tr.Error << "WARNING: downstream residue " << ligres_->type().name3() << " set in the matcher mover does not seem to be a ligand residue, matcher will likely not behave properly." << std::endl;
 
 	ligpose.append_residue_by_jump( *ligres_, 1 );
+
+	if ( basic::options::option[ basic::options::OptionKeys::match::ligand_rotamer_index ].user() ) {
+		set_ligpose_rotamer( ligpose );
+	}
 
 	//we might have to remove the downstream pose from the input
 	if ( incorporate_matches_into_pose_ ) {
@@ -188,7 +202,10 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 		protocols::match::output::PoseMatchOutputWriterOP outputter(
 			utility::pointer::static_pointer_cast< protocols::match::output::PoseMatchOutputWriter >( processor->output_writer() ) );
 		core::pose::Pose const origpose = pose;
-		outputter->insert_match_into_pose( pose );
+		if ( return_single_random_match_ ) {
+			outputter->insert_match_into_pose( pose );
+			return true;
+		}
 		core::Size const num_match_groups = outputter->match_groups_ushits().size();
 		for ( core::Size mgroup=1; mgroup<=num_match_groups; ++mgroup ) {
 			if ( mgroup == 1 ) {
@@ -203,7 +220,7 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 		}
 	}
 	return true;
-} //MatcherMover::apply function
+} //MatcherMover::process_pose function
 
 std::string
 MatcherMover::get_name() const
@@ -234,6 +251,59 @@ MatcherMover::parse_my_tag(
 	Pose const & )
 {
 	incorporate_matches_into_pose_ = tag->getOption<bool>( "incorporate_matches_into_pose", 1 );
+}
+
+void
+set_ligpose_rotamer( core::pose::Pose & ligpose )
+{
+	// Retrieve the rotamer library for this ligand;
+	// check that the requested ligand-rotamer-index is in-bounds.
+	// Relplace-residue on the ligpose with the rotamer from the library.
+
+	using namespace core;
+	using namespace core::conformation;
+	using namespace core::scoring;
+	using namespace core::pack::dunbrack;
+	using namespace core::pack::rotamers;
+
+	runtime_assert( ligpose.total_residue() == 1 ); // we're expecting a one-residue pose.
+
+	core::Size const lig_rotamer_index =
+		basic::options::option[ basic::options::OptionKeys::match::ligand_rotamer_index ];
+
+	if ( lig_rotamer_index < 1 ) {
+		utility_exit_with_message( "Illegal rotamer index given in command line flag match::ligand_rotamer_index ("
+			+ utility::to_string( lig_rotamer_index ) + ").  Must be greater than 0." );
+	}
+
+	SingleResidueRotamerLibraryFactory const & rotlib( *SingleResidueRotamerLibraryFactory::get_instance() );
+	SingleResidueRotamerLibraryCOP res_rotlib( rotlib.get( ligpose.residue_type( 1 ) ) );
+
+	if ( res_rotlib != 0 ) {
+		SingleLigandRotamerLibraryCOP lig_rotlib(
+			utility::pointer::dynamic_pointer_cast< SingleLigandRotamerLibrary const > ( res_rotlib ));
+
+		if ( lig_rotlib == 0 ) {
+			utility_exit_with_message( "Failed to retrieve a ligand rotamer library for "
+				+ ligpose.residue_type(1).name() + " after finding the flag match::ligand_rotamer_index <int> on the command line");
+		}
+
+		core::pack::rotamers::RotamerVector rot_vector;
+		lig_rotlib->build_base_rotamers( ligpose.residue_type( 1 ), rot_vector );
+		Size const nligrots = rot_vector.size();
+
+		if ( lig_rotamer_index > nligrots ) {
+			utility_exit_with_message( "Illegal rotamer index given in command line flag match::ligand_rotamer_index ("
+				+ utility::to_string( lig_rotamer_index ) + "). Index exceeds the number"
+				" of ligand rotamers ( " + utility::to_string( nligrots ) + ")" );
+		}
+
+		ResidueCOP ligrot = rot_vector[ lig_rotamer_index ];
+		ligpose.replace_residue( 1, *ligrot, false );
+	} else {
+		utility_exit_with_message( "Failed to find ligand rotamer library for " +
+			ligpose.residue(1).name() + " after finding the flag -match::ligand_rotamer_index on the command line." );
+	}
 }
 
 }
