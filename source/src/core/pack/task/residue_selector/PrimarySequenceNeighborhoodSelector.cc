@@ -111,11 +111,11 @@ PrimarySequenceNeighborhoodSelector::parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data )
 {
-	if ( tag->hasOption( "lower_residues" ) )
-		set_lower_residues( tag->getOption< core::Size >( "lower_residues" ) );
+	if ( tag->hasOption( "lower" ) )
+		set_lower_residues( tag->getOption< core::Size >( "lower" ) );
 
-	if ( tag->hasOption( "upper_residues" ) )
-		set_upper_residues( tag->getOption< core::Size >( "upper_residues" ) );
+	if ( tag->hasOption( "upper" ) )
+		set_upper_residues( tag->getOption< core::Size >( "upper" ) );
 
 	if ( tag->hasOption( "selector" ) ) {
 		std::string const selectorname = tag->getOption< std::string >( "selector" );
