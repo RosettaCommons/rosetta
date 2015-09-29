@@ -659,6 +659,7 @@ static ResidueSelectorRegistrator< NumNeighborsSelectorCreator > reg_NumNeighbor
 static ResidueSelectorRegistrator< OrResidueSelectorCreator > reg_OrResidueSelectorCreator;
 static ResidueSelectorRegistrator< ResidueIndexSelectorCreator > reg_ResidueIndexSelectorCreator;
 static ResidueSelectorRegistrator< ResidueNameSelectorCreator > reg_ResidueNameSelectorCreator;
+static ResidueSelectorRegistrator< ResiduePDBInfoHasLabelSelectorCreator > reg_ResiduePDBInfoHasLabelSelectorCreator;
 
 
 using basic::resource_manager::ResourceLoaderRegistrator;

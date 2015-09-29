@@ -107,6 +107,12 @@ public:
 	virtual std::string keyname() const;
 };
 
+class ResiduePDBInfoHasLabelSelectorCreator : public ResidueSelectorCreator {
+public:
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
+};
+
 } //namespace residue_selector
 } //namespace task
 } //namespace pack

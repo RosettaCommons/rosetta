@@ -187,6 +187,7 @@ sources = {
 		"OrResidueSelector",
 		"PrimarySequenceNeighborhoodSelector",
 		"ResidueNameSelector",
+		"ResiduePDBInfoHasLabelSelector",
 		"ResidueSelector",
 		"ResidueSelectorFactory",
 		"SecondaryStructureSelector",
