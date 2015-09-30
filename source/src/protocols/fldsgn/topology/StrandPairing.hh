@@ -129,7 +129,7 @@ public: //accessors
 	bool has_paired_residue( Size const res ) const;
 
 	/// @brief residue pair
-	Size residue_pair( Size const res );
+	Size residue_pair( Size const res ) const;
 
 
 public:

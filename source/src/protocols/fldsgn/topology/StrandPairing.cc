@@ -325,7 +325,7 @@ StrandPairing::has_paired_residue( Size const res ) const
 
 /// @brief return residue pairing
 Size
-StrandPairing::residue_pair( Size const res )
+StrandPairing::residue_pair( Size const res ) const
 {
 	//runtime_assert( (begin1_ <= res && res <= end1_) || (begin2_ <= res && res <= end2_) ||
 	//  (end1_ <= res && res <= begin1_) || (end2_ <= res && res <= begin2_) );

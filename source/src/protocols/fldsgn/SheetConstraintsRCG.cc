@@ -18,6 +18,8 @@
 #include <protocols/fldsgn/SheetCstGeneratorCreator.hh>
 
 // Package headers
+#include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/util.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 
@@ -138,7 +140,10 @@ SheetConstraintsRCG::parse_my_tag( TagCOP const tag,
 {
 	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
 	// for all of these, the default is to not change what is already  present in the class
-	set_blueprint( tag->getOption<std::string>( "blueprint", "" ) );
+	if ( tag->hasOption( "blueprint" ) ) {
+		set_blueprint( tag->getOption< std::string >( "blueprint" ) );
+	}
+
 	set_distance( tag->getOption< core::Real >( "dist", dist_ ) );
 	set_angle_tolerance( tag->getOption< core::Real >( "angle_tolerance", angle_tolerance_ ) );
 	set_cacb_dihedral_tolerance( tag->getOption< core::Real >( "cacb_dihedral_tolerance", cacb_dihedral_tolerance_ ) );
@@ -201,7 +206,6 @@ SheetConstraintsRCG::set_distance( Real const dist )
 	dist_ = dist;
 }
 
-
 /// @brief set the flat-bottom tolerance for the backbone angle between strands for each pair
 /// This is N1-C1-C2 and N2-C2-C1 for parallel sheets, and N1-C1-N2/N2-C2-N1 for antiparallel.
 void
@@ -230,6 +234,47 @@ void
 SheetConstraintsRCG::set_constrain_dist_only( bool const constrain_dist_only )
 {
 	constrain_dist_only_ = constrain_dist_only;
+}
+
+std::pair< std::string, std::string >
+SheetConstraintsRCG::get_secstruct_and_strandpairings( Pose const & pose ) const
+{
+	// set constraints to csts
+	core::Size nres( pose.total_residue() );
+	//flo sep '12 in case we have ligands in the pose, don't count them
+	for ( core::Size i = nres; i != 0; i-- ) {
+		if ( pose.residue_type(i).is_ligand() ) {
+			nres--;
+			TR << pose.residue( i ).name3() << i << " = ligand" << std::endl;
+		}
+	}
+
+	std::string secstruct = "";
+	std::string spairs = "";
+	if ( blueprint_ ) {
+		TR << "Blueprint num res=" << blueprint_->total_residue() << std::endl;
+		runtime_assert( nres == blueprint_->total_residue() );
+		TR << "Blueprint file is used for determining constrained residue pairs." << std::endl;
+		secstruct = blueprint_->secstruct();
+		spairs = blueprint_->strand_pairings();
+		TR << "Pose nres protein=" << nres << std::endl;
+	} else {
+		denovo_design::components::StructureDataOP sd =
+			denovo_design::components::StructureData::create_from_pose( pose, "sheetcst" );
+		debug_assert( sd );
+		secstruct = sd->ss();
+		spairs = protocols::denovo_design::get_strandpairings( *sd, true );
+		TR << "StructureData information is used for determinining constraint residue pairs: " << spairs << std::endl;
+	}
+	if ( secstruct.empty() ) {
+		throw utility::excn::EXCN_Msg_Exception( "SheetConstraintsRCG: secstruct is empty!" );
+	}
+	if ( spairs.empty() ) {
+		throw utility::excn::EXCN_Msg_Exception( "SheetConstraintsRCG: strand pairs list is empty!" );
+	}
+	debug_assert( !secstruct.empty() );
+	debug_assert( !spairs.empty() );
+	return std::make_pair( secstruct, spairs );
 }
 
 /// @brief
@@ -263,29 +308,19 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
 	ScalarWeightedFuncOP bb_dihedral_func( new ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new OffsetPeriodicBoundFunc(-bb_dihedral_tolerance_,bb_dihedral_tolerance_, std::sqrt(1.0/42.0), "dihed_bb", 3.14, 0.0 ) ) ) );
 	ScalarWeightedFuncOP bb_angle_func( new ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new BoundFunc(1.57-angle_tolerance_,1.57+angle_tolerance_, sqrt(1.0/42.0), "angle_bb") ) ) );
 
-	// set constraints to csts
-	core::Size nres( pose.total_residue() );
-	//flo sep '12 in case we have ligands in the pose, don't count them
-	for ( core::Size i = nres; i != 0; i-- ) {
-		if ( pose.residue_type(i).is_ligand() ) {
-			nres--;
-			TR << pose.residue( i ).name3() << i << " = ligand" << std::endl;
-		}
-	}
-	runtime_assert( blueprint_ != 0 );
-	TR << "Blueprint num res=" << blueprint_->total_residue() << std::endl;
-	TR << "Pose nres protein=" << nres << std::endl;
-	runtime_assert( nres == blueprint_->total_residue() );
+	std::pair< std::string, std::string > ss_spair = get_secstruct_and_strandpairings( pose );
+	std::string const & secstruct = ss_spair.first;
+	std::string const & spair_str = ss_spair.second;
 
-	TR << "Blueprint file is used for determining constrained residue pairs.  " << std::endl;
+	TR << "Found SS = " << secstruct << std::endl;
+	TR << "Found strand pairings " << spair_str << std::endl;
 	TR << "Constrains between CA-CA atoms in sheet are applied for the following residues. " << std::endl;
 	TR << "dist=" << dist_ << ", weight_=" << weight_ << ", cacb_dihedral=" << cacb_dihedral_tolerance_ << ", bb_dihedral=" << bb_dihedral_tolerance_ << ", angle=" << angle_tolerance_ << std::endl;
 
-	SS_Info2_OP ssinfo( new SS_Info2( pose, blueprint_->secstruct() ) );
-	StrandPairingSet spairset( blueprint_->strand_pairings(), ssinfo );
+	SS_Info2_OP ssinfo( new SS_Info2( pose, secstruct ) );
+	StrandPairingSet spairset( spair_str, ssinfo );
 	StrandPairings spairs = spairset.strand_pairings();
 	for ( utility::vector1< StrandPairingOP >::const_iterator it=spairs.begin(); it!=spairs.end(); ++it ) {
-
 		StrandPairing spair=**it;
 		for ( core::Size iaa=spair.begin1(); iaa<=spair.end1(); iaa++ ) {
 			core::Size jaa( spair.residue_pair( iaa ) );

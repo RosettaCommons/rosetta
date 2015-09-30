@@ -402,7 +402,6 @@ library_path = []
 libraries    = [ "devel",
 "protocols.7",
 "protocols.6",
-"protocols_f.5",
 "protocols_e.5",
 "protocols_d.5",
 "protocols_c.5",

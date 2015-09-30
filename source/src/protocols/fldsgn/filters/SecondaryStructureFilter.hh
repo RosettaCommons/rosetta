@@ -89,6 +89,8 @@ public:// mutator
 	// @brief set filtered abego
 	void filtered_abego( String const & s );
 
+	/// @brief Should we use the secstruct in the pose (true), or recompute via dssp (false)? default=false
+	void set_use_pose_secstruct( bool const use_ss );
 
 public:// accessor
 
@@ -124,6 +126,7 @@ private:
 
 	bool use_abego_;
 
+	bool use_pose_secstruct_;
 };
 
 } // filters

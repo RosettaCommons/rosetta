@@ -10,63 +10,6 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"protocols/fldsgn": [
-		"BluePrintBDR",
-		"CircularPermutation",
-		"NcontactsCalculator",
-		"SheetConstraintsRCG",
-		"MatchResidues",
-		"MatchResiduesMover",
-	],
-	"protocols/fldsgn/filters": [
-		"CoreDunbrackFilter",
-		"FragQualFilter",
-		"HelixKinkFilter",
-		"HelixPairingFilter",
-		"HSSTripletFilter",
-		"InterlockingAromaFilter",
-		"NcontactsFilter",
-		"ParallelBetaPairingPreferenceFilter",
-		"SecondaryStructureFilter",
-		"SecondaryStructureCountFilter",
-		"SecondaryStructureHasResidueFilter",
-		"SheetTopologyFilter",
-	],
-	"protocols/fldsgn/potentials": [
-		"AACompositionEnergy",
-		"SetAACompositionPotential",
-		"SetSecStructEnergies",
-	],
-	"protocols/fldsgn/potentials/sspot": [
-		"HSPairPotential",
-		"NatbiasHelicesSheetPotential",
-		"NatbiasHelixPairPotential",
-		"NatbiasSecondaryStructureEnergy",
-		"NatbiasStrandPairPotential",
-		"SSPairPotential",
-		"util",
-	],
-	"protocols/fldsgn/topology": [
-		"BB_Pos",
-		"BetaAlphaBetaMotif",
-		"DimerPairing",
-		"HelixPairing",
-		"HSSTriplet",
-		"Sheet",
-		"SheetFoldTypeManager",
-		"SS_Info2",
-		"StrandPairing",
-		"util",
-	],
-	"protocols/flxbb": [
-		"DesignTask",
-		"FilterStructs",
-		"FlxbbDesign",
-		"FlxbbDesign_main",
-		"InterlockAroma",
-		"LayerDesignOperation",
-		"utility",
-	],
 }
 include_path = [
 ]

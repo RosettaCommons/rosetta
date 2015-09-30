@@ -102,6 +102,8 @@ public:
 
 	/// @brief sets whether we should constrain distance only, and not generate dihedral and angle constraints
 	void set_constrain_dist_only( bool const constrain_dist_only );
+
+	std::pair< std::string, std::string > get_secstruct_and_strandpairings( Pose const & pose ) const;
 private:
 
 	Real weight_;
@@ -111,6 +113,7 @@ private:
 	Real bb_dihedral_tolerance_;
 	bool constrain_dist_only_;
 	BluePrintOP blueprint_;
+	std::string sheet_name_;
 }; //class SheetConstraintsRCG
 
 

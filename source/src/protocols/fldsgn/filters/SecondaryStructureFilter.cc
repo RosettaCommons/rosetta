@@ -18,14 +18,18 @@
 #include <protocols/fldsgn/filters/SecondaryStructureFilterCreator.hh>
 
 // Project Headers
+#include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
-#include <core/conformation/Residue.hh>
-#include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/sequence/ABEGOManager.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
+
+// Core headers
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
+#include <core/scoring/dssp/Dssp.hh>
+#include <core/sequence/ABEGOManager.hh>
+#include <core/types.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -50,7 +54,8 @@ namespace filters {
 SecondaryStructureFilter::SecondaryStructureFilter():
 	Filter( "SecondaryStructure" ),
 	filtered_ss_( "" ),
-	use_abego_( false )
+	use_abego_( false ),
+	use_pose_secstruct_( false )
 {}
 
 
@@ -58,7 +63,8 @@ SecondaryStructureFilter::SecondaryStructureFilter():
 SecondaryStructureFilter::SecondaryStructureFilter( String const & ss ):
 	Filter( "SecondaryStructure" ),
 	filtered_ss_( ss ),
-	use_abego_( false )
+	use_abego_( false ),
+	use_pose_secstruct_( false )
 {}
 
 // @brief copy constructor
@@ -67,7 +73,8 @@ SecondaryStructureFilter::SecondaryStructureFilter( SecondaryStructureFilter con
 	Super( rval ),
 	filtered_ss_( rval.filtered_ss_ ),
 	filtered_abego_( rval.filtered_abego_ ),
-	use_abego_( rval.use_abego_ )
+	use_abego_( rval.use_abego_ ),
+	use_pose_secstruct_( rval.use_pose_secstruct_ )
 {}
 
 // @brief set filtered secondary structure
@@ -86,6 +93,11 @@ void SecondaryStructureFilter::filtered_abego( String const & s )
 	use_abego_ = true;
 }
 
+void SecondaryStructureFilter::set_use_pose_secstruct( bool const use_ss )
+{
+	use_pose_secstruct_ = use_ss;
+}
+
 // @brief returns true if the given pose passes the filter, false otherwise.
 // In this case, the test is whether the give pose is the topology we want.
 bool SecondaryStructureFilter::apply( Pose const & pose ) const
@@ -97,14 +109,6 @@ bool SecondaryStructureFilter::apply( Pose const & pose ) const
 			--protein_residues;
 		}
 	}
-
-	if ( protein_residues != filtered_ss_.length() ) {
-		utility_exit_with_message("Length of input ss is not same as total residue of pose.");
-	}
-	if ( filtered_abego_.size() >= 1 &&  protein_residues != filtered_abego_.size() ) {
-		utility_exit_with_message("Length of input abego is not same as total residue of pose.");
-	}
-
 
 	return ( compute( pose ) >= protein_residues );
 } // apply_filter
@@ -144,14 +148,18 @@ SecondaryStructureFilter::parse_my_tag(
 	}
 
 	if ( filtered_ss_ == "" ) {
-		tr.Error << "Error!,  option of topology is empty." << std::endl;
-		runtime_assert( false );
+		tr.Warning << "Warning!,  option of topology is empty. SecondaryStructureFilter will attempt to determine it from StructureData information in the pose at runtime" << std::endl;
+	} else {
+		tr << filtered_ss_ << " is filtered." << std::endl;
 	}
-	tr << filtered_ss_ << " is filtered." << std::endl;
 
 	core::sequence::ABEGOManager abego_manager;
 	if ( filtered_abego_.size() >= 1 && use_abego_ ) {
 		tr << abego_manager.get_abego_string( filtered_abego_ ) << " is filtered " << std::endl;
+	}
+
+	if ( tag->hasOption( "use_pose_secstruct" ) ) {
+		set_use_pose_secstruct( tag->getOption< bool >( "use_pose_secstruct" ) );
 	}
 }
 
@@ -229,35 +237,54 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 
 	core::sequence::ABEGOManager abego_manager;
 	core::Size match_count( 0 );
-	for ( Size i=1; i<=pose.total_residue(); i++ ) {
+	String pose_ss = pose.secstruct();
+	if ( !use_pose_secstruct_ ) {
+		core::scoring::dssp::Dssp dssp( pose );
+		pose_ss = dssp.get_dssp_secstruct();
+	}
+
+	std::string filter_ss = filtered_ss_;
+	if ( filtered_ss_.empty() ) {
+		protocols::denovo_design::components::StructureDataOP sd =
+			protocols::denovo_design::components::StructureData::create_from_pose( pose, "SSFilter" );
+		filter_ss = sd->ss();
+	}
+
+	if ( pose.total_residue() != filter_ss.length() ) {
+		utility_exit_with_message("Length of input ss is not same as total residue of pose.");
+	}
+	if ( filtered_abego_.size() >= 1 && pose.total_residue() != filtered_abego_.size() ) {
+		utility_exit_with_message("Length of input abego is not same as total residue of pose.");
+	}
+
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		// if this residue is a ligand, ignore and move on
 		if ( ! pose.residue( i ).is_protein() ) continue;
 
-		String sec = filtered_ss_.substr( i-1, 1 );
-		if ( *sec.c_str() == 'D' ) {
+		char const sec = filter_ss[ i - 1 ];
+		if ( sec == 'D' ) {
 			++match_count;
 			continue;
-		} else if ( *sec.c_str() == 'h' ) {
+		} else if ( sec == 'h' ) {
 			// small h means secondary structure other than H, so either L/E, therefore as long as it is not capital H (helix), it passes
-			if ( pose.secstruct( i ) == 'H' ) {
+			if ( pose_ss[ i - 1 ] == 'H' ) {
 				// it is capital H (helix), so fails
 				tr << "SS filter fail: current/filtered = "
-					<< pose.secstruct( i ) << '/' << sec << " at position " << i << std::endl;
+					<< pose_ss[ i - 1 ] << '/' << sec << " at position " << i << std::endl;
 				continue;
 			}
 		} else {
-			if ( *sec.c_str() != pose.secstruct( i ) ) {
+			if ( sec != pose_ss[ i - 1 ] ) {
 				tr << "SS filter fail: current/filtered = "
-					<< pose.secstruct( i ) << '/' << sec << " at position " << i << std::endl;
+					<< pose_ss[ i - 1 ] << '/' << sec << " at position " << i << std::endl;
 				continue;
-				//return false;
 			}
 		}
 
-		if ( filtered_abego_.size() >= 1 && use_abego_ ) {
+		if ( ( filtered_abego_.size() >= 1 ) && use_abego_ ) {
 			String abego( filtered_abego_[ i ] );
 			bool flag( false );
-			for ( Size j=1; j<=abego.size(); j++ ) {
+			for ( Size j = 1; j <= abego.size(); j++ ) {
 				if ( abego_manager.check_rama( *abego.substr( j-1, 1 ).c_str(), pose.phi( i ), pose.psi( i ), pose.omega( i ) ) ) {
 					flag = true;
 				}
@@ -273,16 +300,17 @@ SecondaryStructureFilter::compute( core::pose::Pose const & pose ) const {
 		++match_count;
 	} //for
 
-	tr << filtered_ss_ << " was filtered with " << match_count << " residues matching " << pose.secstruct() << std::endl;
-	if ( filtered_abego_.size() >= 1 && use_abego_ ) {
+	tr << filter_ss << " was filtered with " << match_count << " residues matching " << pose_ss << std::endl;
+	if ( ( filtered_abego_.size() >= 1 ) && use_abego_ ) {
 		tr << abego_manager.get_abego_string( filtered_abego_ ) << " was filtered with " << match_count << " residues matching." << std::endl;
 	}
 	return match_count;
 }
 
 core::Real
-SecondaryStructureFilter::report_sm( core::pose::Pose const & pose ) const {
-	return compute( pose );
+SecondaryStructureFilter::report_sm( core::pose::Pose const & pose ) const
+{
+	return core::Real( compute( pose ) ) / core::Real( pose.total_residue()  );
 }
 
 protocols::filters::FilterOP
