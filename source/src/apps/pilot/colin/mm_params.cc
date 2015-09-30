@@ -35,6 +35,7 @@
 #include <core/pose/Pose.hh>
 
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
+#include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 
 #include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
@@ -101,7 +102,8 @@ char * argv []
 
 			TR << *aa_iter << std::endl;
 
-			core::chemical::ResidueTypeCOPs const & aa_caps(residue_set->aa_map_DO_NOT_USE(*aa_iter));
+			core::chemical::ResidueTypeCOPs const & aa_caps( protocols::toolbox::match_enzdes_util::sort_residue_type_pointers_by_name(residue_set->aa_map_DO_NOT_USE(*aa_iter)));
+
 
 			for ( core::chemical::ResidueTypeCOPs::const_iterator residue_iter(aa_caps.begin());
 					residue_iter != aa_caps.end(); ++residue_iter ) {
