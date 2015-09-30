@@ -282,7 +282,11 @@ PDBWriter::assemble_remark_lines(
 		rems.push_back( ri );
 
 	}
-
+	for ( core::pose::Remarks::const_iterator r = orig_upstream_pose_->pdb_info()->remarks().begin();
+			r != orig_upstream_pose_->pdb_info()->remarks().end(); ++r ) {
+		if ( r->num != 666 )
+			rems.push_back( *r );
+	}
 	outpose.pdb_info()->remarks( rems );
 
 }
