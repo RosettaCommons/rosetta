@@ -72,7 +72,7 @@ public:
 		ResidueTypeSet & res_type_set = ChemicalManager::get_instance()->nonconst_residue_type_set("fa_standard");
 
 		// Generate a non-standard ResidueTypeSet that includes parameters for glycerol.
-		res_type_set.read_files(params);
+		res_type_set.read_files_for_custom_residue_types(params);
 
 		// Load a pose with a single glycerol residue.
 		Pose glycerol;

@@ -101,7 +101,7 @@ public:
 				core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 			);
 			core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ).
-				add_residue_type( znx_restype );
+				add_custom_residue_type( znx_restype );
 		}
 
 	}

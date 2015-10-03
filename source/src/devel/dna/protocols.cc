@@ -22,7 +22,6 @@
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ResidueConnection.hh>
 
 #include <core/conformation/Residue.hh>

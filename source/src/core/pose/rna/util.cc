@@ -16,7 +16,7 @@
 #include <core/types.hh>
 
 // Package headers
-#include <core/chemical/ResidueTypeSelector.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -71,11 +71,9 @@ mutate_position( pose::Pose & pose, Size const i, char const & new_seq ){
 
 	ResidueTypeSet const & rsd_set = pose.residue( i ).residue_type_set();
 
-	ResidueTypeSelector residue_selector;
-	residue_selector.set_name1( new_seq );
-	residue_selector.match_variants( pose.residue(i).type() );
-	if ( pose.residue( i ).is_RNA() ) residue_selector.set_property( "RNA" );
-	ResidueTypeCOP new_rsd_type( residue_selector.select( rsd_set )[1] );
+	ResidueProperty base_property = ( pose.residue( i ).is_RNA() ) ? RNA : NO_PROPERTY;
+	ResidueTypeCOP new_rsd_type( ResidueTypeFinder( rsd_set ).name1( new_seq ).variants( pose.residue(i).type().variant_types() ).base_property( base_property ).get_representative_type() );
+
 	ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
 
 	Real const save_chi = pose.chi(i);

@@ -48,7 +48,7 @@ public:
 		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
 		if ( !residue_set.has_name("QC1") ) params_files.push_back("core/scoring/1pqc.params");
-		residue_set.read_files(params_files);
+		residue_set.read_files_for_custom_residue_types(params_files);
 	}
 
 	void test_ligand_rms() {

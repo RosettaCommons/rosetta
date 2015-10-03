@@ -626,21 +626,6 @@ SetInterchangeabilityGroup_String::apply( ResidueType & rsd ) const
 	return false;
 }
 
-AppendInterchangeabilityGroup_String::AppendInterchangeabilityGroup_String(
-	std::string const & intgrp_addendum
-):
-	intgrp_addendum_( intgrp_addendum )
-{}
-
-bool
-AppendInterchangeabilityGroup_String::apply( ResidueType & rsd ) const
-{
-	std::string new_intgrp = rsd.interchangeability_group() + intgrp_addendum_;
-	rsd.interchangeability_group( new_intgrp );
-	return false;
-}
-
-
 // SetMMAtomType //////////////////////////////////////////////////////////////
 
 SetMMAtomType::SetMMAtomType(
@@ -932,6 +917,7 @@ SetAllAtomsRepulsive::apply( ResidueType & rsd ) const {
 	return false;
 }
 
+
 bool
 ChiralFlipNaming::apply( ResidueType & rsd ) const {
 
@@ -1128,11 +1114,6 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		std::string intgrp;
 		l >> intgrp;
 		return PatchOperationOP( new SetInterchangeabilityGroup_String( intgrp ) );
-
-	} else if ( tag == "APPEND_INTERCHANGEABILITY_GROUP" ) {
-		std::string intgrp_addendum;
-		l >> intgrp_addendum;
-		return PatchOperationOP( new AppendInterchangeabilityGroup_String( intgrp_addendum ) );
 
 	} else if ( tag == "NBR_ATOM" ) {
 		l >> atom_name;

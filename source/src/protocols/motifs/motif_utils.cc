@@ -27,7 +27,6 @@
 
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>

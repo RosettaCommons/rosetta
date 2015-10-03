@@ -2318,7 +2318,6 @@ get_rsd_type(
 		xyz_atom_names.push_back( xyz_name );
 	}
 
-	// following 'chaining' looks a lot like chemical::ResidueSelector -- use that instead? Rename to chemical::ResidueTypeSelector.
 	rsd_type = ResidueTypeFinder( residue_set ).name3( name3 ).residue_base_name( residue_base_name ).disallow_variants( disallow_variants ).variants_in_sets( required_variants_in_sets ).properties( properties ).disallow_properties( disallow_properties ).patch_names( patch_names ).ignore_atom_named_H( is_lower_terminus ).disallow_carboxyl_conjugation_at_glu_asp( disallow_carboxyl_conjugation_at_glu_asp ).get_best_match_residue_type_for_atom_names( xyz_atom_names );
 
 	return rsd_type;

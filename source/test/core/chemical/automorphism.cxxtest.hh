@@ -37,7 +37,7 @@ public:
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
 		if ( !residue_set.has_name("QC1") )   params_files.push_back("core/chemical/1pqc.params");
 		if ( !residue_set.has_name("UK002") ) params_files.push_back("core/chemical/uk002.params");
-		residue_set.read_files(params_files);
+		residue_set.read_files_for_custom_residue_types(params_files);
 	}
 
 	void tearDown() {}

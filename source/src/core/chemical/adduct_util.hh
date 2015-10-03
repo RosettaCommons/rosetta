@@ -18,12 +18,15 @@
 
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/Adduct.fwd.hh>
 
 // Project headers
 
 // Utility headers
 
 #include <utility/options/StringVectorOption.fwd.hh>
+#include <utility/vector1.hh>
 #include <map>
 
 
@@ -50,6 +53,20 @@ ResidueTypeOP apply_adducts_to_residue(
 	ResidueType const & rsd,
 	utility::vector1< bool > & add_mask
 );
+
+/// @brief apply patches to base ResidueType to generate variant ResidueTyes
+void
+place_adducts( ResidueTypeSet & rsd_type_set );
+
+/// @brief Create correct combinations of adducts for a residue type
+void
+create_adduct_combinations(
+  ResidueTypeSet & rsd_type_set,
+	ResidueType const & rsd,
+	AdductMap ref_map,
+	AdductMap count_map,
+	utility::vector1< bool > add_mask,
+	utility::vector1< Adduct >::const_iterator work_iter );
 
 } // chemical
 } // core

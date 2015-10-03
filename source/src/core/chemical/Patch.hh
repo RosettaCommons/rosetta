@@ -92,6 +92,17 @@ public:
 	utility::vector1< std::string >
 	deletes_variants() const;
 
+	/// @brief returns new name3, if changed
+	std::string
+	generates_new_name3() const;
+
+	/// @brief returns interchangeability group, if set.
+	std::string
+	generates_interchangeability_group() const;
+
+	bool
+	may_change_aa() const;
+
 	// data:
 private:
 	/// @brief to which ResidueTypes this PatchCase applies to?
@@ -168,6 +179,18 @@ public:
 	/// @brief returns list of deleted variant names, useful for identifying patches that go with PDB residues
 	utility::vector1< std::string >
 	deletes_variants( ResidueType const & rsd_in ) const;
+
+	/// @brief returns new name3, if changed. Only one new name3 allowed.
+	std::string
+	generates_new_name3( ResidueType const & rsd_in ) const;
+
+	/// @brief returns new interchangeability_group, if changed. Only one new interchangeability_group allowed.
+	std::string
+	generates_interchangeability_group( ResidueType const & rsd_in ) const;
+
+	/// @brief returns new AA, if changed.
+	chemical::AA
+	generates_aa( ResidueType const & rsd_in ) const;
 
 	/// private data
 private:

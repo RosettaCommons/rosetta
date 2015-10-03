@@ -57,18 +57,24 @@ public:
 		using namespace ObjexxFCL::format;
 
 		int width = 15;
-		TR << A(width,"ResidueTypeSet") << A(width,"NumResTypes") << endl;
+		TR << A(width,"ResidueTypeSet") << A(width,"NumBaseResTypes") << A(width,"NumPatches") << endl;
 
 		string rss;
 		ResidueTypeSetCOP rs;
 
 		rss = FA_STANDARD;
 		rs = ChemicalManager::get_instance()->residue_type_set(rss );
-		TR << A(width, rss) << I(width,rs->residue_types_DO_NOT_USE().size()) << endl;
+		TR << A(width, rss)
+			 << I(width,rs->base_residue_types().size())
+			 << I(width,rs->patches().size())
+			 << endl;
 
 		rss = CENTROID;
 		rs = ChemicalManager::get_instance()->residue_type_set(rss );
-		TR << A(width, rss) << I(width,rs->residue_types_DO_NOT_USE().size()) << endl;
+		TR << A(width, rss)
+			 << I(width,rs->base_residue_types().size())
+			 << I(width,rs->patches().size())
+			 << endl;
 
 		// Is this broken?
 		//rss = COARSE_TWO_BEAD;
@@ -80,10 +86,6 @@ public:
 		//rs = ChemicalManager::get_instance()->residue_type_set(rss );
 		//TR << A(width, rss) << I(width,rs->residue_types_DO_NOT_USE().size()) << endl;
 
-		// FA_RNA residue type set removed in favor of FA_STANDARD.
-		//  rss = FA_RNA;
-		//  rs = ChemicalManager::get_instance()->residue_type_set(rss );
-		//  TR << A(width, rss) << I(width,rs->residue_types_DO_NOT_USE().size()) << endl;
 
 	}
 

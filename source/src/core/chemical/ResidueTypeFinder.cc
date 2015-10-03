@@ -46,9 +46,6 @@ static basic::Tracer TR( "core.chemical.ResidueTypeFinder" );
 //     as many constraints as possible that are specific to the desired residue type(s).
 //
 // TO DO:
-//  * probably should refactor all the checks/filters into functionalities for
-//     chemical::ResidueTypeSelector.  Something like:
-//             bool check_patch_worth_trying( Patch, ResidueType )
 //
 //  * need to properly handle replace_residue_type() functionality (those should be required patches...)
 //
@@ -71,7 +68,7 @@ ResidueTypeFinder::ResidueTypeFinder( core::chemical::ResidueTypeSet const & res
 	name1_( '?' ),
 	base_property_( NO_PROPERTY ),
 	ignore_atom_named_H_( false ),
-	match_adducts_( true ),
+	apply_all_applicable_patches_( false ),
 	disallow_carboxyl_conjugation_at_glu_asp_( false )
 {}
 
@@ -83,24 +80,12 @@ ResidueTypeFinder::~ResidueTypeFinder()
 ResidueTypeCOP
 ResidueTypeFinder::get_representative_type() const
 {
-	if ( custom_variants_.size() > 0 ) return get_representative_type_SLOW();
-	ResidueTypeCOPs rsd_types = get_possible_base_residue_types();
+	ResidueTypeCOPs rsd_types;
+	rsd_types = get_possible_base_residue_types( false /* include_custom */ );
 	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/, true /*get_first_residue_found*/ );
+	if ( rsd_types.size() == 0 ) rsd_types =  get_possible_custom_residue_types();
+
 	rsd_types = apply_filters_after_patches( rsd_types, true /* allow_extra_variants */ );
-	if ( rsd_types.size() == 0 ) return 0;
-	return rsd_types[ 1 ];
-}
-
-
-ResidueTypeCOP
-ResidueTypeFinder::get_representative_type_SLOW() const
-{
-	// this will instantiate *everything*. Super-slow. The way things were done with the OLD ResidueTypeSet.
-	ResidueTypeCOPs rsd_types( residue_type_set_.residue_types_DO_NOT_USE() );
-
-	// this could be made more efficient by exiting after the first rsd_type is found.
-	rsd_types = filter_by_residue_type_base_name( rsd_types );
-	rsd_types = filter_all_variants_matched( rsd_types );
 	if ( rsd_types.size() == 0 ) return 0;
 	return rsd_types[ 1 ];
 }
@@ -110,10 +95,13 @@ ResidueTypeCOPs
 ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_variants /* = false */ ) const
 {
 	// Get all possible basic residues that might match
-	ResidueTypeCOPs rsd_types = get_possible_base_residue_types();
+	ResidueTypeCOPs rsd_types = get_possible_base_residue_types( false /* include_custom*/ );
 
 	// Go down the binary tree of patches.
 	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/ );
+
+	// add in any custom residues.
+	rsd_types.append( get_possible_custom_residue_types() );
 
 	// Filter for rsd_types that strictly obey requirements
 	rsd_types = apply_filters_after_patches( rsd_types, allow_extra_variants );
@@ -146,13 +134,48 @@ ResidueTypeFinder::get_best_match_residue_type_for_atom_names( utility::vector1<
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ResidueTypeCOPs
-ResidueTypeFinder::get_possible_base_residue_types() const
+ResidueTypeFinder::get_possible_base_residue_types( bool const include_custom /* = true */ ) const
 {
 	ResidueTypeCOPs rsd_types = residue_type_set_.base_residue_types();
+	if ( include_custom ) rsd_types.append( get_possible_base_custom_residue_types() );
+	rsd_types = apply_basic_filters( rsd_types );
+	return rsd_types;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+ResidueTypeCOPs
+ResidueTypeFinder::get_possible_custom_residue_types() const
+{
+	ResidueTypeCOPs rsd_types = residue_type_set_.custom_residue_types();
+	rsd_types = apply_basic_filters( rsd_types );
+	return rsd_types;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+ResidueTypeCOPs
+ResidueTypeFinder::get_possible_base_custom_residue_types() const
+{
+	ResidueTypeCOPs filtered_rsd_types;
+	ResidueTypeCOPs rsd_types = residue_type_set_.custom_residue_types();
+	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
+		ResidueTypeCOP rsd_type = rsd_types[ n ];
+		if ( residue_type_base_name( *rsd_type ) == rsd_type->name() ) {
+			filtered_rsd_types.push_back( rsd_type );
+		}
+	}
+	return filtered_rsd_types;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+ResidueTypeCOPs
+ResidueTypeFinder::apply_basic_filters( ResidueTypeCOPs rsd_types ) const
+{
 	rsd_types = filter_by_aa( rsd_types );
 	rsd_types = filter_by_name1( rsd_types );
 	rsd_types = filter_by_name3( rsd_types, true /* keep_if_base_type_generates_name3 */ );
 	rsd_types = filter_by_residue_type_base_name( rsd_types );
+	rsd_types = filter_by_interchangeability_group( rsd_types, true /* keep_if_base_type_generates_interchangeability_group */ );
 	rsd_types = filter_by_base_property( rsd_types );
 	return rsd_types;
 }
@@ -163,6 +186,7 @@ ResidueTypeFinder::apply_filters_after_patches( ResidueTypeCOPs rsd_types,
 	bool const allow_extra_variants  /* = false */ ) const
 {
 	rsd_types = filter_by_name3( rsd_types, false /* keep_if_base_type_generates_name3 */ );
+	rsd_types = filter_by_interchangeability_group( rsd_types, false /* keep_if_base_type_generates_interchangeability */ );
 	rsd_types = filter_disallow_variants( rsd_types );
 	rsd_types = filter_all_variants_matched( rsd_types, allow_extra_variants );
 	rsd_types = filter_all_properties(  rsd_types );
@@ -209,23 +233,24 @@ ResidueTypeFinder::apply_patches_recursively(
 		if ( has_disallowed_variant( patch ) )             continue;
 		if ( deletes_any_property(   patch, rsd_type ) )   continue;
 		if ( deletes_any_variant(    patch, rsd_type ) )   continue;
+		if ( changes_to_wrong_aa(    patch, rsd_type ) )   continue;
 		// could also add as a no-no: if patch *deletes* an atom in atom_names_.
 
 		// note -- make sure to apply patch if it has a chance of satisfying any of
 		// the constraints on variants, branchpoints, or properties.
 		bool apply_patch = (  adds_any_variant ( patch ) ||
-			adds_any_property( patch, rsd_type ) ||
-			matches_any_patch_name( patch )      ||
-			matches_any_atom_name( patch, rsd_type ) ||
-			fixes_name3( patch, rsd_type ) );
+													adds_any_property( patch, rsd_type ) ||
+													matches_any_patch_name( patch )      ||
+													matches_any_atom_name( patch, rsd_type ) ||
+													fixes_name3( patch, rsd_type ) ||
+													fixes_interchangeability_group( patch, rsd_type ) ||
+													apply_all_applicable_patches_ );
 
 		if ( apply_patch ) {
-			//std::cout << "amw patch name was " << patch->name();
+			// following just gets the right name of the patched residue
 			ResidueTypeCOP rsd_type_new_placeholder = patch->apply( *rsd_type, false /*instantiate*/ );
-			//std::cout << "amw placeholder RT name was " << rsd_type_new_placeholder->name();
-			ResidueTypeCOP rsd_type_new( rsd_type->residue_type_set().name_map( rsd_type_new_placeholder->name() ).get_self_ptr() );
-			//std::cout << "amw used name map to get " << rsd_type_new->name();
-
+			// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
+			ResidueTypeCOP rsd_type_new( residue_type_set_.name_map( rsd_type_new_placeholder->name() ).get_self_ptr() );
 			rsd_types_new.push_back( rsd_type_new );
 		}
 
@@ -273,8 +298,26 @@ ResidueTypeFinder::filter_by_name3( ResidueTypeCOPs const & rsd_types, bool cons
 		// with their specialty string -- the first three letters of the residue name.
 		// E.g., CYD will appear in both lists for name3_map_[ "CYS" ] and name3_map_[ "CYD" ]
 		if ( rsd_type->name3() == name3_ ||
-				rsd_type->name().substr(0,3) == name3_ ||
-				( keep_if_base_type_generates_name3 && residue_type_set_.generates_patched_residue_type_with_name3( rsd_type->name(), name3_ ) ) ) {
+				 rsd_type->name().substr(0,3) == name3_ ||
+				 ( keep_if_base_type_generates_name3 && residue_type_set_.generates_patched_residue_type_with_name3( rsd_type->name(), name3_ ) ) ) {
+			rsd_types_new.push_back( rsd_type );
+		}
+	}
+	return rsd_types_new;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+ResidueTypeCOPs
+ResidueTypeFinder::filter_by_interchangeability_group( ResidueTypeCOPs const & rsd_types, bool const keep_if_base_type_generates_interchangeability_group  ) const
+{
+	if ( interchangeability_group_.size() == 0 ) return rsd_types;
+	ResidueTypeCOPs rsd_types_new;
+	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
+		ResidueTypeCOP rsd_type( rsd_types[ n ] );
+		if ( rsd_type->interchangeability_group() == interchangeability_group_ ||
+				 ( keep_if_base_type_generates_interchangeability_group &&
+					 residue_type_set_.generates_patched_residue_type_with_interchangeability_group( rsd_type->name(), interchangeability_group_ ) ) ) {
 			rsd_types_new.push_back( rsd_type );
 		}
 	}
@@ -283,15 +326,16 @@ ResidueTypeFinder::filter_by_name3( ResidueTypeCOPs const & rsd_types, bool cons
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ResidueTypeCOPs
-ResidueTypeFinder::filter_by_aa( ResidueTypeCOPs const & rsd_types  ) const
+ResidueTypeFinder::filter_by_aa( ResidueTypeCOPs const & rsd_types ) const
 {
 	if ( aa_ == aa_none ) return rsd_types;
 
 	ResidueTypeCOPs rsd_types_new;
 	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
 		ResidueTypeCOP rsd_type( rsd_types[ n ] );
-		if ( rsd_type->aa() != aa_ ) continue;
-		rsd_types_new.push_back( rsd_type );
+		if ( rsd_type->aa() == aa_ ) {
+			rsd_types_new.push_back( rsd_type );
+		}
 	}
 	return rsd_types_new;
 }
@@ -305,8 +349,10 @@ ResidueTypeFinder::filter_by_residue_type_base_name( ResidueTypeCOPs const & rsd
 	ResidueTypeCOPs filtered_rsd_types;
 	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
 		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
-		if ( residue_type_base_name( *rsd_type ) != residue_type_base_name_ ) continue;
-		filtered_rsd_types.push_back( rsd_type );
+		std::string base_name( residue_type_base_name( *rsd_type ) );
+		if ( base_name == residue_type_base_name_ ) {
+			filtered_rsd_types.push_back( rsd_type );
+		}
 	}
 	return filtered_rsd_types;
 }
@@ -326,7 +372,6 @@ ResidueTypeFinder::filter_by_base_property( ResidueTypeCOPs const & rsd_types ) 
 	return filtered_rsd_types;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 ResidueTypeFinder::has_disallowed_variant( PatchCOP patch ) const
@@ -339,7 +384,6 @@ ResidueTypeFinder::has_disallowed_variant( PatchCOP patch ) const
 	return false;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
@@ -350,8 +394,9 @@ ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
 
 		for ( Size k = 1; k <= variants_in_sets_.size(); k++ ) {
 			if ( variants_in_sets_[ k ].has_value( patch_variant ) ) return true;
-			if ( !match_adducts_ && patch_variant == ADDUCT_VARIANT ) return true; // explore all adducts
 		}
+
+		if ( variant_exceptions_.has_value( patch_variant ) ) return true; // explore all of these 'exceptions' (used for adducts)
 
 	}
 	return false;
@@ -362,8 +407,23 @@ bool
 ResidueTypeFinder::fixes_name3( PatchCOP patch, ResidueTypeCOP rsd_type ) const
 {
 	if ( name3_.size() > 0 &&
-			rsd_type->name3() != name3_ &&
+			 rsd_type->name3() != name3_ &&
+			 residue_type_set_.generates_patched_residue_type_with_name3( residue_type_base_name( *rsd_type ), name3_ ) &&
 			patch->apply( *rsd_type, false /*instantiate*/ )->name3() == name3_ ) {
+		return true;
+	}
+	return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+ResidueTypeFinder::fixes_interchangeability_group( PatchCOP patch, ResidueTypeCOP rsd_type ) const
+{
+	if ( interchangeability_group_.size() > 0 &&
+			 rsd_type->interchangeability_group() != interchangeability_group_ &&
+			 residue_type_set_.generates_patched_residue_type_with_interchangeability_group( residue_type_base_name( *rsd_type ),
+																																											 interchangeability_group_ ) &&
+			 patch->apply( *rsd_type, false /*instantiate*/ )->interchangeability_group() == interchangeability_group_ ) {
 		return true;
 	}
 	return false;
@@ -393,6 +453,16 @@ ResidueTypeFinder::deletes_any_property( PatchCOP patch, ResidueTypeCOP rsd_type
 		ResidueProperty const deleted_property( rsd_type->properties().get_property_from_string( deleted_properties[ n ] ) );
 		if ( properties_.has_value( deleted_property ) ) return true;
 	}
+	return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+ResidueTypeFinder::changes_to_wrong_aa( PatchCOP patch, ResidueTypeCOP rsd_type ) const
+{
+	if ( aa_ == aa_none ) return false;
+	AA new_aa = patch->generates_aa( *rsd_type );
+	if ( new_aa != aa_none && new_aa != aa_  ) return true;
 	return false;
 }
 
@@ -459,7 +529,7 @@ ResidueTypeFinder::check_candidate_has_all_variant_sets( ResidueTypeCOPs const &
 		bool all_variant_sets_matched( true );
 		for ( Size k = 1; k <= variants_in_sets_.size(); k++ ) {
 			vector1< VariantType > const & variant_set = variants_in_sets_[ k ];
-			if ( !match_adducts_ && variant_set.size() == 1 && variant_set[ 1 ] == ADDUCT_VARIANT ) continue;
+			if ( variant_set.size() == 1 && variant_exceptions_.has_value( variant_set[ 1 ] ) ) continue;
 
 			bool at_least_one_variant_matched( false );
 			for ( Size m = 1; m <= variant_set.size(); m++ ) {
@@ -500,7 +570,8 @@ ResidueTypeFinder::check_variant_sets_have_all_candidate_variants( ResidueTypeCO
 				break;
 			}
 
-			if ( !match_adducts_ && candidate_variant_type == ADDUCT_VARIANT ) continue;
+			if ( variant_exceptions_.has_value( candidate_variant_type ) ) continue;
+
 			bool at_least_one_variant_matched( false );
 			for ( Size k = 1; k <= variants_in_sets_.size(); k++ ) {
 				vector1< VariantType > const & variant_set = variants_in_sets_[ k ];

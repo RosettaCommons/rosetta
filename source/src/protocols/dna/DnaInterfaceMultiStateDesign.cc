@@ -27,7 +27,6 @@
 #include <protocols/multistate_design/PartitionAggregateFunction.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
-#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>

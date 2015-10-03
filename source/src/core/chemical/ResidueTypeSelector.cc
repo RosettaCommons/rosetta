@@ -108,18 +108,6 @@ residue_selector_single_from_line( std::string const & line )
 	return 0;
 }
 
-
-ResidueTypeCOPs
-ResidueTypeSelector::select( ResidueTypeSet const & rsd_set )
-{
-	ResidueTypeCOPs rsd_list;
-	for ( ResidueTypeCOPs::const_iterator it= rsd_set.residue_types_DO_NOT_USE().begin(), ite= rsd_set.residue_types_DO_NOT_USE().end();
-			it != ite; ++it ) {
-		if ( operator[]( **it ) ) rsd_list.push_back( *it );
-	}
-	return rsd_list;
-}
-
 Selector_CMDFLAG::Selector_CMDFLAG(std::string  const & flag_in, bool const result) : ResidueTypeSelectorSingle( result )
 {
 	using namespace basic::options;

@@ -29,7 +29,7 @@
 
 
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSelector.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <utility/tag/Tag.hh>
@@ -38,6 +38,7 @@
 #include <core/pose/Pose.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/tools/make_vector1.hh>
 #include <numeric/random/random_permutation.hh>
 #include <boost/foreach.hpp>
 
@@ -93,12 +94,10 @@ GrowLigand::~GrowLigand() {}
 
 void
 GrowLigand::set_fragments(){
-	core::chemical::ResidueTypeSelector rs;
-	rs.set_property("FRAGMENT");
-	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
-	core::chemical::ResidueTypeSetCOP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
-	core::chemical::ResidueTypeCOPs fragment_types;
-	rsd_set->select_residues_DO_NOT_USE( rs, fragment_types );
+core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
+core::chemical::ResidueTypeSetCOP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
+	// following may not work -- however, i could not find test cases with FRAGMENT residue_types.
+core::chemical::ResidueTypeCOPs fragment_types = core::chemical::ResidueTypeFinder( *rsd_set ).base_property( core::chemical::FRAGMENT ).get_all_possible_residue_types();
 	grow_ligand_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
 	BOOST_FOREACH ( core::chemical::ResidueTypeCOP fragment_type, fragment_types ) {

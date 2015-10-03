@@ -401,10 +401,6 @@ public:
 		return *this;
 	}
 
-
-	ResidueTypeCOPs
-	select( ResidueTypeSet const & rsd_set );
-
 	// data
 private:
 	// a vector of single ResidueTypeSelector

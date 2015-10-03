@@ -81,9 +81,9 @@ void enlarge_h_lj_wdepth( utility::vector1< Real > & lj_wdepth, AtomTypeSet cons
 // @brief Fang-Chieh Chou 8/10/2012. Use larger LJ_WDEPTH for protons to avoid clashes in RNA
 void enlarge_h_lj_wdepth( AtomTypeSet & atom_type_set );
 
-// @brief Rhiju. O3', O4', O5' in nucleic acids are esters -- should not be good acceptors for H-bonds.
+// @brief Rhiju. O3', O4', O5' in nucleic acids are ethers -- should not be good acceptors for H-bonds.
 void
-turn_off_hbonds_to_ester_oxygens( AtomTypeSet & atom_type_set );
+turn_off_hbonds_to_ether_oxygens( AtomTypeSet & atom_type_set );
 
 }  // namespace chemical
 }  // namespace core

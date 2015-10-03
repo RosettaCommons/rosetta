@@ -25,7 +25,6 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
-//#include <core/chemical/ResidueTypeSelector.hh>
 //#include <core/scoring/ScoreFunction.hh>
 //#include <core/scoring/ScoreFunctionFactory.hh>
 //#include <core/pack/pack_rotamers.hh>

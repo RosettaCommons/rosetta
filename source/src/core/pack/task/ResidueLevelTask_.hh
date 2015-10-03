@@ -337,10 +337,6 @@ private: // private methods
 	void
 	setup_allowed_protein_residue_types_LEGACY( chemical::ResidueType const & match_residue_type );
 
-	/// @brief legacy code block to handle packing at DNA residues with adducts.
-	void
-	setup_allowed_DNA_residue_types_LEGACY( conformation::Residue const & original_residue );
-
 private:
 	/// @details is the pre-existing rotamer included for the packer to choose?
 	bool include_current_;

@@ -82,7 +82,7 @@ public:
 		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
 		if ( !residue_set.has_name("1n1") ) params_files.push_back("protocols/match_enzdes_util/1n1.params");
-		residue_set.read_files(params_files);
+		residue_set.read_files_for_custom_residue_types(params_files);
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
 		tim_enz_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr()) );

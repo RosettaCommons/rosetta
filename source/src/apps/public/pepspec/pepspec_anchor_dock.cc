@@ -56,7 +56,6 @@
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>

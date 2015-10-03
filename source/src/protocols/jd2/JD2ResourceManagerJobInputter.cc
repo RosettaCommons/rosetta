@@ -136,7 +136,7 @@ JD2ResourceManagerJobInputter::pose_from_job(
 			std::string type_set_name(new_residue->residue_type_set().name());
 			if ( !core::chemical::ChemicalManager::get_instance()->residue_type_set(type_set_name)->has_name(new_residue->name()) ) {
 				tr << "loading residue " << new_residue->name() << " into " << type_set_name <<" residue_type_set" <<std::endl;
-				core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set(type_set_name).add_residue_type(new_residue);
+				core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set(type_set_name).add_custom_residue_type(new_residue);
 			}
 		}
 
@@ -230,7 +230,7 @@ JD2ResourceManagerJobInputter::cleanup_after_job_completion(
 			if ( new_residue ) {
 				std::string residue_type_set = new_residue->residue_type_set().name();
 				core::chemical::ChemicalManager::get_instance()->
-					ChemicalManager::nonconst_residue_type_set(residue_type_set).remove_residue_type(new_residue->name());
+					ChemicalManager::nonconst_residue_type_set(residue_type_set).remove_custom_residue_type(new_residue->name());
 			}
 
 			tr << "Deleting resource " << *resource_list_it <<std::endl;

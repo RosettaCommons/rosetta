@@ -15,22 +15,28 @@
 ///
 /// @details
 /// This class is responsible for iterating through the sets of residue types, including, but not limited to, amino
-/// acids, nucleic acids, peptoid residues, and monosaccharides.  It first reads through a file that contains the
-/// location of residue types in the database.  At the beginning of that file are the atom types, mm atom types,
-/// element sets, and orbital types that will be used.  The sets are all for fa_standard.  If a new type of atom are
-/// added for residues, this is where they would be added.  Once it assigns the types, it then reads in extra residue
-/// params that are passed through the command line.  Finally, patches are applied to all residues added.
+///  acids, nucleic acids, peptoid residues, and monosaccharides.  It first reads through a file that contains the
+///  location of residue types in the database.  At the beginning of that file are the atom types, mm atom types,
+///  element sets, and orbital types that will be used.  The sets are all for fa_standard.  If a new type of atom is
+///  added for residues, this is where they would be added.  Once it assigns the types, it then reads in extra residue
+///  params that are passed through the command line.
+/// Then, the class reads in patches.
+/// There can be an exponentially large number of possible residue types that can be built from base_residue_types and
+///  patch applications -- they are created on the fly when requested by accessor functions like has_name() and
+///  get_all_types_with_variants_aa().
+/// Later, the class can accept 'custom residue types' (to which patches will not be added).
 ///
 /// @author
 /// Phil Bradley
 /// Steven Combs - these comments
 /// Rocco Moretti - helper functions for more efficient ResidueTypeSet use
-/// Rhiju Das - 'on-the-fly' residue type instantiation/caching.
+/// Rhiju Das - 'on-the-fly' residue type generation; allowing custom residue types; ResidueTypeSetCache.
 /////////////////////////////////////////////////////////////////////////
 
 
 // Rosetta headers
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSetCache.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/Patch.hh>
@@ -58,7 +64,6 @@
 #include <algorithm>
 
 // option key includes
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
@@ -85,7 +90,8 @@ ResidueTypeSet::ResidueTypeSet(
 	std::string const & directory
 ) :
 	name_( name ),
-	database_directory_(directory)
+	database_directory_(directory),
+	cache_( ResidueTypeSetCacheOP( new ResidueTypeSetCache( *this ) ) )
 {}
 
 void ResidueTypeSet::init(
@@ -96,12 +102,6 @@ void ResidueTypeSet::init(
 	using namespace basic::options;
 
 	clock_t const time_start( clock() );
-
-	on_the_fly_ = option[ OptionKeys::chemical::on_the_fly ]();
-	if ( on_the_fly_ && ( option[ OptionKeys::packing::adducts ].user() ) ) {
-		tr << tr.Red << "WARNING! Adducts are not compatible with on_the_fly residue_type_set. Setting on_the_fly to be false. You may have a long load-up time for this ResidueTypeSet. See notes on fixing this in place_adducts() in ResidueTypeSet.cc." << tr.Reset << std::endl;
-		on_the_fly_ = false;
-	}
 
 	//XRW_B_T1
 	//coarse::RuleSetOP coarsify_rule_set;
@@ -173,19 +173,17 @@ void ResidueTypeSet::init(
 				ResidueTypeOP rsd_type( read_topology_file(
 					filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
 
-				residue_types_.push_back( rsd_type );
+				base_residue_types_.push_back( rsd_type );
+				cache_->add_residue_type( rsd_type );
 			}
 		}
 
 		BOOST_FOREACH ( std::string filename, extra_res_param_files ) {
 			ResidueTypeOP rsd_type( read_topology_file(
 				filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
-			residue_types_.push_back( rsd_type );
+			base_residue_types_.push_back( rsd_type );
+			cache_->add_residue_type( rsd_type );
 		}
-
-		update_residue_maps();
-
-		base_residue_types_ = residue_types_;
 
 	}  // ResidueTypes read
 
@@ -287,29 +285,27 @@ void ResidueTypeSet::init(
 	}  // patches applied
 
 	// Generate combinations of adducts as specified by the user
-	place_adducts();
+	place_adducts( *this );
 
+	ResidueTypeCOPs residue_types = cache_->generated_residue_types();
 	if ( option[ OptionKeys::in::add_orbitals] ) {
-		for ( Size ii = 1 ; ii <= residue_types_.size() ; ++ii ) {
-			if ( residue_types_[ii]->finalized() ) {
-				ResidueTypeOP rsd_type_clone = residue_types_[ii]->clone();
+		for ( Size ii = 1 ; ii <= residue_types.size() ; ++ii ) {
+			if ( residue_types[ii]->finalized() ) {
+				ResidueTypeOP rsd_type_clone = residue_types[ii]->clone();
 				orbitals::AssignOrbitals( rsd_type_clone ).assign_orbitals();
-				update_base_residue_types_if_replaced( residue_types_[ ii ], rsd_type_clone );
-				residue_types_[ ii ] = rsd_type_clone;
+				cache_->update_residue_type( residue_types[ ii ], rsd_type_clone );
+				update_base_residue_types_if_replaced( residue_types[ ii ], rsd_type_clone );
 			}
 		}
-		update_residue_maps();
 	}
 
 	tr << "Finished initializing " << name_ << " residue type set.  ";
-	tr << "Created " << residue_types_.size() << " residue types" << std::endl;
+	tr << "Created " << residue_types.size() << " residue types" << std::endl;
 	tr << "Total time to initialize " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 }
 
-
 ResidueTypeSet::ResidueTypeSet() {}
-
 
 ResidueTypeSet::~ResidueTypeSet() {}
 
@@ -344,11 +340,8 @@ ResidueTypeSet::read_files(
 {
 	for ( Size ii=1; ii<= filenames.size(); ++ii ) {
 		ResidueTypeCOP rsd_type( read_topology_file( filenames[ii], atom_types_, elements_, mm_atom_types_,orbital_types_, get_self_weak_ptr() ) );
-		residue_types_.push_back( rsd_type );
 		base_residue_types_.push_back( rsd_type );
 	}
-
-	update_residue_maps();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -357,6 +350,8 @@ ResidueTypeSet::apply_patches(
 	utility::vector1< std::string > const & filenames
 )
 {
+
+	// separate this out.
 	for ( Size ii=1; ii<= filenames.size(); ++ii ) {
 		PatchOP p( new Patch );
 		p->read_file( filenames[ii] );
@@ -364,7 +359,11 @@ ResidueTypeSet::apply_patches(
 		patch_map_[ p->name() ].push_back( p );
 	}
 
-	// These "replace_residue" patches are a special case, and barely in use anymore.
+
+	// separate this to handle a set of base residue types and a set of patches...
+	// this would allow addition of patches and/or base_residue_types at stages after initialization.
+
+	// The "replace_residue" patches are a special case, and barely in use anymore.
 	// In their current implementation, they actually do *not* change the name of the ResidueType.
 	// But we probably should keep track of their application
 	//  by updating name() of residue; and hold copies of the replaced residues without patch applied in, e.g., replaced_name_map_.
@@ -375,164 +374,104 @@ ResidueTypeSet::apply_patches(
 	// -- rhiju
 	for ( Size ii=1; ii<= patches_.size(); ++ii ) {
 		PatchCOP p( patches_[ ii ] );
-		Size current_n_residue_types( residue_types_.size() );
-		for ( Size i=1; i<= current_n_residue_types; ++i ) {
-			ResidueType const & rsd_type( *residue_types_[ i ] );
-			if ( p->applies_to( rsd_type ) && p->replaces( rsd_type ) ) {
-				runtime_assert( rsd_type.finalized() );
-				ResidueTypeCOP rsd_type_new = p->apply( rsd_type );
-				update_base_residue_types_if_replaced( residue_types_[ i ], rsd_type_new );
-				residue_types_[ i ] = rsd_type_new;
-			}
-		}
-	}
-
-	// This is the main loop.
-	// Note that this spawns a number of residue types that is exponentially large in the number of patches!
-	// Use of placeholder residue types (-on_the_fly) significantly decreases the memory & time footprint of this operation,
-	//  but still this probably should not happen -- rhiju.
-	for ( Size ii=1; ii<= patches_.size(); ++ii ) {
-		PatchCOP p( patches_[ ii ] );
-		Size current_n_residue_types( residue_types_.size() );
-		for ( Size i=1; i<= current_n_residue_types; ++i ) {
-			ResidueType const & rsd_type( *residue_types_[ i ] );
+		for ( Size i=1; i<= base_residue_types_.size(); ++i ) {
+			ResidueType const & rsd_type( *base_residue_types_[ i ] );
 			if ( p->applies_to( rsd_type ) ) {
 				if ( p->replaces( rsd_type ) ) {
-					continue; // Now replace_residue patches are applied in a 'first pass' above.
-				}
-				bool const instantiate = (!on_the_fly_) || rsd_type.is_carbohydrate() /*hack for now -- carbohydrate info is complicated.*/;
-				if ( instantiate ) {
 					runtime_assert( rsd_type.finalized() );
+					ResidueTypeCOP rsd_type_new = p->apply( rsd_type );
+					cache_->update_residue_type( base_residue_types_[ i ], rsd_type_new );
+					runtime_assert( update_base_residue_types_if_replaced( base_residue_types_[ i ], rsd_type_new ) );
 				}
-				// AMW: this used to be a COP but it can't be because of this D thing.
-				ResidueTypeOP new_rsd_type( p->apply( rsd_type, instantiate ) );
-				if ( new_rsd_type != 0 ) {
-					//std::cout << "amw apply_patches Checking on igroup for res " << new_rsd_type->name() << ": " << new_rsd_type->interchangeability_group() << std::endl;
-					residue_types_.push_back( new_rsd_type );
-					// Horrifying, but we NEED D amino acids to be considered base residue types
-					// This is why:
-					// 1. get_residue_type_with_variant_added asks the ResidueTypeFinder for
-					// the base residue type e.g. ALA then adds the variant
-					// 2. D can't be a variant or else we can't design to a D (even from gly)
-					// 3. so D isn't in the list of variants so it isn't added
-					if ( new_rsd_type->name() == "D" + rsd_type.name() ) {
-						// AMW don't new_rsd_type->finalize();
-						new_rsd_type->residue_type_set( rsd_type.residue_type_set().get_self_weak_ptr() );
-						base_residue_types_.push_back( new_rsd_type );
-					}
-
-					if ( new_rsd_type->name3() != rsd_type.name3() ) {
-						// name3 is often used to figure out base_residue_type on which to apply patches; sometimes it switches, e.g., CYS-->CYD,
-						// and we need to know that.
-						name3_generated_by_base_residue_name_[ residue_type_base_name( rsd_type ) ].insert( new_rsd_type->name3() );
-					}
-				}
-				// I am commenting out this exit below, because I have patches with complicated selection criteria.  It
-				// can happen that a patch's main selector applies to a ResidueType yet none of the sub-cases apply.
-				// This should not fail; the ResidueType should just be skipped.  If this point is reached, a null
-				// pointer is returned, which is properly handled by ResidueTypeSet directly above.  If there is a
-				// genuine error in patching, the PatchOperations (or ResidueType) will error during the actual
-				// patching, so I believe this is completely safe. ~Labonte
-				//} else {
-				//utility_exit_with_message( "Could not apply patch " + p->name() + " to " + rsd_type.name() );
-				//}
 			}
 		}
 	}
 
-	update_residue_maps();
-}
-
-
-ResidueTypeCOPs const &
-ResidueTypeSet::interchangeability_group_map_DO_NOT_USE( std::string const & name ) const
-{
-	std::map< std::string, ResidueTypeCOPs >::const_iterator iter = interchangeability_group_map_.find( name );
-	if ( iter == interchangeability_group_map_.end() ) {
-		return empty_residue_list_;
+	// separate this to handle a set of base residue types and a set of patches.
+	// this would allow addition of patches and/or base_residue_types at stages after initialization.
+	for ( Size ii=1; ii<= patches_.size(); ++ii ) {
+		PatchCOP p( patches_[ ii ] );
+		for ( Size i=1; i<= base_residue_types_.size(); ++i ) {
+			ResidueType const & rsd_type( *base_residue_types_[ i ] );
+			if ( p->applies_to( rsd_type ) && p->adds_properties( rsd_type ).has_value( "D_AA" ) ) {
+				ResidueTypeCOP new_rsd_type = p->apply( rsd_type );
+				base_residue_types_.push_back( new_rsd_type );
+				cache_->add_residue_type( new_rsd_type );
+			}
+		}
 	}
-	make_sure_instantiated( iter->second );
-	return iter->second;
+
+	// separate this to handle a set of base residue types and a set of patches.
+	// this would allow addition of patches and/or base_residue_types at stages after initialization.
+	update_info_on_name3_and_interchangeability_group( base_residue_types_ );
+
 }
 
-bool
-ResidueTypeSet::has_interchangeability_group( std::string const & name ) const
-{
-	std::map< std::string, ResidueTypeCOPs >::const_iterator iter = interchangeability_group_map_.find( name );
-	if ( iter == interchangeability_group_map_.end() ) {
-		return false;
+/// @details following assumes that all new name3 and interchangeability groups for residue types
+///    can be discovered by applying patches to base residue types -- i.e. on the 'first patch'.
+///    Probably should set up a runtime_assert in ResidueTypeFinder to check this assumption.
+void
+ResidueTypeSet::update_info_on_name3_and_interchangeability_group( ResidueTypeCOPs base_residue_types ) {
+
+	for ( Size ii=1; ii<= patches_.size(); ++ii ) {
+		PatchCOP p( patches_[ ii ] );
+		for ( Size i=1; i<= base_residue_types.size(); ++i ) {
+			ResidueType const & rsd_type( *base_residue_types[ i ] );
+			if ( p->applies_to( rsd_type ) ) {
+
+				// Check if any patches change name3 of residue_types.
+				// Such patches must be applicable to base residue types -- probably should
+				// check this somewhere (e.g. ResidueTypeFinder).
+				std::string const new_name3 = p->generates_new_name3( rsd_type );
+				if ( new_name3.size() > 0 && rsd_type.name3() != new_name3 ) {
+					name3_generated_by_base_residue_name_[ rsd_type.name() ].insert( new_name3 );
+				}
+
+				// similarly, check if any patches create interchangeability_groups from this base residue type.
+				// Used by ResidueTypeFinder.
+				std::string const interchangeability_group = p->generates_interchangeability_group( rsd_type );
+				if ( interchangeability_group.size() > 0 ) {
+					interchangeability_group_generated_by_base_residue_name_[ rsd_type.name() ].insert( interchangeability_group );
+				}
+
+			}
+		}
 	}
-	return true;
+
 }
 
-/// @details 3-letter name is not unique to each ResidueType
-/// for example, 3-letter name "HIS" matches both his tautomers,
-/// HIS and HIS_D. Return an empty list if no match is found.
-ResidueTypeCOPs const &
-ResidueTypeSet::name3_map_DO_NOT_USE( std::string const & name ) const
-{
-	debug_assert( name.size() == 3 );
-	std::map< std::string, ResidueTypeCOPs >::const_iterator iter = name3_map_.find( name );
-	if ( iter == name3_map_.end() ) {
-		return empty_residue_list_;
-	}
-	/*bool did_instantiation = */ make_sure_instantiated( iter->second );
-	// if ( did_instantiation ) tr << tr.Red << "Instantiating name3_map for: " << name << tr.Reset << std::endl;
-	return iter->second;
-}
 
+//////////////////////////////////////////////////////////////////
 /// @details since residue id is unique, it only returns
 /// one residue type or exit without match.
+///
+/// MOST RESIDUE TYPES WILL BE GENERATED THROUGH THIS FUNCTION.
+///
+//////////////////////////////////////////////////////////////////
 ResidueType const &
 ResidueTypeSet::name_map( std::string const & name_in ) const
 {
 	std::string const name = fixup_patches( name_in );
-	ResidueTypeCOP rsd_type( 0 );
-	if ( name_map_.find( name ) != name_map_.end() ) {
-		rsd_type = name_map_.find( name )->second;
-		//  Do not delete yet -- may revive later to 'properly' handle replace_residue_types -- rhiju.
-		// } else if ( replaced_name_map_.find( name ) != replaced_name_map_.end() ) {
-		//  rsd_type = replaced_name_map_.find( name )->second;
-	} else {
-		for ( std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.begin();
-				it != name_map_.end(); ++it ) tr << it->first << std::endl;
-		//  Do not delete yet -- may revive later to 'properly' handle replace_residue_types -- rhiju.
-		//  for ( std::map< std::string, ResidueTypeCOP >::const_iterator it = replaced_name_map_.begin();
-		//     it != replaced_name_map_.end(); ++it ) tr << it->first << std::endl;
-		utility_exit_with_message( "unrecognized residue name '"+name+"'" );
-	}
-	make_sure_instantiated( rsd_type );
-	return *( rsd_type );
+	runtime_assert( generate_residue_type( name ) );
+	return cache_->name_map( name );
 }
 
-/// @brief Check if a base type (like "SER") generates any types with another name3 (like "SEP")
+/// @details Instantiates ResidueType
 bool
-ResidueTypeSet::generates_patched_residue_type_with_name3( std::string const & base_residue_name, std::string const & name3 ) const
+ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 {
-	if ( name3_generated_by_base_residue_name_.find( base_residue_name ) ==
-			name3_generated_by_base_residue_name_.end() ) return false;
-	std::set< std::string> const & name3_set = name3_generated_by_base_residue_name_.find( base_residue_name )->second;
-	return ( name3_set.count( name3 ) );
-}
+	if ( cache_->has_generated_residue_type( rsd_name ) ) return true; // already generated
 
-/// @details Instantiates ResidueType on-the-fly if it isn't finalized.
-///  Watch out: Does not obey constness! Not thread-safe if on_the_fly_ is on!
-bool
-ResidueTypeSet::make_sure_instantiated( ResidueTypeCOP const & rsd_type ) const
-{
-	if ( rsd_type->finalized() ) return false;
-
-	runtime_assert( on_the_fly_ );
 	// get name (which holds patch information)
 	std::string rsd_name_base, patch_name;
-	figure_out_last_patch_from_name( rsd_type->name(), rsd_name_base, patch_name );
-	if ( patch_name.size() == 0 ) utility_exit_with_message( "Problem: " + rsd_type->name() + " not instantiated." );
+	figure_out_last_patch_from_name( rsd_name, rsd_name_base, patch_name );
+	if ( patch_name.size() == 0 ) return false; // utility_exit_with_message( "Problem: " + rsd_name + " not instantiated." );
 
 	// now apply patch.
 	ResidueType const & rsd_base = name_map( rsd_name_base );
 	runtime_assert( rsd_base.finalized() );
 
-	runtime_assert( patch_map_.find( patch_name ) != patch_map_.end() );
+	if ( patch_map_.find( patch_name ) == patch_map_.end() ) return false;
 	utility::vector1< PatchCOP > const & patches = patch_map_.find( patch_name )->second;
 	bool patch_applied( false );
 
@@ -546,37 +485,37 @@ ResidueTypeSet::make_sure_instantiated( ResidueTypeCOP const & rsd_type ) const
 		ResidueTypeOP rsd_instantiated = p->apply( rsd_base );
 
 		if ( rsd_instantiated == 0 ) {
-			utility_exit_with_message(  "Failed to apply: " + p->name() + " to " + rsd_base.name() );
+			return false; // utility_exit_with_message(  "Failed to apply: " + p->name() + " to " + rsd_base.name() );
 		} else {
-
 			if ( option[ OptionKeys::in::add_orbitals] ) orbitals::AssignOrbitals( rsd_instantiated ).assign_orbitals();
-
-			replace_residue_type_in_set_defying_constness( rsd_type, *rsd_instantiated );
+			cache_->add_residue_type( rsd_instantiated );
 		}
 		patch_applied = true;
 	}
 
-	if ( !patch_applied ) {
-		utility_exit_with_message( "What? Patch " + patch_name + " does not apply to " + rsd_base.name() + "  but user is asking for " + rsd_type->name() );
-	}
-
-	if ( !patch_applied ) {
-		utility_exit_with_message( "What? Patch " + patch_name + " does not apply to " + rsd_base.name() + "  but user is asking for " + rsd_type->name() );
-	}
-
-	return true;
+	return patch_applied;
 }
 
-/// @details Instantiates ResidueType on-the-fly if it isn't finalized.
+/// @brief Check if a base type (like "SER") generates any types with another name3 (like "SEP")
 bool
-ResidueTypeSet::make_sure_instantiated( utility::vector1< ResidueTypeCOP > const & rsd_types ) const
+ResidueTypeSet::generates_patched_residue_type_with_name3( std::string const & base_residue_name, std::string const & name3 ) const
 {
-	bool did_instantiation( false );
-	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
-		if ( make_sure_instantiated( rsd_types[ n ] ) ) did_instantiation = true;
-	}
-	return did_instantiation;
+	if ( name3_generated_by_base_residue_name_.find( base_residue_name ) ==
+			name3_generated_by_base_residue_name_.end() ) return false;
+	std::set< std::string> const & name3_set = name3_generated_by_base_residue_name_.find( base_residue_name )->second;
+	return ( name3_set.count( name3 ) );
 }
+
+/// @brief Check if a base type (like "CYS") generates any types with a new interchangeability group (like "SCY" (via cys_acetylated))
+bool
+ResidueTypeSet::generates_patched_residue_type_with_interchangeability_group( std::string const & base_residue_name, std::string const & interchangeability_group ) const
+{
+	if ( interchangeability_group_generated_by_base_residue_name_.find( base_residue_name ) ==
+			interchangeability_group_generated_by_base_residue_name_.end() ) return false;
+	std::set< std::string> const & interchangeability_group_set = interchangeability_group_generated_by_base_residue_name_.find( base_residue_name )->second;
+	return ( interchangeability_group_set.count( interchangeability_group ) );
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -588,64 +527,35 @@ ResidueTypeSet::figure_out_last_patch_from_name( std::string const & rsd_name,
 	if ( pos != std::string::npos ) {
 		rsd_name_base = rsd_name.substr( 0, pos );
 		patch_name    = rsd_name.substr( pos + 1 );
-	} else {
-		// For D patch, it's the first letter.
+	}
+
+	// For D patch, it's the first letter.
+	if ( patch_name.size() == 0 && rsd_name[ 0 ] == 'D' && has_name( rsd_name.substr( 1 ) ) ) {
 		rsd_name_base = rsd_name.substr( 1 );
 		patch_name    = "D";
-
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
 /// @details helper function used during replacing residue types after, e.g., orbitals. Could possibly expand to update all maps.
-void
+bool
 ResidueTypeSet::update_base_residue_types_if_replaced( ResidueTypeCOP rsd_type, ResidueTypeCOP rsd_type_new )
 {
-	if ( !base_residue_types_.has_value( rsd_type ) ) return;
+	if ( !base_residue_types_.has_value( rsd_type ) ) return false;
 	base_residue_types_[ base_residue_types_.index( rsd_type ) ] = rsd_type_new;
+	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// The useful stuff:  Accessor functions
+//////////////////////////////////////////////////////////////////////////////
 
-/// @details OH MY GAWRSH! oh my gosh oh my gosh oh my gosh. Gasp!
-///  If we get rid of aa_map_DO_NOT_USE, etc. we actually might be able to get rid of this call.
-///  Could instead simply change out the ResidueTypeCOP held in residue_types_ and base_residue_types_ (see ,e.g., update_base_residue_types_if_replaced), and use a
-///  mutex to ensure thread safety.
-void
-ResidueTypeSet::replace_residue_type_in_set_defying_constness( ResidueTypeCOP rsd_type, ResidueType const & rsd_new ) const
+/// @brief   checks if name exists.
+/// @details actually instantiates the residue type if it does not exist.
+bool
+ResidueTypeSet::has_name( std::string const & name ) const
 {
-	const_cast< ResidueType & >( *rsd_type ) = rsd_new;
-}
-
-
-ResidueTypeCOP
-ResidueTypeSet::get_residue_type_with_patch( PatchCOP patch, ResidueTypeCOP rsd_type ) const
-{
-	runtime_assert( patch->applies_to( *rsd_type ) );
-	runtime_assert( patches_.has_value( patch ) );
-	runtime_assert( residue_types_.has_value( rsd_type ) );
-	runtime_assert( rsd_type->finalized() );
-	std::string name = rsd_type->name() + PATCH_LINKER + patch->name();
-	return name_map( name ).get_self_ptr();
-}
-
-/// @brief Get the base ResidueType with the given aa type
-/// @details Returns 0 if one does not exist.
-ResidueTypeCOP
-ResidueTypeSet::get_representative_type_aa( AA aa ) const {
-	return ResidueTypeFinder( *this ).aa( aa ).get_representative_type();
-}
-
-/// @brief Get the base ResidueType with the given name1
-/// @details Returns 0 if one does not exist.
-ResidueTypeCOP
-ResidueTypeSet::get_representative_type_name1( char name1 ) const {
-	return ResidueTypeFinder( *this ).name1( name1 ).get_representative_type();
-}
-
-/// @brief Get the base ResidueType with the given name3
-/// @details Returns 0 if one does not exist.
-ResidueTypeCOP
-ResidueTypeSet::get_representative_type_name3( std::string const &  name3 ) const {
-	return ResidueTypeFinder( *this ).name3( name3 ).get_representative_type();
+	return generate_residue_type( name );
 }
 
 /// @brief Get the base ResidueType with the given aa type and variants
@@ -655,18 +565,37 @@ ResidueTypeSet::get_representative_type_aa( AA aa, utility::vector1< std::string
 	return ResidueTypeFinder( *this ).aa( aa ).variants( variants ).get_representative_type();
 }
 
+ResidueTypeCOP
+ResidueTypeSet::get_representative_type_aa( AA aa ) const {
+	utility::vector1< std::string > const variants; // blank
+	return get_representative_type_aa( aa, variants );
+}
+
+
 /// @brief Get the base ResidueType with the given name1 and variants
 /// @details Returns 0 if one does not exist.
 ResidueTypeCOP
-ResidueTypeSet::get_representative_type_name1( char name1, utility::vector1< std::string > const & variants ) const {
+ResidueTypeSet::get_representative_type_name1( char name1, utility::vector1< std::string > const & variants  ) const {
 	return ResidueTypeFinder( *this ).name1( name1 ).variants( variants ).get_representative_type();
+}
+
+ResidueTypeCOP
+ResidueTypeSet::get_representative_type_name1( char name1  ) const {
+	utility::vector1< std::string > const variants; // blank
+	return get_representative_type_name1( name1, variants );
 }
 
 /// @brief Get the base ResidueType with the given name3 and variants
 /// @details Returns 0 if one does not exist.
 ResidueTypeCOP
-ResidueTypeSet::get_representative_type_name3( std::string const &  name3, utility::vector1< std::string > const & variants ) const {
+ResidueTypeSet::get_representative_type_name3( std::string const &  name3, utility::vector1< std::string > const & variants  ) const {
 	return ResidueTypeFinder( *this ).name3( name3 ).variants( variants ).get_representative_type();
+}
+
+ResidueTypeCOP
+ResidueTypeSet::get_representative_type_name3( std::string const &  name3  ) const {
+	utility::vector1< std::string > const variants; // blank
+	return get_representative_type_name3( name3, variants );
 }
 
 /// @brief Gets all non-patched types with the given aa type
@@ -683,7 +612,7 @@ ResidueTypeSet::get_base_types_name1( char name1 ) const {
 
 /// @brief Get all non-patched ResidueTypes with the given name3
 ResidueTypeCOPs
-ResidueTypeSet::get_base_types_name3( std::string const &  name3 ) const {
+ResidueTypeSet::get_base_types_name3( std::string const & name3 ) const {
 	return ResidueTypeFinder( *this ).name3( name3 ).get_possible_base_residue_types();
 }
 
@@ -692,11 +621,7 @@ ResidueTypeSet::get_base_types_name3( std::string const &  name3 ) const {
 /// (It's assumed that the passed VariantTypeList contains no duplicates.)
 ResidueTypeCOPs
 ResidueTypeSet::get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants ) const {
-	std::pair< AA, utility::vector1< std::string > > query( std::make_pair( aa, variants ) );
-	if ( cached_aa_variants_map_.find( query ) == cached_aa_variants_map_.end() ) {
-		cached_aa_variants_map_[ query ] = ResidueTypeFinder( *this ).aa( aa ).variants( variants ).get_all_possible_residue_types();
-	}
-	return cached_aa_variants_map_[ query ];
+	return cache_->get_all_types_with_variants_aa( aa, variants );
 }
 
 /// @brief Gets all types with the given name1 and variants
@@ -716,196 +641,20 @@ ResidueTypeSet::get_all_types_with_variants_name3( std::string const &  name3, u
 	return ResidueTypeFinder( *this ).name3( name3 ).variants( variants ).get_all_possible_residue_types();
 }
 
-bool
-ResidueTypeSet::has_name( std::string const & name ) const
-{
-	return ( name_map_.find( name ) != name_map_.end() );
-}
-
+/// @brief any residue types with this name3?
 bool
 ResidueTypeSet::has_name3( std::string const & name3 ) const
 {
-	return ( name3_map_.find( name3 ) != name3_map_.end() );
+	return ( get_representative_type_name3( name3 ) != 0 );
 }
 
-/// @details similar to name3_map, return all matched residue types
-/// or an empty list.
-ResidueTypeCOPs const &
-ResidueTypeSet::aa_map_DO_NOT_USE( AA const & aa ) const
+bool
+ResidueTypeSet::has_interchangeability_group( std::string const & interchangeability_group ) const
 {
-	std::map< AA, ResidueTypeCOPs >::const_iterator iter = aa_map_.find( aa );
-	if ( iter == aa_map_.end() ) {
-		return empty_residue_list_;
-	}
-	/*bool did_instantiation =*/ make_sure_instantiated( iter->second );
-	// if ( did_instantiation ) tr << tr.Red << "Instantiating aa_map for: " << aa << tr.Reset << std::endl;
-	return aa_map_.find( aa )->second;
+	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).interchangeability_group( interchangeability_group ).get_representative_type();
+	return ( rsd_type != 0 );
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-//private
-/// @brief clear residue  maps
-void
-ResidueTypeSet::clear_residue_maps()
-{
-	aa_map_.clear();
-	name3_map_.clear();
-	name_map_.clear();
-	aas_defined_.clear();
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-//private
-/// @details check that residue id map should be unique,
-/// sort the aas_defined list and make its members unique
-void
-ResidueTypeSet::update_residue_maps()
-{
-	clear_residue_maps();
-
-	for ( ResidueTypeCOPs::iterator rsdtype_it(residue_types_.begin() ), rsdtype_end( residue_types_.end() );
-			rsdtype_it != rsdtype_end; ++rsdtype_it ) {
-		ResidueTypeCOP rsd( *rsdtype_it );
-		add_residue_type_to_maps( rsd );
-	}
-	aas_defined_.sort();
-	aas_defined_.unique();
-}
-
-void
-ResidueTypeSet::add_residue_type_to_maps( ResidueTypeCOP rsd_ptr )
-{
-
-	// name should be unique!
-	if ( name_map_.count( rsd_ptr->name() ) ) {
-		std::stringstream err_msg;
-		err_msg << "Attempting to add a residue type with name '" + rsd_ptr->name() + "' ";
-		err_msg << "but this name is already taken." << std::endl;
-		err_msg << "Please check your residue parameter files." << std::endl;
-		utility_exit_with_message(err_msg.str());
-	}
-	name_map_[ rsd_ptr->name() ] = rsd_ptr;
-
-	// map by AA
-	if ( rsd_ptr->aa() != aa_unk ) {
-		aa_map_[ rsd_ptr->aa() ].push_back( rsd_ptr );
-	}
-
-	// add aa type
-	aas_defined_.push_back( rsd_ptr->aa() );
-
-	// map by pdb string
-	// tr << "ADDING name3 to map " << rsd_ptr->name3() << "  based on rsd_type " << rsd_ptr->name() << std::endl;
-	name3_map_[ rsd_ptr->name3() ].push_back( rsd_ptr );
-
-	// map by interchangeability group
-	interchangeability_group_map_[ rsd_ptr->interchangeability_group() ].push_back( rsd_ptr );
-
-	// For specialty amino acids, add them to the name three maps both with their PDB strings and
-	// with their specialty string -- the first three letters of the residue name.
-	// E.g., CYD will appear in both lists for name3_map_[ "CYS" ] and name3_map_[ "CYD" ]
-	if ( rsd_ptr->name3() != rsd_ptr->name().substr(0,3) ) {
-		name3_map_[ rsd_ptr->name().substr(0,3) ].push_back( rsd_ptr );
-	}
-
-}
-
-void
-ResidueTypeSet::remove_residue_type_from_maps( ResidueTypeCOP rsd )
-{
-	//Assert rather than utility exit, because this should have been called by remove residue, which utility exits
-	debug_assert(has_name(rsd->name()));
-
-	ResidueTypeCOPs::iterator const_res_it(std::find(residue_types_.begin(),residue_types_.end(),rsd));
-	residue_types_.erase(const_res_it);
-
-	name_map_.erase(rsd->name());
-
-	// clear this residue type from the aa_map_
-	if ( rsd->aa() != aa_unk ) {
-		ResidueTypeCOPs::iterator aa_it(std::find(aa_map_[rsd->aa()].begin(),aa_map_[rsd->aa()].end(),rsd));
-		aa_map_[rsd->aa()].erase(aa_it);
-		if ( aa_map_[rsd->aa()].size() == 0 ) {
-			aa_map_.erase(rsd->aa());
-
-			// only clear the aa type from the aas_defined_ list if it was the last aa of this type in the aa_map_
-			// special case for aa_unk ahead
-			std::list<AA>::iterator aa_it(std::find(aas_defined_.begin(),aas_defined_.end(),rsd->aa()));
-			aas_defined_.erase(aa_it);
-		}
-	} else {
-		// if this was the only residue type in the ResidueTypeSet with an aa() of aa_unk, then
-		// remove aa_unk from the aas_defined_ list.
-		bool only_aa_unk = true;
-		for ( ResidueTypeCOPs::const_iterator iter = residue_types_.begin(); iter != residue_types_.end(); ++iter ) {
-			if ( (*iter)->aa() == aa_unk ) {
-				only_aa_unk = false;
-				break;
-			}
-		}
-		if ( only_aa_unk ) {
-			aas_defined_.erase( std::find( aas_defined_.begin(), aas_defined_.end(), aa_unk ) );
-		}
-	}
-
-	// clear this residue type from the name3_map_
-	ResidueTypeCOPs::iterator name3_it(std::find(name3_map_[rsd->name3()].begin(),name3_map_[rsd->name3()].end(),rsd));
-	name3_map_[rsd->name3()].erase(name3_it);
-	if ( name3_map_[rsd->name3()].size() == 0 ) {
-		name3_map_.erase(rsd->name3());
-	}
-
-	// clear this residue type from the interchangeability_group_map_
-	ResidueTypeCOPs::iterator intgrp_it( std::find(
-		interchangeability_group_map_[ rsd->interchangeability_group() ].begin(),
-		interchangeability_group_map_[ rsd->interchangeability_group() ].end(),
-		rsd ));
-	interchangeability_group_map_[ rsd->interchangeability_group() ].erase( intgrp_it );
-	if ( interchangeability_group_map_[ rsd->interchangeability_group() ].size() ) {
-		interchangeability_group_map_.erase( rsd->interchangeability_group() );
-	}
-
-	if ( rsd->name3() != rsd->name().substr(0,3) ) {
-		name3_it = std::find(name3_map_[rsd->name3().substr(0,3)].begin(),name3_map_[rsd->name3().substr(0,3)].end(),rsd);
-		name3_map_[rsd->name3().substr(0,3)].erase(name3_it);
-		if ( name3_map_[rsd->name3().substr(0,3)].size() == 0 ) {
-			name3_map_.erase(rsd->name3().substr(0,3));
-		}
-	}
-
-}
-
-/// @brief beginning of aas_defined_ list
-std::list< AA >::const_iterator
-ResidueTypeSet::aas_defined_begin() const
-{
-	return aas_defined_.begin();
-}
-
-/// @brief end of aas_defined_ list
-std::list< AA >::const_iterator
-ResidueTypeSet::aas_defined_end() const
-{
-	return aas_defined_.end();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-/// @details selection done by ResidueTypeSelector class
-void
-ResidueTypeSet::select_residues_DO_NOT_USE(
-	ResidueTypeSelector const & selector,
-	ResidueTypeCOPs & matches
-) const
-{
-	for ( ResidueTypeCOPs::const_iterator iter=residue_types_.begin(), iter_end = residue_types_.end(); iter!= iter_end; ++iter ) {
-		make_sure_instantiated( *iter );
-		if ( selector[ **iter ] ) {
-			matches.push_back( *iter );
-		}
-	}
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details Return the first match with both base ResidueType id and variant_type name.  Abort if there is no match.
@@ -928,14 +677,7 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 		target_variants.push_back( ResidueProperties::get_string_from_variant( new_type ) );
 	}
 
-	// the desired set of properties:
-	utility::vector1< std::string > target_properties( init_rsd.properties().get_list_of_properties() );
-	/*utility::vector1< ResidueProperty > tp;
-	for ( Size i = 1; i <= target_properties.size(); ++i ) {
-	tp.push_back( ResidueProperties::get_property_from_string( target_properties[ i ] ) );
-	}*/
-
-	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name )./*properties( tp ).*/variants( target_variants ).get_representative_type();
+	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
 
 	if ( rsd_type == 0 ) {
 		utility_exit_with_message( "unable to find desired variant residue: " + init_rsd.name() + " " + base_name + " " +
@@ -974,152 +716,78 @@ ResidueTypeSet::get_residue_type_with_variant_removed(
 	return *rsd_type;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/// @details Generation of new residue types augmented by adduct atoms
-/// @note    This is almost perfectly consistent with on_the_fly residue type sets.
-///            Why not just make adducts a patch? Then it will all work together nicely.
-///            Just need to have the -adduct string (add_map) turned into a PatchSelector
-///                 -- rhiju
 void
-ResidueTypeSet::place_adducts()
+ResidueTypeSet::add_custom_residue_type( std::string const & filename )
 {
-	// First parse the command line for requested adducts
-	utility::options::StringVectorOption & add_set
-		= option[ OptionKeys::packing::adducts ];
-
-	// No adducts, skip out
-	if ( add_set.size() == 0 ) return;
-
-	// Convert to a map that takes a string descriptor of an adduct and
-	// gives the max number of adducts of that class to apply, so
-	// a command line option of -adducts <adduct_type> 2 for a type that has
-	// 5 entries in the rsd param file will create all combinations with up to
-	// 2 total adducts.
-
-	AdductMap add_map = parse_adduct_string( add_set );
-
-	// Error check each requested adduct from the command line, and
-	// complain if there are no examples in any residues.  This function
-	// will not return if
-	error_check_requested_adducts( add_map, residue_types_ );
-
-	// Set up a starting point map where the int value is the number
-	// of adducts of a given type placed
-	AdductMap blank_map( add_map );
-	for ( AdductMap::iterator add_iter = blank_map.begin(),
-			end_iter = blank_map.end() ;
-			add_iter != end_iter ; ++add_iter ) {
-		add_iter->second = 0;
-	}
-
-	// Process the residues in turn
-	for ( ResidueTypeCOPs::const_iterator iter= residue_types_.begin(), iter_end = residue_types_.end();
-			iter != iter_end; ++iter ) {
-		ResidueType const & rsd( **iter );
-		if ( !rsd.finalized() ) continue;
-		AdductMap count_map( blank_map );
-		utility::vector1< bool > add_mask( rsd.defined_adducts().size(), false  );
-		create_adduct_combinations( rsd, add_map, count_map, add_mask, rsd.defined_adducts().begin() );
-	}
-
-	// utility_exit_with_message( "Debug stop point \n" );
-
-	update_residue_maps();
-
+	ResidueTypeOP rsd_type( read_topology_file( filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
+	add_custom_residue_type( rsd_type );
 }
 
 void
-ResidueTypeSet::add_residue_type( ResidueTypeOP new_type )
+ResidueTypeSet::read_files_for_custom_residue_types(
+	utility::vector1< std::string > const & filenames
+)
+{
+	for ( Size n = 1; n <= filenames.size(); n++ ) {
+		add_custom_residue_type( filenames[ n ] );
+	}
+}
+
+void
+ResidueTypeSet::add_custom_residue_type( ResidueTypeOP new_type )
 {
 	new_type->residue_type_set( get_self_weak_ptr() );
-
 	if ( option[ OptionKeys::in::add_orbitals] ) {
 		orbitals::AssignOrbitals add_orbitals_to_residue(new_type);
 		add_orbitals_to_residue.assign_orbitals();
 	}
-	residue_types_.push_back( new_type );
-	if ( residue_type_base_name( *new_type ) == new_type->name() ) base_residue_types_.push_back( new_type );
-
-	add_residue_type_to_maps( new_type );
-	aas_defined_.sort();
-	aas_defined_.unique();
+	custom_residue_types_.push_back( new_type );
+	cache_->add_residue_type( new_type );
+	cache_->clear_cached_maps();
 }
 
 void
-ResidueTypeSet::add_residue_type(std::string const & filename)
+ResidueTypeSet::remove_custom_residue_type( std::string const & name )
 {
-	ResidueTypeOP rsd_type( read_topology_file( filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
-	add_residue_type(rsd_type);
+	ResidueTypeCOP rsd_type( (cache_->name_map( name )).get_self_weak_ptr() );
+	ResidueTypeCOPs::iterator res_it = std::find( custom_residue_types_.begin(), custom_residue_types_.end(), rsd_type );
+	runtime_assert( res_it != custom_residue_types_.end() );
+	custom_residue_types_.erase( res_it );
+	cache_->remove_residue_type( name );
 }
 
 void
-ResidueTypeSet::remove_residue_type(std::string const & name)
+ResidueTypeSet::remove_base_residue_type_DO_NOT_USE( std::string const & name )
 {
-
-	if ( !has_name(name) ) {
-		utility_exit_with_message("ResidueTypeSet does not have a residue called "+name+ " so it cannot be deleted.");
-	}
-
-	ResidueTypeCOP type_to_remove( name_map_[ name ] );
-
-	remove_residue_type_from_maps(type_to_remove);
+	ResidueTypeCOP rsd_type( (cache_->name_map( name )).get_self_weak_ptr() );
+	ResidueTypeCOPs::iterator res_it = std::find( base_residue_types_.begin(), base_residue_types_.end(), rsd_type );
+	runtime_assert( res_it != base_residue_types_.end() );
+	base_residue_types_.erase( res_it );
+	cache_->remove_residue_type( name );
+	// Note danger here -- could still have patched versions of residue in base_residue_types, but they may no longer be accessible.
 }
 
-/// @brief Create correct combinations of adducts for a residue type
-void
-ResidueTypeSet:: create_adduct_combinations(
-	ResidueType const & rsd,
-	AdductMap ref_map,
-	AdductMap count_map,
-	utility::vector1< bool > add_mask,
-	utility::vector1< Adduct >::const_iterator work_iter
-)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// functions to deprecate
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// @details similar to name3_map, return all matched residue types
+/// or an empty list.
+ResidueTypeCOPs
+ResidueTypeSet::aa_map_DO_NOT_USE( AA const & aa ) const
 {
+	return cache_->aa_map_DO_NOT_USE( aa );
+}
 
-	if ( work_iter == rsd.defined_adducts().end() ) {
-		// Skip the 'no adduct' case - that has already been
-		// made when reading in files
-		if ( std::find( add_mask.begin(), add_mask.end(), true ) == add_mask.end() ) {
-			return;
-		}
-		// Make this combo and return;
-		//  std::cout << "Making an adduct" << std::endl;
-
-		utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ;
-		BOOST_FOREACH ( bool make, add_mask ) {
-			std::cout << "Adduct " << add_iter->adduct_name() << " make is " << make << std::endl;
-			++add_iter;
-		}
-
-		// Farm this out to a helper function
-		residue_types_.push_back( apply_adducts_to_residue( rsd, add_mask ) );
-
-		return;
-	}
-
-	// Traverse the 'make' branch for this adduct if:
-	// 1. The adduct is in the map of requested adducts
-	// 2. we haven't exceeded the count limit for this adduct
-	AdductMap::iterator test_iter =
-		ref_map.find( work_iter->adduct_name() );
-
-	if ( test_iter != ref_map.end() &&
-			count_map[ test_iter->first ] < ref_map[ test_iter->first ]   ) {
-		AdductMap new_count_map( count_map );
-		new_count_map[ work_iter->adduct_name() ]++;
-		utility::vector1< bool > new_add_mask( add_mask );
-		// This following line may not work if the Adducts are no longer
-		// stored in a vector
-		new_add_mask[ work_iter - rsd.defined_adducts().begin() + 1 ] = true;
-		create_adduct_combinations( rsd, ref_map, new_count_map, new_add_mask, work_iter+1 );
-	}
-
-	// Always traverse the 'do not make' for this adduct
-	// The count is not incremented, and the mask is left at the default (false)
-	AdductMap new_count_map( count_map );
-	utility::vector1< bool > new_add_mask( add_mask );
-	create_adduct_combinations( rsd, ref_map, new_count_map, new_add_mask, work_iter+1 );
-
+/// @details 3-letter name is not unique to each ResidueType
+/// for example, 3-letter name "HIS" matches both his tautomers,
+/// HIS and HIS_D. Return an empty list if no match is found.
+ResidueTypeCOPs
+ResidueTypeSet::name3_map_DO_NOT_USE( std::string const & name3 ) const
+{
+	debug_assert( name3.size() == 3 );
+	return cache_->name3_map_DO_NOT_USE( name3 );
 }
 
 } // pose

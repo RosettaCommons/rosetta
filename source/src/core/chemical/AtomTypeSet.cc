@@ -69,7 +69,7 @@ AtomTypeSet::AtomTypeSet( std::string const & directory ):
 
 	// post processing from command-line
 	if ( option[ OptionKeys::chemical::enlarge_H_lj ] ) enlarge_h_lj_wdepth( *this );
-	if ( option[ OptionKeys::chemical::no_hbonds_to_ester_oxygens ] ) turn_off_hbonds_to_ester_oxygens( *this );
+	if ( option[ OptionKeys::chemical::no_hbonds_to_ether_oxygens ] ) turn_off_hbonds_to_ether_oxygens( *this );
 
 	clone_atom_types_from_commandline();
 }

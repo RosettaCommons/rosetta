@@ -114,7 +114,7 @@ AddHydrogen::apply( core::pose::Pose & pose )
 	{
 		core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
 		core::chemical::ResidueTypeSet & rsd_set= cm->nonconst_residue_type_set( core::chemical::FA_STANDARD );
-		rsd_set.add_residue_type(type_to_fix);
+		rsd_set.add_custom_residue_type(type_to_fix);
 	}
 	utility::vector1< std::pair< std::string, std::string > > atom_pairs;
 	atom_pairs.push_back(std::pair<std::string, std::string>(name1,name1) );

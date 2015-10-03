@@ -45,14 +45,17 @@ public:
 	ResidueTypeCOP
 	get_representative_type() const;
 
-	ResidueTypeCOP
-	get_representative_type_SLOW() const;
-
 	ResidueTypeCOPs
 	get_all_possible_residue_types( bool const allow_extra_variants = false ) const;
 
 	ResidueTypeCOPs
-	get_possible_base_residue_types() const;
+	get_possible_base_residue_types( bool const include_custom = true ) const;
+
+	ResidueTypeCOPs
+	get_possible_custom_residue_types() const;
+
+	ResidueTypeCOPs
+	get_possible_base_custom_residue_types() const;
 
 	ResidueTypeCOP
 	get_best_match_residue_type_for_atom_names( utility::vector1< std::string > const & atom_names );
@@ -78,6 +81,12 @@ public:
 	ResidueTypeFinder &
 	residue_base_name( std::string const & setting ) {
 		residue_type_base_name_ = setting;
+		return *this;
+	}
+
+	ResidueTypeFinder &
+	interchangeability_group( std::string const & setting ) {
+		interchangeability_group_ = setting;
 		return *this;
 	}
 
@@ -112,6 +121,12 @@ public:
 	}
 
 	ResidueTypeFinder &
+	variant_exceptions( utility::vector1< VariantType > const & setting ) {
+		variant_exceptions_ = setting;
+		return *this;
+	}
+
+	ResidueTypeFinder &
 	properties( utility::vector1< ResidueProperty > const & setting ) {
 		properties_ = setting;
 		return *this;
@@ -136,8 +151,8 @@ public:
 	}
 
 	ResidueTypeFinder &
-	match_adducts( bool const setting ) {
-		match_adducts_ = setting;
+	apply_all_applicable_patches( bool const setting ) {
+		apply_all_applicable_patches_ = setting;
 		return *this;
 	}
 
@@ -150,6 +165,9 @@ public:
 private:
 
 	ResidueTypeCOPs
+	apply_basic_filters( ResidueTypeCOPs rsd_types ) const;
+
+	ResidueTypeCOPs
 	apply_filters_after_patches( ResidueTypeCOPs rsd_types,
 		bool const allow_extra_variants = false ) const;
 
@@ -158,19 +176,23 @@ private:
 		Size const patch_number,
 		bool const get_first_totally_ok_residue_type = false ) const;
 
-
 	ResidueTypeCOPs
 	filter_by_name1( ResidueTypeCOPs const & rsd_types  ) const;
 
 	ResidueTypeCOPs
 	filter_by_name3( ResidueTypeCOPs const & rsd_types,
-		bool const keep_if_base_type_generates_name3) const;
+									 bool const keep_if_base_type_generates_aa) const;
 
 	ResidueTypeCOPs
-	filter_by_aa( ResidueTypeCOPs const & rsd_types  ) const;
+	filter_by_aa( ResidueTypeCOPs const & rsd_types ) const;
+
 
 	ResidueTypeCOPs
 	filter_by_residue_type_base_name( ResidueTypeCOPs const & rsd_types ) const;
+
+	ResidueTypeCOPs
+	filter_by_interchangeability_group( ResidueTypeCOPs const & rsd_types,
+		bool const keep_if_base_type_generates_interchangeability_group) const;
 
 	ResidueTypeCOPs
 	filter_by_base_property( ResidueTypeCOPs const & base_rsd_types ) const;
@@ -211,6 +233,9 @@ private:
 		ResidueTypeCOP rsd_type ) const;
 
 	bool
+	fixes_interchangeability_group( PatchCOP patch, ResidueTypeCOP rsd_type ) const;
+
+	bool
 	adds_any_property( PatchCOP patch,
 		ResidueTypeCOP rsd_type ) const;
 
@@ -223,14 +248,14 @@ private:
 		ResidueTypeCOP rsd_type ) const;
 
 	bool
+	changes_to_wrong_aa( PatchCOP patch, ResidueTypeCOP rsd_type ) const;
+
+	bool
 	matches_any_patch_name( PatchCOP patch ) const;
 
 	bool
 	matches_any_atom_name( PatchCOP patch,
 		ResidueTypeCOP rsd_type ) const;
-
-	ResidueTypeFinder &
-	variants( utility::vector1< VariantType > const & setting ) const;
 
 
 private:
@@ -241,16 +266,18 @@ private:
 	char name1_;
 	std::string name3_;
 	std::string residue_type_base_name_;
+	std::string interchangeability_group_;
 	utility::vector1< std::string > atom_names_soft_;
 	utility::vector1< utility::vector1< VariantType > > variants_in_sets_;
 	utility::vector1< std::string > custom_variants_;
 	utility::vector1< VariantType > disallow_variants_;
+	utility::vector1< VariantType > variant_exceptions_;
 	utility::vector1< ResidueProperty > properties_;
 	utility::vector1< ResidueProperty > disallow_properties_;
 	utility::vector1< std::string > patch_names_;
 	ResidueProperty base_property_;
 	bool ignore_atom_named_H_;
-	bool match_adducts_; // for DNA -- actually not in use, but keep in here if adducts are modernized.
+	bool apply_all_applicable_patches_;
 	bool disallow_carboxyl_conjugation_at_glu_asp_; // special case
 
 };

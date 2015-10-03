@@ -67,6 +67,26 @@ public:
 	std::string
 	deletes_variant(){ return ""; }
 
+	/// @brief Generates a new aa
+	virtual
+	bool
+	may_change_aa(){ return false; }
+
+	/// @brief Generates name3.
+	virtual
+	std::string
+	generates_name3(){ return ""; }
+
+	/// @brief Generates interchangeability_group.
+	virtual
+	std::string
+	generates_interchangeability_group(){ return ""; }
+
+	/// @brief Generates base residue -- legacy for D_AA -- do not use otherwise.
+	virtual
+	bool
+	generates_base_residue(){ return false; }
+
 	/// @brief Special -- does this apply to 'minimal', placeholder types? Generally true, unless updating aa or name3.
 	virtual
 	bool
@@ -585,7 +605,7 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief set atom's chemical type
+/// @brief set residue's name1 and name3
 class SetIO_String : public PatchOperation {
 public:
 	/// constructor
@@ -597,6 +617,11 @@ public:
 	/// set atom's chemical type
 	bool
 	apply( ResidueType & rsd ) const;
+
+	/// @brief Generates name3.
+	virtual
+	std::string
+	generates_name3(){ return name3_; }
 
 	virtual
 	bool
@@ -619,25 +644,13 @@ public:
 	bool
 	apply( ResidueType & rsd ) const;
 
+	std::string
+	generates_interchangeability_group(){ return intgrp_; }
+
 private:
 	std::string const intgrp_;
 };
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Append a string to the existing interchangeability_group string for a ResidueType
-class AppendInterchangeabilityGroup_String : public PatchOperation {
-public:
-	/// constructor
-	AppendInterchangeabilityGroup_String(
-		std::string const & intgrp_addendum
-	);
-
-	bool
-	apply( ResidueType & rsd ) const;
-
-private:
-	std::string const intgrp_addendum_;
-};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief set atom's MM chemical type
@@ -849,12 +862,17 @@ public:
 	bool
 	applies_to_placeholder() const { return true; }
 
+	/// @brief Generates a new aa
+	virtual
+	bool
+	may_change_aa(){ return true; }
+
 	/// @brief set the NCAA rotamer library path in the residue type
 	bool
 	apply( ResidueType & rsd ) const;
+
 private:
-	//std::string atom1_;
-	//std::string atom2_;
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -867,9 +885,9 @@ public:
 
 	bool
 	apply( ResidueType & rsd ) const;
+
 private:
-	//std::string atom1_;
-	//std::string atom2_;
+
 };
 
 /// @brief  Virtual constructor, returns 0 if no match

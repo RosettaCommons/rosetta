@@ -97,13 +97,15 @@ char * argv []
 		residue_type_param_set.use_residue_type_theta0(option[ mm_params::use_residue_type_theta0 ]);
 		residue_type_param_set.central_atoms_to_score(option[ mm_params::central_atoms_to_score ]);
 
-		for ( std::list< core::chemical::AA >::const_iterator aa_iter(residue_set->aas_defined_begin());
-				aa_iter != residue_set->aas_defined_end(); ++aa_iter ) {
+		//		for ( std::list< core::chemical::AA >::const_iterator aa_iter(residue_set->aas_defined_begin());
+		//				aa_iter != residue_set->aas_defined_end(); ++aa_iter ) {
+		for ( core::Size ii = 1; ii <= core::chemical::num_aa_types; ii++ ) {
 
-			TR << *aa_iter << std::endl;
+			core::chemical::AA aa = core::chemical::AA( ii );
+			//			TR << *aa_iter << std::endl;
+			TR << aa << std::endl;
 
-			core::chemical::ResidueTypeCOPs const & aa_caps( protocols::toolbox::match_enzdes_util::sort_residue_type_pointers_by_name(residue_set->aa_map_DO_NOT_USE(*aa_iter)));
-
+			core::chemical::ResidueTypeCOPs const & aa_caps( protocols::toolbox::match_enzdes_util::sort_residue_type_pointers_by_name(residue_set->aa_map_DO_NOT_USE(aa)));
 
 			for ( core::chemical::ResidueTypeCOPs::const_iterator residue_iter(aa_caps.begin());
 					residue_iter != aa_caps.end(); ++residue_iter ) {

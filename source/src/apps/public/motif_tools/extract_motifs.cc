@@ -23,7 +23,6 @@
 //#include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 //#include <core/chemical/ResidueTypeSet.hh>
-//#include <core/chemical/ResidueTypeSelector.hh>
 //#include <core/chemical/ChemicalManager.hh>
 //#include <core/conformation/ResidueFactory.hh>
 //#include <core/chemical/residue_io.hh>

@@ -22,7 +22,6 @@
 #include <protocols/loops/Loops.hh>
 
 // Project headers
-#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>

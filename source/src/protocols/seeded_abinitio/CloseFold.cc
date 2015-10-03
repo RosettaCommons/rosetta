@@ -61,7 +61,6 @@
 #include  <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/util.hh>

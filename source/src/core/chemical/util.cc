@@ -410,10 +410,10 @@ enlarge_h_lj_wdepth( AtomTypeSet & atom_type_set ) {
 
 //////////////////////////////////////
 // In RNA modeling, getting unusual H-bonds to O4', O5', and O3' ...
-// those are esters and probably not great hydrogen bond acceptors (except maybe in
+// those are ethers and probably not great hydrogen bond acceptors (except maybe in
 // catalytic transition states)
 void
-turn_off_hbonds_to_ester_oxygens( AtomTypeSet & atom_type_set ) {
+turn_off_hbonds_to_ether_oxygens( AtomTypeSet & atom_type_set ) {
 	utility::vector1< Real > lj_wdepth;
 	utility::vector1< std::string > const Oet_names = utility::tools::make_vector1( "Oet2", "Oet3" );
 	std::string property; // have to set through a string since set_property() accepts property by reference.

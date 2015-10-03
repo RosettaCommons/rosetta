@@ -20,13 +20,19 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/tools/make_vector1.hh>
 #include <utility/options/StringVectorOption.hh>
+
+// Boost Headers
+#include <boost/foreach.hpp>
 
 
 static THREAD_LOCAL basic::Tracer TR( "core.chemical.adduct_util" );
@@ -166,6 +172,124 @@ ResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
 	new_rsd_type->finalize();
 	return new_rsd_type;
 }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// adducts
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+/// @details Generation of new residue types augmented by adduct atoms
+/// @note    This is almost perfectly consistent with on_the_fly residue type sets.
+///            Why not just make adducts a patch? Then it will all work together nicely.
+///            Just need to have the -adduct string (add_map) turned into a PatchSelector
+///                 -- rhiju
+void
+place_adducts( ResidueTypeSet & rsd_type_set )
+{
+	// First parse the command line for requested adducts
+	utility::options::StringVectorOption & add_set
+		= basic::options::option[ basic::options::OptionKeys::packing::adducts ];
+
+	// No adducts, skip out
+	if ( add_set.size() == 0 ) return;
+
+	// Convert to a map that takes a string descriptor of an adduct and
+	// gives the max number of adducts of that class to apply, so
+	// a command line option of -adducts <adduct_type> 2 for a type that has
+	// 5 entries in the rsd param file will create all combinations with up to
+	// 2 total adducts.
+
+	AdductMap add_map = parse_adduct_string( add_set );
+
+	// Error check each requested adduct from the command line, and
+	// complain if there are no examples in any residues.  This function
+	// will not return if
+	error_check_requested_adducts( add_map, rsd_type_set.base_residue_types() );
+
+	// Set up a starting point map where the int value is the number
+	// of adducts of a given type placed
+	AdductMap blank_map( add_map );
+	for ( AdductMap::iterator add_iter = blank_map.begin(),
+			end_iter = blank_map.end() ;
+			add_iter != end_iter ; ++add_iter ) {
+		add_iter->second = 0;
+	}
+
+	// Process the residues in turn
+	ResidueTypeCOPs residue_types = ResidueTypeFinder( rsd_type_set ).base_property( DNA ).variant_exceptions( utility::tools::make_vector1( LOWER_TERMINUS_VARIANT, UPPER_TERMINUS_VARIANT, ADDUCT_VARIANT ) ).get_all_possible_residue_types();
+
+	for ( ResidueTypeCOPs::const_iterator iter= residue_types.begin(), iter_end = residue_types.end();
+			iter != iter_end; ++iter ) {
+		ResidueType const & rsd( **iter );
+		if ( !rsd.finalized() ) continue;
+		AdductMap count_map( blank_map );
+		utility::vector1< bool > add_mask( rsd.defined_adducts().size(), false  );
+		create_adduct_combinations( rsd_type_set, rsd, add_map, count_map, add_mask, rsd.defined_adducts().begin() );
+	}
+
+	// utility_exit_with_message( "Debug stop point \n" );
+
+}
+
+/// @brief Create correct combinations of adducts for a residue type
+void
+create_adduct_combinations(
+  ResidueTypeSet & rsd_type_set,
+	ResidueType const & rsd,
+	AdductMap ref_map,
+	AdductMap count_map,
+	utility::vector1< bool > add_mask,
+	utility::vector1< Adduct >::const_iterator work_iter
+)
+{
+
+	if ( work_iter == rsd.defined_adducts().end() ) {
+		// Skip the 'no adduct' case - that has already been
+		// made when reading in files
+		if ( std::find( add_mask.begin(), add_mask.end(), true ) == add_mask.end() ) {
+			return;
+		}
+		// Make this combo and return;
+		//  std::cout << "Making an adduct" << std::endl;
+
+		utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ;
+		BOOST_FOREACH ( bool make, add_mask ) {
+			std::cout << "Adduct " << add_iter->adduct_name() << " make is " << make << std::endl;
+			++add_iter;
+		}
+
+		// Farm this out to a helper function
+		rsd_type_set.add_custom_residue_type( apply_adducts_to_residue( rsd, add_mask ) );
+
+		return;
+	}
+
+	// Traverse the 'make' branch for this adduct if:
+	// 1. The adduct is in the map of requested adducts
+	// 2. we haven't exceeded the count limit for this adduct
+	AdductMap::iterator test_iter =
+		ref_map.find( work_iter->adduct_name() );
+
+	if ( test_iter != ref_map.end() &&
+			count_map[ test_iter->first ] < ref_map[ test_iter->first ]   ) {
+		AdductMap new_count_map( count_map );
+		new_count_map[ work_iter->adduct_name() ]++;
+		utility::vector1< bool > new_add_mask( add_mask );
+		// This following line may not work if the Adducts are no longer
+		// stored in a vector
+		new_add_mask[ work_iter - rsd.defined_adducts().begin() + 1 ] = true;
+		create_adduct_combinations( rsd_type_set, rsd, ref_map, new_count_map, new_add_mask, work_iter+1 );
+	}
+
+	// Always traverse the 'do not make' for this adduct
+	// The count is not incremented, and the mask is left at the default (false)
+	AdductMap new_count_map( count_map );
+	utility::vector1< bool > new_add_mask( add_mask );
+	create_adduct_combinations( rsd_type_set, rsd, ref_map, new_count_map, new_add_mask, work_iter+1 );
+
+}
+
+
 
 
 } // chemical

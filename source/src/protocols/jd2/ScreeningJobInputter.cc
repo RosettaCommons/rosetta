@@ -131,7 +131,7 @@ void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 		for ( core::Size i = 0; i < param_group_data.size(); ++i ) {
 			std::string param_name = param_group_data[i].get_str();
 			core::chemical::ChemicalManager::get_instance()->
-				nonconst_residue_type_set(core::chemical::FA_STANDARD).add_residue_type(param_name);
+				nonconst_residue_type_set(core::chemical::FA_STANDARD).add_custom_residue_type(param_name);
 
 		}
 	}

@@ -70,7 +70,7 @@ public:
 		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
 		if ( !residue_set.has_name("D2I") ) params_files.push_back("devel/denovo_design/D2I.params");
-		residue_set.read_files(params_files);
+		residue_set.read_files_for_custom_residue_types(params_files);
 
 		// initialize common filters/movers/scorefxns
 		scorefxn = core::scoring::get_score_function( true );

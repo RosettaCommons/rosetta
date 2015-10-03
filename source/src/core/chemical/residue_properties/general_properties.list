@@ -59,6 +59,7 @@ UPPERTERM_TRUNC
 COARSE  # currently for coarse_RNA only
 ADDUCT
 SC_ORBITALS
+FRAGMENT # shows up in GrowLigand
 
 ## Qualitative Properties
 POLAR #This is for clearly polar side-chains (DEHKNQRST).  Note that it excludes glycine, alanine, cysteine, and proline (as well as very hydrophobic residues with polar groups, like tryptophan or tyrosine).

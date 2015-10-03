@@ -234,16 +234,15 @@ public:
 			cartbonded_improper );
 
 		rs = core::chemical::ChemicalManager::get_instance()->residue_type_set(rss);
+		core::chemical::ResidueTypeCOPs base_residue_types = rs->base_residue_types();
 		for (
-				core::chemical::ResidueTypeSet::const_residue_iterator
-				t=rs->all_residues_begin_DO_NOT_USE(), te=rs->all_residues_end_DO_NOT_USE();
-				t != te; ++t
-				) {
-			TR << t->second->name() << std::endl;
+				 Size q = 1; q <= base_residue_types.size(); q++ )  {
+			core::chemical::ResidueTypeCOP restype = base_residue_types[ q ];
+			TR << restype->name() << std::endl;
 			{
 				bool prepro(true);
 				core::scoring::methods::ResidueCartBondedParameters const & rcbp(
-					ipd.parameters_for_restype(*(t->second), prepro));
+					ipd.parameters_for_restype(*(restype), prepro));
 				rcbp.bb_N_index();
 				rcbp.bb_CA_index();
 				rcbp.bb_O_index();
@@ -253,7 +252,7 @@ public:
 			{
 				bool prepro(false);
 				core::scoring::methods::ResidueCartBondedParameters const & rcbp(
-					ipd.parameters_for_restype(*(t->second), prepro));
+					ipd.parameters_for_restype(*(restype), prepro));
 				rcbp.bb_N_index();
 				rcbp.bb_CA_index();
 				rcbp.bb_O_index();

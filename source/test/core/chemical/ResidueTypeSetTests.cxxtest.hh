@@ -58,13 +58,15 @@ public:
 		using namespace ObjexxFCL::format;
 
 		int width = 15;
-		TR << A(width,"ResidueTypeSet") << A(width,"NumResTypes") << endl;
 
 		string rss;
 		ResidueTypeSetOP rs;
 		rss = FA_STANDARD;
 		rs = ChemicalManager::get_instance()->nonconst_residue_type_set(rss ).get_self_ptr();
-		TR << A(width, rss) << I(width,rs->residue_types_DO_NOT_USE().size()) << endl;
+		TR << A(width,"ResidueTypeSet") << A(width,"NumBaseResTypes") << endl;
+		TR << A(width, rss) << I(width,rs->base_residue_types().size()) << endl;
+		TR << A(width,"ResidueTypeSet") << A(width,"NumCustomResTypes") << endl;
+		TR << A(width, rss) << I(width,rs->custom_residue_types().size()) << endl;
 
 		//rss = CENTROID;
 		//rs = ChemicalManager::get_instance()->residue_type_set(rss );
@@ -78,17 +80,19 @@ public:
 		modser->name( "bigser" );
 
 		//get some stuff from the residue type set
-		core::Size n_res_types = rs->residue_types_DO_NOT_USE().size();
+		core::Size n_base_res_types   = rs->base_residue_types().size();
+		core::Size n_custom_res_types = rs->custom_residue_types().size();
 		core::Size n_ser_types = rs->name3_map_DO_NOT_USE( "SER" ).size();
 		core::Size n_gln_types = rs->name3_map_DO_NOT_USE( "GLN" ).size();
 		core::Size n_ser_aa = rs->aa_map_DO_NOT_USE( aa_ser ).size();
 		//ResidueTypeCOP pointer10 = rs->residue_types_DO_NOT_USE()[10];
 
 		//now change the residue type set
-		rs->add_residue_type( modser );
+		rs->add_custom_residue_type( modser );
 
 		//now make sure everything is as should be
-		TS_ASSERT( n_res_types + 1 == rs->residue_types_DO_NOT_USE().size());
+		TS_ASSERT( n_base_res_types == rs->base_residue_types().size());
+		TS_ASSERT( n_custom_res_types + 1 == rs->custom_residue_types().size());
 		TS_ASSERT( n_ser_types + 1 == rs->name3_map_DO_NOT_USE( "SER" ).size()  );
 		TS_ASSERT( n_gln_types == rs->name3_map_DO_NOT_USE( "GLN" ).size() );
 		TS_ASSERT( n_ser_aa + 1 == rs->aa_map_DO_NOT_USE( aa_ser ).size() );
@@ -150,7 +154,7 @@ public:
 		TS_ASSERT(rtset->has_name("QC1"));
 		TS_ASSERT(rtset->has_name3("QC1"));
 
-		rtset->remove_residue_type("QC1");
+		rtset->remove_base_residue_type_DO_NOT_USE("QC1");
 
 		TS_ASSERT(!rtset->has_name("QC1"));
 		TS_ASSERT(!rtset->has_name3("QC1"));

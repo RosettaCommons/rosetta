@@ -512,7 +512,9 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 
 	for ( core::Size index(1); index <= extra_residues.size(); ++index ) {
 		//TR << extra_residues[index]->name3() <<std::endl;
-		new_set->add_residue_type(extra_residues[index]);
+		// should this be custom? if we want patches applied, then these residue types
+		// should be added before init() -- rhiju
+		new_set->add_custom_residue_type(extra_residues[index]);
 		extra_residues[index]->residue_type_set(ResidueTypeSetCAP(new_set));
 	}
 
