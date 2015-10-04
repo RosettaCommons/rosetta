@@ -29,10 +29,13 @@
 // package headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/signals/GeneralEvent.hh>
+#include <core/conformation/Conformation.fwd.hh>
 
 // utility headers
 #include <utility/pointer/access_ptr.hh>
+#include <utility/exit.hh>
 
+#include <iosfwd>
 
 namespace core {
 namespace conformation {
@@ -68,6 +71,7 @@ struct LengthEvent : public GeneralEvent {
 		Super(),
 		tag( EMPTY ),
 		position( 0 ),
+		conformation_size( 0 ),
 		length_change( 0 ),
 		residue()
 	{}
@@ -76,21 +80,13 @@ struct LengthEvent : public GeneralEvent {
 	/// @brief constructor
 	/// @param t type of length change
 	/// @param pos residue position
-	inline
 	LengthEvent(
 		Conformation const * conf,
 		Tag const t,
 		Size const & pos,
 		int const & len_chg,
 		Residue const * res
-	) :
-		Super( conf ),
-		tag( t ),
-		position( pos ),
-		length_change( len_chg ),
-		residue( res )
-	{}
-
+	);
 
 	/// @brief copy constructor
 	inline
@@ -98,9 +94,14 @@ struct LengthEvent : public GeneralEvent {
 		Super( rval ),
 		tag( rval.tag ),
 		position( rval.position ),
+		conformation_size( rval.conformation_size ),
 		length_change( rval.length_change ),
 		residue( rval.residue )
-	{}
+	{
+#ifndef NDEBUG
+		check_consistency();
+#endif
+	}
 
 
 	/// @brief default destructor
@@ -113,22 +114,33 @@ struct LengthEvent : public GeneralEvent {
 	inline
 	LengthEvent &
 	operator =( LengthEvent const & rval ) {
+#ifndef NDEBUG
+		rval.check_consistency();
+#endif
 		if ( this != &rval ) {
 			Super::operator =( rval );
 			tag = rval.tag;
 			position = rval.position;
+			conformation_size = rval.conformation_size;
 			length_change = rval.length_change;
 			residue = rval.residue;
 		}
 		return *this;
 	}
 
+	void
+	check_consistency() const;
 
 	/// @brief tag indicating type of length change
 	Tag tag;
 
 	/// @brief residue position where the event happened
 	Size position;
+
+	/// @brief The length of the conformation after the length event
+	/// @details This is needed for things like regenerating mappings
+	/// after multiple applications of events which may invalidate the confromation.
+	Size conformation_size;
 
 	/// @brief overall length change of the conformation
 	int length_change;
@@ -144,6 +156,8 @@ struct LengthEvent : public GeneralEvent {
 
 };
 
+std::ostream &
+operator<<( std::ostream & out, LengthEvent const & event );
 
 } // namespace signals
 } // namespace conformation

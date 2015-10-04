@@ -612,6 +612,9 @@ void
 Conformation::fold_tree( FoldTree const & fold_tree_in )
 {
 	if ( size() != Size(fold_tree_in.nres()) ) {
+		TR.Error << "Error in assigning a FoldTree to a Conformation - size mismatch." << std::endl;
+		TR.Error << "Conformation of length " << size() << ": " << annotated_sequence(true) << std::endl;
+		TR.Error << "FoldTree of length " << fold_tree_in.nres() << ": " << fold_tree_in << std::endl;
 		std::string msg;
 		msg += "Conformation: fold_tree nres should match conformation nres. conformation nres: ";
 		msg += string_of( size() );
@@ -638,6 +641,24 @@ Conformation::const_residues() const
 	return const_rsds;
 }
 
+std::string
+Conformation::annotated_sequence( bool show_all_variants ) const
+{
+	using namespace core::chemical;
+
+	std::string seq;
+	for ( Size i=1; i<= size(); ++i ) {
+		char c = residue(i).name1();
+		seq += c;
+		if (
+				( !oneletter_code_specifies_aa(c) || name_from_aa( aa_from_oneletter_code(c) ) != residue(i).name() )
+				&& ( show_all_variants || residue(i).name().substr(0,3) != "CYD")
+				) {
+			seq = seq + '[' + residue(i).name() + ']';
+		}
+	}
+	return seq;
+}
 
 /// @details add a residue into residues_ container, update its seqpos, chainid as well
 /// fold tree and atoms.

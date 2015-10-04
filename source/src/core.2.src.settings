@@ -143,6 +143,9 @@ sources = {
 		"Parameters",
 		"ParametersSet",
 	],
+	"core/conformation/signals": [
+		"LengthEvent",
+	],
 	"core/conformation/symmetry": [
 		"SymDof",
 		"SymmData",

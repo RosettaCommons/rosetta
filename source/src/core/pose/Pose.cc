@@ -711,20 +711,7 @@ Pose::sequence() const
 std::string
 Pose::annotated_sequence( bool show_all_variants ) const
 {
-	using namespace core::chemical;
-
-	std::string seq;
-	for ( Size i=1; i<= conformation_->size(); ++i ) {
-		char c = residue(i).name1();
-		seq += c;
-		if (
-				( !oneletter_code_specifies_aa(c) || name_from_aa( aa_from_oneletter_code(c) ) != residue(i).name() )
-				&& ( show_all_variants || residue(i).name().substr(0,3) != "CYD")
-				) {
-			seq = seq + '[' + residue(i).name() + ']';
-		}
-	}
-	return seq;
+	return conformation_->annotated_sequence( show_all_variants );
 }
 
 std::string

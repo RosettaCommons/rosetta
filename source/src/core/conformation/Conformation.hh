@@ -367,6 +367,12 @@ public:  // Residues
 		return residues_[seqpos]->aa();
 	}
 
+	/// @brief Returns the variant-tagged string representing the
+	/// residue types that make up a conformation; e.g.
+	/// M[MET:N-Terminus-Variant]CDH[HIS_D]LLR[ARG:C-Terminus-Variant]
+	std::string
+	annotated_sequence( bool show_all_variants ) const;
+
 	/// @brief access one of the residues
 	/// @note this access is inlined, since otherwise it
 	/// shows up in the profiler.  This will call non-inlined refold methods if necessary.

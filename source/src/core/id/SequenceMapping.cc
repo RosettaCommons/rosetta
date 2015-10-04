@@ -54,12 +54,15 @@ SequenceMapping::SequenceMapping(
 		//the observers deal with it
 		return;
 	} else if ( event.tag == conformation::signals::LengthEvent::RESIDUE_APPEND ) {
+		runtime_assert( longer || event.length_change == 0);
 		//direction = 1;
 		upstream_res = event.position;
 	} else if ( event.tag == conformation::signals::LengthEvent::RESIDUE_PREPEND ) {
+		runtime_assert( longer || event.length_change == 0);
 		//direction = 1;
 		upstream_res = event.position - 1;
 	} else if ( event.tag == conformation::signals::LengthEvent::RESIDUE_DELETE ) {
+		runtime_assert( !longer || event.length_change == 0);
 		//direction = -1;
 		upstream_res = event.position - 1;
 	} else {
@@ -68,7 +71,9 @@ SequenceMapping::SequenceMapping(
 		);
 	}
 
-	old_num_res = (event.conformation)->size() - event.length_change;
+	runtime_assert( event.conformation_size != 0 );
+
+	old_num_res = event.conformation_size - event.length_change;
 
 	for ( Size i = 1; i <= upstream_res; ++i ) mapping_.push_back( i );
 

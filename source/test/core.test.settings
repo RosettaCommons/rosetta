@@ -90,6 +90,9 @@ sources = {
 	"indexed_structure_store" : [
 		"FragmentLookup",
 	],
+	"id" : [
+		"SequenceMapping",
+	],
 	"io" : [
 		"PDB_IO",
 	],
@@ -320,7 +323,6 @@ sources = {
 		"ABEGOManager",
 		"ScoringSchemes",
 		"SequenceAlignment",
-		"SequenceMapping",
 		"SequenceProfile",
 		"SequenceUtil",
 	],

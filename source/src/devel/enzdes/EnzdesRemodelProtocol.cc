@@ -1065,6 +1065,13 @@ EnzdesRemodelMover::remove_cached_observers(
 		core::Size estop = (*start_to_current_smap_)[e->stop() ];
 		new_fold_tree.add_edge( estart, estop, e->label() );
 	}
+	// Debugging information, as this foldtree reset has had issues in the past
+	tr.Debug << "Resetting pose FoldTree." << std::endl;
+	tr.Debug << "* Current Pose of size " << pose.total_residue() << ": " << pose.annotated_sequence() << std::endl;
+	tr.Debug << "Native Pose of size " << this->get_native_pose()->total_residue() << ": " << this->get_native_pose()->annotated_sequence() << std::endl;
+	tr.Debug << "Current FoldTree, size " << pose.fold_tree().nres() << ": " << pose.fold_tree() << std::endl;
+	tr.Debug << "Starting (native) FoldTree, size " << old_fold_tree.nres() << ": " << old_fold_tree << std::endl;
+	tr.Debug << "* Remodeled (new) FoldTree, size " << new_fold_tree.nres() << ": " << new_fold_tree << std::endl;
 	pose.fold_tree( new_fold_tree );
 }
 
