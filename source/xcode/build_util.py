@@ -37,7 +37,6 @@ else:
 	'protocols_c.5',
 	'protocols_d.5',
 	'protocols_e.5',
-	'protocols_f.5',
 	'protocols.6',
 	'protocols.7',
         ]
