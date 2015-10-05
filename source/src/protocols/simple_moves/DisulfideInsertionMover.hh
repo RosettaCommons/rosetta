@@ -112,7 +112,7 @@ private:
 	/// @brief the movemap for minimization upon call to rebuild_disulfide() (after mutation)
 	core::kinematics::MoveMapOP movemap_;
 
-	/// @brief together with c_cyd_seqpos_, the residue numbers to be mutates into Cys
+	/// @brief together with c_cyd_seqpos_, the residue numbers to be mutated into Cys
 	///        and modeled as having a disulfide bond.
 	core::Size n_cyd_seqpos_;
 	core::Size c_cyd_seqpos_;
@@ -126,6 +126,7 @@ private:
 	/// If this is true, any setting to c_cyd_seqpos_ and n_cyd_seqpos_ is discarded
 	/// upon a call to apply().
 	bool is_cyd_res_at_termini_;
+
 };
 
 }//simple_moves

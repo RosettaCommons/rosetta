@@ -49,6 +49,7 @@
 
 // Package headers
 #include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoverStatus.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -151,16 +152,24 @@ DisulfideInsertionMover::determine_cyclization_viability(
 void
 DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 {
+	set_last_move_status(protocols::moves::FAIL_RETRY);
+
+	core::Size peptide_start_pos = peptide_receptor_pose.conformation().chain_begin(peptide_chain_num_);
+	core::Size peptide_end_pos =  peptide_receptor_pose.conformation().chain_end(peptide_chain_num_);
 
 	if ( is_cyd_res_at_termini_ ) {
-		n_cyd_seqpos_ = peptide_receptor_pose.conformation().chain_begin(peptide_chain_num_);
-		c_cyd_seqpos_ = peptide_receptor_pose.conformation().chain_end(peptide_chain_num_);
+			n_cyd_seqpos_ = peptide_start_pos;
+			c_cyd_seqpos_ = peptide_end_pos;
+	}
+	protocols::simple_moves::DisulfideCyclizationViability cyclizable = determine_cyclization_viability(peptide_receptor_pose, n_cyd_seqpos_, c_cyd_seqpos_);
+
+	if (cyclizable == DCV_NOT_CYCLIZABLE) {
+		return;
 	}
 
-	// eliminate cases where a disulfide should not be formed since the residues already form a disulfide (closability==2)
+	// eliminate cases where a disulfide should not be formed since the residues already form a disulfide (DCV_ALREADY_CYCLIZED)
 	// in that case we will only want to optimize it using the rebuild_disulfide function
-	if ( determine_cyclization_viability(peptide_receptor_pose, n_cyd_seqpos_, c_cyd_seqpos_) == DCV_CYCLIZABLE ) {
-
+	if (cyclizable == DCV_CYCLIZABLE) {
 		core::conformation::form_disulfide(peptide_receptor_pose.conformation(), n_cyd_seqpos_, c_cyd_seqpos_);
 	}
 
@@ -190,10 +199,19 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 		scorefxn_->set_weight( core::scoring::angle_constraint, 0 );
 	}
 
+	// evaluate internal total energy of newly formed peptide
+	// no matter where the disulfide bond was formed
+	core::pose::PoseOP minimized_peptide( new core::pose::Pose (peptide_receptor_pose, peptide_start_pos, peptide_end_pos));
+	core::Real cyclic_peptide_energy = (*scorefxn_)(*minimized_peptide);
+	const core::Real PRACTICALLY_ZERO_ISC = 1e-7;
+	if (cyclic_peptide_energy < PRACTICALLY_ZERO_ISC) {
+		set_last_move_status(protocols::moves::MS_SUCCESS);
+	}
+
 }
 
 /// @brief Setup the score function with the appropriate weights on the constraints.
-///        If user has provided a score function the and set the weights to a specific value,
+///        If user has provided a score function and set the weights to a specific value,
 ///        that value is kept. If weight is not set, prints a warning.
 ///        This is based on a function written by Nir London.
 void

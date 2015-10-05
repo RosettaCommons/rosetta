@@ -833,10 +833,10 @@ PeptideDeriverFilter::derive_peptide(
 
 	// will be applied for each peptide with significant contribution to binding
 	// where residues immediately before and after can be mutated to cysteins and form a disulfide bridge
-	const core::Size peptide_chain = 2;
+	const core::Size PEPTIDE_CHAIN = 2;
 
 	// TODO : perhaps we want the jump in the movemap that DisulfideInsertionMover uses to be user-defined (command-line option), to prevent the peptide from escaping the binding pocket
-	protocols::simple_moves::DisulfideInsertionMoverOP disulfide_inserter( new protocols::simple_moves::DisulfideInsertionMover(peptide_chain) );
+	protocols::simple_moves::DisulfideInsertionMoverOP disulfide_inserter( new protocols::simple_moves::DisulfideInsertionMover(PEPTIDE_CHAIN) );
 
 	BOOST_FOREACH ( core::Size const pep_length, pep_lengths_ ) {
 
@@ -858,6 +858,7 @@ PeptideDeriverFilter::derive_peptide(
 		core::Real cyc_isc_of_best_lin = UNLIKELY_ISC_VALUE;
 		core::Size pep_start_of_best_lin = 0;
 		std::string disulfide_info_of_best_lin;
+		core::pose::PoseOP pre_cyc_pose_of_best_lin;
 		core::pose::PoseOP lin_pose_of_best_lin;
 		core::pose::PoseOP cyc_pose_of_best_lin;
 		bool was_best_lin_cyclic_model_created = false;
@@ -911,7 +912,7 @@ PeptideDeriverFilter::derive_peptide(
 			// here, the complex is the receptor and the derived peptide
 			// NOTE : calculate_interface_score() needs to know the jump number, and for that we need to know the residue of the jump
 			//        options were to use receptor_peptide_pose->fold_tree().get_residue_edge(receptor_pose.total_residue() + 1), but we would have to
-			//        know whether to look at the Edge's start() or stop() for the jump, and the depends on how build_receptor_peptide_pose() builds
+			//        know whether to look at the Edge's start() or stop() for the jump, and that depends on how build_receptor_peptide_pose() builds
 			//        the pose. So it seemed preferable to just output it from build_receptor_peptide_pose().
 			core::Size linear_jump_id;
 			core::pose::PoseOP receptor_peptide_pose = build_receptor_peptide_pose(receptor_pose, partner_pose, pep_start, pep_end, linear_jump_id);
@@ -950,8 +951,9 @@ PeptideDeriverFilter::derive_peptide(
 
 					disulfide_info << partner_chain_letter << "_" << n_putative_cyd << "-" << c_putative_cyd;
 
-					// For peptides that can be closed and contribute more then third of the binding energy, mutate to cysteins and re-evaluate energy
-					if ( (linear_isc / total_isc) >= optimize_cyclic_threshold_ ) {
+					// For peptides that can be closed and contribute more then a user defined fraction of the binding energy (default is 0.35)
+					// mutate to cysteins and re-evaluate energy
+					if ((linear_isc / total_isc) >= optimize_cyclic_threshold_) {
 						// NOTE : see note on linear_jump_id
 						core::Size cyclic_jump_id;
 						receptor_pre_cyclization_peptide_pose = build_receptor_peptide_pose(receptor_pose, partner_pose, n_putative_cyd, c_putative_cyd, cyclic_jump_id);
@@ -962,10 +964,12 @@ PeptideDeriverFilter::derive_peptide(
 						disulfide_inserter->apply(*receptor_cyclic_peptide_pose);
 						// any_peptide_cyclic_model_created checks if any peptide in the pose has been cyclized
 						// current_peptide_cyclic_model_created checks if the current peptide has been cyclized
-						any_peptide_cyclic_model_created = true;
-						current_peptide_cyclic_model_created = true;
-						cyclic_isc = calculate_interface_score(*receptor_cyclic_peptide_pose, cyclic_jump_id);
-					}
+						if (disulfide_inserter->get_last_move_status()==protocols::moves::MS_SUCCESS) {
+							any_peptide_cyclic_model_created = true;
+							current_peptide_cyclic_model_created = true;
+							cyclic_isc = calculate_interface_score(*receptor_cyclic_peptide_pose, cyclic_jump_id);
+						}
+				        }
 				}
 			}
 
@@ -978,7 +982,7 @@ PeptideDeriverFilter::derive_peptide(
 				lin_isc_of_best_lin = linear_isc;
 				cyc_isc_of_best_lin = (current_peptide_cyclic_model_created? cyclic_isc : UNLIKELY_ISC_VALUE);
 				disulfide_info_of_best_lin = disulfide_info.str();
-				lin_pose_of_best_lin = (current_peptide_cyclic_model_created? receptor_pre_cyclization_peptide_pose : receptor_peptide_pose);
+				lin_pose_of_best_lin = receptor_peptide_pose;
 				// TODO : solve the need for a dummy value for receptor_cyclic_peptide_pose
 				// NOTE : receptor_peptide_pose is used here as dummy, since we can't pass NULL as reference
 				cyc_pose_of_best_lin = (current_peptide_cyclic_model_created? receptor_cyclic_peptide_pose : receptor_peptide_pose);
@@ -1026,7 +1030,7 @@ PeptideDeriverFilter::derive_peptide(
 				lin_isc_of_best_cyc = linear_isc;
 				cyc_isc_of_best_cyc = (current_peptide_cyclic_model_created? cyclic_isc : UNLIKELY_ISC_VALUE);
 				disulfide_info_of_best_cyc = disulfide_info.str();
-				lin_pose_of_best_cyc = (current_peptide_cyclic_model_created? receptor_pre_cyclization_peptide_pose : receptor_peptide_pose);
+				lin_pose_of_best_cyc = receptor_pre_cyclization_peptide_pose;
 				// TODO : solve the need for a dummy value for receptor_cyclic_peptide_pose
 				// NOTE : receptor_peptide_pose is used here as dummy, since we can't pass NULL as reference
 				cyc_pose_of_best_cyc = (current_peptide_cyclic_model_created? receptor_cyclic_peptide_pose : receptor_peptide_pose);
@@ -1137,6 +1141,7 @@ PeptideDeriverFilter::normalize_isc(core::Real const isc) {
 /// @param partner_pose  the chain from which a peptide should be cut and connected to the receptor in a new pose
 /// @param peptide_start starting position in the partner pose to cut from
 /// @param peptide_end   last position in the partner pose to be cut out
+/// @param jump_id       the number of the jump that was used to connect the two chains
 core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose(core::pose::Pose const & receptor_pose,
 	core::pose::Pose const & partner_pose,
 	core::Size peptide_start,
