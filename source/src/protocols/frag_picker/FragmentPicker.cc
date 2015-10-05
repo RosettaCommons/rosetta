@@ -74,11 +74,13 @@
 
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
+#include <basic/database/open.hh>
 
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
+#include <utility/file/file_sys_util.hh>
 
 #include <utility>
 #include <sstream>
@@ -2074,23 +2076,36 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 
 	// index file output
 	if ( option[frags::output_index]() ) {
-		if ( option[in::file::vall]().size() > 1 ) {
-			tr.Warning << "cannot output indexed fragment file, does not support more than one vall!" << std::endl;
-		} else {
-			std::string index_out_file_name = out_file_name + ".index";
-			utility::io::ozstream index_output_file(index_out_file_name);
-			utility::file::FileName vallfile(option[in::file::vall]()[1]);
-			index_output_file << "# indexed " << vallfile.bare_name() << std::endl;
-			for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
-				Size qPos = query_positions_[iqpos];
-				if ( qPos > maxqpos ) continue;
-				for ( Size fi = 1; fi <= final_fragments[qPos].size(); ++fi ) {
-					final_fragments[qPos][fi].first->print_fragment_index(index_output_file);
-				}
-				index_output_file << std::endl;
+		std::string index_out_file_name = out_file_name + ".index";
+		utility::io::ozstream index_output_file(index_out_file_name);
+
+		// print vall info
+		std::map<Size,bool> vall_index_database_exists;
+		for ( Size i=1; i<=final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_count(); ++i ) {
+			std::string vallfilename = final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_by_key(i);
+			Size vallstartline = final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_start_line_by_key(i);
+			Size vallendline = final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_end_line_by_key(i);
+			Size valllastresiduekey = final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_last_residue_key_by_key(i);
+			utility::file::FileName vallfile(vallfilename);
+			if (utility::file::file_exists(basic::database::full_name("sampling/" + vallfile.bare_name() + ".torsions")) ||
+					utility::file::file_exists(basic::database::full_name("sampling/" + vallfile.bare_name() + ".torsions.gz"))) {
+				tr.Info << "Vall index database exists: sampling/" << vallfile.bare_name() << ".torsions" << std::endl;
+				vall_index_database_exists[i] = true;
+				index_output_file << "# index " << vallstartline << " " << vallendline << " " << valllastresiduekey << " " << vallfile.bare_name() << std::endl;
+			} else {
+				tr.Info << "Vall index database does not exist for " << vallfile.bare_name() << std::endl;
+				vall_index_database_exists[i] = false;
 			}
-			index_output_file.close();
 		}
+		for ( Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
+			Size qPos = query_positions_[iqpos];
+			if ( qPos > maxqpos ) continue;
+			for ( Size fi = 1; fi <= final_fragments[qPos].size(); ++fi ) {
+				final_fragments[qPos][fi].first->print_fragment_index(index_output_file, vall_index_database_exists[final_fragments[qPos][fi].first->get_chunk()->vall_key()]);
+			}
+			index_output_file << std::endl;
+		}
+		index_output_file.close();
 	}
 
 	// silent file output

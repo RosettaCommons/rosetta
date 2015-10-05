@@ -44,8 +44,35 @@ utility::vector1<core::chemical::AA> VallResidue::order_ = order_vector();
 
 /// @brief default constructor
 VallResidue::VallResidue() :
-	utility::pointer::ReferenceCount(), key_(0),id_(""),profile_(20),profile_struct_(20),sec_shift_data_(/* 0 */),
-	position_index_(0), section_index_(0) {
+	utility::pointer::ReferenceCount(),
+	key_(0),
+	id_(""),
+	aa_(' '),
+	ss_(' '),
+	ss_str_(' '),
+	resi_(0),
+	bF_(.0),
+	x_(.0),
+	y_(.0),
+	z_(.0),
+	cbx_(.0),
+	cby_(.0),
+	cbz_(.0),
+	cenx_(.0),
+	ceny_(.0),
+	cenz_(.0),
+	phi_(.0),
+	psi_(.0),
+	omega_(.0),
+	sa_(.0),
+	sa_norm_(.0),
+	dssp_phi_(.0),
+	dssp_psi_(.0),
+	nali_(0),
+	profile_(20),
+	profile_struct_(20),
+	sec_shift_data_(/* 0 */),
+	all_atom_residue_depth_(.0) {
 }
 
 /// @brief string constructor
@@ -91,8 +118,6 @@ VallResidue::VallResidue(VallResidue const & rval) :
 	profile_(rval.profile_),
 	profile_struct_(rval.profile_struct_),
 	sec_shift_data_(rval.sec_shift_data_),
-	position_index_(rval.position_index_),
-	section_index_(rval.section_index_),
 	all_atom_residue_depth_(rval.all_atom_residue_depth_){
 }
 
@@ -129,8 +154,6 @@ VallResidue & VallResidue::operator =(VallResidue const & rval) {
 		profile_ = rval.profile_;
 		profile_struct_ = rval.profile_struct_;
 		sec_shift_data_ = rval.sec_shift_data_;
-		position_index_ = rval.position_index_;
-		section_index_ = rval.section_index_;
 	}
 	return *this;
 }

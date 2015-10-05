@@ -60,15 +60,23 @@ std::string& VallChunk::get_sequence() {
 }
 
 core::sequence::SequenceProfileOP VallChunk::get_profile() {
-
 	VallProviderOP my_provider( my_provider_ );
 	return my_provider->cache_profile( get_self_ptr() );
 }
 
 core::pose::PoseOP VallChunk::get_pose() {
-
 	VallProviderOP my_provider( my_provider_ );
 	return my_provider->cache_pose( get_self_ptr() );
+}
+
+std::string VallChunk::get_vall_filename() {
+	VallProviderOP my_provider( my_provider_ );
+	return my_provider->get_vall_by_key( vall_key_ );
+}
+
+VallProviderOP VallChunk::get_vall_provider() {
+	VallProviderOP my_provider( my_provider_ );
+	return my_provider;
 }
 
 } // frag_picker

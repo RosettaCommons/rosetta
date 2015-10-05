@@ -233,17 +233,6 @@ public:
 		profile_struct_ = v;
 	}
 
-	/// @brief stores the 1-based indexing for accessing this residue
-	///  via VallSection::operator []
-	inline Size position_index() const {
-		return position_index_;
-	}
-
-	/// @brief stores the 1-based indexing for accessing the VallSection
-	///  this residue is located in via VallLibrary::operator []
-	inline Size section_index() const {
-		return section_index_;
-	}
 
 public:
 	// mutators
@@ -414,20 +403,6 @@ public:
 		bF_ = val;
 	}
 
-	/// @brief stores the 1-based indexing for accessing this residue
-	///  via VallSection::operator []
-	inline
-	void position_index(Size const idx) {
-		position_index_ = idx;
-	}
-
-	/// @brief stores the 1-based indexing for accessing the VallSection
-	///  this residue is located in via VallLibrary::operator []
-	inline
-	void section_index(Size const idx) {
-		section_index_ = idx;
-	}
-
 public:
 	// query
 
@@ -577,14 +552,6 @@ private:
 	utility::vector1<Real> profile_struct_;
 
 	utility::vector1<Real> sec_shift_data_;
-
-	/// @brief stores the 1-based indexing for accessing this residue
-	///  via VallSection::operator []
-	Size position_index_;
-
-	/// @brief stores the 1-based indexing for accessing the VallSection
-	///  this residue is located in via VallLibrary::operator []
-	Size section_index_;
 
 	Real all_atom_residue_depth_;
 

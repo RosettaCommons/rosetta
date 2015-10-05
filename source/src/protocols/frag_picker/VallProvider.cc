@@ -177,6 +177,9 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 		utility_exit_with_message( "can't open file: " + filename );
 	}
 
+	// save Vall filename
+	vall_keys_.push_back(filename);
+
 	// statistics
 	Size n_lines = 0;
 
@@ -184,40 +187,57 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 
 	time_t time_start = time(NULL);
 
+	// get last residue key
 	Size last_key = 0;
 	if ( chunks_.size() > 0 ) {
 		VallChunkOP last_chunk = chunks_[ chunks_.size() ];
 		last_key = last_chunk->at( last_chunk->size() )->key();
 	}
+	vall_last_residue_key_.push_back(last_key);
+
 	std::string prior_id = "";
 	Size prior_resi = 0;
 	VallChunkOP current_section( new VallChunk(get_self_weak_ptr()) );
+	current_section->vall_key(vall_keys_.size());
+
+
 	std::string line;
-	getline(stream, line);
-	while ( line[0] == '#' ) getline(stream, line);
+	while ( getline(stream, line) ) {
+		if ( line[0] == '#' ) continue;
+		++n_lines;
+		if ( n_lines < startline ) continue;
 
-	VallResidueOP firstRes( new VallResidue() );
-	firstRes->key(1);
+		// If endline is 0, just read to the end of the file
+		if ( endline != 0 && n_lines > endline ) break;
 
-	//Decides if vall is in the old nnmake format
-	//if not it tries to use the nnmake + chemical shift's format
-	if ( line.length() > 300 ) {
-		firstRes->fill_from_string_version1(line);
-	} else if ( line.length() > 240 ) {
-		firstRes->fill_from_string_cs(line);
-	} else if ( line.length() > 110 ) {
-		firstRes->fill_from_string(line);
-	} else {
-		firstRes->fill_from_string_residue_depth_version1(line);
+		VallResidueOP firstRes( new VallResidue() );
+
+		// Chunk residue key is the last vall residue key + the vall line number for the residue
+		firstRes->key(n_lines + last_key);
+
+		//Decides if vall is in the old nnmake format
+		//if not it tries to use the nnmake + chemical shift's format
+		if ( line.length() > 300 ) {
+			firstRes->fill_from_string_version1(line);
+		} else if ( line.length() > 240 ) {
+			firstRes->fill_from_string_cs(line);
+		} else if ( line.length() > 110 ) {
+			firstRes->fill_from_string(line);
+		} else {
+			firstRes->fill_from_string_residue_depth_version1(line);
+		}
+
+		current_section->push_back(firstRes);
+		prior_id = firstRes->id();
+		prior_resi = firstRes->resi();
+		vall_start_line_.push_back(n_lines);
+		break;
 	}
 
-	current_section->push_back(firstRes);
-	prior_id = firstRes->id();
-	prior_resi = firstRes->resi();
 	// parse Vall from file
-	n_lines = 1;
-
+	Size end_line = 0;
 	while ( getline(stream, line) ) {
+		if ( line[0] == '#' ) continue;
 		++n_lines;
 		if ( n_lines < startline ) continue;
 
@@ -236,7 +256,9 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 			current_residue->fill_from_string_residue_depth_version1(line);
 		}
 
+		// Chunk residue key is the last vall residue key + the vall line number for the residue
 		current_residue->key( n_lines + last_key );
+
 		// check for start of new continuous stretch
 		if ( (current_residue->resi() != prior_resi + 1)
 				|| (current_residue->id() != prior_id) ) {
@@ -250,16 +272,21 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 				<< " at index " << size() << ". The largest chunk's size is: "
 				<<largest_chunk_size_<<std::endl;
 			current_section = VallChunkOP( new VallChunk(get_self_weak_ptr()) );
+			current_section->vall_key(vall_keys_.size());
 			prior_id = current_residue->id();
 		}
 		prior_resi = current_residue->resi();
 		current_section->push_back(current_residue);
+		end_line = n_lines;
 		//  if (n_lines % 100000 == 0) {
 		//   TR.Info << "   " << n_lines << std::endl;
 		//   TR.flush();
 		//  }
 
 	} // line loop
+
+
+	vall_end_line_.push_back(end_line);
 
 	push_back(current_section);
 	TR.Debug << "Created a new chunk for : " << current_section->get_pdb_id()
@@ -269,6 +296,12 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 	if ( t > largest_chunk_size_ ) largest_chunk_size_ = t;
 
 	time_t time_end = time(NULL);
+
+	if (vall_keys_.size() > 0 && vall_keys_.size() == vall_end_line_.size() && vall_keys_.size() == vall_start_line_.size() && vall_keys_.size() == vall_last_residue_key_.size()) {
+		TR.Debug << "Vall key: " << vall_keys_.size() << std::endl;
+	} else {
+		utility_exit_with_message( "There was an error reading the Vall: " + filename );
+	}
 
 	TR.Info << "... done.  Read " << n_lines << " lines.  Time elapsed: "
 		<< (time_end - time_start) << " seconds." << std::endl;

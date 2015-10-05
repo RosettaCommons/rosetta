@@ -117,79 +117,107 @@ void MinimalFragSet::read_fragment_file( std::string filename, Size top25, Size 
 	}
 	// read torsions only vall
 	string line;
-	string vallname;
 	utility::vector1<torsions> vall_torsions;
-	getline( data, line );
-	if ( line.substr(0,1) == "#" ) {
-		istringstream in( line );
-		in >> vallname;
-		in >> vallname;
-		in >> vallname;
-	} else {
-		tr.Fatal << "Cannot get vall name from first line in indexed fragment file: " << data.filename() << endl;
-		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-	}
-	tr.Info << "Using vall: " << vallname << ".torsions";
-	utility::io::izstream valldata( basic::database::full_name("sampling/" + vallname + ".torsions"));
-	if ( !valldata.good() ) {
-		cerr << "Open failed for file: " << valldata.filename() << endl;
-		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-	}
-
-	while ( getline( valldata, line ) ) {
-		torsions t;
-		istringstream in( line );
-		in >> t.phi >> t.psi >> t.omega;
-		vall_torsions.push_back(t);
-	}
-
-	// read in fragments
 	Size insertion_pos = 1;
 	FrameOP frame;
-
 	std::map<std::pair<Size,Size>, Size> frame_counts;
-
 	Size n_frags( 0 );
 	while ( getline( data, line ) ) {
-		// skip blank lines
-		if ( line == "" || line == " " ) {
-			insertion_pos++;
-			continue;
-		}
-		istringstream in( line );
-		Size vall_line_start;
-		Size fraglen;
-		in >> vall_line_start >> fraglen;
-		Size vall_line_end = vall_line_start + fraglen - 1;
-		FragDataOP current_fragment( NULL );
-		current_fragment = FragDataOP( new FragData );
-		for ( Size i = vall_line_start; i <= vall_line_end; i++ ) {
-			// set ss 'L' and aa 'G' just as placeholders to prevent run time error in
-			// GunnCost moves (fragment_as_pose method)
-			BBTorsionSRFDOP res( new BBTorsionSRFD(3, 'L', 'G') );
-			res->set_torsion(1, vall_torsions[i].phi);
-			res->set_torsion(2, vall_torsions[i].psi);
-			res->set_torsion(3, vall_torsions[i].omega);
-			current_fragment->add_residue(res);
-		}
-		current_fragment->set_valid();
-		std::pair<Size,Size> p(insertion_pos,fraglen);
-		if ( !top25 || frame_counts[p] < top25*ncopies ) {
-			FrameOP frame = FrameOP( new Frame( insertion_pos ) );
-			if ( !frame->add_fragment( current_fragment ) ) {
-				tr.Fatal << "Incompatible Fragment in file: " << data.filename() << endl;
+		if ( line.substr(0,1) == "#" ) {
+			std::string vallname;
+			Size vall_start_line;
+			Size vall_end_line;
+			Size vall_last_residue_key;
+			istringstream in( line );
+			in >> vallname; // #
+			in >> vallname; // index
+			in >> vall_start_line;
+			in >> vall_end_line;
+			in >> vall_last_residue_key;
+			in >> vallname;
+			Size totalsize = vall_last_residue_key+vall_end_line;
+			if (totalsize > vall_torsions.size()) {
+				vall_torsions.resize(totalsize);
+			}
+			tr.Info << "Reading Vall: " << vallname << ".torsions";
+			utility::io::izstream valldata( basic::database::full_name("sampling/" + vallname + ".torsions") );
+			if ( !valldata.good() ) {
+				cerr << "Open failed for vall torsions database file: " << valldata.filename() << endl;
 				utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-			} else {
-				frame_counts[p]++;
-				for ( Size i = 2; i <= ncopies; i++ ) {
-					frame->add_fragment( current_fragment );
-					frame_counts[p]++;
+			}
+			Size valllinecnt = 0;
+			string vallline;
+			while ( getline( valldata, vallline ) ) {
+				if ( vallline.substr(0,1) == "#" ) continue;
+				valllinecnt++;
+				if (valllinecnt >= vall_start_line && valllinecnt <= vall_end_line) {
+					// Chunk residue key is the last vall residue key + the vall line number for the residue
+					Size residueindex = vall_last_residue_key+valllinecnt; // See VallProvider for residue index
+					torsions t;
+					istringstream vin( vallline );
+					vin >> t.phi >> t.psi >> t.omega;
+					vall_torsions[residueindex] = t;
 				}
 			}
-			if ( frame && frame->is_valid() ) {
-				add( frame );
+		} else {
+			// read in fragments
+
+			// skip blank lines
+			if ( line == "" || line == " " ) {
+				insertion_pos++;
+				continue;
 			}
-			n_frags = std::max( n_frags, frame_counts[p] );
+			istringstream in( line );
+			Size vall_residue_key;
+			Size fraglen;
+			FragDataOP current_fragment( NULL );
+			current_fragment = FragDataOP( new FragData );
+			in >> vall_residue_key >> fraglen;
+			if (vall_residue_key == 0) { // read torsions from fragment file
+				for ( Size i = 1; i <= fraglen; i++ ) {
+					getline( data, line );
+					istringstream fin( line );
+					Real phi;
+					Real psi;
+					Real omega;
+					fin >> phi >> psi >> omega;
+					BBTorsionSRFDOP res( new BBTorsionSRFD(3, 'L', 'G') );
+					res->set_torsion(1, phi);
+					res->set_torsion(2, psi);
+					res->set_torsion(3, omega);
+					current_fragment->add_residue(res);
+				}
+			} else { // read torsions from torsion only vall
+				Size last_residue_key = vall_residue_key + fraglen - 1;
+				for ( Size i = vall_residue_key; i <= last_residue_key; i++ ) {
+					// set ss 'L' and aa 'G' just as placeholders to prevent run time error in
+					// GunnCost moves (fragment_as_pose method)
+					BBTorsionSRFDOP res( new BBTorsionSRFD(3, 'L', 'G') );
+					res->set_torsion(1, vall_torsions[i].phi);
+					res->set_torsion(2, vall_torsions[i].psi);
+					res->set_torsion(3, vall_torsions[i].omega);
+					current_fragment->add_residue(res);
+				}
+			}
+			current_fragment->set_valid();
+			std::pair<Size,Size> p(insertion_pos,fraglen);
+			if ( !top25 || frame_counts[p] < top25*ncopies ) {
+				FrameOP frame = FrameOP( new Frame( insertion_pos ) );
+				if ( !frame->add_fragment( current_fragment ) ) {
+					tr.Fatal << "Incompatible Fragment in file: " << data.filename() << endl;
+					utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+				} else {
+					frame_counts[p]++;
+					for ( Size i = 2; i <= ncopies; i++ ) {
+						frame->add_fragment( current_fragment );
+						frame_counts[p]++;
+					}
+				}
+				if ( frame && frame->is_valid() ) {
+					add( frame );
+				}
+				n_frags = std::max( n_frags, frame_counts[p] );
+			}
 		}
 	}
 

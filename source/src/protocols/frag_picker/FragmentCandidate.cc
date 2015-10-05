@@ -57,9 +57,9 @@
 
 
 // Utility
+#include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
-
 #include <utility/vector1.hh>
 
 
@@ -171,9 +171,17 @@ utility::vector1<FragmentCandidateOP> read_fragment_candidates(
 }
 
 
-void FragmentCandidate::print_fragment_index(std::ostream& out) {
-	VallResidueOP r = get_residue(1);
-	out << r->key() << " " << fragmentLength_ << std::endl;
+void FragmentCandidate::print_fragment_index(std::ostream& out, bool vall_index_database_exists) {
+	if (vall_index_database_exists) {
+		VallResidueOP r = get_residue(1);
+		out << r->key() << " " << fragmentLength_ << std::endl;
+	} else {
+		out << "0 " << fragmentLength_ << std::endl;
+		for ( Size i = 1; i <= fragmentLength_; ++i ) {
+			VallResidueOP r = get_residue(i);
+			out << utility::trim(F(9, 3, r->phi())) << " " << F(9, 3, r->psi()) << " " << F(9, 3, r->omega()) << std::endl;
+		}
+	}
 }
 
 /// @brief Prints fragment data, the output can be directly loaded to minirosetta

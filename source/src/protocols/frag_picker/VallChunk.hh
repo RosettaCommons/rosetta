@@ -67,6 +67,14 @@ public:
 		return residues_.size();
 	}
 
+	inline Size vall_key() const {
+		return vall_key_;
+	}
+
+	void vall_key(Size key) {
+		vall_key_ = key;
+	}
+
 	/// @brief  returns i-th residue form this chunk. The first residue has index 1
 	inline VallResidueOP at(Size index) const {
 		runtime_assert( index <= residues_.size() );
@@ -94,6 +102,11 @@ public:
 	/// Every time this method is called for a new chunk, VallProvider caches new data
 	core::pose::PoseOP get_pose();
 
+	/// @brief returns the Vall file used for this chunk
+	std::string get_vall_filename();
+	/// @brief returns the Vall Provider
+	VallProviderOP get_vall_provider();
+
 	/// @brief  returns a string that is unique for each chunk in vall
 	std::string & chunk_key() { if ( !has_key_ ) { create_key(); } return chunk_key_; }
 
@@ -102,6 +115,7 @@ private:
 	std::string sequence_;
 	VallProviderAP my_provider_;
 	std::string chunk_key_;
+	Size vall_key_;
 	bool has_key_;
 
 	void create_key();

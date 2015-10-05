@@ -80,6 +80,26 @@ public:
 		return largest_chunk_size_;
 	}
 
+	inline Size get_vall_count() {
+		return vall_keys_.size();
+	}
+
+	inline std::string get_vall_by_key(Size index) {
+		return vall_keys_.at(index);
+	}
+
+	inline Size get_vall_start_line_by_key(Size index) {
+		return vall_start_line_.at(index);
+	}
+
+	inline Size get_vall_end_line_by_key(Size index) {
+		return vall_end_line_.at(index);
+	}
+
+	inline Size get_vall_last_residue_key_by_key(Size index) {
+		return vall_last_residue_key_.at(index);
+	}
+
 	/// @brief tries to find a chunk defined by PDB id, chain id and a residue
 	/// sequence id @details If this VallProvider does not contain a desired
 	/// chunk, 0 is returned.
@@ -93,6 +113,10 @@ public:
 
 private:
 	utility::vector1<VallChunkOP> chunks_;
+	utility::vector1<std::string> vall_keys_;
+	utility::vector1<Size> vall_start_line_;
+	utility::vector1<Size> vall_end_line_;
+	utility::vector1<Size> vall_last_residue_key_;
 	Size largest_chunk_size_;
 	std::string cached_profile_id_;
 	core::sequence::SequenceProfileOP cached_profile_;
