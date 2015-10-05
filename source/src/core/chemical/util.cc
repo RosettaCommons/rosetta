@@ -300,10 +300,15 @@ variants_match_with_exceptions(
 
 /// @brief   check if user has set -pH_mode.
 /// @details used to determine exceptions to PROTONATION/DEPROTONAT in variants_match.
-bool
-make_pH_mode_exceptions() {
+utility::vector1< VariantType >
+pH_mode_exceptions() {
+	utility::vector1< VariantType > exceptions;
 	using namespace basic::options;
-	return option[ OptionKeys::pH::pH_mode ].user();
+	if ( option[ OptionKeys::pH::pH_mode ]() ) {
+		exceptions.push_back( PROTONATED );
+		exceptions.push_back( DEPROTONATED );
+	}
+	return exceptions;
 }
 
 // Are these two residues patched in exactly the same way?
@@ -312,14 +317,7 @@ make_pH_mode_exceptions() {
 bool
 variants_match( ResidueType const & res1, ResidueType const & res2 )
 {
-	using namespace utility;
-
-	vector1< VariantType > exceptions;
-	if ( make_pH_mode_exceptions() ) {
-		exceptions.push_back( PROTONATED );
-		exceptions.push_back( DEPROTONATED );
-	}
-	return variants_match_with_exceptions( res1, res2, exceptions );
+	return variants_match_with_exceptions( res1, res2, pH_mode_exceptions() );
 }
 
 

@@ -121,6 +121,9 @@ public:
 	}
 
 	ResidueTypeFinder &
+	variant_exceptions( utility::vector1< std::string > const & setting );
+
+	ResidueTypeFinder &
 	variant_exceptions( utility::vector1< VariantType > const & setting ) {
 		variant_exceptions_ = setting;
 		return *this;
@@ -147,12 +150,6 @@ public:
 	ResidueTypeFinder &
 	ignore_atom_named_H( bool const setting ) {
 		ignore_atom_named_H_ = setting;
-		return *this;
-	}
-
-	ResidueTypeFinder &
-	apply_all_applicable_patches( bool const setting ) {
-		apply_all_applicable_patches_ = setting;
 		return *this;
 	}
 
@@ -277,10 +274,15 @@ private:
 	utility::vector1< std::string > patch_names_;
 	ResidueProperty base_property_;
 	bool ignore_atom_named_H_;
-	bool apply_all_applicable_patches_;
 	bool disallow_carboxyl_conjugation_at_glu_asp_; // special case
 
 };
+
+/// @brief figure out which variant types are used -- defines a list of 'standards' in 2015 that need to be
+///   supported in aa_map_DO_NOT_USE and name3_map_DO_NOT_USE, but will not be expanded.
+/// @details OK to remove this after 2015.
+void
+print_variant_types_used();
 
 } //chemical
 } //core

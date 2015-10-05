@@ -333,10 +333,6 @@ private: // private methods
 	void
 	do_restrict_absent_canonical_aas( utility::vector1<bool> const & allowed_aas );
 
-	/// @brief legacy code block to handle packing at residues with custom variants.
-	void
-	setup_allowed_protein_residue_types_LEGACY( chemical::ResidueType const & match_residue_type );
-
 private:
 	/// @details is the pre-existing rotamer included for the packer to choose?
 	bool include_current_;

@@ -20,11 +20,15 @@
 #include <core/chemical/ResidueTypeSetCache.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/types.hh>
 #include <map>
+
 namespace core {
 namespace chemical {
+
+	typedef std::pair< AA, std::pair< utility::vector1< std::string >, utility::vector1< VariantType > > > AA_VariantsExceptions;
 
 	class ResidueTypeSetCache: public utility::pointer::ReferenceCount {
 
@@ -61,14 +65,15 @@ namespace chemical {
 		generated_residue_types();
 
 		ResidueTypeCOPs
-		get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants );
+		get_all_types_with_variants_aa( AA aa,
+																		utility::vector1< std::string > const & variants,
+																		utility::vector1< VariantType > const & exceptions );
 
-		// will deprecate soon
-		/// @brief query ResidueTypes by their AA enum type
+		/// @brief query ResidueTypes by their AA enum type. Does not handle aa_unk and does not handle most new patches. Legacy function.
 		ResidueTypeCOPs
 		aa_map_DO_NOT_USE( AA const & aa );
 
-		/// @brief query ResidueTypes by their 3-letter name
+		/// @brief query ResidueTypes by their 3-letter name.  Does not handle aa_unk and does not handle most new patches. Legacy function.
 		ResidueTypeCOPs
 		name3_map_DO_NOT_USE( std::string const & name );
 
@@ -95,7 +100,7 @@ namespace chemical {
 		std::map< std::string, ResidueTypeCOPs > name3_map_;
 
 		/// @brief caching queries based on aa & variants to avoid recomputation with ResidueTypeFinder
-		std::map< std::pair< AA, utility::vector1< std::string > >, ResidueTypeCOPs > cached_aa_variants_map_;
+		std::map< AA_VariantsExceptions, ResidueTypeCOPs > cached_aa_variants_map_;
 
 	};
 

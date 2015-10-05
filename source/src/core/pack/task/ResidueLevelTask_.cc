@@ -122,17 +122,12 @@ ResidueLevelTask_::ResidueLevelTask_(
 		// amino acids from the list of allowed ones
 		//no rule yet to treat chemically modified aa's differently
 		ResidueType const & match_residue_type( residue_set.get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_SIDE_CHAIN ) );
-		if ( match_residue_type.properties().has_custom_variant_types() || make_pH_mode_exceptions()) {
-			// should actually be able to handle now - custom_variants are supported; and pH_mode_exceptions could be passed in as 'variant_exceptions' to ResidueTypeFinder.
-		 	setup_allowed_protein_residue_types_LEGACY( match_residue_type );
-		} else {
-			for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
-				ResidueTypeCOPs const & aas( residue_set.get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types() ) );
-				for ( ResidueTypeCOPs::const_iterator
-						aas_iter = aas.begin(),
-						aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-					allowed_residue_types_.push_back( *aas_iter );
-				}
+		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+			ResidueTypeCOPs const & aas( residue_set.get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
+			for ( ResidueTypeCOPs::const_iterator
+							aas_iter = aas.begin(),
+							aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+				allowed_residue_types_.push_back( *aas_iter );
 			}
 		}
 		// allow noncanonical AAs and D-amino acids to be repacked
@@ -172,43 +167,6 @@ ResidueLevelTask_::ResidueLevelTask_(
 ResidueLevelTask_::ResidueLevelTask_() {}
 
 ResidueLevelTask_::~ResidueLevelTask_() {}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @details
-// Just to maintain backwards compatibility with:
-//
-//  * custom variants
-//  * pH_mode
-//
-// This instantiates a ton of residue_types (in aa_map_DO_NOT_USE) which can take a lot of time.
-// Would be fairly straightforward to update to use 'on_the_fly' residue types, and
-// thereby avoid the slow down and memory footprint, just isn't done yet.
-//
-// E-mail rhiju [at] stanford.edu if you want to do it.
-//
-/////////////////////////////////////////////////////////////////////////////////////////
-void
-ResidueLevelTask_::setup_allowed_protein_residue_types_LEGACY( chemical::ResidueType const & match_residue_type )
-{
-	using namespace core::chemical;
-	ResidueTypeSet const & residue_set( match_residue_type.residue_type_set() );
-	// use legacy code -- move this to its own shameful code block
-	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
-		ResidueTypeCOPs const & aas( residue_set.aa_map_DO_NOT_USE( chemical::AA( ii )));
-		for ( ResidueTypeCOPs::const_iterator
-				aas_iter = aas.begin(),
-				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-			if ( variants_match( match_residue_type, **aas_iter ) ) {
-				allowed_residue_types_.push_back( *aas_iter );
-			}
-		}
-	}
-	if ( allowed_residue_types_.size() > 10000 /* totally arbitrary limit to flag to future devs to look into this */ &&
-			!basic::options::option[ basic::options::OptionKeys::chemical::override_rsd_type_limit ]() ) {
-		std::string const error_message = "Number of residue types is greater than 10000. Rerun with -override_rsd_type_limit. Or this might be a good time to fix how custom variants or pH_mode are handled (see notes in ResidueLevelTask_.cc). ";
-		utility_exit_with_message( error_message );
-	}
-}
 
 ExtraRotSample
 ResidueLevelTask_::extrachi_sample_level(

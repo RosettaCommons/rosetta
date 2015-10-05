@@ -443,9 +443,6 @@ main( int argc, char * argv [] )
 
 		core::init::init(argc, argv);
 
-		//  option[ OptionKeys::in::file::extra_res_fa ].push_back( utility::file::FileName( basic::database::full_name( "chemical/residue_type_sets/fa_standard//residue_types/extra/C.params" ) ) );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
-
 		protocols::viewer::viewer_main( my_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

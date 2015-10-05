@@ -620,8 +620,18 @@ ResidueTypeSet::get_base_types_name3( std::string const & name3 ) const {
 /// @details The number of variants must match exactly.
 /// (It's assumed that the passed VariantTypeList contains no duplicates.)
 ResidueTypeCOPs
-ResidueTypeSet::get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants ) const {
-	return cache_->get_all_types_with_variants_aa( aa, variants );
+ResidueTypeSet::get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants ) const
+{
+	utility::vector1< VariantType > exceptions;
+	return cache_->get_all_types_with_variants_aa( aa, variants, exceptions );
+}
+
+ResidueTypeCOPs
+ResidueTypeSet::get_all_types_with_variants_aa( AA aa,
+																								utility::vector1< std::string > const & variants,
+																								utility::vector1< VariantType > const & exceptions ) const
+{
+	return cache_->get_all_types_with_variants_aa( aa, variants, exceptions );
 }
 
 /// @brief Gets all types with the given name1 and variants

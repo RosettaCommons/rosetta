@@ -938,11 +938,6 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		core::init::init( argc, argv );
 
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" ); // 5prime_phosphate and 3prime_phosphate
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_PHOSPHATE" );
-
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup
 		////////////////////////////////////////////////////////////////////////////

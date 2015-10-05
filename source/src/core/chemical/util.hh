@@ -60,8 +60,9 @@ bool variants_match_with_exceptions(
 	ResidueType const & res2,
 	utility::vector1< VariantType > list_of_variants_to_ignore );
 
-bool
-make_pH_mode_exceptions();
+
+utility::vector1< VariantType >
+pH_mode_exceptions();
 
 /// @brief  Are these two residues patched in exactly the same way?
 bool variants_match( ResidueType const & res1, ResidueType const & res2 );

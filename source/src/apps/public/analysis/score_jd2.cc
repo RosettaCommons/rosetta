@@ -176,8 +176,6 @@ main( int argc, char * argv [] )
 		// initialize core
 		devel::init(argc, argv);
 
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "PEPTIDE_CAP" ); // N_acetylated.txt and C_methylamidated.txt
-
 		//The following lines are to ensure one can rescore the pcs energy term (that uses TopologyClaimer)
 		if ( option[ broker::setup ].user() ) {
 			protocols::topology_broker::TopologyBrokerOP top_bro_OP( new  topology_broker::TopologyBroker() );

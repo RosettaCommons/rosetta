@@ -221,7 +221,6 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::rna::corrected_geo );
 
 		core::init::init(argc, argv);
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" ); // 5prime_phosphate and 3prime_phosphate
 
 		protocols::viewer::viewer_main( my_main );
 

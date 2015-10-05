@@ -217,29 +217,6 @@ main( int argc, char * argv [] )
 
 		core::init::init(argc, argv);
 
-		// Following patch_selector code is unfortunate... ResidueTypeSet currently initializes a huge number of
-		// residue types with combinatorial application of patches, rather than creating them
-		// 'just-in-time'. Slow and memory-intensive. To save time, we can 'declare' which patches we want
-		// on command line. Following are basicaly hacks to set these global variables based on expectations of
-		// which patches will be needed. -- rhiju, 2014
-
-		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() /* true by default*/ ) {
-			option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" ); // for chemical mapping & bulges in native.
-			option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" ); // for bulge
-		}
-		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() /* true by default*/ ||
-				option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ]() ) {
-			option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" ); // for skip-nucleotide moves.
-		}
-		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ]() /* true by default*/ ||
-				option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]() ) {
-			option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" ); // 5prime_phosphate and 3prime_phosphate
-		}
-		if ( option[ OptionKeys::stepwise::protein::allow_virtual_side_chains ]() ) {
-			option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" ); // for protein side-chain packing/virtualization
-		}
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "PEPTIDE_CAP" ); // N_acetylated.txt and C_methylamidated.txt
-
 		protocols::viewer::viewer_main( my_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

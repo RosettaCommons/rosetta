@@ -435,9 +435,6 @@ main( int argc, char * argv [] )
 		// setup
 		////////////////////////////////////////////////////////////////////////////
 		core::init::init(argc, argv);
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" );
 
 		////////////////////////////////////////////////////////////////////////////
 		// end of setup

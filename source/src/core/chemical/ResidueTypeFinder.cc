@@ -68,7 +68,6 @@ ResidueTypeFinder::ResidueTypeFinder( core::chemical::ResidueTypeSet const & res
 	name1_( '?' ),
 	base_property_( NO_PROPERTY ),
 	ignore_atom_named_H_( false ),
-	apply_all_applicable_patches_( false ),
 	disallow_carboxyl_conjugation_at_glu_asp_( false )
 {}
 
@@ -196,6 +195,8 @@ ResidueTypeFinder::apply_filters_after_patches( ResidueTypeCOPs rsd_types,
 	return rsd_types;
 }
 
+/// OK to remove this after 2015.
+std::set< VariantType > variant_types_used;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Instantiates ResidueType (and gets exponentially slower), based on the number
@@ -243,8 +244,7 @@ ResidueTypeFinder::apply_patches_recursively(
 													matches_any_patch_name( patch )      ||
 													matches_any_atom_name( patch, rsd_type ) ||
 													fixes_name3( patch, rsd_type ) ||
-													fixes_interchangeability_group( patch, rsd_type ) ||
-													apply_all_applicable_patches_ );
+													fixes_interchangeability_group( patch, rsd_type ) );
 
 		if ( apply_patch ) {
 			// following just gets the right name of the patched residue
@@ -252,6 +252,15 @@ ResidueTypeFinder::apply_patches_recursively(
 			// by using name_map, forces residue_type_set to generate the real residue_type, cache it, and return the COP:
 			ResidueTypeCOP rsd_type_new( residue_type_set_.name_map( rsd_type_new_placeholder->name() ).get_self_ptr() );
 			rsd_types_new.push_back( rsd_type_new );
+
+			{
+				vector1< std::string> const & patch_variant_types = patch->types();
+				for ( Size n = 1; n <= patch_variant_types.size(); n++ ) {
+					VariantType const patch_variant = ResidueProperties::get_variant_from_string( patch_variant_types[ n ] );
+					variant_types_used.insert( patch_variant );
+				}
+			}
+
 		}
 
 	} // end loop
@@ -544,6 +553,14 @@ ResidueTypeFinder::check_candidate_has_all_variant_sets( ResidueTypeCOPs const &
 				break;
 			}
 		}
+
+		for ( Size k = 1; k <= custom_variants_.size(); k++ ) {
+			if ( !rsd_type->properties().is_variant_type( custom_variants_[ k ] ) ) {
+				all_variant_sets_matched = false;
+				break;
+			}
+		}
+
 		if ( all_variant_sets_matched ) {
 			filtered_rsd_types.push_back( rsd_type );
 		}
@@ -719,6 +736,33 @@ ResidueTypeFinder::variants( utility::vector1< std::string > const & setting )
 	return variants( variants_ );
 }
 
+////////////////////////////////////////////////////////////////////
+/// @brief   set function for variant exceptions
+ResidueTypeFinder &
+ResidueTypeFinder::variant_exceptions( utility::vector1< std::string > const & setting )
+{
+	vector1< VariantType > variant_exceptions_list;
+	for ( Size n = 1; n <= setting.size(); n++ ) {
+		VariantType variant_type = ResidueProperties::get_variant_from_string( setting[ n ] );
+		if ( variant_type != NO_VARIANT ) {
+			variant_exceptions_list.push_back( variant_type );
+		} else {
+			utility_exit_with_message( "not currently handling custom variants within variant_exceptions" );
+		}
+	}
+	return variant_exceptions( variant_exceptions_list );
+}
+
+/// @brief figure out which variant types are used -- defines a list of 'standards' in 2015 that need to be
+///   supported in aa_map_DO_NOT_USE and name3_map_DO_NOT_USE, but will not be expanded.
+void
+print_variant_types_used() {
+	std::cout << "Following was used to setup src/core/chemical/legacy_types.cc : " << std::endl;
+	for ( std::set< VariantType >::const_iterator it = variant_types_used.begin();
+				it != variant_types_used.end(); it++ ) {
+		std::cout << "variant_types_list_LEGACY.push_back( " <<  ResidueProperties::get_string_from_variant( *it ) <<  " );" << std::endl;
+	}
+}
 
 } //chemical
 } //core

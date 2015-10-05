@@ -467,10 +467,6 @@ main( int argc, char * argv [] )
 		////////////////////////////////////////////////////////////////////////////
 		core::init::init(argc, argv);
 
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" );
-
 		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

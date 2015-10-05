@@ -16,6 +16,9 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/legacy_types.hh>
+
+#include <utility/tools/make_vector1.hh>
 
 #include <basic/Tracer.hh>
 
@@ -102,32 +105,33 @@ namespace chemical {
 
 	ResidueTypeCOPs
 	ResidueTypeSetCache::get_all_types_with_variants_aa( AA aa,
-																											 utility::vector1< std::string > const & variants )
+																											 utility::vector1< std::string > const & variants,
+																											 utility::vector1< VariantType > const & exceptions )
   {
-		std::pair< AA, utility::vector1< std::string > > query( std::make_pair( aa, variants ) );
+		AA_VariantsExceptions query( std::make_pair( aa, std::make_pair( variants, exceptions ) ) );
 		if ( cached_aa_variants_map_.find( query ) == cached_aa_variants_map_.end() ) {
-			cached_aa_variants_map_[ query ] = ResidueTypeFinder( rsd_type_set_ ).aa( aa ).variants( variants ).get_all_possible_residue_types();
+			cached_aa_variants_map_[ query ] = ResidueTypeFinder( rsd_type_set_ ).aa( aa ).variants( variants ).variant_exceptions( exceptions ).get_all_possible_residue_types();
 		}
 		return cached_aa_variants_map_[ query ];
 	}
 
-	// will deprecate soon
-	/// @brief query ResidueTypes by their AA enum type
+	/// @brief query ResidueTypes by their AA enum type. Does not handle aa_unk and does not handle most new patches.
 	ResidueTypeCOPs
 	ResidueTypeSetCache::aa_map_DO_NOT_USE( AA const & aa )
 	{
 		if ( aa == aa_unk ) return ResidueTypeCOPs(); // empty
 		if ( aa_map_.find( aa ) == aa_map_.end() ) {
-			aa_map_[ aa ] = ResidueTypeFinder( rsd_type_set_ ).aa( aa ).apply_all_applicable_patches( true ).get_all_possible_residue_types( true );
+			aa_map_[ aa ] = ResidueTypeFinder( rsd_type_set_ ).aa( aa ).variant_exceptions( variant_types_list_LEGACY() ).get_all_possible_residue_types( true );
 		}
 		return aa_map_[ aa ];
 	}
 
+	/// @brief query ResidueTypes by their 3-letter name.  Does not handle aa_unk and does not handle most new patches.
 	ResidueTypeCOPs
 	ResidueTypeSetCache::name3_map_DO_NOT_USE( std::string const & name3 )
 	{
 		if ( name3_map_.find( name3 ) == name3_map_.end() ) {
-			name3_map_[ name3 ] = ResidueTypeFinder( rsd_type_set_ ).name3( name3 ).apply_all_applicable_patches( true ).get_all_possible_residue_types( true );
+			name3_map_[ name3 ] = ResidueTypeFinder( rsd_type_set_ ).name3( name3 ).variant_exceptions( variant_types_list_LEGACY() ).get_all_possible_residue_types( true );
 		}
 		return name3_map_[ name3 ];
 	}

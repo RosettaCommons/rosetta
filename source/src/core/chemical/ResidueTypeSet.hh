@@ -200,10 +200,19 @@ public:
 	generates_patched_residue_type_with_interchangeability_group( std::string const & base_residue_name, std::string const & interchangeability_group ) const;
 
 	/// @brief Gets all types with the given aa type and variants
-	/// @details The number of variants must match exactly.
+	/// @details The number of variants must match exactly. Variants can be custom variants.
 	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
 	ResidueTypeCOPs
 	get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants ) const;
+
+	/// @brief Gets all types with the given aa type and variants, making exceptions for some variants.
+	/// @details The number of variants must match exactly. Variants can be custom variants, but exceptions must
+	///           be standard types, listed in VariantType.hh.
+	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
+	ResidueTypeCOPs
+	get_all_types_with_variants_aa( AA aa,
+																	utility::vector1< std::string > const & variants,
+																	utility::vector1< VariantType > const & exceptions ) const;
 
 	/// @brief Get all non-patched ResidueTypes with the given name1
 	/// @details The number of variants must match exactly.

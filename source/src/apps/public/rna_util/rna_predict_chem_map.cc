@@ -319,8 +319,6 @@ main( int argc, char * argv [] )
 
 		core::init::init(argc, argv);
 
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
-
 		protocols::viewer::viewer_main( my_main );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

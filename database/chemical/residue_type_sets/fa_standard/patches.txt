@@ -21,9 +21,8 @@ patches/nucleic/rna/rna_cutpoint_upper.txt
 patches/nucleic/rna/Virtual_Phosphate.txt
 patches/nucleic/rna/Virtual_O2prime_hydrogen.txt
 
-##################################################################################
-## Selected from command line (not patched in by default to save memory); see below.
-##################################################################################
+## Used to be selected from command line (not patched in by default to save memory); 
+## but should be OK to instantiate with refactored ResidueTypeSet
 # Protein
 patches/RepulsiveOnly_fa.txt        # replonly
 patches/ShoveBB.txt                 # SHOVE_BB
@@ -54,17 +53,6 @@ patches/branching/sidechain_carboxyl_conjugation.txt
 patches/branching/sidechain_electrophile_conjugation.txt
 patches/branching/phg_cd1_conjugation.txt
 patches/branching/phg_cd2_conjugation.txt
-
-#################################################################################################
-# Instead of just uncommenting below, consider setting up a CMDLINE_SELECTOR in the patch file,
-#  and in your app, put in a line like this after init():
-#
-#  option[ OptionKeys::chemical::patch_selectors ].push_back( "SHOVE_BB" ); // CMDLINE_SELECTOR in ShoveBB.txt
-#
-# [or, more cumbersome for users, require a flag like "-patch_selectors SHOVE_BB".]
-# That will reduce the generic memory footprint that most apps will see.
-#
-#################################################################################################
 
 ## protein
 patches/Cterm_amidation.txt
