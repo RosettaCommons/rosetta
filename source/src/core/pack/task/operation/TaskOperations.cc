@@ -718,7 +718,7 @@ ReadResfileAndObeyLengthEvents::apply(
 	utility::vector1< core::id::SequenceMapping > smaps;
 	TR << "ReadResfileAndObeyLengthEvents: processing " << events.size() << " length events." << std::endl;
 	for ( Size i =1; i <= events.size(); ++i ) {
-		TR <<  events[i] << std::endl;
+		TR.Debug <<  events[i] << std::endl;
 		smaps.push_back( core::id::SequenceMapping( events[i] ) );
 	}
 	core::id::SequenceMappingOP fullsmap( core::id::combine_sequence_mappings( smaps ) );
