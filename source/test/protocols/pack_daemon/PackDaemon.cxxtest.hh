@@ -24,6 +24,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/pack_rotamers.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/interaction_graph/DensePDInteractionGraph.hh>
 #include <core/pack/interaction_graph/DoubleDensePDInteractionGraph.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -263,7 +264,7 @@ public:
 		ScoreFunctionOP sfxn = get_score_function();
 
 		RotamerSetsOP rot_sets( new RotamerSets );
-		InteractionGraphBaseOP ig;
+		AnnealableGraphBaseOP ig;
 		core::pack::pack_rotamers_setup( *trpcage, *sfxn, task, rot_sets, ig );
 
 		PrecomputedPairEnergiesInteractionGraphOP precomp_ig
@@ -380,7 +381,7 @@ public:
 		ScoreFunctionOP sfxn = get_score_function();
 
 		RotamerSetsOP rot_sets( new RotamerSets );
-		InteractionGraphBaseOP ig;
+		AnnealableGraphBaseOP ig;
 		core::pack::pack_rotamers_setup( *trpcage, *sfxn, task, rot_sets, ig );
 
 		PrecomputedPairEnergiesInteractionGraphOP precomp_ig

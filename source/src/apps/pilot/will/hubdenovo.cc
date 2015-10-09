@@ -1198,13 +1198,13 @@ struct HubDenovo {
 		nodisulf.apply( pose, *task_ );
 		// protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
 		// rti.apply( pose, *task_ );
-		pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
+		pack::pack_rotamers( pose, *scorefxn_, task_ );
 		Real bounde = scorefxn_->score(pose);
 		scorefxn_->show(pose);
 
 		trans_pose(pose,dax,1,cfg.nres);
 
-		pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
+		pack::pack_rotamers( pose, *scorefxn_, task_ );
 		Real ubounde = scorefxn_->score(pose);
 		scorefxn_->show(pose);
 

@@ -34,7 +34,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 
 
@@ -51,8 +51,8 @@ namespace simple_moves {
 /// @note please derive from PackRotamersMover instead of attempting to add protocol-specific stuff here!
 class PackRotamersMover : public protocols::moves::Mover {
 public:
-	typedef core::pack::interaction_graph::InteractionGraphBaseOP InteractionGraphBaseOP;
-	typedef core::pack::interaction_graph::InteractionGraphBaseCOP InteractionGraphBaseCOP;
+	typedef core::pack::interaction_graph::AnnealableGraphBaseOP AnnealableGraphBaseOP;
+	typedef core::pack::interaction_graph::AnnealableGraphBaseCOP AnnealableGraphBaseCOP;
 	typedef core::pack::rotamer_set::RotamerSetsOP RotamerSetsOP;
 	typedef core::pack::rotamer_set::RotamerSetsCOP RotamerSetsCOP;
 	typedef core::pack::task::PackerTaskCOP PackerTaskCOP;
@@ -199,7 +199,7 @@ public:
 	///     PackRotamersMover.task
 	TaskFactoryCOP task_factory() const;
 	RotamerSetsCOP rotamer_sets() const;
-	InteractionGraphBaseCOP ig() const;
+	AnnealableGraphBaseCOP ig() const;
 
 protected:
 	/// @brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
@@ -221,7 +221,7 @@ private:
 
 	// 'really private:' packer data, actually created and owned by this class
 	RotamerSetsOP rotamer_sets_;
-	InteractionGraphBaseOP ig_;
+	AnnealableGraphBaseOP ig_;
 };
 
 std::ostream &operator<< (std::ostream &os, PackRotamersMover const &mover);

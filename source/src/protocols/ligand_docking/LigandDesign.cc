@@ -84,10 +84,10 @@ LigandDesign::~LigandDesign() {}
 
 void
 LigandDesign::set_fragments(){
-core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
-core::chemical::ResidueTypeSetCOP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
-// following may not work -- however, i could not find test cases with FRAGMENT residue_types.
-core::chemical::ResidueTypeCOPs fragment_types = core::chemical::ResidueTypeFinder( *rsd_set ).base_property( core::chemical::FRAGMENT ).get_all_possible_residue_types();
+	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
+	core::chemical::ResidueTypeSetCOP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
+	// following may not work -- however, i could not find test cases with FRAGMENT residue_types.
+	core::chemical::ResidueTypeCOPs fragment_types = core::chemical::ResidueTypeFinder( *rsd_set ).base_property( core::chemical::FRAGMENT ).get_all_possible_residue_types();
 	ligand_design_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
 	BOOST_FOREACH ( core::chemical::ResidueTypeCOP fragment_type, fragment_types ) {

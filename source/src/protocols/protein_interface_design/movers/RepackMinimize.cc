@@ -129,11 +129,10 @@ RepackMinimize::apply( pose::Pose & pose )
 	setup_packer_and_movemap( pose );
 	using namespace core::scoring;
 
+	pack::pack_rotamers(pose, *scorefxn_repack_, task_ );
 	if ( symmetry_ ) {
-		pack::symmetric_pack_rotamers( pose, *scorefxn_repack_, task_ );
 		SymMinimizeInterface( pose, scorefxn_minimize_, curr_min_bb_, curr_min_sc_, curr_min_rb_); //, optimize_foldtree_, target_residues_ );
 	} else {
-		pack::pack_rotamers( pose, *scorefxn_repack_, task_ );
 		MinimizeInterface( pose, scorefxn_minimize_, curr_min_bb_, curr_min_sc_, curr_min_rb_, optimize_foldtree_, target_residues_ );
 	}
 	pose.update_residue_neighbors();

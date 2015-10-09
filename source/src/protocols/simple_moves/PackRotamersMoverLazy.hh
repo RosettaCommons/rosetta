@@ -68,9 +68,6 @@ public:
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-protected:
-	//core::PackerEnergy run_with_ig( Pose & pose, utility::vector0< int > rot_to_pack, InteractionGraphBaseOP ig) const;
-
 private:
 
 };

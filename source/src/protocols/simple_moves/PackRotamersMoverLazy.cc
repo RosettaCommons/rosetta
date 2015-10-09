@@ -118,12 +118,6 @@ PackRotamersMoverLazy::apply_to_rotpack( Pose & pose , utility::vector0< int > r
 	ScoreFunctionCOP scorefxn_ = score_function();
 	(*scorefxn_)(pose);
 }
-/*
-core::PackerEnergy PackRotamersMoverLazy::run_with_ig( Pose & pose, utility::vector0< int > rot_to_pack, InteractionGraphBaseOP ig) const
-{
-return pack_rotamers_run( pose, task(), rotamer_sets(), ig, rot_to_pack );
-}
-*/
 
 }//moves
 }//protocols

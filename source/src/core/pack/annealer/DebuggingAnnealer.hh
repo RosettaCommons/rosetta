@@ -21,7 +21,7 @@
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/annealer/RotamerAssigningAnnealer.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 
 // C++ headers
 #include <list>
@@ -44,7 +44,7 @@ public:
 		ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 		PackerEnergy & bestenergy,
 		bool start_with_current, // start simulation with current rotamers
-		interaction_graph::InteractionGraphBaseOP ig,
+		interaction_graph::AnnealableGraphBaseOP ig,
 		rotamer_set::FixbbRotamerSetsCOP p_rotamer_set,
 		ObjexxFCL::FArray1_int & current_rot_index,
 		bool calc_rot_freq,
@@ -55,7 +55,7 @@ public:
 		ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 		PackerEnergy & bestenergy,
 		bool start_with_current, // start simulation with current rotamers
-		interaction_graph::InteractionGraphBaseOP ig,
+		interaction_graph::AnnealableGraphBaseOP ig,
 		rotamer_set::FixbbRotamerSetsCOP p_rotamer_set,
 		ObjexxFCL::FArray1_int & current_rot_index,
 		bool calc_rot_freq,
@@ -69,7 +69,7 @@ public:
 	void annealer_file( std::string const & fname );
 
 private:
-	interaction_graph::InteractionGraphBaseOP ig_;
+	interaction_graph::AnnealableGraphBaseOP ig_;
 	std::list< RotSub > trajectory_;
 
 	DebuggingAnnealer(const DebuggingAnnealer& rhs);

@@ -18,7 +18,9 @@
 #include <core/pack/interaction_graph/InteractionGraphFactory.fwd.hh>
 
 // Package headers
+#include <core/graph/Graph.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 
@@ -36,13 +38,63 @@ namespace interaction_graph {
 class InteractionGraphFactory {
 public:
 
+	/// @brief Create appropiate InteractionGraph instance for given
+	/// packer task, rotamer set, and pose.
 	static
 	InteractionGraphBaseOP
 	create_interaction_graph(
-		task::PackerTask const &,
-		rotamer_set::RotamerSets const &,
-		pose::Pose const &,
-		scoring::ScoreFunction const &
+		task::PackerTask const & packer_task,
+		rotamer_set::RotamerSets const & rotsets,
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & scfxn
+	);
+
+	/// @brief Create and initialize two-body interaction graph for the given
+	/// pose, rotamer sets, packer task and score function.
+	///
+	/// Call only valid after:
+	/// Pose has been scored by scorefxn.
+	/// Pose residue neighbors updated.
+	/// ScoreFunction setup for packing.
+	/// Rotamer sets built.
+	static
+	InteractionGraphBaseOP
+	create_and_initialize_two_body_interaction_graph(
+		task::PackerTask const & packer_task,
+		rotamer_set::RotamerSets & rotsets,
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & scfxn,
+		graph::GraphCOP packer_neighbor_graph);
+
+	/// @brief Create and initialize annealable graph for the given
+	/// pose, rotamer sets, packer task and score function. Initalizes
+	/// two-body interaction graph, as well as other annealable graphs
+	/// sepecified by the given score function and task.
+	///
+	/// Call only valid after:
+	/// Pose has been scored by scorefxn.
+	/// Pose residue neighbors updated.
+	/// ScoreFunction setup for packing.
+	/// Rotamer sets built.
+	static
+	AnnealableGraphBaseOP
+	create_and_initialize_annealing_graph(
+		task::PackerTask const & packer_task,
+		rotamer_set::RotamerSets & rotsets,
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & scfxn,
+		graph::GraphCOP packer_neighbor_graph);
+
+private:
+
+	/// @brief Apply IGEdgeReweights to IG if specified in packer task.
+	static
+	void
+	setup_IG_res_res_weights(
+		pose::Pose const & pose,
+		task::PackerTask const & task,
+		rotamer_set::RotamerSets const & rotsets,
+		interaction_graph::InteractionGraphBase & ig
 	);
 };
 

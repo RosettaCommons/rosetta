@@ -48,9 +48,9 @@ PrimarySequenceNeighborhoodSelector::PrimarySequenceNeighborhoodSelector() :
 }
 
 PrimarySequenceNeighborhoodSelector::PrimarySequenceNeighborhoodSelector(
-		core::Size const lower_residues,
-		core::Size const upper_residues,
-		core::pack::task::residue_selector::ResidueSelectorCOP const selector ) :
+	core::Size const lower_residues,
+	core::Size const upper_residues,
+	core::pack::task::residue_selector::ResidueSelectorCOP const selector ) :
 	lower_residues_( lower_residues ),
 	upper_residues_( upper_residues ),
 	selector_( selector )
@@ -108,14 +108,16 @@ PrimarySequenceNeighborhoodSelector::apply( core::pose::Pose const & pose ) cons
 
 void
 PrimarySequenceNeighborhoodSelector::parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data )
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data )
 {
-	if ( tag->hasOption( "lower" ) )
+	if ( tag->hasOption( "lower" ) ) {
 		set_lower_residues( tag->getOption< core::Size >( "lower" ) );
+	}
 
-	if ( tag->hasOption( "upper" ) )
+	if ( tag->hasOption( "upper" ) ) {
 		set_upper_residues( tag->getOption< core::Size >( "upper" ) );
+	}
 
 	if ( tag->hasOption( "selector" ) ) {
 		std::string const selectorname = tag->getOption< std::string >( "selector" );
@@ -151,7 +153,7 @@ PrimarySequenceNeighborhoodSelector::parse_my_tag(
 
 void
 PrimarySequenceNeighborhoodSelector::set_selector(
-		core::pack::task::residue_selector::ResidueSelectorCOP const selector )
+	core::pack::task::residue_selector::ResidueSelectorCOP const selector )
 {
 	selector_ = selector;
 }

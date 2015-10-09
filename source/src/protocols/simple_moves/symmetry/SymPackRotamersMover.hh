@@ -91,7 +91,7 @@ private:
 	// pointers to data that are passed in
 	core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP sym_rotamer_sets_;
 	core::pack::task::PackerTaskOP symmetric_task_;
-	InteractionGraphBaseOP symmetric_ig_;
+	AnnealableGraphBaseOP symmetric_ig_;
 };
 
 } // symmetry

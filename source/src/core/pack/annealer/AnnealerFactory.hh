@@ -21,7 +21,7 @@
 #include <core/pack/annealer/SimAnnealerBase.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 
 
 /// ObjexxFCL headers
@@ -48,7 +48,7 @@ public:
 		ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 		core::PackerEnergy & bestenergy,
 		bool start_with_current, // start simulation with current rotamers
-		interaction_graph::InteractionGraphBaseOP ig,
+		interaction_graph::AnnealableGraphBaseOP ig,
 		rotamer_set::FixbbRotamerSetsCOP rotamer_sets,
 		ObjexxFCL::FArray1_int & current_rot_index,
 		bool calc_rot_freq,

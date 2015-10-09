@@ -282,9 +282,9 @@ PeptoidDesignMover::apply(
 	chemical::ResidueTypeCOPs rt_caps( chemical::ResidueTypeFinder( *ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) ).base_property( PEPTOID ).get_possible_base_residue_types() );
 	std::set< std::string > peptoid_name_set;
 	for ( Size i(1); i <= rt_caps.size(); ++i ) {
-	 	if ( rt_caps[i]->is_peptoid() ) {
-	 		peptoid_name_set.insert( rt_caps[i]->name3() );
-	 	}
+		if ( rt_caps[i]->is_peptoid() ) {
+			peptoid_name_set.insert( rt_caps[i]->name3() );
+		}
 	}
 
 	peptoid_name_set.erase( peptoid_name_set.find( "004" ) );

@@ -18,7 +18,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
@@ -245,7 +245,7 @@ void RotamerizeMover::setup( Pose & pose )
 	pose.update_residue_neighbors();
 
 	core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "empty" );
-	core::pack::interaction_graph::InteractionGraphBaseOP ig;
+	core::pack::interaction_graph::AnnealableGraphBaseOP ig;
 
 	// if present, task_factory_ always overrides/regenerates task_
 	if ( task_factory_ != 0 ) {

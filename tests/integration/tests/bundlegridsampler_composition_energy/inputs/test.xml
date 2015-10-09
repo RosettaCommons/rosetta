@@ -1,11 +1,31 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
 		<tala weights="talaris2014.wts" >
-			<Reweight scoretype=aa_composition weight=1.0 />
+			Reweight scoretype=aa_composition weight=1.0 />
+			<Reweight scoretype=envsmooth weight=2.0 />
 		</tala>
 	</SCOREFXNS>
 	<TASKOPERATIONS>
 		<ReadResfile name=resfile1 filename="inputs/resfile1.txt" />
+
+      <LayerDesign name=layerdesign layer=core_boundary_surface_Nterm_Cterm use_sidechain_neighbors=true core=1.5 surface=1.25 >
+         <core>
+           <all aa="AVILFW"/>
+         </core>
+         <boundary>
+           <all aa="N"/>
+         </boundary>
+         <surface>
+           <all aa="N"/>
+         </surface>
+			<Nterm>
+				<all aa="N"/>
+			</Nterm>
+			<Cterm>
+				<all aa="N"/>
+			</Cterm>
+      </LayerDesign>		
+		
 	</TASKOPERATIONS>
 	<FILTERS>
 	</FILTERS>
@@ -21,7 +41,7 @@
 		
 		<AtomTree name=foldtree1 fold_tree_file="inputs/foldtree1.txt" />
 		
-		<FastDesign name=fdes1 scorefxn=tala repeats=1 task_operations=resfile1>
+		<FastDesign name=fdes1 scorefxn=tala repeats=3 task_operations=layerdesign >
 			<MoveMap name=fdes1_mm>
 				<Span begin=1 end=40 chi=1 bb=1 />
 				<Jump number=1 setting=1 />

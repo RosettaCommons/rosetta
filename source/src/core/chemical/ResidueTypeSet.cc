@@ -628,8 +628,8 @@ ResidueTypeSet::get_all_types_with_variants_aa( AA aa, utility::vector1< std::st
 
 ResidueTypeCOPs
 ResidueTypeSet::get_all_types_with_variants_aa( AA aa,
-																								utility::vector1< std::string > const & variants,
-																								utility::vector1< VariantType > const & exceptions ) const
+	utility::vector1< std::string > const & variants,
+	utility::vector1< VariantType > const & exceptions ) const
 {
 	return cache_->get_all_types_with_variants_aa( aa, variants, exceptions );
 }

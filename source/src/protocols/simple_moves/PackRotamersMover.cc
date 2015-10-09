@@ -19,7 +19,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/elscripts/util.hh>
 
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -290,8 +290,6 @@ void PackRotamersMover::setup( Pose & pose )
 	note_packertask_settings( pose );
 
 	pack_rotamers_setup( pose, *scorefxn_, task_, rotamer_sets_, ig_ );
-
-	setup_IG_res_res_weights( pose, task_, rotamer_sets_, ig_ );
 }
 
 core::PackerEnergy PackRotamersMover::run( Pose & pose, utility::vector0< int > rot_to_pack ) const
@@ -351,7 +349,7 @@ ScoreFunctionCOP PackRotamersMover::score_function() const { return scorefxn_; }
 PackerTaskCOP PackRotamersMover::task() const { return task_; }
 TaskFactoryCOP PackRotamersMover::task_factory() const { return task_factory_; }
 rotamer_set::RotamerSetsCOP PackRotamersMover::rotamer_sets() const { return rotamer_sets_; }
-interaction_graph::InteractionGraphBaseCOP PackRotamersMover::ig() const { return ig_; }
+interaction_graph::AnnealableGraphBaseCOP PackRotamersMover::ig() const { return ig_; }
 
 std::ostream &operator<< (std::ostream &os, PackRotamersMover const &mover)
 {

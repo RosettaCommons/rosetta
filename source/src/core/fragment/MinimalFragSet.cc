@@ -136,7 +136,7 @@ void MinimalFragSet::read_fragment_file( std::string filename, Size top25, Size 
 			in >> vall_last_residue_key;
 			in >> vallname;
 			Size totalsize = vall_last_residue_key+vall_end_line;
-			if (totalsize > vall_torsions.size()) {
+			if ( totalsize > vall_torsions.size() ) {
 				vall_torsions.resize(totalsize);
 			}
 			tr.Info << "Reading Vall: " << vallname << ".torsions";
@@ -150,7 +150,7 @@ void MinimalFragSet::read_fragment_file( std::string filename, Size top25, Size 
 			while ( getline( valldata, vallline ) ) {
 				if ( vallline.substr(0,1) == "#" ) continue;
 				valllinecnt++;
-				if (valllinecnt >= vall_start_line && valllinecnt <= vall_end_line) {
+				if ( valllinecnt >= vall_start_line && valllinecnt <= vall_end_line ) {
 					// Chunk residue key is the last vall residue key + the vall line number for the residue
 					Size residueindex = vall_last_residue_key+valllinecnt; // See VallProvider for residue index
 					torsions t;
@@ -173,7 +173,7 @@ void MinimalFragSet::read_fragment_file( std::string filename, Size top25, Size 
 			FragDataOP current_fragment( NULL );
 			current_fragment = FragDataOP( new FragData );
 			in >> vall_residue_key >> fraglen;
-			if (vall_residue_key == 0) { // read torsions from fragment file
+			if ( vall_residue_key == 0 ) { // read torsions from fragment file
 				for ( Size i = 1; i <= fraglen; i++ ) {
 					getline( data, line );
 					istringstream fin( line );

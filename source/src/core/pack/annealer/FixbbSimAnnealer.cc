@@ -18,7 +18,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetsBase.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <basic/Tracer.hh>
 
 //#include "after_opts.h"
@@ -73,7 +73,7 @@ FixbbSimAnnealer::FixbbSimAnnealer(
 	FArray1D_int & bestrotamer_at_seqpos,
 	float & bestenergy,
 	bool start_with_current, // start simulation with current rotamers
-	interaction_graph::InteractionGraphBaseOP ig,
+	interaction_graph::AnnealableGraphBaseOP ig,
 	FixbbRotamerSetsCOP rotamer_sets,
 	FArray1_int & current_rot_index,
 	bool calc_rot_freq,
@@ -99,7 +99,7 @@ FixbbSimAnnealer::FixbbSimAnnealer(
 	FArray1D_int & bestrotamer_at_seqpos,
 	float & bestenergy,
 	bool start_with_current, // start simulation with current rotamers
-	interaction_graph::InteractionGraphBaseOP ig,
+	interaction_graph::AnnealableGraphBaseOP ig,
 	FixbbRotamerSetsCOP rotamer_set,
 	FArray1_int & current_rot_index,
 	bool calc_rot_freq,

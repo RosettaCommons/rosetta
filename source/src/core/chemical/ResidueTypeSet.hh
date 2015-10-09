@@ -124,7 +124,7 @@ public:
 	void
 	add_custom_residue_type( std::string const &  filename );
 
- 	/// @brief delete a custom residue type from the set (Use with care)
+	/// @brief delete a custom residue type from the set (Use with care)
 	void
 	remove_custom_residue_type( std::string const & name );
 
@@ -134,7 +134,7 @@ public:
 		utility::vector1< std::string > const & filenames
 	);
 
- 	/// @brief delete a custom residue type from the set (Use with *extreme* care)
+	/// @brief delete a custom residue type from the set (Use with *extreme* care)
 	void
 	remove_base_residue_type_DO_NOT_USE( std::string const & name );
 
@@ -152,7 +152,7 @@ public:
 	/// if a minimal variant type isn't availible.
 	ResidueTypeCOP
 	get_representative_type_aa( AA aa,
-															utility::vector1< std::string > const & variants ) const;
+		utility::vector1< std::string > const & variants ) const;
 
 	ResidueTypeCOP
 	get_representative_type_aa( AA aa ) const;
@@ -163,7 +163,7 @@ public:
 	/// if a minimal variant type isn't availible.
 	ResidueTypeCOP
 	get_representative_type_name1( char name1,
-																 utility::vector1< std::string > const & variants ) const;
+		utility::vector1< std::string > const & variants ) const;
 
 	ResidueTypeCOP
 	get_representative_type_name1( char name1 ) const;
@@ -174,7 +174,7 @@ public:
 	/// if a minimal variant type isn't availible.
 	ResidueTypeCOP
 	get_representative_type_name3( std::string const &  name3,
-																 utility::vector1< std::string > const & variants ) const;
+		utility::vector1< std::string > const & variants ) const;
 
 	ResidueTypeCOP
 	get_representative_type_name3( std::string const &  name3 ) const;
@@ -211,8 +211,8 @@ public:
 	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
 	ResidueTypeCOPs
 	get_all_types_with_variants_aa( AA aa,
-																	utility::vector1< std::string > const & variants,
-																	utility::vector1< VariantType > const & exceptions ) const;
+		utility::vector1< std::string > const & variants,
+		utility::vector1< VariantType > const & exceptions ) const;
 
 	/// @brief Get all non-patched ResidueTypes with the given name1
 	/// @details The number of variants must match exactly.
@@ -225,7 +225,7 @@ public:
 	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
 	ResidueTypeCOPs
 	get_all_types_with_variants_name3( std::string const & name3,
-																		 utility::vector1< std::string > const & variants ) const;
+		utility::vector1< std::string > const & variants ) const;
 
 	/// @brief query if a ResidueType of the unique residue id (name) is present.
 	bool has_name( std::string const & name ) const;
@@ -352,7 +352,7 @@ private:
 	const std::string database_directory_;
 
 	// @brief all cached residue_type information including generated residue_types, name3_map, etc.
-  // By making the following an OP (instead of COP) the cache effectively becomes mutable even when in a
+	// By making the following an OP (instead of COP) the cache effectively becomes mutable even when in a
 	// const ResidueTypeSet.
 	ResidueTypeSetCacheOP cache_;
 

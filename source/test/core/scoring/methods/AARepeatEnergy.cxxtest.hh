@@ -13,7 +13,6 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <core/scoring/methods/AARepeatEnergy.hh>
 
 // Unit headers
 
@@ -30,12 +29,29 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 
+#include <core/pose/annotated_sequence.hh>
+
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 
+#include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.hh>
+#include <core/scoring/aa_repeat_energy/AARepeatEnergy.hh>
+
+#include <core/pack/packer_neighbors.hh>
+#include <core/pack/pack_rotamers.hh>
+#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+
 //Auto Headers
 #include <utility/vector1.hh>
+
+#include <map>
+
+#include <boost/foreach.hpp>
+#define foreach_         BOOST_FOREACH
+#include <utility>
 
 
 static basic::Tracer TR("core.scoring.methods.AARepeatEnergy.cxxtest");
@@ -47,6 +63,12 @@ using namespace core;
 using namespace core::pose;
 using namespace core::scoring;
 using namespace core::scoring::methods;
+using namespace core::scoring::aa_repeat_energy;
+using namespace core::scoring::annealing;
+
+using namespace core::pack;
+using namespace core::pack::task;
+using namespace core::pack::rotamer_set;
 
 class AARepeatEnergyTests : public CxxTest::TestSuite {
 
@@ -63,6 +85,122 @@ public:
 	void tearDown() {
 	}
 
+	void test_energy_annealing() {
+
+		// Setup test pose
+		Pose pose;
+		make_pose_from_sequence( pose, "AAAAAAAA", "fa_standard");
+
+		// Setup score function
+		ScoreFunction scorefxn;
+		scorefxn.set_weight( aa_repeat, 1 );
+		PackerEnergy prepack_score = scorefxn(pose);
+
+		TS_ASSERT_DELTA(prepack_score, 100, 1e-6);
+
+		// Setup packer task and packer objects
+		PackerTaskOP task( TaskFactory::create_packer_task( pose ));
+
+		utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, false );
+		keep_aas[ core::chemical::aa_ala ] = true;
+		keep_aas[ core::chemical::aa_gly ] = true;
+
+		for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+			task->nonconst_residue_task( i ).restrict_absent_canonical_aas( keep_aas );
+		}
+
+		RotamerSetsOP rotsets( new RotamerSets() );
+		rotsets->set_task( task );
+		graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scorefxn, task );
+		rotsets->build_rotamers( pose, scorefxn, packer_neighbor_graph );
+
+		TS_ASSERT_EQUALS( rotsets->nrotamers(), pose.total_residue() * 2);
+
+		core::pack::interaction_graph::ResidueArrayAnnealingEvaluator ev;
+		ev.initialize( scorefxn, pose, *rotsets, packer_neighbor_graph);
+
+		TS_ASSERT_EQUALS( ev.get_num_nodes(), 8);
+		TS_ASSERT_EQUALS( ev.get_num_total_states(), 16);
+		TS_ASSERT_EQUALS( ev.get_num_states_for_node(1), 2);
+
+		// Base assignment should be base pose score...
+		TS_ASSERT_EQUALS( ev.any_vertex_state_unassigned(), true );
+		TS_ASSERT_DELTA( ev.get_energy_current_state_assignment(), 100, 1e-6);
+
+		// Test state assignment and consideration
+		for ( int r = 1; r < ev.get_num_nodes(); ++r ) {
+			ev.set_state_for_node( r, r % 2 + 1);
+		}
+		TS_ASSERT_DELTA( ev.get_energy_current_state_assignment(), 0, 1e-6);
+
+		ev.set_state_for_node( 4, 2 );
+		TS_ASSERT_DELTA( ev.get_energy_current_state_assignment(), 1, 1e-6);
+
+		PackerEnergy delta_energy;
+		PackerEnergy pre_energy;
+
+		ev.set_state_for_node( 4, 1 );
+		TS_ASSERT_DELTA( ev.get_energy_current_state_assignment(), 0, 1e-6);
+
+		ev.consider_substitution( 4, 2, delta_energy, pre_energy );
+		TS_ASSERT_DELTA( delta_energy, 1, 1e-6);
+		TS_ASSERT_DELTA( ev.get_energy_current_state_assignment(), 0, 1e-6);
+
+		ev.consider_substitution( 6, 2, delta_energy, pre_energy );
+		TS_ASSERT_DELTA( delta_energy, 1, 1e-6);
+		TS_ASSERT_DELTA( ev.get_energy_current_state_assignment(), 0, 1e-6);
+
+		ev.commit_considered_substitution( );
+		TS_ASSERT_DELTA( ev.get_energy_current_state_assignment(), 1, 1e-6);
+
+		// Test via pack_rotamers run
+		pack_rotamers(pose, scorefxn, task);
+		PackerEnergy postpack_score = scorefxn(pose);
+
+		TS_ASSERT_DELTA(postpack_score, 0, 1e-6);
+	}
+
+	void test_energy_cases() {
+		typedef std::map< std::string, float> ScoreMap;
+		ScoreMap expected_scores;
+
+		expected_scores["A"] = 0;
+		expected_scores["AA"] = 0;
+		expected_scores["AAA"] = 1;
+		expected_scores["AAAA"] = 10;
+		expected_scores["AAAAA"] = 100;
+		expected_scores["AAAAAA"] = 100;
+
+		expected_scores["GAAAG"] = 1;
+		expected_scores["GAAAAG"] = 10;
+		expected_scores["GAAA"] = 1;
+		expected_scores["AAAG"] = 1;
+
+		expected_scores["AGAGAGAG"] = 0;
+		expected_scores["AAAGAGAG"] = 1;
+		expected_scores["AGAAAGAG"] = 1;
+		expected_scores["AGAGAGGG"] = 1;
+
+		expected_scores["GGGAAA"] = 2;
+		expected_scores["GGGAAAA"] = 11;
+		expected_scores["GGGGAAAA"] = 20;
+
+		expected_scores["GGGGAAAATTTT"] = 30;
+		expected_scores["GGGGAAAAGGGG"] = 30;
+		expected_scores["GGGGAAAAGGGG"] = 30;
+
+		ScoreFunction sfxn;
+		sfxn.set_weight( aa_repeat, 1 );
+
+		foreach_ ( ScoreMap::value_type &i, expected_scores ) {
+			Pose test_pose;
+			make_pose_from_sequence( test_pose, i.first, "fa_standard");
+
+			TR << i.first << " " << i.second << std::endl;
+
+			TS_ASSERT_DELTA( sfxn(test_pose), i.second, 1e-6);
+		}
+	}
 	/// @brief Test the energy calculation for varying numbers of repeating residues.
 	///
 	void test_energy_eval() {
@@ -77,7 +215,7 @@ public:
 
 		Pose trpcage( create_trpcage_ideal_pose() );
 		ScoreFunction sfxn;
-		sfxn.set_weight( aa_repeat_energy, 0.5 );
+		sfxn.set_weight( aa_repeat, 0.5 );
 
 		sfxn(trpcage);
 		if ( TR.visible() ) TR << "TEST\tEXPECTED\tACTUAL" << std::endl;

@@ -16,7 +16,7 @@
 
 // Unit Headers
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
-
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 
 // Package Headers
 
@@ -302,19 +302,14 @@ private:
 
 };
 
-class InteractionGraphBase : public utility::pointer::ReferenceCount
+class InteractionGraphBase : public AnnealableGraphBase
 {
 public:
 	virtual ~InteractionGraphBase();
 
 	InteractionGraphBase(int num_nodes);
 
-	virtual int get_num_nodes_v() const
-	{
-		return get_num_nodes();
-	}
-
-	inline
+	virtual
 	int get_num_nodes() const
 	{
 		return num_ig_nodes_;
@@ -323,8 +318,8 @@ public:
 	virtual void initialize( rotamer_set::RotamerSetsBase const & rot_sets ) = 0;
 
 	void set_num_states_for_node(int node, int num_states);
-	int  get_num_states_for_node(int node) const;
-	int  get_num_total_states() const {return num_total_states_;}
+	virtual int get_num_states_for_node(int node) const;
+	virtual int get_num_total_states() const {return num_total_states_;}
 	virtual core::PackerEnergy get_one_body_energy_for_node_state( int node, int state) = 0;
 	void add_edge( int node1, int node2);
 	bool get_edge_exists(int node1, int node2);
@@ -357,7 +352,7 @@ public:
 	virtual void print_current_state_assignment() const = 0;
 	virtual void set_errorfull_deltaE_threshold( core::PackerEnergy deltaE ) = 0;
 
-	bool any_vertex_state_unassigned() const;
+	virtual bool any_vertex_state_unassigned() const;
 
 	void add_to_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & one_body_energies );
 	void update_one_body_energies( ObjexxFCL::FArray1< core::PackerEnergy > & old_energy1b, ObjexxFCL::FArray1< core::PackerEnergy > & new_energy1b);

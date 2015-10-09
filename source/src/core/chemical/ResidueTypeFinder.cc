@@ -240,11 +240,11 @@ ResidueTypeFinder::apply_patches_recursively(
 		// note -- make sure to apply patch if it has a chance of satisfying any of
 		// the constraints on variants, branchpoints, or properties.
 		bool apply_patch = (  adds_any_variant ( patch ) ||
-													adds_any_property( patch, rsd_type ) ||
-													matches_any_patch_name( patch )      ||
-													matches_any_atom_name( patch, rsd_type ) ||
-													fixes_name3( patch, rsd_type ) ||
-													fixes_interchangeability_group( patch, rsd_type ) );
+			adds_any_property( patch, rsd_type ) ||
+			matches_any_patch_name( patch )      ||
+			matches_any_atom_name( patch, rsd_type ) ||
+			fixes_name3( patch, rsd_type ) ||
+			fixes_interchangeability_group( patch, rsd_type ) );
 
 		if ( apply_patch ) {
 			// following just gets the right name of the patched residue
@@ -307,8 +307,8 @@ ResidueTypeFinder::filter_by_name3( ResidueTypeCOPs const & rsd_types, bool cons
 		// with their specialty string -- the first three letters of the residue name.
 		// E.g., CYD will appear in both lists for name3_map_[ "CYS" ] and name3_map_[ "CYD" ]
 		if ( rsd_type->name3() == name3_ ||
-				 rsd_type->name().substr(0,3) == name3_ ||
-				 ( keep_if_base_type_generates_name3 && residue_type_set_.generates_patched_residue_type_with_name3( rsd_type->name(), name3_ ) ) ) {
+				rsd_type->name().substr(0,3) == name3_ ||
+				( keep_if_base_type_generates_name3 && residue_type_set_.generates_patched_residue_type_with_name3( rsd_type->name(), name3_ ) ) ) {
 			rsd_types_new.push_back( rsd_type );
 		}
 	}
@@ -325,8 +325,8 @@ ResidueTypeFinder::filter_by_interchangeability_group( ResidueTypeCOPs const & r
 	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
 		ResidueTypeCOP rsd_type( rsd_types[ n ] );
 		if ( rsd_type->interchangeability_group() == interchangeability_group_ ||
-				 ( keep_if_base_type_generates_interchangeability_group &&
-					 residue_type_set_.generates_patched_residue_type_with_interchangeability_group( rsd_type->name(), interchangeability_group_ ) ) ) {
+				( keep_if_base_type_generates_interchangeability_group &&
+				residue_type_set_.generates_patched_residue_type_with_interchangeability_group( rsd_type->name(), interchangeability_group_ ) ) ) {
 			rsd_types_new.push_back( rsd_type );
 		}
 	}
@@ -416,8 +416,8 @@ bool
 ResidueTypeFinder::fixes_name3( PatchCOP patch, ResidueTypeCOP rsd_type ) const
 {
 	if ( name3_.size() > 0 &&
-			 rsd_type->name3() != name3_ &&
-			 residue_type_set_.generates_patched_residue_type_with_name3( residue_type_base_name( *rsd_type ), name3_ ) &&
+			rsd_type->name3() != name3_ &&
+			residue_type_set_.generates_patched_residue_type_with_name3( residue_type_base_name( *rsd_type ), name3_ ) &&
 			patch->apply( *rsd_type, false /*instantiate*/ )->name3() == name3_ ) {
 		return true;
 	}
@@ -429,10 +429,10 @@ bool
 ResidueTypeFinder::fixes_interchangeability_group( PatchCOP patch, ResidueTypeCOP rsd_type ) const
 {
 	if ( interchangeability_group_.size() > 0 &&
-			 rsd_type->interchangeability_group() != interchangeability_group_ &&
-			 residue_type_set_.generates_patched_residue_type_with_interchangeability_group( residue_type_base_name( *rsd_type ),
-																																											 interchangeability_group_ ) &&
-			 patch->apply( *rsd_type, false /*instantiate*/ )->interchangeability_group() == interchangeability_group_ ) {
+			rsd_type->interchangeability_group() != interchangeability_group_ &&
+			residue_type_set_.generates_patched_residue_type_with_interchangeability_group( residue_type_base_name( *rsd_type ),
+			interchangeability_group_ ) &&
+			patch->apply( *rsd_type, false /*instantiate*/ )->interchangeability_group() == interchangeability_group_ ) {
 		return true;
 	}
 	return false;
@@ -759,7 +759,7 @@ void
 print_variant_types_used() {
 	std::cout << "Following was used to setup src/core/chemical/legacy_types.cc : " << std::endl;
 	for ( std::set< VariantType >::const_iterator it = variant_types_used.begin();
-				it != variant_types_used.end(); it++ ) {
+			it != variant_types_used.end(); it++ ) {
 		std::cout << "variant_types_list_LEGACY.push_back( " <<  ResidueProperties::get_string_from_variant( *it ) <<  " );" << std::endl;
 	}
 }

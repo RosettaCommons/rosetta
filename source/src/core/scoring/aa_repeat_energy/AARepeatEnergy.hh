@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/scoring/methods/AARepeatEnergy.hh
+/// @file core/scoring/aa_repeat_energy/AARepeatEnergy.hh
 /// @brief Headers for an EnergyMethod that penalizes stretches of a repeating amino acid (e.g. poly-Q sequences).
 /// @details This energy method is inherently not pairwise decomposible.  However, it is intended for very rapid calculation,
 /// and has been designed to plug into Alex Ford's modifications to the packer that permit it to work with non-pairwise scoring
@@ -16,17 +16,18 @@
 
 
 
-#ifndef INCLUDED_core_scoring_methods_AARepeatEnergy_hh
-#define INCLUDED_core_scoring_methods_AARepeatEnergy_hh
+#ifndef INCLUDED_core_scoring_aa_repeat_energy_AARepeatEnergy_hh
+#define INCLUDED_core_scoring_aa_repeat_energy_AARepeatEnergy_hh
 
 // Unit headers
-#include <core/scoring/methods/AARepeatEnergy.fwd.hh>
+#include <core/scoring/aa_repeat_energy/AARepeatEnergy.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
+#include <core/scoring/annealing/ResidueArrayAnnealableEnergy.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -38,15 +39,16 @@
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace aa_repeat_energy {
 
 /// @brief AARepeatEnergy, an energy function to penalize stretches of the same residue,
 /// derived from base class for EnergyMethods, which are meaningful only on entire structures.
 /// These EnergyMethods do all of their work in the "finalize_total_energy" section of score
 /// function evaluation.
-class AARepeatEnergy : public WholeStructureEnergy {
+class AARepeatEnergy : public methods::WholeStructureEnergy, public core::scoring::annealing::ResidueArrayAnnealableEnergy  {
 public:
-	typedef WholeStructureEnergy parent;
+	typedef methods::WholeStructureEnergy parent1;
+	typedef core::scoring::annealing::ResidueArrayAnnealableEnergy parent2;
 
 public:
 
@@ -64,7 +66,7 @@ public:
 
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.
-	virtual EnergyMethodOP clone() const;
+	virtual methods::EnergyMethodOP clone() const;
 
 	/// @brief AARepeatEnergy is context-independent and thus indicates that no context graphs need to be maintained by
 	/// class Energies.
@@ -80,7 +82,7 @@ public:
 
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues.
 	/// @details Called by finalize_total_energy().
-	virtual core::Real calculate_aa_repeat_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const;
+	virtual core::Real calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const;
 
 private:
 
@@ -112,7 +114,7 @@ private:
 
 };
 
-} // methods
+} // aa_repeat_energy
 } // scoring
 } // core
 

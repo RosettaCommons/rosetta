@@ -125,8 +125,8 @@ ResidueLevelTask_::ResidueLevelTask_(
 		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 			ResidueTypeCOPs const & aas( residue_set.get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
 			for ( ResidueTypeCOPs::const_iterator
-							aas_iter = aas.begin(),
-							aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+					aas_iter = aas.begin(),
+					aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 				allowed_residue_types_.push_back( *aas_iter );
 			}
 		}
@@ -897,8 +897,8 @@ void ResidueLevelTask_::allow_noncanonical_aa(
 	for ( Size ii = chemical::num_canonical_aas + 1; ii <= chemical::num_aa_types; ++ii ) {
 		ResidueTypeCOPs const & aas( ResidueTypeFinder( residue_set ).aa( AA( ii ) ).variants( original_residue_type_->variant_types() ).interchangeability_group( interchangeability_group ).get_all_possible_residue_types() );
 		for ( ResidueTypeCOPs::const_iterator
-						aas_iter = aas.begin(),
-						aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+				aas_iter = aas.begin(),
+				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 			if ( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) == allowed_residue_types_.end() /* haven't already added it */ ) {
 				allowed_residue_types_.push_back( *aas_iter );
 			}

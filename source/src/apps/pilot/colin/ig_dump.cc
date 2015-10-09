@@ -34,6 +34,7 @@
 #include <devel/init.hh>
 #include <basic/options/option.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -116,10 +117,12 @@ main( int argc, char * argv [] )
 			// allocate variables necessary for creating an interaction graph
 			PackerTaskCOP task = main_task_factory->create_task_and_apply_taskoperations( *input_pose );
 			core::pack::rotamer_set::RotamerSetsOP rotsets( new core::pack::rotamer_set::RotamerSets );
-			core::pack::interaction_graph::InteractionGraphBaseOP ig;
+			core::pack::interaction_graph::AnnealableGraphBaseOP igbase;
 
 			// create rotamers and calculate interaction graph energies
-			core::pack::pack_rotamers_setup(*input_pose, *score_fxn, task, rotsets, ig);
+			core::pack::pack_rotamers_setup(*input_pose, *score_fxn, task, rotsets, igbase);
+
+			core::pack::interaction_graph::InteractionGraphBaseOP ig = utility::pointer::dynamic_pointer_cast<core::pack::interaction_graph::InteractionGraphBase>(igbase);
 
 			int const num_nodes(ig->get_num_nodes());
 

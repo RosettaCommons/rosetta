@@ -20,7 +20,7 @@
 // Package Headers
 #include <core/pack/annealer/RotamerAssigningAnnealer.hh>
 
-#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
@@ -39,7 +39,7 @@ class FixbbCoupledRotamerSimAnnealer;
 class FixbbCoupledRotamerSimAnnealer : public RotamerAssigningAnnealer
 {
 public:
-	typedef interaction_graph::InteractionGraphBaseOP InteractionGraphBaseOP;
+	typedef interaction_graph::AnnealableGraphBaseOP AnnealableGraphBaseOP;
 	typedef rotamer_set::RotamerSetsCOP RotamerSetsCOP;
 	typedef rotamer_set::RotamerSetCOP RotamerSetCOP;
 	typedef rotamer_set::RotamerCouplingsOP   RotamerCouplingsOP;
@@ -51,7 +51,7 @@ public:
 		ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 		core::PackerEnergy & bestenergy,
 		bool start_with_current, // start simulation with current rotamers
-		InteractionGraphBaseOP ig,
+		AnnealableGraphBaseOP ig,
 		FixbbRotamerSetsCOP rotamer_sets,
 		ObjexxFCL::FArray1_int & current_rot_index,
 		bool calc_rot_freq,
@@ -63,7 +63,7 @@ public:
 		ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 		core::PackerEnergy & bestenergy,
 		bool start_with_current, // start simulation with current rotamers
-		InteractionGraphBaseOP ig,
+		AnnealableGraphBaseOP ig,
 		FixbbRotamerSetsCOP rotamer_sets,
 		ObjexxFCL::FArray1_int & current_rot_index,
 		bool calc_rot_freq,
@@ -81,7 +81,7 @@ private:
 	void
 	setup_rotamer_couplings( RotamerCouplingsCOP rotamer_couplings );
 
-	InteractionGraphBaseOP ig_;
+	AnnealableGraphBaseOP ig_;
 	FixbbCoupledRotamerSimAnnealer(const FixbbCoupledRotamerSimAnnealer& rhs);
 	RotamerCouplingsOP rotamer_couplings_;
 };

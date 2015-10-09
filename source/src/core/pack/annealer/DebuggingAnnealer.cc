@@ -16,7 +16,7 @@
 
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 
 #include <ObjexxFCL/Fmath.hh>
 
@@ -54,7 +54,7 @@ DebuggingAnnealer::DebuggingAnnealer(
 	ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 	float & bestenergy,
 	bool start_with_current, // start simulation with current rotamers
-	interaction_graph::InteractionGraphBaseOP ig,
+	interaction_graph::AnnealableGraphBaseOP ig,
 	rotamer_set::FixbbRotamerSetsCOP p_rotamer_set,
 	ObjexxFCL::FArray1_int & current_rot_index,
 	bool calc_rot_freq,
@@ -78,7 +78,7 @@ DebuggingAnnealer::DebuggingAnnealer(
 	ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 	PackerEnergy & bestenergy,
 	bool start_with_current, // start simulation with current rotamers
-	interaction_graph::InteractionGraphBaseOP ig,
+	interaction_graph::AnnealableGraphBaseOP ig,
 	rotamer_set::FixbbRotamerSetsCOP p_rotamer_set,
 	ObjexxFCL::FArray1_int & current_rot_index,
 	bool calc_rot_freq,

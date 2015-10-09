@@ -48,6 +48,7 @@ public:
 	SymmetricRotamerSets();
 	~SymmetricRotamerSets();
 
+	virtual
 	void
 	compute_energies(
 		pose::Pose const & pose,
@@ -56,8 +57,7 @@ public:
 		interaction_graph::InteractionGraphBaseOP ig
 	);
 
-public:
-
+	virtual
 	void
 	compute_one_body_energies(
 		pose::Pose const & pose,
@@ -69,6 +69,7 @@ public:
 	/// @brief precomputes all rotamer pair energies between neighboring RotamerSets( residues )
 	/// and stores those energies in an intereaction graph capable of storing them
 	/// public so it can be used by the GreenPacker.
+	virtual
 	void
 	precompute_two_body_energies(
 		pose::Pose const & pose,
@@ -78,6 +79,7 @@ public:
 		bool const finalize_edges = true
 	);
 
+private:
 	void
 	prepare_symm_otf_interaction_graph(
 		pose::Pose const & pose,

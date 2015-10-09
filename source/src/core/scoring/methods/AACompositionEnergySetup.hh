@@ -38,11 +38,23 @@
 #include <map>
 #include <string>
 #include <utility/vector1.hh>
-
+#include <math.h>
 
 namespace core {
 namespace scoring {
 namespace methods {
+
+/// @brief The different types of behaviour for the penalty values past the defined range.
+/// @details When values are added to this enum, they should also be added to the AACompositionEnergySetup::get_tailfunction_name() function.
+enum TailFunction {
+	//When adding an effect to this enum, add its name to the get_tailfunction_name() function.
+	tf_linear = 1,
+	tf_quadratic,
+	tf_constant,
+	tf_unknown, //Keep this second-to-last
+	tf_end_of_list=tf_unknown //Keep this last
+};
+
 
 /// @brief AACompositionPropertiesSet, a helper class that stores a set of properties that MUST
 /// be present for a residue to be counted, and a set of properties that MUST NOT be present for
@@ -50,22 +62,22 @@ namespace methods {
 class AACompositionPropertiesSet : public utility::pointer::ReferenceCount {
 public:
 
-	/// @brief Default constructor for AACompositionEnergySetupPropertiesSet.
+	/// @brief Default constructor for AACompositionPropertiesSet.
 	///
 	AACompositionPropertiesSet();
 
-	/// @brief Constructor for AACompositionEnergySetupPropertiesSet that takes lists of
+	/// @brief Constructor for AACompositionPropertiesSet that takes lists of
 	/// included and excluded properties.
 	AACompositionPropertiesSet(
 		utility::vector1< std::string > const &included_properties_strings,
 		utility::vector1< std::string > const &excluded_properties_strings
 	);
 
-	/// @brief Copy constructor for AACompositionEnergySetupPropertiesSet.
+	/// @brief Copy constructor for AACompositionPropertiesSet.
 	///
 	AACompositionPropertiesSet( AACompositionPropertiesSet const &src );
 
-	/// @brief Default destructor for AACompositionEnergySetupPropertiesSet.
+	/// @brief Default destructor for AACompositionPropertiesSet.
 	///
 	virtual ~AACompositionPropertiesSet();
 
@@ -181,6 +193,20 @@ public:
 
 public:
 
+	/***********************
+	Public lookup functions:
+	***********************/
+
+	/// @brief Get tail function name from enum.
+	///
+	std::string get_tailfunction_name( TailFunction const tf ) const;
+
+	/// @brief Get tail function enum from name.
+	/// @details This is slow; it calls get_tailfunction_name repeatedly.  Intended only for use during setup.
+	TailFunction get_tailfunction_from_name( std::string const &name ) const;
+
+public:
+
 	/*************************
 	Public accessor functions:
 	*************************/
@@ -188,16 +214,16 @@ public:
 	/// @brief Look up the penalty for a residue type of internal index res_type_index, given a deviation from
 	/// the desired count given by delta_expected.
 	inline core::Real type_penalty( signed long const delta_expected, core::Size const res_type_index) const {
-		if ( delta_expected < type_deviation_ranges_[res_type_index].first ) return type_penalties_[res_type_index][1];
-		if ( delta_expected > type_deviation_ranges_[res_type_index].second ) return type_penalties_[res_type_index][ type_penalties_[res_type_index].size() ];
+		if ( delta_expected < type_deviation_ranges_[res_type_index].first ) return out_of_bounds_func( res_type_index, delta_expected, true, false ); //type_penalties_[res_type_index][1];
+		if ( delta_expected > type_deviation_ranges_[res_type_index].second ) return out_of_bounds_func( res_type_index, delta_expected, false, false );// type_penalties_[res_type_index][ type_penalties_[res_type_index].size() ];
 		return type_penalties_[res_type_index][ delta_expected - type_deviation_ranges_[res_type_index].first + 1 ];
 	}
 
 	/// @brief Look up the penalty for a property set of internal index property_set_index, given a deviation from
 	/// the desired count given by delta_expected.
 	inline core::Real property_penalty( signed long const delta_expected, core::Size const property_set_index) const {
-		if ( delta_expected < property_deviation_ranges_[property_set_index].first ) return property_penalties_[property_set_index][1];
-		if ( delta_expected > property_deviation_ranges_[property_set_index].second ) return property_penalties_[property_set_index][ property_penalties_[property_set_index].size() ];
+		if ( delta_expected < property_deviation_ranges_[property_set_index].first ) return out_of_bounds_func( property_set_index, delta_expected, true, true ); //property_penalties_[property_set_index][1];
+		if ( delta_expected > property_deviation_ranges_[property_set_index].second ) return out_of_bounds_func( property_set_index, delta_expected, false, true );
 		return property_penalties_[property_set_index][ delta_expected - property_deviation_ranges_[property_set_index].first + 1 ];
 	}
 
@@ -266,6 +292,146 @@ private:
 	///
 	void check_data() const;
 
+	/// @brief Calculate the out-of-bounds behaviour of the penalty function and return the penalty value.
+	/// @details Inputs are:
+	/// @param[in] index The index in the list of properties or residue types that we're counting.
+	/// @param[in] delta_expected The deviation from the expected count.
+	/// @param[in] before If true, this is beyond the low range of penalty values.  If false, we're beyond the high range.
+	/// @param[in] property If true, we're counting property sets.  If false, we're counting residue types.
+	inline core::Real out_of_bounds_func(
+		core::Size const index,
+		signed long const delta_expected,
+		bool const before,
+		bool const property
+	) const {
+		TailFunction tf( tf_unknown );
+		if ( property ) {
+			if ( before ) tf=property_tailfunctions_[index].first;
+			else /*if !before*/ tf=property_tailfunctions_[index].second;
+		} else { // if !property
+			if ( before ) tf=type_tailfunctions_[index].first;
+			else /*if !before*/ tf=type_tailfunctions_[index].second;
+		}
+
+		switch(tf) {
+		case tf_constant :
+			return const_out_of_bounds_func(before, property, index);
+			break;
+		case tf_linear :
+			return linear_out_of_bounds_func( before, property, index, delta_expected );
+			break;
+		case tf_quadratic :
+			return quadratic_out_of_bounds_func( before, property, index, delta_expected );
+			break;
+		default :
+			utility_exit_with_message( "Error in core::scoring::methods::AACompositionEnergySetup::out_of_bounds_func(): Unknown out of bounds function." );
+		}
+
+		return 0.0;
+	}
+
+	/// @brief Return a constant value for an out-of-bounds behaviour.
+	/// @details Inputs are:
+	/// @param[in] before If true, this is beyond the low range of penalty values.  If false, we're beyond the high range.
+	/// @param[in] property If true, we're counting property sets.  If false, we're counting residue types.
+	/// @param[in] index The index in the list of properties or residue types that we're counting.
+	inline core::Real const_out_of_bounds_func(
+		bool const before,
+		bool const property,
+		core::Size const index
+	) const {
+		if ( before ) {
+			if ( property ) {
+				return property_penalties_[index][1];
+			} else { //if type
+				return type_penalties_[index][1];
+			}
+		} else { //if after
+			if ( property ) {
+				return property_penalties_[index][property_penalties_[index].size()];
+			} else { //if type
+				return type_penalties_[index][type_penalties_[index].size()];
+			}
+		}
+		return 0.0;
+	}
+
+	/// @brief Return a linear value for an out-of-bounds behaviour.
+	/// @details This fits the first two or last two points to a straight line, then extends it.  Inputs are:
+	/// @param[in] before If true, this is beyond the low range of penalty values.  If false, we're beyond the high range.
+	/// @param[in] property If true, we're counting property sets.  If false, we're counting residue types.
+	/// @param[in] index The index in the list of properties or residue types that we're counting.
+	/// @param[in] delta_expected The deviation from the expected count.
+	inline core::Real linear_out_of_bounds_func(
+		bool const before,
+		bool const property,
+		core::Size const index,
+		signed long const delta_expected
+	) const {
+		core::Real m(0.0); //slope
+		core::Real b(0.0); //intercept
+
+		if ( before ) {
+			if ( property ) {
+				m = (property_penalties_[index][2] - property_penalties_[index][1]); //denominator is 1
+				b = (property_penalties_[index][1] - m * static_cast<core::Real>(property_deviation_ranges_[index].first) );
+			} else { //if type
+				m = (type_penalties_[index][2] - type_penalties_[index][1]); //denominator is 1
+				b = (type_penalties_[index][1] - m * static_cast<core::Real>(type_deviation_ranges_[index].first) );
+			}
+		} else { //if after
+			if ( property ) {
+				m = (property_penalties_[index][ property_penalties_[index].size() ] - property_penalties_[index][ property_penalties_[index].size()-1 ]); //denominator is 1
+				b = (property_penalties_[index][ property_penalties_[index].size() ] - m * static_cast<core::Real>(property_deviation_ranges_[index].second) );
+			} else { //if type
+				m = (type_penalties_[index][ type_penalties_[index].size() ] - type_penalties_[index][ type_penalties_[index].size()-1 ]); //denominator is 1
+				b = (type_penalties_[index][ type_penalties_[index].size() ] - m * static_cast<core::Real>(type_deviation_ranges_[index].second) );
+			}
+		}
+		return m*static_cast<core::Real>(delta_expected)+b;
+	}
+
+	/// @brief Return a quadratic value for an out-of-bounds behaviour.
+	/// @details This fits the first two or the last two values to a parabola centred on the origin, then extends it.  Inputs are:
+	/// @param[in] before If true, this is beyond the low range of penalty values.  If false, we're beyond the high range.
+	/// @param[in] property If true, we're counting property sets.  If false, we're counting residue types.
+	/// @param[in] index The index in the list of properties or residue types that we're counting.
+	/// @param[in] delta_expected The deviation from the expected count.
+	inline core::Real quadratic_out_of_bounds_func(
+		bool const before,
+		bool const property,
+		core::Size const index,
+		signed long const delta_expected
+	) const {
+		core::Real a(0.0); //coefficient of y=ax^2+b
+		core::Real b(0.0); //intercept of y=ax^2+b
+
+		if ( before ) {
+			if ( property ) {
+				core::Real const x1sq( pow( static_cast<core::Real>(property_deviation_ranges_[index].first), 2 ) );
+				a = ( property_penalties_[index][1] - property_penalties_[index][2] ) / ( x1sq - pow( static_cast<core::Real>(property_deviation_ranges_[index].first + 1 ), 2 ) );
+				b = (property_penalties_[index][1] - a * x1sq );
+			} else { //if type
+				core::Real const x1sq( pow( static_cast<core::Real>( type_deviation_ranges_[index].first ), 2 ) );
+				a = ( type_penalties_[index][1] - type_penalties_[index][2] ) / ( x1sq - pow( static_cast<core::Real>( type_deviation_ranges_[index].first + 1 ), 2 ) );
+				b = (type_penalties_[index][1] - a * x1sq );
+			}
+		} else { //if after
+			if ( property ) {
+				core::Real const x2sq( pow( static_cast<core::Real>( property_deviation_ranges_[index].second ), 2 ) );
+				a = ( property_penalties_[index][ property_penalties_[index].size()-1 ] - property_penalties_[index][ property_penalties_[index].size() ] ) /
+					( pow( static_cast<core::Real>( property_deviation_ranges_[index].second - 1 ), 2 ) - x2sq);
+				b = (property_penalties_[index][property_penalties_[index].size()] - a * x2sq );
+			} else { //if type
+				core::Real const x2sq( pow( static_cast<core::Real>( type_deviation_ranges_[index].second ), 2 ) );
+				a = ( type_penalties_[index][ type_penalties_[index].size()-1 ] - type_penalties_[index][ type_penalties_[index].size() ] ) /
+					( pow( static_cast<core::Real>( type_deviation_ranges_[index].second - 1 ), 2 ) - x2sq);
+				b = (type_penalties_[index][type_penalties_[index].size()] - a * x2sq );
+			}
+		}
+		return a*pow( static_cast<core::Real>(delta_expected), 2) + b;
+	}
+
 private:
 
 	/******************
@@ -277,12 +443,12 @@ private:
 	std::map< std::string, core::Size > res_type_index_mappings_;
 
 	/// @brief Penalties for each residue count and each residue type.
-	/// @brief Outer vector is the residue type, by internal index.  Inner vector is
+	/// @details Outer vector is the residue type, by internal index.  Inner vector is
 	/// the penalty value for a given deviation from the ideal count, by internal index.
 	utility::vector1 < utility::vector1 < core::Real > > type_penalties_;
 
 	/// @brief Deviation ranges for each residue type.
-	/// @brief Outer vector is the residue type, by internal index.  Inner vector is pairs
+	/// @details Outer vector is the residue type, by internal index.  Inner vector is pairs
 	/// of deviation ranges (e.g. -10,5 indicating that we are storing penalties for having 10
 	/// residues too few up to 5 residues too many for a given type).  Deviations outside of this
 	/// range are assigned the value from the end of the range.
@@ -295,6 +461,14 @@ private:
 	/// @brief The expected number of residues for each type (by type index), as an absolute number.
 	/// @details If this is negative, the fraction is used instead.
 	utility::vector1 < signed long > expected_by_type_absolute_;
+
+	/// @brief The behaviours at the end of the user-defined range for each residue type.
+	/// @details By default, past the user-defined range, the energy increases quadratically with
+	/// increasing deviations from ideal sequence composition.  The user can set this to be linear
+	/// or constant, though.  The vector index corresponds to the type index, and the
+	/// internal std::pair represents the behaviour below the range and the behaviour above the
+	/// range.
+	utility::vector1 < std::pair <TailFunction, TailFunction > > type_tailfunctions_;
 
 	/// @brief The residue property sets that we'll be counting.
 	///
@@ -309,16 +483,24 @@ private:
 	utility::vector1 < signed long > expected_by_properties_absolute_;
 
 	/// @brief Penalties for each residue count (relative to expected) and each property set.
-	/// @brief Outer vector is the property set, by internal index.  Inner vector is
+	/// @details Outer vector is the property set, by internal index.  Inner vector is
 	/// the penalty value for a given deviation from the ideal count, by internal index.
 	utility::vector1 < utility::vector1 < core::Real > > property_penalties_;
 
 	/// @brief Deviation ranges for each property set.
-	/// @brief Outer vector is the property set, by internal index.  Inner vector is pairs
+	/// @details Outer vector is the property set, by internal index.  Inner vector is pairs
 	/// of deviation ranges (e.g. -10,5 indicating that we are storing penalties for having 10
 	/// residues too few up to 5 residues too many for a given property set).  Deviations outside
 	/// of this range are assigned the value from the end of the range.
 	utility::vector1 < std::pair < signed long, signed long > > property_deviation_ranges_;
+
+	/// @brief The behaviours at the end of the user-defined range for each property set.
+	/// @details By default, past the user-defined range, the energy increases quadratically with
+	/// increasing deviations from ideal sequence composition.  The user can set this to be linear
+	/// or constant, though.  The vector index corresponds to the property set index, and the
+	/// internal std::pair represents the behaviour below the range and the behaviour above the
+	/// range.
+	utility::vector1 < std::pair <TailFunction, TailFunction > > property_tailfunctions_;
 
 };
 

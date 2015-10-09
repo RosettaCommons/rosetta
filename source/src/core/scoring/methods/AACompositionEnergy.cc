@@ -70,7 +70,8 @@ AACompositionEnergyCreator::score_types_for_method() const
 /// @brief Default constructor.
 ///
 AACompositionEnergy::AACompositionEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
+	parent1( methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
+	parent2( ),
 	setup_helper_( new AACompositionEnergySetup )
 {
 	using namespace basic::options;
@@ -81,7 +82,8 @@ AACompositionEnergy::AACompositionEnergy() :
 /// @brief Copy constructor.
 ///
 AACompositionEnergy::AACompositionEnergy( AACompositionEnergy const &src ) :
-	parent( methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
+	parent1( methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
+	parent2( src ),
 	setup_helper_( src.setup_helper_->clone() ) //CLONE the helper data; don't copy them.
 {
 }
@@ -127,7 +129,7 @@ void AACompositionEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreF
 		resvector.push_back( pose.residue(ir).get_self_ptr() );
 	}
 
-	totals[ aa_composition ] += calculate_aa_composition_energy( resvector ); //Using the vector of residue owning pointers, calculate the repeat energy (unweighted) and set the aa_composition to this value.
+	totals[ aa_composition ] += calculate_energy( resvector ); //Using the vector of residue owning pointers, calculate the repeat energy (unweighted) and set the aa_composition to this value.
 
 	return;
 }
@@ -135,13 +137,13 @@ void AACompositionEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreF
 /// @brief Calculate the total energy given a vector of const owning pointers to residues.
 /// @details Called by finalize_total_energy().  Calls calculate_energy_by_restype() and
 /// calculate_energy_by_properties().
-core::Real AACompositionEnergy::calculate_aa_composition_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const
+core::Real AACompositionEnergy::calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const
 {
 	return calculate_energy_by_restype( resvect ) + calculate_energy_by_properties( resvect );
 }
 
 /// @brief Calculate the total energy based on residue types, given a vector of const owning pointers to residues.
-/// @details Called by calculate_aa_composition_energy().
+/// @details Called by calculate_energy().
 core::Real AACompositionEnergy::calculate_energy_by_restype( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const {
 
 	// Const owning pointer to the setup helper:
@@ -181,7 +183,7 @@ core::Real AACompositionEnergy::calculate_energy_by_restype( utility::vector1< c
 }
 
 /// @brief Calculate the total energy based on residue properties, given a vector of const owning pointers to residues.
-/// @details Called by calculate_aa_composition_energy().
+/// @details Called by calculate_energy().
 core::Real AACompositionEnergy::calculate_energy_by_properties( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const {
 
 	// Const owning pointer to the setup helper:

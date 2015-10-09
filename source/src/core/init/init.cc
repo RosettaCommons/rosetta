@@ -32,6 +32,7 @@
 #include <basic/prof.hh>
 // Classes in core that must register with factories
 #include <core/init/score_function_corrections.hh>
+#include <core/scoring/aa_repeat_energy/AARepeatEnergyCreator.hh>
 #include <core/scoring/constraints/ConstraintsEnergyCreator.hh>
 #include <core/scoring/disulfides/CentroidDisulfideEnergyCreator.hh>
 #include <core/scoring/disulfides/DisulfideMatchingEnergyCreator.hh>
@@ -40,7 +41,6 @@
 
 #include <core/scoring/hbonds/HBondEnergyCreator.hh>
 #include <core/scoring/methods/AACompositionEnergyCreator.hh>
-#include <core/scoring/methods/AARepeatEnergyCreator.hh>
 #include <core/scoring/methods/EnergyMethodRegistrator.hh>
 #include <core/scoring/methods/CenPairEnergyCreator.hh>
 #include <core/scoring/methods/ChainbreakEnergyCreator.hh>
@@ -357,8 +357,8 @@ static EnergyMethodRegistrator< scoring::disulfides::FullatomDisulfideEnergyCrea
 static EnergyMethodRegistrator< scoring::etable::EtableEnergyCreator > EtableEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::etable::EtableClassicIntraEnergyCreator > EtableClassicIntraEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hbonds::HBondEnergyCreator > HBondEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::aa_repeat_energy::AARepeatEnergyCreator > AARepeatEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::AACompositionEnergyCreator > AACompositionEnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::methods::AARepeatEnergyCreator > AARepeatEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ChainbreakEnergyCreator > ChainbreakEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CenPairEnergyCreator > CenPairEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ContactOrderEnergyCreator > ContactOrderEnergyCreator_registrator;

@@ -178,7 +178,7 @@ private:
 
 	ResidueTypeCOPs
 	filter_by_name3( ResidueTypeCOPs const & rsd_types,
-									 bool const keep_if_base_type_generates_aa) const;
+		bool const keep_if_base_type_generates_aa) const;
 
 	ResidueTypeCOPs
 	filter_by_aa( ResidueTypeCOPs const & rsd_types ) const;

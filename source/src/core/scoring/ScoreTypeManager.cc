@@ -486,7 +486,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "aa_cmp" ] = aa_cmp;
 
 	name2score_type_[ "ring_close" ] = ring_close; //General score term for enforcing ring closure in proline-like noncanonicals.  NOTE: EITHER ring_close, OR pro_close, OR cart_bonded should be used -- otherwise we'll double-count!
-	name2score_type_[ "aa_repeat_energy" ] = aa_repeat_energy; //A wholebody score term for penalizing long stretches of repeat sequence (e.g. poly-Q sequences).
+	name2score_type_[ "aa_repeat" ] = aa_repeat; //A wholebody score term for penalizing long stretches of repeat sequence (e.g. poly-Q sequences).
 	name2score_type_[ "aa_composition" ] = aa_composition; //A wholebody score term for penalizing deviation from a desired amino acid composition.
 
 	name2score_type_[ "total_score" ] = total_score;

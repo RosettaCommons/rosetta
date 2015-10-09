@@ -19,15 +19,15 @@
 namespace core {
 namespace chemical {
 
-	/// @details only in use by name3_map_DO_NOT_USE and aa_map_DO_NOT_USE.
-	/// list of variant_types that were "standard" in Rosetta in late 2015, and
-	/// only these will be supported by those DO_NOT_USE legacy functions.
-	/// Newer variant_ types should *not* be placed into this list, or apps that
-	///  ask for *all* variants with an aa or name3 will get super-bloated.
-	/// If those apps need new variant types, please make use of ResidueTypeFinder
-	///  to request specific subsets of ResidueTypes as needed.
-	utility::vector1< VariantType > const &
-	variant_types_list_LEGACY();
+/// @details only in use by name3_map_DO_NOT_USE and aa_map_DO_NOT_USE.
+/// list of variant_types that were "standard" in Rosetta in late 2015, and
+/// only these will be supported by those DO_NOT_USE legacy functions.
+/// Newer variant_ types should *not* be placed into this list, or apps that
+///  ask for *all* variants with an aa or name3 will get super-bloated.
+/// If those apps need new variant types, please make use of ResidueTypeFinder
+///  to request specific subsets of ResidueTypes as needed.
+utility::vector1< VariantType > const &
+variant_types_list_LEGACY();
 
 } // namespace chemical
 } // namespace core

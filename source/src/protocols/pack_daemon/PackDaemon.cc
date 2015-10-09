@@ -41,6 +41,7 @@
 #include <core/pack/interaction_graph/FASTERInteractionGraph.hh>
 #include <core/pack/interaction_graph/FixedBBInteractionGraph.hh>
 //#include <core/pack/interaction_graph/LazyInteractionGraph.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -147,13 +148,13 @@ void PackDaemon::setup()
 	TR << "PackDaemon::setup()" << std::endl;
 
 	rot_sets_ = RotamerSetsOP( new RotamerSets );
-	InteractionGraphBaseOP ig;
+	core::pack::interaction_graph::AnnealableGraphBaseOP ig;
 	core::pack::pack_rotamers_setup( *pose_, *score_function_, task_, rot_sets_, ig );
 
 	ig_ = utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::FixedBBInteractionGraph > ( ig );
 	if ( ! ig_ )  {
 		throw utility::excn::EXCN_Msg_Exception( "Interaction graph returned by pack_rotamers_setup is not a"
-			" fixed-backbone interaction graph.  Cannot continue" );
+			" fixed-backbone two-body interaction graph.  Cannot continue" );
 	}
 
 	best_assignment_.first.resize( rot_sets_->nmoltenres() );

@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/scoring/methods/AARepeatEnergyCreator.hh
+/// @file core/scoring/aa_repeat_energy/AARepeatEnergyCreator.hh
 /// @brief Creator for an EnergyMethod that penalizes stretches of a repeating amino acid (e.g. poly-Q sequences).
 /// @details This energy method is inherently not pairwise decomposible.  However, it is intended for very rapid calculation,
 /// and has been designed to plug into Alex Ford's modifications to the packer that permit it to work with non-pairwise scoring
 /// terms.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 
-#ifndef INCLUDED_core_scoring_methods_AARepeatEnergyCreator_hh
-#define INCLUDED_core_scoring_methods_AARepeatEnergyCreator_hh
+#ifndef INCLUDED_core_scoring_aa_repeat_energy_AARepeatEnergyCreator_hh
+#define INCLUDED_core_scoring_aa_repeat_energy_AARepeatEnergyCreator_hh
 
 // Unit header
 #include <core/scoring/methods/EnergyMethodCreator.hh>
@@ -30,9 +30,9 @@
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace aa_repeat_energy {
 
-class AARepeatEnergyCreator : public EnergyMethodCreator
+class AARepeatEnergyCreator : public methods::EnergyMethodCreator
 {
 public:
 
@@ -45,7 +45,7 @@ public:
 	virtual ScoreTypes score_types_for_method() const;
 };
 
-} // methods
+} // aa_repeat_energy
 } // scoring
 } // core
 

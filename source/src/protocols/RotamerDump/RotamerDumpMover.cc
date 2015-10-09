@@ -76,8 +76,8 @@ void RotamerDumpMover::apply(core::pose::Pose & pose)
 
 	RotamerTracer << "built " << rotamer_sets->nrotamers() << " rotamers at " <<rotamer_sets->nmoltenres() <<" positions" <<std::endl;
 
-	core::pack::interaction_graph::InteractionGraphBaseOP ig(core::pack::interaction_graph::InteractionGraphFactory::create_interaction_graph(*packer_task,*rotamer_sets,pose,*score_function_));
-	rotamer_sets->compute_energies(pose,*score_function_,packer_neighbor_graph,ig);
+	core::pack::interaction_graph::InteractionGraphBaseOP ig =
+		core::pack::interaction_graph::InteractionGraphFactory::create_and_initialize_two_body_interaction_graph(*packer_task,*rotamer_sets,pose,*score_function_, packer_neighbor_graph);
 
 	RotamerTracer << "IG: " <<ig->getTotalMemoryUsage() << " bytes"<<std::endl;
 

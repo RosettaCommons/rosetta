@@ -47,10 +47,14 @@
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
+
+// ObjexxFCL Headers
+#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray2D.hh>
 
 //Auto Headers
 #include <platform/types.hh>
@@ -444,7 +448,7 @@ public:
 
 		//replace this with RotSetsFactory
 		core::pack::rotamer_set::RotamerSetsOP rotsets( new core::pack::rotamer_set::RotamerSets() );
-		core::pack::interaction_graph::InteractionGraphBaseOP ig = NULL;
+		core::pack::interaction_graph::AnnealableGraphBaseOP ig = NULL;
 
 		// create the rotamer sets so that we can then compute the trie-vs-trie energies
 		core::pack::pack_rotamers_setup( pose, sfxn, task, rotsets, ig );

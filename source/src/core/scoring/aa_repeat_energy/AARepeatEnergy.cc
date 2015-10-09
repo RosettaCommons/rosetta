@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/AARepeatEnergy.cc
+/// @file   core/scoring/aa_repeat_energy/AARepeatEnergy.cc
 /// @brief An EnergyMethod that penalizes stretches of a repeating amino acid (e.g. poly-Q sequences).
 /// @details This energy method is inherently not pairwise decomposible.  However, it is intended for very rapid calculation,
 /// and has been designed to plug into Alex Ford's modifications to the packer that permit it to work with non-pairwise scoring
@@ -15,8 +15,8 @@
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 
 // Unit headers
-#include <core/scoring/methods/AARepeatEnergy.hh>
-#include <core/scoring/methods/AARepeatEnergyCreator.hh>
+#include <core/scoring/aa_repeat_energy/AARepeatEnergy.hh>
+#include <core/scoring/aa_repeat_energy/AARepeatEnergyCreator.hh>
 
 // Package headers
 #include <core/scoring/methods/EnergyMethod.hh>
@@ -43,8 +43,9 @@
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace aa_repeat_energy {
 
+using namespace core::scoring::methods;
 static THREAD_LOCAL basic::Tracer TR("core.scoring.methods.AARepeatEnergy");
 
 /// @brief This must return a fresh instance of the AARepeatEnergy class, never an instance already in use.
@@ -61,14 +62,15 @@ ScoreTypes
 AARepeatEnergyCreator::score_types_for_method() const
 {
 	ScoreTypes sts;
-	sts.push_back( aa_repeat_energy );
+	sts.push_back( aa_repeat );
 	return sts;
 }
 
 /// @brief Default constructor.
 ///
 AARepeatEnergy::AARepeatEnergy() :
-	parent( methods::EnergyMethodCreatorOP( new AARepeatEnergyCreator ) ),
+	parent1( methods::EnergyMethodCreatorOP( new AARepeatEnergyCreator ) ),
+	parent2(),
 	penalties_()
 {
 	using namespace basic::options;
@@ -78,7 +80,8 @@ AARepeatEnergy::AARepeatEnergy() :
 /// @brief Copy constructor.
 ///
 AARepeatEnergy::AARepeatEnergy( AARepeatEnergy const &src ) :
-	parent( methods::EnergyMethodCreatorOP( new AARepeatEnergyCreator ) ),
+	parent1( methods::EnergyMethodCreatorOP( new AARepeatEnergyCreator ) ),
+	parent2( src ),
 	penalties_(src.penalties_)
 {
 }
@@ -124,21 +127,21 @@ void AARepeatEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFuncti
 		resvector.push_back( pose.residue(ir).get_self_ptr() );
 	}
 
-	totals[ aa_repeat_energy ] += calculate_aa_repeat_energy( resvector ); //Using the vector of residue owning pointers, calculate the repeat energy (unweighted) and set the aa_repeat_energy to this value.
+	totals[ aa_repeat ] += calculate_energy( resvector ); //Using the vector of residue owning pointers, calculate the repeat energy (unweighted) and set the aa_repeat_energy to this value.
 
 	return;
 }
 
 /// @brief Calculate the total energy given a vector of const owning pointers to residues.
 /// @details Called by finalize_total_energy().
-core::Real AARepeatEnergy::calculate_aa_repeat_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const
+core::Real AARepeatEnergy::calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const
 {
 	core::Size const nres( resvect.size() );
 	if ( nres==0 ) return 0.0;
 	if ( nres==1 ) return penalties(1);
 
 	//A counter (for number of residues in a row):
-	core::Size counter(0);
+	core::Size counter(1);
 	//An accumulator for the score:
 	core::Real accumulator(0.0);
 
@@ -255,6 +258,6 @@ bool AARepeatEnergy::parse_line( std::string const &line, utility::vector1< core
 	return good_parse;
 }
 
-} // methods
+} // aa_repeat
 } // scoring
 } // core

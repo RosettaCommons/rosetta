@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/chemical/ResidueTypeSetCache.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace core {
 namespace chemical {
-	
-	class ResidueTypeSetCache;
-	typedef utility::pointer::shared_ptr< ResidueTypeSetCache > ResidueTypeSetCacheOP;
-	typedef utility::pointer::shared_ptr< ResidueTypeSetCache const > ResidueTypeSetCacheCOP;
-	
-} //chemical 
-} //core 
+
+class ResidueTypeSetCache;
+typedef utility::pointer::shared_ptr< ResidueTypeSetCache > ResidueTypeSetCacheOP;
+typedef utility::pointer::shared_ptr< ResidueTypeSetCache const > ResidueTypeSetCacheCOP;
+
+} //chemical
+} //core
 
 #endif

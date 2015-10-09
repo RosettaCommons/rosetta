@@ -17,14 +17,12 @@
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/task/PackerTask.hh>
-#ifdef WIN32
 #include <core/scoring/ScoreFunction.hh>
-#endif
 
 // Utility headers
 #include <utility/vector0.hh>
-
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 namespace protocols {
@@ -69,7 +67,14 @@ PackingState::create_packer_data(
 	ptask_p_ = ptask;
 	rotamersets_p_ = core::pack::rotamer_set::RotamerSetsOP( new RotamerSets() );
 	assert( scorefxn && ptask_p_ && rotamersets_p_ );
-	pack_rotamers_setup( nonconst_pose(), *scorefxn, ptask_p_, rotamersets_p_, ig_p_ );
+
+	AnnealableGraphBaseOP ig;
+	pack_rotamers_setup( nonconst_pose(), *scorefxn, ptask_p_, rotamersets_p_, ig );
+
+	ig_p_ = utility::pointer::dynamic_pointer_cast<core::pack::interaction_graph::InteractionGraphBase>( ig );
+	if ( ! ig_p_ ) {
+		throw utility::excn::EXCN_Msg_Exception( "Interaction graph returned by pack_rotamers_setup is not a two-body interaction graph." );
+	}
 }
 
 void

@@ -236,7 +236,7 @@ public:
 		rs = core::chemical::ChemicalManager::get_instance()->residue_type_set(rss);
 		core::chemical::ResidueTypeCOPs base_residue_types = rs->base_residue_types();
 		for (
-				 Size q = 1; q <= base_residue_types.size(); q++ )  {
+				Size q = 1; q <= base_residue_types.size(); q++ )  {
 			core::chemical::ResidueTypeCOP restype = base_residue_types[ q ];
 			TR << restype->name() << std::endl;
 			{

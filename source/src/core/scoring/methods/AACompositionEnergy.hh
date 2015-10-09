@@ -25,6 +25,7 @@
 #include <core/scoring/methods/AACompositionEnergySetup.hh>
 
 // Package headers
+#include <core/scoring/annealing/ResidueArrayAnnealableEnergy.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
@@ -48,9 +49,10 @@ namespace methods {
 /// derived from base class for EnergyMethods, which are meaningful only on entire structures.
 /// These EnergyMethods do all of their work in the "finalize_total_energy" section of score
 /// function evaluation.
-class AACompositionEnergy : public WholeStructureEnergy {
+class AACompositionEnergy : public WholeStructureEnergy, public core::scoring::annealing::ResidueArrayAnnealableEnergy {
 public:
-	typedef WholeStructureEnergy parent;
+	typedef WholeStructureEnergy parent1;
+	typedef core::scoring::annealing::ResidueArrayAnnealableEnergy parent2;
 
 public:
 
@@ -84,7 +86,7 @@ public:
 
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues.
 	/// @details Called by finalize_total_energy().
-	virtual core::Real calculate_aa_composition_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const;
+	virtual core::Real calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const;
 
 	/// @brief Get a summary of all loaded data.
 	///
@@ -97,11 +99,11 @@ private:
 	******************/
 
 	/// @brief Calculate the total energy based on residue types, given a vector of const owning pointers to residues.
-	/// @details Called by calculate_aa_composition_energy().
+	/// @details Called by calculate_energy().
 	virtual core::Real calculate_energy_by_restype( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const;
 
 	/// @brief Calculate the total energy based on residue properties, given a vector of const owning pointers to residues.
-	/// @details Called by calculate_aa_composition_energy().
+	/// @details Called by calculate_energy().
 	virtual core::Real calculate_energy_by_properties( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const;
 
 	/// @brief Get a const-access pointer to the setup helper object.

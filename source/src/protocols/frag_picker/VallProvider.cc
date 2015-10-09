@@ -297,7 +297,7 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 
 	time_t time_end = time(NULL);
 
-	if (vall_keys_.size() > 0 && vall_keys_.size() == vall_end_line_.size() && vall_keys_.size() == vall_start_line_.size() && vall_keys_.size() == vall_last_residue_key_.size()) {
+	if ( vall_keys_.size() > 0 && vall_keys_.size() == vall_end_line_.size() && vall_keys_.size() == vall_start_line_.size() && vall_keys_.size() == vall_last_residue_key_.size() ) {
 		TR.Debug << "Vall key: " << vall_keys_.size() << std::endl;
 	} else {
 		utility_exit_with_message( "There was an error reading the Vall: " + filename );

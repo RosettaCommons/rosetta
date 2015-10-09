@@ -69,14 +69,6 @@ public:
 	);
 
 	void
-	compute_energies(
-		pose::Pose const & pose,
-		scoring::ScoreFunction const & scfxn,
-		graph::GraphCOP packer_neighbor_graph,
-		interaction_graph::InteractionGraphBaseOP ig
-	);
-
-	void
 	dump_pdb( pose::Pose const & pose, std::string const & filename ) const;
 
 	virtual uint nrotamers() const;
@@ -159,6 +151,20 @@ private:
 
 public:
 
+	/// @brief Precompute all rotamer pair and rotamer one-body energies, populating
+	/// the given interaction graph.
+	virtual
+	void
+	compute_energies(
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & scfxn,
+		graph::GraphCOP packer_neighbor_graph,
+		interaction_graph::InteractionGraphBaseOP ig
+	);
+
+	/// @brief Precompute all rotamer one-body energies, populating the given
+	/// interaction graph.
+	virtual
 	void
 	compute_one_body_energies(
 		pose::Pose const & pose,
@@ -167,9 +173,11 @@ public:
 		interaction_graph::InteractionGraphBaseOP ig
 	);
 
-	/// @brief precomputes all rotamer pair energies between neighboring RotamerSets( residues )
-	/// and stores those energies in an intereaction graph capable of storing them
-	/// public so it can be used by the GreenPacker.
+	/// @brief Precompute all rotamer pair energies between neighboring RotamerSets (residues)
+	/// populating the given interaction graph.
+	///
+	/// Public so it can be used by the GreenPacker.
+	virtual
 	void
 	precompute_two_body_energies(
 		pose::Pose const & pose,

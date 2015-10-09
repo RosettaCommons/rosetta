@@ -27,114 +27,114 @@ static basic::Tracer TR( "core.chemical.ResidueTypeSetCache" );
 namespace core {
 namespace chemical {
 
-	//Constructor
-	ResidueTypeSetCache::ResidueTypeSetCache( ResidueTypeSet const & rsd_type_set ):
-		rsd_type_set_( rsd_type_set )
-	{}
+//Constructor
+ResidueTypeSetCache::ResidueTypeSetCache( ResidueTypeSet const & rsd_type_set ):
+	rsd_type_set_( rsd_type_set )
+{}
 
-	//Destructor
-	ResidueTypeSetCache::~ResidueTypeSetCache()
-	{}
+//Destructor
+ResidueTypeSetCache::~ResidueTypeSetCache()
+{}
 
-	///@details Main accessor function into ResidueTypeSetCache
-	ResidueType const &
-	ResidueTypeSetCache::name_map( std::string const & name_in ) const
-	{
-		std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.find( name_in );
-		runtime_assert( it != name_map_.end() );
-		return *( it->second );
+///@details Main accessor function into ResidueTypeSetCache
+ResidueType const &
+ResidueTypeSetCache::name_map( std::string const & name_in ) const
+{
+	std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.find( name_in );
+	runtime_assert( it != name_map_.end() );
+	return *( it->second );
+}
+
+void
+ResidueTypeSetCache::clear_cached_maps()
+{
+	aa_map_.clear();
+	name3_map_.clear();
+	cached_aa_variants_map_.clear();
+}
+
+void
+ResidueTypeSetCache::add_residue_type( ResidueTypeCOP residue_type )
+{
+	runtime_assert( name_map_.find( residue_type->name() ) == name_map_.end() );
+	name_map_[ residue_type->name() ] = residue_type;
+	//  clear_cached_maps(); // no can't do this
+}
+
+void
+ResidueTypeSetCache::remove_residue_type( std::string const & name )
+{
+	std::map< std::string, ResidueTypeCOP >::iterator it = name_map_.find( name );
+	runtime_assert( it != name_map_.end() );
+	name_map_.erase( it );
+	clear_cached_maps();
+}
+
+void
+ResidueTypeSetCache::update_residue_type( ResidueTypeCOP residue_type_original, ResidueTypeCOP residue_type_new )
+{
+	std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.find( residue_type_original->name() );
+	runtime_assert( it != name_map_.end() );
+	runtime_assert( residue_type_original->name() == residue_type_new->name() );
+	name_map_[ residue_type_original->name() ] = residue_type_new;
+	clear_cached_maps();
+}
+
+bool
+ResidueTypeSetCache::has_generated_residue_type( ResidueTypeCOP residue_type ) const {
+	std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.find( residue_type->name() );
+	if ( it == name_map_.end() ) return false;
+	runtime_assert( it->second == residue_type );
+	return true;
+}
+
+bool
+ResidueTypeSetCache::has_generated_residue_type( std::string const & rsd_name ) const {
+	return ( name_map_.find( rsd_name ) != name_map_.end() );
+}
+
+ResidueTypeCOPs
+ResidueTypeSetCache::generated_residue_types() {
+	ResidueTypeCOPs residue_types;
+	for ( std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.begin();
+			it != name_map_.end(); ++it ) {
+		residue_types.push_back( it->second );
 	}
+	return residue_types;
+}
 
-	void
-	ResidueTypeSetCache::clear_cached_maps()
-	{
-		aa_map_.clear();
-		name3_map_.clear();
-		cached_aa_variants_map_.clear();
+ResidueTypeCOPs
+ResidueTypeSetCache::get_all_types_with_variants_aa( AA aa,
+	utility::vector1< std::string > const & variants,
+	utility::vector1< VariantType > const & exceptions )
+{
+	AA_VariantsExceptions query( std::make_pair( aa, std::make_pair( variants, exceptions ) ) );
+	if ( cached_aa_variants_map_.find( query ) == cached_aa_variants_map_.end() ) {
+		cached_aa_variants_map_[ query ] = ResidueTypeFinder( rsd_type_set_ ).aa( aa ).variants( variants ).variant_exceptions( exceptions ).get_all_possible_residue_types();
 	}
+	return cached_aa_variants_map_[ query ];
+}
 
-	void
-	ResidueTypeSetCache::add_residue_type( ResidueTypeCOP residue_type )
-	{
-		runtime_assert( name_map_.find( residue_type->name() ) == name_map_.end() );
-		name_map_[ residue_type->name() ] = residue_type;
-		//		clear_cached_maps(); // no can't do this
+/// @brief query ResidueTypes by their AA enum type. Does not handle aa_unk and does not handle most new patches.
+ResidueTypeCOPs
+ResidueTypeSetCache::aa_map_DO_NOT_USE( AA const & aa )
+{
+	if ( aa == aa_unk ) return ResidueTypeCOPs(); // empty
+	if ( aa_map_.find( aa ) == aa_map_.end() ) {
+		aa_map_[ aa ] = ResidueTypeFinder( rsd_type_set_ ).aa( aa ).variant_exceptions( variant_types_list_LEGACY() ).get_all_possible_residue_types( true );
 	}
+	return aa_map_[ aa ];
+}
 
-	void
-	ResidueTypeSetCache::remove_residue_type( std::string const & name )
-	{
-		std::map< std::string, ResidueTypeCOP >::iterator it = name_map_.find( name );
-		runtime_assert( it != name_map_.end() );
-		name_map_.erase( it );
-		clear_cached_maps();
+/// @brief query ResidueTypes by their 3-letter name.  Does not handle aa_unk and does not handle most new patches.
+ResidueTypeCOPs
+ResidueTypeSetCache::name3_map_DO_NOT_USE( std::string const & name3 )
+{
+	if ( name3_map_.find( name3 ) == name3_map_.end() ) {
+		name3_map_[ name3 ] = ResidueTypeFinder( rsd_type_set_ ).name3( name3 ).variant_exceptions( variant_types_list_LEGACY() ).get_all_possible_residue_types( true );
 	}
-
-	void
-	ResidueTypeSetCache::update_residue_type( ResidueTypeCOP residue_type_original, ResidueTypeCOP residue_type_new )
-	{
-		std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.find( residue_type_original->name() );
-		runtime_assert( it != name_map_.end() );
-		runtime_assert( residue_type_original->name() == residue_type_new->name() );
-		name_map_[ residue_type_original->name() ] = residue_type_new;
-		clear_cached_maps();
-	}
-
-	bool
-	ResidueTypeSetCache::has_generated_residue_type( ResidueTypeCOP residue_type ) const {
-		std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.find( residue_type->name() );
-		if ( it == name_map_.end() ) return false;
-		runtime_assert( it->second == residue_type );
-		return true;
-	}
-
-	bool
-	ResidueTypeSetCache::has_generated_residue_type( std::string const & rsd_name ) const {
-		return ( name_map_.find( rsd_name ) != name_map_.end() );
-	}
-
-	ResidueTypeCOPs
-	ResidueTypeSetCache::generated_residue_types() {
-		ResidueTypeCOPs residue_types;
-		for ( std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.begin();
-					it != name_map_.end(); ++it ) {
-			residue_types.push_back( it->second );
-		}
-		return residue_types;
-	}
-
-	ResidueTypeCOPs
-	ResidueTypeSetCache::get_all_types_with_variants_aa( AA aa,
-																											 utility::vector1< std::string > const & variants,
-																											 utility::vector1< VariantType > const & exceptions )
-  {
-		AA_VariantsExceptions query( std::make_pair( aa, std::make_pair( variants, exceptions ) ) );
-		if ( cached_aa_variants_map_.find( query ) == cached_aa_variants_map_.end() ) {
-			cached_aa_variants_map_[ query ] = ResidueTypeFinder( rsd_type_set_ ).aa( aa ).variants( variants ).variant_exceptions( exceptions ).get_all_possible_residue_types();
-		}
-		return cached_aa_variants_map_[ query ];
-	}
-
-	/// @brief query ResidueTypes by their AA enum type. Does not handle aa_unk and does not handle most new patches.
-	ResidueTypeCOPs
-	ResidueTypeSetCache::aa_map_DO_NOT_USE( AA const & aa )
-	{
-		if ( aa == aa_unk ) return ResidueTypeCOPs(); // empty
-		if ( aa_map_.find( aa ) == aa_map_.end() ) {
-			aa_map_[ aa ] = ResidueTypeFinder( rsd_type_set_ ).aa( aa ).variant_exceptions( variant_types_list_LEGACY() ).get_all_possible_residue_types( true );
-		}
-		return aa_map_[ aa ];
-	}
-
-	/// @brief query ResidueTypes by their 3-letter name.  Does not handle aa_unk and does not handle most new patches.
-	ResidueTypeCOPs
-	ResidueTypeSetCache::name3_map_DO_NOT_USE( std::string const & name3 )
-	{
-		if ( name3_map_.find( name3 ) == name3_map_.end() ) {
-			name3_map_[ name3 ] = ResidueTypeFinder( rsd_type_set_ ).name3( name3 ).variant_exceptions( variant_types_list_LEGACY() ).get_all_possible_residue_types( true );
-		}
-		return name3_map_[ name3 ];
-	}
+	return name3_map_[ name3 ];
+}
 
 
 

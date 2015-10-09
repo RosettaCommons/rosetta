@@ -28,81 +28,81 @@
 namespace core {
 namespace chemical {
 
-	typedef std::pair< AA, std::pair< utility::vector1< std::string >, utility::vector1< VariantType > > > AA_VariantsExceptions;
+typedef std::pair< AA, std::pair< utility::vector1< std::string >, utility::vector1< VariantType > > > AA_VariantsExceptions;
 
-	class ResidueTypeSetCache: public utility::pointer::ReferenceCount {
+class ResidueTypeSetCache: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		ResidueTypeSetCache( ResidueTypeSet const & rsd_type_set );
+	//constructor
+	ResidueTypeSetCache( ResidueTypeSet const & rsd_type_set );
 
-		//destructor
-		~ResidueTypeSetCache();
+	//destructor
+	~ResidueTypeSetCache();
 
-	public:
+public:
 
-		///@details Main accessor function into ResidueTypeSetCache
-		ResidueType const &
-		name_map( std::string const & name_in ) const;
+	///@details Main accessor function into ResidueTypeSetCache
+	ResidueType const &
+	name_map( std::string const & name_in ) const;
 
-		void
-		add_residue_type( ResidueTypeCOP residue_type );
+	void
+	add_residue_type( ResidueTypeCOP residue_type );
 
-		void
-		remove_residue_type( std::string const & name );
+	void
+	remove_residue_type( std::string const & name );
 
-		void
-		update_residue_type( ResidueTypeCOP residue_type_original, ResidueTypeCOP residue_type_new );
+	void
+	update_residue_type( ResidueTypeCOP residue_type_original, ResidueTypeCOP residue_type_new );
 
-		bool
-		has_generated_residue_type( ResidueTypeCOP rsd_type ) const;
+	bool
+	has_generated_residue_type( ResidueTypeCOP rsd_type ) const;
 
-		bool
-		has_generated_residue_type( std::string const & rsd_name ) const;
+	bool
+	has_generated_residue_type( std::string const & rsd_name ) const;
 
-		ResidueTypeCOPs
-		generated_residue_types();
+	ResidueTypeCOPs
+	generated_residue_types();
 
-		ResidueTypeCOPs
-		get_all_types_with_variants_aa( AA aa,
-																		utility::vector1< std::string > const & variants,
-																		utility::vector1< VariantType > const & exceptions );
+	ResidueTypeCOPs
+	get_all_types_with_variants_aa( AA aa,
+		utility::vector1< std::string > const & variants,
+		utility::vector1< VariantType > const & exceptions );
 
-		/// @brief query ResidueTypes by their AA enum type. Does not handle aa_unk and does not handle most new patches. Legacy function.
-		ResidueTypeCOPs
-		aa_map_DO_NOT_USE( AA const & aa );
+	/// @brief query ResidueTypes by their AA enum type. Does not handle aa_unk and does not handle most new patches. Legacy function.
+	ResidueTypeCOPs
+	aa_map_DO_NOT_USE( AA const & aa );
 
-		/// @brief query ResidueTypes by their 3-letter name.  Does not handle aa_unk and does not handle most new patches. Legacy function.
-		ResidueTypeCOPs
-		name3_map_DO_NOT_USE( std::string const & name );
+	/// @brief query ResidueTypes by their 3-letter name.  Does not handle aa_unk and does not handle most new patches. Legacy function.
+	ResidueTypeCOPs
+	name3_map_DO_NOT_USE( std::string const & name );
 
-		void clear_cached_maps();
+	void clear_cached_maps();
 
-	private:
+private:
 
-		ResidueTypeSet const & rsd_type_set_;
+	ResidueTypeSet const & rsd_type_set_;
 
-		////////////////////////////////////////////////////////////////////////////
-		// Following must always be up to date.
-		////////////////////////////////////////////////////////////////////////////
-		/// @brief map to ResidueType pointers by unique residue id
-		std::map< std::string, ResidueTypeCOP > name_map_;
+	////////////////////////////////////////////////////////////////////////////
+	// Following must always be up to date.
+	////////////////////////////////////////////////////////////////////////////
+	/// @brief map to ResidueType pointers by unique residue id
+	std::map< std::string, ResidueTypeCOP > name_map_;
 
-		////////////////////////////////////////////////////////////////////////////
-		// Following can get recomputed if custom_residue_types are
-		// added to the ResidueTypeSet -- flag such an event through 'up_to_date'
-		////////////////////////////////////////////////////////////////////////////
-		/// @brief map to ResidueType pointers by AA enum -- may deprecate soon.
-		std::map< AA, ResidueTypeCOPs > aa_map_;
+	////////////////////////////////////////////////////////////////////////////
+	// Following can get recomputed if custom_residue_types are
+	// added to the ResidueTypeSet -- flag such an event through 'up_to_date'
+	////////////////////////////////////////////////////////////////////////////
+	/// @brief map to ResidueType pointers by AA enum -- may deprecate soon.
+	std::map< AA, ResidueTypeCOPs > aa_map_;
 
-		/// @brief map to ResidueType pointers by 3-letter string name -- may deprecate soon.
-		std::map< std::string, ResidueTypeCOPs > name3_map_;
+	/// @brief map to ResidueType pointers by 3-letter string name -- may deprecate soon.
+	std::map< std::string, ResidueTypeCOPs > name3_map_;
 
-		/// @brief caching queries based on aa & variants to avoid recomputation with ResidueTypeFinder
-		std::map< AA_VariantsExceptions, ResidueTypeCOPs > cached_aa_variants_map_;
+	/// @brief caching queries based on aa & variants to avoid recomputation with ResidueTypeFinder
+	std::map< AA_VariantsExceptions, ResidueTypeCOPs > cached_aa_variants_map_;
 
-	};
+};
 
 } //chemical
 } //core

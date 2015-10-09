@@ -21,7 +21,7 @@
 // Package Headers
 #include <core/pack/annealer/RotamerAssigningAnnealer.hh>
 
-#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 
 #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
 
@@ -41,7 +41,7 @@ class FixbbSimAnnealer;
 class FixbbSimAnnealer : public RotamerAssigningAnnealer
 {
 public:
-	typedef interaction_graph::InteractionGraphBaseOP InteractionGraphBaseOP;
+	typedef interaction_graph::AnnealableGraphBaseOP AnnealableGraphBaseOP;
 
 public:
 	FixbbSimAnnealer(
@@ -49,7 +49,7 @@ public:
 		ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 		core::PackerEnergy & bestenergy,
 		bool start_with_current, // start simulation with current rotamers
-		InteractionGraphBaseOP ig,
+		AnnealableGraphBaseOP ig,
 		FixbbRotamerSetsCOP rotamer_sets,
 		ObjexxFCL::FArray1_int & current_rot_index,
 		bool calc_rot_freq,
@@ -60,7 +60,7 @@ public:
 		ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 		core::PackerEnergy & bestenergy,
 		bool start_with_current, // start simulation with current rotamers
-		InteractionGraphBaseOP ig,
+		AnnealableGraphBaseOP ig,
 		FixbbRotamerSetsCOP rotamer_sets,
 		ObjexxFCL::FArray1_int & current_rot_index,
 		bool calc_rot_freq,
@@ -74,7 +74,7 @@ public:
 	void trajectory_file_name( std::string const & setting );
 
 private:
-	InteractionGraphBaseOP ig_;
+	AnnealableGraphBaseOP ig_;
 	bool record_annealer_trajectory_;
 	std::string trajectory_file_name_;
 	FixbbSimAnnealer(const FixbbSimAnnealer& rhs);

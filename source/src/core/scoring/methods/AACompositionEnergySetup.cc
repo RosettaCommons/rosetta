@@ -54,14 +54,14 @@ AACompositionPropertiesSet class:
 **************************************************/
 
 
-/// @brief Default constructor for AACompositionEnergySetupPropertiesSet.
+/// @brief Default constructor for AACompositionPropertiesSet.
 ///
 AACompositionPropertiesSet::AACompositionPropertiesSet() :
 	included_properties_( ),
 	excluded_properties_( )
 {}
 
-/// @brief Constructor for AACompositionEnergySetupPropertiesSet that takes lists of
+/// @brief Constructor for AACompositionPropertiesSet that takes lists of
 /// included and excluded properties.
 AACompositionPropertiesSet::AACompositionPropertiesSet(
 	utility::vector1< std::string > const &included_properties_strings,
@@ -74,7 +74,7 @@ AACompositionPropertiesSet::AACompositionPropertiesSet(
 	if ( !excluded_properties_strings.empty() ) parse_excluded_properites( excluded_properties_strings );
 }
 
-/// @brief Copy constructor for AACompositionEnergySetupPropertiesSet.
+/// @brief Copy constructor for AACompositionPropertiesSet.
 ///
 AACompositionPropertiesSet::AACompositionPropertiesSet( AACompositionPropertiesSet const &src ) :
 	utility::pointer::ReferenceCount(),
@@ -82,7 +82,7 @@ AACompositionPropertiesSet::AACompositionPropertiesSet( AACompositionPropertiesS
 	excluded_properties_( src.included_properties_ )
 {}
 
-/// @brief Default destructor for AACompositionEnergySetupPropertiesSet.
+/// @brief Default destructor for AACompositionPropertiesSet.
 ///
 AACompositionPropertiesSet::~AACompositionPropertiesSet()
 {}
@@ -168,11 +168,13 @@ AACompositionEnergySetup::AACompositionEnergySetup() :
 	type_deviation_ranges_(),
 	expected_by_type_fraction_(),
 	expected_by_type_absolute_(),
+	type_tailfunctions_(),
 	property_sets_(),
 	expected_by_properties_fraction_(),
 	expected_by_properties_absolute_(),
 	property_penalties_(),
-	property_deviation_ranges_()
+	property_deviation_ranges_(),
+	property_tailfunctions_()
 {}
 
 /// @brief Copy constructor for AACompositionEnergySetup.
@@ -184,16 +186,20 @@ AACompositionEnergySetup::AACompositionEnergySetup( AACompositionEnergySetup con
 	type_deviation_ranges_( src.type_deviation_ranges_ ),
 	expected_by_type_fraction_( src.expected_by_type_fraction_ ),
 	expected_by_type_absolute_( src.expected_by_type_absolute_ ),
+	type_tailfunctions_( src.type_tailfunctions_ ),
 	property_sets_(), //Cloned below
 	expected_by_properties_fraction_( src.expected_by_properties_fraction_ ),
 	expected_by_properties_absolute_( src.expected_by_properties_absolute_ ),
 	property_penalties_( src.property_penalties_ ),
-	property_deviation_ranges_( src.property_deviation_ranges_ )
+	property_deviation_ranges_( src.property_deviation_ranges_ ),
+	property_tailfunctions_( src.property_tailfunctions_ )
 {
 	property_sets_.clear();
 	for ( core::Size i=1, imax=src.property_sets_.size(); i<=imax; ++i ) {
 		property_sets_.push_back( src.property_sets_[i]->clone() );
 	}
+
+	check_data(); //Double-check that the object has been copied properly.
 }
 
 /// @brief Default destructor for AACompositionEnergySetup.
@@ -214,11 +220,13 @@ void AACompositionEnergySetup::reset() {
 	type_deviation_ranges_.clear();
 	expected_by_type_fraction_.clear();
 	expected_by_type_absolute_.clear();
+	type_tailfunctions_.clear();
 	property_sets_.clear();
 	expected_by_properties_fraction_.clear();
 	expected_by_properties_absolute_.clear();
 	property_penalties_.clear();
 	property_deviation_ranges_.clear();
+	property_tailfunctions_.clear();
 	return;
 }
 
@@ -264,6 +272,33 @@ void AACompositionEnergySetup::initialize_from_file( std::string const &filename
 	check_data();
 
 	return;
+}
+
+/// @brief Get tail function name from enum.
+///
+std::string AACompositionEnergySetup::get_tailfunction_name( TailFunction const tf ) const
+{
+	switch(tf) {
+	case tf_linear :
+		return "LINEAR";
+	case tf_quadratic :
+		return "QUADRATIC";
+	case tf_constant :
+		return "CONSTANT";
+	default :
+		break;
+	}
+
+	return "UNKNOWN";
+}
+
+/// @brief Get tail function enum from name.
+/// @details This is slow; it calls get_tailfunction_name repeatedly.  Intended only for use during setup.
+TailFunction AACompositionEnergySetup::get_tailfunction_from_name( std::string const &name ) const {
+	for ( core::Size i=1; i<tf_end_of_list; ++i ) {
+		if ( get_tailfunction_name( static_cast<TailFunction>(i) ) == name ) return static_cast<TailFunction>(i);
+	}
+	return tf_unknown;
 }
 
 /// @brief Get a summary of the data stored in this object
@@ -373,6 +408,8 @@ void AACompositionEnergySetup::parse_a_penalty_definition( utility::vector1 < st
 	bool absolutefound(false);
 	signed long deltastart(0);
 	signed long deltaend(0);
+	TailFunction beforefxn( tf_unknown ); //TailFunction is an enum defined in AACompositionEnergySetup.hh
+	TailFunction afterfxn( tf_unknown );
 
 	core::Size const nlines( lines.size() ); //Number of lines we'll be going through.
 
@@ -455,6 +492,20 @@ void AACompositionEnergySetup::parse_a_penalty_definition( utility::vector1 < st
 			runtime_assert_string_msg( !curline.fail() && absolute >= 0, "Error in core::scoring::methods::AACompositionEnergySetup::parse_a_penalty_definition(): Could not parse \"ABSOLUTE\" line.  (Note that negative values are not permitted)." );
 			fraction=0.0;
 			absolutefound=true;
+		} else if ( oneword == "BEFORE_FUNCTION" ) {
+			runtime_assert_string_msg( beforefxn == tf_unknown, "Error in core::scoring::methods::AACompositionEnergySetup::parse_a_penalty_definition():  More than one \"BEFORE_FUNCTION\" statement was found in a \"PENALTY_DEFINITION\" block." );
+			std::string namestring(""); //Temporary storage for the name of the before function.
+			curline >> namestring;
+			runtime_assert_string_msg( !curline.fail() && namestring!="", "Error in core::scoring::methods::AACompositionEnergySetup::parse_a_penalty_definition(): Could not parse \"BEFORE_FUNCTION\" line." );
+			beforefxn = get_tailfunction_from_name( namestring );
+			runtime_assert_string_msg( beforefxn != tf_unknown, "Error in core::scoring::methods::AACompositionEnergySetup::parse_a_penalty_definition(): Could not parse \"BEFORE_FUNCTION\" line." );
+		} else if ( oneword == "AFTER_FUNCTION" ) {
+			runtime_assert_string_msg( afterfxn == tf_unknown, "Error in core::scoring::methods::AACompositionEnergySetup::parse_a_penalty_definition():  More than one \"AFTER_FUNCTION\" statement was found in a \"PENALTY_DEFINITION\" block." );
+			std::string namestring(""); //Temporary storage for the name of the after function.
+			curline >> namestring;
+			runtime_assert_string_msg( !curline.fail() && namestring!="", "Error in core::scoring::methods::AACompositionEnergySetup::parse_a_penalty_definition(): Could not parse \"AFTER_FUNCTION\" line." );
+			afterfxn = get_tailfunction_from_name( namestring );
+			runtime_assert_string_msg( afterfxn != tf_unknown, "Error in core::scoring::methods::AACompositionEnergySetup::parse_a_penalty_definition(): Could not parse \"AFTER_FUNCTION\" line." );
 		}
 	} //End loop through all lines
 
@@ -463,11 +514,17 @@ void AACompositionEnergySetup::parse_a_penalty_definition( utility::vector1 < st
 	runtime_assert_string_msg( penaltiesfound, "Error in core::scoring::methods::AACompositionEnergySetup::parse_a_penalty_definition(): Each \"PENALTY_DEFINITION\" block needs to have a \"PENALTIES\" line." );
 	runtime_assert_string_msg( (fractionfound || absolutefound) && !(fractionfound && absolutefound), "Error in core::scoring::methods::AACompositionEnergySetup::parse_a_penalty_definition(): Each \"PENALTY_DEFINITION\" block needs to have a \"FRACTION\" line OR an \"ABSOLUTE\" line (but not both)." );
 
+	// If a BEFORE_FUNCTION line was not provided, default to quadratic:
+	if ( beforefxn == tf_unknown ) { beforefxn = tf_quadratic;}
+	// If an AFTER_FUNCTION line was not provided, default to quadratic:
+	if ( afterfxn == tf_unknown ) { afterfxn = tf_quadratic;}
+
 	if ( typefound ) { //If we found a residue type.
 		type_deviation_ranges_.push_back( std::pair<signed long, signed long>(deltastart, deltaend) );
 		type_penalties_.push_back( penalties_vector );
 		expected_by_type_fraction_.push_back( fraction );
 		expected_by_type_absolute_.push_back( absolute );
+		type_tailfunctions_.push_back( std::pair< TailFunction, TailFunction >(beforefxn, afterfxn) );
 	} else { //If we wound properties, instead.
 		property_deviation_ranges_.push_back( std::pair<signed long, signed long>(deltastart, deltaend) );
 		AACompositionPropertiesSetOP new_property_set( new AACompositionPropertiesSet( properties_list, not_properties_list ) ); //Create a new properties set for the properties.
@@ -475,6 +532,7 @@ void AACompositionEnergySetup::parse_a_penalty_definition( utility::vector1 < st
 		property_penalties_.push_back( penalties_vector );
 		expected_by_properties_fraction_.push_back( fraction );
 		expected_by_properties_absolute_.push_back( absolute );
+		property_tailfunctions_.push_back( std::pair< TailFunction, TailFunction >(beforefxn, afterfxn) );
 	}
 
 	return;
@@ -490,10 +548,12 @@ void AACompositionEnergySetup::check_data() const {
 	runtime_assert_string_msg( type_deviation_ranges_.size() == ntypes, "Error in core::scoring::methods::AACompositionEnergySetup::check_data(): Deviation range data were not found for all residue types." );
 	runtime_assert_string_msg( expected_by_type_fraction_.size() == ntypes, "Error in core::scoring::methods::AACompositionEnergySetup::check_data(): Expected fraction data were not found for all residue types." );
 	runtime_assert_string_msg( expected_by_type_absolute_.size() == ntypes, "Error in core::scoring::methods::AACompositionEnergySetup::check_data(): Absolute expected number data were not found for all residue types." );
+	runtime_assert_string_msg( type_tailfunctions_.size() == ntypes, "Error in core::scoring::methods::AACompositionEnergySetup::check_data(): Tail function data were not found for all residue types." );
 
 	for ( core::Size i=1; i<=ntypes; ++i ) {
 		runtime_assert_string_msg( type_deviation_ranges_[i].first <= type_deviation_ranges_[i].second, "Error in core::scoring::methods::AACompositionEnergySetup::check_data():  The delta range min must be less than the delta range max for each type.");
 		runtime_assert_string_msg( static_cast< signed long >( type_penalties_[i].size() ) == type_deviation_ranges_[i].second-type_deviation_ranges_[i].first+1, "Error in core::scoring::methods::AACompositionEnergySetup::check_data():  Penalties must be provided for every delta in the range from DELTA_START to DELTA_END.  Too many or too few were found.");
+		runtime_assert_string_msg( type_penalties_[i].size() >=2, "Error in core::scoring::methods::AACompositionEnergySetup::check_data():  At least two penalty values must be specified.  Too few were found." );
 	}
 
 	core::Size const nproperties( property_sets_.size() );
@@ -501,10 +561,12 @@ void AACompositionEnergySetup::check_data() const {
 	runtime_assert_string_msg( property_deviation_ranges_.size() == nproperties, "Error in core::scoring::methods::AACompositionEnergySetup::check_data(): Deviation range data were not found for all property sets." );
 	runtime_assert_string_msg( expected_by_properties_fraction_.size() == nproperties, "Error in core::scoring::methods::AACompositionEnergySetup::check_data(): Expected fraction data were not found for all property sets." );
 	runtime_assert_string_msg( expected_by_properties_absolute_.size() == nproperties, "Error in core::scoring::methods::AACompositionEnergySetup::check_data(): Absolute expected number data were not found for all property sets." );
+	runtime_assert_string_msg( property_tailfunctions_.size() == nproperties, "Error in core::scoring::methods::AACompositionEnergySetup::check_data(): Tail function data were not found for all property sets." );
 
 	for ( core::Size i=1; i<=nproperties; ++i ) {
 		runtime_assert_string_msg( property_deviation_ranges_[i].first <= property_deviation_ranges_[i].second, "Error in core::scoring::methods::AACompositionEnergySetup::check_data():  The delta range min must be less than the delta range max for each property set.");
 		runtime_assert_string_msg( static_cast< signed long >( property_penalties_[i].size() ) == property_deviation_ranges_[i].second-property_deviation_ranges_[i].first+1, "Error in core::scoring::methods::AACompositionEnergySetup::check_data():  Penalties must be provided for every delta in the range from DELTA_START to DELTA_END.  Too many or too few were found.");
+		runtime_assert_string_msg( property_penalties_[i].size() >=2, "Error in core::scoring::methods::AACompositionEnergySetup::check_data():  At least two penalty values must be specified.  Too few were found." );
 	}
 
 	if ( TR.Debug.visible() ) TR.Debug << "Data checks passed!" << std::endl;

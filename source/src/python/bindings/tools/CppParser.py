@@ -510,7 +510,7 @@ class CppFunction:
                 #if (not self.constructor) and a.type_.T()[-1] == '&' and False: return 'boost::python::ptr( & __a%s )' % i
                 # and  not a.type_.T().endswith(' const &') \
                 if (not self.constructor) and a.type_.T()[-1] == '&' \
-                   and a.type_.T() not in 'bool &  ::platform::Size &  ::platform::Size const &  ::numeric::Real &  ::core::Size &  ::core::Size const &  ::core::Real &  ::core::chemical::AA const &  ::numeric::Size &':
+                   and a.type_.T() not in 'bool &  float &  double &  ::platform::Size &  ::platform::Size const &  ::numeric::Real &  ::core::Size &  ::core::Size const &  ::core::Real &  ::core::chemical::AA const &  ::core::PackerEnergy &  ::numeric::Size &':
                     return 'boost::python::ptr( & __a%s )' % i
                 else: return '__a%s' % i
 
@@ -1468,7 +1468,7 @@ _import_order_ = {
 
     'core': ['graph', 'conformation', 'id', 'io', 'scoring'],
     'core/pack' : ['rotamers'],
-    'core/scoring': ['trie', 'methods', 'func', 'hbonds'],
+    'core/scoring': ['annealing', 'trie', 'methods', 'func', 'hbonds'],
 
     'protocols': ['moves', 'jd2', 'jumping', 'environment', 'features', 'evaluation', 'canonical_sampling', 'farna', 'filters',
                   'simple_moves', 'ligand_docking', 'rigid', 'toolbox', 'forge', 'loop_modeling', 'loops', 'wum', 'rosetta_scripts',

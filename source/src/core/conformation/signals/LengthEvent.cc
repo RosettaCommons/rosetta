@@ -52,7 +52,7 @@ LengthEvent::LengthEvent(
 	length_change( len_chg ),
 	residue( res )
 {
-	if( conf ) {
+	if ( conf ) {
 		conformation_size = conf->size();
 	}
 #ifndef NDEBUG
@@ -64,13 +64,13 @@ void
 LengthEvent::check_consistency() const {
 	switch( tag ) {
 	case RESIDUE_APPEND:
-	case RESIDUE_PREPEND:
+	case RESIDUE_PREPEND :
 		runtime_assert( length_change >= 0 );
 		break;
-	case RESIDUE_DELETE:
+	case RESIDUE_DELETE :
 		runtime_assert( length_change <= 0 );
 		break;
-	default:
+	default :
 		break; // In general, there's no need of this.
 	}
 }
@@ -79,22 +79,22 @@ std::ostream &
 operator<<( std::ostream & out, LengthEvent const & event ) {
 	out << "LengthEvent of type ";
 	switch( event.tag ) {
-	case LengthEvent::EMPTY:
+	case LengthEvent::EMPTY :
 		out << "EMPTY";
 		break;
-	case LengthEvent::INVALIDATE:
+	case LengthEvent::INVALIDATE :
 		out << "INVALIDATE";
 		break;
-	case LengthEvent::RESIDUE_APPEND:
+	case LengthEvent::RESIDUE_APPEND :
 		out << "APPEND";
 		break;
-	case LengthEvent::RESIDUE_PREPEND:
+	case LengthEvent::RESIDUE_PREPEND :
 		out << "PREPEND";
 		break;
-	case LengthEvent::RESIDUE_DELETE:
+	case LengthEvent::RESIDUE_DELETE :
 		out << "DELETE";
 		break;
-	default:
+	default :
 		out << "UNKNOWN";
 		break;
 	}

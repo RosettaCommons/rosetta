@@ -175,10 +175,8 @@ rebuild_disulfide( core::pose::Pose & pose,
 	(*packer_score)(pose); // structure must be scored before rotamer_trials can be called
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		TR << "Performing symmetric packing on disulfides." << std::endl;
-		core::pack::symmetric_pack_rotamers(pose, *packer_score, packer_task);
-	} else {
-		pack::pack_rotamers(pose, *packer_score, packer_task );
 	}
+	core::pack::pack_rotamers(pose, *packer_score, packer_task);
 
 	using namespace core::optimization;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {

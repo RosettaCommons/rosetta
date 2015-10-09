@@ -23,7 +23,7 @@
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 
 #include <core/pack/task/PackerTask.hh>
 
@@ -46,7 +46,7 @@ AnnealerFactory::create_annealer(
 	ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 	core::PackerEnergy & bestenergy,
 	bool start_with_current,
-	interaction_graph::InteractionGraphBaseOP ig,
+	interaction_graph::AnnealableGraphBaseOP ig,
 	rotamer_set::FixbbRotamerSetsCOP rotamer_sets,
 	ObjexxFCL::FArray1_int & current_rot_index,
 	bool calc_rot_freq,

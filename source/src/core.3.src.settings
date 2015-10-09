@@ -193,6 +193,12 @@ sources = {
 		"VdWTinkerPotential",
 		"WaterAdductHBondPotential",
 	],
+	"core/scoring/aa_repeat_energy": [
+		"AARepeatEnergy",
+	],
+	"core/scoring/annealing/" : [
+		"ResidueArrayAnnealableEnergy",
+	],
 	"core/scoring/bin_transitions": [ #Moved from core.2 because this needs to use Rama fxns.
 		"BinTransitionCalculator",
 		"BinTransitionData",
@@ -475,7 +481,6 @@ sources = {
 	"core/scoring/methods": [
 		"AACompositionEnergy",
 		"AACompositionEnergySetup",
-		"AARepeatEnergy",
 		"BurialEnergy",
 		"CartesianBondedEnergy",
 		"CenHBEnergy",

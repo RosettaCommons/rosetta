@@ -172,7 +172,7 @@ utility::vector1<FragmentCandidateOP> read_fragment_candidates(
 
 
 void FragmentCandidate::print_fragment_index(std::ostream& out, bool vall_index_database_exists) {
-	if (vall_index_database_exists) {
+	if ( vall_index_database_exists ) {
 		VallResidueOP r = get_residue(1);
 		out << r->key() << " " << fragmentLength_ << std::endl;
 	} else {

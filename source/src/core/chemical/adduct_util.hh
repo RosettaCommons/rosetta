@@ -61,7 +61,7 @@ place_adducts( ResidueTypeSet & rsd_type_set );
 /// @brief Create correct combinations of adducts for a residue type
 void
 create_adduct_combinations(
-  ResidueTypeSet & rsd_type_set,
+	ResidueTypeSet & rsd_type_set,
 	ResidueType const & rsd,
 	AdductMap ref_map,
 	AdductMap count_map,

@@ -15,6 +15,11 @@
 #include <core/pack/interaction_graph/InteractionGraphFactory.hh>
 
 // Package headers
+#include <core/graph/Graph.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
+#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/MultiplexedAnnealableGraph.hh>
+
 #include <core/pack/interaction_graph/PDInteractionGraph.hh>
 #include <core/pack/interaction_graph/DensePDInteractionGraph.hh>
 #include <core/pack/interaction_graph/DoubleLazyInteractionGraph.hh>
@@ -24,14 +29,20 @@
 #include <core/pack/interaction_graph/HPatchInteractionGraph.hh>
 #include <core/pack/interaction_graph/SymmLinMemInteractionGraph.hh>
 
+#include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.hh>
+
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
+
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
+
 #include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/IGEdgeReweightContainer.hh>
 
 #include <core/pose/symmetry/util.hh>
 
+#include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/pointer/owning_ptr.hh>
@@ -42,7 +53,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/options/BooleanVectorOption.hh>
-
 
 namespace core {
 namespace pack {
@@ -159,6 +169,85 @@ InteractionGraphFactory::create_interaction_graph(
 	T << "Instantiating DensePDInteractionGraph" << std::endl;
 	return InteractionGraphBaseOP( new DensePDInteractionGraph( the_task.num_to_be_packed() ) );
 }
+
+InteractionGraphBaseOP
+InteractionGraphFactory::create_and_initialize_two_body_interaction_graph(
+	task::PackerTask const & packer_task,
+	rotamer_set::RotamerSets & rotsets,
+	pose::Pose const & pose,
+	scoring::ScoreFunction const & scfxn,
+	graph::GraphCOP packer_neighbor_graph)
+{
+	InteractionGraphBaseOP ig = create_interaction_graph( packer_task, rotsets, pose, scfxn);
+
+	PROF_START( basic::GET_ENERGIES );
+	rotsets.compute_energies( pose, scfxn, packer_neighbor_graph, ig );
+	PROF_STOP( basic::GET_ENERGIES );
+	T << "IG: " << ig->getTotalMemoryUsage() << " bytes" << std::endl;
+
+	setup_IG_res_res_weights(pose, packer_task, rotsets, *ig);
+
+	return ig;
+}
+
+AnnealableGraphBaseOP
+InteractionGraphFactory::create_and_initialize_annealing_graph(
+	task::PackerTask const & packer_task,
+	rotamer_set::RotamerSets & rotsets,
+	pose::Pose const & pose,
+	scoring::ScoreFunction const & scfxn,
+	graph::GraphCOP packer_neighbor_graph)
+{
+	//using namespace scoring::annealing;
+
+	std::list< AnnealableGraphBaseOP > annealing_graphs;
+	annealing_graphs.push_back(create_and_initialize_two_body_interaction_graph(packer_task, rotsets, pose, scfxn, packer_neighbor_graph));
+
+
+	//TODO alexford This resolves target methods via dynamic cast of all activated WholeStructureMethods
+	// in the score function. This should likely be replaced with some sort of registration mechanism.
+	ResidueArrayAnnealingEvaluatorOP residue_array_evaluator( new ResidueArrayAnnealingEvaluator());
+	residue_array_evaluator->initialize( scfxn, pose, rotsets, packer_neighbor_graph );
+	if ( residue_array_evaluator->has_methods() ) {
+		annealing_graphs.push_back( residue_array_evaluator );
+	}
+
+	if ( annealing_graphs.size() == 1 ) {
+		return annealing_graphs.front();
+	} else {
+		return AnnealableGraphBaseOP(new MultiplexedAnnealableGraph(annealing_graphs));
+	}
+}
+
+void
+InteractionGraphFactory::setup_IG_res_res_weights(
+	pose::Pose const & pose,
+	task::PackerTask const & task,
+	rotamer_set::RotamerSets const & rotsets,
+	interaction_graph::InteractionGraphBase & ig
+)
+{
+	task::IGEdgeReweightContainerCOP edge_reweights = task.IGEdgeReweights();
+
+	if ( edge_reweights ) {
+
+		for ( Size ii = 1; ii<= rotsets.nmoltenres(); ++ii ) {
+			Size const res1id = rotsets.moltenres_2_resid( ii );
+
+			for ( ig.reset_edge_list_iterator_for_node( ii ); !ig.edge_list_iterator_at_end(); ig.increment_edge_list_iterator() ) {
+
+				interaction_graph::EdgeBase const & edge( ig.get_edge() );
+				Size const other_node = edge.get_other_ind( ii );
+				if ( other_node < ii ) {
+					continue; // only deal with upper edges
+				}
+				Size const res2id = rotsets.moltenres_2_resid( other_node );
+				ig.set_edge_weight( ii, other_node, edge_reweights->res_res_weight( pose, task, res1id, res2id ) );
+			}
+		}
+	}
+
+}//setup_IG_res_res_weights
 
 }
 }

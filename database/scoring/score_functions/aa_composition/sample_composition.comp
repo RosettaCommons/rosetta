@@ -25,6 +25,12 @@ PENALTIES 2.0 1.0 0.5 0.25 0 2.0 5.0 20.0 30.0
 # residues.  Here, we are saying that ideally, the pose should be 5% alanine.  Alternatively, we can
 # specify an absolute number with ABSOLUTE
 FRACTION 0.05
+# BEFORE_FUNCTION and AFTER_FUNCTION lines determine how the penalty function behaves outside of the
+# range in which the user specifies values.  It can be CONSTANT (first/last value repeats), LINEAR
+# (continues the line of the first two or last two values), or QUADRATIC (continues the hyperbola
+# centred on the origin on which the first two or last two values lie).
+BEFORE_FUNCTION LINEAR
+AFTER_FUNCTION QUADRATIC
 # END_PENALTY_DEFINITION ends the penalty definition block.
 END_PENALTY_DEFINITION
 
@@ -36,6 +42,8 @@ DELTA_START 0
 DELTA_END 3
 PENALTIES 0 2.0 8.0 20.0
 FRACTION 0.02
+BEFORE_FUNCTION CONSTANT
+AFTER_FUNCTION QUADRATIC
 END_PENALTY_DEFINITION
 
 
@@ -47,6 +55,8 @@ DELTA_START -1
 DELTA_END 1
 PENALTIES 50 0 50
 ABSOLUTE 1
+BEFORE_FUNCTION QUADRATIC
+AFTER_FUNCTION QUADRATIC
 END_PENALTY_DEFINITION
 
 # Penalties can also be applied to residues with particular sets of properties, too.  ALL properties
@@ -61,4 +71,6 @@ DELTA_START -5
 DELTA_END 5
 PENALTIES 10 5 1 0.5 0.25 0 0.25 0.5 1 5 10
 FRACTION 0.08
+BEFORE_FUNCTION QUADRATIC
+AFTER_FUNCTION QUADRATIC
 END_PENALTY_DEFINITION

@@ -2087,8 +2087,8 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 			Size vallendline = final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_end_line_by_key(i);
 			Size valllastresiduekey = final_fragments[query_positions_[1]][1].first->get_chunk()->get_vall_provider()->get_vall_last_residue_key_by_key(i);
 			utility::file::FileName vallfile(vallfilename);
-			if (utility::file::file_exists(basic::database::full_name("sampling/" + vallfile.bare_name() + ".torsions")) ||
-					utility::file::file_exists(basic::database::full_name("sampling/" + vallfile.bare_name() + ".torsions.gz"))) {
+			if ( utility::file::file_exists(basic::database::full_name("sampling/" + vallfile.bare_name() + ".torsions")) ||
+					utility::file::file_exists(basic::database::full_name("sampling/" + vallfile.bare_name() + ".torsions.gz")) ) {
 				tr.Info << "Vall index database exists: sampling/" << vallfile.bare_name() << ".torsions" << std::endl;
 				vall_index_database_exists[i] = true;
 				index_output_file << "# index " << vallstartline << " " << vallendline << " " << valllastresiduekey << " " << vallfile.bare_name() << std::endl;

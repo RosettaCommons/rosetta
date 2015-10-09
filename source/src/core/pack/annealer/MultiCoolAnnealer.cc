@@ -15,7 +15,7 @@
 #include <core/pack/annealer/MultiCoolAnnealer.hh>
 
 /// Package headers
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/task/PackerTask.hh>
 
 /// ObjexxFCL headers
@@ -61,7 +61,7 @@ MultiCoolAnnealer::MultiCoolAnnealer(
 	FArray1D_int & bestrotamer_at_seqpos,
 	core::PackerEnergy & bestenergy,
 	bool start_with_current, // start simulation with current rotamers
-	InteractionGraphBaseOP ig,
+	AnnealableGraphBaseOP ig,
 	FixbbRotamerSetsCOP p_rotamer_set,
 	FArray1_int & current_rot_index,
 	bool calc_rot_freq,
@@ -95,7 +95,7 @@ MultiCoolAnnealer::MultiCoolAnnealer(
 	FArray1D_int & bestrotamer_at_seqpos,
 	core::PackerEnergy & bestenergy,
 	bool start_with_current, // start simulation with current rotamers
-	InteractionGraphBaseOP ig,
+	AnnealableGraphBaseOP ig,
 	FixbbRotamerSetsCOP p_rotamer_set,
 	FArray1_int & current_rot_index,
 	bool calc_rot_freq,
@@ -156,7 +156,7 @@ void MultiCoolAnnealer::run()
 
 	ig_->prepare_for_simulated_annealing();
 
-	TR << "IG after prepare_for_simulated_annealing: " << ig_->getTotalMemoryUsage() << " bytes" << std::endl;
+	//TR << "IG after prepare_for_simulated_annealing: " << ig_->getTotalMemoryUsage() << " bytes" << std::endl;
 
 	ig_->blanket_assign_state_0();
 

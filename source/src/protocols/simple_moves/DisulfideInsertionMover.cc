@@ -158,18 +158,18 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 	core::Size peptide_end_pos =  peptide_receptor_pose.conformation().chain_end(peptide_chain_num_);
 
 	if ( is_cyd_res_at_termini_ ) {
-			n_cyd_seqpos_ = peptide_start_pos;
-			c_cyd_seqpos_ = peptide_end_pos;
+		n_cyd_seqpos_ = peptide_start_pos;
+		c_cyd_seqpos_ = peptide_end_pos;
 	}
 	protocols::simple_moves::DisulfideCyclizationViability cyclizable = determine_cyclization_viability(peptide_receptor_pose, n_cyd_seqpos_, c_cyd_seqpos_);
 
-	if (cyclizable == DCV_NOT_CYCLIZABLE) {
+	if ( cyclizable == DCV_NOT_CYCLIZABLE ) {
 		return;
 	}
 
 	// eliminate cases where a disulfide should not be formed since the residues already form a disulfide (DCV_ALREADY_CYCLIZED)
 	// in that case we will only want to optimize it using the rebuild_disulfide function
-	if (cyclizable == DCV_CYCLIZABLE) {
+	if ( cyclizable == DCV_CYCLIZABLE ) {
 		core::conformation::form_disulfide(peptide_receptor_pose.conformation(), n_cyd_seqpos_, c_cyd_seqpos_);
 	}
 
@@ -204,7 +204,7 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 	core::pose::PoseOP minimized_peptide( new core::pose::Pose (peptide_receptor_pose, peptide_start_pos, peptide_end_pos));
 	core::Real cyclic_peptide_energy = (*scorefxn_)(*minimized_peptide);
 	const core::Real PRACTICALLY_ZERO_ISC = 1e-7;
-	if (cyclic_peptide_energy < PRACTICALLY_ZERO_ISC) {
+	if ( cyclic_peptide_energy < PRACTICALLY_ZERO_ISC ) {
 		set_last_move_status(protocols::moves::MS_SUCCESS);
 	}
 

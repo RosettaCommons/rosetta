@@ -20,7 +20,7 @@
 /// Package headers
 #include <core/pack/annealer/RotamerAssigningAnnealer.hh>
 
-#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 
 /// ObjexxFCL headers
@@ -45,7 +45,7 @@ public:
 		ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 		core::PackerEnergy & bestenergy,
 		bool start_with_current, // start simulation with current rotamers
-		interaction_graph::InteractionGraphBaseOP ig,
+		interaction_graph::AnnealableGraphBaseOP ig,
 		FixbbRotamerSetsCOP rotamer_sets,
 		ObjexxFCL::FArray1_int & current_rot_index,
 		bool calc_rot_freq,
@@ -57,7 +57,7 @@ public:
 		ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 		core::PackerEnergy & bestenergy,
 		bool start_with_current, // start simulation with current rotamers
-		interaction_graph::InteractionGraphBaseOP ig,
+		interaction_graph::AnnealableGraphBaseOP ig,
 		FixbbRotamerSetsCOP rotamer_sets,
 		ObjexxFCL::FArray1_int & current_rot_index,
 		bool calc_rot_freq,
@@ -97,7 +97,7 @@ private:
 
 	static core::PackerEnergy const uninitialized_energy;
 
-	interaction_graph::InteractionGraphBaseOP ig_;
+	interaction_graph::AnnealableGraphBaseOP ig_;
 	//std::vector<int> rot_to_pack_;
 
 	//static int top_to_keep_static;

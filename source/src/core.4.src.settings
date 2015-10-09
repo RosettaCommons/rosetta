@@ -10,7 +10,7 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-        "core/optimization": [
+  "core/optimization": [
 		"atom_tree_minimize",
 		"AtomTreeMinimizer",
 		"AtomTreeMultifunc",
@@ -76,6 +76,7 @@ sources = {
 		"CenRotDunEnergy",
 	],
 	"core/pack/interaction_graph": [
+		"AnnealableGraphBase",
 		"DensePDInteractionGraph",
 		"DoubleDensePDInteractionGraph",
 		"DoubleLazyInteractionGraph",
@@ -86,9 +87,11 @@ sources = {
 		"InteractionGraphFactory",
 		"LazyInteractionGraph",
 		"LinearMemoryInteractionGraph",
+		"MultiplexedAnnealableGraph",
 		"OnTheFlyInteractionGraph",
 		"PDInteractionGraph",
 		"PrecomputedPairEnergiesInteractionGraph",
+		"ResidueArrayAnnealingEvaluator",
 		"RotamerDots",
 		"SimpleInteractionGraph",
 		"SurfaceEnergy",

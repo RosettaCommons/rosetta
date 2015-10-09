@@ -32,6 +32,16 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 
+#include <core/pose/annotated_sequence.hh>
+
+#include <core/pack/packer_neighbors.hh>
+#include <core/pack/pack_rotamers.hh>
+#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+
+#include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.hh>
+
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
@@ -49,6 +59,11 @@ using namespace core;
 using namespace core::pose;
 using namespace core::scoring;
 using namespace core::scoring::methods;
+using namespace core::scoring::annealing;
+
+using namespace core::pack;
+using namespace core::pack::task;
+using namespace core::pack::rotamer_set;
 
 class AACompositionEnergyTests : public CxxTest::TestSuite {
 
@@ -432,6 +447,282 @@ public:
 			TR << "Test AACompositionEnergyTests::test_energy_eval_twenty_percent_pro() complete." << std::endl;
 			TR.flush();
 		}
+		return;
+	}
+
+	/// @brief Test the energy calculation with the packer.
+	/// @author Alex Ford.
+	void test_energy_annealing( ) {
+		core_init_with_additional_options("-score:aa_composition_setup_file exactly_one_ala.comp");
+
+		// Setup score function
+		ScoreFunction scorefxn;
+		scorefxn.set_weight( aa_composition, 1 );
+
+		// Setup test pose
+		Pose pose;
+		make_pose_from_sequence( pose, "AGGGGGGG", "fa_standard");
+		TS_ASSERT_DELTA(scorefxn(pose), 0, 1e-6);
+
+		make_pose_from_sequence( pose, "AAAAAAAA", "fa_standard");
+
+		PackerEnergy prepack_score = scorefxn(pose);
+		TS_ASSERT_DELTA(prepack_score, 100, 1e-6);
+
+		// Setup packer task and packer objects
+		PackerTaskOP task( TaskFactory::create_packer_task( pose ));
+
+		utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, false );
+		keep_aas[ core::chemical::aa_ala ] = true;
+		keep_aas[ core::chemical::aa_gly ] = true;
+
+		for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
+			task->nonconst_residue_task( i ).restrict_absent_canonical_aas( keep_aas );
+		}
+
+		RotamerSetsOP rotsets( new RotamerSets() );
+		rotsets->set_task( task );
+		graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, scorefxn, task );
+		rotsets->build_rotamers( pose, scorefxn, packer_neighbor_graph );
+
+		TS_ASSERT_EQUALS( rotsets->nrotamers(), pose.total_residue() * 2);
+
+		core::pack::interaction_graph::ResidueArrayAnnealingEvaluator ev;
+		ev.initialize( scorefxn, pose, *rotsets, packer_neighbor_graph);
+
+		TS_ASSERT_EQUALS( ev.get_num_nodes(), 8);
+		TS_ASSERT_EQUALS( ev.get_num_total_states(), 16);
+		TS_ASSERT_EQUALS( ev.get_num_states_for_node(1), 2);
+
+		// Base assignment should be base pose score...
+		TS_ASSERT_EQUALS( ev.any_vertex_state_unassigned(), true );
+		TS_ASSERT_DELTA( ev.get_energy_current_state_assignment(), 100, 1e-6);
+
+		// Test state assignment and consideration
+		ev.set_state_for_node(1, 1);
+		for ( int r = 2; r <= ev.get_num_nodes(); ++r ) {
+			ev.set_state_for_node( r, 2);
+		}
+
+		TS_ASSERT_DELTA( ev.get_energy_current_state_assignment(), 0, 1e-6);
+
+		ev.set_state_for_node(2, 1);
+		TS_ASSERT_DELTA( ev.get_energy_current_state_assignment(), 100, 1e-6);
+
+		PackerEnergy delta_energy;
+		PackerEnergy pre_energy;
+
+		ev.consider_substitution(2, 2, delta_energy, pre_energy);
+
+		TS_ASSERT_DELTA( delta_energy, -100, 1e-6);
+		TS_ASSERT_DELTA( ev.get_energy_current_state_assignment(), 100, 1e-6);
+
+		ev.commit_considered_substitution();
+		TS_ASSERT_DELTA( ev.get_energy_current_state_assignment(), 0, 1e-6);
+
+		// Test via pack_rotamers run
+		pack_rotamers(pose, scorefxn, task);
+		PackerEnergy postpack_score = scorefxn(pose);
+		TS_ASSERT_DELTA(postpack_score, 0, 1e-6);
+
+		std::map< std::string, int > aa_count;
+		aa_count["ALA"] = 0;
+		aa_count["GLY"] = 0;
+
+		for ( core::Size r = 1; r<= pose.total_residue(); ++r ) {
+			aa_count[ pose.residue(r).name3() ] += 1;
+		}
+
+		TS_ASSERT_EQUALS( aa_count["ALA"], 1);
+		TS_ASSERT_EQUALS( aa_count["GLY"], pose.total_residue() - 1);
+	}
+
+	/// @brief Test the tail functions with constant below, linear above.
+	///
+	void test_tailfunctions_const_lin() {
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/methods/tailfunction_const.comp");
+
+		if ( TR.visible() ) {
+			TR << "Starting test_tailfunctions_const_lin()." << std::endl;
+		}
+
+		// Set up score function
+		ScoreFunction scorefxn;
+		scorefxn.set_weight( aa_composition, 1 );
+
+		{ //Scope 1: within test range
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAAGGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 0, 1e-6);
+		}
+
+		{ //Scope 2: one below ideal, within test range
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAGGGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 10, 1e-6);
+		}
+
+		{ //Scope 3: two below ideal, out of test range (constant region)
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAGGGGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 10, 1e-6);
+		}
+
+		{ //Scope 4: three below ideal, out of test range (constant region)
+			Pose pose;
+			make_pose_from_sequence( pose, "AAGGGGGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 10, 1e-6);
+		}
+
+		{ //Scope 5: one above ideal, within test range
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAAAGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 20, 1e-6);
+		}
+
+		{ //Scope 6: two above ideal, out of test range (linear region)
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAAAAGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 40, 1e-6);
+		}
+
+		{ //Scope 6: three above ideal, out of test range (linear region)
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAAAAAGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 60, 1e-6);
+		}
+
+		if ( TR.visible() ) {
+			TR << "Test test_tailfunctions_const_lin() complete." << std::endl;
+			TR.flush();
+		}
+
+		return;
+	}
+
+	/// @brief Test the tail functions with linear below, const above.
+	///
+	void test_tailfunctions_lin_const() {
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/methods/tailfunction_linear.comp");
+
+		if ( TR.visible() ) {
+			TR << "Starting test_tailfunctions_lin_const()." << std::endl;
+		}
+
+		// Set up score function
+		ScoreFunction scorefxn;
+		scorefxn.set_weight( aa_composition, 1 );
+
+		{ //Scope 1: within test range
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAAGGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 0, 1e-6);
+		}
+
+		{ //Scope 2: one below ideal, within test range
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAGGGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 10, 1e-6);
+		}
+
+		{ //Scope 3: two below ideal, out of test range (linear region)
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAGGGGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 20, 1e-6);
+		}
+
+		{ //Scope 4: three below ideal, out of test range (linear region)
+			Pose pose;
+			make_pose_from_sequence( pose, "AAGGGGGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 30, 1e-6);
+		}
+
+		{ //Scope 5: one above ideal, within test range
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAAAGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 20, 1e-6);
+		}
+
+		{ //Scope 6: two above ideal, out of test range (constant region)
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAAAAGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 20, 1e-6);
+		}
+
+		{ //Scope 6: three above ideal, out of test range (constant region)
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAAAAAGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 20, 1e-6);
+		}
+
+		if ( TR.visible() ) {
+			TR << "Test test_tailfunctions_lin_const() complete." << std::endl;
+			TR.flush();
+		}
+
+		return;
+	}
+
+	/// @brief Test the tail functions with quadratic above and below.
+	///
+	void test_tailfunctions_quadratic() {
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/methods/tailfunction_quadratic.comp");
+
+		if ( TR.visible() ) {
+			TR << "Starting test_tailfunctions_quadratic()." << std::endl;
+		}
+
+		// Set up score function
+		ScoreFunction scorefxn;
+		scorefxn.set_weight( aa_composition, 1 );
+
+		{ //Scope 1: within test range
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAAGGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 0, 1e-6);
+		}
+
+		{ //Scope 2: one below ideal, within test range
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAGGGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 10, 1e-6);
+		}
+
+		{ //Scope 3: two below ideal, out of test range (quadratic region)
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAGGGGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 40, 1e-6);
+		}
+
+		{ //Scope 4: three below ideal, out of test range (quadratic region)
+			Pose pose;
+			make_pose_from_sequence( pose, "AAGGGGGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 90, 1e-6);
+		}
+
+		{ //Scope 5: one above ideal, within test range
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAAAGGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 20, 1e-6);
+		}
+
+		{ //Scope 6: two above ideal, out of test range (quadratic region)
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAAAAGGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 80, 1e-6);
+		}
+
+		{ //Scope 6: three above ideal, out of test range (quadratic region)
+			Pose pose;
+			make_pose_from_sequence( pose, "AAAAAAAAGG", "fa_standard");
+			TS_ASSERT_DELTA(scorefxn(pose), 180, 1e-6);
+		}
+
+		if ( TR.visible() ) {
+			TR << "Test test_tailfunctions_quadratic() complete." << std::endl;
+			TR.flush();
+		}
+
 		return;
 	}
 

@@ -65,16 +65,16 @@ public:
 		rss = FA_STANDARD;
 		rs = ChemicalManager::get_instance()->residue_type_set(rss );
 		TR << A(width, rss)
-			 << I(width,rs->base_residue_types().size())
-			 << I(width,rs->patches().size())
-			 << endl;
+			<< I(width,rs->base_residue_types().size())
+			<< I(width,rs->patches().size())
+			<< endl;
 
 		rss = CENTROID;
 		rs = ChemicalManager::get_instance()->residue_type_set(rss );
 		TR << A(width, rss)
-			 << I(width,rs->base_residue_types().size())
-			 << I(width,rs->patches().size())
-			 << endl;
+			<< I(width,rs->base_residue_types().size())
+			<< I(width,rs->patches().size())
+			<< endl;
 
 		// Is this broken?
 		//rss = COARSE_TWO_BEAD;

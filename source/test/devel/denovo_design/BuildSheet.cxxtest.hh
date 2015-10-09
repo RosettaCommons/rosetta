@@ -51,7 +51,7 @@ class BuildSheetTests : public CxxTest::TestSuite {
 
 	// rotsets and ig to pass to packer
 	core::pack::rotamer_set::RotamerSetsOP rotsets;
-	core::pack::interaction_graph::InteractionGraphBaseOP ig;
+	core::pack::interaction_graph::AnnealableGraphBaseOP ig;
 
 	// original pose read from disk
 	core::pose::Pose input_pose;

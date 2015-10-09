@@ -16,7 +16,7 @@
 #include <protocols/simple_moves/symmetry/SymPackRotamersMoverCreator.hh>
 
 // Project headers
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
@@ -153,14 +153,12 @@ void SymPackRotamersMover::setup( pose::Pose & pose )
 	//else runtime_assert( task_is_valid( pose ) );
 	symmetric_task_ = make_symmetric_task( pose, symmetric_task_ );
 
-	symmetric_pack_rotamers_setup( pose, *( score_function() ), symmetric_task_, sym_rotamer_sets_, symmetric_ig_ );
-
-	setup_IG_res_res_weights( pose, symmetric_task_, sym_rotamer_sets_, symmetric_ig_ );
+	pack_rotamers_setup( pose, *( score_function() ), symmetric_task_, sym_rotamer_sets_, symmetric_ig_ );
 }
 
 core::PackerEnergy SymPackRotamersMover::run( pose::Pose & pose, utility::vector0< int > rot_to_pack ) const
 {
-	return symmetric_pack_rotamers_run( pose, symmetric_task_, sym_rotamer_sets_, symmetric_ig_, rot_to_pack );
+	return pack_rotamers_run( pose, symmetric_task_, sym_rotamer_sets_, symmetric_ig_, rot_to_pack );
 }
 
 task::PackerTaskOP

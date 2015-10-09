@@ -402,11 +402,6 @@ PackRotamersMoverPartGreedy::choose_n_best( core::pose::Pose const & pose , core
 	}
 	return chosen_residues;
 }
-/*core::PackerEnergy PackRotamersMoverPartGreedy::run_with_ig( Pose & pose, utility::vector0< int > rot_to_pack, InteractionGraphBaseOP ig) const
-{
-return pack_rotamers_run( pose, task(), rotamer_sets(), ig, rot_to_pack );
-}
-*/
 
 }//moves
 }//protocols

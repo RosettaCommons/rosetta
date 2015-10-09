@@ -953,7 +953,7 @@ PeptideDeriverFilter::derive_peptide(
 
 					// For peptides that can be closed and contribute more then a user defined fraction of the binding energy (default is 0.35)
 					// mutate to cysteins and re-evaluate energy
-					if ((linear_isc / total_isc) >= optimize_cyclic_threshold_) {
+					if ( (linear_isc / total_isc) >= optimize_cyclic_threshold_ ) {
 						// NOTE : see note on linear_jump_id
 						core::Size cyclic_jump_id;
 						receptor_pre_cyclization_peptide_pose = build_receptor_peptide_pose(receptor_pose, partner_pose, n_putative_cyd, c_putative_cyd, cyclic_jump_id);
@@ -964,12 +964,12 @@ PeptideDeriverFilter::derive_peptide(
 						disulfide_inserter->apply(*receptor_cyclic_peptide_pose);
 						// any_peptide_cyclic_model_created checks if any peptide in the pose has been cyclized
 						// current_peptide_cyclic_model_created checks if the current peptide has been cyclized
-						if (disulfide_inserter->get_last_move_status()==protocols::moves::MS_SUCCESS) {
+						if ( disulfide_inserter->get_last_move_status()==protocols::moves::MS_SUCCESS ) {
 							any_peptide_cyclic_model_created = true;
 							current_peptide_cyclic_model_created = true;
 							cyclic_isc = calculate_interface_score(*receptor_cyclic_peptide_pose, cyclic_jump_id);
 						}
-				        }
+					}
 				}
 			}
 

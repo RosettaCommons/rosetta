@@ -23,7 +23,7 @@
 #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.fwd.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
+#include <core/pack/interaction_graph/AnnealableGraphBase.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
@@ -85,24 +85,16 @@ pack_rotamers_setup(
 	scoring::ScoreFunction const & scfxn,
 	task::PackerTaskCOP task,
 	rotamer_set::RotamerSetsOP rotsets,
-	interaction_graph::InteractionGraphBaseOP & ig
+	interaction_graph::AnnealableGraphBaseOP & ig
 );
 
 // PyRosetta compatible version
-interaction_graph::InteractionGraphBaseOP
+interaction_graph::AnnealableGraphBaseOP
 pack_rotamers_setup(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & scfxn,
 	task::PackerTaskCOP task,
 	rotamer_set::RotamerSetsOP rotsets
-);
-
-void
-setup_IG_res_res_weights(
-	pose::Pose const & pose,
-	task::PackerTaskCOP task,
-	rotamer_set::RotamerSetsCOP rotsets,
-	interaction_graph::InteractionGraphBaseOP ig
 );
 
 /// @brief Run simulated annealing, return the energy of the best rotamer assignment
@@ -112,7 +104,7 @@ pack_rotamers_run(
 	pose::Pose & pose,
 	task::PackerTaskCOP task,
 	rotamer_set::FixbbRotamerSetsCOP rotsets,
-	interaction_graph::InteractionGraphBaseOP ig,
+	interaction_graph::AnnealableGraphBaseOP ig,
 	utility::vector0<int> rot_to_pack = utility::vector0<int>()
 );
 
@@ -123,47 +115,11 @@ pack_rotamers_run(
 	pose::Pose const & pose,
 	task::PackerTaskCOP task,
 	rotamer_set::FixbbRotamerSetsCOP rotsets,
-	interaction_graph::InteractionGraphBaseOP ig,
+	interaction_graph::AnnealableGraphBaseOP ig,
 	utility::vector0< int > rot_to_pack,
 	ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 	core::PackerEnergy & bestenergy
 );
-
-
-void
-symmetric_pack_rotamers(
-	pose::Pose & pose,
-	scoring::ScoreFunction const & sfxn,
-	task::PackerTaskCOP task
-);
-
-void
-symmetric_pack_rotamers_setup(
-	pose::Pose & pose,
-	scoring::ScoreFunction const & scfxn,
-	task::PackerTaskCOP task,
-	rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets,
-	interaction_graph::InteractionGraphBaseOP & ig
-);
-
-// PyRosetta compatible version
-interaction_graph::InteractionGraphBaseOP
-symmetric_pack_rotamers_setup(
-	pose::Pose & pose,
-	scoring::ScoreFunction const & scfxn,
-	task::PackerTaskCOP task,
-	rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets
-);
-
-Real
-symmetric_pack_rotamers_run(
-	pose::Pose & pose,
-	task::PackerTaskCOP task,
-	rotamer_set::symmetry::SymmetricRotamerSetsCOP rotsets,
-	interaction_graph::InteractionGraphBaseOP ig,
-	utility::vector0< int > rot_to_pack = utility::vector0< int >()
-);
-
 
 } // namespace pack
 } // namespace core

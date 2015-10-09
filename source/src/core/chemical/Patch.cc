@@ -343,7 +343,7 @@ std::string
 PatchCase::generates_new_name3() const {
 	std::string new_name3( "" );
 	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-					iter_end = operations_.end(); iter != iter_end; ++iter ) {
+			iter_end = operations_.end(); iter != iter_end; ++iter ) {
 		std::string const name3 = ( *iter )->generates_name3();
 		if ( name3.size() > 0 ) {
 			runtime_assert( new_name3.size() == 0 ); // do not allow Patch to define more than one new name3
@@ -358,7 +358,7 @@ std::string
 PatchCase::generates_interchangeability_group() const {
 	std::string new_interchangeability_group( "" );
 	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-					iter_end = operations_.end(); iter != iter_end; ++iter ) {
+			iter_end = operations_.end(); iter != iter_end; ++iter ) {
 		std::string const interchangeability_group = ( *iter )->generates_interchangeability_group();
 		if ( interchangeability_group.size() > 0 ) {
 			runtime_assert( new_interchangeability_group.size() == 0 ); // do not allow Patch to define more than one new interchangeability_group
@@ -372,7 +372,7 @@ PatchCase::generates_interchangeability_group() const {
 bool
 PatchCase::may_change_aa() const {
 	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
-					iter_end = operations_.end(); iter != iter_end; ++iter ) {
+			iter_end = operations_.end(); iter != iter_end; ++iter ) {
 		if ( ( *iter )->may_change_aa() ) return true;
 	}
 	return false;
