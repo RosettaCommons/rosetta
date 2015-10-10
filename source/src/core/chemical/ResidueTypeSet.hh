@@ -31,6 +31,7 @@
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/Metapatch.fwd.hh>
 #include <core/chemical/Patch.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 #include <utility/exit.hh>
@@ -123,6 +124,13 @@ public:
 	/// @brief adds a new residue type to the set, one that CANNOT be generated from a base_residue_type and patches
 	void
 	add_custom_residue_type( std::string const &  filename );
+	
+	/// @brief delete a custom residue type from the set (Use with care)
+	void
+	apply_patches(
+		utility::vector1< std::string > const & patch_filenames,
+		utility::vector1< std::string > const & metapatch_filenames
+	);
 
 	/// @brief delete a custom residue type from the set (Use with care)
 	void
@@ -262,6 +270,9 @@ public:
 
 	/// @brief the patches
 	utility::vector1< PatchCOP > const & patches() const { return patches_; }
+	
+	/// @brief the metapatches
+	utility::vector1< MetapatchCOP > const & metapatches() const { return metapatches_; }
 
 	/// @brief the patches, index by name.
 	std::map< std::string, utility::vector1< PatchCOP > > const & patch_map() const { return patch_map_; }
@@ -277,7 +288,9 @@ public:
 	ResidueTypeCOPs
 	name3_map_DO_NOT_USE( std::string const & name ) const;
 
-
+	MetapatchCOP
+	metapatch( std::string name ) const { return metapatch_map_.find( name )->second; }
+	
 	//////////////////
 	// private methods
 private:
@@ -294,16 +307,12 @@ private:
 	);
 
 	void
-	apply_patches(
-		utility::vector1< std::string > const & filenames
-	);
-
-	void
 	update_info_on_name3_and_interchangeability_group( ResidueTypeCOPs base_residue_types );
 
 	void
 	generate_all_residue_types();
 
+	// Nonconst only because it can potentially modify patches_ and patch_map_.
 	bool
 	generate_residue_type( std::string const & rsd_name ) const;
 
@@ -342,14 +351,16 @@ private:
 	/// @brief new residue types added at runtime with, e.g., custom variants.
 	ResidueTypeCOPs custom_residue_types_;
 
-	/// @brief the patches.
-	utility::vector1< PatchCOP > patches_;
-
-	/// @brief patches indexed by name
-	std::map< std::string, utility::vector1< PatchCOP > > patch_map_;
-
 	/// @brief the database directory of the generating files ---> allows to use cached dunbrack libs
 	const std::string database_directory_;
+
+	/// @brief the patches
+	utility::vector1< PatchCOP > patches_;
+	utility::vector1< MetapatchCOP > metapatches_;
+	
+	/// @brief patches indexed by name
+	std::map< std::string, utility::vector1< PatchCOP > > patch_map_;
+	std::map< std::string, MetapatchCOP > metapatch_map_;
 
 	// @brief all cached residue_type information including generated residue_types, name3_map, etc.
 	// By making the following an OP (instead of COP) the cache effectively becomes mutable even when in a

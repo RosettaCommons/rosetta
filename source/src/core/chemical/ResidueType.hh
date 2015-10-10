@@ -1499,8 +1499,7 @@ public:
 	ResidueProperties const & properties() const;
 
 	/// @brief Set the collection of properties for this ResidueType.
-	void
-	set_properties( ResiduePropertiesOP properties );
+	void set_properties( ResiduePropertiesOP properties );
 
 	/// @brief Add a property to this ResidueType.
 	void add_property( std::string const & property );

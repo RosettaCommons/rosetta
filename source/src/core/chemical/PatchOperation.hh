@@ -889,6 +889,118 @@ public:
 private:
 
 };
+				 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief replace proton with methyl
+class ReplaceProtonWithMethoxy: public PatchOperation {
+public:
+	/// @brief constructor
+	ReplaceProtonWithMethoxy( std::string atom ): atom_( atom ) {};
+					 
+	bool
+	apply( ResidueType & rsd ) const;
+					 
+private:
+	std::string atom_;
+};
+				 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief replace proton with methyl
+class ReplaceProtonWithEthyl : public PatchOperation {
+public:
+	/// @brief constructor
+	ReplaceProtonWithEthyl( std::string atom ): atom_( atom ) {};
+					 
+	bool
+	apply( ResidueType & rsd ) const;
+					 
+private:
+	std::string atom_;
+};
+				 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief replace proton with methyl
+class ReplaceProtonWithMethyl : public PatchOperation {
+public:
+	/// @brief constructor
+	ReplaceProtonWithMethyl( std::string atom ): atom_( atom ) {};
+
+	bool
+	apply( ResidueType & rsd ) const;
+
+private:
+	std::string atom_;
+};
+			
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief replace proton with chlorine
+class ReplaceProtonWithChlorine : public PatchOperation {
+public:
+	/// @brief constructor
+	ReplaceProtonWithChlorine( std::string atom ): atom_( atom ) {};
+
+	bool
+	apply( ResidueType & rsd ) const;
+
+private:
+	std::string atom_;
+};
+				 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief replace proton with fluorine
+class ReplaceProtonWithFluorine : public PatchOperation {
+public:
+	/// @brief constructor
+	ReplaceProtonWithFluorine( std::string atom ): atom_( atom ) {};
+	
+	bool
+	apply( ResidueType & rsd ) const;
+					 
+private:
+	std::string atom_;
+};
+				 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief replace proton with bromine
+class ReplaceProtonWithBromine : public PatchOperation {
+public:
+	/// @brief constructor
+	ReplaceProtonWithBromine( std::string atom ): atom_( atom ) {};
+					 
+	bool
+	apply( ResidueType & rsd ) const;
+					 
+private:
+	std::string atom_;
+};
+				 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief replace proton with iodine
+class ReplaceProtonWithIodine : public PatchOperation {
+public:
+	/// @brief constructor
+	ReplaceProtonWithIodine( std::string atom ): atom_( atom ) {};
+					 
+	bool
+	apply( ResidueType & rsd ) const;
+					 
+private:
+	std::string atom_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief replace proton with hydroxyl
+class ReplaceProtonWithHydroxyl : public PatchOperation {
+public:
+	/// @brief constructor
+	ReplaceProtonWithHydroxyl( std::string atom ): atom_( atom ) {};
+
+	bool
+	apply( ResidueType & rsd ) const;
+
+private:
+	std::string atom_;
+};
 
 /// @brief  Virtual constructor, returns 0 if no match
 PatchOperationOP

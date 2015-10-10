@@ -641,6 +641,12 @@ read_topology_file(
 		if ( !l.eof() ) {
 			l >> parse_charge;
 		}
+		
+		utility::vector1< std::string > props;
+		std::string prop;
+		while ( l >> prop ) {
+			props.push_back( prop );
+		}
 
 		if ( atom_type_reassignments.find( stripped( atom_name ) ) != atom_type_reassignments.end() ) {
 			tr.Trace << "reassigning atom " << atom_name << " atomtype: " << atom_type_name << " --> " <<
@@ -660,7 +666,11 @@ read_topology_file(
 		} else {
 			rsd->add_atom( atom_name, atom_type_name, mm_atom_type_name, parse_charge );
 		}
-
+		
+		for ( Size p = 1; p <= props.size(); ++p ) {
+			rsd->atom( atom_name ).set_property( props[ p ], true );
+		}
+		
 		++natoms;
 	}
 

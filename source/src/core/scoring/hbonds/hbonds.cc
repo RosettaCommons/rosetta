@@ -378,6 +378,10 @@ identify_hbonds_1way(
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
 			debug_assert( base2 > 0 && base != base2 );
+			
+			//std::cout << "about to evaluate " << acc_rsd.atom_name(aatm ) << " " << acc_rsd.atom_name(base ) << acc_rsd.atom_name(base2) << std::endl;
+			//std::cout << "coords " << acc_rsd.atom(aatm ) << "\t" << acc_rsd.atom(base ) << "\t" << acc_rsd.atom(base2) << std::endl;
+			//std::cout << "seqpos " << don_rsd.seqpos() << "\t" << acc_rsd.seqpos() << std::endl;
 
 			hb_energy_deriv( database, hbond_set.hbond_options(),
 				hbe_type, datm_xyz, hatm_xyz,
@@ -471,6 +475,10 @@ identify_hbonds_1way(
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
 			debug_assert( base2 > 0 && base != base2 );
+			
+			//std::cout << "about to evaluate " << acc_rsd.atom_name(aatm ) << " " << acc_rsd.atom_name(base ) << acc_rsd.atom_name(base2) << std::endl;
+			//std::cout << "coords " << acc_rsd.atom(aatm ) << "\t" << acc_rsd.atom(base ) << "\t" << acc_rsd.atom(base2) << std::endl;
+			//std::cout << "seqpos " << don_rsd.seqpos() << "\t" << acc_rsd.seqpos() << std::endl;
 
 			hb_energy_deriv( database, options, hbe_type, datm_xyz, hatm_xyz,
 				acc_rsd.atom(aatm ).xyz(),
@@ -585,6 +593,10 @@ identify_hbonds_1way(
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
 			debug_assert( base2 > 0 && base != base2 );
+			
+			//std::cout << "about to evaluate " << acc_rsd.atom_name(aatm ) << " " << acc_rsd.atom_name(base ) << acc_rsd.atom_name(base2) << std::endl;
+			//std::cout << "coords " << acc_rsd.atom(aatm ) << "\t" << acc_rsd.atom(base ) << "\t" << acc_rsd.atom(base2) << std::endl;
+			//std::cout << "seqpos " << don_rsd.seqpos() << "\t" << acc_rsd.seqpos() << std::endl;
 
 			hb_energy_deriv( database, options, hbe_type, datm_xyz, hatm_xyz,
 				acc_rsd.atom(aatm ).xyz(),

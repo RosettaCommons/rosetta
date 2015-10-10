@@ -2691,6 +2691,8 @@ Derived data updated by this method:
 * atoms_last_controlled_by_chi_
 
 * Atom.heavyatom_has_polar_hydrogens_ - for all atoms.
+* Some AtomProperties:
+** AROMATIC_CARBON_WITH_FREE_VALENCE
 
 * rna_residue_type_  -- Will be reset based on other ResidueType data
 * carbohydrate_info_ -- Will be reset based on other ResidueType data
@@ -2756,7 +2758,6 @@ ResidueType::update_derived_data()
 				all_sc_atoms_.push_back( i );
 			}
 		}
-
 	}
 
 	// setup the hydrogen information
@@ -3037,6 +3038,21 @@ ResidueType::update_derived_data()
 		update_last_controlling_chi();
 	} else {
 		update_last_controlling_chi();
+	}
+	
+	// Set up some atom properties
+	for ( Size ii = 1; ii <= natoms(); ++ii ) {
+		// Am I an aromatic carbon atom with a free valence?
+		// Can also be specified in params, but add if not already set!
+		atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, false );
+		if ( atom( ii ).mm_name() == "CA" ) {
+			AtomIndices const & ii_bonded_neighbors( bonded_neighbor( ii ) );
+			for ( Size jj = 1; jj <= ii_bonded_neighbors.size(); ++jj ) {
+				if ( atom( ii_bonded_neighbors[ jj ] ).is_haro() ) {
+					atom( ii ).set_property( AROMATIC_CARBON_WITH_FREE_VALENCE, true );
+				}
+			}
+		}
 	}
 
 }

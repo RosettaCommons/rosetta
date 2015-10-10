@@ -1487,6 +1487,7 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 	// hbenergy,
 	// false /*evaluate_derivative*/, DUMMY_DERIVS );
 
+	//std::cout << "about to evaluate " << at1 << " " << at2 << std::endl;
 	hb_energy_deriv( *database_, *options_, hbe_type,
 		at2.base_xyz(), at2.xyz(), // donor heavy atom, donor hydrogen,
 		at1.xyz(), at1.base_xyz(), at1.base2_xyz(), // acceptor, acceptor base, acceptor base2

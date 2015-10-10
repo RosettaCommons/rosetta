@@ -32,6 +32,9 @@ namespace chemical {
 /// @brief the string used to create new residue names after patching
 extern std::string const PATCH_LINKER;
 
+/// @brief handy function, return the first word from a line
+std::string tag_from_line( std::string const & line );
+	
 /// @brief helper function, returns the base residue name prior to any patching
 std::string
 residue_type_base_name( ResidueType const & rsd_type );
@@ -39,6 +42,8 @@ residue_type_base_name( ResidueType const & rsd_type );
 /// @brief helper function, returns the name of all added patches
 std::string
 residue_type_all_patches_name( ResidueType const & rsd_type );
+
+utility::vector1< std::string > get_patch_names( ResidueType const & rsd_type );
 
 ///  @brief  A single case of a patch, eg proline Nterminus is a case of NtermProteinFull
 class PatchCase : public utility::pointer::ReferenceCount {
@@ -71,7 +76,9 @@ public:
 	{
 		return selector_;
 	}
-
+	
+	void set_selector( ResidueTypeSelector const & selector ) { selector_ = selector; }
+	
 	/// @brief returns list of added atom names, useful for identifying patches that go with PDB residues
 	utility::vector1< std::string >
 	adds_atoms() const;
@@ -111,6 +118,11 @@ private:
 	utility::vector1< PatchOperationOP > operations_;
 };
 
+/// @brief create a PatchCase from input lines
+/// @details add selector_ from lines enclosed by "BEGIN_SELECTOR" and "END_SELECTOR".\n
+/// add operations_ from each input line containing a single operation
+PatchCaseOP
+case_from_lines( utility::vector1< std::string > const & lines );
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief A class patching basic ResidueType to create variant types, containing multiple PatchCase
@@ -151,6 +163,10 @@ public:
 	{
 		return name_;
 	}
+	
+	void set_selector( ResidueTypeSelector const & selector ) { selector_ = selector; }
+	
+	void set_name( std::string name ) { name_ = name; }
 
 	/// @brief the variant types created by applying this patch
 	virtual
@@ -159,6 +175,10 @@ public:
 	{
 		return types_;
 	}
+	
+	inline
+	void
+	replaces_residue_type( bool replaces ) { replaces_residue_type_ = replaces; }
 
 	/// @brief returns list of added atom names, useful for identifying patches that go with PDB residues
 	utility::vector1< std::string >
@@ -180,6 +200,9 @@ public:
 	utility::vector1< std::string >
 	deletes_variants( ResidueType const & rsd_in ) const;
 
+	inline void
+	add_case( PatchCaseOP pcase ) { cases_.push_back( pcase ); }
+	
 	/// @brief returns new name3, if changed. Only one new name3 allowed.
 	std::string
 	generates_new_name3( ResidueType const & rsd_in ) const;

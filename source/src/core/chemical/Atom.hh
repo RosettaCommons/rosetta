@@ -18,9 +18,11 @@
 
 // Unit headers
 #include <core/chemical/Atom.fwd.hh>
+#include <core/chemical/AtomProperties.hh>
 
 // Package headers
 #include <core/chemical/types.hh>
+#include <core/chemical/GreekDistance.hh>
 //#include <core/chemical/Bond.fwd.hh> // only for Temp BondName
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/Element.hh>
@@ -64,48 +66,43 @@ public:
 	/// @brief Construct a new atom type with its name and element.
 	Atom();
 
-
 	/// @brief Construct a new atom with the name, mm type, element, charge and position.
-	// AMW: cppcheck tells you to, but Do NOT change to pass by reference
 	Atom(
-		std::string const name_in,
-		std::string const mm_name,
-		Size const mm_atom_type_index,
-		ElementCOP element,
-		Real const charge,
-		Vector const & ideal_xyz
-	);
+			std::string const & name_in,
+			std::string const & mm_name,
+			Size const mm_atom_type_index,
+			ElementCOP element,
+			Real const charge,
+			Vector const & ideal_xyz );
 
-
-	Atom(Atom const & src);
+	/// @brief Copy constructor
+	Atom( Atom const & src );
 
 	//destructor (default)
 	~Atom();
 
-	/// @brief  Generate string representation of chemical::Atom for debugging purposes.
-	void show( std::ostream & out=std::cout ) const;
-
-	bool operator==(Atom const & atom) const{
+	bool operator==( Atom const & atom ) const {
 		return name_== atom.name_ &&
-			mm_name_ == atom.mm_name_ &&
-			atom_type_index_ == atom.atom_type_index_ &&
-			mm_atom_type_index_ == atom.mm_atom_type_index_ &&
-			element_ == atom.element_ &&
-			formal_charge_ == atom.formal_charge_ &&
-			charge_ == atom.charge_ &&
-			ideal_xyz_ == atom.ideal_xyz_ &&
-			gasteiger_atom_type_ == atom.gasteiger_atom_type_ &&
-			heavyatom_has_polar_hydrogens_ == atom.heavyatom_has_polar_hydrogens_ &&
-			is_acceptor_ == atom.is_acceptor_ &&
-			is_polar_hydrogen_ == atom.is_polar_hydrogen_ &&
-			is_hydrogen_ == atom.is_hydrogen_ &&
-			is_haro_ == atom.is_haro_ &&
-			is_virtual_ == atom.is_virtual_ &&
-			has_orbitals_ == atom.has_orbitals_  &&
-			bonded_orbitals_ == atom.bonded_orbitals_;
+				mm_name_ == atom.mm_name_ &&
+				atom_type_index_ == atom.atom_type_index_ &&
+				mm_atom_type_index_ == atom.mm_atom_type_index_ &&
+				element_ == atom.element_ &&
+				formal_charge_ == atom.formal_charge_ &&
+				charge_ == atom.charge_ &&
+				ideal_xyz_ == atom.ideal_xyz_ &&
+				*properties_ == *atom.properties_ &&
+				gasteiger_atom_type_ == atom.gasteiger_atom_type_ &&
+				is_hydrogen_ == atom.is_hydrogen_ &&
+				has_orbitals_ == atom.has_orbitals_  &&
+				bonded_orbitals_ == atom.bonded_orbitals_ &&
+				abs_stereochem_ == atom.abs_stereochem_ &&
+				greek_d_ == atom.greek_d_;
 	}
 
-	Atom & operator =(Atom const & atom);
+	Atom & operator =( Atom const & atom );
+
+	/// @brief  Generate string representation of chemical::Atom for debugging purposes.
+	void show( std::ostream & out=std::cout ) const;
 
 	// Const Getters
 	std::string const& name() const { return name_; }
@@ -123,13 +120,52 @@ public:
 	Vector const& ideal_xyz() const { return ideal_xyz_; };
 	utility::vector1<Size> const & bonded_orbitals() const{return bonded_orbitals_;}
 	utility::vector1<Size>  & bonded_orbitals() {return bonded_orbitals_;}
-	bool heavyatom_has_polar_hydrogens() const{ return heavyatom_has_polar_hydrogens_;}
-	bool is_acceptor() const{ return is_acceptor_;}
-	bool is_polar_hydrogen() const{ return is_polar_hydrogen_;}
-	bool is_hydrogen() const{return is_hydrogen_;}
-	bool is_haro() const{return is_haro_;}
-	bool is_virtual() const{return is_virtual_;}
-	bool has_orbitals() const{return has_orbitals_;}
+
+	/// @brief Access the collection of properties for this Atom.
+	AtomProperties & properties() const { return *properties_; }
+
+	/// @brief  Generic property access.
+	inline
+	bool
+	has_property( std::string const & property ) const
+	{
+		return properties_->has_property( property );
+	}
+
+	inline
+	bool
+	has_property( AtomProperty const property ) const
+	{
+		return properties_->has_property( property );
+	}
+
+	/// @brief  Get whether or not this heavy atom is a hydrogen-bond donor.
+	bool heavyatom_has_polar_hydrogens() const { return has_property( H_DONOR ); }
+
+	/// @brief  Get whether or not this heavy atom is a hydrogen-bond acceptor.
+	bool is_acceptor() const { return has_property( H_ACCEPTOR ); }
+
+
+	bool is_hydrogen() const { return is_hydrogen_; }
+
+	/// @brief  Get whether or not this hydrogen atom is polar.
+	bool is_polar_hydrogen() const { return has_property( POLAR_HYDROGEN ); }
+
+	/// @brief  Get whether or not this hydrogen atom is bonded to an aromatic ring.
+	bool is_haro() const { return has_property( AROMATIC_HYDROGEN ); }
+
+
+	/// @brief  Get whether or not this atom is virtual.
+	bool is_virtual() const { return has_property( VIRTUAL_ATOM ); }
+
+
+	bool has_orbitals() const { return has_orbitals_; }
+
+	/// @brief  Return the absolute stereochemistry (R/S designation) of this stereocenter.
+	char absolute_stereochemistry() const { return abs_stereochem_; }
+
+	/// @brief  How far (in Greek letters) is this atom from the primary functional group of the molecule?
+	GreekDistance greek_distance() const { return greek_d_; }
 
 
 	// Setters
@@ -146,18 +182,55 @@ public:
 	void formal_charge( int charge ) { formal_charge_ = charge; }
 	void charge( Real const & charge ) { charge_ = charge; };
 	void ideal_xyz( Vector const & ideal_xyz ) { ideal_xyz_= ideal_xyz; };
-	void heavyatom_has_polar_hydrogens( bool heavyatom_has_polar_hydrogens){ heavyatom_has_polar_hydrogens_ = heavyatom_has_polar_hydrogens;}
-	void is_polar_hydrogen(bool polar){is_polar_hydrogen_ = polar;}
-	void is_hydrogen(bool hydrogen){is_hydrogen_= hydrogen;}
-	void is_haro(bool haro){is_haro_ = haro;}
-	void is_acceptor(bool acceptor){is_acceptor_ = acceptor;}
-	void is_virtual(bool is_virtual){is_virtual_ = is_virtual;}
+
+	/// @brief  Generic property setting.
+	inline
+	void
+	set_property( std::string const & property, bool const setting)
+	{
+		properties_->set_property( property, setting );
+	}
+
+	inline
+	void
+	set_property( AtomProperty const property, bool const setting)
+	{
+		properties_->set_property( property, setting );
+	}
+
+	/// @brief  Set whether or not this heavy atom is a hydrogen-bond donor.
+	void heavyatom_has_polar_hydrogens( bool setting ) { set_property( H_DONOR, setting ); }
+
+	/// @brief  Set whether or not this heavy atom is a hydrogen-bond acceptor.
+	void is_acceptor( bool setting ) { set_property( H_ACCEPTOR, setting ); }
+
+
+	void is_hydrogen( bool setting ) { is_hydrogen_= setting; }
+
+	/// @brief  Set whether or not this hydrogen atom is polar.
+	void is_polar_hydrogen( bool setting ) { set_property( POLAR_HYDROGEN, setting ); }
+
+	/// @brief  Set whether or not this hydrogen atom is bonded to an aromatic ring.
+	void is_haro( bool setting ) { set_property( AROMATIC_HYDROGEN, setting ); }
+
+
+	/// @brief  Set whether or not this atom is virtual.
+	void is_virtual( bool setting ) { set_property( VIRTUAL_ATOM, setting ); }
+
+
 	void has_orbitals(bool orbitals){has_orbitals_ = orbitals;}
+
+	/// @brief  Set the absolute stereochemistry (R/S designation) of this stereocenter.
+	void set_absolute_stereochemistry( char const setting );
+
+	/// @brief  Set how far (in Greek letters) this atom is from the primary functional group of the molecule.
+	void greek_distance( GreekDistance const setting );
 
 	// Calculated data
 
 	/// @brief Return true if this represents a fake/mock atom.
 	bool is_fake() const;
+
 
 	// data
 private:
@@ -172,29 +245,22 @@ private:
 	int formal_charge_;
 	Real charge_;
 	Vector ideal_xyz_;
-	/// @brief is an atom both a heavy atom and chemically bonded to a polar hydrogen?
-	/// Derived data, reset in ResidueType.finalize()
-	bool heavyatom_has_polar_hydrogens_;
-	/// @brief is an atom both a heavy atom and capable of accepting hydrogen bonds?
-	/// Derived from Rosetta Atom type, set in add_atom()
-	bool is_acceptor_;
-	/// @brief is an atom a polar hydrogen?
-	/// Derived from Rosetta Atom type, set in add_atom()
-	bool is_polar_hydrogen_; //
+
+	// General properties of this atom.
+	// Many of these properties are derived data and are set in ResidueType::add_atom() and/or Residue::finalize().
+	AtomPropertiesOP properties_;
+
 	/// @brief is an atom a hydrogen?
 	/// Derived from Rosetta Atom type, set in add_atom()
 	bool is_hydrogen_;
-	/// @brief is an atom an aromatic hydrogen?
-	/// Derived from Rosetta Atom type, set in add_atom()
-	bool is_haro_;
-	/// @brief is an atom a virtual atom?
-	/// Derived from Rosetta Atom type, set in add_atom()
-	bool is_virtual_;
+
 	/// @brief doe an atom have orbitals?
 	/// Derived from Rosetta Atom type, set in add_atom()
 	bool has_orbitals_;
 	utility::vector1<Size> bonded_orbitals_;
 
+	char abs_stereochem_;
+	GreekDistance greek_d_;
 };
 
 std::ostream & operator<< ( std::ostream & out, Atom const & atom);

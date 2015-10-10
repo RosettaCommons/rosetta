@@ -59,9 +59,6 @@ public:
 
 		Vector xyz(1,2,3);
 		core::chemical::ElementOP element;
-		// AMW: cppcheck note
-		// Because of this line, the definition of Atom's constructor
-		// CANNOT be changed to pass by reference
 		Atom atom ("test", "mm_test", 2, element, 1, xyz);
 
 		TS_ASSERT_EQUALS("test", atom.name());

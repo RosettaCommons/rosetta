@@ -172,19 +172,26 @@
 
 namespace core {
 namespace chemical {
-
+	
+	
 /// @details Auto-generated virtual destructor
 Patch::~Patch() {}
-
+	
 /// @details Auto-generated virtual destructor
 PatchCase::~PatchCase() {}
-
+	
 static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
-
+	
 /// @brief the string used to generate new residue names
 std::string const PATCH_LINKER( ":" );
-// Changed from '_p:' to ':' for conciseness. Backward compatibility fixes throughout code.
-// std::string const patch_linker( "_p:" );
+	
+std::string tag_from_line( std::string const & line ) {
+	std::string tag;
+	std::istringstream l( line );
+	l >> tag;
+	if ( l.fail() ) return "";
+	else return tag;
+}
 
 std::string
 residue_type_base_name( ResidueType const & rsd_type )
@@ -192,7 +199,7 @@ residue_type_base_name( ResidueType const & rsd_type )
 	std::string base_name = rsd_type.name().substr( 0, rsd_type.name().find( PATCH_LINKER ) );
 	return base_name;
 }
-
+	
 std::string
 residue_type_all_patches_name( ResidueType const & rsd_type )
 {
@@ -201,48 +208,15 @@ residue_type_all_patches_name( ResidueType const & rsd_type )
 	else return "";
 }
 
-
-/// @brief handy function, return the first word from a line
-std::string
-tag_from_line( std::string const & line )
-{
-	std::string tag;
-	std::istringstream l( line );
-	l >> tag;
-	if ( l.fail() ) return "";
-	else return tag;
-}
-
-/// @brief create a PatchCase from input lines
-/// @details add selector_ from lines enclosed by "BEGIN_SELECTOR" and "END_SELECTOR".\n
-/// add operations_ from each input line containing a single operation
-PatchCaseOP
-case_from_lines(
-	utility::vector1< std::string > const & lines
-)
-{
-	PatchCaseOP pcase( new PatchCase() );
-
-	bool in_selector( false );
-	for ( uint i=1; i<= lines.size(); ++i ) {
-		std::string const tag( tag_from_line( lines[i] ) );
-
-		if ( tag == "BEGIN_SELECTOR" ) {
-			debug_assert( !in_selector );
-			in_selector = true;
-		} else if ( tag == "END_SELECTOR" ) {
-			in_selector = false;
-		} else if ( in_selector ) {
-			pcase->selector().add_line( lines[i] );
-		} else {
-			PatchOperationOP operation( patch_operation_from_patch_file_line( lines[i] ) );
-			if ( operation ) pcase->add_operation( operation );
-		}
+utility::vector1< std::string > get_patch_names( ResidueType const & rsd_type ) {
+	std::stringstream ss( residue_type_all_patches_name(rsd_type) );
+	std::string item;
+	utility::vector1< std::string > elems;
+	while ( std::getline( ss, item, ':' ) ) {
+		if ( item != "" ) elems.push_back( item );
 	}
-
-	return pcase;
+	return elems;
 }
-
 
 /// @details First clone the base ResidueType.  Then patching for this case is done by applying all the operations.
 /// finalize() is called after the VariantTypes and name are set by Patch::apply().
@@ -266,8 +240,6 @@ PatchCase::apply( ResidueType const & rsd_in, bool const instantiate /* = true *
 			return 0;
 		}
 	}
-
-	//std::cout << "amw PatchCase::apply Checking on igroup for res " << rsd->name() << ": " << rsd->interchangeability_group() << std::endl;
 
 	return rsd;
 }
@@ -467,6 +439,32 @@ Patch::read_file( std::string const & filename )
 	}
 }
 
+PatchCaseOP
+case_from_lines(
+	utility::vector1< std::string > const & lines
+) {
+	PatchCaseOP pcase( new PatchCase() );
+	
+	bool in_selector( false );
+	for ( uint i=1; i<= lines.size(); ++i ) {
+		std::string const tag( tag_from_line( lines[i] ) );
+		
+		if ( tag == "BEGIN_SELECTOR" ) {
+			debug_assert( !in_selector );
+			in_selector = true;
+		} else if ( tag == "END_SELECTOR" ) {
+			in_selector = false;
+		} else if ( in_selector ) {
+			pcase->selector().add_line( lines[i] );
+		} else {
+			PatchOperationOP operation( patch_operation_from_patch_file_line( lines[i] ) );
+			if ( operation ) pcase->add_operation( operation );
+		}
+	}
+	
+	return pcase;
+}
+
 /// @details loop through the cases in this patch and if it is applicable to this ResidueType, the corresponding patch
 /// operations are applied to create a new variant type of the basic ResidueType.  The new types's name and its
 /// variant type info are updated together with all other primary and derived ResidueType data.
@@ -486,9 +484,9 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 			if ( patched_rsd_type ) {
 				// patch succeeded!
 				if ( !replaces_residue_type_ ) { // This is bananas. Shouldn't just forget that patch was applied. -- rhiju.
-					for ( utility::vector1< std::string >::const_iterator iter=types_.begin(),
-							iter_end = types_.end(); iter != iter_end; ++iter ) {
-						patched_rsd_type->add_variant_type( *iter );
+					for ( utility::vector1< std::string >::const_iterator iter2=types_.begin(),
+							iter2_end = types_.end(); iter2 != iter2_end; ++iter2 ) {
+						patched_rsd_type->add_variant_type( *iter2 );
 					}
 					// AMW: Special case for the D patch. In ONLY THIS CASE,
 					// application of the D patch prepends the letter D. No ':'.
@@ -499,18 +497,13 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 						name_new = patched_rsd_type->name() + PATCH_LINKER + name_;
 					}
 					patched_rsd_type->name( name_new );
-					//std::cout << "amw Patch::apply Checking on igroup for res " << patched_rsd_type->name() << ": " << patched_rsd_type->interchangeability_group() << std::endl;
 				}
-
-				//std::cout << "amw Patch::apply after renaming Checking on igroup for res " << patched_rsd_type->name() << ": " << patched_rsd_type->interchangeability_group() << std::endl;
 
 				if ( instantiate ) {
 					patched_rsd_type->finalize();
 					tr.Debug << "successfully patched: " << rsd_type.name() <<
 						" to: " << patched_rsd_type->name() << std::endl;
 				}
-
-				//std::cout << "amw Patch::apply after finalize Checking on igroup for res " << patched_rsd_type->name() << ": " << patched_rsd_type->interchangeability_group() << std::endl;
 
 				return patched_rsd_type;
 			}

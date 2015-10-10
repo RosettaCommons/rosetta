@@ -625,6 +625,7 @@ ResidueTypeFinder::filter_all_patch_names( ResidueTypeCOPs const & rsd_types )  
 		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
 		bool found_patch_name( true );
 		for ( Size m = 1; m <= patch_names_.size(); m++ )  {
+			//std::cout << "Filtering " << residue_type_all_patches_name( *rsd_type ) << " by " << patch_names_[ m ] << std::endl;
 			std::string const & patch_name = patch_names_[ m ];
 			if ( residue_type_all_patches_name( *rsd_type ).find( patch_name ) == std::string::npos ) {
 				found_patch_name = false;

@@ -80,6 +80,7 @@ sources = {
 		"pna",
 		"sec_struct_finder",
 		"test_d_l_readin",
+		"test_metapatch",
 		"test_mm_lj",
 		"test_nu_angles",
 		"triazolamer_creator",

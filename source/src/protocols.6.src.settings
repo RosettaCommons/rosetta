@@ -318,7 +318,10 @@ sources = {
 	        "MPI_Refine_Master",
 		"Serial_Refine",
 	],
-
+	
+	"protocols/residue_optimization": [
+		"MetapatchEnumeration",
+	],
 
 }
 include_path = [
