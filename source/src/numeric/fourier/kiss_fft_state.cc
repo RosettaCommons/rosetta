@@ -31,8 +31,7 @@ namespace fourier {
 // m0 = n
 void kf_factor(int n,int * facbuf) {
 	int p=4;
-	double floor_sqrt;
-	floor_sqrt = floor( sqrt((double)n) );
+	double floor_sqrt = floor( sqrt((double)n) );
 
 	// factor out powers of 4, powers of 2, then any remaining primes
 	do {
@@ -62,7 +61,22 @@ kiss_fft_state::kiss_fft_state() {
 }
 
 kiss_fft_state::kiss_fft_state(int n, int inv) {
-	resize( n, inv );
+	// This used to just call resize, but has a conditional
+	// that will always query uninitialized values in the ctor case!
+	
+	nfft_ = n;
+	inverse_ = inv;
+	twiddles_.resize(nfft_);
+	
+	for ( int i=0; i<nfft_; ++i ) {
+		const double pi=M_PI;
+		double phase = -2*pi*i / nfft_;
+		if ( inverse_ ) {
+			phase *= -1;
+		}
+		kf_cexp(twiddles_[i], phase );
+	}
+	kf_factor(nfft_,factors_);
 }
 
 void kiss_fft_state::resize(int n, int inv) {

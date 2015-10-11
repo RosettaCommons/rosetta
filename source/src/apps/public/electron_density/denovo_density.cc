@@ -505,15 +505,26 @@ void DockFragmentsMover::run() {
 	// set up docking
 	protocols::electron_density::DockIntoDensityMover dock;
 	dock.setDelR(option[ delR ]); // option?
-	dock.setB(option[ bw ]());
-	dock.setTopN( option[ n_to_search ]() , option[ n_filtered ]() , option[ n_output ]() );
-	dock.setGridStep(option[ movestep ]());
-	dock.setMinBackbone(option[ min_bb ]());
-	dock.setNCyc(option[ ncyc ]());
-	dock.setClusterRadius(option[ clust_radius ]());
-	dock.setFragDens(option[ frag_dens ]());
-	dock.setNormScores(option[ norm_scores ]());
-	dock.setClusterOversamp(option[ clust_oversample ]());
+	
+	// I think the reason there is a valgrind error stemming from this is that
+	// we aren't setting defaults for these options
+	// and the defaults from the DockIntoDensityMover ctor
+	// are being overwritten by the uninitialized values
+	// Therefore, I will be extra-careful here and set the default again
+	// if the option is unspecified.
+	dock.setB( option[ bw ]() );
+	dock.setTopN( option[ n_to_search ]() , option[ n_filtered ]() , option[ n_output ]() ); //y
+	dock.setGridStep(option[ movestep ]()); //y
+	dock.setMinBackbone(option[ min_bb ]()); //y
+	dock.setNCyc(option[ ncyc ]()); //y
+	dock.setClusterRadius(option[ clust_radius ]()); //y
+	dock.setFragDens(option[ frag_dens ]()); //y
+	if ( option[ norm_scores ].user() ) {
+		dock.setNormScores(option[ norm_scores ]());
+	} else {
+		dock.setNormScores( false ); // ctor default
+	}
+	dock.setClusterOversamp(option[ clust_oversample ]()); //y
 	dock.setMaxRotPerTrans( 1 );
 	if ( option[ out::file::silent ].user() ) {
 		std::string silent_fn = option[ out::file::silent ]();
