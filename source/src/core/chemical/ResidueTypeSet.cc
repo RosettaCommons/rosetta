@@ -47,6 +47,7 @@
 #include <core/chemical/util.hh>
 #include <core/chemical/Orbital.hh> /* for copying ResidueType */
 #include <core/chemical/ResidueConnection.hh> /* for copying ResidueType */
+#include <core/chemical/gasteiger/GasteigerAtomTyper.hh>
 
 // Basic headers
 #include <basic/database/open.hh>
@@ -177,7 +178,11 @@ void ResidueTypeSet::init(
 
 				ResidueTypeOP rsd_type( read_topology_file(
 					filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
-
+				if ( option[ OptionKeys::in::file::assign_gasteiger_atom_types ] ) {
+					gasteiger::GasteigerAtomTypeSetCOP gasteiger_set(
+							ChemicalManager::get_instance()->gasteiger_atom_type_set() );
+					gasteiger::assign_gasteiger_atom_types( *rsd_type, gasteiger_set, false );
+				}
 				base_residue_types_.push_back( rsd_type );
 				cache_->add_residue_type( rsd_type );
 			}
@@ -525,19 +530,22 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 			
 			if ( rsd_instantiated == 0 ) {
 				return false; // utility_exit_with_message(  "Failed to apply: " + p->name() + " to " + rsd_base.name() );
-			} else {
-				if ( option[ OptionKeys::in::add_orbitals] ) {
-					orbitals::AssignOrbitals( rsd_instantiated ).assign_orbitals();
-				}
-				cache_->add_residue_type( rsd_instantiated );
 			}
+			if ( option[ OptionKeys::in::file::assign_gasteiger_atom_types ] ) {
+				gasteiger::GasteigerAtomTypeSetCOP gasteiger_set(
+						ChemicalManager::get_instance()->gasteiger_atom_type_set() );
+				gasteiger::assign_gasteiger_atom_types( *rsd_instantiated, gasteiger_set, false );
+			}
+			if ( option[ OptionKeys::in::add_orbitals] ) {
+				orbitals::AssignOrbitals( rsd_instantiated ).assign_orbitals();
+			}
+			cache_->add_residue_type( rsd_instantiated );
 			patch_applied = true;
 		}
 		
 		return patch_applied;
 		
 	} else {
-
 		if ( patch_map_.find( patch_name ) == patch_map_.end() ) return false;
 		utility::vector1< PatchCOP > const & patches = patch_map_.find( patch_name )->second;
 		bool patch_applied( false );
@@ -553,12 +561,16 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 
 			if ( rsd_instantiated == 0 ) {
 				return false; // utility_exit_with_message(  "Failed to apply: " + p->name() + " to " + rsd_base.name() );
-			} else {
-				if ( option[ OptionKeys::in::add_orbitals] ) {
-					orbitals::AssignOrbitals( rsd_instantiated ).assign_orbitals();
-				}
-				cache_->add_residue_type( rsd_instantiated );
 			}
+			if ( option[ OptionKeys::in::file::assign_gasteiger_atom_types ] ) {
+				gasteiger::GasteigerAtomTypeSetCOP gasteiger_set(
+						ChemicalManager::get_instance()->gasteiger_atom_type_set() );
+				gasteiger::assign_gasteiger_atom_types( *rsd_instantiated, gasteiger_set, false );
+			}
+			if ( option[ OptionKeys::in::add_orbitals] ) {
+				orbitals::AssignOrbitals( rsd_instantiated ).assign_orbitals();
+			}
+			cache_->add_residue_type( rsd_instantiated );
 			patch_applied = true;
 		}
 		
@@ -817,6 +829,12 @@ void
 ResidueTypeSet::add_custom_residue_type( ResidueTypeOP new_type )
 {
 	new_type->residue_type_set( get_self_weak_ptr() );
+
+	if ( option[ OptionKeys::in::file::assign_gasteiger_atom_types ] ) {
+		gasteiger::GasteigerAtomTypeSetCOP gasteiger_set(
+				ChemicalManager::get_instance()->gasteiger_atom_type_set() );
+		gasteiger::assign_gasteiger_atom_types( *new_type, gasteiger_set, false );
+	}
 	if ( option[ OptionKeys::in::add_orbitals] ) {
 		orbitals::AssignOrbitals add_orbitals_to_residue(new_type);
 		add_orbitals_to_residue.assign_orbitals();

@@ -72,23 +72,7 @@ test_sugar( Pose const & sugar )
 	for ( core::uint i = 1; i <= n_res; ++i ) {
 		Residue const & res( sugar.residue( i ) );
 		cout << "PDB ID: " << sugar.pdb_info()->pose2pdb( i ) << ": ";
-		// BEGIN_HACK
-		//res.show( cout, true );  // Show verbose output, including atomic details.
-
-		// I would like to make a flag, -assign_gasteiger_atom_types, that does this on creation of the ResidueTypeSet,
-		// but in the meantime, make a copy of the ResidueType and assign the GasteigerAtomTypes for testing.
-		res.show( cout );
-		ResidueType copy_of_type( res.type() );
-		GasteigerAtomTypeSetCOP gasteiger_set( ChemicalManager::get_instance()->gasteiger_atom_type_set() );
-		assign_gasteiger_atom_types( copy_of_type, gasteiger_set, false );
-		cout << " Atomic Details:" << endl;
-		Size n_atoms = copy_of_type.natoms();
-		for ( core::uint j = 1; j <= n_atoms; ++j ) {
-			cout << "  Atom " << j << ": ";
-			copy_of_type.atom( j ).show( cout );
-		}
-		// END_HACK
-
+		res.show( cout, true );  // Show verbose output, including atomic details.
 		cout << endl << endl;
 	}
 }
