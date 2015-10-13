@@ -6693,6 +6693,31 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	#Option_Group('liz',
 	#  Option( 'score', 'Boolean', default='true'),
 	#),
+	
+	## Options for LooDo pilot app (kblacklock)
+	Option_Group( 'loodo',
+		Option( 'ins_begin',    'Integer',        desc="insertion site (pose numbering)"),
+		Option( 'cap',          'String',         desc="cap pdb", default=""),
+		Option( 'bot',          'String',         desc="bot pdb", default=""),
+		Option( 'fragAlength',  'IntegerVector',  desc='lengths for loop A'),
+		Option( 'fragBlength',  'IntegerVector',  desc='lengths for loop B'),
+		Option( 'known',        'Integer',        desc='length of known interior region'),
+		Option( 'fragAnative',  'String',         desc='native loop A pdb file', default=""),
+		Option( 'fragBnative',  'String',         desc='native loop B pdb file', default=""),
+		Option( 'gridligpath',  'String',         desc='path to gridlig file', default=""),
+		Option( 'debug',        'Boolean',        desc='dump CapHitB pdbs', default="false"),
+		Option( 'ca_ratio',     'Real',           desc='fraction of C-alphas required in active site grid', default='0.5'),
+		Option( 'distance_tolerance',     'Real',           desc='distance cutoff for pairwise Real6 x,y,z comparisons', default='5.0'),
+		Option( 'euler_tolerance',      'Real',           desc='angle cutoff for pairwise Real6 euler angle comparisons', default='15.0'),
+		Option( 'num_frags',    'Integer',        desc='number fragments to pick per frame in library',default='4500'),
+		Option( 'use_fraglib',  'String',         desc='fragment library to use instead of vall database'),
+		Option( 'use_fraglibsc','String',         desc='fragment library to use instead of vall database with sidechain torsions specified'),
+		Option( 'com_in_grid',  'Boolean',        desc='cap center-of-mass required to lie in placement grid', default="false"),
+		Option( 'loud',         'Boolean',        desc='loud output?',default="false"),
+		Option( 'dump_all_As',  'Boolean',        desc='dump passing As',default="false"),
+		Option( 'dump_all_Bs',  'Boolean',        desc='dump passing Bs',default="false"),
+		Option( 'caphit_rt_file', 'String',       desc='name of CapHit_RT or filtered CapHitRT file')
+	), #-loodo
 
 	# options for my inv_kin_lig_loop_design program.
 	Option_Group( 'murphp',

@@ -123,6 +123,8 @@ inline numeric::xyzVector<core::Real>  projperp(numeric::xyzVector<core::Real>  
 
 void xform_pose ( core::pose::Pose & pose,            core::kinematics::Stub const & s, core::Size sres=1, core::Size eres=0 );
 void xform_pose ( core::pose::Pose & pose, numeric::xyzTransform<core::Real> const & s, core::Size sres=1, core::Size eres=0 );
+void xform_pose_rev (core::pose::Pose & pose, core::kinematics::Stub const & s);
+void xform_pose_rev (core::pose::Pose & pose, numeric::xyzTransform<core::Real> const & s);
 
 core::kinematics::Stub getxform(core::conformation::Residue const & move_resi, core::conformation::Residue const & fixd_resi);
 
