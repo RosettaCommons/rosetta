@@ -152,7 +152,7 @@ using basic::T;
 using basic::Warning;
 using basic::Error;
 
-static thread_local basic::Tracer TR( "chrisk.hbscan" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.chrisk.hbscan" );
 
 
 //local options
