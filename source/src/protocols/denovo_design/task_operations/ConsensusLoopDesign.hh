@@ -113,7 +113,12 @@ public:
 		std::string const & ss,
 		core::pack::task::residue_selector::ResidueSubset const & subset ) const;
 
+	void set_secstruct( std::string const & secstruct );
+
+	void set_secstruct_from_blueprint( std::string const & bp_file );
+
 private:
+	std::string secstruct_;
 	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
 	ConsensusSequenceTable seqtable_;
 };

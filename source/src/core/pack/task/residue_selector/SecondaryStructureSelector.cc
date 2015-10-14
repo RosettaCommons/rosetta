@@ -41,6 +41,7 @@ namespace residue_selector {
 
 SecondaryStructureSelector::SecondaryStructureSelector() :
 	ResidueSelector(),
+	pose_secstruct_( "" ),
 	overlap_( 0 ),
 	include_terminal_loops_( false )
 {
@@ -49,6 +50,7 @@ SecondaryStructureSelector::SecondaryStructureSelector() :
 
 SecondaryStructureSelector::SecondaryStructureSelector( std::string const & selected ) :
 	ResidueSelector(),
+	pose_secstruct_( "" ),
 	overlap_( 0 )
 {
 	if ( !check_ss( selected ) ) {
@@ -59,6 +61,12 @@ SecondaryStructureSelector::SecondaryStructureSelector( std::string const & sele
 
 SecondaryStructureSelector::~SecondaryStructureSelector()
 {
+}
+
+void
+SecondaryStructureSelector::set_pose_secstruct( std::string const & ss )
+{
+	pose_secstruct_ = ss;
 }
 
 IntervalVec
@@ -104,11 +112,15 @@ SecondaryStructureSelector::apply( core::pose::Pose const & pose ) const
 
 	// first check pose secstruct, otherwise use dssp
 	std::string ss = "";
-	if ( check_ss( pose.secstruct() ) && !is_poly_l( pose.secstruct() ) ) {
-		ss = pose.secstruct();
+	if ( pose_secstruct_.empty() ) {
+		if ( check_ss( pose.secstruct() ) && !is_poly_l( pose.secstruct() ) ) {
+			ss = pose.secstruct();
+		} else {
+			core::scoring::dssp::Dssp dssp( pose );
+			ss = dssp.get_dssp_secstruct();
+		}
 	} else {
-		core::scoring::dssp::Dssp dssp( pose );
-		ss = dssp.get_dssp_secstruct();
+		ss = pose_secstruct_;
 	}
 
 	if ( !check_ss( ss ) ) {
@@ -119,7 +131,7 @@ SecondaryStructureSelector::apply( core::pose::Pose const & pose ) const
 
 	TR << "Using secondary structure " << ss << std::endl;
 	ResidueSubset matching_ss( pose.total_residue(), false );
-	for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		if ( selected_ss_.find( ss[ i - 1 ] ) != selected_ss_.end() ) {
 			TR.Debug << "Found ss match at position " << i << std::endl;
 			matching_ss[ i ] = true;
@@ -141,6 +153,10 @@ void SecondaryStructureSelector::parse_my_tag(
 	if ( tag->hasOption( "include_terminal_loops" ) ) {
 		set_include_terminal_loops( tag->getOption< bool >( "include_terminal_loops" ) );
 	}
+	if ( tag->hasOption( "pose_secstruct" ) ) {
+		set_pose_secstruct( tag->getOption< std::string >( "pose_secstruct" ) );
+	}
+
 	if ( !tag->hasOption( "ss" ) ) {
 		std::stringstream err;
 		err << "SecondaryStructureSelector: the ss option is required to specify which secondary structure elements are being selected." << std::endl;

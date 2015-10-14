@@ -17,6 +17,7 @@
 
 // package headers
 #include <protocols/denovo_design/util.hh>
+#include <protocols/jd2/parser/BluePrint.hh>
 
 // core headers
 #include <core/pack/task/PackerTask.hh>
@@ -57,6 +58,7 @@ ConsensusLoopDesignOperationCreator::keyname() const
 // default constructor
 ConsensusLoopDesignOperation::ConsensusLoopDesignOperation() :
 	core::pack::task::operation::TaskOperation(),
+	secstruct_( "" ),
 	selector_()
 {
 	using namespace core::pack::task::residue_selector;
@@ -90,7 +92,7 @@ ConsensusLoopDesignOperation::apply(
 	core::pack::task::PackerTask & task ) const
 {
 	LoopInfoVec info = get_loop_info( pose );
-	for ( LoopInfoVec::const_iterator l = info.begin(), endl = info.end(); l != endl; ++l ) {
+	for ( LoopInfoVec::const_iterator l = info.begin(); l != info.end(); ++l ) {
 		TR << "Restricting AAs in loop: " << *l << std::endl;
 		disallow_aas( task, *l );
 	}
@@ -102,9 +104,40 @@ ConsensusLoopDesignOperation::parse_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data )
 {
+	if ( tag->hasOption( "blueprint" ) ) {
+		set_secstruct_from_blueprint( tag->getOption< std::string >( "blueprint" ) );
+		if ( secstruct_.empty() ) {
+			std::stringstream msg;
+			msg << "ConsensusLoopDesign: Error getting secondary structure from blueprint file" << std::endl;
+			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		}
+	}
 	if ( tag->hasOption( "residue_selector" ) ) {
 		set_selector( get_residue_selector( data, tag->getOption< std::string >( "residue_selector" ) ) );
 	}
+}
+
+void
+ConsensusLoopDesignOperation::set_secstruct_from_blueprint( std::string const & bpfile )
+{
+	using namespace core::pack::task::residue_selector;
+	protocols::jd2::parser::BluePrint bp( bpfile );
+	set_secstruct( bp.secstruct() );
+	SecondaryStructureSelectorCOP test_sel =
+		utility::pointer::dynamic_pointer_cast< SecondaryStructureSelector const >( selector_ );
+	if ( test_sel ) {
+		SecondaryStructureSelectorOP newsel( new SecondaryStructureSelector( *test_sel ) );
+		newsel->set_pose_secstruct( bp.secstruct() );
+		set_selector( newsel );
+	} else {
+		TR.Warning << "Since a non-default residue selector is being used, consensus loop design could not set it up to use a blueprint file to determine secondary structure. This is only possible with the SecondaryStructureResidueSelectors." << std::endl;
+	}
+}
+
+void
+ConsensusLoopDesignOperation::set_secstruct( std::string const & ss )
+{
+	secstruct_ = ss;
 }
 
 LoopAAs const &
@@ -221,8 +254,14 @@ ConsensusLoopDesignOperation::get_loop_info( core::pose::Pose const & pose ) con
 	debug_assert( selector_ );
 	core::pack::task::residue_selector::ResidueSubset subset = selector_->apply( pose );
 
-	core::scoring::dssp::Dssp dssp( pose );
-	std::string const ss = dssp.get_dssp_secstruct();
+	std::string ss = "";
+	if ( secstruct_.empty() ) {
+		core::scoring::dssp::Dssp dssp( pose );
+		ss = dssp.get_dssp_secstruct();
+	} else {
+		ss = secstruct_;
+	}
+	debug_assert( !ss.empty() );
 
 	return loop_info_from_subset( pose, ss, subset );
 }
@@ -240,8 +279,7 @@ ConsensusLoopDesignOperation::loop_info_from_subset(
 	LoopInfoVec retval;
 	bool inloop = false;
 	LoopInfo info;
-	for ( core::Size res=1, endr=subset.size(); res<=endr; ++res ) {
-
+	for ( core::Size res=1; res<=subset.size(); ++res ) {
 		if ( !inloop && subset[res] && ( res > 1 ) ) {
 			inloop = true;
 			info.startres = res - 1;

@@ -59,6 +59,8 @@ public:
 	void set_selected_ss( std::string const & selected );
 	/// @brief if true, one-residue terminal "loops" will be included (default=false)
 	void set_include_terminal_loops( bool const inc_term );
+	/// @brief Use this secstruct instead of the one found in the pose or DSSP, if set (default = not set)
+	void set_pose_secstruct( std::string const & ss );
 
 private:
 	void add_overlap(
@@ -69,6 +71,7 @@ private:
 	bool check_ss( std::string const & ss ) const;
 
 private:
+	std::string pose_secstruct_;
 	core::Size overlap_;
 	bool include_terminal_loops_;
 	std::set< char > selected_ss_;
