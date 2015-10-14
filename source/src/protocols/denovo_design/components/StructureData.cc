@@ -76,7 +76,6 @@ StructureData::StructureData( std::string const & id_val ) :
 	pose_length_( 0 ),
 	length_( 0 )
 {
-	sub_perms_.clear();
 	segments_.clear();
 	aliases_.clear();
 	segment_order_.clear();
@@ -92,7 +91,6 @@ StructureData::StructureData( StructureData const & perm ) :
 	abego_( perm.abego_ ),
 	pose_length_( perm.pose_length_ ),
 	length_( perm.length_ ),
-	sub_perms_( perm.sub_perms_ ),
 	data_int_( perm.data_int_ ),
 	data_real_( perm.data_real_ ),
 	data_str_( perm.data_str_ ),
@@ -118,6 +116,7 @@ SingleChainStructureData::SingleChainStructureData(
 	std::string const & id_val,
 	core::Size const length_val,
 	core::Size const pose_len_val,
+	bool const is_loop,
 	std::string const & ss_val,
 	utility::vector1< std::string > const & abego_val ) :
 	StructureData( id_val )
@@ -128,8 +127,8 @@ SingleChainStructureData::SingleChainStructureData(
 		n_anchor_res = 1;
 		nterm_included = true;
 	}
-	assert( n_anchor_res >= 1 );
-	assert( n_anchor_res <= pose_len_val );
+	debug_assert( n_anchor_res >= 1 );
+	debug_assert( n_anchor_res <= pose_len_val );
 
 	bool cterm_included = false;
 	core::Size c_anchor_res = pose_len_val-1;
@@ -137,15 +136,15 @@ SingleChainStructureData::SingleChainStructureData(
 		c_anchor_res = 1;
 		cterm_included = true;
 	}
-	assert( c_anchor_res >= 1 );
-	assert( c_anchor_res <= pose_len_val );
+	debug_assert( c_anchor_res >= 1 );
+	debug_assert( c_anchor_res <= pose_len_val );
 
 	Segment resis(
 		pose_len_val,                         // length
 		( n_anchor_res + c_anchor_res ) / 2,  // safe residue
 		0,                                    // cutpoint
 		1,                                    // movable group
-		false,                                // is_loop
+		is_loop,                              // is_loop
 		nterm_included,                       // n terminus included in segment
 		cterm_included,                       // c terminus included in segment
 		"",                                   // lower connected segment
@@ -154,11 +153,11 @@ SingleChainStructureData::SingleChainStructureData(
 		abego_val );                          // abego
 	add_segment( id(), resis, "" );
 
-	assert( segment(id()).nterm_resi() == 1 );
-	assert( segment(id()).cterm_resi() == pose_length() );
-	assert( ss_val.size() == pose_length() );
-	assert( segment(id()).length() == pose_length() );
-	assert( length() == length_val );
+	debug_assert( segment(id()).nterm_resi() == 1 );
+	debug_assert( segment(id()).cterm_resi() == pose_length() );
+	debug_assert( ss_val.size() == pose_length() );
+	debug_assert( segment(id()).length() == pose_length() );
+	debug_assert( length() == length_val );
 }
 
 SingleChainStructureData::~SingleChainStructureData()
@@ -175,6 +174,11 @@ StructureData::infer_from_pose( core::pose::Pose const & pose, std::string const
 	// the object we will add to
 	StructureDataOP sd( new MultiChainStructureData( id_val ) );
 	debug_assert( sd );
+
+	if ( !pose.total_residue() ) {
+		sd->set_pose( pose );
+		return sd;
+	}
 
 	// collect secondary structure
 	core::scoring::dssp::Dssp dssp( pose );
@@ -282,6 +286,12 @@ StructureData::create_from_pose( core::pose::Pose const & pose, std::string cons
 		ss << cached_string( pose );
 		TR.Debug << "Found StructureData information in datacache. Creating from that." << std::endl;
 		newperm = create_from_xml( ss, id );
+		if ( pose.total_residue() != newperm->pose_length() ) {
+			std::stringstream err;
+			err << newperm->id() << ": Size of StructureData does not match size of pose. ";
+			err << "XML: " << ss.str() << " chains: " << pose.conformation().chain_endings() << " pose length: " << pose.total_residue() << std::endl;
+			throw utility::excn::EXCN_Msg_Exception( err.str() );
+		}
 		newperm->set_pose( pose );
 	} else {
 		core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
@@ -303,8 +313,8 @@ StructureData::create_from_pose( core::pose::Pose const & pose, std::string cons
 		return NULL;
 	}
 	debug_assert( newperm->pose() );
-	debug_assert( newperm->ss().size() );
-	debug_assert( newperm->abego().size() );
+	debug_assert( !newperm->pose()->total_residue() || newperm->ss().size() );
+	debug_assert( !newperm->pose()->total_residue() || newperm->abego().size() );
 	newperm->save_into_pose();
 	return newperm;
 }
@@ -327,23 +337,23 @@ StructureData::create_from_remarks( core::pose::Remarks const & rem, std::string
 		// fallback to "old" serialize method
 		std::string line = get_remark_line( it_rem, rem.end() );
 		utility::vector1< std::string > fields = utility::string_split( line, ':' );
-		assert( fields.size() >= 2 );
+		debug_assert( fields.size() >= 2 );
 		std::string & name = fields[1];
 		std::string & type = fields[2];
 		utility::vector1< std::string > names = utility::string_split( name, '.' );
 		if ( names.size() == 1 ) {
 			if ( type == "multi" ) {
 				if ( fields[3] == "1" ) {
-					assert( !newperm );
+					debug_assert( !newperm );
 					newperm = StructureDataOP( new MultiChainStructureData( name ) );
 					newperm->load_pdb_info_old( rem, "" );
 				} else if ( fields[3] == "0" ) {
-					assert( !newperm );
+					debug_assert( !newperm );
 					newperm = StructureDataOP( new SingleChainStructureData( name ) );
 					newperm->load_pdb_info_old( rem, "" );
 				} else {
 					TR.Error << "input error reading permutation data from pose. Line=" << line << std::endl;
-					assert( false );
+					debug_assert( false );
 					return NULL;
 				}
 			}
@@ -356,6 +366,7 @@ StructureData::create_from_remarks( core::pose::Remarks const & rem, std::string
 StructureDataOP
 StructureData::parse_remarks( core::pose::Remarks const & rem, std::string const & newid )
 {
+	TR << "Parsing remarks!" << std::endl;
 	// create list of strings
 	utility::vector1< std::string > lines;
 	for ( core::pose::Remarks::const_iterator it_rem=rem.begin(), it_end=rem.end(); it_rem != it_end; ++it_rem ) {
@@ -389,29 +400,29 @@ StructureData::create_from_xml( std::istream & xmltag, std::string const & newid
 			utility::tag::TagCOP subtag = *t;
 			if ( subtag->getName() == "ResidueRange" ) {
 				subtag->write( TR );
-				assert( subtag->hasOption( "name" ) );
+				debug_assert( subtag->hasOption( "name" ) );
 				Segment newresis;
 				newresis.parse_tag( *t );
 				newperm->add_segment( subtag->getOption< std::string >( "name" ), newresis );
 			} else if ( subtag->getName() == "Int" ) {
-				assert( subtag->hasOption( "name" ) );
-				assert( subtag->hasOption( "value" ) );
+				debug_assert( subtag->hasOption( "name" ) );
+				debug_assert( subtag->hasOption( "value" ) );
 				newperm->set_data_int( subtag->getOption< std::string >( "name" ), subtag->getOption< int >( "value" ) );
 			} else if ( subtag->getName() == "Real" ) {
-				assert( subtag->hasOption( "name" ) );
-				assert( subtag->hasOption( "value" ) );
+				debug_assert( subtag->hasOption( "name" ) );
+				debug_assert( subtag->hasOption( "value" ) );
 				newperm->set_data_real( subtag->getOption< std::string >( "name" ), subtag->getOption< core::Real >( "value" ) );
 			} else if ( subtag->getName() == "Str" ) {
-				assert( subtag->hasOption( "name" ) );
+				debug_assert( subtag->hasOption( "name" ) );
 				if ( subtag->hasOption( "value" ) ) {
 					newperm->set_data_str( subtag->getOption< std::string >( "name" ), subtag->getOption< std::string >( "value" ) );
 				} else {
 					newperm->set_data_str( subtag->getOption< std::string >( "name" ), "" );
 				}
 			} else if ( subtag->getName() == "Alias" ) {
-				assert( subtag->hasOption( "name" ) );
-				assert( subtag->hasOption( "segment" ) );
-				assert( subtag->hasOption( "res" ) );
+				debug_assert( subtag->hasOption( "name" ) );
+				debug_assert( subtag->hasOption( "segment" ) );
+				debug_assert( subtag->hasOption( "res" ) );
 				newperm->set_resnum_alias( subtag->getOption< std::string >( "name" ),
 					subtag->getOption< std::string >( "segment" ),
 					subtag->getOption< core::Size >( "res" ) );
@@ -428,7 +439,7 @@ StructureData::create_from_xml( std::istream & xmltag, std::string const & newid
 void
 StructureData::save_remarks_to_datacache( core::pose::Remarks const & remarks )
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 	core::Size remcount = 1;
 	for ( core::pose::Remarks::const_iterator r=remarks.begin(), endr=remarks.end(); r != endr; ++r ) {
 		if ( r->num == REMARK_NUM ) {
@@ -440,21 +451,29 @@ StructureData::save_remarks_to_datacache( core::pose::Remarks const & remarks )
 			//enzdes header
 			utility::vector1< std::string > fields = utility::string_split_simple( r->value, ' ' );
 			core::Size const resid1 = boost::lexical_cast< core::Size >( fields[5] );
-			std::string const seg = segment_name( resid1 );
-			assert( resid1 >= segment(seg).start() );
-			assert( resid1 <= segment(seg).stop() );
-			core::Size const localres = resid1 - segment(seg).start() + 1;
 			std::stringstream ss;
 			ss << fields[1] << " " << fields[2] << " " << fields[3] << " " << fields[4] << " ";
-			ss << "%%" << seg << DATA_DELIMETER << localres << "%% ";
+			if ( resid1 ) {
+				std::string const seg = segment_name( resid1 );
+				debug_assert( resid1 >= segment(seg).start() );
+				debug_assert( resid1 <= segment(seg).stop() );
+				core::Size const localres = resid1 - segment(seg).start() + 1;
+				ss << "%%" << seg << DATA_DELIMETER << localres << "%% ";
+			} else {
+				ss << fields[5] << " ";
+			}
 			ss << fields[6] << " " << fields[7] << " " << fields[8] << " " << fields[9] << " ";
 
 			core::Size const resid2 = boost::lexical_cast< core::Size >( fields[10] );
-			std::string const seg2 = segment_name( resid2 );
-			assert( resid2 >= segment(seg2).start() );
-			assert( resid2 <= segment(seg2).stop() );
-			core::Size const localres2 = resid2 - segment(seg2).start() + 1;
-			ss << "%%" << seg2 << DATA_DELIMETER << localres2 << "%% ";
+			if ( resid2 ) {
+				std::string const seg2 = segment_name( resid2 );
+				debug_assert( resid2 >= segment(seg2).start() );
+				debug_assert( resid2 <= segment(seg2).stop() );
+				core::Size const localres2 = resid2 - segment(seg2).start() + 1;
+				ss << "%%" << seg2 << DATA_DELIMETER << localres2 << "%% ";
+			} else {
+				ss << fields[10] << " ";
+			}
 			ss << fields[11] << " " << fields[12];
 			set_cached_string( *pose_,
 				boost::lexical_cast< std::string >(r->num) + ' ' + ss.str(),
@@ -480,7 +499,7 @@ StructureData::load_pdb_info_old(
 		}
 		std::string line = get_remark_line( it_rem, rem.end() );
 		utility::vector1< std::string > fields = utility::string_split( line, ':' );
-		assert( fields.size() >= 3);
+		debug_assert( fields.size() >= 3);
 		std::string const & name = fields[1];
 		std::string const & type = fields[2];
 		std::string const & field_name = fields[3];
@@ -496,11 +515,11 @@ StructureData::load_pdb_info_old(
 			continue;
 		}
 
-		assert( name == prefix + id() );
+		debug_assert( name == prefix + id() );
 		if ( type == "multi" ) {
 			continue;
 		} else if ( type == "int" ) {
-			assert( fields.size() == 4 );
+			debug_assert( fields.size() == 4 );
 			TR << "Read id=" << name << " type=" << type << " param=" << field_name << " int=" << fields[4] << std::endl;
 			int val = boost::lexical_cast< int >( fields[4] );
 			if ( field_name == "pose_length" ) {
@@ -512,19 +531,19 @@ StructureData::load_pdb_info_old(
 				set_data_int( field_name, val );
 			}
 		} else if ( type == "real" ) {
-			assert( fields.size() == 4 );
+			debug_assert( fields.size() == 4 );
 			TR << "Read id=" << name << " type=" << type << " param=" << field_name << " real=" << fields[4] << std::endl;
 			core::Real val = boost::lexical_cast< core::Real >( fields[4] );
 			set_data_real( field_name, val );
 		} else if ( type == "str" ) {
-			assert( fields.size() == 4 );
+			debug_assert( fields.size() == 4 );
 			TR << "Read id=" << name << " type=" << type << " param=" << field_name << " str=" << fields[4] << std::endl;
 			set_data_str( field_name, fields[4] );
 		} else if ( type == "ss" ) {
 			// secondary structure is now automatically determined
 			continue;
 		} else if ( type == "residues" ) {
-			assert( fields.size() == 14 );
+			debug_assert( fields.size() == 14 );
 			core::Size startval = boost::lexical_cast< core::Size >( fields[4] );
 			core::Size endval = boost::lexical_cast< core::Size >( fields[5] );
 			core::Size const safe_resi = boost::lexical_cast< core::Size >( fields[6] );
@@ -557,7 +576,7 @@ StructureData::load_pdb_info_old(
 					abegovec.push_back(tmp);
 				}
 			}
-			assert( abegovec.size() == ss.size() );
+			debug_assert( abegovec.size() == ss.size() );
 			TR << "Read id=" << name << " type=" << type << " param=" << name + '.' + field_name << " start=" << fields[4] << " end=" << fields[5] << " is_loop=" << is_loop << " nterm_inc=" << nterm_included << " cterm_inc=" << cterm_included << " mg=" << movable_group << " saferes=" << safe_resi <<  " lower_segment=" << lower_segment << " upper_segment=" << upper_segment << " ss=" << ss << " abego=" << abego << std::endl;
 			if ( !nterm_included ) {
 				--startval;
@@ -576,13 +595,13 @@ StructureData::load_pdb_info_old(
 			}
 			add_segment( field_name, resis, c );
 		} else if ( type == "aliases" ) {
-			assert( fields.size() == 5 );
+			debug_assert( fields.size() == 5 );
 			core::Size const resi = boost::lexical_cast< core::Size >( fields[5] );
 			set_resnum_alias( field_name, fields[4], resi );
 			TR << "Set alias " << field_name << " --> " << fields[4] << ":" << resi << std::endl;
 		} else {
 			TR << "Unknown type: " << type << std::endl;
-			assert( false );
+			debug_assert( false );
 		}
 	}
 }
@@ -591,7 +610,7 @@ StructureData::load_pdb_info_old(
 void
 StructureData::save_into_pose()
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 	save_into_pose( *pose_ );
 }
 
@@ -608,7 +627,7 @@ StructureData::save_into_pose( core::pose::Pose & pose ) const
 	pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) );
 
 	// read cached remarks and save them as actual remarks
-	assert( pose.pdb_info() );
+	debug_assert( pose.pdb_info() );
 	pose.pdb_info()->remarks( cached_remarks(pose) );
 
 	//save_into_pose_with_id( pdb_info, "" );
@@ -622,7 +641,7 @@ StructureData::save_into_pose( core::pose::Pose & pose ) const
 bool
 StructureData::has_cached_string() const
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 	return has_cached_string( *pose_ );
 }
 
@@ -634,7 +653,7 @@ StructureData::has_cached_string( core::pose::Pose const & pose )
 		return false;
 	}
 	basic::datacache::CacheableData const & cachable = pose.data().get( core::pose::datacache::CacheableDataType::STRING_MAP );
-	assert( dynamic_cast< basic::datacache::CacheableStringMap const * >(&cachable) == &cachable );
+	debug_assert( dynamic_cast< basic::datacache::CacheableStringMap const * >(&cachable) == &cachable );
 	basic::datacache::CacheableStringMap const & stringcache =
 		static_cast< basic::datacache::CacheableStringMap const & >( cachable );
 	std::map< std::string, std::string > const & smap = stringcache.map();
@@ -645,7 +664,7 @@ StructureData::has_cached_string( core::pose::Pose const & pose )
 std::string
 StructureData::cached_string() const
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 	return cached_string( *pose_ );
 }
 
@@ -653,7 +672,7 @@ StructureData::cached_string() const
 core::pose::Remarks
 StructureData::cached_remarks() const
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 	return cached_remarks( *pose_ );
 }
 
@@ -670,14 +689,14 @@ clean_from_storage( std::string & st )
 core::pose::Remarks
 StructureData::cached_remarks( core::pose::Pose const & pose ) const
 {
-	assert( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) );
+	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) );
 	basic::datacache::CacheableData const & cachable = pose.data().get( core::pose::datacache::CacheableDataType::STRING_MAP );
-	assert( dynamic_cast< basic::datacache::CacheableStringMap const * >(&cachable) == &cachable );
+	debug_assert( dynamic_cast< basic::datacache::CacheableStringMap const * >(&cachable) == &cachable );
 	basic::datacache::CacheableStringMap const & stringcache =
 		static_cast< basic::datacache::CacheableStringMap const & >( cachable );
 	std::map< std::string, std::string > const & smap = stringcache.map();
 	core::pose::Remarks retval;
-	for ( std::map< std::string, std::string >::const_iterator rem=smap.begin(), endr=smap.end(); rem != endr; ++rem ) {
+	for ( std::map< std::string, std::string >::const_iterator rem=smap.begin(); rem != smap.end(); ++rem ) {
 		if ( boost::starts_with( rem->first, DATA_NAME + '.' ) ) {
 			std::string val = rem->second;
 			clean_from_storage( val );
@@ -688,38 +707,46 @@ StructureData::cached_remarks( core::pose::Pose const & pose ) const
 			me.num = boost::lexical_cast< int >( fields[1] );
 			std::stringstream ss;
 			if ( me.num == 666 ) { // enzdes header
-				for ( core::Size i=2, endi=fields.size(); i<=endi; ++i ) {
+				for ( core::Size i=2; i<=fields.size(); ++i ) {
 					if ( i>2 ) {
 						ss << " ";
 					}
 					if ( i == 4 ) {
 						std::stringstream res_stream( fields[6] );
 						core::Size const resid_chain = boost::lexical_cast< core::Size >( substitute_variables( res_stream ) );
-						char chain = 'A' + pose.chain( resid_chain ) - 1;
-						if ( pose.pdb_info() ) {
-							char const pdbchain = pose.pdb_info()->chain( resid_chain );
-							if ( pdbchain != '^' ) {
-								chain = pdbchain;
+						if ( resid_chain ) {
+							char chain = 'A' + pose.chain( resid_chain ) - 1;
+							if ( pose.pdb_info() ) {
+								char const pdbchain = pose.pdb_info()->chain( resid_chain );
+								if ( pdbchain != '^' ) {
+									chain = pdbchain;
+								}
 							}
+							ss << chain;
+						} else {
+							ss << fields[6];
 						}
-						ss << chain;
 					} else if ( i == 9 ) {
 						std::stringstream res_stream( fields[11] );
 						core::Size const resid_chain = boost::lexical_cast< core::Size >( substitute_variables( res_stream ) );
-						char chain = 'A' + pose.chain( resid_chain ) - 1;
-						if ( pose.pdb_info() ) {
-							char const pdbchain = pose.pdb_info()->chain( resid_chain );
-							if ( pdbchain != '^' ) {
-								chain = pdbchain;
+						if ( resid_chain ) {
+							char chain = 'A' + pose.chain( resid_chain ) - 1;
+							if ( pose.pdb_info() ) {
+								char const pdbchain = pose.pdb_info()->chain( resid_chain );
+								if ( pdbchain != '^' ) {
+									chain = pdbchain;
+								}
 							}
+							ss << chain;
+						} else {
+							ss << fields[11];
 						}
-						ss << chain;
 					} else {
 						ss << fields[i];
 					}
 				}
 			} else { // non-enzdes header
-				for ( core::Size i=2, endi=fields.size(); i<=endi; ++i ) {
+				for ( core::Size i=2; i<=fields.size(); ++i ) {
 					if ( i>2 ) {
 						ss << " ";
 					}
@@ -743,14 +770,14 @@ StructureData::cached_string( core::pose::Pose const & pose )
 std::string
 StructureData::cached_string( core::pose::Pose const & pose, std::string const & data_name )
 {
-	assert( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) );
+	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) );
 	basic::datacache::CacheableData const & cachable = pose.data().get( core::pose::datacache::CacheableDataType::STRING_MAP );
-	assert( dynamic_cast< basic::datacache::CacheableStringMap const * >(&cachable) == &cachable );
+	debug_assert( dynamic_cast< basic::datacache::CacheableStringMap const * >(&cachable) == &cachable );
 	basic::datacache::CacheableStringMap const & stringcache =
 		static_cast< basic::datacache::CacheableStringMap const & >( cachable );
 	std::map< std::string, std::string > const & smap = stringcache.map();
 	std::map< std::string, std::string >::const_iterator dat = smap.find( data_name );
-	assert( dat != smap.end() );
+	debug_assert( dat != smap.end() );
 	std::string st = dat->second;
 	clean_from_storage(st);
 	return st;
@@ -760,7 +787,7 @@ StructureData::cached_string( core::pose::Pose const & pose, std::string const &
 void
 StructureData::set_cached_string( std::string const & ss )
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 	set_cached_string( *pose_, ss );
 }
 
@@ -789,9 +816,9 @@ StructureData::set_cached_string( core::pose::Pose & pose, std::string const & s
 		pose.data().set( core::pose::datacache::CacheableDataType::STRING_MAP,
 			basic::datacache::CacheableDataOP( new basic::datacache::CacheableStringMap() ) );
 	}
-	assert( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) );
+	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) );
 	basic::datacache::CacheableData & cached = pose.data().get( core::pose::datacache::CacheableDataType::STRING_MAP );
-	assert( dynamic_cast< basic::datacache::CacheableStringMap * >(&cached) == &cached );
+	debug_assert( dynamic_cast< basic::datacache::CacheableStringMap * >(&cached) == &cached );
 	basic::datacache::CacheableStringMap & smap =
 		static_cast< basic::datacache::CacheableStringMap & >( cached );
 	smap.map()[data_name] = ss;
@@ -816,9 +843,10 @@ StructureData::substitute_variables( std::istream & input ) const
 	core::Size linecount = 0;
 	// File format: %%SEGMENT_NAME#resid%% will give an integer resid
 	while ( input.good() ) {
-		++linecount;
 		std::string line = "";
 		std::getline( input, line );
+		if ( line[0] == '#' ) continue;
+		++linecount;
 		TR.Debug << "Line=" << line << std::endl;
 		core::Size next_sub = line.find("%%");
 		while ( next_sub != std::string::npos ) {
@@ -826,7 +854,7 @@ StructureData::substitute_variables( std::istream & input ) const
 			if ( second_sub == std::string::npos ) {
 				throw utility::excn::EXCN_BadInput( "Malformed line in constraint file : " + line );
 			}
-			assert( second_sub - next_sub >= 5 );
+			debug_assert( second_sub - next_sub >= 5 );
 			std::string const variable = line.substr( next_sub+2, second_sub-next_sub-2 );
 			utility::vector1< std::string > fields = utility::string_split( variable, DATA_DELIMETER );
 			core::Size local_resid = 0;
@@ -854,7 +882,9 @@ StructureData::substitute_variables( std::istream & input ) const
 		if ( linecount > 1 ) {
 			sub_str << std::endl;
 		}
-		sub_str << line;
+		if ( !line.empty() ) {
+			sub_str << line;
+		}
 	}
 	return sub_str.str();
 }
@@ -871,8 +901,8 @@ StructureData::chain( core::Size const resid ) const
 StringList::iterator
 StructureData::find_segment( std::string const & segname )
 {
-	StringList::iterator c = segment_order_.begin(), end = segment_order_.end();
-	while ( c != end ) {
+	StringList::iterator c = segment_order_.begin();
+	while ( c != segment_order_.end() ) {
 		if ( *c == segname ) {
 			break;
 		}
@@ -885,8 +915,8 @@ StructureData::find_segment( std::string const & segname )
 StringList::const_iterator
 StructureData::find_segment( std::string const & segname ) const
 {
-	StringList::const_iterator c = segments_begin(), end = segments_end();
-	while ( c != end ) {
+	StringList::const_iterator c = segment_order_.begin();
+	while ( c != segment_order_.end() ) {
 		if ( *c == segname ) {
 			break;
 		}
@@ -902,27 +932,11 @@ StructureData::connected_segments( std::string const & seg ) const
 	StringList segmentlist;
 	std::set< std::string > visited;
 	std::stack< std::string > nodes;
-	// go backward from segment
+
+	// go forward from segment
 	nodes.push( seg );
 	while ( nodes.size() ) {
-		std::string const & cur = nodes.top();
-		nodes.pop();
-		if ( visited.find( cur ) != visited.end() ) {
-			continue;
-		}
-		visited.insert( cur );
-		segmentlist.push_front( cur );
-		Segment const & res = segment( cur );
-		if ( !res.has_free_lower_terminus() ) {
-			nodes.push( res.lower_segment() );
-		}
-	}
-	// now go forward from segment
-	if ( !segment( seg ).has_free_upper_terminus() ) {
-		nodes.push( segment( seg ).upper_segment() );
-	}
-	while ( nodes.size() ) {
-		std::string const & cur = nodes.top();
+		std::string const cur = nodes.top();
 		nodes.pop();
 		if ( visited.find( cur ) != visited.end() ) {
 			continue;
@@ -932,6 +946,24 @@ StructureData::connected_segments( std::string const & seg ) const
 		Segment const & res = segment( cur );
 		if ( !res.has_free_upper_terminus() ) {
 			nodes.push( res.upper_segment() );
+		}
+	}
+
+	// now go backward from segment
+	if ( !segment( seg ).has_free_lower_terminus() ) {
+		nodes.push( segment( seg ).lower_segment() );
+	}
+	while ( nodes.size() ) {
+		std::string const cur = nodes.top();
+		nodes.pop();
+		if ( visited.find( cur ) != visited.end() ) {
+			continue;
+		}
+		visited.insert( cur );
+		segmentlist.push_front( cur );
+		Segment const & res = segment( cur );
+		if ( !res.has_free_lower_terminus() ) {
+			nodes.push( res.lower_segment() );
 		}
 	}
 	return segmentlist;
@@ -1010,9 +1042,9 @@ StructureData::prepend_extended_loop(
 		tmp_ss += 'L';
 	}
 	tmp_ss += insert_ss;
-	assert( tmp_abego.size() == tmp_ss.size() );
+	debug_assert( tmp_abego.size() == tmp_ss.size() );
 	StringList::iterator insert_before_me = find_segment( seg );
-	assert( insert_before_me != segment_order_.end() );
+	debug_assert( insert_before_me != segment_order_.end() );
 	add_segment(
 		loop_name,
 		insert_before_me,
@@ -1027,8 +1059,8 @@ StructureData::prepend_extended_loop(
 	// update connected partner
 	if ( cached_lower_segment != "" ) {
 		SegmentMap::iterator r2 = segments_.find( cached_lower_segment );
-		assert( r2 != segments_.end() );
-		assert( r2->second.upper_segment() == seg );
+		debug_assert( r2 != segments_.end() );
+		debug_assert( r2->second.upper_segment() == seg );
 		r2->second.set_upper_segment( loop_name );
 	}
 	connect_segments( loop_name, seg );
@@ -1044,12 +1076,12 @@ StructureData::append_extended_loop(
 	utility::vector1< std::string > const & insert_abego,
 	core::conformation::ResidueCOP template_res )
 {
-	assert( num_residues == insert_ss.size() );
-	assert( (!insert_abego.size()) || ( num_residues == insert_abego.size() ) );
+	debug_assert( num_residues == insert_ss.size() );
+	debug_assert( (!insert_abego.size()) || ( num_residues == insert_abego.size() ) );
 
 	TR.Debug << "Before append loop: " << *this << std::endl;
 	SegmentMap::iterator r = segments_.find(seg);
-	assert( r != segments_.end() );
+	debug_assert( r != segments_.end() );
 	std::string cached_upper_segment = r->second.upper_segment();
 	r->second.set_upper_segment( "" );
 
@@ -1094,9 +1126,9 @@ StructureData::append_extended_loop(
 	for ( core::Size i=1; i<=pad; ++i ) {
 		tmp_ss += 'L';
 	}
-	assert( tmp_abego.size() == tmp_ss.size() );
+	debug_assert( tmp_abego.size() == tmp_ss.size() );
 	StringList::iterator insert_pos = find_segment( seg );
-	assert( insert_pos != segment_order_.end() );
+	debug_assert( insert_pos != segment_order_.end() );
 	++insert_pos;
 	add_segment(
 		loop_name,
@@ -1112,8 +1144,8 @@ StructureData::append_extended_loop(
 	// update connected partner
 	if ( cached_upper_segment != "" ) {
 		SegmentMap::iterator r2 = segments_.find( cached_upper_segment );
-		assert( r2 != segments_.end() );
-		assert( r2->second.lower_segment() == seg );
+		debug_assert( r2 != segments_.end() );
+		debug_assert( r2->second.lower_segment() == seg );
 		r2->second.set_lower_segment( loop_name );
 	}
 	connect_segments( seg, loop_name );
@@ -1124,43 +1156,56 @@ StructureData::append_extended_loop(
 void
 StructureData::chains_from_termini()
 {
-	assert( pose_ );
-	pose_->conformation().chains_from_termini();
+	if ( pose_ ) {
+		pose_->conformation().chains_from_termini();
+	}
 }
 
 /// @brief adds upper terminal variant to a residue
 void
 StructureData::add_upper_terminus_variant_type( core::Size const resi )
 {
-	core::pose::add_variant_type_to_pose_residue( *pose_, core::chemical::UPPER_TERMINUS_VARIANT, resi );
+	debug_assert( pose_ );
+	if ( !pose_->residue( resi ).is_upper_terminus() ) {
+		core::pose::add_variant_type_to_pose_residue( *pose_, core::chemical::UPPER_TERMINUS_VARIANT, resi );
+	}
 }
 
 /// @brief adds lower terminal variant to a residue
 void
 StructureData::add_lower_terminus_variant_type( core::Size const resi )
 {
-	core::pose::add_variant_type_to_pose_residue( *pose_, core::chemical::LOWER_TERMINUS_VARIANT, resi );
+	debug_assert( pose_ );
+	if ( !pose_->residue( resi ).is_lower_terminus() ) {
+		core::pose::add_variant_type_to_pose_residue( *pose_, core::chemical::LOWER_TERMINUS_VARIANT, resi );
+	}
 }
 
 /// @brief removes upper terminal variant from a residue
 void
 StructureData::remove_upper_terminus_variant_type( core::Size const resi )
 {
-	core::pose::remove_variant_type_from_pose_residue( *pose_, core::chemical::UPPER_TERMINUS_VARIANT, resi );
+	debug_assert( pose_ );
+	if ( pose_->residue( resi ).is_upper_terminus() ) {
+		core::pose::remove_variant_type_from_pose_residue( *pose_, core::chemical::UPPER_TERMINUS_VARIANT, resi );
+	}
 }
 
 /// @brief removes lower terminal variant from a residue
 void
 StructureData::remove_lower_terminus_variant_type( core::Size const resi )
 {
-	core::pose::remove_variant_type_from_pose_residue( *pose_, core::chemical::LOWER_TERMINUS_VARIANT, resi );
+	debug_assert( pose_ );
+	if ( pose_->residue( resi ).is_lower_terminus() ) {
+		core::pose::remove_variant_type_from_pose_residue( *pose_, core::chemical::LOWER_TERMINUS_VARIANT, resi );
+	}
 }
 
 /// @brief returns true of the last residue of segment1 contains a covalent bond to the first residue of segment2
 bool
 StructureData::polymer_bond_exists( std::string const & segment1, std::string const & segment2 ) const
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 	return pose_->residue( segment(segment1).cterm_resi() ).is_polymer_bonded( segment(segment2).nterm_resi() );
 }
 
@@ -1180,7 +1225,7 @@ StructureData::delete_jump_and_intervening_cutpoint( std::string const & segment
 		core::Size const res2 = segment(segment2).nterm_resi();
 		int const jnum = find_jump(segment2);
 		// check for cyclic case -- same jump for both segments.  Exit if cyclic
-		if ( jnum == find_jump(segment1) ) {
+		if ( ( jnum == find_jump(segment1) ) || ( segment( segment1 ).cterm_resi() + 1 != segment( segment2 ).nterm_resi() ) ) {
 			TR << "Can't delete jump/cutpoint between " << segment1 << ", res " << segment( segment1 ).safe() << " and " << segment2 << ", res " << segment( segment2 ).safe() << " because the polymer is apparently cyclic. Jump1=" << find_jump( segment1 ) << " Jump2=" << jnum << " FT=" << pose_->fold_tree() << " perm=" << *this << std::endl;
 			return;
 		}
@@ -1195,10 +1240,10 @@ StructureData::delete_jump_and_intervening_cutpoint(
 	core::Size const cut_resi1,
 	core::Size const cut_resi2 )
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 
 	// remove cutpoint variants from pose
-	TR << "Removing cutpoints from " << cut_resi1 << " and " << cut_resi2 << std::endl;
+	TR.Debug << "Removing cutpoints from " << cut_resi1 << " and " << cut_resi2 << std::endl;
 	if ( pose_->residue(cut_resi1).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
 		TR.Debug << "Removing lower cutpoint from " << cut_resi1 << std::endl;
 		core::pose::remove_variant_type_from_pose_residue( *pose_, core::chemical::CUTPOINT_LOWER, cut_resi1 );
@@ -1210,14 +1255,14 @@ StructureData::delete_jump_and_intervening_cutpoint(
 
 	core::kinematics::FoldTree ft = pose()->fold_tree();
 	// move jump so it surrounds cutpoint
-	assert( jnum <= static_cast< int >(ft.num_jump()) );
-	assert( jnum > 0 );
+	debug_assert( jnum <= static_cast< int >(ft.num_jump()) );
+	debug_assert( jnum > 0 );
 	TR.Debug << "Sliding jump " << jnum << " to " << cut_resi1 << "__" << cut_resi2 << std::endl;
 	TR.Debug << pose_->fold_tree() << std::endl;
 	ft.slide_jump( jnum, cut_resi1, cut_resi2 );
 	// delete jump+cutpoint
 	ft.delete_jump_and_intervening_cutpoint( jnum );
-	assert( ft.check_fold_tree() );
+	debug_assert( ft.check_fold_tree() );
 	pose_->fold_tree( ft );
 }
 
@@ -1225,7 +1270,7 @@ StructureData::delete_jump_and_intervening_cutpoint(
 void
 StructureData::switch_residue_type_set( std::string const & typeset )
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 	core::util::switch_to_residue_type_set( *pose_, typeset );
 }
 
@@ -1239,7 +1284,22 @@ StructureData::align_segments(
 	core::Size const align_res_movable( segment(segment2).start() );
 	core::Size const align_torsions = align_res_movable;
 	int const jump_idx = find_jump( segment2 );
-	TR << "aligning " << align_res_movable << " to " << align_res_target << " with torsions from " << align_torsions << std::endl;
+	TR.Debug << "aligning " << align_res_movable << " to " << align_res_target << " with torsions from " << align_torsions << std::endl;
+	TR.Debug << "perm=" << *this << std::endl;
+	align_residues( jump_idx, align_res_target, align_res_movable, align_torsions );
+}
+
+/// @brief aligns the lower-terminal residue of segment1 to the end "anchor" residue of segment2
+void
+StructureData::align_segments_rev(
+	std::string const & segment1,
+	std::string const & segment2 )
+{
+	core::Size const align_res_movable( segment(segment1).cterm_resi() );
+	core::Size const align_res_target( segment(segment2).start() );
+	core::Size const align_torsions = align_res_target;
+	int const jump_idx = find_jump( segment2 );
+	TR.Debug << "aligning " << align_res_movable << " to " << align_res_target << " with torsions from " << align_torsions << std::endl;
 	TR.Debug << "perm=" << *this << std::endl;
 	align_residues( jump_idx, align_res_target, align_res_movable, align_torsions );
 }
@@ -1253,10 +1313,10 @@ StructureData::align_residues(
 	std::string const & movable_seg,
 	core::Size const movable_res )
 {
-	assert( template_res );
-	assert( template_res <= segment(template_seg).length() );
-	assert( movable_res );
-	assert( movable_res <= segment(movable_seg).length() );
+	debug_assert( template_res );
+	debug_assert( template_res <= segment(template_seg).length() );
+	debug_assert( movable_res );
+	debug_assert( movable_res <= segment(movable_seg).length() );
 	core::Size const align_res_target = segment(template_seg).resid(template_res);
 	core::Size const align_res_movable = segment(movable_seg).resid(movable_res);
 	core::Size const align_torsions = 0;
@@ -1267,7 +1327,7 @@ StructureData::align_residues(
 	roots.push_back( movable_seg );
 	consolidate_movable_groups( roots );
 	int jump_idx = find_jump( movable_seg );
-	assert( jump_idx );
+	debug_assert( jump_idx );
 
 	align_residues( jump_idx, align_res_target, align_res_movable, align_torsions );
 }
@@ -1290,7 +1350,7 @@ StructureData::replace_residue(
 	core::conformation::Residue const & res_in,
 	bool const orient_bb = true )
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 	bool is_upper_term = pose_->residue(resnum).is_upper_terminus();
 	bool is_lower_term = pose_->residue(resnum).is_lower_terminus();
 	pose_->replace_residue( resnum, res_in, orient_bb );
@@ -1315,7 +1375,7 @@ StructureData::slide_jump(
 		return;
 	}
 	int const childjump = find_jump(child_segment);
-	assert( childjump );
+	debug_assert( childjump );
 	int const parentjump = find_jump(parent_segment);
 	if ( parentjump == childjump ) {
 		TR.Warning << "Parent jump and child jump are the same while sliding jump for " << child_segment << " to have parent " << parent_segment << " --  not doing anything." << std::endl;
@@ -1324,7 +1384,7 @@ StructureData::slide_jump(
 	core::kinematics::FoldTree ft = pose_->fold_tree();
 	core::kinematics::Edge jedge = ft.jump_edge(childjump);
 	ft.slide_jump( childjump, segment(parent_segment).safe(), jedge.stop() );
-	assert( ft.check_fold_tree() );
+	debug_assert( ft.check_fold_tree() );
 	pose_->fold_tree( ft );
 }
 
@@ -1336,14 +1396,14 @@ StructureData::align_residues(
 	core::Size const align_res_movable,
 	core::Size const res_with_torsions )
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 	// move the jump temporarily
 	core::kinematics::FoldTree ft = pose_->fold_tree();
 	core::kinematics::FoldTree const ft_backup = ft;
 	TR << "Sliding jump " << jump_idx << " to " << align_res_target << " --> " << align_res_movable << " in " << ft << std::endl;
 	core::kinematics::Edge jedge = ft.jump_edge( jump_idx );
 	ft.slide_jump( jump_idx, align_res_target, align_res_movable );
-	assert( ft.check_fold_tree() );
+	debug_assert( ft.check_fold_tree() );
 	pose_->fold_tree( ft );
 
 	//setup torsions
@@ -1365,7 +1425,7 @@ StructureData::align_residues(
 		core::id::AtomID(pose_->residue(align_res_movable).type().atom_index("C"), align_res_movable) );
 
 	pose_->conformation().set_stub_transform( stub1, stub2, core::kinematics::RT() );
-	assert( ft_backup.check_fold_tree() );
+	debug_assert( ft_backup.check_fold_tree() );
 	pose_->fold_tree( ft_backup );
 }
 
@@ -1388,8 +1448,8 @@ StructureData::move_segment(
 		// find all involved segments
 		StringList::iterator segment2_segment_begin = find_segment( segment2_n );
 		StringList::iterator segment2_segment_end = find_segment( segment2_c );
-		assert( segment2_segment_begin != segment_order_.end() );
-		assert( segment2_segment_end != segment_order_.end() );
+		debug_assert( segment2_segment_begin != segment_order_.end() );
+		debug_assert( segment2_segment_end != segment_order_.end() );
 		++segment2_segment_end;
 
 		if ( pose_ ) {
@@ -1400,13 +1460,13 @@ StructureData::move_segment(
 		for ( StringList::iterator s=segment2_segment_begin; s != segment2_segment_end; ++s ) {
 			segment2_segments.push_back( *s );
 		}
-		assert( segment_order_.size() == segments_.size() );
+		debug_assert( segment_order_.size() == segments_.size() );
 		segment_order_.erase( segment2_segment_begin, segment2_segment_end );
 		StringList::iterator insert_pos = find_segment( segment1_c );
-		assert( insert_pos != segment_order_.end() );
+		debug_assert( insert_pos != segment_order_.end() );
 		++insert_pos;
 		segment_order_.insert( insert_pos, segment2_segments.begin(), segment2_segments.end() );
-		assert( segment_order_.size() == segments_.size() );
+		debug_assert( segment_order_.size() == segments_.size() );
 		update_numbering();
 		move_jumps_to_safety();
 	}
@@ -1423,11 +1483,11 @@ StructureData::move_segment_in_pose(
 {
 	TR << "moving segment " << start2 << "->" << end2 << " to after residues " << start1 << "->" << end1 << std::endl;
 
-	assert( pose_ );
+	debug_assert( pose_ );
 	int const len = end2 - start2 + 1;
 
 	insert_after_residue_in_pose( start1, end1, start2, end2 );
-	assert( len >= 0 );
+	debug_assert( len >= 0 );
 	if ( end1 < start2 ) {
 		start2 += len;
 		end2 += len;
@@ -1443,7 +1503,7 @@ StructureData::insert_after_residue_in_pose(
 	core::Size segment2_start,
 	core::Size segment2_end )
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 	TR.Debug << "Inserting segment -- original segment2: " << segment2_start << "-->" << segment2_end << ", segment1_end=" << segment1_end << std::endl;
 
 	// add segment2 residues
@@ -1452,9 +1512,11 @@ StructureData::insert_after_residue_in_pose(
 		// new residue will be attached by jump
 		if ( cseg_res != segment2_start ) {
 			if ( pose()->residue(cseg_res).is_lower_terminus() ) {
-				remove_lower_terminus_variant_type( cseg_res );
+				pose_->insert_residue_by_jump( pose_->residue( cseg_res ), segment1_end+1, pose_->fold_tree().root() );
+			} else {
+				//remove_lower_terminus_variant_type( cseg_res );
+				pose_->append_polymer_residue_after_seqpos( pose_->residue(cseg_res), segment1_end, false );
 			}
-			pose_->append_polymer_residue_after_seqpos( pose_->residue(cseg_res), segment1_end, false );
 		} else {
 			int upstream_res = pose_->fold_tree().root();
 			TR.Debug << "Adding jump from " << upstream_res << " after " << segment1_end << " to residue copied from " << cseg_res << std::endl;
@@ -1463,6 +1525,7 @@ StructureData::insert_after_residue_in_pose(
 				TR.Debug << "Res " << i << " : " << ft.is_cutpoint(i) << std::endl;
 			}
 			pose_->insert_residue_by_jump( pose_->residue(cseg_res), segment1_end+1, upstream_res );
+			core::pose::add_lower_terminus_type_to_pose_residue( *pose_, segment1_end+1 );
 		}
 		if ( segment1_end < segment2_start ) {
 			cseg_res += 1;
@@ -1481,14 +1544,14 @@ StructureData::insert_after_residue_in_pose(
 		int const u = ft.upstream_jump_residue(j);
 		int const d = ft.downstream_jump_residue(j);
 		// these are important for the casting below
-		assert( u >= 0 );
-		assert( d >= 0 );
+		debug_assert( u >= 0 );
+		debug_assert( d >= 0 );
 		TR.Debug << "Looking at jump " << j << " upstream " << u << " downstream " << d << " Comp2=" << segment2_start << "->" << segment2_end << std::endl;
 		bool const u_in_segment2 = ( segment2_start <= static_cast< core::Size >(u) ) && ( static_cast< core::Size >(u) <= segment2_end );
 		bool const d_in_segment1 = ( segment1_start <= static_cast< core::Size >(d) ) && ( static_cast< core::Size >(d) <= segment1_end );
 		core::kinematics::Edge & new_edge = ft.jump_edge(j);
-		assert( new_edge.start() == u );
-		assert( new_edge.stop() == d );
+		debug_assert( new_edge.start() == u );
+		debug_assert( new_edge.stop() == d );
 		// 4 cases
 		if ( u_in_segment2 && d_in_segment1 ) {
 			// 1. upstream in cut segment, downstream in new segment
@@ -1510,7 +1573,7 @@ StructureData::insert_after_residue_in_pose(
 	TR.Debug << "fold tree after insert : " << ft << std::endl;
 	ft.delete_extra_vertices();
 	TR.Debug << "cleaned fold tree      : " << ft << std::endl;
-	assert( ft.check_fold_tree() );
+	debug_assert( ft.check_fold_tree() );
 	pose_->fold_tree( ft );
 }
 
@@ -1592,18 +1655,22 @@ StructureData::delete_segment( std::string const & seg_val )
 	std::string const segment2_n = r->second.upper_segment();
 	if ( !r->second.has_free_lower_terminus() ) {
 		SegmentMap::iterator r2 = segments_.find( segment1_c );
-		assert( r2 != segments_.end() );
+		debug_assert( r2 != segments_.end() );
 		r2->second.set_upper_segment( "" );
-		r2->second.set_cterm_included( false );
-		start_del += 1;
+		if ( start_del <= stop_del ) {
+			start_del += 1;
+			r2->second.set_cterm_included( false );
+		}
 	}
 	if ( !r->second.has_free_upper_terminus() ) {
 		SegmentMap::iterator r2 = segments_.find( segment2_n );
-		assert( r2 != segments_.end() );
+		debug_assert( r2 != segments_.end() );
 		r2->second.set_lower_segment( "" );
-		r2->second.set_nterm_included( false );
-		assert( stop_del > 1 );
-		stop_del -= 1;
+		if ( start_del <= stop_del ) {
+			debug_assert( stop_del > 1 );
+			stop_del -= 1;
+			r2->second.set_nterm_included( false );
+		}
 	}
 	if ( pose_  && ( start_del <= stop_del ) ) {
 		core::Size const resi_count = pose_->total_residue();
@@ -1611,26 +1678,26 @@ StructureData::delete_segment( std::string const & seg_val )
 		debug_assert( resi_count - (stop_del-start_del+1) == pose_->total_residue() );
 	}
 	StringList::iterator remove_me = find_segment( seg );
-	assert( remove_me != segment_order_.end() );
+	debug_assert( remove_me != segment_order_.end() );
 	segment_order_.erase( remove_me );
 	core::Size const removed_mg = r->second.movable_group;
 	segments_.erase( r );
-	assert( segment_order_.size() == segments_.size() );
+	debug_assert( segment_order_.size() == segments_.size() );
 
 	update_movable_groups_after_deletion( removed_mg );
 	update_numbering();
 
 	if ( pose_ ) {
-		// add terminal variants
-		if ( segment1_c != "" ) {
-			add_upper_terminus_variant_type( segment(segment1_c).cterm_resi() );
+		if ( !segment1_c.empty() ) {
+			add_upper_terminus_variant_type( segment( segment1_c ).cterm_resi() );
 		}
-		if ( segment2_n != "" ) {
-			add_lower_terminus_variant_type( segment(segment2_n).nterm_resi() );
+		if ( !segment2_n.empty() ) {
+			add_lower_terminus_variant_type( segment( segment2_n ).nterm_resi() );
 		}
 		chains_from_termini();
 	}
 	TR << "Deleted segment " << seg << std::endl;
+	if ( pose_ ) save_into_pose();
 }
 
 /// @brief deletes the given residues from the pose
@@ -1642,7 +1709,13 @@ StructureData::delete_residues_in_pose(
 	debug_assert( pose_ );
 	pose_->conformation().buffer_signals();
 	TR.Debug << "Deleting pose residues " << start << " to " << end << std::endl;
-	debug_assert( start <= end );
+	if ( start > end ) {
+		std::stringstream ss;
+		ss << id() << ": deleting residue from " << start << " to " << end
+			<< ", pose length = " << pose_->total_residue() << std::endl;
+		ss << "Bad start and end given to delete_residues_in_pose()" << std::endl;
+		throw utility::excn::EXCN_BadInput( ss.str() );
+	}
 	pose_->conformation().delete_residue_range_slow( start, end );
 	pose_->conformation().unblock_signals();
 }
@@ -1686,17 +1759,17 @@ StructureData::set_bond_length(
 	std::string const & atom2,
 	core::Real const newlength )
 {
-	assert( pose_ );
-	assert( newlength >= 0 );
-	assert( has_segment( segmentname ) );
+	debug_assert( pose_ );
+	debug_assert( newlength >= 0 );
+	debug_assert( has_segment( segmentname ) );
 	Segment const & res = segment(segmentname);
-	assert( resid );
-	assert( resid <= res.length() );
+	debug_assert( resid );
+	debug_assert( resid <= res.length() );
 	core::Size const poseres = res.resid(resid);
-	assert( poseres );
-	assert( poseres <= pose_->total_residue() );
-	assert( pose_->residue(poseres).type().has( atom1 ) );
-	assert( pose_->residue(poseres).type().has( atom2 ) );
+	debug_assert( poseres );
+	debug_assert( poseres <= pose_->total_residue() );
+	debug_assert( pose_->residue(poseres).type().has( atom1 ) );
+	debug_assert( pose_->residue(poseres).type().has( atom2 ) );
 	core::id::AtomID const atom1id( pose_->residue(poseres).type().atom_index(atom1), poseres );
 	core::id::AtomID const atom2id( pose_->residue(poseres).type().atom_index(atom2), poseres );
 	pose_->conformation().set_bond_length( atom1id, atom2id, newlength );
@@ -1707,8 +1780,8 @@ StructureData::set_bond_length(
 void
 StructureData::detect_disulfides( core::scoring::ScoreFunctionOP sfx )
 {
-	assert( pose_ );
-	assert( sfx );
+	debug_assert( pose_ );
+	debug_assert( sfx );
 	if ( basic::options::option[ basic::options::OptionKeys::in::detect_disulf ].user() ?
 			basic::options::option[ basic::options::OptionKeys::in::detect_disulf ]() : // detect_disulf true
 			pose_->is_fullatom() // detect_disulf default but fa pose
@@ -1744,7 +1817,7 @@ StructureData::num_chains() const
 		TR.Error << "Error in counting number of chains..." << lower_count << " vs. " << upper_count << std::endl;
 		TR.Error << *this << std::endl;
 	}
-	assert( lower_count == upper_count );
+	debug_assert( lower_count == upper_count );
 	return lower_count;
 }
 
@@ -1852,15 +1925,15 @@ StructureData::are_connectable(
 	core::chemical::ResidueType const & rtype = pose()->residue(res1).residue_type_set().name_map( pose()->residue(res1).name3() );
 	std::string const & aname = rtype.atom_name( rtype.upper_connect_atom() );
 	core::Size const atom1 = pose()->residue(res1).type().atom_index( aname );
-	assert( atom1 );
+	debug_assert( atom1 );
 	core::chemical::ResidueType const & rtype2 = pose()->residue(res2).residue_type_set().name_map( pose()->residue(res2).name3() );
 	std::string const & aname2 = rtype2.atom_name( rtype2.lower_connect_atom() );
 	core::Size const atom2 = pose()->residue(res2).type().atom_index( aname2 );
-	assert( atom2 );
+	debug_assert( atom2 );
 	core::Real const dist( pose()->residue(res1).xyz( atom1 ).distance(
 		pose()->residue(res2).xyz( atom2 ) ) );
 	// max 3.8 angstroms per residue, plus ~1.5 angstroms for N-C bond
-	assert( bond_dist >= -0.0000001 );
+	debug_assert( bond_dist >= -0.0000001 );
 	if ( dist > (max_dist_per_res*nres + bond_dist) ) {
 		TR << id1 << " and " << id2 << " not connectable due to nres=" << nres << " distance=" << dist << std::endl;
 		return false;
@@ -1910,15 +1983,24 @@ StructureData::add_segment( std::string const & id_val, Segment const & resis, s
 void
 StructureData::add_segment( std::string const & id_val, Segment const & resis, StringList::iterator insert_pos )
 {
-	assert( segment_order_.size() == segments_.size() );
+	if ( insert_pos != segment_order_.end() ) {
+		TR.Debug << "Adding " << std::make_pair( id_val, resis ) << " to after " << *insert_pos << std::endl;
+	} else {
+		TR.Debug << "Adding " << std::make_pair( id_val, resis ) << " to end of list" << std::endl;
+	}
+	debug_assert( segment_order_.size() == segments_.size() );
 	SegmentMap::iterator s = segments_.find( id_val );
 	if ( s == segments_.end() ) {
-		segments_[ id_val ] = resis;
+		if ( !segments_.insert( std::make_pair( id_val, resis ) ).second ) {
+			throw utility::excn::EXCN_Msg_Exception( "failed to insert segment " + id_val );
+		}
 		segment_order_.insert( insert_pos, id_val );
+		debug_assert( segments_.size() == segment_order_.size() );
 	} else {
 		s->second = resis;
 		debug_assert( std::count( segment_order_.begin(), segment_order_.end(), id_val ) == 1 );
 	}
+	TR.Debug << "Segment order is now " << segment_order_ << std::endl;
 
 	update_numbering();
 }
@@ -1962,7 +2044,7 @@ StructureData::find_lower_terminus( std::set< std::string > & visited, std::stri
 	if ( segment(seg).has_free_lower_terminus() ) {
 		return seg;
 	}
-	assert( segment(seg).lower_segment() != "" );
+	debug_assert( segment(seg).lower_segment() != "" );
 	return find_lower_terminus( visited, segment(seg).lower_segment() );
 }
 
@@ -1978,7 +2060,7 @@ StructureData::find_upper_terminus( std::set< std::string > & visited, std::stri
 	if ( segment(seg).has_free_upper_terminus() ) {
 		return seg;
 	}
-	assert( segment(seg).upper_segment() != "" );
+	debug_assert( segment(seg).upper_segment() != "" );
 	return find_upper_terminus( visited, segment(seg).upper_segment() );
 }
 
@@ -1990,8 +2072,8 @@ StructureData::set_resnum_alias(
 	core::Size const resi )
 {
 	if ( has_segment( segment_name ) ) {
-		assert( resi );
-		assert( resi <= segment(segment_name).length() );
+		debug_assert( resi );
+		debug_assert( resi <= segment(segment_name).length() );
 		aliases_[ alias_name ] = std::make_pair( segment_name, resi );
 	} else if ( has_alias( segment_name ) ) {
 		aliases_[ alias_name ] = aliases_[ segment_name ];
@@ -2027,7 +2109,7 @@ StructureData::alias_resnum( std::string const & alias ) const
 		TR.Warning << " alias " << alias << " not found!!  returning 0" << std::endl;
 	}
 
-	assert( has_segment( alias_it->second.first ) );
+	debug_assert( has_segment( alias_it->second.first ) );
 	Segment const & resis = segment( alias_it->second.first );
 	return resis.resid( alias_it->second.second );
 }
@@ -2065,7 +2147,7 @@ StructureData::add_prefix_to_segments( std::string const & prefix, char const de
 		newmap[newname] = r->second;
 		if ( r->first != newname ) {
 			StringList::iterator c = find_segment( r->first );
-			assert( c != segment_order_.end() );
+			debug_assert( c != segment_order_.end() );
 			*c = newname;
 		}
 	}
@@ -2084,13 +2166,13 @@ StructureData::rename_segment( std::string const & old_name, std::string const &
 {
 	// find and rename the original segment
 	SegmentMap::iterator r = segments_.find( old_name );
-	assert( r != segments_.end() );
+	debug_assert( r != segments_.end() );
 	Segment resis = r->second;
 	segments_.erase( r );
 	segments_[new_name] = resis;
 
 	StringList::iterator c = find_segment( old_name );
-	assert( c != segment_order_.end() );
+	debug_assert( c != segment_order_.end() );
 	*c = new_name;
 
 	for ( SegmentMap::iterator r2 = segments_.begin(); r2 != segments_.end(); ++r2 ) {
@@ -2118,11 +2200,26 @@ StructureData::has_segment( std::string const & seg ) const
 		( segments_.find( id() + PARENT_DELIMETER + seg ) != segments_.end() ) );
 }
 
+/// @brief start of segments list
+StringList::const_iterator
+StructureData::segments_begin() const
+{
+	return segment_order_.begin();
+}
+
+/// @brief end of segment list
+StringList::const_iterator
+StructureData::segments_end() const
+{
+	return segment_order_.end();
+}
+
+
 core::Size
 StructureData::choose_new_movable_group() const
 {
 	std::set< core::Size > const mgs = movable_groups();
-	core::Size mg = mgs.size() + 1;
+	core::Size mg = 1;
 	while ( mgs.find( mg ) != mgs.end() ) {
 		++mg;
 	}
@@ -2136,9 +2233,6 @@ StructureData::merge( StructureData const & other )
 	// this should only be called on multi-chain permutations
 	runtime_assert( is_multi() );
 
-	// TODO: get rid of this
-	sub_perms_.push_back( other.clone() );
-
 	core::Size const movable_group_new = choose_new_movable_group();
 	for ( StringList::const_iterator c = other.segments_begin(); c != other.segments_end(); ++c ) {
 		Segment newseg = other.segment( *c );
@@ -2148,6 +2242,25 @@ StructureData::merge( StructureData const & other )
 	}
 
 	copy_data( other, false );
+	if ( pose_ ) save_into_pose();
+}
+
+void
+StructureData::merge_before( StructureData const & other, std::string const & position )
+{
+	// this should only be called on multi-chain permutations
+	runtime_assert( is_multi() );
+
+	core::Size const movable_group_new = choose_new_movable_group();
+	for ( StringList::const_iterator c = other.segments_begin(); c != other.segments_end(); ++c ) {
+		Segment newseg = other.segment( *c );
+		newseg.movable_group = movable_group_new;
+		add_segment( *c, newseg, position );
+		TR.Debug << "Added " << std::make_pair( *c, newseg ) << std::endl;
+	}
+
+	copy_data( other, false );
+	if ( pose_ ) save_into_pose();
 }
 
 /// @brief computes and returns a set of segments which are in the given movable group
@@ -2190,11 +2303,11 @@ StructureData::move_jumps_to_safety()
 		e.start() = segment( upname ).safe();
 		std::string const downname = segment_name( e.stop() );
 		e.stop() = segment( downname ).safe();
-		TR << "FT: " << ft << std::endl;
-		TR << "Sliding jump " << e << std::endl;
+		TR.Debug << "FT: " << ft << std::endl;
+		TR.Debug << "Sliding jump " << e << std::endl;
 		ft.slide_jump( e.label(), e.start(), e.stop() );
 	}
-	assert( ft.check_fold_tree() );
+	debug_assert( ft.check_fold_tree() );
 	pose_->fold_tree( ft );
 }
 
@@ -2213,7 +2326,7 @@ StructureData::consolidate_movable_groups(
 	core::pose::PoseOP pose,
 	utility::vector1< std::string > const & root_segments )
 {
-	assert( pose );
+	debug_assert( pose );
 
 	// make fold graph
 	FoldGraph fg( *this, pose );
@@ -2223,7 +2336,7 @@ StructureData::consolidate_movable_groups(
 		throw utility::excn::EXCN_Msg_Exception( "Bad nres" );
 	}
 	pose->fold_tree( ft );
-	TR << "Created fold tree: " << pose->fold_tree() << std::endl;
+	TR.Debug << "Created fold tree: " << pose->fold_tree() << std::endl;
 	TR.Debug << "FT Perm = " << *this << std::endl;
 }
 
@@ -2243,7 +2356,7 @@ StructureData::declare_covalent_bond(
 	core::Size const res2, std::string const & atom2 )
 {
 	TR.Debug << "Creating covalent bond between " << res1 << " and " << res2 << std::endl;
-	assert( pose_ );
+	debug_assert( pose_ );
 	pose_->conformation().declare_chemical_bond( res1, atom1, res2, atom2 );
 
 	//Rebuild the connection atoms:
@@ -2261,15 +2374,15 @@ StructureData::declare_polymer_bond( std::string const & segment1, std::string c
 {
 	core::Size const pos1 = segment(segment1).cterm_resi();
 	core::Size const pos2 = segment(segment2).nterm_resi();
-	assert( pose_ );
-	assert( pose_->residue(pos1).is_polymer() );
-	assert( pose_->residue(pos2).is_polymer() );
-	assert( ! pose_->residue(pos1).is_polymer_bonded( pos2 ) );
+	debug_assert( pose_ );
+	debug_assert( pose_->residue(pos1).is_polymer() );
+	debug_assert( pose_->residue(pos2).is_polymer() );
+	debug_assert( ! pose_->residue(pos1).is_polymer_bonded( pos2 ) );
 
 	declare_covalent_bond( pos1, pose_->residue(pos1).atom_name( pose_->residue(pos1).upper_connect_atom() ),
 		pos2, pose_->residue(pos2).atom_name( pose_->residue(pos2).lower_connect_atom() ) );
 
-	assert( pose_->residue(pos1).is_polymer_bonded( pos2 ) );
+	debug_assert( pose_->residue(pos1).is_polymer_bonded( pos2 ) );
 }
 
 /// @brief marks the resi-th residue of seg as a cutpoint
@@ -2277,7 +2390,7 @@ void
 StructureData::set_cutpoint( std::string const & seg, core::Size const resi )
 {
 	SegmentMap::iterator r = segments_.find( seg );
-	assert( r != segments_.end() );
+	debug_assert( r != segments_.end() );
 	if ( r != segments_.end() ) {
 		r->second.set_cutpoint( resi );
 	}
@@ -2293,13 +2406,54 @@ StructureData::connect_segments(
 	if ( has_free_upper_terminus( segment1_c ) && has_free_lower_terminus( segment2_n ) ) {
 		mark_connected( segment1_c, segment2_n );
 	}
-	assert( segment(segment1_c).upper_segment() == segment2_n );
-	assert( segment(segment2_n).lower_segment() == segment1_c );
+	debug_assert( segment(segment1_c).upper_segment() == segment2_n );
+	debug_assert( segment(segment2_n).lower_segment() == segment1_c );
 
 	// pose manipulation
 	if ( pose_ ) {
 		remove_upper_terminus_variant_type( segment(segment1_c).cterm_resi() );
 		remove_lower_terminus_variant_type( segment(segment2_n).nterm_resi() );
+		if ( ! polymer_bond_exists( segment1_c, segment2_n ) ) {
+			declare_polymer_bond( segment1_c, segment2_n );
+		}
+		chains_from_termini();
+	}
+	TR.Debug << "Marked " << segment1_c << " and " << segment2_n << " as connected." << std::endl;
+}
+
+void
+StructureData::mark_disconnected(
+	std::string const & seg1,
+	std::string const & seg2 )
+{
+	SegmentMap::iterator s1 = segments_.find( seg1 );
+	SegmentMap::iterator s2 = segments_.find( seg2 );
+	debug_assert( s1 != segments_.end() );
+	debug_assert( s2 != segments_.end() );
+
+	s1->second.set_upper_segment( "" );
+	s2->second.set_lower_segment( "" );
+
+	TR.Debug << "Marked " << s1->first << " and " << s2->first << " as disconnected." << std::endl;
+}
+
+/// @brief disconnects the given chains doesn't update anything -- don't call this on its own unless you know what you're doing.
+void
+StructureData::disconnect_segments(
+	std::string const & segment1_c,
+	std::string const & segment2_n )
+{
+	mark_disconnected( segment1_c, segment2_n );
+
+	// pose manipulation
+	if ( pose_ ) {
+		/*
+		if ( polymer_bond_exists( segment1_c, segment2_n ) )
+		pas
+		*/
+
+		add_upper_terminus_variant_type( segment( segment1_c ).cterm_resi() );
+		add_lower_terminus_variant_type( segment( segment2_n ).nterm_resi() );
 		chains_from_termini();
 	}
 }
@@ -2317,7 +2471,7 @@ StructureData::merge_segments(
 	utility::vector1< std::string > c2_grp = segments_in_movable_group( c2.movable_group );
 	core::Size new_group = c1.movable_group;
 	core::Size del_group = c2.movable_group;
-	assert( ( c1_grp.size() <= 1 ) || ( c2_grp.size() <= 1 ) );
+	debug_assert( ( c1_grp.size() <= 1 ) || ( c2_grp.size() <= 1 ) );
 	if ( c2_grp.size() > c1_grp.size() ) {
 		new_group = c2.movable_group;
 		del_group = c1.movable_group;
@@ -2330,7 +2484,7 @@ StructureData::merge_segments(
 		chains_from_termini();
 	}
 
-	assert( c1.cterm_resi()+1 == c2.nterm_resi() );
+	debug_assert( c1.cterm_resi()+1 == c2.nterm_resi() );
 
 	std::string const newss = segment(segment1).ss() + segment(segment2).ss();
 	utility::vector1< std::string > const & c1_abego = segment(segment1).abego();
@@ -2338,8 +2492,8 @@ StructureData::merge_segments(
 	utility::vector1< std::string > new_abego( c1_abego.size() + c2_abego.size() );
 	std::copy( c1_abego.begin(), c1_abego.end(), new_abego.begin() );
 	std::copy( c2_abego.begin(), c2_abego.end(), new_abego.begin() + c1_abego.size() );
-	assert( newss.size() == c1.length() + c2.length() );
-	assert( new_abego.size() == c1.length() + c2.length() );
+	debug_assert( newss.size() == c1.length() + c2.length() );
+	debug_assert( new_abego.size() == c1.length() + c2.length() );
 
 	// handle merging of residues segments
 	Segment resis(
@@ -2361,10 +2515,10 @@ StructureData::merge_segments(
 
 	// erase old strings in order
 	StringList::iterator pos = find_segment( segment1 );
-	assert( pos != segment_order_.end() );
+	debug_assert( pos != segment_order_.end() );
 	pos = segment_order_.erase( pos );
-	assert( pos != segment_order_.end() );
-	assert( *pos == segment2 );
+	debug_assert( pos != segment_order_.end() );
+	debug_assert( *pos == segment2 );
 	pos = segment_order_.erase( pos );
 
 	add_segment( new_name, resis, pos );
@@ -2396,7 +2550,7 @@ StructureData::set_pose( core::pose::Pose const & new_pose )
 void
 StructureData::set_pose( core::pose::PoseOP new_pose )
 {
-	if ( new_pose ) {
+	if ( new_pose && new_pose->total_residue() ) {
 		TR.Debug << id() << ": new_pose len=" << new_pose->total_residue() << " pose residue =" << pose_length() << " perm len=" << length() << std::endl;
 		debug_assert( new_pose->total_residue() == pose_length() );
 		debug_assert( new_pose->total_residue() == ss().size() );
@@ -2478,14 +2632,16 @@ StructureData::upper_anchor( std::string const & id_val ) const
 Segment &
 StructureData::segment_nonconst( std::string const & id_val )
 {
-	SegmentMap::iterator it;
-	it = segments_.find( id_val );
+	SegmentMap::iterator it = segments_.find( id_val );
 	if ( it == segments_.end() ) {
 		it = segments_.find( id() + PARENT_DELIMETER + id_val );
 	}
 	if ( it == segments_.end() ) {
-		TR << "Search term is: " << id_val << "; Segment map is: " << segments_ << std::endl;
-		throw utility::excn::EXCN_BadInput( "Segment " + id_val + " not found in residue lists!" );
+		std::stringstream err;
+		err << id() << ": Segment not found in residue lists! ";
+		err << "Search term is: " << id_val << "; Segment map is: " << segments_ << std::endl;
+		debug_assert( false );
+		throw utility::excn::EXCN_Msg_Exception( err.str() );
 	}
 	return it->second;
 }
@@ -2494,14 +2650,16 @@ StructureData::segment_nonconst( std::string const & id_val )
 Segment const &
 StructureData::segment( std::string const & id_val ) const
 {
-	SegmentMap::const_iterator it;
-	it = segments_.find( id_val );
+	SegmentMap::const_iterator it = segments_.find( id_val );
 	if ( it == segments_.end() ) {
 		it = segments_.find( id() + PARENT_DELIMETER + id_val );
 	}
 	if ( it == segments_.end() ) {
-		TR << "Search term is: " << id_val << "; Segment map is: " << segments_ << std::endl;
-		throw utility::excn::EXCN_BadInput( "Segment " + id_val + " not found in residue lists!" );
+		std::stringstream err;
+		err << id() << ": Segment not found in residue lists! ";
+		err << "Search term is: " << id_val << "; Segment map is: " << segments_ << std::endl;
+		debug_assert( false );
+		throw utility::excn::EXCN_Msg_Exception( err.str() );
 	}
 	return it->second;
 }
@@ -2733,8 +2891,8 @@ StructureData::loop_residues() const
 		if ( it->second.is_loop ) {
 			TR << "Loop Range: " << it->second.start() << " -> " << it->second.stop() << std::endl;
 			for ( core::Size i = it->second.start(); i <= it->second.stop(); ++i ) {
-				assert( i > 0 );
-				assert( i <= is_loop.size() );
+				debug_assert( i > 0 );
+				debug_assert( i <= is_loop.size() );
 				is_loop[i] = true;
 			}
 		}
@@ -2747,7 +2905,7 @@ StructureData::loop_residues() const
 void
 StructureData::update_numbering()
 {
-	assert( segment_order_.size() == segments_.size() );
+	debug_assert( segment_order_.size() == segments_.size() );
 	core::Size cur_num = 1;
 	core::Size non_dummy_count = 0;
 	std::string new_ss = "";
@@ -2774,9 +2932,9 @@ StructureData::update_numbering()
 		err << "new ss= " << new_ss << std::endl;
 		throw utility::excn::EXCN_BadInput( err.str() );
 	}
-	assert( new_ss.size() == pose_length_ );
+	debug_assert( new_ss.size() == pose_length_ );
 	ss_ = new_ss;
-	assert( new_abego.size() == pose_length_ );
+	debug_assert( new_abego.size() == pose_length_ );
 	abego_ = new_abego;
 	TR.Debug << "Numbering updated - new pose length = " << pose_length_ << " new ss = " << new_ss << std::endl;
 }
@@ -2877,7 +3035,7 @@ StructureData::check_consistency() const
 		if ( !pose_ ) {
 			continue;
 		}
-		assert( pose_ );
+		debug_assert( pose_ );
 		for ( core::Size i=r->second.nterm_resi()+1; i<r->second.cterm_resi(); ++i ) {
 			if ( pose_->residue(i).is_terminus() ) {
 				TR.Error << " Residue " << i << " has a terminal variant." << std::endl;
@@ -2951,8 +3109,24 @@ StructureData::has_free_upper_terminus( std::string const & id_val ) const
 void
 StructureData::add_cutpoint_variants( core::Size const cut_res )
 {
-	assert( pose_ );
+	debug_assert( pose_ );
 	protocols::forge::methods::add_cutpoint_variants( *pose_, cut_res );
+}
+
+/// @brief removes cutpoint variants from residues cut and cut+1
+void
+StructureData::remove_cutpoint_variants( core::Size const cut_res )
+{
+	debug_assert( pose_ );
+	debug_assert( cut_res + 1 <= pose_->total_residue() );
+
+	if ( pose_->residue( cut_res ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
+		core::pose::remove_variant_type_from_pose_residue( *pose_, core::chemical::CUTPOINT_LOWER, cut_res );
+	}
+
+	if ( pose_->residue( cut_res + 1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) ) {
+		core::pose::remove_variant_type_from_pose_residue( *pose_, core::chemical::CUTPOINT_UPPER, cut_res + 1 );
+	}
 }
 
 /// @brief applies an arbitrary mover to the contained pose
@@ -2961,14 +3135,14 @@ StructureData::apply_mover( protocols::moves::Mover & mover )
 {
 	core::Size const orig_len = pose_->total_residue();
 	mover.apply( *pose_ );
-	assert( orig_len == pose_->total_residue() );
+	debug_assert( orig_len == pose_->total_residue() );
 }
 
 /// @brief applies an arbitrary mover to the contained pose
 void
 StructureData::apply_mover( protocols::moves::MoverOP mover )
 {
-	assert( mover );
+	debug_assert( mover );
 	apply_mover( *mover );
 }
 
@@ -2976,8 +3150,8 @@ StructureData::apply_mover( protocols::moves::MoverOP mover )
 void
 StructureData::remove_constraints_from_pose( protocols::forge::remodel::RemodelConstraintGeneratorOP rcg )
 {
-	assert( pose_ );
-	assert( rcg );
+	debug_assert( pose_ );
+	debug_assert( rcg );
 	rcg->remove_remodel_constraints_from_pose( *pose_ );
 }
 
@@ -3021,8 +3195,8 @@ StructureData::new_jump_and_cutpoint( protocols::loops::Loop const & loop, core:
 		}
 	}
 
-	assert( saferes1 < cutres );
-	assert( saferes2 > cutres );
+	debug_assert( saferes1 < cutres );
+	debug_assert( saferes2 > cutres );
 	TR << "Inserting jump " << saferes1 << "__" << saferes2 << " with cut at " << cutres << std::endl;
 
 	// modify fold tree
@@ -3032,7 +3206,7 @@ StructureData::new_jump_and_cutpoint( protocols::loops::Loop const & loop, core:
 		TR.Error << "FOLDTREE=" << ft << std::endl;
 		TR.Error << "StructureData=" << *this << std::endl;
 	}
-	assert( ft.check_fold_tree() );
+	debug_assert( ft.check_fold_tree() );
 	pose_->fold_tree( ft );
 
 	// remove terminal variants (if applicable)
@@ -3055,7 +3229,7 @@ StructureData::new_jump_and_cutpoint( protocols::loops::Loop const & loop, core:
 	for ( core::Size i=1, endi=pose_->total_residue(); i<=endi; ++i ) {
 		TR.Debug << i << " " << pose_->residue(i).name() << std::endl;
 	}
-	assert( pose_->chain( saferes1 ) == pose_->chain( saferes2 ) );
+	debug_assert( pose_->chain( saferes1 ) == pose_->chain( saferes2 ) );
 
 	return newjump;
 }
@@ -3071,11 +3245,13 @@ operator<<( std::ostream & os, StructureData const & perm )
 		<< "\" >" << std::endl;
 
 	// residues
-	for ( StringList::const_iterator c = perm.segments_begin(), end = perm.segments_end(); c != end; ++c ) {
+	for ( StringList::const_iterator c = perm.segment_order_.begin(); c != perm.segment_order_.end(); ++c ) {
 		SegmentMap::const_iterator res = perm.segments_.find( *c );
 		if ( res == perm.segments_.end() ) {
-			TR << " segment not found = " << *c << std::endl;
-			assert( res != perm.segments_.end() );
+			std::stringstream err;
+			err << perm.id() << ": segment not found = " << *c << std::endl;
+			err << "Segment List = " << perm.segment_order_ << std::endl;
+			throw utility::excn::EXCN_Msg_Exception( err.str() );
 		}
 		os << "\t" << *res << std::endl;
 	}

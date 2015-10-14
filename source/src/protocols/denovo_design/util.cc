@@ -26,6 +26,7 @@
 
 //Core Headers
 #include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -420,9 +421,9 @@ extract_int( core::Real & num, core::Size const m, core::Size const n )
 void
 copy_rotamers( components::StructureData & dest, core::pose::Pose const & src )
 {
-	assert( dest.pose_length() == src.total_residue() );
+	debug_assert( dest.pose_length() == src.total_residue() );
 
-	for ( core::Size r=1, endr=src.total_residue(); r<=endr; ++r ) {
+	for ( core::Size r=1; r<=src.total_residue(); ++r ) {
 		dest.replace_residue( r, src.residue(r), true );
 	}
 	// re-detect disulfides
@@ -513,7 +514,6 @@ get_strandpairings(
 	bool const use_register_shift )
 {
 	// initiate strand pairing check
-	std::stringstream sheet_str;
 	std::map< std::string, core::Size > name_to_strandnum;
 	StringVec strandnames;
 	core::Size strandcount = 0;
@@ -537,8 +537,12 @@ get_strandpairings(
 	TR << "name_to_strandnum=" << name_to_strandnum << " name_to_compidx=" << strandnames << std::endl;
 
 	// now build sheet topology string
+	std::stringstream sheet_str;
 	std::set< std::pair< std::string, std::string > > visited;
 	for ( StringVec::const_iterator s = strandnames.begin(); s != strandnames.end(); ++s ) {
+		if ( !perm.has_data_str( *s, "paired_strands" ) ) {
+			continue;
+		}
 		std::pair< std::string, std::string > const spair =
 			parse_strand_pair( perm.get_data_str( *s, "paired_strands" ) );
 		TR << "Found strand pair " << spair.first << " : " << spair.second << std::endl;
@@ -568,6 +572,39 @@ get_strandpairings(
 		}
 	}
 	return sheet_str.str();
+}
+
+/// @brief dumps a pose into another pose as a new chain
+void
+add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined )
+{
+	runtime_assert( to_add );
+	runtime_assert( combined );
+
+	if ( ! to_add->total_residue() ) {
+		return;
+	}
+
+	if ( combined->total_residue() ) {
+		// here we want an anchor equal to the root of the fold tree
+		core::Size const anchor_res = 1;
+		combined->conformation().buffer_signals();
+		combined->conformation().insert_conformation_by_jump( to_add->conformation(), combined->total_residue()+1, combined->num_jump()+2, anchor_res, combined->num_jump()+1 );
+		combined->conformation().unblock_signals();
+	} else {
+		*combined = *to_add;
+	}
+	// copy remarks
+	if ( to_add->pdb_info() ) {
+		for ( core::pose::Remarks::const_iterator r=to_add->pdb_info()->remarks().begin(); r != to_add->pdb_info()->remarks().end(); ++r ) {
+			TR.Debug << "Copying remark to new pose: " << r->value << std::endl;
+			if ( !combined->pdb_info() ) {
+				combined->pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( *combined, true ) ) );
+			}
+			assert( combined->pdb_info() );
+			combined->pdb_info()->remarks().push_back( *r );
+		}
+	}
 }
 
 } // protocols

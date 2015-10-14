@@ -36,14 +36,14 @@ typedef utility::pointer::weak_ptr< Connection > ConnectionAP;
 typedef utility::pointer::weak_ptr< Connection const > ConnectionCAP;
 
 // Forward
-class StapleTomponents;
+class StapleChains;
 
 // Types
-typedef utility::pointer::shared_ptr< StapleTomponents > StapleTomponentsOP;
-typedef utility::pointer::shared_ptr< StapleTomponents const > StapleTomponentsCOP;
+typedef utility::pointer::shared_ptr< StapleChains > StapleChainsOP;
+typedef utility::pointer::shared_ptr< StapleChains const > StapleChainsCOP;
 
-typedef utility::pointer::weak_ptr< StapleTomponents > StapleTomponentsAP;
-typedef utility::pointer::weak_ptr< StapleTomponents const > StapleTomponentsCAP;
+typedef utility::pointer::weak_ptr< StapleChains > StapleChainsAP;
+typedef utility::pointer::weak_ptr< StapleChains const > StapleChainsCAP;
 
 // Forward
 class BridgeTomponents;

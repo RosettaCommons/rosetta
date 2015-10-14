@@ -52,6 +52,29 @@
 // C++ headers
 static THREAD_LOCAL basic::Tracer TR( "protocols.denovo_design.Connection.cxxtest" );
 
+namespace protocols {
+namespace denovo_design {
+namespace connection {
+
+class BridgeTomponentsProtected : public protocols::denovo_design::connection::BridgeTomponents {
+public:
+	void move_segments_prot( components::StructureData & perm, protocols::denovo_design::StringList const & order ) const {
+		move_segments( perm, order );
+	}
+	void connect_lower_loop_prot( components::StructureData & perm ) const {
+		connect_lower_loop( perm );
+	}
+	void connect_upper_loop_prot( components::StructureData & perm ) const {
+		connect_upper_loop( perm );
+	}
+	void post_process_permutation_prot( components::StructureData & perm ) const {
+		post_process_permutation( perm );
+	}
+};
+
+}
+}
+}
 // --------------- Test Class --------------- //
 class ConnectionTests : public CxxTest::TestSuite {
 public:
@@ -67,6 +90,176 @@ public:
 
 	// Shared finalization goes here.
 	void tearDown() {
+	}
+
+	void test_simple_bridge() {
+		using namespace protocols::denovo_design;
+		using namespace protocols::denovo_design::components;
+		using namespace protocols::denovo_design::connection;
+		core::pose::Pose input_pose;
+		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/connection/test_bundle_disconnected.pdb" );
+		StructureDataOP sd = StructureData::create_from_pose( input_pose, "UnitTest" );
+		TS_ASSERT( sd->check_consistency() );
+
+		BridgeTomponentsProtected conn;
+		conn.set_id( "bridge" );
+		conn.set_cut_resis( "3" );
+		conn.set_comp1_ids( "UnitTest.1" );
+		conn.set_comp2_ids( "UnitTest.2" );
+		conn.set_motifs( "1LX-3EB-2LG-3EB-1LX,4LX,2LX-10HA-1LB-1LA" );
+		conn.set_do_remodel( false );
+		conn.set_check_abego( false );
+		try {
+			conn.setup_from_random( *sd, core::Real( 0.000 ) );
+		} catch ( EXCN_Setup const & e ) {
+			e.show( TR );
+			TR.flush();
+			TS_ASSERT( false );
+		}
+		TS_ASSERT( sd->has_segment( "UnitTest.1" ) );
+		TS_ASSERT( sd->has_segment( "UnitTest.2" ) );
+		TS_ASSERT( sd->has_segment( "bridge" ) );
+		TS_ASSERT( sd->has_segment( "bridge_1" ) );
+		TS_ASSERT_EQUALS( sd->segment( "bridge" ).elem_length(), 3 );
+		TS_ASSERT_EQUALS( sd->segment( "bridge_1" ).elem_length(), 7 );
+
+		core::pose::PoseOP loop = conn.build_pose( *sd );
+		TS_ASSERT_EQUALS( loop->total_residue(), 14 );
+		TS_ASSERT_EQUALS( loop->conformation().num_chains(), 2 );
+		core::pose::PoseOP total = sd->pose()->clone();
+		add_chain_from_pose( loop, total );
+		TS_ASSERT_EQUALS( total->total_residue(), 46 );
+		TS_ASSERT_EQUALS( total->conformation().num_chains(), 4 );
+
+		sd->set_pose( total );
+		TS_ASSERT( sd->check_consistency() );
+		StructureDataOP orig = sd->clone();
+
+		// move segments into proper order
+		TS_ASSERT_EQUALS( sd->pose()->conformation().num_chains(), 4 );
+		StringList const desired_order = sd->connected_segments( conn.lower_segment_id( *sd ) );
+
+		utility::vector1< std::string > const segs( desired_order.begin(), desired_order.end() );
+		TS_ASSERT_EQUALS( segs.size(), 4 );
+		TS_ASSERT_EQUALS( segs[1], "UnitTest.1" );
+		TS_ASSERT_EQUALS( segs[2], "bridge" );
+		TS_ASSERT_EQUALS( segs[3], "bridge_1" );
+		TS_ASSERT_EQUALS( segs[4], "UnitTest.2" );
+
+		conn.move_segments_prot( *sd, desired_order );
+		TS_ASSERT( sd->check_consistency() );
+		TS_ASSERT_EQUALS( sd->pose()->conformation().num_chains(), 4 );
+		check_unwanted_movement( *orig, *sd );
+		orig = sd->clone();
+
+		utility::vector1< std::string > const segments( sd->segments_begin(), sd->segments_end() );
+		TS_ASSERT_EQUALS( segments.size(), 4 );
+		TS_ASSERT_EQUALS( segments[1], "UnitTest.1" );
+		TS_ASSERT_EQUALS( segments[2], "bridge" );
+		TS_ASSERT_EQUALS( segments[3], "bridge_1" );
+		TS_ASSERT_EQUALS( segments[4], "UnitTest.2" );
+
+		for ( core::Size i=1; i<=sd->pose_length(); ++i ) {
+			TR << "Checking chain of residue " << i << " = " << sd->pose()->chain( i ) << std::endl;
+			if ( i <= sd->segment( "UnitTest.1" ).cterm_resi() ) {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 1 );
+			} else if ( i <= sd->segment( "bridge" ).cterm_resi() ) {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 2 );
+			} else if ( i <= sd->segment( "bridge_1" ).cterm_resi() ) {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 3 );
+			} else {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 4 );
+			}
+		}
+		conn.connect_lower_loop_prot( *sd );
+
+		TS_ASSERT( sd->check_consistency() );
+		check_unwanted_movement( *orig, *sd );
+		orig = sd->clone();
+		TS_ASSERT_EQUALS( sd->pose()->conformation().num_chains(), 3 );
+		TS_ASSERT_EQUALS( sd->pose()->total_residue(), 44 );
+		TS_ASSERT_EQUALS( sd->segment( "UnitTest.1" ).nterm_included(), false );
+		TS_ASSERT_EQUALS( sd->segment( "UnitTest.1" ).cterm_included(), true );
+		TS_ASSERT_EQUALS( sd->segment( "bridge" ).nterm_included(), true );
+		TS_ASSERT_EQUALS( sd->segment( "bridge" ).cterm_included(), false );
+		TS_ASSERT_EQUALS( sd->segment( "bridge_1" ).nterm_included(), false );
+		TS_ASSERT_EQUALS( sd->segment( "bridge_1" ).cterm_included(), false );
+		TS_ASSERT_EQUALS( sd->segment( "UnitTest.2" ).nterm_included(), false );
+		TS_ASSERT_EQUALS( sd->segment( "UnitTest.2" ).cterm_included(), false );
+
+		for ( core::Size i=1; i<=sd->pose_length(); ++i ) {
+			TR << "Checking chain of residue " << i << " = " << sd->pose()->chain( i ) << std::endl;
+			if ( i <= sd->segment( "UnitTest.1" ).cterm_resi() ) {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 1 );
+			} else if ( i <= sd->segment( "bridge" ).cterm_resi() ) {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 1 );
+			} else if ( i <= sd->segment( "bridge_1" ).cterm_resi() ) {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 2 );
+			} else {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 3 );
+			}
+		}
+
+		conn.connect_upper_loop_prot( *sd );
+		TS_ASSERT( sd->check_consistency() );
+		check_unwanted_movement( *orig, *sd );
+		TS_ASSERT_EQUALS( sd->pose()->conformation().num_chains(), 2 );
+		TS_ASSERT_EQUALS( sd->pose()->total_residue(), 42 );
+		TS_ASSERT_EQUALS( sd->segment( "UnitTest.1" ).nterm_included(), false );
+		TS_ASSERT_EQUALS( sd->segment( "UnitTest.1" ).cterm_included(), true );
+		TS_ASSERT_EQUALS( sd->segment( "bridge" ).nterm_included(), true );
+		TS_ASSERT_EQUALS( sd->segment( "bridge" ).cterm_included(), false );
+		TS_ASSERT_EQUALS( sd->segment( "bridge_1" ).nterm_included(), false );
+		TS_ASSERT_EQUALS( sd->segment( "bridge_1" ).cterm_included(), true );
+		TS_ASSERT_EQUALS( sd->segment( "UnitTest.2" ).nterm_included(), true );
+		TS_ASSERT_EQUALS( sd->segment( "UnitTest.2" ).cterm_included(), false );
+
+		for ( core::Size i=1; i<=sd->pose_length(); ++i ) {
+			TR << "Checking chain of residue " << i << " = " << sd->pose()->chain( i ) << std::endl;
+			if ( i <= sd->segment( "UnitTest.1" ).cterm_resi() ) {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 1 );
+			} else if ( i <= sd->segment( "bridge" ).cterm_resi() ) {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 1 );
+			} else if ( i <= sd->segment( "bridge_1" ).cterm_resi() ) {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 2 );
+			} else {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 2 );
+			}
+		}
+		sd->consolidate_movable_groups( boost::assign::list_of ("UnitTest.1") ("UnitTest.2") );
+
+		conn.apply_connection( *sd );
+		TS_ASSERT( sd->check_consistency() );
+		sd->delete_trailing_residues( "bridge" );
+		sd->delete_leading_residues( "bridge_1" );
+		TS_ASSERT( sd->check_consistency() );
+		check_unwanted_movement( *orig, *sd );
+
+		conn.post_process_permutation_prot( *sd );
+		TS_ASSERT( sd->check_consistency() );
+		TS_ASSERT( ! sd->has_segment( "bridge_1" ) );
+		TS_ASSERT( sd->has_segment( "bridge" ) );
+		TS_ASSERT_EQUALS( sd->segment( "bridge" ).elem_length(), 10 );
+		TS_ASSERT_EQUALS( sd->segment( "bridge" ).length(), 10 );
+		TS_ASSERT_EQUALS( sd->pose()->conformation().num_chains(), 1 );
+		TS_ASSERT_EQUALS( sd->pose()->total_residue(), 40 );
+		TS_ASSERT_EQUALS( sd->segment( "UnitTest.1" ).nterm_included(), false );
+		TS_ASSERT_EQUALS( sd->segment( "UnitTest.1" ).cterm_included(), true );
+		TS_ASSERT_EQUALS( sd->segment( "bridge" ).nterm_included(), true );
+		TS_ASSERT_EQUALS( sd->segment( "bridge" ).cterm_included(), true );
+		TS_ASSERT_EQUALS( sd->segment( "UnitTest.2" ).nterm_included(), true );
+		TS_ASSERT_EQUALS( sd->segment( "UnitTest.2" ).cterm_included(), false );
+
+		for ( core::Size i=1; i<=sd->pose_length(); ++i ) {
+			TR << "Checking chain of residue " << i << " = " << sd->pose()->chain( i ) << std::endl;
+			if ( i <= sd->segment( "UnitTest.1" ).cterm_resi() ) {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 1 );
+			} else if ( i <= sd->segment( "bridge" ).cterm_resi() ) {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 1 );
+			} else {
+				TS_ASSERT_EQUALS( sd->pose()->chain( i ), 1 );
+			}
+		}
 	}
 
 	void test_api() {
@@ -141,41 +334,48 @@ public:
 
 		// this should fail because we're connecting chain 1 to itself
 		StructureDataOP sd2 = sd->clone();
-		protocols::moves::MoverStatus status = conn.setup_from_random( *sd2, core::Real( 0.0000 ) );
-		TS_ASSERT_EQUALS( status, protocols::moves::FAIL_DO_NOT_RETRY );
+		try {
+			conn.setup_from_random( *sd2, core::Real( 0.0000 ) );
+			TS_ASSERT( false );
+		} catch ( EXCN_Setup const & e ) {
+			TS_ASSERT( true );
+		}
 
-		// should succeed after enabling cyclic connections
+// should succeed after enabling cyclic connections
 		sd2 = sd->clone();
 		conn.set_allow_cyclic( true );
-		status = conn.setup_from_random( *sd2, core::Real( 0.000 ) );
+		conn.setup_from_random( *sd2, core::Real( 0.000 ) );
 		conn.set_allow_cyclic( false );
-		TS_ASSERT_EQUALS( status, protocols::moves::MS_SUCCESS );
 		TS_ASSERT_EQUALS( conn.build_len( *sd2 ), 10 );
 		TS_ASSERT_EQUALS( conn.build_ss( *sd2 ), "LEEELLEEEL" );
 		TS_ASSERT_EQUALS( conn.build_abego( *sd2 ), "XBBBGGBBBX" );
 		TS_ASSERT_EQUALS( conn.lower_segment_id( *sd2 ), "rot_comp.rot_comp2.catalytic.1" );
-		TS_ASSERT_EQUALS( conn.comp1_lower( *sd2 ), "sheet1.s1" );
 		TS_ASSERT_EQUALS( conn.upper_segment_id( *sd2 ), "sheet1.s1" );
-		TS_ASSERT_EQUALS( conn.comp2_upper( *sd2 ), "rot_comp.rot_comp2.catalytic.1" );
 
 		// this should succeed
 		sd2 = sd->clone();
 		conn.set_user_chain1( 2 );
-		status = conn.setup_from_random( *sd2, core::Real( 0.0000 ) );
-		TS_ASSERT_EQUALS( status, protocols::moves::MS_SUCCESS );
+		conn.setup_from_random( *sd2, core::Real( 0.0000 ) );
 		TS_ASSERT_EQUALS( conn.build_len( *sd2 ), 10 );
 		TS_ASSERT_EQUALS( conn.build_ss( *sd2 ), "LEEELLEEEL" );
 		TS_ASSERT_EQUALS( conn.build_abego( *sd2 ), "XBBBGGBBBX" );
 		TS_ASSERT_EQUALS( conn.lower_segment_id( *sd2 ), "sheet1.s2" );
-		TS_ASSERT_EQUALS( conn.comp1_lower( *sd2 ), "sheet1.s2" );
 		TS_ASSERT_EQUALS( conn.upper_segment_id( *sd2 ), "sheet1.s1" );
-		TS_ASSERT_EQUALS( conn.comp2_upper( *sd2 ), "rot_comp.rot_comp2.catalytic.1" );
+
+		// build and set pose
+		core::pose::PoseCOP newpose = conn.build_pose( *sd2 );
+		core::pose::PoseOP total = sd2->pose()->clone();
+		add_chain_from_pose( newpose, total );
+		sd2->set_pose( total );
+		TR << *sd2 << std::endl;
+		TS_ASSERT( sd2->check_consistency() );
 
 		// test building loop residues
 		conn.setup( *sd2 );
 		TS_ASSERT( sd2 );
 		TS_ASSERT( sd2->pose() );
 		TS_ASSERT( sd2->has_segment( "bridge" ) );
+		TS_ASSERT( sd2->has_segment( "bridge_1" ) );
 
 		// look at connectivity
 		TS_ASSERT_EQUALS( sd2->segment( "bridge" ).lower_segment(), "sheet1.s2" );
@@ -206,11 +406,22 @@ public:
 		// test overlap
 		sd2 = sd->clone();
 		conn.set_overlap( 4 );
-		status = conn.setup_from_random( *sd2, core::Real( 0.000 ) );
+		conn.setup_from_random( *sd2, core::Real( 0.000 ) );
+
+		newpose = conn.build_pose( *sd2 );
+		total = sd2->pose()->clone();
+		add_chain_from_pose( newpose, total );
+
+		TS_ASSERT( newpose );
+		TS_ASSERT( total );
+		sd2->set_pose( total );
+		TS_ASSERT( sd2->check_consistency() );
+		StructureDataOP orig = sd2->clone();
+
 		conn.setup( *sd2 );
-		TS_ASSERT_EQUALS( status, protocols::moves::MS_SUCCESS );
 		TS_ASSERT_EQUALS( conn.build_left( *sd2 ), sd2->segment( conn.loop_lower( *sd2 ) ).nterm_resi() - 4 );
 		TS_ASSERT_EQUALS( conn.build_right( *sd2 ), sd2->segment( conn.loop_upper( *sd2 ) ).cterm_resi() + 4 );
+		check_unwanted_movement( *orig, *sd2 );
 	}
 
 	void test_ideal_abego_no_extension()
@@ -281,11 +492,20 @@ public:
 
 		// check proper loop abego and ss
 		conn->setup_permutation( *poseperm );
+
+		core::pose::PoseOP newpose = conn->build_pose( *poseperm );
+		core::pose::PoseOP total = poseperm->pose()->clone();
+		add_chain_from_pose( newpose, total );
+		poseperm->set_pose( total );
+		TS_ASSERT( poseperm->check_consistency() );
+
+		StructureDataOP orig = poseperm->clone();
 		conn->setup( *poseperm );
 		TS_ASSERT_EQUALS( poseperm->segment( "loop1" ).ss(), "HHL" );
 		TS_ASSERT_EQUALS( abego_str( poseperm->segment( "loop1" ).abego() ), "AAX" );
 		TS_ASSERT_EQUALS( poseperm->segment( "loop1_1" ).ss(), "LLLL" );
 		TS_ASSERT_EQUALS( abego_str( poseperm->segment( "loop1_1" ).abego() ), "XXXX" );
+		check_unwanted_movement( *orig, *poseperm );
 		TR << *poseperm << std::endl;
 		poseperm->delete_leading_residues( "loop1_1" );
 		poseperm->delete_trailing_residues( "loop1" );
@@ -344,8 +564,10 @@ public:
 		newconn->set_check_abego( false );
 		newconn->set_do_remodel( false );
 		newconn->setup_from_random( *perm, 0.0001 );
-		TS_ASSERT_EQUALS( newconn->loop_lower(*perm), "UnitTest.2" );
-		TS_ASSERT_EQUALS( newconn->loop_upper(*perm), "UnitTest.3" );
+		TS_ASSERT_EQUALS( newconn->lower_segment_id(*perm), "UnitTest.2" );
+		TS_ASSERT_EQUALS( newconn->upper_segment_id(*perm), "UnitTest.3" );
+		TS_ASSERT_EQUALS( newconn->loop_lower(*perm), "loop1" );
+		TS_ASSERT_EQUALS( newconn->loop_upper(*perm), "loop1_1" );
 		TS_ASSERT_EQUALS( newconn->build_len(*perm), 5 );
 		TS_ASSERT_EQUALS( newconn->build_ss(*perm), "ELLLH" );
 		TS_ASSERT_EQUALS( newconn->build_abego(*perm), "BBABA" );
@@ -353,8 +575,10 @@ public:
 
 		TR << "Perm=" << *perm << std::endl;
 		newconn->setup_from_random( *perm, 0.9999 );
-		TS_ASSERT_EQUALS( newconn->loop_lower(*perm), "UnitTest.2" );
-		TS_ASSERT_EQUALS( newconn->loop_upper(*perm), "UnitTest.3" );
+		TS_ASSERT_EQUALS( newconn->lower_segment_id(*perm), "UnitTest.2" );
+		TS_ASSERT_EQUALS( newconn->upper_segment_id(*perm), "UnitTest.3" );
+		TS_ASSERT_EQUALS( newconn->loop_lower(*perm), "loop1" );
+		TS_ASSERT_EQUALS( newconn->loop_upper(*perm), "loop1_1" );
 		TS_ASSERT_EQUALS( newconn->build_len(*perm), 5 );
 		TS_ASSERT_EQUALS( newconn->build_ss(*perm), "ELLHH" );
 		TS_ASSERT_EQUALS( newconn->build_abego(*perm), "BGBAA" );

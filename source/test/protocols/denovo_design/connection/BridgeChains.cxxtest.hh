@@ -194,18 +194,27 @@ public:
 		conn.set_scorefxn( scorefxn );
 		conn.set_lengths( "1" );
 		conn.set_cut_resis( "1" );
-		protocols::moves::MoverStatus status = conn.setup_from_random( *(perm->clone()), 0.2501 );
-		// this should have failed since nothing is close enough
-		TS_ASSERT( status != protocols::moves::MS_SUCCESS );
+		try {
+			// this should have failed since nothing is close enough
+			conn.setup_from_random( *(perm->clone()), 0.2501 );
+			TS_ASSERT( false );
+		} catch ( EXCN_Setup const & e ) {
+			TS_ASSERT( true );
+		}
 
-		// now set it up with a longer loop that will build
+// now set it up with a longer loop that will build
 		conn.set_lengths( "4" );
 		conn.set_cut_resis( "3" );
 		TR << "Setting up " << *perm << std::endl;
-		status = conn.setup_from_random( *perm, 0.2501 );
-		TS_ASSERT( status == protocols::moves::MS_SUCCESS );
+		conn.setup_from_random( *perm, 0.2501 );
 		TS_ASSERT( conn.segments_fixed( *perm ) );
 		TS_ASSERT( perm->pose() );
+
+		core::pose::PoseCOP newpose = conn.build_pose( *perm );
+		TS_ASSERT( newpose );
+		core::pose::PoseOP total = perm->pose()->clone();
+		protocols::denovo_design::add_chain_from_pose( newpose, total );
+		perm->set_pose( total );
 
 		// perform setup tasks (e.g. loop building)
 		conn.setup( *perm );
@@ -222,6 +231,7 @@ public:
 		// tell permutation we're connecting these termini
 		perm->connect_segments( "test", "test_1" );
 		perm->merge_segments( "test", "test_1", "test" );
+
 		utility::vector1< std::string > roots;
 		roots.push_back( conn.lower_segment_id(*perm) );
 		roots.push_back( conn.upper_segment_id(*perm) );
@@ -318,7 +328,16 @@ public:
 		conn.set_lengths( "5" );
 		conn.set_overlap( 2 );
 		conn.setup_permutation( *perm );
-		TS_ASSERT_EQUALS( perm->pose()->fold_tree().num_jump(), 1 );
+
+		core::pose::PoseCOP newpose = conn.build_pose( *perm );
+		TS_ASSERT( newpose );
+		core::pose::PoseOP total = perm->pose()->clone();
+		add_chain_from_pose( newpose, total );
+		perm->set_pose( total );
+		TS_ASSERT( perm->check_consistency() );
+
+		// segment1-->segment2, segment1-->helixconn, segment1-->helixconn_1
+		TS_ASSERT_EQUALS( perm->pose()->fold_tree().num_jump(), 3 );
 		conn.setup( *perm );
 
 		// check to make sure the right stuff is set
@@ -331,8 +350,8 @@ public:
 		TS_ASSERT_EQUALS( conn.build_len(*perm), 5 );
 		TS_ASSERT_EQUALS( conn.user_chain1(), 0 );
 		TS_ASSERT_EQUALS( conn.user_chain2(), 0 );
-		TS_ASSERT( conn.comp1_lower(*perm) != conn.upper_segment_id(*perm) );
-		TS_ASSERT( conn.lower_segment_id(*perm) != conn.comp2_upper(*perm) );
+		TS_ASSERT_EQUALS( conn.upper_segment_id(*perm), "1" );
+		TS_ASSERT_EQUALS( conn.lower_segment_id(*perm), "2" );
 
 		// DSSP the shit out of this pose
 		protocols::moves::DsspMover dssp;

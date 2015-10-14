@@ -93,7 +93,8 @@ linear_chainbreak(
 	LinearChainbreakEnergy energy;
 
 	// evaluate the break
-	if ( pose.fold_tree().is_cutpoint( pos ) && pose.fold_tree().num_cutpoint() == 1 ) {
+	// TL: Why did num_cutpoint() have to be 1?? if ( pose.fold_tree().is_cutpoint( pos ) && pose.fold_tree().num_cutpoint() == 1 ) {
+	if ( pose.fold_tree().is_cutpoint( pos ) ) {
 
 		bool cutpoints_added = add_cutpoint_variants( pose, pos );
 		energy.finalize_total_energy( pose, fx, emap );

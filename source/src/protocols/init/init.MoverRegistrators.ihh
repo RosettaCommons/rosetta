@@ -68,6 +68,8 @@ static MoverRegistrator< cyclic_peptide::PeptideStubMoverCreator > reg_PeptideSt
 static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
 
 static MoverRegistrator< denovo_design::connection::BridgeChainsCreator > reg_BridgeChainsCreator;
+static MoverRegistrator< denovo_design::connection::StapleChainsCreator > reg_StapleChainsCreator;
+static MoverRegistrator< denovo_design::connection::ExtendChainCreator > reg_ExtendChainCreator;
 static MoverRegistrator< denovo_design::DisulfidizeMoverCreator > reg_DisulfidizeMoverCreator;
 
 static MoverRegistrator< design_opt::GreedyOptMutationMoverCreator > reg_GreedyOptMutationMoverCreator;

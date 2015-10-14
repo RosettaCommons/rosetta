@@ -119,6 +119,10 @@ std::string get_strandpairings(
 	components::StructureData const & perm,
 	bool const use_register_shift );
 
+/// @brief dumps a pose into another pose as a new chain
+void
+add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined );
+
 } // denovo_design
 } // protocols
 

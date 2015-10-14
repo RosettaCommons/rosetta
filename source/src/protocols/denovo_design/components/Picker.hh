@@ -21,6 +21,7 @@
 
 // Protocol headers
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
+#include <protocols/denovo_design/types.hh>
 
 // Package headers
 
@@ -47,7 +48,7 @@ public:
 	core::fragment::ConstantLengthFragSetOP
 	fragments_for_permutation(
 		StructureData const & perm,
-		utility::vector1< std::string > const & comp_ids,
+		StringList const & comp_ids,
 		core::Size const frag_size );
 
 	/// @brief picks and caches fragments for the listed components with size frag_size

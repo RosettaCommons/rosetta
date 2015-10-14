@@ -91,20 +91,24 @@ NamedMover::apply( core::pose::Pose & pose )
 
 	// preserve header always should be on
 	if ( !basic::options::option[basic::options::OptionKeys::run::preserve_header].value() ) {
-		throw utility::excn::EXCN_BadInput( "To use Tomponent classes properly, the -run:preserve_header option must be specified." );
+		throw utility::excn::EXCN_BadInput( "To use NamedMover derived classes properly, the -run:preserve_header option must be specified." );
 	}
 
 	set_last_move_status( protocols::moves::MS_SUCCESS );
 
-	StructureDataOP sd = StructureData::create_from_pose( pose, id() );
+	//StructureDataOP sd = StructureData::create_from_pose( pose, id() );
+	StructureDataOP sd( new MultiChainStructureData( id() ) );
 	debug_assert( sd );
 
 	// try 100 times to produce a valid permutation
 	bool permutation_is_valid = false;
 	for ( core::Size i = 1; i <= 100; ++i ) {
-		protocols::moves::MoverStatus const setupstatus = setup_permutation( *sd );
-		if ( setupstatus != protocols::moves::MS_SUCCESS ) {
-			TR.Error << id() << ": setup_permutation failed, sd=" << *sd << std::endl;
+		try {
+			setup_permutation( *sd );
+		} catch ( EXCN_Setup const & e ) {
+			TR.Error << id() << ": setup_permutation failed, error=";
+			e.show( TR.Error );
+			TR.Error << std::endl << "sd=" << *sd << std::endl;
 			continue;
 		}
 		if ( check_permutation( *sd ) ) {
@@ -135,6 +139,7 @@ NamedMover::apply( core::pose::Pose & pose )
 
 	debug_assert( sd->pose() );
 	sd->save_into_pose();
+	pose.clear();
 	pose = *(sd->pose());
 }
 

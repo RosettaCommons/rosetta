@@ -171,7 +171,7 @@ Picker::pick_and_cache_fragments(
 core::fragment::ConstantLengthFragSetOP
 Picker::fragments_for_permutation(
 	StructureData const & perm,
-	utility::vector1< std::string > const & comp_ids,
+	StringList const & comp_ids,
 	core::Size const frag_length )
 {
 	core::fragment::ConstantLengthFragSetOP fragset =
@@ -179,8 +179,8 @@ Picker::fragments_for_permutation(
 
 	//utility::vector1< std::string > complete_abego = core::sequence::ABEGOManager().get_symbols( *(perm.pose()), 1 );
 
-	for ( core::Size i=1; i<=comp_ids.size(); ++i ) {
-		Segment residues = perm.segment( comp_ids[i] );
+	for ( StringList::const_iterator s = comp_ids.begin(); s != comp_ids.end(); ++s ) {
+		Segment residues = perm.segment( *s );
 		assert( residues.stop() >= residues.start() );
 		assert( residues.start() >= 1 );
 		fragset->add( get_framelist( "", perm.ss(), perm.abego(), residues.nterm_resi(), residues.cterm_resi(), frag_length ) );

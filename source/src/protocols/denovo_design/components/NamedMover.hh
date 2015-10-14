@@ -72,15 +72,29 @@ public:
 	///  1. Use StructureData to collect information about the structure to be built
 	///  2. Build the pose as instructed by the StructureData object
 	///  3. Store the pose in the StructureData object
-	virtual void apply_permutation( StructureData & perm ) = 0;
+	virtual void apply_permutation( StructureData & perm ) const = 0;
 
 	/// @brief Choose and store build options in the StructureData object
+	/// @throw EXCN_Setup on setup failure
 	/// @details You can store build-specified information (loop length, desired
 	/// abego, etc.) in the StructureData object which will be used later when
 	/// apply_permutation() is called.
 	/// This function SHOULD NOT engage in any pose modification
-	virtual protocols::moves::MoverStatus
+	virtual void
 	setup_permutation( StructureData & perm ) const = 0;
+
+	/// @brief Creates a pose based on the information saved to the provided StructureData object
+	/// @details Use setup_permutation to insert information into the StructureData, then
+	/// build_pose() to create a pose
+	virtual core::pose::PoseOP
+	build_pose( StructureData const & perm ) const = 0;
+
+	/// @brief Performs processing of the StructureData object
+	/// @throw EXCN_Process on failure
+	/// @details Assumed that the StructureData contains a pose which is consistent with the
+	/// StructureData
+	virtual void
+	process_permutation( StructureData & perm ) const = 0;
 
 	/// @brief checks an unbuilt permutation modified by setup_permutation to see if it is acceptable for building
 	virtual bool check_permutation( StructureData const & perm ) const = 0;
@@ -111,6 +125,43 @@ protected:
 private:
 	std::string id_;
 	std::string parent_id_;
+};
+
+class EXCN_Setup : public utility::excn::EXCN_Base {
+public:
+	EXCN_Setup( std::string const & msg ):
+		utility::excn::EXCN_Base(),
+		msg_( msg )
+	{}
+	virtual void show( std::ostream & os ) const { os << msg_; }
+private:
+	std::string const msg_;
+};
+
+class EXCN_Apply : public utility::excn::EXCN_Base {
+public:
+	EXCN_Apply( std::string const & msg ):
+		utility::excn::EXCN_Base(),
+		msg_( msg )
+	{}
+	virtual void show( std::ostream & os ) const { os << msg_; }
+	std::string const & message() const { return msg_; }
+private:
+	std::string const msg_;
+};
+
+class EXCN_Build : public EXCN_Apply {
+public:
+	EXCN_Build( std::string const & msg ):
+		EXCN_Apply( msg )
+	{}
+};
+
+class EXCN_Process : public EXCN_Apply {
+public:
+	EXCN_Process( std::string const & msg ):
+		EXCN_Apply( msg )
+	{}
 };
 
 } // components

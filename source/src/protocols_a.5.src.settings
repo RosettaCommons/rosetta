@@ -30,6 +30,7 @@ sources = {
 	"protocols/denovo_design/connection" : [
 		"BridgeChains",
 		"Connection",
+		"ExtendChain",
 	],
 	"protocols/denovo_design/movers" : [
 		"DisulfidizeMover",

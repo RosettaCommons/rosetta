@@ -61,23 +61,23 @@ public:
 	virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief Performs chain connections and assumes all connection setup has been performed
-	virtual void apply_connection( components::StructureData & perm );
+	virtual void apply_connection( components::StructureData & perm ) const;
 
 	/// @brief this mover creates a polymer bond, so this is true
 	virtual bool polymer_connection() const { return true; }
 
 	/// @brief configures based on a permutation and saves info for building
-	virtual protocols::moves::MoverStatus
+	/// @throw EXCN_Setup if no valid connection endpoints are found
+	virtual void
 	setup_permutation( components::StructureData & perm ) const;
 
 	// accessor/mutator
 public:
 	/// @brief sets the scorefunction
-	inline void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn_val ) { scorefxn_ = scorefxn_val; }
+	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn_val ) { scorefxn_ = scorefxn_val; }
 
 	// member functions
 public:
-
 	/// @brief creates mover that does remodeling of loop residues
 	/// @details result is a ready-to-call mover
 	virtual protocols::moves::MoverOP
@@ -88,7 +88,7 @@ public:
 		std::string const & complete_ss,
 		StringVec const & complete_abego,
 		core::Size const left,
-		core::Size const right );
+		core::Size const right ) const;
 
 	/// @brief checks to ensure that both pieces being connected are fixed relative to one another
 	bool segments_fixed( components::StructureData const & perm ) const;
@@ -121,10 +121,10 @@ public:
 		core::Size const start2 ) const;
 
 	/// @brief builds the loop
-	void build_loop( components::StructureData & perm );
+	void build_loop( components::StructureData & perm ) const;
 
 	/// @brief get score function
-	core::scoring::ScoreFunctionCOP scorefxn();
+	core::scoring::ScoreFunctionCOP scorefxn() const;
 
 private: // options
 	core::scoring::ScoreFunctionCOP scorefxn_;

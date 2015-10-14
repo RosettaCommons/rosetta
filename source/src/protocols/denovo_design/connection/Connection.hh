@@ -116,6 +116,7 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 
 	/// @brief applies the loop building
+	/// @throw EXCN_ConnectionFailed on failure to connect
 	/// @details You should overload this and insert your loop-building method here.
 	/// The input StructureData object contains a pose which has the loop residues
 	/// built in extended conformation with a cutpoint in a user-specified location
@@ -125,7 +126,7 @@ public:
 	///
 	/// perm.delete_jump_and_intervening_cutpoint( loop_lower(perm), loop_upper(perm) );
 	///
-	virtual void apply_connection( components::StructureData & perm ) = 0;
+	virtual void apply_connection( components::StructureData & perm ) const = 0;
 
 	/// @brief uses the permutation to set up, builds, and updates permutation
 	/// @details Steps are:
@@ -143,13 +144,20 @@ public:
 	///  9. Performs bookkeeping on the StuctureData object
 	/// 10. Calls check() and sets status to protocols::moves::FAIL_RETRY
 	///     if the check fails.
-	void apply_permutation( components::StructureData & perm );
+	/// @throws EXCN_ConnectionFailed() on connection failure
+	void apply_permutation( components::StructureData & perm ) const;
 
 	/// @brief set up the connection mover based on the information in the permutation
+	/// @throw EXCN_Setup if no valid free connection points can be found
 	/// @details You can store build-specified information (loop length, desired
 	/// abego, etc.) in the StructureData object which will be used later when
 	/// apply_permutation() is called.
-	virtual protocols::moves::MoverStatus setup_permutation( components::StructureData & perm ) const;
+	virtual void setup_permutation( components::StructureData & perm ) const;
+
+	/// @brief sets up the connection mover based on the information in the permutation
+	/// @throw EXCN_Setup if no valid free termini can be found
+	virtual void
+	setup_from_random( components::StructureData & perm, core::Real random ) const;
 
 	/// @brief checks the generated StructureData object to ensure it fits with what the user wants
 	/// before building
@@ -173,13 +181,17 @@ public:
 		std::string const & segment2,
 		Motif const & motif ) const;
 
+	virtual core::pose::PoseOP
+	build_pose( components::StructureData const & perm ) const;
+
+	/// @throw EXCN_Process on stochastic failures
+	virtual void
+	process_permutation( components::StructureData & perm ) const;
+
 	///////////////////////////////////////////////////////////////////////////
 	/// Methods for setting/getting data in StructureData Object
 	///////////////////////////////////////////////////////////////////////////
 public:
-	/// @brief sets up the connection mover based on the information in the permutation
-	protocols::moves::MoverStatus setup_from_random( components::StructureData & perm, core::Real random ) const;
-
 	/// @brief get "left" residue of loop region taking overlap into account
 	/// @details For example, if a user specifies a loop to start at residue
 	/// 20 with an overlap of three, the "left" of the build region will
@@ -212,23 +224,19 @@ public:
 	/// @details The upper terminus of this segment will become the first residue
 	/// of the loop
 	std::string const & lower_segment_id( components::StructureData const & perm ) const;
-	void set_lower_segment_id( components::StructureData & perm, std::string const & comp ) const;
 
 	/// @brief get id of the segment immediately upper to the loop
 	/// @details The lower terminus of this segment will become the last residue
 	/// of the loop
 	std::string const & upper_segment_id( components::StructureData const & perm ) const;
-	void set_upper_segment_id( components::StructureData & perm, std::string const & comp ) const;
 
 	/// @brief get id of the segment at the lower terminus of the first chain
 	/// being connected
-	std::string const & comp1_lower( components::StructureData const & perm ) const;
-	void set_comp1_lower( components::StructureData & perm, std::string const & comp ) const;
+	//std::string const & comp1_lower( components::StructureData const & perm ) const;
 
 	/// @brief get id of the segment at the upper terminus of the second chain
 	/// being connected
-	std::string const & comp2_upper( components::StructureData const & perm ) const;
-	void set_comp2_upper( components::StructureData & perm, std::string const & comp ) const;
+	//std::string const & comp2_upper( components::StructureData const & perm ) const;
 
 	/// @brief get id of the lower component actually being connected
 	/// @details If the loop has non-zero length, this will be the id() of
@@ -244,6 +252,11 @@ public:
 	std::string const & loop_upper( components::StructureData const & perm ) const;
 	void set_loop_upper( components::StructureData & perm, std::string const & comp ) const;
 
+private:
+	void set_lower_segment_id( components::StructureData & perm, std::string const & comp ) const;
+	void set_upper_segment_id( components::StructureData & perm, std::string const & comp ) const;
+	//void set_comp1_lower( components::StructureData & perm, std::string const & comp ) const;
+	//void set_comp2_upper( components::StructureData & perm, std::string const & comp ) const;
 	///////////////////////////////////////////////////////////////////////////
 	/// Class Member Variable Accessors/Mutators
 	///////////////////////////////////////////////////////////////////////////
@@ -367,13 +380,35 @@ public:
 
 	/// @brief rearranges the pose and inserts loop residues to get ready for closure
 	/// returns a pair of the loop start residue and the loop end residue
-	void create_loop( components::StructureData & perm ) const;
+	//void create_loop( components::StructureData & perm ) const;
 
 	/// @brief Given desired lengths, compute a set of idealized loop motifs via Nobu/Rie/YuRu rules
 	MotifList calc_idealized_motifs(
 		std::string const & abego1,
 		std::string const & abego2,
 		std::set< core::Size > const & len_set ) const;
+
+protected:
+	void move_segments( components::StructureData & perm, StringList const & desired_order ) const;
+	void move_segments_cyclic( components::StructureData & perm ) const;
+	void connect_lower_loop( components::StructureData & perm ) const;
+	void connect_upper_loop( components::StructureData & perm ) const;
+
+	/// @brief performs post-connection-building tasks
+	/// @details Result is a closed chain with closed fold tree and covalent bond
+	/// @throw EXCN_ConnectionFailed if checks fail
+	void post_process_permutation( components::StructureData & perm ) const;
+
+	void setup_structuredata(
+		components::StructureData & perm,
+		core::Size const len,
+		std::string const & ss,
+		std::string const & abego,
+		std::string const & seg1,
+		std::string const & seg2,
+		std::string const & seg1_lower,
+		std::string const & seg2_upper,
+		core::Size const cut_resi_val ) const;
 
 private:
 	// component on the n-terminal side
@@ -420,7 +455,8 @@ public:
 	virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief applies the loop building, in this case does nothing
-	virtual void apply_connection( components::StructureData & perm );
+	/// @throw EXCN_ConnectionFailed on failure to connect
+	virtual void apply_connection( components::StructureData & perm ) const;
 
 	virtual bool polymer_connection() const { return true; }
 
@@ -432,10 +468,10 @@ public:
 		Motif const & motif ) const;
 };
 
-class StapleTomponents : public Connection {
+class StapleChains : public Connection {
 public:
-	StapleTomponents();
-	virtual ~StapleTomponents();
+	StapleChains();
+	virtual ~StapleChains();
 
 	//overloaded virtuals
 public:
@@ -454,10 +490,12 @@ public:
 		core::pose::Pose const & pose );
 
 	/// @brief sets up the connection mover based on the information in the permutation
-	virtual protocols::moves::MoverStatus setup_permutation( components::StructureData & perm ) const;
+	/// @throw EXCN_Setup if no valid connection endpoints can be found
+	virtual void setup_permutation( components::StructureData & perm ) const;
 
 	/// @brief applies the loop building
-	virtual void apply_connection( components::StructureData & perm );
+	/// @throw EXCN_ConnectionFailed on failure to connect
+	virtual void apply_connection( components::StructureData & perm ) const;
 
 	/// @brief derived classes should return true if the Connection forms a polymer bond (e.g. peptide)
 	/// and false if it forms another type of chemical linkage (e.g. disulfide)
@@ -495,7 +533,8 @@ public:
 		core::pose::Pose const & pose );
 
 	/// @brief applies the loop building
-	virtual void apply_connection( components::StructureData & perm );
+	/// @throw EXCN_ConnectionFailed on failure to connect
+	virtual void apply_connection( components::StructureData & perm ) const;
 
 	/// @brief derived classes should return true if the Connection forms a polymer bond (e.g. peptide)
 	/// and false if it forms another type of chemical linkage (e.g. disulfide)
@@ -506,7 +545,7 @@ public:
 	/// @brief generates a list of loop residues for the given permutation
 	/// includes N- and C- terminal residues as anchors
 	std::pair< utility::vector1< core::Size >, core::Size >
-	compute_loop_residues( components::StructureData & perm ) const;
+	compute_loop_residues( components::StructureData const & perm ) const;
 
 	/// @brief create and return kic mover
 	protocols::generalized_kinematic_closure::GeneralizedKICOP
@@ -540,7 +579,12 @@ public:
 	virtual std::string get_name() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual protocols::moves::MoverOP clone() const;
-	virtual void apply_connection( components::StructureData & perm );
+
+	virtual void
+	setup_from_random( components::StructureData & perm, core::Real random ) const;
+
+	/// @throw EXCN_ConnectionFailed on failure to connect
+	virtual void apply_connection( components::StructureData & perm ) const;
 	virtual bool polymer_connection() const { return false; }
 
 	// methods
@@ -565,7 +609,12 @@ public:
 		core::Size const pre_overlap ) const;
 };
 
-void staple_work_function( Connection const & conn, components::StructureData & perm );
+void staple_work_function(
+	components::StructureData & perm,
+	std::string const & loop_lower,
+	std::string const & loop_upper,
+	bool const polymer_connection,
+	bool const reverse );
 
 core::Real
 calc_approx_loop_length( std::string const & abego );
@@ -584,6 +633,17 @@ bool check_insert_ss_and_abego(
 	std::string const & build_ss,
 	utility::vector1< std::string > const & build_abego,
 	core::Size const left );
+
+class EXCN_ConnectionFailed : public utility::excn::EXCN_Base {
+public:
+	EXCN_ConnectionFailed( std::string const & msg ):
+		utility::excn::EXCN_Base(),
+		message_( msg ) {}
+	std::string const & message() const { return message_; }
+	virtual void show( std::ostream & os ) const { os << message_; }
+private:
+	std::string const message_;
+};
 
 } // connection
 } // denovo_design

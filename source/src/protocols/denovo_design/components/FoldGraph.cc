@@ -98,11 +98,15 @@ FoldGraph::FoldGraph( StructureData const & perm, core::pose::PoseCOP pose ) :
 	for ( StringList::const_iterator n = perm.segments_begin(); n != perm.segments_end(); ++n ) {
 		Segment const & resis = perm.segment(*n);
 		if ( !resis.has_free_lower_terminus() ) {
+			TR.Debug << "Segment1 " << *n << " res " << resis.safe() << " chain " << pose->chain( resis.safe() ) << std::endl;
+			TR.Debug << "Segment2 " << resis.lower_segment() << " res " << perm.segment( resis.lower_segment() ).safe() << " chain " << pose->chain( perm.segment( resis.lower_segment() ).safe() ) << std::endl;
 			if ( pose->chain( resis.safe() ) == pose->chain( perm.segment( resis.lower_segment() ).safe() ) ) {
 				add_peptide_edge( *n, resis.lower_segment() );
 			}
 		}
 		if ( !resis.has_free_upper_terminus() ) {
+			TR.Debug << "Segment1 " << *n << " res " << resis.safe() << " chain " << pose->chain( resis.safe() ) << std::endl;
+			TR.Debug << "Segment2 " << resis.upper_segment() << " res " << perm.segment( resis.upper_segment() ).safe() << " chain " << pose->chain( perm.segment( resis.upper_segment() ).safe() ) << std::endl;
 			if ( pose->chain( resis.safe() ) == pose->chain( perm.segment( resis.upper_segment() ).safe() ) ) {
 				add_peptide_edge( *n, resis.upper_segment() );
 			}
@@ -187,7 +191,7 @@ FoldGraph::has_peptide_edge( core::Size const n1, core::Size const n2 ) const
 core::kinematics::FoldTree
 FoldGraph::fold_tree( StructureData const & perm, utility::vector1< std::string > const & root_segments ) const
 {
-	assert( root_segments.size() >= 1 );
+	debug_assert( root_segments.size() >= 1 );
 	core::kinematics::FoldTree ft;
 	NodeSet visited;
 	std::stack< core::Size > to_search;
@@ -239,7 +243,7 @@ FoldGraph::fold_tree( StructureData const & perm, utility::vector1< std::string 
 	TR.Debug << "Before deleting vertices: " << ft << std::endl;
 	ft.delete_extra_vertices();
 	TR.Debug << "After deleting vertices: " << ft << std::endl;
-	assert( ft.check_fold_tree() );
+	debug_assert( ft.check_fold_tree() );
 	return ft;
 }
 
@@ -337,8 +341,8 @@ FoldGraph::check_solution(
 	Solution const & solution ) const
 {
 	std::set< std::string > loop_segments;
-	for ( core::Size i=1, end=solution.size(); i<=end; ++i ) {
-		for ( NodeSet::const_iterator lseg=solution[i].begin(), end=solution[i].end(); lseg != end; ++lseg ) {
+	for ( core::Size i=1; i<=solution.size(); ++i ) {
+		for ( NodeSet::const_iterator lseg = solution[i].begin(); lseg != solution[i].end(); ++lseg ) {
 			std::string const & segmentname = segment( *lseg );
 			std::pair< std::set< std::string >::iterator, bool > ins_result = loop_segments.insert( segmentname );
 			if ( !ins_result.second ) {
@@ -350,29 +354,30 @@ FoldGraph::check_solution(
 
 	std::set< core::Size > fixed_mgs;
 	// ensure that the same MG isn't present both inside and outside of loops
-	for ( StringList::const_iterator c=perm.segments_begin(), end=perm.segments_end(); c != end; ++c ) {
+	for ( StringList::const_iterator c = perm.segments_begin(); c != perm.segments_end(); ++c ) {
 		core::Size const mg = perm.segment(*c).movable_group;
 		if ( loop_segments.find(*c) == loop_segments.end() ) {
 			fixed_mgs.insert( mg );
 		}
 	}
 
-	for ( core::Size i=1, end=solution.size(); i<=end; ++i ) {
-		std::set< core::Size > this_loop;
-		for ( std::set< core::Size >::const_iterator lseg=solution[i].begin(), lend=solution[i].end(); lseg != lend; ++lseg ) {
+	for ( core::Size i=1; i<=solution.size(); ++i ) {
+		//std::set< core::Size > this_loop;
+		for ( std::set< core::Size >::const_iterator lseg=solution[i].begin(); lseg != solution[i].end(); ++lseg ) {
 			std::string const & segname = segment( *lseg );
 			core::Size const mg = perm.segment(segname).movable_group;
 			// check to see if this mg has already been "used" i.e. referred to
 			if ( fixed_mgs.find(mg) != fixed_mgs.end() ) {
-				TR << "Movable group for " << segname << " : " << mg << " has already been used in another loop or is present in both loops and non-loop regions. Skipping." << std::endl;
+				TR.Debug << "Movable group for " << segname << " : " << mg << " has already been used in another loop or is present in both loops and non-loop regions. Skipping." << std::endl;
 				return false;
 			}
-			this_loop.insert(mg);
+			//this_loop.insert( mg );
+			fixed_mgs.insert( mg );
 		}
 		// update list of "used" mgs
-		for ( std::set< core::Size >::const_iterator l=this_loop.begin(), lend=this_loop.end(); l != lend; ++l ) {
-			fixed_mgs.insert( *l );
-		}
+		//for ( std::set< core::Size >::const_iterator l = this_loop.begin(); l != this_loop.end(); ++l ) {
+		// fixed_mgs.insert( *l );
+		//}
 	}
 
 	// each set in the vector represents one loop object
@@ -386,11 +391,11 @@ FoldGraph::check_solution(
 			std::string const segmentname = segment( *lseg );
 			std::pair< std::set< core::Size >::iterator, bool > mg_insert_result = mgs.insert( perm.segment(segmentname).movable_group );
 			if ( !mg_insert_result.second ) {
-				TR << "Movable group for " << segmentname << " : " << perm.segment(segmentname).movable_group << " already existed. Skipping this solution." << std::endl;
+				TR.Debug << "Movable group for " << segmentname << " : " << perm.segment(segmentname).movable_group << " already existed. Skipping this solution." << std::endl;
 				//return false;
 			}
 		}
-		TR << "Movable groups in loop are: " << mgs << std::endl;
+		TR.Debug << "Movable groups in loop are: " << mgs << std::endl;
 		while ( idxs.size() ) {
 			core::Size const cur = idxs.top();
 			idxs.pop();
@@ -401,7 +406,7 @@ FoldGraph::check_solution(
 			bool cur_in_solution = ( solution[i].find(cur) != solution[i].end() );
 			if ( !cur_in_solution && ( mgs.find( perm.segment( segment(cur) ).movable_group ) != mgs.end() ) ) {
 				// in this case, there must be a cutpoint between the two objects of same movable group
-				TR << segment(cur) << " with mg " << perm.segment(segment(cur)).movable_group << " is covalently bound to something in the loop with the same movable group without a cutpoint in between: " << mgs << std::endl;
+				TR.Debug << segment(cur) << " with mg " << perm.segment(segment(cur)).movable_group << " is covalently bound to something in the loop with the same movable group without a cutpoint in between: " << mgs << std::endl;
 				return false;
 			}
 
@@ -496,11 +501,13 @@ FoldGraph::compute_best_solution(
 	utility::vector1< std::string > const & cut_loops ) const
 {
 	TR.Debug << "staple loops= " << staple_loops << " cut_loops= " << cut_loops << std::endl;
+
 	std::set< core::Size > cut_loop_nodes;
 	for ( core::Size i=1; i<=cut_loops.size(); ++i ) {
 		assert( cut_loop_nodes.find(nodeidx(cut_loops[i])) == cut_loop_nodes.end() );
 		cut_loop_nodes.insert( nodeidx( cut_loops[i] ) );
 	}
+
 	utility::vector1< Solution > solutions;
 	for ( core::Size i=1; i<=staple_loops.size(); ++i ) {
 		TR.Debug << "Running for " << staple_loops[i] << std::endl;
@@ -559,12 +566,12 @@ FoldGraph::compute_best_solution(
 	for ( core::Size i=1, endi=solutions.size(); i<=endi; ++i ) {
 		NodeSet visited;
 		for ( core::Size j=1, endj=solutions[i].size(); j<=endj; ++j ) {
-			TR << solutions[i][j] << " ";
+			TR.Debug << solutions[i][j] << " ";
 			for ( NodeSet::const_iterator g=solutions[i][j].begin(); g != solutions[i][j].end(); ++g ) {
 				visited.insert( *g );
 			}
 		}
-		TR << std::endl;
+		TR.Debug << std::endl;
 		TR.Debug << "Adding unvisited loop nodes.  Visited nodes are " << visited << std::endl;
 		for ( NodeSet::const_iterator c=cut_loop_nodes.begin(); c != cut_loop_nodes.end(); ++c ) {
 			if ( visited.find(*c) == visited.end() ) {
@@ -580,22 +587,22 @@ FoldGraph::compute_best_solution(
 
 	// print candidates
 	for ( core::Size i=1; i<=solutions.size(); ++i ) {
-		TR << "S" << i << ": ";
+		TR.Debug << "S" << i << ": ";
 		for ( core::Size j=1; j<=solutions[i].size(); ++j ) {
-			TR << "[ ";
+			TR.Debug << "[ ";
 			for ( NodeSet::const_iterator g=solutions[i][j].begin(); g != solutions[i][j].end(); ++g ) {
-				TR << segment(*g) << " ";
+				TR.Debug << segment(*g) << " ";
 			}
-			TR << "] ";
+			TR.Debug << "] ";
 		}
-		TR << std::endl;
+		TR.Debug << std::endl;
 	}
 
 	// choose best solution == fewest loops
 	core::Size bestidx = 0;
 	for ( core::Size i=1; i<=solutions.size(); ++i ) {
 		if ( ! check_solution( perm, solutions[i] ) ) {
-			TR << "Skipping solution " << i << " because it has a movable groups conflict." << std::endl;
+			TR.Debug << "Skipping solution " << i << " because it has a movable groups conflict." << std::endl;
 			continue;
 		}
 		if ( !bestidx || ( solutions[i].size() < solutions[bestidx].size() ) ) {
@@ -616,7 +623,7 @@ FoldGraph::compute_best_solution(
 	}
 	TR << std::endl;
 
-	TR << "perm=" << perm << std::endl;
+	TR.Debug << "perm=" << perm << std::endl;
 	return solutions[bestidx];
 }
 

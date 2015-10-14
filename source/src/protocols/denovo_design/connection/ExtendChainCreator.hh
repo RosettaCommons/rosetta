@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/denovo_design/connection/ConnectionCreators.hh
-/// @brief Creators for classes that connect chains
+/// @file src/protocols/denovo_design/connection/ExtendChain.hh
+/// @brief The ExtendChain Protocol, for connecting oligomeric structures
 /// @detailed
 /// @author Tom Linsky
 
 
-#ifndef INCLUDED_protocols_denovo_design_connection_TomponentCreator_hh
-#define INCLUDED_protocols_denovo_design_connection_TomponentCreator_hh
+#ifndef INCLUDED_protocols_denovo_design_connection_ExtendChainCreator_hh
+#define INCLUDED_protocols_denovo_design_connection_ExtendChainCreator_hh
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>
@@ -23,23 +23,7 @@ namespace protocols {
 namespace denovo_design {
 namespace connection {
 
-class StapleChainsCreator : public protocols::moves::MoverCreator
-{
-public:
-	virtual protocols::moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
-	static  std::string mover_name();
-};
-
-class BridgeTomponentsCreator : public protocols::moves::MoverCreator
-{
-public:
-	virtual protocols::moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
-	static  std::string mover_name();
-};
-
-class ConnectTerminiWithDisulfideCreator : public protocols::moves::MoverCreator
+class ExtendChainCreator : public protocols::moves::MoverCreator
 {
 public:
 	virtual protocols::moves::MoverOP create_mover() const;
@@ -50,5 +34,6 @@ public:
 }
 }
 }
+
 
 #endif

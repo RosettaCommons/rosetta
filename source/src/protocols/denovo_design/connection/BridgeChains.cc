@@ -143,7 +143,7 @@ BridgeChainsCreator::mover_name()
 BridgeChains::BridgeChains() :
 	Connection(),
 	scorefxn_(),
-	frag_picker_()
+	frag_picker_( components::PickerOP( new components::Picker() ) )
 {
 }
 
@@ -190,26 +190,22 @@ BridgeChains::parse_my_tag(
 }
 
 /// @brief configures based on a permutation
-protocols::moves::MoverStatus
+/// @throw EXCN_Setup if no valid connection endpoints are found
+void
 BridgeChains::setup_permutation( components::StructureData & perm ) const
 {
-	protocols::moves::MoverStatus retval = Connection::setup_permutation( perm );
-	if ( retval != protocols::moves::MS_SUCCESS ) {
-		TR.Error << "Setup of " << id() << " failed..." << std::endl;
-		return retval;
-	}
+	Connection::setup_permutation( perm );
 
 	if ( !segments_fixed( perm ) ) {
 		std::stringstream ss;
-		ss << "The BridgeChains named " << id() << " has been given two components thare are not fixed relative to one another." << perm << std::endl;
+		ss << id() << ": two components were given as input thare are not fixed relative to one another." << perm << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
 	}
-	return retval;
 }
 
 /// @brief Does the work of remodeling the connection
 void
-BridgeChains::apply_connection( components::StructureData & perm )
+BridgeChains::apply_connection( components::StructureData & perm ) const
 {
 	core::scoring::ScoreFunctionCOP my_scorefxn = scorefxn();
 	if ( !my_scorefxn ) {
@@ -219,6 +215,9 @@ BridgeChains::apply_connection( components::StructureData & perm )
 		throw utility::excn::EXCN_Msg_Exception( err.str() );
 	}
 
+	// save phi/psi/omega
+	core::Real const c1e_omega = perm.pose()->omega( perm.segment( loop_lower(perm) ).stop() );
+
 	// strip terminal residues
 	perm.delete_trailing_residues( loop_lower(perm) );
 	perm.delete_leading_residues( loop_upper(perm) );
@@ -227,17 +226,19 @@ BridgeChains::apply_connection( components::StructureData & perm )
 		// store original in case there is a failure
 		components::StructureDataOP orig = perm.clone();
 
-		// remodel the loop
-		build_loop( perm );
-
-		// reset the structure if we failed to close the loop
-		if ( get_last_move_status() != protocols::moves::MS_SUCCESS ) {
+		try {
+			// remodel the loop
+			build_loop( perm );
+		} catch ( utility::excn::EXCN_Base const & e ) {
 			perm = *orig;
-			return;
+			throw EXCN_ConnectionFailed( id() );
 		}
-
-		set_last_move_status( protocols::moves::MS_SUCCESS );
 	}
+
+	perm.declare_covalent_bond(
+		loop_lower(perm), perm.segment( loop_lower(perm) ).length(), "C",
+		loop_upper(perm), 1, "N" );
+	perm.set_omega( perm.segment( loop_lower(perm) ).stop(), c1e_omega );
 
 	// remove jump/cutpoint
 	perm.delete_jump_and_intervening_cutpoint( loop_lower(perm), loop_upper(perm) );
@@ -245,11 +246,9 @@ BridgeChains::apply_connection( components::StructureData & perm )
 
 /// @brief builds the loop
 void
-BridgeChains::build_loop( components::StructureData & perm )
+BridgeChains::build_loop( components::StructureData & perm ) const
 {
 	debug_assert( perm.pose() );
-
-	set_last_move_status( protocols::moves::MS_SUCCESS );
 	static bool const const_fold_tree = true;
 
 	protocols::moves::DsspMover dssp;
@@ -292,6 +291,9 @@ BridgeChains::build_loop( components::StructureData & perm )
 
 	TR << "Original size is " << pose.total_residue() << "; Going to build the secondary structure: " << ss << " between residues " << left << " and " << right << " to cover the loop starting at residue " << loopstart << " and ending at residue " << loopend << " with abego " << abego_ins << std::endl;
 
+	// setup cutpoints
+	core::Size const cutres = perm.segment( loop_lower(perm) ).cterm_resi();
+
 	// setup coordinate csts
 	CoordinateCstRCGOP coord_cst( new CoordinateCstRCG() );
 	for ( core::Size i=left; i<loopstart; ++i ) {
@@ -304,9 +306,8 @@ BridgeChains::build_loop( components::StructureData & perm )
 	}
 
 	protocols::loops::LoopsOP loops( new protocols::loops::Loops() );
-	core::Size const cutres = perm.segment( loop_lower(perm) ).cterm_resi();
-	assert( cutres >= left );
-	assert( cutres <= right );
+	debug_assert( cutres >= left );
+	debug_assert( cutres <= right );
 	loops->add_loop( left, right, cutres );
 
 	protocols::moves::MoverOP remodel =
@@ -332,10 +333,8 @@ BridgeChains::build_loop( components::StructureData & perm )
 	perm.apply_mover( remodel );
 
 	if ( remodel->get_last_move_status() != protocols::moves::MS_SUCCESS ) {
-		set_last_move_status( remodel->get_last_move_status() );
-		return;
+		throw EXCN_ConnectionFailed( "during remodel in " + id() );
 	}
-	set_last_move_status( protocols::moves::MS_SUCCESS );
 
 	// Rebuild fold tree
 	utility::vector1< std::string > roots;
@@ -361,12 +360,8 @@ BridgeChains::create_remodel_mover(
 	std::string const & complete_ss,
 	StringVec const & complete_abego,
 	core::Size const left,
-	core::Size const right )
+	core::Size const right ) const
 {
-	// setup fragment picker if necessary
-	if ( !frag_picker_ ) {
-		frag_picker_ = components::PickerOP( new components::Picker() );
-	}
 	debug_assert( frag_picker_ );
 
 	protocols::forge::remodel::RemodelLoopMoverOP remodel(
@@ -375,13 +370,14 @@ BridgeChains::create_remodel_mover(
 	debug_assert( remodel );
 	remodel->set_keep_input_foldtree( const_fold_tree );
 
-	core::fragment::FragSetOP frag9 =
-		frag_picker_->pick_and_cache_fragments( complete_ss, complete_abego, left, right, 9 );
-	core::fragment::FragSetOP frag3 =
-		frag_picker_->pick_and_cache_fragments( complete_ss, complete_abego, left, right, 3 );
-
-	remodel->add_fragments( frag9 );
-	remodel->add_fragments( frag3 );
+	core::fragment::FragSetOP frag3;
+	core::fragment::FragSetOP frag9;
+	if ( do_remodel() ) {
+		frag9 = frag_picker_->pick_and_cache_fragments( complete_ss, complete_abego, left, right, 9 );
+		frag3 = frag_picker_->pick_and_cache_fragments( complete_ss, complete_abego, left, right, 3 );
+		remodel->add_fragments( frag9 );
+		remodel->add_fragments( frag3 );
+	}
 
 	// turn off interchain score terms if we only have one chain in the final structure
 	core::scoring::ScoreFunctionOP sfx = scorefxn()->clone();
@@ -551,13 +547,12 @@ BridgeChains::ss_insert(
 /// @brief returns the scorefunction, creating it if necessary
 /// @details Default scorefunction is fldsgn_cen
 core::scoring::ScoreFunctionCOP
-BridgeChains::scorefxn()
+BridgeChains::scorefxn() const
 {
 	if ( !scorefxn_ ) {
 		TR.Info << "Using default scorefunction fldsgn_cen.wts" << std::endl;
-		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "fldsgn_cen.wts" );
+		return core::scoring::ScoreFunctionFactory::create_score_function( "fldsgn_cen.wts" );
 	}
-	assert( scorefxn_ );
 	return scorefxn_;
 }
 

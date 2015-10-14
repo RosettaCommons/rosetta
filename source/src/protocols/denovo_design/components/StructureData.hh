@@ -101,6 +101,11 @@ public:
 		std::string const & segment1,
 		std::string const & segment2 );
 
+	/// @brief aligns the lower-terminal residue of segment1 to the end "anchor" residue of segment2
+	void align_segments_rev(
+		std::string const & segment1,
+		std::string const & segment2 );
+
 	/// @brief moves jump pointing to the first segment so that it will move with the second segment
 	void slide_jump(
 		std::string const & child_segment,
@@ -122,6 +127,11 @@ public:
 
 	/// @brief connects the given chains together, doesn't update anything -- don't call this on its own unless you know what you're doing
 	void connect_segments(
+		std::string const & segment1,
+		std::string const & segment2 );
+
+	/// @brief connects the given chains together, doesn't update anything -- don't call this on its own unless you know what you're doing
+	void disconnect_segments(
 		std::string const & segment1,
 		std::string const & segment2 );
 
@@ -180,6 +190,9 @@ public:
 
 	/// @brief merge all data and segments from "other" into this StructureData
 	void merge( StructureData const & other );
+
+	/// @brief merge all data and segments from "other" into this StructureData before the given position
+	void merge_before( StructureData const & other, std::string const & position );
 
 	/// @brief sets real number data
 	void set_data_int( std::string const & segment_id, std::string const & data_name, int const val );
@@ -247,10 +260,10 @@ public:
 	utility::vector1< std::string > available_upper_termini() const;
 
 	/// @brief start of segments list
-	StringList::const_iterator segments_begin() const { return segment_order_.begin(); }
+	StringList::const_iterator segments_begin() const;
 
 	/// @brief end of segment list
-	StringList::const_iterator segments_end() const { return segment_order_.end(); }
+	StringList::const_iterator segments_end() const;
 
 	/// @brief finds a segment in the segment_order list and returns an iterator to it
 	StringList::const_iterator find_segment( std::string const & segname ) const;
@@ -429,6 +442,11 @@ public:
 		std::string const & lower_seg,
 		std::string const & upper_seg );
 
+	/// @brief unmarks the given segments as covalently connected
+	void mark_disconnected(
+		std::string const & seg1,
+		std::string const & seg2 );
+
 	// pose modification methods
 
 	/// @brief returns the chain number of the given residue. Pose MUST be set.
@@ -598,6 +616,9 @@ protected:
 	/// @brief add lower cutpoint to residue cut and upper cutpoint to residue cut+1
 	void add_cutpoint_variants( core::Size const cut_res );
 
+	/// @brief removes cutpoint variants from residues cut and cut+1
+	void remove_cutpoint_variants( core::Size const cut_res );
+
 	/// @brief renames a residue segment and updates all connections
 	void add_prefix_to_segments( std::string const & prefix, char const delimeter );
 
@@ -633,8 +654,6 @@ private:
 	// usable length of the pose, not including n-, c-terminal loops
 	core::Size length_;
 	// sub-permutations for compound objects
-	utility::vector1< StructureDataOP > sub_perms_;
-	// arbitrary unsigned int data that can be set by movers
 	std::map< std::string, int > data_int_;
 	// arbitrary real number data that can be set by movers
 	std::map< std::string, core::Real > data_real_;
@@ -656,6 +675,7 @@ public:
 		std::string const & id_val,
 		core::Size const length_val,
 		core::Size const pose_len_val,
+		bool const is_loop,
 		std::string const & ss_val,
 		utility::vector1< std::string > const & abego_val );
 

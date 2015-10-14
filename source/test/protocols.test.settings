@@ -18,7 +18,7 @@ sources = {
 	],
 	"abinitio/abscript" : [
 		"FragmentCMTest",
-                "RigidChunkTest",
+		"RigidChunkTest",
 	],
 	"analysis": [
 		"PeptideDeriverFilterTests",
@@ -91,7 +91,7 @@ sources = {
 		"FeaturesReporterTests",
 		"InterfaceFeaturesTests",
 		"ProteinSilentReportTests",
-                "SandwichFeaturesTests",
+		"SandwichFeaturesTests",
 		"CoordSerializationTests",
 	],
 
@@ -99,6 +99,10 @@ sources = {
 		"BasicFilters",
 		"CalculatorFilter",
 		"ReplicateFilter",
+	],
+
+	"fldsgn/filters" : [
+#"SheetTopologyFilter",
 	],
 
 	"frag_picker" : [
@@ -140,6 +144,7 @@ sources = {
 	"denovo_design/connection" :[
 		"BridgeChains",
 		"Connection",
+		"ExtendChain",
 	],
 
 	"generalized_kinematic_closure" : [
@@ -509,6 +514,7 @@ testinputfiles = [
 	"enzdes/resfile_remap.resfile",
 	"features/2J88.pdb",
         "features/3B83_nochain.pdb", # needed for SandwichFeaturesTests.cxxtest, I can't use 2J88 for this
+	"fldsgn/filters/test_sheet.pdb",
 	"forge/remodel/bad_pair.blueprint",
 	"forge/remodel/test.blueprint",
 	"forge/remodel/test.pdb",
