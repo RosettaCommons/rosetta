@@ -486,7 +486,7 @@ ResidueType const &
 ResidueTypeSet::name_map( std::string const & name_in ) const
 {
 	std::string const name = fixup_patches( name_in );
-	runtime_assert( generate_residue_type( name ) );
+	runtime_assert_string_msg( generate_residue_type( name ), "The residue " + name + " could not be generated.  Has a suitable params file been loaded?  (Note that custom params files not in the Rosetta database can be loaded with the -extra_res or -extra_res_fa command-line flags.)"  );
 	return cache_->name_map( name );
 }
 
