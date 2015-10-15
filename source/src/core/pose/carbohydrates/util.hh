@@ -72,13 +72,13 @@ void align_virtual_atoms_in_carbohydrate_residue( Pose & pose, uint const sequen
 
 // TorsionID Queries
 /// @brief  Is this is the phi torsion angle of a glycosidic linkage?
-bool is_phi_torsion( Pose const & pose, id::TorsionID const & torsion_id );
+bool is_glycosidic_phi_torsion( Pose const & pose, id::TorsionID const & torsion_id );
 
 /// @brief  Is this is the psi torsion angle of a glycosidic linkage?
-bool is_psi_torsion( Pose const & pose, id::TorsionID const & torsion_id );
+bool is_glycosidic_psi_torsion( Pose const & pose, id::TorsionID const & torsion_id );
 
 /// @brief  Is this is an omega torsion angle of a glycosidic linkage?
-bool is_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id );
+bool is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id );
 
 
 // Torsion Access

@@ -1,5 +1,4 @@
 -chemical:patch_selectors aryl-C-conjugated NtermProteinMethylated aryl-O-conjugated  phg_cd1_conjugation phg_cd2_conjugation
--read_pdb_link_records 
+-read_pdb_link_records
 -include_sugars 
--override_rsd_type_limit 
--mute core.kinematics.AtomTree 
+-mute core.kinematics.AtomTree

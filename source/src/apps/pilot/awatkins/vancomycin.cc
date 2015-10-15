@@ -281,7 +281,7 @@ int main ( int argc, char* argv[] )
 
 		add_constraints( vancomycin );
 
-		for ( Size ii = 1; ii <= vancomycin.total_residue()-2; ++ii ) {
+		for ( Size ii = 1; ii <= vancomycin.total_residue() - 2; ++ii ) {
 			vancomycin.set_phi( ii, -150 );
 			vancomycin.set_psi( ii, 150 );
 			vancomycin.set_omega( ii, 180 );
@@ -296,7 +296,8 @@ int main ( int argc, char* argv[] )
 		}
 		pert_mm->set_jump( 1, true );
 		//pert_mm->set_branches( 4, true );
-		protocols::simple_moves::MinMoverOP min_mover( new simple_moves::MinMover( pert_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
+		protocols::simple_moves::MinMoverOP min_mover(
+				new simple_moves::MinMover( pert_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 
 		for ( Real apc = 0; apc <= 2; apc += 0.01 ) {
 			scorefxn->set_weight( atom_pair_constraint, apc );
@@ -335,8 +336,6 @@ int main ( int argc, char* argv[] )
 		PackRotamersMoverOP pack( new PackRotamersMover( scorefxn, task ) );
 		pack->apply( vancomycin );
 		vancomycin.dump_pdb( "vancomycin_pack.pdb" );
-
-
 
 
 		TR << "Just those branch res "<< std::endl;

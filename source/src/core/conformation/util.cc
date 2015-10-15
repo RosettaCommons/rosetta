@@ -2250,8 +2250,6 @@ TR.Warning << "Queried atom must be on a cyclic residue." << std::endl;
 return chemical::rings::NEITHER;
 }
 
-
-
 return is_atom_axial_or_equatorial_to_ring( residue, query_atom, rsd_type.ring_atoms() );
 }*/
 

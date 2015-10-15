@@ -168,156 +168,156 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_TRACE( "Testing functions that query if the given TorsionID is of a glycosidic torsion." );
 
 		// Are they phis?
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 1, BB, 1 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 1, BB, 2 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 1, BB, 3 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 1, BB, 4 ) ) );  // psi(2)
-		TS_ASSERT( is_phi_torsion( Lex_, TorsionID( 1, BB, 5 ) ) );  // phi(2)
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BB, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BB, 4 ) ) );  // psi(2)
+		TS_ASSERT( is_glycosidic_phi_torsion( Lex_, TorsionID( 1, BB, 5 ) ) );  // phi(2)
 
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 1, CHI, 1 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 1, CHI, 3 ) ) );  // psi(3)
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 1, CHI, 4 ) ) );  // psi(2)
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 1, CHI, 5 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 1, CHI, 6 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, CHI, 3 ) ) );  // psi(3)
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, CHI, 4 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, CHI, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, CHI, 6 ) ) );
 
 		// Nus can never be phis!
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 1, NU, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 1, NU, 1 ) ) );
 
 		// Termini cannot have a phi(n+1)!
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 2, BB, 1 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 2, BB, 2 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 2, BB, 3 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 2, BB, 4 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 2, BB, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, BB, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, BB, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, BB, 5 ) ) );
 
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 2, CHI, 1 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 2, CHI, 3 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 2, CHI, 4 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 2, CHI, 5 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 2, CHI, 6 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, CHI, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, CHI, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, CHI, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 2, CHI, 6 ) ) );
 
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 3, BB, 1 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 3, BB, 2 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 3, BB, 3 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 3, BB, 4 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 3, BB, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, BB, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, BB, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, BB, 5 ) ) );
 
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 3, CHI, 1 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 3, CHI, 3 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 3, CHI, 4 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 3, CHI, 5 ) ) );
-		TS_ASSERT( ! is_phi_torsion( Lex_, TorsionID( 3, CHI, 6 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, CHI, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, CHI, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, CHI, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( Lex_, TorsionID( 3, CHI, 6 ) ) );
 
-		TS_ASSERT( ! is_phi_torsion( isomaltose_, TorsionID( 1, BB, 1 ) ) );
-		TS_ASSERT( ! is_phi_torsion( isomaltose_, TorsionID( 1, BB, 2 ) ) );
-		TS_ASSERT( ! is_phi_torsion( isomaltose_, TorsionID( 1, BB, 3 ) ) );
-		TS_ASSERT( ! is_phi_torsion( isomaltose_, TorsionID( 1, BB, 5 ) ) );  // omega(2)
-		TS_ASSERT( ! is_phi_torsion( isomaltose_, TorsionID( 1, BB, 6 ) ) );  // psi(2)
-		TS_ASSERT( is_phi_torsion( isomaltose_, TorsionID( 1, BB, 7 ) ) );  // phi(2)
+		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, BB, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, BB, 5 ) ) );  // omega(2)
+		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, BB, 6 ) ) );  // psi(2)
+		TS_ASSERT( is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, BB, 7 ) ) );  // phi(2)
 
-		TS_ASSERT( ! is_phi_torsion( isomaltose_, TorsionID( 1, CHI, 1 ) ) );
-		TS_ASSERT( ! is_phi_torsion( isomaltose_, TorsionID( 1, CHI, 3 ) ) );
-		TS_ASSERT( ! is_phi_torsion( isomaltose_, TorsionID( 1, CHI, 4 ) ) );
-		TS_ASSERT( ! is_phi_torsion( isomaltose_, TorsionID( 1, CHI, 5 ) ) );  // omega(2)
-		TS_ASSERT( ! is_phi_torsion( isomaltose_, TorsionID( 1, CHI, 6 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, CHI, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, CHI, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, CHI, 5 ) ) );  // omega(2)
+		TS_ASSERT( ! is_glycosidic_phi_torsion( isomaltose_, TorsionID( 1, CHI, 6 ) ) );  // psi(2)
 
 
 		// Are they psis?
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 1, BB, 1 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 1, BB, 2 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 1, BB, 3 ) ) );
-		TS_ASSERT( is_psi_torsion( Lex_, TorsionID( 1, BB, 4 ) ) );  // psi(2)
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 1, BB, 5 ) ) );  // phi(2)
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, BB, 3 ) ) );
+		TS_ASSERT( is_glycosidic_psi_torsion( Lex_, TorsionID( 1, BB, 4 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, BB, 5 ) ) );  // phi(2)
 
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 1, CHI, 1 ) ) );
-		TS_ASSERT( is_psi_torsion( Lex_, TorsionID( 1, CHI, 3 ) ) );  // psi(3)
-		//TS_ASSERT( is_psi_torsion( Lex_, TorsionID( 1, CHI, 4 ) ) );  // psi(2)
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 1, CHI, 5 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 1, CHI, 6 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, CHI, 1 ) ) );
+		TS_ASSERT( is_glycosidic_psi_torsion( Lex_, TorsionID( 1, CHI, 3 ) ) );  // psi(3)
+		//TS_ASSERT( is_glycosidic_psi_torsion( Lex_, TorsionID( 1, CHI, 4 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, CHI, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, CHI, 6 ) ) );
 
 		// Nus can never be psis!
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 1, NU, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 1, NU, 1 ) ) );
 
 		// Termini cannot have a psi(n+1)!
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 2, BB, 1 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 2, BB, 2 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 2, BB, 3 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 2, BB, 4 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 2, BB, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 2, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 2, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 2, BB, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 2, BB, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 2, BB, 5 ) ) );
 
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 2, CHI, 1 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 2, CHI, 3 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 2, CHI, 4 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 2, CHI, 5 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 2, CHI, 6 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 2, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 2, CHI, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 2, CHI, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 2, CHI, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 2, CHI, 6 ) ) );
 
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 3, BB, 1 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 3, BB, 2 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 3, BB, 3 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 3, BB, 4 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 3, BB, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 3, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 3, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 3, BB, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 3, BB, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 3, BB, 5 ) ) );
 
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 3, CHI, 1 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 3, CHI, 3 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 3, CHI, 4 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 3, CHI, 5 ) ) );
-		TS_ASSERT( ! is_psi_torsion( Lex_, TorsionID( 3, CHI, 6 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 3, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 3, CHI, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 3, CHI, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 3, CHI, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( Lex_, TorsionID( 3, CHI, 6 ) ) );
 
-		TS_ASSERT( ! is_psi_torsion( isomaltose_, TorsionID( 1, BB, 1 ) ) );
-		TS_ASSERT( ! is_psi_torsion( isomaltose_, TorsionID( 1, BB, 2 ) ) );
-		TS_ASSERT( ! is_psi_torsion( isomaltose_, TorsionID( 1, BB, 3 ) ) );
-		TS_ASSERT( ! is_psi_torsion( isomaltose_, TorsionID( 1, BB, 5 ) ) );  // omega(2)
-		TS_ASSERT( is_psi_torsion( isomaltose_, TorsionID( 1, BB, 6 ) ) );  // psi(2)
-		TS_ASSERT( ! is_psi_torsion( isomaltose_, TorsionID( 1, BB, 7 ) ) );  // phi(2)
+		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, BB, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, BB, 5 ) ) );  // omega(2)
+		TS_ASSERT( is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, BB, 6 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, BB, 7 ) ) );  // phi(2)
 
-		TS_ASSERT( ! is_psi_torsion( isomaltose_, TorsionID( 1, CHI, 1 ) ) );
-		TS_ASSERT( ! is_psi_torsion( isomaltose_, TorsionID( 1, CHI, 3 ) ) );
-		TS_ASSERT( ! is_psi_torsion( isomaltose_, TorsionID( 1, CHI, 4 ) ) );
-		TS_ASSERT( ! is_psi_torsion( isomaltose_, TorsionID( 1, CHI, 5 ) ) );  // omega(2)
-		//TS_ASSERT( is_psi_torsion( isomaltose_, TorsionID( 1, CHI, 6 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, CHI, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, CHI, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, CHI, 5 ) ) );  // omega(2)
+		//TS_ASSERT( is_glycosidic_psi_torsion( isomaltose_, TorsionID( 1, CHI, 6 ) ) );  // psi(2)
 
 
 		// Are they omegas?
-		TS_ASSERT( ! is_omega_torsion( Lex_, TorsionID( 1, BB, 1 ) ) );
-		TS_ASSERT( ! is_omega_torsion( Lex_, TorsionID( 1, BB, 2 ) ) );
-		TS_ASSERT( ! is_omega_torsion( Lex_, TorsionID( 1, BB, 3 ) ) );
-		TS_ASSERT( ! is_omega_torsion( Lex_, TorsionID( 1, BB, 4 ) ) );  // psi(2)
-		TS_ASSERT( ! is_omega_torsion( Lex_, TorsionID( 1, BB, 5 ) ) );  // phi(2)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, BB, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, BB, 4 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, BB, 5 ) ) );  // phi(2)
 
-		TS_ASSERT( ! is_omega_torsion( Lex_, TorsionID( 1, CHI, 1 ) ) );
-		TS_ASSERT( ! is_omega_torsion( Lex_, TorsionID( 1, CHI, 3 ) ) );  // psi(3)
-		TS_ASSERT( ! is_omega_torsion( Lex_, TorsionID( 1, CHI, 4 ) ) );  // psi(2)
-		TS_ASSERT( ! is_omega_torsion( Lex_, TorsionID( 1, CHI, 5 ) ) );
-		TS_ASSERT( ! is_omega_torsion( Lex_, TorsionID( 1, CHI, 6 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, CHI, 3 ) ) );  // psi(3)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, CHI, 4 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, CHI, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, CHI, 6 ) ) );
 
 		// Nus can never be omegas!
-		TS_ASSERT( ! is_omega_torsion( Lex_, TorsionID( 1, NU, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( Lex_, TorsionID( 1, NU, 1 ) ) );
 
 		// Termini cannot have an omega(n+1)!
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 2, BB, 1 ) ) );
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 2, BB, 2 ) ) );
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 2, BB, 3 ) ) );
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 2, BB, 6 ) ) );
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 2, BB, 7 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, BB, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, BB, 6 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, BB, 7 ) ) );
 
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 2, CHI, 1 ) ) );
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 2, CHI, 3 ) ) );
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 2, CHI, 4 ) ) );
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 2, CHI, 5 ) ) );
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 2, CHI, 6 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, CHI, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, CHI, 4 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, CHI, 5 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 2, CHI, 6 ) ) );
 
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 1, BB, 1 ) ) );
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 1, BB, 2 ) ) );
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 1, BB, 3 ) ) );
-		TS_ASSERT( is_omega_torsion( isomaltose_, TorsionID( 1, BB, 5 ) ) );  // omega(2)
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 1, BB, 6 ) ) );  // psi(2)
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 1, BB, 7 ) ) );  // phi(2)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, BB, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, BB, 2 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, BB, 3 ) ) );
+		TS_ASSERT( is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, BB, 5 ) ) );  // omega(2)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, BB, 6 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, BB, 7 ) ) );  // phi(2)
 
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 1, CHI, 1 ) ) );
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 1, CHI, 3 ) ) );
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 1, CHI, 4 ) ) );
-		//TS_ASSERT( is_omega_torsion( isomaltose_, TorsionID( 1, CHI, 5 ) ) );  // omega(2)
-		TS_ASSERT( ! is_omega_torsion( isomaltose_, TorsionID( 1, CHI, 6 ) ) );  // psi(2)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, CHI, 1 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, CHI, 3 ) ) );
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, CHI, 4 ) ) );
+		//TS_ASSERT( is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, CHI, 5 ) ) );  // omega(2)
+		TS_ASSERT( ! is_glycosidic_omega_torsion( isomaltose_, TorsionID( 1, CHI, 6 ) ) );  // psi(2)
 	}
 
 
