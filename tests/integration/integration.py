@@ -682,7 +682,10 @@ def generateTestCommandline(test, outdir, options=None, host=None):
         else:
             return None, None #If the command.mpi file doesn't exist, then this isn't an MPI integration test and should be skipped.
     else :
-        cmd += file(path.join(workdir, "command")).read().strip()
+        if( os.path.isfile( path.join(workdir, "command" ) ) ):
+          cmd += file(path.join(workdir, "command")).read().strip()
+        else:
+          return None, None #If the command file doesn't exist, we skip it.  It may only be an MPI integration test.
     cmd = cmd % params # variable substitution using Python printf style
 
     if options.valgrind:

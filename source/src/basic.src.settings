@@ -54,7 +54,7 @@ sources = {
 		"GPU",
 		"Timer",
 	],
-	"basic/message_listening": [
+	"basic/mpi": [
 		"DbMoverMessageListener",
 		"MessageListenerFactory",
 		"util",

@@ -25,10 +25,11 @@
 #include <protocols/features/ProtocolFeatures.hh>
 #include <protocols/features/BatchFeatures.hh>
 #include <protocols/jd2/util.hh>
-#include <basic/message_listening/MessageListenerFactory.hh>
-#include <basic/message_listening/MessageListener.hh>
-#include <basic/message_listening/DbMoverMessageListener.hh>
-#include <basic/message_listening/util.hh>
+#include <basic/mpi/MessageListenerFactory.hh>
+#include <basic/mpi/MessageListener.hh>
+#include <basic/mpi/DbMoverMessageListener.hh>
+#include <basic/mpi/util.hh>
+#include <basic/mpi/mpi_enums.hh>
 #include <basic/database/schema_generator/Schema.hh>
 
 #include <basic/Tracer.hh>
@@ -68,9 +69,9 @@ using cppdb::cppdb_error;
 using utility::sql_database::sessionOP;
 using basic::Tracer;
 using core::Size;
-using basic::message_listening::request_data_from_head_node;
-using basic::message_listening::send_data_to_head_node;
-using basic::message_listening::DATABASE_PROTOCOL_AND_BATCH_ID_TAG;
+using basic::mpi::request_data_from_head_node;
+using basic::mpi::send_data_to_head_node;
+using basic::mpi::DATABASE_PROTOCOL_AND_BATCH_ID_TAG;
 using cppdb::statement;
 using cppdb::result;
 
@@ -124,7 +125,7 @@ get_protocol_and_batch_id(
 	utility::vector1<FeaturesReporterOP> features_reporters,
 	sessionOP db_session
 ) {
-	using namespace basic::message_listening;
+	using namespace basic::mpi;
 
 	int protocol_id = 0;
 	int batch_id = 0;

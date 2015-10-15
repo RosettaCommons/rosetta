@@ -21,8 +21,8 @@
 
 #include <basic/database/sql_utils.hh>
 
-#include <basic/message_listening/MessageListenerFactory.hh>
-#include <basic/message_listening/util.hh>
+#include <basic/mpi/MessageListenerFactory.hh>
+#include <basic/mpi/util.hh>
 
 // Basic Headers
 #include <basic/options/option.hh>
@@ -53,10 +53,10 @@ using std::string;
 using std::endl;
 using std::stringstream;
 using utility::sql_database::sessionOP;
-using basic::message_listening::MessageListenerOP;
-using basic::message_listening::MessageListenerFactory;
-using basic::message_listening::request_data_from_head_node;
-using basic::message_listening::send_data_to_head_node;
+using basic::mpi::MessageListenerOP;
+using basic::mpi::MessageListenerFactory;
+using basic::mpi::request_data_from_head_node;
+using basic::mpi::send_data_to_head_node;
 using basic::database::table_exists;
 using utility::mpi_rank;
 using cppdb::statement;

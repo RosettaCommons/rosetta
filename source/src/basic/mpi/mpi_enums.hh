@@ -7,25 +7,33 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file MessageListener.fwd.hh
-///
-/// @brief
-/// @author Sam DeLuca
+/// @file   basic/mpi/mpi_enums.hh
+/// @author Tim Jacobs
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
+#ifndef INCLUDED_basic_mpi_mpi_enum_hh
+#define INCLUDED_basic_mpi_mpi_enum_hh
 
-#ifndef INCLUDED_basic_message_listening_DbMoverMessageListener_FWD_HH
-#define INCLUDED_basic_message_listening_DbMoverMessageListener_FWD_HH
-
-#include <utility/pointer/owning_ptr.hh>
-
+/// @brief Tags used to tag messeges sent by MPI functions used to decide whether a slave is requesting a new job id or
+///flagging as job as being a bad input
 namespace basic {
-namespace message_listening {
+namespace mpi {
+		
+
+enum mpi_tags {
+	NEW_JOB_ID_TAG = 10,
+	BAD_INPUT_TAG = 20,
+	JOB_SUCCESS_TAG = 30,
+	JOB_FAILURE_TAG = 40,
+	REQUEST_MESSAGE_TAG = 50,
+	RECEIVE_MESSAGE_TAG = 60,
+	JOB_GO_TAG = 70
+};
+
+	
+	
+} //mpi
+} //basic
 
 
-class DbMoverMessageListener;
-typedef utility::pointer::shared_ptr< DbMoverMessageListener > DbMoverMessageListenerOP;
-typedef utility::pointer::shared_ptr< DbMoverMessageListener const > DbMoverMessageListenerCOP;
-
-} //namespace
-} //namespace
 #endif

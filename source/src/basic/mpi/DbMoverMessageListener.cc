@@ -12,7 +12,7 @@
 /// @brief
 /// @author Tim Jacobs
 
-#include <basic/message_listening/DbMoverMessageListener.hh>
+#include <basic/mpi/DbMoverMessageListener.hh>
 
 #include <utility/string_util.hh>
 
@@ -22,9 +22,9 @@
 
 
 namespace basic {
-namespace message_listening {
+namespace mpi {
 
-static THREAD_LOCAL basic::Tracer TR( "basic.message_listening.DbMoverMessageListener" );
+static THREAD_LOCAL basic::Tracer TR( "basic.mpi.DbMoverMessageListener" );
 
 DbMoverMessageListener::DbMoverMessageListener():
 	protocol_id_(0)

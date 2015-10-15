@@ -30,6 +30,8 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <basic/mpi/mpi_enums.hh>
+
 #ifdef USEMPI
 #include <utility/exit.hh>
 #endif
@@ -49,7 +51,8 @@ namespace unfolded_state_energy_calculator {
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-
+using namespace basic::mpi;
+	
 /// @brief ctor
 UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor() :
 	MPIWorkPoolJobDistributor()

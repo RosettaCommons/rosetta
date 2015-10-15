@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file basic/message_listening/util.cc
+/// @file basic/mpi/util.cc
 /// @brief Utility functions for the message listening framework
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
@@ -15,8 +15,9 @@
 #include <mpi.h>
 #endif
 
-#include <basic/message_listening/MessageListener.fwd.hh>
-#include <basic/message_listening/util.hh>
+#include <basic/mpi/MessageListener.fwd.hh>
+#include <basic/mpi/util.hh>
+#include <basic/mpi/mpi_enums.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/mpi_util.hh>
@@ -28,7 +29,7 @@
 #include <string>
 
 namespace basic {
-namespace message_listening {
+namespace mpi {
 
 using std::string;
 using std::endl;
@@ -36,7 +37,7 @@ using utility::send_string_to_node;
 using utility::receive_string_from_node;
 
 
-static THREAD_LOCAL basic::Tracer TR( "basic.message_listening" );
+static THREAD_LOCAL basic::Tracer TR( "basic.mpi" );
 
 /// @brief used for message passing to the
 ///MPIWorkPoolJobDistributor. This function will ask the head node for
@@ -56,7 +57,7 @@ request_data_from_head_node(
     << "Requesting data from head node for tag "
     << "'" << listener_tag_to_name(listener_tag) << "'" << endl;
   TR.flush();
-  MPI_Send( &listener_tag, 1, MPI_INT, 0/*head node*/, 40 /*REQUEST_MESSAGE_TAG*/, MPI_COMM_WORLD );
+  MPI_Send( &listener_tag, 1, MPI_INT, 0/*head node*/, REQUEST_MESSAGE_TAG, MPI_COMM_WORLD );
 
   //send a string to be processed by the listener
   TR.Debug << "Sending " << data << " to head node for tag '" << listener_tag_to_name(listener_tag) << "'" << std::endl;

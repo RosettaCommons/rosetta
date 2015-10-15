@@ -26,7 +26,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
-#include <basic/message_listening/MessageListenerFactory.hh>
+#include <basic/mpi/MessageListenerFactory.hh>
 
 #include <protocols/evaluation/util.hh>
 

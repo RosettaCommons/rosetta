@@ -10,30 +10,22 @@
 /// @file MessageListener.fwd.hh
 ///
 /// @brief
-/// @author Tim Jacobs
+/// @author Sam DeLuca
 
 
-#ifndef INCLUDED_basic_message_listening_MessageListener_FWD_HH
-#define INCLUDED_basic_message_listening_MessageListener_FWD_HH
+#ifndef INCLUDED_basic_mpi_DbMoverMessageListener_FWD_HH
+#define INCLUDED_basic_mpi_DbMoverMessageListener_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace basic {
-namespace message_listening {
-
-/// @brief MessageListener id tags
-///note: please add string conversion to util.cc/hh
-enum listener_tags {
-	DATABASE_PROTOCOL_AND_BATCH_ID_TAG = 42
-};
+namespace mpi {
 
 
-class MessageListener;
-typedef utility::pointer::shared_ptr< MessageListener > MessageListenerOP;
-typedef utility::pointer::shared_ptr< MessageListener const > MessageListenerCOP;
+class DbMoverMessageListener;
+typedef utility::pointer::shared_ptr< DbMoverMessageListener > DbMoverMessageListenerOP;
+typedef utility::pointer::shared_ptr< DbMoverMessageListener const > DbMoverMessageListenerCOP;
 
 } //namespace
 } //namespace
 #endif
-
-

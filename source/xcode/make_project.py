@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 PATH_TO_ROOT = '../../'
 
 import hashlib, os, string, sys, shutil

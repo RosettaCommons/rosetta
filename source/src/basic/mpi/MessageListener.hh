@@ -13,16 +13,16 @@
 /// @author Tim Jacobs
 
 
-#ifndef INCLUDED_basic_message_listening_MessageListener_HH
-#define INCLUDED_basic_message_listening_MessageListener_HH
+#ifndef INCLUDED_basic_mpi_MessageListener_HH
+#define INCLUDED_basic_mpi_MessageListener_HH
 
-#include <basic/message_listening/MessageListener.fwd.hh>
+#include <basic/mpi/MessageListener.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <string>
 
 namespace basic {
-namespace message_listening {
+namespace mpi {
 
 class MessageListener : public utility::pointer::ReferenceCount
 {

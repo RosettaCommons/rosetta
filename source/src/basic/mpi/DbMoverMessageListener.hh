@@ -12,11 +12,11 @@
 /// @brief
 /// @author Tim Jacobs
 
-#ifndef INCLUDED_basic_message_listening_DbMoverMessageListener_hh
-#define INCLUDED_basic_message_listening_DbMoverMessageListener_hh
+#ifndef INCLUDED_basic_mpi_DbMoverMessageListener_hh
+#define INCLUDED_basic_mpi_DbMoverMessageListener_hh
 
-#include <basic/message_listening/MessageListener.hh>
-#include <basic/message_listening/DbMoverMessageListener.fwd.hh>
+#include <basic/mpi/MessageListener.hh>
+#include <basic/mpi/DbMoverMessageListener.fwd.hh>
 
 #include <numeric/types.hh>
 
@@ -24,7 +24,7 @@
 #include <map>
 
 namespace basic {
-namespace message_listening {
+namespace mpi {
 
 class DbMoverMessageListener : public MessageListener{
 

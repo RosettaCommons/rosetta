@@ -22,9 +22,10 @@
 // Package headers
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
-#include <basic/message_listening/MessageListenerFactory.hh>
-#include <basic/message_listening/MessageListener.hh>
-#include <basic/message_listening/util.hh>
+#include <basic/mpi/MessageListenerFactory.hh>
+#include <basic/mpi/MessageListener.hh>
+#include <basic/mpi/util.hh>
+#include <basic/mpi/mpi_enums.hh>
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/LargeNstructJobInputter.hh>
 
@@ -34,6 +35,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
+
 #include <utility/exit.hh>
 #include <utility/assert.hh>
 #include <utility/mpi_util.hh>
@@ -49,6 +51,8 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
+
+
 static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.MPIWorkPoolJobDistributor" );
 
 namespace protocols {
@@ -56,6 +60,7 @@ namespace jd2 {
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace basic::mpi;
 
 /// @details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
 ///which processor it is in MPI land.
@@ -182,8 +187,6 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 			case REQUEST_MESSAGE_TAG:
 			{
 
-				using namespace basic::message_listening;
-
 				listener_tags listener_tag((listener_tags)slave_data);
 				MessageListenerOP listener(MessageListenerFactory::get_instance()->get_listener(listener_tag));
 
@@ -267,7 +270,6 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				break;
 			case REQUEST_MESSAGE_TAG:
 			{
-				using namespace basic::message_listening;
 
 				listener_tags listener_tag((listener_tags)slave_data);
 				MessageListenerOP listener(MessageListenerFactory::get_instance()->get_listener(listener_tag));

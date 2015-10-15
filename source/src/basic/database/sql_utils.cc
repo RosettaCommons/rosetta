@@ -392,6 +392,7 @@ platform::SSize db_partition_from_options( DatabaseMode::e db_mode )
 	switch(db_mode)
 			{
 			case DatabaseMode::sqlite3 :
+
 				if ( !option[inout::dbms::database_partition].user() ) {
 					return resolve_db_partition(
 						option[inout::dbms::separate_db_per_mpi_process]);
@@ -846,6 +847,9 @@ parse_database_connection(
 	using utility::sql_database::DatabaseSessionManager;
 	using namespace basic::resource_manager;
 
+	bool separate_database = option[ inout::dbms::separate_db_per_mpi_process ]();
+	int database_partition = option[ inout::dbms::database_partition]();
+
 	if ( tag->hasOption("database_resource") ) {
 		std::string database_resource = tag->getOption<string>("database_resource");
 		if ( ! ResourceManager::get_instance()->has_resource_with_description( database_resource ) ) {
@@ -1004,8 +1008,8 @@ parse_database_connection(
 			database_path, "", "", "", "", 0,
 			tag->getOption("database_read_only", false),
 			resolve_db_partition(
-			tag->getOption("database_separate_db_per_mpi_process", false),
-			tag->getOption("database_partition", -1)));
+			tag->getOption("database_separate_db_per_mpi_process", separate_database),
+			tag->getOption("database_partition", database_partition)));
 
 	case utility::sql_database::DatabaseMode::mysql:
 	case utility::sql_database::DatabaseMode::postgres : {

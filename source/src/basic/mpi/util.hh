@@ -7,18 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   basic/message_listening/util.hh
+/// @file   basic/mpi/util.hh
 /// @author Tim Jacobs
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
-#ifndef INCLUDED_basic_message_listening_util_hh
-#define INCLUDED_basic_message_listening_util_hh
+#ifndef INCLUDED_basic_mpi_util_hh
+#define INCLUDED_basic_mpi_util_hh
 
-#include <basic/message_listening/MessageListener.fwd.hh>
+#include <basic/mpi/MessageListener.fwd.hh>
 #include <string>
 
 namespace basic {
-namespace message_listening {
+namespace mpi {
 
 /// @brief send mpi message to head node in order to request data. The
 /// data sent back will be a string formatted by the listener

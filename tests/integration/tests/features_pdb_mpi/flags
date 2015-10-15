@@ -1,0 +1,34 @@
+-ignore_unrecognized_res
+-remember_unrecognized_res
+#
+# Why not use energy method corrections?
+-correct
+#
+# Use as input, structures S_56 and S_73 from the collection of
+# structures stored in the binary silent file for the cluster test:
+-in
+ -file
+  -fullatom
+  -l PDBLIST.txt
+
+-separate_db_per_mpi_process
+# Since the important output is the feature database,
+# ignore the job distributor output.
+-out
+ -nooutput
+-overwrite
+#
+# Select the features to be output to the features database using
+# the parser.  See for details
+# https://wiki.rosettacommons.org/index.php/Scripter_Documentation#ReportToDB
+-parser
+ -protocol parser_script.xml
+#
+# Mute some tracers...
+-mute protocols.jobdist
+-mute core.io
+-mute core.conformation
+-mute core.pack
+-add_orbitals
+
+-mpi_tracer_to_file log

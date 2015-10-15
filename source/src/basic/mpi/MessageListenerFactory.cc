@@ -12,9 +12,9 @@
 /// @brief A factory for lazily initializing message listeners. This should be used in conjunction the the MPIWorkPoolJobDistributor's message listening functionality
 /// @author Tim Jacobs
 
-#include <basic/message_listening/MessageListener.fwd.hh>
-#include <basic/message_listening/DbMoverMessageListener.hh>
-#include <basic/message_listening/MessageListenerFactory.hh>
+#include <basic/mpi/MessageListener.fwd.hh>
+#include <basic/mpi/DbMoverMessageListener.hh>
+#include <basic/mpi/MessageListenerFactory.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -33,7 +33,7 @@
 // Singleton instance and mutex static data members
 namespace utility {
 
-using basic::message_listening::MessageListenerFactory;
+using basic::mpi::MessageListenerFactory;
 
 #if defined MULTI_THREADED && defined CXX11
 template <> std::mutex utility::SingletonBase< MessageListenerFactory >::singleton_mutex_{};
@@ -45,9 +45,9 @@ template <> MessageListenerFactory * utility::SingletonBase< MessageListenerFact
 }
 
 namespace basic {
-namespace message_listening {
+namespace mpi {
 
-static THREAD_LOCAL basic::Tracer TR( "basic.message_listening.MessageListenerFactory" );
+static THREAD_LOCAL basic::Tracer TR( "basic.mpi.MessageListenerFactory" );
 
 MessageListenerFactory *
 MessageListenerFactory::create_singleton_instance()

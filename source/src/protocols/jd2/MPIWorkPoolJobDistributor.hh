@@ -53,6 +53,7 @@
 #include <utility/pointer/owning_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <numeric/xyzVector.fwd.hh>
+#include <basic/mpi/mpi_enums.hh>
 #include <algorithm>
 #include <utility/assert.hh>
 #include <cstddef>
@@ -66,17 +67,6 @@
 namespace protocols {
 namespace jd2 {
 
-/// @brief Tags used to tag messeges sent by MPI functions used to decide whether a slave is requesting a new job id or
-///flagging as job as being a bad input
-enum mpi_tags {
-	NEW_JOB_ID_TAG = 10,
-	BAD_INPUT_TAG = 20,
-	JOB_SUCCESS_TAG = 30,
-	JOB_FAILURE_TAG = 40,
-	REQUEST_MESSAGE_TAG = 50,
-	RECEIVE_MESSAGE_TAG = 60,
-	JOB_GO_TAG = 70
-};
 
 /// @details This job distributor is meant for running jobs where the machine you are using has a large number of
 ///processors, the number of jobs is much greater than the number of processors, or the runtimes of the individual jobs
