@@ -32,21 +32,25 @@ cd %(workdir)s
 
 mpirun -np 3 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s -constant_seed 2>&1 \
 	| egrep -vf ../../ignore_list \
-	> log_db_output
+	> log.ignore
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 
+#This could be used to remove lines.  Need to remove more than this.  Instead, we really only care about the output of the database in this test.
 # We need to separate out the log files, since the order in which slaves report results will vary (From Vikram).
-rm log_0 #The master node logfile will show stocastic changes due to slaves completing in different orders, so don't compare it.
+#rm log_0 #The master node logfile will show stocastic changes due to slaves completing in different orders, so don't compare it.
 #Logs 1 and 2 should be deterministic EXCEPT for the write times.  Delete this from the logfile:
-grep -v 'seconds' log_1 > log_1_noseconds
-rm log_1
-grep -v 'seconds' log_2 > log_2_noseconds
-rm log_2
+#grep -v 'seconds' log_1 > log_1_noseconds
+#rm log_1
+#grep -v 'seconds' log_2 > log_2_noseconds
+#rm log_2
 
+mv log_0 log_0.ignore
+mv log_1 log_1.ignore
+mv log_2 log_2.ignore
 
 #Make a note how many files there are.  There should be two.  If not, we have a HUGE problem.
-echo "Total split features dbs: $(ls features_IntegrationTest.db3_* | wc -l)" >> log_db_output
+echo "Total split features dbs: $(ls features_IntegrationTest.db3_* | wc -l)" > log_db_output
 
 
 #Merge the Databases
@@ -57,10 +61,11 @@ bash ../../../features/sample_sources/merge.sh features_IntegrationTest.db3 feat
 if type -P sqlite3 &>/dev/null; then
    sqlite3 features_IntegrationTest.db3 'UPDATE protocols SET svn_url = "";'
    sqlite3 features_IntegrationTest.db3 'UPDATE protocols SET svn_version = "";'
-   sqlite3 features_IntegrationTest.db3 '.dump' | egrep -vf ../../ignore_list > features_IntegrationTest.db3.dump 
+   sqlite3 features_IntegrationTest.db3 '.dump' | egrep -vf ../../ignore_list > features_IntegrationTest.db3.dump.full 
+   grep -v 'sqlite_sequence' features_IntegrationTest.db3.dump.full > features_IntegrationTest.db3.dump
+   rm -rf features_IntegrationTest.db3.dump.full
 else
    echo "Please install the sqlite3 command line application to correctly run this test." >> log_db_output
 fi
 rm -rf features_IntegrationTest.db3
-
 
