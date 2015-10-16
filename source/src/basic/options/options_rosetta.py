@@ -3373,12 +3373,12 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		##############################################################################
 		# Rosetta AntibodyDesign Options -----------------------------------------------
 		Option_Group( 'design',
-			Option('base_instructions', 'String',
+			Option('base_cdr_instructions', 'String',
 				desc='The Default/Baseline instructions file. Should not need to be changed.',
 				default='/sampling/antibodies/design/default_instructions.txt'
 				),
 
-			Option('instructions', 'String',
+			Option('cdr_instructions', 'String',
 				desc='Path to CDR Instruction File',
 				),
 			Option('antibody_database', 'String',
@@ -3386,7 +3386,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				default='/sampling/antibodies/antibody_database_rosetta_design.db'
 				),
 			Option('paper_ab_db', 'Boolean',
-				desc='Force the use the Antibody Database with data from the North clustering paper.  This is included in Rosetta, but is not recommended for general use. If a newer antibody database is not found, we will use this. The full ab db is available at http://dunbrack2.fccc.edu/PyIgClassify/',
+				desc='Force the use the Antibody Database with data from the North clustering paper.  This is included in Rosetta. If a newer antibody database is not found, we will use this. The full ab db is available at http://dunbrack2.fccc.edu/PyIgClassify/',
 				default='false'
 				),
 			Option('paper_ab_db_path', 'String',
@@ -3404,17 +3404,21 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			###### Protocol Steps
 			Option('design_protocol', 'String',
 				desc='Set the main protocol to use.  Note that deterministic is currently only available for the grafting of one CDR.',
-				default='generalized_monte_carlo',
-				legal = ['generalized_monte_carlo', 'deterministic_graft']
+				default='gen_mc',
+				legal = ['gen_mc', 'even_cluster_mc', 'even_length_cluster_mc', 'deterministic_graft']
 				),
 			Option('run_snugdock', 'Boolean',
 				desc='Run snugdock on each ensemble after designing.',
 				default='false'
 				),
 			Option('run_relax', 'Boolean',
-				desc = 'Run Dualspace Relax on each ensemble after designing (after snugdock if run).',
+				desc = 'Run Dualspace Relax on each ensemble after designing (after snugdock if run). Also output pre-relaxed structures',
 				default = 'false'
 				),
+			Option('run_interface_analyzer', 'Boolean',
+				desc = 'Run the Interface Analyzer and add the information to the resulting score function for each top design output.',
+				default = 'true'),
+
 			###### Paratope + Epitope
 			Option('paratope', 'StringVector',
 				desc = "Use these CDRs as the paratope. Default is all of them.  Currently only used for constraints. Note that these site constraints are only used during docking unless -enable_full_protocol_atom_pair_cst is set.",
@@ -3551,8 +3555,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
             desc = 'KT used for the outer graft Monte Carlo.  Each graft step will use this value',
             default = '1.0'),
 			###### Benchmarking
-			Option('benchmark_graft_design', 'Boolean',
-				desc = 'Start graft design with a new set of CDRs as to not bias the run with native CDRs.',
+			Option('random_start', 'Boolean',
+				desc = 'Start graft design (currently) with a new set of CDRs from the CDRSets as to not bias the run with native CDRs.',
 				default='false'
 				),
 			Option('adapt_graft', 'Boolean',

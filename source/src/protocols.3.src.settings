@@ -724,6 +724,7 @@ sources = {
 	"protocols/toolbox": [
 		"AllowInsert",
 		"Cluster",
+		"CalcInterNeighborGroup",
 		"DecoySetEvaluation",
 		"IGEdgeReweighters",
 		"InteratomicVarianceMatrix",

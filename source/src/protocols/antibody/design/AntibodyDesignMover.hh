@@ -18,6 +18,7 @@
 // Project Includes
 #include <protocols/antibody/design/AntibodyDesignMover.fwd.hh>
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
+#include <protocols/antibody/design/AntibodyDesignEnumManager.fwd.hh>
 #include <protocols/antibody/design/AntibodyDesignModeler.hh>
 #include <protocols/antibody/database/CDRSetOptions.hh>
 #include <protocols/antibody/design/CDRGraftDesignOptions.hh>
@@ -78,6 +79,8 @@ class AntibodyDesignMover: public protocols::moves::Mover {
 public:
 
 	AntibodyDesignMover();
+
+	AntibodyDesignMover( AntibodyInfoCOP ab_info );
 
 	virtual ~AntibodyDesignMover();
 
@@ -233,6 +236,9 @@ private:
 	setup_native_clusters(core::pose::Pose & pose);
 
 	void
+	setup_native_sequence(core::pose::Pose & pose);
+
+	void
 	setup_epitope_residues(core::pose::Pose const & pose);
 
 	void
@@ -256,6 +262,10 @@ private:
 
 	void
 	setup_default_graft_settings();
+
+	///@brief Setup alternative cdr pose indexes and sampling strategies.
+	void
+	setup_cdr_pose_sampling_strategies();
 
 
 	///@brief Uses instructions to Query the AntibodyDatabase and load poses.
@@ -305,7 +315,7 @@ private:
 
 	///@brief Basic mc algorithm that randomly samples from the cdr set.
 	void
-	run_basic_mc_algorithm(core::pose::Pose & pose, utility::vector1<CDRNameEnum>& cdrs_to_design);
+	run_basic_mc_algorithm(core::pose::Pose & pose, utility::vector1<CDRNameEnum>& cdrs_to_design, AntibodyDesignProtocolEnum mc_algorithm);
 
 
 
@@ -316,12 +326,28 @@ private:
 private:
 
 	AntibodyInfoOP ab_info_;
+	AntibodyDesignEnumManagerOP design_enum_manager_;
+
 	AntibodyCDRSetOptions cdr_set_options_;
 	AntibodyCDRGraftDesignOptions cdr_graft_design_options_;
 	AntibodyCDRSeqDesignOptions cdr_seq_design_options_;
 	AntibodySeqDesignTFCreatorOP seq_design_creator_;
 
-	std::map< CDRNameEnum, vector1< CDRDBPose > > cdr_set_;
+	std::map< CDRNameEnum, utility::vector1< CDRDBPose > > cdr_set_;
+
+	//CDRSet Indexing for CDR sampling strategies:
+
+	///@brief Even cluster sampling (even_cluster_mc protocol)
+	std::map< CDRNameEnum,
+		std::map< clusters::CDRClusterEnum,
+			utility::vector1< core::Size > > > cluster_based_CDRDBPose_indexes_;
+
+	///@brief Even Length and Cluster sampling (even_length_cluster_mc protocol)
+	std::map< CDRNameEnum,
+		std::map< core::Size,
+			std::map< clusters::CDRClusterEnum,
+				utility::vector1< core::Size > > > > length_based_CDRDBPose_indexes_;
+
 
 	protocols::grafting::CCDEndsGraftMoverOP graft_mover_;
 	protocols::grafting::AnchoredGraftMoverOP anchored_graft_mover_;

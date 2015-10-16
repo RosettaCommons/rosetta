@@ -9,17 +9,17 @@
 #-out:level 400
 
 #####PyMol #####################
-#-show_simulation_in_pymol .2
-#-update_pymol_on_energy_changes_only
+-show_simulation_in_pymol .2
+-update_pymol_on_energy_changes_only
 #-update_pymol_on_conformation_changes_only
-#-keep_pymol_simulation_history
+-keep_pymol_simulation_history
 
 #####General Options ###########
 #-in:file:s mis_start_3FO9_0006.pdb
 #-in:file:s mis_start_0001.pdb
--in:file:s mis_start.pdb
+#-in:file:s mis_start.pdb
 #-in:file:s mis_start_no_antigen.pdb
-#-in:file:s 2r0l_1_1.pdb
+-in:file:s 2r0l_1_1.pdb
 -nstruct 1
 
 #-run:debug
@@ -31,12 +31,12 @@
 
 ############################################
 #########General Design Options ############
--antibody:design:instructions local_instructions.txt
+-antibody:design:cdr_instructions local_instructions.txt
 #-antibody:design:antibody_database /sampling/antibodies/ab_db_for_tests.db
 
 #-design_cdrs L1
 -top_designs 1
--antibody:design:outer_cycles 2
+-antibody:design:outer_cycle_rounds 10
 #-antibody:design:design_rounds 1
 
 -antibody:light_chain kappa
@@ -67,8 +67,8 @@
 
 
 ########Benchmarking Options ##################
--benchmark_graft_design false
--adapt_graft true
+#-benchmark_graft_design false
+#-adapt_graft true
 #-antibody:design:dump_post_graft_designs
 -add_graft_log_to_pdb
 

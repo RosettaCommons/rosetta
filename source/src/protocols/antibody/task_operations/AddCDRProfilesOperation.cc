@@ -18,6 +18,7 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/design/util.hh>
+#include <protocols/antibody/design/AntibodyDesignEnumManager.hh>
 
 #include <protocols/toolbox/task_operations/ResidueProbDesignOperation.hh>
 #include <protocols/toolbox/task_operations/ConservativeDesignOperation.hh>
@@ -145,7 +146,8 @@ AddCDRProfilesOperation::parse_tag(utility::tag::TagCOP tag, basic::datacache::D
 		set_cdrs(get_cdr_bool_from_tag(tag, "cdrs"));
 	}
 
-	set_fallback_strategy(seq_design_strategy_to_enum(tag->getOption< std::string >("fallback_strategy", "seq_design_conservative")));
+	AntibodyDesignEnumManager manager = AntibodyDesignEnumManager();
+	set_fallback_strategy(manager.seq_design_strategy_string_to_enum(tag->getOption< std::string >("fallback_strategy", "seq_design_conservative")));
 	keep_task_allowed_aas_ = tag->getOption< bool>("add_to_current", keep_task_allowed_aas_);
 	include_native_restype_ = tag->getOption< bool>("include_native_restype", include_native_restype_);
 	picking_rounds_ = tag->getOption< core::Size >("picking_rounds", picking_rounds_);
@@ -440,9 +442,21 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 			}
 		}
 	}
+
 	if ( cons_task_residues > 0 ) {
+		if ( has_native_sequence( pose ) ) {
+			TR << "Using original bb sequence for conservative design." << std::endl;
+			std::string native_seq = get_native_sequence( pose );
+			cons_task_->set_native_sequence( native_seq );
+		}
+		else {
+			cons_task_->use_pose_sequence_as_native( pose );
+		}
+
 		cons_task_->apply(pose, task);
+
 	}
+
 
 
 	/// Disable design if seq design is set as none.

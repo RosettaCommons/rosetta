@@ -85,6 +85,9 @@ public:
 	void
 	use_pose_sequence_as_native(core::pose::Pose const & pose);
 
+	void
+	set_native_sequence( std::string seq);
+
 	///@brief Set the source of the data used to define what is conservative.
 	/// Options are: chothia_76, and the Blosum matrices from 30 to 100; designated as blosum30, 62, etc.
 	/// Default is blosum62.  The higher the number, the more conservative the set of mutations (numbers are sequence identity cutoffs)

@@ -72,7 +72,7 @@ CDRSetOptionsOP
 CDRSetOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::string filename) {
 
 	cdr_options_ = CDRSetOptionsOP( new CDRSetOptions(cdr) );
-	std::string path = basic::options::option [basic::options::OptionKeys::antibody::design::base_instructions]();
+	std::string path = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	default_and_user_ = true;
 	parse_options(cdr, path);
 	parse_options(cdr, filename);

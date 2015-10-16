@@ -34,7 +34,7 @@
 
 ############################################
 #########General Design Options ############
--antibody:design:instructions cdr_design_instructions.txt
+-antibody:design:cdr_instructions cdr_design_instructions.txt
 -antibody:design:paper_ab_db
 
 #-design_cdrs L1
@@ -48,8 +48,8 @@
 
 ######### Protocol Options #################
 
-#-post_graft_rb_min
-#-post_graft_dock
+#-do_rb_min
+#-do_dock
 #-design_antigen
 #-design_framework
 
@@ -66,7 +66,7 @@
 
 
 ########Benchmarking Options ##################
-#-benchmark_graft_design true
+#-antibody:design:random_start true
 -adapt_graft true
 -add_graft_log_to_pdb
 

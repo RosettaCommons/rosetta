@@ -30,11 +30,17 @@
 #include <protocols/antibody/design/AntibodySeqDesignTFCreator.hh>
 #include <protocols/antibody/design/MutateFrameworkForCluster.hh>
 #include <protocols/antibody/design/util.hh>
+#include <protocols/antibody/design/AntibodyDesignEnumManager.hh>
+#include <protocols/antibody/design/NativeAntibodySeq.hh>
 
 // Core Includes
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/DataCache.hh>
 
 #include <core/optimization/MinimizerOptions.hh>
 
@@ -72,6 +78,7 @@
 #include <basic/Tracer.hh>
 #include <utility/py/PyAssert.hh>
 #include <map>
+#include <iterator>
 #include <boost/algorithm/string.hpp>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
@@ -88,11 +95,13 @@ using namespace protocols::antibody::constraints;
 using namespace core::pack::task;
 using namespace core::pack::task::operation;
 using namespace core::scoring;
+using basic::datacache::DataCache_CacheableData;
 using core::Size;
 using core::pose::Pose;
 using core::pose::PoseOP;
 
 AntibodyDesignMover::AntibodyDesignMover():
+	ab_info_(/* NULL */),
 	graft_mover_(/* NULL */),
 	scorefxn_(/* NULL */),
 	scorefxn_min_(/* NULL */),
@@ -101,9 +110,27 @@ AntibodyDesignMover::AntibodyDesignMover():
 	cdr_dihedral_cst_mover_ (/* NULL */)
 
 {
-	overhang_ = 3;
+	design_enum_manager_ = AntibodyDesignEnumManagerOP( new AntibodyDesignEnumManager);
 	read_command_line_options();
 	set_defaults();
+
+}
+
+AntibodyDesignMover::AntibodyDesignMover( AntibodyInfoCOP ab_info ):
+	graft_mover_(/* NULL */),
+	scorefxn_(/* NULL */),
+	scorefxn_min_(/* NULL */),
+	paratope_epitope_cst_mover_(/* NULL */),
+	paratope_cst_mover_(/* NULL */),
+	cdr_dihedral_cst_mover_ (/* NULL */)
+
+{
+	ab_info_ = ab_info->clone();
+
+	design_enum_manager_ = AntibodyDesignEnumManagerOP( new AntibodyDesignEnumManager);
+	read_command_line_options();
+	set_defaults();
+
 }
 
 AntibodyDesignMover::~AntibodyDesignMover(){}
@@ -126,6 +153,7 @@ AntibodyDesignMoverCreator::mover_name(){
 void
 AntibodyDesignMover::set_defaults(){
 	///Conservative defaults.  Defaults here are also read and set from a database file.  To allow run-time manipulations and testing.
+	overhang_ = 3;
 	print_tracer_info_ = true;
 	paratope_cdrs_.clear();
 	paratope_cdrs_.resize(6, true);
@@ -148,7 +176,7 @@ AntibodyDesignMover::read_command_line_options(){
 	set_rb_min_post_graft(option [OptionKeys::antibody::design::do_rb_min]());
 	set_dock_rounds(option [OptionKeys::antibody::design::dock_cycle_rounds]());
 	//initial_perturb_ = basic::options::option [basic::options::OptionKeys::antibody::design::initial_perturb] ();
-	benchmark_ = option [OptionKeys::antibody::design::benchmark_graft_design]();
+	benchmark_ = option [OptionKeys::antibody::design::random_start]();
 	use_light_chain_type_ = option [OptionKeys::antibody::design::use_light_chain_type]();
 	adapt_graft_ = option [OptionKeys::antibody::design::adapt_graft]();
 	enable_adapt_graft_cartesian_ = option[ OptionKeys::antibody::design::enable_adapt_graft_cartesian]();
@@ -159,7 +187,8 @@ AntibodyDesignMover::read_command_line_options(){
 	outer_kt_ = option [OptionKeys::antibody::design::outer_kt]();
 	inner_kt_ = option [OptionKeys::antibody::design::inner_kt]();
 
-	design_protocol_ = design_protocol_to_enum(option[ OptionKeys::antibody::design::design_protocol]());
+	//TR << "Design protocol: " << option[ OptionKeys::antibody::design::design_protocol]() << std::endl;
+	design_protocol_ = design_enum_manager_->design_protocol_string_to_enum(option[ OptionKeys::antibody::design::design_protocol]());
 
 	interface_dis_ = option [OptionKeys::antibody::design::interface_dis]();
 	neighbor_dis_ = option [OptionKeys::antibody::design::neighbor_dis]();
@@ -168,8 +197,8 @@ AntibodyDesignMover::read_command_line_options(){
 
 	mutate_framework_for_cluster_ = option [OptionKeys::antibody::design::mutate_framework_for_cluster]();
 
-	if ( basic::options::option [basic::options::OptionKeys::antibody::design::instructions].user() ) {
-		instruction_file_ = basic::options::option [basic::options::OptionKeys::antibody::design::instructions]();
+	if ( basic::options::option [basic::options::OptionKeys::antibody::design::cdr_instructions].user() ) {
+		instruction_file_ = basic::options::option [basic::options::OptionKeys::antibody::design::cdr_instructions]();
 		TR << "Instructions file: " << instruction_file_ << std::endl;
 	}
 
@@ -247,7 +276,7 @@ AntibodyDesignMover::parse_my_tag(
 	}
 
 
-	design_protocol_ = design_protocol_to_enum(tag->getOption< std::string >("design_protocol", "generalized_monte_carlo"));
+	design_protocol_ = design_enum_manager_->design_protocol_string_to_enum(tag->getOption< std::string >("design_protocol", "generalized_monte_carlo"));
 
 	interface_dis_ = tag->getOption< core::Real >("interface_dis", interface_dis_);
 	neighbor_dis_ = tag->getOption< core::Real >("neighbor_dis", neighbor_dis_);
@@ -375,6 +404,10 @@ AntibodyDesignMover::setup_native_clusters(core::pose::Pose & pose){
 	ab_info_->get_CDR_cluster_set()->set_cacheable_cluster_data_to_pose(pose);
 }
 
+void
+AntibodyDesignMover::setup_native_sequence(core::pose::Pose & pose){
+	pose.data().set(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ, DataCache_CacheableData::DataOP( new NativeAntibodySeq( pose, ab_info_) ));
+}
 //void
 //AntibodyDesignMover::set_cdr_set(CDRDBPoseSet& cdr_set, core::Size overhang){
 // cdr_set_ = cdr_set;
@@ -454,6 +487,23 @@ AntibodyDesignMover::setup_options_classes(){
 	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRGraftDesignOptionsOP options = cdr_graft_design_options_[i];
 		cdr_set_options_[i]->load(options->design());
+	}
+
+
+
+}
+void
+AntibodyDesignMover::setup_cdr_pose_sampling_strategies() {
+	typedef std::map< CDRNameEnum, utility::vector1< CDRDBPose > >::const_iterator it_type;
+
+	for ( it_type it = cdr_set_.begin(); it != cdr_set_.end(); ++it ){
+		CDRNameEnum cdr = it->first;
+		for ( core::Size index=1; index <= cdr_set_[ cdr ].size(); ++index ){
+			CDRClusterEnum cluster = cdr_set_[ cdr ][ index ].cluster;
+			core::Size cluster_length = ab_info_->get_cluster_length(cluster);
+			cluster_based_CDRDBPose_indexes_[ cdr ][ cluster ].push_back( index );
+			length_based_CDRDBPose_indexes_[ cdr ][ cluster_length ][ cluster ].push_back( index );
+		}
 	}
 
 }
@@ -590,6 +640,7 @@ AntibodyDesignMover::finalize_setup(Pose & pose){
 
 	//Reinit CDRDBPoseSet.  No option to set your own CDRs at the moment.  Later maybe.
 	initialize_cdr_set(pose);
+	setup_cdr_pose_sampling_strategies();
 
 	///////////Reinitialize.  Need to figure out how to do this properly via JD.
 	top_designs_.clear();
@@ -726,6 +777,7 @@ AntibodyDesignMover::apply_to_cdr(Pose & pose, CDRNameEnum cdr, core::Size index
 			ab_info_->setup_CDR_clusters(pose, true /* setup data from any datacache */);
 			ab_info_->set_CDR_cluster(cdr, cluster);
 			ab_info_->get_CDR_cluster_set()->set_cacheable_cluster_data_to_pose(pose);
+			set_native_cdr_sequence(ab_info_, cdr, pose);
 
 			core::pose::add_comment(pose, "REMARK "+ab_info_->get_CDR_name( cdr )+"_origin", cdr_pose.pdb);
 
@@ -1021,8 +1073,8 @@ AntibodyDesignMover::get_cdr_set_index_list(){
 		cdr_set_totals[i] = cdr_set_[cdr].size();
 	}
 
-	vector1< Size > dummy_index(6, 0);
-	get_all_graft_permutations(cdr_set_totals, index_list, dummy_index, 1);
+	vector1< vector1< Size > > empty_vector;
+	get_all_graft_permutations(empty_vector, cdr_set_totals, 1);
 	return index_list;
 
 }
@@ -1071,7 +1123,7 @@ AntibodyDesignMover::setup_random_start_pose(core::pose::Pose& pose, vector1<CDR
 }
 
 void
-AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& cdrs_to_design){
+AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& cdrs_to_design, AntibodyDesignProtocolEnum mc_algorithm){
 
 	using namespace utility;
 
@@ -1094,15 +1146,77 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 	}
 	sampler.weights(cdr_weights);
 
+	//Convert to vector for index-based RNG.  Beautiful c++ code right here.  This would be so much better in c++ 11 or python
+	//  Probably a better way, though using std::advance is still not ideal...
+	std::map< CDRNameEnum, utility::vector1< CDRClusterEnum > > cluster_indexes;
+
+	typedef std::map< CDRNameEnum,
+		std::map< clusters::CDRClusterEnum,
+			utility::vector1< core::Size > > >::iterator it_type;
+
+	typedef std::map< clusters::CDRClusterEnum,
+		utility::vector1< core::Size > >::iterator it_type_clusters;
+
+	for (it_type it = cluster_based_CDRDBPose_indexes_.begin(); it != cluster_based_CDRDBPose_indexes_.end(); ++it) {
+
+		//For Length indexing:
+		for (it_type_clusters it2 = cluster_based_CDRDBPose_indexes_[ it->first ].begin(); it2 != cluster_based_CDRDBPose_indexes_[ it->first ].end(); ++it2){
+			cluster_indexes[ it->first ].push_back( it2->first );
+		}
+
+		//For length and cluster indexing
+
+	};
+
+	//typedef std::map< clusters::CDRClusterEnum,
+	//		utility::vector1< core::Size > > ::iterator cluster_based_CDRDBPose_indexes_it_type;
+
 	//Choose random weighted CDR, graft in CDR, minimize
 	for ( core::Size i = 1; i <= outer_cycles_; ++i ) {
 		TR << "Outer round: " << i <<std::endl;
+
+
 		CDRNameEnum cdr_type = cdrs_to_design[sampler.random_sample(numeric::random::rg())];
 		core::Size cdr_index = 0;
 
-		/// Only get a cdr_index if we are graft designing.  This will eventually be refactored.
+		/// Only get a cdr_index if we are graft designing.
 		if ( cdr_graft_design_options_[ cdr_type ]->design() ) {
-			cdr_index = numeric::random::rg().random_range(1, cdr_set_[cdr_type].size());
+			if (mc_algorithm == generalized_monte_carlo) {
+				cdr_index = numeric::random::rg().random_range(1, cdr_set_[cdr_type].size());
+			}
+			else if (mc_algorithm == even_cluster_monte_carlo){
+
+
+				core::Size cluster_index = numeric::random::rg().random_range(1, cluster_indexes[ cdr_type ].size());
+				CDRClusterEnum cluster = cluster_indexes[ cdr_type ][cluster_index];
+				core::Size pre_cdr_index = numeric::random::rg().random_range(1, cluster_based_CDRDBPose_indexes_[ cdr_type ][ cluster ].size());
+				cdr_index = cluster_based_CDRDBPose_indexes_[ cdr_type ][ cluster ][ pre_cdr_index];
+
+				//cluster_based_CDRDBPose_indexes_it_type clus_it = cluster_based_CDRDBPose_indexes_.begin();
+				//std::advance(clus_it, numeric::random::rg().random_range(0, cluster_based_CDRDBPose_indexes_.size()));
+				//CDRClusterEnum cluster = clus_it->first;
+
+			}
+			else if (mc_algorithm == even_length_cluster_monte_carlo){
+
+				//Get a random length
+				//Index needs start from 0 for std::advance
+				std::map< core::Size, std::map< CDRClusterEnum, utility::vector1< core::Size > > >::iterator len_it = length_based_CDRDBPose_indexes_[ cdr_type ].begin();
+				std::advance(len_it, numeric::random::rg().random_range(0, length_based_CDRDBPose_indexes_[ cdr_type ].size() - 1));
+				core::Size length = len_it->first;
+
+				//Get a random cluster within that length
+				//Index needs start from 0 for std::advance
+				std::map<CDRClusterEnum, utility::vector1< core::Size > >::iterator clus_it = length_based_CDRDBPose_indexes_[ cdr_type ][ length ].begin();
+				std::advance(clus_it, numeric::random::rg().random_range(0, length_based_CDRDBPose_indexes_[ cdr_type ][ length ].size() - 1));
+				CDRClusterEnum cluster = clus_it->first;
+
+				//Get a random CDR within that cluster
+				core::Size pre_cdr_index = numeric::random::rg().random_range(1, length_based_CDRDBPose_indexes_[ cdr_type ][ length ][ cluster ].size());
+
+				cdr_index = length_based_CDRDBPose_indexes_[ cdr_type ][ length ][ cluster ][ pre_cdr_index ];
+
+			}
 		}
 
 		bool successful = apply_to_cdr(pose, cdr_type, cdr_index);
@@ -1126,6 +1240,7 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 	mc_->show_counters();
 }
 
+
 void
 AntibodyDesignMover::run_deterministic_graft_algorithm(core::pose::Pose & pose,vector1<CDRNameEnum>& cdrs_to_design){
 	//Note:  Not feasible with >= 4 CDRs to try at each position. Should not be used with docking on.
@@ -1148,17 +1263,120 @@ AntibodyDesignMover::run_deterministic_graft_algorithm(core::pose::Pose & pose,v
 }
 
 void
+AntibodyDesignMover::apply(core::pose::Pose & pose){
+
+	//if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
+	// utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
+	//}
+
+	if (!ab_info_) {
+		ab_info_ = AntibodyInfoOP(new AntibodyInfo(pose, AHO_Scheme, North));
+	}
+
+	ab_info_->show(std::cout);
+
+
+	//////////////////Create Instances.  Make sure everything is ready to begin.
+	setup_scorefxn();
+	setup_native_clusters(pose);
+	setup_native_sequence(pose);
+	setup_options_classes();
+	setup_cart_minimizer();
+	setup_epitope_residues(pose);
+	setup_paratope_epitope_constraints(pose);
+	setup_modeler();
+
+	finalize_setup(pose);
+	show(std::cout);
+
+	if ( cdrs_to_design_.size() == 0 ) {
+		return;
+	}
+
+	scorefxn_->show(pose);
+	core::Real native_score = (*scorefxn_)(pose);
+
+	///Energy Log:
+	std::string out = "-1 "+utility::to_string(native_score)+" NA";
+	accept_log_.push_back(out);
+	if ( benchmark_ ) {
+		this->setup_random_start_pose(pose, cdrs_to_design_);
+		out = "0 "+utility::to_string(scorefxn_->score(pose))+" NA";
+		accept_log_.push_back(out);
+	}
+
+	//////////// Setup Monte carlo ////////////////////////////////////////////
+	mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo(pose, *scorefxn_, outer_kt_) );
+	core::Real benchmark_start_score = scorefxn_->score(pose);
+
+	//////////// Run Main Algorithms ///////////////////////////////////////////
+	if ( design_protocol_ == deterministic_graft && cdrs_to_design_.size() == 1 ) {
+		run_deterministic_graft_algorithm(pose, cdrs_to_design_);
+	} else if ( design_protocol_ == deterministic_graft && cdrs_to_design_.size() > 1 ) {
+		utility_exit_with_message("Cannot currently run the deterministic protocol for more than 1 "
+			"grafting CDR.  Set CDRs using the instructions file or the option -design_cdrs");
+	} else {
+		run_basic_mc_algorithm(pose, cdrs_to_design_, design_protocol_);
+	}
+
+	//} else {
+	//	utility_exit_with_message("Design Protocol not understood: "+design_protocol_to_string( design_protocol_ )+" See -design_protocol option for available protocols");
+	//}
+
+
+	//////// Print Score Information ///////////////////////////////////////////
+	TR << "Native Pose: " << native_score << std::endl;
+	if ( benchmark_ ) {
+		TR << "Benchmarked Pose: "<< benchmark_start_score << std::endl;
+	}
+	TR << "Final Pose: " << (*scorefxn_)(pose) << std::endl;
+
+	for ( core::Size i = 2; i<= top_scores_.size(); ++i ) {
+		TR << "Top Ensemble " << i << " : " << (*scorefxn_)(*top_designs_[i]) << std::endl;
+	}
+
+	//////// Add Logs for Benchmarking /////////////////////////////////////////
+	if ( add_log_to_pose_ ) {
+		for ( core::Size i = 1; i <= graft_log_.size(); ++i ) {
+			core::pose::add_comment(pose, "GRAFT LOG "+utility::to_string(i), graft_log_[i]);
+
+			for ( core::Size x = 1; x <= top_designs_.size(); ++x ) {
+				core::pose::add_comment(*top_designs_[x], "GRAFT LOG "+utility::to_string(i), graft_log_[i]);
+			}
+		}
+		for ( core::Size i = 1; i <= accept_log_.size(); ++i ) {
+			core::pose::add_comment(pose, "ACCEPT LOG "+utility::to_string(i), accept_log_[i]);
+			for ( core::Size x = 1; x <= top_designs_.size(); ++x ) {
+				core::pose::add_comment(*top_designs_[x], "ACCEPT LOG "+utility::to_string(i), accept_log_[i]);
+			}
+		}
+	}
+
+	//Needs to be called for RosettaScripts integration - should be called for each 'get_other_pose' or whatever it is.
+	add_cluster_comments_to_pose( pose, ab_info_ );
+	check_fix_aho_cdr_numbering(ab_info_, pose);
+}
+
+////////////////////////////////////////////// Boiler Plate ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::string
+AntibodyDesignMover::get_name() const{
+	return "AntibodyDesignMover";
+}
+
+void
 AntibodyDesignMover::show(std::ostream & output) const{
 
 	utility::vector1<std::string> strategies(SeqDesignStrategyEnum_total, "");
 	strategies[ seq_design_profiles ] = "Profile-Based";
 	strategies[ seq_design_conservative ] = "Conservative";
 	strategies[ seq_design_basic ] = "Basic";
+	strategies[ seq_design_none ] = "No Design";
 
 	output << "////////////////////////////////////////////////////////////////////////////////" <<std::endl;
 	output << "///                   Rosetta Antibody Design Settings                       ///" << std::endl;
 	output << "///                                                                          ///" << std::endl;
-	output << "// Design Protocol: " << design_protocol_to_string( design_protocol_ ) << std::endl;
+	output << "// Design Protocol: " << design_enum_manager_->design_protocol_enum_to_string( design_protocol_ ) << std::endl;
 	output << "//  Outer Cycles: "<< outer_cycles_ << std::endl;
 	output << "//  Inner Cycles: "<< inner_cycles_ << std::endl;
 	output << "//  Dock? " << std::boolalpha << dock_post_graft_ << std::endl;
@@ -1186,7 +1404,7 @@ AntibodyDesignMover::show(std::ostream & output) const{
 		if ( seq_options->design() ) {
 			output<< "///   Design Strategy: " << strategies[ seq_options->design_strategy() ] << std::endl;
 			output<< "///   Fallback Strategy: " << strategies[ seq_options->fallback_strategy() ] << std::endl;
-			output<< "///   Fallback? " << std::boolalpha << seq_options->fallback() << std::endl;
+			//output<< "///   Fallback? " << std::boolalpha << seq_options->fallback() << std::endl;
 
 		}
 
@@ -1254,103 +1472,6 @@ AntibodyDesignMover::print_str_vec(std::string const name, utility::vector1<std:
 		output<< "/// "<< name <<" "<<utility::to_string(vec)<<std::endl;
 	}
 }
-
-void
-AntibodyDesignMover::apply(core::pose::Pose & pose){
-
-	//if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
-	// utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
-	//}
-
-	ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) );
-	ab_info_->show(std::cout);
-
-
-	//////////////////Create Instances.  Make sure everything is ready to begin.
-	setup_scorefxn();
-	setup_native_clusters(pose);
-	setup_options_classes();
-	setup_cart_minimizer();
-	setup_epitope_residues(pose);
-	setup_paratope_epitope_constraints(pose);
-	setup_modeler();
-
-	finalize_setup(pose);
-	show(std::cout);
-
-	if ( cdrs_to_design_.size() == 0 ) {
-		return;
-	}
-
-	scorefxn_->show(pose);
-	core::Real native_score = (*scorefxn_)(pose);
-
-	///Energy Log:
-	std::string out = "-1 "+utility::to_string(native_score)+" NA";
-	accept_log_.push_back(out);
-	if ( benchmark_ ) {
-		this->setup_random_start_pose(pose, cdrs_to_design_);
-		out = "0 "+utility::to_string(scorefxn_->score(pose))+" NA";
-		accept_log_.push_back(out);
-	}
-
-	//////////// Setup Monte carlo ////////////////////////////////////////////
-	mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo(pose, *scorefxn_, outer_kt_) );
-	core::Real benchmark_start_score = scorefxn_->score(pose);
-
-	//////////// Run Main Algorithms ///////////////////////////////////////////
-	if ( design_protocol_ == deterministic_graft && cdrs_to_design_.size() == 1 ) {
-		run_deterministic_graft_algorithm(pose, cdrs_to_design_);
-	} else if ( design_protocol_ == deterministic_graft && cdrs_to_design_.size() > 1 ) {
-		utility_exit_with_message("Cannot currently run the deterministic protocol for more than 1 "
-			"grafting CDR.  Set CDRs using the instructions file or the option -design_cdrs");
-	} else if ( design_protocol_ == generalized_monte_carlo ) {
-		run_basic_mc_algorithm(pose, cdrs_to_design_);
-	} else {
-		utility_exit_with_message("Design Protocol not understood: "+design_protocol_to_string( design_protocol_ )+" See -design_protocol option for available protocols");
-	}
-
-
-	//////// Print Score Information ///////////////////////////////////////////
-	TR << "Native Pose: " << native_score << std::endl;
-	if ( benchmark_ ) {
-		TR << "Benchmarked Pose: "<< benchmark_start_score << std::endl;
-	}
-	TR << "Final Pose: " << (*scorefxn_)(pose) << std::endl;
-
-	for ( core::Size i = 2; i<= top_scores_.size(); ++i ) {
-		TR << "Top Ensemble " << i << " : " << (*scorefxn_)(*top_designs_[i]) << std::endl;
-	}
-
-	//////// Add Logs for Benchmarking /////////////////////////////////////////
-	if ( add_log_to_pose_ ) {
-		for ( core::Size i = 1; i <= graft_log_.size(); ++i ) {
-			core::pose::add_comment(pose, "GRAFT LOG "+utility::to_string(i), graft_log_[i]);
-
-			for ( core::Size x = 1; x <= top_designs_.size(); ++x ) {
-				core::pose::add_comment(*top_designs_[x], "GRAFT LOG "+utility::to_string(i), graft_log_[i]);
-			}
-		}
-		for ( core::Size i = 1; i <= accept_log_.size(); ++i ) {
-			core::pose::add_comment(pose, "ACCEPT LOG "+utility::to_string(i), accept_log_[i]);
-			for ( core::Size x = 1; x <= top_designs_.size(); ++x ) {
-				core::pose::add_comment(*top_designs_[x], "ACCEPT LOG "+utility::to_string(i), accept_log_[i]);
-			}
-		}
-	}
-
-	//Needs to be called for RosettaScripts integration - should be called for each 'get_other_pose' or whatever it is.
-	add_cluster_comments_to_pose( pose, ab_info_ );
-	check_fix_aho_cdr_numbering(ab_info_, pose);
-}
-
-////////////////////////////////////////////// Boiler Plate ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-std::string
-AntibodyDesignMover::get_name() const{
-	return "AntibodyDesignMover";
-}
-
 
 } //design
 } //antibody

@@ -47,6 +47,8 @@ enum SeqDesignStrategyEnum {
 
 enum AntibodyDesignProtocolEnum {
 	generalized_monte_carlo = 1,
+	even_cluster_monte_carlo,
+	even_length_cluster_monte_carlo,
 	deterministic_graft,
 
 	DesignProtocolEnum_total = deterministic_graft

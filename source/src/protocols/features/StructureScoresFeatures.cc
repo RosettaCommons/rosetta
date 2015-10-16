@@ -193,7 +193,7 @@ StructureScoresFeatures::parse_my_tag(
 			<< "The " << type_name() << " reporter requires a 'scorefxn' tag:" << endl
 			<< endl
 			<< "    <feature name=" << type_name() <<" scorefxn=(name_of_score_function) />" << endl;
-		throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
+		//throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
 	}
 }
 

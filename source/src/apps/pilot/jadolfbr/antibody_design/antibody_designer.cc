@@ -17,8 +17,13 @@
 #include <utility/excn/Exceptions.hh>
 #include <devel/init.hh>
 
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
 
 using namespace protocols::antibody::design;
+using namespace basic::options;
+
 
 //Description:  This application will become the Rosetta Antibody Designer.  Main code is handled through AntibodyDesignProtocol
 int main(int argc, char* argv[])
@@ -26,6 +31,9 @@ int main(int argc, char* argv[])
 	try{
 		devel::init(argc, argv);
 
+		if ( ( ! option [ OptionKeys::in::file::l ].user() ) && ( ! option [ OptionKeys::in::file::s ].user() ) ) {
+			utility_exit_with_message("Please specify either -s or -l to specify the input PDB.");
+		}
 		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AntibodyDesignProtocol ));
 	}catch(utility::excn::EXCN_Base & excn){
 		std::cout << "Exception: "<<std::endl;

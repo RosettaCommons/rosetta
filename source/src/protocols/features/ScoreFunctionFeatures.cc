@@ -177,13 +177,6 @@ ScoreFunctionFeatures::parse_my_tag(
 	if ( tag->hasOption("scorefxn") ) {
 		scfxn_name_ = tag->getOption<string>("scorefxn");
 		scfxn_ = data.get_ptr<ScoreFunction>("scorefxns", scfxn_name_);
-	} else {
-		stringstream error_msg;
-		error_msg
-			<< "The " << type_name() << " reporter requires a 'scorefxn' tag:" << endl
-			<< endl
-			<< "    <feature name=" << type_name() <<" scorefxn=(name_of_score_function) />" << endl;
-		throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
 	}
 }
 

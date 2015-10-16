@@ -6,3 +6,4 @@ L3 SeqDesign FIX
 ALL SeqDesign PROFILES Profile
 L2 SeqDesign PROFILES Conservative
 L3 SeqDesign PROFILES Basic
+L3 SeqDesign FALLBACK_STRATEGY No_design

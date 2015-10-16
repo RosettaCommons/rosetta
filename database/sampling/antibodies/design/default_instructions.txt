@@ -2,8 +2,8 @@
 #Format of this file will be explained in the documentation of the Rosetta Antibody Designer.
 
 #General
-ALL Graft ALLOW
-ALL SeqDesign FIX
+ALL ALLOW
+
 ALL WEIGHTS 1.0
 
 #Types
@@ -24,7 +24,7 @@ ALL SeqDesign FALLBACK_STRATEGY CONSERVATIVE
 #ALL SeqDesign FALLBACK_STRATEGY NO_DESIGN - Turns off design if fallback needed.
 
 
-##################################Examples for user files############################################
+#####################Examples for user files##############################
 
 #L1 FIX #Global Fix:
 #L3 Graft FIX #Fix for Graft step
@@ -45,11 +45,19 @@ ALL SeqDesign FALLBACK_STRATEGY CONSERVATIVE
 #### Profiles ##########
 #Profile design - conservative vs cluster profiles.  Normal cluster-based.  Changing not for general use.
 #L3 SeqDesign STRATEGY CONSERVATIVE #Use basic conservative design for this CDR during high-res Design step:
+
+#L3 SeqDesign STRATEGY PROFILE_SETS #Sample whole sequences of CDRs with each cluster each pack. Useful if doing center cluster members.
+
+#L3 SeqDesign STRATEGY PROFILES_AND_SETS #Add both whole sequences of CDRs and the profile-based sampling to the task when doing design. This may eventually become the default.
+
+
+#######Fallback Strategy#######
 #L1 SeqDesign FALLBACK_STRATEGY BASIC #Use Basic design as the fallback if there is not enough data for profiles of that cluster.
+
 #H2 SeqDesign FALLBACK_STRATEGY No_Design # Turn off use of the Fallback strategy if not enough data and profiles are used as the primary strategy.  This means that H2 WILL NOT design if there is sparse data for profiles.  Useful for less aggressive design runs or H3.
 
 #### Weights ##########
-#H3  WEIGHTS 3.0 #Make H3 sampling at a weight of 3 (3 times al other CDRs)
+#H3  WEIGHTS 3.0 #Make H3 sampling at a weight of 3 (3 times all other CDRs)
 #ALL WEIGHTS 1.0 #Make sampling of all CDRs at equivalent weight.
 
 ### Neighbor Minimization during Graft ######

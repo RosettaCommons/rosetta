@@ -18,6 +18,7 @@
 #include <protocols/antibody/design/CDRSeqDesignOptions.hh>
 #include <protocols/antibody/design/CDRGraftDesignOptions.hh>
 #include <protocols/antibody/database/AntibodyDatabaseManager.hh>
+#include <protocols/antibody/design/NativeAntibodySeq.hh>
 
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
@@ -28,6 +29,12 @@
 #include <protocols/grafting/util.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
+
+#include <core/pose/datacache/CacheableDataType.hh>
+
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/DataCache.hh>
+#include <basic/datacache/CacheableData.hh>
 
 // Options
 #include <basic/options/option.hh>
@@ -53,7 +60,7 @@ using namespace protocols::antibody;
 using namespace protocols::antibody::clusters;
 using namespace utility;
 using namespace basic::options;
-
+using namespace core::pose::datacache;
 
 ScoreFunctionOP
 get_ab_design_global_scorefxn() {
@@ -181,50 +188,72 @@ insert_cdr_into_antibody(AntibodyInfoCOP ab_info, CDRNameEnum const cdr, core::p
 }
 
 
-void
+vector1< vector1< core::Size > >
 get_all_graft_permutations(
-	vector1<core::Size > & cdr_set_totals,
-	vector1< vector1< core::Size> > & all_permutations,
-	vector1<core::Size>current_index,
-	core::Size const cdr_num
-)
-{
+	vector1< vector1< core::Size> > permutations,
+	vector1<core::Size > totals,
+	core::Size const n
+) {
 	//Current index is what is being worked on.
 
-	if ( cdr_num > cdr_set_totals.size() ) { return;}
+	vector1<vector1<core::Size> > all_permutations;
 
-	//No CDR in CDR set.  Set index 0, move on to next CDR
-	if ( cdr_set_totals[cdr_num]==0 ) {
-		current_index[cdr_num]=0;
-		//Inner most loop, add current_index and return;
-		if ( cdr_num==cdr_set_totals.size() ) {
-			all_permutations.push_back(current_index);
-			return;
+
+	if (n > totals.size()) return permutations;
+
+	else if (n == 1) {
+
+		if (totals[1] == 0) {
+			vector1<core::Size> zero_vector(1, 0);
+			all_permutations.push_back(zero_vector);
 		}
-		get_all_graft_permutations(cdr_set_totals, all_permutations, current_index, cdr_num+1);
-	} else {
-		for ( core::Size i = 1; i<=cdr_set_totals[cdr_num]; ++i ) {
-			current_index[cdr_num]=i;
-			//Inner most loop, add current_index and return;
-			if ( cdr_num==cdr_set_totals.size() ) {
-				all_permutations.push_back(current_index);
-				return;
+		else {
+			for (core::Size i = 1; i <= totals[1]; ++i) {
+				vector1<core::Size> start_vector(1, i);
+				all_permutations.push_back(start_vector);
 			}
-			get_all_graft_permutations(cdr_set_totals, all_permutations, current_index, cdr_num+1);
-
 		}
 	}
+	else {
+		//No CDR in CDR set.  Set index 0, move on to next CDR
+		if (totals[n] == 0) {
+			for (core::Size i = 1; i <= permutations.size(); ++i) {
+				utility::vector1<core::Size> c = permutations[i];
+				utility::vector1<core::Size> c2(c);
+				c2.push_back(0);
+				all_permutations.push_back(c2);
+			}
+		} else {
+			for (core::Size ind = 1; ind <= totals[n]; ++ind) {
+
+				for (core::Size i = 1; i <= permutations.size(); ++i) {
+					utility::vector1<core::Size> c = permutations[i];
+					utility::vector1<core::Size> c2(c);
+					c2.push_back(ind);
+					all_permutations.push_back(c2);
+				}
+			}
+		}
+	}
+
+	vector1< vector1< core::Size > > combos = get_all_graft_permutations(all_permutations, totals, n+1);
+	return combos;
+
 }
+
+
 
 AntibodyDesignProtocolEnum
 design_protocol_to_enum(std::string const & design_type){
 	std::string type = design_type;
 	boost::to_upper(type);
 
-	if ( type == "GENERALIZED_MONTE_CARLO" ) {
+	if ( type == "GENERALIZED_MONTE_CARLO" || type == "GEN_MC") {
 		return generalized_monte_carlo;
 	} else if ( type == "DETERMINISTIC_GRAFT" ) {
 		return deterministic_graft;
+	} else if (type == "EVEN_CLUSTER_MC") {
+		return even_cluster_monte_carlo;
 	} else {
 		utility_exit_with_message("DesignProtocol unrecognized.  Please check AntibodyDesign settings.");
 	}
@@ -236,6 +265,8 @@ design_protocol_to_string(AntibodyDesignProtocolEnum const design_type){
 		return "generalized_monte_carlo";
 	} else if ( design_type==deterministic_graft ) {
 		return "deterministic_graft";
+	} else if (design_type == even_cluster_monte_carlo){
+		return "even_cluster_monte_carlo";
 	} else {
 		utility_exit_with_message("DesignProtocolunrecognized.  Please check AntibodyDesign settings.");
 	}
@@ -611,7 +642,7 @@ get_cdr_set_options(){
 	CDRSetOptionsParser parser = CDRSetOptionsParser();
 	AntibodyCDRSetOptions options_settings;
 
-	std::string filename = basic::options::option [basic::options::OptionKeys::antibody::design::base_instructions]();
+	std::string filename = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	TR << "Reading CDRSetOptions from: " << filename << std::endl;
 	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
@@ -645,7 +676,7 @@ get_graft_design_options(){
 	CDRGraftDesignOptionsParser parser = CDRGraftDesignOptionsParser();
 	AntibodyCDRGraftDesignOptions options_settings;
 
-	std::string filename = basic::options::option [basic::options::OptionKeys::antibody::design::base_instructions]();
+	std::string filename = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	TR << "Reading CDRGraftDesignOptions from: " << filename << std::endl;
 	for ( core::Size i = 1; i <= 6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
@@ -678,7 +709,7 @@ get_seq_design_options(){
 	CDRSeqDesignOptionsParser parser = CDRSeqDesignOptionsParser();
 	AntibodyCDRSeqDesignOptions options_settings;
 
-	std::string filename = basic::options::option [basic::options::OptionKeys::antibody::design::base_instructions]();
+	std::string filename = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	TR << "Reading CDRSeqDesignOptions from: " << filename << std::endl;
 	for ( core::Size i = 1; i <=6; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
@@ -766,6 +797,53 @@ transform_sequence_to_mutation_set(
 
 	return mutation_set;
 }
+
+void
+set_native_cdr_sequence( AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose::Pose & pose){
+	using basic::datacache::DataCache_CacheableData;
+	if (pose.data().has(CacheableDataType::NATIVE_ANTIBODY_SEQ) ){
+
+		//This is always a pretty line:
+		//NativeAntibodySeq & seq = static_cast< NativeAntibodySeq & >(pose.data().get(CacheableDataType::NATIVE_ANTIBODY_SEQ));
+
+		NativeAntibodySeqOP data
+			=  utility::pointer::static_pointer_cast< NativeAntibodySeq >
+				( pose.data().get_ptr(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ) );
+
+		runtime_assert( data.get() != NULL );
+
+		TR << "Setting CDR sequence in NativeAntibodySeq" << std::endl;
+		data->set_from_cdr(pose, cdr );
+
+	}
+	else {
+		pose.data().set(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ, DataCache_CacheableData::DataOP( new NativeAntibodySeq( pose, ab_info) ));
+	}
+}
+
+std::string
+get_native_sequence( core::pose::Pose const & pose){
+
+	//Does not work:
+	//NativeAntibodySeqCOP data
+	//	=  utility::pointer::static_pointer_cast< NativeAntibodySeq >
+	//		( pose.data().get_ptr(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ) );
+
+
+	NativeAntibodySeq const & data = static_cast< NativeAntibodySeq const & >(pose.data().get(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ));
+	std::string seq = data.get_sequence(pose);
+	//TR << "Getting sequence: " << seq << std::endl;
+	return data.get_sequence(pose);
+}
+
+bool
+has_native_sequence( core::pose::Pose const & pose){
+	return pose.data().has(CacheableDataType::NATIVE_ANTIBODY_SEQ);
+
+}
+
+
+
 
 } //design
 } //antibody

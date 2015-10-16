@@ -26,6 +26,8 @@
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
 #include <protocols/antibody/design/CDRGraftDesignOptions.hh>
 #include <protocols/antibody/design/CDRSeqDesignOptions.hh>
+#include <protocols/antibody/design/NativeAntibodySeq.hh>
+#include <protocols/antibody/design/util.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
@@ -73,6 +75,7 @@ public:
 
 		TS_ASSERT_EQUALS( options[ l2 ]->design_strategy(), seq_design_conservative );
 		TS_ASSERT_EQUALS( options[ l3 ]->design_strategy(), seq_design_basic );
+		TS_ASSERT_EQUALS( options[ l3 ]->fallback_strategy(), seq_design_none );
 
 	}
 
@@ -94,6 +97,30 @@ public:
 		TS_ASSERT_EQUALS( l3_option->design(), false );
 		TS_ASSERT_DELTA( l3_option->weight(), 2.0, .0001 );
 
+	}
+	
+	void test_native_seq() {
+		NativeAntibodySeq native_record = NativeAntibodySeq(pose, ab_info);
+		TS_ASSERT_THROWS_NOTHING(native_record.set_sequence(pose) ); //Does nothing.  Just a test.
+		TS_ASSERT_THROWS_NOTHING( native_record.set_to_pose( pose ) );
+		TS_ASSERT_EQUALS( protocols::antibody::design::has_native_sequence( pose ), true);
+		
+		
+		std::string pose_seq = pose.sequence();
+		
+		for (core::Size i = 1; i <= 6; ++i){
+			CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+			TS_ASSERT_THROWS_NOTHING(native_record.set_from_cdr(pose, cdr) ); //Does nothing. Just a test.
+			TS_ASSERT_THROWS_NOTHING( set_native_cdr_sequence( ab_info, cdr, pose));
+		}
+		std::string record_seq = native_record.get_sequence(pose);
+		TS_ASSERT_EQUALS( pose_seq, record_seq);
+		
+		std::string seq_from_pose_cache = protocols::antibody::design::get_native_sequence(pose);
+		TS_ASSERT_EQUALS( pose_seq, seq_from_pose_cache);
+		
+		
+		
 	}
 
 };

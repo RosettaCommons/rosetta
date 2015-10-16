@@ -133,6 +133,8 @@ private:
 	void
 	model_post_design(core::pose::Pose & pose);
 
+	void
+	analyze_LH_A_interface(core::pose::Pose & pose);
 
 	void
 	init_on_new_input( core::pose::Pose const & pose );

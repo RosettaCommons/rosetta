@@ -56,7 +56,7 @@
 #include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
+#include <protocols/toolbox/CalcInterNeighborGroup.hh>
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
 
 #include <core/scoring/packstat/compute_sasa.hh>
@@ -109,6 +109,8 @@ namespace protocols {
 namespace analysis {
 
 using namespace protocols::moves;
+using namespace core;
+using namespace utility;
 
 std::string
 InterfaceAnalyzerMoverCreator::keyname() const
@@ -289,6 +291,7 @@ InterfaceAnalyzerMover::init_data(core::pose::Pose const & pose) {
 	data_.packstat = 0;
 
 	data_.delta_unsat_hbonds = 0;
+	data_.interface_hbonds = 0;
 	data_.interface_nres.resize(3, 0);
 	data_.complexed_interface_score.resize(3, 0);
 	data_.separated_interface_score.resize(3, 0);
@@ -315,6 +318,7 @@ InterfaceAnalyzerMover::init_on_new_input(const core::pose::Pose & pose){
 	interface_set_.clear();
 	upstream_chains_.insert(0);
 	downstream_chains_.insert(0);
+	score_data_.clear();
 	included_nres_ = 0;
 	include_residue_.clear();
 	include_residue_.resize(pose.total_residue(), true);  //By default we don't ignore any residues for whole - pose calculations.
@@ -388,6 +392,7 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 	//If there are no residues detected at the interface, don't bother with anything else. Report everything as zero and return.
 	if ( interface_set_.empty() ) {
 		if ( !skip_reporting_ ) {
+			setup_score_data();
 			report_data();
 		}
 		TR << "No Interface detected.  Skipping calculations" << std::endl;
@@ -413,6 +418,8 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 	if ( compute_interface_delta_hbond_unsat_ ) compute_interface_delta_hbond_unsat( complexed_pose, separated_pose );
 	//find the shape complementarity stats for the interface
 	if ( compute_interface_sc_ ) compute_interface_sc(interface_jump_, complexed_pose);
+
+	setup_score_data();
 
 	if ( !skip_reporting_ ) {
 		//always will fill a selection option to get the pymol selection
@@ -559,9 +566,12 @@ void InterfaceAnalyzerMover::make_multichain_interface_set( core::pose::Pose & p
 	std::set<int> & fixed_chains){
 	using namespace core;
 	using namespace utility;
+	using namespace protocols::toolbox;
+
 	std::set<Size> fixed_side_residues, other_side_residues;
 	std::set<core::Size> fixed_chain_nums;
 	std::set<core::Size> other_chain_nums;
+
 
 	//itterate over all residues determine what part of the interface they are
 	//also select what chain(s) are upstream and downstream of the interface
@@ -592,16 +602,12 @@ void InterfaceAnalyzerMover::make_multichain_interface_set( core::pose::Pose & p
 	interface_definition_vector.push_back( side_pairs );
 	chain_groups_ = interface_definition_vector ;
 
-	//get calculator for multichain poses
-	register_intergroup_calculator();
+	CalcInterNeighborGroup calc = CalcInterNeighborGroup(chain_groups_, basic::options::option[ basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff ] );
+	calc.compute(pose);
+	interface_set_ = calc.neighbors();
 
-	//std::set<Size> multichain_interface;
-	basic::MetricValue< std::set< Size > > mv_interface_set;
-	pose.metric( InterGroupNeighborsCalculator_, "neighbors", mv_interface_set );
-	//set_interface_set( mv_interface_set.value() );
-	interface_set_ =  mv_interface_set.value();
 	//debugging
-	//TR << "Interface set residues total: " << interface_set_.size() << std::endl;
+	TR << "Interface set residues total: " << interface_set_.size() << std::endl;
 
 }//end make_multichain_interface_set
 
@@ -750,18 +756,6 @@ void InterfaceAnalyzerMover::register_calculators()
 	return;
 }//register_calculators
 
-/// @detail register calculator for multichain poses
-void InterfaceAnalyzerMover::register_intergroup_calculator(){
-	using namespace core::pose::metrics;
-	using namespace protocols::toolbox::pose_metric_calculators;
-	InterGroupNeighborsCalculator_ = "InterGroupNeighborsCalculator_" + posename_base_ ;
-	if ( CalculatorFactory::Instance().check_calculator_exists( InterGroupNeighborsCalculator_ ) ) {
-		Warning() << "In InterfaceAnalyzerMover, calculator " << InterGroupNeighborsCalculator_
-			<< " already exists, this is hopefully correct for your purposes" << std::endl;
-	} else {
-		CalculatorFactory::Instance().register_calculator(  InterGroupNeighborsCalculator_, PoseMetricCalculatorOP( new InterGroupNeighborsCalculator(chain_groups_, basic::options::option[ basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff ] ) ) );
-	}
-}
 
 /// @details actual function to separate the chains based on the chosen jump and score
 void InterfaceAnalyzerMover::score_separated_chains( core::pose::Pose & complexed_pose,
@@ -1297,7 +1291,8 @@ void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ) {
 	hbond_set.setup_for_residue_pair_energies( pose, false, false );
 
 	//itterate through all hbonds and figure out which ones are bb-bb betas
-	Real n_crosschain_hbonds( 0 );
+	Size n_crosschain_hbonds( 0 );
+
 	//Real total_ratios( 0 );
 	//total_hb_sasa_ = 0 ;
 	data_.total_hb_E = 0;
@@ -1405,7 +1400,10 @@ void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ) {
 	}//end loop over all hbonds
 	//get the avg exposure of the hbonds
 	//hbond_exposure_ratio_ = total_ratios / n_crosschain_hbonds;
+
 	data_.hbond_E_fraction = data_.total_hb_E/data_.dG[total];
+	data_.interface_hbonds = n_crosschain_hbonds;
+
 }//end function def
 
 // //helper function for above to calculate hbond stats based on an hbond input
@@ -1539,7 +1537,7 @@ InterfaceAnalyzerMover::parse_my_tag(
 	basic::datacache::DataMap & datamap,
 	Filters_map const &,
 	Movers_map const &,
-	Pose const & pose
+	core::pose::Pose const & pose
 )
 {
 	if ( tag->getName() != "InterfaceAnalyzerMover" ) {
@@ -1603,6 +1601,35 @@ InterfaceAnalyzerMover::parse_my_tag(
 	set_defaults();
 }
 
+void InterfaceAnalyzerMover::setup_score_data() {
+
+	score_data_["dSASA_int"] = data_.dSASA[ total ];
+	score_data_["dSASA_polar"] = data_.dSASA[ total ] - data_.dhSASA[ total ];
+	score_data_["dSASA_hphobic"] = data_.dhSASA[ total ];
+	score_data_["dG_separated"] = data_.dG[ total ];
+	score_data_["dG_separated/dSASAx100"] = data_.dG_dSASA_ratio * 100.0;
+	score_data_["delta_unsatHbonds"] = data_.delta_unsat_hbonds;
+	score_data_["packstat"] = data_.packstat;
+	score_data_["dG_cross"] = data_.crossterm_interface_energy;
+	score_data_["dG_cross/dSASAx100"] = data_.crossterm_interface_energy_dSASA_ratio * 100.0;
+
+	if ( use_centroid_ ) {
+		score_data_["cen_dG"] = data_.centroid_dG;
+	}
+	score_data_["nres_int"] = data_.interface_nres[ total ];
+	score_data_["per_residue_energy_int"] = per_residue_data_.regional_avg_per_residue_energy_int[ total ];
+	score_data_["side1_score"] = data_.complexed_interface_score[ side1 ];
+	score_data_["side2_score"] = data_.complexed_interface_score[ side2 ];
+	score_data_["nres_all"] = included_nres_;
+	score_data_["side1_normalized"] =  data_.complexed_interface_score[ side1 ] / ( core::Real( data_.interface_nres[ side1 ] ) );
+	score_data_["side2_normalized"] = data_.complexed_interface_score[ side2 ] / ( core::Real( data_.interface_nres[ side2 ] ) );
+	score_data_["complex_normalized"] = data_.complex_total_energy[ total ] / ( core::Real( included_nres_ ) );
+	score_data_["hbond_E_fraction"] = data_.hbond_E_fraction;
+	score_data_["sc_value"] = data_.sc_value;
+	score_data_["hbonds_int"] = data_.interface_hbonds;
+
+}
+
 /// @details reports all the cool stuff we calculate to tracer output OR puts it into the job object.
 void InterfaceAnalyzerMover::report_data(){
 	//make output
@@ -1634,6 +1661,7 @@ void InterfaceAnalyzerMover::report_data(){
 		}
 		//T(posename_base_) << "AVG HBOND EXPOSURE RATIO: " << hbond_exposure_ratio_ << std::endl; does not help
 		//T(posename_base_) << "HBOND SASA / INTERFACE dSASA: " << total_hb_sasa_ / interface_delta_sasa_ << std::endl;
+		T( posename_base_ ) << "CROSS INTERFACE HBONDS: " << data_.interface_hbonds << std::endl;
 		T( posename_base_ ) << "HBOND ENERGY: " << data_.total_hb_E << std::endl;
 		T( posename_base_ ) << "HBOND ENERGY/ SEPARATED INTERFACE ENERGY: " << data_.total_hb_E / data_.dG[ total ] << std::endl;
 		if ( compute_packstat_ ) {
@@ -1649,32 +1677,25 @@ void InterfaceAnalyzerMover::report_data(){
 
 	} else {
 		//or report to job
-		current_job->add_string_real_pair( "dSASA_int", data_.dSASA[ total ] );
-		current_job->add_string_real_pair( "dSASA_polar", data_.dSASA[ total ] - data_.dhSASA[ total ] );
-		current_job->add_string_real_pair( "dSASA_hphobic", data_.dhSASA[ total ] );
-		current_job->add_string_real_pair( "dG_separated", data_.dG[ total ] );
-		current_job->add_string_real_pair( "dG_separated/dSASAx100", data_.dG_dSASA_ratio * 100.0 );//purpose of 1000 is to move decimal point to make more significant digits appear in fixed-precision scorefile (0.022 is only 2 digits, 2.234 is more useful)
-		current_job->add_string_real_pair( "delta_unsatHbonds", data_.delta_unsat_hbonds );
-		current_job->add_string_real_pair( "packstat", data_.packstat );
-		current_job->add_string_real_pair( "dG_cross", data_.crossterm_interface_energy );
-		current_job->add_string_real_pair( "dG_cross/dSASAx100", data_.crossterm_interface_energy_dSASA_ratio * 100.0);//as above
-		//current_job->add_string_real_pair("AllGly_dG", data_.gly_dG ); does not help
-		if ( use_centroid_ ) {
-			current_job->add_string_real_pair("cen_dG", data_.centroid_dG );
+		typedef std::map< std::string , core::Real >::iterator it_type;
+		for (it_type it = score_data_.begin(); it != score_data_.end(); it++){
+			current_job->add_string_real_pair(it->first, it->second);
 		}
-		current_job->add_string_real_pair( "nres_int", data_.interface_nres[ total ] );
-		current_job->add_string_real_pair( "per_residue_energy_int", per_residue_data_.regional_avg_per_residue_energy_int[ total ] );
-		current_job->add_string_real_pair( "side1_score", data_.complexed_interface_score[ side1 ] );
-		current_job->add_string_real_pair( "side2_score", data_.complexed_interface_score[ side2 ] );
-		current_job->add_string_real_pair( "nres_all", included_nres_ );
-		current_job->add_string_real_pair( "side1_normalized", ( data_.complexed_interface_score[ side1 ] / ( core::Real( data_.interface_nres[ side1 ] ) ) ) );
-		current_job->add_string_real_pair( "side2_normalized", ( data_.complexed_interface_score[ side2 ] / ( core::Real( data_.interface_nres[ side2 ] ) ) ) );
-		current_job->add_string_real_pair( "complex_normalized", data_.complex_total_energy[ total ] / ( core::Real( included_nres_ ) ) );
-		current_job->add_string_real_pair( "hbond_E_fraction", data_.hbond_E_fraction );
-		current_job->add_string_real_pair( "sc_value", data_.sc_value );
 	}
 }
 
+void InterfaceAnalyzerMover::add_score_info_to_pose( core::pose::Pose & pose ){
+
+	if (score_data_.size() == 0){
+		TR << "No extra scores to add to pose..." << std::endl;
+		return;
+	}
+
+	typedef std::map< std::string , core::Real >::iterator it_type;
+	for (it_type it = score_data_.begin(); it != score_data_.end(); it++){
+		core::pose::setPoseExtraScore(pose, it->first, it->second);
+	}
+}
 
 /// @details prints tracer output of pymol selction of interface residues, also builds a pymol selection that can be used from a file.
 void InterfaceAnalyzerMover::print_pymol_selection_of_interface_residues( core::pose::Pose const & pose, std::set< core::Size > const interface_set )

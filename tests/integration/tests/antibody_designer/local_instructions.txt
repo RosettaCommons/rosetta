@@ -25,13 +25,13 @@ L1 ALLOW
 #L1 CDRSet STAY_NATIVE_CLUSTER - Does not work!!
 #L1 CDRSet INCLUDEONLY L1-11-1 - Ignored!!
 
-L1 CDRSet LENGTH MIN 11
-L1 CDRSet LENGTH MAX 11
+#L1 CDRSet LENGTH MIN 11
+L1 CDRSet LENGTH MAX 15
 
-L1 GraftDesign MINTYPE backrub
-L1 GraftDesign MIN_NEIGHBORS L3
+#L1 GraftDesign MINTYPE backrub
+#L1 GraftDesign MIN_NEIGHBORS L3
 
-H3 GraftDesign MINTYPE relax
+L3 GraftDesign MINTYPE pack
 #H3 GraftDesign MIN_NEIGHBORS L3 H1
 
 #L1 GraftDesign WEIGHT 3

@@ -239,7 +239,9 @@ AntibodyDatabaseManager::load_cdr_poses(
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		CDRSetOptionsOP options = instructions[cdr]->clone();
 
-		if ( !options->load() ) { continue;}
+		if ( !options->load() ) {
+			continue;
+		}
 
 		std::string base_statement =
 			"SELECT\n"

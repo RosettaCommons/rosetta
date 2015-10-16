@@ -150,12 +150,12 @@ insert_cdr_into_antibody(AntibodyInfoCOP ab_info, CDRNameEnum const cdr, core::p
 ///@details all_permutations is a list of vectors corresponding to cdrs_to_design vector.  Essentially, each inner index describes a position in the cdr_set.
 /// Indexes correspond to CDRNameEnum, and whose values correspond to the cdr_set index.  If the value is 0, it means no cdr in set.
 /// Example: <1, 0, 1, 1, 1, 1>.  This is a possible combination to try graft, the second CDR, H2 is not part of the combination.
-void
+utility::vector1<utility::vector1< core::Size > >
 get_all_graft_permutations(
-	utility::vector1<core::Size > & total_cdr_set,
-	utility::vector1<utility::vector1< core::Size > > & all_permutations,
-	utility::vector1< core::Size >current_index,
-	core::Size const cdr_num);
+
+	utility::vector1<utility::vector1< core::Size > > permutations,
+	utility::vector1<core::Size > totals,
+	core::Size const n);
 
 AntibodyDesignProtocolEnum
 design_protocol_to_enum(std::string const & design_type);
@@ -265,6 +265,16 @@ transform_sequence_to_mutation_set(
 	CDRNameEnum const cdr,
 	std::string const & sequence);
 
+///@brief Set the native CDR sequence into the pose datacache
+/// If none is set in the pose, will add it.
+void
+set_native_cdr_sequence(AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose::Pose & pose);
+
+std::string
+get_native_sequence(core::pose::Pose const & pose);
+
+bool
+has_native_sequence(core::pose::Pose const & pose);
 
 } //design
 } //antibody

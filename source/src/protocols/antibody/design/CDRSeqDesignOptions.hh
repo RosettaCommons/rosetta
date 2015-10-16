@@ -18,6 +18,7 @@
 #include <protocols/antibody/AntibodyEnumManager.fwd.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
+#include <protocols/antibody/design/AntibodyDesignEnumManager.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -145,8 +146,11 @@ private:
 	set_cdr_design_fallback_option(std::string const option);
 
 private:
+
+
 	std::string instructions_path_;
-	AntibodyEnumManagerOP ab_manager_;
+	AntibodyEnumManagerCOP ab_manager_;
+	AntibodyDesignEnumManagerCOP design_enum_manager_;
 	CDRSeqDesignOptionsOP cdr_options_;
 	bool default_and_user_;
 

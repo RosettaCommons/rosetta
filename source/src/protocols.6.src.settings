@@ -64,13 +64,15 @@ sources = {
 		"CDRSetOptionsParser",
 	],
 	"protocols/antibody/design":[
+		"AntibodyDesignEnumManager",
 		"AntibodyDesignModeler",
 		"AntibodyDesignMover",
 		"AntibodyDesignProtocol",
 		"AntibodySeqDesignTFCreator",
 		"CDRGraftDesignOptions",
 		"CDRSeqDesignOptions",
-                "MutateFrameworkForCluster",
+        "MutateFrameworkForCluster",
+        "NativeAntibodySeq",
 		"util",
 	],
 	"protocols/antibody/snugdock":[

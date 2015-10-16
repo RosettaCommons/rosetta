@@ -136,6 +136,10 @@ ConservativeDesignOperation::use_pose_sequence_as_native(core::pose::Pose const 
 	pose_sequence_ = pose.sequence();
 }
 
+void
+ConservativeDesignOperation::set_native_sequence(std::string seq) {
+	pose_sequence_ = seq;
+}
 
 void
 ConservativeDesignOperation::load_data_from_db() {

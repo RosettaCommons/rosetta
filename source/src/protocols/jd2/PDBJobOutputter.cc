@@ -116,7 +116,7 @@ void protocols::jd2::PDBJobOutputter::other_pose(
 	out.close();
 
 	//these are separate options because leaving the default on other_pose_scorefile is totally valid, but you can't both specify it on the command line and leave it blank
-	//THIS FUNCTIONALITY IS GOING TO BE DEPRECATED SOON
+	//THIS FUNCTIONALITY IS GOING TO BE DEPRECATED SOON. WHY???
 	if ( basic::options::option[ basic::options::OptionKeys::run::other_pose_to_scorefile ].value() ) {
 		scorefile(job, pose, tag, "", basic::options::option[ basic::options::OptionKeys::run::other_pose_scorefile ].value());
 	}

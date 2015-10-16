@@ -14,7 +14,7 @@
 #include <protocols/interface/util.hh>
 
 #include <core/pose/util.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
+#include <protocols/toolbox/CalcInterNeighborGroup.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 
 #include <utility/vector1.hh>
@@ -36,7 +36,7 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	using namespace core;
 	using namespace utility;
 	using namespace core::pose::metrics;
-	using namespace protocols::toolbox::pose_metric_calculators;
+	using namespace protocols::toolbox;
 
 	typedef std::set< Size > one_group;
 	typedef std::pair< one_group, one_group > group_pair;
@@ -85,6 +85,7 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	group_set chain_groups;
 	chain_groups.push_back( side_pairs );
 
+	/*
 	std::string calc = "interface_res_calc" ;
 	if ( ! CalculatorFactory::Instance().check_calculator_exists( calc ) ) {
 		CalculatorFactory::Instance().register_calculator(  calc, PoseMetricCalculatorOP( new InterGroupNeighborsCalculator(chain_groups, interface_distance ) ) );
@@ -94,7 +95,12 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	basic::MetricValue< std::set<Size> > mv_interface_set;
 	pose.metric(  calc, "neighbors", mv_interface_set);
 	//set_interface_set( mv_interface_set.value() );
-	std::set<Size> interface_residues =  mv_interface_set.value();
+
+	*/
+
+	CalcInterNeighborGroup calc = CalcInterNeighborGroup(chain_groups, interface_distance);
+	calc.compute(pose);
+	std::set<Size> interface_residues = calc.neighbors();
 
 	vector1<bool> residues(pose.total_residue(), false);
 	std::set<Size>::const_iterator it, end ;

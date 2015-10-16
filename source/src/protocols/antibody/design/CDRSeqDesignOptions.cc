@@ -17,6 +17,7 @@
 #include <protocols/antibody/AntibodyEnumManager.hh>
 #include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
+#include <protocols/antibody/design/AntibodyDesignEnumManager.hh>
 
 #include <utility/string_util.hh>
 #include <utility/py/PyAssert.hh>
@@ -69,7 +70,6 @@ CDRSeqDesignOptions::CDRSeqDesignOptions(CDRSeqDesignOptions const & src):
 	fallback_strategy_(src.fallback_strategy_)
 
 {
-
 }
 
 CDRSeqDesignOptions::~CDRSeqDesignOptions() {}
@@ -116,15 +116,33 @@ CDRSeqDesignOptions::clone() const {
 	return CDRSeqDesignOptionsOP( new CDRSeqDesignOptions(*this) );
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////// PARSER ///////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 CDRSeqDesignOptionsParser::CDRSeqDesignOptionsParser():
 	utility::pointer::ReferenceCount(),
 	default_and_user_(false)
 {
-	ab_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager() );
+	ab_manager_ = AntibodyEnumManagerCOP( new AntibodyEnumManager() );
+	design_enum_manager_ = AntibodyDesignEnumManagerCOP( new AntibodyDesignEnumManager());
 }
 
 CDRSeqDesignOptionsParser::~CDRSeqDesignOptionsParser() {}
@@ -143,7 +161,7 @@ CDRSeqDesignOptionsOP
 CDRSeqDesignOptionsParser::parse_default_and_user_options(CDRNameEnum cdr, std::string filename) {
 
 	cdr_options_ = CDRSeqDesignOptionsOP( new CDRSeqDesignOptions(cdr) );
-	std::string path = basic::options::option [basic::options::OptionKeys::antibody::design::base_instructions]();
+	std::string path = basic::options::option [basic::options::OptionKeys::antibody::design::base_cdr_instructions]();
 	default_and_user_ = true;
 	parse_options(cdr, path);
 	parse_options(cdr, filename);
@@ -283,12 +301,12 @@ CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const name, vecto
 		cdr_options_->design(false);
 	} else if ( name == "ALLOW" ) {
 		cdr_options_->design(true);
-	} else if ( name=="PROFILES" || name == "PROFILE" || name == "STRATEGY" || name == "PRIMARY_STRATEGY" || name == "PRIMARYSTRATEGY" ) {
+	} else if ( name=="PROFILES" || name == "PROFILE" || name == "STRATEGY" || name == "PRIMARY_STRATEGY" || name == "PRIMARYSTRATEGY" || name == "PRIMARY") {
 		check_line_len(lineSP, 4);
 		std::string option = lineSP[4];
 		boost::to_upper(option);
 		set_cdr_design_primary_option(option);
-	} else if ( name=="FALLBACK_STRATEGY" || name == "FALLBACKSTRATEGY" ) {
+	} else if ( name=="FALLBACK_STRATEGY" || name == "FALLBACKSTRATEGY" || name == "FALLBACK") {
 		check_line_len(lineSP, 4);
 		std::string option = lineSP[4];
 		boost::to_upper(option);
@@ -301,21 +319,19 @@ CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const name, vecto
 void
 CDRSeqDesignOptionsParser::set_cdr_design_primary_option(std::string const option) {
 
-
-	cdr_options_->design_strategy(seq_design_strategy_to_enum( option ));
+	cdr_options_->design_strategy(design_enum_manager_->seq_design_strategy_string_to_enum( option ));
 
 }
 
 void
 CDRSeqDesignOptionsParser::set_cdr_design_fallback_option(const std::string option) {
 
-	SeqDesignStrategyEnum strategy= seq_design_strategy_to_enum( option );
-
+	SeqDesignStrategyEnum strategy= design_enum_manager_->seq_design_strategy_string_to_enum( option );
 	if ( strategy == seq_design_profiles || strategy == seq_design_profile_sets || strategy == seq_design_profile_sets_combined ) {
 		utility_exit_with_message("SeqDesign Fallback Strategy cannot be profile-based");
 	} else {
-		cdr_options_->design_strategy(strategy);
-		//TR << "Setting fallback " << seq_design_strategy_to_string(strategy) << std::endl;
+		cdr_options_->fallback_strategy(strategy);
+
 	}
 
 }

@@ -13,6 +13,7 @@
 
 #include <protocols/antibody/design/AntibodyDesignProtocol.hh>
 #include <protocols/antibody/design/AntibodyDesignProtocolCreator.hh>
+#include <protocols/antibody/design/util.hh>
 
 #include <protocols/antibody/database/AntibodyDatabaseManager.hh>
 #include <protocols/antibody/design/AntibodyDesignMover.hh>
@@ -45,6 +46,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/simple_moves/DeleteChainsMover.hh>
+#include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
 //Options
 #include <basic/options/option.hh>
@@ -126,8 +128,8 @@ AntibodyDesignProtocol::read_cmd_line_options(){
 
 	remove_antigen_ = option [OptionKeys::antibody::design::remove_antigen]();
 
-	if ( basic::options::option [basic::options::OptionKeys::antibody::design::instructions].user() ) {
-		instruction_file_ = basic::options::option [basic::options::OptionKeys::antibody::design::instructions]();
+	if ( basic::options::option [basic::options::OptionKeys::antibody::design::cdr_instructions].user() ) {
+		instruction_file_ = basic::options::option [basic::options::OptionKeys::antibody::design::cdr_instructions]();
 		TR << "Instructions file: " << instruction_file_ << std::endl;
 	}
 
@@ -220,7 +222,7 @@ AntibodyDesignProtocol::set_instruction_file_path(std::string instruction_file){
 }
 
 void
-AntibodyDesignProtocol::model_post_design(core::pose::Pose& pose){
+AntibodyDesignProtocol::model_post_design(core::pose::Pose & pose){
 
 	//If no constraints are set - add constraints to pose CDRs.
 	core::Real start = scorefxn_->score(pose);
@@ -236,7 +238,7 @@ AntibodyDesignProtocol::model_post_design(core::pose::Pose& pose){
 		snug->apply(pose);
 		core::Real post_snugdock = scorefxn_->score(pose);
 		TR <<"start:            " << start <<std::endl;
-		TR <<"postSD:        " << post_snugdock << std::endl;
+		TR <<"postSD:           " << post_snugdock << std::endl;
 	}
 
 	if ( run_relax_ ) {
@@ -255,14 +257,14 @@ AntibodyDesignProtocol::model_post_design(core::pose::Pose& pose){
 		core::Real post_modeling = scorefxn_->score(pose);
 
 		TR <<"start:            " << start <<std::endl;
-		TR <<"postDsREL: " << post_modeling << std::endl;
+		TR <<"postDsREL:        " << post_modeling << std::endl;
 	}
 }
 
 void
 AntibodyDesignProtocol::setup_design_mover() {
 
-	graft_designer_ = AntibodyDesignMoverOP( new AntibodyDesignMover() );
+	graft_designer_ = AntibodyDesignMoverOP( new AntibodyDesignMover( ab_info_) );
 	graft_designer_->set_scorefunction(scorefxn_);
 	graft_designer_->set_scorefunction_min(scorefxn_min_);
 	graft_designer_->set_instruction_file(instruction_file_);
@@ -308,16 +310,13 @@ AntibodyDesignProtocol::output_ensemble(vector1<core::pose::PoseOP> ensemble, co
 	protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job());
 	for ( core::Size i = range_start; i <= range_end; ++i ) {
 		//Filter here
-		std::string tag = prefix+"_"+utility::to_string(i)+"_";
+		std::string tag = prefix+"_"+utility::to_string(i);
 		TR << "Outputting ensemble " << i << std::endl;
 		add_cluster_comments_to_pose( *(ensemble[ i ]), ab_info_ );
 		check_fix_aho_cdr_numbering(ab_info_, *(ensemble[ i ]) );
 
 		//Note that this does NOT write to a scorefile by default.  To pass it to the scorefile,
-		// you need -other_pose_to_scorefile.  However, this does NOT work with MPI.
-		// To make it work with MPI, we will need the PDBJobOutputter or whatever, to STORE the pose and tag until it is done.
-		// I don't have time right now to make that work nicely across all of the JobOutputters and MPIJobDistributors.
-		// It would, however, be incredibly useful across the board.
+		// you need -other_pose_to_scorefile.  This is now working in MPI.
 		protocols::jd2::JobDistributor::get_instance()->job_outputter()->other_pose(current_job, *(ensemble[i]), tag);
 	}
 }
@@ -332,6 +331,7 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 	// utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
 	//}
 
+	using namespace protocols::analysis;
 
 	ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) );
 	ab_info_->show(std::cout);
@@ -385,6 +385,26 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 	//Reorder pose ensemble before output
 	//reorder_poses(final_pose_ensemble); Need debugging - no time to run debugger
 
+	protocols::analysis::InterfaceAnalyzerMoverOP analyzer( new protocols::analysis::InterfaceAnalyzerMover(get_dock_chains_from_ab_dock_chains(ab_info_, "A_LH"), false, scorefxn_, false , true, false) );
+
+	if (run_snugdock_ || run_relax_){
+		for ( core::Size i = 1; i <= final_pose_ensemble.size(); ++i ) {
+			ab_info_->setup_CDR_clusters( *final_pose_ensemble[i], false );
+			add_cluster_comments_to_pose( *final_pose_ensemble[i], ab_info_ );
+			check_fix_aho_cdr_numbering( ab_info_, *final_pose_ensemble[i] );
+
+			if (option [ OptionKeys::antibody::design::run_interface_analyzer ]()) {
+				analyzer->init_on_new_input(*final_pose_ensemble[i]);
+				analyzer->apply(*final_pose_ensemble[i]);
+				analyzer->add_score_info_to_pose(*final_pose_ensemble[i]);
+			}
+
+			scorefxn_->score( *final_pose_ensemble[i] );
+			output_ensemble( final_pose_ensemble, 1, final_pose_ensemble.size(), "pre_model" );
+		}
+	}
+
+
 	TR << "Running Post-Graft modeling" << std::endl;
 	for ( core::Size i = 1; i <= final_pose_ensemble.size(); ++i ) {
 		this->model_post_design(*final_pose_ensemble[ i ]);
@@ -393,10 +413,16 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 	TR <<"Native: "<< native_score << std::endl;
 	for ( core::Size i = 1; i <= final_pose_ensemble.size(); ++i ) {
 		TR << "Pose " << i << std::endl;
-		scorefxn_->show(TR, *final_pose_ensemble[ i ]);
-		ab_info_->setup_CDR_clusters(*final_pose_ensemble[ i ], false);
-		add_cluster_comments_to_pose(*final_pose_ensemble[ i ], ab_info_);
-		check_fix_aho_cdr_numbering(ab_info_, *final_pose_ensemble[ i ]);
+		scorefxn_->show( TR, *final_pose_ensemble[ i ] );
+		ab_info_->setup_CDR_clusters( *final_pose_ensemble[ i ], false );
+		add_cluster_comments_to_pose( *final_pose_ensemble[ i ], ab_info_ );
+		check_fix_aho_cdr_numbering( ab_info_, *final_pose_ensemble[ i ] );
+
+		if (option [ OptionKeys::antibody::design::run_interface_analyzer ]()) {
+			analyzer->init_on_new_input(*final_pose_ensemble[i]);
+			analyzer->apply(*final_pose_ensemble[i]);
+			analyzer->add_score_info_to_pose(*final_pose_ensemble[i]);
+		}
 
 	}
 

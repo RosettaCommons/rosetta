@@ -7,16 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file /src/protocols/toolbox/PoseMetricCalculators/InterGroupNeighborsCalculator.hh
-/// @brief This is complicated, so pay attention.  This calculator is meant for finding interfaces between protein domains - like protein-protein interfaces but within a protein.  It's more flexible than that, though.  You define groups of residues within a protein (say, the N and C terminal domains).  You then define which pairs of groups you are interested in.  This calculator returns the union of the sets of residues at the interfaces between these domains/groups.  This calculator contains a superset of the functionality of some of the other calculators, but is less efficient in simple cases.  The pose does NOT have to have been scored.
+/// @file /src/protocols/toolbox/CalcInterNeighborGroup.hh
+/// @brief This calculator is meant for finding interfaces between protein domains - like protein-protein interfaces but within a protein.  It's more flexible than that, though.  You define groups of residues within a protein (say, the N and C terminal domains).  You then define which pairs of groups you are interested in.  This calculator returns the union of the sets of residues at the interfaces between these domains/groups.  This calculator contains a superset of the functionality of some of the other calculators, but is less efficient in simple cases.  The pose does NOT have to have been scored.
 /// @author Steven Lewis
+/// @author Jared Adolf-Bryfogle (split from IGNC pose calculator)
 
-#ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_InterGroupNeighborsCalculator_hh
-#define INCLUDED_protocols_toolbox_pose_metric_calculators_InterGroupNeighborsCalculator_hh
+#ifndef INCLUDED_protocols_toolbox_CalcInterNeighborGroup_hh
+#define INCLUDED_protocols_toolbox_CalcInterNeighborGroup_hh
+
+#include <protocols/toolbox/CalcInterNeighborGroup.fwd.hh>
 
 //Unit headers
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.fwd.hh>
 #include <protocols/toolbox/CalcInterNeighborGroup.fwd.hh>
 
 
@@ -24,23 +26,20 @@
 #include <basic/MetricValue.fwd.hh>
 
 //Utility headers
-#include <basic/options/option.hh>
 #include <core/types.hh>
 //#include <utility/vector1.hh>
 
 //C++ headers
 #include <set>
-#include <utility> //pair
+#include <utility>
+#include <utility/pointer/ReferenceCount.hh>
 
 // option key includes
-#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
-
 #include <utility/vector1.hh>
 
 
 namespace protocols {
 namespace toolbox {
-namespace pose_metric_calculators {
 
 
 /// @details This is complicated, so pay attention.  You define groups of residues within a protein (say, the N and C terminal domains).  You then define which pairs of groups you are interested in.  This calculator returns the union of the sets of residues at the interfaces between these domains/groups.  Functionally it is intended for "interface design" at the non-chainbreak interface between domains of multidomain proteins.  It contains a superset of the functionality of some of the other calculators (so I'll be obsoleting them, maybe?).  The pose does NOT have to have been scored.
@@ -50,42 +49,55 @@ namespace pose_metric_calculators {
 @li "neighbors" returns a std::set<core::Size> of the neighbors calculated between the group pairs.
 @li "num_neighbors" returns the size of the neighbors set.
 **/
-class InterGroupNeighborsCalculator : public core::pose::metrics::StructureDependentCalculator {
+class CalcInterNeighborGroup : public utility::pointer::ReferenceCount {
 
 public:
-	typedef core::pose::metrics::StructureDependentCalculator parent;
 	typedef std::set< core::Size > one_group;
 	typedef std::pair< one_group, one_group > group_pair;
 	typedef utility::vector1< group_pair > group_set;
 
+
+	CalcInterNeighborGroup();
+
 	/// @brief
-	InterGroupNeighborsCalculator(
+	CalcInterNeighborGroup(
 		group_set const & groups,
-		core::Real dist_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff]
+		core::Real dist_cutoff = 10.0
 	);
 
-	InterGroupNeighborsCalculator( InterGroupNeighborsCalculator const & calculator );
+	CalcInterNeighborGroup( CalcInterNeighborGroup const & calculator );
 
-	~InterGroupNeighborsCalculator();
+	~CalcInterNeighborGroup();
 
-	virtual core::pose::metrics::PoseMetricCalculatorOP clone() const;
+	void
+	compute( core::pose::Pose const & pose );
 
-	//accessors for non-recomputed input data
-	/// @brief return groups
-	group_set const & groups() const;
+
+	void
+	dist_cutoff(core::Real cutoff){ dist_cutoff_ = cutoff; }
 
 	/// @brief return distance cutoff
-	core::Real dist_cutoff() const;
+	core::Real
+	dist_cutoff() const { return dist_cutoff_; }
 
-protected:
 
-	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
-	virtual std::string print( std::string const & key ) const;
-	virtual void recompute( core::pose::Pose const & pose );
+	group_set const &
+	groups() const { return groups_; }
+
+	void
+	groups( group_set groups) { groups_ = groups; }
+
+
+	//accessors
+
+	core::Real
+	num_neighbors(){ return num_neighbors_; }
+
+	std::set< core::Size >
+	neighbors(){ return neighbors_; }
+
 
 private:
-
-	CalcInterNeighborGroupOP calc_inter_group_;
 
 	/// @brief stores the input - whose neighbors are we finding?
 	group_set groups_;
@@ -101,8 +113,7 @@ private:
 
 };
 
-} // namespace pose_metric_calculators
 } // namespace toolbox
 } // namespace protocols
 
-#endif //INCLUDED_protocols_toolbox_PoseMetricCalculators_InterGroupNeighborsCalculator_HH
+#endif //INCLUDED_protocols_toolbox_CalcInterNeighborGroup_HH
