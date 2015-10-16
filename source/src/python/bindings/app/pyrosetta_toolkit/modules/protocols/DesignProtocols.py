@@ -93,14 +93,10 @@ def mutate_residue(pose, mutant_position, mutant_aa,
 
     # prevent residues from packing by setting the per-residue "options" of
     #    the PackerTask
-    center = pose.residue(mutant_position).nbr_atom_xyz()
-    for i in range(1, pose.total_residue() + 1):
-        # only pack the mutating residue and any within the pack_radius
-        if not i == mutant_position or center.distance_squared(
-                pose.residue(i).nbr_atom_xyz()) > pack_radius**2:
-            task.nonconst_residue_task(i).prevent_repacking()
+    restrict_non_nbrs_from_repacking(pose, mutant_position, task, pack_radius)
 
     # apply the mutation and pack nearby residues
+    print task
     packer = PackRotamersMover(pack_scorefxn, task)
     packer.apply(pose)
 
@@ -108,14 +104,22 @@ def restrict_non_nbrs_from_repacking(pose, res, task, pack_radius):
     """
     Evan's nbr detection in a function.  Should go in C++
     """
-    
-    center = pose.residue(res).nbr_atom_xyz()
+
+    center = pose.residue( res ).xyz( pose.residue( res ).nbr_atom() );
+    print "Res: pack radius: "+repr(pack_radius)
     for i in range(1, pose.total_residue() + 1):
         # only pack the mutating residue and any within the pack_radius
-        if not i == res or center.distance_squared(
-            pose.residue(i).nbr_atom_xyz()) > pack_radius**2:
-            task.nonconst_residue_task(i).prevent_repacking()
-            
+
+            nbr = pose.residue( i ).xyz( pose.residue( i ).nbr_atom() );
+            dist = nbr.distance(center)
+            if i != res and dist > pack_radius:
+                task.nonconst_residue_task(i).prevent_repacking()
+            else:
+                task.restrict_to_repacking()
+
+    print task
+    return task
+
 class DesignProtocols(ProtocolBaseClass):
     def __init__(self, pose, score_class, input_class, output_class):
         ProtocolBaseClass.__init__(self, pose, score_class, input_class, output_class)
