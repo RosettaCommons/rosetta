@@ -1,11 +1,12 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
+// :notabs=false:tabSize=4:indentsize=4:
 //
-// (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available under license.
-// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) copyright rosetta commons member institutions.
+// (c) this file is part of the rosetta software suite and is made available under license.
+// (c) the rosetta software is developed by the contributing members of the rosetta commons.
+// (c) for more information, see http://www.rosettacommons.org. questions about this can be
+// (c) addressed to university of washington uw techtransfer, email: license@u.washington.edu.
 
 /// @file HelixBundleFeatures.hh
 /// @brief
@@ -46,6 +47,22 @@ struct FragmentPair
 	core::Real fa_attr;
 	core::Real fa_fraction;
 	core::Real crossing_angle;
+
+	bool
+	operator == ( FragmentPair const & other ) const
+	{
+		return fragment_1 == other.fragment_1 && fragment_2 == other.fragment_2;
+	}
+
+	friend
+	bool
+	operator <(
+		FragmentPair const & a,
+		FragmentPair const & b
+	)
+	{
+		return a.fragment_1 < b.fragment_1;
+	}
 };
 
 typedef std::map< std::pair<core::Size, core::Size>, FragmentPair> PairMap;
@@ -63,7 +80,7 @@ public:
 		return "HelixBundleFeatures";
 	};
 
-	/// @brief generate the table schemas and write them to the database
+	///@brief generate the table schemas and write them to the database
 	virtual
 	void
 	write_schema_to_db(
@@ -80,18 +97,12 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	/// @brief return the set of features reporters that are required to
+	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
 
-	bool
-	overlapping(
-		HelicalFragmentOP const & fragment_1,
-		HelicalFragmentOP const & fragment_2
-	);
-
-	/// @brief collect all the feature data for the pose
+	///@brief collect all the feature data for the pose
 	virtual
 	core::Size
 	report_features(
@@ -102,45 +113,22 @@ public:
 	);
 
 	utility::vector1<HelicalFragmentOP>
-	get_helix_fragments(
+	get_helices(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
 	);
 
-	void
-	calc_pc_and_com(
+	bool
+	validate_bundle(
 		core::pose::Pose const & pose,
-		HelicalFragmentOP fragment
+		utility::vector1<HelicalFragment> const & helices
 	);
 
-	/// @brief create a bundle-pose from the combination of fragments
-	/// and record the "interface" SASA for each helix against the
-	/// rest of the bundle
 	void
-	record_helix_sasas(
-		core::pose::Pose const & pose,
-		std::set<HelicalFragmentOP> const & frag_set
-	);
-
-	PairMap
-	get_helix_pairs(
-		core::pose::Pose const & pose,
-		utility::vector1<HelicalFragmentOP> helix_fragments
-	);
-
-	/// @brief calculate the shared fa_attr for each pair of helices
-	/// in the bundle
-	void
-	calc_fa_energy(
-		core::pose::Pose const & pose,
-		FragmentPair & fragment_pair
-	);
-
-	/// @brief calculate the crossing angles of the helix fragment in the bundle set
-	void
-	calc_crossing_angles(
-		core::pose::Pose const & pose,
-		FragmentPair & fragment_pair
+	write_bundle_to_db(
+		protocols::features::StructureID const & struct_id,
+		utility::sql_database::sessionOP db_session,
+		utility::vector1<HelicalFragment> const & bundle
 	);
 
 private:
@@ -149,10 +137,10 @@ private:
 	core::Real helix_cap_dist_cutoff_;
 
 	//number of helices in the bundle
-	core::Size bundle_size_;
+	core::Size num_helices_per_bundle_;
 
 	//number of residues in each helix
-	core::Size helix_size_;
+	core::Size min_helix_size_;
 
 	//minimum residue_normalized fa_attr between two helix fragments in order to be considered
 	//interacting
@@ -160,9 +148,6 @@ private:
 
 	//minimum fraction of
 	core::Real min_interacting_set_fraction_;
-
-	//maximum degrees off parallel for crossing angle
-	core::Real max_degrees_off_parallel_;
 
 	protocols::simple_filters::InterfaceSasaFilter sasa_filter_;
 

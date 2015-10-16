@@ -77,6 +77,16 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/);
 
+	void
+	calculate_angles(
+		utility::vector1< numeric::xyzVector<core::Real> > const & ss1_coords,
+		utility::vector1< numeric::xyzVector<core::Real> > const & ss2_coords,
+		core::Real & distance, /*output*/
+		core::Real & hoist_angle_degrees, /*output*/
+		core::Real & packing_angle_degrees, /*output*/
+		core::Real & meridian_angle_degrees /*output*/
+	);
+
 	utility::vector1<SecondaryStructureSegment>
 	get_ss_segments(
 		StructureID struct_id,

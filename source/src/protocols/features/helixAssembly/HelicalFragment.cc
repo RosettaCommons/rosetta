@@ -34,6 +34,8 @@ namespace protocols {
 namespace features {
 namespace helixAssembly {
 
+HelicalFragment::HelicalFragment():start_(0),end_(0){}
+
 HelicalFragment::HelicalFragment(core::Size start, core::Size end):
 	start_(start),
 	end_(end)
@@ -52,6 +54,18 @@ numeric::xyzVector<core::Real> HelicalFragment::com() const{ return com_; }
 void HelicalFragment::com(numeric::xyzVector<core::Real> com)
 {
 	this->com_ = com;
+}
+
+numeric::xyzVector<core::Real> HelicalFragment::p0() const{ return p0_; }
+void HelicalFragment::p0(numeric::xyzVector<core::Real> p0)
+{
+	this->p0_ = p0;
+}
+
+numeric::xyzVector<core::Real> HelicalFragment::p1() const{ return p1_; }
+void HelicalFragment::p1(numeric::xyzVector<core::Real> p1)
+{
+	this->p1_ = p1;
 }
 
 numeric::xyzVector<core::Real> HelicalFragment::principal_component() const { return principal_component_; }

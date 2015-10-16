@@ -27,10 +27,10 @@
 
 // Devel
 #include <devel/init.hh>
-#include <devel/sewing/DeleteAllRotamerSetOperation.hh>
-#include <devel/sewing/NativeResidueReader.hh>
-#include <devel/sewing/BridgeFragmentMover.hh>
-#include <devel/sewing/LoopCreationMover.hh>
+#include <protocols/sewing/DeleteAllRotamerSetOperation.hh>
+#include <protocols/sewing/NativeResidueReader.hh>
+#include <protocols/sewing/BridgeFragmentMover.hh>
+#include <protocols/sewing/LoopCreationMover.hh>
 
 // Protocols
 #include <protocols/simple_moves/MinPackMover.hh>
@@ -73,7 +73,7 @@ main( int argc, char * argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pack::task;
-	using namespace devel::sewing;
+	using namespace protocols::sewing;
 
 	option.add( HelixAssemblyDesigner::num_residues_to_match, "Number of residues to match before and after the jump");
 	option.add( HelixAssemblyDesigner::num_helices_in_repeat, "Number of helices in the repeating unit");
@@ -153,7 +153,7 @@ main( int argc, char * argv [] )
 	core::Size num_helices_in_repeat = option[HelixAssemblyDesigner::num_helices_in_repeat].def(0);
 	bool autodetect_loops = option[HelixAssemblyDesigner::autodetect_loops].def(false);
 
-	devel::sewing::LoopCreationMoverOP loop_creation_mover;
+	protocols::sewing::LoopCreationMoverOP loop_creation_mover;
 	if(option[loops::loop_file].user())
 	{
 		if(autodetect_loops){
@@ -162,7 +162,7 @@ main( int argc, char * argv [] )
 		std::string loops_file = option[loops::loop_file]()[1];
 		protocols::loops::Loops loops_to_close = protocols::loops::Loops(loops_file);
 		loop_creation_mover =
-			new devel::sewing::LoopCreationMover(
+			new protocols::sewing::LoopCreationMover(
 				loops_to_close, loop_sizes, max_radius, max_rms, min_rms, num_residues_to_match, num_helices_in_repeat, nat_ro_map);
 	}
 	else
@@ -171,7 +171,7 @@ main( int argc, char * argv [] )
 			utility_exit_with_message("You must either specify the autodetect_loops flag or provide a loops file with loops::loop_file");
 		}
 		loop_creation_mover =
-			new devel::sewing::LoopCreationMover(
+			new protocols::sewing::LoopCreationMover(
 				loop_sizes, max_radius, max_rms, min_rms, num_residues_to_match, num_helices_in_repeat, nat_ro_map);
 	}
 

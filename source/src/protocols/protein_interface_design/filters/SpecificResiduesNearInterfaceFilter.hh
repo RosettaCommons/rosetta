@@ -66,6 +66,8 @@ private:
 
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::Size rb_jump_;
+	// TODO make this work
+	//core::Real interface_distance_threshold_;
 };
 
 } // filters

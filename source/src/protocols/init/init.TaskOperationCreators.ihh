@@ -39,6 +39,9 @@
 
 #include <protocols/denovo_design/task_operations/ConsensusLoopDesignCreator.hh>
 
+//TODO move this elsewhere!
+#include <protocols/sewing/sampling/AssemblyConstraintsMover.hh>
+
 #include <protocols/toolbox/task_operations/CrystalContactsOperationCreator.hh>
 #include <protocols/toolbox/task_operations/DatabaseThreadCreator.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperationCreator.hh>

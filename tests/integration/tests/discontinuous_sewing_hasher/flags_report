@@ -1,0 +1,6 @@
+-parser:protocol report_features.xml
+#-l inputs.txt.short
+-l inputs.txt
+-ignore_unrecognized_res true
+-delete_old_poses true 
+-out:path:all output

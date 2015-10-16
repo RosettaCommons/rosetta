@@ -3,7 +3,7 @@
 # Project settings for rosetta sources
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
-# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) The Rosetta software is protocolsoped by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
@@ -127,6 +127,49 @@ sources = {
 		"BundleParameters",
 		"BundleParametersSet",
 	],
+	"protocols/sewing/conformation": [
+		"Assembly",
+		"AssemblyFactory",
+		"ContinuousAssembly",
+		"DisembodiedAssembly",
+		"Model",
+    ],
+	"protocols/sewing/hashing": [
+		"Hasher",
+    ],
+	"protocols/sewing/scoring": [
+        "BlosumScorer",
+        "ClashScorer",
+        "InterModelMotifScorer",
+        "MotifScorer",
+		"PartnerMotifScorer",
+    ],
+	"protocols/sewing/sampling": [
+		"AddStartnodeFragments",
+		"AppendAssemblyMover",
+		"AssemblyMover",
+		"AssemblyConstraintsMover",
+        "GivenPathAssemblyMover",
+        "GreedyAssemblyMover",
+        "MonteCarloAssemblyMover",
+        #"NodeConstraintAssemblyMover",
+		"SewGraph",
+		#"LoophashAssemblyMover",
+		#"RehashAssemblyMover",
+		"RepeatAssemblyMover",
+	],
+	"protocols/sewing/sampling/requirements": [
+        "GlobalLengthRequirement",
+        "RequirementSet",
+        "RequirementFactory",
+        "ResidueRetentionRequirement",
+        "SegmentDsspRequirement",
+        "SegmentLengthRequirement",
+    ],
+	"protocols/sewing/util": [
+		"io",
+		"util",
+    ],
 }
 include_path = [
 ]
@@ -135,6 +178,7 @@ library_path = [
 libraries = [
 ]
 subprojects = [
+	"protocols_c.4",
 	"protocols_b.4",
 	"protocols.3",
 	"protocols_a.2",

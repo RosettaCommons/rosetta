@@ -218,6 +218,9 @@ sources = {
 		"rna_thread",
 		"erraser_minimizer",
 	],
+	"public/sewing": [
+		"sewing_hasher",
+	],
 	"public/surface_docking": [
 		"surface_docking",
 	],

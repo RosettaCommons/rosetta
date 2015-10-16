@@ -45,6 +45,7 @@ class HelicalFragment : public utility::pointer::ReferenceCount{
 
 public:
 
+	HelicalFragment();
 	HelicalFragment(core::Size start, core::Size end);
 
 	~HelicalFragment();
@@ -63,6 +64,12 @@ public:
 	void com(numeric::xyzVector<core::Real> com);
 	numeric::xyzVector<core::Real> com() const;
 
+	void p0(numeric::xyzVector<core::Real> p0);
+	numeric::xyzVector<core::Real> p0() const;
+
+	void p1(numeric::xyzVector<core::Real> p1);
+	numeric::xyzVector<core::Real> p1() const;
+
 	void sasa(core::Real sasa);
 	core::Real sasa() const;
 
@@ -78,6 +85,8 @@ private:
 	core::Real sasa_;
 	numeric::xyzVector<core::Real> com_;
 	numeric::xyzVector<core::Real> principal_component_;
+	numeric::xyzVector<core::Real> p0_;
+	numeric::xyzVector<core::Real> p1_;
 };
 
 }

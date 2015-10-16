@@ -14,11 +14,11 @@
 /// @author Tim Jacobs
 
 // Unit headers
-#include <devel/sewing/ProteinAssemblyGraph.hh>
-#include <devel/sewing/ThreeHelixGraph.hh>
-#include <devel/sewing/ThreeHelixRepeatGraph.hh>
-#include <devel/sewing/FourHelixGraph.hh>
-#include <devel/sewing/FourHelixRepeatGraph.hh>
+#include <protocols/sewing/ProteinAssemblyGraph.hh>
+#include <protocols/sewing/ThreeHelixGraph.hh>
+//#include <protocols/sewing/ThreeHelixRepeatGraph.hh>
+#include <protocols/sewing/FourHelixGraph.hh>
+#include <protocols/sewing/FourHelixRepeatGraph.hh>
 
 // Core headers
 #include <core/types.hh>
@@ -77,7 +77,7 @@ main( int argc, char * argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core;
-	using namespace devel::sewing;
+	using namespace protocols::sewing;
 
 	option.add( HelicalAssembly::num_helices, "Number of helices in final structure");
 	option.add( HelicalAssembly::max_rmsd, "Maximum RMSD for a pair of bundles");
@@ -110,7 +110,7 @@ main( int argc, char * argv [] )
 	ProteinAssemblyGraphOP graph;
 	if(find_cycles){
 		if(node_size==3){
-			graph = new ThreeHelixRepeatGraph(db_session);
+			//graph = new ThreeHelixRepeatGraph(db_session);
 		}
 		else if(node_size==4){
 			graph = new FourHelixRepeatGraph(db_session);
@@ -124,7 +124,7 @@ main( int argc, char * argv [] )
 			graph = new ThreeHelixGraph(db_session);
 		}
 		else if(node_size==4){
-			graph = new FourHelixGraph(db_session);
+			//graph = new FourHelixGraph(db_session);
 		}
 		else{
 			utility_exit_with_message("Sewing protocol only currently supports 3 and 4 helix nodes.");

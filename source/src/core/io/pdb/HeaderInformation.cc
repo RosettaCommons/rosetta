@@ -448,7 +448,8 @@ HeaderInformation::store_compound(std::string const & compound) {
 		TR.Error
 			<< "Attempting to add compound to header information "
 			<< "but no compund token was found in '" << compound << "'" << endl;
-		utility_exit();
+		return;
+		//utility_exit();
 	}
 	CompoundToken token(
 		string_to_compound_token(compound.substr(t_begin,t_end - t_begin)));

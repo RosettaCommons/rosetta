@@ -124,6 +124,8 @@ sources = {
 		"ResID",
 	],
 	"devel/loop_creation": [
+		"AddLoopResidues",
+		"CartminLoopCloser",
 		"CCDLoopCloser",
 		"FragmentLoopInserter",
 		"IterativeLoophashLoopInserter",
@@ -191,20 +193,6 @@ sources = {
 	"devel/residual_dipolar_coupling": [
 		"RDC_energies",
 		"RDC_main",
-	],
-	"devel/sewing": [
-		"DeleteAllRotamerSetOperation",
-		"FourHelixGraph",
-		"FourHelixRepeatGraph",
-		"NativeResidueReader",
-		"NativeRotamerFileLoader",
-		"Node",
-		"ProteinAssemblyGraph",
-		"SewingDesigner",
-		#"SmotifGraph",
-		"ThreeHelixGraph",
-		"ThreeHelixRepeatGraph",
-		"util",
 	],
         "devel/splice": [
 				"AddFoldUnit",

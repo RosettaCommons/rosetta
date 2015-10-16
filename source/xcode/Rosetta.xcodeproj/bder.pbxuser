@@ -1,0 +1,354 @@
+// !$*UTF8*$!
+{
+	3B7A001214977BC300905864 /* rosetta_static */ = {
+		activeExec = 0;
+	};
+	3B7A001D149782E500905864 /* rosetta_scripts_static */ = {
+		activeExec = 0;
+		executables = (
+			F9C94E3F17384A31003A05DE /* rosetta_scripts_static */,
+		);
+	};
+	3B945C71148C9D5200C2FBE5 /* protocols_a.2 */ = {
+		activeExec = 0;
+	};
+	3B946126148CA62A00C2FBE5 /* protocols.3 */ = {
+		activeExec = 0;
+	};
+	3B9461A1148CB2B700C2FBE5 /* protocols_a.4 */ = {
+		activeExec = 0;
+	};
+	3B94630F148CBAD200C2FBE5 /* protocols_b.4 */ = {
+		activeExec = 0;
+	};
+	3B94635A148CBAD400C2FBE5 /* protocols_c.4 */ = {
+		activeExec = 0;
+	};
+	3B9463A4148CBAD600C2FBE5 /* protocols_d.4 */ = {
+		activeExec = 0;
+	};
+	3B9463EE148CBB3F00C2FBE5 /* protocols_e.4 */ = {
+		activeExec = 0;
+	};
+	3B946438148CBB4200C2FBE5 /* protocols_f.4 */ = {
+		activeExec = 0;
+	};
+	3B94648C148CBD9D00C2FBE5 /* protocols_a.5 */ = {
+		activeExec = 0;
+	};
+	3B9464C8148CBE0A00C2FBE5 /* protocols_b.5 */ = {
+		activeExec = 0;
+	};
+	3B946503148CBE0C00C2FBE5 /* protocols_c.5 */ = {
+		activeExec = 0;
+	};
+	3B946548148CBF6800C2FBE5 /* protocols_e.5 */ = {
+		activeExec = 0;
+	};
+	3B94657A148CBF6E00C2FBE5 /* protocols_f.5 */ = {
+		activeExec = 0;
+	};
+	3B9465AB148CBF7000C2FBE5 /* protocols.6 */ = {
+		activeExec = 0;
+	};
+	3B9465EE148CBFBF00C2FBE5 /* protocols.7 */ = {
+		activeExec = 0;
+	};
+	3B94666D148CC98F00C2FBE5 /* rosetta_scripts */ = {
+		activeExec = 0;
+		executables = (
+			F9C94E3E17384A31003A05DE /* rosetta_scripts */,
+		);
+	};
+	3D5BA03E1492D94500524FBB /* protocols_d.5 */ = {
+		activeExec = 0;
+	};
+	3D5BA0701492D95800524FBB /* protocols_b.2 */ = {
+		activeExec = 0;
+	};
+	3D5BA08C1492D96800524FBB /* protocols_g.4 */ = {
+		activeExec = 0;
+	};
+	3D5BA0AC1492D97300524FBB /* protocols_h.4 */ = {
+		activeExec = 0;
+	};
+	3D64845014CDE9970038C383 /* Andrew's App */ = {
+		activeExec = 0;
+		executables = (
+			F9C94E4017384A31003A05DE /* Andrew's App */,
+		);
+	};
+	3D7D99D915D9A54300564DDB /* SnugDock */ = {
+		activeExec = 0;
+		executables = (
+			F9C94E4217384A31003A05DE /* SnugDock */,
+		);
+	};
+	3DDF62A513EE13B800401374 /* devel */ = {
+		activeExec = 0;
+	};
+	3DFB7A801405746F00EA18CE /* docking_protocol */ = {
+		activeExec = 0;
+		executables = (
+			F9C94E3D17384A31003A05DE /* docking_protocol */,
+		);
+	};
+	BE8A16ED0CA833BF00D67A6F /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = F9C94E3D17384A31003A05DE /* docking_protocol */;
+		activeTarget = D1120FFF136B62F3000B9DB5 /* external */;
+		codeSenseManager = F9C94E4C17384A37003A05DE /* Code sense */;
+		executables = (
+			F9C94E3D17384A31003A05DE /* docking_protocol */,
+			F9C94E3E17384A31003A05DE /* rosetta_scripts */,
+			F9C94E3F17384A31003A05DE /* rosetta_scripts_static */,
+			F9C94E4017384A31003A05DE /* Andrew's App */,
+			F9C94E4117384A31003A05DE /* antibody_model_CDR_H3 */,
+			F9C94E4217384A31003A05DE /* SnugDock */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					341,
+					20,
+					48.16259765625,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 389564977;
+			PBXWorkspaceStateSaveDate = 389564977;
+		};
+		sourceControlManager = F9C94E4B17384A37003A05DE /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	BEDC3F980CA84E43000FAD97 /* ObjecxxFCL */ = {
+		activeExec = 0;
+	};
+	BEDC3FBA0CA84F63000FAD97 /* utility */ = {
+		activeExec = 0;
+	};
+	BEDC400E0CA8522A000FAD97 /* core.1 */ = {
+		activeExec = 0;
+	};
+	BEDC40E70CA8592F000FAD97 /* numeric */ = {
+		activeExec = 0;
+	};
+	D1120FFF136B62F3000B9DB5 /* external */ = {
+		activeExec = 0;
+	};
+	D139B5AF13687DEE0030829C /* core.2 */ = {
+		activeExec = 0;
+	};
+	D139B7E213687E0F0030829C /* core.3 */ = {
+		activeExec = 0;
+	};
+	D139BA0A13687E180030829C /* core.4 */ = {
+		activeExec = 0;
+	};
+	D139BC3213687E200030829C /* core.5 */ = {
+		activeExec = 0;
+	};
+	D1FC49F613687F42006C102D /* basic */ = {
+		activeExec = 0;
+	};
+	D1FD035B0E2851B800B3C702 /* protocols.1 */ = {
+		activeExec = 0;
+	};
+	EC5D958B15D6C9F700EAE42D /* antibody_model_CDR_H3 */ = {
+		activeExec = 0;
+		executables = (
+			F9C94E4117384A31003A05DE /* antibody_model_CDR_H3 */,
+		);
+	};
+	F9C94E3D17384A31003A05DE /* docking_protocol */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = docking_protocol;
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	F9C94E3E17384A31003A05DE /* rosetta_scripts */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = rosetta_scripts;
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	F9C94E3F17384A31003A05DE /* rosetta_scripts_static */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = rosetta_scripts_static;
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	F9C94E4017384A31003A05DE /* Andrew's App */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = "Andrew's App";
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	F9C94E4117384A31003A05DE /* antibody_model_CDR_H3 */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = antibody_model_CDR_H3;
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	F9C94E4217384A31003A05DE /* SnugDock */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = SnugDock;
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	F9C94E4B17384A37003A05DE /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	F9C94E4C17384A37003A05DE /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+}

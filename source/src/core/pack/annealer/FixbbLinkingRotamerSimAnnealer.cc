@@ -205,24 +205,32 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 	core::Size totalrot = 0;
 	// totalrot needs to be calculated differently for the quasisymmetrical case
-	if ( flag1 && flag2 ) {
-		for ( core::Size res=1; res<=nmoltenres; ++res ) {
-			totalrot += rotamer_sets()->nrotamers_for_moltenres( res );
-		}
-	} else {
+    // Commenting out this logic, it is unclear why it is necessary and how it works, it's labeled
+    // as "experimental" and causes a segfault in certain cases
+	for ( core::Size res=1; res<=nmoltenres; ++res ) {
+		totalrot += rotamer_sets()->nrotamers_for_moltenres( res );
+	}
+	//if ( flag1 && flag2 ) {
+	//	for ( core::Size res=1; res<=nmoltenres; ++res ) {
+	//		totalrot += rotamer_sets()->nrotamers_for_moltenres( res );
+	//	}
+	//} else {
 
-		//experimental
-		utility::vector1<Size> segmentTest = rotamer_links_->get_equiv(nmoltenres);
-		// get the first element of the last repeat.  it should be segment length
-		//std::cout<< "SEGMENTLENGTH from ROTAMER LINK" << segmentTest[1] << std::endl;
-		//Size repeat_number = segmentTest.back()/segmentTest[1];
-		//std::cout<< "number of repeats" << repeat_number << std::endl;
+	//	//experimental
+	//	//  utility::vector1<Size> segmentTest = rotamer_links_->get_equiv(nmoltenres);
+	//	// get the first element of the last repeat.  it should be segment length
+	//	//std::cout<< "SEGMENTLENGTH from ROTAMER LINK" << segmentTest[1] << std::endl;
+	//	//Size repeat_number = segmentTest.back()/segmentTest[1];
+	//	//std::cout<< "number of repeats" << repeat_number << std::endl;
 
-		for ( core::Size res = segmentTest[1]; res <= segmentTest[1]*2 ; res++ ) {
-			totalrot += rotamer_sets()->nrotamers_for_moltenres(res);
-		}
-		//std::cout << "TOTAL ROTAMER " << totalrot << std::endl;
-	} // end quasisymmetric if-else
+	//	//  for (core::Size res = segmentTest[1]; res <= segmentTest[1]*2 ; res++){
+	//	//   totalrot += rotamer_sets()->nrotamers_for_moltenres(res);
+	//	//  }
+	//	for ( core::Size res=1; res<=nmoltenres; ++res ) {
+	//		totalrot += rotamer_sets()->nrotamers_for_moltenres( res );
+	//	}
+	//	//std::cout << "TOTAL ROTAMER " << totalrot << std::endl;
+	//} // end quasisymmetric if-else
 
 
 	//setup_iterations();
@@ -320,11 +328,12 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			for ( utility::vector1<int>::iterator itr = linked_residues.begin(), ite = linked_residues.end(); itr != ite; ++itr ) {
 				num_linked_res++;
 				if ( (*itr != 0) && (*itr != moltenres_id ) ) {
-					TR.Trace << "moltenres_id " << moltenres_id << " coupled to moltenres_id " << *itr << std::endl;
 
 					//try multiple substitutions
-
-					TR.Trace << "Picked rotamer incompatible, trying multiple substitution" << std::endl;
+					if ( TR.Trace.visible() ) {
+						TR.Trace << "moltenres_id " << moltenres_id << " coupled to moltenres_id " << *itr << std::endl;
+						TR.Trace << "Picked rotamer incompatible, trying multiple substitution" << std::endl;
+					}
 
 					other_prevrotamer_state = state_on_node(*itr);
 
@@ -436,8 +445,9 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			if ( prevrotamer_state == 0 || other_prevrotamer_state == 0 ||
 					pass_metropolis( previous_energy_average, delta_energy_average ) ) {
 				// accept !!!!!!!
-				TR.Trace << "accepting multiple rotamer substitution" << std::endl;
-
+				if ( TR.Trace.visible() ) {
+					TR.Trace << "accepting multiple rotamer substitution" << std::endl;
+				}
 
 				//std::cout << "ACCEPT: substitution on ";
 				//set state
@@ -486,7 +496,9 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 			} else {
 				// reject
-				TR.Trace << "rejecting multiple rotamer substitution" << std::endl;
+				if ( TR.Trace.visible() ) {
+					TR.Trace << "rejecting multiple rotamer substitution" << std::endl;
+				}
 				//revert changes:
 
 				for ( std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ) {

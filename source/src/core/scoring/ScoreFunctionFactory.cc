@@ -199,6 +199,7 @@ void ScoreFunctionFactory::load_weights_file( std::string weights_tag, ScoreFunc
 }
 
 std::string const TALARIS_2013( "talaris2013" );
+std::string const TALARIS_2013_CART( "talaris2013_cart" );
 std::string const PRE_TALARIS_2013_STANDARD_WTS( "pre_talaris_2013_standard" );
 std::string const CENTROID_WTS( "cen_std" );
 std::string const SOFT_REP_WTS( "soft_rep" );
@@ -215,6 +216,8 @@ std::string const SCORE12_PATCH( "score12" );
 std::string const SCORE13( "score13" );
 std::string const DOCK_PATCH( "docking" );
 std::string const DOCK_LOW_PATCH( "docking_cen" );
+
+std::string const SCORE4_SMOOTH_CART( "score4_smooth_cart" );
 
 
 core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* default true */ ) {
