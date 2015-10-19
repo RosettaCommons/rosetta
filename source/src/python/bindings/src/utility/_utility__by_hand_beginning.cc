@@ -26,6 +26,7 @@
 #include <istream>
 #include <sstream>
 #include <set>
+#include <list>
 #include <map>
 
 
@@ -884,6 +885,45 @@ void wrap_std_set(std::string name)
 	;
 }
 
+
+// std::list --------------------------------------------------------------------------------------------------------------------
+template< class T > void add_to_list(std::list<T> & s, const T & v) { s.push_back(v); }
+template< class T > void erase_last_from_list(std::list<T> & s) { s.pop_back(); }
+
+template< class TT > inline typename std::list<TT>::iterator list_begin( std::list<TT> & v ) { return v.begin(); }
+template< class TT > inline typename std::list<TT>::iterator list_end  ( std::list<TT> & v ) { return v.end(); }
+
+template <class T>
+std::string list_repr(std::list<T> const & s)
+{
+	typedef std::list<T> Stype;
+	typedef typename std::list<T>::const_iterator Stype_iterator;
+
+    std::ostringstream os;
+    os << "<list>[";
+    for(Stype_iterator p=s.begin(); p!=s.end(); ++p) os << *p << ", ";
+    os << "]";
+    return os.str();
+}
+
+template< class Htype, class CP, class CP_const>
+void wrap_std_list(std::string name)
+{
+	typedef std::list<Htype> Ttype;
+	bp::class_<Ttype>(name.c_str())
+	.def( bp::init< >() )
+	.def( bp::init< std::list<Htype> const & >() )
+
+	//.def("__contains__", &std::list<Htype>::count )
+	.def("add", &add_to_list<Htype> )
+	.def("erase_last",  &erase_last_from_list<Htype> )
+	.def("__len__",  &std::list<Htype>::size )
+	.def("__iter__", bp::range(&list_begin<Htype>, &list_end<Htype> ) )
+	.def("__str__", &list_repr<Htype> )
+	;
+}
+
+
 template< class Type >
 void wrap_owning_pointer(char * name)
 {
@@ -927,7 +967,10 @@ void expose_basic_type(std::string name)
 
   wrap_vector1< T, CP_CNCR, CP_CCR >("vector1_" + name);
   wrap_vector1< utility::vector1<T>, CP_REF, CP_REF >("vec1_vec1_" + name);
+
   wrap_std_set< T, CP_CNCR, CP_CCR >("set_" + name);
+
+  wrap_std_list< T, CP_CNCR, CP_CCR >("list_" + name);
 }
 
 
