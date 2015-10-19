@@ -17,9 +17,6 @@
 #include <core/init/init.hh>
 
 //Note protocols/init/init has been split into included-headers for organizational purposes.
-//
-#include <protocols/init/init.RequirementCreators.ihh>
-#include <protocols/init/init.RequirementRegistrators.ihh>
 
 #include <protocols/init/init.ConstraintCreators.ihh>
 #include <protocols/init/init.ConstraintRegistrators.ihh>

@@ -425,14 +425,6 @@ static MoverRegistrator< membrane::visualize::VisualizeEmbeddingMoverCreator > r
 static MoverRegistrator< docking::membrane::MPDockingMoverCreator > reg_MPDockingMoverCreator;
 static MoverRegistrator< docking::membrane::MPDockingSetupMoverCreator > reg_MPDockingSetupMoverCreator;
 
-static protocols::moves::MoverRegistrator< sewing::AppendAssemblyMoverCreator > reg_AppendAssemblyMoverCreator;
-static protocols::moves::MoverRegistrator< sewing::GivenPathAssemblyMoverCreator > reg_GivenPathAssemblyMoverCreator;
-static protocols::moves::MoverRegistrator< sewing::GreedyAssemblyMoverCreator > reg_GreedyAssemblyMoverCreator;
-static protocols::moves::MoverRegistrator< sewing::MonteCarloAssemblyMoverCreator > reg_MonteCarloAssemblyMoverCreator;
-static protocols::moves::MoverRegistrator< sewing::AssemblyConstraintsMoverCreator > reg_AssemblyConstraintsMoverCreator;
-static protocols::moves::MoverRegistrator< sewing::AddStartnodeFragmentsCreator > reg_AddStartnodeFragmentsCreator;
-static protocols::moves::MoverRegistrator< sewing::RepeatAssemblyMoverCreator > reg_RepeatAssemblyMoverCreator;
-
 static MoverRegistrator< symmetric_docking::membrane::MPSymDockMoverCreator > reg_MPSymDockMoverCreator;
 
 static MoverRegistrator< membrane::AddMPLigandMoverCreator > reg_AddMPLigandMoverCreator;

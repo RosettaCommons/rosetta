@@ -124,9 +124,7 @@ BuriedUnsatHbondFilter2::report_sm( core::pose::Pose const & pose ) const {
 core::Size
 BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 
-	if ( pose.pdb_info() != 0 ) {
-		TR << "PDB: " << pose.pdb_info()->name() << std::endl;
-	}
+	TR << "PDB: " << pose.pdb_info()->name() << std::endl;
 
 	runtime_assert( jump_num_ <= pose.num_jump() );
 

@@ -77,7 +77,7 @@ public:
 
 	void
 	parse_stride_tag_item(
-		utility::tag::TagCOP tag);
+		utility::tag::TagCOP const tag);
 
 	void
 	apply(

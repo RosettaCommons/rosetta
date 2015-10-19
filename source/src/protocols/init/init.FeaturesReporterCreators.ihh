@@ -26,7 +26,6 @@
 #include <protocols/features/HelixCapFeaturesCreator.hh>
 #include <protocols/features/JobDataFeaturesCreator.hh>
 #include <protocols/features/LoopAnchorFeaturesCreator.hh>
-#include <protocols/features/ModelFeaturesCreator.hh>
 #include <protocols/features/OrbitalsFeaturesCreator.hh>
 #include <protocols/features/PairFeaturesCreator.hh>
 #include <protocols/features/PdbDataFeaturesCreator.hh>

@@ -105,7 +105,6 @@ sources = {
 		"bb_independent_rotamers",
 		"BumpSelector",
 		"ContinuousRotamerSet",
-		"DeleteAllRotamerSetOperation",
 		"FixbbRotamerSets",
 		"rotamer_building_functions",
 		"rna_rotamer_building_functions",

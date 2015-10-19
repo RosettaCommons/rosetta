@@ -414,14 +414,5 @@
 #include <protocols/docking/membrane/MPDockingMoverCreator.hh>
 #include <protocols/docking/membrane/MPDockingSetupMoverCreator.hh>
 
-#include <protocols/sewing/sampling/AppendAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/GivenPathAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/GreedyAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/MonteCarloAssemblyMoverCreator.hh>
-#include <protocols/sewing/sampling/AssemblyConstraintsMoverCreator.hh>
-#include <protocols/sewing/sampling/AddStartnodeFragmentsCreator.hh>
-#include <protocols/sewing/sampling/AssemblyConstraintsMover.hh>
-#include <protocols/sewing/sampling/RepeatAssemblyMoverCreator.hh>
-
 #include <protocols/symmetric_docking/membrane/MPSymDockMoverCreator.hh>
 

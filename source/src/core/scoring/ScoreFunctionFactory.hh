@@ -82,7 +82,6 @@ private:
 };
 
 extern std::string const TALARIS_2013;
-extern std::string const TALARIS_2013_CART;
 extern std::string const PRE_TALARIS_2013_STANDARD_WTS;
 extern std::string const SCORE13;
 extern std::string const CENTROID_WTS;
@@ -99,8 +98,6 @@ extern std::string const MEMB_HIGHRES_WTS; //pba
 extern std::string const SCORE12_PATCH;
 extern std::string const DOCK_PATCH;
 extern std::string const DOCK_LOW_PATCH;
-
-extern std::string const SCORE4_SMOOTH_CART;
 
 
 /// @brief A helper function which returns a scoring function owning pointer according to the

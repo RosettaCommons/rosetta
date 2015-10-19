@@ -114,7 +114,7 @@ SingleChainStructureData::SingleChainStructureData( std::string const & id_val )
 
 SingleChainStructureData::SingleChainStructureData(
 	std::string const & id_val,
-	core::Size const ASSERT_ONLY(length_val),
+	core::Size const length_val,
 	core::Size const pose_len_val,
 	bool const is_loop,
 	std::string const & ss_val,

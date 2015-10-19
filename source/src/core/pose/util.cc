@@ -123,12 +123,7 @@ append_subpose_to_pose(
 					pose1.append_residue_by_jump(pose2.residue(i), pose1.total_residue(), "","", true);
 				}
 			} else {
-				if ( pose2.residue(i).is_protein() ) {
-					pose1.append_residue_by_bond(pose2.residue(i));
-				} else {
-					bool new_chain =  pose2.chain(i) != pose2.chain(i-1);
-					pose1.append_residue_by_jump(pose2.residue(i), i-1, "","", new_chain);
-				}
+				pose1.append_residue_by_bond(pose2.residue(i));
 			}
 		}
 	}

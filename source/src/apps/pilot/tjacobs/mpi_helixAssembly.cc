@@ -14,11 +14,11 @@
 /// @author Tim jacobs
 
 // Unit headers
-#include <protocols/sewing/HelixAssemblyMover.hh>
-#include <protocols/sewing/HelixAssemblyJob.hh>
+#include <devel/sewing/HelixAssemblyMover.hh>
+#include <devel/sewing/HelixAssemblyJob.hh>
 #include <protocols/features/sewing/HelicalFragment.hh>
-#include <protocols/sewing/NativeAtom.hh>
-#include <protocols/sewing/NativeResidue.hh>
+#include <devel/sewing/NativeAtom.hh>
+#include <devel/sewing/NativeResidue.hh>
 
 // Devel headers
 #include <devel/init.hh>

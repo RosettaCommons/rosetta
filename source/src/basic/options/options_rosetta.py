@@ -6298,65 +6298,22 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	################################
 	## In development helix assembly options
 	Option_Group( 'sewing',
+		####Old options - to be removed shortly####
+		Option('query_structure_path','File', desc=""),
+		Option('frag1_start','Integer', desc=""),
+		Option('frag1_end','Integer', desc=""),
+		Option('frag2_start','Integer', desc=""),
+		Option('frag2_end','Integer', desc=""),
+		Option('minimum_helix_contacts','Integer', desc=""),
+		Option('helices_to_add','Integer', desc=""),
+		Option('single_helix_rmsd_cutoff','Real', desc=""),
+		Option('helix_pair_rmsd_cutoff','Real', desc=""),
+		####End old stuff####
 
-            ##General options
-            Option('model_file_name','File', desc="Filename for model file (creation or reading)"),
-            Option('score_file_name','File', desc="Filename for scores file (creation or reading)"),
-
-			##ModelTrimmer options
-            Option('new_model_file_name','File', desc="Filename for new model file to be written"),
-			Option('remove_any_dssp','String', desc="If a given model has *any* segments with this DSSP, remove it", default=""),
-			Option('remove_all_dssp','String', desc="If a given model has *all* non-loop segments with this DSSP, remove it", default=""),
-			Option('min_helix_length','Integer', desc="Helices less than supplied length will be removed from model file", default='0'),
-			Option('max_helix_length','Integer', desc="Helices greater than supplied length will be removed from model file", default='1000'),
-			Option('min_loop_length','Integer', desc="Loops less than supplied length will be removed from model file", default='0'),
-			Option('max_loop_length','Integer', desc="Loops greater than supplied length will be removed from model file", default='1000'),
-			Option('min_strand_length','Integer', desc="Strands less than supplied length will be removed from model file", default='0'),
-			Option('max_strand_length','Integer', desc="Strands greater than supplied length will be removed from model file", default='1000'),
-
-            ##SewingHasher and ModelDumper options
-            Option( 'mode', 'String',
-                desc="The mode SewingHasher should run.",
-                default='hash',
-                legal=["hash", "generate", "convert", "test"]),
-
-            Option('num_models_to_dump','Integer', desc="Used for ModelDumper. How many random models should be dumped?"),
-            Option('models_to_dump','IntegerVector', desc="Used for ModelDumper for specifying model ids you want to dump"),
-            Option('min_hash_score','Integer', desc="Minimum number of overlapping atoms per segment", default='10'),
-            Option('max_clash_score','Integer', desc="Maximum number of atoms found in the same bin, but not from superimposed fragments",default='0'),
-            Option('num_segments_to_match','Integer', desc="Number of segments required to have min_hash_score atom matches",default='1'),
-            Option('match_segments','IntegerVector', desc="Segment scored by the hasher"),
-
-            Option('max_models','Integer', desc="Maximum models to hash, for testing purposes only"),
-            Option('starting_model','Integer', desc="Starting model for hashing"),
-            Option('num_procs','Integer', desc="Number of processors to split up hashing with"),
-            Option('rank','Integer', desc="The processor rank for this process"),
-
-            ##Base AssemblyMover options
-            Option('assembly_type','String', desc="Type of Assembly class to generate", default='continuous'),
-            Option('num_edges_to_follow','Integer',desc="Maximum number of edges on graph to follow"),
-            Option('base_native_bonus','Real',desc="Weighting term for packing native rotamers"),
-            Option('neighbor_cutoff','Integer',desc="Cutoff for favoring natives in SEWING refinement. Any residues with fewer neighbors is not favored"),
-            Option('dump_pdbs','Boolean', desc="Dump intermediate PDBs", default='false'),
-            Option('skip_refinement','Boolean', desc="Should you refine the final assembly", default='false'),
-            Option('skip_filters','Boolean', desc="Should the Assembly be filtered before refinment", default='false'),
-            Option('min_motif_score','Real',desc="Minimum allowable motif score", default='20'),
-
-            ##RepeatAssembly options
-            Option('num_repeats','Integer', desc="Number of repeats to print in final structures", default='3'),
-            Option('repeat','Boolean', desc="Should the AssemblyConstraintsMover treat this as a repeat?", default='false'),
-
-            ##SewingAppend options
-            Option('pose_segment_starts','IntegerVector', desc="Segment begin indices"),
-            Option('pose_segment_ends','IntegerVector', desc="Segment end indices"),
-            Option('keep_source_segments', 'Boolean', desc="Keep the source segments rather than the target segments. For use with append", default='false'),
-            Option('partner_pdb', 'File', desc="A PDB that is not part of the Assembly, but will be used for clash checking"),
-            Option('keep_model_residues', 'IntegerVector', desc="A list of residues from the input pose that will not be designed (but are repacked)"),
-
-            ##LoopHashAssemblyMover options
-            Option('min_lh_fragments','Integer', desc="Minimium number of LoopHash fragments necessary for each designed loop", default='10'),
-            Option('skip_loop_generation','Boolean', desc="Should you skip generation of loops", default='false'),
-
+		Option('nat_ro_file','File', desc="A file containing coordinates for 'native' rotamers"),
+		Option('helix_cap_dist_cutoff','Real', desc="Maximum distance between c-alpha residues at the end of two helices in order to call them part of the same bundle"),
+		Option('helix_contact_dist_cutoff','Real', desc="Maximum distance between c-alpha residues in two helices in order to call them interacting"),
+		Option('min_helix_size','Integer', desc="Minimum size of a helix in a bundle"),
 	), # -sewing
 
 	Option_Group( 'SSrbrelax',

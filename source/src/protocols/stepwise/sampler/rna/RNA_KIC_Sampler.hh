@@ -126,7 +126,7 @@ public:
 		}
 	}
 
-	/// @brief Max # of step for trying in random sampling
+	/// @brief Max # of step for trying in random samping
 	void set_max_tries( core::Size const setting ) {
 		set_and_reinit( max_tries_, setting );
 	}

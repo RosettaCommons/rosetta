@@ -29,7 +29,6 @@ static FeaturesReporterRegistrator< HBondParameterFeaturesCreator > HBondParamet
 static FeaturesReporterRegistrator< HelixCapFeaturesCreator > HelixCapFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< JobDataFeaturesCreator > JobDataFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< LoopAnchorFeaturesCreator > LoopAnchorFeaturesCreator_registrator;
-static FeaturesReporterRegistrator< ModelFeaturesCreator > ModelFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< OrbitalsFeaturesCreator > OrbitalsFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< PairFeaturesCreator > PairFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< PdbDataFeaturesCreator > PdbDataFeaturesCreator_registrator;

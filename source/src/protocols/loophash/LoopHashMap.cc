@@ -320,13 +320,8 @@ get_rt_over_leap_without_foldtree_bs(
 	if ( !pose.residue(ir).is_protein() ) return false;
 	if ( !pose.residue(jr).is_protein() ) return false;
 
-	core::id::StubID id1( AtomID(2,ir), AtomID(1,ir), AtomID(3,ir-1) );
-	core::id::StubID id2;
-	if ( pose.residue(jr).type().name1() == 'P' ) { //jumps to proline use Carbon as jump atom
-		id2 = core::id::StubID( AtomID(2,jr), AtomID(1,jr), AtomID(3,jr) );
-	} else {
-		id2 = core::id::StubID( AtomID(2,jr), AtomID(1,jr), AtomID( pose.residue(jr).atom_index("H") ,jr) );
-	}
+	core::id::StubID id1( AtomID(2,ir), AtomID(1,ir), AtomID(            3                     ,ir-1) );
+	core::id::StubID id2( AtomID(2,jr), AtomID(1,jr), AtomID( pose.residue(jr).atom_index("H") ,jr  ) );
 
 	RT rt = pose.conformation().get_stub_transform(id1,id2);
 

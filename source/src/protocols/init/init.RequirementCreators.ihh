@@ -1,6 +1,0 @@
-// Requirement creators
-#include <protocols/sewing/sampling/requirements/RequirementFactory.hh>
-#include <protocols/sewing/sampling/requirements/ResidueRetentionRequirementCreator.hh>
-#include <protocols/sewing/sampling/requirements/SegmentDsspRequirementCreator.hh>
-#include <protocols/sewing/sampling/requirements/SegmentLengthRequirementCreator.hh>
-#include <protocols/sewing/sampling/requirements/GlobalLengthRequirementCreator.hh>

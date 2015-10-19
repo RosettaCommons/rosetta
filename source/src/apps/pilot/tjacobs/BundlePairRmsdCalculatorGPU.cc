@@ -13,41 +13,30 @@
 
 /// @author Tim Jacobs
 
-#ifdef USEMPI
-#include <mpi.h>
-#endif
-
-#include <protocols/sewing/BundlePairRmsdWorkUnit.hh>
+#include <devel/sewing/BundlePairRmsdWorkUnit.hh>
 
 #include <basic/gpu/GPU.hh>
 #include <basic/gpu/Timer.hh>
 
-//Core
 #include <core/pose/util.hh>
-#include <core/init/init.hh>
-
-//Protocols
 #include <protocols/wum/WorkUnitList.hh>
 #include <protocols/wum/WorkUnitManager.hh>
 #include <protocols/wum/MPI_WorkUnitManager_Slave.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/wum.OptionKeys.gen.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 
-//Basic
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/wum.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/sewing.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-
-//utility
-#include <utility/mpi_util.hh>
 
 #include <cstdio>
+
+#include <core/init/init.hh>
 
 //Numeric
 #include <numeric/xyzVector.hh>
@@ -71,7 +60,9 @@ static THREAD_LOCAL basic::Tracer TR( "BundlePairRmsdCalculator" );
 static int BLOCK_SIZE = 512;
 
 namespace BundlePairRmsdCalculator {
-	basic::options::RealOptionKey const max_rmsd( "max_rmsd" ); // subfraction size
+	basic::options::IntegerOptionKey const total_fractions( "total_fractions" ); // fraction to run
+	basic::options::IntegerOptionKey const fraction( "fraction" ); // fraction to run
+	basic::options::IntegerOptionKey const subfraction_size( "subfraction_size" ); // subfraction size
 }
 
 struct gpu_node_block_ptrs
@@ -121,30 +112,10 @@ typedef std::map<core::Size, bool > helix_flipped_map;
 std::vector< std::string >
 gpu_rmsd_programs() {
 	std::vector< std::string > programs;
-	programs.push_back( "/home/tjacobs2/workspace/devel_rosetta/source/test/apps/pilot/tjacobs/gpu_xyzfunctions.cl" );
-	programs.push_back( "/home/tjacobs2/workspace/devel_rosetta/source/test/apps/pilot/tjacobs/gpu_rmsd_functions.cl" );
-	programs.push_back( "/home/tjacobs2/workspace/devel_rosetta/source/test/apps/pilot/tjacobs/gpu_helical_bundle_rms_and_clash_calculations.cl" );
+	programs.push_back( "/home/tjacobs2/rosetta/rosetta_source/test/apps/pilot/tjacobs/gpu_xyzfunctions.cl" );
+	programs.push_back( "/home/tjacobs2/rosetta/rosetta_source/test/apps/pilot/tjacobs/gpu_rmsd_functions.cl" );
+	programs.push_back( "/home/tjacobs2/rosetta/rosetta_source/test/apps/pilot/tjacobs/gpu_helical_bundle_rms_and_clash_calculations.cl" );
 	return programs;
-}
-
-void
-create_node_comparison_table(
-	utility::sql_database::sessionOP db_session
-){
-	using namespace basic::database::schema_generator;
-
-	Column compare_id("compare_id", new DbBigInt(), false /*not null*/, true);
-	Column node_id_1("node_id_1", new DbInteger());
-	Column node_id_2("node_id_2", new DbInteger());
-	Column rmsd("rmsd", new DbReal());
-	Column clash_score("clash_score", new DbReal());
-
-	Schema node_comparisons("node_comparisons", PrimaryKey(compare_id));
-	node_comparisons.add_column(node_id_1);
-	node_comparisons.add_column(node_id_2);
-	node_comparisons.add_column(rmsd);
-	node_comparisons.add_column(clash_score);
-	node_comparisons.write(db_session);
 }
 
 void
@@ -156,28 +127,16 @@ load_coordinates_from_database(
 )
 {
 	/**Get coordinates**/
-	std::string select_helix_coords;
-	bool legacy_mode = basic::options::option[basic::options::OptionKeys::sewing::legacy];
-	if(legacy_mode){
-		select_helix_coords =
-			"SELECT bh.helix_id, res.x, res.y, res.z\n"
-			"FROM bundle_helices bh\n"
-			"JOIN residue_atom_coords res ON\n"
-			"	bh.struct_id = res.struct_id AND\n"
-			"	res.atomno IN (1,2,3,4) AND\n"
-			"	(res.seqpos BETWEEN bh.residue_begin AND bh.residue_end)\n"
-			"ORDER BY bh.helix_id, res.seqpos, res.atomno;";
-	}
-	else{
-		select_helix_coords =
-			"SELECT bh.helix_id, res.x, res.y, res.z\n"
-			"FROM helices bh\n"
-			"JOIN residue_atom_coords res ON\n"
-			"	bh.struct_id = res.struct_id AND\n"
-			"	res.atomno IN (1,2,3,4) AND\n"
-			"	(res.seqpos BETWEEN bh.residue_begin AND bh.residue_end)\n"
-			"ORDER BY bh.helix_id, res.seqpos, res.atomno;";
-	}
+	std::string select_helix_coords =
+	"SELECT bh.bundle_id, bh.helix_id, bh.flipped, res.x, res.y, res.z\n"
+	"FROM bundle_helices bh\n"
+	"JOIN structures s ON\n"
+	"	s.struct_id = bh.struct_id\n"
+	"JOIN residue_atom_coords res ON\n"
+	"	bh.struct_id = res.struct_id AND\n"
+	"	res.atomno IN (1,2,3,4) AND\n"
+	"	(res.seqpos BETWEEN bh.residue_begin AND bh.residue_end)\n"
+	"ORDER BY bh.helix_id, res.seqpos, res.atomno;";
 
 	cppdb::statement coords_stmt=basic::database::safely_prepare_statement(select_helix_coords, db_session);
 	cppdb::result coords_res=basic::database::safely_read_from_database(coords_stmt);
@@ -185,26 +144,12 @@ load_coordinates_from_database(
 
 	while(coords_res.next())
 	{
-		core::Size helix_id;
+		core::Size bundle_id, helix_id, flipped;
 		core::Real x, y, z;
 
-		coords_res >> helix_id >> x >> y >> z;
+		coords_res >> bundle_id >> helix_id >> flipped >> x >> y >> z;
 		//std::cout << "bundle id: " << bundle_id << " helix_id " << helix_id << " " << x << " " << y << " " << z << "\n";
 		helix_coords[helix_id].push_back(numeric::xyzVector< core::Real >(x,y,z));
-	}
-
-	std::string select_bundle_helices =
-	"SELECT helix_id, bundle_id, flipped \n"
-	"FROM bundle_helices bh;";
-
-	cppdb::statement bundle_helices_stmt=basic::database::safely_prepare_statement(select_bundle_helices, db_session);
-	cppdb::result bundle_helices_res=basic::database::safely_read_from_database(bundle_helices_stmt);
-	TR << "Done querying for bundle_id/helix_id pairs" << std::endl;
-	while(bundle_helices_res.next())
-	{
-		core::Size helix_id, bundle_id, flipped;
-		bundle_helices_res >> helix_id >> bundle_id >> flipped;
-
 		if ( std::find( bundle_helices[ bundle_id ].begin(), bundle_helices[ bundle_id ].end(), helix_id ) == bundle_helices[ bundle_id ].end() ) bundle_helices[bundle_id].push_back(helix_id);
 		helix_flipped[helix_id]=flipped;
 	}
@@ -632,10 +577,8 @@ feed_rms_and_clash_scores_to_database(
 		int node1_index = iipair / BLOCK_SIZE + 1 + block1_offset;
 		int node2_index = iipair % BLOCK_SIZE + 1 + block2_offset;
 		//std::cout << "good pair " << ii << " n1: " << node1_index << " n2: " << node2_index << " (" << iipair /BLOCK_SIZE << "," << iipair % BLOCK_SIZE << ")" << std::endl;
-		//comparison_insert_stmt.bind(1, node1_index);
-		//comparison_insert_stmt.bind(2, node2_index);
-		comparison_insert_stmt.bind(1, ndat[ node1_index ].node_index);
-		comparison_insert_stmt.bind(2, ndat[ node2_index ].node_index);
+		comparison_insert_stmt.bind(1, node1_index);
+		comparison_insert_stmt.bind(2, node2_index);
 		comparison_insert_stmt.bind(3, bpd.rms_data[ ii ] );
 		comparison_insert_stmt.bind(4, bpd.clash_data[ ii ] );
 		basic::database::safely_write_to_database(comparison_insert_stmt);
@@ -676,7 +619,9 @@ main( int argc, char * argv [] )
 	using ObjexxFCL::FArray2D;
 	using ObjexxFCL::FArray1D;
 
-	option.add( BundlePairRmsdCalculator::max_rmsd, "Maximum allowed RMSD to be written to the DB");
+	option.add( BundlePairRmsdCalculator::total_fractions, "The number of fractions to split the selection into");
+	option.add( BundlePairRmsdCalculator::fraction, "The fraction of results to run RMSD comparisons on");
+//	option.add( BundlePairRmsdCalculator::subfraction_size, "Size of each subfraction");
 
 	// initialize core
 	core::init::init(argc, argv);
@@ -684,35 +629,51 @@ main( int argc, char * argv [] )
 	// Initialize DB
 	utility::sql_database::sessionOP db_session( basic::database::get_db_session() );
 
-	// Read options
-	core::Real max_rmsd = option[BundlePairRmsdCalculator::max_rmsd].def(1.0);
-	TR << "Using a maximum rmsd of: " << max_rmsd << std::endl;
+	/**Get fraction of comparisons to be run**/
+	int fraction = option[BundlePairRmsdCalculator::fraction].def(1);
+	int total_fractions = option[BundlePairRmsdCalculator::total_fractions].def(1000);
+//	int subfraction_size = option[BundlePairRmsdCalculator::subfraction_size].def(1000000);
+
+	std::string get_count_string =
+//	"SELECT max(node_id) FROM helix_graph_nodes;";
+	"SELECT max(pair_id) FROM helix_pairs;";
+	cppdb::statement get_count=basic::database::safely_prepare_statement(get_count_string, db_session);
+	cppdb::result count_res=basic::database::safely_read_from_database(get_count);
+
+	core::Size total_rows=0;
+	while(count_res.next())
+	{
+		count_res >> total_rows;
+	}
+
+	core::Size num_rows_per_fraction = total_rows/total_fractions+1;
+
+	core::Size overall_min_id = num_rows_per_fraction*fraction - num_rows_per_fraction + 1;
+	core::Size overall_max_id = num_rows_per_fraction*fraction;
+	TR << "overall_min_id: " << overall_min_id << std::endl;
+	TR << "overall_max_id: " << overall_max_id << std::endl;
+
+//	core::Size total_sub_fractions=num_rows_per_fraction/subfraction_size+1;
+//	core::Size min_id=overall_min_id;
+//	core::Size max_id=min_id+subfraction_size;
+//
+//	TR << "num_rows_per_fraction: " << num_rows_per_fraction << std::endl;
+//	TR << "total_sub_fractions: " << total_sub_fractions << std::endl;
 
 	// Load in the coordinates from the database
 	helix_coord_map helix_coords;
 	bundle_helices_map bundle_helices;
 	helix_flipped_map helix_flipped;
-	create_node_comparison_table( db_session );
 	load_coordinates_from_database( db_session, helix_coords, bundle_helices, helix_flipped );
 	TR << "Done populating helix coords and bundle helices" << std::endl;
 
 	//*****SQL statements******//
 
-	std::string count_nodes;
-
-	bool legacy_mode = basic::options::option[basic::options::OptionKeys::sewing::legacy];
-	if(legacy_mode){
-		count_nodes =
-			"SELECT\n"
-			" count(*)\n"
-			"FROM helix_graph_nodes;";
-	}
-	else{
-		count_nodes =
-			"SELECT\n"
-			" count(*)\n"
-			"FROM bundle_pairs;";
-	}
+	std::string count_nodes =
+		"SELECT\n"
+		" count(*)\n"
+//		"FROM helix_graph_nodes;\n";
+		"FROM helix_pairs;\n";
 	cppdb::statement count_nodes_stmt =
 		basic::database::safely_prepare_statement(count_nodes, db_session);
 	cppdb::result count_nodes_res =
@@ -725,23 +686,12 @@ main( int argc, char * argv [] )
 	count_nodes_res >> n_nodes;
 	TR << "Done counting nodes from the database.  n_nodes = " << n_nodes  << std::endl;
 
-	std::string select_all_nodes;
-	if(legacy_mode){
-		select_all_nodes =
-			"SELECT\n"
-			"	node_1.node_id, node_1.bundle_id, node_1.helix_id_1, node_1.helix_id_2\n"
-			"FROM helix_graph_nodes as node_1;\n";
-	}
-	else{
-		select_all_nodes =
-			"SELECT\n"
-			"	bp.id as node_id, bp.bundle_id, hp.helix_id_1, hp.helix_id_2\n"
-			"FROM helix_pairs hp\n"
-			"JOIN bundle_pairs bp ON\n"
-			"	hp.pair_id = bp.pair_id;";
-	}
-
-
+	std::string select_all_nodes =
+		"SELECT\n"
+//		"	node_1.node_id, node_1.bundle_id, node_1.helix_id_1, node_1.helix_id_2\n"
+//		"FROM helix_graph_nodes as node_1;\n";
+		"	pair_id as node_id, bundle_id, helix_id_1, helix_id_2\n"
+		"FROM helix_pairs;\n";
 	cppdb::statement select_all_nodes_stmt=
 		basic::database::safely_prepare_statement(select_all_nodes, db_session);
 
@@ -772,34 +722,15 @@ main( int argc, char * argv [] )
 	// Then we'll launch a second kernel to compute the RMS and clash scores
 	// making sure that the first kernel has first finished.
 
-
 	basic::gpu::GPU gpu;
 	std::vector< std::string > programs = gpu_rmsd_programs();
 	gpu.RegisterProgram( programs );
 
 	int const n_node_blocks = ( n_nodes + BLOCK_SIZE - 1 ) / BLOCK_SIZE;
+	utility::vector1< int > coords_already_shipped( n_node_blocks, 0 );
+	utility::vector1< gpu_node_block_ptrs > block_ptrs( n_node_blocks );
 
-	//find out how many processors we have here, figure out the amount of blocks per processor
-	int num_procs = utility::mpi_nprocs();
-	int n_node_blocks_per_processor;
-	int begin_block;
-	int end_block;
-	if(num_procs > 1){
-		n_node_blocks_per_processor = n_node_blocks/num_procs+1;
-		begin_block = utility::mpi_rank() * n_node_blocks_per_processor + 1;
-		end_block = std::max(utility::mpi_rank()+1 * n_node_blocks_per_processor, n_node_blocks);
-		TR << "MPI Process: " << utility::mpi_rank() << " working on blocks " << begin_block << " " << end_block << std::endl;
-	}
-	else{
-		n_node_blocks_per_processor = n_node_blocks;
-		begin_block = 1;
-		end_block = n_node_blocks;
-	}
-
-	utility::vector1< int > coords_already_shipped( n_node_blocks_per_processor, 0 );
-	utility::vector1< gpu_node_block_ptrs > block_ptrs( n_node_blocks_per_processor );
-
-	int const n_block_pairs = n_node_blocks_per_processor * ( n_node_blocks_per_processor - 1 ) / 2 + n_node_blocks_per_processor;
+	int const n_block_pairs = n_node_blocks * ( n_node_blocks - 1 ) / 2 + n_node_blocks;
 	int count_block_pairs_completed = 0;
 
 	//ObjexxFCL::FArray2D< float > rms1( BLOCK_SIZE, BLOCK_SIZE );
@@ -838,12 +769,12 @@ main( int argc, char * argv [] )
 
 	int which_index = 1; // either 1 or 2 -- keep the GPU loaded by switching between working on block_pairs_data[1] and block_pairs_data[2]
 
-	float maximum_tolerated_rms = max_rmsd; // should probably be turned into a flag
+	float maximum_tolerated_rms = 1.0f; // should probably be turned into a flag
 	float minimum_acceptible_square_distance = 4.0; // should probably be turned into a flag -- 2.0A distance between Calpha and any other atom in the other helix
 
 	bool first_pass = true;
-	for ( int ii = begin_block; ii <= end_block; ++ii ) {
-		for ( int jj = ii; jj <= end_block; ++jj ) {
+	for ( int ii = 1; ii <= n_node_blocks; ++ii ) {
+		for ( int jj = ii; jj <= n_node_blocks; ++jj ) {
 
 			// 1. send coordinates if necessary
 			if ( ! coords_already_shipped[ ii ] ) {
@@ -896,8 +827,6 @@ main( int argc, char * argv [] )
 
 			++count_block_pairs_completed;
 			if ( count_block_pairs_completed % 100 == 0 ) {
-				db_session->commit();
-				db_session->begin();
 				std::cout << "Completed " << count_block_pairs_completed << " of " << n_block_pairs;
 				std::cout << " (" << (float) count_block_pairs_completed / n_block_pairs << ")" << std::endl;
 			}
@@ -921,9 +850,8 @@ main( int argc, char * argv [] )
 					block_pairs_data[ last_set_index ].block1_id,
 					block_pairs_data[ last_set_index ].block2_id,
 					block_pairs_data[ last_set_index ] );
-				//compare_gpu_result_against_cpu( helix_coords, bundle_helices, helix_flipped, nodes,
-				//	block_pairs_data[ last_set_index ].block1_id, block_pairs_data[ last_set_index ].block2_id,
-				//	maximum_tolerated_rms, minimum_acceptible_square_distance, block_pairs_data[ last_set_index ] );
+				//compare_gpu_result_against_cpu( helix_coords, bundle_helices, helix_flipped, nodes, lastii, lastjj,
+				//	maximum_tolerated_rms, minimum_acceptible_square_distance, block_pairs_data[ last_set_index; ] );
 			}
 		}
 		last_set_index = last_set_index % num_concurrent + 1;
@@ -931,7 +859,7 @@ main( int argc, char * argv [] )
 	}
 
 
-	//db_session->commit(); // almost done: now commit all of the stored RMSD/clash-score pairs to the database
+	db_session->commit(); // almost done: now commit all of the stored RMSD/clash-score pairs to the database
 
 	return 0;
 }

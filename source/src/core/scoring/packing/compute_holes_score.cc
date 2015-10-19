@@ -103,7 +103,6 @@ void compute_holes_surfs(PoseBalls & pb, std::string ) {
 			utility::io::ozstream out2("debug_holes_DalphaBall_output.log");
 			out2 << buf;
 			out2.close();
-			TR << "nlines: " << nlines << "\npb nballs: " << pb.nballs() << std::endl;
 			utility_exit_with_message("incorrect DAlphaBall output! see debug_holes_DalphaBall_command.log");
 		}
 

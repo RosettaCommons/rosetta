@@ -116,7 +116,7 @@ read_biounit(
 		bool only_one_model = -12345==nresmodel1; nresmodel1 = 9999999;
 		for ( vector1<Pose>::const_iterator ip = poses.begin(); ip != poses.end(); ++ip ) {
 			if ( (int)ip->n_residue() > max_res ) { cout<<"SKIP max_res "<<max_res<<" "<<fname<<endl; return false; }
-			for ( core::Size i = 1; i <= ip->n_residue(); ++i ) {
+			for ( Size i = 1; i <= ip->n_residue(); ++i ) {
 				if ( i==1 || ip->residue(i).is_lower_terminus() || ip->residue(i).is_ligand() ) {
 					if ( !ip->residue(i).is_protein() ) continue;
 					bool is_new_chain = ( 1 == i || ip->chain(i) != ip->chain(i-1) || ip->pdb_info()->chain(i) != ip->pdb_info()->chain(i-1) );
@@ -129,7 +129,7 @@ read_biounit(
 				pdbres.push_back(ip->pdb_info()->number(i));
 				pdbchain[pose.chain(pose.n_residue())] = ip->pdb_info()->chain(i);
 				Real bfac=0.0, occ=0.0;
-				for ( core::Size ia = 1; ia <= ip->residue(i).nheavyatoms(); ++ia ) {
+				for ( Size ia = 1; ia <= ip->residue(i).nheavyatoms(); ++ia ) {
 					if ( ip->pdb_info()->temperature(i,ia)<0.1 ) bfac = 9e9;
 					bfac += ip->pdb_info()->temperature(i,ia);
 					occ  += ip->pdb_info()->occupancy  (i,ia);

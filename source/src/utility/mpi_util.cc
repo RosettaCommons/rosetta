@@ -267,7 +267,7 @@ mpi_nprocs()
 	if ( SimulateMPI::simulate_mpi() ) {
 		return SimulateMPI::mpi_nprocs();
 	} else {
-		int return_val( 1 );
+		int return_val( 0 );
 		return return_val;
 	}
 }

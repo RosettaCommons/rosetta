@@ -494,7 +494,7 @@ void EnvClaimBroker::annotate_fold_tree( core::kinematics::FoldTreeOP ft,
 
 void EnvClaimBroker::add_virtual_residues( Conformation& conf,
 	SizeToStringMap const& new_vrts,
-	SequenceAnnotationOP ASSERT_ONLY(ann) )
+	SequenceAnnotationOP ann )
 {
 	// Add new virtual residues into conformation.
 	BOOST_FOREACH ( SizeToStringMap::value_type pair, new_vrts ) {

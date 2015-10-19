@@ -335,9 +335,7 @@ Pose::split_by_chain(Size const chain_id) const
 	}
 
 	// restore broken pdb_info to new pose ~ Labonte
-	if ( chain_pose->pdb_info() != 0 ) {
-		chain_pose->pdb_info()->obsolete(false);
-	}
+	chain_pose->pdb_info()->obsolete(false);
 
 	return chain_pose;
 }
