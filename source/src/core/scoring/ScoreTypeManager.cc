@@ -489,6 +489,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "aa_repeat" ] = aa_repeat; //A wholebody score term for penalizing long stretches of repeat sequence (e.g. poly-Q sequences).
 	name2score_type_[ "aa_composition" ] = aa_composition; //A wholebody score term for penalizing deviation from a desired amino acid composition.
 
+	name2score_type_[ "sidechain_neighbors" ] = sidechain_neighbors;
+
 	name2score_type_[ "total_score" ] = total_score;
 
 	name2score_type_[ "dummy_score_type" ] = dummy_score_type;

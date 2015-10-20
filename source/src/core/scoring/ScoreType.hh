@@ -562,6 +562,9 @@ enum ScoreType {
 		PyRosettaEnergy_last = PyRosettaEnergy_first + 10,
 #endif
 
+	// side chain neighbors
+	sidechain_neighbors,
+
 	// etc etc
 	// Why is there a total score?
 	total_score,

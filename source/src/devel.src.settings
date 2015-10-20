@@ -65,8 +65,12 @@ sources = {
 	],
 	"devel/denovo_design/filters": [
 		"CavityVolumeFilter",
+		"CoreResiduesPerElementFilter",
 		"FoldabilityFilter",
 		"SSShapeComplementarityFilter",
+	],
+	"devel/denovo_design/scoring": [
+		"SideChainNeighborsEnergy",
 	],
 	"devel/denovo_design/task_operations": [
 		"DesignBySecondaryStructure",

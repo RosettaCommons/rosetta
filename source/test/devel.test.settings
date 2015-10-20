@@ -17,6 +17,7 @@ sources = {
 	],
 	"denovo_design" : [
 		"BuildSheet",
+		"CoreResiduesPerElementFilter",
 		"FoldabilityFilter",
 		"GenericSimulatedAnnealer",
 	],
@@ -69,6 +70,7 @@ testinputfiles = [
 		"denovo_design/D2I.params",
 		"denovo_design/test_foldability.pdb",
 		"denovo_design/C5_Z.sym",
+		"denovo_design/helix15.pdb",
     "znhash/1EER_A.pdb",
     "znhash/1EER_cn4_0043.pdb",
     "znhash/match_cst_pairs.txt",
