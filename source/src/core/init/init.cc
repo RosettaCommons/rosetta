@@ -660,6 +660,7 @@ static ResidueSelectorRegistrator< OrResidueSelectorCreator > reg_OrResidueSelec
 static ResidueSelectorRegistrator< ResidueIndexSelectorCreator > reg_ResidueIndexSelectorCreator;
 static ResidueSelectorRegistrator< ResidueNameSelectorCreator > reg_ResidueNameSelectorCreator;
 static ResidueSelectorRegistrator< ResiduePDBInfoHasLabelSelectorCreator > reg_ResiduePDBInfoHasLabelSelectorCreator;
+static ResidueSelectorRegistrator< SecondaryStructureSelectorCreator > reg_SecondaryStructureSelectorCreator;
 
 
 using basic::resource_manager::ResourceLoaderRegistrator;
