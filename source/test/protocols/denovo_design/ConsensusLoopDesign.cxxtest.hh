@@ -64,12 +64,14 @@ public:
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/disulf_test.pdb" );
 
 		ConsensusLoopDesignOperation loopdesign;
-		std::string const loop_abego = "GB";
+		std::string const loop_abego = "BGBA";
 		SurroundingSS ss_around( 'E', 'H' );
 
 		LoopAAs allowed_aas;
+		allowed_aas.push_back( "N" );
 		allowed_aas.push_back( "G" );
 		allowed_aas.push_back( "DNS" );
+		allowed_aas.push_back( "Q" );
 		loopdesign.set_allowed_aas( ss_around, loop_abego, allowed_aas );
 
 		LoopAAs const & aalist = loopdesign.allowed_aas( ss_around, loop_abego );
@@ -89,7 +91,7 @@ public:
 		loopdesign.disallow_aas( *task, info );
 
 		TS_ASSERT_EQUALS( task->total_residue(), input_pose.total_residue() );
-		for ( core::Size i=1, endi=input_pose.total_residue(); i<=endi; ++i ) {
+		for ( core::Size i=1; i<=input_pose.total_residue(); ++i ) {
 			// all aas should be allowed except for residues 17, 18
 			TS_ASSERT( task->being_packed( i ) );
 			if ( i == 17 ) {
@@ -98,10 +100,11 @@ public:
 					TS_ASSERT_EQUALS( (*t)->name1(), 'G' );
 				}
 			} else if ( i == 18 ) {
-				std::string const & c = *(allowed_aas.rbegin());
-				TS_ASSERT_EQUALS( task->residue_task( i ).allowed_residue_types().size(), c.size() );
+				LoopAAs::const_reverse_iterator c = allowed_aas.rbegin();
+				++c;
+				TS_ASSERT_EQUALS( task->residue_task( i ).allowed_residue_types().size(), c->size() );
 				for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter t=task->residue_task( i ).allowed_residue_types_begin(), endt = task->residue_task( i ).allowed_residue_types_end(); t != endt; ++t ) {
-					TS_ASSERT( c.find( (*t)->name1() ) != std::string::npos );
+					TS_ASSERT( c->find( (*t)->name1() ) != std::string::npos );
 				}
 			} else if ( input_pose.residue( i ).name() == "CYS:disulfide" ) {
 				TS_ASSERT_EQUALS( task->residue_task( i ).allowed_residue_types().size(), 1 );
@@ -110,6 +113,44 @@ public:
 				TS_ASSERT_EQUALS( task->residue_task( i ).allowed_residue_types().size(), core::Size( core::chemical::num_canonical_aas )+1 );
 			}
 		}
+
+		task = tf.create_task_and_apply_taskoperations( input_pose );
+		loopdesign.set_include_adjacent_residues( true );
+		loopdesign.disallow_aas( *task, info );
+		TS_ASSERT_EQUALS( task->total_residue(), input_pose.total_residue() );
+		for ( core::Size i=1; i<=input_pose.total_residue(); ++i ) {
+			// all aas should be allowed except for residues 17, 18
+			TS_ASSERT( task->being_packed( i ) );
+			if ( i == 16 ) {
+				TS_ASSERT_EQUALS( task->residue_task( i ).allowed_residue_types().size(), 1 );
+				for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter t=task->residue_task( i ).allowed_residue_types_begin(), endt = task->residue_task( i ).allowed_residue_types_end(); t != endt; ++t ) {
+					TS_ASSERT_EQUALS( (*t)->name1(), 'N' );
+				}
+			} else if ( i == 19 ) {
+				TS_ASSERT_EQUALS( task->residue_task( i ).allowed_residue_types().size(), 1 );
+				for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter t=task->residue_task( i ).allowed_residue_types_begin(), endt = task->residue_task( i ).allowed_residue_types_end(); t != endt; ++t ) {
+					TS_ASSERT_EQUALS( (*t)->name1(), 'Q' );
+				}
+			} else if ( i == 17 ) {
+				TS_ASSERT_EQUALS( task->residue_task( i ).allowed_residue_types().size(), 1 );
+				for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter t=task->residue_task( i ).allowed_residue_types_begin(), endt = task->residue_task( i ).allowed_residue_types_end(); t != endt; ++t ) {
+					TS_ASSERT_EQUALS( (*t)->name1(), 'G' );
+				}
+			} else if ( i == 18 ) {
+				LoopAAs::const_reverse_iterator c = allowed_aas.rbegin();
+				++c;
+				TS_ASSERT_EQUALS( task->residue_task( i ).allowed_residue_types().size(), c->size() );
+				for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter t=task->residue_task( i ).allowed_residue_types_begin(), endt = task->residue_task( i ).allowed_residue_types_end(); t != endt; ++t ) {
+					TS_ASSERT( c->find( (*t)->name1() ) != std::string::npos );
+				}
+			} else if ( input_pose.residue( i ).name() == "CYS:disulfide" ) {
+				TS_ASSERT_EQUALS( task->residue_task( i ).allowed_residue_types().size(), 1 );
+			} else {
+				// the +1 is for HIS_D
+				TS_ASSERT_EQUALS( task->residue_task( i ).allowed_residue_types().size(), core::Size( core::chemical::num_canonical_aas )+1 );
+			}
+		}
+
 
 		// test getting loop info
 		LoopInfoVec loopinfo = loopdesign.get_loop_info( input_pose );
@@ -120,14 +161,16 @@ public:
 		std::string const ss = dssp.get_dssp_secstruct();
 		utility::vector1< std::string > const abego = core::sequence::get_abego( input_pose, 1 );
 
-		for ( LoopInfoVec::const_iterator l=loopinfo.begin(), endl=loopinfo.end(); l != endl; ++l ) {
-			TS_ASSERT_EQUALS( ss[ l->startres - 1 ], l->ss_around.before );
-			TS_ASSERT_EQUALS( ss[ l->startres + l->abego.size() + 1 ], l->ss_around.after );
-			for ( core::Size i=l->startres+1, endi=l->startres+l->abego.size()-1; i<endi; ++i ) {
-				core::Size const abegoidx = i - l->startres;
-				TS_ASSERT_EQUALS( ss[ i - 1 ], 'L' );
-				TS_ASSERT_EQUALS( abego[ i ].size(), 1 );
-				TS_ASSERT_EQUALS( abego[ i ][ 0 ], l->abego[ abegoidx ] );
+		for ( LoopInfoVec::const_iterator l=loopinfo.begin(); l!=loopinfo.end(); ++l ) {
+			TR << "Start: " << l->startres << " abego: " << l->abego << " ss: " << ss << std::endl;
+			TS_ASSERT_EQUALS( ss[ l->startres - 2 ], l->ss_around.before );
+			TS_ASSERT_EQUALS( ss[ l->startres + l->abego.size() - 1 ], l->ss_around.after );
+			for ( core::Size res=l->startres; res<=l->startres+l->abego.size()-3; ++res ) {
+				core::Size const abegoidx = res - l->startres + 1;
+				TR << "Res: " << res << " abegoidx: " << abegoidx << std::endl;
+				TS_ASSERT_EQUALS( ss[ res - 1 ], 'L' );
+				TS_ASSERT_EQUALS( abego[ res ].size(), 1 );
+				TS_ASSERT_EQUALS( abego[ res ][ 0 ], l->abego[ abegoidx ] );
 			}
 		}
 

@@ -59,6 +59,7 @@ ConsensusLoopDesignOperationCreator::keyname() const
 ConsensusLoopDesignOperation::ConsensusLoopDesignOperation() :
 	core::pack::task::operation::TaskOperation(),
 	secstruct_( "" ),
+	include_adjacent_residues_( false ),
 	selector_()
 {
 	using namespace core::pack::task::residue_selector;
@@ -112,9 +113,10 @@ ConsensusLoopDesignOperation::parse_tag(
 			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 		}
 	}
-	if ( tag->hasOption( "residue_selector" ) ) {
+	if ( tag->hasOption( "residue_selector" ) )
 		set_selector( get_residue_selector( data, tag->getOption< std::string >( "residue_selector" ) ) );
-	}
+	if ( tag->hasOption( "include_adjacent_residues" ) )
+		set_include_adjacent_residues( tag->getOption< bool >( "include_adjacent_residues" ) );
 }
 
 void
@@ -138,6 +140,12 @@ void
 ConsensusLoopDesignOperation::set_secstruct( std::string const & ss )
 {
 	secstruct_ = ss;
+}
+
+void
+ConsensusLoopDesignOperation::set_include_adjacent_residues( bool const include_res )
+{
+	include_adjacent_residues_ = include_res;
 }
 
 LoopAAs const &
@@ -208,7 +216,7 @@ ConsensusLoopDesignOperation::read_db()
 		debug_assert( preabego != ss_to_abego.end() );
 		debug_assert( postabego != ss_to_abego.end() );
 		abegostream << preabego->second << loop_abego << postabego->second;
-		for ( core::Size i=1, endi=abegostream.str().size(); i<=endi; ++i ) {
+		for ( core::Size i=1; i<=abegostream.str().size(); ++i ) {
 			std::string aas;
 			infile >> aas;
 			allowed_aa.push_back( aas );
@@ -239,8 +247,10 @@ ConsensusLoopDesignOperation::disallow_aas(
 	if ( aas.empty() ) {
 		return;
 	}
-	core::Size lres = loop.startres;
-	for ( LoopAAs::const_iterator a = aas.begin(), enda = aas.end(); a != enda; ++a, ++lres ) {
+	core::Size lres = loop.startres - 1;
+	for ( LoopAAs::const_iterator a = aas.begin(); a != aas.end(); ++a, ++lres ) {
+		if ( !include_adjacent_residues_ && ( lres + 1 == loop.startres ) ) continue;
+		if ( !include_adjacent_residues_ && ( lres == loop.startres + loop.abego.size() - 2 ) ) continue;
 		debug_assert( lres <= task.total_residue() );
 		TR << "Residue: " << lres << "; allowed aas: " << *a << std::endl;
 		utility::vector1< bool > aa_bitmap = make_aa_bitmap( *a );
@@ -282,7 +292,7 @@ ConsensusLoopDesignOperation::loop_info_from_subset(
 	for ( core::Size res=1; res<=subset.size(); ++res ) {
 		if ( !inloop && subset[res] && ( res > 1 ) ) {
 			inloop = true;
-			info.startres = res - 1;
+			info.startres = res;
 			info.ss_around.before = ss[ res - 2 ];
 			info.abego += abego[ res - 1 ];
 		}
