@@ -681,6 +681,7 @@ def getLinkerOptions(dynamic=True):
         #add_loption = '-dynamiclib -m64'  # <-- used on Mac
         add_loption = '-dynamiclib' if dynamic else ''
 
+        add_loption += ' -headerpad_max_install_names'  #-headerpad=1024
         #if platform.release()[:2] == '13': add_loption += ' -stdlib=libstdc++'
 
     return add_loption
@@ -856,9 +857,10 @@ def get_all_rosetta_objs(mini_path):
             elif platform.release()[:2] == '11': lib_path = 'build/src/'+mode+'/macos/10.7/64/x86/gcc/'
             elif platform.release()[:2] == '12': lib_path = 'build/src/'+mode+'/macos/10.8/64/x86/gcc/'
             elif platform.release()[:2] == '13': lib_path = 'build/src/'+mode+'/macos/10.9/64/x86/gcc/'
-            elif platform.release()[:2] == '14':
+            elif platform.release()[:2] == '14': lib_path = 'build/src/'+mode+'/macos/10.10/64/x86/gcc/'
+            elif platform.release()[:2] == '15': lib_path = 'build/src/'+mode+'/macos/15.0/64/x86/gcc/'
                 #lib_path = 'build/src/'+mode+'/macos/10.9/64/x86/clang/';  version_add_on = execute("Getting GCC version...", 'clang --version', return_='output').split()[3] + '/default/'  #'5.0/default/'
-                lib_path = 'build/src/'+mode+'/macos/10.10/64/x86/gcc/'
+
 
             else: print 'Unknown MacOS version:', platform.release()[:2];  sys.exit(1)  #lib_path = 'build/src/'+mode+'/macos/10.8/64/x86/gcc/'
 
@@ -1612,7 +1614,7 @@ class ModuleBuilder:
         self.include_paths = ' -I'.join( [''] + include_paths + ['../src/platform/linux' , '../src'] )
 
         self.libpaths = ' -L'.join( ['', dest] + libpaths )
-        self.runtime_libpaths = ' -Xlinker -rpath '.join( [''] + runtime_libpaths + ([] if Options.monolith else ['rosetta']) )
+        self.runtime_libpaths = '' if Platform == "macos" else ( ' -Xlinker -rpath '.join( [''] + runtime_libpaths + ([] if Options.monolith else ['rosetta']) ) )
 
         #PTR_MODERN PTR_BOOST BOOST_PYTHON_MAX_ARITY=32 PYROSETTA UNUSUAL_ALLOCATOR_DECLARATION
         self.cpp_defines = get_compiler_defines() + ' -DBOOST_NO_MT -DBOOST_THREAD_DONT_USE_CHRONO -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_SYSTEM_NO_DEPRECATED -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK'  # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK  -DBOOST_LCAST_NO_COMPILE_TIME_PRECISION
@@ -1621,7 +1623,7 @@ class ModuleBuilder:
         else: self.cpp_defines += ' -I../src/platform/linux'
 
         #self.gccxml_options = '--gccxml-compiler llvm-g++-4.2 -march=nocona' if Platform == "macos" else ''
-        self.gccxml_options = ''
+        self.gccxml_options = ''  # -std=c++98 -DPYROSETTA_GCCXML_PASS -D__GCCXML__=040200
         if Options.gccxml_compiler: self.gccxml_options += '--gccxml-compiler ' + Options.gccxml_compiler
         elif Platform == 'macos':
             if platform.release()[:2] == '13': self.gccxml_options += '--gccxml-compiler gcc'  #  --gccxml-cxxflags "-stdlib=libstdc++"
@@ -1752,8 +1754,8 @@ class ModuleBuilder:
 
             def generate():
                 # --gccxml-cxxflags "--sysroot=$HOME/prefix/macports.yosemite"
-                if execute('Generating XML representation...', 'gccxml {gccxml_options} {source} -fxml={xml} {defines} -I. -I../external/include -I../external/boost_1_55_0 -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS {includes} ' \
-                           .format(gccxml_options=self.gccxml_options, source=self.all_at_once_source_cpp, xml=self.all_at_once_xml, defines=self.cpp_defines, includes=self.include_paths), Options.continue_ ): return
+                if execute('Generating XML representation...', '{gccxml} {gccxml_options} {source} -fxml={xml} {defines} -I. -I../external/include -I../external/boost_1_55_0 -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS {includes} ' \
+                           .format(gccxml=Options.gccxml, gccxml_options=self.gccxml_options, source=self.all_at_once_source_cpp, xml=self.all_at_once_xml, defines=self.cpp_defines, includes=self.include_paths), Options.continue_ ): return
 
                 namespaces_to_wrap = ['::'+self.path.replace('/', '::')+'::']
                 # Temporary injecting Mover in to protocols level
