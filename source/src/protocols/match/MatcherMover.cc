@@ -33,16 +33,20 @@
 #include <core/id/AtomID.hh>
 #include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
+#include <core/pack/task/residue_selector/ResidueSelector.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/match.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
+#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <fstream>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -54,6 +58,7 @@ namespace match {
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.match.MatcherMover" );
 
+std::string const MatcherMover::MATCH_POS_FILE = "selector_generated_match.pos";
 
 std::string
 MatcherMoverCreator::keyname() const
@@ -76,7 +81,8 @@ MatcherMover::MatcherMover( bool incorporate_matches_into_pose ):
 	protocols::rosetta_scripts::MultiplePoseMover(),
 	incorporate_matches_into_pose_( incorporate_matches_into_pose ),
 	return_single_random_match_( false ),
-	ligres_(/* NULL */)
+	ligres_(/* NULL */),
+	selectors_()
 {
 	//we need this for the output to be correct
 	basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value(true);
@@ -89,7 +95,8 @@ MatcherMover::MatcherMover( MatcherMover const & rval ) :
 	incorporate_matches_into_pose_( rval.incorporate_matches_into_pose_ ),
 	return_single_random_match_( rval.return_single_random_match_ ),
 	ligres_( rval.ligres_ ),
-	match_positions_( rval.match_positions_ )
+	match_positions_( rval.match_positions_ ),
+	selectors_( rval.selectors_ )
 {}
 
 /// @brief clone this object
@@ -162,7 +169,17 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 		mtask->set_original_scaffold_build_points( match_positions_ );
 	}
 
+	// if selectors are set, use them to generate a match.pos file
+	if ( selectors_.size() ) {
+		generate_match_pos( pose );
+	}
+
 	mtask->initialize_from_command_line();
+
+	// if selectors are set, clean up match pos file
+	if ( selectors_.size() ) {
+		clean_match_pos();
+	}
 
 	if ( incorporate_matches_into_pose_ ) mtask->output_writer_name("PoseMatchOutputWriter");
 
@@ -213,6 +230,9 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 				tr << "Incorporated match " << mgroup << " into pose." << std::endl;
 			} else {
 				core::pose::PoseOP matchedpose = origpose.clone();
+				if ( origpose.pdb_info() ) {
+					matchedpose->pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( *origpose.pdb_info() ) ) );
+				}
 				outputter->insert_match_into_pose( *matchedpose, mgroup );
 				poselist.push_back( matchedpose );
 				tr << "Incorporated match " << mgroup << " into a stored pose." << std::endl;
@@ -226,6 +246,40 @@ std::string
 MatcherMover::get_name() const
 {
 	return "MatcherMover";
+}
+
+void
+MatcherMover::generate_match_pos( core::pose::Pose const & pose ) const
+{
+	std::stringstream outfile;
+	outfile << "N_CST " << selectors_.size() << std::endl;
+	core::Size idx = 1;
+	for ( utility::vector1< core::pack::task::residue_selector::ResidueSelectorCOP >::const_iterator s = selectors_.begin();
+			s != selectors_.end(); ++s, ++idx ) {
+		outfile << idx << " : ";
+		debug_assert( *s );
+		core::pack::task::residue_selector::ResidueSubset const subset = (*s)->apply( pose );
+		for ( core::Size i=1; i<=subset.size(); ++i ) {
+			if ( subset[i] ) {
+				outfile << i << " ";
+			}
+		}
+		outfile << std::endl;
+	}
+	tr << "Going to write the following to " << MATCH_POS_FILE << std::endl;
+	tr << outfile.str();
+	tr.flush();
+	std::ofstream outfile_real( MATCH_POS_FILE.c_str() );
+	outfile_real << outfile.str();
+	outfile_real.close();
+	basic::options::option[ basic::options::OptionKeys::match::scaffold_active_site_residues_for_geomcsts ].value( MATCH_POS_FILE );
+}
+
+void
+MatcherMover::clean_match_pos() const
+{
+	remove( MATCH_POS_FILE.c_str() );
+	basic::options::option[ basic::options::OptionKeys::match::scaffold_active_site_residues_for_geomcsts ].deactivate();
 }
 
 void
@@ -245,12 +299,66 @@ MatcherMover::set_match_positions(
 void
 MatcherMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & )
 {
 	incorporate_matches_into_pose_ = tag->getOption<bool>( "incorporate_matches_into_pose", 1 );
+	if ( tag->hasOption( "residues_for_geomcsts" ) ) {
+		std::string const selector_str = tag->getOption< std::string >( "residues_for_geomcsts" );
+		utility::vector1< std::string > const selector_strs = utility::string_split( selector_str, ',' );
+		for ( utility::vector1< std::string >::const_iterator s = selector_strs.begin(); s != selector_strs.end(); ++s ) {
+			core::pack::task::residue_selector::ResidueSelectorCOP selector;
+			try {
+				selector = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", *s );
+			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+				std::stringstream error_msg;
+				error_msg << "Failed to find ResidueSelector named '" << *s << "' from the Datamap from MatcherMover::parse_my_tag.\n";
+				error_msg << e.msg();
+				throw utility::excn::EXCN_RosettaScriptsOption( error_msg.str() );
+			}
+			debug_assert( selector );
+			selectors_.push_back( selector );
+		}
+		tr << "Obtained residue selectors for " << selectors_.size() << " geomcsts." << std::endl;
+	}
+
+	// Exactly one of three things needs to be specified
+	// -match:scaffold_active_site_residues
+	// -match:scaffold_active_site_residues_for_geomcsts
+	// residue selectors as XML "residues_for_geomcsts" option
+	std::stringstream msg;
+	msg << "MatcherMover: Exactly one of the following three things needs to be specified: " << std::endl;
+	msg << "1) -match:scaffold_active_site_residues <filename> command line option" << std::endl;
+	msg << "2) -match:scaffold_active_site_residues_for_geomcsts <filename> command line option" << std::endl;
+	msg << "3) residues_for_geomcsts XML option to MatcherMover" << std::endl;
+
+	bool bad_options = false;
+	if ( basic::options::option[ basic::options::OptionKeys::match::scaffold_active_site_residues ].user() ) {
+		if ( basic::options::option[ basic::options::OptionKeys::match::scaffold_active_site_residues_for_geomcsts ].user()
+				|| selectors_.size() ) {
+			bad_options = true;
+			msg << "You have specified -match:scaffold_active_site_residues and ";
+			if ( selectors_.empty() ) {
+				msg << "-match:scaffold_active_site_residues_for_geomcsts";
+			} else {
+				msg << "residues_for_geomcsts (XML option)";
+			}
+		}
+	} else if ( basic::options::option[ basic::options::OptionKeys::match::scaffold_active_site_residues_for_geomcsts ].user() ) {
+		if ( selectors_.size() ) {
+			bad_options = true;
+			msg << "You have specified -match:scaffold_active_site_residues_for_geomcsts and residues_for_geomcsts (XML option)";
+		}
+	} else if ( selectors_.empty() ) {
+		bad_options = true;
+		msg << "You have specified none of these";
+	}
+	if ( bad_options ) {
+		msg << "." << std::endl;
+		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+	}
 }
 
 void

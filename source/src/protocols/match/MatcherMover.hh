@@ -24,6 +24,7 @@
 
 #include <core/types.hh>
 
+#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
@@ -94,6 +95,12 @@ public:
 	set_match_positions(
 		utility::vector1< core::Size > const & match_positions );
 
+	void
+	generate_match_pos( core::pose::Pose const & pose ) const;
+
+	void
+	clean_match_pos() const;
+
 	/// @brief if set to true, a single random match will be returned.
 	/// @details The default behavior is to use the MultiplePoseMover framework
 	/// to return all matches
@@ -112,7 +119,9 @@ private:
 
 	core::conformation::ResidueCOP ligres_;
 	utility::vector1< core::Size > match_positions_;
+	utility::vector1< core::pack::task::residue_selector::ResidueSelectorCOP > selectors_;
 
+	static std::string const MATCH_POS_FILE;
 };
 
 void
