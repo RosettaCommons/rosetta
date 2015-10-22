@@ -31,6 +31,7 @@
 #include <core/conformation/ResidueFactory.hh>
 //#include <core/pack/rotamer_set/WaterPackingInfo.hh>
 #include <basic/options/util.hh>
+#include <basic/options/option.hh>
 #include <basic/database/open.hh>
 
 

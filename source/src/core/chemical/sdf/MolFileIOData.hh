@@ -18,8 +18,9 @@
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/types.hh>
-
-#include <utility/vector1.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>        // for AtomTypeSetCOP
+#include <core/chemical/ElementSet.fwd.hh>         // for ElementSetCOP
+#include <core/chemical/MMAtomTypeSet.fwd.hh>      // for MMAtomTypeSetCOP
 
 #include <boost/graph/undirected_graph.hpp>
 

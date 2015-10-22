@@ -44,7 +44,7 @@
 #include <core/id/DOF_ID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/TorsionID.fwd.hh>
-#include <core/environment/DofPassport.hh>
+#include <core/environment/DofPassport.fwd.hh>
 
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
@@ -65,7 +65,6 @@
 #include <utility/signals/Link.hh>
 #include <utility/signals/PausableSignalHub.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 
 
 namespace core {

@@ -11,10 +11,9 @@
 /// @author Rocco Moretti (rmorettiase@gmail.com)
 
 #include <core/chemical/atomtype_support.hh>
+#include <core/chemical/AtomType.hh>
 
 #include <core/chemical/ResidueType.hh>
-
-#include <basic/Tracer.hh>
 
 namespace core {
 namespace chemical {

@@ -44,6 +44,7 @@
 //Symmetry Headers
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh> //to access symmetric pose data
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
 //movers

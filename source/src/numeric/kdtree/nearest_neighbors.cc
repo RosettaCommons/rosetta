@@ -16,20 +16,16 @@
 #include <numeric/kdtree/constants.hh>
 #include <numeric/kdtree/nearest_neighbors.hh>
 #include <numeric/kdtree/util.hh>
-#include <numeric/kdtree/nearest_neighbors.hh>
 #include <numeric/kdtree/calc_distance.hh>
 #include <numeric/kdtree/KDNode.hh>
 #include <numeric/kdtree/KDTree.hh>
-#include <numeric/kdtree/KDPoint.hh>
 #include <numeric/kdtree/HyperRectangle.hh>
-#include <numeric/kdtree/HyperRectangle.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>
 
 #include <cmath>
-#include <string>
 #include <algorithm>
 
 namespace numeric {

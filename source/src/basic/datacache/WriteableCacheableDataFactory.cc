@@ -12,20 +12,13 @@
 /// @author Justin Porter
 
 #include <basic/datacache/WriteableCacheableDataFactory.hh>
-
 #include <basic/datacache/WriteableCacheableDataCreator.hh>
-#include <basic/datacache/WriteableCacheableData.hh>
 
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/thread/threadsafe_creation.hh>
-
-// Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 // Singleton instance and mutex static data members
 namespace utility {

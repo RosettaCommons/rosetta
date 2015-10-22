@@ -18,28 +18,20 @@
 // Unit headers
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 
-
 // Package headers
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.fwd.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
-#include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.fwd.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-//XRW_B_T1
-//#include <core/coarse/Translator.fwd.hh>
-//XRW_E_T1
 #include <core/conformation/Residue.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
+//#include <core/graph/Graph.fwd.hh>
 
 #ifdef WIN32 //VC++ needs full class declaration
-#include <core/graph/Graph.hh>
+//#include <core/graph/Graph.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #endif

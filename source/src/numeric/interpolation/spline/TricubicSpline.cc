@@ -29,11 +29,8 @@
 #include <numeric/types.hh>
 #include <numeric/interpolation/spline/Cubic_spline.hh>
 #include <numeric/interpolation/spline/Bicubic_spline.hh>
-#include <numeric/MathVector_operations.hh>
+#include <numeric/MathVector.hh>
 #include <numeric/MathMatrix.hh>
-
-// C++ headers
-#include <iostream>
 
 namespace numeric {
 namespace interpolation {

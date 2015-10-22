@@ -15,8 +15,6 @@
 #include <core/conformation/ResidueMatcher.hh>
 #include <core/conformation/Residue.hh>
 
-#include <utility/vector1.hh>
-
 
 // Utility headers
 

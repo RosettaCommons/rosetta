@@ -12,32 +12,25 @@
 /// @author Matt O'Meara
 
 // Project Headers
-#include <basic/Tracer.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/icoor_support.hh>
 #include <core/chemical/rotamers/PDBRotamerLibrarySpecification.hh>
-#include <core/kinematics/Stub.hh>
 #include <core/types.hh>
 #include <basic/database/sql_utils.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Index.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 
-
-#include <numeric/xyz.functions.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
 // Boost Headers

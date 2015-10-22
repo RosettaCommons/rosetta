@@ -20,17 +20,6 @@
 // Unit headers
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
-// Package headers
-//#include <core/optimization/DOF_Node.hh>
-//#include <core/optimization/AtomNode.hh>
-//#include <core/optimization/types.hh>
-
-
-// Project headers
-//#include <core/pose/Pose.fwd.hh>
-//#include <core/id/AtomID_Map.hh>
-//#include <core/id/DOF_ID_Map.hh>
-
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 

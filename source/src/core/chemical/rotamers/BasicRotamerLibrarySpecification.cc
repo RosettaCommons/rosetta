@@ -15,7 +15,6 @@
 #include <core/chemical/rotamers/BasicRotamerLibrarySpecification.hh>
 #include <core/chemical/rotamers/BasicRotamerLibrarySpecificationCreator.hh>
 
-#include <core/chemical/ResidueType.fwd.hh>
 // Utility headers
 
 namespace core {

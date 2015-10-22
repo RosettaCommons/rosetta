@@ -27,13 +27,9 @@
 #include <core/conformation/signals/LengthEvent.fwd.hh>
 
 // package headers
-#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/signals/GeneralEvent.hh>
 #include <core/conformation/Conformation.fwd.hh>
-
-// utility headers
-#include <utility/pointer/access_ptr.hh>
-#include <utility/exit.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <iosfwd>
 

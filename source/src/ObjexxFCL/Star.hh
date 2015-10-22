@@ -15,10 +15,6 @@
 // Licensing is available from Objexx Engineering, Inc.:  http://objexx.com  Objexx@objexx.com
 
 
-// ObjexxFCL Headers
-#include <ObjexxFCL/Star.fwd.hh>
-
-
 namespace ObjexxFCL {
 
 

@@ -16,58 +16,29 @@
 #include <mpi.h>
 #endif
 
-
 #include <basic/Tracer.hh>
-
-//#include <basic/options/option.hh>
-//#include <basic/options/keys/OptionKeys.hh>
-
-#include <utility/CSI_Sequence.hh>
-#include <utility/string_util.hh>
-#include <utility/basic_sys_util.hh>
-#include <utility/tools/make_vector.hh>
-
-#include <iostream>
-#include <algorithm>
-
-#include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <utility/exit.hh>
-#include <utility/stream_util.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <cassert>
-#include <cstddef>
-#include <iosfwd>
-#include <list>
-#include <map>
-#include <ostream>
-#include <sstream>
-#include <string>
-#include <typeinfo>
-#include <vector>
-#include <basic/Tracer.fwd.hh>
-#include <boost/algorithm/string/erase.hpp>
-
-#include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/string.functions.hh>  // for lowercased
+#include <algorithm>                      // for find
+#include <cassert>                        // for assert
+#include <cstddef>                        // for size_t
+#include <iosfwd>                         // for string, ostream
+#include <iostream>                       // for cout, cerr
+#include <ostream>                        // for operator<<, basic_ostream
+#include <platform/types.hh>              // for Size
+#include <string>                         // for allocator, operator==, basi...
+#include <utility/CSI_Sequence.hh>        // for CSI_Sequence, CSI_Black
+#include <utility/basic_sys_util.hh>      // for timestamp
+#include <utility/string_util.hh>         // for split, string2int, string_s...
+#include <utility/tools/make_vector.hh>   // for make_vector
+#include <utility/vector1.hh>             // for vector1
+#include <utility/vectorL.hh>             // for vectorL
+#include <vector>                         // for vector, vector<>::iterator
 
 #ifndef WIN32
 #include <unistd.h>
 #else
 #include <io.h>
 #endif
-
-#include <cstdio>
 
 #ifdef CXX11
 #ifdef MULTI_THREADED

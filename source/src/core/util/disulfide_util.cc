@@ -31,6 +31,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/make_symmetric_task.hh>
 
 #include <core/scoring/ScoreFunction.hh>

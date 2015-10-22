@@ -18,13 +18,8 @@
 // Package headers
 #include <core/conformation/RotamerSetCacheableDataType.hh>
 
-// Project headers
-#include <core/types.hh>
-
 // Utility headers
 #include <basic/datacache/BasicDataCache.hh>
-
-#include <utility/vector1.hh>
 
 
 namespace core {

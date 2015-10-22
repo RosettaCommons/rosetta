@@ -93,24 +93,20 @@ DunbrackEnergy::residue_energy(
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
-		return;
-	}
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) )  return;
 
 	if ( rsd.is_virtual_residue() ) return;
 
 	//Returns the equivalent L-amino acid library if a D-amino acid is provided
 	pack::rotamers::SingleResidueRotamerLibraryCOP rotlib = rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() );
 
-	if ( rotlib ) {
-		dunbrack::RotamerLibraryScratchSpace scratch;
-		emap[ fa_dun ] += rotlib->rotamer_energy( rsd, scratch );
-		emap[ fa_dun_rot ] += scratch.fa_dun_rot();
-		emap[ fa_dun_semi ] += scratch.fa_dun_semi();
-		emap[ fa_dun_dev  ] += scratch.fa_dun_dev();
-	}
-	//--count_present;
-	//std::cout << "D" << count_present << std::flush;
+	if ( ! rotlib ) return;
+	
+	dunbrack::RotamerLibraryScratchSpace scratch;
+	emap[ fa_dun ] += rotlib->rotamer_energy( rsd, scratch );
+	emap[ fa_dun_rot ] += scratch.fa_dun_rot();
+	emap[ fa_dun_semi ] += scratch.fa_dun_semi();
+	emap[ fa_dun_dev  ] += scratch.fa_dun_dev();
 }
 
 bool DunbrackEnergy::defines_dof_derivatives( pose::Pose const & ) const { return true; }
@@ -133,25 +129,26 @@ DunbrackEnergy::eval_residue_dof_derivative(
 	Real deriv_dev( 0.0 );
 	Real deriv_rot( 0.0 );
 	Real deriv_semi( 0.0 );
-	if ( tor_id.valid() ) {
-		debug_assert( rsd.seqpos() == tor_id.rsd() );
+	if ( ! tor_id.valid() ) return 0.0;
+	
+	debug_assert( rsd.seqpos() == tor_id.rsd() );
 
-		pack::rotamers::SingleResidueRotamerLibraryCOP rotlib =
-			rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() );
-		if ( rsd.is_protein() && rotlib ) {
-			dunbrack::RotamerLibraryScratchSpace scratch;
-			rotlib->rotamer_energy_deriv( rsd, scratch );
-			if ( tor_id.type() == id::BB && tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
-				deriv      = scratch.dE_dbb()[ tor_id.torsion() ];
-				deriv_dev  = scratch.dE_dbb_dev()[ tor_id.torsion() ];
-				deriv_rot  = scratch.dE_dbb_rot()[ tor_id.torsion() ];
-				deriv_semi = scratch.dE_dbb_semi()[ tor_id.torsion() ];
-			} else if ( tor_id.type() == id::CHI && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_SCTOR ) {
-				deriv      = scratch.dE_dchi()[ tor_id.torsion() ];
-				deriv_dev  = scratch.dE_dchi_dev()[ tor_id.torsion() ];
-				deriv_semi = scratch.dE_dchi_semi()[ tor_id.torsion() ];
-			}
-		}
+	pack::rotamers::SingleResidueRotamerLibraryCOP rotlib =
+	rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() );
+	if ( ! rsd.is_protein() || ! rotlib )  return 0.0;
+	
+	
+	dunbrack::RotamerLibraryScratchSpace scratch;
+	rotlib->rotamer_energy_deriv( rsd, scratch );
+	if ( tor_id.type() == id::BB && tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
+		deriv      = scratch.dE_dbb()[ tor_id.torsion() ];
+		deriv_dev  = scratch.dE_dbb_dev()[ tor_id.torsion() ];
+		deriv_rot  = scratch.dE_dbb_rot()[ tor_id.torsion() ];
+		deriv_semi = scratch.dE_dbb_semi()[ tor_id.torsion() ];
+	} else if ( tor_id.type() == id::CHI && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_SCTOR ) {
+		deriv      = scratch.dE_dchi()[ tor_id.torsion() ];
+		deriv_dev  = scratch.dE_dchi_dev()[ tor_id.torsion() ];
+		deriv_semi = scratch.dE_dchi_semi()[ tor_id.torsion() ];
 	}
 
 	return numeric::conversions::degrees( weights[ fa_dun ] * deriv + weights[ fa_dun_dev ] * deriv_dev + weights[ fa_dun_rot ] * deriv_rot + weights[ fa_dun_semi ] * deriv_semi);
@@ -176,33 +173,30 @@ DunbrackEnergy::eval_dof_derivative(
 	Real deriv_dev( 0.0 );
 	Real deriv_rot( 0.0 );
 	Real deriv_semi( 0.0 );
-	if ( tor_id.valid() ) {
-
-		pack::rotamers::SingleResidueRotamerLibraryCOP rotlib =
-			rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue( tor_id.rsd() ).type() );
-
-		if ( pose.residue( tor_id.rsd() ).is_virtual_residue() ) return 0.0;
-
-		if ( rotlib ) {
-			dunbrack::RotamerLibraryScratchSpace scratch;
-			rotlib->rotamer_energy_deriv( pose.residue( tor_id.rsd() ), scratch );
-
-			/// ASSUMPTION: Derivatives for amino acids only!
-			if ( pose.residue_type( tor_id.rsd() ).is_protein() ) {
-				if ( tor_id.type() == id::BB  && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_BBTOR ) {
-					deriv      = scratch.dE_dbb()[ tor_id.torsion() ];
-					deriv_dev  = scratch.dE_dbb_dev()[ tor_id.torsion() ];
-					deriv_rot  = scratch.dE_dbb_rot()[ tor_id.torsion() ];
-					deriv_semi = scratch.dE_dbb_semi()[ tor_id.torsion() ];
-				} else if ( tor_id.type() == id::CHI && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_SCTOR ) {
-					deriv      = scratch.dE_dchi()[ tor_id.torsion() ];
-					deriv_dev  = scratch.dE_dchi_dev()[ tor_id.torsion() ];
-					deriv_semi = scratch.dE_dchi_semi()[ tor_id.torsion() ];
-				}
-			}
-		}
+	if ( !tor_id.valid() )  return 0.0;
+	
+	pack::rotamers::SingleResidueRotamerLibraryCOP rotlib =
+	rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue( tor_id.rsd() ).type() );
+	
+	if ( pose.residue( tor_id.rsd() ).is_virtual_residue() ) return 0.0;
+	
+	/// ASSUMPTION: Derivatives for amino acids only!
+	if ( ! rotlib || ! pose.residue_type( tor_id.rsd() ).is_protein() )  return 0.0;
+	
+	dunbrack::RotamerLibraryScratchSpace scratch;
+	rotlib->rotamer_energy_deriv( pose.residue( tor_id.rsd() ), scratch );
+	
+	if ( tor_id.type() == id::BB  && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_BBTOR ) {
+		deriv      = scratch.dE_dbb()[ tor_id.torsion() ];
+		deriv_dev  = scratch.dE_dbb_dev()[ tor_id.torsion() ];
+		deriv_rot  = scratch.dE_dbb_rot()[ tor_id.torsion() ];
+		deriv_semi = scratch.dE_dbb_semi()[ tor_id.torsion() ];
+	} else if ( tor_id.type() == id::CHI && tor_id.torsion() <= dunbrack::DUNBRACK_MAX_SCTOR ) {
+		deriv      = scratch.dE_dchi()[ tor_id.torsion() ];
+		deriv_dev  = scratch.dE_dchi_dev()[ tor_id.torsion() ];
+		deriv_semi = scratch.dE_dchi_semi()[ tor_id.torsion() ];
 	}
-
+	
 	return numeric::conversions::degrees( weights[ fa_dun ] * deriv + weights[ fa_dun_dev ] * deriv_dev + weights[ fa_dun_rot ] * deriv_rot + weights[ fa_dun_semi ] * deriv_semi );
 }
 

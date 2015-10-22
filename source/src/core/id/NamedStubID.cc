@@ -19,10 +19,7 @@
 
 
 // C++ headers
-#include <ostream>
 #include <string>
-
-#include <utility/vector1.hh>
 #include <sstream>
 
 

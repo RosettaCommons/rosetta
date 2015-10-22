@@ -22,12 +22,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/AA.hh>
 
-// Basic headers
-
-// Utility Headers
-
 // C++ headers
-#include <string>
 #include <istream>
 
 namespace core {

@@ -18,6 +18,7 @@
 #define INCLUDED_utility_Binary_Util_hh
 
 // C++ Headers
+// Could be iosfwd, except for Windows PyRosetta.
 #include <string>
 
 

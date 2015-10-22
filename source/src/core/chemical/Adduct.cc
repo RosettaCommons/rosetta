@@ -18,11 +18,6 @@
 // Utility headers
 #include <utility/exit.hh>
 
-
-// C++ headers
-#include <string>
-
-
 namespace core {
 namespace chemical {
 

@@ -53,6 +53,7 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 
 //Numeric
 #include <numeric/PCA.hh>

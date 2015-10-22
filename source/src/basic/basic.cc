@@ -14,22 +14,12 @@
 
 // Rosetta Headers
 #include <basic/basic.hh>
+#include <ObjexxFCL/Fmath.hh>    // for mod
+#include <cassert>               // for assert
+#include <cmath>                 // for fabs, sqrt
 
-// ObjexxFCL Headers
-#include <ObjexxFCL/Fmath.hh>
-//#include <ObjexxFCL/format.hh>
-
-// Numeric Headers
-#include <numeric/constants.hh>
-
-#include <platform/types.hh>
-#include <numeric/types.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <cstddef>
-#include <limits>
+// Numeric headers
+#include <numeric/constants.hh>  // for pi_2
 
 
 //Auto using namespaces

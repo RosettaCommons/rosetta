@@ -23,10 +23,6 @@
 //project headers
 #include <utility/tag/Tag.fwd.hh>
 
-//utility headers
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/excn/Exceptions.hh>
-
 //C++ headers
 #include <istream>
 

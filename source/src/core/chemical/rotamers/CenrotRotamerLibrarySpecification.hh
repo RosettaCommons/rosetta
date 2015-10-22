@@ -19,7 +19,7 @@
 #include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
 
 // Package headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/AA.hh>
 
 // Basic headers

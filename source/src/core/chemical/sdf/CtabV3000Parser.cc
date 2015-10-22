@@ -21,7 +21,6 @@
 #include <utility/numbers.hh>
 
 #include <string>
-#include <sstream>
 #include <istream>
 
 //// Boost Headers

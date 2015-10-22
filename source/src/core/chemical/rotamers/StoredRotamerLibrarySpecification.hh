@@ -28,7 +28,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <string>
 #include <istream>
 #include <map>
 

@@ -32,10 +32,6 @@
 
 // C++ headers
 #include <algorithm>
-#include <cassert>
-#include <cstddef>
-#include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <utility>
 //#include <list>

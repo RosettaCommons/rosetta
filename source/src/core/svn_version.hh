@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_svn_version_hh
 #define INCLUDED_core_svn_version_hh
 
-#include <string>
+#include <string> // a bunch of auto generated files rely on this NOT being iosfwd
 
 namespace core {
 

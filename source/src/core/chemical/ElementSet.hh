@@ -23,7 +23,6 @@
 // Project headers
 
 // Utility headers
-#include <utility/exit.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers

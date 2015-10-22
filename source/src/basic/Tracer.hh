@@ -15,28 +15,20 @@
 #ifndef INCLUDED_basic_Tracer_hh
 #define INCLUDED_basic_Tracer_hh
 
-#include <basic/Tracer.fwd.hh>
+#include <cassert>                                // for assert
+#include <memory>                                 // for allocator, shared_ptr
+#include <sstream>                                // for string, basic_strin...
+#include <vector>                                 // for vector
+#include <utility/pointer/ReferenceCount.hh>      // for ReferenceCount
+#include <utility/vector1.hh>                     // for vector1
 
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/owning_ptr.hh>
+#include <utility/thread/backwards_thread_local.hh> // for THREAD_LOCAL
 
-#include <sstream>
-
-#include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-
-#include <utility/thread/backwards_thread_local.hh>
-
+#ifdef WIN32
 #include <utility/CSI_Sequence.hh>
-
-#include <cassert>
-#include <cstddef>
-#include <iosfwd>
-#include <ostream>
+#else
+#include <utility/CSI_Sequence.fwd.hh>
+#endif
 
 namespace basic {
 

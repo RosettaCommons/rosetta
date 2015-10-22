@@ -21,11 +21,13 @@
 #include <utility/numbers.hh>
 
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
+//#include <utility/string_util.hh>
 #include <core/types.hh>
 
 #include <set>
-#include <iostream>
+
+// needed for header-only build, I guess.
+#include <iostream> 
 
 namespace core {
 namespace chemical {

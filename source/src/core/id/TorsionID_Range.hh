@@ -19,15 +19,7 @@
 #include <core/id/TorsionID_Range.fwd.hh>
 
 // Package headers
-#include <core/id/types.hh>
 #include <core/id/TorsionID.hh>
-
-// Numeric headers
-//#include <numeric/constants.hh>
-//#include <numeric/numeric.functions.hh>
-
-// Utility headers
-//#include <utility/exit.hh>
 
 // C++ header
 #include <iostream>

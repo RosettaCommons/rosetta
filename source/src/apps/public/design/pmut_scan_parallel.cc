@@ -19,6 +19,7 @@
 
 #include <devel/init.hh>
 
+#include <basic/options/option.hh>
 #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 

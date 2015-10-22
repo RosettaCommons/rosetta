@@ -24,12 +24,11 @@
 #include <utility/options/keys/ResidueChainVectorOptionKey.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/char.functions.hh>
 
 // C++ headers
-#include <cstdlib>
-#include <iostream>
+//#include <cstdlib>
+//#include <iostream>
 
 
 // A mod of IntegerVectorOption that, by default, returns list of integers but more generally stores and

@@ -38,7 +38,7 @@
 #include <utility/vector1_bool.hh>
 
 // C++ headers
-#include <string>
+#include <iosfwd>
 
 namespace core {
 namespace chemical {

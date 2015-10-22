@@ -14,34 +14,9 @@
 #ifndef INCLUDED_basic_MemTracer_hh
 #define INCLUDED_basic_MemTracer_hh
 
-// C/C++ headers
-#include <string>
-
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility/vector1.hh>
-
-#include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <algorithm>
-#include <cassert>
-#include <cstddef>
 #include <iosfwd>
-#include <ostream>
-#include <sstream>
-#include <vector>
-#include <basic/Tracer.fwd.hh>
 
 
 namespace basic {

@@ -20,13 +20,10 @@
 // C++ Headers
 #include <iosfwd>
 #include <map>
-#include <sstream>
 #include <string>
-#include <utility/assert.hh>
 #include <iostream>
 
 // Utility headers
-#include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector0.hh>

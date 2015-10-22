@@ -12,25 +12,26 @@
 /// @author Matthew O'Meara
 
 // Project Headers
-#include <basic/Tracer.hh>
-#include <core/types.hh>
+//#include <basic/Tracer.hh>
+//#include <core/types.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomTypeDatabaseIO.hh>
 #include <core/chemical/types.hh>
 #include <basic/database/sql_utils.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
+//#include <basic/options/option.hh>
+//#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 
 
 #include <utility/vector1.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
+//#include <boost/foreach.hpp>
 #include <boost/assign/list_of.hpp>
 
 #include <vector>

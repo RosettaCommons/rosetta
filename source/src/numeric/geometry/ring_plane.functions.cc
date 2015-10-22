@@ -19,8 +19,6 @@
 
 // Numeric headers
 #include <numeric/linear_algebra/singular_value_decomposition.hh>
-#include <numeric/MathMatrix.hh>
-#include <numeric/MathVector.hh>
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>

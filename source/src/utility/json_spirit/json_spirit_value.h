@@ -12,13 +12,9 @@
 
 #include <vector>
 #include <map>
-#include <string>
-#include <cassert>
 #include <sstream>
 #include <stdexcept>
-#include <boost/config.hpp>
 #include <boost/cstdint.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/variant.hpp>
 
 // comment out the value types you don't need to reduce build times and intermediate file sizes

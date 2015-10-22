@@ -22,7 +22,6 @@
 #include <core/chemical/sdf/MolFileIOData.hh>
 
 #include <istream>
-#include <string>
 
 namespace core {
 namespace chemical {

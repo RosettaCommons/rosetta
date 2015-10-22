@@ -14,24 +14,11 @@
 
 
 #include <basic/TracerToFile.hh>
-
-#include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <cassert>
-#include <cstddef>
-#include <fstream>
-#include <iosfwd>
-#include <ostream>
-#include <sstream>
-#include <basic/Tracer.fwd.hh>
-#include <basic/Tracer.hh>
-#include <utility/exit.hh>
+#include <cassert>          // for assert
+#include <iosfwd>           // for ofstream, string, fstream
+#include <ostream>          // for basic_ostream, operator<<, endl
+#include <string>           // for operator+
+#include <utility/exit.hh>  // for utility_exit_with_message
 
 
 namespace basic {

@@ -13,13 +13,13 @@
 #include <utility/inline_file_provider.hh>
 
 // C/C++ headers
-#include <fstream>
-#include <iostream>
 #include <sstream>
 #include <string>
 
-#include <utility/static_database.hh>
-#include <utility/exit.hh>
+// As far as I can tell, find_if is available in algorithm under CXX11?
+#ifdef CXX11
+#include <algorithm>
+#endif
 
 // Singleton instance and mutex static data members
 namespace utility {

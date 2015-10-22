@@ -24,13 +24,6 @@
 
 #include <basic/Tracer.hh>
 
-//#include "after_opts.h"
-//#include "FixbbCoupledRotamerSimAnnealer.h"
-//#include "RotamerAssigningAnnealer.h"
-//#include "random_numbers.h"
-//#include "param.h"
-//#include "RotamerSet.h"
-
 #include <utility/exit.hh>
 #include <numeric/random/random.hh>
 
@@ -141,9 +134,6 @@ FixbbCoupledRotamerSimAnnealer::setup_rotamer_couplings(
 			// both are molten
 			(*rotamer_couplings_)[ moltenres_id ].first  = rotamer_sets()->resid_2_moltenres( other_resid );
 			(*rotamer_couplings_)[ moltenres_id ].second = (*rotamer_couplings)[ resid ].second;
-
-			//std::cout << "packing with coupling between: "  << resid << " and " << other_resid << std::endl;
-
 		} else {
 			(*rotamer_couplings_)[ moltenres_id ].first = 0; // signal no pairwise couplings
 		}
@@ -185,15 +175,6 @@ void FixbbCoupledRotamerSimAnnealer::run()
 	FArray1D< core::PackerEnergy > previous_nsteps_for_rot( rotamer_sets()->nrotamers(), 0.0);
 
 	int outeriterations = get_outeriterations();
-
-
-	//std::ofstream annealer_trajectory;
-	//static bool const record_annealer_trajectory( truefalseoption("record_annealer_trajectory") ); //look up once
-	//if ( record_annealer_trajectory )
-	//{
-	// std::string trajectory_file_name( stringafteroption("record_annealer_trajectory" ) );
-	// annealer_trajectory.open(trajectory_file_name.c_str() );
-	//}
 
 	//outer loop
 	for ( int nn = 1; nn <= outeriterations; ++nn ) {
@@ -390,8 +371,6 @@ void FixbbCoupledRotamerSimAnnealer::run()
 		}
 		debug_assert( ! ig_->any_vertex_state_unassigned() );
 		utility_exit();
-
-
 	}
 
 	//convert best_state_on_node into best_rotamer_at_seqpos
@@ -399,8 +378,6 @@ void FixbbCoupledRotamerSimAnnealer::run()
 		int const iiresid = rotamer_sets()->moltenres_2_resid( ii );
 		bestrotamer_at_seqpos()( iiresid ) = rotamer_sets()->moltenres_rotid_2_rotid( ii, best_state_on_node(ii));
 	}
-
-
 }
 
 }//end namespace annealer

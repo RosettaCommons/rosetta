@@ -17,79 +17,44 @@
 
 // Package headers
 #include <core/pose/copydofs/CopyDofs.hh>
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/MiniPose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/datacache/PositionConservedResiduesStore.hh>
-#include <core/pose/util.tmpl.hh>
 
 // Project headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueProperties.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/PatchOperation.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/Exceptions.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/id/TorsionID.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/io/raw_data/DisulfideFile.hh>
-#include <core/io/silent/BinarySilentStruct.hh>
+#include <core/conformation/Residue.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/chemical/ResidueConnection.hh>
+#include <core/id/AtomID.hh>
+
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/conformation/Residue.hh>
-#include <core/id/SequenceMapping.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/sequence/util.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
-#include <basic/datacache/CacheableStringFloatMap.hh>
-#include <basic/datacache/CacheableStringMap.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Numeric headers
-#include <numeric/constants.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.string.hh>
+#include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh> 
 
 // Utility headers
-#include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
 // C/C++ headers
 #include <cmath>
 #include <iostream>
-#include <stdio.h>
 
 // External headers
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
-//#include <boost/functional/hash.hpp>
-//#include <boost/foreach.hpp>
-
 
 #define foreach BOOST_FOREACH
 
@@ -123,7 +88,6 @@ add_covalent_linkage_helper(
 )
 {
 	using namespace core::chemical;
-	using namespace core::pack::dunbrack;
 
 	std::string res_atom = pose.residue(res_pos).atom_name( Atpos /*(template_res->get_template_atoms_at_pos(pose, res_pos) )->atom1_[Atpos].atomno()*/ );
 	core::Size res_atom_parent_index = pose.residue(res_pos).atom_base(Atpos);

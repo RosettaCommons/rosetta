@@ -14,10 +14,6 @@
 //unit headers
 #include <basic/resource_manager/ResourceOptions.hh>
 
-//utility headers
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/tag/Tag.fwd.hh>
-
 //C++ headers
 #include <string>
 #include <ostream>

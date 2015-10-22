@@ -14,68 +14,15 @@
 
 #include <core/types.hh>
 
-//#include <core/chemical/AtomTypeSet.hh>
-//#include <core/chemical/MMAtomTypeSet.hh>
-
-//#include <core/id/AtomID.hh>
-
-//#include <core/chemical/AA.hh>
-//#include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-//#include <core/chemical/ResidueTypeSet.hh>
-//#include <core/chemical/ChemicalManager.hh>
-//#include <core/conformation/ResidueFactory.hh>
-//#include <core/chemical/residue_io.hh>
-//#include <core/chemical/VariantType.hh>
-
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-
-//#include <core/scoring/etable/Etable.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
-//#include <core/scoring/ScoreType.hh>
-//#include <core/scoring/Ramachandran.hh>
-//#include <core/pack/dunbrack/RotamerLibrary.hh>
-//#include <core/scoring/hbonds/HBondSet.hh>
-//#include <core/scoring/hbonds/hbonds.hh>
-//#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-//#include <core/scoring/LREnergyContainer.hh>
-//#include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
-//#include <core/scoring/TenANeighborGraph.hh>
-//#include <core/scoring/methods/EnergyMethodOptions.hh>
-
-
-//#include <core/pack/rotamer_trials.hh>
-//#include <core/pack/pack_rotamers.hh>
-//#include <core/pack/task/PackerTask.hh>
-//#include <core/pack/task/TaskFactory.hh>
-//#include <core/pack/rotamer_set/RotamerSet.hh>
-//#include <core/pack/rotamer_set/RotamerSetFactory.hh>
-//#include <core/pack/packer_neighbors.hh>
-
-//#include <core/pack/rotamer_set/OptEData.hh>
-
-//#include <core/graph/Graph.hh>
-
-//#include <core/kinematics/FoldTree.hh>
-//#include <core/kinematics/MoveMap.hh>
-//#include <core/id/AtomID_Map.hh>
-//#include <core/id/AtomID_Map.Pose.hh>
-
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>
 
-//#include <core/scoring/mm/MMTorsionLibrary.hh>
-//#include <core/scoring/mm/MMTorsionLibrary.fwd.hh>
-
-//#include <core/optimization/types.hh>
-//#include <core/optimization/Multifunc.hh>
-//#include <core/optimization/AtomTreeMinimizer.hh>
-//#include <core/optimization/Minimizer.hh>
-//#include <core/optimization/MinimizerOptions.hh>
-
 #include <basic/options/util.hh>
+#include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
@@ -83,33 +30,12 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
-//#include <basic/database/open.hh>
-
-//#include <utility/vector1.hh>
-//#include <utility/exit.hh>
-//#include <utility/pointer/owning_ptr.hh>
-//#include <utility/pointer/ReferenceCount.hh>
-
-//#include <numeric/xyzVector.hh>
-//#include <numeric/random/random.hh>
-
-//#include <ObjexxFCL/string.functions.hh>
-
-//#include <protocols/dna/util.hh>
-//#include <protocols/dna/classes.hh>
-
 #include <protocols/motifs/Motif.hh>
 #include <protocols/motifs/SingleMotif.hh>
 #include <protocols/motifs/MotifLibrary.hh>
-//#include <protocols/motifs/motif_utils.hh>
 
 // C++ headers
-//#include <cstdlib>
 #include <fstream>
-//#include <iostream>
-//#include <string>
-//#include <algorithm>
-
 //silly using/typedef
 
 

@@ -16,11 +16,12 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/stream_util.hh>
 #include <utility/exit.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
+
+#include <utility/stream_util.hh>
 
 // Boost headers
 #include <boost/algorithm/string/erase.hpp>

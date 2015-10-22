@@ -17,11 +17,11 @@
 #include <core/types.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueType.fwd.hh>
+//#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <core/kinematics/Stub.hh>
+//#include <core/kinematics/Stub.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 

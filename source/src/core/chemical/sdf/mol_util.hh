@@ -17,7 +17,7 @@
 #include <core/types.hh>
 #include <map>
 #include <set>
-#include <string>
+#include <iosfwd>
 
 namespace core {
 namespace chemical {

@@ -13,7 +13,6 @@
 // Unit Headers
 #include <numeric/types.hh>
 #include <numeric/kinematic_closure/vector.hh>
-#include <numeric/xyzVector.hh>
 
 // C++ Headers
 #include <cmath>

@@ -39,6 +39,8 @@
 #include <protocols/comparative_modeling/coord_util.hh>
 #include <protocols/comparative_modeling/PartialThreadingMover.hh>
 
+#include <ObjexxFCL/FArray2D.hh>
+
 //utilities
 
 // option key includes

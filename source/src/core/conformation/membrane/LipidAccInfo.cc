@@ -25,16 +25,12 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-
 #include <utility/vector1.hh>
 
-#include <core/types.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
-#include <cmath>
-
 #include <cmath>
 
 static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.LipidAccInfo" );

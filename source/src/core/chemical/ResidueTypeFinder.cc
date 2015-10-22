@@ -13,6 +13,7 @@
 /// @author Rhiju Das, rhiju@stanford.edu
 
 #include <core/chemical/ResidueTypeFinder.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/util.hh>
@@ -22,7 +23,6 @@
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/string.functions.hh>
-#include <utility/stream_util.hh>
 
 using utility::vector1;
 using utility::tools::make_vector1;

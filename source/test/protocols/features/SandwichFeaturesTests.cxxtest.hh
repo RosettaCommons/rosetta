@@ -28,6 +28,7 @@
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/tag/Tag.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>

@@ -20,12 +20,8 @@
 
 // utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/exit.hh>
 #include <utility/thread/threadsafe_creation.hh>
-
-// Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 // Singleton instance and mutex static data members
 namespace utility {

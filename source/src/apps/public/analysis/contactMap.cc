@@ -14,7 +14,6 @@
 //include block
 // C++ headers
 #include <string>
-#include <sstream>
 
 // libRosetta headers
 
@@ -26,16 +25,14 @@
 #include <utility/vector1.hh>
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
 //#include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/contact_map/ContactMap.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>

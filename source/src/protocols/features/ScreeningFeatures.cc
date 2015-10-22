@@ -23,6 +23,7 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
@@ -31,6 +32,7 @@
 #include <utility/string_util.hh>
 #include <utility/json_spirit/json_spirit_utils.h>
 #include <utility/json_spirit/json_spirit_writer.h>
+#include <utility/tag/Tag.hh>
 #include <algorithm>
 
 #include <core/chemical/ResidueType.hh>

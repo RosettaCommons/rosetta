@@ -14,8 +14,6 @@
 #include <numeric/types.hh>
 #include <utility/vector1.hh>
 
-#include <limits>
-#include <cmath>
 #include <algorithm>
 
 namespace numeric {

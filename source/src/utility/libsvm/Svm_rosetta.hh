@@ -16,13 +16,14 @@
 
 #ifndef INCLUDED_utility_libsvm_Svm_rosetta_hh
 #define INCLUDED_utility_libsvm_Svm_rosetta_hh
-#include <utility/libsvm/Svm.hh>
 #include <utility/libsvm/Svm_rosetta.fwd.hh>
+#include <utility/libsvm/Svm.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 // type headers
 #include <platform/types.hh>
+// aaaa WinPyRosetta
 #include <string>
 
 namespace utility {

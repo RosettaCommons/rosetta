@@ -15,9 +15,6 @@
 // Unit headers
 #include <core/kinematics/RT.hh>
 
-// Package headers
-#include <core/kinematics/Stub.hh>
-
 // Numeric headers
 #include <numeric/xyz.functions.hh>
 

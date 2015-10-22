@@ -29,9 +29,11 @@
 #include <numeric/interpolation/spline/SimpleInterpolator.hh>
 #include <numeric/kdtree/KDTree.hh>
 #include <numeric/kdtree/nearest_neighbors.hh>
+#include <numeric/xyz.functions.hh>
 
 #include <utility/tag/Tag.hh>
 #include <utility/io/izstream.hh>
+#include <utility/json_spirit/json_spirit_reader.h>
 #include <utility/tools/make_vector.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

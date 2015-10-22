@@ -17,11 +17,9 @@
 
 #include <numeric/types.hh>
 
-#include <utility/vector1.hh>
 #include <utility/json_spirit/json_spirit_value.h>
 
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/owning_ptr.hh>
 
 namespace numeric {
 namespace interpolation {

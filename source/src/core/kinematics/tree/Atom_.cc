@@ -34,7 +34,6 @@
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/types.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
 
 namespace core {
 namespace kinematics {

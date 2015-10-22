@@ -21,11 +21,9 @@
 
 // Package Headers
 #include <core/kinematics/RT.hh>
-#include <core/kinematics/Stub.fwd.hh>
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>

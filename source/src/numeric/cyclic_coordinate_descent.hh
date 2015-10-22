@@ -17,7 +17,6 @@
 #define INCLUDED_numeric_cyclic_coordinate_descent_HH
 
 #include <numeric/types.hh>
-#include <numeric/xyzVector.hh>
 
 #include <utility/vector1.hh>
 

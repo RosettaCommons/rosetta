@@ -23,7 +23,6 @@
 #include <numeric/wrap_angles.hh>
 #include <numeric/conversions.hh>
 #include <numeric/kinematic_closure/dixon.hh>
-#include <numeric/kinematic_closure/vector.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 
 // Utility headers
@@ -31,7 +30,6 @@
 
 // C++ headers
 #include <cmath>
-#include <iostream>
 
 namespace numeric {
 namespace kinematic_closure {

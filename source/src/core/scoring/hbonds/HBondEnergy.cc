@@ -566,9 +566,7 @@ HBondEnergy::residue_pair_energy_ext(
 				*options_,
 				emap, ssdep_weight_factor);
 		}
-
 	}
-
 }
 
 /// @details Note that this function helps enforce the bb/sc exclusion rule by setting the donor and acceptor availability
@@ -760,12 +758,12 @@ HBondEnergy::eval_intrares_derivatives(
 ) const
 {
 
-	if ( calculate_intra_res_hbonds( rsd, *options_ ) ) {
-		using EnergiesCacheableDataType::HBOND_SET;
-		HBondSet const & hbond_set = static_cast< HBondSet const & > (pose.energies().data().get( HBOND_SET ));
-		bool const exclude_scb( false );
-		hbond_derivs_1way( weights, hbond_set, database_, rsd, rsd, 1, 1, exclude_scb, exclude_scb, 1, atom_derivs, atom_derivs );
-	}
+	if ( ! calculate_intra_res_hbonds( rsd, *options_ ) ) return;
+ 
+	using EnergiesCacheableDataType::HBOND_SET;
+	HBondSet const & hbond_set = static_cast< HBondSet const & > (pose.energies().data().get( HBOND_SET ));
+	bool const exclude_scb( false );
+	hbond_derivs_1way( weights, hbond_set, database_, rsd, rsd, 1, 1, exclude_scb, exclude_scb, 1, atom_derivs, atom_derivs );
 }
 
 void
@@ -1012,7 +1010,6 @@ HBondEnergy::sidechain_sidechain_energy(
 			false /*calculate_derivative*/,
 			true, true, true, false, *options_, emap);
 	}
-
 }
 
 
@@ -1061,9 +1058,6 @@ HBondEnergy::evaluate_rotamer_pair_energies(
 	HBondRotamerTrieCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( hbond_method ) ));
 	HBondRotamerTrieCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( hbond_method ) ));
 
-	//prepare_for_residue_pair( set1.resid(), set2.resid(), pose );
-	//debug_assert( rep_scoretype() == fa_rep || rep_scoretype() == coarse_fa_rep );
-
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp( new HBCountPairFunction );
 
@@ -1078,29 +1072,6 @@ HBondEnergy::evaluate_rotamer_pair_energies(
 
 	/// add in the energies calculated by the tvt alg.
 	energy_table += temp_table1;
-	//std::cout << "FINISHED evaluate_rotamer_pair_energies" << std::endl;
-
-	/*
-	// debug
-	//using namespace pack;
-
-	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table3( energy_table );
-	temp_table3 = 0;
-	EnergyMap emap;
-	for ( Size ii = 1, ii_end = set1.num_rotamers(); ii <= ii_end; ++ii ) {
-	for ( Size jj = 1, jj_end = set2.num_rotamers(); jj <= jj_end; ++jj ) {
-	emap.zero();
-	residue_pair_energy( *set1.rotamer( ii ), *set2.rotamer( jj ), pose, sfxn, emap );
-	temp_table3( jj, ii ) += weights.dot( emap );
-	if ( std::abs( temp_table1( jj, ii ) - temp_table3( jj, ii )) > 0.001 ) {
-	std::cout << "Residues " << set1.resid() << " & " << set2.resid() << " rotamers: " << ii << " & " << jj;
-	std::cout << " tvt/reg discrepancy: tvt= " <<  temp_table1( jj, ii ) << " reg= " << temp_table3( jj, ii );
-	std::cout << " delta: " << temp_table1( jj, ii ) - temp_table3( jj, ii ) << std::endl;
-	}
-	}
-	}
-	std::cout << "Finished RPE calcs for residues " << set1.resid() << " & " << set2.resid() << std::endl;
-	*/
 }
 
 
@@ -1165,25 +1136,6 @@ HBondEnergy::evaluate_rotamer_background_energies(
 	for ( Size ii = 1; ii <= set.num_rotamers(); ++ii ) {
 		energy_vector[ ii ] += temp_vector1[ ii ];
 	}
-	//std::cout << "FINISHED evaluate_rotamer_background_energies" << std::endl;
-
-	/*
-	//debug
-	utility::vector1< Energy > temp_vector3( energy_vector.size(), 0.0f );
-	EnergyMap emap;
-	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
-	emap.zero();
-	residue_pair_energy( *set.rotamer( ii ), residue, pose, sfxn, emap );
-	temp_vector3[ ii ] += weights.dot( emap );
-	if ( std::abs( temp_vector1[ ii ] - temp_vector3[ ii ]) > 0.001 ) {
-	std::cout << "Residues " << set.resid() << " & " << residue.seqpos() << " rotamers: " << ii << " & bg";
-	std::cout << " tvt/reg discrepancy: tvt= " << temp_vector1[ ii ] << " reg= " << temp_vector3[ ii ];
-	std::cout << " delta: " << temp_vector1[ ii ] - temp_vector3[ ii ] << std::endl;
-	}
-	}
-	std::cout << "Finished Rotamer BG calcs for residues " << set.resid() << " & " << residue.seqpos() << std::endl;
-	*/
-
 }
 
 
@@ -1355,8 +1307,6 @@ create_rotamer_descriptor(
 		if ( res.atom_type_set()[ res.atom( jj ).type() ].is_acceptor() ) {
 
 			newatom.hb_chem_type( get_hb_acc_chem_type( jj, res ));
-			//newatom.orientation_vector( create_acc_orientation_vector( res, jj ));
-			//newatom.base_xyz( res.xyz( res.atom_base( jj )) );
 			newatom.base2_xyz( res.xyz( res.abase2( jj )) );
 
 			cpdata.is_sc( ! res.type().atom_is_backbone( jj ) );
@@ -1382,7 +1332,6 @@ create_rotamer_descriptor(
 			newhatom.xyz( res.atom(kk).xyz() );
 			newhatom.base_xyz( res.xyz( res.atom_base( kk )) );
 			newhatom.base2_xyz( Vector( 0.0, 0.0, 0.0 ) );
-			//newhatom.orientation_vector( create_don_orientation_vector( res, kk ));
 			newhatom.hb_chem_type( get_hb_don_chem_type( res.atom_base(kk), res ));
 			newhatom.is_hydrogen( true );
 			newhatom.is_backbone( res.atom_is_backbone( kk ) ) ;
@@ -1479,14 +1428,7 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 	HBEvalTuple hbe_type = hbond_evaluation_type( at2, 0,   // donor atom
 		at1, ss); // acceptor atom
 	Energy hbenergy;
-	//hb_energy_deriv_u( database_, hbe_type, at2.xyz(), at2.xyz() /*apl -- donor atom coordinate goes here, but is only used for derivatives */,
-	// at2.orientation_vector(),
-	// at1.xyz(), at1.xyz() /* apl -- acceptor-base coordinate goes here, but is only used for derivatives */,
-	// at1.orientation_vector(),
-	// Vector(-1.0,-1.0,-1.0), // abase2 xyz -- this is now wrong
-	// hbenergy,
-	// false /*evaluate_derivative*/, DUMMY_DERIVS );
-
+	
 	//std::cout << "about to evaluate " << at1 << " " << at2 << std::endl;
 	hb_energy_deriv( *database_, *options_, hbe_type,
 		at2.base_xyz(), at2.xyz(), // donor heavy atom, donor hydrogen,

@@ -13,53 +13,8 @@
 
 
 // Rosetta Headers
-#include <basic/basic.hh>
 #include <basic/interpolate.hh>
-
-#include <ObjexxFCL/Dimension.fwd.hh>
-#include <ObjexxFCL/Dimension.hh>
-#include <ObjexxFCL/DimensionExpression.hh>
-#include <ObjexxFCL/DynamicIndexRange.fwd.hh>
-#include <ObjexxFCL/DynamicIndexRange.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/FArray.hh>
-#include <ObjexxFCL/FArray2.fwd.hh>
-#include <ObjexxFCL/FArray2.hh>
-#include <ObjexxFCL/FArray2A.fwd.hh>
-#include <ObjexxFCL/FArray2A.hh>
-#include <ObjexxFCL/FArray2D.fwd.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray2P.fwd.hh>
-#include <ObjexxFCL/FArray2P.hh>
-#include <ObjexxFCL/FArrayInitializer.fwd.hh>
-#include <ObjexxFCL/FArrayInitializer.hh>
-#include <ObjexxFCL/FArraySection.fwd.hh>
-#include <ObjexxFCL/FArraySection.hh>
-#include <ObjexxFCL/FArrayTraits.fwd.hh>
-#include <ObjexxFCL/FArrayTraits.hh>
-#include <ObjexxFCL/Fmath.hh>
-#include <ObjexxFCL/IndexRange.fwd.hh>
-#include <ObjexxFCL/IndexRange.hh>
-#include <ObjexxFCL/InitializerSentinel.hh>
-#include <ObjexxFCL/Observer.fwd.hh>
-#include <ObjexxFCL/Observer.hh>
-#include <ObjexxFCL/ObserverMulti.hh>
-#include <ObjexxFCL/ObserverSingle.hh>
-#include <ObjexxFCL/ProxySentinel.hh>
-#include <ObjexxFCL/SetWrapper.fwd.hh>
-#include <ObjexxFCL/Star.fwd.hh>
-#include <ObjexxFCL/Star.hh>
-#include <ObjexxFCL/StaticIndexRange.fwd.hh>
-#include <ObjexxFCL/StaticIndexRange.hh>
-#include <ObjexxFCL/proxy_const_assert.hh>
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <cstddef>
-#include <cstdio>
-#include <iosfwd>
-#include <limits>
-#include <string>
+#include <basic/basic.hh>  // for subtract_degree_angles, angle_in_range
 
 namespace basic {
 

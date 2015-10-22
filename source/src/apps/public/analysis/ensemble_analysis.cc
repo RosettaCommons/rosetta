@@ -16,13 +16,11 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/NoOutputJobOutputter.hh>
-#include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobInputter.hh>
 
 #include <protocols/toolbox/DecoySetEvaluation.hh>
@@ -39,18 +37,13 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // ObjexxFCL includes
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
-#include <ostream>
-#include <algorithm>
 #include <string>
 
 //Auto Headers

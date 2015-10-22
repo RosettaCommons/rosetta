@@ -30,8 +30,6 @@
 // Project Headers
 #include <core/conformation/Conformation.fwd.hh>
 
-#include <core/types.hh>
-
 
 namespace core {
 namespace conformation {

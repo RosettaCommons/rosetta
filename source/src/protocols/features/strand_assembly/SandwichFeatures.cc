@@ -40,6 +40,8 @@
 #include <protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh>
 #include <protocols/features/strand_assembly/WriteToFileFromSandwichFeatures.hh>
 
+#include <basic/database/schema_generator/DbDataType.hh>
+
 #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>

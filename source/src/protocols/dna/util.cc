@@ -65,6 +65,7 @@ typedef numeric::xyzVector< core::Real > xyzVec;
 #include <core/chemical/VariantType.hh>
 #include <core/import_pose/import_pose.hh>
 #include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/FArray2D.hh>
 
 
 //#include <fstream> no, use zstreams

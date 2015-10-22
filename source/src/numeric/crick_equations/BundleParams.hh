@@ -14,9 +14,6 @@
 #ifndef INCLUDED_numeric_crick_equations_BundleParams_hh
 #define INCLUDED_numeric_crick_equations_BundleParams_hh
 
-//C++ headers
-#include <math.h>
-
 // Unit headers
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>

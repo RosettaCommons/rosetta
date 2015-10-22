@@ -23,6 +23,7 @@
 // Project Headers
 #include <core/graph/Graph.hh>
 
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/Bond.hh>
 #include <utility/graph/RingDetection.hh>
@@ -36,7 +37,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <cmath>
 #include <algorithm>
 
 namespace core {

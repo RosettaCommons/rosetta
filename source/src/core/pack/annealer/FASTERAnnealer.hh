@@ -107,10 +107,6 @@ private:
 	Real sa_inner_iterations_length_scale_; // default of 0.05
 	int sBR_limit_;
 
-	//ObjexxFCL::FArray1D_int moltenres_2_resid_;
-	//ObjexxFCL::FArray1D_int moltenres_rotoffsets_;
-	//ObjexxFCL::FArray2D_int rot_2_moltenres_;
-
 };
 
 }

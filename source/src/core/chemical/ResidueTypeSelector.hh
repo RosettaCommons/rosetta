@@ -38,10 +38,10 @@
 
 // Unit headers
 #include <core/chemical/ResidueTypeSelector.fwd.hh>
-#include <core/chemical/ResidueTypeFinder.hh> // This is a shortcut -- will later unify ResidueTypeSelector & ResidueTypeFinder -- rhiju
 
 // Package headers
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/ResidueProperties.hh>
 
 // Utility headers

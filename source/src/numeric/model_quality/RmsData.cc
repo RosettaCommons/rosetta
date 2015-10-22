@@ -12,14 +12,10 @@
 /// @author James Thompson
 /// @date   Thu Jan 10 06:55:37 2008
 
-
-#include <numeric/types.hh>
-#include <numeric/xyzVector.hh>
 #include <numeric/model_quality/RmsData.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/FArray2A.hh>
 
 namespace numeric {

@@ -27,16 +27,15 @@
 // Project headers
 
 // Utility headers
-#include <utility/exit.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
-// C++ headers
-
-#include <map>
-
 #include <utility/vector1.hh>
 
 #include <core/types.hh>
+
+// C++ headers
+#include <iosfwd>                                                // for string
+#include <map>
+
 
 namespace core {
 namespace chemical {

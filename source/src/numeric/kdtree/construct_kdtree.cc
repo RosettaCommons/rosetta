@@ -11,24 +11,17 @@
 /// @brief
 /// @author James Thompson
 
-#include <numeric/types.hh>
-
 #include <numeric/kdtree/constants.hh>
 #include <numeric/kdtree/util.hh>
 #include <numeric/kdtree/construct_kdtree.hh>
-#include <numeric/kdtree/KDNode.hh>
-#include <numeric/kdtree/KDTree.hh>
 #include <numeric/kdtree/KDPoint.hh>
+#include <numeric/kdtree/KDNode.hh>
 #include <numeric/kdtree/HyperRectangle.hh>
 #include <numeric/kdtree/HyperRectangle.fwd.hh>
 
-#include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>
 
-#include <cmath>
-#include <string>
-#include <iostream>
 #include <algorithm>
 
 namespace numeric {

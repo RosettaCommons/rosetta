@@ -14,14 +14,12 @@
 
 // Unit headers
 #include <utility/file/FileName.hh>
-#include <utility/exit.hh>
 
 // Platform headers
 #include <platform/types.hh>
 
 // C++ headers
 #include <algorithm>
-#include <cassert>
 #include <cctype>
 #include <iostream> // PB fix gcc 4.2.1 error?
 

@@ -16,7 +16,9 @@
 #define INCLUDED_core_chemical_rings_RingConformerManager_HH
 
 // Unit header
-#include <core/chemical/rings/RingConformer.hh>
+// No fwd.hh of RingConformer exists
+namespace core { namespace chemical { namespace rings { struct RingConformer; } } }
+//#include <core/chemical/rings/RingConformer.hh>
 #include <core/chemical/rings/RingConformerManager.fwd.hh>
 
 // Project headers

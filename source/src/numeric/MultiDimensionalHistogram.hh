@@ -31,8 +31,6 @@
 // C++ headers
 #include <ostream>
 #include <set>
-#include <string>
-
 
 namespace numeric {
 

@@ -16,10 +16,6 @@
 #include <basic/resource_manager/ResourceManager.hh>
 
 //project headres
-#include <basic/resource_manager/ResourceLocator.hh>
-#include <basic/resource_manager/ResourceLocatorFactory.hh>
-#include <basic/resource_manager/ResourceLoader.hh>
-#include <basic/resource_manager/ResourceLoaderFactory.hh>
 #include <basic/resource_manager/ResourceManagerFactory.hh>
 
 //utility headers
@@ -27,10 +23,6 @@
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/thread/threadsafe_creation.hh>
-
-// Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 //C++ headers
 #include <sstream>

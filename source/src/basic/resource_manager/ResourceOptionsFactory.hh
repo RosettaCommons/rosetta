@@ -22,7 +22,6 @@
 
 //utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 //C++ headers

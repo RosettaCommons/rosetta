@@ -17,8 +17,6 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Basic Headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <platform/types.hh>
 

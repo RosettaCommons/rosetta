@@ -21,6 +21,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <utility/vector1.hh>
 

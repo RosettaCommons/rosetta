@@ -16,10 +16,9 @@
 #include <core/chemical/sdf/mol_writer.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/types.hh>
 #include <list>
 
-#include <utility/io/ozstream.fwd.hh>
+//#include <utility/io/ozstream.fwd.hh>
 #include <string>
 #include <map>
 namespace core {

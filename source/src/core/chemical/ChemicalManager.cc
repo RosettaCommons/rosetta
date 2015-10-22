@@ -43,7 +43,7 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/sdf/MolFileIOReader.hh>
-#include <core/chemical/sdf/MolFileIOData.hh>
+//#include <core/chemical/sdf/MolFileIOData.hh>
 #include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/util.hh>
 
@@ -56,7 +56,7 @@
 
 #include <basic/options/option.hh>
 #include <utility/file/file_sys_util.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+//#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/sql_database/types.hh>
 
 
@@ -73,7 +73,7 @@
 
 // Boost headers
 #include <boost/bind.hpp>
-#include <boost/function.hpp>
+//#include <boost/function.hpp>
 
 
 // Singleton instance and mutex static data members

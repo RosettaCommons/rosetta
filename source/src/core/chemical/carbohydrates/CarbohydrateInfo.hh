@@ -22,14 +22,12 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/id/types.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <map>
 #include <string>
 #include <iostream>
 

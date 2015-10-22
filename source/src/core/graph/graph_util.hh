@@ -19,7 +19,7 @@
 // Utility Headers
 
 #include <core/graph/Graph.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 // C++ headers

@@ -14,10 +14,7 @@
 #define INCLUDED_NUMERIC_PROB_UTIL_hh
 
 // C/C++ headers
-#include <algorithm>
 #include <iostream>
-#include <iterator>
-#include <string>
 
 // Utility headers
 #include <utility/vector1.hh>

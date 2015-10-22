@@ -20,7 +20,6 @@
 #include <numeric/kdtree/KDNode.fwd.hh>
 #include <numeric/kdtree/KDTree.fwd.hh>
 #include <numeric/kdtree/KDPoint.fwd.hh>
-#include <numeric/kdtree/KDPoint.hh>
 
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>

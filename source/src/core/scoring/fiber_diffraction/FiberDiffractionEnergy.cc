@@ -206,7 +206,6 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 					if ( atom1 == 1 ) {
 						for ( Size at=1; at <= natoms; ++at ) {
 							jn_vec[at] = jn(n,x_factor*r[at]);
-							//      jn_vec[at] = boost::math::cyl_bessel_j(n, x_factor*r[at]);
 						}
 					}
 					Real X1 (x_factor*r[atom1]);
@@ -214,11 +213,6 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 					if ( abs_n > X1 +2 ) continue;
 					Real jn1 (jn_vec[atom1]);
 					Size atom_type_index1 ( atom_type_number[atom1] );
-					//////////B factors//////////////////////////////////////
-					//Real D_2=Rinv*Rinv + l*l/(c_*c_);
-					//Real B_factor_exp( exp( -bfactors[atom1]*D_2/4 ) );
-					////////////////////////////////////////////////////////
-					//Real dummy(  B_factor_exp*form_factors[l][atom_type_index1][R]*jn1 );
 					Real dummy(  form_factors[l][atom_type_index1][R]*jn1 );
 					Real dummy_sum( 0 );
 					I[l][R] += dummy*form_factors[l][atom_type_index1][R]*jn1;
@@ -227,8 +221,6 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 						if ( abs_n > X2 +2 ) continue;
 						Real jn2 (jn_vec[atom2]);
 						Size atom_type_index2 ( atom_type_number[ atom2 ] );
-						//Real B_factor_exp( exp( -bfactors[atom2]*D_2/4 ) );
-						//dummy_sum += B_factor_exp*form_factors[l][atom_type_index2][R]*jn2*phases[atom1][atom2];
 						dummy_sum += form_factors[l][atom_type_index2][R]*jn2*phases[atom1][atom2];
 						++n_iter;
 					} // atoms2
@@ -316,13 +308,7 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 	TR << "chi2 " << chi2_ << " sum_obs_ " << sum_obs_ << " scale_factor " <<  scale_factor_ << std::endl;
 
 	TR << " number of iterations " << n_iter  << std::endl;
-	//gettimeofday(&t2, NULL);
-
-	// compute and print the elapsed time in millisec
-	//elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;      // sec to ms
-	//elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;   // us to ms
-	//TR << " end score time" << elapsedTime << " ms."<<std::endl;
-
+	
 	////////////////////////////////////////////
 
 	core::Size chi_iterations_(0);
@@ -402,7 +388,6 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 
 	core::Real res_cutoff_low_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_low ]();
 	core::Real res_cutoff_high_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::resolution_cutoff_high ]();
-	//core::Size n_max_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::max_bessel_order ]();
 
 	core::Real b_factor_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor ]();
 	core::Real b_factor_solv_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv ]();
@@ -417,9 +402,6 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > >::iterator form_factors(form_factors_.begin());
 
 	TR << "Preparing fiber model data for deriv calculation..." << std::endl;
-	//timeval t1, t2;
-	//double elapsedTime;
-	//gettimeofday(&t1, NULL);
 
 	Size natoms(0);
 	utility::vector1< Size > atom_type_number;
@@ -563,14 +545,7 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 			} // b_order
 		}
 	}
-	//gettimeofday(&t2, NULL);
-
-	// compute and print the elapsed time in millisec
-	//elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;      // sec to ms
-	//elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;   // us to ms
-	//TR << "Deriv calculation time: " << elapsedTime << " ms."<<std::endl;
 	TR << "number of iterations " << n_iter << std::endl;
-
 }
 
 void FiberDiffractionEnergy::eval_atom_derivative(
@@ -600,7 +575,6 @@ void FiberDiffractionEnergy::eval_atom_derivative(
 	numeric::xyzVector<core::Real> f1( dchi2_d_cross_R[atomnbr] );
 	numeric::xyzVector<core::Real> f2( dchi2_d[atomnbr] );
 
-	// std::cout << " sum f1 f2 " << resid << " " << rsd_i.aa() << " " << atmid << " " << rsd_i.atom_name(atmid) << " " << f1(1) << " " << f1(2) << " " << f1(3) << " f2 " << f2(1) << " " << f2(2) << " " << f2(3) << " " << std::endl;
 	F1 += weights[ fiberdiffraction ] * f1;
 	F2 += weights[ fiberdiffraction ] * f2;
 }

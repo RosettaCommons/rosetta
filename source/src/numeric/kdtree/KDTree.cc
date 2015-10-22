@@ -17,7 +17,6 @@
 
 #include <numeric/kdtree/util.hh>
 #include <numeric/kdtree/KDTree.hh>
-#include <numeric/kdtree/KDNode.hh>
 #include <numeric/kdtree/KDNode.fwd.hh>
 #include <numeric/kdtree/HyperRectangle.hh>
 #include <numeric/kdtree/HyperRectangle.fwd.hh>

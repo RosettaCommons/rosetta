@@ -26,21 +26,20 @@
 #include <core/conformation/membrane/SpanningTopology.fwd.hh>
 #include <core/conformation/membrane/Span.fwd.hh>
 
-#ifdef WIN32
+// This ifdef is failing for Windows PyRosetta builds. Anyone with expertise?
+//#ifdef WIN32
+#include <iostream>
 #include <core/conformation/membrane/Span.hh>
-#endif
+//#endif
 
 // Package Header
 #include <core/types.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-#include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
 
 namespace core {

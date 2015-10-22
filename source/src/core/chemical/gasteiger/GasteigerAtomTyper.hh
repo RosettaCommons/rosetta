@@ -21,13 +21,11 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh> // For enums
 #include <core/chemical/Element.fwd.hh>
 
-#include <core/chemical/Atom.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 
 #include <core/types.hh>
 
-#include <utility/vector1.hh>
 #include <utility/vector0.hh>
 #include <utility/pointer/ReferenceCount.hh>
 

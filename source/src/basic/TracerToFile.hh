@@ -15,25 +15,10 @@
 #define INCLUDED_basic_TracerToFile_hh
 
 
-#include <basic/Tracer.hh>
-
-#include <utility/pointer/owning_ptr.hh>
-
+#include <basic/Tracer.hh>  // for otstream
+#include <iosfwd>           // for string, ofstream
 #include <fstream>
-
-#include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <cassert>
-#include <cstddef>
-#include <iosfwd>
 #include <ostream>
-#include <sstream>
-#include <basic/Tracer.fwd.hh>
 
 
 namespace basic {

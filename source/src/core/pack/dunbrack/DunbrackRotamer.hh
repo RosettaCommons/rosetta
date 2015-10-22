@@ -152,16 +152,6 @@ public:
 		}
 	}
 
-	/*DunbrackRotamerMeanSD( PackedDunbrackRotamer< S, N, P > const & rhs ) :
-	rotamer_probability_( rhs.rotamer_probability() )
-	{
-	n_derivs_ = rhs.n_derivs();
-	for ( Size ii = 1; ii <= S; ++ii ) {
-	chi_mean_[ ii ] = rhs.chi_mean( ii );
-	chi_sd_[ ii ]   = rhs.chi_sd( ii );
-	}
-	}*/
-
 	DunbrackRotamerMeanSD(
 		typename utility::vector1< P > const & chimean_in,
 		typename utility::vector1< P > const & chisd_in,
@@ -169,11 +159,10 @@ public:
 	) :
 		rotamer_probability_( prob_in )
 	{
-		//std::cout << "Currently sizing n_derivs_ to ";
 		for ( Size deriv_i = 1; deriv_i <= ( 1 << N ); ++deriv_i ) {
 			n_derivs_[ deriv_i ] = P( 0.0 );
 		}
-		//std::cout << n_derivs_.size() << std::endl;
+
 		for ( Size ii = 1; ii <= S; ++ii ) {
 			chi_mean_[ ii ] = chimean_in[ ii ];
 			chi_sd_  [ ii ] = chisd_in  [ ii ];
@@ -449,14 +438,13 @@ expand_proton_chi(
 
 template < Size N >
 void
-alternate_tricubic_interpolation(
+polycubic_interpolation(
 	utility::fixedsizearray1< utility::fixedsizearray1< Real, ( 1 << N ) >, ( 1 << N ) > n_derivs,
 	utility::fixedsizearray1< Real, N > dbbp,
 	utility::fixedsizearray1< Real, N > binwbb,
 	Real & val,
 	utility::fixedsizearray1< Real, N > & dvaldbb
-)
-{
+) {
 	utility::fixedsizearray1< Real, N > invbinwbb;
 	utility::fixedsizearray1< Real, N > binwbb_over_6;
 	utility::fixedsizearray1< Real, N > dbbm;
@@ -469,12 +457,16 @@ alternate_tricubic_interpolation(
 		dbb3p[ ii ] = ( dbbp[ ii ] * dbbp[ ii ] * dbbp[ ii ] - dbbp[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ];
 		dbb3m[ ii ] = ( dbbm[ ii ] * dbbm[ ii ] * dbbm[ ii ] - dbbm[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ];
 	}
+	
+	// there are 2^N deriv terms, i.e. the value, the N first derivatives,
+	// the N^2 second derivatives... up to the single Nth derivative
+	
+	// The value has its own functional form.
 	val = 0;
-
-	// there are 2^nbb deriv terms, i.e. value, dv/dx, dv/dy, d2v/dxy for phipsi
 	for ( Size iid = 1; iid <= (1 << N); ++iid ) {
 		for ( Size iiv = 1; iiv <= (1 << N); ++iiv ) {
 			Real valterm = n_derivs[ iid ][ iiv ];
+			
 			for ( Size jj = 1; jj <= N; ++jj ) { // each bb
 				Size two_to_the_jj_compl = 1 << ( N - jj );
 				if ( ( iiv - 1 ) & two_to_the_jj_compl ) {
@@ -483,23 +475,30 @@ alternate_tricubic_interpolation(
 					valterm *= ( ( iid - 1 ) & two_to_the_jj_compl ) ? dbb3m[ jj ] : dbbm[ jj ];
 				}
 			}
-			if ( valterm != valterm ) std::cout << "valterm NaN at iid " << iid << " iiv " << iiv << std::endl;
+			
 			val += valterm;
-			//std::cout << "first valterm " << valterm << " so val now " << val << std::endl;
 		}
 	}
 
+	//Each of the N first derivatives.
 	for ( Size bbn = 1; bbn <= N; ++bbn ) {
 		dvaldbb[ bbn ] = 0;
+		
 		for ( Size iid = 1; iid <= (1 << N); ++iid ) {
 			for ( Size iiv = 1; iiv <= (1 << N); ++iiv ) {
 				Real valterm = n_derivs[ iid ][ iiv ]; // v000
+				
 				for ( Size jj = 1; jj <= N; ++jj ) {
 					Size two_to_the_jj_compl = 1 << ( N - jj );
-					if ( ( iiv - 1 ) & two_to_the_jj_compl ) { // if this backbone value is from bb_bin_next
-						if ( ( iid - 1 ) & two_to_the_jj_compl ) { // if it is time for the derivative-based term for this bb angle
+					
+					// Half of the values from iiv = 1 to 2^N come from
+					// "bb_bin_next" and half from "bb_bin."
+					if ( ( iiv - 1 ) & two_to_the_jj_compl ) {
+
+						// Does the iid-th derivative have a jj-backbone deriv?
+						if ( ( iid - 1 ) & two_to_the_jj_compl ) {
 							valterm *= ( bbn == jj ) ?      ( 3 * dbbp[ jj ] * dbbp[ jj ] - 1 ) * binwbb_over_6[ jj ] : dbb3p[ jj ];
-						} else { // not taking the derivative for this term
+						} else {
 							valterm *= ( bbn == jj ) ?      invbinwbb[ jj ]                                           :  dbbp[ jj ];
 						}
 					} else { // bb_bin
@@ -511,6 +510,7 @@ alternate_tricubic_interpolation(
 						}
 					}
 				}
+				
 				dvaldbb[ bbn ] += valterm;
 			}
 		}

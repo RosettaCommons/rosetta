@@ -29,7 +29,7 @@
 #include <core/chemical/Atom.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 

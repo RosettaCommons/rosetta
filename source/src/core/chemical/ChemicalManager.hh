@@ -49,13 +49,13 @@
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ElementSet.hh>
-#include <core/chemical/IdealBondLengthSet.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+//#include <core/chemical/AtomTypeSet.hh>
+//#include <core/chemical/ElementSet.hh>
+//#include <core/chemical/IdealBondLengthSet.hh>
+//#include <core/chemical/MMAtomTypeSet.hh>
+//#include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
+//#include <core/chemical/orbitals/OrbitalTypeSet.hh>
+//#include <core/chemical/ResidueTypeSet.hh>
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

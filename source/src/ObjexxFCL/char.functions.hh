@@ -16,8 +16,11 @@
 
 
 // C++ Headers
+#ifdef WIN_PYROSETTA
 #include <string>
-
+#else
+#include <iosfwd>
+#endif
 
 namespace ObjexxFCL {
 

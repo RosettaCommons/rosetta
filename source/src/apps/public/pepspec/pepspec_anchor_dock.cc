@@ -96,6 +96,7 @@
 
 #include <basic/basic.hh>
 
+#include <basic/options/option.hh>
 #include <basic/database/open.hh>
 
 #include <devel/init.hh>

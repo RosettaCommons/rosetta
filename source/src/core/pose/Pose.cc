@@ -30,7 +30,6 @@
 #include <core/pose/metrics/PoseMetricContainer.hh>
 
 // Project headers
-#include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/rings/RingConformer.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
@@ -53,7 +52,6 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/prof.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Numeric headers
@@ -471,7 +469,6 @@ Pose::insert_residue_by_jump(
 	std::string const& root_atomno // = ""
 )
 {
-	//PyAssert( (seqpos>0), "Pose::insert_residue_by_jump( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later:
 	PyAssert( (anchor_pos<=total_residue()), "Pose::insert_residue_by_jump( ...Size anchor_pos... ): variable anchor_pos is out of range!" );    // check later:
 	energies_->clear(); // TEMPORARY
 	conformation_->insert_residue_by_jump( new_rsd_in, seqpos, anchor_pos, anchor_atomno, root_atomno );
@@ -490,7 +487,6 @@ Pose::insert_residue_by_bond(
 	bool const lookup_bond_length // default false
 )
 {
-	//PyAssert( (seqpos>0), "Pose::insert_residue_by_jump( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later:
 	PyAssert( (anchor_pos<=total_residue()), "Pose::insert_residue_by_jump( ...Size anchor_pos... ): variable anchor_pos is out of range!" );    // check later:
 	energies_->clear(); // TEMPORARY
 	conformation_->insert_residue_by_bond( new_rsd_in, seqpos, anchor_pos, build_ideal_geometry, anchor_atom, root_atom, new_chain, lookup_bond_length );
@@ -644,9 +640,9 @@ Pose::total_atoms() const{
 ///   pose.total_atoms()
 Size
 Pose::total_atoms( Size nres ) const{
-	core::Size atomno(0);
-	for ( core::Size res = 1; res <= nres; res++ ) {
-		for ( core::Size atms = 1; atms <= residue(res).natoms(); atms++ ) {
+	Size atomno(0);
+	for ( Size res = 1; res <= nres; res++ ) {
+		for ( Size atms = 1; atms <= residue(res).natoms(); atms++ ) {
 			atomno++;
 		}
 	}
@@ -950,7 +946,8 @@ Pose::theta( Size const seqpos ) const
 	if ( residue_type(seqpos).is_beta_aa() ) {
 		return residue(seqpos).mainchain_torsion(theta_torsion_beta_aa);
 	} else {
-		return 0.0; //This shouldn't happen -- in debug mode, the assert above would be tripped.
+		// Undefined.
+		return 0.0;
 	}
 }
 

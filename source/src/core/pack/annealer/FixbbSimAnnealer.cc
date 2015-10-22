@@ -21,13 +21,6 @@
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <basic/Tracer.hh>
 
-//#include "after_opts.h"
-//#include "FixbbSimAnnealer.h"
-//#include "RotamerAssigningAnnealer.h"
-//#include "random_numbers.h"
-//#include "param.h"
-//#include "RotamerSet.h"
-
 #include <utility/exit.hh>
 
 
@@ -161,8 +154,6 @@ void FixbbSimAnnealer::run()
 		annealer_trajectory.open(trajectory_file_name_.c_str() );
 	}
 
-	//std::cout << "Annealing begins" << std::endl;
-
 	//outer loop
 	for ( int nn = 1; nn <= outeriterations; ++nn ) {
 		setup_temperature(loopenergy,nn);
@@ -171,8 +162,7 @@ void FixbbSimAnnealer::run()
 			state_on_node = best_state_on_node;
 			ig_->set_network_state( state_on_node );
 		}
-		//rh std::cout << "Sim Annealer Temperature: " << get_temperature() << std::endl;
-
+		
 		int inneriterations = get_inneriterations();
 
 		float treshold_for_deltaE_inaccuracy = std::sqrt( get_temperature() );
@@ -194,9 +184,7 @@ void FixbbSimAnnealer::run()
 
 			ig_->consider_substitution( moltenres_id, rotamer_state_on_moltenres,
 				delta_energy, previous_energy_for_node);
-			//std::cout << "mres: " << moltenres_id << ", state: ";
-			//std::cout << rotamer_state_on_moltenres << ", deltaE: " << delta_energy;
-
+			
 			//bk keep new rotamer if it is lower in energy or accept it at some
 			//bk probability if it is higher in energy, if it is the first
 			//bk rotamer to be tried at this position automatically accept it.
@@ -206,18 +194,6 @@ void FixbbSimAnnealer::run()
 				state_on_node(moltenres_id) = rotamer_state_on_moltenres;
 				if ( (prevrotamer_state == 0)||(currentenergy < bestenergy() ) ) {
 					best_state_on_node = state_on_node;
-
-					/*
-					//ronj - debugging output useful for seeing how the energy changes during the course of the simulation
-					for ( Size ii=0; ii < best_state_on_node.size(); ii++ ) {
-					if ( best_state_on_node[ii] != 0 )
-					TR << rotamer_sets()->rotamer_set_for_moltenresidue( ii+1 )->rotamer( best_state_on_node[ii] )->name1();
-					else
-					TR << '-';
-					}
-					TR << ", current_energy: " << currentenergy << ", best_energy: " << bestenergy() << std::endl;
-					*/
-
 					bestenergy() = currentenergy;
 				}
 
@@ -228,11 +204,7 @@ void FixbbSimAnnealer::run()
 			} else if ( record_annealer_trajectory_ ) {
 				annealer_trajectory << moltenres_id << " " << rotamer_state_on_moltenres << " R\n";
 			}
-			//else {
-			// std::cout << " rejected\n";
-			//}
-
-
+			
 			loopenergy(nn) = currentenergy;
 			float const temperature = get_temperature();
 
@@ -278,8 +250,6 @@ void FixbbSimAnnealer::run()
 		}
 		debug_assert( ! ig_->any_vertex_state_unassigned() );
 		utility_exit();
-
-
 	}
 
 	//convert best_state_on_node into best_rotamer_at_seqpos
@@ -287,8 +257,6 @@ void FixbbSimAnnealer::run()
 		int const iiresid = rotamer_sets()->moltenres_2_resid( ii );
 		bestrotamer_at_seqpos()( iiresid ) = rotamer_sets()->moltenres_rotid_2_rotid( ii, best_state_on_node(ii));
 	}
-
-	//std::cout << "Annealing ends" << std::endl;
 }
 
 void FixbbSimAnnealer::record_annealer_trajectory( bool setting ) {

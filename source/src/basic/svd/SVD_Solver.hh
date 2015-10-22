@@ -45,64 +45,13 @@
 
 // Package headers
 
-// Project headers
-//#include <core/types.hh>
-
-// Platform headers
-#include <platform/types.hh>
-
-// Utility headers
-#include <utility/vector1.hh>
+#include <platform/types.hh>   // for Size
+#include <string>              // for allocator
+#include <utility/vector1.hh>  // for vector1
 
 // Objexx headers
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
-
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <ObjexxFCL/Dimension.fwd.hh>
-#include <ObjexxFCL/Dimension.hh>
-#include <ObjexxFCL/DimensionExpression.hh>
-#include <ObjexxFCL/DynamicIndexRange.fwd.hh>
-#include <ObjexxFCL/DynamicIndexRange.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/FArray.hh>
-#include <ObjexxFCL/FArray1.fwd.hh>
-#include <ObjexxFCL/FArray1.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
-#include <ObjexxFCL/FArray2.fwd.hh>
-#include <ObjexxFCL/FArray2.hh>
-#include <ObjexxFCL/FArray2D.fwd.hh>
-#include <ObjexxFCL/FArrayInitializer.fwd.hh>
-#include <ObjexxFCL/FArrayInitializer.hh>
-#include <ObjexxFCL/FArraySection.fwd.hh>
-#include <ObjexxFCL/FArraySection.hh>
-#include <ObjexxFCL/FArrayTraits.fwd.hh>
-#include <ObjexxFCL/FArrayTraits.hh>
-#include <ObjexxFCL/IndexRange.fwd.hh>
-#include <ObjexxFCL/IndexRange.hh>
-#include <ObjexxFCL/InitializerSentinel.hh>
-#include <ObjexxFCL/Observer.fwd.hh>
-#include <ObjexxFCL/Observer.hh>
-#include <ObjexxFCL/ObserverMulti.hh>
-#include <ObjexxFCL/ObserverSingle.hh>
-#include <ObjexxFCL/ProxySentinel.hh>
-#include <ObjexxFCL/SetWrapper.fwd.hh>
-#include <ObjexxFCL/Star.fwd.hh>
-#include <ObjexxFCL/Star.hh>
-#include <ObjexxFCL/proxy_const_assert.hh>
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <cstddef>
-#include <cstdio>
-#include <iosfwd>
-#include <string>
-#include <vector>
 
 namespace basic {
 namespace svd {

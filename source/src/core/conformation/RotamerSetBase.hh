@@ -19,7 +19,6 @@
 #include <core/conformation/RotamerSetBase.fwd.hh>
 
 // Package Headers
-#include <core/types.hh>
 #include <core/conformation/AbstractRotamerTrie.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
@@ -32,7 +31,6 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace conformation {

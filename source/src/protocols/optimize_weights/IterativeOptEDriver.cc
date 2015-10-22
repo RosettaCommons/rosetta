@@ -120,6 +120,7 @@
 
 // option key includes
 
+#include <basic/options/option.hh>
 #include <basic/options/keys/optE.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>

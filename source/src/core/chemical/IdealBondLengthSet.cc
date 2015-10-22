@@ -22,10 +22,8 @@
 #include <utility/io/izstream.hh>
 
 // C++ headers
-#include <fstream>
 #include <iostream>
 
-#include <utility/vector1.hh>
 #include <utility/exit.hh>
 
 namespace core {

@@ -24,7 +24,8 @@
 // Package Headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <core/conformation/membrane/Exceptions.hh>
+
+#include <utility/excn/Exceptions.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>

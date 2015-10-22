@@ -20,19 +20,13 @@
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/Atom.hh>
-#include <core/chemical/Bond.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 // C++ headers
 #include <iostream>
-#include <ios>
 #include <string>
-#include <map>
-
-#include <utility/vector1.hh>
-
 
 namespace core {
 namespace chemical {

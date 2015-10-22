@@ -20,11 +20,8 @@
 // Unit headers
 
 // C++ headers
-#include <utility/assert.hh>
-#include <cstdlib>
-#include <iostream>
-#include <set>
-#include <sstream>
+// for the sake of Windows PyRosetta build
+#include <string>
 
 namespace utility {
 namespace options {

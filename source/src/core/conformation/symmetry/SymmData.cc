@@ -32,11 +32,7 @@
 
 #include <utility/vector1.hh>
 #include <fstream>
-#include <iostream>
 #include <iomanip>
-
-//Auto Headers
-#include <core/kinematics/Jump.hh>
 
 // @details: This data structure contains all data necessary to generate a
 // symmetrical system, score it and move it. It is used to initialize the

@@ -13,6 +13,7 @@
 /// Basically, this is just a bunch of atoms and a reference to the Residue they originated from.
 
 #include <core/conformation/UltraLightResidue.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzTransform.hh>

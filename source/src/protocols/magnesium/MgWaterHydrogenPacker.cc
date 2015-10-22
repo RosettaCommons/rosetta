@@ -16,6 +16,7 @@
 #include <protocols/magnesium/MgWaterHydrogenPacker.hh>
 #include <protocols/magnesium/util.hh>
 #include <core/id/AtomID.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>

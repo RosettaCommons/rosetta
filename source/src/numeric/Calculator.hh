@@ -16,12 +16,11 @@
 
 #include <numeric/Calculator.fwd.hh>
 
-#include <utility/vector1.hh>
 #include <numeric/types.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <string>
+#include <iosfwd>
 #include <map>
 
 // IMPORTANT - Keep all the boost crazyness confined to the .cpp,

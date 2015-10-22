@@ -31,8 +31,6 @@
 
 // C++ headers
 #include <iostream>
-#include <string>
-#include <vector>
 #include <utility/vector1.hh> // need for template definition...
 
 

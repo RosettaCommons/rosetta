@@ -14,8 +14,6 @@
 
 #include <numeric/interpolation/spline/spline_functions.hh>
 
-#include <iostream>
-
 namespace numeric {
 namespace interpolation {
 namespace spline {

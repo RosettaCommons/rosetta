@@ -20,19 +20,12 @@
 #include <utility/excn/Exceptions.hh>
 
 // Numeric headers
-#include <numeric/conversions.hh>
 #include <numeric/types.hh>
-
-// ObjexxFCL headers
-#include <ObjexxFCL/format.hh>
 
 // C++ headers
 #include <iostream>
 #include <string>
-#include <sstream>
 #include <cmath>
-
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format;
 
 namespace numeric {
 

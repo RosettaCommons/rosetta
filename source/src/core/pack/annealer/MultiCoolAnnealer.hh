@@ -98,10 +98,7 @@ private:
 	static core::PackerEnergy const uninitialized_energy;
 
 	interaction_graph::AnnealableGraphBaseOP ig_;
-	//std::vector<int> rot_to_pack_;
-
-	//static int top_to_keep_static;
-
+	
 	ObjexxFCL::FArray1D_int nsteps_for_rot_;
 	int nsteps_;
 	Size top_to_keep;

@@ -19,8 +19,6 @@
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>
-#include <utility/string_util.hh>
-#include <utility/assert.hh>
 #include <platform/types.hh>
 
 // Boost Headers

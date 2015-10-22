@@ -21,7 +21,6 @@
 #include <basic/Tracer.hh>
 
 #include <utility/string_util.hh>
-#include <utility/tag/Tag.hh>
 
 namespace basic {
 namespace resource_manager {

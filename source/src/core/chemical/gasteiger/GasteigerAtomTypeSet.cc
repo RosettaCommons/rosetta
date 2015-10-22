@@ -14,7 +14,6 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
-#include <core/chemical/ElementSet.hh>
 #include <core/chemical/Element.hh>
 
 // Project headers
@@ -24,7 +23,6 @@
 
 // C++ headers
 #include <fstream>
-#include <iostream>
 #include <string>
 
 namespace core {

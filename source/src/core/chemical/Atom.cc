@@ -25,10 +25,6 @@
 // Utility header
 #include <utility/exit.hh>
 
-// C++ header
-#include <algorithm>
-
-
 namespace core {
 namespace chemical {
 

@@ -34,23 +34,20 @@
 #include <utility/file/PathName.hh>
 
 // Project headers
-#include <utility/basic_sys_util.hh>
+#include <utility/basic_sys_util.hh> //  for rand_sleep?
 #include <utility/exit.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/mpistream.hh>
-#include <utility/inline_file_provider.hh>
 
 // C++ headers
 #include <iostream>
 
 // Platforms headers
-#include <errno.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #ifndef _WIN32
 #include <dirent.h>
 #endif
+
+// only needed for linux?
+#include <errno.h>
 
 // Platform headers - Win32
 #ifndef _WIN32

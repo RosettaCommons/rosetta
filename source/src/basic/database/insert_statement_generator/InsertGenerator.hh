@@ -15,12 +15,8 @@
 #ifndef INCLUDED_basic_database_insert_statement_generator_InsertGenerator_HH
 #define INCLUDED_basic_database_insert_statement_generator_InsertGenerator_HH
 
-#include <basic/database/insert_statement_generator/InsertGenerator.fwd.hh>
-
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <basic/database/insert_statement_generator/RowData.hh>
-
-#include <cppdb/frontend.h>
 
 #include <map>
 #include <vector>

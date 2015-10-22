@@ -14,12 +14,10 @@
 #ifndef INCLUDED_numeric_fourier_SHT_hh
 #define INCLUDED_numeric_fourier_SHT_hh
 
-#include <numeric/fourier/kiss_fft.hh>
 #include <numeric/fourier/kiss_fft_state.hh>
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
 
 #include <utility/vector0.hh>
 

@@ -20,7 +20,7 @@
 #include <numeric/types.hh>
 #include <utility/vector1.hh>
 #include <map>
-#include <string>
+#include <iosfwd>
 
 namespace numeric {
 namespace interpolation {

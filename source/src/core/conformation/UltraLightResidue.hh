@@ -17,11 +17,11 @@
 
 #include <core/conformation/UltraLightResidue.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.fwd.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/types.hh>
-#include <numeric/xyzTransform.hh>
+#include <numeric/xyzMatrix.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>

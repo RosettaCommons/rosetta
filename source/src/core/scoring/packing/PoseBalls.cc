@@ -323,18 +323,6 @@ void PoseBalls::compute_smooth_nb() {
 			if ( d2 < 121.0 ) {
 				Real const sn( sigmoidish_neighbor(d2) );
 				smooth_nb_[i] += sn;
-				// smooth_nb_[j] += sn;
-				//     if( atype > 29 || atype < 1 ) continue;
-				//     if( i==j ) continue;
-				//     Real d = sqrt(d2);
-				//     for( core::Size idth = 1; idth <= 100; idth++ ) {
-				//      Real dth = (Real)(idth) / 10.0;
-				//      // std::cerr << "DIST " << d << " " << dth << " " << idth << std::endl;
-				//      if( d < dth ) {
-				//       nbhist_[atype][idth]++;
-				//       break;
-				//      }
-				//     }
 			}
 		}
 	}

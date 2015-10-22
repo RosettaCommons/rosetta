@@ -19,6 +19,7 @@
 #include <cstdlib> //g++ 4.3.2 requires for exit()
 //#include <string.h> //g++ 4.3.2 requires for memcpy()
 // tracer
+#include <iostream>
 
 
 namespace numeric {

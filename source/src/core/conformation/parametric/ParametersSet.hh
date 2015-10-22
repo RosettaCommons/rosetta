@@ -21,7 +21,7 @@
 
 // Package headers
 #include <core/conformation/parametric/Parameters.fwd.hh>
-#include <core/conformation/parametric/Parameters.hh>
+#include <core/conformation/parametric/Parameters.hh> // only MSVC
 #include <core/conformation/Conformation.fwd.hh>
 
 // Project headers

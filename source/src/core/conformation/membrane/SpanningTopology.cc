@@ -24,7 +24,9 @@
 #include <core/conformation/membrane/Span.hh>
 
 // Project Headers
-#include <core/conformation/membrane/Exceptions.hh>
+//#include <core/conformation/membrane/Exceptions.hh>
+// This class isn't actually used--it's just an indirect way of including
+#include <utility/excn/Exceptions.hh>
 
 // Package Headers
 #include <core/types.hh>
@@ -37,12 +39,10 @@
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/string_util.hh>
 
 #include <numeric/numeric.functions.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
 
 static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.SpanningTopology" );

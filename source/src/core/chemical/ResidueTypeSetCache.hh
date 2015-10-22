@@ -22,7 +22,6 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/types.hh>
 #include <map>
 
 namespace core {

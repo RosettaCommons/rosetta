@@ -24,7 +24,6 @@
 
 // STL Headers
 #include <iosfwd>
-#include <utility/assert.hh>
 
 // Boost Headers
 #include <core/graph/unordered_object_pool.fwd.hpp>
@@ -35,7 +34,7 @@
 
 // ObjexxFCL Headers
 
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
 

@@ -20,11 +20,9 @@
 // Package headers
 #include <core/chemical/ResidueType.fwd.hh>
 
-// Basic header
-#include <basic/Tracer.hh>
-
 // Utility header
 #include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 
 namespace core {

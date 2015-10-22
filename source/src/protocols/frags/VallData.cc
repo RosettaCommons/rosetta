@@ -17,9 +17,11 @@
 
 #include <basic/basic.hh> // tracer output
 #include <basic/options/util.hh>
+#include <basic/options/option.hh>
 
 // utility headers
 #include <ObjexxFCL/ObjexxFCL.hh>
+#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1A.hh>
 #include <utility/io/izstream.hh>
 

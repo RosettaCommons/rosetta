@@ -13,10 +13,7 @@
 /// @author Tim Jacobs
 
 #include <basic/database/schema_generator/DbDataType.hh>
-
-//Basic
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
+#include <memory>                                              // for shared...
 
 //Utility
 #include <utility/exit.hh>

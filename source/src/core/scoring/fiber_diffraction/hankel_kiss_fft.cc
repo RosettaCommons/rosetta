@@ -117,9 +117,6 @@ void hankel_r_mult (
 		*f++ *= p_hankel->rp0 * *rp;
 		*f++ *= p_hankel->rp0 * *rp;
 		rp++;
-		//TODO: Check if twice needed
-		//*f++ *= p_hankel->rp0 *p_hankel->rp_vec[count];
-		//*f++ *= p_hankel->rp0 *p_hankel->rp_vec[count];
 	}
 }
 
@@ -136,8 +133,6 @@ void hankel_r_div
 		*f++ /= p_hankel->rp0 * *rp;
 		*f++ /= p_hankel->rp0 * *rp;
 		rp++;
-		//*f++ /= p_hankel->rp0 * p_hankel->rp_vec[count];
-		//*f++ /= p_hankel->rp0 * p_hankel->rp_vec[count];
 	}
 }
 
@@ -229,7 +224,6 @@ void hankel_make_j (
 		*j++ = p_hankel->alpha * arg * jn( p_hankel->l, arg);
 		*j++ = 0;
 	}
-	//dfour1_plan( p_hankel->j - 1 , 2 * p_hankel->n , -1, p_hankel->plan_forward, p_hankel->data_in_fft );
 	dfour1_plan( p_hankel->j - 1 , 2 * p_hankel->n , -1, p_hankel->data_in_fft );
 	d_array_scale( 4 * p_hankel->n , 1.0 / ( 2 * p_hankel->n ), p_hankel->j );
 }
@@ -246,9 +240,6 @@ void hankel_make_rp (
 	}
 	for ( core::Size count = 0 ; count < p_hankel->n ;
 			*rp++ = exp( p_hankel->alpha * count++ ) ) ; // fpd is this semicolon correct?
-	/*p_hankel->rp_vec.resize(p_hankel->n);
-	for( core::Size count = 0 ; count < p_hankel->n ; count++)
-	p_hankel->rp_vec[count]=exp( p_hankel->alpha * count);*/
 }
 
 

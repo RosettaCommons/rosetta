@@ -25,7 +25,6 @@
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 //C++ headers
 #include <istream>

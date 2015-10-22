@@ -14,8 +14,6 @@
 // Unit headers
 #include <core/chemical/ResidueTypeSelector.hh>
 
-// Package headers
-#include <core/chemical/ResidueTypeSet.hh>
 
 // Basic headers
 #include <basic/options/option.hh>

@@ -42,7 +42,7 @@
 
 #include <core/types.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 namespace core {

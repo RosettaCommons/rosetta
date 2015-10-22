@@ -35,7 +35,6 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 #include <iostream>
 
 // core utilities

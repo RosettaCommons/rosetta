@@ -17,6 +17,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoringManager.hh>
 

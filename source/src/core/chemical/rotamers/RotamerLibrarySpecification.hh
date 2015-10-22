@@ -26,7 +26,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-#include <string>
 #include <istream>
 
 namespace core {

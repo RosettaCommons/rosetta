@@ -18,11 +18,8 @@
 //unit headers
 #include <basic/resource_manager/ResourceLocator.hh>
 #include <basic/resource_manager/locator/StringResourceStream.fwd.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/excn/Exceptions.hh>
 
 //C++ headers
 #include <sstream>

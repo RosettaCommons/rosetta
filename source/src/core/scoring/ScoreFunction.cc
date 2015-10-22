@@ -62,13 +62,13 @@
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-
+#ifdef PYROSETTA
 #include <basic/init.hh>
+#endif
 
 #include <numeric/random/DistributionSampler.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
 
 #include <core/id/DOF_ID.hh>
 #include <utility/vector1.hh>

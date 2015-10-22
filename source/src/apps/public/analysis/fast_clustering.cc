@@ -38,17 +38,11 @@
 
 // ObjexxFCL includes
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
 
-#include <ostream>
-#include <algorithm>
 #include <string>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
 #include <utility/excn/EXCN_Base.hh>
-#include <utility/excn/Exceptions.hh>
 
 
 static THREAD_LOCAL basic::Tracer tr( "main" );

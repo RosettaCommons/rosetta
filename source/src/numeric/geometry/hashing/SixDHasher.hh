@@ -32,7 +32,6 @@
 #include <boost/unordered_map.hpp>
 
 /// C++ headers
-#include <cmath>
 #include <vector>
 
 //#include <protocols/match/Hit.fwd.hh>

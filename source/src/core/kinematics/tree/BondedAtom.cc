@@ -16,7 +16,6 @@
 #include <core/kinematics/tree/BondedAtom.hh>
 
 // Package headers
-#include <core/id/DOF_ID.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
 
@@ -32,10 +31,8 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/vector1.hh>
 
 // C++ headers
-#include <utility/assert.hh>
 #include <iostream>
 
 

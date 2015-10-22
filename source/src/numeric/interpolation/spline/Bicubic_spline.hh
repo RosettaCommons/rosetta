@@ -60,7 +60,6 @@
 #include <numeric/types.hh>
 #include <numeric/interpolation/spline/Cubic_spline.fwd.hh>
 #include <numeric/MathMatrix.hh>
-#include <numeric/MathVector.hh>
 
 namespace numeric {
 namespace interpolation {

@@ -14,12 +14,7 @@
 #ifndef INCLUDED_numeric_fourier_kiss_fft_hh
 #define INCLUDED_numeric_fourier_kiss_fft_hh
 
-#include <iostream>
-#include <string>
-#include <limits>
 #include <cmath>
-#include <complex>
-
 #include <numeric/fourier/kiss_fft_state.hh>
 
 namespace numeric {

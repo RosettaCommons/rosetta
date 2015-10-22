@@ -17,7 +17,7 @@
 #include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
 
 #include <core/types.hh>
-#include <core/chemical/rna/util.hh>
+//#include <core/chemical/rna/util.hh>
 
 // Project headers
 #include <utility/pointer/ReferenceCount.hh>

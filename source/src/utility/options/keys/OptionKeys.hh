@@ -22,18 +22,6 @@
 
 // Package headers
 #include <utility/options/keys/BooleanOptionKey.hh>
-#include <utility/options/keys/IntegerOptionKey.hh>
-#include <utility/options/keys/RealOptionKey.hh>
-#include <utility/options/keys/StringOptionKey.hh>
-#include <utility/options/keys/FileOptionKey.hh>
-#include <utility/options/keys/PathOptionKey.hh>
-#include <utility/options/keys/BooleanVectorOptionKey.hh>
-#include <utility/options/keys/IntegerVectorOptionKey.hh>
-#include <utility/options/keys/RealVectorOptionKey.hh>
-#include <utility/options/keys/StringVectorOptionKey.hh>
-#include <utility/options/keys/FileVectorOptionKey.hh>
-#include <utility/options/keys/PathVectorOptionKey.hh>
-#include <utility/options/keys/AnyVectorOptionKey.hh>
 
 
 namespace utility {

@@ -18,7 +18,6 @@
 #include <core/chemical/Patch.fwd.hh>
 
 // Package headers
-#include <core/chemical/PatchOperation.hh>
 #include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/AtomProperty.hh>
 

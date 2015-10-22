@@ -22,7 +22,6 @@
 #include <utility/string_util.hh>
 
 #include <string>
-#include <sstream>
 #include <istream>
 
 // C++ 11 support

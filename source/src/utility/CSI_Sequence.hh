@@ -17,9 +17,7 @@
 
 #include <utility/CSI_Sequence.fwd.hh>
 
-#include <ostream>
-#include <string>
-
+#include <ostream>  // for string, ostream, operator<<
 
 namespace utility {
 

@@ -19,10 +19,8 @@
 #include <core/chemical/ResidueProperties.hh>
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
-#include <set>
 #include <iomanip>
 #include <iostream>
-#include <sstream>
 #include <algorithm>
 
 // Boost Headers

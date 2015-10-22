@@ -18,17 +18,6 @@
 // Package headers
 #include <core/kinematics/Stub.hh>
 
-
-// Rosetta Headers
-// #include "jump_classes.h"
-// #include "angles.h"
-// #include "FArray_xyz_functions.h"
-// #include "jumping_util.h"
-// #include "param.h"
-// #include "pose.h"
-// #include "random_numbers.h"
-// #include "util_vector.h" // Ddotprod, etc
-
 // Numeric Headers
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
@@ -37,7 +26,6 @@
 
 // C++ Headers
 #include <iostream>
-#include <string>
 
 #include <utility/vector1.hh>
 

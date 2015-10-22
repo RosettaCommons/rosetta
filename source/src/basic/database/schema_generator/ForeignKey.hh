@@ -16,8 +16,11 @@
 #define INCLUDED_basic_database_schema_generator_ForeignKey_HH
 
 #include <utility/vector1.hh>
-#include <basic/database/schema_generator/Column.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+
+// The full header is necessary for Windows builds, and something
+// arcane about the Windows PyRosetta build isn't responding to ifdefs.
+#include <basic/database/schema_generator/Column.hh>
 
 //C++ Headers
 #include <string>

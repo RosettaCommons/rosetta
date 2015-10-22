@@ -15,18 +15,17 @@
 #ifndef INCLUDED_basic_database_schema_generator_Schema_HH
 #define INCLUDED_basic_database_schema_generator_Schema_HH
 
-#include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
-#include <basic/database/schema_generator/Column.hh>
-#include <basic/database/schema_generator/Constraint.hh>
 #include <basic/database/schema_generator/Index.hh>
-
-#include <utility/sql_database/DatabaseSessionManager.hh>
-
-#include <boost/unordered_set.hpp>
-
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/Constraint.hh>
+#include <iosfwd>
 #include <string>
-#include <set>
+
+#include <basic/database/schema_generator/Column.fwd.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace basic {
 namespace database {

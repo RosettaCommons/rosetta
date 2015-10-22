@@ -41,6 +41,7 @@
 #include <core/conformation/membrane/LipidAccInfo.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/Conformation.hh>

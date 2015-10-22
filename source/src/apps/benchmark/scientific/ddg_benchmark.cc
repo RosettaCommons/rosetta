@@ -26,6 +26,7 @@
 
 #include <core/pose/Pose.hh>
 
+#include <basic/options/option.hh>
 #include <basic/options/util.hh>
 
 #include <devel/init.hh>

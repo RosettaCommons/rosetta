@@ -19,12 +19,8 @@
 // Unit headers
 #include <core/kinematics/Edge.fwd.hh>
 
-
-// // C++ Headers
-#include <utility/assert.hh>
+// In a perfect world, I would ifdef for Windows PyRosetta. A perfect world this isn't.
 #include <string>
-
-//#include <iosfwd>
 
 
 namespace core {

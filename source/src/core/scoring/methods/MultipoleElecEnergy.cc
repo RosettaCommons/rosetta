@@ -33,6 +33,7 @@
 #include <basic/datacache/CacheableData.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/prof.hh>
+#include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/conformation/RotamerSetBase.hh>

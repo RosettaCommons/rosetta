@@ -14,21 +14,10 @@
 #include <basic/resource_manager/fallback_configuration/NativeFallbackConfiguration.hh>
 #include <basic/resource_manager/fallback_configuration/NativeFallbackConfigurationCreator.hh>
 
-
-// Platform Headers
-#include <utility/vector1.hh>
-
 // basic headers
 #include <basic/resource_manager/ResourceOptions.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-
-//utility headers
-#include <utility/excn/Exceptions.hh>
-
-//C++ Headers
-#include <string>
-#include <map>
 
 namespace basic {
 namespace resource_manager {

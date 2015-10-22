@@ -28,8 +28,8 @@
 #include <basic/Tracer.hh> // profiling
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/FArray1D.hh>
 
 // Numeric headers
 #include <numeric/constants.hh>
@@ -41,9 +41,6 @@
 // Utility headers
 #include <utility/assert.hh>
 #include <utility/vector1.hh>
-
-// C++ headers
-#include <cstdlib>
 
 
 namespace core {

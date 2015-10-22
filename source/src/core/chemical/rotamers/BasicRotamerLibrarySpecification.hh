@@ -21,12 +21,8 @@
 // Package headers
 #include <core/chemical/ResidueType.fwd.hh>
 
-// Basic headers
-
-// Utility Headers
-
 // C++ headers
-#include <string>
+#include <iosfwd>
 
 namespace core {
 namespace chemical {

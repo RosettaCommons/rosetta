@@ -11,12 +11,10 @@
 /// @brief  A few spherical harmonic transform function: very simple, with support for real, even BW only
 /// @author Frank DiMaio
 
-
+#include <numeric/fourier/kiss_fft.hh>
 #include <numeric/fourier/SHT.hh>
 #include <numeric/constants.hh>
 
-
-#include <string>
 #include <cstdlib>
 
 #ifdef WIN32

@@ -21,7 +21,11 @@
 #include <utility/options/keys/OptionKey.fwd.hh>
 
 // C++ headers
+#ifdef WIN32
 #include <string>
+#else
+#include <iosfwd>
+#endif
 
 
 namespace basic {

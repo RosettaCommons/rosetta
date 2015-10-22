@@ -15,6 +15,7 @@
 
 #include <core/svn_version.hh>
 #include <utility/exit.hh>
+#include <string>
 
 namespace core {
 

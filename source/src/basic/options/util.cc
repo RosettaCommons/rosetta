@@ -22,9 +22,6 @@
 
 
 // Utility headers
-//#include <utility/options/OptionCollection.hh>
-//#include <utility/options/keys/OptionKeys.hh>
-
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>

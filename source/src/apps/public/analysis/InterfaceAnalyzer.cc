@@ -19,8 +19,6 @@
 
 #include <protocols/moves/Mover.hh>
 
-#include <core/conformation/Conformation.hh>
-
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -33,7 +31,6 @@
 #include <basic/options/option.hh>
 
 #include <utility/vector1.hh>
-#include <utility/excn/Exceptions.hh>
 
 
 using basic::T;

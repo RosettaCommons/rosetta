@@ -14,13 +14,17 @@
 #define INCLUDED_core_chemical_AtomTypeDatabaseIO_hh
 
 #include <utility/pointer/ReferenceCount.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/ResidueDatabaseIO.fwd.hh>
+//#include <core/chemical/ResidueType.fwd.hh>
+//#include <core/chemical/ResidueDatabaseIO.fwd.hh>
+
+// needed for header only build
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+#include <utility/vector1.hh>
+
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 
-#include <map>
+//#include <map>
 
 namespace core {
 namespace chemical {

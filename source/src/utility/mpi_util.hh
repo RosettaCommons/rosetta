@@ -24,6 +24,7 @@
 #include <utility/vector1.hh>
 
 /// STL Headers
+// Have to go full string because of Windows PyRosetta
 #include <string>
 
 namespace utility {

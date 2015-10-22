@@ -16,14 +16,15 @@
 
 // Project headers
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 
 // C++ headers
 #include <fstream>
-#include <iostream>
 #include <string>
-#include <locale>
+
+#ifdef WIN32
+#include <utility/string_util.hh>
+#endif
 
 namespace core {
 namespace chemical {

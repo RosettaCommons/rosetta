@@ -136,7 +136,6 @@ void CenrotLibrary::create_centroid_rotamer_libraries_from_ASCII()
 		aan = chemical::aa_from_name( nextaa );
 		SingleResidueCenrotLibraryOP newlib( new SingleResidueCenrotLibrary(aan) );
 		/// read the rotlib for current aa and save the name of the next one
-		//thisaa = nextaa;
 		nextaa = newlib->read_from_file( libstream, true );
 		++count_libraries_read;
 
@@ -146,18 +145,6 @@ void CenrotLibrary::create_centroid_rotamer_libraries_from_ASCII()
 			continue;
 		}
 		add_cenrot_residue_library( aan, newlib );
-
-		//fullatom lib way
-		//libraries_[ aan ] = newlib();
-		//aa_libraries_[ aan ] = newlib();
-		//if( cenrot_libraries_[ aan ] != 0 ) {
-		// TR.Warning << "Already read centroid rotamer library for " << aan << " replacing. " << std::endl;
-		//}
-		//cenrot_libraries_[ aan ] = newlib;
-		//libraries_ops_.push_back( newlib );
-
-		//SingleResidueCenrotLibraryCOP dunlib( static_cast< SingleResidueCenrotLibraryCOP> ( newlib ));
-		//add_residue_library(rsd_set->name_map(thisaa), dunlib);
 	}
 
 	libstream.close();

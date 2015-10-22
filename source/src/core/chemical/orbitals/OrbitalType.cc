@@ -42,7 +42,6 @@
 #include <core/chemical/orbitals/OrbitalType.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
-#include <vector>
 #include <core/chemical/orbitals/OrbitalTypeMapper.hh>
 #include <core/types.hh>
 

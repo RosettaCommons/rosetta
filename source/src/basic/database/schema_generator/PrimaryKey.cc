@@ -16,10 +16,6 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <basic/database/schema_generator/Column.hh>
 
-//C++ Headers
-#include <string>
-#include <set>
-
 namespace basic {
 namespace database {
 namespace schema_generator {

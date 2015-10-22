@@ -20,15 +20,9 @@
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 
-#include <core/types.hh>
-
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <numeric/xyzVector.hh>
-
-#include <map>
-#include <string>
 #include <istream>
 
 namespace core {

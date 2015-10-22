@@ -16,7 +16,6 @@
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/ReferenceCount.hh>
 
 namespace basic {
 namespace datacache {

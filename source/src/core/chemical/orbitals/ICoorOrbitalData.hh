@@ -40,10 +40,11 @@
 
 // Project headers
 
+#include <core/chemical/orbitals/ICoorOrbitalData.fwd.hh>
+
 // Utility headers
 
 #include <core/types.hh>
-#include <string>
 #include <core/chemical/ResidueGraphTypes.hh>
 
 //Auto Headers

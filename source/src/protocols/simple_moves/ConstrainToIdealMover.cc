@@ -22,6 +22,7 @@
 
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/util.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/pose/rna/util.hh>
 #include <protocols/toolbox/AllowInsert.hh>
 

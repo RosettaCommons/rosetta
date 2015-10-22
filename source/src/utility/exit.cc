@@ -28,8 +28,9 @@
 #ifdef BOINC
 #include <utility/io/izstream.hh>
 #include <boinc_api.h>
-#include <string>
 #endif
+
+#include <string>
 
 #include <vector>
 

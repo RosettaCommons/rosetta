@@ -20,13 +20,10 @@
 #include <utility/io/FileContentsMap.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
 #include <map>
-#include <set>
-#include <string>
 
 // Platform headers
 #include <platform/types.hh>

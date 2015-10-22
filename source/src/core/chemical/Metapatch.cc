@@ -20,8 +20,10 @@
 // Unit headers
 #include <core/chemical/Patch.hh>
 #include <core/chemical/Metapatch.hh>
-#include <core/chemical/MMAtomType.hh>
 #include <core/chemical/AtomPropertiesManager.hh>
+
+// Basic header
+#include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

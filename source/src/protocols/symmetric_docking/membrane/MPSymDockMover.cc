@@ -42,6 +42,7 @@
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/Conformation.hh>
 

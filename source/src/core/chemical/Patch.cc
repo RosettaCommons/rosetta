@@ -162,6 +162,9 @@
 // Unit headers
 #include <core/chemical/Patch.hh>
 
+// Basic header
+#include <basic/Tracer.hh>
+
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
@@ -173,7 +176,7 @@
 namespace core {
 namespace chemical {
 	
-	
+
 /// @details Auto-generated virtual destructor
 Patch::~Patch() {}
 	
@@ -181,9 +184,6 @@ Patch::~Patch() {}
 PatchCase::~PatchCase() {}
 	
 static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
-	
-/// @brief the string used to generate new residue names
-std::string const PATCH_LINKER( ":" );
 	
 std::string tag_from_line( std::string const & line ) {
 	std::string tag;

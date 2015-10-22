@@ -16,9 +16,6 @@
 #include <basic/resource_manager/ResourceOptions.hh>
 #include <basic/database/sql_utils.hh>
 
-//package headers
-#include <basic/resource_manager/types.hh>
-
 //utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>

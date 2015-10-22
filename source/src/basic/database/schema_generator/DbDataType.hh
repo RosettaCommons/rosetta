@@ -16,9 +16,8 @@
 #define INCLUDED_basic_database_schema_generator_DbDataType_HH
 
 #include <basic/database/schema_generator/DbDataType.fwd.hh>
-#include <string>
-#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
-#include <utility/sql_database/types.hh>
+#include <string>                                              // for string
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>  // for sessionOP
 #include <utility/pointer/ReferenceCount.hh>
 
 namespace basic {

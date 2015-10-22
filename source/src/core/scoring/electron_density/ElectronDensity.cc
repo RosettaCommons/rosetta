@@ -153,12 +153,6 @@ static void swap4_aligned(void *v, long ndata) {
 ///////////////////////////////  ///////////////////////////////
 
 ElectronDensity& getDensityMap(std::string filename, bool force_reload) {
-	/*
-	if (basic::options::option[ basic::options::OptionKeys::edensity::force_legacy ]()) {
-	return getDensityMap_legacy();
-	}
-	*/
-
 	if ( basic::resource_manager::ResourceManager::get_instance()->
 			has_resource_with_description("electron_density") ) {
 
@@ -846,29 +840,29 @@ core::Real ElectronDensity::matchCentroidPose(
 					numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from (x,y,z) to atom_i
 					core::Real d2 = (cart_del_ij).length_squared();
 
-					if ( d2 <= (CA_MASK+ATOM_MASK_PADDING)*(CA_MASK+ATOM_MASK_PADDING) ) {
-						core::Real atm = C*exp(-k*d2);
-						core::Real sigmoid_msk = exp( d2 - (ATOM_MASK)*(ATOM_MASK)  );
-						core::Real inv_msk = 1/(1+sigmoid_msk);
-
-						rho_calc(x,y,z) += atm;
-						inv_rho_mask(x,y,z) *= (1 - inv_msk);
-
-						if ( cacheCCs ) {
-							int idx = (z-1)*density.u2()*density.u1() + (y-1)*density.u1() + x-1;
-							rho_dx_pt[i].push_back  ( idx );
-							rho_dx_atm[i].push_back ( (-2*k*atm)*cart_del_ij );
-
-							core::Real eps_i = (1-inv_msk), inv_eps_i;
-							if ( eps_i == 0 ) { // divide-by-zero
-								inv_eps_i = sigmoid_msk;
-							} else {
-								inv_eps_i = 1/eps_i;
-							}
-
-							rho_dx_mask[i].push_back( (-2*sigmoid_msk*inv_msk*inv_msk*inv_eps_i)*cart_del_ij );
-						}
+					if ( d2 > (CA_MASK+ATOM_MASK_PADDING)*(CA_MASK+ATOM_MASK_PADDING) )  continue;
+					
+					core::Real atm = C*exp(-k*d2);
+					core::Real sigmoid_msk = exp( d2 - (ATOM_MASK)*(ATOM_MASK)  );
+					core::Real inv_msk = 1/(1+sigmoid_msk);
+					
+					rho_calc(x,y,z) += atm;
+					inv_rho_mask(x,y,z) *= (1 - inv_msk);
+					
+					if ( !cacheCCs )  continue;
+					
+					int idx = (z-1)*density.u2()*density.u1() + (y-1)*density.u1() + x-1;
+					rho_dx_pt[i].push_back  ( idx );
+					rho_dx_atm[i].push_back ( (-2*k*atm)*cart_del_ij );
+					
+					core::Real eps_i = (1-inv_msk), inv_eps_i;
+					if ( eps_i == 0 ) { // divide-by-zero
+						inv_eps_i = sigmoid_msk;
+					} else {
+						inv_eps_i = 1/eps_i;
 					}
+					
+					rho_dx_mask[i].push_back( (-2*sigmoid_msk*inv_msk*inv_msk*inv_eps_i)*cart_del_ij );
 				}
 			}
 		}
@@ -915,57 +909,58 @@ core::Real ElectronDensity::matchCentroidPose(
 
 	///////////////////////////
 	/// 4  CALCULATE PER-CA DERIVATIVES
-	if ( cacheCCs ) {
-		//std::map< core::Size , numeric::xyzMatrix< core::Real > > symmRots;
-		for ( int i=1 ; i<=nres; ++i ) {
-			if ( isSymm && !symmInfo->bb_is_independent(i) && !remapSymm ) {  // should this be fa_...??
-				continue; // only score the monomer
-			}
-
-			conformation::Residue const &rsd_i (pose.residue(i)); //( *reses[i] );
-
-			//if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
-			if ( !pose.residue_type(i).is_protein() ) continue;
-			if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
-
-			numeric::xyzVector< core::Real > dVdx_ij(0,0,0), dOdx_ij(0,0,0), dO2dx_ij(0,0,0), dCOdx_ij(0,0,0), dC2dx_ij(0,0,0);
-
-			conformation::Atom const &atm_i( rsd_i.atom("CA") );
-			if ( is_missing_density( atm_i.xyz() ) ) continue;
-
-			utility::vector1< int > const &rho_dx_pt_ij   = rho_dx_pt[i];
-			utility::vector1< numeric::xyzVector<core::Real> > const &rho_dx_mask_ij = rho_dx_mask[i];
-			utility::vector1< numeric::xyzVector<core::Real> > const &rho_dx_atm_ij  = rho_dx_atm[i];
-
-			int npoints = rho_dx_pt_ij.size();
-			for ( int n=1; n<=npoints; ++n ) {
-				const int x(rho_dx_pt_ij[n]);
-				clc_x = rho_calc[x];
-				obs_x = density[x];
-				core::Real inv_eps_x = inv_rho_mask[x];
-
-				numeric::xyzVector<double> del_mask = inv_eps_x*rho_dx_mask_ij[n];
-				numeric::xyzVector<double> del_rhoc = rho_dx_atm_ij[n];
-
-				dVdx_ij  += del_mask;
-				dOdx_ij  += del_mask*obs_x;
-				dO2dx_ij += del_mask*obs_x*obs_x;
-				dCOdx_ij += del_rhoc*obs_x;
-				dC2dx_ij += 2.0*del_rhoc*clc_x;
-			}
-
-			// finally compute dCC/dx_ij
-			core::Real f = ( sumCO_i - sumC_i*sumO_i / vol_i );
-			core::Real g = sqrt ( varO_i * varC_i );
-
-			numeric::xyzVector<core::Real> fprime = dCOdx_ij - 1/(vol_i*vol_i) * ( dOdx_ij*sumC_i*vol_i - sumO_i*sumC_i*dVdx_ij);
-			numeric::xyzVector<core::Real> gprime = 0.5 * (
-				sqrt(varO_i)/sqrt(varC_i) * ( dC2dx_ij + ( sumC_i*sumC_i*dVdx_ij/(vol_i*vol_i) ) )  +
-				sqrt(varC_i)/sqrt(varO_i) * ( dO2dx_ij - ( 1/(vol_i*vol_i) * ( 2*vol_i*sumO_i*dOdx_ij - sumO_i*sumO_i*dVdx_ij ) ) ) );
-
-			dCCdxs_cen[i] = (g*fprime - f*gprime) / (g*g);
+	if ( ! cacheCCs ) return CC_i;
+	
+	//std::map< core::Size , numeric::xyzMatrix< core::Real > > symmRots;
+	for ( int i=1 ; i<=nres; ++i ) {
+		if ( isSymm && !symmInfo->bb_is_independent(i) && !remapSymm ) {  // should this be fa_...??
+			continue; // only score the monomer
 		}
+		
+		conformation::Residue const &rsd_i (pose.residue(i)); //( *reses[i] );
+		
+		//if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
+		if ( !pose.residue_type(i).is_protein() ) continue;
+		if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
+		
+		numeric::xyzVector< core::Real > dVdx_ij(0,0,0), dOdx_ij(0,0,0), dO2dx_ij(0,0,0), dCOdx_ij(0,0,0), dC2dx_ij(0,0,0);
+		
+		conformation::Atom const &atm_i( rsd_i.atom("CA") );
+		if ( is_missing_density( atm_i.xyz() ) ) continue;
+		
+		utility::vector1< int > const &rho_dx_pt_ij   = rho_dx_pt[i];
+		utility::vector1< numeric::xyzVector<core::Real> > const &rho_dx_mask_ij = rho_dx_mask[i];
+		utility::vector1< numeric::xyzVector<core::Real> > const &rho_dx_atm_ij  = rho_dx_atm[i];
+		
+		int npoints = rho_dx_pt_ij.size();
+		for ( int n=1; n<=npoints; ++n ) {
+			const int x(rho_dx_pt_ij[n]);
+			clc_x = rho_calc[x];
+			obs_x = density[x];
+			core::Real inv_eps_x = inv_rho_mask[x];
+			
+			numeric::xyzVector<double> del_mask = inv_eps_x*rho_dx_mask_ij[n];
+			numeric::xyzVector<double> del_rhoc = rho_dx_atm_ij[n];
+			
+			dVdx_ij  += del_mask;
+			dOdx_ij  += del_mask*obs_x;
+			dO2dx_ij += del_mask*obs_x*obs_x;
+			dCOdx_ij += del_rhoc*obs_x;
+			dC2dx_ij += 2.0*del_rhoc*clc_x;
+		}
+		
+		// finally compute dCC/dx_ij
+		core::Real f = ( sumCO_i - sumC_i*sumO_i / vol_i );
+		core::Real g = sqrt ( varO_i * varC_i );
+		
+		numeric::xyzVector<core::Real> fprime = dCOdx_ij - 1/(vol_i*vol_i) * ( dOdx_ij*sumC_i*vol_i - sumO_i*sumC_i*dVdx_ij);
+		numeric::xyzVector<core::Real> gprime = 0.5 * (
+			sqrt(varO_i)/sqrt(varC_i) * ( dC2dx_ij + ( sumC_i*sumC_i*dVdx_ij/(vol_i*vol_i) ) )  +
+			sqrt(varC_i)/sqrt(varO_i) * ( dO2dx_ij - ( 1/(vol_i*vol_i) * ( 2*vol_i*sumO_i*dOdx_ij - sumO_i*sumO_i*dVdx_ij ) ) ) );
+		
+		dCCdxs_cen[i] = (g*fprime - f*gprime) / (g*g);
 	}
+
 	// >> debugging <<
 	//ElectronDensity(rho_calc, 2.0).writeMRC( "rho_calc.mrc" );
 	//ElectronDensity(inv_rho_mask, 2.0).writeMRC( "inv_rho_mask.mrc" );
@@ -1098,29 +1093,29 @@ core::Real ElectronDensity::matchPose(
 						numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from (x,y,z) to atom_i
 						core::Real d2 = (cart_del_ij).length_squared();
 
-						if ( d2 <= (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING) ) {
-							core::Real atm = C*exp(-k*d2);
-							core::Real sigmoid_msk = exp( d2 - (ATOM_MASK)*(ATOM_MASK)  );
-							core::Real inv_msk = 1/(1+sigmoid_msk);
-
-							rho_calc(x,y,z) += atm;
-							inv_rho_mask(x,y,z) *= (1 - inv_msk);
-
-							if ( cacheCCs ) {
-								int idx = (z-1)*density.u2()*density.u1() + (y-1)*density.u1() + x-1;
-
-								core::Real eps_i = (1-inv_msk), inv_eps_i;
-								if ( eps_i == 0 ) { // divide-by-zero
-									inv_eps_i = sigmoid_msk;
-								} else {
-									inv_eps_i = 1/eps_i;
-								}
-
-								rho_dx_pt[i][j].push_back  ( idx );
-								rho_dx_atm[i][j].push_back ( (-2*k*atm)*cart_del_ij );
-								rho_dx_mask[i][j].push_back( (-2*sigmoid_msk*inv_msk*inv_msk*inv_eps_i)*cart_del_ij );
-							}
+						if ( d2 > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING) )  continue;
+						
+						core::Real atm = C*exp(-k*d2);
+						core::Real sigmoid_msk = exp( d2 - (ATOM_MASK)*(ATOM_MASK)  );
+						core::Real inv_msk = 1/(1+sigmoid_msk);
+						
+						rho_calc(x,y,z) += atm;
+						inv_rho_mask(x,y,z) *= (1 - inv_msk);
+						
+						if ( ! cacheCCs )  continue;
+						
+						int idx = (z-1)*density.u2()*density.u1() + (y-1)*density.u1() + x-1;
+						
+						core::Real eps_i = (1-inv_msk), inv_eps_i;
+						if ( eps_i == 0 ) { // divide-by-zero
+							inv_eps_i = sigmoid_msk;
+						} else {
+							inv_eps_i = 1/eps_i;
 						}
+						
+						rho_dx_pt[i][j].push_back  ( idx );
+						rho_dx_atm[i][j].push_back ( (-2*k*atm)*cart_del_ij );
+						rho_dx_mask[i][j].push_back( (-2*sigmoid_msk*inv_msk*inv_msk*inv_eps_i)*cart_del_ij );
 					}
 				}
 			}
@@ -1169,65 +1164,65 @@ core::Real ElectronDensity::matchPose(
 
 	///////////////////////////
 	/// 4  CALCULATE PER-ATOM DERIVATIVES
-	if ( cacheCCs ) {
-		//std::map< core::Size , numeric::xyzMatrix< core::Real > > symmRots;
-		for ( int i=1 ; i<=nres; ++i ) {
-			if ( isSymm && !symmInfo->bb_is_independent(i) && !remapSymm ) {  // should this be fa_...??
-				continue; // only score the monomer
+	if ( ! cacheCCs )  return CC_i;
+	
+	//std::map< core::Size , numeric::xyzMatrix< core::Real > > symmRots;
+	for ( int i=1 ; i<=nres; ++i ) {
+		if ( isSymm && !symmInfo->bb_is_independent(i) && !remapSymm ) {  // should this be fa_...??
+			continue; // only score the monomer
+		}
+		
+		conformation::Residue const &rsd_i (pose.residue(i)); //( *reses[i] );
+		
+		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
+		if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
+		
+		int nheavyatoms = atm_idx[i].size();
+		dCCdxs_aacen[i].resize( nheavyatoms, numeric::xyzVector< core::Real >(0,0,0) );
+		
+		for ( int j=1 ; j<=nheavyatoms; ++j ) {
+			numeric::xyzVector< core::Real > dVdx_ij(0,0,0), dOdx_ij(0,0,0), dO2dx_ij(0,0,0), dCOdx_ij(0,0,0), dC2dx_ij(0,0,0);
+			
+			conformation::Atom const &atm_i( rsd_i.atom(j) );
+			if ( is_missing_density( atm_i.xyz() ) ) continue;
+			
+			//chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
+			//std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
+			
+			utility::vector1< int > const &rho_dx_pt_ij   = rho_dx_pt[i][j];
+			utility::vector1< numeric::xyzVector<core::Real> > const &rho_dx_mask_ij = rho_dx_mask[i][j];
+			utility::vector1< numeric::xyzVector<core::Real> > const &rho_dx_atm_ij  = rho_dx_atm[i][j];
+			
+			int npoints = rho_dx_pt_ij.size();
+			for ( int n=1; n<=npoints; ++n ) {
+				const int x(rho_dx_pt_ij[n]);
+				clc_x = rho_calc[x];
+				obs_x = density[x];
+				core::Real inv_eps_x = inv_rho_mask[x];
+				
+				numeric::xyzVector<double> del_mask = inv_eps_x*rho_dx_mask_ij[n];
+				numeric::xyzVector<double> del_rhoc = rho_dx_atm_ij[n];
+				
+				dVdx_ij  += del_mask;
+				dOdx_ij  += del_mask*obs_x;
+				dO2dx_ij += del_mask*obs_x*obs_x;
+				dCOdx_ij += del_rhoc*obs_x;
+				dC2dx_ij += 2.0*del_rhoc*clc_x;
 			}
-
-			conformation::Residue const &rsd_i (pose.residue(i)); //( *reses[i] );
-
-			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
-			if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
-
-			int nheavyatoms = atm_idx[i].size();
-			dCCdxs_aacen[i].resize( nheavyatoms, numeric::xyzVector< core::Real >(0,0,0) );
-
-			for ( int j=1 ; j<=nheavyatoms; ++j ) {
-				numeric::xyzVector< core::Real > dVdx_ij(0,0,0), dOdx_ij(0,0,0), dO2dx_ij(0,0,0), dCOdx_ij(0,0,0), dC2dx_ij(0,0,0);
-
-				conformation::Atom const &atm_i( rsd_i.atom(j) );
-				if ( is_missing_density( atm_i.xyz() ) ) continue;
-
-				//chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
-				//std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
-
-				utility::vector1< int > const &rho_dx_pt_ij   = rho_dx_pt[i][j];
-				utility::vector1< numeric::xyzVector<core::Real> > const &rho_dx_mask_ij = rho_dx_mask[i][j];
-				utility::vector1< numeric::xyzVector<core::Real> > const &rho_dx_atm_ij  = rho_dx_atm[i][j];
-
-				int npoints = rho_dx_pt_ij.size();
-				for ( int n=1; n<=npoints; ++n ) {
-					const int x(rho_dx_pt_ij[n]);
-					clc_x = rho_calc[x];
-					obs_x = density[x];
-					core::Real inv_eps_x = inv_rho_mask[x];
-
-					numeric::xyzVector<double> del_mask = inv_eps_x*rho_dx_mask_ij[n];
-					numeric::xyzVector<double> del_rhoc = rho_dx_atm_ij[n];
-
-					dVdx_ij  += del_mask;
-					dOdx_ij  += del_mask*obs_x;
-					dO2dx_ij += del_mask*obs_x*obs_x;
-					dCOdx_ij += del_rhoc*obs_x;
-					dC2dx_ij += 2.0*del_rhoc*clc_x;
-				}
-
-				// finally compute dCC/dx_ij
-				core::Real f = ( sumCO_i - sumC_i*sumO_i / vol_i );
-				core::Real g = sqrt ( varO_i * varC_i );
-
-				numeric::xyzVector<core::Real> fprime = dCOdx_ij - 1/(vol_i*vol_i) * ( dOdx_ij*sumC_i*vol_i - sumO_i*sumC_i*dVdx_ij);
-				numeric::xyzVector<core::Real> gprime = 0.5 * (
-					sqrt(varO_i)/sqrt(varC_i) * ( dC2dx_ij + ( sumC_i*sumC_i*dVdx_ij/(vol_i*vol_i) ) )  +
-					sqrt(varC_i)/sqrt(varO_i) * ( dO2dx_ij - ( 1/(vol_i*vol_i) * ( 2*vol_i*sumO_i*dOdx_ij - sumO_i*sumO_i*dVdx_ij ) ) ) );
-
-				dCCdxs_aacen[i][j] = (g*fprime - f*gprime) / (g*g);
-			}
+			
+			// finally compute dCC/dx_ij
+			core::Real f = ( sumCO_i - sumC_i*sumO_i / vol_i );
+			core::Real g = sqrt ( varO_i * varC_i );
+			
+			numeric::xyzVector<core::Real> fprime = dCOdx_ij - 1/(vol_i*vol_i) * ( dOdx_ij*sumC_i*vol_i - sumO_i*sumC_i*dVdx_ij);
+			numeric::xyzVector<core::Real> gprime = 0.5 * (
+				sqrt(varO_i)/sqrt(varC_i) * ( dC2dx_ij + ( sumC_i*sumC_i*dVdx_ij/(vol_i*vol_i) ) )  +
+				sqrt(varC_i)/sqrt(varO_i) * ( dO2dx_ij - ( 1/(vol_i*vol_i) * ( 2*vol_i*sumO_i*dOdx_ij - sumO_i*sumO_i*dVdx_ij ) ) ) );
+			
+			dCCdxs_aacen[i][j] = (g*fprime - f*gprime) / (g*g);
 		}
 	}
-
+	
 	return CC_i;
 }
 
@@ -2381,20 +2376,6 @@ void ElectronDensity::setup_patterson_first_time(core::pose::Pose const &pose) {
 		numeric::fourier::ifft3(Fp_o, p_o);
 	}
 
-	// standardize
-	// core::Real delta,mean=0,M2=0;
-	// for (int i=0; i< (int)(p_grid[0]*p_grid[1]*p_grid[2]) ; ++i) {
-	//  delta = p_o[i] - mean;
-	//  mean = mean + delta/(i+1);
-	//  M2 = M2 + delta*(p_o[i] - mean);
-	// }
-	// M2 = sqrt(M2/((int)p_grid[0]*p_grid[1]*p_grid[2]));
-	// for (int i=0; i< (int)(p_grid[0]*p_grid[1]*p_grid[2]) ; ++i) {
-	//  p_o[i] = (p_o[i]-mean)/M2;
-	//  po_bar += p_o[i] * PattersonEpsilon[i];
-	// }
-	// po_bar /= eps_sum;
-
 	// normalization in reciprocal space now
 	po_bar = 0.0;
 
@@ -2437,43 +2418,11 @@ core::Real ElectronDensity::matchPoseToPatterson(
 	//// first time this function is called, we need to set up a bunch of stuff
 	//// if the pose has moved a lot we need to set up a new grid
 	// quick check of bounding box, CoM
-	// bool is_set = false;
-	// core::Real nCoM=0;
 	numeric::xyzVector< core::Real > newd_min, newd_max, CoM(0,0,0);
-	// for (int i=1 ; i<=nres; ++i) {
-	//  conformation::Residue const &rsd_i (pose.residue(i));
-	//  if ( (rsd_i.aa() == core::chemical::aa_vrt) || (scoring_mask_.find(i) != scoring_mask_.end()) ) continue;
-	//  int nheavyatoms = rsd_i.nheavyatoms();
-	//  for (int j=1 ; j<=nheavyatoms; ++j) {
-	//   numeric::xyzVector< core::Real > const &xyz_ij = rsd_i.atom(j).xyz();
-	//   if (is_missing_density( xyz_ij )) continue;
-	//   if (!is_set) {
-	//    newd_min = newd_max = xyz_ij;
-	//    is_set = true;
-	//   }
-	//   newd_min[0] = std::min(newd_min[0],xyz_ij[0]);
-	//   newd_min[1] = std::min(newd_min[1],xyz_ij[1]);
-	//   newd_min[2] = std::min(newd_min[2],xyz_ij[2]);
-	//   newd_max[0] = std::max(newd_max[0],xyz_ij[0]);
-	//   newd_max[1] = std::max(newd_max[1],xyz_ij[1]);
-	//   newd_max[2] = std::max(newd_max[2],xyz_ij[2]);
-	//   CoM+=xyz_ij;
-	//   nCoM+=1;
-	//  }
-	// }
-	// CoM /= nCoM;
-	// newd_max -= CoM;
-	// newd_min -= CoM;
-
-	// save CoM for repacking
-	//p_CoM = CoM;
-
+	
 	bool needToSetup = (p_extent.length_squared() == 0);
 	p_CoM = numeric::xyzVector< core::Real >(0,0,0);
-	//for (int j=0; j<3; ++j) {
-	// needToSetup |= newd_min[j] < d_min[j];
-	// needToSetup |= newd_max[j] > d_max[j];
-	//}
+	
 	// do not let the grid change while minimizing
 	if ( needToSetup && ! pose.energies().use_nblist() ) {
 		setup_patterson_first_time(pose);
@@ -2693,13 +2642,6 @@ core::Real ElectronDensity::matchPoseToPatterson(
 			ObjexxFCL::FArray3D< std::complex< double > > &Fdrhoc_dy_i = Fdrhoc_dy[ it->first ];
 			ObjexxFCL::FArray3D< std::complex< double > > &Fdrhoc_dz_i = Fdrhoc_dz[ it->first ];
 
-			//OLD conv_p_co = real( ifft( fft(epsilon.*p_o)   .* fft(rho_c) .* conj(fft(drhox)) ) );
-			//OLD conv_p_c  = real( ifft( fft(epsilon)        .* fft(rho_c) .* conj(fft(drhox)) ) );
-			//OLD conv_p_c2 = real( ifft( fft(2*epsilon.*p_c) .*  fft(rho_c) .* conj(fft(drhox)) ) );
-			// f = ( sumCO - sumC*sumO/sumV  );
-			// g = ( varC*varO );
-			// Fconv_p_pcc = fft2( p_mask .* ( (p_o-po_bar)/sqrt(g) - f * varO*(p_c-pc_bar) / (g^1.5) ) ) ...
-			//    .* frho_c .* conj(fft2(drhox));
 			{
 				ObjexxFCL::FArray3D< std::complex<double> > Fdpcc_dx, Fdpcc_dy, Fdpcc_dz;
 				dpcc_dx.dimension(p_grid[0],p_grid[1],p_grid[2]);
@@ -2795,14 +2737,7 @@ core::Real ElectronDensity::matchPoseToPatterson(
 	///////////////////////////////
 	/// DUMP MAPS FOR DEBUGGING
 	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
-		//TR << "Patterson correl = " << ( (p_sumCO - p_sumC*p_sumO/ p_vol) / sqrt( varC * varO ) ) << std::endl;
-		//TR << "          sum_co =  " << p_sumCO << std::endl;
-		//TR << "          sum_c  =  " << p_sumC << std::endl;
-		//TR << "          sum_o  =  " << p_sumO << std::endl;
-		//TR << "          sum_c2 =  " << p_sumC2 << std::endl;
-		//TR << "          sum_o2 =  " << p_sumO2 << std::endl;
-
-		//if (useMask) ElectronDensity(Pmask,1.0,numeric::xyzVector< core::Real >(0,0,0), true).writeMRC( "p_mask.mrc" );
+		
 		ElectronDensity(rho_calc,1.0, numeric::xyzVector< core::Real >(0,0,0), false).writeMRC( "rho_calc.mrc" );
 	}
 	return ( (sumCO - sumC*sumO/vol) / sqrt( varC * varO ) );
@@ -2863,14 +2798,6 @@ core::Real ElectronDensity::rematchResToPatterson( core::conformation::Residue c
 
 	// add density to new, updating cache
 	int nheavyatoms_new = rsd.nheavyatoms();
-
-	// for (int j=1 ; j<=rsd.natoms(); ++j) {
-	//   cartX = rsd.atom(j).xyz() - p_CoM;
-	//   fracX = rho_calc_atms[resid][j];
-	//   std::cout << j << "  " << cartX[0] << "," << cartX[1] << "," << cartX[2] << "  " << fracX[0] << "," << fracX[1] << "," << fracX[2];
-	//   if (j<= nheavyatoms_new) std::cout <<  " *";
-	//   std::cout << std::endl;
-	// }
 
 	for ( int j=1 ; j<=nheavyatoms_new; ++j ) {
 		conformation::Atom const &atm_i( rsd.atom(j) );
@@ -3457,22 +3384,6 @@ numeric::xyzVector< double > ElectronDensity::match_fragment(
 		}
 	}
 
-	/*
-	for (grid_idx[2] = 1; grid_idx[2] <= density.u3(); grid_idx[2]++) {
-	for (grid_idx[1] = 1; grid_idx[1] <= density.u2(); grid_idx[1]++) {
-	for (grid_idx[0] = 1; grid_idx[0] <= density.u1(); grid_idx[0]++) {
-	core::Real sigma_sq = sigma_rho_frag_sq * sigma_rhoo_sq(grid_idx[0],grid_idx[1],grid_idx[2]);
-	if ( sigma_sq < 1e-30) {
-	match_score_density(grid_idx[0],grid_idx[1],grid_idx[2]) = min_score;
-	}
-	}
-	}
-	}
-	core::scoring::electron_density::ElectronDensity temp_edensity_map(*this);
-	temp_edensity_map.set_data(match_score_density);
-	temp_edensity_map.writeMRC("match_score.mrc");
-	*/
-
 	numeric::xyzVector<core::Real> fracX(
 		( (core::Real)max_score_idx[0] - 1 ) / grid[0],
 		( (core::Real)max_score_idx[1] - 1 ) / grid[1],
@@ -3484,10 +3395,6 @@ numeric::xyzVector< double > ElectronDensity::match_fragment(
 		}
 	}
 	numeric::xyzVector_double cartX = f2c*fracX;
-
-	//TR << "Match idx " << I(8,max_score_idx[0]) << I(8,max_score_idx[1]) << I(8,max_score_idx[2]) << F(10,3,max_score) << std::endl;
-	//TR << "Match frac" << F(8,3,fracX[0]) << F(8,3,fracX[1]) << F(8,3,fracX[2]) << F(10,3,max_score) << std::endl;
-	//TR << "Match cart" << F(8,3,cartX[0]) << F(8,3,cartX[1]) << F(8,3,cartX[2]) << F(10,3,max_score) << std::endl;
 
 	return cartX;
 }
@@ -3751,32 +3658,33 @@ core::Real ElectronDensity::matchRes(
 
 					numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from atom_i to (x,y,z)
 					core::Real d2 = (cart_del_ij).length_squared();
-					if ( d2 <= (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING) ) {
-						core::Real atm = C*exp(-k*d2);
-						core::Real sigmoid_msk = exp( d2 - (ATOM_MASK)*(ATOM_MASK)  );
-						core::Real inv_msk = 1/(1+sigmoid_msk);
-
-						rho_obs(x,y,z) = density(mapX,mapY,mapZ);
-						if ( i>=firstMaskedAtom && i<=lastMaskedAtom ) {
-							rho_calc_fg(x,y,z) += atm;
-							inv_rho_mask(x,y,z) *= (1 - inv_msk);
-							if ( cacheCCs ) {
-								int idx = (z-1)*rho_calc_fg.u2()*rho_calc_fg.u1() + (y-1)*rho_calc_fg.u1() + x-1;
-
-								core::Real eps_i = (1-inv_msk), inv_eps_i;
-								if ( eps_i == 0 ) { // divide-by-zero
-									inv_eps_i = sigmoid_msk;
-								} else {
-									inv_eps_i = 1/eps_i;
-								}
-
-								rho_dx_pt[i].push_back  ( idx );
-								rho_dx_atm[i].push_back ( (-2*k*atm)*cart_del_ij );
-								rho_dx_mask[i].push_back( (-2*sigmoid_msk*inv_msk*inv_msk*inv_eps_i)*cart_del_ij );
-							}
+					if ( d2 > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING) )  continue;
+					
+					core::Real atm = C*exp(-k*d2);
+					core::Real sigmoid_msk = exp( d2 - (ATOM_MASK)*(ATOM_MASK)  );
+					core::Real inv_msk = 1/(1+sigmoid_msk);
+					
+					rho_obs(x,y,z) = density(mapX,mapY,mapZ);
+					if ( i>=firstMaskedAtom && i<=lastMaskedAtom ) {
+						rho_calc_fg(x,y,z) += atm;
+						inv_rho_mask(x,y,z) *= (1 - inv_msk);
+						if ( ! cacheCCs )  continue;
+						
+						int idx = (z-1)*rho_calc_fg.u2()*rho_calc_fg.u1() + (y-1)*rho_calc_fg.u1() + x-1;
+						
+						core::Real eps_i = (1-inv_msk), inv_eps_i;
+						if ( eps_i == 0 ) { // divide-by-zero
+							inv_eps_i = sigmoid_msk;
 						} else {
-							rho_calc_bg(x,y,z) += atm;
+							inv_eps_i = 1/eps_i;
 						}
+						
+						rho_dx_pt[i].push_back  ( idx );
+						rho_dx_atm[i].push_back ( (-2*k*atm)*cart_del_ij );
+						rho_dx_mask[i].push_back( (-2*sigmoid_msk*inv_msk*inv_msk*inv_eps_i)*cart_del_ij );
+						
+					} else {
+						rho_calc_bg(x,y,z) += atm;
 					}
 				}
 			}
@@ -4056,33 +3964,33 @@ void ElectronDensity::dCCdx_fastRes(
 	dCCdX[1] = W*dCCdX_grid[0]*c2f(1,2)*fastgrid[0] + W*dCCdX_grid[1]*c2f(2,2)*fastgrid[1] + W*dCCdX_grid[2]*c2f(3,2)*fastgrid[2];
 	dCCdX[2] = W*dCCdX_grid[0]*c2f(1,3)*fastgrid[0] + W*dCCdX_grid[1]*c2f(2,3)*fastgrid[1] + W*dCCdX_grid[2]*c2f(3,3)*fastgrid[2];
 
-	if ( ExactDerivatives ) {
-		numeric::xyzVector<core::Real> dCCdX1 = dCCdX;
-
-		core::conformation::Residue rsd_copy = rsd;
-
-		rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0]+NUM_DERIV_H_CEN,X[1],X[2] ) );
-		core::Real CC_px = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
-		rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0]-NUM_DERIV_H_CEN,X[1],X[2] ) );
-		core::Real CC_mx = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
-		rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0],X[1]+NUM_DERIV_H_CEN,X[2] ) );
-		core::Real CC_py = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
-		rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0],X[1]-NUM_DERIV_H_CEN,X[2] ) );
-		core::Real CC_my = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
-		rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0],X[1],X[2]+NUM_DERIV_H_CEN ) );
-		core::Real CC_pz = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
-		rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0],X[1],X[2]-NUM_DERIV_H_CEN ) );
-		core::Real CC_mz = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
-
-		// rescore with orig pose
-		getDensityMap().matchRes( resid, rsd, pose, NULL, false );
-
-		dCCdX[0] = (CC_px-CC_mx)/(2*NUM_DERIV_H_CEN); // * dCCdxs_res_multiplier[resid][atmid];
-		dCCdX[1] = (CC_py-CC_my)/(2*NUM_DERIV_H_CEN); // * dCCdxs_res_multiplier[resid][atmid];
-		dCCdX[2] = (CC_pz-CC_mz)/(2*NUM_DERIV_H_CEN); // * dCCdxs_res_multiplier[resid][atmid];
-
-		TR << "   " <<  dCCdX<< "  ;  " <<  dCCdX1 << std::endl;
-	}
+	if ( ! ExactDerivatives )  return;
+	
+	numeric::xyzVector<core::Real> dCCdX1 = dCCdX;
+	
+	core::conformation::Residue rsd_copy = rsd;
+	
+	rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0]+NUM_DERIV_H_CEN,X[1],X[2] ) );
+	core::Real CC_px = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
+	rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0]-NUM_DERIV_H_CEN,X[1],X[2] ) );
+	core::Real CC_mx = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
+	rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0],X[1]+NUM_DERIV_H_CEN,X[2] ) );
+	core::Real CC_py = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
+	rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0],X[1]-NUM_DERIV_H_CEN,X[2] ) );
+	core::Real CC_my = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
+	rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0],X[1],X[2]+NUM_DERIV_H_CEN ) );
+	core::Real CC_pz = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
+	rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0],X[1],X[2]-NUM_DERIV_H_CEN ) );
+	core::Real CC_mz = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
+	
+	// rescore with orig pose
+	getDensityMap().matchRes( resid, rsd, pose, NULL, false );
+	
+	dCCdX[0] = (CC_px-CC_mx)/(2*NUM_DERIV_H_CEN); // * dCCdxs_res_multiplier[resid][atmid];
+	dCCdX[1] = (CC_py-CC_my)/(2*NUM_DERIV_H_CEN); // * dCCdxs_res_multiplier[resid][atmid];
+	dCCdX[2] = (CC_pz-CC_mz)/(2*NUM_DERIV_H_CEN); // * dCCdxs_res_multiplier[resid][atmid];
+	
+	TR << "   " <<  dCCdX<< "  ;  " <<  dCCdX1 << std::endl;
 }
 
 // Compute the gradient (fast density score) w.r.t B factors

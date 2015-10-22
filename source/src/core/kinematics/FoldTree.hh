@@ -33,11 +33,11 @@
 
 // External Headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <boost/functional/hash.hpp>
+#include <ObjexxFCL/FArray2D.fwd.hh>
+
+#include <boost/functional/hash/hash.hpp>         // for hash
 
 // C++ Headers
-#include <string>
 #include <vector>
 #include <iostream>
 

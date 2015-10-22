@@ -16,6 +16,7 @@
 
 #include <utility/tag/Tag.hh>
 #include <utility/json_spirit/json_spirit.h>
+#include <utility/json_spirit/json_spirit_writer_options.h>
 
 #include <core/pose/Pose.hh>
 

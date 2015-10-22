@@ -32,13 +32,6 @@
 // Rosetta headers
 #include <core/chemical/Orbital.hh>
 
-// Utility headers
-#include <utility/exit.hh>
-#include <basic/Tracer.hh>
-
-// C++ headers
-#include <algorithm>
-
 namespace core {
 namespace chemical {
 

@@ -20,6 +20,7 @@
 #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 #include <utility/json_spirit/json_spirit_writer.h>
+#include <utility/json_spirit/json_spirit_writer_options.h>
 #include <utility/tools/make_vector.hh>
 #include <utility/io/ozstream.hh>
 #include <string>

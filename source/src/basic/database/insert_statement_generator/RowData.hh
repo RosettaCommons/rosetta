@@ -15,13 +15,10 @@
 #ifndef INCLUDED_basic_database_insert_statement_generator_RowData_HH
 #define INCLUDED_basic_database_insert_statement_generator_RowData_HH
 
-#include <platform/types.hh>
 #include <basic/database/insert_statement_generator/RowData.fwd.hh>
-#include <boost/uuid/uuid.hpp>
+#include <platform/types.hh>
 #include <cppdb/frontend.h>
-
 #include <utility/pointer/ReferenceCount.hh>
-
 #include <string>
 
 namespace basic {

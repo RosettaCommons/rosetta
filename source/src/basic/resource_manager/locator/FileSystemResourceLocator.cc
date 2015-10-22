@@ -17,14 +17,12 @@
 
 //project headers
 #include <utility/tag/Tag.hh>
-#include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <basic/Tracer.hh>
 
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
 //C++ headers

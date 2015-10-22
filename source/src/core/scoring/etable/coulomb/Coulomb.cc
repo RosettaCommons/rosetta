@@ -74,8 +74,6 @@ Coulomb::initialize() {
 	min_dis2_ = min_dis_ * min_dis_ ;
 
 	// default dielectric is 10r
-	//die_ = 10.0;
-	//no_dis_dep_die_ = false;
 
 	C0_ = 322.0637 ;
 	if ( sigmoidal_die_ ) {
@@ -177,21 +175,6 @@ Coulomb::initialize() {
 		low_poly_end_   = min_dis_ / 2; low_poly_end2_   = std::pow( low_poly_end_, 2 );
 		hi_poly_start_  = max_dis_;     hi_poly_start2_  = std::pow( hi_poly_start_, 2 );
 	}
-
-
-	//low_fade_start_ = min_dis_;
-	//low_fade_start2_ = low_fade_start_ * low_fade_start_;
-	//low_fade_end_ = min_dis_ + 0.75;
-	//low_fade_end2_ = low_fade_end_ * low_fade_end_;
-	//low_fade_d0_ = min_dis_ + 0.25;
-	//low_fade_K_ = 16;
-	//high_fade_start_ = max_dis_ - 1.0;
-	//high_fade_start2_ = high_fade_start_ * high_fade_start_;
-	//high_fade_end_ = max_dis_;
-	//high_fade_end2_ = high_fade_end_ * high_fade_end_;
-	//high_fade_K_ = -12;
-	//high_fade_d0_ = max_dis_ - 0.25;
-
 }
 
 }

@@ -33,6 +33,7 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>

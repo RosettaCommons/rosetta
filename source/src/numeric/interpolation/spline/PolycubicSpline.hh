@@ -29,10 +29,7 @@
 
 #include <numeric/types.hh>
 #include <numeric/interpolation/spline/Cubic_spline.fwd.hh>
-#include <numeric/MathTensor.hh>
 #include <numeric/MathNTensor.hh>
-#include <numeric/MathMatrix.hh>
-#include <numeric/MathVector.hh>
 
 #include <utility>
 

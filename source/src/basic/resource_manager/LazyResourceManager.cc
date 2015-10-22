@@ -24,9 +24,6 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-
 //C++ headers
 #include <string>
 #include <sstream>

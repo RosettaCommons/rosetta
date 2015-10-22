@@ -75,14 +75,6 @@ HolesEnergyRes::finalize_total_energy(
 ) const
 {
 	totals[ holes ] = compute_holes_score_res(pose,params_);
-	//
-	//
-	// pose::Pose nat;
-	// core::import_pose::pose_from_pdb(nat,"hivp_high_1tw7.pdb.clean.align");
-	//
-	// Real rms = all_atom_rmsd(pose,nat);
-	//
-	// std::cout << "holes score: " << totals[holes]/(pose.total_residue()-2) << " rms " << rms << std::endl;
 }
 
 void
@@ -133,9 +125,6 @@ HolesEnergyRes::eval_atom_derivative(
 	if ( aid.rsd() > derivs.n_residue() || aid.atomno() > derivs.n_atom(aid.rsd()) ) {
 		return;
 	}
-	// std::cerr << "eval_atom_derivative " << aid << " " << derivs[aid].x() << " " << derivs[aid].y() << " " << derivs[aid].z() << std::endl;
-	// F2 += weights * derivs[aid];
-	// F1 += weights * derivs[aid].cross(xyzVector<Real>(1,0,0));
 
 	numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
 	numeric::xyzVector<core::Real> const f2( derivs[aid] );

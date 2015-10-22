@@ -21,9 +21,6 @@
 #include <basic/resource_manager/types.hh>
 
 
-//utility headers
-#include <utility/pointer/ReferenceCount.hh>
-
 namespace basic {
 namespace resource_manager {
 

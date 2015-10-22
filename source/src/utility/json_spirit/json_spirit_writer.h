@@ -11,7 +11,6 @@
 #endif
 
 #include "json_spirit_value.h"
-#include "json_spirit_writer_options.h"
 #include <iostream>
 
 namespace utility {

@@ -12,7 +12,6 @@
 /// @author James Thompson
 
 // Platform headers
-#include <platform/types.hh>
 #include <numeric/statistics/functions.hh>
 #include <numeric/types.hh>
 #include <utility/vector1.hh>

@@ -15,15 +15,13 @@
 #ifndef INCLUDED_basic_database_schema_generator_Constraint_HH
 #define INCLUDED_basic_database_schema_generator_Constraint_HH
 
-#include <utility/pointer/ReferenceCount.hh>
 #include <basic/database/schema_generator/Constraint.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
-#include <basic/database/schema_generator/Column.hh>
-
-#include <string>
-#include <platform/types.hh>
+#include <iosfwd>                                              // for string
+#include <platform/types.hh>                                   // for Real
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>  // for sessionOP
+#include <utility/pointer/ReferenceCount.hh>
+#include <basic/database/schema_generator/Column.fwd.hh>
 
 namespace basic {
 namespace database {

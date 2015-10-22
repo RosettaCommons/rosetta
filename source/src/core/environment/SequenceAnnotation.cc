@@ -17,7 +17,6 @@
 
 // Project headers
 #include <utility/excn/Exceptions.hh>
-#include <core/kinematics/FoldTree.hh>
 
 #include <utility/string_util.hh>
 

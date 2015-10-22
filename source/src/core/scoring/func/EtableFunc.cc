@@ -39,7 +39,7 @@ EtableFunc::read_data( std::istream& in ) {
 		core::Real func_temp;
 		in >> func_temp;
 		func_.push_back( func_temp  );
-	} // for ( Real r = min_; r <= max_; r += stepsize_ )
+	}
 }
 
 Real

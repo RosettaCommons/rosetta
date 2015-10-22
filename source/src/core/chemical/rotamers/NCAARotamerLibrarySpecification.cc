@@ -20,8 +20,6 @@
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
-#include <sstream>
-
 namespace core {
 namespace chemical {
 namespace rotamers {

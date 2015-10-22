@@ -20,6 +20,7 @@
 #include <core/init/init.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 //RNA stuff -- move this?
 #include <protocols/stepwise/modeler/align/StepWiseLegacyClustererSilentBased.hh>
@@ -30,6 +31,7 @@
 
 
 // option key includes
+#include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>

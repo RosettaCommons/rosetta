@@ -28,7 +28,7 @@
 
 // C++ header
 #include <sstream>
-
+//#include <string>
 
 // Construct tracer.
 static THREAD_LOCAL basic::Tracer TR( "core.chemical.rings.ring_conformer_io" );

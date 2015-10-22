@@ -15,7 +15,6 @@
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
 #include <basic/database/sql_utils.hh>
 
-#include <utility/string_util.hh>
 #include <utility/sql_database/types.hh>
 #include <cppdb/frontend.h>
 

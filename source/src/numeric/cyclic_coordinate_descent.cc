@@ -14,6 +14,7 @@
 /// @author Phil Bradley
 
 #include <numeric/cyclic_coordinate_descent.hh>
+#include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 
 namespace numeric {

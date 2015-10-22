@@ -34,6 +34,7 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 #include <basic/database/sql_utils.hh>
 
 #include <basic/datacache/DataMap.hh>
@@ -41,7 +42,7 @@
 
 //Utility Headers
 #include <utility/string_util.hh>
-//#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 #include <cppdb/frontend.h>

@@ -15,9 +15,7 @@
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzTransform.hh>
-#include <ObjexxFCL/format.hh>
 #include <utility/pointer/ReferenceCount.hh>
-#include <boost/foreach.hpp>
 
 #include <map>
 

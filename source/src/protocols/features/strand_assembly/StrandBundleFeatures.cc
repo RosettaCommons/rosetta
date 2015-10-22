@@ -32,6 +32,7 @@
 #include <protocols/features/strand_assembly/StrandFragment.hh>
 
 //Utility and basic
+#include <basic/options/option.hh>
 #include <basic/database/sql_utils.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <numeric/xyz.functions.hh> // for torsion calculations
@@ -53,6 +54,7 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 
 #include <protocols/analysis/InterfaceAnalyzerMover.hh> // for SASA
 #include <core/scoring/ScoreFunction.hh> // ScoreFunction.hh seems required for compilation of InterfaceAnalyzerMover.hh

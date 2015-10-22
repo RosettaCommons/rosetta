@@ -12,11 +12,7 @@
 /// @brief Column data object for the insert statement generator
 /// @author Sam DeLuca
 
-
 #include <basic/database/insert_statement_generator/RowData.hh>
-#include <utility/string_util.hh>
-#include <boost/uuid/uuid_io.hpp>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 
 namespace basic {
 namespace database {

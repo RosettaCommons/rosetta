@@ -15,14 +15,9 @@
 #define INCLUDED_basic_database_DatabaseSessionOptions_hh
 
 //unit headers
-#include <basic/database/DatabaseSessionOptions.fwd.hh>
 #include <basic/resource_manager/ResourceOptions.hh>
 
-//package headers
-#include <basic/resource_manager/types.hh>
-
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 

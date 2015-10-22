@@ -42,7 +42,7 @@
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/rings/RingConformer.hh>
+namespace core { namespace chemical { namespace rings { struct RingConformer; } } }
 #include <core/chemical/AA.hh>
 
 #include <core/conformation/Residue.fwd.hh>
@@ -78,7 +78,6 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/signals/BufferedSignalHub.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
@@ -97,8 +96,6 @@
 
 // C++ Headers
 #include <iostream>
-#include <sstream>
-#include <boost/unordered_map.hpp>
 
 namespace core {
 namespace pose {

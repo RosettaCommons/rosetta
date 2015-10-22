@@ -21,7 +21,6 @@
 
 // C++ headers
 #include <algorithm>
-#include <cassert>
 #include <cctype>
 #include <iostream> // PB fix gcc 4.2.1 error?
 

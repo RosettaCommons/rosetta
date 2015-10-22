@@ -22,6 +22,7 @@
 // Setup Mover
 #include <protocols/features/TrajectoryReportToDBCreator.hh>
 #include <basic/database/sql_utils.hh>
+#include <utility/tag/Tag.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>

@@ -8,6 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 #include <numeric/geometry/hashing/xyzStripeHash.hh>
+#include <boost/foreach.hpp>
+#include <ObjexxFCL/format.hh>
+
 
 namespace numeric {
 namespace geometry {

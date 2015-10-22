@@ -13,7 +13,6 @@
 
 #include <utility/json_spirit/json_spirit_value.h>
 #include <utility/json_spirit/json_spirit_reader.h>
-#include <utility/json_spirit/json_spirit_writer.h>
 #include <utility/json_spirit/json_spirit_tools.hh>
 #include <utility/excn/Exceptions.hh>
 

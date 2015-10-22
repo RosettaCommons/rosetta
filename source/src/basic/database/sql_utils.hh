@@ -14,27 +14,12 @@
 #define INCLUDED_basic_database_sql_utils_HH
 
 #include <utility/sql_database/DatabaseSessionManager.hh>
-
+#include <utility/sql_database/types.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <utility/file/FileName.fwd.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/PathName.fwd.hh>
-#include <utility/file/PathName.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
-#include <utility/vector1.hh>
-#include <cassert>
-#include <cstddef>
+
 #include <iosfwd>
-#include <string>
 #include <vector>
-#include <boost/scoped_ptr.hpp>
 #include <cppdb/frontend.h>
 
 namespace basic {

@@ -20,12 +20,14 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 #include <basic/database/sql_utils.hh>
 
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
 #include <basic/database/insert_statement_generator/RowData.hh>
 
 #include <utility/tools/make_vector.hh>
+#include <utility/tag/Tag.hh>
 
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/util.hh>

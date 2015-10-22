@@ -16,14 +16,10 @@
 #define INCLUDED_numeric_statistics_functions_hh
 
 
-// Platform headers
-#include <platform/types.hh>
-
 #include <numeric/types.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <algorithm>
 #include <cmath>
 #include <complex>
 

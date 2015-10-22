@@ -22,17 +22,17 @@
 #include <core/environment/EnvCore.fwd.hh>
 
 // Project headers
-#include <core/kinematics/Jump.fwd.hh>
+//#include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
 #include <core/conformation/Conformation.fwd.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <core/id/TorsionID.hh>
-#include <core/id/AtomID.hh>
+//#include <core/id/TorsionID.hh>
+//#include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/id/JumpID.hh>
+//#include <core/id/JumpID.hh>
 
 #include <utility/vector1.fwd.hh>
 

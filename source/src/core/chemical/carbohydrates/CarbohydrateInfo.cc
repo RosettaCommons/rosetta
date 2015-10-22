@@ -24,18 +24,13 @@
 #include <utility/exit.hh>
 
 // Basic headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
 #include <algorithm>
 #include <iostream>
-#include <sstream>
 
-// Boost headers
-#include <boost/algorithm/string.hpp>
-
+#include <boost/algorithm/string/case_conv.hpp> // we don't need all string
 
 // Construct tracer.
 static THREAD_LOCAL basic::Tracer TR( "core.chemical.carbohydrates.CarbohydrateInfo" );

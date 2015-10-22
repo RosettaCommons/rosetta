@@ -17,6 +17,7 @@
 
 
 // C++ headers
+// Issue with Windows PyRosetta requires full header, no ifdef
 #include <string>
 
 

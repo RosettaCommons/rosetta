@@ -32,7 +32,7 @@
 #define INCLUDED_core_chemical_ResiduePredicates_hh
 
 // Unit headers
-#include <core/chemical/Atom.hh>
+#include <core/chemical/Atom.hh> // needed full header for ResidueGraph def
 #include <core/chemical/Bond.hh>
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/filtered_graph.hpp>

@@ -17,7 +17,8 @@
 // Package headers
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+//#include <core/conformation/symmetry/util.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/Stub.hh>
@@ -26,7 +27,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
+//#include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
@@ -34,7 +35,9 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/IdealBondLengthSet.hh>
 #include <core/chemical/rings/util.hh>
-#include <core/chemical/rna/util.hh> // for default root atom -- there is a choice encoded below for DNA vs. RNA vs. proteins
+// for default root atom -- there is a choice encoded below for DNA vs. RNA vs. proteins
+// This is no longer in use, it seems.
+//#include <core/chemical/rna/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.hh>
@@ -48,14 +51,12 @@
 // Numeric headers
 #include <numeric/util.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
+//#include <numeric/xyz.functions.hh>
 
 // Utility headers
-#include <utility/assert.hh>
 #include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
-#include <utility/io/izstream.hh>
 
 // C++ headers
 #include <algorithm> //std::min()

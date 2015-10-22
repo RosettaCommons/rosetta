@@ -28,7 +28,7 @@
 #include <list>
 #include <map>
 
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace numeric {

@@ -15,17 +15,12 @@
 #define INCLUDED_basic_database_DatabaseSessionLoader_hh
 
 //unit headers
-#include <basic/database/DatabaseSessionLoader.fwd.hh>
 #include <basic/database/DatabaseSessionOptions.hh>
 #include <basic/resource_manager/ResourceLoader.hh>
 
 //package headers
 #include <basic/resource_manager/ResourceOptions.hh>
 #include <basic/resource_manager/types.hh>
-
-//utility headers
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 //C++ headers
 #include <istream>

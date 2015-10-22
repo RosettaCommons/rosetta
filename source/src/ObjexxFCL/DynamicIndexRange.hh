@@ -22,8 +22,11 @@
 #include <ObjexxFCL/Dimension.hh>
 
 // C++ Headers
+#ifdef CXX11
+#include <type_traits> // for swap
+#else
 #include <algorithm>
-
+#endif
 
 namespace ObjexxFCL {
 

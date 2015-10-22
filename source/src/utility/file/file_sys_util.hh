@@ -20,7 +20,6 @@
 #include <utility/file/FileName.hh>
 
 // C++ headers
-#include <string>
 #include <fstream>
 
 #include <utility/vector1.hh>

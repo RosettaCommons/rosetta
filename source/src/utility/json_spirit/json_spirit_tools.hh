@@ -15,8 +15,6 @@
 #define JSON_SPIRIT_TOOLS
 
 #include <utility/json_spirit/json_spirit_value.h>
-#include <utility/json_spirit/json_spirit_reader.h>
-#include <utility/json_spirit/json_spirit_writer.h>
 
 namespace utility {
 namespace json_spirit {

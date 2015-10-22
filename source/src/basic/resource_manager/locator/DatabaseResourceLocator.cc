@@ -22,15 +22,11 @@
 #include <basic/resource_manager/ResourceManager.hh>
 #include <basic/database/sql_utils.hh>
 
-//utility headers
-#include <utility/pointer/ReferenceCount.hh>
-
 //External Headers
 #include <cppdb/frontend.h>
 
 //C++ headers
 #include <istream>
-#include <string>
 
 namespace basic {
 namespace resource_manager {

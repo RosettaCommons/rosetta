@@ -27,7 +27,6 @@
 #include <utility/options/StringOption.hh>
 #include <utility/options/FileOption.hh>
 #include <utility/options/PathOption.hh>
-#include <utility/options/AnyOption.hh>
 #include <utility/options/BooleanVectorOption.hh>
 #include <utility/options/IntegerVectorOption.hh>
 #include <utility/options/RealVectorOption.hh>
@@ -59,9 +58,6 @@
 #include <utility/exit.hh>
 
 // C++ headers
-#include <stdlib.h>
-#include <utility/assert.hh>
-#include <iosfwd>
 #include <list>
 #include <string>
 #include <vector>

@@ -17,17 +17,11 @@
 #ifndef INCLUDED_core_conformation_membrane_util_hh
 #define INCLUDED_core_conformation_membrane_util_hh
 
-// Project Headers
-#include <core/conformation/membrane/SpanningTopology.hh>
-
 // Package Headers
-#include <core/types.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers
-#include <cstdlib>
-#include <string>
-#include <cmath>
+#include <iosfwd>
 
 namespace core {
 namespace conformation {

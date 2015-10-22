@@ -16,7 +16,7 @@
 
 #include <core/types.hh>
 #include <ObjexxFCL/FArray2D.hh>
-
+#include <ObjexxFCL/FArray1P.hh>
 
 // ObjexxFCL Headers
 

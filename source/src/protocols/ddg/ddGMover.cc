@@ -53,6 +53,7 @@
 #include <core/io/silent/BinarySilentStruct.hh>
 
 #include <basic/options/util.hh>
+#include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>

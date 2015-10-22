@@ -21,13 +21,11 @@
 //project headers
 
 //utility headers
-#include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/exit.hh>
 #include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 #include <boost/foreach.hpp>
 
 //C++ headers

@@ -43,12 +43,8 @@
 #include <core/kinematics/FoldTree.hh>
 
 // Utility Headers
-#include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-// C++ Headers
-#include <cstdlib>
 
 namespace core {
 namespace conformation {

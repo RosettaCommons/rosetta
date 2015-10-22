@@ -16,7 +16,9 @@
 #define INCLUDED_core_chemical_rings_ring_conformer_io_HH
 
 // Unit header
-#include <core/chemical/rings/RingConformer.hh>
+// no fwd.hh exists
+namespace core { namespace chemical { namespace rings { struct RingConformer; } } }
+//#include <core/chemical/rings/RingConformer.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -25,7 +27,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <string>
+#include <iosfwd>
 
 
 namespace core {

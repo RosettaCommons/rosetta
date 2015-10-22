@@ -14,8 +14,7 @@
 #ifndef INCLUDED_core_chemical_atomtype_support_hh
 #define INCLUDED_core_chemical_atomtype_support_hh
 
-#include <core/chemical/ResidueType.hh>
-
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 
 namespace core {

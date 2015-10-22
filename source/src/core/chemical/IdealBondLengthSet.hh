@@ -27,8 +27,6 @@
 // C++ headers
 #include <map>
 
-#include <utility/vector1_bool.hh>
-
 #include <core/types.hh>
 #include <core/chemical/Element.fwd.hh>
 

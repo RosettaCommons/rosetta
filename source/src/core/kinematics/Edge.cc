@@ -19,19 +19,7 @@
 
 // C++ headers
 #include <iostream>
-#include <sstream>
-
-
-// will remove the following in a couple of weeks OL/ 8/4/2008
-// just to have some backward compatibiliy for a transient time
-#include <basic/options/option.hh>
-
-
-// option key includes
-
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-
-#include <utility/vector1.hh>
+#include <string>
 
 
 namespace core {

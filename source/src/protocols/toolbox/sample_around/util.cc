@@ -302,7 +302,6 @@ sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump, scoring::S
 	// std::cout << "Energies: " << free_E << ' ' << score_min << std::endl;
 	// return score_min;
 	return free_E;
-
 }
 
 
@@ -318,7 +317,6 @@ do_scoring( pose::Pose & pose,
 	}
 
 	return (*scorefxn)( pose );
-
 }
 
 //////////////////////////////////////////////////////////

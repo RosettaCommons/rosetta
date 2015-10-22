@@ -15,8 +15,6 @@
 #include <core/conformation/symmetry/SymSlideInfo.hh>
 
 // Utility header
-
-#include <utility/vector1.hh>
 #include <algorithm>
 
 namespace core {

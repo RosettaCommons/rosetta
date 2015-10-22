@@ -193,19 +193,6 @@ create_minimization_graph(
 	return mingraph;
 }
 
-/*scmin::AtomTreeCollectionOP
-create_atom_tree_collections(
-pose::Pose const & pose,
-rotamer_set::RotamerSets const & rotsets
-)
-{
-utility::vector1< scmin::AtomTreeCollectionOP > atcs( pose.total_residue() );
-for ( Size ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
-Size iiresid = rotsets->moltenres_2_resid( ii );
-atcs[ ii ] = new scmin::AtomTreeCollection( rotsets->rotamer_set_for_residue( iiresid ) );
-}
-return atcs;
-}*/
 
 utility::vector1< conformation::ResidueCOP >
 setup_bgres_cops(
@@ -279,19 +266,6 @@ initialize_temperatures_off_rotamer_pack(
 	temps.push_back( .02  );
 	temps.push_back( .01  );
 
-	/*temps[ 1  ] = 10;
-	temps[ 2  ] = 3;
-	temps[ 3  ] = 1;
-	temps[ 4  ] = .6;
-	temps[ 5  ] = .4;
-	temps[ 6  ] = .3;
-	temps[ 7  ] = .2;
-	temps[ 8  ] = .15;
-	temps[ 9  ] = .1;
-	temps[ 10  ] = .075;
-	temps[ 11 ] = .05;
-	temps[ 12 ] = .03;
-	temps[ 13 ] = .02;*/
 	return temps;
 }
 
@@ -371,9 +345,7 @@ get_residue_current_energy(
 	reinitialize_mingraph_neighborhood_for_residue( pose, sfxn, bgres, scminmap, ratc.active_residue(), mingraph );
 
 	/// 4.
-	//scmin::SCMinMultifunc scmin_func( pose, bgres, sfxn, mingraph, scminmap );
 	optimization::MultifuncOP scmin_func = scminmap.make_multifunc( pose, bgres, sfxn, mingraph );
-	//utility::vector1< Real > chi = ratc.active_residue().chi();
 	utility::vector1< Real > chi;
 	scminmap.starting_dofs( chi );
 
@@ -398,7 +370,6 @@ get_residue_current_energy(
 
 	compare_mingraph_and_energy_graph(resid, debug_pose, sfxn, mingraph );
 
-	//Real res_energy_from_debug_pose = debug_pose.energies().residue_total_energies( resid ).dot( sfxn.weights() );
 	for ( Size ii = 1; ii <= chi.size(); ++ii ) {
 		if ( std::abs( ratc.active_residue().chi()[ ii ] - chi[ ii ] ) > 1e-3 ) {
 			std::cout << "chi discrepancy " << ratc.active_residue().chi()[ ii ] << " vs " << chi[ ii ] << std::endl;
@@ -470,12 +441,6 @@ get_total_energy_for_state(
 	//scmin::SCMinMultifunc scmin_func( pose, bgres, sfxn, mingraph, scminmap );
 	optimization::MultifuncOP scmin_func = scminmap.make_multifunc( pose, bgres, sfxn, mingraph );
 	utility::vector1< Real > allchi;
-	//for ( Size ii = 1; ii <= rotsets.nmoltenres(); ++ii ) {
-	// Size iiresid = rotsets.moltenres_2_resid( ii );
-	// scmin::ResidueAtomTreeCollection & iiratc = atc->residue_atomtree_collection( iiresid );
-	// utility::vector1< Real > chi = iiratc.active_residue().chi();
-	// for ( Size jj = 1; jj <= chi.size(); ++jj ) allchi.push_back( chi[ jj ] );
-	//}
 	scminmap.starting_dofs( allchi );
 
 

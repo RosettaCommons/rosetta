@@ -13,6 +13,8 @@
 
 #include <protocols/hybridization/WeightedFragmentSmoothTrialMover.hh>
 
+#include <basic/Tracer.hh>
+
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
 

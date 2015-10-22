@@ -15,17 +15,12 @@
 #include <basic/resource_manager/FallbackConfigurationFactory.hh>
 
 // package headers
-#include <basic/resource_manager/FallbackConfiguration.hh>
 #include <basic/resource_manager/FallbackConfigurationCreator.hh>
 
 // utility headers
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/thread/threadsafe_creation.hh>
-
-// Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 // Singleton instance and mutex static data members
 namespace utility {

@@ -28,8 +28,6 @@
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <set>
-#include <list>
 #include <map>
 #include <string>
 #include <vector>

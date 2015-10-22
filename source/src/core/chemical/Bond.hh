@@ -25,7 +25,7 @@
 #include <core/chemical/Bond.fwd.hh>
 #include <core/types.hh>
 
-#include <string>
+#include <iosfwd>
 
 namespace core {
 namespace chemical {

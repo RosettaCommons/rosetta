@@ -93,7 +93,10 @@ parse_resnum(
 	core::pose::Pose const& pose,
 	bool const check_for_refpose
 ) {
-	if ( check_for_refpose ) { //Scope 1: Check whether this string is of the form "resnum(<refpose_name>,<refpose_number>)+/-<offset>" and parse accordingly if it is.
+	// Scope 1: Check whether this string is of the form
+	// "resnum(<refpose_name>,<refpose_number>)+/-<offset>"
+	// and parse accordingly if it is.
+	if ( check_for_refpose ) {
 		std::string refpose_name("");
 		core::Size refpose_number(0);
 		signed long refpose_offset(0); //Must be signed!
@@ -101,7 +104,8 @@ parse_resnum(
 			return get_resnumber_from_reference_pose(refpose_name, refpose_number, refpose_offset, pose);
 		}
 	}
-	//Otherwise, this is NOT of that form, and we should parse it as a Rosetta number or as a PDB number:
+	// Otherwise, this is NOT of that form, and we should parse it as a Rosetta
+	// number or as a PDB number:
 
 	string::const_iterator input_end = resnum.end();
 	//Set number to the sequence of digits at the start of input [0-9]*

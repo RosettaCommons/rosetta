@@ -29,7 +29,6 @@
 // Project headers
 #include <basic/Tracer.hh>
 
-#include <fstream>
 #include <iostream>
 
 #include <core/chemical/AtomType.hh>

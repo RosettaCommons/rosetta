@@ -46,6 +46,7 @@
 #include <utility/json_spirit/json_spirit_reader.h>
 #include <utility/json_spirit/json_spirit_writer.h>
 #include <utility/json_spirit/json_spirit_tools.hh>
+#include <utility/json_spirit/json_spirit_error_position.h>
 
 #include <ObjexxFCL/string.functions.hh>
 

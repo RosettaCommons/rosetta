@@ -19,7 +19,7 @@
 #include <core/chemical/Patch.fwd.hh>
 
 // Package headers
-#include <core/chemical/PatchOperation.hh>
+#include <core/chemical/PatchOperation.hh> // MSVC can't use fwd header
 #include <core/chemical/ResidueTypeSelector.hh>
 
 // Utility headers
@@ -30,7 +30,7 @@ namespace core {
 namespace chemical {
 
 /// @brief the string used to create new residue names after patching
-extern std::string const PATCH_LINKER;
+std::string const PATCH_LINKER =  ":";
 
 /// @brief handy function, return the first word from a line
 std::string tag_from_line( std::string const & line );

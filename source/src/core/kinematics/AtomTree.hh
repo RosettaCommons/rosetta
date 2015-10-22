@@ -27,6 +27,7 @@
 #include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/tree/Atom.hh> // apl temp, until all of AtomTree's methods are moved into its .cc file
+#include <core/id/AtomID_Map.hh>
 #ifdef WIN32
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/AtomWithDOFChange.hh>
@@ -35,24 +36,14 @@
 // Project headers
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
-
-// Numeric headers
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <algorithm>
-#include <cmath>
-#include <cstdlib>
-#include <utility/assert.hh>
 #include <map>
 
 

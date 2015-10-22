@@ -24,6 +24,7 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 
 // Platform Headers
 #include <basic/options/option.hh>

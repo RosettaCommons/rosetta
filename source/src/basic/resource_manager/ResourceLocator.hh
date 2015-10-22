@@ -22,7 +22,7 @@
 
 //project headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 //C++ headers
 #include <istream>

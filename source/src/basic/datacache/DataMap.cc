@@ -13,18 +13,9 @@
 
 // Unit Headers
 #include <basic/datacache/DataMap.hh>
-
-// Package headers
-
-// Project headers
-// ObjexxFCL Headers
-
-// C++ Headers
-#include <map>
-
-// Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
-#include <basic/Tracer.hh>
+#include <basic/Tracer.hh>    // for Tracer
+#include <map>                // for map, __map_const_iterator, map<>::const...
+#include <platform/types.hh>  // for Size
 
 namespace basic {
 namespace datacache {

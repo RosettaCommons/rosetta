@@ -27,11 +27,8 @@
 #include <basic/options/option.hh>
 #include <core/init/init.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/moves/NullMover.hh>
-#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 using basic::T;

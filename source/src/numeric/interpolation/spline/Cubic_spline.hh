@@ -60,7 +60,6 @@
 #define INCLUDED_numeric_interpolation_spline_Cubic_spline_hh
 
 #include <numeric/types.hh>
-#include <numeric/MathMatrix.hh>
 #include <numeric/MathVector.hh>
 
 

@@ -230,45 +230,45 @@ Etable::read_alternate_parameter_set(
 	std::string const alternate_parameter_set
 )
 {
-	if ( alternate_parameter_set.size() ) {
-		// uses alternate paramers
-		std::string param_name;
-		chemical::AtomTypeSetCOP atom_set_in( atom_set_in_ap );
-
-		param_name = "LJ_RADIUS_"+alternate_parameter_set;
-		if ( atom_set_in->has_extra_parameter( param_name ) ) {
-			TR << "Using alternate parameters: " << param_name << " in Etable construction." << std::endl;
-			Size const index( atom_set_in->extra_parameter_index( param_name ) );
-			for ( int i=1; i<= n_atomtypes_; ++i ) lj_radius_[i] = (*atom_set_in)[i].extra_parameter( index );
-		}
-
-		param_name = "LJ_WDEPTH_"+alternate_parameter_set;
-		if ( atom_set_in->has_extra_parameter( param_name ) ) {
-			TR << "Using alternate parameters: " << param_name << " in Etable construction."<<std::endl;
-			Size const index( atom_set_in->extra_parameter_index( param_name ) );
-			for ( int i=1; i<= n_atomtypes_; ++i ) lj_wdepth_[i] = (*atom_set_in)[i].extra_parameter( index );
-		}
-
-		param_name = "LK_DGFREE_"+alternate_parameter_set;
-		if ( atom_set_in->has_extra_parameter( param_name ) ) {
-			TR << "Using alternate parameters: " << param_name << " in Etable construction."<<std::endl;
-			Size const index( atom_set_in->extra_parameter_index( param_name ) );
-			for ( int i=1; i<= n_atomtypes_; ++i ) lk_dgfree_[i] = (*atom_set_in)[i].extra_parameter( index );
-		}
-
-		param_name = "LK_LAMBDA_"+alternate_parameter_set;
-		if ( atom_set_in->has_extra_parameter( param_name ) ) {
-			TR << "Using alternate parameters: " << param_name << " in Etable construction." << std::endl;
-			Size const index( atom_set_in->extra_parameter_index( param_name ) );
-			for ( int i=1; i<= n_atomtypes_; ++i ) lk_lambda_[i] = (*atom_set_in)[i].extra_parameter( index );
-		}
-
-		param_name = "LK_VOLUME_"+alternate_parameter_set;
-		if ( atom_set_in->has_extra_parameter( param_name ) ) {
-			TR << "Using alternate parameters: " << param_name << " in Etable construction." << std::endl;
-			Size const index( atom_set_in->extra_parameter_index( param_name ) );
-			for ( int i=1; i<= n_atomtypes_; ++i ) lk_volume_[i] = (*atom_set_in)[i].extra_parameter( index );
-		}
+	if ( ! alternate_parameter_set.size() )  return;
+	
+	// uses alternate paramers
+	std::string param_name;
+	chemical::AtomTypeSetCOP atom_set_in( atom_set_in_ap );
+	
+	param_name = "LJ_RADIUS_"+alternate_parameter_set;
+	if ( atom_set_in->has_extra_parameter( param_name ) ) {
+		TR << "Using alternate parameters: " << param_name << " in Etable construction." << std::endl;
+		Size const index( atom_set_in->extra_parameter_index( param_name ) );
+		for ( int i=1; i<= n_atomtypes_; ++i ) lj_radius_[i] = (*atom_set_in)[i].extra_parameter( index );
+	}
+	
+	param_name = "LJ_WDEPTH_"+alternate_parameter_set;
+	if ( atom_set_in->has_extra_parameter( param_name ) ) {
+		TR << "Using alternate parameters: " << param_name << " in Etable construction."<<std::endl;
+		Size const index( atom_set_in->extra_parameter_index( param_name ) );
+		for ( int i=1; i<= n_atomtypes_; ++i ) lj_wdepth_[i] = (*atom_set_in)[i].extra_parameter( index );
+	}
+	
+	param_name = "LK_DGFREE_"+alternate_parameter_set;
+	if ( atom_set_in->has_extra_parameter( param_name ) ) {
+		TR << "Using alternate parameters: " << param_name << " in Etable construction."<<std::endl;
+		Size const index( atom_set_in->extra_parameter_index( param_name ) );
+		for ( int i=1; i<= n_atomtypes_; ++i ) lk_dgfree_[i] = (*atom_set_in)[i].extra_parameter( index );
+	}
+	
+	param_name = "LK_LAMBDA_"+alternate_parameter_set;
+	if ( atom_set_in->has_extra_parameter( param_name ) ) {
+		TR << "Using alternate parameters: " << param_name << " in Etable construction." << std::endl;
+		Size const index( atom_set_in->extra_parameter_index( param_name ) );
+		for ( int i=1; i<= n_atomtypes_; ++i ) lk_lambda_[i] = (*atom_set_in)[i].extra_parameter( index );
+	}
+	
+	param_name = "LK_VOLUME_"+alternate_parameter_set;
+	if ( atom_set_in->has_extra_parameter( param_name ) ) {
+		TR << "Using alternate parameters: " << param_name << " in Etable construction." << std::endl;
+		Size const index( atom_set_in->extra_parameter_index( param_name ) );
+		for ( int i=1; i<= n_atomtypes_; ++i ) lk_volume_[i] = (*atom_set_in)[i].extra_parameter( index );
 	}
 }
 
@@ -792,34 +792,15 @@ Etable::modify_pot_one_pair(
 			//   push carbonyl oxygens (in beta sheets) apart.  a proxy for the missing
 			//   electrostatic repulsion needed to counteract the LJatr which pulls the oxyens
 			//   together
-			if ( dis <= 3.6 ) {
-				if ( atype1 == OCbb_idx && atype2 == OCbb_idx && ! skip_mod_OCbb_OCbb_rep ) {
-					Real const fac = std::max( dis - 3.6, -1.5 );
-					//std::cout << "adding extra repulsion " << dis << " " << 2*fac*fac << " + " << ljrep_(k,OCbb_idx,OCbb_idx) <<  std::endl;
-					//Real const fac = std::max( dis - 3.6f, -1.5f );
-					ljrep(  k ) += 2 * ( fac * fac );
-					dljrep( k ) += 4 * fac;
-				}
+			if ( dis > 3.6 )  continue;
+			
+			if ( atype1 == OCbb_idx && atype2 == OCbb_idx && ! skip_mod_OCbb_OCbb_rep ) {
+				Real const fac = std::max( dis - 3.6, -1.5 );
+				//std::cout << "adding extra repulsion " << dis << " " << 2*fac*fac << " + " << ljrep_(k,OCbb_idx,OCbb_idx) <<  std::endl;
+				//Real const fac = std::max( dis - 3.6f, -1.5f );
+				ljrep(  k ) += 2 * ( fac * fac );
+				dljrep( k ) += 4 * fac;
 			}
-
-			//  the following gives peak at 2.4 in 22 and 23 interactions. maybe push out a
-			//  bit further.  (this is commented out because effects on design have not been
-			//  tested)
-
-			// use one half of a single term polynomial
-			// as the repulsive term for apolar hydrogens (types 23 & 24)
-
-			//    if( mod_hhrep ) {
-			//     if( dis < c ) {
-			//      for ( int j = 23; j <= 24; ++j ) {
-			//       for ( int kk = 23; kk <= 24; ++kk ) {
-			//        ljrep_(k,j,kk)  = h * pow( min(0.0f, (dis-c)/w ), e );//  +
-			//        dljrep_(k,j,kk) = h * e / w * pow( min(0.0f, dis-c)/w, e-1 ) ;//  +
-			//       }
-			//      }
-			//     }
-			//    }
-
 		} // end  for ( int k = 1; k <= etable_disbins; ++k ) {
 
 
@@ -846,9 +827,7 @@ Etable::modify_pot_one_pair(
 			}
 		}
 		//std::cout << "zeroing ljatr_final_weight " << (*atom_set_)[at1].name() << " " << (*atom_set_)[at2].name() << std::endl;
-		//ljrep_from_negcrossing( atype1, atype2 ) = true;
-		//ljatr_final_weight(     atype1, atype2 ) = 0.0;
-		//fasol_final_weight(     atype1, atype2 ) = 0.0;
+		
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
 		p.ljrep_from_negcrossing = true;
 		// record the minimum value as the bin after the last value at which the repulsive energy is positive.
@@ -896,7 +875,7 @@ Etable::smooth_etables_one_pair(
 		float d = ((float)i)/10.0;
 		bin_of_dis(i) = (int)( d*d * bins_per_A2 + 1 );
 	}
-	//FArray2D< int > minima_bin_indices( n_atomtypes_, n_atomtypes_ );
+	
 	int minima_bin_index = 0;
 
 	//////////////////////////////////////////////////////////////////
@@ -917,26 +896,13 @@ Etable::smooth_etables_one_pair(
 	}
 	if ( which_min != -1 ) {
 		minima_bin_index = which_min;
-		//lj_minima(atype1,atype2) = dis( which_min );
-		//lj_vals_at_minima(atype1, atype2) = min_atr;
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
-
-		// OLD VERSION
-		//p.lj_minimum = dis( which_min );
-		//p.lj_val_at_minimum = min_atr;
 
 		// Correct version
 		p.lj_minimum = lj_sigma_(atype1,atype2);
 		p.lj_val_at_minimum = -1 * std::sqrt(lj_wdepth_[atype1]*lj_wdepth_[atype2]);
 
-		//core::Real real_minima = (*fa_ats)[atype1].lj_radius() + (*fa_ats)[atype2].lj_radius();
-		//std::cout << "etable minima: " << (*fa_ats)[atype1].atom_type_name() << " " << (*fa_ats)[atype2].atom_type_name();
-		//std::cout << " dis: " << dis( which_min ) << " vs real dis: " << real_minima << " diff: " << dis( which_min )  - real_minima << " minval: " << min_atr << std::endl;
-		//std::cout << " new analytic value: " << (*fa_ats)[atype1].atom_type_name() << " " << (*fa_ats)[atype2].atom_type_name();
-		//std::cout << "p.lj_minimum " << p.lj_minimum << " p.lj_val_at_minimum " << p.lj_val_at_minimum << std::endl;
 	} else {
-		//lj_minima(atype1,atype2) = max_dis_;
-		//lj_vals_at_minima( atype1,atype2) = 0;
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
 		p.lj_minimum = max_dis_;
 		p.lj_val_at_minimum = 0;
@@ -968,7 +934,6 @@ Etable::smooth_etables_one_pair(
 	Real lbdy = dljatr(start);
 	Real uby  = 0.0;
 	Real ubdy = 0.0;
-	//ljatr_spline_xlo_xhi(atype1,atype2) = std::make_pair( lbx, ubx );
 	{
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
 		p.ljatr_cubic_poly_xlo = lbx;
@@ -981,12 +946,7 @@ Etable::smooth_etables_one_pair(
 
 	// APL -- Disabling this behavior since I think it is unused and if it is used, then it would
 	// Prevent the analytic etable evaluation code I'm working on
-	//if( option[ score::etable_lr ].user() ) {
-	//  Real modx = option[ score::etable_lr ]();
-	// Real mody = lbx * 0.5;
-	// gen.add_known_value( modx, mody );
-	//}
-
+	
 	InterpolatorOP interp( gen.get_interpolator() );
 	for ( int i = start; i <= etable_disbins; ++i ) {
 		interp->interpolate( dis(i), ljatr(i), dljatr(i) );
@@ -1035,9 +995,7 @@ Etable::smooth_etables_one_pair(
 		// treat the range [0,famaxdis] as a constant (of zero) -- everything below
 		// the distance fasol_spline_close_start_end(at1,at2).first is evaluated as
 		// the constant fasol_spline_close(at1,at2).ylo.
-		//fasol_spline_close_start_end( atype1, atype2 ) = std::make_pair( fasol_spline_far_xhi, fasol_spline_far_xhi+1.0 );
 		SplineParameters sp; sp.ylo=0; sp.yhi=0; sp.y2lo = 0; sp.y2hi = 0;
-		//fasol_spline_close( atype1, atype2 ) = sp;
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
 		p.fasol_cubic_poly_close_start = fasol_cubic_poly_far_xhi_;
 		p.fasol_cubic_poly_close_end   = fasol_cubic_poly_far_xhi_ + 1.0;
@@ -1102,28 +1060,6 @@ Etable::smooth_etables_one_pair(
 		p.fasol_cubic_poly_close_end = dis(E1);
 		p.fasol_cubic_poly_close_flat  = sparams.ylo;
 		p.fasol_cubic_poly_close = cubic_polynomial_from_spline( p.fasol_cubic_poly_close_start, p.fasol_cubic_poly_close_end, sparams );
-
-		//std::cout << "etable fasol close spline: " << (*fa_ats)[atype1].atom_type_name() << " " << (*fa_ats)[atype2].atom_type_name();
-		//std::cout << " " << p.fasol_spline_close_start << " " << p.fasol_spline_close_end << std::endl;
-
-		// APL TEMP!
-		//Real const dis = p.fasol_spline_close_end;
-		//Real const dis_rad1 = dis - lj_radius(atype1);
-		//Real const x1 = ( dis_rad1 * dis_rad1 ) * lk_inv_lambda2_(atype1);
-		//Real const dis_rad2 = dis - lj_radius(atype2);
-		//Real const x2 = ( dis_rad2 * dis_rad2 ) * lk_inv_lambda2_(atype2);
-		//Real const inv_dis2 = 1.0/(dis*dis);
-		//Real const analytic_fasol = inv_dis2 * ( std::exp(-x1) * p.lk_coeff1 + std::exp(-x2) * p.lk_coeff2 );
-		//Real const spline_fasol = eval_spline( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline_close );
-		//std::cout << "fasol at spline_close_end: " << analytic_fasol << " vs " << spline_fasol << " diff: " << analytic_fasol - spline_fasol << std::endl;
-
-		//Real const inv_dis = 1/dis;
-		//Real const solvE1 = std::exp(-x1) * p.lk_coeff1 * inv_dis2;
-		//Real const solvE2 = std::exp(-x2) * p.lk_coeff2 * inv_dis2;
-		//Real const analytic_fasol_deriv = -2 * ( ( dis_rad1 * lk_inv_lambda2_(atype1) + inv_dis ) * solvE1 + ( dis_rad2 * lk_inv_lambda2_(atype2) + inv_dis ) * solvE2 );
-		//Real const spline_fasol_deriv = spline_deriv( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline_close );
-		//std::cout << "fasol deriv at spline_close_end: " << analytic_fasol_deriv << " vs " << spline_fasol_deriv << " diff: " << analytic_fasol_deriv - spline_fasol_deriv << std::endl;
-		//std::cout << "fasol deriv analytical vs dfasol table: " << analytic_fasol_deriv << " vs " << dfasol(E1) << " diff: " << analytic_fasol_deriv - dfasol(E1) << std::endl;
 	}
 
 	// Now compute the splines for the individual desolvation of atoms 1 and 2 between S1 and E1
@@ -1540,10 +1476,8 @@ Etable::precalc_etable_coefficients(
 
 			// ctsa - precalculated lk solvation coefficients
 			lk_coeff(i,j) = lk_coeff_tmp(i) * lk_volume(j);
-			//lk_coeff(i,j) = lk_coeff_tmp(i) * atom_type(j).lk_volume();
 			lk_coeff(j,i) = lk_coeff_tmp(j) * lk_volume(i);
-			//lk_coeff(j,i) = lk_coeff_tmp(j) * atom_type(i).lk_volume();
-
+			
 			// ctsa - when dis/sigma drops below lk_min_dis2sigma,
 			//   a constant lk solvation value equal to the value at the
 			//   switchover point is used. That switchover-point value
@@ -1551,23 +1485,17 @@ Etable::precalc_etable_coefficients(
 			thresh_dis = lk_min_dis2sigma*sigma;
 			inv_thresh_dis2 = 1./( thresh_dis * thresh_dis );
 			Real dis_rad = thresh_dis - lj_radius(i);
-			//Real dis_rad = thresh_dis - atom_type(i).lj_radius();
 			x_thresh = ( dis_rad * dis_rad ) * lk_inv_lambda2(i);
 			lk_min_dis2sigma_value(i,j) = std::exp(-x_thresh) * lk_coeff(i,j) *
 				inv_thresh_dis2;
 
 			dis_rad = thresh_dis - lj_radius(j);
-			//dis_rad = thresh_dis - atom_type(j).lj_radius();
 			x_thresh = ( dis_rad * dis_rad ) * lk_inv_lambda2(j);
 			lk_min_dis2sigma_value(j,i) = std::exp(-x_thresh) * lk_coeff(j,i) *
 				inv_thresh_dis2;
 
 		}
 	}
-
-	// ctsa - calculate disulfide coefficients
-	// pb -- killed this
-
 }
 
 
@@ -1645,8 +1573,7 @@ Etable::calc_etable_value(
 	Real dis;
 	Real inv_dis,inv_dis2,inv_dis6,inv_dis7,inv_dis12,inv_dis13;
 	Real dis2sigma;
-	//int const atype_sulfur = { 16 };
-
+	
 	// include after local variables to allow data statements to initialize
 	atrE = 0.;
 	d_atrE = 0.;
@@ -1736,10 +1663,8 @@ Etable::lk_solv_energy_and_deriv(
 	// ctsa - get d(lk_E)/dr
 	dsolvE1 = -2.0 * solvE1 *
 		(((dis-lj_radius(atype1))*lk_inv_lambda2_(atype1))+inv_dis);
-	//(((dis-atom_type(atype1).lj_radius())*lk_inv_lambda2(atype1))+inv_dis);
 	dsolvE2 = -2.0 * solvE2 *
 		(((dis-lj_radius(atype2))*lk_inv_lambda2_(atype2))+inv_dis);
-	//(((dis-atom_type(atype2).lj_radius())*lk_inv_lambda2(atype2))+inv_dis);
 }
 
 void
@@ -1779,8 +1704,6 @@ Etable::zero_hydrogen_and_water_ljatr_one_pair(
 				first_zero_ljrep = i;
 			}
 		}
-		//std::cout << "zeroing ljatr_final_weight " << (*atom_set_)[at1].name() << " " << (*atom_set_)[at2].name() << std::endl;
-		//ljatr_final_weight(atype1,atype2) = 0.0;
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
 		p.ljatr_final_weight = 0.0;
 		p.fasol_final_weight = 0.0;

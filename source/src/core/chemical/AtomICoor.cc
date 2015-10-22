@@ -19,6 +19,7 @@
 // Project headers
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
+
 #include <basic/Tracer.hh>
 
 #include <basic/datacache/DataMapObj.hh> // To wrap std::set for prettyprinter
@@ -29,8 +30,8 @@
 
 #include <ObjexxFCL/string.functions.hh>
 
-#include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
+//#include <utility/vector1.hh>
+//#include <numeric/xyz.functions.hh>
 #include <numeric/NumericTraits.hh>
 
 //Auto using namespaces

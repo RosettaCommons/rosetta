@@ -19,7 +19,10 @@
 
 #include <utility/lua/LuaIterator.fwd.hh>
 #include <utility/lua/LuaObject.fwd.hh>
+
+// Should by rights be iosfwd or ifdef ed for Windows, but...
 #include <string>
+
 #ifdef USELUA
 #include <lua.hpp>
 #include <luabind/luabind.hpp>

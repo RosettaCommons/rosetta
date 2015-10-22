@@ -32,9 +32,6 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/ozstream.hh>
 
-// C++ headers
-#include <fstream>
-
 
 namespace utility {
 namespace file {

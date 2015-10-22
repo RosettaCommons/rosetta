@@ -18,7 +18,8 @@
 #include <utility/exit.hh>
 #include <iostream>
 
-#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/trim.hpp>                  // for trim
+
 
 namespace numeric {
 namespace interpolation {

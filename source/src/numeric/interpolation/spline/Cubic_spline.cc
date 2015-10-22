@@ -21,7 +21,7 @@
 ///
 /////////////////////////////////////////////////////////////////////////
 #include <numeric/interpolation/spline/Cubic_spline.hh>
-#include <numeric/MathVector_operations.hh>
+#include <numeric/MathMatrix.hh>
 #include <numeric/MathMatrix_operations.hh>
 
 #include <numeric/types.hh>

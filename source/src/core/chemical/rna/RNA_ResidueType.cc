@@ -15,12 +15,6 @@
 #include <core/chemical/rna/RNA_ResidueType.hh>
 #include <core/chemical/ResidueType.hh>
 
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/AtomType.hh>
-
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/string.functions.hh>
-
 #include <basic/Tracer.hh>
 
 

@@ -1,8 +1,6 @@
 #include <math.h>
 #include <cstdio>
 #include <stdlib.h>
-#include <ctype.h>
-#include <float.h>
 #include <string.h>
 #include <stdarg.h>
 #include <limits.h>

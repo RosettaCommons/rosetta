@@ -19,7 +19,6 @@
 
 #include <core/types.hh>
 
-#include <string>
 #include <iostream>
 #include <vector>
 #include <algorithm>

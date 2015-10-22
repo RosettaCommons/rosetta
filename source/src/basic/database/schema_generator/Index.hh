@@ -18,7 +18,7 @@
 #include <utility/vector1.hh>
 #include <utility/sql_database/types.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
-#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Column.fwd.hh>
 
 //C++ Headers
 #include <string>

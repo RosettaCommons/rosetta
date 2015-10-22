@@ -16,22 +16,22 @@
 
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/IndexRange.fwd.hh>
 #include <ObjexxFCL/Star.hh>
+#include <ObjexxFCL/Dimension.fwd.hh>
 
 // C++ Headers
-#include <algorithm>
 #include <cassert>
 #include <cstddef>
 #include <iosfwd>
+// only available in cxx11
+#ifdef CXX11
+#include <utility> // for swap
+#else
+#include <algorithm>
+#endif
 
 
 namespace ObjexxFCL {
-
-
-// Forward Declarations
-class Dimension;
-
 
 /// @brief IndexRange: Index Range Abstract Base Class
 ///

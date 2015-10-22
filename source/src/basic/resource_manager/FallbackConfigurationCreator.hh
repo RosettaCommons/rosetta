@@ -24,7 +24,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 //C++ headers
-#include <string>
+#include <iosfwd>
 
 namespace basic {
 namespace resource_manager {

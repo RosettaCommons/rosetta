@@ -30,10 +30,8 @@
 ////////////////////////////////////////////////////////////////////////
 // Unit headers
 #include <core/chemical/ResidueGraphTypes.hh>
-#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AtomTypeSet.hh> // operator []
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/Atom.hh>
-#include <core/chemical/Bond.hh>
 // Package headers
 
 namespace core {

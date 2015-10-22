@@ -18,7 +18,6 @@
 //#include <basic/Tracer.hh>
 
 #include <list>
-#include <iostream>
 
 namespace numeric {
 

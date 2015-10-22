@@ -18,18 +18,16 @@
 #include <basic/datacache/WriteableCacheableDataFactory.fwd.hh>
 #include <basic/datacache/WriteableCacheableDataCreator.hh>
 #include <basic/datacache/WriteableCacheableData.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 // c++ headers
+#include <iosfwd>
 #include <map>
-#include <set>
-#include <utility/vector1.hh>
+#include <string>
 
-#include <boost/utility.hpp>
 
 namespace basic {
 namespace datacache {

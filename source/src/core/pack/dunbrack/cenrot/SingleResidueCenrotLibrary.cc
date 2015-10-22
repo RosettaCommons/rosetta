@@ -196,10 +196,6 @@ Real SingleResidueCenrotLibrary::rotamer_energy(
 	conformation::Residue const & rsd,
 	RotamerLibraryScratchSpace & scratch
 ) const {
-	// Size nrot;
-	// Real dis_sq;
-	// CentroidRotamerSampleData const &sampledata (get_closest_rotamer(rsd, nrot, dis_sq));
-	// return sampledata.energy()-ref_energy_;
 	return eval_rotameric_energy_deriv(rsd, scratch, false);
 }
 
@@ -520,14 +516,6 @@ void SingleResidueCenrotLibrary::fill_rotamer_vector(
 			break;
 		}
 
-		// ** this is the old logic: get phi/psi from the exsisting_residue and read rot data from all_rots_bb_
-		//utility::fixedsizearray1< Real, 3 > sample;
-		//Size phi_bin, psi_bin;
-		//Real phi(get_phi_from_rsd(existing_residue));
-		//Real psi(get_psi_from_rsd(existing_residue));
-		//get_phipsi_bins(phi, psi, phi_bin, psi_bin);
-		//all_rots_bb_(phi_bin,psi_bin)[count_rotamers_built].assign_best_rotamer(sample);
-
 		//get sample from CentroidRotamerSampleData
 		utility::fixedsizearray1< Real, 3 > sample;
 		samples[count_rotamers_built].assign_best_rotamer(sample);
@@ -569,11 +557,6 @@ const utility::vector1< CentroidRotamerSampleData >
 SingleResidueCenrotLibrary::get_rotamer_samples(
 	conformation::Residue const & rsd
 ) const {
-
-	// ** comment out, existing_residue could be different from the current rotlib
-	//if (rsd.aa()==core::chemical::aa_gly || rsd.aa()==core::chemical::aa_ala) {
-	// return dummy_sample_;
-	//}
 
 	Size phibin, psibin;
 	Size phibin_next, psibin_next;

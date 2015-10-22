@@ -17,6 +17,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <ObjexxFCL/FArray2D.hh>
 
 // Package headers
 

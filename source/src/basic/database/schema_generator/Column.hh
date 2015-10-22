@@ -15,18 +15,12 @@
 #define INCLUDED_basic_database_schema_generator_Column_HH
 
 // Unit Headers
+#include <iosfwd>                                              // for string
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>  // for sessionOP
 #include <basic/database/schema_generator/Column.fwd.hh>
-
-//Project Headers
-#include <basic/database/schema_generator/DbDataType.hh>
-
-// Unit Headers
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
-#include <utility/sql_database/types.hh>
-
-//C++ Headers
-#include <string>
+#include <basic/database/schema_generator/DbDataType.fwd.hh>   // for DbData...
+#include <platform/types.hh>                                   // for Size
+#include <utility/pointer/ReferenceCount.hh>                   // for Refere...
 
 namespace basic {
 namespace database {

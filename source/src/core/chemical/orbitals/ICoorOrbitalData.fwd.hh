@@ -7,37 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/utility/CSI_Sequence.cc
-/// @brief  Terminal ASCII codes
-/// @author Sergey Lyskov, @modified by Caleb Geniesse
+#ifndef INCLUDED_core_chemical_orbitals_ICoorOrbitalData_fwd_hh
+#define INCLUDED_core_chemical_orbitals_ICoorOrbitalData_fwd_hh
 
 
-#include <utility/CSI_Sequence.hh>
+namespace core {
+namespace chemical {
+namespace orbitals {
 
-#include <ostream>
+class ICoorOrbitalData;
 
-#ifndef WIN32
-#include <unistd.h>
-#else
-#include <io.h>
-#endif
-
-#include <cstdio>
-
-
-namespace utility {
-
-
-/// @brief constructor
-CSI_Sequence::CSI_Sequence(std::string sequence_)
-{
-#ifdef WIN32
-	if ( _isatty(fileno(stdout)) ) sequence = sequence_;
-#else
-	if ( isatty(fileno(stdout)) ) sequence = sequence_;
-#endif
+}
+}
 }
 
 
-} // utility
-
+#endif /* ORBITALTYPE_FWD_HH_ */

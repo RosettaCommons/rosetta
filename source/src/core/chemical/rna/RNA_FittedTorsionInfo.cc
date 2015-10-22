@@ -14,15 +14,6 @@
 // Unit headers
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 
-// Package headers
-
-// Project headers
-
-// Utility headers
-#include <utility/vector1.hh>
-
-// C++
-
 ///////////////////////////////////////////////////////
 // Keep track of information from, e.g., chemical
 // accessibility experiments -- useful for chemical.

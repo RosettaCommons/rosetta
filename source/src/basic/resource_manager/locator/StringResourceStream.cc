@@ -16,7 +16,6 @@
 
 //C++ Headers
 #include <sstream>
-#include <string>
 
 namespace basic {
 namespace resource_manager {

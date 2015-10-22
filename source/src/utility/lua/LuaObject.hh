@@ -28,7 +28,6 @@
 #endif
 
 #include <iostream>
-#include <typeinfo>
 
 
 namespace utility {

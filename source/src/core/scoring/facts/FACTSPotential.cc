@@ -1380,24 +1380,25 @@ void FACTSPotential::evaluate_polar_energy(Residue const & rsd1,
 
 // Called at scoring step - for nonpolar energy
 // Just reuse scores calculated at setup_for_scoring
-Real FACTSPotential::evaluate_nonpolar_energy(Residue const & rsd1,
+Real FACTSPotential::evaluate_nonpolar_energy(
+	Residue const & rsd1,
 	FACTSResidueInfo const & facts1,
 	Residue const & rsd2
 ) const {
-	Real E_SA = 0.0;
+	
+	if ( rsd1.seqpos() != rsd2.seqpos() ) return 0.0;
+ 	Real E_SA = 0.0;
 	FACTSRsdTypeInfoCOP factstype1 = facts1.restypeinfo();
 
-	if ( rsd1.seqpos() == rsd2.seqpos() ) {
-		for ( Size atm1 = 1; atm1 <= rsd1.natoms(); ++ atm1 ) {
-			E_SA += factstype1->alpha(atm1)*facts1.sasa(atm1);
-		}
-
-		TR.Debug << "Facts SA:";
-		TR.Debug << " " << std::setw(4) << rsd1.seqpos();
-		TR.Debug << " " << std::setw(10) << E_SA;
-		TR.Debug << " " << rsd1.name();
-		TR.Debug << std::endl;
+	for ( Size atm1 = 1; atm1 <= rsd1.natoms(); ++ atm1 ) {
+		E_SA += factstype1->alpha(atm1)*facts1.sasa(atm1);
 	}
+
+	TR.Debug << "Facts SA:";
+	TR.Debug << " " << std::setw(4) << rsd1.seqpos();
+	TR.Debug << " " << std::setw(10) << E_SA;
+	TR.Debug << " " << rsd1.name();
+	TR.Debug << std::endl;
 
 	return E_SA;
 }
@@ -1417,10 +1418,6 @@ void FACTSPotential::eval_atom_polar_derivative(
 		( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
 	Size const atm1( id.atomno() );
 	Size const res1( id.rsd() );
-
-	// Pose stuff - this is not supported currently
-	//int const i_map( domain_map( res2 ) );
-	//bool const i_fixed( i_map != 0 );
 
 	FACTSResidueInfo const & facts1( facts_info.residue_info( res1 ) );
 
@@ -1451,10 +1448,6 @@ void FACTSPotential::eval_atom_nonpolar_derivative(
 		( pose.data().get( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )));
 	Size const atm1( id.atomno() );
 	Size const res1( id.rsd() );
-
-	// Pose stuff - this is not supported currently
-	//int const i_map( domain_map( res2 ) );
-	//bool const i_fixed( i_map != 0 );
 
 	FACTSResidueInfo const & facts1( facts_info.residue_info( res1 ) );
 
@@ -1504,12 +1497,7 @@ void FACTSPotential::get_template_born_radii(pose::Pose const & pose, FACTSPoseI
 		runtime_assert( rsd1.natoms()<1 || std::fabs(facts1.Ai(1)) < 1e-3 );
 
 		for ( Size j=1; j<= nres; ++j ) {
-			// we are not using placeholder in FACTS - this can be changed if we want to do "Design"
-			//if ( facts_info.being_packed(j) ) {
-			// res_res_burial( rsd1, facts1, facts_info.placeholder_residue(j), facts_info.placeholder_info(j) );
-			//} else {
 			res_res_burial( rsd1, facts1, pose.residue(j), facts_info.residue_info(j) );
-			//}
 		}
 		get_self_terms( factstype1, facts1, true );
 	}
@@ -1565,12 +1553,7 @@ void FACTSPotential::get_single_rotamer_born_radii(Residue const & rsd1,
 
 	debug_assert( rsd1.natoms()<1 || std::fabs(facts1.Ai(1)) < 1e-3 );
 	for ( Size res2=1; res2<= pose.total_residue(); ++res2 ) {
-		// we are not using placeholder in FACTS - this can be changed if we want to do "Design"
-		//if ( facts_info.being_packed( res2 ) ) {
-		// res_res_burial( rsd1, facts1, facts_info.placeholder_residue( res2 ), facts_info.placeholder_info( res2));
-		//} else {
 		res_res_burial( rsd1, facts1, pose.residue( res2 ), facts_info.residue_info( res2 ) );
-		//}
 	}//end for loop 1
 	get_self_terms( factstype1, facts1, true );
 }

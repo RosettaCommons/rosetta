@@ -14,18 +14,8 @@
 #ifndef INCLUDED_utility_io_util_hh
 #define INCLUDED_utility_io_util_hh
 
-
-// Unit headers
-#include <utility/vector1.fwd.hh>
-
-// Package headers
-#include <utility/vectorL.hh>
-#include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-
-// C++ headers
-#include <string>
-
+#include <utility/vector1.hh>
 
 namespace utility {
 namespace io {

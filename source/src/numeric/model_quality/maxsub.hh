@@ -19,7 +19,6 @@
 
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/ObjexxFCL.hh>
 #include <numeric/model_quality/rms.hh>
 #include <numeric/model_quality/RmsData.hh>
 
@@ -27,9 +26,6 @@
 
 namespace numeric {
 namespace model_quality {
-
-// maxsub Function Declarations
-using namespace ObjexxFCL;
 
 
 /* void
@@ -57,8 +53,8 @@ float & logeval
 void
 maxsub(
 	int & nsup,
-	FArray1A_double xe,
-	FArray1A_double xp,
+	ObjexxFCL::FArray1A_double xe,
+	ObjexxFCL::FArray1A_double xp,
 	double & rms,
 	double & psi,
 	int & nali,
@@ -102,8 +98,8 @@ erfcc( double x );
 
 void
 COMAS(
-	FArray1A< double > C,
-	FArray1A< double > WT,
+	ObjexxFCL::FArray1A< double > C,
+	ObjexxFCL::FArray1A< double > WT,
 	int NAT,
 	double & XC,
 	double & YC,

@@ -150,13 +150,13 @@ expand_proton_chi_oldversion(
 		for ( Size jj = 1; jj <= chi_set_vector.size(); ++jj ) {
 			newchi_vect[ count ]->chi[ chi_id ] = ii_sample;
 			++count;
-			if ( include_extra ) {
-				for ( Size kk = 1; kk <= extra_samples.size(); ++kk ) {
-					newchi_vect[ count ]->chi[ chi_id ] = ii_sample + extra_samples[ kk ];
-					++count;
-					newchi_vect[ count ]->chi[ chi_id ] = ii_sample - extra_samples[ kk ];
-					++count;
-				}
+			if ( ! include_extra ) continue;
+			
+			for ( Size kk = 1; kk <= extra_samples.size(); ++kk ) {
+				newchi_vect[ count ]->chi[ chi_id ] = ii_sample + extra_samples[ kk ];
+				++count;
+				newchi_vect[ count ]->chi[ chi_id ] = ii_sample - extra_samples[ kk ];
+				++count;
 			}
 		}
 	}
@@ -210,14 +210,14 @@ expand_proton_chi(
 			}
 			new_chi_vec->chi[ chi_id ] = ii_sample;
 
-			if ( include_extra ) {
-				for ( Size kk = 1; kk <= extra_samples.size(); ++kk ) {
-					chi_set_vector.push_back( new_chi_vec = ChiSetOP( new pack::dunbrack::ChiSet( *base_chi_vec  ) ) );
-					new_chi_vec->chi[ chi_id ] = ii_sample  + extra_samples[ kk ];
-					chi_set_vector.push_back( new_chi_vec = ChiSetOP( new pack::dunbrack::ChiSet( *base_chi_vec  ) ) );
-					new_chi_vec->chi[ chi_id ] = ii_sample  - extra_samples[ kk ];
-				} // for extra_samples
-			} // include extra
+			if ( ! include_extra )  continue;
+			
+			for ( Size kk = 1; kk <= extra_samples.size(); ++kk ) {
+				chi_set_vector.push_back( new_chi_vec = ChiSetOP( new pack::dunbrack::ChiSet( *base_chi_vec  ) ) );
+				new_chi_vec->chi[ chi_id ] = ii_sample  + extra_samples[ kk ];
+				chi_set_vector.push_back( new_chi_vec = ChiSetOP( new pack::dunbrack::ChiSet( *base_chi_vec  ) ) );
+				new_chi_vec->chi[ chi_id ] = ii_sample  - extra_samples[ kk ];
+			} // for extra_samples
 		} // for sample.size()
 	} // for jj (chi_set_vector)
 
@@ -313,12 +313,7 @@ DunbrackRotamerSampleData::assign_random_chi(
 	debug_assert( chi_angles.size() >= nchi() );
 
 	for ( core::Size ii = 1; ii <= nchi(); ++ii ) {
-		//if ( chi_is_nonrotameric( ii ) ) {
-		// nonrotameric chi angles not currently supported
-		//runtime_assert( false );
-		//} else {
 		chi_angles[ ii ] = basic::periodic_range( chi_mean_[ii] + RG.gaussian() * chi_sd_[ii] * temperature, 360.0 );
-		//}
 	}
 
 	// set any remaining chi uniformly (proton chi)
@@ -338,16 +333,11 @@ DunbrackRotamerSampleData::chi_probability(
 	Real prob(1);
 
 	for ( Size ii = 1; ii <= nchi(); ++ii ) {
-		//if ( chi_is_nonrotameric( ii ) ) {
-		// nonrotameric chi angles not currently supported
-		//runtime_assert( false );
-		//} else {
 		// Gaussian function with area 1 for rotameric angles
 		Real const angle_diff( chi_mean_[ii] - numeric::nearest_angle_degrees( chi_angles[ii], chi_mean_[ii] ) );
 		Real const sd ( chi_sd_[ii] * temperature );
 		Real const variance( sd*sd );
 		prob *= std::exp( -(angle_diff*angle_diff)/(2*variance) ) / sd / norm_gauss;
-		//}
 	}
 
 	for ( Size ii = nchi()+1; ii <= chi_angles.size(); ++ii ) {

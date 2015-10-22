@@ -31,12 +31,7 @@
 #include <utility/vector1.hh>
 #include <core/types.hh>
 
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-
-
 // C++ Headers
-#include <algorithm>
 #include <stack>
 #include <set>
 

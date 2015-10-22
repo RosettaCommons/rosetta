@@ -23,7 +23,7 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/orbitals/OrbitalXYZCoords.hh>
-#include <core/conformation/PseudoBond.hh>
+#include <core/conformation/PseudoBond.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/Atom.hh>
@@ -37,7 +37,10 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
-#include <core/chemical/rings/RingConformer.hh>
+
+// No fwd.hh
+namespace core { namespace chemical { namespace rings { struct RingConformer; } } }
+
 #include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>
 #include <core/types.hh>
 
@@ -48,12 +51,10 @@
 #include <utility/vector1.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
 // C++ headers
 #include <map>
-#include <iosfwd>
 #include <limits>
 
 

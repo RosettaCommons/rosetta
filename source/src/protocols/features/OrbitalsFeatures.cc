@@ -25,6 +25,7 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 #include <core/chemical/orbitals/OrbitalType.hh>
 #include <core/chemical/AtomType.hh>
 //Numeric Headers

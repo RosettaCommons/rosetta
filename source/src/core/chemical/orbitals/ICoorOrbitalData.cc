@@ -38,15 +38,15 @@
 
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 
-
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/Residue.hh>
+//#include <core/chemical/ResidueType.hh>
+//#include <core/conformation/Residue.hh>
 
 // Utility headers
-#include <utility/exit.hh>
-#include <numeric/xyz.functions.hh>
-#include <core/kinematics/Jump.hh>
-#include <utility/vector1.hh>
+//#include <utility/exit.hh>
+//#include <numeric/xyz.functions.hh>
+#include <core/kinematics/Stub.hh>
+//#include <core/kinematics/Jump.hh>
+//#include <utility/vector1.hh>
 
 //Auto Headers
 namespace core {

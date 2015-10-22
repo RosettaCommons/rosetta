@@ -15,7 +15,6 @@
 #include <core/chemical/ResidueTypeSetCache.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/legacy_types.hh>
 
 #include <utility/tools/make_vector1.hh>

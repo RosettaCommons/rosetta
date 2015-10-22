@@ -37,6 +37,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/types.hh>
 #include <core/io/pdb/pose_io.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/dna/setup.hh>
 #include <core/scoring/dna/base_geometry.hh>

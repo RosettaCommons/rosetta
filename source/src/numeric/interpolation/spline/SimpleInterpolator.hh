@@ -16,9 +16,7 @@
 #define INCLUDED_numeric_interpolation_spline_SimpleInterpolator_hh
 
 #include <numeric/interpolation/spline/Interpolator.hh>
-#include <utility/json_spirit/json_spirit_writer.h>
-#include <utility/json_spirit/json_spirit_reader.h>
-
+#include <utility/vector1.hh>
 #include <numeric/interpolation/spline/spline_functions.hh>
 
 namespace numeric {

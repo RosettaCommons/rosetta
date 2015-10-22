@@ -34,6 +34,7 @@
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 

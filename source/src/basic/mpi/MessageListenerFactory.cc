@@ -26,10 +26,6 @@
 // C++ headers
 #include <map>
 
-// Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-
 // Singleton instance and mutex static data members
 namespace utility {
 

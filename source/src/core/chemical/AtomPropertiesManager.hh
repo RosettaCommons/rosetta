@@ -19,9 +19,6 @@
 #include <core/chemical/AtomPropertiesManager.fwd.hh>
 #include <core/chemical/AtomProperty.hh>
 
-// Project headers
-#include <core/types.hh>
-
 // Utility headers
 #include <utility/SingletonBase.hh>
 

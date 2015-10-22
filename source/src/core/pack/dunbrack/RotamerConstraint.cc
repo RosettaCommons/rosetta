@@ -197,15 +197,15 @@ RotamerConstraint::score(
 	pack::dunbrack::RotVector rot;
 	pack::dunbrack::rotamer_from_chi( rsd, rot );
 	for ( Size i = 1, i_end = favored_rotamer_numbers_.size(); i <= i_end; ++i ) {
-		if ( rot == favored_rotamer_numbers_[i] ) {
-			pack::dunbrack::RotamerLibraryScratchSpace scratch;
-			Real const best_rotE = rotlib->best_rotamer_energy(rsd, false /* => global min */, scratch);
-			Real const this_rotE = rotlib->best_rotamer_energy(rsd, true /* => local min */, scratch);
-			debug_assert( best_rotE <= this_rotE );
-			TR << "rotamer constraint active for " << seqpos_ << " thisE = " << this_rotE << " bestE = " << best_rotE << " dE = " << ( best_rotE - this_rotE ) << std::endl;
-			emap[ this->score_type() ] +=  ( best_rotE - this_rotE );
-			return; // quit once we find a match
-		}
+		if ( rot != favored_rotamer_numbers_[i] )  continue;
+	
+		pack::dunbrack::RotamerLibraryScratchSpace scratch;
+		Real const best_rotE = rotlib->best_rotamer_energy(rsd, false /* => global min */, scratch);
+		Real const this_rotE = rotlib->best_rotamer_energy(rsd, true /* => local min */, scratch);
+		debug_assert( best_rotE <= this_rotE );
+		TR << "rotamer constraint active for " << seqpos_ << " thisE = " << this_rotE << " bestE = " << best_rotE << " dE = " << ( best_rotE - this_rotE ) << std::endl;
+		emap[ this->score_type() ] +=  ( best_rotE - this_rotE );
+		return; // quit once we find a match
 	}
 	// no match found, don't adjust score for this rotamer
 }

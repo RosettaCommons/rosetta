@@ -15,7 +15,6 @@
 #include <utility/vector1.hh>
 
 #include <cmath>
-#include <iostream>
 
 namespace numeric {
 namespace kdtree {

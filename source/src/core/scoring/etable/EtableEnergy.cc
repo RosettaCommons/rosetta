@@ -142,16 +142,16 @@ TableLookupEtableEnergy::clone() const {
 void
 TableLookupEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::ScoreFunction const& ) const
 {
-	if ( pose.total_residue() ) {
-		if ( pose.residue(1).type().atom_type_set_ptr() != etable().atom_set().lock() ) {
-			std::stringstream err_msg;
-			err_msg
-				<< "Illegal attempt to score with non-identical atom set between pose and etable" << std::endl
-				<< "\tpose   atom_type_set: '" << pose.residue(1).type().atom_type_set_ptr()->name() << "'" << std::endl
-				<< "\tetable atom_type_set: '" << etable().atom_set().lock()->name() << "'" << std::endl;
-			utility_exit_with_message( err_msg.str());
-		}
-	}
+	if ( ! pose.total_residue() )  return;
+
+	// All we need is a matching atom type set.
+	if ( pose.residue(1).type().atom_type_set_ptr() == etable().atom_set().lock() )  return;
+	
+	std::stringstream err_msg;
+	err_msg << "Illegal attempt to score with non-identical atom set between pose and etable" << std::endl
+			<< "\tpose   atom_type_set: '" << pose.residue(1).type().atom_type_set_ptr()->name() << "'" << std::endl
+			<< "\tetable atom_type_set: '" << etable().atom_set().lock()->name() << "'" << std::endl;
+	utility_exit_with_message( err_msg.str());
 }
 
 
@@ -193,7 +193,6 @@ TableLookupEtableEnergy::eval_intrares_energy(
 	if ( pose.energies().use_nblist() ) return; // intraresidue atom pairs present in neighborlist, evaluated during finalize
 
 	count_pair::CountPairFunctionOP cpfxn = get_intrares_countpair( res, pose, sfxn );
-	//cpfxn->residue_atom_pair_energy( res, res, *this, tbemap );
 	intrares_evaluator_.residue_atom_pair_energy( res, res, *cpfxn, tbemap );
 	emap[ intrares_evaluator_.st_atr() ] = tbemap[ intrares_evaluator_.st_atr() ];
 	emap[ intrares_evaluator_.st_rep() ] = tbemap[ intrares_evaluator_.st_rep() ];
@@ -260,12 +259,12 @@ AnalyticEtableEnergy::clone() const {
 void
 AnalyticEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::ScoreFunction const& ) const
 {
-	if ( pose.total_residue() ) {
-		if ( pose.residue(1).type().atom_type_set_ptr() != etable().atom_set().lock() ) {
-			utility_exit_with_message( "Illegal attempt to score with non-identical atom set between pose and etable " );
-		}
-	}
-
+	if ( ! pose.total_residue() )  return;
+	
+	if ( pose.residue(1).type().atom_type_set_ptr() == etable().atom_set().lock() )  return;
+	
+	utility_exit_with_message( "Illegal attempt to score with non-identical atom set between pose and etable " );
+	
 	// For debugging if etable options are being updated
 	//std::cout << "Check!" << etable().get_lj_hbond_hdis() << " ";
 	//std::cout << etable().get_lj_hbond_OH_donor_dis() << std::endl;
@@ -309,7 +308,6 @@ AnalyticEtableEnergy::eval_intrares_energy(
 	if ( pose.energies().use_nblist() ) return; // intraresidue atom pairs present in neighborlist, evaluated during finalize
 
 	count_pair::CountPairFunctionOP cpfxn = get_intrares_countpair( res, pose, sfxn );
-	//cpfxn->residue_atom_pair_energy( res, res, *this, tbemap );
 	intrares_evaluator_.residue_atom_pair_energy( res, res, *cpfxn, tbemap );
 	emap[ intrares_evaluator_.st_atr() ] = tbemap[ intrares_evaluator_.st_atr() ];
 	emap[ intrares_evaluator_.st_rep() ] = tbemap[ intrares_evaluator_.st_rep() ];
@@ -389,40 +387,6 @@ TableLookupEvaluator::residue_atom_pair_energy_sidechain_whole(
 {
 	cp.residue_atom_pair_energy_sidechain_whole( rsd1, rsd2, *this, emap );
 }
-
-//    void
-//    TableLookupEvaluator::atom_pair_lk_energy_and_deriv_v_efficient(
-//                                                                    conformation::Atom const & atom1,
-//                                                                    conformation::Atom const & atom2,
-//                                                                    Real & solv1,
-//                                                                    Real & dsolv1,
-//                                                                    bool const eval_deriv /* = false */
-//                                                                    ) const
-//    {
-//
-//        int disbin;
-//        Real frac, d2;
-//
-//        if (interpolate_bins(atom1,atom2,d2,disbin,frac)) {
-//
-//            int const l1 = solv1_.index( disbin, atom2.type(), atom1.type()),
-//            l2 = l1 + 1;
-//
-//            Real const e1 = solv1_[ l1 ];
-//            solv1 = ( e1 + frac * ( solv1_[ l2 ] - e1 ) );
-//
-//            if ( eval_deriv ){
-//                // Following (commented out) is used in dE_dR_over_R below,
-//                //  but its a mistake, I think -- rhiju.
-//                //   Real e1 = dsolv1_[ l1 ];
-//                //   deriv = ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
-//                dsolv1 = ( solv1_[ l2 ] - solv1_[ l1 ] ) * etable_bins_per_A2_ * std::sqrt( d2 ) * 2;
-//            }
-//
-//        } //if within cutoff
-//
-//    }
-
 
 /// @details atom-pair-energy inline type resolution function
 void

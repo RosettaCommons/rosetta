@@ -22,15 +22,12 @@
 #include <numeric/kdtree/KDPoint.fwd.hh>
 #include <numeric/kdtree/HyperRectangle.fwd.hh>
 
-#include <numeric/kdtree/KDPointList.hh>
-
 #include <numeric/kdtree/WrappedReal.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>
 
 #include <iostream>
-#include <string>
 
 namespace numeric {
 namespace kdtree {

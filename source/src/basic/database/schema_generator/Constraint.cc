@@ -14,13 +14,10 @@
 
 #include <basic/database/schema_generator/Constraint.hh>
 #include <basic/database/schema_generator/Column.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
-
 #include <platform/types.hh>
 
 #include <string>
 #include <sstream>
-#include <utility/exit.hh>
 
 namespace basic {
 namespace database {

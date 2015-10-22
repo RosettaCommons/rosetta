@@ -17,7 +17,6 @@
 
 #include <protocols/jobdist/standard_mains.hh>
 
-#include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/ProlineFixMover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -31,7 +30,6 @@
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <utility/file/FileName.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 
@@ -39,9 +37,7 @@
 #include <devel/init.hh>
 
 // C++ headers
-//#include <cstdlib>
 #include <iostream>
-#include <string>
 
 // option key includes
 
@@ -56,14 +52,8 @@
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <platform/types.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <protocols/simple_moves/MissingDensityToJumpMover.hh>
-#include <utility/Bound.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 #include <basic/options/option.hh>
 
 using namespace core;

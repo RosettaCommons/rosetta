@@ -15,20 +15,15 @@
 #define INCLUDED_basic_datacache_DataMap_hh
 
 // Project headers
-#include <platform/types.hh>
-#include <sstream>
-// ObjexxFCL Headers
-
-// C++ Headers
-#include <map>
-
-// Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
-
-//#include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
-#include <string>
-#include <basic/Tracer.hh>
+#include <basic/Tracer.hh>                            // for Tracer
+#include <map>                                        // for map, __map_cons...
+#include <memory>                                     // for shared_ptr, dyn...
+#include <platform/types.hh>                          // for Size
+#include <sstream>                                    // for string, operator<<
+#include <string>                                     // for char_traits
+#include <utility/excn/Exceptions.hh>                 // for EXCN_Msg_Exception
+#include <utility>                                    // for pair
+#include <utility/pointer/std/ReferenceCount.hh>      // for ReferenceCount
 
 namespace basic {
 namespace datacache {

@@ -14,12 +14,13 @@
 
 // Unit headers
 #include <basic/database/open.hh>
+#include <basic/Tracer.hh>
 
 // Project headers
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/file/PathName.hh>
@@ -28,13 +29,7 @@
 // C++ headers
 #include <cstdlib>
 #include <iostream>
-
-#include <basic/Tracer.hh>
 using basic::T;
-
-// option key includes
-
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>

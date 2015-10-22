@@ -19,9 +19,6 @@
 // Unit headers
 //#include <utility/recent_history_queue.fwd.hh>
 
-// Platform headers
-#include <platform/types.hh>
-
 // ObjexxFCL Headers
 #include <utility/vector1.hh>
 

@@ -76,15 +76,11 @@
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
-#include <boost/foreach.hpp>
 
 #include <boost/spirit/include/classic_position_iterator.hpp> // for reporting where errors occur
 #include <boost/spirit/include/classic_functor_parser.hpp>
-#include <platform/types.hh>
 
 #include <string>
-#include <iostream>
-#include <sstream>
 
 namespace boost {
 void throw_exception(std::exception const&) {

@@ -21,7 +21,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // c++ headers
-#include <string>
+#include <iosfwd>
 
 namespace basic {
 namespace datacache {

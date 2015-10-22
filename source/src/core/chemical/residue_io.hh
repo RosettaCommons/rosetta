@@ -24,7 +24,7 @@
 #include <utility/io/izstream.fwd.hh>
 
 // C++ headers
-#include <string>
+#include <iosfwd>
 #include <map>
 
 namespace core {

@@ -17,159 +17,52 @@
 #endif
 
 #include <basic/database/sql_utils.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/resource_manager/ResourceManager.hh>
-#include <basic/resource_manager/util.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
-#include <basic/Tracer.hh>
-#include <utility/excn/Exceptions.hh>
-#include <numeric/random/random.hh>
 
-#include <platform/types.hh>
-#include <utility/Bound.fwd.hh>
-#include <utility/Bound.hh>
-#include <utility/down_cast.hh>
-#include <utility/exit.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/file/FileName.fwd.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/PathName.fwd.hh>
-#include <utility/file/PathName.hh>
-#include <utility/keys/AutoKey.fwd.hh>
-#include <utility/keys/AutoKey.hh>
-#include <utility/keys/Key.fwd.hh>
-#include <utility/keys/Key.hh>
-#include <utility/keys/KeyLess.fwd.hh>
-#include <utility/keys/KeyLookup.fwd.hh>
-#include <utility/keys/KeyLookup.hh>
-#include <utility/keys/NoClient.fwd.hh>
-#include <utility/keys/NoClient.hh>
-#include <utility/keys/SmallKeyVector.fwd.hh>
-#include <utility/keys/SmallKeyVector.hh>
-#include <utility/keys/UserKey.fwd.hh>
-#include <utility/keys/VariantKey.fwd.hh>
-#include <utility/keys/VariantKey.hh>
-#include <utility/options/AnyOption.fwd.hh>
-#include <utility/options/AnyOption.hh>
-#include <utility/options/AnyVectorOption.fwd.hh>
-#include <utility/options/AnyVectorOption.hh>
-#include <utility/options/BooleanOption.fwd.hh>
-#include <utility/options/BooleanOption.hh>
-#include <utility/options/BooleanVectorOption.fwd.hh>
-#include <utility/options/BooleanVectorOption.hh>
-#include <utility/options/FileOption.fwd.hh>
-#include <utility/options/FileOption.hh>
-#include <utility/options/FileVectorOption.fwd.hh>
-#include <utility/options/FileVectorOption.hh>
-#include <utility/options/IntegerOption.fwd.hh>
-#include <utility/options/IntegerOption.hh>
-#include <utility/options/IntegerVectorOption.fwd.hh>
-#include <utility/options/IntegerVectorOption.hh>
-#include <utility/options/Option.fwd.hh>
-#include <utility/options/Option.hh>
-#include <utility/options/OptionCollection.fwd.hh>
-#include <utility/options/OptionCollection.hh>
-#include <utility/options/PathOption.fwd.hh>
-#include <utility/options/PathOption.hh>
-#include <utility/options/PathVectorOption.fwd.hh>
-#include <utility/options/PathVectorOption.hh>
-#include <utility/options/RealOption.fwd.hh>
-#include <utility/options/RealOption.hh>
-#include <utility/options/RealVectorOption.fwd.hh>
-#include <utility/options/RealVectorOption.hh>
-#include <utility/options/ScalarOption.fwd.hh>
-#include <utility/options/ScalarOption.hh>
-#include <utility/options/ScalarOption_T_.fwd.hh>
-#include <utility/options/ScalarOption_T_.hh>
-#include <utility/options/StringOption.fwd.hh>
-#include <utility/options/StringOption.hh>
-#include <utility/options/StringVectorOption.fwd.hh>
-#include <utility/options/StringVectorOption.hh>
-#include <utility/options/VariantOption.fwd.hh>
-#include <utility/options/VariantOption.hh>
-#include <utility/options/VectorOption.fwd.hh>
-#include <utility/options/VectorOption.hh>
-#include <utility/options/VectorOption_T_.fwd.hh>
-#include <utility/options/VectorOption_T_.hh>
-#include <utility/options/mpi_stderr.hh>
-#include <utility/options/keys/AnyOptionKey.fwd.hh>
-#include <utility/options/keys/AnyOptionKey.hh>
-#include <utility/options/keys/AnyVectorOptionKey.fwd.hh>
-#include <utility/options/keys/AnyVectorOptionKey.hh>
-#include <utility/options/keys/BooleanOptionKey.fwd.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
-#include <utility/options/keys/BooleanVectorOptionKey.fwd.hh>
-#include <utility/options/keys/BooleanVectorOptionKey.hh>
-#include <utility/options/keys/FileOptionKey.fwd.hh>
-#include <utility/options/keys/FileOptionKey.hh>
-#include <utility/options/keys/FileVectorOptionKey.fwd.hh>
-#include <utility/options/keys/FileVectorOptionKey.hh>
-#include <utility/options/keys/IntegerOptionKey.fwd.hh>
-#include <utility/options/keys/IntegerOptionKey.hh>
-#include <utility/options/keys/IntegerVectorOptionKey.fwd.hh>
-#include <utility/options/keys/IntegerVectorOptionKey.hh>
-#include <utility/options/keys/OptionKey.fwd.hh>
-#include <utility/options/keys/OptionKey.hh>
-#include <utility/options/keys/OptionKeys.hh>
-#include <utility/options/keys/PathOptionKey.fwd.hh>
-#include <utility/options/keys/PathOptionKey.hh>
-#include <utility/options/keys/PathVectorOptionKey.fwd.hh>
-#include <utility/options/keys/PathVectorOptionKey.hh>
-#include <utility/options/keys/RealOptionKey.fwd.hh>
-#include <utility/options/keys/RealOptionKey.hh>
-#include <utility/options/keys/RealVectorOptionKey.fwd.hh>
-#include <utility/options/keys/RealVectorOptionKey.hh>
-#include <utility/options/keys/ScalarOptionKey.fwd.hh>
-#include <utility/options/keys/ScalarOptionKey.hh>
-#include <utility/options/keys/StringOptionKey.fwd.hh>
-#include <utility/options/keys/StringOptionKey.hh>
-#include <utility/options/keys/StringVectorOptionKey.fwd.hh>
-#include <utility/options/keys/StringVectorOptionKey.hh>
-#include <utility/options/keys/VectorOptionKey.fwd.hh>
-#include <utility/options/keys/VectorOptionKey.hh>
-#include <utility/options/keys/all.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/string_util.hh>
-#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
-#include <ObjexxFCL/TypeTraits.hh>
-#include <ObjexxFCL/char.functions.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <algorithm>
-#include <cassert>
-#include <cstddef>
-#include <cstdlib>
-#include <iomanip>
-#include <iosfwd>
-#include <iostream>
-#include <list>
-#include <map>
-#include <ostream>
-#include <set>
-#include <sstream>
-#include <string>
-#include <utility>
-#include <vector>
-#include <basic/Tracer.fwd.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <boost/scoped_ptr.hpp>
-#include <cppdb/frontend.h>
+#include <basic/Tracer.hh>                                     // for Tracer
+#include <basic/options/keys/inout.OptionKeys.gen.hh>          // for databa...
+#include <basic/options/keys/out.OptionKeys.gen.hh>            // for all, db
+#include <basic/options/option.hh>                             // for Option...
+#include <basic/resource_manager/ResourceManager.hh>           // for Resour...
+#include <basic/resource_manager/util.hh>                      // for get_re...
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#include <boost/tokenizer.hpp>
-#include <boost/algorithm/string/predicate.hpp>
+#include <cppdb/errors.h>                                      // for cppdb_...
+#include <cppdb/frontend.h>                                    // for statement
+
+#include <boost/algorithm/string/predicate.hpp>                // for istart...
+#include <boost/foreach.hpp>                                   // for auto_a...
+#include <boost/iterator/iterator_facade.hpp>                  // for operat...
+#include <boost/lexical_cast.hpp>                              // for bad_le...
+#include <boost/mpl/bool.hpp>                                  // for bool_
+#include <boost/mpl/bool_fwd.hpp>                              // for false_
+#include <boost/token_functions.hpp>                           // for char_s...
+#include <boost/tokenizer.hpp>                                 // for tokenizer
+#include <numeric/random/random.hh>                            // for rg
+#include <platform/types.hh>                                   // for Size
+#include <utility/excn/Exceptions.hh>                          // for EXCN_M...
+#include <utility/exit.hh>                                     // for utilit...
+#include <utility/file/PathName.hh>                            // for PathName
+#include <utility/options/BooleanOption.hh>                    // for Boolea...
+#include <utility/options/IntegerOption.hh>                    // for Intege...
+#include <utility/options/PathOption.hh>                       // for PathOp...
+#include <utility/options/ScalarOption_T_.hh>                  // for Scalar...
+#include <utility/options/StringOption.hh>                     // for String...
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>  // for sessionOP
+#include <utility/sql_database/DatabaseSessionManager.hh>      // for session
+#include <utility/string_util.hh>                              // for join
+#include <utility/vector1.hh>                                  // for vector1
+#include <utility/tag/Tag.hh>                                  // for Tag
+
+#include <cstddef>                                             // for size_t
+#include <iosfwd>                                              // for string
+#include <memory>                                              // for shared...
+#include <sstream>                                             // for operat...
+#include <string>                                              // for basic_...
+#include <vector>                                              // for vector
+
+#ifndef WIN32
+#include <unistd.h>                                            // for usleep
+#endif
+
 
 #ifdef WIN32
 #include <windows.h>

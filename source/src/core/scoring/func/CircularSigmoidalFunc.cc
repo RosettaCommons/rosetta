@@ -29,9 +29,6 @@ namespace func {
 Real
 CircularSigmoidalFunc::func( Real const x ) const {
 	Real const x0 = numeric::nearest_angle_radians(x,xC_)-xC_;
-
-	//std::cout << "SIG_FUNC " << M_E << " " << x << " " << xC_ << " " << x0 << " " << o1_ << " " << o2_ << " " << m_ << " " << offset_ << " " << (1/(1+ std::pow( M_E, (-m_*(x0-o1_)) ))) << " " << (1/(1+ std::pow( M_E, (-m_*(x0-o2_)) ))) << std::endl;
-
 	Real const z = offset_ + (1/(1+ std::pow( M_E, (-m_*(x0-o1_)) ))) - (1/(1+ std::pow( M_E, (-m_*(x0-o2_)) )));
 
 	return z;

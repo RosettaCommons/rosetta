@@ -14,8 +14,6 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/color_util.hh>
 
-#include <algorithm>
-
 namespace numeric {
 
 numeric::xyzVector<platform::Real> rgb_to_hsv(platform::Real r, platform::Real g, platform::Real b)

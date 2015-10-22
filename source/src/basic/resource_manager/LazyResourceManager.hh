@@ -16,18 +16,15 @@
 
 // Unit Headers
 #include <basic/resource_manager/LazyResourceManager.fwd.hh>
-#include <basic/resource_manager/ResourceManager.hh>
 #include <basic/resource_manager/JobOptions.hh>
+#include <basic/resource_manager/ResourceManager.hh>
 
 // Project Headers
 #include <basic/resource_manager/types.hh>
-#include <basic/resource_manager/ResourceLoader.fwd.hh>
 #include <basic/resource_manager/ResourceLocator.fwd.hh>
 #include <basic/resource_manager/ResourceOptions.fwd.hh>
-#include <utility/exit.hh>
 
 // C++ Headers
-#include <iomanip>
 #include <set>
 #include <list>
 

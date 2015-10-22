@@ -16,27 +16,21 @@
 #include <basic/resource_manager/locator/NullResourceLocatorCreator.hh>
 
 //project headers
-#include <utility/tag/Tag.hh>
-#include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
-#include <utility/file/file_sys_util.hh>
 #include <basic/Tracer.hh>
 
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
 //C++ headers
 #include <istream>
-#include <string>
 
 namespace basic {
 namespace resource_manager {
 namespace locator {
 
 using utility::tag::TagCOP;
-using utility::file::FileName;
 using utility::io::izstream;
 using utility::vector1;
 using std::string;

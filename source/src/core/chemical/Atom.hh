@@ -21,14 +21,10 @@
 #include <core/chemical/AtomProperties.hh>
 
 // Package headers
-#include <core/chemical/types.hh>
 #include <core/chemical/GreekDistance.hh>
 //#include <core/chemical/Bond.fwd.hh> // only for Temp BondName
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/Element.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
 
 // Project headers
 #include <core/types.hh>

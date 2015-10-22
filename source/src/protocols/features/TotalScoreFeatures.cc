@@ -22,6 +22,7 @@
 #include <basic/database/insert_statement_generator/RowData.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/sql_utils.hh>
 #include <utility/excn/Exceptions.hh>

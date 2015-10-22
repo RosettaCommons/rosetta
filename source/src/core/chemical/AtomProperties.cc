@@ -21,7 +21,6 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
 
 // C++ headers
 #include <map>

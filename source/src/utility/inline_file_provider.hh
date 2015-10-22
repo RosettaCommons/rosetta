@@ -16,12 +16,10 @@
 
 // Utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/io/izstream.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
 #include <iostream>
-#include <sstream>
 #include <vector>
 
 

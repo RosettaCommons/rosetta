@@ -9,7 +9,6 @@
 #include <core/chemical/Atom.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/orbitals/AssignOrbitals.hh>
-#include <map>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>

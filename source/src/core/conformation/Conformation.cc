@@ -65,10 +65,8 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/broker.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility/assert.hh>
 #include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>

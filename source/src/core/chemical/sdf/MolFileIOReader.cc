@@ -16,19 +16,15 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ElementSet.hh>
 
 #include <core/chemical/rotamers/StoredRotamerLibrarySpecification.hh>
 
-#include <numeric/util.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
 
 #include <ObjexxFCL/string.functions.hh>
-
-#include <fstream>
 
 namespace core {
 namespace chemical {

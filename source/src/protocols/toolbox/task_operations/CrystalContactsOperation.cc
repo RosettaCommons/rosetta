@@ -16,6 +16,7 @@
 #include <protocols/toolbox/task_operations/CrystalContactsOperationCreator.hh>
 
 // Project Headers
+#include <core/chemical/AtomType.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>

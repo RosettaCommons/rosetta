@@ -24,10 +24,17 @@
 #include <core/types.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
-#include <numeric/util.hh>
 
 #include <set>
+#include <vector>
+
+// Only the Windows PyRosetta build complains about this. But somehow,
+// WIN32 is not a useful ifdef here. What.
+//#ifdef WIN32
 #include <string>
+//#else
+//#include <iosfwd>
+//#endif
 
 namespace core {
 namespace chemical {

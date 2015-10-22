@@ -15,7 +15,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
@@ -25,7 +24,6 @@
 #include <core/chemical/bond_support.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
 #include <utility/numbers.hh>
 
 #include <map>

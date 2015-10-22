@@ -13,7 +13,6 @@
 
 #include <core/types.hh>
 #include <core/id/SequenceMapping.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>

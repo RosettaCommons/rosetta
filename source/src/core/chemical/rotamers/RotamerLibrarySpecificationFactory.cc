@@ -16,13 +16,12 @@
 #include <core/chemical/rotamers/RotamerLibrarySpecificationFactory.hh>
 
 // Package headers
-#include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
+#include <core/chemical/rotamers/RotamerLibrarySpecification.fwd.hh>
 #include <core/chemical/rotamers/RotamerLibrarySpecificationCreator.hh>
 
 // Program Headers
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 

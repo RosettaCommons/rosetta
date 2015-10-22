@@ -19,10 +19,14 @@
 #include <numeric/model_quality/RmsData.hh>
 
 // ObjexxFCL Headers
+#include <ObjexxFCL/FArray1.hh>              // for FArray1
+#include <ObjexxFCL/FArray1D.fwd.hh>         // for FArray1D_double, FArray1...
+#include <ObjexxFCL/FArray1D.hh>             // for FArray1D
+#include <ObjexxFCL/FArray2.hh>              // for FArray2
+#include <ObjexxFCL/Star.hh>                 // for star
+#include <numeric/numeric.functions.hh>      // for square
 #include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/FArray2A.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray3A.hh>
 //#include <ObjexxFCL/format.hh>
 
 // C++ Headers
@@ -158,8 +162,8 @@ namespace model_quality {
 void
 maxsub(
 	int & nsup, // total number of residues to superimpose
-	FArray1A_double xe,
-	FArray1A_double xp,
+	ObjexxFCL::FArray1A_double xe,
+	ObjexxFCL::FArray1A_double xp,
 	double & rms,
 	double & psi,
 	int & nali, // number of aligned residues
@@ -170,6 +174,8 @@ maxsub(
 	double distance_tolerance //default = 7.0
 )
 {
+	using namespace ObjexxFCL;
+	
 	xe.dimension( 3*nsup );
 	xp.dimension( 3*nsup );
 
@@ -496,14 +502,16 @@ erfcc( double x )
 /////////////////////////////////////////////////////////////////////////////////
 void
 COMAS(
-	FArray1A_double C,  // coordinates for each atom (must be of length NAT)
-	FArray1A_double WT, // weights on each atom (must be of length NAT)
+	ObjexxFCL::FArray1A_double C,  // coordinates for each atom (must be of length NAT)
+	ObjexxFCL::FArray1A_double WT, // weights on each atom (must be of length NAT)
 	int NAT, // number of atoms provided
 	double & XC, // x-coordinate for center of mass
 	double & YC, // y-coordinate for center of mass
 	double & ZC  // z-coordinate for center of mass
 )
 {
+	using namespace ObjexxFCL;
+	
 	C.dimension( star );
 	WT.dimension( star );
 

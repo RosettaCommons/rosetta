@@ -14,6 +14,8 @@
 // Unit header
 #include <core/chemical/adduct_util.hh>
 #include <core/chemical/Patch.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 
 // Project headers
 #include <core/chemical/VariantType.hh>

@@ -19,6 +19,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>

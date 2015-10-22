@@ -134,14 +134,13 @@ ElecDensEnergy::setup_for_derivatives( pose::Pose & pose , ScoreFunction const &
 		nressum++;
 
 		// if we're symmetric, add contributions from all copies
-		if ( symminfo ) {
-			utility::vector1< core::Size > bbclones = symminfo->bb_clones( r );
-			for ( int i=1; i<=(int)bbclones.size(); ++i ) {
-				ccsum += core::scoring::electron_density::getDensityMap().matchRes(
-					bbclones[i], pose.residue(bbclones[i]), pose, symminfo, true );
-			}
-			nressum++;
+		if ( ! symminfo )  continue;
+		utility::vector1< core::Size > bbclones = symminfo->bb_clones( r );
+		for ( int i=1; i<=(int)bbclones.size(); ++i ) {
+			ccsum += core::scoring::electron_density::getDensityMap().matchRes(
+				bbclones[i], pose.residue(bbclones[i]), pose, symminfo, true );
 		}
+		nressum++;
 	}
 	TR.Debug << "Average CC = " << ccsum/nressum << " ( " << nressum << " res)" << std::endl;
 

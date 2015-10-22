@@ -22,7 +22,9 @@
 #include <protocols/jd2/JD2ResourceManager.fwd.hh>
 #include <basic/resource_manager/LazyResourceManager.hh>
 #include <basic/resource_manager/FallbackConfiguration.fwd.hh>
+#include <basic/resource_manager/FallbackConfiguration.fwd.hh>
 #include <basic/resource_manager/types.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 //C++ headers
 #include <istream>

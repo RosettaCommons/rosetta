@@ -21,10 +21,15 @@
 #include <ObjexxFCL/DimensionExpression.hh>
 
 // C++ Headers
-#include <algorithm>
 #include <cassert>
 #include <iosfwd>
 
+#ifdef CXX11
+#include <utility>
+#include <type_traits>  // for swap
+#else
+#include <algorithm>
+#endif
 
 namespace ObjexxFCL {
 

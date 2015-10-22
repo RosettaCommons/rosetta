@@ -18,7 +18,6 @@
 
 // Package headers
 #include <core/kinematics/AtomWithDOFChange.fwd.hh>
-#include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/id/AtomID.hh>
 

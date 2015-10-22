@@ -23,17 +23,15 @@
 #include <utility/exit.hh>
 #include <utility/py/PyAssert.hh>
 
-// Third-party Headers
-#include <boost/functional/hash.hpp>
-
 // ObjexxFCL formating
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray2D.hh>
 
 // C++ Headers
 #include <algorithm>
 #include <list>
-#include <sstream>
 #include <string>
 #include <iostream>
 

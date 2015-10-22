@@ -21,8 +21,6 @@
 #include <core/conformation/AtomGraphData.hh>
 #include <core/graph/UpperEdgeGraph.hh>
 
-#include <utility/vector1.hh>
-
 
 namespace core {
 namespace conformation {

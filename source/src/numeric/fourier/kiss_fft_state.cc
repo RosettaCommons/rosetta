@@ -22,6 +22,8 @@
 #include <cstdlib> //g++ 4.3.2 requires for exit()
 // tracer
 
+#include <iostream>
+
 namespace numeric {
 namespace fourier {
 

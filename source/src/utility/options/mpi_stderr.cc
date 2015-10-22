@@ -19,11 +19,8 @@
 #include <utility/options/mpi_stderr.hh>
 
 // C++ headers
-#include <cassert>
-#include <cstdlib>
 #include <iostream>
 #include <set>
-#include <sstream>
 
 namespace utility {
 namespace options {

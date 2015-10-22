@@ -24,15 +24,13 @@
 #include <core/chemical/ResidueGraphTypes.hh>
 
 // Package headers
-#include <core/chemical/Atom.hh> // Needed by GCC 4.2
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.hh>
-#include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
-#include <core/chemical/ElementSet.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
@@ -49,38 +47,32 @@
 #endif
 #include <core/chemical/rna/RNA_ResidueType.fwd.hh>
 #include <core/chemical/rotamers/RotamerLibrarySpecification.fwd.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>  // TODO: Fix this to use the fwd.hh.
+#include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>  // TODO: Fix this to use the fwd.hh.
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
-#include <core/chemical/orbitals/ICoorOrbitalData.hh>
+#include <core/chemical/orbitals/ICoorOrbitalData.fwd.hh>
 #include <core/chemical/rings/RingConformerSet.fwd.hh>
-#include <core/chemical/VariantType.hh>
 
 // Project headers
 #include <core/types.hh>
-
-// Numeric headers
-#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/keys/Key2Tuple.hh>
 #include <utility/keys/Key4Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/py/PyAssert.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
 #include <map>
-#include <functional>
 #include <core/chemical/VariantType.hh>
 #include <utility/vector1.hh>
 
 // External headers
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/copy.hpp>
-#include <boost/graph/floyd_warshall_shortest.hpp>
+//#include <boost/graph/adjacency_list.hpp>
+//#include <boost/graph/copy.hpp>
+//#include <boost/graph/floyd_warshall_shortest.hpp>
 
 
 namespace core {

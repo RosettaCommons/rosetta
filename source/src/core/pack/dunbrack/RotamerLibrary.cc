@@ -28,11 +28,7 @@
 #include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
 
 // Project headers
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/graph/Graph.hh>
-#include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/AA.hh>
 
 // Basic headers
@@ -42,12 +38,11 @@
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/basic.hh>
-#include <basic/interpolate.hh>
 #include <basic/Tracer.hh>
 
 // Numeric headers
 #include <numeric/xyz.functions.hh>
-#include <numeric/random/random.hh>
+#include <numeric/random/uniform.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
@@ -62,16 +57,12 @@
 // C++ Headers
 #include <string>
 #include <iostream>
-#include <fstream>
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <io.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #endif
 #include <sys/stat.h>
-
-// Boost Headers
-#include <boost/cstdint.hpp>
 
 using basic::T;
 
@@ -381,13 +372,6 @@ void rotamer_from_chi_02(Real4 const & chi, chemical::AA const res, Size nchi,
 			}
 		}
 	} // i=1, i<= nchi
-
-	//std::cout << "Rotamer from chi02: " << res << " ";
-	//for ( Size ii = 1; ii <= nchi; ++ii ) std::cout << chi[ii] << " ";
-	//std::cout << " : ";
-	//for ( Size ii = 1; ii <= nchi; ++ii ) std::cout << rot[ii] << " ";
-	//std::cout << std::endl;
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////

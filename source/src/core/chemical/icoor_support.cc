@@ -17,7 +17,7 @@
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/ResidueConnection.hh>
 
-#include <core/kinematics/AtomTree.hh>
+//#include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/tree/BondedAtom.hh>
@@ -29,7 +29,7 @@
 #include <core/types.hh>
 
 #include <basic/Tracer.hh>
-#include <numeric/xyzVector.io.hh>
+//#include <numeric/xyzVector.io.hh>
 
 #include <utility/graph/DFS_sort.hh>
 

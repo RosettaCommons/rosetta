@@ -282,25 +282,24 @@ void FACTSEnergy::evaluate_rotamer_pair_energies(
 			Vector const & jj_coord( jj_example_rotamer.nbr_atom_xyz() );
 			Real const jj_radius( jj_example_rotamer.nbr_radius() );
 
-			if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
-				for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-					Size const kk_rot_id = ii_offset + kk - 1;
-					for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
-						Size const ll_rot_id = jj_offset + ll - 1;
-
-						Real E_elec, E_solv_pair, E_solv_self;
-						potential_.evaluate_polar_otf_energy( *set1.rotamer( kk_rot_id ), facts_info1.residue_info( kk_rot_id ),
+			if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) )  continue;
+			
+			for ( Size kk = 1, kke = set1.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
+				Size const kk_rot_id = ii_offset + kk - 1;
+				for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
+					Size const ll_rot_id = jj_offset + ll - 1;
+					
+					Real E_elec, E_solv_pair, E_solv_self;
+					potential_.evaluate_polar_otf_energy( *set1.rotamer( kk_rot_id ), facts_info1.residue_info( kk_rot_id ),
 							*set2.rotamer( ll_rot_id ), facts_info2.residue_info( ll_rot_id ),
-							E_elec, E_solv_self, E_solv_pair
-						);
-						Real const E_sasa
-							( potential_.evaluate_nonpolar_energy( *set1.rotamer( kk_rot_id ), facts_info1.residue_info( kk_rot_id ),
-							*set2.rotamer( ll_rot_id ) ) );
-
-						energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy >( weights[ facts_elec ] * E_elec
+							E_elec, E_solv_self, E_solv_pair );
+					Real const E_sasa
+					( potential_.evaluate_nonpolar_energy( *set1.rotamer( kk_rot_id ),
+							facts_info1.residue_info( kk_rot_id ), *set2.rotamer( ll_rot_id ) ) );
+					
+					energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy >( weights[ facts_elec ] * E_elec
 							+ weights[ facts_solv ] * (E_solv_self + E_solv_pair)
 							+ weights[ facts_sasa ] * E_sasa );
-					}
 				}
 			}
 		}
@@ -343,23 +342,23 @@ void FACTSEnergy::evaluate_rotamer_background_energies(
 		Vector const & jj_coord( rsd.nbr_atom_xyz() );
 		Real const jj_radius( rsd.nbr_radius() );
 
-		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
-			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-				Size const kk_rot_id = ii_offset + kk - 1;
+		if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) )  continue;
+		
+		for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
+			Size const kk_rot_id = ii_offset + kk - 1;
 
-				Real E_elec, E_solv_self, E_solv_pair;
-				potential_.evaluate_polar_otf_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
-					rsd, facts_rsd_info,
-					E_elec, E_solv_self, E_solv_pair );
-				Real const E_sasa
-					( potential_.evaluate_nonpolar_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
-					rsd) );
-				energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > ( weights[ facts_elec ] * E_elec
-					+ weights[ facts_solv ] * (E_solv_self+E_solv_pair)
-					+ weights[ facts_sasa ] * E_sasa );
-				//std::cout << "Background: " << ii << " " << kk << " " << kk_rot_id << " " << polarE << " " << nonpolarE << std::endl;
-			} // kk - rotamers for residue types
-		} // nbrs
+			Real E_elec, E_solv_self, E_solv_pair;
+			potential_.evaluate_polar_otf_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
+				rsd, facts_rsd_info,
+				E_elec, E_solv_self, E_solv_pair );
+			Real const E_sasa
+				( potential_.evaluate_nonpolar_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
+				rsd) );
+			energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > ( weights[ facts_elec ] * E_elec
+				+ weights[ facts_solv ] * (E_solv_self+E_solv_pair)
+				+ weights[ facts_sasa ] * E_sasa );
+			//std::cout << "Background: " << ii << " " << kk << " " << kk_rot_id << " " << polarE << " " << nonpolarE << std::endl;
+		} // kk - rotamers for residue types
 	} // ii - residue types for rotamer set
 	PROF_STOP( basic::FACTS_ROTAMER_BACKGROUND_ENERGIES );
 }
@@ -395,22 +394,22 @@ void FACTSEnergy::evaluate_rotamer_background_energy_maps(
 		Vector const & jj_coord( rsd.nbr_atom_xyz() );
 		Real const jj_radius( rsd.nbr_radius() );
 
-		if ( ii_coord.distance_squared( jj_coord ) < std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) ) {
-			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
-				Size const kk_rot_id = ii_offset + kk - 1;
+		if ( ii_coord.distance_squared( jj_coord ) >= std::pow(ii_radius+jj_radius+packing_interaction_cutoff(), 2 ) )  continue;
+		
+		for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
+			Size const kk_rot_id = ii_offset + kk - 1;
 
-				Real E_elec, E_solv_self, E_solv_pair;
-				potential_.evaluate_polar_otf_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
-					rsd, facts_rsd_info,
-					E_elec, E_solv_self, E_solv_pair );
-				Real const E_sasa
-					( potential_.evaluate_nonpolar_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
-					rsd ) );
-				(emaps[ kk_rot_id ])[ facts_elec ] += E_elec;
-				(emaps[ kk_rot_id ])[ facts_solv ] += E_solv_self + E_solv_pair;
-				(emaps[ kk_rot_id ])[ facts_sasa ] += E_sasa;
-			} // kk - rotamers for residue types
-		} // nbrs
+			Real E_elec, E_solv_self, E_solv_pair;
+			potential_.evaluate_polar_otf_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
+				rsd, facts_rsd_info,
+				E_elec, E_solv_self, E_solv_pair );
+			Real const E_sasa
+				( potential_.evaluate_nonpolar_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
+				rsd ) );
+			(emaps[ kk_rot_id ])[ facts_elec ] += E_elec;
+			(emaps[ kk_rot_id ])[ facts_solv ] += E_solv_self + E_solv_pair;
+			(emaps[ kk_rot_id ])[ facts_sasa ] += E_sasa;
+		} // kk - rotamers for residue types
 	} // ii - residue types for rotamer set
 }
 

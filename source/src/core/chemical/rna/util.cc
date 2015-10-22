@@ -17,24 +17,16 @@
 
 // Package headers
 #include <core/conformation/Residue.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/id/TorsionID.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/Stub.hh>
-#include <core/kinematics/AtomPointer.fwd.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AA.hh>
 
 // Project headers
 #include <numeric/constants.hh>
-
-#include <core/kinematics/tree/Atom.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
 #include <numeric/angle.functions.hh>
+
+#include <utility/vector1.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>

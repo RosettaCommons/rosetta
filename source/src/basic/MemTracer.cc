@@ -10,63 +10,16 @@
 // Unit header
 #include <basic/MemTracer.hh>
 
-// C/C++ headers
-#include <algorithm>
-#include <iostream>
-#include <stdio.h>
-
-// *nix headers
-#ifndef _WIN32
-#include <sys/resource.h>
-#include <sys/time.h>
-#include <unistd.h>
+#include <stdio.h>              // for fclose, fopen, fscanf, snprintf, EOF
+#ifndef WIN32
+#include <sys/resource.h>       // for getrusage, rusage, RUSAGE_SELF
+#include <unistd.h>             // for getpagesize, getpid
 #endif
-
-// Utility headers
-#include <ObjexxFCL/format.hh>
-#include <utility/string_util.hh>
-#include <utility/tools/make_vector.hh>
-
-#include <platform/types.hh>
-#include <utility/down_cast.hh>
-#include <utility/exit.hh>
-#include <utility/stream_util.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <ObjexxFCL/Fstring.fwd.hh>
-#include <ObjexxFCL/TypeTraits.hh>
-#include <ObjexxFCL/byte.fwd.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/ubyte.fwd.hh>
-#include <cassert>
-#include <cmath>
-#include <complex>
-#include <cstddef>
-#include <iomanip>
-#include <iosfwd>
-#include <istream>
-#include <limits>
-#include <list>
-#include <map>
-#include <ostream>
-#include <sstream>
-#include <string>
-#include <typeinfo>
-#include <vector>
-#include <basic/Tracer.fwd.hh>
-#include <basic/Tracer.hh>
-#include <boost/algorithm/string/erase.hpp>
-
+#include <ObjexxFCL/format.hh>  // for I
+#include <iomanip>              // for operator<<, setprecision
+#include <iosfwd>               // for ostream, stringstream, string
+#include <ostream>              // for operator<<, basic_ostream
+#include <string>               // for allocator, char_traits
 
 namespace basic {
 

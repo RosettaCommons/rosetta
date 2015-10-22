@@ -16,6 +16,7 @@
 #include <protocols/magnesium/util.hh>
 #include <protocols/magnesium/MgWaterHydrogenPacker.hh>
 #include <protocols/magnesium/MgOrbitalFrameFinder.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/AtomID.hh>

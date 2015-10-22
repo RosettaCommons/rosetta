@@ -31,6 +31,8 @@
 #include <basic/mpi/util.hh>
 #include <basic/mpi/mpi_enums.hh>
 #include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/DbDataType.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>

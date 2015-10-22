@@ -31,8 +31,7 @@
 
 // Project Headers
 #include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/Span.hh>
-#include <core/conformation/membrane/LipidAccInfo.hh>
+#include <core/conformation/membrane/LipidAccInfo.fwd.hh>
 #include <core/conformation/membrane/MembraneParams.hh>
 
 // Package Headers
@@ -43,8 +42,6 @@
 
 #include <core/id/AtomID.hh>
 
-#include <core/conformation/membrane/Exceptions.hh>
-
 #include <core/conformation/util.hh>
 #include <core/types.hh>
 
@@ -53,9 +50,7 @@
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <cstdlib>
 #include <string>
-#include <cmath>
 
 static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.MembraneInfo" );
 

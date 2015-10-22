@@ -20,17 +20,16 @@
 #include <core/chemical/AtomPropertiesManager.fwd.hh>
 #include <core/chemical/AtomProperty.hh>
 
-// Project header
-#include <core/types.hh>
-
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <map>
 #include <iostream>
 
+#ifdef WIN32
+#include <core/types.hh>
+#endif
 
 namespace core {
 namespace chemical {

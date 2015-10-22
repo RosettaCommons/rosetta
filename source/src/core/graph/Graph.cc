@@ -15,7 +15,6 @@
 #include <core/graph/Graph.hh>
 
 //STL Headers
-#include <algorithm>
 #include <iostream>
 #include <utility/assert.hh>
 
@@ -25,50 +24,11 @@
 //ObjexxFCL Headers
 
 #include <platform/types.hh>
-#include <core/graph/Graph.fwd.hh>
-#include <core/graph/unordered_object_pool.fwd.hpp>
-#include <utility/down_cast.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <ObjexxFCL/Dimension.fwd.hh>
-#include <ObjexxFCL/Dimension.hh>
-#include <ObjexxFCL/DimensionExpression.hh>
-#include <ObjexxFCL/DynamicIndexRange.fwd.hh>
-#include <ObjexxFCL/DynamicIndexRange.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/FArray.hh>
-#include <ObjexxFCL/FArray2.fwd.hh>
-#include <ObjexxFCL/FArray2.hh>
-#include <ObjexxFCL/FArray2D.fwd.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArrayInitializer.fwd.hh>
-#include <ObjexxFCL/FArrayInitializer.hh>
-#include <ObjexxFCL/FArraySection.fwd.hh>
-#include <ObjexxFCL/FArraySection.hh>
-#include <ObjexxFCL/FArrayTraits.fwd.hh>
-#include <ObjexxFCL/FArrayTraits.hh>
-#include <ObjexxFCL/IndexRange.fwd.hh>
-#include <ObjexxFCL/IndexRange.hh>
-#include <ObjexxFCL/InitializerSentinel.hh>
-#include <ObjexxFCL/Observer.fwd.hh>
-#include <ObjexxFCL/Observer.hh>
-#include <ObjexxFCL/ObserverMulti.hh>
-#include <ObjexxFCL/ObserverSingle.hh>
-#include <ObjexxFCL/ProxySentinel.hh>
-#include <ObjexxFCL/SetWrapper.fwd.hh>
-#include <ObjexxFCL/Star.fwd.hh>
-#include <ObjexxFCL/Star.hh>
-#include <ObjexxFCL/proxy_const_assert.hh>
 #include <cstddef>
-#include <cstdio>
 #include <iosfwd>
 #include <string>
 #include <boost/pool/pool.hpp>
-#include <boost/pool/poolfwd.hpp>
 
 #include <basic/Tracer.hh>
 

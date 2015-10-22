@@ -18,8 +18,6 @@
 // Unit headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueConnection.hh>
-#include <boost/graph/graph_utility.hpp>
-#include <core/chemical/util.hh>
 
 // Package Headers
 #include <core/chemical/ResidueProperties.hh>
@@ -39,21 +37,12 @@
 #include <core/chemical/rings/RingConformerSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
-#include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
-#include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/bond_support.hh>
 
-// Numeric headers
-#include <numeric/xyz.functions.hh>
-#include <numeric/NumericTraits.hh>
-
 // Basic headers
 #include <basic/Tracer.hh>
-// Options and Option key includes (needed for protonated versions of the residues - pH mode)
-#include <basic/options/option.hh>
-#include <basic/options/keys/pH.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/py/PyAssert.hh>
@@ -63,7 +52,6 @@
 // External headers
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <boost/graph/graph_utility.hpp>
 
 // C++ headers
 #include <algorithm>

@@ -29,6 +29,7 @@
 #include <protocols/environment/DofUnlock.hh>
 #include <protocols/environment/EnvExcn.hh>
 
+#include <core/environment/DofPassport.hh>
 #include <core/environment/LocalPosition.hh>
 
 #include <core/kinematics/MoveMap.hh>

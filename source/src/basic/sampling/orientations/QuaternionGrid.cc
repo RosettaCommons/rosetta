@@ -20,18 +20,9 @@
 #include <basic/database/open.hh>
 
 // Utility headers
-#include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <utility/thread/threadsafe_creation.hh>
-
-// numeric headers
-#include <numeric/xyz.io.hh>
-#include <numeric/conversions.hh>
-
-// Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 // C++ headers
 #include <cassert>

@@ -16,19 +16,7 @@
 #include <core/types.hh>
 
 // Package headers
-#include <core/conformation/Residue.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/id/TorsionID.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/Stub.hh>
-#include <core/kinematics/AtomPointer.fwd.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AA.hh>
 #include <utility/vector1.hh>
-
-#include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 #include <numeric/angle.functions.hh>

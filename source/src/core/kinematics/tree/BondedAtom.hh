@@ -18,14 +18,9 @@
 
 // Package headers
 #include <core/kinematics/tree/Atom_.hh>
-#include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
 
 // Project headers
-#include <core/kinematics/MinimizerMapBase.fwd.hh>
 #include <core/types.hh>
-
-// C++ headers
-#include <utility/assert.hh>
 
 
 namespace core {

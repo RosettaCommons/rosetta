@@ -19,22 +19,21 @@
 
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
-#include <core/chemical/ElementSet.hh>
+//#include <core/chemical/ElementSet.hh>
 #include <core/chemical/Element.hh>
 #include <core/chemical/ElectronConfiguration.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/Atom.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/Bond.hh>
+//#include <core/chemical/AtomType.hh>
+//#include <core/chemical/Bond.hh>
 #include <core/chemical/ResidueConnection.hh>
 
 #include <core/chemical/sdf/mol_writer.hh>
 
 #include <core/types.hh>
 
-#include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <utility/graph/ring_detection.hh>

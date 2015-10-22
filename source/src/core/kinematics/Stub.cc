@@ -16,8 +16,7 @@
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/RT.hh>
 
-#include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
+#include <numeric/conversions.hh>
 
 
 namespace core {

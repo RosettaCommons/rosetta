@@ -26,7 +26,7 @@
 //#include <core/pose/Pose.hh>
 #include <core/kinematics/util.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/chemical/AA.hh>
+//#include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/id/AtomID.hh>
@@ -35,10 +35,10 @@
 #include <basic/Tracer.hh>
 
 // Numeric headers
-#include <numeric/random/random.hh>
-#include <numeric/xyzMatrix.hh>
+//#include <numeric/random/random.hh>
+//#include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
+//#include <numeric/xyz.functions.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>

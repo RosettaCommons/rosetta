@@ -33,7 +33,6 @@
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/import_pose/pose_stream/util.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 
 #include <utility/vector1.hh>

@@ -102,20 +102,20 @@ void FACTSPoseInfo::initialize( pose::Pose const & pose, FACTSRsdTypeMap &rsdtyp
 
 		// Initialize only if the residue is in enumeration_shell
 		// otherwise keep information stored previously
-		if ( residue_info_[i]->enumeration_shell() ) {
-			// initialize residuetypeinfo if it has not been
-			core::chemical::ResidueType const &rsdtype = pose.residue(i).type();
-			FACTSRsdTypeMap::const_iterator it = rsdtypemap.find( &rsdtype );
-
-			if ( it == rsdtypemap.end() ) {
-				TR << "Adding new FACTS residue type info: " << rsdtype.name() << std::endl;
-				FACTSRsdTypeInfoOP rsdtypeinfo( new FACTSRsdTypeInfo );
-				rsdtypeinfo->create_info( rsdtype );
-				rsdtypemap[ &rsdtype ] = rsdtypeinfo;
-				it = rsdtypemap.find( &rsdtype );
-			}
-			residue_info_[i]->initialize( pose.residue(i), it->second );
+		if ( ! residue_info_[i]->enumeration_shell() )  continue;
+		
+		// initialize residuetypeinfo if it has not been
+		core::chemical::ResidueType const &rsdtype = pose.residue(i).type();
+		FACTSRsdTypeMap::const_iterator it = rsdtypemap.find( &rsdtype );
+		
+		if ( it == rsdtypemap.end() ) {
+			TR << "Adding new FACTS residue type info: " << rsdtype.name() << std::endl;
+			FACTSRsdTypeInfoOP rsdtypeinfo( new FACTSRsdTypeInfo );
+			rsdtypeinfo->create_info( rsdtype );
+			rsdtypemap[ &rsdtype ] = rsdtypeinfo;
+			it = rsdtypemap.find( &rsdtype );
 		}
+		residue_info_[i]->initialize( pose.residue(i), it->second );
 	}
 }
 
@@ -163,39 +163,6 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 
 	// use minimization graph instead!
 
-
-	// Old way - use coordinate
-	/*
-	// First check change in coordinate in residue level
-	for( Size ires = 1; ires <= pose.total_residue(); ++ ires ){
-
-	FACTSResidueInfo & facts1( residue_info( ires ) );
-	facts1.set_changed( false );
-	facts1.set_enumeration_shell( false );
-
-	Size const natom( pose.residue(ires).natoms() );
-	utility::vector1<Vector> const facts_xyz = residue_info( ires ).xyz();
-
-	// Check residue conformation change by looking at coordinate
-	// Is there better way than this?
-	if( natom != facts_xyz.size() ){
-	facts1.set_changed( true );
-	facts1.set_enumeration_shell( true );
-
-	} else {
-	for( Size iatm = 1; iatm <= natom; ++ iatm ){
-	Vector const dxyz = facts_xyz[iatm] - pose.residue(ires).xyz(iatm);
-	Real const d2 = dxyz.dot(dxyz);
-	if( d2 > 1.0e-6 ){
-	facts1.set_changed( true );
-	facts1.set_enumeration_shell( true );
-	break;
-	}
-	}
-	}
-	}
-	*/
-
 	// Decide whether to expand enumeration to the second shell:
 	// say A-B-C where A,B,C are residues and A-B < 10 A, B-C < 10 A, A-C > 10 A
 	// if A's conformation changes, it will affect B's context, which will again change B-C interaction energy
@@ -210,16 +177,16 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 		FACTSResidueInfo & facts1( residue_info( res1 ) );
 
 		// Propagate change info into its first neighbor shell
-		if ( facts1.changed() ) {
-			facts1.set_enumeration_shell( true );
-			for ( graph::Graph::EdgeListConstIter
-					iru  = energy_graph.get_node( res1 )->const_edge_list_begin(),
-					irue = energy_graph.get_node( res1 )->const_edge_list_end();
-					iru != irue; ++iru ) {
-				Size const res2( (*iru)->get_other_ind( res1 ) );
-				FACTSResidueInfo & facts2( residue_info( res2 ) );
-				facts2.set_enumeration_shell( true );
-			}
+		if ( ! facts1.changed() )  continue;
+		
+		facts1.set_enumeration_shell( true );
+		for ( graph::Graph::EdgeListConstIter
+			 iru  = energy_graph.get_node( res1 )->const_edge_list_begin(),
+			 irue = energy_graph.get_node( res1 )->const_edge_list_end();
+			 iru != irue; ++iru ) {
+			Size const res2( (*iru)->get_other_ind( res1 ) );
+			FACTSResidueInfo & facts2( residue_info( res2 ) );
+			facts2.set_enumeration_shell( true );
 		}
 	}
 

@@ -37,8 +37,6 @@
 
 // C++ headers
 #include <map>
-#include <vector>
-
 
 namespace core {
 namespace kinematics {

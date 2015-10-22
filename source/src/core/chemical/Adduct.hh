@@ -20,8 +20,6 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/MMAtomType.fwd.hh>
 
 #include <string>
 
@@ -89,9 +87,7 @@ private:
 	std::string adduct_name_;
 	std::string atom_name_;
 	std::string atom_type_name_;
-	// unused AtomType* atom_type_;
 	std::string mm_atom_type_name_;
-	// unused MMAtomType *mm_atom_type_;
 	Real atom_charge_;
 	Real phi_;
 	Real theta_;

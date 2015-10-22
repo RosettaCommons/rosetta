@@ -17,6 +17,7 @@
 #include <core/types.hh>
 
 
+#include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <utility/io/izstream.hh>

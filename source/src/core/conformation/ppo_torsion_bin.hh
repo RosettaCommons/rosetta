@@ -21,11 +21,8 @@
 // Project headers
 #include <core/types.hh>
 
-// Utility headers
-#include <utility/vector0.hh>
-
 // C++ headers
-#include <string>
+#include <iosfwd>
 
 namespace core {
 namespace conformation {

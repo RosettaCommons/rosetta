@@ -19,7 +19,6 @@
 #include <core/chemical/gasteiger/util.hh>
 
 #include <utility/numbers.hh>
-#include <utility/string_util.hh>
 #include <utility/tools/make_vector.hh>
 
 #include <string>

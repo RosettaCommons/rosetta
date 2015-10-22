@@ -107,10 +107,6 @@ methods::EnergyMethodOP FiberDiffractionEnergyDens::clone() const {
 
 void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
 
-	//timeval t1, t2;
-	//double elapsedTime;
-	//gettimeofday(&t1, NULL);
-
 	if ( !core::pose::symmetry::is_symmetric(pose) ) {
 		utility_exit_with_message("Structure needs to be symmetric! Aborting...");
 	}
@@ -278,10 +274,6 @@ void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, ScoreFunc
 	}
 	chi2_ /=square_obs_;
 
-	//gettimeofday(&t2, NULL);
-	//elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;      // sec to ms
-	//elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;   // us to ms
-	//TR << " Scoring time " << elapsedTime << " ms." << std::endl;
 	TR << "chi2 " << chi2_ << " sum_obs_ " << sum_obs_ << std::endl;
 	if ( output_fiber_spectra_ ) {
 		out.close();
@@ -294,21 +286,6 @@ void FiberDiffractionEnergyDens::finalize_total_energy(pose::Pose & /*pose*/, Sc
 	emap[ fiberdiffractiondens ] += chi2_;
 }
 
-//No derivatives calucalation for this module
-/*void FiberDiffractionEnergyDens::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
-
-}
-
-void FiberDiffractionEnergyDens::eval_atom_derivative(
-id::AtomID const & id,
-pose::Pose const & pose,
-kinematics::DomainMap const &, // domain_map,
-ScoreFunction const & ,
-EnergyMap const & weights,
-Vector & F1,
-Vector & F2
-) const {
-}*/
 
 void
 FiberDiffractionEnergyDens::calculate_rho_fast2(
@@ -430,10 +407,6 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 
 			if ( atm_i.xyz()[2]>maxZZ ) {
 				zr = int(fabs(atm_i.xyz()[2]-minZZ)/c_);
-
-				//core::Real phicalc_ = zr*2*M_PI/cn_symmetry_;
-				//core::Real xrot = atm_i.xyz()[0]*cos(phicalc_) - atm_i.xyz()[1]*sin(phicalc_);
-				//core::Real yrot = atm_i.xyz()[0]*sin(phicalc_) + atm_i.xyz()[1]*cos(phicalc_);
 
 				atmi_xyz_[0] =  atm_i.xyz()[0];
 				atmi_xyz_[1] =  atm_i.xyz()[1];

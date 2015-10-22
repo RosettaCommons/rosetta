@@ -19,20 +19,6 @@
 // Package headers
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/tree/Atom_.hh>
-#include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
-
-// Project headers
-#include <core/kinematics/MinimizerMapBase.fwd.hh>
-
-// Numeric headers
-#include <numeric/xyzMatrix.fwd.hh>
-#include <numeric/xyzVector.fwd.hh>
-
-// C++ headers
-#include <algorithm>
-
-#include <utility/vector1.hh>
-
 
 namespace core {
 namespace kinematics {

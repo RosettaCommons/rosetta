@@ -15,6 +15,7 @@
 // mini headers
 #include <core/io/raw_data/ScoreStructJSON.hh>
 #include <utility/json_spirit/json_spirit_writer.h>
+#include <utility/json_spirit/json_spirit_writer_template.h>
 
 // C++ Headers
 #include <map>

@@ -20,7 +20,6 @@
 // Numeric headers
 #include <numeric/types.hh>
 #include <numeric/xyzVector.fwd.hh>
-#include <numeric/xyz.functions.hh>
 
 // Utility header
 #include <utility/vector1.hh>

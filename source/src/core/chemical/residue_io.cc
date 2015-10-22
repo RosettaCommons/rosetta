@@ -32,11 +32,8 @@
 #include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 
 // Project headers
-#include <platform/types.hh>
-
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.fwd.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/kinematics/Stub.hh>
 
 // Basic headers
@@ -44,28 +41,24 @@
 #include <basic/Tracer.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
+//#include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
-#include <utility/Bound.hh>
+//#include <utility/Bound.hh>
 #include <utility/vector1.hh>
+//#include <utility/keys/AutoKey.hh>
+//#include <utility/keys/SmallKeyVector.hh>
 #include <utility/io/izstream.hh>
-#include <utility/keys/AutoKey.hh>
-#include <utility/keys/SmallKeyVector.hh>
 
 // External headers
 #include <boost/foreach.hpp>
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/Dimension.hh>
-#include <ObjexxFCL/DynamicIndexRange.hh>
-#include <ObjexxFCL/FArray.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 

@@ -21,6 +21,7 @@
 // Package Headers
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/conformation/membrane/SpanningTopology.hh>

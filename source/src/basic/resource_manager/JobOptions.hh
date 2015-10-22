@@ -22,7 +22,6 @@
 #include <utility/options/keys/FileVectorOptionKey.hh>
 #include <utility/options/keys/IntegerOptionKey.hh>
 #include <utility/options/keys/IntegerVectorOptionKey.hh>
-#include <utility/options/keys/OptionKey.hh>
 #include <utility/options/keys/PathOptionKey.hh>
 #include <utility/options/keys/PathVectorOptionKey.hh>
 #include <utility/options/keys/RealOptionKey.hh>
@@ -40,7 +39,7 @@
 #include <platform/types.hh>
 
 //C++ Headers
-#include <string>
+#include <iosfwd>
 #include <map>
 
 namespace basic {

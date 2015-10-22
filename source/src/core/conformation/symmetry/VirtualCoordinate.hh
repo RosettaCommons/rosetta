@@ -23,8 +23,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <string>
-#include <vector>
+#include <iosfwd>
 
 namespace core {
 namespace conformation {

@@ -18,6 +18,7 @@
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/Energies.hh>

@@ -20,7 +20,7 @@
 
 // Unit headers
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <core/conformation/Conformation.hh>
 

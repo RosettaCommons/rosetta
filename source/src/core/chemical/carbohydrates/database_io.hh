@@ -20,7 +20,7 @@
 
 // C++ headers
 #include <map>
-#include <string>
+#include <iosfwd>
 
 
 namespace core {

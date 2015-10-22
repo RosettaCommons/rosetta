@@ -20,7 +20,6 @@
 #include <core/chemical/MMAtomType.hh>
 
 // C++ headers
-#include <fstream>
 #include <iostream>
 #include <utility/io/izstream.hh>
 

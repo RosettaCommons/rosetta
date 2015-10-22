@@ -29,11 +29,11 @@
 
 
 // Project headers
-#include <core/chemical/orbitals/OrbitalType.hh>
+#include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <map>
 #include <core/types.hh>
-#include <utility/vector1_bool.hh>
+//#include <utility/vector1_bool.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 
 #include <utility/vector1.hh>

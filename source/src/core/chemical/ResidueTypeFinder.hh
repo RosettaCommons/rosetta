@@ -24,7 +24,6 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueProperty.hh>
-#include <core/types.hh>
 #include <utility/vector1.hh>
 
 namespace core {

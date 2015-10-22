@@ -13,7 +13,6 @@
 
 //C++ headers
 #include <math.h>
-#include <iostream>
 
 // Unit headers
 #include <numeric/types.hh>

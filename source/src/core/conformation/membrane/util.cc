@@ -16,12 +16,7 @@
 // Unit headers
 #include <core/conformation/membrane/util.hh>
 
-// Project Headers
-#include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/Span.hh>
-
 // Package Headers
-#include <core/types.hh>
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
@@ -36,7 +31,7 @@ namespace conformation {
 namespace membrane {
 
 // read spanfiles
-utility::vector1< std::string > spanfile_names(){
+utility::vector1< std::string > spanfile_names() {
 
 	using namespace basic;
 	using namespace basic::options;

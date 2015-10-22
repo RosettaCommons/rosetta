@@ -19,7 +19,7 @@
 #include <basic/resource_manager/types.hh>
 
 //project headers
-#include <basic/resource_manager/ResourceOptions.hh>
+#include <basic/resource_manager/ResourceOptions.fwd.hh>
 
 //utility headers
 #include <utility/SingletonBase.hh>
