@@ -559,22 +559,6 @@ Connection::upper_segment_id( components::StructureData const & perm ) const
 	return perm.get_data_str( id(), "segment2" );
 }
 
-/*
-/// @brief get id of the component 2 to be built
-std::string const &
-Connection::comp1_lower( components::StructureData const & perm ) const
-{
-return perm.get_data_str( id(), "segment1_lower" );
-}
-
-/// @brief get id of the component 2 to be built
-std::string const &
-Connection::comp2_upper( components::StructureData const & perm ) const
-{
-return perm.get_data_str( id(), "segment2_upper" );
-}
-*/
-
 /// @brief get id of the lower component actually being connected
 std::string const &
 Connection::loop_lower( components::StructureData const & perm ) const
@@ -604,24 +588,6 @@ Connection::set_upper_segment_id( components::StructureData & perm, std::string 
 	//perm.set_data_str( data_name( "segment2" ), add_parent_prefix(comp) );
 	perm.set_data_str( id(), "segment2", comp );
 }
-
-/*
-/// @brief set id of the component 1 to be built
-void
-Connection::set_comp1_lower( components::StructureData & perm, std::string const & comp ) const
-{
-//perm.set_data_str( data_name( "segment1_lower" ), add_parent_prefix(comp) );
-perm.set_data_str( id(), "segment1_lower", comp );
-}
-
-/// @brief set id of the component 2 to be built
-void
-Connection::set_comp2_upper( components::StructureData & perm, std::string const & comp ) const
-{
-//perm.set_data_str( id(), "segment2_upper" ), add_parent_prefix(comp) );
-perm.set_data_str( id(), "segment2_upper", comp );
-}
-*/
 
 /// @brief set id of the lower component actually being connected
 void
@@ -1265,30 +1231,6 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 		<< " ss=" << build_ss( perm ) << " abego=" << build_abego( perm ) << std::endl;
 }
 
-/// @brief adds loop residues in extended conformation
-void
-Connection::add_loop_residues(
-	components::StructureData & perm,
-	std::string const & comp,
-	std::string const & loop_name,
-	core::Size const num_residues,
-	std::string const & ss,
-	utility::vector1< std::string > const & abego,
-	bool const prepend = false ) const
-{
-	core::conformation::ResidueCOP newres;
-	if ( perm.pose() ) {
-		assert( perm.pose()->total_residue() > 2 );
-		newres = core::conformation::ResidueFactory::create_residue(
-			perm.pose()->residue(2).residue_type_set().name_map("VAL") );
-	}
-	if ( prepend ) {
-		perm.prepend_extended_loop( comp, loop_name, num_residues, ss, abego, newres );
-	} else {
-		perm.append_extended_loop( comp, loop_name, num_residues, ss, abego, newres );
-	}
-}
-
 core::pose::PoseOP
 Connection::build_pose( components::StructureData const & perm ) const
 {
@@ -1397,60 +1339,6 @@ Connection::move_segments( components::StructureData & perm, StringList const & 
 	}
 	perm.chains_from_termini();
 }
-
-/*
-/// @brief adds loop residues based on build_len and cut_resi
-
-void
-Connection::create_loop( components::StructureData & perm ) const
-{
-// list of loop residues to propagate
-utility::vector1< core::Size > loop_residues;
-
-move_segments( perm );
-
-TR << "Cut resi is " << cut_resi(perm) << " out of " << build_len(perm) << std::endl;
-core::Size prepend_residues = 0, append_residues = 0;
-std::string prepend_ss = "", append_ss = "";
-utility::vector1< std::string > prepend_abego, append_abego;
-
-if ( cut_resi(perm) ) {
-prepend_residues = build_len(perm) - cut_resi(perm);
-append_residues = cut_resi(perm);
-} else {
-prepend_residues = 0;
-append_residues = build_len(perm);
-}
-
-std::string const ss = build_ss(perm);
-std::string const ab = build_abego(perm);
-for ( core::Size i = 1; i <= append_residues; ++i ) {
-append_ss += ss[i-1];
-std::string achar = "";
-achar += ab[i-1];
-append_abego.push_back( achar );
-}
-for ( core::Size i = 1; i <= prepend_residues; ++i ) {
-prepend_ss += ss[append_residues+i-1];
-std::string achar = "";
-achar += ab[append_residues+i-1];
-prepend_abego.push_back( achar );
-}
-debug_assert( append_residues == append_ss.size() );
-debug_assert( append_residues == append_abego.size() );
-debug_assert( prepend_residues == prepend_ss.size() );
-debug_assert( prepend_residues == prepend_abego.size() );
-debug_assert( append_residues + prepend_residues == build_len(perm) );
-if ( prepend_residues ) {
-set_loop_upper( perm, id() + "_1" );
-add_loop_residues( perm, upper_segment_id(perm), loop_upper(perm), prepend_residues, prepend_ss, prepend_abego, true );
-}
-if ( append_residues ) {
-set_loop_lower( perm, id() );
-add_loop_residues( perm, lower_segment_id(perm), loop_lower(perm), append_residues, append_ss, append_abego, false );
-}
-}
-*/
 
 /// @brief checks the generated StructureData object to ensure it fits with what the user wants
 /// before building

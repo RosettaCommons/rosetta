@@ -78,6 +78,7 @@ StructureData::StructureData( std::string const & id_val ) :
 {
 	segments_.clear();
 	aliases_.clear();
+	covalent_bonds_.clear();
 	segment_order_.clear();
 	abego_.clear();
 }
@@ -96,6 +97,7 @@ StructureData::StructureData( StructureData const & perm ) :
 	data_str_( perm.data_str_ ),
 	segments_( perm.segments_ ),
 	aliases_( perm.aliases_ ),
+	covalent_bonds_( perm.covalent_bonds_ ),
 	segment_order_( perm.segment_order_ )
 {
 	if ( perm.pose() ) {
@@ -268,6 +270,30 @@ StructureData::infer_from_pose( core::pose::Pose const & pose, std::string const
 		sd->add_segment( segname.str(), new_segment );
 		chain_start = *r + 1;
 	}
+
+	// locate non-polymeric covalent bonds
+	for ( core::Size res=1; res<=pose.total_residue(); ++res ) {
+		if ( pose.residue( res ).n_non_polymeric_residue_connections() ) {
+			for ( core::Size conn=1; conn<=pose.residue( res ).n_residue_connections(); ++conn ) {
+				core::Size const other_res = pose.residue( res ).connected_residue_at_resconn( conn );
+				if ( ( other_res == res + 1 ) || ( other_res + 1 == res ) ) continue;
+				std::string const atom1 = pose.residue( res ).type().atom_name( pose.residue( res ).residue_connect_atom_index( conn ) );
+				std::string atom2 = "";
+				// find other connections
+				for ( core::Size oconn=1; oconn<=pose.residue( other_res ).n_residue_connections(); ++oconn ) {
+					if ( pose.residue( other_res ).connected_residue_at_resconn( oconn ) == res ) {
+						atom2 = pose.residue( other_res ).type().atom_name( pose.residue( other_res ).residue_connect_atom_index( oconn ) );
+						break;
+					}
+				}
+				if ( !other_res ) continue;
+				TR << "Found non-polymeric connection between residues " << res << ":" << atom1 << " and " << other_res << ":" << atom2 << std::endl;
+				debug_assert( other_res );
+				debug_assert( !atom2.empty() );
+				sd->add_covalent_bond( res, atom1, other_res, atom2 );
+			}
+		}
+	}
 	sd->set_pose( pose );
 	debug_assert( sd->pose() );
 	debug_assert( sd->ss().size() == pose.total_residue() );
@@ -426,6 +452,21 @@ StructureData::create_from_xml( std::istream & xmltag, std::string const & newid
 				newperm->set_resnum_alias( subtag->getOption< std::string >( "name" ),
 					subtag->getOption< std::string >( "segment" ),
 					subtag->getOption< core::Size >( "res" ) );
+			} else if ( subtag->getName() == "CovalentBond" ) {
+				debug_assert( subtag->hasOption( "segment1" ) );
+				debug_assert( subtag->hasOption( "segment2" ) );
+				debug_assert( subtag->hasOption( "residue1" ) );
+				debug_assert( subtag->hasOption( "residue2" ) );
+				debug_assert( subtag->hasOption( "atom1" ) );
+				debug_assert( subtag->hasOption( "atom2" ) );
+				newperm->add_covalent_bond(
+					subtag->getOption< std::string >( "segment1" ),
+					subtag->getOption< core::Size >( "residue1" ),
+					subtag->getOption< std::string >( "atom1" ),
+					subtag->getOption< std::string >( "segment2" ),
+					subtag->getOption< core::Size >( "residue2" ),
+					subtag->getOption< std::string >( "atom2" )
+				);
 			} else {
 				subtag->write( TR.Error );
 				throw utility::excn::EXCN_RosettaScriptsOption( "Unknown tag in permutation: " + subtag->getName() );
@@ -635,6 +676,18 @@ StructureData::save_into_pose( core::pose::Pose & pose ) const
 	while ( std::getline( ss, line ) ) {
 		add_perm_remark( pose.pdb_info()->remarks(), line );
 	}
+}
+
+utility::vector1< BondInfo >::const_iterator
+StructureData::covalent_bonds_begin() const
+{
+	return covalent_bonds_.begin();
+}
+
+utility::vector1< BondInfo >::const_iterator
+StructureData::covalent_bonds_end() const
+{
+	return covalent_bonds_.end();
 }
 
 /// @brief stores a string in the pose's datacache
@@ -984,173 +1037,6 @@ StructureData::mark_connected(
 	debug_assert( up->second.lower_segment() == "" );
 	up->second.set_lower_segment( lower_seg );
 }
-
-/// @brief inserts an extended loop (phi/psi/omega=180) before segment x
-void
-StructureData::prepend_extended_loop(
-	std::string const & seg,
-	std::string const & loop_name,
-	core::Size const num_residues,
-	std::string const & insert_ss,
-	utility::vector1< std::string > const & insert_abego,
-	core::conformation::ResidueCOP template_res )
-{
-	debug_assert( num_residues == insert_ss.size() );
-	debug_assert( (!insert_abego.size()) || ( num_residues == insert_abego.size() ) );
-
-	// save and clear lower segment -- it will become the lower segment of the loop
-	SegmentMap::iterator r = segments_.find(seg);
-	debug_assert( r != segments_.end() );
-	std::string cached_lower_segment = r->second.lower_segment();
-	r->second.set_lower_segment( "" );
-
-	if ( pose_ ) {
-		core::Real const start_phi = pose()->phi( segment(seg).start() );
-		core::Size const insert_before_res = segment(seg).nterm_resi();
-		for ( core::Size loop_res=1; loop_res<=num_residues; ++loop_res ) {
-			TR.Debug << "Prepending loop residue " << loop_res << std::endl;
-			pose_->conformation().safely_prepend_polymer_residue_before_seqpos( *(template_res->clone()), insert_before_res, true );
-		}
-		// set phi/psi for new loops
-		core::Size const end = insert_before_res + num_residues - 1;
-		for ( core::Size loop_res=insert_before_res; loop_res<=end; ++loop_res ) {
-			TR.Debug << "Setting phi/psi for " << loop_res << std::endl;
-			pose_->set_phi( loop_res, 180.0 );
-			pose_->set_psi( loop_res, 180.0 );
-			pose_->set_omega( loop_res, 180.0 );
-		}
-		pose_->set_phi( segment(seg).start(), start_phi );
-	}
-
-	// new loop will include the terminal residue of seg and have its own terminal residue specified as not included
-	core::Size const pad = r->second.nterm_pad();
-	bool const nterm_inc = !pad;
-	r->second.delete_leading_residues();
-
-	core::Size const loop_safe = (num_residues+1)/2 + pad; // the +pad is to make sure safe_res != dummy
-	core::Size const group = choose_new_movable_group();
-	// add dummy residue to the beginning
-	utility::vector1< std::string > tmp_abego;
-	for ( core::Size i=1; i<=pad; ++i ) {
-		tmp_abego.push_back( "X" );
-	}
-	for ( core::Size i=1; i<=insert_abego.size(); ++i ) {
-		tmp_abego.push_back( insert_abego[i] );
-	}
-	std::string tmp_ss = "";
-	for ( core::Size i=1; i<=pad; ++i ) {
-		tmp_ss += 'L';
-	}
-	tmp_ss += insert_ss;
-	debug_assert( tmp_abego.size() == tmp_ss.size() );
-	StringList::iterator insert_before_me = find_segment( seg );
-	debug_assert( insert_before_me != segment_order_.end() );
-	add_segment(
-		loop_name,
-		insert_before_me,
-		num_residues+pad, // the +1 is for the terminal "dummy" residue
-		loop_safe,
-		0,
-		group,
-		true,
-		nterm_inc, true,
-		cached_lower_segment, "",
-		tmp_ss, tmp_abego );
-	// update connected partner
-	if ( cached_lower_segment != "" ) {
-		SegmentMap::iterator r2 = segments_.find( cached_lower_segment );
-		debug_assert( r2 != segments_.end() );
-		debug_assert( r2->second.upper_segment() == seg );
-		r2->second.set_upper_segment( loop_name );
-	}
-	connect_segments( loop_name, seg );
-}
-
-/// @brief inserts an extended loop (phi/psi/omega=180) after segment x
-void
-StructureData::append_extended_loop(
-	std::string const & seg,
-	std::string const & loop_name,
-	core::Size const num_residues,
-	std::string const & insert_ss,
-	utility::vector1< std::string > const & insert_abego,
-	core::conformation::ResidueCOP template_res )
-{
-	debug_assert( num_residues == insert_ss.size() );
-	debug_assert( (!insert_abego.size()) || ( num_residues == insert_abego.size() ) );
-
-	TR.Debug << "Before append loop: " << *this << std::endl;
-	SegmentMap::iterator r = segments_.find(seg);
-	debug_assert( r != segments_.end() );
-	std::string cached_upper_segment = r->second.upper_segment();
-	r->second.set_upper_segment( "" );
-
-	if ( pose_ ) {
-		// save phi/psi/omega for the connecting residues
-		core::Real const end_phi = pose()->phi( segment(seg).cterm_resi() );
-		core::Real const end_psi = pose()->psi( segment(seg).stop() );
-		core::Real const end_omega = pose()->omega( segment(seg).stop() );
-
-		core::Size const insert_after_res = segment(seg).cterm_resi();
-		for ( core::Size loop_res=1; loop_res<=num_residues; ++loop_res ) {
-			TR.Debug << "Appending loop residue " << loop_res << std::endl;
-			pose_->conformation().safely_append_polymer_residue_after_seqpos( *(template_res->clone()), insert_after_res+loop_res-1, true );
-		}
-		// set phi/psi for new loops
-		core::Size const end = insert_after_res + num_residues - 1;
-		for ( core::Size loop_res=insert_after_res; loop_res<=end; ++loop_res ) {
-			TR.Debug << "Setting phi/psi for " << loop_res << std::endl;
-			pose_->set_phi( loop_res, 180.0 );
-			pose_->set_psi( loop_res, 180.0 );
-			pose_->set_omega( loop_res, 180.0 );
-		}
-
-		TR.Debug << "Restoring phi/psi for " << segment(seg).stop() << std::endl;
-		pose_->set_psi( segment(seg).stop(), end_psi );
-		pose_->set_omega( segment(seg).stop(), end_omega );
-		pose_->set_phi( segment(seg).stop()+1, end_phi );
-	}
-
-	// new loop will include the terminal residue of seg and have its own terminal residue specified as not included
-	core::Size const pad = r->second.cterm_pad();
-	bool const cterm_inc = !pad;
-	r->second.delete_trailing_residues();
-
-	core::Size const loop_safe = ( num_residues+1 ) / 2;
-	core::Size const group = choose_new_movable_group();
-	utility::vector1< std::string > tmp_abego = insert_abego;
-	for ( core::Size i=1; i<=pad; ++i ) {
-		tmp_abego.push_back( "X" );
-	}
-	std::string tmp_ss = insert_ss;
-	for ( core::Size i=1; i<=pad; ++i ) {
-		tmp_ss += 'L';
-	}
-	debug_assert( tmp_abego.size() == tmp_ss.size() );
-	StringList::iterator insert_pos = find_segment( seg );
-	debug_assert( insert_pos != segment_order_.end() );
-	++insert_pos;
-	add_segment(
-		loop_name,
-		insert_pos,
-		num_residues+pad, // the +pad is for the terminal dummy residue
-		loop_safe,
-		0,
-		group,
-		true,
-		true, cterm_inc,
-		"", cached_upper_segment,
-		tmp_ss, tmp_abego );
-	// update connected partner
-	if ( cached_upper_segment != "" ) {
-		SegmentMap::iterator r2 = segments_.find( cached_upper_segment );
-		debug_assert( r2 != segments_.end() );
-		debug_assert( r2->second.lower_segment() == seg );
-		r2->second.set_lower_segment( loop_name );
-	}
-	connect_segments( seg, loop_name );
-}
-
 
 /// @brief determine pose chains based on termini
 void
@@ -2349,6 +2235,45 @@ StructureData::declare_covalent_bond(
 	declare_covalent_bond( pose_residue( seg1, res1 ), atom1, pose_residue( seg2, res2 ), atom2 );
 }
 
+void
+StructureData::add_covalent_bond(
+	core::Size const res1, std::string const & atom1,
+	core::Size const res2, std::string const & atom2 )
+{
+	std::string const & seg1 = segment_name( res1 );
+	core::Size const localres1 = res1 - segment( seg1 ).start() + 1;
+	std::string const & seg2 = segment_name( res2 );
+	core::Size const localres2 = res2 - segment( seg2 ).start() + 1;
+	if ( localres1 && localres2 ) {
+		add_covalent_bond( seg1, localres1, atom1, seg2, localres2, atom2 );
+	} else {
+		TR << "Warning: connection between residues " << res1 << " and " << res2 << " may be lost since one/both of the residues are present as \"padding\" residues." << std::endl;
+	}
+}
+
+void
+StructureData::add_covalent_bond(
+	std::string const & seg1, core::Size const res1, std::string const & atom1,
+	std::string const & seg2, core::Size const res2, std::string const & atom2 )
+{
+	add_covalent_bond( BondInfo( seg1, seg2, res1, res2, atom1, atom2 ) );
+}
+
+void
+StructureData::add_covalent_bond( BondInfo const & bi )
+{
+	covalent_bonds_.push_back( bi );
+}
+
+void
+StructureData::update_covalent_bonds_in_pose()
+{
+	for ( utility::vector1< BondInfo >::const_iterator p = covalent_bonds_.begin(); p != covalent_bonds_.end(); ++p ) {
+		TR.Debug << "Updating covalent bond " << p->seg1 << "-->" << p->seg2 << std::endl;
+		declare_covalent_bond_in_pose( pose_residue( p->seg1, p->res1 ), p->atom1, pose_residue( p->seg2, p->res2 ), p->atom2 );
+	}
+}
+
 /// @brief declares a covalent bond using pose residues
 void
 StructureData::declare_covalent_bond(
@@ -2356,15 +2281,30 @@ StructureData::declare_covalent_bond(
 	core::Size const res2, std::string const & atom2 )
 {
 	TR.Debug << "Creating covalent bond between " << res1 << " and " << res2 << std::endl;
-	debug_assert( pose_ );
-	pose_->conformation().declare_chemical_bond( res1, atom1, res2, atom2 );
-
-	//Rebuild the connection atoms:
-	for ( core::Size i = 1; i <= pose_->conformation().residue(res1).n_residue_connections(); ++i ) {
-		pose_->conformation().rebuild_residue_connection_dependent_atoms( res1, i );
+	if ( ( res1 != res2 + 1 ) && ( res1 + 1 != res2 ) ) {
+		add_covalent_bond( res1, atom1, res2, atom2 );
 	}
-	for ( core::Size i = 1; i <= pose_->conformation().residue(res2).n_residue_connections(); ++i ) {
-		pose_->conformation().rebuild_residue_connection_dependent_atoms( res2, i );
+	declare_covalent_bond_in_pose( res1, atom1, res2, atom2 );
+}
+
+void
+StructureData::declare_covalent_bond_in_pose(
+	core::Size const res1, std::string const & atom1,
+	core::Size const res2, std::string const & atom2 )
+{
+	if ( !pose_ ) return;
+	if ( pose_->residue( res1 ).has( atom1 ) && pose_->residue( res2 ).has( atom2 ) ) {
+		pose_->conformation().declare_chemical_bond( res1, atom1, res2, atom2 );
+		//Rebuild the connection atoms:
+		for ( core::Size i = 1; i <= pose_->conformation().residue(res1).n_residue_connections(); ++i ) {
+			pose_->conformation().rebuild_residue_connection_dependent_atoms( res1, i );
+		}
+		for ( core::Size i = 1; i <= pose_->conformation().residue(res2).n_residue_connections(); ++i ) {
+			pose_->conformation().rebuild_residue_connection_dependent_atoms( res2, i );
+		}
+	} else {
+		TR.Debug << "Skipping covalent bond declaration between " << res1 << ":" << atom1
+			<< " and " << res2 << ":" << atom2 << " due to missing atoms. The residue identity may have changed." << std::endl;
 	}
 }
 
@@ -2859,6 +2799,9 @@ StructureData::copy_data( StructureData const & perm, bool const do_rename )
 			}
 		}
 	}
+	for ( utility::vector1< BondInfo >::const_iterator bi=perm.covalent_bonds_begin(); bi!=perm.covalent_bonds_end(); ++bi ) {
+		add_covalent_bond( *bi );
+	}
 }
 
 /// @brief just return the pose (doesn't build pose if it doesn't exist)
@@ -2936,6 +2879,7 @@ StructureData::update_numbering()
 	ss_ = new_ss;
 	debug_assert( new_abego.size() == pose_length_ );
 	abego_ = new_abego;
+	if ( pose_ ) update_covalent_bonds_in_pose();
 	TR.Debug << "Numbering updated - new pose length = " << pose_length_ << " new ss = " << new_ss << std::endl;
 }
 
@@ -3275,6 +3219,12 @@ operator<<( std::ostream & os, StructureData const & perm )
 	for ( a_it = perm.aliases_.begin(), a_end = perm.aliases_.end(); a_it != a_end; ++a_it ) {
 		os << "\t<Alias name=\"" << a_it->first << "\" segment=\""
 			<< a_it->second.first << "\" res=\"" << a_it->second.second << "\" />" << std::endl;
+	}
+	// covalent bonds
+	for ( utility::vector1< BondInfo >::const_iterator b = perm.covalent_bonds_.begin(); b != perm.covalent_bonds_.end(); ++b ) {
+		os << "\t<CovalentBond segment1=\"" << b->seg1 << "\" segment2=\"" << b->seg2
+			<< "\" residue1=\"" << b->res1 << "\" residue2=\"" << b->res2
+			<< "\" atom1=\"" << b->atom1 << "\" atom2=\"" << b->atom2 << "\" />" << std::endl;
 	}
 	os << "</StructureData>";
 	return os;

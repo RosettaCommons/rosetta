@@ -368,20 +368,6 @@ public:
 	utility::vector1< std::string >
 	find_available_lower_termini( components::StructureData const & perm ) const;
 
-	/// @brief adds loop residues
-	void add_loop_residues(
-		components::StructureData & perm,
-		std::string const & comp,
-		std::string const & loop_name,
-		core::Size const num_residues,
-		std::string const & ss,
-		utility::vector1< std::string > const & abego,
-		bool const prepend ) const;
-
-	/// @brief rearranges the pose and inserts loop residues to get ready for closure
-	/// returns a pair of the loop start residue and the loop end residue
-	//void create_loop( components::StructureData & perm ) const;
-
 	/// @brief Given desired lengths, compute a set of idealized loop motifs via Nobu/Rie/YuRu rules
 	MotifList calc_idealized_motifs(
 		std::string const & abego1,

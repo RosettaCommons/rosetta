@@ -37,6 +37,7 @@ namespace denovo_design {
 
 static char const PARENT_DELIMETER = '.';
 
+typedef std::pair< core::Size, core::Size > SizePair;
 typedef std::list< std::string > StringList;
 typedef utility::vector1< std::string > StringVec;
 

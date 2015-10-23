@@ -48,6 +48,25 @@ namespace denovo_design {
 namespace components {
 
 typedef std::map< std::string, Segment > SegmentMap;
+typedef std::pair< std::string, core::Size > Alias;
+
+struct BondInfo {
+private:
+	BondInfo(): seg1( "" ), seg2( "" ), res1( 0 ), res2( 0 ), atom1( "" ), atom2( "" ) {}
+public:
+	BondInfo(
+		std::string const & s1,
+		std::string const & s2,
+		core::Size const r1,
+		core::Size const r2,
+		std::string const & a1,
+		std::string const & a2
+	): seg1( s1 ), seg2( s2 ), res1( r1 ), res2( r2 ), atom1( a1 ), atom2( a2 ) {}
+
+	std::string seg1, seg2;
+	core::Size res1, res2;
+	std::string atom1, atom2;
+};
 
 // StructureData objects -- contains functionality for building components
 class StructureData : public utility::pointer::ReferenceCount {
@@ -264,6 +283,10 @@ public:
 
 	/// @brief end of segment list
 	StringList::const_iterator segments_end() const;
+
+	/// @brief start/end of covalent bonds list
+	utility::vector1< BondInfo >::const_iterator covalent_bonds_begin() const;
+	utility::vector1< BondInfo >::const_iterator covalent_bonds_end() const;
 
 	/// @brief finds a segment in the segment_order list and returns an iterator to it
 	StringList::const_iterator find_segment( std::string const & segname ) const;
@@ -527,24 +550,6 @@ public:
 	/// @brief deletes the residues between the segment C terminus and the C anchor point
 	void delete_trailing_residues( std::string const & seg );
 
-	/// @brief inserts an extended loop (phi/psi/omega=180) before segment x
-	void prepend_extended_loop(
-		std::string const & seg,
-		std::string const & loop_name,
-		core::Size const num_residues,
-		std::string const & insert_ss,
-		utility::vector1< std::string > const & insert_abego,
-		core::conformation::ResidueCOP template_res );
-
-	/// @brief inserts an extended loop (phi/psi/omega=180) after segment x
-	void append_extended_loop(
-		std::string const & seg,
-		std::string const & loop_name,
-		core::Size const num_residues,
-		std::string const & insert_ss,
-		utility::vector1< std::string > const & insert_abego,
-		core::conformation::ResidueCOP template_res );
-
 	/// @brief replaces one residue with another
 	void replace_residue(
 		std::string const & target_segment,
@@ -559,6 +564,7 @@ public:
 
 	/// @brief updates numbering based on the saved order of Segment objects
 	void update_numbering();
+	void update_covalent_bonds_in_pose();
 
 protected:
 	/// helper functions for data access
@@ -591,6 +597,20 @@ protected:
 		core::Size const align_res_target,
 		core::Size const align_res_movable,
 		core::Size const res_with_torsions );
+
+	void add_covalent_bond(
+		core::Size const res1, std::string const & atom1,
+		core::Size const res2, std::string const & atom2 );
+
+	void add_covalent_bond(
+		std::string const & seg1, core::Size const res1, std::string const & atom1,
+		std::string const & seg2, core::Size const res2, std::string const & atom2 );
+
+	void add_covalent_bond( BondInfo const & bi );
+
+	void declare_covalent_bond_in_pose(
+		core::Size const res1, std::string const & atom1,
+		core::Size const res2, std::string const & atom2 );
 
 	/// @brief moves a segment of the pose such that the segment from start2<=res<=end2 is moved so that it starts at end1+1
 	/// returns the jump number that is to be ignored in fold tree searches
@@ -662,7 +682,9 @@ private:
 	// map of segment to residue [start, end]
 	SegmentMap segments_;
 	// names given to special single residues -- value stored is segment name + intra-segment residue number
-	std::map< std::string, std::pair< std::string, core::Size > > aliases_;
+	std::map< std::string, Alias > aliases_;
+	// non-canonical covalent bonds
+	utility::vector1< BondInfo > covalent_bonds_;
 	// segments listed in order
 	StringList segment_order_;
 };

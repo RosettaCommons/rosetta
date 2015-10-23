@@ -123,7 +123,14 @@ private:
 	/// @brief checks to see whether solutions found by DFS search can be combined.
 	void add_combined_solutions( utility::vector1< Solution > & solutions ) const;
 
-private:
+	void add_non_polymeric_connections(
+		utility::vector1< Solution > & solutions,
+		StructureData const & perm ) const;
+
+	core::Size select_best_solution(
+		StructureData const & perm,
+		utility::vector1< Solution > const & solutions ) const;
+
 	/// @brief checks a solution to ensure that covalently bound segments are not found both inside and outside of loops
 	bool check_solution( StructureData const & perm, Solution const & solution ) const;
 

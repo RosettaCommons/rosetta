@@ -94,6 +94,13 @@ FoldGraph::FoldGraph( StructureData const & perm, core::pose::PoseCOP pose ) :
 		}
 	}
 
+	// look for non-canonical bonds
+	for ( utility::vector1< BondInfo >::const_iterator bi = perm.covalent_bonds_begin(); bi != perm.covalent_bonds_end(); ++bi ) {
+		TR << "Found non-canonical connection from " << bi->seg1 << ":" << bi->res1 << ":" << bi->atom1
+			<<" to " << bi->seg2 << ":" << bi->res2 << ":" << bi->atom2 << std::endl;
+		add_edge( bi->seg1, bi->seg2 );
+	}
+
 	// add peptide edges
 	for ( StringList::const_iterator n = perm.segments_begin(); n != perm.segments_end(); ++n ) {
 		Segment const & resis = perm.segment(*n);
@@ -334,6 +341,23 @@ FoldGraph::fold_tree_rec(
 	}
 }
 
+bool
+is_non_polymeric_connection(
+	StructureData const & perm,
+	std::string const & seg1,
+	std::string const & seg2 )
+{
+	for ( utility::vector1< BondInfo >::const_iterator bi = perm.covalent_bonds_begin(); bi != perm.covalent_bonds_end(); ++bi ) {
+		if ( ( ( seg1 == bi->seg1 ) && ( seg2 == bi->seg2 ) )
+				|| ( ( seg2 == bi->seg1 ) && ( seg1 == bi->seg2 ) ) ) {
+			TR << "is_non_polymeric_connection " << seg1 << " " << seg2 << " 1" << std::endl;
+			return true;
+		}
+	}
+	TR << "is_non_polymeric_connection " << seg1 << " " << seg2 << " 0" << std::endl;
+	return false;
+}
+
 /// @brief checks a solution to ensure that covalently bound segments are not found both inside and outside of loops
 bool
 FoldGraph::check_solution(
@@ -360,24 +384,54 @@ FoldGraph::check_solution(
 			fixed_mgs.insert( mg );
 		}
 	}
+	for ( Solution::const_iterator nodeset = solution.begin(); nodeset != solution.end(); ++nodeset ) {
+		for ( NodeSet::const_iterator n = nodeset->begin(); n != nodeset->end(); ++n ) {
+			core::Size const mg = perm.segment( segment( *n ) ).movable_group;
+			if ( fixed_mgs.find( mg ) != fixed_mgs.end() ) {
+				TR.Debug << "Movable group for node " << *n << " --> " << segment( *n ) << " : " << mg << " is present in both loops and non-loop regions. Skipping." << std::endl;
+				return false;
+			}
+		}
+	}
 
-	for ( core::Size i=1; i<=solution.size(); ++i ) {
-		//std::set< core::Size > this_loop;
-		for ( std::set< core::Size >::const_iterator lseg=solution[i].begin(); lseg != solution[i].end(); ++lseg ) {
-			std::string const & segname = segment( *lseg );
+	// check for the same MG present in different loops
+	NodeSet seen;
+	for ( Solution::const_iterator nodeset = solution.begin(); nodeset != solution.end(); ++nodeset ) {
+		for ( NodeSet::const_iterator n = nodeset->begin(); n != nodeset->end(); ++n ) {
+			std::string const & segname = segment( *n );
+			core::Size const mg = perm.segment(segname).movable_group;
+			if ( seen.find( mg ) != seen.end() ) {
+				TR.Debug << "Movable group for node " << *n << " --> " << segname << " : " << mg << " is present in two different loops. Skipping." << std::endl;
+				return false;
+			}
+		}
+		for ( NodeSet::const_iterator n = nodeset->begin(); n != nodeset->end(); ++n ) {
+			seen.insert( perm.segment( segment( *n ) ).movable_group );
+		}
+		TR.Debug << "Seen is now: " << seen << std::endl;
+	}
+
+	for ( Solution::const_iterator nodeset = solution.begin(); nodeset != solution.end(); ++nodeset ) {
+		std::set< std::string > segments_in_set;
+		for ( NodeSet::const_iterator n = nodeset->begin(); n != nodeset->end(); ++n ) {
+			std::string const & segname = segment( *n );
+			segments_in_set.insert( segname );
 			core::Size const mg = perm.segment(segname).movable_group;
 			// check to see if this mg has already been "used" i.e. referred to
 			if ( fixed_mgs.find(mg) != fixed_mgs.end() ) {
-				TR.Debug << "Movable group for " << segname << " : " << mg << " has already been used in another loop or is present in both loops and non-loop regions. Skipping." << std::endl;
-				return false;
+				// check to see if the violating segments are connected by a bond -- this makes it OK
+				std::string const & seg1 = segment( *n );
+				for ( std::set< std::string >::const_iterator s2 = segments_in_set.begin(); s2 != segments_in_set.end(); ++s2 ) {
+					if ( perm.segment( *s2 ).movable_group != mg ) continue;
+					if ( seg1 == *s2 ) continue;
+					if ( ! is_non_polymeric_connection( perm, seg1, *s2 ) ) {
+						TR.Debug << "Movable group for node " << *n << " --> " << segname << " : " << mg << " has been used twice in the same loop. Skipping." << std::endl;
+						return false;
+					}
+				}
 			}
-			//this_loop.insert( mg );
 			fixed_mgs.insert( mg );
 		}
-		// update list of "used" mgs
-		//for ( std::set< core::Size >::const_iterator l = this_loop.begin(); l != this_loop.end(); ++l ) {
-		// fixed_mgs.insert( *l );
-		//}
 	}
 
 	// each set in the vector represents one loop object
@@ -493,6 +547,35 @@ FoldGraph::named_solution( Solution const & solution ) const
 	return nsolution;
 }
 
+void
+FoldGraph::add_non_polymeric_connections(
+	utility::vector1< Solution > & solutions,
+	StructureData const & perm ) const
+{
+	for ( utility::vector1< Solution >::iterator s = solutions.begin(); s != solutions.end(); ++s ) {
+		for ( Solution::iterator sol = s->begin(); sol != s->end(); ++sol ) {
+			NodeSet connected_nodes;
+			for ( NodeSet::const_iterator n = sol->begin(); n != sol->end(); ++n ) {
+				for ( utility::vector1< BondInfo >::const_iterator bi = perm.covalent_bonds_begin();
+						bi != perm.covalent_bonds_end(); ++bi ) {
+					core::Size othernode = 0;
+					if ( segment( *n ) == bi->seg1 ) {
+						othernode = nodeidx( bi->seg2 );
+					} else if ( segment( *n ) == bi->seg2 ) {
+						othernode = nodeidx( bi->seg1 );
+					}
+					if ( othernode ) connected_nodes.insert( othernode );
+				}
+			}
+			if ( !connected_nodes.empty() ) {
+				for ( NodeSet::const_iterator n = connected_nodes.begin(); n != connected_nodes.end(); ++n ) {
+					sol->insert( *n );
+				}
+			} // if !connected_nodes.empty()
+		} // for nodeset in s
+	} // for s in solution
+}
+
 /// @brief generates a solution of movable segments to be used in remodel, based on the foldgraph
 Solution
 FoldGraph::compute_best_solution(
@@ -563,7 +646,7 @@ FoldGraph::compute_best_solution(
 	if ( !staple_loops.size() ) {
 		solutions.push_back( Solution() );
 	}
-	for ( core::Size i=1, endi=solutions.size(); i<=endi; ++i ) {
+	for ( core::Size i=1; i<=solutions.size(); ++i ) {
 		NodeSet visited;
 		for ( core::Size j=1, endj=solutions[i].size(); j<=endj; ++j ) {
 			TR.Debug << solutions[i][j] << " ";
@@ -585,6 +668,35 @@ FoldGraph::compute_best_solution(
 	// combine solution sets which are connected by one and only one peptide edge
 	add_combined_solutions( solutions );
 
+	// add non-polymeric connections to solutions
+	utility::vector1< Solution > const solutions_return = solutions;
+
+	add_non_polymeric_connections( solutions, perm );
+
+	core::Size const bestidx = select_best_solution( perm, solutions );
+	if ( bestidx == 0 ) {
+		TR << "No valid solutions found..." << std::endl;
+		return Solution();
+	}
+	TR << "Chose the following loops from solution " << bestidx << ":";
+	for ( core::Size j=1; j<=solutions[bestidx].size(); ++j ) {
+		TR << "[ ";
+		for ( NodeSet::const_iterator g=solutions[bestidx][j].begin(); g != solutions[bestidx][j].end(); ++g ) {
+			TR << segment(*g) << " ";
+		}
+		TR << "] ";
+	}
+	TR << std::endl;
+
+	TR.Debug << "perm=" << perm << std::endl;
+	return solutions_return[ bestidx ];
+}
+
+core::Size
+FoldGraph::select_best_solution(
+	StructureData const & perm,
+	utility::vector1< Solution > const & solutions ) const
+{
 	// print candidates
 	for ( core::Size i=1; i<=solutions.size(); ++i ) {
 		TR.Debug << "S" << i << ": ";
@@ -609,22 +721,7 @@ FoldGraph::compute_best_solution(
 			bestidx = i;
 		}
 	}
-	if ( bestidx == 0 ) {
-		TR << "No valid solutions found..." << std::endl;
-		return Solution();
-	}
-	TR << "Chose the following loops from solution " << bestidx << ":";
-	for ( core::Size j=1; j<=solutions[bestidx].size(); ++j ) {
-		TR << "[ ";
-		for ( NodeSet::const_iterator g=solutions[bestidx][j].begin(); g != solutions[bestidx][j].end(); ++g ) {
-			TR << segment(*g) << " ";
-		}
-		TR << "] ";
-	}
-	TR << std::endl;
-
-	TR.Debug << "perm=" << perm << std::endl;
-	return solutions[bestidx];
+	return bestidx;
 }
 
 protocols::loops::LoopsOP
@@ -735,6 +832,7 @@ FoldGraph::create_loops_dfs(
 		NodeSet visited_new = visited;
 		create_loops_dfs( solutions, visited_new, othernode, cut_loop_nodes, perm );
 	}
+	// add non-polymeric bonded things
 	if ( terminal_node ) {
 		solutions.push_back( visited );
 	}

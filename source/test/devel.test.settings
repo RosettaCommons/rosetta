@@ -16,7 +16,7 @@ sources = {
 		"MMTReceiver",
 	],
 	"denovo_design" : [
-		"BuildSheet",
+		"BuildBetaSheet",
 		"CoreResiduesPerElementFilter",
 		"FoldabilityFilter",
 		"GenericSimulatedAnnealer",
