@@ -301,12 +301,12 @@ CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const name, vecto
 		cdr_options_->design(false);
 	} else if ( name == "ALLOW" ) {
 		cdr_options_->design(true);
-	} else if ( name=="PROFILES" || name == "PROFILE" || name == "STRATEGY" || name == "PRIMARY_STRATEGY" || name == "PRIMARYSTRATEGY" || name == "PRIMARY") {
+	} else if ( name=="PROFILES" || name == "PROFILE" || name == "STRATEGY" || name == "PRIMARY_STRATEGY" || name == "PRIMARYSTRATEGY" || name == "PRIMARY" ) {
 		check_line_len(lineSP, 4);
 		std::string option = lineSP[4];
 		boost::to_upper(option);
 		set_cdr_design_primary_option(option);
-	} else if ( name=="FALLBACK_STRATEGY" || name == "FALLBACKSTRATEGY" || name == "FALLBACK") {
+	} else if ( name=="FALLBACK_STRATEGY" || name == "FALLBACKSTRATEGY" || name == "FALLBACK" ) {
 		check_line_len(lineSP, 4);
 		std::string option = lineSP[4];
 		boost::to_upper(option);

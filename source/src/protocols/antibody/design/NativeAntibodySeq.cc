@@ -33,12 +33,12 @@ static THREAD_LOCAL basic::Tracer TR("protocols.antibody.NativeAntibodySeq");
 namespace protocols {
 namespace antibody {
 namespace design {
-	using namespace core::chemical;
-	using namespace basic::datacache;
-	using basic::datacache::DataCache_CacheableData;
+using namespace core::chemical;
+using namespace basic::datacache;
+using basic::datacache::DataCache_CacheableData;
 
 NativeAntibodySeq::NativeAntibodySeq(const core::pose::Pose &pose,
-									 protocols::antibody::AntibodyInfoCOP ab_info) :
+	protocols::antibody::AntibodyInfoCOP ab_info) :
 	CacheableData(),
 	ab_info_(ab_info)
 {
@@ -70,7 +70,7 @@ NativeAntibodySeq::set_sequence(const core::pose::Pose &pose) {
 	seq_.clear();
 	cdr_seq_.clear();
 	TR << "Setting full pose sequence" << std::endl;
-	for (core::Size i = 1; i <= pose.total_residue(); ++i) {
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 
 		AA res = pose.aa(i);
 		//PDBNumbering info;
@@ -78,14 +78,14 @@ NativeAntibodySeq::set_sequence(const core::pose::Pose &pose) {
 		//info.chain = pose.pdb_info()->chain(i);
 		//info.icode = pose.pdb_info()->icode(i);
 
-		if (ab_info_->get_region_of_residue(pose, i) != cdr_region) {
+		if ( ab_info_->get_region_of_residue(pose, i) != cdr_region ) {
 			seq_[ pose.pdb_info()->pose2pdb( i )] = res;
 
 		}
 	}
 
 	//Setup CDR Regions
-	for (core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i) {
+	for ( core::Size i = 1; i <= core::Size(ab_info_->get_total_num_CDRs()); ++i ) {
 		CDRNameEnum cdr = static_cast< CDRNameEnum >( i );
 		set_from_cdr( pose, cdr );
 	}
@@ -101,7 +101,7 @@ NativeAntibodySeq::set_from_cdr(const core::pose::Pose &pose, CDRNameEnum cdr) {
 
 	utility::vector1<AA> s;
 	core::Size cdr_start_resnum = ab_info_->get_CDR_start( cdr, pose);
-	for (core::Size cdr_pose_index = cdr_start_resnum; cdr_pose_index <= cdr_start_resnum + ab_info_->get_CDR_length( cdr, pose ) - 1; ++cdr_pose_index){
+	for ( core::Size cdr_pose_index = cdr_start_resnum; cdr_pose_index <= cdr_start_resnum + ab_info_->get_CDR_length( cdr, pose ) - 1; ++cdr_pose_index ) {
 		AA res = pose.aa( cdr_pose_index );
 		s.push_back( res );
 	}
@@ -116,28 +116,27 @@ NativeAntibodySeq::get_sequence(const core::pose::Pose & pose) const {
 
 	//Use any sequence that is set here.  If not, use the current one.
 	utility::vector1<AA> local_seq;
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		std::string info = pose.pdb_info()->pose2pdb( i );
-		if ( seq_.find( info )!= seq_.end() ){
+		if ( seq_.find( info )!= seq_.end() ) {
 			AA res = seq_.find( info )->second;
 			local_seq.push_back( res );
-		}
-		else{
+		} else {
 			AA res = pose.aa( i );
 			local_seq.push_back( res );
 		}
 	}
 
 	//Go through each of the CDRs.  Update the final sequence with what is stored here.
-	for (core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs()); ++i){
+	for ( core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs()); ++i ) {
 		CDRNameEnum cdr = static_cast< CDRNameEnum >( i );
 		core::Size cdr_start_resnum = ab_info_->get_CDR_start( cdr, pose );
 
-		if (cdr_seq_.find( cdr ) != cdr_seq_.end()) continue;
+		if ( cdr_seq_.find( cdr ) != cdr_seq_.end() ) continue;
 
 		utility::vector1< AA > local_cdr_seq = cdr_seq_.find( cdr )->second;
 		core::Size local_index = 1;
-		for (core::Size cdr_pose_index = cdr_start_resnum; cdr_pose_index <= cdr_start_resnum + ab_info_->get_CDR_length( cdr, pose ) - 1; ++cdr_pose_index){
+		for ( core::Size cdr_pose_index = cdr_start_resnum; cdr_pose_index <= cdr_start_resnum + ab_info_->get_CDR_length( cdr, pose ) - 1; ++cdr_pose_index ) {
 			local_seq[ cdr_pose_index ] = local_cdr_seq[ local_index ];
 			local_index +=1;
 		}
@@ -145,7 +144,7 @@ NativeAntibodySeq::get_sequence(const core::pose::Pose & pose) const {
 
 	//Convert vector to string and return
 	std::string return_seq = "";
-	for (core::Size i = 1; i <= pose.total_residue(); ++i ){
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		return_seq += core::chemical::oneletter_code_from_aa( local_seq[ i ]);
 	}
 	return return_seq;

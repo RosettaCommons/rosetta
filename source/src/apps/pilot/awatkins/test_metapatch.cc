@@ -112,14 +112,14 @@ using utility::file::FileName;
 static basic::Tracer TR("test_metapatch" );
 
 namespace metapatch {
-	// pert options
-	IntegerOptionKey const first_ligand_res ( "metapatch::first_ligand_res" );
-	IntegerOptionKey const last_ligand_res ( "metapatch::last_ligand_res" );
-	IntegerOptionKey const scoring_mode ( "metapatch::scoring_mode" );
-	RealOptionKey const score_threshold ( "metapatch::score_threshold" );
-	IntegerOptionKey const top_n ( "metapatch::top_n" );
-	BooleanOptionKey const also_pack ( "metapatch::also_pack" );
-	RealOptionKey const taboo_threshold ( "metapatch::taboo_threshold" );
+// pert options
+IntegerOptionKey const first_ligand_res ( "metapatch::first_ligand_res" );
+IntegerOptionKey const last_ligand_res ( "metapatch::last_ligand_res" );
+IntegerOptionKey const scoring_mode ( "metapatch::scoring_mode" );
+RealOptionKey const score_threshold ( "metapatch::score_threshold" );
+IntegerOptionKey const top_n ( "metapatch::top_n" );
+BooleanOptionKey const also_pack ( "metapatch::also_pack" );
+RealOptionKey const taboo_threshold ( "metapatch::taboo_threshold" );
 }
 
 int
@@ -128,7 +128,7 @@ main( int argc, char* argv[] )
 	try {
 
 		using namespace protocols::residue_optimization;
-		
+
 		//utility::vector1< core::Size > empty_vector(0);
 		option.add( metapatch::first_ligand_res, "first res" ).def( 1 );
 		option.add( metapatch::last_ligand_res, "last res" ).def( 2 );
@@ -145,37 +145,37 @@ main( int argc, char* argv[] )
 		ScoreFunctionOP score_fxn = get_score_function();
 		// Soft repulsion.
 		score_fxn->set_weight( fa_rep, 0.1 );
-		
+
 		Pose pose;
 		import_pose::pose_from_pdb( pose, option[ in::file::s ].value()[1] );
-		
+
 		Size ligand_begin = option[ metapatch::first_ligand_res ].value();
 		Size ligand_end = option[ metapatch::last_ligand_res ].value();
 		Real threshold = option[ metapatch::score_threshold ].value();
 		Size mode = option[ metapatch::scoring_mode ].value();
 		bool pack = option[ metapatch::also_pack ].value();
 		Real taboo = option[ metapatch::taboo_threshold ].value();
-		
+
 		Size n_to_save = option[ metapatch::top_n ].value();
 
 		utility::vector1< std::string > metapatch_names;
-		
+
 		//metapatch_names.push_back( "brominated" );
 		metapatch_names.push_back( "chlorinated" );
 		//metapatch_names.push_back( "fluorinated" );
 		//metapatch_names.push_back( "iodinated" );
 		metapatch_names.push_back( "methylated" );
-		
+
 		//metapatch_names.push_back( "methoxylated" );
 		//metapatch_names.push_back( "ethylated" );
 		//metapatch_names.push_back( "hydroxylated" );
-		
+
 		kinematics::MoveMapOP mm( new kinematics::MoveMap() );
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			mm->set_bb(  ii, true );
 			mm->set_chi( ii, true );
 		}
-		
+
 		//utility::vector1< Real > final_scores;
 		//utility::vector1< std::string > summary_lines;
 
@@ -184,7 +184,7 @@ main( int argc, char* argv[] )
 			TR << "Starting score is " << metapatch_tester.score() << std::endl;
 			metapatch_tester.generate_metapatched_variants( resi );
 		}
-		
+
 		utility::vector1< Real > final_scores = metapatch_tester.final_scores();;
 		utility::vector1< std::string > summary_lines =  metapatch_tester.summary_lines();;
 
@@ -196,7 +196,7 @@ main( int argc, char* argv[] )
 			for ( Size i = 1; i <= n_to_save; ++i ) {
 				TR << std::setw(8) << final_scores[ indices_best_n[ i ] ] << "\t" << summary_lines[ indices_best_n[ i ] ] << std::endl;
 			}
-			
+
 			TR << "Worst: " << std::endl;
 			// Okay, now report the best n mutants.
 			utility::vector1< Size > indices_worst_n( n_to_save );
@@ -204,14 +204,14 @@ main( int argc, char* argv[] )
 			for ( Size i = 1; i <= n_to_save; ++i ) {
 				TR << std::setw(8) << final_scores[ indices_worst_n[ i ] ] << "\t" << summary_lines[ indices_worst_n[ i ] ] << std::endl;
 			}
-			
+
 		} else {
 			TR << "All: " << std::endl;
 			for ( Size i = 1; i <= final_scores.size(); ++i ) {
 				TR << std::setw(8) << final_scores[ i ] << "\t" << summary_lines[ i ] << std::endl;
 			}
 		}
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;
 		return -1;

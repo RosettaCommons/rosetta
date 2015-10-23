@@ -118,7 +118,7 @@ AntibodyDesignEnumManager::seq_design_strategy_string_to_enum(std::string const 
 
 	std::string s = boost::to_upper_copy<std::string>(seq_design_strategy);
 
-	if (! seq_design_strategy_is_present( s )){
+	if ( ! seq_design_strategy_is_present( s ) ) {
 		utility_exit_with_message("Strategy not present!" +s);
 	}
 
@@ -145,7 +145,7 @@ AntibodyDesignProtocolEnum
 AntibodyDesignEnumManager::design_protocol_string_to_enum(std::string const &design_protocol) const {
 
 	std::string s = boost::to_upper_copy<std::string>(design_protocol);
-	if (! design_protocol_is_present( s )){
+	if ( ! design_protocol_is_present( s ) ) {
 		utility_exit_with_message("Design Protocol not present! "+ s );
 	}
 
@@ -172,7 +172,7 @@ AntibodyDesignEnumManager::min_type_string_to_enum(std::string const & min_type)
 
 	std::string s = boost::to_upper_copy<std::string>(min_type);
 
-	if (! min_type_is_present( s )){
+	if ( ! min_type_is_present( s ) ) {
 		utility_exit_with_message("MinType not present! "+s);
 	}
 	std::map<std::string, MinTypeEnum>::const_iterator iter(min_type_to_enum_.find(s));

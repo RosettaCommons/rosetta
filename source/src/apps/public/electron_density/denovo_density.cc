@@ -505,7 +505,7 @@ void DockFragmentsMover::run() {
 	// set up docking
 	protocols::electron_density::DockIntoDensityMover dock;
 	dock.setDelR(option[ delR ]); // option?
-	
+
 	// I think the reason there is a valgrind error stemming from this is that
 	// we aren't setting defaults for these options
 	// and the defaults from the DockIntoDensityMover ctor

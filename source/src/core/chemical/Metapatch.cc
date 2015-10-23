@@ -55,7 +55,7 @@ Metapatch::read_file( std::string const & filename )
 	name_ = "";
 	types_.clear();
 	selector_.clear();
-	
+
 	utility::vector1< std::string > lines;
 	{ // read the lines file
 		utility::io::izstream data( filename.c_str() );
@@ -136,13 +136,13 @@ PatchOP
 Metapatch::get_one_patch( ResidueType const & rsd_type, std::string const & atom_name ) const
 {
 	PatchOP p( new Patch );
-	
+
 	//std::cout << "Creating a metapatch derived patch for RT " << rsd_type.name() << " on its atom " << atom_name << std::endl;
 	// Have to explicitly set this, since we aren't calling Patch::read_file :-(
 	// If ever we want a replacing metapatch (why??) make metapatch::read_file grab a tag
 	// and pass that value on here.
 	p->replaces_residue_type( false );
-	
+
 	// Loop through cases until we find one that applies
 	utility::vector1< std::string > substituted_lines = case_lines_;
 	// Replace mentions of "blank" with the atom name.
@@ -154,31 +154,31 @@ Metapatch::get_one_patch( ResidueType const & rsd_type, std::string const & atom
 	}
 	PatchCaseOP new_case( case_from_lines( substituted_lines ) );
 	p->add_case( new_case );
-	
+
 	Size first = atom_name.find_first_not_of(' ');
 	Size last = atom_name.find_last_not_of(' ');
-	
+
 	std::string trimmed_atom = atom_name.substr( first, last-first+1 );
-	
+
 	p->set_name( rsd_type.name3() + "-" + trimmed_atom + "-" + name_ );
 	p->set_selector( selector_ );
-	
+
 	return p;
 }
-	
+
 utility::vector1< std::string >
 Metapatch::atoms( ResidueType const & rsd_type ) const
 {
 	utility::vector1< std::string > good_atoms;
 	utility::vector1< std::string > patch_names = get_patch_names( rsd_type );
 	for ( Size i = 1; i <= rsd_type.natoms(); ++i ) {
-		
+
 		if ( !meets_requirements( rsd_type, i ) ) continue;
-		
+
 		Size first = rsd_type.atom_name( i ).find_first_not_of(' ');
 		Size last = rsd_type.atom_name( i ).find_last_not_of(' ');
 		std::string trimmed_atom = rsd_type.atom_name( i ).substr( first, last-first+1 );
-		
+
 		bool cont = false;
 		for ( Size pn = 1; pn <= patch_names.size(); ++pn ) {
 			if ( patch_names[ pn ].find( rsd_type.name3() ) == std::string::npos ) continue;
@@ -186,7 +186,7 @@ Metapatch::atoms( ResidueType const & rsd_type ) const
 			if ( trimmed_atom < elems[2] ) cont = true;
 		}
 		if ( cont ) continue;
-		
+
 		good_atoms.push_back( trimmed_atom );
 	}
 	return good_atoms;
@@ -200,7 +200,7 @@ Metapatch::generate_patches( ResidueType const & rsd_type ) const
 	utility::vector1< std::string > good_atoms;
 
 	if ( !applies_to( rsd_type ) ) { return patches; }  // I don't know how to patch this residue.
-	
+
 	utility::vector1< std::string > patch_names = get_patch_names( rsd_type );
 	for ( Size i = 1; i <= rsd_type.natoms(); ++i ) {
 
@@ -212,7 +212,7 @@ Metapatch::generate_patches( ResidueType const & rsd_type ) const
 		// instead of iterating over atom index for the patch creation phase.
 
 		if ( meets_requirements( rsd_type, i ) ) {
-			
+
 			// Okay, we are going to engage in a subtlety here.
 			// In order to meet requirements, we also have to be alphabetically after
 			// any atom already part of the patch name.
@@ -220,69 +220,69 @@ Metapatch::generate_patches( ResidueType const & rsd_type ) const
 			Size first = rsd_type.atom_name( i ).find_first_not_of(' ');
 			Size last = rsd_type.atom_name( i ).find_last_not_of(' ');
 			std::string trimmed_atom = rsd_type.atom_name( i ).substr( first, last-first+1 );
-			
+
 			bool cont = false;
 			for ( Size pn = 1; pn <= patch_names.size(); ++pn ) {
-				
+
 				// Only make this requirement apply to patch names
 				// that include the residue's name3 in it
 				// i.e. 101-CG1-methylation
-				
+
 				if ( patch_names[ pn ].find( rsd_type.name3() ) == std::string::npos ) continue;
-				
+
 				std::stringstream ss( patch_names[ pn ] );
 				std::string item;
 				utility::vector1< std::string > elems;
 				while ( std::getline( ss, item, '-' ) ) {
 					if ( item != "" ) elems.push_back( item );
 				}
-				
+
 				if ( trimmed_atom < elems[2] ) cont = true;
 			}
 			if ( cont ) continue;
-			
+
 			good_atoms.push_back( rsd_type.atom_name( i ) );// actually for patch nomenclature, remember untrimmed  trimmed_atom );
 		}
 	}
 
 	std::sort( good_atoms.begin(), good_atoms.end() );
 	for ( Size i = 1; i <= good_atoms.size(); ++i ) {
-			PatchOP p( new Patch );
-			
-			// Have to explicitly set this, since we aren't calling Patch::read_file :-(
-			// If ever we want a replacing metapatch (why??) make metapatch::read_file grab a tag
-			// and pass that value on here.
-			p->replaces_residue_type( false );
-			
-			// Loop through cases until we find one that applies
-			utility::vector1< std::string > substituted_lines = case_lines_;
-			// Replace mentions of "blank" with the atom name.
-			for ( Size l = 1; l <= substituted_lines.size(); ++l ) {
-				//std::cout << substituted_lines[l] << std::endl;
-				if ( substituted_lines[l].find("blank") != std::string::npos ) {
-					substituted_lines[l] = substituted_lines[l].replace(
-						substituted_lines[l].find("blank"), 5, good_atoms[i] );
-				}
-				//std::cout << substituted_lines[l] << std::endl;
-			}
-			PatchCaseOP new_case( case_from_lines( substituted_lines ) );
-			p->add_case( new_case );
-			//for ( Size c = 1; c <= cases_.size(); ++c ) {
-			//	if ( cases_[c]->applies_to( rsd_type ) ) {
-			//
-			//		break;
-			//	}
-			//}
-			
-			Size first = good_atoms[i].find_first_not_of(' ');
-			Size last = good_atoms[i].find_last_not_of(' ');
-			
-			std::string trimmed_atom = good_atoms[i].substr( first, last-first+1 );
-			
-			p->set_name( rsd_type.name3() + "-" + trimmed_atom + "-" + name_ );
-			p->set_selector( selector_ );
+		PatchOP p( new Patch );
 
-			patches.push_back( p );
+		// Have to explicitly set this, since we aren't calling Patch::read_file :-(
+		// If ever we want a replacing metapatch (why??) make metapatch::read_file grab a tag
+		// and pass that value on here.
+		p->replaces_residue_type( false );
+
+		// Loop through cases until we find one that applies
+		utility::vector1< std::string > substituted_lines = case_lines_;
+		// Replace mentions of "blank" with the atom name.
+		for ( Size l = 1; l <= substituted_lines.size(); ++l ) {
+			//std::cout << substituted_lines[l] << std::endl;
+			if ( substituted_lines[l].find("blank") != std::string::npos ) {
+				substituted_lines[l] = substituted_lines[l].replace(
+					substituted_lines[l].find("blank"), 5, good_atoms[i] );
+			}
+			//std::cout << substituted_lines[l] << std::endl;
+		}
+		PatchCaseOP new_case( case_from_lines( substituted_lines ) );
+		p->add_case( new_case );
+		//for ( Size c = 1; c <= cases_.size(); ++c ) {
+		// if ( cases_[c]->applies_to( rsd_type ) ) {
+		//
+		//  break;
+		// }
+		//}
+
+		Size first = good_atoms[i].find_first_not_of(' ');
+		Size last = good_atoms[i].find_last_not_of(' ');
+
+		std::string trimmed_atom = good_atoms[i].substr( first, last-first+1 );
+
+		p->set_name( rsd_type.name3() + "-" + trimmed_atom + "-" + name_ );
+		p->set_selector( selector_ );
+
+		patches.push_back( p );
 	}
 
 	return patches;

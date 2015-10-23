@@ -77,6 +77,7 @@ RotamerBoltzmannWeight::RotamerBoltzmannWeight() :
 	repacking_radius_( 6.0 ),
 	energy_reduction_factor_( 0.5 ),
 	compute_entropy_reduction_( false ),
+	compute_max_( false ),
 	repack_( true ),
 	type_( "" ),
 	skip_ala_scan_( false ),
@@ -301,11 +302,27 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 		if ( write2pdb() ) { write_to_pdb( hs_res, const_pose.residue( hs_res ).name3(), boltz_weight ); }
 	}
 	TR.flush();
-	core::Real avg = 0.0;
-	for ( std::map<core::Size,core::Real>::const_iterator i = rotamer_probabilities_.begin(); i != rotamer_probabilities_.end(); ++i ) {
-		avg += i->second;
+	return -compute_boltz_probability();
+}
+
+core::Real
+RotamerBoltzmannWeight::compute_boltz_probability() const
+{
+	if ( compute_max_ ) {
+		core::Real max = 0.0;
+		for ( std::map<core::Size,core::Real>::const_iterator i = rotamer_probabilities_.begin(); i != rotamer_probabilities_.end(); ++i ) {
+			if ( i->second > max ) {
+				max = i->second;
+			}
+		}
+		return max;
+	} else {
+		core::Real avg = 0.0;
+		for ( std::map<core::Size,core::Real>::const_iterator i = rotamer_probabilities_.begin(); i != rotamer_probabilities_.end(); ++i ) {
+			avg += i->second;
+		}
+		return avg / (core::Real)rotamer_probabilities_.size();
 	}
-	return - avg / (core::Real)rotamer_probabilities_.size();
 }
 
 core::Real
@@ -416,13 +433,10 @@ RotamerBoltzmannWeight::report_sm( core::pose::Pose const & pose ) const
 {
 	compute( pose );
 	if ( no_modified_ddG_ ) {
-		core::Real avg = 0.0;
-		for ( std::map<core::Size,core::Real>::const_iterator i = rotamer_probabilities_.begin(); i != rotamer_probabilities_.end(); ++i ) {
-			avg += i->second;
-		}
-		return - avg / (core::Real)rotamer_probabilities_.size();
+		return -compute_boltz_probability();
+	} else {
+		return compute_modified_ddG( pose, TR );
 	}
-	return( compute_modified_ddG( pose, TR ));
 }
 
 core::Real
@@ -507,6 +521,7 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP tag,
 	fast_calc_ = tag->getOption< bool >("fast_calc",0);
 	no_modified_ddG_ = tag->getOption< bool >("no_modified_ddG",0);
 
+	compute_max_ = tag->getOption< bool >( "compute_max", 0 );
 	skip_ala_scan( tag->getOption< bool >( "skip_ala_scan", 0 ) );
 	write2pdb( tag->getOption< bool >( "write2pdb", 0 ) );
 	TR<<"with options repacking radius: "<<repacking_radius()<<" and jump "<<rb_jump()<<" unbound "<<unbound()<<" ddG threshold "<<ddG_threshold()<<" temperature "<<temperature()<<" energy reduction factr "<<energy_reduction_factor()<<" entropy_reduction "<<compute_entropy_reduction()<<" repack "<<repack()<<" skip_ala_scan "<<skip_ala_scan()<<std::endl;

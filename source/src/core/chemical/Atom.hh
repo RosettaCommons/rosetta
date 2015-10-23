@@ -64,12 +64,12 @@ public:
 
 	/// @brief Construct a new atom with the name, mm type, element, charge and position.
 	Atom(
-			std::string const & name_in,
-			std::string const & mm_name,
-			Size const mm_atom_type_index,
-			ElementCOP element,
-			Real const charge,
-			Vector const & ideal_xyz );
+		std::string const & name_in,
+		std::string const & mm_name,
+		Size const mm_atom_type_index,
+		ElementCOP element,
+		Real const charge,
+		Vector const & ideal_xyz );
 
 	/// @brief Copy constructor
 	Atom( Atom const & src );
@@ -79,20 +79,20 @@ public:
 
 	bool operator==( Atom const & atom ) const {
 		return name_== atom.name_ &&
-				mm_name_ == atom.mm_name_ &&
-				atom_type_index_ == atom.atom_type_index_ &&
-				mm_atom_type_index_ == atom.mm_atom_type_index_ &&
-				element_ == atom.element_ &&
-				formal_charge_ == atom.formal_charge_ &&
-				charge_ == atom.charge_ &&
-				ideal_xyz_ == atom.ideal_xyz_ &&
-				*properties_ == *atom.properties_ &&
-				gasteiger_atom_type_ == atom.gasteiger_atom_type_ &&
-				is_hydrogen_ == atom.is_hydrogen_ &&
-				has_orbitals_ == atom.has_orbitals_  &&
-				bonded_orbitals_ == atom.bonded_orbitals_ &&
-				abs_stereochem_ == atom.abs_stereochem_ &&
-				greek_d_ == atom.greek_d_;
+			mm_name_ == atom.mm_name_ &&
+			atom_type_index_ == atom.atom_type_index_ &&
+			mm_atom_type_index_ == atom.mm_atom_type_index_ &&
+			element_ == atom.element_ &&
+			formal_charge_ == atom.formal_charge_ &&
+			charge_ == atom.charge_ &&
+			ideal_xyz_ == atom.ideal_xyz_ &&
+			*properties_ == *atom.properties_ &&
+			gasteiger_atom_type_ == atom.gasteiger_atom_type_ &&
+			is_hydrogen_ == atom.is_hydrogen_ &&
+			has_orbitals_ == atom.has_orbitals_  &&
+			bonded_orbitals_ == atom.bonded_orbitals_ &&
+			abs_stereochem_ == atom.abs_stereochem_ &&
+			greek_d_ == atom.greek_d_;
 	}
 
 	Atom & operator =( Atom const & atom );

@@ -3027,7 +3027,7 @@ ResidueType::update_derived_data()
 	} else {
 		update_last_controlling_chi();
 	}
-	
+
 	// Set up some atom properties
 	for ( Size ii = 1; ii <= natoms(); ++ii ) {
 		// Am I an aromatic carbon atom with a free valence?

@@ -65,11 +65,11 @@ kiss_fft_state::kiss_fft_state() {
 kiss_fft_state::kiss_fft_state(int n, int inv) {
 	// This used to just call resize, but has a conditional
 	// that will always query uninitialized values in the ctor case!
-	
+
 	nfft_ = n;
 	inverse_ = inv;
 	twiddles_.resize(nfft_);
-	
+
 	for ( int i=0; i<nfft_; ++i ) {
 		const double pi=M_PI;
 		double phase = -2*pi*i / nfft_;

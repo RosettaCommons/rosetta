@@ -34,7 +34,7 @@ std::string const PATCH_LINKER =  ":";
 
 /// @brief handy function, return the first word from a line
 std::string tag_from_line( std::string const & line );
-	
+
 /// @brief helper function, returns the base residue name prior to any patching
 std::string
 residue_type_base_name( ResidueType const & rsd_type );
@@ -76,9 +76,9 @@ public:
 	{
 		return selector_;
 	}
-	
+
 	void set_selector( ResidueTypeSelector const & selector ) { selector_ = selector; }
-	
+
 	/// @brief returns list of added atom names, useful for identifying patches that go with PDB residues
 	utility::vector1< std::string >
 	adds_atoms() const;
@@ -163,9 +163,9 @@ public:
 	{
 		return name_;
 	}
-	
+
 	void set_selector( ResidueTypeSelector const & selector ) { selector_ = selector; }
-	
+
 	void set_name( std::string name ) { name_ = name; }
 
 	/// @brief the variant types created by applying this patch
@@ -175,7 +175,7 @@ public:
 	{
 		return types_;
 	}
-	
+
 	inline
 	void
 	replaces_residue_type( bool replaces ) { replaces_residue_type_ = replaces; }
@@ -202,7 +202,7 @@ public:
 
 	inline void
 	add_case( PatchCaseOP pcase ) { cases_.push_back( pcase ); }
-	
+
 	/// @brief returns new name3, if changed. Only one new name3 allowed.
 	std::string
 	generates_new_name3( ResidueType const & rsd_in ) const;

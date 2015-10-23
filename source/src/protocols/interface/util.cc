@@ -88,7 +88,7 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	/*
 	std::string calc = "interface_res_calc" ;
 	if ( ! CalculatorFactory::Instance().check_calculator_exists( calc ) ) {
-		CalculatorFactory::Instance().register_calculator(  calc, PoseMetricCalculatorOP( new InterGroupNeighborsCalculator(chain_groups, interface_distance ) ) );
+	CalculatorFactory::Instance().register_calculator(  calc, PoseMetricCalculatorOP( new InterGroupNeighborsCalculator(chain_groups, interface_distance ) ) );
 	}
 
 	//std::set<Size> multichain_interface;

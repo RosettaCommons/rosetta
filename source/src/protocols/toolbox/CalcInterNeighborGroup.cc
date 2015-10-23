@@ -47,7 +47,7 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.CalcInterNeighborGroup" );
 
-namespace protocols { 
+namespace protocols {
 namespace toolbox {
 
 
@@ -62,17 +62,17 @@ CalcInterNeighborGroup::CalcInterNeighborGroup()
 }
 
 CalcInterNeighborGroup::CalcInterNeighborGroup( group_set const & groups, core::Real dist_cutoff )
-	: groups_(groups), dist_cutoff_(dist_cutoff), num_neighbors_(0)
+: groups_(groups), dist_cutoff_(dist_cutoff), num_neighbors_(0)
 
 {}
 
 CalcInterNeighborGroup::CalcInterNeighborGroup( CalcInterNeighborGroup const & calculator )
-	: groups_(calculator.groups_), dist_cutoff_(calculator.dist_cutoff_), num_neighbors_(calculator.num_neighbors_), neighbors_(calculator.neighbors_)
+: groups_(calculator.groups_), dist_cutoff_(calculator.dist_cutoff_), num_neighbors_(calculator.num_neighbors_), neighbors_(calculator.neighbors_)
 {}
 
 CalcInterNeighborGroup::~CalcInterNeighborGroup() {}
 
-		
+
 void
 CalcInterNeighborGroup::compute( core::pose::Pose const & pose )
 {
@@ -93,7 +93,7 @@ CalcInterNeighborGroup::compute( core::pose::Pose const & pose )
 	core::graph::Graph neighborgraph(nres);
 	for ( core::Size r(1); r <= nres; ++r ) {
 		for ( core::conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex(r).upper_edge_list_begin(),
-				  edge_end_iter = pg->get_vertex(r).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
+				edge_end_iter = pg->get_vertex(r).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
 			neighborgraph.add_edge(r, edge_iter->upper_vertex());
 		}
 	}
@@ -107,8 +107,8 @@ CalcInterNeighborGroup::compute( core::pose::Pose const & pose )
 		for ( one_group::const_iterator it(groups_[i].first.begin()), end(groups_[i].first.end()); it != end; ++it ) {
 			//for all edges of that node
 			for ( core::graph::Graph::EdgeListConstIter edge_iter = neighborgraph.get_node(*it)->const_edge_list_begin(),
-					  edge_end_iter = neighborgraph.get_node(*it)->const_edge_list_end();
-				  edge_iter != edge_end_iter; ++edge_iter ) {
+					edge_end_iter = neighborgraph.get_node(*it)->const_edge_list_end();
+					edge_iter != edge_end_iter; ++edge_iter ) {
 				core::Size const other = (*edge_iter)->get_other_ind(*it);
 				//at this point, *it and other are neighbors.  *it is in the "first" group, we need to see if other is in the second.
 				if ( groups_[i].second.find(other) != groups_[i].second.end() ) {
@@ -125,10 +125,10 @@ CalcInterNeighborGroup::compute( core::pose::Pose const & pose )
 	num_neighbors_ = neighbors_.size();
 
 	return;
-	
+
 } //compute
 
-		
-		
+
+
 } //namespace toolbox
 } //namespace protocols

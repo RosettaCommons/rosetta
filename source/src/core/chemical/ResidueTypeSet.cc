@@ -102,7 +102,7 @@ ResidueTypeSet::ResidueTypeSet(
 bool sort_patchop_by_name( PatchOP p, PatchOP q ) {
 	return ( p->name() < q->name() );
 }
-	
+
 void ResidueTypeSet::init(
 	std::vector< std::string > const & extra_res_param_files, // defaults to empty
 	std::vector< std::string > const & extra_patch_files // defaults to empty
@@ -183,7 +183,7 @@ void ResidueTypeSet::init(
 					filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
 				if ( option[ OptionKeys::in::file::assign_gasteiger_atom_types ] ) {
 					gasteiger::GasteigerAtomTypeSetCOP gasteiger_set(
-							ChemicalManager::get_instance()->gasteiger_atom_type_set() );
+						ChemicalManager::get_instance()->gasteiger_atom_type_set() );
 					gasteiger::assign_gasteiger_atom_types( *rsd_type, gasteiger_set, false );
 				}
 				base_residue_types_.push_back( rsd_type );
@@ -299,7 +299,7 @@ void ResidueTypeSet::init(
 		if ( name_ == "fa_standard" ) {
 			std::string const meta_filename( database_directory_+"/metapatches.txt" );
 			utility::io::izstream data2( meta_filename.c_str() );
-			
+
 			if ( !data2.good() ) {
 				utility_exit_with_message( "Unable to open metapatch list file: "+meta_filename );
 			}
@@ -309,11 +309,11 @@ void ResidueTypeSet::init(
 				metapatch_filenames.push_back( database_directory_ + mpline );
 			}
 		}
-		
+
 		apply_patches( patch_filenames, metapatch_filenames );
 	}  // patches applied
-	
-	
+
+
 
 	// Generate combinations of adducts as specified by the user
 	place_adducts( *this );
@@ -388,7 +388,7 @@ ResidueTypeSet::apply_patches(
 		patches_.push_back( p );
 		patch_map_[ p->name() ].push_back( p );
 	}
-	
+
 	for ( Size ii=1; ii <= metapatch_filenames.size(); ++ii ) {
 		MetapatchOP p( new Metapatch );
 		p->read_file( metapatch_filenames[ii] );
@@ -507,7 +507,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 	// now apply patch.
 	ResidueType const & rsd_base = name_map( rsd_name_base );
 	runtime_assert( rsd_base.finalized() );
-	
+
 	// I may have to create this patch, if it is metapatch-derived!
 	// This version preserves this function's constness by not
 	// adding to patches_ or the patch_map.
@@ -522,21 +522,21 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 			// PHE-CD1-methylated
 			// Atom name: second element if you split the patch name by '-'
 			std::string atom_name = utility::string_split( patch_name, '-' )[2];
-			
+
 			// Add buffering spaces just in case the resultant patch is PDB-naming sensitive
 			// we need enough whitespace -- will trim later
 			PatchOP needed_patch = metapatches_[ m ]->get_one_patch( rsd_base, "  " + atom_name + "  " );
-			
+
 			if ( !needed_patch->applies_to( rsd_base ) ) continue;
-			
+
 			ResidueTypeOP rsd_instantiated = needed_patch->apply( rsd_base );
-			
+
 			if ( rsd_instantiated == 0 ) {
 				return false; // utility_exit_with_message(  "Failed to apply: " + p->name() + " to " + rsd_base.name() );
 			}
 			if ( option[ OptionKeys::in::file::assign_gasteiger_atom_types ] ) {
 				gasteiger::GasteigerAtomTypeSetCOP gasteiger_set(
-						ChemicalManager::get_instance()->gasteiger_atom_type_set() );
+					ChemicalManager::get_instance()->gasteiger_atom_type_set() );
 				gasteiger::assign_gasteiger_atom_types( *rsd_instantiated, gasteiger_set, false );
 			}
 			if ( option[ OptionKeys::in::add_orbitals] ) {
@@ -545,9 +545,9 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 			cache_->add_residue_type( rsd_instantiated );
 			patch_applied = true;
 		}
-		
+
 		return patch_applied;
-		
+
 	} else {
 		if ( patch_map_.find( patch_name ) == patch_map_.end() ) return false;
 		utility::vector1< PatchCOP > const & patches = patch_map_.find( patch_name )->second;
@@ -556,10 +556,10 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 		// sometimes patch cases are split between several patches -- look through all:
 		for ( Size n = 1; n <= patches.size(); n++ ) {
 			PatchCOP p = patches[ n ];
-			
+
 			if ( !p->applies_to( rsd_base ) ) continue;
 			runtime_assert( !patch_applied ); // patch cannot be applied twice.
-			
+
 			ResidueTypeOP rsd_instantiated = p->apply( rsd_base );
 
 			if ( rsd_instantiated == 0 ) {
@@ -567,7 +567,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 			}
 			if ( option[ OptionKeys::in::file::assign_gasteiger_atom_types ] ) {
 				gasteiger::GasteigerAtomTypeSetCOP gasteiger_set(
-						ChemicalManager::get_instance()->gasteiger_atom_type_set() );
+					ChemicalManager::get_instance()->gasteiger_atom_type_set() );
 				gasteiger::assign_gasteiger_atom_types( *rsd_instantiated, gasteiger_set, false );
 			}
 			if ( option[ OptionKeys::in::add_orbitals] ) {
@@ -576,7 +576,7 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 			cache_->add_residue_type( rsd_instantiated );
 			patch_applied = true;
 		}
-		
+
 		return patch_applied;
 	}
 }
@@ -835,7 +835,7 @@ ResidueTypeSet::add_custom_residue_type( ResidueTypeOP new_type )
 
 	if ( option[ OptionKeys::in::file::assign_gasteiger_atom_types ] ) {
 		gasteiger::GasteigerAtomTypeSetCOP gasteiger_set(
-				ChemicalManager::get_instance()->gasteiger_atom_type_set() );
+			ChemicalManager::get_instance()->gasteiger_atom_type_set() );
 		gasteiger::assign_gasteiger_atom_types( *new_type, gasteiger_set, false );
 	}
 	if ( option[ OptionKeys::in::add_orbitals] ) {

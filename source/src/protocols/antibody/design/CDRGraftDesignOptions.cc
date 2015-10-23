@@ -277,7 +277,7 @@ CDRGraftDesignOptionsParser::parse_cdr_option(std::string const mode, vector1<st
 	/// it does not make sense to include MIN as part of GraftDesign, since it is overall part of the protocol.
 	/// that said, I cannot make up my mind as to what the hell the the tag should be called.
 	if ( mode == "GRAFT" || mode == "GRAFT_DESIGN" || mode == "GRAFTDESIGN" ||
-			mode == "GRAFTING" || mode == "MINPROTOCOL" || mode == "MIN_PROTOCOL" || mode == "MIN_STEP" || mode == "MINSTEP" || mode == "MIN") {
+			mode == "GRAFTING" || mode == "MINPROTOCOL" || mode == "MIN_PROTOCOL" || mode == "MIN_STEP" || mode == "MINSTEP" || mode == "MIN" ) {
 		check_line_len(lineSP, 3);
 		std::string adjective = lineSP[3];
 		boost::to_upper(adjective);

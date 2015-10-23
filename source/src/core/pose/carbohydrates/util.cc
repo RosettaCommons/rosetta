@@ -140,7 +140,7 @@ get_reference_atoms_for_phi( Pose const & pose, uint const sequence_position )
 	// Reference 2 is always the anomeric carbon.
 	AtomID const ref2( residues.first->carbohydrate_info()->anomeric_carbon_index(), residues.first->seqpos() );
 	ids[ 2 ] = ref2;
-	
+
 	// Reference 3 is OX(n-1) for polysaccharides.
 	AtomID const ref3( residues.second->connect_atom( *residues.first ), residues.second->seqpos() );
 	ids[ 3 ] = ref3;
@@ -176,7 +176,7 @@ get_reference_atoms_for_psi( Pose const & pose, uint const sequence_position )
 	if ( residues.first->seqpos() == residues.second->seqpos() ) {  // This occurs when there is no parent residue.
 		return ids;
 	}
-	
+
 	ids.resize( 4 );  // A torsion has 4 reference atoms.
 
 	// Set the atom names of the four reference atoms.
@@ -228,7 +228,7 @@ get_reference_atoms_for_1st_omega( Pose const & pose, uint const sequence_positi
 		TR.Warning << "Omega is undefined for this residue, because the glycosidic linkage is not exocyclic." << endl;
 		return ids;
 	}
-	
+
 	ids.resize( 4 );  // A torsion has 4 reference atoms.
 
 	// Set the atom names of the four reference atoms.
@@ -411,26 +411,26 @@ is_glycosidic_phi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 		uint next_rsd_num( 0 );  // We will need to see if the "next" residue is a saccharide.
 
 		switch( torsion_id.type() ) {
-			case  BB :
-				if ( ! residue.is_upper_terminus() ) {
-					// If this is a main-chain torsion, we need the next residue on the main chain.
-					next_rsd_num = torsion_id.rsd() + 1;
-					if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-						return ( torsion_id.torsion() == residue.n_mainchain_atoms() );  // The last BB is phi.
-					}
+		case  BB :
+			if ( ! residue.is_upper_terminus() ) {
+				// If this is a main-chain torsion, we need the next residue on the main chain.
+				next_rsd_num = torsion_id.rsd() + 1;
+				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
+					return ( torsion_id.torsion() == residue.n_mainchain_atoms() );  // The last BB is phi.
 				}
-				break;
-			case BRANCH :
-				{
-					Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
-					next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + torsion_id.torsion() );
-					if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-						return true;  // If it's a branch to a sugar, it must be the phi from the branching residue.
-					}
-				}
-				break;
-			default :
-				break;
+			}
+			break;
+		case BRANCH :
+			{
+			Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
+			next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + torsion_id.torsion() );
+			if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
+				return true;  // If it's a branch to a sugar, it must be the phi from the branching residue.
+			}
+		}
+			break;
+		default :
+			break;
 		}
 
 	}
@@ -451,32 +451,32 @@ is_glycosidic_psi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 		uint next_rsd_num( 0 );  // We will need to see if the "next" residue is a saccharide.
 
 		switch( torsion_id.type() ) {
-			case BB :
-				if ( ! residue.is_upper_terminus() ) {
-					// If this is a main-chain torsion, we need the next residue on the main chain.
-					next_rsd_num = torsion_id.rsd() + 1;
-					if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-						return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 1 );
-					}
+		case BB :
+			if ( ! residue.is_upper_terminus() ) {
+				// If this is a main-chain torsion, we need the next residue on the main chain.
+				next_rsd_num = torsion_id.rsd() + 1;
+				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
+					return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 1 );
 				}
-				break;
-			case CHI :
-				{
-					Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
-					// A psi angle will always have the third atom of its definition be a connect atom.
-					uint const third_atom( residue.chi_atoms( torsion_id.torsion() )[ 3 ] );
-					Size const n_branches( residue.n_non_polymeric_residue_connections() );
-					for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
-						next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
-						conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
-						if ( next_rsd.is_carbohydrate() ) {
-							return ( residue.connect_atom( next_rsd ) == third_atom );
-						}
-					}
+			}
+			break;
+		case CHI :
+			{
+			Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
+			// A psi angle will always have the third atom of its definition be a connect atom.
+			uint const third_atom( residue.chi_atoms( torsion_id.torsion() )[ 3 ] );
+			Size const n_branches( residue.n_non_polymeric_residue_connections() );
+			for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
+				next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
+				conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
+				if ( next_rsd.is_carbohydrate() ) {
+					return ( residue.connect_atom( next_rsd ) == third_atom );
 				}
-				break;
-			default :
-				break;
+			}
+		}
+			break;
+		default :
+			break;
 		}
 	}
 	return false;
@@ -497,35 +497,35 @@ is_glycosidic_omega_torsion( Pose const & pose, id::TorsionID const & torsion_id
 		uint next_rsd_num( 0 );  // We will need to see if the "next" residue is a saccharide.
 
 		switch( torsion_id.type() ) {
-			case BB :
-				if ( ! residue.is_upper_terminus() ) {
-					// If this is a main-chain torsion, we need the next residue on the main chain.
-					next_rsd_num = torsion_id.rsd() + 1;
-					if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
-						chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
-						if ( info->has_exocyclic_linkage() ) {
-							return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 2 );
-						}
+		case BB :
+			if ( ! residue.is_upper_terminus() ) {
+				// If this is a main-chain torsion, we need the next residue on the main chain.
+				next_rsd_num = torsion_id.rsd() + 1;
+				if ( pose.residue( next_rsd_num ).is_carbohydrate() ) {
+					chemical::carbohydrates::CarbohydrateInfoCOP info( residue.carbohydrate_info() );
+					if ( info->has_exocyclic_linkage() ) {
+						return ( torsion_id.torsion() == residue.n_mainchain_atoms() - 2 );
 					}
 				}
-				break;
-			case CHI :
-				{
-					Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
-					// An omega angle will always have the fourth atom of its definition be a connect atom.
-					uint const fourth_atom( residue.chi_atoms( torsion_id.torsion() )[ 4 ] );
-					Size const n_branches( residue.n_non_polymeric_residue_connections() );
-					for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
-						next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
-						conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
-						if ( next_rsd.is_carbohydrate() ) {
-							return ( residue.connect_atom( next_rsd ) == fourth_atom );
-						}
-					}
+			}
+			break;
+		case CHI :
+			{
+			Size const n_mainchain_connections( residue.n_polymeric_residue_connections() );
+			// An omega angle will always have the fourth atom of its definition be a connect atom.
+			uint const fourth_atom( residue.chi_atoms( torsion_id.torsion() )[ 4 ] );
+			Size const n_branches( residue.n_non_polymeric_residue_connections() );
+			for ( uint branch_num( 1 ); branch_num <= n_branches; ++branch_num ) {
+				next_rsd_num = residue.residue_connection_partner( n_mainchain_connections + branch_num );
+				conformation::Residue const & next_rsd( pose.residue( next_rsd_num ) );
+				if ( next_rsd.is_carbohydrate() ) {
+					return ( residue.connect_atom( next_rsd ) == fourth_atom );
 				}
-				break;
-			default :
-				break;
+			}
+		}
+			break;
+		default :
+			break;
 		}
 	}
 	return false;

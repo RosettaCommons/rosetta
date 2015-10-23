@@ -340,13 +340,13 @@ private:
 	///@brief Even cluster sampling (even_cluster_mc protocol)
 	std::map< CDRNameEnum,
 		std::map< clusters::CDRClusterEnum,
-			utility::vector1< core::Size > > > cluster_based_CDRDBPose_indexes_;
+		utility::vector1< core::Size > > > cluster_based_CDRDBPose_indexes_;
 
 	///@brief Even Length and Cluster sampling (even_length_cluster_mc protocol)
 	std::map< CDRNameEnum,
 		std::map< core::Size,
-			std::map< clusters::CDRClusterEnum,
-				utility::vector1< core::Size > > > > length_based_CDRDBPose_indexes_;
+		std::map< clusters::CDRClusterEnum,
+		utility::vector1< core::Size > > > > length_based_CDRDBPose_indexes_;
 
 
 	protocols::grafting::CCDEndsGraftMoverOP graft_mover_;

@@ -297,7 +297,7 @@ int main ( int argc, char* argv[] )
 		pert_mm->set_jump( 1, true );
 		//pert_mm->set_branches( 4, true );
 		protocols::simple_moves::MinMoverOP min_mover(
-				new simple_moves::MinMover( pert_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
+			new simple_moves::MinMover( pert_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 
 		for ( Real apc = 0; apc <= 2; apc += 0.01 ) {
 			scorefxn->set_weight( atom_pair_constraint, apc );

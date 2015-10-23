@@ -124,7 +124,7 @@ public:
 	/// @brief adds a new residue type to the set, one that CANNOT be generated from a base_residue_type and patches
 	void
 	add_custom_residue_type( std::string const &  filename );
-	
+
 	/// @brief delete a custom residue type from the set (Use with care)
 	void
 	apply_patches(
@@ -270,7 +270,7 @@ public:
 
 	/// @brief the patches
 	utility::vector1< PatchCOP > const & patches() const { return patches_; }
-	
+
 	/// @brief the metapatches
 	utility::vector1< MetapatchCOP > const & metapatches() const { return metapatches_; }
 
@@ -290,7 +290,7 @@ public:
 
 	MetapatchCOP
 	metapatch( std::string name ) const { return metapatch_map_.find( name )->second; }
-	
+
 	//////////////////
 	// private methods
 private:
@@ -357,7 +357,7 @@ private:
 	/// @brief the patches
 	utility::vector1< PatchCOP > patches_;
 	utility::vector1< MetapatchCOP > metapatches_;
-	
+
 	/// @brief patches indexed by name
 	std::map< std::string, utility::vector1< PatchCOP > > patch_map_;
 	std::map< std::string, MetapatchCOP > metapatch_map_;

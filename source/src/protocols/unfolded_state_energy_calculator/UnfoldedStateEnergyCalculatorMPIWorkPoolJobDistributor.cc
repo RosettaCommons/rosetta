@@ -52,7 +52,7 @@ namespace unfolded_state_energy_calculator {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace basic::mpi;
-	
+
 /// @brief ctor
 UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor() :
 	MPIWorkPoolJobDistributor()

@@ -448,8 +448,7 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 			TR << "Using original bb sequence for conservative design." << std::endl;
 			std::string native_seq = get_native_sequence( pose );
 			cons_task_->set_native_sequence( native_seq );
-		}
-		else {
+		} else {
 			cons_task_->use_pose_sequence_as_native( pose );
 		}
 

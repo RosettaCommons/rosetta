@@ -113,10 +113,12 @@ ConsensusLoopDesignOperation::parse_tag(
 			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
 		}
 	}
-	if ( tag->hasOption( "residue_selector" ) )
+	if ( tag->hasOption( "residue_selector" ) ) {
 		set_selector( get_residue_selector( data, tag->getOption< std::string >( "residue_selector" ) ) );
-	if ( tag->hasOption( "include_adjacent_residues" ) )
+	}
+	if ( tag->hasOption( "include_adjacent_residues" ) ) {
 		set_include_adjacent_residues( tag->getOption< bool >( "include_adjacent_residues" ) );
+	}
 }
 
 void

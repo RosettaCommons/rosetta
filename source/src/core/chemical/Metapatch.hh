@@ -52,7 +52,7 @@ public:
 
 	PatchOP
 	get_one_patch( ResidueType const & rsd_type, std::string const & atom_name ) const;
-	
+
 	inline
 	bool
 	meets_requirements( ResidueType const & r, Size i ) const {
@@ -76,7 +76,7 @@ public:
 	{
 		return types_;
 	}
-	
+
 	utility::vector1< std::string >
 	atoms( ResidueType const & rsd_type ) const;
 
@@ -84,17 +84,17 @@ public:
 private:
 	/// name of the patch
 	std::string name_;
-	
+
 	/// @brief variant types created by the created patches
 	utility::vector1< std::string > types_;
-	
+
 	/// @brief different cases to which the derived patches patch will be applied slightly differently, e.g., N-terminus patch to PRO and GLY
 	utility::vector1< PatchCaseOP > cases_;
-	
+
 	chemical::AtomProperty pertinent_property_;
-	
+
 	utility::vector1< std::string > case_lines_;
-	
+
 	/// @brief criteria to select ResidueTypes to which the patches are applied
 	ResidueTypeSelector selector_;
 

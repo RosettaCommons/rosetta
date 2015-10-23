@@ -175,16 +175,16 @@
 
 namespace core {
 namespace chemical {
-	
+
 
 /// @details Auto-generated virtual destructor
 Patch::~Patch() {}
-	
+
 /// @details Auto-generated virtual destructor
 PatchCase::~PatchCase() {}
-	
+
 static THREAD_LOCAL basic::Tracer tr( "core.chemical" );
-	
+
 std::string tag_from_line( std::string const & line ) {
 	std::string tag;
 	std::istringstream l( line );
@@ -199,7 +199,7 @@ residue_type_base_name( ResidueType const & rsd_type )
 	std::string base_name = rsd_type.name().substr( 0, rsd_type.name().find( PATCH_LINKER ) );
 	return base_name;
 }
-	
+
 std::string
 residue_type_all_patches_name( ResidueType const & rsd_type )
 {
@@ -444,11 +444,11 @@ case_from_lines(
 	utility::vector1< std::string > const & lines
 ) {
 	PatchCaseOP pcase( new PatchCase() );
-	
+
 	bool in_selector( false );
 	for ( uint i=1; i<= lines.size(); ++i ) {
 		std::string const tag( tag_from_line( lines[i] ) );
-		
+
 		if ( tag == "BEGIN_SELECTOR" ) {
 			debug_assert( !in_selector );
 			in_selector = true;
@@ -461,7 +461,7 @@ case_from_lines(
 			if ( operation ) pcase->add_operation( operation );
 		}
 	}
-	
+
 	return pcase;
 }
 

@@ -378,7 +378,7 @@ identify_hbonds_1way(
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
 			debug_assert( base2 > 0 && base != base2 );
-			
+
 			//std::cout << "about to evaluate " << acc_rsd.atom_name(aatm ) << " " << acc_rsd.atom_name(base ) << acc_rsd.atom_name(base2) << std::endl;
 			//std::cout << "coords " << acc_rsd.atom(aatm ) << "\t" << acc_rsd.atom(base ) << "\t" << acc_rsd.atom(base2) << std::endl;
 			//std::cout << "seqpos " << don_rsd.seqpos() << "\t" << acc_rsd.seqpos() << std::endl;
@@ -475,7 +475,7 @@ identify_hbonds_1way(
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
 			debug_assert( base2 > 0 && base != base2 );
-			
+
 			//std::cout << "about to evaluate " << acc_rsd.atom_name(aatm ) << " " << acc_rsd.atom_name(base ) << acc_rsd.atom_name(base2) << std::endl;
 			//std::cout << "coords " << acc_rsd.atom(aatm ) << "\t" << acc_rsd.atom(base ) << "\t" << acc_rsd.atom(base2) << std::endl;
 			//std::cout << "seqpos " << don_rsd.seqpos() << "\t" << acc_rsd.seqpos() << std::endl;
@@ -593,7 +593,7 @@ identify_hbonds_1way(
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
 			debug_assert( base2 > 0 && base != base2 );
-			
+
 			//std::cout << "about to evaluate " << acc_rsd.atom_name(aatm ) << " " << acc_rsd.atom_name(base ) << acc_rsd.atom_name(base2) << std::endl;
 			//std::cout << "coords " << acc_rsd.atom(aatm ) << "\t" << acc_rsd.atom(base ) << "\t" << acc_rsd.atom(base2) << std::endl;
 			//std::cout << "seqpos " << don_rsd.seqpos() << "\t" << acc_rsd.seqpos() << std::endl;

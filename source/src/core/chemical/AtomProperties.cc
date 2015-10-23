@@ -44,7 +44,7 @@ AtomProperties::AtomProperties() : utility::pointer::ReferenceCount()
 
 // Copy constructor
 AtomProperties::AtomProperties( AtomProperties const & object_to_copy ) :
-		utility::pointer::ReferenceCount( object_to_copy )
+	utility::pointer::ReferenceCount( object_to_copy )
 {
 	copy_data( *this, object_to_copy );
 }

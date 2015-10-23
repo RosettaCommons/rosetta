@@ -1678,7 +1678,7 @@ void InterfaceAnalyzerMover::report_data(){
 	} else {
 		//or report to job
 		typedef std::map< std::string , core::Real >::iterator it_type;
-		for (it_type it = score_data_.begin(); it != score_data_.end(); it++){
+		for ( it_type it = score_data_.begin(); it != score_data_.end(); it++ ) {
 			current_job->add_string_real_pair(it->first, it->second);
 		}
 	}
@@ -1686,13 +1686,13 @@ void InterfaceAnalyzerMover::report_data(){
 
 void InterfaceAnalyzerMover::add_score_info_to_pose( core::pose::Pose & pose ){
 
-	if (score_data_.size() == 0){
+	if ( score_data_.size() == 0 ) {
 		TR << "No extra scores to add to pose..." << std::endl;
 		return;
 	}
 
 	typedef std::map< std::string , core::Real >::iterator it_type;
-	for (it_type it = score_data_.begin(); it != score_data_.end(); it++){
+	for ( it_type it = score_data_.begin(); it != score_data_.end(); it++ ) {
 		core::pose::setPoseExtraScore(pose, it->first, it->second);
 	}
 }

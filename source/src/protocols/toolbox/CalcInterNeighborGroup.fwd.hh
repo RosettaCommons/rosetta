@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   
-/// @brief  
-/// @author 
+/// @file
+/// @brief
+/// @author
 
 
 #ifndef INCLUDED_protocols_toolbox_CalcInterNeighborGroup_fwd_hh
@@ -21,17 +21,17 @@
 
 
 namespace protocols {
-	namespace toolbox {
+namespace toolbox {
 
 // Forward
-		class CalcInterNeighborGroup;
+class CalcInterNeighborGroup;
 
 // Types
-		typedef  utility::pointer::shared_ptr< CalcInterNeighborGroup >  CalcInterNeighborGroupOP;
-		typedef  utility::pointer::shared_ptr< CalcInterNeighborGroup const >  CalcInterNeighborGroupCOP;
+typedef  utility::pointer::shared_ptr< CalcInterNeighborGroup >  CalcInterNeighborGroupOP;
+typedef  utility::pointer::shared_ptr< CalcInterNeighborGroup const >  CalcInterNeighborGroupCOP;
 
 
-	}
+}
 }
 
 #endif

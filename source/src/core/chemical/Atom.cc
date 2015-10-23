@@ -32,62 +32,62 @@ static THREAD_LOCAL basic::Tracer TR( "core.chemical.Atom" );
 
 /// @details All its properties are un-set by default.
 Atom::Atom() :
-		name_( "" ),
-		mm_name_( "" ),
-		atom_type_index_( 0 ),
-		mm_atom_type_index_( 0 ),
-		element_( /* 0 */ ),
-		gasteiger_atom_type_( /* 0 */ ),
-		formal_charge_( 0 ),
-		charge_( 0 ),
-		ideal_xyz_(),
-		properties_( AtomPropertiesOP( new AtomProperties() ) ),
-		is_hydrogen_( false ),
-		has_orbitals_( false ),
-		abs_stereochem_( char() ),
-		greek_d_( NA_GREEK_DISTANCE )
+	name_( "" ),
+	mm_name_( "" ),
+	atom_type_index_( 0 ),
+	mm_atom_type_index_( 0 ),
+	element_( /* 0 */ ),
+	gasteiger_atom_type_( /* 0 */ ),
+	formal_charge_( 0 ),
+	charge_( 0 ),
+	ideal_xyz_(),
+	properties_( AtomPropertiesOP( new AtomProperties() ) ),
+	is_hydrogen_( false ),
+	has_orbitals_( false ),
+	abs_stereochem_( char() ),
+	greek_d_( NA_GREEK_DISTANCE )
 {}
 
 /// @details Rosetta AtomTypes should be set through the ResidueType to ensure data consistency.
 Atom::Atom(
-		std::string const & name_in,
-		std::string const & mm_name,
-		Size const mm_atom_type_index,
-		ElementCOP element,
-		Real const charge,
-		Vector const & ideal_xyz ) :
-		name_( name_in ),
-		mm_name_( mm_name ),
-		atom_type_index_( 0 ),
-		mm_atom_type_index_( mm_atom_type_index ),
-		element_( element ),
-		gasteiger_atom_type_( /* 0 */ ),
-		formal_charge_( 0 ),
-		charge_( charge ),
-		ideal_xyz_( ideal_xyz ),
-		properties_( AtomPropertiesOP( new AtomProperties() ) ),
-		is_hydrogen_( false ),
-		has_orbitals_( false ),
-		abs_stereochem_( char() ),
-		greek_d_( NA_GREEK_DISTANCE )
+	std::string const & name_in,
+	std::string const & mm_name,
+	Size const mm_atom_type_index,
+	ElementCOP element,
+	Real const charge,
+	Vector const & ideal_xyz ) :
+	name_( name_in ),
+	mm_name_( mm_name ),
+	atom_type_index_( 0 ),
+	mm_atom_type_index_( mm_atom_type_index ),
+	element_( element ),
+	gasteiger_atom_type_( /* 0 */ ),
+	formal_charge_( 0 ),
+	charge_( charge ),
+	ideal_xyz_( ideal_xyz ),
+	properties_( AtomPropertiesOP( new AtomProperties() ) ),
+	is_hydrogen_( false ),
+	has_orbitals_( false ),
+	abs_stereochem_( char() ),
+	greek_d_( NA_GREEK_DISTANCE )
 {}
 
 Atom::Atom( Atom const & src ) :
-		name_( src.name_ ),
-		mm_name_( src.mm_name_ ),
-		atom_type_index_( src.atom_type_index_ ),
-		mm_atom_type_index_( src.mm_atom_type_index_ ),
-		element_( src.element_ ),
-		gasteiger_atom_type_( src.gasteiger_atom_type_ ),
-		formal_charge_( src.formal_charge_ ),
-		charge_( src.charge_ ),
-		ideal_xyz_( src.ideal_xyz_ ),
-		properties_( AtomPropertiesOP ( new AtomProperties( *src.properties_ ) ) ),
-		is_hydrogen_( 0 ),
-		has_orbitals_( 0 ),
-		bonded_orbitals_(),
-		abs_stereochem_( src.abs_stereochem_ ),
-		greek_d_( src.greek_d_ )
+	name_( src.name_ ),
+	mm_name_( src.mm_name_ ),
+	atom_type_index_( src.atom_type_index_ ),
+	mm_atom_type_index_( src.mm_atom_type_index_ ),
+	element_( src.element_ ),
+	gasteiger_atom_type_( src.gasteiger_atom_type_ ),
+	formal_charge_( src.formal_charge_ ),
+	charge_( src.charge_ ),
+	ideal_xyz_( src.ideal_xyz_ ),
+	properties_( AtomPropertiesOP ( new AtomProperties( *src.properties_ ) ) ),
+	is_hydrogen_( 0 ),
+	has_orbitals_( 0 ),
+	bonded_orbitals_(),
+	abs_stereochem_( src.abs_stereochem_ ),
+	greek_d_( src.greek_d_ )
 {}
 
 Atom::~Atom() {}
@@ -132,7 +132,7 @@ Atom::set_absolute_stereochemistry( char const setting )
 {
 	if ( !( setting == 'R' || setting == 'S' || setting == char() ) ) {
 		utility_exit_with_message( "Atom::set_absolute_stereochemistry: "
-				"R and S are the only valid deginations for absolute stereochemistry." );
+			"R and S are the only valid deginations for absolute stereochemistry." );
 	}
 	abs_stereochem_ = setting;
 }

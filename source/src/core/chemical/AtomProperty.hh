@@ -18,7 +18,7 @@
 
 namespace core {
 namespace chemical {
-	
+
 /// @brief   Enumerators for all the properties that can be assigned to a chemical::Atom.
 enum AtomProperty {
 	NO_ATOM_PROPERTY = 0,

@@ -114,7 +114,7 @@ SugarBackboneEnergy::residue_energy(
 	// Calculate psi component.
 	// For psi, we need to get information from the previous residue.
 	conformation::Residue const & prev_rsd( pose.residue(
-			pose::carbohydrates::find_seqpos_of_saccharides_parent_residue( rsd ) ) );
+		pose::carbohydrates::find_seqpos_of_saccharides_parent_residue( rsd ) ) );
 	// If this is not a saccharide residue, do nothing.
 	if ( prev_rsd.is_carbohydrate() ) {
 		CarbohydrateInfoCOP prev_info( prev_rsd.carbohydrate_info() );
@@ -155,22 +155,22 @@ SugarBackboneEnergy::residue_energy(
 
 			// Finally, check if it's axial or equatorial and call the appropriate function.
 			switch ( is_atom_axial_or_equatorial_to_ring( prev_rsd, connect_atom, ring_atoms ) ) {
-				case AXIAL :
-					if ( position % 2 == 0 ) {  // even
-						score += E_( _2AX_3EQ_4AX_LINKS, psi );
-					} else /* odd */ {
-						score += E_( _2EQ_3AX_4EQ_LINKS, psi );
-					}
-					break;
-				case EQUATORIAL :
-					if ( position % 2 == 0 ) {  // even
-						score += E_( _2EQ_3AX_4EQ_LINKS, psi );
-					} else /* odd */ {
-						score += E_( _2AX_3EQ_4AX_LINKS, psi );
-					}
-					break;
-				case NEITHER :
-					break;
+			case AXIAL :
+				if ( position % 2 == 0 ) {  // even
+					score += E_( _2AX_3EQ_4AX_LINKS, psi );
+				} else /* odd */ {
+					score += E_( _2EQ_3AX_4EQ_LINKS, psi );
+				}
+				break;
+			case EQUATORIAL :
+				if ( position % 2 == 0 ) {  // even
+					score += E_( _2EQ_3AX_4EQ_LINKS, psi );
+				} else /* odd */ {
+					score += E_( _2AX_3EQ_4AX_LINKS, psi );
+				}
+				break;
+			case NEITHER :
+				break;
 			}
 		}
 	}

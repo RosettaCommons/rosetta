@@ -199,34 +199,32 @@ get_all_graft_permutations(
 	vector1<vector1<core::Size> > all_permutations;
 
 
-	if (n > totals.size()) return permutations;
+	if ( n > totals.size() ) return permutations;
 
-	else if (n == 1) {
+	else if ( n == 1 ) {
 
-		if (totals[1] == 0) {
+		if ( totals[1] == 0 ) {
 			vector1<core::Size> zero_vector(1, 0);
 			all_permutations.push_back(zero_vector);
-		}
-		else {
-			for (core::Size i = 1; i <= totals[1]; ++i) {
+		} else {
+			for ( core::Size i = 1; i <= totals[1]; ++i ) {
 				vector1<core::Size> start_vector(1, i);
 				all_permutations.push_back(start_vector);
 			}
 		}
-	}
-	else {
+	} else {
 		//No CDR in CDR set.  Set index 0, move on to next CDR
-		if (totals[n] == 0) {
-			for (core::Size i = 1; i <= permutations.size(); ++i) {
+		if ( totals[n] == 0 ) {
+			for ( core::Size i = 1; i <= permutations.size(); ++i ) {
 				utility::vector1<core::Size> c = permutations[i];
 				utility::vector1<core::Size> c2(c);
 				c2.push_back(0);
 				all_permutations.push_back(c2);
 			}
 		} else {
-			for (core::Size ind = 1; ind <= totals[n]; ++ind) {
+			for ( core::Size ind = 1; ind <= totals[n]; ++ind ) {
 
-				for (core::Size i = 1; i <= permutations.size(); ++i) {
+				for ( core::Size i = 1; i <= permutations.size(); ++i ) {
 					utility::vector1<core::Size> c = permutations[i];
 					utility::vector1<core::Size> c2(c);
 					c2.push_back(ind);
@@ -248,11 +246,11 @@ design_protocol_to_enum(std::string const & design_type){
 	std::string type = design_type;
 	boost::to_upper(type);
 
-	if ( type == "GENERALIZED_MONTE_CARLO" || type == "GEN_MC") {
+	if ( type == "GENERALIZED_MONTE_CARLO" || type == "GEN_MC" ) {
 		return generalized_monte_carlo;
 	} else if ( type == "DETERMINISTIC_GRAFT" ) {
 		return deterministic_graft;
-	} else if (type == "EVEN_CLUSTER_MC") {
+	} else if ( type == "EVEN_CLUSTER_MC" ) {
 		return even_cluster_monte_carlo;
 	} else {
 		utility_exit_with_message("DesignProtocol unrecognized.  Please check AntibodyDesign settings.");
@@ -265,7 +263,7 @@ design_protocol_to_string(AntibodyDesignProtocolEnum const design_type){
 		return "generalized_monte_carlo";
 	} else if ( design_type==deterministic_graft ) {
 		return "deterministic_graft";
-	} else if (design_type == even_cluster_monte_carlo){
+	} else if ( design_type == even_cluster_monte_carlo ) {
 		return "even_cluster_monte_carlo";
 	} else {
 		utility_exit_with_message("DesignProtocolunrecognized.  Please check AntibodyDesign settings.");
@@ -801,22 +799,21 @@ transform_sequence_to_mutation_set(
 void
 set_native_cdr_sequence( AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose::Pose & pose){
 	using basic::datacache::DataCache_CacheableData;
-	if (pose.data().has(CacheableDataType::NATIVE_ANTIBODY_SEQ) ){
+	if ( pose.data().has(CacheableDataType::NATIVE_ANTIBODY_SEQ) ) {
 
 		//This is always a pretty line:
 		//NativeAntibodySeq & seq = static_cast< NativeAntibodySeq & >(pose.data().get(CacheableDataType::NATIVE_ANTIBODY_SEQ));
 
 		NativeAntibodySeqOP data
 			=  utility::pointer::static_pointer_cast< NativeAntibodySeq >
-				( pose.data().get_ptr(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ) );
+			( pose.data().get_ptr(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ) );
 
 		runtime_assert( data.get() != NULL );
 
 		TR << "Setting CDR sequence in NativeAntibodySeq" << std::endl;
 		data->set_from_cdr(pose, cdr );
 
-	}
-	else {
+	} else {
 		pose.data().set(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ, DataCache_CacheableData::DataOP( new NativeAntibodySeq( pose, ab_info) ));
 	}
 }
@@ -826,8 +823,8 @@ get_native_sequence( core::pose::Pose const & pose){
 
 	//Does not work:
 	//NativeAntibodySeqCOP data
-	//	=  utility::pointer::static_pointer_cast< NativeAntibodySeq >
-	//		( pose.data().get_ptr(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ) );
+	// =  utility::pointer::static_pointer_cast< NativeAntibodySeq >
+	//  ( pose.data().get_ptr(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ) );
 
 
 	NativeAntibodySeq const & data = static_cast< NativeAntibodySeq const & >(pose.data().get(core::pose::datacache::CacheableDataType::NATIVE_ANTIBODY_SEQ));

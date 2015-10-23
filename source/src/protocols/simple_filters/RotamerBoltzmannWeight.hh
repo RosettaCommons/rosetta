@@ -94,6 +94,8 @@ public:
 	core::Real compute_modified_ddG( core::pose::Pose const & pose, std::ostream & out ) const;
 	void write_to_pdb( core::Size const residue, std::string const residue_name, core::Real const boltzmann_weight ) const;
 private:
+	core::Real compute_boltz_probability() const;
+private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::Size rb_jump_; // dflt 1.
 	std::string sym_dof_names_; // dflt "".
@@ -106,6 +108,7 @@ private:
 	core::Real energy_reduction_factor_;//dflt 0.5; by how much to decrease the binding energy
 
 	bool compute_entropy_reduction_; //dflt false; compute the difference between the bound and unbound states
+	bool compute_max_; //dflt false; compute the max rotamer boltz weight for all residues selected instead of averaging them
 	bool repack_; //dflt true; carry out ddG (true) or dG (false) calculations
 	/// the following are mutable b/c they only sum up data in the filter. They do not affect
 	/// how the filter is run (so the filter will remain logically constant, despite these variables)

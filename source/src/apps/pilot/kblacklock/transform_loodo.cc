@@ -9,7 +9,7 @@
 
 /// @file /src/apps/pilot/kblacklock/transform_loodo.cc
 ///
-/// @brief Pilot Application for reading CapHit information from LooDo CapHit_RT.txt-style output file 
+/// @brief Pilot Application for reading CapHit information from LooDo CapHit_RT.txt-style output file
 /// and generating CapHits in PDB form.
 ///
 /// @author Kristin Blacklock (kristin.blacklock@rutgers.edu)
@@ -54,94 +54,93 @@ basic::Tracer TR("PDBTransform");
 core::kinematics::Stub
 parse_into_stub( utility::vector1<core::Real> const & in_vec )
 {
-		core::kinematics::Stub to_apply_stub;
-		Matrix M;
-		Vector v;
-		int count (0), i(1), j(1), k(0);
-		utility::vector1<core::Real>::const_iterator it;
-		for (it = in_vec.begin(); it != in_vec.end(); ++it ){
-				count++;
-				if (count <= 9){
-						if (j==4){
-								i++;
-								j=1;
-						}
-						M(i,j) = *it;
-						j++;
-				}
-				else {
-						v[k] = *it;
-						k++;
-				}
+	core::kinematics::Stub to_apply_stub;
+	Matrix M;
+	Vector v;
+	int count (0), i(1), j(1), k(0);
+	utility::vector1<core::Real>::const_iterator it;
+	for ( it = in_vec.begin(); it != in_vec.end(); ++it ) {
+		count++;
+		if ( count <= 9 ) {
+			if ( j==4 ) {
+				i++;
+				j=1;
+			}
+			M(i,j) = *it;
+			j++;
+		} else {
+			v[k] = *it;
+			k++;
 		}
-		to_apply_stub.M = M;
-		to_apply_stub.v = v;
-		return to_apply_stub;
+	}
+	to_apply_stub.M = M;
+	to_apply_stub.v = v;
+	return to_apply_stub;
 }
 
 /// @brief Main method
 int main( int argc, char * argv [] ) {
 
-		using namespace basic::options;
+	using namespace basic::options;
 
-		try {
-				
-				// Devel init factories
-				devel::init(argc, argv);
+	try {
 
-				// Import native insert domain PDB & center.
-				std::string pdbfile = option[ OptionKeys::loodo::cap ]();
-				core::pose::Pose native_pose;
-				core::import_pose::pose_from_pdb( native_pose, pdbfile );
-				native_pose.center();
+		// Devel init factories
+		devel::init(argc, argv);
 
-				core::pose::Pose moving_pose = native_pose;
+		// Import native insert domain PDB & center.
+		std::string pdbfile = option[ OptionKeys::loodo::cap ]();
+		core::pose::Pose native_pose;
+		core::import_pose::pose_from_pdb( native_pose, pdbfile );
+		native_pose.center();
 
-				// Get CapHit_RT (or equivalent) file name.
-				std::string stubfile = option[ OptionKeys::loodo::caphit_rt_file ]();
+		core::pose::Pose moving_pose = native_pose;
 
-				// Open CapHit_RT (or equivalent) File
-				utility::io::izstream stream(stubfile);
-				if (!stream) {
-						utility_exit_with_message("File not found");
-				}
-			
-				// Read CapHit_RT (or equivalent) file lines and separate into CapHit name & stub
-				std::string line;
-				while ( getline(stream,line)){
-						//std::cout << line << std::endl;
-						
-						int name_index = line.find_first_of(" || ", 0);
-						int stub_index = line.rfind("STUB ");
-						
-						std::string name = line.substr(0, name_index);
-						//TR << "Name: " << name << std::endl;
-						
-						std::string stub = line.substr(stub_index+5);
-						//TR << "Stub: " << stub << std::endl;
+		// Get CapHit_RT (or equivalent) file name.
+		std::string stubfile = option[ OptionKeys::loodo::caphit_rt_file ]();
 
-						std::vector< std::string > stubvec;
-						boost::split( stubvec, stub, boost::is_any_of(" "));
-
-						utility::vector1<core::Real> SV;
-						for (std::vector< std::string >::iterator i = stubvec.begin(); i != stubvec.end(); ++i){
-								float f = boost::lexical_cast<float>(*i);
-								SV.push_back(f);
-						}
-
-						// Parse file information into stub and apply to the centered native pose.
-						moving_pose = native_pose;
-						core::kinematics::Stub to_apply_stub = parse_into_stub( SV );
-						//TR << "Stub after parse_into_stub: " << to_apply_stub << std::endl;
-						protocols::sic_dock::xform_pose_rev( moving_pose, to_apply_stub );
-						moving_pose.dump_pdb("XFORM_"+name);
-
-				}
-				stream.close();
-
-		} catch (utility::excn::EXCN_Base const & e ) {
-				std::cout << "caught exception " << e.msg() << std::endl;
-				return -1;
+		// Open CapHit_RT (or equivalent) File
+		utility::io::izstream stream(stubfile);
+		if ( !stream ) {
+			utility_exit_with_message("File not found");
 		}
-		return 0;
+
+		// Read CapHit_RT (or equivalent) file lines and separate into CapHit name & stub
+		std::string line;
+		while ( getline(stream,line) ) {
+			//std::cout << line << std::endl;
+
+			int name_index = line.find_first_of(" || ", 0);
+			int stub_index = line.rfind("STUB ");
+
+			std::string name = line.substr(0, name_index);
+			//TR << "Name: " << name << std::endl;
+
+			std::string stub = line.substr(stub_index+5);
+			//TR << "Stub: " << stub << std::endl;
+
+			std::vector< std::string > stubvec;
+			boost::split( stubvec, stub, boost::is_any_of(" "));
+
+			utility::vector1<core::Real> SV;
+			for ( std::vector< std::string >::iterator i = stubvec.begin(); i != stubvec.end(); ++i ) {
+				float f = boost::lexical_cast<float>(*i);
+				SV.push_back(f);
+			}
+
+			// Parse file information into stub and apply to the centered native pose.
+			moving_pose = native_pose;
+			core::kinematics::Stub to_apply_stub = parse_into_stub( SV );
+			//TR << "Stub after parse_into_stub: " << to_apply_stub << std::endl;
+			protocols::sic_dock::xform_pose_rev( moving_pose, to_apply_stub );
+			moving_pose.dump_pdb("XFORM_"+name);
+
+		}
+		stream.close();
+
+	} catch (utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+	return 0;
 }

@@ -496,9 +496,9 @@ void
 AntibodyDesignMover::setup_cdr_pose_sampling_strategies() {
 	typedef std::map< CDRNameEnum, utility::vector1< CDRDBPose > >::const_iterator it_type;
 
-	for ( it_type it = cdr_set_.begin(); it != cdr_set_.end(); ++it ){
+	for ( it_type it = cdr_set_.begin(); it != cdr_set_.end(); ++it ) {
 		CDRNameEnum cdr = it->first;
-		for ( core::Size index=1; index <= cdr_set_[ cdr ].size(); ++index ){
+		for ( core::Size index=1; index <= cdr_set_[ cdr ].size(); ++index ) {
 			CDRClusterEnum cluster = cdr_set_[ cdr ][ index ].cluster;
 			core::Size cluster_length = ab_info_->get_cluster_length(cluster);
 			cluster_based_CDRDBPose_indexes_[ cdr ][ cluster ].push_back( index );
@@ -1152,15 +1152,15 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 
 	typedef std::map< CDRNameEnum,
 		std::map< clusters::CDRClusterEnum,
-			utility::vector1< core::Size > > >::iterator it_type;
+		utility::vector1< core::Size > > >::iterator it_type;
 
 	typedef std::map< clusters::CDRClusterEnum,
 		utility::vector1< core::Size > >::iterator it_type_clusters;
 
-	for (it_type it = cluster_based_CDRDBPose_indexes_.begin(); it != cluster_based_CDRDBPose_indexes_.end(); ++it) {
+	for ( it_type it = cluster_based_CDRDBPose_indexes_.begin(); it != cluster_based_CDRDBPose_indexes_.end(); ++it ) {
 
 		//For Length indexing:
-		for (it_type_clusters it2 = cluster_based_CDRDBPose_indexes_[ it->first ].begin(); it2 != cluster_based_CDRDBPose_indexes_[ it->first ].end(); ++it2){
+		for ( it_type_clusters it2 = cluster_based_CDRDBPose_indexes_[ it->first ].begin(); it2 != cluster_based_CDRDBPose_indexes_[ it->first ].end(); ++it2 ) {
 			cluster_indexes[ it->first ].push_back( it2->first );
 		}
 
@@ -1169,7 +1169,7 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 	};
 
 	//typedef std::map< clusters::CDRClusterEnum,
-	//		utility::vector1< core::Size > > ::iterator cluster_based_CDRDBPose_indexes_it_type;
+	//  utility::vector1< core::Size > > ::iterator cluster_based_CDRDBPose_indexes_it_type;
 
 	//Choose random weighted CDR, graft in CDR, minimize
 	for ( core::Size i = 1; i <= outer_cycles_; ++i ) {
@@ -1181,10 +1181,9 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 
 		/// Only get a cdr_index if we are graft designing.
 		if ( cdr_graft_design_options_[ cdr_type ]->design() ) {
-			if (mc_algorithm == generalized_monte_carlo) {
+			if ( mc_algorithm == generalized_monte_carlo ) {
 				cdr_index = numeric::random::rg().random_range(1, cdr_set_[cdr_type].size());
-			}
-			else if (mc_algorithm == even_cluster_monte_carlo){
+			} else if ( mc_algorithm == even_cluster_monte_carlo ) {
 
 
 				core::Size cluster_index = numeric::random::rg().random_range(1, cluster_indexes[ cdr_type ].size());
@@ -1196,8 +1195,7 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 				//std::advance(clus_it, numeric::random::rg().random_range(0, cluster_based_CDRDBPose_indexes_.size()));
 				//CDRClusterEnum cluster = clus_it->first;
 
-			}
-			else if (mc_algorithm == even_length_cluster_monte_carlo){
+			} else if ( mc_algorithm == even_length_cluster_monte_carlo ) {
 
 				//Get a random length
 				//Index needs start from 0 for std::advance
@@ -1269,7 +1267,7 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 	// utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
 	//}
 
-	if (!ab_info_) {
+	if ( !ab_info_ ) {
 		ab_info_ = AntibodyInfoOP(new AntibodyInfo(pose, AHO_Scheme, North));
 	}
 
@@ -1320,7 +1318,7 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 	}
 
 	//} else {
-	//	utility_exit_with_message("Design Protocol not understood: "+design_protocol_to_string( design_protocol_ )+" See -design_protocol option for available protocols");
+	// utility_exit_with_message("Design Protocol not understood: "+design_protocol_to_string( design_protocol_ )+" See -design_protocol option for available protocols");
 	//}
 
 

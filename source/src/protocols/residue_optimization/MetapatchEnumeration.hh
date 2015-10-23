@@ -79,26 +79,26 @@ using namespace pose;
 class MetapatchEnumeration {
 public:
 	MetapatchEnumeration( Pose pose, MoveMapOP mm, ScoreFunctionOP score_fxn, Size mode, bool pack, Real threshold, utility::vector1< std::string > metapatch_names, Real taboo = 5 ) :
-	pose_( pose ),
-	mm_( mm ),
-	sampling_score_fxn_( score_fxn ),
-	evaluation_score_fxn_( score_fxn ),
-	mode_( mode ),
-	pack_( pack ),
-	threshold_( threshold ),
-	metapatch_names_( metapatch_names ),
-	taboo_( taboo )
+		pose_( pose ),
+		mm_( mm ),
+		sampling_score_fxn_( score_fxn ),
+		evaluation_score_fxn_( score_fxn ),
+		mode_( mode ),
+		pack_( pack ),
+		threshold_( threshold ),
+		metapatch_names_( metapatch_names ),
+		taboo_( taboo )
 	{}
-	
+
 	utility::vector1< Real > final_scores() { return final_scores_; }
 	utility::vector1< std::string > summary_lines() { return summary_lines_; }
-	
+
 	void generate_metapatched_variants( Size resi );
-	
+
 	Real score() { return score_; }
-	
+
 private:
-	
+
 	void generate_derived_types( Size resi, Size tp, utility::vector1< std::string > & types_considered );
 	Real binding( Pose pose );
 	void initial_sampling( Pose & pose );
@@ -107,7 +107,7 @@ private:
 
 	utility::vector1< Real > final_scores_;
 	utility::vector1< std::string > summary_lines_;
-	
+
 	Pose pose_;
 	MoveMapOP mm_;
 	ScoreFunctionOP sampling_score_fxn_;
@@ -121,7 +121,7 @@ private:
 	// Score past which a mutation is no longer investigated
 	Real taboo_;
 	utility::vector1< utility::vector1< std::string > > tabooed_;
-	
+
 };
 
 }

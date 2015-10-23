@@ -928,7 +928,7 @@ DockIntoDensityMover::apply_multi( utility::vector1< core::pose::PoseOP > & pose
 			// 2: do the grid search
 			//    top N per position
 			RBfitResultDB results(cluster_oversample_*topNfilter_);
-			
+
 			density_grid_search( i, *pose_i, results );
 			TR << "Have " << results.size() << " solutions with score >= " << results.top().score_ << std::endl;
 			if ( native_ ) print_best_rms( *pose_i, results );

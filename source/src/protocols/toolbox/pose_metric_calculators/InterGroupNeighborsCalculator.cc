@@ -49,10 +49,10 @@ namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
 
-	typedef core::pose::metrics::StructureDependentCalculator parent;
-	typedef std::set< core::Size > one_group;
-	typedef std::pair< one_group, one_group > group_pair;
-	typedef utility::vector1< group_pair > group_set;
+typedef core::pose::metrics::StructureDependentCalculator parent;
+typedef std::set< core::Size > one_group;
+typedef std::pair< one_group, one_group > group_pair;
+typedef utility::vector1< group_pair > group_set;
 
 InterGroupNeighborsCalculator::InterGroupNeighborsCalculator( group_set const & groups, core::Real dist_cutoff )
 : parent()

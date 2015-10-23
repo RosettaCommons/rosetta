@@ -33,7 +33,7 @@
 
 namespace core {
 namespace chemical {
-	
+
 /// @details This is a container class for storing properties specific to a ResidueType's atoms.
 /// These properties belong to a particular ResidueType's Atoms; they do not belong to an AtomType.
 /// chemical::Atoms store both AtomTypes and AtomProperties.
@@ -44,7 +44,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 
 	/// @brief  Copy constructor
 	AtomProperties( AtomProperties const & object_to_copy );
-	
+
 	// Destructor
 	virtual ~AtomProperties();
 
@@ -59,7 +59,7 @@ public:  // Standard Rosetta methods //////////////////////////////////////////
 	/// @brief  Generate string representation of AtomProperties for debugging purposes.
 	virtual void show( std::ostream & output=std::cout ) const;
 
-	
+
 public:  // Accessors/Mutators ////////////////////////////////////////////////
 	/// @brief  Get whether or not this Atom has the requested property.
 	inline
@@ -95,8 +95,8 @@ private:  // Private methods //////////////////////////////////////////////////
 
 	// Copy all data members from <from> to <to>.
 	void copy_data( AtomProperties & to, AtomProperties const & from );
-	
-	
+
+
 private:  // Private data /////////////////////////////////////////////////////
 	// Storage of general atom properties.
 	utility::vector1< bool > atom_property_status_;  // indexed by AtomProperty

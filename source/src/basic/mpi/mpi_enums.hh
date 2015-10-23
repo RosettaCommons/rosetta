@@ -18,7 +18,7 @@
 ///flagging as job as being a bad input
 namespace basic {
 namespace mpi {
-		
+
 
 enum mpi_tags {
 	NEW_JOB_ID_TAG = 10,
@@ -30,8 +30,8 @@ enum mpi_tags {
 	JOB_GO_TAG = 70
 };
 
-	
-	
+
+
 } //mpi
 } //basic
 

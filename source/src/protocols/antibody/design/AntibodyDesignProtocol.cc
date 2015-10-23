@@ -387,13 +387,13 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 
 	protocols::analysis::InterfaceAnalyzerMoverOP analyzer( new protocols::analysis::InterfaceAnalyzerMover(get_dock_chains_from_ab_dock_chains(ab_info_, "A_LH"), false, scorefxn_, false , true, false) );
 
-	if (run_snugdock_ || run_relax_){
+	if ( run_snugdock_ || run_relax_ ) {
 		for ( core::Size i = 1; i <= final_pose_ensemble.size(); ++i ) {
 			ab_info_->setup_CDR_clusters( *final_pose_ensemble[i], false );
 			add_cluster_comments_to_pose( *final_pose_ensemble[i], ab_info_ );
 			check_fix_aho_cdr_numbering( ab_info_, *final_pose_ensemble[i] );
 
-			if (option [ OptionKeys::antibody::design::run_interface_analyzer ]()) {
+			if ( option [ OptionKeys::antibody::design::run_interface_analyzer ]() ) {
 				analyzer->init_on_new_input(*final_pose_ensemble[i]);
 				analyzer->apply(*final_pose_ensemble[i]);
 				analyzer->add_score_info_to_pose(*final_pose_ensemble[i]);
@@ -418,7 +418,7 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 		add_cluster_comments_to_pose( *final_pose_ensemble[ i ], ab_info_ );
 		check_fix_aho_cdr_numbering( ab_info_, *final_pose_ensemble[ i ] );
 
-		if (option [ OptionKeys::antibody::design::run_interface_analyzer ]()) {
+		if ( option [ OptionKeys::antibody::design::run_interface_analyzer ]() ) {
 			analyzer->init_on_new_input(*final_pose_ensemble[i]);
 			analyzer->apply(*final_pose_ensemble[i]);
 			analyzer->add_score_info_to_pose(*final_pose_ensemble[i]);

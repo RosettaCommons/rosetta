@@ -1070,16 +1070,16 @@ ChiralFlipAtoms::apply( ResidueType & rsd ) const {
 /// @brief replace proton with methyl
 bool
 ReplaceProtonWithMethyl::apply( ResidueType & rsd ) const {
-	
+
 	// What is the proton to be replaced?
 	//std::cout << "Atom is " << atom_ << std::endl;
 	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
 		return true;
 	}
-	
+
 	// Now the valence isn't free.
 	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-	
+
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 		// Am I an aromatic carbon atom with a free valence?
 		// Can also be specified in params, but add if not already set!
@@ -1093,24 +1093,24 @@ ReplaceProtonWithMethyl::apply( ResidueType & rsd ) const {
 			}
 		}
 	}
-	
+
 	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
 	//std::cout << "Proton is " << rsd.atom_name( proton_index ) << std::endl;
 	AtomICoor icoor = rsd.icoor( proton_index );
 	rsd.delete_atom( proton_index );
-	
+
 	//std::cout << "Adding atom C" << atom_ << " to " << atom_ << ", bonded to " << rsd.atom_name( icoor.stub_atom1().atomno() ) << rsd.atom_name( icoor.stub_atom2().atomno() ) << rsd.atom_name( icoor.stub_atom3().atomno() ) << std::endl;
 	rsd.add_atom( "C"+atom_, "CH3", "CT3", -0.27 );
 	rsd.add_bond( "C"+atom_, atom_ );
 	rsd.set_icoor( "C"+atom_,
-				  icoor.phi(),
-				  icoor.theta(),
-				  1.511005,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  rsd.atom_name( icoor.stub_atom2().atomno() ),
-				  rsd.atom_name( icoor.stub_atom3().atomno() ),
-				  true );
-	
+		icoor.phi(),
+		icoor.theta(),
+		1.511005,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		true );
+
 	// these codes with
 	rsd.add_atom( "X"+atom_, "Hapo", "HA", 0.09 );
 	rsd.add_atom( "Y"+atom_, "Hapo", "HA", 0.09 );
@@ -1120,42 +1120,42 @@ ReplaceProtonWithMethyl::apply( ResidueType & rsd ) const {
 	rsd.add_bond( "C"+atom_, "Z"+atom_ );
 
 	rsd.set_icoor( "X"+atom_,
-				  88.407090/180.0*3.14159,
-				  70.5/180.0*3.14159,
-				  1.083573,
-				  "C"+atom_,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  rsd.atom_name( icoor.stub_atom2().atomno() ),
-				  true );
-	
+		88.407090/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.083573,
+		"C"+atom_,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		true );
+
 	rsd.set_icoor( "Y"+atom_,
-				  -120.0/180.0*3.14159,
-				  70.5/180.0*3.14159,
-				  1.083573,
-				  "C"+atom_,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  "X"+atom_,
-				  true );
-	
+		-120.0/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.083573,
+		"C"+atom_,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		"X"+atom_,
+		true );
+
 	rsd.set_icoor( "Z"+atom_,
-				  -120.0/180.0*3.14159,
-				  70.5/180.0*3.14159,
-				  1.083573,
-				  "C"+atom_,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  "Y"+atom_,
-				  true );
-	
+		-120.0/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.083573,
+		"C"+atom_,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		"Y"+atom_,
+		true );
+
 	rosetta_recharge_fullatom( rsd );
 	find_bonds_in_rings( rsd );
 	//VD nbr_atom = rsd.nbr_vertex();
 	//rsd.nbr_radius( find_nbr_dist( rsd, nbr_atom ) );
 	//rsd.nbr_atom( nbr_atom );
-	
+
 	//rename_atoms( rsd, false );
 	//rsd.assign_internal_coordinates();
 	//rsd.autodetermine_chi_bonds();
-	
+
 	return false;
 }
 
@@ -1167,10 +1167,10 @@ ReplaceProtonWithMethoxy::apply( ResidueType & rsd ) const {
 	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
 		return true;
 	}
-	
+
 	// Now the valence isn't free.
 	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-	
+
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 		// Am I an aromatic carbon atom with a free valence?
 		// Can also be specified in params, but add if not already set!
@@ -1184,37 +1184,37 @@ ReplaceProtonWithMethoxy::apply( ResidueType & rsd ) const {
 			}
 		}
 	}
-	
+
 	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
 	//std::cout << "Proton is " << rsd.atom_name( proton_index ) << std::endl;
 	AtomICoor icoor = rsd.icoor( proton_index );
 	rsd.delete_atom( proton_index );
-	
+
 	//std::cout << "Adding atom C" << atom_ << " to " << atom_ << ", bonded to " << rsd.atom_name( icoor.stub_atom1().atomno() ) << rsd.atom_name( icoor.stub_atom2().atomno() ) << rsd.atom_name( icoor.stub_atom3().atomno() ) << std::endl;
-	
+
 	rsd.add_atom( "O"+atom_, "OH", "OE", -0.61 );
 	rsd.add_bond( "O"+atom_, atom_ );
 	rsd.set_icoor( "O"+atom_,
-				  icoor.phi(),
-				  icoor.theta(),
-				  1.375964, // actually that's the tyr dist
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  rsd.atom_name( icoor.stub_atom2().atomno() ),
-				  rsd.atom_name( icoor.stub_atom3().atomno() ),
-				  true  );
-	
-	
+		icoor.phi(),
+		icoor.theta(),
+		1.375964, // actually that's the tyr dist
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		true  );
+
+
 	rsd.add_atom( "C"+atom_, "CH3", "CT3", -0.22 );
 	rsd.add_bond( "C"+atom_, "O"+atom_ );
 	rsd.set_icoor( "C"+atom_,
-				  -177.688373/180.0*3.14159,
-				  65.681781/180.0*3.14159,
-				  1.393527, // aliphatic context.
-				  "O"+atom_,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  rsd.atom_name( icoor.stub_atom2().atomno() ),
-				  true );
-	
+		-177.688373/180.0*3.14159,
+		65.681781/180.0*3.14159,
+		1.393527, // aliphatic context.
+		"O"+atom_,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		true );
+
 	// these codes with
 	rsd.add_atom( "X"+atom_, "Hapo", "HA", 0.14 );
 	rsd.add_atom( "Y"+atom_, "Hapo", "HA", 0.14 );
@@ -1222,57 +1222,57 @@ ReplaceProtonWithMethoxy::apply( ResidueType & rsd ) const {
 	rsd.add_bond( "C"+atom_, "X"+atom_ );
 	rsd.add_bond( "C"+atom_, "Y"+atom_ );
 	rsd.add_bond( "C"+atom_, "Z"+atom_ );
-	
+
 	rsd.set_icoor( "X"+atom_,
-				  88.407090/180.0*3.14159,
-				  70.5/180.0*3.14159,
-				  1.083573,
-				  "C"+atom_,
-				  "O"+atom_,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  true );
-	
+		88.407090/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.083573,
+		"C"+atom_,
+		"O"+atom_,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		true );
+
 	rsd.set_icoor( "Y"+atom_,
-				  -120.0/180.0*3.14159,
-				  70.5/180.0*3.14159,
-				  1.083573,
-				  "C"+atom_,
-				  "O"+atom_,
-				  "X"+atom_,
-				  true );
-	
+		-120.0/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.083573,
+		"C"+atom_,
+		"O"+atom_,
+		"X"+atom_,
+		true );
+
 	rsd.set_icoor( "Z"+atom_,
-				  -120.0/180.0*3.14159,
-				  70.5/180.0*3.14159,
-				  1.083573,
-				  "C"+atom_,
-				  "O"+atom_,
-				  "Y"+atom_,
-				  true );
-	
+		-120.0/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.083573,
+		"C"+atom_,
+		"O"+atom_,
+		"Y"+atom_,
+		true );
+
 	// fake proton chi
 	rsd.add_chi( rsd.atom_name( icoor.stub_atom2().atomno() ), rsd.atom_name( icoor.stub_atom1().atomno() ), "O"+atom_, "C"+atom_ );
-	
+
 	rsd.add_chi_rotamer( rsd.nchi(),   0, 10 );
 	rsd.add_chi_rotamer( rsd.nchi(),  60, 10 );
 	rsd.add_chi_rotamer( rsd.nchi(), 120, 10 );
 	rsd.add_chi_rotamer( rsd.nchi(), 180, 10 );
 	rsd.add_chi_rotamer( rsd.nchi(), 240, 10 );
 	rsd.add_chi_rotamer( rsd.nchi(), 300, 10 );
-	
+
 	rosetta_recharge_fullatom( rsd );
 	find_bonds_in_rings( rsd );
 	//VD nbr_atom = rsd.nbr_vertex();
 	//rsd.nbr_radius( find_nbr_dist( rsd, nbr_atom ) );
 	//rsd.nbr_atom( nbr_atom );
-	
+
 	//rename_atoms( rsd, false );
 	//rsd.assign_internal_coordinates();
 	//rsd.autodetermine_chi_bonds();
-	
+
 	return false;
 }
-						  
+
 /// @brief replace proton with ethyl
 bool
 ReplaceProtonWithEthyl::apply( ResidueType & rsd ) const {
@@ -1281,10 +1281,10 @@ ReplaceProtonWithEthyl::apply( ResidueType & rsd ) const {
 	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
 		return true;
 	}
-	
+
 	// Now the valence isn't free.
 	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-	
+
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 		// Am I an aromatic carbon atom with a free valence?
 		// Can also be specified in params, but add if not already set!
@@ -1298,58 +1298,58 @@ ReplaceProtonWithEthyl::apply( ResidueType & rsd ) const {
 			}
 		}
 	}
-	
+
 	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
 	//std::cout << "Proton is " << rsd.atom_name( proton_index ) << std::endl;
 	AtomICoor icoor = rsd.icoor( proton_index );
 	rsd.delete_atom( proton_index );
-	
+
 	//std::cout << "Adding atom C" << atom_ << " to " << atom_ << ", bonded to " << rsd.atom_name( icoor.stub_atom1().atomno() ) << rsd.atom_name( icoor.stub_atom2().atomno() ) << rsd.atom_name( icoor.stub_atom3().atomno() ) << std::endl;
 	rsd.add_atom( "C"+atom_, "CH2", "CT2", -0.27 );
 	rsd.add_bond( "C"+atom_, atom_ );
 	rsd.set_icoor( "C"+atom_,
-				  icoor.phi(),
-				  icoor.theta(),
-				  1.511005,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  rsd.atom_name( icoor.stub_atom2().atomno() ),
-				  rsd.atom_name( icoor.stub_atom3().atomno() ),
-				  true  );
-	
+		icoor.phi(),
+		icoor.theta(),
+		1.511005,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		true  );
+
 	rsd.add_atom( "A"+atom_, "Hapo", "HA", 0.09 );
 	rsd.add_atom( "B"+atom_, "Hapo", "HA", 0.09 );
 	rsd.add_bond( "C"+atom_, "A"+atom_ );
 	rsd.add_bond( "C"+atom_, "B"+atom_ );
-	
+
 	rsd.add_atom( "D"+atom_, "CH3", "CT3", -0.27 );
 	rsd.add_bond( "D"+atom_, "C"+atom_ );
 	rsd.set_icoor( "D"+atom_,
-				  3.14159,
-				  70.5/180.0*3.14159,
-				  1.527165, // semi-arbitrary--CC bond from ethanolamine
-				  "C"+atom_,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  rsd.atom_name( icoor.stub_atom2().atomno() ),
-				  true );
-	
+		3.14159,
+		70.5/180.0*3.14159,
+		1.527165, // semi-arbitrary--CC bond from ethanolamine
+		"C"+atom_,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		true );
+
 	rsd.set_icoor( "A"+atom_,
-				  120/180.0*3.14159,
-				  70.5/180.0*3.14159,
-				  1.083573,
-				  "C"+atom_,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  "D"+atom_,
-				  true );
-	
+		120/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.083573,
+		"C"+atom_,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		"D"+atom_,
+		true );
+
 	rsd.set_icoor( "B"+atom_,
-				  120/180.0*3.14159,
-				  70.5/180.0*3.14159,
-				  1.083573,
-				  "C"+atom_,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  "A"+atom_,
-				  true );
-	
+		120/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.083573,
+		"C"+atom_,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		"A"+atom_,
+		true );
+
 	// these codes with
 	rsd.add_atom( "X"+atom_, "Hapo", "HA", 0.09 );
 	rsd.add_atom( "Y"+atom_, "Hapo", "HA", 0.09 );
@@ -1357,69 +1357,69 @@ ReplaceProtonWithEthyl::apply( ResidueType & rsd ) const {
 	rsd.add_bond( "D"+atom_, "X"+atom_ );
 	rsd.add_bond( "D"+atom_, "Y"+atom_ );
 	rsd.add_bond( "D"+atom_, "Z"+atom_ );
-	
+
 	rsd.set_icoor( "X"+atom_,
-				  88.407090/180.0*3.14159,
-				  70.5/180.0*3.14159,
-				  1.083573,
-				  "D"+atom_,
-				  "C"+atom_,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  true );
-	
+		88.407090/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.083573,
+		"D"+atom_,
+		"C"+atom_,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		true );
+
 	rsd.set_icoor( "Y"+atom_,
-				  -120.0/180.0*3.14159,
-				  70.5/180.0*3.14159,
-				  1.083573,
-				  "D"+atom_,
-				  "C"+atom_,
-				  "X"+atom_,
-				  true );
-	
+		-120.0/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.083573,
+		"D"+atom_,
+		"C"+atom_,
+		"X"+atom_,
+		true );
+
 	rsd.set_icoor( "Z"+atom_,
-				  -120.0/180.0*3.14159,
-				  70.5/180.0*3.14159,
-				  1.083573,
-				  "D"+atom_,
-				  "C"+atom_,
-				  "Y"+atom_,
-				  true );
-	
+		-120.0/180.0*3.14159,
+		70.5/180.0*3.14159,
+		1.083573,
+		"D"+atom_,
+		"C"+atom_,
+		"Y"+atom_,
+		true );
+
 	// fake proton chi
 	rsd.add_chi( rsd.atom_name( icoor.stub_atom2().atomno() ), rsd.atom_name( icoor.stub_atom1().atomno() ), "C"+atom_, "D"+atom_ );
-	
+
 	rsd.add_chi_rotamer( rsd.nchi(),   0, 10 );
 	rsd.add_chi_rotamer( rsd.nchi(),  60, 10 );
 	rsd.add_chi_rotamer( rsd.nchi(), 120, 10 );
 	rsd.add_chi_rotamer( rsd.nchi(), 180, 10 );
 	rsd.add_chi_rotamer( rsd.nchi(), 240, 10 );
 	rsd.add_chi_rotamer( rsd.nchi(), 300, 10 );
-	
+
 	rosetta_recharge_fullatom( rsd );
 	find_bonds_in_rings( rsd );
 	//VD nbr_atom = rsd.nbr_vertex();
 	//rsd.nbr_radius( find_nbr_dist( rsd, nbr_atom ) );
 	//rsd.nbr_atom( nbr_atom );
-	
+
 	//rename_atoms( rsd, false );
 	//rsd.assign_internal_coordinates();
 	//rsd.autodetermine_chi_bonds();
-	
+
 	return false;
 }
 
 /// @brief replace proton with chlorine
 bool
 ReplaceProtonWithChlorine::apply( ResidueType & rsd ) const {
-	
+
 	// What is the proton to be replaced?
 	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
 		return true;
 	}
-	
+
 	// Now the valence isn't free.
 	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-	
+
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 		// Am I an aromatic carbon atom with a free valence?
 		// Can also be specified in params, but add if not already set!
@@ -1433,35 +1433,35 @@ ReplaceProtonWithChlorine::apply( ResidueType & rsd ) const {
 			}
 		}
 	}
-	
+
 	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
 	AtomICoor icoor = rsd.icoor( proton_index );
 	rsd.delete_atom( proton_index );
-	
+
 	rsd.add_atom( "CL"+atom_.substr( 1 ), "Cl", "CL", -0.10 );
 	rsd.add_bond( "CL"+atom_.substr( 1 ), atom_ );
 	rsd.set_icoor( "CL"+atom_.substr( 1 ),
-				  icoor.phi(),
-				  icoor.theta(),
-				  1.810005,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  rsd.atom_name( icoor.stub_atom2().atomno() ),
-				  rsd.atom_name( icoor.stub_atom3().atomno() ),
-				  true );
-	
+		icoor.phi(),
+		icoor.theta(),
+		1.810005,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		true );
+
 	rosetta_recharge_fullatom( rsd );
 	find_bonds_in_rings( rsd );
 	//VD nbr_atom = rsd.nbr_vertex();
 	//rsd.nbr_radius( find_nbr_dist( rsd, nbr_atom ) );
 	//rsd.nbr_atom( nbr_atom );
-	
+
 	//rename_atoms( rsd, false );
 	//rsd.assign_internal_coordinates();
 	//rsd.autodetermine_chi_bonds();
 
 	return false;
 }
-						   
+
 /// @brief replace proton with fluorine
 bool
 ReplaceProtonWithFluorine::apply( ResidueType & rsd ) const {
@@ -1470,10 +1470,10 @@ ReplaceProtonWithFluorine::apply( ResidueType & rsd ) const {
 	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
 		return true;
 	}
-	
+
 	// Now the valence isn't free.
 	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-	
+
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 		// Am I an aromatic carbon atom with a free valence?
 		// Can also be specified in params, but add if not already set!
@@ -1487,7 +1487,7 @@ ReplaceProtonWithFluorine::apply( ResidueType & rsd ) const {
 			}
 		}
 	}
-	
+
 	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
 	AtomICoor icoor = rsd.icoor( proton_index );
 	rsd.delete_atom( proton_index );
@@ -1495,27 +1495,27 @@ ReplaceProtonWithFluorine::apply( ResidueType & rsd ) const {
 	rsd.add_atom( "F"+atom_, "F", "F1", -0.22 );
 	rsd.add_bond( "F"+atom_, atom_ );
 	rsd.set_icoor( "F"+atom_,
-				  icoor.phi(),
-				  icoor.theta(),
-				  1.332965,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  rsd.atom_name( icoor.stub_atom2().atomno() ),
-				  rsd.atom_name( icoor.stub_atom3().atomno() ),
-				  true );
+		icoor.phi(),
+		icoor.theta(),
+		1.332965,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		true );
 
 	rosetta_recharge_fullatom( rsd );
 	find_bonds_in_rings( rsd );
 	//VD nbr_atom = rsd.nbr_vertex();
 	//rsd.nbr_radius( find_nbr_dist( rsd, nbr_atom ) );
 	//rsd.nbr_atom( nbr_atom );
-	
+
 	//rename_atoms( rsd, false );
 	//rsd.assign_internal_coordinates();
 	//rsd.autodetermine_chi_bonds();
 
 	return false;
 }
-						   
+
 /// @brief replace proton with bromine
 bool
 ReplaceProtonWithBromine::apply( ResidueType & rsd ) const {
@@ -1524,10 +1524,10 @@ ReplaceProtonWithBromine::apply( ResidueType & rsd ) const {
 	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
 		return true;
 	}
-	
+
 	// Now the valence isn't free.
 	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-	
+
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 		// Am I an aromatic carbon atom with a free valence?
 		// Can also be specified in params, but add if not already set!
@@ -1541,7 +1541,7 @@ ReplaceProtonWithBromine::apply( ResidueType & rsd ) const {
 			}
 		}
 	}
-	
+
 	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
 	AtomICoor icoor = rsd.icoor( proton_index );
 	rsd.delete_atom( proton_index );
@@ -1549,27 +1549,27 @@ ReplaceProtonWithBromine::apply( ResidueType & rsd ) const {
 	rsd.add_atom( "BR"+atom_.substr( 1 ), "Br", "BR", -0.07 );
 	rsd.add_bond( "BR"+atom_.substr( 1 ), atom_ );
 	rsd.set_icoor( "BR"+atom_.substr( 1 ),
-				  icoor.phi(),
-				  icoor.theta(),
-				  1.903609,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  rsd.atom_name( icoor.stub_atom2().atomno() ),
-				  rsd.atom_name( icoor.stub_atom3().atomno() ),
-				  true );
+		icoor.phi(),
+		icoor.theta(),
+		1.903609,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		true );
 
 	rosetta_recharge_fullatom( rsd );
 	find_bonds_in_rings( rsd );
 	//VD nbr_atom = rsd.nbr_vertex();
 	//rsd.nbr_radius( find_nbr_dist( rsd, nbr_atom ) );
 	//rsd.nbr_atom( nbr_atom );
-	
+
 	//rename_atoms( rsd, false );
 	//rsd.assign_internal_coordinates();
 	//rsd.autodetermine_chi_bonds();
 
 	return false;
 }
-						   
+
 /// @brief replace proton with iodine
 bool
 ReplaceProtonWithIodine::apply( ResidueType & rsd ) const {
@@ -1578,10 +1578,10 @@ ReplaceProtonWithIodine::apply( ResidueType & rsd ) const {
 	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
 		return true;
 	}
-	
+
 	// Now the valence isn't free.
 	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-	
+
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 		// Am I an aromatic carbon atom with a free valence?
 		// Can also be specified in params, but add if not already set!
@@ -1595,7 +1595,7 @@ ReplaceProtonWithIodine::apply( ResidueType & rsd ) const {
 			}
 		}
 	}
-	
+
 	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
 	AtomICoor icoor = rsd.icoor( proton_index );
 	rsd.delete_atom( proton_index );
@@ -1603,20 +1603,20 @@ ReplaceProtonWithIodine::apply( ResidueType & rsd ) const {
 	rsd.add_atom( "I"+atom_, "I", "I", -0.08 );
 	rsd.add_bond( "I"+atom_, atom_ );
 	rsd.set_icoor( "I"+atom_,
-				  icoor.phi(),
-				  icoor.theta(),
-				  2.142205,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  rsd.atom_name( icoor.stub_atom2().atomno() ),
-				  rsd.atom_name( icoor.stub_atom3().atomno() ),
-				  true );
+		icoor.phi(),
+		icoor.theta(),
+		2.142205,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		true );
 
 	rosetta_recharge_fullatom( rsd );
 	find_bonds_in_rings( rsd );
 	//VD nbr_atom = rsd.nbr_vertex();
 	//rsd.nbr_radius( find_nbr_dist( rsd, nbr_atom ) );
 	//rsd.nbr_atom( nbr_atom );
-	
+
 	//rename_atoms( rsd, false );
 	//rsd.assign_internal_coordinates();
 	//rsd.autodetermine_chi_bonds();
@@ -1632,10 +1632,10 @@ ReplaceProtonWithHydroxyl::apply( ResidueType & rsd ) const {
 	if ( rsd.number_bonded_hydrogens( rsd.atom_index( atom_ ) ) == 0 ) {
 		return true;
 	}
-	
+
 	// Now the valence isn't free.
 	rsd.atom( rsd.atom_index( atom_ ) ).set_property( chemical::AROMATIC_CARBON_WITH_FREE_VALENCE, false );
-	
+
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 		// Am I an aromatic carbon atom with a free valence?
 		// Can also be specified in params, but add if not already set!
@@ -1649,7 +1649,7 @@ ReplaceProtonWithHydroxyl::apply( ResidueType & rsd ) const {
 			}
 		}
 	}
-	
+
 	Size proton_index = rsd.attached_H_begin( rsd.atom_index( atom_ ) );
 	AtomICoor icoor = rsd.icoor( proton_index );
 	rsd.delete_atom( proton_index );
@@ -1657,28 +1657,28 @@ ReplaceProtonWithHydroxyl::apply( ResidueType & rsd ) const {
 	rsd.add_atom( "O"+atom_, "OH", "OH1", -0.54 );
 	rsd.add_bond( "O"+atom_, atom_ );
 	rsd.set_icoor( "O"+atom_,
-				  icoor.phi(),
-				  icoor.theta(),
-				  1.375964,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  rsd.atom_name( icoor.stub_atom2().atomno() ),
-				  rsd.atom_name( icoor.stub_atom3().atomno() ),
-				  true );
-	
+		icoor.phi(),
+		icoor.theta(),
+		1.375964,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		rsd.atom_name( icoor.stub_atom3().atomno() ),
+		true );
+
 	rsd.add_atom( "H"+atom_, "Hpol", "H", 0.43 );
 	rsd.add_bond( "H"+atom_, "O"+atom_ );
-	
+
 	rsd.set_icoor( "H"+atom_,
-				  0.000000*3.14159/180.000000,
-				  70.600000*3.14159/180.000000,
-				  0.960239,
-				  "O"+atom_,
-				  rsd.atom_name( icoor.stub_atom1().atomno() ),
-				  rsd.atom_name( icoor.stub_atom2().atomno() ),
-				  true );
-	
+		0.000000*3.14159/180.000000,
+		70.600000*3.14159/180.000000,
+		0.960239,
+		"O"+atom_,
+		rsd.atom_name( icoor.stub_atom1().atomno() ),
+		rsd.atom_name( icoor.stub_atom2().atomno() ),
+		true );
+
 	rsd.add_chi( rsd.atom_name( icoor.stub_atom2().atomno() ), rsd.atom_name( icoor.stub_atom1().atomno() ), "O"+atom_, "H"+atom_ );
-	
+
 	utility::vector1< Real > chi_samples;
 	chi_samples.push_back( 0 );
 	chi_samples.push_back( 60 );
@@ -1689,13 +1689,13 @@ ReplaceProtonWithHydroxyl::apply( ResidueType & rsd ) const {
 	utility::vector1< Real > extra;
 	chi_samples.push_back( 20 );
 	rsd.set_proton_chi( rsd.nchi(), chi_samples, extra );
-	
+
 	rosetta_recharge_fullatom( rsd );
 	find_bonds_in_rings( rsd );
 	//VD nbr_atom = rsd.nbr_vertex();
 	//rsd.nbr_radius( find_nbr_dist( rsd, nbr_atom ) );
 	//rsd.nbr_atom( nbr_atom );
-	
+
 	//rename_atoms( rsd, false );
 	//rsd.assign_internal_coordinates();
 	//rsd.autodetermine_chi_bonds();

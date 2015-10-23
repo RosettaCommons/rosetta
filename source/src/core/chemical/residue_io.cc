@@ -634,7 +634,7 @@ read_topology_file(
 		if ( !l.eof() ) {
 			l >> parse_charge;
 		}
-		
+
 		utility::vector1< std::string > props;
 		std::string prop;
 		while ( l >> prop ) {
@@ -659,11 +659,11 @@ read_topology_file(
 		} else {
 			rsd->add_atom( atom_name, atom_type_name, mm_atom_type_name, parse_charge );
 		}
-		
+
 		for ( Size p = 1; p <= props.size(); ++p ) {
 			rsd->atom( atom_name ).set_property( props[ p ], true );
 		}
-		
+
 		++natoms;
 	}
 
