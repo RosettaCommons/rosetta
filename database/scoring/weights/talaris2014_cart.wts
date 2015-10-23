@@ -1,0 +1,36 @@
+# The Talaris2014 score function represents a small modification to the
+# Talaris2013 score function: the weights are all scaled upwards so that
+# fa_atr has a weight of 1.0; then the hydrogen bond strengths are decreased
+# by 20%.  This has the effect of keeping the hbond strengths fixed while
+# everything else gets stronger. The Talaris2014_cart weight set replaces
+# the pro_close term with cart_bonded.
+#
+# The benchmarking performed for the O'Meara et al. (2014) hbond paper
+# showed that weakening the hbond weights by 20% improved sequence recovery,
+# rotamer recovery, and decoy discrimination.
+#
+# Reference energies were fit with optE on Jane Richardson's HiQ54 benchmark
+# set in triplicate, and tested on the Ding & Dokholyan 38 set.  The
+# set of reference energies with the highest sequence recovery (39.1%) was
+# chosen.
+#
+
+
+METHOD_WEIGHTS ref 0.732242 0.452293 -1.59152 -1.91244 0.70787 0.381826 0.466798 1.0391 -0.310074 0.839628 0.357977 -1.13268 -0.871985 -1.45867 -0.24586 0.0338828 0.0698398 0.938144 1.28263 0.220996 
+fa_atr 1
+fa_rep 0.55
+fa_sol 0.9375
+fa_intra_rep 0.005
+fa_elec 0.875
+hbond_sr_bb 1.17
+hbond_lr_bb 1.17
+hbond_bb_sc 1.17
+hbond_sc 1.1
+dslf_fa13 1.25
+rama 0.25
+omega 0.625
+fa_dun 0.7
+p_aa_pp 0.4
+yhh_planarity 0.625
+cart_bonded 0.625
+ref 1
