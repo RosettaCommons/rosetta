@@ -89,6 +89,9 @@ sources = {
 	"protocols/cryst" : [
 	        "cryst_movers",
 	],
+	"protocols/cyclic_peptide_predict" : [
+                "SimpleCycpepPredictApplication",
+	],
 	"protocols/enzdes": [
 		"AddorRemoveCsts",
 		"BackboneSampler",

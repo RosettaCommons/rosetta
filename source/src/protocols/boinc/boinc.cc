@@ -417,6 +417,16 @@ void Boinc::stop_running_worker() {
 //////////////////////////////////////////////////////////////////////////////////////
 
 // called by worker
+void Boinc::set_randomly_cycle_appearance( bool const setting ) {
+	if(!shmem_) return;
+	if(!wait_semaphore()) {
+		shmem_->randomly_cycle_appearance=setting;
+		unlock_semaphore();
+	}
+	return;
+}
+
+// called by worker
 void Boinc::set_wu_desc() {
   using namespace basic::options;
 	if (!shmem_) return;
@@ -458,6 +468,16 @@ int Boinc::attach_graphics_current_pose_observer( core::pose::Pose & pose ) {
 	bpo->attach_to( pose );
 	return 1;
 }
+
+// "GHOST" OF CURRENT POSE (i.e. second pose overlaid on first)
+// called by worker
+int Boinc::attach_graphics_current_pose_ghost_observer( core::pose::Pose & pose ) {
+	if (!shmem_) return 0;
+	static BoincCurrentPoseObserverOP bpo_ghost( new BoincCurrentPoseObserver(true /*indicates that this is a "ghost"*/) );
+	bpo_ghost->attach_to( pose );
+	return 1;
+}
+
 
 // NATIVE POSE
 // called by worker
@@ -510,6 +530,35 @@ void Boinc::update_graphics_current( core::pose::Pose & pose ) {
 				core::io::serialization::write_binary(pose,b);
 			}
 			shmem_->current_pose_exists = 1;
+		}
+		boinc_end_critical_section();
+		unlock_semaphore();
+  }
+}
+
+// Update graphics for the "ghost".
+void Boinc::update_graphics_current_ghost( core::pose::Pose & pose ) {
+/*
+	static int count = 0;
+  if (count > 0) {
+		count--;
+		return;
+  }
+  count = SKIP_FOR_EFFICIENCY;
+*/
+	if (!shmem_) return;
+	if (!trywait_semaphore()) {
+		boinc_begin_critical_section();
+		if (pose.total_residue() > 0) {
+			core::io::serialization::BUFFER b((char*)(&shmem_->current_pose_ghost_buf ),POSE_BUFSIZE);
+			if (core::pose::symmetry::is_symmetric( pose ) && pose.total_residue() > MAX_SYMM_POSE_RESIDUES) {
+				core::pose::Pose asy_pose;
+				core::pose::symmetry::extract_asymmetric_unit(pose, asy_pose);
+				core::io::serialization::write_binary(asy_pose,b);
+			} else {
+				core::io::serialization::write_binary(pose,b);
+			}
+			shmem_->current_pose_ghost_exists = 1;
 		}
 		boinc_end_critical_section();
 		unlock_semaphore();

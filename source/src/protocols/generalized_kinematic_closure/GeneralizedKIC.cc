@@ -11,6 +11,13 @@
 /// @brief  Kinematic closure of arbitrary segments that could go through side-chains (e.g. disulfides).
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
+// BOINC includes -- keep these first:
+#ifdef BOINC
+#include <utility/boinc/boinc_util.hh>
+#include <protocols/boinc/boinc.hh>
+#include "boinc_zip.h"
+#endif // BOINC
+
 // Unit Headers
 #include <protocols/generalized_kinematic_closure/GeneralizedKIC.hh>
 #include <protocols/generalized_kinematic_closure/GeneralizedKICCreator.hh>
@@ -99,7 +106,8 @@ GeneralizedKIC::GeneralizedKIC():
 	pre_selection_mover_(),
 	pre_selection_mover_exists_(false),
 	ntries_before_giving_up_(0),
-	solutions_()
+	solutions_(),
+	attach_boinc_ghost_observer_(false)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
@@ -130,7 +138,8 @@ GeneralizedKIC::GeneralizedKIC( GeneralizedKIC const &src ):
 	pre_selection_mover_(src.pre_selection_mover_), //Not cloned!
 	pre_selection_mover_exists_(src.pre_selection_mover_exists_),
 	ntries_before_giving_up_(src.ntries_before_giving_up_),
-	solutions_() //Copied below.
+	solutions_(), //Copied below.
+	attach_boinc_ghost_observer_(src.attach_boinc_ghost_observer_)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {
 	//Clone elements in the perturber list
@@ -809,6 +818,24 @@ void GeneralizedKIC::set_perturber_bin( std::string const &bin )
 	return;
 } //set_perturber_bin
 
+/// @brief Set whether the perturber's generated poses should be used for BOINC graphics.
+/// @details Does nothing outside of the BOINC build.
+void GeneralizedKIC::set_perturber_attach_boinc_ghost_observer( core::Size const perturber_index, bool const setting )
+{
+	runtime_assert_string_msg( perturber_index <= perturberlist_.size() && perturber_index > 0, "The perturber index provided to GeneralizedKIC::set_perturber_attach_boinc_ghost_observer() is out of range." );
+	perturberlist_[perturber_index]->set_attach_boinc_ghost_observer( setting );
+	return;
+}
+
+/// @brief Set whether the perturber's generated poses should be used for BOINC graphics.
+/// @details Does nothing outside of the BOINC build.  This version acts on the last perturber in the perturber list.
+void GeneralizedKIC::set_perturber_attach_boinc_ghost_observer( bool const setting )
+{
+	runtime_assert_string_msg(perturberlist_.size()>0, "No perturbers specified.  Aborting from GeneralizedKIC::set_perturber_attach_boinc_ghost_observer().");
+	set_perturber_attach_boinc_ghost_observer(perturberlist_.size(), setting);
+	return;
+}
+
 
 /// @brief Add a value to the list of values that a perturber takes.
 void GeneralizedKIC::add_value_to_perturber_value_list ( core::Size const perturber_index, core::Real const &val )
@@ -1019,6 +1046,24 @@ void GeneralizedKIC::set_filter_rama_cutoff_energy( core::Real const &cutoff_ene
 		utility_exit_with_message( "In GeneralizedKIC::set_filter_rama_cutoff_energy(): No filters have been defined!\n" );
 	}
 	set_filter_rama_cutoff_energy( filterlist_.size(), cutoff_energy );
+	return;
+}
+
+/// @brief Set whether the filter's generated poses should be used for BOINC graphics.
+/// @details Does nothing outside of the BOINC build.
+void GeneralizedKIC::set_filter_attach_boinc_ghost_observer( core::Size const filter_index, bool const setting )
+{
+	runtime_assert_string_msg( filter_index <= filterlist_.size() && filter_index > 0, "The filter index provided to GeneralizedKIC::set_filter_attach_boinc_ghost_observer() is out of range." );
+	filterlist_[filter_index]->set_attach_boinc_ghost_observer( setting );
+	return;
+}
+
+/// @brief Set whether the filter's generated poses should be used for BOINC graphics.
+/// @details Does nothing outside of the BOINC build.  This version acts on the last filter in the filter list.
+void GeneralizedKIC::set_filter_attach_boinc_ghost_observer( bool const setting )
+{
+	runtime_assert_string_msg(filterlist_.size()>0, "No filters specified.  Aborting from GeneralizedKIC::set_filter_attach_boinc_ghost_observer().");
+	set_filter_attach_boinc_ghost_observer(filterlist_.size(), setting);
 	return;
 }
 
@@ -1482,6 +1527,17 @@ bool GeneralizedKIC::doKIC(
 			core::pose::PoseOP looppose( pose.clone() ); //Clone the loop pose.
 			set_loop_pose( *looppose, atomlist_, t_ang[iattempt][j], b_ang[iattempt][j], b_len[iattempt][j]);
 			copy_loop_pose_to_original( *curpose, *looppose, residue_map, tail_residue_map);
+
+			//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
+#ifdef BOINC_GRAPHICS
+			if ( attach_boinc_ghost_observer() ) {
+				protocols::boinc::Boinc::attach_graphics_current_pose_ghost_observer( *curpose );
+				protocols::boinc::Boinc::update_graphics_current_ghost( *curpose );
+				//std::cerr << "GenKIC attached a BOINC ghost observer." << std::endl;
+				//std::cerr.flush();
+			}
+#endif
+
 			//Apply preselection movers.
 			if ( preselection_mover_exists() ) {
 				TR << "Applying pre-selection mover to solution " << j << " from attempt " << iattempt << "." << std::endl;

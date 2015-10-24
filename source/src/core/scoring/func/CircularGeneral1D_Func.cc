@@ -64,7 +64,7 @@ CircularGeneral1D_Func::CircularGeneral1D_Func( std::string const & filename )
 	data_.dimension( num_bins_ );
 
 	for ( Size i = 1; i <= num_bins_; i++ ) data_( i ) = all_vals[ i ];
-	
+
 	stream.close();
 }
 
@@ -96,7 +96,7 @@ CircularGeneral1D_Func::dfunc( Real const x ) const {
 	debug_assert( bin_wrap_real >= 1 && bin_wrap_real < num_bins_ + 1 );
 
 	Size const bin = static_cast< Size >( bin_wrap_real );
-	
+
 	Size next_bin = bin + 1;
 	if ( next_bin > num_bins_ ) next_bin = 1; //wrap around.
 

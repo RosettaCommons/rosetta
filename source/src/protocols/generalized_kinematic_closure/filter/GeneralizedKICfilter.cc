@@ -11,6 +11,13 @@
 /// @brief  Helper class defining success filters for generalized closure of arbitrary segments that could go through side-chains (e.g. disulfides).
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
+// BOINC includes -- keep these first:
+#ifdef BOINC
+#include <utility/boinc/boinc_util.hh>
+#include <protocols/boinc/boinc.hh>
+#include "boinc_zip.h"
+#endif // BOINC
+
 // Unit Headers
 #include <protocols/generalized_kinematic_closure/filter/GeneralizedKICfilter.hh>
 #include <protocols/generalized_kinematic_closure/util.hh>
@@ -67,7 +74,8 @@ GeneralizedKICfilter::GeneralizedKICfilter():
 	bin_transition_calculator_(),
 	bin_(""),
 	resnum_(0),
-	rama_threshhold_(0.3)
+	rama_threshhold_(0.3),
+	attach_boinc_ghost_observer_(false)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
@@ -83,7 +91,8 @@ GeneralizedKICfilter::GeneralizedKICfilter( GeneralizedKICfilter const &src ):
 	bin_transition_calculator_( ), //CLONE this, below
 	bin_( src.bin_ ),
 	resnum_( src.resnum_ ),
-	rama_threshhold_( src.rama_threshhold_ )
+	rama_threshhold_( src.rama_threshhold_ ),
+	attach_boinc_ghost_observer_(src.attach_boinc_ghost_observer_)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {
 	if ( src.bin_transition_calculator_ ) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
@@ -390,6 +399,17 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 	core::pose::Pose pose(loop_pose); //Make a copy of the loop pose
 	set_loop_pose (pose, atomlist, torsions, bondangles, bondlengths);
 
+	//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
+#ifdef BOINC_GRAPHICS
+	if ( attach_boinc_ghost_observer() ) {
+		protocols::boinc::Boinc::attach_graphics_current_pose_ghost_observer( pose );
+		protocols::boinc::Boinc::update_graphics_current_ghost( pose );
+		//std::cerr << "GenKIC attached a BOINC ghost observer." << std::endl;
+		//std::cerr.flush();
+	}
+#endif
+
+
 	//Make a copy of the list of atoms in the chain to be closed:
 	utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > atomlist_prime = atomlist;
 	//Remove the first three and last three entries in atomlist_prime.  These are atoms outside of the loop used to establish frame:
@@ -547,6 +567,17 @@ bool GeneralizedKICfilter::apply_atom_pair_distance(
 	set_loop_pose (looppose, atomlist, torsions, bondangles, bondlengths); //Set the loop conformation using the torsions, bondangles, and bondlengths vectors.
 	copy_loop_pose_to_original( fullpose, looppose, residue_map, tail_residue_map); //Copy the loop conformation to the full pose.
 
+	//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
+#ifdef BOINC_GRAPHICS
+	if ( attach_boinc_ghost_observer() ) {
+		protocols::boinc::Boinc::attach_graphics_current_pose_ghost_observer( fullpose );
+		protocols::boinc::Boinc::update_graphics_current_ghost( fullpose );
+		//std::cerr << "GenKIC attached a BOINC ghost observer." << std::endl;
+		//std::cerr.flush();
+	}
+#endif
+
+
 	if ( fullpose.residue(res1).xyz(at1).distance_squared( fullpose.residue(res2).xyz(at2) ) > dist_cutoff_sq ) {
 		if ( !greaterthan ) {
 			if ( TR.Debug.visible() ) {
@@ -613,6 +644,16 @@ bool GeneralizedKICfilter::apply_backbone_bin(
 	core::pose::Pose pose(loop_pose); //Make a copy of the loop pose
 	set_loop_pose (pose, atomlist, torsions, bondangles, bondlengths); //Set the loop pose to the current solution
 
+	//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
+#ifdef BOINC_GRAPHICS
+	if ( attach_boinc_ghost_observer() ) {
+		protocols::boinc::Boinc::attach_graphics_current_pose_ghost_observer( pose );
+		protocols::boinc::Boinc::update_graphics_current_ghost( pose );
+		//std::cerr << "GenKIC attached a BOINC ghost observer." << std::endl;
+		//std::cerr.flush();
+	}
+#endif
+
 	bool const inbin (bin_transition_calculator_->is_in_bin( pose.residue(curres), bin_ ));
 	if ( TR.visible() ) {
 		if ( inbin ) TR << "The backbone_bin filter reports that residue " << resnum() << " is in bin " << bin_ << ".  Passing." << std::endl;
@@ -662,6 +703,16 @@ bool GeneralizedKICfilter::apply_alpha_aa_rama_check (
 
 	core::pose::Pose pose(loop_pose); //Make a copy of the loop pose
 	set_loop_pose (pose, atomlist, torsions, bondangles, bondlengths); //Set the loop pose to the current solution
+
+	//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
+#ifdef BOINC_GRAPHICS
+	if ( attach_boinc_ghost_observer() ) {
+		protocols::boinc::Boinc::attach_graphics_current_pose_ghost_observer( pose );
+		protocols::boinc::Boinc::update_graphics_current_ghost( pose );
+		//std::cerr << "GenKIC attached a BOINC ghost observer." << std::endl;
+		//std::cerr.flush();
+	}
+#endif
 
 	core::scoring::Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran(); //Get the Rama scoring function
 	core::Real rama_out(0.0), drama_dphi(0.0), drama_dpsi(0.0);

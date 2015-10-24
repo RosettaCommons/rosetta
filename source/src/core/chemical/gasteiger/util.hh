@@ -27,7 +27,7 @@
 #include <set>
 
 // needed for header-only build, I guess.
-#include <iostream> 
+#include <iostream>
 
 namespace core {
 namespace chemical {

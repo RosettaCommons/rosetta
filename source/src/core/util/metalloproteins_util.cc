@@ -42,7 +42,7 @@
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh> 
+#include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <utility/exit.hh>

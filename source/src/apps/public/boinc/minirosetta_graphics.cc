@@ -111,6 +111,9 @@ std::vector<std::string> wu_desc_rows;
 // tinker with these to modify how the text is displayed
 float wu_desc_rows_per_small_box = 6.0;
 
+// Variables associated with appearance:
+bool randomly_cycle_appearance(true);
+
 // boinc data
 APP_INIT_DATA app_init_data;
 // shared memory
@@ -141,11 +144,14 @@ protocols::viewer::GraphicsState current_gs;
 
 static core::Size max_pose_nres = 0;
 static core::Size current_pose_nres = 0;
+static core::Size current_pose_ghost_nres = 0;
 static core::Size native_pose_nres = 0;
 
-bool native_exists = false;
+bool native_exists(false);
+bool ghost_exists(false);
 static core::pose::PoseOP nativeposeOP;
 static core::pose::PoseOP currentposeOP;
+static core::pose::PoseOP currentposeghostOP;
 static core::pose::PoseOP lastacceptedposeOP;
 static core::pose::PoseOP lowenergyposeOP;
 
@@ -467,11 +473,11 @@ void boinc_app_key_press(int key, int //lParam           // system-specific key 
 	}
 	if ( key == 66 || key == 98 ) { //'b' control backbone display
 		current_gs.BBdisplay_state = BBdisplayState ( current_gs.BBdisplay_state + 1 );
-		if ( current_gs.BBdisplay_state > SHOW_BACKBONE ) current_gs.BBdisplay_state = SHOW_NOBB;
+		if ( current_gs.BBdisplay_state > SHOW_BBSPHERES ) current_gs.BBdisplay_state = SHOW_NOBB;
 	}
 	if ( key == 83 || key == 115 ) { //'s' control sidechain display
 		current_gs.SCdisplay_state = SCdisplayState ( current_gs.SCdisplay_state + 1 );
-		if ( current_gs.SCdisplay_state > SHOW_WIREFRAME ) current_gs.SCdisplay_state = SHOW_NOSC;
+		if ( current_gs.SCdisplay_state > SHOW_SCSPHERES ) current_gs.SCdisplay_state = SHOW_NOSC;
 	}
 }
 
@@ -512,6 +518,18 @@ void app_graphics_init() {
 			wu_desc_rows.insert(wu_desc_rows.end(), tmp_wu_desc_rows.begin(), tmp_wu_desc_rows.end());
 			protocols::boinc::Boinc::unlock_semaphore();
 		}
+	}
+
+	if ( shmem ) {
+		if ( !protocols::boinc::Boinc::wait_semaphore() ) {
+			randomly_cycle_appearance = shmem->randomly_cycle_appearance;
+			protocols::boinc::Boinc::unlock_semaphore();
+		}
+	}
+	if ( !randomly_cycle_appearance ) { //Set the appearance to spheres if we're not randomly cycling:
+		current_gs.SCdisplay_state = protocols::viewer::graphics_states_param::SHOW_SCSPHERES;
+		current_gs.BBdisplay_state = protocols::viewer::graphics_states_param::SHOW_BBSPHERES;
+		current_gs.Color_mode = protocols::viewer::graphics_states_param::RAINBOW_COLOR;
 	}
 
 	aspect_width = float(default_aspect_width);
@@ -555,6 +573,7 @@ void app_graphics_init() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	glEnable(GL_NORMALIZE);
 
 	// Expects a .txf file to exist in run directory
 	// TEXT WILL NOT DISPLAY IF .txf FILE IS MISSING!!
@@ -733,6 +752,8 @@ Structure_display ( const graphics::GraphicsPoseType & graphics_pose_type, const
 	float x_max_screen = + this_window_size;
 	float zmax = 300.0;
 
+	protocols::viewer::draw_gradient_bg();
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(x_min_screen, x_max_screen, y_min_screen, y_max_screen, -zmax, zmax);
@@ -756,6 +777,13 @@ Structure_display ( const graphics::GraphicsPoseType & graphics_pose_type, const
 	switch( graphics_pose_type ){
 	case CURRENT :
 		protocols::viewer::draw_pose( *currentposeOP, current_gs );
+		if ( ghost_exists ) {
+			protocols::viewer::GraphicsState current_gs_ghost;
+			current_gs_ghost.BBdisplay_state = current_gs.BBdisplay_state;
+			current_gs_ghost.SCdisplay_state = current_gs.SCdisplay_state;
+			current_gs_ghost.Color_mode = protocols::viewer::graphics_states_param::GHOST_COLOR;
+			protocols::viewer::draw_pose( *currentposeghostOP, current_gs_ghost);
+		}
 		break;
 	case ACCEPTED :
 		protocols::viewer::draw_pose( *lastacceptedposeOP, current_gs );
@@ -903,6 +931,14 @@ void get_shmem_structures() {
 			core::io::serialization::BUFFER bc((char*)(&shmem->current_pose_buf ),protocols::boinc::POSE_BUFSIZE);
 			core::io::serialization::read_binary(*currentposeOP,bc);
 			current_pose_nres =  (*currentposeOP).total_residue();
+		}
+
+		// get current pose "ghost" (overlay structure)
+		if ( shmem->current_pose_ghost_exists ) {
+			core::io::serialization::BUFFER bc((char*)(&shmem->current_pose_ghost_buf ),protocols::boinc::POSE_BUFSIZE);
+			core::io::serialization::read_binary(*currentposeghostOP,bc);
+			current_pose_ghost_nres =  (*currentposeghostOP).total_residue();
+			ghost_exists = true;
 		}
 
 		// get last accepted pose and calculate rmsd
@@ -1081,23 +1117,25 @@ void draw_rosetta_screensaver( int & width, int & height )
 
 
 	// change view_type randomly
-	if ( (time(NULL) - last_time_graphic_switch) > 100 ) {
-		last_time_graphic_switch = time(NULL);
+	if ( randomly_cycle_appearance ) {
+		if ( (time(NULL) - last_time_graphic_switch) > 100 ) {
+			last_time_graphic_switch = time(NULL);
 
-		if ( rand() % 2 == 0 ) current_gs.BBdisplay_state = SHOW_CARTOON;
-		else                  current_gs.BBdisplay_state = SHOW_BACKBONE;
+			if ( rand() % 2 == 0 ) current_gs.BBdisplay_state = SHOW_CARTOON;
+			else                  current_gs.BBdisplay_state = SHOW_BACKBONE;
 
-		if ( rand() % 3 == 0 && max_pose_nres < 500 ) current_gs.SCdisplay_state = SHOW_STICK;
-		else                  current_gs.SCdisplay_state = SHOW_NOSC;
+			if ( rand() % 3 == 0 && max_pose_nres < 500 ) current_gs.SCdisplay_state = SHOW_STICK;
+			else                  current_gs.SCdisplay_state = SHOW_NOSC;
 
-		if ( current_gs.SCdisplay_state != SHOW_NOSC ) {
-			int randnum = rand() % 4;
-			if ( randnum == 0 ) current_gs.Color_mode = RAINBOW_COLOR;
-			if ( randnum == 1 ) current_gs.Color_mode = RAINBOW_CPK_COLOR;
-			if ( randnum == 2 ) current_gs.Color_mode = RESIDUE_CPK_COLOR;
-			if ( randnum == 3 ) current_gs.Color_mode = CPK_COLOR;
-		} else {
-			current_gs.Color_mode = RAINBOW_COLOR;
+			if ( current_gs.SCdisplay_state != SHOW_NOSC ) {
+				int randnum = rand() % 4;
+				if ( randnum == 0 ) current_gs.Color_mode = RAINBOW_COLOR;
+				if ( randnum == 1 ) current_gs.Color_mode = RAINBOW_CPK_COLOR;
+				if ( randnum == 2 ) current_gs.Color_mode = RESIDUE_CPK_COLOR;
+				if ( randnum == 3 ) current_gs.Color_mode = CPK_COLOR;
+			} else {
+				current_gs.Color_mode = RAINBOW_COLOR;
+			}
 		}
 	}
 
@@ -1126,6 +1164,7 @@ void draw_rosetta_screensaver( int & width, int & height )
 	glMultMatrixf(graphics::lowrotation);
 	glGetFloatv(GL_MODELVIEW_MATRIX, graphics::lowrotation);  // Store current model view in decoyrotation
 
+	protocols::viewer::clear_bg();
 	Structure_display(CURRENT, window_size);
 
 	// ACCEPTED BOX
@@ -1333,6 +1372,7 @@ int main(int argc, char** argv) {
 
 		nativeposeOP =  core::pose::PoseOP( new core::pose::Pose() );
 		currentposeOP = core::pose::PoseOP( new core::pose::Pose() );
+		currentposeghostOP = core::pose::PoseOP( new core::pose::Pose() );
 		lowenergyposeOP = core::pose::PoseOP( new core::pose::Pose() );
 		lastacceptedposeOP = core::pose::PoseOP( new core::pose::Pose() );
 

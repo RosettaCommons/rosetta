@@ -19,8 +19,7 @@
 #include <boost/io/ios_state.hpp>
 
 namespace utility {
-namespace json_spirit
-{
+namespace json_spirit {
     inline char to_hex_char( unsigned int c )
     {
         assert( c <= 0xF );

@@ -759,7 +759,7 @@ HBondEnergy::eval_intrares_derivatives(
 {
 
 	if ( ! calculate_intra_res_hbonds( rsd, *options_ ) ) return;
- 
+
 	using EnergiesCacheableDataType::HBOND_SET;
 	HBondSet const & hbond_set = static_cast< HBondSet const & > (pose.energies().data().get( HBOND_SET ));
 	bool const exclude_scb( false );
@@ -1428,7 +1428,7 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 	HBEvalTuple hbe_type = hbond_evaluation_type( at2, 0,   // donor atom
 		at1, ss); // acceptor atom
 	Energy hbenergy;
-	
+
 	//std::cout << "about to evaluate " << at1 << " " << at2 << std::endl;
 	hb_energy_deriv( *database_, *options_, hbe_type,
 		at2.base_xyz(), at2.xyz(), // donor heavy atom, donor hydrogen,

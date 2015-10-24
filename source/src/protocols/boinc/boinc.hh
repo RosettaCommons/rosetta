@@ -147,10 +147,16 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// WORKER APP GRAPHICS FUNCTIONS
 
+	// called by worker
+	static void set_randomly_cycle_appearance( bool const setting );
+
 	static void set_wu_desc( void );
 
 	// The current pose shared memory data will get updated with the observer.
 	static int attach_graphics_current_pose_observer( core::pose::Pose & pose );
+
+	// The current pose "ghost" shared memory data will get updated with the observer.
+	static int attach_graphics_current_pose_ghost_observer( core::pose::Pose & pose );
 
 	// Sets the native pose
 	static int set_graphics_native_pose( core::pose::Pose & pose );
@@ -161,6 +167,8 @@ public:
 	// Update the current Pose buffer directly.
 	static void update_graphics_current( core::pose::Pose & pose );
 
+	// Update the current Pose ghost buffer directly.
+	static void update_graphics_current_ghost( core::pose::Pose & pose );
 
 	// Low energy pose and energy - set by monte carlo object
 	// If PERSIST is set, later calls with DEFAULT will be ignored until RESET is used.

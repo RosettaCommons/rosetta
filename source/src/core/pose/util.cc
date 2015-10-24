@@ -115,7 +115,7 @@ append_subpose_to_pose(
 ){
 	if ( pose2.total_residue()<start_res ) {
 		TR.Error << "Provided starting residue number " << start_res
-		<< " less than number residues in appended pose. Nothing to do." << std::endl;
+			<< " less than number residues in appended pose. Nothing to do." << std::endl;
 	}
 	pose1.append_residue_by_jump(pose2.residue(start_res), pose1.total_residue() , "", "", new_chain);
 	for ( core::Size i=start_res+1; i<=end_res; ++i ) {
@@ -1169,14 +1169,14 @@ bool renumber_pdbinfo_based_on_conf_chains(
 			std::string letters( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
 			for ( Conf2PDB::iterator i = conf2pdb.begin(), ie = conf2pdb.end(); i != ie; ++i ) {
 				if ( i->second == PDBInfo::empty_record() )  continue;
-				
+
 				std::string::size_type const j = letters.find( i->second );
 				if ( j == std::string::npos )  continue;
-				
+
 				if ( rotate_chain_ids ) { // rotating
 					letters.push_back( letters.at( j ) );
 				}
-				
+
 				letters.erase( j, 1 );
 			}
 
@@ -1184,7 +1184,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 			Size lidx = 0;
 			for ( Conf2PDB::iterator i = conf2pdb.begin(), ie = conf2pdb.end(); i != ie; ++i ) {
 				if ( i->second != PDBInfo::empty_record() )  continue;
-				
+
 				if ( rotate_chain_ids ) { // rotating
 					i->second = letters.at( lidx % letters.size() );
 				} else { // fixed length

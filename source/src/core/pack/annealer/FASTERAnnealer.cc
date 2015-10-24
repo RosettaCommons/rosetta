@@ -133,7 +133,7 @@ FASTERAnnealer::run( )
 
 		ig_->prepare_for_FASTER();
 		ig_->get_energy_current_state_assignment();
-		
+
 		sBR();
 		core::PackerEnergy energy = ig_->get_energy_current_state_assignment();
 		if ( energy < best_energy ) {
@@ -144,7 +144,7 @@ FASTERAnnealer::run( )
 
 	ig_->set_network_state( best_network_state );
 	bestenergy() = ig_->get_energy_current_state_assignment();
-	
+
 	finalize_output();
 }
 
@@ -205,7 +205,7 @@ FASTERAnnealer::ciBR()
 
 		ig_->relax_in_current_context();
 		ig_->probabilistically_commit_relaxation( DESMET_ciBR_ACCEPT_RATE );
-		
+
 		ig_->get_current_network_state( current_network_state );
 
 		note_current_network_state( current_network_state );
@@ -361,7 +361,7 @@ FASTERAnnealer::note_current_network_state( ObjexxFCL::FArray1_int const & netst
 			bool same = true;
 			for ( int jj = 1; jj <= num_nodes_; ++jj ) {
 				if ( recent_network_state_history_( jj, recent_history_head_ ) !=
-					recent_network_state_history_( jj, ii ) ) {
+						recent_network_state_history_( jj, ii ) ) {
 					same = false;
 					break;
 				}
@@ -370,7 +370,7 @@ FASTERAnnealer::note_current_network_state( ObjexxFCL::FArray1_int const & netst
 				netstate_duplicated_ = true;
 				break;
 			}
-			
+
 			if ( num_same_hash == 0 ) {
 				break;
 			}

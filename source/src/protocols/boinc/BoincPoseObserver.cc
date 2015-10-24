@@ -30,8 +30,15 @@ namespace boinc {
 BoincCurrentPoseObserver::BoincCurrentPoseObserver()
 {
 	shmem_ = protocols::boinc::Boinc::get_shmem();
+	is_ghost_ = false;
 }
 
+/// @brief Constructor for observers for drawing a "ghost" overlaid on the current pose.
+BoincCurrentPoseObserver::BoincCurrentPoseObserver( bool const is_ghost )
+{
+	shmem_ = protocols::boinc::Boinc::get_shmem();
+	is_ghost_ = is_ghost;
+}
 
 /// @brief default destructor
 BoincCurrentPoseObserver::~BoincCurrentPoseObserver()
@@ -73,7 +80,7 @@ BoincCurrentPoseObserver::on_conf_change(
 	if ( !Boinc::trywait_semaphore() ) {
 		boinc_begin_critical_section();
 		if ( event.pose->total_residue() > 0 ) {
-			core::io::serialization::BUFFER b((char*)(&shmem_->current_pose_buf ),POSE_BUFSIZE);
+			core::io::serialization::BUFFER b((char*)( is_ghost_ ? &shmem_->current_pose_ghost_buf : &shmem_->current_pose_buf ),POSE_BUFSIZE);
 			if ( core::pose::symmetry::is_symmetric( *event.pose ) && event.pose->total_residue() > MAX_SYMM_POSE_RESIDUES ) {
 				core::pose::Pose pose;
 				core::pose::symmetry::extract_asymmetric_unit(*event.pose, pose);
@@ -81,7 +88,11 @@ BoincCurrentPoseObserver::on_conf_change(
 			} else {
 				write_binary(*event.pose,b);
 			}
-			shmem_->current_pose_exists = 1;
+			if ( !is_ghost_ ) {
+				shmem_->current_pose_exists = 1;
+			} else {
+				shmem_->current_pose_ghost_exists = 1;
+			}
 		}
 		boinc_end_critical_section();
 		Boinc::unlock_semaphore();

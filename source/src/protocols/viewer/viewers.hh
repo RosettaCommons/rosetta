@@ -73,6 +73,8 @@ typedef void* (*VoidFunc)(void*);
 
 static std::string empty_string("");
 
+enum spheremode { SPHERE_MODE_BB, SPHERE_MODE_SC, SPHERE_MODE_LIGAND };
+
 #ifndef GL_GRAPHICS ///////////////////////////////////////////////////////
 
 inline
@@ -155,6 +157,12 @@ display_residues_wireframe(
 
 void set_bg_color( core::Vector new_bg_color );
 
+/// @brief Clear the background and fill it with the background colour.
+///
+void clear_bg();
+
+/// @brief Draw a gradient for the background.
+void draw_gradient_bg();
 
 void draw_pose(const core::pose::Pose & pose,
 	GraphicsState & gs);
@@ -180,6 +188,13 @@ draw_conformation_and_density(
 	utility::vector1< triangle > &triangles,
 	GraphicsState & gs,
 	core::Vector const & center);
+
+void
+draw_sphere(
+	GraphicsState & gs,
+	utility::vector1< core::conformation::ResidueCOP > const & residues,
+	spheremode const &sphere_mode
+);
 
 core::Vector
 get_center( utility::vector1< core::conformation::ResidueCOP > const & residues );

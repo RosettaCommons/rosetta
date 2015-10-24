@@ -182,7 +182,7 @@ void MultiCoolAnnealer::run()
 	setup_iterations();
 
 	int outeriterations = get_outeriterations() * 6;
-	
+
 	//outer loop
 	set_temperature( 10 );
 	set_lowtemp( 0.2 );
@@ -234,7 +234,7 @@ void MultiCoolAnnealer::run()
 
 	set_lowtemp( 0.05 );
 	for ( Size ii = 1; ii <= top_to_keep; ++ii ) {
-		
+
 		if ( energy_top_( ii ) == uninitialized_energy ) continue;
 
 		FArray1A_int start_state( top_netstates_( 1, ii ), rotamer_sets()->nmoltenres() );
@@ -258,13 +258,13 @@ void MultiCoolAnnealer::run()
 				inneriterations);
 
 			FArray1D_int state_to_restore( state_on_node );
-			
+
 			run_quench(
 				state_on_node,
 				best_state_on_node,
 				bestenergy(),
 				inneriterations / 2);
-			
+
 			state_on_node = state_to_restore;
 			ig_->set_network_state( state_on_node );
 

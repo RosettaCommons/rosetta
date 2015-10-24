@@ -1045,7 +1045,7 @@ Options = Option_Group( '',
 			desc="Which protocol to run, for Rosetta@home wrapper",
 			default='abrelax',
 			legal=[
-				'abrelax', 'broker', 'vf_abrelax', 'ligand_dock', 'relax', 'symdock', 'star',
+				'abrelax', 'simple_cycpep_predict', 'broker', 'vf_abrelax', 'ligand_dock', 'relax', 'symdock', 'star',
 				'loophash','looprelax','threading', 'rbsegmentrelax', 'boinc_debug', 'parser',
 				'jd2_scripting', 'cm', 'flxbb','rna','ddg', 'canonical_sampling', 'nonlocal_frags', 'medal',
 			],
@@ -4012,6 +4012,22 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'num_min_rebuild', 'Integer', desc="The number of time to iterate between minimization and rebuilding the connection dependant atom positions", default='3' ),
 		Option( 'add_constraints', 'Boolean', desc="The add constraints to maintain cycle geometry", default='true' ),
 	), # -cyclization
+
+	## Options for cyclic peptide structure prediction app (simple_cycpep_predict) -- Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu) ##
+	Option_Group( 'cyclic_peptide',
+		Option( 'sequence_file', 'String', desc="Filename of a file specfying the sequence, as a series of whitespace-separated full residue names (e.g. ALA LYS DARG DPRO HYP).  Required input for the simple_cycpep_predict app." ),
+		Option( 'genkic_closure_attempts', 'Integer', desc="How many closure attempts should we make for each job attempted by the simple_cycpep_predict app?  Default 10,000.", default='10000' ),
+		Option( 'genkic_min_solution_count', 'Integer', desc="How many solutions should genKIC find before picking one when used in the simple_cycpep_predict app?  Default 1.", default='1' ),
+		Option( 'cyclic_permutations', 'Boolean', desc="Should cyclic permutations of the sequence be considered when setting up the kinematic closure?  Default true.", default='true' ),
+		Option( 'use_rama_filter', 'Boolean', desc="Should GenKIC solutions be filtered based on rama score in the simple_cycpep_predict app?  True by default.", default='true' ),
+		Option( 'rama_cutoff', 'Real', desc="The maximum rama score value that's permitted in the accepted GenKIC solutions if the use_rama_filter option is passed to the simple_cycpep_predict app.  Default 0.3.", default='0.3' ),
+		Option( 'high_hbond_weight_multiplier', 'Real', desc="In parts of the simple_cycpep_predict protocol involving upweighting of the backbone hbond terms, by what factor should backbone hbond energy be upweighted?  Default 10.0.", default='10.0' ),
+		Option( 'min_genkic_hbonds', 'Real', desc="The minimum number of backbone hbonds for a solution to pass during GenKIC closure in the simple_cycpep_predict app.  Default 3.", default='3.0' ),
+		Option( 'min_final_hbonds', 'Real', desc="The minimum number of backbone hbonds for a solution to pass after final relaxtion in the simple_cycpep_predict app.  Default 0 (report only).", default='0.0' ),
+		Option( 'hbond_energy_cutoff', 'Real', desc="The mainchain hbond energy threshold for something to be counted as a hydrogen bond in the simple_cycpep_predict app.  Default -0.25.", default='-0.25' ),
+		Option( 'fast_relax_rounds', 'Integer', desc="The number of rounds of FastRelax to perform at each FastRelax step in the simple_cycpep_predict protocol.  Note that there are two such steps: a high-hbond initial FastRelax applied to all GenKIC solutions, and a regular scorefunction final FastRelax applied to the best GenKIC solution.  Default 3.", default='3' ),
+		Option( 'count_sc_hbonds', 'Boolean', desc="Should sidechain-backbone and sidechain-sidechain hydrogen bonds be counted in the total hydrogen bond count in the simple_cycpep_predict protocol?  Default false.", default='false' ),
+	), # -cyclic_peptide
 
 	Option_Group('dc',
 		Option( 'useZ', 'Boolean', desc='Use absolute zaxis for scoring dc'),

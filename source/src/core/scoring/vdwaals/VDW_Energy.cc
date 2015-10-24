@@ -256,13 +256,13 @@ VDW_Energy::eval_atom_derivative(
 				Size path_dist( 0 );
 				if ( ! cpfxn->count( i, j, cp_weight, path_dist ) ) continue;
 				if ( cp_weight < 0.99 ) continue; // dont count half-weight interxns in vdw_compute
-				
+
 				Vector const & j_xyz( rsd2.xyz(j) );
 				Vector const f2( i_xyz - j_xyz );
 				Real const dis2( f2.length_squared() );
 				Real const bump_dsq( i_atom_vdw[ rsd2.atom_type_index(j) ] );
 				if ( dis2 >= bump_dsq )  continue;
-				
+
 				Real const dE_dr_over_r = vdw_scale_factor_ * weights[ vdw ] * cp_weight * 4.0 * ( dis2 - bump_dsq ) / bump_dsq;
 				Vector const f1( i_xyz.cross( j_xyz ) );
 				F1 += dE_dr_over_r * f1;
@@ -277,7 +277,7 @@ VDW_Energy::eval_atom_derivative(
 				Real const dis2( f2.length_squared() );
 				Real const bump_dsq( i_atom_vdw[ rsd2.atom_type_index(j) ] );
 				if ( dis2 >= bump_dsq )  continue;
-				
+
 				Real const dE_dr_over_r = vdw_scale_factor_ * weights[ vdw ] * 4.0 * ( dis2 - bump_dsq ) / bump_dsq;
 				Vector const f1( i_xyz.cross( j_xyz ) );
 				F1 += dE_dr_over_r * f1;

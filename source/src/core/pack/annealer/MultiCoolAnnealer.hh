@@ -98,7 +98,7 @@ private:
 	static core::PackerEnergy const uninitialized_energy;
 
 	interaction_graph::AnnealableGraphBaseOP ig_;
-	
+
 	ObjexxFCL::FArray1D_int nsteps_for_rot_;
 	int nsteps_;
 	Size top_to_keep;

@@ -11,6 +11,13 @@
 /// @brief  Helper class for generalized closure of arbitrary segments that could go through side-chains (e.g. disulfides).
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
+// BOINC includes -- keep these first:
+#ifdef BOINC
+#include <utility/boinc/boinc_util.hh>
+#include <protocols/boinc/boinc.hh>
+#include "boinc_zip.h"
+#endif // BOINC
+
 // Unit Headers
 #include <protocols/generalized_kinematic_closure/perturber/GeneralizedKICperturber.hh>
 #include <protocols/generalized_kinematic_closure/GeneralizedKIC.hh>
@@ -70,7 +77,8 @@ GeneralizedKICperturber::GeneralizedKICperturber():
 	atoms_(),
 	iterations_(1),
 	must_switch_bins_(false),
-	bin_("")
+	bin_(""),
+	attach_boinc_ghost_observer_(false)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
@@ -86,7 +94,8 @@ GeneralizedKICperturber::GeneralizedKICperturber( GeneralizedKICperturber const 
 	atoms_(src.atoms_),
 	iterations_(src.iterations_),
 	must_switch_bins_(src.must_switch_bins_),
-	bin_(src.bin_)
+	bin_(src.bin_),
+	attach_boinc_ghost_observer_(src.attach_boinc_ghost_observer_)
 {
 	if ( src.bbgmover_ ) bbgmover_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::BBGaussianMover >(src.bbgmover_->clone());
 	if ( src.bin_transition_calculator_ ) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
@@ -510,6 +519,16 @@ void GeneralizedKICperturber::apply_perturb_dihedral_bbg(
 			continue;
 		}
 
+		//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
+#ifdef BOINC_GRAPHICS
+		if ( attach_boinc_ghost_observer() ) {
+			protocols::boinc::Boinc::attach_graphics_current_pose_ghost_observer( loop_pose_copy );
+			protocols::boinc::Boinc::update_graphics_current_ghost( loop_pose_copy );
+			//std::cerr << "GenKIC attached a BOINC ghost observer." << std::endl;
+			//std::cerr.flush();
+		}
+#endif
+
 		//Get this residue's index in the loop pose:
 		core::Size const loopindex = get_loop_index(residues[ir], residue_map);
 		//TR << "Current loop index is " << loopindex << std::endl; TR.flush(); //DELETE ME
@@ -822,6 +841,17 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 		general_set_phi(loop_pose_copy, loopindex, rama_phi);
 		general_set_psi(loop_pose_copy, loopindex, rama_psi);
 
+		//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
+#ifdef BOINC_GRAPHICS
+		if ( attach_boinc_ghost_observer() ) {
+			protocols::boinc::Boinc::attach_graphics_current_pose_ghost_observer( loop_pose_copy );
+			protocols::boinc::Boinc::update_graphics_current_ghost( loop_pose_copy );
+			//std::cerr << "GenKIC attached a BOINC ghost observer." << std::endl;
+			//std::cerr.flush();
+		}
+#endif
+
+
 		//Finding and setting phi and psi:
 		utility::vector1 < std::string > at1list;
 		utility::vector1 < std::string > at2list;
@@ -1020,6 +1050,16 @@ void GeneralizedKICperturber::apply_perturb_backbone_by_bins(
 
 		//Actually generate the mainchain torsion values:
 		bin_transition_calculator_->random_mainchain_torsions_using_adjacent_bins( loop_pose_copy.conformation(), res_index, must_switch_bins(), mainchain_torsions) ; //pose.conformation() and res_index are const inputs; mainchain_torsions is the output
+
+		//If this is the BOINC graphics build, and we're using the ghost pose observer, attach the observer now:
+#ifdef BOINC_GRAPHICS
+		if ( attach_boinc_ghost_observer() ) {
+			protocols::boinc::Boinc::attach_graphics_current_pose_ghost_observer( loop_pose_copy );
+			protocols::boinc::Boinc::update_graphics_current_ghost( loop_pose_copy );
+			//std::cerr << "GenKIC attached a BOINC ghost observer." << std::endl;
+			//std::cerr.flush();
+		}
+#endif
 
 		//Generate list of atoms defining the mainchain torsions to set:
 		utility::vector1 < utility::vector1 <core::id::AtomID> > dihedral_list;

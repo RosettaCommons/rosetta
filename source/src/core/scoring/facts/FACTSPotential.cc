@@ -1385,9 +1385,9 @@ Real FACTSPotential::evaluate_nonpolar_energy(
 	FACTSResidueInfo const & facts1,
 	Residue const & rsd2
 ) const {
-	
+
 	if ( rsd1.seqpos() != rsd2.seqpos() ) return 0.0;
- 	Real E_SA = 0.0;
+	Real E_SA = 0.0;
 	FACTSRsdTypeInfoCOP factstype1 = facts1.restypeinfo();
 
 	for ( Size atm1 = 1; atm1 <= rsd1.natoms(); ++ atm1 ) {

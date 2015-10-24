@@ -22,6 +22,7 @@
 #include <core/io/silent/util.hh>
 #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/abinitio/IterativeAbrelax.hh>
+#include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
 #include <protocols/jd2/archive/ArchiveManager.hh>
 #include <protocols/abinitio/BrokerMain.hh>
 #include <protocols/boinc/util.hh>
@@ -136,6 +137,7 @@ main( int argc, char * argv [] )
 	std::cerr << "Registering options.. " << std::endl;std::cerr.flush();
 #endif
 		protocols::abinitio::AbrelaxApplication::register_options();
+		protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_options();
 		protocols::abinitio::IterativeAbrelax::register_options();
 		protocols::jd2::archive::ArchiveManager::register_options();
 		//protocols::canonical_sampling::register_options();
@@ -242,9 +244,20 @@ main( int argc, char * argv [] )
 		// RUN PROTOCOL
 		// catch *any* exception.
 		try{
+#ifdef BOINC_GRAPHICS
+			// Set whether the app should randomly cycle the graphics
+			Boinc::set_randomly_cycle_appearance( true );
+#endif
 			if ( option[ run::protocol ]() == "abrelax" ) {
 				protocols::abinitio::AbrelaxApplication abrelax;
 				abrelax.run();
+			} else if ( option[run::protocol]() == "simple_cycpep_predict" ) {
+#ifdef BOINC_GRAPHICS
+				// Special case -- don't randomly cycle the appearance.
+				Boinc::set_randomly_cycle_appearance( false );
+#endif
+				protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication peppredict;
+				peppredict.run();
 			} else if ( option[ run::protocol ]() == "symdock" ) {
 				protocols::symmetric_docking::SymDock_main();
 			} else if ( option[ run::protocol ]() == "broker" ) {

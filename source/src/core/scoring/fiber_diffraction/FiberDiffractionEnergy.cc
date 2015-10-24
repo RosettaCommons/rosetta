@@ -308,7 +308,7 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 	TR << "chi2 " << chi2_ << " sum_obs_ " << sum_obs_ << " scale_factor " <<  scale_factor_ << std::endl;
 
 	TR << " number of iterations " << n_iter  << std::endl;
-	
+
 	////////////////////////////////////////////
 
 	core::Size chi_iterations_(0);

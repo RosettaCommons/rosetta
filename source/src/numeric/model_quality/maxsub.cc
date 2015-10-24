@@ -175,7 +175,7 @@ maxsub(
 )
 {
 	using namespace ObjexxFCL;
-	
+
 	xe.dimension( 3*nsup );
 	xp.dimension( 3*nsup );
 
@@ -511,7 +511,7 @@ COMAS(
 )
 {
 	using namespace ObjexxFCL;
-	
+
 	C.dimension( star );
 	WT.dimension( star );
 

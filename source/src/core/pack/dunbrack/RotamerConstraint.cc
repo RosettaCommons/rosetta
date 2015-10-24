@@ -198,7 +198,7 @@ RotamerConstraint::score(
 	pack::dunbrack::rotamer_from_chi( rsd, rot );
 	for ( Size i = 1, i_end = favored_rotamer_numbers_.size(); i <= i_end; ++i ) {
 		if ( rot != favored_rotamer_numbers_[i] )  continue;
-	
+
 		pack::dunbrack::RotamerLibraryScratchSpace scratch;
 		Real const best_rotE = rotlib->best_rotamer_energy(rsd, false /* => global min */, scratch);
 		Real const this_rotE = rotlib->best_rotamer_energy(rsd, true /* => local min */, scratch);

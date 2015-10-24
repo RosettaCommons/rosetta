@@ -13,8 +13,7 @@
 #include <string>
 
 namespace utility {
-namespace json_spirit
-{
+namespace json_spirit {
     // An Error_position exception is thrown by the "read_or_throw" functions below on finding an error.
     // Note the "read_or_throw" functions are around 3 times slower than the standard functions "read"
     // functions that return a bool.

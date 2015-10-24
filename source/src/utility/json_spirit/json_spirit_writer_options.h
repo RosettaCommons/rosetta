@@ -11,8 +11,7 @@
 #endif
 
 namespace utility {
-namespace json_spirit
-{
+namespace json_spirit {
     enum Output_options{ pretty_print = 0x01,   // Add whitespace to format the output nicely.
 
                          raw_utf8 = 0x02,       // This prevents non-printable characters from being escapted using "\uNNNN" notation.

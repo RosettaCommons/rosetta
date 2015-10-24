@@ -129,7 +129,7 @@ FixbbLinkingRotamerSimAnnealer::setup_rotamer_links(
 		uint const resid( rotamer_sets()->moltenres_2_resid( moltenres_id ) );
 		//init anything linking to it locally
 		//iterate over the associated set to check the positions, if molten
-		
+
 		if ( ! rotamer_links->has(resid) ) {
 			std::cout << "singular unlinked position" << std::endl;
 		} else {
@@ -380,13 +380,13 @@ void FixbbLinkingRotamerSimAnnealer::run()
 				delta_energy_accumulated += delta_energy_temp;
 				previous_energy_for_node_accumulated += previous_energy_for_node_temp;
 			}
-			
+
 			core::PackerEnergy previous_energy_average = ( previous_energy_for_node + previous_energy_for_node_accumulated );
 			core::PackerEnergy delta_energy_average = ( delta_energy + delta_energy_accumulated );
 
 			if ( prevrotamer_state == 0 || other_prevrotamer_state == 0 ||
 					pass_metropolis( previous_energy_average, delta_energy_average ) ) {
-				
+
 				// accept !!!!!!!
 				TR.Trace << "accepting multiple rotamer substitution" << std::endl;
 
@@ -395,7 +395,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 				for ( std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ) {
 					state_on_node( (*it).first ) = (*it).second;
 				}
-				
+
 				if ( ( prevrotamer_state == 0 ) || ( other_prevrotamer_state == 0 ) || ( currentenergy <= bestenergy() ) ) {
 					bestenergy() = currentenergy;
 					best_state_on_node = state_on_node;

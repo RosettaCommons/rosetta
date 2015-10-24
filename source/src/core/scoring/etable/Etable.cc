@@ -231,39 +231,39 @@ Etable::read_alternate_parameter_set(
 )
 {
 	if ( ! alternate_parameter_set.size() )  return;
-	
+
 	// uses alternate paramers
 	std::string param_name;
 	chemical::AtomTypeSetCOP atom_set_in( atom_set_in_ap );
-	
+
 	param_name = "LJ_RADIUS_"+alternate_parameter_set;
 	if ( atom_set_in->has_extra_parameter( param_name ) ) {
 		TR << "Using alternate parameters: " << param_name << " in Etable construction." << std::endl;
 		Size const index( atom_set_in->extra_parameter_index( param_name ) );
 		for ( int i=1; i<= n_atomtypes_; ++i ) lj_radius_[i] = (*atom_set_in)[i].extra_parameter( index );
 	}
-	
+
 	param_name = "LJ_WDEPTH_"+alternate_parameter_set;
 	if ( atom_set_in->has_extra_parameter( param_name ) ) {
 		TR << "Using alternate parameters: " << param_name << " in Etable construction."<<std::endl;
 		Size const index( atom_set_in->extra_parameter_index( param_name ) );
 		for ( int i=1; i<= n_atomtypes_; ++i ) lj_wdepth_[i] = (*atom_set_in)[i].extra_parameter( index );
 	}
-	
+
 	param_name = "LK_DGFREE_"+alternate_parameter_set;
 	if ( atom_set_in->has_extra_parameter( param_name ) ) {
 		TR << "Using alternate parameters: " << param_name << " in Etable construction."<<std::endl;
 		Size const index( atom_set_in->extra_parameter_index( param_name ) );
 		for ( int i=1; i<= n_atomtypes_; ++i ) lk_dgfree_[i] = (*atom_set_in)[i].extra_parameter( index );
 	}
-	
+
 	param_name = "LK_LAMBDA_"+alternate_parameter_set;
 	if ( atom_set_in->has_extra_parameter( param_name ) ) {
 		TR << "Using alternate parameters: " << param_name << " in Etable construction." << std::endl;
 		Size const index( atom_set_in->extra_parameter_index( param_name ) );
 		for ( int i=1; i<= n_atomtypes_; ++i ) lk_lambda_[i] = (*atom_set_in)[i].extra_parameter( index );
 	}
-	
+
 	param_name = "LK_VOLUME_"+alternate_parameter_set;
 	if ( atom_set_in->has_extra_parameter( param_name ) ) {
 		TR << "Using alternate parameters: " << param_name << " in Etable construction." << std::endl;
@@ -793,7 +793,7 @@ Etable::modify_pot_one_pair(
 			//   electrostatic repulsion needed to counteract the LJatr which pulls the oxyens
 			//   together
 			if ( dis > 3.6 )  continue;
-			
+
 			if ( atype1 == OCbb_idx && atype2 == OCbb_idx && ! skip_mod_OCbb_OCbb_rep ) {
 				Real const fac = std::max( dis - 3.6, -1.5 );
 				//std::cout << "adding extra repulsion " << dis << " " << 2*fac*fac << " + " << ljrep_(k,OCbb_idx,OCbb_idx) <<  std::endl;
@@ -827,7 +827,7 @@ Etable::modify_pot_one_pair(
 			}
 		}
 		//std::cout << "zeroing ljatr_final_weight " << (*atom_set_)[at1].name() << " " << (*atom_set_)[at2].name() << std::endl;
-		
+
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
 		p.ljrep_from_negcrossing = true;
 		// record the minimum value as the bin after the last value at which the repulsive energy is positive.
@@ -875,7 +875,7 @@ Etable::smooth_etables_one_pair(
 		float d = ((float)i)/10.0;
 		bin_of_dis(i) = (int)( d*d * bins_per_A2 + 1 );
 	}
-	
+
 	int minima_bin_index = 0;
 
 	//////////////////////////////////////////////////////////////////
@@ -946,7 +946,7 @@ Etable::smooth_etables_one_pair(
 
 	// APL -- Disabling this behavior since I think it is unused and if it is used, then it would
 	// Prevent the analytic etable evaluation code I'm working on
-	
+
 	InterpolatorOP interp( gen.get_interpolator() );
 	for ( int i = start; i <= etable_disbins; ++i ) {
 		interp->interpolate( dis(i), ljatr(i), dljatr(i) );
@@ -1477,7 +1477,7 @@ Etable::precalc_etable_coefficients(
 			// ctsa - precalculated lk solvation coefficients
 			lk_coeff(i,j) = lk_coeff_tmp(i) * lk_volume(j);
 			lk_coeff(j,i) = lk_coeff_tmp(j) * lk_volume(i);
-			
+
 			// ctsa - when dis/sigma drops below lk_min_dis2sigma,
 			//   a constant lk solvation value equal to the value at the
 			//   switchover point is used. That switchover-point value
@@ -1573,7 +1573,7 @@ Etable::calc_etable_value(
 	Real dis;
 	Real inv_dis,inv_dis2,inv_dis6,inv_dis7,inv_dis12,inv_dis13;
 	Real dis2sigma;
-	
+
 	// include after local variables to allow data statements to initialize
 	atrE = 0.;
 	d_atrE = 0.;

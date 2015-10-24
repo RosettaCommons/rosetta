@@ -103,11 +103,11 @@ void FACTSPoseInfo::initialize( pose::Pose const & pose, FACTSRsdTypeMap &rsdtyp
 		// Initialize only if the residue is in enumeration_shell
 		// otherwise keep information stored previously
 		if ( ! residue_info_[i]->enumeration_shell() )  continue;
-		
+
 		// initialize residuetypeinfo if it has not been
 		core::chemical::ResidueType const &rsdtype = pose.residue(i).type();
 		FACTSRsdTypeMap::const_iterator it = rsdtypemap.find( &rsdtype );
-		
+
 		if ( it == rsdtypemap.end() ) {
 			TR << "Adding new FACTS residue type info: " << rsdtype.name() << std::endl;
 			FACTSRsdTypeInfoOP rsdtypeinfo( new FACTSRsdTypeInfo );
@@ -178,12 +178,12 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 
 		// Propagate change info into its first neighbor shell
 		if ( ! facts1.changed() )  continue;
-		
+
 		facts1.set_enumeration_shell( true );
 		for ( graph::Graph::EdgeListConstIter
-			 iru  = energy_graph.get_node( res1 )->const_edge_list_begin(),
-			 irue = energy_graph.get_node( res1 )->const_edge_list_end();
-			 iru != irue; ++iru ) {
+				iru  = energy_graph.get_node( res1 )->const_edge_list_begin(),
+				irue = energy_graph.get_node( res1 )->const_edge_list_end();
+				iru != irue; ++iru ) {
 			Size const res2( (*iru)->get_other_ind( res1 ) );
 			FACTSResidueInfo & facts2( residue_info( res2 ) );
 			facts2.set_enumeration_shell( true );

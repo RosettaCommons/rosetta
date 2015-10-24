@@ -244,6 +244,13 @@ public:
 	/// @details This acts on the last perturber in the perturber list.
 	void set_perturber_bin( std::string const &bin );
 
+	/// @brief Set whether the perturber's generated poses should be used for BOINC graphics.
+	/// @details Does nothing outside of the BOINC build.
+	void set_perturber_attach_boinc_ghost_observer( core::Size const perturber_index, bool const setting );
+
+	/// @brief Set whether the perturber's generated poses should be used for BOINC graphics.
+	/// @details Does nothing outside of the BOINC build.  This version acts on the last perturber in the perturber list.
+	void set_perturber_attach_boinc_ghost_observer( bool const setting );
 
 	/// @brief Add a value to the list of values that a perturber takes.
 	void add_value_to_perturber_value_list ( core::Size const perturber_index, core::Real const &val );
@@ -337,6 +344,14 @@ public:
 	/// @details This version acts on the last filter in the filter list.
 	void set_filter_rama_cutoff_energy( core::Real const &cutoff_energy );
 
+	/// @brief Set whether the filter's generated poses should be used for BOINC graphics.
+	/// @details Does nothing outside of the BOINC build.
+	void set_filter_attach_boinc_ghost_observer( core::Size const filter_index, bool const setting );
+
+	/// @brief Set whether the filter's generated poses should be used for BOINC graphics.
+	/// @details Does nothing outside of the BOINC build.  This version acts on the last filter in the filter list.
+	void set_filter_attach_boinc_ghost_observer( bool const setting );
+
 	/// @brief Initialize a filter's BinTransitionCalculator object, and load a bin_params file.
 	///
 	void load_filter_bin_params( core::Size const filter_index, std::string const &bin_params_file );
@@ -397,6 +412,14 @@ public:
 	/// @brief Sets the mover that will be applied to all solutions that pass filters prior to applying the selector.
 	///
 	void set_preselection_mover ( protocols::moves::MoverOP mover );
+
+	/// @brief Sets whether we are attaching a BOINC "ghost" pose observer.
+	/// @details Only does anything in the BOINC graphics build.
+	void set_attach_boinc_ghost_observer( bool const setting ) { attach_boinc_ghost_observer_ = setting; return; }
+
+	/// @brief Gets whether we are attaching a BOINC "ghost" pose observer.
+	/// @details Only does anything in the BOINC graphics build.
+	inline bool attach_boinc_ghost_observer() const { return attach_boinc_ghost_observer_; }
 
 private:
 
@@ -511,6 +534,10 @@ private:
 	/// @brief Vector of owning pointers to solutions.  Used for temporary storage.
 	///
 	utility::vector1 < core::pose::PoseOP > solutions_;
+
+	/// @brief Should we attach a BOINC "ghost" pose observer for BOINC graphics output?
+	/// @details Default false.  Only does anything in the BOINC build.
+	bool attach_boinc_ghost_observer_;
 
 	////////////////////////////////////////////////////////////////////////////////
 	//          PRIVATE FUNCTIONS                                                 //

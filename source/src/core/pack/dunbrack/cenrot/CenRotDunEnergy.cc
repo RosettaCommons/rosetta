@@ -146,23 +146,23 @@ Real CenRotDunEnergy::eval_residue_dof_derivative(
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) )  return 0.0;
 	if ( rsd.is_virtual_residue() ) return 0.0;
 	if ( ! tor_id.valid() )  return 0.0;
-	
+
 	debug_assert( rsd.seqpos() == tor_id.rsd() );
-	
+
 	Real deriv(0.0);
-	
+
 	SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
 	SingleResidueRotamerLibraryCOP residue_rotamer_library(rotlibfact.get( rsd.type() ));
-	
+
 	if ( residue_rotamer_library==0 ) return 0.0;
-	
+
 	SingleResidueCenrotLibraryCOP residue_cenrot_library(
-			utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library) );
-	
+		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library) );
+
 	if ( residue_cenrot_library != 0 && rsd.is_protein() && tor_id.type() == id::BB ) {
 		RotamerLibraryScratchSpace scratch;
 		residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv( rsd, scratch );
-		
+
 		if ( tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
 			//for backbone torsion angles: phi, psi, omega?
 			deriv = scratch.dE_dbb()[tor_id.torsion()];
@@ -188,28 +188,28 @@ Real CenRotDunEnergy::eval_dof_derivative(
 
 	if ( ! tor_id.valid() )  return 0.0;
 	if ( pose.residue( tor_id.rsd() ).is_virtual_residue() ) return 0.0;
-	
+
 	Real deriv(0.0);
-	
+
 	SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
 	SingleResidueRotamerLibraryCOP residue_rotamer_library(rotlibfact.get( pose.residue( tor_id.rsd() ).type() ));
-	
+
 	if ( residue_rotamer_library==0 ) return 0.0;
-	
+
 	SingleResidueCenrotLibraryCOP residue_cenrot_library(
-			utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library) );
-	
+		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library) );
+
 	if ( residue_cenrot_library && pose.residue_type( tor_id.rsd() ).is_protein() && tor_id.type() == id::BB ) {
-		
+
 		RotamerLibraryScratchSpace scratch;
 		residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv(pose.residue( tor_id.rsd() ), scratch);
-		
+
 		if ( tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
 			//for backbone torsion angles: phi, psi, omega?
 			deriv = scratch.dE_dbb()[tor_id.torsion()];
 		}
 	}
-	
+
 	return numeric::conversions::degrees( weights[ cen_rot_dun ] * deriv );
 }
 

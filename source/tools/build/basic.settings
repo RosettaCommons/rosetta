@@ -841,7 +841,12 @@ settings = {
             ],
             "defines"  : [ "BOINC_GRAPHICS" ],
             "flags" : {
-                "link" : [ "Wl,-Bdynamic -lglut"  ],
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter",
+		    "Wno-unused-but-set-variable",
+                ],
+                "link" : [ "Wl,-Bdynamic -lglut -lGL -lGLU -Wl,--dynamic-linker=/lib64/ld-linux-x86-64.so.2"  ],
             },
         },
     },

@@ -1000,7 +1000,7 @@ sources = {
 		#"bettercluster",
 		#"design_cycpeptide_MPI",
 		"fit_helixparams",
-		"simple_cycpep_predict",
+		#"simple_cycpep_predict",
 	],
 
 	# Z ######################################################################

@@ -20,7 +20,7 @@
 #include <utility/io/izstream.fwd.hh>
 
 // C++ headers
-#ifdef WIN32 
+#ifdef WIN32
 #include <string>
 #else
 #include <iosfwd>

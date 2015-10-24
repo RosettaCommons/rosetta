@@ -93,6 +93,9 @@ sources = {
 	"public/coupled_moves": [
 		"coupled_moves",
 	],
+	"public/cyclic_peptide": [
+		"simple_cycpep_predict",
+	],
 	"public/darc": [
 		"DARC",
 		"make_ray_files",

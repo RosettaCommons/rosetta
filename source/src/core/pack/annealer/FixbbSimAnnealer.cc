@@ -162,7 +162,7 @@ void FixbbSimAnnealer::run()
 			state_on_node = best_state_on_node;
 			ig_->set_network_state( state_on_node );
 		}
-		
+
 		int inneriterations = get_inneriterations();
 
 		float treshold_for_deltaE_inaccuracy = std::sqrt( get_temperature() );
@@ -184,7 +184,7 @@ void FixbbSimAnnealer::run()
 
 			ig_->consider_substitution( moltenres_id, rotamer_state_on_moltenres,
 				delta_energy, previous_energy_for_node);
-			
+
 			//bk keep new rotamer if it is lower in energy or accept it at some
 			//bk probability if it is higher in energy, if it is the first
 			//bk rotamer to be tried at this position automatically accept it.
@@ -204,7 +204,7 @@ void FixbbSimAnnealer::run()
 			} else if ( record_annealer_trajectory_ ) {
 				annealer_trajectory << moltenres_id << " " << rotamer_state_on_moltenres << " R\n";
 			}
-			
+
 			loopenergy(nn) = currentenergy;
 			float const temperature = get_temperature();
 

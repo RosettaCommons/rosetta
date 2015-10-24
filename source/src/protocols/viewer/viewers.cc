@@ -114,7 +114,11 @@ int click_y;
 std::map< int , GraphicsState* > gs_map_;
 
 // Vector bg_color( 1.0f, 1.0f, 1.0f ); // white
-Vector bg_color( 0.0f, 0.0f, 0.0f ); // black
+Vector bg_color( 0.0f, 0.0f, 0.05f ); // dark blue
+Vector bg_color2( 0.0f, 0.0f, 0.01f ); // darker blue
+Vector border_color( 0.01f, 0.03f, 0.15f ); // lighter blue
+Vector ghost_color_vect( 0.5f, 0.55f, 0.6f); //blue-grey
+Vector atom_specular_color(0.4f, 0.37f, 0.35f); //Grey-orange
 
 // rhiju parameters for cartoons
 const int NUM_SEGMENTS = 5;
@@ -135,8 +139,9 @@ const core::Real SHOWBONDCUTOFF2_NA = (8.0*8.0)/(NUM_SEGMENTS*NUM_SEGMENTS);
 //lin parameters for spacefill
 core::Real const ligand_sphere_opacity( 1.0 );
 core::Real const protein_sphere_opacity( 1.0 );
-core::Real const ligand_sphere_shininess( 1.0);
-core::Real const protein_sphere_shininess( 1.0 );
+core::Real const ghost_sphere_opacity( 0.5 );
+core::Real const ligand_sphere_shininess( 25 );
+core::Real const protein_sphere_shininess( 25 );
 //lin parameters for ball and stick
 core::Real const protein_wireframeScale( 0.2 );
 core::Real const protein_stickScale( 0.2 );
@@ -354,10 +359,10 @@ conformation_viewer_window_init( GraphicsState& gs, std::string const & window_n
 
 	graphics::gs_map_[window] = &gs;
 
-	glutDisplayFunc( conformation_viewer_display );
-
 	glClearColor( bg_color.x(), bg_color.y(), bg_color.z(), 1.0 );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ) ;
+
+	glutDisplayFunc( conformation_viewer_display );
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -813,7 +818,14 @@ Vector get_atom_color(
 		} else if ( sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() ) {
 			return sidechain_color_rhiju[ residues[r]->name3() ];
 		}
+		break;
+	case GHOST_COLOR :
+		if ( residues[r]->atom_is_hydrogen(i) ) {
+			return Vector( graphics::ghost_color_vect.x()+0.1 , graphics::ghost_color_vect.y()+0.1, graphics::ghost_color_vect.z()+0.1 );
+		}
+		return Vector(graphics::ghost_color_vect.x(), graphics::ghost_color_vect.y(), graphics::ghost_color_vect.z());
 	}
+
 	return Vector( 1.0, 1.0, 1.0);
 }
 
@@ -1146,6 +1158,10 @@ void draw_secstruct_chunk(
 		CA_segment = get_CA_segment( prev_CA, current_CA, prev_tangent, tangent, p, hermite_factor);
 		if ( gs.Color_mode == CHAIN_COLOR ) {
 			chain_color( residues[n]->chain(), red, green, blue );
+		} else if ( gs.Color_mode == GHOST_COLOR ) {
+			red=graphics::ghost_color_vect.x();
+			green=graphics::ghost_color_vect.y();
+			blue=graphics::ghost_color_vect.z();
 		} else  {
 			get_residue_color( static_cast<float>(n - 1) + p, red, green, blue, false, gs.nres_for_graphics );
 		}
@@ -1308,6 +1324,10 @@ void draw_coil_chunk(
 		CA_segment = get_CA_segment( prev_CA, current_CA, prev_tangent, tangent, p, graphics::COIL_HERMITE_FACTOR);
 		if ( gs.Color_mode == CHAIN_COLOR ) {
 			chain_color( residues[n]->chain(), red, green, blue );
+		} else if ( gs.Color_mode == GHOST_COLOR ) {
+			red=graphics::ghost_color_vect.x();
+			green=graphics::ghost_color_vect.y();
+			blue=graphics::ghost_color_vect.z();
 		} else  {
 			get_residue_color ( static_cast<float>(n) + p, red, green, blue, false, gs.nres_for_graphics );
 		}
@@ -1455,6 +1475,10 @@ void draw_Calpha_trace(
 		float red, green, blue;
 		if ( gs.Color_mode == CHAIN_COLOR ) {
 			chain_color( residues[i]->chain(), red, green, blue );
+		} else if ( gs.Color_mode == GHOST_COLOR ) {
+			red=graphics::ghost_color_vect.x();
+			green=graphics::ghost_color_vect.y();
+			blue=graphics::ghost_color_vect.z();
 		} else {
 			get_residue_color( i, red, green, blue, false,  gs.nres_for_graphics );
 		}
@@ -1505,6 +1529,10 @@ void
 draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::ResidueCOP > const & residues, const int & start, const int & end ) {
 
 	if ( gs.SCdisplay_state == SHOW_NOSC ) return;
+	else if ( gs.SCdisplay_state == SHOW_SCSPHERES ) {
+		draw_sphere( gs, residues, SPHERE_MODE_SC );
+		return;
+	}
 
 	GLfloat currentrotation[16];
 	glGetFloatv(GL_MODELVIEW_MATRIX, currentrotation);
@@ -1646,13 +1674,16 @@ void draw_backbone(
 		return;
 	case SHOW_NOBB :
 		return;
+	case SHOW_BBSPHERES :
+		draw_sphere( gs, residues, SPHERE_MODE_BB );
+		return;
 	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //chu copied from rosetta++ protein_graphics.cc
 void
-draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCOP > const & residues )
+draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCOP > const & residues, spheremode const &sphere_mode )
 {
 	using namespace graphics;
 	//lin currently only ligand
@@ -1666,14 +1697,17 @@ draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCO
 	gluQuadricDrawStyle(sphereObj, GLU_FILL);
 	gluQuadricNormals(sphereObj, GLU_SMOOTH);
 
-	// ligand residue only
 	for ( int i = 1; i <= nres; i++ ) {
 		conformation::Residue const & rsd = *(residues[i]);
 
-		if ( rsd.aa() != chemical::aa_unk ) continue;
+		if ( sphere_mode == SPHERE_MODE_LIGAND ) {
+			if ( rsd.aa() != chemical::aa_unk || rsd.is_protein() ) continue;  // ligand residues only
+		} else {
+			if ( rsd.aa() == chemical::aa_unk && !rsd.is_protein() ) continue; // NOT ligand residues
+		}
 
-		float const sphere_opacity ( rsd.is_protein() ? protein_sphere_opacity : ligand_sphere_opacity );
-		float const sphere_shininess ( rsd.is_protein() ? protein_sphere_shininess : ligand_sphere_shininess );
+		float const sphere_opacity ( gs.Color_mode == GHOST_COLOR? ghost_sphere_opacity : (rsd.is_protein() ? protein_sphere_opacity : ligand_sphere_opacity) );
+		float const sphere_shininess ( rsd.is_protein() ? static_cast<float>(protein_sphere_shininess) : static_cast<float>(ligand_sphere_shininess) );
 
 		// loop through each heavy atom
 		int atom_begin = 1 ;
@@ -1681,6 +1715,9 @@ draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCO
 
 		for ( int j = atom_begin; j <= atom_end; ++j ) {
 			conformation::Atom const & atom( rsd.atom(j) );
+
+			if ( sphere_mode == SPHERE_MODE_BB && !rsd.atom_is_backbone(j) ) continue; //Skip if atom is not backbone if we're doing backbone.
+			if ( sphere_mode == SPHERE_MODE_SC && rsd.atom_is_backbone(j) ) continue; //Skip if atom is backbone if we're NOT doing backbone.
 
 			if ( rsd.is_virtual(j) ) continue; //no virtual atoms
 
@@ -1691,16 +1728,16 @@ draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCO
 
 			//GLfloat mat_shininess[] = { sphere_shininess };
 			GLfloat atom_material[4] = {
-				static_cast<GLfloat>(atom_color[0]),
-				static_cast<GLfloat>(atom_color[1]),
-				static_cast<GLfloat>(atom_color[2]),
-				1.0,
+				static_cast<GLfloat>(atom_color[0])*sphere_opacity,
+				static_cast<GLfloat>(atom_color[1])*sphere_opacity,
+				static_cast<GLfloat>(atom_color[2])*sphere_opacity,
+				sphere_opacity,
 				};
 			GLfloat specular_material[4] = {
-				atom_material[0] * sphere_opacity,
-				atom_material[1] * sphere_opacity,
-				atom_material[2] * sphere_opacity,
-				sphere_opacity,
+				static_cast<GLfloat>(atom_specular_color.x()),
+				static_cast<GLfloat>(atom_specular_color.y()),
+				static_cast<GLfloat>(atom_specular_color.z()),
+				1.0f,
 				};
 
 			// Highlight the nonprotein
@@ -1715,7 +1752,7 @@ draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCO
 					atom_material[3] = 0.1;
 				}
 			}
-			if ( atom_material[3] < 0.1 ) continue;
+
 			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  atom_material);
 			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  atom_material);
 			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular_material);
@@ -1738,7 +1775,7 @@ draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCO
 			if ( graphics::sphereDisplayList != 0 ) {
 				//float sphereRadius, sphereScale(1.0);
 				const float scale_for_display_list(1.0);
-				float sphereScale = 1.0 * scale_for_display_list ;
+				float sphereScale = 0.8 * scale_for_display_list ;
 				float sphereRadius = sphereScale *  rsd.atom_type_set()[ atom.type() ].lj_radius();
 				glScalef(sphereRadius, sphereRadius, sphereRadius);
 			}
@@ -1851,11 +1888,11 @@ draw_conformation_and_density(
 	using namespace graphics;
 	const int total_residue = residues.size();
 
-	// clear
-	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
 	//Set background color
 	glClearColor( bg_color.x(), bg_color.y(), bg_color.z(), 1.0 );
+
+	// clear
+	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	// In case the view has been rotated... set z to be the axis pointing out of the screen
 	glMatrixMode(GL_MODELVIEW);
@@ -1896,7 +1933,7 @@ draw_conformation_and_density(
 
 		draw_backbone( gs, residues, ss );
 		draw_sidechains( gs, residues, 1, total_residue );
-		draw_sphere( gs, residues );
+		draw_sphere( gs, residues, SPHERE_MODE_LIGAND );
 
 		render_density( gs, triangles );  // renders "on-demand" depending on gs object
 		display_density( gs, triangles );
@@ -1922,29 +1959,40 @@ fill_nres_for_graphics( GraphicsState & gs, utility::vector1< conformation::Resi
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void draw_conformation( utility::vector1< conformation::ResidueCOP > const & residues,
+void draw_conformation(
+	utility::vector1< conformation::ResidueCOP > const & residues,
 	utility::vector1< char > const & ss,
 	GraphicsState & gs,
-	Vector const & center) {
+	Vector const & center
+) {
 
 	using namespace graphics;
 	//const int total_residue = residues.size();
 
 #ifndef BOINC_GRAPHICS
 
-	// clear
-	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
 	//Set background color
 	glClearColor( bg_color.x(), bg_color.y(), bg_color.z(), 1.0 );
 
+	// clear
+	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
 #endif
 
-	GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+	GLfloat light_position[] = { 100.0, 100.0, 100.0, 0.0 };
+	GLfloat light_color[] = {1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat light_position2[] = { -100.0, -100.0, -100.0, 0.0 };
+	GLfloat light_color2[] = {0.3f, 0.35f, 0.5f, 1.0f };
 	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
 	glEnable(GL_DEPTH_TEST);
 	glShadeModel(GL_SMOOTH);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_color);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_color);
+	glLightfv(GL_LIGHT1, GL_POSITION, light_position2);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_color2);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, light_color2);
 
 	glPushMatrix();
 	glTranslatef(-center.x(), -center.y(), -center.z());
@@ -1965,7 +2013,7 @@ void draw_conformation( utility::vector1< conformation::ResidueCOP > const & res
 	if  ( residues_protein.size() > 0 ) {
 		draw_backbone( gs, residues_protein, ss );
 		draw_sidechains( gs, residues_protein, 1, residues_protein.size() );
-		draw_sphere( gs, residues_protein );
+		draw_sphere( gs, residues_protein, SPHERE_MODE_LIGAND );
 	}
 
 	if ( other_residues.size() > 0 ) {
@@ -1978,12 +2026,13 @@ void draw_conformation( utility::vector1< conformation::ResidueCOP > const & res
 	if ( residues_sphere.size() > 0 ) {
 		ColorMode colormode_save = gs.Color_mode;
 		gs.Color_mode = RESIDUE_COLOR;
-		draw_sphere( gs, residues_sphere );
+		draw_sphere( gs, residues_sphere, SPHERE_MODE_LIGAND );
 		gs.Color_mode = colormode_save;
 	}
 
 	glPopMatrix();
 	glDisable(GL_LIGHT0);// Turn lighting off
+	glDisable(GL_LIGHT1);// Turn lighting off
 }
 
 
@@ -2003,11 +2052,62 @@ get_center( utility::vector1< conformation::ResidueCOP > const & residues ){
 	return center_of_mass;
 }
 
+/// @brief Clear the background and fill it with the background colour.
+///
+void clear_bg()
+{
+	using namespace graphics;
+	glClearColor( bg_color.x(), bg_color.y(), bg_color.z(), 1.0 );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ) ;
+	return;
+}
+
+/// @brief Draw a gradient for the background.
+void draw_gradient_bg()
+{
+	using namespace graphics;
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glBegin(GL_QUADS);
+	glColor3f(bg_color.x(), bg_color.y(), bg_color.z());
+	glVertex2f(1.0,1.0);
+	glVertex2f(-1.0,1.0);
+	glColor3f(bg_color2.x(), bg_color2.y(), bg_color2.z());
+	glVertex2f(-1.0,-1.0);
+	glVertex2f(1.0,-1.0);
+	glEnd();
+
+	glLineWidth(2.5);
+	glColor3f(border_color.x(), border_color.y(), border_color.z());
+	glBegin(GL_LINES);
+	glVertex2f(-1.0, -1.0);
+	glVertex2f(1.0, -1.0);
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex2f(-1.0, 1.0);
+	glVertex2f(1.0, 1.0);
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex2f(1.0, 1.0);
+	glVertex2f(1.0, -1.0);
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex2f(-1.0, 1.0);
+	glVertex2f(-1.0, -1.0);
+	glEnd();
+
+	return;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void draw_pose(
 	const core::pose::Pose & pose,
-	GraphicsState & gs) {
+	GraphicsState & gs
+) {
 	core::Size nres = pose.total_residue();
 	utility::vector1< char > ss(nres);
 	utility::vector1< conformation::ResidueCOP > residues(nres);

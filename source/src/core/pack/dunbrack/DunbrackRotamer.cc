@@ -151,7 +151,7 @@ expand_proton_chi_oldversion(
 			newchi_vect[ count ]->chi[ chi_id ] = ii_sample;
 			++count;
 			if ( ! include_extra ) continue;
-			
+
 			for ( Size kk = 1; kk <= extra_samples.size(); ++kk ) {
 				newchi_vect[ count ]->chi[ chi_id ] = ii_sample + extra_samples[ kk ];
 				++count;
@@ -211,7 +211,7 @@ expand_proton_chi(
 			new_chi_vec->chi[ chi_id ] = ii_sample;
 
 			if ( ! include_extra )  continue;
-			
+
 			for ( Size kk = 1; kk <= extra_samples.size(); ++kk ) {
 				chi_set_vector.push_back( new_chi_vec = ChiSetOP( new pack::dunbrack::ChiSet( *base_chi_vec  ) ) );
 				new_chi_vec->chi[ chi_id ] = ii_sample  + extra_samples[ kk ];

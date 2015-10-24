@@ -457,16 +457,16 @@ polycubic_interpolation(
 		dbb3p[ ii ] = ( dbbp[ ii ] * dbbp[ ii ] * dbbp[ ii ] - dbbp[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ];
 		dbb3m[ ii ] = ( dbbm[ ii ] * dbbm[ ii ] * dbbm[ ii ] - dbbm[ ii ] ) * binwbb[ ii ] * binwbb_over_6[ ii ];
 	}
-	
+
 	// there are 2^N deriv terms, i.e. the value, the N first derivatives,
 	// the N^2 second derivatives... up to the single Nth derivative
-	
+
 	// The value has its own functional form.
 	val = 0;
 	for ( Size iid = 1; iid <= (1 << N); ++iid ) {
 		for ( Size iiv = 1; iiv <= (1 << N); ++iiv ) {
 			Real valterm = n_derivs[ iid ][ iiv ];
-			
+
 			for ( Size jj = 1; jj <= N; ++jj ) { // each bb
 				Size two_to_the_jj_compl = 1 << ( N - jj );
 				if ( ( iiv - 1 ) & two_to_the_jj_compl ) {
@@ -475,7 +475,7 @@ polycubic_interpolation(
 					valterm *= ( ( iid - 1 ) & two_to_the_jj_compl ) ? dbb3m[ jj ] : dbbm[ jj ];
 				}
 			}
-			
+
 			val += valterm;
 		}
 	}
@@ -483,14 +483,14 @@ polycubic_interpolation(
 	//Each of the N first derivatives.
 	for ( Size bbn = 1; bbn <= N; ++bbn ) {
 		dvaldbb[ bbn ] = 0;
-		
+
 		for ( Size iid = 1; iid <= (1 << N); ++iid ) {
 			for ( Size iiv = 1; iiv <= (1 << N); ++iiv ) {
 				Real valterm = n_derivs[ iid ][ iiv ]; // v000
-				
+
 				for ( Size jj = 1; jj <= N; ++jj ) {
 					Size two_to_the_jj_compl = 1 << ( N - jj );
-					
+
 					// Half of the values from iiv = 1 to 2^N come from
 					// "bb_bin_next" and half from "bb_bin."
 					if ( ( iiv - 1 ) & two_to_the_jj_compl ) {
@@ -510,7 +510,7 @@ polycubic_interpolation(
 						}
 					}
 				}
-				
+
 				dvaldbb[ bbn ] += valterm;
 			}
 		}

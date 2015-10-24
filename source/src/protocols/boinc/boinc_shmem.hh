@@ -46,6 +46,10 @@ struct BoincSharedMemory {
 	// current pose
 	int current_pose_exists;
 	char current_pose_buf[POSE_BUFSIZE];
+	
+	// current pose ghost
+	int current_pose_ghost_exists;
+	char current_pose_ghost_buf[POSE_BUFSIZE];
 
 	// accepted
 	int last_accepted_pose_exists;
@@ -88,6 +92,8 @@ struct BoincSharedMemory {
 	// monte carlo mover step count
 	unsigned int mover_mc_trial_count;
 
+	// Should we randomly cycle appearance?
+	bool randomly_cycle_appearance;
 
 };
 
