@@ -349,7 +349,12 @@ rm -r ref/; ./integration.py    # create reference results using only default se
             results = {}
             full_log = []
             for test in tests:
-            	 if( (not Options.mpi_tests) or (Options.mpi_tests and os.path.isfile( path.join("tests", test, "command.mpi") ) ) ) :
+                if Options.mpi_tests:
+                    test_valid = os.path.isfile( path.join("tests", test, "command.mpi") )
+                else:
+                    test_valid = os.path.isfile( path.join("tests", test, "command") )
+
+                if test_valid:
                     if options.valgrind:
                         errors += analyze_valgrind_test(test, outdir, results, full_log )
                     else:
