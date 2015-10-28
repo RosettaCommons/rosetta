@@ -61,9 +61,9 @@ PROTON_CHI 4 SAMPLES 2 0 180 EXTRA 1 20
 NBR_ATOM  CB
 NBR_RADIUS 5.811339
 FIRST_SIDECHAIN_ATOM CB
-#NCAA_ROTLIB_PATH hty.rotlib doesn't exist
+#NCAA_ROTLIB_PATH ncaa_rotamer_libraries/alpha_amino_acid/hty.rotlib doesn't exist
 # amw making one now
-NCAA_ROTLIB_PATH HTY.rotlib
+NCAA_ROTLIB_PATH ncaa_rotamer_libraries/alpha_amino_acid/HTY.rotlib
 ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
 ICOOR_INTERNAL    CA     0.000000  179.999999    1.455875   N     CA    C  
 ICOOR_INTERNAL    C      0.000000   72.123546    1.515256   CA    N     C  
