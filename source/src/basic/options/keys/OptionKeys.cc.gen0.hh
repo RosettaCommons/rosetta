@@ -216,3 +216,4 @@ namespace out { namespace file { BooleanOptionKey const output_virtual_zero_occ(
 namespace out { namespace file { BooleanOptionKey const no_output_cen( "out:file:no_output_cen" );  } }
 namespace out { namespace file { BooleanOptionKey const output_orbitals( "out:file:output_orbitals" );  } }
 namespace out { namespace file { BooleanOptionKey const no_scores_in_pdb( "out:file:no_scores_in_pdb" );  } }
+namespace out { namespace file { BooleanOptionKey const renumber_pdb( "out:file:renumber_pdb" );  } }

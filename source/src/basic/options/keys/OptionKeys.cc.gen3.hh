@@ -1,6 +1,3 @@
-namespace constraints { StringOptionKey const viol_type( "constraints:viol_type" );  }
-namespace constraints { RealOptionKey const sog_cst_param( "constraints:sog_cst_param" );  }
-namespace constraints { RealOptionKey const sog_upper_bound( "constraints:sog_upper_bound" );  }
 namespace constraints { BooleanOptionKey const epr_distance( "constraints:epr_distance" );  }
 namespace constraints { IntegerOptionKey const combine( "constraints:combine" );  }
 namespace constraints { FileOptionKey const combine_exclude_region( "constraints:combine_exclude_region" );  }
@@ -216,3 +213,7 @@ namespace loops { RealOptionKey const remodel_final_temp( "loops:remodel_final_t
 namespace loops { RealOptionKey const refine_init_temp( "loops:refine_init_temp" );  }
 namespace loops { RealOptionKey const refine_final_temp( "loops:refine_final_temp" );  }
 namespace loops { IntegerOptionKey const gapspan( "loops:gapspan" );  }
+namespace loops { IntegerOptionKey const spread( "loops:spread" );  }
+namespace loops { IntegerOptionKey const kinematic_wrapper_cycles( "loops:kinematic_wrapper_cycles" );  }
+namespace loops { IntegerOptionKey const kic_num_rotamer_trials( "loops:kic_num_rotamer_trials" );  }
+namespace loops { BooleanOptionKey const kic_omega_sampling( "loops:kic_omega_sampling" );  }

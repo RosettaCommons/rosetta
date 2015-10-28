@@ -1,5 +1,3 @@
-namespace score { BooleanOptionKey const allow_complex_loop_graph( "score:allow_complex_loop_graph" );  }
-namespace score { BooleanOptionKey const compute_mg_sol_for_hydrogens( "score:compute_mg_sol_for_hydrogens" );  }
 namespace score { IntegerVectorOptionKey const rg_local_span( "score:rg_local_span" );  }
 namespace score { BooleanOptionKey const unmodifypot( "score:unmodifypot" );  }
 namespace score { RealOptionKey const conc( "score:conc" );  }
@@ -216,3 +214,6 @@ namespace constraints { RealOptionKey const pocket_constraint_weight( "constrain
 namespace constraints { BooleanOptionKey const pocket_zero_derivatives( "constraints:pocket_zero_derivatives" );  }
 namespace constraints { BooleanOptionKey const viol( "constraints:viol" );  }
 namespace constraints { IntegerOptionKey const viol_level( "constraints:viol_level" );  }
+namespace constraints { StringOptionKey const viol_type( "constraints:viol_type" );  }
+namespace constraints { RealOptionKey const sog_cst_param( "constraints:sog_cst_param" );  }
+namespace constraints { RealOptionKey const sog_upper_bound( "constraints:sog_upper_bound" );  }

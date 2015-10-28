@@ -1,4 +1,3 @@
-namespace out { namespace file { BooleanOptionKey const renumber_pdb( "out:file:renumber_pdb" );  } }
 namespace out { namespace file { BooleanOptionKey const pdb_parents( "out:file:pdb_parents" );  } }
 namespace out { namespace file { BooleanOptionKey const per_chain_renumbering( "out:file:per_chain_renumbering" );  } }
 namespace out { namespace file { BooleanOptionKey const output_torsions( "out:file:output_torsions" );  } }
@@ -216,3 +215,5 @@ namespace score { RealOptionKey const free_side_chain_bonus( "score:free_side_ch
 namespace score { RealOptionKey const bond_angle_sd_polar_hydrogen( "score:bond_angle_sd_polar_hydrogen" );  }
 namespace score { RealOptionKey const bond_torsion_sd_polar_hydrogen( "score:bond_torsion_sd_polar_hydrogen" );  }
 namespace score { BooleanOptionKey const rna_bulge_bonus_once_per_loop( "score:rna_bulge_bonus_once_per_loop" );  }
+namespace score { BooleanOptionKey const allow_complex_loop_graph( "score:allow_complex_loop_graph" );  }
+namespace score { BooleanOptionKey const compute_mg_sol_for_hydrogens( "score:compute_mg_sol_for_hydrogens" );  }
