@@ -1,0 +1,4 @@
+-sewing:mode generate
+-sewing:assembly_type continuous
+-model_file_name test.models
+-inout:dbms:database_name scores.db3

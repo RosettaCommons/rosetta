@@ -1,0 +1,7 @@
+-sewing:mode hash
+-sewing:assembly_type discontinuous
+-model_file_name test.models
+-score_file_name test.scores
+-num_segments_to_match 2
+-min_hash_score 10
+-max_clash_score 0

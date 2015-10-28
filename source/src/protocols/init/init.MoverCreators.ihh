@@ -316,6 +316,7 @@
 #include <protocols/simple_moves/ContingentAcceptMoverCreator.hh>
 #include <protocols/simple_moves/CoupledMoverCreator.hh>
 #include <protocols/simple_moves/ddGCreator.hh>
+#include <protocols/simple_moves/DeleteChainMoverCreator.hh>
 #include <protocols/simple_moves/DeleteChainsMoverCreator.hh>
 #include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>
 #include <protocols/simple_moves/ExtendedPoseMoverCreator.hh>
@@ -413,6 +414,15 @@
 
 #include <protocols/docking/membrane/MPDockingMoverCreator.hh>
 #include <protocols/docking/membrane/MPDockingSetupMoverCreator.hh>
+
+#include <protocols/sewing/sampling/AppendAssemblyMoverCreator.hh>
+#include <protocols/sewing/sampling/GivenPathAssemblyMoverCreator.hh>
+#include <protocols/sewing/sampling/GreedyAssemblyMoverCreator.hh>
+#include <protocols/sewing/sampling/MonteCarloAssemblyMoverCreator.hh>
+#include <protocols/sewing/sampling/AssemblyConstraintsMoverCreator.hh>
+#include <protocols/sewing/sampling/AddStartnodeFragmentsCreator.hh>
+#include <protocols/sewing/sampling/AssemblyConstraintsMover.hh>
+#include <protocols/sewing/sampling/RepeatAssemblyMoverCreator.hh>
 
 #include <protocols/symmetric_docking/membrane/MPSymDockMoverCreator.hh>
 

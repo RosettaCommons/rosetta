@@ -32,6 +32,7 @@
 // Utility headers
 
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <map>
 #include <string>
@@ -384,6 +385,10 @@ public: // Indexers
 	Reference
 	operator ()( Size const i_res, std::string const atom )
 	{
+		//Hack until I find out the root cause of this from file_data.cc
+		if ( i_res > res_map_.size() ) {
+			throw utility::excn::EXCN_RangeError("Residue outside res_map range");
+		}
 		if ( res_map_[ i_res ].count( atom ) == 0 ) {
 			res_map_[ i_res ][ atom ] = default_value_;
 		}

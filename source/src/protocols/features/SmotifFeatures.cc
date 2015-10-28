@@ -1,5 +1,5 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 noet:
+// vi: set ts=2 noet;
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -67,14 +67,14 @@ SmotifFeatures::SmotifFeatures( SmotifFeatures const & /*src*/ ) : FeaturesRepor
 
 SmotifFeatures::~SmotifFeatures(){}
 
-/// @brief return string with class name
+///@brief return string with class name
 std::string
 SmotifFeatures::type_name() const
 {
 	return "SmotifFeatures";
 }
 
-/// @brief generate the table schemas and write them to the database
+///@brief generate the table schemas and write them to the database
 void
 SmotifFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
 {
@@ -82,27 +82,23 @@ SmotifFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) 
 	using namespace utility;
 
 	//******smotifs******//
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
-	Column smotif_id("smotif_id", DbDataTypeOP( new DbInteger() ), false);
-	Column ss1("secondary_struct_segment_id_1", DbDataTypeOP( new DbInteger() ), false);
-	Column ss2("secondary_struct_segment_id_2", DbDataTypeOP( new DbInteger() ), false);
-	Column loop("loop_segment_id", DbDataTypeOP( new DbInteger() ), false);
+	Column smotif_id("smotif_id", DbDataTypeOP(new DbInteger()), true);
+	Column struct_id("struct_id", DbDataTypeOP(new DbBigInt()), false);
+	Column ss1("secondary_struct_segment_id_1", DbDataTypeOP(new DbInteger()), false);
+	Column ss2("secondary_struct_segment_id_2", DbDataTypeOP(new DbInteger()), false);
+	Column loop("loop_segment_id", DbDataTypeOP(new DbInteger()), false);
 
 	//Distance, in angstroms, between C-term of SS1 (P1) and N term of SS2 (P2)
-	Column distance("distance", DbDataTypeOP( new DbReal() ), false);
+	Column distance("distance", DbDataTypeOP(new DbReal()), false);
 
 	//Angle between L (vector between P1 and P2) and M1 (principal moment of inertia for SS1)
-	Column hoist("hoist", DbDataTypeOP( new DbReal() ), false);
+	Column hoist("hoist", DbDataTypeOP(new DbReal()), false);
 
 	//Angle between M1 and M2 (principal moment of inertia for SS1 and SS2)
-	Column packing("packing", DbDataTypeOP( new DbReal() ), false);
+	Column packing("packing", DbDataTypeOP(new DbReal()), false);
 
 	//Angle between M2 and Gamma (defined by M1 and normal to plane Pie, which is defined
-	Column meridian("meridian", DbDataTypeOP( new DbReal() ), false);
-
-	utility::vector1<Column> pkey_cols;
-	pkey_cols.push_back(struct_id);
-	pkey_cols.push_back(smotif_id);
+	Column meridian("meridian", DbDataTypeOP(new DbReal()), false);
 
 	Columns foreign_key_columns1;
 	foreign_key_columns1.push_back(struct_id);
@@ -134,7 +130,7 @@ SmotifFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) 
 	reference_columns4.push_back("segment_id");
 	ForeignKey foreign_key4(foreign_key_columns4, "secondary_structure_segments", reference_columns4, true);
 
-	Schema smotifs("smotifs", PrimaryKey(pkey_cols));
+	Schema smotifs("smotifs", smotif_id);
 	smotifs.add_foreign_key(foreign_key1);
 	smotifs.add_foreign_key(foreign_key2);
 	smotifs.add_foreign_key(foreign_key3);
@@ -147,7 +143,7 @@ SmotifFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) 
 	smotifs.write(db_session);
 }
 
-/// @brief return the set of features reporters that are required to
+///@brief return the set of features reporters that are required to
 ///also already be extracted by the time this one is used.
 utility::vector1<std::string>
 SmotifFeatures::features_reporter_dependencies() const
@@ -167,7 +163,57 @@ SmotifFeatures::parse_my_tag(
 {
 }
 
-/// @brief collect all the feature data for the pose
+void
+SmotifFeatures::calculate_angles(
+	utility::vector1< numeric::xyzVector<core::Real> > const & ss1_coords,
+	utility::vector1< numeric::xyzVector<core::Real> > const & ss2_coords,
+	core::Real & distance, /*output*/
+	core::Real & hoist_angle_degrees, /*output*/
+	core::Real & packing_angle_degrees, /*output*/
+	core::Real & meridian_angle_degrees /*output*/
+) {
+	using namespace numeric;
+
+	xyzVector<core::Real> ss1_com = center_of_mass(ss1_coords);
+	xyzVector<core::Real> ss1_first_principal_component =
+		first_principal_component(ss1_coords);
+
+	//Draw principal component vector from COM instead of origin
+	xyzVector<core::Real> ss1_com_principal_component=
+		ss1_first_principal_component+=ss1_com;
+
+	//p0 is point on principal component vector closest to N-term of SS1
+	xyzVector<core::Real> p0 =
+		closest_point_on_line(ss1_com, ss1_com_principal_component, ss1_coords[1]);
+
+	//p1 is point on principal component vector closest to C-term of SS1
+	xyzVector<core::Real> p1 =
+		closest_point_on_line(ss1_com, ss1_com_principal_component, ss1_coords.back());
+
+	//SS2
+	xyzVector<core::Real> ss2_com = center_of_mass(ss2_coords);
+	xyzVector<core::Real> ss2_first_principal_component =
+		first_principal_component(ss2_coords);
+
+	xyzVector<core::Real> ss2_com_principal_component=
+		ss2_first_principal_component+=ss2_com;
+
+	//p2 is point on principal component vector closest to N-term of SS2
+	xyzVector<core::Real> p2 =
+		closest_point_on_line(ss2_com, ss2_com_principal_component, ss2_coords[1]);
+
+	//p3 is point on principal component vector closest to C-term of SS2
+	xyzVector<core::Real> p3 =
+		closest_point_on_line(ss2_com, ss2_com_principal_component, ss2_coords.back());
+
+	distance = p1.distance(p2);
+	hoist_angle_degrees = angle_degrees(p0,p1,p2);
+	packing_angle_degrees = angle_degrees(p0,p1,p2,p3);
+
+	meridian_angle_degrees = dihedral_degrees(p0,p1,p2,p3);
+}
+
+///@brief collect all the feature data for the pose
 core::Size
 SmotifFeatures::report_features(
 	core::pose::Pose const & pose,
@@ -177,20 +223,18 @@ SmotifFeatures::report_features(
 {
 	using core::Size;
 	using core::Real;
-	using namespace numeric;
 
 	utility::vector1<SecondaryStructureSegment> ss_segments =
 		get_ss_segments(struct_id, db_session);
 
 	std::string smotif_insert_string =
-		"INSERT INTO smotifs (struct_id, smotif_id, secondary_struct_segment_id_1,\n"
+		"INSERT INTO smotifs (struct_id, secondary_struct_segment_id_1,\n"
 		"\tsecondary_struct_segment_id_2, loop_segment_id, distance, hoist, packing,\n"
-		"\tmeridian) VALUES(?,?,?,?,?,?,?,?,?)";
+		"\tmeridian) VALUES(?,?,?,?,?,?,?,?)";
 
 	cppdb::statement smotif_insert_stmt =
 		basic::database::safely_prepare_statement(smotif_insert_string, db_session);
 
-	core::Size smotif_counter=1;
 	if ( ss_segments.size()>2 ) {
 		for ( Size i=1; i<=ss_segments.size()-2; ++i ) {
 			SecondaryStructureSegment ss1=ss_segments[i];
@@ -199,71 +243,31 @@ SmotifFeatures::report_features(
 
 			if ( (ss1.dssp=="H" || ss1.dssp=="E") &&
 					(ss2.dssp=="H" || ss2.dssp=="E") &&
+					//       (ss1.dssp=="H" && ss2.dssp=="H") &&
 					loop.dssp == "L" ) { //make sure loop is loop
-				utility::vector1< xyzVector<core::Real> > ss1_coords;
+				utility::vector1< numeric::xyzVector<core::Real> > ss1_coords;
 				for ( core::Size i=ss1.residue_begin; i<=ss1.residue_end; ++i ) {
 					ss1_coords.push_back(pose.residue(i).atom("CA").xyz());
 				}
 
-				utility::vector1< xyzVector<core::Real> > ss2_coords;
+				utility::vector1< numeric::xyzVector<core::Real> > ss2_coords;
 				for ( core::Size i=ss2.residue_begin; i<=ss2.residue_end; ++i ) {
 					ss2_coords.push_back(pose.residue(i).atom("CA").xyz());
 				}
 
-				xyzVector<core::Real> ss1_com = center_of_mass(ss1_coords);
-				xyzVector<core::Real> ss1_first_principal_component =
-					first_principal_component(ss1_coords);
-
-				//Draw principal component vector from COM instead of origin
-				xyzVector<core::Real> ss1_com_principal_component=
-					ss1_first_principal_component+=ss1_com;
-
-				//p0 is point on principal component vector closest to N-term of SS1
-				xyzVector<core::Real> p0 =
-					closest_point_on_line(ss1_com, ss1_com_principal_component,
-					pose.residue(ss1.residue_begin).atom("CA").xyz());
-
-				//p1 is point on principal component vector closest to C-term of SS1
-				xyzVector<core::Real> p1 =
-					closest_point_on_line(ss1_com, ss1_com_principal_component,
-					pose.residue(ss1.residue_end).atom("CA").xyz());
-
-				//SS2
-				xyzVector<core::Real> ss2_com = center_of_mass(ss2_coords);
-				xyzVector<core::Real> ss2_first_principal_component =
-					first_principal_component(ss2_coords);
-
-				xyzVector<core::Real> ss2_com_principal_component=
-					ss2_first_principal_component+=ss2_com;
-
-				//p2 is point on principal component vector closest to N-term of SS2
-				xyzVector<core::Real> p2 =
-					closest_point_on_line(ss2_com, ss2_com_principal_component,
-					pose.residue(ss2.residue_begin).atom("CA").xyz());
-
-				//p3 is point on principal component vector closest to C-term of SS2
-				xyzVector<core::Real> p3 =
-					closest_point_on_line(ss2_com, ss2_com_principal_component,
-					pose.residue(ss2.residue_end).atom("CA").xyz());
-
-				core::Real distance = p1.distance(p2);
-				core::Real hoist_angle_degrees = angle_degrees(p0,p1,p2);
-				core::Real packing_angle_degrees = angle_degrees(p0,p1,p2,p3);
-
-				core::Real meridian_angle_degrees = dihedral_degrees(p0,p1,p2,p3);
+				Real distance, hoist_angle_degrees, packing_angle_degrees, meridian_angle_degrees;
+				calculate_angles(ss1_coords, ss2_coords, distance, hoist_angle_degrees, packing_angle_degrees, meridian_angle_degrees);
 
 				smotif_insert_stmt.bind(1, struct_id);
-				smotif_insert_stmt.bind(2, smotif_counter);
-				smotif_insert_stmt.bind(3, ss1.segment_id);
-				smotif_insert_stmt.bind(4, ss2.segment_id);
-				smotif_insert_stmt.bind(5, loop.segment_id);
-				smotif_insert_stmt.bind(6, distance);
-				smotif_insert_stmt.bind(7, hoist_angle_degrees);
-				smotif_insert_stmt.bind(8, packing_angle_degrees);
-				smotif_insert_stmt.bind(9, meridian_angle_degrees);
+				smotif_insert_stmt.bind(2, ss1.segment_id);
+				smotif_insert_stmt.bind(3, ss2.segment_id);
+				smotif_insert_stmt.bind(4, loop.segment_id);
+				smotif_insert_stmt.bind(5, distance);
+				smotif_insert_stmt.bind(6, hoist_angle_degrees);
+				smotif_insert_stmt.bind(7, packing_angle_degrees);
+				smotif_insert_stmt.bind(8, meridian_angle_degrees);
 
 				basic::database::safely_write_to_database(smotif_insert_stmt);
-				++smotif_counter;
 			}
 		}
 	}

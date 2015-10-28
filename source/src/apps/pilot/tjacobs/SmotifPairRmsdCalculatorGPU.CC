@@ -13,7 +13,7 @@
 
 /// @author Tim Jacobs
 
-#include <devel/sewing/BundlePairRmsdWorkUnit.hh>
+#include <protocols/sewing/BundlePairRmsdWorkUnit.hh>
 
 #include <basic/gpu/GPU.hh>
 #include <basic/gpu/Timer.hh>

@@ -34,7 +34,7 @@ namespace sdf {
 static THREAD_LOCAL basic::Tracer TR( "core.chemical.sdf.CtabV3000Parser" );
 
 
-bool CtabV3000Parser::parse(std::istream & tablein, std::string const & headerline, MolFileIOMolecule & molecule) {
+bool CtabV3000Parser::parse(std::istream & tablein, std::string const & ASSERT_ONLY(headerline), MolFileIOMolecule & molecule) {
 
 	debug_assert( headerline.compare(33,5,"V3000") == 0 );
 

@@ -22,6 +22,7 @@
 #include <protocols/loops/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/conformation/util.hh>
 
@@ -156,10 +157,12 @@ LocalInserter_SimpleMin::make_local_bb_change_close_gaps(
 	// setup movemap & minimisation
 
 	AtomTreeMinimizer().run( newpose, final_mm, *scorefxn_rama_cst_, options_ );
+	//CartesianMinimizer().run( newpose, final_mm, *scorefxn_rama_cst_, options_ );
 
 	core::Real premin_rms = core::scoring::CA_rmsd( newpose, original_pose );
 	//scorefxn_cen_cst->show( TR.Info, *newpose );
 	AtomTreeMinimizer().run( newpose, final_mm, *scorefxn_cen_cst_, options2_ );
+	//CartesianMinimizer().run( newpose, final_mm, *scorefxn_cen_cst_, options2_ );
 	//scorefxn_cen_cst->show( TR.Info, *newpose );
 
 
@@ -222,9 +225,11 @@ LocalInserter_SimpleMin::set_default_score_functions(){
 	using namespace core::scoring;
 
 	scorefxn_rama_cst_->set_weight( coordinate_constraint, 0.5 );
+	//scorefxn_rama_cst_->set_weight( cart_bonded, 0.5 );
 	scorefxn_rama_cst_->set_weight( rama  , 1.0 );
 
 	scorefxn_cen_cst_->set_weight( coordinate_constraint, 0.05 );
+	//scorefxn_cen_cst_->set_weight( cart_bonded, 0.5 );
 	scorefxn_cen_cst_->set_weight( env   , 1.0);
 	scorefxn_cen_cst_->set_weight( pair   , 1.0);
 	scorefxn_cen_cst_->set_weight( cbeta  , 1.0);

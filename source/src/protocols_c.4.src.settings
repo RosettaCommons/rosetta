@@ -46,6 +46,7 @@ sources = {
 		"JobDataFeaturesCreator",
 		"LoopAnchorFeatures",
 		"LoopAnchorFeaturesCreator",
+		"ModelFeatures",
 		"OrbitalsFeatures",
 		"OrbitalsFeaturesCreator",
 		"PairFeatures",

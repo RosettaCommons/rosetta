@@ -21,15 +21,14 @@
 #include <cmath>
 
 
-#ifdef WIN32
+#if defined(WIN32)  &&  !defined(__CYGWIN__)
 #include <float.h>
-namespace std {
-inline int isnan(double x) { return _isnan(x); }
-inline int isinf(double x) { return !_finite(x); }
-
-}
-inline double round(double x) { return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); }
-inline double copysign(double x, double y) { return _copysign(x, y); }
+	namespace std {
+		inline int isnan(double x) { return _isnan(x); }
+		inline int isinf(double x) { return !_finite(x); }
+	}
+	inline double round(double x) { return x < 0.0 ? ceil(x - 0.5) : floor(x + 0.5); }
+	inline double copysign(double x, double y) { return _copysign(x, y); }
 #endif
 
 namespace utility {

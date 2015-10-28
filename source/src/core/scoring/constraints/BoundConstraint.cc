@@ -40,11 +40,15 @@ BoundFunc::func( Real const x ) const
 {
 
 	//Real const rswitch_offset (( rswitch_ * rswitch_ ) - rswitch_ );
-	Real delta( 0 );
+	Real delta;
 	if ( x > ub_ ) {
 		delta = x - ub_;
+	} else if ( lb_ <= x ) {
+		delta = 0;
 	} else if ( x < lb_ ) {
 		delta = lb_ - x;
+	} else {
+		delta = 0;
 	}
 	//  tr.Trace << "evaluate x in [ lb_ ub_ ]: delta " << x << " " << lb_ << " " << ub_ << " " << delta << std::endl;
 

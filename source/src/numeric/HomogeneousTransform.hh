@@ -387,7 +387,7 @@ public:
 	/// If this frame is F and the point is p, then this solves for x st:
 	/// F x = p.  Equivalent to computing  (F.inverse() * p).point().
 	xyzVector< T >
-	to_local_coordinate( xyzVector< T > const & v ) {
+	to_local_coordinate( xyzVector< T > const & v ) const {
 		xyzVector< T > local = v - point();
 		return xyzVector< T >(
 			xaxis().dot( local ),
