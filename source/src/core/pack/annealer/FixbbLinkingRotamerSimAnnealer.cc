@@ -193,31 +193,31 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 	core::Size totalrot = 0;
 	// totalrot needs to be calculated differently for the quasisymmetrical case
-    // Commenting out this logic, it is unclear why it is necessary and how it works, it's labeled
-    // as "experimental" and causes a segfault in certain cases
+	// Commenting out this logic, it is unclear why it is necessary and how it works, it's labeled
+	// as "experimental" and causes a segfault in certain cases
 	for ( core::Size res=1; res<=nmoltenres; ++res ) {
 		totalrot += rotamer_sets()->nrotamers_for_moltenres( res );
 	}
 	//if ( flag1 && flag2 ) {
-	//	for ( core::Size res=1; res<=nmoltenres; ++res ) {
-	//		totalrot += rotamer_sets()->nrotamers_for_moltenres( res );
-	//	}
+	// for ( core::Size res=1; res<=nmoltenres; ++res ) {
+	//  totalrot += rotamer_sets()->nrotamers_for_moltenres( res );
+	// }
 	//} else {
 
-	//	//experimental
-	//	//  utility::vector1<Size> segmentTest = rotamer_links_->get_equiv(nmoltenres);
-	//	// get the first element of the last repeat.  it should be segment length
-	//	//std::cout<< "SEGMENTLENGTH from ROTAMER LINK" << segmentTest[1] << std::endl;
-	//	//Size repeat_number = segmentTest.back()/segmentTest[1];
-	//	//std::cout<< "number of repeats" << repeat_number << std::endl;
+	// //experimental
+	// //  utility::vector1<Size> segmentTest = rotamer_links_->get_equiv(nmoltenres);
+	// // get the first element of the last repeat.  it should be segment length
+	// //std::cout<< "SEGMENTLENGTH from ROTAMER LINK" << segmentTest[1] << std::endl;
+	// //Size repeat_number = segmentTest.back()/segmentTest[1];
+	// //std::cout<< "number of repeats" << repeat_number << std::endl;
 
-	//	//  for (core::Size res = segmentTest[1]; res <= segmentTest[1]*2 ; res++){
-	//	//   totalrot += rotamer_sets()->nrotamers_for_moltenres(res);
-	//	//  }
-	//	for ( core::Size res=1; res<=nmoltenres; ++res ) {
-	//		totalrot += rotamer_sets()->nrotamers_for_moltenres( res );
-	//	}
-	//	//std::cout << "TOTAL ROTAMER " << totalrot << std::endl;
+	// //  for (core::Size res = segmentTest[1]; res <= segmentTest[1]*2 ; res++){
+	// //   totalrot += rotamer_sets()->nrotamers_for_moltenres(res);
+	// //  }
+	// for ( core::Size res=1; res<=nmoltenres; ++res ) {
+	//  totalrot += rotamer_sets()->nrotamers_for_moltenres( res );
+	// }
+	// //std::cout << "TOTAL ROTAMER " << totalrot << std::endl;
 	//} // end quasisymmetric if-else
 
 

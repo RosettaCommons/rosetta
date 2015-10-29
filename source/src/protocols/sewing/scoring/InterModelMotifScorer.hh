@@ -55,7 +55,7 @@ public:
 
 	//core::Real
 	//norm_motif_score(
-	//	AssemblyCOP assembly
+	// AssemblyCOP assembly
 	//);
 
 private:

@@ -68,7 +68,7 @@ CartminLoopCloserCreator::mover_name()
 }
 //****END CREATOR METHODS****//
 
-	
+
 ///@brief default constructor
 CartminLoopCloser::CartminLoopCloser():
 	scorefxn_(0),
@@ -84,13 +84,13 @@ CartminLoopCloser::CartminLoopCloser(
 	core::Real minimization_tolerance,
 	core::Real max_chainbreak
 ):
-scorefxn_(scorefxn),
-minimization_tolerance_(minimization_tolerance),
-max_chainbreak_(max_chainbreak)
+	scorefxn_(scorefxn),
+	minimization_tolerance_(minimization_tolerance),
+	max_chainbreak_(max_chainbreak)
 {
 	init();
 }
-	
+
 protocols::moves::MoverOP
 CartminLoopCloser::clone() const {
 	return( protocols::moves::MoverOP( new CartminLoopCloser( *this ) ) );
@@ -99,15 +99,15 @@ protocols::moves::MoverOP
 CartminLoopCloser::fresh_instance() const {
 	return protocols::moves::MoverOP( new CartminLoopCloser );
 }
-	
+
 std::string
 CartminLoopCloser::get_name() const {
 	return "CartminLoopCloser";
 }
-	
+
 void
 CartminLoopCloser::init(){
-	if(!scorefxn_){
+	if ( !scorefxn_ ) {
 		scorefxn_ = core::scoring::get_score_function();
 	}
 }
@@ -117,23 +117,21 @@ CartminLoopCloser::apply(
 	core::pose::Pose & pose
 ){
 	core::kinematics::FoldTree saved_ft = pose.fold_tree();
-	if(prevent_nonloop_modifications())
-	{
+	if ( prevent_nonloop_modifications() ) {
 		protocols::loops::set_single_loop_fold_tree( pose, loop() );
 	}
 	protocols::loops::add_single_cutpoint_variant(pose, loop());
-	
+
 	// setup movemap
 	core::kinematics::MoveMapOP mm;
-	for ( Size ii=loop().start(); ii<=loop().stop(); ++ii )
-	{
+	for ( Size ii=loop().start(); ii<=loop().stop(); ++ii ) {
 		mm->set_bb( ii, true );
-		
+
 		//don't change phi for prolines
-//		if ( pose.residue(ii).aa() == chemical::aa_pro )
-//		{
-//			mm.set( id::TorsionID( id::phi_torsion, id::BB, ii ), false );
-//		}
+		//  if ( pose.residue(ii).aa() == chemical::aa_pro )
+		//  {
+		//   mm.set( id::TorsionID( id::phi_torsion, id::BB, ii ), false );
+		//  }
 	}
 	TR.Debug << "Minimizing residues: " << loop().start() << " " << loop().stop() << std::endl;
 	TR.Debug << "Cutpoint: " << loop().cut() << std::endl;
@@ -145,7 +143,7 @@ CartminLoopCloser::apply(
 	//check for closure using chainbreak score
 	bool closed = check_closure(pose);
 
-	if(closed){
+	if ( closed ) {
 		success_=true;
 		return;
 	}
@@ -162,7 +160,7 @@ CartminLoopCloser::check_closure(core::pose::Pose & pose){
 	chbreak_sf->set_weight( core::scoring::chainbreak, 20.0 );
 
 	core::Real chainbreak_score = chbreak_sf->score(pose);
-	if(chainbreak_score < max_chainbreak_){
+	if ( chainbreak_score < max_chainbreak_ ) {
 		return true;
 	}
 	return false;
@@ -178,15 +176,18 @@ CartminLoopCloser::parse_my_tag(
 	core::pose::Pose const & /*pose*/
 ){
 	using namespace core;
-	
-	if(tag->hasOption("prevent_nonloop_modification"))
+
+	if ( tag->hasOption("prevent_nonloop_modification") ) {
 		prevent_nonloop_modifications_ = tag->getOption< bool >("prevent_nonloop_modifications");
+	}
 
-	if(tag->hasOption("minimization_tolerance"))
+	if ( tag->hasOption("minimization_tolerance") ) {
 		minimization_tolerance_ = tag->getOption< Real >("minimization_tolerance");
+	}
 
-	if(tag->hasOption("max_chainbreak"))
+	if ( tag->hasOption("max_chainbreak") ) {
 		max_chainbreak_ = tag->getOption< Real >("max_chainbreak");
+	}
 }
 
 } //loop creation

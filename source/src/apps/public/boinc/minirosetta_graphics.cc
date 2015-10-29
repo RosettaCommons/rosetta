@@ -268,6 +268,8 @@ plot_2D(
 ) {
 	using namespace graphics;
 
+	protocols::viewer::draw_black_bg();
+
 	unsigned int total_steps = xdata.size();
 	if ( ydata.size() < total_steps ) total_steps = ydata.size();
 
@@ -821,6 +823,8 @@ void plot_timeseries(
 ) {
 	using namespace graphics;
 
+	protocols::viewer::draw_black_bg();
+
 	//int logsteps = int( ((float)log(float(data.size() )*5.0f) ) );
 	//unsigned int total_steps = pow( log(1),
 
@@ -1004,6 +1008,8 @@ void draw_rosetta_screensaver( int & width, int & height )
 		native_window_size = (native_pose_nres > 100) ? 0.7*(28 + ( native_pose_nres - 100)*0.15) : 28;
 	}
 
+	protocols::viewer::clear_bg();
+
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	glViewport(0 , 0, width, height );
 	glMatrixMode(GL_PROJECTION);
@@ -1020,56 +1026,6 @@ void draw_rosetta_screensaver( int & width, int & height )
 		small_box = int(width/aspect_width);
 	}
 	int dim_main = 2*small_box;
-
-
-	// generate box above text box (need this to prevent lines from
-	// disappearing in graph and plot boxes for some odd reason)
-	glViewport( 0, height-3*small_box, small_box*6, small_box*3 );
-	gluOrtho2D(0,1,0,aspect);
-	glMatrixMode( GL_MODELVIEW );
-	glLoadIdentity();
-	glColor3f( 0.5f, 0.5f, 0.5f );
-	glTranslatef( 0.0, 0.0, 0.0 );
-	glBegin( GL_LINE_STRIP ) ;
-	glVertex2f(0,0); glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0); glVertex2f(0,0);
-	glEnd();
-	glLoadIdentity();
-
-	// generate box above text box (need this to prevent lines from
-	// disappearing in graph and plot boxes for some odd reason)
-	glViewport( 0, height-3*small_box, small_box*6, small_box );
-	gluOrtho2D(0,1,0,aspect);
-	glMatrixMode( GL_MODELVIEW );
-	glLoadIdentity();
-	glColor3f( 0.5f, 0.5f, 0.5f );
-	glTranslatef( 0.0, 0.0, 0.0 );
-	glBegin( GL_LINE_STRIP ) ;
-	glVertex2f(0,0); glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0); glVertex2f(0,0);
-	glEnd();
-	glLoadIdentity();
-
-	// generate boxes for plots
-	glViewport( small_box*5, height-3*small_box, small_box, small_box );
-	gluOrtho2D(0,1,0,aspect);
-	glMatrixMode( GL_MODELVIEW );
-	glLoadIdentity();
-	glColor3f( 0.5f, 0.5f, 0.5f );
-	glTranslatef( 0.0, 0.0, 0.0 );
-	glBegin( GL_LINE_STRIP ) ;
-	glVertex2f(0,0); glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0); glVertex2f(0,0);
-	glEnd();
-	glLoadIdentity();
-
-	glViewport( 0, height-3*small_box, 5*small_box, small_box );
-	gluOrtho2D(0,1,0,aspect);
-	glMatrixMode( GL_MODELVIEW );
-	glLoadIdentity();
-	glColor3f( 0.5f, 0.5f, 0.5f );
-	glTranslatef( 0.0, 0.0, 0.0 );
-	glBegin( GL_LINE_STRIP ) ;
-	glVertex2f(0,0); glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0); glVertex2f(0,0);
-	glEnd();
-	glLoadIdentity();
 
 	// Work Unit Description?
 	if ( wu_desc_rows.size() > 0 ) {
@@ -1139,7 +1095,6 @@ void draw_rosetta_screensaver( int & width, int & height )
 		}
 	}
 
-	writeStrokeString( "Searching...", default_structure_text_color, 0.0f, 0.0f, 280);
 	mode_ortho_done();
 	// do slow changes
 	float slowrotate = 0.8;
@@ -1164,23 +1119,22 @@ void draw_rosetta_screensaver( int & width, int & height )
 	glMultMatrixf(graphics::lowrotation);
 	glGetFloatv(GL_MODELVIEW_MATRIX, graphics::lowrotation);  // Store current model view in decoyrotation
 
-	protocols::viewer::clear_bg();
 	Structure_display(CURRENT, window_size);
+	mode_ortho_start();
+	glColor3f( 0.5f, 0.5f, 0.5f );
+	writeStrokeString( "Searching...", default_structure_text_color, 0.0f, 0.0f, 280);
+	mode_ortho_done();
 
 	// ACCEPTED BOX
 	best_viewport_x      = dim_main;
 	best_viewport_y      = height-dim_main;
 	best_viewport_width  = best_viewport_height = dim_main;
 	glViewport( best_viewport_x, best_viewport_y, best_viewport_width, best_viewport_height );
+	Structure_display(ACCEPTED, window_size);
 	mode_ortho_start();
 	glColor3f( 0.5f, 0.5f, 0.5f );
-	glTranslatef( 0.0, 0.0, 0.0 );
-	glBegin( GL_LINE_STRIP ) ;
-	glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0);
-	glEnd();
 	writeStrokeString( "Accepted", default_structure_text_color, 0.0f, 0.0f, 280);
 	mode_ortho_done();
-	Structure_display(ACCEPTED, window_size);
 
 	float rms_min = 0.0;
 	float rms_max = 0.0;
@@ -1206,38 +1160,29 @@ void draw_rosetta_screensaver( int & width, int & height )
 		low_viewport_y      = height - small_box;
 		low_viewport_width  = low_viewport_height = small_box;
 		glViewport( low_viewport_x, low_viewport_y, low_viewport_width, low_viewport_height );
+		Structure_display(LOW, window_size);
 		mode_ortho_start();
 		glColor3f( 0.5f, 0.5f, 0.5f );
-		glTranslatef( 0.0, 0.0, 0.0 );
-		glBegin( GL_LINE_STRIP ) ;
-		glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0);
-		glEnd();
 		writeStrokeString( "Low Energy", default_structure_text_color, 0.0f, 0.0f, 200);
 		mode_ortho_done();
-		Structure_display(LOW, window_size);
 
 		// NATIVE BOX (SMALL)
 		native_viewport_x      = 2 * dim_main;
 		native_viewport_y      = height - 2*small_box;
 		native_viewport_width  = native_viewport_height = small_box;
 		glViewport( native_viewport_x, native_viewport_y, native_viewport_width, native_viewport_height );
+		Structure_display(NATIVE, native_window_size);
 		mode_ortho_start();
 		glColor3f( 0.5f, 0.5f, 0.5f );
-		glTranslatef( 0.0, 0.0, 0.0 );
-		glBegin( GL_LINE_STRIP ) ;
-		glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0);
-		glEnd();
 		writeStrokeString( "Native", default_structure_text_color, 0.0f, 0.0f, 200);
 		mode_ortho_done();
-		Structure_display(NATIVE, native_window_size);
 
 		// RMSD TIME SERIES GRAPH BOX
 		glViewport( 5*small_box, height-2*small_box, small_box, 2*small_box );
+		plot_timeseries( last_accepted_rmsd_vector,low_rmsd_vector ,true, rms_min, rms_max );
 		mode_ortho_start();
 		writeStrokeString( "RMSD", default_structure_text_color, 0.0f, 0.0f, 180 );
 		mode_ortho_done();
-		plot_timeseries( last_accepted_rmsd_vector,low_rmsd_vector ,true, rms_min, rms_max );
-
 	} else {
 
 		// LOW ENERGY BOX (LARGE WITHOUT NATIVE)
@@ -1245,19 +1190,18 @@ void draw_rosetta_screensaver( int & width, int & height )
 		low_viewport_y      = height - dim_main;
 		low_viewport_width  = low_viewport_height = dim_main;
 		glViewport( 2*dim_main, height-dim_main, dim_main, dim_main );
+		Structure_display(LOW, window_size);
 		mode_ortho_start();
 		writeStrokeString( "Low Energy", default_structure_text_color, 0.0f, 0.0f, 280);
 		mode_ortho_done();
-		Structure_display(LOW, window_size);
-
 	}
 
 	// ENERGY TIME SERIES GRAPH BOX
 	glViewport( 0, height-3*small_box, 5*small_box, small_box );
+	plot_timeseries( last_accepted_energy_vector, low_energy_vector, false, energy_min, energy_max );
 	mode_ortho_start();
 	writeStrokeString( "Accepted Energy", default_structure_text_color, 0.0f, 0.0f, 250 );
 	mode_ortho_done();
-	plot_timeseries( last_accepted_energy_vector, low_energy_vector, false, energy_min, energy_max );
 
 	// ENERGY VS RMSD 2D PLOT
 	glViewport( 5*small_box, height-3*small_box, small_box, small_box );

@@ -161,6 +161,46 @@ private:
 		core::pose::PoseCOP native_pose
 	) const;
 
+	/// @brief Create a new checkpoint file.
+	///
+	void new_checkpoint_file() const;
+
+	/// @brief Initialize checkpointing for this run.
+	/// @details  This function does several things.  First, it checks for an existing checkpoint
+	/// file.  If one exists, it checks whether the unique job name in the file matches the current
+	/// job.  If it does, then this job has already been attempted, and we're somewhere in the middle
+	/// of it.  The function reads the last attempt number and success count from the checkpoint
+	/// file, and returns these values.  Otherwise, it creates a new checkpoint file with the current
+	/// job name and returns (0,0).  If checkpointing is disabled, this function does nothing, and
+	/// returns (0,0).
+	/// @param[out] lastjob The index of the last job run.  Set to zero if checkpointing is disabled
+	/// or if we're creating a new checkpoint file (first job run).
+	/// @param[out] successes The number of successes so far.  Set to zero if checkpointing is
+	/// disabled or if we're creating a new checkpoint file (first job run).
+	void initialize_checkpointing( core::Size &lastjob, core::Size &successes ) const;
+
+	/// @brief Add a checkpoint to the checkpoint file.
+	/// @details  The checkpoint file must already exist.  Does nothing if checkpointing is disabled.
+	/// @param[in] curjob The index of the current job just run, for writing to the checkpoint file.
+	/// @param[in] successes The number of successes so far, for writing to the checkpoint file.
+	void checkpoint( core::Size const curjob, core::Size const successes ) const;
+
+	/// @brief End checkpointing and delete the checkpoint file.
+	/// @details Does nothing if checkpointing is disabled.
+	void end_checkpointing() const;
+
+	/// @brief Restore the state of the random generator from a previous run.
+	///
+	void get_random_seed_info() const;
+
+	/// @brief Store the state of the random generator from a previous run.
+	///
+	void store_random_seed_info() const;
+
+	/// @brief Erase the stored state of the random generator from a previous run.
+	///
+	void erase_random_seed_info() const;
+
 private:
 	/// ------------- Data -------------------------------
 	/// -------- When you add new data to this class, ----
@@ -239,6 +279,14 @@ private:
 	/// @brief Max number of structures to generate.
 	///
 	core::Size nstruct_;
+
+	/// @brief A unique job name for checkpointing.
+	/// @details If none is provided, job is not checkpointed.
+	std::string checkpoint_job_identifier_;
+
+	/// @brief The name of the checkpoint file
+	/// @details Currently hard-coded to "checkpoint.txt".  Can be changed later.
+	std::string checkpoint_filename_;
 
 };
 

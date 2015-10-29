@@ -715,9 +715,9 @@ SewGraph::add_edges_from_binary(
 		TR.Warning << "There are more nodes in the graph than in the edge file. This should only happen if you have added PDB nodes!" << std::endl;
 	}
 	if ( TR.Debug.visible() ) {
-        TR << "n_nodes: " << n_nodes << std::endl;
-        TR << "num_nodes(): " << num_nodes() << std::endl;
-    }
+		TR << "n_nodes: " << n_nodes << std::endl;
+		TR << "num_nodes(): " << num_nodes() << std::endl;
+	}
 	runtime_assert(n_nodes <= num_nodes());
 
 	//Next, read the number of segments per node

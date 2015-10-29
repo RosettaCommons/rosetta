@@ -87,13 +87,12 @@ DeleteChainMover::apply( Pose & pose )
 	TR << "Removing chain " << chain_num() << " from pose with " << chain_poses.size() << " chains" << std::endl;
 
 	bool chain_added = false;
-	for(core::Size i=1; i<=chain_poses.size(); ++i) {
-		if(i != chain_num_){
-			if(!chain_added) {
+	for ( core::Size i=1; i<=chain_poses.size(); ++i ) {
+		if ( i != chain_num_ ) {
+			if ( !chain_added ) {
 				pose = *chain_poses[i];
 				chain_added = true;
-			}
-			else {
+			} else {
 				pose.append_pose_by_jump(*chain_poses[i], 1);
 			}
 		}
@@ -109,7 +108,7 @@ DeleteChainMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
-	if(tag->hasOption("chain")) {
+	if ( tag->hasOption("chain") ) {
 		chain_num_ = tag->getOption< core::Size >( "chain");
 	}
 }

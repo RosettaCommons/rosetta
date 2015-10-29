@@ -36,17 +36,17 @@ namespace devel {
 namespace loop_creation {
 
 class AddLoopResidues : public protocols::moves::Mover {
-	
+
 public:
 
 	AddLoopResidues();
-	
+
 	protocols::moves::MoverOP
 	clone() const;
 
 	protocols::moves::MoverOP
 	fresh_instance() const;
-	
+
 	std::string
 	get_name() const;
 
@@ -56,7 +56,7 @@ public:
 
 	virtual void
 	apply( Pose & pose );
-	
+
 	void
 	update_anchors(
 		utility::vector1<core::Size> & loop_anchors,
@@ -84,7 +84,7 @@ public:
 		protocols::moves::Movers_map const &movers,
 		Pose const & pose
 	);
-	
+
 private:
 
 	core::Size asym_size_;
@@ -92,7 +92,7 @@ private:
 	utility::vector1<core::Size> loop_anchors_;
 
 };
-	
+
 } // loop_creation
 } // devel
 

@@ -161,7 +161,16 @@ void set_bg_color( core::Vector new_bg_color );
 ///
 void clear_bg();
 
-/// @brief Draw a gradient for the background.
+/// @brief Draw a frame for a window.
+///
+void draw_frame();
+
+/// @brief Fill window background with black.
+///
+void draw_black_bg();
+
+/// @brief Draw a gradient for the window background.
+///
 void draw_gradient_bg();
 
 void draw_pose(const core::pose::Pose & pose,

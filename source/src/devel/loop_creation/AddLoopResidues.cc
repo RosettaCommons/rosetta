@@ -65,7 +65,7 @@ AddLoopResiduesCreator::mover_name()
 /****END CREATOR FUNCTIONS*****/
 
 AddLoopResidues::AddLoopResidues():
-Mover("AddLoopResidues")
+	Mover("AddLoopResidues")
 {}
 
 protocols::moves::MoverOP
@@ -93,16 +93,16 @@ AddLoopResidues::apply( pose::Pose & pose ) {
 
 	protocols::loops::Loops all_loops;
 	protocols::loops::Loops duplicate_loops;
-    core::chemical::ResidueTypeSetCOP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-    core::chemical::ResidueTypeCOP alanine_type = restype_set->get_representative_type_aa(core::chemical::aa_from_oneletter_code('A'));
-	for(core::Size anchor_index=1; anchor_index<=loop_anchors_.size(); ++anchor_index) {
+	core::chemical::ResidueTypeSetCOP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	core::chemical::ResidueTypeCOP alanine_type = restype_set->get_representative_type_aa(core::chemical::aa_from_oneletter_code('A'));
+	for ( core::Size anchor_index=1; anchor_index<=loop_anchors_.size(); ++anchor_index ) {
 		//Pick a random size
 		core::Size random_size_index = numeric::random::random_range(1, loop_sizes_.size());
 		core::Size loop_size = loop_sizes_[random_size_index];
 
 		TR << "Appending " << loop_size << " residues to residue: " << loop_anchors_[anchor_index] << std::endl;
 		core::Size cur_anchor = loop_anchors_[anchor_index];
-		for(core::Size i=1; i<=loop_size; ++i) {
+		for ( core::Size i=1; i<=loop_size; ++i ) {
 			conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *alanine_type );
 			pose.conformation().safely_append_polymer_residue_after_seqpos(*new_rsd, cur_anchor, true);
 			++cur_anchor;
@@ -118,9 +118,9 @@ AddLoopResidues::apply( pose::Pose & pose ) {
 		cur_anchor = dup_anchor;
 
 		protocols::loops::Loops just_duplicated;
-		while( dup_anchor < pose.total_residue() ) {
+		while ( dup_anchor < pose.total_residue() ) {
 			TR << "Appending " << loop_size << " residues to residue: " << dup_anchor << std::endl;
-			for(core::Size i=1; i<=loop_size; ++i) {
+			for ( core::Size i=1; i<=loop_size; ++i ) {
 				conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *alanine_type );
 				pose.conformation().safely_append_polymer_residue_after_seqpos(*new_rsd, cur_anchor, true);
 				++cur_anchor;
@@ -130,12 +130,12 @@ AddLoopResidues::apply( pose::Pose & pose ) {
 		}
 		update_anchors(loop_anchors_, new_loop, anchor_index);
 		duplicate_loops = update_loops(new_loop, duplicate_loops);
-		for(core::Size i=1; i<=just_duplicated.size(); ++i) {
+		for ( core::Size i=1; i<=just_duplicated.size(); ++i ) {
 			duplicate_loops.push_back(just_duplicated[i]);
 		}
 	}
 
-	for(core::Size i=1; i<=duplicate_loops.size(); ++i) {
+	for ( core::Size i=1; i<=duplicate_loops.size(); ++i ) {
 		all_loops.push_back(duplicate_loops[i]);
 	}
 
@@ -154,13 +154,12 @@ AddLoopResidues::update_loops(
 	protocols::loops::Loops const & all_loops
 ){
 	protocols::loops::Loops new_loops;
-	for(core::Size i=1; i<=all_loops.size(); ++i) {
-		if(all_loops[i].start() > new_loop.start() ) {
+	for ( core::Size i=1; i<=all_loops.size(); ++i ) {
+		if ( all_loops[i].start() > new_loop.start() ) {
 			core::Size new_start = all_loops[i].start() + new_loop.size();
 			core::Size new_stop = all_loops[i].stop() + new_loop.size();
 			new_loops.push_back(new_start, new_stop);
-		}
-		else {
+		} else {
 			new_loops.push_back(all_loops[i]);
 		}
 	}
@@ -175,8 +174,7 @@ AddLoopResidues::update_anchors(
 	protocols::loops::Loop const & new_loop,
 	core::Size index_of_new_loop
 ){
-	for(core::Size i=index_of_new_loop+1; i<=loop_anchors.size(); ++i)
-	{
+	for ( core::Size i=index_of_new_loop+1; i<=loop_anchors.size(); ++i ) {
 		loop_anchors_[i]+=new_loop.size();
 	}
 }
@@ -188,7 +186,7 @@ AddLoopResidues::dump_loops_file(
 ){
 	utility::io::ozstream loops_file;
 	loops_file.open(filename);
-	for(core::Size i = 1; i <= loops.size(); ++i){
+	for ( core::Size i = 1; i <= loops.size(); ++i ) {
 		loops_file << "LOOP " << loops[i].start() << " " << loops[i].stop() << " 0 0.0 1\n";
 	}
 	loops_file.close();
@@ -202,35 +200,31 @@ AddLoopResidues::parse_my_tag(
 	protocols::moves::Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ){
-	if(tag->hasOption("asym_size")) {
+	if ( tag->hasOption("asym_size") ) {
 		asym_size_ = tag->getOption<core::Size>("asym_size");
 	}
 
 
-	if(tag->hasOption("loop_sizes")) {
+	if ( tag->hasOption("loop_sizes") ) {
 		loop_sizes_.clear();
 		utility::vector1<std::string> loop_sizes_strings =
 			utility::string_split(tag->getOption< std::string >("loop_sizes"), ',');
-		for(core::Size i=1; i<=loop_sizes_strings.size(); ++i)
-		{
+		for ( core::Size i=1; i<=loop_sizes_strings.size(); ++i ) {
 			loop_sizes_.push_back(utility::string2int(loop_sizes_strings[i]));
 		}
-	}
-	else {
+	} else {
 		utility_exit_with_message("You must specify desired loop sizes through the loop_sizes options");
 	}
 
-	if(tag->hasOption("loop_anchors")) {
+	if ( tag->hasOption("loop_anchors") ) {
 		loop_anchors_.clear();
 
 		string const loop_anchors_string = tag->getOption<string>("loop_anchors");
 		utility::vector1<string> loop_anchor_strings=utility::string_split(loop_anchors_string, ',');
-		for(core::Size i=1; i<=loop_anchor_strings.size(); ++i)
-		{
+		for ( core::Size i=1; i<=loop_anchor_strings.size(); ++i ) {
 			loop_anchors_.push_back(utility::string2int(loop_anchor_strings[i]));
 		}
-	}
-	else {
+	} else {
 		utility_exit_with_message("You must specify loop anchors");
 	}
 }

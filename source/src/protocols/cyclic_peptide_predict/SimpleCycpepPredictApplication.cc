@@ -56,6 +56,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/scoring/Energies.hh>
+#include <utility/file/file_sys_util.hh>
 
 //Constraints
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -106,6 +107,7 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::hbond_energy_cutoff          );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::fast_relax_rounds            );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::count_sc_hbonds              );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::checkpoint_job_identifier    );
 
 	return;
 }
@@ -135,7 +137,9 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication() :
 	count_sc_hbonds_(false),
 	native_exists_(false),
 	native_filename_(""),
-	nstruct_(1)
+	nstruct_(1),
+	checkpoint_job_identifier_(""),
+	checkpoint_filename_("checkpoint.txt")
 {
 	initialize_from_options();
 }
@@ -166,7 +170,9 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	count_sc_hbonds_(src.count_sc_hbonds_),
 	native_exists_(src.native_exists_),
 	native_filename_(src.native_filename_),
-	nstruct_(src.nstruct_)
+	nstruct_(src.nstruct_),
+	checkpoint_job_identifier_(src.checkpoint_job_identifier_),
+	checkpoint_filename_(src.checkpoint_filename_)
 	//TODO -- copy variables here.
 {}
 
@@ -229,6 +235,8 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		nstruct_ = static_cast<core::Size>(option[out::nstruct]());
 	} else { nstruct_ = 1; }
 
+	checkpoint_job_identifier_ = option[basic::options::OptionKeys::cyclic_peptide::checkpoint_job_identifier]();
+
 	return;
 }
 
@@ -261,18 +269,13 @@ SimpleCycpepPredictApplication::run() const {
 	core::pose::PoseOP native_pose;
 	if ( native_exists_ ) {
 		native_pose=core::pose::PoseOP(new core::pose::Pose);
+		TR << "Importing native structure from " << native_filename_ << "." << std::endl;
 		import_and_set_up_native ( native_filename_, native_pose, resnames.size() );
 #ifdef BOINC_GRAPHICS
 		// set native for graphics
 		boinc::Boinc::set_graphics_native_pose( *native_pose );
-		std::cerr << "Set native pose for BOINC graphics." << std::endl;
-		std::cerr.flush();
 #endif
 	} else {
-#ifdef BOINC_GRAPHICS
-		std::cerr << "No native defined for BOINC graphics." << std::endl;
-		std::cerr.flush();
-#endif
 		TR << "No native structure specified by the user.  No RMSD values will be calculated." << std::endl;
 	}
 
@@ -280,10 +283,21 @@ SimpleCycpepPredictApplication::run() const {
 	protocols::filters::CombinedFilterOP total_hbond( new protocols::filters::CombinedFilter );
 	set_up_hbond_filter( total_hbond, resnames.size(), sfxn_default, static_cast<core::Real>( min_genkic_hbonds_ ) );
 
-	//EVERYTHING ABOVE THIS POINT IS DONE ONCE PER PROGRAM EXECUTION.
+	//Get the checkpoint information:
 	core::Size success_count(0);
+	core::Size curstruct(0);
+	initialize_checkpointing( curstruct, success_count );
 
-	for ( core::Size irepeat=1, irepeat_max=nstruct_; irepeat<=irepeat_max; ++irepeat ) { //Loop nstruct times
+	//EVERYTHING ABOVE THIS POINT IS DONE ONCE PER PROGRAM EXECUTION.
+	++curstruct;
+	for ( core::Size irepeat=curstruct, irepeat_max=nstruct_; irepeat<=irepeat_max; ++irepeat ) { //Loop nstruct times
+#ifdef BOINC
+		{ //Increment the model count for BOINC.
+			protocols::boinc::BoincSharedMemory* shmem = protocols::boinc::Boinc::get_shmem();
+			shmem->model_count = shmem->model_count + 1;
+		}
+#endif
+
 		//Cyclic permutation of sequence.
 		core::Size cyclic_offset(0);
 		utility::vector1 < std::string > resnames_copy;
@@ -324,23 +338,23 @@ SimpleCycpepPredictApplication::run() const {
 
 		if ( !success ) {
 			TR << "Closure failed.";
-			if ( irepeat < irepeat_max ) TR << "  Continuing to next job.";
-			TR << std::endl;
-			TR.flush();
-#ifdef BOINC_GRAPHICS
-			std::cerr << "Closure failed for job " << irepeat << "." << std::endl;
-			std::cerr.flush();
+			if ( irepeat < irepeat_max ) {
+				TR << "  Continuing to next job." << std::endl;
+				checkpoint( irepeat, success_count ); //This job has been attempted and has failed; don't repeat it.
+#ifdef BOINC
+				//Increment total jobs and check whether it's time to quit.
+				if (protocols::boinc::Boinc::worker_is_finished( irepeat )) break;
 #endif
+			} else {
+				TR << std::endl;
+			}
+			TR.flush();
 			continue;
 		}
 
 		//If we reach here, then closure was successful.  Time to relax the pose.
 
 		TR << "Closure successful." << std::endl;
-#ifdef BOINC_GRAPHICS
-		std::cerr << "Closure successful for job " << irepeat << "." << std::endl;
-		std::cerr.flush();
-#endif
 		protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn_default_cst, 1) );
 		(*sfxn_default_cst)(*pose);
 		core::Real cur_energy( pose->energies().total_energy() );
@@ -377,6 +391,11 @@ SimpleCycpepPredictApplication::run() const {
 		if ( final_hbonds > -1.0*min_final_hbonds_ ) {
 			TR << "Final hbond count is " << -1.0*final_hbonds << ", which is less than the minimum.  Failing job." << std::endl;
 			TR.flush();
+			checkpoint( irepeat, success_count ); //This job has been attempted and has failed; don't repeat it.
+#ifdef BOINC
+			//Increment total jobs and check whether it's time to quit.
+			if (protocols::boinc::Boinc::worker_is_finished( irepeat )) break;
+#endif
 			continue;
 		}
 
@@ -400,6 +419,12 @@ SimpleCycpepPredictApplication::run() const {
 			ss->fill_struct( *pose, std::string(tag) );
 			if ( native_pose ) ss->add_energy( "RMSD", native_rmsd ); //Add the RMSD to the energy to be written out in the silent file.
 			ss->add_energy( "HBOND_COUNT", -1.0*final_hbonds ); //Add the hbond count to be written out in the silent file.
+#ifdef BOINC_GRAPHICS
+			protocols::boinc::Boinc::update_graphics_current( *pose );
+			protocols::boinc::Boinc::update_graphics_current_ghost( *pose );
+			protocols::boinc::Boinc::update_graphics_last_accepted( *pose, pose->energies().total_energy() );
+			protocols::boinc::Boinc::update_graphics_low_energy( *pose, pose->energies().total_energy() );
+#endif
 			silent_file->write_silent_struct( *ss, out_filename_ );
 		} else { //if pdb output
 			char outstring[512];
@@ -408,12 +433,18 @@ SimpleCycpepPredictApplication::run() const {
 		}
 
 		TR.flush();
+		checkpoint( irepeat, success_count ); //This job has been attempted and has succeeded; don't repeat it.
 
+#ifdef BOINC
+		//Increment total jobs and check whether it's time to quit.
+		if (protocols::boinc::Boinc::worker_is_finished( irepeat )) break;
+#endif
 	} //Looping through nstruct
 
 	TR << nstruct_ << " jobs attempted.  " << success_count << " jobs returned solutions." << std::endl;
 	TR.flush();
 
+	end_checkpointing(); //Delete the checkpoint file at this point, since all jobs have completed.
 	return;
 }
 
@@ -884,6 +915,186 @@ SimpleCycpepPredictApplication::align_and_calculate_rmsd(
 	return core::scoring::superimpose_pose( *pose, *native_pose, amap ); //Superimpose the pose and return the RMSD.
 }
 
+/// @brief Create a new checkpoint file.
+///
+void
+SimpleCycpepPredictApplication::new_checkpoint_file() const {
+	using namespace utility::io;
+
+	ozstream outfile;
+	outfile.open( checkpoint_filename_ );
+	runtime_assert(outfile.good());
+	outfile << checkpoint_job_identifier_ << std::endl;
+	outfile << "LAST\t0\tSUCCESS\t0" << std::endl;
+	outfile.flush();
+	outfile.close();
+
+	erase_random_seed_info();
+	store_random_seed_info();
+
+	return;
+}
+
+
+/// @brief Initialize checkpointing for this run.
+/// @details  This function does several things.  First, it checks for an existing checkpoint
+/// file.  If one exists, it checks whether the unique job name in the file matches the current
+/// job.  If it does, then this job has already been attempted, and we're somewhere in the middle
+/// of it.  The function reads the last attempt number and success count from the checkpoint
+/// file, and returns these values.  Otherwise, it creates a new checkpoint file with the current
+/// job name and returns (0,0).  If checkpointing is disabled, this function does nothing, and
+/// returns (0,0).
+/// @param[out] lastjob The index of the last job run.  Set to zero if checkpointing is disabled
+/// or if we're creating a new checkpoint file (first job run).
+/// @param[out] successes The number of successes so far.  Set to zero if checkpointing is
+/// disabled or if we're creating a new checkpoint file (first job run).
+void
+SimpleCycpepPredictApplication::initialize_checkpointing(
+	core::Size &lastjob,
+	core::Size &successes
+) const {
+	using namespace utility::io;
+
+	//If we're not using checkpointing, return 0,0:
+	if ( checkpoint_job_identifier_ == "" ) {
+		lastjob=0;
+		successes=0;
+		return;
+	}
+
+	//Check for a checkpoint file:
+	izstream infile;
+	infile.open( checkpoint_filename_ );
+	if ( !infile.good() ) {
+		//If the checkpoint file doesn't exist/isn't readable, then we're starting a new job and need a new checkpoint file.
+		infile.close();
+		new_checkpoint_file();
+		lastjob=0;
+		successes=0;
+		return;
+	}
+
+	//If we've reached this point, then the checkpoint file IS good, and we need to read the job name and the last job ID/success count:
+	std::string curline;
+	infile.getline(curline);
+	if ( infile.eof() || curline=="" || curline!=checkpoint_job_identifier_ ) {
+		//If the checkpoint file isn't readable or is for a different job, then we're starting a new job and need a new checkpoint file.
+		infile.close();
+		new_checkpoint_file();
+		lastjob=0;
+		successes=0;
+		return;
+	}
+
+	//Loop through the checkpoint file and read the job lines:
+	while ( !infile.eof() ) {
+		infile.getline(curline);
+		std::istringstream ss(curline);
+		ss >> curline;
+		ss >> lastjob;
+		ss >> curline;
+		ss >> successes;
+	}
+	infile.close();
+
+	get_random_seed_info();
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Initialized job to " << lastjob << ", successes to " << successes << "." << std::endl;
+		TR.Debug.flush();
+	}
+
+	return;
+}
+
+/// @brief Add a checkpoint to the checkpoint file.
+/// @details  The checkpoint file must already exist.  Does nothing if checkpointing is disabled.
+/// @param[in] curjob The index of the current job just run, for writing to the checkpoint file.
+/// @param[in] successes The number of successes so far, for writing to the checkpoint file.
+void
+SimpleCycpepPredictApplication::checkpoint(
+	core::Size const curjob,
+	core::Size const successes
+) const {
+	using namespace utility::io;
+
+	//Do nothing if we're not using checkpointing:
+	if ( checkpoint_job_identifier_ == "" ) {
+		return;
+	}
+
+	ozstream outfile;
+	outfile.open_append( checkpoint_filename_ );
+	runtime_assert(outfile.good());
+	outfile << "LAST\t" << curjob << "\tSUCCESS\t" << successes << std::endl;
+	outfile.flush();
+	outfile.close();
+
+	store_random_seed_info();
+
+#ifdef BOINC_GRAPHICS
+	protocols::boinc::Boinc::update_pct_complete();
+#endif
+
+	return;
+
+}
+
+/// @brief End checkpointing and delete the checkpoint file.
+/// @details Does nothing if checkpointing is disabled.
+void
+SimpleCycpepPredictApplication::end_checkpointing() const {
+	using namespace utility::io;
+
+	//Do nothing if we're not using checkpointing:
+	if ( checkpoint_job_identifier_ == "" ) {
+		return;
+	}
+	runtime_assert( remove( checkpoint_filename_.c_str() ) == 0 );
+	erase_random_seed_info();
+	return;
+}
+
+/// @brief Restore the state of the random generator from a previous run.
+///
+void SimpleCycpepPredictApplication::get_random_seed_info() const {
+#ifdef BOINC
+	boinc_begin_critical_section();
+#endif
+	if ( utility::file::file_exists("rng.state.gz") ) {
+		utility::io::izstream izs("rng.state.gz");
+		numeric::random::rg().restoreState(izs);
+		izs.close();
+	}
+#ifdef BOINC
+	boinc_end_critical_section();
+#endif
+	return;
+}
+
+/// @brief Store the state of the random generator from a previous run.
+///
+void SimpleCycpepPredictApplication::store_random_seed_info() const {
+#ifdef BOINC
+	boinc_begin_critical_section();
+#endif
+	utility::io::ozstream ozs("rng.state.gz");
+	numeric::random::rg().saveState(ozs);
+	ozs.close();
+#ifdef BOINC
+	boinc_end_critical_section();
+#endif
+	return;
+}
+
+/// @brief Erase the stored state of the random generator from a previous run.
+///
+void SimpleCycpepPredictApplication::erase_random_seed_info() const {
+	if ( utility::file::file_exists("rng.state.gz") ) {
+		utility::file::file_delete("rng.state.gz");
+	}
+	return;
+}
 
 } //cyclic_peptide_predict
 } //protocols

@@ -2138,6 +2138,59 @@ settings = {
         },
     },
 
+    "clang, macos, boinc" : {
+        "appends" : {
+            "libraries" : [
+		"boinc_graphics2",
+                "boinc_api",
+                "boinc",
+                "boinc_zip"
+	    ],
+            "library_path" : [
+                "#external/boinc/mac_build/build/Deployment",
+                "#external/boinc/zip",
+                "/usr/X11R6/lib",
+                "#external/boinc/api",
+                "#external/boinc/lib",
+            ],
+            "include_path" : [
+                "#external",
+                "#external/dbio",
+                "#external/boinc/api",
+                "#external/boinc",
+                "#external/boinc/lib",
+                "#external/boinc/zip",
+            ],
+            "defines" : [
+                "MAC",
+		"BOINC",
+                "BOINC_GRAPHICS",
+                "GL_GRAPHICS"
+            ],
+            "flags" : {
+		"warn" : [
+		    "Wno-deprecated-declarations",
+		],
+                "link" : [
+                    "framework GLUT",
+                    "framework OpenGL",
+                    "framework Cocoa"
+                ],
+                "shlink" : [
+                    "framework GLUT",
+                    "framework OpenGL",
+                    "framework Cocoa"
+                ],
+            },
+        },
+        "removes" : {
+            "flags" : {
+                "compile" : [ "pthread" ],
+            },
+        },
+    },
+
+
     "clang, boost_mpi" : {
         "overrides" : {
             "cc" : "mpicc",

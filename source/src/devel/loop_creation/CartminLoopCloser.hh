@@ -33,32 +33,32 @@ public:
 
 	///@brief default constructor
 	CartminLoopCloser();
-	
+
 	///@brief explicit constructor
 	CartminLoopCloser(
 		core::scoring::ScoreFunctionOP scorefxn,
 		core::Real minimization_tolerance,
 		core::Real max_chainbreak
 	);
-	
+
 	protocols::moves::MoverOP
 	clone() const;
 
 	protocols::moves::MoverOP
 	fresh_instance() const;
-		
+
 	std::string
 	get_name() const;
-	
+
 	void
 	init();
-	
+
 	void
 	apply ( core::pose::Pose & pose );
 
 	bool
 	check_closure ( core::pose::Pose & pose );
-	
+
 	///@brief parse tag for use in RosettaScripts
 	void
 	parse_my_tag(
@@ -68,7 +68,7 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/
 	);
-	
+
 private:
 
 	//Should we set up a fold tree that prevents modification outside the loop region?

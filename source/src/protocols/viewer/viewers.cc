@@ -114,7 +114,7 @@ int click_y;
 std::map< int , GraphicsState* > gs_map_;
 
 // Vector bg_color( 1.0f, 1.0f, 1.0f ); // white
-Vector bg_color( 0.0f, 0.0f, 0.05f ); // dark blue
+Vector bg_color( 0.0f, 0.0f, 0.08f ); // dark blue
 Vector bg_color2( 0.0f, 0.0f, 0.01f ); // darker blue
 Vector border_color( 0.01f, 0.03f, 0.15f ); // lighter blue
 Vector ghost_color_vect( 0.5f, 0.55f, 0.6f); //blue-grey
@@ -2062,24 +2062,11 @@ void clear_bg()
 	return;
 }
 
-/// @brief Draw a gradient for the background.
-void draw_gradient_bg()
+/// @brief Draw a frame for a window.
+///
+void draw_frame()
 {
 	using namespace graphics;
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glBegin(GL_QUADS);
-	glColor3f(bg_color.x(), bg_color.y(), bg_color.z());
-	glVertex2f(1.0,1.0);
-	glVertex2f(-1.0,1.0);
-	glColor3f(bg_color2.x(), bg_color2.y(), bg_color2.z());
-	glVertex2f(-1.0,-1.0);
-	glVertex2f(1.0,-1.0);
-	glEnd();
 
 	glLineWidth(2.5);
 	glColor3f(border_color.x(), border_color.y(), border_color.z());
@@ -2099,6 +2086,53 @@ void draw_gradient_bg()
 	glVertex2f(-1.0, 1.0);
 	glVertex2f(-1.0, -1.0);
 	glEnd();
+
+	return;
+}
+
+/// @brief Fill window background with black.
+///
+void draw_black_bg()
+{
+	using namespace graphics;
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glBegin(GL_QUADS);
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glVertex2f(1.0,1.0);
+	glVertex2f(-1.0,1.0);
+	glVertex2f(-1.0,-1.0);
+	glVertex2f(1.0,-1.0);
+	glEnd();
+
+	draw_frame();
+}
+
+/// @brief Draw a gradient for the window background.
+///
+void draw_gradient_bg()
+{
+	using namespace graphics;
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glBegin(GL_QUADS);
+	glColor3f(bg_color.x(), bg_color.y(), bg_color.z());
+	glVertex2f(1.0,1.0);
+	glVertex2f(-1.0,1.0);
+	glColor3f(bg_color2.x(), bg_color2.y(), bg_color2.z());
+	glVertex2f(-1.0,-1.0);
+	glVertex2f(1.0,-1.0);
+	glEnd();
+
+	draw_frame();
 
 	return;
 }

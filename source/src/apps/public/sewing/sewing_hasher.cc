@@ -54,143 +54,143 @@ main( int argc, char * argv [] ) {
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::sewing;
 
-    try { 
-	    // initialize core and read options
-	    devel::init(argc, argv);
+	try {
+		// initialize core and read options
+		devel::init(argc, argv);
 
-	    if ( !option[sewing::mode].user() ) {
-	    	std::stringstream err;
-	    	err << "You must provide a mode for SewingHasher to run in using the -sewing:mode flag. Valid options are" << std::endl;
-	    	err << "  -generate: generates a model file from an sqlite database" << std::endl;
-	    	err << "  -hash: score all models against each other and create a plain text score file (MPI required)" << std::endl;
-	    	err << "  -convert: convert a plain text score file to a binary score file. This is required by the SEWING movers" << std::endl;
-	    	utility_exit_with_message(err.str());
-	    }
+		if ( !option[sewing::mode].user() ) {
+			std::stringstream err;
+			err << "You must provide a mode for SewingHasher to run in using the -sewing:mode flag. Valid options are" << std::endl;
+			err << "  -generate: generates a model file from an sqlite database" << std::endl;
+			err << "  -hash: score all models against each other and create a plain text score file (MPI required)" << std::endl;
+			err << "  -convert: convert a plain text score file to a binary score file. This is required by the SEWING movers" << std::endl;
+			utility_exit_with_message(err.str());
+		}
 
-	    //Check for model file (either for reading or writing)
-	    std::map< int, Model > models;
-	    std::string model_filename = option[sewing::model_file_name];
-	    if ( !option[sewing::model_file_name].user() ) {
-	    	std::stringstream err;
-	    	err << "You must provide a model file name to the SewingHasher using the -model_file_name flag. To generate a new model file use the "
-	    		<< "-generate_models_from_db flag and a new model file with that name will be written. Otherwise, the model file will be read";
-	    	utility_exit_with_message(err.str());
-	    }
+		//Check for model file (either for reading or writing)
+		std::map< int, Model > models;
+		std::string model_filename = option[sewing::model_file_name];
+		if ( !option[sewing::model_file_name].user() ) {
+			std::stringstream err;
+			err << "You must provide a model file name to the SewingHasher using the -model_file_name flag. To generate a new model file use the "
+				<< "-generate_models_from_db flag and a new model file with that name will be written. Otherwise, the model file will be read";
+			utility_exit_with_message(err.str());
+		}
 
-	    //////////////////////////// MODEL GENERATION ///////////////////////////////////
+		//////////////////////////// MODEL GENERATION ///////////////////////////////////
 
-	    //Are we just generating a model file?
-	    if ( option[sewing::mode].value() == "generate" ) {
+		//Are we just generating a model file?
+		if ( option[sewing::mode].value() == "generate" ) {
 
-	    	//Create comments stream for model file and add the date
-	    	std::stringstream comments;
-	    	time_t t = time(0); // get time now
-	    	struct tm * now = localtime( & t );
-	    	comments << "#Model file created on " << (now->tm_year + 1900) << '-'
-	    		<< (now->tm_mon + 1) << '-'
-	    		<< now->tm_mday
-	    		<< std::endl;
+			//Create comments stream for model file and add the date
+			std::stringstream comments;
+			time_t t = time(0); // get time now
+			struct tm * now = localtime( & t );
+			comments << "#Model file created on " << (now->tm_year + 1900) << '-'
+				<< (now->tm_mon + 1) << '-'
+				<< now->tm_mday
+				<< std::endl;
 
-	    	//Generate model file from a list of PDBs. All models will have 1 segment
-	    	if ( option[ in::file::l ].user() ) {
-	    		comments << "#Models generated from PDB input (-l flag)" << std::endl;
-	    		utility::vector1<utility::file::FileName> input_lists( option[ in::file::l ]() );
-	    		utility::vector1<utility::file::FileName> pdb_library;
-	    		for ( core::Size i = 1; i <= input_lists.size(); i++ ) {
-	    			utility::io::izstream current_input_list( input_lists[i] );
-	    			if ( !current_input_list.good() ) {
-	    				utility_exit_with_message("unable to open input file file: "+input_lists[i].name()+"\n");
-	    			}
-	    			while ( current_input_list.good() ) {
-	    				std::string name;
-	    				current_input_list.getline(name);
-	    				if ( current_input_list.good() ) pdb_library.push_back( utility::file::FileName(name) );
-	    			}
-	    		}
+			//Generate model file from a list of PDBs. All models will have 1 segment
+			if ( option[ in::file::l ].user() ) {
+				comments << "#Models generated from PDB input (-l flag)" << std::endl;
+				utility::vector1<utility::file::FileName> input_lists( option[ in::file::l ]() );
+				utility::vector1<utility::file::FileName> pdb_library;
+				for ( core::Size i = 1; i <= input_lists.size(); i++ ) {
+					utility::io::izstream current_input_list( input_lists[i] );
+					if ( !current_input_list.good() ) {
+						utility_exit_with_message("unable to open input file file: "+input_lists[i].name()+"\n");
+					}
+					while ( current_input_list.good() ) {
+						std::string name;
+						current_input_list.getline(name);
+						if ( current_input_list.good() ) pdb_library.push_back( utility::file::FileName(name) );
+					}
+				}
 
-	    		for ( core::Size i=1; i<=pdb_library.size(); ++i ) {
-	    			core::pose::Pose pose;
-	    			core::import_pose::pose_from_pdb(pose, pdb_library[i]);
-	    			utility::vector1< std::pair<core::Size,core::Size> > segments;
-	    			segments.push_back(std::make_pair(1, pose.total_residue()));
-	    			Model pdb_model = create_model_from_pose(pose, segments, (int)i);
-	    			models.insert(std::make_pair(i, pdb_model));
-	    		}
+				for ( core::Size i=1; i<=pdb_library.size(); ++i ) {
+					core::pose::Pose pose;
+					core::import_pose::pose_from_pdb(pose, pdb_library[i]);
+					utility::vector1< std::pair<core::Size,core::Size> > segments;
+					segments.push_back(std::make_pair(1, pose.total_residue()));
+					Model pdb_model = create_model_from_pose(pose, segments, (int)i);
+					models.insert(std::make_pair(i, pdb_model));
+				}
 
-	    	} else {
-	    		//Generate models from a features database. Each segment is a single piece of secondary structure
-	    		if ( !option[ sewing::assembly_type ].user() ) {
-	    			std::stringstream err;
-	    			err << "You must provide an assembly_type (continuous or discontinuous) with the -sewing:assembly_type flag in order to extract models";
-	    			utility_exit_with_message(err.str());
-	    		}
-	    		if ( option[ sewing::assembly_type ].value() == "discontinuous" ) {
-	    			comments << "#Discontinuous models generated from sqlite database " << option[inout::dbms::database_name].value() << std::endl;
-	    			models = get_discontinuous_models_from_db();
-	    		} else if ( option[ sewing::assembly_type ].value() == "continuous" ) {
-	    			comments << "#Continuous models generated from sqlite database " << option[inout::dbms::database_name].value() << std::endl;
-	    			models = get_continuous_models_from_db();
-	    		}
-	    	}
+			} else {
+				//Generate models from a features database. Each segment is a single piece of secondary structure
+				if ( !option[ sewing::assembly_type ].user() ) {
+					std::stringstream err;
+					err << "You must provide an assembly_type (continuous or discontinuous) with the -sewing:assembly_type flag in order to extract models";
+					utility_exit_with_message(err.str());
+				}
+				if ( option[ sewing::assembly_type ].value() == "discontinuous" ) {
+					comments << "#Discontinuous models generated from sqlite database " << option[inout::dbms::database_name].value() << std::endl;
+					models = get_discontinuous_models_from_db();
+				} else if ( option[ sewing::assembly_type ].value() == "continuous" ) {
+					comments << "#Continuous models generated from sqlite database " << option[inout::dbms::database_name].value() << std::endl;
+					models = get_continuous_models_from_db();
+				}
+			}
 
-	    	write_model_file(comments.str(), models, model_filename);
-	    	TR << "New model file " << model_filename << " successfully written." << std::endl;
-	    	std::exit(0);
-	    }
-
-
-	    //If we aren't generating models, then we need to read them
-	    models = read_model_file(model_filename);
-
-	    ///////////////////////// BINARY FILE TESTING //////////////////////////////
-
-	    if ( option[sewing::mode].value() == "test" ) {
-	    	std::string binary_filename = option[sewing::score_file_name].value();
-	    	SewGraphOP graph( new SewGraph(models, 1) );
-	    	graph->report_binary_stats(models, binary_filename);
-	    }
-
-	    ///////////////////////// MODEL CONVERSION TO BINARY //////////////////////////////
-
-	    //If we are generating a binary file then do that and exit
-	    if ( option[sewing::mode].value() == "convert" ) {
-	    	if ( !option[sewing::score_file_name].user() ) {
-	    		std::stringstream err;
-	    		err << "You must provide a score file name to the SewingHasher for binary conversion.";
-	    		utility_exit_with_message(err.str());
-
-	    	}
-	    	std::string binary_filename = utility::to_string(option[sewing::score_file_name].value())+utility::to_string(".bin");
-
-	    	SewGraphOP graph;
-	    	if ( option[ sewing::assembly_type ].value() == "discontinuous" ) {
-	    		graph = SewGraphOP( new SewGraph(models, 2) );
-	    	} else if ( option[ sewing::assembly_type ].value() == "continuous" ) {
-	    		graph = SewGraphOP( new SewGraph(models, 1) );
-	    	}
-	    	graph->generate_binary_score_file(option[sewing::score_file_name].value(), binary_filename);
-	    	std::exit(0);
-	    }
+			write_model_file(comments.str(), models, model_filename);
+			TR << "New model file " << model_filename << " successfully written." << std::endl;
+			std::exit(0);
+		}
 
 
-	    //////////// MODEL COMPARISON USING GEOMETRIC HASHING /////////////////
+		//If we aren't generating models, then we need to read them
+		models = read_model_file(model_filename);
 
-	    if ( option[sewing::mode].value() == "hash" ) {
+		///////////////////////// BINARY FILE TESTING //////////////////////////////
 
-	    	if ( !option[sewing::score_file_name].user() ) {
-	    		utility_exit_with_message("You must provide a graph file name to the SewingHasher using -score_file_name");
-	    	}
-	    	std::string score_file_name = option[sewing::score_file_name];
+		if ( option[sewing::mode].value() == "test" ) {
+			std::string binary_filename = option[sewing::score_file_name].value();
+			SewGraphOP graph( new SewGraph(models, 1) );
+			graph->report_binary_stats(models, binary_filename);
+		}
 
-	    	core::Size min_score = option[sewing::min_hash_score].def(10);
-	    	core::Size max_clash_score = option[sewing::max_clash_score].def(0);
-	    	core::Size num_segments_to_match = option[sewing::num_segments_to_match].def(0);
+		///////////////////////// MODEL CONVERSION TO BINARY //////////////////////////////
 
-	    	TR << "Bundle Hasher options:" << std::endl;
-	    	TR << "\tMinimum Score: " << min_score << std::endl;
-	    	TR << "\tMaximum Clash Score: " << max_clash_score << std::endl;
-	    	TR << "\tNumber of segments to match: " << num_segments_to_match << std::endl;
-	    	TR << "\tScore file name: " << score_file_name << std::endl;
+		//If we are generating a binary file then do that and exit
+		if ( option[sewing::mode].value() == "convert" ) {
+			if ( !option[sewing::score_file_name].user() ) {
+				std::stringstream err;
+				err << "You must provide a score file name to the SewingHasher for binary conversion.";
+				utility_exit_with_message(err.str());
+
+			}
+			std::string binary_filename = utility::to_string(option[sewing::score_file_name].value())+utility::to_string(".bin");
+
+			SewGraphOP graph;
+			if ( option[ sewing::assembly_type ].value() == "discontinuous" ) {
+				graph = SewGraphOP( new SewGraph(models, 2) );
+			} else if ( option[ sewing::assembly_type ].value() == "continuous" ) {
+				graph = SewGraphOP( new SewGraph(models, 1) );
+			}
+			graph->generate_binary_score_file(option[sewing::score_file_name].value(), binary_filename);
+			std::exit(0);
+		}
+
+
+		//////////// MODEL COMPARISON USING GEOMETRIC HASHING /////////////////
+
+		if ( option[sewing::mode].value() == "hash" ) {
+
+			if ( !option[sewing::score_file_name].user() ) {
+				utility_exit_with_message("You must provide a graph file name to the SewingHasher using -score_file_name");
+			}
+			std::string score_file_name = option[sewing::score_file_name];
+
+			core::Size min_score = option[sewing::min_hash_score].def(10);
+			core::Size max_clash_score = option[sewing::max_clash_score].def(0);
+			core::Size num_segments_to_match = option[sewing::num_segments_to_match].def(0);
+
+			TR << "Bundle Hasher options:" << std::endl;
+			TR << "\tMinimum Score: " << min_score << std::endl;
+			TR << "\tMaximum Clash Score: " << max_clash_score << std::endl;
+			TR << "\tNumber of segments to match: " << num_segments_to_match << std::endl;
+			TR << "\tScore file name: " << score_file_name << std::endl;
 
 
 #ifdef USEMPI
@@ -313,40 +313,40 @@ main( int argc, char * argv [] ) {
 	    	MPI_Barrier( MPI_COMM_WORLD ); // make all nodes reach this point together.
 	    	MPI_Finalize();
 #else
-	    	Hasher hasher;
-	    	std::map< int, Model >::const_iterator it1 = models.begin();
-	    	std::map< int, Model >::const_iterator it_end = models.end();
-	    	std::map< int, Model >::const_iterator it2 = models.begin();
-	    	for ( ; it1 != it_end; ++it1 ) {
-	    		ScoreResults scores;
-	    		for ( ; it2 != it1; ++it2 ) {
-	    			hasher.insert(it2->second);
-	    		}
-	    		scores = hasher.score(it1->second, num_segments_to_match, min_score, max_clash_score, true);
-	    		hasher.remove_connection_inconsistencies(models, scores);
-	    		TR << "Done scoring " << it2->first << " found " << scores.size() << " valid comparisons" << std::endl;
-	    		if ( scores.size() > 0 && TR.Debug ) {
-	    			BasisPair bp = scores.begin()->first;
-	    			std::map< SegmentPair, core::Size > segment_matches = scores.begin()->second.segment_match_counts;
-	    			std::map< SegmentPair, AtomMap > segment_matches2 = scores.begin()->second.segment_matches;
-	    			TR.Debug << "After scoring." << std::endl;
-	    			TR.Debug << "\tModels: " << bp.first.model_id << " " << bp.second.model_id << std::endl;
-	    			TR.Debug << "\tBasis Residues: " << bp.first.resnum << " " << bp.second.resnum << std::endl;
-	    			TR.Debug << "\tNumber of matched segments: " << segment_matches.size() << std::endl;
-	    			std::map< SegmentPair, core::Size >::const_iterator it = segment_matches.begin();
-	    			std::map< SegmentPair, core::Size >::const_iterator it_end = segment_matches.end();
-	    			std::map< SegmentPair, AtomMap >::const_iterator it2 = segment_matches2.begin();
-	    			for ( ; it != it_end; ++it ) {
-	    				TR.Debug << "\tSegments " << it->first.first << " and " << it->first.second << " have " << it->second << " overlapping atoms." << std::endl;
-	    				TR.Debug << "\tSegments " << it2->first.first << " and " << it2->first.second << " have " << it2->second.size() << " overlapping atoms." << std::endl;
-	    				++it2;
-	    			}
-	    		}
-	    		write_hashing_scores_to_file(scores, score_file_name);
-	    	}
+			Hasher hasher;
+			std::map< int, Model >::const_iterator it1 = models.begin();
+			std::map< int, Model >::const_iterator it_end = models.end();
+			std::map< int, Model >::const_iterator it2 = models.begin();
+			for ( ; it1 != it_end; ++it1 ) {
+				ScoreResults scores;
+				for ( ; it2 != it1; ++it2 ) {
+					hasher.insert(it2->second);
+				}
+				scores = hasher.score(it1->second, num_segments_to_match, min_score, max_clash_score, true);
+				hasher.remove_connection_inconsistencies(models, scores);
+				TR << "Done scoring " << it2->first << " found " << scores.size() << " valid comparisons" << std::endl;
+				if ( scores.size() > 0 && TR.Debug ) {
+					BasisPair bp = scores.begin()->first;
+					std::map< SegmentPair, core::Size > segment_matches = scores.begin()->second.segment_match_counts;
+					std::map< SegmentPair, AtomMap > segment_matches2 = scores.begin()->second.segment_matches;
+					TR.Debug << "After scoring." << std::endl;
+					TR.Debug << "\tModels: " << bp.first.model_id << " " << bp.second.model_id << std::endl;
+					TR.Debug << "\tBasis Residues: " << bp.first.resnum << " " << bp.second.resnum << std::endl;
+					TR.Debug << "\tNumber of matched segments: " << segment_matches.size() << std::endl;
+					std::map< SegmentPair, core::Size >::const_iterator it = segment_matches.begin();
+					std::map< SegmentPair, core::Size >::const_iterator it_end = segment_matches.end();
+					std::map< SegmentPair, AtomMap >::const_iterator it2 = segment_matches2.begin();
+					for ( ; it != it_end; ++it ) {
+						TR.Debug << "\tSegments " << it->first.first << " and " << it->first.second << " have " << it->second << " overlapping atoms." << std::endl;
+						TR.Debug << "\tSegments " << it2->first.first << " and " << it2->first.second << " have " << it2->second.size() << " overlapping atoms." << std::endl;
+						++it2;
+					}
+				}
+				write_hashing_scores_to_file(scores, score_file_name);
+			}
 #endif
-	    }
-    } catch ( utility::excn::EXCN_Base& excn ) {
+		}
+	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );
 		return -1;
