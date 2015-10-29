@@ -175,7 +175,7 @@ sources = {
 		"simple_dna_regression_test", # /* ???,Documentation Location,Demo Location */
 	],
 	"pilot/chrisk" : [
-		#"byres_data",
+		"hbscan",
 	],
 	"pilot/chu" : [
 		#"zinc_stat", # /* Chu Wang,Documentation Location,Demo Location */

@@ -23,6 +23,7 @@
 #include <core/chemical/util.hh>
 
 #include <core/conformation/Residue.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -492,7 +493,7 @@ scan_hbond_jumps(
   //now get their base atoms to get datm and batm
   Size datm( pose.residue( don_pos ).atom_base( hatm ) );
   Size batm( pose.residue( acc_pos ).atom_base( aatm ) );
-  Size b2atm( pose.residue( acc_pos ).abase2( aatm ) );
+//  Size b2atm( pose.residue( acc_pos ).abase2( aatm ) );
   Size bbatm( pose.residue( acc_pos ).atom_base( batm ) ); //base of base needed for defined torsion DOF, is sometimes diff than abase2
   Size dbatm( pose.residue( don_pos ).atom_base( datm ) ); //hpol base2
 
@@ -525,13 +526,13 @@ scan_hbond_jumps(
 					for( Real other_tor = other_tor_min; other_tor < other_tor_max;
 							other_tor += (other_tor_max - other_tor_min)/static_cast<Real>(other_tor_steps-1)){
 
-						Real cosBAH( std::cos( pi - BAHang ) );
-						Real cosAHD( std::cos( pi - AHDang ) );
+//						Real cosBAH( std::cos( pi - BAHang ) );
+//						Real cosAHD( std::cos( pi - AHDang ) );
             //call hbonds::hbond_compute_energy( ... ) with these angles
             // and skip if is zero hb energy
 						// this allows computing exactly what frac of actual HB phase space
 						// can be filled w/ a favorable  molecule
-						Real hb_energy( 0.0 );
+//						Real hb_energy( 0.0 );
 //						scoring::hbonds::hbond_compute_energy( *( hb_database_ ),
 //							scorefxn->energy_method_options().hbond_options(),
 //							hbe_type, AHdist, cosAHD, cosBAH, other_tor, hb_energy );
@@ -718,7 +719,7 @@ byres_analysis(
 	std::string const restypes( option[ hbscan::restypes ] );
 	for( Size iaa = 0; iaa <= restypes.length() - 1; ++iaa ){
 		conformation::ResidueOP dock_rsd( conformation::ResidueFactory::create_residue( 
-				*( rsd_set.aa_map( chemical::AA( chemical::aa_from_oneletter_code( restypes[ iaa ] ) ) )[ 1 ] ) ) );
+				*( rsd_set.get_representative_type_aa( chemical::AA( chemical::aa_from_oneletter_code( restypes[ iaa ] ) ) ) ) ) );
 		for( Size seqpos = 1; seqpos <= nres; ++seqpos ){
 			//if option is set, only check the user defined sequence position
 			if( option[ hbscan::lig_seqpos ].user() && seqpos != Size( option[ hbscan::lig_seqpos ] ) ) continue;
