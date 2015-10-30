@@ -740,7 +740,7 @@ sources = {
 	"pilot/rhiju" : [
 		"rna_test",
 		#"rna_assemble_test",
-	        #"gaussian_chain_func_test", # should become a unit test
+	        "gaussian_chain_func_test", # save; will eventually make into a unit test
 		"mg_lores_pdbstats",
 		"mg_hires_pdbstats",
 		"dna_test",

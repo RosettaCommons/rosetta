@@ -57,9 +57,11 @@ CopyDofMover::~CopyDofMover()
 
 ////////////////////////////////////////////////////////////
 void
-CopyDofMover::apply( core::pose::Pose & pose ){
+CopyDofMover::apply( core::pose::Pose & pose )
+{
 	using namespace core::pose::copydofs;
 
+	pose_string_ = pose_string( pose );
 	if ( use_hash_ && check_for_precomputed_copy_dofs_info( pose ) ) {
 		// use precomputed copy dofs info
 		core::pose::copydofs::apply_dofs( pose, copy_dofs_info_[ pose_string_ ] );
@@ -75,16 +77,53 @@ CopyDofMover::apply( core::pose::Pose & pose ){
 }
 
 ////////////////////////////////////////////////////////////
-bool
-CopyDofMover::check_for_precomputed_copy_dofs_info( pose::Pose const & pose ){
-
-	pose_string_ = "";
-	for ( std::map< Size, Size >::const_iterator it = res_map_.begin(), end = res_map_.end(); it != end; ++it ) {
-		pose_string_ += pose.residue( it->first ).name();
+// might be a useful function for core/pose/util.hh
+std::string
+CopyDofMover::pose_string(
+	pose::Pose const & pose,
+	utility::vector1< Size > const & res_list ) const
+{
+	std::string pose_string = "";
+	for ( Size n = 1; n <= res_list.size(); n++ ) {
+		pose_string += pose.residue( res_list[ n ] ).name();
 	}
-	pose_string_ += pose.fold_tree().to_string();
+	pose_string += pose.fold_tree().to_string();
+	return pose_string;
+}
 
-	return ( copy_dofs_info_.find( pose_string_ ) != copy_dofs_info_.end() );
+////////////////////////////////////////////////////////////
+std::string
+CopyDofMover::pose_string(
+	pose::Pose const & pose
+) const
+{
+	utility::vector1< Size > res_list;
+	for ( std::map< Size, Size >::const_iterator it = res_map_.begin(), end = res_map_.end(); it != end; ++it ) {
+		res_list.push_back( it->first );
+	}
+	return pose_string( pose, res_list );
+}
+////////////////////////////////////////////////////////////
+bool
+CopyDofMover::check_for_precomputed_copy_dofs_info( pose::Pose const & pose ) const
+{
+	return ( copy_dofs_info_.find( pose_string( pose ) ) != copy_dofs_info_.end() );
+}
+
+////////////////////////////////////////////////////////////
+pose::copydofs::CopyDofsInfo const &
+CopyDofMover::copy_dofs_info( pose::Pose const & pose ) const
+{
+	runtime_assert( check_for_precomputed_copy_dofs_info( pose ) );
+	return copy_dofs_info_.find( pose_string( pose ) )->second;
+}
+
+////////////////////////////////////////////////////////////
+void
+CopyDofMover::set_copy_dofs_info(
+	pose::Pose const & pose,
+	pose::copydofs::CopyDofsInfo const & copy_dofs_info ) {
+	copy_dofs_info_[ pose_string( pose ) ] = copy_dofs_info;
 }
 
 

@@ -44,10 +44,27 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const { return "CopyDofMover"; }
 
+	pose::copydofs::CopyDofsInfo const & copy_dofs_info( pose::Pose const & pose ) const;
+
+	void
+	set_copy_dofs_info(
+		pose::Pose const & pose,
+		pose::copydofs::CopyDofsInfo const & copy_dofs_info );
+
 private:
 
+	std::string
+	pose_string(
+		pose::Pose const & pose,
+		utility::vector1< Size > const & res_list ) const;
+
+	std::string
+	pose_string(
+		pose::Pose const & pose
+	) const;
+
 	bool
-	check_for_precomputed_copy_dofs_info( pose::Pose const & pose );
+	check_for_precomputed_copy_dofs_info( pose::Pose const & pose ) const;
 
 private:
 

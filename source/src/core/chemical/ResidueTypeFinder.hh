@@ -153,6 +153,12 @@ public:
 	}
 
 	ResidueTypeFinder &
+	check_nucleic_acid_virtual_phosphates( bool const setting ) {
+		check_nucleic_acid_virtual_phosphates_ = setting;
+		return *this;
+	}
+
+	ResidueTypeFinder &
 	disallow_carboxyl_conjugation_at_glu_asp( bool const setting ) {
 		disallow_carboxyl_conjugation_at_glu_asp_ = setting;
 		return *this;
@@ -253,6 +259,8 @@ private:
 	matches_any_atom_name( PatchCOP patch,
 		ResidueTypeCOP rsd_type ) const;
 
+	ResidueTypeFinder &
+	variants( utility::vector1< VariantType > const & setting ) const;
 
 private:
 
@@ -274,6 +282,7 @@ private:
 	ResidueProperty base_property_;
 	bool ignore_atom_named_H_;
 	bool disallow_carboxyl_conjugation_at_glu_asp_; // special case
+	bool check_nucleic_acid_virtual_phosphates_; // special case (could be generalized to match virtual atoms to missing atoms)
 
 };
 

@@ -68,7 +68,8 @@ ResidueTypeFinder::ResidueTypeFinder( core::chemical::ResidueTypeSet const & res
 	name1_( '?' ),
 	base_property_( NO_PROPERTY ),
 	ignore_atom_named_H_( false ),
-	disallow_carboxyl_conjugation_at_glu_asp_( false )
+	disallow_carboxyl_conjugation_at_glu_asp_( false ),
+	check_nucleic_acid_virtual_phosphates_( false )
 {}
 
 //Destructor
@@ -192,6 +193,7 @@ ResidueTypeFinder::apply_filters_after_patches( ResidueTypeCOPs rsd_types,
 	rsd_types = filter_disallow_properties(  rsd_types );
 	rsd_types = filter_all_patch_names( rsd_types );
 	rsd_types = filter_special_cases( rsd_types );
+
 	return rsd_types;
 }
 
@@ -405,9 +407,16 @@ ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
 			if ( variants_in_sets_[ k ].has_value( patch_variant ) ) return true;
 		}
 
+		// following could also be managed by looking to see if patch *virtualizes* a missing atom.
+		if ( check_nucleic_acid_virtual_phosphates_ &&
+				 ( patch_variant == VIRTUAL_DNA_PHOSPHATE ||  patch_variant == VIRTUAL_PHOSPHATE ) &&
+				 !atom_names_soft_.has_value( "P" ) ) return true;
+
 		if ( variant_exceptions_.has_value( patch_variant ) ) return true; // explore all of these 'exceptions' (used for adducts)
 
 	}
+
+
 	return false;
 }
 
@@ -695,11 +704,23 @@ ResidueTypeCOPs
 ResidueTypeFinder::filter_special_cases( ResidueTypeCOPs const & rsd_types )  const
 {
 	ResidueTypeCOPs filtered_rsd_types;
+
+	bool const actually_check_nucleic_acid_virtual_phosphates =
+		check_nucleic_acid_virtual_phosphates_ &&	!atom_names_soft_.has_value( "P" );
+
 	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
 		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
-		if ( disallow_carboxyl_conjugation_at_glu_asp_ &&
-				( rsd_type->aa() == aa_glu || rsd_type->aa() == aa_asp ) &&
-				rsd_type->has_variant_type( BRANCH_LOWER_TERMINUS_VARIANT ) ) continue;
+
+		if ( disallow_carboxyl_conjugation_at_glu_asp_ ) {
+			if ( ( rsd_type->aa() == aa_glu || rsd_type->aa() == aa_asp ) &&
+					 rsd_type->has_variant_type( BRANCH_LOWER_TERMINUS_VARIANT ) ) continue;
+		}
+
+		if ( actually_check_nucleic_acid_virtual_phosphates ) {
+			if ( rsd_type->is_DNA() && !rsd_type->has_variant_type( VIRTUAL_DNA_PHOSPHATE ) ) continue;
+			if ( rsd_type->is_RNA() && !rsd_type->has_variant_type( VIRTUAL_PHOSPHATE ) ) continue;
+		}
+
 		filtered_rsd_types.push_back( rsd_type );
 	}
 	return filtered_rsd_types;

@@ -63,6 +63,7 @@ CopyDofs::apply( pose::Pose & pose ){
 }
 
 ////////////////////////////////////////////////////////
+// Hey, what about jumps? -- rhiju, 2015
 void
 CopyDofs::figure_out_dofs( pose::Pose & pose ){
 	using namespace core::id;

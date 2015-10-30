@@ -1939,8 +1939,10 @@ build_pose_as_is1(
 		for ( uint atomi(1), natoms( rsd.natoms() ); atomi <= natoms; ++atomi ) {
 			id::AtomID const id( atomi, seqpos );
 			if ( missing[ id ] && rsd.atom_name(atomi) == " P  " ) {
-				TR << "Virtualizing missing phosphate that was built in at seqpos " << seqpos << std::endl;
-				core::pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_DNA_PHOSPHATE, seqpos );
+				runtime_assert( rsd.has_variant_type( chemical::VIRTUAL_DNA_PHOSPHATE ) );
+				// Now handled above in rsd_type_finder.
+				//TR << "Virtualizing missing phosphate that was built in at seqpos " << seqpos << std::endl;
+				//core::pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_DNA_PHOSPHATE, seqpos );
 				break;
 			}
 		}
@@ -2318,7 +2320,7 @@ get_rsd_type(
 		xyz_atom_names.push_back( xyz_name );
 	}
 
-	rsd_type = ResidueTypeFinder( residue_set ).name3( name3 ).residue_base_name( residue_base_name ).disallow_variants( disallow_variants ).variants_in_sets( required_variants_in_sets ).properties( properties ).disallow_properties( disallow_properties ).patch_names( patch_names ).ignore_atom_named_H( is_lower_terminus ).disallow_carboxyl_conjugation_at_glu_asp( disallow_carboxyl_conjugation_at_glu_asp ).get_best_match_residue_type_for_atom_names( xyz_atom_names );
+	rsd_type = ResidueTypeFinder( residue_set ).name3( name3 ).residue_base_name( residue_base_name ).disallow_variants( disallow_variants ).variants_in_sets( required_variants_in_sets ).properties( properties ).disallow_properties( disallow_properties ).patch_names( patch_names ).ignore_atom_named_H( is_lower_terminus ).disallow_carboxyl_conjugation_at_glu_asp( disallow_carboxyl_conjugation_at_glu_asp ).check_nucleic_acid_virtual_phosphates( true ).get_best_match_residue_type_for_atom_names( xyz_atom_names );
 
 	return rsd_type;
 }
