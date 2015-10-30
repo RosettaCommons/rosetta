@@ -153,6 +153,7 @@ def refit_polynomial_from_file( fname, degree, hb_weight, verbose ) :
         if cols[0] == "ENERGY_VALUES" :
             assert( len(cols) == 4 )
             xval = float(cols[1])
+            #print xval, last_x
             assert( last_x == -1234 or last_x < xval )
             last_x = xval
             xs.append( xval )
@@ -192,133 +193,11 @@ def refit_polynomial_from_file( fname, degree, hb_weight, verbose ) :
     for y in ys_start :
         ys.append( ( y - min_y ) / hb_weight - 0.5 )
 
-    # lets throw out the xs and ys where ys > 1.0 or that are outside of the range near the min_xval where it is below 1 without
-    # crossing above 1
-    xs2 = []; ys2 = [];
-    crossed_above_1 = False
-    for x,y in zip(xs,ys) :
-        if y <= 1 and x >= min_xval and not crossed_above_1 :
-            xs2.append(x)
-            ys2.append(y)
-        if y > 1 and x >= min_xval : crossed_above_1 = True
+    # xandys = []
+    # for x,y in zip(xs,ys) : xandys.append("%f,%f" % (x,y) )
+    # print ",".join(xandys)
 
-    # try again
-    if not crossed_above_1 :
-        old_max_x = -1234
-        last_x_val = -1234
-        last_e_val = -1234
-        final_e_val = -1234
-        final_y_val = -1234
-        for x,e in zip(xs,energies) :
-            if x >= min_xval and e[0] == 0.0 :
-                old_max_x = x
-                #print "old max x:", old_max_x
-                break;
-        if old_max_x == -1234 :
-            print "Error: could not find xval at which the hbond score goes to zero.  Extend hbond energy reporting range"
-            sys.exit(1)
-
-        # step back two tenths of an angstrom and take the slope from there
-        for x,e,y in zip(xs,energies,ys) :
-            if x >= old_max_x - 0.2 :
-                final_e_val = e[0]
-                final_x_val = x
-                final_y_val = y
-                break
-            last_e_val = e[0]
-            last_x_val = x
-
-        xs2 = []; ys2 = [];
-        if verbose : print "final_e_val",final_e_val,"last_e_val",last_e_val,"final_x_val",final_x_val,"last_x_val",last_x_val
-        slope = ( final_e_val - last_e_val ) / ( final_x_val - last_x_val )
-        if verbose : print "slope",slope,"final_y_val",final_y_val
-        for x,y in zip(xs,ys) :
-            newy = slope * ( x - final_x_val ) + final_y_val # point slope form
-            #print x, y, newy
-            if x >= min_xval and x <= final_x_val and not crossed_above_1 :
-                xs2.append(x)
-                ys2.append(y)
-            elif x >= min_xval and x > final_x_val :
-                if newy < 1.1 :
-                    xs2.append(x)
-                    ys2.append(newy)
-                else :
-                    crossed_above_1 = True
-
-    crossed_above_1 = False
-    save_xs2 = list(xs2); save_ys2 = list(ys2); # keep a deep copy in case we need to take a second pass sweep
-
-    revlist = zip(xs,ys,energies)
-    revlist.reverse()
-    xs2.reverse(); ys2.reverse();
-    for x,y,e in revlist :
-        #print "revlist",x,y,e[0],e[1]
-        if e[0] <= 1 and x < min_xval and not crossed_above_1 :
-            #print "appending",x,y
-            xs2.append(x)
-            ys2.append(y)
-        if e[0] > 1 and x < min_xval : crossed_above_1 = True
-    xs2.reverse(); ys2.reverse();
-
-    # try again
-    if not crossed_above_1 :
-        old_max_x = -1234
-        last_x_val = -1234
-        last_e_val = -1234
-        final_e_val = -1234
-        final_y_val = -1234
-        for x,y,e in revlist :
-            if x <= min_xval and e[0] == 0.0 :
-                old_max_x = x
-                #print "old max x:", old_max_x
-                break;
-        if old_max_x != -1234 :
-
-            xs2 = list(save_xs2); ys2 = list(save_ys2);
-            xs2.reverse(); ys2.reverse();
-            # step back two tenths of an angstrom and take the slope from there
-            for x,y,e in revlist :
-                if x <= old_max_x + 0.2 :
-                    final_e_val = e[0]
-                    final_x_val = x
-                    final_y_val = y
-                    break
-                last_e_val = e[0]
-                last_x_val = x
-            
-            if verbose : print "final_e_val",final_e_val,"last_e_val",last_e_val,"final_x_val",final_x_val,"last_x_val",last_x_val
-            slope = ( final_e_val - last_e_val ) / ( final_x_val - last_x_val )
-            if verbose : print "slope",slope,"final_y_val",final_y_val
-            for x,y,e in revlist :
-                newy = slope * ( x - final_x_val ) + final_y_val # point slope form
-                #print x, y, newy
-                if x <= min_xval and x >= final_x_val and not crossed_above_1 :
-                    #print "appending original value:",x,y
-                    xs2.append(x)
-                    ys2.append(y)
-                elif x <= min_xval and x < final_x_val :
-                    if newy < 1.1 :
-                        #print "appending linearized value:",x,y
-                        xs2.append(x)
-                        ys2.append(newy)
-                    else :
-                        crossed_above_1 = True
-
-    xs2.reverse(); ys2.reverse();
-
-    if ( verbose ) :
-        print "fitpoints_x = [",
-        for x in xs2 : print x,
-        print "];"
-        print "fitpoints_y = [",
-        for y in ys2 : print y,
-        print "];"
-        print
-        print "controlpoints format: "
-        ctrptstr = ""
-        for x,y in zip(xs2,ys2) : ctrptstr += ("%f,%f," % (x, y))
-        print ctrptstr
-
+    xs2, ys2 = tune_control_points( xs, ys, energies, min_xval )
         
 
     # now fit the polynomial
@@ -360,6 +239,320 @@ def print_polynomial_in_HBPoly_csv_format( output_name, poly, poly_index=0 ) :
 
     print ",".join( vals )
 
+def fit_parabola( xs, ys ) :
+    x = list(xs)
+    M = numpy.matrix( [[ x[0]*x[0], x[0], 1 ], [x[1]*x[1], x[1], 1 ], [ x[2]*x[2], x[2], 1 ]] )
+    b = numpy.matrix( ys )
+    # print M
+    # print b.transpose()
+    return numpy.linalg.inv( M ) * b.transpose();
+
+def eval_parabola( coeffs, x ) :
+    val = coeffs[0]*x*x + coeffs[1]*x + coeffs[2]
+    #print "val", val.item(0,0)
+    return val.item(0,0)
+
+def solve_parabola( coeffs, y ) :
+    # solve the quadratic equation:
+    a = coeffs[0]
+    b = coeffs[1]
+    c = coeffs[2] - y
+    discriminant = b**2 - 4*a*c
+    if ( discriminant < 0 ) :
+        return [500,-500]
+    return ( (-b + math.sqrt( discriminant )) / (2*a),  (-b - math.sqrt( discriminant )) / (2*a) )
+
+def tune_control_points( xs, ys, energies, min_xval ) :
+    # lets throw out the xs and ys where ys > 1.0 or that are outside of the range near the min_xval where it is below 1 without
+    # crossing above 1
+    xs2 = []; ys2 = [];
+    hits_1p1_low = False;
+    hits_1p1_hi  = False;
+    xlow = -1234; xhi = -1234;
+    for x,y in zip(xs,ys):
+        if x < min_xval and y >= 1.1 and not hits_1p1_low :
+            hits_1p1_low = True
+            xlow = x
+        if x > min_xval and y >= 1.1 and not hits_1p1_hi  :
+            hits_1p1_hi  = True 
+            xhi  = x
+    if hits_1p1_hi and hits_1p1_low :
+        if verbose : print "hits both 1p1 low and hi!"
+        for x,y in zip(xs,ys) :
+            if x >= xlow and x <= xhi :
+                xs2.append(x)
+                ys2.append(y)
+        return xs2, ys2;
+
+    # otherwise, we need to fudge some control points 
+
+    #print "min_xval", min_xval
+    for x,y in zip(xs,ys) :
+        if x == min_xval :
+            xs2.append(x)
+            ys2.append(y)
+            break
+
+    # take the good parts of the curve, if any
+    if hits_1p1_hi :
+        for x,y in zip(xs,ys) :
+            if x > min_xval and x <= xhi :
+                xs2.append(x)
+                ys2.append(y)
+    if hits_1p1_low :
+        for x, y in zip(xs,ys) :
+            if x < min_xval and x >= xlow :
+                xs2.append(x)
+                ys2.append(y)
+    if not hits_1p1_hi :
+        # find the point, if any, at which y stops monotonically increasing
+        xmax = -1234
+        ylast = -1234
+        for x,y in zip(xs,ys) :
+            if x == min_xval :
+                ylast = y
+            elif x > min_xval :
+                if y < ylast :
+                    xmax = x
+                    break
+                ylast = y
+        #print "extending hi: xmax", xmax
+        if xmax == -1234 :
+            # ok -- so, we didn't find a local maximum; this is troubling.
+            pass
+        else :
+            # let's trim backwards from the local maximum and see if we can't
+            # draw a line up to +1.1
+            trim = 0.2
+            done = False
+            took_halfway_point = False
+            while ( not done ) :
+                #print "trim", trim
+                if xmax - trim < min_xval :
+                    trim = ( xmax - min_xval ) / 2;
+                    took_halfway_point = True
+                xs3, ys3 = [], []
+                for x,y in zip( xs,ys ) :
+                    if x > min_xval and x <= xmax - trim :
+                        #print "adding to xs3/ys3:",x, y
+                        xs3.append(x)
+                        ys3.append(y)
+                # xi,yi     = xs3[-2],ys3[-2]
+                # xip1,yip1 = xs3[-1],ys3[-1]
+                # slope = ( yip1 - yi ) / ( xip1 - xi )
+                coeffs = fit_parabola( xs3[-3:], ys3[-3:] )
+                x_of_1p1 = solve_parabola(coeffs,1.1)[0]
+                if x_of_1p1 > 3.0 : # 3.0 = MAX_R, the maximum hbond distance considered
+                    if took_halfway_point :
+                        # OH SHIT!
+                        # let's punt -- we'll just thow in some x,y pairs 
+                        xs3.append( 2.9 ); ys3.append( 1.1 );
+                        xs3.append( 2.8 ); ys3.append( 1.0 );
+                        break;
+                    trim += 0.1 # let's try again trimming more of the original points
+                    continue
+                else :
+                    done = True
+            if done :
+                x = xmax - trim + 0.1
+                while x < x_of_1p1 :
+                    xs3.append( x ); ys3.append( eval_parabola(coeffs,x) );
+                    x += 0.1
+                # one more for good measure
+                xs3.append( x ); ys3.append( eval_parabola(coeffs,x) );
+            xs2.extend(xs3); ys2.extend(ys3);
+
+    if not hits_1p1_low :
+        # find the point, if any, at which y stops monotonically increasing
+        xmax = -1234
+        ylast = -1234
+        xsrev,ysrev = list(xs), list(ys); xsrev.reverse(); ysrev.reverse();
+        for x,y in zip(xsrev,ysrev) :
+            #if ylast != -1234:
+            #    print "backwards", x, y, ylast
+            if x == min_xval :
+                ylast = y
+            elif x < min_xval :
+                if y < ylast :
+                    xmax = x
+                    break
+                ylast = y
+        #print "extend low: xmax", xmax
+        if xmax == -1234 :
+            # ok -- so, we didn't find a local maximum -- take everything!
+            for x,y in zip(xsrev,ysrev) :
+                if x < min_xval :
+                    xs2.append(x); ys2.append(y)
+        else :
+            # let's trim backwards from the local maximum and see if we can't
+            # draw a line up to +1.1
+            trim = 0.2
+            if xmax + trim > min_xval :
+                trim = ( min_xval - xmax ) / 2;
+            #print trim
+            xs3, ys3 = [], []
+            for x,y in zip( xsrev,ysrev ) :
+                if x < min_xval and x >= xmax + trim :
+                    xs3.append(x)
+                    ys3.append(y)
+            coeffs = fit_parabola( xs3[-3:],ys3[-3:] )
+            x_of_1p1 = solve_parabola(coeffs,1.1)[1]
+
+            x = xmax + trim - 0.1
+            while x > 0 :
+                nexty = eval_parabola(coeffs,x)
+                if nexty > ys3[-1] :
+                    xs3.append( x ); ys3.append( nexty );
+                else :
+                    break
+                x -= 0.1
+            xs2.extend(xs3); ys2.extend(ys3);
+
+    if ( verbose ) :
+        print "fitpoints_x = [",
+        for x in xs2 : print x,
+        print "];"
+        print "fitpoints_y = [",
+        for y in ys2 : print y,
+        print "];"
+        print
+        print "controlpoints format: "
+        ctrpts = []
+        for x,y in zip(xs2,ys2) :
+            ctrpts.append("%f"%x)
+            ctrpts.append("%f"%y)
+        print ",".join(ctrpts)
+    
+
+    #print xs2, ys2
+    return xs2, ys2;
+
+    crossed_above_1p1 = False
+    for x,y in zip(xs,ys) :
+        if y <= 1.1 and x >= min_xval and not crossed_above_1p1 :
+            xs2.append(x)
+            ys2.append(y)
+        if y > 1.1 and x >= min_xval : crossed_above_1p1 = True
+
+    # try again
+    if not crossed_above_1p1 :
+        old_max_x = -1234
+        last_x_val = -1234
+        last_e_val = -1234
+        final_e_val = -1234
+        final_y_val = -1234
+        for x,e in zip(xs,energies) :
+            if x >= min_xval and e[0] == 0.0 :
+                old_max_x = x
+                #print "old max x:", old_max_x
+                break;
+        if old_max_x == -1234 :
+            print "Error: could not find xval at which the hbond score goes to zero.  Extend hbond energy reporting range"
+            sys.exit(1)
+
+        # step back two tenths of an angstrom and take the slope from there
+        for x,e,y in zip(xs,energies,ys) :
+            if x >= old_max_x - 0.2 :
+                final_e_val = e[0]
+                final_x_val = x
+                final_y_val = y
+                break
+            last_e_val = e[0]
+            last_x_val = x
+
+        xs2 = []; ys2 = [];
+        if verbose : print "final_e_val",final_e_val,"last_e_val",last_e_val,"final_x_val",final_x_val,"last_x_val",last_x_val
+        slope = ( final_e_val - last_e_val ) / ( final_x_val - last_x_val )
+        if verbose : print "slope",slope,"final_y_val",final_y_val
+        # crossed_above_1p1 = False
+        for x,y in zip(xs,ys) :
+            newy = slope * ( x - final_x_val ) + final_y_val # point slope form
+            #print x, y, newy
+            if x >= min_xval and x <= final_x_val and not crossed_above_1p1 :
+                xs2.append(x)
+                ys2.append(y)
+            elif x >= min_xval and x > final_x_val :
+                if newy < 1.1 :
+                    xs2.append(x)
+                    ys2.append(newy)
+                else :
+                    crossed_above_1p1 = True
+
+    crossed_above_1p1 = False
+    save_xs2 = list(xs2); save_ys2 = list(ys2); # keep a deep copy in case we need to take a second pass sweep
+
+    revlist = zip(xs,ys,energies)
+    revlist.reverse()
+    xs2.reverse(); ys2.reverse();
+    for x,y,e in revlist :
+        #print "revlist",x,y,e[0],e[1]
+        if e[0] <= 1.1 and x < min_xval and not crossed_above_1p1 :
+            #print "appending",x,y
+            xs2.append(x)
+            ys2.append(y)
+        if e[0] > 1.1 and x < min_xval : crossed_above_1p1 = True
+    xs2.reverse(); ys2.reverse();
+
+    # try again
+    if not crossed_above_1p1 :
+        old_max_x = -1234
+        last_x_val = -1234
+        last_e_val = -1234
+        final_e_val = -1234
+        final_y_val = -1234
+        for x,y,e in revlist :
+            if x <= min_xval and e[0] == 0.0 :
+                old_max_x = x
+                #print "old max x:", old_max_x
+                break;
+        if old_max_x != -1234 :
+
+            xs2 = list(save_xs2); ys2 = list(save_ys2);
+            xs2.reverse(); ys2.reverse();
+            # step back two tenths of an angstrom and take the slope from there
+            for x,y,e in revlist :
+                if x <= old_max_x + 0.2 :
+                    final_e_val = e[0]
+                    final_x_val = x
+                    final_y_val = y
+                    break
+                last_e_val = e[0]
+                last_x_val = x
+            
+            if verbose : print "final_e_val",final_e_val,"last_e_val",last_e_val,"final_x_val",final_x_val,"last_x_val",last_x_val
+            slope = ( final_e_val - last_e_val ) / ( final_x_val - last_x_val )
+            if verbose : print "slope",slope,"final_y_val",final_y_val
+            for x,y,e in revlist :
+                newy = slope * ( x - final_x_val ) + final_y_val # point slope form
+                #print x, y, newy
+                if x <= min_xval and x >= final_x_val and not crossed_above_1p1 :
+                    #print "appending original value:",x,y
+                    xs2.append(x)
+                    ys2.append(y)
+                elif x <= min_xval and x < final_x_val :
+                    if newy < 1.1 :
+                        #print "appending linearized value:",x,y
+                        xs2.append(x)
+                        ys2.append(newy)
+                    else :
+                        crossed_above_1p1 = True
+
+    xs2.reverse(); ys2.reverse();
+
+    if ( verbose ) :
+        print "fitpoints_x = [",
+        for x in xs2 : print x,
+        print "];"
+        print "fitpoints_y = [",
+        for y in ys2 : print y,
+        print "];"
+        print
+        print "controlpoints format: "
+        ctrptstr = ""
+        for x,y in zip(xs2,ys2) : ctrptstr += ("%f,%f," % (x, y))
+        print ctrptstr
+
+    return xs2,ys2
 
 if __name__ == "__main__" :
     with blargs.Parser(locals()) as p :
