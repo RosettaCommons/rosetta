@@ -250,6 +250,15 @@ public:
 	/// @brief is this residue modififable at all by the packer?
 	virtual bool being_packed() const;
 
+	/// @brief ONLY for the RESET command in resfiles: completely reset this position.
+	/// @details This does several things.  It:
+	/// - Removes all noncanonicals allowed at this position.
+	/// - Resets the list of allowed canonicals to the 20 standard canonicals.
+	/// - Resets the designability of this position (design allowed).
+	/// - Resets the repacking of this position (repacking allowed).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	virtual void reset();
+
 	virtual
 	rotamer_set::RotamerOperations const &
 	rotamer_operations() const;

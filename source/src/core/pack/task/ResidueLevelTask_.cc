@@ -1014,6 +1014,44 @@ ResidueLevelTask_::print_allowed_types( std::ostream & os ) const
 bool ResidueLevelTask_::being_designed() const { return designing_; } // is this residue up for design?
 bool ResidueLevelTask_::being_packed() const { return repacking_; } // is this residue being modified at all by the packer
 
+/// @brief ONLY for the RESET command in resfiles: completely reset this position.
+/// @details This does several things.  It:
+/// - Removes all noncanonicals allowed at this position.
+/// - Resets the list of allowed canonicals to the 20 standard canonicals.
+/// - Resets the designability of this position (design allowed).
+/// - Resets the repacking of this position (repacking allowed).
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void ResidueLevelTask_::reset() {
+	using namespace core::chemical;
+
+	mode_tokens_.push_back( "RESET" );
+	disallow_noncanonical_aas();
+	
+	ResidueTypeSet const & residue_set( get_original_residue_set() );
+	allowed_residue_types_.clear();
+	ResidueType const & match_residue_type( residue_set.get_residue_type_with_variant_removed( *original_residue_type_, chemical::VIRTUAL_SIDE_CHAIN ) );
+	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+		ResidueTypeCOPs const & aas( residue_set.get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
+		for ( ResidueTypeCOPs::const_iterator
+				aas_iter = aas.begin(),
+				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+			allowed_residue_types_.push_back( *aas_iter );
+		}
+	}
+
+	//Re-enable design and repacking, if they've been disabled:
+	repacking_ = true;
+	designing_ = true;
+	disabled_ = false;
+	design_disabled_ = false;
+	determine_if_designing();
+	determine_if_repacking();
+	
+	debug_assert( being_packed() );
+	debug_assert( being_designed() );
+	return;
+}
+
 /// @details  bookkeeping - increases to EX_ONE_STDDEV if boolean is on, but sample level is zero (AS IT SHOULD!)
 void ResidueLevelTask_::refresh_ex1_sample_levels()
 {
@@ -1322,8 +1360,8 @@ ResidueLevelTask_::update_commutative(
 	flip_HNQ_                     |= o.flip_HNQ_;
 	fix_his_tautomer_             |= o.fix_his_tautomer_;
 	include_virtual_side_chain_   |= o.include_virtual_side_chain_;
-	disabled_                     |= o.disabled_;
-	design_disabled_              |= o.design_disabled_;
+	//disabled_                     |= o.disabled_; // need to call determine_if_repacking()
+	//design_disabled_              |= o.design_disabled_; // need to call determine_if_designing()
 	sample_proton_chi_            = o.sample_proton_chi_; // <--- apparently sample_proton_chi is not commutatively assigned
 	ex1_                          |= o.ex1_;
 	ex2_                          |= o.ex2_;
@@ -1387,6 +1425,8 @@ ResidueLevelTask_::update_commutative(
 	}
 	determine_if_repacking();
 	determine_if_designing();
+	disabled_                      = !o.repacking_;
+	design_disabled_               = !o.designing_;
 
 	/// Form a union of the following sets
 	rotamer_operations_.insert(rotamer_operations_.begin(),o.rotamer_operations_.begin(),o.rotamer_operations_.end());

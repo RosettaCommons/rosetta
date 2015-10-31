@@ -877,11 +877,7 @@ RESET::residue_action(
 	Size resid
 ) const
 {
-	//vector is expected format for PackerTask, but false at all positions
-	utility::vector1< bool > keep_aas( chemical::num_canonical_aas, true );
-	std::string mode( "RESET" );
-	task.nonconst_residue_task(resid).restrict_absent_canonical_aas( keep_aas, mode );
-	task.nonconst_residue_task(resid).disallow_noncanonical_aas();
+	task.nonconst_residue_task(resid).reset();
 }
 
 ///////////////////////////////////////////////////////////////////////

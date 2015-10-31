@@ -218,6 +218,15 @@ public:
 
 	virtual bool being_designed() const = 0; // is this residue up for design?
 	virtual bool being_packed() const = 0; // is this residue being modified at all by the packer
+	
+	/// @brief ONLY for the RESET command in resfiles: completely reset this position.
+	/// @details This does several things.  It:
+	/// - Removes all noncanonicals allowed at this position.
+	/// - Resets the list of allowed canonicals to the 20 standard canonicals.
+	/// - Resets the designability of this position (design allowed).
+	/// - Resets the repacking of this position (repacking allowed).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	virtual void reset() = 0;
 
 	virtual
 	rotamer_set::RotamerOperations const &
