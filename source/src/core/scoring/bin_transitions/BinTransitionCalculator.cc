@@ -916,7 +916,7 @@ void BinTransitionCalculator::set_up_bins( utility::vector1 < std::string > cons
 		} else if ( tag=="SUB_BINS_I" ) {
 			l >> tag; //Read the sub-bin type.
 			curdata->set_subbin_type_i( tag );
-		} else if ( tag=="SUB_BINS_Iplus1" ) {
+		} else if ( tag=="SUB_BINS_IPLUS1" ) {
 			l >> tag; //Read the sub-bin type.
 			curdata->set_subbin_type_iplus1( tag );
 		} else continue;
