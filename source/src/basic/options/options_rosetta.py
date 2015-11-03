@@ -6340,9 +6340,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
             ##SewingHasher and ModelDumper options
             Option( 'mode', 'String',
-                desc="The mode SewingHasher should run.",
+                desc="The mode sewing_hasher should run.",
                 default='hash',
-                legal=["hash", "generate", "convert", "test"]),
+                legal=["hash", "generate", "generate_five_ss_model", "convert", "test"]),
 
             Option('num_models_to_dump','Integer', desc="Used for ModelDumper. How many random models should be dumped?"),
             Option('models_to_dump','IntegerVector', desc="Used for ModelDumper for specifying model ids you want to dump"),
