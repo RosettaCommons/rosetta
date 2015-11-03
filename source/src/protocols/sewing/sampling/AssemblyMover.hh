@@ -103,7 +103,8 @@ public:
 	void
 	output_stats(
 		AssemblyOP const & assembly,
-		core::pose::Pose & pose
+		core::pose::Pose & pose,
+		std::string indicator_whether_from_MonteCarloAssemblyMover_or_ExhaustiveAssemblyMover
 	);
 
 	virtual

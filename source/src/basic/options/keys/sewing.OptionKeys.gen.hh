@@ -34,6 +34,12 @@ namespace sewing { extern IntegerOptionKey const min_loop_length; }
 namespace sewing { extern IntegerOptionKey const max_loop_length; }
 namespace sewing { extern IntegerOptionKey const min_strand_length; }
 namespace sewing { extern IntegerOptionKey const max_strand_length; }
+namespace sewing { extern BooleanOptionKey const model_should_have_at_least_one_E_at_terminal_segment; }
+namespace sewing { extern BooleanOptionKey const model_should_have_at_least_one_E; }
+namespace sewing { extern BooleanOptionKey const leave_models_with_E_terminal_ss; }
+namespace sewing { extern BooleanOptionKey const leave_antiparallel_way_H_bonded_models_by_terminal_strands_only; }
+namespace sewing { extern BooleanOptionKey const leave_parallel_way_H_bonded_models_by_terminal_strands_only; }
+namespace sewing { extern IntegerOptionKey const box_length; }
 namespace sewing { extern StringOptionKey const mode; }
 namespace sewing { extern IntegerOptionKey const num_models_to_dump; }
 namespace sewing { extern IntegerVectorOptionKey const models_to_dump; }
@@ -45,6 +51,7 @@ namespace sewing { extern IntegerOptionKey const max_models; }
 namespace sewing { extern IntegerOptionKey const starting_model; }
 namespace sewing { extern IntegerOptionKey const num_procs; }
 namespace sewing { extern IntegerOptionKey const rank; }
+namespace sewing { extern BooleanOptionKey const hash_tag_only_terminal_Es; }
 namespace sewing { extern StringOptionKey const assembly_type; }
 namespace sewing { extern IntegerOptionKey const num_edges_to_follow; }
 namespace sewing { extern RealOptionKey const base_native_bonus; }
@@ -53,6 +60,7 @@ namespace sewing { extern BooleanOptionKey const dump_pdbs; }
 namespace sewing { extern BooleanOptionKey const skip_refinement; }
 namespace sewing { extern BooleanOptionKey const skip_filters; }
 namespace sewing { extern RealOptionKey const min_motif_score; }
+namespace sewing { extern RealOptionKey const offset_bump_dsq; }
 namespace sewing { extern IntegerOptionKey const num_repeats; }
 namespace sewing { extern BooleanOptionKey const repeat; }
 namespace sewing { extern IntegerVectorOptionKey const pose_segment_starts; }
@@ -62,6 +70,8 @@ namespace sewing { extern FileOptionKey const partner_pdb; }
 namespace sewing { extern IntegerVectorOptionKey const keep_model_residues; }
 namespace sewing { extern IntegerOptionKey const min_lh_fragments; }
 namespace sewing { extern BooleanOptionKey const skip_loop_generation; }
+namespace sewing { extern IntegerOptionKey const max_ss_num; }
+namespace sewing { extern BooleanOptionKey const dump_every_model_for_devel_purpose; }
 
 } // namespace OptionKeys
 } // namespace options

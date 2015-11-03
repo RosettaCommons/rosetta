@@ -94,12 +94,21 @@ RequirementSet::satisfies(
 	AssemblyCOP assembly
 ) const {
 
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "assembly->segments().size(): " << assembly->segments().size() << std::endl;
+	}
+
 	if ( assembly->segments().size() < min_segments_ || assembly->segments().size() > max_segments_ ) {
+		TR.Debug << "return false: assembly->segments().size() not fit min/max segments" << std::endl;
 		return false;
 	}
 
 	for ( core::Size i=1; i<=global_requirements_.size(); ++i ) {
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "global_requirements_[i]->satisfies(assembly): " << global_requirements_[i]->satisfies(assembly) << std::endl;
+		}
 		if ( !global_requirements_[i]->satisfies(assembly) ) {
+			TR.Debug << "return false: global_requirements_[i]->satisfies(assembly)" << std::endl;
 			return false;
 		}
 	}
@@ -109,13 +118,22 @@ RequirementSet::satisfies(
 	IntraSegmentRequirementsMap::const_iterator intra_it_end = intra_segment_requirements_.end();
 
 	for ( ; intra_it != intra_it_end; ++intra_it ) {
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "intra_it->first: " << intra_it->first << std::endl;
+			TR.Debug << "segments.size(): " << segments.size() << std::endl;
+		}
 		if ( intra_it->first > segments.size() ) {
+			TR.Debug << "return false: intra_it->first > segments.size()" << std::endl;
 			return false;
 		}
 		SewSegment cur_segment = segments[intra_it->first];
 		utility::vector1<IntraSegmentRequirementOP> requirements = intra_it->second;
 		for ( core::Size i=1; i<=requirements.size(); ++i ) {
+			if ( TR.Debug.visible() ) {
+				TR.Debug << "requirements[i]->satisfies(cur_segment): " << requirements[i]->satisfies(cur_segment) << std::endl;
+			}
 			if ( !requirements[i]->satisfies(cur_segment) ) {
+				TR.Debug << "return false: !requirements[i]->satisfies(cur_segment)" << std::endl;
 				return false;
 			}
 		}

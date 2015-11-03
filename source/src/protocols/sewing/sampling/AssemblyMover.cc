@@ -137,7 +137,7 @@ AssemblyMover::apply( core::pose::Pose & pose ) {
 	core::Size starttime = time(NULL);
 	AssemblyOP assembly = generate_assembly();
 	if ( assembly == 0 ) {
-		TR << "Failed to generate an Assembly" << std::endl;
+		TR << "Failed to generate an Assembly (if this comes from ExhaustiveAssembly, this is actually a success, hopefully later I can better code this part)" << std::endl;
 		set_last_move_status(protocols::moves::FAIL_RETRY);
 		return;
 	}
@@ -159,13 +159,13 @@ AssemblyMover::apply( core::pose::Pose & pose ) {
 	}
 	TR << "Got Pose!" << std::endl;
 
-	output_stats(assembly, pose);
+	output_stats(assembly, pose, "from_MonteCarloAssemblyMover");
 	endtime = time(NULL);
 	TR << "Refined Assembly in " << endtime - starttime << " seconds" << std::endl;
 
 	//SUCCESS!
 	set_last_move_status(protocols::moves::MS_SUCCESS);
-}
+}//AssemblyMover::apply( core::pose::Pose & pose ) {
 
 
 void
@@ -190,7 +190,7 @@ AssemblyMover::add_starting_model(
 		assembly = pre_op_assembly;
 	}
 	utility_exit_with_message("Failed to find an initial model that satisfies requirements!");
-}
+}//AssemblyMover::add_starting_model(
 
 core::pose::Pose
 AssemblyMover::get_fullatom_pose(
@@ -199,24 +199,35 @@ AssemblyMover::get_fullatom_pose(
 	return assembly->to_pose(core::chemical::FA_STANDARD, false);
 }
 
-
+// not needed for MonteCarloAssemblyMover, but keep this
+// not needed for ExhaustiveAssemblyMover, but keep this
 bool
 AssemblyMover::follow_random_edge_from_node(
 	AssemblyOP assembly,
 	ModelNode const * reference_node
 ) const {
+
+	if ( TR.Debug.visible() ) { TR << "AssemblyMover::follow_random_edge_from_node " << std::endl;}
+
 	//Randomly permute the edges of the current node until we find one that
 	//satisfies all requirements
 	core::Size num_edges = reference_node->num_edges();
 	utility::vector1<core::Size> edge_order(num_edges);
 	for ( core::Size i = 0; i < num_edges; ++i ) {
+		//if(TR.Debug.visible()) { TR << "i: " << i << std::endl;}
 		edge_order[i+1]=i;
 	}
 	numeric::random::random_permutation(edge_order, numeric::random::rg());
 
 	for ( core::Size cur_edge_ind=1; cur_edge_ind<=num_edges; ++cur_edge_ind ) {
+		//if(TR.Debug.visible()) { TR << "cur_edge_ind: " << cur_edge_ind << std::endl;}
 		core::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
 		for ( core::Size j=0; j<edge_order[cur_edge_ind]; ++j ) {
+			//   if(TR.Debug.visible()) {
+			//    TR << "j: " << j << std::endl;
+			//    TR << "cur_edge_ind in 2nd for loop: " << cur_edge_ind << std::endl;
+			//    TR << "edge_order[cur_edge_ind]: " << edge_order[cur_edge_ind] << std::endl;
+			//   }
 			++edge_it;
 		}
 
@@ -233,7 +244,8 @@ AssemblyMover::follow_random_edge_from_node(
 	}
 	TR << "Failed to find any edges that satisfy all requirements, consider less strigent requirements!" << std::endl;
 	return false;
-}
+}//follow_random_edge_from_node
+
 
 core::pose::Pose
 AssemblyMover::get_centroid_pose(
@@ -289,79 +301,151 @@ AssemblyMover::refine_assembly(
 	//pose.energies().clear();
 
 	return pose;
-}
+}//refine_assembly
 
 void
 AssemblyMover::output_stats(
 	AssemblyOP const & assembly,
-	core::pose::Pose & pose
+	core::pose::Pose & pose,
+	std::string pdb_name // and indicator_whether_from_MonteCarloAssemblyMover_or_ExhaustiveAssemblyMover
 ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	TR << "Base class output stats!" << std::endl;
-
 	///Somehow, the energies object is getting totally F*#*%ed
 	pose.energies().structure_has_moved(true);
 
-	protocols::jd2::JobOP const job_me ( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	job_me->input_tag();
-	std::string const job_name ( protocols::jd2::JobDistributor::get_instance()->job_outputter()->output_name(job_me) );
+	if ( pdb_name == "from_MonteCarloAssemblyMover" ) {
 
-	/**************** Dump multi chain pose and NativeRotamersMap ******************/
-	//Dump the multichain pose
-	core::pose::Pose multi_chain_pose = assembly->to_multichain_pose(core::chemical::FA_STANDARD);
-	multi_chain_pose.dump_pdb(std::string(option[ OptionKeys::out::path::all ]())  + "/" + job_name+"_multichain.pdb");
+		TR << "Base class output stats!" << std::endl;
 
-	NativeRotamersMap nat_ro_map = assembly->generate_native_rotamers_map();
-	write_native_residue_file(nat_ro_map, std::string(option[ OptionKeys::out::path::all ]())  + "/" + job_name+".rot");
+		protocols::jd2::JobOP const job_me ( protocols::jd2::JobDistributor::get_instance()->current_job() );
+		job_me->input_tag();
+		std::string const job_name ( protocols::jd2::JobDistributor::get_instance()->job_outputter()->output_name(job_me) );
 
-	/************** Assembly-only Statistics ****************/
-	std::string path = assembly->string_path();
-	job_me->add_string_string_pair("path", path);
 
-	utility::vector1< std::pair< std::string, core::Real > > assembly_scores = assembly_scorefxn_->get_all_scores(assembly);
-	for ( core::Size i=1; i<=assembly_scores.size(); ++i ) {
-		job_me->add_string_real_pair(assembly_scores[i].first, assembly_scores[i].second);
-	}
 
-	/************** Centroid Statistics ****************/
+		/**************** Dump multi chain pose and NativeRotamersMap ******************/
+		//Dump the multichain pose
+		core::pose::Pose multi_chain_pose = assembly->to_multichain_pose(core::chemical::FA_STANDARD);
+		multi_chain_pose.dump_pdb(std::string(option[ OptionKeys::out::path::all ]())  + "/" + job_name+"_multichain.pdb");
 
-	//Report centroid score terms
-	core::pose::Pose cen_pose = get_centroid_pose(assembly);
-	cen_scorefxn_->score(cen_pose);
-	core::Real env_score = cen_pose.energies().total_energies()[core::scoring::cen_env_smooth];
-	core::Real rg_score = cen_pose.energies().total_energies()[core::scoring::rg];
-	core::Real pair_score = cen_pose.energies().total_energies()[core::scoring::cen_pair_smooth];
-	job_me->add_string_real_pair( "cen_env_smooth",  env_score );
-	job_me->add_string_real_pair( "cen_rg",  rg_score );
-	job_me->add_string_real_pair( "cen_pair_smooth",  pair_score );
+		NativeRotamersMap nat_ro_map = assembly->generate_native_rotamers_map();
+		write_native_residue_file(nat_ro_map, std::string(option[ OptionKeys::out::path::all ]())  + "/" + job_name+".rot");
 
-	/************** Full-Atom Statistics ****************/
 
-	//Write a residue-normalized score to the score file
-	job_me->add_string_real_pair( "nres", pose.total_residue());
-	job_me->add_string_real_pair( "norm_tot_score", fa_scorefxn_->score(pose)/pose.total_residue());
-	job_me->add_string_real_pair( "percent_native", assembly->percent_native(pose));
 
-	//Write RMS data to the score file by generating pose from the Assembly, and comparing it to the refined pose
-	core::pose::Pose unrefined_pose = get_fullatom_pose(assembly);
-	if ( unrefined_pose.total_residue() == pose.total_residue() ) {
-		core::Real rms = core::scoring::bb_rmsd_including_O(unrefined_pose, pose);
-		job_me->add_string_real_pair( "bb_rmsd",  rms );
-	} else {
-		TR << "NOT THE SAME NUMBER OF RESIDUES" << std::endl;
-		TR << "pose: " << pose.total_residue() << std::endl;
-		TR << "unrefined pose: " << unrefined_pose.total_residue() << std::endl;
-		core::Real rms = pose.total_residue() - unrefined_pose.total_residue();
-		job_me->add_string_real_pair( "bb_rmsd",  rms );
-	}
+		/************** Assembly-only Statistics ****************/
+		std::string path = assembly->string_path();
+		job_me->add_string_string_pair("path", path);
 
-	//Print a PyMOL selection for 'native' positions
-	TR << "Pymol select " << assembly->natives_select(pose, job_name) << std::endl;
+		utility::vector1< std::pair< std::string, core::Real > > assembly_scores = assembly_scorefxn_->get_all_scores(assembly);
+		for ( core::Size i=1; i<=assembly_scores.size(); ++i ) {
+			job_me->add_string_real_pair(assembly_scores[i].first, assembly_scores[i].second);
+		}
 
-}
+		/************** Centroid Statistics ****************/
+
+		//Report centroid score terms
+		core::pose::Pose cen_pose = get_centroid_pose(assembly);
+		cen_scorefxn_->score(cen_pose);
+		core::Real env_score = cen_pose.energies().total_energies()[core::scoring::cen_env_smooth];
+		core::Real rg_score = cen_pose.energies().total_energies()[core::scoring::rg];
+		core::Real pair_score = cen_pose.energies().total_energies()[core::scoring::cen_pair_smooth];
+		job_me->add_string_real_pair( "cen_env_smooth",  env_score );
+		job_me->add_string_real_pair( "cen_rg",  rg_score );
+		job_me->add_string_real_pair( "cen_pair_smooth",  pair_score );
+
+		/************** Full-Atom Statistics ****************/
+
+		//Write a residue-normalized score to the score file
+		job_me->add_string_real_pair( "nres", pose.total_residue());
+		job_me->add_string_real_pair( "norm_tot_score", fa_scorefxn_->score(pose)/pose.total_residue());
+		job_me->add_string_real_pair( "percent_native", assembly->percent_native(pose));
+
+		//Write RMS data to the score file by generating pose from the Assembly, and comparing it to the refined pose
+		core::pose::Pose unrefined_pose = get_fullatom_pose(assembly);
+		if ( unrefined_pose.total_residue() == pose.total_residue() ) {
+			core::Real rms = core::scoring::bb_rmsd_including_O(unrefined_pose, pose);
+			job_me->add_string_real_pair( "bb_rmsd",  rms );
+		} else {
+			TR << "NOT THE SAME NUMBER OF RESIDUES" << std::endl;
+			TR << "pose: " << pose.total_residue() << std::endl;
+			TR << "unrefined pose: " << unrefined_pose.total_residue() << std::endl;
+			core::Real rms = pose.total_residue() - unrefined_pose.total_residue();
+			job_me->add_string_real_pair( "bb_rmsd",  rms );
+		}
+
+		//Print a PyMOL selection for 'native' positions
+		TR << "Pymol select " << assembly->natives_select(pose, job_name) << std::endl;
+	} else { //if (pdb_name == "from_MonteCarloAssemblyMover"){ // when it is from ExhaustiveAssemblyMover
+
+		TR << "it is from ExhaustiveAssemblyMover!" << std::endl;
+
+		/**************** Dump multi chain pose and NativeRotamersMap ******************/
+		//Dump the multichain pose
+		core::pose::Pose multi_chain_pose = assembly->to_multichain_pose(core::chemical::FA_STANDARD);
+		multi_chain_pose.dump_pdb(pdb_name + "_multichain.pdb");
+
+		NativeRotamersMap nat_ro_map = assembly->generate_native_rotamers_map();
+		write_native_residue_file(nat_ro_map, pdb_name + ".rot");
+
+		//Report centroid score terms
+		//  core::pose::Pose cen_pose = get_centroid_pose(assembly);
+		//  cen_scorefxn_->score(cen_pose);
+		//  core::Real env_score = cen_pose.energies().total_energies()[core::scoring::cen_env_smooth];
+		//  core::Real rg_score = cen_pose.energies().total_energies()[core::scoring::rg];
+		//  core::Real pair_score = cen_pose.energies().total_energies()[core::scoring::cen_pair_smooth];
+		//
+		//  /************** Full-Atom Statistics ****************/
+
+		//Write a residue-normalized score to the score file
+		core::Real nres = pose.total_residue();
+		//  core::Real norm_tot_score = fa_scorefxn_->score(pose)/pose.total_residue();
+		//  core::Real percent_native = assembly->percent_native(pose);
+		//
+		//  //Write RMS data to the score file by generating pose from the Assembly, and comparing it to the refined pose
+		////  core::pose::Pose unrefined_pose = get_fullatom_pose(assembly);
+		////  if(unrefined_pose.total_residue() == pose.total_residue()) {
+		////   core::Real rms = core::scoring::bb_rmsd_including_O(unrefined_pose, pose);
+		////   core::Real bb_rmsd = rms;
+		//  }
+		//  else {
+		//   TR << "NOT THE SAME NUMBER OF RESIDUES" << std::endl;
+		//   TR << "pose: " << pose.total_residue() << std::endl;
+		//   TR << "unrefined pose: " << unrefined_pose.total_residue() << std::endl;
+		//   core::Real rms = pose.total_residue() - unrefined_pose.total_residue();
+		//   core::Real bb_rmsd = rms;
+		//  }
+
+		//Print a PyMOL selection for 'native' positions
+		TR << "Pymol select " << assembly->natives_select(pose, pdb_name) << std::endl;
+
+
+		///////// write individual score file
+
+		utility::io::ozstream individual_score_file;
+		std::string score_filename = pdb_name + ".score";
+		individual_score_file.open(score_filename);
+
+		utility::vector1< std::pair< std::string, core::Real > > assembly_scores = assembly_scorefxn_->get_all_scores(assembly);
+		for ( core::Size i=1; i<=assembly_scores.size(); ++i ) {
+			individual_score_file << assembly_scores[i].first << " ";
+			//job_me->add_string_real_pair(assembly_scores[i].first, assembly_scores[i].second);
+		}
+
+		individual_score_file << " nres assembly_name" << std::endl;
+
+		for ( core::Size i=1; i<=assembly_scores.size(); ++i ) {
+			individual_score_file << assembly_scores[i].second << " ";
+			//job_me->add_string_real_pair(assembly_scores[i].first, assembly_scores[i].second);
+		}
+
+		individual_score_file << nres << " " << pdb_name << std::endl;
+
+	}//when it is from ExhaustiveAssemblyMover
+}//output_stats
 
 
 void
@@ -509,11 +593,14 @@ AssemblyMover::parse_my_tag(
 	if ( tag->hasOption("model_file") && tag->hasOption("score_file") ) {
 		edge_file_ = tag->getOption<std::string>("score_file");
 		std::string model_file = tag->getOption<std::string>("model_file");
+		//model_file = tag->getOption<std::string>("model_file");
+		//TR << "model_file: " << model_file << std::endl;
 		models = read_model_file(model_file);
 	} else if ( option[basic::options::OptionKeys::sewing::score_file_name].user() &&
 			option[basic::options::OptionKeys::sewing::model_file_name].user() ) {
 		edge_file_ = option[basic::options::OptionKeys::sewing::score_file_name].value();
 		std::string model_file = option[basic::options::OptionKeys::sewing::model_file_name].value();
+		// TR << "model_file by option: " << model_file << std::endl;
 		models = read_model_file(model_file);
 	} else {
 		utility_exit_with_message("You must give a model file and score file to an AssemblyMover either through options or tags");

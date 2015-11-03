@@ -842,7 +842,8 @@ SandwichFeatures::parse_my_tag(
 	// definition: maximum allowable number of E residues in extracted sandwich loop
 	// usefulness: If used, it is useful to exclude [1LOQ] which is a beta-propeller
 
-	max_H_in_extracted_sw_loop_ = tag->getOption<core::Size>("max_H_in_extracted_sw_loop", 10);
+	//max_H_in_extracted_sw_loop_ = tag->getOption<core::Size>("max_H_in_extracted_sw_loop", 9);
+	max_H_in_extracted_sw_loop_ = tag->getOption<core::Size>("max_H_in_extracted_sw_loop", 100);
 	// definition: maximum allowable number of helix residues in extracted sandwich loop
 	// example: 0 would be ideal, but then only ~10% of sandwiches will be extracted among CATH classified sandwiches instead even when same_direction_strand linking sw is allowed!
 
@@ -1081,7 +1082,8 @@ SandwichFeatures::report_features(
 					pose, temp_strand_i, temp_strand_j, true,
 					min_CA_CA_dis_,
 					max_CA_CA_dis_,
-					min_C_O_N_angle_);
+					min_C_O_N_angle_,
+					false); //care_smaller_sheet
 				if ( return_of_find_sheet_antiparallel == 999 ) {
 					break;
 				}
@@ -1091,7 +1093,8 @@ SandwichFeatures::report_features(
 						pose, temp_strand_i, temp_strand_j, false,
 						min_CA_CA_dis_,
 						max_CA_CA_dis_,
-						min_C_O_N_angle_);
+						min_C_O_N_angle_,
+						true); //care_smaller_sheet for parallel search
 				}
 				if ( return_of_find_sheet_parallel == 999 ) { // since these two strands are too distant to each other, there is virtually no chance to be sheet!
 					break;
@@ -1147,7 +1150,8 @@ SandwichFeatures::report_features(
 							pose, temp_strand_i, temp_strand_j, true,
 							min_CA_CA_dis_,
 							max_CA_CA_dis_,
-							min_C_O_N_angle_);
+							min_C_O_N_angle_,
+							false); //care_smaller_sheet
 
 						if ( return_of_find_sheet_antiparallel == 999 ) {
 							break; // too distant strands
@@ -1159,7 +1163,8 @@ SandwichFeatures::report_features(
 								pose, temp_strand_i, temp_strand_j, false,
 								min_CA_CA_dis_,
 								max_CA_CA_dis_,
-								min_C_O_N_angle_);
+								min_C_O_N_angle_,
+								true); //care_smaller_sheet for parallel finding
 						}
 
 						if ( return_of_find_sheet_parallel == 999 ) {
@@ -1614,7 +1619,9 @@ SandwichFeatures::report_features(
 					}
 				}
 				if ( helix_num > max_H_in_extracted_sw_loop_ ) {
-					//TR << "helix_num > max_H_in_extracted_sw_loop_ " << endl;
+					if ( TR.Debug.visible() ) {
+						TR.Debug << "helix_num: " << helix_num << ", max_H_in_extracted_sw_loop_: " << max_H_in_extracted_sw_loop_ << std::endl;
+					}
 					bool_proper_num_helix_in_loop = false;
 				}
 				//////////// <end> check whether there is a helix as a loop in this extracted sandwich candidate

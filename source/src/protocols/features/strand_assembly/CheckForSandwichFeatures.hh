@@ -258,7 +258,8 @@ find_sheet (
 	bool antiparalell, // if false, try to find a sheet in parallel way
 	Real min_CA_CA_dis_,
 	Real max_CA_CA_dis_,
-	Real min_C_O_N_angle_
+	Real min_C_O_N_angle_,
+	bool care_smaller_sheet
 );
 
 vector<Size>

@@ -348,6 +348,10 @@ sources = {
 		"Interface",
 	],
 
+        "sewing" : [
+                "SewingHasherTests",
+        ],
+
 	"simple_filters" : [
 		"DdgFilter",
 		"DdGScan",
@@ -662,6 +666,7 @@ testinputfiles = [
 	"rigid/RotateJumpAxisMover_underspecified_jump.pdb",
 	"scoring/Interface.u",
 	"scoring/dock_in.pdb",
+        "sewing/inputs/basic_1ten_m8.db3",
 	"simple_moves/1bl0_auto.fasta.pssm",
 	"simple_moves/design.resfile",
 	"simple_moves/design2.resfile",

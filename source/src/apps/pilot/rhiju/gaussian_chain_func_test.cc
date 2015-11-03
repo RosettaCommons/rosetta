@@ -48,7 +48,7 @@ double_func_test( Distance const distance2  ){
 	// sweep through distance1.
 	std::cout << "-- GAUSSIAN_CHAIN_DOUBLE_FUNC --" << std::endl;
 	std::cout << "Fixing Distance2 at " << distance2 << std::endl;
-	for ( Size i = 1; i <= 20; i++ ){
+	for ( Size i = 1; i <= 20; i++ ) {
 		Distance const d = Real( i ) * 1.0;
 		std::cout << "Distance1 " << F(6,2,d) << "   FUNC_EXACT " << F(10,5,func2->func( d )) << " FUNC_APPROX " << F(10,5,func2_approx->func( d )) << " SINGLE_FUNC " << F(10,5,func1->func( d )) << std::endl;
 	}
@@ -73,7 +73,7 @@ triple_func_test( Distance const distance2, Distance const distance3  ){
 	// sweep through distance1.
 	std::cout << "-- GAUSSIAN_CHAIN_TRIPLE_FUNC --" << std::endl;
 	std::cout << "Fixing Distance2 at " << distance2 << ", Distance3 at " << distance3 << std::endl;
-	for ( Size i = 1; i <= 20; i++ ){
+	for ( Size i = 1; i <= 20; i++ ) {
 		Distance const d = Real( i ) * 1.0;
 		std::cout << "Distance1 " << F(6,2,d) << "   FUNC_EXACT " << F(10,5,func3->func( d )) << " FUNC_APPROX " << F(10,5,func3_approx->func( d )) << " DOUBLE_FUNC " << F(10,5,func2->func( d )) << " SINGLE_FUNC " << F(10,5,func1->func( d ) ) << std::endl;
 	}
@@ -89,8 +89,8 @@ quadruple_func_test( Distance const distance2, Distance const distance3, Distanc
 	other_distances.push_back( distance4 );
 
 	Real const gaussian_variance( 5.0 * 5.0 );
-	//	FuncOP func1( new GaussianChainFunc( gaussian_variance, loop_fixed_cost ) ); // single func
-	//	FuncOP func2( new GaussianChainFunc( gaussian_variance, loop_fixed_cost, make_vector1( distance2 ) ) );
+	// FuncOP func1( new GaussianChainFunc( gaussian_variance, loop_fixed_cost ) ); // single func
+	// FuncOP func2( new GaussianChainFunc( gaussian_variance, loop_fixed_cost, make_vector1( distance2 ) ) );
 	FuncOP func4( new GaussianChainFunc( gaussian_variance, loop_fixed_cost, other_distances ) );
 	GaussianChainFuncOP func4_approx( new GaussianChainFunc( gaussian_variance, loop_fixed_cost, other_distances ) );
 	func4_approx->set_force_combined_gaussian_approximation( true );
@@ -100,7 +100,7 @@ quadruple_func_test( Distance const distance2, Distance const distance3, Distanc
 	// sweep through distance1.
 	std::cout << "-- GAUSSIAN_CHAIN_QUADRUPLE_FUNC --" << std::endl;
 	std::cout << "Fixing Distance2 at " << distance2 << ", Distance3 at " << distance3  << ", Distance4 at " << distance4 << std::endl;
-	for ( Size i = 1; i <= 20; i++ ){
+	for ( Size i = 1; i <= 20; i++ ) {
 		Distance const d = Real( i ) * 1.0;
 		std::cout << "Distance1 " << F(6,2,d) << "   FUNC_EXACT " << F(10,5,func4->func( d )) << " FUNC_APPROX " << F(10,5,func4_approx->func( d )) << std::endl; //<< " DOUBLE_FUNC " << F(10,5,func2->func( d )) << " SINGLE_FUNC " << F(10,5,func1->func( d ) ) << std::endl;
 	}

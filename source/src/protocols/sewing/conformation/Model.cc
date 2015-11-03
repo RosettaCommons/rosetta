@@ -615,7 +615,193 @@ result_to_models(
 	cur_model.segments_.push_back(cur_segment);
 	models[cur_model.model_id_] = cur_model;
 	return models;
-}
+} //result_to_models // for original model with 3 secondary_structure_segments
+
+
+std::map< int, Model >
+result_to_five_ss_models(
+	cppdb::result res
+){
+	// As of 2015/10/26, this result_to_five_ss_models fn is not super-perfect, since some ~0.5% of model may have L at terminal segment.
+	// TR << "result_to_five_ss_models " << std::endl; // for now, just 5 ss
+	std::string input_tag, res_type, dssp;
+	int model_id;
+	core::Size struct_id, segment_id, seqpos, atomno;
+	//core::Real distance, hoist, packing, meridian, chi1, chi2, chi3, chi4, x, y, z;
+	core::Real chi1, chi2, chi3, chi4, x, y, z;
+
+	utility::vector1<int> residue_numbers;
+
+	std::map< int, Model > models;
+
+	bool first = true;
+	core::Size offset_of_model_id = -1; // due_to_different_struct_id or starting model_id
+	Model cur_model;
+	SewSegment cur_segment = SewSegment();
+	SewResidue cur_residue;
+	int new_model_id = 0; // initial value
+	int segment_id_count_in_each_model_id = 1; // intentional meaningful initial value
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "segment_id_count_in_each_model_id before res.next: " << segment_id_count_in_each_model_id << std::endl;
+	}
+
+	while ( res.next() ) {
+		//res >> input_tag >> struct_id >> model_id >> distance >> hoist >> packing >> meridian >> segment_id >> dssp >> res_type >> chi1 >> chi2 >> chi3 >> chi4 >> seqpos >> atomno >> x >> y >> z;
+		res >> input_tag >> struct_id >> model_id >> segment_id >> dssp >> res_type >> chi1 >> chi2 >> chi3 >> chi4 >> seqpos >> atomno >> x >> y >> z;
+
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "struct_id: " << struct_id << ", model_id: " << model_id << ", segment_id: " << segment_id << ", dssp: " << dssp << ", seqpos: " << seqpos << ", atomno: " << atomno << std::endl;
+			TR.Debug << "cur_segment.segment_id_: " << cur_segment.segment_id_ << std::endl;
+			TR.Debug << "segment_id_count_in_each_model_id before if statement: " << segment_id_count_in_each_model_id << std::endl;
+		}
+
+		if ( cur_segment.segment_id_ != 0 && segment_id != cur_segment.segment_id_ ) {
+			segment_id_count_in_each_model_id++;
+		}
+
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "segment_id_count_in_each_model_id after if statement: " << segment_id_count_in_each_model_id << std::endl;
+		}
+
+		if ( dssp != "L" && segment_id_count_in_each_model_id==3 ) {
+			int result = std::count( residue_numbers.begin(), residue_numbers.end(), seqpos );
+			if ( TR.Debug.visible() ) {
+				TR.Debug << "Number of seqpos in residue_numbers_vector: " << result << std::endl;
+				TR.Debug << std::endl;
+			}
+
+			if ( result > 3 ) {
+				continue;
+			}
+			residue_numbers.push_back(seqpos);
+		}
+
+		if ( TR.Debug.visible() ) {
+			TR.Debug << std::endl;
+		}
+
+		if ( segment_id_count_in_each_model_id==4 ) {
+			residue_numbers.clear();
+		}
+
+		if ( cur_model.structure_id_ != struct_id ) {
+			offset_of_model_id++;
+		}
+
+		core::Size remnant_after_model_id_divided_by_2 = model_id%2 ;
+
+		if ( remnant_after_model_id_divided_by_2 == 1 ) {
+			new_model_id = (model_id+1)/2 + offset_of_model_id;
+		} else {
+			new_model_id = (model_id)/2 + offset_of_model_id;
+		}
+
+		//new model
+		if ( new_model_id != cur_model.model_id_ ) {
+			if ( !first ) {
+				segment_id_count_in_each_model_id = 1;
+				cur_segment.residues_.push_back(cur_residue);
+				cur_model.segments_.push_back(cur_segment);
+				models[cur_model.model_id_] = cur_model;
+			} else {
+				first=false;
+			}
+
+			cur_model = Model();
+
+			cur_model.model_id_ = new_model_id;
+
+			cur_model.structure_id_ = struct_id;
+			cur_model.pdb_code_ = input_tag;
+			//   cur_model.distance_ = distance;
+			//   cur_model.hoist_angle_degrees_ = hoist;
+			//   cur_model.packing_angle_degrees_ = packing;
+			//   cur_model.meridian_angle_degrees_ = meridian;
+
+			cur_segment = SewSegment();
+
+			cur_segment.model_id_ = new_model_id;
+
+			cur_segment.segment_id_ = segment_id;
+			cur_segment.dssp_ = dssp[0];
+
+			cur_residue = SewResidue();
+			cur_residue.resnum_ = seqpos;
+			cur_residue.residue_type_ = res_type;
+			if ( chi1 != 0.0 ) {
+				cur_residue.chi_angles_.push_back(chi1);
+			}
+			if ( chi2 != 0.0 ) {
+				cur_residue.chi_angles_.push_back(chi2);
+			}
+			if ( chi3 != 0.0 ) {
+				cur_residue.chi_angles_.push_back(chi3);
+			}
+			if ( chi4 != 0.0 ) {
+				cur_residue.chi_angles_.push_back(chi4);
+			}
+		} else if ( segment_id != cur_segment.segment_id_ ) {
+			//new segment
+
+			cur_segment.residues_.push_back(cur_residue);
+			cur_model.segments_.push_back(cur_segment);
+
+			cur_segment = SewSegment();
+
+			cur_segment.model_id_ = new_model_id;
+
+			cur_segment.segment_id_ = segment_id;
+			cur_segment.dssp_ = dssp[0];
+
+			cur_residue = SewResidue();
+			cur_residue.resnum_ = seqpos;
+			cur_residue.residue_type_ = res_type;
+			if ( chi1 != 0.0 ) {
+				cur_residue.chi_angles_.push_back(chi1);
+			}
+			if ( chi2 != 0.0 ) {
+				cur_residue.chi_angles_.push_back(chi2);
+			}
+			if ( chi3 != 0.0 ) {
+				cur_residue.chi_angles_.push_back(chi3);
+			}
+			if ( chi4 != 0.0 ) {
+				cur_residue.chi_angles_.push_back(chi4);
+			}
+		} else if ( seqpos != cur_residue.resnum_ ) {
+			//new residue
+			cur_segment.residues_.push_back(cur_residue);
+
+			cur_residue = SewResidue();
+			cur_residue.resnum_ = seqpos;
+			cur_residue.residue_type_ = res_type;
+			if ( chi1 != 0.0 ) {
+				cur_residue.chi_angles_.push_back(chi1);
+			}
+			if ( chi2 != 0.0 ) {
+				cur_residue.chi_angles_.push_back(chi2);
+			}
+			if ( chi3 != 0.0 ) {
+				cur_residue.chi_angles_.push_back(chi3);
+			}
+			if ( chi4 != 0.0 ) {
+				cur_residue.chi_angles_.push_back(chi4);
+			}
+		}
+
+		SewAtom atom;
+		numeric::xyzVector<core::Real> coords(x,y,z);
+		atom.atomno_ = atomno;
+		atom.coords_ = coords;
+		cur_residue.basis_atoms_.push_back(atom);
+	} // while(res.next())
+
+	cur_segment.residues_.push_back(cur_residue);
+	cur_model.segments_.push_back(cur_segment);
+	models[cur_model.model_id_] = cur_model;
+	return models;
+} //result_to_five_ss_models // for new model definition with 5 secondary_structure_segments
 
 //std::map< int, Model >
 //get_discontinuous_models_from_db(){
@@ -691,7 +877,7 @@ get_discontinuous_models_from_db(){
 
 	TR << "Done selecting from database " << std::endl;
 	return result_to_models(res);
-}
+}//get_discontinuous_models_from_db
 
 std::map< int, Model >
 get_strand_sew_models_from_db(){
@@ -733,7 +919,7 @@ get_strand_sew_models_from_db(){
 
 	TR << "Done selecting from database " << std::endl;
 	return result_to_models(res);
-}
+} //get_strand_sew_models_from_db
 
 std::map< int, Model >
 get_continuous_models_from_db(){
@@ -763,6 +949,7 @@ get_continuous_models_from_db(){
 		"WHERE\n"
 		" coords.atomno IN (1,2,3,4) \n"
 		"ORDER BY s.struct_id, sm.smotif_id, ss.segment_id, coords.seqpos, coords.atomno;";
+
 	cppdb::statement select_stmt=basic::database::safely_prepare_statement(select_string, db_session);
 	cppdb::result res=basic::database::safely_read_from_database(select_stmt);
 
@@ -801,7 +988,74 @@ get_continuous_models_from_db(){
 	}
 
 	return models;
-}
+}//get_continuous_models_from_db
+
+
+
+
+std::map< int, Model >
+get_5_ss_models_from_db(std::string hash_between){
+
+	utility::sql_database::sessionOP db_session( basic::database::get_db_session() );
+
+	std::string select_string =
+		"SELECT s.input_tag, s.struct_id, sm.smotif_id as model_id,\n"
+		" ss.segment_id, ss.dssp,\n"
+		" r.res_type, prc.chi1, prc.chi2, prc.chi3, prc.chi4, coords.seqpos,\n"
+		" coords.atomno, coords.x, coords.y, coords.z\n"
+		"FROM smotifs sm\n"
+		"JOIN structures s ON\n"
+		"\tsm.struct_id = s.struct_id\n"
+		"JOIN secondary_structure_segments ss ON\n"
+		"\ts.struct_id = ss.struct_id AND\n"
+		" ss.segment_id IN (sm.secondary_struct_segment_id_1, sm.secondary_struct_segment_id_2, loop_segment_id)\n"
+		"JOIN residues r ON\n"
+		"\ts.struct_id = r.struct_id AND\n"
+		"\tr.resnum BETWEEN ss.residue_begin AND ss.residue_end\n"
+		"JOIN residue_atom_coords coords ON\n"
+		"\ts.struct_id = coords.struct_id AND\n"
+		"\tr.resnum = coords.seqpos\n"
+		"JOIN protein_residue_conformation prc ON\n"
+		"\ts.struct_id = prc.struct_id AND\n"
+		"\tr.resnum = prc.seqpos\n"
+		"WHERE\n"
+		" coords.atomno IN (1,2,3,4) \n"
+		"ORDER BY s.struct_id, sm.smotif_id, ss.segment_id, coords.seqpos, coords.atomno;";
+
+	cppdb::statement select_stmt=basic::database::safely_prepare_statement(select_string, db_session);
+	cppdb::result res=basic::database::safely_read_from_database(select_stmt);
+
+	// for new model definition with 5 secondary_structure_segments
+	std::map< int, Model > models_w_5_sss = result_to_five_ss_models(res);
+
+
+	////////////// for models_w_5_sss
+	//Now make sure we aren't hashing the linker segments
+	std::map< int, Model >::iterator it_5 = models_w_5_sss.begin();
+	std::map< int, Model >::iterator it_end_5 = models_w_5_sss.end();
+	for ( ; it_5 != it_end_5; ++it_5 ) {
+		Model & cur_model = it_5->second;
+		for ( core::Size i=1; i <= cur_model.segments_.size(); ++i ) {
+			if ( TR.Debug.visible() ) {
+				TR.Debug << "hash_between: " << hash_between << std::endl;
+			}
+			if ( hash_between == "hash_between_any_HEs" ) {
+				if ( ((i != 1) && (i != cur_model.segments_.size()))
+						|| ((cur_model.segments_[i].dssp_) == 'L') ) {
+					cur_model.segments_[i].hash_ = false;
+				}
+			} else { // (hash_between == "hash_tag_only_terminal_Es")
+				if ( ((i != 1) && (i != cur_model.segments_.size()))
+						|| ((cur_model.segments_[i].dssp_) != 'E') ) {
+					cur_model.segments_[i].hash_ = false;
+				}
+			}
+		}
+	}
+
+	return models_w_5_sss;
+} //get_5_ss_models_from_db
+
 
 ///Will only work for smotif models!!!
 void
@@ -810,7 +1064,6 @@ remove_models_from_dssp(
 	char dssp1,
 	char dssp2
 ) {
-
 	std::set<int> invalid_model_ids;
 	std::map< int, Model >::iterator it = models.begin();
 	std::map< int, Model >::iterator it_end = models.end();
@@ -830,7 +1083,7 @@ remove_models_from_dssp(
 	for ( ; remove_it != remove_it_end; ++remove_it ) {
 		models.erase(models.find(*remove_it));
 	}
-}
+}//remove_models_from_dssp
 
 void
 add_num_neighbors(
@@ -992,7 +1245,7 @@ add_linker_segments(
 		cur_model.segments_.insert(cur_model.segments_.end(), linker_segments.begin(), linker_segments.end());
 	}
 	TR << "Done adding extra segment" << std::endl;
-}
+}//add_linker_segments
 
 //New function for beta-alpha-beta models -- unfinished
 std::map< int, Model >
@@ -1060,7 +1313,7 @@ get_alpha_beta_models_from_db(){
 	}
 
 	return models;
-}
+}//get_alpha_beta_models_from_db
 
 struct segment{
 	core::Size struct_id;
@@ -1159,7 +1412,7 @@ create_alpha_beta_models_table(){
 	}
 
 	TR << "Done creating new database table" << std::endl;
-}
+}//create_alpha_beta_models_table
 
 
 void
@@ -1310,9 +1563,11 @@ read_model_file(
 					curr_model.segments_.add_connection(i, j);
 				}
 			}
-			if ( curr_model.segments_[1].residues_.size() <= 1 || curr_model.segments_[3].residues_.size() <= 1
-					|| curr_model.segments_[2].residues_.size() <= 1 ) {
+
+			if ( curr_model.segments_[i].residues_.size() <= 1 ) {
+				// if any segment in a model is constitued with less than 2 residues, then don't care this model, if cared, it will crash generating too high atom numbers
 				invalid_model_ids.insert(curr_model.model_id_);
+				continue;
 			}
 		}
 	}
@@ -1327,7 +1582,8 @@ read_model_file(
 	TR << "Read " << models.size() << " models in " << endttime - starttime << " seconds" << std::endl;
 
 	return models;
-}
+} //read_model_file
+
 
 core::Size
 Model::pose_number(
@@ -1344,7 +1600,7 @@ Model::pose_number(
 	}
 	utility_exit_with_message("No residue " + utility::to_string(resnum) + " in model with ID " + utility::to_string(model_id_));
 	return 0;
-}
+}//pose_number
 
 } //sewing namespace
 } //protocols namespace

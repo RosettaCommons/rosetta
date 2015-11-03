@@ -837,6 +837,9 @@ sources = {
 	"pilot/thermo" : [
 		#"metropolis_hastings"
 	],
+	"pilot/tjacobs" : [
+                "ModelTrimmer",
+        ],
 	"pilot/tseng" : [
 		#"tseng_minimize", # /* ????,Documentation Location,Demo Location */
 	],

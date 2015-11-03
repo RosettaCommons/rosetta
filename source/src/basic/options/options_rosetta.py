@@ -6330,6 +6330,13 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option('max_loop_length','Integer', desc="Loops greater than supplied length will be removed from model file", default='1000'),
 			Option('min_strand_length','Integer', desc="Strands less than supplied length will be removed from model file", default='0'),
 			Option('max_strand_length','Integer', desc="Strands greater than supplied length will be removed from model file", default='1000'),
+			Option('model_should_have_at_least_one_E_at_terminal_segment','Boolean', desc="model_should_have_at_least_one_E_at_terminal_segment", default='false'),
+			Option('model_should_have_at_least_one_E','Boolean', desc="model_should_have_at_least_one_E", default='false'),
+			Option('leave_models_with_E_terminal_ss','Boolean', desc="leave only models_with_E_terminal_ss", default='false'),
+			Option('leave_antiparallel_way_H_bonded_models_by_terminal_strands_only','Boolean', desc="leave only anti-pa H_bonded_models by_terminal_strands", default='false'),
+			Option('leave_parallel_way_H_bonded_models_by_terminal_strands_only','Boolean', desc="leave only pa H_bonded_models by_terminal_strands", default='false'),
+			Option('box_length','Integer', desc="Neighborhood lookup box size, 3 for 27 boxes, 4 for 64 boxes etc",default='3'),
+
 
             ##SewingHasher and ModelDumper options
             Option( 'mode', 'String',
@@ -6348,6 +6355,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
             Option('starting_model','Integer', desc="Starting model for hashing"),
             Option('num_procs','Integer', desc="Number of processors to split up hashing with"),
             Option('rank','Integer', desc="The processor rank for this process"),
+						Option('hash_tag_only_terminal_Es','Boolean', desc="hash_tag_only_terminal_Es",default='false'),
 
             ##Base AssemblyMover options
             Option('assembly_type','String', desc="Type of Assembly class to generate", default='continuous'),
@@ -6358,6 +6366,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
             Option('skip_refinement','Boolean', desc="Should you refine the final assembly", default='false'),
             Option('skip_filters','Boolean', desc="Should the Assembly be filtered before refinment", default='false'),
             Option('min_motif_score','Real',desc="Minimum allowable motif score", default='20'),
+
+						##ClashScore options
+            Option('offset_bump_dsq','Real', desc="offset to bump_dsq", default='0'),
 
             ##RepeatAssembly options
             Option('num_repeats','Integer', desc="Number of repeats to print in final structures", default='3'),
@@ -6374,6 +6385,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
             Option('min_lh_fragments','Integer', desc="Minimium number of LoopHash fragments necessary for each designed loop", default='10'),
             Option('skip_loop_generation','Boolean', desc="Should you skip generation of loops", default='false'),
 
+						##ExhaustiveAssemblyMover options
+						Option('max_ss_num','Integer', desc="max_ss_num", default='5'),
+						Option('dump_every_model_for_devel_purpose','Boolean', desc="dump_every_model_for_devel_purpose", default='false'),
 	), # -sewing
 
 	Option_Group( 'SSrbrelax',

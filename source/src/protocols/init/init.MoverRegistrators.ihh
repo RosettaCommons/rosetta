@@ -433,6 +433,7 @@ static protocols::moves::MoverRegistrator< sewing::MonteCarloAssemblyMoverCreato
 static protocols::moves::MoverRegistrator< sewing::AssemblyConstraintsMoverCreator > reg_AssemblyConstraintsMoverCreator;
 static protocols::moves::MoverRegistrator< sewing::AddStartnodeFragmentsCreator > reg_AddStartnodeFragmentsCreator;
 static protocols::moves::MoverRegistrator< sewing::RepeatAssemblyMoverCreator > reg_RepeatAssemblyMoverCreator;
+static protocols::moves::MoverRegistrator< sewing::ExhaustiveAssemblyMoverCreator > reg_ExhaustiveAssemblyMoverCreator;
 
 static MoverRegistrator< symmetric_docking::membrane::MPSymDockMoverCreator > reg_MPSymDockMoverCreator;
 

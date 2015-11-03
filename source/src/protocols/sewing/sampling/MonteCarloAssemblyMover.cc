@@ -80,6 +80,8 @@ MonteCarloAssemblyMover::MonteCarloAssemblyMover():
 	cycles_(10000),
 	max_temperature_(0.10),
 	min_temperature_(0.05),
+	min_assembly_score_(-2.0),
+	use_best_assembly_score_(true),
 	add_probability_(0.05),
 	delete_probability_(0.005),
 	switch_probability_(0.8)
@@ -87,6 +89,7 @@ MonteCarloAssemblyMover::MonteCarloAssemblyMover():
 
 AssemblyOP
 MonteCarloAssemblyMover::generate_assembly(){
+	// TR << "MonteCarloAssemblyMover::generate_assembly()" << std::endl;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -158,10 +161,15 @@ MonteCarloAssemblyMover::generate_assembly(){
 
 		//Add operation
 		if ( random_action < current_add_probability ) {
-			if ( TR.Debug.visible() ) { TR.Debug << "ADD EDGE" << std::endl; }
+			if ( TR.Debug.visible() ) {
+				TR.Debug << std::endl;
+				TR.Debug << "ADD EDGE" << std::endl;
+			}
 			if ( !add_edge(pre_op_assembly, pre_op_assembly_list, working_assembly, assembly_list) ) {
+				if ( TR.Debug.visible() ) { TR.Debug << "add_edge fails" << std::endl; }
 				continue;
 			}
+
 			append_movie_frame(working_assembly, cur_cycle);
 		} else if ( random_action < (current_add_probability + current_delete_probability) ) {
 			//Delete operation
@@ -172,6 +180,7 @@ MonteCarloAssemblyMover::generate_assembly(){
 			//Switch operation
 			if ( TR.Debug.visible() ) { TR.Debug << "SWITCH EDGE" << std::endl; }
 			if ( !switch_edge(pre_op_assembly, pre_op_assembly_list, working_assembly, assembly_list) ) {
+				if ( TR.Debug.visible() ) { TR.Debug << "switch_edge fails" << std::endl; }
 				continue;
 			}
 			boltzman(
@@ -191,32 +200,63 @@ MonteCarloAssemblyMover::generate_assembly(){
 	core::Size endtime = time(NULL);
 	TR << "Completed " << cur_cycle << " cycles (" << total_attempts_counter << " total attempts) in " << endtime - starttime << " seconds" << std::endl;
 	return best_complete_assembly;
-}
+} //generate_assembly
+
 
 ///@details If we haven't added an edges yet, pick a random node to start from. Otherwise
-///Pick a random node from the currently assembly that has the ability to have edges built
+///Pick a random node from the current assembly that has the ability to have edges built
 ///from it. This method returns true if an edge was added, false if we couldn't add an edge
 ///either due to no edges being in the graph, or no edges satisfying requirements.
 bool
 MonteCarloAssemblyMover::add_edge(
 	AssemblyOP const & pre_op_assembly,
 	utility::vector1<AssemblyOP> const & pre_op_assembly_list,
-	AssemblyOP & assembly,
+	AssemblyOP & assembly, //working_assembly
 	utility::vector1<AssemblyOP> & assembly_list
 ) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	assembly_list.push_back(assembly->clone());
+	if ( TR.Debug.visible() ) { TR << "MonteCarloAssemblyMover::add_edge" << std::endl;}
+
+	assembly_list.push_back(assembly->clone()); // so working_assembly will be pushed back to this assembly_list
+	if ( TR.Debug.visible() ) { TR.Debug << "assembly_list.size(): " << assembly_list.size() << std::endl; }
 	if ( assembly_list.size() == 1 ) {
 		add_starting_model(assembly);
 		return true;
 	} else {
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "assembly->get_next_reference_node(graph_): " << assembly->get_next_reference_node(graph_) << std::endl;
+			// so it turns out that assembly->get_next_reference_node(graph_) is not model_id!
+		}
+
 		ModelNode const * reference_node = graph_->get_model_node(assembly->get_next_reference_node(graph_));
+
+
+
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "edge_file_: " << edge_file_ << std::endl;
+			TR.Debug << "node_id in other word, reference_node->get_node_index(): " << reference_node->get_node_index() << std::endl;
+		}
+
+		if ( TR.Debug.visible() ) { TR.Debug << "before add_edges_from_binary " << std::endl; }
+
 		graph_->add_edges_from_binary(edge_file_, reference_node->get_node_index());
+		// the 2nd parameter reference_node->get_node_index()
+
+
+		if ( TR.Debug.visible() ) { TR.Debug << "after add_edges_from_binary " << std::endl; }
+
+
 
 		//if there are no edges from this node then this ADD_EDGE operation is a no-op
 		core::Size num_edges = reference_node->num_edges();
+
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "num_edges: " << num_edges << std::endl;
+		}
+
+		/// num_edges: the number of edges incident on this node, which may include a loop edge
 		if ( num_edges == 0 ) {
 			assembly = pre_op_assembly;
 			assembly_list = pre_op_assembly_list;
@@ -256,11 +296,13 @@ MonteCarloAssemblyMover::add_edge(
 			return false;
 		}
 
-
 		assembly->follow_edge(graph_, cur_edge, reference_node->get_node_index());
+
+		if ( TR.Debug.visible() ) { TR.Debug << "return true in add_edge" << std::endl; }
+
 		return true;
 	}
-}
+} //add_edge
 
 
 
@@ -273,6 +315,8 @@ MonteCarloAssemblyMover::delete_edge(
 ) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+
+	if ( TR.Debug.visible() ) { TR << "MonteCarloAssemblyMover::delete_edge" << std::endl;}
 
 	//If we've added edges, simply go back to the
 	if ( assembly_list.size() > 0 ) {
@@ -329,22 +373,58 @@ MonteCarloAssemblyMover::boltzman(
 	core::Real const boltz_factor =  -score_delta / temperature_;
 	core::Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
 
+	if ( TR.Debug.visible() ) {
+		TR << "min_temperature_: " << min_temperature_ << std::endl;
+		TR << "max_temperature_: " << max_temperature_ << std::endl;
+		TR << "temperature_: " << temperature_ << std::endl;
+	}
+
+
+	// if(TR.Debug.visible()) {
+	//  if (working_assembly->segments().size() > 5){
+	//
+	//   std::string seg_tag = utility::to_string(working_assembly->segments().size());
+	//
+	//   //Dump the full pose
+	//   core::pose::Pose to_be_dumped_full_pose_indirct = get_fullatom_pose(working_assembly);
+	//   to_be_dumped_full_pose_indirct.dump_pdb( seg_tag + "_segments_long_assembly_full_from_to_pose_indirectly_called.pdb" );
+	//
+	//   core::pose::Pose to_be_dumped_full_pose = working_assembly->to_pose(core::chemical::FA_STANDARD);
+	//   to_be_dumped_full_pose.dump_pdb( seg_tag + "_segments_long_assembly_full_from_to_pose_directly_called.pdb" );
+	//
+	//   //Dump the multichain pose
+	//   core::pose::Pose multi_chain_pose = working_assembly->to_multichain_pose(core::chemical::FA_STANDARD);
+	//   multi_chain_pose.dump_pdb( seg_tag + "_segments_long_assembly_multichain.pdb");
+	//
+	//   utility_exit_with_message("just dumped working_assembly as a pdb");
+	//  }
+	// }
 
 	//Accept
 	if ( numeric::random::rg().uniform() < probability ) {
 		if ( TR.Debug.visible() ) {
-			TR.Debug << "ACCEPTING " << " " << pre_op_assembly->segments().size() << " segments to " << working_assembly->segments().size() <<
+			TR.Debug << "ACCEPTING " << " " << pre_op_assembly->segments().size() << " segments to " << working_assembly->segments().size() << " segments " <<
 				" ( " << old_score << " -> " << score << " ) at temp " << temperature_ << std::endl;
 			append_movie_frame(working_assembly, cur_cycle);
 		}
 
-		//If this is our best completed assembly, then save it
-		if ( requirement_set_->satisfies(working_assembly) && score < best_score ) {
-			if ( TR.Debug.visible() ) {
-				TR.Debug << "SAVING BEST" << std::endl;
+		if ( use_best_assembly_score_ ) { // default behavior in Tim's era
+			//If this is our best completed assembly, then save it
+			if ( requirement_set_->satisfies(working_assembly) && score < best_score ) {
+				if ( TR.Debug.visible() ) {
+					TR.Debug << "SAVING BEST" << std::endl;
+				}
+				best_complete_assembly = working_assembly->clone();
+				best_score = score;
 			}
-			best_complete_assembly = working_assembly->clone();
-			best_score = score;
+		} else {
+			if ( requirement_set_->satisfies(working_assembly) && score < min_assembly_score_ ) {
+				if ( TR.Debug.visible() ) {
+					TR.Debug << "SAVING current backbone since (assembly_score: " << score << ") < (min_assembly_score: " << min_assembly_score_ << ")" << std::endl;
+				}
+				best_complete_assembly = working_assembly->clone();
+			}
+
 		}
 
 	} else { //Reject
@@ -356,7 +436,7 @@ MonteCarloAssemblyMover::boltzman(
 		working_assembly = pre_op_assembly;
 		assembly_list = pre_op_assembly_list;
 	}
-}
+} //boltzman
 
 
 void
@@ -389,6 +469,13 @@ MonteCarloAssemblyMover::parse_my_tag(
 	if ( tag->hasOption("max_temperature") ) {
 		max_temperature_ = tag->getOption<core::Real>("max_temperature");
 	}
+	if ( tag->hasOption("min_assembly_score") ) {
+		min_assembly_score_ = tag->getOption<core::Real>("min_assembly_score"); // for Doonam's a/b design, -2.0 is recommended
+	}
+	if ( tag->hasOption("use_best_assembly_score") ) {
+		use_best_assembly_score_ = tag->getOption<bool>("use_best_assembly_score");
+	}
+
 }
 
 } //sewing

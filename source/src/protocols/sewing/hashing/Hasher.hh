@@ -46,6 +46,12 @@
 #include <set>
 
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/sewing.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
+
+
 namespace protocols {
 namespace sewing  {
 
@@ -198,7 +204,8 @@ public:
 		Model const & m1,
 		SewResidue const & m1_basis,
 		Model const & m2,
-		SewResidue const & m2_basis
+		SewResidue const & m2_basis,
+		core::Size box_length
 	);
 
 	///@brief Insert this model into the hash table
@@ -214,7 +221,8 @@ public:
 		core::Size min_segment_score,
 		core::Size max_clash_score,
 		std::set<core::Size> const & score_segments,
-		bool store_atoms
+		bool store_atoms,
+		core::Size box_length
 	) const;
 
 	///@brief Score the given model against the models in the hash table
@@ -224,12 +232,23 @@ public:
 		core::Size num_segment_matches,
 		core::Size min_segment_score,
 		core::Size max_clash_score,
-		bool store_atoms
+		bool store_atoms,
+		core::Size box_length
 	) const;
 
 	///@brief
 	void
 	score_basis(
+		ScoreResults & alignment_scores,
+		Model const & transformed_model,
+		SewResidue const & basis_residue,
+		bool store_atoms
+	) const;
+
+	//new
+	///@brief
+	void
+	score_basis_125(
 		ScoreResults & alignment_scores,
 		Model const & transformed_model,
 		SewResidue const & basis_residue,
@@ -270,6 +289,16 @@ public:
 	neighborhood_lookup(
 		HashKey const & key,
 		utility::fixedsizearray1<HashMap::const_iterator, 27> & hit_its
+	) const;
+
+	// new with box_length
+	///@brief retrive hits from the bin corresponding to the key (3D voxel) and all neighboring
+	///quarter-angstrom bins
+	//utility::vector1<HashValue>
+	void
+	neighborhood_lookup_125(
+		HashKey const & key,
+		utility::fixedsizearray1<HashMap::const_iterator, 125> & hit_its
 	) const;
 
 	///@brief Transform all features to the local coordinate frame of the basis set

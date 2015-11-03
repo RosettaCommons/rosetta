@@ -423,6 +423,7 @@
 #include <protocols/sewing/sampling/AddStartnodeFragmentsCreator.hh>
 #include <protocols/sewing/sampling/AssemblyConstraintsMover.hh>
 #include <protocols/sewing/sampling/RepeatAssemblyMoverCreator.hh>
+#include <protocols/sewing/sampling/ExhaustiveAssemblyMoverCreator.hh>
 
 #include <protocols/symmetric_docking/membrane/MPSymDockMoverCreator.hh>
 

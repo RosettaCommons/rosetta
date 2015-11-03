@@ -45,8 +45,7 @@ calculate_dihedral_w_4_resnums(
 	Size res1_sheet_i,
 	Size res2_sheet_i,
 	Size res1_sheet_j,
-	Size res2_sheet_j)
-{
+	Size res2_sheet_j){
 	Real arr_dis_inter_sheet [4];
 	arr_dis_inter_sheet[0] = pose.residue(res1_sheet_i).atom("CA").xyz().distance(pose.residue(res1_sheet_j).atom("CA").xyz());
 	arr_dis_inter_sheet[1] = pose.residue(res1_sheet_i).atom("CA").xyz().distance(pose.residue(res2_sheet_j).atom("CA").xyz());
@@ -100,34 +99,26 @@ cal_dis_angle_to_find_sheet(
 	Size res_i_2,
 	Size res_j_0,
 	Size res_j_1,
-	Size res_j_2)
-{
+	Size res_j_2){
 	Real dis_CA_CA_0_0 = pose.residue(res_i_0).atom("CA").xyz().distance(pose.residue(res_j_0).atom("CA").xyz());
-
 	Vector const& first_0_xyz    ( pose.residue(res_i_0).xyz("C") );
 	Vector const& middle_0_xyz   ( pose.residue(res_i_0).xyz("O") );
 	Vector const& third_0_xyz    ( pose.residue(res_j_0).xyz("N") );
 	Real angle_C_O_N_0_0 = numeric::angle_degrees(first_0_xyz, middle_0_xyz, third_0_xyz);
 
-
 	Real dis_CA_CA_1_1 = pose.residue(res_i_1).atom("CA").xyz().distance(pose.residue(res_j_1).atom("CA").xyz());
-
 	Vector const& first_1_xyz    ( pose.residue(res_i_1).xyz("C") );
 	Vector const& middle_1_xyz   ( pose.residue(res_i_1).xyz("O") );
 	Vector const& third_1_xyz    ( pose.residue(res_j_1).xyz("N") );
 	Real angle_C_O_N_1_1 = numeric::angle_degrees(first_1_xyz, middle_1_xyz, third_1_xyz);
 
-
 	Real dis_CA_CA_2_2 = pose.residue(res_i_2).atom("CA").xyz().distance(pose.residue(res_j_2).atom("CA").xyz());
-
 	Vector const& first_2_xyz    ( pose.residue(res_i_2).xyz("C") );
 	Vector const& middle_2_xyz   ( pose.residue(res_i_2).xyz("O") );
 	Vector const& third_2_xyz    ( pose.residue(res_j_2).xyz("N") );
 	Real angle_C_O_N_2_2 = numeric::angle_degrees(first_2_xyz, middle_2_xyz, third_2_xyz);
 
-
 	vector<Real> dis_angle_inter_strands;
-
 	dis_angle_inter_strands.push_back ( dis_CA_CA_0_0 );
 	dis_angle_inter_strands.push_back ( dis_CA_CA_1_1 );
 	dis_angle_inter_strands.push_back ( dis_CA_CA_2_2 );
@@ -146,8 +137,7 @@ cal_min_avg_dis_between_sheets_by_cen_res (
 	sessionOP db_session,
 	Pose & dssp_pose,
 	utility::vector1<Size> all_distinct_sheet_ids,
-	Size min_num_strands_in_sheet_)
-{
+	Size min_num_strands_in_sheet_){
 	Real min_dis_between_sheets_by_cen_res = 0;
 	Real avg_dis_between_sheets_by_cen_res = 0;
 	int appropriate_sheet_num = 0;
@@ -869,7 +859,7 @@ check_sw_by_dis(
 	Pose const & pose,
 	SandwichFragment strand_i,
 	SandwichFragment strand_j,
-	bool antiparalell, // if false, find parallel way
+	bool antiparallel, // if false, find parallel way
 	Real min_sheet_dis_,
 	Real max_sheet_dis_
 )
@@ -888,7 +878,7 @@ check_sw_by_dis(
 		for ( Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
 			Size j_resnum = strand_j.get_start()+strand_j_res;
 
-			if ( antiparalell ) {
+			if ( antiparallel ) {
 				i_resnum_1 = i_resnum+1;
 				j_resnum_1 = j_resnum-1;
 
@@ -1700,17 +1690,24 @@ find_sheet(
 	Pose const & pose,
 	SandwichFragment strand_i,
 	SandwichFragment strand_j,
-	bool antiparalell, // if 'false', find a sheet in parallel way
+	bool antiparallel, // if 'false', find a sheet in parallel way
 	Real min_CA_CA_dis_,
 	Real max_CA_CA_dis_,
-	Real min_C_O_N_angle_
-)
-{
+	Real min_C_O_N_angle_,
+	bool care_smaller_sheet
+){
 	// seeing distances between 'O' of strand "i" and 'N' of strand "j"
 	for ( Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
 		Size i_resnum = strand_i.get_start()+strand_i_res;
 		for ( Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
 			Size j_resnum = strand_j.get_start()+strand_j_res;
+
+			if ( TR.Debug.visible() ) {
+				TR.Debug << std::endl << "i_resnum: " << i_resnum << std::endl;
+				TR.Debug << "j_resnum: " << j_resnum << std::endl;
+				TR.Debug << "see whether these two strands can become a sheet " << std::endl;
+			}
+
 			Real dis_CA_CA_0_0 = 0; // just initial assignment of value
 			Real dis_CA_CA_1_1 = 0;
 			Real dis_CA_CA_2_2 = 0;
@@ -1720,16 +1717,24 @@ find_sheet(
 			Real angle_C_O_N_2_2 = 0; // just initial assignment of value
 
 			if ( strand_i.get_size() == 2 || strand_j.get_size() == 2 ) {
-				if ( antiparalell ) {
+				if ( antiparallel ) {
 					if ( i_resnum+1 > strand_i.get_end() || j_resnum-1 < strand_j.get_start() ) {
 						continue; // I want to extract strand_pairs with only given ranges
 					}
 					dis_CA_CA_0_0 = pose.residue(i_resnum).atom("CA").xyz().distance(pose.residue(j_resnum).atom("CA").xyz());
 					// TR.Info << "distance between resnum("<< i_resnum << ")'s N and resnum(" << j_resnum << ")'s O = " << dis_N_O << endl;
 					dis_CA_CA_1_1 = pose.residue(i_resnum+1).atom("CA").xyz().distance(pose.residue(j_resnum-1).atom("CA").xyz());
-				} else { // find a sheet in a parallel way
+				} else {
+					// find a sheet in a parallel way
 					if ( i_resnum+1 > strand_i.get_end() || j_resnum+1 > strand_j.get_end() ) {
-						continue; // I want to extract strand_pairs with only given ranges
+						if ( TR.Debug.visible() ) {
+							TR.Debug << "i_resnum+1: " << i_resnum+1 << std::endl;
+							TR.Debug << "strand_i.get_end(): " << strand_i.get_end() << std::endl;
+							TR.Debug << "j_resnum+1: " << j_resnum+1 << std::endl;
+							TR.Debug << "strand_j.get_end(): " << strand_j.get_end() << std::endl;
+							TR.Debug << "I want to extract strand_pairs with only given ranges" << std::endl;
+						}
+						continue;
 					}
 
 					dis_CA_CA_0_0 = pose.residue(i_resnum).atom("CA").xyz().distance(pose.residue(j_resnum).atom("CA").xyz());
@@ -1738,17 +1743,21 @@ find_sheet(
 				}
 
 				if ( dis_CA_CA_0_0 > 40 ) {
+					if ( TR.Debug.visible() ) {
+						TR << "dis_CA_CA_0_0: " << dis_CA_CA_0_0 << std::endl;
+					}
 					return 999; // since these two strands are too distant to each other, there is virtually no chance to be sheet!
 				}
 
-				if (
-						(dis_CA_CA_0_0 >= min_CA_CA_dis_ && dis_CA_CA_0_0 <= max_CA_CA_dis_)
-						&& (dis_CA_CA_1_1 >= min_CA_CA_dis_ && dis_CA_CA_1_1 <= max_CA_CA_dis_)
-						) {
-					return 1; //  may have kinkness or not
+				if ( (dis_CA_CA_0_0 >= min_CA_CA_dis_ && dis_CA_CA_0_0 <= max_CA_CA_dis_)
+						&& (dis_CA_CA_1_1 >= min_CA_CA_dis_ && dis_CA_CA_1_1 <= max_CA_CA_dis_) ) {
+					return 1; //  may have kinkness or not, but these strands can be part of one sheet
 				}
 			} else { // strand_i.get_size() >= 3 && strand_j.get_size() >= 3)
-				if ( antiparalell ) { // find a sheet in an anti-parallel way
+				if ( antiparallel ) {
+					if ( TR.Debug.visible() ) {
+						TR.Debug << "find a sheet in an anti-parallel way" << std::endl;
+					}
 					if ( i_resnum+2 > strand_i.get_end() || j_resnum-2 < strand_j.get_start() ) {
 						continue; // I want to extract strand_pairs within only valid ranges
 					}
@@ -1770,56 +1779,88 @@ find_sheet(
 					angle_C_O_N_0_0 = dis_angle_inter_strands[3];
 					angle_C_O_N_1_1 = dis_angle_inter_strands[4];
 					angle_C_O_N_2_2 = dis_angle_inter_strands[5];
-
-				} else { // find a sheet in a parallel way
-					if ( i_resnum+2 > strand_i.get_end() || j_resnum+2 > strand_j.get_end() ) {
-						continue; // I want to extract strand_pairs with only given ranges
+				} else { //if (antiparallel){ // parallel
+					if ( TR.Debug.visible() ) {
+						TR.Debug << "find a sheet in a parallel way" << std::endl;
 					}
-					vector<Real> dis_angle_inter_strands =
-						cal_dis_angle_to_find_sheet(
-						pose,
-						i_resnum,
-						i_resnum+1,
-						i_resnum+2,
-						j_resnum,
-						j_resnum+1,
-						j_resnum+2);
+					//if ((care_smaller_sheet) && (i_resnum+2 > strand_i.get_end() || j_resnum+2 > strand_j.get_end())){
+					if ( i_resnum+2 > strand_i.get_end() || j_resnum+2 > strand_j.get_end() ) {
+						if ( care_smaller_sheet ) {
+							if ( TR.Debug.visible() ) {
+								TR.Debug << "Maybe a special case like in Tim barrel " << std::endl;
+								TR.Debug << "i_resnum+2: " << i_resnum+2 << std::endl;
+								TR.Debug << "strand_i.get_end(): " << strand_i.get_end() << std::endl;
+								TR.Debug << "j_resnum+2: " << j_resnum+2 << std::endl;
+								TR.Debug << "strand_j.get_end(): " << strand_j.get_end() << std::endl;
+							}
+							//continue; // disabled since 2015_10_02 due to Tim Barrel (8TIM_A)
+							dis_CA_CA_0_0 = pose.residue(i_resnum).atom("CA").xyz().distance(pose.residue(j_resnum).atom("CA").xyz());
+							dis_CA_CA_1_1 = pose.residue(i_resnum+1).atom("CA").xyz().distance(pose.residue(j_resnum+1).atom("CA").xyz());
 
-					dis_CA_CA_0_0 = dis_angle_inter_strands[0];
-					dis_CA_CA_1_1 = dis_angle_inter_strands[1];
-					dis_CA_CA_2_2 = dis_angle_inter_strands[2];
+							// new definition of a sheet since 2015_10_02 due to Tim Barrel (8TIM_A)
+							if ( (dis_CA_CA_0_0 >= min_CA_CA_dis_ && dis_CA_CA_0_0 <= max_CA_CA_dis_)
+									&& (dis_CA_CA_1_1 >= min_CA_CA_dis_ && dis_CA_CA_1_1 <= max_CA_CA_dis_) ) {
+								return 1; //  these strands can be part of one sheet (may have a kinkness)
+							}
+						}
+					} else { //if (i_resnum+2 > strand_i.get_end() || j_resnum+2 > strand_j.get_end()){ //regular case
+						vector<Real> dis_angle_inter_strands =
+							cal_dis_angle_to_find_sheet(
+							pose,
+							i_resnum,
+							i_resnum+1,
+							i_resnum+2,
+							j_resnum,
+							j_resnum+1,
+							j_resnum+2);
 
-					angle_C_O_N_0_0 = dis_angle_inter_strands[3];
-					angle_C_O_N_1_1 = dis_angle_inter_strands[4];
-					angle_C_O_N_2_2 = dis_angle_inter_strands[5];
-				}
+						dis_CA_CA_0_0 = dis_angle_inter_strands[0];
+						dis_CA_CA_1_1 = dis_angle_inter_strands[1];
+						dis_CA_CA_2_2 = dis_angle_inter_strands[2];
+
+						angle_C_O_N_0_0 = dis_angle_inter_strands[3];
+						angle_C_O_N_1_1 = dis_angle_inter_strands[4];
+						angle_C_O_N_2_2 = dis_angle_inter_strands[5];
+					}//else{ //regular case
+				}//else{ // parallel
 
 				if ( dis_CA_CA_0_0 > 40 ) {
+					if ( TR.Debug.visible() ) {
+						TR << "dis_CA_CA_0_0: " << dis_CA_CA_0_0 << std::endl;
+					}
 					return 999; // since these two strands are too distant to each other, there is virtually no chance to be sheet!
 				}
 
-				if (
-						(dis_CA_CA_0_0 >= min_CA_CA_dis_ && dis_CA_CA_0_0 <= max_CA_CA_dis_)
+				if ( TR.Debug.visible() ) {
+					TR.Debug << "dis_CA_CA_0_0: " << dis_CA_CA_0_0 << std::endl;
+					TR.Debug << "dis_CA_CA_1_1: " << dis_CA_CA_1_1 << std::endl;
+					TR.Debug << "dis_CA_CA_2_2: " << dis_CA_CA_2_2 << std::endl;
+					TR.Debug << "angle_C_O_N_0_0: " << angle_C_O_N_0_0 << std::endl;
+					TR.Debug << "angle_C_O_N_1_1: " << angle_C_O_N_1_1 << std::endl;
+					TR.Debug << "angle_C_O_N_2_2: " << angle_C_O_N_2_2 << std::endl;
+				}
+				if ( (dis_CA_CA_0_0 >= min_CA_CA_dis_ && dis_CA_CA_0_0 <= max_CA_CA_dis_)
 						&& (dis_CA_CA_1_1 >= min_CA_CA_dis_ && dis_CA_CA_1_1 <= max_CA_CA_dis_)
 						&& (dis_CA_CA_2_2 >= min_CA_CA_dis_ && dis_CA_CA_2_2 <= max_CA_CA_dis_)
 						&& ((angle_C_O_N_0_0 >= min_C_O_N_angle_ && angle_C_O_N_2_2 >= min_C_O_N_angle_)
-						|| (angle_C_O_N_1_1 >= min_C_O_N_angle_))
-						) {
+						|| (angle_C_O_N_1_1 >= min_C_O_N_angle_)) ) {
 					return 1; //  may have a kinkness or not, but these strands can be part of one sheet
 				}
 			} // strand_i.get_size() >= 3 && strand_j.get_size() >= 3)
 		} // for(Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++)
 	} // for(Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++)
 
-	return 0; // these strands cannot be in one sheet
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "these strands cannot be in one sheet " << std::endl;
+	}
+	return 0;
 } //find_sheet
 
 std::pair< vector<Size >, vector<Size > >
 query_begin_end(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sheet_id
-) {
+	Size sheet_id) {
 
 	string select_string =
 		"SELECT\n"
@@ -1840,8 +1881,7 @@ query_begin_end(
 
 	vector<Size> vector_of_residue_begin;
 	vector_of_residue_begin.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
-	while ( res.next() )
-			{
+	while ( res.next() ) {
 		Size residue_begin;
 		res >> residue_begin;
 		vector_of_residue_begin.push_back(residue_begin);
@@ -1866,8 +1906,7 @@ query_begin_end(
 
 	vector<Size> vector_of_residue_end;
 	vector_of_residue_end.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
-	while ( result_end.next() )
-			{
+	while ( result_end.next() ) {
 		Size residue_end;
 		result_end >> residue_end;
 		vector_of_residue_end.push_back(residue_end);
@@ -1884,61 +1923,7 @@ vector<Size>
 get_all_residues_in_this_sheet(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sheet_id)
-{
-	/*string select_string =
-	"SELECT\n"
-	" residue_begin \n"
-	"FROM\n"
-	" sheet AS sh, \n"
-	" secondary_structure_segments AS sss \n"
-	"WHERE\n"
-	" (sh.struct_id = ?) \n"
-	" AND (sh.struct_id = sss.struct_id) \n"
-	" AND (sh.segment_id = sss.segment_id) \n"
-	" AND (sh.sheet_id = ?) ;";
-
-	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
-	select_statement.bind(1,struct_id);
-	select_statement.bind(2,sheet_id);
-	result res(basic::database::safely_read_from_database(select_statement));
-
-	vector<Size> vector_of_residue_begin;
-	vector_of_residue_begin.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
-	while(res.next())
-	{
-	Size residue_begin;
-	res >> residue_begin;
-	vector_of_residue_begin.push_back(residue_begin);
-	}
-
-	string select_string_2 =
-	"SELECT\n"
-	" residue_end \n"
-	"FROM\n"
-	" sheet AS sh, \n"
-	" secondary_structure_segments AS sss \n"
-	"WHERE\n"
-	" (sh.struct_id = ?) \n"
-	" AND (sh.struct_id = sss.struct_id) \n"
-	" AND (sh.segment_id = sss.segment_id) \n"
-	" AND (sh.sheet_id = ?) ;";
-
-	statement select_statement_2(basic::database::safely_prepare_statement(select_string_2, db_session));
-	select_statement_2.bind(1,struct_id);
-	select_statement_2.bind(2,sheet_id);
-	result result_end(basic::database::safely_read_from_database(select_statement_2));
-
-	vector<Size> vector_of_residue_end;
-	vector_of_residue_end.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
-	while(result_end.next())
-	{
-	Size residue_end;
-	result_end >> residue_end;
-	vector_of_residue_end.push_back(residue_end);
-	}
-	*/
-
+	Size sheet_id){
 	std::pair< vector<Size>, vector<Size> > pair = query_begin_end( struct_id, db_session, sheet_id );
 	vector<Size> vector_of_residue_begin = pair.first;
 	vector<Size> vector_of_residue_end = pair.second;
@@ -2251,60 +2236,6 @@ get_central_residues_in_this_sheet(
 	sessionOP db_session,
 	Size sheet_id)
 {
-	/*
-
-	string select_string =
-	"SELECT\n"
-	" residue_begin \n"
-	"FROM\n"
-	" sheet AS sh, \n"
-	" secondary_structure_segments AS sss \n"
-	"WHERE\n"
-	" (sh.struct_id = ?) \n"
-	" AND (sh.struct_id = sss.struct_id) \n"
-	" AND (sh.segment_id = sss.segment_id) \n"
-	" AND (sh.sheet_id = ?) ;";
-
-	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
-	select_statement.bind(1,struct_id);
-	select_statement.bind(2,sheet_id);
-	result res(basic::database::safely_read_from_database(select_statement));
-
-	vector<Size> vector_of_residue_begin;
-	vector_of_residue_begin.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
-	while(res.next())
-	{
-	Size residue_begin;
-	res >> residue_begin;
-	vector_of_residue_begin.push_back(residue_begin);
-	}
-
-	string select_string_2 =
-	"SELECT\n"
-	" residue_end \n"
-	"FROM\n"
-	" sheet AS sh, \n"
-	" secondary_structure_segments AS sss \n"
-	"WHERE\n"
-	" (sh.struct_id = ?) \n"
-	" AND (sh.struct_id = sss.struct_id) \n"
-	" AND (sh.segment_id = sss.segment_id) \n"
-	" AND (sh.sheet_id = ?) ;";
-
-	statement select_statement_2(basic::database::safely_prepare_statement(select_string_2, db_session));
-	select_statement_2.bind(1,struct_id);
-	select_statement_2.bind(2,sheet_id);
-	result result_end(basic::database::safely_read_from_database(select_statement_2));
-
-	vector<Size> vector_of_residue_end;
-	vector_of_residue_end.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
-	while(result_end.next())
-	{
-	Size residue_end;
-	result_end >> residue_end;
-	vector_of_residue_end.push_back(residue_end);
-	}
-	*/
 	std::pair< vector<Size>, vector<Size> > pair = query_begin_end( struct_id, db_session, sheet_id );
 	vector< Size > vector_of_residue_begin = pair.first;
 	vector< Size > vector_of_residue_end = pair.second;
@@ -4013,7 +3944,8 @@ see_whether_sheet_is_antiparallel(
 			current_strand, nearest_strand_from_the_current_strand, true,
 			min_CA_CA_dis_,
 			max_CA_CA_dis_,
-			min_C_O_N_angle_);
+			min_C_O_N_angle_,
+			false);
 
 		if ( return_of_find_sheet == 1 ) {
 			count_antiparellel++;
@@ -4055,7 +3987,8 @@ see_whether_sheets_can_be_combined(
 				pose, temp_strand_i, temp_strand_j, true,
 				min_CA_CA_dis_,
 				max_CA_CA_dis_,
-				min_C_O_N_angle_);
+				min_C_O_N_angle_,
+				false);
 
 			if ( return_of_find_sheet_antiparallel == 999 ) { // since these two strands are too distant to each other, there is virtually no chance to be sheet!
 				break; // since these two strands are too distant to each other, there is virtually no chance to be sheet!
@@ -4067,7 +4000,8 @@ see_whether_sheets_can_be_combined(
 					pose, temp_strand_i, temp_strand_j, false,
 					min_CA_CA_dis_,
 					max_CA_CA_dis_,
-					min_C_O_N_angle_);
+					min_C_O_N_angle_,
+					true); // try to find even smaller sheet when parallel method
 			}
 
 			if ( return_of_find_sheet_parallel == 999 ) { // since these two strands are too distant to each other, there is virtually no chance to be sheet!

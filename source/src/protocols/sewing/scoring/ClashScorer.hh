@@ -25,6 +25,8 @@
 //Utility headers
 #include <utility/vector1.hh>
 
+#include <utility/tag/Tag.hh>
+
 namespace protocols {
 namespace sewing  {
 namespace scoring {
@@ -43,10 +45,6 @@ public:
 	score(
 		AssemblyCOP assembly
 	);
-
-
-private:
-
 };
 
 

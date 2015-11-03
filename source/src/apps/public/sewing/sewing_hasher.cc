@@ -46,7 +46,7 @@
 #include <set>
 #include <iterator>
 
-static basic::Tracer TR("SewingHasher");
+static basic::Tracer TR("sewing_hasher");
 
 int
 main( int argc, char * argv [] ) {
@@ -62,6 +62,7 @@ main( int argc, char * argv [] ) {
 			std::stringstream err;
 			err << "You must provide a mode for SewingHasher to run in using the -sewing:mode flag. Valid options are" << std::endl;
 			err << "  -generate: generates a model file from an sqlite database" << std::endl;
+			err << "  -generate_five_ss_model: generates a 3~5 ss model file from an sqlite database" << std::endl;
 			err << "  -hash: score all models against each other and create a plain text score file (MPI required)" << std::endl;
 			err << "  -convert: convert a plain text score file to a binary score file. This is required by the SEWING movers" << std::endl;
 			utility_exit_with_message(err.str());
@@ -136,8 +137,42 @@ main( int argc, char * argv [] ) {
 			write_model_file(comments.str(), models, model_filename);
 			TR << "New model file " << model_filename << " successfully written." << std::endl;
 			std::exit(0);
-		}
+		} else if ( option[sewing::mode].value() == "generate_five_ss_model" ) {
 
+			//Create comments stream for model file and add the date
+			std::stringstream comments;
+			time_t t = time(0);   // get time now
+			struct tm * now = localtime( & t );
+			comments << "#Model file created on " << (now->tm_year + 1900) << '-'
+				<< (now->tm_mon + 1) << '-'
+				<<  now->tm_mday
+				<< std::endl;
+
+			//Generate models from a features database. Each segment is a single piece of secondary structure
+			comments << "# 3 or 5 secondary structures based models generated from sqlite database " << option[inout::dbms::database_name].value() << std::endl;
+
+
+			bool hash_tag_only_terminal_Es = option[sewing::hash_tag_only_terminal_Es].def(false);
+			TR << "hash_tag_only_terminal_Es: " << hash_tag_only_terminal_Es << std::endl;
+			std::string hash_between;
+			std::string model_five_ss_filename;
+			if ( hash_tag_only_terminal_Es ) {
+				hash_between = "hash_tag_only_terminal_Es";
+				comments << "# only_terminal_Es_are_hash_bool_true_to_be_merged_with_other_node " << std::endl;
+				model_five_ss_filename = model_filename + "_three_or_five_ss_will_be_hashed_only_between_Es";
+			} else {
+				hash_between = "hash_between_any_HEs";
+				comments << "# hash_between_any_HEs_are_bool_true_to_be_merged_with_other_node " << std::endl;
+				model_five_ss_filename = model_filename + "_three_or_five_ss_will_be_hashed_between_HEs";
+			}
+
+			std::map< int, Model > models = get_5_ss_models_from_db(hash_between);
+
+			write_model_file(comments.str(), models, model_five_ss_filename);
+			TR << "New model file with 3~5 ss " << model_five_ss_filename << " successfully written." << std::endl;
+
+			std::exit(0);
+		}
 
 		//If we aren't generating models, then we need to read them
 		models = read_model_file(model_filename);
@@ -185,13 +220,14 @@ main( int argc, char * argv [] ) {
 			core::Size min_score = option[sewing::min_hash_score].def(10);
 			core::Size max_clash_score = option[sewing::max_clash_score].def(0);
 			core::Size num_segments_to_match = option[sewing::num_segments_to_match].def(0);
+			core::Size box_length = option[sewing::box_length].def(3);
 
 			TR << "Bundle Hasher options:" << std::endl;
 			TR << "\tMinimum Score: " << min_score << std::endl;
 			TR << "\tMaximum Clash Score: " << max_clash_score << std::endl;
 			TR << "\tNumber of segments to match: " << num_segments_to_match << std::endl;
 			TR << "\tScore file name: " << score_file_name << std::endl;
-
+			TR << "\tNeighborhood lookup box_length: " << box_length << std::endl;
 
 #ifdef USEMPI
 	    	//Now, score models. Split this work between multiple processors if we have them
@@ -279,7 +315,8 @@ main( int argc, char * argv [] ) {
 	    						break;
 	    					}
 	    				}
-	    				ScoreResults group_scores = hasher.score(models[model_id], num_segments_to_match, min_score, max_clash_score, false);
+	    				//ScoreResults group_scores = hasher.score(models[model_id], num_segments_to_match, min_score, max_clash_score, false);
+						ScoreResults group_scores = hasher.score(models[model_id], num_segments_to_match, min_score, max_clash_score, false, box_length);
 	    				hasher.remove_connection_inconsistencies(models, group_scores);
 	    				std::string node_score_file_name = score_file_name + "." + utility::to_string(rank);
 	    				write_hashing_scores_to_file(group_scores, node_score_file_name);
@@ -322,7 +359,8 @@ main( int argc, char * argv [] ) {
 				for ( ; it2 != it1; ++it2 ) {
 					hasher.insert(it2->second);
 				}
-				scores = hasher.score(it1->second, num_segments_to_match, min_score, max_clash_score, true);
+				//scores = hasher.score(it1->second, num_segments_to_match, min_score, max_clash_score, true);
+				scores = hasher.score(it1->second, num_segments_to_match, min_score, max_clash_score, true, box_length);
 				hasher.remove_connection_inconsistencies(models, scores);
 				TR << "Done scoring " << it2->first << " found " << scores.size() << " valid comparisons" << std::endl;
 				if ( scores.size() > 0 && TR.Debug ) {

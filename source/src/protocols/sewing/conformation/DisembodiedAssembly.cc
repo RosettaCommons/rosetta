@@ -170,7 +170,7 @@ DisembodiedAssembly::append_model(
 			}
 		}
 	}
-}
+}//DisembodiedAssembly::append_model
 
 
 } //sewing namespace

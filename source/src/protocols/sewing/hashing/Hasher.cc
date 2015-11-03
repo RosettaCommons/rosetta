@@ -57,7 +57,8 @@ Hasher::score_one(
 	Model const & m1,
 	SewResidue const & m1_basis,
 	Model const & m2,
-	SewResidue const & m2_basis
+	SewResidue const & m2_basis,
+	core::Size box_length
 ){
 	Model transformed_m1 = transform_model(m1, m1_basis);
 	Model transformed_m2 = transform_model(m2, m2_basis);
@@ -65,8 +66,20 @@ Hasher::score_one(
 	//Get a map from the m2 to m1
 	hash_model(transformed_m2, m2_basis);
 	ScoreResults alignment_scores;
-	score_basis(alignment_scores, transformed_m1, m1_basis, true);
 
+
+	if ( box_length == 3 ) {
+		score_basis(alignment_scores, transformed_m1, m1_basis, true);
+	} else if ( box_length == 5 ) {
+		score_basis_125(alignment_scores, transformed_m1, m1_basis, true);
+	} else {
+		TR << "box_length should be either 3 or 5!!" << std::endl;
+		exit(1);
+	}
+
+	if ( TR.Debug.visible() ) {
+		TR << "alignment_scores.size(): " << alignment_scores.size() << std::endl;
+	}
 	runtime_assert(alignment_scores.size() == 1);
 	//runtime_assert(alignment_scores.begin()->second.segment_matches.size() == 2);
 	if ( TR.Debug ) {
@@ -83,6 +96,7 @@ Hasher::score_one(
 	}
 
 	return *alignment_scores.begin();
+
 }
 
 
@@ -111,7 +125,7 @@ Hasher::insert(
 			hash_model(transformed_model, basis_residue);
 		}
 	}
-}
+}//insert
 
 ScoreResults
 Hasher::score(
@@ -119,7 +133,8 @@ Hasher::score(
 	core::Size num_segment_matches,
 	core::Size min_segment_score,
 	core::Size max_clash_score,
-	bool store_atoms
+	bool store_atoms,
+	core::Size box_length
 ) const {
 	std::set<core::Size> all_segments;
 
@@ -127,21 +142,22 @@ Hasher::score(
 	for ( ; it!=model.segments_.end(); ++it ) {
 		all_segments.insert(it->segment_id_);
 	}
-	return score(model, num_segment_matches, min_segment_score, max_clash_score, all_segments, store_atoms);
+	return score(model, num_segment_matches, min_segment_score, max_clash_score, all_segments, store_atoms, box_length);
 }
 
 
 ///@details Tally the score of each model/basis_set in the HashMap against the input pose. This is very
 ///similar to the insert function, but instead of populating the hash with the transformed features,
-///you tally the number of HashMap hits correspond to each structure/basis_set pair.
+///you tally the number of HashMap hits corresponding to each structure/basis_set pair.
 ScoreResults
 Hasher::score(
-	Model const & model,
+	Model const & model, // it1->second from sewing_hasher
 	core::Size num_segment_matches,
 	core::Size min_segment_score,
 	core::Size max_clash_score,
 	std::set<core::Size> const & score_segments,
-	bool store_atoms
+	bool store_atoms,
+	core::Size box_length
 ) const {
 
 	ScoreResults alignment_scores;
@@ -151,19 +167,30 @@ Hasher::score(
 	utility::vector1<SewSegment>::const_iterator it= model.segments_.begin();
 	for ( ; it != model.segments_.end(); ++it ) {
 
-		//Don't score the segments that we aren't hashing
+		//Don't score the segments that we aren't hashing, if it is not hashed, it is just a linker segment
 		if ( ! it->hash_ ) continue;
 
 		if ( score_segments.find(it->segment_id_) != score_segments.end() ) {
 			all_residues.insert(all_residues.begin(), it->residues_.begin(), it->residues_.end());;
 		}
 	}
-	TR << "All residues size " << all_residues.size() << std::endl;
+	TR << "\nAll residues size " << all_residues.size() << std::endl;
 	for ( core::Size basis_i=1; basis_i<=all_residues.size(); ++basis_i ) {
 		SewResidue basis_residue = all_residues[basis_i];
 		Model transformed_model = transform_model(model, basis_residue);
 
-		score_basis(alignment_scores, transformed_model, basis_residue, store_atoms);
+		runtime_assert_msg ( (box_length == 3) || (box_length == 5), "box_length should be either 3 or 5" );
+
+		if ( TR.Debug.visible() ) {
+			TR.Debug << box_length*box_length*box_length << " boxes for neighborhood lookup " << std::endl;
+		}
+
+		if ( box_length == 3 ) {
+			score_basis(alignment_scores, transformed_model, basis_residue, store_atoms);
+		} else { // (box_length == 5)
+			score_basis_125(alignment_scores, transformed_model, basis_residue, store_atoms);
+		}
+
 		trim_scores(alignment_scores, num_segment_matches, min_segment_score, max_clash_score);
 
 	}//foreach basis residue (from query)
@@ -172,10 +199,7 @@ Hasher::score(
 		TR << "Done scoring model " << model.model_id_ << std::endl;
 	}
 	return alignment_scores;
-}
-
-
-
+}//score
 
 void
 Hasher::score_basis(
@@ -228,7 +252,65 @@ Hasher::score_basis(
 			}//foreach hit
 		}//foreach hit_iterator
 	}//model iterator
-}
+}//score_basis
+
+void
+Hasher::score_basis_125(
+	ScoreResults & alignment_scores,
+	Model const & transformed_model,
+	SewResidue const & basis_residue,
+	bool store_atoms
+) const {
+
+	utility::fixedsizearray1<HashMap::const_iterator, 125> hit_its(hash_map_.end()); //put here for speed
+
+	Basis reference_bp(transformed_model.model_id_, basis_residue.resnum_);
+
+	ModelConstIterator<SewSegment> model_it = transformed_model.model_begin();
+
+
+	for ( ; model_it != transformed_model.model_end(); ++model_it ) {
+
+		SewAtom const & cur_atom = *model_it.atom();
+
+		//iterate through hits in the hash map and tally the score for the model/residue alignment pairs
+		HashKey key = generate_key(cur_atom);
+
+		neighborhood_lookup_125(key, hit_its);
+
+		for ( core::Size hit_it_i = 1; hit_it_i<= hit_its.size(); ++hit_it_i ) {
+			if ( hit_its[hit_it_i] == hash_map_.end() ) continue;
+
+			for ( utility::vector1<HashValue>::const_iterator it = hit_its[hit_it_i]->second.begin(); it!=hit_its[hit_it_i]->second.end(); ++it ) {
+				HashValue const & cur_hit = *it;
+
+				if ( transformed_model.model_id_ != cur_hit.model_id ) { //Don't score the model against itself
+					BasisPair basis_pair = std::make_pair(reference_bp, Basis(cur_hit.model_id, cur_hit.basis_resnum));
+
+					if ( cur_atom.atomno_ == cur_hit.atomno ) {
+						SegmentPair segment_pair = std::make_pair(model_it.segment()->segment_id_, cur_hit.segment_id);
+
+						std::map<SegmentPair, core::Size>::iterator seg_pair_it = alignment_scores[basis_pair].segment_match_counts.find(segment_pair);
+						if ( seg_pair_it == alignment_scores[basis_pair].segment_match_counts.end() ) {
+							alignment_scores[basis_pair].segment_match_counts[segment_pair] = 0;
+						}
+
+						alignment_scores[basis_pair].segment_match_counts[segment_pair]++;
+						if ( store_atoms ) {
+							core::id::AtomID query_atom(cur_atom.atomno_, model_it.residue()->resnum_);
+							core::id::AtomID hit_atom(cur_hit.atomno, cur_hit.resnum);
+							alignment_scores[basis_pair].segment_matches[segment_pair].insert(std::make_pair(query_atom, hit_atom));
+						}
+					} else {
+						alignment_scores[basis_pair].clash_count++;
+					}
+				} //if( transformed_model.model_id_ != cur_hit.model_id ) { //Don't score the model against itself
+			}//foreach hit
+		}//foreach hit_iterator
+	}//model iterator
+
+} //score_basis_125
+
 
 ///@details trim the given ScoreResults based on the number of segments that match
 ///between two models, the number of atom matches for each of these segments, and the
@@ -279,7 +361,7 @@ Hasher::trim_scores(
 			scores.erase(it++);
 		}
 	}
-}
+}//trim_scores
 
 ///@details Keep only the segment matches between
 ///two models that has the most aligned atoms.
@@ -329,7 +411,7 @@ Hasher::remove_duplicates(
 	}
 	return trimmed_scores;
 
-}
+}//remove_duplicates
 
 
 void
@@ -417,6 +499,42 @@ Hasher::neighborhood_lookup(
 
 
 
+///@details when doing a lookup, look in each of the quarter angstrom bins surrounding
+///the query key. This should prevent issues of close matches being missed due to being
+///across bin boundaries.
+//utility::vector1<HashValue>
+void
+Hasher::neighborhood_lookup_125(
+	HashKey const & key,
+	utility::fixedsizearray1<HashMap::const_iterator, 125> & hit_its
+) const {
+	int index = 0; // just initial value
+	int box_number = 0;
+
+	for ( int i=-2; i<=2; ++i ) {
+		for ( int j=-2; j<=2; ++j ) {
+			for ( int k=-2; k<=2; ++k ) {
+				box_number++;
+
+				HashKey modified_key = key;
+				// The HashKey is the 3 indices that describe the location the feature in discretized space, and the atomno of the point being described.
+				// The hasher is responsible for creating a (hopefully) uniform distribution of keys in the table.
+
+				modified_key[1]+=i;
+				modified_key[2]+=j;
+				modified_key[3]+=k;
+
+				index = ((i+2) * 5 * 5) + ((j+2) * 5) + (k+2);
+				index++; //1-indexed array
+				hit_its[index] = hash_map_.find(modified_key);
+			}
+		}
+	}
+}
+
+
+
+
 ///@details Construct a HomogenousTransform using the 3 points in the BasisSet. Use this
 ///HomogenousTransform to transform all features into the local coordinate frame
 Model
@@ -440,6 +558,7 @@ Hasher::transform_model(
 		}
 	}
 	erase_it.segment()->residues_.erase(erase_it.residue());
+
 	return model;
 }
 

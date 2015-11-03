@@ -409,8 +409,8 @@ ResidueTypeFinder::adds_any_variant( PatchCOP patch ) const
 
 		// following could also be managed by looking to see if patch *virtualizes* a missing atom.
 		if ( check_nucleic_acid_virtual_phosphates_ &&
-				 ( patch_variant == VIRTUAL_DNA_PHOSPHATE ||  patch_variant == VIRTUAL_PHOSPHATE ) &&
-				 !atom_names_soft_.has_value( "P" ) ) return true;
+				( patch_variant == VIRTUAL_DNA_PHOSPHATE ||  patch_variant == VIRTUAL_PHOSPHATE ) &&
+				!atom_names_soft_.has_value( "P" ) ) return true;
 
 		if ( variant_exceptions_.has_value( patch_variant ) ) return true; // explore all of these 'exceptions' (used for adducts)
 
@@ -706,14 +706,14 @@ ResidueTypeFinder::filter_special_cases( ResidueTypeCOPs const & rsd_types )  co
 	ResidueTypeCOPs filtered_rsd_types;
 
 	bool const actually_check_nucleic_acid_virtual_phosphates =
-		check_nucleic_acid_virtual_phosphates_ &&	!atom_names_soft_.has_value( "P" );
+		check_nucleic_acid_virtual_phosphates_ && !atom_names_soft_.has_value( "P" );
 
 	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
 		ResidueTypeCOP const & rsd_type = rsd_types[ n ];
 
 		if ( disallow_carboxyl_conjugation_at_glu_asp_ ) {
 			if ( ( rsd_type->aa() == aa_glu || rsd_type->aa() == aa_asp ) &&
-					 rsd_type->has_variant_type( BRANCH_LOWER_TERMINUS_VARIANT ) ) continue;
+					rsd_type->has_variant_type( BRANCH_LOWER_TERMINUS_VARIANT ) ) continue;
 		}
 
 		if ( actually_check_nucleic_acid_virtual_phosphates ) {

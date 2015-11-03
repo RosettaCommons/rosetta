@@ -1,4 +1,4 @@
-//G vi: set ts=2 noet;
+// vi: set ts=2 noet;
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -117,6 +117,9 @@ private:
 	core::Size cycles_;
 	core::Real max_temperature_;
 	core::Real min_temperature_;
+	core::Real min_assembly_score_;
+
+	bool use_best_assembly_score_;
 
 	core::Real add_probability_;
 	core::Real delete_probability_;

@@ -25,6 +25,12 @@
 //Utility headers
 #include <basic/Tracer.hh>
 
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/sewing.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+
+
 namespace protocols {
 namespace sewing  {
 namespace scoring {
@@ -33,15 +39,20 @@ static basic::Tracer TR("protocols.sewing.scoring.ClashScorer");
 
 ClashScorer::ClashScorer(){}
 
+
+
 core::Real
 ClashScorer::score(
 	AssemblyCOP assembly
 ) {
 
+	using namespace basic::options;
+	// using namespace basic::options::OptionKeys;
+
 	core::Real score = 0.0;
 
 	core::scoring::AtomVDW const & atom_vdw( core::scoring::ScoringManager::get_instance()->get_AtomVDW( core::chemical::CENTROID ));
-
+	//TR << AtomVDW
 	ModelConstIterator<SewSegment> it1=assembly->assembly_begin();
 	ModelConstIterator<SewSegment> end=assembly->assembly_end();
 
@@ -51,7 +62,26 @@ ClashScorer::score(
 		//Get the xyz coordinates and the vanderwaals size for the current atom
 		numeric::xyzVector<core::Real> i_xyz ( it1.atom()->coords_ );
 		Size const i_type( it1.atom()->atomno_ );
+
+
 		utility::vector1< core::Real > const & i_atom_vdw( atom_vdw( i_type ) );
+
+		//  if(TR.Debug.visible()){
+		//   TR << "it1.segment()->dssp_: " << it1.segment()->dssp_ << std::endl;
+		//  }
+		//  if(TR.Debug.visible()){
+		////   TR.Debug << "it1.atom()->atomno_ : " << it1.atom()->atomno_ << " " ;
+		////   if (it1.atom()->atomno_ == 1){ TR.Debug << "element: N" << std::endl; }
+		////   else if (it1.atom()->atomno_ == 2){ TR.Debug << "element: CA" << std::endl; }
+		////   else if (it1.atom()->atomno_ == 3){ TR.Debug << "element: C" << std::endl; }
+		////   else if (it1.atom()->atomno_ == 4){ TR.Debug << "element: O" << std::endl; }
+		//
+		//  // TR.Debug << "i_type( it1.atom()->atomno_ ): " << i_type << std::endl;
+		//  // TR.Debug << "i_atom_vdw[ i_type ]: " << i_atom_vdw[ i_type ] << std::endl;
+		////   TR.Debug << "sqrt of i_atom_vdw[ i_type ]: " << sqrt(i_atom_vdw[ i_type ]) << std::endl;
+		////   TR.Debug << std::endl;
+		//  }
+
 
 		ModelConstIterator<SewSegment> it2 = it1;
 		++it2;
@@ -77,16 +107,69 @@ ClashScorer::score(
 			if ( (it1.segment()->model_id_ <= 0 || it2.segment()->model_id_ <= 0)
 					&& it1.residue()->resnum_ == it2.residue()->resnum_ - 1 ) {
 				continue;
-			}
+			} // Hi Tim! How come this case is even possible? (Doonam)
+
+
 
 			//Get the xyz coordinates and the vanderwaals size for the current atom
 			numeric::xyzVector<core::Real> j_xyz ( it2.atom()->coords_ );
 			Size const j_type( it2.atom()->atomno_ );
 
 			//This bump distance seems weird, double check this...
-			core::Real const bump_dsq = i_atom_vdw[ j_type ] ;
-			core::Real const clash = bump_dsq - i_xyz.distance_squared( j_xyz );
+
+			// original bump_dsq
+			//core::Real const bump_dsq = i_atom_vdw[ j_type ] ;
+
+			// offset to bump_dsq
+			core::Real offset_bump_dsq_ = option[OptionKeys::sewing::offset_bump_dsq];
+
+			//   if(TR.Debug.visible()){
+			//    //TR.Debug << "offset_bump_dsq_: " << offset_bump_dsq_ << std::endl;
+			//   }
+
+			// bump_dsq => (bump_distance)^2
+			//core::Real const bump_dsq = i_atom_vdw[ j_type ] + offset_bump_dsq_;
+			core::Real const bump_dsq = i_atom_vdw[ j_type ];
+
+			//utility::vector1< core::Real > const & j_atom_vdw( atom_vdw( j_type ) );
+
+			/*
+			if(TR.Debug.visible()){
+			TR.Debug << "it1.atom()->atomno_ : " << it1.atom()->atomno_ << " " ;
+			if (it1.atom()->atomno_ == 1){ TR.Debug << "element: N" << std::endl; }
+			else if (it1.atom()->atomno_ == 2){ TR.Debug << "element: CA" << std::endl; }
+			else if (it1.atom()->atomno_ == 3){ TR.Debug << "element: C" << std::endl; }
+			else if (it1.atom()->atomno_ == 4){ TR.Debug << "element: O" << std::endl; }
+
+			TR.Debug << "it2.atom()->atomno_ : " << it2.atom()->atomno_ << " " ;
+			// TR.Debug << "j_type( it2.atom()->atomno_ ): " << j_type << std::endl;
+			if (it2.atom()->atomno_ == 1){ TR.Debug << "element: N" << std::endl; }
+			else if (it2.atom()->atomno_ == 2){ TR.Debug << "element: CA" << std::endl; }
+			else if (it2.atom()->atomno_ == 3){ TR.Debug << "element: C" << std::endl; }
+			else if (it2.atom()->atomno_ == 4){ TR.Debug << "element: O" << std::endl; }
+
+			if ( ((it1.atom()->atomno_ == 1) || (it1.atom()->atomno_ == 4) ) && ( (it2.atom()->atomno_ == 1) || (it2.atom()->atomno_ == 4) ) ){
+			TR.Debug << "N, O" << std::endl;
+			}
+
+			// TR.Debug << "bump_dsq (=i_atom_vdw[ j_type ]): " << bump_dsq << std::endl;
+			//TR.Debug << "sqrt of bump_dsq: " << sqrt(bump_dsq) << std::endl;
+			}
+
+
+			if(TR.Debug.visible()){
+			//TR.Debug << "i_xyz.distance_squared( j_xyz ): " << i_xyz.distance_squared( j_xyz ) << std::endl;
+			//TR.Debug << "sqrt of i_xyz.distance_squared( j_xyz ): " << sqrt(i_xyz.distance_squared( j_xyz )) << std::endl;
+			//TR.Debug << "clash = bump_dsq - i_xyz.distance_squared( j_xyz ): " << clash << std::endl;
+			//TR.Debug << "sqrt of clash: " << sqrt(clash) << std::endl;
+			TR.Debug << std::endl;
+			}
+			*/
+
+			core::Real const clash = bump_dsq - i_xyz.distance_squared( j_xyz ) + offset_bump_dsq_;
+
 			if ( clash > 0.0 ) {
+
 				score += 1;
 				if ( TR.Debug.visible() ) {
 					int model_id_1 = it1.segment()->model_id_;
@@ -103,6 +186,19 @@ ClashScorer::score(
 						<< num_1 << std::endl
 						<< num_2 << std::endl;
 				}
+
+				if ( TR.Debug.visible() ) {
+					//TR << "it1.segment()->dssp_: " << it1.segment()->dssp_ << std::endl;
+					//TR << "it2.segment()->dssp_: " << it2.segment()->dssp_ << std::endl;
+					if ( it1.segment()->dssp_ == 'E' && it2.segment()->dssp_ == 'E' ) {
+						TR.Debug << "sqrt of i_xyz.distance_squared( j_xyz ): " << sqrt(i_xyz.distance_squared( j_xyz )) << std::endl;
+						TR.Debug << "sqrt of bump_dsq: " << sqrt(bump_dsq) << std::endl;
+						//      TR.Debug << "clash = bump_dsq - i_xyz.distance_squared( j_xyz ): " << clash << std::endl;
+						TR.Debug << "it1.atom()->atomno_ : " << it1.atom()->atomno_ << " " ;
+						TR.Debug << "it2.atom()->atomno_ : " << it2.atom()->atomno_ << " " << std::endl;
+					}
+				} //if ( TR.Debug.visible() )
+
 			} //clash
 		} //it2
 	} //it1
@@ -145,7 +241,10 @@ ClashScorer::score(
 			}
 		}
 	}
-
+	// if(TR.Debug.visible()){
+	//  utility_exit_with_message("quit now!"); // temporary for devel
+	//  //exit(1);
+	// }
 	return score;
 }
 

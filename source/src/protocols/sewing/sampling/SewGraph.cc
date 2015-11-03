@@ -357,7 +357,7 @@ SewGraph::add_special_edges(){
 		HashEdge * const e = static_cast< HashEdge * >( add_edge(n1->get_node_index(), n2->get_node_index()));
 		e->basis_pair(bp);
 	}
-}
+}//add_special_edges
 
 
 /// @brief Factory method for node creation
@@ -407,6 +407,7 @@ SewGraph::find_hash_edge(
 	}
 }
 
+// possible example of usage, SewGraph.cc:line 791, ModelNode const * const node = get_model_node(node_id);
 ModelNode const *
 SewGraph::get_model_node(
 	Size n

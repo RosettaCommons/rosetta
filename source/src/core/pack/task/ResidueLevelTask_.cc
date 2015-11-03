@@ -1026,7 +1026,7 @@ void ResidueLevelTask_::reset() {
 
 	mode_tokens_.push_back( "RESET" );
 	disallow_noncanonical_aas();
-	
+
 	ResidueTypeSet const & residue_set( get_original_residue_set() );
 	allowed_residue_types_.clear();
 	ResidueType const & match_residue_type( residue_set.get_residue_type_with_variant_removed( *original_residue_type_, chemical::VIRTUAL_SIDE_CHAIN ) );
@@ -1046,7 +1046,7 @@ void ResidueLevelTask_::reset() {
 	design_disabled_ = false;
 	determine_if_designing();
 	determine_if_repacking();
-	
+
 	debug_assert( being_packed() );
 	debug_assert( being_designed() );
 	return;

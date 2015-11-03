@@ -114,7 +114,7 @@ struct SewSegment{
 
 	//Vector of parents (pairs of model/segment ids)
 	//utility::vector1< std::pair<int, core::Size> > parent_segments_;
-};
+};//struct SewSegment{
 
 
 template <class T>
@@ -437,6 +437,10 @@ std::map< int, Model >
 get_continuous_models_from_db();
 
 std::map< int, Model >
+get_5_ss_models_from_db(
+	std::string hash_between);
+
+std::map< int, Model >
 get_alpha_beta_models_from_db();
 
 void
@@ -478,7 +482,6 @@ std::map<int, Model>
 read_model_file(
 	std::string filename
 );
-
 
 } //sewing namespace
 } //protocols namespace

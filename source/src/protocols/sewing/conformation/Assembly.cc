@@ -92,6 +92,7 @@ Assembly::add_model(
 	bool available /*= true*/
 ){
 	core::Size pre_segments_size = segments_.size();
+
 	for ( core::Size i=1; i<=model.segments_.size(); ++i ) {
 		segments_.push_back(model.segments_[i]);
 		utility::vector1<SewSegment> seg_vec;
@@ -163,7 +164,13 @@ Assembly::get_score_result(
 	SewResidue mobile_residue = mobile_model.get_residue( cur_edge->model_resnum( mobile_model.model_id_ ) );
 
 	Hasher hasher;
-	ScoreResult edge_score = hasher.score_one(reference_model, reference_residue, mobile_model, mobile_residue);
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace protocols::sewing;
+	core::Size box_length = basic::options::option[ basic::options::OptionKeys::sewing::box_length ];
+
+	ScoreResult edge_score = hasher.score_one(reference_model, reference_residue, mobile_model, mobile_residue, box_length);
 
 	return edge_score;
 }
@@ -403,6 +410,7 @@ Assembly::get_chimera_segments(
 			}
 		}
 	}
+
 	runtime_assert(chimera_segs.size() > 0);
 	return chimera_segs;
 }
@@ -440,6 +448,7 @@ Assembly::get_model_segments(
 std::set<core::Size>
 Assembly::model_ids() const {
 	std::set<core::Size> model_ids;
+
 	for ( core::Size i=1; i<=all_segments_.size(); ++i ) {
 		for ( core::Size j=1; j<=all_segments_[i].size(); ++j ) {
 			model_ids.insert(all_segments_[i][j].model_id_);
@@ -542,7 +551,11 @@ Assembly::follow_edge(
 	SewResidue mobile_residue = mobile_model.get_residue( edge->model_resnum( mobile_model.model_id_ ) );
 
 	Hasher hasher;
-	ScoreResult edge_score = hasher.score_one(reference_model, reference_residue, mobile_model, mobile_residue);
+
+	core::Size box_length = basic::options::option[ basic::options::OptionKeys::sewing::box_length ];
+
+	ScoreResult edge_score = hasher.score_one(reference_model, reference_residue, mobile_model, mobile_residue, box_length);
+	// std::pair< BasisPair, HashResult > ScoreResult
 
 	//This 'check' is due to slight differences in geometric hashing before and after a
 	//model transformation. For example, Model X, model Y, and model Z are scored from the initial model
@@ -582,6 +595,7 @@ Assembly::follow_edge(
 
 	available_nodes_.erase(available_nodes_.find(source_index));
 	available_nodes_.erase(available_nodes_.find(other_index));
+
 }
 
 

@@ -24,12 +24,20 @@
 
 //Devel
 #include <protocols/sewing/conformation/Model.fwd.hh>
+#include <protocols/sewing/conformation/Model.hh> // for see_whether_model_is_H_bonded_by_terminal_strands
 #include <protocols/sewing/conformation/Assembly.fwd.hh>
 #include <protocols/sewing/sampling/SewGraph.hh>
 
 //C++
 #include <map>
 #include <string>
+
+//to find "beta-sheet" backbone H-bonded strands
+//#include <protocols/features/strand_assembly/SandwichFeatures.hh>
+#include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/pose/Pose.hh>
+#include <utility/file/file_sys_util.hh>
 
 namespace protocols {
 namespace sewing  {
@@ -53,6 +61,19 @@ void
 write_hashing_scores_to_file(
 	ScoreResults const & scores,
 	std::string filename
+);
+
+/////@brief Return true if given model is H bonded by terminal strands
+//std::string
+//see_whether_model_is_H_bonded_by_terminal_strands(
+// Model model
+//);
+
+///@brief Return true if given model is H bonded by terminal strands
+std::string
+see_whether_model_is_H_bonded_by_terminal_strands(
+	Model model,
+	std::string P_PA
 );
 
 utility::vector1<BasisPair>
