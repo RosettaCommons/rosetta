@@ -71,11 +71,6 @@ SingleResidueMultifunc::operator ()( Multivec const & vars ) const {
 
 	pose_.scoring_begin( score_function_ );
 	// Setup (particularly hbonds) is expensive and so is done once, in RTMIN.
-	//// do any setup necessary
-	//for ( ScoreFunction::AllMethodsIterator it=score_function_.all_energies_begin(),
-	//  it_end = score_function_.all_energies_end(); it != it_end; ++it ) {
-	// (*it)->setup_for_scoring( pose_, score_function_ );
-	//}
 
 	score_function_.eval_ci_1b( rsd, pose_, emap );
 	score_function_.eval_cd_1b( rsd, pose_, emap );

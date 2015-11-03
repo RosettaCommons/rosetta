@@ -686,17 +686,6 @@ Minimizer::lbfgs(
 				return;
 			} else {
 				if ( line_min->_last_accepted_step == 0 ) { // failed line search
-					//Real Dnorm = 0.0;
-					//for ( int i = 1; i <= N; ++i ) {
-					// Dnorm += D[i]*D[i];
-					//}
-					//Dnorm = std::sqrt(Dnorm);
-
-					//TR << "    deriv_sum " << line_min->_deriv_sum << "     -1e-3*Gnorm*Dnorm " << -1e-3*Gnorm*Dnorm << std::endl;
-					//if ( line_min->_last_accepted_step != 0 && line_min->_deriv_sum < -1e-3*Gnorm*Dnorm ) {
-					// TR << "Failed line search while large _deriv_sum, quit! N= " << N << " ITER= " << ITER << std::endl;
-					// return;
-					//}
 
 					// Reset Hessian
 					CURPOS = 1;

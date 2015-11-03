@@ -3435,72 +3435,43 @@ Conformation::backbone_torsion_angle_atoms(
 			rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) {
 		// set all id rsds to seqpos since they are all in the same residue
 		id1.rsd() = id2.rsd() = id3.rsd() = id4.rsd() = seqpos;
-		if ( rsd.type().is_peptoid() ) {
-			// just explicit for now -- shouldn't be necessary, though, since the general case covers this.
-			if ( torsion == 1 ) {
-				id1.atomno() = rsd.atom_index( "CP2" );
-				id2.atomno() = rsd.atom_index( "CO" );
-				id3.atomno() = rsd.atom_index( "N" );
-				id4.atomno() = rsd.atom_index( "CA" );
-			} else if ( torsion == 2 ) {
-				id1.atomno() = rsd.atom_index( "CO" );
-				id2.atomno() = rsd.atom_index( "N" );
-				id3.atomno() = rsd.atom_index( "CA" );
-				id4.atomno() = rsd.atom_index( "C" );
-			} else if ( torsion == 3 ) {
-				id1.atomno() = rsd.atom_index( "N" );
-				id2.atomno() = rsd.atom_index( "CA" );
-				id3.atomno() = rsd.atom_index( "C" );
-				id4.atomno() = rsd.atom_index( "NM" );
-			} else {
-				id1.atomno() = rsd.atom_index( "CA" );
-				id2.atomno() = rsd.atom_index( "C" );
-				id3.atomno() = rsd.atom_index( "NM" );
-				id4.atomno() = rsd.atom_index( "CN" );
-			}
-		} else { //General case -- should be correct for an arbitrary heteropolymer.
-			if ( torsion == 1 ) {
-				id1.atomno() = rsd.atom_index( "CP2" ); //CP2 0
-				id2.atomno() = mainchain[0+torsion];//CO 1
-				id3.atomno() = mainchain[1+torsion];//N 2
-				id4.atomno() = mainchain[2+torsion];//CA 3
-				//std::cout << "CP2-" << rsd.atom_name( id2.atomno() ) << "-" << rsd.atom_name( id3.atomno() ) <<
-				//  "-" << rsd.atom_name( id4.atomno() ) << std::endl;
-			} else if ( torsion == rsd.mainchain_torsions().size() - 1 ) {
-				id1.atomno() = mainchain[-1+torsion]; //N 2
-				id2.atomno() = mainchain[0+torsion]; //CA 3
-				id3.atomno() = mainchain[1+torsion]; //C 4
-				id4.atomno() = rsd.atom_index( "NM" ); //NM 5
-				//std::cout << rsd.atom_name( id1.atomno() )<<"-" << rsd.atom_name( id2.atomno() ) << "-" <<
-				//  rsd.atom_name( id3.atomno() ) << "-" << rsd.atom_name( id4.atomno() ) << std::endl;
-			} else if ( torsion == rsd.mainchain_torsions().size() ) {
-				id1.atomno() = mainchain[-1+torsion]; //CA 3 or CM 4
-				id2.atomno() = mainchain[0+torsion]; //C 4 or C 5
-				id3.atomno() = rsd.atom_index( "NM" ); //NM 5
-				id4.atomno() = rsd.atom_index( "CN" ); //CN 6
-				//std::cout << rsd.atom_name( id1.atomno() )<<"-" << rsd.atom_name( id2.atomno() ) << "-" <<
-				//  rsd.atom_name( id3.atomno() ) << "-" << rsd.atom_name( id4.atomno() ) << std::endl;
-			} else if ( torsion < /*ntorsions*/rsd.mainchain_torsions().size() - 1 ) {
-				id1.atomno() = mainchain[-1+torsion]; //CO 1 or N 2
-				id2.atomno() = mainchain[0+torsion]; //N 2 or CA 3
-				id3.atomno() = mainchain[1+torsion]; //CA 3 or CM 4
-				id4.atomno() = mainchain[2+torsion]; //C 4 or C 5
-				//std::cout << rsd.atom_name( id1.atomno() )<<"-" << rsd.atom_name( id2.atomno() ) << "-" <<
-				//  rsd.atom_name( id3.atomno() ) << "-" << rsd.atom_name( id4.atomno() ) << std::endl;
-			}
+
+		//General case -- should be correct for an arbitrary heteropolymer.
+		if ( torsion == 1 ) {
+			id1.atomno() = rsd.atom_index( "CP2" ); //CP2 0
+			id2.atomno() = mainchain[0+torsion];//CO 1
+			id3.atomno() = mainchain[1+torsion];//N 2
+			id4.atomno() = mainchain[2+torsion];//CA 3
+		} else if ( torsion == rsd.mainchain_torsions().size() - 1 ) {
+			id1.atomno() = mainchain[-1+torsion]; //N 2
+			id2.atomno() = mainchain[0+torsion]; //CA 3
+			id3.atomno() = mainchain[1+torsion]; //C 4
+			id4.atomno() = rsd.atom_index( "NM" ); //NM 5
+		} else if ( torsion == rsd.mainchain_torsions().size() ) {
+			id1.atomno() = mainchain[-1+torsion]; //CA 3 or CM 4
+			id2.atomno() = mainchain[0+torsion]; //C 4 or C 5
+			id3.atomno() = rsd.atom_index( "NM" ); //NM 5
+			id4.atomno() = rsd.atom_index( "CN" ); //CN 6
+		} else if ( torsion < rsd.mainchain_torsions().size() - 1 ) {
+			id1.atomno() = mainchain[-1+torsion]; //CO 1 or N 2
+			id2.atomno() = mainchain[0+torsion]; //N 2 or CA 3
+			id3.atomno() = mainchain[1+torsion]; //CA 3 or CM 4
+			id4.atomno() = mainchain[2+torsion]; //C 4 or C 5
 		}
 
 		// the ACETYLATED_NTERMINUS prepends an additional backbone atom which is why the numbers are increased by one.
 	} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
-		// Acetylated N-terminus variant but no C-terminal methylation.
+
+		// The torsion is not well defined if the first two atoms aren't in the current residue.
 		if ( torsion + 1 > mainchain.size() ) {
 			// The torsion is not well defined if the first two atoms aren't in the current residue.
 			return true;
 		}
 
-		id1.rsd() = seqpos; id1.atomno() = mainchain[ torsion ]; // First atom is always in the current residue.
-		id2.rsd() = seqpos; id2.atomno() = mainchain[ torsion + 1 ]; // Second atom is always in the current residue.
-		if ( torsion + 2 <= mainchain.size() ) { // If the third atom is in the current residue...
+		// First and second atoms are always in the current residue.
+		id1.rsd() = seqpos; id1.atomno() = mainchain[ torsion ];
+		id2.rsd() = seqpos; id2.atomno() = mainchain[ torsion + 1 ];
+		if ( torsion + 2 <= mainchain.size() ) {
 			id3.rsd() = seqpos; id3.atomno() = mainchain[ torsion + 2 ];
 			if ( torsion + 3 <= mainchain.size() ) { // If the fourth atom is in the current residue...
 				id4.rsd() = seqpos; id4.atomno() = mainchain[ torsion + 3 ];
@@ -3557,10 +3528,7 @@ Conformation::backbone_torsion_angle_atoms(
 			id1.rsd() = seqpos;
 			id1.atomno() = mainchain[ torsion -1 ];
 		} else {
-			// AMW: Remember: chain_end does not refer to the actual chain end if we're in a one chain pose.
-			// Also, num_chains is 2 if we are in a one chain pose because fuck my life.
-			Residue const cterm_res = ( num_chains() == 1 || rsd.chain() == num_chains() - 1 ) ?
-				*residues_[ size() ] : *residues_[ chain_end( rsd.chain() ) ];
+			Residue const cterm_res =  *residues_[ chain_end( rsd.chain() ) ];
 			if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) &&
 					cterm_res.has_variant_type( chemical::CTERM_CONNECT ) ) {
 				// Assume that they are connected as a cyclic polymer.

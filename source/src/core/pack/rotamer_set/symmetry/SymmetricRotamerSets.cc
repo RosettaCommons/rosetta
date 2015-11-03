@@ -215,12 +215,6 @@ SymmetricRotamerSets::precompute_two_body_energies(
 			}
 			pig->add_to_two_body_energies_for_edge( ii_master, jj_master, pair_energy_table );
 
-			// finalize the edge
-			// if ( finalize_edges && ! scfxn.any_lr_residue_pair_energy(pose, ii_master, jj_master )
-			//    && final_visit_to_edge( pose, packer_neighbor_graph, ii_resid, jj_resid ) ){
-			//  pig->declare_edge_energies_final( ii_master, jj_master );
-			//  std::cout << "finalize pair " << ii_master << ' '<< jj_master << std::endl;
-			// }
 		}
 	}
 
@@ -318,10 +312,7 @@ SymmetricRotamerSets::precompute_two_body_energies(
 
 				if ( ! pig->get_edge_exists( ii_master, jj_master ) ) { pig->add_edge( ii_master, jj_master ); }
 				pig->add_to_two_body_energies_for_edge( ii_master, jj_master, pair_energy_table );
-				// if ( finalize_edges && final_visit_to_edge( pose, packer_neighbor_graph, ii_resid, jj_resid ) ) {
-				//  pig->declare_edge_energies_final( ii_master, jj_master );
-				//  std::cout << "finalize pair " << ii_master << ' '<< jj_master << std::endl;
-				// }
+
 			}
 		}
 	}
@@ -329,16 +320,15 @@ SymmetricRotamerSets::precompute_two_body_energies(
 
 	/// yes, this is O(N^2) but the logic for doing it correctly in the loops above is really hairy
 	/// for the time being, this works.
-	if ( finalize_edges ) {
-		for ( Size ii=1; ii<= nmoltenres(); ++ii ) {
-			for ( Size jj=ii+1; jj<= nmoltenres(); ++jj ) {
-				if ( pig->get_edge_exists( ii, jj ) ) {
-					pig->declare_edge_energies_final( ii, jj );
-				}
+	if ( !finalize_edges ) return;
+
+	for ( Size ii=1; ii<= nmoltenres(); ++ii ) {
+		for ( Size jj=ii+1; jj<= nmoltenres(); ++jj ) {
+			if ( pig->get_edge_exists( ii, jj ) ) {
+				pig->declare_edge_energies_final( ii, jj );
 			}
 		}
 	}
-
 }
 
 /// @details Add edges between all adjacent nodes in the

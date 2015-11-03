@@ -87,12 +87,6 @@ SymAtomTreeMinimizer::run(
 
 	// setup the minimizer map using the semi-symetric min map
 	SymMinimizerMap sym_min_map( pose, semisym_move_map, symm_info, new_sym_min );
-	//kinematics::DomainMap const & dm( sym_min_map.domain_map() );
-	//for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-	// std::cout << "(" << ii << ", " << dm(ii) << "), ";
-	// if ( ii % 10 == 0 ) std::cout << std::endl;
-	//}
-	//std::cout << std::endl;
 
 	// if we are using the nblist, set it up
 	if ( use_nblist ) {

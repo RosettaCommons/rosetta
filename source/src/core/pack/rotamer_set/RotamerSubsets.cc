@@ -49,12 +49,6 @@ RotamerSubsets::RotamerSubsets(
 	moltenres_for_rotamer_( nrotamers_, 0 ),
 	nrotamers_for_moltenres_( nmoltenres_, 0 )
 {
-	/*subset_mapping rotamer_subset_map( source.nrotamers() );
-	rotamer_subset_map.reserve_destination_size( rotamer_subset_map.size() );
-	for ( Size ii = 0; ii < rotamer_subset.size(); ++ii ) {
-	rotamer_subset_map.set_next_correspondence( rotamer_subset_map[ ii ] );
-	}*/
-
 	for ( Size ii = 0; ii < rotamer_subset.size(); ++ii ) {
 		Size const ii_moltres = source.moltenres_for_rotamer( rotamer_subset[ ii ] );
 		++nrotamers_for_moltenres_[ ii_moltres ];

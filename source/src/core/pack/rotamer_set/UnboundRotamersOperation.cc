@@ -99,17 +99,6 @@ dup_residue(
 	conformation::Residue const & conformer
 )
 {
-	// This is bad:  fields like seqpos, chain, etc. don't match existing residue!
-	//conformation::ResidueOP newrsd = rotamers_[i]->clone();
-
-	// Could start by cloning either one, but I think people are more likely to introduce
-	// new metadata than new conformational data, so I'll let clone() copy the metadata.
-	//conformation::ResidueOP newrsd = existing.clone();
-	//newrsd->atoms() = conformer.atoms();
-	//newrsd->chi() = conformer.chi();
-	//newrsd->mainchain_torsions() = conformer.mainchain_torsions();
-	//newrsd->actcoord() = conformer.actcoord();
-
 	// The above is also bad:  existing may not be the same residue type as conformer!
 	conformation::ResidueOP newrsd = conformer.clone();
 	newrsd->chain( existing.chain() );

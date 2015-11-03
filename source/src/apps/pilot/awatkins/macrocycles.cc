@@ -205,7 +205,6 @@ MacrocycleMover::apply(
 				pose.conformation().append_residue_by_bond( ala, true );
 			}
 		}
-
 		Size const chain = 1;
 		Size const minimization_rounds = 15;
 

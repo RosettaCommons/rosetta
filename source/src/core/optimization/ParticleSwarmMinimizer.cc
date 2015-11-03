@@ -139,14 +139,6 @@ void ParticleSwarmMinimizer::run(Size num_cycles, Multifunc & f_fitness, Particl
 		//
 		// TODO: apply local optimization to best particle in the swarm
 		//
-		// update p(ersonal)best again?
-		//for(Size i = 1; i <= N; ++i) {
-		// ParticleOP const & p = particles[i];
-		// if( p->pbest_.size() == 0 || p->fitness_pbest_ < p->fitness_ ) {
-		//  p->pbest_ = p->p_; // make a copy
-		//  p->fitness_pbest_ = p->fitness_;
-		// }
-		//}
 		// Determine l(ocal)best and g(lobal)best
 		ParticleOPs lbests;
 		for ( Size i = 1; i <= N; ++i ) {

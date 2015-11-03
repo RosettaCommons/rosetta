@@ -90,8 +90,8 @@ pack_rotamers(
 
 	AnnealableGraphBaseOP ig = NULL;
 
-	pack_rotamers_setup( pose, scfxn, task, rotsets, ig ); //TODO: make compatible with D-amino acids
-	pack_rotamers_run( pose, task, rotsets, ig ); //TODO: make compatible with D-amino acids
+	pack_rotamers_setup( pose, scfxn, task, rotsets, ig );
+	pack_rotamers_run( pose, task, rotsets, ig );
 
 	// rescore here to make the state of the Energies good.
 	scfxn( pose );

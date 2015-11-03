@@ -1311,44 +1311,6 @@ void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ) {
 						TR << "Found Hbond between chains: "<< pose.chain( don_resnum ) << " and " << pose.chain( acc_resnum ) << std::endl;
 						//now copy the same stuff as for the normal case:
 						n_crosschain_hbonds += 1;
-						//TR << "Hbond number: "<< ii << " is between chains." << std::endl;
-						//now look at atoms involved
-						// Size hatm = hbond.don_hatm() ;
-						// conformation::Residue don_rsd = pose.residue(  don_resnum );
-						// conformation::Residue acc_rsd = pose.residue(  acc_resnum );
-						// Size don_atm = don_rsd.atom_base( hatm );
-						// //Size don_atm = hbond.don_hatm() ;
-						// Size acc_atm = hbond.acc_atm();
-
-						// //Make AtomIDs
-						// core::id::AtomID don_atid( don_atm, don_resnum );
-						// core::id::AtomID acc_atid( acc_atm, acc_resnum );
-						// Real acc_SASA( atom_sasa[ acc_atid ] );
-						// Real don_SASA( atom_sasa[ don_atid ] );
-						// Real hbond_SASA ( acc_SASA + don_SASA );
-
-						// //now find possible sasa
-						// Real const don_rad = radii[ don_rsd.atom(don_atm).type() ] + probe_radius;
-						// Real const acc_rad = radii[ acc_rsd.atom(acc_atm).type() ] + probe_radius;
-						// Real const possible_sasa( four_pi * (don_rad*don_rad + acc_rad*acc_rad ) );
-
-						// //Adujust Hbond energy
-						// Real adjust_weight( 2 );
-						// Real sasa_ratio( hbond_SASA / possible_sasa );
-						// Real const adjustment = (1 - adjust_weight * sasa_ratio);
-						// //Real const new_Hbond_E = adjustment * hbond.energy();
-
-						// //Print some stuff to make sure
-						// const std::string & don_atomname = don_rsd.atom_name( don_atm );
-						// const std::string & acc_atomname = acc_rsd.atom_name( acc_atm );
-						// // TR << "Donor Res: " <<  don_rsd.name3() << pose.pdb_info()->number( don_resnum ) << " Donor Atm: " << don_atid << " (" << don_atomname << ")"
-						// //   << " Acc Res: " << acc_rsd.name3() << pose.pdb_info()->number( acc_resnum ) << " Acc Atm: " << acc_atid << " (" << acc_atomname << ")"
-						// //   << " Hbond_SASA: " << hbond_SASA << " Possible SASA: " << possible_sasa << " SASA ratio: " << sasa_ratio
-						// //   << " Initial HBond E: " << hbond.energy() << " Adjusted: "<< new_Hbond_E
-						// //   << std::endl ;
-						// //add up the ratios and total hbond sasa
-						// total_ratios += sasa_ratio;
-						// total_hb_sasa_ += hbond_SASA;
 						data_.total_hb_E += hbond.energy();
 					}
 				}
@@ -1356,44 +1318,6 @@ void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ) {
 		} else { //not multichain constructor
 			if ( pose.chain( hbond.don_res() ) != pose.chain( hbond.acc_res() ) ) {
 				n_crosschain_hbonds += 1;
-				// //TR << "Hbond number: "<< ii << " is between chains." << std::endl;
-				// //now look at atoms involved
-				// Size hatm = hbond.don_hatm() ;
-				// conformation::Residue don_rsd = pose.residue(  don_resnum );
-				// conformation::Residue acc_rsd = pose.residue(  acc_resnum );
-				// Size don_atm = don_rsd.atom_base( hatm );
-				// //Size don_atm = hbond.don_hatm() ;
-				// Size acc_atm = hbond.acc_atm();
-
-				// //Make AtomIDs
-				// core::id::AtomID don_atid( don_atm, don_resnum );
-				// core::id::AtomID acc_atid( acc_atm, acc_resnum );
-				// Real acc_SASA( atom_sasa[ acc_atid ] );
-				// Real don_SASA( atom_sasa[ don_atid ] );
-				// Real hbond_SASA ( acc_SASA + don_SASA );
-
-				// //now find possible sasa
-				// Real const don_rad = radii[ don_rsd.atom(don_atm).type() ] + probe_radius;
-				// Real const acc_rad = radii[ acc_rsd.atom(acc_atm).type() ] + probe_radius;
-				// Real const possible_sasa( four_pi * (don_rad*don_rad + acc_rad*acc_rad ) );
-
-				// //Adujust Hbond energy
-				// Real adjust_weight( 2 );
-				// Real sasa_ratio( hbond_SASA / possible_sasa );
-				// Real const adjustment = (1 - adjust_weight * sasa_ratio);
-				// Real const new_Hbond_E = adjustment * hbond.energy();
-
-				// // //Print some stuff to make sure
-				// // const std::string & don_atomname = don_rsd.atom_name( don_atm );
-				// // const std::string & acc_atomname = acc_rsd.atom_name( acc_atm );
-				// // // TR << "Donor Res: " <<  don_rsd.name3() << pose.pdb_info()->number( don_resnum ) << " Donor Atm: " << don_atid << " (" << don_atomname << ")"
-				// // //   << " Acc Res: " << acc_rsd.name3() << pose.pdb_info()->number( acc_resnum ) << " Acc Atm: " << acc_atid << " (" << acc_atomname << ")"
-				// // //   << " Hbond_SASA: " << hbond_SASA << " Possible SASA: " << possible_sasa << " SASA ratio: " << sasa_ratio
-				// // //   << " Initial HBond E: " << hbond.energy() << " Adjusted: "<< new_Hbond_E
-				// // //   << std::endl ;
-				// // //add up the ratios and total hbond sasa
-				// total_ratios += sasa_ratio;
-				// total_hb_sasa_ += hbond_SASA;
 				data_.total_hb_E += hbond.energy();
 			} //end if chains not equal
 		} //end if not multichain
@@ -1670,10 +1594,6 @@ void InterfaceAnalyzerMover::report_data(){
 		if ( compute_interface_sc_ ) {
 			T( posename_base_ ) << "SHAPE COMPLEMENTARITY VALUE: " << data_.sc_value << std::endl;
 		}
-		//results <<  data_.pymol_sel_interface;
-		// results <<  data_.pymol_sel_hbond_unsat;
-		//if(compute_packstat_)
-		// results <<  data_.pymol_sel_packing;
 
 	} else {
 		//or report to job

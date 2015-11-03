@@ -346,7 +346,6 @@ simple_numeric_deriv_check(
 	for ( Size i=1; i<= n_increment; ++i ) {
 		dE_dvars_numeric[i].resize( nangles, 0.0 );
 	}
-	///ObjexxFCL::FArray2D< Real > dE_dvars_numeric( nangles, n_increment );
 
 	Multivec vars( start_vars );
 

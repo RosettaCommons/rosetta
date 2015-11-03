@@ -494,7 +494,11 @@ RotamerSet_::build_optimize_H_rotamers(
 		utility::vector1< ResidueOP > suggested_rotamers;
 
 		// REFACTOR!!!
-		if ( concrete_residue->n_proton_chi() != 0 ) {
+		if ( concrete_residue->n_proton_chi() == 0 ) {
+			/// merely clone the input residue
+			push_back_rotamer( existing_residue.clone() );
+			id_for_current_rotamer_ = rotamers_.size();
+		} else {
 			utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
 			proton_chi_chisets.push_back(
 				dunbrack::ChiSetOP( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) ) );
@@ -520,10 +524,6 @@ RotamerSet_::build_optimize_H_rotamers(
 			for ( Size ii = 1; ii <= suggested_rotamers.size(); ++ii ) {
 				push_back_rotamer( suggested_rotamers[ ii ] );
 			}
-		} else {
-			/// merely clone the input residue
-			push_back_rotamer( existing_residue.clone() );
-			id_for_current_rotamer_ = rotamers_.size();
 		}
 
 	}
@@ -677,8 +677,6 @@ RotamerSet_::compute_one_body_energies(
 
 		} // (potentially) long-range neighbors of theresid [our resid()]
 	} // long-range energy functions
-
-
 }
 
 /// @details This function is similar to compute_one_body_energies but it also returns
@@ -769,7 +767,6 @@ RotamerSet_::compute_one_and_two_body_energies(
 
 		} // (potentially) long-range neighbors of theresid [our resid()]
 	} // long-range energy functions
-
 }
 
 /// @details Used in OptE.  Based on the function compute_one_body_energies().  OptE needs to store the energies for all score terms for each rotamer separately.  In this context there are only rotamers at a single position, with all other positions fixed.
@@ -808,14 +805,21 @@ RotamerSet_::compute_one_body_energy_maps(
 		sf.eval_ci_1b( *rotamers_[ ii ], pose, emap );
 		sf.eval_cd_1b( *rotamers_[ ii ], pose, emap );
 
-		// With apl's blessing, adding a special check for whether or not surface scoring is in use for the long-term
-		// goal of trying to optimize the non-PD surface score together with the other EnergyMethods in the optE protocol.
-		// Since this method is only used by optE, this ugly if statement here will not affect performance in regular runs. (ronj)
+		// With apl's blessing, adding a special check for whether or not
+		// surface scoring is in use for the long-term goal of trying to
+		// optimize the non-PD surface score together with the other
+		// EnergyMethods in the optE protocol. Since this method is only used
+		// by optE, this ugly if statement here will not affect performance
+		// in regular runs. (ronj)
 
-		// This calculation is inside the for loop above which goes through all the different possible rotamers at a sequence
-		// position. To avoid making the expensive surface calculation, cache the last computed energy if the residue type
-		// of the last rotamer is the same as that of the current rotamer since that will not change the surface score.
-		// This kind of "state" can't be kept in the surface calculation function since that is not implemented as a class. (ronj)
+		// This calculation is inside the for loop above which goes through
+		// all the different possible rotamers at a sequence position. To avoid
+		// making the expensive surface calculation, cache the last computed
+		// energy if the residue type of the last rotamer is the same as that
+		// of the current rotamer since that will not change the surface score.
+		// This kind of "state" can't be kept in the surface calculation
+		// function since that is not implemented as a class. (ronj)
+
 		core::Real surface_weight( sf.get_weight( core::scoring::surface ) );
 		if ( surface_weight ) {
 			if ( ( ii > 1 ) && ( (*rotamers_[ii]).name() == (*rotamers_[ii-1]).name() ) ) {
@@ -1202,8 +1206,6 @@ RotamerSet_::build_dependent_rotamers_for_concrete(
 {
 	using namespace conformation;
 	using namespace pack::task;
-
-	//if ( !task.residue_task( resid() ).build_dependent_rotamers() ) return;
 
 	if ( concrete_residue->name() != "TP3" ) return; // logic only exists for this guy right now
 

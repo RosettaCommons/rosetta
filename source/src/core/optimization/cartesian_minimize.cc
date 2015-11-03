@@ -304,6 +304,7 @@ cart_numerical_derivative_check(
 				Real const ratio( std::abs( dE_dvars[ii] ) < 0.001 ? 0.0 :
 					deriv / dE_dvars[ii] );
 
+
 				if ( std::abs(dE_dvars[ii]) > 0.001 || std::abs(deriv) > 0.001 ) {
 					if ( verbose && write_to_stdout ) {
 						// if you change this output, please also change the comments

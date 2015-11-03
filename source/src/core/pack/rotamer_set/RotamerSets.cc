@@ -280,35 +280,10 @@ RotamerSets::build_rotamers(
 				set_of_rotamer_sets_[ resid_2_moltenres_[ copies[jj] ]] = smallset;
 				//std::cout << "replacing rotset at " << copies[jj] << " with smallest set from " << smallest_res << std::endl;
 			}
-
-			//debug
-			/*
-			for (int i =1; i<= set_of_rotamer_sets_.size(); ++i){
-			std::cout << "set of rot set has " << set_of_rotamer_sets_[i]->num_rotamers() << " at " << i << std::endl;
-			}
-			*/
-
 		}
 		std::cout << "expected rotamer count is " << expected_rot_count << std::endl;
-
 	}
-
 	update_offset_data();
-
-	// // DOUG DOUG DOUG
-	// // Dump rotamers to the screen.
-	// for ( Size ii = 1; ii <= nmoltenres_; ++ii ) {
-	//  RotamerSetOP rotset( set_of_rotamer_sets_[ ii ] );
-	//  for ( Size jj = 1; jj <= rotset->num_rotamers(); ++jj ) {
-	//   conformation::ResidueCOP jjres( rotset->rotamer( jj ) );
-	//   std::cout << "ROT: " << ii << " " << jj << " " << jjres->name();
-	//   for ( Size kk = 1; kk <= jjres->nchi(); ++kk ) {
-	//    std::cout << " " << jjres->chi( kk );
-	//   }
-	//   std::cout << std::endl;
-	//  }
-	// }
-
 }
 
 void
@@ -704,70 +679,8 @@ RotamerSets::compute_proline_correction_energies_for_otf_graph(
 				otfig->set_ProCorrection_values_for_edge( ii, jj, jj, kk,
 					bb_bbnonproE, bb_bbproE, sc_npbb_energy, sc_probb_energy );
 			}
-
 		}
 	}
-
-	/* Giant code duplication ahead! -- when I'm 100% sure this is totally unncessary, I'll delete it... but it took a while to write
-	/// 3. For each molten residue
-	for ( Size ii = 1; ii <= (Size) nmoltenres_; ++ii ) {
-	RotamerSetCOP ii_rotset = set_of_rotamer_sets_[ ii ];
-	/// 4. Calculate one body energies
-	Size const ii_nrots = ii_rotset->num_rotamers();
-	Size const ii_resid = moltenres_2_resid_[ ii ];
-
-	utility::vector1< core::PackerEnergy > energies( ii_nrots, 0.0 );
-	for ( Size jj = 1; jj <= ii_nrots; ++jj ) {
-	EnergyMap emap;
-	sfxn.eval_ci_1b( *ii_rotset->rotamers( jj ), pose, emap );
-	sfxn.eval_cd_1b( *ii_rotset->rotamers( jj ), pose, emap );
-	energies[ jj ] += static_cast< core::PackerEnergy > ( sfxn.weights().dot( emap ) ); // precision loss here.
-	}
-
-	sfxn.evaluate_rotamer_intrares_energies( *ii_rotset, pose, energies );
-
-	/// 5. Iterate across all incident edges for the corresponding vertex in the packer neighbor graph
-	for ( graph::Graph::EdgeListConstIter
-	uli  = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
-	ulie = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end();
-	uli != ulie; ++uli ) {
-	Size const jj_resid = (*uli)->get_second_node_ind();
-	Size const jj = resid_2_moltenres_[ jj_resid ]; //pretend we're iterating over jj >= ii
-	if ( jj != 0 ) continue;
-	/// 6. Calculate two-body energies with the background residues
-	Residue const & neighbor( pose.residue( jj_resid ) );
-	sfxn.evaluate_rotamer_background_energies( ii_rotset, neighbor, pose, energies );
-	}
-
-	/// 7. Iterate across long-range edges
-	for ( ScoreFunction::LR_2B_MethodIterator
-	lr_iter = sf.long_range_energies_begin(),
-	lr_end  = sf.long_range_energies_end();
-	lr_iter != lr_end; ++lr_iter ) {
-	LREnergyContainerCOP lrec = pose.energies().long_range_container( (*lr_iter)->long_range_type() );
-	if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
-
-	// Potentially O(N) operation...
-	for ( ResidueNeighborConstIteratorOP
-	rni = lrec->const_neighbor_iterator_begin( ii_resid ),
-	rniend = lrec->const_neighbor_iterator_end( ii_resid );
-	(*rni) != (*rniend); ++(*rni) ) {
-	Size const neighbor_id = rni->neighbor_id();
-	debug_assert( neighbor_id != theresid );
-	if ( resid_2_moltenres_[ neighbor_id ] != 0 ) continue;
-
-	(*lr_iter)->evaluate_rotamer_background_energies(
-	*ii_rotset, pose.residue( neighbor_id ), pose, sfxn,
-	sfxn.weights(), energies );
-
-	} // (potentially) long-range neighbors of ii
-	} // long-range energy functions
-
-	for ( Size jj = 1; jj <= ii_nrots; ++jj ) {
-	otfig->add_to_one_body_energy_for_node_state( ii, jj, energies[ jj ] );
-	}
-
-	}*/
 }
 
 

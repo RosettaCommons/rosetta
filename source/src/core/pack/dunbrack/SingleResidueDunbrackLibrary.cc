@@ -713,225 +713,109 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	utility_exit_with_message(
 		"ERROR: SingleResidueDunbrackLibrary::hokey_template_workaround should never be called!");
 
-	RotamericSingleResidueDunbrackLibrary< ONE, ONE >   rsrdl_11( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< ONE, TWO >   rsrdl_12( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< ONE, THREE > rsrdl_13( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< ONE, FOUR >  rsrdl_14( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< ONE, FIVE >  rsrdl_15( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< TWO, ONE >   rsrdl_21( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< TWO, TWO >   rsrdl_22( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< TWO, THREE > rsrdl_23( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< TWO, FOUR >  rsrdl_24( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< TWO, FIVE >  rsrdl_25( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< THREE, ONE >   rsrdl_31( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< THREE, TWO >   rsrdl_32( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< THREE, THREE > rsrdl_33( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< THREE, FOUR >  rsrdl_34( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< THREE, FIVE >  rsrdl_35( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< FOUR, ONE >   rsrdl_41( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< FOUR, TWO >   rsrdl_42( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< FOUR, THREE > rsrdl_43( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< FOUR, FOUR >  rsrdl_44( chemical::aa_ala, false );
-	RotamericSingleResidueDunbrackLibrary< FOUR, FIVE >  rsrdl_45( chemical::aa_ala, false );
+	// Don't look at this #define--read the comment below it.
 
-	SemiRotamericSingleResidueDunbrackLibrary< ONE, ONE >   srsrdl_11( chemical::aa_ala, true, true ); //e.g. asn,phe
-	SemiRotamericSingleResidueDunbrackLibrary< TWO, ONE >   srsrdl_12( chemical::aa_ala, true, true ); // e.g. glu
-	SemiRotamericSingleResidueDunbrackLibrary< ONE, TWO >   srsrdl_21( chemical::aa_ala, true, true ); //e.g. asn,phe
-	SemiRotamericSingleResidueDunbrackLibrary< TWO, TWO >   srsrdl_22( chemical::aa_ala, true, true ); // e.g. glu
-	SemiRotamericSingleResidueDunbrackLibrary< ONE, THREE >   srsrdl_31( chemical::aa_ala, true, true ); //e.g. asn,phe
-	SemiRotamericSingleResidueDunbrackLibrary< TWO, THREE >   srsrdl_32( chemical::aa_ala, true, true ); // e.g. glu
-	SemiRotamericSingleResidueDunbrackLibrary< ONE, FOUR >   srsrdl_41( chemical::aa_ala, true, true ); //e.g. asn,phe
-	SemiRotamericSingleResidueDunbrackLibrary< TWO, FOUR >   srsrdl_42( chemical::aa_ala, true, true ); // e.g. glu
-	SemiRotamericSingleResidueDunbrackLibrary< ONE, FIVE >   srsrdl_51( chemical::aa_ala, true, true ); //e.g. asn,phe
-	SemiRotamericSingleResidueDunbrackLibrary< TWO, FIVE >   srsrdl_52( chemical::aa_ala, true, true ); // e.g. glu
-	// three and four do not exist... they could in the future if needed.
+	#define INIT( CHI, BB ) \
+RotamericSingleResidueDunbrackLibrary< CHI, BB > rsrdl_ ## CHI ## _ ## BB( chemical::aa_ala, false ); \
+SemiRotamericSingleResidueDunbrackLibrary< CHI, BB > srsrdl_ ## CHI ## _ ## BB( chemical::aa_ala, true, true ); \
+PackedDunbrackRotamer< CHI, BB, Real > prot_ ## CHI ## _ ## BB; \
+rsrdl_ ## CHI ## _ ## BB.nchi(); \
+srsrdl_ ## CHI ## _ ## BB.nchi(); \
+rsrdl_ ## CHI ## _ ## BB.n_rotamer_bins(); \
+srsrdl_ ## CHI ## _ ## BB.n_rotamer_bins(); \
+rsrdl_ ## CHI ## _ ## BB.rotamer_energy( rsd, scratch ); \
+srsrdl_ ## CHI ## _ ## BB.rotamer_energy( rsd, scratch ); \
+rsrdl_ ## CHI ## _ ## BB.rotamer_energy_deriv( rsd, scratch ); \
+srsrdl_ ## CHI ## _ ## BB.rotamer_energy_deriv( rsd, scratch ); \
+rsrdl_ ## CHI ## _ ## BB.best_rotamer_energy( rsd, true, scratch ); \
+srsrdl_ ## CHI ## _ ## BB.best_rotamer_energy( rsd, true, scratch ); \
+rsrdl_ ## CHI ## _ ## BB.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv ); \
+srsrdl_ ## CHI ## _ ## BB.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv ); \
+rsrdl_ ## CHI ## _ ## BB.write_to_file( ozs ); \
+srsrdl_ ## CHI ## _ ## BB.write_to_file( ozs ); \
+rsrdl_ ## CHI ## _ ## BB.write_to_binary( os ); \
+srsrdl_ ## CHI ## _ ## BB.write_to_binary( os ); \
+rsrdl_ ## CHI ## _ ## BB.read_from_binary( is ); \
+srsrdl_ ## CHI ## _ ## BB.read_from_binary( is ); \
+rsrdl_ ## CHI ## _ ## BB.memory_usage_in_bytes(); \
+srsrdl_ ## CHI ## _ ## BB.memory_usage_in_bytes(); \
+rsrdl_ ## CHI ## _ ## BB.get_rotamer_from_chi( chi, rot ); \
+srsrdl_ ## CHI ## _ ## BB.get_rotamer_from_chi( chi, rot ); \
+rsrdl_ ## CHI ## _ ## BB.find_another_representative_for_unlikely_rotamer( rsd, rotwell ); \
+srsrdl_ ## CHI ## _ ## BB.find_another_representative_for_unlikely_rotamer( rsd, rotwell ); \
+rsrdl_ ## CHI ## _ ## BB.interpolate_rotamers( rsd, scratch, i, prot_ ## CHI ## _ ## BB ); \
+srsrdl_ ## CHI ## _ ## BB.interpolate_rotamers( rsd, scratch, i, prot_ ## CHI ## _ ## BB ); \
+rsrdl_ ## CHI ## _ ## BB.memory_usage_dynamic(); \
+srsrdl_ ## CHI ## _ ## BB.memory_usage_dynamic(); \
+rsrdl_ ## CHI ## _ ## BB.memory_usage_static(); \
+srsrdl_ ## CHI ## _ ## BB.memory_usage_static(); \
+rsrdl_ ## CHI ## _ ## BB.get_all_rotamer_samples( bb_FIVE ); \
+srsrdl_ ## CHI ## _ ## BB.get_all_rotamer_samples( bb_FIVE ); \
+rsrdl_ ## CHI ## _ ## BB.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );  \
+srsrdl_ ## CHI ## _ ## BB.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true ); \
+rsrdl_ ## CHI ## _ ## BB.get_probability_for_rotamer( bb_ ## BB, 1 ); \
+srsrdl_ ## CHI ## _ ## BB.get_probability_for_rotamer( bb_ ## BB, 1 ); \
+rsrdl_ ## CHI ## _ ## BB.get_rotamer( bb_ ## BB, 1 ); \
+srsrdl_ ## CHI ## _ ## BB.get_rotamer( bb_ ## BB, 1 ); \
+srsrdl_ ## CHI ## _ ## BB.interpolate_nrchi_values( sizevec_ ## BB, sizevec_ ## BB, realvec_ ## BB, 1, realvec );
+
+	// If you are adding support for rotamers with more than four chis or five
+	// backbone dihedrals, good for you. Have you created const Sizes for the
+	// additional numbers in core/pack/dunbrack/DunbrackRotamer.fwd.hh yet?
+	// If you have, add the new combinations to this clever FOREACH define.
+
+	#define FOREACH_Chi_BB(INIT) \
+INIT(   ONE,   ONE ) \
+INIT(   ONE,   TWO ) \
+INIT(   ONE, THREE ) \
+INIT(   ONE,  FOUR ) \
+INIT(   ONE,  FIVE ) \
+INIT(   TWO,   ONE ) \
+INIT(   TWO,   TWO ) \
+INIT(   TWO, THREE ) \
+INIT(   TWO,  FOUR ) \
+INIT(   TWO,  FIVE ) \
+INIT( THREE,   ONE ) \
+INIT( THREE,   TWO ) \
+INIT( THREE, THREE ) \
+INIT( THREE,  FOUR ) \
+INIT( THREE,  FIVE ) \
+INIT(  FOUR,   ONE ) \
+INIT(  FOUR,   TWO ) \
+INIT(  FOUR, THREE ) \
+INIT(  FOUR,  FOUR ) \
+INIT(  FOUR,  FIVE ) \
+INIT(  FIVE,   ONE ) \
+INIT(  FIVE,   TWO ) \
+INIT(  FIVE, THREE ) \
+INIT(  FIVE,  FOUR ) \
+INIT(  FIVE,  FIVE )
+
+	// If it's a new number of backbone angles you have added, add lines here.
+	// And increase the size of "realvec" too.
+	utility::fixedsizearray1< Real,   ONE > bb_ONE;
+	utility::fixedsizearray1< Real,   TWO > bb_TWO;
+	utility::fixedsizearray1< Real, THREE > bb_THREE;
+	utility::fixedsizearray1< Real,  FOUR > bb_FOUR;
+	utility::fixedsizearray1< Real,  FIVE > bb_FIVE;
+
+	utility::fixedsizearray1< Size,   ONE > sizevec_ONE;
+	utility::fixedsizearray1< Real,   ONE > realvec_ONE;
+	utility::fixedsizearray1< Size,   TWO > sizevec_TWO;
+	utility::fixedsizearray1< Real,   TWO > realvec_TWO;
+	utility::fixedsizearray1< Size, THREE > sizevec_THREE;
+	utility::fixedsizearray1< Real, THREE > realvec_THREE;
+	utility::fixedsizearray1< Size,  FOUR > sizevec_FOUR;
+	utility::fixedsizearray1< Real,  FOUR > realvec_FOUR;
+	utility::fixedsizearray1< Size,  FIVE > sizevec_FIVE;
+	utility::fixedsizearray1< Real,  FIVE > realvec_FIVE;
+	utility::vector1< Real > realvec( FIVE );
 
 	chemical::ResidueType rt( NULL, NULL, NULL, NULL );
 	conformation::Residue rsd( rt, true );
 	RotamerLibraryScratchSpace scratch;
 	Size4 rotwell;
 	Size i(0);
-	utility::fixedsizearray1< Real, ONE > bb1;
-	utility::fixedsizearray1< Real, TWO > bb2;
-	utility::fixedsizearray1< Real, THREE > bb3;
-	utility::fixedsizearray1< Real, FOUR > bb4;
-	utility::fixedsizearray1< Real, FIVE > bb5;
-
-	PackedDunbrackRotamer< ONE, ONE, Real > prot11;
-	PackedDunbrackRotamer< ONE, TWO, Real > prot12;
-	PackedDunbrackRotamer< ONE, THREE, Real > prot13;
-	PackedDunbrackRotamer< ONE, FOUR, Real > prot14;
-	PackedDunbrackRotamer< ONE, FIVE, Real > prot15;
-	PackedDunbrackRotamer< TWO, ONE, Real > prot21;
-	PackedDunbrackRotamer< TWO, TWO, Real > prot22;
-	PackedDunbrackRotamer< TWO, THREE, Real > prot23;
-	PackedDunbrackRotamer< TWO, FOUR, Real > prot24;
-	PackedDunbrackRotamer< TWO, FIVE, Real > prot25;
-	PackedDunbrackRotamer< THREE, ONE, Real > prot31;
-	PackedDunbrackRotamer< THREE, TWO, Real > prot32;
-	PackedDunbrackRotamer< THREE, THREE, Real > prot33;
-	PackedDunbrackRotamer< THREE, FOUR, Real > prot34;
-	PackedDunbrackRotamer< THREE, FIVE, Real > prot35;
-	PackedDunbrackRotamer< FOUR, ONE, Real > prot41;
-	PackedDunbrackRotamer< FOUR, TWO, Real > prot42;
-	PackedDunbrackRotamer< FOUR, THREE, Real > prot43;
-	PackedDunbrackRotamer< FOUR, FOUR, Real > prot44;
-	PackedDunbrackRotamer< FOUR, FIVE, Real > prot45;
-
-	rsrdl_11.nchi();
-	rsrdl_12.nchi();
-	rsrdl_13.nchi();
-	rsrdl_14.nchi();
-	rsrdl_15.nchi();
-	srsrdl_11.nchi();
-	srsrdl_12.nchi();
-	rsrdl_21.nchi();
-	rsrdl_22.nchi();
-	rsrdl_23.nchi();
-	rsrdl_24.nchi();
-	rsrdl_25.nchi();
-	srsrdl_21.nchi();
-	srsrdl_22.nchi();
-	rsrdl_31.nchi();
-	rsrdl_32.nchi();
-	rsrdl_33.nchi();
-	rsrdl_34.nchi();
-	rsrdl_35.nchi();
-	srsrdl_31.nchi();
-	srsrdl_32.nchi();
-	rsrdl_41.nchi();
-	rsrdl_42.nchi();
-	rsrdl_43.nchi();
-	rsrdl_44.nchi();
-	rsrdl_45.nchi();
-	srsrdl_41.nchi();
-	srsrdl_42.nchi();
-	srsrdl_51.nchi();
-	srsrdl_52.nchi();
-
-	rsrdl_11.n_rotamer_bins();
-	rsrdl_12.n_rotamer_bins();
-	rsrdl_13.n_rotamer_bins();
-	rsrdl_14.n_rotamer_bins();
-	rsrdl_15.n_rotamer_bins();
-	srsrdl_11.n_rotamer_bins();
-	srsrdl_12.n_rotamer_bins();
-	rsrdl_21.n_rotamer_bins();
-	rsrdl_22.n_rotamer_bins();
-	rsrdl_23.n_rotamer_bins();
-	rsrdl_24.n_rotamer_bins();
-	rsrdl_25.n_rotamer_bins();
-	srsrdl_21.n_rotamer_bins();
-	srsrdl_22.n_rotamer_bins();
-	rsrdl_31.n_rotamer_bins();
-	rsrdl_32.n_rotamer_bins();
-	rsrdl_33.n_rotamer_bins();
-	rsrdl_34.n_rotamer_bins();
-	rsrdl_35.n_rotamer_bins();
-	srsrdl_31.n_rotamer_bins();
-	srsrdl_32.n_rotamer_bins();
-	rsrdl_41.n_rotamer_bins();
-	rsrdl_42.n_rotamer_bins();
-	rsrdl_43.n_rotamer_bins();
-	rsrdl_44.n_rotamer_bins();
-	rsrdl_45.n_rotamer_bins();
-	srsrdl_41.n_rotamer_bins();
-	srsrdl_42.n_rotamer_bins();
-	srsrdl_51.n_rotamer_bins();
-	srsrdl_52.n_rotamer_bins();
-
-	rsrdl_11.rotamer_energy( rsd, scratch );
-	rsrdl_12.rotamer_energy( rsd, scratch );
-	rsrdl_13.rotamer_energy( rsd, scratch );
-	rsrdl_14.rotamer_energy( rsd, scratch );
-	rsrdl_15.rotamer_energy( rsd, scratch );
-	srsrdl_11.rotamer_energy( rsd, scratch );
-	srsrdl_12.rotamer_energy( rsd, scratch );
-	rsrdl_21.rotamer_energy( rsd, scratch );
-	rsrdl_22.rotamer_energy( rsd, scratch );
-	rsrdl_23.rotamer_energy( rsd, scratch );
-	rsrdl_24.rotamer_energy( rsd, scratch );
-	rsrdl_25.rotamer_energy( rsd, scratch );
-	srsrdl_21.rotamer_energy( rsd, scratch );
-	srsrdl_22.rotamer_energy( rsd, scratch );
-	rsrdl_31.rotamer_energy( rsd, scratch );
-	rsrdl_32.rotamer_energy( rsd, scratch );
-	rsrdl_33.rotamer_energy( rsd, scratch );
-	rsrdl_34.rotamer_energy( rsd, scratch );
-	rsrdl_35.rotamer_energy( rsd, scratch );
-	srsrdl_31.rotamer_energy( rsd, scratch );
-	srsrdl_32.rotamer_energy( rsd, scratch );
-	rsrdl_41.rotamer_energy( rsd, scratch );
-	rsrdl_42.rotamer_energy( rsd, scratch );
-	rsrdl_43.rotamer_energy( rsd, scratch );
-	rsrdl_44.rotamer_energy( rsd, scratch );
-	rsrdl_45.rotamer_energy( rsd, scratch );
-	srsrdl_41.rotamer_energy( rsd, scratch );
-	srsrdl_42.rotamer_energy( rsd, scratch );
-	srsrdl_51.rotamer_energy( rsd, scratch );
-	srsrdl_52.rotamer_energy( rsd, scratch );
-
-	rsrdl_11.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_12.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_13.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_14.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_15.rotamer_energy_deriv( rsd, scratch );
-	srsrdl_11.rotamer_energy_deriv( rsd, scratch );
-	srsrdl_12.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_21.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_22.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_23.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_24.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_25.rotamer_energy_deriv( rsd, scratch );
-	srsrdl_21.rotamer_energy_deriv( rsd, scratch );
-	srsrdl_22.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_31.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_32.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_33.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_34.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_35.rotamer_energy_deriv( rsd, scratch );
-	srsrdl_31.rotamer_energy_deriv( rsd, scratch );
-	srsrdl_32.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_41.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_42.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_43.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_44.rotamer_energy_deriv( rsd, scratch );
-	rsrdl_45.rotamer_energy_deriv( rsd, scratch );
-	srsrdl_41.rotamer_energy_deriv( rsd, scratch );
-	srsrdl_42.rotamer_energy_deriv( rsd, scratch );
-	srsrdl_51.rotamer_energy_deriv( rsd, scratch );
-	srsrdl_52.rotamer_energy_deriv( rsd, scratch );
-
-	rsrdl_11.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_12.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_13.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_14.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_15.best_rotamer_energy( rsd, true, scratch );
-	srsrdl_11.best_rotamer_energy( rsd, true, scratch );
-	srsrdl_12.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_21.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_22.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_23.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_24.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_25.best_rotamer_energy( rsd, true, scratch );
-	srsrdl_21.best_rotamer_energy( rsd, true, scratch );
-	srsrdl_22.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_31.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_32.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_33.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_34.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_35.best_rotamer_energy( rsd, true, scratch );
-	srsrdl_31.best_rotamer_energy( rsd, true, scratch );
-	srsrdl_32.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_41.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_42.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_43.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_44.best_rotamer_energy( rsd, true, scratch );
-	rsrdl_45.best_rotamer_energy( rsd, true, scratch );
-	srsrdl_41.best_rotamer_energy( rsd, true, scratch );
-	srsrdl_42.best_rotamer_energy( rsd, true, scratch );
-	srsrdl_51.best_rotamer_energy( rsd, true, scratch );
-	srsrdl_52.best_rotamer_energy( rsd, true, scratch );
 
 	pose::Pose pose;
 	scoring::ScoreFunction sfxn;
@@ -941,501 +825,15 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	chemical::ResidueTypeCOP cr;
 	utility::vector1< utility::vector1< Real > > ecs;
 	rotamers::RotamerVector rv;
-
-	rsrdl_11.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_12.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_13.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_14.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_15.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	srsrdl_11.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	srsrdl_12.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_21.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_22.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_23.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_24.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_25.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	srsrdl_21.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	srsrdl_22.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_31.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_32.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_33.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_34.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_35.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	srsrdl_31.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	srsrdl_32.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_41.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_42.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_43.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_44.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	rsrdl_45.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	srsrdl_41.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	srsrdl_42.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	srsrdl_51.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-	srsrdl_52.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
-
-	utility::io::ozstream ozs;
-	rsrdl_11.write_to_file( ozs );
-	rsrdl_12.write_to_file( ozs );
-	rsrdl_13.write_to_file( ozs );
-	rsrdl_14.write_to_file( ozs );
-	rsrdl_15.write_to_file( ozs );
-	srsrdl_11.write_to_file( ozs );
-	srsrdl_12.write_to_file( ozs );
-	rsrdl_21.write_to_file( ozs );
-	rsrdl_22.write_to_file( ozs );
-	rsrdl_23.write_to_file( ozs );
-	rsrdl_24.write_to_file( ozs );
-	rsrdl_25.write_to_file( ozs );
-	srsrdl_21.write_to_file( ozs );
-	srsrdl_22.write_to_file( ozs );
-	rsrdl_31.write_to_file( ozs );
-	rsrdl_32.write_to_file( ozs );
-	rsrdl_33.write_to_file( ozs );
-	rsrdl_34.write_to_file( ozs );
-	rsrdl_35.write_to_file( ozs );
-	srsrdl_31.write_to_file( ozs );
-	srsrdl_32.write_to_file( ozs );
-	rsrdl_41.write_to_file( ozs );
-	rsrdl_42.write_to_file( ozs );
-	rsrdl_43.write_to_file( ozs );
-	rsrdl_44.write_to_file( ozs );
-	rsrdl_45.write_to_file( ozs );
-	srsrdl_41.write_to_file( ozs );
-	srsrdl_42.write_to_file( ozs );
-	srsrdl_51.write_to_file( ozs );
-	srsrdl_52.write_to_file( ozs );
-
-	utility::io::ozstream os;
-	rsrdl_11.write_to_binary( os );
-	rsrdl_12.write_to_binary( os );
-	rsrdl_13.write_to_binary( os );
-	rsrdl_14.write_to_binary( os );
-	rsrdl_15.write_to_binary( os );
-	srsrdl_11.write_to_binary( os );
-	srsrdl_12.write_to_binary( os );
-	rsrdl_21.write_to_binary( os );
-	rsrdl_22.write_to_binary( os );
-	rsrdl_23.write_to_binary( os );
-	rsrdl_24.write_to_binary( os );
-	rsrdl_25.write_to_binary( os );
-	srsrdl_21.write_to_binary( os );
-	srsrdl_22.write_to_binary( os );
-	rsrdl_31.write_to_binary( os );
-	rsrdl_32.write_to_binary( os );
-	rsrdl_33.write_to_binary( os );
-	rsrdl_34.write_to_binary( os );
-	rsrdl_35.write_to_binary( os );
-	srsrdl_31.write_to_binary( os );
-	srsrdl_32.write_to_binary( os );
-	rsrdl_41.write_to_binary( os );
-	rsrdl_42.write_to_binary( os );
-	rsrdl_43.write_to_binary( os );
-	rsrdl_44.write_to_binary( os );
-	rsrdl_45.write_to_binary( os );
-	srsrdl_41.write_to_binary( os );
-	srsrdl_42.write_to_binary( os );
-	srsrdl_51.write_to_binary( os );
-	srsrdl_52.write_to_binary( os );
-
-	utility::io::izstream is;
-	rsrdl_11.read_from_binary( is );
-	rsrdl_12.read_from_binary( is );
-	rsrdl_13.read_from_binary( is );
-	rsrdl_14.read_from_binary( is );
-	rsrdl_15.read_from_binary( is );
-	srsrdl_11.read_from_binary( is );
-	srsrdl_12.read_from_binary( is );
-	rsrdl_21.read_from_binary( is );
-	rsrdl_22.read_from_binary( is );
-	rsrdl_23.read_from_binary( is );
-	rsrdl_24.read_from_binary( is );
-	rsrdl_25.read_from_binary( is );
-	srsrdl_21.read_from_binary( is );
-	srsrdl_22.read_from_binary( is );
-	rsrdl_31.read_from_binary( is );
-	rsrdl_32.read_from_binary( is );
-	rsrdl_33.read_from_binary( is );
-	rsrdl_34.read_from_binary( is );
-	rsrdl_35.read_from_binary( is );
-	srsrdl_31.read_from_binary( is );
-	srsrdl_32.read_from_binary( is );
-	rsrdl_41.read_from_binary( is );
-	rsrdl_42.read_from_binary( is );
-	rsrdl_43.read_from_binary( is );
-	rsrdl_44.read_from_binary( is );
-	rsrdl_45.read_from_binary( is );
-	srsrdl_41.read_from_binary( is );
-	srsrdl_42.read_from_binary( is );
-	srsrdl_51.read_from_binary( is );
-	srsrdl_52.read_from_binary( is );
-
-	rsrdl_11.memory_usage_in_bytes();
-	rsrdl_12.memory_usage_in_bytes();
-	rsrdl_13.memory_usage_in_bytes();
-	rsrdl_14.memory_usage_in_bytes();
-	rsrdl_15.memory_usage_in_bytes();
-	srsrdl_11.memory_usage_in_bytes();
-	srsrdl_12.memory_usage_in_bytes();
-	rsrdl_21.memory_usage_in_bytes();
-	rsrdl_22.memory_usage_in_bytes();
-	rsrdl_23.memory_usage_in_bytes();
-	rsrdl_24.memory_usage_in_bytes();
-	rsrdl_25.memory_usage_in_bytes();
-	srsrdl_21.memory_usage_in_bytes();
-	srsrdl_22.memory_usage_in_bytes();
-	rsrdl_31.memory_usage_in_bytes();
-	rsrdl_32.memory_usage_in_bytes();
-	rsrdl_33.memory_usage_in_bytes();
-	rsrdl_34.memory_usage_in_bytes();
-	rsrdl_35.memory_usage_in_bytes();
-	srsrdl_31.memory_usage_in_bytes();
-	srsrdl_32.memory_usage_in_bytes();
-	rsrdl_41.memory_usage_in_bytes();
-	rsrdl_42.memory_usage_in_bytes();
-	rsrdl_43.memory_usage_in_bytes();
-	rsrdl_44.memory_usage_in_bytes();
-	rsrdl_45.memory_usage_in_bytes();
-	srsrdl_41.memory_usage_in_bytes();
-	srsrdl_42.memory_usage_in_bytes();
-	srsrdl_51.memory_usage_in_bytes();
-	srsrdl_52.memory_usage_in_bytes();
-
-	utility::vector1< Real > chi; utility::vector1< Size > rot;
-	rsrdl_11.get_rotamer_from_chi( chi, rot );
-	rsrdl_12.get_rotamer_from_chi( chi, rot );
-	rsrdl_13.get_rotamer_from_chi( chi, rot );
-	rsrdl_14.get_rotamer_from_chi( chi, rot );
-	rsrdl_15.get_rotamer_from_chi( chi, rot );
-	srsrdl_11.get_rotamer_from_chi( chi, rot );
-	srsrdl_12.get_rotamer_from_chi( chi, rot );
-	rsrdl_21.get_rotamer_from_chi( chi, rot );
-	rsrdl_22.get_rotamer_from_chi( chi, rot );
-	rsrdl_23.get_rotamer_from_chi( chi, rot );
-	rsrdl_24.get_rotamer_from_chi( chi, rot );
-	rsrdl_25.get_rotamer_from_chi( chi, rot );
-	srsrdl_21.get_rotamer_from_chi( chi, rot );
-	srsrdl_22.get_rotamer_from_chi( chi, rot );
-	rsrdl_31.get_rotamer_from_chi( chi, rot );
-	rsrdl_32.get_rotamer_from_chi( chi, rot );
-	rsrdl_33.get_rotamer_from_chi( chi, rot );
-	rsrdl_34.get_rotamer_from_chi( chi, rot );
-	rsrdl_35.get_rotamer_from_chi( chi, rot );
-	srsrdl_31.get_rotamer_from_chi( chi, rot );
-	srsrdl_32.get_rotamer_from_chi( chi, rot );
-	rsrdl_41.get_rotamer_from_chi( chi, rot );
-	rsrdl_42.get_rotamer_from_chi( chi, rot );
-	rsrdl_43.get_rotamer_from_chi( chi, rot );
-	rsrdl_44.get_rotamer_from_chi( chi, rot );
-	rsrdl_45.get_rotamer_from_chi( chi, rot );
-	srsrdl_41.get_rotamer_from_chi( chi, rot );
-	srsrdl_42.get_rotamer_from_chi( chi, rot );
-	srsrdl_51.get_rotamer_from_chi( chi, rot );
-	srsrdl_52.get_rotamer_from_chi( chi, rot );
-
-	rsrdl_11.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_12.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_13.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_14.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_15.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	srsrdl_11.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	srsrdl_12.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_21.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_22.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_23.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_24.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_25.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	srsrdl_21.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	srsrdl_22.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_31.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_32.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_33.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_34.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_35.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	srsrdl_31.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	srsrdl_32.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_41.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_42.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_43.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_44.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	rsrdl_45.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	srsrdl_41.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	srsrdl_42.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	srsrdl_51.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-	srsrdl_52.find_another_representative_for_unlikely_rotamer( rsd, rotwell );
-
-	rsrdl_11.interpolate_rotamers( rsd, scratch, i, prot11 );
-	rsrdl_12.interpolate_rotamers( rsd, scratch, i, prot12 );
-	rsrdl_13.interpolate_rotamers( rsd, scratch, i, prot13 );
-	rsrdl_14.interpolate_rotamers( rsd, scratch, i, prot14 );
-	rsrdl_15.interpolate_rotamers( rsd, scratch, i, prot15 );
-	srsrdl_11.interpolate_rotamers( rsd, scratch, i, prot11 );
-	srsrdl_21.interpolate_rotamers( rsd, scratch, i, prot12 );
-	srsrdl_31.interpolate_rotamers( rsd, scratch, i, prot13 );
-	srsrdl_41.interpolate_rotamers( rsd, scratch, i, prot14 );
-	srsrdl_51.interpolate_rotamers( rsd, scratch, i, prot15 );
-	rsrdl_21.interpolate_rotamers( rsd, scratch, i, prot21 );
-	rsrdl_22.interpolate_rotamers( rsd, scratch, i, prot22 );
-	rsrdl_23.interpolate_rotamers( rsd, scratch, i, prot23 );
-	rsrdl_24.interpolate_rotamers( rsd, scratch, i, prot24 );
-	rsrdl_25.interpolate_rotamers( rsd, scratch, i, prot25 );
-	srsrdl_12.interpolate_rotamers( rsd, scratch, i, prot21 );
-	srsrdl_22.interpolate_rotamers( rsd, scratch, i, prot22 );
-	srsrdl_32.interpolate_rotamers( rsd, scratch, i, prot23 );
-	srsrdl_42.interpolate_rotamers( rsd, scratch, i, prot24 );
-	srsrdl_52.interpolate_rotamers( rsd, scratch, i, prot25 );
-	rsrdl_31.interpolate_rotamers( rsd, scratch, i, prot31 );
-	rsrdl_32.interpolate_rotamers( rsd, scratch, i, prot32 );
-	rsrdl_33.interpolate_rotamers( rsd, scratch, i, prot33 );
-	rsrdl_34.interpolate_rotamers( rsd, scratch, i, prot34 );
-	rsrdl_35.interpolate_rotamers( rsd, scratch, i, prot35 );
-	rsrdl_41.interpolate_rotamers( rsd, scratch, i, prot41 );
-	rsrdl_42.interpolate_rotamers( rsd, scratch, i, prot42 );
-	rsrdl_43.interpolate_rotamers( rsd, scratch, i, prot43 );
-	rsrdl_44.interpolate_rotamers( rsd, scratch, i, prot44 );
-	rsrdl_45.interpolate_rotamers( rsd, scratch, i, prot45 );
-
-	rsrdl_11.memory_usage_dynamic();
-	rsrdl_12.memory_usage_dynamic();
-	rsrdl_13.memory_usage_dynamic();
-	rsrdl_14.memory_usage_dynamic();
-	rsrdl_15.memory_usage_dynamic();
-	srsrdl_11.memory_usage_dynamic();
-	srsrdl_12.memory_usage_dynamic();
-	rsrdl_21.memory_usage_dynamic();
-	rsrdl_22.memory_usage_dynamic();
-	rsrdl_23.memory_usage_dynamic();
-	rsrdl_24.memory_usage_dynamic();
-	rsrdl_25.memory_usage_dynamic();
-	srsrdl_21.memory_usage_dynamic();
-	srsrdl_22.memory_usage_dynamic();
-	rsrdl_31.memory_usage_dynamic();
-	rsrdl_32.memory_usage_dynamic();
-	rsrdl_33.memory_usage_dynamic();
-	rsrdl_34.memory_usage_dynamic();
-	rsrdl_35.memory_usage_dynamic();
-	srsrdl_31.memory_usage_dynamic();
-	srsrdl_32.memory_usage_dynamic();
-	rsrdl_41.memory_usage_dynamic();
-	rsrdl_42.memory_usage_dynamic();
-	rsrdl_43.memory_usage_dynamic();
-	rsrdl_44.memory_usage_dynamic();
-	rsrdl_45.memory_usage_dynamic();
-	srsrdl_41.memory_usage_dynamic();
-	srsrdl_42.memory_usage_dynamic();
-	srsrdl_51.memory_usage_dynamic();
-	srsrdl_52.memory_usage_dynamic();
-
-	rsrdl_11.memory_usage_static();
-	rsrdl_12.memory_usage_static();
-	rsrdl_13.memory_usage_static();
-	rsrdl_14.memory_usage_static();
-	rsrdl_15.memory_usage_static();
-	srsrdl_11.memory_usage_static();
-	srsrdl_12.memory_usage_static();
-	rsrdl_21.memory_usage_static();
-	rsrdl_22.memory_usage_static();
-	rsrdl_23.memory_usage_static();
-	rsrdl_24.memory_usage_static();
-	rsrdl_25.memory_usage_static();
-	srsrdl_21.memory_usage_static();
-	srsrdl_22.memory_usage_static();
-	rsrdl_31.memory_usage_static();
-	rsrdl_32.memory_usage_static();
-	rsrdl_33.memory_usage_static();
-	rsrdl_34.memory_usage_static();
-	rsrdl_35.memory_usage_static();
-	srsrdl_31.memory_usage_static();
-	srsrdl_32.memory_usage_static();
-	rsrdl_41.memory_usage_static();
-	rsrdl_42.memory_usage_static();
-	rsrdl_43.memory_usage_static();
-	rsrdl_44.memory_usage_static();
-	rsrdl_45.memory_usage_static();
-	srsrdl_41.memory_usage_static();
-	srsrdl_42.memory_usage_static();
-	srsrdl_51.memory_usage_static();
-	srsrdl_52.memory_usage_static();
-
-	/*rsrdl_11.get_all_rotamer_samples( bb1 );
-	rsrdl_12.get_all_rotamer_samples( bb2 );
-	rsrdl_13.get_all_rotamer_samples( bb3 );
-	rsrdl_14.get_all_rotamer_samples( bb4 );
-	rsrdl_15.get_all_rotamer_samples( bb5 );
-	srsrdl_11.get_all_rotamer_samples( bb1 );
-	srsrdl_12.get_all_rotamer_samples( bb1 );
-	rsrdl_21.get_all_rotamer_samples( bb1 );
-	rsrdl_22.get_all_rotamer_samples( bb2 );
-	rsrdl_23.get_all_rotamer_samples( bb3 );
-	rsrdl_24.get_all_rotamer_samples( bb4 );
-	rsrdl_25.get_all_rotamer_samples( bb5 );
-	srsrdl_21.get_all_rotamer_samples( bb2 );
-	srsrdl_22.get_all_rotamer_samples( bb2 );
-	rsrdl_31.get_all_rotamer_samples( bb1 );
-	rsrdl_32.get_all_rotamer_samples( bb2 );
-	rsrdl_33.get_all_rotamer_samples( bb3 );
-	rsrdl_34.get_all_rotamer_samples( bb4 );
-	rsrdl_35.get_all_rotamer_samples( bb5 );
-	srsrdl_31.get_all_rotamer_samples( bb3 );
-	srsrdl_32.get_all_rotamer_samples( bb3 );
-	rsrdl_41.get_all_rotamer_samples( bb1 );
-	rsrdl_42.get_all_rotamer_samples( bb2 );
-	rsrdl_43.get_all_rotamer_samples( bb3 );
-	rsrdl_44.get_all_rotamer_samples( bb4 );
-	rsrdl_45.get_all_rotamer_samples( bb5 );
-	srsrdl_41.get_all_rotamer_samples( bb4 );
-	srsrdl_42.get_all_rotamer_samples( bb4 );
-	srsrdl_51.get_all_rotamer_samples( bb5 );
-	srsrdl_52.get_all_rotamer_samples( bb5 );
-	*/
-	rsrdl_11.get_all_rotamer_samples( bb5 );
-	rsrdl_12.get_all_rotamer_samples( bb5 );
-	rsrdl_13.get_all_rotamer_samples( bb5 );
-	rsrdl_14.get_all_rotamer_samples( bb5 );
-	rsrdl_15.get_all_rotamer_samples( bb5 );
-	srsrdl_11.get_all_rotamer_samples( bb5 );
-	srsrdl_12.get_all_rotamer_samples( bb5 );
-	rsrdl_21.get_all_rotamer_samples( bb5 );
-	rsrdl_22.get_all_rotamer_samples( bb5 );
-	rsrdl_23.get_all_rotamer_samples( bb5 );
-	rsrdl_24.get_all_rotamer_samples( bb5 );
-	rsrdl_25.get_all_rotamer_samples( bb5 );
-	srsrdl_21.get_all_rotamer_samples( bb5 );
-	srsrdl_22.get_all_rotamer_samples( bb5 );
-	rsrdl_31.get_all_rotamer_samples( bb5 );
-	rsrdl_32.get_all_rotamer_samples( bb5 );
-	rsrdl_33.get_all_rotamer_samples( bb5 );
-	rsrdl_34.get_all_rotamer_samples( bb5 );
-	rsrdl_35.get_all_rotamer_samples( bb5 );
-	srsrdl_31.get_all_rotamer_samples( bb5 );
-	srsrdl_32.get_all_rotamer_samples( bb5 );
-	rsrdl_41.get_all_rotamer_samples( bb5 );
-	rsrdl_42.get_all_rotamer_samples( bb5 );
-	rsrdl_43.get_all_rotamer_samples( bb5 );
-	rsrdl_44.get_all_rotamer_samples( bb5 );
-	rsrdl_45.get_all_rotamer_samples( bb5 );
-	srsrdl_41.get_all_rotamer_samples( bb5 );
-	srsrdl_42.get_all_rotamer_samples( bb5 );
-	srsrdl_51.get_all_rotamer_samples( bb5 );
-	srsrdl_52.get_all_rotamer_samples( bb5 );
-
 	ChiVector chiv;
 
-	rsrdl_11.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_12.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_13.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_14.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_15.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	srsrdl_11.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	srsrdl_12.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_21.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_22.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_23.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_24.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_25.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	srsrdl_21.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	srsrdl_22.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_31.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_32.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_33.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_34.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_35.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	srsrdl_31.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	srsrdl_32.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_41.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_42.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_43.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_44.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	rsrdl_45.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	srsrdl_41.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	srsrdl_42.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	srsrdl_51.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
-	srsrdl_52.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
+	utility::io::ozstream os;
+	utility::io::ozstream ozs;
+	utility::io::izstream is;
 
-	rsrdl_11.get_probability_for_rotamer( bb1, 1 );
-	rsrdl_12.get_probability_for_rotamer( bb2, 1 );
-	rsrdl_13.get_probability_for_rotamer( bb3, 1 );
-	rsrdl_14.get_probability_for_rotamer( bb4, 1 );
-	rsrdl_15.get_probability_for_rotamer( bb5, 1 );
-	srsrdl_11.get_probability_for_rotamer( bb1, 1 );
-	srsrdl_12.get_probability_for_rotamer( bb1, 1 );
-	rsrdl_21.get_probability_for_rotamer( bb1, 1 );
-	rsrdl_22.get_probability_for_rotamer( bb2, 1 );
-	rsrdl_23.get_probability_for_rotamer( bb3, 1 );
-	rsrdl_24.get_probability_for_rotamer( bb4, 1 );
-	rsrdl_25.get_probability_for_rotamer( bb5, 1 );
-	srsrdl_21.get_probability_for_rotamer( bb2, 1 );
-	srsrdl_22.get_probability_for_rotamer( bb2, 1 );
-	rsrdl_31.get_probability_for_rotamer( bb1, 1 );
-	rsrdl_32.get_probability_for_rotamer( bb2, 1 );
-	rsrdl_33.get_probability_for_rotamer( bb3, 1 );
-	rsrdl_34.get_probability_for_rotamer( bb4, 1 );
-	rsrdl_35.get_probability_for_rotamer( bb5, 1 );
-	srsrdl_31.get_probability_for_rotamer( bb3, 1 );
-	srsrdl_32.get_probability_for_rotamer( bb3, 1 );
-	rsrdl_41.get_probability_for_rotamer( bb1, 1 );
-	rsrdl_42.get_probability_for_rotamer( bb2, 1 );
-	rsrdl_43.get_probability_for_rotamer( bb3, 1 );
-	rsrdl_44.get_probability_for_rotamer( bb4, 1 );
-	rsrdl_45.get_probability_for_rotamer( bb5, 1 );
-	srsrdl_41.get_probability_for_rotamer( bb4, 1 );
-	srsrdl_42.get_probability_for_rotamer( bb4, 1 );
-	srsrdl_51.get_probability_for_rotamer( bb5, 1 );
-	srsrdl_52.get_probability_for_rotamer( bb5, 1 );
+	utility::vector1< Real > chi; utility::vector1< Size > rot;
 
-	rsrdl_11.get_rotamer( bb1, 1 );
-	rsrdl_12.get_rotamer( bb2, 1 );
-	rsrdl_13.get_rotamer( bb3, 1 );
-	rsrdl_14.get_rotamer( bb4, 1 );
-	rsrdl_15.get_rotamer( bb5, 1 );
-	srsrdl_11.get_rotamer( bb1, 1 );
-	srsrdl_12.get_rotamer( bb1, 1 );
-	rsrdl_21.get_rotamer( bb1, 1 );
-	rsrdl_22.get_rotamer( bb2, 1 );
-	rsrdl_23.get_rotamer( bb3, 1 );
-	rsrdl_24.get_rotamer( bb4, 1 );
-	rsrdl_25.get_rotamer( bb5, 1 );
-	srsrdl_21.get_rotamer( bb2, 1 );
-	srsrdl_22.get_rotamer( bb2, 1 );
-	rsrdl_31.get_rotamer( bb1, 1 );
-	rsrdl_32.get_rotamer( bb2, 1 );
-	rsrdl_33.get_rotamer( bb3, 1 );
-	rsrdl_34.get_rotamer( bb4, 1 );
-	rsrdl_35.get_rotamer( bb5, 1 );
-	srsrdl_31.get_rotamer( bb3, 1 );
-	srsrdl_32.get_rotamer( bb3, 1 );
-	rsrdl_41.get_rotamer( bb1, 1 );
-	rsrdl_42.get_rotamer( bb2, 1 );
-	rsrdl_43.get_rotamer( bb3, 1 );
-	rsrdl_44.get_rotamer( bb4, 1 );
-	rsrdl_45.get_rotamer( bb5, 1 );
-	srsrdl_41.get_rotamer( bb4, 1 );
-	srsrdl_42.get_rotamer( bb4, 1 );
-	srsrdl_51.get_rotamer( bb5, 1 );
-	srsrdl_52.get_rotamer( bb5, 1 );
-
-	utility::fixedsizearray1< Size, 1 > sizevec1;
-	utility::fixedsizearray1< Real, 1 > realvec1;
-	utility::fixedsizearray1< Size, 2 > sizevec2;
-	utility::fixedsizearray1< Real, 2 > realvec2;
-	utility::fixedsizearray1< Size, 3 > sizevec3;
-	utility::fixedsizearray1< Real, 3 > realvec3;
-	utility::fixedsizearray1< Size, 4 > sizevec4;
-	utility::fixedsizearray1< Real, 4 > realvec4;
-	utility::fixedsizearray1< Size, 5 > sizevec5;
-	utility::fixedsizearray1< Real, 5 > realvec5;
-	utility::vector1< Real > realvec( 5 );
-
-	srsrdl_11.interpolate_nrchi_values( sizevec1, sizevec1, realvec1, 1, realvec );
-	srsrdl_12.interpolate_nrchi_values( sizevec1, sizevec1, realvec1, 1, realvec );
-	srsrdl_21.interpolate_nrchi_values( sizevec2, sizevec2, realvec2, 1, realvec );
-	srsrdl_22.interpolate_nrchi_values( sizevec2, sizevec2, realvec2, 1, realvec );
-	srsrdl_31.interpolate_nrchi_values( sizevec3, sizevec3, realvec3, 1, realvec );
-	srsrdl_32.interpolate_nrchi_values( sizevec3, sizevec3, realvec3, 1, realvec );
-	srsrdl_41.interpolate_nrchi_values( sizevec4, sizevec4, realvec4, 1, realvec );
-	srsrdl_42.interpolate_nrchi_values( sizevec4, sizevec4, realvec4, 1, realvec );
-	srsrdl_51.interpolate_nrchi_values( sizevec5, sizevec5, realvec5, 1, realvec );
-	srsrdl_52.interpolate_nrchi_values( sizevec5, sizevec5, realvec5, 1, realvec );
-
+	FOREACH_Chi_BB( INIT );
 }
 
 

@@ -207,10 +207,6 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 	std::ofstream log_out( log_filename.c_str() );
 	std::ofstream rotlib_out( rotlib_filename.c_str() );
 
-	std::stringstream def_fn;
-	def_fn << mrlod->get_name() << "_definitions.rotlib";
-	std::ofstream def_os( def_fn.str().c_str() );
-
 	TR << "Printing out log file to " << log_filename << "..." << std::endl;
 	log_out << "ROTAMERS" << std::endl;
 	print_rot_data_vec( rotamers_, bb_ids, log_out );
@@ -231,6 +227,9 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 		print_dunbrack02_rotlib( omg, bbs, bb_ids, eps, mrlod->get_polymer_type(), rotlib_out );
 
 		if ( bbs_appropriate_for_definitions ( bbs ) ) {
+			std::stringstream def_fn;
+			def_fn << mrlod->get_name() << "_definitions.rotlib";
+			std::ofstream def_os( def_fn.str().c_str() );
 			print_definitions( def_os );
 		}
 	}
@@ -245,7 +244,7 @@ MakeRotLibMover::bbs_appropriate_for_definitions( utility::vector1< core::Real >
 {
 	// use neutral phi and psi for alpha
 	// use -120 60 -120 for beta
-	if ( ( bbs.size() == 3 && bbs[1] == -120 && bbs[2] == 60 && bbs[3] == 120 )
+	if ( ( bbs.size() == 3 && bbs[1] == -120 && bbs[2] == 60 && bbs[3] == -120 )
 			|| ( bbs.size() == 2 && bbs[1] == -60 && bbs[2] == 60 ) ) {
 		return true;
 
@@ -543,18 +542,6 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 
 			pose.set_chi( nchi, resi, nchi_setting );
 			Real energy = ( ( * scrfxn_ ) ( pose ) );
-
-			// dump pdb for debugging
-			//std::stringstream fn;
-			//fn << "tripeptide_" << rd.get_omg() << "_";
-			//for ( Size bb_i = 1; bb_i <= bbs.size(); ++bb_i ) fn << rd.get_bb( bb_i ) << "_";
-			//fn << rd.get_eps() << "_";
-			//if ( rd.get_semirotameric() )
-			// for ( Size j = 1; j <= nchi; ++j ) fn << rd.get_inp_chi( j ) << "_";
-			//else
-			// for ( Size j = 1; j <= nchi - 1; ++j ) fn << rd.get_inp_chi( j ) << "_";
-			//fn << nchi_setting << ".pdb";
-			//pose.dump_scored_pdb( fn.str(), (*scrfxn_) );
 
 			if ( energy < min_ener ) min_ener = energy;
 			rd.set_semi_energy_dist( i, energy );

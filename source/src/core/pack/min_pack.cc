@@ -1259,12 +1259,7 @@ off_rotamer_pack_optimize(
 							//std::cout << "Accepted new best " << best_state.energy() << " " << totalE << " discrepancy: " << best_state.energy() - totalE << std::endl;
 						}
 					}
-
 				}
-				//Real totalE = ig.total_energy(); //get_total_energy_for_state( pose, bgres, sfxn, *mingraph, *scminmap, curr_state, atc, *rotsets );
-				//if( ! curr_state.any_unassigned() && std::abs( totalE - curr_state.energy() ) > 1e-5 ) {
-				// std::cout << "Disagreement between totalE and curr_state.energy() " << totalE << " " << curr_state.energy() << " diff " << totalE - curr_state.energy() << std::endl;
-				//}
 			} else {
 				// reject; restore the old residue
 				atc->moltenres_atomtree_collection( ran_moltres ).update_from_momento( curr_state.momento_for_moltenres( ran_moltres ) );

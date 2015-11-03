@@ -118,6 +118,21 @@ void ContinuousRotamerSet::build_rotamers(
 			} else {
 				utility_exit_with_message("ContinuousRotamerSet cannot support non-Dunbrack rotamer libraries at this time" );
 			}
+
+			utility::fixedsizearray1< Real, 5 > bbs;
+			// Explicit for alpha or beta.
+			// Otherwise... we need a mainchain torsion sense that is
+			// somehow not modified by terminal types!
+			if ( pose.residue( resid ).type().is_beta_aa() ) {
+				bbs[ 1 ] = pose.phi(   resid );
+				bbs[ 2 ] = pose.theta( resid );
+				bbs[ 3 ] = pose.psi(   resid );
+			} else {
+				bbs[ 1 ] = pose.phi( resid );
+				bbs[ 2 ] = pose.psi( resid );
+			}
+			samples_[ count_restype_ind ] = dunlib->get_all_rotamer_samples( bbs );
+
 		} else {
 			// Ala or gly or something similar.
 			// noop
