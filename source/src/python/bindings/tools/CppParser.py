@@ -851,8 +851,19 @@ class CppClass:
     def isPublicMembersWrappable(self):
         ''' Check if public data members are wrappable or not and return list of wrappable one...
         '''
-        if self.context+self.name == '::core::scoring::etable::AtomPairEnergy': return self.dataMembers
+        if self.context+self.name not in '''::numeric::kinematic_closure::p ::basic::Tracer ::core::optimization::NelderMeadSimplex ::core::pose::rna::RNA_SuiteName ::core::scoring::APBSResult ::core::scoring::MultipoleElecPotential
+        ::core::scoring::APBSConfig ::core::scoring::motif::ResPairMotifMetaBinner ::core::scoring::motif::MotifHash ::core::scoring::sc::MolecularSurfaceCalculator
+        ::core::scoring::sc::_RESULTS ::core::scoring::sc::_ATOM_RADIUS ::core::scoring::sc::_PROBE ::core::scoring::sc::Atom ::protocols::antibody_legacy::Antibody
+        ::protocols::ligand_docking::rdf::AtomPairData ::protocols::scoring::methods::pcsTs4::TensorsOptimizer_Ts1 ::protocols::scoring::methods::pcsTs4::TensorsOptimizer_Ts2 ::protocols::scoring::methods::pcsTs4::TensorsOptimizer_Ts3
+        ::protocols::scoring::methods::pcs2::TensorsOptimizerFix ::protocols::scoring::methods::pcsTs1::TensorsOptimizer_Ts1 ::protocols::scoring::methods::pcsTs3::TensorsOptimizer_Ts3
+        ::protocols::scoring::methods::pcsTs4::TensorsOptimizer_Ts4 ::protocols::scoring::methods::pcs2::TensorsOptimizerSvd ::protocols::scoring::methods::pcs2::TensorsOptimizer ::protocols::scoring::methods::pcs::TensorsOptimizer
+        ::protocols::scoring::methods::pcsTs2::TensorsOptimizer_Ts2
+        ::protocols::sic_dock::CBScore ::protocols::sparta::RingData ::protocols::sparta::ANN ::protocols::sparta::PDB ::protocols::sparta::CORdata
+        '''.split(): return self.dataMembers
         else: return []
+
+        #if self.context+self.name == '::core::scoring::etable::AtomPairEnergy': return self.dataMembers
+        #else: return []
 
 
     def isHeldTypeOP(self):
