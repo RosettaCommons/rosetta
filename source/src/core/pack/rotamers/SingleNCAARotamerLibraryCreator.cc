@@ -106,6 +106,13 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 	while ( !rotlib_in && pveci <= pvec.size() ) {
 		full_path = pvec[ pveci ].name() + file_name;
 		rotlib_in.open( full_path );
+
+		if ( rotlib_in ) break;
+		
+		// Try flat hierarchy too
+		full_path = pvec[ pveci ].name() + file_name.substr( file_name.find_last_of( "/\\" )+1 );
+		rotlib_in.open( full_path );
+
 		pveci++;
 	}
 
