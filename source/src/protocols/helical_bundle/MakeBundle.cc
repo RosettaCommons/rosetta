@@ -36,6 +36,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/pose/util.tmpl.hh>
+#include <core/pose/PDBInfo.hh>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
@@ -244,6 +245,8 @@ void MakeBundle::apply (core::pose::Pose & pose)
 			pose=newpose;
 		} else {
 			if ( TR.Debug.visible() ) TR.Debug << "Appending helical bundle to pose." << std::endl;
+			pose.pdb_info()->detach_from();
+			pose.pdb_info(NULL);
 			pose.append_pose_by_jump(newpose, 1);
 		}
 	}
