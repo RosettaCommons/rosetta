@@ -24,9 +24,9 @@ namespace farna {
 
 //Constructor
 BasePairStep::BasePairStep( Size const i, Size const i_next,
-	Size const j, Size const j_next ){
+														Size const j, Size const j_next ){
 	runtime_assert( i_next == i+1 );
-	runtime_assert( j_next == j+1 );
+	//	runtime_assert( j_next == j+1 );
 	base_pair_step_ = std::make_pair( std::make_pair( i, i_next ), std::make_pair( j, j_next ) );
 }
 

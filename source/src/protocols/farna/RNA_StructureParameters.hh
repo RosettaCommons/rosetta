@@ -110,9 +110,6 @@ public:
 	void
 	setup_virtual_phosphate_variants( core::pose::Pose & pose );
 
-	utility::vector1< BasePairStep >
-	get_base_pair_steps() const;
-
 	utility::vector1 < utility::vector1 <core::Size > >
 	get_obligate_pairing_sets() {
 		return obligate_pairing_sets_;
@@ -122,6 +119,12 @@ public:
 	get_rna_pairing_list() {
 		return rna_pairing_list_;
 	}
+
+	utility::vector1< BasePairStep >
+	get_canonical_base_pair_steps() const;
+
+	utility::vector1< BasePairStep >
+	get_noncanonical_base_pair_steps() const;
 
 private:
 
@@ -187,11 +190,18 @@ private:
 	void
 	fill_in_default_jump_atoms( core::kinematics::FoldTree & f, core::pose::Pose const & pose ) const;
 
+	void
+	figure_out_partner( std::map< Size, Size > & partner, bool const force_canonical ) const;
+
 	Size
 	check_in_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > pairing_sets,
-		RNA_Pairing const & rna_pairing_check ) const;
+												 RNA_Pairing const & rna_pairing_check ) const;
+
+	utility::vector1< BasePairStep >
+	get_base_pair_steps( bool const just_canonical ) const;
 
 private:
+
 	RNA_JumpLibraryOP rna_jump_library_;
 	RNA_PairingList rna_pairing_list_;
 
@@ -210,7 +220,6 @@ private:
 	std::string rna_secstruct_;
 	bool assume_non_stem_is_loop;
 	bool bps_moves_;
-	bool allow_cuts_inside_base_pair_steps_;
 
 	bool add_virtual_anchor_;
 	bool root_at_first_rigid_body_;

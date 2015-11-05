@@ -34,6 +34,9 @@ namespace rna {
 void
 classify_base_pairs( core::pose::Pose const & pose, utility::vector1< core::pose::rna::BasePair> & base_pair_list, utility::vector1< bool > & is_bulged  );
 
+utility::vector1< core::pose::rna::BasePair>
+classify_base_pairs( core::pose::Pose const & pose );
+
 core::Size
 get_number_base_stacks(
 	core::pose::Pose const & pose_input

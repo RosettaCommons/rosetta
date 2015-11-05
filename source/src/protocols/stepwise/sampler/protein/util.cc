@@ -25,6 +25,7 @@
 #include <protocols/stepwise/modeler/align/StepWiseLegacyClustererSilentBased.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/protein/StepWiseProteinBackboneSampler.hh>
+#include <protocols/stepwise/setup/util.hh>
 #include <utility/io/ozstream.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -43,7 +44,6 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerSizedComb.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <numeric/xyz.functions.hh>
@@ -206,7 +206,7 @@ generate_beta_database_test(){
 	pose::remove_variant_type_from_pose_residue( scratch_pose, UPPER_TERMINUS_VARIANT, 2 );
 
 	// main loop
-	utility::vector1< std::string > in_files = load_s_and_l();
+	utility::vector1< std::string > in_files = setup::load_s_and_l();
 
 	SilentFileDataOP silent_file_data( new SilentFileData );
 	std::string const silent_file( option[ out::file::silent ]() );
@@ -327,48 +327,6 @@ generate_beta_database_test(){
 	std::cout << "Put JUMP transforms in " << outfile << std::endl;
 
 }
-
-//////////////////////////////////////////////////////////
-utility::vector1< std::string > load_s_and_l()
-{
-	using basic::options::option;
-	using utility::vector1;
-	using namespace basic::options::OptionKeys;
-
-	// concatenate -s and -l flags together to get total list of PDB files
-	vector1< std::string > pdb_file_names;
-	if ( option[ in::file::s ].active() ) {
-		pdb_file_names = option[ in::file::s ]().vector(); // make a copy (-s)
-	}
-
-	vector1< std::string > list_file_names;
-	if ( option[ in::file::l ].active() ) {
-		list_file_names = option[ in::file::l ]().vector(); // make a copy (-l)
-	}
-	if ( option[ in::file::list ].active() ) {
-		vector1< std::string > better_list_file_names;
-		better_list_file_names= option[in::file::list ]().vector(); // make a copy (-list)
-		for ( vector1< std::string >::iterator i = better_list_file_names.begin(), i_end = better_list_file_names.end(); i != i_end; ++i ) {
-			list_file_names.push_back(*i); // make a copy (-l)
-		}
-	}
-
-	for ( vector1< std::string >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i ) {
-		std::string filename( *i );
-		utility::io::izstream data( filename.c_str() );
-		if ( !data.good() ) {
-			utility_exit_with_message( "Unable to open file: " + filename + '\n' );
-		}
-		std::string line;
-		while ( getline(data, line) ) {
-			pdb_file_names.push_back( std::string(line) );
-		}
-		data.close();
-	}
-
-	return pdb_file_names;
-}
-
 
 } //protein
 } //sampler

@@ -28,9 +28,11 @@
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/stepwise/modeler/util.hh>
+#include <protocols/stepwise/setup/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
+#include <core/pose/rna/RNA_BasePairClassifier.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/init/init.hh>
 
@@ -39,6 +41,7 @@
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/file/file_sys_util.hh>
 
 #include <numeric/conversions.hh>
 
@@ -47,6 +50,7 @@
 
 //RNA stuff.
 #include <protocols/farna/util.hh>
+#include <protocols/farna/BasePairStepLibrary.hh>
 
 
 // C++ headers
@@ -80,6 +84,7 @@ using namespace protocols;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 using io::pdb::dump_pdb;
+using protocols::farna::MAX_BULGE_LENGTH;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -87,9 +92,9 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 // these will be available in the top-level OptionKey namespace:
 // i.e., OPT_KEY( Type, key ) -->  OptionKey::key
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
-//OPT_KEY( Boolean, jump_database )
-//OPT_KEY( Boolean, vall_torsions )
 OPT_KEY( IntegerVector, exclude_res )
+OPT_KEY( Boolean,       general_bps )
+OPT_KEY( Boolean,       use_lores_base_pair_classification )
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -384,7 +389,6 @@ create_bp_jump_database_test( ){
 
 }
 
-
 ///////////////////////////////////////////////////////////////
 std::string
 get_bps_seq( utility::vector1< Size > const & base_pair_res, std::string const & sequence  ){
@@ -393,8 +397,16 @@ get_bps_seq( utility::vector1< Size > const & base_pair_res, std::string const &
 	std::string bps_seq;
 	bps_seq += sequence[ base_pair_res[1]-1 ];
 	bps_seq += sequence[ base_pair_res[2]-1 ];
+
 	bps_seq += "_";
+
 	bps_seq += sequence[ base_pair_res[3]-1 ];
+	int seq_sep = int( base_pair_res[ 4 ] ) - int( base_pair_res[ 3 ] );
+	if ( seq_sep > 0 &&  seq_sep <= (MAX_BULGE_LENGTH+1) ) {
+		for ( Size i = base_pair_res[3]+1; i < base_pair_res[4]; i++ ) bps_seq += 'n';  // bulge
+	} else {
+		bps_seq += "x"; // greater than 3 nts, or possibly different chain
+	}
 	bps_seq += sequence[ base_pair_res[4]-1 ];
 
 	return bps_seq;
@@ -402,25 +414,182 @@ get_bps_seq( utility::vector1< Size > const & base_pair_res, std::string const &
 
 ///////////////////////////////////////////////////////////
 std::string
-get_bps_tag( utility::vector1< Size > const &  base_pair_res, std::string const & infile, pose::Pose  & pose ){
+get_bps_tag( utility::vector1< Size > const &  base_pair_res, std::string const & infile, pose::Pose const & pose ){
 
 	using namespace ObjexxFCL::format;
 
-	pose::PDBInfoOP pdb_info = pose.pdb_info();
+	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 
 	std::stringstream pdb_tag_stream;
 	pdb_tag_stream << infile;
-	pdb_tag_stream << "_";
-	pdb_tag_stream << pdb_info->chain( base_pair_res[1] ) << pdb_info->number( base_pair_res[1] );
-	pdb_tag_stream << "_";
-	pdb_tag_stream << pdb_info->chain( base_pair_res[2] ) << pdb_info->number( base_pair_res[2] );
-	pdb_tag_stream << "_";
-	pdb_tag_stream << pdb_info->chain( base_pair_res[3] ) << pdb_info->number( base_pair_res[3] );
-	pdb_tag_stream << "_";
-	pdb_tag_stream << pdb_info->chain( base_pair_res[4] ) << pdb_info->number( base_pair_res[4] );
+	for ( Size n = 1; n <= base_pair_res.size(); n++ ) {
+		pdb_tag_stream << "_";
+		pdb_tag_stream << pdb_info->chain( base_pair_res[1] ) << pdb_info->number( base_pair_res[n] );
+	}
 
 	return pdb_tag_stream.str();
 }
+
+
+
+///////////////////////////////////////////////////////////
+std::string
+get_bps_sub_dir( int const seq_sep ){
+	if ( seq_sep == 1 ) {
+		return "standard/";
+	} else if ( seq_sep >= 2 && seq_sep <= (MAX_BULGE_LENGTH+1) ) {
+		return "bulge_"+ObjexxFCL::format::I( 1, seq_sep - 1 )+"nt/";
+	} else {
+		return "long_distance/";
+	}
+}
+
+
+///////////////////////////////////////////////////////////
+std::string
+get_bps_sub_dir( utility::vector1< Size > const &  base_pair_res ){
+	int seq_sep = int( base_pair_res[ 4 ] ) - int( base_pair_res[ 3 ] );
+	return get_bps_sub_dir( seq_sep );
+}
+
+///////////////////////////////////////////////////////////////
+void
+write_base_pair_step_to_silent_struct( pose::Pose const & pose,
+																			 utility::vector1< int > base_pair_res,
+																			 std::string const & intag,
+																			 bool const use_sub_directories = true )
+{
+	using namespace core::io::silent;
+	static SilentFileData silent_file_data;
+
+	pose::Pose bps_pose;
+	core::pose::pdbslice( bps_pose, pose, base_pair_res );
+
+	std::string bps_seq = get_bps_seq( base_pair_res, pose.sequence() );
+	std::string bps_tag = get_bps_tag( base_pair_res, intag, pose );
+
+	std::cout << "Found base pair step! " << bps_seq << " " << bps_tag << std::endl;
+
+	std::string bps_sub_dir;
+	if ( use_sub_directories ) {
+		bps_sub_dir = get_bps_sub_dir( base_pair_res );
+		if ( !utility::file::file_exists( bps_sub_dir ) )	utility::file::create_directory_recursive( bps_sub_dir );
+	}
+	std::string const silent_file = bps_sub_dir + bps_seq + ".out";
+	BinarySilentStruct s( bps_pose, bps_tag );
+	silent_file_data.write_silent_struct( s, silent_file,  false /* score_only */ );
+}
+
+///////////////////////////////////////////////////////////////
+void
+write_base_pair_step_to_silent_struct( pose::Pose const & pose, Size const & i, Size const & j,
+																			 std::string const & intag )
+{
+	utility::vector1< int > const base_pair_res = utility::tools::make_vector1( i, i+1, j-1, j);
+	write_base_pair_step_to_silent_struct( pose, base_pair_res, intag, false /* use_sub_directories */ );
+}
+
+///////////////////////////////////////////////////////////////
+// Following just gets Watson-Crick and G*U pairs
+void
+output_canonical_base_pair_steps( pose::Pose & pose,
+																	std::string const & intag )
+{
+	std::map< Size, Size > partner;
+	protocols::farna::figure_out_base_pair_partner( pose, partner, false );
+
+	for ( std::map< Size, Size >::const_iterator it = partner.begin();
+				it != partner.end(); ++it ) {
+
+		Size const i = it->first;
+		Size const j = it->second;
+
+		if ( i < pose.total_residue() &&
+				 partner.find( i+1 ) != partner.end() && j > 1 && partner[ i+1 ] == j-1 &&
+				 !pose.fold_tree().is_cutpoint(i) && !pose.fold_tree().is_cutpoint(j-1) ) {
+
+			write_base_pair_step_to_silent_struct( pose, i, j, intag );
+
+		}
+	}
+
+}
+
+///////////////////////////////////////////////////////////////
+// Following outputs all base pair steps (including neighboring non-canonicals)
+void
+output_general_base_pair_steps( pose::Pose const & pose,
+																std::string const & intag )
+{
+
+	utility::vector1< core::pose::rna::BasePair > base_pair_list;
+	if ( basic::options::option[ use_lores_base_pair_classification ]() ) {
+		base_pair_list= protocols::farna::classify_base_pairs_lores( pose );
+	} else {
+		base_pair_list= classify_base_pairs( pose );
+	}
+
+	std::map< std::pair< Size, Size >, bool > partnered;
+	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
+
+		BasePair const base_pair = base_pair_list[ n ];
+
+		Size const i = base_pair.res1;
+		Size const j = base_pair.res2;
+
+		runtime_assert( pose.residue( i ).is_RNA() );
+		runtime_assert( pose.residue( j ).is_RNA() );
+
+		partnered[ std::make_pair( i, j ) ] = true;
+		partnered[ std::make_pair( j, i ) ] = true;
+	}
+
+	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+		for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+
+			if ( partnered[ std::make_pair( i,   j )   ] ) {
+
+				vector1< bool > outputted_bps( pose.total_residue(), false );
+
+				// Looking for i+1 to also base pair to something.
+				// base-pair-step, and then bulges: single, double, triple
+				for ( int n = 0; n <= MAX_BULGE_LENGTH; n++ ) {
+
+					if ( int(j) > (n+1) && std::abs( int(i) - int(j) ) > (int(n)+1) &&
+							 partnered[ std::make_pair( i+1, j-n-1 ) ] &&
+							 !pose.fold_tree().is_cutpoint( i ) ) {
+
+						bool found_cut( false );
+						for ( int q = 1; q <= n+1; q++ ) {
+							if ( pose.fold_tree().is_cutpoint( j-q ) ) {
+								found_cut = true;
+							}
+						}
+						if ( found_cut ) continue;
+
+						write_base_pair_step_to_silent_struct( pose, utility::tools::make_vector1( i, i+1, j-n-1, j), intag, true /*create subdir*/ );
+
+						outputted_bps[ j-n-1 ] = true;
+
+					}
+				}
+
+
+				// scan for adjacent base pair that has one partner distant in sequence; may even involve totally different chain!
+				for ( Size k = 1; k <= pose.total_residue(); k++ ) {
+					if ( outputted_bps[ k ] ) continue;
+					if ( partnered[ std::make_pair( i+1, k ) ] ) {
+						write_base_pair_step_to_silent_struct( pose, utility::tools::make_vector1( i, i+1, k, j), intag, true /*create subdir*/ );
+					}
+				}
+
+			}
+
+		}
+	}
+
+}
+
 
 ///////////////////////////////////////////////////////////////
 void
@@ -429,7 +598,6 @@ create_base_pair_step_database_test( ){
 	using namespace chemical;
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
-	using namespace core::io::silent;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::farna;
@@ -440,9 +608,7 @@ create_base_pair_step_database_test( ){
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-	SilentFileData silent_file_data;
-
-	utility::vector1< std::string > const infiles  = option[ in::file::s ]();
+	utility::vector1< std::string > const infiles  = setup::load_s_and_l();
 
 	for ( Size n = 1; n <= infiles.size(); n++ ) {
 		std::string const & infile = infiles[ n ];
@@ -452,36 +618,14 @@ create_base_pair_step_database_test( ){
 		intag.replace( pos, 4, "" );
 
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *rsd_set, infile );
+		core::import_pose::pose_from_pdb( pose, *rsd_set, std::string( option[ in::path::pdb ](1) ) + infile );
 		core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 		std::string const sequence = pose.sequence();
-		std::cout << sequence.size() << " " << pose.total_residue() << std::endl;
 
-		std::map< Size, Size > partner;
-		figure_out_base_pair_partner( pose, partner, false );
-
-		for ( std::map< Size, Size >::const_iterator it = partner.begin();
-				it != partner.end(); ++it ) {
-			Size const i = it->first;
-			Size const j = it->second;
-			if ( i < pose.total_residue() &&
-					partner.find( i+1 ) != partner.end() && j > 1 && partner[ i+1 ] == j-1 &&
-					!pose.fold_tree().is_cutpoint(i) && !pose.fold_tree().is_cutpoint(j-1) ) {
-				utility::vector1< int > const base_pair_res = utility::tools::make_vector1( i, i+1, j-1, j);
-
-				pose::Pose bps_pose;
-				core::pose::pdbslice( bps_pose, pose, base_pair_res );
-
-				std::string bps_seq = get_bps_seq( base_pair_res, sequence );
-				std::string bps_tag = get_bps_tag( base_pair_res, intag, pose );
-
-				std::cout << "Found base pair step! " << bps_seq << " " << bps_tag << std::endl;
-
-				std::string const silent_file = bps_seq + ".out";
-				BinarySilentStruct s( bps_pose, bps_tag );
-				silent_file_data.write_silent_struct( s, silent_file,  false /* score_only */ );
-
-			}
+		if ( option[ general_bps ]() ) {
+			output_general_base_pair_steps( pose, intag );
+		} else {
+			output_canonical_base_pair_steps( pose, intag );
 		}
 
 		std::cout << "***********************************************************" << std::endl;
@@ -533,7 +677,9 @@ main( int argc, char * argv [] )
 		std::cout <<              "              " << argv[0] << "  -s <pdb1> [... <more pdbs>] -jump_database [name of rigid-body orientation database to create] " << std::endl;
 		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
-		NEW_OPT( exclude_res, "Residues exlcuded for database creation (works for one file only)", blank_size_vector );
+		NEW_OPT( exclude_res, "Residues excluded for database creation (works for one file only)", blank_size_vector );
+		NEW_OPT( general_bps, "For bps_database, output base pair steps involving noncanonicals", false );
+		NEW_OPT( use_lores_base_pair_classification, "Use loose base-pair classifier (same as used in FARNA)", false );
 		option.add_relevant( basic::options::OptionKeys::rna::vall_torsions );
 		option.add_relevant( basic::options::OptionKeys::rna::jump_database );
 		option.add_relevant( basic::options::OptionKeys::rna::bps_database );

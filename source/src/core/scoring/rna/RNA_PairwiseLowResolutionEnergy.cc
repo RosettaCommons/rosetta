@@ -185,7 +185,7 @@ RNA_PairwiseLowResolutionEnergy::residue_pair_energy(
 	kinematics::Stub stub1, stub2;
 	get_centroid_information( rsd1, rsd2, pose, centroid1, centroid2, stub1, stub2 );
 
-	rna_low_resolution_potential_.eval_rna_base_pair_energy( *rna_raw_base_base_info_, rsd1, rsd2, pose, centroid1, centroid2, stub1, stub2 );
+	rna_low_resolution_potential_.eval_rna_base_pair_energy( *rna_raw_base_base_info_, rsd1, rsd2, centroid1, centroid2, stub1, stub2 );
 
 	// Note that following are used in packing/designing, although for full de novo modeling
 	//  there's a score that filters out base pairings that oversubscribe any one base edge.

@@ -45,8 +45,6 @@ do_set_xyz( core::pose::Pose const & pose, core::Size const i, core::pose::Pose 
 void
 generate_beta_database_test();
 
-utility::vector1< std::string > load_s_and_l();
-
 } //protein
 } //sampler
 } //stepwise

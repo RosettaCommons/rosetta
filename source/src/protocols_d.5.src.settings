@@ -102,6 +102,7 @@ sources = {
 	"FullModelInfoSetupFromCommandLine",
 	"StepWiseCSA_JobDistributor",
 	"StepWiseMonteCarloJobDistributor",
+	"util",
     ],
     "protocols/stepwise/legacy/modeler": [
 	#"StepWiseLegacyMinimizer",

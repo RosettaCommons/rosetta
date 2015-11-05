@@ -551,6 +551,16 @@ bases_are_coplanar(
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
+utility::vector1< core::pose::rna::BasePair>
+classify_base_pairs(
+	core::pose::Pose const & pose_input
+)
+{
+	utility::vector1< core::pose::rna::BasePair> base_pair_list;
+	utility::vector1< bool > is_bulged;
+  classify_base_pairs( pose_input, base_pair_list, is_bulged );
+	return base_pair_list;
+}
 /////////////////////////////////////////////////////////////////////////////
 void
 classify_base_pairs(
@@ -562,6 +572,8 @@ classify_base_pairs(
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
 	using namespace core::chemical;
+
+	Distance NBR_DIST_CUTOFF( 16.0 );
 
 	base_pair_list.clear();
 
@@ -582,13 +594,14 @@ classify_base_pairs(
 
 	hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
 
-	// std::cout << "---------" << std::endl;
 
 	//////////////////////////////////////////////////////////////
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		if ( ! pose.residue(i).is_RNA()  ) continue;
 		for ( Size j = i+1; j <= pose.total_residue(); j++ ) {
 			if ( ! pose.residue(j).is_RNA()  ) continue;
+
+			if ( ( pose.residue(i).nbr_atom_xyz() - pose.residue(j).nbr_atom_xyz() ).length() > NBR_DIST_CUTOFF ) continue;
 
 			Size const num_hbonds = bases_form_a_hydrogen_bond( hbond_set, pose, i, j );
 			if ( num_hbonds == 0  ) continue;
@@ -608,7 +621,6 @@ classify_base_pairs(
 			//    edge_classification_i = WATSON_CRICK;
 			//    edge_classification_j = WATSON_CRICK;
 			//   }
-
 
 			//   if ( n_i > 0 && n_j > 0 ) {
 			base_pair_list.push_back( core::pose::rna::BasePair( i, j, edge_classification_i, edge_classification_j , orientation ) );

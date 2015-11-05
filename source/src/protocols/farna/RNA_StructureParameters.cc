@@ -18,6 +18,7 @@
 #include <protocols/farna/RNA_JumpLibrary.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_SecStructInfo.hh>
+#include <protocols/farna/BasePairStepLibrary.hh>
 #include <protocols/toolbox/AllowInsert.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/data/RNA_DataInfo.hh>
@@ -135,7 +136,6 @@ RNA_StructureParameters::RNA_StructureParameters():
 	secstruct_defined_( false ),
 	assume_non_stem_is_loop( false ),
 	bps_moves_( false ),
-	allow_cuts_inside_base_pair_steps_( true ),
 	root_at_first_rigid_body_( false ),
 	suppress_bp_constraint_( 1.0 )
 {
@@ -819,7 +819,9 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 	if ( bps_moves_ ) { // supplement obligate_pairing_sets with stems in freely moving regions.
 		for ( Size n = 1; n <= stem_pairing_sets_.size(); n++ ) {
 			for ( Size m = 1; m <= stem_pairing_sets_[n].size(); m++ ) {
-				obligate_pairing_sets.push_back( utility::tools::make_vector1( stem_pairing_sets_[n][m] ) );
+				Size const idx = stem_pairing_sets_[n][m];
+				if ( check_in_pairing_sets( obligate_pairing_sets, rna_pairing_list_[ idx ] ) ) continue;
+				obligate_pairing_sets.push_back( utility::tools::make_vector1(idx ) );
 			}
 		}
 	} else {
@@ -848,12 +850,14 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 	//////////////////////////////////////////////////////////////////////
 	utility::vector1< Size > base_pair_step_starts;
 	if ( bps_moves_ ) {
-		utility::vector1< BasePairStep > base_pair_steps = get_base_pair_steps();
+		utility::vector1< BasePairStep > base_pair_steps = get_base_pair_steps( false /* just canonical */ );
 
 		for ( Size n = 1; n <= base_pair_steps.size(); n++ ) {
 			BasePairStep const & base_pair_step = base_pair_steps[n];
 			runtime_assert( check_in_pairing_sets( obligate_pairing_sets, RNA_Pairing( base_pair_step.i(),      base_pair_step.j_next() ) ) );
 			runtime_assert( check_in_pairing_sets( obligate_pairing_sets, RNA_Pairing( base_pair_step.i_next(), base_pair_step.j()      ) ) );
+			runtime_assert ( base_pair_step.i_next() == base_pair_step.i()+1 );
+			if ( base_pair_step.j_next() != (base_pair_step.j() + 1) ) continue;
 
 			// used below in cutpoint setting...
 			base_pair_step_starts.push_back( base_pair_step.i() );
@@ -1312,38 +1316,99 @@ RNA_StructureParameters::check_in_pairing_sets( utility::vector1 < utility::vect
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< BasePairStep >
-RNA_StructureParameters::get_base_pair_steps() const {
 
-	// Parse base pair steps. [perhaps this should go into RNA_StructureParameters, or in a util.]
-	std::map< Size, Size > stem_partner;
+////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_StructureParameters::figure_out_partner( std::map< Size, Size > & partner, bool const force_canonical ) const
+{
+
 	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
 		RNA_Pairing const & rna_pairing( rna_pairing_list_[ n ] );
 		Size i( rna_pairing.pos1 );
 		Size j( rna_pairing.pos2 );
-		if ( i > j ) {
-			i = rna_pairing.pos2;
-			j = rna_pairing.pos1;
+
+		//		TR << "PAIRING " << rna_pairing.pos1 << " " << rna_pairing.pos2 << " " << rna_pairing.edge1 << " " << rna_pairing.edge2 << " " << rna_pairing.orientation << " --> "  << std::endl;
+
+		bool const pair_is_canonical = rna_pairing.edge1 == 'W' && rna_pairing.edge2 == 'W' && rna_pairing.orientation=='A';
+		if ( force_canonical && !pair_is_canonical ) continue;
+
+		// if pairing is user-specified to be, say, H/S/A, we won't be able to handle it.
+		bool const pair_is_ambiguous = rna_pairing.edge1 == 'X' && rna_pairing.edge2 == 'X' && rna_pairing.orientation=='X';
+		if ( !force_canonical && !pair_is_ambiguous ) continue;
+
+		if ( partner.find( i ) != partner.end() )  {
+			TR << "Warning: in base pair steps, already found a partner for " << i << " which is " << partner[ i ] << ", so not including additional pairing to " << j << std::endl;
 		}
-		if ( rna_pairing.edge1 == 'W' && rna_pairing.edge2 == 'W' && rna_pairing.orientation=='A' ) stem_partner[ i ] = j;
+		if ( partner.find( j ) != partner.end() )  {
+			TR << "Warning: in base pair steps, already found a partner for " << j << " which is " << partner[ j ] << ", so not including additional pairing to " << i << std::endl;
+		}
+
+		partner[ i ] = j;
+		partner[ j ] = i;
 	}
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< BasePairStep >
+RNA_StructureParameters::get_base_pair_steps( bool const just_canonical ) const {
+
+	// Parse base pair steps.
+	std::map< Size, Size > partner;
+	// Canonical pairs take precedence
+	figure_out_partner( partner, true  /*force_canonical*/ );
+	// Then any ambiguous pairs for residues that remain "partner free" (base edges=X, orientation=X)
+	if ( !just_canonical ) figure_out_partner( partner, false /*force_canonical*/ );
 
 	utility::vector1< BasePairStep > base_pair_steps;
 
-	for ( std::map< Size, Size >::const_iterator iter = stem_partner.begin(), end = stem_partner.end(); iter != end; ++iter ) {
+	for ( std::map< Size, Size >::const_iterator iter = partner.begin(), end = partner.end(); iter != end; ++iter ) {
 		Size const i = iter->first;
-		if ( stem_partner.find( i+1 ) != stem_partner.end() &&
-				stem_partner[ i+1 ] == stem_partner[i] - 1 &&
-				!cutpoints_open_.has_value( i ) &&
-				!cutpoints_open_.has_value( stem_partner[i+1] ) ) {
+		if ( partner.find( i+1 ) != partner.end() &&
+				 !cutpoints_open_.has_value( i ) ) {
+			Size const j = partner[ i+1 ];
+			// In following, q = 0  means flush base pair steps. Strands are (i, i+1)  and (j, j+1 )
+			// For q > 0, there are q unpaired residues ('bulges') in between j and j+q. Strands are (i, i+1) and ( j, j+1, ... j+q+1 ).
+			for ( int q = 0; q <= MAX_BULGE_LENGTH; q++ ) {
+				if ( j == partner[i] - q - 1 ) {
+					bool has_cutpoint( false );
+					for ( Size n = j; n < partner[ i ]; n++ ) {
+						if ( cutpoints_open_.has_value( n ) ) has_cutpoint = true;
+					}
+					if ( has_cutpoint ) continue;
+					if ( q == 0 && base_pair_steps.has_value( BasePairStep( j, j+1, i, i+1 )  ) ) { // don't put in the 'reverse' of the base pair step.
+						continue;
+					}
+					base_pair_steps.push_back( BasePairStep( i, i+1, j, j+q+1 ) );
+				}
+			}
 
-			Size const j = stem_partner[ i+1 ];
-			base_pair_steps.push_back( BasePairStep( i, i+1, j, j+1 ) );
 		}
 	}
 
 	return base_pair_steps;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< BasePairStep >
+RNA_StructureParameters::get_canonical_base_pair_steps() const {
+	return get_base_pair_steps( true /* just_canonical*/ );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< BasePairStep >
+RNA_StructureParameters::get_noncanonical_base_pair_steps() const {
+	utility::vector1< BasePairStep > canonical_base_pair_steps = get_base_pair_steps( true /* just_canonical*/ );
+	utility::vector1< BasePairStep > general_base_pair_steps   = get_base_pair_steps( false /* just_canonical*/ );
+
+	utility::vector1< BasePairStep > noncanonical_base_pair_steps;
+	for ( Size n = 1; n <= general_base_pair_steps.size(); n++ ) {
+		BasePairStep const & base_pair_step = general_base_pair_steps[ n ];
+		if ( canonical_base_pair_steps.has_value( base_pair_step ) ) continue;
+		noncanonical_base_pair_steps.push_back( base_pair_step );
+	}
+
+	return noncanonical_base_pair_steps;
 }
 
 

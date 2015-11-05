@@ -245,6 +245,15 @@ RNA_ChunkLibrary::initialize_rna_chunk_library(
 
 		for ( Size i = 1; i <= scratch_pose.sequence().size(); i++ ) {
 			count++;
+			if ( count > input_res.size() ) {
+				std::cout << "Number of residues in scratch pose in RNA_ChunkLibrary " << count << " exceeds size of -input_res " << input_res.size() << std::endl;
+				utility_exit_with_message( "problem with input_res" );
+			}
+			if ( input_res[ count ] < 1 ||
+					 input_res[ count ] > sequence_of_big_pose.size() ) {
+				std::cout << "Problem with input_res: " << input_res[ count ] << " is bigger then length " << sequence_of_big_pose.size() << " of pose sequence " << sequence_of_big_pose << std::endl;
+				utility_exit_with_message( "problem with input_res" );
+			}
 			if ( sequence_of_big_pose[ input_res[ count ] -1 ] != scratch_pose.sequence()[ i - 1 ] ) {
 				std::cout << "Problem with input_file: " << all_input_files[n] << std::endl;
 				std::cout << "mismatch in sequence   in  big pose: " << sequence_of_big_pose[ input_res[ count ] -1 ] << input_res[count] <<
@@ -546,29 +555,36 @@ RNA_ChunkLibrary::set_allow_insert(toolbox::AllowInsertOP allow_insert ){
 
 //////////////////////////////////////////////////////////////////////////////
 void
-RNA_ChunkLibrary::setup_base_pair_step_chunks( pose::Pose const & pose, utility::vector1< BasePairStep > base_pair_steps ){
+RNA_ChunkLibrary::setup_base_pair_step_chunks( pose::Pose const & pose,
+																							 utility::vector1< BasePairStep > const & base_pair_steps,
+																							 BasePairStepLibrary const & base_pair_step_library,
+																							 toolbox::AllowInsertCOP allow_insert_original /* = 0 */){
 
 	using namespace core::id;
 	using namespace core::pose;
 
-	if ( !base_pair_step_library_ ) base_pair_step_library_ = BasePairStepLibraryOP( new BasePairStepLibrary );
-	base_pair_step_library_->initialize();
+	if ( allow_insert_original == 0 ) allow_insert_original = allow_insert_->clone();
 
-	toolbox::AllowInsertOP allow_insert_original = allow_insert_->clone();
-
-	if ( chunk_sets_.size() > 900 ) utility_exit_with_message( "hey update AllowInsert & RNA_ChunkLibrary to not use 999 as a magic number" );
 	Size q( 1000 ); // heh heh, magic number.
+	if ( chunk_sets_.size() > 900 ) utility_exit_with_message( "hey update AllowInsert & RNA_ChunkLibrary to not use 999 as a magic number" );
 
 	for ( Size m = 1; m <= base_pair_steps.size(); m++ ) {
 
 		BasePairStep const & base_pair_step = base_pair_steps[ m ];
 
 		BasePairStepSequence base_pair_step_sequence( pose.sequence(), base_pair_step );
-		runtime_assert( base_pair_step_library_->has_value( base_pair_step_sequence ) );
+		if ( base_pair_step_library.canonical() ) {
+			runtime_assert( base_pair_step_library.has_value( base_pair_step_sequence ) );
+		} else {
+			if ( !base_pair_step_library.has_value( base_pair_step_sequence ) ) {
+				TR << base_pair_step_library.database_dir() << " does not have "  << base_pair_step_sequence.tag() << " for residue numbers " << base_pair_step << " so no base pair steps will be sampled there, just fragments." << std::endl;
+				continue;
+			}
+		}
 
-		if ( !allow_insert_original->get( named_atom_id_to_atom_id( NamedAtomID( " C1'", base_pair_step.i() ), pose ) ) ) continue;
-		if ( !allow_insert_original->get( named_atom_id_to_atom_id( NamedAtomID( " C1'", base_pair_step.i_next() ), pose ) ) ) continue;
-		if ( !allow_insert_original->get( named_atom_id_to_atom_id( NamedAtomID( " C1'", base_pair_step.j() ), pose ) ) ) continue;
+		if ( !allow_insert_original->get( named_atom_id_to_atom_id( NamedAtomID( " C1'", base_pair_step.i() ), pose ) ) )       continue;
+		if ( !allow_insert_original->get( named_atom_id_to_atom_id( NamedAtomID( " C1'", base_pair_step.i_next() ), pose ) ) )  continue;
+		if ( !allow_insert_original->get( named_atom_id_to_atom_id( NamedAtomID( " C1'", base_pair_step.j() ), pose ) ) )       continue;
 		if ( !allow_insert_original->get( named_atom_id_to_atom_id( NamedAtomID( " C1'", base_pair_step.j_next() ), pose  ) ) ) continue;
 
 		ResMap res_map;
@@ -577,10 +593,10 @@ RNA_ChunkLibrary::setup_base_pair_step_chunks( pose::Pose const & pose, utility:
 		res_map[ base_pair_step.j()      ] = 3;
 		res_map[ base_pair_step.j_next() ] = 4;
 
-		ChunkSetOP chunk_set( new ChunkSet( base_pair_step_library_->mini_pose_list( base_pair_step_sequence ), res_map ) );
+		ChunkSetOP chunk_set( new ChunkSet( base_pair_step_library.mini_pose_list( base_pair_step_sequence ), res_map ) );
 		chunk_sets_.push_back( chunk_set );
 
-		pose::Pose const & scratch_pose = *base_pair_step_library_->scratch_pose( base_pair_step_sequence );
+		pose::Pose const & scratch_pose = *( base_pair_step_library.scratch_pose( base_pair_step_sequence ) );
 		check_res_map( res_map, scratch_pose, pose.sequence() );
 
 		q++;

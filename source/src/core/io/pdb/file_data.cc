@@ -1645,6 +1645,7 @@ build_pose_as_is1(
 					if ( options.exit_if_missing_heavy_atoms() == true ) {
 						utility_exit_with_message("quitting due to missing heavy atoms");
 					}
+					last_residue_was_recognized = false;
 					continue;
 				}
 			}

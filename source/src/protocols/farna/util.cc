@@ -1231,7 +1231,7 @@ set_output_res_num( pose::Pose & extended_pose,
 //////////////////////////////////////////////////////////////////////////////////////
 void
 figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partner,
-	bool const strict )
+															bool const strict /* = true */ )
 {
 
 	using namespace core::scoring;
@@ -1243,25 +1243,17 @@ figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partne
 
 	partner.clear();
 
-	ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
-	(*lores_scorefxn)( pose );
-	lores_scorefxn->show( std::cout, pose );
+	utility::vector1< core::pose::rna::BasePair > base_pair_list = classify_base_pairs_lores( pose );
 
-	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
-	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	EnergyBasePairList scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
 
-	Size k( 0 ), m( 0 );
-	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
-			it != scored_base_pair_list.end(); ++it ) {
-
-		BasePair const base_pair = it->second;
+		BasePair const & base_pair = base_pair_list[ n ];
 
 		Size const i = base_pair.res1;
 		Size const j = base_pair.res2;
 
-		k = base_pair.edge1;
-		m = base_pair.edge2;
+		Size const & k = base_pair.edge1;
+		Size const & m = base_pair.edge2;
 
 		Residue const & rsd_i( pose.residue( i ) );
 		Residue const & rsd_j( pose.residue( j ) );
@@ -1285,6 +1277,33 @@ figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partne
 		}
 
 	}
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+utility::vector1< core::pose::rna::BasePair >
+classify_base_pairs_lores( pose::Pose const & pose_input )
+{
+
+	using namespace core::scoring;
+	using namespace core::scoring::rna;
+	using namespace core::pose::rna;
+	using namespace core::pose;
+
+	Pose pose = pose_input; // need a non-const copy to apply scorefunction
+	ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
+	(*lores_scorefxn)( pose );
+	lores_scorefxn->show( std::cout, pose );
+
+	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
+	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
+	EnergyBasePairList scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+
+	utility::vector1< core::pose::rna::BasePair > base_pair_list;
+	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
+				it != scored_base_pair_list.end(); ++it ) base_pair_list.push_back( it->second );
+
+	return base_pair_list;
 
 }
 

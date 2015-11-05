@@ -68,6 +68,7 @@ RNA_RawBaseBaseInfo::resize( Size const & total_residue )
 	base_stack_axis_array_.dimension( total_residue, total_residue );
 	base_geometry_orientation_array_.dimension( total_residue, total_residue );
 	base_geometry_height_array_.dimension( total_residue, total_residue );
+	zero();
 }
 
 ////////////////////////////////////////////////////////

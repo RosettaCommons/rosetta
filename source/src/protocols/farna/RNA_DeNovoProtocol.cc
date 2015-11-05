@@ -30,7 +30,7 @@
 #include <protocols/farna/RNA_Relaxer.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
 #include <protocols/farna/RNA_ChunkLibrary.hh>
-#include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
+#include <protocols/farna/BasePairStepLibrary.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/stepwise/modeler/align/util.hh> //move this to toolbox/
 #include <protocols/stepwise/modeler/rna/util.hh>
@@ -538,7 +538,18 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	all_rna_fragments_ = protocols::farna::RNA_FragmentsOP( new FullAtomRNA_Fragments( all_rna_fragments_file_ ) );
 
 	rna_chunk_library_ = protocols::farna::RNA_ChunkLibraryOP( new RNA_ChunkLibrary( chunk_pdb_files_, chunk_silent_files_, pose, input_res_ ) );
-	if ( bps_moves_ ) rna_chunk_library_->setup_base_pair_step_chunks( pose, rna_structure_parameters_->get_base_pair_steps() );
+
+	canonical_base_pair_step_library_ = BasePairStepLibraryOP( new BasePairStepLibrary( true ) );
+	general_base_pair_step_library_   = BasePairStepLibraryOP( new BasePairStepLibrary( false ) );
+
+	if ( bps_moves_ ) {
+		// this prevents base pair step moves from 'intruding' into user-defined segments.
+		toolbox::AllowInsertCOP allow_insert_original = rna_structure_parameters_->allow_insert()->clone();
+		rna_chunk_library_->setup_base_pair_step_chunks( pose, rna_structure_parameters_->get_canonical_base_pair_steps(),
+																										 *canonical_base_pair_step_library_, allow_insert_original );
+		rna_chunk_library_->setup_base_pair_step_chunks( pose, rna_structure_parameters_->get_noncanonical_base_pair_steps(),
+																										 *general_base_pair_step_library_, allow_insert_original );
+	}
 
 	chunk_coverage_ = rna_chunk_library_->chunk_coverage();
 
@@ -721,21 +732,12 @@ RNA_DeNovoProtocol::output_to_silent_file(
 	// Why do I need to supply the damn file name? That seems silly.
 	TR << "Making silent struct for " << out_file_tag << std::endl;
 
-	if ( binary_rna_output_ ) {
-		BinarySilentStruct s( pose, out_file_tag );
+	SilentStructOP s = ( binary_rna_output_ ) ? SilentStructOP( new BinarySilentStruct( pose, out_file_tag ) ) :
+		                                          SilentStructOP( new RNA_SilentStruct(   pose, out_file_tag ) );
 
-		if ( use_chem_shift_data_ ) add_chem_shift_info( s, pose);
+	if ( use_chem_shift_data_ ) add_chem_shift_info( *s, pose);
 
-		output_silent_struct( s, silent_file_data, silent_file, pose, out_file_tag, score_only );
-
-	} else {
-		RNA_SilentStruct s( pose, out_file_tag );
-
-		if ( use_chem_shift_data_ ) add_chem_shift_info( s, pose);
-
-		output_silent_struct( s, silent_file_data, silent_file, pose, out_file_tag, score_only );
-
-	}
+	output_silent_struct( *s, silent_file_data, silent_file, pose, out_file_tag, score_only );
 
 }
 

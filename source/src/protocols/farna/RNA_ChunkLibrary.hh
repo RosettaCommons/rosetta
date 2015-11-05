@@ -21,11 +21,12 @@
 #ifdef WIN32
 #include <core/pose/MiniPose.hh>
 #endif
+#include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.fwd.hh>
 
 
 // ObjexxFCL Headers
@@ -164,7 +165,10 @@ public:
 	check_fold_tree_OK( core::pose::Pose const & pose );
 
 	void
-	setup_base_pair_step_chunks( core::pose::Pose const & pose, utility::vector1< BasePairStep > base_pair_steps );
+	setup_base_pair_step_chunks( core::pose::Pose const & pose,
+															 utility::vector1< BasePairStep > const & base_pair_steps,
+															 BasePairStepLibrary const & base_pair_step_library,
+															 toolbox::AllowInsertCOP allow_insert = 0 );
 
 private:
 
@@ -194,7 +198,6 @@ private:
 	ObjexxFCL::FArray1D <bool> covered_by_chunk_;
 	core::Real chunk_coverage_;
 	bool coarse_rna_;
-	BasePairStepLibraryOP base_pair_step_library_;
 
 };
 

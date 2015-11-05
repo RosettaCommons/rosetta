@@ -45,10 +45,9 @@ namespace rna {
 Size
 convert_acgu_to_1234( char const c )
 {
-	if ( c == 'a' ) return 1;
-	if ( c == 'c' ) return 2;
-	if ( c == 'g' ) return 3;
-	if ( c == 'u' ) return 4;
+	if ( rna_nts.find( c ) != std::string::npos ) {
+		return rna_nts.find( c ) + 1;
+	}
 	return 0;
 }
 

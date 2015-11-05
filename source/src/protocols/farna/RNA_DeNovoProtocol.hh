@@ -31,6 +31,7 @@
 #include <protocols/farna/RNA_Minimizer.fwd.hh>
 #include <protocols/farna/RNA_Relaxer.fwd.hh>
 #include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
+#include <protocols/farna/BasePairStepLibrary.fwd.hh>
 
 //Oooh.
 #include <ObjexxFCL/FArray1D.hh>
@@ -361,6 +362,8 @@ private:
 	protocols::farna::RNA_MinimizerOP rna_minimizer_;
 	protocols::farna::RNA_RelaxerOP rna_relaxer_;
 	protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_;
+	BasePairStepLibraryOP canonical_base_pair_step_library_;
+	BasePairStepLibraryOP general_base_pair_step_library_;
 
 	std::string rna_params_file_;
 	std::string rna_data_file_;

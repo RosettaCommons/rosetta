@@ -738,7 +738,7 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 	Size const total_residue = pose.total_residue();
 
 	rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info( rna_scoring_info.rna_raw_base_base_info() );
-	rna_raw_base_base_info.resize( total_residue );
+	//	rna_raw_base_base_info.resize( total_residue );
 	// if (rna_raw_base_base_info.calculated()) return;
 
 	ObjexxFCL::FArray3D < Real > & base_pair_array( rna_raw_base_base_info.base_pair_array() );
@@ -897,7 +897,6 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy(
 	rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
 	Vector const & centroid1,
 	Vector const & centroid2,
 	kinematics::Stub const & stub1,
@@ -906,8 +905,8 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy(
 {
 	// Following fills in arrays inside rna_raw_base_base_info, which you have to
 	// look inside to get computed energies.
-	eval_rna_base_pair_energy_one_way( rna_raw_base_base_info, rsd1, rsd2, pose, centroid1, centroid2, stub1, stub2 );
-	eval_rna_base_pair_energy_one_way( rna_raw_base_base_info, rsd2, rsd1, pose, centroid2, centroid1, stub2, stub1 );
+	eval_rna_base_pair_energy_one_way( rna_raw_base_base_info, rsd1, rsd2, centroid1, centroid2, stub1, stub2 );
+	eval_rna_base_pair_energy_one_way( rna_raw_base_base_info, rsd2, rsd1, centroid2, centroid1, stub2, stub1 );
 }
 
 /////////////////////////////////////////////////////////////
@@ -1000,7 +999,6 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 	rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
 	conformation::Residue const & res_i,
 	conformation::Residue const & res_j,
-	pose::Pose const & pose,
 	Vector const & centroid_i,
 	Vector const & centroid_j,
 	kinematics::Stub const & stub_i,
@@ -1010,11 +1008,6 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 
 	if ( !res_i.is_RNA() ) return;
 	if ( !res_j.is_RNA() ) return;
-
-	Size const total_residue = pose.total_residue();
-
-	// Is this necessary?
-	rna_raw_base_base_info.resize( total_residue );
 
 	ObjexxFCL::FArray3D < Real > & base_pair_array( rna_raw_base_base_info.base_pair_array() );
 	ObjexxFCL::FArray3D < Real > & base_axis_array( rna_raw_base_base_info.base_axis_array() );

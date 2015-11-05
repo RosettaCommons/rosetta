@@ -30,6 +30,7 @@ namespace chemical {
 namespace rna {
 
 ///////////////////////////////////////////////////////////////////////////////
+std::string const rna_nts( "acgu" );
 enum BaseEdge    { ANY_BASE_EDGE, WATSON_CRICK, HOOGSTEEN, SUGAR, O2PRIME, PHOSPHATE };
 enum RNA_Torsion { ANY_TORSION, ALPHA, BETA, GAMMA, DELTA, EPSILON, ZETA, CHI, NU2, NU1, O2H};
 enum ChiState    { ANY_CHI, ANTI, SYN, NO_CHI};
