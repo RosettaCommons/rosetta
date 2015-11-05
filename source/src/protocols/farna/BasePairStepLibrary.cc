@@ -31,10 +31,10 @@ namespace farna {
 
 //constructor
 BasePairStepSequence::BasePairStepSequence( char const nt_i,
-																						char const nt_i_next,
-																						char const nt_j,
-																						char const nt_j_next,
-																						Size num_bulge /* = 0 */){
+	char const nt_i_next,
+	char const nt_j,
+	char const nt_j_next,
+	Size num_bulge /* = 0 */){
 	base_pair_step_sequence_ = std::make_pair(
 		std::make_pair( nt_i, nt_i_next ),
 		std::make_pair( nt_j, nt_j_next ) );
@@ -43,7 +43,7 @@ BasePairStepSequence::BasePairStepSequence( char const nt_i,
 
 //constructor
 BasePairStepSequence::BasePairStepSequence( std::string const & sequence,
-																						Size const i, Size const i_next, Size const j, Size const j_next ){
+	Size const i, Size const i_next, Size const j, Size const j_next ){
 	base_pair_step_sequence_ = std::make_pair(
 		std::make_pair( sequence[ i-1 ], sequence[ i_next-1 ] ),
 		std::make_pair( sequence[ j-1 ], sequence[ j_next-1 ] ) );
@@ -53,12 +53,12 @@ BasePairStepSequence::BasePairStepSequence( std::string const & sequence,
 
 //constructor
 BasePairStepSequence::BasePairStepSequence( std::string const & sequence,
-																						BasePairStep const & base_pair_step ){
+	BasePairStep const & base_pair_step ){
 	base_pair_step_sequence_ = std::make_pair(
-																						std::make_pair( sequence[ base_pair_step.i() - 1 ],
-																														sequence[ base_pair_step.i_next() - 1 ] ),
-																						std::make_pair( sequence[ base_pair_step.j() - 1 ],
-																														sequence[ base_pair_step.j_next() - 1 ] ) );
+		std::make_pair( sequence[ base_pair_step.i() - 1 ],
+		sequence[ base_pair_step.i_next() - 1 ] ),
+		std::make_pair( sequence[ base_pair_step.j() - 1 ],
+		sequence[ base_pair_step.j_next() - 1 ] ) );
 	runtime_assert( base_pair_step.j_next() > base_pair_step.j() );
 	num_bulge_ = base_pair_step.j_next()  - base_pair_step.j() - 1;
 }
@@ -135,7 +135,7 @@ BasePairStepLibrary::database_dir() const {
 // although this is const, it can update the mutable list of mini_poses...
 void
 BasePairStepLibrary::initialize_data( BasePairStepSequence const & base_pair_step_sequence,
-																			bool const load_in_poses /* = true */ ) const
+	bool const load_in_poses /* = true */ ) const
 {
 	// already initialized?
 	if ( has_value( base_pair_step_sequence ) && mini_pose_lists_[ base_pair_step_sequence ].size() > 0 ) return; // already initialized.
@@ -144,7 +144,7 @@ BasePairStepLibrary::initialize_data( BasePairStepSequence const & base_pair_ste
 	if ( !utility::file::file_exists( input_file ) ) {
 		input_file += ".gz";
 		if ( !utility::file::file_exists( input_file ) ) {
-			//			TR << "WARNING! COULD NOT FIND:  "<< input_file << std::endl;
+			//   TR << "WARNING! COULD NOT FIND:  "<< input_file << std::endl;
 			return;
 		}
 	}

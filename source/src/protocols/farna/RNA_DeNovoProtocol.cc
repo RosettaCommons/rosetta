@@ -546,9 +546,9 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 		// this prevents base pair step moves from 'intruding' into user-defined segments.
 		toolbox::AllowInsertCOP allow_insert_original = rna_structure_parameters_->allow_insert()->clone();
 		rna_chunk_library_->setup_base_pair_step_chunks( pose, rna_structure_parameters_->get_canonical_base_pair_steps(),
-																										 *canonical_base_pair_step_library_, allow_insert_original );
+			*canonical_base_pair_step_library_, allow_insert_original );
 		rna_chunk_library_->setup_base_pair_step_chunks( pose, rna_structure_parameters_->get_noncanonical_base_pair_steps(),
-																										 *general_base_pair_step_library_, allow_insert_original );
+			*general_base_pair_step_library_, allow_insert_original );
 	}
 
 	chunk_coverage_ = rna_chunk_library_->chunk_coverage();
@@ -733,7 +733,7 @@ RNA_DeNovoProtocol::output_to_silent_file(
 	TR << "Making silent struct for " << out_file_tag << std::endl;
 
 	SilentStructOP s = ( binary_rna_output_ ) ? SilentStructOP( new BinarySilentStruct( pose, out_file_tag ) ) :
-		                                          SilentStructOP( new RNA_SilentStruct(   pose, out_file_tag ) );
+		SilentStructOP( new RNA_SilentStruct(   pose, out_file_tag ) );
 
 	if ( use_chem_shift_data_ ) add_chem_shift_info( *s, pose);
 

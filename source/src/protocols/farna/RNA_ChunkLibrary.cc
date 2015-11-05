@@ -250,7 +250,7 @@ RNA_ChunkLibrary::initialize_rna_chunk_library(
 				utility_exit_with_message( "problem with input_res" );
 			}
 			if ( input_res[ count ] < 1 ||
-					 input_res[ count ] > sequence_of_big_pose.size() ) {
+					input_res[ count ] > sequence_of_big_pose.size() ) {
 				std::cout << "Problem with input_res: " << input_res[ count ] << " is bigger then length " << sequence_of_big_pose.size() << " of pose sequence " << sequence_of_big_pose << std::endl;
 				utility_exit_with_message( "problem with input_res" );
 			}
@@ -556,9 +556,9 @@ RNA_ChunkLibrary::set_allow_insert(toolbox::AllowInsertOP allow_insert ){
 //////////////////////////////////////////////////////////////////////////////
 void
 RNA_ChunkLibrary::setup_base_pair_step_chunks( pose::Pose const & pose,
-																							 utility::vector1< BasePairStep > const & base_pair_steps,
-																							 BasePairStepLibrary const & base_pair_step_library,
-																							 toolbox::AllowInsertCOP allow_insert_original /* = 0 */){
+	utility::vector1< BasePairStep > const & base_pair_steps,
+	BasePairStepLibrary const & base_pair_step_library,
+	toolbox::AllowInsertCOP allow_insert_original /* = 0 */){
 
 	using namespace core::id;
 	using namespace core::pose;

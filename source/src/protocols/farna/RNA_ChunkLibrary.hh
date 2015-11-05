@@ -166,9 +166,9 @@ public:
 
 	void
 	setup_base_pair_step_chunks( core::pose::Pose const & pose,
-															 utility::vector1< BasePairStep > const & base_pair_steps,
-															 BasePairStepLibrary const & base_pair_step_library,
-															 toolbox::AllowInsertCOP allow_insert = 0 );
+		utility::vector1< BasePairStep > const & base_pair_steps,
+		BasePairStepLibrary const & base_pair_step_library,
+		toolbox::AllowInsertCOP allow_insert = 0 );
 
 private:
 

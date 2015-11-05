@@ -558,7 +558,7 @@ classify_base_pairs(
 {
 	utility::vector1< core::pose::rna::BasePair> base_pair_list;
 	utility::vector1< bool > is_bulged;
-  classify_base_pairs( pose_input, base_pair_list, is_bulged );
+	classify_base_pairs( pose_input, base_pair_list, is_bulged );
 	return base_pair_list;
 }
 /////////////////////////////////////////////////////////////////////////////

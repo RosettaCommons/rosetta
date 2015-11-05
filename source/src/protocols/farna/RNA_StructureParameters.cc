@@ -1327,7 +1327,7 @@ RNA_StructureParameters::figure_out_partner( std::map< Size, Size > & partner, b
 		Size i( rna_pairing.pos1 );
 		Size j( rna_pairing.pos2 );
 
-		//		TR << "PAIRING " << rna_pairing.pos1 << " " << rna_pairing.pos2 << " " << rna_pairing.edge1 << " " << rna_pairing.edge2 << " " << rna_pairing.orientation << " --> "  << std::endl;
+		//  TR << "PAIRING " << rna_pairing.pos1 << " " << rna_pairing.pos2 << " " << rna_pairing.edge1 << " " << rna_pairing.edge2 << " " << rna_pairing.orientation << " --> "  << std::endl;
 
 		bool const pair_is_canonical = rna_pairing.edge1 == 'W' && rna_pairing.edge2 == 'W' && rna_pairing.orientation=='A';
 		if ( force_canonical && !pair_is_canonical ) continue;
@@ -1365,7 +1365,7 @@ RNA_StructureParameters::get_base_pair_steps( bool const just_canonical ) const 
 	for ( std::map< Size, Size >::const_iterator iter = partner.begin(), end = partner.end(); iter != end; ++iter ) {
 		Size const i = iter->first;
 		if ( partner.find( i+1 ) != partner.end() &&
-				 !cutpoints_open_.has_value( i ) ) {
+				!cutpoints_open_.has_value( i ) ) {
 			Size const j = partner[ i+1 ];
 			// In following, q = 0  means flush base pair steps. Strands are (i, i+1)  and (j, j+1 )
 			// For q > 0, there are q unpaired residues ('bulges') in between j and j+q. Strands are (i, i+1) and ( j, j+1, ... j+q+1 ).

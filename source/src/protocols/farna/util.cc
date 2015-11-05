@@ -1231,7 +1231,7 @@ set_output_res_num( pose::Pose & extended_pose,
 //////////////////////////////////////////////////////////////////////////////////////
 void
 figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partner,
-															bool const strict /* = true */ )
+	bool const strict /* = true */ )
 {
 
 	using namespace core::scoring;
@@ -1301,7 +1301,7 @@ classify_base_pairs_lores( pose::Pose const & pose_input )
 
 	utility::vector1< core::pose::rna::BasePair > base_pair_list;
 	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
-				it != scored_base_pair_list.end(); ++it ) base_pair_list.push_back( it->second );
+			it != scored_base_pair_list.end(); ++it ) base_pair_list.push_back( it->second );
 
 	return base_pair_list;
 

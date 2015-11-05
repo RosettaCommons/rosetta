@@ -127,6 +127,12 @@ func_test(){
 int
 main()
 {
-	func_test();
-	exit( 0 );
+	try {
+		func_test();
+	} catch ( utility::excn::EXCN_Base& excn ) {
+		std::cerr << "Exception : " << std::endl;
+		excn.show( std::cerr );
+		return -1;
+	}
+	return 0;
 }

@@ -147,7 +147,7 @@ private:
 
 	void
 	initialize_data( BasePairStepSequence const & base_pair_step_sequence,
-									 bool const load_in_poses = true ) const;
+		bool const load_in_poses = true ) const;
 
 private:
 

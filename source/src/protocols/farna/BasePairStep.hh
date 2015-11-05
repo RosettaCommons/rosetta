@@ -41,7 +41,7 @@ public:
 	// This is more information than is required -- i_next should be i+1, j_next should be j+q+1.
 	//  but I wanted this to be explicit to prevent confusion for which numbers correspond to what.
 	BasePairStep( Size const i, Size const i_next,
-								Size const j, Size const j_next );
+		Size const j, Size const j_next );
 
 	//destructor
 	~BasePairStep();
@@ -63,9 +63,9 @@ public:
 	{
 		//There must be a more elegant way to do this...
 		if ( lhs.base_pair_step_.first.first   == rhs.base_pair_step_.first.first &&
-				 lhs.base_pair_step_.first.second  == rhs.base_pair_step_.first.second &&
-				 lhs.base_pair_step_.second.first  == rhs.base_pair_step_.second.first &&
-				 lhs.base_pair_step_.second.second == rhs.base_pair_step_.second.second ) {
+				lhs.base_pair_step_.first.second  == rhs.base_pair_step_.first.second &&
+				lhs.base_pair_step_.second.first  == rhs.base_pair_step_.second.first &&
+				lhs.base_pair_step_.second.second == rhs.base_pair_step_.second.second ) {
 			return true;
 		}
 		return false;

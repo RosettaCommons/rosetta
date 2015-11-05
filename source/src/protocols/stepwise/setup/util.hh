@@ -23,7 +23,7 @@ namespace protocols {
 namespace stepwise {
 namespace setup {
 
-	utility::vector1< std::string > load_s_and_l();
+utility::vector1< std::string > load_s_and_l();
 
 } //setup
 } //stepwise

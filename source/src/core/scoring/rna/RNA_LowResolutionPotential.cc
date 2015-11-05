@@ -738,7 +738,7 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 	Size const total_residue = pose.total_residue();
 
 	rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info( rna_scoring_info.rna_raw_base_base_info() );
-	//	rna_raw_base_base_info.resize( total_residue );
+	// rna_raw_base_base_info.resize( total_residue );
 	// if (rna_raw_base_base_info.calculated()) return;
 
 	ObjexxFCL::FArray3D < Real > & base_pair_array( rna_raw_base_base_info.base_pair_array() );

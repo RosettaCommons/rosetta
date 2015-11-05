@@ -160,7 +160,7 @@ set_output_res_num( core::pose::Pose & extended_pose,
 
 void
 figure_out_base_pair_partner( core::pose::Pose & pose, std::map< core::Size, core::Size > & partner,
-															bool const strict = true );
+	bool const strict = true );
 
 utility::vector1< core::pose::rna::BasePair >
 classify_base_pairs_lores( core::pose::Pose const & pose );

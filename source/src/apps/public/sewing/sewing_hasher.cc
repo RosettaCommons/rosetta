@@ -85,12 +85,12 @@ main( int argc, char * argv [] ) {
 
 			//Create comments stream for model file and add the date
 			std::stringstream comments;
-			time_t t = time(0); // get time now
-			struct tm * now = localtime( & t );
-			comments << "#Model file created on " << (now->tm_year + 1900) << '-'
-				<< (now->tm_mon + 1) << '-'
-				<< now->tm_mday
-				<< std::endl;
+			//time_t t = time(0); // get time now
+			//struct tm * now = localtime( & t );
+			//comments << "#Model file created on " << (now->tm_year + 1900) << '-'
+			// << (now->tm_mon + 1) << '-'
+			// << now->tm_mday
+			// << std::endl;
 
 			//Generate model file from a list of PDBs. All models will have 1 segment
 			if ( option[ in::file::l ].user() ) {
@@ -141,12 +141,12 @@ main( int argc, char * argv [] ) {
 
 			//Create comments stream for model file and add the date
 			std::stringstream comments;
-			time_t t = time(0);   // get time now
-			struct tm * now = localtime( & t );
-			comments << "#Model file created on " << (now->tm_year + 1900) << '-'
-				<< (now->tm_mon + 1) << '-'
-				<<  now->tm_mday
-				<< std::endl;
+			//time_t t = time(0);   // get time now
+			//struct tm * now = localtime( & t );
+			//comments << "#Model file created on " << (now->tm_year + 1900) << '-'
+			// << (now->tm_mon + 1) << '-'
+			// <<  now->tm_mday
+			// << std::endl;
 
 			//Generate models from a features database. Each segment is a single piece of secondary structure
 			comments << "# 3 or 5 secondary structures based models generated from sqlite database " << option[inout::dbms::database_name].value() << std::endl;

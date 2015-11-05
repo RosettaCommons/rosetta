@@ -455,9 +455,9 @@ get_bps_sub_dir( utility::vector1< Size > const &  base_pair_res ){
 ///////////////////////////////////////////////////////////////
 void
 write_base_pair_step_to_silent_struct( pose::Pose const & pose,
-																			 utility::vector1< int > base_pair_res,
-																			 std::string const & intag,
-																			 bool const use_sub_directories = true )
+	utility::vector1< int > base_pair_res,
+	std::string const & intag,
+	bool const use_sub_directories = true )
 {
 	using namespace core::io::silent;
 	static SilentFileData silent_file_data;
@@ -473,7 +473,7 @@ write_base_pair_step_to_silent_struct( pose::Pose const & pose,
 	std::string bps_sub_dir;
 	if ( use_sub_directories ) {
 		bps_sub_dir = get_bps_sub_dir( base_pair_res );
-		if ( !utility::file::file_exists( bps_sub_dir ) )	utility::file::create_directory_recursive( bps_sub_dir );
+		if ( !utility::file::file_exists( bps_sub_dir ) ) utility::file::create_directory_recursive( bps_sub_dir );
 	}
 	std::string const silent_file = bps_sub_dir + bps_seq + ".out";
 	BinarySilentStruct s( bps_pose, bps_tag );
@@ -483,7 +483,7 @@ write_base_pair_step_to_silent_struct( pose::Pose const & pose,
 ///////////////////////////////////////////////////////////////
 void
 write_base_pair_step_to_silent_struct( pose::Pose const & pose, Size const & i, Size const & j,
-																			 std::string const & intag )
+	std::string const & intag )
 {
 	utility::vector1< int > const base_pair_res = utility::tools::make_vector1( i, i+1, j-1, j);
 	write_base_pair_step_to_silent_struct( pose, base_pair_res, intag, false /* use_sub_directories */ );
@@ -493,20 +493,20 @@ write_base_pair_step_to_silent_struct( pose::Pose const & pose, Size const & i, 
 // Following just gets Watson-Crick and G*U pairs
 void
 output_canonical_base_pair_steps( pose::Pose & pose,
-																	std::string const & intag )
+	std::string const & intag )
 {
 	std::map< Size, Size > partner;
 	protocols::farna::figure_out_base_pair_partner( pose, partner, false );
 
 	for ( std::map< Size, Size >::const_iterator it = partner.begin();
-				it != partner.end(); ++it ) {
+			it != partner.end(); ++it ) {
 
 		Size const i = it->first;
 		Size const j = it->second;
 
 		if ( i < pose.total_residue() &&
-				 partner.find( i+1 ) != partner.end() && j > 1 && partner[ i+1 ] == j-1 &&
-				 !pose.fold_tree().is_cutpoint(i) && !pose.fold_tree().is_cutpoint(j-1) ) {
+				partner.find( i+1 ) != partner.end() && j > 1 && partner[ i+1 ] == j-1 &&
+				!pose.fold_tree().is_cutpoint(i) && !pose.fold_tree().is_cutpoint(j-1) ) {
 
 			write_base_pair_step_to_silent_struct( pose, i, j, intag );
 
@@ -519,7 +519,7 @@ output_canonical_base_pair_steps( pose::Pose & pose,
 // Following outputs all base pair steps (including neighboring non-canonicals)
 void
 output_general_base_pair_steps( pose::Pose const & pose,
-																std::string const & intag )
+	std::string const & intag )
 {
 
 	utility::vector1< core::pose::rna::BasePair > base_pair_list;
@@ -556,8 +556,8 @@ output_general_base_pair_steps( pose::Pose const & pose,
 				for ( int n = 0; n <= MAX_BULGE_LENGTH; n++ ) {
 
 					if ( int(j) > (n+1) && std::abs( int(i) - int(j) ) > (int(n)+1) &&
-							 partnered[ std::make_pair( i+1, j-n-1 ) ] &&
-							 !pose.fold_tree().is_cutpoint( i ) ) {
+							partnered[ std::make_pair( i+1, j-n-1 ) ] &&
+							!pose.fold_tree().is_cutpoint( i ) ) {
 
 						bool found_cut( false );
 						for ( int q = 1; q <= n+1; q++ ) {
