@@ -721,6 +721,9 @@ sources = {
 		"ragul_get_molecular_surface",
 		"ragul_get_connolly_surface",
 		"cstmin",
+		"ragul_calculate_residue_rmsd",
+		"ragul_get_aa_code",
+		"ragul_analyze_tcr_interface"
 	],
 	"pilot/ralford" : [
 		"version_mpscorefxn",

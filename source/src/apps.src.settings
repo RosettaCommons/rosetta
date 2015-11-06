@@ -100,6 +100,7 @@ sources = {
 	"public/darc": [
 		"DARC",
 		"make_ray_files",
+		"theta_ligand",
 	],
 	"public/ddg": [
 		"ddg_monomer",
