@@ -58,6 +58,7 @@ sources = {
 		"sequence_tolerance",
 		"SymDock",
 		"vip",
+		"struc_set_fragment_picker",
 	],
 	"public/analysis": [
 		"contactMap",

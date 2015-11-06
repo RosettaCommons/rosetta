@@ -1,0 +1,5 @@
+-in::file::l input/list
+-struc_set_fragment_picker::frag_length 3
+-struc_set_fragment_picker::sequence_length 30
+-struc_set_fragment_picker::frag_name 3mer_frags.dat
+
