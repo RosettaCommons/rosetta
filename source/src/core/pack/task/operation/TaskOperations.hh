@@ -108,8 +108,12 @@ public:
 
 	/// @brief a human-readible string-based mutator
 	void keep_aas( std::string const keep_aas );
-	/// @brief direct vector1-basd mutator.  If an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
+
+	/// @brief direct vector1-basd mutator.  If an amino acid is not present (false) in the boolean vector,
+	/// then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical
+	/// order by one-letter code.
 	void keep_aas( utility::vector1< bool > keep_aas );
+
 	virtual void parse_tag( TagCOP, DataMap & );
 	void include_residue( core::Size const resid );
 private:
@@ -225,6 +229,30 @@ public:
 
 };
 
+struct ExtraRotamerSamplingData {
+	ExtraRotamerSamplingData();
+
+	bool ex1_;
+	bool ex2_;
+	bool ex3_;
+	bool ex4_;
+	bool ex1aro_;
+	bool ex2aro_;
+	bool ex1aro_exposed_;
+	bool ex2aro_exposed_;
+
+	ExtraRotSample ex1_sample_level_;
+	ExtraRotSample ex2_sample_level_;
+	ExtraRotSample ex3_sample_level_;
+	ExtraRotSample ex4_sample_level_;
+	ExtraRotSample ex1aro_sample_level_;
+	ExtraRotSample ex2aro_sample_level_;
+	ExtraRotSample ex1aro_exposed_sample_level_;
+	ExtraRotSample ex2aro_exposed_sample_level_;
+	ExtraRotSample exdna_sample_level_;
+	Size extrachi_cutoff_;
+};
+
 /// @details control the extra chi rotamers for all residues
 class ExtraRotamersGeneric : public TaskOperation {
 public:
@@ -261,28 +289,21 @@ public:
 	void exdna_sample_level( ExtraRotSample value );
 	void extrachi_cutoff( Size value );
 
+	ExtraRotamerSamplingData const & sampling_data() const;
+
 private:
-
-	bool ex1_;
-	bool ex2_;
-	bool ex3_;
-	bool ex4_;
-	bool ex1aro_;
-	bool ex2aro_;
-	bool ex1aro_exposed_;
-	bool ex2aro_exposed_;
-
-	ExtraRotSample ex1_sample_level_;
-	ExtraRotSample ex2_sample_level_;
-	ExtraRotSample ex3_sample_level_;
-	ExtraRotSample ex4_sample_level_;
-	ExtraRotSample ex1aro_sample_level_;
-	ExtraRotSample ex2aro_sample_level_;
-	ExtraRotSample ex1aro_exposed_sample_level_;
-	ExtraRotSample ex2aro_exposed_sample_level_;
-	ExtraRotSample exdna_sample_level_;
-	Size extrachi_cutoff_;
+	ExtraRotamerSamplingData sampling_data_;
 };
+
+void parse_rotamer_sampling_data(
+	utility::tag::TagCOP tag,
+	ExtraRotamerSamplingData & sampling_data
+);
+
+void set_rotamer_sampling_data_for_RLT(
+	ExtraRotamerSamplingData const & sampling_data,
+	ResidueLevelTask & res_task
+);
 
 class ReadResfile : public TaskOperation
 {

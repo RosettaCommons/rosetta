@@ -57,6 +57,30 @@ public:
 	virtual std::string keyname() const { return "AddBehaviorRLT"; }
 };
 
+class IncludeCurrentRLTCreator : public ResLvlTaskOperationCreator {
+public:
+	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
+	virtual std::string keyname() const { return "IncludeCurrentRLT"; }
+};
+
+class PreserveCBetaRLTCreator : public ResLvlTaskOperationCreator {
+public:
+	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
+	virtual std::string keyname() const { return "PreserveCBetaRLT"; }
+};
+
+class ExtraChiCutoffRLTCreator : public ResLvlTaskOperationCreator {
+public:
+	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
+	virtual std::string keyname() const { return "ExtraChiCutoffRLT"; }
+};
+
+class ExtraRotamersGenericRLTCreator : public ResLvlTaskOperationCreator {
+public:
+	virtual ResLvlTaskOperationOP create_res_level_task_operation() const;
+	virtual std::string keyname() const { return "ExtraRotamersGenericRLT"; }
+};
+
 } //namespace operation
 } //namespace task
 } //namespace pack

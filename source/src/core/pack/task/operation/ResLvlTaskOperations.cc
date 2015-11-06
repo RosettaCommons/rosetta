@@ -18,19 +18,25 @@
 #include <core/pack/task/PackerTask.hh>
 
 #include <core/chemical/AA.hh>
+
+#include <basic/Tracer.hh>
+
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
-
-#include <sstream>
-
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <boost/foreach.hpp>
+
+#include <sstream>
 
 
 namespace core {
 namespace pack {
 namespace task {
 namespace operation {
+
+static THREAD_LOCAL basic::Tracer TR( "core.pack.task.operation.ResLvlTaskOperations", basic::t_info );
 
 RestrictToRepackingRLT::~RestrictToRepackingRLT() {}
 
@@ -213,6 +219,147 @@ void AddBehaviorRLT::parse_tag( TagCOP tag )
 	if ( tag->hasOption("behavior") ) behavior_ = tag->getOption<std::string>("behavior");
 	else utility_exit_with_message("AddBehaviorRLT tag needs to define option \"behavior\".");
 }
+
+ResLvlTaskOperationOP
+IncludeCurrentRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new IncludeCurrentRLT );
+}
+
+IncludeCurrentRLT::IncludeCurrentRLT() {}
+IncludeCurrentRLT::~IncludeCurrentRLT() {}
+ResLvlTaskOperationOP IncludeCurrentRLT::clone() const
+{
+	return ResLvlTaskOperationOP( new IncludeCurrentRLT );
+}
+
+void IncludeCurrentRLT::apply( ResidueLevelTask & rlt ) const
+{
+	rlt.or_include_current( true );
+}
+
+ResLvlTaskOperationOP
+PreserveCBetaRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new PreserveCBetaRLT );
+}
+
+PreserveCBetaRLT::PreserveCBetaRLT() {}
+PreserveCBetaRLT::~PreserveCBetaRLT() {}
+ResLvlTaskOperationOP PreserveCBetaRLT::clone() const
+{
+	return ResLvlTaskOperationOP( new PreserveCBetaRLT );
+}
+void PreserveCBetaRLT::apply( ResidueLevelTask & rlt ) const
+{
+	rlt.or_preserve_c_beta( true );
+}
+
+ResLvlTaskOperationOP
+ExtraChiCutoffRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new ExtraChiCutoffRLT );
+}
+
+ExtraChiCutoffRLT::ExtraChiCutoffRLT() :
+	extrachi_cutoff_( EXTRACHI_CUTOFF_LIMIT )
+{}
+
+ExtraChiCutoffRLT::~ExtraChiCutoffRLT() {}
+ResLvlTaskOperationOP ExtraChiCutoffRLT::clone() const
+{
+	return ResLvlTaskOperationOP( new ExtraChiCutoffRLT( *this ));
+}
+void ExtraChiCutoffRLT::apply( ResidueLevelTask & rlt ) const
+{
+	rlt.and_extrachi_cutoff( extrachi_cutoff_ );
+}
+
+void ExtraChiCutoffRLT::parse_tag( TagCOP tag )
+{
+	extrachi_cutoff_ = tag->getOption< core::Size >( "extrachi_cutoff", EXTRACHI_CUTOFF_LIMIT );
+}
+
+
+ResLvlTaskOperationOP
+ExtraRotamersGenericRLTCreator::create_res_level_task_operation() const {
+	return ResLvlTaskOperationOP( new ExtraRotamersGenericRLT );
+}
+
+ExtraRotamersGenericRLT::ExtraRotamersGenericRLT() {}
+ExtraRotamersGenericRLT::~ExtraRotamersGenericRLT() {}
+ResLvlTaskOperationOP ExtraRotamersGenericRLT::clone() const
+{
+	return ResLvlTaskOperationOP( new ExtraRotamersGenericRLT( *this ));
+}
+void ExtraRotamersGenericRLT::apply( ResidueLevelTask & rlt ) const
+{
+	set_rotamer_sampling_data_for_RLT( sampling_data_, rlt );
+}
+void ExtraRotamersGenericRLT::parse_tag( TagCOP tag )
+{
+	parse_rotamer_sampling_data( tag, sampling_data_ );
+}
+
+void ExtraRotamersGenericRLT::ex1( bool value ) {
+	sampling_data_.ex1_ = value;
+}
+void ExtraRotamersGenericRLT::ex2( bool value ) {
+	sampling_data_.ex2_ = value;
+}
+void ExtraRotamersGenericRLT::ex3( bool value ) {
+	sampling_data_.ex3_ = value;
+}
+void ExtraRotamersGenericRLT::ex4( bool value ) {
+	sampling_data_.ex4_ = value;
+}
+void ExtraRotamersGenericRLT::ex1aro( bool value ) {
+	sampling_data_.ex1aro_ = value;
+}
+void ExtraRotamersGenericRLT::ex2aro( bool value ) {
+	sampling_data_.ex2aro_ = value;
+}
+void ExtraRotamersGenericRLT::ex1aro_exposed( bool value ) {
+	sampling_data_.ex1aro_exposed_ = value;
+}
+void ExtraRotamersGenericRLT::ex2aro_exposed( bool value ) {
+	sampling_data_.ex2aro_exposed_ = value;
+}
+void ExtraRotamersGenericRLT::ex1_sample_level( ExtraRotSample value ) {
+	sampling_data_.ex1_sample_level_ = value;
+}
+void ExtraRotamersGenericRLT::ex2_sample_level( ExtraRotSample value ) {
+	sampling_data_.ex2_sample_level_ = value;
+}
+void ExtraRotamersGenericRLT::ex3_sample_level( ExtraRotSample value ) {
+	sampling_data_.ex3_sample_level_ = value;
+}
+void ExtraRotamersGenericRLT::ex4_sample_level( ExtraRotSample value ) {
+	sampling_data_.ex4_sample_level_ = value;
+}
+void ExtraRotamersGenericRLT::ex1aro_sample_level( ExtraRotSample value ) {
+	sampling_data_.ex1aro_sample_level_ = value;
+}
+void ExtraRotamersGenericRLT::ex2aro_sample_level( ExtraRotSample value ) {
+	sampling_data_.ex2aro_sample_level_ = value;
+}
+void ExtraRotamersGenericRLT::ex1aro_exposed_sample_level( ExtraRotSample value ) {
+	sampling_data_.ex1aro_exposed_sample_level_ = value;
+}
+void ExtraRotamersGenericRLT::ex2aro_exposed_sample_level( ExtraRotSample value ) {
+	sampling_data_.ex2aro_exposed_sample_level_ = value;
+}
+void ExtraRotamersGenericRLT::exdna_sample_level( ExtraRotSample value ) {
+	sampling_data_.exdna_sample_level_ = value;
+}
+void ExtraRotamersGenericRLT::extrachi_cutoff( Size value ) {
+	sampling_data_.extrachi_cutoff_ = value;
+}
+
+ExtraRotamerSamplingData const &
+ExtraRotamersGenericRLT::sampling_data() const
+{
+	return sampling_data_;
+}
+
+
 
 } //namespace operation
 } //namespace task

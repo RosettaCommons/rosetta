@@ -442,8 +442,7 @@ void
 IncludeCurrent::parse_def( utility::lua::LuaObject const & ) {}
 
 /// BEGIN ExtraRotamersGeneric
-
-ExtraRotamersGeneric::ExtraRotamersGeneric() :
+ExtraRotamerSamplingData::ExtraRotamerSamplingData() :
 	ex1_(false),
 	ex2_(false),
 	ex3_(false),
@@ -464,6 +463,10 @@ ExtraRotamersGeneric::ExtraRotamersGeneric() :
 	extrachi_cutoff_( EXTRACHI_CUTOFF_LIMIT )
 {}
 
+ExtraRotamersGeneric::ExtraRotamersGeneric() :
+	sampling_data_()
+{}
+
 ExtraRotamersGeneric::~ExtraRotamersGeneric() {}
 
 TaskOperationOP ExtraRotamersGenericCreator::create_task_operation() const
@@ -479,109 +482,131 @@ TaskOperationOP ExtraRotamersGeneric::clone() const
 void
 ExtraRotamersGeneric::parse_tag( TagCOP tag , DataMap & )
 {
-	ex1_ = tag->getOption<bool>("ex1", false);
-	ex2_ = tag->getOption<bool>("ex2", false);
-	ex3_ = tag->getOption<bool>("ex3", false);
-	ex4_ = tag->getOption<bool>("ex4", false);
-	ex1aro_ = tag->getOption<bool>("ex1aro", false);
-	ex2aro_ = tag->getOption<bool>("ex2aro", false);
-	ex1aro_exposed_ = tag->getOption<bool>("ex1aro_exposed", false);
-	ex2aro_exposed_ = tag->getOption<bool>("ex2aro_exposed", false);
-
-	ex1_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex1_sample_level", NO_EXTRA_CHI_SAMPLES));
-	ex2_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex2_sample_level", NO_EXTRA_CHI_SAMPLES));
-	ex3_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex3_sample_level", NO_EXTRA_CHI_SAMPLES));
-	ex4_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex4_sample_level", NO_EXTRA_CHI_SAMPLES));
-	ex1aro_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex1aro_sample_level", NO_EXTRA_CHI_SAMPLES));
-	ex2aro_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex2aro_sample_level", NO_EXTRA_CHI_SAMPLES));
-	ex1aro_exposed_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex1aro_exposed_sample_level", NO_EXTRA_CHI_SAMPLES));
-	ex2aro_exposed_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex2aro_exposed_sample_level", NO_EXTRA_CHI_SAMPLES));
-	exdna_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("exdna_sample_level", NO_EXTRA_CHI_SAMPLES));
-
-	extrachi_cutoff_ = tag->getOption<Size>("extrachi_cutoff", EXTRACHI_CUTOFF_LIMIT);
+	parse_rotamer_sampling_data( tag, sampling_data_ );
 }
-
 
 void
 ExtraRotamersGeneric::apply( pose::Pose const &, PackerTask & task ) const
 {
 	for ( Size i=1; i <= task.total_residue(); ++i ) {
 		ResidueLevelTask & res_task(task.nonconst_residue_task(i));
-		res_task.or_ex1(ex1_);
-		res_task.or_ex2(ex2_);
-		res_task.or_ex3(ex3_);
-		res_task.or_ex4(ex4_);
-		res_task.or_ex1aro(ex1aro_);
-		res_task.or_ex2aro(ex2aro_);
-		res_task.or_ex1aro_exposed(ex1aro_exposed_);
-		res_task.or_ex2aro_exposed(ex2aro_exposed_);
-		res_task.or_ex1_sample_level(ex1_sample_level_);
-		res_task.or_ex2_sample_level(ex2_sample_level_);
-		res_task.or_ex3_sample_level(ex3_sample_level_);
-		res_task.or_ex4_sample_level(ex4_sample_level_);
-		res_task.or_ex1aro_sample_level(ex1aro_sample_level_);
-		res_task.or_ex2aro_sample_level(ex2aro_sample_level_);
-		res_task.or_ex1aro_exposed_sample_level(ex1aro_exposed_sample_level_);
-		res_task.or_ex2aro_exposed_sample_level(ex2aro_exposed_sample_level_);
-		res_task.or_exdna_sample_level(exdna_sample_level_);
-		res_task.and_extrachi_cutoff(extrachi_cutoff_);
+		set_rotamer_sampling_data_for_RLT( sampling_data_, res_task );
 	}
 }
 
 void ExtraRotamersGeneric::ex1( bool value ) {
-	ex1_ = value;
+	sampling_data_.ex1_ = value;
 }
 void ExtraRotamersGeneric::ex2( bool value ) {
-	ex2_ = value;
+	sampling_data_.ex2_ = value;
 }
 void ExtraRotamersGeneric::ex3( bool value ) {
-	ex3_ = value;
+	sampling_data_.ex3_ = value;
 }
 void ExtraRotamersGeneric::ex4( bool value ) {
-	ex4_ = value;
+	sampling_data_.ex4_ = value;
 }
 void ExtraRotamersGeneric::ex1aro( bool value ) {
-	ex1aro_ = value;
+	sampling_data_.ex1aro_ = value;
 }
 void ExtraRotamersGeneric::ex2aro( bool value ) {
-	ex2aro_ = value;
+	sampling_data_.ex2aro_ = value;
 }
 void ExtraRotamersGeneric::ex1aro_exposed( bool value ) {
-	ex1aro_exposed_ = value;
+	sampling_data_.ex1aro_exposed_ = value;
 }
 void ExtraRotamersGeneric::ex2aro_exposed( bool value ) {
-	ex2aro_exposed_ = value;
+	sampling_data_.ex2aro_exposed_ = value;
 }
 void ExtraRotamersGeneric::ex1_sample_level( ExtraRotSample value ) {
-	ex1_sample_level_ = value;
+	sampling_data_.ex1_sample_level_ = value;
 }
 void ExtraRotamersGeneric::ex2_sample_level( ExtraRotSample value ) {
-	ex2_sample_level_ = value;
+	sampling_data_.ex2_sample_level_ = value;
 }
 void ExtraRotamersGeneric::ex3_sample_level( ExtraRotSample value ) {
-	ex3_sample_level_ = value;
+	sampling_data_.ex3_sample_level_ = value;
 }
 void ExtraRotamersGeneric::ex4_sample_level( ExtraRotSample value ) {
-	ex4_sample_level_ = value;
+	sampling_data_.ex4_sample_level_ = value;
 }
 void ExtraRotamersGeneric::ex1aro_sample_level( ExtraRotSample value ) {
-	ex1aro_sample_level_ = value;
+	sampling_data_.ex1aro_sample_level_ = value;
 }
 void ExtraRotamersGeneric::ex2aro_sample_level( ExtraRotSample value ) {
-	ex2aro_sample_level_ = value;
+	sampling_data_.ex2aro_sample_level_ = value;
 }
 void ExtraRotamersGeneric::ex1aro_exposed_sample_level( ExtraRotSample value ) {
-	ex1aro_exposed_sample_level_ = value;
+	sampling_data_.ex1aro_exposed_sample_level_ = value;
 }
 void ExtraRotamersGeneric::ex2aro_exposed_sample_level( ExtraRotSample value ) {
-	ex2aro_exposed_sample_level_ = value;
+	sampling_data_.ex2aro_exposed_sample_level_ = value;
 }
 void ExtraRotamersGeneric::exdna_sample_level( ExtraRotSample value ) {
-	exdna_sample_level_ = value;
+	sampling_data_.exdna_sample_level_ = value;
 }
 void ExtraRotamersGeneric::extrachi_cutoff( Size value ) {
-	extrachi_cutoff_ = value;
+	sampling_data_.extrachi_cutoff_ = value;
 }
+
+ExtraRotamerSamplingData const &
+ExtraRotamersGeneric::sampling_data() const
+{
+	return sampling_data_;
+}
+
+void parse_rotamer_sampling_data(
+	utility::tag::TagCOP tag,
+	ExtraRotamerSamplingData & sampling_data
+)
+{
+	sampling_data.ex1_ = tag->getOption<bool>("ex1", false);
+	sampling_data.ex2_ = tag->getOption<bool>("ex2", false);
+	sampling_data.ex3_ = tag->getOption<bool>("ex3", false);
+	sampling_data.ex4_ = tag->getOption<bool>("ex4", false);
+	sampling_data.ex1aro_ = tag->getOption<bool>("ex1aro", false);
+	sampling_data.ex2aro_ = tag->getOption<bool>("ex2aro", false);
+	sampling_data.ex1aro_exposed_ = tag->getOption<bool>("ex1aro_exposed", false);
+	sampling_data.ex2aro_exposed_ = tag->getOption<bool>("ex2aro_exposed", false);
+
+	sampling_data.ex1_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex1_sample_level", NO_EXTRA_CHI_SAMPLES));
+	sampling_data.ex2_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex2_sample_level", NO_EXTRA_CHI_SAMPLES));
+	sampling_data.ex3_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex3_sample_level", NO_EXTRA_CHI_SAMPLES));
+	sampling_data.ex4_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex4_sample_level", NO_EXTRA_CHI_SAMPLES));
+	sampling_data.ex1aro_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex1aro_sample_level", NO_EXTRA_CHI_SAMPLES));
+	sampling_data.ex2aro_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex2aro_sample_level", NO_EXTRA_CHI_SAMPLES));
+	sampling_data.ex1aro_exposed_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex1aro_exposed_sample_level", NO_EXTRA_CHI_SAMPLES));
+	sampling_data.ex2aro_exposed_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("ex2aro_exposed_sample_level", NO_EXTRA_CHI_SAMPLES));
+	sampling_data.exdna_sample_level_ = static_cast<ExtraRotSample>(tag->getOption<Size>("exdna_sample_level", NO_EXTRA_CHI_SAMPLES));
+
+	sampling_data.extrachi_cutoff_ = tag->getOption<Size>("extrachi_cutoff", EXTRACHI_CUTOFF_LIMIT);
+}
+
+void set_rotamer_sampling_data_for_RLT(
+	ExtraRotamerSamplingData const & sampling_data,
+	ResidueLevelTask & res_task
+)
+{
+	res_task.or_ex1(sampling_data.ex1_);
+	res_task.or_ex2(sampling_data.ex2_);
+	res_task.or_ex3(sampling_data.ex3_);
+	res_task.or_ex4(sampling_data.ex4_);
+	res_task.or_ex1aro(sampling_data.ex1aro_);
+	res_task.or_ex2aro(sampling_data.ex2aro_);
+	res_task.or_ex1aro_exposed(sampling_data.ex1aro_exposed_);
+	res_task.or_ex2aro_exposed(sampling_data.ex2aro_exposed_);
+	res_task.or_ex1_sample_level(sampling_data.ex1_sample_level_);
+	res_task.or_ex2_sample_level(sampling_data.ex2_sample_level_);
+	res_task.or_ex3_sample_level(sampling_data.ex3_sample_level_);
+	res_task.or_ex4_sample_level(sampling_data.ex4_sample_level_);
+	res_task.or_ex1aro_sample_level(sampling_data.ex1aro_sample_level_);
+	res_task.or_ex2aro_sample_level(sampling_data.ex2aro_sample_level_);
+	res_task.or_ex1aro_exposed_sample_level(sampling_data.ex1aro_exposed_sample_level_);
+	res_task.or_ex2aro_exposed_sample_level(sampling_data.ex2aro_exposed_sample_level_);
+	res_task.or_exdna_sample_level(sampling_data.exdna_sample_level_);
+	res_task.and_extrachi_cutoff(sampling_data.extrachi_cutoff_);
+}
+
 
 /// BEGIN ReadResfile
 

@@ -19,13 +19,15 @@
 
 #include <core/pack/task/operation/ResLvlTaskOperation.hh>
 
-// Project Headers
+// Package Headers
 #include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/task/RotamerSampleOptions.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 
+#include <core/types.hh>
 
 #include <utility/vector1.hh>
 #include <string>
-
 
 namespace core {
 namespace pack {
@@ -106,6 +108,80 @@ public:
 private:
 	std::string behavior_;
 };
+
+class IncludeCurrentRLT : public ResLvlTaskOperation
+{
+public:
+	typedef ResLvlTaskOperation parent;
+public:
+	IncludeCurrentRLT();
+	virtual ~IncludeCurrentRLT();
+	virtual ResLvlTaskOperationOP clone() const;
+	virtual void apply( ResidueLevelTask & ) const;
+};
+
+class PreserveCBetaRLT : public ResLvlTaskOperation
+{
+public:
+	typedef ResLvlTaskOperation parent;
+public:
+	PreserveCBetaRLT();
+	virtual ~PreserveCBetaRLT();
+	virtual ResLvlTaskOperationOP clone() const;
+	virtual void apply( ResidueLevelTask & ) const;
+};
+
+class ExtraChiCutoffRLT : public ResLvlTaskOperation
+{
+public:
+	typedef ResLvlTaskOperation parent;
+public:
+	ExtraChiCutoffRLT();
+	virtual ~ExtraChiCutoffRLT();
+	virtual ResLvlTaskOperationOP clone() const;
+	virtual void apply( ResidueLevelTask & ) const;
+	virtual void parse_tag( TagCOP );
+private:
+	core::Size extrachi_cutoff_;
+};
+
+class ExtraRotamersGenericRLT : public ResLvlTaskOperation
+{
+public:
+	typedef ResLvlTaskOperation parent;
+public:
+	ExtraRotamersGenericRLT();
+	virtual ~ExtraRotamersGenericRLT();
+	virtual ResLvlTaskOperationOP clone() const;
+	virtual void apply( ResidueLevelTask & ) const;
+	virtual void parse_tag( TagCOP );
+
+	void ex1( bool value );
+	void ex2( bool value );
+	void ex3( bool value );
+	void ex4( bool value );
+	void ex1aro( bool value );
+	void ex2aro( bool value );
+	void ex1aro_exposed( bool value );
+	void ex2aro_exposed( bool value );
+	void ex1_sample_level( ExtraRotSample value );
+	void ex2_sample_level( ExtraRotSample value );
+	void ex3_sample_level( ExtraRotSample value );
+	void ex4_sample_level( ExtraRotSample value );
+	void ex1aro_sample_level( ExtraRotSample value );
+	void ex2aro_sample_level( ExtraRotSample value );
+	void ex1aro_exposed_sample_level( ExtraRotSample value );
+	void ex2aro_exposed_sample_level( ExtraRotSample value );
+	void exdna_sample_level( ExtraRotSample value );
+	void extrachi_cutoff( Size value );
+
+	ExtraRotamerSamplingData const & sampling_data() const;
+
+private:
+	ExtraRotamerSamplingData sampling_data_;
+};
+
+
 
 } //namespace operation
 } //namespace task

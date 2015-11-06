@@ -28,6 +28,7 @@ class AppendRotamerSet;
 class DisallowIfNonnative;
 class ExtraChiCutoff;
 class ExtraRotamers;
+struct ExtraRotamerSamplingData;
 class ExtraRotamersGeneric;
 class IncludeCurrent;
 class InitializeExtraRotsFromCommandline;
