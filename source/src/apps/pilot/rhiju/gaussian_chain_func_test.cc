@@ -16,6 +16,7 @@
 #include <utility/tools/make_vector1.hh>
 #include <iostream>
 #include <ObjexxFCL/format.hh>
+#include <devel/init.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -29,12 +30,10 @@ using utility::tools::make_vector1;
 // This could become a unit test.
 ///////////////////////////////////////////////////////////////
 
-Real const loop_fixed_cost = basic::options::option[ basic::options::OptionKeys::score::loop_fixed_cost ]();
-
 
 ///////////////////////////////////////////////////////////////
 void
-double_func_test( Distance const distance2  ){
+double_func_test( Distance const distance2, core::Real const &loop_fixed_cost  ){
 
 	utility::vector1< Distance > other_distances;
 	other_distances.push_back( distance2 );
@@ -56,7 +55,7 @@ double_func_test( Distance const distance2  ){
 }
 
 void
-triple_func_test( Distance const distance2, Distance const distance3  ){
+triple_func_test( Distance const distance2, Distance const distance3, core::Real const &loop_fixed_cost  ){
 	utility::vector1< Distance > other_distances;
 	other_distances.push_back( distance2 );
 	other_distances.push_back( distance3 );
@@ -82,7 +81,7 @@ triple_func_test( Distance const distance2, Distance const distance3  ){
 
 
 void
-quadruple_func_test( Distance const distance2, Distance const distance3, Distance const distance4  ){
+quadruple_func_test( Distance const distance2, Distance const distance3, Distance const distance4, core::Real const &loop_fixed_cost  ){
 	utility::vector1< Distance > other_distances;
 	other_distances.push_back( distance2 );
 	other_distances.push_back( distance3 );
@@ -108,27 +107,30 @@ quadruple_func_test( Distance const distance2, Distance const distance3, Distanc
 }
 
 void
-func_test(){
+func_test( core::Real const &loop_fixed_cost ){
 
-	double_func_test( 0.5 );
-	double_func_test( 15.0 );
+	double_func_test( 0.5, loop_fixed_cost );
+	double_func_test( 15.0, loop_fixed_cost );
 
-	triple_func_test( 0.5, 0.5 );
-	triple_func_test( 15.0, 0.5 );
-	triple_func_test( 15.0, 15.0 );
+	triple_func_test( 0.5, 0.5, loop_fixed_cost );
+	triple_func_test( 15.0, 0.5, loop_fixed_cost );
+	triple_func_test( 15.0, 15.0, loop_fixed_cost );
 
-	quadruple_func_test( 0.01, 0.01, 0.01 );
-	quadruple_func_test( 15.0, 15.0, 15.0 );
+	quadruple_func_test( 0.01, 0.01, 0.01, loop_fixed_cost );
+	quadruple_func_test( 15.0, 15.0, 15.0, loop_fixed_cost );
 
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 int
-main()
+main( int argc, char * argv [] )
 {
 	try {
-		func_test();
+		basic::options::option.add_relevant(basic::options::OptionKeys::score::loop_fixed_cost ); //Must come before init().
+		devel::init(argc, argv);
+		core::Real const loop_fixed_cost( basic::options::option[ basic::options::OptionKeys::score::loop_fixed_cost ]() );
+		func_test( loop_fixed_cost );
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception : " << std::endl;
 		excn.show( std::cerr );
