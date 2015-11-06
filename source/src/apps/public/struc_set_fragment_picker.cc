@@ -146,10 +146,17 @@ main_local( void* ) {
 int
 main( int argc, char * argv [] )
 {
-	register_options();
-	devel::init( argc, argv );
+	try {
+		register_options();
+		devel::init( argc, argv );
 
-	main_local(NULL);
+		main_local(NULL);
+	} catch ( utility::excn::EXCN_Base& excn ) {
+		std::cerr << "Exception caught: " << std::endl;
+		excn.show( std::cerr );
+		std::cerr.flush();
+		return -1;
+	}
 
 	return 0;
 }
