@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file ExhaustiveAssemblyMover.cc
+/// @file EnumerateAssemblyMover.cc
 ///
 /// @brief Enumerate every possible assembly exhaustively
 /// @author Doonam Kim
 /// @author Tim Jacobs
 
 // Unit Headers
-#include <protocols/sewing/sampling/ExhaustiveAssemblyMover.hh>
-#include <protocols/sewing/sampling/ExhaustiveAssemblyMoverCreator.hh>
+#include <protocols/sewing/sampling/EnumerateAssemblyMover.hh>
+#include <protocols/sewing/sampling/EnumerateAssemblyMoverCreator.hh>
 
 // Package Headers
 #include <protocols/sewing/conformation/AssemblyFactory.hh>
@@ -39,62 +39,63 @@
 namespace protocols {
 namespace sewing  {
 
-static basic::Tracer TR( "protocols.sewing.sampling.ExhaustiveAssemblyMover" );
+static basic::Tracer TR( "protocols.sewing.sampling.EnumerateAssemblyMover" );
 
 ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////  Boiler Plate Code   ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 protocols::moves::MoverOP
-ExhaustiveAssemblyMoverCreator::create_mover() const
+EnumerateAssemblyMoverCreator::create_mover() const
 {
-	return protocols::moves::MoverOP( new ExhaustiveAssemblyMover );
+	return protocols::moves::MoverOP( new EnumerateAssemblyMover );
 }
 
 std::string
-ExhaustiveAssemblyMoverCreator::keyname() const
+EnumerateAssemblyMoverCreator::keyname() const
 {
-	return ExhaustiveAssemblyMoverCreator::mover_name();
+	return EnumerateAssemblyMoverCreator::mover_name();
 }
 
 std::string
-ExhaustiveAssemblyMoverCreator::mover_name()
+EnumerateAssemblyMoverCreator::mover_name()
 {
-	return "ExhaustiveAssemblyMover";
+	return "EnumerateAssemblyMover";
 }
 
 
 protocols::moves::MoverOP
-ExhaustiveAssemblyMover::clone() const {
-	return( protocols::moves::MoverOP( new ExhaustiveAssemblyMover( *this ) ) );
+EnumerateAssemblyMover::clone() const {
+	return( protocols::moves::MoverOP( new EnumerateAssemblyMover( *this ) ) );
 }
 
 protocols::moves::MoverOP
-ExhaustiveAssemblyMover::fresh_instance() const {
-	return protocols::moves::MoverOP( new ExhaustiveAssemblyMover );
+EnumerateAssemblyMover::fresh_instance() const {
+	return protocols::moves::MoverOP( new EnumerateAssemblyMover );
 }
 
 std::string
-ExhaustiveAssemblyMover::get_name() const {
-	return "ExhaustiveAssemblyMover";
+EnumerateAssemblyMover::get_name() const {
+	return "EnumerateAssemblyMover";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////  ExhaustiveAssemblyMover function   //////////////////////////////////
+////////////////////////  EnumerateAssemblyMover function   //////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-ExhaustiveAssemblyMover::ExhaustiveAssemblyMover():
+EnumerateAssemblyMover::EnumerateAssemblyMover():
 	bogus_var_for_constructor_(10),
+	min_assembly_score_(-2.0),
 	models()
 {}
 
 
 // @brief: add one N-term edge and one C-term edge to the current node, and check all requirements
 AssemblyOP
-ExhaustiveAssemblyMover::generate_assembly(){
-	TR << "ExhaustiveAssemblyMover::generate_assembly()" << std::endl;
+EnumerateAssemblyMover::generate_assembly(){
+	TR << "EnumerateAssemblyMover::generate_assembly()" << std::endl;
 	using namespace basic::options;
 
-	/* pseudo code for ExhaustiveAssemblyMover::follow_edge_from_node
+	/* pseudo code for EnumerateAssemblyMover::follow_edge_from_node
 
 	Load all models from specified model_file
 	For each model {
@@ -124,7 +125,7 @@ ExhaustiveAssemblyMover::generate_assembly(){
 		std::string model_file = option[basic::options::OptionKeys::sewing::model_file_name].value();
 		models = read_model_file(model_file);
 	} else {
-		utility_exit_with_message("You must give a model file and score file to an ExhaustiveAssemblyMover either through options or tags");
+		utility_exit_with_message("You must give a model file and score file to an EnumerateAssemblyMover either through options or tags");
 	}
 	/////// <end> get model_file, edge_file
 
@@ -294,7 +295,7 @@ ExhaustiveAssemblyMover::generate_assembly(){
 				// (Tim Jacobs) If we've already added this model, don't add it again. This should theoretically
 				//not be a problem, but due to the way model regeneration is handled in the Assembly
 				//class, you get an error. This should be fixed in Assembly soon.
-				// (Doonam) So far, adding already added model caused no problem for me, but just use this for just in case
+				// (Doonam) So far, adding already added model caused no problem for me, but use this for just in case
 				std::set<core::Size> model_ids = assembly->model_ids();
 				if ( model_ids.find(mobile_model_id_c) != model_ids.end() ) {
 					assembly = one_edge_assembly;
@@ -334,7 +335,18 @@ ExhaustiveAssemblyMover::generate_assembly(){
 
 				if ( requirement_set_->violates(assembly) ) {
 					if ( TR.Debug.visible() ) {
-						TR.Debug << "rejecting add, violation" << std::endl;
+						TR.Debug << "rejecting add, violation of requirement_set" << std::endl;
+					}
+					assembly = one_edge_assembly;
+					continue;
+				}
+
+				core::Real const score = assembly_scorefxn_->score(assembly);
+
+				if ( score > min_assembly_score_ ) {
+					if ( TR.Debug.visible() ) {
+						TR.Debug << "rejecting add" << std::endl;
+						TR.Debug << "score of assembly ( " << score << " ) > min_assembly_score ( " << min_assembly_score_ << " ) " << std::endl;
 					}
 					assembly = one_edge_assembly;
 					continue;
@@ -369,7 +381,7 @@ ExhaustiveAssemblyMover::generate_assembly(){
 
 
 void
-ExhaustiveAssemblyMover::parse_my_tag(
+EnumerateAssemblyMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
@@ -379,6 +391,11 @@ ExhaustiveAssemblyMover::parse_my_tag(
 	parent::parse_my_tag(tag, data, filters, movers, pose); // parent is AssemblyMover
 	// indeed this "parent::parse_my_tag" is essential. For example, user can specify max_segments in parser.xml
 	// inheriting classes can't recognize TR << "max_segments: " << max_segments << std::endl;
+
+	if ( tag->hasOption("min_assembly_score") ) {
+		min_assembly_score_ = tag->getOption<core::Real>("min_assembly_score"); // for Doonam's a/b design, -2.0 is recommended
+	}
+
 } //parse_my_tag
 
 } //sewing

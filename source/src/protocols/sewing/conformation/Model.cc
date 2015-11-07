@@ -922,7 +922,7 @@ get_strand_sew_models_from_db(){
 } //get_strand_sew_models_from_db
 
 std::map< int, Model >
-get_continuous_models_from_db(){
+get_continuous_models_from_db(std::string hash_between){
 
 	utility::sql_database::sessionOP db_session( basic::database::get_db_session() );
 
@@ -975,14 +975,22 @@ get_continuous_models_from_db(){
 		linker_segs.insert(std::make_pair(model_id, ss_id));
 	}
 	TR << "Found " << linker_segs.size() << " linker segments" << std::endl;
+	TR << "hash_between: " << hash_between << std::endl;
 
 	std::map< int, Model >::iterator it = models.begin();
 	std::map< int, Model >::iterator it_end = models.end();
 	for ( ; it != it_end; ++it ) {
 		Model & cur_model = it->second;
 		for ( core::Size i=1; i <= cur_model.segments_.size(); ++i ) {
-			if ( linker_segs.find(std::make_pair(cur_model.model_id_, cur_model.segments_[i].segment_id_)) != linker_segs.end() ) {
-				cur_model.segments_[i].hash_ = false;
+			if ( hash_between == "hash_between_any_HEs" ) {
+				if ( linker_segs.find(std::make_pair(cur_model.model_id_, cur_model.segments_[i].segment_id_)) != linker_segs.end() ) {
+					cur_model.segments_[i].hash_ = false;
+				}
+			} else { // (hash_between == "hash_tag_only_terminal_Es")
+				if ( ((i != 1) && (i != cur_model.segments_.size()))
+						|| ((cur_model.segments_[i].dssp_) != 'E') ) {
+					cur_model.segments_[i].hash_ = false;
+				}
 			}
 		}
 	}
@@ -1027,7 +1035,6 @@ get_5_ss_models_from_db(std::string hash_between){
 
 	// for new model definition with 5 secondary_structure_segments
 	std::map< int, Model > models_w_5_sss = result_to_five_ss_models(res);
-
 
 	////////////// for models_w_5_sss
 	//Now make sure we aren't hashing the linker segments

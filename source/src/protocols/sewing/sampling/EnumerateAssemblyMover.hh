@@ -6,31 +6,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file ExhaustiveAssemblyMover.hh
+/// @file EnumerateAssemblyMover.hh
 ///
 /// @brief
-/// @author Tim Jacobs
+/// @author Doonam Kim, Tim Jacobs
 
-
-#ifndef INCLUDED_devel_sewing_sampling_ExhaustiveAssemblyMover_HH
-#define INCLUDED_devel_sewing_sampling_ExhaustiveAssemblyMover_HH
+#ifndef INCLUDED_devel_sewing_sampling_EnumerateAssemblyMover_HH
+#define INCLUDED_devel_sewing_sampling_EnumerateAssemblyMover_HH
 
 // Unit Headers
-#include <protocols/sewing/sampling/ExhaustiveAssemblyMover.fwd.hh>
 #include <protocols/sewing/sampling/AssemblyMover.hh>
-
+#include <protocols/sewing/sampling/EnumerateAssemblyMover.fwd.hh>
 #include <protocols/sewing/conformation/Assembly.hh> // for accessing segments_ and all_segments_
-
+#include <protocols/sewing/conformation/Model.hh>
 
 //Protocol headers
 #include <core/pose/Pose.hh>
 
-#include <protocols/sewing/conformation/Model.hh>
-
 namespace protocols {
 namespace sewing  {
 
-class ExhaustiveAssemblyMover : public AssemblyMover {
+class EnumerateAssemblyMover : public AssemblyMover {
 
 private:
 
@@ -38,7 +34,7 @@ private:
 
 public:
 
-	ExhaustiveAssemblyMover();
+	EnumerateAssemblyMover();
 
 	protocols::moves::MoverOP
 	clone() const;
@@ -64,9 +60,8 @@ public:
 
 private:
 	core::Size bogus_var_for_constructor_;
-
+	core::Real min_assembly_score_;
 	std::map< int, Model > models;
-
 };
 
 } // sewing

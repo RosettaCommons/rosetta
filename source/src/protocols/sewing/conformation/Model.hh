@@ -434,7 +434,8 @@ std::map< int, Model >
 get_strand_sew_models_from_db();
 
 std::map< int, Model >
-get_continuous_models_from_db();
+get_continuous_models_from_db(
+	std::string hash_between);
 
 std::map< int, Model >
 get_5_ss_models_from_db(

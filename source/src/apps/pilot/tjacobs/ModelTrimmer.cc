@@ -13,7 +13,7 @@
 /// This is hardcoded in lots of terrible ways. Ideally, this concept should be generalized and run strategically during the
 /// actual generation of a SEWING construct, but that's for another day/PhD.
 ///
-/// @author Tim Jacobs
+/// @author Tim Jacobs, Doonam Kim
 
 //Package headers
 #include <devel/init.hh>
@@ -77,11 +77,10 @@ static basic::Tracer TR("ModelTrimmer");
 
 int
 main( int argc, char * argv [] ) {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace protocols::sewing;
-
 	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace protocols::sewing;
 
 		// initialize core and read options
 		devel::init(argc, argv);
@@ -132,7 +131,6 @@ main( int argc, char * argv [] ) {
 			comments << "#All models composed of entirely loops and dssp code(s) " << remove_all_dssp << " have been removed" << std::endl;
 		}
 
-
 		comments << "#Any model with helical (H) segment(s) fewer than " << option[sewing::min_helix_length]
 			<< " residues or greater than " << option[sewing::max_helix_length] << " residues have been removed" << std::endl;
 		comments << "#Any model with strand (E) segment(s) fewer than " << option[sewing::min_strand_length]
@@ -140,12 +138,16 @@ main( int argc, char * argv [] ) {
 		comments << "#Any model with loop (L) segment(s) fewer than " << option[sewing::min_loop_length]
 			<< " residues or greater than " << option[sewing::max_loop_length] << " residues have been removed" << std::endl;
 
+		if ( option[sewing::leave_models_by_ss_num] ) {
+			comments << "#Only models with " << option[sewing::model_should_have_this_num_of_ss] << " secondary structures remained " << std::endl;
+		}
+
 		if ( option[sewing::model_should_have_at_least_one_E_at_terminal_segment] ) {
-			comments << "#Only models that have at least 1 E segment at terminal segment are remained " << std::endl;
+			comments << "#Only models that have at least 1 E segment at terminal segment remained " << std::endl;
 		}
 
 		if ( option[sewing::model_should_have_at_least_one_E] ) {
-			comments << "#Only models that have at least 1 E segment are remained " << std::endl;
+			comments << "#Only models that have at least 1 E segment remained " << std::endl;
 		}
 
 		if ( option[sewing::leave_models_with_E_terminal_ss] ) {
@@ -206,6 +208,12 @@ main( int argc, char * argv [] ) {
 
 			if ( (!erase) && (option[sewing::model_should_have_at_least_one_E_at_terminal_segment]) ) {
 				if ( (model.segments_[1].dssp_ != 'E') && (model.segments_[model.segments_.size()].dssp_ != 'E') ) {
+					erase=true;
+				}
+			}
+
+			if ( (!erase) && (option[sewing::leave_models_by_ss_num]) ) {
+				if ( (int)model.segments_.size() != option[sewing::model_should_have_this_num_of_ss] ) {
 					erase=true;
 				}
 			}
@@ -299,10 +307,11 @@ main( int argc, char * argv [] ) {
 			}
 		}//while(it != it_end) {
 		write_model_file(comments.str(), models, new_model_filename);
-	} catch ( utility::excn::EXCN_Base& excn ) {
-		std::cerr << "Exception : " << std::endl;
-		excn.show( std::cerr );
-		return -1;
-	}
+	} //try
+catch ( utility::excn::EXCN_Base& excn ) {
+	std::cerr << "Exception : " << std::endl;
+	excn.show( std::cerr );
+	return -1;
+}
 	return 0;
 }

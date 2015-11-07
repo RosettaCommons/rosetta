@@ -6330,6 +6330,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option('max_loop_length','Integer', desc="Loops greater than supplied length will be removed from model file", default='1000'),
 			Option('min_strand_length','Integer', desc="Strands less than supplied length will be removed from model file", default='0'),
 			Option('max_strand_length','Integer', desc="Strands greater than supplied length will be removed from model file", default='1000'),
+
+			Option('leave_models_by_ss_num','Boolean', desc="Only models with certain number of secondary structures remain", default='false'),
+			Option('model_should_have_this_num_of_ss','Integer', desc="Only models with this number of secondary structures remain", default='5'),
+
 			Option('model_should_have_at_least_one_E_at_terminal_segment','Boolean', desc="model_should_have_at_least_one_E_at_terminal_segment", default='false'),
 			Option('model_should_have_at_least_one_E','Boolean', desc="model_should_have_at_least_one_E", default='false'),
 			Option('leave_models_with_E_terminal_ss','Boolean', desc="leave only models_with_E_terminal_ss", default='false'),

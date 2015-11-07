@@ -8,8 +8,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief  test suite for sewing_hasher
+/// @file /rosetta/main/source/test/protocols/sewing/SewingHasherTests.cxxtest.hh
+/// @brief test suite for sewing_hasher
 /// @author Doonam Kim
 
 
@@ -99,7 +99,7 @@ public:
 			<< std::endl;
 
 		//Generate models from a features database. Each segment is a single piece of secondary structure
-		option[inout::dbms::database_name].value("protocols/sewing/inputs/basic_1ten_m8.db3");
+		option[inout::dbms::database_name].value("protocols/sewing/inputs/1ten_m8.db3");
 
 		tr << "#Model will be generated from sqlite database " << option[inout::dbms::database_name].value() << std::endl;
 

@@ -424,7 +424,6 @@ MonteCarloAssemblyMover::boltzman(
 				}
 				best_complete_assembly = working_assembly->clone();
 			}
-
 		}
 
 	} else { //Reject

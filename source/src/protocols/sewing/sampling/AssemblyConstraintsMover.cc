@@ -217,17 +217,20 @@ AssemblyConstraintsMover::get_name() const {
 
 AssemblyConstraintsMover::AssemblyConstraintsMover():
 	neighbor_cutoff_(16),
-	base_native_bonus_(1.0)
+	base_native_bonus_(1.0),
+	base_native_pro_bonus_(1.0) // Doonam plans to use with 2.0, but for other users, default value is 1.0
 {}
 
 AssemblyConstraintsMover::AssemblyConstraintsMover(
 	NativeRotamersMap const & nat_ro_map,
 	core::Real neighbor_cutoff,
-	core::Real base_native_bonus
+	core::Real base_native_bonus,
+	core::Real base_native_pro_bonus
 ):
 	nat_ro_map_(nat_ro_map),
 	neighbor_cutoff_(neighbor_cutoff),
-	base_native_bonus_(base_native_bonus)
+	base_native_bonus_(base_native_bonus),
+	base_native_pro_bonus_(base_native_pro_bonus)
 {}
 
 void
@@ -269,19 +272,26 @@ AssemblyConstraintsMover::apply( core::pose::Pose & pose ) {
 		utility::vector1<std::pair<bool, core::conformation::ResidueOP> > residues = map_it->second;
 		std::set<std::string> favored_types;
 		for ( core::Size i=1; i<=residues.size(); ++i ) {
-			TR << "Favoring " << residues[i].second->type().name3()<< " at position " << seqpos << std::endl;
 			if ( pose.energies().tenA_neighbor_graph().get_node(seqpos)->num_neighbors_counting_self() >= neighbor_cutoff_ ) {
 				if ( favored_types.find(residues[i].second->type().name3()) != favored_types.end() ) {
 					continue;
 				}
-				if ( TR.Debug.visible() ) {
-					TR.Debug << "Favoring " << residues[i].second->type().name3()<< " at position " << seqpos << std::endl;
+				TR << "Favoring " << residues[i].second->type().name3()<< " at position " << seqpos << std::endl;
+				if (residues[i].second->type().name3() != "PRO"){
+					ResidueTypeConstraintOP matched_nat_res_constraint ( new ResidueTypeConstraint(seqpos, residues[i].second->type().name3(), residues[i].second->type().name3(), base_native_bonus_) );
+					pose.add_constraint(matched_nat_res_constraint);
+					//Need to update residue neighbors every time we add a constraint. As adding a constraint clears the energies object
+					pose.update_residue_neighbors();
+					favored_types.insert(residues[i].second->type().name3());
 				}
-				ResidueTypeConstraintOP matched_nat_res_constraint ( new ResidueTypeConstraint(seqpos, residues[i].second->type().name3(), residues[i].second->type().name3(), base_native_bonus_) );
-				pose.add_constraint(matched_nat_res_constraint);
-				//Need to update residue neighbors every time we add a constraint. As adding a constraint clears the energies object
-				pose.update_residue_neighbors();
-				favored_types.insert(residues[i].second->type().name3());
+				else{ // as of 2015_11_05, Doonam can't confirm whether native rotamer file's proline is ever actually used to be favored
+					TR << "Favoring " << residues[i].second->type().name3()<< " at position " << seqpos << " with base_native_pro_bonus_ " << base_native_pro_bonus_ << std::endl;
+					ResidueTypeConstraintOP matched_nat_res_constraint ( new ResidueTypeConstraint(seqpos, residues[i].second->type().name3(), residues[i].second->type().name3(), base_native_pro_bonus_) );
+					pose.add_constraint(matched_nat_res_constraint);
+					//Need to update residue neighbors every time we add a constraint. As adding a constraint clears the energies object
+					pose.update_residue_neighbors();
+					favored_types.insert(residues[i].second->type().name3());
+				}
 			}
 		}
 	}
@@ -363,6 +373,9 @@ AssemblyConstraintsMover::parse_my_tag(
 	}
 	if ( tag->hasOption("native_bonus") ) {
 		base_native_bonus_ = tag->getOption<core::Real>("native_bonus");
+	}
+	if ( tag->hasOption("native_pro_bonus") ) { //native_proline_bonus
+		base_native_pro_bonus_ = tag->getOption<core::Real>("native_pro_bonus");
 	}
 }
 

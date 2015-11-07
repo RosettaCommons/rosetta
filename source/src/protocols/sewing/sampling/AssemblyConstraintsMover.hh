@@ -124,7 +124,8 @@ public:
 	AssemblyConstraintsMover(
 		NativeRotamersMap const & nat_ro_map,
 		core::Real neighbor_cutoff,
-		core::Real base_native_bonus
+		core::Real base_native_bonus,
+		core::Real base_native_pro_bonus
 	);
 
 	protocols::moves::MoverOP
@@ -181,6 +182,8 @@ private:
 
 	//Favor all 'natives' by this amount (in REU)
 	core::Real base_native_bonus_;
+
+	core::Real base_native_pro_bonus_; // specifically for proline
 
 };
 

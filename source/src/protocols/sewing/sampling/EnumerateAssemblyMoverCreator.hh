@@ -7,28 +7,32 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file ExhaustiveAssemblyMover.fwd.hh
+/// @file protocols/sewing/sampling/EnumerateAssemblyMoverCreator.hh
 ///
 /// @brief
 /// @author Tim Jacobs
 
 
 
-#ifndef INCLUDED_devel_sewing_sampling_ExhaustiveAssemblyMover_FWD_HH
-#define INCLUDED_devel_sewing_sampling_ExhaustiveAssemblyMover_FWD_HH
+#ifndef INCLUDED_devel_sewing_sampling_EnumerateAssemblyMoverCreator_hh
+#define INCLUDED_devel_sewing_sampling_EnumerateAssemblyMoverCreator_hh
 
-#include <utility/pointer/owning_ptr.hh>
+// Project headers
+#include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace sewing  {
 
-class ExhaustiveAssemblyMover;
-typedef utility::pointer::shared_ptr< ExhaustiveAssemblyMover > ExhaustiveAssemblyMoverOP;
-typedef utility::pointer::shared_ptr< ExhaustiveAssemblyMover const > ExhaustiveAssemblyMoverCOP;
+class EnumerateAssemblyMoverCreator : public protocols::moves::MoverCreator
+{
+public:
+	virtual protocols::moves::MoverOP create_mover() const;
+	virtual std::string keyname() const;
+	static  std::string mover_name();
+};
 
 }
 }
 
 #endif
-
 

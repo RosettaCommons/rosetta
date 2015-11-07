@@ -137,7 +137,7 @@ AssemblyMover::apply( core::pose::Pose & pose ) {
 	core::Size starttime = time(NULL);
 	AssemblyOP assembly = generate_assembly();
 	if ( assembly == 0 ) {
-		TR << "Failed to generate an Assembly (if this comes from ExhaustiveAssembly, this is actually a success, hopefully later I can better code this part)" << std::endl;
+		TR << "Failed to generate an Assembly (if this comes from EnumerateAssembly, this is actually a success, hopefully later I can better code this part)" << std::endl;
 		set_last_move_status(protocols::moves::FAIL_RETRY);
 		return;
 	}
@@ -200,7 +200,7 @@ AssemblyMover::get_fullatom_pose(
 }
 
 // not needed for MonteCarloAssemblyMover, but keep this
-// not needed for ExhaustiveAssemblyMover, but keep this
+// not needed for EnumerateAssemblyMover, but keep this
 bool
 AssemblyMover::follow_random_edge_from_node(
 	AssemblyOP assembly,
@@ -223,11 +223,6 @@ AssemblyMover::follow_random_edge_from_node(
 		//if(TR.Debug.visible()) { TR << "cur_edge_ind: " << cur_edge_ind << std::endl;}
 		core::graph::EdgeListConstIterator edge_it = reference_node->const_edge_list_begin();
 		for ( core::Size j=0; j<edge_order[cur_edge_ind]; ++j ) {
-			//   if(TR.Debug.visible()) {
-			//    TR << "j: " << j << std::endl;
-			//    TR << "cur_edge_ind in 2nd for loop: " << cur_edge_ind << std::endl;
-			//    TR << "edge_order[cur_edge_ind]: " << edge_order[cur_edge_ind] << std::endl;
-			//   }
 			++edge_it;
 		}
 
@@ -307,7 +302,7 @@ void
 AssemblyMover::output_stats(
 	AssemblyOP const & assembly,
 	core::pose::Pose & pose,
-	std::string pdb_name // and indicator_whether_from_MonteCarloAssemblyMover_or_ExhaustiveAssemblyMover
+	std::string pdb_name // and indicator_whether_from_MonteCarloAssemblyMover_or_EnumerateAssemblyMover
 ) {
 
 	using namespace basic::options;
@@ -379,9 +374,9 @@ AssemblyMover::output_stats(
 
 		//Print a PyMOL selection for 'native' positions
 		TR << "Pymol select " << assembly->natives_select(pose, job_name) << std::endl;
-	} else { //if (pdb_name == "from_MonteCarloAssemblyMover"){ // when it is from ExhaustiveAssemblyMover
+	} else { // when it is from EnumerateAssemblyMover
 
-		TR << "it is from ExhaustiveAssemblyMover!" << std::endl;
+		TR << "it is from EnumerateAssemblyMover!" << std::endl;
 
 		/**************** Dump multi chain pose and NativeRotamersMap ******************/
 		//Dump the multichain pose
@@ -435,16 +430,16 @@ AssemblyMover::output_stats(
 			//job_me->add_string_real_pair(assembly_scores[i].first, assembly_scores[i].second);
 		}
 
-		individual_score_file << " nres assembly_name" << std::endl;
+		individual_score_file << " nres assembly_name path" << std::endl;
 
 		for ( core::Size i=1; i<=assembly_scores.size(); ++i ) {
 			individual_score_file << assembly_scores[i].second << " ";
 			//job_me->add_string_real_pair(assembly_scores[i].first, assembly_scores[i].second);
 		}
+		std::string path = assembly->string_path();
+		individual_score_file << nres << " " << pdb_name << " " << path << std::endl;
 
-		individual_score_file << nres << " " << pdb_name << std::endl;
-
-	}//when it is from ExhaustiveAssemblyMover
+	}//when it is from EnumerateAssemblyMover
 }//output_stats
 
 

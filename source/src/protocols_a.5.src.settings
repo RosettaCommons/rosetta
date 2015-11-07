@@ -157,7 +157,7 @@ sources = {
 		#"LoophashAssemblyMover",
 		#"RehashAssemblyMover",
 		"RepeatAssemblyMover",
-		"ExhaustiveAssemblyMover",
+		"EnumerateAssemblyMover",
 	],
 	"protocols/sewing/sampling/requirements": [
         "GlobalLengthRequirement",

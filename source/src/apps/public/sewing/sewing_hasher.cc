@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file SewingHasher.cc
+/// @file Apps/sewing_hasher.cc
 ///
 /// @brief An MPI-enabled application that reads in a Hasher hashtable, scores each model in that table against all others, and
 /// generates a SewGraph file.
@@ -60,7 +60,7 @@ main( int argc, char * argv [] ) {
 
 		if ( !option[sewing::mode].user() ) {
 			std::stringstream err;
-			err << "You must provide a mode for SewingHasher to run in using the -sewing:mode flag. Valid options are" << std::endl;
+			err << "You must provide a mode for sewing_hasher to run in using the -sewing:mode flag. Valid options are" << std::endl;
 			err << "  -generate: generates a model file from an sqlite database" << std::endl;
 			err << "  -generate_five_ss_model: generates a 3~5 ss model file from an sqlite database" << std::endl;
 			err << "  -hash: score all models against each other and create a plain text score file (MPI required)" << std::endl;
@@ -73,7 +73,7 @@ main( int argc, char * argv [] ) {
 		std::string model_filename = option[sewing::model_file_name];
 		if ( !option[sewing::model_file_name].user() ) {
 			std::stringstream err;
-			err << "You must provide a model file name to the SewingHasher using the -model_file_name flag. To generate a new model file use the "
+			err << "You must provide a model file name to the sewing_hasher using the -model_file_name flag. To generate a new model file use the "
 				<< "-generate_models_from_db flag and a new model file with that name will be written. Otherwise, the model file will be read";
 			utility_exit_with_message(err.str());
 		}
@@ -85,12 +85,18 @@ main( int argc, char * argv [] ) {
 
 			//Create comments stream for model file and add the date
 			std::stringstream comments;
+			//timestamp became commented by Vikram to prevent daily integration failure
 			//time_t t = time(0); // get time now
 			//struct tm * now = localtime( & t );
 			//comments << "#Model file created on " << (now->tm_year + 1900) << '-'
 			// << (now->tm_mon + 1) << '-'
 			// << now->tm_mday
 			// << std::endl;
+
+			bool hash_tag_only_terminal_Es = option[sewing::hash_tag_only_terminal_Es].def(false);
+			TR << "hash_tag_only_terminal_Es: " << hash_tag_only_terminal_Es << std::endl;
+			std::string hash_between;
+			//std::string model_three_ss_filename;
 
 			//Generate model file from a list of PDBs. All models will have 1 segment
 			if ( option[ in::file::l ].user() ) {
@@ -120,6 +126,17 @@ main( int argc, char * argv [] ) {
 
 			} else {
 				//Generate models from a features database. Each segment is a single piece of secondary structure
+
+				if ( hash_tag_only_terminal_Es ) {
+					hash_between = "hash_tag_only_terminal_Es";
+					comments << "#Only terminal_Es are hash_bool_true to be merged with other nodes" << std::endl;
+					// (not possible due to integration test) model_three_ss_filename = model_filename + "_three_ss_will_be_hashed_only_between_Es";
+				} else {
+					hash_between = "hash_between_any_HEs";
+					comments << "# hash between any_HEs are bool_true to be merged with other nodes" << std::endl;
+					// (not possible due to integration test) model_three_ss_filename = model_filename + "_three_ss_will_be_hashed_between_HEs";
+				}
+
 				if ( !option[ sewing::assembly_type ].user() ) {
 					std::stringstream err;
 					err << "You must provide an assembly_type (continuous or discontinuous) with the -sewing:assembly_type flag in order to extract models";
@@ -130,7 +147,7 @@ main( int argc, char * argv [] ) {
 					models = get_discontinuous_models_from_db();
 				} else if ( option[ sewing::assembly_type ].value() == "continuous" ) {
 					comments << "#Continuous models generated from sqlite database " << option[inout::dbms::database_name].value() << std::endl;
-					models = get_continuous_models_from_db();
+					models = get_continuous_models_from_db(hash_between);
 				}
 			}
 
@@ -141,6 +158,7 @@ main( int argc, char * argv [] ) {
 
 			//Create comments stream for model file and add the date
 			std::stringstream comments;
+			//timestamp became commented by Vikram to prevent daily integration failure
 			//time_t t = time(0);   // get time now
 			//struct tm * now = localtime( & t );
 			//comments << "#Model file created on " << (now->tm_year + 1900) << '-'
@@ -150,7 +168,6 @@ main( int argc, char * argv [] ) {
 
 			//Generate models from a features database. Each segment is a single piece of secondary structure
 			comments << "# 3 or 5 secondary structures based models generated from sqlite database " << option[inout::dbms::database_name].value() << std::endl;
-
 
 			bool hash_tag_only_terminal_Es = option[sewing::hash_tag_only_terminal_Es].def(false);
 			TR << "hash_tag_only_terminal_Es: " << hash_tag_only_terminal_Es << std::endl;
@@ -191,7 +208,7 @@ main( int argc, char * argv [] ) {
 		if ( option[sewing::mode].value() == "convert" ) {
 			if ( !option[sewing::score_file_name].user() ) {
 				std::stringstream err;
-				err << "You must provide a score file name to the SewingHasher for binary conversion.";
+				err << "You must provide a score file name to the sewing_hasher for binary conversion.";
 				utility_exit_with_message(err.str());
 
 			}
@@ -213,7 +230,7 @@ main( int argc, char * argv [] ) {
 		if ( option[sewing::mode].value() == "hash" ) {
 
 			if ( !option[sewing::score_file_name].user() ) {
-				utility_exit_with_message("You must provide a graph file name to the SewingHasher using -score_file_name");
+				utility_exit_with_message("You must provide a graph file name to the sewing_hasher using -score_file_name");
 			}
 			std::string score_file_name = option[sewing::score_file_name];
 
