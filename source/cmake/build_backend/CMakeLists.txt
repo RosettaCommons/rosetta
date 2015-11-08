@@ -15,7 +15,7 @@ ADD_DEFINITIONS(-w)
 
 SET( LIBRARIES
 	ObjexxFCL utility numeric basic
-	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols_f.5 protocols.6 protocols.7 devel
+	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols.6 protocols.7 devel
     )
 FOREACH(LIBRARY ${LIBRARIES})
 	INCLUDE(../build/${LIBRARY}.cmake)
@@ -32,7 +32,6 @@ SET(LINK_STATIC_LIBS
     ${CMAKE_CURRENT_SOURCE_DIR}/libdevel.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.7.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.6.a
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_f.5.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_e.5.a 
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_d.5.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_c.5.a 

@@ -62,7 +62,6 @@ SET( LIBRARIES
   protocols_c.5
   protocols_d.5
   protocols_e.5
-  protocols_f.5
   protocols.6
   protocols.7
   devel
@@ -85,7 +84,6 @@ SET(LINK_STATIC_LIBS
     ${CMAKE_CURRENT_SOURCE_DIR}/libdevel.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.7.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.6.a
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_f.5.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_e.5.a 
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_d.5.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_c.5.a 

@@ -14,7 +14,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 " )
 
 SET( LIBRARIES
 	ObjexxFCL utility numeric basic
-	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols_f.5 protocols.6 protocols.7 devel
+	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols.6 protocols.7 devel
     )
 FOREACH(LIBRARY ${LIBRARIES})
 	INCLUDE(../build/${LIBRARY}.cmake)
@@ -32,7 +32,6 @@ SET(LINK_STATIC_LIBS
     ${CMAKE_CURRENT_SOURCE_DIR}/libdevel.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.7.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.6.a
-    ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_f.5.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_e.5.a 
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_d.5.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_c.5.a 
@@ -89,7 +88,7 @@ SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--relax")
 # Dependencies are set so that binaries are created after rosetta libraries
 # are built
 #ADD_DEPENDENCIES(loophash_createfiltereddb.mpi.linuxgccrelease ObjexxFCL utility numeric basic 
-#	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols_f.5 protocols.6 protocols.7 devel)
+#	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols.6 protocols.7 devel)
 
 ### design_cycpeptide_MPI
 #ADD_EXECUTABLE(design_cycpeptide_MPI.mpi.linuxgccrelease ../../src/apps/pilot/vmullig/design_cycpeptide_MPI.cc)
@@ -103,7 +102,7 @@ SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--relax")
 #protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4
 #protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4
 #protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5
-#protocols_f.5 protocols.6 protocols.7 devel)
+#protocols.6 protocols.7 devel)
 
 ### rosetta_scripts
 ADD_EXECUTABLE(rosetta_scripts.mpi.linuxgccrelease ../../src/apps/public/rosetta_scripts/rosetta_scripts.cc)
@@ -117,7 +116,7 @@ basic core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2
 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4
 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4
 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5
-protocols_f.5 protocols.6 protocols.7 devel)
+protocols.6 protocols.7 devel)
 
 ### loophash_mpi 
 #ADD_EXECUTABLE(loophash_mpi.mpi.linuxgccrelease ../../src/apps/pilot/mike/loophash_mpi.cc)
@@ -127,7 +126,7 @@ protocols_f.5 protocols.6 protocols.7 devel)
 # Dependencies are set so that binaries are created after rosetta libraries
 # are built
 #ADD_DEPENDENCIES(loophash_mpi.mpi.linuxgccrelease ObjexxFCL utility numeric basic 
-#	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols_f.5 protocols.6 protocols.7 devel)
+#	core.1 core.2 core.3 core.4 core.5 protocols.1 protocols_a.2 protocols_b.2 protocols.3 protocols_a.4 protocols_b.4 protocols_c.4 protocols_d.4 protocols_e.4 protocols_f.4 protocols_g.4 protocols_h.4 protocols_a.5 protocols_b.5 protocols_c.5 protocols_d.5 protocols_e.5 protocols.6 protocols.7 devel)
 
 #### minirosetta 
 #ADD_EXECUTABLE(minirosetta.mpi.linuxgccrelease ../../src/apps/public/boinc/minirosetta.cc)
