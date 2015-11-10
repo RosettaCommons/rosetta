@@ -1953,6 +1953,12 @@ settings = {
         },
     },
 
+    "clang, macos, 15.0" : {
+        "removes" : {
+            "include_path" : [ "/usr/local/include" ],
+        },
+    },
+
     # modes ###################################################################
 
     "clang, debug" : {
