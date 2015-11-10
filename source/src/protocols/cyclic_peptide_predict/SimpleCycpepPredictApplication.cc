@@ -108,6 +108,8 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::fast_relax_rounds            );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::count_sc_hbonds              );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::checkpoint_job_identifier    );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::checkpoint_file              );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::rand_checkpoint_file         );
 
 	return;
 }
@@ -139,7 +141,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication() :
 	native_filename_(""),
 	nstruct_(1),
 	checkpoint_job_identifier_(""),
-	checkpoint_filename_("checkpoint.txt")
+	checkpoint_filename_("checkpoint.txt"),
+	rand_checkpoint_file_("rng.state.gz")
 {
 	initialize_from_options();
 }
@@ -172,7 +175,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	native_filename_(src.native_filename_),
 	nstruct_(src.nstruct_),
 	checkpoint_job_identifier_(src.checkpoint_job_identifier_),
-	checkpoint_filename_(src.checkpoint_filename_)
+	checkpoint_filename_(src.checkpoint_filename_),
+	rand_checkpoint_file_(src.rand_checkpoint_file_)
 	//TODO -- copy variables here.
 {}
 
@@ -236,6 +240,8 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	} else { nstruct_ = 1; }
 
 	checkpoint_job_identifier_ = option[basic::options::OptionKeys::cyclic_peptide::checkpoint_job_identifier]();
+	checkpoint_filename_ = option[basic::options::OptionKeys::cyclic_peptide::checkpoint_file]();
+  rand_checkpoint_file_ = option[basic::options::OptionKeys::cyclic_peptide::rand_checkpoint_file]();
 
 	return;
 }
@@ -1061,8 +1067,8 @@ void SimpleCycpepPredictApplication::get_random_seed_info() const {
 #ifdef BOINC
 	boinc_begin_critical_section();
 #endif
-	if ( utility::file::file_exists("rng.state.gz") ) {
-		utility::io::izstream izs("rng.state.gz");
+	if ( utility::file::file_exists(rand_checkpoint_file_) ) {
+		utility::io::izstream izs(rand_checkpoint_file_);
 		numeric::random::rg().restoreState(izs);
 		izs.close();
 	}
@@ -1078,7 +1084,7 @@ void SimpleCycpepPredictApplication::store_random_seed_info() const {
 #ifdef BOINC
 	boinc_begin_critical_section();
 #endif
-	utility::io::ozstream ozs("rng.state.gz");
+	utility::io::ozstream ozs(rand_checkpoint_file_);
 	numeric::random::rg().saveState(ozs);
 	ozs.close();
 #ifdef BOINC
@@ -1090,8 +1096,8 @@ void SimpleCycpepPredictApplication::store_random_seed_info() const {
 /// @brief Erase the stored state of the random generator from a previous run.
 ///
 void SimpleCycpepPredictApplication::erase_random_seed_info() const {
-	if ( utility::file::file_exists("rng.state.gz") ) {
-		utility::file::file_delete("rng.state.gz");
+	if ( utility::file::file_exists(rand_checkpoint_file_) ) {
+		utility::file::file_delete(rand_checkpoint_file_);
 	}
 	return;
 }

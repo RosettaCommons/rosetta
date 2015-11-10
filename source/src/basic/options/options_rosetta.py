@@ -4015,6 +4015,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	## Options for cyclic peptide structure prediction app (simple_cycpep_predict) -- Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu) ##
 	Option_Group( 'cyclic_peptide',
+		Option( 'rand_checkpoint_file', 'String', desc="The name of the checkpoint file used for the random number generator.  Defaults to rng.state.gz.  Not used if the -cyclic_peptide:checkpoint_job_identifier flag isn't used.", default="rng.state.gz" ),
+		Option( 'checkpoint_file', 'String', desc="The name of the checkpoint file.  Defaults to checkpoint.txt.  Not used if the -cyclic_peptide:checkpoint_job_identifier flag isn't used.", default="checkpoint.txt" ),
 		Option( 'checkpoint_job_identifier', 'String', desc="A unique job name for checkpointing.  If none is provided, jobs are not checkpointed.", default="" ),
 		Option( 'sequence_file', 'String', desc="Filename of a file specfying the sequence, as a series of whitespace-separated full residue names (e.g. ALA LYS DARG DPRO HYP).  Required input for the simple_cycpep_predict app." ),
 		Option( 'genkic_closure_attempts', 'Integer', desc="How many closure attempts should we make for each job attempted by the simple_cycpep_predict app?  Default 10,000.", default='10000' ),

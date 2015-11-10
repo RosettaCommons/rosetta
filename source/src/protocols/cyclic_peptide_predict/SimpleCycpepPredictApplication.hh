@@ -285,8 +285,12 @@ private:
 	std::string checkpoint_job_identifier_;
 
 	/// @brief The name of the checkpoint file
-	/// @details Currently hard-coded to "checkpoint.txt".  Can be changed later.
+	/// @details Defaults to "checkpoint.txt".  Read from options.
 	std::string checkpoint_filename_;
+
+	/// @brief The name of the checkpoint file for the random number generator.
+	/// @details Defaults to "rng.state.gz".  Read from options.
+	std::string rand_checkpoint_file_;
 
 };
 
