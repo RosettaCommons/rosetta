@@ -502,6 +502,50 @@ make_tag_with_dashes( utility::vector1< int > res_vector,
 }
 
 
+std::string
+make_segtag_with_dashes( utility::vector1< int > res_vector,
+	utility::vector1< std::string > segid_vector,
+	char const delimiter /* = ' ' */){
+
+	using namespace ObjexxFCL;
+	std::string tag = "";
+
+	if ( res_vector.size() == 0 ) return tag;
+	runtime_assert( res_vector.size() == segid_vector.size() );
+
+	int start_segment = res_vector[1];
+	int last_res = res_vector[1];
+	std::string last_segid = segid_vector[1];
+	utility::vector1< std::pair<int,int> > res_vector_segments;
+	utility::vector1< std::string > segids_for_segments;
+	for ( platform::Size n = 2; n<= res_vector.size(); n++ ) {
+		if ( res_vector[n] != last_res+1  || segid_vector[n] != last_segid ) {
+			res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
+			segids_for_segments.push_back( last_segid );
+			start_segment = res_vector[n];
+		}
+		last_res = res_vector[n];
+		last_segid = segid_vector[n];
+	}
+	res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
+	segids_for_segments.push_back( last_segid );
+
+	for ( platform::Size n = 1; n <= res_vector_segments.size(); n++ ) {
+		if ( n > 1 ) tag += delimiter;
+		std::pair< int, int > const & segment = res_vector_segments[n];
+		if ( segids_for_segments[n] != "" &&
+				segids_for_segments[n] != "    " )
+			tag += segids_for_segments[n] + ":";
+		if ( segment.first == segment.second ) {
+			tag += string_of( segment.first );
+		} else {
+			tag += string_of( segment.first )+"-"+string_of(segment.second);
+		}
+	}
+
+	return tag;
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 std::string
 make_tag( utility::vector1< int > res_vector ){
@@ -538,6 +582,44 @@ get_resnum_and_chain( std::string const & s, bool & string_is_ok ){
 	return std::make_pair( resnum,chain );
 }
 
+std::pair< std::vector< int >, std::vector< std::string > >
+get_resnum_and_segid( std::string const & s, bool & string_is_ok ){
+
+	string_is_ok = true;
+	std::vector< int  > resnum;
+	std::vector< std::string > segid;
+
+	std::string s_nocommas = replace_in( s, ",", " " ); // order of operations issue?
+	// Each tag looks like
+	// abcd:n-m, bcd could be spaces...
+	// Strategy: add substring from start to colon (skips spaces!)
+	// then from the space on forward.
+	// utility::string_split( s_nocommas );
+	utility::vector1< std::string > tags;
+ 
+	// populate tags
+	while ( true ) {
+		std::string tag = s_nocommas.substr( 0, s_nocommas.find_first_of( ':' )+1 );
+		s_nocommas = s_nocommas.substr( s_nocommas.find_first_of( ':' ) +1 );
+		
+		if ( s_nocommas.find_first_of( ' ' ) == std::string::npos ) {
+			tag += s_nocommas;
+			tags.push_back( tag );
+			break;
+		}
+		
+		tag += s_nocommas.substr( s_nocommas.find_first_of( ' ' ) );
+		tags.push_back( tag );
+		s_nocommas = s_nocommas.substr( s_nocommas.find_first_of( ' ' ) +1 );
+	}
+
+	for ( platform::Size n = 1; n <= tags.size(); n++ ) {
+		string_is_ok = get_resnum_and_segid_from_one_tag( tags[n], resnum, segid );
+		if ( !string_is_ok ) break;
+	}
+	return std::make_pair( resnum, segid );
+}
+
 /// @brief helper function for get_resnum_and_chain
 bool
 get_resnum_and_chain_from_one_tag( std::string const & tag,
@@ -565,6 +647,29 @@ get_resnum_and_chain_from_one_tag( std::string const & tag,
 	for ( platform::Size n = 0; n < resnum_from_tag.size(); n++ ) {
 		resnum.push_back( resnum_from_tag[ n ] );
 		chains.push_back( chain );
+	}
+
+	return string_is_ok;
+}
+
+bool
+get_resnum_and_segid_from_one_tag( std::string const & tag,
+	std::vector< int > & resnum,
+	std::vector< std::string > & segids ){
+	bool string_is_ok( false );
+	std::vector< int > resnum_from_tag;
+	std::string segid( "" );
+
+	size_t found_colon = tag.find( ":" );
+	
+	if ( found_colon != 1 ) return false;
+	
+	segid = tag.substr(0,4);
+	resnum_from_tag = ObjexxFCL::ints_of( tag.substr(4), string_is_ok );
+	
+	for ( platform::Size n = 0; n < resnum_from_tag.size(); n++ ) {
+		resnum.push_back( resnum_from_tag[ n ] );
+		segids.push_back( segid );
 	}
 
 	return string_is_ok;

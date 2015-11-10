@@ -427,6 +427,9 @@ bool BinarySilentStruct::init_from_lines(
 			} else if ( iter->substr(0,7) == "RES_NUM" ) {
 				figure_out_residue_numbers_from_line( line_stream );
 				continue;
+			} else if ( iter->substr(0,11) == "SEGMENT_IDS" ) {
+				figure_out_segment_ids_from_line( line_stream );
+				continue;
 			}
 
 			// parse coords
@@ -480,11 +483,14 @@ bool BinarySilentStruct::init_from_lines(
 				}
 			}
 			if ( !symmetry_info()->get_use_symmetry() || currpos <=symmetry_info()->num_independent_residues()  ) {
-				// always run this if we're not dealing with a symmetric pose, or, if we're dealing with a symmetric pose
-				// and we're still reading in data for the assymetric unit.  But if we're reading in a symmetric pose
-				// and currpos > the number of residues in the asymmetric unit (i.e. we're reading in a virtual residue),
-				// then DON'T use a count of the number of atoms in the given residue as an indication of whether we're dealing
-				// with a fullatom structure.
+				// always run this if we're not dealing with a symmetric pose,
+				// or, if we're dealing with a symmetric pose and we're still
+				// reading in data for the assymetric unit.  But if we're
+				// reading in a symmetric pose and currpos > the number of
+				// residues in the asymmetric unit (i.e. we're reading in a
+				// virtual residue), then DON'T use a count of the number of
+				// atoms in the given residue as an indication of whether we're
+				// dealing with a fullatom structure.
 				detect_fullatom( currpos, natoms, fullatom_, fullatom_well_defined );
 			}
 

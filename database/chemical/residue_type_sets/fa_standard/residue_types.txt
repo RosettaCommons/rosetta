@@ -42,6 +42,22 @@ residue_types/nucleic/rna_phenix/RAD_n.params
 residue_types/nucleic/rna_phenix/RCY_n.params
 residue_types/nucleic/rna_phenix/RGU_n.params
 residue_types/nucleic/rna_phenix/URA_n.params
+#residue_types/nucleic/rna_nonnatural/1AP.params
+residue_types/nucleic/rna_nonnatural/2MA.params
+residue_types/nucleic/rna_nonnatural/2MG.params
+residue_types/nucleic/rna_nonnatural/2MU.params
+residue_types/nucleic/rna_nonnatural/4OC.params
+residue_types/nucleic/rna_nonnatural/5MC.params
+residue_types/nucleic/rna_nonnatural/5MU.params
+residue_types/nucleic/rna_nonnatural/7MG.params
+#residue_types/nucleic/rna_nonnatural/ICY.params
+#residue_types/nucleic/rna_nonnatural/IGU.params
+#residue_types/nucleic/rna_nonnatural/INO.params
+residue_types/nucleic/rna_nonnatural/M2G.params
+residue_types/nucleic/rna_nonnatural/MA6.params
+residue_types/nucleic/rna_nonnatural/OMG.params
+residue_types/nucleic/rna_nonnatural/PSU.params
+residue_types/nucleic/rna_nonnatural/UR3.params
 
 ## Metal Ion Types
 residue_types/metal_ions/CA.params
@@ -141,6 +157,7 @@ residue_types/l-ncaa/NVL.params
 residue_types/l-ncaa/BZP.params
 residue_types/l-ncaa/SAL.params
 residue_types/l-ncaa/BCS.params
+residue_types/l-ncaa/0TD.params
 residue_types/l-ncaa/1-amino-cyclopentane-carboxylic_acid.params
 residue_types/l-ncaa/1-methyl-histidine.params
 residue_types/l-ncaa/1-methyl-histidine_prot.params

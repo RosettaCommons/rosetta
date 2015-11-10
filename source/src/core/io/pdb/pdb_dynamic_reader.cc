@@ -284,6 +284,7 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 			if ( force_no_occupancy ) ai.occupancy = -1.0;
 
 			ai.temperature = atof( R["tempFactor"].value.c_str() );
+			ai.segmentID = R["segmentID"].value;
 			ai.element = R["element"].value;
 			ai.terCount = ter_count;
 
@@ -489,6 +490,7 @@ std::vector<Record> PDB_DReader::createRecords(FileData const & fd)
 			R["element"].value = ai.element;
 			R["occupancy"].value = print_d("%6.2f", ai.occupancy);
 			R["tempFactor"].value = print_d("%6.2f", ai.temperature);
+			R["segmentID"].value = ai.segmentID;
 			VR.push_back(R);
 		}
 	}

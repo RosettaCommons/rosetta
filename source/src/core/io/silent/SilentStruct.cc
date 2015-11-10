@@ -157,26 +157,25 @@ void SilentStruct::extract_writeable_cacheable_data( core::pose::Pose const& pos
 
 	// Pull out WriteableCacheable datacache items and add them as comments
 	BasicDataCache const& cache = pose.data();
-
-	if ( cache.has( CacheableDataType::WRITEABLE_DATA ) ) {
-		using namespace basic::datacache;
-		typedef std::map< std::string, std::set< WriteableCacheableDataOP > > DataMap;
-		DataMap const& map = cache.get< WriteableCacheableMap >( CacheableDataType::WRITEABLE_DATA ).map();
-
-		for ( DataMap::const_iterator datamap_it = map.begin(), end = map.end();
-				datamap_it != end; ++datamap_it ) {
-			std::set< WriteableCacheableDataOP > const& dataset = datamap_it->second;
-
-			for ( std::set< WriteableCacheableDataOP >::const_iterator set_it = dataset.begin(), set_end = dataset.end();
-					set_it != set_end; ++set_it ) {
-				std::stringstream ss;
-
-				ss << "CACHEABLE_DATA ";
-				(*set_it)->write( ss );
-
-				add_comment( "CACHEABLE_DATA", ss.str() );
-			};
-		}
+	if ( ! cache.has( CacheableDataType::WRITEABLE_DATA ) ) return;
+	
+	using namespace basic::datacache;
+	typedef std::map< std::string, std::set< WriteableCacheableDataOP > > DataMap;
+	DataMap const& map = cache.get< WriteableCacheableMap >( CacheableDataType::WRITEABLE_DATA ).map();
+	
+	for ( DataMap::const_iterator datamap_it = map.begin(), end = map.end();
+		 datamap_it != end; ++datamap_it ) {
+		std::set< WriteableCacheableDataOP > const& dataset = datamap_it->second;
+		
+		for ( std::set< WriteableCacheableDataOP >::const_iterator set_it = dataset.begin(), set_end = dataset.end();
+			 set_it != set_end; ++set_it ) {
+			std::stringstream ss;
+			
+			ss << "CACHEABLE_DATA ";
+			(*set_it)->write( ss );
+			
+			add_comment( "CACHEABLE_DATA", ss.str() );
+		};
 	}
 }
 
@@ -1030,11 +1029,25 @@ SilentStruct::fill_struct_with_residue_numbers( pose::Pose const & pose ){
 			residue_numbering_is_interesting = true;
 		}
 	}
+	
+	utility::vector1< std::string > seg_ids;
+	bool segment_IDs_are_interesting( false );
+	for ( core::uint i = 1; i <= pose.total_residue(); ++i ) {
+		seg_ids.push_back( pdb_info->segmentID( i ) );
+		if ( pdb_info->segmentID( i ) != "    " ) {
+			segment_IDs_are_interesting = true;
+		}
+	}
 
-	if ( !residue_numbering_is_interesting ) return; // leave residue_numbers_ blank.
+	if ( residue_numbering_is_interesting ) { // leave residue_numbers_ blank.
 
-	set_residue_numbers( residue_numbers );
-	set_chains( chains );
+		set_residue_numbers( residue_numbers );
+		set_chains( chains );
+	}
+	
+	if ( segment_IDs_are_interesting ) {
+		set_segment_IDs( seg_ids );
+	}
 
 }
 
@@ -1079,6 +1092,16 @@ SilentStruct::residue_numbers_into_pose( pose::Pose & pose ) const{
 
 	runtime_assert( residue_numbers_.size() == chains_.size() );
 	pdb_info->set_chains( chains_ );
+	
+	if ( segment_IDs_.size() == 0 ) return;
+	
+	if ( pose.total_residue() != segment_IDs_.size() ) {
+		std::cout << "Number of residues in pose: " << pose.total_residue() << std::endl;
+		std::cout << "Number of residues in silent_struct segment_IDs: " << segment_IDs_.size() << std::endl;
+		utility_exit_with_message( "Problem with segment_IDs_ in silent_struct!" );
+	}
+
+	pdb_info->set_segment_ids( segment_IDs_ );
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1120,6 +1143,10 @@ SilentStruct::print_residue_numbers( std::ostream & out ) const {
 	}
 
 	out << "RES_NUM " << make_tag_with_dashes( residue_numbers_, chains_ ) <<  " " << decoy_tag() << std::endl;
+	
+	if ( segment_IDs_.size() == 0 ) return;
+	
+	out << "SEGMENT_IDS " << make_segtag_with_dashes( residue_numbers_, segment_IDs_ ) <<  " " << decoy_tag() << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1144,6 +1171,29 @@ SilentStruct::figure_out_residue_numbers_from_line( std::istream & line_stream )
 
 	set_residue_numbers( residue_numbers );
 	set_chains( chains );
+}
+
+void
+SilentStruct::figure_out_segment_ids_from_line( std::istream & line_stream ) {
+	utility::vector1< Size > residue_numbers;
+	utility::vector1< std::string > segment_ids;
+	std::string resnum_string;
+	line_stream >> resnum_string; // the tag (SEGMENT_ID)
+	line_stream >> resnum_string;
+	while ( !line_stream.fail() ) {
+		bool string_ok( false );
+		std::pair< std::vector< int >, std::vector< std::string > > resnum_and_segid = utility::get_resnum_and_segid( resnum_string, string_ok );
+		std::vector< int >  const & resnums       = resnum_and_segid.first;
+		std::vector< std::string > const & segid  = resnum_and_segid.second;
+		if ( string_ok ) {
+			for ( Size i = 0; i < resnums.size(); i++ ) residue_numbers.push_back( resnums[i] );
+			for ( Size i = 0; i < segid.size(); i++ ) segment_ids.push_back( segid[i] );
+		} else break;
+		line_stream >> resnum_string;
+	}
+	
+	set_residue_numbers( residue_numbers );
+	set_segment_IDs( segment_ids );
 }
 
 void

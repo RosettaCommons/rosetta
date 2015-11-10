@@ -291,6 +291,11 @@ make_tag_with_dashes( utility::vector1< int > res_vector,
 	char const delimiter = ' ' );
 
 std::string
+make_segtag_with_dashes( utility::vector1< int > res_vector,
+	utility::vector1< std::string > segid_vector,
+	char const delimiter = ' ');
+
+std::string
 make_tag( utility::vector1< int > res_vector );
 
 /// @brief  converts string like "1-3 20-22" or "A:1-5 B:20-22" to vectors containing resnums and chains.
@@ -303,6 +308,15 @@ get_resnum_and_chain_from_one_tag( std::string const & tag,
 	std::vector< int > & resnum,
 	std::vector< char > & chains );
 
+/// @brief  converts string like "1-3 20-22" or "A:1-5 B:20-22" to vectors containing resnums and chains.
+std::pair< std::vector< int >, std::vector< std::string > >
+get_resnum_and_segid( std::string const & s, bool & string_is_ok );
+
+/// @brief helper function for get_resnum_and_chain
+bool
+get_resnum_and_segid_from_one_tag( std::string const & tag,
+	std::vector< int > & resnum,
+	std::vector< std::string > & chains );
 
 platform::Size
 get_num_digits( platform::Size value);

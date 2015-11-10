@@ -26,9 +26,9 @@ PrimaryKey::PrimaryKey(Column column){
 	columns_.push_back(column);
 }
 
-PrimaryKey::PrimaryKey(Columns columns){
-	columns_ = columns;
-}
+PrimaryKey::PrimaryKey(Columns columns):
+	columns_( columns )
+{}
 
 void PrimaryKey::add_column(Column column){
 	columns_.push_back(column);

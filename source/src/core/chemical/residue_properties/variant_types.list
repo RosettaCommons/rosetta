@@ -107,6 +107,9 @@ THREE_PRIME_PACKABLE_PHOSPHATE  # experimental terminal variant -- deprecate in 
 FIVE_PRIME_PACKABLE_PHOSPHATE   # experimental terminal variant -- deprecate in 2015 if not in use by then.
 PROTONATED_H1_ADENOSINE # in use in RNA -- functionally important protonation state
 
+THREE_PRIME_FIVE_PRIME_METHYL_PHOSPHATE # capping for optimization
+
+
 N_ACETYLATION      # for stepwise assembly (SWA) code; different geometry/atoms then ACETYLATED_NTERMINUS above
 C_METHYLAMIDATION  # for stepwise assembly (SWA) code; distinct from METHYLATED_CTERMINUS above
 

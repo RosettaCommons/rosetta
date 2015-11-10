@@ -26,7 +26,7 @@ DataMap::DataMap() {}
 DataMap::~DataMap() {}
 
 bool
-DataMap::add( std::string const type, std::string const name, utility::pointer::ReferenceCountOP const op ){
+DataMap::add( std::string const & type, std::string const & name, utility::pointer::ReferenceCountOP const op ){
 	if ( has( type, name ) ) {
 		TR<<"A datum of type "<<type<<" and name "<<name<<" has been added before. I'm not adding again. This is probably a BIG error but I'm letting it pass!"<<std::endl;
 		return false;
@@ -37,7 +37,7 @@ DataMap::add( std::string const type, std::string const name, utility::pointer::
 }
 
 bool
-DataMap::has( std::string const type, std::string const name/*=""*/ ) const {
+DataMap::has( std::string const & type, std::string const & name/*=""*/ ) const {
 	std::map< std::string, std::map< std::string, utility::pointer::ReferenceCountOP > >::const_iterator it;
 
 	it = data_map_.find( type );

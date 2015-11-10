@@ -303,6 +303,8 @@ public:
 	void set_chains( utility::vector1< char > const & chains ){ chains_ = chains;}
 	void set_full_model_parameters( core::pose::full_model_info::FullModelParametersCOP setting ){ full_model_parameters_ = setting; }
 	core::pose::full_model_info::FullModelParametersCOP full_model_parameters() const{ return full_model_parameters_; }
+	
+	void set_segment_IDs( utility::vector1< std::string > const & segids ) { segment_IDs_ = segids; }
 
 	void fill_struct_with_residue_numbers( pose::Pose const & pose );
 
@@ -315,6 +317,9 @@ public:
 
 	void
 	figure_out_residue_numbers_from_line( std::istream & line_stream );
+
+	void
+	figure_out_segment_ids_from_line( std::istream & line_stream );
 
 	utility::vector1< SilentStructOP > const & other_struct_list() const { return other_struct_list_; }
 
@@ -370,6 +375,7 @@ private:
 	utility::vector1< char > chains_; // can be derived from PDB info.
 	utility::vector1< SilentStructOP > other_struct_list_;
 	core::pose::full_model_info::FullModelParametersCOP full_model_parameters_;
+	utility::vector1< std::string > segment_IDs_;
 
 private:
 	/// @brief Updates the "score" entry in the silent_energies.

@@ -25,6 +25,7 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 
 // Basic headers
@@ -96,7 +97,8 @@ dump_pdb(
 				F(8,3,atom.xyz()(1)) <<
 				F(8,3,atom.xyz()(2)) <<
 				F(8,3,atom.xyz()(3)) <<
-				F(6,2,1.0) << F(6,2,1.0) << '\n';
+				F(6,2,1.0) << F(6,2,1.0) <<
+				"      " << pose.pdb_info()->segmentID( resnum ) << '\n';
 
 			//now add orbitals if the atom type has orbitals
 			if ( basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
@@ -109,7 +111,8 @@ dump_pdb(
 						F(8,3,orbital_xyz.x()) <<
 						F(8,3,orbital_xyz.y()) <<
 						F(8,3,orbital_xyz.z()) <<
-						F(6,2,1.0) << F(6,2,1.0) << '\n';
+						F(6,2,1.0) << F(6,2,1.0) <<
+						"      " << pose.pdb_info()->segmentID( resnum ) << '\n';
 				}
 			}
 		}
@@ -151,7 +154,8 @@ dump_pdb(
 				F(8,3,atom.xyz()(1)) <<
 				F(8,3,atom.xyz()(2)) <<
 				F(8,3,atom.xyz()(3)) <<
-				F(6,2,1.0) << F(6,2,1.0) << '\n';
+				F(6,2,1.0) << F(6,2,1.0) <<
+				"      " << pose.pdb_info()->segmentID( rsd.seqpos() ) << '\n';
 
 			//now add orbitals if the atom type has orbitals
 			if ( basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
@@ -165,7 +169,8 @@ dump_pdb(
 						F(8,3,orbital_xyz.x()) <<
 						F(8,3,orbital_xyz.y()) <<
 						F(8,3,orbital_xyz.z()) <<
-						F(6,2,1.0) << F(6,2,1.0) << '\n';
+						F(6,2,1.0) << F(6,2,1.0) <<
+						"      " << pose.pdb_info()->segmentID( rsd.seqpos() ) <<  '\n';
 				}
 			}
 		}
@@ -203,7 +208,8 @@ dump_bfactor_pdb(
 				F(8,3,atom.xyz()(1)) <<
 				F(8,3,atom.xyz()(2)) <<
 				F(8,3,atom.xyz()(3)) <<
-				F(6,2,1.0) << F(6,2, bfactor[ id::AtomID(j,i) ] ) << '\n';
+				F(6,2,1.0) << F(6,2, bfactor[ id::AtomID(j,i) ] ) <<
+				"      " << pose.pdb_info()->segmentID( rsd.seqpos() ) << '\n';
 
 			//now add orbitals if the atom type has orbitals
 			if ( basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
@@ -217,7 +223,8 @@ dump_bfactor_pdb(
 						F(8,3,orbital_xyz.x()) <<
 						F(8,3,orbital_xyz.y()) <<
 						F(8,3,orbital_xyz.z()) <<
-						F(6,2,1.0) << F(6,2,1.0) << '\n';
+						F(6,2,1.0) << F(6,2,1.0) <<
+						"      " << pose.pdb_info()->segmentID( rsd.seqpos() ) << '\n';
 				}
 			}
 		} //  for ( int i=1; i<= nres; ++i )

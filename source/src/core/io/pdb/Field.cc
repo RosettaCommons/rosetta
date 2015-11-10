@@ -171,6 +171,7 @@ RecordRef & Field::getRecordCollection()
 			"spacegroup", Field(56, 66), // LString
 			"z",          Field(67, 70)  // Integer
 			),
+														   
 			"ATOM  ", utility::tools::make_map<string, Field>(
 			"type",       Field( 1,  6),
 			"serial",     Field( 7, 11), // Integer
@@ -185,10 +186,11 @@ RecordRef & Field::getRecordCollection()
 			"z",          Field(47, 54), // Real(8.3)
 			"occupancy",  Field(55, 60), // Real(6.2)
 			"tempFactor", Field(61, 66), // Real(6.2)
-			//"segID",     Field(73, 76),
+			"segmentID",  Field(73, 76), // LString(2) standard would have been segID
 			"element",    Field(77, 78), // LString(2)
 			"charge",     Field(79, 80)  // LString(2)
 			),
+														   
 			"HETATM", utility::tools::make_map<string, Field>(
 			"type",       Field( 1,  6),
 			"serial",     Field( 7, 11), // Integer
@@ -203,10 +205,11 @@ RecordRef & Field::getRecordCollection()
 			"z",          Field(47, 54), // Real(8.3)
 			"occupancy",  Field(55, 60), // Real(6.2)
 			"tempFactor", Field(61, 66), // Real(6.2)
-			//"segID",     Field(73, 76),
+			"segmentID",  Field(73, 76),
 			"element",    Field(77, 78), // LString(2)
 			"charge",     Field(79, 80)  // LString(2)
 			),
+														   
 			"TER   ", utility::tools::make_map<string, Field>(
 			"type",    Field( 1,  6),
 			"serial",  Field( 7, 11),

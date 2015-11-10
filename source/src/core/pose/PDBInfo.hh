@@ -157,7 +157,8 @@ private: // structs
 		ResidueRecord () :
 			chainID( PDBInfo::empty_record() ),
 			resSeq( 0 ),
-			iCode( ' ')
+			iCode( ' '),
+			segmentID( " " )
 		{}
 
 		/// @brief chain id
@@ -166,6 +167,8 @@ private: // structs
 		int resSeq;
 		/// @brief insertion code
 		char iCode;
+		/// @brief segment ID
+		std::string segmentID;
 		/// @brief vector of AtomRecord
 		/// @details sized the same as number of atoms for a given instance of core::conformation::Residue
 		AtomRecords atomRec;
@@ -606,6 +609,12 @@ public: // single residue accessors
 		return residue_rec_[ res ].iCode;
 	}
 
+	inline
+	std::string const &
+	segmentID( Size const res ) const
+	{
+		return residue_rec_[ res ].segmentID;
+	}
 
 	/// @brief Returns the pose numbering of the pdb residue with chain  <chain>,
 	/// pdb residue  <res>, and insertion code  <icode>
@@ -704,6 +713,21 @@ public: // single residue mutators
 		char const ins_code
 	);
 
+	/// @brief Sets the insertion code of pose residue  <res>  to  <ins_code>
+	/// @brief Returns the pdb insertion code of residue  <res>
+	///
+	/// example(s):
+	///
+	/// See also:
+	///     Pose
+	///     PDBInfo
+	///     PDBInfo.pdb2pose
+	///     PDBInfo.pose2pdb
+	void
+	segmentID(
+		Size const res,
+		std::string const & segmentID
+	);
 
 	/// @brief Sets the chain id, pdb sequence residue numbering, and insertion
 	/// code for pose residue  <res>  to  <chain_id>  ,  <pdb_res>  , and
@@ -1069,6 +1093,33 @@ public: // residue mutators en masse
 		set_icodes( c.begin(), c.end() );
 	}
 
+	template< typename StringIterator >
+	inline
+	void
+	set_segment_ids(
+			   StringIterator const & begin,
+			   StringIterator const & end
+	) {
+		ResidueRecords::iterator rr = residue_rec_.begin();
+		
+		for ( StringIterator i = begin; i < end; ++i, ++rr ) {
+			rr->segmentID = *i;
+			debug_assert( rr < residue_rec_.end() );
+		}
+		
+		rebuild_pdb2pose();
+	}
+
+	template< typename StringContainer >
+	inline
+	void
+	set_segment_ids( StringContainer const & s )
+	{
+		debug_assert( residue_rec_.size() == s.size() );
+		check_residue_records_size( s.size() ); // run-time check
+		
+		set_segment_ids( s.begin(), s.end() );
+	}
 
 	/// @brief Copyies a section from PDBInfo  <input_info>
 	/// @param[in] input_info the PDBInfo to copy from

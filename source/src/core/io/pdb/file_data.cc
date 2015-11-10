@@ -132,7 +132,8 @@ ResidueInformation::ResidueInformation() :
 	terCount( 0 ),
 	atoms(),
 	xyz(),
-	temps()
+	temps(),
+	segmentID( "" )
 {}
 
 ResidueInformation::ResidueInformation(
@@ -145,7 +146,8 @@ ResidueInformation::ResidueInformation(
 	terCount( ai.terCount ),
 	atoms(),
 	xyz(),
-	temps()
+	temps(),
+	segmentID( ai.segmentID )
 {}
 
 bool
@@ -404,7 +406,7 @@ FileData::get_residue_information(core::pose::Pose const & pose, core::uint cons
 		}
 		res_info.resSeq = pdb_info->number(seqpos);
 		res_info.iCode = pdb_info->icode(seqpos);
-
+		res_info.segmentID = pdb_info->segmentID(seqpos);
 		// ...or not?
 	} else {
 		uint chain_num = pose.chain(seqpos);
@@ -517,7 +519,7 @@ FileData::append_residue(
 		ai.y = atom.xyz()(2);
 		ai.z = atom.xyz()(3);
 		ai.occupancy = 1.0; // dummy occupancy, can be overridden by PDBInfo
-
+		ai.segmentID = res_info.segmentID;
 
 		// Output with pdb-specific info if possible.
 		if ( use_PDB ) {
@@ -527,6 +529,7 @@ FileData::append_residue(
 			ai.altLoc = pdb_info->alt_loc( rsd.seqpos(), j );
 			ai.occupancy = pdb_info->occupancy( rsd.seqpos(), j );
 			ai.temperature = pdb_info->temperature( rsd.seqpos(), j );
+			ai.segmentID = pdb_info->segmentID( rsd.seqpos() );
 		}
 
 		if ( option[ OptionKeys::out::file::output_virtual_zero_occ ]() ) {
@@ -742,80 +745,79 @@ void FileData::get_connectivity_annotation_info( core::pose::Pose const & pose )
 			}
 		}
 
-		if ( pose.residue( ii ).n_non_polymeric_residue_connections() != 0 ) {
-
-			for ( Size conn = pose.residue( ii ).n_polymeric_residue_connections()+1; conn <= pose.residue( ii ).n_residue_connections(); ++conn ) {
-
-				Size jj = pose.residue( ii ).connected_residue_at_resconn( conn );
-				Size jj_conn = pose.residue( ii ).residue_connection_conn_id( conn );
-
-				// Either LINK or SSBOND
-				// Note that it's not an SSBOND if you are a cysteine bonded
-				// to the UPPER of another cysteine!
-				// Are the two atoms both the get_disulfide_atom_name() of the
-				// connected residue types?
-				if ( ( pose.residue( ii ).type().has_property( chemical::DISULFIDE_BONDED ) || pose.residue( ii ).type().has_property( chemical::SIDECHAIN_THIOL ) ) &&
-						( pose.residue( jj ).type().has_property( chemical::DISULFIDE_BONDED ) || pose.residue( jj ).type().has_property( chemical::SIDECHAIN_THIOL ) ) &&
-						pose.residue( ii ).residue_connect_atom_index( conn ) ==
-						pose.residue( ii ).atom_index( pose.residue( ii ).type().get_disulfide_atom_name() ) &&
-						pose.residue( jj ).residue_connect_atom_index( jj_conn ) ==
-						pose.residue( ii ).atom_index( pose.residue( jj ).type().get_disulfide_atom_name() ) ) {
-					// Disulfide.
-
-					// If jj < ii, we already counted it
-					if ( jj < ii ) continue;
-
-					SSBondInformation ssbond = get_ssbond_record( pose, ii, conn );
-					vector1<SSBondInformation> ssbonds;
-
-					// If key is found in the links map, add this new linkage information to the links already keyed to
-					// this residue.
-					if ( ssbond_map.count(ssbond.resID1) ) {
-						ssbonds = ssbond_map[ssbond.resID1];
-					}
-					ssbonds.push_back(ssbond);
-
-					ssbond_map[ssbond.resID1] = ssbonds;
-
-				} else {
-
-					LinkInformation link = get_link_record( pose, ii, conn );
-					vector1<LinkInformation> links;
-
-					// If key is found in the links map, add this new linkage information to the links already keyed to
-					// this residue.
-					if ( link_map.count(link.resID1) ) {
-						links = link_map[link.resID1];
-					}
-					// If this link is found under the OTHER record...
-					bool skip = false;
-					if ( link_map.count( link.resID2 ) ) {
-						for ( Size i = 1; i <= link_map[link.resID2].size(); ++i ) {
-							if ( link.resID1 == link_map[link.resID2][i].resID2 ) {
-								skip = true;
-								break;
-							}
-						}
-					}
-					if ( skip )  continue;
-					// Make sure it isn't a dupe--for example, make sure that
-					// we didn't already push this back as a lower to upper thing.
-					// Right now, we assume you can't have two noncanonical connections to the same residue.
-					// This is not strictly necessarily true, but until we implement
-					// LinkInformation ==, it's good enough.
-					bool push_it = true;
-					for ( Size i = 1; i <= links.size(); ++i ) {
-						if ( ( link.resID1 == links[i].resID1 && link.resID2 == links[i].resID2 )
-								|| ( link.resID2 == links[i].resID1 && link.resID1 == links[i].resID2 ) ) {
-							push_it = false;
-						}
-					}
-					if ( push_it ) {
-						links.push_back(link);
-					}
-
-					link_map[link.resID1] = links;
+		if ( pose.residue( ii ).n_non_polymeric_residue_connections() == 0 ) continue;
+		
+		for ( Size conn = pose.residue( ii ).n_polymeric_residue_connections()+1; conn <= pose.residue( ii ).n_residue_connections(); ++conn ) {
+			
+			Size jj = pose.residue( ii ).connected_residue_at_resconn( conn );
+			Size jj_conn = pose.residue( ii ).residue_connection_conn_id( conn );
+			
+			// Either LINK or SSBOND
+			// Note that it's not an SSBOND if you are a cysteine bonded
+			// to the UPPER of another cysteine!
+			// Are the two atoms both the get_disulfide_atom_name() of the
+			// connected residue types?
+			if ( ( pose.residue( ii ).type().has_property( chemical::DISULFIDE_BONDED ) || pose.residue( ii ).type().has_property( chemical::SIDECHAIN_THIOL ) ) &&
+				( pose.residue( jj ).type().has_property( chemical::DISULFIDE_BONDED ) || pose.residue( jj ).type().has_property( chemical::SIDECHAIN_THIOL ) ) &&
+				pose.residue( ii ).residue_connect_atom_index( conn ) ==
+				pose.residue( ii ).atom_index( pose.residue( ii ).type().get_disulfide_atom_name() ) &&
+				pose.residue( jj ).residue_connect_atom_index( jj_conn ) ==
+				pose.residue( ii ).atom_index( pose.residue( jj ).type().get_disulfide_atom_name() ) ) {
+				// Disulfide.
+				
+				// If jj < ii, we already counted it
+				if ( jj < ii ) continue;
+				
+				SSBondInformation ssbond = get_ssbond_record( pose, ii, conn );
+				vector1<SSBondInformation> ssbonds;
+				
+				// If key is found in the links map, add this new linkage information to the links already keyed to
+				// this residue.
+				if ( ssbond_map.count(ssbond.resID1) ) {
+					ssbonds = ssbond_map[ssbond.resID1];
 				}
+				ssbonds.push_back(ssbond);
+				
+				ssbond_map[ssbond.resID1] = ssbonds;
+				
+			} else {
+				
+				LinkInformation link = get_link_record( pose, ii, conn );
+				vector1<LinkInformation> links;
+				
+				// If key is found in the links map, add this new linkage information to the links already keyed to
+				// this residue.
+				if ( link_map.count(link.resID1) ) {
+					links = link_map[link.resID1];
+				}
+				// If this link is found under the OTHER record...
+				bool skip = false;
+				if ( link_map.count( link.resID2 ) ) {
+					for ( Size i = 1; i <= link_map[link.resID2].size(); ++i ) {
+						if ( link.resID1 == link_map[link.resID2][i].resID2 ) {
+							skip = true;
+							break;
+						}
+					}
+				}
+				if ( skip )  continue;
+				// Make sure it isn't a dupe--for example, make sure that
+				// we didn't already push this back as a lower to upper thing.
+				// Right now, we assume you can't have two noncanonical connections to the same residue.
+				// This is not strictly necessarily true, but until we implement
+				// LinkInformation ==, it's good enough.
+				bool push_it = true;
+				for ( Size i = 1; i <= links.size(); ++i ) {
+					if ( ( link.resID1 == links[i].resID1 && link.resID2 == links[i].resID2 )
+						|| ( link.resID2 == links[i].resID1 && link.resID1 == links[i].resID2 ) ) {
+						push_it = false;
+					}
+				}
+				if ( push_it ) {
+					links.push_back(link);
+				}
+				
+				link_map[link.resID1] = links;
 			}
 		}
 	}
@@ -1163,23 +1165,23 @@ write_additional_pdb_data(
 			core::Size number(0);
 			char const chain( chains[ rsd.chain() ] );
 			for ( core::Size j=1; j<=rsd.natoms(); ++j ) {
-				if ( rsd.atom_type(j).atom_has_orbital() ) {
-					utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
-					for (
-							utility::vector1<core::Size>::const_iterator
-							orbital_index = orbital_indices.begin(),
-							orbital_index_end = orbital_indices.end();
-							orbital_index != orbital_index_end; ++orbital_index
-							) {
-						++number;
-						Vector orbital_xyz(rsd.orbital_xyz(*orbital_index));
-						out << "ATOM  " << I(5,number) << ' ' << rsd.orbital_name(*orbital_index) << ' ' <<
-							rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
-							F(8,3,orbital_xyz.x()) <<
-							F(8,3,orbital_xyz.y()) <<
-							F(8,3,orbital_xyz.z()) <<
-							F(6,2,1.0) << F(6,2,1.0) << '\n';
-					}
+				if ( !rsd.atom_type(j).atom_has_orbital() ) continue;
+				
+				utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
+				for (
+					 utility::vector1<core::Size>::const_iterator
+					 orbital_index = orbital_indices.begin(),
+					 orbital_index_end = orbital_indices.end();
+					 orbital_index != orbital_index_end; ++orbital_index
+					 ) {
+					++number;
+					Vector orbital_xyz(rsd.orbital_xyz(*orbital_index));
+					out << "ATOM  " << I(5,number) << ' ' << rsd.orbital_name(*orbital_index) << ' ' <<
+					rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
+					F(8,3,orbital_xyz.x()) <<
+					F(8,3,orbital_xyz.y()) <<
+					F(8,3,orbital_xyz.z()) <<
+					F(6,2,1.0) << F(6,2,1.0) << '\n';
 				}
 			}
 		}
@@ -1899,12 +1901,14 @@ build_pose_as_is1(
 	utility::vector1< int > pdb_numbering;
 	//sml chain char
 	utility::vector1< char > pdb_chains, insertion_codes;
+	utility::vector1< std::string > segment_ids;
 	//Size const nres( pose.total_residue() );
 	for ( Size i(1); i <= nres; ++i ) {
 		ResidueInformation const & rinfo = rinfos[pose_to_rinfo[i]];
 		pdb_numbering.push_back( rinfo.resSeq );
 		pdb_chains.push_back( rinfo.chainID );
 		insertion_codes.push_back( rinfo.iCode );
+		segment_ids.push_back( rinfo.segmentID );
 	}
 
 	// PDBInfo setup
@@ -1927,6 +1931,7 @@ build_pose_as_is1(
 	pdb_info->set_numbering( pdb_numbering );
 	pdb_info->set_chains( pdb_chains );
 	pdb_info->set_icodes( insertion_codes );
+	pdb_info->set_segment_ids( segment_ids );
 	if ( options.preserve_crystinfo() ) {
 		pdb_info->set_crystinfo( fd.crystinfo );
 	}

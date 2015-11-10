@@ -81,6 +81,7 @@ public:
 		x( 0.0 ), y( 0.0 ), z( 0.0 ),
 		occupancy( 0.0 ),
 		temperature( 0.0 ),
+		segmentID( "" ),
 		element( "" ),
 		terCount( 0 )
 	{}
@@ -97,6 +98,7 @@ public:
 	double x, y, z;
 	double occupancy;
 	double temperature;
+	String segmentID;
 	String element;
 	int terCount; //< number of TER or END cards encountered prior to this
 
@@ -107,6 +109,7 @@ public:
 			<< " x=" << ai.x << " y=" << ai.y << " z=" << ai.z
 			<< " temperature=" << ai.temperature
 			<< " occupancy=" << ai.occupancy
+			<< " segmentID=" << ai.segmentID
 			<< " element=" << ai.element
 			<< "}";
 		return os;
@@ -138,6 +141,8 @@ public:
 	utility::vector1< AtomInformation > atoms;
 	std::map< std::string, Vector > xyz; //< map of names to coords;  redundant but used a lot in reader
 	std::map< std::string, double > temps; //< map of names to B-factors;  redundant but used a lot in reader
+
+	std::string segmentID;
 
 	/// @brief Returns a short, printable designation for this residue.
 	String resid() const;

@@ -266,6 +266,9 @@ bool RNA_SilentStruct::init_from_lines(
 			} else if ( iter->substr(0,7) == "RES_NUM" ) {
 				figure_out_residue_numbers_from_line( line_stream );
 				continue;
+			} else if ( iter->substr(0,11) == "SEGMENT_IDS" ) {
+				figure_out_segment_ids_from_line( line_stream );
+				continue;
 			}
 
 

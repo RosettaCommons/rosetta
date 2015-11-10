@@ -47,13 +47,13 @@ public:
 	// @brief add an object to the map, returning false if an object of that
 	// name already exists
 	bool add(
-		std::string const type,
-		std::string const name,
+		std::string const & type,
+		std::string const & name,
 		utility::pointer::ReferenceCountOP const op
 	);
-	bool has( std::string const type, std::string const name="" ) const;
-	template< class Ty > Ty get( std::string const type, std::string const name ) const;
-	template< class Ty > utility::pointer::shared_ptr< Ty > get_ptr( std::string const type, std::string const name ) const;
+	bool has( std::string const & type, std::string const & name="" ) const;
+	template< class Ty > Ty get( std::string const & type, std::string const & name ) const;
+	template< class Ty > utility::pointer::shared_ptr< Ty > get_ptr( std::string const & type, std::string const & name ) const;
 	std::map< std::string, utility::pointer::ReferenceCountOP > & operator [](
 		std::string const & type
 	);
@@ -71,7 +71,7 @@ private:
 /// the requested object cannot be found in the DataMap.
 template< class Ty >
 Ty
-DataMap::get( std::string const type, std::string const name ) const {
+DataMap::get( std::string const & type, std::string const & name ) const {
 	using namespace utility::pointer;
 	Ty ret( 0 );
 
@@ -103,7 +103,7 @@ DataMap::get( std::string const type, std::string const name ) const {
 /// the requested object cannot be found in the DataMap.
 template< class Ty >
 utility::pointer::shared_ptr< Ty >
-DataMap::get_ptr( std::string const type, std::string const name ) const {
+DataMap::get_ptr( std::string const & type, std::string const & name ) const {
 	using namespace utility::pointer;
 	utility::pointer::shared_ptr< Ty > ret( 0 );
 
@@ -134,7 +134,7 @@ DataMap::get_ptr( std::string const type, std::string const name ) const {
 /// that item on the datamap and returns the OP for it.
 template < class Ty >
 utility::pointer::shared_ptr< Ty >
-get_set_from_datamap( std::string const type, std::string const name, basic::datacache::DataMap & data ){
+get_set_from_datamap( std::string const & type, std::string const & name, basic::datacache::DataMap & data ){
 	utility::pointer::shared_ptr< Ty > obj;
 	if ( data.has( type, name ) ) {
 		obj = data.get_ptr< Ty >( type, name );
