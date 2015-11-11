@@ -24,7 +24,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -362,22 +361,6 @@ TaskAwareScoreTypeFilter::parse_my_tag( utility::tag::TagCOP tag,
 	if ( !((mode() == "average") || (mode() == "total") || (mode() == "individual")) ) {
 		utility_exit_with_message( "InputError: The specified mode for the TaskAwareScoreTypeFilter does not match either average, total, or individual." );
 	}
-	TR<<"with options scoretype: "<<score_type()<<" and threshold: "<<threshold()<<std::endl;
-}
-void TaskAwareScoreTypeFilter::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & score_fxns,
-	utility::lua::LuaObject const & tasks ) {
-	TR << "TaskAwareScoreTypeFilter"<<std::endl;
-	task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-	if ( def["scorefxn"] ) {
-		scorefxn( protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) );
-	} else {
-		scorefxn( score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone()  );
-	}
-	score_type( core::scoring::score_type_from_name( def["score_type"] ? def["score_type"].to<std::string>() : "total_score" ) );
-	threshold( def["threshold"] ? def["threshold"].to<core::Real>() : 100000 );
-	bb_bb( def["bb_bb"] ? def["bb_bb"].to<bool>() : false );
-	write2pdb( def["write2pdb"] ? def["write2pdb"].to<bool>() : 0 );
 	TR<<"with options scoretype: "<<score_type()<<" and threshold: "<<threshold()<<std::endl;
 }
 

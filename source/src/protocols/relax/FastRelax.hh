@@ -122,11 +122,6 @@ public:
 		core::pose::Pose const &
 	);
 
-	virtual void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache );
-
 	/// @brief Initializes class using option system. This is called by the constructors
 	void set_to_default();
 

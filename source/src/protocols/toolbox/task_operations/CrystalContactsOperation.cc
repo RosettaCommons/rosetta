@@ -187,18 +187,6 @@ CrystalContactsOperation::parse_tag( TagCOP tag, DataMap & )
 	atoms_to_atoms_ = tag->getOption<bool>("atoms_to_atoms", 0);
 }
 
-void
-CrystalContactsOperation::parse_def( utility::lua::LuaObject const & def)
-{
-	all_gap_ = def["all_gap"] ? def["all_gap"].to<core::Real>() : 0.5;
-	polar_gap_ = def["polar_gap"] ? def["polar_gap"].to<core::Real>() : 2.5;
-	max_buried_sasa_ = def["max_buried_sasa"] ? def["max_buried_sasa"].to<core::Real>() : 0.01;
-
-	nbr_radius_to_nbr_radius_ = def["nbr_radius_to_nbr_radius"] ? def["nbr_radius_to_nbr_radius"].to<bool>() : false;
-	nbr_radius_to_atoms_ = def["nbr_radius_to_atoms"] ? def["nbr_radius_to_atoms"].to<bool>() : true;
-	atoms_to_atoms_ = def["atoms_to_atoms"] ? def["atoms_to_atoms"].to<bool>() : false;
-}
-
 } //namespace task_operations
 } //namespace toolbox
 } //namespace protocols

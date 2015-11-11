@@ -14,23 +14,15 @@
 #ifndef INCLUDED_core_pose_Pose_fwd_hh
 #define INCLUDED_core_pose_Pose_fwd_hh
 
-#ifdef USELUA
-#include <lua.hpp>
-#include <luabind/luabind.hpp>
-#endif
-
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
-#include <boost/shared_ptr.hpp>
 
 namespace core {
 namespace pose {
 
 // Forward
 class Pose;
-
-typedef boost::shared_ptr < Pose > PoseSP;
 
 typedef utility::pointer::shared_ptr< Pose > PoseOP;
 typedef utility::pointer::shared_ptr< Pose const > PoseCOP;
@@ -40,10 +32,6 @@ typedef utility::pointer::weak_ptr< Pose const > PoseCAP;
 
 typedef utility::vector1< PoseOP > PoseOPs;
 typedef utility::vector1< PoseCOP > PoseCOPs;
-
-#ifdef USELUA
-void lregister_Pose( lua_State * lstate );
-#endif
 
 } // namespace pose
 } // namespace core

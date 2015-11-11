@@ -262,22 +262,6 @@ SelectBySASAOperation::parse_tag( TagCOP tag , DataMap & )
 	verbose_ = tag->getOption< bool >("verbose", 0 );
 }
 
-void
-SelectBySASAOperation::parse_def( utility::lua::LuaObject const & def)
-{
-	mode_ = def["mode"] ? def["mode"].to<std::string>() : "sc";
-	state_ = def["state"] ? def["state"].to<std::string>() : "monomer";
-	probe_radius_ = def["probe_radius"] ? def["probe_radius"].to<core::Real>() : 2.2;
-	core_asa_ = def["core_asa"] ? def["core_asa"].to<core::Real>() : 0;
-	surface_asa_ = def["surface_asa"] ? def["surface_asa"].to<core::Real>() : 30;
-	jump_nums_ = def["jumps"] ? def["jumps"].to<std::string>() : "1";
-	sym_dof_names_ = def["sym_dof_names"] ? def["sym_dof_names"].to<std::string>() : "";
-	core_ = def["core"] ? def["core"].to< bool >() : 0;
-	boundary_ = def["boundary"] ? def["boundary"].to< bool >() : 0;
-	surface_ = def["surface"] ? def["surface"].to< bool >() : 0;
-	verbose_ = def["verbose"] ? def["verbose"].to< bool >() : 0;
-}
-
 } //namespace task_operations
 } //namespace toolbox
 } //namespace protocols

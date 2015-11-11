@@ -59,8 +59,6 @@ public:
 
 	virtual void parse_tag( TagCOP, DataMap & );
 
-	virtual void parse_def( utility::lua::LuaObject const & def );
-
 	void repack_shell( core::Real const repack_shell) {
 		repack_shell_ = repack_shell;
 		if ( repack_shell <= design_shell() ) {

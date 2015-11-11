@@ -17,7 +17,6 @@
 #include <protocols/simple_moves/PackRotamersMoverCreator.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 
 #include <core/pack/interaction_graph/AnnealableGraphBase.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -176,27 +175,6 @@ PackRotamersMover::task_is_valid( Pose const & pose ) const
 		if ( ! task_->residue_task(i).is_original_type( r ) ) return false;
 	}
 	return true;
-}
-
-void PackRotamersMover::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & score_fxns,
-	utility::lua::LuaObject const & tasks,
-	protocols::moves::MoverCacheSP /*cache*/ ) {
-	if ( def["nloop"] ) {
-		nloop_ = def["nloop"].to<Size>();
-		runtime_assert( nloop_ > 0 );
-	}
-
-	if ( def["scorefxn"] ) {
-		score_function( protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) );
-	} else {
-		score_function( score_fxns["score12"].to<ScoreFunctionSP>()->clone()  );
-	}
-	if ( def["tasks"] ) {
-		TaskFactoryOP new_task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-		if ( new_task_factory == 0 ) return;
-		task_factory( new_task_factory );
-	}
 }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)

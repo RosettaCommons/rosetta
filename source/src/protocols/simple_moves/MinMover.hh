@@ -136,16 +136,6 @@ public:
 		TagCOP tag,
 		basic::datacache::DataMap & data);
 
-	virtual void parse_def_opts( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache );
-
-	virtual void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache );
-
 	/// @brief allow non-const access to the internal minimizer options object
 	virtual MinimizerOptionsOP min_options();
 

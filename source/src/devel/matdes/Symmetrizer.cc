@@ -223,33 +223,6 @@ Symmetrizer::parse_my_tag( TagCOP const tag,
 	angle_ = tag->getOption<Real>( "angle",0.0 );
 
 }
-void Symmetrizer::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & ,
-	utility::lua::LuaObject const & ,
-	protocols::moves::MoverCacheSP ) {
-
-	// Turn symmetry hacks on
-	basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
-
-	symm_file_ = def["symm_file"].to<std::string>();
-	symmetry_axis_ = def["axis"] ? def["axis"].to<std::string>()[0] : 'z';
-
-	explore_grid_ = def["grid"] ? def["grid"].to<bool>() : false;
-	if ( explore_grid_ ) {
-		Real angle_min = def["angle_min"].to<Real>();
-		Real angle_max = def["angle_max"].to<Real>();
-		Real angle_step = def["angle_step"].to<Real>();
-		Real radial_disp_min = def["radial_disp_min"].to<Real>();
-		Real radial_disp_max = def["radial_disp_max"].to<Real>();
-		Real radial_disp_step = def["radial_disp_step"].to<Real>();
-		TR << "Setting the exploration grid." << std::endl;
-		SymmetrizerSampler::get_instance().set_angle_range(angle_min, angle_max, angle_step);
-		SymmetrizerSampler::get_instance().set_radial_disp_range(radial_disp_min, radial_disp_max, radial_disp_step);
-	} else {
-		radial_disp_ = def["radial_disp"] ? def["radial_disp"].to<Real>() : 0.0;
-		angle_ = def["angle"] ? def["angle"].to<Real>() : 0.0;
-	}
-}
 
 } // matdes
 } // devel

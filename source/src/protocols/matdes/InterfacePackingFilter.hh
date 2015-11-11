@@ -52,9 +52,6 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
-	void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks );
 
 	core::Real distance_cutoff() const;
 	core::Real contact_dist() const;

@@ -30,9 +30,9 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh> // get_score_function
 #include <core/pose/Pose.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 
 // Basic headers
 #include <basic/prof.hh>
@@ -305,64 +305,6 @@ MinMover::show(std::ostream & output) const
 
 protocols::moves::MoverOP MinMover::clone() const { return protocols::moves::MoverOP( new protocols::simple_moves::MinMover( *this ) ); }
 protocols::moves::MoverOP MinMover::fresh_instance() const { return protocols::moves::MoverOP( new MinMover ); }
-
-void MinMover::parse_def_opts( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & score_fxns,
-	utility::lua::LuaObject const & /*tasks*/,
-	protocols::moves::MoverCacheSP /*cache*/ ) {
-	if ( def["scorefxn"] ) {
-		score_function( protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) );
-	} else {
-		score_function( score_fxns["score12"].to<ScoreFunctionSP>()->clone()  );
-	}
-
-	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
-	if ( def["jump"] ) {
-		for ( utility::lua::LuaIterator i=def["jump"].begin(), end; i != end; ++i ) {
-			if ( (*i).to<int>() == -1 ) {
-				movemap_->set_jump( true );
-				break;
-			} else if ( (*i).to<core::Size>() == 0 ) {
-				movemap_->set_jump( false );
-				break;
-			} else {
-				TR << "Setting min on jump " << (*i).to<core::Size>() << std::endl;
-				movemap_->set_jump( (*i).to<core::Size>(), true );
-			}
-		}
-	}
-
-	min_type( def["type"] ? def[ "type" ].to<std::string>() : "dfpmin_armijo_nonmonotone" );
-	tolerance( def["tolerance"] ? def[ "tolerance" ].to<core::Real>() : 0.01 );
-	cartesian( def["cartesian"] ? def[ "cartesian" ].to<bool>() : false );
-	//fpd if cartesian default to lbfgs minimization
-	if ( cartesian() && ! def["type"] ) {
-		min_type( "lbfgs_armijo_nonmonotone" );
-	}
-
-	// TODO: Add parsing of task operations?
-}
-
-void MinMover::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & score_fxns,
-	utility::lua::LuaObject const & tasks,
-	protocols::moves::MoverCacheSP cache ) {
-	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
-
-	parse_def_opts( def, score_fxns, tasks, cache );
-
-	if ( def["chi"] ) {
-		movemap_->set_chi(def["chi"].to<bool>());
-	}
-	if ( def["bb"] ) {
-		movemap_->set_chi(def["bb"].to<bool>());
-	}
-
-
-	if ( def["movemap"] ) {
-		protocols::elscripts::parse_movemapdef( def["movemap"], movemap_ );
-	}
-}
 
 void MinMover::parse_my_tag(
 	TagCOP const tag,

@@ -50,10 +50,6 @@ sources = {
 		"Svm_rosetta",
 		"Svm",
 	],
-	"utility/lua": [
-		"LuaIterator",
-		"LuaObject"
-	],
 	"utility/json_spirit": [
 		"json_spirit_reader",
 		"json_spirit_value",

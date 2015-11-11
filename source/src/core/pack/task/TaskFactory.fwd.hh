@@ -15,7 +15,6 @@
 #define INCLUDED_core_pack_task_TaskFactory_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <boost/shared_ptr.hpp>
 
 namespace core {
 namespace pack {
@@ -23,7 +22,6 @@ namespace task {
 
 class TaskFactory;
 
-typedef boost::shared_ptr<TaskFactory> TaskFactorySP;
 typedef utility::pointer::shared_ptr< TaskFactory > TaskFactoryOP;
 typedef utility::pointer::shared_ptr< TaskFactory const > TaskFactoryCOP;
 

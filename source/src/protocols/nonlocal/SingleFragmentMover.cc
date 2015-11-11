@@ -36,7 +36,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 
 // Package headers
 #include <protocols/nonlocal/Chunk.hh>
@@ -161,38 +160,6 @@ void SingleFragmentMover::parse_my_tag(const utility::tag::TagCOP tag,
 	// optional flags
 	// policy -- default => uniform
 	string policy_type = tag->getOption<string>("policy", "uniform");
-	PolicyOP policy = PolicyFactory::get_policy(policy_type, fragments);
-
-	initialize(fragments, movable, policy);
-}
-
-void SingleFragmentMover::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & ,
-	utility::lua::LuaObject const & ,
-	protocols::moves::MoverCacheSP ) {
-	using core::fragment::FragmentIO;
-	using core::fragment::FragSetOP;
-	using core::kinematics::MoveMap;
-	using core::kinematics::MoveMapOP;
-	using std::string;
-
-	// required flags
-	// fragments, movemap
-	string fragments_file = def["fragments"].to<string>();
-	FragSetOP fragments = FragmentIO().read_data(fragments_file);
-
-	// initially, all backbone torsions are movable
-	MoveMapOP movable( new MoveMap() );
-	movable->set_bb( true );
-	movable->set_chi( true );
-	movable->set_jump( true );
-	if ( def["movemap"] ) {
-		protocols::elscripts::parse_movemapdef(def["movemap"], movable);
-	}
-
-	// optional flags
-	// policy -- default => uniform
-	string policy_type = def["policy"] ? def["policy"].to<string>() : "uniform";
 	PolicyOP policy = PolicyFactory::get_policy(policy_type, fragments);
 
 	initialize(fragments, movable, policy);

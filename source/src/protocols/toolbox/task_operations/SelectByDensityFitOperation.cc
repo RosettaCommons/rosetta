@@ -50,12 +50,16 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.task_operations.SelectByDensityFitOperation" );
 
+namespace protocols {
+namespace toolbox {
+namespace task_operations {
+
 using namespace core;
 using namespace basic;
 using namespace utility;
 using namespace protocols;
 using namespace toolbox;
-using namespace task_operations;
+//using namespace task_operations;
 
 core::pack::task::operation::TaskOperationOP
 SelectByDensityFitOperationCreator::create_task_operation() const
@@ -117,11 +121,7 @@ SelectByDensityFitOperation::parse_tag( TagCOP tag, DataMap & )
 	invert_ = tag->getOption<bool>("invert", 0);
 }
 
-void
-SelectByDensityFitOperation::parse_def( utility::lua::LuaObject const & def)
-{
-	threshold_ = def["threshold"] ? def["threshold"].to<core::Real>() : 0.72;
-	invert_ = def["invert"] ? def["invert"].to<bool>() : 0;
-}
 
-
+} //namespace task_operations
+} //namespace toolbox
+} //namespace protocols

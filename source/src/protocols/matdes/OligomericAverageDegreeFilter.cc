@@ -30,7 +30,6 @@
 #include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -270,21 +269,6 @@ OligomericAverageDegreeFilter::parse_my_tag(
 	TR << "with options threshold: " <<threshold() << " and distance_threshold " << distance_threshold() << std::endl;
 }
 
-void OligomericAverageDegreeFilter::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & ,
-	utility::lua::LuaObject const & tasks ) {
-	TR << "OligomericAverageDegreeFilter"<<std::endl;
-	task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-	threshold( def["threshold"] ? def["threshold"].to<core::Size>() : 0 );
-	distance_threshold( def["distance_threshold"] ? def["distance_threshold"].to<core::Real>() : 10.0 );
-	if ( def["jump"] ) {
-		jump_set( true);
-		jump_id( def["jump"] ? def["jump"].to<core::Size>() : 1 );
-	}
-	write2pdb( def["write2pdb"] ? def["write2pdb"].to<bool>() : 0 );
-	verbose( def["verbose"] ? def["verbose"].to<bool>() : 0 );
-	TR << "with options threshold: " <<threshold() << " and distance_threshold " << distance_threshold() << std::endl;
-}
 core::Real
 OligomericAverageDegreeFilter::report_sm( core::pose::Pose const & pose ) const
 {

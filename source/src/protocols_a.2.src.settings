@@ -15,15 +15,6 @@ sources = {
 		"BoincPoseObserver",
 		"watchdog",
 	],
-	"protocols/elscripts": [
-		"BaseRole",
-		"Master",
-		"MPI_Master",
-		"MPI_Slave",
-		"SingleNode",
-		"Slave",
-		"util",
-	],
 	"protocols/frags": [
 		"heap",
 		"TorsionFragment",
@@ -34,20 +25,6 @@ sources = {
 		"EntityRandomizer",
 		"GeneticAlgorithm",
 		"Mutate1Randomizer",
-	],
-	"protocols/inputter": [
-		"FastaInputter",
-		"Inputter",
-		"InputterStream",
-		"PDBInputter",
-		"SilentFileInputter",
-	],
-	"protocols/outputter": [
-		"Outputter",
-		"FormatStringOutputter",
-		"PDBOutputter",
-		"ResFileOutputter",
-		"SilentFileOutputter",
 	],
 	"protocols/rpc": [
 		"rpc",
@@ -61,13 +38,6 @@ sources = {
 		"WorkUnitBase",
 		"WorkUnitList",
 		"WorkUnitManager",
-	],
-	"protocols/wum2": [
-		"EndPoint",
-		"MPI_EndPoint",
-		"WorkUnit",
-		"WUQueue",
-		"WUQueueBuffer",
 	],
 }
 include_path = [

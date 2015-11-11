@@ -21,7 +21,6 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -185,40 +184,6 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 		pb_enabled_ = false;
 	}
 	TR.flush();
-}
-
-void DdgFilter::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & score_fxns,
-	utility::lua::LuaObject const & /*tasks*/ ) {
-	using namespace core::scoring;
-	if ( def["scorename"] ) {
-		scorename_ = def["scorename"].to<std::string>();
-	}
-	if ( def["scorefxn"] ) {
-		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
-	} else {
-		scorefxn_ = score_fxns["score12"].to<ScoreFunctionSP>()->clone();
-	}
-	ddg_threshold_ = def["threshold"] ? def["threshold"].to<core::Real>() : -15;
-	rb_jump_ = def["jump"] ? def["jump"].to<core::Size>() : 1;
-	repeats( def["repeats"] ? def["repeats"].to<core::Size>() : 1 );
-	repack( def["repack"] ? def["repack"].to<bool>() : true );
-	repack_bound_ = def["repack_bound"] ? def["repack_bound"].to<bool>() : true;
-	relax_bound_ = def["relax_bound"] ? def["relax_bound"].to<bool>() : false;
-	translate_by_ = def["translate_by"] ? def["translate_by"].to<core::Real>() : 1000;
-	// ignoring relax_mover option
-	if ( def["chain_num"] ) {
-		chain_ids_.clear();
-		for ( utility::lua::LuaIterator i=def["chain_num"].begin(), end; i != end; ++i ) {
-			chain_ids_.push_back( (*i).to<core::Size>() );
-		}
-	}
-
-	if ( repeats() > 1 && !repack() ) {
-		utility_exit_with_message( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
-	}
-
-	TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" over jump "<<rb_jump_<<" and repack "<<repack()<<std::endl;
 }
 
 bool

@@ -119,8 +119,6 @@ BannedFiles = [
 
     'protocols/medal/MedalMain.hh',  # void* (void*) declaration
 
-    'protocols/wum2/EndPoint.hh',  # Function returning a function
-
     #'protocols/rpc',  # Some problem with parser, but in general: do we need RPC calls in PyRosetta? (it easier to implement it in Python anyway)
 
 

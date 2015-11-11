@@ -50,7 +50,6 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 #include <protocols/scoring/Interface.hh>
 #include <protocols/simple_filters/DdgFilter.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
@@ -163,20 +162,6 @@ DdGScan::parse_my_tag(
 		moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "ddG_mover" ), movers );
 		ddG_mover( utility::pointer::dynamic_pointer_cast < protocols::simple_moves::ddG > (mover));
 	}
-}
-
-void DdGScan::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & score_fxns,
-	utility::lua::LuaObject const & tasks ) {
-	task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-	repeats( def["repeats"] ? def["repeats"].to<core::Size>() : 1 );
-	if ( def["scorefxn"] ) {
-		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
-	} else {
-		scorefxn_ = score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone();
-	}
-	report_diffs( def["report_diffs"] ? def["report_diffs"].to<bool>() : 1 );
-	write2pdb( def["write2pdb"] ? def["write2pdb"].to<bool>() : 0 );
 }
 
 /// @brief Calculate the binding ddG for a mutation at the specified position (or wildtype no-mutant if resi is 0)

@@ -41,7 +41,6 @@ public:
 	SequenceRecoveryFilter();
 	/// @brief Constructor with a single target residue
 	virtual bool apply( core::pose::Pose const & pose ) const;
-	virtual void apply( core::io::serialization::PipeMap & pmap);
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
 	virtual protocols::filters::FilterOP clone() const;
@@ -71,9 +70,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
-	void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks );
+
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::pose::PoseCOP reference_pose_;

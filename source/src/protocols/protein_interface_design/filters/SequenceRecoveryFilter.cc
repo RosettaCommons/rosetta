@@ -18,7 +18,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -166,12 +165,6 @@ SequenceRecoveryFilter::apply(core::pose::Pose const & pose ) const
 		}
 	}
 }
-void SequenceRecoveryFilter::apply( core::io::serialization::PipeMap & pmap ) {
-	if ( pmap["reference"]->size() == 1 ) {
-		reference_pose( *(*pmap["reference"])[0] );
-	}
-	Filter::apply( pmap );
-}
 
 core::Real
 SequenceRecoveryFilter::compute( core::pose::Pose const & pose, bool const & write ) const{
@@ -308,29 +301,6 @@ SequenceRecoveryFilter::parse_my_tag( utility::tag::TagCOP tag,
 	TR<<std::endl;
 }
 
-void SequenceRecoveryFilter::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & ,
-	utility::lua::LuaObject const & tasks ) {
-	TR << "SequenceRecoveryFilter"<<std::endl;
-	task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-	rate_threshold( def["rate_threshold"] ? def["rate_threshold"].to<core::Real>() : 0.0 );
-	mutation_threshold( def["mutation_threshold"] ? def["mutation_threshold"].to<core::Size>() : 100 );
-	mutations( def["report_mutations"] ? def["report_mutations"].to<bool>() : false );
-	verbose( def["verbose"] ? def["verbose"].to<bool>() : false );
-	write2pdb( def["write2pdb"] ? def["write2pdb"].to<bool>() : false );
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	if ( option[ in::file::native ].user() ) {
-		std::string const reference_pdb = option[ in::file::native ]();
-		core::pose::PoseOP temp_pose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *temp_pose, reference_pdb );
-		reference_pose( temp_pose );
-		TR<<"Using native pdb "<<reference_pdb<<" as reference.";
-	}
-	TR<<std::endl;
-}
 protocols::filters::FilterOP
 SequenceRecoveryFilter::fresh_instance() const{
 	return protocols::filters::FilterOP( new SequenceRecoveryFilter() );

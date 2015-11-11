@@ -34,21 +34,6 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.filters.Filter" );
 namespace protocols {
 namespace filters {
 
-#ifdef USELUA
-void lregister_Filter( lua_State * lstate ) {
-	luabind::module(lstate, "protocols")
-	[
-		luabind::namespace_("filters")
-		[
-			luabind::class_<Filter>("Filter")
-				.def("apply", ( void (Filter::*)( core::io::serialization::PipeMap & )) &Filter::apply)
-				.def("score", ( void (Filter::*)( core::io::serialization::PipeMap & )) &Filter::score)
-				.def("score", ( core::Real (Filter::*)( core::pose::Pose & )) &Filter::score)
-		]
-	];
-}
-#endif
-
 using namespace core;
 typedef std::pair< std::string const, FilterCOP > StringFilter_pair;
 typedef utility::tag::TagCOP TagCOP;
@@ -106,35 +91,11 @@ Filter::parse_my_tag(
 	core::pose::Pose const & )
 {}
 
-// start mpr support
-void Filter::apply( core::io::serialization::PipeMap & pmap ) {
-	core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(), end = pmap["input"]->end();
-	while ( itr != end ) {
-		if ( !apply ( **itr ) ) {
-			itr = pmap["input"]->erase( itr );
-		} else {
-			++itr;
-		}
-		clear();
-	}
-}
 core::Real Filter::score( core::pose::Pose & pose ) {
 	core::Real score = report_sm( pose );
 	core::pose::setPoseExtraScore( pose, scorename_, score );
 	return score;
 }
-void Filter::score( core::io::serialization::PipeMap & pmap ) {
-	for ( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(), end = pmap["input"]->end(); itr != end; ++itr ) {
-		score( **itr );
-		clear();
-	}
-}
-void Filter::parse_def( utility::lua::LuaObject const & /*def*/,
-	utility::lua::LuaObject const & /*score_fxns*/,
-	utility::lua::LuaObject const & /*tasks*/ ){
-	utility_exit_with_message("This Filter has not implemented parse_def()");
-}
-// end mpr support
 
 } // filters
 } // protocols

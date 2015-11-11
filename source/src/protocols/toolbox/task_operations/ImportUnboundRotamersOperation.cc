@@ -75,10 +75,6 @@ ImportUnboundRotamersOperation::parse_tag( TagCOP /*tag*/ , DataMap & )
 {
 }
 
-void
-ImportUnboundRotamersOperation::parse_def( utility::lua::LuaObject const & /*def*/)
-{}
-
 } // TaskOperations
 } // toolbox
 } // protocols

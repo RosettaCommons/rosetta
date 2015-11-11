@@ -55,9 +55,7 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
-	void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks );
+
 	core::Size lower_threshold() const;
 	core::Size upper_threshold() const;
 	bool packable() const;

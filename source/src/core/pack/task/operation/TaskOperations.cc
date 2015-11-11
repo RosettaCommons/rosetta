@@ -84,9 +84,6 @@ void
 RestrictToRepacking::parse_tag( TagCOP, DataMap & )
 {}
 
-void
-RestrictToRepacking::parse_def( utility::lua::LuaObject const & ) {}
-
 /// BEGIN RestrictResidueToRepacking
 RestrictResidueToRepacking::~RestrictResidueToRepacking() {}
 
@@ -305,10 +302,6 @@ void DisallowIfNonnative::parse_tag( TagCOP tag , DataMap & )
 	restrict_to_residue( tag->getOption< core::Size >( "resnum", 0 ) );
 	disallow_aas( tag->getOption< std::string >( "disallow_aas" ) );
 }
-void DisallowIfNonnative::parse_def( utility::lua::LuaObject const & def) {
-	restrict_to_residue( def["resnum"] ? def["resnum"].to<core::Size>() : 0 );
-	disallow_aas( def["disallow_aas"].to<std::string>());
-}
 
 //BEGIN RotamerExplosion
 RotamerExplosion::RotamerExplosion(){}
@@ -394,9 +387,6 @@ InitializeFromCommandline::parse_tag( TagCOP, DataMap & )
 {
 }
 
-void
-InitializeFromCommandline::parse_def( utility::lua::LuaObject const &) {}
-
 /// BEGIN InitializeFromCommandline
 
 InitializeExtraRotsFromCommandline::~InitializeExtraRotsFromCommandline() {}
@@ -437,9 +427,6 @@ IncludeCurrent::apply( pose::Pose const &, PackerTask & task ) const
 {
 	task.or_include_current(true);
 }
-
-void
-IncludeCurrent::parse_def( utility::lua::LuaObject const & ) {}
 
 /// BEGIN ExtraRotamersGeneric
 ExtraRotamerSamplingData::ExtraRotamerSamplingData() :
@@ -683,13 +670,6 @@ ReadResfile::parse_tag( TagCOP tag , DataMap & )
 	// will be read from, anyways.
 	// if no filename is given, then the ReadResfile command will read either from the ResourceManager
 	// or from the packing::resfile option on the command line.
-	if ( resfile_filename_ == "COMMANDLINE" ) default_filename();
-}
-
-void
-ReadResfile::parse_def( utility::lua::LuaObject const & def) {
-	if ( def["filename"] ) resfile_filename_ = def["filename"].to<std::string>();
-	// special case: if "COMMANDLINE" string specified, use commandline option setting
 	if ( resfile_filename_ == "COMMANDLINE" ) default_filename();
 }
 

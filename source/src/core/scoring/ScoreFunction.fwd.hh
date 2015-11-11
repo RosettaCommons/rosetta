@@ -16,7 +16,6 @@
 #define INCLUDED_core_scoring_ScoreFunction_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <boost/shared_ptr.hpp>
 
 
 namespace core {
@@ -28,7 +27,6 @@ class ScoreFunction;
 
 typedef utility::pointer::shared_ptr< ScoreFunction > ScoreFunctionOP;
 typedef utility::pointer::shared_ptr< ScoreFunction const > ScoreFunctionCOP;
-typedef boost::shared_ptr < ScoreFunction > ScoreFunctionSP;
 
 } // namespace scoring
 } // namespace core

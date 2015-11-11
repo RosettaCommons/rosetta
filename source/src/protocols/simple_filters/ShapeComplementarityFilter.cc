@@ -411,61 +411,6 @@ ShapeComplementarityFilter::parse_my_tag(
 	}
 }
 
-void ShapeComplementarityFilter::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & /*score_fxns*/,
-	utility::lua::LuaObject const & /*tasks*/ ) {
-	filtered_sc_ = def["min_sc"] ? def["min_sc"].to<Real>() : 0.50;
-	filtered_area_ = def["min_interface"] ? def["min_interface"].to<Real>() : 0;
-	verbose_ = def["verbose"] ? def["verbose"].to<Size>() : 0;
-	quick_ = def["quick"] ? def["quick"].to<Size>() : 0;
-	jump_id_ = def["jump"] ? def["jump"].to<Size>() : 1;
-	write_int_area_ = def["write_int_area"] ? def["write_int_area"].to<bool>() : false;
-
-	if ( def["residues1"] ) {
-		for ( utility::lua::LuaIterator i=def["residues1"].begin(), end; i != end; ++i ) {
-			residues1_.push_back( (*i).to<core::Size>() );
-		}
-		if ( residues1_.empty() ) {
-			tr.Warning << "Failed to parse residue1 range, using default." << std::endl;
-		}
-	}
-	if ( def["residues2"] ) {
-		for ( utility::lua::LuaIterator i=def["residues2"].begin(), end; i != end; ++i ) {
-			residues2_.push_back( (*i).to<core::Size>() );
-		}
-		if ( residues2_.empty() ) {
-			tr.Warning << "Failed to parse residue2 range, using default." << std::endl;
-		}
-	}
-
-	tr.Info << "Structures with shape complementarity < " << filtered_sc_ << ", interface area < " <<
-		filtered_area_ << " A^2 will be filtered." << std::endl;
-
-	if ( quick_ ) {
-		tr.Info << "Calculating shape complementarity in quick mode with less accuracy." << std::endl;
-	}
-	if ( !residues1_.empty() && !residues2_.empty() ) {
-		tr.Info << "Using residues for molecule surface (rosetta numbering):" << std::endl;
-		tr.Info << "  Surface 1: ";
-		for ( utility::vector1<Size>::const_iterator r = residues1_.begin(); r != residues1_.end(); ++r ) {
-			tr.Info << (r == residues1_.begin() ? "" : ", ") << *r;
-		}
-		tr.Info << std::endl;
-		tr.Info << "  Surface 2: ";
-		for ( utility::vector1<Size>::const_iterator r = residues2_.begin(); r != residues2_.end(); ++r ) {
-			tr.Info << (r == residues2_.begin() ? "" : ", ") << *r;
-		}
-		tr.Info << std::endl;
-	} else {
-		if ( !residues1_.empty() || !residues2_.empty() ) {
-			tr.Warning << "Ignoring residue range selection since residues" << (residues1_.empty() ? 1 : 2) << " is empty." << std::endl;
-		}
-		if ( jump_id_ != 1 ) {
-			tr.Info << "Using Jump ID " << jump_id_ << " to define surfaces." << std::endl;
-		}
-	}
-}
-
 filters::FilterOP
 ShapeComplementarityFilterCreator::create_filter() const { return filters::FilterOP( new ShapeComplementarityFilter ); }
 

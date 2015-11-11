@@ -295,15 +295,6 @@ InterfacePackingFilter::parse_my_tag( utility::tag::TagCOP tag,
 	TR<<"with options lower_threshold: "<<lower_threshold()<<", upper_threshold: "<<upper_threshold()<<", distance_cutoff: "<<distance_cutoff()<<"contact_dist: "<<contact_dist()<<"sym_dof_names: "<<sym_dof_names()<<std::endl;
 }
 
-void InterfacePackingFilter::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & ,
-	utility::lua::LuaObject const & ) {
-	TR << "InterfacePackingFilter"<<std::endl;
-	distance_cutoff( def["distance_cutoff"] ? def["distance_cutoff"].to<core::Real>() : 9.0 );
-	lower_threshold( def["lower_cutoff"] ? def["lower_cutoff"].to<core::Real>() : -5 );
-	upper_threshold( def["upper_cutoff"] ? def["upper_cutoff"].to<core::Real>() : 5 );
-	TR<<"with options lower_threshold: "<<lower_threshold()<<", upper_threshold: "<<upper_threshold()<<", and distance_cutoff: "<<distance_cutoff()<<std::endl;
-}
 protocols::filters::FilterOP
 InterfacePackingFilter::fresh_instance() const{
 	return protocols::filters::FilterOP( new InterfacePackingFilter() );

@@ -20,7 +20,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -184,18 +183,6 @@ DesignableResiduesFilter::parse_my_tag( utility::tag::TagCOP tag,
 	upper_threshold( tag->getOption< core::Size >( "upper_cutoff", 1000 ) );
 	packable( tag->getOption< bool >( "packable", false ) );
 	designable( tag->getOption< bool >( "designable", true ) );
-	runtime_assert( designable() || packable() );
-	TR<<"with options designable: "<<designable()<<", repackable: "<<packable()<<", lower_cutoff: "<<lower_threshold()<<", and upper_cutoff: "<<upper_threshold()<<std::endl;
-}
-void DesignableResiduesFilter::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & ,
-	utility::lua::LuaObject const & tasks ) {
-	TR << "DesignableResiduesFilter"<<std::endl;
-	task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-	lower_threshold( def["lower_cutoff"] ? def["lower_cutoff"].to<core::Size>() : 0 );
-	upper_threshold( def["upper_cutoff"] ? def["upper_cutoff"].to<core::Size>() : 1000 );
-	packable( def["packable"] ? def["packable"].to<bool>() : false );
-	designable( def["designable"] ? def["designable"].to<bool>() : true );
 	runtime_assert( designable() || packable() );
 	TR<<"with options designable: "<<designable()<<", repackable: "<<packable()<<", lower_cutoff: "<<lower_threshold()<<", and upper_cutoff: "<<upper_threshold()<<std::endl;
 }

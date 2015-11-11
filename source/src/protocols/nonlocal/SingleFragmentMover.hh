@@ -107,12 +107,6 @@ public:
 		const protocols::moves::Movers_map& movers,
 		const Pose& pose);
 
-	/// @brief Mover-specific parsing required by ElScripts
-	void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache );
-
 	/// @brief Returns true if this instance is in a usable state, false otherwise
 	bool valid() const;
 

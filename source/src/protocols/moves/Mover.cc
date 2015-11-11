@@ -42,36 +42,6 @@
 namespace protocols {
 namespace moves {
 
-
-#ifdef USELUA
-void lregister_Mover( lua_State * lstate ) {
-	luabind::module(lstate, "protocols")
-	[
-		luabind::namespace_( "moves" )
-		[
-			luabind::class_<Mover>("Mover")
-				.def("apply", ( void (Mover::*)( core::io::serialization::PipeMap & )) &Mover::apply)
-				.def("apply", ( void (Mover::*)( core::pose::Pose & )) &Mover::apply)
-				.def("parse_state", &Mover::parse_state)
-				.def("save_state", &Mover::save_state)
-		]
-	];
-}
-
-void lregister_SerializableState( lua_State * lstate ){
-	luabind::module(lstate, "protocols")
-	[
-		luabind::namespace_( "moves" )
-		[
-			luabind::class_<SerializableState>("SerializableState")
-				.def("set", ( void (*) ( SerializableStateSP, std::string, std::string )) &SerializableState_set )
-				.def("set", ( void (*) ( SerializableStateSP, std::string, core::Real )) &SerializableState_set )
-				.def("get", &SerializableState_get )
-		]
-	];
-}
-#endif
-
 using namespace core;
 using namespace pose;
 
@@ -139,33 +109,8 @@ void
 Mover::set_native_pose( PoseCOP pose ) { native_pose_ = pose; }
 
 // Factory<Mover> functions
-MoverSP Mover::create() {
-	MoverOP a = fresh_instance();
-	MoverSP tmpsp (a.get());
-	a.reset();
-	return tmpsp;
-}
-// elscripts functions
-void Mover::apply( core::io::serialization::PipeMap & pmap ) {
-	for ( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(), end = pmap["input"]->end(); itr != end; ++itr ) {
-		apply( **itr );
-	}
-}
-
-// called right before mover is used , allowing mover to set settings based on state
-void Mover::parse_state( SerializableState const & /*state*/ ) {
-	utility_exit_with_message("This Mover has not implemented parse_state()");
-}
-// state is not an argument because it doesn't exist at this point
-void Mover::parse_def( utility::lua::LuaObject const & /*def*/,
-	utility::lua::LuaObject const & /*score_fxns*/,
-	utility::lua::LuaObject const & /*tasks*/,
-	MoverCacheSP /*cache*/ ) {
-	utility_exit_with_message("This Mover has not implemented parse_def()");
-}
-
-void Mover::save_state( SerializableState & /*state*/ ) {
-	utility_exit_with_message("This Mover has not implemented save_state()");
+MoverOP Mover::create() {
+	return fresh_instance();
 }
 
 // end mpr support
@@ -238,23 +183,6 @@ Mover::show(std::ostream & output) const
 	output << "Mover name: " << get_name();
 	output << ", Mover type: " << get_type();
 	output << ", Mover current tag:" << get_current_tag() << std::endl;
-}
-
-
-/// serializable set helper functions
-void SerializableState_set( SerializableStateSP state, std::string key, std::string val ) {
-	(*state)[key] = val;
-}
-
-void SerializableState_set( SerializableStateSP state, std::string key, core::Real val ) {
-	(*state)[key] = utility::to_string(val);
-}
-std::string SerializableState_get( SerializableStateSP state, std::string key ) {
-	if ( state->find( key ) != state->end() ) {
-		return (*state)[key];
-	} else {
-		return "";
-	}
 }
 
 

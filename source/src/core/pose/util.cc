@@ -2600,23 +2600,6 @@ return_nearest_residue(
 	return return_nearest_residue( pose, generate_vector_from_bounds( pose, begin, end ), center );
 }
 
-#ifdef USELUA
-void lregister_util( lua_State * lstate ) {
-	luabind::module(lstate, "core")
-	[
-		luabind::namespace_("pose")
-		[
-			luabind::def("getExtraScore", &getPoseExtraScore, luabind::pure_out_value(_3)),
-			luabind::def("setExtraScore", &setPoseExtraScore),
-			luabind::def("get_comment", &get_comment, luabind::pure_out_value(_3)),
-			luabind::def("add_comment", &add_comment),
-			luabind::def("getScore", (core::Real (*) (core::pose::Pose &, std::string const & ) ) &energy_from_pose),
-			luabind::def("getTotalScore", (core::Real (*) (core::pose::Pose & ) ) &total_energy_from_pose)
-		]
-	];
-}
-#endif
-
 // silly conversion from std::map< AtomID, AtomID> to rosetta's silly AtomID_Map class.
 id::AtomID_Map< id::AtomID >
 convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,

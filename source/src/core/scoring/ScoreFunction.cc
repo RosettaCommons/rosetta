@@ -84,18 +84,6 @@ using namespace ObjexxFCL::format;
 namespace core {
 namespace scoring {
 
-#ifdef USELUA
-void lregister_ScoreFunction( lua_State * lstate ) {
-	luabind::module(lstate, "core")
-	[
-		luabind::namespace_("scoring")
-		[
-			luabind::class_<ScoreFunction>("ScoreFunction")
-		]
-	];
-}
-#endif
-
 #ifdef APL_TEMP_DEBUG
 Size n_minimization_sfxn_evals( 0 );
 #endif

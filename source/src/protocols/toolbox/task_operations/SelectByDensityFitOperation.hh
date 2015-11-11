@@ -46,7 +46,6 @@ public:
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
 	void parse_tag( TagCOP tag, DataMap & );
-	void parse_def( utility::lua::LuaObject const & def );
 
 private:
 	core::Real threshold_;

@@ -49,12 +49,6 @@
 #include <map>
 #include <set>
 
-#ifdef USELUA
-#include <lua.hpp>
-#include <luabind/luabind.hpp>
-#include <luabind/out_value_policy.hpp>
-#endif
-
 
 namespace core {
 namespace pose {
@@ -651,9 +645,6 @@ std::string extract_tag_from_pose( core::pose::Pose &pose );
 /// @brief Create a sequence map of first pose onto the second, matching the PDBInfo
 ///    If the PDBInfo of either Pose is missing or invalid, do a simple sequence alignment matching.
 core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose const & second );
-#ifdef USELUA
-void lregister_util( lua_State * lstate );
-#endif
 
 /// @brief count the number of canonical residues in the pose
 core::Size canonical_residue_count(core::pose::Pose const & pose);

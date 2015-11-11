@@ -57,26 +57,8 @@
 #include <utility/tag/Tag.hh>
 #endif
 
-#ifdef USELUA
-#include <lua.hpp>
-#include <luabind/luabind.hpp>
-#endif
-
-#include <core/io/serialization/PipeMap.fwd.hh>
-#include <utility/lua/LuaObject.hh>
-#include <utility/lua/LuaIterator.hh>
-
 namespace protocols {
 namespace moves {
-
-#ifdef USELUA
-void lregister_Mover( lua_State * lstate );
-void lregister_SerializableState( lua_State * lstate );
-void SerializableState_set( SerializableStateSP state, std::string key, std::string val );
-void SerializableState_set( SerializableStateSP state, std::string key, core::Real val );
-std::string SerializableState_get( SerializableStateSP state, std::string key );
-#endif
-
 
 class Mover : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Mover >
 {
@@ -93,7 +75,7 @@ public:
 
 	// Factory<Mover> functions
 	// this really should be pure
-	virtual MoverSP create();
+	virtual MoverOP create();
 
 	static std::string name() {
 		return "UNDEFINED NAME";
@@ -104,20 +86,6 @@ public:
 	inline MoverOP  get_self_ptr() { return shared_from_this(); }
 	inline MoverCAP get_self_weak_ptr() const { return MoverCAP( shared_from_this() ); }
 	inline MoverAP  get_self_weak_ptr() { return MoverAP( shared_from_this() ); }
-
-	// elscripts functions
-	virtual void apply( core::io::serialization::PipeMap & pmap);
-
-	// called right before mover is used , allowing mover to set settings based on state
-	virtual void parse_state( SerializableState const & state );
-
-	// called once, when mover is instantiated
-	virtual void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		MoverCacheSP cache );
-
-	virtual void save_state( SerializableState & state );
 
 	/// @brief sets the type for a mover; name_ has been removed (2010/05/14)
 	Mover( std::string const & type_name );

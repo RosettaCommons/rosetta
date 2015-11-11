@@ -98,11 +98,6 @@ RetrieveStoredTaskOperation::parse_tag( TagCOP tag , DataMap & )
 	task_name_ = tag->getOption< std::string >( "task_name" ) ;
 }
 
-void
-RetrieveStoredTaskOperation::parse_def( utility::lua::LuaObject const & def) {
-	task_name_ = def["task_name"].to<std::string>();
-}
-
 } //namespace task_operations
 } //namespace toolbox
 } //namespace protocols

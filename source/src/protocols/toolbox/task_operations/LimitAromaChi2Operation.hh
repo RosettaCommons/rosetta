@@ -196,7 +196,6 @@ public:
 
 
 	void parse_tag( TagCOP tag , DataMap & );
-	void parse_def( utility::lua::LuaObject const & def );
 
 
 private: // data

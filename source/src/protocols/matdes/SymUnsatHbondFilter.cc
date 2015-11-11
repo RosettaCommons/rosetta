@@ -413,16 +413,6 @@ SymUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 	TR<<"Buried Unsatisfied Hbond filter over jump number " << jump_num() << " with cutoff " << upper_threshold() << std::endl;
 }
 
-void SymUnsatHbondFilter::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & ,
-	utility::lua::LuaObject const & ) {
-	upper_threshold( def["cutoff"] ? def["cutoff"].to<core::Size>() : 20 );
-	jump_num( def["jump"] ? def["jump"].to<core::Size>() : 1 );
-	verbose( def["verbose"] ? def["verbose"].to<bool>() : false );
-	write2pdb( def["write2pdb"] ? def["write2pdb"].to<bool>() : false );
-
-	TR<<"Buried Unsatisfied Hbond filter over jump number " << jump_num() << " with cutoff " << upper_threshold() << std::endl;
-}
 core::Real
 SymUnsatHbondFilter::report_sm( core::pose::Pose const & pose ) const
 {

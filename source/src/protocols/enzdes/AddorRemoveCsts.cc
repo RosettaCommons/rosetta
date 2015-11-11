@@ -155,29 +155,6 @@ AddOrRemoveMatchCsts::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	fail_on_constraints_missing_ = tag->getOption<bool>( "fail_on_constraints_missing", 1 );
 }
 
-void AddOrRemoveMatchCsts::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & ,
-	utility::lua::LuaObject const & ,
-	protocols::moves::MoverCacheSP ) {
-
-	cstfile_ = def["cstfile"] ? def[ "cstfile" ].to<std::string>() : "";
-	if ( (cstfile_ == "") && ( option_cstfile_ == "" ) ) {
-		tr.Warning << "WARNING: No name for the enzdes .cst file was specified in either the options, the xml tag, or programatically. AddOrRemoveMatchCsts will turn into a null operation." << std::endl;
-	}
-
-	std::string cst_instruction = def["cst_instruction"] ? def[ "cst_instruction" ].to<std::string>() : "void";
-	if ( cst_instruction == "add_new" ) cst_action_ = ADD_NEW;
-	else if ( cst_instruction == "add_pregenerated" ) cst_action_ = ADD_PREGENERATED;
-	else if ( cst_instruction == "remove" ) cst_action_ = REMOVE;
-	else {
-		utility_exit_with_message("Illegal or no value for cst_instruction in xml tag given. Has to be either 'add_new', 'add_pregenerated', or 'remove'.");
-	}
-
-	keep_covalent_ = def["keep_covalent"] ? def[ "keep_covalent" ].to<bool>() : false;
-	accept_blocks_missing_header_ = def["accept_blocks_missing_header"] ? def[ "accept_blocks_missing_header" ].to<bool>() : false;
-	fail_on_constraints_missing_ = def["fail_on_constraints_missing"] ? def[ "fail_on_constraints_missing" ].to<bool>() : true;
-}
-
 void
 AddOrRemoveMatchCsts::cstfile( std::string const & setting )
 {

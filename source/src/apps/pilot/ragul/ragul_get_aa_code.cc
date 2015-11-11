@@ -55,7 +55,7 @@ OPT_KEY( IntegerVector, list_of_residues )
 
 int main( int argc, char * argv [] ) {
 
-  try{
+	try{
 
 		NEW_OPT( list_of_residues, "comma seperated list of residue number", 1 );
 
@@ -65,27 +65,27 @@ int main( int argc, char * argv [] ) {
 
 		utility::vector1<std::string> decoy_files;
 
-		if(basic::options::option[in::file::s].user()){
-			for(core::Size h=1;h<=option[in::file::s]().size();h++){
+		if ( basic::options::option[in::file::s].user() ) {
+			for ( core::Size h=1; h<=option[in::file::s]().size(); h++ ) {
 				decoy_files.push_back( option[in::file::s]()[h] );
 			}
-		}else if( option[in::file::l].user()){
-			for(core::Size h=1;h<=option[in::file::l]().size();h++){
+		} else if ( option[in::file::l].user() ) {
+			for ( core::Size h=1; h<=option[in::file::l]().size(); h++ ) {
 				utility::io::izstream pdbs(option[in::file::l]()[h]);
 				std::string fname;
-				while(pdbs >> fname){
+				while ( pdbs >> fname ) {
 					decoy_files.push_back(fname);
 				}
 			}
 		}
 
-		for (core::Size f=1; f <= decoy_files.size(); f++) {
+		for ( core::Size f=1; f <= decoy_files.size(); f++ ) {
 			std::string const input_decoy_name = decoy_files[f];
 			std::cout<<"Reading decoy " << input_decoy_name <<std::endl;
 			core::pose::Pose decoy_pose;
 			core::import_pose::pose_from_pdb(decoy_pose, decoy_files[f]);
 			std::cout<<"SEQUENCE "<<input_decoy_name<<" ";
-			for (core::Size g=1; g <= res_pos.size(); g++) {
+			for ( core::Size g=1; g <= res_pos.size(); g++ ) {
 				core::Size h = option[list_of_residues][g];
 				std::cout<<decoy_pose.residue(h).name1();
 			}

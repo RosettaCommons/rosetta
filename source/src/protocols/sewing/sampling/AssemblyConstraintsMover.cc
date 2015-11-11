@@ -277,14 +277,13 @@ AssemblyConstraintsMover::apply( core::pose::Pose & pose ) {
 					continue;
 				}
 				TR << "Favoring " << residues[i].second->type().name3()<< " at position " << seqpos << std::endl;
-				if (residues[i].second->type().name3() != "PRO"){
+				if ( residues[i].second->type().name3() != "PRO" ) {
 					ResidueTypeConstraintOP matched_nat_res_constraint ( new ResidueTypeConstraint(seqpos, residues[i].second->type().name3(), residues[i].second->type().name3(), base_native_bonus_) );
 					pose.add_constraint(matched_nat_res_constraint);
 					//Need to update residue neighbors every time we add a constraint. As adding a constraint clears the energies object
 					pose.update_residue_neighbors();
 					favored_types.insert(residues[i].second->type().name3());
-				}
-				else{ // as of 2015_11_05, Doonam can't confirm whether native rotamer file's proline is ever actually used to be favored
+				} else { // as of 2015_11_05, Doonam can't confirm whether native rotamer file's proline is ever actually used to be favored
 					TR << "Favoring " << residues[i].second->type().name3()<< " at position " << seqpos << " with base_native_pro_bonus_ " << base_native_pro_bonus_ << std::endl;
 					ResidueTypeConstraintOP matched_nat_res_constraint ( new ResidueTypeConstraint(seqpos, residues[i].second->type().name3(), residues[i].second->type().name3(), base_native_pro_bonus_) );
 					pose.add_constraint(matched_nat_res_constraint);

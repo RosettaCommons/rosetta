@@ -196,47 +196,6 @@ JointSequenceOperation::parse_tag( TagCOP tag , DataMap & )
 
 }
 
-void
-JointSequenceOperation::parse_def( utility::lua::LuaObject const & def)
-{
-	use_current_pose( def["use_current"] ? def["use_current"].to<bool>() : true );
-	use_natro( def["use_natro"] ? def["use_natro"].to<bool>() : false );
-
-	// specifiy a chain, if 0 use all
-	chain_ = def["chain"] ? def["chain"].to<core::Size>() : 0;
-
-	if ( def["use_native"] && def["use_native"].to<bool>() == false ) {
-		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-			add_native_pdb( basic::options::option[ basic::options::OptionKeys::in::file::native ] );
-		} else {
-			utility_exit_with_message("Native PDB not specified on command line.");
-		}
-	}
-
-	if ( def["use_starting_as_native"] && def["use_starting_as_native"].to<bool>() == false ) {
-		core::pose::PoseCOP pose (protocols::jd2::get_current_jobs_starting_pose());
-		add_native_pose( pose );
-	}
-
-	if ( def["filename"] ) {
-		add_pdb( def["filename"].to<std::string>() );
-	}
-	if ( def["native"] ) {
-		add_native_pdb( def["native"].to<std::string>() );
-	}
-
-	if ( def["use_fasta"] && def["use_fasta"].to<bool>() == false ) {
-		// Use native FASTA sequence
-		if ( basic::options::option[ basic::options::OptionKeys::in::file::fasta ].user() ) {
-			std::string fasta_file( core::sequence::read_fasta_file_str( basic::options::option[ basic::options::OptionKeys::in::file::fasta ]()[1] )[1] );
-			add_native_fasta( fasta_file );
-		} else {
-			utility_exit_with_message("Native FASTA file not specified on command line.");
-		}
-
-	}
-}
-
 /// @brief Add the sequence from the given filename to the set of allowed aas.
 void
 JointSequenceOperation::add_pdb( std::string filename )

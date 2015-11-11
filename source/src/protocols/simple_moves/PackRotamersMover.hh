@@ -102,11 +102,6 @@ public:
 
 	bool task_is_valid( Pose const & pose ) const; // should this be virtual?
 
-	virtual void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache );
-
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		TagCOP,

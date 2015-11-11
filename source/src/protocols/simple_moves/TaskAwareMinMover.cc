@@ -27,7 +27,6 @@
 
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Utility Headers
@@ -177,32 +176,6 @@ TaskAwareMinMover::parse_my_tag(
 	minmover_->parse_opts( tag, datamap, filters, movers, pose );
 	parse_task_operations( tag, datamap, filters, movers, pose );
 	minmover_->score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap) );
-}
-
-void TaskAwareMinMover::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & score_fxns,
-	utility::lua::LuaObject const & tasks,
-	protocols::moves::MoverCacheSP cache ) {
-	if ( def["chi"] ) {
-		chi_ = def["chi"].to<bool>();
-	}
-	if ( def["bb"] ) {
-		bb_ = def["bb"].to<bool>();
-	}
-	jump_ = def["jump"] ? def["jump"].to<bool>() : false;
-	minmover_ = protocols::simple_moves::MinMoverOP( new MinMover );
-	// interesting how this doesn't read a movemap....
-	minmover_->parse_def_opts( def, score_fxns, tasks, cache );
-	if ( def["tasks"] ) {
-		core::pack::task::TaskFactoryOP new_task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-		if ( new_task_factory == 0 ) return;
-		factory_ =  new_task_factory;
-	}
-	if ( def["scorefxn"] ) {
-		minmover_->score_function( protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) );
-	} else {
-		minmover_->score_function( score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone()  );
-	}
 }
 
 /// @brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)

@@ -35,7 +35,6 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 
 #include <utility/tag/Tag.hh>
@@ -191,22 +190,6 @@ TaskAwareSymMinMover::parse_my_tag( utility::tag::TagCOP tag,
 	factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 
 }
-
-void TaskAwareSymMinMover::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & score_fxns,
-	utility::lua::LuaObject const & tasks,
-	protocols::moves::MoverCacheSP ){
-	scorefxn_name_ = def["scorefxn"] ? def["scorefxn"].to<std::string>() : "score12_symm";
-	min_chi_ = def["chi"] ? def["chi"].to<bool>() : true;
-	min_bb_ = def["bb"] ? def["bb"].to<bool>() : false;
-	min_bb_ = def["rb"] ? def["rb"].to<bool>() : false;
-	min_type_ = def["type"] ? def["type"].to<std::string>() : "dfpmin_armijo_nonmonotone";
-	tolerance_ = def["tolerance"] ? def["tolerance"].to<core::Real>() : 1e-5;
-	// Get the ScoreFunction and TaskOperations from the basic::datacache::DataMap
-	scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
-	factory_ = protocols::elscripts::parse_taskdef( def["tasks"], tasks );
-}
-
 
 } // symmetry
 } // simple_moves

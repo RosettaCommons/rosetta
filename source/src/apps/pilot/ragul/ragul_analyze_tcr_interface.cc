@@ -139,7 +139,7 @@ int main( int argc, char * argv [] ){
 		std::string tag = input_pdb_name.substr((pfounddir+1),(pfounddot-(pfounddir+1)));
 		std::string unbo_pdb = "unbo_" + tag + ".pdb";
 
-		if (option[ print_unbound ]){
+		if ( option[ print_unbound ] ) {
 			unbound_pose.dump_pdb( unbo_pdb );
 		}
 
@@ -247,7 +247,7 @@ int main( int argc, char * argv [] ){
 		unbound_sb = tot_sb_mval.value();
 		Interface_sb = bound_sb - unbound_sb;
 
-		std::cout << "Interface_Scores:	"<< tag <<"	"<< input_pdb_name <<"	" << bound_energy <<"	"<< Interface_Energy <<"	"<< Total_BSA <<"	"<< Interface_HB <<"	"<< Total_packstats <<"	"<< Interface_unsat <<"	"<<Interface_pipi<<"	"<<Interface_catpi<<"	"<<Interface_sb<< std::endl;
+		std::cout << "Interface_Scores:\t"<< tag <<"\t"<< input_pdb_name <<"\t" << bound_energy <<"\t"<< Interface_Energy <<"\t"<< Total_BSA <<"\t"<< Interface_HB <<"\t"<< Total_packstats <<"\t"<< Interface_unsat <<"\t"<<Interface_pipi<<"\t"<<Interface_catpi<<"\t"<<Interface_sb<< std::endl;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

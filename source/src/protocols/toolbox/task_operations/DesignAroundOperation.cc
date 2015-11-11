@@ -161,25 +161,7 @@ DesignAroundOperation::parse_tag( TagCOP tag , DataMap & )
 	runtime_assert( design_shell() <= repack_shell() );
 	TR<<"repack_shell = "<<repack_shell()<<" design shell = "<<design_shell()<<std::endl;
 }
-void DesignAroundOperation::parse_def( utility::lua::LuaObject const & def ) {
-	if ( def["resnums"] ) {
-		ostringstream oss("");
-		utility::lua::LuaIterator beg = def["resnums"].begin();
-		for ( utility::lua::LuaIterator i=beg, end; i != end; ++i ) {
-			if ( i != beg ) {
-				oss << ",";
-			}
-			oss << (*i).to<core::Size>();
-		}
-		string_resnums_ = oss.str();
-	}
-	design_shell( def["design_shell"] ? def["design_shell"].to<core::Real>() : 8.0 );
-	allow_design( def["allow_design"] ? def["allow_design"].to<bool>() : true );
-	resnums_allow_design( def["resnums_allow_design"] ? def["resnums_allow_design"].to<bool>() : true );
-	repack_shell( def["repack_shell"] ? def["repack_shell"].to<core::Real>() : 8.0 );
-	runtime_assert( design_shell() <= repack_shell() );
-	TR<<"repack_shell = "<<repack_shell()<<" design shell = "<<design_shell()<<std::endl;
-}
+
 } //namespace protocols
 } //namespace toolbox
 } //namespace task_operations

@@ -135,20 +135,6 @@ RestrictIdentitiesOperation::parse_tag( TagCOP tag , DataMap & )
 	}
 }
 
-void
-RestrictIdentitiesOperation::parse_def( utility::lua::LuaObject const & def)
-{
-	prevent_repacking( def["prevent_repacking"] ? def["prevent_repacking"].to<bool>() : false );
-	std::string action = (prevent_repacking_) ? "Preventing from repacking " : "Restricting to repacking " ;
-	TR << action << "residues of type(s): ";
-	identities_.clear();
-	for ( utility::lua::LuaIterator i=def["identities"].begin(), end; i != end; ++i ) {
-		identities_.push_back( (*i).to< std::string >() ) ;
-		TR << identities_.back() << " ";
-	}
-	TR.Debug << std::endl;
-}
-
 } //namespace protocols
 } //namespace toolbox
 } //namespace task_operations

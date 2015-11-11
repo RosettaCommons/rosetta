@@ -619,7 +619,6 @@ sources = {
 		"MonteCarloReset",
 		"MSDMover",
 		"MutateResidue",
-		"O2M_MutateMover",
 		"PackRotamersMover",
 		"PackRotamersMoverLazy",
 		"PDBReloadMover",

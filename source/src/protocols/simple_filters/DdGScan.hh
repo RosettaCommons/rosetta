@@ -27,6 +27,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/simple_moves/ddG.fwd.hh>
 
@@ -87,10 +88,6 @@ public :
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const &
 	);
-
-	void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks );
 
 	// Effector functions
 	core::Real ddG_for_single_residue(

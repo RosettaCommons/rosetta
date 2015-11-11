@@ -67,11 +67,6 @@ public:
 		Movers_map const &,
 		Pose const & );
 
-	void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache );
-
 private:
 	Real get_radial_disp();
 	Real get_angle();

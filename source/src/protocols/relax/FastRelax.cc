@@ -168,7 +168,6 @@ endrepeat
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <utility/excn/Exceptions.hh>
-#include <protocols/elscripts/util.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
@@ -413,47 +412,6 @@ FastRelax::parse_my_tag(
 	//      virtual residues need to be deleted to calculate rmsd after FastRelax
 
 } //parse_my_tag
-
-void FastRelax::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & score_fxns,
-	utility::lua::LuaObject const & tasks,
-	protocols::moves::MoverCacheSP ) {
-	if ( def["scorefxn"] ) {
-		set_scorefxn( protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) );
-	} else {
-		set_scorefxn( score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone()  );
-	}
-
-	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-	mm->set_chi( true );
-	mm->set_bb( true );
-	mm->set_jump( true );
-	// initially, all backbone torsions are movable
-	if ( def["movemap"] ) {
-		protocols::elscripts::parse_movemapdef( def["movemap"], mm );
-	}
-	set_movemap(mm);
-
-	if ( def["tasks"] ) {
-		core::pack::task::TaskFactoryOP new_task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-		if ( new_task_factory == 0 ) return;
-		set_task_factory(new_task_factory);
-	}
-
-	default_repeats_ = def["repeats"] ? def["repeats"].to<int>() : 8;
-	std::string script_file = def["relaxscript"] ? def["relaxscript"].to<std::string>() : "";
-
-	bool batch = def["batch"] ? def["batch"].to<bool>() : false;
-	cartesian (def["cartesian"] ? def["cartesian"].to<bool>() : false );
-
-	if ( batch ) {
-		set_script_to_batchrelax_default( default_repeats_ );
-	} else if ( script_file == "" ) {
-		read_script_file( "", default_repeats_ );
-	} else {
-		read_script_file( script_file );
-	}
-} //parse_def
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void FastRelax::set_to_default( )

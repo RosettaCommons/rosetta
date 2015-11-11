@@ -90,8 +90,6 @@
 #include <utility/sort_predicates.hh>
 #include <math.h>
 
-#include <protocols/outputter/ResFileOutputter.hh>
-
 
 //tracers
 using basic::Error;

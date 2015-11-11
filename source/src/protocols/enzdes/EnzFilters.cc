@@ -54,7 +54,6 @@
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 #include <core/pose/selection.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/ChargeCalculator.hh>
@@ -326,7 +325,7 @@ LigInterfaceEnergyFilter::report( std::ostream & out, core::pose::Pose const & p
 
 	core::pose::Pose in_pose = pose;
 	// TL 4/2013: If rb_jump_ is unset, determine jump number according to the number of jumps currently in the pose
-	// previously, if this filter was used in RosettaScripts, rb_jump_ was initialized to jump number according to the number of jumps in the pose when the XML was parsed. This enables adding a ligand to the pose after the XML/Lua is parsed
+	// previously, if this filter was used in RosettaScripts, rb_jump_ was initialized to jump number according to the number of jumps in the pose when the XML was parsed. This enables adding a ligand to the pose after the XML is parsed
 	core::Size jump;
 	if ( rb_jump_ == 0 ) {
 		jump = pose.num_jump();
@@ -434,21 +433,6 @@ LigInterfaceEnergyFilter::parse_my_tag( TagCOP const tag, basic::datacache::Data
 	rb_jump_ = tag->getOption<core::Size>( "jump_number", 0 );
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff" , 8.0 );
 
-}
-void LigInterfaceEnergyFilter::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & score_fxns,
-	utility::lua::LuaObject const & /*tasks*/ ){
-	using namespace core::scoring;
-
-	if ( def["scorefxn"] ) {
-		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns )->clone();
-	} else {
-		scorefxn_ = score_fxns["score12"].to<ScoreFunctionSP>()->clone();
-	}
-	threshold_ = def["threshold"] ? def["threshold"].to<core::Real>() : 0.0;
-	include_cstE_ = def["include_cstE"] ? def["include_cstE"].to<bool>() : false;
-	rb_jump_ = def["jump_number"] ? def["jump_number"].to<core::Size>() : 0;
-	interface_distance_cutoff_ = def["interface_distance_cutoff"] ? def["interface_distance_cutoff"].to<core::Real>() : 8.0;
 }
 
 LigInterfaceEnergyFilter::~LigInterfaceEnergyFilter() {}

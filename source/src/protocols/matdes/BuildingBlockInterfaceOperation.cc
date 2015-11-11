@@ -229,14 +229,6 @@ BuildingBlockInterfaceOperation::parse_tag( TagCOP tag , DataMap & )
 	multicomponent_ = tag->getOption< bool >("multicomp", 0);
 }
 
-void
-BuildingBlockInterfaceOperation::parse_def( utility::lua::LuaObject const & def)
-{
-	nsub_bblock_ = def["nsub_bblock"] ? def["nsub_bblock"].to<core::Size>() : 1;
-	contact_dist_ = def["contact_dist"] ? def["contact_dist"].to<core::Real>() : 10.0;
-	bblock_dist_ = def["bblock_dist"] ? def["bblock_dist"].to<core::Real>() : 5.0;
-	fa_rep_cut_ = def["fa_rep_cut"] ? def["fa_rep_cut"].to<core::Real>() : 3.0;
-}
 
 } //namespace matdes
 } //namespace protocols

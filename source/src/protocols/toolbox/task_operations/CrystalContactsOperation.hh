@@ -55,7 +55,6 @@ public:
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
 	void parse_tag( TagCOP tag, DataMap & );
-	void parse_def( utility::lua::LuaObject const & def );
 
 private:
 	bool is_crystal_contact( core::conformation::Residue const & asymm_residue, core::conformation::Residue const & symm_residue ) const;

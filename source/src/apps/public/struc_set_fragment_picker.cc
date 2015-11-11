@@ -86,10 +86,10 @@ run()
 	utility::vector1<core::pose::Pose> poses;
 	FragSetOP fragset(new ConstantLengthFragSet);
 
-	for( size_t i = 1; i <= files.size(); ++i ) {
-			utility::io::izstream list( files[i] );
-			std::string fname;
-			while( list >> fname ) {
+	for ( size_t i = 1; i <= files.size(); ++i ) {
+		utility::io::izstream list( files[i] );
+		std::string fname;
+		while ( list >> fname ) {
 			tr << "reading pose from " << fname << std::endl;
 			core::pose::Pose tmp;
 			core::import_pose::pose_from_pdb(tmp,fname);
@@ -100,14 +100,13 @@ run()
 	}
 
 	FrameOP frame(new Frame( 1, frag_length ));
-	for ( Size i=1; i <= poses.size(); ++i )
-	{
+	for ( Size i=1; i <= poses.size(); ++i ) {
 		for ( Size pos=1; pos <= poses[i].total_residue()-frag_length; ++pos ) {
 			FragDataOP frag(new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), frag_length ));
 			bool steal_success = frag->steal( poses[i], pos, pos + frag_length -1 );
-	    if ( steal_success && frag->is_valid() ) {
-			   bool success = frame->add_fragment( frag );
-			   assert( success );
+			if ( steal_success && frag->is_valid() ) {
+				bool success = frame->add_fragment( frag );
+				assert( success );
 			}
 		}
 	}
@@ -119,15 +118,15 @@ run()
 			new_frame->add_fragment( frag );
 		}
 		if ( new_frame->is_valid() ) {
-		fragset->add( new_frame );
+			fragset->add( new_frame );
 		}
 	}
 
 	utility::io::ozstream dump_frag( option[ OptionKeys::struc_set_fragment_picker::frag_name ]() );
-  Size ct( 1 );
-  for ( ConstFrameIterator it=fragset->begin(), eit=fragset->end(); it!=eit; ++it, ++ct ) {
-    (*it)->show( dump_frag );
-  }
+	Size ct( 1 );
+	for ( ConstFrameIterator it=fragset->begin(), eit=fragset->end(); it!=eit; ++it, ++ct ) {
+		(*it)->show( dump_frag );
+	}
 }
 
 

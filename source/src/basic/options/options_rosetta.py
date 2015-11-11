@@ -4530,17 +4530,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'unmask_bb', 'Boolean', default = 'false', desc='Only include sidechain atoms in atom mask'),
 	), # -edensity
 
-	Option_Group( 'els',
-		Option( 'master_wu_per_send', 'Integer', default='1' , desc = 'How many wu to send in one isend from master.  Set to ~ (WU generated: slaves per master) ratio' ),
-		Option( 'vars', 'String', default='' , desc = 'Any variables you want to pass to lua, semi colon separated, in the form: myvar=5' ),
-		Option( 'script', 'File', default='' , desc = 'Path to the ElScript' ),
-		Option( 'num_traj', 'Integer', desc = 'Number of trajectories' ),
-		Option( 'traj_per_master', 'Integer', desc = 'Number of trajectories per master node' ),
-		Option( 'shortest_wu', 'Integer', default='60', desc = 'Length of time of shortest wu in seconds, used for determining status request resend period.  Err on the side of smaller times' ),
-		Option( 'pool', 'Boolean', default='false', desc = 'Using pool node?' ),
-		Option( 'singlenode', 'Boolean', default='false', desc = 'Using singlenode role with mpi?' ),
-	), # -els
-
 	## options for enzyme design
 	Option_Group('enzdes',
 		Option( 'enzdes', 'Boolean', desc="enzdes option group", legal='true', default='true' ),

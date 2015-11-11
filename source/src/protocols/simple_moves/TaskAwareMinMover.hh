@@ -63,11 +63,6 @@ public:
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-	virtual void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache );
-
 	/// @brief parse "task_operations" XML option
 	virtual void parse_task_operations(
 		TagCOP,

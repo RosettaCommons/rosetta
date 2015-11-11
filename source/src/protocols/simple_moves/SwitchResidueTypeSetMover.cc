@@ -104,14 +104,6 @@ SwitchResidueTypeSetMover::parse_my_tag(
 	if ( tag->hasOption("set") ) type_set_tag_ = tag->getOption<std::string>("set");
 }
 
-void
-SwitchResidueTypeSetMover::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & /*score_fxns*/,
-	utility::lua::LuaObject const & /*tasks*/,
-	protocols::moves::MoverCacheSP /*cache*/ ) {
-	if ( def["set"] ) type_set_tag_ = def["set"].to<std::string>();
-}
-
 std::ostream &operator<< (std::ostream &os, SwitchResidueTypeSetMover const &mover)
 {
 	mover.show(os);

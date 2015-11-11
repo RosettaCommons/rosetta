@@ -87,11 +87,6 @@
 #include <protocols/init/init.WriteableCacheableDataCreators.ihh>
 #include <protocols/init/init.WriteableCacheableDataRegistrators.ihh>
 
-#include <protocols/init/init.MoverFactory.ihh>
-#include <protocols/init/init.InputterFactory.ihh>
-#include <protocols/init/init.OutputterFactory.ihh>
-
-
 namespace protocols {
 namespace init {
 void init( int argc, char * argv [] )

@@ -37,7 +37,6 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
-#include <protocols/elscripts/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>

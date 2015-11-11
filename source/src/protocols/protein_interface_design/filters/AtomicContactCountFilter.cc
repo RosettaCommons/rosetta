@@ -35,6 +35,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/dssp/Dssp.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/symmetry/util.hh>

@@ -71,10 +71,6 @@ public:
 		filters::Filters_map const &filters,
 		moves::Movers_map const &movers,
 		core::pose::Pose const & pose );
-	virtual void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache );
 
 private:
 

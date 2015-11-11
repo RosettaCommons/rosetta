@@ -94,7 +94,7 @@ main( int argc, char * argv [] )
 	core::pose::lregister_Pose(lstate_);
 	core::pose::lregister_util(lstate_);
 	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	PoseSP pose_sp(new Pose());
+	PoseOP pose_sp(new Pose());
 	core::import_pose::pose_from_pdb( *pose_sp, *residue_set, option[ m::file]().name() );
 	luabind::globals(lstate_)["p"] = pose_sp;
 	somelua =

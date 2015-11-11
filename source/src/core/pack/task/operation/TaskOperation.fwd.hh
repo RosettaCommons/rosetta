@@ -16,7 +16,6 @@
 #define INCLUDED_core_pack_task_operation_TaskOperation_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <boost/shared_ptr.hpp>
 
 namespace core {
 namespace pack {
@@ -26,7 +25,6 @@ namespace operation {
 class TaskOperation;
 typedef utility::pointer::shared_ptr< TaskOperation > TaskOperationOP;
 typedef utility::pointer::shared_ptr< TaskOperation > TaskOperationCOP;
-typedef boost::shared_ptr < TaskOperation > TaskOperationSP;
 
 } //namespace operation
 } //namespace task

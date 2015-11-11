@@ -42,7 +42,6 @@
 #include <protocols/loops/util.hh>
 #include <protocols/loops/Loops.hh>
 
-#include <protocols/elscripts/util.hh>
 // utility headers
 #include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>
@@ -212,19 +211,6 @@ void ScoreMover::parse_my_tag(
 
 	if ( tag->hasOption("verbose") ) {
 		verbose_ = tag->getOption<bool>("verbose");
-	}
-}
-
-void ScoreMover::parse_def( utility::lua::LuaObject const & def,
-	utility::lua::LuaObject const & score_fxns,
-	utility::lua::LuaObject const & /*tasks*/,
-	protocols::moves::MoverCacheSP /*cache*/ ){
-	if ( def["scorefxn"] ) {
-		score_function_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
-	}
-
-	if ( def["verbose"] ) {
-		verbose_ = def["verbose"].to<bool>();
 	}
 }
 

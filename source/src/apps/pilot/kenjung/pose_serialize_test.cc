@@ -54,12 +54,12 @@ main( int argc, char * argv [] )
 		using namespace core::scoring;
 
 		core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-		PoseSP tmppose(new Pose());
+		PoseOP tmppose(new Pose());
 		core::import_pose::pose_from_pdb( *tmppose, *residue_set, option[ m::file]().name() );
 		tmppose->dump_pdb(option[ m::file]().name()+".dump");
 
 		ScoreFunctionOP scorefxn = get_score_function();
-		PoseSP out;
+		PoseOP out;
 		(*scorefxn)(*tmppose);
 		std::stringstream s;
 		boost::archive::binary_oarchive oa(s);
