@@ -86,9 +86,6 @@ MMLJEnergyIntra::clone() const
 	return EnergyMethodOP( new MMLJEnergyIntra() );
 }
 
-/// @details this method heinously const-casts the Pose reference it's given
-/// this is because we need to shuck a nblist into the Pose's Energies
-/// because the ResSingleMinimizationData isn't working for a NeighborListOP?
 void
 MMLJEnergyIntra::setup_for_minimizing_for_residue(
 	conformation::Residue const & /*rsd*/,
@@ -102,7 +99,7 @@ MMLJEnergyIntra::setup_for_minimizing_for_residue(
 	// and putting the nblist in the pose over and over and this debug_assert
 	// that is failing is saying "hey there is already a nblist in here"
 
-	if ( !pose.energies().use_nblist() ) return;
+	//if ( !pose.energies().use_nblist() ) return;
 
 	//Return right now so we don't set the nblist again?
 	if ( pose.energies().use_nblist_of_type( EnergiesCacheableDataType::MM_LJ_INTRA_NBLIST ) ) return;
@@ -138,10 +135,10 @@ MMLJEnergyIntra::setup_for_minimizing(
 ) const
 {
 	// Could this be conflicting somehow?
-	return;
+	//return;
 	// taken for the most part from BaseETableEnergy.hh
 
-	if ( pose.energies().use_nblist() ) {
+	//if ( pose.energies().use_nblist() ) {
 		// stash our nblist inside the pose's energies object
 		Energies & energies( pose.energies() );
 
@@ -165,7 +162,7 @@ MMLJEnergyIntra::setup_for_minimizing(
 		energies.set_nblist( EnergiesCacheableDataType::MM_LJ_INTRA_NBLIST, nblist );
 		NeighborList nblist_blah( energies.nblist( EnergiesCacheableDataType::MM_LJ_INTRA_NBLIST ) );
 		//std::cout << "In MMLJEnergyIntra setup_for_minimizing()" << std::endl;
-	}
+	//}
 }
 
 
@@ -227,16 +224,6 @@ MMLJEnergyIntra::eval_intrares_energy(
 				potential_.score( rsdtype.atom( i ).mm_atom_type_index(), rsdtype.atom( j ).mm_atom_type_index(), path_dist, dist_squared, rep, atr );
 				total_rep += rep;
 				total_atr += atr;
-				//      std::cout << "INTRA"
-				//          << " RSD: "  << std::setw(22) << rsdtype.name()
-				//          << " ATM1: " << std::setw(4)  << rsdtype.mm_atom_name(i)
-				//          << " ATM2: " << std::setw(4)  << rsdtype.mm_atom_name(j)
-				//          << " PDST: " << std::setw(4)  << path_dist
-				//          << " DIST: " << std::setw(8)  << atom1.xyz().distance( atom2.xyz() )
-				//          << " WGHT: " << std::setw(4)  << weight
-				//          << " ENER: " << std::setw(8)  << energy
-				//          << std::endl;
-
 			}
 		}
 	}
@@ -309,9 +296,12 @@ MMLJEnergyIntra::eval_intrares_derivatives(
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const {
-	if ( !pose.energies().use_nblist() ) {
-		utility_exit_with_message("non-nblist minimize!");
-	}
+	
+	// The nblist is not necessarily stored in the pose's energies object!
+	// In setup_for_minimize_for_residue etc., we actually don't put it there.
+	//if ( !pose.energies().use_nblist() ) {
+	//	utility_exit_with_message("non-nblist minimize!");
+	//}
 
 	scoring::NeighborList const & nblist( *utility::pointer::dynamic_pointer_cast< const NeighborListData >( res_data_cache.get_data( mm_lj_intra_nblist ) )->nblist() );
 

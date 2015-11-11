@@ -74,23 +74,6 @@ MMTorsionScore::score( mm_torsion_atom_quad mm_atomtype_set, Real angle ) const
 		score += ( (i->second).key1() * ( 1+cos( (i->second).key2() *  angle - (i->second).key3() ) ) );
 	}
 
-	/* Debug virtual atom scores
-	if ( mm_atomtype_set.key1() == 38
-	|| mm_atomtype_set.key2() == 38
-	|| mm_atomtype_set.key3() == 38
-	|| mm_atomtype_set.key4() == 38 ) {
-	std::cout << "MM virtual score: " << score << std::endl;
-	if ( score != 0.0 ) {
-	for ( mm_torsion_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
-	std::cout << "(i->second).key1() " << (i->second).key1();
-	std::cout << " (i->second).key2() " << (i->second).key2();
-	std::cout << " (i->second).key3() " << (i->second).key3() << std::endl;
-	}
-
-	}
-	}
-	*/
-
 	return score;
 }
 
@@ -109,32 +92,10 @@ MMTorsionScore::dscore( mm_torsion_atom_quad mm_atomtype_set, Real angle ) const
 		mm_atomtype_set.key3(),
 		mm_atomtype_set.key4() );
 
-	// calc score
-	//for ( mm_torsion_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
-	// score += ( (i->second).key1() * ( 1+cos( (i->second).key2() *  angle - (i->second).key3() ) ) );
-	//}
-
 	for ( mm_torsion_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
 		/// The math below is entirely Doug's and I'm trusting it.
 		dscore_dang += (-1 * (i->second).key1() * (i->second).key2() * sin( (i->second).key2() * angle - (i->second).key3() ) );
 	}
-
-	/* Debug virtual atom scores
-	if ( mm_atomtype_set.key1() == 38
-	|| mm_atomtype_set.key2() == 38
-	|| mm_atomtype_set.key3() == 38
-	|| mm_atomtype_set.key4() == 38 ) {
-	std::cout << "MM virtual score: " << dscore_dang << std::endl;
-	if ( score != 0.0 ) {
-	for ( mm_torsion_library_citer i = pair.first, e = pair.second; i != e; ++i ) {
-	std::cout << "(i->second).key1() " << (i->second).key1();
-	std::cout << " (i->second).key2() " << (i->second).key2();
-	std::cout << " (i->second).key3() " << (i->second).key3() << std::endl;
-	}
-
-	}
-	}
-	*/
 
 	return dscore_dang;
 }
