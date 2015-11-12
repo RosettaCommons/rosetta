@@ -26,9 +26,8 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 #include <core/pose/ncbb/util.hh>
-
-#include <core/import_pose/import_pose.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -229,7 +228,7 @@ CovalentPeptidomimeticDockDesign::apply(
 	pose.fold_tree( f );
 	TR << pose.fold_tree() << std::endl;
 
-	import_pose::set_reasonable_fold_tree( pose );
+	pose::set_reasonable_fold_tree( pose );
 	mm->set_branches( cys_resi, true );
 
 	limited_task->restrict_to_residues( packable );

@@ -20,19 +20,20 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTyper.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-#include <core/chemical/rings/RingConformerSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/carbohydrates/util.hh>
 #include <core/io/carbohydrates/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/FileName.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <iostream>
@@ -86,8 +87,8 @@ main( int argc, char *argv[] )
 		devel::init( argc, argv );
 
 		// Declare variables.
-		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, psicose,
-			neuraminate, Lex, SLex, GalCer, target57, Me_glycoside, maltobiose;
+		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, O_linked,
+				psicose, neuraminate, Lex, SLex, GalCer, target57, Me_glycoside, maltobiose;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -118,16 +119,10 @@ main( int argc, char *argv[] )
 		cout << "Creating maltotriose from sequence: alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp:" << endl;
 
 		make_pose_from_saccharide_sequence(
-			maltotriose, "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp", *residue_set );
+				maltotriose, "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp", *residue_set );
+		maltotriose.pdb_info()->name( "maltotriose" );
 
-		// TODO: Figure out what is wrong from sugar poses made from sequences.
-		// Note to self: It's a PDBInfo issue.
-		//test_sugar(maltotriose);
-		cout << endl << maltotriose << endl;
-
-		cout << "Sequences:" << endl;
-		cout << " Chain 1: ";
-		cout << maltotriose.chain_sequence( 1 ) << endl;
+		test_sugar( maltotriose );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
@@ -145,19 +140,14 @@ main( int argc, char *argv[] )
 
 		test_sugar( glucosamine );
 
-		cout << *glucosamine.residue( 1 ).type().ring_conformer_set( 1 );
-
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Creating glucosamine from sequence: GlcpN:" << endl;
 
 		make_pose_from_saccharide_sequence( glucosamine, "GlcpN", *residue_set );
+		glucosamine.pdb_info()->name( "glucosamine" );
 
-		cout << endl << glucosamine << endl;
-
-		cout << "Sequences:" << endl;
-		cout << " Chain 1: ";
-		cout << glucosamine.chain_sequence( 1 ) << endl;
+		test_sugar( glucosamine );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
@@ -169,13 +159,55 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating N-glycosylated 14-mer from sequence: " <<
+				"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
+				"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
+				"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-" << endl;
+
+		make_pose_from_saccharide_sequence( N_linked_14_mer,
+				"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
+				"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
+				"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-", *residue_set );
+
+		test_sugar( N_linked_14_mer );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating O-linked glycan from sequences: ASA and Glcp" << endl;
+
+		make_pose_from_sequence( O_linked, "ASA", *residue_set );
+		pose::carbohydrates::glycosylate_pose( O_linked, 2, "Glcp" );
+
+		test_sugar( O_linked );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating core 5 O-linked glycan by glycosylating sequence: ASA" << endl;
+
+		make_pose_from_sequence( O_linked, "ASA", *residue_set );
+		pose::carbohydrates::glycosylate_pose_by_file( O_linked, 2, "core_5_O-glycan" );
+
+		test_sugar( O_linked );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating N-linked, branched glycan from sequences:" << endl;
+
+		make_pose_from_sequence( N_linked_14_mer, "ANASA", *residue_set );
+		pose::carbohydrates::glycosylate_pose( N_linked_14_mer, 2,
+				"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
+				"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
+				"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-" );
+
+		test_sugar( N_linked_14_mer );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing beta-D-psicopyranose:" << endl;
 
 		pose_from_pdb(psicose, PATH + "beta-psicose.pdb");
 
 		test_sugar( psicose );
-
-		cout << *psicose.residue( 1 ).type().ring_conformer_set( 1 );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
@@ -195,25 +227,11 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Creating Lewisx from sequence: beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpN:" << endl;
+		cout << "Creating Lewisx from sequence: beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc:" << endl;
 
-		//make_pose_from_saccharide_sequence( Lex, "beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpN", *residue_set );
-		// TEMP
-		vector1< ResidueTypeCOP > residue_types(
-			residue_types_from_saccharide_sequence( "beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpN", *residue_set ) );
+		make_pose_from_saccharide_sequence( Lex, "beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc", *residue_set );
 
-		for ( core::uint i( 1 ); i <= residue_types.size();  ++i ) {
-			cout << residue_types[ i ]->name() << endl;
-		}
-		// END TEMP
-
-		cout << endl << Lex << endl;
-
-		cout << "Sequences:" << endl;
-		cout << " Chain 1: ";
-		cout << Lex.chain_sequence( 1 ) << endl;
-		cout << " Chain 2: ";
-		cout << Lex.chain_sequence( 2 ) << endl;
+		test_sugar( Lex );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
@@ -247,9 +265,10 @@ main( int argc, char *argv[] )
 
 		test_sugar( GalCer );
 
+
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing CAPRI Round 27 Target 57, a crazy, heparin-like hexamer with uronic acids, sulfates, and "
-			"sulfonamidos:" << endl;
+				"sulfonamidos:" << endl;
 
 		pose_from_pdb( target57, PATH + "target57.pdb" );
 

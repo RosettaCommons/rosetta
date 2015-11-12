@@ -89,10 +89,33 @@ core::Angle get_glycosidic_torsion( uint const torsion_id, Pose const & pose, ui
 
 // Setters
 /// @brief  Set the requested torsion angle between a saccharide residue of the given pose and the previous residue.
-void set_glycosidic_torsion( uint const torsion_id,
-	Pose & pose,
-	uint const sequence_position,
-	core::Angle const setting );
+void set_glycosidic_torsion(
+		uint const torsion_id,
+		Pose & pose,
+		uint const sequence_position,
+		core::Angle const setting );
+
+
+// Glycosylation
+/// @brief  Glycosylate the Pose at the given sequence position and atom using an IUPAC sequence.
+void glycosylate_pose(
+		Pose & pose,
+		uint const sequence_position,
+		std::string const & atom_name,
+		std::string const & iupac_sequence );
+
+/// @brief  Glycosylate the Pose at the given sequence position using an IUPAC sequence.
+void glycosylate_pose( Pose & pose, uint const sequence_position, std::string const & iupac_sequence );
+
+/// @brief  Glycosylate the Pose at the given sequence position and atom using a .GWS or IUPAC sequence file.
+void glycosylate_pose_by_file(
+		Pose & pose,
+		uint const sequence_position,
+		std::string const & atom_name,
+		std::string const & filename );
+
+/// @brief  Glycosylate the Pose at the given sequence position using a .GWS or IUPAC sequence file.
+void glycosylate_pose_by_file( Pose & pose, uint const sequence_position, std::string const & filename );
 
 }  // namespace carbohydrates
 }  // namespace pose

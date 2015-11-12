@@ -578,7 +578,24 @@ ResidueType::bond(std::string const & atom1, std::string const & atom2) const {
 }
 
 
-/// @brief set the atom which connects to the lower connection
+// Connections ////////////////////////////////////////////////////////////////
+// Lower
+ResidueConnection const &
+ResidueType::lower_connect() const
+{
+	debug_assert( properties_->has_property( POLYMER ) );
+	debug_assert( lower_connect_id_ != 0 );
+	return residue_connections_[ lower_connect_id_ ];
+}
+
+Size
+ResidueType::lower_connect_atom() const {
+	debug_assert( properties_->has_property( POLYMER ) );
+	debug_assert( lower_connect_id_ != 0 );
+	return vd_to_index_.find(residue_connections_[ lower_connect_id_ ].vertex())->second;
+}
+
+// Set the atom which connects to the lower connection.
 void
 ResidueType::set_lower_connect_atom( std::string const & atm_name )
 {
@@ -610,7 +627,25 @@ ResidueType::set_lower_connect_atom( std::string const & atm_name )
 	update_residue_connection_mapping();
 }
 
-/// @brief set the atom which connects to the upper connection
+
+// Upper
+ResidueConnection const &
+ResidueType::upper_connect() const
+{
+	debug_assert( properties_->has_property( POLYMER ) );
+	debug_assert( upper_connect_id_ != 0 );
+	return residue_connections_[ upper_connect_id_ ];
+}
+
+Size
+ResidueType::upper_connect_atom() const
+{
+	debug_assert( properties_->has_property( POLYMER ) );
+	debug_assert( upper_connect_id_ != 0 );
+	return vd_to_index_.find(residue_connections_[ upper_connect_id_ ].vertex())->second;
+}
+
+// Set the atom which connects to the upper connection.
 void
 ResidueType::set_upper_connect_atom( std::string const & atm_name )
 {
@@ -640,62 +675,68 @@ ResidueType::set_upper_connect_atom( std::string const & atm_name )
 	update_residue_connection_mapping();
 }
 
-ResidueConnection const &
-ResidueType::upper_connect() const
+
+// Branches / Non-polymer
+// Return a list of indices of atoms at non-polymer connections.
+utility::vector1< uint >
+ResidueType::branch_connect_atoms() const
 {
-	debug_assert( properties_->has_property( POLYMER ) );
-	debug_assert( upper_connect_id_ != 0 );
-	return residue_connections_[ upper_connect_id_ ];
+	utility::vector1< uint > atoms;
+	Size const n_connections( n_residue_connections() );
+	for ( uint i( 1 ); i <= n_connections; ++i ) {
+		if ( i == lower_connect_id_ || i == upper_connect_id_ ) { continue; }
+		atoms.push_back( residue_connect_atom_index( i ) );
+	}
+	debug_assert( atoms.size() == n_non_polymeric_residue_connections_ );
+
+	// Branch lower connects should be treated like lower connects, so remove them from this list.
+	if ( is_branch_lower_terminus() ) {
+		// If this is a branch lower terminus, the branch lower connection SHOULD be at the first of the atoms found
+		// above.  So return all but the first element of the vector.
+		return utility::vector1< uint >( atoms.begin() + 1, atoms.end() );
+	}
+
+	return atoms;
 }
 
-ResidueConnection const &
-ResidueType::lower_connect() const
+// Return a list of names of atoms at non-polymer connections.
+utility::vector1< std::string >
+ResidueType::branch_connect_atom_names() const
 {
-	debug_assert( properties_->has_property( POLYMER ) );
-	debug_assert( lower_connect_id_ != 0 );
-	return residue_connections_[ lower_connect_id_ ];
+	utility::vector1< uint > const atoms( branch_connect_atoms() );
+	Size const n_atoms( atoms.size() );
+	utility::vector1< std::string > names( n_atoms );
+	for ( uint i( 1 ); i <= n_atoms; ++i ) {
+		names[ i ] = atom_name( atoms[ i ] );
+	}
+	return names;
 }
 
-Size
-ResidueType::lower_connect_atom() const {
-	debug_assert( properties_->has_property( POLYMER ) );
-	debug_assert( lower_connect_id_ != 0 );
-	return vd_to_index_.find(residue_connections_[ lower_connect_id_ ].vertex())->second;
-}
 
-/// @brief index number of the atom which connects to the upper connection
-Size
-ResidueType::upper_connect_atom() const
-{
-	debug_assert( properties_->has_property( POLYMER ) );
-	debug_assert( upper_connect_id_ != 0 );
-	return vd_to_index_.find(residue_connections_[ upper_connect_id_ ].vertex())->second;
-}
-
-/// @brief number of ResidueConnections, counting polymeric residue connections
+// General
+// Number of ResidueConnections, counting polymeric residue connections
 Size
 ResidueType::n_residue_connections() const
 {
 	return residue_connections_.size();
 }
 
-Size
-ResidueType::residue_connect_atom_index( Size const resconn_id ) const {
-	return vd_to_index_.find(residue_connections_[ resconn_id ].vertex())->second;
-}
-
-
-/// @brief get a ResidueConection
+// Get a ResidueConection.
 ResidueConnection const &
 ResidueType::residue_connection( Size const i ) const
 {
-	return residue_connections_[i];
+	return residue_connections_[ i ];
 }
 
 ResidueConnection &
 ResidueType::residue_connection( Size const i )
 {
 	return residue_connections_[ i ];
+}
+
+Size
+ResidueType::residue_connect_atom_index( Size const resconn_id ) const {
+	return vd_to_index_.find( residue_connections_[ resconn_id ].vertex() )->second;
 }
 
 
@@ -3976,14 +4017,24 @@ ResidueType::show( std::ostream & output, bool output_atomic_details ) const
 	}
 	output << endl;
 
+	if ( is_branch_point() ) {
+		output << " Branch-point atoms:";
+		vector1< string > const atom_names( branch_connect_atom_names() );
+		Size const n_atoms( atom_names.size() );
+		for ( uint i( 1 ); i <= n_atoms; ++i ) {
+			output << ' ' << atom_names[ i ];
+		}
+		output << endl;
+	}
+
 	if ( properties_->has_property( CARBOHYDRATE ) ) {
 		carbohydrate_info_->show( output );
 	}
 
 	if ( output_atomic_details ) {
 		output << " Atomic Details:" << endl;
-		Size n_atoms = natoms();
-		for ( core::uint i = 1; i <= n_atoms; ++i ) {
+		Size const n_atoms( natoms() );
+		for ( uint i( 1 ); i <= n_atoms; ++i ) {
 			output << "  Atom " << i << ": ";
 			atom( i ).show( output );
 		}

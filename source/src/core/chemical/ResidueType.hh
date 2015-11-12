@@ -909,12 +909,10 @@ public:
 	}
 
 	/// @brief index number of the atom which connects to the lower connection
-	Size
-	lower_connect_atom() const;
+	Size lower_connect_atom() const;
 
 	/// @brief set the atom which connects to the lower connection
-	void
-	set_lower_connect_atom( std::string const & atm_name );
+	void set_lower_connect_atom( std::string const & atm_name );
 
 	// Upper
 	ResidueConnection const & upper_connect() const;
@@ -926,17 +924,23 @@ public:
 	}
 
 	/// @brief index number of the atom which connects to the upper connection
-	Size
-	upper_connect_atom() const;
+	Size upper_connect_atom() const;
 
 	/// @brief set the atom which connects to the upper connection
-	void
-	set_upper_connect_atom( std::string const & atm_name );
+	void set_upper_connect_atom( std::string const & atm_name );
 
 
+	// Branches / Non-polymer
+	/// @brief  Return a list of indices of atoms at non-polymer connections.
+	utility::vector1< uint > branch_connect_atoms() const;
+
+	/// @brief  Return a list of names of atoms at non-polymer connections.
+	utility::vector1< std::string > branch_connect_atom_names() const;
+
+
+	// General
 	/// @brief number of ResidueConnections, counting polymeric residue connections
-	Size
-	n_residue_connections() const;
+	Size n_residue_connections() const;
 
 	Size
 	n_polymeric_residue_connections() const {
@@ -948,9 +952,10 @@ public:
 		return n_non_polymeric_residue_connections_;
 	}
 
-	/// @brief get a ResidueConection
+	/// @brief Get a ResidueConection.
 	ResidueConnection const & residue_connection( Size const i ) const;
 
+	/// @brief Get a ResidueConection.
 	ResidueConnection & residue_connection( Size const i );
 
 
@@ -987,8 +992,7 @@ public:
 		return ( resconn_id == lower_connect_id_ || resconn_id == upper_connect_id_ );
 	}
 
-	Size
-	residue_connect_atom_index( Size const resconn_id ) const;
+	Size residue_connect_atom_index( Size const resconn_id ) const;
 
 
 	/// @brief require actcoord?

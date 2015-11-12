@@ -297,7 +297,7 @@ CovalentPeptidomimeticCreator::apply(
 	//pose.conformation().declare_chemical_bond( resi_cys, "SG", resi_vdp, "CZ" );
 
 	std::cout << pose.fold_tree() << std::endl;
-	core::import_pose::set_reasonable_fold_tree( pose );
+	core::pose::set_reasonable_fold_tree( pose );
 	std::cout << pose.fold_tree() << std::endl;
 	pert_mm->set( BRANCH, true );
 

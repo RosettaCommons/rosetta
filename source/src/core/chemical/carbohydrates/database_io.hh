@@ -15,8 +15,14 @@
 #ifndef INCLUDED_core_chemical_carbohydrates_database_io_HH
 #define INCLUDED_core_chemical_carbohydrates_database_io_HH
 
+// Package header
+#include <core/chemical/carbohydrates/SugarModificationsNomenclatureTable.hh>
+
 // Project header
 #include <core/types.hh>
+
+// Utility header
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <map>
@@ -32,9 +38,12 @@ namespace carbohydrates {
 std::map< std::string, std::string > read_codes_and_roots_from_database_file( std::string const & filename );
 
 /// @brief  Return a map of Sizes to pairs of char and string, which are ring sizes mapped to 1-letter affixes and
-/// morphemes, respectively.
-std::map< core::Size, std::pair< char, std::string > > read_ring_sizes_and_morphemes_fromt_database_file(
-	std::string const & filename );
+/// morphemes, respectively, read from a database file.
+std::map< core::Size, std::pair< char, std::string > > read_ring_sizes_and_morphemes_from_database_file(
+		std::string const & filename );
+
+/// @brief  Return a table of nomenclature data for sugar modifications, read from a database file.
+SugarModificationsNomenclatureTable read_nomenclature_table_from_database_file( std::string const & filename );
 
 }  // namespace carbohydrates
 }  // namespace chemical

@@ -27,10 +27,14 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/database/open.hh>
 
 // Utility headers
+#include <utility/exit.hh>
 #include <utility/vector1.hh>
+#include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/io/util.hh>
 
 // C++ headers
 #include <sstream>
@@ -46,6 +50,119 @@ namespace carbohydrates {
 
 using namespace std;
 using namespace core;
+
+// Input //////////////////////////////////////////////////////////////////////
+
+// Try various combinations to locate the specific glycan sequence file being requested by the user.
+/// @details  The default directory to search is: database/chemical/carbohydrates/common_glycans/\n
+/// The default file extension is: .iupac
+std::string
+find_glycan_sequence_file( std::string filename )
+{
+	using namespace utility::io;
+
+	std::string const & path( basic::database::full_name( "chemical/carbohydrates/common_glycans/" ) );
+	std::string const ext( ".iupac" );
+
+	izstream potential_file( filename );
+
+	if ( potential_file.good() ) {
+			return filename;
+		} else {
+			izstream potential_file( filename + ext );  // Perhaps the user didn't use the .iupac extension.
+			if ( potential_file.good() ) {
+				return filename + ext;
+			} else {
+				izstream potential_file( path + filename);  // Let's assume it's in the database in the usual spot.
+				if ( potential_file.good() ) {
+					return path + filename;
+				} else {
+					izstream potential_file( path + filename + ext );  // last try
+					if ( potential_file.good() ) {
+						return path + filename + ext;
+					} else {
+						utility_exit_with_message( "Unable to open glycan sequence file. Neither ./" + filename +
+								" nor " + "./" + filename + ext +
+								" nor " + path + filename +
+								" nor " + path + filename + ext + " exists." );
+					}
+				}
+			}
+		}
+	return "I do not think that word means what you think it means....";  // Code can never reach here.
+}
+
+// Read a single-line glycan sequence file.
+std::string
+read_glycan_sequence_file( std::string filename )
+{
+	utility::vector1< string > const lines( utility::io::get_lines_from_file_data( filename ) );
+	if ( lines.size() != 1 ) {
+		utility_exit_with_message( "A glycan sequence file must contain a single line of text." );
+	}
+	return lines.front();
+}
+
+// Parse sugar code suffixes to extract a list of sugar modifications with their corresponding positions.
+utility::vector1< std::pair< core::uint, std::string > >
+sugar_modifications_from_suffix( std::string const & suffix )
+{
+	using namespace std;
+	using namespace utility;
+
+	// We need to read through the suffix letter by letter to separate out positions from modifications.
+	vector1< pair< uint, string > > modifications;
+	vector1< uint > current_positions;
+	string current_affix;
+	Size const suffix_length( suffix.size() );
+	for ( uint i( 0 ); i < suffix_length; ++i ) {
+		char const letter( suffix[ i ] );
+		char prev_letter = char();
+		char next_letter = char();
+		if ( i != 0 ) { prev_letter = suffix[ i - 1 ]; }
+		if ( i != suffix_length - 1 ) { next_letter = suffix[ i + 1 ]; }
+
+		// Each letter can be
+		// * a number, which designates the position of a modification,
+		// * a comma, which indicates that we have multiple modifications of the same kind, or
+		// * an alphabetic symbol, which is or is part of the affix for a modification.
+		if ( letter == ',' ) {
+			if ( atoi( &prev_letter ) == 0 || atoi( &next_letter ) == 0 ) {
+				utility_exit_with_message( "Saccharide sequence input error: "
+						"A comma must come between two numerals in a suffix." );
+			}
+			// If it's a valid location for a comma, we just move on.
+		} else if ( atoi( &letter ) != 0 ) {  // It's a number.
+			if ( atoi( &next_letter ) != 0 ) {  // If the next letter is also a number....
+				utility_exit_with_message( "Saccharide sequence input error: "
+						"A comma must come between two numerals in a suffix and "
+						"Rosetta cannot handle sugars with more than 9 carbons." );;
+			}
+			if ( i != 0 && atoi( &prev_letter ) == 0 && prev_letter != ',' ) {
+				// If the previous letter was a letter, the information about the previous modifications are complete;
+				// store them.
+				Size const n_modifications( current_positions.size() );
+				for ( uint j( 1 ); j <= n_modifications; ++j ) {
+					modifications.push_back( make_pair( current_positions[ j ], current_affix ) );
+				}
+				current_positions.clear();
+				current_affix.clear();
+			}
+			current_positions.push_back( atoi( &letter ) );
+		} else {  // It's an alphabetic letter (or nonsense).
+			if ( i == 0 ) {  // A default position is only allowed for the first modification.
+				current_positions.push_back( 0 );  // This will be filled in with a real value later.
+			}
+			current_affix += letter;
+		}
+	}
+	Size const n_modifications( current_positions.size() );
+	for ( uint j( 1 ); j <= n_modifications; ++j ) {
+		modifications.push_back( make_pair( current_positions[ j ], current_affix ) );
+	}
+
+	return modifications;
+}
 
 
 // Output /////////////////////////////////////////////////////////////////////

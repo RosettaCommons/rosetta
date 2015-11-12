@@ -495,7 +495,7 @@ public:
 		conformation::Residue const & new_rsd,
 		bool const build_ideal_geometry,
 		std::string const & connect_atom,
-		Size const anchor_residue,
+		Size const anchor_rsd_seqpos,
 		std::string const & anchor_connect_atom,
 		bool const start_new_chain = false,
 		bool const lookup_bond_length = false

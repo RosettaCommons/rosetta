@@ -106,6 +106,10 @@ void
 pdbslice( pose::Pose & pose,
 	utility::vector1< Size > const & slice_res );
 
+
+void set_reasonable_fold_tree( core::pose::Pose & pose );
+
+
 // for partition_by_jump: both new poses start residue numbering from 1 and don't keep the original numbering!
 void
 partition_pose_by_jump(

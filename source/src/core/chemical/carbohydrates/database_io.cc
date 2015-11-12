@@ -38,6 +38,20 @@ namespace core {
 namespace chemical {
 namespace carbohydrates {
 
+// Check if a string variable's value is "N/A", and if so, sets it to "".
+void
+check_if_applicable( std::string & variable )
+{
+	if ( variable == "N/A" ) { variable = ""; }
+}
+
+void
+replace_underscores_with_spaces( std::string & phrase )
+{
+	replace( phrase.begin(), phrase.end(), '_', ' ' );
+}
+
+
 // Return a map of strings to strings, which are saccharide-specific 3-letter codes mapped to IUPAC roots, read from a
 // database file.
 std::map< std::string, std::string >
@@ -60,17 +74,15 @@ read_codes_and_roots_from_database_file( std::string const & filename )
 		codes_to_roots[ key ] = value;
 	}
 
-	if ( TR.Debug.visible() ) {
-		TR.Debug << "Read " << codes_to_roots.size() << " 3-letter code mappings from the carbohydrate database." << endl;
-	}
+	TR.Debug << "Read " << codes_to_roots.size() << " 3-letter code mappings from the carbohydrate database." << endl;
 
 	return codes_to_roots;
 }
 
 // Return a map of Sizes to pairs of char and string, which are ring sizes mapped to 1-letter affixes and morphemes,
-// respectively.
+// respectively, read from a database file.
 std::map< core::Size, std::pair< char, std::string > >
-read_ring_sizes_and_morphemes_fromt_database_file( std::string const & filename )
+read_ring_sizes_and_morphemes_from_database_file( std::string const & filename )
 {
 	using namespace std;
 	using namespace utility;
@@ -88,7 +100,7 @@ read_ring_sizes_and_morphemes_fromt_database_file( std::string const & filename 
 		line_word_by_word >> key >> affix >> morpheme;
 
 		if ( key < 3 ) {
-			utility_exit_with_message( "read_ring_sizes_and_morphemes_fromt_database_file: "
+			utility_exit_with_message( "read_ring_sizes_and_morphemes_from_database_file: "
 				"invalid ring size; rings cannot have less than 3 atoms!" );
 		}
 		if ( affix == 'X' ) { affix = '\0'; }  // Some ring sizes don't have accepted affixes.
@@ -96,13 +108,49 @@ read_ring_sizes_and_morphemes_fromt_database_file( std::string const & filename 
 		ring_size_to_morphemes[ key ] = make_pair( affix, morpheme );
 	}
 
-	if ( TR.Debug.visible() ) {
-		TR.Debug << "Read " << ring_size_to_morphemes.size() <<
+	TR.Debug << "Read " << ring_size_to_morphemes.size() <<
 			" ring size mappings from the carbohydrate database." << endl;
-	}
 
 	return ring_size_to_morphemes;
 }
+
+// Return a table of nomenclature data for sugar modifications, read from a database file.
+SugarModificationsNomenclatureTable
+read_nomenclature_table_from_database_file( std::string const & filename )
+{
+	using namespace std;
+	using namespace utility;
+
+	vector1< string > const lines( io::get_lines_from_file_data( filename ) );
+	SugarModificationsNomenclatureTable table;
+
+	Size const n_lines( lines.size() );
+	for ( uint i( 1 ); i <= n_lines; ++i ) {
+		istringstream line_word_by_word( lines[ i ] );
+		std::string key;  // The map key is the name of the type of modification, derived from the VariantType name.
+		SugarModificationsNomenclatureTableRow row;
+
+		line_word_by_word >> key >> row.substituent_full_name >> row.implies >> row.short_affix >> row.patch_name >>
+				row.default_position;
+
+		replace_underscores_with_spaces( key );
+		check_if_applicable( row.substituent_full_name );
+		check_if_applicable( row.implies );
+		check_if_applicable( row.short_affix );
+		check_if_applicable( row.patch_name );
+
+		// TODO: After ResidueProperties static const data is moved into a singleton, check that each key is in fact
+		// derived from accepted ResiduePropertys
+
+		table[ key ] = row;
+	}
+
+	TR.Debug << "Read " << table.size() <<
+			" rows from the sugar modifications table in the carbohydrate database." << endl;
+
+	return table;
+}
+
 
 }  // namespace carbohydrates
 }  // namespace chemical

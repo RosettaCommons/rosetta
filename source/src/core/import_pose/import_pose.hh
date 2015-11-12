@@ -252,9 +252,6 @@ centroid_pose_from_pdb(
 );
 
 
-void set_reasonable_fold_tree( core::pose::Pose & pose );
-
-
 /// @brief Create pose object, using given FileData object.
 /// If PDB cleanin specified - it will be applied first.
 /// Constructs a ImportPoseOptions object from the command line

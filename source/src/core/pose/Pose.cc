@@ -432,34 +432,50 @@ Pose::append_residue_by_atoms(
 	conformation::Residue const & new_rsd,
 	bool const build_ideal_geometry,
 	std::string const & connect_atom,
-	Size const anchor_residue,
+	Size const anchor_rsd_seqpos,
 	std::string const & anchor_connect_atom,
 	bool const start_new_chain /*= false*/,
 	bool const lookup_bond_length /*= false*/
 ) {
 	energies_->clear();
-	int anchor_connection = -1;
-	int connection = -1;
+	uint anchor_connection( 0 );
+	uint connection( 0 );
+	uint connect_atom_index, anchor_connect_atom_index;
+
+	// First, see if the atoms exist.
+	conformation::Residue const & anchor_rsd( residue( anchor_rsd_seqpos ) );
+	if ( ! new_rsd.has( connect_atom ) || ! anchor_rsd.has( anchor_connect_atom ) ) {
+		utility_exit_with_message( "Can't append by these atoms, "
+				"since they are not found in the Residues in question!" );
+	}
+
+	// Next, convert to indices.
+	connect_atom_index = new_rsd.atom_index( connect_atom );
+	anchor_connect_atom_index = anchor_rsd.atom_index( anchor_connect_atom );
 
 	// Determine both connections...
-	for ( Size ii = 1; ii <= residue( anchor_residue ).n_residue_connections(); ++ii ) {
-		if ( residue( anchor_residue ).atom_name( residue( anchor_residue ).residue_connect_atom_index( ii ) ) == anchor_connect_atom ) {
+	Size n_connections( anchor_rsd.n_residue_connections() );
+	for ( Size ii = 1; ii <= n_connections; ++ii ) {
+		if ( anchor_rsd.residue_connect_atom_index( ii ) == anchor_connect_atom_index ) {
 			anchor_connection = ii;
 			break;
 		}
 	}
-	for ( Size ii = 1; ii <= new_rsd.n_residue_connections(); ++ii ) {
-		if ( new_rsd.atom_name( new_rsd.residue_connect_atom_index( ii ) ) == connect_atom ) {
+	n_connections = new_rsd.n_residue_connections();
+	for ( Size ii = 1; ii <= n_connections; ++ii ) {
+		if ( new_rsd.residue_connect_atom_index( ii ) == connect_atom_index ) {
 			connection = ii;
 			break;
 		}
 	}
 
-	if ( anchor_connection == -1 || connection == -1 ) {
-		utility_exit_with_message( "Can't append by these atoms, since they do not correspond to connections on the Residues in question!" );
+	if ( ( ! anchor_connection ) || ( ! connection ) ) {
+		utility_exit_with_message( "Can't append by these atoms, "
+				"since they do not correspond to connections on the Residues in question!" );
 	}
 
-	conformation_->append_residue_by_bond( new_rsd, build_ideal_geometry, connection, anchor_residue, anchor_connection, start_new_chain, lookup_bond_length);
+	conformation_->append_residue_by_bond( new_rsd, build_ideal_geometry, connection, anchor_rsd_seqpos,
+			anchor_connection, start_new_chain, lookup_bond_length);
 }
 
 void

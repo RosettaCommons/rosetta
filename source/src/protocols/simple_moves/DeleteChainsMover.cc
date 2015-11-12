@@ -18,7 +18,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
 
 #include <basic/datacache/DataMapObj.hh>
 #include <basic/datacache/DataMap.hh>
@@ -143,8 +142,7 @@ DeleteChainsMover::apply( Pose & pose )
 		}
 	}
 
-	core::import_pose::set_reasonable_fold_tree( pose );
-
+	core::pose::set_reasonable_fold_tree( pose );
 }
 
 

@@ -17,20 +17,25 @@
 #include <core/pose/Pose.hh>
 
 // Package headers
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/io/carbohydrates/pose_io.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-
-#include <core/chemical/AtomICoor.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/pose/util.hh>
 
 // Project headers
 #include <core/id/types.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/types.hh>
+#include <core/chemical/AtomICoor.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/Conformation.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/exit.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -41,6 +46,9 @@
 
 // External headers
 #include <boost/lexical_cast.hpp>
+
+// C++ header
+#include <list>
 
 
 // Construct tracer.
@@ -596,6 +604,159 @@ set_glycosidic_torsion( uint const torsion_id, Pose & pose, uint const sequence_
 	pose.conformation().set_torsion_angle(
 		ref_atoms[ 1 ], ref_atoms[ 2 ], ref_atoms[ 3 ], ref_atoms[ 4 ], setting_in_radians );
 	align_virtual_atoms_in_carbohydrate_residue( pose, sequence_position );
+}
+
+
+// Glycosylation //////////////////////////////////////////////////////////////
+// Glycosylate the Pose at the given sequence position and atom using an IUPAC sequence.
+/// @details   Format for <iupac_sequence>:\n
+/// Prefixes apply to the residue to which they are attached, below indicated by residue n.\n
+/// Residues are listed from N to 1, where N is the total number of residues in the saccharide.\n
+/// The sequence is parsed by reading to the next hyphen, so hyphens are crucial.\n
+/// Linkage indication: "(a->x)-" specifies the linkage of residue n, where a is the anomeric carbon number of residue
+/// (n+1) and x is the oxygen number of residue n.  The first residue listed in the annotated sequence (residue N)
+/// need not have the linkage prefix.  A ->4) ResidueType will automatically be assigned by default if not specified.\n
+/// Anomer indication: The strings "alpha-" or "beta-" are supplied next, which determines the stereochemistry of the
+/// anomeric carbon of the residue to which it is prefixed.  An alpha ResidueType will automatically be assigned by
+/// default.\n
+/// Stereochemical indication: "L-" or "D-" specifies whether residue n is an L- or D-sugar.  The default is "D-".\n
+/// 3-Letter code: A three letter code (in sentence case) MUST be supplied next.  This specifies the "base sugar name",
+/// e.g., Glc is for glucose.  (A list of all recognized 3-letter codes for sugars can be found in
+/// database/chemical/carbohydrates/codes_to_roots.map.)\n
+/// 1-Letter suffix: If no suffix follows, residue n will be linear.  If a letter is present, it indicates the ring
+/// size, where "f" is furanose, "p" is puranose, and "s" is septanose.\n
+/// Branches are indicated using nested brackets and are best explained by example:\n
+/// beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc- is:\n
+/// beta-D-Galp-(1->4)-D-GlcpNAc-\n
+///                       |\n
+///     alpha-L-Fucp-(1->3)
+/// @remarks   The order of residues in the created pose is in the opposite direction as the annotated sequence of
+/// saccharide residues, as sugars are named with the 1st residue as the "main chain", with all other residues named as
+/// substituents and written as prefixes.  In other words, sugars are usually drawn and named with residue 1 to the
+/// right.
+/// At present time, param files only exist for a limited number of sugars! ~ Labonte
+/// Also, I've not written this to handle creation of glycolipids yet.
+void
+glycosylate_pose(
+		Pose & pose,
+		uint const sequence_position,
+		std::string const & atom_name,
+		std::string const & iupac_sequence )
+{
+	using namespace utility;
+	using namespace chemical;
+	using namespace conformation;
+
+	conformation::Residue const & residue( pose.residue( sequence_position ) );
+	ResidueTypeSet const & residue_set( residue.type().residue_type_set() );
+
+	// Get list of carbohydrate ResidueTypes from which to construct the Pose.
+	ResidueTypeCOPs residue_types( residue_types_from_saccharide_sequence( iupac_sequence, residue_set ) );
+
+	Size const n_types( residue_types.size() );
+	if ( ! n_types ) {
+		TR.Warning << "No saccharide residues in sequence to append to pose!" << endl;
+		return;
+	}
+
+	// We need to reorder the ResidueTypes, such that each chain is complete before a new branch is added.
+	reorder_saccharide_residue_types( residue_types );
+
+	// Prepare the glycosylation site for branching.
+	// TODO: Add code to attach to lipids.
+	if ( residue.is_carbohydrate() ) {
+		;  // TODO: Add complicated check here to figure out which VariantType to assign.
+	} else {  // It's a typical branch point, in that it has a single type of branch point variant.
+		add_variant_type_to_pose_residue( pose, SC_BRANCH_POINT, sequence_position );
+	}
+
+
+	// Now we can extend the Pose.
+	// Keep track of branch points as we go.
+	list< pair< uint, string > > branch_points;
+
+	// Begin with the first sugar.
+	ResidueType const & first_sugar_type( *residue_types.front() );
+	ResidueOP first_sugar( ResidueFactory::create_residue( first_sugar_type ) );
+	string const upper_atom( first_sugar->carbohydrate_info()->anomeric_carbon_name() );
+	pose.append_residue_by_atoms( *first_sugar, true, upper_atom, sequence_position, atom_name, true );
+
+	// Build any other sugars.
+	append_pose_with_glycan_residues( pose, ResidueTypeCOPs( residue_types.begin() + 1, residue_types.end() ) );
+
+	// Let the Conformation know that it (now) contains sugars.
+	pose.conformation().contains_carbohydrate_residues( true );
+
+	// Finally, change the PDB information.
+	// TODO: Be more intelligent about this by assigning new chain letters, etc.
+	PDBInfoOP info( new PDBInfo( pose ) );
+	info->name( pose.sequence() );  // Use the sequence as the default name.
+	pose.pdb_info( info );
+
+	TR << "Glycosylated pose with " << iupac_sequence << '-' << atom_name <<
+			pose.residue( sequence_position ).name3() << sequence_position << endl;
+}
+
+// Glycosylate the Pose at the given sequence position using an IUPAC sequence.
+/// @details  This is a wrapper function for standard AA cases, i.e., glycosylation at Asn, Thr, or Ser.
+void
+glycosylate_pose( Pose & pose, uint const sequence_position, std::string const & iupac_sequence )
+{
+	std::string const & glycosylation_site( pose.residue( sequence_position ).name3() );
+	if ( glycosylation_site == "ASN" ) {
+		glycosylate_pose( pose, sequence_position, "ND2", iupac_sequence );
+	} else if ( glycosylation_site == "SER" ) {
+		glycosylate_pose( pose, sequence_position, "OG", iupac_sequence );
+	} else if ( glycosylation_site == "THR" ) {
+		glycosylate_pose( pose, sequence_position, "OG1", iupac_sequence );
+	// TODO: Add Trp, after creating an appropriate patch file.
+	} else {
+		utility_exit_with_message( glycosylation_site + " is not a common site of glycosylation or else it is "
+				"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose( Pose & pose, uint const "
+				"sequence_position, std::string const & atom_name, std::string const & iupac_sequence ) instead." );
+	}
+}
+
+
+// Glycosylate the Pose at the given sequence position and atom using a .GWS or IUPAC sequence file.
+void
+glycosylate_pose_by_file(
+		Pose & pose,
+		uint const sequence_position,
+		std::string const & atom_name,
+		std::string const & filename )
+{
+	using namespace std;
+	using namespace io::carbohydrates;
+
+	string const & sequence_file( find_glycan_sequence_file( filename ) );
+	if ( sequence_file.find( ".gws" ) != string::npos ) {
+		utility_exit_with_message( "Rosetta cannot yet read .gws format sequence files." );  // TODO: Change this.
+		//string const & gws_sequence( read_glycan_sequence_file( sequence_file ) );
+	} else {  // Assume any other file type contains an IUPAC sequence.
+		string const & iupac_sequence( read_glycan_sequence_file( sequence_file ) );
+		glycosylate_pose( pose, sequence_position, atom_name, iupac_sequence );
+	}
+}
+
+// Glycosylate the Pose at the given sequence position using a .GWS or IUPAC sequence file.
+/// @details  This is a wrapper function for standard AA cases, i.e., glycosylation at Asn, Thr, or Ser.
+void
+glycosylate_pose_by_file( Pose & pose, uint const sequence_position, std::string const & filename )
+{
+	std::string const & glycosylation_site( pose.residue( sequence_position ).name3() );
+	if ( glycosylation_site == "ASN" ) {
+		glycosylate_pose_by_file( pose, sequence_position, "ND2", filename );
+	} else if ( glycosylation_site == "SER" ) {
+		glycosylate_pose_by_file( pose, sequence_position, "OG", filename );
+	} else if ( glycosylation_site == "THR" ) {
+		glycosylate_pose_by_file( pose, sequence_position, "OG1", filename );
+	// TODO: Add Trp, after creating an appropriate patch file.
+	} else {
+		utility_exit_with_message( glycosylation_site + " is not a common site of glycosylation or else it is "
+				"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose_by_file( Pose & pose, uint "
+				"const sequence_position, std::string const & atom_name, std::string const & filename ) instead." );
+	}
 }
 
 }  // namespace carbohydrates

@@ -37,7 +37,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -499,7 +498,7 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 		//sep_pose.dump_pdb("ignored_chain_sep.pdb");
 
 		//Give the pose a normal foldtree.  Copy data into current pose.
-		core::import_pose::set_reasonable_fold_tree( sep_pose );
+		core::pose::set_reasonable_fold_tree( sep_pose );
 
 		pose = sep_pose;
 
