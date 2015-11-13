@@ -10,3 +10,5 @@ lk_nonpolar     		     0.32
 geom_sol_fast        		     0.25
 atom_pair_constraint                 2.0
 #atom_pair_constraint                 0.1
+ENLARGE_H_LJ_WDEPTH # turns on stronger repulsion between hydrogens
+RNA_TORSION_POTENTIAL RNA11_based_new
