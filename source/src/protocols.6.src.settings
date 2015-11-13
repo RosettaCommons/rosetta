@@ -88,6 +88,11 @@ sources = {
 	],
 	"protocols/cryst" : [
 	        "cryst_movers",
+	        "cryst_rms",
+	        "refineable_lattice",
+	        "spacegroup",
+	        "TwoDLattice",
+	        "wallpaper"
 	],
 	"protocols/cyclic_peptide_predict" : [
                 "SimpleCycpepPredictApplication",
@@ -323,7 +328,7 @@ sources = {
 	        "MPI_Refine_Master",
 		"Serial_Refine",
 	],
-	
+
 	"protocols/residue_optimization": [
 		"MetapatchEnumeration",
 	],

@@ -241,7 +241,7 @@ public:
 		}
 	}
 
-
+	// remove redundent through a realspace symmetry operator
 	void
 	remove_redundant( numeric::xyzMatrix<numeric::Real> R0 ) {
 		utility::vector1<bool> tokeep(rotlist_.size(), true);
@@ -273,7 +273,7 @@ public:
 			if ( tokeep[i] ) rotlist_.push_back(rotlist_old[i]);
 		}
 
-		std::cout << "Trimmed rot list has " << rotlist_.size() << " rotations (was " << rotlist_old.size() << ")\n";
+		//std::cout << "Trimmed rot list has " << rotlist_.size() << " rotations (was " << rotlist_old.size() << ")\n";
 	}
 }; // class UniformRotationSampler
 

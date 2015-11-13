@@ -49,6 +49,10 @@ static MoverRegistrator< cryst::FitBfactorsMoverCreator > reg_FitBfactorsMoverCr
 static MoverRegistrator< cryst::UpdateSolventMoverCreator > reg_UpdateSolventMoverCreator;
 static MoverRegistrator< cryst::TagPoseWithRefinementStatsMoverCreator > reg_TagPoseWithRefinementStatsMoverCreator;
 static MoverRegistrator< cryst::SetRefinementOptionsMoverCreator > reg_SetRefinementOptionsMoverCreator;
+static MoverRegistrator< cryst::UpdateCrystInfoCreator > reg_UpdateCrystInfoCreator;
+static MoverRegistrator< cryst::DockLatticeMoverCreator > reg_DockLatticeMoverCreator;
+static MoverRegistrator< cryst::MakeLatticeMoverCreator > reg_MakeLatticeMoverCreator;
+static MoverRegistrator< cryst::MakeLayerMoverCreator > reg_MakeLayerMoverCreator;
 
 static MoverRegistrator< comparative_modeling::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
 static MoverRegistrator< hybridization::HybridizeProtocolCreator > reg_HybridizeProtocolCreator;
