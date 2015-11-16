@@ -635,15 +635,15 @@ SymmOnTheFlyInteractionGraph::initialize(
 	rotamer_set::RotamerSets const & rot_sets( static_cast< rotamer_set::RotamerSets const & > (rot_sets_base) );
 
 	// determine max # of residue types
-	Size max_nrestypes = 0;
+	Size max_nrestype_groups = 0;
 	for ( Size ii = 1; ii <= rot_sets.nmoltenres(); ++ii ) {
-		Size ii_nrestypes =  rot_sets.rotamer_set_for_moltenresidue( ii )->get_n_residue_types();
-		if ( ii_nrestypes > max_nrestypes ) max_nrestypes = ii_nrestypes;
+		Size ii_nrestype_groups =  rot_sets.rotamer_set_for_moltenresidue( ii )->get_n_residue_groups();
+		if ( ii_nrestype_groups > max_nrestype_groups ) max_nrestype_groups = ii_nrestype_groups;
 	}
 
 	//"aa types" means "distinct groups of rotamers" -- this ig has no idea
 	// what an amino acid is or why they might be different from one another
-	num_restype_groups_ = max_nrestypes;
+	num_restype_groups_ = max_nrestype_groups;
 
 	for ( Size ii = 1; ii <= rot_sets.nmoltenres(); ++ii ) {
 		Size const ii_num_states = rot_sets.rotamer_set_for_moltenresidue( ii )->num_rotamers();

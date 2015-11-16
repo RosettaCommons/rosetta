@@ -41,8 +41,8 @@ CHI 3  CB   CG   CD   OE1
 PROPERTIES PROTEIN ALPHA_AA L_AA POLAR CHARGED SC_ORBITALS METALBINDING
 METAL_BINDING_ATOMS O OE1 OE2
 NBR_ATOM CB
-# APL CB to furthest side chain heavy atom distance -- max as observed from res 74 on ubiquitin
-NBR_RADIUS 3.6154
+# APL CB to furthest side chain heavy atom distance -- swept all chi combos at 5 degree increments
+NBR_RADIUS 3.63412
 FIRST_SIDECHAIN_ATOM CB
 ACT_COORD_ATOMS CD OE1 OE2 END
 ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  

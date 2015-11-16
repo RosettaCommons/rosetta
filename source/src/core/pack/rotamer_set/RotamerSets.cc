@@ -513,15 +513,15 @@ RotamerSets::prepare_otf_graph(
 
 				sparse_conn_info = false;
 				Distance const sfxn_reach = scfxn.info()->max_atomic_interaction_distance();
-				for ( Size kk = 1, kk_end = ii_rotset->get_n_residue_types(); kk <= kk_end; ++kk ) {
-					Size kk_example_rotamer_index = ii_rotset->get_residue_type_begin( kk );
+				for ( Size kk = 1, kk_end = ii_rotset->get_n_residue_groups(); kk <= kk_end; ++kk ) {
+					Size kk_example_rotamer_index = ii_rotset->get_residue_group_begin( kk );
 					conformation::Residue const & kk_rotamer( *ii_rotset->rotamer( kk_example_rotamer_index ) );
 
 					Distance const kk_reach = kk_rotamer.nbr_radius();
 					Vector const kk_nbratom( kk_rotamer.xyz( kk_rotamer.nbr_atom() ) );
 
-					for ( Size ll = 1, ll_end = jj_rotset->get_n_residue_types(); ll <= ll_end; ++ll ) {
-						Size ll_example_rotamer_index = jj_rotset->get_residue_type_begin( ll );
+					for ( Size ll = 1, ll_end = jj_rotset->get_n_residue_groups(); ll <= ll_end; ++ll ) {
+						Size ll_example_rotamer_index = jj_rotset->get_residue_group_begin( ll );
 						conformation::Residue const & ll_rotamer( *jj_rotset->rotamer( ll_example_rotamer_index ) );
 
 						Distance const ll_reach( ll_rotamer.nbr_radius() );

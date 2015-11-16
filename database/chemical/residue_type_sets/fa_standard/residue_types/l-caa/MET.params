@@ -45,8 +45,8 @@ CHI 3  CB   CG   SD   CE
 PROPERTIES PROTEIN ALPHA_AA L_AA HYDROPHOBIC SC_ORBITALS METALBINDING
 METAL_BINDING_ATOMS O SD #There are rare cases in which the delta sulfur coordinates a metal.
 NBR_ATOM CB
-# APL CB to sidechain heavyatom distance -- max observed on residue 74 of ubiquitin
-NBR_RADIUS 4.1766
+# APL CB to sidechain heavyatom distance; swept all chi combos at 5 degree intervals
+NBR_RADIUS 4.17728
 FIRST_SIDECHAIN_ATOM CB
 ACT_COORD_ATOMS SD END
 ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  

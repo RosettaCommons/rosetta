@@ -60,8 +60,8 @@ CHI 2  CA   CB   CG   CD1
 PROPERTIES PROTEIN ALPHA_AA L_AA HYDROPHOBIC AROMATIC SC_ORBITALS METALBINDING
 METAL_BINDING_ATOMS O
 NBR_ATOM CB
-# APL CB to sidechain heavyatom distance -- max observed at residue 74 in ubiquitin
-NBR_RADIUS 5.3639
+# APL CB to sidechain heavyatom distance; swept all chi combos at 5 degree intervals
+NBR_RADIUS 5.37514
 FIRST_SIDECHAIN_ATOM CB
 ACT_COORD_ATOMS CD2 CE3 END
 ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  

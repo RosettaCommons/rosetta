@@ -35,6 +35,7 @@ sources = {
 		"domain_assembly_jd2",
 		#"optest",
 		"measure_catalytic_geometry",
+		"measure_lcaa_neighbor_radii",
 		"mmt_msd",
 		"version_scorefunction", #Note: used for scorefunction version tests; no itest needed
 		"analyze_rtmin_failures",
