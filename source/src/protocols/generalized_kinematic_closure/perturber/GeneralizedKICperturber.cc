@@ -78,8 +78,8 @@ GeneralizedKICperturber::GeneralizedKICperturber():
 	iterations_(1),
 	must_switch_bins_(false),
 	bin_(""),
-	attach_boinc_ghost_observer_(false)
-	//TODO -- make sure above data are copied properly when duplicating this mover.
+	attach_boinc_ghost_observer_(false),
+	custom_rama_table_( core::scoring::unknown_ramatable_type )
 {}
 
 /// @brief Copy constructor for GeneralizedKICperturber.
@@ -95,7 +95,8 @@ GeneralizedKICperturber::GeneralizedKICperturber( GeneralizedKICperturber const 
 	iterations_(src.iterations_),
 	must_switch_bins_(src.must_switch_bins_),
 	bin_(src.bin_),
-	attach_boinc_ghost_observer_(src.attach_boinc_ghost_observer_)
+	attach_boinc_ghost_observer_(src.attach_boinc_ghost_observer_),
+	custom_rama_table_( src.custom_rama_table_ )
 {
 	if ( src.bbgmover_ ) bbgmover_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::BBGaussianMover >(src.bbgmover_->clone());
 	if ( src.bin_transition_calculator_ ) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
@@ -469,6 +470,28 @@ void GeneralizedKICperturber::init_bbgmover(
 	}
 }
 
+/// @brief Set the custom Ramachandran table (by name) for the perturb_alpha_backbone_by_rama perturber.
+///
+void GeneralizedKICperturber::set_custom_rama_table ( std::string const &name ) {
+	core::scoring::Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
+
+	core::scoring::Rama_Table_Type const type ( rama.get_ramatable_type_by_name(name) );
+	if ( type == core::scoring::unknown_ramatable_type ) {
+		std::stringstream err_msg("Error in protocols::generalized_kinematic_closure::perturber::GeneralizedKICperturber::set_custom_rama_table():");
+		err_msg << "  The provided custom Ramachandran table type (\"" << name << "\") is unknown.  Allowed options are: ";
+		for ( core::Size i=1; i<static_cast<core::Size>(core::scoring::unknown_ramatable_type); ++i ) {
+			err_msg << rama.get_ramatable_name_by_type( static_cast<core::scoring::Rama_Table_Type>(i) );
+			if ( i < (static_cast<core::Size>(core::scoring::unknown_ramatable_type) - 1) ) {
+				err_msg << ", ";
+			}
+		}
+		err_msg << "." << std::endl;
+		utility_exit_with_message( err_msg.str() );
+	}
+
+	set_custom_rama_table(type);
+}
+
 /// @brief Applies a perturb_dihedral_bbg perturbation to a list of torsions.
 /// @details  Backbone Gaussian Perturbation
 /// @param[in] original_pose - The input pose.
@@ -811,7 +834,7 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 
 	runtime_assert_string_msg( residues.size() > 0 , "Residues must be specified for the randomize_alpha_backbone_by_rama generalized kinematic closure perturber." );
 
-	core::scoring::Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
+	core::scoring::Ramachandran & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran_nonconst(); //Must be nonconst to allow lazy loading of custom rama tables.
 
 	core::Size nres = original_pose.n_residue();
 
@@ -837,7 +860,11 @@ void GeneralizedKICperturber::apply_randomize_alpha_backbone_by_rama(
 		//Randomize phi and psi for this residue:
 		core::Real rama_phi=0;
 		core::Real rama_psi=0;
-		rama.random_phipsi_from_rama(loop_pose_copy.aa(loopindex), rama_phi, rama_psi);
+		if ( custom_rama_table() == core::scoring::unknown_ramatable_type ) {
+			rama.random_phipsi_from_rama(loop_pose_copy.aa(loopindex), rama_phi, rama_psi);
+		} else {
+			rama.draw_random_phi_psi_from_extra_cdf(custom_rama_table(), rama_phi, rama_psi);
+		}
 		general_set_phi(loop_pose_copy, loopindex, rama_phi);
 		general_set_psi(loop_pose_copy, loopindex, rama_psi);
 

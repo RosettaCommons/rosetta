@@ -253,10 +253,6 @@ GeneralizedKIC::parse_my_tag(
 	using namespace core::id;
 	using namespace protocols::filters;
 
-	/*if ( tag->getName() != "GeneralizedKIC" ){
-	throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
-	}*/
-
 	TR << "Parsing options for GeneralizedKIC (\"" << tag->getOption<std::string>("name" ,"") << "\") mover." << std::endl;
 
 	runtime_assert_string_msg( tag->hasOption("selector"), "RosettaScript parsing error: the <GeneralizedKIC> mover must have a selector specfied with the selector=<selector_name> statement." );
@@ -379,6 +375,15 @@ GeneralizedKIC::parse_my_tag(
 				std::string const bin( (*tag_it)->getOption<std::string>("bin", "") );
 				set_perturber_bin( bin );
 				if ( TR.visible() ) TR << "The set_backbone_bin GeneralizedKICperturber was set to use bin " << bin << "." << std::endl;
+			}
+
+			//If this is the randomize_alpha_backbone_by_rama perturber, the user may have specified a custom Ramachandran map:
+			if ( effect == "randomize_alpha_backbone_by_rama" ) {
+				if ( (*tag_it)->hasOption("custom_rama_table") ) {
+					std::string const custom_table( (*tag_it)->getOption<std::string>("custom_rama_table") );
+					set_perturber_custom_rama_table( custom_table );
+					if ( TR.visible() ) TR << "The perturb_alpha_backbone_by_rama perturber was set to use the \"" << custom_table << "\" custom Ramachandran table for sampling." << std::endl;
+				}
 			}
 
 			//Loop through the sub-tags to find out what information we're adding to this perturber:
@@ -817,6 +822,38 @@ void GeneralizedKIC::set_perturber_bin( std::string const &bin )
 	set_perturber_bin(perturberlist_.size(), bin);
 	return;
 } //set_perturber_bin
+
+/// @brief Set the custom Ramachandran table for the perturb_alpha_backbone_by_rama perturber.
+///
+void GeneralizedKIC::set_perturber_custom_rama_table( core::Size const perturber_index, std::string const &table_name ) {
+	runtime_assert_string_msg( perturber_index <= perturberlist_.size() && perturber_index > 0, "The perturber index provided to GeneralizedKIC::set_perturber_custom_rama_table() is out of range." );
+	perturberlist_[perturber_index]->set_custom_rama_table( table_name );
+	return;
+}
+
+/// @brief Set the curstom Ramachandran table for the perturb_alpha_backbone_by_rama perturber.
+/// @details This acts on the last perturber in the perturber list.
+void GeneralizedKIC::set_perturber_custom_rama_table( std::string const &table_name ) {
+	runtime_assert_string_msg(perturberlist_.size()>0, "No perturbers specified.  Aborting from GeneralizedKIC::set_perturber_custom_rama_table().");
+	set_perturber_custom_rama_table(perturberlist_.size(), table_name);
+	return;
+}
+
+/// @brief Set the custom Ramachandran table for the perturb_alpha_backbone_by_rama perturber.
+/// @details This version works by Rama_Table_Type.
+void GeneralizedKIC::set_perturber_custom_rama_table( core::Size const perturber_index, core::scoring::Rama_Table_Type const table_type ) {
+	runtime_assert_string_msg( perturber_index <= perturberlist_.size() && perturber_index > 0, "The perturber index provided to GeneralizedKIC::set_perturber_custom_rama_table() is out of range." );
+	perturberlist_[perturber_index]->set_custom_rama_table( table_type );
+	return;
+}
+
+/// @brief Set the curstom Ramachandran table for the perturb_alpha_backbone_by_rama perturber.
+/// @details This acts on the last perturber in the perturber list, and works by Rama_Table_Type.
+void GeneralizedKIC::set_perturber_custom_rama_table( core::scoring::Rama_Table_Type const table_type ) {
+	runtime_assert_string_msg(perturberlist_.size()>0, "No perturbers specified.  Aborting from GeneralizedKIC::set_perturber_custom_rama_table().");
+	set_perturber_custom_rama_table(perturberlist_.size(), table_type);
+	return;
+}
 
 /// @brief Set whether the perturber's generated poses should be used for BOINC graphics.
 /// @details Does nothing outside of the BOINC build.

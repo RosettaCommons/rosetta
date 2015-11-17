@@ -55,7 +55,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		TS_TRACE( "Testing a maltotriose, a simple linear sugar, relying on default settings." );
 		residue_types = residue_types_from_saccharide_sequence(
-				"Glcp-Glcp-Glcp", *residue_set );
+			"Glcp-Glcp-Glcp", *residue_set );
 
 		TS_ASSERT_EQUALS( residue_types.size(), 3 );
 		TS_ASSERT_EQUALS( residue_types[ 1 ]->name(), "->4)-alpha-D-Glcp:non-reducing_end" );
@@ -65,7 +65,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		TS_TRACE( "Testing Lewisx, which has one branch and modified sugars." );
 		residue_types = residue_types_from_saccharide_sequence(
-				"beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc", *residue_set );
+			"beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc", *residue_set );
 
 		TS_ASSERT_EQUALS( residue_types.size(), 3 );
 		TS_ASSERT_EQUALS( residue_types[ 1 ]->name(), "->4)-beta-D-Galp:non-reducing_end" );
@@ -75,9 +75,9 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		TS_TRACE( "Testing a 14-mer, which has nested branches." );
 		residue_types = residue_types_from_saccharide_sequence(
-				"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
-				"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
-				"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-", *residue_set );
+			"a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Glcp-(1->3)-a-D-Manp-(1->2)-a-D-Manp-(1->2)-a-D-Manp-(1->3)-"
+			"[a-D-Manp-(1->2)-a-D-Manp-(1->3)-[a-D-Manp-(1->2)-a-D-Manp-(1->6)]-a-D-Manp-(1->6)]-b-D-Manp-(1->4)-"
+			"b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-", *residue_set );
 
 		TS_ASSERT_EQUALS( residue_types.size(), 14 );
 		TS_ASSERT_EQUALS( residue_types[ 1 ]->name(), "->4)-alpha-D-Glcp:non-reducing_end" );

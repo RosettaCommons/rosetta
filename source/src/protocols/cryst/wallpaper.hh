@@ -119,10 +119,10 @@ public:
 
 	// grid spacing must be a multiple of this number
 	core::Size minmult() const {
-		if (setting_ == wgMONOCLINIC)   return 4;
-		if (setting_ == wgCUBIC)        return 4;
-		if (setting_ == wgTETRAGONAL)   return 8;
-		if (setting_ == wgHEXAGONAL)    return 6;
+		if ( setting_ == wgMONOCLINIC )   return 4;
+		if ( setting_ == wgCUBIC )        return 4;
+		if ( setting_ == wgTETRAGONAL )   return 8;
+		if ( setting_ == wgHEXAGONAL )    return 6;
 		return 0;
 	}
 
@@ -135,16 +135,16 @@ public:
 		CheshireCell  cc;
 		get_symmops (rt,cc);
 		std::string retval;
-		if (cc.high[0]>cc.low[0]) retval += "x ";
-		if (cc.high[1]>cc.low[1]) retval += "y ";
-		if (cc.high[2]>cc.low[2]) retval += "z ";
+		if ( cc.high[0]>cc.low[0] ) retval += "x ";
+		if ( cc.high[1]>cc.low[1] ) retval += "y ";
+		if ( cc.high[2]>cc.low[2] ) retval += "z ";
 		return retval;
 	}
 
 	numeric::xyzVector<core::Size>
 	get_nsubdivisions() {
 		numeric::xyzVector<core::Size> retval(1,1,1);
-		for (int i=1; i<=(int)nsymmops(); ++i) {
+		for ( int i=1; i<=(int)nsymmops(); ++i ) {
 			numeric::xyzVector<core::Real> const &T = symmops_[i].get_translation();
 			retval[0] = std::max( retval[0], denom( T[0] ) );
 			retval[1] = std::max( retval[1], denom( T[1] ) );
@@ -154,22 +154,24 @@ public:
 
 	numeric::xyzVector<core::Size>
 	get_trans_dofs() {
-		if (setting_ == wgMONOCLINIC)
+		if ( setting_ == wgMONOCLINIC ) {
 			return numeric::xyzVector<core::Size>(1,2,0);
-		else if (setting_ == wgCUBIC)
+		} else if ( setting_ == wgCUBIC ) {
 			return numeric::xyzVector<core::Size>(1,1,0);
-		else if (setting_ == wgTETRAGONAL)
+		} else if ( setting_ == wgTETRAGONAL ) {
 			return numeric::xyzVector<core::Size>(1,2,0);
-		else if (setting_ == wgHEXAGONAL)
+		} else if ( setting_ == wgHEXAGONAL ) {
 			return numeric::xyzVector<core::Size>(1,1,0);
+		}
 
 		return numeric::xyzVector<core::Size>(1,2,0);  // no warnings
 	}
 
 	core::Size
 	get_nrot_dofs() {
-		if (setting_ == wgMONOCLINIC)
+		if ( setting_ == wgMONOCLINIC ) {
 			return 1;
+		}
 		return 0;
 	}
 

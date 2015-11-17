@@ -108,6 +108,8 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::fast_relax_rounds            );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::count_sc_hbonds              );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::checkpoint_job_identifier    );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::default_rama_sampling_table  );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::rama_sampling_table_by_res   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::checkpoint_file              );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::rand_checkpoint_file         );
 
@@ -142,6 +144,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication() :
 	nstruct_(1),
 	checkpoint_job_identifier_(""),
 	checkpoint_filename_("checkpoint.txt"),
+	default_rama_table_type_( core::scoring::unknown_ramatable_type ),
+	rama_table_type_by_res_(),
 	rand_checkpoint_file_("rng.state.gz")
 {
 	initialize_from_options();
@@ -176,6 +180,8 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	nstruct_(src.nstruct_),
 	checkpoint_job_identifier_(src.checkpoint_job_identifier_),
 	checkpoint_filename_(src.checkpoint_filename_),
+	default_rama_table_type_( src.default_rama_table_type_ ),
+	rama_table_type_by_res_( src.rama_table_type_by_res_ ),
 	rand_checkpoint_file_(src.rand_checkpoint_file_)
 	//TODO -- copy variables here.
 {}
@@ -241,10 +247,14 @@ SimpleCycpepPredictApplication::initialize_from_options(
 
 	checkpoint_job_identifier_ = option[basic::options::OptionKeys::cyclic_peptide::checkpoint_job_identifier]();
 	checkpoint_filename_ = option[basic::options::OptionKeys::cyclic_peptide::checkpoint_file]();
-  rand_checkpoint_file_ = option[basic::options::OptionKeys::cyclic_peptide::rand_checkpoint_file]();
+	rand_checkpoint_file_ = option[basic::options::OptionKeys::cyclic_peptide::rand_checkpoint_file]();
+
+	//Figure out what custom Ramachandran tables we're using, if any:
+	set_default_rama_table_type( option[basic::options::OptionKeys::cyclic_peptide::default_rama_sampling_table]() );
+	set_rama_table_type_by_res( option[basic::options::OptionKeys::cyclic_peptide::rama_sampling_table_by_res]() );
 
 	return;
-}
+} //initialize_from_options()
 
 /// @brief Actually run the application.
 /// @details The initialize_from_options() function must be called before calling this.  (Called by default constructor.)
@@ -325,7 +335,7 @@ SimpleCycpepPredictApplication::run() const {
 		add_cyclic_constraints(pose);
 
 		//Set all omega values to 180 and randomize mainchain torsions:
-		set_mainchain_torsions(pose);
+		set_mainchain_torsions(pose, cyclic_offset);
 
 #ifdef BOINC_GRAPHICS
 		// attach boinc graphics pose observer
@@ -334,7 +344,7 @@ SimpleCycpepPredictApplication::run() const {
 #endif
 
 		//Do the kinematic closure:
-		bool const success( genkic_close(pose, sfxn_highhbond_cst, total_hbond) );
+		bool const success( genkic_close(pose, sfxn_highhbond_cst, total_hbond, cyclic_offset) );
 
 #ifdef BOINC_GRAPHICS
 		// attach boinc graphics pose observer
@@ -486,6 +496,90 @@ SimpleCycpepPredictApplication::build_polymer(
 	TR << "Build successful." << std::endl;
 
 	return;
+} //build_polymer()
+
+/// @brief Given the name of a Rama_Table_Type, set the default Rama_Table_Type.
+/// @details Error if unknown type.
+void
+SimpleCycpepPredictApplication::set_default_rama_table_type(
+	std::string const &type_name
+) {
+	if ( type_name=="" ) return; //Default case -- no default rama table provided.
+
+	default_rama_table_type_ = get_rama_table_type_from_name( type_name );
+	if ( TR.visible() ) {
+		TR << "Set default Rama table type to " << type_name << "." << std::endl;
+		TR.flush();
+	}
+	return;
+}
+
+/// @brief Given a string vector that we need to parse, populate the rama_table_type_by_res_ map.
+/// @details The string vector must be of the format: [integer] [rama type name] [integer] [rama type name] etc.
+/// Throws error if could not parse.
+void
+SimpleCycpepPredictApplication::set_rama_table_type_by_res(
+	utility::vector1 <std::string> const &type_name_vector
+) {
+	core::Size const vectsize( type_name_vector.size() );
+	if ( vectsize == 0 ) return;
+
+	core::Size i(0);
+	while ( i<vectsize ) {
+		++i;
+		std::stringstream ss(type_name_vector[i]);
+		core::Size tempval(0);
+		ss >> tempval;
+		if ( ss.fail() ) {
+			std::stringstream msg("");
+			msg << "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_rama_table_type_by_res(): Could not interpret " << type_name_vector[i] << " as an integer.  The \"-rama_sampling_table_by_res\" flag must be given a series of values of the pattern [res_index] [rama_table_type] [res_index] [rama_table_type] etc." << std::endl;
+			utility_exit_with_message(msg.str());
+		}
+		++i;
+		if ( i > vectsize ) {
+			std::stringstream msg("");
+			msg << "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::set_rama_table_type_by_res(): A residue index was found with no corresponding Rama table type." << std::endl;
+			utility_exit_with_message(msg.str());
+		}
+		std::string tempstring("");
+		std::stringstream ss2(type_name_vector[i]);
+		ss2 >> tempstring;
+		rama_table_type_by_res_[tempval] = get_rama_table_type_from_name(tempstring);
+		if ( TR.visible() ) TR << "Set custom Ramachandran table for residue " << tempval << " to " << tempstring << "." << std::endl;
+	}
+
+	if ( TR.visible() ) TR.flush();
+
+	return;
+}
+
+/// @brief Given a Rama_Table_Type name, return the Rama_Table_Type, or an informative error message on failure.
+///
+core::scoring::Rama_Table_Type
+SimpleCycpepPredictApplication::get_rama_table_type_from_name(
+	std::string const &type_name
+) const {
+	//Get an instance of the Ramachandran object:
+	core::scoring::Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
+
+	//Get the type from the name:
+	core::scoring::Rama_Table_Type const type ( rama.get_ramatable_type_by_name(type_name) );
+
+	//Check that the type was parsed sensibly:
+	if ( type == core::scoring::unknown_ramatable_type ) {
+		std::stringstream err_msg("Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::get_rama_table_type_from_name():");
+		err_msg << "  The provided custom Ramachandran table type (\"" << type_name << "\") is unknown.  Allowed options are: ";
+		for ( core::Size i=1; i<static_cast<core::Size>(core::scoring::unknown_ramatable_type); ++i ) {
+			err_msg << rama.get_ramatable_name_by_type( static_cast<core::scoring::Rama_Table_Type>(i) );
+			if ( i < (static_cast<core::Size>(core::scoring::unknown_ramatable_type) - 1) ) {
+				err_msg << ", ";
+			}
+		}
+		err_msg << "." << std::endl;
+		utility_exit_with_message( err_msg.str() );
+	}
+
+	return(type);
 }
 
 
@@ -693,16 +787,24 @@ SimpleCycpepPredictApplication::add_cyclic_constraints (
 /// For other residue types, just randomizes mainchain torsions other than peptide bonds.
 void
 SimpleCycpepPredictApplication::set_mainchain_torsions (
-	core::pose::PoseOP pose
+	core::pose::PoseOP pose,
+	core::Size const cyclic_offset
 ) const {
 	TR << "Randomizing mainchain torsions." << std::endl;
 	core::Size const nres(pose->n_residue());
 	for ( core::Size i=1; i<=nres; ++i ) { //Loop through all residues
 		if ( pose->residue(i).type().is_alpha_aa() ) {
-			core::scoring::Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran(); //Get the Rama scoring function
+			core::scoring::Ramachandran & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran_nonconst(); //Get the Rama scoring function; must be nonconst to allow lazy loading
 			core::Real phi(0.0), psi(0.0);
 			//TR << "aa" << i << "=" << pose->residue_type(i).aa() << std::endl; //DELETE ME
-			rama.random_phipsi_from_rama( pose->residue_type(i).aa(), phi, psi); //TODO -- use backbone_aa
+			core::Size const cur_abs_pos( current_position( i, cyclic_offset, pose->n_residue() ) );
+			if ( custom_rama_table_defined( cur_abs_pos ) ) {
+				rama.draw_random_phi_psi_from_extra_cdf( rama_table_type_by_res(cur_abs_pos), phi, psi);
+			} else if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) {
+				rama.draw_random_phi_psi_from_extra_cdf( default_rama_table_type(), phi, psi);
+			} else {
+				rama.random_phipsi_from_rama( pose->residue_type(i).aa(), phi, psi); //TODO -- use backbone_aa
+			}
 			pose->set_phi(i,phi);
 			pose->set_psi(i,psi);
 			if ( i!=nres ) pose->set_omega(i, 180.0);
@@ -749,7 +851,8 @@ bool
 SimpleCycpepPredictApplication::genkic_close(
 	core::pose::PoseOP pose,
 	core::scoring::ScoreFunctionOP sfxn_highhbond,
-	protocols::filters::CombinedFilterOP total_hbond
+	protocols::filters::CombinedFilterOP total_hbond,
+	core::Size const cyclic_offset
 ) const {
 	using namespace protocols::generalized_kinematic_closure;
 	using namespace protocols::generalized_kinematic_closure::selector;
@@ -824,6 +927,12 @@ SimpleCycpepPredictApplication::genkic_close(
 		if ( pose->residue(i).type().is_alpha_aa() ) {
 			genkic->add_perturber( protocols::generalized_kinematic_closure::perturber::randomize_alpha_backbone_by_rama );
 			genkic->add_residue_to_perturber_residue_list(i);
+			core::Size const res_in_original( current_position(i, cyclic_offset, pose->n_residue() ) ); //Get the index of this position in the original pose (prior to any circular permutation).
+			if ( custom_rama_table_defined( res_in_original ) ) { //If there is a custom rama table defined for sampling at this position, use it.
+				genkic->set_perturber_custom_rama_table( rama_table_type_by_res( res_in_original ) );
+			} else if ( default_rama_table_type() != core::scoring::unknown_ramatable_type ) { //If there is a default custom rama table defined for sampling, use it.
+				genkic->set_perturber_custom_rama_table( default_rama_table_type() );
+			}
 		} else {
 			//TODO Randomize mainchain torsions here for beta- and gamma-amino acids.
 			utility_exit_with_message( "Handling of beta- and gamma-amino acids in setup of the genKIC perturber in the simple_cycpep_predict app has not yet been written.  TODO." );
@@ -834,13 +943,15 @@ SimpleCycpepPredictApplication::genkic_close(
 	genkic->add_filter( protocols::generalized_kinematic_closure::filter::loop_bump_check );
 
 	//Add rama check filters:
-	for ( core::Size i=1; i<=nres; ++i ) {
-		if ( i!=first_loop_res && i!=middle_loop_res && i!=last_loop_res ) continue; //Just filter the pivots.
-		if ( pose->residue(i).type().is_alpha_aa() ) {
-			genkic->add_filter( protocols::generalized_kinematic_closure::filter::alpha_aa_rama_check );
-			genkic->set_filter_resnum(i);
-			genkic->set_filter_rama_cutoff_energy( rama_cutoff_ );
-			if ( i==first_loop_res ) genkic->set_filter_attach_boinc_ghost_observer(true);
+	if ( use_rama_filter() ) {
+		for ( core::Size i=1; i<=nres; ++i ) {
+			if ( i!=first_loop_res && i!=middle_loop_res && i!=last_loop_res ) continue; //Just filter the pivots.
+			if ( pose->residue(i).type().is_alpha_aa() ) {
+				genkic->add_filter( protocols::generalized_kinematic_closure::filter::alpha_aa_rama_check );
+				genkic->set_filter_resnum(i);
+				genkic->set_filter_rama_cutoff_energy( rama_cutoff_ );
+				if ( i==first_loop_res ) genkic->set_filter_attach_boinc_ghost_observer(true);
+			}
 		}
 	}
 

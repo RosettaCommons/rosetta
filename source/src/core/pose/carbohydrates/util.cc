@@ -638,10 +638,10 @@ set_glycosidic_torsion( uint const torsion_id, Pose & pose, uint const sequence_
 /// Also, I've not written this to handle creation of glycolipids yet.
 void
 glycosylate_pose(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & atom_name,
-		std::string const & iupac_sequence )
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & atom_name,
+	std::string const & iupac_sequence )
 {
 	using namespace utility;
 	using namespace chemical;
@@ -694,7 +694,7 @@ glycosylate_pose(
 	pose.pdb_info( info );
 
 	TR << "Glycosylated pose with " << iupac_sequence << '-' << atom_name <<
-			pose.residue( sequence_position ).name3() << sequence_position << endl;
+		pose.residue( sequence_position ).name3() << sequence_position << endl;
 }
 
 // Glycosylate the Pose at the given sequence position using an IUPAC sequence.
@@ -709,11 +709,11 @@ glycosylate_pose( Pose & pose, uint const sequence_position, std::string const &
 		glycosylate_pose( pose, sequence_position, "OG", iupac_sequence );
 	} else if ( glycosylation_site == "THR" ) {
 		glycosylate_pose( pose, sequence_position, "OG1", iupac_sequence );
-	// TODO: Add Trp, after creating an appropriate patch file.
+		// TODO: Add Trp, after creating an appropriate patch file.
 	} else {
 		utility_exit_with_message( glycosylation_site + " is not a common site of glycosylation or else it is "
-				"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose( Pose & pose, uint const "
-				"sequence_position, std::string const & atom_name, std::string const & iupac_sequence ) instead." );
+			"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose( Pose & pose, uint const "
+			"sequence_position, std::string const & atom_name, std::string const & iupac_sequence ) instead." );
 	}
 }
 
@@ -721,10 +721,10 @@ glycosylate_pose( Pose & pose, uint const sequence_position, std::string const &
 // Glycosylate the Pose at the given sequence position and atom using a .GWS or IUPAC sequence file.
 void
 glycosylate_pose_by_file(
-		Pose & pose,
-		uint const sequence_position,
-		std::string const & atom_name,
-		std::string const & filename )
+	Pose & pose,
+	uint const sequence_position,
+	std::string const & atom_name,
+	std::string const & filename )
 {
 	using namespace std;
 	using namespace io::carbohydrates;
@@ -751,11 +751,11 @@ glycosylate_pose_by_file( Pose & pose, uint const sequence_position, std::string
 		glycosylate_pose_by_file( pose, sequence_position, "OG", filename );
 	} else if ( glycosylation_site == "THR" ) {
 		glycosylate_pose_by_file( pose, sequence_position, "OG1", filename );
-	// TODO: Add Trp, after creating an appropriate patch file.
+		// TODO: Add Trp, after creating an appropriate patch file.
 	} else {
 		utility_exit_with_message( glycosylation_site + " is not a common site of glycosylation or else it is "
-				"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose_by_file( Pose & pose, uint "
-				"const sequence_position, std::string const & atom_name, std::string const & filename ) instead." );
+			"ambiguous; Rosetta cannot determine attachment atom.  Use glycosylate_pose_by_file( Pose & pose, uint "
+			"const sequence_position, std::string const & atom_name, std::string const & filename ) instead." );
 	}
 }
 

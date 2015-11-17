@@ -92,27 +92,27 @@ CarbohydrateInfo::show( std::ostream & output ) const
 		prefix = string( 1, num ) + string( "-keto" );
 	}
 	switch ( n_carbons_ ) {
-		case 3 :
-			suffix = "triose";
-			break;
-		case 4 :
-			suffix = "tetrose";
-			break;
-		case 5 :
-			suffix = "pentose";
-			break;
-		case 6 :
-			suffix = "hexose";
-			break;
-		case 7 :
-			suffix = "heptose";
-			break;
-		case 8 :
-			suffix = "octose";
-			break;
-		case 9 :
-			suffix = "nonose";
-			break;
+	case 3 :
+		suffix = "triose";
+		break;
+	case 4 :
+		suffix = "tetrose";
+		break;
+	case 5 :
+		suffix = "pentose";
+		break;
+	case 6 :
+		suffix = "hexose";
+		break;
+	case 7 :
+		suffix = "heptose";
+		break;
+	case 8 :
+		suffix = "octose";
+		break;
+	case 9 :
+		suffix = "nonose";
+		break;
 	}
 
 	ring_form = CarbohydrateInfoManager::morpheme_from_ring_size( ring_size_ ) + "ose";

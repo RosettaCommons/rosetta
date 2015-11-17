@@ -336,9 +336,9 @@ pdbslice( core::pose::Pose & pose,
 /// @author Joseph Harrison
 bool
 change_jump_to_this_residue_into_chemical_edge(
-		core::uint end_resnum,
-		core::pose::Pose const & pose,
-		core::kinematics::FoldTree & ft )
+	core::uint end_resnum,
+	core::pose::Pose const & pose,
+	core::kinematics::FoldTree & ft )
 {
 	using namespace std;
 	using namespace core::chemical;
@@ -432,7 +432,7 @@ set_reasonable_fold_tree( pose::Pose & pose )
 				} else /* We couldn't find a chemical connection. */ {
 					if ( pose.residue_type( ii ).n_residue_connections() > 0 ) {
 						TR.Warning << "Can't find a chemical connection for residue " << ii << " " <<
-								pose.residue_type( ii ).name() << endl;
+							pose.residue_type( ii ).name() << endl;
 					}
 				}
 			} else {
@@ -462,7 +462,7 @@ set_reasonable_fold_tree( pose::Pose & pose )
 						} else /* We couldn't find a chemical connection. */ {
 							if ( pose.residue_type( jj ).n_residue_connections() > 0 ) {
 								TR.Warning << "Can't find a chemical connection for residue " << jj << " " <<
-										pose.residue_type( jj ).name() << endl;
+									pose.residue_type( jj ).name() << endl;
 							}
 						}
 					}

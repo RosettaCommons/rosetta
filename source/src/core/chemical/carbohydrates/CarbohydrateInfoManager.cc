@@ -121,26 +121,26 @@ VariantType
 CarbohydrateInfoManager::branch_variant_type_from_position( core::uint position )
 {
 	switch ( position ) {
-		case 1:
-			return C1_BRANCH_POINT;
-		case 2:
-			return C2_BRANCH_POINT;
-		case 3:
-			return C3_BRANCH_POINT;
-		case 4:
-			return C4_BRANCH_POINT;
-		case 5:
-			return C5_BRANCH_POINT;
-		case 6:
-			return C6_BRANCH_POINT;
-		case 7:
-			return C7_BRANCH_POINT;
-		case 8:
-			return C8_BRANCH_POINT;
-		case 9:
-			return C9_BRANCH_POINT;
-		default:
-			return NO_VARIANT;
+	case 1 :
+		return C1_BRANCH_POINT;
+	case 2 :
+		return C2_BRANCH_POINT;
+	case 3 :
+		return C3_BRANCH_POINT;
+	case 4 :
+		return C4_BRANCH_POINT;
+	case 5 :
+		return C5_BRANCH_POINT;
+	case 6 :
+		return C6_BRANCH_POINT;
+	case 7 :
+		return C7_BRANCH_POINT;
+	case 8 :
+		return C8_BRANCH_POINT;
+	case 9 :
+		return C9_BRANCH_POINT;
+	default :
+		return NO_VARIANT;
 	}
 }
 
@@ -166,7 +166,7 @@ CarbohydrateInfoManager::code_to_root_map()
 	// Only create map one time, as needed.
 	if ( code_to_root_map_.empty() ) {
 		code_to_root_map_ = read_codes_and_roots_from_database_file(
-				basic::database::full_name( "chemical/carbohydrates/codes_to_roots.map" ) );
+			basic::database::full_name( "chemical/carbohydrates/codes_to_roots.map" ) );
 	}
 	return code_to_root_map_;
 }
@@ -181,7 +181,7 @@ CarbohydrateInfoManager::ring_size_to_morphemes_map()
 	// Only create map one time, as needed.
 	if ( ring_size_to_morphemes_map_.empty() ) {
 		ring_size_to_morphemes_map_ = read_ring_sizes_and_morphemes_from_database_file(
-				basic::database::full_name( "chemical/carbohydrates/ring_size_to_morphemes.map" ) );
+			basic::database::full_name( "chemical/carbohydrates/ring_size_to_morphemes.map" ) );
 	}
 	return ring_size_to_morphemes_map_;
 }
@@ -214,7 +214,7 @@ CarbohydrateInfoManager::nomenclature_table()
 	// Only create table one time, as needed.
 	if ( nomenclature_table_.empty() ) {
 		nomenclature_table_ = read_nomenclature_table_from_database_file(
-				basic::database::full_name( "chemical/carbohydrates/sugar_modifications.table" ) );
+			basic::database::full_name( "chemical/carbohydrates/sugar_modifications.table" ) );
 	}
 	return nomenclature_table_;
 }

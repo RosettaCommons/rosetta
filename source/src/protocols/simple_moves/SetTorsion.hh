@@ -141,6 +141,11 @@ private:
 	utility::vector1< std::string > angle_;
 	utility::vector1< std::string > residues_;
 	utility::vector1< std::string > torsion_name_; // phi/psi etc.
+
+	/// @brief Used for custom rama sampling.  One entry per <Torsion> block; defaults to "".
+	///
+	utility::vector1< std::string > custom_rama_map_;
+
 	utility::vector1< Size > extending_;
 	utility::vector1< utility::vector1< core::id::NamedAtomID > > torsion_atoms_;
 

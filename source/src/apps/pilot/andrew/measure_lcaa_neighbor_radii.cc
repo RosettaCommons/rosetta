@@ -51,9 +51,9 @@ int main( int argc, char * argv [] )
 		using namespace core::id;
 		using namespace core::io::pdb;
 		using namespace core::pose;
- 		using namespace core::scoring;
+		using namespace core::scoring;
 		using namespace core::graph;
- 		using namespace core::pack;
+		using namespace core::pack;
 		using namespace core::pack::rotamer_set;
 		using namespace core::pack::task;
 
@@ -83,9 +83,9 @@ int main( int argc, char * argv [] )
 
 		RotamerSetOP rotset2 = rotsets->rotamer_set_for_residue( 2 );
 		for ( Size ii = 1; ii <= rotset2->get_n_residue_types(); ++ii ) {
-		  ResidueOP iirot = rotset2->rotamer( rotset2->get_residue_type_begin(ii) )->clone();
+			ResidueOP iirot = rotset2->rotamer( rotset2->get_residue_type_begin(ii) )->clone();
 			Real maxd2 = 0;
-		  Size nchi = iirot->nchi();
+			Size nchi = iirot->nchi();
 			if ( nchi != 0 ) {
 				utility::vector1< Size > dims( nchi, nsteps );
 				utility::LexicographicalIterator lex( dims );

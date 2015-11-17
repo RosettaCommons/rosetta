@@ -129,8 +129,8 @@ struct SingleInterface {
 };
 
 inline bool transforms_equiv(
-		numeric::xyzMatrix<Real> const &S1, numeric::xyzVector<Real> const &T1,
-		numeric::xyzMatrix<Real> const &S2, numeric::xyzVector<Real> const &T2
+	numeric::xyzMatrix<Real> const &S1, numeric::xyzVector<Real> const &T1,
+	numeric::xyzMatrix<Real> const &S2, numeric::xyzVector<Real> const &T2
 ) {
 	Real const threshold( 1e-4 );
 	bool equiv( true );
@@ -146,12 +146,12 @@ inline bool transforms_equiv(
 
 core::Real
 get_max_interface(
-		Pose /*pose*/,
-		utility::vector1<SingleInterface> &allInterfaces,
-		utility::vector1<core::kinematics::RT> const & /*rts_all*/ ) {
+	Pose /*pose*/,
+	utility::vector1<SingleInterface> &allInterfaces,
+	utility::vector1<core::kinematics::RT> const & /*rts_all*/ ) {
 
 	core::Real retval=0.0;
-	for (int k=1; k<=(int)allInterfaces.size(); ++k) {
+	for ( int k=1; k<=(int)allInterfaces.size(); ++k ) {
 		retval = std::max( retval, allInterfaces[k].cb_overlap_ );
 	}
 	return retval;
@@ -160,12 +160,12 @@ get_max_interface(
 
 void
 reconstruct_lattice_pose_info(
-		core::Size const nres_monomer,
-		core::pose::Pose const & pose, // already a symmetric pose
-		core::Size & base_monomer,
-		core::Size & num_monomers,
-		utility::vector1<core::Size> & monomer_jumps,
-		utility::vector1<core::Size> & monomer_anchor_virtuals) {
+	core::Size const nres_monomer,
+	core::pose::Pose const & pose, // already a symmetric pose
+	core::Size & base_monomer,
+	core::Size & num_monomers,
+	utility::vector1<core::Size> & monomer_jumps,
+	utility::vector1<core::Size> & monomer_anchor_virtuals) {
 	monomer_jumps.clear();
 	monomer_anchor_virtuals.clear();
 
@@ -192,7 +192,7 @@ reconstruct_lattice_pose_info(
 					jumpno = e.label();
 				}
 			}
-			if( jumpno==0 ) {
+			if ( jumpno==0 ) {
 				TS << imon << " " << offset << " " << nres_monomer << std::endl;
 				runtime_assert( false );
 			}
@@ -209,10 +209,10 @@ reconstruct_lattice_pose_info(
 ///
 core::Real
 get_interface_score(
-		Pose /*pose*/,
-		utility::vector1<SingleInterface> &allInterfaces,
-		utility::vector1<core::kinematics::RT> const &rts_all,
-		bool verbose = false ) {
+	Pose /*pose*/,
+	utility::vector1<SingleInterface> &allInterfaces,
+	utility::vector1<core::kinematics::RT> const &rts_all,
+	bool verbose = false ) {
 	// [STAGE 2] see if we form a connected lattice
 	//    * idea: expand all contacting symmops
 	//    *       ensure we generate all symmops
@@ -240,10 +240,10 @@ get_interface_score(
 	// }
 
 	bool done = false;
-	for (int rd=1; rd<=EXPAND_ROUNDS && !done; ++rd) {
-		if (verbose) {
+	for ( int rd=1; rd<=EXPAND_ROUNDS && !done; ++rd ) {
+		if ( verbose ) {
 			std::cerr << "Round " << rd << ":" << std::endl;
-			for (int j=1; j<=(int)allInterfaces.size(); ++j) {  // 1 is identity
+			for ( int j=1; j<=(int)allInterfaces.size(); ++j ) {  // 1 is identity
 				numeric::xyzMatrix<Real> const &Sj=allInterfaces[j].R_;
 				numeric::xyzVector<Real> const &Tj=allInterfaces[j].T_;
 				std::cerr << "At " << j << ", score = " << allInterfaces[j].cb_overlap_ << std::endl;
@@ -256,8 +256,8 @@ get_interface_score(
 
 		done = true;
 		int nxforms = (int)allInterfaces.size();
-		for (int i=1; i<=nxforms; ++i) {
-			for (int j=1; j<=nxformsOrig; ++j) {
+		for ( int i=1; i<=nxforms; ++i ) {
+			for ( int j=1; j<=nxformsOrig; ++j ) {
 				// keep in inner loop
 				numeric::xyzMatrix<Real> const &Si=allInterfaces[i].R_;
 				numeric::xyzVector<Real> const &Ti=allInterfaces[i].T_;
@@ -268,23 +268,23 @@ get_interface_score(
 				numeric::xyzVector<Real> Tij = Ti + Si*Tj;
 				Real overlap_ij = std::min( allInterfaces[i].cb_overlap_, allInterfaces[j].cb_overlap_ );
 
-				if ((Tij[0])>2 || (Tij[1])>2 || (Tij[2])>2) continue;
-				if ((Tij[0])<-2 || (Tij[1])<-2 || (Tij[2])<-2) continue;
+				if ( (Tij[0])>2 || (Tij[1])>2 || (Tij[2])>2 ) continue;
+				if ( (Tij[0])<-2 || (Tij[1])<-2 || (Tij[2])<-2 ) continue;
 
 				// check if it is in the set
 				// we could hash these for a small speed increase...
 				bool unique_xform = true;
-				for (int k=1; k<=(int)allInterfaces.size(); ++k) {
-					if (transforms_equiv(Sij, Tij, allInterfaces[k].R_, allInterfaces[k].T_)) {
+				for ( int k=1; k<=(int)allInterfaces.size(); ++k ) {
+					if ( transforms_equiv(Sij, Tij, allInterfaces[k].R_, allInterfaces[k].T_) ) {
 						// check if min interface is better
-						if (allInterfaces[k].cb_overlap_ < overlap_ij) {
+						if ( allInterfaces[k].cb_overlap_ < overlap_ij ) {
 							allInterfaces[k].cb_overlap_ = overlap_ij;
 							done = false;
 						}
 						unique_xform = false;
 					}
 				}
-				if (unique_xform) {
+				if ( unique_xform ) {
 					allInterfaces.push_back( SingleInterface( Sij, Tij, overlap_ij ) );
 					done = false;
 				}
@@ -297,11 +297,11 @@ get_interface_score(
 	//   1--- all symmops
 	Real score = 1e30;
 	bool connected = true;
-	for (int i=2; i<=(int)rts_all.size() && connected; ++i) {  // 1 is identity
+	for ( int i=2; i<=(int)rts_all.size() && connected; ++i ) {  // 1 is identity
 		bool contains_j = false;
 		numeric::xyzMatrix<Real> const &Si= rts_all[i].get_rotation();
 		numeric::xyzVector<Real> const &Ti= rts_all[i].get_translation();
-		for (int j=1; j<=(int)allInterfaces.size() && !contains_j; ++j) {
+		for ( int j=1; j<=(int)allInterfaces.size() && !contains_j; ++j ) {
 			numeric::xyzMatrix<Real> const &Sj=allInterfaces[j].R_;
 			numeric::xyzVector<Real> const &Tj=allInterfaces[j].T_;
 			if ( transforms_equiv( Si, Ti, Sj, Tj) ) {
@@ -311,27 +311,33 @@ get_interface_score(
 		}
 		connected &= contains_j;
 	}
-	if (!connected) return 0.0;
+	if ( !connected ) return 0.0;
 
 
 	//   2--- +/- 1 in each direction
 	Real score_00p=0, score_00m=0, score_0m0=0, score_0p0=0, score_p00=0, score_m00=0;
 	numeric::xyzMatrix<Real> identity = numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
-	for (int i=1; i<=(int)allInterfaces.size(); ++i) {
+	for ( int i=1; i<=(int)allInterfaces.size(); ++i ) {
 		numeric::xyzMatrix<Real> const &Si=allInterfaces[i].R_;
 		numeric::xyzVector<Real> const &Ti=allInterfaces[i].T_;
-		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(0,0, 1)))
+		if ( transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(0,0, 1)) ) {
 			score_00p = allInterfaces[i].cb_overlap_;
-		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(0,0,-1)))
+		}
+		if ( transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(0,0,-1)) ) {
 			score_00m = allInterfaces[i].cb_overlap_;
-		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(0, 1,0)))
+		}
+		if ( transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(0, 1,0)) ) {
 			score_0p0 = allInterfaces[i].cb_overlap_;
-		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(0,-1,0)))
+		}
+		if ( transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(0,-1,0)) ) {
 			score_0m0 = allInterfaces[i].cb_overlap_;
-		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>( 1,0,0)))
+		}
+		if ( transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>( 1,0,0)) ) {
 			score_p00 = allInterfaces[i].cb_overlap_;
-		if (transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(-1,0,0)))
+		}
+		if ( transforms_equiv(Si, Ti, identity, numeric::xyzVector<Real>(-1,0,0)) ) {
 			score_m00 = allInterfaces[i].cb_overlap_;
+		}
 	}
 	score = std::min( score, std::min(score_00p, score_00m));
 	score = std::min( score, std::min(score_0m0, score_0p0));
@@ -362,7 +368,7 @@ calc_vm( Real const volume, std::string const & sequence, Size const ncopies )
 		'S', 87,  'T', 101, 'W', 186, 'Y', 163, 'V', 99 ) );
 
 	Real weight(0.0);
-	BOOST_FOREACH( char c, sequence ) weight += daltons[ c ];
+	BOOST_FOREACH ( char c, sequence ) weight += daltons[ c ];
 	return ( volume / Real( ncopies * weight ) );
 }
 
@@ -386,27 +392,27 @@ get_sc( protocols::cryst::MakeLatticeMover &setup, core::pose::Pose & pose, core
 	// into the sc surface objects
 	utility::vector1<SingleInterface> sc_interfaces, sasa_interfaces;
 
-	for (Size i=1; i<=nres_asu; ++i) scc.AddResidue(0, pose.residue(i));
-	for (Size i=2; i<=nsubunits; ++i ) {
+	for ( Size i=1; i<=nres_asu; ++i ) scc.AddResidue(0, pose.residue(i));
+	for ( Size i=2; i<=nsubunits; ++i ) {
 		core::scoring::sc::ShapeComplementarityCalculator scc_i;
 		scc_i.Init();
-		for (Size j=1; j<=nres_asu; ++j) scc_i.AddResidue(0, pose.residue(j));
+		for ( Size j=1; j<=nres_asu; ++j ) scc_i.AddResidue(0, pose.residue(j));
 
 		bool contact = false;
 		Size start = (i-1)*nres_asu;
-		for (Size ir=1; ir<=nres_asu; ir++) {
-			if (pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
+		for ( Size ir=1; ir<=nres_asu; ir++ ) {
+			if ( pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0 ) {
 				contact = true;
 				break;
 			}
 		}
-		if (contact) {
-			for (Size ir=1; ir<=nres_asu; ir++) {
+		if ( contact ) {
+			for ( Size ir=1; ir<=nres_asu; ir++ ) {
 				scc.AddResidue(1, pose.residue(ir+start));
 				scc_i.AddResidue(1, pose.residue(ir+start));
 			}
 
-			if (scc_i.Calc()) {
+			if ( scc_i.Calc() ) {
 				numeric::xyzMatrix<core::Real> Ri;
 				numeric::xyzVector<core::Real> Ti;
 				setup.getRT( i, Ri, Ti );
@@ -418,7 +424,7 @@ get_sc( protocols::cryst::MakeLatticeMover &setup, core::pose::Pose & pose, core
 	weakest_sc = get_interface_score (pose, sc_interfaces, setup.symmops() );
 	weakest_sasa = get_interface_score (pose, sasa_interfaces, setup.symmops() );
 
-	if (scc.Calc()) {
+	if ( scc.Calc() ) {
 		total_sc = scc.GetResults().sc;
 		total_sasa = scc.GetResults().surface[2].trimmedArea;
 	}
@@ -466,22 +472,22 @@ get_sasa( protocols::cryst::MakeLatticeMover &setup, core::pose::Pose & pose, co
 	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
 
 	// per subunit
-	for (Size i=2; i<=nsubunits; ++i ) {
+	for ( Size i=2; i<=nsubunits; ++i ) {
 		core::pose::Pose pose_i = pose_asu;
 
 		bool contact = false;
 		Size start = (i-1)*nres_asu;
-		for (Size ir=1; ir<=nres_asu; ir++) {
-			if (pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
+		for ( Size ir=1; ir<=nres_asu; ir++ ) {
+			if ( pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0 ) {
 				contact = true;
 				break;
 			}
 		}
 
-		if (contact) {
+		if ( contact ) {
 			Size const anchor( nres_asu );
 			pose_i.append_residue_by_jump( pose.residue(start+1), anchor );
-			for (Size ir=2; ir<=nres_asu; ir++) {
+			for ( Size ir=2; ir<=nres_asu; ir++ ) {
 				pose_i.append_residue_by_bond( pose.residue(start+ir) );
 			}
 
@@ -553,8 +559,8 @@ find_buried_unsatisfied_polars(
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
 			conformation::Residue const & rsd( pose.residue(i) );
 			for ( chemical::AtomIndices::const_iterator
-							hnum  = rsd.Hpos_polar().begin(),
-							hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+					hnum  = rsd.Hpos_polar().begin(),
+					hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 				id::AtomID const hatm( *hnum, i ), datm( rsd.atom_base( *hnum ), i );
 				atom_sasa[ datm ] += atom_sasa[ hatm ];
 			}
@@ -566,7 +572,7 @@ find_buried_unsatisfied_polars(
 	{
 		using namespace scoring;
 		ScoreFunction sf;
- 		sf.set_weight( hbond_sc, 1.0 );
+		sf.set_weight( hbond_sc, 1.0 );
 		sf(pose);
 		pose.update_residue_neighbors();
 		scoring::hbonds::fill_hbond_set( pose, false, hbond_set );
@@ -594,8 +600,8 @@ find_buried_unsatisfied_polars(
 
 		// donors
 		for ( chemical::AtomIndices::const_iterator
-						hnum  = rsd.Hpos_polar().begin(),
-						hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+				hnum  = rsd.Hpos_polar().begin(),
+				hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 			id::AtomID const hatm( *hnum, i ), datm( rsd.atom_base( *hnum ), i );
 			Real const hatm_sasa( new_unsats ? atom_sasa[ datm ] : atom_sasa[ hatm ] );
 			if ( total_hbond_energy[ hatm ] >= hbond_energy_threshold && hatm_sasa <= burial_threshold ) {
@@ -605,11 +611,11 @@ find_buried_unsatisfied_polars(
 
 		// acceptors
 		for ( chemical::AtomIndices::const_iterator
-						anum  = rsd.accpt_pos().begin(),
-						anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
+				anum  = rsd.accpt_pos().begin(),
+				anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 			id::AtomID const aatm( *anum, i );
 			if ( total_hbond_energy[ aatm ] >= hbond_energy_threshold &&
-					 atom_sasa[ aatm ] <= burial_threshold ) {
+					atom_sasa[ aatm ] <= burial_threshold ) {
 				buried_unsatisfied_acceptors.push_back( aatm );
 			}
 		}
@@ -658,23 +664,23 @@ unsatisfied_buried_polars( core::pose::Pose & pose, core::scoring::ScoreFunction
 		find_buried_unsatisfied_polars( pose_apart_i   , nres_asu, unsatdons1, unsataccs1, probe );
 		find_buried_unsatisfied_polars( pose_together_i, nres_asu, unsatdons2, unsataccs2, probe );
 
-		BOOST_FOREACH( id::AtomID id, unsatdons2 ) {
+		BOOST_FOREACH ( id::AtomID id, unsatdons2 ) {
 			if ( !has_element( id, unsatdons1 ) ) {
 				unsat_frequency[id] += increment;
 				unsats += increment;
 			}
 		}
 		//BOOST_FOREACH( id::AtomID id, unsatdons1 ) {
-			//if ( !has_element( id, unsatdons2 ) ) TS << "Unsatisfied in unbound only: " << id << std::endl;
+		//if ( !has_element( id, unsatdons2 ) ) TS << "Unsatisfied in unbound only: " << id << std::endl;
 		//}
-		BOOST_FOREACH( id::AtomID id, unsataccs2 ) {
+		BOOST_FOREACH ( id::AtomID id, unsataccs2 ) {
 			if ( !has_element( id, unsataccs1 ) ) {
 				unsat_frequency[id] += increment;
 				unsats += increment;
 			}
 		}
 		//BOOST_FOREACH( id::AtomID id, unsataccs1 ) {
-			//if ( !has_element( id, unsataccs2 ) ) TS << "Unsatisfied in unbound only: " << id << std::endl;
+		//if ( !has_element( id, unsataccs2 ) ) TS << "Unsatisfied in unbound only: " << id << std::endl;
 		//}
 	}
 
@@ -682,13 +688,13 @@ unsatisfied_buried_polars( core::pose::Pose & pose, core::scoring::ScoreFunction
 	scs_buried.clear();
 	scs_buried.resize(nres_asu, false);
 	for ( Size i=1; i<= nres_asu; ++i ) {
-	 	core::conformation::Residue const & rsd( pose.residue(i) );
-	 	for ( Size j=1; j<= rsd.natoms(); ++j ) {
-			if (rsd.atom_is_backbone( j )) continue;
-	 		if ( unsat_frequency[ AtomID( j,i ) ] >= 0.5 ) {
-	 			scs_buried[i]=true;
-	 		}
-	 	}
+		core::conformation::Residue const & rsd( pose.residue(i) );
+		for ( Size j=1; j<= rsd.natoms(); ++j ) {
+			if ( rsd.atom_is_backbone( j ) ) continue;
+			if ( unsat_frequency[ AtomID( j,i ) ] >= 0.5 ) {
+				scs_buried[i]=true;
+			}
+		}
 	}
 
 	return unsats;
@@ -709,7 +715,7 @@ get_perresE( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sf,utility:
 
 	//
 	core::Size nres_asu = pose.total_residue();
-	while (pose.residue(nres_asu).aa() == core::chemical::aa_vrt) nres_asu--;
+	while ( pose.residue(nres_asu).aa() == core::chemical::aa_vrt ) nres_asu--;
 
 	SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -746,9 +752,9 @@ get_perresE( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sf,utility:
 	for ( Size i=1, i_end = nres_asu; i<= i_end; ++i ) {
 		conformation::Residue const & rsd1( pose.residue( i ) );
 		for ( graph::Graph::EdgeListIter
-			  iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
-			  irue = energy_graph.get_node(i)->upper_edge_list_end();
-			  iru != irue; ++iru ) {
+				iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
+				irue = energy_graph.get_node(i)->upper_edge_list_end();
+				iru != irue; ++iru ) {
 			EnergyEdge & edge( static_cast< EnergyEdge & > (**iru) );
 
 			Size const j( edge.get_second_node_ind() );
@@ -759,7 +765,7 @@ get_perresE( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sf,utility:
 			if ( int_only && (!symm_info || symm_info->bb_is_independent(rsd2.seqpos())) ) continue;
 
 			Real thisEdgeE = edge.dot( sfc->weights() );
-			if (j<=nres_asu) {
+			if ( j<=nres_asu ) {
 				perresE[i] += 0.5*thisEdgeE;
 				perresE[j] += 0.5*thisEdgeE;
 			} else {
@@ -778,8 +784,9 @@ void do_sc_relax( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sf, ut
 	core::kinematics::MoveMapOP movemap (new core::kinematics::MoveMap);
 	movemap->set_bb(false); movemap->set_jump(rb);
 
-	for (core::Size i=1; i<=residues.size(); ++i)
+	for ( core::Size i=1; i<=residues.size(); ++i ) {
 		movemap->set_chi(i, residues[i]);
+	}
 
 	// "sc relax" w/ angles + RB
 	protocols::relax::FastRelax relax_prot( sf, rpts );
@@ -805,8 +812,9 @@ void do_sc_min( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sf, util
 	core::kinematics::MoveMapOP movemap (new core::kinematics::MoveMap);
 	movemap->set_bb(false); movemap->set_jump(rb);
 
-	for (core::Size i=1; i<=residues.size(); ++i)
+	for ( core::Size i=1; i<=residues.size(); ++i ) {
 		movemap->set_chi(i, residues[i]);
+	}
 
 	// "sc relax" w/ angles + RB
 	protocols::relax::FastRelax relax_prot( sf, rpts );
@@ -818,12 +826,12 @@ void do_sc_min( core::pose::Pose & pose, core::scoring::ScoreFunctionOP sf, util
 // fast ddg
 core::Real
 ddg (
-		core::pose::Pose &pose , core::scoring::ScoreFunctionOP sf,
-		utility::vector1< core::Real > &perresddg,
-		core::Real &esymm,
-		core::Real &easymm,
-		int ncyc=1,
-		int nrepeats=3) {
+	core::pose::Pose &pose , core::scoring::ScoreFunctionOP sf,
+	utility::vector1< core::Real > &perresddg,
+	core::Real &esymm,
+	core::Real &easymm,
+	int ncyc=1,
+	int nrepeats=3) {
 	core::Real ddg=0;
 	core::Real esymmPR=0.0,easymmPR=0.0;
 	esymm = easymm = 0.0;
@@ -835,7 +843,7 @@ ddg (
 	(*sfc)(pose);
 	//sfc->show( pose );
 
-	for (int rpt = 1; rpt<=nrepeats; ++rpt) {
+	for ( int rpt = 1; rpt<=nrepeats; ++rpt ) {
 		core::pose::Pose pose_asu;
 		core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
 
@@ -845,12 +853,12 @@ ddg (
 		utility::vector1< core::Real > perresAsymm, perresSymm;
 		get_perresE (pose_asu, sf_asu, perresAsymm, false );
 		get_perresE (pose, sf, perresSymm, false );
-		if (rpt==1) perresddg.resize( perresSymm.size(), 0.0 );
+		if ( rpt==1 ) perresddg.resize( perresSymm.size(), 0.0 );
 
 		ddg += (0.5*(*sfc)(pose) - (*sf_asu)(pose_asu)) / nrepeats;
 		esymm += 0.5*(*sfc)(pose) / nrepeats;
 		easymm += (*sf_asu)(pose_asu)/ nrepeats;
-		for (int i=1; i<=(int)perresSymm.size(); ++i) {
+		for ( int i=1; i<=(int)perresSymm.size(); ++i ) {
 			perresddg[i] += (0.5*perresSymm[i] - perresAsymm[i]) / nrepeats;
 			esymmPR += 0.5*perresSymm[i] / nrepeats;
 			easymmPR += perresAsymm[i] / nrepeats;
@@ -895,9 +903,9 @@ get_interface_energies( protocols::cryst::MakeLatticeMover &setup, core::pose::P
 			conformation::Residue const & rsd1( pose.residue( i ) );
 
 			for ( graph::Graph::EdgeListIter
-				  iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
-				  irue = energy_graph.get_node(i)->upper_edge_list_end();
-				  iru != irue; ++iru ) {
+					iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
+					irue = energy_graph.get_node(i)->upper_edge_list_end();
+					iru != irue; ++iru ) {
 				EnergyEdge & edge( static_cast< EnergyEdge & > (**iru) );
 
 				Size const j( edge.get_second_node_ind() );
@@ -915,7 +923,7 @@ get_interface_energies( protocols::cryst::MakeLatticeMover &setup, core::pose::P
 	}
 
 	utility::vector1<SingleInterface> motif_interfaces;
-	for (int i=2; i<=(int)score_perinterface.size(); ++i) {
+	for ( int i=2; i<=(int)score_perinterface.size(); ++i ) {
 		numeric::xyzMatrix<core::Real> Ri;
 		numeric::xyzVector<core::Real> Ti;
 		setup.getRT( i, Ri, Ti );

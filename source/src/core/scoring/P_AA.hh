@@ -98,6 +98,12 @@ private:
 	void
 	read_P_AA_pp();
 
+	/// @brief Symmetrize the glyceine P_AA_pp table, if the user has used the -symmetric_gly_tables option.
+	/// @details The gly table must already be loaded before this is called.  Also, this should be called before
+	/// the bicubic splines are set up for the energy table.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void symmetrize_gly_table();
+
 public:
 	/// @brief Probability energies from P(aa|phi,psi)
 	//Energy

@@ -27,6 +27,7 @@
 #include <protocols/cyclic_peptide/DeclareBond.fwd.hh>
 #include <protocols/filters/BasicFilters.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/Ramachandran.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -82,6 +83,19 @@ private:
 		utility::vector1<std::string> const &restypes
 	) const;
 
+	/// @brief Given the name of a Rama_Table_Type, set the default Rama_Table_Type.
+	/// @details Error if unknown type.
+	void set_default_rama_table_type( std::string const &type_name);
+
+	/// @brief Given a string vector that we need to parse, populate the rama_table_type_by_res_ map.
+	/// @details The string vector must be of the format: [integer] [rama type name] [integer] [rama type name] etc.
+	/// Throws error if could not parse.
+	void set_rama_table_type_by_res( utility::vector1 <std::string> const &type_name_vector);
+
+	/// @brief Given a Rama_Table_Type name, return the Rama_Table_Type, or an informative error message on failure.
+	///
+	core::scoring::Rama_Table_Type get_rama_table_type_from_name( std::string const &type_name ) const;
+
 	/// @brief Read a sequence (as a series of full names, separated by whitespace) and store
 	/// it in a string vector.
 	void
@@ -124,7 +138,10 @@ private:
 	/// @brief Sets all omega values to 180, and randomizes mainchain torsions.
 	/// @details For alpha-amino acids, mainchain torsions are randomized by the Ramachandran plot.
 	/// For other residue types, just randomizes mainchain torsions other than peptide bonds.
-	void set_mainchain_torsions (core::pose::PoseOP pose) const;
+	void set_mainchain_torsions (
+		core::pose::PoseOP pose,
+		core::Size const cyclic_offset
+	) const;
 
 	/// @brief Set up the filters for the mainchain hydrogen bonds that will
 	/// be used to discard solutions with too little mainchain hydrogen bonding.
@@ -142,7 +159,8 @@ private:
 	genkic_close(
 		core::pose::PoseOP pose,
 		core::scoring::ScoreFunctionOP sfxn_highhbond,
-		protocols::filters::CombinedFilterOP total_hbond
+		protocols::filters::CombinedFilterOP total_hbond,
+		core::Size const cyclic_offset
 	) const;
 
 	/// @brief Given a pose that has undergone an N-residue cyclic permutation, restore
@@ -200,6 +218,41 @@ private:
 	/// @brief Erase the stored state of the random generator from a previous run.
 	///
 	void erase_random_seed_info() const;
+
+	/// @brief Given an absolute position in the sequence and the current cyclic permuation offset,
+	/// return the position in the current pose corresponding to that absolute postion.
+	inline core::Size current_position(
+		core::Size const absolute_position,
+		core::Size const permutation_offset,
+		core::Size const nresidue
+	) const {
+		signed long int returnval( absolute_position - permutation_offset );
+		if ( returnval < 1 ) returnval += nresidue;
+		return static_cast<core::Size>(returnval);
+	}
+
+	/// @brief Does a position have a custom Rama table defined?
+	/// @details Does not include a default custom Rama table -- only position-specific Rama tables are checked.
+	inline bool custom_rama_table_defined( core::Size const absolute_position ) const {
+		return ( rama_table_type_by_res_.count( absolute_position )!=0 );
+	}
+
+	/// @brief Custom Rama table for a position.
+	/// @brief Returns unknown_ramatable_type if none defined for the position.
+	inline core::scoring::Rama_Table_Type rama_table_type_by_res( core::Size const absolute_position ) const {
+		if ( !custom_rama_table_defined( absolute_position ) ) return core::scoring::unknown_ramatable_type;
+		return rama_table_type_by_res_.at(absolute_position);
+	}
+
+	/// @brief Get the default custom Rama table type.
+	/// @details Defaults to unknown_ramatable_type if not set.
+	inline core::scoring::Rama_Table_Type default_rama_table_type() const {
+		return default_rama_table_type_;
+	}
+
+	/// @brief Are we using a rama filter?  Defaults to true.
+	///
+	inline bool use_rama_filter() const { return use_rama_filter_; }
 
 private:
 	/// ------------- Data -------------------------------
@@ -287,6 +340,17 @@ private:
 	/// @brief The name of the checkpoint file
 	/// @details Defaults to "checkpoint.txt".  Read from options.
 	std::string checkpoint_filename_;
+
+	/// @brief A default custom Ramachandran table to be used for sampling.
+	/// @details Defaults to unknown_ramatable_type (which means that no custom Rama table
+	/// is applied by default).
+	core::scoring::Rama_Table_Type default_rama_table_type_;
+
+	/// @brief Custom Ramachandran tables to be used for sampling, listed by residue.
+	/// @details Defaults to an empty map.  Only mapped indicies have custom rama tables
+	/// applied.  Overrides default_rama_table_type_ (if used) at the residue indices in
+	/// the map.
+	std::map <core::Size, core::scoring::Rama_Table_Type> rama_table_type_by_res_;
 
 	/// @brief The name of the checkpoint file for the random number generator.
 	/// @details Defaults to "rng.state.gz".  Read from options.

@@ -139,29 +139,29 @@ MMLJEnergyIntra::setup_for_minimizing(
 	// taken for the most part from BaseETableEnergy.hh
 
 	//if ( pose.energies().use_nblist() ) {
-		// stash our nblist inside the pose's energies object
-		Energies & energies( pose.energies() );
+	// stash our nblist inside the pose's energies object
+	Energies & energies( pose.energies() );
 
-		// get a reference to the MMLJLibrary we are using
-		core::scoring::mm::MMLJLibrary const & library = potential_.mm_lj_score().mm_lj_library();
+	// get a reference to the MMLJLibrary we are using
+	core::scoring::mm::MMLJLibrary const & library = potential_.mm_lj_score().mm_lj_library();
 
-		// setup the atom-atom nblist
-		NeighborListOP nblist( new NeighborList(
-			min_map.domain_map(),
-			library.nblist_dis2_cutoff_XX(),
-			library.nblist_dis2_cutoff_XH(),
-			library.nblist_dis2_cutoff_HH()) );
+	// setup the atom-atom nblist
+	NeighborListOP nblist( new NeighborList(
+		min_map.domain_map(),
+		library.nblist_dis2_cutoff_XX(),
+		library.nblist_dis2_cutoff_XH(),
+		library.nblist_dis2_cutoff_HH()) );
 
-		if ( pose.energies().use_nblist_auto_update() ) {
-			// setting this to one angstrom fudge factor
-			nblist->set_auto_update( 1 ); // MAGIC NUMBER
-		}
-		// this partially becomes the MMLJEnergy classes's responsibility
-		nblist->setup( pose, sfxn, *this );
+	if ( pose.energies().use_nblist_auto_update() ) {
+		// setting this to one angstrom fudge factor
+		nblist->set_auto_update( 1 ); // MAGIC NUMBER
+	}
+	// this partially becomes the MMLJEnergy classes's responsibility
+	nblist->setup( pose, sfxn, *this );
 
-		energies.set_nblist( EnergiesCacheableDataType::MM_LJ_INTRA_NBLIST, nblist );
-		NeighborList nblist_blah( energies.nblist( EnergiesCacheableDataType::MM_LJ_INTRA_NBLIST ) );
-		//std::cout << "In MMLJEnergyIntra setup_for_minimizing()" << std::endl;
+	energies.set_nblist( EnergiesCacheableDataType::MM_LJ_INTRA_NBLIST, nblist );
+	NeighborList nblist_blah( energies.nblist( EnergiesCacheableDataType::MM_LJ_INTRA_NBLIST ) );
+	//std::cout << "In MMLJEnergyIntra setup_for_minimizing()" << std::endl;
 	//}
 }
 
@@ -296,11 +296,11 @@ MMLJEnergyIntra::eval_intrares_derivatives(
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const {
-	
+
 	// The nblist is not necessarily stored in the pose's energies object!
 	// In setup_for_minimize_for_residue etc., we actually don't put it there.
 	//if ( !pose.energies().use_nblist() ) {
-	//	utility_exit_with_message("non-nblist minimize!");
+	// utility_exit_with_message("non-nblist minimize!");
 	//}
 
 	scoring::NeighborList const & nblist( *utility::pointer::dynamic_pointer_cast< const NeighborListData >( res_data_cache.get_data( mm_lj_intra_nblist ) )->nblist() );

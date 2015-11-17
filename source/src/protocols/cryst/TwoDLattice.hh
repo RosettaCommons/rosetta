@@ -169,8 +169,8 @@ private:
 
 	core::conformation::ResidueOP make_vrt( core::Vector O, core::Vector X, core::Vector Y ) {
 		core::conformation::ResidueOP vrtrsd
-				( core::conformation::ResidueFactory::create_residue(
-					core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( "VRT" ) ) );
+			( core::conformation::ResidueFactory::create_residue(
+			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( "VRT" ) ) );
 		vrtrsd->set_xyz("ORIG",O);
 		vrtrsd->set_xyz("X",O+X);
 		vrtrsd->set_xyz("Y",O+Y);

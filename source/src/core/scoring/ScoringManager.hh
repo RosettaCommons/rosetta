@@ -139,7 +139,18 @@ public:
 	Ramachandran2B const & get_Ramachandran2B() const;
 
 	RamachandranCOP get_Ramachandran_ptr() const;
+
+	/// @brief Get a non-const owning pointer to the Ramachandran object.
+	/// @details Warning!  Probably not threadsafe!  Needed, though, for
+	/// lazy loading.
+	RamachandranOP get_Ramachandran_ptr_nonconst();
+
 	Ramachandran const & get_Ramachandran() const;
+
+	/// @brief Get a non-const reference to the Ramachandran object.
+	/// @details Warning!  Probably not threadsafe!  Needed, though, for
+	/// lazy loading.
+	Ramachandran & get_Ramachandran_nonconst();
 
 	dna::DNABFormPotential const & get_DNABFormPotential() const;
 

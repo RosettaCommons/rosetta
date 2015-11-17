@@ -515,10 +515,30 @@ ScoringManager::get_Ramachandran_ptr() const
 	return rama_;
 }
 
+/// @brief Get a non-const owning pointer to the Ramachandran object.
+/// @details Warning!  Probably not threadsafe!  Needed, though, for
+/// lazy loading.
+RamachandranOP
+ScoringManager::get_Ramachandran_ptr_nonconst()
+{
+	if ( rama_ == 0 ) {
+		rama_ = RamachandranOP( new Ramachandran );
+	}
+	return rama_;
+}
+
 Ramachandran const &
 ScoringManager::get_Ramachandran() const
 {
 	return *get_Ramachandran_ptr();
+}
+
+/// @brief Get a non-const reference to the Ramachandran object.
+/// @details Warning!  Probably not threadsafe!  Needed, though, for
+/// lazy loading.
+Ramachandran &
+ScoringManager::get_Ramachandran_nonconst() {
+	return *get_Ramachandran_ptr_nonconst();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

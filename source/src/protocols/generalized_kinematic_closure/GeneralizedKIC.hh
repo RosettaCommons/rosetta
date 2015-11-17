@@ -20,6 +20,7 @@
 #include <protocols/generalized_kinematic_closure/perturber/GeneralizedKICperturber.hh>
 #include <protocols/generalized_kinematic_closure/filter/GeneralizedKICfilter.hh>
 #include <protocols/generalized_kinematic_closure/selector/GeneralizedKICselector.hh>
+#include <core/scoring/Ramachandran.hh>
 
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -243,6 +244,22 @@ public:
 	/// @brief Set the bin for the set_backbone_bin perturber.
 	/// @details This acts on the last perturber in the perturber list.
 	void set_perturber_bin( std::string const &bin );
+
+	/// @brief Set the custom Ramachandran table for the randomize_alpha_backbone_by_rama perturber.
+	///
+	void set_perturber_custom_rama_table( core::Size const perturber_index, std::string const &table_name );
+
+	/// @brief Set the custom Ramachandran table for the randomize_alpha_backbone_by_rama perturber.
+	/// @details This version works by Rama_Table_Type.
+	void set_perturber_custom_rama_table( core::Size const perturber_index, core::scoring::Rama_Table_Type const table_type );
+
+	/// @brief Set the curstom Ramachandran table for the randomize_alpha_backbone_by_rama perturber.
+	/// @details This acts on the last perturber in the perturber list.
+	void set_perturber_custom_rama_table( std::string const &table_name );
+
+	/// @brief Set the curstom Ramachandran table for the randomize_alpha_backbone_by_rama perturber.
+	/// @details This acts on the last perturber in the perturber list, and works by Rama_Table_Type.
+	void set_perturber_custom_rama_table( core::scoring::Rama_Table_Type const table_type );
 
 	/// @brief Set whether the perturber's generated poses should be used for BOINC graphics.
 	/// @details Does nothing outside of the BOINC build.

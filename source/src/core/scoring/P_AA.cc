@@ -307,6 +307,9 @@ P_AA::read_P_AA_pp()
 	// }
 	//#endif
 
+	if ( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables].user() ) {
+		symmetrize_gly_table();
+	}
 
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
 
@@ -338,6 +341,54 @@ P_AA::read_P_AA_pp()
 			P_AA_pp_energy_splines_[ ii ] = paappEspline;
 		}
 	}
+}
+
+/// @brief Symmetrize the glyceine P_AA_pp table, if the user has used the -symmetric_gly_tables option.
+/// @details The gly table must already be loaded before this is called.  Also, this should be called before
+/// the bicubic splines are set up for the energy table.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void P_AA::symmetrize_gly_table()
+{
+	if ( TR.visible() ) TR << "Symmetrizing P_AA_pp glycine table." << std::endl;
+	core::Size const glyindex( static_cast<core::Size>(core::chemical::aa_gly) );
+
+	//Debug-mode check:
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "P_AA_pp gly table before symmetry operation:" << std::endl;
+		for ( core::Size iphi=0; iphi < 36; ++iphi ) {
+			for ( core::Size ipsi=0; ipsi < 36; ++ipsi ) {
+				TR.Debug << P_AA_pp_[glyindex](iphi,ipsi) << "\t";
+			}
+			TR.Debug << std::endl;
+		}
+	} //end debug output
+
+	for ( core::Size iphi = 0 /*Ugh, zero-based*/; iphi < 36 /*Ugh, hard-coded*/; ++iphi ) {
+		core::Size const opposite_phi( 35 - iphi );
+		for ( core::Size ipsi = 0 /*Ugh, zero-based*/; ipsi <= iphi /*Ugh, hard-coded*/; ++ipsi ) {
+			core::Size const opposite_psi( 35 - ipsi );
+			core::Real const avg_val( (P_AA_pp_[glyindex](iphi,ipsi)+P_AA_pp_[glyindex](opposite_phi,opposite_psi))/2.0 );
+			P_AA_pp_[glyindex](iphi,ipsi) = avg_val;
+			P_AA_pp_[glyindex](opposite_phi,opposite_psi) = avg_val;
+		}
+	}
+	//This will do the diagonals twice, but that's okay -- the second time, we'll be averaging two identical values.
+	//To my knowledge, there's no need for normalization -- the values were unnormalized to begin with.  So we're done.
+
+	//Debug-mode check:
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "P_AA_pp gly table after symmetry operation:" << std::endl;
+		for ( core::Size iphi=0; iphi < 36; ++iphi ) {
+			for ( core::Size ipsi=0; ipsi < 36; ++ipsi ) {
+				TR.Debug << P_AA_pp_[glyindex](iphi,ipsi) << "\t";
+			}
+			TR.Debug << std::endl;
+		}
+	} //end debug output
+
+	if ( TR.visible() ) TR.flush();
+	if ( TR.Debug.visible() ) TR.Debug.flush();
+	return;
 }
 
 

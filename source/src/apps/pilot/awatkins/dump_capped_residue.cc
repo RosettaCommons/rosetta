@@ -141,7 +141,7 @@ main( int argc, char* argv[] )
 		Residue res( type, true );
 
 		pose->conformation().append_residue_by_jump( res, 1 );
-		
+
 		pose->dump_pdb( name+".pdb" );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

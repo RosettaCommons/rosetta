@@ -109,7 +109,7 @@ read_ring_sizes_and_morphemes_from_database_file( std::string const & filename )
 	}
 
 	TR.Debug << "Read " << ring_size_to_morphemes.size() <<
-			" ring size mappings from the carbohydrate database." << endl;
+		" ring size mappings from the carbohydrate database." << endl;
 
 	return ring_size_to_morphemes;
 }
@@ -131,7 +131,7 @@ read_nomenclature_table_from_database_file( std::string const & filename )
 		SugarModificationsNomenclatureTableRow row;
 
 		line_word_by_word >> key >> row.substituent_full_name >> row.implies >> row.short_affix >> row.patch_name >>
-				row.default_position;
+			row.default_position;
 
 		replace_underscores_with_spaces( key );
 		check_if_applicable( row.substituent_full_name );
@@ -146,7 +146,7 @@ read_nomenclature_table_from_database_file( std::string const & filename )
 	}
 
 	TR.Debug << "Read " << table.size() <<
-			" rows from the sugar modifications table in the carbohydrate database." << endl;
+		" rows from the sugar modifications table in the carbohydrate database." << endl;
 
 	return table;
 }

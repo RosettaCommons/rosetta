@@ -106,16 +106,17 @@ WallpaperGroup::set_wallpaper_group( std::string name_in) {
 	name_.erase( std::remove( name_.begin(), name_.end(), ' ' ), name_.end() );
 
 	// setting + validation
-	if ( name_ == "P1" || name_ == "P112" )
+	if ( name_ == "P1" || name_ == "P112" ) {
 		setting_ = wgMONOCLINIC;
-	else if ( name_ == "P121" || name_ == "P2111" || name_ == "C211" || name_ == "P222" || name_ == "P2122" || name_ == "P21212" || name_ == "C222" || name_ == "C211" )
+	} else if ( name_ == "P121" || name_ == "P2111" || name_ == "C211" || name_ == "P222" || name_ == "P2122" || name_ == "P21212" || name_ == "C222" || name_ == "C211" ) {
 		setting_ = wgTETRAGONAL;
-	else if ( name_ == "P4" || name_ == "P422" || name_ == "P4212" )
+	} else if ( name_ == "P4" || name_ == "P422" || name_ == "P4212" ) {
 		setting_ = wgCUBIC;
-	else if ( name_ == "P3" || name_ == "P312" || name_ == "P321" || name_ == "P6" || name_ == "P622" )
+	} else if ( name_ == "P3" || name_ == "P312" || name_ == "P321" || name_ == "P6" || name_ == "P622" ) {
 		setting_ = wgHEXAGONAL;
-	else
+	} else {
 		utility_exit_with_message("Unknown WallpaperGroup! "+name_);
+	}
 
 	// lookup
 	symmops_.clear();
@@ -125,16 +126,13 @@ WallpaperGroup::set_wallpaper_group( std::string name_in) {
 
 // sets AND VALIDATES input parameters
 void WallpaperGroup::set_parameters(core::Real a_in, core::Real b_in, core::Real alpha_in) {
-	if (setting_ == wgMONOCLINIC) {
+	if ( setting_ == wgMONOCLINIC ) {
 		a_=a_in; b_=b_in; alpha_=alpha_in;
-	}
-	else if (setting_ == wgCUBIC) {
+	} else if ( setting_ == wgCUBIC ) {
 		a_=a_in; b_=a_in; alpha_=90.0;
-	}
-	else if (setting_ == wgTETRAGONAL) {
+	} else if ( setting_ == wgTETRAGONAL ) {
 		a_=a_in; b_=b_in; alpha_=90.0;
-	}
-	else if (setting_ == wgHEXAGONAL) {
+	} else if ( setting_ == wgHEXAGONAL ) {
 		a_=a_in; b_=a_in; alpha_=120.0;
 	}
 
@@ -150,9 +148,9 @@ void WallpaperGroup::set_parameters(core::Real a_in, core::Real b_in, core::Real
 	V_ = a_*b_* sa;
 
 	// report
-	if (a_!=a_in || b_!=b_in || alpha_!=alpha_in ) {
+	if ( a_!=a_in || b_!=b_in || alpha_!=alpha_in ) {
 		TSW << "Overriding input crystal parameters with [ "
-				  << a_ << "," << b_ << " , " << alpha_ << " ]" << std::endl;
+			<< a_ << "," << b_ << " , " << alpha_ << " ]" << std::endl;
 	}
 }
 
@@ -193,21 +191,21 @@ void WallpaperGroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out,
 		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		cc = CheshireCell( numeric::xyzVector<core::Real>(0, 0, 0),numeric::xyzVector<core::Real>(0.5 ,0.5 ,0.5) );
-	} else if (name_ == "P2122") {
+	} else if ( name_ == "P2122" ) {
 		rt_out.resize(4);
 		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<core::Real>(0.5,0,0) );
 		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , numeric::xyzVector<core::Real>(0.5,0,0) );
 		cc = CheshireCell( numeric::xyzVector<core::Real>(0, 0, 0),numeric::xyzVector<core::Real>(0.5 ,0.5 ,0.5) );
-	} else if (name_ == "P21212") {
+	} else if ( name_ == "P21212" ) {
 		rt_out.resize(4);
 		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<core::Real>(0.5,0.5,0) );
 		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , numeric::xyzVector<core::Real>(0.5,0.5,0) );
 		cc = CheshireCell( numeric::xyzVector<core::Real>(0, 0, 0),numeric::xyzVector<core::Real>(0.5 ,0.5 ,0.5) );
-	} else if (name_ == "C222") {
+	} else if ( name_ == "C222" ) {
 		rt_out.resize(8);
 		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , numeric::xyzVector<core::Real>(0,0,0) );
@@ -247,13 +245,13 @@ void WallpaperGroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out,
 		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<core::Real>(0.5,0.5,0) );
 		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , numeric::xyzVector<core::Real>(0,0,0) );
 		cc = CheshireCell( numeric::xyzVector<core::Real>( 0, 0, 0),numeric::xyzVector<core::Real>(1 ,0.5 ,0.5 ) );
-	} else if (name_ == "P3") {
+	} else if ( name_ == "P3" ) {
 		rt_out.resize(3);
 		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		cc = CheshireCell( numeric::xyzVector<core::Real>( 0, 0, 0),numeric::xyzVector<core::Real>(2.0/3.0 ,2.0/3.0 ,0 ) );
-	} else if (name_ == "P312") {
+	} else if ( name_ == "P312" ) {
 		rt_out.resize(6);
 		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<core::Real>(0,0,0) );
@@ -262,8 +260,7 @@ void WallpaperGroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out,
 		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		cc = CheshireCell( numeric::xyzVector<core::Real>( 0, 0, 0),numeric::xyzVector<core::Real>(2.0/3.0 ,2.0/3.0 ,0.5 ) );
-	}
-	else if (name_ == "P321") {
+	} else if ( name_ == "P321" ) {
 		rt_out.resize(6);
 		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , numeric::xyzVector<core::Real>(0,0,0) );
@@ -272,7 +269,7 @@ void WallpaperGroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out,
 		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		cc = CheshireCell( numeric::xyzVector<core::Real>( 0, 0, 0),numeric::xyzVector<core::Real>(1 ,1 ,0.5 ) );
-	} else if (name_ == "P6") {
+	} else if ( name_ == "P6" ) {
 		rt_out.resize(6);
 		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<core::Real>(0,0,0) );
@@ -281,7 +278,7 @@ void WallpaperGroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out,
 		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		cc = CheshireCell( numeric::xyzVector<core::Real>( 0, 0, 0),numeric::xyzVector<core::Real>(1 ,1 ,0 ) );
-	} else if (name_ == "P622") {
+	} else if ( name_ == "P622" ) {
 		rt_out.resize(12);
 		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<core::Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<core::Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , numeric::xyzVector<core::Real>(0,0,0) );
@@ -299,7 +296,7 @@ void WallpaperGroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out,
 	}
 
 
-	for (int ii=1; ii<=(int)rt_out.size(); ++ii) {
+	for ( int ii=1; ii<=(int)rt_out.size(); ++ii ) {
 		core::Vector T_i = rt_out[ii].get_translation();
 		rt_out[ii].set_translation( core::Vector(std::fmod(T_i[0],1), std::fmod(T_i[1],1), std::fmod(T_i[2],1) ) );
 	}

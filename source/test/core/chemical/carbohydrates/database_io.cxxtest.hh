@@ -52,7 +52,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_TRACE( "Testing read_codes_and_roots_from_database_file() method." );
 
 		map< string, string > map(
-				read_codes_and_roots_from_database_file( "core/chemical/carbohydrates/codes_to_roots.map" ) );
+			read_codes_and_roots_from_database_file( "core/chemical/carbohydrates/codes_to_roots.map" ) );
 
 		TS_ASSERT_EQUALS( map.size(), 3 );
 	}
@@ -67,7 +67,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_TRACE( "Testing read_ring_sizes_and_morphemes_from_database_file() method." );
 
 		map< core::Size, pair< char, string > > map( read_ring_sizes_and_morphemes_from_database_file(
-				"core/chemical/carbohydrates/ring_size_to_morphemes.map" ) );
+			"core/chemical/carbohydrates/ring_size_to_morphemes.map" ) );
 
 		TS_ASSERT_EQUALS( map.size(), 2 );
 		TS_ASSERT_EQUALS( map[ 3 ].first, '\0' );  // Make sure 'X' was properly converted to a null char.
@@ -77,11 +77,11 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_TRACE( "An input error should follow:" );
 		try {
 			read_ring_sizes_and_morphemes_from_database_file(
-					"core/chemical/carbohydrates/ring_size_to_morphemes.bad_map" );
+				"core/chemical/carbohydrates/ring_size_to_morphemes.bad_map" );
 		} catch ( utility::excn::EXCN_Base const & e) {
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
-					"ERROR: read_ring_sizes_and_morphemes_from_database_file: invalid ring size; "
-					"rings cannot have less than 3 atoms!\n\n" );
+				"ERROR: read_ring_sizes_and_morphemes_from_database_file: invalid ring size; "
+				"rings cannot have less than 3 atoms!\n\n" );
 			TS_TRACE( "The above error message was expected." );
 		}
 	}
@@ -95,7 +95,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 
 		TS_TRACE( "Testing read_nomenclature_table_from_database_file() method." );
 		SugarModificationsNomenclatureTable table( read_nomenclature_table_from_database_file(
-				"core/chemical/carbohydrates/nomenclature.table") );
+			"core/chemical/carbohydrates/nomenclature.table") );
 
 		TS_ASSERT_EQUALS( table.size(), 8 );  // TEMP
 	}

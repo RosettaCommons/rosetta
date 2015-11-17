@@ -495,9 +495,9 @@ PDBInfo::segmentID(
 ) {
 	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::icode( Size const res, ins_code ): res is not in this PDBInfo!" );
 	ResidueRecord & rr = residue_rec_[ res ];
-	
+
 	// no map sync needed, pray
-	
+
 	// set new residue info
 	rr.segmentID = segmentID;
 }

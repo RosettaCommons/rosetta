@@ -44,16 +44,16 @@ gzip() {
 	// gzip output file if desired
 	std::string const basename = option[ out::file::silent ]();
 	if ( ! option[ out::silent_gz ]() )  return;
-	
+
 	utility::vector1< std::string > file_list;
 	file_list.push_back( basename );
-	
+
 	for ( utility::vector1< std::string >::const_iterator
-		 fn = file_list.begin(), end = file_list.end(); fn != end; ++fn
-		 ) {
+			fn = file_list.begin(), end = file_list.end(); fn != end; ++fn
+			) {
 		utility::io::izstream in_stream( *fn );
 		if ( ! in_stream ) continue;
-		
+
 		in_stream.close();
 		in_stream.clear();
 		tr.Info << "GZIP SILENT FILE: " << *fn << std::endl;
@@ -69,7 +69,7 @@ initialize_tag_is_done( std::string const & silent_file ){
 	std::map< std::string, bool > tag_is_done;
 	utility::vector1< std::string > tags_done;
 	SilentFileData silent_file_data;
-	
+
 	if ( utility::file::file_exists( silent_file ) ) {
 		tags_done = silent_file_data.read_tags_fast( silent_file );
 		for ( utility::vector1< std::string >::const_iterator iter = tags_done.begin(), end = tags_done.end(); iter != end; ++iter ) {

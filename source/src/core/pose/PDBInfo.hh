@@ -1097,16 +1097,16 @@ public: // residue mutators en masse
 	inline
 	void
 	set_segment_ids(
-			   StringIterator const & begin,
-			   StringIterator const & end
+		StringIterator const & begin,
+		StringIterator const & end
 	) {
 		ResidueRecords::iterator rr = residue_rec_.begin();
-		
+
 		for ( StringIterator i = begin; i < end; ++i, ++rr ) {
 			rr->segmentID = *i;
 			debug_assert( rr < residue_rec_.end() );
 		}
-		
+
 		rebuild_pdb2pose();
 	}
 
@@ -1117,7 +1117,7 @@ public: // residue mutators en masse
 	{
 		debug_assert( residue_rec_.size() == s.size() );
 		check_residue_records_size( s.size() ); // run-time check
-		
+
 		set_segment_ids( s.begin(), s.end() );
 	}
 

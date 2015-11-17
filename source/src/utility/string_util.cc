@@ -534,8 +534,9 @@ make_segtag_with_dashes( utility::vector1< int > res_vector,
 		if ( n > 1 ) tag += delimiter;
 		std::pair< int, int > const & segment = res_vector_segments[n];
 		if ( segids_for_segments[n] != "" &&
-				segids_for_segments[n] != "    " )
+				segids_for_segments[n] != "    " ) {
 			tag += segids_for_segments[n] + ":";
+		}
 		if ( segment.first == segment.second ) {
 			tag += string_of( segment.first );
 		} else {
@@ -596,18 +597,18 @@ get_resnum_and_segid( std::string const & s, bool & string_is_ok ){
 	// then from the space on forward.
 	// utility::string_split( s_nocommas );
 	utility::vector1< std::string > tags;
- 
+
 	// populate tags
 	while ( true ) {
 		std::string tag = s_nocommas.substr( 0, s_nocommas.find_first_of( ':' )+1 );
 		s_nocommas = s_nocommas.substr( s_nocommas.find_first_of( ':' ) +1 );
-		
+
 		if ( s_nocommas.find_first_of( ' ' ) == std::string::npos ) {
 			tag += s_nocommas;
 			tags.push_back( tag );
 			break;
 		}
-		
+
 		tag += s_nocommas.substr( s_nocommas.find_first_of( ' ' ) );
 		tags.push_back( tag );
 		s_nocommas = s_nocommas.substr( s_nocommas.find_first_of( ' ' ) +1 );
@@ -661,12 +662,12 @@ get_resnum_and_segid_from_one_tag( std::string const & tag,
 	std::string segid( "" );
 
 	size_t found_colon = tag.find( ":" );
-	
+
 	if ( found_colon != 1 ) return false;
-	
+
 	segid = tag.substr(0,4);
 	resnum_from_tag = ObjexxFCL::ints_of( tag.substr(4), string_is_ok );
-	
+
 	for ( platform::Size n = 0; n < resnum_from_tag.size(); n++ ) {
 		resnum.push_back( resnum_from_tag[ n ] );
 		segids.push_back( segid );

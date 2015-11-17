@@ -139,12 +139,12 @@ public:
 
 	// grid spacing must be a multiple of this number
 	core::Size minmult() const {
-		if (setting_ == TRICLINIC)   return 2;
-		if (setting_ == MONOCLINIC)   return 4;
-		if (setting_ == CUBIC)        return 4;
-		if (setting_ == ORTHORHOMBIC) return 4;
-		if (setting_ == TETRAGONAL)   return 8;
-		if (setting_ == HEXAGONAL)    return 6;
+		if ( setting_ == TRICLINIC )   return 2;
+		if ( setting_ == MONOCLINIC )   return 4;
+		if ( setting_ == CUBIC )        return 4;
+		if ( setting_ == ORTHORHOMBIC ) return 4;
+		if ( setting_ == TETRAGONAL )   return 8;
+		if ( setting_ == HEXAGONAL )    return 6;
 		return 0;
 	}
 
@@ -157,16 +157,16 @@ public:
 		CheshireCell  cc;
 		get_symmops (rt,cc);
 		std::string retval;
-		if (cc.high[0]>cc.low[0]) retval += "x ";
-		if (cc.high[1]>cc.low[1]) retval += "y ";
-		if (cc.high[2]>cc.low[2]) retval += "z ";
+		if ( cc.high[0]>cc.low[0] ) retval += "x ";
+		if ( cc.high[1]>cc.low[1] ) retval += "y ";
+		if ( cc.high[2]>cc.low[2] ) retval += "z ";
 		return retval;
 	}
 
 	numeric::xyzVector<core::Size>
 	get_nsubdivisions() {
 		numeric::xyzVector<core::Size> retval(1,1,1);
-		for (int i=1; i<=(int)nsymmops(); ++i) {
+		for ( int i=1; i<=(int)nsymmops(); ++i ) {
 			numeric::xyzVector<core::Real> const &T = symmops_[i].get_translation();
 			retval[0] = std::max( retval[0], denom( T[0] ) );
 			retval[1] = std::max( retval[1], denom( T[1] ) );
@@ -177,28 +177,30 @@ public:
 
 	numeric::xyzVector<core::Size>
 	get_trans_dofs() {
-		if (setting_ == TRICLINIC)
+		if ( setting_ == TRICLINIC ) {
 			return numeric::xyzVector<core::Size>(1,2,3);
-		else if (setting_ == MONOCLINIC)
+		} else if ( setting_ == MONOCLINIC ) {
 			return numeric::xyzVector<core::Size>(1,2,3);
-		else if (setting_ == CUBIC)
+		} else if ( setting_ == CUBIC ) {
 			return numeric::xyzVector<core::Size>(1,1,1);
-		else if (setting_ == ORTHORHOMBIC)
+		} else if ( setting_ == ORTHORHOMBIC ) {
 			return numeric::xyzVector<core::Size>(1,2,3);
-		else if (setting_ == TETRAGONAL)
+		} else if ( setting_ == TETRAGONAL ) {
 			return numeric::xyzVector<core::Size>(1,1,3);
-		else if (setting_ == HEXAGONAL)
+		} else if ( setting_ == HEXAGONAL ) {
 			return numeric::xyzVector<core::Size>(1,1,3);
+		}
 
 		return numeric::xyzVector<core::Size>(1,2,3);  // no warnings
 	}
 
 	core::Size
 	get_nrot_dofs() {
-		if (setting_ == TRICLINIC)
+		if ( setting_ == TRICLINIC ) {
 			return 3;
-		else if (setting_ == MONOCLINIC)
+		} else if ( setting_ == MONOCLINIC ) {
 			return 1;
+		}
 		return 0;
 	}
 

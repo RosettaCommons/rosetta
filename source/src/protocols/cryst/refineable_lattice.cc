@@ -121,11 +121,11 @@ static basic::Tracer TR("protocols.cryst.refineable_lattice");
 
 using namespace protocols;
 using namespace core;
-  using namespace kinematics;
-  using namespace scoring;
-	  using namespace scoring::symmetry;
-  using namespace conformation;
-	  using namespace conformation::symmetry;
+using namespace kinematics;
+using namespace scoring;
+using namespace scoring::symmetry;
+using namespace conformation;
+using namespace conformation::symmetry;
 
 //static int OUTCOUNTER=1;
 
@@ -170,12 +170,12 @@ UpdateCrystInfo::apply( core::pose::Pose & pose ) {
 	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
 
 	// find lattice jumps
-	for (Size i=1; i<=pose.fold_tree().num_jump(); ++i) {
+	for ( Size i=1; i<=pose.fold_tree().num_jump(); ++i ) {
 		std::string jumpname = SymmConf.Symmetry_Info()->get_jump_name( i );
-		if (jumpname == "A") Ajump_=i;
-		else if (jumpname == "B") Bjump_=i;
-		else if (jumpname == "C") Cjump_=i;
-		else if (jumpname == "SUB") SUBjump_=i;
+		if ( jumpname == "A" ) Ajump_=i;
+		else if ( jumpname == "B" ) Bjump_=i;
+		else if ( jumpname == "C" ) Cjump_=i;
+		else if ( jumpname == "SUB" ) SUBjump_=i;
 	}
 	runtime_assert( Ajump_!=0 &&  Bjump_!=0 ); // && Cjump_ != 0 );
 
@@ -183,7 +183,7 @@ UpdateCrystInfo::apply( core::pose::Pose & pose ) {
 	Vector Bxform = pose.jump(Bjump_).get_translation();
 	Vector Cxform(-1000,0,0);
 
-	if (Cjump_ != 0) Cxform = pose.jump(Cjump_).get_translation();
+	if ( Cjump_ != 0 ) Cxform = pose.jump(Cjump_).get_translation();
 
 	Bxform = Vector( Bxform[1], Bxform[2], Bxform[0] );
 	Cxform = Vector( Cxform[2], Cxform[0], Cxform[1] );
@@ -192,17 +192,19 @@ UpdateCrystInfo::apply( core::pose::Pose & pose ) {
 
 	bool need_angles=false;
 	numeric::xyzVector<Size> grid;
-	if (Cjump_ != 0) {
+	if ( Cjump_ != 0 ) {
 		Spacegroup sg;
 		sg.set_spacegroup(ci.spacegroup());
-		if (sg.setting() == TRICLINIC || sg.setting() == MONOCLINIC)
+		if ( sg.setting() == TRICLINIC || sg.setting() == MONOCLINIC ) {
 			need_angles = true;
+		}
 		grid = sg.get_nsubdivisions();
 	} else {
 		WallpaperGroup wg;
 		wg.set_wallpaper_group(ci.spacegroup());
-		if (wg.setting() == wgMONOCLINIC)
+		if ( wg.setting() == wgMONOCLINIC ) {
 			need_angles = true;
+		}
 		grid = wg.get_nsubdivisions();
 	}
 
@@ -211,7 +213,7 @@ UpdateCrystInfo::apply( core::pose::Pose & pose ) {
 	Real C = Cxform.length()*grid[2];
 	ci.A(A); ci.B(B); ci.C(C);
 
-	if (need_angles) {
+	if ( need_angles ) {
 		Axform = Vector(Axform[0], Axform[1], Axform[2]);
 		Bxform = Vector(Bxform[1], Bxform[2], Bxform[0]);
 		Cxform = Vector(-Cxform[2], Cxform[0], Cxform[1]);
@@ -234,11 +236,11 @@ UpdateCrystInfo::apply( core::pose::Pose & pose ) {
 // parse_my_tag
 void
 UpdateCrystInfo::parse_my_tag(
-		utility::tag::TagCOP const /*tag*/,
-		basic::datacache::DataMap & /*data*/,
-		filters::Filters_map const & ,
-		moves::Movers_map const & ,
-		core::pose::Pose const & /*pose*/ )
+	utility::tag::TagCOP const /*tag*/,
+	basic::datacache::DataMap & /*data*/,
+	filters::Filters_map const & ,
+	moves::Movers_map const & ,
+	core::pose::Pose const & /*pose*/ )
 {
 
 }
@@ -279,14 +281,14 @@ DockLatticeMover::init(core::pose::Pose & pose) {
 	core::pose::Pose pose_asu;
 	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
 
-	if (pose.is_centroid()) {
+	if ( pose.is_centroid() ) {
 		monomer_bump_ = 2*((*sf_vdw_)( pose_asu )); // * SymmConf.Symmetry_Info()->subunits();
 	}
 
 	// find lattice jumps
-	for (Size i=1; i<=pose.fold_tree().num_jump(); ++i) {
+	for ( Size i=1; i<=pose.fold_tree().num_jump(); ++i ) {
 		std::string jumpname = SymmConf.Symmetry_Info()->get_jump_name( i );
-		if (jumpname == "SUB") SUBjump_=i;
+		if ( jumpname == "SUB" ) SUBjump_=i;
 	}
 	runtime_assert( SUBjump_ != 0 );
 }
@@ -298,13 +300,17 @@ DockLatticeMover::perturb_trial( core::pose::Pose & pose ) {
 		core::kinematics::Jump flexible_jump = pose.jump( it->first );
 		SymDof const &dof = it->second;
 
-		for ( Size i = 1; i<= 3; ++i )
-			if ( dof.allow_dof(i) )
+		for ( Size i = 1; i<= 3; ++i ) {
+			if ( dof.allow_dof(i) ) {
 				flexible_jump.gaussian_move_single_rb( 1, trans_mag_, i );
+			}
+		}
 
-		for ( Size i = 4; i<= 6; ++i )
-			if ( dof.allow_dof(i) )
+		for ( Size i = 4; i<= 6; ++i ) {
+			if ( dof.allow_dof(i) ) {
 				flexible_jump.gaussian_move_single_rb( 1, rot_mag_, i );
+			}
+		}
 
 		pose.set_jump( it->first, flexible_jump );
 	}
@@ -316,7 +322,7 @@ DockLatticeMover::min_lattice( core::pose::Pose & pose ) {
 	protocols::simple_moves::SwitchResidueTypeSetMover to_fa("fa_standard");
 	protocols::simple_moves::ReturnSidechainMoverOP restore_sc;
 
-	if (pose.is_fullatom()) {
+	if ( pose.is_fullatom() ) {
 		restore_sc = protocols::simple_moves::ReturnSidechainMoverOP( new protocols::simple_moves::ReturnSidechainMover( pose ) );
 		to_cen.apply(pose);
 	}
@@ -328,10 +334,10 @@ DockLatticeMover::min_lattice( core::pose::Pose & pose ) {
 	core::scoring::ScoreFunctionOP sf = core::scoring::ScoreFunctionFactory::create_score_function("score1");
 
 	protocols::simple_moves::symmetry::SymMinMoverOP min(
-			new protocols::simple_moves::symmetry::SymMinMover(mm, sf, "lbfgs_armijo", 0.01, true) );
+		new protocols::simple_moves::symmetry::SymMinMover(mm, sf, "lbfgs_armijo", 0.01, true) );
 	min->apply(pose);
 
-	if (restore_sc) {
+	if ( restore_sc ) {
 		to_fa.apply(pose);
 		restore_sc->apply(pose);
 	}
@@ -352,7 +358,7 @@ DockLatticeMover::slide_lattice( core::pose::Pose & pose ) {
 
 	std::map< Size, Vector > orig_trans;
 	for ( it = it_begin; it != it_end; ++it ) {
-		if (it->first == SUBjump_) {
+		if ( it->first == SUBjump_ ) {
 			step[it->first]=Vector(0.5,0.5,0.5);
 		} else {
 			step[it->first]=Vector(-1.0,0.0,0.0);
@@ -365,22 +371,22 @@ DockLatticeMover::slide_lattice( core::pose::Pose & pose ) {
 
 	// 1 slide out
 	bool done = false;
-	while ( tries < max_tries && !done) {
+	while ( tries < max_tries && !done ) {
 		done = true;
 		for ( it = it_begin; it != it_end; ++it ) {
 			for ( int i = X_DOF; i <= Z_DOF; ++i ) {
-				if (!it->second.allow_dof(i)) continue;
+				if ( !it->second.allow_dof(i) ) continue;
 
 				core::Size ii = 0;
-				if (i==X_DOF) ii=0;
-				if (i==Y_DOF) ii=1;
-				if (i==Z_DOF) ii=2;
+				if ( i==X_DOF ) ii=0;
+				if ( i==Y_DOF ) ii=1;
+				if ( i==Z_DOF ) ii=2;
 
 				core::kinematics::Jump jump_i = pose.jump( it->first );
 				numeric::xyzVector<core::Real> T_curr = jump_i.get_translation();
 				numeric::xyzVector<core::Real> move_dir(0,0,0);
 				move_dir[ii] = step[it->first][ii];
-				if (it->first == SUBjump_) {
+				if ( it->first == SUBjump_ ) {
 					numeric::xyzVector<core::Real> T_unit = T_curr; T_unit.normalize();
 					move_dir[ii] *= T_unit[ii];
 				}
@@ -397,7 +403,7 @@ DockLatticeMover::slide_lattice( core::pose::Pose & pose ) {
 
 				// if we are still above bump thresh, we are not done
 				if ( (score-monomer_bump_) > bump_threshold ) { // BUMP
-						done = false;
+					done = false;
 				}
 
 				//std::cerr << "slide-out " << move_dir << " " << score-monomer_bump_ << std::endl;
@@ -410,7 +416,7 @@ DockLatticeMover::slide_lattice( core::pose::Pose & pose ) {
 
 	//pose.dump_pdb("slideout"+utility::to_string(xx)+".pdb");
 
-	if (!done) {
+	if ( !done ) {
 		std::cerr << "slide-out fail after " << max_tries << " attempts" << std::endl;
 		//pose.dump_pdb("slidefail.pdb");
 		for ( it = it_begin; it != it_end; ++it ) {
@@ -428,7 +434,7 @@ DockLatticeMover::slide_lattice( core::pose::Pose & pose ) {
 	// 2 slide in
 	tries=0;
 	done = false;
-	while ( tries < max_tries && !done) {
+	while ( tries < max_tries && !done ) {
 		done = true;
 		it_begin = symdofs_.begin();
 		it_end = symdofs_.end();
@@ -436,20 +442,20 @@ DockLatticeMover::slide_lattice( core::pose::Pose & pose ) {
 			//Size ndims=(it->first == SUBjump_)?3:1;
 
 			for ( int i = X_DOF; i <= Z_DOF; ++i ) {
-				if (!it->second.allow_dof(i)) continue;
+				if ( !it->second.allow_dof(i) ) continue;
 
 				core::Size ii = 0;
-				if (i==X_DOF) ii=0;
-				if (i==Y_DOF) ii=1;
-				if (i==Z_DOF) ii=2;
+				if ( i==X_DOF ) ii=0;
+				if ( i==Y_DOF ) ii=1;
+				if ( i==Z_DOF ) ii=2;
 
 				core::kinematics::Jump jump_i = pose.jump( it->first );
 				numeric::xyzVector<core::Real> T_curr = jump_i.get_translation();
 				numeric::xyzVector<core::Real> move_dir(0,0,0);
 				move_dir[ii] = step[it->first][ii];
 				//if (it->first == SUBjump_) {
-				//	numeric::xyzVector<core::Real> T_unit = T_curr; T_unit.normalize();
-				//	move_dir[ii] *= T_unit[ii];
+				// numeric::xyzVector<core::Real> T_unit = T_curr; T_unit.normalize();
+				// move_dir[ii] *= T_unit[ii];
 				//}
 				//core::Real score_old = (*sf_vdw_)( pose );
 				jump_i.set_translation( T_curr - move_dir );
@@ -465,7 +471,7 @@ DockLatticeMover::slide_lattice( core::pose::Pose & pose ) {
 					}
 				} else { // NO BUMP
 					done = false;
-					if (it->first == SUBjump_) {
+					if ( it->first == SUBjump_ ) {
 						if ( std::fabs(step[it->first][ii]) < std::fabs(max_sub_step_size-1e-4) ) {
 							step[it->first][ii] *= 2.0;
 						}
@@ -486,10 +492,10 @@ DockLatticeMover::slide_lattice( core::pose::Pose & pose ) {
 	}
 
 
-	if (!done) {
+	if ( !done ) {
 		std::cerr << "slide-in fail after " << max_tries << " attempts" << std::endl;
 		for ( it = it_begin; it != it_end; ++it ) {
-			if (it->first == SUBjump_) continue;
+			if ( it->first == SUBjump_ ) continue;
 			core::kinematics::Jump jump_i = pose.jump( it->first );
 			jump_i.set_translation( orig_trans[it->first] );
 			pose.set_jump( it->first, jump_i );
@@ -503,7 +509,7 @@ void
 DockLatticeMover::modify_lattice( core::pose::Pose & pose, core::Real mag ) {
 	std::map< Size, SymDof >::iterator it, it_begin = symdofs_.begin(), it_end = symdofs_.end();
 	for ( it = it_begin; it != it_end; ++it ) {
-		if (it->first == SUBjump_) continue;
+		if ( it->first == SUBjump_ ) continue;
 		core::kinematics::Jump jump_i = pose.jump( it->first );
 		jump_i.set_translation( jump_i.get_translation() - mag*numeric::xyzVector<core::Real>(1,0,0) );  // neg. direction expands lattice
 	}
@@ -517,18 +523,18 @@ DockLatticeMover::apply( core::pose::Pose & pose ) {
 	protocols::simple_moves::SwitchResidueTypeSetMover to_cen("centroid");
 	protocols::simple_moves::SwitchResidueTypeSetMover to_fa("fa_standard");
 
-	if (!fullatom_) {
-		if (pose.is_fullatom()) to_cen.apply(pose);
+	if ( !fullatom_ ) {
+		if ( pose.is_fullatom() ) to_cen.apply(pose);
 		init(pose); // find which are lattice jumps && which are dof jumps
 		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo(pose, *sf_, temp_ ) );
 
-		for (int i=1; i<(int)ncycles_; ++i) {
-			if (i%24 == 0) {
+		for ( int i=1; i<(int)ncycles_; ++i ) {
+			if ( i%24 == 0 ) {
 				mc->show_scores();
 				mc->show_counters();
 			}
 			perturb_trial(pose);
-			if (i%24 == 0) {
+			if ( i%24 == 0 ) {
 				slide_lattice(pose);
 			}
 			//pose.dump_pdb("dock_"+utility::to_string( OUTCOUNTER++ )+".pdb");
@@ -537,7 +543,7 @@ DockLatticeMover::apply( core::pose::Pose & pose ) {
 		mc->recover_low( pose );
 		//to_fa.apply(pose);
 	} else {
-		if (!pose.is_fullatom()) to_fa.apply(pose);
+		if ( !pose.is_fullatom() ) to_fa.apply(pose);
 
 		// set up packer
 		using namespace core::pack::task;
@@ -546,7 +552,7 @@ DockLatticeMover::apply( core::pose::Pose & pose ) {
 		TaskFactoryOP tf (new TaskFactory);
 		tf->push_back( TaskOperationCOP(new InitializeFromCommandline) );
 		tf->push_back( TaskOperationCOP(new IncludeCurrent) );
-		if (!design_) {
+		if ( !design_ ) {
 			tf->push_back( TaskOperationCOP(new RestrictToRepacking) );
 			tf->push_back( TaskOperationCOP(new NoRepackDisulfides) );
 		}
@@ -560,19 +566,19 @@ DockLatticeMover::apply( core::pose::Pose & pose ) {
 		mm->set_jump(true); mm->set_chi(true); mm->set_bb(false);
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 		protocols::simple_moves::symmetry::SymMinMoverOP min(
-				new protocols::simple_moves::symmetry::SymMinMover(mm, sf_, "lbfgs_armijo", 0.01, true) );
+			new protocols::simple_moves::symmetry::SymMinMover(mm, sf_, "lbfgs_armijo", 0.01, true) );
 
 		init(pose); // find which are lattice jumps && which are dof jumps
 		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo(pose, *sf_, 2.0 ) );
-		for (int i=1; i<(int)ncycles_; ++i) {
-			if (i%24 == 0) {
+		for ( int i=1; i<(int)ncycles_; ++i ) {
+			if ( i%24 == 0 ) {
 				mc->show_scores();
 				mc->show_counters();
 			}
 
 			perturb_trial(pose);
 
-			if (i%24 == 1) {
+			if ( i%24 == 1 ) {
 				pack_interface_repack->apply( pose );
 			} else {
 				pack_interface_rtrials->apply( pose );
@@ -589,29 +595,30 @@ DockLatticeMover::apply( core::pose::Pose & pose ) {
 // parse_my_tag
 void
 DockLatticeMover::parse_my_tag(
-		utility::tag::TagCOP const tag,
-		basic::datacache::DataMap & data,
-		filters::Filters_map const & ,
-		moves::Movers_map const & ,
-		core::pose::Pose const & /*pose*/ )
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
+	filters::Filters_map const & ,
+	moves::Movers_map const & ,
+	core::pose::Pose const & /*pose*/ )
 {
 	fullatom_ = tag->getOption<bool>( "fullatom", true );
-	if (fullatom_)
+	if ( fullatom_ ) {
 		sf_ = core::scoring::ScoreFunctionFactory::create_score_function("talaris2013");
-	else
+	} else {
 		sf_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
+	}
 
-	if( tag->hasOption( "scorefxn" ) ) {
+	if ( tag->hasOption( "scorefxn" ) ) {
 		sf_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	}
 
-	if( tag->hasOption( "ncycles" ) ) {
+	if ( tag->hasOption( "ncycles" ) ) {
 		ncycles_ = tag->getOption<core::Size>( "ncycles" );
 	}
-	if( tag->hasOption( "trans_step" ) ) {
+	if ( tag->hasOption( "trans_step" ) ) {
 		trans_mag_ = tag->getOption<core::Real>( "trans_step" );
 	}
-	if( tag->hasOption( "rot_step" ) ) {
+	if ( tag->hasOption( "rot_step" ) ) {
 		rot_mag_ = tag->getOption<core::Real>( "rot_step" );
 	}
 
@@ -643,10 +650,10 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 
 	Vector max_extent(0,0,0);
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
-		if (!pose.residue(i).is_protein()) continue;
+		if ( !pose.residue(i).is_protein() ) continue;
 		for ( Size j=1; j<=pose.residue(i).natoms(); ++j ) {
 			Vector f_ij = sg_.c2f()*pose.residue(i).xyz(j);
-			for (int k=0; k<3; ++k) max_extent[k] = std::max( std::fabs(f_ij[k]) , max_extent[k] );
+			for ( int k=0; k<3; ++k ) max_extent[k] = std::max( std::fabs(f_ij[k]) , max_extent[k] );
 		}
 	}
 	max_extent += sg_.c2f()*Vector(6,6,6);
@@ -709,8 +716,9 @@ MakeLatticeMover::place_near_origin (
 	Size nres = pose.total_residue();
 
 	Vector com(0,0,0);
-	for ( Size i=1; i<= nres; ++i )
+	for ( Size i=1; i<= nres; ++i ) {
 		com += pose.residue(i).xyz("CA");
+	}
 	com /= nres;
 
 	Real mindis2(1e6);
@@ -727,13 +735,13 @@ MakeLatticeMover::place_near_origin (
 	Vector bestoffset(0,0,0);
 	mindis2=1e6;
 	com = sg_.c2f()*com;
-	for (Size i=1; i<=nsymm; ++i) {
+	for ( Size i=1; i<=nsymm; ++i ) {
 		Vector foffset = sg_.symmop(i).get_rotation()*com + sg_.symmop(i).get_translation(), rfoffset;
 		rfoffset[0] = min_mod( foffset[0], 1.0 );
 		rfoffset[1] = min_mod( foffset[1], 1.0 );
 		rfoffset[2] = min_mod( foffset[2], 1.0 );
 		Real dist = (sg_.f2c()*rfoffset).length_squared();
-		if (dist<mindis2) {
+		if ( dist<mindis2 ) {
 			mindis2=dist;
 			bestxform=i;
 			bestoffset = foffset - rfoffset;
@@ -772,9 +780,9 @@ MakeLatticeMover::detect_connecting_subunits(
 	runtime_assert( T0.length() < 1e-6);
 
 	for ( Size i=1; i<= nres_monomer; ++i ) {
-			Vector ca_i = monomer_pose.residue(i).xyz("CA");
-			monomer_cas[i] = ca_i;
-			radius = std::max( (ca_i).length_squared() , radius );
+		Vector ca_i = monomer_pose.residue(i).xyz("CA");
+		monomer_cas[i] = ca_i;
+		radius = std::max( (ca_i).length_squared() , radius );
 	}
 	radius = sqrt(radius);
 
@@ -785,12 +793,12 @@ MakeLatticeMover::detect_connecting_subunits(
 	new_basesubunit = 1;
 
 	for ( Size i=1; i<=num_monomers; ++i ) {
-		if (i==basesubunit) continue;
+		if ( i==basesubunit ) continue;
 
 		// pass 1 check vrt-vrt dist to throw out very distant things
 		Vector T = pose.residue(monomer_anchors[i]).xyz("ORIG");
 		Real disVRT = T.length();
-		if (disVRT>contact_dist_+2*radius) continue;
+		if ( disVRT>contact_dist_+2*radius ) continue;
 
 		// pass 2 check ca-ca dists
 		Vector X = pose.residue(monomer_anchors[i]).xyz("X") - T;
@@ -806,7 +814,7 @@ MakeLatticeMover::detect_connecting_subunits(
 				contact = ((Ri-monomer_cas[k]).length_squared() < contact_dist_*contact_dist_);
 			}
 		}
-		if (contact) {
+		if ( contact ) {
 			new_monomer_anchors.push_back(monomer_anchors[i]);
 			new_allRs.push_back( allRs_[i] );
 			new_allTs.push_back( allTs_[i] );
@@ -821,11 +829,11 @@ MakeLatticeMover::detect_connecting_subunits(
 
 void
 MakeLatticeMover::add_monomers_to_lattice(
-			Pose const & monomer_pose,
-			Pose & pose,
-			utility::vector1<Size> const & monomer_anchors,
-			utility::vector1<Size> & monomer_jumps,
-			Size rootpos
+	Pose const & monomer_pose,
+	Pose & pose,
+	utility::vector1<Size> const & monomer_anchors,
+	utility::vector1<Size> & monomer_jumps,
+	Size rootpos
 ) {
 	Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.total_residue () );
 
@@ -844,8 +852,9 @@ MakeLatticeMover::add_monomers_to_lattice(
 		}
 		monomer_jumps.push_back( pose.fold_tree().num_jump() );
 	}
-	for ( Size i=1; i<= num_monomers; ++i )
+	for ( Size i=1; i<= num_monomers; ++i ) {
 		pose.conformation().insert_chain_ending( nres_monomer*i );
+	}
 
 	core::kinematics::FoldTree f( pose.fold_tree() );
 	f.reorder( nres_protein+1 );
@@ -855,13 +864,13 @@ MakeLatticeMover::add_monomers_to_lattice(
 
 void
 MakeLatticeMover::build_lattice_of_virtuals(
-			core::pose::Pose & posebase,
-			numeric::xyzVector<int> EXTEND,
-			utility::vector1<Size> &Ajumps,
-			utility::vector1<Size> &Bjumps,
-			utility::vector1<Size> &Cjumps,
-			utility::vector1<Size> &subunit_anchors,
-			Size &basesubunit
+	core::pose::Pose & posebase,
+	numeric::xyzVector<int> EXTEND,
+	utility::vector1<Size> &Ajumps,
+	utility::vector1<Size> &Bjumps,
+	utility::vector1<Size> &Cjumps,
+	utility::vector1<Size> &subunit_anchors,
+	Size &basesubunit
 ) {
 	numeric::xyzVector<int> nvrts_dim(2*EXTEND[0]+1, 2*EXTEND[1]+1, 2*EXTEND[2]+1);
 
@@ -874,7 +883,7 @@ MakeLatticeMover::build_lattice_of_virtuals(
 	numeric::xyzVector< Size > trans_dofs = sg_.get_trans_dofs();
 
 	Vector O, Ax, Bx, Cx, Ay, By, Cy;
-	if (sg_.setting() == HEXAGONAL) {
+	if ( sg_.setting() == HEXAGONAL ) {
 		Ax = sg_.f2c()*Vector(1,0,0); Ax.normalize();
 		Bx = sg_.f2c()*Vector(0,1,0); Bx.normalize();
 		Cx = sg_.f2c()*Vector(0,0,1); Cx.normalize();
@@ -895,7 +904,7 @@ MakeLatticeMover::build_lattice_of_virtuals(
 	vrtZ.dimension(nvrts_dim[0]*grid[0]+1,nvrts_dim[1]*grid[1]+1,nvrts_dim[2]*grid[2]+1); vrtZ=0;
 
 	// 1 expand A (j==k==1)
-	for (int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i) {
+	for ( int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i ) {
 		Vector fX( (Real)(i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], -EXTEND[1], -EXTEND[2] );
 		O = sg_.f2c()*fX;
 
@@ -904,7 +913,7 @@ MakeLatticeMover::build_lattice_of_virtuals(
 		ResidueOP vrt_y = make_vrt(O,Bx,By);
 		ResidueOP vrt_z = make_vrt(O,Cx,Cy);
 
-		if (i==1) {
+		if ( i==1 ) {
 			posebase.append_residue_by_bond( *vrt_x );    vrtX(1,1,1) = 1;
 			posebase.append_residue_by_jump( *vrt_y, 1);  vrtY(1,1,1) = 2;
 			posebase.append_residue_by_jump( *vrt_z, 2);  vrtZ(1,1,1) = 3;
@@ -917,67 +926,72 @@ MakeLatticeMover::build_lattice_of_virtuals(
 	}
 
 	// expand B (k==1)
-	for (int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i)
-	for (int j=2; j<=(int)(nvrts_dim[1]*grid[1]+1); ++j) {
-		Vector fX( (i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], (j-1-(Real)(EXTEND[1]*grid[1]))/(Real)grid[1], -EXTEND[2] );
-		O = sg_.f2c()*fX;
+	for ( int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i ) {
+		for ( int j=2; j<=(int)(nvrts_dim[1]*grid[1]+1); ++j ) {
+			Vector fX( (i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], (j-1-(Real)(EXTEND[1]*grid[1]))/(Real)grid[1], -EXTEND[2] );
+			O = sg_.f2c()*fX;
 
-		// now add 3 virtuals to the pose, with X pointing toward A,B,C, respectively
-		ResidueOP vrt_y = make_vrt(O,Bx,By);
-		ResidueOP vrt_z = make_vrt(O,Cx,Cy);
+			// now add 3 virtuals to the pose, with X pointing toward A,B,C, respectively
+			ResidueOP vrt_y = make_vrt(O,Bx,By);
+			ResidueOP vrt_z = make_vrt(O,Cx,Cy);
 
-		posebase.append_residue_by_jump( *vrt_y, vrtY(i,j-1,1)); vrtY(i,j,1) = posebase.total_residue();
-		Bjumps.push_back(posebase.fold_tree().num_jump());
-		posebase.append_residue_by_jump( *vrt_z, vrtY(i,j,1));   vrtZ(i,j,1) = posebase.total_residue();
+			posebase.append_residue_by_jump( *vrt_y, vrtY(i,j-1,1)); vrtY(i,j,1) = posebase.total_residue();
+			Bjumps.push_back(posebase.fold_tree().num_jump());
+			posebase.append_residue_by_jump( *vrt_z, vrtY(i,j,1));   vrtZ(i,j,1) = posebase.total_residue();
+		}
 	}
 
 	// expand C
-	for (int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i)
-	for (int j=1; j<=(int)(nvrts_dim[1]*grid[1]+1); ++j)
-	for (int k=2; k<=(int)(nvrts_dim[2]*grid[2]+1); ++k) {
-		Vector fX( (i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], (j-1-(Real)(EXTEND[1]*grid[1]))/(Real)grid[1], (k-1-(Real)(EXTEND[2]*grid[2]))/(Real)grid[2] );
-		O = sg_.f2c()*fX;
+	for ( int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i ) {
+		for ( int j=1; j<=(int)(nvrts_dim[1]*grid[1]+1); ++j ) {
+			for ( int k=2; k<=(int)(nvrts_dim[2]*grid[2]+1); ++k ) {
+				Vector fX( (i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], (j-1-(Real)(EXTEND[1]*grid[1]))/(Real)grid[1], (k-1-(Real)(EXTEND[2]*grid[2]))/(Real)grid[2] );
+				O = sg_.f2c()*fX;
 
-		// now add 3 virtuals to the pose, with X pointing toward A,B,C, respectively
-		ResidueOP vrt_z = make_vrt(O,Cx,Cy);
+				// now add 3 virtuals to the pose, with X pointing toward A,B,C, respectively
+				ResidueOP vrt_z = make_vrt(O,Cx,Cy);
 
-		posebase.append_residue_by_jump( *vrt_z, vrtZ(i,j,k-1));  vrtZ(i,j,k) = posebase.total_residue();
-		Cjumps.push_back(posebase.fold_tree().num_jump());
+				posebase.append_residue_by_jump( *vrt_z, vrtZ(i,j,k-1));  vrtZ(i,j,k) = posebase.total_residue();
+				Cjumps.push_back(posebase.fold_tree().num_jump());
+			}
+		}
 	}
 
 	// add "hanging" virtuals
-	for (int s=1; s<=(int)sg_.nsymmops(); ++s) {
+	for ( int s=1; s<=(int)sg_.nsymmops(); ++s ) {
 		numeric::xyzMatrix<Real> R_i = sg_.symmop(s).get_rotation();
 		numeric::xyzVector<Real> T_i = sg_.symmop(s).get_translation();
 
 		// T_i -> indices
-		for (int i=-(int)EXTEND[0]; i<=(int)EXTEND[0]; ++i)
-		for (int j=-(int)EXTEND[1]; j<=(int)EXTEND[1]; ++j)
-		for (int k=-(int)EXTEND[2]; k<=(int)EXTEND[2]; ++k) {
-			// find lattice anchor
-			int x_i = (int)std::floor( (i+EXTEND[0]+T_i[0])*grid[0] + 1.5 );
-			int y_i = (int)std::floor( (j+EXTEND[1]+T_i[1])*grid[1] + 1.5 );
-			int z_i = (int)std::floor( (k+EXTEND[2]+T_i[2])*grid[2] + 1.5 );
+		for ( int i=-(int)EXTEND[0]; i<=(int)EXTEND[0]; ++i ) {
+			for ( int j=-(int)EXTEND[1]; j<=(int)EXTEND[1]; ++j ) {
+				for ( int k=-(int)EXTEND[2]; k<=(int)EXTEND[2]; ++k ) {
+					// find lattice anchor
+					int x_i = (int)std::floor( (i+EXTEND[0]+T_i[0])*grid[0] + 1.5 );
+					int y_i = (int)std::floor( (j+EXTEND[1]+T_i[1])*grid[1] + 1.5 );
+					int z_i = (int)std::floor( (k+EXTEND[2]+T_i[2])*grid[2] + 1.5 );
 
-			O = posebase.residue(vrtZ(x_i,y_i,z_i)).xyz("ORIG");
+					O = posebase.residue(vrtZ(x_i,y_i,z_i)).xyz("ORIG");
 
-			if (sg_.setting() == HEXAGONAL) {
-				Ax = sg_.f2c()*R_i*sg_.c2f()*Vector(1,0,0); Ax.normalize();
-				Ay = sg_.f2c()*R_i*sg_.c2f()*Vector(0,1,0); Ay.normalize();
-			} else {
-				Ax = R_i*Vector(1,0,0); Ax.normalize();
-				Ay = R_i*Vector(0,1,0); Ay.normalize();
-			}
-			ResidueOP vrt_z = make_vrt(O,Ax,Ay);
+					if ( sg_.setting() == HEXAGONAL ) {
+						Ax = sg_.f2c()*R_i*sg_.c2f()*Vector(1,0,0); Ax.normalize();
+						Ay = sg_.f2c()*R_i*sg_.c2f()*Vector(0,1,0); Ay.normalize();
+					} else {
+						Ax = R_i*Vector(1,0,0); Ax.normalize();
+						Ay = R_i*Vector(0,1,0); Ay.normalize();
+					}
+					ResidueOP vrt_z = make_vrt(O,Ax,Ay);
 
-			posebase.append_residue_by_jump( *vrt_z, vrtZ(x_i,y_i,z_i));
+					posebase.append_residue_by_jump( *vrt_z, vrtZ(x_i,y_i,z_i));
 
-			allRs_.push_back(R_i);
-			allTs_.push_back(numeric::xyzVector<Real>(i+T_i[0],j+T_i[1],k+T_i[2]));
+					allRs_.push_back(R_i);
+					allTs_.push_back(numeric::xyzVector<Real>(i+T_i[0],j+T_i[1],k+T_i[2]));
 
-			subunit_anchors.push_back(posebase.total_residue());
-			if (s==1 && i==0 && j==0 && k==0) {
-				basesubunit = subunit_anchors.size();
+					subunit_anchors.push_back(posebase.total_residue());
+					if ( s==1 && i==0 && j==0 && k==0 ) {
+						basesubunit = subunit_anchors.size();
+					}
+				}
 			}
 		}
 	}
@@ -986,16 +1000,16 @@ MakeLatticeMover::build_lattice_of_virtuals(
 
 void
 MakeLatticeMover::setup_xtal_symminfo(
-		Pose const & pose,
-		Size const num_monomers,
-		Size const num_virtuals,
-		Size const base_monomer,
-		Size const nres_monomer,
-		utility::vector1<Size> const &Ajumps,
-		utility::vector1<Size> const &Bjumps,
-		utility::vector1<Size> const &Cjumps,
-		utility::vector1<Size> const &monomer_jumps,
-		conformation::symmetry::SymmetryInfo & symminfo
+	Pose const & pose,
+	Size const num_monomers,
+	Size const num_virtuals,
+	Size const base_monomer,
+	Size const nres_monomer,
+	utility::vector1<Size> const &Ajumps,
+	utility::vector1<Size> const &Bjumps,
+	utility::vector1<Size> const &Cjumps,
+	utility::vector1<Size> const &monomer_jumps,
+	conformation::symmetry::SymmetryInfo & symminfo
 ) {
 
 	for ( Size i=1; i<= num_monomers; ++i ) {
@@ -1010,7 +1024,7 @@ MakeLatticeMover::setup_xtal_symminfo(
 
 	// subunit jump clones
 	Size const base_monomer_jump( monomer_jumps[ base_monomer ] );
-	for (Size i=1; i<=monomer_jumps.size(); ++i) {
+	for ( Size i=1; i<=monomer_jumps.size(); ++i ) {
 		if ( monomer_jumps[i]!= base_monomer_jump ) {
 			symminfo.add_jump_clone( base_monomer_jump, monomer_jumps[i], 0.0 );
 		}
@@ -1023,27 +1037,32 @@ MakeLatticeMover::setup_xtal_symminfo(
 
 	Size Amaster=Ajumps[1], Bmaster=Bjumps[1], Cmaster=Cjumps[1];
 	numeric::xyzVector<core::Size> linked_dofs=sg_.get_trans_dofs();
-	if (linked_dofs[1]==1) { Bmaster=Ajumps[1]; /*std::cerr << "clone B->A" << std::endl;*/ }
-	if (linked_dofs[2]==1) { Cmaster=Ajumps[1]; /*std::cerr << "clone C->A" << std::endl;*/ }
+	if ( linked_dofs[1]==1 ) { Bmaster=Ajumps[1]; /*std::cerr << "clone B->A" << std::endl;*/ }
+	if ( linked_dofs[2]==1 ) { Cmaster=Ajumps[1]; /*std::cerr << "clone C->A" << std::endl;*/ }
 
-	for (Size i=2; i<=Ajumps.size(); ++i)
+	for ( Size i=2; i<=Ajumps.size(); ++i ) {
 		symminfo.add_jump_clone( Amaster, Ajumps[i], 0.0 );
-	for (Size i=1; i<=Bjumps.size(); ++i)
-		if (Bmaster!=Bjumps[i])
+	}
+	for ( Size i=1; i<=Bjumps.size(); ++i ) {
+		if ( Bmaster!=Bjumps[i] ) {
 			symminfo.add_jump_clone( Bmaster, Bjumps[i], 0.0 );
-	for (Size i=1; i<=Cjumps.size(); ++i)
-		if (Cmaster!=Cjumps[i])
+		}
+	}
+	for ( Size i=1; i<=Cjumps.size(); ++i ) {
+		if ( Cmaster!=Cjumps[i] ) {
 			symminfo.add_jump_clone( Cmaster, Cjumps[i], 0.0 );
+		}
+	}
 
 	SymDof symdof_a;
 	SymDof symdof_b;
 	SymDof symdof_c;
 
 	core::Size nrot_dofs=sg_.get_nrot_dofs();
-	if (nrot_dofs == 3) {
+	if ( nrot_dofs == 3 ) {
 		symdof_c.read( "x y z" );
 		symdof_b.read( "x z" );
-	} else if (nrot_dofs == 1) {
+	} else if ( nrot_dofs == 1 ) {
 		symdof_c.read( "x y" );
 		symdof_b.read( "x" );
 	} else {
@@ -1053,16 +1072,16 @@ MakeLatticeMover::setup_xtal_symminfo(
 	symdof_a.read( "x" );
 
 	symdofs[ Ajumps[1] ] = symdof_a;
-	if (Bmaster==Bjumps[1]) {
+	if ( Bmaster==Bjumps[1] ) {
 		symdofs[ Bjumps[1] ] = symdof_b;
 	}
-	if (Cmaster==Cjumps[1]) {
+	if ( Cmaster==Cjumps[1] ) {
 		symdofs[ Cjumps[1] ] = symdof_c;
 	}
 
 	// jump names
 	TR << "Initializing " << pose.num_jump() << " jumps." << std::endl;
-	for (Size v=1; v<=pose.num_jump(); ++v) symminfo.set_jump_name(v, "v_"+utility::to_string(v));
+	for ( Size v=1; v<=pose.num_jump(); ++v ) symminfo.set_jump_name(v, "v_"+utility::to_string(v));
 
 	symminfo.set_jump_name(Ajumps[1], "A");
 	symminfo.set_jump_name(Bjumps[1], "B");
@@ -1091,13 +1110,13 @@ MakeLatticeMover::setup_xtal_symminfo(
 // parse_my_tag
 void
 MakeLatticeMover::parse_my_tag(
-		utility::tag::TagCOP const tag,
-		basic::datacache::DataMap & /*data*/,
-		filters::Filters_map const & ,
-		moves::Movers_map const & ,
-		core::pose::Pose const & /*pose*/ )
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
+	filters::Filters_map const & ,
+	moves::Movers_map const & ,
+	core::pose::Pose const & /*pose*/ )
 {
-	if( tag->hasOption( "contact_dist" ) ) {
+	if ( tag->hasOption( "contact_dist" ) ) {
 		contact_dist_ = tag->getOption<core::Real>( "contact_dist" );
 	}
 }

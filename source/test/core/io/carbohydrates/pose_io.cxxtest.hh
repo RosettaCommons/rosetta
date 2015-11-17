@@ -115,7 +115,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( modifications.size(), 1 );
 		TS_ASSERT_EQUALS( modifications[ 1 ].first, 2 );
 		TS_ASSERT_EQUALS( modifications[ 1 ].second, "CMe" );
-		
+
 		// Now test for some expected errors.
 		TS_TRACE( "Six (6) error messages about commas should follow." );
 		TS_ASSERT_THROWS_ANYTHING( sugar_modifications_from_suffix( "going,ndo" ) );

@@ -746,45 +746,45 @@ void FileData::get_connectivity_annotation_info( core::pose::Pose const & pose )
 		}
 
 		if ( pose.residue( ii ).n_non_polymeric_residue_connections() == 0 ) continue;
-		
+
 		for ( Size conn = pose.residue( ii ).n_polymeric_residue_connections()+1; conn <= pose.residue( ii ).n_residue_connections(); ++conn ) {
-			
+
 			Size jj = pose.residue( ii ).connected_residue_at_resconn( conn );
 			Size jj_conn = pose.residue( ii ).residue_connection_conn_id( conn );
-			
+
 			// Either LINK or SSBOND
 			// Note that it's not an SSBOND if you are a cysteine bonded
 			// to the UPPER of another cysteine!
 			// Are the two atoms both the get_disulfide_atom_name() of the
 			// connected residue types?
 			if ( ( pose.residue( ii ).type().has_property( chemical::DISULFIDE_BONDED ) || pose.residue( ii ).type().has_property( chemical::SIDECHAIN_THIOL ) ) &&
-				( pose.residue( jj ).type().has_property( chemical::DISULFIDE_BONDED ) || pose.residue( jj ).type().has_property( chemical::SIDECHAIN_THIOL ) ) &&
-				pose.residue( ii ).residue_connect_atom_index( conn ) ==
-				pose.residue( ii ).atom_index( pose.residue( ii ).type().get_disulfide_atom_name() ) &&
-				pose.residue( jj ).residue_connect_atom_index( jj_conn ) ==
-				pose.residue( ii ).atom_index( pose.residue( jj ).type().get_disulfide_atom_name() ) ) {
+					( pose.residue( jj ).type().has_property( chemical::DISULFIDE_BONDED ) || pose.residue( jj ).type().has_property( chemical::SIDECHAIN_THIOL ) ) &&
+					pose.residue( ii ).residue_connect_atom_index( conn ) ==
+					pose.residue( ii ).atom_index( pose.residue( ii ).type().get_disulfide_atom_name() ) &&
+					pose.residue( jj ).residue_connect_atom_index( jj_conn ) ==
+					pose.residue( ii ).atom_index( pose.residue( jj ).type().get_disulfide_atom_name() ) ) {
 				// Disulfide.
-				
+
 				// If jj < ii, we already counted it
 				if ( jj < ii ) continue;
-				
+
 				SSBondInformation ssbond = get_ssbond_record( pose, ii, conn );
 				vector1<SSBondInformation> ssbonds;
-				
+
 				// If key is found in the links map, add this new linkage information to the links already keyed to
 				// this residue.
 				if ( ssbond_map.count(ssbond.resID1) ) {
 					ssbonds = ssbond_map[ssbond.resID1];
 				}
 				ssbonds.push_back(ssbond);
-				
+
 				ssbond_map[ssbond.resID1] = ssbonds;
-				
+
 			} else {
-				
+
 				LinkInformation link = get_link_record( pose, ii, conn );
 				vector1<LinkInformation> links;
-				
+
 				// If key is found in the links map, add this new linkage information to the links already keyed to
 				// this residue.
 				if ( link_map.count(link.resID1) ) {
@@ -809,14 +809,14 @@ void FileData::get_connectivity_annotation_info( core::pose::Pose const & pose )
 				bool push_it = true;
 				for ( Size i = 1; i <= links.size(); ++i ) {
 					if ( ( link.resID1 == links[i].resID1 && link.resID2 == links[i].resID2 )
-						|| ( link.resID2 == links[i].resID1 && link.resID1 == links[i].resID2 ) ) {
+							|| ( link.resID2 == links[i].resID1 && link.resID1 == links[i].resID2 ) ) {
 						push_it = false;
 					}
 				}
 				if ( push_it ) {
 					links.push_back(link);
 				}
-				
+
 				link_map[link.resID1] = links;
 			}
 		}
@@ -1166,22 +1166,22 @@ write_additional_pdb_data(
 			char const chain( chains[ rsd.chain() ] );
 			for ( core::Size j=1; j<=rsd.natoms(); ++j ) {
 				if ( !rsd.atom_type(j).atom_has_orbital() ) continue;
-				
+
 				utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
 				for (
-					 utility::vector1<core::Size>::const_iterator
-					 orbital_index = orbital_indices.begin(),
-					 orbital_index_end = orbital_indices.end();
-					 orbital_index != orbital_index_end; ++orbital_index
-					 ) {
+						utility::vector1<core::Size>::const_iterator
+						orbital_index = orbital_indices.begin(),
+						orbital_index_end = orbital_indices.end();
+						orbital_index != orbital_index_end; ++orbital_index
+						) {
 					++number;
 					Vector orbital_xyz(rsd.orbital_xyz(*orbital_index));
 					out << "ATOM  " << I(5,number) << ' ' << rsd.orbital_name(*orbital_index) << ' ' <<
-					rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
-					F(8,3,orbital_xyz.x()) <<
-					F(8,3,orbital_xyz.y()) <<
-					F(8,3,orbital_xyz.z()) <<
-					F(6,2,1.0) << F(6,2,1.0) << '\n';
+						rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
+						F(8,3,orbital_xyz.x()) <<
+						F(8,3,orbital_xyz.y()) <<
+						F(8,3,orbital_xyz.z()) <<
+						F(6,2,1.0) << F(6,2,1.0) << '\n';
 				}
 			}
 		}

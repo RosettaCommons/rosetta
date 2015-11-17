@@ -446,7 +446,7 @@ Pose::append_residue_by_atoms(
 	conformation::Residue const & anchor_rsd( residue( anchor_rsd_seqpos ) );
 	if ( ! new_rsd.has( connect_atom ) || ! anchor_rsd.has( anchor_connect_atom ) ) {
 		utility_exit_with_message( "Can't append by these atoms, "
-				"since they are not found in the Residues in question!" );
+			"since they are not found in the Residues in question!" );
 	}
 
 	// Next, convert to indices.
@@ -471,11 +471,11 @@ Pose::append_residue_by_atoms(
 
 	if ( ( ! anchor_connection ) || ( ! connection ) ) {
 		utility_exit_with_message( "Can't append by these atoms, "
-				"since they do not correspond to connections on the Residues in question!" );
+			"since they do not correspond to connections on the Residues in question!" );
 	}
 
 	conformation_->append_residue_by_bond( new_rsd, build_ideal_geometry, connection, anchor_rsd_seqpos,
-			anchor_connection, start_new_chain, lookup_bond_length);
+		anchor_connection, start_new_chain, lookup_bond_length);
 }
 
 void

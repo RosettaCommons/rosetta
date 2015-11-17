@@ -11,6 +11,8 @@
 /// @brief  Ramachandran potential class implementation
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 /// @author Modified by Vikram K. Mulligan (vmullig@uw.edu) for D-amino acids, noncanonical alpha-amino acids, etc.
+/// @details  This class should really be rewritten from the ground up, to permit greater flexibility and to remove protein-only assumptions that
+/// limit the utility of the rama score term.  This is very old, kind of ugly, not very versatile code.
 
 // Unit Headers
 #include <core/scoring/Ramachandran.hh>
@@ -84,10 +86,14 @@ Real const R::rama_sampling_factor_( 10.0 ); // factor for increased precision o
 
 Ramachandran::Ramachandran() :
 	ram_probabil_( n_phi_, n_psi_, 3, n_aa_ ),
+	extra_ram_probabil_(),
 	ram_counts_( n_phi_, n_psi_, 3, n_aa_ ),
+	extra_ram_counts_(),
 	ram_energ_( n_phi_, n_psi_, 3, n_aa_),
+	extra_ram_energ_(),
 	ram_entropy_( 3, n_aa_ ),
 	cdf_( n_aa_ ),
+	extra_cdf_(),
 	cdf_by_torsion_bin_( n_aa_, conformation::n_ppo_torsion_bins ),
 	n_valid_pp_bins_by_ppo_torbin_( n_aa_, conformation::n_ppo_torsion_bins ),
 	phi_psi_bins_above_thold_( n_aa_ )
@@ -129,15 +135,108 @@ Ramachandran::Ramachandran(
 	bool use_bicubic_interpolation
 ) :
 	ram_probabil_( n_phi_, n_psi_, 3, n_aa_ ),
+	extra_ram_probabil_(),
 	ram_counts_( n_phi_, n_psi_, 3, n_aa_ ),
+	extra_ram_counts_(),
 	ram_energ_( n_phi_, n_psi_, 3, n_aa_),
+	extra_ram_energ_(),
 	ram_entropy_( 3, n_aa_ ),
 	cdf_( n_aa_ ),
+	extra_cdf_(),
 	cdf_by_torsion_bin_( n_aa_, conformation::n_ppo_torsion_bins ),
 	n_valid_pp_bins_by_ppo_torbin_( n_aa_, conformation::n_ppo_torsion_bins ),
 	phi_psi_bins_above_thold_( n_aa_ )
 {
 	read_rama(rama_map_filename, use_bicubic_interpolation);
+}
+
+/// @brief Given a custom Rama table type, get the filename of the database file containing
+/// the data.
+/// @details Accesses the options system for this information.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+std::string
+Ramachandran::get_custom_rama_table_filename (
+	Rama_Table_Type const type
+) const  {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::corrections::score;
+
+	switch(type) {
+	case(flat_l_aa_ramatable) :
+		return option[rama_map_average_L_flat]();
+	case(flat_d_aa_ramatable) :
+		return option[rama_map_average_L_flat]();
+	case(flat_symm_dl_aa_ramatable) :
+		return option[rama_map_sym_average_L_flat]();
+	case(flat_symm_gly_ramatable) :
+		return option[rama_map_sym_gly_flat]();
+	case(flat_symm_pro_ramatable) :
+		return option[rama_map_sym_pro_flat]();
+	case(flat_l_aa_ramatable_stringent) :
+		return option[rama_map_average_L_flat_stringent]();
+	case(flat_d_aa_ramatable_stringent) :
+		return option[rama_map_average_L_flat_stringent]();
+	case(flat_symm_dl_aa_ramatable_stringent) :
+		return option[rama_map_sym_average_L_flat_stringent]();
+	case(flat_symm_gly_ramatable_stringent) :
+		return option[rama_map_sym_gly_flat_stringent]();
+	case(flat_symm_pro_ramatable_stringent) :
+		return option[rama_map_sym_pro_flat_stringent]();
+	default :
+		break;
+	}
+
+	utility_exit_with_message( "Error in core::scoring::Ramachandran::get_custom_rama_table_filename(): No filename associated with unknown rama table type." );
+	return "";
+}
+
+
+/// @brief Given a Rama_Table_Type name, return the type.
+/// @details Calls get_ramatable_name_by_type().
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+Rama_Table_Type
+Ramachandran::get_ramatable_type_by_name (
+	std::string const &name
+) const {
+	for ( core::Size i=1; i<=static_cast<core::Size>(end_of_ramatable_type_list); ++i ) {
+		if ( get_ramatable_name_by_type( static_cast<Rama_Table_Type>(i) ) == name ) {
+			return static_cast<Rama_Table_Type>(i);
+		}
+	}
+	return unknown_ramatable_type;
+}
+
+/// @brief Given a Rama_Table_Type, return the name.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+std::string
+Ramachandran::get_ramatable_name_by_type (
+	Rama_Table_Type const type
+) const {
+	switch(type) {
+	case(flat_l_aa_ramatable) :
+		return "flat_l_aa_ramatable";
+	case(flat_d_aa_ramatable) :
+		return "flat_d_aa_ramatable";
+	case(flat_symm_dl_aa_ramatable) :
+		return "flat_symm_dl_aa_ramatable";
+	case(flat_symm_gly_ramatable) :
+		return "flat_symm_gly_ramatable";
+	case(flat_symm_pro_ramatable) :
+		return "flat_symm_pro_ramatable";
+	case(flat_l_aa_ramatable_stringent) :
+		return "flat_l_aa_ramatable_stringent";
+	case(flat_d_aa_ramatable_stringent) :
+		return "flat_d_aa_ramatable_stringent";
+	case(flat_symm_dl_aa_ramatable_stringent) :
+		return "flat_symm_dl_aa_ramatable_stringent";
+	case(flat_symm_gly_ramatable_stringent) :
+		return "flat_symm_gly_ramatable_stringent";
+	case(flat_symm_pro_ramatable_stringent) :
+		return "flat_symm_pro_ramatable_stringent";
+	default :
+		break;
+	}
+	return "unknown_ramatable_type";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -648,6 +747,149 @@ Ramachandran::cdf_for_aa_for_torsion_bin(
 	return cdf_by_torsion_bin_( aa, torsion_bin );
 }
 
+/// @brief Pick a random phi, psi value from a custom Rama table.
+/// @details The custom Rama table is lazily loaded, so this function
+/// is necessarily non-const.  By default, only the 20 canonical Rama
+/// tables are loaded.
+/// @param[in] type The type of custom rama table (an enum value).
+/// @param[out] phi Randomly-drawn phi value, biased by the custom rama
+/// table.
+/// @param[out] psi Randomly-drawn psi value, biased by the custom rama
+/// table.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+Ramachandran::draw_random_phi_psi_from_extra_cdf(
+	Rama_Table_Type const type,
+	Real & phi,
+	Real & psi
+) {
+	bool is_d(false); //Are we dealing with a D-amino acid table?
+	Rama_Table_Type type2(type);
+
+	if ( type == flat_d_aa_ramatable ) {
+		type2 = flat_l_aa_ramatable;
+		is_d = true;
+	} else if ( type == flat_d_aa_ramatable_stringent ) {
+		type2 = flat_l_aa_ramatable_stringent;
+		is_d = true;
+	}
+
+	if ( !has_custom_rama_cdf(type2) ) {
+		generate_custom_rama_cdf(type2);
+	}
+	draw_random_phi_psi_from_cdf( custom_rama_cdf(type2), phi, psi );
+
+	if ( is_d ) { //If this is a D-amino acid table, we've used the corresponding L-table, so we need to invert phi and psi.
+		phi *= -1.0;
+		psi *= -1.0;
+	}
+
+	return;
+}
+
+/// @brief If the -symmetric_gly_tables option is used, symmetrize the aa_gly table.
+/// @details By default, the gly table is asymmetric because it is based on statistics from the PDB (which disproportionately put glycine
+/// in the D-amino acid region of Ramachandran space).  However, the intrinsic propensities of glycine make it equally inclined to favour
+/// right- or left-handed conformation.  (Glycine is achrial, and can't have a preference.)  Must be called AFTER gly table load, but prior
+/// to bicubic interpolation setup.  Note that symmetrization is based on the probability table, and carries over to the energy table; the
+/// counts table is left as-is (asymmetric).
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+Ramachandran::symmetrize_gly_table()
+{
+	if ( TR.visible() ) {
+		TR << "Symmetrizing glycine Ramachandran table." << std::endl;
+	}
+
+	for ( core::Size ss=1; ss<=3; ++ss ) { //Repeat for each secondary structure type
+
+		//For debugging only:
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "Old gly probability table for ss " << ss << ":" << std::endl;
+			for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
+				for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
+					TR.Debug << ram_probabil_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) << "\t";
+				}
+				TR.Debug << std::endl;
+			}
+		}
+
+		//Need to rebuild probability tables by averaging:
+		core::Real probsum(0.0);
+		for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
+			core::Size const opposite_phi( n_phi_ + 1 - iphi );
+			for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
+				core::Size const opposite_psi( n_psi_ + 1 - ipsi );
+				core::Real const probval( (ram_probabil_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) + ram_probabil_(opposite_phi,opposite_psi,ss,static_cast<int>(core::chemical::aa_gly))) / 2.0 );
+				ram_probabil_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) = probval;
+				ram_probabil_(opposite_phi,opposite_psi,ss,static_cast<int>(core::chemical::aa_gly)) = probval;
+				probsum += probval;
+			}
+		}
+
+		//Need to loop through again to renormalize and calculate entropy:
+		core::Real entropy(0.0);
+		for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
+			for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
+				ram_probabil_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) /= probsum;
+				if ( ram_probabil_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) != 0 ) entropy += ram_probabil_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) * std::log( ram_probabil_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) );
+			}
+		}
+
+		if ( TR.Debug.visible() ) { //For debugging only!
+			TR.Debug << "Old gly entropy for ss " << ss << " was " << ram_entropy_(ss,static_cast<int>(core::chemical::aa_gly)) << ".  New is " << entropy << "." << std::endl;
+		}
+		ram_entropy_(ss,static_cast<int>(core::chemical::aa_gly)) = entropy;
+
+
+		//For debugging only:
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "New gly probability table for ss " << ss << ":" << std::endl;
+			for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
+				for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
+					TR.Debug << ram_probabil_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) << "\t";
+				}
+				TR.Debug << std::endl;
+			}
+			TR.Debug << "Old gly energy table for ss " << ss << ":" << std::endl;
+			for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
+				for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
+					TR.Debug << ram_energ_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) << "\t";
+				}
+				TR.Debug << std::endl;
+			}
+		}
+
+		//Finally, need to recalculate energy:
+		for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
+			for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
+				core::Real const pval( ram_probabil_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) );
+				if ( pval != 0 ) {
+					ram_energ_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) = -1.0*std::log( pval ) + entropy;
+				} else {
+					ram_energ_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) = 20.0; //Fixing this at 20 for the prohibited region for now.
+				}
+			}
+		}
+
+		//For debugging only:
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "New gly energy table for ss " << ss << ":" << std::endl;
+			for ( core::Size iphi=1; iphi<=static_cast<core::Size>(n_phi_); ++iphi ) {
+				for ( core::Size ipsi=1; ipsi<=static_cast<core::Size>(n_psi_); ++ipsi ) {
+					TR.Debug << ram_energ_(iphi,ipsi,ss,static_cast<int>(core::chemical::aa_gly)) << "\t";
+				}
+				TR.Debug << std::endl;
+			}
+		}
+
+	} // Looping through secondary structures
+
+	if ( TR.visible() ) { TR.flush(); }
+	if ( TR.Debug.visible() ) { TR.Debug.flush(); }
+
+	return;
+}
 
 void
 Ramachandran::read_rama_map_file (
@@ -755,6 +997,11 @@ Ramachandran::read_rama(
 	iunit.close();
 	iunit.clear();
 
+	//If the option is set to do this, symmetrize the glycine Ramachandran map.
+	if ( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ].user() ) {
+		symmetrize_gly_table();
+	}
+
 	if ( use_bicubic_interpolation ) {
 		using namespace numeric;
 		using namespace numeric::interpolation::spline;
@@ -766,7 +1013,11 @@ Ramachandran::read_rama(
 				for ( Size kk = 0; kk < 36; ++kk ) {
 					//MaximCode:
 					if ( true ) {
-						energy_vals( jj, kk ) = -std::log( ram_probabil_(jj+1,kk+1,3,ii )) + ram_entropy_(3,ii) ;
+						if ( ram_probabil_(jj+1,kk+1,3,ii ) != 0 ) {
+							energy_vals( jj, kk ) = -std::log( ram_probabil_(jj+1,kk+1,3,ii )) + ram_entropy_(3,ii) ;
+						} else {
+							energy_vals( jj, kk ) = 20.0; //Arbitrarily setting the energy to +20 for cases of probability 0.
+						}
 					} else {
 						energy_vals( jj, kk ) = ram_probabil_(jj+1,kk+1,3,ii );
 					}
@@ -800,6 +1051,96 @@ Ramachandran::read_rama(
 	}
 
 	initialize_rama_sampling_tables();
+}
+
+/// @brief Load a custom Ramachandran table, in addition to the 20x3 standard
+/// ones that are always loaded.
+/// @detailed Intended for sampling with alternative Ramachandran distributions.  Custom
+/// tables are lazily loaded so as not to add to total Rosetta memory footprint.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+Ramachandran::load_custom_rama_table(
+	Rama_Table_Type const type
+) {
+
+	runtime_assert_string_msg( !has_custom_rama_energy_table(type) && !has_custom_rama_probability_table(type) && !has_custom_rama_count_table(type),
+		"Error in core::scoring::Ramachandran::load_custom_rama_table(): the tables for type " + get_ramatable_name_by_type(type) + " have already been loaded!" );
+
+	std::string const filename( get_custom_rama_table_filename( type ) );
+
+	utility::io::izstream iunit;
+
+	// search in the local directory first
+	iunit.open( filename );
+
+	if ( !iunit.good() ) {
+		iunit.close();
+		if ( !basic::database::open( iunit, filename ) ) {
+			std::stringstream err_msg("");
+			err_msg << "Unable to open custom Ramachandran map \"" << filename << "\".";
+			utility_exit_with_message(err_msg.str());
+		}
+	}
+
+	if ( TR.visible() ) {
+		TR << "Reading custom Ramachandran table from " << filename << "." << std::endl;
+		TR.flush();
+	}
+
+	// Read/parse buffers:
+	core::Size aa_num(0), phi_bin(0), psi_bin(0), ss_type (0);
+	core::Real probsum(0.0);
+	std::string line;
+
+	//Storage for data that will be stored in extra_ram_probabil_, extra_ram_counts_, and extra_ram_energ_.
+	utility::vector1 < utility::vector1 <core::Real> > prob;
+	utility::vector1 < utility::vector1 <core::Size> > counts;
+	utility::vector1 < utility::vector1 <core::Real> > energy;
+	for ( core::Size j=1; j<=static_cast<core::Size>(n_phi_); ++j ) {
+		utility::vector1 < core::Real > tempvect( n_psi_, 0.0 );
+		utility::vector1 < core::Size > tempvect_size( n_psi_, 0.0 );
+		prob.push_back( tempvect );
+		counts.push_back( tempvect_size );
+		energy.push_back( tempvect );
+	}
+
+	for ( core::Size j = 1; j <= static_cast<core::Size>(n_phi_); ++j ) {
+		for ( core::Size k = 1; k <= static_cast<core::Size>(n_psi_); ++k ) {
+			iunit.getline( line );
+			if ( iunit.eof() ) {
+				return;
+			} else if ( iunit.fail() ) {
+				std::stringstream err_msg("");
+				err_msg << "Error reading file \"" << filename << "\".";
+				utility_exit_with_message( err_msg.str() );
+			}
+			std::stringstream l(line);
+
+			l >> aa_num;
+			l >> ss_type;
+			l >> phi_bin;
+			l >> psi_bin;
+			l >> counts[j][k];
+			l >> prob[j][k];
+			l >> energy[j][k];
+			probsum += prob[j][k];
+
+		}
+	}
+	iunit.close();
+
+	for ( core::Size j=1; j<=static_cast<core::Size>(n_phi_); ++j ) {
+		for ( core::Size k=1; k<=static_cast<core::Size>(n_psi_); ++k ) {
+			prob[j][k] /= probsum; //Normalize the probabilities.
+		}
+	}
+
+	// Store the loaded values:
+	extra_ram_probabil_[type] = prob;
+	extra_ram_counts_[type] = counts;
+	extra_ram_energ_[type] = energy;
+
+	return;
 }
 
 void
@@ -903,6 +1244,12 @@ Ramachandran::init_uniform_sampling_table()
 	}
 }
 
+/// @brief Pick a random phi and psi value given a cumulative distribution function.
+/// @param[in] cdf The cumulative distribution function.
+/// @param[out] phi The output phi value.
+/// @param[out] psi The output psi value.
+/// @details A random bin from the cumulative distribution function is chosen first.  Then uniform
+/// randomness is added within the chosen bin to produce the final phi and psi values.
 void
 Ramachandran::draw_random_phi_psi_from_cdf(
 	utility::vector1< Real > const & cdf,
@@ -923,6 +1270,40 @@ Ramachandran::draw_random_phi_psi_from_cdf(
 	// AS Nov 2013 - note that phi/psi bins are lower left corners, so we only want to add "noise" from a uniform distribution
 	phi = binw_ * ( phi_ind + numeric::random::uniform() );
 	psi = binw_ * ( psi_ind + numeric::random::uniform() );
+}
+
+/// @brief Generate a custom Rama cumulative distribution function from the corresponding energy table.
+/// @details This is generated from the PROBABILITY table, not from the ENERGY table.  If the energy table has not been
+/// loaded, this function loads the energy table first.
+void
+Ramachandran::generate_custom_rama_cdf(
+	Rama_Table_Type const type
+) {
+	//Check that type refers to something sensible:
+	runtime_assert_string_msg( type >= 1 && type < unknown_ramatable_type, "Error in core::scoring::Ramachandran::generate_custom_rama_cdf(): The type of Ramachandran table is not in the known types list." );
+
+	//If we haven't loaded the energy table yet, load it now:
+	if ( !has_custom_rama_probability_table( type ) ) {
+		load_custom_rama_table( type );
+	}
+
+	//Compute the cumulative distribution function (inner_cdf):
+	utility::vector1< Real > inner_cdf( n_phi_ * n_psi_, 0.0 );
+	core::Real probsum(0.0);
+	for ( core::Size jj = 0; jj < static_cast<core::Size>(n_phi_); ++jj ) {
+		for ( core::Size kk = 0; kk < static_cast<core::Size>(n_psi_); ++kk ) {
+			inner_cdf[ jj*n_psi_ + kk +  1 ] = probsum;
+			probsum += custom_rama_probability_table(type, jj, kk);
+		}
+	}
+	for ( core::Size i=1, imax=inner_cdf.size(); i<=imax; ++i ) {
+		inner_cdf[i] = inner_cdf[i] / probsum;
+	}
+
+	//Store the computed CDF in the map:
+	extra_cdf_[type] = inner_cdf;
+
+	return;
 }
 
 //MaximCode

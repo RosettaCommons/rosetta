@@ -115,11 +115,11 @@ static THREAD_LOCAL basic::Tracer TR("protocols.cryst.refineable_lattice");
 
 using namespace protocols;
 using namespace core;
-  using namespace kinematics;
-  using namespace scoring;
-	  using namespace scoring::symmetry;
-  using namespace conformation;
-	  using namespace conformation::symmetry;
+using namespace kinematics;
+using namespace scoring;
+using namespace scoring::symmetry;
+using namespace conformation;
+using namespace conformation::symmetry;
 
 
 ////////////////////////////////////////////////////
@@ -145,7 +145,7 @@ MakeLayerMover::apply( core::pose::Pose & pose ) {
 	wg_.set_wallpaper_group(ci.spacegroup());
 
 	core::Real angle = ci.beta();
-	if (wg_.setting() == wgHEXAGONAL) angle=ci.gamma();
+	if ( wg_.setting() == wgHEXAGONAL ) angle=ci.gamma();
 
 	wg_.set_parameters(ci.A(),ci.B(), angle);
 
@@ -200,8 +200,9 @@ MakeLayerMover::place_near_origin (
 	Size nres = pose.total_residue();
 
 	Vector com(0,0,0);
-	for ( Size i=1; i<= nres; ++i )
+	for ( Size i=1; i<= nres; ++i ) {
 		com += pose.residue(i).xyz("CA");
+	}
 	com /= nres;
 
 	Real mindis2(1e6);
@@ -218,13 +219,13 @@ MakeLayerMover::place_near_origin (
 	Vector bestoffset(0,0,0);
 	mindis2=1e6;
 	com = wg_.c2f()*com;
-	for (Size i=1; i<=nsymm; ++i) {
+	for ( Size i=1; i<=nsymm; ++i ) {
 		Vector foffset = wg_.symmop(i).get_rotation()*com + wg_.symmop(i).get_translation(), rfoffset;
 		rfoffset[0] = pos_mod( foffset[0], 1.0 );
 		rfoffset[1] = pos_mod( foffset[1], 1.0 );
 		rfoffset[2] = 0.0;
 		Real dist = (wg_.f2c()*rfoffset).length_squared();
-		if (dist<mindis2) {
+		if ( dist<mindis2 ) {
 			mindis2=dist;
 			bestxform=i;
 			bestoffset = foffset - rfoffset;
@@ -259,9 +260,9 @@ MakeLayerMover::detect_connecting_subunits(
 	runtime_assert( T0.length() < 1e-6);
 
 	for ( Size i=1; i<= nres_monomer; ++i ) {
-			Vector ca_i = monomer_pose.residue(i).xyz("CA");
-			monomer_cas[i] = ca_i;
-			radius = std::max( (ca_i).length_squared() , radius );
+		Vector ca_i = monomer_pose.residue(i).xyz("CA");
+		monomer_cas[i] = ca_i;
+		radius = std::max( (ca_i).length_squared() , radius );
 	}
 	radius = sqrt(radius);
 
@@ -270,12 +271,12 @@ MakeLayerMover::detect_connecting_subunits(
 	new_basesubunit = 1;
 
 	for ( Size i=1; i<=num_monomers; ++i ) {
-		if (i==basesubunit) continue;
+		if ( i==basesubunit ) continue;
 
 		// pass 1 check vrt-vrt dist to throw out very distant things
 		Vector T = pose.residue(monomer_anchors[i]).xyz("ORIG");
 		Real disVRT = T.length();
-		if (disVRT>contact_dist_+2*radius) continue;
+		if ( disVRT>contact_dist_+2*radius ) continue;
 
 		// pass 2 check ca-ca dists
 		Vector X = pose.residue(monomer_anchors[i]).xyz("X") - T;
@@ -291,8 +292,9 @@ MakeLayerMover::detect_connecting_subunits(
 				contact = ((Ri-monomer_cas[k]).length_squared() < contact_dist_*contact_dist_);
 			}
 		}
-		if (contact)
+		if ( contact ) {
 			new_monomer_anchors.push_back(monomer_anchors[i]);
+		}
 	}
 	basesubunit = new_basesubunit;
 	monomer_anchors = new_monomer_anchors;
@@ -301,11 +303,11 @@ MakeLayerMover::detect_connecting_subunits(
 
 void
 MakeLayerMover::add_monomers_to_layer(
-			Pose const & monomer_pose,
-			Pose & pose,
-			utility::vector1<Size> const & monomer_anchors,
-			utility::vector1<Size> & monomer_jumps,
-			Size rootpos
+	Pose const & monomer_pose,
+	Pose & pose,
+	utility::vector1<Size> const & monomer_anchors,
+	utility::vector1<Size> & monomer_jumps,
+	Size rootpos
 ) {
 	Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.total_residue () );
 
@@ -324,8 +326,9 @@ MakeLayerMover::add_monomers_to_layer(
 		}
 		monomer_jumps.push_back( pose.fold_tree().num_jump() );
 	}
-	for ( Size i=1; i<= num_monomers; ++i )
+	for ( Size i=1; i<= num_monomers; ++i ) {
 		pose.conformation().insert_chain_ending( nres_monomer*i );
+	}
 
 	core::kinematics::FoldTree f( pose.fold_tree() );
 	f.reorder( nres_protein+1 );
@@ -335,11 +338,11 @@ MakeLayerMover::add_monomers_to_layer(
 
 void
 MakeLayerMover::build_layer_of_virtuals(
-			core::pose::Pose & posebase,
-			utility::vector1<Size> &Ajumps,
-			utility::vector1<Size> &Bjumps,
-			utility::vector1<Size> &subunit_anchors,
-			Size &basesubunit
+	core::pose::Pose & posebase,
+	utility::vector1<Size> &Ajumps,
+	utility::vector1<Size> &Bjumps,
+	utility::vector1<Size> &subunit_anchors,
+	Size &basesubunit
 ) {
 	numeric::xyzVector<Size> EXTEND((Size)2,(Size)2,(Size)0);
 	numeric::xyzVector<int> nvrts_dim(2*EXTEND[0]+1, 2*EXTEND[1]+1, 1);
@@ -350,7 +353,7 @@ MakeLayerMover::build_layer_of_virtuals(
 	numeric::xyzVector< Size > trans_dofs = wg_.get_trans_dofs();
 
 	Vector O, Ax, Bx, Cx, Ay, By, Cy;
-	if (wg_.setting() == wgHEXAGONAL) {
+	if ( wg_.setting() == wgHEXAGONAL ) {
 		Ax = wg_.f2c()*Vector(1,0,0); Ax.normalize();
 		Bx = wg_.f2c()*Vector(0,1,0); Bx.normalize();
 		Cx = Vector(0,0,1); Cx.normalize();
@@ -370,7 +373,7 @@ MakeLayerMover::build_layer_of_virtuals(
 	vrtY.dimension(nvrts_dim[0]*grid[0]+1,nvrts_dim[1]*grid[1]+1,1); vrtY=0;
 
 	// 1 expand A (j==k==1)
-	for (int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i) {
+	for ( int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i ) {
 		Vector fX( (Real)(i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], -1.0*EXTEND[1], 0 );
 		O = wg_.f2c()*fX;
 
@@ -378,7 +381,7 @@ MakeLayerMover::build_layer_of_virtuals(
 		ResidueOP vrt_x = make_vrt(O,Ax,Ay);
 		ResidueOP vrt_y = make_vrt(O,Bx,By);
 
-		if (i==1) {
+		if ( i==1 ) {
 			posebase.append_residue_by_bond( *vrt_x );    vrtX(1,1) = 1;
 			posebase.append_residue_by_jump( *vrt_y, 1);  vrtY(1,1) = 2;
 		} else {
@@ -389,46 +392,48 @@ MakeLayerMover::build_layer_of_virtuals(
 	}
 
 	// expand B (k==1)
-	for (int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i)
-	for (int j=2; j<=(int)(nvrts_dim[1]*grid[1]+1); ++j) {
-		Vector fX( (i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], (j-1-(Real)(EXTEND[1]*grid[1]))/(Real)grid[1], 0 );
-		O = wg_.f2c()*fX;
+	for ( int i=1; i<=(int)(nvrts_dim[0]*grid[0]+1); ++i ) {
+		for ( int j=2; j<=(int)(nvrts_dim[1]*grid[1]+1); ++j ) {
+			Vector fX( (i-1-(Real)(EXTEND[0]*grid[0]))/(Real)grid[0], (j-1-(Real)(EXTEND[1]*grid[1]))/(Real)grid[1], 0 );
+			O = wg_.f2c()*fX;
 
-		// now add 3 virtuals to the pose, with X pointing toward A,B,C, respectively
-		ResidueOP vrt_y = make_vrt(O,Bx,By);
+			// now add 3 virtuals to the pose, with X pointing toward A,B,C, respectively
+			ResidueOP vrt_y = make_vrt(O,Bx,By);
 
-		posebase.append_residue_by_jump( *vrt_y, vrtY(i,j-1)); vrtY(i,j) = posebase.total_residue();
-		Bjumps.push_back(posebase.fold_tree().num_jump());
+			posebase.append_residue_by_jump( *vrt_y, vrtY(i,j-1)); vrtY(i,j) = posebase.total_residue();
+			Bjumps.push_back(posebase.fold_tree().num_jump());
+		}
 	}
 
 	// add "hanging" virtuals
-	for (int s=1; s<=(int)wg_.nsymmops(); ++s) {
+	for ( int s=1; s<=(int)wg_.nsymmops(); ++s ) {
 		numeric::xyzMatrix<Real> R_i = wg_.symmop(s).get_rotation();
 		numeric::xyzVector<Real> T_i = wg_.symmop(s).get_translation();
 
 		// T_i -> indices
-		for (int i=-(int)EXTEND[0]; i<=(int)EXTEND[0]; ++i)
-		for (int j=-(int)EXTEND[1]; j<=(int)EXTEND[1]; ++j) {
-			// find lattice anchor
-			int x_i = (int)std::floor( (i+EXTEND[0]+T_i[0])*grid[0] + 1.5 );
-			int y_i = (int)std::floor( (j+EXTEND[1]+T_i[1])*grid[1] + 1.5 );
+		for ( int i=-(int)EXTEND[0]; i<=(int)EXTEND[0]; ++i ) {
+			for ( int j=-(int)EXTEND[1]; j<=(int)EXTEND[1]; ++j ) {
+				// find lattice anchor
+				int x_i = (int)std::floor( (i+EXTEND[0]+T_i[0])*grid[0] + 1.5 );
+				int y_i = (int)std::floor( (j+EXTEND[1]+T_i[1])*grid[1] + 1.5 );
 
-			O = posebase.residue(vrtY(x_i,y_i)).xyz("ORIG");
+				O = posebase.residue(vrtY(x_i,y_i)).xyz("ORIG");
 
-			if (wg_.setting() == wgHEXAGONAL) {
-				Ax = wg_.f2c()*R_i*wg_.c2f()*Vector(1,0,0); Ax.normalize();
-				Ay = wg_.f2c()*R_i*wg_.c2f()*Vector(0,1,0); Ay.normalize();
-			} else {
-				Ax = R_i*Vector(1,0,0); Ax.normalize();
-				Ay = R_i*Vector(0,1,0); Ay.normalize();
-			}
-			ResidueOP vrt_sub = make_vrt(O,Ax,Ay);
+				if ( wg_.setting() == wgHEXAGONAL ) {
+					Ax = wg_.f2c()*R_i*wg_.c2f()*Vector(1,0,0); Ax.normalize();
+					Ay = wg_.f2c()*R_i*wg_.c2f()*Vector(0,1,0); Ay.normalize();
+				} else {
+					Ax = R_i*Vector(1,0,0); Ax.normalize();
+					Ay = R_i*Vector(0,1,0); Ay.normalize();
+				}
+				ResidueOP vrt_sub = make_vrt(O,Ax,Ay);
 
-			posebase.append_residue_by_jump( *vrt_sub, vrtY(x_i,y_i));
+				posebase.append_residue_by_jump( *vrt_sub, vrtY(x_i,y_i));
 
-			subunit_anchors.push_back(posebase.total_residue());
-			if (s==1 && i==0 && j==0 ) {
-				basesubunit = subunit_anchors.size();
+				subunit_anchors.push_back(posebase.total_residue());
+				if ( s==1 && i==0 && j==0 ) {
+					basesubunit = subunit_anchors.size();
+				}
 			}
 		}
 	}
@@ -437,15 +442,15 @@ MakeLayerMover::build_layer_of_virtuals(
 
 void
 MakeLayerMover::setup_xtal_symminfo(
-		Pose const & pose,
-		Size const num_monomers,
-		Size const num_virtuals,
-		Size const base_monomer,
-		Size const nres_monomer,
-		utility::vector1<Size> const &Ajumps,
-		utility::vector1<Size> const &Bjumps,
-		utility::vector1<Size> const &monomer_jumps,
-		conformation::symmetry::SymmetryInfo & symminfo
+	Pose const & pose,
+	Size const num_monomers,
+	Size const num_virtuals,
+	Size const base_monomer,
+	Size const nres_monomer,
+	utility::vector1<Size> const &Ajumps,
+	utility::vector1<Size> const &Bjumps,
+	utility::vector1<Size> const &monomer_jumps,
+	conformation::symmetry::SymmetryInfo & symminfo
 ) {
 
 	for ( Size i=1; i<= num_monomers; ++i ) {
@@ -460,7 +465,7 @@ MakeLayerMover::setup_xtal_symminfo(
 
 	// subunit jump clones
 	Size const base_monomer_jump( monomer_jumps[ base_monomer ] );
-	for (Size i=1; i<=monomer_jumps.size(); ++i) {
+	for ( Size i=1; i<=monomer_jumps.size(); ++i ) {
 		if ( monomer_jumps[i]!= base_monomer_jump ) {
 			symminfo.add_jump_clone( base_monomer_jump, monomer_jumps[i], 0.0 );
 		}
@@ -473,34 +478,37 @@ MakeLayerMover::setup_xtal_symminfo(
 
 	Size Amaster=Ajumps[1], Bmaster=Bjumps[1];
 	numeric::xyzVector<core::Size> linked_dofs=wg_.get_trans_dofs();
-	if (linked_dofs[1]==1) { Bmaster=Ajumps[1]; /*std::cerr << "clone B->A" << std::endl;*/ }
+	if ( linked_dofs[1]==1 ) { Bmaster=Ajumps[1]; /*std::cerr << "clone B->A" << std::endl;*/ }
 
-	for (Size i=2; i<=Ajumps.size(); ++i)
+	for ( Size i=2; i<=Ajumps.size(); ++i ) {
 		symminfo.add_jump_clone( Amaster, Ajumps[i], 0.0 );
-	for (Size i=1; i<=Bjumps.size(); ++i)
-		if (Bmaster!=Bjumps[i])
+	}
+	for ( Size i=1; i<=Bjumps.size(); ++i ) {
+		if ( Bmaster!=Bjumps[i] ) {
 			symminfo.add_jump_clone( Bmaster, Bjumps[i], 0.0 );
+		}
+	}
 
 	SymDof symdof_a;
 	SymDof symdof_b;
 
 	core::Size nrot_dofs=wg_.get_nrot_dofs();
-	if (nrot_dofs == 1) {
+	if ( nrot_dofs == 1 ) {
 		symdof_b.read( "x y" );
 	} else {
 		symdof_b.read( "x" );
 	}
 	symdof_a.read( "x" );
 
-	if (moving_lattice_) {
+	if ( moving_lattice_ ) {
 		symdofs[ Ajumps[1] ] = symdof_a;
-		if (Bmaster==Bjumps[1]) {
+		if ( Bmaster==Bjumps[1] ) {
 			symdofs[ Bjumps[1] ] = symdof_b;
 		}
 	}
 
 	// jump names
-	for (Size v=1; v<=pose.num_jump(); ++v) symminfo.set_jump_name(v, "v_"+utility::to_string(v));
+	for ( Size v=1; v<=pose.num_jump(); ++v ) symminfo.set_jump_name(v, "v_"+utility::to_string(v));
 
 	symminfo.set_jump_name(Ajumps[1], "A");
 	symminfo.set_jump_name(Bjumps[1], "B");
@@ -528,13 +536,13 @@ MakeLayerMover::setup_xtal_symminfo(
 // parse_my_tag
 void
 MakeLayerMover::parse_my_tag(
-		utility::tag::TagCOP const tag,
-		basic::datacache::DataMap & /*data*/,
-		filters::Filters_map const & ,
-		moves::Movers_map const & ,
-		core::pose::Pose const & /*pose*/ )
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
+	filters::Filters_map const & ,
+	moves::Movers_map const & ,
+	core::pose::Pose const & /*pose*/ )
 {
-	if( tag->hasOption( "contact_dist" ) ) {
+	if ( tag->hasOption( "contact_dist" ) ) {
 		contact_dist_ = tag->getOption<core::Real>( "contact_dist" );
 	}
 }

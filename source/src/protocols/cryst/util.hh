@@ -35,28 +35,31 @@ inline core::Real absfpart( core::Real x) {
 }
 
 inline core::Size denom( core::Real x ) {
-	if (absfpart(x) <= 1e-4) { return 1; }
-	for (core::Size i=2; i<=6; ++i)
-		if (absfpart(i*x) <= 1e-4) { return i;}
+	if ( absfpart(x) <= 1e-4 ) { return 1; }
+	for ( core::Size i=2; i<=6; ++i ) {
+		if ( absfpart(i*x) <= 1e-4 ) { return i;}
+	}
 
 	utility_exit_with_message( "error in denom()");
 	return 0;
 }
 
 inline int pos_mod(int x,int y) {
-	int r=x%y; if (r<0) r+=y;
+	int r=x%y; if ( r<0 ) r+=y;
 	return r;
 }
 inline core::Real pos_mod(core::Real x,core::Real y) {
-	core::Real r=std::fmod(x,y); if (r<0) r+=y;
+	core::Real r=std::fmod(x,y); if ( r<0 ) r+=y;
 	return r;
 }
 inline int min_mod(int x,int y) {
-	int r=x%y; if (r<-y/2) r+=y;if (r>=y/2) r-=y;
+	int r=x%y; if ( r<-y/2 ) r+=y;
+	if ( r>=y/2 ) r-=y;
 	return r;
 }
 inline core::Real min_mod(core::Real x,core::Real y) {
-	core::Real r=std::fmod(x,y); if (r<-0.5*y) r+=y;if (r>=0.5*y) r-=y;
+	core::Real r=std::fmod(x,y); if ( r<-0.5*y ) r+=y;
+	if ( r>=0.5*y ) r-=y;
 	return r;
 }
 

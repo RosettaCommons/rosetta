@@ -67,28 +67,28 @@ find_glycan_sequence_file( std::string filename )
 	izstream potential_file( filename );
 
 	if ( potential_file.good() ) {
-			return filename;
+		return filename;
+	} else {
+		izstream potential_file( filename + ext );  // Perhaps the user didn't use the .iupac extension.
+		if ( potential_file.good() ) {
+			return filename + ext;
 		} else {
-			izstream potential_file( filename + ext );  // Perhaps the user didn't use the .iupac extension.
+			izstream potential_file( path + filename);  // Let's assume it's in the database in the usual spot.
 			if ( potential_file.good() ) {
-				return filename + ext;
+				return path + filename;
 			} else {
-				izstream potential_file( path + filename);  // Let's assume it's in the database in the usual spot.
+				izstream potential_file( path + filename + ext );  // last try
 				if ( potential_file.good() ) {
-					return path + filename;
+					return path + filename + ext;
 				} else {
-					izstream potential_file( path + filename + ext );  // last try
-					if ( potential_file.good() ) {
-						return path + filename + ext;
-					} else {
-						utility_exit_with_message( "Unable to open glycan sequence file. Neither ./" + filename +
-								" nor " + "./" + filename + ext +
-								" nor " + path + filename +
-								" nor " + path + filename + ext + " exists." );
-					}
+					utility_exit_with_message( "Unable to open glycan sequence file. Neither ./" + filename +
+						" nor " + "./" + filename + ext +
+						" nor " + path + filename +
+						" nor " + path + filename + ext + " exists." );
 				}
 			}
 		}
+	}
 	return "I do not think that word means what you think it means....";  // Code can never reach here.
 }
 
@@ -129,14 +129,14 @@ sugar_modifications_from_suffix( std::string const & suffix )
 		if ( letter == ',' ) {
 			if ( atoi( &prev_letter ) == 0 || atoi( &next_letter ) == 0 ) {
 				utility_exit_with_message( "Saccharide sequence input error: "
-						"A comma must come between two numerals in a suffix." );
+					"A comma must come between two numerals in a suffix." );
 			}
 			// If it's a valid location for a comma, we just move on.
 		} else if ( atoi( &letter ) != 0 ) {  // It's a number.
 			if ( atoi( &next_letter ) != 0 ) {  // If the next letter is also a number....
 				utility_exit_with_message( "Saccharide sequence input error: "
-						"A comma must come between two numerals in a suffix and "
-						"Rosetta cannot handle sugars with more than 9 carbons." );;
+					"A comma must come between two numerals in a suffix and "
+					"Rosetta cannot handle sugars with more than 9 carbons." );;
 			}
 			if ( i != 0 && atoi( &prev_letter ) == 0 && prev_letter != ',' ) {
 				// If the previous letter was a letter, the information about the previous modifications are complete;

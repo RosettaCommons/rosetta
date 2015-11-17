@@ -98,6 +98,7 @@ SetTorsion::SetTorsion() :
 	angle_(),
 	residues_(),
 	torsion_name_(),
+	custom_rama_map_(),
 	extending_(),
 	torsion_atoms_(),
 	perturbation_type_(),
@@ -198,7 +199,7 @@ void SetTorsion::apply( Pose & pose ) {
 		TR.flush();
 	}
 
-	core::scoring::Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
+	core::scoring::Ramachandran & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran_nonconst(); //Must be nonconst to allow lazy loading of custom rama tables.
 	Size picked_set(1);
 	if ( random_set_ ) {
 		picked_set = numeric::random::rg().random_range(1, n_torsion_sets());
@@ -252,14 +253,13 @@ void SetTorsion::apply( Pose & pose ) {
 				} else if ( torsion_name(iset) == "rama" ) {
 					if ( pose.residue(resnum).type().is_alpha_aa() ) {
 						if ( angle_[iset] == "rama_biased" ) {
-							assert(pose.residue(resnum).aa()!=core::chemical::aa_unk);
-							Real phi, psi;
-							rama.random_phipsi_from_rama( pose.residue_type(resnum).aa(), phi, psi); //TODO -- use backbone_aa
-							if ( pose.residue( resnum ).has_property( "D_AA" ) ) {
-								phi *= -1.0;
-								psi *= -1.0;
+							Real phi(0), psi(0);
+							if ( custom_rama_map_[iset] == "" ) {
+								assert(pose.residue(resnum).aa()!=core::chemical::aa_unk);
+								rama.random_phipsi_from_rama( pose.residue_type(resnum).aa(), phi, psi); //TODO -- use backbone_aa
+							} else { // custom_ramna_map_[iset] != ""
+								rama.draw_random_phi_psi_from_extra_cdf( rama.get_ramatable_type_by_name(custom_rama_map_[iset]) , phi, psi);
 							}
-
 							pose.set_phi( resnum, phi );
 							pose.set_psi( resnum, psi );
 						} else {
@@ -308,6 +308,7 @@ void SetTorsion::parse_my_tag( utility::tag::TagCOP tag,
 			add_perturbation_magnitude( (*tag_it)->getOption< core::Real >("perturbation_magnitude", 1.0) );
 			residues_.push_back((*tag_it)->getOption< std::string >( "residue" ));
 			torsion_name_.push_back((*tag_it)->getOption< std::string >( "torsion_name", ""));
+			custom_rama_map_.push_back( (*tag_it)->getOption< std::string >("custom_rama_table", "") );
 			extending_.push_back((*tag_it)->getOption< Size >( "extending", 0 )); // expanding picked residue
 
 			utility::vector1< utility::tag::TagCOP > const sub_branch_tags( (*tag_it)->getTags() );

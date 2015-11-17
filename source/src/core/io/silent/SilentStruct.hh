@@ -303,7 +303,7 @@ public:
 	void set_chains( utility::vector1< char > const & chains ){ chains_ = chains;}
 	void set_full_model_parameters( core::pose::full_model_info::FullModelParametersCOP setting ){ full_model_parameters_ = setting; }
 	core::pose::full_model_info::FullModelParametersCOP full_model_parameters() const{ return full_model_parameters_; }
-	
+
 	void set_segment_IDs( utility::vector1< std::string > const & segids ) { segment_IDs_ = segids; }
 
 	void fill_struct_with_residue_numbers( pose::Pose const & pose );

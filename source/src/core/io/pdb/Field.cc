@@ -171,7 +171,7 @@ RecordRef & Field::getRecordCollection()
 			"spacegroup", Field(56, 66), // LString
 			"z",          Field(67, 70)  // Integer
 			),
-														   
+
 			"ATOM  ", utility::tools::make_map<string, Field>(
 			"type",       Field( 1,  6),
 			"serial",     Field( 7, 11), // Integer
@@ -190,7 +190,7 @@ RecordRef & Field::getRecordCollection()
 			"element",    Field(77, 78), // LString(2)
 			"charge",     Field(79, 80)  // LString(2)
 			),
-														   
+
 			"HETATM", utility::tools::make_map<string, Field>(
 			"type",       Field( 1,  6),
 			"serial",     Field( 7, 11), // Integer
@@ -209,7 +209,7 @@ RecordRef & Field::getRecordCollection()
 			"element",    Field(77, 78), // LString(2)
 			"charge",     Field(79, 80)  // LString(2)
 			),
-														   
+
 			"TER   ", utility::tools::make_map<string, Field>(
 			"type",    Field( 1,  6),
 			"serial",  Field( 7, 11),

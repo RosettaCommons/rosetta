@@ -325,7 +325,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 						// The previous character must be a right parenthesis.
 						if ( sequence_with_hyphen[ chr_num - 1 ] != ')' ) {
 							utility_exit_with_message( "Saccharide sequence input error: "
-									"a branch must specify its connectivity to its parent chain." );
+								"a branch must specify its connectivity to its parent chain." );
 						}
 						branch_points.push_back( atoi( &sequence_with_hyphen[ chr_num - 2 ] ) );
 						// Set the proper VariantType below.
@@ -346,28 +346,28 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 			} else if ( morpheme == "" ) {
 				;  // We just came out of a branch or else the user typed two hyphens in a row; ignore.
 
-			// Linkage indication, second half
+				// Linkage indication, second half
 			} else if ( morpheme[ 0 ] == '>' ) {
 				if ( linkage_assigned ) {
 					utility_exit_with_message( "Saccharide sequence input error: "
-							"the linkage notation cannot be specified twice!" );
+						"the linkage notation cannot be specified twice!" );
 				} else if ( anomer_assigned || L_or_D_assigned ) {
 					utility_exit_with_message( "Saccharide sequence input error: "
-							"the linkage notation must precede other prefixes." );
+						"the linkage notation must precede other prefixes." );
 				} else {
 					residue_type_name << '-' << morpheme << '-';
 					linkage_assigned = true;
 					morpheme = "";
 				}
 
-			// Anomer indication
+				// Anomer indication
 			} else if ( morpheme == "alpha" || morpheme == "beta" || morpheme == "a" || morpheme == "b" ) {
 				if ( anomer_assigned ) {
 					utility_exit_with_message( "Saccharide sequence input error: "
-							"the anomer notation cannot be specified twice!" );
+						"the anomer notation cannot be specified twice!" );
 				} else if ( L_or_D_assigned ) {
 					utility_exit_with_message( "Saccharide sequence input error: "
-							"alpha/beta notation must precede L- or D- prefixes." );
+						"alpha/beta notation must precede L- or D- prefixes." );
 				} else {
 					// Set default linkage if missed.
 					if ( ! linkage_assigned ) {
@@ -381,12 +381,12 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 					morpheme = "";
 				}
 
-			// L/D indication
-			// TODO: Except l- or d- and also create a flag for outputting such.
+				// L/D indication
+				// TODO: Except l- or d- and also create a flag for outputting such.
 			} else if ( morpheme == "L" || morpheme == "D" ) {
 				if ( L_or_D_assigned ) {
 					utility_exit_with_message( "Saccharide sequence input error: "
-							"the L or D notation cannot be specified twice!" );
+						"the L or D notation cannot be specified twice!" );
 				} else {
 					// Set other defaults if missed.
 					if ( ! linkage_assigned ) {
@@ -402,7 +402,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 					morpheme = "";
 				}
 
-			// 3-Letter code (must be found in map of allowed 3-letter codes) and suffix(es)
+				// 3-Letter code (must be found in map of allowed 3-letter codes) and suffix(es)
 			} else if ( morpheme.length() >= 3 ) {
 				string const code( morpheme.substr( 0, 3 ) );
 				string suffix( morpheme.substr( 3 ) );
@@ -415,7 +415,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 					// modifications coming from the suffix below.
 					// What a pain.
 					utility_exit_with_message( "Saccharide sequence input error: "
-							"Unrecognized sugar 3-letter code." );
+						"Unrecognized sugar 3-letter code." );
 				}
 
 				// Set defaults if missed.
@@ -447,7 +447,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 					// Now check for valid sugar modifications.
 					if ( suffix != "" ) {
 						vector1< pair< uint, string > > const modifications(
-								io::carbohydrates::sugar_modifications_from_suffix( suffix ) );
+							io::carbohydrates::sugar_modifications_from_suffix( suffix ) );
 						Size const n_modifications( modifications.size() );
 						for ( uint i( 1 ); i <= n_modifications; ++i ) {
 							uint position( modifications[ i ].first );
@@ -459,15 +459,15 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 								}
 								if ( position == 0 ) {  // If there's no default, we don't know what to do here.
 									utility_exit_with_message( "Saccharide sequence input error: "
-											"The position of the requested sugar modification is unclear." );
+										"The position of the requested sugar modification is unclear." );
 								}
 							} else {
 								utility_exit_with_message( "Saccharide sequence input error: "
-										"Unrecognized modified sugar indicated by suffix(es)." );
+									"Unrecognized modified sugar indicated by suffix(es)." );
 							}
 							residue_type_name << ':' << position;  // Patches begin with a colon.
 							residue_type_name << '-' <<
-									CarbohydrateInfoManager::patch_name_from_affix( modification );
+								CarbohydrateInfoManager::patch_name_from_affix( modification );
 						}
 					}
 				}
@@ -477,7 +477,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 				Size const n_branches( branch_points.size() );
 				for ( uint i( 1 ); i <= n_branches; ++i ) {
 					VariantType const variant(
-							CarbohydrateInfoManager::branch_variant_type_from_position( branch_points[ i ] ) );
+						CarbohydrateInfoManager::branch_variant_type_from_position( branch_points[ i ] ) );
 					residue = residue_set.get_residue_type_with_variant_added( *residue, variant ).get_self_ptr();
 				}
 				residue_types.push_back( residue );
@@ -492,7 +492,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 
 			} else {  // Unrecognized morpheme
 				utility_exit_with_message( "Saccharide sequence input error: "
-						"Unrecognized sugar and/or notation in sequence.  Did you forget to indicate ring size?" );
+					"Unrecognized sugar and/or notation in sequence.  Did you forget to indicate ring size?" );
 			}
 		}
 	}  // next chr_num
@@ -500,9 +500,9 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 	// Set the termini.
 	// (Remember, the residues are in reverse order.)
 	residue_types.front() = residue_set.get_residue_type_with_variant_added(
-			*residue_types.front(), UPPER_TERMINUS_VARIANT ).get_self_ptr();
+		*residue_types.front(), UPPER_TERMINUS_VARIANT ).get_self_ptr();
 	residue_types.back() = residue_set.get_residue_type_with_variant_added(
-			*residue_types.back(), BRANCH_LOWER_TERMINUS_VARIANT ).get_self_ptr();
+		*residue_types.back(), BRANCH_LOWER_TERMINUS_VARIANT ).get_self_ptr();
 
 	return residue_types;
 }  // residue_types_from_saccharide_sequence()
@@ -535,8 +535,8 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 		Residue const & last_residue( pose.residue( pose.total_residue() ) );
 		if ( ! last_residue.is_carbohydrate() ) {
 			tr.Warning << "append_pose_with_glycan_residues( " <<
-					"pose::Pose & pose, chemical::ResidueTypeCOPs residue_types ): " <<
-					"The last residue of <pose> must be a carbohydrate to append." << endl;
+				"pose::Pose & pose, chemical::ResidueTypeCOPs residue_types ): " <<
+				"The last residue of <pose> must be a carbohydrate to append." << endl;
 			return;
 		}
 		tr.Debug << "Appending Pose with provided ResidueTypes..." << endl;
@@ -547,7 +547,7 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 			Size const n_branches( branch_atom_names.size() );
 			for ( uint i( 1 ); i <= n_branches; ++i ) {
 				branch_points.push_back(
-						make_pair( pose.residue( pose.total_residue() ).seqpos(), branch_atom_names[ i ] ) );
+					make_pair( pose.residue( pose.total_residue() ).seqpos(), branch_atom_names[ i ] ) );
 			}
 		}
 	}
@@ -564,7 +564,7 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 			string const anchor_atom( branch_points.front().second );
 			string const upper_atom( new_rsd->carbohydrate_info()->anomeric_carbon_name() );
 			tr.Debug << " as branch from " << anchor_atom << " on residue " << anchor_residue <<
-					" to " << upper_atom << "..." << endl;
+				" to " << upper_atom << "..." << endl;
 			pose.append_residue_by_atoms( *new_rsd, true, upper_atom, anchor_residue, anchor_atom, true );
 			branch_points.pop_front();
 		} else {
@@ -576,7 +576,7 @@ append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeCOPs r
 			Size const n_branches( branch_atom_names.size() );
 			for ( uint j( 1 ); j <= n_branches; ++j ) {
 				branch_points.push_back(
-						make_pair( pose.residue( pose.total_residue() ).seqpos(), branch_atom_names[ j ] ) );
+					make_pair( pose.residue( pose.total_residue() ).seqpos(), branch_atom_names[ j ] ) );
 			}
 		}
 	}
@@ -628,7 +628,7 @@ void make_pose_from_sequence(
 				jump_to_next = false;
 				if ( !rsd_type.is_lower_terminus(  ) ) {
 					tr.Debug << "Residue! following X, Z, or an upper terminus is _not_ a lower terminus type!  " <<
-							"Continuing ..." << std::endl;
+						"Continuing ..." << std::endl;
 				}
 			}
 			// each time this happens, a new chain should be started
@@ -726,9 +726,9 @@ void make_pose_from_sequence(
 /// At present time, param files only exist for a limited number of sugars! ~ Labonte
 void
 make_pose_from_saccharide_sequence( pose::Pose & pose,
-		std::string const & sequence,
-		chemical::ResidueTypeSet const & residue_set,
-		bool const auto_termini )
+	std::string const & sequence,
+	chemical::ResidueTypeSet const & residue_set,
+	bool const auto_termini )
 {
 	using namespace std;
 	using namespace utility;
@@ -744,14 +744,14 @@ make_pose_from_saccharide_sequence( pose::Pose & pose,
 
 	// Fix the termini.
 	residue_types.front() = residue_set.get_residue_type_with_variant_removed(
-			*residue_types.front(), BRANCH_LOWER_TERMINUS_VARIANT ).get_self_ptr();
+		*residue_types.front(), BRANCH_LOWER_TERMINUS_VARIANT ).get_self_ptr();
 	if ( auto_termini ) {
 		residue_types.front() = residue_set.get_residue_type_with_variant_added(
-				*residue_types.front(), LOWER_TERMINUS_VARIANT ).get_self_ptr();
+			*residue_types.front(), LOWER_TERMINUS_VARIANT ).get_self_ptr();
 	}
 	if ( ! auto_termini ) {
 		residue_types.front() = residue_set.get_residue_type_with_variant_removed(
-				*residue_types.front(), UPPER_TERMINUS_VARIANT ).get_self_ptr();
+			*residue_types.front(), UPPER_TERMINUS_VARIANT ).get_self_ptr();
 	}
 
 	// Now we can build the Pose.
