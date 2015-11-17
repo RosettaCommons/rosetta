@@ -38,7 +38,7 @@ public:
 
 	/// @brief Instantiate a new AACompositionEnergy.
 	///
-	virtual methods::EnergyMethodOP create_energy_method( methods::EnergyMethodOptions const & ) const;
+	virtual methods::EnergyMethodOP create_energy_method( core::scoring::methods::EnergyMethodOptions const &options ) const;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod that
 	/// this EnergyMethodCreator creates in its create_energy_method() function.

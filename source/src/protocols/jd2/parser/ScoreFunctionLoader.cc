@@ -85,19 +85,29 @@ void ScoreFunctionLoader::load_data(
 			TR << "***WARNING***: No weights/patch defined. Defining " << scorefxn_name << " with all-zero weights.\n";
 		}
 		BOOST_FOREACH ( TagCOP mod_tag, scorefxn_tag->getTags() ) {
-			if ( mod_tag->getName() == "Reweight" ) {
+			std::string const tagname( mod_tag->getName() ); //Get the name of the tag
+			if ( tagname == "Reweight" ) {
 				std::string const scoretype_name( mod_tag->getOption<std::string>( "scoretype" ) );
 				core::Real const weight( mod_tag->getOption<core::Real>( "weight" ) );
 				TR<<"setting "<<scorefxn_name<<" weight " << scoretype_name << " to " << weight<<'\n';
 				core::scoring::ScoreType const type = score_type_from_name( scoretype_name );
 				in_scorefxn->set_weight( type, weight );
-			}
-
-			// Set energy method options:
-			if ( mod_tag->getName() == "Set" ) {
+			} else if ( tagname == "Set" ) { // Set energy method options:
 				core::scoring::methods::EnergyMethodOptions emoptions( in_scorefxn->energy_method_options() );
 				emoptions.hbond_options().parse_my_tag(mod_tag);
 				emoptions.etable_options().parse_my_tag(mod_tag);
+
+				// Set up the list of aa_composition score term setup files:
+				if ( mod_tag->hasOption("aa_composition_setup_file") ) {
+					std::stringstream filelist( mod_tag->getOption<std::string>("aa_composition_setup_file") );
+					utility::vector1 < std::string > filevect;
+					while ( !filelist.eof() ) {
+						std::string tempstring("");
+						filelist >> tempstring;
+						if ( !filelist.fail() ) filevect.push_back( tempstring );
+					}
+					emoptions.set_aa_composition_setup_files( filevect );
+				}
 
 				if ( mod_tag->hasOption( "softrep_etable" ) ) {
 					if ( mod_tag->getOption<bool>( "softrep_etable" ) ) {
@@ -156,7 +166,7 @@ void ScoreFunctionLoader::load_data(
 					}
 				}
 				in_scorefxn->set_energy_method_options( emoptions );
-			}
+			} // tagname == ?
 		} // Mod tags
 
 		// weights for arbitrary ScoreFunctions should be tampered with only as a consequence of user input--NEVER by default

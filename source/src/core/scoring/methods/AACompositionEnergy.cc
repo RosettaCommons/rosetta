@@ -21,6 +21,7 @@
 
 // Package headers
 #include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
@@ -52,9 +53,9 @@ static THREAD_LOCAL basic::Tracer TR("core.scoring.methods.AACompositionEnergy")
 /// @brief This must return a fresh instance of the AACompositionEnergy class, never an instance already in use.
 ///
 methods::EnergyMethodOP
-AACompositionEnergyCreator::create_energy_method( methods::EnergyMethodOptions const & ) const
+AACompositionEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &options ) const
 {
-	return methods::EnergyMethodOP( new AACompositionEnergy );
+	return methods::EnergyMethodOP( new AACompositionEnergy( options ) );
 }
 
 /// @brief Defines the score types that this energy method calculates.
@@ -67,15 +68,18 @@ AACompositionEnergyCreator::score_types_for_method() const
 	return sts;
 }
 
-/// @brief Default constructor.
+/// @brief Options constructor.
 ///
-AACompositionEnergy::AACompositionEnergy() :
+AACompositionEnergy::AACompositionEnergy ( core::scoring::methods::EnergyMethodOptions const &options ) :
 	parent1( methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
 	parent2( ),
-	setup_helper_( new AACompositionEnergySetup )
+	setup_helpers_()
 {
-	using namespace basic::options;
-	setup_helper_->initialize_from_file( option[OptionKeys::score::aa_composition_setup_file]() ); //Initialize this from a file.
+	core::Size const n_setup_helpers( options.aa_composition_setup_file_count() );
+	for ( core::Size i=1; i<=n_setup_helpers; ++i ) {
+		setup_helpers_.push_back( AACompositionEnergySetupOP( new AACompositionEnergySetup ) );
+		setup_helpers_[i]->initialize_from_file( options.aa_composition_setup_file(i) );
+	}
 	if ( TR.Debug.visible() ) report();
 }
 
@@ -84,8 +88,11 @@ AACompositionEnergy::AACompositionEnergy() :
 AACompositionEnergy::AACompositionEnergy( AACompositionEnergy const &src ) :
 	parent1( methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
 	parent2( src ),
-	setup_helper_( src.setup_helper_->clone() ) //CLONE the helper data; don't copy them.
+	setup_helpers_() //CLONE the helper data below; don't copy them.
 {
+	for ( core::Size i=1, imax=src.setup_helpers_.size(); i<=imax; ++i ) {
+		setup_helpers_.push_back( src.setup_helpers_[i]->clone() );
+	}
 }
 
 /// @brief Default destructor.
@@ -146,86 +153,100 @@ core::Real AACompositionEnergy::calculate_energy( utility::vector1< core::confor
 /// @details Called by calculate_energy().
 core::Real AACompositionEnergy::calculate_energy_by_restype( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const {
 
-	// Const owning pointer to the setup helper:
-	AACompositionEnergySetupCOP helper( setup_helper_cop() );
-	if ( helper->n_residue_types() == 0 ) return 0.0; //Return 0 if we're not tracking any residue types.
+	core::Real outer_accumulator(0.0);
 
-	// Number of residues:
-	core::Size const nres( resvect.size() );
+	for ( core::Size ihelper=1, ihelpermax=setup_helper_count(); ihelper<=ihelpermax; ++ihelper ) { //loop through all setup_helper objects
 
-	// Figure out expected number of residues of each type:
-	utility::vector1 < signed long > expected;
-	expected.resize( helper->n_residue_types(), 0 );
-	for ( core::Size i=1, imax=expected.size(); i<=imax; ++i ) {
-		if ( helper->expected_by_type_absolute(i) >= 0 ) expected[i] = helper->expected_by_type_absolute(i);
-		else expected[i] = static_cast< signed long >( utility::round( static_cast<double>( nres ) * static_cast<double>( helper->expected_by_type_fraction(i) ) ) );
-	}
+		// Const owning pointer to the setup helper:
+		AACompositionEnergySetupCOP helper( setup_helper_cop( ihelper ) );
+		if ( helper->n_residue_types() == 0 ) return 0.0; //Return 0 if we're not tracking any residue types.
 
-	// Counts of the various residue types that we're counting.  The indicies are determined by the res_type_index_mappings_ map in the setup_helper object.
-	utility::vector1 < signed long > counts;
-	counts.resize( helper->n_residue_types(), 0 ); //Make sure that we have a counter for each residue type that we're counting
+		// Number of residues:
+		core::Size const nres( resvect.size() );
 
-	// Loop through all residues and count residue types.
-	for ( core::Size ir=1; ir<=nres; ++ir ) {
-		if ( helper->has_type( resvect[ir]->type().name3() ) ) { //If this residue's name3 is in the map, it's a type that we're counting.
-			++counts[ helper->res_type_index( resvect[ir]->type().name3() ) ]; //So add 1 to the count for that residue type.
+		// Figure out expected number of residues of each type:
+		utility::vector1 < signed long > expected;
+		expected.resize( helper->n_residue_types(), 0 );
+		for ( core::Size i=1, imax=expected.size(); i<=imax; ++i ) {
+			if ( helper->expected_by_type_absolute(i) >= 0 ) expected[i] = helper->expected_by_type_absolute(i);
+			else expected[i] = static_cast< signed long >( utility::round( static_cast<double>( nres ) * static_cast<double>( helper->expected_by_type_fraction(i) ) ) );
 		}
-	}
 
-	// Accumulator for penalty function
-	core::Real accumulator(0.0);
-	for ( core::Size i=1, imax=counts.size(); i<=imax; ++i ) { //Loop through the counts and accumulate the appropriate penalty
-		counts[i] -= expected[i]; // Calculate the DELTA count.
-		accumulator += helper->type_penalty( counts[i], i );
-	}
+		// Counts of the various residue types that we're counting.  The indicies are determined by the res_type_index_mappings_ map in the setup_helper object.
+		utility::vector1 < signed long > counts;
+		counts.resize( helper->n_residue_types(), 0 ); //Make sure that we have a counter for each residue type that we're counting
 
-	return accumulator;
+		// Loop through all residues and count residue types.
+		for ( core::Size ir=1; ir<=nres; ++ir ) {
+			if ( helper->has_type( resvect[ir]->type().name3() ) ) { //If this residue's name3 is in the map, it's a type that we're counting.
+				++counts[ helper->res_type_index( resvect[ir]->type().name3() ) ]; //So add 1 to the count for that residue type.
+			}
+		}
+
+		// Accumulator for penalty function
+		core::Real accumulator(0.0);
+		for ( core::Size i=1, imax=counts.size(); i<=imax; ++i ) { //Loop through the counts and accumulate the appropriate penalty
+			counts[i] -= expected[i]; // Calculate the DELTA count.
+			accumulator += helper->type_penalty( counts[i], i );
+		}
+		outer_accumulator += accumulator;
+
+	} //looping through all helpers
+
+	return outer_accumulator;
 }
 
 /// @brief Calculate the total energy based on residue properties, given a vector of const owning pointers to residues.
 /// @details Called by calculate_energy().
 core::Real AACompositionEnergy::calculate_energy_by_properties( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const {
 
-	// Const owning pointer to the setup helper:
-	AACompositionEnergySetupCOP helper( setup_helper_cop() );
-	if ( helper->n_property_sets() == 0 ) return 0.0; //Return 0 if we're not tracking any properties.
+	core::Real outer_accumulator(0.0);
 
-	// Number of residues:
-	core::Size const nres( resvect.size() );
+	for ( core::Size ihelper=1, ihelpermax=setup_helper_count(); ihelper<=ihelpermax; ++ihelper ) { //loop through all setup_helper objects
 
-	// Figure out expected number of residues of each property:
-	utility::vector1 < signed long > expected;
-	expected.resize( helper->n_property_sets(), 0 );
-	for ( core::Size i=1, imax=expected.size(); i<=imax; ++i ) {
-		if ( helper->expected_by_properties_absolute(i) >= 0 ) expected[i] = helper->expected_by_properties_absolute(i);
-		else {
-			expected[i] = static_cast< signed long >( utility::round( static_cast<double>( nres ) * static_cast<double>( helper->expected_by_properties_fraction(i) ) ) );
+		// Const owning pointer to the setup helper:
+		AACompositionEnergySetupCOP helper( setup_helper_cop(ihelper) );
+		if ( helper->n_property_sets() == 0 ) return 0.0; //Return 0 if we're not tracking any properties.
+
+		// Number of residues:
+		core::Size const nres( resvect.size() );
+
+		// Figure out expected number of residues of each property:
+		utility::vector1 < signed long > expected;
+		expected.resize( helper->n_property_sets(), 0 );
+		for ( core::Size i=1, imax=expected.size(); i<=imax; ++i ) {
+			if ( helper->expected_by_properties_absolute(i) >= 0 ) expected[i] = helper->expected_by_properties_absolute(i);
+			else {
+				expected[i] = static_cast< signed long >( utility::round( static_cast<double>( nres ) * static_cast<double>( helper->expected_by_properties_fraction(i) ) ) );
+			}
 		}
-	}
 
-	// Counts of the residues corresponding to the various property sets that we're counting.  The indicies are property set indices that are internal to the setup_helper object.
-	utility::vector1 < signed long > counts;
-	counts.resize( helper->n_property_sets(), 0 ); //Make sure that we have a counter for each residue type that we're counting
+		// Counts of the residues corresponding to the various property sets that we're counting.  The indicies are property set indices that are internal to the setup_helper object.
+		utility::vector1 < signed long > counts;
+		counts.resize( helper->n_property_sets(), 0 ); //Make sure that we have a counter for each residue type that we're counting
 
-	// A storage container for the property sets that each residue is in.
-	utility::vector1< core::Size > this_rsd_property_sets;
+		// A storage container for the property sets that each residue is in.
+		utility::vector1< core::Size > this_rsd_property_sets;
 
-	// Loop through all residues and count residues in each property set.
-	for ( core::Size ir=1; ir<=nres; ++ir ) {
-		helper->property_set_indices_matching_residue(resvect[ir]->type(), this_rsd_property_sets); //Get the property sets that this residue belongs to.
-		for ( core::Size j=1, jmax=this_rsd_property_sets.size(); j<=jmax; ++j ) {
-			++counts[this_rsd_property_sets[j]]; //Increment the counter for EVERY property set that this residue belongs to.
+		// Loop through all residues and count residues in each property set.
+		for ( core::Size ir=1; ir<=nres; ++ir ) {
+			helper->property_set_indices_matching_residue(resvect[ir]->type(), this_rsd_property_sets); //Get the property sets that this residue belongs to.
+			for ( core::Size j=1, jmax=this_rsd_property_sets.size(); j<=jmax; ++j ) {
+				++counts[this_rsd_property_sets[j]]; //Increment the counter for EVERY property set that this residue belongs to.
+			}
 		}
-	}
 
-	// Accumulator for penalty function
-	core::Real accumulator(0.0);
-	for ( core::Size i=1, imax=counts.size(); i<=imax; ++i ) { //Loop through the counts and accumulate the appropriate penalty
-		counts[i] -= expected[i]; // Calculate the DELTA count.
-		accumulator += helper->property_penalty( counts[i], i );
-	}
+		// Accumulator for penalty function
+		core::Real accumulator(0.0);
+		for ( core::Size i=1, imax=counts.size(); i<=imax; ++i ) { //Loop through the counts and accumulate the appropriate penalty
+			counts[i] -= expected[i]; // Calculate the DELTA count.
+			accumulator += helper->property_penalty( counts[i], i );
+		}
 
-	return accumulator;
+		outer_accumulator += accumulator;
+	} //End loop through helper objects
+
+	return outer_accumulator;
 }
 
 /// @brief Get a summary of all loaded data.
@@ -233,9 +254,16 @@ core::Real AACompositionEnergy::calculate_energy_by_properties( utility::vector1
 void AACompositionEnergy::report() const {
 	if ( !TR.Debug.visible() ) return; //Do nothing if I don't have a tracer.
 
-	std::string const summary( "\nSummary of data loaded by AACompositionEnergy object:\n" + setup_helper_cop()->report() );
+	TR.Debug << std::endl << "Summary of data loaded by AACompositionEnergy object:" << std::endl;
 
-	TR.Debug << summary << std::endl;
+	for ( core::Size i=1, imax=setup_helper_count(); i<=imax; ++i ) {
+		TR.Debug << "AACompositionEnergySetup #" << i << ":" << std::endl;
+		TR.Debug << setup_helper_cop(i)->report();
+	}
+
+	TR.Debug << std::endl;
+
+	TR.Debug.flush();
 
 	return;
 }

@@ -81,6 +81,7 @@ private:
 
 };
 
+extern std::string const TALARIS_2014;
 extern std::string const TALARIS_2013;
 extern std::string const TALARIS_2013_CART;
 extern std::string const PRE_TALARIS_2013_STANDARD_WTS;

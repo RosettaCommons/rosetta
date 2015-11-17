@@ -1,0 +1,62 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" >
+			<Reweight scoretype=aa_composition weight=1.0 />
+			<Set aa_composition_setup_file="inputs/disfavour_polyala.comp" />
+			<Reweight scoretype=envsmooth weight=2.0 />
+		</tala>
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<ReadResfile name=resfile1 filename="inputs/resfile1.txt" />
+
+      <LayerDesign name=layerdesign layer=core_boundary_surface_Nterm_Cterm use_sidechain_neighbors=true core=1.5 surface=1.25 >
+         <core>
+           <all aa="AVILFW"/>
+         </core>
+         <boundary>
+           <all aa="N"/>
+         </boundary>
+         <surface>
+           <all aa="N"/>
+         </surface>
+			<Nterm>
+				<all aa="N"/>
+			</Nterm>
+			<Cterm>
+				<all aa="N"/>
+			</Cterm>
+      </LayerDesign>		
+		
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+
+		<BundleGridSampler name="bgs1" helix_length=20 scorefxn="tala" set_bondlengths=true set_bondangles=true set_dihedrals=true
+				r0_min=4.0 r0_max=7.5 r0_samples=10 omega0=0.1 delta_omega0=0 delta_omega1=0 delta_t=0 nstruct_mode=true >
+			<Helix />
+			<Helix invert=true delta_omega0=3.141592654 r0_copies_helix=1 />
+		</BundleGridSampler>
+		
+		<DeclareBond name=add_termini atom1=C atom2=N res1=1 res2=2 add_termini=true />
+		
+		<AtomTree name=foldtree1 fold_tree_file="inputs/foldtree1.txt" />
+		
+		<FastDesign name=fdes1 scorefxn=tala repeats=3 task_operations=layerdesign >
+			<MoveMap name=fdes1_mm>
+				<Span begin=1 end=40 chi=1 bb=1 />
+				<Jump number=1 setting=1 />
+			</MoveMap>
+		</FastDesign>
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=bgs1 />
+		<Add mover=add_termini />
+		<Add mover=foldtree1 />
+		<Add mover=fdes1 />
+	</PROTOCOLS>
+	<OUTPUT scorefxn=tala />
+</ROSETTASCRIPTS>

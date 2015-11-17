@@ -77,6 +77,26 @@ public:
 	}
 
 
+	/// @brief Get the nth aa_composition setup file name from the list of setup files.
+	///
+	inline std::string const & aa_composition_setup_file( core::Size const index ) const {
+		runtime_assert_string_msg( index > 0 && index <= aa_composition_setup_files_.size(), "Error in core::scoring::methods::EnergyMethodOptions::aa_composition_setup_file(): The index of the file requested is greater than the number of filenames stored." );
+		return aa_composition_setup_files_[index];
+	}
+
+	/// @brief Get the number of aa_composition setup files.
+	///
+	inline core::Size aa_composition_setup_file_count() const {
+		return aa_composition_setup_files_.size();
+	}
+
+	/// @brief Set the aa_composition setup file names.
+	///
+	inline void set_aa_composition_setup_files( utility::vector1 < std::string > const &input_filenames ) {
+		aa_composition_setup_files_ = input_filenames;
+		return;
+	}
+
 	std::string const &
 	etable_type() const;
 
@@ -478,6 +498,7 @@ private:
 	// IMPORTANT NOTE!  If you add an option, make sure you also update the constructor,
 	// the assignment operator, the == comparison operator, and the show method in the .cc file!
 	/////////////////////////////////////////////////
+	utility::vector1 < std::string > aa_composition_setup_files_;
 	std::string atom_vdw_atom_type_set_name_;
 	std::string unfolded_energies_type_;
 	std::string split_unfolded_label_type_;

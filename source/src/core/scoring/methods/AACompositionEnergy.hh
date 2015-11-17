@@ -27,6 +27,7 @@
 // Package headers
 #include <core/scoring/annealing/ResidueArrayAnnealableEnergy.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
@@ -56,9 +57,9 @@ public:
 
 public:
 
-	/// @brief Default constructor.
+	/// @brief Options constructor.
 	///
-	AACompositionEnergy();
+	AACompositionEnergy( core::scoring::methods::EnergyMethodOptions const &options );
 
 	/// @brief Copy constructor.
 	///
@@ -106,17 +107,24 @@ private:
 	/// @details Called by calculate_energy().
 	virtual core::Real calculate_energy_by_properties( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const;
 
-	/// @brief Get a const-access pointer to the setup helper object.
+	/// @brief Get a const-access pointer to a setup helper object.
 	///
-	inline AACompositionEnergySetupCOP setup_helper_cop() const { return utility::pointer::dynamic_pointer_cast<AACompositionEnergySetup const>(setup_helper_); }
+	inline AACompositionEnergySetupCOP setup_helper_cop( core::Size const index ) const {
+		runtime_assert_string_msg( index > 0 && index <= setup_helpers_.size(), "Error in core::scoring::methods::AACompositionEnergy::setup_helper_cop(): Index of setup helper is out of range." );
+		return utility::pointer::dynamic_pointer_cast<AACompositionEnergySetup const>(setup_helpers_[index]);
+	}
+
+	/// @brief Get the number of setup helper objects:
+	///
+	inline core::Size setup_helper_count() const { return setup_helpers_.size(); }
 
 	/******************
 	Private variables:
 	******************/
 
-	/// @brief The helper object that stores all of the data for setting up this scoring function.
+	/// @brief The vector of helper objects that store all of the data for setting up this scoring function.
 	/// @details Initialized on scoreterm initialization.
-	AACompositionEnergySetupOP setup_helper_;
+	utility::vector1<AACompositionEnergySetupOP> setup_helpers_;
 
 };
 
