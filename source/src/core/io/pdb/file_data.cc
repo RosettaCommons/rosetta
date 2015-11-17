@@ -1365,59 +1365,78 @@ build_pose_as_is1(
 			fd.residue_type_base_names[ resid ] = rosetta_names.second;
 		}
 
-		bool const separate_chemical_entity = find(entities_begin, entities_end, chainID ) !=  entities_end;
-		bool const same_chain_prev = ( i > 1        && chainID == rinfos[i-1].chainID &&
-			rinfo.terCount == rinfos[i-1].terCount && !separate_chemical_entity);
-		bool const same_chain_next = ( i < nres_pdb && chainID == rinfos[i+1].chainID &&
-			rinfo.terCount == rinfos[i+1].terCount && !separate_chemical_entity);
-		bool const check_Ntermini_for_this_chain = ("ALL" == chains_to_check_if_Ntermini) ?
-			true : find(check_Ntermini_begin, check_Ntermini_end, chainID ) ==  check_Ntermini_end;
-		bool const check_Ctermini_for_this_chain = ("ALL" == chains_to_check_if_Ctermini) ?
-			true : find(check_Ctermini_begin, check_Ctermini_end, chainID ) ==  check_Ctermini_end;
+		bool const separate_chemical_entity( find(entities_begin, entities_end, chainID ) != entities_end );
+		bool same_chain_prev( i > 1 && chainID == rinfos[ i - 1 ].chainID &&
+				rinfo.terCount == rinfos[i-1].terCount && ! separate_chemical_entity );
+		bool same_chain_next( i < nres_pdb && chainID == rinfos[ i + 1 ].chainID &&
+				rinfo.terCount == rinfos[ i + 1 ].terCount && ! separate_chemical_entity );
+		bool const check_Ntermini_for_this_chain( ( "ALL" == chains_to_check_if_Ntermini ) ?
+				true : find( check_Ntermini_begin, check_Ntermini_end, chainID ) ==  check_Ntermini_end );
+		bool const check_Ctermini_for_this_chain( ( "ALL" == chains_to_check_if_Ctermini ) ?
+				true : find( check_Ctermini_begin, check_Ctermini_end, chainID ) ==  check_Ctermini_end );
 
 		// Determine polymer information: termini, branch points, etc.
+		// Carbohydrate base names will have "->?)-" as a prefix if their main-chain connectivity requires LINK records
+		// to determine.
+		bool const unknown_main_chain_connectivity( fd.residue_type_base_names[ resid ][ 2 ] == '?' );
 		Strings branch_points_on_this_residue;
 		bool is_branch_point( false );
-		if ( TR.Trace.visible() ) {
-			TR.Trace << "Checking if resid " << resid << " is in the link map " << std::endl;
-		}
+		TR.Trace << "Checking if resid " << resid << " is in the link map " << std::endl;
 		if ( fd.link_map.count( resid ) ) {  // if found in the linkage map
 			// Find and store to access later:
 			//     - associated 1st residue of all branches off this residue (determines branch lower termini)
 			//     - positions of branch points
-			if ( TR.Trace.visible() ) {
-				TR.Trace << "Found resid " << resid << " in link map " << std::endl;
-			}
-			for ( Size branch = 1, n_branches = fd.link_map[ resid ].size(); branch <= n_branches; ++branch ) {
-
-				if ( TR.Trace.visible() ) {
-					TR.Trace << "Examining branch " << branch << std::endl;
-				}
+			//     - main-chain for carbohydrates
+			TR.Trace << "Found resid " << resid << " in link map " << std::endl;
+			Size const n_branches( fd.link_map[ resid ].size() );
+			for ( uint branch = 1; branch <= n_branches; ++branch ) {
+				TR.Trace << "Examining branch " << branch << std::endl;
 				LinkInformation const & link_info( fd.link_map[ resid ][ branch ] );
-				if ( link_info.chainID1 == link_info.chainID2 && link_info.resSeq1 == ( link_info.resSeq2 - 1 ) ) {
+				if ( link_info.chainID1 == link_info.chainID2 && link_info.resSeq1 == ( link_info.resSeq2 - 1 )
+						&& ! unknown_main_chain_connectivity ) {
 					// If this occurs, the link is to the next residue on the same chain, so both residues are part of
-					// the same main chain or branch, and this linkage information can be ignored.
-					// Note that this assumes insertion codes are not involved! It also assumes that the PDB file
+					// the same main chain or branch, and this linkage information can be ignored, UNLESS this .pdb file
+					// came from the PDB, in which case its 3-letter codes don't tell us the main chain, so we must get
+					// the main chain from the LINK records.
+					// Note that this all assumes insertion codes are not involved! It also assumes that the PDB file
 					// makers did things reasonably.
 					continue;
 				}
-				if ( TR.Trace.visible() ) {
-					TR.Trace << "branch point is true for this residue" << std::endl;
-					TR.Trace << "corresponding branch lower terminus is " <<  link_info.resID2 << std::endl;
+				if ( unknown_main_chain_connectivity && branch == 1 ) {
+					char const connectivity( link_info.name1[ 2 ] );  // where the connect atom name is " O? "
+					TR.Trace << "Assigning main-chain connectivity to position " << connectivity;
+					TR.Trace << " of this residue." << std::endl;
+					fd.residue_type_base_names[ resid ][ 2 ] = connectivity;
+				} else {
+					TR.Trace << "This residue is a branch point with corresponding branch lower terminus: ";
+					TR.Trace << link_info.resID2 << std::endl;
+					is_branch_point = true;
+					branch_lower_termini.push_back( link_info.resID2 );
+					branch_points_on_this_residue.push_back( link_info.name1 );
 				}
-				is_branch_point = true;
-				branch_lower_termini.push_back( link_info.resID2 );
-				branch_points_on_this_residue.push_back( link_info.name1 );
 			}
+		} else if ( unknown_main_chain_connectivity ) {
+			// If .pdb 3-letter codes are being used, LINK records MUST be used to designate main-chain connectivity
+			// for anything with a HETATM record.  So if we got here, it means that this must be an upper terminus.
+			// First, assign an arbitrary main-chain connection and then reset this to be the NOT of the same chain as
+			// the next residue.
+			TR.Trace << "Assigning main-chain connectivity to position 3 of this terminal residue." << std::endl;
+			fd.residue_type_base_names[ resid ][ 2 ] = '3';  // TODO: In the future, we might want something else.
+			same_chain_next = false;
 		}
-		bool const is_branch_lower_terminus = branch_lower_termini.contains(resid);
-		bool const is_lower_terminus( ( i == 1 || rinfos.empty() || (!same_chain_prev && !is_branch_lower_terminus) )
-			&& check_Ntermini_for_this_chain );
-		bool const is_upper_terminus( ( i == nres_pdb || !same_chain_next ) && check_Ctermini_for_this_chain );
+		bool const is_branch_lower_terminus = branch_lower_termini.contains( resid );
+		if ( is_branch_lower_terminus && carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( name3 ) ) {
+			same_chain_prev = false;
+		}
 
+		bool const is_lower_terminus( ( i == 1 || rinfos.empty() || ( ! same_chain_prev && ! is_branch_lower_terminus) )
+				&& check_Ntermini_for_this_chain );
+		bool const is_upper_terminus( ( i == nres_pdb || ! same_chain_next ) && check_Ctermini_for_this_chain );
+
+
+		// Determine if this residue is a D-AA residue, an L-AA residue, or neither.
 		ResidueCoords const & xyz = rinfo.xyz;
 		ResidueTemps  const & rtemp = rinfo.temps;
-
 		bool is_d_aa = false;
 		bool is_l_aa = false;
 		// Skip the below for canonicals
@@ -1536,22 +1555,18 @@ build_pose_as_is1(
 			continue;
 		}
 
-		if ( TR.Debug.visible() ) {
-			TR.Debug << "Residue " << i << std::endl;
-		}
-		if ( TR.Trace.visible() ) {
-			TR.Trace << "...same_chain_prev: " << same_chain_prev << std::endl;
-			TR.Trace << "...same_chain_next: " << same_chain_next << std::endl;
-			TR.Trace << "...is_lower_terminus: " << is_lower_terminus << std::endl;
-			TR.Trace << "...check_Ntermini_for_this_chain: "<< check_Ntermini_for_this_chain << std::endl;
-			TR.Trace << "...is_upper_terminus: " << is_upper_terminus << std::endl;
-			TR.Trace << "...check_Ctermini_for_this_chain: "<< check_Ctermini_for_this_chain << std::endl;
-			TR.Trace << "...is_branch_point: " << is_branch_point << std::endl;
-			TR.Trace << "...is_branch_lower_terminus: "<< is_branch_lower_terminus << std::endl;
-			TR.Trace << "...last_residue_was_recognized: " << last_residue_was_recognized << std::endl;
-			TR.Trace << "...is_d_aa: " << is_d_aa << std::endl;
-			TR.Trace << "...is_l_aa: " << is_l_aa << std::endl;
-		}
+		TR.Debug << "Residue " << i << std::endl;
+		TR.Trace << "...same_chain_prev: " << same_chain_prev << std::endl;
+		TR.Trace << "...same_chain_next: " << same_chain_next << std::endl;
+		TR.Trace << "...is_lower_terminus: " << is_lower_terminus << std::endl;
+		TR.Trace << "...check_Ntermini_for_this_chain: "<< check_Ntermini_for_this_chain << std::endl;
+		TR.Trace << "...is_upper_terminus: " << is_upper_terminus << std::endl;
+		TR.Trace << "...check_Ctermini_for_this_chain: "<< check_Ctermini_for_this_chain << std::endl;
+		TR.Trace << "...is_branch_point: " << is_branch_point << std::endl;
+		TR.Trace << "...is_branch_lower_terminus: "<< is_branch_lower_terminus << std::endl;
+		TR.Trace << "...last_residue_was_recognized: " << last_residue_was_recognized << std::endl;
+		TR.Trace << "...is_d_aa: " << is_d_aa << std::endl;
+		TR.Trace << "...is_l_aa: " << is_l_aa << std::endl;
 
 		ResidueTypeCOP rsd_type_cop = get_rsd_type( name3, xyz, residue_set,
 			fd, options, branch_points_on_this_residue,
@@ -1682,18 +1697,14 @@ build_pose_as_is1(
 
 		Size const old_nres( pose.total_residue() );
 
-		if ( TR.Trace.visible() ) {
-			TR.Trace << "...new residue is a polymer: " << new_rsd->type().is_polymer() << std::endl;
-			if ( old_nres >= 1 ) {
-				TR.Trace << "The old residue is a polymer: " << pose.residue_type(old_nres).is_polymer() << std::endl;
-			}
+		TR.Trace << "...new residue is a polymer: " << new_rsd->type().is_polymer() << std::endl;
+		if ( old_nres >= 1 ) {
+			TR.Trace << "The old residue is a polymer: " << pose.residue_type(old_nres).is_polymer() << std::endl;
 		}
 
 		// Add the first new residue to the pose
 		if ( !old_nres ) {
-			if ( TR.Trace.visible() ) {
-				TR.Trace << rsd_type.name() << " " << i << " is the start of a new pose" << std::endl;
-			}
+			TR.Trace << rsd_type.name() << " " << i << " is the start of a new pose" << std::endl;
 			pose.append_residue_by_bond( *new_rsd );
 
 		} else if ( ( ( is_lower_terminus && check_Ntermini_for_this_chain ) || ! same_chain_prev )
@@ -1749,9 +1760,7 @@ build_pose_as_is1(
 
 		} else { // Append residue to current chain dependent on bond length.
 			if ( !options.missing_dens_as_jump() ) {
-				if ( TR.Trace.visible() ) {
-					TR.Trace << rsd_type.name() << " " << i << " is appended to chain " << chainID << std::endl;
-				}
+				TR.Trace << rsd_type.name() << " " << i << " is appended to chain " << chainID << std::endl;
 				pose.append_residue_by_bond( *new_rsd );
 			} else {
 				//fpd look for missing density in the input PDB
@@ -1782,9 +1791,7 @@ build_pose_as_is1(
 						core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWER_TERMINUS_VARIANT, old_nres+1 );
 					}
 				} else {
-					if ( TR.Trace.visible() ) {
-						TR.Trace << rsd_type.name() << " " << i << " is appended to chain" << chainID << std::endl;
-					}
+					TR.Trace << rsd_type.name() << " " << i << " is appended to chain" << chainID << std::endl;
 					pose.append_residue_by_bond( *new_rsd );
 				}
 			}
@@ -2326,7 +2333,18 @@ get_rsd_type(
 		xyz_atom_names.push_back( xyz_name );
 	}
 
-	rsd_type = ResidueTypeFinder( residue_set ).name3( name3 ).residue_base_name( residue_base_name ).disallow_variants( disallow_variants ).variants_in_sets( required_variants_in_sets ).properties( properties ).disallow_properties( disallow_properties ).patch_names( patch_names ).ignore_atom_named_H( is_lower_terminus ).disallow_carboxyl_conjugation_at_glu_asp( disallow_carboxyl_conjugation_at_glu_asp ).check_nucleic_acid_virtual_phosphates( true ).get_best_match_residue_type_for_atom_names( xyz_atom_names );
+	rsd_type = ResidueTypeFinder( residue_set )
+			.name3( name3 )
+			.residue_base_name( residue_base_name )
+			.disallow_variants( disallow_variants )
+			.variants_in_sets( required_variants_in_sets )
+			.properties( properties )
+			.disallow_properties( disallow_properties )
+			.patch_names( patch_names )
+			.ignore_atom_named_H( is_lower_terminus )
+			.disallow_carboxyl_conjugation_at_glu_asp( disallow_carboxyl_conjugation_at_glu_asp )
+			.check_nucleic_acid_virtual_phosphates( true )
+			.get_best_match_residue_type_for_atom_names( xyz_atom_names );
 
 	return rsd_type;
 }

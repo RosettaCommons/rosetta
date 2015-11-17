@@ -8,6 +8,12 @@
 # This listing was composed by Thuy-My Le in November, 2013, and expanded by
 # Labonte <JWLabonte@jhu.edu>.
 
+# Note that (most) )PDB 3-letter codes do not provide enough information to
+# define the main-chain connectivity, and LINK records must be used.  Such
+# cases (the vast majority) are indicated by the "->?)-" prefix below.  Rosetta
+# will read the "?" and try to interpret the LINK records to assign
+# connectivity.
+
 # Many of these codes are for modified sugars, which will only work if the
 # proper patch already exists within Rosetta.
 
@@ -19,107 +25,107 @@
 # Aldotrioses
 
 # Code  Rosetta Code  Default HETNAM
-  3GR   Gly           ->3)-D-Gly
+  3GR   Gly           ->?)-D-Gly
   G3H   Gly           ->2)-D-Gly
-  GXV   Gly           ->3)-L-Gly
+  GXV   Gly           ->?)-L-Gly
 
 
 # Aldotetroses
 
 # Code  Rosetta Code  Default HETNAM
-  E4P   Ery           ->3)-D-Ery
+  E4P   Ery           ->?)-D-Ery
 
 
 # Aldopentoses
 
 # Code  Rosetta Code  Default HETNAM
-  RIB   Rib           ->4)-alpha-D-Ribf
-  3DR   Rib           ->4)-D-Ribf
-  AAB   Rib           ->4)-beta-D-Ribf
-  ORP   Rib           ->4)-alpha-D-Ribf
-  RIP   Rib           ->4)-alpha-D-Ribp
-  R1X   Rib           ->4)-D-Ribp
-  R52   Rib           ->4)-D-Rib
-  R5P   Rib           ->4)-D-Rib
-  RB5   Rib           ->4)-D-Rib
+  RIB   Rib           ->?)-alpha-D-Ribf
+  3DR   Rib           ->?)-D-Ribf
+  AAB   Rib           ->?)-beta-D-Ribf
+  ORP   Rib           ->?)-alpha-D-Ribf
+  RIP   Rib           ->?)-alpha-D-Ribp
+  R1X   Rib           ->?)-D-Ribp
+  R52   Rib           ->?)-D-Rib
+  R5P   Rib           ->?)-D-Rib
+  RB5   Rib           ->?)-D-Rib
 
-  ARA   Ara           ->4)-alpha-L-Arap
-  A5P   Ara           ->4)-D-Ara
-  ARB   Ara           ->4)-beta-L-Arap
-  LAI   Ara           ->4)-L-Ara
-  PAN   Ara           ->4)-D-Ara
+  ARA   Ara           ->?)-alpha-L-Arap
+  A5P   Ara           ->?)-D-Ara
+  ARB   Ara           ->?)-beta-L-Arap
+  LAI   Ara           ->?)-L-Ara
+  PAN   Ara           ->?)-D-Ara
 
-  LXC   Xyl           ->4)-beta-L-Xylp
-  XLS   Xyl           ->4)-D-Xyl
+  LXC   Xyl           ->?)-beta-L-Xylp
+  XLS   Xyl           ->?)-D-Xyl
 
 
 # Aldohexoses
 
 # Code  Rosetta Code  Default HETNAM
-  ALL   All           ->4)-beta-D-Allp
-  DSR   All           ->4)-beta-D-Allp
+  ALL   All           ->?)-beta-D-Allp
+  DSR   All           ->?)-beta-D-Allp
 
-  GLC   Glc           ->4)-alpha-D-Glcp
-  AGL   Glc           ->4)-alpha-D-Glcp
-  BG6   Glc           ->4)-beta-D-Glcp
-  BGC   Glc           ->4)-beta-D-Glcp
-  DDA   Glc           ->4)-beta-D-Glcp
-  DRI   Glc           ->4)-beta-D-Glcp
-  G16   Glc           ->4)-alpha-D-Glcp
-  G1P   Glc           ->4)-alpha-D-Glcp
-  G4D   Glc           ->4)-alpha-D-Glcp
-  G6P   Glc           ->4)-alpha-D-Glcp
-  G6Q   Glc           ->4)-D-Glc
-  GCS   Glc           ->4)-beta-D-Glcp
-  GDA   Glc           ->4)-alpha-D-Glcp
-  GFP   Glc           ->4)-alpha-D-Glcp
-  GLF   Glc           ->4)-alpha-D-Glcp
-  GLO   Glc           ->4)-alpha-D-Glc
-  GLT   Glc           ->4)-alpha-D-Glcp
-  GTM   Glc           ->4)-beta-D-Glcp
-  KBG   Glc           ->4)-beta-D-Glcp
-  MA3   Glc           ->4)-alpha-D-Glcp
-  MGL   Glc           ->4)-beta-D-Glcp
-  NDG   Glc           ->4)-alpha-D-Glcp
-  TOA   Glc           ->4)-alpha-D-Glcp
-  TOC   Glc           ->4)-alpha-D-Glcp
-  NAG   Glc           ->4)-beta-D-Glcp
-  MUR   Mur           ->4)-beta-D-Murp  # trivial name for ->4)-beta-D-GlcpNAc, lactic acid derivative
-  G6D   Qui           ->4)-alpha-D-Quip # trivial name for ->4)-alpha-D-Glcp, 6-deoxy-
+  GLC   Glc           ->?)-alpha-D-Glcp
+  AGL   Glc           ->?)-alpha-D-Glcp
+  BG6   Glc           ->?)-beta-D-Glcp
+  BGC   Glc           ->?)-beta-D-Glcp
+  DDA   Glc           ->?)-beta-D-Glcp
+  DRI   Glc           ->?)-beta-D-Glcp
+  G16   Glc           ->?)-alpha-D-Glcp
+  G1P   Glc           ->?)-alpha-D-Glcp
+  G4D   Glc           ->?)-alpha-D-Glcp
+  G6P   Glc           ->?)-alpha-D-Glcp
+  G6Q   Glc           ->?)-D-Glc
+  GCS   Glc           ->?)-beta-D-Glcp
+  GDA   Glc           ->?)-alpha-D-Glcp
+  GFP   Glc           ->?)-alpha-D-Glcp
+  GLF   Glc           ->?)-alpha-D-Glcp
+  GLO   Glc           ->?)-alpha-D-Glc
+  GLT   Glc           ->?)-alpha-D-Glcp
+  GTM   Glc           ->?)-beta-D-Glcp
+  KBG   Glc           ->?)-beta-D-Glcp
+  MA3   Glc           ->?)-alpha-D-Glcp
+  MGL   Glc           ->?)-beta-D-Glcp
+  NDG   Glc           ->?)-alpha-D-Glcp
+  TOA   Glc           ->?)-alpha-D-Glcp
+  TOC   Glc           ->?)-alpha-D-Glcp
+  NAG   Glc           ->?)-beta-D-Glcp
+  MUR   Mur           ->?)-beta-D-Murp  # trivial name for ->?)-beta-D-GlcpNAc, lactic acid derivative
+  G6D   Qui           ->?)-alpha-D-Quip # trivial name for ->?)-alpha-D-Glcp, 6-deoxy-
 
-  MAN   Man           ->4)-alpha-D-Manp
-  BMA   Man           ->4)-beta-D-Manp
-  M1P   Man           ->4)-alpha-D-Manp
-  M6D   Man           ->4)-beta-D-Manp
-  M6P   Man           ->4)-alpha-D-Manp
-  MAF   Man           ->4)-alpha-D-Manp
-  MBF   Man           ->4)-beta-D-Manp
-  MMA   Man           ->4)-alpha-D-Manp
-  OPM   Man           ->4)-alpha-D-Manp
-  RHA   Man           ->4)-alpha-L-Manp
-  RNS   Man           ->4)-L-Man
+  MAN   Man           ->?)-alpha-D-Manp
+  BMA   Man           ->?)-beta-D-Manp
+  M1P   Man           ->?)-alpha-D-Manp
+  M6D   Man           ->?)-beta-D-Manp
+  M6P   Man           ->?)-alpha-D-Manp
+  MAF   Man           ->?)-alpha-D-Manp
+  MBF   Man           ->?)-beta-D-Manp
+  MMA   Man           ->?)-alpha-D-Manp
+  OPM   Man           ->?)-alpha-D-Manp
+  RHA   Man           ->?)-alpha-L-Manp
+  RNS   Man           ->?)-L-Man
 
-  GAL   Gal           ->4)-beta-D-Galp
-  GLA   Gal           ->4)-alpha-D-Galp
-  1GN   Gal           ->4)-beta-D-Galp
-  2DG   Gal           ->4)-beta-D-Galp
-  A2G   Gal           ->4)-alpha-D-Galp
-  AAL   Gal           ->4)-alpha-L-Galp
-  ASG   Gal           ->4)-beta-D-Galp
-  BGP   Gal           ->4)-beta-D-Galp
-  DDL   Gal           ->4)-beta-D-Galp
-  DGS   Gal           ->4)-alpha-D-Galp
-  DR4   Gal           ->4)-beta-D-Galp
-  FUL   Gal           ->4)-beta-L-Galp
-  G6S   Gal           ->4)-beta-D-Galp
-  GAF   Gal           ->4)-alpha-D-Galp
-  GL1   Gal           ->4)-alpha-D-Galp
-  KDP   Gal           ->4)-D-Gal
-  L6S   Gal           ->4)-alpha-L-Galp
-  MBG   Gal           ->4)-beta-D-Galp
-  SGA   Gal           ->4)-beta-D-Galp
-  FUC   Fuc           ->4)-alpha-L-Fucp  # trivial name for ->4)-alpha-L-Galp, 6-deoxy-
-  ABE   Abe           ->4)-alpha-D-Abep  # trivial name for ->4)-alpha-D-Galp, 3,6-deoxy-
+  GAL   Gal           ->?)-beta-D-Galp
+  GLA   Gal           ->?)-alpha-D-Galp
+  1GN   Gal           ->?)-beta-D-Galp
+  2DG   Gal           ->?)-beta-D-Galp
+  A2G   Gal           ->?)-alpha-D-Galp
+  AAL   Gal           ->?)-alpha-L-Galp
+  ASG   Gal           ->?)-beta-D-Galp
+  BGP   Gal           ->?)-beta-D-Galp
+  DDL   Gal           ->?)-beta-D-Galp
+  DGS   Gal           ->?)-alpha-D-Galp
+  DR4   Gal           ->?)-beta-D-Galp
+  FUL   Gal           ->?)-beta-L-Galp
+  G6S   Gal           ->?)-beta-D-Galp
+  GAF   Gal           ->?)-alpha-D-Galp
+  GL1   Gal           ->?)-alpha-D-Galp
+  KDP   Gal           ->?)-D-Gal
+  L6S   Gal           ->?)-alpha-L-Galp
+  MBG   Gal           ->?)-beta-D-Galp
+  SGA   Gal           ->?)-beta-D-Galp
+  FUC   Fuc           ->?)-alpha-L-Fucp  # trivial name for ->?)-alpha-L-Galp, 6-deoxy-
+  ABE   Abe           ->?)-alpha-D-Abep  # trivial name for ->?)-alpha-D-Galp, 3,6-deoxy-
 
 
 # KETOSES
@@ -134,69 +140,70 @@
 # Ketotetrose
 
 # Code  Rosetta Code  Default HETNAM
-  DE2   Eul           ->4)-L-Eul
+  DE2   Eul           ->?)-L-Eul
 
 
 # Ketopentoses
 
 # Code  Rosetta Code  Default HETNAM
-  0VR   Rul           ->4)-D-Rul
-  137   Rul           ->4)-D-Rul
-  5RP   Rul           ->4)-D-Rul
-  HMS   Rul           ->4)-L-Rul
-  MRU   Rul           ->4)-D-Rul
-  RUB   Rul           ->4)-D-Rul
+  0VR   Rul           ->?)-D-Rul
+  137   Rul           ->?)-D-Rul
+  5RP   Rul           ->?)-D-Rul
+  HMS   Rul           ->?)-L-Rul
+  MRU   Rul           ->?)-D-Rul
+  RUB   Rul           ->?)-D-Rul
 
-  XUL   Xul           ->4)-D-Xul
-  5FX   Xul           ->4)-D-Xul
-  5SP   Xul           ->4)-D-Xul
-  DXP   Xul           ->4)-D-Xul
-  XBP   Xul           ->4)-D-Xul
-  XDP   Xul           ->4)-D-Xul
+  XUL   Xul           ->?)-D-Xul
+  5FX   Xul           ->?)-D-Xul
+  5SP   Xul           ->?)-D-Xul
+  DXP   Xul           ->?)-D-Xul
+  XBP   Xul           ->?)-D-Xul
+  XDP   Xul           ->?)-D-Xul
 
 
 # Ketohexoses
 
 # Code  Rosetta Code  Default HETNAM
-  PSJ   Psi           ->5)-D-Psi
-  LPK   Psi           ->5)-L-Psi
+  PSJ   Psi           ->?)-D-Psi
+  LPK   Psi           ->?)-L-Psi
 
-  FRU   Fru           ->4)-beta-D-Fruf
-  AFP   Fru           ->4)-alpha-D-Fruf
-  DFR   Fru           ->4)-beta-D-Fruf
-  F1X   Fru           ->4)-beta-D-Fruf
-  F6P   Fru           ->4)-beta-D-Fruf
-  F6R   Fru           ->4)-D-Fru
-  FBP   Fru           ->4)-beta-D-Fruf
-  FDP   Fru           ->4)-beta-D-Fruf
-  FUD   Fru           ->4)-D-Fru
-  P6F   Fru           ->4)-D-Fru
-  P6P   Fru           ->4)-alpha-D-Fruf
+  FRU   Fru           ->?)-beta-D-Fruf
+  AFP   Fru           ->?)-alpha-D-Fruf
+  DFR   Fru           ->?)-beta-D-Fruf
+  F1X   Fru           ->?)-beta-D-Fruf
+  F6P   Fru           ->?)-beta-D-Fruf
+  F6R   Fru           ->?)-D-Fru
+  FBP   Fru           ->?)-beta-D-Fruf
+  FDP   Fru           ->?)-beta-D-Fruf
+  FUD   Fru           ->?)-D-Fru
+  P6F   Fru           ->?)-D-Fru
+  P6P   Fru           ->?)-alpha-D-Fruf
 
-  2FP   Sor           ->4)-D-Sor
-  SDD   Sor           ->4)-D-Sor
-  SOE   Sor           ->4)-alpha-L-Sorp
-  SOL   Sor           ->4)-L-Sor
+  2FP   Sor           ->?)-D-Sor
+  SDD   Sor           ->?)-D-Sor
+  SOE   Sor           ->?)-alpha-L-Sorp
+  SOL   Sor           ->?)-L-Sor
 
-  TAG   Tag           ->4)-D-alpha-Tag
+  TAG   Tag           ->?)-D-alpha-Tag
 
 
 # Ketooctose
 
 # Code  Rosetta Code  Default HETNAM
-  KDO   Kdo           ->8)-D-alpha-Kdop
+  KDO   Kdo           ->?)-D-alpha-Kdop
 
 
 # Ketononoses (e.g., Sialic Acids)
 
 # Code  Rosetta Code  Default HETNAM
-  AMN   Neu           ->8)-alpha-Neup
-  ANA   Neu           ->8)-alpha-Neup
-  GNA   Neu           ->8)-alpha-Neup
-  MNA   Neu           ->8)-alpha-Neup
-  NGC   Neu           ->8)-alpha-Neup
-  NGE   Neu           ->8)-beta-Neup
-  NGF   Neu           ->8)-Neu
-  SI3   Neu           ->8)-Neu
-  SID   Neu           ->8)-alpha-Neup
-  SLB   Neu           ->8)-beta-Neup
+  AMN   Neu           ->?)-alpha-Neup
+  ANA   Neu           ->?)-alpha-Neup
+  GNA   Neu           ->?)-alpha-Neup
+  MNA   Neu           ->?)-alpha-Neup
+  NGC   Neu           ->?)-alpha-Neup
+  NGE   Neu           ->?)-beta-Neup
+  NGF   Neu           ->?)-Neu
+  SI3   Neu           ->?)-Neu
+  SID   Neu           ->?)-alpha-Neup
+  SLB   Neu           ->?)-beta-Neup
+  

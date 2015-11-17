@@ -107,27 +107,39 @@ ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_varian
 	rsd_types = apply_filters_after_patches( rsd_types, allow_extra_variants );
 
 	return rsd_types;
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ResidueTypeCOP
 ResidueTypeFinder::get_best_match_residue_type_for_atom_names( utility::vector1< std::string > const & atom_names )
 {
-
-	// clock_t const time_start( clock() );
+	//clock_t const time_start( clock() );
 
 	// will try to match these ('soft' constraints). Go ahead and strip out whitespace.
 	atom_names_soft_.clear();
-	for ( Size n = 1; n <= atom_names.size(); n++ ) {
+	for ( Size n = 1; n <= atom_names.size(); ++n ) {
 		std::string atom_name_temp = atom_names[ n ];
 		atom_names_soft_.push_back( ObjexxFCL::strip_whitespace( atom_name_temp ) );
 	}
 
 	ResidueTypeCOPs rsd_types = get_all_possible_residue_types( true /* allow_extra_variants */ );
-	ResidueTypeCOP  rsd_type  = find_best_match( rsd_types, atom_names, ignore_atom_named_H_ );
 
-	//  TR << "time to initialize " << rsd_type->name() << " from " << rsd_types.size() << " possible ResidueTypes: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
+	Size const n_types( rsd_types.size() );
+	if ( n_types == 0 ) {
+		return 0;
+	}
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Finding best match from among " << n_types << " ResidueTypes." << std::endl;
+		for ( uint i( 1 ); i <= n_types; ++i ) {
+			TR.Trace << ' ' << rsd_types[ i ]->name() << std::endl;
+		}
+	}
+
+	ResidueTypeCOP rsd_type = find_best_match( rsd_types, atom_names, ignore_atom_named_H_ );
+
+	//TR << "time to initialize " << rsd_type->name() << " from " << rsd_types.size() << " possible ResidueTypes: " <<
+	//	static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 	return rsd_type;
 }

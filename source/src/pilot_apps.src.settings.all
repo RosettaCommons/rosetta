@@ -544,6 +544,7 @@ sources = {
 	"pilot/labonte" : [
 		"debug_labontes_current_work",
 		"dock_glycans",
+		"load_crazy_sugars",
 		"test_ResidueProperties",
 		"test_sugar_torsion_getters_and_setters",
 	],
