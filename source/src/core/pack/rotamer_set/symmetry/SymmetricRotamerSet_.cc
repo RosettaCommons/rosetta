@@ -106,119 +106,170 @@ SymmetricRotamerSet_::compute_one_body_energies(
 		sf.eval_ci_1b( *rotamer( ii ), pose, emap );
 		sf.eval_cd_1b( *rotamer( ii ), pose, emap );
 		energies[ ii ] += static_cast< core::PackerEnergy > (sf.weights().dot( emap ))*symm_info->score_multiply_factor(); // precision loss here. Multiply with the number of total subunits to get the total energy
+		// if ( theresid == 238 && (ii == 1||ii==9) ) {
+		// 	std::cout << "one body energy: " << theresid << " " << ii << ": " << (sf.weights().dot( emap ))*symm_info->score_multiply_factor() << std::endl;
+		// }
 	}
 
 
 	sf.evaluate_rotamer_intrares_energies( *this, pose, temp_energies );
 	// multiply the rotamer_intrares energy with the number of subunits in the system
 	PackerEnergyMultiply( temp_energies, symm_info->score_multiply_factor() );
+	// if ( theresid == 238 && temp_energies.size() >= 9 ) {
+	// 	std::cout << "intra-residue energy: " << theresid << " " << temp_energies[ 1 ] * symm_info->score_multiply_factor() << " " << temp_energies[ 9 ] * symm_info->score_multiply_factor() << std::endl;
+	// }
 	PackerEnergyAdd( energies, temp_energies );
 
 	// define a factory
 	RotamerSetFactory rsf;
 
-	for ( graph::Graph::EdgeListConstIter
-			ir  = packer_neighbor_graph->get_node( theresid )->const_edge_list_begin(),
-			ire = packer_neighbor_graph->get_node( theresid )->const_edge_list_end();
-			ir != ire; ++ir ) {
-		int const neighbor_id( (*ir)->get_other_ind( theresid ) );
-		if ( task.pack_residue( neighbor_id ) ) continue;
-		Residue const & neighbor( pose.residue( neighbor_id ) );
-		uint const symm_clone ( symm_info->chi_follows( neighbor_id ) );
-		if ( symm_clone != 0 && task.pack_residue( symm_clone )
-				&& symm_clone != theresid )  continue;
-		// Residue is not interating with itself
-		if ( symm_clone != theresid ) {
-			// evaluate the energy for one rotamer pair interaction and
-			// multiply it with the number of subunits in the system
-			std::fill( temp_energies.begin(), temp_energies.end(), core::PackerEnergy( 0.0 ) );
-			sf.evaluate_rotamer_background_energies( *this, neighbor, pose, temp_energies );
-			PackerEnergyMultiply( temp_energies, symm_info->score_multiply_factor() );
-			PackerEnergyAdd( energies, temp_energies );
-			//     PackerEnergyAdd( energies, temp_energies );
-		} else {
-			// We have a self interaction. We have to calculate the rotamer-rotamer pair interaction
-			// where both rotamers change at the same time to the same state. We go through all rotamers
-			// and calculated interaction energies with translated copies of itself
-			for ( int jj = 1; jj <= nrotamers; ++jj ) {
-				// make a new rotamer set that is going to be translated to the neighbor interation residue
-				conformation::ResidueOP sym_rsd( this->rotamer( jj )->clone() );
-				RotamerSetOP one_rotamer_set = rsf.create_rotamer_set( *sym_rsd );
-				one_rotamer_set->set_resid( theresid );
-				one_rotamer_set->add_rotamer( *sym_rsd );
-				// place rotamer set at neighbor position
-				RotamerSetOP sym_rotset(
-					orient_rotamer_set_to_symmetric_partner( pose, sym_rsd, neighbor_id, one_rotamer_set ) );
-				sf.prepare_rotamers_for_packing( pose, *one_rotamer_set );
-				sf.prepare_rotamers_for_packing( pose, *sym_rotset );
-				// make a temporary core::PackerEnergy object with on rotamer in it
-				ObjexxFCL::FArray2D< core::PackerEnergy > temp_energies( 1, 1, 0.0 );
-				// evaluate the energy for this rotamer-rotamer interaction
-				sf.evaluate_rotamer_pair_energies(
-					*one_rotamer_set, *sym_rotset, pose, temp_energies );
-				// add the energy of this interaction. Mulitply with the number of subunits in
-				// the system
-				energies[ jj ] += temp_energies[ 0 ]*symm_info->score_multiply( theresid, neighbor_id );
-			}
-		}
+	// We're going to iterate across the edges in the packer neighbor graph for all residues
+	// that are equivalent to this residue, and for each of them, figure out what residues
+	// in the asymmetric unit that are part of the background that this residue interacts with.
+	utility::vector1< Size > this_res_clones( 1 + symm_info->bb_clones( theresid ).size() );
+	this_res_clones[1] = theresid;
+	for ( core::Size ii = 1; ii <= symm_info->bb_clones( theresid ).size(); ++ii ) {
+		this_res_clones[ii+1] = symm_info->bb_clones( theresid )[ ii ];
 	}
 
-	// long-range energy interactions with background
-	// Iterate across the long range energy functions and use the iterators generated
-	// by the LRnergy container object
-	for ( ScoreFunction::LR_2B_MethodIterator
-			lr_iter = sf.long_range_energies_begin(),
-			lr_end  = sf.long_range_energies_end();
-			lr_iter != lr_end; ++lr_iter ) {
-		LREnergyContainerCOP lrec = pose.energies().long_range_container( (*lr_iter)->long_range_type() );
-		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
+	for ( core::Size ii = 1; ii <= this_res_clones.size(); ++ii ) {
+		Size iiresid = this_res_clones[ii];
 
-		// Potentially O(N) operation leading to O(N^2) behavior
-		for ( ResidueNeighborConstIteratorOP
-				rni = lrec->const_neighbor_iterator_begin( theresid ),
-				rniend = lrec->const_neighbor_iterator_end( theresid );
-				(*rni) != (*rniend); ++(*rni) ) {
-			Size const neighbor_id = rni->neighbor_id();
-			debug_assert( neighbor_id != theresid );
-			if ( task.pack_residue( neighbor_id ) ) continue;
+		for ( graph::Graph::EdgeListConstIter
+				ir  = packer_neighbor_graph->get_node( iiresid )->const_edge_list_begin(),
+				ire = packer_neighbor_graph->get_node( iiresid )->const_edge_list_end();
+				ir != ire; ++ir ) {
+
+			int const neighbor_id( (*ir)->get_other_ind( iiresid ) );
+			if ( task.pack_residue( neighbor_id ) ) continue; // skip, b/c energies will be calculated as part of the two body energies
+
+			Real const ii_neighb_score_multiply_factor = symm_info->score_multiply( iiresid, neighbor_id );
+			if ( ii_neighb_score_multiply_factor == 0 ) continue;
+
+			Residue const & neighbor( pose.residue( neighbor_id ) );
+			uint const symm_clone( symm_info->chi_follows( neighbor_id ) ); // if symm_clone is zero, then neighbor_id is in the ASU
+
+			// if neighbor_id is not in the ASU and it's being packed and it's not theresid, then skip
+			if ( symm_clone != 0 && task.pack_residue( symm_clone ) && symm_clone != theresid ) continue;
+
+			// avoid counting self interactions multiple times by asking iiresid to be theresid
+			if ( symm_clone == theresid && iiresid != theresid ) continue;
 
 			// Residue is not interating with itself
-			if ( symm_info->chi_follows( theresid ) != neighbor_id ) {
+			if ( symm_clone != theresid ) {
+				// then neighbor_id is in the ASU and is not being repacked or it is
+				// not in the ASU and it is not being repacked.
+
 				// evaluate the energy for one rotamer pair interaction and
-				// multiply it with the number of subunits in the system
+				// multiply it by the scale factor between this subunit and the others
 				std::fill( temp_energies.begin(), temp_energies.end(), core::PackerEnergy( 0.0 ) );
-				(*lr_iter)->evaluate_rotamer_background_energies(
-					*this, pose.residue( neighbor_id ), pose, sf,
-					sf.weights(), temp_energies );
-				PackerEnergyMultiply( temp_energies, symm_info->score_multiply_factor() );
+				if ( iiresid != theresid ) {
+					// RETURN TO DEBUGGING HERE!!!
+					RotamerSetOP sym_rotset( orient_rotamer_set_to_symmetric_partner( pose, pose.residue( iiresid ) /*unused*/, iiresid, *this ) );
+					sf.prepare_rotamers_for_packing( pose, *sym_rotset );
+					sf.evaluate_rotamer_background_energies( *sym_rotset, neighbor, pose, temp_energies );
+				} else {
+					sf.evaluate_rotamer_background_energies( *this, neighbor, pose, temp_energies );
+				}
+				PackerEnergyMultiply( temp_energies, ii_neighb_score_multiply_factor );
 				PackerEnergyAdd( energies, temp_energies );
+				// if ( theresid == 238 && temp_energies.size() >= 9 ) { std::cout << "E1 interaction between " << iiresid << " and " << neighbor_id << " " << temp_energies[ 1 ] * ii_neighb_score_multiply_factor << " " << temp_energies[ 9 ] * ii_neighb_score_multiply_factor << std::endl; }
+				//     PackerEnergyAdd( energies, temp_energies );
 			} else {
 				// We have a self interaction. We have to calculate the rotamer-rotamer pair interaction
 				// where both rotamers change at the same time to the same state. We go through all rotamers
 				// and calculated interaction energies with translated copies of itself
-				//Residue const & neighbor( pose.residue( neighbor_id ) );
 				for ( int jj = 1; jj <= nrotamers; ++jj ) {
 					// make a new rotamer set that is going to be translated to the neighbor interation residue
 					conformation::ResidueOP sym_rsd( this->rotamer( jj )->clone() );
 					RotamerSetOP one_rotamer_set = rsf.create_rotamer_set( *sym_rsd );
-					one_rotamer_set->set_resid( theresid );
+					one_rotamer_set->set_resid( theresid ); // we know iiresid == theresid
 					one_rotamer_set->add_rotamer( *sym_rsd );
 					// place rotamer set at neighbor position
 					RotamerSetOP sym_rotset(
-						orient_rotamer_set_to_symmetric_partner( pose, sym_rsd, neighbor_id, one_rotamer_set ) );
+						orient_rotamer_set_to_symmetric_partner( pose, *sym_rsd, neighbor_id, *one_rotamer_set ) );
 					sf.prepare_rotamers_for_packing( pose, *one_rotamer_set );
 					sf.prepare_rotamers_for_packing( pose, *sym_rotset );
+					// make a temporary core::PackerEnergy object with on rotamer in it
 					ObjexxFCL::FArray2D< core::PackerEnergy > temp_energies( 1, 1, 0.0 );
 					// evaluate the energy for this rotamer-rotamer interaction
-					(*lr_iter)->evaluate_rotamer_pair_energies(
-						*one_rotamer_set, *sym_rotset, pose, sf, sf.weights(), temp_energies );
-					// add the energy of this interaction. Mulitply with the number of subunits in
-					// the system
-					energies[ jj ] += temp_energies[ 0 ]*symm_info->score_multiply( theresid, neighbor_id );
+					sf.evaluate_rotamer_pair_energies(
+						*one_rotamer_set, *sym_rotset, pose, temp_energies );
+					// add the energy of this interaction. Mulitply with by the interaction energy scale
+					// between the ASU and the subunit that neighbor_id is on.
+					// if ( theresid == 238 && (jj == 1||jj==9) ) { std::cout << "E1 self interaction " << iiresid << " with " << neighbor_id << "; rot " << jj << ": " << temp_energies[ 0 ]*symm_info->score_multiply( iiresid, neighbor_id ) << std::endl; }
+					energies[ jj ] += temp_energies[ 0 ]*ii_neighb_score_multiply_factor;
 				}
 			}
-		} // (potentially) long-range neighbors of theresid [our resid()]
-	} // long-range energy functions
+		}
+
+		// long-range energy interactions with background
+		// Iterate across the long range energy functions and use the iterators generated
+		// by the LRnergy container object
+		for ( ScoreFunction::LR_2B_MethodIterator
+				lr_iter = sf.long_range_energies_begin(),
+				lr_end  = sf.long_range_energies_end();
+				lr_iter != lr_end; ++lr_iter ) {
+			LREnergyContainerCOP lrec = pose.energies().long_range_container( (*lr_iter)->long_range_type() );
+			if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
+
+			// Potentially O(N) operation leading to O(N^2) behavior
+			for ( ResidueNeighborConstIteratorOP
+					rni = lrec->const_neighbor_iterator_begin( iiresid ),
+					rniend = lrec->const_neighbor_iterator_end( iiresid );
+					(*rni) != (*rniend); ++(*rni) ) {
+				Size const neighbor_id = rni->neighbor_id();
+				debug_assert( neighbor_id != iiresid );
+
+				Real const ii_neighb_score_multiply_factor = symm_info->score_multiply( iiresid, neighbor_id );
+				if ( ii_neighb_score_multiply_factor == 0 ) continue; // skip if we're just going to multiply by zero anyways
+
+				if ( task.pack_residue( neighbor_id ) ) continue; // skip, b/c energies will be calculated as part of the two body energies
+
+				uint const symm_clone( symm_info->chi_follows( neighbor_id ) ); // if symm_clone is zero, then neighbor_id is in the ASU
+				if ( symm_clone != 0 && task.pack_residue( symm_clone ) && symm_clone != theresid ) continue;
+
+				// avoid counting self interactions multiple times by asking iiresid to be theresid
+				if ( symm_clone == theresid && iiresid != theresid ) continue;
+
+				// Residue is not interating with itself
+				if ( symm_info->chi_follows( iiresid ) != neighbor_id ) {
+					// evaluate the energy for one rotamer pair interaction and
+					// multiply it with the number of subunits in the system
+					std::fill( temp_energies.begin(), temp_energies.end(), core::PackerEnergy( 0.0 ) );
+					(*lr_iter)->evaluate_rotamer_background_energies(
+						*this, pose.residue( neighbor_id ), pose, sf,
+						sf.weights(), temp_energies );
+					PackerEnergyMultiply( temp_energies, ii_neighb_score_multiply_factor );
+					PackerEnergyAdd( energies, temp_energies );
+				} else {
+					// We have a self interaction. We have to calculate the rotamer-rotamer pair interaction
+					// where both rotamers change at the same time to the same state. We go through all rotamers
+					// and calculated interaction energies with translated copies of itself
+					//Residue const & neighbor( pose.residue( neighbor_id ) );
+					for ( int jj = 1; jj <= nrotamers; ++jj ) {
+						// make a new rotamer set that is going to be translated to the neighbor interation residue
+						conformation::ResidueOP sym_rsd( this->rotamer( jj )->clone() );
+						RotamerSetOP one_rotamer_set = rsf.create_rotamer_set( *sym_rsd );
+						one_rotamer_set->set_resid( theresid ); // we know iiresid == theresid
+						one_rotamer_set->add_rotamer( *sym_rsd );
+						// place rotamer set at neighbor position
+						RotamerSetOP sym_rotset(
+							orient_rotamer_set_to_symmetric_partner( pose, *sym_rsd, neighbor_id, *one_rotamer_set ) );
+						sf.prepare_rotamers_for_packing( pose, *one_rotamer_set );
+						sf.prepare_rotamers_for_packing( pose, *sym_rotset );
+						ObjexxFCL::FArray2D< core::PackerEnergy > temp_energies( 1, 1, 0.0 );
+						// evaluate the energy for this rotamer-rotamer interaction
+						(*lr_iter)->evaluate_rotamer_pair_energies(
+							*one_rotamer_set, *sym_rotset, pose, sf, sf.weights(), temp_energies );
+						// add the energy of this interaction. Mulitply with the number of subunits in
+						// the system
+						energies[ jj ] += temp_energies[ 0 ]*ii_neighb_score_multiply_factor;
+					}
+				}
+			} // (potentially) long-range neighbors of iiresid [our resid()]
+		} // long-range energy functions
+	} // iiresid
 }
 // @details function for mulitplying core::PackerEnergy objects. Should make a * operator in core::PackerEnergy
 // instead
@@ -262,19 +313,20 @@ SymmetricRotamerSet_::PackerEnergySubtract( utility::vector1< core::PackerEnergy
 RotamerSetOP
 SymmetricRotamerSet_::orient_rotamer_set_to_symmetric_partner(
 	pose::Pose const & pose,
-	conformation::ResidueOP residue_in,
+	conformation::Residue const & /*residue_in*/,
 	int const & sympos,
-	RotamerSetOP rotset_in
+	RotamerSet const & rotset_in
 ) const
 {
 
 	RotamerSetFactory rsf;
-	RotamerSetOP sym_rotamer_set = rsf.create_rotamer_set( *residue_in );
+	//RotamerSetOP sym_rotamer_set = rsf.create_rotamer_set( *residue_in );
+	RotamerSetOP sym_rotamer_set = rsf.create_rotamer_set( pose.residue( sympos ) );
 	for ( Rotamers::const_iterator
-			rot     = rotset_in->begin(),
-			rot_end = rotset_in->end();
+			rot     = rotset_in.begin(),
+			rot_end = rotset_in.end();
 			rot != rot_end; ++rot ) {
-		conformation::Residue target_rsd( *residue_in );
+		conformation::Residue target_rsd( **rot );
 
 		// peptoids have a different orientation function due to the placement of the first side chain atom
 		if ( target_rsd.type().is_peptoid() ) {

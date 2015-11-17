@@ -592,6 +592,7 @@ testinputfiles = [
 	"pack/SymmetricRotamerTrials.u",
 	"pack/dunbrack/1UBQ_repack.pdb",
 	"pack/interaction_graph/resfile",
+	"pack/interaction_graph/fibril.silent",
 	"pack/rotamer_set/test_rotamer_sets.pdb",
 	"pack/rotamer_set/glycerol.pdb",
 	"pack/rotamer_set/GOL.params",

@@ -92,17 +92,19 @@ SymmOnTheFlyNode::set_rotamers(
 		sc_bounding_spheres_[ ii ].second = scoring::compute_sc_radius(   *rotamers_[ ii ], sc_bounding_spheres_[ ii ].first );
 	}
 
-	Size const nsubunits = get_on_the_fly_owner()->symm_info()->subunits();
-	Size const nres_asu = get_on_the_fly_owner()->symm_info()->num_independent_residues();
+	Size const nsubunits = get_on_the_fly_owner()->symm_info().subunits();
+	//Size const nres_asu = get_on_the_fly_owner()->symm_info().num_independent_residues();
 	core::pose::Pose const & pose = get_on_the_fly_owner()->pose();
 	rotamer_representatives_.resize( nsubunits );
-	for ( Size ii = 1; ii <= nsubunits; ++ii ) {
-		state_offset_for_restype_group_[ ii ] = rotamers->get_residue_type_begin( ii ) - 1;
+	for ( int ii = 1; ii <= num_restype_groups_; ++ii ) {
+		state_offset_for_restype_group_[ ii ] = rotamers->get_residue_group_begin( ii ) - 1;
+	}
 
+	for ( Size ii = 1; ii <= nsubunits; ++ii ) {
 		rotamer_representatives_[ ii ].resize( num_res_types_ );
 		for ( int jj = 1; jj <= num_res_types_; ++jj ) {
 			rotamer_representatives_[ ii ][ jj ] = rotamers->rotamer( rotamers->get_residue_type_begin( jj ) )->clone();
-			rotamer_representatives_[ ii ][ jj ]->seqpos( rotamers->resid() + (ii-1)*nres_asu );
+			rotamer_representatives_[ ii ][ jj ]->seqpos( get_on_the_fly_owner()->symm_info().equivalent_residue_on_subunit( ii, rotamers->resid() ));
 			rotamer_representatives_[ ii ][ jj ]->copy_residue_connections_from( pose.residue( rotamer_representatives_[ ii ][ jj ]->seqpos() ) );
 		}
 	}
@@ -220,7 +222,7 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 	using namespace scoring;
 	using namespace scoring::methods;
 
-	Size const asu_index = 1; // OK will it always be the case that the asymmetic unit is the first subunit?  I'm assuming it always will be.
+	Size const asu_index = get_on_the_fly_owner()->asymmetric_unit();
 
 	core::PackerEnergy esum( 0.0 );
 
@@ -229,29 +231,40 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 
 	get_on_the_fly_owner()->note_rpe_calculated();
 
-	Size nsubunits = get_on_the_fly_owner()->symm_info()->subunits();
+	Size nsubunits = get_on_the_fly_owner()->symm_info().subunits();
 	Size this_restype_group = rotamer_set_->get_residue_group_index_for_rotamer( state_this );
 	Size other_restype_group = neighbor.rotamer_set_->get_residue_group_index_for_rotamer( state_other );
 
 	EnergyMap tbody_emap;
 
+	scoring::ScoreTypes const & active_score_types = get_on_the_fly_owner()->active_score_types();
+
+	//std::cout << "SymmOnTheFlyNode::compute_rotamer_pair_energy " << get_node_index() << " " << neighbor.get_node_index() << " " << state_this << " " << state_other << std::endl;
+
 	for ( Size ii = 1; ii <= 2; ++ii ) {
-		bool which_way_is_up = (ii == 1) == (get_node_index() < neighbor.get_node_index());
-		Size ii_restype_group = which_way_is_up ? this_restype_group : other_restype_group;
-		Size jj_restype_group = which_way_is_up ? other_restype_group : this_restype_group;
+
+		bool which_node_is_on_asu = (ii == 1) == (get_node_index() < neighbor.get_node_index());
+		Size ii_restype_group = which_node_is_on_asu ? this_restype_group : other_restype_group;
+		Size jj_restype_group = which_node_is_on_asu ? other_restype_group : this_restype_group;
+
+		// 1 for when the lower node is the one on the ASU, 2 for when the upper node is on the ASU.
+		Size node_on_asu = ( ii == 1 ) == ( get_node_index() < neighbor.get_node_index() ) ? 1 : 2;
 
 		for ( Size jj = 1; jj <= nsubunits; ++jj ) {
 
-			tbody_emap.zero();
+			// bool target = get_node_index() == 1 && neighbor.get_node_index() == 3 && ii == 2 && jj == 5 && state_other == 3;
+			// if ( target ) { std::cout << "Target interaction, state this: " << state_this << " state other: " << state_other << std::endl; }
 
 			/// iijj_score_multiply does double duty:
 			/// 1 ) it indicates whether a pair of amino acids on certain subunits are adjacent
 			/// 2 ) it gives the symmetry multiplication factor for the subunit pair
 			/// It does not, however, indicate what the multiplication factor should be for long-range two body
 			/// interactions if the amino acids are not close enough to qualify for short-range interactionsm
-			unsigned char iijj_score_multiply = spanning_edge.residues_adjacent_for_subunit_pair( ii, jj, ii_restype_group, jj_restype_group );
+			unsigned char iijj_score_multiply = spanning_edge.residues_adjacent_for_subunit_pair( node_on_asu, jj, ii_restype_group, jj_restype_group );
 
 			if ( iijj_score_multiply == 0 && ! spanning_edge.long_range_interactions_exist() ) continue;
+
+			tbody_emap.zero( active_score_types );
 
 			Size this_subunit = ii == 1 ? asu_index : jj;
 			Size other_subunit = ii == 1 ? jj : asu_index;
@@ -259,9 +272,32 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 			core::conformation::Residue const & this_rotamer( get_rotamer( state_this, this_subunit ));
 			core::conformation::Residue const & other_rotamer( neighbor.get_rotamer( state_other, other_subunit ));
 
-			BoundingSphere this_sc_bounding_sphere = sc_bounding_sphere( state_this, this_subunit );
+			//if (  (get_node_index() == 1 && ( state_this == 1||state_this == 9) ) || ( neighbor.get_node_index() == 1 && (state_other == 1 || state_other == 9 ))) {
+			// if ( target ) {
+			// 	get_on_the_fly_owner()->score_function().eval_ci_2b_sc_sc(
+			// 		this_rotamer,
+			// 		other_rotamer,
+			// 		get_on_the_fly_owner()->pose(),
+			// 		tbody_emap );
+			//
+			// 	get_on_the_fly_owner()->score_function().eval_cd_2b_sc_sc(
+			// 		this_rotamer,
+			// 		other_rotamer,
+			// 		get_on_the_fly_owner()->pose(),
+			// 		tbody_emap
+			// 	);
+			//
+			// 	std::cout << "no bounding spheres: " << get_node_index() << " " << neighbor.get_node_index() << " " << state_this << " " << state_other << " ii: " << ii << " jj: " << jj << " " << (int) iijj_score_multiply << " * " << static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) ) << " = " <<  iijj_score_multiply * static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) )<< std::endl;
+			// 	Vector xyz = this_rotamer.xyz(1);
+			// 	std::cout << "this rotamer: " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
+			// 	xyz = other_rotamer.xyz(1);
+			// 	std::cout << "neib rotamer: " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
+			// 	tbody_emap.zero();
+			// }
+
+			BoundingSphere this_sc_bounding_sphere  = sc_bounding_sphere( state_this, this_subunit );
 			BoundingSphere other_sc_bounding_sphere = neighbor.sc_bounding_sphere( state_other, other_subunit );
-			BoundingSphere this_bb_bounding_sphere = bb_bounding_sphere( this_subunit );
+			BoundingSphere this_bb_bounding_sphere  = bb_bounding_sphere( this_subunit );
 			BoundingSphere other_bb_bounding_sphere = neighbor.bb_bounding_sphere( other_subunit );
 
 			// evaluate short-ranged interactions for this pair, if appropriate
@@ -365,11 +401,11 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 					break;
 				}
 
-				if ( false ) {
-					std::cout << get_node_index() << " " << neighbor.get_node_index() << " ii: " << ii << " jj: " << jj << " " << (int) iijj_score_multiply << " * " << static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) ) << " = " <<  iijj_score_multiply * static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) )<< std::endl;
-					std::cout << "this cbeta: " << this_rotamer.xyz( "CB" ).x() << " " << this_rotamer.xyz( "CB" ).y() << " " << this_rotamer.xyz( "CB" ).z();
-					std::cout << "; other cbeta: " << other_rotamer.xyz( "CB" ).x() << " " << other_rotamer.xyz( "CB" ).y() << " " << other_rotamer.xyz( "CB" ).z() << std::endl;;
-				}
+				// if (  (get_node_index() == 1 && ( state_this == 1||state_this == 9) ) || ( neighbor.get_node_index() == 1 && (state_other == 1 || state_other == 9 ))) {
+				// 	std::cout << get_node_index() << " " << neighbor.get_node_index() << " " << state_this << " " << state_other << " ii: " << ii << " jj: " << jj << " " << (int) iijj_score_multiply << " * " << static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) ) << " = " <<  iijj_score_multiply * static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) )<< std::endl;
+				// 	//std::cout << "this cbeta: " << this_rotamer.xyz( "CB" ).x() << " " << this_rotamer.xyz( "CB" ).y() << " " << this_rotamer.xyz( "CB" ).z();
+				// 	//std::cout << "; other cbeta: " << other_rotamer.xyz( "CB" ).x() << " " << other_rotamer.xyz( "CB" ).y() << " " << other_rotamer.xyz( "CB" ).z() << std::endl;;
+				// }
 				esum += iijj_score_multiply * static_cast< core::PackerEnergy >
 					( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) );
 			}
@@ -379,7 +415,7 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 				EnergyMap emap;
 				Size lr_iijj_score_multiply( iijj_score_multiply );
 				if ( lr_iijj_score_multiply == 0 ) {
-					lr_iijj_score_multiply = Size(get_on_the_fly_owner()->symm_info()->score_multiply(
+					lr_iijj_score_multiply = Size(get_on_the_fly_owner()->symm_info().score_multiply(
 						this_rotamer.seqpos(), other_rotamer.seqpos() ) );
 				}
 				if ( lr_iijj_score_multiply != 0 ) {
@@ -401,19 +437,23 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 	}
 
 
-	if ( get_adjacent_otf_node( edge_making_energy_request )->get_rotamer( state_other, 1 ).aa() == chemical::aa_pro ) {
+	if ( get_adjacent_otf_node( edge_making_energy_request )->get_asu_rotamer( state_other ).aa() == chemical::aa_pro ) {
 		esum += get_incident_otf_edge( edge_making_energy_request )->
 			get_proline_correction_for_node( get_node_index(), state_this );
-		//std::cout << "adding proline correction 1: " << get_incident_otf_edge( edge_making_energy_request )->
-		// get_proline_correction_for_node( get_node_index(), state_this ) << std::endl;
+		// if ( get_node_index() == 1 && state_this == 1 ) {
+		// 	std::cout << "adding proline correction 1: " << get_incident_otf_edge( edge_making_energy_request )->
+		// 		get_proline_correction_for_node( get_node_index(), state_this ) << std::endl;
+		// }
 	}
-	if ( get_rotamer( state_this, 1 ).aa() == chemical::aa_pro ) {
+	if ( get_asu_rotamer( state_this ).aa() == chemical::aa_pro ) {
 		esum += get_incident_otf_edge( edge_making_energy_request )->
 			get_proline_correction_for_node( get_index_of_adjacent_node( edge_making_energy_request ),
 			state_other
 		);
-		//std::cout << "adding proline correction 2: " <<  get_incident_otf_edge( edge_making_energy_request )->
-		//  get_proline_correction_for_node( get_index_of_adjacent_node( edge_making_energy_request ), state_other ) << std::endl;
+		// if ( get_node_index() == 1 && state_this == 1 ) {
+		// 	std::cout << "adding proline correction 2: " <<  get_incident_otf_edge( edge_making_energy_request )->
+		// 		get_proline_correction_for_node( get_index_of_adjacent_node( edge_making_energy_request ), state_other ) << std::endl;
+		// }
 	}
 
 	return get_incident_edge( edge_making_energy_request )->edge_weight() * esum;
@@ -426,8 +466,7 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 conformation::Residue const &
 SymmOnTheFlyNode::get_rotamer( int state, int subunit ) const
 {
-	/// ASSUMPTION: the asymmetric unit is subunit #1
-	if ( subunit == 1 ) {
+	if ( (Size) subunit == get_on_the_fly_owner()->asymmetric_unit() ) {
 		return *rotamers_[ state ];
 	}
 
@@ -457,6 +496,15 @@ SymmOnTheFlyNode::get_rotamer( int state, int subunit ) const
 	// orbital rotation would happen here, too, I think
 
 	return rotamer;
+}
+
+/// @brief Returns a reference to the rotamer object in the requested subunit.  This reference
+/// is valid only until the next call to get_rotamer, and which point, the coordinates inside
+/// the requested rotamer may change.
+conformation::Residue const &
+SymmOnTheFlyNode::get_asu_rotamer( int state ) const
+{
+	return *rotamers_[ state ];
 }
 
 /// @brief Returns a bounding sphere for the sidechain of a given state on a particular subunit.
@@ -490,7 +538,7 @@ SymmOnTheFlyEdge::SymmOnTheFlyEdge(
 	restypegroup_adjacency_(
 	get_otf_owner()->get_num_restype_groups(),
 	get_otf_owner()->get_num_restype_groups(),
-	get_otf_owner()->symm_info()->subunits(),
+	get_otf_owner()->symm_info().subunits(),
 	2,
 	(unsigned char) 0  // initial value -- set everything to "false"
 	),
@@ -515,6 +563,8 @@ SymmOnTheFlyEdge::SymmOnTheFlyEdge(
 	} else {
 		eval_types_[ 1 ] = eval_types_[ 0 ] = whole_whole;
 	}
+	//std::cout << "Edge " << get_first_node_ind() << " " << get_second_node_ind() << " eval types [ " <<
+	//	eval_types_[ 0 ] << ", " << eval_types_[ 1 ] << " ] " << std::endl;
 }
 
 
@@ -553,18 +603,20 @@ SymmOnTheFlyEdge::count_dynamic_memory() const
 
 void
 SymmOnTheFlyEdge::set_residues_adjacent_for_subunit_pair(
-	int asu_node_index,
+	int asu_node_index, // that is, the the node that's in the ASU the first node or the second node? (should be 1 or 2)
 	int other_node_subunit
 )
 {
-	if ( asu_node_index == 2 && other_node_subunit == 1 ) return;
+	//bool target_edge = false; // ( get_first_node_ind() == 1 && get_second_node_ind() == 3 );
 
-	//std::cout << "SymmOnTheFlyEdge " << get_first_node_ind() << " " << get_second_node_ind() << " set_residues_adjacent_for_subunit_pair " << asu_node_index << " " << other_node_subunit << std::endl;
+	if ( asu_node_index == 2 && (Size) other_node_subunit == get_otf_owner()->asymmetric_unit() ) return;
 
-	int const asu_index = 1; // ASSUMPTION, the asymmetric unit is unit 1!
-	int const nres_asu = get_otf_owner()->symm_info()->num_independent_residues();
+	//if ( target_edge ) { std::cout << "SymmOnTheFlyEdge " << get_first_node_ind() << " " << get_second_node_ind() << " set_residues_adjacent_for_subunit_pair " << asu_node_index << " " << other_node_subunit << std::endl; }
+
 	Size const score_multiply =
-		Size(get_otf_owner()->symm_info()->score_multiply( 1, (other_node_subunit-1)*nres_asu + 1 ));
+		Size( get_otf_owner()->symm_info().score_multiply(
+		get_otf_owner()->symm_info().last_independent_residue(),
+		get_otf_owner()->symm_info().equivalent_residue_on_subunit( other_node_subunit, get_otf_owner()->symm_info().last_independent_residue() )));
 	if ( score_multiply == 0 ) return;
 
 	// OK: now iterate across the rotamer representatives for this pair and figure out their cbeta distances
@@ -576,15 +628,15 @@ SymmOnTheFlyEdge::set_residues_adjacent_for_subunit_pair(
 	Real const sfxn_reach = get_otf_owner()->score_function().max_atomic_interaction_cutoff();
 	for ( int ii = 1; ii <= asu_node->get_num_restype_groups(); ++ii ) {
 		int iistate = asu_node->get_state_offset_for_restype_group( ii ) + 1;
-		core::conformation::Residue const & iires = asu_node->get_rotamer( iistate, asu_index );
+		core::conformation::Residue const & iires = asu_node->get_asu_rotamer( iistate );
 		for ( int jj = 1; jj <= other_node->get_num_restype_groups(); ++jj ) {
 			int jjstate = other_node->get_state_offset_for_restype_group( jj ) + 1;
 			core::conformation::Residue const & jjres = other_node->get_rotamer( jjstate, other_node_subunit );
 			Real ii_jj_radii_sum = iires.nbr_radius() + jjres.nbr_radius();
 			Real d2 = iires.xyz( iires.nbr_atom() ).distance_squared( jjres.xyz( jjres.nbr_atom() ));
-			//std::cout << "ii: " << ii << " " << iires.name() << " jj: " << jj << " " << jjres.name() << " d2: " << d2 << " sfxn_reach: " << sfxn_reach << " ii_jj_radii_sum: " << ii_jj_radii_sum << ", squared: " << (sfxn_reach + ii_jj_radii_sum )*(sfxn_reach + ii_jj_radii_sum ) << std::endl;
+			// if ( target_edge ) { std::cout << "ii: " << ii << " " << iires.name() << " jj: " << jj << " " << jjres.name() << " d2: " << d2 << " sfxn_reach: " << sfxn_reach << " ii_jj_radii_sum: " << ii_jj_radii_sum << ", squared: " << (sfxn_reach + ii_jj_radii_sum )*(sfxn_reach + ii_jj_radii_sum ) << std::endl; }
 			if ( d2 < (sfxn_reach + ii_jj_radii_sum )*(sfxn_reach + ii_jj_radii_sum ) ) {
-				//std::cout << "declared neighbors: " << get_otf_owner()->symm_info()->score_multiply( 1, (other_node_subunit-1)*nres_asu + 1 ) << std::endl;
+				//if ( target_edge ) { std::cout << "declared neighbors: " << score_multiply << std::endl; }
 				restypegroup_adjacency_( jj, ii, other_node_subunit, asu_node_index ) = score_multiply;
 			}
 		}
@@ -658,6 +710,7 @@ SymmOnTheFlyInteractionGraph::set_score_function( ScoreFunction const & sfxn )
 {
 	score_function_ = sfxn.clone();
 	if ( pose_ ) ( *score_function_)(*pose_); // rescore the pose with the input score function
+	active_score_types_ = sfxn.get_nonzero_weighted_scoretypes();
 }
 
 void
@@ -678,13 +731,14 @@ SymmOnTheFlyInteractionGraph::set_pose( pose::Pose const & pose )
 	Size const asu_size = symm_info_->num_independent_residues();
 	debug_assert( nsubunits > 0 );
 	symmetric_transforms_.resize( nsubunits );
-	symmetric_transforms_[1].set_identity();
 
 	// 1. find a residue with at least three atoms
 	Size orientation_residue = 0;
 	for ( Size ii = 1; ii <= asu_size; ++ii ) {
-		if ( pose.residue( ii ).natoms() >= 3 ) {
-			orientation_residue = ii;
+		Size ii_follows = symm_info_->bb_follows( ii );
+		Size ii_asu_residue = ii_follows == 0 ? ii : ii_follows;
+		if ( pose.residue( ii_asu_residue ).natoms() >= 3 ) {
+			orientation_residue = ii_asu_residue;
 			break;
 		}
 	}
@@ -694,25 +748,30 @@ SymmOnTheFlyInteractionGraph::set_pose( pose::Pose const & pose )
 		utility_exit_with_message( "Failed to find a residue in the pose with at least three atoms" );
 	}
 
-	HTReal frame1(
+	HTReal asu_frame(
 		pose.xyz( AtomID( 1, orientation_residue )),
 		pose.xyz( AtomID( 2, orientation_residue )),
 		pose.xyz( AtomID( 3, orientation_residue )) );
-	HTReal invframe1 = frame1.inverse();
-	for ( Size ii = 2; ii <= nsubunits; ++ii ) {
-		Size iiresidue = orientation_residue + (ii-1)*asu_size;
+	HTReal inv_asu_frame = asu_frame.inverse();
+	for ( Size ii = 1; ii <= nsubunits; ++ii ) {
+		Size iiresidue = symm_info_->equivalent_residue_on_subunit( ii, orientation_residue );
+		if ( iiresidue == orientation_residue ) {
+			symmetric_transforms_[ ii ].set_identity();
+			asymmetric_unit_ = ii;
+			continue;
+		}
 		HTReal iiframe(
 			pose.xyz( AtomID( 1, iiresidue )),
 			pose.xyz( AtomID( 2, iiresidue )),
 			pose.xyz( AtomID( 3, iiresidue )) );
-		symmetric_transforms_[ ii ] = iiframe * invframe1;
+		symmetric_transforms_[ ii ] = iiframe * inv_asu_frame;
 	}
 
 }
 
-conformation::symmetry::SymmetryInfoCOP
+conformation::symmetry::SymmetryInfo const &
 SymmOnTheFlyInteractionGraph::symm_info() const {
-	return symm_info_;
+	return *symm_info_;
 }
 
 

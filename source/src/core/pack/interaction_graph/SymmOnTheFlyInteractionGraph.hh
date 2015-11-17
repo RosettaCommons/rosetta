@@ -34,6 +34,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreType.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
@@ -168,6 +169,10 @@ public:
 	/// the requested rotamer may change.
 	conformation::Residue const &
 	get_rotamer( int state, int subunit ) const;
+
+	/// @brief Returns a reference to the rotamer object in the asymmetric unit.
+	conformation::Residue const &
+	get_asu_rotamer( int state ) const;
 
 	/// @brief Returns a bounding sphere for the sidechain of a given state on a particular subunit.
 	BoundingSphere
@@ -403,7 +408,7 @@ public:
 		return *pose_;
 	}
 
-	conformation::symmetry::SymmetryInfoCOP
+	conformation::symmetry::SymmetryInfo const &
 	symm_info() const;
 
 	/// @brief debugging only -- modify the pose during simulated annealing, if you're so inclined
@@ -422,6 +427,14 @@ public:
 		debug_assert( score_function_ );
 		return *score_function_;
 	}
+
+	inline
+	scoring::ScoreTypes const &
+	active_score_types() const {
+		return active_score_types_;
+	}
+
+
 
 	/*
 	// for using ResidueWeightMap
@@ -521,6 +534,9 @@ public:
 	HTReal const &
 	symmetric_transform( Size dst_subunit ) const { return symmetric_transforms_[ dst_subunit ]; }
 
+	inline
+	Size asymmetric_unit() const { return asymmetric_unit_; }
+
 public:
 
 	inline
@@ -539,11 +555,13 @@ public:
 
 private:
 	int num_restype_groups_;
+	Size asymmetric_unit_;
 	mutable Size num_rpe_calcs_;
 
 	conformation::symmetry::SymmetryInfoCOP symm_info_;
 	utility::vector1< HTReal > symmetric_transforms_;
 	scoring::ScoreFunctionOP score_function_;
+	scoring::ScoreTypes active_score_types_;
 	pose::PoseOP pose_;
 
 	// Additional per-residue (or per-residue-per-aa) weights

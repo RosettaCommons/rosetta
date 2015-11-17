@@ -22,6 +22,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionInfo.hh>
@@ -75,7 +76,7 @@ create_packer_graph(
 	//GraphOP g = new Graph( pose.total_residue() );
 	GraphOP g( new Graph( total_nodes ) );
 
-	if ( ! task->design_any() && ! pose.conformation().structure_moved() ) {
+	if ( ! task->design_any() && ! pose.conformation().structure_moved() /* && ! core::pose::symmetry::is_symmetric( pose ) */ ) {
 		//if ( false ) {
 		g->copy_connectivity( pose.energies().energy_graph() );
 	} else {
@@ -98,7 +99,18 @@ create_packer_graph(
 		// create point graph and detect neighbors
 		core::conformation::PointGraphOP point_graph( new core::conformation::PointGraph );
 		core::conformation::residue_point_graph_from_conformation( pose.conformation(), *point_graph );
-		core::conformation::find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( point_graph, atomic_itxn_dist + 2 * max_radius );
+		if ( symm_info ) {
+			core::conformation::find_neighbors_restricted<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( point_graph, atomic_itxn_dist + 2 * max_radius, symm_info->independent_residues() );
+		} else {
+			core::conformation::find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( point_graph, atomic_itxn_dist + 2 * max_radius );
+		}
+
+		if ( pose.total_residue() > 468 ) {
+			Vector v316 = point_graph->get_vertex( 316 ).data().xyz();
+			Vector v468 = point_graph->get_vertex( 316 ).data().xyz();
+			std::cout << "point graph data: " << v316.x() << ", " << v316.y() << ", " << v316.z() << " and "
+								<< v468.x() << ", " << v468.y() << ", " << v468.z() << " sqrdist: " << v316.distance_squared( v468 ) << std::endl;
+		}
 
 		// add edges
 		//for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -119,6 +131,10 @@ create_packer_graph(
 					jj_asu = symm_info->bb_follows(jj);
 				}
 				Distance const jj_rad = residue_radii[ jj_asu ];
+
+				if ( ii == 316 && jj == 468 ) {
+					std::cout << "Packer neighbor graph creation; 316 and 468; " << iter->data().dsq() << std::endl;
+				}
 
 				if ( jj_rad + ii_itxn_rad > 0 &&
 						iter->data().dsq() < ( jj_rad + ii_itxn_rad )*( jj_rad + ii_itxn_rad ) ) {

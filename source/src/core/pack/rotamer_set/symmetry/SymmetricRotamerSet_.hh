@@ -85,9 +85,9 @@ public:
 	RotamerSetOP
 	orient_rotamer_set_to_symmetric_partner(
 		pose::Pose const & pose,
-		conformation::ResidueOP residue_in,
+		conformation::Residue const & residue_in,
 		int const & sympos,
-		RotamerSetOP rotset_in
+		RotamerSet const & rotset_in
 	) const;
 
 };

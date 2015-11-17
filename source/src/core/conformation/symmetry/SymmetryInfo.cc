@@ -1685,6 +1685,22 @@ SymmetryInfo::subunit_index( Size const seqpos ) const {
 	}
 }
 
+Size
+SymmetryInfo::equivalent_residue_on_subunit( Size subunit_index, Size residue_id ) const
+{
+	if ( contiguous_monomers_ ) {
+		return ( subunit_index - 1 ) * num_independent_residues() + ( (residue_id-1) % nres_monomer_ + 1 ) ;
+	} else {
+		Size basepos = bb_follows_.find( residue_id )->second;
+		basepos = basepos == 0 ? residue_id : basepos;
+		if ( subunit_index == 1 ) {
+			return basepos;
+		} else {
+			return bb_clones_.find( basepos )->second[ subunit_index - 1 ];
+		}
+	}
+}
+
 std::string
 SymmetryInfo::get_jump_name(Size jnum) const {
 	if ( 0 == jnum2dofname_.count(jnum) ) utility_exit_with_message("bad jump num");

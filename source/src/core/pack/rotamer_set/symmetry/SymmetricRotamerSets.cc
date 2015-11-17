@@ -346,7 +346,6 @@ SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-
 	/// Mark all-amino-acid nodes as worthy of distinguishing between bb & sc
 	for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
 		RotamerSetCOP ii_rotset = rotamer_set_for_moltenresidue( ii );
@@ -362,27 +361,32 @@ SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 		}
 	}
 
+
 	for ( Size ii = 1; ii <= nmoltenres(); ++ii ) {
 		Size ii_resid = moltenres_2_resid( ii );
+		//std::cout << "ii_resid: " << ii_resid << std::endl;
 		for ( graph::Graph::EdgeListConstIter
-				uli = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
-				ulie = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end(); uli != ulie; ++uli ) {
-			Size jj_resid = (*uli)->get_second_node_ind();
+				li = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_begin(),
+				lie = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_end(); li != lie; ++li ) {
+			Size jj_resid = (*li)->get_other_ind( ii_resid );
 			Size jj = resid_2_moltenres( jj_resid );
+			Size jj_resid_master = symm_info->chi_follows( jj_resid ) == 0 ? jj_resid : symm_info->chi_follows( jj_resid );
+			Size jj_master = jj == 0 ? resid_2_moltenres( jj_resid_master ) : jj;
 
-			// skip jj if this is a background residue.  This is true
+			// skip jj if it is a background residue.  This is true
 			// if jj == 0 (i.e. not a moltenresidue) and if jj_resid
 			// is in the asymmetric unit (i.e. chi_follows(jj_resid) == 0 )
 			// If jj is not in the asymmetric unit, and its master is
 			// also not a molten residue
 			if ( jj == 0 && symm_info->chi_follows( jj_resid ) == 0 ) { /*std::cout << "jj==0 && symm_info->chi_follows( jj_resid ) == 0" << std::endl;*/ continue; }
-			Size jj_resid_master = symm_info->chi_follows( jj_resid ) == 0 ? jj_resid : symm_info->chi_follows( jj_resid );
-			Size jj_master = jj == 0 ? resid_2_moltenres( jj_resid_master ) : jj;
 			// ok, jj_resid's master is also not a molten residue
 			if ( jj_master == 0 ) { /*std::cout << "jj_master == 0" << std::endl;*/ continue; }
 			// or if jj_master == ii, then we're looking at a residue interacting with its symmetric clone, which
 			// in the context of packing, is qualified as a one-body interaction,
 			if ( jj_master == ii ) { /*std::cout << "jj_master == ii" << std::endl;*/ continue; }
+
+			// If jj is in the asymmetric unit, then only consider it if it's an upper neighbor of ii
+			if ( symm_info->chi_follows( jj_resid ) == 0 && jj_resid < ii_resid ) continue;
 
 			// OK: ii_resid interacts with jj_resid and their interaction
 			// needs to be counted as part of the interaction graph.
@@ -405,11 +409,9 @@ SymmetricRotamerSets::prepare_symm_otf_interaction_graph(
 			// now let's inform the graph that, for this ii_resid / jj_resid pair that
 			// an interaction exists.
 
-			debug_assert( ii_resid <= symm_info->num_independent_residues() || jj_resid <= symm_info->num_independent_residues() );
-
 			ig->set_residues_adjacent_for_subunit_pair_for_edge( ii_master, jj_master,
 				swap ? 2 : 1,
-				symm_info->subunit_index( (*uli)->get_second_node_ind() ));
+				symm_info->subunit_index( jj_resid ));
 		}
 	}
 
@@ -529,12 +531,23 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 		Size const ii_resid = moltenres_2_resid( ii );
 		if ( ! otfig->distinguish_backbone_and_sidechain_for_node( ii ) ) continue;
 		for ( graph::Graph::EdgeListConstIter
-				uli  = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
-				ulie = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end();
-				uli != ulie; ++uli ) {
-			Size jj_resid = (*uli)->get_second_node_ind();
+				li  = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_begin(),
+				lie = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_end();
+				li != lie; ++li ) {
+			Size jj_resid = (*li)->get_other_ind( ii_resid );
+			Size const iijj_scale = Size(symm_info->score_multiply( ii_resid, jj_resid ));
+			//std::cout << "pro_corr: ii_resid " << ii_resid << " jj_resid " << jj_resid << " scale: " << iijj_scale << std::endl;
+			if ( iijj_scale == 0 ) continue;
+
 			Size jj = resid_2_moltenres( jj_resid ); //pretend we're iterating over jj >= ii
+
+			// if jj_resid isn't a molten residue, but it is part of the asymmetric unit, pass;
+			// jj_resid represents a background residue.
 			if ( jj == 0 && symm_info->chi_follows( jj_resid ) == 0 ) continue;
+
+			// for residue pairs in the ASU, only consider pairs where ii < jj
+			if ( symm_info->chi_follows( jj_resid ) == 0 && jj < ii ) continue;
+
 			Size jj_resid_master = symm_info->chi_follows( jj_resid ) == 0 ? jj_resid : symm_info->chi_follows( jj_resid );
 			Size jj_master = jj == 0 ? resid_2_moltenres( jj_resid_master ) : jj;
 			if ( jj_master == 0 ) continue;
@@ -542,12 +555,13 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 			if ( ! otfig->distinguish_backbone_and_sidechain_for_node( jj_master ) ) continue;
 
 			Size ii_master( ii ), ii_resid_master( ii_resid );
-			Size ii_subunit = 1; Size jj_subunit = (jj_resid-1) / symm_info->num_independent_residues() + 1;
+			Size ii_subunit = symm_info->subunit_index( ii_resid ); Size jj_subunit = symm_info->subunit_index( jj_resid );
+			//std::cout << "proline correction; " << ii << " (" << ii_subunit << "), " << jj << " (" << jj_subunit << ") from residues " << ii_resid << " " << jj_resid << " with scale " << iijj_scale << std::endl;
 			//bool swap( false );
 			if ( jj_resid_master < ii_resid_master ) {
 				Size temp;
 				temp = ii_master; ii_master = jj_master; jj_master = temp;
-				temp = ii_resid_master; ii_resid_master =jj_resid_master; jj_resid_master = temp;
+				temp = ii_resid_master; ii_resid_master = jj_resid_master; jj_resid_master = temp;
 				temp = ii_subunit; ii_subunit = jj_subunit; jj_subunit = temp;
 				//swap = true;  // set but never used ~Labonte
 			}
@@ -557,15 +571,14 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 			RotamerSetCOP ii_rotset = rotamer_set_for_moltenresidue( ii_master );
 			RotamerSetCOP jj_rotset = rotamer_set_for_moltenresidue( jj_master );
 
-			Size const iijj_scale = Size(symm_info->score_multiply( ii_resid, jj_resid ));
-			if ( iijj_scale == 0 ) continue;
-
 			//std::cout << "SymmetricRotamerSets::compute_proline_corrections " << (*uli)->get_first_node_ind() << " " << (*uli)->get_second_node_ind() << " " << ii_master << " " << jj_master << " " << ii_subunit << " " << jj_subunit << std::endl;
 
 			SymmOnTheFlyNode * iinode = otfig->get_on_the_fly_node( ii_master );
 			SymmOnTheFlyNode * jjnode = otfig->get_on_the_fly_node( jj_master );
 
 			for ( Size kk = 1; kk <= ii_rotset->num_rotamers(); ++kk ) {
+				//bool target_interaction = ( ii_master == 1 && ( kk == 1 || kk == 9 ) );
+
 				core::PackerEnergy bb_bbnonproE( iijj_scale ), bb_bbproE( iijj_scale );
 				core::PackerEnergy sc_npbb_energy( iijj_scale ), sc_probb_energy( iijj_scale );
 				//calc sc_npbb_energy;
@@ -582,13 +595,14 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 				} else {
 					bb_bbproE = sc_probb_energy = 0;
 				}
-				//std::cout << "  procorr: " << ii_master << " " << jj_master << " 1 kk: " << kk << " " << bb_bbnonproE << " " << sc_npbb_energy << " " << bb_bbproE << " " << sc_probb_energy << " add1b: " << sc_npbb_energy +  0.5 * bb_bbnonproE << std::endl;
+				//if ( target_interaction ) { std::cout << "  procorr: " << ii_master << " " << jj_master << " 1 kk: " << kk << " " << bb_bbnonproE << " " << sc_npbb_energy << " " << bb_bbproE << " " << sc_probb_energy << " add1b: " << sc_npbb_energy +  0.5 * bb_bbnonproE << std::endl; }
 				otfig->add_to_one_body_energy_for_node_state( ii_master, kk, sc_npbb_energy +  0.5 * bb_bbnonproE  );
 				otfig->add_ProCorrection_values_for_edge( ii_master, jj_master, ii_master, kk,
 					bb_bbnonproE, bb_bbproE, sc_npbb_energy, sc_probb_energy );
 			}
 
 			for ( Size kk = 1; kk <= jj_rotset->num_rotamers(); ++kk ) {
+				// bool target_interaction = ( ii_master == 1 );
 				core::PackerEnergy bb_bbnonproE( iijj_scale ), bb_bbproE( iijj_scale );
 				core::PackerEnergy sc_npbb_energy( iijj_scale ), sc_probb_energy( iijj_scale );
 				//calc sc_npbb_energy;
@@ -605,7 +619,7 @@ SymmetricRotamerSets::compute_proline_correction_energies_for_otf_graph(
 				} else {
 					bb_bbproE = sc_probb_energy = 0;
 				}
-				//std::cout << "  procorr: " << ii_master << " " << jj_master << " 2 kk: " << kk << " " << bb_bbnonproE << " " << sc_npbb_energy << " " << bb_bbproE << " " << sc_probb_energy << " add1b: " << sc_npbb_energy +  0.5 * bb_bbnonproE << std::endl;
+				//if ( target_interaction ) { std::cout << "  procorr: " << ii_master << " " << jj_master << " 2 kk: " << kk << " " << bb_bbnonproE << " " << sc_npbb_energy << " " << bb_bbproE << " " << sc_probb_energy << " add1b: " << sc_npbb_energy +  0.5 * bb_bbnonproE << std::endl; }
 				otfig->add_to_one_body_energy_for_node_state( jj_master, kk, sc_npbb_energy + 0.5 * bb_bbnonproE );
 
 				otfig->add_ProCorrection_values_for_edge( ii_master, jj_master, jj_master, kk,

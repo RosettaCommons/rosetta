@@ -142,7 +142,13 @@ public:
 	bool torsion_changes_move_other_monomers() const { return torsion_changes_move_other_monomers_; }
 	void torsion_changes_move_other_monomers( bool const setting ) { torsion_changes_move_other_monomers_ = setting;}
 
+	/// @brief What subunit does a particular residue come from?
 	Size subunit_index( Size const seqpos ) const;
+
+	/// @brief What is the equivalent residue on a particular subunit for the given residue? The
+	/// logic here mimics the logic in subunit index in terms of subunit numbering.
+	Size equivalent_residue_on_subunit( Size subunit_index, Size residue_id ) const;
+
 
 	Size score_multiply_factor() const;
 
