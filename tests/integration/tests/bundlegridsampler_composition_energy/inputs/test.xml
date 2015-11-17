@@ -1,7 +1,7 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
 		<tala weights="talaris2014.wts" >
-			Reweight scoretype=aa_composition weight=1.0 />
+			<Reweight scoretype=aa_composition weight=1.0 />
 			<Reweight scoretype=envsmooth weight=2.0 />
 		</tala>
 	</SCOREFXNS>
