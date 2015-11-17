@@ -57,6 +57,7 @@
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/types.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -339,6 +340,10 @@ LocalRelax::parse_my_tag(
 
 void
 LocalRelax::apply( core::pose::Pose & pose) {
+	if ( !pose.is_fullatom() ) {
+		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
+	}
+
 	core::Size nres = pose.total_residue();
 	core::Size nres_asu = nres;
 
