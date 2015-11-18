@@ -7,8 +7,8 @@ execfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../projects.s
 KNOWN_PROJECTS = PROJECTS_SETTINGS["projects"]["src"]
 KNOWN_TESTS =PROJECTS_SETTINGS["projects"]["test"]
 
-def list_project_files(path_to_mini, project_name, look_for_extension = 'all'):
-	path_to_project = path_to_mini + 'src/'
+def list_project_files(path_to_source_dir, project_name, look_for_extension = 'all'):
+	path_to_project = path_to_source_dir + 'src/'
 	settings_file_name = path_to_project + project_name + '.src.settings'
 
 	# allow user to override 'normal' .settings file with ,settings.my file.
@@ -67,8 +67,8 @@ def list_project_files(path_to_mini, project_name, look_for_extension = 'all'):
 	#return (path_to_project + project_name_nohash + '/', project_files)
 	return (path_to_project + '/', project_files)
 
-def list_test_files(path_to_mini, test_name):
-	path_to_test = path_to_mini + 'test/'
+def list_test_files(path_to_source_dir, test_name):
+	path_to_test = path_to_source_dir + 'test/'
 	settings_file_name = path_to_test + test_name + '.test.settings'
 	settings_dict = {}
 	execfile(settings_file_name, settings_dict)
@@ -128,11 +128,11 @@ def update_test_list(projects, test_path):
 	out = open('build/test_libraries.cmake', 'w')
 	try:
 		out.write('SET( TEST_LIBRARIES ' + ' '.join( projects) + ')\n')
-		out.write('SET( SRCDIR ../' + test_path + ' )\n' )
+		out.write('SET( SRCDIR ' + test_path + ' )\n' )
 	finally:
 		out.close()
 
-def test_main(path_to_mini, argv, project_test_callback = None):
+def test_main(path_to_source_dir, argv, project_test_callback = None):
 
 	tests =  [ "all" ]
 
@@ -145,12 +145,12 @@ def test_main(path_to_mini, argv, project_test_callback = None):
 			print 'unknown test: ' + test
 			sys.exit(-1)
 
-		test_path, test_files, test_inputs = list_test_files(path_to_mini, test)
-		project_test_callback(test, path_to_mini, "build/", test_files, test_inputs)
+		test_path, test_files, test_inputs = list_test_files(path_to_source_dir, test)
+		project_test_callback(test, path_to_source_dir, "build/", test_files, test_inputs)
 
-	update_test_list(tests, path_to_mini + "test/")
+	update_test_list(tests, path_to_source_dir + "test/")
 
-def project_main(path_to_mini, argv, project_callback):
+def project_main(path_to_source_dir, argv, project_callback):
 	if len(argv) < 2:
 		print 'usage: %s [project]...' % argv[0]
 		print '  known projects:'
@@ -174,7 +174,7 @@ def project_main(path_to_mini, argv, project_callback):
 			print 'unknown project: ' + project
 			sys.exit(-1)
 
-		project_path, project_files = list_project_files(path_to_mini, project, look_for_extension)
+		project_path, project_files = list_project_files(path_to_source_dir, project, look_for_extension)
 		project_callback(project, project_path, project_files)
 
 

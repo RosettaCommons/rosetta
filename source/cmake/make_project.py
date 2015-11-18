@@ -6,8 +6,9 @@ import os, string, sys, os.path
 import timeit
 import build_util
 
-PATH_TO_ROOT = '../../'
-MINI_DIR = (os.path.abspath(sys.argv[0])).split("/")[-3]
+# Note that CMake encodes absolute path information in the compile,
+# so we don't actually lose anything by using the absolute path
+PATH_TO_SOURCE_DIR = os.path.dirname( os.path.dirname( os.path.abspath(sys.argv[0]) ) ) + "/"
 
 def update_version():
 	cmd = 'cd ..; python version.py'
@@ -62,7 +63,7 @@ def project_callback(project, project_path, project_files):
 	else:
 		cmake_files = ''
 		for dir, files in project_files:
-			cmake_files += '\n\t' + string.join(['../' + project_path + dir + file for file in files], '\n\t')
+			cmake_files += '\n\t' + string.join([project_path + dir + file for file in files], '\n\t')
 
 		#print 'making project files for ' + project + ' from ' + project_path
 
@@ -113,7 +114,7 @@ update_version()
 update_options()
 update_ResidueType_enum_files()
 
-build_util.project_main(PATH_TO_ROOT + MINI_DIR + "/", sys.argv, project_callback)
+build_util.project_main(PATH_TO_SOURCE_DIR, sys.argv, project_callback)
 
-build_util.test_main(PATH_TO_ROOT + MINI_DIR + "/", sys.argv, project_test_callback)
+build_util.test_main(PATH_TO_SOURCE_DIR, sys.argv, project_test_callback)
 
