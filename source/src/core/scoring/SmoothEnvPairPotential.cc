@@ -27,6 +27,12 @@
 #include <basic/prof.hh>
 #include <utility/io/izstream.hh>
 
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+#include <core/pose/symmetry/util.hh>
+
+
 #include <utility/vector1.hh>
 
 
@@ -280,6 +286,11 @@ SmoothEnvPairPotential::compute_centroid_environment(
 ) const {
 	// basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
+	}
+
 	SigmoidWeightedCenList<Real> & cenlist( nonconst_cenlist_from_pose( pose ));
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
@@ -312,6 +323,21 @@ SmoothEnvPairPotential::compute_centroid_environment(
 			}
 		}
 
+		// symetrize cenlist (if necessary)
+		if (symminfo) {
+			for ( Size i = 1; i <= nres; ++i ) {
+				conformation::Residue const & rsd1 ( pose.residue(i) );
+				if ( !rsd1.is_protein() ) continue;
+				if ( !symminfo->bb_is_independent( i ) ) continue; // probably unnecessary...
+				utility::vector1< core::Size > bbclones = symminfo->bb_clones( i );
+				for ( Size j = 1; j <= bbclones.size(); ++j ) {
+					cenlist.fcen6( bbclones[j] ) = cenlist.fcen6(i);
+					cenlist.fcen10( bbclones[j] ) = cenlist.fcen10(i);
+					cenlist.fcen12( bbclones[j] ) = cenlist.fcen12(i);
+				}
+			}
+		}
+
 		cenlist.calculated() = true;
 	}
 }
@@ -322,7 +348,12 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 ) const {
 	// basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
-	nonconst_cenlist_from_pose( pose );
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
+	}
+
+	nonconst_cenlist_from_pose( pose ); // must call 1st (?)
 	SigmoidWeightedCenList< numeric::xyzVector< Real > > & dcenlist( nonconst_dcenlist_from_pose( pose ));
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
@@ -334,6 +365,8 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 		for ( Size i = 1; i <= nres; ++i ) {
 			conformation::Residue const & rsd1 ( pose.residue(i) );
 			if ( !rsd1.is_protein() ) continue;
+			if ( symminfo && !symminfo->bb_is_independent( i ) ) continue;
+
 			for ( graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
@@ -349,6 +382,23 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 
 				if ( cendist <= cen_dist_cutoff_12_pad ) {
 					fill_smooth_dcenlist( dcenlist, i, j, cenvec );
+				}
+			}
+		}
+
+		// symetrize cenlist (if necessary)
+		if (symminfo) {
+			core::conformation::symmetry::SymmetricConformation const &symmconf =
+				dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
+			for ( Size i = 1; i <= nres; ++i ) {
+				conformation::Residue const & rsd1 ( pose.residue(i) );
+				if ( !rsd1.is_protein() ) continue;
+				if ( !symminfo->bb_is_independent( i ) ) continue; // probably unnecessary...
+				utility::vector1< core::Size > bbclones = symminfo->bb_clones( i );
+				for ( Size j = 1; j <= bbclones.size(); ++j ) {
+					dcenlist.fcen6( bbclones[j] ) = symmconf.apply_transformation_norecompute( dcenlist.fcen6(i), bbclones[j], i, true );
+					dcenlist.fcen10( bbclones[j] ) = symmconf.apply_transformation_norecompute( dcenlist.fcen10(i), bbclones[j], i, true );
+					dcenlist.fcen12( bbclones[j] ) = symmconf.apply_transformation_norecompute( dcenlist.fcen12(i), bbclones[j], i, true );
 				}
 			}
 		}
@@ -382,6 +432,12 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_scores(
 
 	if ( !rsd.is_protein() ) return;
 
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetryInfoCOP symminfo
+			= dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
+		if ( !symminfo->bb_is_independent( rsd.seqpos() ) ) return;
+	}
+
 	SigmoidWeightedCenList<Real> const & cenlist( cenlist_from_pose( pose ));
 	int const position ( rsd.seqpos() );
 
@@ -408,6 +464,12 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 	d_env_score = numeric::xyzVector<Real>(0.0,0.0,0.0);
 	d_cb_score6  = numeric::xyzVector<Real>(0.0,0.0,0.0);
 	d_cb_score12 = numeric::xyzVector<Real>(0.0,0.0,0.0);
+
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetryInfoCOP symminfo
+			= dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
+		if ( !symminfo->bb_is_independent( rsd.seqpos() ) ) return;
+	}
 
 	if ( !rsd.is_protein() ) return;
 

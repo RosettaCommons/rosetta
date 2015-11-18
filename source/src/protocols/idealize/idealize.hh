@@ -44,7 +44,8 @@ basic_idealize(
 	utility::vector1< core::Size > pos_list, // local copy
 	core::scoring::ScoreFunction const & scorefxn,
 	bool const fast,
-	bool const chainbreaks = false // to maintain previous behavior (abrelax and ?  may use idealizer to close chainbreaks)
+	bool const chainbreaks = false, // to maintain previous behavior (abrelax and ?  may use idealizer to close chainbreaks)
+	bool const cis_omega = false //fpd fix non-proline cis-omegas
 );
 
 } // idealize

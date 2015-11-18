@@ -261,7 +261,7 @@ IdealizeMover::apply( pose::Pose & pose ) {
 
 
 	if ( !(option[ basic::options::OptionKeys::run::dry_run ]() ) ) {
-		basic_idealize( pose, pos_list_, *scorefxn, fast_, chainbreaks_ );
+		basic_idealize( pose, pos_list_, *scorefxn, fast_, chainbreaks_, cis_omega_ );
 	}
 
 	// remove that virtual residue now!

@@ -37,12 +37,14 @@ OPT_KEY( Real, atom_pair_constraint_weight )
 OPT_KEY( Real, coordinate_constraint_weight )
 OPT_KEY( Boolean, fast )
 OPT_KEY( Boolean, chainbreaks )
+OPT_KEY( Boolean, cis_omega )
 
 void register_options() {
 	NEW_OPT( atom_pair_constraint_weight, "atompair constraint weight", 0.0 );
 	NEW_OPT( coordinate_constraint_weight, "coordinate constraint weight", 0.0 );
 	NEW_OPT( fast, "fast protocol", false );
 	NEW_OPT( chainbreaks, "keep chainbreaks", false );
+	NEW_OPT( cis_omega, "fix non-pro cis omegas", false );
 }
 
 int main( int argc, char * argv [] ) {
@@ -70,6 +72,7 @@ int main( int argc, char * argv [] ) {
 		}
 		idealizer->fast( option[ fast ]() );
 		idealizer->chainbreaks( option[ chainbreaks ]() );
+		idealizer->cis_omega( option[ cis_omega ]() );
 
 		MoverOP mover (idealizer);
 

@@ -43,6 +43,7 @@ public:
 		Mover("IdealizeMover"),
 		atom_pair_constraint_weight_( 0.0 ),
 		coordinate_constraint_weight_( 0.01 ),
+		cis_omega_( false ),
 		fast_( false ),
 		chainbreaks_( false ),
 		report_CA_rmsd_(true),
@@ -90,6 +91,12 @@ public:
 	}
 
 	IdealizeMover &
+	cis_omega( bool const setting ){
+		cis_omega_ = setting;
+		return *this;
+	}
+
+	IdealizeMover &
 	report_CA_rmsd( bool const setting )
 	{
 		report_CA_rmsd_ = setting;
@@ -126,6 +133,7 @@ private:
 	Real atom_pair_constraint_weight_;
 	Real coordinate_constraint_weight_;
 	utility::vector1< core::Size > ignore_residues_in_csts_; // dflt empty; residues that don't carry constraints, e.g., residues that were inserted without closing loops etc.
+	bool cis_omega_;
 	bool fast_;
 	bool chainbreaks_;
 	bool report_CA_rmsd_;

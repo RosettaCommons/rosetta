@@ -30,6 +30,12 @@
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+#include <core/pose/symmetry/util.hh>
+
+
 // Utility headers
 
 // C++
@@ -86,6 +92,14 @@ SmoothEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) c
 
 void
 SmoothEnvEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
+	// symmetry-specific code
+	// since it is a whole-structure energy, special treatment is needed to make sure this is computed correctly
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation &symmconf =
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
+		symmconf.recalculate_transforms(); // this is needed by deriv calcs
+	}
+
 	// compute interpolated number of neighbors at various distance cutoffs
 	pose.update_residue_neighbors();
 	potential_.compute_centroid_environment( pose );
@@ -131,7 +145,6 @@ SmoothEnvEnergy::eval_residue_derivatives(
 ) const {
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
-
 
 	Real weight_env = weights[ cen_env_smooth ];
 	Real weight_cbeta = weights[ cbeta_smooth ];

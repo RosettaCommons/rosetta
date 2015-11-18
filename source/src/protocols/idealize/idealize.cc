@@ -134,7 +134,8 @@ basic_idealize(
 	utility::vector1< Size > pos_list, // local copy
 	scoring::ScoreFunction const & scorefxn,
 	bool const fast,
-	bool const chainbreaks
+	bool const chainbreaks,
+	bool const cis_omega
 ) {
 	using namespace optimization;
 	using namespace optimization::symmetry;
@@ -231,6 +232,14 @@ basic_idealize(
 		conformation::idealize_position( seqpos, pose.conformation() );
 		//pose.dump_pdb( "post_idl_"+right_string_of(seqpos,4,'0')+".pdb" );
 		idealized[ seqpos ] = true;
+
+		if (cis_omega && pose.residue(seqpos).is_protein() && pose.residue(seqpos).aa() != chemical::aa_pro) {
+			core::Real omega_i = fmod( pose.omega(seqpos), 360.0); if (omega_i <0) omega_i+=360;
+			if (omega_i<90 || omega_i>270)  {
+				TR << "Fix cis omega at position " << seqpos << std::endl;
+				pose.set_omega(seqpos, 180.0);
+			}
+		}
 
 		// setup the window of positions to minimize, also records flexible positions for the final minimize
 		utility::vector1< Size > window;

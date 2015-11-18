@@ -159,10 +159,12 @@ OPT_1GRP_KEY(Real, crystdock, K)
 OPT_1GRP_KEY(Integer, crystdock, dock_ncycle)
 OPT_1GRP_KEY(Real, crystdock, dock_vdw_cut)
 OPT_1GRP_KEY(Integer, crystdock, ncyc)
+OPT_1GRP_KEY(Integer, crystdock, nmut)
 OPT_1GRP_KEY(IntegerVector, crystdock, fixedres)
 OPT_1GRP_KEY(IntegerVector, crystdock, hits_to_dock)
 OPT_1GRP_KEY(StringVector, crystdock, adjust_ref_weights)
 OPT_1GRP_KEY(Boolean, crystdock, nofilt)
+OPT_1GRP_KEY(Boolean, crystdock, nocys)
 
 OPT_1GRP_KEY(String, crystdock, hits_in)
 OPT_1GRP_KEY(String, crystdock, hits_out)
@@ -433,6 +435,7 @@ public:
 		UNSATS_SOFT_CUT_ = 2.5;
 		UNSATS_CUT_ = 1.1;
 		SC_CUT_ = 0.4;
+		MUT_CUT_ = option[crystdock::nmut]();
 		K_ = option[crystdock::K]();
 		NCYC_ = option[crystdock::ncyc]();
 		NOFILT_ = option[crystdock::nofilt]();
@@ -495,9 +498,9 @@ public:
 			}
 		}
 
-		if ( filter &&  ( (nWmut+nFmut+nYmut > WFY_MUT_CUT_) || (nMmut>M_MUT_CUT_) ) ) {   // HARD CODED FILTER
+		if (filter &&  ( (nmut > MUT_CUT_) || (nWmut+nFmut+nYmut > WFY_MUT_CUT_) || (nMmut>M_MUT_CUT_) ) ) {   // HARD CODED FILTER
 			TR << "Fail res identity!" << std::endl;
-			TR << "nmuts W/F/Y/M " << nWmut << "/" << nFmut << "/" << nYmut << "/" << nMmut << std::endl;
+			TR << "nmuts */W/F/Y/M " << nmut << "/" << nWmut << "/" << nFmut << "/" << nYmut << "/" << nMmut << std::endl;
 			pass = false;
 			return;
 		}
@@ -601,6 +604,7 @@ public:
 		utility::vector1<bool> allowed_aas( num_canonical_aas, true );
 		allowed_aas[ aa_pro ] = false;
 		allowed_aas[ aa_gly ] = false;
+		if (option[crystdock::nocys]()) { allowed_aas[ aa_cys ] = false; }
 
 		core::pack::task::PackerTaskOP designtask = core::pack::task::TaskFactory::create_packer_task( pose );
 
@@ -1172,7 +1176,7 @@ private:
 	// filters
 	core::Real DDG_CUT_,WEAKE_CUT_;
 	core::Real UNSATS_SOFT_CUT_,UNSATS_CUT_,SC_CUT_;
-	core::Size WFY_MUT_CUT_,M_MUT_CUT_;
+	core::Size WFY_MUT_CUT_,M_MUT_CUT_, MUT_CUT_;
 
 	// interface definition
 	core::Real K_;
