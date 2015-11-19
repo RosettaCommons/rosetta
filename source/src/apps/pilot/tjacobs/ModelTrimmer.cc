@@ -106,6 +106,7 @@ main( int argc, char * argv [] ) {
 		std::string new_model_filename = option[sewing::new_model_file_name];
 
 		comments << "#This model file contains models from parent file " << model_filename << std::endl;
+		comments << "#Any model with L segment at terminal segment has been removed" << std::endl;
 
 		std::string remove_any_dssp = option[sewing::remove_any_dssp];
 		for ( core::Size i=0; i<remove_any_dssp.length(); ++i ) {
@@ -132,11 +133,11 @@ main( int argc, char * argv [] ) {
 		}
 
 		comments << "#Any model with helical (H) segment(s) fewer than " << option[sewing::min_helix_length]
-			<< " residues or greater than " << option[sewing::max_helix_length] << " residues have been removed" << std::endl;
+			<< " residues or greater than " << option[sewing::max_helix_length] << " residues has been removed" << std::endl;
 		comments << "#Any model with strand (E) segment(s) fewer than " << option[sewing::min_strand_length]
-			<< " residues or greater than " << option[sewing::max_strand_length] << " residues have been removed" << std::endl;
+			<< " residues or greater than " << option[sewing::max_strand_length] << " residues has been removed" << std::endl;
 		comments << "#Any model with loop (L) segment(s) fewer than " << option[sewing::min_loop_length]
-			<< " residues or greater than " << option[sewing::max_loop_length] << " residues have been removed" << std::endl;
+			<< " residues or greater than " << option[sewing::max_loop_length] << " residues has been removed" << std::endl;
 
 		if ( option[sewing::leave_models_by_ss_num] ) {
 			comments << "#Only models with " << option[sewing::model_should_have_this_num_of_ss] << " secondary structures remained " << std::endl;
@@ -205,6 +206,11 @@ main( int argc, char * argv [] ) {
 				}
 			}
 
+			if (!erase) { // since 2015/11/13 this Trimming always runs
+				if ( (model.segments_[1].dssp_ == 'L') || (model.segments_[model.segments_.size()].dssp_ == 'L') ) {
+					erase=true;
+				}
+			}
 
 			if ( (!erase) && (option[sewing::model_should_have_at_least_one_E_at_terminal_segment]) ) {
 				if ( (model.segments_[1].dssp_ != 'E') && (model.segments_[model.segments_.size()].dssp_ != 'E') ) {
@@ -254,10 +260,12 @@ main( int argc, char * argv [] ) {
 					}
 					erase=true;
 				}
-			}//for(core::Size i=1; (!erase) && i<=model.segments_.size(); ++i) {
+			}
 
 			//If a given model lacks appropriate DSSP in its two terminal secondary structures, remove it
-			if ( (!erase) && option[sewing::leave_models_with_E_terminal_ss] ) {
+			if ( (!erase) &&
+				(	( option[sewing::leave_models_with_E_terminal_ss]	)
+				||	( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands_only]	) ) ) {
 				if ( model.segments_[1].dssp_ != 'E' || model.segments_[model.segments_.size()].dssp_ != 'E' ) {
 					erase=true;
 				}
@@ -270,7 +278,7 @@ main( int argc, char * argv [] ) {
 				if ( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands_only] ) {
 					std::string model_is_H_bonded_by_terminal_strands = see_whether_model_is_H_bonded_by_terminal_strands(model, "antiparallel");
 					//TR << "model_is_H_bonded_by_terminal_strands: " << model_is_H_bonded_by_terminal_strands << std::endl;
-					if ( model_is_H_bonded_by_terminal_strands!="antiparallel" ) {
+					if ( model_is_H_bonded_by_terminal_strands != "antiparallel" ) {
 						erase=true;
 					}
 				}
@@ -278,7 +286,7 @@ main( int argc, char * argv [] ) {
 				if ( option[sewing::leave_parallel_way_H_bonded_models_by_terminal_strands_only] ) {
 					std::string model_is_H_bonded_by_terminal_strands = see_whether_model_is_H_bonded_by_terminal_strands(model, "parallel");
 					//TR << "model_is_H_bonded_by_terminal_strands: " << model_is_H_bonded_by_terminal_strands << std::endl;
-					if ( model_is_H_bonded_by_terminal_strands!="parallel" ) {
+					if ( model_is_H_bonded_by_terminal_strands != "parallel" ) {
 						erase=true;
 					}
 				}
@@ -308,10 +316,10 @@ main( int argc, char * argv [] ) {
 		}//while(it != it_end) {
 		write_model_file(comments.str(), models, new_model_filename);
 	} //try
-catch ( utility::excn::EXCN_Base& excn ) {
-	std::cerr << "Exception : " << std::endl;
-	excn.show( std::cerr );
-	return -1;
-}
+	catch ( utility::excn::EXCN_Base& excn ) {
+		std::cerr << "Exception : " << std::endl;
+		excn.show( std::cerr );
+		return -1;
+	}
 	return 0;
 }

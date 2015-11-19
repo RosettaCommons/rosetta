@@ -129,12 +129,14 @@ main( int argc, char * argv [] ) {
 
 				if ( hash_tag_only_terminal_Es ) {
 					hash_between = "hash_tag_only_terminal_Es";
-					comments << "#Only terminal_Es are hash_bool_true to be merged with other nodes" << std::endl;
-					// (not possible due to integration test) model_three_ss_filename = model_filename + "_three_ss_will_be_hashed_only_between_Es";
+					comments << "#Only terminal Es are hash bool true to be merged with other nodes later (but as of 2015/11/14, later model assembly has 'ERROR: alignment_scores.size() == 1'" << std::endl;
+					// model_three_ss_filename = model_filename + "_three_ss_will_be_hashed_only_between_Es";
+					//(not possible due to integration test)
 				} else {
 					hash_between = "hash_between_any_HEs";
-					comments << "# hash between any_HEs are bool_true to be merged with other nodes" << std::endl;
-					// (not possible due to integration test) model_three_ss_filename = model_filename + "_three_ss_will_be_hashed_between_HEs";
+					comments << "# hash between any HEs are bool true to be merged with other nodes" << std::endl;
+					// model_three_ss_filename = model_filename + "_three_ss_will_be_hashed_between_any_HEs";
+					//(not possible due to integration test)
 				}
 
 				if ( !option[ sewing::assembly_type ].user() ) {
@@ -180,7 +182,7 @@ main( int argc, char * argv [] ) {
 			} else {
 				hash_between = "hash_between_any_HEs";
 				comments << "# hash_between_any_HEs_are_bool_true_to_be_merged_with_other_node " << std::endl;
-				model_five_ss_filename = model_filename + "_three_or_five_ss_will_be_hashed_between_HEs";
+				model_five_ss_filename = model_filename + "_three_or_five_ss_will_be_hashed_between_any_HEs";
 			}
 
 			std::map< int, Model > models = get_5_ss_models_from_db(hash_between);

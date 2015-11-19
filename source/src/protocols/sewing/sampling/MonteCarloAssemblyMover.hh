@@ -8,7 +8,7 @@
 
 /// @file MonteCarloAssemblyMover.hh
 ///
-/// @brief
+/// @brief Assembly substructures by MonteCarlo way
 /// @author Tim Jacobs
 
 
@@ -120,6 +120,7 @@ private:
 	core::Real min_assembly_score_;
 
 	bool use_best_assembly_score_;
+	bool remove_cut_off_assembly_;
 
 	core::Real add_probability_;
 	core::Real delete_probability_;

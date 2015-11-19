@@ -67,10 +67,12 @@ SegmentLengthRequirement::violates(
 ) const {
 	core::Size length = segment.residues_.size();
 	if ( length < min_length_ ) {
-		if ( TR.Debug.visible() ) { TR.Debug << length << " Violation! Too Short!" << std::endl; }
+		//if ( TR.Debug.visible() ) { TR.Debug << length << " Violation! Too Short!" << std::endl; }
+		if ( TR.Debug.visible() ) { TR.Debug << " Violation! " << length << " is shorter than " << min_length_ << std::endl; }
 		return true;
 	} else if ( length > max_length_ ) {
-		if ( TR.Debug.visible() ) { TR.Debug << length << " Violation! Too Long!" << std::endl; }
+		//if ( TR.Debug.visible() ) { TR.Debug << length << " Violation! Too Long!" << std::endl; }
+		if ( TR.Debug.visible() ) { TR.Debug << " Violation! " << length << " is larger than " << max_length_ << std::endl; }
 		return true;
 	}
 	return false;

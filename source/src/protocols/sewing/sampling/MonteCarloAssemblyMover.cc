@@ -9,8 +9,9 @@
 
 /// @file MonteCarloAssemblyMover.cc
 ///
-/// @brief
-/// @author Tim Jacobs
+/// @brief Assembly substructures by MonteCarlo way
+/// @author Tim Jacobs, Frank Teets
+/// @modified Doonam Kim
 
 // Unit Headers
 #include <protocols/sewing/sampling/MonteCarloAssemblyMover.hh>
@@ -408,21 +409,49 @@ MonteCarloAssemblyMover::boltzman(
 			append_movie_frame(working_assembly, cur_cycle);
 		}
 
+		bool check_completeness_of_assembly = false;
+
 		if ( use_best_assembly_score_ ) { // default behavior in Tim's era
 			//If this is our best completed assembly, then save it
 			if ( requirement_set_->satisfies(working_assembly) && score < best_score ) {
 				if ( TR.Debug.visible() ) {
 					TR.Debug << "SAVING BEST" << std::endl;
 				}
-				best_complete_assembly = working_assembly->clone();
-				best_score = score;
+				check_completeness_of_assembly = true;
+
 			}
 		} else {
 			if ( requirement_set_->satisfies(working_assembly) && score < min_assembly_score_ ) {
+				check_completeness_of_assembly = true;
+			}
+		}
+		if (check_completeness_of_assembly){
+			bool this_pose_is_complete = true;
+			if (remove_cut_off_assembly_)	{// remove incomplete (cut-off) assembly (mostly comes from inherent error in pdb file), in the future, removing incomplete model at model extration step will be pursued
+				core::pose::Pose to_be_checked_pose = get_fullatom_pose(working_assembly);
+
+				for ( Size ii=1; ii < to_be_checked_pose.total_residue(); ii++ ) {
+					core::Real distance = to_be_checked_pose.residue(ii).atom("CA").xyz().distance(to_be_checked_pose.residue(ii+1).atom("CA").xyz());
+					if ( distance > 5.0 ) {
+						this_pose_is_complete = false;
+						if ( TR.Debug.visible() ) {
+							TR.Debug << "Don't use this assembly, you will throw it away anyway unless you rebuild missing region!" << std::endl;
+						}
+						break;
+					}
+				}
+			}
+			if (((remove_cut_off_assembly_) && (this_pose_is_complete)) || (!remove_cut_off_assembly_)){
 				if ( TR.Debug.visible() ) {
 					TR.Debug << "SAVING current backbone since (assembly_score: " << score << ") < (min_assembly_score: " << min_assembly_score_ << ")" << std::endl;
 				}
-				best_complete_assembly = working_assembly->clone();
+				if ( use_best_assembly_score_ ) { // default behavior in Tim's era
+					best_complete_assembly = working_assembly->clone();
+					best_score = score;
+				}
+				else {
+					best_complete_assembly = working_assembly->clone();
+				}
 			}
 		}
 
@@ -468,13 +497,16 @@ MonteCarloAssemblyMover::parse_my_tag(
 	if ( tag->hasOption("max_temperature") ) {
 		max_temperature_ = tag->getOption<core::Real>("max_temperature");
 	}
-	if ( tag->hasOption("min_assembly_score") ) {
-		min_assembly_score_ = tag->getOption<core::Real>("min_assembly_score"); // for Doonam's a/b design, -2.0 is recommended
-	}
 	if ( tag->hasOption("use_best_assembly_score") ) {
 		use_best_assembly_score_ = tag->getOption<bool>("use_best_assembly_score");
 	}
+	if ( tag->hasOption("min_assembly_score") ) {
+		min_assembly_score_ = tag->getOption<core::Real>("min_assembly_score"); // for Doonam's a/b design, -2.0 is recommended
+	}
 
+	if ( tag->hasOption("remove_cut_off_assembly") ) {
+		remove_cut_off_assembly_ = tag->getOption<bool>("remove_cut_off_assembly");
+	}
 }
 
 } //sewing
