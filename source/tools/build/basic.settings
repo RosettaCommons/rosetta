@@ -144,13 +144,13 @@ settings = {
                     "std=c99",
                     "isystem external/boost_1_55_0/",
                     "isystem external/include/",
-                    "isystem external/dbio/"
+                    "isystem external/dbio/",
                 ],
                 "cxx" : [
                     "std=c++98",
                     "isystem external/boost_1_55_0/",
                     "isystem external/include/",
-                    "isystem external/dbio/"
+                    "isystem external/dbio/",
                 ],
                 "compile" : [
                     "pipe",

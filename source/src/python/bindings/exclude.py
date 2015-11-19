@@ -65,13 +65,17 @@ BannedFiles = [
     'basic/options/keys', 'utility/exit.hh',
     'numeric/xyzVector.hh',
 
+    'numeric/PCA.hh', 'numeric/linear_algebra/GeneralizedEigenSolver.hh', 'protocols/forge/remodel/RemodelGlobalFrame.hh', 'protocols/forge/remodel/RemodelLoopMover.hh',
+    'protocols/simple_filters/RepeatParameterFilter.hh',
+    # ^^^ direct Eigen includes
+
     #'basic/Tracer.hh',
     'core/scoring/etable/BaseMembEtableEnergy.hh',  # abandoned?
     'core/scoring/etable/CoarseEtableEnergyCreator.hh',  # not in scons (.hh only)
     'core/scoring/memb_etable/BaseMembEtableEnergy.hh', # abandoned?
     'core/scoring/rna/RNA_FA_Stack.hh', # not in scons (.hh only)
     'core/scoring/methods/GaussianOverlapEnergyCreator.hh', # not in scons
-    
+
     'core/scoring/fiber_diffraction/FiberDiffractionEnergyGpuCreator.hh',
     'core/scoring/fiber_diffraction/FiberDiffractionEnergyGpu.hh',
     'core/scoring/fiber_diffraction/FiberDiffractionKernelGpu.hh',

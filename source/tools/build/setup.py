@@ -187,7 +187,7 @@ combinatorically unmanageable.
         possible += [ ", ".join((options.cxx, options.os, extra)) ]
         # ("cxx", "arch", "extra")
         possible += [ ", ".join((options.cxx, options.arch, extra)) ]
-        # ("cxx", "cxx_ver", "extra") 
+        # ("cxx", "cxx_ver", "extra")
         possible += [ ", ".join((options.cxx, options.cxx_ver, extra)) ]
 
 

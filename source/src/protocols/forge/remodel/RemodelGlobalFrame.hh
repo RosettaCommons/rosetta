@@ -131,4 +131,3 @@ public: // accessors
 } // protocols
 
 #endif /* INCLUDED_protocols_forge_remodel_RemodelGlobalFrame_HH */
-
