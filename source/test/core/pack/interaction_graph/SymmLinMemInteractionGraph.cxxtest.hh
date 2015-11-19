@@ -321,7 +321,7 @@ public:
 		using namespace core::chemical;
 		using namespace core::conformation::symmetry;
 		using namespace core::graph;
- 		using namespace core::pack;
+		using namespace core::pack;
 		using namespace core::pack::interaction_graph;
 		using namespace core::pack::rotamer_set;
 		using namespace core::pack::task;
@@ -460,9 +460,9 @@ public:
 								Size kkmoltenresid = kk-10;
 								core::conformation::Residue const & kkres = symlinmem_ig->get_on_the_fly_node( kkmoltenresid )->get_rotamer( kk == ii ? jj : 1, 1 );
 								for ( core::graph::Node::EdgeListConstIter
-												eiter = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_begin(),
-												eiter_end = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_end();
-											eiter != eiter_end; ++eiter ) {
+										eiter = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_begin(),
+										eiter_end = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_end();
+										eiter != eiter_end; ++eiter ) {
 									EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*eiter);
 									Size const other_node_ind = ( eedge->get_other_ind( kk ) - 1 ) % 32 + 1;
 									if ( other_node_ind == kk ) continue;
@@ -505,9 +505,9 @@ public:
 							Size kkmoltenresid = kk-10;
 							core::conformation::Residue const & kkres = symlinmem_ig->get_on_the_fly_node( kkmoltenresid )->get_rotamer( kk == ii ? jj : 1, 1 );
 							for ( core::graph::Node::EdgeListConstIter
-											eiter = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_begin(),
-											eiter_end = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_end();
-										eiter != eiter_end; ++eiter ) {
+									eiter = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_begin(),
+									eiter_end = pose.energies().energy_graph().get_node(kk)->const_upper_edge_list_end();
+									eiter != eiter_end; ++eiter ) {
 								EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*eiter);
 								Size const other_node_ind = ( eedge->get_other_ind( kk ) - 1 ) % 32 + 1;
 								if ( other_node_ind == kk ) continue;
@@ -623,10 +623,10 @@ public:
 					TS_ASSERT( ! packer_neighbor_graph->get_edge_exists( ii, jj ) );
 				}
 				// if ( (ii-1) % nres_asu == 78 && (jj-1) % nres_asu == 72 ) {
-				// 	std::cout << "dist " << ii << " " << jj << " " << dis << " (" << dis*dis << ") cut: " << dis_cut << " (" << dis_cut*dis_cut << ")" << std::endl;
-				// 	std::cout << " ii radius: " << pose.residue(ii).name() << " " << pose.residue(ii).nbr_radius();
-				// 	std::cout << " jj radius: " << pose.residue(jj).name() << " " << pose.residue(jj).nbr_radius();
-				// 	std::cout << " sfxn cutoff: " << sfxn->max_atomic_interaction_cutoff() << std::endl;
+				//  std::cout << "dist " << ii << " " << jj << " " << dis << " (" << dis*dis << ") cut: " << dis_cut << " (" << dis_cut*dis_cut << ")" << std::endl;
+				//  std::cout << " ii radius: " << pose.residue(ii).name() << " " << pose.residue(ii).nbr_radius();
+				//  std::cout << " jj radius: " << pose.residue(jj).name() << " " << pose.residue(jj).nbr_radius();
+				//  std::cout << " sfxn cutoff: " << sfxn->max_atomic_interaction_cutoff() << std::endl;
 				// }
 			}
 		}
@@ -634,39 +634,39 @@ public:
 
 		// Size res79_inASU = 79 + 3*nres_asu;
 		// for ( Node::EdgeListConstIter
-		// 		iter = packer_neighbor_graph->get_node( res79_inASU )->const_edge_list_begin(),
-		// 		iter_end = packer_neighbor_graph->get_node( res79_inASU )->const_edge_list_end();
-		// 		iter != iter_end; ++iter ) {
-		// 	Size other = (*iter)->get_other_ind( res79_inASU );
-		// 	if ( (other-1) % nres_asu+1 == 73 ) {
-		// 		std::cout << "Edge between 79 and 73 in packer neighbor graph: " << res79_inASU << " " << other << std::endl;
-		// 	}
+		//   iter = packer_neighbor_graph->get_node( res79_inASU )->const_edge_list_begin(),
+		//   iter_end = packer_neighbor_graph->get_node( res79_inASU )->const_edge_list_end();
+		//   iter != iter_end; ++iter ) {
+		//  Size other = (*iter)->get_other_ind( res79_inASU );
+		//  if ( (other-1) % nres_asu+1 == 73 ) {
+		//   std::cout << "Edge between 79 and 73 in packer neighbor graph: " << res79_inASU << " " << other << std::endl;
+		//  }
 		// }
 		// for ( core::Size ii = 1; ii <= 7; ++ii ) {
-		// 	Size ii_73 = 73 + ( ii-1 ) * nres_asu;
-		// 	core::conformation::Residue const & r79 = pose.residue( res79_inASU );
-		// 	core::conformation::Residue const & r73 = pose.residue( ii_73 );
-		// 	std::cout << "res " << res79_inASU << " vs res " << ii_73 << " on subunit " << ii << " sqrdist: "
-		// 						<< r79.xyz( r79.nbr_atom() ).distance_squared( r73.xyz( r73.nbr_atom() ) ) << std::endl;
+		//  Size ii_73 = 73 + ( ii-1 ) * nres_asu;
+		//  core::conformation::Residue const & r79 = pose.residue( res79_inASU );
+		//  core::conformation::Residue const & r73 = pose.residue( ii_73 );
+		//  std::cout << "res " << res79_inASU << " vs res " << ii_73 << " on subunit " << ii << " sqrdist: "
+		//       << r79.xyz( r79.nbr_atom() ).distance_squared( r73.xyz( r73.nbr_atom() ) ) << std::endl;
 		// }
 		//
 		// Size res73_inASU = 73 + 3*nres_asu;
 		// for ( Node::EdgeListConstIter
-		// 		iter = packer_neighbor_graph->get_node( res73_inASU )->const_edge_list_begin(),
-		// 		iter_end = packer_neighbor_graph->get_node( res73_inASU )->const_edge_list_end();
-		// 		iter != iter_end; ++iter ) {
-		// 	Size other = (*iter)->get_other_ind( res73_inASU );
-		// 	if ( (other-1) % nres_asu+1 == 79 ) {
-		// 		std::cout << "Edge between 73 and 79 in packer neighbor graph: " << res73_inASU << " " << other << std::endl;
-		// 	}
+		//   iter = packer_neighbor_graph->get_node( res73_inASU )->const_edge_list_begin(),
+		//   iter_end = packer_neighbor_graph->get_node( res73_inASU )->const_edge_list_end();
+		//   iter != iter_end; ++iter ) {
+		//  Size other = (*iter)->get_other_ind( res73_inASU );
+		//  if ( (other-1) % nres_asu+1 == 79 ) {
+		//   std::cout << "Edge between 73 and 79 in packer neighbor graph: " << res73_inASU << " " << other << std::endl;
+		//  }
 		// }
 		// for ( core::Size ii = 1; ii <= 7; ++ii ) {
-		// 	Size ii_79 = 79 + ( ii-1 ) * nres_asu;
-		// 	core::conformation::Residue const & r73 = pose.residue( res73_inASU );
-		// 	core::conformation::Residue const & r79 = pose.residue( ii_79 );
+		//  Size ii_79 = 79 + ( ii-1 ) * nres_asu;
+		//  core::conformation::Residue const & r73 = pose.residue( res73_inASU );
+		//  core::conformation::Residue const & r79 = pose.residue( ii_79 );
 		//
-		// 	std::cout << "res " << res73_inASU << " vs res " << ii_79 << " on subunit " << ii << " sqrdist: "
-		// 						<< r79.xyz( r79.nbr_atom() ).distance_squared( r73.xyz( r73.nbr_atom() ) ) << std::endl;
+		//  std::cout << "res " << res73_inASU << " vs res " << ii_79 << " on subunit " << ii << " sqrdist: "
+		//       << r79.xyz( r79.nbr_atom() ).distance_squared( r73.xyz( r73.nbr_atom() ) ) << std::endl;
 		// }
 
 		core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets( new core::pack::rotamer_set::symmetry::SymmetricRotamerSets() );
@@ -714,7 +714,7 @@ public:
 		}
 		// Real ref_score = (*sfxn)( pose );
 
- 		//Size ii = 1;
+		//Size ii = 1;
 		//Size jj = 1;
 		//
 		//symlinmem_ig->consider_substitution( ii, jj, otf_deltaE, otf_prevnode_energy );
@@ -727,50 +727,50 @@ public:
 		//(*sfxn)(pose);
 		//
 		//for ( Size kk = 1; kk <= 7; ++kk ) {
-		//	Size kkresid = (rotsets->moltenres_2_resid( ii )-1) % nres_asu + 1 + (kk-1)*nres_asu;
-		//	core::conformation::Residue const & kkres( pose.residue( kkresid ) );
-		//	for ( core::graph::Node::EdgeListConstIter
-		//					eiter = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_begin(),
-		//					eiter_end = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_end();
-		//				eiter != eiter_end; ++eiter ) {
-		//		EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*eiter);
-		//		// Size const other_node_ind = ( eedge->get_other_ind( kkresid ) - 1 ) % nres_asu + 1;
+		// Size kkresid = (rotsets->moltenres_2_resid( ii )-1) % nres_asu + 1 + (kk-1)*nres_asu;
+		// core::conformation::Residue const & kkres( pose.residue( kkresid ) );
+		// for ( core::graph::Node::EdgeListConstIter
+		//     eiter = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_begin(),
+		//     eiter_end = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_end();
+		//    eiter != eiter_end; ++eiter ) {
+		//  EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*eiter);
+		//  // Size const other_node_ind = ( eedge->get_other_ind( kkresid ) - 1 ) % nres_asu + 1;
 		//
-		//		// Size othernodemoltenresid = other_node_ind-10;
-		//		// Size other_subunit = (eedge->get_other_ind(kkresid)-1)/nres_asu + 1;
-		//		// Size kk_subunit = other_node_ind == kk ? other_subunit : 1;
-		//		Size scale = symm_info->score_multiply( kkresid, eedge->get_other_ind(kkresid) );
-		//		if ( scale == 0 ) continue;
+		//  // Size othernodemoltenresid = other_node_ind-10;
+		//  // Size other_subunit = (eedge->get_other_ind(kkresid)-1)/nres_asu + 1;
+		//  // Size kk_subunit = other_node_ind == kk ? other_subunit : 1;
+		//  Size scale = symm_info->score_multiply( kkresid, eedge->get_other_ind(kkresid) );
+		//  if ( scale == 0 ) continue;
 		//
-		//		core::conformation::Residue const & otherres = pose.residue( eedge->get_other_ind( kkresid ) );
-		//		Real edge_energy = eedge->dot( sfxn->weights() );
-		//		Real bb_bbE = get_bb_bbE( pose, *sfxn, otherres, kkres ) * scale;
-		//		Real bb_scE = get_sc_bbE( pose, *sfxn, otherres, kkres ) * scale;
-		//		Real sc_bbE = get_sc_bbE( pose, *sfxn, kkres, otherres ) * scale;
-		//		Real sc_scE = get_sc_scE( pose, *sfxn, otherres, kkres ) * scale;
-		//		Real rpe = get_residue_pairE( pose, *sfxn, otherres, kkres ) * scale;
+		//  core::conformation::Residue const & otherres = pose.residue( eedge->get_other_ind( kkresid ) );
+		//  Real edge_energy = eedge->dot( sfxn->weights() );
+		//  Real bb_bbE = get_bb_bbE( pose, *sfxn, otherres, kkres ) * scale;
+		//  Real bb_scE = get_sc_bbE( pose, *sfxn, otherres, kkres ) * scale;
+		//  Real sc_bbE = get_sc_bbE( pose, *sfxn, kkres, otherres ) * scale;
+		//  Real sc_scE = get_sc_scE( pose, *sfxn, otherres, kkres ) * scale;
+		//  Real rpe = get_residue_pairE( pose, *sfxn, otherres, kkres ) * scale;
 		//
-		//		if ( edge_energy == 0 && bb_bbE == 0 && bb_scE == 0 && sc_bbE == 0 && sc_scE == 0 && rpe == 0 ) continue;
+		//  if ( edge_energy == 0 && bb_bbE == 0 && bb_scE == 0 && sc_bbE == 0 && sc_scE == 0 && rpe == 0 ) continue;
 		//
-		//		// core::conformation::Residue const & kk_ala_res = symlinmem_ig->get_on_the_fly_node( kkmoltenresid )->get_rotamer( 1, kk_subunit );
-		//		//Real ala_bb_bbE = get_bb_bbE( pose, *sfxn, nbrres, kk_ala_res ) * scale;
-		//		//std::cout << "adding in " << 0.5 * (gly_bb_bbE - ala_bb_bbE) << std::endl;
-		//		//deltaE += 0.5 * (gly_bb_bbE - ala_bb_bbE);
-		//		std::cout << "edge between " << eedge->get_first_node_ind() << " " << eedge->get_second_node_ind() << " energy " << edge_energy << "; ";
-		//		std::cout << " bb_bb " << bb_bbE;
-		//		std::cout << " bb_sc " << bb_scE;
-		//		std::cout << " sc_bb " << sc_bbE;
-		//		std::cout << " sc_sc " << sc_scE << " total " << bb_bbE + bb_scE + sc_bbE + sc_scE << " vs rpe " << rpe <<  std::endl;
-		//		std::cout << "EnergyMap: ";
-		//		EnergyMap emap = eedge->fill_energy_map();
-		//		emap.show_weighted( std::cout, sfxn->weights() );
-		//		std::cout << std::endl;
-		//		Vector xyz = kkres.xyz(1);
-		//		std::cout << "kkres       : " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
-		//		xyz = otherres.xyz(1);
-		//		std::cout << "otherres    : " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
+		//  // core::conformation::Residue const & kk_ala_res = symlinmem_ig->get_on_the_fly_node( kkmoltenresid )->get_rotamer( 1, kk_subunit );
+		//  //Real ala_bb_bbE = get_bb_bbE( pose, *sfxn, nbrres, kk_ala_res ) * scale;
+		//  //std::cout << "adding in " << 0.5 * (gly_bb_bbE - ala_bb_bbE) << std::endl;
+		//  //deltaE += 0.5 * (gly_bb_bbE - ala_bb_bbE);
+		//  std::cout << "edge between " << eedge->get_first_node_ind() << " " << eedge->get_second_node_ind() << " energy " << edge_energy << "; ";
+		//  std::cout << " bb_bb " << bb_bbE;
+		//  std::cout << " bb_sc " << bb_scE;
+		//  std::cout << " sc_bb " << sc_bbE;
+		//  std::cout << " sc_sc " << sc_scE << " total " << bb_bbE + bb_scE + sc_bbE + sc_scE << " vs rpe " << rpe <<  std::endl;
+		//  std::cout << "EnergyMap: ";
+		//  EnergyMap emap = eedge->fill_energy_map();
+		//  emap.show_weighted( std::cout, sfxn->weights() );
+		//  std::cout << std::endl;
+		//  Vector xyz = kkres.xyz(1);
+		//  std::cout << "kkres       : " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
+		//  xyz = otherres.xyz(1);
+		//  std::cout << "otherres    : " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
 		//
-		//	}
+		// }
 		//}
 		//
 		////pose.dump_pdb( "fibril_met1_rot1.pdb" );
@@ -790,118 +790,118 @@ public:
 		//(*sfxn)(pose);
 		//
 		//for ( Size kk = 1; kk <= 7; ++kk ) {
-		//	Size kkresid = (rotsets->moltenres_2_resid( ii )-1) % nres_asu + 1 + (kk-1)*nres_asu;
-		//	core::conformation::Residue const & kkres( pose.residue( kkresid ) );
-		//	for ( core::graph::Node::EdgeListConstIter
-		//					eiter = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_begin(),
-		//					eiter_end = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_end();
-		//				eiter != eiter_end; ++eiter ) {
-		//		EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*eiter);
-		//		// Size const other_node_ind = ( eedge->get_other_ind( kkresid ) - 1 ) % nres_asu + 1;
+		// Size kkresid = (rotsets->moltenres_2_resid( ii )-1) % nres_asu + 1 + (kk-1)*nres_asu;
+		// core::conformation::Residue const & kkres( pose.residue( kkresid ) );
+		// for ( core::graph::Node::EdgeListConstIter
+		//     eiter = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_begin(),
+		//     eiter_end = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_end();
+		//    eiter != eiter_end; ++eiter ) {
+		//  EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*eiter);
+		//  // Size const other_node_ind = ( eedge->get_other_ind( kkresid ) - 1 ) % nres_asu + 1;
 		//
-		//		// Size othernodemoltenresid = other_node_ind-10;
-		//		// Size other_subunit = (eedge->get_other_ind(kkresid)-1)/nres_asu + 1;
-		//		// Size kk_subunit = other_node_ind == kk ? other_subunit : 1;
-		//		Size scale = symm_info->score_multiply( kkresid, eedge->get_other_ind(kkresid) );
-		//		if ( scale == 0 ) continue;
+		//  // Size othernodemoltenresid = other_node_ind-10;
+		//  // Size other_subunit = (eedge->get_other_ind(kkresid)-1)/nres_asu + 1;
+		//  // Size kk_subunit = other_node_ind == kk ? other_subunit : 1;
+		//  Size scale = symm_info->score_multiply( kkresid, eedge->get_other_ind(kkresid) );
+		//  if ( scale == 0 ) continue;
 		//
-		//		core::conformation::Residue const & otherres = pose.residue( eedge->get_other_ind( kkresid ) );
-		//		Real edge_energy = eedge->dot( sfxn->weights() );
-		//		Real bb_bbE = get_bb_bbE( pose, *sfxn, otherres, kkres ) * scale;
-		//		Real bb_scE = get_sc_bbE( pose, *sfxn, otherres, kkres ) * scale;
-		//		Real sc_bbE = get_sc_bbE( pose, *sfxn, kkres, otherres ) * scale;
-		//		Real sc_scE = get_sc_scE( pose, *sfxn, otherres, kkres ) * scale;
-		//		Real rpe = get_residue_pairE( pose, *sfxn, otherres, kkres ) * scale;
+		//  core::conformation::Residue const & otherres = pose.residue( eedge->get_other_ind( kkresid ) );
+		//  Real edge_energy = eedge->dot( sfxn->weights() );
+		//  Real bb_bbE = get_bb_bbE( pose, *sfxn, otherres, kkres ) * scale;
+		//  Real bb_scE = get_sc_bbE( pose, *sfxn, otherres, kkres ) * scale;
+		//  Real sc_bbE = get_sc_bbE( pose, *sfxn, kkres, otherres ) * scale;
+		//  Real sc_scE = get_sc_scE( pose, *sfxn, otherres, kkres ) * scale;
+		//  Real rpe = get_residue_pairE( pose, *sfxn, otherres, kkres ) * scale;
 		//
-		//		if ( edge_energy == 0 && bb_bbE == 0 && bb_scE == 0 && sc_bbE == 0 && sc_scE == 0 && rpe == 0 ) continue;
+		//  if ( edge_energy == 0 && bb_bbE == 0 && bb_scE == 0 && sc_bbE == 0 && sc_scE == 0 && rpe == 0 ) continue;
 		//
-		//		// core::conformation::Residue const & kk_ala_res = symlinmem_ig->get_on_the_fly_node( kkmoltenresid )->get_rotamer( 1, kk_subunit );
-		//		//Real ala_bb_bbE = get_bb_bbE( pose, *sfxn, nbrres, kk_ala_res ) * scale;
-		//		//std::cout << "adding in " << 0.5 * (gly_bb_bbE - ala_bb_bbE) << std::endl;
-		//		//deltaE += 0.5 * (gly_bb_bbE - ala_bb_bbE);
-		//		std::cout << "edge between " << eedge->get_first_node_ind() << " " << eedge->get_second_node_ind() << " energy " << edge_energy << "; ";
-		//		std::cout << " bb_bb " << bb_bbE;
-		//		std::cout << " bb_sc " << bb_scE;
-		//		std::cout << " sc_bb " << sc_bbE;
-		//		std::cout << " sc_sc " << sc_scE << " total " << bb_bbE + bb_scE + sc_bbE + sc_scE << " vs rpe " << rpe <<  std::endl;
-		//		std::cout << "EnergyMap: ";
-		//		EnergyMap emap = eedge->fill_energy_map();
-		//		emap.show_weighted( std::cout, sfxn->weights() );
-		//		std::cout << std::endl;
-		//		Vector xyz = kkres.xyz(1);
-		//		std::cout << "kkres       : " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
-		//		xyz = otherres.xyz(1);
-		//		std::cout << "otherres    : " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
+		//  // core::conformation::Residue const & kk_ala_res = symlinmem_ig->get_on_the_fly_node( kkmoltenresid )->get_rotamer( 1, kk_subunit );
+		//  //Real ala_bb_bbE = get_bb_bbE( pose, *sfxn, nbrres, kk_ala_res ) * scale;
+		//  //std::cout << "adding in " << 0.5 * (gly_bb_bbE - ala_bb_bbE) << std::endl;
+		//  //deltaE += 0.5 * (gly_bb_bbE - ala_bb_bbE);
+		//  std::cout << "edge between " << eedge->get_first_node_ind() << " " << eedge->get_second_node_ind() << " energy " << edge_energy << "; ";
+		//  std::cout << " bb_bb " << bb_bbE;
+		//  std::cout << " bb_sc " << bb_scE;
+		//  std::cout << " sc_bb " << sc_bbE;
+		//  std::cout << " sc_sc " << sc_scE << " total " << bb_bbE + bb_scE + sc_bbE + sc_scE << " vs rpe " << rpe <<  std::endl;
+		//  std::cout << "EnergyMap: ";
+		//  EnergyMap emap = eedge->fill_energy_map();
+		//  emap.show_weighted( std::cout, sfxn->weights() );
+		//  std::cout << std::endl;
+		//  Vector xyz = kkres.xyz(1);
+		//  std::cout << "kkres       : " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
+		//  xyz = otherres.xyz(1);
+		//  std::cout << "otherres    : " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
 		//
-		//	}
+		// }
 		//}
 
 		for ( Size ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
 			for ( Size jj = 1; jj <= rotsets->rotamer_set_for_moltenresidue( ii )->num_rotamers(); ++jj ) {
 				// if ( ii == 1 && jj == 9 ) {
-				// 	symlinmem_ig->consider_substitution( ii, 1, otf_deltaE, otf_prevnode_energy );
-				// 	regular_ig->consider_substitution(   ii, 1, reg_deltaE, reg_prevnode_energy );
-				// 	symlinmem_ig->commit_considered_substitution();
-				// 	regular_ig->commit_considered_substitution();
+				//  symlinmem_ig->consider_substitution( ii, 1, otf_deltaE, otf_prevnode_energy );
+				//  regular_ig->consider_substitution(   ii, 1, reg_deltaE, reg_prevnode_energy );
+				//  symlinmem_ig->commit_considered_substitution();
+				//  regular_ig->commit_considered_substitution();
 				// }
 
 				symlinmem_ig->consider_substitution( ii, jj, otf_deltaE, otf_prevnode_energy );
 				regular_ig->consider_substitution(   ii, jj, reg_deltaE, reg_prevnode_energy );
 
 				//if ( ii == 1 && (jj == 1||jj==9) ) {
-				//	pose.replace_residue( rotsets->moltenres_2_resid(ii), *rotsets->rotamer_set_for_moltenresidue(ii)->rotamer( jj ), false );
-				//	(*sfxn)(pose);
+				// pose.replace_residue( rotsets->moltenres_2_resid(ii), *rotsets->rotamer_set_for_moltenresidue(ii)->rotamer( jj ), false );
+				// (*sfxn)(pose);
 				//
-				//	regular_ig->print_vertices();
-				//	symlinmem_ig->print_vertices();
-				//	std::cout << "Difference: " << otf_deltaE - reg_deltaE << std::endl;
+				// regular_ig->print_vertices();
+				// symlinmem_ig->print_vertices();
+				// std::cout << "Difference: " << otf_deltaE - reg_deltaE << std::endl;
 				//
-				//	for ( Size kk = 1; kk <= 7; ++kk ) {
-				//		Size kkresid = (rotsets->moltenres_2_resid( ii )-1) % nres_asu + 1 + (kk-1)*nres_asu;
-				//		core::conformation::Residue const & kkres( pose.residue( kkresid ) );
-				//		for ( core::graph::Node::EdgeListConstIter
-				//						eiter = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_begin(),
-				//						eiter_end = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_end();
-				//					eiter != eiter_end; ++eiter ) {
-				//			EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*eiter);
-				//			// Size const other_node_ind = ( eedge->get_other_ind( kkresid ) - 1 ) % nres_asu + 1;
+				// for ( Size kk = 1; kk <= 7; ++kk ) {
+				//  Size kkresid = (rotsets->moltenres_2_resid( ii )-1) % nres_asu + 1 + (kk-1)*nres_asu;
+				//  core::conformation::Residue const & kkres( pose.residue( kkresid ) );
+				//  for ( core::graph::Node::EdgeListConstIter
+				//      eiter = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_begin(),
+				//      eiter_end = pose.energies().energy_graph().get_node(kkresid)->const_edge_list_end();
+				//     eiter != eiter_end; ++eiter ) {
+				//   EnergyEdge const * eedge = static_cast< EnergyEdge const * > (*eiter);
+				//   // Size const other_node_ind = ( eedge->get_other_ind( kkresid ) - 1 ) % nres_asu + 1;
 				//
-				//			// Size othernodemoltenresid = other_node_ind-10;
-				//			// Size other_subunit = (eedge->get_other_ind(kkresid)-1)/nres_asu + 1;
-				//			// Size kk_subunit = other_node_ind == kk ? other_subunit : 1;
-				//			Size scale = symm_info->score_multiply( kkresid, eedge->get_other_ind(kkresid) );
-				//			if ( scale == 0 ) continue;
+				//   // Size othernodemoltenresid = other_node_ind-10;
+				//   // Size other_subunit = (eedge->get_other_ind(kkresid)-1)/nres_asu + 1;
+				//   // Size kk_subunit = other_node_ind == kk ? other_subunit : 1;
+				//   Size scale = symm_info->score_multiply( kkresid, eedge->get_other_ind(kkresid) );
+				//   if ( scale == 0 ) continue;
 				//
-				//			core::conformation::Residue const & otherres = pose.residue( eedge->get_other_ind( kkresid ) );
-				//			Real edge_energy = eedge->dot( sfxn->weights() );
-				//			Real bb_bbE = get_bb_bbE( pose, *sfxn, otherres, kkres ) * scale;
-				//			Real bb_scE = get_sc_bbE( pose, *sfxn, otherres, kkres ) * scale;
-				//			Real sc_bbE = get_sc_bbE( pose, *sfxn, kkres, otherres ) * scale;
-				//			Real sc_scE = get_sc_scE( pose, *sfxn, otherres, kkres ) * scale;
-				//			Real rpe = get_residue_pairE( pose, *sfxn, otherres, kkres ) * scale;
+				//   core::conformation::Residue const & otherres = pose.residue( eedge->get_other_ind( kkresid ) );
+				//   Real edge_energy = eedge->dot( sfxn->weights() );
+				//   Real bb_bbE = get_bb_bbE( pose, *sfxn, otherres, kkres ) * scale;
+				//   Real bb_scE = get_sc_bbE( pose, *sfxn, otherres, kkres ) * scale;
+				//   Real sc_bbE = get_sc_bbE( pose, *sfxn, kkres, otherres ) * scale;
+				//   Real sc_scE = get_sc_scE( pose, *sfxn, otherres, kkres ) * scale;
+				//   Real rpe = get_residue_pairE( pose, *sfxn, otherres, kkres ) * scale;
 				//
-				//			if ( edge_energy == 0 && bb_bbE == 0 && bb_scE == 0 && sc_bbE == 0 && sc_scE == 0 && rpe == 0 ) continue;
+				//   if ( edge_energy == 0 && bb_bbE == 0 && bb_scE == 0 && sc_bbE == 0 && sc_scE == 0 && rpe == 0 ) continue;
 				//
-				//			// core::conformation::Residue const & kk_ala_res = symlinmem_ig->get_on_the_fly_node( kkmoltenresid )->get_rotamer( 1, kk_subunit );
-				//			//Real ala_bb_bbE = get_bb_bbE( pose, *sfxn, nbrres, kk_ala_res ) * scale;
-				//			//std::cout << "adding in " << 0.5 * (gly_bb_bbE - ala_bb_bbE) << std::endl;
-				//			//deltaE += 0.5 * (gly_bb_bbE - ala_bb_bbE);
-				//			std::cout << "edge between " << eedge->get_first_node_ind() << " " << eedge->get_second_node_ind() << " energy " << edge_energy << "; ";
-				//			std::cout << " bb_bb " << bb_bbE;
-				//			std::cout << " bb_sc " << bb_scE;
-				//			std::cout << " sc_bb " << sc_bbE;
-				//			std::cout << " sc_sc " << sc_scE << " total " << bb_bbE + bb_scE + sc_bbE + sc_scE << " vs rpe " << rpe <<  std::endl;
-				//			Vector xyz = kkres.xyz(1);
-				//			std::cout << "kkres       : " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
-				//			xyz = otherres.xyz(1);
-				//			std::cout << "otherres    : " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
+				//   // core::conformation::Residue const & kk_ala_res = symlinmem_ig->get_on_the_fly_node( kkmoltenresid )->get_rotamer( 1, kk_subunit );
+				//   //Real ala_bb_bbE = get_bb_bbE( pose, *sfxn, nbrres, kk_ala_res ) * scale;
+				//   //std::cout << "adding in " << 0.5 * (gly_bb_bbE - ala_bb_bbE) << std::endl;
+				//   //deltaE += 0.5 * (gly_bb_bbE - ala_bb_bbE);
+				//   std::cout << "edge between " << eedge->get_first_node_ind() << " " << eedge->get_second_node_ind() << " energy " << edge_energy << "; ";
+				//   std::cout << " bb_bb " << bb_bbE;
+				//   std::cout << " bb_sc " << bb_scE;
+				//   std::cout << " sc_bb " << sc_bbE;
+				//   std::cout << " sc_sc " << sc_scE << " total " << bb_bbE + bb_scE + sc_bbE + sc_scE << " vs rpe " << rpe <<  std::endl;
+				//   Vector xyz = kkres.xyz(1);
+				//   std::cout << "kkres       : " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
+				//   xyz = otherres.xyz(1);
+				//   std::cout << "otherres    : " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
 				//
-				//		}
-				//	}
+				//  }
+				// }
 				//
-				//	//pose.dump_pdb( "fibril_met1_rot1.pdb" );
-				//	Size iicurrentrot = rotsets->rotamer_set_for_moltenresidue( ii )->id_for_current_rotamer();
-				//	pose.replace_residue( rotsets->moltenres_2_resid(ii), *rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( iicurrentrot ), false );
+				// //pose.dump_pdb( "fibril_met1_rot1.pdb" );
+				// Size iicurrentrot = rotsets->rotamer_set_for_moltenresidue( ii )->id_for_current_rotamer();
+				// pose.replace_residue( rotsets->moltenres_2_resid(ii), *rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( iicurrentrot ), false );
 				//}
 
 				// TS_ASSERT_DELTA( otf_deltaE, reg_deltaE, 1e-5 );
@@ -910,11 +910,11 @@ public:
 
 				//std::cout << "Delta otf_deltaE-reg_deltaE: " << otf_deltaE - reg_deltaE << std::endl;
 				// if ( std::abs( otf_deltaE - reg_deltaE ) > 1e-5 ) {
-				// 	pose.replace_residue( rotsets->moltenres_2_resid(ii), *rotsets->rotamer_set_for_moltenresidue(ii)->rotamer( jj ), false );
-				// 	Real new_score = (*sfxn )( pose );
-				// 	std::cout << "Score discrepancy: " << ii << " " << jj << " " << rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( jj )->name() << " reg= " << reg_deltaE << " otf: " << otf_deltaE << " pose: " << (new_score - ref_score ) << " ig disc: " << otf_deltaE - reg_deltaE << std::endl;
-				// 	Size iicurrentrot = rotsets->rotamer_set_for_moltenresidue( ii )->id_for_current_rotamer();
-				// 	pose.replace_residue( rotsets->moltenres_2_resid(ii), *rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( iicurrentrot ), false );
+				//  pose.replace_residue( rotsets->moltenres_2_resid(ii), *rotsets->rotamer_set_for_moltenresidue(ii)->rotamer( jj ), false );
+				//  Real new_score = (*sfxn )( pose );
+				//  std::cout << "Score discrepancy: " << ii << " " << jj << " " << rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( jj )->name() << " reg= " << reg_deltaE << " otf: " << otf_deltaE << " pose: " << (new_score - ref_score ) << " ig disc: " << otf_deltaE - reg_deltaE << std::endl;
+				//  Size iicurrentrot = rotsets->rotamer_set_for_moltenresidue( ii )->id_for_current_rotamer();
+				//  pose.replace_residue( rotsets->moltenres_2_resid(ii), *rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( iicurrentrot ), false );
 				// }
 			}
 		}

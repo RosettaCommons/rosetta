@@ -51,7 +51,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <basic/Tracer.hh>
-#include <protocols/toolbox/SelectResiduesByLayer.hh>
+#include <core/util/SelectResiduesByLayer.hh>
 #include <core/pose/symmetry/util.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
@@ -122,7 +122,7 @@ LayerDesignOperation::LayerDesignOperation():
 	restrict_restypes_( true ),
 	make_pymol_script_( false ),
 	ignore_pikaa_natro_( false ),
-	srbl_( toolbox::SelectResiduesByLayerOP( new toolbox::SelectResiduesByLayer ) ),
+	srbl_( core::util::SelectResiduesByLayerOP( new core::util::SelectResiduesByLayer ) ),
 	blueprint_( /* NULL */ ),
 	use_symmetry_(true)
 {
@@ -140,7 +140,7 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	restrict_restypes_( true ),
 	make_pymol_script_( false ),
 	ignore_pikaa_natro_( false ),
-	srbl_( toolbox::SelectResiduesByLayerOP( new toolbox::SelectResiduesByLayer ) ),
+	srbl_( core::util::SelectResiduesByLayerOP( new core::util::SelectResiduesByLayer ) ),
 	blueprint_( /* NULL */ ),
 	use_symmetry_(true)
 {
@@ -226,7 +226,7 @@ LayerDesignOperation::pos2select( utility::vector1< core::Size > const & pos ) c
 }
 
 void
-LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, toolbox::SelectResiduesByLayerOP srbl, std::map< std::string, utility::vector1<bool> > const & layer_specification, bool has_ligand, std::string const & filename ) const
+LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, core::util::SelectResiduesByLayerOP srbl, std::map< std::string, utility::vector1<bool> > const & layer_specification, bool has_ligand, std::string const & filename ) const
 {
 	using utility::io::ozstream;
 	typedef utility::vector1<Size> VecSize;
@@ -432,6 +432,51 @@ LayerDesignOperation::set_use_sidechain_neighbors( bool const value )
 		srbl_->sasa_surface( 2.0 );
 	}
 }
+
+/// @brief Set the midpoint of the sigmoidal distance falloff for the sidechain neighbors method.
+///
+void
+LayerDesignOperation::set_sc_neighbor_dist_midpoint(
+	core::Real const &value
+) {
+	srbl_->set_dist_midpoint(value);
+	return;
+}
+
+/// @brief Set the factor by which neighbor counts are divided when using the sidechain neighbors method.
+///
+void
+LayerDesignOperation::set_sc_neighbor_denominator(
+	core::Real const &value
+) {
+	srbl_->set_rsd_neighbor_denominator(value);
+	return;
+}
+
+/// @brief Set a parameter in the calculation that the sidechain neighbors algorithm uses.
+/// @details See core::util::SelectResiduesByLayer class for details.
+void
+LayerDesignOperation::set_sc_neighbor_angle_shift_factor( core::Real const &value ) {
+	srbl_->set_angle_shift_factor(value);
+	return;
+}
+
+/// @brief Set another parameter (the angle exponent) in the calculation that the sidechain neighbors algorithm uses.
+/// @details See core::util::SelectResiduesByLayer class for details.
+void
+LayerDesignOperation::set_sc_neighbor_angle_exponent( core::Real const &value ) {
+	srbl_->set_angle_exponent(value);
+	return;
+}
+
+/// @brief Set another parameter (the distance exponent) in the calculation that the sidechain neighbors algorithm uses.
+/// @details See core::util::SelectResiduesByLayer class for details.
+void
+LayerDesignOperation::set_sc_neighbor_dist_exponent( core::Real const &value ) {
+	srbl_->set_dist_exponent(value);
+	return;
+}
+
 
 /// @brief sets layer operation
 void
@@ -854,6 +899,26 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 
 	if ( tag->hasOption( "use_sidechain_neighbors" ) ) {
 		set_use_sidechain_neighbors( tag->getOption< bool >( "use_sidechain_neighbors" ) );
+	}
+
+	if ( tag->hasOption( "sc_neighbor_dist_midpoint" ) ) {
+		set_sc_neighbor_dist_midpoint( tag->getOption<core::Real>("sc_neighbor_dist_midpoint") );
+	}
+
+	if ( tag->hasOption( "sc_neighbor_denominator" ) ) {
+		set_sc_neighbor_denominator( tag->getOption<core::Real>("sc_neighbor_denominator") );
+	}
+
+	if ( tag->hasOption( "sc_neighbor_angle_shift_factor") ) {
+		set_sc_neighbor_angle_shift_factor( tag->getOption<core::Real>("sc_neighbor_angle_shift_factor") );
+	}
+
+	if ( tag->hasOption( "sc_neighbor_angle_exponent") ) {
+		set_sc_neighbor_angle_exponent( tag->getOption<core::Real>("sc_neighbor_angle_exponent") );
+	}
+
+	if ( tag->hasOption( "sc_neighbor_dist_exponent") ) {
+		set_sc_neighbor_dist_exponent( tag->getOption<core::Real>("sc_neighbor_dist_exponent") );
 	}
 
 	if ( tag->hasOption( "pore_radius" ) ) {

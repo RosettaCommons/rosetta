@@ -109,7 +109,7 @@ create_packer_graph(
 			Vector v316 = point_graph->get_vertex( 316 ).data().xyz();
 			Vector v468 = point_graph->get_vertex( 316 ).data().xyz();
 			std::cout << "point graph data: " << v316.x() << ", " << v316.y() << ", " << v316.z() << " and "
-								<< v468.x() << ", " << v468.y() << ", " << v468.z() << " sqrdist: " << v316.distance_squared( v468 ) << std::endl;
+				<< v468.x() << ", " << v468.y() << ", " << v468.z() << " sqrdist: " << v316.distance_squared( v468 ) << std::endl;
 		}
 
 		// add edges

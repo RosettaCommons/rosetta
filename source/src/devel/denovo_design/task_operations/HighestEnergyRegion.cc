@@ -33,7 +33,7 @@
 #include <protocols/jd2/parser/BluePrint.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
-#include <protocols/toolbox/SelectResiduesByLayer.hh>
+#include <core/util/SelectResiduesByLayer.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
@@ -364,7 +364,7 @@ DesignByPackStatOperation::get_residues_to_design( core::pose::Pose const & pose
 	}
 
 	// compute SASA and exclude surface-accessible residues.
-	protocols::toolbox::SelectResiduesByLayer srbl( true, true, true );
+	core::util::SelectResiduesByLayer srbl( true, true, true );
 	srbl.compute( pose, pose.secstruct() );
 
 	// sort the vector based on the psipred probability

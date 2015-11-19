@@ -1,0 +1,40 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" />
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name=helix1 resnums=1-20 />
+		<Index name=helix2 resnums=21-40 />
+		<Index name=helix3 resnums=41-60 />
+		<Index name=helix4 resnums=61-80 />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<ReadResfile name=resfile1 filename="inputs/resfile1.txt" selector=helix1 />
+		<ReadResfile name=resfile2 filename="inputs/resfile2.txt" selector=helix2 />
+		<ReadResfile name=resfile3 filename="inputs/resfile3.txt" selector=helix3 />
+		<ReadResfile name=resfile4 filename="inputs/resfile4.txt" selector=helix4 />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+
+		<BundleGridSampler name="bgs1" helix_length=20 scorefxn="tala"
+				nstruct_mode=true r0=7.5 omega0=0.1 delta_omega0=0 delta_omega1=0 delta_t=0 z1_offset=0 >
+			<Helix invert=false/>
+			<Helix delta_omega0=1.57079632679 invert=true />
+			<Helix delta_omega0=3.141592654 invert=false z1_offset_min=-5 z1_offset_max=5 z1_offset_samples=10 />
+			<Helix delta_omega0=4.71238898038 z1_offset_copies_helix=3 invert=true />
+		</BundleGridSampler>
+
+		<DeclareBond name=add_termini atom1=C atom2=N res1=2 res2=3 add_termini=true />		
+
+		<PackRotamersMover name="pack" scorefxn=tala task_operations=resfile1,resfile2,resfile3,resfile4 />
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=bgs1 />
+		<Add mover=add_termini />
+		<Add mover=pack />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

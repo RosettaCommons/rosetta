@@ -52,7 +52,7 @@
 #include <core/pose/motif/reference_frames.hh>
 
 #include <protocols/loops/Loop.hh>
-#include <protocols/toolbox/SelectResiduesByLayer.hh>
+#include <core/util/SelectResiduesByLayer.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>
@@ -742,7 +742,7 @@ Assembly::prepare_for_packing(
 	pose.update_residue_neighbors();
 
 	///// layered design ////
-	protocols::toolbox::SelectResiduesByLayerOP layer_select( new protocols::toolbox::SelectResiduesByLayer );
+	core::util::SelectResiduesByLayerOP layer_select( new core::util::SelectResiduesByLayer );
 	layer_select->compute(pose, "");//empty string for secondary structure
 	utility::vector1<core::Size> surface_residues = layer_select->selected_surface_residues();
 

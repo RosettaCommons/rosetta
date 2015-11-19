@@ -29,6 +29,7 @@
 #include <core/pack/rotamer_set/RotamerLinks.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
+#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -325,8 +326,28 @@ public:
 
 	virtual void parse_tag( TagCOP, DataMap & );
 
+	/// @brief Read in the resfile and store it, so that it
+	/// doesn't have to be read over and over again at apply time.
+	void cache_resfile();
+
 private:
+
+	/// @brief The filename to read.
+	///
 	std::string resfile_filename_;
+
+	/// @brief Has the file been read in?
+	/// @details Must happen before apply() function is called.
+	bool file_was_read_;
+
+	/// @brief The cache of the resfile.
+	/// @details Cached here so that it isn't read in over and over again.
+	std::string resfile_cache_;
+
+	/// @brief An optional ResidueSelector that can serve to mask the residues
+	/// to which this TaskOperation is applied.
+	core::pack::task::residue_selector::ResidueSelectorCOP residue_selector_;
+
 };
 
 /// @brief written by flo, feb 2011

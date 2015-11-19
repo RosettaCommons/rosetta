@@ -1,0 +1,48 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" />
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Layer name=layercore select_core=true core_cutoff=3.5 />
+		<Layer name=boundarysurface select_core=false select_boundary=true select_surface=true core_cutoff=3.5 />
+		<Index name=helix1 resnums=1-20 />
+		<Not name=nothelix1 selector=helix1 />
+		<And name=core_and_helix1 selectors=layercore,helix1 />
+		<And name=core_and_nothelix1 selectors=layercore,nothelix1 />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<ReadResfile name=resfile1 filename="inputs/resfile1.txt" />
+		<OperateOnResidueSubset name=core_helix1_task selector=core_and_helix1 >
+			<RestrictAbsentCanonicalAASRLT aas="FV" />
+		</OperateOnResidueSubset>
+		<OperateOnResidueSubset name=core_nothelix1_task selector=core_and_nothelix1 >
+			<RestrictAbsentCanonicalAASRLT aas="YI" />
+		</OperateOnResidueSubset>
+		<OperateOnResidueSubset name=boundarysurface_task selector=boundarysurface >
+			<RestrictAbsentCanonicalAASRLT aas="DR" />
+		</OperateOnResidueSubset>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+
+		<BundleGridSampler name="bgs1" helix_length=20 scorefxn="tala"
+				nstruct_mode=true r0=7.5 omega0=0.1 delta_omega0=0 delta_omega1=0 delta_t=0 z1_offset=0 >
+			<Helix invert=false/>
+			<Helix delta_omega0=1.57079632679 invert=true />
+			<Helix delta_omega0=3.141592654 invert=false z1_offset_min=-5 z1_offset_max=5 z1_offset_samples=10 />
+			<Helix delta_omega0=4.71238898038 z1_offset_copies_helix=3 invert=true />
+		</BundleGridSampler>
+
+		<DeclareBond name=add_termini atom1=C atom2=N res1=2 res2=3 add_termini=true />		
+
+		<PackRotamersMover name="pack" scorefxn=tala task_operations=resfile1,core_helix1_task,core_nothelix1_task,boundarysurface_task />
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=bgs1 />
+		<Add mover=add_termini />
+		<Add mover=pack />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

@@ -19,6 +19,7 @@
 #include <core/pack/task/ResfileReader.fwd.hh>
 
 // Package Headers
+#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -746,11 +747,27 @@ parse_resfile(
 	std::string filename );
 
 /// @brief changes the state of the given PackerTask according to the commands in the resfile.
+/// @details This version calls the overloaded parse_resfile_string and just passes it a ResidueSubset
+/// that's set to "true" for every residue of the pose.
 void
 parse_resfile_string(
 	pose::Pose const & pose,
 	PackerTask & the_task,
-	std::string const & resfile_string ) throw(ResfileReaderException);
+	std::string const & resfile_string
+) throw(ResfileReaderException);
+
+
+/// @brief changes the state of the given PackerTask according to the commands in the resfile.
+/// @details This version accepts a ResidueSubset (a utility::vector1<bool>) that serves as a
+/// mask.  Residues set to "false" don't have their packer behaviour altered by this TaskOperation.
+void
+parse_resfile_string(
+	pose::Pose const & pose,
+	PackerTask & the_task,
+	std::string const & resfile_string,
+	core::pack::task::residue_selector::ResidueSubset const &mask
+
+) throw(ResfileReaderException);
 
 void
 onError( std::string message );

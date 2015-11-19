@@ -660,6 +660,7 @@ static ResidueSelectorRegistrator< JumpUpstreamSelectorCreator > reg_JumpUpstrea
 static ResidueSelectorRegistrator< NeighborhoodResidueSelectorCreator > reg_NeighborhoodResidueSelectorCreator;
 static ResidueSelectorRegistrator< NotResidueSelectorCreator > reg_NotResidueSelectorCreator;
 static ResidueSelectorRegistrator< NumNeighborsSelectorCreator > reg_NumNeighborsSelectorCreator;
+static ResidueSelectorRegistrator< LayerSelectorCreator > reg_LayerSelectorCreator;
 static ResidueSelectorRegistrator< OrResidueSelectorCreator > reg_OrResidueSelectorCreator;
 static ResidueSelectorRegistrator< ResidueIndexSelectorCreator > reg_ResidueIndexSelectorCreator;
 static ResidueSelectorRegistrator< ResidueNameSelectorCreator > reg_ResidueNameSelectorCreator;

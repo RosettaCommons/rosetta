@@ -107,7 +107,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 		sf.eval_cd_1b( *rotamer( ii ), pose, emap );
 		energies[ ii ] += static_cast< core::PackerEnergy > (sf.weights().dot( emap ))*symm_info->score_multiply_factor(); // precision loss here. Multiply with the number of total subunits to get the total energy
 		// if ( theresid == 238 && (ii == 1||ii==9) ) {
-		// 	std::cout << "one body energy: " << theresid << " " << ii << ": " << (sf.weights().dot( emap ))*symm_info->score_multiply_factor() << std::endl;
+		//  std::cout << "one body energy: " << theresid << " " << ii << ": " << (sf.weights().dot( emap ))*symm_info->score_multiply_factor() << std::endl;
 		// }
 	}
 
@@ -116,7 +116,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 	// multiply the rotamer_intrares energy with the number of subunits in the system
 	PackerEnergyMultiply( temp_energies, symm_info->score_multiply_factor() );
 	// if ( theresid == 238 && temp_energies.size() >= 9 ) {
-	// 	std::cout << "intra-residue energy: " << theresid << " " << temp_energies[ 1 ] * symm_info->score_multiply_factor() << " " << temp_energies[ 9 ] * symm_info->score_multiply_factor() << std::endl;
+	//  std::cout << "intra-residue energy: " << theresid << " " << temp_energies[ 1 ] * symm_info->score_multiply_factor() << " " << temp_energies[ 9 ] * symm_info->score_multiply_factor() << std::endl;
 	// }
 	PackerEnergyAdd( energies, temp_energies );
 

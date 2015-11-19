@@ -23,12 +23,14 @@
 #include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
+#include <core/pack/task/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/pose/datacache/ObserverCache.hh>
+#include <basic/datacache/DataMap.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <boost/foreach.hpp>
@@ -597,14 +599,25 @@ void set_rotamer_sampling_data_for_RLT(
 
 /// BEGIN ReadResfile
 
-ReadResfile::ReadResfile() : parent()
+ReadResfile::ReadResfile() :
+	parent(),
+	resfile_filename_(""),
+	file_was_read_(false),
+	resfile_cache_(""),
+	residue_selector_()
 {
+	cache_resfile();
 }
 
 ReadResfile::ReadResfile( std::string const & filename ) :
 	parent(),
-	resfile_filename_( filename )
-{}
+	resfile_filename_( filename ),
+	file_was_read_(false),
+	resfile_cache_(""),
+	residue_selector_()
+{
+	cache_resfile(); //Read in the file.
+}
 
 ReadResfile::~ReadResfile() {}
 
@@ -624,15 +637,25 @@ ReadResfile::apply( pose::Pose const & pose, PackerTask & task ) const
 	using namespace basic::resource_manager;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	if ( resfile_filename_.empty() ) {
-		/// only apply the read-resfile command if a resfile has been supplied, either through the
-		/// resource manager, or through the command line
+
+	if ( !file_was_read_ ) {
+		/// If no file has been read, try to get a resfile from the ResourceManager.  Unfortunately, this is the one
+		/// case in which caching will not work, and read from disk will happen every time at apply time.
 		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
-			parse_resfile(pose, task, ResourceManager::get_instance()->get_option( packing::resfile )[ 1 ] );
-		} /// else -- do not change the input PackerTask at all. Noop.
-	} else {
-		parse_resfile(pose, task, resfile_filename_ );
+			parse_resfile(pose, task, ResourceManager::get_instance()->get_option( packing::resfile )[ 1 ] ); //Note that in this case, the selector is not applied
+		} /// else, if no file was provided directly or through the options system -- do not change the input PackerTask at all. Noop.
+		return; //Do nothing if no resfile was read in and nothing is provided via the options system.
 	}
+
+	//At this point, we're dealing with a cached resfile.
+	if ( residue_selector_ ) { //If there's a residue selector provided, use it to make a mask, then apply this TaskOperation only to unmasked (selected) residues:
+		core::pack::task::residue_selector::ResidueSubset const mask( residue_selector_->apply(pose) );
+		parse_resfile_string(pose, task, resfile_cache_, mask );
+	} else { //Otherwise, apply this TaskOperation to all residues:
+		parse_resfile_string(pose, task, resfile_cache_ );
+	}
+
+	return;
 }
 
 /// @brief Assign the filename from the ResourceManager, if a resfile has been assigned for the
@@ -654,6 +677,7 @@ void
 ReadResfile::filename( std::string const & filename )
 {
 	resfile_filename_ = filename;
+	cache_resfile();
 }
 
 std::string const & ReadResfile::filename() const
@@ -662,7 +686,7 @@ std::string const & ReadResfile::filename() const
 }
 
 void
-ReadResfile::parse_tag( TagCOP tag , DataMap & )
+ReadResfile::parse_tag( TagCOP tag , DataMap &datamap )
 {
 	if ( tag->hasOption("filename") ) resfile_filename_ = tag->getOption<std::string>("filename");
 	// special case: if "COMMANDLINE" string specified, use commandline option setting.
@@ -671,7 +695,55 @@ ReadResfile::parse_tag( TagCOP tag , DataMap & )
 	// if no filename is given, then the ReadResfile command will read either from the ResourceManager
 	// or from the packing::resfile option on the command line.
 	if ( resfile_filename_ == "COMMANDLINE" ) default_filename();
+
+	if ( tag->hasOption( "selector" ) ) {
+		std::string const selector_name ( tag->getOption< std::string >( "selector" ) );
+		try {
+			residue_selector_ = datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from ReadResfile::parse_tag()\n" + e.msg();
+			throw utility::excn::EXCN_Msg_Exception( error_message );
+		}
+	}
+
+	// Read in the resfile and store it:
+	cache_resfile();
 }
+
+/// @brief Read in the resfile and store it, so that it
+/// doesn't have to be read over and over again at apply time.
+void
+ReadResfile::cache_resfile() {
+	using namespace basic::resource_manager;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	if ( resfile_filename_ == "" ) {
+		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
+			resfile_filename_ = ResourceManager::get_instance()->get_option( packing::resfile )[ 1 ];
+		}
+	}
+
+	if ( resfile_filename_ == "" ) {
+		file_was_read_ = false;
+		resfile_cache_ = "";
+		return; //Do nothing if we have no filename to read.
+	}
+
+	utility::io::izstream file( resfile_filename_ );
+	if ( !file ) {
+		TR.Error << "File:" << resfile_filename_ << " not found!\n";
+		TR.Error.flush();
+		utility_exit_with_message( "Cannot open file " + resfile_filename_ );
+	}
+	resfile_cache_=""; //Clear current cache, if it exists.
+	utility::slurp( file, resfile_cache_ ); //Cache the resfile in memory.
+	file.close();
+
+	file_was_read_ = true;
+	return;
+}
+
 
 /// BEGIN ReadResfileAndObeyLengthEvents
 ReadResfileAndObeyLengthEvents::ReadResfileAndObeyLengthEvents() :

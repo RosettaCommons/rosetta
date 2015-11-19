@@ -730,7 +730,6 @@ sources = {
 		"InteratomicVarianceMatrix",
 		"KCluster",
 		"NetworkAlgorithms",
-		"SelectResiduesByLayer",
 		"superimpose",
 	],
 	"protocols/toolbox/match_enzdes_util": [

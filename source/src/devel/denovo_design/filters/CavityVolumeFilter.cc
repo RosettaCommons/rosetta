@@ -29,7 +29,6 @@
 #include <protocols/fldsgn/topology/HSSTriplet.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
-#include <protocols/toolbox/SelectResiduesByLayer.hh>
 
 // Basic Headers
 #include <basic/MetricValue.hh>

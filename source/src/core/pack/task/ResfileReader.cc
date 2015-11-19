@@ -1380,10 +1380,9 @@ parse_resfile(
 	if ( !file ) {
 		TR << "File:" << filename << " not found!\n";
 		utility_exit_with_message( "Cannot open file " + filename );
-	} else {
-		//T() << "read file: " << filename << "\n";
 	}
 	utility::slurp( file, resfile );
+	file.close();
 	try{
 		parse_resfile_string( pose, the_task, resfile );
 	} catch (ResfileReaderException &) {
@@ -1396,22 +1395,45 @@ parse_resfile(
 }
 
 
-// question: if no chain is supplied should it be accepted?
-// yes just pass ' ' for the chain
-// how if a symbol is a chain or not?
-// all commands begin with something in the command map, if it's not a command treat it as a chain
-
+/// @brief changes the state of the given PackerTask according to the commands in the resfile.
+/// @details This version calls the overloaded parse_resfile_string and just passes it a ResidueSubset
+/// that's set to "true" for every residue of the pose.
 void
 parse_resfile_string(
 	pose::Pose const & pose,
 	PackerTask & the_task,
-	std::string const & resfile_string ) throw(ResfileReaderException)
+	std::string const & resfile_string
+) throw(ResfileReaderException)
+{
+	core::pack::task::residue_selector::ResidueSubset const mask( pose.n_residue(), true );
+	parse_resfile_string( pose, the_task, resfile_string, mask );
+	return;
+}
+
+/// @brief changes the state of the given PackerTask according to the commands in the resfile.
+/// @details This version accepts a ResidueSubset (a utility::vector1<bool>) that serves as a
+/// mask.  Residues set to "false" don't have their packer behaviour altered by this TaskOperation.
+// question: if no chain is supplied should it be accepted?
+// yes just pass ' ' for the chain
+// how if a symbol is a chain or not?
+// all commands begin with something in the command map, if it's not a command treat it as a chain
+void
+parse_resfile_string(
+	pose::Pose const & pose,
+	PackerTask & the_task,
+	std::string const & resfile_string,
+	core::pack::task::residue_selector::ResidueSubset const &mask
+) throw(ResfileReaderException)
 {
 	using namespace std;
 	istringstream resfile(resfile_string);
 	ResfileContents contents( pose, resfile );
 
+	runtime_assert_string_msg( mask.size() == pose.n_residue(), "Error in core::pack::task::parse_resfile_string(): The mask passed to this function is not the same size as the pose.  The mask must have one entry for every residue." );
+
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+
+		if ( !mask[ii] ) continue; //Skip masked residues.
 
 		std::list< ResfileCommandCOP > const & ii_command_list(
 			contents.specialized_commands_exist_for_residue( ii ) ?

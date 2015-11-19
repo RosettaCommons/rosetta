@@ -47,6 +47,12 @@ public:
 	virtual std::string keyname() const;
 };
 
+class LayerSelectorCreator : public ResidueSelectorCreator {
+public:
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
+};
+
 class NotResidueSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;

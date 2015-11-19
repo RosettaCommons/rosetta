@@ -7,13 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/toolbox/SelectResiduesByLayer.cc
+/// @file core/util/SelectResiduesByLayer.cc
 /// @brief select residues depending on layer: core, boundary, and surface
-/// The layer of residues are defined by accessible sufrace area of CB + mainchain
+/// The layer of residues are defined by accessible sufrace area of CB + mainchain,
+/// or by the number of sidechains within a cone along the CA-CB vector.
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
+/// @author Gabe Rocklin (sidechain neighbour selection)
+/// @author Vikram K. Mulligan (vmullig@uw.edu -- moving this class to core and refactoring for noncanonicals)
 
 // Unit Headers
-#include <protocols/toolbox/SelectResiduesByLayer.hh>
+#include <core/util/SelectResiduesByLayer.hh>
 
 // Project Headers
 #include <core/id/AtomID_Map.hh>
@@ -36,10 +39,10 @@ using basic::Error;
 using basic::Warning;
 
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.SelectResiduesByLayer" );
+static THREAD_LOCAL basic::Tracer TR( "core.util.SelectResiduesByLayer" );
 
-namespace protocols {
-namespace toolbox {
+namespace core {
+namespace util {
 
 /// @brief default constructor
 SelectResiduesByLayer::SelectResiduesByLayer() : utility::pointer::ReferenceCount(),
@@ -48,35 +51,74 @@ SelectResiduesByLayer::SelectResiduesByLayer() : utility::pointer::ReferenceCoun
 	pick_surface_( false ),
 	pore_radius_( 2.0 ),
 	make_rasmol_format_file_( false ),
-	use_sidechain_neighbors_( false )
+	use_sidechain_neighbors_( false ),
+	dist_midpoint_(9.0),
+	rsd_neighbor_denominator_(1.0),
+	angle_shift_factor_(0.5),
+	angle_exponent_(2.0),
+	dist_exponent_(1.0)
 {
 	initialize( 20.0, 40.0 );
 }
 
+/// @brief Copy constructor
+///
+SelectResiduesByLayer::SelectResiduesByLayer( SelectResiduesByLayer const &src ) :
+	pick_core_(src.pick_core_),
+	pick_boundary_(src.pick_boundary_),
+	pick_surface_(src.pick_surface_),
+	pore_radius_(src.pore_radius_),
+	burial_(src.burial_),
+	surface_(src.surface_),
+	excluded_aatypes_for_selection_(src.excluded_aatypes_for_selection_),
+	restricted_aatypes_for_selection_(src.restricted_aatypes_for_selection_),
+	selected_core_residues_(src.selected_core_residues_),
+	selected_boundary_residues_(src.selected_boundary_residues_),
+	selected_surface_residues_(src.selected_surface_residues_),
+	make_rasmol_format_file_(src.make_rasmol_format_file_),
+	use_sidechain_neighbors_(src.use_sidechain_neighbors_),
+	rsd_sasa_(src.rsd_sasa_),
+	rsd_layer_(src.rsd_layer_),
+	dist_midpoint_(src.dist_midpoint_),
+	rsd_neighbor_denominator_(src.rsd_neighbor_denominator_),
+	angle_shift_factor_(src.angle_shift_factor_),
+	angle_exponent_(src.angle_exponent_),
+	dist_exponent_(src.dist_exponent_)
+{}
 
 /// @brief value constructor
 SelectResiduesByLayer::SelectResiduesByLayer(
 	bool const pick_core,
 	bool const pick_boundary,
-	bool const pick_surface ) : utility::pointer::ReferenceCount(),
+	bool const pick_surface ) :
+	utility::pointer::ReferenceCount(),
 	pick_core_( pick_core ),
 	pick_boundary_( pick_boundary ),
 	pick_surface_( pick_surface ),
 	pore_radius_( 2.0 ),
 	make_rasmol_format_file_( false ),
-	use_sidechain_neighbors_( false )
+	use_sidechain_neighbors_( false ),
+	dist_midpoint_(9.0),
+	rsd_neighbor_denominator_(1.0),
+	angle_shift_factor_(0.5),
+	angle_exponent_(2.0)
 {
 	initialize( 20.0, 40.0 );
 }
 
 /// @brief value constructor
-SelectResiduesByLayer::SelectResiduesByLayer( String const pick ) : utility::pointer::ReferenceCount(),
+SelectResiduesByLayer::SelectResiduesByLayer( String const &pick ) : utility::pointer::ReferenceCount(),
 	pick_core_( false ),
 	pick_boundary_( false ),
 	pick_surface_( false ),
 	pore_radius_( 2.0 ),
 	make_rasmol_format_file_( false ),
-	use_sidechain_neighbors_( false )
+	use_sidechain_neighbors_( false ),
+	dist_midpoint_(9.0),
+	rsd_neighbor_denominator_(1.0),
+	angle_shift_factor_(0.5),
+	angle_exponent_(2.0),
+	dist_exponent_(1.0)
 {
 	initialize( 20.0, 40.0 );
 	utility::vector1< String > layers( utility::string_split( pick, '_' ) );
@@ -98,27 +140,16 @@ SelectResiduesByLayer::SelectResiduesByLayer( String const pick ) : utility::poi
 /// @brief destructor
 SelectResiduesByLayer::~SelectResiduesByLayer() {}
 
-/// @brief copy constructor
-SelectResiduesByLayer::SelectResiduesByLayer( SelectResiduesByLayer const & rval ) : utility::pointer::ReferenceCount(),
-	pick_core_( rval.pick_core_ ),
-	pick_boundary_( rval.pick_boundary_ ),
-	pick_surface_( rval.pick_surface_ ),
-	pore_radius_( rval.pore_radius_ ),
-	burial_( rval.burial_ ),
-	surface_( rval.surface_ ),
-	excluded_aatypes_for_selection_( rval.excluded_aatypes_for_selection_ ),
-	selected_core_residues_( rval.selected_core_residues_ ),
-	selected_boundary_residues_( rval.selected_boundary_residues_ ),
-	selected_surface_residues_( rval.selected_surface_residues_ ),
-	make_rasmol_format_file_( rval.make_rasmol_format_file_ ),
-	use_sidechain_neighbors_( rval.use_sidechain_neighbors_  ),
-	rsd_sasa_( rval.rsd_sasa_ ),
-	rsd_layer_( rval.rsd_layer_ )
-{}
+/// @brief Clone operator.
+/// @details Construct a copy of this object and return an owning pointer to the copy.
+SelectResiduesByLayerOP
+SelectResiduesByLayer::clone() const {
+	return SelectResiduesByLayerOP( new SelectResiduesByLayer(*this) );
+}
 
 /// @brief accessible surface for evaluating residues are in surface or not
 void
-SelectResiduesByLayer::sasa_surface( Real const r, String const ss )
+SelectResiduesByLayer::sasa_surface( Real const &r, String const &ss )
 {
 	if ( ss == "" ) {
 		surface_[ 'H' ] = r;
@@ -133,7 +164,7 @@ SelectResiduesByLayer::sasa_surface( Real const r, String const ss )
 
 /// @brief accessible surface for evaluating residues are in core or not
 void
-SelectResiduesByLayer::sasa_core( Real const r, String const ss )
+SelectResiduesByLayer::sasa_core( Real const &r, String const &ss )
 {
 	if ( ss == "" ) {
 		burial_[ 'H' ] = r;
@@ -148,7 +179,7 @@ SelectResiduesByLayer::sasa_core( Real const r, String const ss )
 
 /// @brief
 void
-SelectResiduesByLayer::initialize( Real burial, Real surface )
+SelectResiduesByLayer::initialize( Real const &burial, Real const &surface )
 {
 	surface_.insert( std::map< char, Real >::value_type( 'H', surface ) );
 	surface_.insert( std::map< char, Real >::value_type( 'L', surface ) );
@@ -287,18 +318,15 @@ SelectResiduesByLayer::calc_sc_neighbors( Pose const & pose ) const {
 				numeric::xyzVector< Real > new_sc_vector(other_bb_coordinates - my_sc_coordinates);
 				//TR << new_sc_vector.length() << std::endl;
 
-				Real dist_term(1.0 / (1.0 + exp(new_sc_vector.length() - 9.0)));
-				Real angle_term(my_sc_vector.dot(new_sc_vector.normalize()) + 0.5 );
+				Real dist_term(1.0 / (1.0 + exp( dist_exponent()*(new_sc_vector.length() - dist_midpoint())  ))); // dist_term = 1/(1+exp( n*(d - m))); sigmoidal falloff with midpoint at m, with sharpness controlled by n
+				Real angle_term( ( my_sc_vector.dot(new_sc_vector.normalize()) + angle_shift_factor() ) / (1 + angle_shift_factor() ) );
 				if ( angle_term < 0 ) {
 					angle_term = 0.0;
 				}
-				my_neighbors += (dist_term * angle_term * angle_term);
-
+				my_neighbors += (dist_term * pow(angle_term, angle_exponent()) );
 			}
-
-
 		}
-		rsd_sc_neighbors.push_back(my_neighbors / 2.25);
+		rsd_sc_neighbors.push_back(my_neighbors / rsd_neighbor_denominator());
 		//TR << i << "  " << my_neighbors << std::endl;
 	}
 
@@ -308,16 +336,23 @@ SelectResiduesByLayer::calc_sc_neighbors( Pose const & pose ) const {
 
 /// @brief
 utility::vector1< core::Size > const
-SelectResiduesByLayer::compute( Pose const & pose, String secstruct )
+SelectResiduesByLayer::compute( Pose const & pose, String const &secstruct, bool const skip_dssp )
 {
+	String secstruct2(secstruct);
+
 	// define secstruct if it is empty
-	if ( secstruct == "" ) {
+	if ( secstruct2 == "" ) {
+		if ( skip_dssp ) {
+			for ( core::Size i=1, imax=pose.n_residue(); i<=imax; ++i ) {
+				secstruct2 = secstruct2 + "L";
+			}
+		}
 		// calc dssp
 		core::scoring::dssp::Dssp dssp( pose );
 		dssp.dssp_reduced();
-		secstruct = dssp.get_dssp_secstruct();
+		secstruct2 = dssp.get_dssp_secstruct();
 	}
-	runtime_assert( pose.total_residue() == secstruct.length() );
+	runtime_assert( pose.total_residue() == secstruct2.length() );
 
 	// clear
 	rsd_sasa_.clear();
@@ -346,7 +381,7 @@ SelectResiduesByLayer::compute( Pose const & pose, String secstruct )
 	utility::vector1< Size > selected_residues;
 	for ( Size iaa=1; iaa<=pose.total_residue(); iaa++ ) {
 
-		char ss = secstruct.at( iaa-1 );
+		char ss = secstruct2.at( iaa-1 );
 		runtime_assert( ss == 'L' || ss =='E' || ss=='H' );
 
 		rsd_layer_[ iaa ] = "";
@@ -418,5 +453,5 @@ SelectResiduesByLayer::compute( Pose const & pose, String secstruct )
 } // compute
 
 
-} // flxbb
-} // protocols
+} // util
+} // core

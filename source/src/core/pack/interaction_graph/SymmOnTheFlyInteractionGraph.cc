@@ -274,25 +274,25 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 
 			//if (  (get_node_index() == 1 && ( state_this == 1||state_this == 9) ) || ( neighbor.get_node_index() == 1 && (state_other == 1 || state_other == 9 ))) {
 			// if ( target ) {
-			// 	get_on_the_fly_owner()->score_function().eval_ci_2b_sc_sc(
-			// 		this_rotamer,
-			// 		other_rotamer,
-			// 		get_on_the_fly_owner()->pose(),
-			// 		tbody_emap );
+			//  get_on_the_fly_owner()->score_function().eval_ci_2b_sc_sc(
+			//   this_rotamer,
+			//   other_rotamer,
+			//   get_on_the_fly_owner()->pose(),
+			//   tbody_emap );
 			//
-			// 	get_on_the_fly_owner()->score_function().eval_cd_2b_sc_sc(
-			// 		this_rotamer,
-			// 		other_rotamer,
-			// 		get_on_the_fly_owner()->pose(),
-			// 		tbody_emap
-			// 	);
+			//  get_on_the_fly_owner()->score_function().eval_cd_2b_sc_sc(
+			//   this_rotamer,
+			//   other_rotamer,
+			//   get_on_the_fly_owner()->pose(),
+			//   tbody_emap
+			//  );
 			//
-			// 	std::cout << "no bounding spheres: " << get_node_index() << " " << neighbor.get_node_index() << " " << state_this << " " << state_other << " ii: " << ii << " jj: " << jj << " " << (int) iijj_score_multiply << " * " << static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) ) << " = " <<  iijj_score_multiply * static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) )<< std::endl;
-			// 	Vector xyz = this_rotamer.xyz(1);
-			// 	std::cout << "this rotamer: " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
-			// 	xyz = other_rotamer.xyz(1);
-			// 	std::cout << "neib rotamer: " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
-			// 	tbody_emap.zero();
+			//  std::cout << "no bounding spheres: " << get_node_index() << " " << neighbor.get_node_index() << " " << state_this << " " << state_other << " ii: " << ii << " jj: " << jj << " " << (int) iijj_score_multiply << " * " << static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) ) << " = " <<  iijj_score_multiply * static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) )<< std::endl;
+			//  Vector xyz = this_rotamer.xyz(1);
+			//  std::cout << "this rotamer: " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
+			//  xyz = other_rotamer.xyz(1);
+			//  std::cout << "neib rotamer: " << xyz.x() << " " << xyz.y() << " " << xyz.z() << std::endl;
+			//  tbody_emap.zero();
 			// }
 
 			BoundingSphere this_sc_bounding_sphere  = sc_bounding_sphere( state_this, this_subunit );
@@ -402,9 +402,9 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 				}
 
 				// if (  (get_node_index() == 1 && ( state_this == 1||state_this == 9) ) || ( neighbor.get_node_index() == 1 && (state_other == 1 || state_other == 9 ))) {
-				// 	std::cout << get_node_index() << " " << neighbor.get_node_index() << " " << state_this << " " << state_other << " ii: " << ii << " jj: " << jj << " " << (int) iijj_score_multiply << " * " << static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) ) << " = " <<  iijj_score_multiply * static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) )<< std::endl;
-				// 	//std::cout << "this cbeta: " << this_rotamer.xyz( "CB" ).x() << " " << this_rotamer.xyz( "CB" ).y() << " " << this_rotamer.xyz( "CB" ).z();
-				// 	//std::cout << "; other cbeta: " << other_rotamer.xyz( "CB" ).x() << " " << other_rotamer.xyz( "CB" ).y() << " " << other_rotamer.xyz( "CB" ).z() << std::endl;;
+				//  std::cout << get_node_index() << " " << neighbor.get_node_index() << " " << state_this << " " << state_other << " ii: " << ii << " jj: " << jj << " " << (int) iijj_score_multiply << " * " << static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) ) << " = " <<  iijj_score_multiply * static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) )<< std::endl;
+				//  //std::cout << "this cbeta: " << this_rotamer.xyz( "CB" ).x() << " " << this_rotamer.xyz( "CB" ).y() << " " << this_rotamer.xyz( "CB" ).z();
+				//  //std::cout << "; other cbeta: " << other_rotamer.xyz( "CB" ).x() << " " << other_rotamer.xyz( "CB" ).y() << " " << other_rotamer.xyz( "CB" ).z() << std::endl;;
 				// }
 				esum += iijj_score_multiply * static_cast< core::PackerEnergy >
 					( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) );
@@ -441,8 +441,8 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 		esum += get_incident_otf_edge( edge_making_energy_request )->
 			get_proline_correction_for_node( get_node_index(), state_this );
 		// if ( get_node_index() == 1 && state_this == 1 ) {
-		// 	std::cout << "adding proline correction 1: " << get_incident_otf_edge( edge_making_energy_request )->
-		// 		get_proline_correction_for_node( get_node_index(), state_this ) << std::endl;
+		//  std::cout << "adding proline correction 1: " << get_incident_otf_edge( edge_making_energy_request )->
+		//   get_proline_correction_for_node( get_node_index(), state_this ) << std::endl;
 		// }
 	}
 	if ( get_asu_rotamer( state_this ).aa() == chemical::aa_pro ) {
@@ -451,8 +451,8 @@ SymmOnTheFlyNode::compute_rotamer_pair_energy(
 			state_other
 		);
 		// if ( get_node_index() == 1 && state_this == 1 ) {
-		// 	std::cout << "adding proline correction 2: " <<  get_incident_otf_edge( edge_making_energy_request )->
-		// 		get_proline_correction_for_node( get_index_of_adjacent_node( edge_making_energy_request ), state_other ) << std::endl;
+		//  std::cout << "adding proline correction 2: " <<  get_incident_otf_edge( edge_making_energy_request )->
+		//   get_proline_correction_for_node( get_index_of_adjacent_node( edge_making_energy_request ), state_other ) << std::endl;
 		// }
 	}
 
@@ -564,7 +564,7 @@ SymmOnTheFlyEdge::SymmOnTheFlyEdge(
 		eval_types_[ 1 ] = eval_types_[ 0 ] = whole_whole;
 	}
 	//std::cout << "Edge " << get_first_node_ind() << " " << get_second_node_ind() << " eval types [ " <<
-	//	eval_types_[ 0 ] << ", " << eval_types_[ 1 ] << " ] " << std::endl;
+	// eval_types_[ 0 ] << ", " << eval_types_[ 1 ] << " ] " << std::endl;
 }
 
 

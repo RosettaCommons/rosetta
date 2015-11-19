@@ -139,7 +139,7 @@ ResidueTypeFinder::get_best_match_residue_type_for_atom_names( utility::vector1<
 	ResidueTypeCOP rsd_type = find_best_match( rsd_types, atom_names, ignore_atom_named_H_ );
 
 	//TR << "time to initialize " << rsd_type->name() << " from " << rsd_types.size() << " possible ResidueTypes: " <<
-	//	static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
+	// static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 	return rsd_type;
 }

@@ -34,7 +34,6 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/DsspMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/toolbox/SelectResiduesByLayer.hh>
 
 // Core Headers
 #include <core/conformation/Conformation.hh>

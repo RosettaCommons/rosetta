@@ -1367,13 +1367,13 @@ build_pose_as_is1(
 
 		bool const separate_chemical_entity( find(entities_begin, entities_end, chainID ) != entities_end );
 		bool same_chain_prev( i > 1 && chainID == rinfos[ i - 1 ].chainID &&
-				rinfo.terCount == rinfos[i-1].terCount && ! separate_chemical_entity );
+			rinfo.terCount == rinfos[i-1].terCount && ! separate_chemical_entity );
 		bool same_chain_next( i < nres_pdb && chainID == rinfos[ i + 1 ].chainID &&
-				rinfo.terCount == rinfos[ i + 1 ].terCount && ! separate_chemical_entity );
+			rinfo.terCount == rinfos[ i + 1 ].terCount && ! separate_chemical_entity );
 		bool const check_Ntermini_for_this_chain( ( "ALL" == chains_to_check_if_Ntermini ) ?
-				true : find( check_Ntermini_begin, check_Ntermini_end, chainID ) ==  check_Ntermini_end );
+			true : find( check_Ntermini_begin, check_Ntermini_end, chainID ) ==  check_Ntermini_end );
 		bool const check_Ctermini_for_this_chain( ( "ALL" == chains_to_check_if_Ctermini ) ?
-				true : find( check_Ctermini_begin, check_Ctermini_end, chainID ) ==  check_Ctermini_end );
+			true : find( check_Ctermini_begin, check_Ctermini_end, chainID ) ==  check_Ctermini_end );
 
 		// Determine polymer information: termini, branch points, etc.
 		// Carbohydrate base names will have "->?)-" as a prefix if their main-chain connectivity requires LINK records
@@ -1430,7 +1430,7 @@ build_pose_as_is1(
 		}
 
 		bool const is_lower_terminus( ( i == 1 || rinfos.empty() || ( ! same_chain_prev && ! is_branch_lower_terminus) )
-				&& check_Ntermini_for_this_chain );
+			&& check_Ntermini_for_this_chain );
 		bool const is_upper_terminus( ( i == nres_pdb || ! same_chain_next ) && check_Ctermini_for_this_chain );
 
 
@@ -2334,17 +2334,17 @@ get_rsd_type(
 	}
 
 	rsd_type = ResidueTypeFinder( residue_set )
-			.name3( name3 )
-			.residue_base_name( residue_base_name )
-			.disallow_variants( disallow_variants )
-			.variants_in_sets( required_variants_in_sets )
-			.properties( properties )
-			.disallow_properties( disallow_properties )
-			.patch_names( patch_names )
-			.ignore_atom_named_H( is_lower_terminus )
-			.disallow_carboxyl_conjugation_at_glu_asp( disallow_carboxyl_conjugation_at_glu_asp )
-			.check_nucleic_acid_virtual_phosphates( true )
-			.get_best_match_residue_type_for_atom_names( xyz_atom_names );
+		.name3( name3 )
+		.residue_base_name( residue_base_name )
+		.disallow_variants( disallow_variants )
+		.variants_in_sets( required_variants_in_sets )
+		.properties( properties )
+		.disallow_properties( disallow_properties )
+		.patch_names( patch_names )
+		.ignore_atom_named_H( is_lower_terminus )
+		.disallow_carboxyl_conjugation_at_glu_asp( disallow_carboxyl_conjugation_at_glu_asp )
+		.check_nucleic_acid_virtual_phosphates( true )
+		.get_best_match_residue_type_for_atom_names( xyz_atom_names );
 
 	return rsd_type;
 }
