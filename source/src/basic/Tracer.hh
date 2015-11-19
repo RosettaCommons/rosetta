@@ -133,6 +133,14 @@ struct TracerOptions
 ///    then channel must be something like 'src.basic.scoring.myfile'
 class Tracer :  public otstream
 {
+	/// @brief init Tracer object with given parameters. This is a helper function to be called from various constructors
+	void init(
+		std::string const & channel,
+		std::string const & channel_color,
+		std::string const & channel_name_color,
+		TracerPriority priority,
+		bool muted_by_default
+	);
 
 public:
 
@@ -142,6 +150,17 @@ public:
 		TracerPriority priority = t_info,
 		bool muted_by_default = false
 	);
+
+	/// @brief Create Tracer object with channel color, channel name color and given channel and priority
+	Tracer(
+		std::string const & channel,
+		std::string const & channel_color,
+		std::string const & channel_name_color = "",
+		TracerPriority priority = t_info,
+		bool muted_by_default = false
+	);
+
+
 
 	virtual ~Tracer();
 
@@ -179,6 +198,12 @@ public:
 	void priority(int priority);
 
 	std::string const & channel() const { return channel_; }
+
+	std::string const &channel_color() { return channel_color_; }
+	void channel_color(std::string const &color) { channel_color_ = color; }
+
+	std::string const &channel_name_color() { return channel_name_color_; }
+	void channel_name_color(std::string const &color) { channel_name_color_ = color; }
 
 	/// @brief get/set tracer options - global options for Tracer IO.
 	static TracerOptions & tracer_options() { return tracer_options_; }
@@ -297,6 +322,9 @@ private: /// Data members
 
 	/// @brief channel name
 	std::string channel_;
+
+	/// @brief default colors for tracer output and tracer channel-name string (ie color of string such as: 'core.pose:')
+	std::string channel_color_, channel_name_color_;
 
 	/// @brief channel output priority level
 	int priority_;

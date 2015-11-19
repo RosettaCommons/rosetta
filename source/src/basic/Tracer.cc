@@ -208,16 +208,37 @@ Tracer::Tracer(std::string const & channel, TracerPriority priority, bool muted_
 	Warning( *this, t_warning, channel ),
 	Info(    *this, t_info,    channel ),
 	Debug(   *this, t_debug,   channel ),
-	Trace(   *this, t_trace,   channel ),
-	mute_level_(-1),
-	visible_(true),
-	muted_( false ),
-	muted_by_default_(muted_by_default),
-	begining_of_the_line_(true),
-	visibility_calculated_(false)
+	Trace(   *this, t_trace,   channel )
 {
+	init(channel, "", "", priority, muted_by_default);
+}
+
+
+Tracer::Tracer(std::string const & channel, std::string const & channel_color, std::string const & channel_name_color, TracerPriority priority, bool muted_by_default) :
+	Fatal(   *this, t_fatal,   channel ),
+	Error(   *this, t_error,   channel ),
+	Warning( *this, t_warning, channel ),
+	Info(    *this, t_info,    channel ),
+	Debug(   *this, t_debug,   channel ),
+	Trace(   *this, t_trace,   channel )
+{
+	init(channel, channel_color, channel_name_color, priority, muted_by_default);
+}
+
+void Tracer::init(std::string const & channel, std::string const & channel_color, std::string const & channel_name_color, TracerPriority priority, bool muted_by_default)
+{
+	mute_level_ = -1;
+	visible_ = true;
+	muted_ = false;
+	muted_by_default_ = muted_by_default;
+	begining_of_the_line_ = true;
+	visibility_calculated_ = false;
+
 	channel_ = channel;
 	priority_ = priority;
+
+	channel_color_ = channel_color;
+	channel_name_color_ = channel_name_color;
 
 #ifdef CXX11
 #ifdef MULTI_THREADED
@@ -230,7 +251,6 @@ Tracer::Tracer(std::string const & channel, TracerPriority priority, bool muted_
 	}
 
 	TracerManager::get_instance()->all_tracers().push_back( this );
-
 }
 
 Tracer::~Tracer()
@@ -496,24 +516,30 @@ bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std
 template <class out_stream>
 void Tracer::prepend_channel_name( out_stream & sout, std::string const &str )
 {
-	if ( tracer_options_.print_channel_name ) {
-		std::string s = str;
-		begining_of_the_line_ = true;
-		for ( size_t i=0; i<s.size(); i++ ) {
-			if ( begining_of_the_line_ ) {
-				sout << channel_ << ": ";
-#ifdef USEMPI
-				sout << "(" << mpi_rank_ << ") ";
-#endif
-				if ( tracer_options_.timestamp ) {
-					sout << utility::timestamp() << " ";
-				}
-				begining_of_the_line_ = false;
+	std::string s = str;
+	begining_of_the_line_ = true;
+	for ( size_t i=0; i<s.size(); i++ ) {
+		if ( begining_of_the_line_ ) {
+
+			sout << this->Reset;
+
+			if ( tracer_options_.print_channel_name ) {
+				sout << channel_name_color_ << channel_ << ": ";
 			}
-			sout << s[i];
+
+			#ifdef USEMPI
+				sout << "(" << mpi_rank_ << ") ";
+			#endif
+
+			if ( tracer_options_.timestamp ) {
+				sout << utility::timestamp() << " ";
+			}
+
+			sout << this->Reset << channel_color_;
+
+			begining_of_the_line_ = false;
 		}
-	} else {
-		sout << str;
+		sout << s[i];
 	}
 }
 
