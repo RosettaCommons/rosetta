@@ -33,11 +33,11 @@ namespace protein {
 
 
 // This is used by create_alignment_id_map, but should be deprecated in favor of StepWisePoseAligner
-void
-setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
-	core::pose::Pose const & pose_2,
-	core::Size const base_res,
-	core::id::AtomID_Map< core::id::AtomID > & atom_ID_map);
+// void
+// setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
+// 	core::pose::Pose const & pose_2,
+// 	core::Size const base_res,
+// 	core::id::AtomID_Map< core::id::AtomID > & atom_ID_map);
 
 // This is used by create_alignment_id_map, but should be deprecated in favor of StepWisePoseAligner
 void

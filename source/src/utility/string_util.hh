@@ -76,8 +76,21 @@ std::string join(utility::vector1<T> const & vector, std::string const & connect
 /// @brief combine strings with anything
 std::string join(std::vector<std::string> const & s, std::string const & connector);
 
-/// @brief join space separations in a string with a connector such as '_'
-std::string join(std::string const & string_w_spaces, std::string const & connector);
+/// @brief Join vector of strings in to single string
+template< platform::SSize L>
+std::string join(vectorL<L, std::string> const & s, std::string const & connector){
+	std::ostringstream os;
+	typename utility::vectorL<L, std::string>::const_iterator begin= s.begin();
+	os << *begin++;
+	for ( ; begin != s.end(); ++begin ) {
+		os<< connector<< *begin;
+	}
+	return os.str();
+}
+
+
+/// @brief replace space separations in a string with a connector such as '_'
+std::string replace_spaces(std::string const & string_w_spaces, std::string const & replacement);
 
 /// @brief split given std::string using ' ' symbol.
 std::list< std::string > split_to_list(const std::string &s);
@@ -184,9 +197,8 @@ void replace_in( std::string & s, const char from, const char *to )
 	}
 }
 
-/// @brief find/replace strings within input string.
-std::string
-replace_in( std::string const & name_in, std::string const & find_string, std::string const & replace_string );
+/// @brief Generate new string from 'source' by replacing all occurrences of 'from' to 'to' string.
+std::string replace_in( std::string const & source, std::string const & from, std::string const & to );
 
 
 template <class T>
@@ -320,6 +332,10 @@ get_resnum_and_segid_from_one_tag( std::string const & tag,
 
 platform::Size
 get_num_digits( platform::Size value);
+
+
+/// @brief Return a copy of the string with leading and trailing characters removed
+std::string strip(std::string const & source, char c=' ');
 
 }  // namespace utility
 

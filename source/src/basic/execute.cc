@@ -35,10 +35,7 @@ ExecutionResult execute(std::string const & message, std::string const & command
 {
 	ExecutionResult r;
 
-	if ( !silent ) {
-		TR << message << command_line;
-		TR.flush();
-	}
+	if ( !silent )  TR << message << ' ' << command_line << std::endl;  // TR.flush();
 
 	FILE *pipe = popen( (command_line+ " 2>&1" ).c_str(), "r"); // we need to redirect std error in to std output so it will got captured by pipe...
 
@@ -55,7 +52,7 @@ ExecutionResult execute(std::string const & message, std::string const & command
 		r.output = "Could not open pipe!";
 	}
 
-	if ( terminate_on_failure ) utility_exit_with_message("basic.execute encounter error while runnning " + command_line+ "... Exiting...");
+	if ( terminate_on_failure && r.result ) utility_exit_with_message("basic.execute encounter error while runnning " + command_line+ '\n'+ r.output +"\nExiting...");
 	return r;
 }
 

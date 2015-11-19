@@ -92,7 +92,7 @@ MutateResidue::MutateResidue(MutateResidue const& dm) :
 /// @brief Mutate a single residue to a new amino acid
 /// @param target The residue index to mutate
 /// @param new_res The name of the replacement residue
-MutateResidue::MutateResidue( core::Size const target, string const new_res ) :
+MutateResidue::MutateResidue( core::Size const target, string const &new_res ) :
 	parent(),
 	target_(""),
 	res_name_(new_res),

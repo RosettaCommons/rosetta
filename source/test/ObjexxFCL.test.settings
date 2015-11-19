@@ -17,5 +17,5 @@ testinputfiles = [
 	]
 include_path = [ "#external/cxxtest", "#" ]
 library_path = []
-libraries    = [ "ObjexxFCL" ]
+libraries    = [ "utility", "ObjexxFCL" ]
 subprojects  = []

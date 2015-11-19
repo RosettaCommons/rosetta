@@ -816,6 +816,9 @@ sources = {
 		#"docking_parallel",
 		#"complex_interface_optimize",
 	],
+	"pilot/sergey" : [
+		"antibody",
+	],
 	"pilot/sevya" : [
 		#"msd",
 	],

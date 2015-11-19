@@ -108,10 +108,10 @@ std::string join(std::vector<std::string> const & s, std::string const & connect
 	return os.str();
 }
 
-std::string join(std::string const & string_w_spaces, std::string const & connector){
+std::string replace_spaces(std::string const & string_w_spaces, std::string const & replacement){
 	//std::string trimmed= trim(string_w_spaces);
 	utility::vector1<std::string> pieces= split(string_w_spaces);
-	return join(pieces, connector);
+	return join(pieces, replacement);
 }
 
 /// @details split given std::string using ' ' symbol.
@@ -697,6 +697,25 @@ replace_in( std::string const & name_in, std::string const & find_string, std::s
 		pos = name.find( find_string, pos + replace_string.size() );
 	}
 	return name;
+}
+
+
+// @brief Return a copy of the string with leading and trailing characters removed
+std::string strip(std::string const & source, char c)
+{
+	std::string::const_iterator begin = source.begin();
+	std::string::const_iterator end = source.end();
+	for(std::string::const_iterator p = source.begin(); p!=source.end(); ++p) {
+		if( *p == c ) begin = p+1;
+		else break;
+	}
+
+	for(std::string::const_iterator p = source.end(); p!=begin; --p) {
+		if( *(p-1) == c ) end = p-1;
+		else break;
+	}
+
+	return std::string(begin, end);
 }
 
 

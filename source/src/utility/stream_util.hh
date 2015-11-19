@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/unti/OStream.hh
-/// @brief  base ostream like class for mini
+/// @file   utility/stream_util.hh
+/// @brief  Implemention of ostream operator << for various common types
 /// @author Sergey Lyskov
 
 #ifndef INCLUDED_utility_stream_util_hh
@@ -20,8 +20,8 @@
 
 //Auto Headers
 #include <utility/vector1.fwd.hh>
+#include <utility/vectorL.fwd.hh>
 #include <vector>
-
 
 namespace utility {
 
@@ -32,32 +32,6 @@ namespace utility {
 
 template <typename T1, typename T2>
 std::ostream & operator <<(std::ostream & os, std::pair<T1, T2> const & v); // declare here to allow output of vector1< std::pair >.
-
-/// @brief Output function for std::vector object.
-template <class T>
-std::ostream & operator <<( std::ostream & os, std::vector<T> const & v)
-{
-	os << "[";
-	for ( size_t i = 0; i < v.size(); i++ ) {
-		os << v[i];
-		if ( i < v.size()-1 ) os << ", ";
-	}
-	os << "]";
-	return os;
-}
-
-
-/// @brief Output function for utility::vector1 object.
-template <class T>
-std::ostream & operator <<(std::ostream & os, utility::vector1<T> const & v) {
-	os << "[";
-	for ( size_t i=1; i<=v.size(); i++ ) {
-		os << v[i];
-		if ( i < v.size() ) os << ", ";
-	}
-	os << "]";
-	return os;
-}
 
 /// @brief Output function for std::pair object.
 template <typename T1, typename T2>
@@ -104,6 +78,38 @@ std::ostream & operator <<(std::ostream & os, std::list<T> const & l) {
 	return os;
 }
 
+/// @brief Output function for utility::vector1 object.
+template <platform::SSize L, class T>
+std::ostream & operator <<(std::ostream & os, utility::vectorL<L, T> const & v) {
+	os << "[";
+	if( v.size() ) {
+		for(size_t i=v.l(); i<=v.u(); ++i) {
+			os << v[i];
+			if ( i < v.u() ) os << ", ";
+		}
+	}
+	os << "]";
+	return os;
+}
+
 } // namespace utility
+
+
+namespace std { // inserting operator for ::std types in to std namespace
+
+/// @brief Output function for std::vector object.
+template <class T>
+std::ostream & operator <<( std::ostream & os, std::vector<T> const & v)
+{
+	os << "[";
+	for ( size_t i = 0; i < v.size(); i++ ) {
+		os << v[i];
+		if ( i < v.size()-1 ) os << ", ";
+	}
+	os << "]";
+	return os;
+}
+
+} // namespace std
 
 #endif // INCLUDED_utility_stream_util_hh

@@ -28,7 +28,7 @@ public:
 	std::string output;
 
 #ifdef HAS_MOVE_SEMANTICS
-		ExecutionResult(ExecutionResult &&r) =default; //{ result=r.result; output=std::move(r.output); }
+	ExecutionResult(ExecutionResult &&r) =default; //{ result=r.result; output=std::move(r.output); }
 #endif
 };
 

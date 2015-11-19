@@ -86,10 +86,10 @@ public:
 		return helix_id_(n);
 	}
 
-	Size
-	relative_tmh_ori(Size const n, Size const m) const {
-		return(relative_tmh_ori(n,m));
-	}
+	// Size
+	// relative_tmh_ori(Size const n, Size const m) const {
+	// 	return(relative_tmh_ori(n,m));
+	// }
 
 	Real
 	depth(Size const seqpos) {

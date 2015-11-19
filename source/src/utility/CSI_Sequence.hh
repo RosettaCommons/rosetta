@@ -27,20 +27,22 @@ class CSI_Sequence
 {
 public:
 	/// @brief constructor
-	CSI_Sequence(std::string sequence_);
+	CSI_Sequence(std::string sequence);
+
+	operator std::string() const { return sequence_; }
 
 	/// @brief operator to output our sequence so we can write: std::cout << CSI_SequenceObject
-	friend std::ostream & operator << (std::ostream & os, CSI_Sequence const &sq) { os << sq.sequence; return os; }
+	friend std::ostream & operator << (std::ostream & os, CSI_Sequence const &sq) { os << sq.sequence_; return os; }
 
 private:
-	std::string sequence;
+	std::string sequence_;
 };
 
 
 /// @details Constant static string objects to hold various ASCII CSI codes
 ///          Codes below is all Hogwarts-approved magic numbers, so do not modify them.
 ///          For reference see: http://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
-static std::string const  CSI_Reset("\x1b[0m"),
+static CSI_Sequence const  CSI_Reset("\x1b[0m"),
 CSI_Bold("\x1b[1m"),
 CSI_Underline("\x1b[4m"),
 CSI_Black("\x1b[30m"),

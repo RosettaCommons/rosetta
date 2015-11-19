@@ -56,6 +56,8 @@ if( ${COMPILER} STREQUAL "gcc" AND ${CMAKE_CXX_COMPILER_VERSION} MATCHES ".*4.4(
 	)
 endif()
 
+
+
 # modes ###################################################################
 
 # "gcc, debug"
@@ -233,26 +235,42 @@ if( EXTRAS )
 	    )
 	    set( compile
 			    -pipe
-			    -Qunused-arguments
-			    -DUNUSUAL_ALLOCATOR_DECLARATION
 			    -ftemplate-depth-256
-			    -stdlib=libstdc++
     			    -fPIC
 			    -DBOOST_ERROR_CODE_HEADER_ONLY
 			    -DBOOST_SYSTEM_NO_DEPRECATED
 			    -I /usr/include
 			    -I /usr/local/include
 			    -I src
-			    -I src/platform/macos/64/clang/6.1
-			    -I src/platform/macos/64/clang
-			    -I src/platform/macos/64
+			    -I external/include
     	    )
-	    set( shlink
-			    -stdlib=libstdc++
-	    )
-	    set( link
-			    -stdlib=libstdc++
-	    )
+	    if( ${COMPILER} STREQUAL "gcc" )
+		list( APPEND compile
+		    -I src/platform/linux
+		)
+	    endif()
+
+
+	    if( ${COMPILER} STREQUAL "clang" )
+		list( APPEND compile
+		    -DUNUSUAL_ALLOCATOR_DECLARATION
+		    -stdlib=libstdc++
+		    -Qunused-arguments
+		    -I src/platform/macos/64/clang/6.1
+		    -I src/platform/macos/64/clang
+		    -I src/platform/macos/64
+		)
+
+		set( shlink
+		    -stdlib=libstdc++
+		)
+
+		set( link
+		    -stdlib=libstdc++
+		)
+
+	    endif()
+
 	endif()
 
 

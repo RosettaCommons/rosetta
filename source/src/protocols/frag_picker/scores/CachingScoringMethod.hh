@@ -55,9 +55,11 @@ public:
 		utility_exit_with_message( "ERROR: unimplemented cached_score() method. Your score function could not use cache\n" );
 		return true;
 	}
-	virtual bool score(FragmentCandidateOP fragment,
-		FragmentScoreMapOP scores) {
-		return score(fragment,scores); };
+
+	virtual bool score(FragmentCandidateOP /*fragment*/, FragmentScoreMapOP /*scores*/) { utility_exit_with_message( "ERROR: unimplemented score() method!\n" ); return true; }
+	// virtual bool score(FragmentCandidateOP fragment,
+	// 	FragmentScoreMapOP scores) {
+	// 	return score(fragment,scores); };
 };
 
 } // scores

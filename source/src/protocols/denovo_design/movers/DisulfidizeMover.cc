@@ -47,6 +47,7 @@
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/stream_util.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>

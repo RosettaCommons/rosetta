@@ -27,6 +27,8 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+#include <utility/CSI_Sequence.fwd.hh>
+
 // option key includes
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -275,7 +277,7 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 
 	}
 
-	T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION: " << weight_set << std::endl;
+	T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION: " << utility::CSI_Green << weight_set << utility::CSI_Reset << std::endl;
 
 	core::scoring::ScoreFunctionOP scorefxn;
 
@@ -400,4 +402,3 @@ get_score_functionName(
 
 } // namespace scoring
 } // namespace core
-

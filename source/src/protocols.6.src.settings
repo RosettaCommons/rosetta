@@ -75,6 +75,13 @@ sources = {
         "NativeAntibodySeq",
 		"util",
 	],
+	"protocols/antibody/grafting":[
+		"antibody_sequence",
+		'regex_based_cdr_detection',
+		'chothia_numberer',
+		'scs_blast',
+		'scs_functor',
+	],
 	"protocols/antibody/snugdock":[
 		"SnugDock",
 		"SnugDockProtocol",

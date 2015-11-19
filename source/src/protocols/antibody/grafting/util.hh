@@ -7,35 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/utility/CSI_Sequence.cc
-/// @brief  Terminal ASCII codes
-/// @author Sergey Lyskov, @modified by Caleb Geniesse
+/// @file src/protocols/antibody/grafting/util.hh
+/// @brief Helpers for antibody grafting code
+/// @author Sergey Lyskov
 
 
-#include <utility/CSI_Sequence.hh>
+#ifdef CXX11
 
-#include <ostream>
+	#ifdef __clang__
+		#define __ANTIBODY_GRAFTING__
+	#else
+		#if __GNUC__ > 3  &&  __GNUC_MINOR__ > 8  // We need at least GCC-4.9 to compiler Antibody code
+			#define __ANTIBODY_GRAFTING__
+		#endif
+	#endif
 
-#ifndef WIN32
-#include <unistd.h>
-#else
-#include <io.h>
-#endif
-
-#include <cstdio>
-
-
-namespace utility {
-
-/// @brief constructor
-CSI_Sequence::CSI_Sequence(std::string sequence)
-{
-#ifdef WIN32
-	if ( _isatty(fileno(stdout)) ) sequence_ = sequence;
-#else
-	if ( isatty(fileno(stdout)) ) sequence_ = sequence;
-#endif
-}
-
-
-} // utility
+#endif // CXX11
