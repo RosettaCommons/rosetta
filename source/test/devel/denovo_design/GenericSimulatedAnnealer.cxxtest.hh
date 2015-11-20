@@ -28,6 +28,8 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/filters/BasicFilters.hh>
@@ -154,6 +156,7 @@ public:
 
 		// set up two genericsimulatedannealers
 		std::string const checkpoint_file( "devel/denovo_design/mc" );
+		std::string const checkpoint_silent_file( checkpoint_file + ".out" );
 		devel::denovo_design::GenericSimulatedAnnealer annealer;
 		annealer.checkpoint_file( checkpoint_file );
 		annealer.set_mover( mut_to_ala );
@@ -190,16 +193,26 @@ public:
 		TS_ASSERT_DELTA( ntrp, 2.000000000, 1e-9 );
 		// checkpoint files should be there.
 		TS_ASSERT( exists( checkpoint_file ) );
-		TS_ASSERT( exists(checkpoint_file + "_best.pdb") );
-		TS_ASSERT( exists(checkpoint_file + "_last.pdb") );
+		TS_ASSERT( exists( checkpoint_silent_file ) );
 
 		// best.pdb should contain 2 TRP, as should last.pdb
 		core::pose::Pose test_pose;
-		core::import_pose::pose_from_pdb( test_pose, checkpoint_file + "_best.pdb" );
+		core::io::silent::SilentFileData sfd;
+		sfd.read_file( checkpoint_silent_file );
+		std::string const best_tag = annealer.create_tag( "best" );
+		std::string const last_tag = annealer.create_tag( "last" );
+		TR << "Looking for " << best_tag << " and " << last_tag << std::endl;
+		TS_ASSERT( sfd.has_tag( best_tag ) );
+		TS_ASSERT( sfd.has_tag( last_tag ) );
+		sfd.get_structure( best_tag ).fill_pose( test_pose );
 		TS_ASSERT( num_trp->report_sm( test_pose ) == ntrp );
-		core::import_pose::pose_from_pdb( test_pose, checkpoint_file + "_last.pdb" );
-		TS_ASSERT( num_trp->report_sm( test_pose ) == ntrp );
+		test_pose.clear();
 
+		sfd.get_structure( last_tag ).fill_pose( test_pose );
+		TS_ASSERT( num_trp->report_sm( test_pose ) == ntrp );
+		test_pose.clear();
+
+		TR << "Applying round 2: " << std::endl;
 		// when we run the second annealer, it should find the checkpoint file and not do anything
 		annealer2.apply( pose );
 		// there should be one accepted pose and the starting values in the accepted scores
@@ -208,14 +221,17 @@ public:
 		TR << "3ntrp=" << ntrp2 << std::endl;
 		TS_ASSERT_DELTA( ntrp, ntrp2, 1e-9 );
 		// and checkpoint files should still be there
-		TS_ASSERT( exists(checkpoint_file) );
-		TS_ASSERT( exists(checkpoint_file + "_best.pdb") );
-		TS_ASSERT( exists(checkpoint_file + "_last.pdb") );
+		TS_ASSERT( exists( checkpoint_file ) );
+		TS_ASSERT( exists( checkpoint_silent_file ) );
 
 		// best.pdb should contain 2 TRP, as should last.pd
-		core::import_pose::pose_from_pdb( test_pose, checkpoint_file + "_best.pdb" );
+		sfd.clear();
+		sfd.read_file( checkpoint_silent_file );
+		TS_ASSERT( sfd.has_tag( best_tag ) );
+		TS_ASSERT( sfd.has_tag( last_tag ) );
+		sfd.get_structure( best_tag ).fill_pose( test_pose );
 		TS_ASSERT( num_trp->report_sm( test_pose ) == ntrp2 );
-		core::import_pose::pose_from_pdb( test_pose, checkpoint_file + "_last.pdb" );
+		sfd.get_structure( last_tag ).fill_pose( test_pose );
 		TS_ASSERT( num_trp->report_sm( test_pose ) == ntrp2 );
 
 		// now we tell annealer2 to do two trials -- it should run once
@@ -229,10 +245,16 @@ public:
 		TR << "after 2 trials ntrp=" << ntrp3 << std::endl;
 		TS_ASSERT_DELTA( ntrp3, 1.000000000, 1e-9 );
 		// checkpoint files should still be there
-		TS_ASSERT( exists(checkpoint_file) );
-		core::import_pose::pose_from_pdb( test_pose, checkpoint_file + "_best.pdb" );
+		TS_ASSERT( exists( checkpoint_file ) );
+		TS_ASSERT( exists( checkpoint_silent_file ) );
+
+		sfd.clear();
+		sfd.read_file( checkpoint_silent_file );
+		TS_ASSERT( sfd.has_tag( best_tag ) );
+		TS_ASSERT( sfd.has_tag( last_tag ) );
+		sfd.get_structure( best_tag ).fill_pose( test_pose );
 		TS_ASSERT( num_trp->report_sm( test_pose ) == ntrp3 );
-		core::import_pose::pose_from_pdb( test_pose, checkpoint_file + "_last.pdb" );
+		sfd.get_structure( last_tag ).fill_pose( test_pose );
 		TS_ASSERT( num_trp->report_sm( test_pose ) == ntrp3 );
 		annealer.remove_checkpoint_file();
 	}

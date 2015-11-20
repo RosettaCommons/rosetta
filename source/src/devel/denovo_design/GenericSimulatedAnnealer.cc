@@ -28,7 +28,9 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
+#include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentStructFactory.hh>
+#include <core/io/silent/SilentFileData.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
 // C/C++ headers
@@ -296,20 +298,41 @@ GenericSimulatedAnnealer::calculate_temps()
 	}
 }
 
+std::string
+GenericSimulatedAnnealer::create_tag( std::string const & suffix ) const
+{
+	std::string cp = checkpoint_file_ + '_' + suffix;
+	for ( std::string::iterator c=cp.begin(); c!=cp.end(); ++c ) {
+		if ( ( *c == '/' )	 ||  ( *c == ' ' ) || ( *c == '\t' ) ) {
+			*c = '_';
+		}
+	}
+	return cp;
+}
+
 void
 GenericSimulatedAnnealer::load_checkpoint_file( core::pose::Pose & pose )
 {
 	runtime_assert( checkpoint_file_ != "" );
-	// load best pose
-	core::pose::PoseOP best_pose( new core::pose::Pose() );
-	core::import_pose::pose_from_pdb( *best_pose, checkpoint_file_ + "_best.pdb" );
-	lowest_score_pose( best_pose );
-	TR << "Loaded lowest score pose from " << checkpoint_file_ << "_best.pdb" << std::endl;
-	// load last accepted pose
-	core::pose::PoseOP last_pose( new core::pose::Pose() );
-	core::import_pose::pose_from_pdb( *last_pose, checkpoint_file_ + "_last.pdb" );
-	last_accepted_pose( last_pose );
-	TR << "Loaded last accepted pose from " << checkpoint_file_ << "_last.pdb" << std::endl;
+	std::string const sf_name = checkpoint_file_ + ".out";
+	core::io::silent::SilentFileData sfd( sf_name, false, false, "binary" );
+	sfd.read_file( sf_name );
+	std::string const best_tag = create_tag( "best" );
+	if ( sfd.has_tag( best_tag ) ) {
+		core::pose::PoseOP best_pose( new core::pose::Pose() );
+		sfd.get_structure( best_tag ).fill_pose( *best_pose );
+		lowest_score_pose( best_pose );
+		TR << "Loaded lowest score pose " << best_tag << " from " << sf_name << std::endl;
+	}
+	std::string const last_accepted_tag = create_tag( "last" );
+	if ( sfd.has_tag( last_accepted_tag ) ) {
+		core::pose::PoseOP last_pose( new core::pose::Pose() );
+		sfd.get_structure( last_accepted_tag ).fill_pose( *last_pose );
+		last_accepted_pose( last_pose );
+		TR << "Loaded last accepted pose " << last_accepted_tag << " from " << sf_name << std::endl;
+	}
+	runtime_assert( last_accepted_pose() );
+	runtime_assert( lowest_score_pose() );
 	// read the file with stats
 	std::ifstream saved_file( checkpoint_file_.c_str() );
 	if ( !saved_file.is_open() ) {
@@ -362,23 +385,29 @@ GenericSimulatedAnnealer::load_checkpoint_file( core::pose::Pose & pose )
 		utility_exit_with_message( "The GenericSimulatedAnnealerMover encountered an error writing to " + checkpoint_file_ );
 	}
 	saved_file.close();
-	pose = *last_pose;
+	pose = *last_accepted_pose();
 }
 
 void
 GenericSimulatedAnnealer::save_checkpoint_file() const
 {
 	runtime_assert( checkpoint_file_ != "" );
-	std::string const tmp_checkpoint( checkpoint_file_ + "~" );
+	std::string const sf_name = checkpoint_file_ + ".out~";
 	// save best pose
-	if ( lowest_score_pose() ) {
-		lowest_score_pose()->dump_pdb( tmp_checkpoint + "_best.pdb" );
-	}
-	// save last accepted pose
-	if ( last_accepted_pose() ) {
-		last_accepted_pose()->dump_pdb( tmp_checkpoint + "_last.pdb" );
+	if ( lowest_score_pose() && last_accepted_pose() ) {
+		core::io::silent::SilentFileData sfd;
+		core::io::silent::SilentStructOP best_score = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "binary" );
+		best_score->fill_struct( *lowest_score_pose() );
+		best_score->set_decoy_tag( create_tag( "best" ) );
+		core::io::silent::SilentStructOP last_accepted = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "binary" );
+		last_accepted->fill_struct( *last_accepted_pose() );
+		last_accepted->set_decoy_tag( create_tag( "last" ) );
+		sfd.add_structure_replace_tag_if_necessary( best_score );
+		sfd.add_structure_replace_tag_if_necessary( last_accepted );
+		sfd.write_all( sf_name );
 	}
 	// Write out a file with stats
+	std::string const tmp_checkpoint( checkpoint_file_ + "~" );
 	std::ofstream saved_file( std::string( tmp_checkpoint ).c_str() );
 	if ( !saved_file.is_open() ) {
 		utility_exit_with_message( "Error: The GenericSimulatedAnnealerMover could not open " + tmp_checkpoint + " for writing." );
@@ -415,8 +444,7 @@ GenericSimulatedAnnealer::save_checkpoint_file() const
 		saved_file.close();
 		// Writing was successful -- therefore, remove the tmp file and overwrite it
 		replace_file( tmp_checkpoint, checkpoint_file_ );
-		replace_file( tmp_checkpoint + "_best.pdb", checkpoint_file_ + "_best.pdb" );
-		replace_file( tmp_checkpoint + "_last.pdb", checkpoint_file_ + "_last.pdb" );
+		replace_file( sf_name, checkpoint_file_ + ".out" );
 	}
 }
 
@@ -457,8 +485,7 @@ GenericSimulatedAnnealer::remove_checkpoint_file() const
 {
 	runtime_assert( checkpoint_file_ != "" );
 	utility::vector1< std::string > files;
-	files.push_back( checkpoint_file_ + "_best.pdb" );
-	files.push_back( checkpoint_file_ + "_last.pdb" );
+	files.push_back( checkpoint_file_ + ".out" );
 	files.push_back( checkpoint_file_ );
 	for ( core::Size i=1; i<=files.size(); ++i ) {
 		if ( remove( files[i].c_str() ) != 0 ) {
@@ -474,8 +501,7 @@ GenericSimulatedAnnealer::checkpoint_exists() const
 {
 	runtime_assert( checkpoint_file_ != "" );
 	utility::vector1< std::string > files;
-	files.push_back( checkpoint_file_ + "_best.pdb" );
-	files.push_back( checkpoint_file_ + "_last.pdb" );
+	files.push_back( checkpoint_file_ + ".out" );
 	files.push_back( checkpoint_file_ );
 	for ( core::Size i=1; i<=files.size(); ++i ) {
 		std::ifstream f( files[i].c_str() );

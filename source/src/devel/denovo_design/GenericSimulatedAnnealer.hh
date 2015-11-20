@@ -87,6 +87,8 @@ public: // accessor
 	core::Size num_accepted_scores() const { return accepted_scores_.size(); }
 	/// @brief if boltz_rank is used, this will calculate the ranking score from a list of filter scores
 	core::Real calc_boltz_score( utility::vector1< core::Real > const & scores ) const;
+	/// @brief create a silent struct tag for checkpointing with the given suffix
+	std::string create_tag( std::string const & suffix ) const;
 
 public: // mutators
 	/// @brief loads checkpoint data and attempts to resume a run with pose as the pose
