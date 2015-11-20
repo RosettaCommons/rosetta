@@ -206,7 +206,7 @@ main( int argc, char * argv [] ) {
 				}
 			}
 
-			if (!erase) { // since 2015/11/13 this Trimming always runs
+			if ( !erase ) { // since 2015/11/13 this Trimming always runs
 				if ( (model.segments_[1].dssp_ == 'L') || (model.segments_[model.segments_.size()].dssp_ == 'L') ) {
 					erase=true;
 				}
@@ -264,8 +264,8 @@ main( int argc, char * argv [] ) {
 
 			//If a given model lacks appropriate DSSP in its two terminal secondary structures, remove it
 			if ( (!erase) &&
-				(	( option[sewing::leave_models_with_E_terminal_ss]	)
-				||	( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands_only]	) ) ) {
+					( ( option[sewing::leave_models_with_E_terminal_ss] )
+					|| ( option[sewing::leave_antiparallel_way_H_bonded_models_by_terminal_strands_only] ) ) ) {
 				if ( model.segments_[1].dssp_ != 'E' || model.segments_[model.segments_.size()].dssp_ != 'E' ) {
 					erase=true;
 				}
@@ -316,10 +316,10 @@ main( int argc, char * argv [] ) {
 		}//while(it != it_end) {
 		write_model_file(comments.str(), models, new_model_filename);
 	} //try
-	catch ( utility::excn::EXCN_Base& excn ) {
-		std::cerr << "Exception : " << std::endl;
-		excn.show( std::cerr );
-		return -1;
-	}
+catch ( utility::excn::EXCN_Base& excn ) {
+	std::cerr << "Exception : " << std::endl;
+	excn.show( std::cerr );
+	return -1;
+}
 	return 0;
 }

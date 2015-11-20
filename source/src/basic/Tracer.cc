@@ -527,9 +527,9 @@ void Tracer::prepend_channel_name( out_stream & sout, std::string const &str )
 				sout << channel_name_color_ << channel_ << ": ";
 			}
 
-			#ifdef USEMPI
+#ifdef USEMPI
 				sout << "(" << mpi_rank_ << ") ";
-			#endif
+#endif
 
 			if ( tracer_options_.timestamp ) {
 				sout << utility::timestamp() << " ";

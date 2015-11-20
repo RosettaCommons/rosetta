@@ -14,12 +14,12 @@
 
 #ifdef CXX11
 
-	#ifdef __clang__
+#ifdef __clang__
 		#define __ANTIBODY_GRAFTING__
-	#else
-		#if __GNUC__ > 3  &&  __GNUC_MINOR__ > 8  // We need at least GCC-4.9 to compiler Antibody code
-			#define __ANTIBODY_GRAFTING__
-		#endif
-	#endif
+#else
+#if __GNUC__ > 3  &&  __GNUC_MINOR__ > 8  // We need at least GCC-4.9 to compiler Antibody code
+#define __ANTIBODY_GRAFTING__
+#endif
+#endif
 
 #endif // CXX11

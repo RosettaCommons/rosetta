@@ -82,8 +82,8 @@ std::ostream & operator <<(std::ostream & os, std::list<T> const & l) {
 template <platform::SSize L, class T>
 std::ostream & operator <<(std::ostream & os, utility::vectorL<L, T> const & v) {
 	os << "[";
-	if( v.size() ) {
-		for(size_t i=v.l(); i<=v.u(); ++i) {
+	if ( v.size() ) {
+		for ( size_t i=v.l(); i<=v.u(); ++i ) {
 			os << v[i];
 			if ( i < v.u() ) os << ", ";
 		}

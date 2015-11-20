@@ -1,0 +1,4 @@
+-parser:protocol xml/roll_mover_integrationtest.xml
+-s xml/test.pdb
+-score:weights talaris2014.wts
+-nstruct 10

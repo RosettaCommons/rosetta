@@ -234,6 +234,39 @@ centroids_by_jump_int(
 	//TR << "Upstream:   " << upstream_atoms << " atoms, " << upstream_ctrd << std::endl;
 	//TR << "Downstream: " << downstream_atoms << " atoms, " << downstream_ctrd << std::endl;
 }
+////////////////////////////////////////////////////////////////////////////////////
+/// @begin center_of_mass
+///
+/// @brief calculates the center of mass of a pose
+/// @detailed
+///    the start and stop positions (or residues) within the pose are used to
+///    find the starting and finishing locations
+///
+/// @authors Monica Berrondo June 14 2007
+///
+/// @last_modified Javier Castellanos June 4 2012
+/////////////////////////////////////////////////////////////////////////////////
+numeric::xyzVector< core::Real>
+center_of_mass(
+	core::pose::Pose const & pose,
+	int const start,
+	int const stop
+)
+{
+	Vector center( 0.0 );
+	for ( int i=start; i<=stop; ++i ) {
+		if ( !pose.residue( i ).is_protein() ) {
+			Vector ca_pos( pose.residue( i ).nbr_atom_xyz() );
+			center += ca_pos;
+		} else {
+			Vector ca_pos( pose.residue( i ).atom( "CA" ).xyz() );
+			center += ca_pos;
+		}
+	}
+	center /= (stop-start+1);
+
+	return center;
+}
 
 
 } // namespace geometry

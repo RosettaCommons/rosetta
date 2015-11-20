@@ -705,13 +705,13 @@ std::string strip(std::string const & source, char c)
 {
 	std::string::const_iterator begin = source.begin();
 	std::string::const_iterator end = source.end();
-	for(std::string::const_iterator p = source.begin(); p!=source.end(); ++p) {
-		if( *p == c ) begin = p+1;
+	for ( std::string::const_iterator p = source.begin(); p!=source.end(); ++p ) {
+		if ( *p == c ) begin = p+1;
 		else break;
 	}
 
-	for(std::string::const_iterator p = source.end(); p!=begin; --p) {
-		if( *(p-1) == c ) end = p-1;
+	for ( std::string::const_iterator p = source.end(); p!=begin; --p ) {
+		if ( *(p-1) == c ) end = p-1;
 		else break;
 	}
 

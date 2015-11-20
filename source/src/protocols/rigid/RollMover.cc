@@ -19,6 +19,7 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
@@ -71,7 +72,17 @@ void RollMover::apply( core::pose::Pose & pose ){
 		}
 	}
 
-	angle_ = min_angle_ + ( max_angle_ - min_angle_ ) * numeric::random::rg().uniform();
+	if ( random_roll_ ) {
+		translate_ = protocols::geometry::center_of_mass(pose, start_res_, stop_res_);
+		translate_.x() += numeric::random::rg().gaussian() * random_roll_trans_;
+		translate_.y() += numeric::random::rg().gaussian() * random_roll_trans_;
+		translate_.z() += numeric::random::rg().gaussian() * random_roll_trans_;
+		angle_ = numeric::random::rg().gaussian() * random_roll_angle_;
+		axis_ = numeric::xyzVector< core::Real >( numeric::random::rg().gaussian(),numeric::random::rg().gaussian(),numeric::random::rg().gaussian() ).normalized();
+	} else {
+		angle_ = min_angle_ + ( max_angle_ - min_angle_ ) * numeric::random::rg().uniform();
+	}
+
 	numeric::xyzMatrix< core::Real > rotation_matrix( numeric::rotation_matrix_degrees(axis_, angle_ ) );
 	//move to origin
 	for ( core::Size i =start_res_; i <= stop_res_; ++i ) {
@@ -124,62 +135,76 @@ RollMover::parse_my_tag(
 	start_res_ = ( tag->hasOption("start_res") ) ?  tag->getOption<core::Size>("start_res") : 1;
 	stop_res_ = ( tag->hasOption("stop_res") ) ?  tag->getOption<core::Size>("stop_res") : pose.total_residue();
 
-	/*parse min_angle*/
-	if ( tag->hasOption("min_angle") ) {
-		min_angle_ = tag->getOption<core::Real>("min_angle");
-	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires min_angle option");
+	if ( tag->hasOption("chain") ) {
+		if ( tag->hasOption("start_res") || tag->hasOption("stop_res") ) utility_exit_with_message("cannot specify start/stop res AND chain!");
+		core::Size const chain = tag->getOption<core::Size>("chain");
+		runtime_assert_msg(chain > 0 && chain <= pose.conformation().num_chains(),"RollMover bad chain");
+		start_res_ = pose.conformation().chain_begin(chain);
+		stop_res_ = pose.conformation().chain_end(chain);
 	}
 
-	/*parse max_angle*/
-	if ( tag->hasOption("max_angle") ) {
-		max_angle_ = tag->getOption<core::Real>("max_angle");
-	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires max_angle option");
-	}
+	random_roll_       = tag->getOption<bool>("random_roll",false);
+	random_roll_angle_ = tag->getOption<core::Real>("random_roll_angle_mag",3.0);
+	random_roll_trans_ = tag->getOption<core::Real>("random_roll_trans_mag",1.0);
 
-	bool axis_option_parsed = false;
-	bool translate_option_parsed = false;
+	if ( ! random_roll_ ) {
 
-	if ( tag->hasOption("axis") ) {
-		switch(tag->getOption<char>("axis")) {
-		case 'x' :
-			axis_ = numeric::xyzVector< core::Real >( 1.0, 0.0, 0.0 );
-			break;
-		case 'y' :
-			axis_ = numeric::xyzVector< core::Real >( 0.0, 1.0, 0.0 );
-			break;
-		case 'z' :
-			axis_ = numeric::xyzVector< core::Real >( 0.0, 0.0, 1.0 );
-			break;
+		/*parse min_angle*/
+		if ( tag->hasOption("min_angle") ) {
+			min_angle_ = tag->getOption<core::Real>("min_angle");
+		} else {
+			throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires min_angle option");
 		}
-		axis_option_parsed = true;
-	}
+		/*parse max_angle*/
+		if ( tag->hasOption("max_angle") ) {
+			max_angle_ = tag->getOption<core::Real>("max_angle");
+		} else {
+			throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires max_angle option");
+		}
 
-	BOOST_FOREACH ( utility::tag::TagCOP const child_tag, tag->getTags() ) {
-		std::string name= child_tag->getName();
+		bool axis_option_parsed = false;
+		bool translate_option_parsed = false;
 
-		if ( name == "axis" ) {
-			/*parse axis x,y,z*/
-			axis_ = protocols::rosetta_scripts::parse_xyz_vector(child_tag);
+		if ( tag->hasOption("axis") ) {
+			switch(tag->getOption<char>("axis")) {
+			case 'x' :
+				axis_ = numeric::xyzVector< core::Real >( 1.0, 0.0, 0.0 );
+				break;
+			case 'y' :
+				axis_ = numeric::xyzVector< core::Real >( 0.0, 1.0, 0.0 );
+				break;
+			case 'z' :
+				axis_ = numeric::xyzVector< core::Real >( 0.0, 0.0, 1.0 );
+				break;
+			}
 			axis_option_parsed = true;
-		} else if ( name == "translate" ) {
-			/*parse translate x,y,z*/
-			translate_ = protocols::rosetta_scripts::parse_xyz_vector(child_tag);
-			translate_option_parsed = true;
+		}
+
+		BOOST_FOREACH ( utility::tag::TagCOP child_tag, tag->getTags() ) {
+			std::string name= child_tag->getName();
+
+			if ( name == "axis" ) {
+				/*parse axis x,y,z*/
+				axis_ = protocols::rosetta_scripts::parse_xyz_vector(child_tag);
+				axis_option_parsed = true;
+			} else if ( name == "translate" ) {
+				/*parse translate x,y,z*/
+				translate_ = protocols::rosetta_scripts::parse_xyz_vector(child_tag);
+				translate_option_parsed = true;
+			}
+
+		}
+
+		if ( !axis_option_parsed ) {
+			throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires axis option");
+		}
+		if ( !translate_option_parsed ) {
+			//throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires translate option");
+			TR << "No translation given, using the pose's center of mass" << std::endl;
+			translate_ = protocols::geometry::center_of_mass(pose, start_res_, stop_res_);
 		}
 
 	}
-
-	if ( !axis_option_parsed ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires axis option");
-	}
-	if ( !translate_option_parsed ) {
-		//throw utility::excn::EXCN_RosettaScriptsOption("RollMover requires translate option");
-		TR << "No translation given, using the pose's center of mass" << std::endl;
-		translate_ = core::pose::center_of_mass(pose, start_res_, stop_res_);
-	}
-
 }
 
 std::string
@@ -235,7 +260,8 @@ RollMover::RollMover(
 	min_angle_(min_angle),
 	max_angle_(max_angle),
 	axis_(axis),
-	translate_(translate)
+	translate_(translate),
+	random_roll_(false)
 {
 	moves::Mover::type( "RollMover" );
 }

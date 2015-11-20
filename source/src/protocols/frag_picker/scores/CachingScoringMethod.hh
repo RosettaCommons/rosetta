@@ -58,8 +58,8 @@ public:
 
 	virtual bool score(FragmentCandidateOP /*fragment*/, FragmentScoreMapOP /*scores*/) { utility_exit_with_message( "ERROR: unimplemented score() method!\n" ); return true; }
 	// virtual bool score(FragmentCandidateOP fragment,
-	// 	FragmentScoreMapOP scores) {
-	// 	return score(fragment,scores); };
+	//  FragmentScoreMapOP scores) {
+	//  return score(fragment,scores); };
 };
 
 } // scores

@@ -76,6 +76,9 @@ private:
 	core::Real max_angle_;
 	numeric::xyzVector< core::Real > axis_;
 	numeric::xyzVector< core::Real > translate_;
+	bool random_roll_;
+	core::Real random_roll_angle_;
+	core::Real random_roll_trans_;
 };//end RollMover
 
 

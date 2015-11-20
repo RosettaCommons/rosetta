@@ -324,7 +324,7 @@ SmoothEnvPairPotential::compute_centroid_environment(
 		}
 
 		// symetrize cenlist (if necessary)
-		if (symminfo) {
+		if ( symminfo ) {
 			for ( Size i = 1; i <= nres; ++i ) {
 				conformation::Residue const & rsd1 ( pose.residue(i) );
 				if ( !rsd1.is_protein() ) continue;
@@ -387,7 +387,7 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 		}
 
 		// symetrize cenlist (if necessary)
-		if (symminfo) {
+		if ( symminfo ) {
 			core::conformation::symmetry::SymmetricConformation const &symmconf =
 				dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation());
 			for ( Size i = 1; i <= nres; ++i ) {

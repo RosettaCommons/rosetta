@@ -74,7 +74,24 @@ centroids_by_jump_int(
 	core::Vector & upstream_ctrd,
 	core::Vector & downstream_ctrd
 );
-
+////////////////////////////////////////////////////////////////////////////////////
+/// @begin center_of_mass
+///
+/// @brief calculates the center of mass of a pose
+/// @detailed
+///    the start and stop positions (or residues) within the pose are used to
+///    find the starting and finishing locations
+///
+/// @authors Monica Berrondo June 14 2007
+///
+/// @last_modified Javier Castellanos June 4 2012
+/////////////////////////////////////////////////////////////////////////////////
+numeric::xyzVector< core::Real>
+center_of_mass(
+	core::pose::Pose const & pose,
+	int const start,
+	int const stop
+);
 
 } // geometry
 } // core

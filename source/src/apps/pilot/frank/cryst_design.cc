@@ -498,7 +498,7 @@ public:
 			}
 		}
 
-		if (filter &&  ( (nmut > MUT_CUT_) || (nWmut+nFmut+nYmut > WFY_MUT_CUT_) || (nMmut>M_MUT_CUT_) ) ) {   // HARD CODED FILTER
+		if ( filter &&  ( (nmut > MUT_CUT_) || (nWmut+nFmut+nYmut > WFY_MUT_CUT_) || (nMmut>M_MUT_CUT_) ) ) {   // HARD CODED FILTER
 			TR << "Fail res identity!" << std::endl;
 			TR << "nmuts */W/F/Y/M " << nmut << "/" << nWmut << "/" << nFmut << "/" << nYmut << "/" << nMmut << std::endl;
 			pass = false;
@@ -604,7 +604,7 @@ public:
 		utility::vector1<bool> allowed_aas( num_canonical_aas, true );
 		allowed_aas[ aa_pro ] = false;
 		allowed_aas[ aa_gly ] = false;
-		if (option[crystdock::nocys]()) { allowed_aas[ aa_cys ] = false; }
+		if ( option[crystdock::nocys]() ) { allowed_aas[ aa_cys ] = false; }
 
 		core::pack::task::PackerTaskOP designtask = core::pack::task::TaskFactory::create_packer_task( pose );
 

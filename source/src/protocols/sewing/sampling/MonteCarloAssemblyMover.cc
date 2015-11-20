@@ -425,9 +425,9 @@ MonteCarloAssemblyMover::boltzman(
 				check_completeness_of_assembly = true;
 			}
 		}
-		if (check_completeness_of_assembly){
+		if ( check_completeness_of_assembly ) {
 			bool this_pose_is_complete = true;
-			if (remove_cut_off_assembly_)	{// remove incomplete (cut-off) assembly (mostly comes from inherent error in pdb file), in the future, removing incomplete model at model extration step will be pursued
+			if ( remove_cut_off_assembly_ ) { // remove incomplete (cut-off) assembly (mostly comes from inherent error in pdb file), in the future, removing incomplete model at model extration step will be pursued
 				core::pose::Pose to_be_checked_pose = get_fullatom_pose(working_assembly);
 
 				for ( Size ii=1; ii < to_be_checked_pose.total_residue(); ii++ ) {
@@ -441,15 +441,14 @@ MonteCarloAssemblyMover::boltzman(
 					}
 				}
 			}
-			if (((remove_cut_off_assembly_) && (this_pose_is_complete)) || (!remove_cut_off_assembly_)){
+			if ( ((remove_cut_off_assembly_) && (this_pose_is_complete)) || (!remove_cut_off_assembly_) ) {
 				if ( TR.Debug.visible() ) {
 					TR.Debug << "SAVING current backbone since (assembly_score: " << score << ") < (min_assembly_score: " << min_assembly_score_ << ")" << std::endl;
 				}
 				if ( use_best_assembly_score_ ) { // default behavior in Tim's era
 					best_complete_assembly = working_assembly->clone();
 					best_score = score;
-				}
-				else {
+				} else {
 					best_complete_assembly = working_assembly->clone();
 				}
 			}

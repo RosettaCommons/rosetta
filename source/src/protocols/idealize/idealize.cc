@@ -233,9 +233,9 @@ basic_idealize(
 		//pose.dump_pdb( "post_idl_"+right_string_of(seqpos,4,'0')+".pdb" );
 		idealized[ seqpos ] = true;
 
-		if (cis_omega && pose.residue(seqpos).is_protein() && pose.residue(seqpos).aa() != chemical::aa_pro) {
-			core::Real omega_i = fmod( pose.omega(seqpos), 360.0); if (omega_i <0) omega_i+=360;
-			if (omega_i<90 || omega_i>270)  {
+		if ( cis_omega && pose.residue(seqpos).is_protein() && pose.residue(seqpos).aa() != chemical::aa_pro ) {
+			core::Real omega_i = fmod( pose.omega(seqpos), 360.0); if ( omega_i <0 ) omega_i+=360;
+			if ( omega_i<90 || omega_i>270 )  {
 				TR << "Fix cis omega at position " << seqpos << std::endl;
 				pose.set_omega(seqpos, 180.0);
 			}
