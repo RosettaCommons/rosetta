@@ -1,5 +1,4 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -41,9 +40,26 @@ ResidueIEFilterCreator::create_filter() const { return protocols::filters::Filte
 std::string
 ResidueIEFilterCreator::keyname() const { return "ResidueIE"; }
 
+ResidueIEFilter::ResidueIEFilter():
+	filters::Filter( "ResidueIE" ),
+	resnum_str_( "" ),
+	restype_( "TRP" ),
+	score_type_( core::scoring::total_score ),
+	threshold_( 0.0 ),
+	whole_pose_ ( false ),
+	whole_interface_ ( false ),
+	rb_jump_( 1 ),
+	interface_distance_cutoff_( 8.0 ),
+	max_penalty_( 1000.0 ),
+	penalty_factor_( 1.0 ),
+	report_energy_( false ),
+	selector_()
+{
+}
+
 ResidueIEFilter::ResidueIEFilter(
-	utility::vector1< core::Size > const resnums,
-	std::string const restype,
+	std::string const & resnums,
+	std::string const & restype,
 	core::scoring::ScoreFunctionCOP scorefxn,
 	core::scoring::ScoreType const score_type,
 	core::Real const threshold,
@@ -52,20 +68,22 @@ ResidueIEFilter::ResidueIEFilter(
 	core::Size const rb_jump,
 	core::Real const interface_distance_cutoff,
 	core::Real max_penalty,
-	core::Real penalty_factor
+	core::Real penalty_factor,
+	bool const report_energy
 ) :
 	filters::Filter( "ResidueIE" ),
-	resnums_( resnums ),
-	restype_ (restype),
+	resnum_str_( resnums ),
+	restype_( restype ),
 	score_type_( score_type ),
 	threshold_( threshold ),
-	whole_pose_ ( whole_pose ),
-	whole_interface_ ( whole_interface ),
-	rb_jump_ ( rb_jump ),
-	interface_distance_cutoff_ ( interface_distance_cutoff ),
-	max_penalty_ (max_penalty),
-	penalty_factor_ (penalty_factor),
-	selector_ ()
+	whole_pose_( whole_pose ),
+	whole_interface_( whole_interface ),
+	rb_jump_( rb_jump ),
+	interface_distance_cutoff_( interface_distance_cutoff ),
+	max_penalty_( max_penalty ),
+	penalty_factor_( penalty_factor ),
+	report_energy_( report_energy ),
+	selector_()
 {
 	using namespace core::scoring;
 
@@ -80,7 +98,7 @@ ResidueIEFilter::ResidueIEFilter(
 }
 
 ResidueIEFilter::ResidueIEFilter( ResidueIEFilter const &init ) :
-	Filter( init ), resnums_( init.resnums_ ),
+	Filter( init ), resnum_str_( init.resnum_str_ ),
 	restype_( init.restype_ ),
 	score_type_( init.score_type_ ),
 	threshold_( init.threshold_ ),
@@ -90,6 +108,7 @@ ResidueIEFilter::ResidueIEFilter( ResidueIEFilter const &init ) :
 	interface_distance_cutoff_ ( init.interface_distance_cutoff_),
 	max_penalty_ ( init.max_penalty_),
 	penalty_factor_ ( init.penalty_factor_),
+	report_energy_ ( init.report_energy_ ),
 	use_resE_ ( init.use_resE_ ),
 	selector_ ( init.selector_ )
 {
@@ -127,46 +146,34 @@ ResidueIEFilter::threshold( core::Real const th ){
 	threshold_ = th;
 }
 
-utility::vector1 <core::Size>
+std::string const &
 ResidueIEFilter::resnums() const{
-	return resnums_;
+	return resnum_str_;
 }
 
 void
-ResidueIEFilter::resnums( utility::vector1<core::Size> const & rn ){
-	resnums_ = rn;
+ResidueIEFilter::resnums( std::string const & resnums_str ){
+	resnum_str_ = resnums_str;
 }
 
 ResidueIEFilter::~ResidueIEFilter() {}
 
 void
-ResidueIEFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+ResidueIEFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	using namespace core::scoring;
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	score_type_ = core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) );
-	threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
-	whole_pose_ = tag->getOption<bool>( "whole_pose" , 0 );
-	whole_interface_ = tag->getOption<bool>( "interface" , 0 );
-	rb_jump_ = tag->getOption<core::Size>( "jump_number", pose.num_jump() );
-	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff" , 8.0 );
-	restype_ =  tag->getOption<std::string>( "restype3", "TRP" );
-	penalty_factor_ =  tag->getOption<core::Real>( "penalty_factor", 1.0 );
-	max_penalty_ =  tag->getOption<core::Real>( "max_penalty", 1000.0 );
-
-	if ( tag->hasOption("residues") ) {
-		tr << " the tag residues is seen by the program" << std::endl;
-		resnums_ = core::pose::get_resnum_list(tag, "residues", pose);
-
-		if ( resnums_.empty() ) {
-			whole_pose_=1;
-			whole_interface_=0;
-			tr<< "Failed to parse residues: " << tag->getOption<std::string> ("residues") << ". Using whole pose." << std::endl;
-		} else {
-			whole_pose_=0;
-			whole_interface_=0;
-		}
-	}
+	threshold_ = tag->getOption<core::Real>( "energy_cutoff", threshold_ );
+	whole_pose_ = tag->getOption<bool>( "whole_pose" , whole_pose_ );
+	whole_interface_ = tag->getOption<bool>( "interface" , whole_interface_ );
+	rb_jump_ = tag->getOption<core::Size>( "jump_number", rb_jump_ );
+	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff", interface_distance_cutoff_ );
+	restype_ =  tag->getOption<std::string>( "restype3", restype_ );
+	penalty_factor_ =  tag->getOption<core::Real>( "penalty_factor", penalty_factor_ );
+	max_penalty_ =  tag->getOption<core::Real>( "max_penalty", max_penalty_ );
+	report_energy_ = tag->getOption<bool>( "report_energy", report_energy_ );
+	resnum_str_ = tag->getOption<std::string>( "resnums", resnum_str_ );
 
 	if ( tag->hasOption("selector") ) {
 		std::string const selector_name = tag->getOption< std::string >( "selector" );
@@ -178,11 +185,11 @@ ResidueIEFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 			error_msg << e.msg();
 			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
 		}
-		assert( selector_ );
+		debug_assert( selector_ );
 		tr << "Using residue selector " << selector_name << std::endl;
 	}
 
-	runtime_assert(tag->hasOption("residues") || whole_pose_ || whole_interface_ || selector_);
+	runtime_assert( tag->hasOption("residues") || whole_pose_ || whole_interface_ || selector_ );
 
 	use_resE_ = tag->getOption<bool>( "use_resE" , 0 );
 }
@@ -219,55 +226,10 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 	using namespace core::scoring;
 	using namespace core::graph;
 
+	std::set< core::Size > const resnums = compute_resnums( pose );
 
-	if ( whole_interface_ ) {
-		tr << "Detecting target resnums from interface." << std::endl;
-		resnums_.clear();
-
-		if ( pose.conformation().num_chains() < 2 ) {
-			tr << "pose must contain at least two chains!" << std::endl;
-			return false;
-		}
-
-		core::pose::Pose in_pose = pose;
-
-		(*scorefxn_)(in_pose);
-		protocols::scoring::Interface interface_obj(rb_jump_);
-
-		in_pose.update_residue_neighbors();
-
-		interface_obj.distance( interface_distance_cutoff_ );
-		interface_obj.calculate( in_pose );
-		for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
-			if ( in_pose.residue(resnum).is_protein()  &&  interface_obj.is_interface( resnum ) && (in_pose.residue_type(resnum).name3() == restype_) ) {
-				resnums_.push_back( resnum );
-			}
-		}
-	} else if ( whole_pose_ ) { // whole_interface_
-		tr << "Detecting target resnums from whole pose." << std::endl;
-		resnums_.clear();
-
-		core::pose::Pose in_pose = pose;
-		for ( core::Size resnum = 1; resnum <= in_pose.total_residue(); ++resnum ) {
-			if ( in_pose.residue(resnum).is_protein()  && (in_pose.residue_type(resnum).name3() == restype_) ) resnums_.push_back( resnum );
-		}
-	} else if ( selector_ ) { //whole_pose_
-		tr << "Applying residue selector to determine resnums" << std::endl;
-		resnums_.clear();
-		core::pack::task::residue_selector::ResidueSubset subset = selector_->apply(pose);
-		//sanity check
-		debug_assert( subset.size() == pose.total_residue() );
-		for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
-			if ( subset[i] ) {
-				resnums_.push_back( i );
-			}
-		}
-	}
-
-	utility::vector1<Size>::iterator last = std::unique( resnums_.begin(), resnums_.end() );
-	resnums_.erase( last, resnums_.end() );
 	tr << "The following residues will be considered for interaction energy calculation:"<< std::endl;
-	BOOST_FOREACH ( core::Size const res, resnums_ ) {
+	BOOST_FOREACH ( core::Size const res, resnums ) {
 		tr << pose.residue_type( res ).name3() << res <<" + ";
 		if ( !(pose.residue_type( res ).name3() == restype_) ) {
 			tr << "Residue " << res << " in pose is of type "<< pose.residue_type( res ).name3() << ". Requested restype3 is "<< restype_<<". Skipping!"<<std::endl;
@@ -280,14 +242,13 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 	core::Real penalty (0.0);
 	EnergyMap const curr_weights = in_pose.energies().weights();
 
-	if ( resnums_.size() == 0 ) {
+	if ( resnums.size() == 0 ) {
 		tr << "No residues found. Skipping calculation."<< std::endl;
 
 		return (0.0);
 	}
 
-	BOOST_FOREACH ( core::Size const res, resnums_ ) {
-
+	BOOST_FOREACH ( core::Size const res, resnums ) {
 
 		core::Real res_intE (0.0);
 
@@ -318,15 +279,86 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 
 		tr << "Residue "<< pose.residue_type( res ).name3()<<res<< " has an (interaction) energy "<< res_intE <<", threshold is "<< threshold_<<" and penalty is ";
 
-		if ( res_intE > threshold_ ) {
-			penalty+= (res_intE - threshold_);
-			tr<< (res_intE - threshold_) << std::endl;
-		} else {
-			tr << " 0"<<std::endl;
-		}
+		core::Real const res_penalty = penalty_from_score( res_intE );
+		penalty += res_penalty;
+		tr << res_penalty << std::endl;
 	} //foreach res
 
 	return( penalty * penalty_factor_ );
+}
+
+core::Real
+ResidueIEFilter::penalty_from_score( core::Real const res_intE ) const
+{
+	if ( report_energy_ ) return res_intE;
+	if ( res_intE > threshold_ ) return (res_intE - threshold_);
+	return 0.0;
+}
+
+std::set< core::Size >
+ResidueIEFilter::compute_resnums( core::pose::Pose const & pose ) const
+{
+	std::set< core::Size > resnums;
+
+	if ( !resnum_str_.empty() )
+		resnums = core::pose::get_resnum_list( resnum_str_, pose );
+
+	if ( selector_ ) {
+		tr << "Applying residue selector to determine resnums" << std::endl;
+
+		core::pack::task::residue_selector::ResidueSubset subset = selector_->apply(pose);
+		//sanity check
+		debug_assert( subset.size() == pose.total_residue() );
+		for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
+			if ( subset[i] ) {
+				resnums.insert( i );
+			}
+		}
+	}
+
+	bool whole_pose = whole_pose_;
+	bool whole_interface = whole_interface_;
+	if ( resnums.empty() ) {
+		whole_pose = true;
+		whole_interface = false;
+		tr << "Failed to parse residues: " << resnum_str_ << ". Using whole pose." << std::endl;
+	} else {
+		whole_pose = false;
+		whole_interface = false;
+	}
+
+	if ( whole_interface ) {
+		tr << "Detecting target resnums from interface." << std::endl;
+		if ( pose.conformation().num_chains() < 2 ) {
+			std::stringstream msg;
+			msg << "ResidueIEFilter: pose must contain at least two chains! The given pose has " << pose.total_residue() << " and " << pose.conformation().num_chains() << " chains" << std::endl;
+			throw utility::excn::EXCN_BadInput( msg.str() );
+		}
+
+		core::pose::Pose in_pose = pose;
+
+		(*scorefxn_)(in_pose);
+		protocols::scoring::Interface interface_obj(rb_jump_);
+
+		in_pose.update_residue_neighbors();
+
+		interface_obj.distance( interface_distance_cutoff_ );
+		interface_obj.calculate( in_pose );
+		for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
+			if ( in_pose.residue(resnum).is_protein()  &&  interface_obj.is_interface( resnum ) && (in_pose.residue_type(resnum).name3() == restype_) ) {
+				resnums.insert( resnum );
+			}
+		}
+	} else if ( whole_pose ) { // whole_interface_
+		tr << "Detecting target resnums from whole pose." << std::endl;
+
+		core::pose::Pose in_pose = pose;
+		for ( core::Size resnum = 1; resnum <= in_pose.total_residue(); ++resnum ) {
+			if ( in_pose.residue(resnum).is_protein()  && (in_pose.residue_type(resnum).name3() == restype_) ) resnums.insert( resnum );
+		}
+	}
+
+	return resnums;
 }
 
 }

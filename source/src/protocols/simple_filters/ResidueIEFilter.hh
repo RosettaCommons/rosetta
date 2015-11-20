@@ -24,6 +24,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/vector1.hh>
+#include <set>
 
 namespace protocols {
 namespace simple_filters {
@@ -31,12 +32,21 @@ namespace simple_filters {
 class ResidueIEFilter : public filters::Filter
 {
 public:
-	ResidueIEFilter() : filters::Filter( "ResidueIE" ) {}
+	ResidueIEFilter();
 
-	ResidueIEFilter( utility::vector1<core::Size> const resnums, std::string const restype, core::scoring::ScoreFunctionCOP scorefxn,
-		core::scoring::ScoreType const score_type, core::Real const threshold,
-		bool const whole_pose = false, bool const whole_interface = false, core::Size const rb_jump = 1,
-		core::Real const interface_distance_cutoff =  8.0 , core::Real max_penalty = 0.0, core::Real penalty_factor = 1.0 );
+	ResidueIEFilter(
+		std::string const & resnums,
+		std::string const & restype,
+		core::scoring::ScoreFunctionCOP scorefxn,
+		core::scoring::ScoreType const score_type = core::scoring::total_score,
+		core::Real const threshold = 0.0,
+		bool const whole_pose = false,
+		bool const whole_interface = false,
+		core::Size const rb_jump = 1,
+		core::Real const interface_distance_cutoff =  8.0,
+		core::Real max_penalty = 1000.0,
+		core::Real penalty_factor = 1.0,
+		bool const report_energy = false );
 
 	ResidueIEFilter( ResidueIEFilter const &init );
 	bool apply( core::pose::Pose const & pose ) const;
@@ -52,16 +62,21 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~ResidueIEFilter();
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	utility::vector1<core::Size> resnums() const;
+	std::string const & resnums() const;
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	core::scoring::ScoreType score_type() const;
 	core::Real threshold() const;
-	void resnums( utility::vector1<core::Size> const & rn );
+	void resnums( std::string const & resnums_str );
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
 	void score_type( core::scoring::ScoreType score_type );
 	void threshold( core::Real const th );
+
 private:
-	mutable utility::vector1<core::Size> resnums_;
+	std::set< core::Size > compute_resnums( core::pose::Pose const & pose ) const;
+	core::Real penalty_from_score( core::Real const res_intE ) const;
+
+private:
+	std::string resnum_str_;
 	std::string restype_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::scoring::ScoreType score_type_;
@@ -72,6 +87,7 @@ private:
 	core::Real interface_distance_cutoff_;
 	core::Real max_penalty_;
 	core::Real penalty_factor_;
+	bool report_energy_;
 	bool use_resE_;
 	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
 
