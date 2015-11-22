@@ -20,7 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 
-#include <core/pack/task/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 #include <protocols/environment/Environment.hh>
 #include <protocols/environment/EnvExcn.hh>
@@ -89,7 +89,7 @@ public:
 		TS_TRACE( "Starting test_chunk" );
 
 		using namespace protocols::environment;
-		using namespace core::pack::task::residue_selector;
+		using namespace core::select::residue_selector;
 		using namespace protocols::abinitio::abscript;
 
 		basic::datacache::DataMap datamap;
@@ -150,7 +150,7 @@ public:
 		TS_TRACE( "Starting test_two_chunk" );
 
 		using namespace protocols::environment;
-		using namespace core::pack::task::residue_selector;
+		using namespace core::select::residue_selector;
 		using namespace protocols::abinitio::abscript;
 
 		// We need an extra long sequence in this one.
@@ -240,7 +240,7 @@ public:
 
 		using namespace protocols;
 		using namespace protocols::environment;
-		using namespace core::pack::task::residue_selector;
+		using namespace core::select::residue_selector;
 		using namespace protocols::abinitio::abscript;
 
 		basic::datacache::DataMap datamap;
@@ -309,7 +309,7 @@ public:
 		TS_TRACE( "Starting test_two_part_chunk" );
 
 		using namespace protocols::environment;
-		using namespace core::pack::task::residue_selector;
+		using namespace core::select::residue_selector;
 		using namespace protocols::abinitio::abscript;
 
 		pose = make_seq( "FRMQIFVYKTLTGKSSSS" );

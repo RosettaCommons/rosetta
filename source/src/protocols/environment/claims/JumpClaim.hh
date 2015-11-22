@@ -42,8 +42,8 @@ namespace claims {
 class JumpClaim : public EnvClaim {
 	typedef EnvClaim Parent;
 	typedef core::environment::LocalPosition LocalPosition;
-	typedef core::pack::task::residue_selector::ResidueSelector ResidueSelector;
-	typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
+	typedef core::select::residue_selector::ResidueSelector ResidueSelector;
+	typedef core::select::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
 
 public:
 

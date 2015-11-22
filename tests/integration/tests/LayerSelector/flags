@@ -1,7 +1,7 @@
 -parser:protocol inputs/test.xml
 -in:file:fasta inputs/dummy.fasta
 -mute all
--unmute core.util.SelectResiduesByLayer core.pack.task.residue_selector.LayerSelector core.pack.pack_rotamers core.pack.interaction_graph.interaction_graph_factory protocols.helical_bundle.BundleGridSampler
+-unmute core.select.util.SelectResiduesByLayer core.selector.residue_selector.LayerSelector core.pack.pack_rotamers core.pack.interaction_graph.interaction_graph_factory protocols.helical_bundle.BundleGridSampler
 -nstruct 10
 -inout:dump_connect_info
 -inout:connect_info_cutoff 0.0

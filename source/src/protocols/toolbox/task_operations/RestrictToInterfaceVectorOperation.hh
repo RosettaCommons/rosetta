@@ -10,7 +10,7 @@
 /// @file   protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.hh
 /// @brief  TaskOperation class that finds an interface based on InterfaceVectorDefinition
 /// and leaves it mobile in the PackerTask.  Serves mostly to wrap InterfaceVectorDefinition
-/// into a TaskOperation. see src/core/pack/task/operation/util/interface_vector_calculate.hh
+/// into a TaskOperation. see src/core/select/util/interface_vector_calculate.hh
 /// @author Ben Stranges (stranges@unc.edu)
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_RestrictToInterfaceVectorOperation_hh

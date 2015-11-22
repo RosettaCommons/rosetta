@@ -17,7 +17,7 @@
 //#include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh> //shouldn't need this
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pack/task/operation/util/interface_vector_calculate.hh>
+#include <core/select/util/interface_vector_calculate.hh>
 //#include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/selection.hh>
@@ -135,7 +135,7 @@ RestrictInterGroupVectorOperation::apply( core::pose::Pose const & pose, core::p
 	for ( core::Size jj=1 ; jj<= pair_vector_.size(); ++jj ) {//{utility::vector1<group_pair>::const_iterator jj = pair_vector_.begin() ; jj != pair_vector_.end() ; ++jj ){
 		group_pair this_pair = pair_vector_[jj];
 		utility::vector1_bool repack =
-			core::pack::task::operation::util::calc_interacting_vector(
+			core::select::util::calc_interacting_vector(
 			pose,
 			this_pair.first,
 			this_pair.second,

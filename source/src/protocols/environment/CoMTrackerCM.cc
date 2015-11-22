@@ -37,7 +37,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/util.hh>
 
 //Utility Headers
@@ -97,7 +97,7 @@ CoMTrackerCM::CoMTrackerCM():
 {}
 
 CoMTrackerCM::CoMTrackerCM( std::string const& name,
-	core::pack::task::residue_selector::ResidueSelectorCOP mobile_selector,
+	core::select::residue_selector::ResidueSelectorCOP mobile_selector,
 	std::string const& stationary_label ):
 	ClientMover(),
 	name_( name ),
@@ -106,7 +106,7 @@ CoMTrackerCM::CoMTrackerCM( std::string const& name,
 {}
 
 CoMTrackerCM::CoMTrackerCM( std::string const& name,
-	core::pack::task::residue_selector::ResidueSelectorCOP mobile_selector ):
+	core::select::residue_selector::ResidueSelectorCOP mobile_selector ):
 	ClientMover(),
 	name_( name ),
 	stationary_label_( GENERATE_STATIONARY_ATTACHMENT_POINT ),
@@ -266,7 +266,7 @@ void CoMTrackerCM::parse_my_tag( utility::tag::TagCOP tag,
 	name_ = tag->getOption< std::string >( "name" );
 
 	// the mobile selector is inverted during brokering to determine which residues are stationary
-	using namespace core::pack::task::residue_selector;
+	using namespace core::select::residue_selector;
 	mobile_selector_ = datamap.get_ptr< ResidueSelector >( "ResidueSelector", tag->getOption<std::string>( "mobile_selector" ) );
 
 
@@ -275,7 +275,7 @@ void CoMTrackerCM::parse_my_tag( utility::tag::TagCOP tag,
 claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
 	basic::datacache::WriteableCacheableMapOP ){
 	using core::Size;
-	using core::pack::task::residue_selector::ResidueSubset;
+	using core::select::residue_selector::ResidueSubset;
 	claims::EnvClaims claim_list;
 
 	// com_name_ = mobile_label_ + "CoM";

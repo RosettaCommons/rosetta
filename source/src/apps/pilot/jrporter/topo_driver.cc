@@ -24,7 +24,7 @@
 
 #include <test/protocols/environment/TorsionMover.hh>
 
-#include <core/pack/task/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>

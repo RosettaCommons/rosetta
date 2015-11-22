@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/pack/task/residue_selector/OperateOnResidueSubset.cxxtest.hh
-/// @brief  test suite for core::pack::task::residue_selector::OperateOnResidueSubset
+/// @file core/select/residue_selector/OperateOnResidueSubset.cxxtest.hh
+/// @brief  test suite for core::select::residue_selector::OperateOnResidueSubset
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/protocols/init_util.hh>
 #include <test/util/pose_funcs.hh>
-#include <test/core/pack/task/residue_selector/DummySelectors.hh>
+#include <test/core/select/residue_selector/DummySelectors.hh>
 
 // Package headers
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
@@ -39,7 +39,7 @@
 
 using namespace core::pack::task;
 using namespace core::pack::task::operation;
-using namespace core::pack::task::residue_selector;
+using namespace core::select::residue_selector;
 
 class OperateOnResidueSubsetTests : public CxxTest::TestSuite {
 

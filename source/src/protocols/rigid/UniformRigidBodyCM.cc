@@ -144,7 +144,7 @@ void UniformRigidBodyCM::parse_my_tag( utility::tag::TagCOP tag,
 claims::EnvClaims UniformRigidBodyCM::yield_claims( core::pose::Pose const&,
 	basic::datacache::WriteableCacheableMapOP ){
 	using core::Size;
-	using core::pack::task::residue_selector::ResidueSubset;
+	using core::select::residue_selector::ResidueSubset;
 	claims::EnvClaims claim_list;
 
 	ClientMoverOP this_ptr( utility::pointer::static_pointer_cast< ClientMover >( get_self_ptr() ) );

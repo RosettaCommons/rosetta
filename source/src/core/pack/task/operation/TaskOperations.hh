@@ -29,7 +29,7 @@
 #include <core/pack/rotamer_set/RotamerLinks.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -346,7 +346,7 @@ private:
 
 	/// @brief An optional ResidueSelector that can serve to mask the residues
 	/// to which this TaskOperation is applied.
-	core::pack::task::residue_selector::ResidueSelectorCOP residue_selector_;
+	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
 
 };
 

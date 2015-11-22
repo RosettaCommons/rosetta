@@ -22,7 +22,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/util/SelectResiduesByLayer.hh>
+#include <core/select/util/SelectResiduesByLayer.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -253,7 +253,7 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 	core::pose::Pose unbound_pose( const_pose );
 	if ( hotspot_res.size()==0 ) {
 		if ( type_ == "monomer" ) {
-			core::util::SelectResiduesByLayer srb( true, true, false );
+			core::select::util::SelectResiduesByLayer srb( true, true, false );
 			utility::vector1< core::chemical::AA > select_aa_types;
 			select_aa_types.push_back( core::chemical::aa_tyr );
 			select_aa_types.push_back( core::chemical::aa_phe );

@@ -257,8 +257,9 @@
 // (end for registering TaskOperations, ResLvlTaskOperations, and ResFilters)
 
 // ResidueSelectors
-#include <core/pack/task/residue_selector/ResidueSelectorCreators.hh>
-#include <core/pack/task/residue_selector/ResidueSelectorRegistrator.hh>
+#include <core/select/residue_selector/ResidueSelectorCreators.hh>
+#include <core/pack/task/residue_selector/ClashBasedRepackShellSelectorCreator.hh>
+#include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
 
 #endif
 
@@ -650,10 +651,10 @@ static ResFilterRegistrator< NoResFilterCreator > NoResFilterCreator_registrator
 static ResFilterRegistrator< ResidueTypeFilterCreator > ResidueTypeResFilterCreator_registrator;
 
 // register ResidueSelectorCreators
-using namespace core::pack::task::residue_selector;
+using namespace core::select::residue_selector;
 static ResidueSelectorRegistrator< AndResidueSelectorCreator > reg_AndResidueSelectorCreator;
 static ResidueSelectorRegistrator< ChainSelectorCreator > reg_ChainSelectorCreator;
-static ResidueSelectorRegistrator< ClashBasedRepackShellSelectorCreator > reg_ClashBasedRepackShellSelectorCreator;
+static ResidueSelectorRegistrator< core::pack::task::residue_selector::ClashBasedRepackShellSelectorCreator > reg_ClashBasedRepackShellSelectorCreator;
 static ResidueSelectorRegistrator< InterGroupInterfaceByVectorSelectorCreator > reg_InterGroupInterfaceByVectorSelectorCreator;
 static ResidueSelectorRegistrator< JumpDownstreamSelectorCreator > reg_JumpDownstreamSelectorCreator;
 static ResidueSelectorRegistrator< JumpUpstreamSelectorCreator > reg_JumpUpstreamSelectorCreator;

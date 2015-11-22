@@ -22,7 +22,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.tmpl.hh>
 
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 #ifdef WIN32
 #include <basic/datacache/WriteableCacheableMap.hh>
@@ -45,7 +45,7 @@ class RigidChunkCM : public protocols::environment::ClientMover {
 public:
 	RigidChunkCM();
 
-	RigidChunkCM( core::pack::task::residue_selector::ResidueSelectorCOP selector,
+	RigidChunkCM( core::select::residue_selector::ResidueSelectorCOP selector,
 		core::pose::Pose const& template_pose );
 
 	virtual ~RigidChunkCM() {};
@@ -55,13 +55,13 @@ public:
 
 	virtual std::string get_name() const;
 
-	void sim_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
+	void sim_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
-	core::pack::task::residue_selector::ResidueSelectorCOP sim_selector() const;
+	core::select::residue_selector::ResidueSelectorCOP sim_selector() const;
 
-	void templ_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
+	void templ_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
-	core::pack::task::residue_selector::ResidueSelectorCOP templ_selector() const;
+	core::select::residue_selector::ResidueSelectorCOP templ_selector() const;
 
 	virtual void initialize( Pose& pose );
 
@@ -105,8 +105,8 @@ private:
 	EnvClaims claims_;
 	//  loops::Loops rigid_core_;
 	core::pose::PoseCOP template_;
-	core::pack::task::residue_selector::ResidueSelectorCOP sim_selector_;
-	core::pack::task::residue_selector::ResidueSelectorCOP templ_selector_;
+	core::select::residue_selector::ResidueSelectorCOP sim_selector_;
+	core::select::residue_selector::ResidueSelectorCOP templ_selector_;
 
 	std::string xml_name_;
 

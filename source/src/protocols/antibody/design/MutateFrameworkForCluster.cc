@@ -27,7 +27,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/residue_selector/NeighborhoodResidueSelector.hh>
+#include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -401,7 +401,7 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 		}
 	}
 
-	residue_selector::NeighborhoodResidueSelector neighbor_sel = residue_selector::NeighborhoodResidueSelector(design_positions_set, pack_shell_);
+	core::select::residue_selector::NeighborhoodResidueSelector neighbor_sel = core::select::residue_selector::NeighborhoodResidueSelector(design_positions_set, pack_shell_);
 	utility::vector1<bool> pack_positions = neighbor_sel.apply(pose);
 
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {

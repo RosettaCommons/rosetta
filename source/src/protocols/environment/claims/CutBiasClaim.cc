@@ -50,7 +50,7 @@ CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
 	Parent( owner ),
 	label_( tag->getOption< std::string >( "label" ) )
 {
-	using core::pack::task::residue_selector::ResidueSelector;
+	using core::select::residue_selector::ResidueSelector;
 
 	core::Real bias = tag->getOption< core::Real >( "bias" );
 

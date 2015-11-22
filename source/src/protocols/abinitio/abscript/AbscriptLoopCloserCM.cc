@@ -30,7 +30,7 @@
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/pack/task/residue_selector/TrueResidueSelector.hh>
+#include <core/select/residue_selector/TrueResidueSelector.hh>
 
 #include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
 #include <protocols/loops/Exceptions.hh>
@@ -98,7 +98,7 @@ AbscriptLoopCloserCM::AbscriptLoopCloserCM():
 	Parent(),
 	fragset_(),
 	scorefxn_(),
-	selector_( new core::pack::task::residue_selector::TrueResidueSelector() )
+	selector_( new core::select::residue_selector::TrueResidueSelector() )
 {}
 
 AbscriptLoopCloserCM::AbscriptLoopCloserCM( core::fragment::FragSetCOP fragset,
@@ -106,7 +106,7 @@ AbscriptLoopCloserCM::AbscriptLoopCloserCM( core::fragment::FragSetCOP fragset,
 	Parent(),
 	fragset_( fragset ),
 	scorefxn_( scorefxn ),
-	selector_( new core::pack::task::residue_selector::TrueResidueSelector() ),
+	selector_( new core::select::residue_selector::TrueResidueSelector() ),
 	bUpdateMM_( true )
 {}
 
@@ -258,9 +258,9 @@ void AbscriptLoopCloserCM::parse_my_tag( utility::tag::TagCOP tag,
 	using namespace basic::options;
 
 	if ( tag->hasOption( "selector" ) ) {
-		set_selector( datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
+		set_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
 	} else {
-		set_selector( core::pack::task::residue_selector::ResidueSelectorCOP( new core::pack::task::residue_selector::TrueResidueSelector() ) );
+		set_selector( core::select::residue_selector::ResidueSelectorCOP( new core::select::residue_selector::TrueResidueSelector() ) );
 	}
 
 	std::string fragfile;

@@ -1405,7 +1405,7 @@ parse_resfile_string(
 	std::string const & resfile_string
 ) throw(ResfileReaderException)
 {
-	core::pack::task::residue_selector::ResidueSubset const mask( pose.n_residue(), true );
+	core::select::residue_selector::ResidueSubset const mask( pose.n_residue(), true );
 	parse_resfile_string( pose, the_task, resfile_string, mask );
 	return;
 }
@@ -1422,7 +1422,7 @@ parse_resfile_string(
 	pose::Pose const & pose,
 	PackerTask & the_task,
 	std::string const & resfile_string,
-	core::pack::task::residue_selector::ResidueSubset const &mask
+	core::select::residue_selector::ResidueSubset const &mask
 ) throw(ResfileReaderException)
 {
 	using namespace std;

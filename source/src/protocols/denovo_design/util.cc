@@ -25,7 +25,7 @@
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 //Core Headers
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -139,12 +139,12 @@ void construct_poly_ala_pose(
 	}
 }
 
-core::pack::task::residue_selector::ResidueSelectorCOP
+core::select::residue_selector::ResidueSelectorCOP
 get_residue_selector( basic::datacache::DataMap const & data, std::string const & name )
 {
-	core::pack::task::residue_selector::ResidueSelectorCOP selector;
+	core::select::residue_selector::ResidueSelectorCOP selector;
 	try {
-		selector = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", name );
+		selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", name );
 	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 		std::stringstream error_msg;
 		error_msg << "Failed to find ResidueSelector named '" << name << "' from the Datamap.\n";

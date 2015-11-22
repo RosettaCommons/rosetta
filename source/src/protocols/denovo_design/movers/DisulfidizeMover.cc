@@ -30,7 +30,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/util.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/pack/task/residue_selector/NeighborhoodResidueSelector.hh>
+#include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
@@ -148,14 +148,14 @@ DisulfidizeMover::clone() const
 
 /// @brief sets the selector for set 1 -- disulfides will connect residues in set 1 to residues in set 2
 void
-DisulfidizeMover::set_set1_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector )
+DisulfidizeMover::set_set1_selector( core::select::residue_selector::ResidueSelectorCOP selector )
 {
 	set1_selector_ = selector;
 }
 
 /// @brief sets the selector for set 2 -- disulfides will connect residues in set 1 to residues in set 2
 void
-DisulfidizeMover::set_set2_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector )
+DisulfidizeMover::set_set2_selector( core::select::residue_selector::ResidueSelectorCOP selector )
 {
 	set2_selector_ = selector;
 }
@@ -316,8 +316,8 @@ DisulfidizeMover::process_pose(
 	}
 
 	// get two sets of residues which will be connected by disulfides
-	core::pack::task::residue_selector::ResidueSubset subset1( pose.total_residue(), true );
-	core::pack::task::residue_selector::ResidueSubset subset2( pose.total_residue(), true );
+	core::select::residue_selector::ResidueSubset subset1( pose.total_residue(), true );
+	core::select::residue_selector::ResidueSubset subset2( pose.total_residue(), true );
 	if ( set1_selector_ ) {
 		subset1 = set1_selector_->apply( pose );
 	}
@@ -518,8 +518,8 @@ add_to_list( DisulfidizeMover::DisulfideList & disulf_partners, core::Size const
 DisulfidizeMover::DisulfideList
 DisulfidizeMover::find_possible_disulfides(
 	core::pose::Pose const & pose,
-	core::pack::task::residue_selector::ResidueSubset const & residueset1,
-	core::pack::task::residue_selector::ResidueSubset const & residueset2,
+	core::select::residue_selector::ResidueSubset const & residueset1,
+	core::select::residue_selector::ResidueSubset const & residueset2,
 	core::scoring::ScoreFunctionOP sfxn
 ) const {
 	if ( TR.visible() ) TR << "FINDING DISULF" << std::endl;

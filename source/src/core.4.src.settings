@@ -174,29 +174,8 @@ sources = {
 		"TaskOperationFactory",
 		"TaskOperations",
 	],
-	"core/pack/task/operation/util": [
-		"interface_vector_calculate",
-	],
-	"core/pack/task/residue_selector": [
-		"AndResidueSelector",
-		"ChainSelector",
+	"core/pack/task/residue_selector" : [
 		"ClashBasedRepackShellSelector",
-		"InterGroupInterfaceByVectorSelector",
-		"JumpDownstreamSelector",
-		"JumpUpstreamSelector",
-		"LayerSelector",
-		"NeighborhoodResidueSelector",
-		"NotResidueSelector",
-		"NumNeighborsSelector",
-		"OrResidueSelector",
-		"PrimarySequenceNeighborhoodSelector",
-		"ResidueIndexSelector",
-		"ResidueNameSelector",
-		"ResiduePDBInfoHasLabelSelector",
-		"ResidueSelector",
-		"ResidueSelectorFactory",
-		"SecondaryStructureSelector",
-		"TrueResidueSelector",
 	],
 	"core/util": [
 		"ChainbreakUtil",
@@ -204,7 +183,6 @@ sources = {
 		"disulfide_util",
 		"kinematics_util",
 		"metalloproteins_util",
-		"SelectResiduesByLayer",
 		"SwitchResidueTypeSet",
 	]
 

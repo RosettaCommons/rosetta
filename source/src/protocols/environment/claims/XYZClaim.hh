@@ -23,7 +23,7 @@
 #include <core/environment/LocalPosition.hh>
 #include <core/environment/FoldTreeSketch.hh>
 
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/environment/claims/BrokerElements.hh>
@@ -54,8 +54,8 @@ class XYZClaim : public EnvClaim {
 	typedef EnvClaim Parent;
 	typedef core::environment::LocalPosition LocalPosition;
 	typedef core::environment::LocalPositions LocalPositions;
-	typedef core::pack::task::residue_selector::ResidueSelectorOP ResidueSelectorOP;
-	typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
+	typedef core::select::residue_selector::ResidueSelectorOP ResidueSelectorOP;
+	typedef core::select::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
 
 public:
 

@@ -22,7 +22,7 @@
 #include <core/environment/FoldTreeSketch.hh>
 #include <core/environment/SequenceAnnotation.fwd.hh>
 
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 #include <protocols/environment/claims/BrokerElements.hh>
 #include <protocols/environment/ClientMover.hh>
@@ -53,7 +53,7 @@ namespace environment {
 namespace claims {
 
 class EnvClaim : public utility::pointer::ReferenceCount {
-	typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
+	typedef core::select::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
 	typedef core::environment::FoldTreeSketch FoldTreeSketch;
 	typedef std::map< std::string, ResidueSelectorCOP > AnnotatingSelectors;
 

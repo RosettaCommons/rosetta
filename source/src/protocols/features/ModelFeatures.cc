@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
-#include <core/pack/task/operation/util/interface_vector_calculate.hh>
+#include <core/select/util/interface_vector_calculate.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/graph/Graph.hh>
 #include <core/scoring/EnergyGraph.hh>

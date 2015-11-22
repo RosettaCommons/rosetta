@@ -41,7 +41,7 @@
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pack/task/residue_selector/SecondaryStructureSelector.hh>
+#include <core/select/residue_selector/SecondaryStructureSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/symmetry/util.hh>
@@ -175,7 +175,7 @@ FoldabilityFilter::parse_my_tag(
 		}
 		std::string const selectorname = tag->getOption< std::string >("selector");
 		try {
-			selector_ = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
+			selector_ = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from DisulfidizeMover.\n";
@@ -232,8 +232,8 @@ FoldabilityFilter::compute( core::pose::Pose const & pose ) const
 {
 	IntervalVec segments;
 	if ( selector_ ) {
-		core::pack::task::residue_selector::ResidueSubset subset = selector_->apply( pose );
-		segments = core::pack::task::residue_selector::subset_to_intervals( subset );
+		core::select::residue_selector::ResidueSubset subset = selector_->apply( pose );
+		segments = core::select::residue_selector::subset_to_intervals( subset );
 	} else {
 		segments = segments_;
 	}

@@ -16,7 +16,7 @@
 
 #include <core/id/types.hh>
 
-#include <core/pack/task/residue_selector/ChainSelector.hh>
+#include <core/select/residue_selector/ChainSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/kinematics/Jump.hh>
@@ -74,7 +74,7 @@ public:
 
 		using namespace protocols;
 		using namespace protocols::environment;
-		using namespace core::pack::task::residue_selector;
+		using namespace core::select::residue_selector;
 		using namespace numeric;
 		using namespace core::conformation;
 		using namespace abinitio::abscript;
@@ -141,7 +141,7 @@ public:
 
 		using namespace protocols;
 		using namespace protocols::environment;
-		using namespace core::pack::task::residue_selector;
+		using namespace core::select::residue_selector;
 		using namespace numeric;
 		using namespace core::conformation;
 
@@ -198,7 +198,7 @@ public:
 		using namespace core::environment;
 		using namespace protocols;
 		using namespace protocols::environment;
-		using namespace core::pack::task::residue_selector;
+		using namespace core::select::residue_selector;
 		using namespace numeric;
 		using namespace core::conformation;
 		using namespace abinitio::abscript;

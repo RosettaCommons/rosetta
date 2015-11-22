@@ -22,7 +22,7 @@
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 #include <core/pose/selection.hh>
-#include <core/pack/task/operation/util/interface_vector_calculate.hh>
+#include <core/select/util/interface_vector_calculate.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 
@@ -111,7 +111,7 @@ bool DomainInterfaceFilter::apply( core::pose::Pose const & pose ) const {
 	}
 
 	utility::vector1< bool > rs_subset( false, pose.total_residue() );
-	rs_subset = core::pack::task::operation::util::calc_interacting_vector( pose, target_local, query_local, cb_dist_cut_, nearby_atom_cut_, vector_angle_cut_, vector_dist_cut_ );
+	rs_subset = core::select::util::calc_interacting_vector( pose, target_local, query_local, cb_dist_cut_, nearby_atom_cut_, vector_angle_cut_, vector_dist_cut_ );
 
 	for ( std::set< core::Size >::const_iterator it = query_local.begin();
 			it != query_local.end();

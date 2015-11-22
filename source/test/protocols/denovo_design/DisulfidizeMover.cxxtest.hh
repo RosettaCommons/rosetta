@@ -213,8 +213,8 @@ public:
 		m2.apply( *posecopy );
 		TS_ASSERT( disulf.check_disulfide_match_rt( *posecopy, 47, 30, disulfPot, false ) );
 
-		core::pack::task::residue_selector::ResidueSubset residueset1( input_pose.total_residue(), true );
-		core::pack::task::residue_selector::ResidueSubset residueset2( input_pose.total_residue(), true );
+		core::select::residue_selector::ResidueSubset residueset1( input_pose.total_residue(), true );
+		core::select::residue_selector::ResidueSubset residueset2( input_pose.total_residue(), true );
 		TS_ASSERT( residueset1[1] );
 		TR << residueset2[1] << std::endl;
 		DisulfidizeMover::DisulfideList disulfs =

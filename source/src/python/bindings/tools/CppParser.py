@@ -1477,7 +1477,7 @@ _import_order_ = {
 
     'basic': ['datacache', 'resource_manager'],
 
-    'core': ['graph', 'conformation', 'id', 'io', 'scoring'],
+    'core': ['select', 'graph', 'conformation', 'id', 'io', 'scoring'],
     'core/pack' : ['rotamers'],
     'core/scoring': ['annealing', 'trie', 'methods', 'func', 'hbonds'],
 

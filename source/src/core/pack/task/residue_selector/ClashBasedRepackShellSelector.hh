@@ -20,7 +20,7 @@
 
 // Package headers
 #include <core/types.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -38,14 +38,14 @@ namespace pack {
 namespace task {
 namespace residue_selector {
 
-class ClashBasedRepackShellSelector : public ResidueSelector {
+class ClashBasedRepackShellSelector : public core::select::residue_selector::ResidueSelector {
 public:
 	ClashBasedRepackShellSelector();
 	ClashBasedRepackShellSelector( core::pack::task::PackerTaskOP packer_task, core::scoring::ScoreFunctionOP score_fxn );
 
 	virtual ~ClashBasedRepackShellSelector();
 
-	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
+	virtual core::select::residue_selector::ResidueSubset apply( core::pose::Pose const & pose ) const;
 	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap

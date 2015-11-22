@@ -40,7 +40,7 @@ public:
 	FragmentJumpCM();
 
 	FragmentJumpCM( std::string const& topol_filename,
-		core::pack::task::residue_selector::ResidueSelectorCOP selector,
+		core::select::residue_selector::ResidueSelectorCOP selector,
 		std::string const& moverkey );
 
 	virtual

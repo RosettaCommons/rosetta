@@ -21,7 +21,7 @@
 
 // core headers
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/residue_selector/SecondaryStructureSelector.hh>
+#include <core/select/residue_selector/SecondaryStructureSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/sequence/ABEGOManager.hh>
@@ -62,7 +62,7 @@ ConsensusLoopDesignOperation::ConsensusLoopDesignOperation() :
 	include_adjacent_residues_( false ),
 	selector_()
 {
-	using namespace core::pack::task::residue_selector;
+	using namespace core::select::residue_selector;
 	SecondaryStructureSelectorOP sel( new SecondaryStructureSelector( "L" ) );
 	sel->set_include_terminal_loops( false );
 	set_selector( sel );
@@ -124,7 +124,7 @@ ConsensusLoopDesignOperation::parse_tag(
 void
 ConsensusLoopDesignOperation::set_secstruct_from_blueprint( std::string const & bpfile )
 {
-	using namespace core::pack::task::residue_selector;
+	using namespace core::select::residue_selector;
 	protocols::jd2::parser::BluePrint bp( bpfile );
 	set_secstruct( bp.secstruct() );
 	SecondaryStructureSelectorCOP test_sel =
@@ -264,7 +264,7 @@ LoopInfoVec
 ConsensusLoopDesignOperation::get_loop_info( core::pose::Pose const & pose ) const
 {
 	debug_assert( selector_ );
-	core::pack::task::residue_selector::ResidueSubset subset = selector_->apply( pose );
+	core::select::residue_selector::ResidueSubset subset = selector_->apply( pose );
 
 	std::string ss = "";
 	if ( secstruct_.empty() ) {
@@ -282,7 +282,7 @@ LoopInfoVec
 ConsensusLoopDesignOperation::loop_info_from_subset(
 	core::pose::Pose const & pose,
 	std::string const & ss,
-	core::pack::task::residue_selector::ResidueSubset const & subset ) const
+	core::select::residue_selector::ResidueSubset const & subset ) const
 {
 	utility::vector1< std::string > abego = core::sequence::get_abego( pose, 1 );
 	debug_assert( subset.size() == ss.size() );
@@ -316,7 +316,7 @@ ConsensusLoopDesignOperation::loop_info_from_subset(
 }
 
 void
-ConsensusLoopDesignOperation::set_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector_val )
+ConsensusLoopDesignOperation::set_selector( core::select::residue_selector::ResidueSelectorCOP selector_val )
 {
 	debug_assert( selector_val );
 	selector_ = selector_val;

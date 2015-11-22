@@ -25,7 +25,7 @@
 #include <protocols/environment/claims/EnvClaim.hh>
 
 // Project headers
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.hh>
 
 

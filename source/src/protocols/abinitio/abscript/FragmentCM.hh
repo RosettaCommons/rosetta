@@ -19,7 +19,7 @@
 
 // Package headers
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 // Project headers
 #include <basic/datacache/WriteableCacheableMap.fwd.hh>
@@ -40,9 +40,9 @@ public:
 	FragmentCM();
 
 	FragmentCM( simple_moves::FragmentMoverOP,
-		core::pack::task::residue_selector::ResidueSelectorCOP = NULL );
+		core::select::residue_selector::ResidueSelectorCOP = NULL );
 
-	virtual void set_selector( core::pack::task::residue_selector::ResidueSelectorCOP );
+	virtual void set_selector( core::select::residue_selector::ResidueSelectorCOP );
 
 	virtual void set_mover( simple_moves::FragmentMoverOP mover );
 
@@ -64,7 +64,7 @@ public:
 
 	virtual std::string get_name() const;
 
-	core::pack::task::residue_selector::ResidueSelectorCOP const&
+	core::select::residue_selector::ResidueSelectorCOP const&
 	selector() const { return selector_; }
 
 	bool initialize() const { return bInitialize_; }
@@ -82,7 +82,7 @@ protected:
 
 private:
 	simple_moves::FragmentMoverOP mover_;
-	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 	bool bInitialize_;
 	bool bYieldCutBias_;
 

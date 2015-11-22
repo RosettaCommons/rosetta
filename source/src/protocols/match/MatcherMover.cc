@@ -33,7 +33,7 @@
 #include <core/id/AtomID.hh>
 #include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/match.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -254,11 +254,11 @@ MatcherMover::generate_match_pos( core::pose::Pose const & pose ) const
 	std::stringstream outfile;
 	outfile << "N_CST " << selectors_.size() << std::endl;
 	core::Size idx = 1;
-	for ( utility::vector1< core::pack::task::residue_selector::ResidueSelectorCOP >::const_iterator s = selectors_.begin();
+	for ( utility::vector1< core::select::residue_selector::ResidueSelectorCOP >::const_iterator s = selectors_.begin();
 			s != selectors_.end(); ++s, ++idx ) {
 		outfile << idx << " : ";
 		debug_assert( *s );
-		core::pack::task::residue_selector::ResidueSubset const subset = (*s)->apply( pose );
+		core::select::residue_selector::ResidueSubset const subset = (*s)->apply( pose );
 		for ( core::Size i=1; i<=subset.size(); ++i ) {
 			if ( subset[i] ) {
 				outfile << i << " ";
@@ -309,9 +309,9 @@ MatcherMover::parse_my_tag(
 		std::string const selector_str = tag->getOption< std::string >( "residues_for_geomcsts" );
 		utility::vector1< std::string > const selector_strs = utility::string_split( selector_str, ',' );
 		for ( utility::vector1< std::string >::const_iterator s = selector_strs.begin(); s != selector_strs.end(); ++s ) {
-			core::pack::task::residue_selector::ResidueSelectorCOP selector;
+			core::select::residue_selector::ResidueSelectorCOP selector;
 			try {
-				selector = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", *s );
+				selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", *s );
 			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 				std::stringstream error_msg;
 				error_msg << "Failed to find ResidueSelector named '" << *s << "' from the Datamap from MatcherMover::parse_my_tag.\n";

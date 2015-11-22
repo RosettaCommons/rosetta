@@ -34,7 +34,7 @@
 
 #include <core/kinematics/MoveMap.hh>
 
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
@@ -85,7 +85,7 @@ void LoopCM::parse_my_tag( TagCOP const tag,
 	Filters_map const&,
 	moves::Movers_map const&,
 	Pose const& ){
-	using core::pack::task::residue_selector::ResidueSelector;
+	using core::select::residue_selector::ResidueSelector;
 
 	std::string const algorithm = tag->getOption< std::string >( "algorithm" );
 	if ( algorithm == KIC ) {

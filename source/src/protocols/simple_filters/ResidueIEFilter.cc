@@ -19,7 +19,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/scoring/Interface.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>
@@ -178,7 +178,7 @@ ResidueIEFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 	if ( tag->hasOption("selector") ) {
 		std::string const selector_name = tag->getOption< std::string >( "selector" );
 		try {
-			selector_ = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			selector_ = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_name << "' from the Datamap from DisulfidizeMover.\n";
@@ -306,7 +306,7 @@ ResidueIEFilter::compute_resnums( core::pose::Pose const & pose ) const
 	if ( selector_ ) {
 		tr << "Applying residue selector to determine resnums" << std::endl;
 
-		core::pack::task::residue_selector::ResidueSubset subset = selector_->apply(pose);
+		core::select::residue_selector::ResidueSubset subset = selector_->apply(pose);
 		//sanity check
 		debug_assert( subset.size() == pose.total_residue() );
 		for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {

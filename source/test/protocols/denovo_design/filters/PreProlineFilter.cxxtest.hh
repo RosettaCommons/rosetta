@@ -26,7 +26,7 @@
 
 // Core headers
 #include <core/io/pdb/file_data.hh>
-#include <core/pack/task/residue_selector/ChainSelector.hh>
+#include <core/select/residue_selector/ChainSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 
@@ -92,8 +92,8 @@ public:
 		TS_ASSERT_DELTA( prohelix_bad, 2.0, 1e-3 );
 
 		// now select chain a
-		core::pack::task::residue_selector::ChainSelectorOP selchain(
-			new core::pack::task::residue_selector::ChainSelector() );
+		core::select::residue_selector::ChainSelectorOP selchain(
+			new core::select::residue_selector::ChainSelector() );
 		utility::vector1< std::string > const chains = boost::assign::list_of ("A");
 		selchain->set_chain_strings( chains );
 		prepro.set_selector( selchain );

@@ -17,7 +17,7 @@
 // Package Headers
 #include <core/environment/LocalPosition.hh>
 
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <protocols/environment/claims/EnvLabelSelector.hh>
 #include <protocols/environment/claims/EnvClaim.hh>
@@ -52,7 +52,7 @@ using core::environment::LocalPositions;
 using core::conformation::Conformation;
 
 TorsionClaim::TorsionClaim( ClientMoverOP owner,
-	core::pack::task::residue_selector::ResidueSelectorCOP selector ) :
+	core::select::residue_selector::ResidueSelectorCOP selector ) :
 	EnvClaim( owner ),
 	selector_( selector ),
 	c_str_( MUST_CONTROL ),
@@ -79,13 +79,13 @@ TorsionClaim::TorsionClaim( ClientMoverOP owner,
 			<< " Are you sure this is what you wanted?" << std::endl;
 	}
 
-	selector_ = datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) );
+	selector_ = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) );
 }
 
 TorsionClaim::TorsionClaim( ClientMoverOP owner,
 	LocalPosition const & local_pos):
 	EnvClaim( owner ),
-	selector_( core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_pos ) ) ) ),
+	selector_( core::select::residue_selector::ResidueSelectorCOP( core::select::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_pos ) ) ) ),
 	c_str_( MUST_CONTROL ),
 	i_str_( DOES_NOT_CONTROL ),
 	claim_sidechain_( false ),
@@ -107,13 +107,13 @@ TorsionClaim::TorsionClaim( ClientMoverOP owner,
 		local_positions.push_back( core::environment::LocalPositionOP( new LocalPosition( label, i ) ) );
 	}
 
-	selector_ = core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_positions ) ) );
+	selector_ = core::select::residue_selector::ResidueSelectorCOP( core::select::residue_selector::ResidueSelectorOP( new EnvLabelSelector( local_positions ) ) );
 }
 
 TorsionClaim::TorsionClaim( ClientMoverOP owner,
 	LocalPositions const & positions ):
 	EnvClaim( owner ),
-	selector_( core::pack::task::residue_selector::ResidueSelectorCOP( core::pack::task::residue_selector::ResidueSelectorOP( new EnvLabelSelector( positions ) ) ) ),
+	selector_( core::select::residue_selector::ResidueSelectorCOP( core::select::residue_selector::ResidueSelectorOP( new EnvLabelSelector( positions ) ) ) ),
 	c_str_( MUST_CONTROL ),
 	i_str_( DOES_NOT_CONTROL ),
 	claim_sidechain_( false ),

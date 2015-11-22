@@ -15,7 +15,8 @@
 
 // Unit headers
 #include <core/pack/task/residue_selector/ClashBasedRepackShellSelector.hh>
-#include <core/pack/task/residue_selector/ResidueSelectorCreators.hh>
+#include <core/pack/task/residue_selector/ClashBasedRepackShellSelectorCreator.hh>
+#include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
 // Package headers
 #include <core/conformation/Conformation.hh>
@@ -149,10 +150,10 @@ utility::vector1<core::Size> ClashBasedRepackShellSelector::get_clashing_positio
 	return clash_positions;
 }
 
-ResidueSubset
+core::select::residue_selector::ResidueSubset
 ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose ) const
 {
-	ResidueSubset subset( pose.total_residue(), false );
+	core::select::residue_selector::ResidueSubset subset( pose.total_residue(), false );
 	core::pose::PoseOP mypose( new core::pose::Pose(pose) );
 
 	// determine design positions based on the packer task
@@ -236,9 +237,9 @@ core::pack::task::PackerTaskOP ClashBasedRepackShellSelector::get_packer_task() 
 core::scoring::ScoreFunctionOP ClashBasedRepackShellSelector::get_score_fxn() const { return score_fxn_; }
 core::Real ClashBasedRepackShellSelector::get_bump_overlap_factor() const { return bump_overlap_factor_; }
 
-ResidueSelectorOP
+core::select::residue_selector::ResidueSelectorOP
 ClashBasedRepackShellSelectorCreator::create_residue_selector() const {
-	return ResidueSelectorOP( new ClashBasedRepackShellSelector );
+	return core::select::residue_selector::ResidueSelectorOP( new ClashBasedRepackShellSelector );
 }
 
 std::string

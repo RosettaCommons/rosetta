@@ -29,7 +29,7 @@
 //Other headers
 #include <core/conformation/Conformation.hh>
 
-#include <core/pack/task/residue_selector/ChainSelector.hh>
+#include <core/select/residue_selector/ChainSelector.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -301,14 +301,14 @@ public:
 	}
 
 	void test_JumpClaim_rscripts_creation( core::pose::Pose const& pose ) {
-		using namespace core::pack::task::residue_selector;
+		using namespace core::select::residue_selector;
 		using namespace protocols::environment;
 		using namespace protocols::environment::claims;
 
-		core::pack::task::residue_selector::ChainSelectorOP chA_sele( new core::pack::task::residue_selector::ChainSelector() );
+		core::select::residue_selector::ChainSelectorOP chA_sele( new core::select::residue_selector::ChainSelector() );
 		chA_sele->set_chain_strings( utility::vector1< std::string >( 1, "1" ) );
 
-		core::pack::task::residue_selector::ChainSelectorOP chB_sele( new core::pack::task::residue_selector::ChainSelector() );
+		core::select::residue_selector::ChainSelectorOP chB_sele( new core::select::residue_selector::ChainSelector() );
 		chB_sele->set_chain_strings( utility::vector1< std::string >( 1, "2" ) );
 
 		basic::datacache::DataMap datamap;

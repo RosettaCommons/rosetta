@@ -21,7 +21,7 @@
 // Package headers
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/ResLvlTaskOperation.fwd.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -50,7 +50,7 @@ public:
 
 public:
 	OperateOnResidueSubset();
-	OperateOnResidueSubset( ResLvlTaskOperationCOP, residue_selector::ResidueSelectorCOP );
+	OperateOnResidueSubset( ResLvlTaskOperationCOP, core::select::residue_selector::ResidueSelectorCOP );
 	OperateOnResidueSubset( OperateOnResidueSubset const & );
 	OperateOnResidueSubset & operator = ( OperateOnResidueSubset const & );
 	virtual ~OperateOnResidueSubset();
@@ -61,14 +61,14 @@ public:
 	/// @brief sets the ResLvlTaskOperation that will be applied to residues
 	void op( ResLvlTaskOperationCOP );
 	/// @brief sets the ResidueSelector that will be used to determine which residues to apply the RLTOP to
-	void selector( residue_selector::ResidueSelectorCOP );
+	void selector( core::select::residue_selector::ResidueSelectorCOP );
 
 	/// @brief Used to parse an xml-like tag to construct the ResLvlTaskOperation and the ResFilter
 	virtual void parse_tag( TagCOP, DataMap & );
 
 private:
 	ResLvlTaskOperationCOP op_;
-	residue_selector::ResidueSelectorCOP residue_selector_;
+	core::select::residue_selector::ResidueSelectorCOP residue_selector_;
 
 };
 

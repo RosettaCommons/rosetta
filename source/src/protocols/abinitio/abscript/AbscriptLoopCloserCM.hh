@@ -25,7 +25,7 @@
 
 #include <core/conformation/Conformation.fwd.hh>
 
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 #include <core/fragment/FragSet.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -58,9 +58,9 @@ public:
 
 	virtual void broking_finished( environment::EnvClaimBroker::BrokerResult const& );
 
-	core::pack::task::residue_selector::ResidueSelectorCOP selector() const { return selector_; }
+	core::select::residue_selector::ResidueSelectorCOP selector() const { return selector_; }
 
-	void set_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector ) { selector_ = selector; }
+	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector ) { selector_ = selector; }
 
 	virtual std::string get_name() const;
 
@@ -89,7 +89,7 @@ private:
 	mutable core::kinematics::MoveMapOP movemap_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 
-	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 
 	mutable bool bUpdateMM_;
 

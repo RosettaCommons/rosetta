@@ -20,7 +20,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/moves/DsspMover.hh>
-#include <core/util/SelectResiduesByLayer.hh>
+#include <core/select/util/SelectResiduesByLayer.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
@@ -134,7 +134,7 @@ ExposedHydrophobicsFilter::report_sm( core::pose::Pose const & pose ) const
 core::Real
 ExposedHydrophobicsFilter::compute( core::pose::Pose const & pose ) const
 {
-	core::util::SelectResiduesByLayer srbl( true, true, true );
+	core::select::util::SelectResiduesByLayer srbl( true, true, true );
 	core::Real const surface_sasa( 40 );
 	srbl.initialize( sasa_cutoff_, surface_sasa );
 	// do dssp on copy of pose to get secondary structure

@@ -31,7 +31,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
@@ -91,7 +91,7 @@ FragmentCM::FragmentCM():
 {}
 
 FragmentCM::FragmentCM( simple_moves::FragmentMoverOP mover,
-	core::pack::task::residue_selector::ResidueSelectorCOP selector ):
+	core::select::residue_selector::ResidueSelectorCOP selector ):
 	ClientMover(),
 	selector_( selector ),
 	bInitialize_( true ),
@@ -102,7 +102,7 @@ FragmentCM::FragmentCM( simple_moves::FragmentMoverOP mover,
 
 FragmentCM::~FragmentCM() {}
 
-void FragmentCM::set_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector ) {
+void FragmentCM::set_selector( core::select::residue_selector::ResidueSelectorCOP selector ) {
 	if ( Parent::state_check( __FUNCTION__, ( selector.get() == selector_.get() ) ) ) {
 		selector_ = selector;
 	}
@@ -172,7 +172,7 @@ void FragmentCM::parse_my_tag( utility::tag::TagCOP tag,
 
 	initialize( tag->getOption< bool >( "initialize", true ) );
 
-	set_selector( datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
+	set_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
 }
 
 claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,

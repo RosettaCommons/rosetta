@@ -43,7 +43,7 @@
 
 //protocols headers
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
-#include <core/util/SelectResiduesByLayer.fwd.hh>
+#include <core/select/util/SelectResiduesByLayer.fwd.hh>
 
 //core headers
 #include <core/pack/task/operation/TaskOperation.hh>
@@ -207,15 +207,15 @@ public:
 	void set_sc_neighbor_denominator( core::Real const &value );
 
 	/// @brief Set a parameter in the calculation that the sidechain neighbors algorithm uses.
-	/// @details See core::util::SelectResiduesByLayer class for details.
+	/// @details See core::select::util::SelectResiduesByLayer class for details.
 	void set_sc_neighbor_angle_shift_factor( core::Real const &value );
 
 	/// @brief Set another parameter (the angle exponent) in the calculation that the sidechain neighbors algorithm uses.
-	/// @details See core::util::SelectResiduesByLayer class for details.
+	/// @details See core::select::util::SelectResiduesByLayer class for details.
 	void set_sc_neighbor_angle_exponent( core::Real const &value );
 
 	/// @brief Set another parameter (the distance exponent) in the calculation that the sidechain neighbors algorithm uses.
-	/// @details See core::util::SelectResiduesByLayer class for details.
+	/// @details See core::select::util::SelectResiduesByLayer class for details.
 	void set_sc_neighbor_dist_exponent( core::Real const &value );
 
 	/// @brief sets names of layers to design
@@ -304,7 +304,7 @@ private:
 	/// @brief write a pymol command with the different layers as selections
 	void write_pymol_script(
 		Pose const & pos,
-		core::util::SelectResiduesByLayerOP srbl,
+		core::select::util::SelectResiduesByLayerOP srbl,
 		std::map< std::string, utility::vector1< bool > > const & layer_specification,
 		bool las_ligand,
 		std::string const & filename ) const;
@@ -342,7 +342,7 @@ private:
 	TaskLayers task_layers_;
 
 	// define the layer each residue belong to
-	core::util::SelectResiduesByLayerOP srbl_;
+	core::select::util::SelectResiduesByLayerOP srbl_;
 
 	// for defining secondary structure
 	protocols::jd2::parser::BluePrintOP blueprint_;

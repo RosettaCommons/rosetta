@@ -20,7 +20,7 @@
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/loops/loop_mover/IndependentLoopMover.hh>
 
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 #include <basic/datacache/WriteableCacheableMap.fwd.hh>
 
@@ -72,7 +72,7 @@ private:
 	std::string style_;
 
 	LoopMoverOP mover_;
-	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 
 }; // class LoopCM
 

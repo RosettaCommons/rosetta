@@ -19,7 +19,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -89,7 +89,7 @@ private:
 	core::Real penalty_factor_;
 	bool report_energy_;
 	bool use_resE_;
-	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 
 };
 

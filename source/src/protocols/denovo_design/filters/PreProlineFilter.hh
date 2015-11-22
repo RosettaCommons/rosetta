@@ -23,7 +23,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Core headers
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Numeric headers
 #include <numeric/interpolation/spline/Bicubic_spline.hh>
@@ -65,7 +65,7 @@ public:
 	virtual bool apply( core::pose::Pose const & pose ) const;
 
 	void set_use_statistical_potential( bool const use_stat );
-	void set_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
+	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
 	void setup_spline();
 
@@ -85,7 +85,7 @@ private:   // options
 	bool use_statistical_potential_;
 
 private:   // other data
-	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 	numeric::interpolation::spline::BicubicSpline spline_;
 };
 

@@ -99,7 +99,7 @@ FragmentJumpCM::FragmentJumpCM():
 {}
 
 FragmentJumpCM::FragmentJumpCM( std::string const& topol_filename,
-	core::pack::task::residue_selector::ResidueSelectorCOP selector,
+	core::select::residue_selector::ResidueSelectorCOP selector,
 	std::string const& moverkey ) :
 	moverkey_( moverkey )
 {
@@ -137,7 +137,7 @@ void FragmentJumpCM::parse_my_tag( utility::tag::TagCOP tag,
 	initialize( tag->getOption< bool >( "initialize", true ) );
 
 	if ( tag->hasOption( "selector" ) ) {
-		set_selector( datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
+		set_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
 	} else {
 		set_selector( NULL );
 	}

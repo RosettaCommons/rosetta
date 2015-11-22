@@ -41,9 +41,9 @@
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 
-#include <core/pack/task/residue_selector/AndResidueSelector.hh>
-#include <core/pack/task/residue_selector/NotResidueSelector.hh>
-#include <core/pack/task/residue_selector/ChainSelector.hh>
+#include <core/select/residue_selector/AndResidueSelector.hh>
+#include <core/select/residue_selector/NotResidueSelector.hh>
+#include <core/select/residue_selector/ChainSelector.hh>
 
 // Protocol Headers
 #include <protocols/antibody/AntibodyInfo.hh>

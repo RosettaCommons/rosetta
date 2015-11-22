@@ -9,7 +9,7 @@
 
 /// @file   protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.cc
 /// @brief  TaskOperation class that finds an interface based on:
-/// core/pack/task/operation/util/interface_vector_calculate.hh
+/// core/select/util/interface_vector_calculate.hh
 /// and leaves it mobile in the PackerTask
 /// @author Ben Stranges (stranges@unc.edu)
 
@@ -20,7 +20,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/pack/task/operation/util/interface_vector_calculate.hh>
+#include <core/select/util/interface_vector_calculate.hh>
 //#include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/PackerTask.hh>
 //#include <protocols/toolbox/pose_metric_calculators/InterfaceVectorDefinitionCalculator.hh>
@@ -158,7 +158,7 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 				utility_exit_with_message("Specified jump does not exist.");
 			}
 			utility::vector1_bool repack =
-				core::pack::task::operation::util::calc_interface_vector(
+				core::select::util::calc_interface_vector(
 				pose,
 				*jj,
 				CB_dist_cutoff_,
@@ -192,7 +192,7 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 					utility_exit_with_message("Specified chain does not exist.");
 				}
 				utility::vector1_bool repack =
-					core::pack::task::operation::util::calc_interface_vector( pose,
+					core::select::util::calc_interface_vector( pose,
 					current_lower_chain, current_upper_chain,
 					CB_dist_cutoff_,
 					nearby_atom_cutoff_,

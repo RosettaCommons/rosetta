@@ -38,7 +38,7 @@
 
 #include <core/pose/Pose.hh>
 
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -444,9 +444,9 @@ AbscriptMover::parse_my_tag(
 			}
 		} else if ( stagetag->getName() == "Fragments" ||
 				stagetag->getName() == "fragments" ) {
-			core::pack::task::residue_selector::ResidueSelectorCOP selector( NULL );
+			core::select::residue_selector::ResidueSelectorCOP selector( NULL );
 			if ( stagetag->hasOption( "selector" ) ) {
-				selector = datamap.get_ptr<core::pack::task::residue_selector::ResidueSelector const>( "ResidueSelector", stagetag->getOption<std::string>( "selector" ) );
+				selector = datamap.get_ptr<core::select::residue_selector::ResidueSelector const>( "ResidueSelector", stagetag->getOption<std::string>( "selector" ) );
 			}
 
 			add_frags( stagetag->getOption< std::string >( "small_frags" ),
@@ -479,7 +479,7 @@ AbscriptMover::parse_my_tag(
 
 void AbscriptMover::add_frags( std::string const& small_fragfile,
 	std::string const& large_fragfile,
-	core::pack::task::residue_selector::ResidueSelectorCOP selector ){
+	core::select::residue_selector::ResidueSelectorCOP selector ){
 	using namespace core::fragment;
 	using namespace basic::options;
 	using namespace protocols::simple_moves;

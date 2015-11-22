@@ -28,7 +28,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 // Utillity Headers
@@ -63,14 +63,14 @@ parse_task_operations( std::string const & task_list, basic::datacache::DataMap 
 /// @details Looks for "residue_selector" option in tag
 ///          If that option isn't found, returns NULL ptr
 ///          If that option is found, calls get_residue_selector()
-core::pack::task::residue_selector::ResidueSelectorCOP
+core::select::residue_selector::ResidueSelectorCOP
 parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data );
 
 /// @brief returns a residue selector given a selector's name and datamap
 /// @details Looks for selector in the datamap
 ///          Returns a const ptr to the selector
 /// @throws utility::excn::EXCN_Msg_Exception if selector is not found in datamap
-core::pack::task::residue_selector::ResidueSelectorCOP
+core::select::residue_selector::ResidueSelectorCOP
 get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data );
 
 /// @brief Look up the score function defined in the <SCOREFXNS/>

@@ -21,8 +21,8 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/kinematics/Jump.hh>
 
-#include <core/pack/task/residue_selector/ChainSelector.hh>
-#include <core/pack/task/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/ChainSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragmentIO.hh>
@@ -116,8 +116,8 @@ public:
 
 	void test_chain2_fragment_init( core::pose::Pose & pose ){
 
-		core::pack::task::residue_selector::ChainSelectorOP selector( new core::pack::task::residue_selector::ChainSelector() );
-		core::pack::task::residue_selector::ChainSelectorOP bad_selector( new core::pack::task::residue_selector::ChainSelector() );
+		core::select::residue_selector::ChainSelectorOP selector( new core::select::residue_selector::ChainSelector() );
+		core::select::residue_selector::ChainSelectorOP bad_selector( new core::select::residue_selector::ChainSelector() );
 		selector->set_chain_strings( utility::vector1< std::string >( 1, "2" ) );
 		bad_selector->set_chain_strings( utility::vector1< std::string >( 1, "1" ) );
 
@@ -238,7 +238,7 @@ public:
 
 		datamap.add( "ResidueSelector",
 			SELECTOR,
-			core::pack::task::residue_selector::ResidueSelectorOP( new core::pack::task::residue_selector::ResidueIndexSelector( "1-10" ) ) );
+			core::select::residue_selector::ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( "1-10" ) ) );
 
 		std::stringstream ss;
 		ss << "<FragmentCM selector=\"" << SELECTOR << "\" fragments=\""

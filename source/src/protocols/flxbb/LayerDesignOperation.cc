@@ -51,7 +51,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <basic/Tracer.hh>
-#include <core/util/SelectResiduesByLayer.hh>
+#include <core/select/util/SelectResiduesByLayer.hh>
 #include <core/pose/symmetry/util.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
@@ -122,7 +122,7 @@ LayerDesignOperation::LayerDesignOperation():
 	restrict_restypes_( true ),
 	make_pymol_script_( false ),
 	ignore_pikaa_natro_( false ),
-	srbl_( core::util::SelectResiduesByLayerOP( new core::util::SelectResiduesByLayer ) ),
+	srbl_( core::select::util::SelectResiduesByLayerOP( new core::select::util::SelectResiduesByLayer ) ),
 	blueprint_( /* NULL */ ),
 	use_symmetry_(true)
 {
@@ -140,7 +140,7 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	restrict_restypes_( true ),
 	make_pymol_script_( false ),
 	ignore_pikaa_natro_( false ),
-	srbl_( core::util::SelectResiduesByLayerOP( new core::util::SelectResiduesByLayer ) ),
+	srbl_( core::select::util::SelectResiduesByLayerOP( new core::select::util::SelectResiduesByLayer ) ),
 	blueprint_( /* NULL */ ),
 	use_symmetry_(true)
 {
@@ -226,7 +226,7 @@ LayerDesignOperation::pos2select( utility::vector1< core::Size > const & pos ) c
 }
 
 void
-LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, core::util::SelectResiduesByLayerOP srbl, std::map< std::string, utility::vector1<bool> > const & layer_specification, bool has_ligand, std::string const & filename ) const
+LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, core::select::util::SelectResiduesByLayerOP srbl, std::map< std::string, utility::vector1<bool> > const & layer_specification, bool has_ligand, std::string const & filename ) const
 {
 	using utility::io::ozstream;
 	typedef utility::vector1<Size> VecSize;
@@ -454,7 +454,7 @@ LayerDesignOperation::set_sc_neighbor_denominator(
 }
 
 /// @brief Set a parameter in the calculation that the sidechain neighbors algorithm uses.
-/// @details See core::util::SelectResiduesByLayer class for details.
+/// @details See core::select::util::SelectResiduesByLayer class for details.
 void
 LayerDesignOperation::set_sc_neighbor_angle_shift_factor( core::Real const &value ) {
 	srbl_->set_angle_shift_factor(value);
@@ -462,7 +462,7 @@ LayerDesignOperation::set_sc_neighbor_angle_shift_factor( core::Real const &valu
 }
 
 /// @brief Set another parameter (the angle exponent) in the calculation that the sidechain neighbors algorithm uses.
-/// @details See core::util::SelectResiduesByLayer class for details.
+/// @details See core::select::util::SelectResiduesByLayer class for details.
 void
 LayerDesignOperation::set_sc_neighbor_angle_exponent( core::Real const &value ) {
 	srbl_->set_angle_exponent(value);
@@ -470,7 +470,7 @@ LayerDesignOperation::set_sc_neighbor_angle_exponent( core::Real const &value ) 
 }
 
 /// @brief Set another parameter (the distance exponent) in the calculation that the sidechain neighbors algorithm uses.
-/// @details See core::util::SelectResiduesByLayer class for details.
+/// @details See core::select::util::SelectResiduesByLayer class for details.
 void
 LayerDesignOperation::set_sc_neighbor_dist_exponent( core::Real const &value ) {
 	srbl_->set_dist_exponent(value);

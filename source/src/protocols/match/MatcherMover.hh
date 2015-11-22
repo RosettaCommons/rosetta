@@ -24,7 +24,7 @@
 
 #include <core/types.hh>
 
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
@@ -119,7 +119,7 @@ private:
 
 	core::conformation::ResidueCOP ligres_;
 	utility::vector1< core::Size > match_positions_;
-	utility::vector1< core::pack::task::residue_selector::ResidueSelectorCOP > selectors_;
+	utility::vector1< core::select::residue_selector::ResidueSelectorCOP > selectors_;
 
 	static std::string const MATCH_POS_FILE;
 };

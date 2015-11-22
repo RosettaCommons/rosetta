@@ -41,11 +41,11 @@
 #include <core/pack/task/operation/OperateOnResidueSubset.hh>
 #include <core/pack/task/operation/ResLvlTaskOperation.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <core/pack/task/residue_selector/OrResidueSelector.hh>
-#include <core/pack/task/residue_selector/ResidueIndexSelector.hh>
-#include <core/pack/task/residue_selector/InterGroupInterfaceByVectorSelector.hh>
-#include <core/pack/task/residue_selector/NotResidueSelector.hh>
-#include <core/pack/task/residue_selector/ChainSelector.hh>
+#include <core/select/residue_selector/OrResidueSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/InterGroupInterfaceByVectorSelector.hh>
+#include <core/select/residue_selector/NotResidueSelector.hh>
+#include <core/select/residue_selector/ChainSelector.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 #include <protocols/jd2/util.hh>
@@ -155,23 +155,23 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using residue_selector::ResidueSelectorOP;
-	using residue_selector::ResidueSelectorCOP;
+	using core::select::residue_selector::ResidueSelectorOP;
+	using core::select::residue_selector::ResidueSelectorCOP;
 
-	residue_selector::NotResidueSelectorOP not_rs( new core::pack::task::residue_selector::NotResidueSelector );
-	residue_selector::OrResidueSelectorOP or_rs( new core::pack::task::residue_selector::OrResidueSelector );
+	core::select::residue_selector::NotResidueSelectorOP not_rs( new core::select::residue_selector::NotResidueSelector );
+	core::select::residue_selector::OrResidueSelectorOP or_rs( new core::select::residue_selector::OrResidueSelector );
 
 	// add all possible interdomain interfaces to the ORResidueSelector for repacking
 	for ( core::Size ii = 0; ii < domain_definitions.size(); ++ii ) {
 		for ( core::Size jj = ii+1; jj < domain_definitions.size(); ++jj ) {
-			residue_selector::InterGroupInterfaceByVectorSelectorOP vector_rs( new residue_selector::InterGroupInterfaceByVectorSelector );
+			core::select::residue_selector::InterGroupInterfaceByVectorSelectorOP vector_rs( new core::select::residue_selector::InterGroupInterfaceByVectorSelector );
 			vector_rs->group1_resstring( domain_definitions[ii] );
 			vector_rs->group2_resstring( domain_definitions[jj] );
 			or_rs->add_residue_selector( vector_rs );
 		}
 	}
 
-	or_rs->add_residue_selector( ResidueSelectorCOP( ResidueSelectorOP( new residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) ) );
+	or_rs->add_residue_selector( ResidueSelectorCOP( ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) ) );
 	not_rs->set_residue_selector( or_rs );
 	operation::OperateOnResidueSubsetOP repack_operation( new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::PreventRepackingRLT() ), not_rs ) );
 
@@ -247,8 +247,8 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	using residue_selector::ResidueSelectorOP;
-	using residue_selector::ResidueSelectorCOP;
+	using core::select::residue_selector::ResidueSelectorOP;
+	using core::select::residue_selector::ResidueSelectorCOP;
 
 	// recover sidechains if pose has been loaded from centriod PDB...
 	// rather check if pose is in centroid mode and try recovering sidechains.
@@ -262,24 +262,24 @@ void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) 
 	std::vector< std::string > domain_definitions;
 	get_domain_definition( pose, domain_definitions );
 
-	residue_selector::NotResidueSelectorOP not_interface_or_linker_rs( new core::pack::task::residue_selector::NotResidueSelector );
-	residue_selector::OrResidueSelectorOP interface_or_linker_rs( new core::pack::task::residue_selector::OrResidueSelector );
+	core::select::residue_selector::NotResidueSelectorOP not_interface_or_linker_rs( new core::select::residue_selector::NotResidueSelector );
+	core::select::residue_selector::OrResidueSelectorOP interface_or_linker_rs( new core::select::residue_selector::OrResidueSelector );
 
 	// add all possible interdomain interfaces to the ORResidueSelector for repacking
 	for ( core::Size ii = 0; ii < domain_definitions.size(); ++ii ) {
 		for ( core::Size jj = ii+1; jj < domain_definitions.size(); ++jj ) {
-			residue_selector::InterGroupInterfaceByVectorSelectorOP vector_rs( new residue_selector::InterGroupInterfaceByVectorSelector );
+			core::select::residue_selector::InterGroupInterfaceByVectorSelectorOP vector_rs( new core::select::residue_selector::InterGroupInterfaceByVectorSelector );
 			vector_rs->group1_resstring( domain_definitions[ii] );
 			vector_rs->group2_resstring( domain_definitions[jj] );
 			interface_or_linker_rs->add_residue_selector( vector_rs );
 		}
 	}
 
-	interface_or_linker_rs->add_residue_selector( ResidueSelectorCOP( ResidueSelectorOP( new residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) ) );
+	interface_or_linker_rs->add_residue_selector( ResidueSelectorCOP( ResidueSelectorOP( new core::select::residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) ) );
 	not_interface_or_linker_rs->set_residue_selector( interface_or_linker_rs );
 	operation::OperateOnResidueSubsetOP block_outside_interface_operation( new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::PreventRepackingRLT() ), not_interface_or_linker_rs ) );;
 
-	residue_selector::ResidueIndexSelectorOP repack_only_rs( new residue_selector::ResidueIndexSelector( residues_to_repack_only_ ) );
+	core::select::residue_selector::ResidueIndexSelectorOP repack_only_rs( new core::select::residue_selector::ResidueIndexSelector( residues_to_repack_only_ ) );
 	operation::OperateOnResidueSubsetOP block_design_operation( new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::RestrictToRepackingRLT() ), repack_only_rs ) );
 
 	// global repack of the side chains

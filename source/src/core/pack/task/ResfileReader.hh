@@ -19,7 +19,7 @@
 #include <core/pack/task/ResfileReader.fwd.hh>
 
 // Package Headers
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -765,7 +765,7 @@ parse_resfile_string(
 	pose::Pose const & pose,
 	PackerTask & the_task,
 	std::string const & resfile_string,
-	core::pack::task::residue_selector::ResidueSubset const &mask
+	core::select::residue_selector::ResidueSubset const &mask
 
 ) throw(ResfileReaderException);
 

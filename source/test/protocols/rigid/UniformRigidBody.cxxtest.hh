@@ -71,7 +71,7 @@ public:
 		using namespace core::environment;
 		using namespace protocols;
 		using namespace protocols::environment;
-		using namespace core::pack::task::residue_selector;
+		using namespace core::select::residue_selector;
 		using namespace numeric;
 		using namespace core::conformation;
 		//using namespace abinitio::abscript;

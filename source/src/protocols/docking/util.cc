@@ -22,7 +22,7 @@
 
 // Project headers
 #include <core/kinematics/FoldTree.hh>
-#include <core/pack/task/residue_selector/ChainSelector.hh>
+#include <core/select/residue_selector/ChainSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/types.hh>
@@ -182,7 +182,7 @@ setup_foldtree(
 	using utility::vector1;
 	using core::Size;
 	using core::kinematics::FoldTree;
-	using core::pack::task::residue_selector::ChainSelector;
+	using core::select::residue_selector::ChainSelector;
 
 	FoldTree f;
 	vector1< bool > partner1( pose.total_residue(), false );

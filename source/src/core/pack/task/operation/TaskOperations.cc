@@ -23,7 +23,7 @@
 #include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/selection.hh>
@@ -649,7 +649,7 @@ ReadResfile::apply( pose::Pose const & pose, PackerTask & task ) const
 
 	//At this point, we're dealing with a cached resfile.
 	if ( residue_selector_ ) { //If there's a residue selector provided, use it to make a mask, then apply this TaskOperation only to unmasked (selected) residues:
-		core::pack::task::residue_selector::ResidueSubset const mask( residue_selector_->apply(pose) );
+		core::select::residue_selector::ResidueSubset const mask( residue_selector_->apply(pose) );
 		parse_resfile_string(pose, task, resfile_cache_, mask );
 	} else { //Otherwise, apply this TaskOperation to all residues:
 		parse_resfile_string(pose, task, resfile_cache_ );
@@ -699,7 +699,7 @@ ReadResfile::parse_tag( TagCOP tag , DataMap &datamap )
 	if ( tag->hasOption( "selector" ) ) {
 		std::string const selector_name ( tag->getOption< std::string >( "selector" ) );
 		try {
-			residue_selector_ = datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			residue_selector_ = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from ReadResfile::parse_tag()\n" + e.msg();
 			throw utility::excn::EXCN_Msg_Exception( error_message );

@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <protocols/environment/claims/EnvLabelSelector.fwd.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 // Package headers
 #include <core/environment/LocalPosition.hh>
@@ -35,8 +35,8 @@ namespace protocols {
 namespace environment {
 namespace claims {
 
-class EnvLabelSelector : public core::pack::task::residue_selector::ResidueSelector {
-	typedef core::pack::task::residue_selector::ResidueSubset ResidueSubset;
+class EnvLabelSelector : public core::select::residue_selector::ResidueSelector {
+	typedef core::select::residue_selector::ResidueSubset ResidueSubset;
 	typedef core::environment::LocalPositions LocalPositions;
 	typedef core::environment::LocalPosition LocalPosition;
 
@@ -54,7 +54,7 @@ public:
 	virtual ~EnvLabelSelector();
 
 	virtual
-	core::pack::task::residue_selector::ResidueSubset
+	core::select::residue_selector::ResidueSubset
 	apply( core::pose::Pose const & pose ) const;
 
 	virtual void parse_my_tag(

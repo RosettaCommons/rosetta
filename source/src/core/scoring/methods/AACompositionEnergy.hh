@@ -11,7 +11,7 @@
 /// @brief Headers for an EnergyMethod that penalizes deviation from a desired amino acid composition.
 /// @details This energy method is inherently not pairwise decomposible.  However, it is intended for very rapid calculation,
 /// and has been designed to plug into Alex Ford's modifications to the packer that permit it to work with non-pairwise scoring
-/// terms.
+/// terms.  It has also been modified to permit sub-regions of a pose to be scored.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 
 

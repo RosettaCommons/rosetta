@@ -26,7 +26,7 @@
 #include <protocols/rosetta_scripts/MultiplePoseMover.hh>
 
 // Core headers
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/disulfides/DisulfideMatchingPotential.fwd.hh>
 
@@ -123,8 +123,8 @@ public:
 	/// @brief find disulfides in the given neighborhood
 	DisulfideList find_possible_disulfides(
 		core::pose::Pose const & pose,
-		core::pack::task::residue_selector::ResidueSubset const & residueset1,
-		core::pack::task::residue_selector::ResidueSubset const & residueset2,
+		core::select::residue_selector::ResidueSubset const & residueset1,
+		core::select::residue_selector::ResidueSubset const & residueset2,
 		core::scoring::ScoreFunctionOP sfxn
 	) const;
 
@@ -176,10 +176,10 @@ public:
 
 public: //mutators
 	/// @brief sets the selector for set 1 -- disulfides will connect residues in set 1 to residues in set 2
-	void set_set1_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
+	void set_set1_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
 	/// @brief sets the selector for set 2 -- disulfides will connect residues in set 1 to residues in set 2
-	void set_set2_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
+	void set_set2_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 
 	/// @brief sets the min_loop value (number of residues between disulfide-joined residues) (default=8)
 	void set_min_loop( core::Size const minloopval );
@@ -227,8 +227,8 @@ private:   // options
 
 private:   // other data
 	/// @brief disulfides connect residues from set1 to residues from set2
-	core::pack::task::residue_selector::ResidueSelectorCOP set1_selector_;
-	core::pack::task::residue_selector::ResidueSelectorCOP set2_selector_;
+	core::select::residue_selector::ResidueSelectorCOP set1_selector_;
+	core::select::residue_selector::ResidueSelectorCOP set2_selector_;
 
 	/// @brief Can disulfides involve L-cystine?
 	/// @details Default true

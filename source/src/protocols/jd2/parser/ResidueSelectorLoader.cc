@@ -16,8 +16,8 @@
 #include <protocols/jd2/parser/ResidueSelectorLoaderCreator.hh>
 
 // Project headers
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
-#include <core/pack/task/residue_selector/ResidueSelectorFactory.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -47,13 +47,13 @@ void ResidueSelectorLoader::load_data(
 ) const
 {
 	using namespace utility::tag;
-	using core::pack::task::residue_selector::ResidueSelectorOP;
+	using core::select::residue_selector::ResidueSelectorOP;
 	typedef utility::vector0< TagCOP > TagCOPs;
 
 	TagCOPs const & selector_tags( tag->getTags() );
 	for ( core::Size ii = 0; ii < selector_tags.size(); ++ii ) {
 		TagCOP ii_tag = selector_tags[ ii ];
-		ResidueSelectorOP selector = core::pack::task::residue_selector::ResidueSelectorFactory::get_instance()->new_residue_selector(
+		ResidueSelectorOP selector = core::select::residue_selector::ResidueSelectorFactory::get_instance()->new_residue_selector(
 			ii_tag->getName(),
 			ii_tag,
 			datamap

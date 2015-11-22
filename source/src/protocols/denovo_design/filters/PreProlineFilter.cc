@@ -21,7 +21,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 // Core Headers
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/sequence/ABEGOManager.hh>
@@ -119,7 +119,7 @@ PreProlineFilter::get_name() const
 }
 
 void
-PreProlineFilter::set_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector )
+PreProlineFilter::set_selector( core::select::residue_selector::ResidueSelectorCOP selector )
 {
 	selector_ = selector;
 }

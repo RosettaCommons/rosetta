@@ -26,7 +26,7 @@
 #include <protocols/environment/ProtectedConformation.hh>
 #include <protocols/environment/ClientMover.hh>
 
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 #include <core/kinematics/AtomTree.hh>
 
@@ -69,7 +69,7 @@ VirtResClaim::VirtResClaim( ClientMoverOP owner,
 	xyz_claim_( owner, vrt_label() )
 {
 	if ( datamap.has( "ResidueSelector", j_claim_.pos2().label() ) ) {
-		using core::pack::task::residue_selector::ResidueSelector;
+		using core::select::residue_selector::ResidueSelector;
 		this->queue_for_annotation( j_claim_.pos2().label(), datamap.get_ptr< ResidueSelector const >( "ResidueSelector", j_claim_.pos2().label() ) );
 	}
 

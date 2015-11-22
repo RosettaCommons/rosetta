@@ -66,7 +66,7 @@ EnvLabelSelector::EnvLabelSelector( std::string const& label,
 EnvLabelSelector::~EnvLabelSelector() {}
 
 
-core::pack::task::residue_selector::ResidueSubset
+core::select::residue_selector::ResidueSubset
 EnvLabelSelector::apply(
 	core::pose::Pose const & pose
 ) const

@@ -24,7 +24,7 @@
 #include <protocols/environment/claims/EnvClaim.hh>
 
 // Project headers
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/datacache/WriteableCacheableMap.fwd.hh>
@@ -44,11 +44,11 @@ public:
 	CoMTrackerCM();
 
 	CoMTrackerCM( std::string const& name,
-		core::pack::task::residue_selector::ResidueSelectorCOP mobile_selector,
+		core::select::residue_selector::ResidueSelectorCOP mobile_selector,
 		std::string const& stationary_label );
 
 	CoMTrackerCM( std::string const& name,
-		core::pack::task::residue_selector::ResidueSelectorCOP mobile_selector );
+		core::select::residue_selector::ResidueSelectorCOP mobile_selector );
 
 	virtual
 	~CoMTrackerCM() {};
@@ -93,8 +93,8 @@ private:
 	std::string name_;
 	std::string stationary_label_;
 	std::string com_name_, com_jump_name_;
-	core::pack::task::residue_selector::ResidueSubset mobile_residues_;
-	core::pack::task::residue_selector::ResidueSelectorCOP mobile_selector_;
+	core::select::residue_selector::ResidueSubset mobile_residues_;
+	core::select::residue_selector::ResidueSelectorCOP mobile_selector_;
 
 }; // end CoMTrackerCM base class
 

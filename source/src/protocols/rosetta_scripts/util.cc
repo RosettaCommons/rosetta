@@ -28,7 +28,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <boost/foreach.hpp>
 #include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
@@ -164,23 +164,23 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 }
 
 
-core::pack::task::residue_selector::ResidueSelectorCOP
+core::select::residue_selector::ResidueSelectorCOP
 parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
 {
 	if ( tag->hasOption( "residue_selector" ) ) {
 		std::string const selectorname = tag->getOption< std::string >( "residue_selector" );
 		return get_residue_selector( selectorname, data );
 	} else {
-		return core::pack::task::residue_selector::ResidueSelectorCOP();
+		return core::select::residue_selector::ResidueSelectorCOP();
 	}
 }
 
-core::pack::task::residue_selector::ResidueSelectorCOP
+core::select::residue_selector::ResidueSelectorCOP
 get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data )
 {
-	core::pack::task::residue_selector::ResidueSelectorCOP selector;
+	core::select::residue_selector::ResidueSelectorCOP selector;
 	try {
-		selector = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+		selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
 	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 		std::stringstream error_msg;
 		error_msg << "Failed to find ResidueSelector named '" << selector_name << "' in the DataMap.\n";

@@ -64,7 +64,7 @@ XYZClaim::XYZClaim( ClientMoverOP owner,
 	std::string const& selection = tag->getOption< std::string >( "selection" );
 	if ( datamap.has( "ResidueSelector", selection ) ) {
 		tr.Debug << "Pulling ResidueSelector '" << selection << "' from datamap in " << *this << std::endl;
-		selector_ = datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selection" ) );
+		selector_ = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selection" ) );
 	} else {
 		tr.Debug << "Instantiating EnvLabelSelector for selection '" << selection << "' in " << *this << std::endl;
 		selector_ = ResidueSelectorCOP( ResidueSelectorOP( new EnvLabelSelector( LocalPosition( selection ) ) ) );
@@ -98,7 +98,7 @@ XYZClaim::XYZClaim(
 
 XYZClaim::XYZClaim(
 	ClientMoverOP owner,
-	core::pack::task::residue_selector::ResidueSelectorCOP selector
+	core::select::residue_selector::ResidueSelectorCOP selector
 ):
 	EnvClaim( owner ),
 	selector_( ResidueSelectorCOP( selector ) ),

@@ -31,7 +31,7 @@
 #include <core/conformation/Conformation.hh>
 
 // Project Headers
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 #include <core/id/types.hh>
 
@@ -56,7 +56,7 @@ class TorsionClaim : public EnvClaim {
 	typedef core::environment::FoldTreeSketch FoldTreeSketch;
 	typedef EnvClaim Parent;
 
-	typedef core::pack::task::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
+	typedef core::select::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
 
 public:
 	typedef core::environment::LocalPosition LocalPosition;
@@ -67,7 +67,7 @@ public:
 		basic::datacache::DataMap& );
 
 	TorsionClaim( ClientMoverOP owner,
-		core::pack::task::residue_selector::ResidueSelectorCOP );
+		core::select::residue_selector::ResidueSelectorCOP );
 
 	// Initializer for a single backbone angle
 	TorsionClaim( ClientMoverOP owner,

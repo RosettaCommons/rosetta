@@ -33,7 +33,7 @@
 
 // Core headers
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -167,7 +167,7 @@ private:   // other data
 	/// @brief scorefunction to use for folding
 	core::scoring::ScoreFunctionOP scorefxn_;
 	/// @brief residue selector to identify positions to rebuild
-	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 	/// @brief fragment picker
 	PickerOP picker_;
 	/// @brief the vlb object for testing foldability

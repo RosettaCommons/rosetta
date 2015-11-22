@@ -23,7 +23,7 @@
 #include <protocols/moves/DsspMover.hh>
 
 // Core Headers
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -103,7 +103,7 @@ CoreResiduesPerElementFilter::parse_my_tag(
 	if ( tag->hasOption("selector") ) {
 		std::string const selectorname = tag->getOption< std::string >("selector");
 		try {
-			selector_ = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
+			selector_ = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from CoreResiduesPerElement filter.";
@@ -154,7 +154,7 @@ CoreResiduesPerElementFilter::compute( core::pose::Pose const & pose ) const
 	core::Size badelements = 0;
 	if ( selector_ ) {
 		// selection is treated as one element
-		core::pack::task::residue_selector::ResidueSubset subset = selector_->apply( pose );
+		core::select::residue_selector::ResidueSubset subset = selector_->apply( pose );
 		core::Size found = evaluate_element( work, scn, subset );
 		TR << "Core/boundary residues found in selected element: " << found << std::endl;
 		if ( !found ) {
@@ -205,7 +205,7 @@ CoreResiduesPerElementFilter::apply( core::pose::Pose const & pose ) const
 
 /// @brief sets the residue selector used to decide which residues to evaluate
 void
-CoreResiduesPerElementFilter::set_selector( core::pack::task::residue_selector::ResidueSelectorCOP rs )
+CoreResiduesPerElementFilter::set_selector( core::select::residue_selector::ResidueSelectorCOP rs )
 {
 	selector_ = rs;
 }
@@ -228,7 +228,7 @@ core::Size
 CoreResiduesPerElementFilter::evaluate_element(
 	core::pose::Pose const & pose,
 	core::scoring::methods::SideChainNeighborsEnergy const & scn,
-	core::pack::task::residue_selector::ResidueSubset const & subset ) const
+	core::select::residue_selector::ResidueSubset const & subset ) const
 {
 	utility::vector1< core::Size > residues;
 	for ( core::Size i=1, endi=subset.size(); i<=endi; ++i ) {

@@ -21,8 +21,8 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/ResLvlTaskOperation.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
-#include <core/pack/task/residue_selector/ResidueSelectorFactory.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
@@ -51,7 +51,7 @@ OperateOnResidueSubset::OperateOnResidueSubset()
 
 OperateOnResidueSubset::OperateOnResidueSubset(
 	ResLvlTaskOperationCOP rlto,
-	residue_selector::ResidueSelectorCOP selector
+	core::select::residue_selector::ResidueSelectorCOP selector
 )
 : parent(),
 	op_( rlto ),
@@ -92,7 +92,7 @@ OperateOnResidueSubset::apply( Pose const & pose, PackerTask & ptask ) const
 	Size const nres( pose.total_residue() );
 	runtime_assert( nres == ptask.total_residue() );
 
-	residue_selector::ResidueSubset subset = residue_selector_->apply( pose );
+	core::select::residue_selector::ResidueSubset subset = residue_selector_->apply( pose );
 
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( subset[ ii ] ) op_->apply( ptask.nonconst_residue_task( ii ) );
@@ -104,7 +104,7 @@ void OperateOnResidueSubset::op( ResLvlTaskOperationCOP op_in )
 	op_ = op_in;
 }
 
-void OperateOnResidueSubset::selector( residue_selector::ResidueSelectorCOP rs_in )
+void OperateOnResidueSubset::selector( core::select::residue_selector::ResidueSelectorCOP rs_in )
 {
 	residue_selector_ = rs_in;
 }
@@ -121,7 +121,7 @@ Example Tag syntax for parser as of October 2013
 */
 void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 {
-	using namespace residue_selector;
+	using namespace core::select::residue_selector;
 
 	ResLvlTaskOperationCOP rltop;
 

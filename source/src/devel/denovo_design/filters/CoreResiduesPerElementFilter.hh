@@ -26,7 +26,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Core headers
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // C++ headers
 
@@ -68,7 +68,7 @@ public:
 	// mutators
 public:
 	/// @brief sets the residue selector used to decide which residues to evaluate
-	void set_selector( core::pack::task::residue_selector::ResidueSelectorCOP rs );
+	void set_selector( core::select::residue_selector::ResidueSelectorCOP rs );
 
 	// protected functions
 protected:
@@ -81,7 +81,7 @@ protected:
 	core::Size evaluate_element(
 		core::pose::Pose const & pose,
 		core::scoring::methods::SideChainNeighborsEnergy const & scn,
-		core::pack::task::residue_selector::ResidueSubset const & subset ) const;
+		core::select::residue_selector::ResidueSubset const & subset ) const;
 
 	core::Size evaluate_element(
 		core::pose::Pose const & pose,
@@ -92,7 +92,7 @@ private:   // options
 
 private:   // other data
 	/// @brief residue selector to identify positions to rebuild
-	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 };
 
 

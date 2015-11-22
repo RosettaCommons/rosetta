@@ -37,8 +37,8 @@
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <core/pack/task/residue_selector/TrueResidueSelector.hh>
-#include <core/pack/task/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/TrueResidueSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
@@ -138,13 +138,13 @@ private:
 
 RigidChunkCM::RigidChunkCM():
 	Parent(),
-	sim_selector_( new core::pack::task::residue_selector::TrueResidueSelector() ),
-	templ_selector_( new core::pack::task::residue_selector::TrueResidueSelector() ),
+	sim_selector_( new core::select::residue_selector::TrueResidueSelector() ),
+	templ_selector_( new core::select::residue_selector::TrueResidueSelector() ),
 	xml_name_("")
 {}
 
 RigidChunkCM::RigidChunkCM(
-	core::pack::task::residue_selector::ResidueSelectorCOP selector,
+	core::select::residue_selector::ResidueSelectorCOP selector,
 	core::pose::Pose const& template_pose
 ):
 	Parent(),
@@ -176,7 +176,7 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
 	core::pose::Pose const& ){
 
 	using namespace basic::options;
-	using namespace core::pack::task::residue_selector;
+	using namespace core::select::residue_selector;
 
 	xml_name_ = std::string( tag->getOption< std::string >( "name" ) );
 
@@ -826,7 +826,7 @@ loops::Loops RigidChunkCM::select_parts( loops::Loops const& rigid_core, core::S
 }
 
 void RigidChunkCM::sim_selector(
-	core::pack::task::residue_selector::ResidueSelectorCOP selector
+	core::select::residue_selector::ResidueSelectorCOP selector
 ) {
 	if ( Parent::state_check( __FUNCTION__, ( selector.get() == sim_selector_.get() ) ) ) {
 		sim_selector_ = selector;
@@ -834,19 +834,19 @@ void RigidChunkCM::sim_selector(
 }
 
 void RigidChunkCM::templ_selector(
-	core::pack::task::residue_selector::ResidueSelectorCOP selector
+	core::select::residue_selector::ResidueSelectorCOP selector
 ) {
 	if ( Parent::state_check( __FUNCTION__, ( selector.get() == templ_selector_.get() ) ) ) {
 		templ_selector_ = selector;
 	}
 }
 
-core::pack::task::residue_selector::ResidueSelectorCOP RigidChunkCM::sim_selector() const {
+core::select::residue_selector::ResidueSelectorCOP RigidChunkCM::sim_selector() const {
 	assert( sim_selector_ );
 	return sim_selector_;
 }
 
-core::pack::task::residue_selector::ResidueSelectorCOP RigidChunkCM::templ_selector() const {
+core::select::residue_selector::ResidueSelectorCOP RigidChunkCM::templ_selector() const {
 	assert( templ_selector_ );
 	return templ_selector_;
 }

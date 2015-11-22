@@ -23,7 +23,7 @@
 
 // core headers
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -84,7 +84,7 @@ public:
 
 public:
 	// mutators
-	void set_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector_val );
+	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector_val );
 
 public:
 	void parse_tag(
@@ -111,7 +111,7 @@ public:
 	LoopInfoVec loop_info_from_subset(
 		core::pose::Pose const & pose,
 		std::string const & ss,
-		core::pack::task::residue_selector::ResidueSubset const & subset ) const;
+		core::select::residue_selector::ResidueSubset const & subset ) const;
 
 	/// @brief if true, residues adjacent to loops will be restricted. Otherwise, just the loop. (default=false)
 	void set_include_adjacent_residues( bool const include_res );
@@ -123,7 +123,7 @@ public:
 private:
 	std::string secstruct_;
 	bool include_adjacent_residues_;
-	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 	ConsensusSequenceTable seqtable_;
 };
 

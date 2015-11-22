@@ -26,7 +26,7 @@
 // Core headers
 #include <core/kinematics/Edge.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/Remarks.hh>
 #include <core/types.hh>
@@ -64,7 +64,7 @@ void construct_poly_ala_pose(
 	bool const keep_chirality=false
 );
 
-core::pack::task::residue_selector::ResidueSelectorCOP
+core::select::residue_selector::ResidueSelectorCOP
 get_residue_selector( basic::datacache::DataMap const & data, std::string const & name );
 
 std::string
