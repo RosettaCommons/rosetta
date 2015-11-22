@@ -79,7 +79,7 @@ AACompositionPropertiesSet::AACompositionPropertiesSet(
 AACompositionPropertiesSet::AACompositionPropertiesSet( AACompositionPropertiesSet const &src ) :
 	utility::pointer::ReferenceCount(),
 	included_properties_( src.included_properties_ ),
-	excluded_properties_( src.included_properties_ )
+	excluded_properties_( src.excluded_properties_ )
 {}
 
 /// @brief Default destructor for AACompositionPropertiesSet.
