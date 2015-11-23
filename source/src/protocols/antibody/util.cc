@@ -89,8 +89,16 @@ using namespace protocols::antibody::clusters;
 
 
 utility::vector1<bool>
-get_cdr_bool_from_tag(utility::tag::TagCOP tag, std::string const & name){
-	utility::vector1<bool> cdrs (6, false);
+get_cdr_bool_from_tag(utility::tag::TagCOP tag, std::string const & name, bool include_cdr4 /* false */){
+	core::Size total_cdrs;
+	if (include_cdr4){
+		total_cdrs = CDRNameEnum_proto_total;
+	}
+	else {
+		total_cdrs = CDRNameEnum_total;
+	}
+	
+	utility::vector1<bool> cdrs (total_cdrs, false);
 	vector1<std::string> cdr_strings = utility::string_split_multi_delim(tag->getOption<std::string>(name), ":,'`~+*&|;. ");
 	AntibodyEnumManager manager = AntibodyEnumManager();
 	for ( core::Size i = 1; i <= cdr_strings.size(); ++i ) {
@@ -104,15 +112,18 @@ protocols::loops::LoopsOP
 get_cdr_loops(
 	AntibodyInfoCOP ab_info,
 	core::pose::Pose const & pose,
-	utility::vector1<bool> cdrs,
+	utility::vector1<bool> const & cdrs,
 	core::Size stem_size /* 0 */ ) {
 
-	assert( cdrs.size() == 6 );
+	assert( cdrs.size() <= CDRNameEnum_proto_total );
 	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops() );
-	for ( core::Size i = 1; i <= CDRNameEnum_total; ++i ) {
+	for ( core::Size i = 1; i <= cdrs.size(); ++i ) {
 		if ( cdrs[ i ] ) {
 			//TR <<"CDR: " << i << std::endl;
 			CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+			
+			if ( ab_info->is_camelid() && ab_info->get_CDR_chain( cdr ) == 'L') continue;
+			
 			cdr_loops->add_loop(ab_info->get_CDR_loop(cdr, pose, stem_size));
 		}
 	}

@@ -51,18 +51,18 @@ public:
 	RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info);
 
 	///@brief Constructor specifying CDRs to restrict to.
-	RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, utility::vector1< bool > cdrs);
+	RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, utility::vector1< bool > const & cdrs);
 
 	///@brief Constructor with more options
 	RestrictToCDRsAndNeighbors(
 		AntibodyInfoCOP ab_info,
-		utility::vector1<bool> cdrs,
+		utility::vector1<bool> const & cdrs,
 		bool allow_cdr_design);
 
 	///@brief Constructor with most options
 	RestrictToCDRsAndNeighbors(
 		AntibodyInfoCOP ab_info,
-		utility::vector1<bool> cdrs,
+		utility::vector1<bool> const & cdrs,
 		bool allow_cdr_design,
 		bool allow_neighbor_framework_design,
 		bool allow_neighbor_antigen_design);
@@ -121,7 +121,7 @@ public:
 private:
 
 	AntibodyInfoCOP ab_info_;
-	utility::vector1<bool> cdrs_;
+	utility::vector1<bool> cdrs_; //This is so easy, but debugging sucks.  Wouldn't recommend vectors as storage in future.
 	core::Real neighbor_dis_;
 
 	bool design_cdrs_;

@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_antibody_design_AntibodyDesignProtocol_hh
 
 #include <protocols/antibody/design/AntibodyDesignProtocol.fwd.hh>
-#include <protocols/antibody/design/AntibodyDesignModeler.hh>
+#include <protocols/antibody/design/GeneralAntibodyModeler.hh>
 #include <protocols/antibody/database/AntibodyDatabaseManager.hh>
 #include <protocols/antibody/design/AntibodyDesignMover.hh>
 

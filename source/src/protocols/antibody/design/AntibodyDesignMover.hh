@@ -19,7 +19,7 @@
 #include <protocols/antibody/design/AntibodyDesignMover.fwd.hh>
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
 #include <protocols/antibody/design/AntibodyDesignEnumManager.fwd.hh>
-#include <protocols/antibody/design/AntibodyDesignModeler.hh>
+#include <protocols/antibody/design/GeneralAntibodyModeler.hh>
 #include <protocols/antibody/database/CDRSetOptions.hh>
 #include <protocols/antibody/design/CDRGraftDesignOptions.hh>
 #include <protocols/antibody/design/CDRSeqDesignOptions.hh>
@@ -358,7 +358,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_min_;
 	core::scoring::ScoreFunctionOP scorefxn_cart_graft_;
 
-	AntibodyDesignModelerOP modeler_;
+	GeneralAntibodyModelerOP modeler_;
 	protocols::simple_moves::MinMoverOP cart_min_graft_;
 
 	protocols::moves::MonteCarloOP mc_;

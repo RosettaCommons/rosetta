@@ -255,9 +255,7 @@ CDRDihedralConstraintMover::apply(core::pose::Pose& pose) {
 
 	if ( ! cdr_is_set_ ) throw utility::excn::EXCN_Msg_Exception("CDR not set for CDRDihedralConstraintMover!");
 
-
-
-	if ( use_cluster_csts_ && (cdr_ != h3 || use_cluster_for_H3_) ) {
+	if ( use_cluster_csts_ && (cdr_ != h3 || use_cluster_for_H3_) && (cdr_ != l4 || cdr_ != h4) )  {
 
 		/////////////  Use Cluster from set cluster, Datacache, or AntibodyInfo
 		CDRClusterEnum local_cluster;

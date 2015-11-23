@@ -17,7 +17,7 @@
 
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/database/AntibodyDatabaseManager.fwd.hh>
-//#include <protocols/antibody/design/AntibodyDesignModeler.hh>
+//#include <protocols/antibody/design/GeneralAntibodyModeler.hh>
 //#include <protocols/antibody/design/AntibodyDesignMover.hh>
 #include <protocols/antibody/design/CDRSeqDesignOptions.hh>
 #include <protocols/antibody/database/CDRSetOptions.hh>

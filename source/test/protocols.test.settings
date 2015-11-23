@@ -25,6 +25,7 @@ sources = {
 	],
 	"antibody": [
 		"AntibodyInfo",
+		"AntibodyCDRGrafterTests",
 	],
 
 	"antibody/clusters" : [

@@ -55,7 +55,7 @@ RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info):
 	set_defaults();
 }
 
-RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, utility::vector1<bool> cdrs):
+RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, utility::vector1<bool> const & cdrs):
 	TaskOperation(),
 	ab_info_(ab_info)
 {
@@ -63,18 +63,18 @@ RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, 
 	cdrs_ = cdrs;
 }
 
-RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, utility::vector1<bool> cdrs, bool allow_cdr_design):
+RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, utility::vector1<bool> const & cdrs, bool allow_cdr_design):
 	TaskOperation(),
 	ab_info_(ab_info)
 {
 	set_defaults();
-	cdrs_ = cdrs;
+	set_cdrs( cdrs );
 	design_cdrs_ = allow_cdr_design;
 }
 
 RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(
 	AntibodyInfoCOP ab_info,
-	utility::vector1<bool> cdrs,
+	utility::vector1<bool> const & cdrs,
 	bool allow_cdr_design,
 	bool allow_neighbor_framework_design,
 	bool allow_neighbor_antigen_design):
@@ -82,7 +82,7 @@ RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(
 	ab_info_(ab_info)
 {
 	set_defaults();
-	cdrs_ = cdrs;
+	set_cdrs( cdrs );
 	design_cdrs_ = allow_cdr_design;
 	design_framework_ = allow_neighbor_framework_design;
 	design_antigen_ = allow_neighbor_antigen_design;
@@ -113,7 +113,10 @@ RestrictToCDRsAndNeighbors::~RestrictToCDRsAndNeighbors() {}
 void
 RestrictToCDRsAndNeighbors::set_defaults() {
 	cdrs_.clear();
-	cdrs_.resize(6, true);
+	cdrs_.resize(8, true);
+	cdrs_[ l4 ] = false;
+	cdrs_[ h4 ] = false;
+	
 	neighbor_dis_ = 6.0;
 	design_cdrs_ = false;
 	design_antigen_ = false;
@@ -132,7 +135,7 @@ RestrictToCDRsAndNeighbors::set_defaults() {
 void
 RestrictToCDRsAndNeighbors::parse_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&){
 	if ( tag->hasOption("cdrs") ) {
-		cdrs_ = get_cdr_bool_from_tag(tag, "cdrs");
+		cdrs_ = get_cdr_bool_from_tag(tag, "cdrs", true /* include cdr4 */);
 	}
 
 	neighbor_dis_ = tag->getOption< core::Real >("neighbor_dis", neighbor_dis_);
@@ -159,12 +162,17 @@ RestrictToCDRsAndNeighbors::parse_tag(utility::tag::TagCOP tag, basic::datacache
 void
 RestrictToCDRsAndNeighbors::set_cdrs(const utility::vector1<bool>& cdrs) {
 	cdrs_ = cdrs;
+	if ( cdrs.size() < CDRNameEnum_proto_total ){
+		for (core::Size i = cdrs.size() +1; i <= CDRNameEnum_proto_total; ++i){
+			cdrs_.push_back( false );
+		}
+	}
 }
 
 void
 RestrictToCDRsAndNeighbors::set_cdr_only(CDRNameEnum cdr) {
 	cdrs_.clear();
-	cdrs_.resize(6, false);
+	cdrs_.resize(CDRNameEnum_proto_total, false);
 	cdrs_[ cdr ] = true;
 }
 

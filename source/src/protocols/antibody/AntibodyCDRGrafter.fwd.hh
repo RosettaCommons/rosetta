@@ -8,13 +8,13 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file .../%<%CLASSNAME%>%.fwd.hh
-/// @brief
+/// @file protocols/antibody/AntibodyCDRGrafter.fwd.hh
+/// @brief Class to graft CDR loops from an antibody to a new antibody or from a CDR pose into a different antibody.  
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-#ifndef INCLUDED_ _%<%NAME%>%_fwd_hh
-#define INCLUDED_ _%<%NAME%>%_fwd_hh
+#ifndef INCLUDED_protocols_antibody_AntibodyCDRGrafter_fwd_hh
+#define INCLUDED_protocols_antibody_AntibodyCDRGrafter_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -22,13 +22,19 @@
 
 
 // Forward
-class %<%NAME%>%;
+namespace protocols {
+namespace antibody {
 
-typedef utility::pointer::shared_ptr< %<%NAME%>% > %<%NAME%>%OP;
-typedef utility::pointer::shared_ptr< %<%NAME%>% const > %<%NAME%>%COP;
+class AntibodyCDRGrafter;
+
+typedef utility::pointer::shared_ptr< AntibodyCDRGrafter > AntibodyCDRGrafterOP;
+typedef utility::pointer::shared_ptr< AntibodyCDRGrafter const > AntibodyCDRGrafterCOP;
 
 
-#endif	//INCLUDED_ %<%CLASSNAME%>%.fwd.hh
+}//protocols
+}//antibody
+
+#endif	//INCLUDED_protocols/antibody_AntibodyCDRGrafter_fwd_hh
 
 
 

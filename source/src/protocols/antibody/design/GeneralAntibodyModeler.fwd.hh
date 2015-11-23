@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/antibody/design/AntibodyDesignModeler.fwd.hh
+/// @file protocols/antibody/design/GeneralAntibodyModeler.fwd.hh
 /// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-#ifndef INCLUDED_protocols_antibody_design_AntibodyDesignModeler_fwd_hh
-#define INCLUDED_protocols_antibody_design_AntibodyDesignModeler_fwd_hh
+#ifndef INCLUDED_protocols_antibody_design_GeneralAntibodyModeler_fwd_hh
+#define INCLUDED_protocols_antibody_design_GeneralAntibodyModeler_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -25,10 +25,10 @@ namespace antibody {
 namespace design {
 
 // Forward
-class AntibodyDesignModeler;
+class GeneralAntibodyModeler;
 
-typedef utility::pointer::shared_ptr< AntibodyDesignModeler > AntibodyDesignModelerOP;
-typedef utility::pointer::shared_ptr< AntibodyDesignModeler const > AntibodyDesignModelerCOP;
+typedef utility::pointer::shared_ptr< GeneralAntibodyModeler > GeneralAntibodyModelerOP;
+typedef utility::pointer::shared_ptr< GeneralAntibodyModeler const > GeneralAntibodyModelerCOP;
 
 
 } //namespace design

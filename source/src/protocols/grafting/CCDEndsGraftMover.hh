@@ -32,7 +32,6 @@
 namespace protocols {
 namespace grafting {
 
-using protocols::simple_moves::SmallMoverOP;
 
 /// @brief General purpose Grafting class which:
 /// 1) superimposes the insert onto the scaffold using any overhang residues,
@@ -75,11 +74,11 @@ public:
 	CCDEndsGraftMover();
 
 	/// @brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
-	CCDEndsGraftMover(Size const start, Size const end, bool copy_pdbinfo = false);
+	CCDEndsGraftMover(core::Size const start, core::Size const end, bool copy_pdbinfo = false);
 
 	CCDEndsGraftMover(
-		Size const start, Size const end,
-		core::pose::Pose const & piece, Size Nter_overhang=2, Size Cter_overhang=2, bool copy_pdbinfo = false);
+		core::Size const start, core::Size const end,
+		core::pose::Pose const & piece, core::Size Nter_overhang=2, core::Size Cter_overhang=2, bool copy_pdbinfo = false);
 
 	CCDEndsGraftMover(CCDEndsGraftMover const & src);
 
@@ -101,7 +100,7 @@ public:
 	/// May want to consider turning off the sampling step when passing crazy movemaps.
 	///
 	virtual void
-	set_movemaps(MoveMapCOP const scaffold_mm, MoveMapCOP const insert_mm);
+	set_movemaps(core::kinematics::MoveMapCOP const scaffold_mm, core::kinematics::MoveMapCOP const insert_mm);
 
 
 public:
@@ -118,7 +117,7 @@ public:
 
 private:
 
-	virtual SmallMoverOP
+	virtual protocols::simple_moves::SmallMoverOP
 	setup_default_small_mover();
 
 }; //Class CCDEndsGraftMover

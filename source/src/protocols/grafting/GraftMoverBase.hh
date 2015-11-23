@@ -27,12 +27,7 @@
 
 namespace protocols {
 namespace grafting {
-using core::Size;
-using core::pose::Pose;
-using core::pose::PoseOP;
-using protocols::loops::Loop;
-using core::kinematics::MoveMapOP;
-using core::kinematics::MoveMap;
+
 
 /// @brief Fairly abstract base class for GraftMover classes
 class GraftMoverBase: public moves::Mover {
@@ -43,10 +38,10 @@ public:
 	GraftMoverBase(std::string mover_name);
 
 	/// @brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
-	GraftMoverBase(Size const start, Size const end, std::string mover_name);
+	GraftMoverBase(core::Size const start, core::Size const end, std::string mover_name);
 
-	GraftMoverBase(Size const start, Size const end, std::string mover_name,
-		core::pose::Pose const & piece, Size Nter_overhang_length=0, Size Cter_overhang_length=0);
+	GraftMoverBase(core::Size const start, core::Size const end, std::string mover_name,
+				   core::pose::Pose const & piece, core::Size Nter_overhang_length=0, core::Size Cter_overhang_length=0);
 
 	GraftMoverBase(GraftMoverBase const & src);
 
@@ -60,10 +55,10 @@ public:
 	/// These residues are deleted before insertion and are used by classes usually for superposition or
 	/// Initial orientation of the insert relative to the scaffold.
 	virtual void
-	set_piece(Pose const & piece, Size Nter_overhang_length, Size Cter_overhang_length);
+	set_piece(core::pose::Pose const & piece, core::Size Nter_overhang_length, core::Size Cter_overhang_length);
 
 	virtual void
-	set_insert_region(Size const start, Size const end);
+	set_insert_region(core::Size const start, core::Size const end);
 
 	/// @brief Copy PDBInfo from the pose piece into pose during graft.  If false(default), PDBInfo will be obsoleted.
 	void
@@ -91,40 +86,48 @@ protected:
 	/// @details Need to set piece to use. Deletes any overhang in piece.  Deletes any region from start to end in pose. Updates end_.
 	/// Recommended use is within apply method.
 	///
-	Pose
-	insert_piece(Pose const & pose);
+	core::pose::Pose
+	insert_piece(core::pose::Pose const & pose);
 
 protected:
 	///Setters and accessors of private data
-	void original_end(Size original_end);
-	void insertion_length(Size insertion_length);
+	
+	void original_end(core::Size original_end);
+	void insertion_length(core::Size insertion_length);
 	void start(core::Size start);
 	void end(core::Size end);
 
-	Size Nter_overhang_length();
+	core::Size Nter_overhang_length();
 	void Nter_overhang_length(core::Size overhang);
-	Size Cter_overhang_length();
+	
+	core::Size Cter_overhang_length();
 	void Cter_overhang_length(core::Size overhang);
-	PoseOP piece();
-	void piece(PoseOP piece);
+	
+	core::pose::PoseOP piece();
+	void piece(core::pose::PoseOP piece);
 
 private:
+	
 	//Reference of the pose piece.  Should be changed to local copy, but I'm not sure how to do that.
-	PoseOP piece_;
+	core::pose::PoseOP piece_;
 
 	/// @brief Residue insertion will start from
-	Size start_;
+	core::Size start_;
+	
 	/// @brief Residue insertion will end before here. Updates after insertion.
-	Size end_;
+	core::Size end_;
+	
 	/// @brief some functions need to only work on the original numbers. (combine movemaps)
-	Size original_end_;
+	core::Size original_end_;
 
-	Size insertion_length_;
+	core::Size insertion_length_;
 
 	/// @brief Number of overhang residues on N terminus.  Updates on delete_overhang_residues
-	Size Nter_overhang_length_;
+	core::Size Nter_overhang_length_;
+	
 	/// @brief Number of overhang residues on C terminus.  Updates on delete_overhang_residues
-	Size Cter_overhang_length_;
+	core::Size Cter_overhang_length_;
+	
 	bool copy_pdbinfo_;
 
 };  // class GraftMoverBase

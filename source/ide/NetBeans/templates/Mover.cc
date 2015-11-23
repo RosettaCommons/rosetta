@@ -15,7 +15,10 @@
 #include < /%<%NAME%>%.hh>
 #include < /%<%NAME%>%Creator.hh>
 
+#include <core/pose/Pose.hh>
+
 #include <basic/Tracer.hh>
+#include <utility/tag/Tag.hh>
 
 static basic::Tracer TR("%<%NAME%>%");
 
@@ -33,9 +36,20 @@ static basic::Tracer TR("%<%NAME%>%");
 	
 }
 
+void
+%<%NAME%>%::parse_my_tag(
+	TagCOP tag,
+	basic::datacache::DataMap& ,
+	const Filters_map& ,
+	const Movers_map& ,
+	const Pose& )
+{
+
+}
+
 protocols::moves::MoverOP
 %<%NAME%>%::clone() const{
-	return new %<%NAME%>%(*this);
+	return protocols::moves::MoverOP( new %<%NAME%>%(*this) );
 }
 
 %<%NAME%>% & operator=( %<%NAME%>% const & src){
@@ -45,7 +59,7 @@ protocols::moves::MoverOP
 moves::MoverOP
 %<%NAME%>%::fresh_instance() const
 {
-	return new %<%NAME%>%;
+	return protocols::moves::MoverOP( new %<%NAME%>% );
 }
 
 std::string
@@ -53,7 +67,18 @@ std::string
 	return "%<%NAME%>%";
 }
 
-rotocols::moves::MoverOP
+
+
+
+
+void
+%<%NAME%>%::apply(core::pose::Pose& pose){
+	
+}
+
+/////////////// Creator ///////////////
+
+protocols::moves::MoverOP
 %<%NAME%>%Creator::create_mover() const {
 	return new %<%NAME%>%;
 }
@@ -66,20 +91,4 @@ std::string
 std::string
 %<%NAME%>%Creator::mover_name(){
 	return "%<%NAME%>%";
-}
-
-void
-%<%NAME%>%::parse_my_tag(
-	TagCOP tag,
-	basic::datacache::DataMap& ,
-	const Filters_map& ,
-	const Movers_map& ,
-	const Pose& )
-{
-
-}
-
-void
-%<%NAME%>%::apply(core::pose::Pose& pose){
-	
 }

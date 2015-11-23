@@ -22,6 +22,8 @@ static MoverRegistrator< abinitio::DomainAssemblyCreator > reg_DomainAssemblyCre
 
 static MoverRegistrator< analysis::InterfaceAnalyzerMoverCreator > reg_InterfaceAnalyzerMoverCreator;
 
+static MoverRegistrator< antibody::AntibodyCDRGrafterCreator > reg_AntibodyCDRGrafterCreator;
+
 static MoverRegistrator< antibody::constraints::CDRDihedralConstraintMoverCreator > reg_CDRDihedralConstraintMoverCreator;
 static MoverRegistrator< antibody::constraints::ParatopeEpitopeSiteConstraintMoverCreator > reg_ParatopeEpitopeSiteConstraintMoverCreator;
 static MoverRegistrator< antibody::constraints::ParatopeSiteConstraintMoverCreator > reg_ParatopeSiteConstraintMoverCreator;

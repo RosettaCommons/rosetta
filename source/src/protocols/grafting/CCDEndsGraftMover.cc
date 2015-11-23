@@ -45,7 +45,20 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.grafting.CCDEndsGraftMover" );
 namespace protocols {
 namespace grafting {
 
+using namespace core::scoring;
+using namespace core::pose;
+using namespace core::pack::task;
+using namespace protocols::loops;
+using namespace protocols::simple_moves;
+using namespace core::kinematics;
+
+using core::pose::Pose;
 using core::kinematics::MoveMapCOP;
+using core::kinematics::MoveMapOP;
+using core::scoring::ScoreFunctionCOP;
+using core::scoring::ScoreFunctionOP;
+using protocols::simple_moves::MinMoverOP;
+using protocols::simple_moves::SmallMoverOP;
 using core::Size;
 
 CCDEndsGraftMover::CCDEndsGraftMover():

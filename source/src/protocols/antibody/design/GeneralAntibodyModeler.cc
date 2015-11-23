@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/antibody_design/AntibodyDesignModeler.cc
+/// @file protocols/antibody_design/GeneralAntibodyModeler.cc
 /// @brief Handles modeling of the antibody.  Before and after design
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 //Antibody Headers
-#include <protocols/antibody/design/AntibodyDesignModeler.hh>
+#include <protocols/antibody/design/GeneralAntibodyModeler.hh>
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
@@ -64,7 +64,7 @@
 #include <utility/file/FileName.hh>
 #include <sstream>
 
-static THREAD_LOCAL basic::Tracer TR( "antibody.design.AntibodyDesignModeler" );
+static THREAD_LOCAL basic::Tracer TR( "antibody.design.GeneralAntibodyModeler" );
 namespace protocols {
 namespace antibody {
 namespace design {
@@ -82,7 +82,7 @@ using core::Size;
 using std::string;
 
 
-AntibodyDesignModeler::AntibodyDesignModeler(AntibodyInfoOP ab_info) :
+GeneralAntibodyModeler::GeneralAntibodyModeler(AntibodyInfoOP ab_info) :
 	utility::pointer::ReferenceCount(),
 	ab_info_(ab_info)
 {
@@ -96,20 +96,22 @@ AntibodyDesignModeler::AntibodyDesignModeler(AntibodyInfoOP ab_info) :
 }
 
 void
-AntibodyDesignModeler::set_defaults(){
+GeneralAntibodyModeler::set_defaults(){
 
 	model_cdrs_.clear();
-	model_cdrs_.resize(CDRNameEnum_total, true);
+	model_cdrs_.resize(CDRNameEnum_proto_total, true);
+	model_cdrs_[ l4 ] = false;
+	model_cdrs_[ h4 ] = false;
 
 	overhangs_.clear();
-	overhangs_.resize(CDRNameEnum_total, 0);
+	overhangs_.resize(CDRNameEnum_proto_total, 0);
 
 }
 
-AntibodyDesignModeler::~AntibodyDesignModeler(){}
+GeneralAntibodyModeler::~GeneralAntibodyModeler(){}
 
 void
-AntibodyDesignModeler::read_command_line_options(){
+GeneralAntibodyModeler::read_command_line_options(){
 
 	interface_detection_dis(basic::options::option [basic::options::OptionKeys::antibody::design::interface_dis]());
 	neighbor_detection_dis(basic::options::option [basic::options::OptionKeys::antibody::design::neighbor_dis]());
@@ -117,7 +119,7 @@ AntibodyDesignModeler::read_command_line_options(){
 }
 
 void
-AntibodyDesignModeler::setup_scorefxns(){
+GeneralAntibodyModeler::setup_scorefxns(){
 
 	using namespace basic::options;
 
@@ -128,7 +130,7 @@ AntibodyDesignModeler::setup_scorefxns(){
 }
 
 void
-AntibodyDesignModeler::setup_task_operations(){
+GeneralAntibodyModeler::setup_task_operations(){
 
 	tf_set_ = false;
 	cmd_line_operation_ = operation::InitializeFromCommandlineOP( new core::pack::task::operation::InitializeFromCommandline() );
@@ -143,7 +145,7 @@ AntibodyDesignModeler::setup_task_operations(){
 }
 
 void
-AntibodyDesignModeler::set_cdr_range(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, bool setting) {
+GeneralAntibodyModeler::set_cdr_range(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, bool setting) {
 	for ( core::SSize i=cdr_start; i<=cdr_end; ++i ) {
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_cdr(cdr, setting);
@@ -151,84 +153,89 @@ AntibodyDesignModeler::set_cdr_range(CDRNameEnum const cdr_start, CDRNameEnum co
 }
 
 void
-AntibodyDesignModeler::set_cdrs(utility::vector1<bool> cdrs){
+GeneralAntibodyModeler::set_cdrs(utility::vector1<bool> cdrs){
 	model_cdrs_ = cdrs;
+	if ( model_cdrs_.size() == 6 ){
+		model_cdrs_.push_back(false);
+		model_cdrs_.push_back(false);
+	}
+	
 }
 
 void
-AntibodyDesignModeler::set_cdr_only(CDRNameEnum cdr, bool setting){
+GeneralAntibodyModeler::set_cdr_only(CDRNameEnum cdr, bool setting){
 	if ( setting==true ) {
-		set_cdr_range(CDRNameEnum_start, CDRNameEnum_total, false);
+		set_cdr_range(CDRNameEnum_start, CDRNameEnum_proto_total, false);
 		set_cdr(cdr, true);
 	} else {
-		set_cdr_range(CDRNameEnum_start, CDRNameEnum_total, true);
+		set_cdr_range(CDRNameEnum_start, CDRNameEnum_proto_total, true);
 		set_cdr(cdr, false);
 	}
 }
 
 void
-AntibodyDesignModeler::set_cdr(CDRNameEnum const cdr, bool setting){
+GeneralAntibodyModeler::set_cdr(CDRNameEnum const cdr, bool setting){
 	model_cdrs_[cdr]=setting;
 }
 
 void
-AntibodyDesignModeler::cdr_overhang(const CDRNameEnum cdr, const core::Size overhang) {
+GeneralAntibodyModeler::cdr_overhang(const CDRNameEnum cdr, const core::Size overhang) {
 	overhangs_[cdr] = overhang;
 }
 
 void
-AntibodyDesignModeler::ab_dock_chains(std::string ab_dock_chains) {
+GeneralAntibodyModeler::ab_dock_chains(std::string ab_dock_chains) {
 	ab_dock_chains_ = ab_dock_chains;
 
 }
 
 void
-AntibodyDesignModeler::set_scorefunction(ScoreFunctionCOP scorefxn){
+GeneralAntibodyModeler::set_scorefunction(ScoreFunctionCOP scorefxn){
 	scorefxn_ = scorefxn->clone();
 }
 
 void
-AntibodyDesignModeler::set_scorefunction_min(ScoreFunctionCOP scorefxn){
+GeneralAntibodyModeler::set_scorefunction_min(ScoreFunctionCOP scorefxn){
 	min_scorefxn_ = scorefxn->clone();
 }
 
 void
-AntibodyDesignModeler::set_dock_low_res_scorefunction(ScoreFunctionCOP scorefxn){
+GeneralAntibodyModeler::set_dock_low_res_scorefunction(ScoreFunctionCOP scorefxn){
 	docking_scorefxn_low_ = scorefxn->clone();
 }
 
 void
-AntibodyDesignModeler::set_dock_high_res_scorefunction(ScoreFunctionCOP scorefxn){
+GeneralAntibodyModeler::set_dock_high_res_scorefunction(ScoreFunctionCOP scorefxn){
 	docking_scorefxn_high_ = scorefxn->clone();
 }
 
 void
-AntibodyDesignModeler::set_task_factory(core::pack::task::TaskFactoryOP tf) {
+GeneralAntibodyModeler::set_task_factory(core::pack::task::TaskFactoryOP tf) {
 	tf_ = tf;
 	tf_set_ = true;
 }
 
 void
-AntibodyDesignModeler::reset_task_factory() {
+GeneralAntibodyModeler::reset_task_factory() {
 	setup_task_operations();
 }
 
 void
-AntibodyDesignModeler::interface_detection_dis(core::Real interface_distance){
+GeneralAntibodyModeler::interface_detection_dis(core::Real interface_distance){
 	interface_dis_ = interface_distance;
 }
 
 void
-AntibodyDesignModeler::neighbor_detection_dis(core::Real neighbor_distance){
+GeneralAntibodyModeler::neighbor_detection_dis(core::Real neighbor_distance){
 	neighbor_dis_ = neighbor_distance;
 }
 
 protocols::loops::LoopsOP
-AntibodyDesignModeler::get_cdr_loops(Pose const & pose) const {
+GeneralAntibodyModeler::get_cdr_loops(Pose const & pose) const {
 
 	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops );
 
-	for ( Size i = 1; i <= CDRNameEnum_total; ++i ) {
+	for ( Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs( true /* include_cdr4 */)); ++i ) {
 		if ( model_cdrs_[i] ) {
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 			Size start = ab_info_->get_CDR_start(cdr, pose);
@@ -242,11 +249,11 @@ AntibodyDesignModeler::get_cdr_loops(Pose const & pose) const {
 }
 
 protocols::loops::LoopsOP
-AntibodyDesignModeler::get_cdr_loops_with_overhang(Pose const & pose) const {
+GeneralAntibodyModeler::get_cdr_loops_with_overhang(Pose const & pose) const {
 
 	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops );
 
-	for ( Size i = 1; i <= CDRNameEnum_total; ++i ) {
+	for ( Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs( true /* include_cdr4 */)); ++i ) {
 		if ( model_cdrs_[i] ) {
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 			protocols::loops::Loop cdr_loop = get_cdr_loop_with_overhang(pose, cdr);
@@ -257,7 +264,7 @@ AntibodyDesignModeler::get_cdr_loops_with_overhang(Pose const & pose) const {
 }
 
 protocols::loops::Loop
-AntibodyDesignModeler::get_cdr_loop_with_overhang(Pose const & pose, CDRNameEnum cdr) const {
+GeneralAntibodyModeler::get_cdr_loop_with_overhang(Pose const & pose, CDRNameEnum cdr) const {
 
 	Size start = ab_info_->get_CDR_start(cdr, pose) - overhangs_[cdr];
 	Size stop =  ab_info_->get_CDR_end(cdr, pose) + overhangs_[cdr];
@@ -268,7 +275,7 @@ AntibodyDesignModeler::get_cdr_loop_with_overhang(Pose const & pose, CDRNameEnum
 }
 
 void
-AntibodyDesignModeler::apply_A_LH_foldtree(core::pose::Pose & pose) const {
+GeneralAntibodyModeler::apply_A_LH_foldtree(core::pose::Pose & pose) const {
 	vector1< char > antigen_chains = ab_info_->get_antigen_chains();
 
 	std::string antigen(antigen_chains.begin(), antigen_chains.end());
@@ -279,12 +286,12 @@ AntibodyDesignModeler::apply_A_LH_foldtree(core::pose::Pose & pose) const {
 }
 
 MoveMapOP
-AntibodyDesignModeler::get_cdrs_movemap_with_overhang(Pose  & pose, bool min_bb, bool min_sc, bool include_neighbor_sc, bool include_neighbor_bb) const {
+GeneralAntibodyModeler::get_cdrs_movemap_with_overhang(Pose  & pose, bool min_bb, bool min_sc, bool include_neighbor_sc, bool include_neighbor_bb) const {
 
 
 	pose.update_residue_neighbors();
 	MoveMapOP mm( new MoveMap() );
-	for ( core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs() ); ++i ) {
+	for ( core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs( true /* include_cdr4 */) ); ++i ) {
 		if ( model_cdrs_[i] ) {
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 			protocols::loops::Loop cdr_loop = ab_info_->get_CDR_loop(cdr, pose, overhangs_[ cdr ]);
@@ -309,7 +316,7 @@ AntibodyDesignModeler::get_cdrs_movemap_with_overhang(Pose  & pose, bool min_bb,
 }
 
 MoveMapOP
-AntibodyDesignModeler::get_movemap_from_task(core::pose::Pose const & pose, core::pack::task::PackerTaskCOP task) const {
+GeneralAntibodyModeler::get_movemap_from_task(core::pose::Pose const & pose, core::pack::task::PackerTaskCOP task) const {
 	MoveMapOP mm( new MoveMap() );
 	for ( core::Size i = 1; i<=pose.total_residue(); i++ ) {
 		if ( task->pack_residue(i) ) {
@@ -323,7 +330,7 @@ AntibodyDesignModeler::get_movemap_from_task(core::pose::Pose const & pose, core
 ////////////////////////////////////////////////////////// Modeling Functions /////////////////////////////////////////////
 
 void
-AntibodyDesignModeler::extend_CDR(Pose& pose, CDRNameEnum cdr) const {
+GeneralAntibodyModeler::extend_CDR(Pose& pose, CDRNameEnum cdr) const {
 
 	core::Size start = ab_info_->get_CDR_start(cdr, pose);
 	core::Size end = ab_info_->get_CDR_end(cdr, pose);
@@ -344,7 +351,7 @@ AntibodyDesignModeler::extend_CDR(Pose& pose, CDRNameEnum cdr) const {
 }
 
 void
-AntibodyDesignModeler::repack_cdrs(Pose& pose, bool include_neighbor_sc ) {
+GeneralAntibodyModeler::repack_cdrs(Pose& pose, bool include_neighbor_sc ) {
 	using namespace protocols::toolbox::task_operations;
 
 	protocols::loops::LoopsOP cdr_loops = get_cdr_loops_with_overhang(pose);
@@ -373,7 +380,7 @@ AntibodyDesignModeler::repack_cdrs(Pose& pose, bool include_neighbor_sc ) {
 }
 
 void
-AntibodyDesignModeler::minimize_cdrs(Pose & pose,
+GeneralAntibodyModeler::minimize_cdrs(Pose & pose,
 	bool min_sc,
 	bool include_neighbor_sc ,
 	bool min_interface,
@@ -431,7 +438,7 @@ AntibodyDesignModeler::minimize_cdrs(Pose & pose,
 }
 
 void
-AntibodyDesignModeler::relax_cdrs(Pose & pose,  bool include_neighbor_sc /*true*/,  bool starting_coordinate_constraints /*false*/, bool min_interface /* false */, bool dualspace /*false*/) const {
+GeneralAntibodyModeler::relax_cdrs(Pose & pose,  bool include_neighbor_sc /*true*/,  bool starting_coordinate_constraints /*false*/, bool min_interface /* false */, bool dualspace /*false*/) const {
 
 	ScoreFunctionOP local_scorefxn = min_scorefxn_->clone();
 
@@ -505,7 +512,7 @@ AntibodyDesignModeler::relax_cdrs(Pose & pose,  bool include_neighbor_sc /*true*
 }
 
 void
-AntibodyDesignModeler::relax_interface(Pose & pose, bool min_interface_sc /* true */) const {
+GeneralAntibodyModeler::relax_interface(Pose & pose, bool min_interface_sc /* true */) const {
 
 	//TR << "Relaxing Interface: " << dock_chains << std::endl;
 	ScoreFunctionOP local_scorefxn = scorefxn_->clone();
@@ -536,7 +543,7 @@ AntibodyDesignModeler::relax_interface(Pose & pose, bool min_interface_sc /* tru
 }
 
 void
-AntibodyDesignModeler::minimize_interface(Pose& pose, bool min_interface_sc /* true */) const {
+GeneralAntibodyModeler::minimize_interface(Pose& pose, bool min_interface_sc /* true */) const {
 
 
 	vector1< int > movable_jumps(1, 1);
@@ -562,7 +569,7 @@ AntibodyDesignModeler::minimize_interface(Pose& pose, bool min_interface_sc /* t
 }
 
 void
-AntibodyDesignModeler::backrub_cdrs( core::pose::Pose & pose, bool min_sc, bool include_neighbor_sc /*true*/) const {
+GeneralAntibodyModeler::backrub_cdrs( core::pose::Pose & pose, bool min_sc, bool include_neighbor_sc /*true*/) const {
 
 	using namespace protocols::backrub;
 	using namespace basic::options;
@@ -632,7 +639,7 @@ AntibodyDesignModeler::backrub_cdrs( core::pose::Pose & pose, bool min_sc, bool 
 }
 
 void
-AntibodyDesignModeler::repack_antigen_ab_interface(Pose& pose) const {
+GeneralAntibodyModeler::repack_antigen_ab_interface(Pose& pose) const {
 	vector1< char > antigen_chains = ab_info_->get_antigen_chains();
 	if ( antigen_chains.size() == 0 ) {
 		TR <<" Antigen not present to repack interface" << std::endl;
@@ -658,7 +665,7 @@ AntibodyDesignModeler::repack_antigen_ab_interface(Pose& pose) const {
 }
 
 void
-AntibodyDesignModeler::repack_antigen_interface(Pose & pose) const {
+GeneralAntibodyModeler::repack_antigen_interface(Pose & pose) const {
 	vector1< char > antigen_chains = ab_info_->get_antigen_chains();
 	if ( antigen_chains.size() == 0 ) {
 		TR <<" Antigen not present to repack interface" << std::endl;
@@ -685,7 +692,7 @@ AntibodyDesignModeler::repack_antigen_interface(Pose & pose) const {
 }
 
 void
-AntibodyDesignModeler::repack_antibody_interface(Pose & pose) const {
+GeneralAntibodyModeler::repack_antibody_interface(Pose & pose) const {
 	vector1< char > antigen_chains = ab_info_->get_antigen_chains();
 	if ( antigen_chains.size() == 0 ) {
 		TR <<" Antigen not present to detect antibody interface" << std::endl;
@@ -715,7 +722,7 @@ AntibodyDesignModeler::repack_antibody_interface(Pose & pose) const {
 
 
 void
-AntibodyDesignModeler::dock_low_res(Pose& pose, bool pack_interface ) const {
+GeneralAntibodyModeler::dock_low_res(Pose& pose, bool pack_interface ) const {
 	std::string dock_chains = get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains_);
 	TR << "Docking " <<dock_chains << " low res " << std::endl;
 	vector1< int > movable_jumps(1, 1);
@@ -751,7 +758,7 @@ AntibodyDesignModeler::dock_low_res(Pose& pose, bool pack_interface ) const {
 }
 
 void
-AntibodyDesignModeler::dock_high_res(Pose& pose, core::Size first_cycle, core::Size second_cycle) const {
+GeneralAntibodyModeler::dock_high_res(Pose& pose, core::Size first_cycle, core::Size second_cycle) const {
 
 	std::string dock_chains = get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains_);
 	TR << "Docking " <<dock_chains << " high res " << std::endl;

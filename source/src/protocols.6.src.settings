@@ -21,6 +21,7 @@ sources = {
 	],
 	"protocols/antibody": [
 		"Ab_TemplateInfo",
+		"AntibodyCDRGrafter",
 		"AntibodyEnumManager",
 		"AntibodyInfo",
 		"AntibodyFeatures",
@@ -65,14 +66,14 @@ sources = {
 	],
 	"protocols/antibody/design":[
 		"AntibodyDesignEnumManager",
-		"AntibodyDesignModeler",
 		"AntibodyDesignMover",
 		"AntibodyDesignProtocol",
 		"AntibodySeqDesignTFCreator",
 		"CDRGraftDesignOptions",
 		"CDRSeqDesignOptions",
-        "MutateFrameworkForCluster",
-        "NativeAntibodySeq",
+		"GeneralAntibodyModeler",
+        	"MutateFrameworkForCluster",
+        	"NativeAntibodySeq",
 		"util",
 	],
 	"protocols/antibody/grafting":[

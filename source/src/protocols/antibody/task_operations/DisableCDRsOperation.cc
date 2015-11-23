@@ -59,7 +59,7 @@ DisableCDRsOperation::DisableCDRsOperation(AntibodyInfoCOP ab_info, const utilit
 	ab_info_(ab_info)
 {
 	set_defaults();
-	cdrs_ = cdrs;
+	set_cdrs( cdrs );
 
 }
 
@@ -72,7 +72,7 @@ DisableCDRsOperation::DisableCDRsOperation(
 	ab_info_(ab_info)
 {
 	set_defaults();
-	cdrs_ = cdrs;
+	set_cdrs( cdrs );
 	disable_packing_and_design_ = disable_packing_and_design;
 }
 
@@ -80,8 +80,10 @@ void
 DisableCDRsOperation::set_defaults() {
 	disable_packing_and_design_ = true;
 	cdrs_.clear();
-	cdrs_.resize(6, true);
-
+	cdrs_.resize(8, true);
+	cdrs_[ l4 ] = false;
+	cdrs_[ h4 ] = false;
+	
 	AntibodyEnumManager manager = AntibodyEnumManager();
 	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
 	std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
@@ -113,12 +115,18 @@ DisableCDRsOperation::clone() const {
 void
 DisableCDRsOperation::set_cdrs(const utility::vector1<bool>& cdrs){
 	cdrs_ = cdrs;
+	if ( cdrs.size() < CDRNameEnum_proto_total ){
+		for (core::Size i = cdrs.size() +1; i <= CDRNameEnum_proto_total; ++i){
+			cdrs_.push_back( false );
+		}
+	}
+	
 }
 
 void
 DisableCDRsOperation::set_cdr_only(CDRNameEnum cdr){
 	cdrs_.clear();
-	cdrs_.resize(6, false);
+	cdrs_.resize(CDRNameEnum_proto_total, false);
 	cdrs_[ cdr ] = true;
 }
 
@@ -133,7 +141,7 @@ DisableCDRsOperation::parse_tag( TagCOP tag, DataMap & ) {
 
 	if ( tag->hasOption("cdrs") ) {
 		TR << "Setting CDRs from settings" << std::endl;
-		cdrs_ = get_cdr_bool_from_tag(tag, "cdrs");
+		cdrs_ = get_cdr_bool_from_tag(tag, "cdrs", true /* include_cdr4*/);
 	}
 
 	disable_packing_and_design_ = tag->getOption< bool >("disable_packing_and_design", disable_packing_and_design_);
@@ -167,10 +175,15 @@ DisableCDRsOperation::apply(const core::pose::Pose& pose, core::pack::task::Pack
 	core::pack::task::operation::PreventRepacking turn_off_packing;
 	core::pack::task::operation::RestrictResidueToRepacking turn_off_design;
 
-	for ( core::Size i = 1; i <= core::Size(local_ab_info->get_total_num_CDRs()); ++i ) {
-		if ( ! cdrs_[ i ] ) continue;
-
+	for ( core::Size i = 1; i <= CDRNameEnum_proto_total; ++i ) {
+	
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+		
+		
+		if ( ! cdrs_[ i ] ) continue;
+		if ( local_ab_info->is_camelid() && local_ab_info->get_CDR_chain( cdr ) == 'L') continue;
+		
+		
 
 		core::Size start = local_ab_info->get_CDR_start( cdr, pose );
 		core::Size end = local_ab_info->get_CDR_end( cdr, pose );

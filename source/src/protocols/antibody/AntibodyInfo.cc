@@ -1141,10 +1141,10 @@ Size
 AntibodyInfo::get_CDR_end(CDRNameEnum const cdr_name, pose::Pose const & pose, CDRDefinitionEnum const & transform) const {
 
 	if ( cdr_name == l4 ) {
-		return this->get_landmark_resnum(pose, AHO_Scheme, 'L', 82);
+		return this->get_landmark_resnum(pose, AHO_Scheme, 'L', 89);
 	}
 	if ( cdr_name == h4 ) {
-		return this->get_landmark_resnum(pose, AHO_Scheme, 'H', 82);
+		return this->get_landmark_resnum(pose, AHO_Scheme, 'H', 89);
 	}
 
 	core::Size resnum;
@@ -1242,8 +1242,7 @@ AntibodyInfo::get_CDR_loops(pose::Pose const & pose, core::Size overhang) const 
 
 loops::LoopsOP
 AntibodyInfo::get_CDR_loops(const pose::Pose& pose, const vector1<bool> & cdrs, core::Size overhang) const{
-
-	assert(cdrs.size() == 6);
+	assert(cdrs.size() <= CDRNameEnum_proto_total);
 
 	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops );
 	for ( Size i = 1; i <= cdrs.size(); ++i ) {
@@ -1322,9 +1321,9 @@ AntibodyInfo::setup_CDR_clusters(pose::Pose const & pose, bool attempt_set_from_
 }
 
 void
-AntibodyInfo::setup_CDR_clusters(const pose::Pose& pose, utility::vector1<bool> cdrs, bool attempt_set_from_pose ){
+AntibodyInfo::setup_CDR_clusters(const pose::Pose& pose, utility::vector1<bool> const & cdrs, bool attempt_set_from_pose ){
 
-	assert( cdrs.size() == 6 );
+	assert( cdrs.size() <= CDRNameEnum_proto_total );
 
 	for ( core::Size i = 1; i <= cdrs.size(); ++i ) {
 		if ( cdrs[ i ] ) {
@@ -1337,7 +1336,12 @@ AntibodyInfo::setup_CDR_clusters(const pose::Pose& pose, utility::vector1<bool> 
 
 void
 AntibodyInfo::setup_CDR_cluster(const pose::Pose& pose, CDRNameEnum cdr, bool attempt_set_from_pose) {
-
+	
+	if ( cdr == l4 || cdr == h4 ){
+		TR << "Clusters do not currently exist for the DE loop.  Skipping. " << std::endl;
+		return;
+	}
+	
 	using namespace core::pose::datacache;
 	TR << "Setting up CDR Cluster for " << this->get_CDR_name( cdr ) << std::endl;
 

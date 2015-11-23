@@ -75,7 +75,7 @@ public:
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
 
-	///@brief Set the CDRs we will be disabling - 3/6 long vector corresponding to Enum.
+	///@brief Set the CDRs we will be disabling - 6/8 long vector corresponding to Enum.
 	void
 	set_cdrs(utility::vector1<bool> const & cdrs);
 
@@ -93,7 +93,7 @@ public:
 
 private:
 	AntibodyInfoCOP ab_info_;
-	utility::vector1<bool> cdrs_;
+	utility::vector1<bool> cdrs_; //This is so easy, but debugging sucks.  Wouldn't recommend vectors as storage in future.
 
 	bool disable_packing_and_design_;
 

@@ -26,7 +26,7 @@
 
 #include <protocols/antibody/constraints/util.hh>
 #include <protocols/antibody/database/AntibodyDatabaseManager.hh>
-#include <protocols/antibody/design/AntibodyDesignModeler.hh>
+#include <protocols/antibody/design/GeneralAntibodyModeler.hh>
 #include <protocols/antibody/design/AntibodySeqDesignTFCreator.hh>
 #include <protocols/antibody/design/MutateFrameworkForCluster.hh>
 #include <protocols/antibody/design/util.hh>
@@ -550,7 +550,7 @@ AntibodyDesignMover::setup_cart_minimizer(){
 void
 AntibodyDesignMover::setup_modeler(){
 
-	modeler_ = AntibodyDesignModelerOP( new AntibodyDesignModeler(ab_info_) );
+	modeler_ = GeneralAntibodyModelerOP( new GeneralAntibodyModeler(ab_info_) );
 	modeler_->set_scorefunction(scorefxn_); //Note that modeler will setup its own docking scorefunctions with proper constraint weights.
 	modeler_->set_scorefunction_min(scorefxn_min_);
 	modeler_->interface_detection_dis(interface_dis_);

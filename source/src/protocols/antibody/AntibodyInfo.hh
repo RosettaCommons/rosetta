@@ -301,7 +301,7 @@ public:
 	/// @brief setup the clustering information for each CDR according to boolean vector.
 	///  Optionally, attempt to set the CDR cluster from the Pose data cache if any data is there.
 	void
-	setup_CDR_clusters(core::pose::Pose const & pose, utility::vector1<bool> cdrs, bool attempt_set_from_pose=false);
+	setup_CDR_clusters(core::pose::Pose const & pose, utility::vector1<bool> const & cdrs, bool attempt_set_from_pose=false);
 
 	///@brief setup the clustering information for a particular CDR.
 	///  Optionally, attempt to set the CDR cluster from the Pose data cache if any data is there.

@@ -63,7 +63,11 @@ using core::pose::initialize_atomid_map;
 using protocols::loops::Loop;
 using core::kinematics::MoveMapOP;
 using core::kinematics::MoveMap;
+using core::pose::Pose;
+using core::pose::PoseOP;
 
+
+	
 GraftMoverBase::GraftMoverBase(std::string mover_name):
 	moves::Mover(mover_name),
 	start_(0),

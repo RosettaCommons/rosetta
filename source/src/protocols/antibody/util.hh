@@ -41,7 +41,7 @@ namespace antibody {
 
 ///@brief Geta boolean vector of CDRs from a RosettaScripts tag.
 utility::vector1<bool>
-get_cdr_bool_from_tag(utility::tag::TagCOP tag, std::string const & name);
+get_cdr_bool_from_tag(utility::tag::TagCOP tag, std::string const & name, bool include_cdr4 = false);
 
 
 ///@brief Get a set of loops for a boolean vector of CDRNameEnums including any stem residues.
@@ -49,7 +49,7 @@ protocols::loops::LoopsOP
 get_cdr_loops(
 	AntibodyInfoCOP ab_info,
 	core::pose::Pose const & pose,
-	utility::vector1<bool> cdrs,
+	utility::vector1<bool> const & cdrs,
 	core::Size stem_size = 0 );
 
 

@@ -45,12 +45,11 @@ public:
 	get_name() const;
 	
 	void parse_my_tag(
-		TagCOP tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
-		Filters_map const & filters,
-		Movers_map const & movers,
-		Pose const & pose
-	);	
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
 	
 	protocols::moves::MoverOP
 	clone() const;

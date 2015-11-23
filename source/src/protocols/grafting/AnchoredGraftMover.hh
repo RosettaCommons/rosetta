@@ -36,13 +36,6 @@
 namespace protocols {
 namespace grafting {
 
-using core::pose::Pose;
-using core::kinematics::MoveMapCOP;
-using core::kinematics::MoveMapOP;
-using core::scoring::ScoreFunctionCOP;
-using core::scoring::ScoreFunctionOP;
-using protocols::simple_moves::MinMoverOP;
-using protocols::simple_moves::SmallMoverOP;
 
 /// @brief Grafting class adapted from Steven Lewis' pose_into_pose algorithm.
 ///
@@ -117,10 +110,10 @@ public:
 
 	virtual void
 	parse_my_tag(
-		TagCOP tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
-		Filters_map const & filters,
-		moves::Movers_map const & movers,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
 	);
 
@@ -278,20 +271,20 @@ protected:
 
 	bool test_control_mode() const;
 
-	Size Nter_scaffold_flexibility() const;
-	Size Cter_scaffold_flexibility() const;
-	Size Nter_insert_flexibility() const;
-	Size Cter_insert_flexibility() const;
-	Size Nter_loop_start() const;
-	Size Nter_loop_end() const;
-	Size Cter_loop_start() const;
-	Size Cter_loop_end() const;
+	core::Size Nter_scaffold_flexibility() const;
+	core::Size Cter_scaffold_flexibility() const;
+	core::Size Nter_insert_flexibility() const;
+	core::Size Cter_insert_flexibility() const;
+	core::Size Nter_loop_start() const;
+	core::Size Nter_loop_end() const;
+	core::Size Cter_loop_start() const;
+	core::Size Cter_loop_end() const;
 
 	std::string mintype() const;
-	Size cycles() const;
+	core::Size cycles() const;
 	bool skip_sampling() const;
 
-	TagCOP tag() const;
+	utility::tag::TagCOP tag() const;
 
 private:
 	core::Size cycles_;
@@ -322,7 +315,7 @@ private:
 	bool final_repack_;
 
 	core::Real neighbor_dis_;
-	TagCOP tag_; //This is so pdb_num can be parsed at apply time instead of construction time.
+	utility::tag::TagCOP tag_; //This is so pdb_num can be parsed at apply time instead of construction time.
 	bool idealize_insert_;
 
 	protocols::loops::LoopsOP loops_;

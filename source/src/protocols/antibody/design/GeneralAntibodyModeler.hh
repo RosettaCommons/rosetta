@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/antibody.design/AntibodyDesignModeler.hh
+/// @file protocols/antibody.design/GeneralAntibodyModeler.hh
 /// @brief Handles modeling of the antibody.  Before, after, and during design
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody_design_AntibodyDesignModeler_hh
-#define INCLUDED_protocols_antibody_design_AntibodyDesignModeler_hh
+#ifndef INCLUDED_protocols_antibody_design_GeneralAntibodyModeler_hh
+#define INCLUDED_protocols_antibody_design_GeneralAntibodyModeler_hh
 
-#include <protocols/antibody/design/AntibodyDesignModeler.fwd.hh>
+#include <protocols/antibody/design/GeneralAntibodyModeler.fwd.hh>
 #include <protocols/antibody/design/AntibodySeqDesignTFCreator.fwd.hh>
 #include <protocols/antibody/design/CDRSeqDesignOptions.fwd.hh>
 
@@ -38,11 +38,11 @@ namespace design {
 
 ///@brief Basic Class that can run modeling for various protocols.
 /// Does not do any design.  Setup design TF via AntibodySeqDesignTFCreator.
-class AntibodyDesignModeler : public utility::pointer::ReferenceCount {
+class GeneralAntibodyModeler : public utility::pointer::ReferenceCount {
 
 public:
-	AntibodyDesignModeler(AntibodyInfoOP ab_info);
-	virtual ~AntibodyDesignModeler();
+	GeneralAntibodyModeler(AntibodyInfoOP ab_info);
+	virtual ~GeneralAntibodyModeler();
 
 
 
