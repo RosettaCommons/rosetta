@@ -500,6 +500,8 @@ PDBInfo::segmentID(
 
 	// set new residue info
 	rr.segmentID = segmentID;
+
+	runtime_assert( segmentID.size() == 4 );
 }
 
 /// @brief Displays the PDB info by expressing continuous chain segments

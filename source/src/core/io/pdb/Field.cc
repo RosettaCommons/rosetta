@@ -186,7 +186,7 @@ RecordRef & Field::getRecordCollection()
 			"z",          Field(47, 54), // Real(8.3)
 			"occupancy",  Field(55, 60), // Real(6.2)
 			"tempFactor", Field(61, 66), // Real(6.2)
-			"segmentID",  Field(73, 76), // LString(2) standard would have been segID
+			"segmentID",  Field(73, 76), // LString(4) standard would have been segID
 			"element",    Field(77, 78), // LString(2)
 			"charge",     Field(79, 80)  // LString(2)
 			),

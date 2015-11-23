@@ -663,10 +663,15 @@ get_resnum_and_segid_from_one_tag( std::string const & tag,
 
 	size_t found_colon = tag.find( ":" );
 
-	if ( found_colon != 1 ) return false;
+	if ( found_colon == std::string::npos || found_colon > 4 ) return false;
 
-	segid = tag.substr(0,4);
-	resnum_from_tag = ObjexxFCL::ints_of( tag.substr(4), string_is_ok );
+	for ( size_t n = found_colon; n < 4; n++ ) {
+		segid += ' ';
+	}
+	segid += tag.substr(0,found_colon);
+	runtime_assert( segid.size() == 4 );
+
+	resnum_from_tag = ObjexxFCL::ints_of( tag.substr( found_colon + 1 ), string_is_ok );
 
 	for ( platform::Size n = 0; n < resnum_from_tag.size(); n++ ) {
 		resnum.push_back( resnum_from_tag[ n ] );

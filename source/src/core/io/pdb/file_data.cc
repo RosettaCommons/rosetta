@@ -133,7 +133,7 @@ ResidueInformation::ResidueInformation() :
 	atoms(),
 	xyz(),
 	temps(),
-	segmentID( "" )
+	segmentID( "    " )
 {}
 
 ResidueInformation::ResidueInformation(

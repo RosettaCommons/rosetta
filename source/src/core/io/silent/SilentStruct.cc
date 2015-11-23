@@ -1192,7 +1192,9 @@ SilentStruct::figure_out_segment_ids_from_line( std::istream & line_stream ) {
 		line_stream >> resnum_string;
 	}
 
-	set_residue_numbers( residue_numbers );
+	if ( residue_numbers_.size() > 0 ) {
+		runtime_assert( residue_numbers_ == residue_numbers );
+	}
 	set_segment_IDs( segment_ids );
 }
 

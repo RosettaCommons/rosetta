@@ -158,7 +158,7 @@ private: // structs
 			chainID( PDBInfo::empty_record() ),
 			resSeq( 0 ),
 			iCode( ' '),
-			segmentID( " " )
+			segmentID( "    " )
 		{}
 
 		/// @brief chain id
@@ -1104,6 +1104,7 @@ public: // residue mutators en masse
 
 		for ( StringIterator i = begin; i < end; ++i, ++rr ) {
 			rr->segmentID = *i;
+			runtime_assert( rr->segmentID.size() == 4 );
 			debug_assert( rr < residue_rec_.end() );
 		}
 
