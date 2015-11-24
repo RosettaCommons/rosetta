@@ -105,12 +105,12 @@ create_packer_graph(
 			core::conformation::find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( point_graph, atomic_itxn_dist + 2 * max_radius );
 		}
 
-		if ( pose.total_residue() > 468 ) {
-			Vector v316 = point_graph->get_vertex( 316 ).data().xyz();
-			Vector v468 = point_graph->get_vertex( 316 ).data().xyz();
-			std::cout << "point graph data: " << v316.x() << ", " << v316.y() << ", " << v316.z() << " and "
-				<< v468.x() << ", " << v468.y() << ", " << v468.z() << " sqrdist: " << v316.distance_squared( v468 ) << std::endl;
-		}
+		//if ( pose.total_residue() > 468 ) {
+		//	Vector v316 = point_graph->get_vertex( 316 ).data().xyz();
+		//	Vector v468 = point_graph->get_vertex( 316 ).data().xyz();
+		//	std::cout << "point graph data: " << v316.x() << ", " << v316.y() << ", " << v316.z() << " and "
+		//		<< v468.x() << ", " << v468.y() << ", " << v468.z() << " sqrdist: " << v316.distance_squared( v468 ) << std::endl;
+		//}
 
 		// add edges
 		//for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -132,9 +132,9 @@ create_packer_graph(
 				}
 				Distance const jj_rad = residue_radii[ jj_asu ];
 
-				if ( ii == 316 && jj == 468 ) {
-					std::cout << "Packer neighbor graph creation; 316 and 468; " << iter->data().dsq() << std::endl;
-				}
+				//if ( ii == 316 && jj == 468 ) {
+				//	std::cout << "Packer neighbor graph creation; 316 and 468; " << iter->data().dsq() << std::endl;
+				//}
 
 				if ( jj_rad + ii_itxn_rad > 0 &&
 						iter->data().dsq() < ( jj_rad + ii_itxn_rad )*( jj_rad + ii_itxn_rad ) ) {

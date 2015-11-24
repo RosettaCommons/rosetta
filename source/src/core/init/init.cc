@@ -55,6 +55,7 @@
 #include <core/scoring/methods/OmegaTetherEnergyCreator.hh>
 #include <core/scoring/methods/OtherPoseEnergyCreator.hh>
 #include <core/scoring/methods/P_AA_EnergyCreator.hh>
+#include <core/scoring/methods/P_AA_ss_EnergyCreator.hh>
 #include <core/scoring/methods/P_AA_pp_EnergyCreator.hh>
 #include <core/scoring/methods/PackStatEnergyCreator.hh>
 #include <core/scoring/methods/PairEnergyCreator.hh>
@@ -67,7 +68,7 @@
 #include <core/scoring/methods/D2H_SA_EnergyCreator.hh>
 #include <core/scoring/methods/ProQ_EnergyCreator.hh>
 #include <core/scoring/methods/RMS_EnergyCreator.hh>
-#include <core/scoring/methods/Rama2BOffsetEnergyCreator.hh>
+#include <core/scoring/methods/RamaPreProEnergyCreator.hh>
 #include <core/scoring/methods/RamachandranEnergy2BCreator.hh>
 #include <core/scoring/methods/RamachandranEnergyCreator.hh>
 #include <core/scoring/methods/ReferenceEnergyCreator.hh>
@@ -373,6 +374,7 @@ static EnergyMethodRegistrator< scoring::methods::NMerRefEnergyCreator > NMerRef
 static EnergyMethodRegistrator< scoring::methods::NMerPSSMEnergyCreator > NMerPSSMEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::NMerSVMEnergyCreator > NMerSVMEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::P_AA_EnergyCreator > P_AA_EnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::P_AA_ss_EnergyCreator > P_AA_ss_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::P_AA_pp_EnergyCreator > P_AA_pp_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PackStatEnergyCreator > PackStatEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PairEnergyCreator > PairEnergyCreator_registrator;
@@ -385,7 +387,7 @@ static EnergyMethodRegistrator< scoring::methods::SA_EnergyCreator > SA_EnergyCr
 static EnergyMethodRegistrator< scoring::methods::D2H_SA_EnergyCreator > D2H_SA_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ProQ_EnergyCreator > ProQ_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RMS_EnergyCreator > RMS_EnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::methods::Rama2BOffsetEnergyCreator > Ramac2BOffsetEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::RamaPreProEnergyCreator > RamaPreProEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RamachandranEnergy2BCreator > RamachandranEnergy2BCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RamachandranEnergyCreator > RamachandranEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ReferenceEnergyCreator > ReferenceEnergyCreator_registrator;

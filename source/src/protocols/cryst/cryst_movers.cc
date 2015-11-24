@@ -31,8 +31,7 @@
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/coulomb/Coulomb.hh>
 #include <core/scoring/etable/Etable.hh>
-#include <core/scoring/elec/GroupElec.hh>
-#include <core/scoring/elec/FA_GrpElecEnergy.hh>
+#include <core/scoring/elec/FA_ElecEnergy.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -81,6 +80,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <fstream>
 
@@ -285,10 +285,6 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 	core::scoring::methods::LK_BallEnergy lkb( reference_scorefxn->energy_method_options() );
 	lkb.setup_for_scoring(pose, *reference_scorefxn);
 
-	// GroupElec
-	core::scoring::elec::FA_GrpElecEnergy grpelec( reference_scorefxn->energy_method_options() );
-	grpelec.setup_for_scoring(pose, *reference_scorefxn);
-
 	utility::vector1< Multivec > dEros_i_dvars;
 	utility::vector1< core::scoring::ScoreType > term_i;
 
@@ -306,8 +302,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 		working_scorefxn->set_weight( (core::scoring::ScoreType)ii , reference_scorefxn->get_weight( (core::scoring::ScoreType)ii )  );
 
 		// lk ball hack
-		if ( (core::scoring::ScoreType)ii == lk_ball_wtd ||
-				(core::scoring::ScoreType)ii == fa_grpelec ) {
+		if ( (core::scoring::ScoreType)ii == lk_ball_wtd) {
 			working_scorefxn->set_weight( fa_atr, 1e-9 );
 		}
 
@@ -338,10 +333,9 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 		// other terms
 		for ( int ii=1; ii<=(int)term_i.size(); ++ii ) {
 			if ( term_i[ii] == fa_rep || term_i[ii] == fa_atr || term_i[ii] == fa_sol ) continue;
-			if ( term_i[ii] == fa_elec || term_i[ii] == fa_grpelec ) continue;
+			if ( term_i[ii] == fa_elec ) continue;
 			if ( term_i[ii] == fa_intra_rep || term_i[ii] == fa_intra_atr || term_i[ii] == fa_intra_sol ) continue;
 			if ( term_i[ii] == fa_intra_rep_xover4 || term_i[ii] == fa_intra_atr_xover4 || term_i[ii] == fa_intra_sol_xover4 ) continue;
-			if ( term_i[ii] == lk_ball_wtd ) continue;
 
 			numeric::xyzVector< core::Real > grad_ij (dEros_i_dvars[ii][3*ii_atm+1], dEros_i_dvars[ii][3*ii_atm+2], dEros_i_dvars[ii][3*ii_atm+3]);
 			norm += grad_ij.length();
@@ -451,6 +445,7 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 	core::conformation::Residue const & rsd1( pose.residue(ires) );
 
 	// needed for electrostatic calcs
+	core::scoring::elec::FA_ElecEnergy faelec( e_opts );
 	Coulomb coulomb( sfxn->energy_method_options() );
 	coulomb.initialize();
 
@@ -473,23 +468,30 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 				core::Real weight=1.0;
 				core::Size path_dist;
 				core::Real d_faatr=0, d_farep=0, d_fasol=0, d_faelec=0, invD; //, dummy;
+
+				etable.analytic_etable_derivatives(rsd1.atom(iatm), rsd2.atom(jatm),  d_faatr, d_farep, d_fasol, invD );
+
+				Real const dis = (rsd1.xyz(iatm)-rsd2.xyz(jatm)).length();
+				Real const dis2 = dis*dis;
+
+				d_faelec = coulomb.eval_dfa_elecE_dr_over_r( dis2, rsd1.atomic_charge(iatm), rsd2.atomic_charge(jatm) );
+
+				// fa_rep/atr/sol
 				if ( cpfxn->count( iatm, jatm, weight, path_dist ) ) {
-					etable.analytic_etable_derivatives(rsd1.atom(iatm), rsd2.atom(jatm),  d_faatr, d_farep, d_fasol, invD );
-
-					Real const dis = (rsd1.xyz(iatm)-rsd2.xyz(jatm)).length();
-					Real const dis2 = dis*dis;
-
-					d_faelec = coulomb.eval_dfa_elecE_dr_over_r( dis2, rsd1.atomic_charge(iatm), rsd2.atomic_charge(jatm) );
-
-					// to do: split lk_ball into per-atom contributions as well (this requires some thought ...)
-
-					// sum
 					norm += symmscale * weight *(
 						fa_atr_wt*std::abs(d_faatr) +
 						fa_rep_wt*std::abs(d_farep) +
-						fa_sol_wt*std::abs(d_fasol) +
-						dis*fa_elec_wt*std::abs(d_faelec));
+						fa_sol_wt*std::abs(d_fasol));
 				}
+
+				// fa_elec
+				core::Size iirep = faelec.get_countpair_representative_atom(rsd1.type(), iatm);
+				core::Size jjrep = faelec.get_countpair_representative_atom(rsd2.type(), iatm);
+
+				if ( cpfxn->count( iirep, jjrep, weight, path_dist ) ) {
+					norm += symmscale * weight *(dis*fa_elec_wt*std::abs(d_faelec));
+				}
+
 			}
 		}
 	}

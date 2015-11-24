@@ -37,6 +37,8 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/scoring/dssp/Dssp.hh>
+#include <core/pose/util.hh>
 
 #include <core/scoring/electron_density/util.hh>
 
@@ -418,7 +420,24 @@ public:
 			(*scorefxn)(pose);
 			scorefxn->show(TR, pose);
 		}
+
+		core::scoring::dssp::Dssp my_dssp( pose );
+		//core::scoring::dssp::DsspOP my_dssp_OP = new core::scoring::dssp::Dssp( pose );
+		my_dssp.insert_ss_into_pose( pose );
+
+		// add counts of ss elts to scorefile
+		core::Size nL=0,nH=0,nE=0;
+		for (core::Size i=1; i<=pose.total_residue(); ++i) {
+			if (!pose.residue(i).is_protein()) continue;
+			if (pose.secstruct(i) == 'L') nL++;
+			if (pose.secstruct(i) == 'H') nH++;
+			if (pose.secstruct(i) == 'E') nE++;
+		}
+		core::pose::setPoseExtraScore( pose, "nL", nL);
+		core::pose::setPoseExtraScore( pose, "nH", nH);
+		core::pose::setPoseExtraScore( pose, "nE", nE);
 	}
+
 	virtual std::string get_name() const {
 		return "MinTestMover";
 	}

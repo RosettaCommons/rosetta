@@ -1223,6 +1223,57 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 	} // use option "-detect_disulf" to control this
 }
 
+// Declare that a chemical bond exists between two residues
+void
+SymmetricConformation::declare_chemical_bond(
+	Size seqpos1,
+	std::string const & atom_name1,
+	Size seqpos2,
+	std::string const & atom_name2
+)
+{
+	bool r1_is_indep = symm_info_->bb_is_independent( seqpos1 );
+	bool r2_is_indep = symm_info_->bb_is_independent( seqpos2 );
+
+	Size s1master = seqpos1, s2master = seqpos2;
+
+	if (!r1_is_indep && !r2_is_indep) {
+		TR.Debug << "Making a chemical bond between two dependent residues, applying to parent!" << std::endl;
+		s1master = symm_info_->bb_follows(seqpos1);
+		s2master = symm_info_->bb_follows(seqpos2);
+	}
+
+	TR << "Add symmetric chemical bond " << s1master << " to " << s2master << std::endl;
+	Conformation::declare_chemical_bond(s1master, atom_name1, s2master, atom_name2);
+
+	// special logic if this crosses a symm boundary
+	if (r1_is_indep != r2_is_indep) {
+		Size A = r1_is_indep? seqpos1 : seqpos2;
+		Size Bprime = r1_is_indep? seqpos2 : seqpos1;
+		Size B = symm_info_->bb_follows(Bprime);
+
+		// we need to find the clone A' such that the transform A->B' and A'->B are equivalent
+		core::Size nclones = symm_info_->num_bb_clones( );
+		SymmetryInfo::Clones clonesA = symm_info_->bb_clones( A );
+		bool found = false;
+		numeric::xyzVector< core::Real > xyzA = residue( A ).xyz(1);
+		for ( int i=1; i<=(int)nclones && !found; ++i ) {
+			Size Aprime = clonesA[i];
+			numeric::xyzVector< core::Real > xyzAstar = apply_transformation( residue(Aprime).xyz(1), A, Bprime );
+			core::Real dist = (xyzAstar - xyzA).length();
+			if (dist < 1e-4) {
+				TR << "Add symmetric chemical bond " << Aprime << " to " << B << std::endl;
+				Conformation::declare_chemical_bond(Aprime, atom_name1, B, atom_name2);
+				found = true;
+			}
+		}
+		if (!found) {
+			TR << "Error in declare_chemical_bond: unable to find corresponding partner!" << std::endl;
+		}
+	}
+}
+
+/*
 /// @brief Declare that a chemical bond exists between two residues
 /// @details This updates all symmetry copies, so that each one has a chemical
 /// bond between the residues in question.
@@ -1255,6 +1306,8 @@ SymmetricConformation::declare_chemical_bond(
 
 	return;
 }
+*/
+
 
 }
 } // conformation

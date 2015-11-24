@@ -60,6 +60,7 @@
 #include <core/types.hh>
 #include <devel/init.hh>
 
+
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
 #include <protocols/jd2/util.hh>
@@ -124,7 +125,9 @@ static THREAD_LOCAL basic::Tracer TR( "calc_ssm_energies" );
 OPT_1GRP_KEY(Boolean, ssm, interface)
 OPT_1GRP_KEY(Boolean, ssm, packing)
 OPT_1GRP_KEY(Boolean, ssm, verbose)
+OPT_1GRP_KEY(Boolean, ssm, with_ss)
 OPT_1GRP_KEY(IntegerVector, ssm, parallel)
+
 
 //
 // helper function, get interface residues (directional)
@@ -367,6 +370,12 @@ public:
 		sfxn_ = core::scoring::get_score_function();
 		sfxn_->set_weight( core::scoring::ref, 0.0 );
 
+		if (  basic::options::option[basic::options::OptionKeys::ssm::with_ss] ) {
+			sfxn_->set_weight( core::scoring::rama_prepro, 0.0 );
+			sfxn_->set_weight( core::scoring::rama, 0.0 );
+			sfxn_->set_weight( core::scoring::p_aa_pp, 0.0 );
+		}
+
 		K_=12.0;
 		NCYC_=1;
 	}
@@ -387,18 +396,15 @@ public:
 		(*sf)(pose);  // this needs to be here
 		minimizer.run( pose, *mm, *sf, options );
 
-		// pack+relax
-		//protocols::relax::FastRelax relax_prot( sf, NCYC_ );
-		//relax_prot.min_type("lbfgs_armijo_nonmonotone");
-		//relax_prot.cartesian( true );
-		//relax_prot.set_movemap( mm );
-		//relax_prot.apply(pose);
 	}
 
 
 	///
 	void
 	apply(core::pose::Pose &pose) {
+    core::scoring::dssp::Dssp dssp( pose );
+    dssp.insert_ss_into_pose( pose );
+
 		// load packer task from command line
 		core::Size nres = pose.total_residue();
 
@@ -415,6 +421,10 @@ public:
 			get_interface_residues( pose, interface, K_);
 			ptask_resfile->restrict_to_residues(interface);
 		}
+
+		core::scoring::ScoreFunction Srama, Spaapp;
+		Srama.set_weight(core::scoring::rama_prepro,1.0);
+		Spaapp.set_weight(core::scoring::p_aa_pp,1.0);
 
 		for ( Size i_res=1; i_res <= nres; ++i_res ) {
 			bool design_i = ptask_resfile->design_residue( i_res );
@@ -436,7 +446,11 @@ public:
 			if (  basic::options::option[basic::options::OptionKeys::ssm::verbose] ) {
 				TR << pose.residue(i_res).aa() << " ";
 			}
+			if (  basic::options::option[basic::options::OptionKeys::ssm::with_ss] ) {
+				TR << pose.secstruct(i_res) << " ";
+			}
 
+			utility::vector1<core::Real> Es, ramas,paapps;
 			for ( Size i_aa=1; i_aa <= (Size)core::chemical::num_canonical_aas; ++i_aa ) {
 				utility::vector1<bool> allowed_aas( core::chemical::num_canonical_aas, false );
 				allowed_aas[i_aa] = true;
@@ -456,8 +470,16 @@ public:
 				// optimize
 				core::pose::Pose pose_copy = pose;
 				optimization_loop( pose_copy, sfxn_, ptask_working, mm );
-				TR << (*sfxn_)(pose_copy) << " ";
+				Es.push_back( (*sfxn_)(pose_copy) );
+				ramas.push_back( Srama(pose_copy) );
+				paapps.push_back( Spaapp(pose_copy) );
 			} // foreach aa
+
+			for ( Size i_aa=1; i_aa <= (Size)core::chemical::num_canonical_aas; ++i_aa ) TR << Es[i_aa] << " ";
+			if (  basic::options::option[basic::options::OptionKeys::ssm::with_ss] ) {
+				for ( Size i_aa=1; i_aa <= (Size)core::chemical::num_canonical_aas; ++i_aa ) TR << ramas[i_aa] << " ";
+				for ( Size i_aa=1; i_aa <= (Size)core::chemical::num_canonical_aas; ++i_aa ) TR << paapps[i_aa] << " ";
+			}
 			TR << std::endl;
 		} // foreach res
 	}
@@ -484,7 +506,9 @@ int main( int argc, char * argv [] )
 	try {
 		NEW_OPT(ssm::interface, "interface", false);
 		NEW_OPT(ssm::packing, "packing", false);
+		NEW_OPT(ssm::with_ss, "with_ss", false);
 		NEW_OPT(ssm::verbose, "verbose", false);
+		NEW_OPT(ssm::with_ss, "with_ss", false);
 		NEW_OPT(ssm::parallel, "parallel", utility::vector1<core::Size>());
 
 		devel::init(argc, argv);

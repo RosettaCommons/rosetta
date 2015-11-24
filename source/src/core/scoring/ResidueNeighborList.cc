@@ -836,6 +836,50 @@ ResiduePairNeighborList::initialize_from_residues(
 	}
 }
 
+void
+ResiduePairNeighborList::initialize_from_residues(
+	Real vvd2,
+	Real hvd2,
+	Real hhd2,
+	conformation::Residue const & r1,
+	conformation::Residue const & r2,
+	etable::count_pair::CountPairFunctionCOP cpfxn,
+	std::map<core::Size,core::Size> const &r1_map,
+	std::map<core::Size,core::Size> const &r2_map
+)
+{
+	atom_neighbors_.clear();
+
+	//std::cout << "ResiduePairNeighborList::initialize_from_residues " << r1.seqpos() << " " << r2.seqpos() << std::endl;
+
+	utility::vector0< Real > cutoffs( 3 );
+	cutoffs[ 0 ] = vvd2;
+	cutoffs[ 1 ] = hvd2;
+	cutoffs[ 2 ] = hhd2;
+
+	for ( Size ii = 1; ii <= r1.natoms(); ++ii ) {
+		std::map<core::Size,core::Size>::const_iterator iter_i = r1_map.find(ii);
+		int ii_rep = iter_i == r1_map.end() ? ii : iter_i->second;
+		int ii_isH = r1.atom_is_hydrogen( ii );
+		for ( Size jj = 1; jj <= r2.natoms(); ++jj ) {
+			std::map<core::Size,core::Size>::const_iterator iter_j = r2_map.find(jj);
+			int jj_rep = iter_j == r2_map.end() ? jj : iter_j->second;
+			int jj_isH = r2.atom_is_hydrogen( jj );
+			Real weight( 1.0 );
+			Size path_dist( 0 );
+			if ( cpfxn->count( ii_rep, jj_rep, weight, path_dist ) ) {
+				Real d2 = r1.xyz( ii ).distance_squared( r2.xyz( jj ) );
+				///std::cout << "  atoms "  << ii << " " << jj << " " << r1.atom_name( ii ) << " " << r2.atom_name( jj )
+				/// << " d2: " << d2 << " d " << std::sqrt( d2 ) <<  " cutoff2:" <<  cutoffs[ ii_isH + jj_isH ]
+				/// << " cutoff " << std::sqrt( cutoffs[ ii_isH + jj_isH ] ) << std::endl;
+				if ( d2 < cutoffs[ ii_isH + jj_isH ] ) {
+					atom_neighbors_.push_back( SmallAtNb( ii, jj, weight ) );
+				}
+			}
+		}
+	}
+}
+
 
 }
 }

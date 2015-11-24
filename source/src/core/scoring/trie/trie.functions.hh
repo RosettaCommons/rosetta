@@ -147,6 +147,139 @@ create_trie(
 }
 
 
+/// helper function: look up count-pair mapping
+inline
+core::Size
+lookup_cp_map(
+	std::map<core::Size,core::Size> const &cp_reps,
+	core::Size atm_idx
+) {
+	std::map<core::Size,core::Size>::const_iterator i = cp_reps.find(atm_idx);
+	if (i == cp_reps.end()) {
+		return atm_idx;
+	} else {
+		return i->second;
+	}
+}
+
+/// @details
+/// version of the above that also takes a count-pair corespondence
+template < class AT, class CPDAT >
+RotamerTrieBaseOP
+create_trie(
+	conformation::RotamerSetBase const & rotset,
+	AT    const & /* dummy variable for type identification */,
+	CPDAT const & /* dummy variable for type identification */,
+	CPDataCorrespondence const & cpdata_map,
+	std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> > const &cp_reps,
+	Distance atomic_interaction_cutoff
+)
+{
+
+	utility::vector1< RotamerDescriptor< AT, CPDAT > > rotamer_descriptors( rotset.num_rotamers() );
+
+	for ( Size ii = 1; ii <= rotset.num_rotamers(); ++ii ) {
+		conformation::ResidueCOP ii_rotamer( rotset.rotamer( ii ) );
+		rotamer_descriptors[ ii ].natoms( ii_rotamer->natoms() );
+		Size count_added_atoms = 0;
+		for ( Size jj = 1; jj <= ii_rotamer->nheavyatoms(); ++jj ) {
+
+			AT newatom( *ii_rotamer, jj );
+			newatom.is_hydrogen( false );
+
+			CPDAT cpdata;
+			std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(ii_rotamer->type()));
+			core::Size jj_rep = lookup_cp_map( it->second, jj );
+			initialize_cpdata_for_atom( cpdata, jj_rep, *ii_rotamer, cpdata_map );
+
+			RotamerDescriptorAtom< AT, CPDAT > rdatom( newatom, cpdata );
+			rotamer_descriptors[ ii ].atom( ++count_added_atoms, rdatom );
+
+			for ( Size kk = ii_rotamer->attached_H_begin( jj ),
+					kk_end = ii_rotamer->attached_H_end( jj );
+					kk <= kk_end; ++kk ) {
+
+				AT newhatom( *ii_rotamer, kk );
+				newhatom.is_hydrogen( true );
+
+				CPDAT cpdata;
+				std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(ii_rotamer->type()));
+				core::Size kk_rep = lookup_cp_map( it->second, kk );
+				initialize_cpdata_for_atom( cpdata, kk_rep, *ii_rotamer, cpdata_map );
+
+				RotamerDescriptorAtom< AT, CPDAT > rdatom( newhatom, cpdata );
+				rotamer_descriptors[ ii ].atom( ++count_added_atoms, rdatom );
+
+			}
+		}
+		rotamer_descriptors[ ii ].rotamer_id( ii );
+	}
+
+	sort( rotamer_descriptors.begin(), rotamer_descriptors.end() );
+
+	RotamerTrieBaseOP newtrie = RotamerTrieBaseOP( new RotamerTrie< AT, CPDAT >( rotamer_descriptors, atomic_interaction_cutoff ) );
+	for ( Size ii = 1; ii <= cpdata_map.n_entries(); ++ii ) {
+		newtrie->set_resid_2_connection_entry( cpdata_map.resid_for_entry( ii ), ii );
+	}
+	return newtrie;
+}
+
+/// @details
+/// version of the above that also takes a count-pair corespondence
+template < class AT, class CPDAT >
+RotamerTrieBaseOP
+create_trie(
+	conformation::Residue const & res,
+	AT    const & /* dummy variable for type identification */,
+	CPDAT const & /* dummy variable for type identification */,
+	CPDataCorrespondence const & cpdata_map,
+	std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> > const &cp_reps,
+	Distance atomic_interaction_cutoff
+)
+{
+
+	utility::vector1< RotamerDescriptor< AT, CPDAT > > rotamer_descriptor( 1 );
+
+	rotamer_descriptor[ 1 ].natoms( res.natoms() );
+	Size count_added_atoms = 0;
+	for ( Size jj = 1; jj <= res.nheavyatoms(); ++jj ) {
+
+		AT newatom( res, jj );
+		newatom.is_hydrogen( false );
+
+		CPDAT cpdata;
+		std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(res.type()) );
+		core::Size jj_rep = lookup_cp_map( it->second, jj );
+		initialize_cpdata_for_atom( cpdata, jj_rep, res, cpdata_map );
+
+
+		RotamerDescriptorAtom< AT, CPDAT > rdatom( newatom, cpdata );
+		rotamer_descriptor[ 1 ].atom( ++count_added_atoms, rdatom );
+
+		for ( Size kk = res.attached_H_begin( jj ), kk_end = res.attached_H_end( jj );
+				kk <= kk_end; ++kk ) {
+
+			AT newhatom( res, kk );
+			newhatom.is_hydrogen( true );
+
+			CPDAT cpdata;
+			std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(res.type()) );
+			core::Size kk_rep = lookup_cp_map( it->second, kk );
+			initialize_cpdata_for_atom( cpdata, kk_rep, res, cpdata_map );
+			RotamerDescriptorAtom< AT, CPDAT > rdatom( newhatom, cpdata );
+			rotamer_descriptor[ 1 ].atom( ++count_added_atoms, rdatom );
+		}
+	}
+	rotamer_descriptor[ 1 ].rotamer_id( 1 );
+
+	RotamerTrieBaseOP newtrie = RotamerTrieBaseOP( new RotamerTrie< AT, CPDAT >( rotamer_descriptor, atomic_interaction_cutoff ) );
+	for ( Size ii = 1; ii <= cpdata_map.n_entries(); ++ii ) {
+		newtrie->set_resid_2_connection_entry( cpdata_map.resid_for_entry( ii ), ii );
+	}
+	return newtrie;
+}
+
+
 template < class CPDAT >
 void
 initialize_cpdata_for_atom(

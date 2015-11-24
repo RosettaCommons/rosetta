@@ -7,22 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/Rama2BOffset.fwd.hh
+/// @file   core/scoring/RamaPrePro.fwd.hh
 /// @brief
 /// @author
 
-#ifndef INCLUDED_core_scoring_Rama2BOffset_fwd_hh
-#define INCLUDED_core_scoring_Rama2BOffset_fwd_hh
+#ifndef INCLUDED_core_scoring_RamaPrePro_fwd_hh
+#define INCLUDED_core_scoring_RamaPrePro_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
 
-class Rama2BOffset;
+class RamaPrePro;
 
-typedef utility::pointer::shared_ptr< Rama2BOffset > Rama2BOffsetOP;
-typedef utility::pointer::shared_ptr< Rama2BOffset const > Rama2BOffsetCOP;
+typedef utility::pointer::shared_ptr< RamaPrePro > RamaPreProOP;
+typedef utility::pointer::shared_ptr< RamaPrePro const > RamaPreProCOP;
 }
 }
 

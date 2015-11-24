@@ -412,7 +412,14 @@ get_sc( protocols::cryst::MakeLatticeMover &setup, core::pose::Pose & pose, core
 				scc_i.AddResidue(1, pose.residue(ir+start));
 			}
 
-			if ( scc_i.Calc() ) {
+			bool result = false;
+			try {
+				result = scc_i.Calc();
+			} catch ( utility::excn::EXCN_Base const & e ) {
+				result = false;
+			}
+
+			if (result) {
 				numeric::xyzMatrix<core::Real> Ri;
 				numeric::xyzVector<core::Real> Ti;
 				setup.getRT( i, Ri, Ti );

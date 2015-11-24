@@ -310,6 +310,9 @@ sources = {
 		"min_test", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"pdb_gen_cryst", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"cryst_design", # /* Frank Dimaio,Documentation Location,Demo Location */
+		"calc_ssm_energies", # /* Frank Dimaio,Documentation Location,Demo Location */
+		"perturb_structure", # /* Frank Dimaio,Documentation Location,Demo Location */
+		"fasol_perres", # /* Frank Dimaio,Documentation Location,Demo Location */
 	],
 
 	# G ######################################################################

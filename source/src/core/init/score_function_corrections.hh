@@ -39,8 +39,14 @@ void init_correct_correction();
 /// @brief Initialize the -shapovalov_lib_fixes_enable correction
 void init_shapovalov_lib_fixes_enable_correction();
 
-/// @brief Initialize the -beta score function
+/// @brief Initialize the _most recent_ beta score function (-beta)
 void init_beta_correction();
+
+/// @brief Initialize the -beta_july15 score function
+void init_beta_july15_correction();
+
+/// @brief Initialize the -beta_nov15 score function
+void init_beta_nov15_correction();
 
 /// @brief Initialize the crystal refinement correction
 void init_crystal_refinement_correction();
