@@ -1704,10 +1704,7 @@ ReplaceProtonWithHydroxyl::apply( ResidueType & rsd ) const {
 }
 
 PatchOperationOP
-patch_operation_from_patch_file_line(
-		std::string const & line,
-		std::map< std::string, Real > const & atomic_charge_reassignments
-) {
+patch_operation_from_patch_file_line( std::string const & line ) {
 	using numeric::conversions::radians;
 	std::istringstream l( line );
 	std::string tag, atom1, atom2, atom3, atom4, atom_name, atom_alias, atom_type_name, mm_atom_type_name, bond_type,
@@ -1724,15 +1721,6 @@ patch_operation_from_patch_file_line(
 		l >> mm_atom_type_name; // = line.substr( 19,4);
 		l >> charge;
 		if ( l.fail() ) return 0;
-
-		//fd let command line override charge
-		if ( atomic_charge_reassignments.find( ObjexxFCL::stripped( atom_name ) ) != atomic_charge_reassignments.end() ) {
-			tr.Trace << "reassigning patch atomic charge " << atom_name << " atomtype: " << atom_type_name << " --> " <<
-				atomic_charge_reassignments.find( ObjexxFCL::stripped( atom_name ) )->second << std::endl;
-			// note that we set charge and also parse_charge, so this will over-ride the parse_charge if those are the charges we are using
-			charge = atomic_charge_reassignments.find( ObjexxFCL::stripped( atom_name ) )->second;
-		}
-
 #if defined(WIN32) && !defined(WIN_PYROSETTA)
 		return PatchOperationOP( new AddAtomWIN32( atom_name, atom_type_name, mm_atom_type_name, charge ) );
 #else
@@ -1926,16 +1914,6 @@ patch_operation_from_patch_file_line(
 
 	} else if ( tag == "SET_ATOMIC_CHARGE" ) {
 		l >> atom_name >> charge;
-
-		//fd let command line override charge
-		if ( atomic_charge_reassignments.find( ObjexxFCL::stripped( atom_name ) ) != atomic_charge_reassignments.end() ) {
-			tr.Trace << "reassigning patch atomic charge " << atom_name << " atomtype: " << atom_type_name << " --> " <<
-				atomic_charge_reassignments.find( ObjexxFCL::stripped( atom_name ) )->second << std::endl;
-			// note that we set charge and also parse_charge, so this will over-ride the parse_charge if those are the charges we are using
-			charge = atomic_charge_reassignments.find( ObjexxFCL::stripped( atom_name ) )->second;
-		}
-
-
 		if ( l.fail() ) utility_exit_with_message( line );
 		return PatchOperationOP( new SetAtomicCharge( atom_name, charge ) );
 

@@ -23,7 +23,6 @@
 
 // Project headers
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
@@ -386,18 +385,6 @@ public:
 	}
 
 
-	//fpd countpair representatives: read tables from DB
-	void
-	read_cp_tables_from_db(std::string filename);
-
-	//fpd countpair representatives: read tables from DB
-	core::Size
-	get_countpair_representative_atom(
-		core::chemical::ResidueType const & restype,
-		core::Size atm_i
-	) const;
-
-
 	/// Private methods
 private:
 
@@ -479,11 +466,6 @@ private:
 	//fpd: envdep hbonds
 	bool use_env_dep_;
 	core::Real env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_;
-
-	//fpd: countpair representative atoms
-	bool use_cp_rep_, flip_cp_rep_;
-	mutable std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> > cp_rep_map_;
-	std::map< std::string, std::map<std::string,std::string> > cp_rep_map_byname_;
 
 
 	//mutable Real elec_weight_; // used during trie-vs-trie algorithm

@@ -90,7 +90,6 @@ DisulfidizeMover::DisulfidizeMover() :
 	protocols::rosetta_scripts::MultiplePoseMover(),
 	match_rt_limit_( 2.0 ),
 	max_disulf_score_( 1.5 ),
-	max_dist_sq_( 25 ),
 	min_loop_( 8 ),
 	min_disulfides_( 1 ),
 	max_disulfides_( 3 ),
@@ -112,7 +111,6 @@ DisulfidizeMover::DisulfidizeMover( DisulfidizeMover const &src ) :
 	protocols::rosetta_scripts::MultiplePoseMover( src ),
 	match_rt_limit_( src.match_rt_limit_ ),
 	max_disulf_score_( src.max_disulf_score_ ),
-	max_dist_sq_( src.max_dist_sq_ ),
 	min_loop_( src.min_loop_ ),
 	min_disulfides_( src.min_disulfides_ ),
 	max_disulfides_( src.max_disulfides_ ),
@@ -223,13 +221,22 @@ DisulfidizeMover::prune_symmetric_disulfides (
 	core::conformation::symmetry::SymmetricConformationCOP symm_conf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::SymmetricConformation const >( pose.conformation_ptr() ) );
 	if ( !symm_conf ) return; //Do nothing if the conformation is not symmetric.
 
-	for ( core::Size i=1; i<ndisulf; ++i ) { //Loop through the input list, starting with the second entry.
-		bool n1_is_indep = symm_conf->Symmetry_Info()->bb_is_independent(  disulf_list[i].first );
-		bool n2_is_indep = symm_conf->Symmetry_Info()->bb_is_independent(  disulf_list[i].second );
+	disulf_list_out.push_back( disulf_list[1] ); //Store the first disulfide (can't be redundant, since it's the first).
 
-		if (n1_is_indep || n2_is_indep) {
-			disulf_list_out.push_back( disulf_list[i] );
+	for ( core::Size i=2; i<ndisulf; ++i ) { //Loop through the input list, starting with the second entry.
+		utility::vector1 < std::pair < core::Size, core::Size > > const equivalent_positions( symm_conf->Symmetry_Info()->map_symmetric_res_pairs( disulf_list[i].first, disulf_list[i].second ) );
+		bool in_list(false);
+		for ( core::Size j=1, jmax=equivalent_positions.size(); j<=jmax; ++j ) {
+			for ( core::Size k=1; k<i; ++k ) {
+				if ( ( disulf_list[k].first == equivalent_positions[j].first && disulf_list[k].second == equivalent_positions[j].second) ||
+						( disulf_list[k].first == equivalent_positions[j].second && disulf_list[k].second == equivalent_positions[j].first) ) {
+					in_list=true;
+					break;
+				}
+			}
+			if ( in_list ) break;
 		}
+		if ( !in_list ) disulf_list_out.push_back( disulf_list[i] ); //Store this disulfide if it's not redundant.
 	}
 
 	disulf_list = disulf_list_out; //Replace the old disulf list.
@@ -269,12 +276,6 @@ DisulfidizeMover::parse_my_tag(
 	if ( tag->hasOption( "max_disulf_score" ) ) {
 		set_max_disulf_score( tag->getOption< core::Real >( "max_disulf_score" ) );
 	}
-
-	if ( tag->hasOption( "max_cb_dist" ) ) {
-		core::Real max_dist = tag->getOption< core::Real >( "max_cb_dist" );
-		max_dist_sq_ = max_dist*max_dist;
-	}
-
 	// by default, a disulfide is valid if it passes score OR matchrt
 	// if this option is false, disulfides must pass score AND matchrt
 	if ( tag->hasOption( "score_or_matchrt" ) ) {
@@ -772,7 +773,7 @@ DisulfidizeMover::check_disulfide_cb_distance(
 	core::Size const res2 ) const
 {
 	core::Real const dist_squared = pose.residue(res1).nbr_atom_xyz().distance_squared(pose.residue(res2).nbr_atom_xyz());
-	bool const retval = ( dist_squared <= max_dist_sq_ );
+	bool const retval = ( dist_squared <= 25 );
 	if ( !retval && TR.Debug.visible() ) {
 		TR.Debug << "DISULF \tTOO FAR. CB-CB distance squared: " << dist_squared << std::endl;
 	}

@@ -75,48 +75,15 @@ rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
 	MoveMapOP mm, ScoreFunctionOP minimizer_score )
 {
 	vector1< pair<Size,Size> > disulfides;
-
+	disulfides.push_back(std::make_pair(lower_res,upper_res));
 	//If this is a symmetric pose, add the equivalent positions:
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformationOP conf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::SymmetricConformation >( pose.conformation_ptr() ) );
-		bool r1_is_indep = conf->Symmetry_Info()->bb_is_independent( lower_res );
-		bool r2_is_indep = conf->Symmetry_Info()->bb_is_independent( upper_res );
-
-		Size s1master = lower_res, s2master = upper_res;
-		if (!r1_is_indep && !r2_is_indep) {
-			s1master = conf->Symmetry_Info()->bb_follows(lower_res);
-			s2master = conf->Symmetry_Info()->bb_follows(upper_res);
+		core::conformation::symmetry::SymmetricConformationCOP conf( utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::SymmetricConformation const >( pose.conformation_ptr() ) );
+		utility::vector1< std::pair <core::Size, core::Size > > const additional_disulfides( conf->Symmetry_Info()->map_symmetric_res_pairs(lower_res,upper_res) );
+		for ( core::Size i=1, imax=additional_disulfides.size(); i<=imax; ++i ) {
+			disulfides.push_back( additional_disulfides[i] );
 		}
-		disulfides.push_back(std::make_pair(s1master,s2master));
-
-		// special logic if this crosses a symm boundary
-		if (r1_is_indep != r2_is_indep) {
-			Size A = r1_is_indep? lower_res : upper_res;
-			Size Bprime = r1_is_indep? upper_res : lower_res;
-			Size B = conf->Symmetry_Info()->bb_follows(Bprime);
-
-			core::Size nclones = conf->Symmetry_Info()->num_bb_clones( );
-			conformation::symmetry::SymmetryInfo::Clones clonesA = conf->Symmetry_Info()->bb_clones( A );
-			bool found = false;
-			numeric::xyzVector< core::Real > xyzA = conf->residue( A ).xyz(1);
-			for ( int i=1; i<=(int)nclones && !found; ++i ) {
-				Size Aprime = clonesA[i];
-				numeric::xyzVector< core::Real > xyzAstar = conf->apply_transformation( conf->residue(Aprime).xyz(1), A, Bprime );
-				core::Real dist = (xyzAstar - xyzA).length();
-				if (dist < 1e-4) {
-					disulfides.push_back(std::make_pair(Aprime,B));
-					found = true;
-				}
-			}
-			if (!found) {
-				TR << "Error in rebuild_disulfide: unable to find symmetry partner!" << std::endl;
-			}
-		}
-	} else {
-		// nonsymmetric, do nothing
-		disulfides.push_back(std::make_pair(lower_res,upper_res));
 	}
-
 	core::util:: rebuild_disulfide(pose, disulfides, packer_task, packer_score, mm, minimizer_score);
 }
 

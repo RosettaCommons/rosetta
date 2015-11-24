@@ -1272,8 +1272,6 @@ Options = Option_Group( '',
 		Option( 'elec_sigmoidal_die_D', 'Real', desc='D parameter for sigmoidal dielectric', default='78.0'),
 		Option( 'elec_sigmoidal_die_D0', 'Real', desc='D0 parameter for sigmoidal dielectric', default='2.0'),
 		Option( 'elec_sigmoidal_die_S', 'Real', desc='S parameter for sigmoidal dielectric', default='0.36'),
-		Option( 'elec_representative_cp', 'Boolean', desc='Use representative atoms for countpair to avoid dipole splits', default='false'),
-		Option( 'elec_representative_cp_flip', 'Boolean', desc='Enable elec_representative_cp, but FLIP the order in the table', default='false'),
 		Option( 'intrares_elec_correction_scale', 'Real', desc='Intrares elec scaling factor for free DOF atoms', default='0.05'),
 		Option( 'smooth_fa_elec', 'Boolean', desc='Smooth the discontinuities in the elec energy function using a sigmoidal term', default='true' ),
 		Option( 'grpelec_fade_type', 'String', desc='use standard way (shift/switch function) of Coulomb function for fa_grpelec', default='false' ),
@@ -1890,7 +1888,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'reassign_atom_types', 'StringVector', desc="Switch the atomtype assignments for atoms in specified residue types. Useful along with -clone_atom_types. -reassign_atom_types format should be:: -reassign_atom_types <rsd-type-set1-name>:<rsd-type1-name>:<atom-type1-name>:<new-atom-type1-name>   <rsd-type-set2-name>:<rsd-type2-name>:<atom-type2-name>:<new-atom-type2-name> ...; for example: '-chemical:reassign_atom_types fa_standard:ARG:NE:NtpR' " ),
 		Option( 'reassign_icoor', 'StringVector', desc="Update icoor parameters for specified atom types. -reassign_icoor format should be:: -reassign_icoor <rsd-type-set1-name>:<rsd-type1-name>:<atom1-name>:<the-six-icoor-params-as-a-comma-separated-list>   <rsd-type-set2-name>:<rsd-type2-name>:<atom2-name>:<icoorparams2> ...; for example: -chemical:reassign_icoor fa_standard:ADE:UPPER:-180,60,1.6,O3',C3',C4' " ),
 		Option( 'set_atomic_charge', 'StringVector', desc="Modify atomic charge from the command line. Happens at time of params file reading, so changes will propagate to patched versions of the residue type. Format is: -chemical:set_atomic_charge <rsd-type-set1-name>:<rsd-type1-name>:<atom1-name>:<new-charge> <rsd-type-set2-name>:<rsd-type2-name>:<atom2-name>:<new-charge>  ... For example: '-chemical:set_atomic_charge fa_standard:ARG:NE:-1' " ),
-		Option( 'set_patch_atomic_charge', 'StringVector', desc="Modify patch atomic charge from the command line. Happens at time of patch file reading, so changes will propagate to patched versions of the residue type.  Uses a simplified version of the residue selector so will probably not work for patches with complex selector logic.   format should be::  -chemical:set_patch_atomic_charge <rsd-type-set1-name>:<rsd-type1-name>:<patch-name>:<atom1-name>:<new-charge> ... For example: '-chemical:set_atomic_charge fa_standard:PRO:NtermProteinFull:1H:-1' " ),
 		Option( 'enlarge_H_lj', 'Boolean', desc="Use larger LJ_WDEPTH for Hs to avoid RNA clashes", default='false'),
 		Option( 'no_hbonds_to_ether_oxygens', 'Boolean', desc="no H-bonds to nucleic acid ether oxygens O3', O4', O5'", default='false'),
 		Option( 'check_rsd_type_finder','Boolean',desc='run legacy code based on name3_map or aa_map to compare to ResidueTypeFinder, which should be way more efficient',default='false'),
@@ -1943,12 +1940,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	# correction for testing ------------------------------------------------------------
 	Option_Group( 'corrections',
-		Option( 'beta', 'Boolean', desc='Use the most-recent (curr Nov 15) beta score function', default='false'),
-		Option( 'beta_cart', 'Boolean', desc='Use the most-recent (curr Nov 15) beta score function for nonideal optimization', default='false'),
-		Option( 'beta_nov15', 'Boolean', desc='Use the November 2015 beta score function', default='false'),
-		Option( 'beta_nov15_cart', 'Boolean', desc='Use the November 2015 beta score function for nonideal optimization', default='false'),
-		Option( 'beta_july15', 'Boolean', desc='Use the July 2015 beta  score function', default='false'),
-		Option( 'beta_july15_cart', 'Boolean', desc='Use the July 2015 beta score function for nonideal optimization', default='false'),
+		Option( 'beta_july15', 'Boolean', desc='use beta score function', default='false'),
+		Option( 'beta_july15_cart', 'Boolean', desc='use beta score function for nonideal optimization', default='false'),
 		Option( 'newdna', 'Boolean', desc='Apply some dna-specific mods to chemical/scoring (for testing)',
 						default='false'),
 		Option( 'correct', 'Boolean',
@@ -6786,7 +6779,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	#Option_Group('liz',
 	#  Option( 'score', 'Boolean', default='true'),
 	#),
-
+	
 	## Options for LooDo pilot app (kblacklock)
 	Option_Group( 'loodo',
 		Option( 'ins_begin',    'Integer',        desc="insertion site (pose numbering)"),

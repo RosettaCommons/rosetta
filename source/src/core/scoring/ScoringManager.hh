@@ -28,11 +28,10 @@
 #include <core/scoring/Membrane_FAPotential.fwd.hh> //pba
 #include <core/scoring/OmegaTether.fwd.hh>
 #include <core/scoring/P_AA.fwd.hh>
-#include <core/scoring/P_AA_ss.fwd.hh>
 #include <core/scoring/PairEPotential.fwd.hh>
 #include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
 #include <core/scoring/ProQPotential.fwd.hh>
-#include <core/scoring/RamaPrePro.fwd.hh>
+#include <core/scoring/Rama2BOffset.fwd.hh>
 #include <core/scoring/Ramachandran.fwd.hh>
 #include <core/scoring/Ramachandran2B.fwd.hh>
 #include <core/scoring/SecondaryStructurePotential.fwd.hh>
@@ -134,7 +133,7 @@ public:
 
 	///RotamerLibrary & get_RotamerLibrary() const;
 
-	RamaPrePro const & get_RamaPrePro() const;
+	Rama2BOffset const & get_Rama2BOffset() const;
 
 	Ramachandran2BCOP get_Ramachandran2B_ptr() const;
 	Ramachandran2B const & get_Ramachandran2B() const;
@@ -213,8 +212,6 @@ public:
 	interface_::DDPlookup const & get_DDPLookupTable() const;
 
 	P_AA const & get_P_AA() const;
-
-	P_AA_ss const & get_P_AA_ss() const;
 
 	UnfoldedStatePotential const & get_UnfoldedStatePotential( std::string const & type ) const;
 
@@ -297,7 +294,7 @@ private:
 	mutable PairEPotentialOP pairE_potential_;
 	mutable RamachandranOP rama_;
 	mutable Ramachandran2BOP rama2b_;
-	mutable RamaPreProOP rama_pp_;
+	mutable Rama2BOffsetOP rama2bo_;
 	mutable OmegaTetherOP omega_;
 	mutable EnvPairPotentialOP env_pair_potential_;
 	mutable SmoothEnvPairPotentialOP smooth_env_pair_potential_;
@@ -326,7 +323,6 @@ private:
 	mutable rna::data::RNA_DMS_PotentialOP rna_dms_potential_;
 	mutable rna::data::RNA_DMS_LowResolutionPotentialOP rna_dms_low_resolution_potential_;
 	mutable P_AAOP p_aa_;
-	mutable P_AA_ssOP p_aa_ss_;
 	mutable WaterAdductHBondPotentialOP water_adduct_hbond_potential_;
 	mutable GenBornPotentialOP gen_born_potential_;
 	mutable MultipoleElecPotentialOP multipole_elec_potential_;

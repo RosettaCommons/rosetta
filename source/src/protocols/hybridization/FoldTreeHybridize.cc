@@ -1480,7 +1480,6 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		// minimizer setup
 		core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true, false, false );
 		if ( core::pose::symmetry::is_symmetric(pose) ) {
-			core::pose::symmetry::make_symmetric_movemap( pose, mm );
 			core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
 			minimizer.run( pose, mm, *minscorefxn_, options );
 		} else {

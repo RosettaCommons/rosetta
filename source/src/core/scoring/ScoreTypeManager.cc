@@ -88,7 +88,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "mm_twist" ] = mm_twist;
 	name2score_type_[ "mm_bend" ] = mm_bend;
 	name2score_type_[ "mm_stretch" ] = mm_stretch;
-	name2score_type_[ "rama_prepro" ] = rama_prepro;
+	name2score_type_[ "rama2b_offset" ] = rama2b_offset;
+	name2score_type_[ "omega2b_offset" ] = omega2b_offset;
 	name2score_type_[ "cart_bonded" ] = cart_bonded;
 	name2score_type_[ "cart_bonded_angle" ] = cart_bonded_angle;
 	name2score_type_[ "cart_bonded_length" ] = cart_bonded_length;
@@ -238,7 +239,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_dun_semi" ] = fa_dun_semi;
 	name2score_type_[ "dna_chi" ] = dna_chi;
 	name2score_type_[ "p_aa_pp" ] = p_aa_pp;
-	name2score_type_[ "p_aa_ss" ] = p_aa_ss;
+	name2score_type_[ "p_aa_pp_offset" ] = p_aa_pp_offset;
 	name2score_type_[ "yhh_planarity" ] = yhh_planarity;
 	name2score_type_[ "h2o_intra" ] =  h2o_intra;
 	name2score_type_[ "ref" ] = ref;

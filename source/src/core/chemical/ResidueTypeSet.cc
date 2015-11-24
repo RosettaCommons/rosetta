@@ -383,7 +383,7 @@ ResidueTypeSet::apply_patches(
 )
 {
 	for ( Size ii=1; ii<= patch_filenames.size(); ++ii ) {
-		PatchOP p( new Patch(name_) );
+		PatchOP p( new Patch );
 		p->read_file( patch_filenames[ii] );
 		patches_.push_back( p );
 		patch_map_[ p->name() ].push_back( p );

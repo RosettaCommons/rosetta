@@ -122,19 +122,12 @@ private:
 /// @details add selector_ from lines enclosed by "BEGIN_SELECTOR" and "END_SELECTOR".\n
 /// add operations_ from each input line containing a single operation
 PatchCaseOP
-case_from_lines(
-	utility::vector1< std::string > const & lines,
-	std::string const & res_type_set_name = "",
-	std::string const & patch_name = ""
-);
+case_from_lines( utility::vector1< std::string > const & lines );
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief A class patching basic ResidueType to create variant types, containing multiple PatchCase
 class Patch : public utility::pointer::ReferenceCount {
 public:
-	Patch() {}
-	Patch( std::string res_type_set_name ) : res_type_set_name_(res_type_set_name) {}
-
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Patch();
 	/// @brief constructor from file
@@ -224,9 +217,6 @@ public:
 
 	/// private data
 private:
-	/// name of the residuetypeset to which this patch belongs
-	std::string res_type_set_name_;
-
 	/// name of the patch
 	std::string name_;
 

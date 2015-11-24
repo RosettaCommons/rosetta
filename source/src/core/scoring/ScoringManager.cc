@@ -33,7 +33,7 @@
 //#include <core/pack/dunbrack/RotamerLibrary.hh>
 //#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
 //#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
-#include <core/scoring/RamaPrePro.hh>
+#include <core/scoring/Rama2BOffset.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/Ramachandran2B.hh>
 #include <core/scoring/OmegaTether.hh>
@@ -56,7 +56,6 @@
 #include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.hh>
 #include <core/scoring/dna/DirectReadoutPotential.hh>
 #include <core/scoring/P_AA.hh>
-#include <core/scoring/P_AA_ss.hh>
 #include <core/scoring/WaterAdductHBondPotential.hh>
 #include <core/scoring/disulfides/FullatomDisulfidePotential.hh>
 #include <core/scoring/disulfides/CentroidDisulfidePotential.hh>
@@ -134,7 +133,7 @@ ScoringManager::ScoringManager() :
 	pairE_potential_( /* 0 */ ),
 	rama_( /* 0 */ ),
 	rama2b_( /* 0 */ ),
-	rama_pp_( /* 0 */ ),
+	rama2bo_( /* 0 */ ),
 	omega_( /* 0 */ ),
 	env_pair_potential_( /* 0 */ ),
 	smooth_env_pair_potential_( /* 0 */ ),
@@ -160,7 +159,6 @@ ScoringManager::ScoringManager() :
 	rna_dms_potential_( /* 0 */ ),
 	rna_dms_low_resolution_potential_( /* 0 */ ),
 	p_aa_( /* 0 */ ),
-	p_aa_ss_( /* 0 */ ),
 	water_adduct_hbond_potential_( /* 0 */ ),
 	gen_born_potential_( /* 0 */ ),
 	fa_disulfide_potential_( /* 0 */ ),
@@ -497,15 +495,6 @@ ScoringManager::get_P_AA() const
 	return *p_aa_;
 }
 
-P_AA_ss const &
-ScoringManager::get_P_AA_ss() const
-{
-	if ( p_aa_ss_ == 0 ) {
-		p_aa_ss_ = P_AA_ssOP( new P_AA_ss );
-	}
-	return *p_aa_ss_;
-}
-
 WaterAdductHBondPotential const &
 ScoringManager::get_WaterAdductHBondPotential() const
 {
@@ -569,13 +558,13 @@ ScoringManager::get_Ramachandran2B() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-RamaPrePro const &
-ScoringManager::get_RamaPrePro() const
+Rama2BOffset const &
+ScoringManager::get_Rama2BOffset() const
 {
-	if ( rama_pp_ == 0 ) {
-		rama_pp_ = RamaPreProOP( new RamaPrePro );
+	if ( rama2bo_ == 0 ) {
+		rama2bo_ = Rama2BOffsetOP( new Rama2BOffset );
 	}
-	return *rama_pp_;
+	return *rama2bo_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

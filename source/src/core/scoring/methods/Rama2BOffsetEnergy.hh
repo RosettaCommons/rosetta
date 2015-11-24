@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/RamaPreProEnergy.hh
+/// @file   core/scoring/methods/Rama2BOffsetEnergy.hh
 /// @brief
 /// @author Frank DiMaio
 
-#ifndef INCLUDED_core_scoring_methods_RamaPreProEnergy_hh
-#define INCLUDED_core_scoring_methods_RamaPreProEnergy_hh
+#ifndef INCLUDED_core_scoring_methods_Rama2BOffsetEnergy_hh
+#define INCLUDED_core_scoring_methods_Rama2BOffsetEnergy_hh
 
 // Unit headers
-#include <core/scoring/methods/RamaPreProEnergy.fwd.hh>
-#include <core/scoring/RamaPrePro.fwd.hh>
+#include <core/scoring/methods/Rama2BOffsetEnergy.fwd.hh>
+#include <core/scoring/Rama2BOffset.fwd.hh>
 
 // Package headers
 #include <core/chemical/ResidueType.fwd.hh>
@@ -43,12 +43,13 @@ namespace scoring {
 namespace methods {
 
 
-class RamaPreProEnergy : public ContextIndependentLRTwoBodyEnergy {
+class Rama2BOffsetEnergy : public ContextIndependentLRTwoBodyEnergy {
 public:
 	typedef ContextIndependentLRTwoBodyEnergy  parent;
 
 public:
-	RamaPreProEnergy( );
+	Rama2BOffsetEnergy( );
+	~Rama2BOffsetEnergy();
 
 	/// clone
 	virtual
@@ -84,16 +85,17 @@ public:
 		EnergyMap &
 	) const { }
 
-	virtual
-	Real
-	eval_intraresidue_dof_derivative(
-		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & /*min_data*/,
-		id::DOF_ID const & /*dof_id*/,
-		id::TorsionID const & tor_id,
-		pose::Pose const & pose,
-		ScoreFunction const & /*sfxn*/,
-		EnergyMap const & weights
+	void
+	eval_residue_pair_derivatives(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		ResSingleMinimizationData const &,
+		ResSingleMinimizationData const &,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const &,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
 	virtual
@@ -102,7 +104,11 @@ public:
 
 	virtual
 	bool
-	defines_intrares_dof_derivatives( pose::Pose const & ) const { return true; }
+	defines_intrares_dof_derivatives( pose::Pose const & ) const { return false; }
+
+	virtual
+	bool
+	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
 
 	virtual
 	Distance
@@ -111,16 +117,11 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const { }
 
-	//fpd  use the new minimizer interface
-	virtual
-	bool
-	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
-
 	methods::LongRangeEnergyType
 	long_range_type() const;
 
 private:
-	RamaPrePro const & potential_;
+	Rama2BOffset const & potential_;
 
 	virtual
 	core::Size version() const;
@@ -132,4 +133,4 @@ private:
 } // namespace core
 
 
-#endif // INCLUDED_core_scoring_methods_RamaPreProEnergy_HH
+#endif // INCLUDED_core_scoring_methods_Rama2BOffsetEnergy_HH

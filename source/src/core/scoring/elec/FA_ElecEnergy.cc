@@ -63,14 +63,12 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/database/open.hh>
 
 // option key includes
 #include <basic/options/option.hh>
@@ -136,7 +134,7 @@ FA_ElecEnergy::FA_ElecEnergy( methods::EnergyMethodOptions const & options ):
 	env_dep_low_nneigh_( options.hbond_options().hb_env_dep_new_low_nneigh() ),
 	hb_env_dep_high_nneigh_( options.hbond_options().hb_env_dep_new_high_nneigh() )
 {
-	initialize();
+	coulomb_.initialize();
 }
 
 
@@ -152,108 +150,13 @@ FA_ElecEnergy::FA_ElecEnergy( FA_ElecEnergy const & src ):
 	env_dep_low_nneigh_( src.env_dep_low_nneigh_ ),
 	hb_env_dep_high_nneigh_( src.hb_env_dep_high_nneigh_ )
 {
-	initialize();
+	coulomb_.initialize();
 }
 
 
 void
 FA_ElecEnergy::initialize() {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
 	coulomb_.initialize();
-
-	// read countpair tables from DB
-	use_cp_rep_ = option[ score::elec_representative_cp ]() || option[ score::elec_representative_cp_flip ]();
-	flip_cp_rep_ = option[ score::elec_representative_cp_flip ]();
-	if ( use_cp_rep_ ) {
-		read_cp_tables_from_db("scoring/score_functions/elec_cp_reps.dat");
-	}
-}
-
-void
-FA_ElecEnergy::read_cp_tables_from_db(std::string filename) {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	// search in the local directory first
-	utility::io::izstream  iunit;
-	iunit.open( filename );
-
-	if ( !iunit.good() ) {
-		iunit.close();
-		if ( !basic::database::open( iunit, filename ) ) {
-			std::stringstream err_msg;
-			err_msg << "Unable to open fa_elec countpair groups '" << filename << "'.";
-			utility_exit_with_message(err_msg.str());
-		}
-	}
-
-	std::string line;
-	std::string name3, atom1, atom2;
-	while ( iunit ) {
-		getline( iunit, line );
-		if ( line[0] == '#' ) continue;
-
-		std::istringstream linestream(line);
-
-		linestream >> name3 >> atom1 >> atom2;  // format is NAME REPRESENTATIVE_ATOM TARGET_ATOM
-
-		if (flip_cp_rep_) {
-			cp_rep_map_byname_[name3].insert(std::make_pair( atom1, atom2 )) ;
-		} else {
-			cp_rep_map_byname_[name3].insert(std::make_pair( atom2, atom1 )) ;
-		}
-	}
-
-	TR << "Read " << cp_rep_map_byname_.size() << " countpair representative atoms" << std::endl;
-}
-
-core::Size
-FA_ElecEnergy::get_countpair_representative_atom(
-	core::chemical::ResidueType const & restype,
-	core::Size atm_i
-) const {
-	if (!use_cp_rep_) return atm_i;
-
-	// for now ...
-	if (!restype.is_protein()) return atm_i;
-
-	std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator iter = cp_rep_map_.find( & restype );
-	if (iter == cp_rep_map_.end()) {
-		// make parameters
-		std::map<core::Size,core::Size> rsd_map;
-
-		std::map< std::string, std::map<std::string,std::string> >::const_iterator name_iter = cp_rep_map_byname_.find( restype.name3() );
-
-		if (name_iter == cp_rep_map_byname_.end()) {
-			TR.Trace << "Warning!  Unable to find countpair representatives for restype " << restype.name3() << std::endl;
-		} else {
-			std::map<std::string,std::string> const & atms = name_iter->second;
-			for (std::map<std::string,std::string>::const_iterator atom_iter = atms.begin(), atom_iter_end = atms.end(); atom_iter!=atom_iter_end; ++atom_iter) {
-				if (restype.has(atom_iter->first) &&  restype.has(atom_iter->second)) {
-					core::Size idx1 = restype.atom_index(atom_iter->first);
-					core::Size idx2 = restype.atom_index(atom_iter->second);
-					rsd_map.insert( std::make_pair(idx1,idx2) );
-				}
-				else {
-					TR.Trace << "Warning!  Unable to find atompair " << atom_iter->first << "," << atom_iter->second  << " for " << restype.name3() << " (" << restype.name() << ")" << std::endl;
-				}
-			}
-		}
-
-		cp_rep_map_[ & restype ] = rsd_map;
-
-		iter = cp_rep_map_.find( & restype );
-	}
-
-	std::map<core::Size,core::Size> const &mapping_i = iter->second;
-	std::map<core::Size,core::Size>::const_iterator iter_map_i = mapping_i.find(atm_i);
-	if (iter_map_i == mapping_i.end()) {
-		return atm_i;
-	} else {
-		return iter_map_i->second;
-	}
 }
 
 
@@ -338,9 +241,6 @@ FA_ElecEnergy::setup_for_packing(
 		// Do not compute energy for virtual residues.
 		if ( pose.residue(ii).aa() == core::chemical::aa_vrt ) continue;
 
-		// ensure that the resmaps are initialized for this
-		if (use_cp_rep_ ) get_countpair_representative_atom(pose.residue( ii ).type(),1);
-
 		RotamerTrieBaseOP one_rotamer_trie = create_rotamer_trie( pose.residue( ii ), pose );
 		tries->trie( ii, one_rotamer_trie );
 	}
@@ -356,10 +256,6 @@ FA_ElecEnergy::prepare_rotamers_for_packing(
 	conformation::RotamerSetBase & set
 ) const
 {
-	// ensure that the resmaps are initialized for everyrestype in the set
-	for ( Size ii = 1; ii <= set.num_rotamers(); ++ii ) {
-	 get_countpair_representative_atom( set.rotamer( ii )->type(),1);
-	}
 
 	trie::RotamerTrieBaseOP rottrie = create_rotamer_trie( set, pose );
 	set.store_trie( methods::elec_method, rottrie );
@@ -421,16 +317,37 @@ FA_ElecEnergy::residue_pair_energy(
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
 		CountPairFunctionOP cpfxn =
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+		/*
+		for ( Size i=1, i_end = rsd1.natoms(); i<= i_end; ++i ) {
+		Vector const & i_xyz( rsd1.xyz(i) );
+		Real const i_charge( rsd1.atomic_charge(i) );
+		if ( i_charge == 0.0 ) continue;
+		for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
+		Real const j_charge( rsd2.atomic_charge(j) );
+		if ( j_charge == 0.0 ) continue;
+		Real weight(1.0);
+		if ( cpfxn->count( i, j, weight ) ) {
+		Real energy = weight *
+		coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+		score += energy;
 
+		if (rsd1.atom_is_backbone(i) && rsd2.atom_is_backbone(j)){
+		emap[fa_elec_bb_bb]+=energy;
+		}else if (!rsd1.atom_is_backbone(i) && ! rsd2.atom_is_backbone(j)){
+		emap[fa_elec_sc_sc]+=energy;
+		} else {
+		emap[fa_elec_bb_sc]+=energy;
+		}
+		}
+		}
+		}*/
 		Real d2;
 		for ( Size ii = 1; ii <= rsd1.nheavyatoms(); ++ii ) {
-			Size ii_rep = get_countpair_representative_atom( rsd1.type(), ii );
 			for ( Size jj = 1; jj <= rsd2.nheavyatoms(); ++jj ) {
-				Size jj_rep = get_countpair_representative_atom( rsd2.type(), jj );
 
 				Real weight = 1.0;
 				Size path_dist( 0 );
-				if ( cpfxn->count( ii_rep, jj_rep, weight, path_dist ) ) {
+				if ( cpfxn->count( ii, jj, weight, path_dist ) ) {
 					score += score_atom_pair( rsd1, rsd2, ii, jj, emap, weight, d2 );
 				} else {
 					d2 = rsd1.xyz(ii).distance_squared( rsd2.xyz(jj) );
@@ -441,27 +358,20 @@ FA_ElecEnergy::residue_pair_energy(
 				Size ii_hatbegin( rsd1.attached_H_begin()[ ii ] ), ii_hatend( rsd1.attached_H_end()[ ii ] );
 				Size jj_hatbegin( rsd2.attached_H_begin()[ jj ] ), jj_hatend( rsd2.attached_H_end()[ jj ] );
 				for ( Size kk = ii_hatbegin; kk <= ii_hatend; ++kk ) {
-					Size kk_rep = get_countpair_representative_atom( rsd1.type(), kk );
-
 					weight = 1.0;
 					path_dist = 0;
-					if ( cpfxn->count( kk_rep, jj_rep, weight, path_dist ) ) score += score_atom_pair( rsd1, rsd2, kk, jj, emap, weight, d2 );
+					if ( cpfxn->count( kk, jj, weight, path_dist ) ) score += score_atom_pair( rsd1, rsd2, kk, jj, emap, weight, d2 );
 				}
 				for ( Size kk = jj_hatbegin; kk <= jj_hatend; ++kk ) {
-					Size kk_rep = get_countpair_representative_atom( rsd2.type(), kk );
-
 					weight = 1.0;
 					path_dist = 0;
-					if ( cpfxn->count( ii_rep, kk_rep, weight, path_dist ) ) score += score_atom_pair( rsd1, rsd2, ii, kk, emap, weight, d2 );
+					if ( cpfxn->count( ii, kk, weight, path_dist ) ) score += score_atom_pair( rsd1, rsd2, ii, kk, emap, weight, d2 );
 				}
 				for ( Size kk = ii_hatbegin; kk <= ii_hatend; ++kk ) {
-					Size kk_rep = get_countpair_representative_atom( rsd1.type(), kk );
 					for ( Size ll = jj_hatbegin; ll <= jj_hatend; ++ll ) {
-						Size ll_rep = get_countpair_representative_atom( rsd2.type(), ll );
-
 						weight = 1.0;
 						path_dist = 0;
-						if ( cpfxn->count( kk_rep, ll_rep, weight, path_dist ) ) score += score_atom_pair( rsd1, rsd2, kk, ll, emap, weight, d2 );
+						if ( cpfxn->count( kk, ll, weight, path_dist ) ) score += score_atom_pair( rsd1, rsd2, kk, ll, emap, weight, d2 );
 					}
 				}
 			}
@@ -469,6 +379,29 @@ FA_ElecEnergy::residue_pair_energy(
 
 
 	} else {
+		// no countpair!
+		/*
+		for ( Size i=1, i_end = rsd1.natoms(); i<= i_end; ++i ) {
+		Vector const & i_xyz( rsd1.xyz(i) );
+		Real const i_charge( rsd1.atomic_charge(i) );
+		if ( i_charge == 0.0 ) continue;
+		for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
+		Real const j_charge( rsd2.atomic_charge(j) );
+		if ( j_charge == 0.0 ) continue;
+
+		float energy = coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+		score += energy;
+		if (rsd1.atom_is_backbone(i) && rsd2.atom_is_backbone(j)){
+		emap[fa_elec_bb_bb]+=energy;
+		}else if (!rsd1.atom_is_backbone(i) && ! rsd2.atom_is_backbone(j)){
+		emap[fa_elec_sc_sc]+=energy;
+		} else {
+		emap[fa_elec_bb_sc]+=energy;
+		}
+
+		// score += coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
+		}
+		}*/
 		Real d2;
 		for ( Size ii = 1; ii <= rsd1.nheavyatoms(); ++ii ) {
 			for ( Size jj = 1; jj <= rsd2.nheavyatoms(); ++jj ) {
@@ -593,15 +526,7 @@ FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
 	Real const XX2 = std::pow( coulomb().max_dis() + 2*tolerated_narrow_nblist_motion, 2 );
 
-	if (!use_cp_rep_ ) {
-		nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair );
-	} else {
-		// ensure that the resmaps are initialized for this pair
-		get_countpair_representative_atom(rsd1.type(),1);
-		get_countpair_representative_atom(rsd2.type(),1);
-
-		nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair, cp_rep_map_[&(rsd1.type())], cp_rep_map_[&(rsd2.type())] );
-	}
+	nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair );
 
 	pair_data.set_data( elec_pair_nblist, nblist );
 }
@@ -765,18 +690,16 @@ FA_ElecEnergy::backbone_backbone_energy(
 
 		for ( Size ii=1, ii_end = rsd1_bb_atoms.size(); ii<= ii_end; ++ii ) {
 			Size const i = rsd1_bb_atoms[ ii ];
-			Size i_rep = get_countpair_representative_atom( rsd1.type(), i );
 			Vector const & i_xyz( rsd1.xyz(i) );
 			Real const i_charge( rsd1.atomic_charge(i) );
 			if ( i_charge == 0.0 ) continue;
 			for ( Size jj=1, jj_end = rsd2_bb_atoms.size(); jj<= jj_end; ++jj ) {
 				Size const j = rsd2_bb_atoms[ jj ];
-				Size j_rep = get_countpair_representative_atom( rsd2.type(), j );
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
 				Real weight(1.0);
 				Size path_dist( 0 );
-				if ( cpfxn->count( i_rep, j_rep, weight, path_dist ) ) {
+				if ( cpfxn->count( i, j, weight, path_dist ) ) {
 					score += weight *
 						coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				}
@@ -840,18 +763,16 @@ FA_ElecEnergy::backbone_sidechain_energy(
 
 		for ( Size ii=1, ii_end = rsd1_bb_atoms.size(); ii<= ii_end; ++ii ) {
 			Size const i = rsd1_bb_atoms[ ii ];
-			Size i_rep = get_countpair_representative_atom( rsd1.type(), i );
 			Vector const & i_xyz( rsd1.xyz(i) );
 			Real const i_charge( rsd1.atomic_charge(i) );
 			if ( i_charge == 0.0 ) continue;
 			for ( Size jj=1, jj_end = rsd2_sc_atoms.size(); jj<= jj_end; ++jj ) {
 				Size const j = rsd2_sc_atoms[ jj ];
-				Size j_rep = get_countpair_representative_atom( rsd2.type(), j );
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
 				Real weight(1.0);
 				Size path_dist( 0 );
-				if ( cpfxn->count( i_rep, j_rep, weight, path_dist ) ) {
+				if ( cpfxn->count( i, j, weight, path_dist ) ) {
 					score += weight *
 						coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				}
@@ -917,18 +838,16 @@ FA_ElecEnergy::sidechain_sidechain_energy(
 
 		for ( Size ii=1, ii_end = rsd1_sc_atoms.size(); ii<= ii_end; ++ii ) {
 			Size const i = rsd1_sc_atoms[ ii ];
-			Size i_rep = get_countpair_representative_atom( rsd1.type(), i );
 			Vector const & i_xyz( rsd1.xyz(i) );
 			Real const i_charge( rsd1.atomic_charge(i) );
 			if ( i_charge == 0.0 ) continue;
 			for ( Size jj=1, jj_end = rsd2_sc_atoms.size(); jj<= jj_end; ++jj ) {
 				Size const j = rsd2_sc_atoms[ jj ];
-				Size j_rep = get_countpair_representative_atom( rsd2.type(), j );
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
 				Real weight(1.0);
 				Size path_dist( 0 );
-				if ( cpfxn->count( i_rep, j_rep, weight, path_dist ) ) {
+				if ( cpfxn->count( i, j, weight, path_dist ) ) {
 					score += weight *
 						coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				}
@@ -1277,16 +1196,16 @@ FA_ElecEnergy::create_rotamer_trie(
 			cpdata_map.max_connpoints_for_residue() > 1 ||
 			cpdata_map.n_entries() > 3 ) {
 		ElecAtom at; CountPairDataGeneric cpdat;
-		return create_trie( rotset, at, cpdat, cpdata_map, cp_rep_map_, atomic_interaction_cutoff() );
+		return create_trie( rotset, at, cpdat, cpdata_map, atomic_interaction_cutoff() );
 	} else if ( cpdata_map.n_entries() == 1 || cpdata_map.n_entries() == 0 /* HACK! */ ) {
 		ElecAtom at; CountPairData_1_1 cpdat;
-		return create_trie( rotset, at, cpdat, cpdata_map, cp_rep_map_, hydrogen_interaction_cutoff()  );
+		return create_trie( rotset, at, cpdat, cpdata_map, hydrogen_interaction_cutoff()  );
 	} else if ( cpdata_map.n_entries() == 2 ) {
 		ElecAtom at; CountPairData_1_2 cpdat;
-		return create_trie( rotset, at, cpdat, cpdata_map, cp_rep_map_, hydrogen_interaction_cutoff() );
+		return create_trie( rotset, at, cpdat, cpdata_map, hydrogen_interaction_cutoff() );
 	} else if ( cpdata_map.n_entries() == 3 ) {
 		ElecAtom at; CountPairData_1_3 cpdat;
-		return create_trie( rotset, at, cpdat, cpdata_map, cp_rep_map_, hydrogen_interaction_cutoff() );
+		return create_trie( rotset, at, cpdat, cpdata_map, hydrogen_interaction_cutoff() );
 	} else {
 		std::cerr << "Unsupported number of residue connections in trie construction." << std::endl;
 		utility_exit();
@@ -1309,16 +1228,16 @@ FA_ElecEnergy::create_rotamer_trie(
 			cpdata_map.max_connpoints_for_residue() > 1 ||
 			cpdata_map.n_entries() > 3 ) {
 		ElecAtom at; CountPairDataGeneric cpdat;
-		return create_trie( res, at, cpdat, cpdata_map, cp_rep_map_, atomic_interaction_cutoff() );
+		return create_trie( res, at, cpdat, cpdata_map, atomic_interaction_cutoff() );
 	} else if ( cpdata_map.n_entries() == 1 || cpdata_map.n_entries() == 0 /* HACK! */ ) {
 		ElecAtom at; CountPairData_1_1 cpdat;
-		return create_trie( res, at, cpdat, cpdata_map, cp_rep_map_, hydrogen_interaction_cutoff()  );
+		return create_trie( res, at, cpdat, cpdata_map, hydrogen_interaction_cutoff()  );
 	} else if ( cpdata_map.n_entries() == 2 ) {
 		ElecAtom at; CountPairData_1_2 cpdat;
-		return create_trie( res, at, cpdat, cpdata_map, cp_rep_map_, hydrogen_interaction_cutoff() );
+		return create_trie( res, at, cpdat, cpdata_map, hydrogen_interaction_cutoff() );
 	} else if ( cpdata_map.n_entries() == 3 ) {
 		ElecAtom at; CountPairData_1_3 cpdat;
-		return create_trie( res, at, cpdat, cpdata_map, cp_rep_map_, hydrogen_interaction_cutoff() );
+		return create_trie( res, at, cpdat, cpdata_map, hydrogen_interaction_cutoff() );
 	} else {
 		std::cerr << "Unsupported number of residue connections in trie construction." << std::endl;
 		utility_exit();

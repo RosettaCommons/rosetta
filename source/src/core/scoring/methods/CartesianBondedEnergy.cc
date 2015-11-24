@@ -3501,7 +3501,7 @@ CartesianBondedEnergy::eval_score(
 
 core::Size
 CartesianBondedEnergy::version() const {
-	return 2; //fd  Fix a typo in params file, update HIS_D params
+	return 1; // Initial versioning
 }
 
 } // namespace methods

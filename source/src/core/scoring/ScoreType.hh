@@ -346,7 +346,7 @@ enum ScoreType {
 	cen_rot_dun,
 	dna_chi,
 	p_aa_pp,
-	p_aa_ss,
+	p_aa_pp_offset,
 	yhh_planarity,
 	h2o_intra,
 	ref,
@@ -467,7 +467,8 @@ enum ScoreType {
 	distance_chainbreak,
 	dof_constraint,
 
-	rama_prepro,  //fpd rama with separate pre-proline potential
+	rama2b_offset,
+	omega2b_offset,
 
 	cart_bonded,  // cartesian bonded potential
 	cart_bonded_angle,  // cartesian bonded potential

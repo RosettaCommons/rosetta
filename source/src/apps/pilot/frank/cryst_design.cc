@@ -3152,7 +3152,6 @@ main( int argc, char * argv [] ) {
 		NEW_OPT(crystdock::dock_ncycle, "dock_ncycle", 200);
 		NEW_OPT(crystdock::dock_vdw_cut, "dock_vdw", 2.0);
 		NEW_OPT(crystdock::ncyc, "ncyc", 1);
-		NEW_OPT(crystdock::nmut, "nmut", 12);
 		NEW_OPT(crystdock::K, "K", 14.0);
 		NEW_OPT(crystdock::fixedres, "fixedpos", utility::vector1<Size>(0));
 		NEW_OPT(crystdock::nofilt, "nofilt", false);

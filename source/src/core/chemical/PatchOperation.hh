@@ -24,7 +24,6 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <map>
 
 namespace core {
 namespace chemical {
@@ -1003,10 +1002,7 @@ private:
 
 /// @brief  Virtual constructor, returns 0 if no match
 PatchOperationOP
-patch_operation_from_patch_file_line(
-	std::string const & line,
-	std::map< std::string, Real > const & atomic_charge_reassignments
-);
+patch_operation_from_patch_file_line( std::string const & line );
 
 } // chemical
 } // core

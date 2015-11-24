@@ -218,7 +218,6 @@ protected:
 private:   // options
 	core::Real match_rt_limit_;
 	core::Real max_disulf_score_;
-	core::Real max_dist_sq_;
 	core::Size min_loop_;
 	core::Size min_disulfides_ ;
 	core::Size max_disulfides_ ;
