@@ -1,0 +1,11 @@
+# This is a .comp file for requiring that the number of (trp or tyr) residues is exactly 2. 
+# File created 21 July 2015 by Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
+PENALTY_DEFINITION
+TYPE TRP TYR # Count if this is a tryptophan OR a tyrosine
+DELTA_START -2
+DELTA_END 2
+PENALTIES 100 40 0 90 110
+ABSOLUTE 2
+BEFORE_FUNCTION LINEAR
+AFTER_FUNCTION LINEAR
+END_PENALTY_DEFINITION

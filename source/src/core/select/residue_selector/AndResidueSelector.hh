@@ -41,6 +41,15 @@ class AndResidueSelector : public ResidueSelector {
 public:
 	// derived from base class
 	AndResidueSelector();
+
+	/// @brief Copy constructor
+	///
+	AndResidueSelector( AndResidueSelector const &src);
+
+	/// @brief Clone operator.
+	/// @details Copy this object and return an owning pointer to the new object.
+	virtual ResidueSelectorOP clone() const;
+
 	AndResidueSelector( ResidueSelectorCOP selector1);
 	AndResidueSelector( ResidueSelectorCOP selector1, ResidueSelectorCOP selector2 );
 

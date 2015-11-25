@@ -52,6 +52,10 @@ LayerSelector::LayerSelector( LayerSelector const &src ) :
 ///
 LayerSelector::~LayerSelector() {}
 
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP LayerSelector::clone() const { return ResidueSelectorOP( new LayerSelector(*this) ); }
+
 /// @brief Apply function: generate a ResidueSubset given a Pose.
 ///
 ResidueSubset

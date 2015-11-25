@@ -65,7 +65,7 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 #include <core/pose/PDBInfo.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
@@ -363,6 +363,14 @@ public:
 
 	bool
 	remove_constraints();
+
+	/// @brief Remove all sequence constraints from this pose.
+	///
+	inline void
+	clear_sequence_constraints() {
+		constraint_set_->clear_sequence_constraints();
+		return;
+	}
 
 	void
 	constraint_set( ConstraintSetOP );

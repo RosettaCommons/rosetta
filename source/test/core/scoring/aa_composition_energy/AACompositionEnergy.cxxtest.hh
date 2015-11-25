@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   test/core/scoring/methods/AACompositionEnergy.cxxtest.hh
-/// @brief  test suite for core::scoring::methods::AACompositionEnergy
+/// @file   test/core/scoring/aa_composition_energy/AACompositionEnergy.cxxtest.hh
+/// @brief  test suite for core::scoring::aa_composition_energy::AACompositionEnergy
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-#include <core/scoring/methods/AACompositionEnergySetup.hh>
-#include <core/scoring/methods/AACompositionEnergy.hh>
+#include <core/scoring/aa_composition_energy/AACompositionEnergySetup.hh>
+#include <core/scoring/aa_composition_energy/AACompositionEnergy.hh>
 
 // Unit headers
 
@@ -50,7 +50,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("core.scoring.methods.AACompositionEnergy.cxxtest");
+static basic::Tracer TR("core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest");
 
 // --------------- Test Class --------------- //
 
@@ -83,7 +83,7 @@ public:
 	/// @details This test checks that we can impose the requirement that a pose contain exactly
 	/// three trans-ACPC residues.
 	void test_energy_eval_exactly_three_transACPC() {
-		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/methods/exactly_three_transACPC.comp -mute all -unmute core.scoring.methods.AACompositionEnergy.cxxtest");
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/exactly_three_transACPC.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_exactly_three_transACPC()." << std::endl;
 			TR << "Test created 20 July 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -169,12 +169,289 @@ public:
 		return;
 	}
 
+	/// @brief Test the energy calculation using the trp cage with a .comp file with fairly complex Boolean logic.
+	/// @details This test defines a count group in which a residue is counted if it is a tryptophan OR it is ((charged or aliphatic) and not (negatively charged or argenine or leucine)).
+	/// So the following residue types should be counted: AIKMPVW.
+	void test_energy_eval_complex_boolean_logic() {
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/complex_booleans.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		if ( TR.visible() ) {
+			TR << "Starting AACompositionEnergyTests::test_energy_eval_complex_boolean_logic()." << std::endl;
+			TR << "Test created 21 Nov 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
+			TR << "This test checks that the aa_composition score term evaluates its energy correctly.  It uses the trp cage, and scores using a setup file that counts a residue if it is a tryptophan OR it is ((charged or aliphatic) and not (negatively charged or argenine or leucine))." << std::endl;
+		}
+
+		using namespace core::chemical;
+		ResidueTypeSetCOP standard_residues( ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+
+		Pose trpcage( create_trpcage_ideal_pose() );
+		TR << "Trp cage sequence: " << trpcage.sequence() << std::endl;;
+		ScoreFunction sfxn;
+		sfxn.set_weight( aa_composition, 1.0 );
+
+		sfxn(trpcage);
+		if ( TR.visible() ) TR << "TEST\tEXPECTED\tACTUAL" << std::endl;
+		if ( TR.visible() ) TR << "TrpCage:\t" << "7.0\t" << trpcage.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage.energies().total_energy(), 7.0, 1e-6 );
+
+		//Mutate the trp to leu:
+		Pose trpcage2(trpcage);
+		core::conformation::ResidueOP new_rsd1( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("LEU") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 6 ), *new_rsd1, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 6, *new_rsd1, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-W6L:\t" << "6.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 6.0, 1e-6 );
+		//Mutate a pro to glu:
+		core::conformation::ResidueOP new_rsd2( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("GLU") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 19 ), *new_rsd2, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 19, *new_rsd2, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-W6L,P19E:\t" << "5.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 5.0, 1e-6 );
+		//Add an arginine:
+		core::conformation::ResidueOP new_rsd3( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("ARG") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 4 ), *new_rsd3, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 4, *new_rsd3, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-W6L,P19E,I4R:\t" << "4.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 4.0, 1e-6 );
+		//Add back a tryptophan:
+		core::conformation::ResidueOP new_rsd4( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("TRP") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 1 ), *new_rsd4, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 1, *new_rsd4, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-N1W,W6L,P19E,I4R:\t" << "5.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 5.0, 1e-6 );
+		//Ged rid of 2 prolines:
+		core::conformation::ResidueOP new_rsd5( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("LEU") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 17 ), *new_rsd5, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 17, *new_rsd5, false );
+		core::conformation::ResidueOP new_rsd6( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("ASN") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 18 ), *new_rsd6, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 18, *new_rsd6, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-N1W,W6L,P19E,I4R,P17L,P18N:\t" << "3.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 3.0, 1e-6 );
+
+		if ( TR.visible() ) {
+			TR << "Test AACompositionEnergyTests::test_energy_eval_complex_boolean_logic() complete." << std::endl;
+			TR.flush();
+		}
+		return;
+	}
+
+	/// @brief Test the energy calculation using the trp cage with a .comp file that specifies more than one residue type.
+	/// @details This test checks that we can impose a requirement involving counting residues that have more than one identity.  (We're
+	/// counting the total number of tryptophan and tyrosine residues, and requiring that the count sum to two).
+	void test_energy_eval_exactly_two_trportyr() {
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/exactly_two_trportyr.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		if ( TR.visible() ) {
+			TR << "Starting AACompositionEnergyTests::test_energy_eval_exactly_two_trportyr()." << std::endl;
+			TR << "Test created 21 Nov 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
+			TR << "This test checks that the aa_composition score term evaluates its energy correctly.  It uses the trp cage, and scores using a setup file that requires that a pose contain exactly two residues that are either tryptophan or tyrosine." << std::endl;
+		}
+
+		using namespace core::chemical;
+		ResidueTypeSetCOP standard_residues( ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+
+		Pose trpcage( create_trpcage_ideal_pose() );
+		ScoreFunction sfxn;
+		sfxn.set_weight( aa_composition, 0.5 );
+
+		sfxn(trpcage);
+		if ( TR.visible() ) TR << "TEST\tEXPECTED\tACTUAL" << std::endl;
+		if ( TR.visible() ) TR << "TrpCage:\t" << "0.0\t" << trpcage.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage.energies().total_energy(), 0.0, 1e-6 );
+
+		//Mutate the tyr to ala:
+		Pose trpcage2(trpcage);
+		core::conformation::ResidueOP new_rsd1( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("ALA") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 3 ), *new_rsd1, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 3, *new_rsd1, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-Y3A:\t" << "20.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 20.0, 1e-6 );
+		//Mutate the ala (formerly tyr) to trp:
+		core::conformation::ResidueOP new_rsd2( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("TRP") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 3 ), *new_rsd2, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 3, *new_rsd2, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-Y3W:\t" << "0.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 0.0, 1e-6 );
+		//Add another tyrosine:
+		core::conformation::ResidueOP new_rsd3( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("TYR") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 2 ), *new_rsd3, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 2, *new_rsd3, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-L2Y,Y3W:\t" << "45.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 45.0, 1e-6 );
+		//Add another tyrosine:
+		core::conformation::ResidueOP new_rsd4( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("TYR") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 1 ), *new_rsd4, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 1, *new_rsd4, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-N1Y,L2Y,Y3W:\t" << "55.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 55.0, 1e-6 );
+		//Ged rid of 2 tryptophans:
+		core::conformation::ResidueOP new_rsd5( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("ALA") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 6 ), *new_rsd5, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 6, *new_rsd5, false );
+		core::conformation::ResidueOP new_rsd6( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("ALA") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 3 ), *new_rsd6, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 3, *new_rsd6, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-N1Y,L2Y,Y3A,W6A:\t" << "0.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 0.0, 1e-6 );
+
+		if ( TR.visible() ) {
+			TR << "Test AACompositionEnergyTests::test_energy_eval_exactly_two_trportyr() complete." << std::endl;
+			TR.flush();
+		}
+		return;
+	}
+
+	/// @brief Test the energy calculation using the trp cage with a .comp file that specifies more than one residue type.
+	/// @details This test checks that we can impose two independent requirements.  (We're counting tryptphans and tyrosines
+	/// separately, and requiring that there be one of each).
+	void test_energy_eval_one_trp_one_tyr() {
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/one_trp_one_tyr.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		if ( TR.visible() ) {
+			TR << "Starting AACompositionEnergyTests::test_energy_eval_one_trp_one_tyr()." << std::endl;
+			TR << "Test created 21 Nov 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
+			TR << "This test checks that the aa_composition score term evaluates its energy correctly.  It uses the trp cage, and scores using a setup file that requires that a pose contain one tryptophan and one tyrosine, counting tryptophans and tyrosines separately." << std::endl;
+		}
+
+		using namespace core::chemical;
+		ResidueTypeSetCOP standard_residues( ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+
+		Pose trpcage( create_trpcage_ideal_pose() );
+		ScoreFunction sfxn;
+		sfxn.set_weight( aa_composition, 0.5 );
+
+		sfxn(trpcage);
+		if ( TR.visible() ) TR << "TEST\tEXPECTED\tACTUAL" << std::endl;
+		if ( TR.visible() ) TR << "TrpCage:\t" << "0.0\t" << trpcage.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage.energies().total_energy(), 0.0, 1e-6 );
+
+		//Mutate the tyr to ala:
+		Pose trpcage2(trpcage);
+		core::conformation::ResidueOP new_rsd1( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("ALA") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 3 ), *new_rsd1, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 3, *new_rsd1, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-Y3A:\t" << "20.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 20.0, 1e-6 );
+		//Mutate the ala (formerly tyr) to trp:
+		core::conformation::ResidueOP new_rsd2( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("TRP") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 3 ), *new_rsd2, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 3, *new_rsd2, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-Y3W:\t" << "55.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 55.0, 1e-6 );
+		//Add another tyrosine:
+		core::conformation::ResidueOP new_rsd3( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("TYR") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 2 ), *new_rsd3, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 2, *new_rsd3, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-L2Y,Y3W:\t" << "35.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 35.0, 1e-6 );
+		//Add another tyrosine:
+		core::conformation::ResidueOP new_rsd4( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("TYR") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 1 ), *new_rsd4, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 1, *new_rsd4, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-N1Y,L2Y,Y3W:\t" << "50.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 50.0, 1e-6 );
+		//Ged rid of 2 tryptophans:
+		core::conformation::ResidueOP new_rsd5( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("ALA") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 6 ), *new_rsd5, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 6, *new_rsd5, false );
+		core::conformation::ResidueOP new_rsd6( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("ALA") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 3 ), *new_rsd6, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 3, *new_rsd6, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-N1Y,L2Y,Y3A,W6A:\t" << "40.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 40.0, 1e-6 );
+
+		if ( TR.visible() ) {
+			TR << "Test AACompositionEnergyTests::test_energy_eval_one_trp_one_tyr() complete." << std::endl;
+			TR.flush();
+		}
+		return;
+	}
+
+	/// @brief Test the energy calculation using the trp cage with a .comp file that requires exactly three aliphatic residues that are not proline.
+	///
+	void test_energy_eval_aliphatic_not_pro() {
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/aliphatic_not_pro.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
+		if ( TR.visible() ) {
+			TR << "Starting AACompositionEnergyTests::test_energy_eval_aliphatic_not_pro()." << std::endl;
+			TR << "Test created 21 Nov 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
+			TR << "This test checks that the aa_composition score term evaluates its energy correctly.  It uses the trp cage, and scores using a setup file that requires that a pose contain exactly three aliphatic residues that are not proline." << std::endl;
+		}
+
+		using namespace core::chemical;
+		ResidueTypeSetCOP standard_residues( ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+
+		Pose trpcage( create_trpcage_ideal_pose() );
+		ScoreFunction sfxn;
+		sfxn.set_weight( aa_composition, 0.5 );
+
+		sfxn(trpcage);
+		if ( TR.visible() ) TR << "TEST\tEXPECTED\tACTUAL" << std::endl;
+		if ( TR.visible() ) TR << "TrpCage:\t" << "0.0\t" << trpcage.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage.energies().total_energy(), 0.0, 1e-6 );
+
+		//Mutate the ile to val:
+		Pose trpcage2(trpcage);
+		core::conformation::ResidueOP new_rsd1( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("VAL") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 4 ), *new_rsd1, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 4, *new_rsd1, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-I4V:\t" << "0.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 0.0, 1e-6 );
+		//Mutate the val (formerly ile) to pro:
+		core::conformation::ResidueOP new_rsd2( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("PRO") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 4 ), *new_rsd2, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 4, *new_rsd2, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-I4P:\t" << "25.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 25.0, 1e-6 );
+		//Add another isoleucine:
+		core::conformation::ResidueOP new_rsd3( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("ILE") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 10 ), *new_rsd3, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 10, *new_rsd3, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-I4P,G10I:\t" << "0.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 0.0, 1e-6 );
+		//Add another leucine:
+		core::conformation::ResidueOP new_rsd4( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("LEU") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 1 ), *new_rsd4, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 1, *new_rsd4, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-N1L,I4P,G10I:\t" << "35.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 35.0, 1e-6 );
+		//Mutate Ile10 to Pro:
+		core::conformation::ResidueOP new_rsd5( core::conformation::ResidueFactory::create_residue( standard_residues->name_map("PRO") ) );
+		core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( trpcage2.residue( 10 ), *new_rsd5, trpcage2.conformation(), true);
+		trpcage2.replace_residue( 10, *new_rsd5, false );
+		sfxn(trpcage2);
+		if ( TR.visible() ) TR << "TrpCage-N1L,I4P,G10P:\t" << "0.0\t" << trpcage2.energies().total_energy() << std::endl;
+		TS_ASSERT_DELTA( trpcage2.energies().total_energy(), 0.0, 1e-6 );
+
+		if ( TR.visible() ) {
+			TR << "Test AACompositionEnergyTests::test_energy_aliphatic_not_pro() complete." << std::endl;
+			TR.flush();
+		}
+		return;
+	}
+
 
 	/// @brief Test the energy calculation using the trp cage.
 	/// @details This test checks that we can impose the requirement that a pose contain exactly
 	/// one tryptophan using this scoring term.
 	void test_energy_eval_exactly_one_trp() {
-		core_init_with_additional_options("-score:aa_composition_setup_file exactly_one_trp.comp -mute all -unmute core.scoring.methods.AACompositionEnergy.cxxtest");
+		core_init_with_additional_options("-score:aa_composition_setup_file exactly_one_trp.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_exactly_one_trp()." << std::endl;
 			TR << "Test created 20 July 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -237,7 +514,7 @@ public:
 	/// @brief Test the energy calculation using the trp cage.
 	/// @details This test checks that we can impose the requirement that a pose contain exactly two aromatic residues.
 	void test_energy_eval_two_aromatics() {
-		core_init_with_additional_options("-score:aa_composition_setup_file two_aromatics.comp -mute all -unmute core.scoring.methods.AACompositionEnergy.cxxtest");
+		core_init_with_additional_options("-score:aa_composition_setup_file two_aromatics.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_two_aromatics()." << std::endl;
 			TR << "Test created 20 July 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -303,7 +580,7 @@ public:
 	/// @brief Test the energy calculation using the trp cage.
 	/// @details This test checks that we can impose the requirement that a pose contain 10% aromatic residues.
 	void test_energy_eval_ten_percent_aromatic() {
-		core_init_with_additional_options("-score:aa_composition_setup_file ten_percent_aromatic.comp -mute all -unmute core.scoring.methods.AACompositionEnergy.cxxtest");
+		core_init_with_additional_options("-score:aa_composition_setup_file ten_percent_aromatic.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_ten_percent_aromatic()." << std::endl;
 			TR << "Test created 20 July 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -369,7 +646,7 @@ public:
 	/// @brief Test the energy calculation using the trp cage.
 	/// @details This test checks that we can impose the requirement that a pose contain 20% proline.
 	void test_energy_eval_twenty_percent_pro() {
-		core_init_with_additional_options("-score:aa_composition_setup_file twenty_percent_pro.comp -mute all -unmute core.scoring.methods.AACompositionEnergy.cxxtest");
+		core_init_with_additional_options("-score:aa_composition_setup_file twenty_percent_pro.comp -mute all -unmute core.scoring.aa_composition_energy.AACompositionEnergy.cxxtest core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 		if ( TR.visible() ) {
 			TR << "Starting AACompositionEnergyTests::test_energy_eval_twenty_percent_pro()." << std::endl;
 			TR << "Test created 20 July 2015 by Vikram K. Mulligan, Baker laboratory." << std::endl;
@@ -540,7 +817,7 @@ public:
 	/// @brief Test the tail functions with constant below, linear above.
 	///
 	void test_tailfunctions_const_lin() {
-		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/methods/tailfunction_const.comp");
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/tailfunction_const.comp -unmute core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 
 		if ( TR.visible() ) {
 			TR << "Starting test_tailfunctions_const_lin()." << std::endl;
@@ -603,7 +880,7 @@ public:
 	/// @brief Test the tail functions with linear below, const above.
 	///
 	void test_tailfunctions_lin_const() {
-		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/methods/tailfunction_linear.comp");
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/tailfunction_linear.comp -unmute core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 
 		if ( TR.visible() ) {
 			TR << "Starting test_tailfunctions_lin_const()." << std::endl;
@@ -666,7 +943,7 @@ public:
 	/// @brief Test the tail functions with quadratic above and below.
 	///
 	void test_tailfunctions_quadratic() {
-		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/methods/tailfunction_quadratic.comp");
+		core_init_with_additional_options("-score:aa_composition_setup_file core/scoring/aa_composition_energy/tailfunction_quadratic.comp -unmute core.scoring.aa_composition_energy.AACompositionEnergy -out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500");
 
 		if ( TR.visible() ) {
 			TR << "Starting test_tailfunctions_quadratic()." << std::endl;

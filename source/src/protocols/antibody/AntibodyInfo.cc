@@ -1336,12 +1336,12 @@ AntibodyInfo::setup_CDR_clusters(const pose::Pose& pose, utility::vector1<bool> 
 
 void
 AntibodyInfo::setup_CDR_cluster(const pose::Pose& pose, CDRNameEnum cdr, bool attempt_set_from_pose) {
-	
-	if ( cdr == l4 || cdr == h4 ){
+
+	if ( cdr == l4 || cdr == h4 ) {
 		TR << "Clusters do not currently exist for the DE loop.  Skipping. " << std::endl;
 		return;
 	}
-	
+
 	using namespace core::pose::datacache;
 	TR << "Setting up CDR Cluster for " << this->get_CDR_name( cdr ) << std::endl;
 

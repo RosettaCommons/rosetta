@@ -37,7 +37,18 @@ namespace residue_selector {
 
 
 OrResidueSelector::OrResidueSelector() {}
+
+/// @brief Copy constructor
+///
+OrResidueSelector::OrResidueSelector( OrResidueSelector const &src) :
+	selectors_( src.selectors_ )
+{}
+
 OrResidueSelector::~OrResidueSelector() {}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP OrResidueSelector::clone() const { return ResidueSelectorOP( new OrResidueSelector(*this) ); }
 
 OrResidueSelector::OrResidueSelector( ResidueSelectorCOP selector1, ResidueSelectorCOP selector2 )
 {

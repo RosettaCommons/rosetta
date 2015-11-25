@@ -42,7 +42,8 @@ BOND  CE  3HE
 CHI 1  N    CA   CB   CG 
 CHI 2  CA   CB   CG   SD 
 CHI 3  CB   CG   SD   CE 
-PROPERTIES PROTEIN ALPHA_AA L_AA HYDROPHOBIC SC_ORBITALS METALBINDING
+#Note that, for convenience, we classify methionine as an "honorary" aliphatic:
+PROPERTIES PROTEIN ALPHA_AA L_AA HYDROPHOBIC SC_ORBITALS METALBINDING ALIPHATIC
 METAL_BINDING_ATOMS O SD #There are rare cases in which the delta sulfur coordinates a metal.
 NBR_ATOM CB
 # APL CB to sidechain heavyatom distance; swept all chi combos at 5 degree intervals

@@ -35,8 +35,21 @@ namespace select {
 namespace residue_selector {
 
 
-TrueResidueSelector::TrueResidueSelector() {}
+TrueResidueSelector::TrueResidueSelector() :
+	ResidueSelector()
+{}
+
 TrueResidueSelector::~TrueResidueSelector() {}
+
+/// @brief Copy constructor
+///
+TrueResidueSelector::TrueResidueSelector( TrueResidueSelector const &) :
+	ResidueSelector()
+{}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP TrueResidueSelector::clone() const { return ResidueSelectorOP( new TrueResidueSelector(*this) ); }
 
 ResidueSubset
 TrueResidueSelector::apply( core::pose::Pose const & pose ) const

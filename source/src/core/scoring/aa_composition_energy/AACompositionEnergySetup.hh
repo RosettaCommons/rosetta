@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/scoring/methods/AACompositionEnergySetupSetup.hh
+/// @file core/scoring/aa_composition_energy/AACompositionEnergySetupSetup.hh
 /// @brief Headers for a helper for the EnergyMethod that penalizes deviation from a desired amino acid composition.
 /// @details This energy method is inherently not pairwise decomposible.  However, it is intended for very rapid calculation,
 /// and has been designed to plug into Alex Ford's modifications to the packer that permit it to work with non-pairwise scoring
@@ -16,14 +16,13 @@
 
 
 
-#ifndef INCLUDED_core_scoring_methods_AACompositionEnergySetupSetup_hh
-#define INCLUDED_core_scoring_methods_AACompositionEnergySetupSetup_hh
+#ifndef INCLUDED_core_scoring_aa_composition_energy_AACompositionEnergySetupSetup_hh
+#define INCLUDED_core_scoring_aa_composition_energy_AACompositionEnergySetupSetup_hh
 
 // Unit headers
-#include <core/scoring/methods/AACompositionEnergySetup.fwd.hh>
+#include <core/scoring/aa_composition_energy/AACompositionEnergySetup.fwd.hh>
 
 // Package headers
-#include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
@@ -42,7 +41,7 @@
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace aa_composition_energy {
 
 /// @brief The different types of behaviour for the penalty values past the defined range.
 /// @details When values are added to this enum, they should also be added to the AACompositionEnergySetup::get_tailfunction_name() function.
@@ -56,9 +55,15 @@ enum TailFunction {
 };
 
 
-/// @brief AACompositionPropertiesSet, a helper class that stores a set of properties that MUST
-/// be present for a residue to be counted, and a set of properties that MUST NOT be present for
-/// that residue to be counted.
+/// @brief AACompositionPropertiesSet, a helper class that stores:
+/// - names of residue types that WILL be counted (TYPE)
+/// - names of residue types that WILL NOT be counted (NOT_TYPE)
+/// - properties that MUST be present in order for a residue to be counted (PROPERTIES).
+/// - properties, any of which is sufficient for a residue to be counted (OR_PROPERTIES).
+/// - properties that MUST NOT be present in order for a residue to be counted (NOT_PROPERTIES).
+/// @details The logic is as follows: a residue is counted if and only if [any TYPE matches] OR [ (no NOT_TYPE matches) AND
+/// ( {all PROPERTIES match} OR {any OR_PROPERTIES match} OR {no TYPEs defined AND no PROPERTIES defined AND no OR_PROPERTIES defined } ) AND
+/// ( no NOT_PROPERTIES match) ]
 class AACompositionPropertiesSet : public utility::pointer::ReferenceCount {
 public:
 
@@ -69,7 +74,10 @@ public:
 	/// @brief Constructor for AACompositionPropertiesSet that takes lists of
 	/// included and excluded properties.
 	AACompositionPropertiesSet(
+		utility::vector1< std::string > const &included_type_strings,
+		utility::vector1< std::string > const &excluded_type_strings,
 		utility::vector1< std::string > const &included_properties_strings,
+		utility::vector1< std::string > const &or_properties_strings,
 		utility::vector1< std::string > const &excluded_properties_strings
 	);
 
@@ -86,22 +94,70 @@ public:
 	virtual AACompositionPropertiesSetOP clone() const;
 
 	/// @brief Check whether the properties of a residue type match those of this set.
-	/// @details This checks (a) that all of the included properties are in the rsd_type, and
-	/// (b) that none of the excluded properties is in the rsd_type.
+	/// @details This checks:
+	/// 1.  Whether the residue name matches an exlcuded name -> return false.
+	/// 2.  Whether the residue name matches an included name -> return true.
+	/// 3.  Whether the residue properties match an excluded property -> return false.
+	/// 4.  Whether all three of the included_types and or_properties and included_property lists are empty -> return true.
+	/// 5.  Whether any or_property is matched -> return true.
+	/// 6.  Whether there exist any proprties to match -> if not, return false.
+	/// 7.  Whether any properties are not matched -> return false.
+	/// Returns true
 	inline bool properties_match_this( core::chemical::ResidueType const &rsd_type ) const {
-		for ( core::Size i=1, imax=included_properties_.size(); i<=imax; ++i ) {
-			if ( !rsd_type.has_property(included_properties_[i]) ) return false;
+		std::string const & resname( rsd_type.name3() );
+		//Check 1:
+		for ( core::Size i=1, imax=excluded_types_.size(); i<=imax; ++i ) {
+			if ( resname == excluded_types_[i] ) return false;
 		}
+
+		//Check2:
+		for ( core::Size i=1, imax=included_types_.size(); i<=imax; ++i ) {
+			if ( resname == included_types_[i] ) return true;
+		}
+
+		//Check 3:
 		for ( core::Size i=1, imax=excluded_properties_.size(); i<=imax; ++i ) {
 			if ( rsd_type.has_property(excluded_properties_[i]) ) return false;
 		}
+
+		//Check 4:
+		if ( included_types_.size()==0 && or_properties_.size()==0 && included_properties_.size()==0 ) return true;
+
+		//Check 5:
+		for ( core::Size i=1, imax=or_properties_.size(); i<=imax; ++i ) {
+			if ( rsd_type.has_property(or_properties_[i]) ) return true;
+		}
+
+		//Check 6:
+		if ( included_properties_.size() == 0 ) return false;
+
+		//Check 7:
+		for ( core::Size i=1, imax=included_properties_.size(); i<=imax; ++i ) {
+			if ( !rsd_type.has_property(included_properties_[i]) ) return false;
+		}
+
 		return true;
 	}
+
+	/// @brief Take a list of included type strings and add it to the list of included types, checking that
+	/// none of the types has already been added.
+	/// @details Populates the included_types_ vector based on the types named in the list.
+	void parse_included_types( utility::vector1< std::string > const &typelist );
+
+	/// @brief Take a list of excluded type strings and add it to the list of excluded types, checking that
+	/// none of the types has already been added.
+	/// @details Populates the excluded_types_ vector based on the types named in the list.
+	void parse_excluded_types( utility::vector1< std::string > const &typelist );
 
 	/// @brief Take a list of included property strings and parse it.
 	/// @details Populates the included_properties_ vector based on the properties named in
 	/// the list.
 	void parse_included_properites( utility::vector1< std::string > const &proplist );
+
+	/// @brief Take a list of included property strings and parse it.
+	/// @details Populates the included_properties_ vector based on the properties named in
+	/// the list.
+	void parse_or_properties( utility::vector1< std::string > const &proplist );
 
 	/// @brief Take a list of excluded property strings and parse it.
 	/// @details Populates the excluded_properties_ vector based on the properties named in
@@ -126,12 +182,34 @@ private:
 		return false;
 	}
 
-	/// @brief Add a property to the list of properties that must be present.
+	/// @brief Check whether a string is in a list.
 	///
+	inline bool is_in_list( std::string const &mystring, utility::vector1 < std::string > const &list) const {
+		for ( core::Size i=1, imax=list.size(); i<=imax; ++i ) {
+			if ( list[i]==mystring ) return true;
+		}
+		return false;
+	}
+
+	/// @brief Add a type to the list of types that are always counted.
+	/// @details Checks that it hasn't yet been added to any list.
+	void add_included_type( std::string const &type );
+
+	/// @brief Add a type to the list of types that are never counted.
+	/// @details Checks that it hasn't yet been added to any list.
+	void add_excluded_type( std::string const &type );
+
+	/// @brief Add a property to the list of properties that must be present.
+	/// @details Checks that it hasn't yet been added to any list.
 	void add_included_property( core::chemical::ResidueProperty const property );
 
+	/// @brief Add a property to the list of properties that, if present, result in the residue being counted
+	/// if it's not in the excluded_types_ or excluded_properties_ lists.
+	/// @details Checks that it hasn't yet been added to any list.
+	void add_or_property( core::chemical::ResidueProperty const property );
+
 	/// @brief Add a property to the list of properties that must not be present.
-	///
+	/// @details Checks that it hasn't yet been added to any list.
 	void add_excluded_property( core::chemical::ResidueProperty const property );
 
 	/// @brief Convert a property name to a ResidueProperty enum.
@@ -145,9 +223,21 @@ private:
 	Private variables:
 	******************/
 
+	/// @brief Residue names that are counted.
+	///
+	utility::vector1 < std::string > included_types_;
+
+	/// @brief Residue names that are not counted.
+	///
+	utility::vector1 < std::string > excluded_types_;
+
 	/// @brief Properties that a residue MUST have.
 	///
 	utility::vector1 < core::chemical::ResidueProperty > included_properties_;
+
+	/// @brief Properties, any of which is sufficient for a residue to be counted if it's not in the NOT_TYPE or NOT_PROPERTIES lists.
+	///
+	utility::vector1 < core::chemical::ResidueProperty > or_properties_;
 
 	/// @brief Properties that a residue MUST NOT have.
 	///
@@ -211,50 +301,21 @@ public:
 	Public accessor functions:
 	*************************/
 
-	/// @brief Look up the penalty for a residue type of internal index res_type_index, given a deviation from
-	/// the desired count given by delta_expected.
-	inline core::Real type_penalty( signed long const delta_expected, core::Size const res_type_index) const {
-		if ( delta_expected < type_deviation_ranges_[res_type_index].first ) return out_of_bounds_func( res_type_index, delta_expected, true, false ); //type_penalties_[res_type_index][1];
-		if ( delta_expected > type_deviation_ranges_[res_type_index].second ) return out_of_bounds_func( res_type_index, delta_expected, false, false );// type_penalties_[res_type_index][ type_penalties_[res_type_index].size() ];
-		return type_penalties_[res_type_index][ delta_expected - type_deviation_ranges_[res_type_index].first + 1 ];
-	}
-
 	/// @brief Look up the penalty for a property set of internal index property_set_index, given a deviation from
 	/// the desired count given by delta_expected.
 	inline core::Real property_penalty( signed long const delta_expected, core::Size const property_set_index) const {
-		if ( delta_expected < property_deviation_ranges_[property_set_index].first ) return out_of_bounds_func( property_set_index, delta_expected, true, true ); //property_penalties_[property_set_index][1];
-		if ( delta_expected > property_deviation_ranges_[property_set_index].second ) return out_of_bounds_func( property_set_index, delta_expected, false, true );
+		if ( delta_expected < property_deviation_ranges_[property_set_index].first ) return out_of_bounds_func( property_set_index, delta_expected, true ); //property_penalties_[property_set_index][1];
+		if ( delta_expected > property_deviation_ranges_[property_set_index].second ) return out_of_bounds_func( property_set_index, delta_expected, false );
 		return property_penalties_[property_set_index][ delta_expected - property_deviation_ranges_[property_set_index].first + 1 ];
 	}
-
-	/// @brief Get the number of types of residues that we'll be counting.
-	///
-	inline core::Size n_residue_types() const { return res_type_index_mappings_.size(); }
 
 	/// @brief Get the number of sets of properties that we'll be counting.
 	///
 	inline core::Size n_property_sets() const { return property_sets_.size(); }
 
-	/// @brief Return true if and only if a particular residue type name3 is in the map of residues to count.
-	///
-	inline bool has_type( std::string const &name ) const { return ( res_type_index_mappings_.count( name ) != 0 ); }
-
-	/// @brief Get the internal index of a particular residue type that we're counting,
-	/// given its name3 string.
-	/// @details Does not check for whether the type exists in the map first!  Use has_type() to check before calling!
-	inline core::Size res_type_index(std::string const &name) const { return res_type_index_mappings_.at( name ); }
-
-	/// @brief Get the expected absolute number of residues for a given type, by type index.
-	/// @details Warning!  For speed, there's no check that the index is in range!
-	inline signed long expected_by_type_absolute( core::Size const index ) const { return expected_by_type_absolute_[index]; }
-
 	/// @brief Get the expected absolute number of residues for a given set of properties, by property set index.
 	/// @details Warning!  For speed, there's no check that the index is in range!
 	inline signed long expected_by_properties_absolute( core::Size const index ) const { return expected_by_properties_absolute_[index]; }
-
-	/// @brief Get the expected fractional number of residues for a given type, by type index.
-	/// @details Warning!  For speed, there's no check that the index is in range!
-	inline core::Real expected_by_type_fraction( core::Size const index ) const { return expected_by_type_fraction_[index]; }
 
 	/// @brief Get the expected fractional number of residues for a given set of properties, by property set index.
 	/// @details Warning!  For speed, there's no check that the index is in range!
@@ -301,30 +362,24 @@ private:
 	inline core::Real out_of_bounds_func(
 		core::Size const index,
 		signed long const delta_expected,
-		bool const before,
-		bool const property
+		bool const before
 	) const {
 		TailFunction tf( tf_unknown );
-		if ( property ) {
-			if ( before ) tf=property_tailfunctions_[index].first;
-			else /*if !before*/ tf=property_tailfunctions_[index].second;
-		} else { // if !property
-			if ( before ) tf=type_tailfunctions_[index].first;
-			else /*if !before*/ tf=type_tailfunctions_[index].second;
-		}
+		if ( before ) tf=property_tailfunctions_[index].first;
+		else /*if !before*/ tf=property_tailfunctions_[index].second;
 
 		switch(tf) {
 		case tf_constant :
-			return const_out_of_bounds_func(before, property, index);
-			break;
+			return const_out_of_bounds_func(before, index);
+			//break; //cppcheck complains about this below a return.
 		case tf_linear :
-			return linear_out_of_bounds_func( before, property, index, delta_expected );
-			break;
+			return linear_out_of_bounds_func( before, index, delta_expected );
+			//break; //cppcheck complains about this below a return.
 		case tf_quadratic :
-			return quadratic_out_of_bounds_func( before, property, index, delta_expected );
-			break;
+			return quadratic_out_of_bounds_func( before, index, delta_expected );
+			//break; //cppcheck complains about this below a return.
 		default :
-			utility_exit_with_message( "Error in core::scoring::methods::AACompositionEnergySetup::out_of_bounds_func(): Unknown out of bounds function." );
+			utility_exit_with_message( "Error in core::scoring::aa_composition_energy::AACompositionEnergySetup::out_of_bounds_func(): Unknown out of bounds function." );
 		}
 
 		return 0.0;
@@ -337,21 +392,12 @@ private:
 	/// @param[in] index The index in the list of properties or residue types that we're counting.
 	inline core::Real const_out_of_bounds_func(
 		bool const before,
-		bool const property,
 		core::Size const index
 	) const {
 		if ( before ) {
-			if ( property ) {
-				return property_penalties_[index][1];
-			} else { //if type
-				return type_penalties_[index][1];
-			}
+			return property_penalties_[index][1];
 		} else { //if after
-			if ( property ) {
-				return property_penalties_[index][property_penalties_[index].size()];
-			} else { //if type
-				return type_penalties_[index][type_penalties_[index].size()];
-			}
+			return property_penalties_[index][property_penalties_[index].size()];
 		}
 		return 0.0;
 	}
@@ -364,7 +410,6 @@ private:
 	/// @param[in] delta_expected The deviation from the expected count.
 	inline core::Real linear_out_of_bounds_func(
 		bool const before,
-		bool const property,
 		core::Size const index,
 		signed long const delta_expected
 	) const {
@@ -372,21 +417,11 @@ private:
 		core::Real b(0.0); //intercept
 
 		if ( before ) {
-			if ( property ) {
-				m = (property_penalties_[index][2] - property_penalties_[index][1]); //denominator is 1
-				b = (property_penalties_[index][1] - m * static_cast<core::Real>(property_deviation_ranges_[index].first) );
-			} else { //if type
-				m = (type_penalties_[index][2] - type_penalties_[index][1]); //denominator is 1
-				b = (type_penalties_[index][1] - m * static_cast<core::Real>(type_deviation_ranges_[index].first) );
-			}
+			m = (property_penalties_[index][2] - property_penalties_[index][1]); //denominator is 1
+			b = (property_penalties_[index][1] - m * static_cast<core::Real>(property_deviation_ranges_[index].first) );
 		} else { //if after
-			if ( property ) {
-				m = (property_penalties_[index][ property_penalties_[index].size() ] - property_penalties_[index][ property_penalties_[index].size()-1 ]); //denominator is 1
-				b = (property_penalties_[index][ property_penalties_[index].size() ] - m * static_cast<core::Real>(property_deviation_ranges_[index].second) );
-			} else { //if type
-				m = (type_penalties_[index][ type_penalties_[index].size() ] - type_penalties_[index][ type_penalties_[index].size()-1 ]); //denominator is 1
-				b = (type_penalties_[index][ type_penalties_[index].size() ] - m * static_cast<core::Real>(type_deviation_ranges_[index].second) );
-			}
+			m = (property_penalties_[index][ property_penalties_[index].size() ] - property_penalties_[index][ property_penalties_[index].size()-1 ]); //denominator is 1
+			b = (property_penalties_[index][ property_penalties_[index].size() ] - m * static_cast<core::Real>(property_deviation_ranges_[index].second) );
 		}
 		return m*static_cast<core::Real>(delta_expected)+b;
 	}
@@ -399,7 +434,6 @@ private:
 	/// @param[in] delta_expected The deviation from the expected count.
 	inline core::Real quadratic_out_of_bounds_func(
 		bool const before,
-		bool const property,
 		core::Size const index,
 		signed long const delta_expected
 	) const {
@@ -407,27 +441,14 @@ private:
 		core::Real b(0.0); //intercept of y=ax^2+b
 
 		if ( before ) {
-			if ( property ) {
-				core::Real const x1sq( pow( static_cast<core::Real>(property_deviation_ranges_[index].first), 2 ) );
-				a = ( property_penalties_[index][1] - property_penalties_[index][2] ) / ( x1sq - pow( static_cast<core::Real>(property_deviation_ranges_[index].first + 1 ), 2 ) );
-				b = (property_penalties_[index][1] - a * x1sq );
-			} else { //if type
-				core::Real const x1sq( pow( static_cast<core::Real>( type_deviation_ranges_[index].first ), 2 ) );
-				a = ( type_penalties_[index][1] - type_penalties_[index][2] ) / ( x1sq - pow( static_cast<core::Real>( type_deviation_ranges_[index].first + 1 ), 2 ) );
-				b = (type_penalties_[index][1] - a * x1sq );
-			}
+			core::Real const x1sq( pow( static_cast<core::Real>(property_deviation_ranges_[index].first), 2 ) );
+			a = ( property_penalties_[index][1] - property_penalties_[index][2] ) / ( x1sq - pow( static_cast<core::Real>(property_deviation_ranges_[index].first + 1 ), 2 ) );
+			b = (property_penalties_[index][1] - a * x1sq );
 		} else { //if after
-			if ( property ) {
-				core::Real const x2sq( pow( static_cast<core::Real>( property_deviation_ranges_[index].second ), 2 ) );
-				a = ( property_penalties_[index][ property_penalties_[index].size()-1 ] - property_penalties_[index][ property_penalties_[index].size() ] ) /
-					( pow( static_cast<core::Real>( property_deviation_ranges_[index].second - 1 ), 2 ) - x2sq);
-				b = (property_penalties_[index][property_penalties_[index].size()] - a * x2sq );
-			} else { //if type
-				core::Real const x2sq( pow( static_cast<core::Real>( type_deviation_ranges_[index].second ), 2 ) );
-				a = ( type_penalties_[index][ type_penalties_[index].size()-1 ] - type_penalties_[index][ type_penalties_[index].size() ] ) /
-					( pow( static_cast<core::Real>( type_deviation_ranges_[index].second - 1 ), 2 ) - x2sq);
-				b = (type_penalties_[index][type_penalties_[index].size()] - a * x2sq );
-			}
+			core::Real const x2sq( pow( static_cast<core::Real>( property_deviation_ranges_[index].second ), 2 ) );
+			a = ( property_penalties_[index][ property_penalties_[index].size()-1 ] - property_penalties_[index][ property_penalties_[index].size() ] ) /
+				( pow( static_cast<core::Real>( property_deviation_ranges_[index].second - 1 ), 2 ) - x2sq);
+			b = (property_penalties_[index][property_penalties_[index].size()] - a * x2sq );
 		}
 		return a*pow( static_cast<core::Real>(delta_expected), 2) + b;
 	}
@@ -437,38 +458,6 @@ private:
 	/******************
 	Private variables:
 	******************/
-
-	/// @brief A map of the residue types that we will be scoring to their indices.
-	/// @details Indicies are internal to this scoring function.
-	std::map< std::string, core::Size > res_type_index_mappings_;
-
-	/// @brief Penalties for each residue count and each residue type.
-	/// @details Outer vector is the residue type, by internal index.  Inner vector is
-	/// the penalty value for a given deviation from the ideal count, by internal index.
-	utility::vector1 < utility::vector1 < core::Real > > type_penalties_;
-
-	/// @brief Deviation ranges for each residue type.
-	/// @details Outer vector is the residue type, by internal index.  Inner vector is pairs
-	/// of deviation ranges (e.g. -10,5 indicating that we are storing penalties for having 10
-	/// residues too few up to 5 residues too many for a given type).  Deviations outside of this
-	/// range are assigned the value from the end of the range.
-	utility::vector1 < std::pair < signed long, signed long > > type_deviation_ranges_;
-
-	/// @brief The expected number of residues for each type (by type index), as a fraction (from 0 to 1) of total.
-	///
-	utility::vector1 < core::Real > expected_by_type_fraction_;
-
-	/// @brief The expected number of residues for each type (by type index), as an absolute number.
-	/// @details If this is negative, the fraction is used instead.
-	utility::vector1 < signed long > expected_by_type_absolute_;
-
-	/// @brief The behaviours at the end of the user-defined range for each residue type.
-	/// @details By default, past the user-defined range, the energy increases quadratically with
-	/// increasing deviations from ideal sequence composition.  The user can set this to be linear
-	/// or constant, though.  The vector index corresponds to the type index, and the
-	/// internal std::pair represents the behaviour below the range and the behaviour above the
-	/// range.
-	utility::vector1 < std::pair <TailFunction, TailFunction > > type_tailfunctions_;
 
 	/// @brief The residue property sets that we'll be counting.
 	///
@@ -504,7 +493,7 @@ private:
 
 };
 
-} // methods
+} // aa_composition_energy
 } // scoring
 } // core
 

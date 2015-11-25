@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody/AntibodyCDRGrafter.fwd.hh
-/// @brief Class to graft CDR loops from an antibody to a new antibody or from a CDR pose into a different antibody.  
+/// @brief Class to graft CDR loops from an antibody to a new antibody or from a CDR pose into a different antibody.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -34,7 +34,7 @@ typedef utility::pointer::shared_ptr< AntibodyCDRGrafter const > AntibodyCDRGraf
 }//protocols
 }//antibody
 
-#endif	//INCLUDED_protocols/antibody_AntibodyCDRGrafter_fwd_hh
+#endif //INCLUDED_protocols/antibody_AntibodyCDRGrafter_fwd_hh
 
 
 

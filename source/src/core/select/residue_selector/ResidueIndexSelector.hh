@@ -41,6 +41,15 @@ class ResidueIndexSelector : public ResidueSelector {
 public:
 	// derived from base class
 	ResidueIndexSelector();
+
+	/// @brief Copy constructor
+	///
+	ResidueIndexSelector( ResidueIndexSelector const &src);
+
+	/// @brief Clone operator.
+	/// @details Copy this object and return an owning pointer to the new object.
+	virtual ResidueSelectorOP clone() const;
+
 	ResidueIndexSelector( std::string const & index_str );
 	virtual ~ResidueIndexSelector();
 

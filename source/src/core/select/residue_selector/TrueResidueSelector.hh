@@ -38,6 +38,14 @@ public:
 	// derived from base class
 	TrueResidueSelector();
 
+	/// @brief Copy constructor
+	///
+	TrueResidueSelector( TrueResidueSelector const &src);
+
+	/// @brief Clone operator.
+	/// @details Copy this object and return an owning pointer to the new object.
+	virtual ResidueSelectorOP clone() const;
+
 	virtual ~TrueResidueSelector();
 
 	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;

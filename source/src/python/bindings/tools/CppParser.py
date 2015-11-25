@@ -1479,7 +1479,7 @@ _import_order_ = {
 
     'core': ['select', 'graph', 'conformation', 'id', 'io', 'scoring'],
     'core/pack' : ['rotamers'],
-    'core/scoring': ['annealing', 'trie', 'methods', 'func', 'hbonds'],
+    'core/scoring': ['annealing', 'trie', 'methods', 'func', 'constraints', 'hbonds'],
 
     'protocols': ['moves', 'jd2', 'jumping', 'environment', 'features', 'evaluation', 'canonical_sampling', 'farna', 'filters',
                   'simple_moves', 'ligand_docking', 'rigid', 'toolbox', 'forge', 'loop_modeling', 'loops', 'wum', 'rosetta_scripts',

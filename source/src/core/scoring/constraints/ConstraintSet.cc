@@ -25,7 +25,7 @@
 #include <core/scoring/ScoreFunction.hh>  //need to pass in weights
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
-
+#include <core/scoring/aa_composition_energy/SequenceConstraint.hh>
 
 // C++ Headers
 #include <set>
@@ -51,6 +51,7 @@ static THREAD_LOCAL basic::Tracer tr( "core.scoring.ConstraintSet" );
 
 ConstraintSet::ConstraintSet()
 :
+	sequence_constraints_(),
 	revision_id_( 0 ),
 	revision_id_current_( false ),
 	conformation_pt_( /* NULL */ )
@@ -59,12 +60,20 @@ ConstraintSet::ConstraintSet()
 ConstraintSet::ConstraintSet( ConstraintSet const & other )
 :
 	ReferenceCount(),
+	sequence_constraints_( other.sequence_constraints_.size() ),
 	residue_pair_constraints_( other.residue_pair_constraints_.size() ),
 	revision_id_( 0 ),
 	revision_id_current_( false ),
 	conformation_pt_( /* NULL */ )
 {
 	basic::ProfileThis doit( basic::CONSTRAINT_SET_COPY );
+
+	//Clone the sequence constraints:
+	for ( core::Size ii=1, iimax=other.sequence_constraints_.size(); ii<=iimax; ++ii ) {
+		if ( other.sequence_constraints_[ii] ) {
+			sequence_constraints_[ii] = utility::pointer::dynamic_pointer_cast< core::scoring::aa_composition_energy::SequenceConstraint const >( other.sequence_constraints_[ii]->clone() );
+		}
+	}
 
 	// Loop over residue 1
 	for ( Size ii = 1; ii <= other.residue_pair_constraints_.size(); ++ii ) {
@@ -104,12 +113,20 @@ ConstraintSet::ConstraintSet( ConstraintSet const & other,
 	Size end_residue )
 :
 	ReferenceCount(),
+	sequence_constraints_( other.sequence_constraints_.size() ),
 	residue_pair_constraints_( other.residue_pair_constraints_.size() ),
 	revision_id_( 0 ),
 	revision_id_current_( false ),
 	conformation_pt_( /* NULL */ )
 {
 	basic::ProfileThis doit( basic::CONSTRAINT_SET_COPY );
+
+	//Clone the sequence constraints:
+	for ( core::Size ii=1, iimax=other.sequence_constraints_.size(); ii<=iimax; ++ii ) {
+		if ( other.sequence_constraints_[ii] ) {
+			sequence_constraints_[ii] = utility::pointer::dynamic_pointer_cast< core::scoring::aa_composition_energy::SequenceConstraint const >( other.sequence_constraints_[ii]->clone() );
+		}
+	}
 
 	for ( Size ii = 1; ii <= other.residue_pair_constraints_.size(); ++ii ) {
 
@@ -520,23 +537,29 @@ ConstraintSet::add_constraint( ConstraintCOP cst )
 {
 	mark_revision_id_expired();
 
-	// figure out if it's inter-res, residue_pair, or 3+body
-	utility::vector1< int > pos_list( cst->residues() );
+	core::scoring::aa_composition_energy::SequenceConstraintCOP seq_cst( utility::pointer::dynamic_pointer_cast<core::scoring::aa_composition_energy::SequenceConstraint const>(cst) ); //See whether this is a SequenceConstraint
+	if ( seq_cst ) { // If it is a sequence constraint, store it as such
+		add_sequence_constraint( seq_cst );
+	} else { //If it is not a sequence constraint (i.e. it's a geometric constraint) store it appropriately:
+		// figure out if it's inter-res, residue_pair, or 3+body
+		utility::vector1< int > pos_list( cst->residues() );
 
-	if ( pos_list.size() == 1 ) {
-		// intra-res
-		//  tr.Trace << "add intra-res constraint " << std::endl;
-		add_constraint_to_residue_constraints( pos_list[1], cst, intra_residue_constraints_ );
-	} else if ( pos_list.size() == 2 ) {
-		// rsd-pai
-		//  tr.Trace << "add res constraint " << std::endl;
-		add_residue_pair_constraint( pos_list[1], pos_list[2], cst );
-		add_residue_pair_constraint( pos_list[2], pos_list[1], cst );
-	} else {
-		// 3+ body
-		//  tr.Trace << "add 3+body constraint " << std::endl;
-		non_residue_pair_constraints_.add_constraint( cst );
+		if ( pos_list.size() == 1 ) {
+			// intra-res
+			//  tr.Trace << "add intra-res constraint " << std::endl;
+			add_constraint_to_residue_constraints( pos_list[1], cst, intra_residue_constraints_ );
+		} else if ( pos_list.size() == 2 ) {
+			// rsd-pai
+			//  tr.Trace << "add res constraint " << std::endl;
+			add_residue_pair_constraint( pos_list[1], pos_list[2], cst );
+			add_residue_pair_constraint( pos_list[2], pos_list[1], cst );
+		} else {
+			// 3+ body
+			//  tr.Trace << "add 3+body constraint " << std::endl;
+			non_residue_pair_constraints_.add_constraint( cst );
+		}
 	}
+	return;
 }
 
 /// helper, static
@@ -959,6 +982,7 @@ ConstraintSet::show_violations(
 void
 ConstraintSet::clear()
 {
+	sequence_constraints_.clear();
 	intra_residue_constraints_.clear();
 	residue_pair_constraints_.clear();
 	non_residue_pair_constraints_.clear();

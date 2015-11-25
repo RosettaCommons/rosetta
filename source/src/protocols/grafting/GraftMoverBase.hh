@@ -41,7 +41,7 @@ public:
 	GraftMoverBase(core::Size const start, core::Size const end, std::string mover_name);
 
 	GraftMoverBase(core::Size const start, core::Size const end, std::string mover_name,
-				   core::pose::Pose const & piece, core::Size Nter_overhang_length=0, core::Size Cter_overhang_length=0);
+		core::pose::Pose const & piece, core::Size Nter_overhang_length=0, core::Size Cter_overhang_length=0);
 
 	GraftMoverBase(GraftMoverBase const & src);
 
@@ -91,7 +91,7 @@ protected:
 
 protected:
 	///Setters and accessors of private data
-	
+
 	void original_end(core::Size original_end);
 	void insertion_length(core::Size insertion_length);
 	void start(core::Size start);
@@ -99,24 +99,24 @@ protected:
 
 	core::Size Nter_overhang_length();
 	void Nter_overhang_length(core::Size overhang);
-	
+
 	core::Size Cter_overhang_length();
 	void Cter_overhang_length(core::Size overhang);
-	
+
 	core::pose::PoseOP piece();
 	void piece(core::pose::PoseOP piece);
 
 private:
-	
+
 	//Reference of the pose piece.  Should be changed to local copy, but I'm not sure how to do that.
 	core::pose::PoseOP piece_;
 
 	/// @brief Residue insertion will start from
 	core::Size start_;
-	
+
 	/// @brief Residue insertion will end before here. Updates after insertion.
 	core::Size end_;
-	
+
 	/// @brief some functions need to only work on the original numbers. (combine movemaps)
 	core::Size original_end_;
 
@@ -124,10 +124,10 @@ private:
 
 	/// @brief Number of overhang residues on N terminus.  Updates on delete_overhang_residues
 	core::Size Nter_overhang_length_;
-	
+
 	/// @brief Number of overhang residues on C terminus.  Updates on delete_overhang_residues
 	core::Size Cter_overhang_length_;
-	
+
 	bool copy_pdbinfo_;
 
 };  // class GraftMoverBase

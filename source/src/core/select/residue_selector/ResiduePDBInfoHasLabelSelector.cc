@@ -40,6 +40,16 @@ ResiduePDBInfoHasLabelSelector::ResiduePDBInfoHasLabelSelector():
 {
 }
 
+/// @brief Copy constructor
+///
+ResiduePDBInfoHasLabelSelector::ResiduePDBInfoHasLabelSelector( ResiduePDBInfoHasLabelSelector const &src) :
+	label_( src.label_ )
+{}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP ResiduePDBInfoHasLabelSelector::clone() const { return ResidueSelectorOP( new ResiduePDBInfoHasLabelSelector(*this) ); }
+
 ResiduePDBInfoHasLabelSelector::ResiduePDBInfoHasLabelSelector( std::string const & label_str ):
 	ResidueSelector(),
 	label_( label_str )

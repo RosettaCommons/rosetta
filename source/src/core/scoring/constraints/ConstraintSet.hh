@@ -24,6 +24,7 @@
 #include <core/scoring/MinimizationData.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/Constraints.hh>
+#include <core/scoring/aa_composition_energy/SequenceConstraint.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/constraints/DOF_Constraint.hh>
 #include <core/scoring/ScoreType.hh>
@@ -442,6 +443,25 @@ public:
 	void
 	clear();
 
+	/// @brief Discard any and all sequence constraints in the sequence_constraints_ list.
+	///
+	inline void
+	clear_sequence_constraints() {
+		sequence_constraints_.clear();
+		return;
+	}
+
+	/// @brief Get the number of sequence constraints.
+	///
+	inline core::Size n_sequence_constraints() const { return sequence_constraints_.size(); }
+
+	/// @brief Get the owning pointer to the Nth sequence constraint.
+	///
+	inline core::scoring::aa_composition_energy::SequenceConstraintCOP sequence_constraint( core::Size const index ) const {
+		runtime_assert_string_msg( index > 0 && index <= sequence_constraints_.size(), "Error in core::scoring::constraints::ConstraintSet::sequence_constraint(): Index is out of range.  Must be greater than zero and less than or equal to the number of sequence constraints." );
+		return sequence_constraints_[index];
+	}
+
 	bool
 	is_empty() const;
 
@@ -479,6 +499,16 @@ private:
 		bool object_comparison
 	);
 
+	/// @brief Add a sequence constraint to the sequence_constraints_ list.
+	///
+	inline void
+	add_sequence_constraint(
+		core::scoring::aa_composition_energy::SequenceConstraintCOP cst
+	) {
+		sequence_constraints_.push_back(cst);
+		return;
+	}
+
 protected:
 	ResiduePairConstraints const &
 	residue_pair_constraints() const;
@@ -488,6 +518,10 @@ protected:
 	}
 
 private:
+
+	/// @brief List of sequence constraints.
+	/// @details Sequence constraints constrain the sequence, just as geometric constraints constrain the geometry.
+	utility::vector1<core::scoring::aa_composition_energy::SequenceConstraintCOP> sequence_constraints_;
 
 	/// constraints are added symmetrically
 	ResiduePairConstraints residue_pair_constraints_;

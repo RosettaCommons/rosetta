@@ -15,6 +15,8 @@
 #define INCLUDED_core_scoring_annealing_ResidueArrayAnnealableEnergy_hh
 
 #include <core/scoring/annealing/ResidueArrayAnnealableEnergy.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 
@@ -41,6 +43,14 @@ public:
 	/// @brief Calculate the energy given a vector of const-owning pointers to Residue objects.
 	/// @details Must be implemented by derived classes.
 	virtual core::Real calculate_energy( utility::vector1< core::conformation::ResidueCOP > const &resvect ) const = 0;
+
+	/// @brief ResidueArrayAnnealableEnergy objects may optionally cache data within the EnergyMethod prior to a packer run.
+	/// This function is defined as doing nothing by default, but can be redefined on a per-EnergyMethod basis to cache whatever
+	/// data are necessary.
+	/// @details Note that this is strictly unidirectional: data can be cached FROM the Pose or ScoreFunction, not TO the Pose or ScoreFunction.
+	/// The method is nonconst to permit caching within the ResidueArrayAnnealableEnergy-derived EnergyMethod.
+	virtual void setup_residuearrayannealableenergy_for_packing ( core::pose::Pose const &pose, core::scoring::ScoreFunction const &sfxn);
+
 };
 
 }

@@ -13,27 +13,27 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_AntibodyCDRGrafterCreator_hh
-#define	INCLUDED_protocols_antibody_AntibodyCDRGrafterCreator_hh
+#define INCLUDED_protocols_antibody_AntibodyCDRGrafterCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
-	
+
 namespace protocols {
 namespace antibody {
 
 class AntibodyCDRGrafterCreator : public protocols::moves::MoverCreator {
 
 public:
-	
+
 	virtual protocols::moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
-	
-	
-	
-};	
 
-	
+
+
+};
+
+
 }//protocols
 }//antibody
 

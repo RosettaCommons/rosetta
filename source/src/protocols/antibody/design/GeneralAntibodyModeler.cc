@@ -155,11 +155,11 @@ GeneralAntibodyModeler::set_cdr_range(CDRNameEnum const cdr_start, CDRNameEnum c
 void
 GeneralAntibodyModeler::set_cdrs(utility::vector1<bool> cdrs){
 	model_cdrs_ = cdrs;
-	if ( model_cdrs_.size() == 6 ){
+	if ( model_cdrs_.size() == 6 ) {
 		model_cdrs_.push_back(false);
 		model_cdrs_.push_back(false);
 	}
-	
+
 }
 
 void

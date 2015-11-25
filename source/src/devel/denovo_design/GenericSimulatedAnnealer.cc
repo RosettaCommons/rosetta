@@ -303,7 +303,7 @@ GenericSimulatedAnnealer::create_tag( std::string const & suffix ) const
 {
 	std::string cp = checkpoint_file_ + '_' + suffix;
 	for ( std::string::iterator c=cp.begin(); c!=cp.end(); ++c ) {
-		if ( ( *c == '/' )	 ||  ( *c == ' ' ) || ( *c == '\t' ) ) {
+		if ( ( *c == '/' )  ||  ( *c == ' ' ) || ( *c == '\t' ) ) {
 			*c = '_';
 		}
 	}

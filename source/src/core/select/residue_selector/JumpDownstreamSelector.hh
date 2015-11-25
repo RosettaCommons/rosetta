@@ -40,6 +40,15 @@ class JumpDownstreamSelector : public ResidueSelector {
 public:
 	// derived from base class
 	JumpDownstreamSelector();
+
+	/// @brief Copy constructor
+	///
+	JumpDownstreamSelector( JumpDownstreamSelector const &src);
+
+	/// @brief Clone operator.
+	/// @details Copy this object and return an owning pointer to the new object.
+	virtual ResidueSelectorOP clone() const;
+
 	JumpDownstreamSelector( int jump );
 	virtual ~JumpDownstreamSelector();
 

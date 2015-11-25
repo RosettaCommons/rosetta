@@ -44,6 +44,25 @@ InterGroupInterfaceByVectorSelector::InterGroupInterfaceByVectorSelector() :
 	vector_dist_cut_( 9.0 )
 {}
 
+/// @brief Copy constructor
+///
+InterGroupInterfaceByVectorSelector::InterGroupInterfaceByVectorSelector( InterGroupInterfaceByVectorSelector const &src) :
+	group1_selector_( src.group1_selector_ ),
+	group1_set_( src.group1_set_ ),
+	group1_resstring_(src.group1_resstring_ ),
+	group2_selector_( src.group2_selector_ ),
+	group2_set_( src.group2_set_ ),
+	group2_resstring_( src.group2_resstring_ ),
+	cb_dist_cut_( src.cb_dist_cut_ ),
+	nearby_atom_cut_( src.nearby_atom_cut_ ),
+	vector_angle_cut_( src.vector_angle_cut_ ),
+	vector_dist_cut_( src.vector_dist_cut_ )
+{}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP InterGroupInterfaceByVectorSelector::clone() const { return ResidueSelectorOP( new InterGroupInterfaceByVectorSelector(*this) ); }
+
 InterGroupInterfaceByVectorSelector::~InterGroupInterfaceByVectorSelector() {}
 
 ResidueSubset

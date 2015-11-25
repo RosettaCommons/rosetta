@@ -65,7 +65,10 @@ FRAGMENT # shows up in GrowLigand
 POLAR #This is for clearly polar side-chains (DEHKNQRST).  Note that it excludes glycine, alanine, cysteine, and proline (as well as very hydrophobic residues with polar groups, like tryptophan or tyrosine).
 HYDROPHOBIC #This is for clearly hydrophobic side-chains (FMILYVW).  Note that it also excludes glycine, alanine, cysteine, and proline.  The union of POLAR and HYDROPHOBIC does NOT include all amino acids.
 CHARGED
+NEGATIVE_CHARGE #Has a negative charge.  Includes zwitterionic side-chains.
+POSITIVE_CHARGE #Has a positive charge.  Includes zwitterionic side-chains.
 AROMATIC
+ALIPHATIC #Has a side-chain (i.e. not gly) and the side-chain contains only carbon and hydrogen, with no aromatic rings.  Methionine is included as an "honourary" aliphatic, so the set is: ALA, VAL, ILE, LEU, PRO, MET.
 CYCLIC
 METALBINDING  # This residue type is a one capable of binding to a metal ion.
 SIDECHAIN_THIOL # This residue type is capable of forming a disulfide bond

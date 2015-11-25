@@ -1,0 +1,15 @@
+# This is a .comp file for testing more complicated boolean logic.
+# File created 21 July 2015 by Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
+
+PENALTY_DEFINITION
+TYPE TRP # Count if this is a tryptophan
+NOT_TYPE ARG LEU # Do not count if this is an argenine or a leucine
+OR_PROPERTIES ALIPHATIC CHARGED # Count this if this is aliphatic or charged
+NOT_PROPERTIES NEGATIVE_CHARGE # Do not count this if the charge is negative.
+DELTA_START -1
+DELTA_END 1
+PENALTIES -1 0 1
+ABSOLUTE 0
+BEFORE_FUNCTION LINEAR
+AFTER_FUNCTION LINEAR
+END_PENALTY_DEFINITION

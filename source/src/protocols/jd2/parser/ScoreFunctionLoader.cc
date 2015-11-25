@@ -106,7 +106,7 @@ void ScoreFunctionLoader::load_data(
 						filelist >> tempstring;
 						if ( !filelist.fail() ) filevect.push_back( tempstring );
 					}
-					emoptions.set_aa_composition_setup_files( filevect );
+					emoptions.append_aa_composition_setup_files( filevect );
 				}
 
 				if ( mod_tag->hasOption( "softrep_etable" ) ) {

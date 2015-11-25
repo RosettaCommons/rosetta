@@ -1,0 +1,22 @@
+# This is a .comp file for requiring that a structure have one tryptophan and one tyrosine, counted separately. 
+# File created 21 July 2015 by Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
+
+PENALTY_DEFINITION
+TYPE TRP # Count if this is a tryptophan
+DELTA_START -1
+DELTA_END 1
+PENALTIES 50 0 70
+ABSOLUTE 1
+BEFORE_FUNCTION LINEAR
+AFTER_FUNCTION LINEAR
+END_PENALTY_DEFINITION
+
+PENALTY_DEFINITION
+TYPE TYR # Count if this is a tyrosine
+DELTA_START -1
+DELTA_END 1
+PENALTIES 40 0 30
+ABSOLUTE 1
+BEFORE_FUNCTION LINEAR
+AFTER_FUNCTION LINEAR
+END_PENALTY_DEFINITION

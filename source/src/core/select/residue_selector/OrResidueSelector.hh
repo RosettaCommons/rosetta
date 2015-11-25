@@ -42,8 +42,17 @@ class OrResidueSelector : public ResidueSelector {
 public:
 	// derived from base class
 	OrResidueSelector();
+
+	/// @brief Copy constructor
+	///
+	OrResidueSelector( OrResidueSelector const &src);
+
 	OrResidueSelector( ResidueSelectorCOP selector1, ResidueSelectorCOP selector2 );
 	virtual ~OrResidueSelector();
+
+	/// @brief Clone operator.
+	/// @details Copy this object and return an owning pointer to the new object.
+	virtual ResidueSelectorOP clone() const;
 
 	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
 	virtual void parse_my_tag(

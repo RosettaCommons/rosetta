@@ -10,6 +10,10 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+	"protocols/aa_composition": [
+		"AddCompositionConstraintMover",
+		"ClearCompositionConstraintsMover",
+	],
 	"protocols/analysis": [
 		"InterfaceAnalyzerMover",
 		"LoopAnalyzerMover",

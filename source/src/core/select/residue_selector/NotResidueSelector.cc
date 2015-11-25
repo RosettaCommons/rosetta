@@ -39,6 +39,16 @@ namespace residue_selector {
 NotResidueSelector::NotResidueSelector() {}
 NotResidueSelector::~NotResidueSelector() {}
 
+/// @brief Copy constructor
+///
+NotResidueSelector::NotResidueSelector( NotResidueSelector const &src) :
+	selector_( src.selector_ )
+{}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP NotResidueSelector::clone() const { return ResidueSelectorOP( new NotResidueSelector(*this) ); }
+
 NotResidueSelector::NotResidueSelector( ResidueSelectorCOP selector )
 {
 	set_residue_selector( selector );

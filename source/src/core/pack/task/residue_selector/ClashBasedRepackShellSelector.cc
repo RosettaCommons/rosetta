@@ -53,12 +53,28 @@ namespace task {
 namespace residue_selector {
 
 
-ClashBasedRepackShellSelector::ClashBasedRepackShellSelector()
-{
-	bump_overlap_factor_ = 0.5;
-}
+ClashBasedRepackShellSelector::ClashBasedRepackShellSelector() :
+	packer_task_(),
+	score_fxn_(),
+	bump_overlap_factor_(0.5)
+{}
 
 ClashBasedRepackShellSelector::~ClashBasedRepackShellSelector() {}
+
+/// @brief Copy constructor
+///
+ClashBasedRepackShellSelector::ClashBasedRepackShellSelector( ClashBasedRepackShellSelector const &src) :
+	packer_task_( src.packer_task_),
+	score_fxn_( src.score_fxn_ ),
+	bump_overlap_factor_( src.bump_overlap_factor_ )
+{}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+core::select::residue_selector::ResidueSelectorOP
+ClashBasedRepackShellSelector::clone() const {
+	return core::select::residue_selector::ResidueSelectorOP( new ClashBasedRepackShellSelector(*this) );
+}
 
 ClashBasedRepackShellSelector::ClashBasedRepackShellSelector(
 	core::pack::task::PackerTaskOP packer_task,

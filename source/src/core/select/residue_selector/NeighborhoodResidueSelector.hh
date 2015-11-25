@@ -45,6 +45,15 @@ class NeighborhoodResidueSelector : public ResidueSelector {
 public:
 	// derived from base class
 	NeighborhoodResidueSelector();
+
+	/// @brief Copy constructor
+	///
+	NeighborhoodResidueSelector( NeighborhoodResidueSelector const &src);
+
+	/// @brief Clone operator.
+	/// @details Copy this object and return an owning pointer to the new object.
+	virtual ResidueSelectorOP clone() const;
+
 	NeighborhoodResidueSelector( std::set<core::Size> const & focus, Real distance );
 	virtual ~NeighborhoodResidueSelector();
 

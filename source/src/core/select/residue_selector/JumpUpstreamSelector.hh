@@ -40,6 +40,15 @@ class JumpUpstreamSelector : public ResidueSelector {
 public:
 	// derived from base class
 	JumpUpstreamSelector();
+
+	/// @brief Copy constructor
+	///
+	JumpUpstreamSelector( JumpUpstreamSelector const &src);
+
+	/// @brief Clone operator.
+	/// @details Copy this object and return an owning pointer to the new object.
+	virtual ResidueSelectorOP clone() const;
+
 	JumpUpstreamSelector( int jump );
 	virtual ~JumpUpstreamSelector();
 

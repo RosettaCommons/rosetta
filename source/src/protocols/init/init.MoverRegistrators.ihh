@@ -18,6 +18,9 @@ namespace protocols {
 
 using protocols::moves::MoverRegistrator;
 
+static MoverRegistrator< aa_composition::AddCompositionConstraintMoverCreator > reg_AddCompositionConstraintMoverCreator;
+static MoverRegistrator< aa_composition::ClearCompositionConstraintsMoverCreator > reg_ClearCompositionConstraintsMoverCreator;
+
 static MoverRegistrator< abinitio::DomainAssemblyCreator > reg_DomainAssemblyCreator;
 
 static MoverRegistrator< analysis::InterfaceAnalyzerMoverCreator > reg_InterfaceAnalyzerMoverCreator;

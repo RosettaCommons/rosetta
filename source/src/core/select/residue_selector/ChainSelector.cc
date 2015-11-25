@@ -35,9 +35,22 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
-ChainSelector::ChainSelector() {}
+ChainSelector::ChainSelector():
+	chain_strings_()
+{}
+
+/// @brief Copy constructor
+///
+ChainSelector::ChainSelector( ChainSelector const &src) :
+	chain_strings_( src.chain_strings_ )
+{}
+
 ChainSelector::ChainSelector( std::string chains ) : chain_strings_( utility::string_split( chains, ',' ) ) {}
 ChainSelector::~ChainSelector() {}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP ChainSelector::clone() const { return ResidueSelectorOP( new ChainSelector(*this) ); }
 
 ResidueSubset
 ChainSelector::apply(

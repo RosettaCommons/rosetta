@@ -22,6 +22,11 @@ using namespace core::select::residue_selector;
 class OddResidueSelector : public ResidueSelector {
 public:
 	OddResidueSelector() {}
+	
+	OddResidueSelector(OddResidueSelector const &)
+	{}
+	
+	ResidueSelectorOP clone() const { return ResidueSelectorOP( new OddResidueSelector(*this) ); }
 
 	virtual
 	ResidueSubset
@@ -43,6 +48,14 @@ public:
 		x_( x ),
 		y_( y )
 	{}
+
+	XModYResidueSelector(XModYResidueSelector const &src):
+		x_( src.x_ ),
+		y_( src.y_ )
+	{}
+	
+	ResidueSelectorOP clone() const { return ResidueSelectorOP( new XModYResidueSelector(*this) ); }
+
 
 	virtual
 	ResidueSubset apply( core::pose::Pose const & pose ) const

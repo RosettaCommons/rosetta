@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/scoring/methods/AACompositionEnergyCreator.hh
+/// @file core/scoring/aa_composition_energy/AACompositionEnergyCreator.hh
 /// @brief Creator for an EnergyMethod that penalizes deviation from a desired amino acid composition.
 /// @details This energy method is inherently not pairwise decomposible.  However, it is intended for very rapid calculation,
 /// and has been designed to plug into Alex Ford's modifications to the packer that permit it to work with non-pairwise scoring
 /// terms.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 
-#ifndef INCLUDED_core_scoring_methods_AACompositionEnergyCreator_hh
-#define INCLUDED_core_scoring_methods_AACompositionEnergyCreator_hh
+#ifndef INCLUDED_core_scoring_aa_composition_energy_AACompositionEnergyCreator_hh
+#define INCLUDED_core_scoring_aa_composition_energy_AACompositionEnergyCreator_hh
 
 // Unit header
 #include <core/scoring/methods/EnergyMethodCreator.hh>
@@ -30,22 +30,22 @@
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace aa_composition_energy {
 
-class AACompositionEnergyCreator : public EnergyMethodCreator
+class AACompositionEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 
 	/// @brief Instantiate a new AACompositionEnergy.
 	///
-	virtual methods::EnergyMethodOP create_energy_method( core::scoring::methods::EnergyMethodOptions const &options ) const;
+	virtual core::scoring::methods::EnergyMethodOP create_energy_method( core::scoring::methods::EnergyMethodOptions const &options ) const;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod that
 	/// this EnergyMethodCreator creates in its create_energy_method() function.
 	virtual ScoreTypes score_types_for_method() const;
 };
 
-} // methods
+} // aa_composition_energy
 } // scoring
 } // core
 

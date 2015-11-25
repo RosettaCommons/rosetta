@@ -37,8 +37,19 @@ namespace residue_selector {
 
 class ResidueSelector : public utility::pointer::ReferenceCount {
 public:
+
+	/// @brief Constructor.
+	///
 	ResidueSelector();
+
+	/// @brief Destructor.
+	///
 	virtual ~ResidueSelector();
+
+	/// @brief Clone operator.
+	/// @details All ResidueSelectors must implement a clone() operator.  This must create a copy of the object and
+	/// return a ResidueSelectorOP to the original object.
+	virtual ResidueSelectorOP clone() const = 0;
 
 	/// @brief Return a ResidueSubset indicating a selection of Residues from the
 	/// input Pose; the ResidueSubset is an array of booleans where a value of

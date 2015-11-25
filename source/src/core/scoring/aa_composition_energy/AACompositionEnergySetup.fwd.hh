@@ -7,30 +7,35 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/scoring/methods/AACompositionEnergy.fwd.hh
-/// @brief Forward declarations for an EnergyMethod that penalizes deviation from a desired amino acid composition.
+/// @file core/scoring/aa_composition_energy/AACompositionEnergySetup.fwd.hh
+/// @brief Forward declarations for a helper class that stores the setup information for the AACompositionEnergy score term.
 /// @details This energy method is inherently not pairwise decomposible.  However, it is intended for very rapid calculation,
 /// and has been designed to plug into Alex Ford's modifications to the packer that permit it to work with non-pairwise scoring
-/// terms.  It has also been modified to permit sub-regions of a pose to be scored.
+/// terms.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 
 
-#ifndef INCLUDED_core_scoring_methods_AACompositionEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_AACompositionEnergy_fwd_hh
+#ifndef INCLUDED_core_scoring_aa_composition_energy_AACompositionEnergySetup_fwd_hh
+#define INCLUDED_core_scoring_aa_composition_energy_AACompositionEnergySetup_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace aa_composition_energy {
 
-class AACompositionEnergy;
+class AACompositionPropertiesSet;
 
-typedef utility::pointer::shared_ptr< AACompositionEnergy > AACompositionEnergyOP;
+typedef utility::pointer::shared_ptr< AACompositionPropertiesSet > AACompositionPropertiesSetOP;
+typedef utility::pointer::shared_ptr< AACompositionPropertiesSet const > AACompositionPropertiesSetCOP;
 
+class AACompositionEnergySetup;
 
-} // methods
+typedef utility::pointer::shared_ptr< AACompositionEnergySetup > AACompositionEnergySetupOP;
+typedef utility::pointer::shared_ptr< AACompositionEnergySetup const > AACompositionEnergySetupCOP;
+
+} // aa_composition_energy
 } // scoring
 } // core
 

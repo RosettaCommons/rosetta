@@ -38,6 +38,15 @@ class NumNeighborsSelector : public ResidueSelector {
 public:
 	// derived from base class
 	NumNeighborsSelector();
+
+	/// @brief Copy constructor
+	///
+	NumNeighborsSelector( NumNeighborsSelector const &src);
+
+	/// @brief Clone operator.
+	/// @details Copy this object and return an owning pointer to the new object.
+	virtual ResidueSelectorOP clone() const;
+
 	NumNeighborsSelector( Size threshold, core::Real distance_cutoff );
 	//// Undefined, commenting out to fix PyRosetta build  NumNeighborsSelector( bool count_water, Size threshold, core::Real distance_cutoff );
 	virtual ~NumNeighborsSelector();

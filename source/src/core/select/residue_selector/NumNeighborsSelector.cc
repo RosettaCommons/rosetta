@@ -43,6 +43,18 @@ NumNeighborsSelector::NumNeighborsSelector() :
 {}
 NumNeighborsSelector::~NumNeighborsSelector() {}
 
+/// @brief Copy constructor
+///
+NumNeighborsSelector::NumNeighborsSelector( NumNeighborsSelector const &src) :
+	count_water_( src.count_water_ ),
+	threshold_( src.threshold_ ),
+	distance_cutoff_( src.distance_cutoff_ )
+{}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP NumNeighborsSelector::clone() const { return ResidueSelectorOP( new NumNeighborsSelector(*this) ); }
+
 NumNeighborsSelector::NumNeighborsSelector( Size threshold, Real distance_cutoff ) :
 	count_water_( false ),
 	threshold_( threshold ),

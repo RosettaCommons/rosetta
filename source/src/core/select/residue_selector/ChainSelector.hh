@@ -39,9 +39,17 @@ public:
 	// derived from base class
 	ChainSelector();
 
+	/// @brief Copy constructor
+	///
+	ChainSelector( ChainSelector const &src);
+
 	// takes a comma-separated list of chains (e.g. "A,B")
 	ChainSelector( std::string chains );
 	virtual ~ChainSelector();
+
+	/// @brief Clone operator.
+	/// @details Copy this object and return an owning pointer to the new object.
+	virtual ResidueSelectorOP clone() const;
 
 	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
 

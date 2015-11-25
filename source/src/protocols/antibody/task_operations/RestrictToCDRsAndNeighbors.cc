@@ -116,7 +116,7 @@ RestrictToCDRsAndNeighbors::set_defaults() {
 	cdrs_.resize(8, true);
 	cdrs_[ l4 ] = false;
 	cdrs_[ h4 ] = false;
-	
+
 	neighbor_dis_ = 6.0;
 	design_cdrs_ = false;
 	design_antigen_ = false;
@@ -162,8 +162,8 @@ RestrictToCDRsAndNeighbors::parse_tag(utility::tag::TagCOP tag, basic::datacache
 void
 RestrictToCDRsAndNeighbors::set_cdrs(const utility::vector1<bool>& cdrs) {
 	cdrs_ = cdrs;
-	if ( cdrs.size() < CDRNameEnum_proto_total ){
-		for (core::Size i = cdrs.size() +1; i <= CDRNameEnum_proto_total; ++i){
+	if ( cdrs.size() < CDRNameEnum_proto_total ) {
+		for ( core::Size i = cdrs.size() +1; i <= CDRNameEnum_proto_total; ++i ) {
 			cdrs_.push_back( false );
 		}
 	}

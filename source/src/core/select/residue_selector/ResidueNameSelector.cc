@@ -34,10 +34,21 @@ namespace select {
 namespace residue_selector {
 
 ResidueNameSelector::ResidueNameSelector():
-	res_name_str_(),
-	res_name3_str_()
+	res_name_str_(""),
+	res_name3_str_("")
 {
 }
+
+/// @brief Copy constructor
+///
+ResidueNameSelector::ResidueNameSelector( ResidueNameSelector const &src) :
+	res_name_str_( src.res_name_str_ ),
+	res_name3_str_( src.res_name3_str_ )
+{}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP ResidueNameSelector::clone() const { return ResidueSelectorOP( new ResidueNameSelector(*this) ); }
 
 ResidueNameSelector::ResidueNameSelector( std::string const & res_name_str ):
 	res_name3_str_()

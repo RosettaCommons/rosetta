@@ -91,11 +91,21 @@ public:
 	}
 
 	/// @brief Set the aa_composition setup file names.
-	///
+	/// @details Overrides existing.
 	inline void set_aa_composition_setup_files( utility::vector1 < std::string > const &input_filenames ) {
 		aa_composition_setup_files_ = input_filenames;
 		return;
 	}
+
+	/// @brief Appends additional files to the aa_composition setup file names.
+	/// @details Does not override existing.
+	inline void append_aa_composition_setup_files( utility::vector1 < std::string > const &input_filenames ) {
+		for ( core::Size i=1, imax=input_filenames.size(); i<=imax; ++i ) {
+			aa_composition_setup_files_.push_back( input_filenames[i] );
+		}
+		return;
+	}
+
 
 	std::string const &
 	etable_type() const;

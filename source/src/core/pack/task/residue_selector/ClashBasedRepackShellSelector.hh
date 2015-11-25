@@ -41,6 +41,15 @@ namespace residue_selector {
 class ClashBasedRepackShellSelector : public core::select::residue_selector::ResidueSelector {
 public:
 	ClashBasedRepackShellSelector();
+
+	/// @brief Copy constructor
+	///
+	ClashBasedRepackShellSelector( ClashBasedRepackShellSelector const &src);
+
+	/// @brief Clone operator.
+	/// @details Copy this object and return an owning pointer to the new object.
+	virtual core::select::residue_selector::ResidueSelectorOP clone() const;
+
 	ClashBasedRepackShellSelector( core::pack::task::PackerTaskOP packer_task, core::scoring::ScoreFunctionOP score_fxn );
 
 	virtual ~ClashBasedRepackShellSelector();

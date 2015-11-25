@@ -35,8 +35,28 @@ namespace select {
 namespace residue_selector {
 
 NeighborhoodResidueSelector::NeighborhoodResidueSelector():
+	focus_(),
+	focus_str_(""),
 	distance_(10.0),
-	focus_set_(false) {}
+	focus_selector_(),
+	focus_set_(false),
+	use_focus_selector_(false)
+{}
+
+/// @brief Copy constructor
+///
+NeighborhoodResidueSelector::NeighborhoodResidueSelector( NeighborhoodResidueSelector const &src) :
+	focus_( src.focus_ ),
+	focus_str_( src.focus_str_ ),
+	distance_( src.distance_ ),
+	focus_selector_( src.focus_selector_ ),
+	focus_set_( src.focus_set_ ),
+	use_focus_selector_( src.use_focus_selector_ )
+{}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP NeighborhoodResidueSelector::clone() const { return ResidueSelectorOP( new NeighborhoodResidueSelector(*this) ); }
 
 NeighborhoodResidueSelector::NeighborhoodResidueSelector( std::set<core::Size> const & focus, Real distance )
 {

@@ -38,7 +38,22 @@ namespace protocols {
 namespace environment {
 namespace claims {
 
-EnvLabelSelector::EnvLabelSelector() {}
+EnvLabelSelector::EnvLabelSelector() :
+	positions_()
+{}
+
+/// @brief Copy constructor
+///
+EnvLabelSelector::EnvLabelSelector( EnvLabelSelector const &src) :
+	positions_( src.positions_ )
+{}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+core::select::residue_selector::ResidueSelectorOP
+EnvLabelSelector::clone() const {
+	return core::select::residue_selector::ResidueSelectorOP( new EnvLabelSelector(*this) );
+}
 
 EnvLabelSelector::EnvLabelSelector( LocalPositions const& positions_in ) {
 	this->set_local_positions( positions_in );

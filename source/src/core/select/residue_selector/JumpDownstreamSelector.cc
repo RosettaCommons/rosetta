@@ -39,6 +39,16 @@ namespace residue_selector {
 JumpDownstreamSelector::JumpDownstreamSelector():
 	jump_(0) {}
 
+/// @brief Copy constructor
+///
+JumpDownstreamSelector::JumpDownstreamSelector( JumpDownstreamSelector const &src) :
+	jump_( src.jump_ )
+{}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP JumpDownstreamSelector::clone() const { return ResidueSelectorOP( new JumpDownstreamSelector(*this) ); }
+
 JumpDownstreamSelector::JumpDownstreamSelector( int jump )
 {
 	jump_ = jump;

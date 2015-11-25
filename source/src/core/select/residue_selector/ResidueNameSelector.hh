@@ -44,6 +44,14 @@ public:
 	ResidueNameSelector( std::string const & res_name_str );
 	virtual ~ResidueNameSelector();
 
+	/// @brief Copy constructor
+	///
+	ResidueNameSelector( ResidueNameSelector const &src);
+
+	/// @brief Clone operator.
+	/// @details Copy this object and return an owning pointer to the new object.
+	virtual ResidueSelectorOP clone() const;
+
 	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
 	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,

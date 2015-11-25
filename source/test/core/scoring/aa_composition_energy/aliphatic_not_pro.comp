@@ -1,0 +1,14 @@
+# This is a .comp file for requiring that a structure have exactly three aliphatic residues that are not prolines. 
+# File created 21 July 2015 by Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
+
+PENALTY_DEFINITION
+PROPERTIES ALIPHATIC # Count aliphatics.
+NOT_TYPE PRO # Don't count prolines among the aliphatics. 
+DELTA_START -3
+DELTA_END 1
+PENALTIES 150 100 50 0 70
+ABSOLUTE 3
+BEFORE_FUNCTION LINEAR
+AFTER_FUNCTION LINEAR
+END_PENALTY_DEFINITION
+

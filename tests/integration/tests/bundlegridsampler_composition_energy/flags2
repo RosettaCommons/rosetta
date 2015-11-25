@@ -3,7 +3,8 @@
 -nstruct 10
 -out:prefix test2_
 -mute all
--unmute protocols.helical_bundle core.scoring.methods.AACompositionEnergy core.scoring.methods.AACompositionEnergySetup
+-unmute protocols.helical_bundle core.scoring.aa_composition_energy.AACompositionEnergy core.scoring.aa_composition_energy.AACompositionEnergySetup
+-out:levels core.scoring.aa_composition_energy.AACompositionEnergy:500 core.scoring.aa_composition_energy.AACompositionEnergySetup:500
 -inout:dump_connect_info
 -inout:connect_info_cutoff 0.0
 ##### these are general flags

@@ -40,6 +40,15 @@ class NotResidueSelector : public ResidueSelector {
 public:
 	// derived from base class
 	NotResidueSelector();
+
+	/// @brief Copy constructor
+	///
+	NotResidueSelector( NotResidueSelector const &src);
+
+	/// @brief Clone operator.
+	/// @details Copy this object and return an owning pointer to the new object.
+	virtual ResidueSelectorOP clone() const;
+
 	NotResidueSelector( ResidueSelectorCOP selector );
 	virtual ~NotResidueSelector();
 

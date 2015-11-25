@@ -41,6 +41,13 @@ class ResRangeSelector : public ResidueSelector {
 public:
 	ResRangeSelector( Size lower, Size upper ) : lower_( lower ), upper_( upper ) {}
 
+	ResRangeSelector( ResRangeSelector const &src ) :
+		lower_(src.lower_),
+		upper_(src.upper_)
+	{}
+
+	ResidueSelectorOP clone() const { return ResidueSelectorOP( new ResRangeSelector(*this) ); }
+
 	virtual
 	ResidueSubset
 	apply( core::pose::Pose const & pose ) const

@@ -36,6 +36,17 @@ namespace residue_selector {
 ResidueIndexSelector::ResidueIndexSelector():
 	index_str_() {}
 
+/// @brief Copy constructor
+///
+ResidueIndexSelector::ResidueIndexSelector( ResidueIndexSelector const &src) :
+	index_str_( src.index_str_ )
+{}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP ResidueIndexSelector::clone() const { return ResidueSelectorOP( new ResidueIndexSelector(*this) ); }
+
+
 ResidueIndexSelector::ResidueIndexSelector( std::string const & index_str )
 {
 	index_str_ = index_str;

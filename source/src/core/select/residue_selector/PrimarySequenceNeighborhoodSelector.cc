@@ -46,6 +46,18 @@ PrimarySequenceNeighborhoodSelector::PrimarySequenceNeighborhoodSelector() :
 {
 }
 
+/// @brief Copy constructor
+///
+PrimarySequenceNeighborhoodSelector::PrimarySequenceNeighborhoodSelector( PrimarySequenceNeighborhoodSelector const &src) :
+	lower_residues_( src.lower_residues_ ),
+	upper_residues_( src.upper_residues_ ),
+	selector_( src.selector_ )
+{}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP PrimarySequenceNeighborhoodSelector::clone() const { return ResidueSelectorOP( new PrimarySequenceNeighborhoodSelector(*this) ); }
+
 PrimarySequenceNeighborhoodSelector::PrimarySequenceNeighborhoodSelector(
 	core::Size const lower_residues,
 	core::Size const upper_residues,

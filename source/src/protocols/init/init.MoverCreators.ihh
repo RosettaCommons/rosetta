@@ -14,6 +14,9 @@
 //MoverCreator #includes
 #include <protocols/moves/MoverFactory.hh>
 
+#include <protocols/aa_composition/AddCompositionConstraintMoverCreator.hh>
+#include <protocols/aa_composition/ClearCompositionConstraintsMoverCreator.hh>
+
 #include <protocols/abinitio/DomainAssemblyCreator.hh>
 
 #include <protocols/analysis/InterfaceAnalyzerMoverCreator.hh>
@@ -99,8 +102,8 @@
 #include <protocols/enzdes/EnzRepackMinimizeCreator.hh>
 #include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 
-#include <protocols/features/ReportToDBCreator.hh> //this is a mover
-#include <protocols/features/TrajectoryReportToDBCreator.hh> //this is also a mover
+#include <protocols/features/ReportToDBCreator.hh>
+#include <protocols/features/TrajectoryReportToDBCreator.hh>
 
 #include <protocols/fldsgn/BluePrintBDRCreator.hh>
 #include <protocols/fldsgn/CircularPermutationCreator.hh>

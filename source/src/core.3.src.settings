@@ -192,6 +192,12 @@ sources = {
 		"VdWTinkerPotential",
 		"WaterAdductHBondPotential",
 	],
+	"core/scoring/aa_composition_energy": [
+		"AACompositionConstraint",
+		"AACompositionEnergy",
+		"AACompositionEnergySetup",
+		"SequenceConstraint",
+	],
 	"core/scoring/aa_repeat_energy": [
 		"AARepeatEnergy",
 	],
@@ -478,8 +484,6 @@ sources = {
 		"FaMPEnvSmoothEnergy",
 	],
 	"core/scoring/methods": [
-		"AACompositionEnergy",
-		"AACompositionEnergySetup",
 		"BurialEnergy",
 		"CartesianBondedEnergy",
 		"CenHBEnergy",

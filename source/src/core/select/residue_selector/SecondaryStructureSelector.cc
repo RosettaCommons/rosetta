@@ -42,10 +42,25 @@ SecondaryStructureSelector::SecondaryStructureSelector() :
 	ResidueSelector(),
 	pose_secstruct_( "" ),
 	overlap_( 0 ),
-	include_terminal_loops_( false )
+	include_terminal_loops_( false ),
+	selected_ss_()
 {
 	selected_ss_.clear();
 }
+
+/// @brief Copy constructor
+///
+SecondaryStructureSelector::SecondaryStructureSelector( SecondaryStructureSelector const &src) :
+	ResidueSelector(),
+	pose_secstruct_( src.pose_secstruct_ ),
+	overlap_( src.overlap_ ),
+	include_terminal_loops_( src.include_terminal_loops_ ),
+	selected_ss_( src.selected_ss_ )
+{}
+
+/// @brief Clone operator.
+/// @details Copy this object and return an owning pointer to the new object.
+ResidueSelectorOP SecondaryStructureSelector::clone() const { return ResidueSelectorOP( new SecondaryStructureSelector(*this) ); }
 
 SecondaryStructureSelector::SecondaryStructureSelector( std::string const & selected ) :
 	ResidueSelector(),

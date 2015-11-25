@@ -300,8 +300,9 @@ ResidueIEFilter::compute_resnums( core::pose::Pose const & pose ) const
 {
 	std::set< core::Size > resnums;
 
-	if ( !resnum_str_.empty() )
+	if ( !resnum_str_.empty() ) {
 		resnums = core::pose::get_resnum_list( resnum_str_, pose );
+	}
 
 	if ( selector_ ) {
 		tr << "Applying residue selector to determine resnums" << std::endl;

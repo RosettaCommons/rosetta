@@ -44,6 +44,14 @@ public:
 	// derived from base class
 	EnvLabelSelector();
 
+	/// @brief Copy constructor
+	///
+	EnvLabelSelector( EnvLabelSelector const &src);
+
+	/// @brief Clone operator.
+	/// @details Copy this object and return an owning pointer to the new object.
+	virtual core::select::residue_selector::ResidueSelectorOP clone() const;
+
 	EnvLabelSelector( LocalPositions const& );
 
 	EnvLabelSelector( LocalPosition const& );

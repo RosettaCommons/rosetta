@@ -36,6 +36,10 @@ class DummyResidueSelector : public ResidueSelector {
 public:
 	DummyResidueSelector() {}
 
+	DummyResidueSelector( DummyResidueSelector const & ) {}
+
+	ResidueSelectorOP clone() const { return ResidueSelectorOP( new DummyResidueSelector(*this) ); }
+
 	virtual
 	ResidueSubset apply( core::pose::Pose const & ) const
 	{

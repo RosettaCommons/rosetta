@@ -33,6 +33,15 @@ ResidueArrayAnnealableEnergy::ResidueArrayAnnealableEnergy( ResidueArrayAnnealab
 ///
 ResidueArrayAnnealableEnergy::~ResidueArrayAnnealableEnergy() {}
 
+/// @brief ResidueArrayAnnealableEnergy objects may optionally cache data within the EnergyMethod prior to a packer run.
+/// This function is defined as doing nothing by default, but can be redefined on a per-EnergyMethod basis to cache whatever
+/// data are necessary.
+void
+ResidueArrayAnnealableEnergy::setup_residuearrayannealableenergy_for_packing (
+	core::pose::Pose const &/*pose*/,
+	core::scoring::ScoreFunction const &/*sfxn*/
+) {} //Does nothing unless implemented by a derived class.
+
 }
 }
 }
