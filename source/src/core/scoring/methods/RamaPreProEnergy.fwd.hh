@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/Rama2BOffsetEnergy.fwd.hh
+/// @file   core/scoring/methods/RamaPreProEnergy.fwd.hh
 /// @brief
 /// @author Frank DiMaio
 
-#ifndef INCLUDED_core_scoring_methods_Rama2BOffsetEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_Rama2BOffsetEnergy_fwd_hh
+#ifndef INCLUDED_core_scoring_methods_RamaPreProEnergy_fwd_hh
+#define INCLUDED_core_scoring_methods_RamaPreProEnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
@@ -21,14 +21,14 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-class Rama2BOffsetEnergy;
-typedef  utility::pointer::weak_ptr< Rama2BOffsetEnergy > Rama2BOffsetEnergyAP;
-typedef  utility::pointer::weak_ptr< Rama2BOffsetEnergy const > Rama2BOffsetEnergyCAP;
-typedef  utility::pointer::shared_ptr< Rama2BOffsetEnergy > Rama2BOffsetEnergyOP;
-typedef  utility::pointer::shared_ptr< Rama2BOffsetEnergy const > Rama2BOffsetEnergyCOP;
+class RamaPreProEnergy;
+typedef  utility::pointer::weak_ptr< RamaPreProEnergy > RamaPreProEnergyAP;
+typedef  utility::pointer::weak_ptr< RamaPreProEnergy const > RamaPreProEnergyCAP;
+typedef  utility::pointer::shared_ptr< RamaPreProEnergy > RamaPreProEnergyOP;
+typedef  utility::pointer::shared_ptr< RamaPreProEnergy const > RamaPreProEnergyCOP;
 
 } // namespace methods
 } // namespace scoring
 } // namespace core
 
-#endif // INCLUDED_core_scoring_methods_Rama2BOffsetEnergy_HH
+#endif // INCLUDED_core_scoring_methods_RamaPreProEnergy_HH

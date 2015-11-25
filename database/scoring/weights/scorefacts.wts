@@ -12,5 +12,5 @@ omega 1.0
 fa_dun_rot 0.56
 fa_dun_semi 0.56
 fa_dun_dev 0.25
-p_aa_pp_offset 1.0
+p_aa_pp 1.0
 ref 1

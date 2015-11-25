@@ -169,6 +169,9 @@
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+
 // C++ headers
 #include <fstream>
 
@@ -216,6 +219,97 @@ utility::vector1< std::string > get_patch_names( ResidueType const & rsd_type ) 
 		if ( item != "" ) elems.push_back( item );
 	}
 	return elems;
+}
+
+/// @brief override patch partial charges with values from commandline
+void
+setup_patch_atomic_charge_reassignments_from_commandline(
+	std::string const & patch_name,
+	std::string const & rsd_type_set_name,
+	ResidueTypeSelector const & rsd_selector,
+	std::map< std::string, Real > & atomic_charge_reassignments
+)
+{
+	if ( !basic::options::option[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ].user() ) return;
+
+	if ( patch_name.empty() ) { return; }
+
+	utility::vector1< std::string > mods
+		( basic::options::option[ basic::options::OptionKeys::chemical::set_patch_atomic_charge ] );
+
+	std::string const errmsg( "-set_patch_atomic_charge format should be::  -chemical:set_patch_atomic_charge <rsd-type-set1-name>:<rsd-type1-name>:<patch-name>:<atom1-name>:<new-charge> ... For example: '-chemical:set_atomic_charge fa_standard:PRO:NtermProteinFull:1H:-1' ");
+
+	for ( Size i=1; i<= mods.size(); ++i ) {
+		///
+		/// mod should look like (for example):  "fa_standard:PRO:NtermProteinFull:1H:-1"
+		///
+		std::string const & mod( mods[i] );
+		utility::vector1<std::string> tokens = utility::string_split( mod, ':');
+		if (tokens.size() != 5) utility_exit_with_message(errmsg);
+
+		// 1: check rsd_type_set
+		if (tokens[1] != rsd_type_set_name) continue;
+
+		// 2: check patch name
+		if (tokens[3] != patch_name) continue;
+
+		// 3: check residue
+		//    this is tricky since we can't get a representative (since we are in the process of building the residue type set)
+		//    instead, we make make a dummy residue type with only name1, name3, and aa set
+		//    this could be expanded to deal with more complicated selector logic
+		//    it is possible as well more complicated selector logic (which queries ResidueType in more detail) could break this ...
+		ResidueType dummy( NULL,NULL,NULL,NULL );
+		AA aatype = aa_from_name(tokens[2]);
+		dummy.aa(aatype);
+		dummy.name(tokens[2]);
+		dummy.name3(tokens[2]);
+		dummy.name1(oneletter_code_from_aa(aatype));
+		if (!rsd_selector[ dummy ]) continue;
+
+		// 4: add to list
+		if ( !ObjexxFCL::is_float( tokens[5] ) ) utility_exit_with_message(errmsg);
+		Real const new_atomic_charge( ObjexxFCL::float_of( tokens[5] ) );
+
+		tr.Trace << "setup_atomic_charge_reassignments_from_commandline: setting charge of " << rsd_type_set_name << ' ' << patch_name << ' ' << tokens[4] << " to " << new_atomic_charge << std::endl;
+
+		atomic_charge_reassignments[ tokens[4] ] = new_atomic_charge;
+	}
+}
+
+
+/// @brief create a PatchCase from input lines
+/// @details add selector_ from lines enclosed by "BEGIN_SELECTOR" and "END_SELECTOR".\n
+/// add operations_ from each input line containing a single operation
+PatchCaseOP
+case_from_lines(
+	utility::vector1< std::string > const & lines,
+	std::string const & res_type_set_name,
+	std::string const & patch_name
+)
+{
+	PatchCaseOP pcase( new PatchCase() );
+
+	bool in_selector( false );
+	for ( uint i=1; i<= lines.size(); ++i ) {
+		std::string const tag( tag_from_line( lines[i] ) );
+
+		if ( tag == "BEGIN_SELECTOR" ) {
+			debug_assert( !in_selector );
+			in_selector = true;
+		} else if ( tag == "END_SELECTOR" ) {
+			in_selector = false;
+		} else if ( in_selector ) {
+			pcase->selector().add_line( lines[i] );
+		} else {
+			//fd : use phil's logic for flag-based changes to patch charges and atom types
+			//   : use both selector and patch name to figure out charge mapping
+			std::map< std::string, Real > atomic_charge_reassignments;
+			setup_patch_atomic_charge_reassignments_from_commandline( patch_name, res_type_set_name, pcase->selector(), atomic_charge_reassignments );
+			PatchOperationOP operation( patch_operation_from_patch_file_line( lines[i],atomic_charge_reassignments ) );
+			if ( operation ) pcase->add_operation( operation );
+		}
+	}
+	return pcase;
 }
 
 /// @details First clone the base ResidueType.  Then patching for this case is done by applying all the operations.
@@ -429,7 +523,7 @@ Patch::read_file( std::string const & filename )
 			debug_assert( !in_case );
 			in_case = true;
 		} else if ( tag == "END_CASE" ) {
-			PatchCaseOP new_case( case_from_lines( case_lines ) );
+			PatchCaseOP new_case( case_from_lines( case_lines, res_type_set_name_, name_ ) );
 			if ( new_case ) cases_.push_back( new_case );
 			case_lines.clear();
 			in_case = false;
@@ -437,32 +531,6 @@ Patch::read_file( std::string const & filename )
 
 		lines.erase( lines.begin() );
 	}
-}
-
-PatchCaseOP
-case_from_lines(
-	utility::vector1< std::string > const & lines
-) {
-	PatchCaseOP pcase( new PatchCase() );
-
-	bool in_selector( false );
-	for ( uint i=1; i<= lines.size(); ++i ) {
-		std::string const tag( tag_from_line( lines[i] ) );
-
-		if ( tag == "BEGIN_SELECTOR" ) {
-			debug_assert( !in_selector );
-			in_selector = true;
-		} else if ( tag == "END_SELECTOR" ) {
-			in_selector = false;
-		} else if ( in_selector ) {
-			pcase->selector().add_line( lines[i] );
-		} else {
-			PatchOperationOP operation( patch_operation_from_patch_file_line( lines[i] ) );
-			if ( operation ) pcase->add_operation( operation );
-		}
-	}
-
-	return pcase;
 }
 
 /// @details loop through the cases in this patch and if it is applicable to this ResidueType, the corresponding patch

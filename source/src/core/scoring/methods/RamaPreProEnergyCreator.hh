@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/scoring/methods/Rama2BOffsetEnergyCreator.hh
-/// @brief  Declaration for the class that connects Rama2BOffsetEnergy with the ScoringManager
+/// @file   src/core/scoring/methods/RamaPreProEnergyCreator.hh
+/// @brief  Declaration for the class that connects RamaPreProEnergy with the ScoringManager
 /// @author
 
-#ifndef INCLUDED_core_scoring_methods_Rama2BOffsetEnergyCreator_hh
-#define INCLUDED_core_scoring_methods_Rama2BOffsetEnergyCreator_hh
+#ifndef INCLUDED_core_scoring_methods_RamaPreProEnergyCreator_hh
+#define INCLUDED_core_scoring_methods_RamaPreProEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -26,10 +26,10 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-class Rama2BOffsetEnergyCreator : public EnergyMethodCreator
+class RamaPreProEnergyCreator : public EnergyMethodCreator
 {
 public:
-	/// @brief Instantiate a new Rama2BOffsetEnergy
+	/// @brief Instantiate a new RamaPreProEnergy
 	virtual
 	methods::EnergyMethodOP
 	create_energy_method(

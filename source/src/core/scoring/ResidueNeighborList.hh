@@ -30,6 +30,8 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
+#include <map>
+
 //Auto Headers
 namespace core {
 namespace scoring {
@@ -309,6 +311,18 @@ public:
 		conformation::Residue const & r1,
 		conformation::Residue const & r2,
 		etable::count_pair::CountPairFunctionCOP cpfxn
+	);
+
+	//fpd initialize using count pair representatives
+	void initialize_from_residues(
+		Real vvd2,
+		Real hvd2,
+		Real hhd2,
+		conformation::Residue const & r1,
+		conformation::Residue const & r2,
+		etable::count_pair::CountPairFunctionCOP cpfxn,
+		std::map<core::Size,core::Size> const &r1_map,
+		std::map<core::Size,core::Size> const &r2_map
 	);
 
 	utility::vector1< SmallAtNb > const & atom_neighbors() const { return atom_neighbors_; }
