@@ -516,8 +516,8 @@ JobDistributor::run_one_job(
 	pose.data().clear();
 	try {
 
-		setup_pymol_observer( pose );
 		job_inputter_->pose_from_job(pose, current_job_);
+		setup_pymol_observer( pose ); // This needs to be after loading the pose, as loading pose clears observers
 
 #ifdef BOINC_GRAPHICS
 		// attach boinc graphics pose observer

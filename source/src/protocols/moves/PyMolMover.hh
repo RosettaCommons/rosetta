@@ -25,11 +25,13 @@
 #include <core/pose/signals/GeneralEvent.hh>
 #include <core/pose/signals/EnergyEvent.hh>
 #include <core/pose/signals/ConformationEvent.hh>
+#include <core/pose/datacache/CacheableObserver.hh>
 
 #include <core/scoring/ScoreType.hh>
 
 // utility headers
 #include <utility/vector1.hh>
+#include <utility/signals/Link.hh>
 
 // c++ headers
 #include <string>
@@ -394,11 +396,43 @@ private:
 // Insertion operator (overloaded so that PyMolMover can be "printed") in PyRosetta).
 std::ostream &operator<< (std::ostream & output, PyMolMover const & mover);
 
-class PyMolObserver : public utility::pointer::ReferenceCount
+class PyMolObserver : public core::pose::datacache::CacheableObserver
 {
 public:
-	PyMolObserver() {};
-	virtual ~PyMolObserver() {};
+	// This is set up to allow multiple settings with bit twiddling
+	enum ObserverType {
+		no_observer = 0,
+		general_observer = 1,
+		energy_observer = 2,
+		conformation_observer = 4
+	};
+
+	PyMolObserver();
+	PyMolObserver(PyMolObserver const & rval);
+	virtual ~PyMolObserver();
+
+	PyMolObserver &
+	operator= (PyMolObserver const &rval);
+
+	virtual
+	core::pose::datacache::CacheableObserverOP
+	clone();
+
+	virtual
+	core::pose::datacache::CacheableObserverOP
+	create();
+
+	void
+	set_type( ObserverType setting);
+
+	void
+	add_type( ObserverType setting);
+
+	ObserverType
+	get_type() const { return type_; };
+
+	virtual bool
+	is_attached() const;
 
 	virtual void generalEvent( core::pose::signals::GeneralEvent const & ev) {
 		pymol_.apply( *ev.pose );
@@ -414,16 +448,43 @@ public:
 
 	PyMolMover & pymol() { return pymol_; };
 
-	/// attach/detach observer from the pose object
+	/// Attach observer to the pose object
 	void attach(core::pose::Pose &p);
+
+	/// Detach observer from the pose object
 	void detach(core::pose::Pose &p);
 
+protected:
+
+	virtual void
+	attach_impl(core::pose::Pose &pose);
+
+	virtual	void
+	detach_impl();
+
+	void
+	update_links();
+
 private:
+
+	ObserverType type_;
 	PyMolMover pymol_;
 
-	// friend PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history);
+	utility::signals::Link general_event_link_;
+	utility::signals::Link energy_event_link_;
+	utility::signals::Link conformation_event_link_;
 };
 
+// Because C++ is silly about enum conversions
+inline PyMolObserver::ObserverType operator| (PyMolObserver::ObserverType & l, PyMolObserver::ObserverType & r) {
+	// We need to cast to int to avoid infinite loops
+	return static_cast<PyMolObserver::ObserverType>( static_cast<int>(l) | static_cast<int>(r) );
+}
+
+/// @brief (Internal) helper function to create a PyMolObserver and add it to the given pose
+/// NOTE: You NEED to adjust the observer type and call attach() on the return - by default a new PyMolObserver isn't attached/observing.
+PyMolObserverOP
+get_pymol_observer(core::pose::Pose & pose);
 
 /// @brief Helper function that create PyMolObserver Object and add it to the give Pose.
 ///        This is the most likely the only function that you need to call...

@@ -1442,7 +1442,7 @@ public: // observer attach/detach
 
 	/// @brief attach DestructionEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( DestructionEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return Link that can be used to manage the connection.
 	/// @remarks DestructionEvent observers will only be notified upon destruction
 	///  of the Pose
@@ -1456,7 +1456,7 @@ public: // observer attach/detach
 
 	/// @brief detach DestructionEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( DestructionEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return true if disconnect successful, false if connection does not exist
 	/// @remarks DestructionEvent observers will only be notified upon destruction
 	///  of the Pose
@@ -1470,7 +1470,7 @@ public: // observer attach/detach
 
 	/// @brief attach GeneralEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( GeneralEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return Link that can be used to manage the connection.
 	/// @remarks GeneralEvent observers will be notified whenever any signal
 	///  derived from GeneralEvent occurs.
@@ -1484,7 +1484,7 @@ public: // observer attach/detach
 
 	/// @brief detach GeneralEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( GeneralEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return true if disconnect successful, false if connection does not exist
 	/// @remarks GeneralEvent observers will be notified whenever any signal
 	///  derived from GeneralEvent occurs.
@@ -1498,7 +1498,7 @@ public: // observer attach/detach
 
 	/// @brief attach EnergyEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( EnergyEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return Link that can be used to manage the connection.
 	template< typename MemFn, typename Ptr >
 	inline
@@ -1510,7 +1510,7 @@ public: // observer attach/detach
 
 	/// @brief detach EnergyEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( EnergyEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return true if disconnect successful, false if connection does not exist
 	template< typename MemFn, typename Ptr >
 	inline
@@ -1522,7 +1522,7 @@ public: // observer attach/detach
 
 	/// @brief attach ConformationEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( ConformationEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return Link that can be used to manage the connection.
 	template< typename MemFn, typename Ptr >
 	inline
@@ -1534,7 +1534,7 @@ public: // observer attach/detach
 
 	/// @brief detach ConformationEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( ConformationEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return true if disconnect successful, false if connection does not exist
 	template< typename MemFn, typename Ptr >
 	inline
@@ -1584,6 +1584,15 @@ private: // observer notifications
 	void
 	notify_conformation_obs( ConformationEvent const & e, bool const fire_general = true );
 
+	/// @brief Temporarily turn off observer notification
+	/// Used for places where the Pose is in a temporarily inconsistent state
+	void
+	buffer_observers() const;
+
+	/// @brief Turn back on observer notification
+	/// Used for places where the Pose is in a temporarily inconsistent state
+	void
+	unbuffer_observers() const;
 
 private: // Pose as-an-observer methods
 

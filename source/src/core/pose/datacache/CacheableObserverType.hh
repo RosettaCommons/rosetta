@@ -31,11 +31,12 @@ public:
 		LENGTH_EVENT_COLLECTOR = 1,
 		SPECIAL_SEGMENTS_OBSERVER,
 		ENZDES_OBSERVER,
+		PYMOL_OBSERVER,
 		// *** IMPORTANT ***
 		// The 'num_cacheable_data_types' below must be the last enum, and must
 		// always be set equal to the (last-1) enum.  If you append a new enum
 		// to the list, remember to change the value below!
-		num_cacheable_data_types = ENZDES_OBSERVER
+		num_cacheable_data_types = PYMOL_OBSERVER
 	};
 
 }; // class CacheableObserverType

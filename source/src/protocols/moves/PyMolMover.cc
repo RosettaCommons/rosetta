@@ -46,6 +46,8 @@ inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/datacache/CacheableObserverType.hh>
+#include <core/pose/datacache/ObserverCache.hh>
 
 // utility headers
 #include <utility/vector1.hh>
@@ -563,43 +565,135 @@ operator<<(std::ostream & output, PyMolMover const & mover)
 	return output;
 }
 
+PyMolObserver::PyMolObserver():
+	CacheableObserver(),
+	type_( no_observer ) // We have to set the observer type specifically.
+{
+}
+
+PyMolObserver::PyMolObserver(PyMolObserver const & rval) :
+	CacheableObserver( rval ),
+	type_( rval.type_ ),
+	pymol_(rval.pymol_)
+	// Do NOT copy the *_event_link_s
+{
+}
+
+PyMolObserver::~PyMolObserver() {
+	detach_from();
+}
+
+PyMolObserver &
+PyMolObserver::operator= (PyMolObserver const &rval) {
+	if ( this != &rval ) {
+		core::pose::datacache::CacheableObserver::operator=( rval );
+		type_ = rval.type_;
+		pymol_ = rval.pymol_;
+		// Do NOT copy the *_event_link_s
+	}
+	return *this;
+}
+
+core::pose::datacache::CacheableObserverOP
+PyMolObserver::clone() {
+	return core::pose::datacache::CacheableObserverOP( new PyMolObserver( *this ) );
+}
+
+core::pose::datacache::CacheableObserverOP
+PyMolObserver::create() {
+	return core::pose::datacache::CacheableObserverOP( new PyMolObserver );
+}
+
+void
+PyMolObserver::set_type( ObserverType setting ) {
+	type_ = setting;
+	// We don't have a pose, so wait until we get attached
+}
+
+void
+PyMolObserver::add_type( ObserverType setting ) {
+	type_ = type_ | setting;
+	// We don't have a pose, so wait until we get attached
+}
 
 void PyMolObserver::attach(core::pose::Pose &p)
 {
-	p.attach_general_obs(&PyMolObserver::generalEvent, this);
+	attach_to(p);
 }
 
-void PyMolObserver::detach(core::pose::Pose &p)
+void PyMolObserver::detach(core::pose::Pose & /*p*/)
 {
-	p.detach_general_obs(&PyMolObserver::generalEvent, this);
+	detach_from();
 }
 
+bool
+PyMolObserver::is_attached() const {
+	return general_event_link_.valid() || energy_event_link_.valid() || conformation_event_link_.valid();
+}
+
+void
+PyMolObserver::attach_impl(core::pose::Pose & pose) {
+	general_event_link_.invalidate();
+	energy_event_link_.invalidate();
+	conformation_event_link_.invalidate();
+
+	if( type_ & general_observer ) {
+		general_event_link_ = pose.attach_general_obs( &PyMolObserver::generalEvent, this );
+	}
+	if( type_ & energy_observer ) {
+		energy_event_link_ = pose.attach_energy_obs( &PyMolObserver::energyEvent, this );
+	}
+	if( type_ & conformation_observer ) {
+		conformation_event_link_ = pose.attach_conformation_obs( &PyMolObserver::conformationEvent, this );
+	}
+}
+
+void
+PyMolObserver::detach_impl() {
+	general_event_link_.invalidate();
+	energy_event_link_.invalidate();
+	conformation_event_link_.invalidate();
+}
+
+PyMolObserverOP
+get_pymol_observer(core::pose::Pose & pose) {
+	using namespace core::pose::datacache;
+
+	if ( !pose.observer_cache().has( CacheableObserverType::PYMOL_OBSERVER ) ) {
+		PyMolObserverOP obs( new PyMolObserver );
+		pose.observer_cache().set( CacheableObserverType::PYMOL_OBSERVER, obs, /*autoattach*/ false );
+	}
+	CacheableObserverOP obs = pose.observer_cache().get_ptr( core::pose::datacache::CacheableObserverType::PYMOL_OBSERVER );
+	return utility::pointer::dynamic_pointer_cast< PyMolObserver >( obs );
+}
 
 PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
-	//Add options
-	PyMolObserverOP o( new PyMolObserver );
+	PyMolObserverOP o( get_pymol_observer(p) );
 	o->pymol().keep_history(keep_history);
 	o->pymol().update_interval(update_interval);
-	p.attach_general_obs(&PyMolObserver::generalEvent, o);
+	o->add_type( PyMolObserver::general_observer );
+	o->attach(p);
 	return o;
 }
 
 PyMolObserverOP AddPyMolObserver_to_energies(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
-	PyMolObserverOP o( new PyMolObserver );
+	PyMolObserverOP o( get_pymol_observer(p) );
 	o->pymol().keep_history(keep_history);
 	o->pymol().update_interval(update_interval);
-	p.attach_energy_obs(&PyMolObserver::energyEvent, o);
+	o->add_type( PyMolObserver::energy_observer );
+	o->attach(p);
 	return o;
 }
 
 PyMolObserverOP AddPyMolObserver_to_conformation(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
-	PyMolObserverOP o( new PyMolObserver );
+	PyMolObserverOP o( get_pymol_observer(p) );
 	o->pymol().keep_history(keep_history);
 	o->pymol().update_interval(update_interval);
-	p.attach_conformation_obs(&PyMolObserver::conformationEvent, o);
+	o->add_type( PyMolObserver::conformation_observer );
+	o->attach(p);
 	return o;
 }
 

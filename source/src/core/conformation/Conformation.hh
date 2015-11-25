@@ -977,7 +977,7 @@ public:  // observer management
 
 	/// @brief attach ConnectionEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( ConnectionEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return Link that can be used to manage the connection
 	/// @remarks ConnectionEvent observers will only be notified upon a change
 	///  in the state of the connection with the Conformation, e.g. if the
@@ -995,7 +995,7 @@ public:  // observer management
 
 	/// @brief detach ConnectionEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( ConnectionEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return true if disconnect successful, false if connection does not exist
 	/// @remarks ConnectionEvent observers will only be notified upon a change
 	///  in the state of the connection with the Conformation, e.g. if the
@@ -1013,7 +1013,7 @@ public:  // observer management
 
 	/// @brief attach GeneralEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( GeneralEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return Link that can be used to manage the connection
 	/// @remarks GeneralEvent observers will be notified whenever any signal
 	///  derived from GeneralEvent occurs.
@@ -1027,7 +1027,7 @@ public:  // observer management
 
 	/// @brief detach GeneralEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( GeneralEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return true if disconnect successful, false if connection does not exist
 	/// @remarks GeneralEvent observers will be notified whenever any signal
 	///  derived from GeneralEvent occurs.
@@ -1041,7 +1041,7 @@ public:  // observer management
 
 	/// @brief attach IdentityEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( IdentityEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return Link that can be used to manage the connection
 	template< typename MemFn, typename Ptr >
 	inline
@@ -1053,7 +1053,7 @@ public:  // observer management
 
 	/// @brief detach IdentityEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( IdentityEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return true if disconnect successful, false if connection does not exist
 	template< typename MemFn, typename Ptr >
 	inline
@@ -1065,7 +1065,7 @@ public:  // observer management
 
 	/// @brief attach LengthEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( LengthEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return Link that can be used to manage the connection
 	template< typename MemFn, typename Ptr >
 	inline
@@ -1077,7 +1077,7 @@ public:  // observer management
 
 	/// @brief detach LengthEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( LengthEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return true if disconnect successful, false if connection does not exist
 	template< typename MemFn, typename Ptr >
 	inline
@@ -1089,7 +1089,7 @@ public:  // observer management
 
 	/// @brief attach XYZEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( XYZEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return Link that can be used to manage the connection
 	template< typename MemFn, typename Ptr >
 	inline
@@ -1101,7 +1101,7 @@ public:  // observer management
 
 	/// @brief detach XYZEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( XYZEvent const & )
-	/// @param ptr pointer to observer object
+	/// @param ptr **RAW** pointer to observer object
 	/// @return true if disconnect successful, false if connection does not exist
 	template< typename MemFn, typename Ptr >
 	inline

@@ -146,6 +146,9 @@ Pose::operator=( Pose const & src )
 {
 	PROF_START ( basic::POSE_COPY );
 
+	// Don't send signals to the observers during the incomplete state of a Pose copy
+	buffer_observers();
+
 	ConformationOP old_conf = conformation_; // track for observer transfer
 
 	if ( conformation_ && conformation_->same_type_as_me( *src.conformation_, true ) ) {
@@ -191,6 +194,8 @@ Pose::operator=( Pose const & src )
 		conformation_->receive_observers_from( *old_conf );
 		old_conf.reset(); // force clear
 	}
+
+	unbuffer_observers();
 
 	PROF_STOP ( basic::POSE_COPY );
 
@@ -1775,6 +1780,26 @@ Pose::notify_conformation_obs( ConformationEvent const & e, bool const fire_gene
 	if ( fire_general ) {
 		notify_general_obs( e );
 	}
+}
+
+/// @brief Temporarily turn off observer notification
+/// Used for places where the Pose is in a temporarily inconsistent state
+void
+Pose::buffer_observers() const {
+	destruction_obs_hub_.buffer();
+	general_obs_hub_.buffer();
+	energy_obs_hub_.buffer();
+	conformation_obs_hub_.buffer();
+}
+
+/// @brief Turn back on observer notification
+/// Used for places where the Pose is in a temporarily inconsistent state
+void
+Pose::unbuffer_observers() const {
+	destruction_obs_hub_.unblock();
+	general_obs_hub_.unblock();
+	energy_obs_hub_.unblock();
+	conformation_obs_hub_.unblock();
 }
 
 /// @brief upon receiving a conformation::signals::XYZEvent
