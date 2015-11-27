@@ -1093,6 +1093,7 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 	using namespace scoring::rna;
 	using namespace pose::rna;
 	using namespace conformation;
+	using namespace core::chemical::rna;
 
 	// pose::Pose pose = pose_input;
 	// (*denovo_scorefxn_)( pose );
@@ -1108,23 +1109,20 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 
 	Size N_WC( 0 ), N_NWC( 0 );
 
-	// for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
-	//    it != scored_base_pair_list.end(); ++it ){
 	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
 
 		BasePair const base_pair = base_pair_list[ n ];
 
-		Size const i = base_pair.res1;
-		Size const j = base_pair.res2;
+		Size const i = base_pair.res1();
+		Size const j = base_pair.res2();
 
-		Size const k = base_pair.edge1;
-		Size const m = base_pair.edge2;
+		BaseEdge const k = base_pair.edge1();
+		BaseEdge const m = base_pair.edge2();
 
 		Residue const & rsd_i( pose.residue( i ) );
 		Residue const & rsd_j( pose.residue( j ) );
 
-		if ( ( k == core::chemical::rna::WATSON_CRICK && m == core::chemical::rna::WATSON_CRICK
-				&& base_pair.orientation == 1 )  &&
+		if ( ( k == WATSON_CRICK && m == WATSON_CRICK && base_pair.orientation() == ANTIPARALLEL )  &&
 				core::chemical::rna::possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )  {
 			N_WC++;
 		} else {
@@ -1136,15 +1134,12 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 	s.add_string_value( "N_NWC", ObjexxFCL::format::I( 9, N_NWC ) );
 	s.add_string_value( "N_BS",  ObjexxFCL::format::I( 9, core::pose::rna::get_number_base_stacks( pose ) ) );
 
-	//s.add_energy( "N_WC",  N_WC );
-	// s.add_energy( "N_NWC", N_NWC );
-	// s.add_energy( "N_BS",  core::pose::rna::get_number_base_stacks( pose ) );
 }
 
 /////////////////////////////////////////////////////////////////////
 bool
 check_in_base_pair_list( pose::rna::BasePair const & base_pair /*from native*/,
-	utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/)
+												 utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/)
 {
 	using namespace pose::rna;
 
@@ -1154,16 +1149,12 @@ check_in_base_pair_list( pose::rna::BasePair const & base_pair /*from native*/,
 
 		BasePair const base_pair2 = base_pair_list[ n ];
 
-		if ( ( base_pair.res1 == base_pair2.res1 && base_pair.res2 == base_pair2.res2 )  &&
-				( base_pair.edge1 == base_pair2.edge1 && base_pair.edge2 == base_pair2.edge2 )  &&
-				base_pair.orientation == base_pair2.orientation ) {
+		if ( base_pair == base_pair2 ) {
 			in_list = true;
 			break;
 		}
 
-		if ( ( base_pair.res2 == base_pair2.res1 && base_pair.res1 == base_pair2.res2 )  &&
-				( base_pair.edge2 == base_pair2.edge1 && base_pair.edge1 == base_pair2.edge2 )  &&
-				base_pair.orientation == base_pair2.orientation ) {
+		if ( base_pair.flipped() == base_pair2 ) {
 			in_list = true;
 			break;
 		}
@@ -1220,19 +1211,18 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 
 		core::pose::rna::BasePair const base_pair = base_pair_list_native[ n ];
 
-		Size const i = base_pair.res1;
-		Size const j = base_pair.res2;
+		Size const i = base_pair.res1();
+		Size const j = base_pair.res2();
 
-		Size const k = base_pair.edge1;
-		Size const m = base_pair.edge2;
+		BaseEdge const k = base_pair.edge1();
+		BaseEdge const m = base_pair.edge2();
 
 		Residue const & rsd_i( pose.residue( i ) );
 		Residue const & rsd_j( pose.residue( j ) );
 
 		//std::cout << " NATIVE BASE PAIR " << i << " " << j << " " << k << " " << m << " " << it->first << std::endl;
 
-		if ( ( k == core::chemical::rna::WATSON_CRICK && m == core::chemical::rna::WATSON_CRICK
-				&& base_pair.orientation == 1 )  &&
+		if ( ( k == WATSON_CRICK && m == WATSON_CRICK && base_pair.orientation() == ANTIPARALLEL )  &&
 				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )  {
 			N_WC_NATIVE++;
 			if ( check_in_base_pair_list( base_pair /*from native*/, base_pair_list /*for decoy*/) ) N_WC++;

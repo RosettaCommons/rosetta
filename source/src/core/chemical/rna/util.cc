@@ -68,7 +68,7 @@ get_full_edge_from_num( Size const num ) {
 	if ( num == WATSON_CRICK ) return "WC";
 	if ( num == HOOGSTEEN )    return "HOOG";
 	if ( num == SUGAR )        return "SUGAR";
-	if ( num == O2PRIME )       return "O2PRIME";
+	if ( num == O2PRIME )      return "O2PRIME";
 	if ( num == PHOSPHATE )    return "PHOS";
 
 	std::cout << "Invalid edge num = " << num << std::endl;
@@ -89,7 +89,7 @@ char get_orientation_from_num( Size const num ) {
 
 std::string //Parin March 7, 2011
 get_full_orientation_from_num( Size const num ) {
-	if ( num == 0 ) return "BLAH";
+	if ( num == 0 ) return "ANY ";
 	if ( num == 1 ) return "ANTI";
 	if ( num == 2 ) return "PARA";
 
@@ -100,7 +100,7 @@ get_full_orientation_from_num( Size const num ) {
 
 std::string //Parin April 19, 2011
 get_full_LW_orientation_from_num( Size const num ){
-	if ( num == 0 ) return "BLAH ";
+	if ( num == 0 ) return "ANY  ";
 	if ( num == 1 ) return "CIS  ";
 	if ( num == 2 ) return "TRANS";
 

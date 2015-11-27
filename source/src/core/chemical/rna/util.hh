@@ -17,11 +17,9 @@
 #include <core/types.hh>
 
 #include <core/chemical/AA.hh>
-//#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-//#include <core/kinematics/Stub.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 
@@ -35,6 +33,10 @@ enum BaseEdge    { ANY_BASE_EDGE, WATSON_CRICK, HOOGSTEEN, SUGAR, O2PRIME, PHOSP
 enum RNA_Torsion { ANY_TORSION, ALPHA, BETA, GAMMA, DELTA, EPSILON, ZETA, CHI, NU2, NU1, O2H};
 enum ChiState    { ANY_CHI, ANTI, SYN, NO_CHI};
 enum PuckerState { ANY_PUCKER, NORTH, SOUTH, NO_PUCKER};
+
+enum BaseDoubletOrientation    { ANY_BASE_DOUBLET_ORIENTATION, ANTIPARALLEL, PARALLEL };
+enum LW_BaseDoubletOrientation { ANY_LW_ORIENTATION, CIS, TRANS };
+enum BaseStackWhichSide        { ANY_BASE_STACK_SIDE, ABOVE, BELOW };
 
 Size const NUM_EDGES( 3 );
 Size const NUM_RNA_TORSIONS( 10 );

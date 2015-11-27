@@ -7,14 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_core_scoring_rna_RNA_BaseDoubletClasses_hh
-#define INCLUDED_core_scoring_rna_RNA_BaseDoubletClasses_hh
+/// @file core/pose/rna/BasePair.fwd.hh
+/// @brief 
+/// @detailed
+/// @author Rhiju Das, rhiju@stanford.edu
 
-/////////////////////////////////////////////////////////////////////
-// Useful type definitions.
-/////////////////////////////////////////////////////////////////////
 
-#include <core/pose/rna/BasePair.hh>
-#include <core/pose/rna/BaseStack.hh>
+#ifndef INCLUDED_core_pose_rna_BasePair_FWD_HH
+#define INCLUDED_core_pose_rna_BasePair_FWD_HH
+
+#include <utility/pointer/owning_ptr.hh>
+
+namespace core {
+namespace pose {
+namespace rna {
+	
+	class BasePair;
+	typedef utility::pointer::shared_ptr< BasePair > BasePairOP;
+	typedef utility::pointer::shared_ptr< BasePair const > BasePairCOP;
+	
+} //rna 
+} //pose 
+} //core 
 
 #endif

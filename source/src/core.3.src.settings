@@ -123,9 +123,12 @@ sources = {
 		"ReferencePoseSet",
 	],
 	"core/pose/rna": [
+		"BasePair",
+		"BaseStack",
 		"RNA_BasePairClassifier",
 		"RNA_IdealCoord",
 		"RNA_SuiteName",
+		"leontis_westhof_util",
 		"util",
 	],
 	"core/pose/symmetry": [

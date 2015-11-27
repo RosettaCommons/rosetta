@@ -171,15 +171,15 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 						raw_base_pair_array( i, j, k ) + raw_base_pair_array( j, i, found_match );
 
 					pose::rna::BasePair base_pair;
-					base_pair.res1 = i;
-					base_pair.edge1 = k;
+					base_pair.set_res1( i );
+					base_pair.set_edge1( BaseEdge(k) );
 
-					base_pair.res2 = j;
-					base_pair.edge2 = found_match;
+					base_pair.set_res2( j );
+					base_pair.set_edge2( BaseEdge(found_match) );
 
 					//orientations are cos( theta ) and should be symmetric!
 					debug_assert( std::abs( raw_base_geometry_orientation_array( i, j ) - raw_base_geometry_orientation_array( j, i ) ) < 1.0e-2 );
-					base_pair.orientation = ( raw_base_geometry_orientation_array( i, j ) + raw_base_geometry_orientation_array( j, i ) < 0.0 ? 1 : 2 );
+					base_pair.set_orientation( ( raw_base_geometry_orientation_array( i, j ) + raw_base_geometry_orientation_array( j, i ) < 0.0 ? ANTIPARALLEL : PARALLEL ) );
 
 					energy_base_pair_list.push_back( std::make_pair( total_base_pair_energy, base_pair )  );
 
@@ -198,11 +198,11 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 		Real const energy = it->first;
 		pose::rna::BasePair const base_pair = it->second;
 
-		Size const i = base_pair.res1;
-		Size const k = base_pair.edge1;
+		Size const i = base_pair.res1();
+		Size const k = base_pair.edge1();
 
-		Size const j = base_pair.res2;
-		Size const m = base_pair.edge2;
+		Size const j = base_pair.res2();
+		Size const m = base_pair.edge2();
 
 		if ( edge_is_base_pairing( i, k ) ) continue;
 		if ( edge_is_base_pairing( j, m ) ) continue;
@@ -221,13 +221,13 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 		if ( rna_verbose_ ) {
 
 			std::cout << "BASE PAIR: " << I( 3, i ) << " " << I( 3, j ) << " "
-				<< get_edge_from_num( k ) << " "
-				<< get_edge_from_num( m ) << " "
-				<< get_orientation_from_num( base_pair.orientation )
-				<< "  ==  > "
-				<< F( 5, 3, raw_base_pair_array( i, j, k ) ) << " " << F( 5, 3, raw_base_pair_array( j, i, m ) )  << " "
+								<< get_edge_from_num( k ) << " "
+								<< get_edge_from_num( m ) << " "
+								<< get_orientation_from_num( base_pair.orientation() )
+								<< "  ==  > "
+								<< F( 5, 3, raw_base_pair_array( i, j, k ) ) << " " << F( 5, 3, raw_base_pair_array( j, i, m ) )  << " "
 				//        << scaled_axis_energy
-				<< std::endl;
+								<< std::endl;
 
 		}
 
@@ -286,15 +286,15 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_stacks_to_score(
 				if ( rna_verbose_ ) std::cout << "BASE STACK: " << i << " " << j << std::endl;
 
 				pose::rna::BaseStack base_stack;
-				base_stack.res1 = i;
-				base_stack.res2 = j;
+				base_stack.set_res1( i );
+				base_stack.set_res2( j );
 
 				//orientations are cos( theta ) and should be symmetric!
 				debug_assert( std::abs( raw_base_geometry_orientation_array( i, j ) - raw_base_geometry_orientation_array( j, i ) ) < 1.0e-2 );
-				base_stack.orientation = ( raw_base_geometry_orientation_array( i, j ) + raw_base_geometry_orientation_array( j, i ) ) < 0.0 ? 1 : 2;
+				base_stack.set_orientation( ( raw_base_geometry_orientation_array( i, j ) + raw_base_geometry_orientation_array( j, i ) ) < 0.0 ? ANTIPARALLEL : PARALLEL );
 
 				// height is not necessarily (anti)-symmetric if the planes of the two bases aren't co-planar.
-				base_stack.which_side = ( raw_base_geometry_height_array( i, j ) > 0.0 ) ? 1 : 2;
+				base_stack.set_which_side( ( raw_base_geometry_height_array( i, j ) > 0.0 ) ? ABOVE : BELOW );
 
 				Real const total_base_stack_energy = raw_base_stack_array( i, j ) + raw_base_stack_array( j, i );
 				scored_base_stack_list_.push_back( std::make_pair( total_base_stack_energy,  base_stack ) );
@@ -339,14 +339,14 @@ Real RNA_FilteredBaseBaseInfo::get_data_score( data::RNA_DataInfo const & rna_da
 
 			pose::rna::BasePair const base_pair = it->second;
 
-			Size const i = base_pair.res1;
-			Size const j = base_pair.res2;
+			Size const i = base_pair.res1();
+			Size const j = base_pair.res2();
 
 			Size k( 0 );
 			if ( i == seqpos ) {
-				k = base_pair.edge1;
+				k = base_pair.edge1();
 			} else if ( j == seqpos ) {
-				k = base_pair.edge2;
+				k = base_pair.edge2();
 			} else {
 				continue;
 			}

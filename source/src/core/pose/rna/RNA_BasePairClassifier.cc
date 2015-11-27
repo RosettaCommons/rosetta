@@ -263,7 +263,7 @@ void
 figure_out_number_base_contacts(
 	conformation::Residue const & rsd_i,
 	conformation::Residue const & rsd_j,
-	Size & edge_classification )
+	BaseEdge & edge_classification )
 {
 	using namespace core::scoring::rna;
 
@@ -346,7 +346,7 @@ figure_out_number_base_contacts(
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 /////////////////////////////////////////////////////////////////////////////
-Size
+BaseDoubletOrientation
 figure_out_base_pair_orientation(
 	core::pose::Pose & pose,
 	Size const & i,
@@ -370,7 +370,7 @@ figure_out_base_pair_orientation(
 	Vector const & z_j = M_j.col_z();
 	Real const cos_theta = dot_product( z_i, z_j );
 
-	Size const theta_bin = (cos_theta < 0) ?  1 : 2;
+	BaseDoubletOrientation const theta_bin = (cos_theta < 0) ?  ANTIPARALLEL : PARALLEL;
 	return theta_bin;
 
 }
@@ -607,12 +607,12 @@ classify_base_pairs(
 			if ( num_hbonds == 0  ) continue;
 			if ( ! bases_are_coplanar( pose, i, j ) || ! bases_are_coplanar( pose, j, i ) ) continue;
 
-			Size edge_classification_i( 0 ), edge_classification_j( 0 );
+			BaseEdge edge_classification_i( ANY_BASE_EDGE ), edge_classification_j( ANY_BASE_EDGE );
 
 			figure_out_number_base_contacts(  pose.residue( i ), pose.residue( j ), edge_classification_i );
 			figure_out_number_base_contacts(  pose.residue( j ), pose.residue( i ), edge_classification_j );
 
-			Size const orientation = figure_out_base_pair_orientation( pose, i, j );
+			BaseDoubletOrientation const orientation = figure_out_base_pair_orientation( pose, i, j );
 
 			//These pernicious bifurcated hydrogen bonds.
 			//   if ( num_hbonds == 1 &&

@@ -2041,7 +2041,7 @@ rna_jumping_test(){
 ///////////////////////////////////////////////////////////////////////////////
 Size
 is_regular_helix( pose::Pose const & pose,
-	Size const & seqpos ){
+									Size const & seqpos ){
 
 	using namespace core::chemical::rna;
 	using namespace core::scoring::rna;
@@ -2062,16 +2062,16 @@ is_regular_helix( pose::Pose const & pose,
 
 		BasePair const base_pair = it->second;
 
-		Size const i = base_pair.res1;
-		Size const j = base_pair.res2;
+		Size const i = base_pair.res1();
+		Size const j = base_pair.res2();
 
 		if ( i == seqpos ) {
-			k = base_pair.edge1;
-			m = base_pair.edge2;
+			k = base_pair.edge1();
+			m = base_pair.edge2();
 			partner = j;
 		} else if ( j == seqpos ) {
-			k = base_pair.edge2;
-			m = base_pair.edge1;
+			k = base_pair.edge2();
+			m = base_pair.edge1();
 			partner = i;
 		} else {
 			continue;
@@ -2081,7 +2081,7 @@ is_regular_helix( pose::Pose const & pose,
 		Residue const & rsd_j( pose.residue( j ) );
 
 		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
-				&& base_pair.orientation == 1 )  &&
+					 && base_pair.orientation() == 1 )  &&
 				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) { //&&
 			//     pose.torsion( id::TorsionID( i, id::CHI, 1 ) ) > 0  && //Need to check syn/anti
 			//     pose.torsion( id::TorsionID( j, id::CHI, 1 ) ) > 0     //Need to check syn/anti

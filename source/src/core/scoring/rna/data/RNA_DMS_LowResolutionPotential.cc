@@ -268,8 +268,8 @@ RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & 
 
 		for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
 			pose::rna::BasePair const base_pair = base_pair_list[ n ]; // move this to pose/rna?
-			update_edge_paired(  base_pair.res1, base_pair.edge1, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
-			update_edge_paired(  base_pair.res2, base_pair.edge2, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
+			update_edge_paired(  base_pair.res1(), base_pair.edge1(), wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
+			update_edge_paired(  base_pair.res2(), base_pair.edge2(), wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 		}
 	} else {
 
@@ -284,16 +284,16 @@ RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & 
 		pose::rna::EnergyBasePairList const & scored_base_pair_list = rna_filtered_base_base_info.scored_base_pair_list();
 		for ( pose::rna::EnergyBasePairList::const_iterator it = scored_base_pair_list.begin(), end = scored_base_pair_list.end(); it != end; ++it ) {
 			pose::rna::BasePair const base_pair = it->second;
-			update_edge_paired(  base_pair.res1, base_pair.edge1, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
-			update_edge_paired(  base_pair.res2, base_pair.edge2, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
+			update_edge_paired(  base_pair.res1(), base_pair.edge1(), wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
+			update_edge_paired(  base_pair.res2(), base_pair.edge2(), wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 		}
 
 		pose::rna::EnergyBaseStackList const & scored_base_stack_list = rna_filtered_base_base_info.scored_base_stack_list();
 		vector1< bool > is_stacked( pose.total_residue(), false );
 		for ( pose::rna::EnergyBaseStackList::const_iterator it = scored_base_stack_list.begin(), end = scored_base_stack_list.end(); it != end; ++it ) {
 			pose::rna::BaseStack const base_stack = it->second;
-			is_stacked[ base_stack.res1 ] = true;
-			is_stacked[ base_stack.res2 ] = true;
+			is_stacked[ base_stack.res1() ] = true;
+			is_stacked[ base_stack.res2() ] = true;
 		}
 
 		for ( Size i = 1; i <= pose.total_residue(); i++ ) {

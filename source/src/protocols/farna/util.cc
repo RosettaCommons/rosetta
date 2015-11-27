@@ -107,21 +107,21 @@ get_base_pairing_info( pose::Pose const & pose,
 
 	bool forms_canonical_base_pair( false ), forms_base_pair( false );
 
-	Size k( 0 ), m( 0 );
+	BaseEdge k( ANY_BASE_EDGE ), m( ANY_BASE_EDGE );
 	for ( EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
 			it != scored_base_pair_list.end(); ++it ) {
 
 		BasePair const base_pair = it->second;
 
-		Size const i = base_pair.res1;
-		Size const j = base_pair.res2;
+		Size const i = base_pair.res1();
+		Size const j = base_pair.res2();
 
 		if ( i == seqpos ) {
-			k = base_pair.edge1;
-			m = base_pair.edge2;
+			k = base_pair.edge1();
+			m = base_pair.edge2();
 		} else if ( j == seqpos ) {
-			k = base_pair.edge2;
-			m = base_pair.edge1;
+			k = base_pair.edge2();
+			m = base_pair.edge1();
 		} else {
 			continue;
 		}
@@ -133,7 +133,7 @@ get_base_pairing_info( pose::Pose const & pose,
 		Residue const & rsd_j( pose.residue( j ) );
 
 		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
-				&& base_pair.orientation == 1 )  &&
+					 && base_pair.orientation() == ANTIPARALLEL )  &&
 				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) {
 			std::string atom1, atom2;
 
@@ -159,7 +159,8 @@ get_base_pairing_info( pose::Pose const & pose,
 ///////////////////////////////////////////////////////////////////////////////
 void
 get_base_pairing_list( pose::Pose & pose,
-	utility::vector1< std::pair<Size, Size> > & base_pairing_list ){
+											 utility::vector1< std::pair<Size, Size> > & base_pairing_list )
+{
 
 	using namespace core::scoring;
 	using namespace core::chemical;
@@ -178,7 +179,7 @@ get_base_pairing_list( pose::Pose & pose,
 
 	// bool forms_canonical_base_pair( false );
 
-	Size k( 0 ), m( 0 );
+	BaseEdge k( ANY_BASE_EDGE ), m( ANY_BASE_EDGE );
 
 	std::list < std::pair< Size,Size > > base_pair_list0;
 
@@ -187,19 +188,19 @@ get_base_pairing_list( pose::Pose & pose,
 
 		BasePair const base_pair = it->second;
 
-		Size const i = base_pair.res1;
-		Size const j = base_pair.res2;
+		Size const i = base_pair.res1();
+		Size const j = base_pair.res2();
 
 		if ( i > j ) continue;
 
-		k = base_pair.edge1;
-		m = base_pair.edge2;
+		k = base_pair.edge1();
+		m = base_pair.edge2();
 
 		Residue const & rsd_i( pose.residue( i ) );
 		Residue const & rsd_j( pose.residue( j ) );
 
 		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
-				&& base_pair.orientation == 1 )  &&
+					 && base_pair.orientation() == ANTIPARALLEL )  &&
 				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) {
 			std::string atom1, atom2;
 
@@ -587,15 +588,15 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 
 		BasePair const base_pair = it->second;
 
-		Size const i = base_pair.res1;
-		Size const j = base_pair.res2;
+		Size const i = base_pair.res1();
+		Size const j = base_pair.res2();
 
 		Residue const & rsd_i( pose.residue( i ) );
 		Residue const & rsd_j( pose.residue( j ) );
 
 		bool WC_base_pair( false );
-		if ( ( base_pair.edge1 == WATSON_CRICK && base_pair.edge2 == WATSON_CRICK
-				&& base_pair.orientation == 1 )  &&
+		if ( ( base_pair.edge1() == WATSON_CRICK && base_pair.edge2() == WATSON_CRICK
+					 && base_pair.orientation() == ANTIPARALLEL )  &&
 				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )    {
 			//std::string atom1, atom2;
 			//  get_watson_crick_base_pair_atoms( rsd_i.aa(), rsd_j.aa(), atom1, atom2 );
@@ -1249,17 +1250,17 @@ figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partne
 
 		BasePair const & base_pair = base_pair_list[ n ];
 
-		Size const i = base_pair.res1;
-		Size const j = base_pair.res2;
+		Size const i = base_pair.res1();
+		Size const j = base_pair.res2();
 
-		Size const & k = base_pair.edge1;
-		Size const & m = base_pair.edge2;
+		BaseEdge const & k = base_pair.edge1();
+		BaseEdge const & m = base_pair.edge2();
 
 		Residue const & rsd_i( pose.residue( i ) );
 		Residue const & rsd_j( pose.residue( j ) );
 
 		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
-				&& base_pair.orientation == 1 )  &&
+					 && base_pair.orientation() == 1 )  &&
 				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) &&
 				pose.torsion( id::TorsionID( i, id::CHI, 1 ) ) > 0  && //Need to check syn/anti
 				pose.torsion( id::TorsionID( j, id::CHI, 1 ) ) > 0     //Need to check syn/anti

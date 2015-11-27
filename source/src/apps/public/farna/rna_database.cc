@@ -317,17 +317,17 @@ create_bp_jump_database_test( ){
 
 		BasePair const base_pair = it->second;
 
-		int const i = base_pair.res1;
-		int const k = base_pair.edge1;
+		int const i = base_pair.res1();
+		int const k = base_pair.edge1();
 
-		int const j = base_pair.res2;
-		int const m = base_pair.edge2;
+		int const j = base_pair.res2();
+		int const m = base_pair.edge2();
 
 		if ( is_num_in_list(i, exclude_res_list) || is_num_in_list(j, exclude_res_list) ) {
 			continue;
 		}
 
-		char const orientation = ( base_pair.orientation == 1) ? 'A' : 'P';
+		char const orientation = ( base_pair.orientation() == 1) ? 'A' : 'P';
 
 		char const edge_i = core::chemical::rna::get_edge_from_num( k );
 		char const edge_j = core::chemical::rna::get_edge_from_num( m );
@@ -534,8 +534,8 @@ output_general_base_pair_steps( pose::Pose const & pose,
 
 		BasePair const base_pair = base_pair_list[ n ];
 
-		Size const i = base_pair.res1;
-		Size const j = base_pair.res2;
+		Size const i = base_pair.res1();
+		Size const j = base_pair.res2();
 
 		runtime_assert( pose.residue( i ).is_RNA() );
 		runtime_assert( pose.residue( j ).is_RNA() );
