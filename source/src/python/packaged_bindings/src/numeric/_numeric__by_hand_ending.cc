@@ -41,7 +41,7 @@ void instantiate_numeric_functions(std::string type_name)
 
   { // numeric::rotation_matrix
     typedef xyzMatrix<T>   (*function_type)( xyzVector<T> const &, T const & );
-    char * docstring = "Rotation matrix for rotation about an axis by an angle in radians.";
+    std::string docstring = "Rotation matrix for rotation about an axis by an angle in radians.";
 
     bp::def(
         ("rotation_matrix_" + type_name).c_str()
@@ -60,7 +60,7 @@ void instantiate_numeric_functions(std::string type_name)
 
   { // numeric::rotation_matrix_degrees
     typedef xyzMatrix<T>   (*function_type)( xyzVector<T> const &, T const & );
-    char * docstring = "Rotation matrix for rotation about an axis by an angle in degrees.";
+    std::string docstring = "Rotation matrix for rotation about an axis by an angle in degrees.";
 
     bp::def(
         ("rotation_matrix_degrees_" + type_name).c_str()
@@ -79,7 +79,7 @@ void instantiate_numeric_functions(std::string type_name)
 
   { // numeric::rotation_matrix_radians
     typedef xyzMatrix<T>   (*function_type)( xyzVector<T> const &, T const & );
-    char * docstring = "Rotation matrix for rotation about an axis by an angle in radians.";
+    std::string docstring = "Rotation matrix for rotation about an axis by an angle in radians.";
 
     bp::def(
         ("rotation_matrix_radians_" + type_name).c_str()
@@ -99,7 +99,7 @@ void instantiate_numeric_functions(std::string type_name)
 
   { //numeric::rotation_angle
     typedef T (*function_type)( xyzMatrix<T> const &);
-    char * docstring = \
+    std::string docstring = \
          "Transformation from rotation matrix to magnitude of helical rotation, input matrix must be orthogonal.\nOrientation of axis chosen so that the angle of rotation is non-negative [0,pi].\nnumeric::rotation_axis returns both axis and angle of rotation.";
 
     bp::def(
@@ -118,7 +118,7 @@ void instantiate_numeric_functions(std::string type_name)
   }
   { //numeric::rotation_axis_angle
     typedef xyzVector<T>   (*function_type)( xyzMatrix<T> const &);
-    char * docstring = \
+    std::string docstring = \
           "Transformation from rotation matrix to compact axis-angle representation\nInput matrix must be orthogonal\nOrientation of axis chosen so that the angle of rotation is non-negative [0,pi]\nResulting vector will be oriented in axis of rotation with magnitude equal to magnitude of rotation.";
 
     bp::def(
@@ -139,7 +139,7 @@ void instantiate_numeric_functions(std::string type_name)
   { // numeric::rotation_matrix
     typedef xyzMatrix<T>   (*function_type)( xyzVector<T> const &);
 
-    char * docstring = "Rotation matrix for rotation from axis-angle representation.\nMagnitude of rotation (in radians) is taken as axis_angle.magnitude().";
+    std::string docstring = "Rotation matrix for rotation from axis-angle representation.\nMagnitude of rotation (in radians) is taken as axis_angle.magnitude().";
 
     bp::def(
         ("rotation_matrix_" + type_name).c_str()
@@ -657,7 +657,7 @@ void instantiate_numeric_functions(std::string type_name)
   }
 
   { // ::numeric::EulerAngles<T>
-    utility::wrap_access_pointer< ::numeric::EulerAngles<T> >(("EulerAngles_" + type_name).c_str());
+    utility::py::wrap_access_pointer< ::numeric::EulerAngles<T> >(("EulerAngles_" + type_name).c_str());
     typedef boost::python::class_< ::numeric::EulerAngles<T>, boost::python::bases< ::numeric::xyzVector<T> > > EulerAngles_typename_exposer_type;
     EulerAngles_typename_exposer_type EulerAngles_typename_exposer(("EulerAngles_" + type_name).c_str(), "Euler angles 3-D orientation representation\n@remarks\nThe three euler angles (in radians) that describing a rotation operation\nof a Z axis rotation by the angle phi (position 1), followed by\nan X axis rotation by the angle theta (position 3), followed by another\nZ axis rotation by the angle psi (position 2).\nthis->code is a modified version of Alex Z's code from r++.\n@details\nThe range of phi is [ -pi, pi ];\nThe range of psi is [ -pi, pi ];\nThe range of theta is [ 0, pi ];\n", boost::python::init <  >() );
     EulerAngles_typename_exposer.def( boost::python::init< ::numeric::EulerAngles<T> const & > ( (boost::python::arg("")) , "Euler angles 3-D orientation representation\n@remarks\nThe three euler angles (in radians) that describing a rotation operation\nof a Z axis rotation by the angle phi (position 1), followed by\nan X axis rotation by the angle theta (position 3), followed by another\nZ axis rotation by the angle psi (position 2).\nthis->code is a modified version of Alex Z's code from r++.\n@details\nThe range of phi is [ -pi, pi ];\nThe range of psi is [ -pi, pi ];\nThe range of theta is [ 0, pi ];\n" ) );
@@ -912,6 +912,720 @@ void instantiate_numeric_functions(std::string type_name)
 
 		EulerAngles_typename_exposer.staticmethod("angular_distance_between");
 
+  }
+}
+
+template<class T>
+void instantiate_real_numeric_containers(std::string type_name)
+{
+  { // ::numeric::xyzTransform< T > 
+
+    utility::py::wrap_access_pointer< ::numeric::xyzTransform< T > >( std::string("xyzTransform_" + type_name).c_str()  );
+
+    typedef boost::python::class_< ::numeric::xyzTransform< T >, ::utility::pointer::shared_ptr< ::numeric::xyzTransform< T > > > xyzTransform_typename_exposer_type;
+
+    xyzTransform_typename_exposer_type xyzTransform_typename_exposer( std::string("xyzTransform_" + type_name).c_str()  , "numeric/xyzTransform.fwd.hh:29", boost::python::init <  >() );
+    xyzTransform_typename_exposer.def( boost::python::init< ::numeric::xyzTransform< T > const & > ( (boost::python::arg("")) , "numeric/xyzTransform.fwd.hh:29" ) );
+    xyzTransform_typename_exposer.def( boost::python::init< ::numeric::xyzMatrix< T > const & > ( (boost::python::arg("rin")) , "numeric/xyzTransform.hh:55" ) );
+    xyzTransform_typename_exposer.def( boost::python::init< ::numeric::xyzVector< T > const & > ( (boost::python::arg("tin")) , "numeric/xyzTransform.hh:56" ) );
+    xyzTransform_typename_exposer.def( boost::python::init< ::numeric::xyzMatrix< T > const &, ::numeric::xyzVector< T > const & > ( (boost::python::arg("rin"), boost::python::arg("tin")) , "numeric/xyzTransform.hh:57" ) );
+    xyzTransform_typename_exposer.def( boost::python::init< ::utility::fixedsizearray1<T,6ul> const & > ( (boost::python::arg("_rt6")) , "numeric/xyzTransform.hh:58" ) );
+    xyzTransform_typename_exposer.def( boost::python::init< ::numeric::xyzVector< T > const &, ::numeric::xyzVector< T > const &, ::numeric::xyzVector< T > const & > ( (boost::python::arg("u"), boost::python::arg("v"), boost::python::arg("w")) , "numeric/xyzTransform.hh:71" ) );
+    xyzTransform_typename_exposer.def( boost::python::init< ::numeric::xyzVector< T > const &, ::numeric::xyzVector< T > const &, ::numeric::xyzVector< T > const &, ::numeric::xyzVector< T > const & > ( (boost::python::arg("c"), boost::python::arg("u"), boost::python::arg("v"), boost::python::arg("w")) , "numeric/xyzTransform.hh:72" ) );
+  
+    { // ::numeric::xyzTransform< T >::from_four_points
+      typedef ::numeric::xyzTransform< T > & ( ::numeric::xyzTransform< T >:: * from_four_points_function_type)(::numeric::xyzVector< T > const & __a0, ::numeric::xyzVector< T > const & __a1, ::numeric::xyzVector< T > const & __a2, ::numeric::xyzVector< T > const & __a3) ;
+    
+      xyzTransform_typename_exposer.def("from_four_points"
+        , from_four_points_function_type( &::numeric::xyzTransform< T >::from_four_points )
+        , ( boost::python::arg("c"), boost::python::arg("u"), boost::python::arg("v"), boost::python::arg("w") )
+        , boost::python::return_value_policy< boost::python::reference_existing_object >()
+        , "numeric/xyzTransform.hh:61" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::identity
+      typedef ::numeric::xyzTransform< T > ( * identity_function_type)();
+    
+      xyzTransform_typename_exposer.def("identity"
+        , identity_function_type( &::numeric::xyzTransform< T >::identity )
+        , "numeric/xyzTransform.hh:74" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::BAD_XFORM
+      typedef ::numeric::xyzTransform< T > ( * BAD_XFORM_function_type)();
+    
+      xyzTransform_typename_exposer.def("BAD_XFORM"
+        , BAD_XFORM_function_type( &::numeric::xyzTransform< T >::BAD_XFORM )
+        , "numeric/xyzTransform.hh:75" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::BAD_RT6
+      typedef ::utility::fixedsizearray1<T,6ul> ( * BAD_RT6_function_type)();
+    
+      xyzTransform_typename_exposer.def("BAD_RT6"
+        , BAD_RT6_function_type( &::numeric::xyzTransform< T >::BAD_RT6 )
+        , "numeric/xyzTransform.hh:76" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::xx const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * xx_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("xx"
+        , xx_function_type( &::numeric::xyzTransform< T >::xx )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:78" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::xy const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * xy_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("xy"
+        , xy_function_type( &::numeric::xyzTransform< T >::xy )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:79" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::xz const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * xz_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("xz"
+        , xz_function_type( &::numeric::xyzTransform< T >::xz )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:80" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::yx const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * yx_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("yx"
+        , yx_function_type( &::numeric::xyzTransform< T >::yx )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:81" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::yy const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * yy_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("yy"
+        , yy_function_type( &::numeric::xyzTransform< T >::yy )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:82" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::yz const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * yz_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("yz"
+        , yz_function_type( &::numeric::xyzTransform< T >::yz )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:83" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::zx const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * zx_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("zx"
+        , zx_function_type( &::numeric::xyzTransform< T >::zx )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:84" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::zy const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * zy_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("zy"
+        , zy_function_type( &::numeric::xyzTransform< T >::zy )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:85" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::zz const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * zz_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("zz"
+        , zz_function_type( &::numeric::xyzTransform< T >::zz )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:86" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::px const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * px_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("px"
+        , px_function_type( &::numeric::xyzTransform< T >::px )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:87" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::py const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * py_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("py"
+        , py_function_type( &::numeric::xyzTransform< T >::py )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:88" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::pz const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * pz_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("pz"
+        , pz_function_type( &::numeric::xyzTransform< T >::pz )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:89" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::x const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * x_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("x"
+        , x_function_type( &::numeric::xyzTransform< T >::x )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:90" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::y const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * y_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("y"
+        , y_function_type( &::numeric::xyzTransform< T >::y )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:91" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::z const
+      typedef T const & ( ::numeric::xyzTransform< T >:: * z_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("z"
+        , z_function_type( &::numeric::xyzTransform< T >::z )
+        , boost::python::return_value_policy< boost::python::copy_const_reference >()
+        , "numeric/xyzTransform.hh:92" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::xx
+      typedef T & ( ::numeric::xyzTransform< T >:: * xx_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("xx"
+        , xx_function_type( &::numeric::xyzTransform< T >::xx )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:93" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::xy
+      typedef T & ( ::numeric::xyzTransform< T >:: * xy_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("xy"
+        , xy_function_type( &::numeric::xyzTransform< T >::xy )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:94" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::xz
+      typedef T & ( ::numeric::xyzTransform< T >:: * xz_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("xz"
+        , xz_function_type( &::numeric::xyzTransform< T >::xz )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:95" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::yx
+      typedef T & ( ::numeric::xyzTransform< T >:: * yx_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("yx"
+        , yx_function_type( &::numeric::xyzTransform< T >::yx )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:96" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::yy
+      typedef T & ( ::numeric::xyzTransform< T >:: * yy_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("yy"
+        , yy_function_type( &::numeric::xyzTransform< T >::yy )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:97" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::yz
+      typedef T & ( ::numeric::xyzTransform< T >:: * yz_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("yz"
+        , yz_function_type( &::numeric::xyzTransform< T >::yz )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:98" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::zx
+      typedef T & ( ::numeric::xyzTransform< T >:: * zx_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("zx"
+        , zx_function_type( &::numeric::xyzTransform< T >::zx )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:99" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::zy
+      typedef T & ( ::numeric::xyzTransform< T >:: * zy_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("zy"
+        , zy_function_type( &::numeric::xyzTransform< T >::zy )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:100" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::zz
+      typedef T & ( ::numeric::xyzTransform< T >:: * zz_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("zz"
+        , zz_function_type( &::numeric::xyzTransform< T >::zz )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:101" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::px
+      typedef T & ( ::numeric::xyzTransform< T >:: * px_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("px"
+        , px_function_type( &::numeric::xyzTransform< T >::px )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:102" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::py
+      typedef T & ( ::numeric::xyzTransform< T >:: * py_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("py"
+        , py_function_type( &::numeric::xyzTransform< T >::py )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:103" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::pz
+      typedef T & ( ::numeric::xyzTransform< T >:: * pz_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("pz"
+        , pz_function_type( &::numeric::xyzTransform< T >::pz )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:104" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::x
+      typedef T & ( ::numeric::xyzTransform< T >:: * x_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("x"
+        , x_function_type( &::numeric::xyzTransform< T >::x )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:105" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::y
+      typedef T & ( ::numeric::xyzTransform< T >:: * y_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("y"
+        , y_function_type( &::numeric::xyzTransform< T >::y )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:106" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::z
+      typedef T & ( ::numeric::xyzTransform< T >:: * z_function_type)() ;
+    
+      xyzTransform_typename_exposer.def("z"
+        , z_function_type( &::numeric::xyzTransform< T >::z )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "numeric/xyzTransform.hh:107" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::inverse const
+      typedef ::numeric::xyzTransform< T > ( ::numeric::xyzTransform< T >:: * inverse_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("inverse"
+        , inverse_function_type( &::numeric::xyzTransform< T >::inverse )
+        , "numeric/xyzTransform.hh:110" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::distance const
+      typedef T ( ::numeric::xyzTransform< T >:: * distance_function_type)(::numeric::xyzTransform< T > const & __a0)  const;
+    
+      xyzTransform_typename_exposer.def("distance"
+        , distance_function_type( &::numeric::xyzTransform< T >::distance )
+        , ( boost::python::arg("b") )
+        , "numeric/xyzTransform.hh:112" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::distance_squared const
+      typedef T ( ::numeric::xyzTransform< T >:: * distance_squared_function_type)(::numeric::xyzTransform< T > const & __a0)  const;
+    
+      xyzTransform_typename_exposer.def("distance_squared"
+        , distance_squared_function_type( &::numeric::xyzTransform< T >::distance_squared )
+        , ( boost::python::arg("b") )
+        , "numeric/xyzTransform.hh:113" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::rot
+      typedef ::numeric::xyzTransform< T > ( * rot_function_type)(::numeric::xyzMatrix< T > const & __a0, ::numeric::xyzVector< T > const & __a1, ::numeric::xyzVector< T > const & __a2);
+    
+      xyzTransform_typename_exposer.def("rot"
+        , rot_function_type( &::numeric::xyzTransform< T >::rot )
+        , ( boost::python::arg("rot"), boost::python::arg("o_cen"), boost::python::arg("cen") )
+        , "numeric/xyzTransform.hh:131" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::rot
+      typedef ::numeric::xyzTransform< T > ( * rot_function_type)(::numeric::xyzMatrix< T > const & __a0, ::numeric::xyzVector< T > const & __a1);
+    
+      xyzTransform_typename_exposer.def("rot"
+        , rot_function_type( &::numeric::xyzTransform< T >::rot )
+        , ( boost::python::arg("rot"), boost::python::arg("cen")=(numeric::xyzVector<T>(0, 0, 0)) )
+        , "numeric/xyzTransform.hh:132" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::rot
+      typedef ::numeric::xyzTransform< T > ( * rot_function_type)(::numeric::xyzVector< T > const & __a0, T const & __a1, ::numeric::xyzVector< T > const & __a2);
+    
+      xyzTransform_typename_exposer.def("rot"
+        , rot_function_type( &::numeric::xyzTransform< T >::rot )
+        , ( boost::python::arg("axs"), boost::python::arg("ang"), boost::python::arg("cen")=(numeric::xyzVector<T>(0, 0, 0)) )
+        , "numeric/xyzTransform.hh:133" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::rot_deg
+      typedef ::numeric::xyzTransform< T > ( * rot_deg_function_type)(::numeric::xyzVector< T > const & __a0, T const & __a1, ::numeric::xyzVector< T > const & __a2);
+    
+      xyzTransform_typename_exposer.def("rot_deg"
+        , rot_deg_function_type( &::numeric::xyzTransform< T >::rot_deg )
+        , ( boost::python::arg("axs"), boost::python::arg("ang"), boost::python::arg("cen")=(numeric::xyzVector<T>(0, 0, 0)) )
+        , "numeric/xyzTransform.hh:134" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::align
+      typedef ::numeric::xyzTransform< T > ( * align_function_type)(::numeric::xyzVector< T > const & __a0, ::numeric::xyzVector< T > const & __a1);
+    
+      xyzTransform_typename_exposer.def("align"
+        , align_function_type( &::numeric::xyzTransform< T >::align )
+        , ( boost::python::arg("to"), boost::python::arg("from")=(numeric::xyzVector<T>(1, 0, 0)) )
+        , "numeric/xyzTransform.hh:136" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::align_fast
+      typedef ::numeric::xyzTransform< T > ( * align_fast_function_type)(::numeric::xyzVector< T > const & __a0, ::numeric::xyzVector< T > const & __a1);
+    
+      xyzTransform_typename_exposer.def("align_fast"
+        , align_fast_function_type( &::numeric::xyzTransform< T >::align_fast )
+        , ( boost::python::arg("to"), boost::python::arg("from")=(numeric::xyzVector<T>(1.0e+0, 0.0, 0.0)) )
+        , "numeric/xyzTransform.hh:141" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::xform const
+      typedef ::numeric::xyzVector< T > ( ::numeric::xyzTransform< T >:: * xform_function_type)(::numeric::xyzVector< T > const & __a0)  const;
+    
+      xyzTransform_typename_exposer.def("xform"
+        , xform_function_type( &::numeric::xyzTransform< T >::xform )
+        , ( boost::python::arg("v") )
+        , "numeric/xyzTransform.hh:145" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::inv_xform const
+      typedef ::numeric::xyzVector< T > ( ::numeric::xyzTransform< T >:: * inv_xform_function_type)(::numeric::xyzVector< T > const & __a0)  const;
+    
+      xyzTransform_typename_exposer.def("inv_xform"
+        , inv_xform_function_type( &::numeric::xyzTransform< T >::inv_xform )
+        , ( boost::python::arg("v") )
+        , "numeric/xyzTransform.hh:146" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::to_quaternion const
+      typedef void ( ::numeric::xyzTransform< T >:: * to_quaternion_function_type)(T & __a0, T & __a1, T & __a2, T & __a3)  const;
+    
+      xyzTransform_typename_exposer.def("to_quaternion"
+        , to_quaternion_function_type( &::numeric::xyzTransform< T >::to_quaternion )
+        , ( boost::python::arg("qw"), boost::python::arg("qx"), boost::python::arg("qy"), boost::python::arg("qz") )
+        , "numeric/xyzTransform.hh:149" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::from_quaternion
+      typedef void ( ::numeric::xyzTransform< T >:: * from_quaternion_function_type)(T const & __a0, T const & __a1, T const & __a2, T const & __a3) ;
+    
+      xyzTransform_typename_exposer.def("from_quaternion"
+        , from_quaternion_function_type( &::numeric::xyzTransform< T >::from_quaternion )
+        , ( boost::python::arg("qw"), boost::python::arg("qx"), boost::python::arg("qy"), boost::python::arg("qz") )
+        , "numeric/xyzTransform.hh:168" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::euler_angles_rad const
+      typedef ::numeric::xyzVector< T > ( ::numeric::xyzTransform< T >:: * euler_angles_rad_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("euler_angles_rad"
+        , euler_angles_rad_function_type( &::numeric::xyzTransform< T >::euler_angles_rad )
+        , "see numeric/HomogeneousTransform\n" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::euler_angles_deg const
+      typedef ::numeric::xyzVector< T > ( ::numeric::xyzTransform< T >:: * euler_angles_deg_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("euler_angles_deg"
+        , euler_angles_deg_function_type( &::numeric::xyzTransform< T >::euler_angles_deg )
+        , "numeric/xyzTransform.hh:250" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::from_euler_angles_rad
+      typedef ::numeric::xyzTransform< T > & ( ::numeric::xyzTransform< T >:: * from_euler_angles_rad_function_type)(T const & __a0, T const & __a1, T const & __a2) ;
+    
+      xyzTransform_typename_exposer.def("from_euler_angles_rad"
+        , from_euler_angles_rad_function_type( &::numeric::xyzTransform< T >::from_euler_angles_rad )
+        , ( boost::python::arg("phi"), boost::python::arg("psi"), boost::python::arg("theta") )
+        , boost::python::return_value_policy< boost::python::reference_existing_object >()
+        , "numeric/xyzTransform.hh:257" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::from_euler_angles_rad
+      typedef ::numeric::xyzTransform< T > & ( ::numeric::xyzTransform< T >:: * from_euler_angles_rad_function_type)(::numeric::xyzVector< T > const & __a0) ;
+    
+      xyzTransform_typename_exposer.def("from_euler_angles_rad"
+        , from_euler_angles_rad_function_type( &::numeric::xyzTransform< T >::from_euler_angles_rad )
+        , ( boost::python::arg("euler") )
+        , boost::python::return_value_policy< boost::python::reference_existing_object >()
+        , "numeric/xyzTransform.hh:267" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::from_euler_angles_deg
+      typedef ::numeric::xyzTransform< T > & ( ::numeric::xyzTransform< T >:: * from_euler_angles_deg_function_type)(T const & __a0, T const & __a1, T const & __a2) ;
+    
+      xyzTransform_typename_exposer.def("from_euler_angles_deg"
+        , from_euler_angles_deg_function_type( &::numeric::xyzTransform< T >::from_euler_angles_deg )
+        , ( boost::python::arg("phi"), boost::python::arg("psi"), boost::python::arg("theta") )
+        , boost::python::return_value_policy< boost::python::reference_existing_object >()
+        , "numeric/xyzTransform.hh:270" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::from_euler_angles_deg
+      typedef ::numeric::xyzTransform< T > & ( ::numeric::xyzTransform< T >:: * from_euler_angles_deg_function_type)(::numeric::xyzVector< T > const & __a0) ;
+    
+      xyzTransform_typename_exposer.def("from_euler_angles_deg"
+        , from_euler_angles_deg_function_type( &::numeric::xyzTransform< T >::from_euler_angles_deg )
+        , ( boost::python::arg("euler") )
+        , boost::python::return_value_policy< boost::python::reference_existing_object >()
+        , "numeric/xyzTransform.hh:274" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::rt6 const
+      typedef ::utility::fixedsizearray1<T,6ul> ( ::numeric::xyzTransform< T >:: * rt6_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("rt6"
+        , rt6_function_type( &::numeric::xyzTransform< T >::rt6 )
+        , "numeric/xyzTransform.hh:280" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::rt6
+      typedef ::numeric::xyzTransform< T > & ( ::numeric::xyzTransform< T >:: * rt6_function_type)(::utility::fixedsizearray1<T,6ul> const & __a0) ;
+    
+      xyzTransform_typename_exposer.def("rt6"
+        , rt6_function_type( &::numeric::xyzTransform< T >::rt6 )
+        , ( boost::python::arg("rt6") )
+        , boost::python::return_value_policy< boost::python::reference_existing_object >()
+        , "numeric/xyzTransform.hh:306" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::rt6
+      typedef ::numeric::xyzTransform< T > & ( ::numeric::xyzTransform< T >:: * rt6_function_type)(T const & __a0, T const & __a1, T const & __a2, T const & __a3, T const & __a4, T const & __a5) ;
+    
+      xyzTransform_typename_exposer.def("rt6"
+        , rt6_function_type( &::numeric::xyzTransform< T >::rt6 )
+        , ( boost::python::arg("i"), boost::python::arg("j"), boost::python::arg("k"), boost::python::arg("l"), boost::python::arg("m"), boost::python::arg("n") )
+        , boost::python::return_value_policy< boost::python::reference_existing_object >()
+        , "numeric/xyzTransform.hh:315" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::hash64 const
+      typedef ::uint64_t ( ::numeric::xyzTransform< T >:: * hash64_function_type)(T const & __a0, T const & __a1)  const;
+    
+      xyzTransform_typename_exposer.def("hash64"
+        , hash64_function_type( &::numeric::xyzTransform< T >::hash64 )
+        , ( boost::python::arg("cw")=(1.000000000000000055511151231257827021181583404541015625e-1), boost::python::arg("aw")=((3.6e+2 / 1.024e+3)) )
+        , "numeric/xyzTransform.hh:325" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::symhash64 const
+      typedef ::uint64_t ( ::numeric::xyzTransform< T >:: * symhash64_function_type)(T const & __a0, T const & __a1)  const;
+    
+      xyzTransform_typename_exposer.def("symhash64"
+        , symhash64_function_type( &::numeric::xyzTransform< T >::symhash64 )
+        , ( boost::python::arg("cw")=(1.000000000000000055511151231257827021181583404541015625e-1), boost::python::arg("aw")=((3.6e+2 / 1.024e+3)) )
+        , "numeric/xyzTransform.hh:341" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::intersect3D_2Planes const
+      typedef int ( ::numeric::xyzTransform< T >:: * intersect3D_2Planes_function_type)(typename ::numeric::xyzTransform< T >::Plane __a0, typename ::numeric::xyzTransform< T >::Plane __a1, typename ::numeric::xyzTransform< T >::Line * __a2)  const;
+    
+      xyzTransform_typename_exposer.def("intersect3D_2Planes"
+        , intersect3D_2Planes_function_type( &::numeric::xyzTransform< T >::intersect3D_2Planes )
+        , ( boost::python::arg("Pn1"), boost::python::arg("Pn2"), boost::python::arg("L") )
+        , "numeric/xyzTransform.hh:364" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::rotation_axis const
+      typedef void ( ::numeric::xyzTransform< T >:: * rotation_axis_function_type)(::numeric::xyzVector< T > & __a0, ::numeric::xyzVector< T > & __a1, T & __a2)  const;
+    
+      xyzTransform_typename_exposer.def("rotation_axis"
+        , rotation_axis_function_type( &::numeric::xyzTransform< T >::rotation_axis )
+        , ( boost::python::arg("axis"), boost::python::arg("cen"), boost::python::arg("angle") )
+        , "numeric/xyzTransform.hh:420" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::rotation_axis const
+      typedef ::numeric::xyzVector< T > ( ::numeric::xyzTransform< T >:: * rotation_axis_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("rotation_axis"
+        , rotation_axis_function_type( &::numeric::xyzTransform< T >::rotation_axis )
+        , "numeric/xyzTransform.hh:454" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::rotation_angle_degrees const
+      typedef T ( ::numeric::xyzTransform< T >:: * rotation_angle_degrees_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("rotation_angle_degrees"
+        , rotation_angle_degrees_function_type( &::numeric::xyzTransform< T >::rotation_angle_degrees )
+        , "numeric/xyzTransform.hh:459" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::rotation_angle const
+      typedef T ( ::numeric::xyzTransform< T >:: * rotation_angle_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("rotation_angle"
+        , rotation_angle_function_type( &::numeric::xyzTransform< T >::rotation_angle )
+        , "numeric/xyzTransform.hh:464" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::rotation_cosine const
+      typedef T ( ::numeric::xyzTransform< T >:: * rotation_cosine_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("rotation_cosine"
+        , rotation_cosine_function_type( &::numeric::xyzTransform< T >::rotation_cosine )
+        , "numeric/xyzTransform.hh:470" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::rotation_sine const
+      typedef T ( ::numeric::xyzTransform< T >:: * rotation_sine_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("rotation_sine"
+        , rotation_sine_function_type( &::numeric::xyzTransform< T >::rotation_sine )
+        , "numeric/xyzTransform.hh:474" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::approx_lever_distance const
+      typedef T ( ::numeric::xyzTransform< T >:: * approx_lever_distance_function_type)(::numeric::xyzTransform< T > const & __a0, T const & __a1)  const;
+    
+      xyzTransform_typename_exposer.def("approx_lever_distance"
+        , approx_lever_distance_function_type( &::numeric::xyzTransform< T >::approx_lever_distance )
+        , ( boost::python::arg("o"), boost::python::arg("lever")=(1.0e+0) )
+        , "numeric/xyzTransform.hh:479" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::bad const
+      typedef bool ( ::numeric::xyzTransform< T >:: * bad_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("bad"
+        , bad_function_type( &::numeric::xyzTransform< T >::bad )
+        , "numeric/xyzTransform.hh:486" );
+    }
+    
+  
+    { // ::numeric::xyzTransform< T >::badfast const
+      typedef bool ( ::numeric::xyzTransform< T >:: * badfast_function_type)()  const;
+    
+      xyzTransform_typename_exposer.def("badfast"
+        , badfast_function_type( &::numeric::xyzTransform< T >::badfast )
+        , "numeric/xyzTransform.hh:492" );
+    }
+    
+  
+    xyzTransform_typename_exposer.staticmethod("rot_deg");
+  
+  
+    xyzTransform_typename_exposer.staticmethod("align");
+  
+  
+    xyzTransform_typename_exposer.staticmethod("BAD_XFORM");
+  
+  
+    xyzTransform_typename_exposer.staticmethod("BAD_RT6");
+  
+  
+    xyzTransform_typename_exposer.staticmethod("align_fast");
+  
+  
+    xyzTransform_typename_exposer.staticmethod("rot");
+  
+  
+    xyzTransform_typename_exposer.staticmethod("identity");
+  
   }
 }
 
@@ -3290,14 +4004,16 @@ void instantiate_numeric_containers(std::string type_name)
 
 void __numeric_by_hand_ending__()
 {
-	// instantiate template classes at the end of numeric bindings so they act as default classes for Python for temaplte bindings (some of them might get binded automatically due to temaplate specifications)
-	// Conflic with Real instantiate_numeric_containers<double>("double");
+	// instantiate template classes at the end of numeric bindings so they act as default classes for Python for template bindings (some of them might get binded automatically due to template specifications)
 	instantiate_numeric_containers<float>("float");
 	instantiate_numeric_containers<numeric::Real>("Real");
+	instantiate_real_numeric_containers<float>("float");
+	instantiate_real_numeric_containers<numeric::Real>("Real");
+
 	instantiate_numeric_containers<numeric::Size>("Size");
 	instantiate_numeric_containers<numeric::SSize>("SSize");
 
-	// Conflic with Real instantiate_numeric_functions<double>("double");
+
 	instantiate_numeric_functions<float>("float");
 	instantiate_numeric_functions<numeric::Real>("Real");
 }

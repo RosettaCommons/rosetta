@@ -10,7 +10,6 @@
 #include "boost/python.hpp"
 
 #include "utility/vector1.hh"
-#include "utility/pointer/owning_ptr.hh"
 
 #include <core/fragment/FragID.hh>
 #include <core/fragment/FragData.hh>

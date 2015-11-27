@@ -28,6 +28,7 @@ ENDFOREACH(LIBRARY)
 SET(LINK_ALL_LIBS ${LINK_ROSETTA_LIBS})
 
 # Add custom targets for just the applications (Dependancies added elsewhere)
+ADD_CUSTOM_TARGET(libs DEPENDS BUILD_ROSETTA_LIBS) # Just shared libraries
 ADD_CUSTOM_TARGET(apps DEPENDS BUILD_ROSETTA_LIBS) # Just released applications
 ADD_CUSTOM_TARGET(pilot_apps DEPENDS BUILD_ROSETTA_LIBS) # Just pilot applications
 ADD_CUSTOM_TARGET(bin DEPENDS apps pilot_apps) #All executables

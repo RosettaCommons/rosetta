@@ -9,29 +9,59 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 ## @file   BuildBuindings.py
-## @brief  Build Python buidings for mini
+## @brief  Build Python buidings for rosetta
 ## @author Sergey Lyskov
 
 import logging
-logging.basicConfig(level=logging.DEBUG, format="%(levelname)s %(message)s")
-logger = logging.getLogger("BuildPackagedBindings")
+try:
+    import coloredlogs
+    log_config = coloredlogs.install(
+        level=logging.INFO,
+        fmt="[%(process)d] %(asctime)s %(filename)s:%(lineno)s %(levelname)s %(message)s"
+    )
+except ImportError:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="[%(process)d] %(asctime)s %(filename)s:%(lineno)s %(levelname)s %(message)s"
+    )
 
 import os, re, sys, time, commands, shutil, platform, os.path, gc, json, glob
+import pprint
 from os import path
 import subprocess #, errno
+
+import multiprocessing
+import signal
+
+import cStringIO as StringIO
+# See https://github.com/jreese/multiprocessing-keyboardinterrupt/
+def init_worker():
+    signal.signal( signal.SIGINT, signal.SIG_IGN )
 
 # Expand path to include tools subdir
 script_root_dir = path.dirname(path.realpath(__file__))
 logging.info("Script root directory: %s", script_root_dir)
 sys.path.append( path.dirname( script_root_dir  ))
 
-# Create global 'Platform' that will hold info of current system
-if sys.platform.startswith("linux"): Platform = "linux" # can be linux1, linux2, etc
-elif sys.platform == "darwin" : Platform = "macos"
-elif sys.platform == "cygwin" : Platform = "cygwin"
-elif sys.platform == "win32" : Platform = "windows"
-else: Platform = "_unknown_"
-PlatformBits = platform.architecture()[0][:2]
+# Create global 'current_platform' that will hold info of current system
+if sys.platform.startswith("linux"):
+    current_platform = "linux" # can be linux1, linux2, etc
+    current_lib_suffix = "so"
+elif sys.platform == "darwin" :
+    current_platform = "macos"
+    current_lib_suffix = "dylib"
+elif sys.platform == "cygwin" :
+    raise ValueError("Unsupportred platform: %s", sys.platform)
+    current_platform = "cygwin"
+    current_lib_suffix = 'dll'
+elif sys.platform == "win32" :
+    raise ValueError("Unsupportred platform: %s", sys.platform)
+    current_platform = "windows"
+    current_lib_suffix = 'dll'
+else:
+    raise ValueError("Unrecognized platform: %s", sys.platform)
+
+current_platform_bits = platform.architecture()[0][:2]
 
 import exclude
 
@@ -43,12 +73,17 @@ from argparse import ArgumentParser
 from collections import namedtuple
 JobTuple = namedtuple("JobTuple",["pid", "tag"])
 
-Jobs = []  # Global list of NameTuples  (pid, tag)
-
 candidate_target_modules = ['utility', 'numeric', 'basic', 'core', 'protocols']
+candidate_target_library = {
+    'numeric' : "core.5",
+    'basic' : "core.5",
+    'core' : "core.5",
+    'utility' : "core.5",
+    'protocols' : "protocols.7"
+}
 
 def main(args):
-    ''' Script to build mini Python buidings.
+    ''' Script to build Python buidings.
     '''
     parser = ArgumentParser(usage="Generate pyrosetta distribution.")
 
@@ -71,17 +106,17 @@ def main(args):
 
     parser.add_argument("-t", "--target",
         type=str, default=None, choices=candidate_target_modules,
-        help="Target build namespace, dependent namespaces built.")
+        help="Target build namespace, dependent namespaces built. (Choice")
 
-    parser.add_argument("--BuildMiniLibs",
+    parser.add_argument("--build_rosetta",
       default=True,
       action="store_true",
       help="Build rosetta libraries before generating bindings."
       )
 
     parser.add_argument("-d",
-      action="store_false", dest="BuildMiniLibs",
-      help="Disable building of mini libs.",
+      action="store_false", dest="build_rosetta",
+      help="Distable build rosetta libraries before generating bindings.",
     )
 
     parser.add_argument("-u", "--update",
@@ -97,7 +132,7 @@ def main(args):
 
     parser.add_argument("--debug_bindings",
       action="store_true", default=False,
-      help="Build bindings with -DDEBUG.",
+      help="Build bindings with -DDEBUG and debug symbols.",
       )
 
     parser.add_argument("--numpy_support",
@@ -106,7 +141,7 @@ def main(args):
       )
 
     parser.add_argument("--no-numpy_support",
-      action="store_true", default=False, dest="numpy_support",
+      action="store_false", default=False, dest="numpy_support",
       help="Disable numpy type conversion support.",
       )
 
@@ -114,26 +149,10 @@ def main(args):
         action="store", default="pyrosetta",
         help="Target package directory for bindings. (default: %(default)s)",)
 
-    parser.add_argument("--bindings_path",
-      action="store", default=None,
-      help="Output directory for bindings. (default: %(default)s)",
-      )
-
-    parser.add_argument("--continue",
+    parser.add_argument("--continue_on_error",
       default=False,
-      action="store_true", dest="continue_",
-      help="Debug only. Continue building after encounter the error.",
-      )
-
-    parser.add_argument("--all", default=True,
-      action="store_true", dest="build_all",
-      help="Experimental. Build bindings for all source avaliable.",
-      )
-
-    parser.add_argument("--gccxml",
-      default='gccxml',
-      action="store",
-      help="Path to gccxml executable. (default: %(default)s)",
+      action="store_true", dest="continue_on_error",
+      help="Debug only. Continue building after compilation errors."
       )
 
     parser.add_argument("--compiler",
@@ -142,16 +161,11 @@ def main(args):
       help="Default compiler that will be used to build PyRosetta. (default: %(default)s)",
       )
 
-    parser.add_argument("--gccxml-compiler",
-      default='',
-      action="store",
-      help="Default compiler that will be used in GCCXML. Default is empty string which usually imply 'gcc'.",
-      )
-
     parser.add_argument(
             "--boost_path",
             action="store",
-            required=True,
+            required=False,
+            default=None,
             help="Path to boost install prefix.")
 
     parser.add_argument("--boost_lib",
@@ -159,6 +173,12 @@ def main(args):
       action="store",
       help="Name of boost dynamic library. (default: %(default)s)",
       )
+
+    parser.add_argument(
+            "--package_boost",
+            action="store_true", default=False,
+            help="Package external boost_python library specified under --boost_path."
+    )
 
     parser.add_argument(
       "--python_lib",
@@ -170,7 +190,8 @@ def main(args):
     parser.add_argument(
         "--python_path",
         action="store",
-        required=True,
+        required=False,
+        default=None,
         help="Python install prefix.")
 
     parser.add_argument("--max-function-size", default=1024*128, type=int,
@@ -187,49 +208,31 @@ def main(args):
       help="Number of processors to use on when building. (default: %(default)s)",
     )
 
-    parser.add_argument("-p", "--parsing-jobs",
-      default=1,
-      type=int,
-      help="Number of processors to use for parsing when building. WARNING: Some namespace will consume huge amount of memory when parsing (up to ~4Gb), use this option with caution! (default: %(default)s)",
-    )
-
-    parser.add_argument('--color',
-      action="store_true", default=False,
-      help="Color output.",
-    )
-
-    parser.add_argument('--no-color',
-      action="store_false", dest="color", default=False,
-      help="Disable color output.",
-    )
-
     parser.add_argument('-v', "--verbose",
       action="store_true", default=False,
       help="Generate verbose output.",
     )
-
+    
     options = parser.parse_args(args=args[1:])
-    logger.info("Options:\n%r", options)
+    logging.info("Options:\n%r", options)
 
-    global Options
-    Options = options
+    if options.verbose:
+        logging.root.setLevel(logging.DEBUG)
 
-    if Options.parsing_jobs > Options.jobs:
-        Options.parsing_jobs = Options.jobs  # Seriously now...
-
-    if Options.target and Options.one:
+    if options.target and options.one:
         raise ValueError("Can not specify both --one and --target.")
 
     #Expand relative to absolute bindings target path
     package_path = os.path.abspath(options.package_path)
     bindings_path = path.join(package_path, "rosetta")
+    bindings_header_path = path.join(package_path, "rosetta/include")
 
     # Resolve working directories from repository base directory
     repository_base_dir = subprocess.check_output('git rev-parse --show-toplevel', shell=True).strip()
-    logger.info("Resolved base dir: %s", repository_base_dir)
+    logging.info("Resolved base dir: %s", repository_base_dir)
 
-    mini_path = path.join(repository_base_dir, "source")
-    logging.info("Resolved source dir: %s", mini_path)
+    rosetta_source_path = path.join(repository_base_dir, "source")
+    logging.info("Resolved source dir: %s", rosetta_source_path)
 
     #Switch to python build directory
     os.chdir(script_root_dir)
@@ -241,19 +244,22 @@ def main(args):
     if not os.path.isdir(bindings_path):
         os.makedirs(bindings_path)
 
+    if not os.path.isdir(bindings_header_path):
+        os.makedirs(bindings_header_path)
+
     source_file_patterns = ["*.py"]
     execute(
-            'Copy init script and python files...', 'cp %s %s/' %
+        'Copy init script and python files...',
+        'cp %s %s/' %
             (" ".join(os.path.join("src", p) for p in source_file_patterns), bindings_path),
-            verbose=Options.verbose)
+    )
 
-    prepareBoostLibs(bindings_path)
-    preparePythonLibs(bindings_path)
+    prepareBoostLibs(options, bindings_path)
+    preparePythonLibs(options, bindings_path)
 
-    if options.BuildMiniLibs:
-        prepareMiniLibs(mini_path, bindings_path)
+    rosetta_libs = prepareRosettaLibs(options, rosetta_source_path, bindings_path)
 
-    os.chdir(path.join(mini_path, "src"))
+    os.chdir(path.join(rosetta_source_path, "src"))
 
     if options.one:
         build_targets = options.one
@@ -262,181 +268,131 @@ def main(args):
     else:
         build_targets = candidate_target_modules
 
-    logger.info('Building namespaces: %s', build_targets)
-    buildModules(build_targets, bindings_src_path, bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
-
-    error = False
-    for j in Jobs:
-        try:
-            r = os.waitpid(j.pid, 0)  # waiting for all child process to termintate...
-            if r[1] :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
-                error = True
-
-        except OSError:
-            error = True
-
-    if error:
-        logging.error('Some of the build scripts return an error, PyRosetta build failed!')
-        sys.exit(1)
-
+    logging.info('Building namespaces: %s', build_targets)
+    stageHeaders( options, build_targets, bindings_header_path )
+    buildModules(options, build_targets, bindings_src_path, bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, rosetta_libs=rosetta_libs)
     stageStaticFiles(repository_base_dir, script_root_dir, package_path)
 
-    logging.info("Done!")
+def execute(message, command_line, return_=False):
+    logging.info("%s:\n%s", message, command_line)
+    po = subprocess.Popen(command_line, bufsize=0, shell=True, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
 
-def execute(message, command_line, return_=False, untilSuccesses=False, print_output=True, verbose=True):
-    if verbose:
-        print message
-        print command_line
+    output = po.stdout.read()
 
-    while True:
-        po = subprocess.Popen(command_line, bufsize=0, shell=True, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+    logging.debug("Output:\n%s\n", command_line, output)
 
-        f = po.stdout
-
-        output = ''
-        for line in f:
-            if print_output:
-                print line,
-            output += line
-            sys.stdout.flush()
-        f.close()
-
-        if po.returncode is None:
-            po.wait()
-        res = po.returncode
-
-        if res and untilSuccesses:
-            print "Error while executing %s: %s\n" % (message, output)
-            print "Sleeping 60s... then I will retry..."
-            time.sleep(60)
-        else:
-            break
+    if po.returncode is None:
+        po.wait()
+    res = po.returncode
 
     if res:
-        if print_output:
-            print "\nEncounter error while executing: " + command_line
+        logging.error("Error: " + command_line)
+        logging.error("Error: " + command_line + "\n" + output.decode("ascii", "ignore"))
         if not return_:
-            sys.exit(1)
+            raise ValueError(command_line)
 
-    if return_ == 'output':
-        return output
-    else:
-        return res
+    return res
 
-def print_(msg, color=None, background=None, bright=False, blink=False, action='print', endline=True):
-    ''' print string with color and background. Avoid printing and return results str instead if action is 'return'. Also check for 'Options.no_color'
-    '''
-    colors = dict(black=0, red=1, green=2, yellow=3, blue=4, magenta=5, cyan=6, white=7)  # standard ASCII colors
-
-    if 'Options' in globals()  and  hasattr(Options, 'color')  and  not Options.color: s = str(msg)
-    else:
-        s  = ['3%s' % colors[color] ] if color else []
-        s += ['4%s' % colors[background] ] if background else []
-        s += ['1'] if bright else []
-        s += ['5'] if blink else []
-
-        s = '\033[%sm%s\033[0m%s' % (';'.join(s), msg, '\n' if endline else '')
-
-    if action == 'print': sys.stdout.write(s)
-    else: return s
-
-def mFork(tag=None, overhead=0):
-    ''' Check if number of child process is below Options.jobs. And if it is - fork the new pocees and return its pid.
-    '''
-    #print_('Groups:%s' % os.getgroups(), color='cyan')
-    while len(Jobs) >= Options.jobs + overhead:
-        for j in Jobs[:] :
-            r = os.waitpid(j.pid, os.WNOHANG)
-            if r == (j.pid, 0):  # process have ended without error
-                Jobs.remove(j)
-            elif r[0] == j.pid :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
-                for j in Jobs:
-                    try:
-                        os.waitpid(j.pid, 0)
-                    except OSError: pass
-
-                print_('Some of the build scripts return an error, PyRosetta build failed!', color='red', bright=True)
-                sys.exit(1)
-
-        if len(Jobs) >= Options.jobs + overhead: time.sleep(.2)
-
-    sys.stdout.flush()
-    pid = os.fork()
-    if pid: Jobs.append( JobTuple(pid, tag) )  # We are parent!
-    return pid
-
-def mWait(tag=None, all_=False):
-    ''' Wait for process tagged with 'tag' for completion
-    '''
-    while True :
-        #print 'Waiting for %s: ' % tag, Jobs
-        for j in [ x for x in Jobs if x.tag==tag or all_==True]:
-            #print 'Waiting2: ', Jobs
-            #try:
-            r = os.waitpid(j.pid, os.WNOHANG)
-            if r == (j.pid, 0):  # process have ended without error
-                Jobs.remove(j)
-            elif r[0] == j.pid :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
-                for j in Jobs:
-                    try:
-                        os.waitpid(j.pid, 0)
-                    except OSError: pass
-
-                print_('Some of the build scripts return an error, PyRosetta build failed!', color='red', bright=True)
-                sys.exit(1)
-            else: time.sleep(.2);  break
-            '''
-            except OSError, e:
-                if e.errno == errno.ESRCH:  # process already got closed, we assume that this is done by child process and any error will be reported by proc. that closed it
-                    Jobs.remove(j) '''
-
-        else: return
-
-def getCompilerOptions():
-    #if Platform == 'linux':
-    if Platform != 'macos':
+def getCompilerOptions(options):
+    if current_platform != 'macos':
         add_option = '-ffloat-store -ffor-scope'
-        if  PlatformBits == '32':
+        if  current_platform_bits == '32':
             add_option += ' -malign-double'
         else:
             add_option += ' -fPIC'
-    elif Options.compiler == 'clang':
-        add_option = '-pipe -O3 -ffast-math -funroll-loops -finline-functions -fPIC'
-    else:
-        add_option = '-pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
-    #if Platform == 'cygwin' : add_option =''
-    add_option += ' -DBOOST_PYTHON_MAX_ARITY=25 -DPYROSETTA'
-    add_option += (' -DDEBUG' if Options.debug_bindings else ' -DNDEBUG')
 
-    if not Options.numpy_support:
+    elif options.compiler == 'clang':
+        add_option = '-pipe -ffast-math -funroll-loops -finline-functions -fPIC'
+    else:
+        add_option = '-pipe -ffor-scope -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
+
+    #if current_platform == 'cygwin' : add_option =''
+    add_option += ' -DBOOST_PYTHON_MAX_ARITY=25 -DPYROSETTA'
+
+    if options.debug_bindings:
+        add_option += ' -g -DDEBUG -O0'
+    else:
+        add_option += ' -DNDEBUG -O3'
+
+    if not options.numpy_support:
         add_option += ' -DPYROSETTA_NO_NUMPY'
 
-    if Options.compiler == 'clang':
+    if options.compiler == 'clang':
         add_option += ' -w'
 
     return add_option
 
-def getLinkerOptions():
+def getLinkerOptions(options):
     ''' Return appropriate linking options based on platform info
     '''
     add_loption = ''
-    #if Platform == 'linux':
-    if Platform != 'macos':  # Linux and cygwin...
+    #if current_platform == 'linux':
+    if current_platform != 'macos':  # Linux and cygwin...
         add_loption += '-shared'
-        #if PlatformBits == '32' and Platform != 'cygwin': add_loption += ' -malign-double'
-        if PlatformBits == '32' : add_loption += ' -malign-double'
+        #if current_platform_bits == '32' and current_platform != 'cygwin': add_loption += ' -malign-double'
+        if current_platform_bits == '32' : add_loption += ' -malign-double'
     else: add_loption = '-dynamiclib -Xlinker -headerpad_max_install_names'
 
     return add_loption
 
-def buildModules(module_paths, py_src_path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
+def getPlatformIncludePath(options):
+    if current_platform == "macos":
+        return '../src/platform/macos'
+    else:
+        return '../src/platform/linux'
+
+def stageHeaders(options, module_paths, dest_inc_path):
+    """Recursively stage all headers for given modules."""
+
+    dir_list = []
+    for module_path in module_paths:
+        for dir_name, _, _ in os.walk(module_path):
+            if exclude.isBanned(dir_name):
+                logging.info('Skipping banned directory %s.', dir_name)
+                continue
+
+            dir_list.append((dir_name, path.join(dest_inc_path, dir_name) ))
+
+    if not options.jobs or options.jobs <= 1:
+        map( copy_header_directory, dir_list )
+        copy_header_directory((path.join(getPlatformIncludePath(options), "platform"), path.join(dest_inc_path, "platform")))
+    else:
+        work_pool = multiprocessing.Pool( processes = options.jobs, initializer=init_worker )
+        try:
+            work_pool.map( copy_header_directory, dir_list )
+            work_pool.apply(copy_header_directory, ((path.join(getPlatformIncludePath(options), "platform"), path.join(dest_inc_path, "platform")),))
+        except KeyboardInterrupt:
+            work_pool.terminate()
+            work_pool.join()
+            raise
+        finally:
+            work_pool.close()
+            work_pool.join()
+
+def copy_header_directory((source_header_dir, target_header_dir)):
+    """Copy all namespace headers into output include directory."""
+
+    header_glob = path.join(source_header_dir, "*.hh")
+    all_headers = [p for p in glob.glob(header_glob) if path.isfile(p)]
+    logging.debug("Copying headers: %s\n%s", header_glob, pprint.pformat(all_headers) )
+
+    if all_headers and not path.exists(target_header_dir):
+        os.makedirs(target_header_dir)
+
+    for header_file in all_headers:
+        target_header_file = path.join(target_header_dir, path.basename(header_file))
+        if not os.path.isfile(target_header_file) or os.path.getmtime(target_header_file) < os.path.getmtime(header_file):
+            logging.debug("Copying header: %s", header_file, )
+            shutil.copyfile( header_file, target_header_file )
+
+def buildModules(options, module_paths, py_src_path, dest, include_paths, libpaths, runtime_libpaths, rosetta_libs):
     ''' recursive build buinding for given dir name, and store them in dest.'''
 
     dir_list = []
     for module_path in module_paths:
         for dir_name, _, files in os.walk(module_path):
             if exclude.isBanned(dir_name):
-                logger.info('Skipping banned directory %s.', dir_name)
+                logging.info('Skipping banned directory %s.', dir_name)
                 continue
 
             dir_list.append( (dir_name, files) )
@@ -444,173 +400,141 @@ def buildModules(module_paths, py_src_path, dest, include_paths, libpaths, runti
     # sort dirs by number of files, most populated first. This should improve speed of multi-thread builds
     dir_list.sort(key=lambda x: -len(x[1]))
 
-    logging.info("Building directories: %s", dir_list)
+    logging.info("Building directories:\n%s", pprint.pformat(dir_list, width=80))
 
-    mb = []
+    module_builders = []
     for dir_name, _ in dir_list:
-        #print "buildModules(...): '%s', " % dir_name
-        dname = dest + '/' + dir_name
-        if not os.path.isdir(dname): os.makedirs(dname)
+        module_builders.append(ModuleBuilder(options, dir_name, py_src_path, dest, include_paths, libpaths, runtime_libpaths, rosetta_libs))
 
-        mb.append( ModuleBuilder(dir_name, py_src_path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) )
-        mb[-1].generateBindings()
-        gc.collect()
-
-    mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
-
-    for b in mb:
-        b.compileBindings()
-        gc.collect()
-
-    mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
-
-    for b in mb:
-        b.linkBindings()
-        gc.collect()
-
-def prepareMiniLibs(mini_path, bindings_path):
-    mode = 'pyrosetta_debug' if Options.debug else 'pyrosetta'
-
-    if Platform == "macos" and PlatformBits=='32':
-        execute("Building mini libraries...", "cd %s && ./scons.py mode=%s arch=x86 arch_size=32 -j%s" % (mini_path, mode, Options.jobs) )
-    elif Platform == "macos" and PlatformBits=='64':
-        execute("Building mini libraries...", "cd %s && ./scons.py mode=%s -j%s" % (mini_path, mode, Options.jobs) )
-    elif Platform == "cygwin":
-        execute("Building mini libraries...", "cd %s && ./scons.py mode=%s bin -j%s" % (mini_path, mode, Options.jobs) )
+    if not options.jobs or options.jobs <= 1:
+      generate_results = map( perform_build, module_builders)
     else:
-        execute("Building mini libraries...", "cd %s && ./scons.py mode=%s -j%s" % (mini_path, mode, Options.jobs) )
+        work_pool = multiprocessing.Pool( processes = options.jobs, initializer=init_worker )
+        try:
+            for res in work_pool.imap_unordered(perform_build, module_builders):
+                pass
+        except KeyboardInterrupt:
+            work_pool.terminate()
+            work_pool.join()
+            raise
+        except Exception:
+            work_pool.terminate()
+            work_pool.join()
+            raise
+        finally:
+            work_pool.close()
+            work_pool.join()
 
-    # fix this for diferent platform
-    if Platform == "linux":
-        lib_path = os.path.join('build/src/', mode, 'linux/' , platform.release()[:3], PlatformBits , 'x86/gcc/')
-    elif Platform == "cygwin":
-        lib_path = os.path.join('build/src/', mode, 'cygwin/1.7/32/x86/gcc/')
-    else:
-        if Platform == "macos" and PlatformBits=='32':
-            lib_path = os.path.join('build/src/', mode, 'macos/10.5/32/x86/gcc/')
-        if Platform == "macos" and PlatformBits=='64':
-            if platform.release()[:2] == '10':
-                lib_path = os.path.join('build/src/', mode,'macos/10.6/64/x86/gcc/')
-            elif platform.release()[:2] == '11':
-                lib_path = os.path.join('build/src/', mode, 'macos/10.7/64/x86/gcc/')
-            else:
-                lib_path = os.path.join('build/src/', mode, 'macos/10.8/64/x86/gcc/')
+# Global utility functions for use with multiprocessing Pool
+def perform_build(module_builder):
+    module_builder.generateBindings()
+    module_builder.compileBindings()
+    module_builder.linkBindings()
 
-    # now lets add version to lib_path...
-    lib_path += execute("Getting GCC version...", 'gcc -dumpversion', return_='output').strip()[0:3] + '/default/'
+def prepareRosettaLibs(options, rosetta_source_path, bindings_path):
+    #mode = 'pyrosetta_debug' if options.debug else 'pyrosetta'
 
-        #if Platform == "macos" and PlatformBits=='64'  and  platform.release().startswith('11.'): lib_path = 'build/src/pyrosetta/macos/11/64/x86/gcc/'
-        #else: lib_path = 'build/src/pyrosetta/macos/10.6/64/x86/gcc/'
+    cmake_path = os.path.join(rosetta_source_path, "cmake")
+    build_path = os.path.join(cmake_path, "build_pyrosetta")
 
-    #lib_path += 'static/'
-    obj_suffix = '.os'
+    subprocess.check_call(["./make_project.py", "all"], cwd=cmake_path )
+    subprocess.check_call(["cmake", "-G", "Ninja"], cwd=build_path)
 
-    # Now the funny part - we link all libs to produce just one lib file...
-    all_sources = []
-    all_scons_files = [f for f in commands.getoutput('cd ../../ && ls *.src.settings').split() if f not in ['apps.src.settings', 'devel.src.settings', 'pilot_apps.src.settings']]
-    for scons_file in all_scons_files:
-    #for scons_file in ['ObjexxFCL', 'numeric', 'utility',]:
-        f = file('./../../'+scons_file).read();  exec(f)
-        for k in sources:
-            for f in sources[k]:
-                #all_sources.append( scons_file + '/' + k + '/' + f + obj_suffix)
-                if not f.endswith('.cu'): all_sources.append( k + '/' + f + obj_suffix)
+    # Cleanup linked libraries.
+    map( os.remove, glob.glob( path.join(build_path, "*." + current_lib_suffix)))
 
-    #all_sources.remove('protocols/forge/remodel/RemodelDesignMover' + obj_suffix) # <-- I have no idea what gcc does not like this file...
+    # Build libraries
+    subprocess.check_call(["ninja", candidate_target_library[options.target if options.target else "protocols"]
+], cwd=build_path)
 
-    extra_objs = [  # additioanal source for external libs
-        'dbio/cppdb/atomic_counter', "dbio/cppdb/conn_manager", "dbio/cppdb/driver_manager", "dbio/cppdb/frontend",
-        "dbio/cppdb/backend", "dbio/cppdb/mutex", "dbio/cppdb/pool", "dbio/cppdb/shared_object", "dbio/cppdb/sqlite3_backend",
-        "dbio/cppdb/utils", 'dbio/sqlite3/sqlite3', ]
+    source_libs = glob.glob( path.join(build_path, "*." + current_lib_suffix))
+    for s in source_libs:
+        shutil.copy( s, bindings_path )
 
-    all_sources += [ mini_path + '/' + lib_path.replace('/src/', '/external/') + x + obj_suffix for x in extra_objs ]
+    # Trim off extension and lib prefix
+    return [path.splitext(path.basename(s))[0][3:] for s in source_libs]
 
-    objs = ' '.join(all_sources)
-
-    suffix = 'so'
-    if Platform == 'cygwin':
-        suffix = 'dll'
-    if Platform == 'macos':
-        suffix = 'dylib'
-
-    mini = os.path.join(bindings_path, 'libmini.' + suffix)
-
-    add_loption = getLinkerOptions()
-
-    execute("Linking mini lib...",
-            "cd %(mini_path)s && cd %(lib_path)s && gcc %(add_loption)s \
-            %(objs)s -lz -lstdc++ -o %(mini)s" % dict(mini_path=mini_path, lib_path=lib_path, add_loption=add_loption, mini=mini, objs=objs, compiler=Options.compiler)
-             )
-
-    if Platform == 'macos':
-        #libs = ['libObjexxFCL.dylib', 'libnumeric.dylib', 'libprotocols.dylib', 'libdevel.dylib', 'libutility.dylib', 'libcore.dylib']
-        libs = ['libmini.dylib']
-        for l in libs:
-            execute('Adjustin lib self path in %s' % l, 'install_name_tool -id rosetta/%s %s' % (l, os.path.join(bindings_path, l)) )
-            for k in libs:
-                execute('Adjustin lib path in %s' % l, 'install_name_tool -change %s rosetta/%s %s' % (os.path.abspath(path.join(mini_path,lib_path,k)), k, os.path.join(bindings_path, l)) )
-
-def prepareBoostLibs(bindings_path):
+def prepareBoostLibs(options, bindings_path):
     """Identify and copy boost library into the bindings path."""
 
-    #TODO alexford factor out suffix gen
-    suffix = 'so'
-    if Platform == 'cygwin':
-        suffix = 'dll'
-    if Platform == 'macos':
-        suffix = 'dylib'
+    if options.package_boost:
+        if not options.boost_path:
+            raise ValueError("Must specify options.boost_path if options.package_boost is set.")
 
-    # Identify and copy boost library into target directory
-    search_glob = "%s/lib/lib%s.%s*" % (Options.boost_path, Options.boost_lib, suffix)
-    logging.debug("prepareBoostLibs searching: %s", search_glob)
-    boost_libs = glob.glob(search_glob)
-    logging.info("prepareBoostLibs found boost lib: %s", boost_libs)
+        # Identify and copy boost library into target directory
+        search_glob = "%s/lib/lib%s.%s*" % (options.boost_path, options.boost_lib, current_lib_suffix)
+        logging.debug("prepareBoostLibs searching: %s", search_glob)
+        boost_libs = glob.glob(search_glob)
+        logging.info("prepareBoostLibs found boost lib: %s", boost_libs)
 
-    if len(boost_libs) == 0:
-        raise ValueError("No valid boost library found: %s" % search_glob)
+        if len(boost_libs) == 0:
+            raise ValueError("No valid boost library found: %s" % search_glob)
 
-    for boost_lib in boost_libs:
-        execute("Copying boost lib: %s" % boost_lib, "cp -P %s %s" % (boost_lib, bindings_path) )
+        for boost_lib in boost_libs:
+            execute("Copying boost lib: %s" % boost_lib, "cp -P %s %s" % (boost_lib, bindings_path) )
+    else:
+        if options.boost_path:
+            # Append boost include path to options.L
+            boost_lib_path = os.path.join(options.boost_path, "lib")
+            logging.info("prepareBoostLibs using boost lib path: %s", boost_lib_path)
+            options.L.append(boost_lib_path)
 
-    # Append boost include path to Options.I
-    boost_include_path = os.path.join(Options.boost_path, "include")
-    logging.info("prepareBoostLibs using boost include path: %s", boost_include_path)
-    Options.I.append(boost_include_path)
+    if options.boost_path:
+        # Append boost include path to options.I
+        boost_include_path = os.path.join(options.boost_path, "include")
+        logging.info("prepareBoostLibs using boost include path: %s", boost_include_path)
+        options.I.append(boost_include_path)
 
-def preparePythonLibs(bindings_path):
-    """Identify python include paths."""
+def preparePythonLibs(options, bindings_path):
+    """Identify python include paths.
 
-    python_include_path = os.path.join(Options.python_path, "include", Options.python_lib)
-    if not os.path.exists(python_include_path):
-        logger.warning("Invalid python_path & python_version, include path does not exist: %s", python_include_path)
-        import distutils
-        python_include_path = distutils.sysconfig.get_python_inc()
-        logger.warning("Falling back to distutils.sysconfig.get_python_inc: %s", python_include_path)
+    Must specify lib and include paths for target python interpreter, as well as numpy include path."""
 
-    python_numpy_include_path = os.path.join(
-            Options.python_path, "lib", Options.python_lib,
+    python_include_path = None
+    python_lib_path = None
+
+    if options.python_path:
+        python_include_path = os.path.join(options.python_path, "include", options.python_lib)
+        if not os.path.exists(python_include_path):
+            logging.warning("Invalid python_path & python_version, include path does not exist: %s", python_include_path)
+            logging.warning("Falling back to distutils.sysconfig.get_python_inc.")
+            python_include_path = None
+
+        python_lib_path = os.path.join(options.python_path, "lib", options.python_lib)
+        if not os.path.exists(python_include_path):
+            logging.warning("Invalid python_path & python_version, lib path does not exist: %s", python_lib_path)
+            logging.warning("Falling back to distutils.sysconfig.get_python_inc.")
+            python_lib_path = None
+
+    import distutils.sysconfig
+    if not python_include_path:
+        python_include_path = distutils.sysconfig.get_config_var("INCLUDEPY")
+    if not python_lib_path:
+        python_lib_path = distutils.sysconfig.get_config_var("LIBDIR")
+
+    python_numpy_include_path = None
+
+    if options.python_path:
+        python_numpy_include_path = os.path.join(
+            options.python_path, "lib", options.python_lib,
             "site-packages", "numpy", "core", "include")
 
-    if not os.path.exists(python_numpy_include_path):
-        logger.warning("Numpy not installed under target python_path: %s", python_numpy_include_path)
+        if not os.path.exists(python_numpy_include_path):
+            logging.warning("Numpy not installed under target python_path: %s", python_numpy_include_path)
+            logging.warning("Falling back to numpy.get_include.")
+            python_numpy_include_path = None
+
+    if not python_numpy_include_path:
         import numpy
         python_numpy_include_path = numpy.get_include()
-        logger.warning("Falling back to numpy.get_include: %s", python_numpy_include_path)
 
-    logger.info("Using python include path: %s", python_include_path)
-    Options.I.append(python_include_path)
-    logger.info("Using python numpy include path: %s", python_numpy_include_path)
-    Options.I.append(python_numpy_include_path)
+    logging.info("Using python include path: %s", python_include_path)
+    options.I.append(python_include_path)
+    logging.info("Using python lib path: %s", python_lib_path)
+    options.L.append(python_lib_path)
 
-    python_library_path = os.path.join(Options.python_path, "lib")
-
-    #Just glob on libpythnon<major>.<minor>* to avoid needing to resolve dylib/so/etc...
-    shared_lib_glob = os.path.join(python_library_path, "lib" + Options.python_lib + "*")
-    if len(glob.glob(shared_lib_glob)) == 0:
-        raise ValueError("Unable to resolve python shared library matching include path and version: %s" % shared_lib_glob)
-
-    logger.info("Using python library path: %s", python_library_path)
-    Options.L.append(python_library_path)
+    logging.info("Using python numpy include path: %s", python_numpy_include_path)
+    options.I.append(python_numpy_include_path)
 
 def copy_tree_contents(src, dst, symlinks=False, ignore=None):
     """Recursively copy contents of src into dst."""
@@ -656,18 +580,19 @@ def copy_tree_contents(src, dst, symlinks=False, ignore=None):
         raise Error(errors)
 
 def stageStaticFiles(repository_root_dir, script_root_dir, target_dir):
-    logger.info("stageStaticFiles: %s", locals())
+    logging.info("stageStaticFiles: %s", locals())
 
     copy_tree_contents( path.join(script_root_dir, "static"), target_dir)
 
-    if not path.lexists( path.join(target_dir, "database") ):
+    if not path.lexists( path.join(target_dir, "rosetta/database") ):
         os.symlink(
-            path.relpath( path.join(repository_root_dir, "database"), target_dir),
-            path.join(target_dir, "database"))
+            path.relpath( path.join(repository_root_dir, "database"), path.join(target_dir, "rosetta") ),
+            path.join(target_dir, "rosetta/database"))
 
 class ModuleBuilder:
-    def __init__(self, namespace_path, py_src_path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
+    def __init__(self, options, namespace_path, py_src_path, dest, include_paths, libpaths, runtime_libpaths, rosetta_libs):
         ''' Non recursive build buinding for given dir name, and store them in dest.
+            options - ModuleBuilder global options object
             namespace_path - relative path to namespace
             py_src_path - path to bindings src path, containing byhand and .py source files
             dest - path to root file destination, actual dest will be dest + path
@@ -676,51 +601,36 @@ class ModuleBuilder:
 
             This is a class because we want to generate path/name only once etc.
         '''
-        global Options
-        if Options.verbose: print 'CppXML route: ModuleBuilder.init...', path, dest
+        logging.debug( "ModuleBuilder.init(%s)", locals())
 
+        self.options = options
         self.namespace_path = namespace_path
         self.py_src_path  = py_src_path
         self.dest = dest
 
         # Creating list of headers
-        self.headers = [os.path.join(self.namespace_path, d)
-                            for d in os.listdir(self.namespace_path)
-                                if os.path.isfile( os.path.join(self.namespace_path, d) )
-                                    and d.endswith('.hh')
-                                    and not d.endswith('.fwd.hh')
-                                    ]
-
+        self.headers = [p for p in glob.glob(path.join(self.namespace_path, "*.hh")) if path.isfile(p) and not p.endswith("fwd.hh")]
         self.headers.sort()
-
         for h in self.headers[:]:
             if exclude.isBanned(h):
-                if Options.verbose: print "Banning header:", h
+                logging.info("Skipping banned header: %s", h)
                 self.headers.remove(h)
 
-        if Options.verbose: print_(self.headers, color='black', bright=True)
+        logging.debug("Building headers:\n%s", pprint.pformat(self.headers))
 
-        self.fname_base = self.dest + '/' + self.namespace_path
+        self.fname_base = path.join(self.dest, self.namespace_path)
+        if not os.path.isdir(self.fname_base):
+            os.makedirs(self.fname_base)
 
-        if not os.path.isdir(self.fname_base): os.makedirs(self.fname_base)
+        #Create blank __init__.py for module
+        with open( path.join( self.fname_base, "__init__.py"), "w") as f:
+            pass
 
-        #print 'Creating __init__.py file...'
-        f = file( dest + '/' + self.namespace_path + '/__init__.py', 'w');  f.close()
-        if not self.headers:  return   # if source files is empty then __init__.py should be empty too
-
-        def finalize_init(current_fname):
-            #print 'Finalizing Creating __init__.py file...'
-            f = file( dest + '/' + self.namespace_path + '/__init__.py', 'a');
-            f.write('from %s import *\n' % os.path.basename(current_fname)[:-3]);
-            f.close()
-
-        self.finalize_init = finalize_init
+        if not self.headers:
+            return
 
         # Resolve platform specific include path, used in compile & gccxml passes
-        if Platform == "macos":
-            self.platform_include_path = '../src/platform/macos'
-        else:
-            self.platform_include_path = '../src/platform/linux'
+        self.platform_include_path = getPlatformIncludePath(self.options)
 
         # Resolve module include paths
         self.include_paths = list(include_paths)
@@ -735,20 +645,20 @@ class ModuleBuilder:
         self.dest_origin_rpath = path.relpath(".",self.namespace_path)
         self.runtime_libpaths = runtime_libpaths +  ["'%s'" % path.join("$ORIGIN", self.dest_origin_rpath) ]
 
-        self.cpp_defines = '-DPYROSETTA -DBOOST_SYTEM_ -DBOOST_NO_MT -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_SYSTEM_NO_DEPRECATED -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK'
+        self.rosetta_libs = rosetta_libs
 
-        self.gccxml_options = ''
-        if Options.gccxml_compiler:
-            self.gccxml_options += '--gccxml-compiler ' + Options.gccxml_compiler
-        elif Platform == 'macos':
-            self.gccxml_options += '--gccxml-compiler llvm-g++-4.2'
+        self.cpp_defines = '-DPYROSETTA -DBOOST_SYTEM_ -DBOOST_NO_MT -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_SYSTEM_NO_DEPRECATED -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK -DPTR_BOOST -DPTR_MODERN -DUNUSUAL_ALLOCATOR_DECLARATION'
 
-        if Platform == 'macos':
+        # See http://lists.mech.kuleuven.be/pipermail/orocos-dev/2014-April/012832.html
+        self.gccxml_options = '-DBOOST_THREAD_DONT_USE_CHRONO -DEIGEN_DONT_VECTORIZE'
+        if current_platform == 'macos':
+            self.gccxml_options += ' --gccxml-compiler g++-4.2'
             self.gccxml_options += ' -march=nocona'
+            self.gccxml_options += ' -fpermissive'
 
         self.cc_files = []
-        self.add_option  = getCompilerOptions()
-        self.add_loption = getLinkerOptions()
+        self.add_option  = getCompilerOptions(options)
+        self.add_loption = getLinkerOptions(options)
 
         self.by_hand_beginning_file = path.join(self.py_src_path, self.namespace_path,
                                                     '_%s__by_hand_beginning.cc' % self.namespace_path.split('/')[-1])
@@ -767,7 +677,6 @@ class ModuleBuilder:
         else:
             self.by_hand_ending = ""
 
-
         self.all_at_once_base = '__' + self.namespace_path.split('/')[-1] + '_all_at_once_'
         self.all_at_once_source_cpp = self.fname_base + '/' + self.all_at_once_base + '.source.cc'
         self.all_at_once_cpp = self.fname_base + '/' + self.all_at_once_base + '.'
@@ -778,213 +687,200 @@ class ModuleBuilder:
         self.all_at_once_relative_files = []
 
     def generateBindings(self):
-        ''' This function only generate XML file, parse it and generate list of sources that saved in sources.json. We assume that one_lib_file and build_all option is on here.
-        '''
-        if not self.headers: return
+        ''' This function only generate XML file, parse it and generate list of sources that saved in sources.json. '''
+
+        # Setup __init__ for module
+        src_init_file = path.join( self.py_src_path, self.namespace_path , '__init__.py')
+        dest_init_file = path.join( self.dest, self.namespace_path , '__init__.py')
+
+        if os.path.isfile(src_init_file):
+            with open(src_init_file) as i, open(dest_init_file, "a") as o:
+                o.write(i.read())
+        elif getattr( self, "all_at_once_base", None ):
+            with open( dest_init_file, "a") as f:
+                f.write("from %s import *\n" % self.all_at_once_base)
+
+        if not self.headers:
+            return
 
         xml_recompile = False
-        for fl in self.headers:
-            #print 'Binding:', files
-            hbase = fl.split('/')[-1][:-3]
-            hbase = hbase.replace('.', '_')
-            #print 'hbase = ', hbase
-            #if hbase == 'init': hbase='tint'  # for some reason Boost don't like 'init' name ? by hand?
 
-            fname = self.fname_base + '/' + '_' + hbase + '.cc'
-            '''
-            inc_name =  fname_base + '/' + '_' + hbase + '.hh'
-            obj_name =  fname_base + '/' + '_' + hbase + '.o'
-            xml_name =  fname_base + '/' + '_' + hbase + '.xml'
-            cc_for_xml_name =  fname_base + '/' + '_' + hbase + '.xml.cpp'
-            dst_name =  fname_base + '/' + '_' + hbase + '.so'
-            if Platform == 'cygwin' : dst_name =  fname_base + '/' + '_' + hbase + '.dll'
-            decl_name = fname_base + '/' + '_' + hbase + '.exposed_decl.pypp.txt'
-            '''
-            self.cc_files.append(fname)
+        if not self.options.update:
+            xml_recompile = True
 
-            if Options.update:
-                try:
-                    if fl == self.headers[0]:  # for first header we additionaly check if 'by_hand' code is up to date
-                        if os.path.isfile(self.by_hand_beginning_file) and os.path.getmtime(self.by_hand_beginning_file) > os.path.getmtime(self.all_at_once_json): raise os.error
-                        if os.path.isfile(self.by_hand_ending_file) and os.path.getmtime(self.by_hand_ending_file) > os.path.getmtime(self.all_at_once_json): raise os.error
+        if not xml_recompile:
+            try:
+                if os.path.isfile(self.by_hand_beginning_file) and os.path.getmtime(self.by_hand_beginning_file) > os.path.getmtime(self.all_at_once_json):
+                    xml_recompile = True
+                elif os.path.isfile(self.by_hand_ending_file) and os.path.getmtime(self.by_hand_ending_file) > os.path.getmtime(self.all_at_once_json):
+                    xml_recompile = True
 
-                    if os.path.getmtime(fl) > os.path.getmtime(self.all_at_once_json):
+                for header_file in self.headers:
+                    if os.path.getmtime(header_file) > os.path.getmtime(self.all_at_once_json):
                         xml_recompile = True
                     else:
-                        if Options.verbose: print 'File: %s is up to date - skipping' % fl
+                        pass
 
-                except os.error: xml_recompile = True
+                if not os.path.exists(self.all_at_once_cpp+'0.cpp'):
+                    xml_recompile = True
 
-            if xml_recompile: print_(fl, color='green', bright=True)
+            except os.error:
+                xml_recompile = True
 
-            source_fwd_hh = fl.replace('.hh', '.fwd.hh')
-            source_hh = fl
-            source_cc = fl.replace('.hh', '.cc')
+        for header_file in self.headers:
+            hbase = header_file.split('/')[-1][:-3]
+            hbase = hbase.replace('.', '_')
+
+            fname = path.join(self.fname_base, '_' + hbase + '.cc')
+            self.cc_files.append(fname)
+
+            source_fwd_hh = header_file.replace('.hh', '.fwd.hh')
+            source_hh = header_file
+            source_cc = header_file.replace('.hh', '.cc')
 
             self.all_at_once_relative_files.extend( [source_fwd_hh, source_hh, source_cc] )  # just collecting file names...
 
+        with open(self.all_at_once_source_cpp, 'w') as f:
+            for header_file in self.headers:
+                f.write('#include <%s>\n' % header_file)
 
-        f = file(self.all_at_once_source_cpp, 'w');
-        for fl in self.headers: f.write('#include <%s>\n' % fl);
-        f.close()
+        if not xml_recompile:
+            logging.debug("Skipping generate pass: %s", self.namespace_path)
+            return
 
+        if os.path.isfile(self.all_at_once_lib):
+            os.remove(self.all_at_once_lib)
 
-        #print 'Finalizing Creating __init__.py file...'
-        namespace = os.path.basename(self.namespace_path)
-        py_init_file = path.join( self.py_src_path, self.namespace_path , '__init__.py')
-        if os.path.isfile(py_init_file):
-            t = file(py_init_file).read()
-        else:
-            t = ''
+        gen_xml_result = execute('Generating XML representation...',
+            "gccxml "
+            "-fxml=%(out_xml)s "
+            "%(src_cpp)s "
+            "%(cpp_defines)s "
+            "-I. -I../external/include -I../external/boost_1_55_0  -I../external/dbio "
+            "-I%(platform_include_path)s "
+            "%(extra_include_paths)s "
+            "%(gccxml_options)s "
+            "-DBOOST_NO_INITIALIZER_LISTS" % dict(
+                gccxml_options =self.gccxml_options,
+                src_cpp = self.all_at_once_source_cpp,
+                out_xml = self.all_at_once_xml,
+                cpp_defines = self.cpp_defines,
+                platform_include_path = self.platform_include_path,
+                extra_include_paths = " ".join("-I%s" % p for p in self.include_paths)),
+            self.options.continue_on_error)
 
-        with open(self.dest + '/' + self.namespace_path + '/__init__.py', 'w') as f:
-            f.write(t+'from %s import *\n' % self.all_at_once_base);
-            f.close()
+        if gen_xml_result: 
+            return
 
-        if xml_recompile or (not Options.update):
-            start_time = time.time()
+        namespaces_to_wrap = ['::'+self.namespace_path.replace('/', '::')+'::']
 
-            if os.path.isfile(self.all_at_once_lib): os.remove(self.all_at_once_lib)
+        code = tools.CppParser.parseAndWrapModule(
+                                self.all_at_once_base,
+                                namespaces_to_wrap,
+                                self.all_at_once_xml,
+                                self.all_at_once_relative_files,
+                                max_funcion_size=self.options.max_function_size,
+                                by_hand_beginning=self.by_hand_beginning,
+                                by_hand_ending=self.by_hand_ending)
 
-            def generate():
-                if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_55_0  -I../external/dbio -I%s -DBOOST_NO_INITIALIZER_LISTS ' % (self.gccxml_options, self.all_at_once_source_cpp, self.all_at_once_xml, self.cpp_defines, self.platform_include_path), Options.continue_ ): return
+        logging.info('Getting include list...')
+        includes = exclude.getIncludes(self.headers)
 
-                namespaces_to_wrap = ['::'+self.namespace_path.replace('/', '::')+'::']
-                # Temporary injecting Mover in to protocols level
-                #if path == 'protocols': namespaces_to_wrap.append('::protocols::moves::')
+        logging.info('Finalizing[%s]', len(code))
+        source_list = []
+        for i in range( len(code) ):
+            all_at_once_N_cpp = self.all_at_once_cpp+'%s.cpp' % i
+            all_at_once_N_obj = self.all_at_once_obj+'%s.o' % i
+            source_list.append((all_at_once_N_cpp, all_at_once_N_obj))
 
-                code = tools.CppParser.parseAndWrapModule(self.all_at_once_base, namespaces_to_wrap, self.all_at_once_xml, self.all_at_once_relative_files, max_funcion_size=Options.max_function_size,
-                                                          by_hand_beginning=self.by_hand_beginning, by_hand_ending=self.by_hand_ending)
+            if os.path.isfile(all_at_once_N_obj):
+                os.remove(all_at_once_N_obj)
 
-                print_('Getting include list...', color='black', bright=True)
-                includes = exclude.getIncludes(self.headers)
+            for fl in self.headers:
+                code[i] = '#include <%s>\n' % fl + code[i]
 
-                print_('Finalizing[%s]' % len(code), color='black', bright=True, endline=False);  sys.stdout.flush()
-                source_list = []
-                for i in range( len(code) ):
-                    all_at_once_N_cpp = self.all_at_once_cpp+'%s.cpp' % i
-                    all_at_once_N_obj = self.all_at_once_obj+'%s.o' % i
-                    source_list.append((all_at_once_N_cpp, all_at_once_N_obj))
+            with open(all_at_once_N_cpp, 'w') as f:
+                f.write(code[i])
 
-                    if os.path.isfile(all_at_once_N_obj): os.remove(all_at_once_N_obj)
+            exclude.finalize2(all_at_once_N_cpp, self.dest, self.namespace_path, module_name=self.all_at_once_base, includes=includes)
+        logging.info('Done!')
 
-                    for fl in self.headers: code[i] = '#include <%s>\n' % fl + code[i]
-
-                    f = file(all_at_once_N_cpp, 'w');  f.write(code[i]);  f.close()
-
-                    exclude.finalize2(all_at_once_N_cpp, self.dest, self.namespace_path, module_name=self.all_at_once_base, add_by_hand = False, includes=includes)
-                    print_('.', color='black', bright=True, endline=False); sys.stdout.flush()
-                print_(' Done!', color='black', bright=True);
-
-                json.dump(source_list, file(self.all_at_once_json, 'w') )
-
-            if Options.jobs > 1:
-                pid = mFork()
-                if not pid:  # we are child process
-                    generate()
-                    sys.exit(0)
-
-            else:
-                generate();
-
+        json.dump(source_list, file(self.all_at_once_json, 'w') )
 
     def compileBindings(self):
         ''' Build early generated bindings.
         '''
-        if not self.headers: return
+        if not self.headers:
+            return
         source_list = json.load( file(self.all_at_once_json) )
 
         recompile = False
 
-        if Options.update:
+        if not self.options.update:
+            recompile = True
+
+        if not recompile:
             for (all_at_once_N_cpp, all_at_once_N_obj) in source_list:
-                if not os.path.isfile(all_at_once_N_obj)  or  os.path.getmtime(all_at_once_N_cpp) > os.path.getmtime(all_at_once_N_obj): recompile = True; break
+                if not os.path.isfile(all_at_once_N_obj)  or  os.path.getmtime(all_at_once_N_cpp) > os.path.getmtime(all_at_once_N_obj):
+                    recompile = True
+                    break
 
-        if recompile or (not Options.update):
-            for (all_at_once_N_cpp, all_at_once_N_obj) in source_list: #range( len(code) ):
-                start_time = time.time()
+        if not recompile:
+            logging.debug("Skipping compile pass: %s", self.namespace_path)
+            return
 
-                #all_at_once_N_cpp = self.all_at_once_cpp+'%s.cpp' % i
-                #all_at_once_N_obj = self.all_at_once_obj+'%s.o' % i
+        for (all_at_once_N_cpp, all_at_once_N_obj) in source_list:
+            compiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external/include -I../external/boost_1_55_0 -I../external/dbio %(include_paths)s "
+            compiler_dict = dict(
+                    add_option=self.add_option,
+                    fname=all_at_once_N_cpp,
+                    obj_name=all_at_once_N_obj,
+                    include_paths=" ".join(["-I%s" % p for p in self.include_paths]),
+                    compiler=self.options.compiler, cpp_defines=self.cpp_defines)
 
-                # -fPIC
-                comiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external/include -I../external/boost_1_55_0 -I../external/dbio %(include_paths)s "
-                comiler_dict = dict(
-                        add_option=self.add_option,
-                        fname=all_at_once_N_cpp,
-                        obj_name=all_at_once_N_obj,
-                        include_paths=" ".join(["-I%s" % p for p in self.include_paths]),
-                        compiler=Options.compiler, cpp_defines=self.cpp_defines)
-
-                failed = False
-
-                def compile_():
-                    if execute("Compiling...", comiler_cmd % comiler_dict, return_=True):
-                        if Options.compiler != 'clang': failed = True
-                        elif execute("Compiling...", comiler_cmd % dict(comiler_dict, compiler='gcc'), return_=True): failed = True
-
-                if Options.jobs > 1:
-                    pid = mFork(tag=self.namespace_path)
-                    if not pid:  # we are child process
-                        compile_()
-                        sys.exit(0)
-
-                else:
-                    compile_()
-
-
-                if Options.jobs == 1:
-                    if Options.continue_ and failed: return new_headers
-
+            execute("Compiling...", compiler_cmd % compiler_dict, self.options.continue_on_error)
 
     def linkBindings(self):
         ''' Build early generated bindings.
         '''
-        if not self.headers: return
+        if not self.headers:
+            return
+
         source_list = json.load( file(self.all_at_once_json) )
 
         relink = False
-
-        if Options.update:
-            for (all_at_once_N_cpp, all_at_once_N_obj) in source_list:
-                if not os.path.isfile(self.all_at_once_lib)  or  os.path.getmtime( all_at_once_N_obj) > os.path.getmtime(self.all_at_once_lib):
-                    relink = True
-                    break
-        else:
+        if not self.options.update:
             relink = True
 
-
-        if relink:
-            start_time = time.time()
-
-            objs_list = map(lambda x:x[1], source_list)
-            linker_cmd = "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s -lmini -lstdc++ -lz -l%(python_lib)s \
-                            -l%(boost_lib)s %(libpaths)s -Wl,%(runtime_libpaths)s -o %(dst)s"
-            linker_dict = dict(
-                    add_option=self.add_loption,
-                    obj=' '.join(objs_list),
-                    dst=self.all_at_once_lib,
-                    libpaths=' '.join(["-L%s" % p for p in self.libpaths]),
-                    runtime_libpaths=','.join(['-rpath,%s' % p for p in self.runtime_libpaths]),
-                    dest=self.dest,
-                    boost_lib=Options.boost_lib,
-                    python_lib=Options.python_lib,
-                    compiler=Options.compiler)
-
-            def linking():
-                if execute("Linking...", linker_cmd % linker_dict, return_= (True if Options.compiler != 'gcc' or Options.continue_ else False) ):
-                    if Options.compiler != 'gcc':
-                        execute("Linking...", linker_cmd % dict(linker_dict, compiler='gcc'), return_= Options.continue_ )
-
-            if Options.jobs > 1:
-
-                pid = mFork(tag=self.namespace_path+'+linking', overhead=1)  # we most likely can start extra linking process, beceause it depend on compilation to  finish. There is no point of waiting for it...
-                if not pid:  # we are child process
-                    #mWait(tag=self.path)  # wait for all compilation jobs to finish...
-                    linking()
-                    sys.exit(0)
+        if not relink:
+            if not os.path.isfile( self.all_at_once_lib ):
+                relink = True
             else:
-                linking()
+                for (all_at_once_N_cpp, all_at_once_N_obj) in source_list:
+                    if os.path.getmtime( all_at_once_N_obj) > os.path.getmtime(self.all_at_once_lib):
+                        relink = True
+                        break
+
+        if not relink:
+            logging.debug("Skipping link pass: %s", self.namespace_path)
+            return
+
+        objs_list = map(lambda x:x[1], source_list)
+        linker_cmd = "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s %(rosetta_libs)s -lstdc++ -lz -l%(python_lib)s \
+                        -l%(boost_lib)s %(libpaths)s -Wl,%(runtime_libpaths)s -o %(dst)s"
+        linker_dict = dict(
+                add_option=self.add_loption,
+                obj=' '.join(objs_list),
+                dst=self.all_at_once_lib,
+                libpaths=' '.join(["-L%s" % p for p in self.libpaths]),
+                runtime_libpaths=','.join(['-rpath,%s' % p for p in self.runtime_libpaths]),
+                rosetta_libs = " ".join("-l%s" % l for l in self.rosetta_libs),
+                dest=self.dest,
+                boost_lib=self.options.boost_lib,
+                python_lib=self.options.python_lib,
+                compiler=self.options.compiler)
+
+        execute("Linking...", linker_cmd % linker_dict, self.options.continue_on_error)
 
 if __name__ == "__main__":
     main(sys.argv)

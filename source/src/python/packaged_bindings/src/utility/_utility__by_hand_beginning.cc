@@ -623,42 +623,7 @@ struct python_istream_wrapper
 
 #endif // GUARD
 
-// Some subclassing testing functions
-void Q_Test_CI1B(core::scoring::methods::ContextIndependentOneBodyEnergyOP )
-{
-    std::cout << "Q_Test_CI1B!" << std::endl;
-}
-
-// Some subclassing testing functions
-void Q_Test_EnergyMethodCreator(core::scoring::methods::EnergyMethodCreatorOP cr)
-{
-    std::cout << "Q_Test_EnergyMethodCreator..." << std::endl;
-
-    core::scoring::methods::EnergyMethodOptions options;
-    cr->create_energy_method( options );
-    std::cout << "Q_Test_EnergyMethodCreator... Done!" << std::endl;
-}
-
-
-template< class T >
-T * getCAP( pointer::access_ptr<T> rs ) {
-  T & rs_ref( *rs );
-  T * rs_ptr = &rs_ref;
-  return rs_ptr;
-}
-
 // std::pair ---------------------------------------------------------------------------------------------------
-
-
-//vector1 wrapper requires ostream '<<' operator
-
-template< class T1, class T2 >
-std::ostream& operator<<(std::ostream& strm, const std::pair< T1, T2>& kvPair)
-{
-  strm << "(" << kvPair.first << ", " << kvPair.second << ")";
-  return strm;
-}
-
 template <class T1, class T2>
 std::string pair_repr(std::pair<T1, T2> const & v)
 {
@@ -873,31 +838,6 @@ void wrap_owning_pointer(char * name)
     ;
 }
 
-#ifndef _MSC_VER
-	template< class T >  T * wrap_access_pointer_get_function( pointer::access_ptr<T> rs ) {  return rs.get(); }
-#else
-	template< class T >  T * wrap_access_pointer_get_function( pointer::access_ptr<T> const & rs ) {  return rs.get(); }
-#endif
-
-/*
-template< class T >
-void wrap_access_pointer(std::string class_name)
-{
-    boost::python::implicitly_convertible< utility::pointer::access_ptr< T >
-                                         , utility::pointer::access_ptr< T const > >();
-
-    bp::class_< utility::pointer::access_ptr< T > >( std::string(class_name+"AP").c_str() )
-        .def("get", (  T * (*)( utility::pointer::access_ptr<T> )  )( & wrap_access_pointer_get_function<T> )
-             , bp::return_value_policy< bp::reference_existing_object >() );
-
-    bp::class_< utility::pointer::access_ptr< T const > >( std::string(class_name+"CAP").c_str() )
-        .def("get", (  T const * (*)( utility::pointer::access_ptr<T const > )  )( & wrap_access_pointer_get_function<T const> )
-             , bp::return_value_policy< bp::reference_existing_object >() );
-}
-*/
-
-// .def("__iter__", bp::range( &core::pose::Pose::res_begin, &core::pose::Pose::res_end));
-
 inline bool vector1_bool_get ( vector1<bool> & v, int i ) { if(v[i]) return true; else return false; }
 inline void vector1_bool_push( vector1<bool> & v, bool h ) { return v.push_back(h); }
 
@@ -910,73 +850,6 @@ void set_pyexit_callback(void)
 {
     set_main_exit_callback(pyexit_callback);
 }
-
-
-// Python Char/String arguments overload demo ------------------------------------------------------
-void _test_char_string_args_(int c)
-{
-    std::cout << "_test_char_string_args_::char_version: c = " << c << std::endl;
-}
-
-void _test_char_string_args_(std::string s)
-{
-    std::cout << "_test_char_string_args_::string_version: s = " << s << std::endl;
-}
-
-
-// Python Derived class demo -----------------------------------------------------------------------
-// An abstract base class...
-class DemoBase //: public boost::noncopyable
-{
-public:
-
-    DemoBase() {};
-    ~DemoBase() {};
-
-    virtual std::string testMethod() { return "testMethod() of a C++ Base"; };
-};
-
-// A derived class...
-class DemoDerived : public DemoBase
-{
-public:
-
-    DemoDerived() {}
-    ~DemoDerived() {}
-
-    std::string testMethod()
-    {
-        return "testMethod() of a C++ Derived object called!";
-    }
-};
-
-std::string DemoTesterFunction(DemoBase* p) { return p->testMethod(); }
-
-// Boost.Python wrapper class for Base
-struct BaseWrap : public DemoBase
-{
-    BaseWrap(PyObject* self_) : self(self_) {}
-
-    std::string testMethod()
-    {
-        return boost::python::call_method<std::string>(self, "testMethod");
-    }
-
-    PyObject* self;
-};
-/* Python part of the demo
-class PythonDerived( Base ):
-    def testMethod( self ):
-        return "testMethod() of a PythonDerived object called!"
-
-p = PythonDerived()
-DemoTesterFunction(p)
-*/
-
-class OOO
-{
-public:
-};
 
 #ifndef PYROSETTA_NO_NUMPY
 
@@ -1192,27 +1065,8 @@ void __utility_by_hand_beginning__()
 	// #endif
 
     // Testing functions
-    bp::def("Q_Test_CI1B", Q_Test_CI1B);
-    bp::def("Q_Test_EnergyMethodCreator", Q_Test_EnergyMethodCreator);
-
     bp::def("set_pyexit_callback", set_pyexit_callback);
-    //bp::def("set_main_exit_callback", set_main_exit_callback);
     bp::def("pyexit_callback", pyexit_callback);
-
-    // Wraping for derived Demo
-    bp::class_< DemoBase >("DemoBase")
-    .def("testMethod", &DemoBase::testMethod)
-    ;
-
-    bp::class_< DemoDerived, bp::bases<DemoBase> >("DemoDerived")
-    .def("testMethod", &DemoDerived::testMethod)
-    ;
-
-    boost::python::class_<DemoBase, BaseWrap, boost::noncopyable>( "Base" );
-
-    bp::def("DemoTesterFunction", DemoTesterFunction);
-
-    //wrap_owning_pointer<core::pack::task::PackerTaskOP>("PackerTaskOP");
 
     // istream and ostream converters for python file objects
     // See documentation in class definition for usage.
@@ -1239,75 +1093,5 @@ void __utility_by_hand_beginning__()
         .def("str", stringstream_str_set_function_type( &::std::stringstream::str ) )
         .def("str", stringstream_str_get_function_type( &::std::stringstream::str ) );
 
-    using namespace pointer;
-    typedef bp::return_value_policy< bp::reference_existing_object > CP_REF;
-    typedef bp::return_value_policy< bp::copy_const_reference >      CP_CCR;
-    typedef bp::return_value_policy< bp::copy_non_const_reference >  CP_CNCR;
-
-    // bp::class_< vector1<vector1<size_t> > >("utility___vec1_vec1_size")
-    //   .def(bp::vector_indexing_suite< vector1<vector1<size_t> > >() );
-
-    // bp::class_< access_ptr< core::chemical::AtomTypeSet const   > >("core___chemical___AtomTypeSetCAP");
-    // bp::class_< access_ptr< core::chemical::ResidueType const   > >("core___chemical___ResidueTypeCAP");
-    // bp::class_< access_ptr< core::chemical::ResidueTypeSet const> >("core___chemical___ResidueTypeSetCAP");
-    // bp::class_< access_ptr< core::chemical::MMAtomTypeSet const > >("core___chemical___MMAtomTypeSetCAP");
-    // bp::class_< access_ptr< core::coarse::Translator const      > >("core___coarse___TranslatorCAP");
-    // bp::class_< access_ptr< core::coarse::CoarseEtable const    > >("core___coarse___CoarseEtableCAP");
-
-    using namespace core::chemical;
-    using namespace core::coarse;
-
-    // old code - only for compatibility with previous verisons - deprecated, will be removed in the future...
-    bp::def("utility___getCAP"
-         , (  ResidueTypeSet const * (*)( access_ptr<ResidueTypeSet const> )  )( & getCAP<ResidueTypeSet const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  AtomTypeSet const * (*)( access_ptr<AtomTypeSet const> )  )( & getCAP<AtomTypeSet const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  ResidueType const * (*)( access_ptr<ResidueType const> )  )( & getCAP<ResidueType const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  MMAtomTypeSet const * (*)( access_ptr<MMAtomTypeSet const> )  )( & getCAP<MMAtomTypeSet const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  Translator const * (*)( access_ptr<Translator const> )  )( & getCAP<Translator const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  CoarseEtable const * (*)( access_ptr<CoarseEtable const> )  )( & getCAP<CoarseEtable const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    /*
-    //wrap_access_pointer<  >("AP");
-    wrap_access_pointer< core::chemical::AtomTypeSet >("core_chemical_AtomTypeSet");
-    wrap_access_pointer< core::chemical::ResidueType >("core_chemical_ResidueType");
-    wrap_access_pointer< core::chemical::ResidueTypeSet >("core_chemical_ResidueTypeSet");
-    wrap_access_pointer< core::chemical::MMAtomTypeSet >("core_chemical_MMAtomTypeSet");
-    wrap_access_pointer< core::coarse::Translator >("core_coarse_Translator");
-    wrap_access_pointer< core::coarse::CoarseEtable >("core_coarse_CoarseEtable");
-
-    // Adding AP for subclassin in Python
-    wrap_access_pointer< core::pose::Pose >("core_pose_Pose");  // for PyMover
-
-    wrap_access_pointer< core::conformation::Residue >("core_conformation_Residue");  // Energy methods
-    wrap_access_pointer< core::scoring::EnergyMap >("core_scoring_EnergyMap");
-    wrap_access_pointer< core::scoring::ScoreFunction >("core_scoring_ScoreFunction");
-    wrap_access_pointer< core::id::DOF_ID >("core_id_DOF_ID_");
-    wrap_access_pointer< core::id::TorsionID >("core_id_TorsionID_");
-    */
-    wrap_access_pointer< utility::vector1< bool > >("utility_vector1_bool_");
-
-
-	// Some wrapping test funtions/demos -----------------------------------------
-    typedef void ( * _test_char_string_args_int_)(int);
-    typedef void ( * _test_char_string_args_string_)(string);
-    bp::def("Q_test_char_string_args_", _test_char_string_args_int_( &_test_char_string_args_) );
-    bp::def("Q_test_char_string_args_", _test_char_string_args_string_( &_test_char_string_args_) );
-
-
-    boost::python::class_<OOO> my_obj("OOO");
-    //boost::python::object my_obj;
-
-    boost::python::scope within(my_obj);
-    bp::def("Q_Test_CI1B", Q_Test_CI1B);
-    bp::def("Q_Test_EnergyMethodCreator", Q_Test_EnergyMethodCreator);
+		utility::py::wrap_access_pointer< utility::vector1< bool > >("utility_vector1_bool");
 }

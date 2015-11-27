@@ -408,7 +408,7 @@ public:
 	std::string buf() { return buf_; }
 	void buf(std::string b) { buf_ = b; }
 
-	virtual void output_callback(std::string) {}
+	virtual void output_callback(std::string) = 0;
 
 protected:
 	/// @brief overload member function.

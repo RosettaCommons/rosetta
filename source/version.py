@@ -13,35 +13,26 @@
 # /// @author Andrew Leaver-Fay
 # /// @author Sergey Lyskov
 
-import sys, time, os, re, os.path, commands
+import sys, time, os, re, os.path, subprocess, commands
 
 
-def svn_version():
-    '''
-    Generates a C++ header file with a summary of the current version(s) of the working copy, if any.
-    If this code is not a git repository, the version will be given as "exported".
-    Although this is being placed in core/, it doesn't really belong to any subproject.
-    There's no good way to know when the version summary will change, either, so we just generate the file every time.
-    '''
-    rootdir = os.getcwd()
-    while os.path.basename(rootdir) and os.path.basename(rootdir) != 'main' and not \
-            (os.path.exists(os.path.join( rootdir, ".git" )) and
-             os.path.exists(os.path.join( rootdir, 'source')) and
-             os.path.exists(os.path.join( rootdir, 'database')) and
-             os.path.exists(os.path.join( rootdir, 'tests'))):
-        rootdir = os.path.dirname(rootdir) # Walk up directory tree to "main" directory, or root of filesystem.
+def retrieve_version_information():
+    ver = ""
+    url = ""
+    commit_date = ""
 
-    #Check if we're in a git repository - if not, skip gracefully (so git doesn't throw warnings in releases.)
-    if os.path.exists(os.path.join( rootdir, ".git" )):
-        ver = os.popen("git rev-parse HEAD").read().strip() or "unknown"
-        if ver != "unknown":
-            url = os.popen("git remote -v |grep fetch |awk '{print $2}'|head -n1").read().strip()
-            if url == "":
-                url = "unknown"
-        else:
-            url="unknown"
+    if subprocess.call("git rev-parse --show-toplevel", shell=True, stdout=subprocess.PIPE) is 0:
+        try:
+            ver = subprocess.check_output("git rev-parse HEAD", shell=True).strip()
+            url = subprocess.check_output("git remote -v | grep fetch | awk '{print $2}' | head -n1", shell=True).strip()
+            commit_date = subprocess.check_output("git log %s -1 --format='%%ci'" % ver, shell=True).strip()
+        except subprocess.CalledProcessError:
+            pass
 
-        commit_date = os.popen("git log %s -1 --format='%%ci'" % ver).read().strip()  #[:-6]
+        if not ver:
+            ver = "unknown"
+        if not url:
+            url = "unknown"
     else:
         # We're probably a release version
         ver = "exported"
@@ -53,22 +44,39 @@ def svn_version():
     commit_id = 'unknown'
     if os.path.isfile('get_commit_id.sh'):
         (res, output) = commands.getstatusoutput('./get_commit_id.sh %s' % ver)
+
         print 'Asked Testing server for commit id, got reply:', repr(output)
-        if (res  or  not output  or not output.isdigit() ): commit_id = 'failed_to_get_id' # simple validation
-        else: commit_id = str(int(output))
 
-    if commit_id != 'unknown': ver = commit_id + ':' + ver
+        if (res  or  not output  or not output.isdigit() ):
+            commit_id = 'failed_to_get_id' # simple validation
+        else:
+            commit_id = str(int(output))
 
-    file( os.path.normpath("src/devel/svn_version.cc"), "w" )          .write( version_cc_template % vars())
-    file( os.path.normpath("src/python/bindings/src/version.py"), "w" ).write( version_py_template % vars())
+    if commit_id != 'unknown':
+        ver = commit_id + ':' + ver
 
+    return dict( commit_id = commit_id, ver = ver, url = url, commit_date = commit_date)
+
+
+def generate_version_files():
+    '''
+    Generates a C++ header file with a summary of the current version(s) of the working copy, if any.
+    If this code is not a git repository, the version will be given as "exported".
+    Although this is being placed in core/, it doesn't really belong to any subproject.
+    There's no good way to know when the version summary will change, either, so we just generate the file every time.
+    '''
+
+    version_info = retrieve_version_information()
+    file( os.path.normpath("src/devel/svn_version.cc"), "w" )          .write( version_cc_template % version_info)
+    file( os.path.normpath("src/python/bindings/src/version.py"), "w" ).write( version_py_template % version_info)
+    file( os.path.normpath("src/python/packaged_bindings/src/version.py"), "w" ).write( version_py_template % version_info)
 
 def main():
     # Run with timing
     starttime = time.time()
     sys.stdout.write("Running versioning script ... ")
     sys.stdout.flush() # Make sure it gets dumped before running the function.
-    svn_version()
+    generate_version_files()
     sys.stdout.write("Done. (%.1f seconds)\n" % (time.time() - starttime) )
 
 

@@ -1,6 +1,6 @@
 import warnings
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Distribution
 import subprocess
 import datetime
 
@@ -47,23 +47,30 @@ if not ISRELEASED:
 else:
     full_version = "%s.%s" % (MAJOR, MINOR)
 
-# Extract list if all database files, can not write a simple glob
-# that matches all db files but not db sub-directories.
-database_files = []
-for dirpath, _, files in os.walk("database"):
-    dirrel = dirpath[len("database/"):]
-    database_files.extend(path.join(dirrel, f) for f in files)
+def get_file_list(directory):
+    """Get list of all files in directory, relative to directory name."""
+    result_files = []
+    for dirpath, _, files in os.walk(directory):
+        dirrel = dirpath[len(directory) + 1:]
+        result_files.extend(path.join(dirrel, f) for f in files)
+
+    return result_files
+
+class RosettaDistribution( Distribution ):
+    """Override default distribution class to ensure packages are marked as containing non-pure modules."""
+    def is_pure(self):
+        return False
 
 setup(
         name="pyrosetta",
         description="PyRosetta distributable package.",
         version = full_version,
         author_email="fordas@uw.edu",
-        packages=find_packages() + ["database"],
+        packages=find_packages(),
         package_data = {
-            "" : ["*.so", "libboost_python*"],
-            "database" : database_files
-            },
-        tests__requires = ["nose", "nose-pathmunge"],
-        zip_safe = False
+            "" :    ["*.so"] + [path.join("database", f) for f in get_file_list("rosetta/database")] + [path.join("include", f) for f in get_file_list("rosetta/include")]
+        },
+        tests_require = ["nose", "nose-pathmunge"],
+        distclass = RosettaDistribution,
+        zip_safe = False,
         )

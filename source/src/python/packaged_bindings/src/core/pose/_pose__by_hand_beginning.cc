@@ -59,7 +59,7 @@ struct Wrapper_PosePyObserver : public PosePyObserver, bp::wrapper<PosePyObserve
 
 void __pose_by_hand_beginning__()
 {
-	boost::python::class_<Wrapper_PosePyObserver, utility::pointer::owning_ptr<Wrapper_PosePyObserver>, boost::noncopyable>( "PosePyObserver" )
+	boost::python::class_<Wrapper_PosePyObserver, utility::pointer::shared_ptr<Wrapper_PosePyObserver>, boost::noncopyable>( "PosePyObserver" )
  		.def("add_observer", &PosePyObserver::add_observer)
 		.def("remove_observer", &PosePyObserver::remove_observer)
 		.def("generalEvent", &PosePyObserver::generalEvent, &Wrapper_PosePyObserver::default_generalEvent)

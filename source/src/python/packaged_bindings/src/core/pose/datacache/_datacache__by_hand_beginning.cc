@@ -21,5 +21,5 @@ namespace bp = boost::python;
 void __datacache_by_hand_beginning__()
 { 
   // Add templated abstract base class wrapper for DataCache objects used in core.pose.datacache and core.pose
-  boost::python::class_< basic::datacache::DataCache< core::pose::datacache::CacheableObserver >, utility::pointer::owning_ptr< basic::datacache::DataCache< core::pose::datacache::CacheableObserver > > >( "DataCache_CacheableObserver" );
+  boost::python::class_< basic::datacache::DataCache< core::pose::datacache::CacheableObserver >, utility::pointer::shared_ptr< basic::datacache::DataCache< core::pose::datacache::CacheableObserver > > >( "DataCache_CacheableObserver" );
 }

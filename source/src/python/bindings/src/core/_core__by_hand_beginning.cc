@@ -81,14 +81,6 @@
 
 namespace bp = boost::python;
 
-
-// #ifndef _MSC_VER
-// 	template< class T >  T * wrap_access_pointer_get_function( utility::pointer::access_ptr<T> rs ) {  return rs.get(); }
-// #else
-// 	template< class T >  T * wrap_access_pointer_get_function( utility::pointer::access_ptr<T> const & rs ) {  return rs.get(); }
-// #endif
-
-
 #ifdef PYROSETTA_NUMPY
 
 // Numpy API has strange import behavior

@@ -45,13 +45,13 @@ void __scoring_by_hand_beginning__()
 
     bp::implicitly_convertible< core::scoring::ScoreFunction const &, core::scoring::ScoreFunctionInfo >();
 
-    bp::implicitly_convertible< utility::pointer::owning_ptr< ::core::scoring::ScoreFunction >
-                              , utility::pointer::owning_ptr< ::core::scoring::ScoreFunction const > >();
-    bp::implicitly_convertible< utility::pointer::owning_ptr< ::core::scoring::NeighborList >
-                              , utility::pointer::owning_ptr< ::core::scoring::NeighborList const > >();
-    bp::implicitly_convertible< utility::pointer::owning_ptr< ::core::scoring::ScoreFunctionInfo >
-                              , utility::pointer::owning_ptr< ::core::scoring::ScoreFunctionInfo const > >();
-    bp::implicitly_convertible< utility::pointer::owning_ptr< ::core::scoring::SecondaryStructureWeights >
-                              , utility::pointer::owning_ptr< ::core::scoring::SecondaryStructureWeights const > >();
+    bp::implicitly_convertible< utility::pointer::shared_ptr< ::core::scoring::ScoreFunction >
+                              , utility::pointer::shared_ptr< ::core::scoring::ScoreFunction const > >();
+    bp::implicitly_convertible< utility::pointer::shared_ptr< ::core::scoring::NeighborList >
+                              , utility::pointer::shared_ptr< ::core::scoring::NeighborList const > >();
+    bp::implicitly_convertible< utility::pointer::shared_ptr< ::core::scoring::ScoreFunctionInfo >
+                              , utility::pointer::shared_ptr< ::core::scoring::ScoreFunctionInfo const > >();
+    bp::implicitly_convertible< utility::pointer::shared_ptr< ::core::scoring::SecondaryStructureWeights >
+                              , utility::pointer::shared_ptr< ::core::scoring::SecondaryStructureWeights const > >();
 
 }

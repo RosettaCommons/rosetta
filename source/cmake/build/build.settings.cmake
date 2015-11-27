@@ -110,6 +110,8 @@ endif()
 # Clang ###################################################################
 ###########################################################################
 
+set(WITH_LIBSTDC++ ON CACHE BOOL "Build libraries using libstdc++ when using clang compiler. ")
+
 if( ${COMPILER} STREQUAL "clang" )
 	set( cc
 			#-std=c99
@@ -128,13 +130,6 @@ if( ${COMPILER} STREQUAL "clang" )
 			-Qunused-arguments
 			-DUNUSUAL_ALLOCATOR_DECLARATION
 			-ftemplate-depth-256
-			-stdlib=libstdc++
-	)
-	set( shlink
-			-stdlib=libstdc++
-	)
-	set( link
-			-stdlib=libstdc++
 	)
 	set( warn
 			-W
@@ -149,6 +144,18 @@ if( ${COMPILER} STREQUAL "clang" )
 			#-Wno-padded
 			#-Wno-weak-vtables
 	)
+
+  if( WITH_LIBSTDC++ )
+    list( APPEND compile
+			-stdlib=libstdc++
+    )
+    list (APPEND shlink
+			-stdlib=libstdc++
+    )
+    list (APPEND link
+			-stdlib=libstdc++
+    )
+  endif()
 endif()
 
 if(APPLE AND ${COMPILER} STREQUAL "clang")
@@ -209,8 +216,14 @@ if( ${COMPILER} STREQUAL "clang" AND ${MODE} STREQUAL "release" )
 	list( APPEND defines
 			-DNDEBUG
 	)
+
 endif()
 
+# Pyrosetta build options
+set(WITH_PYROSETTA OFF CACHE BOOL "Build rosetta libraries with pyrosetta-specific build configuration.")
+if( WITH_PYROSETTA )
+  list( APPEND defines -DPYROSETTA )
+endif()
 
 ###########################################################################
 # Extras ###################################################################
