@@ -28,6 +28,7 @@
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/rna/BasePair.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/init/init.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -78,6 +79,7 @@ using namespace core::kinematics;
 using namespace core::id;
 using namespace core::io::silent;
 using namespace core::pose;
+using namespace core::pose::rna;
 using namespace core::scoring;
 using namespace core::scoring::rna::chemical_shift;
 
@@ -147,25 +149,25 @@ setup_rna_struct_params(core::pose::Pose & pose) {
 }
 
 // Get all obligated base pairs
-utility::vector1< RNA_Pairing >
+utility::vector1< BasePair >
 get_obligated_rna_pairings(RNA_StructureParametersOP rna_struct_params) {
 
 	utility::vector1 < utility::vector1 <core::Size > >
 		obligate_pairing_sets = rna_struct_params->get_obligate_pairing_sets();
 
-	utility::vector1< RNA_Pairing >
+	utility::vector1< BasePair >
 		all_rna_pairings = rna_struct_params->get_rna_pairing_list();
 
-	utility::vector1< RNA_Pairing > obl_rna_pairings;
+	utility::vector1< BasePair > obl_rna_pairings;
 
 	for ( Size i = 1; i <= obligate_pairing_sets.size(); i++ ) {
 		for ( Size j = 1; j <= obligate_pairing_sets[i].size(); j++ ) {
-			RNA_Pairing rna_pairing = all_rna_pairings[ obligate_pairing_sets[i][j] ];
+			BasePair rna_pairing = all_rna_pairings[ obligate_pairing_sets[i][j] ];
 			obl_rna_pairings.push_back(rna_pairing);
 
 			cout << endl;
-			cout << "cs_rosetta_rna:: obl_rna_pairing.pos1 = " << rna_pairing.pos1;
-			cout << " obl_rna_pairing.pos2 = " << rna_pairing.pos2;
+			cout << "cs_rosetta_rna:: obl_rna_pairing.res1() = " << rna_pairing.res1();
+			cout << " obl_rna_pairing.res2() = " << rna_pairing.res2();
 			cout << endl;
 
 		}
@@ -189,8 +191,7 @@ setup_rna_minimizer(ScoreFunctionOP scorefxn,
 	rna_minimizer->set_score_function( scorefxn );
 	//return rna_minimizer;
 
-
-	utility::vector1< RNA_Pairing >
+	utility::vector1< BasePair >
 		obl_rna_pairings = get_obligated_rna_pairings(rna_struct_params);
 
 	// Determine DOFs to allow minimization.
@@ -202,8 +203,8 @@ setup_rna_minimizer(ScoreFunctionOP scorefxn,
 
 			bool is_obl_res = false;
 			for ( Size id = 1; id <= obl_rna_pairings.size(); id++ ) {
-				if ( res_num == obl_rna_pairings[id].pos1 ||
-						res_num == obl_rna_pairings[id].pos2 ) {
+				if ( res_num == obl_rna_pairings[id].res1() ||
+						res_num == obl_rna_pairings[id].res2() ) {
 					is_obl_res = true;
 				}
 			}

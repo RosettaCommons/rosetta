@@ -35,7 +35,7 @@ enum ChiState    { ANY_CHI, ANTI, SYN, NO_CHI};
 enum PuckerState { ANY_PUCKER, NORTH, SOUTH, NO_PUCKER};
 
 enum BaseDoubletOrientation    { ANY_BASE_DOUBLET_ORIENTATION, ANTIPARALLEL, PARALLEL };
-enum LW_BaseDoubletOrientation { ANY_LW_ORIENTATION, CIS, TRANS };
+enum LW_BaseDoubletOrientation { ANY_LW_BASE_DOUBLET_ORIENTATION, CIS, TRANS };
 enum BaseStackWhichSide        { ANY_BASE_STACK_SIDE, ABOVE, BELOW };
 
 Size const NUM_EDGES( 3 );
@@ -59,11 +59,19 @@ char get_edge_from_num( Size const num );
 
 std::string get_full_edge_from_num( Size const num );
 
+BaseEdge get_edge_from_char( char const e );
+
 char get_orientation_from_num( Size const num );
 
 std::string get_full_orientation_from_num( Size const num );
 
 std::string get_full_LW_orientation_from_num( Size const num );
+
+BaseDoubletOrientation
+get_orientation_from_char( char const o );
+
+LW_BaseDoubletOrientation
+get_LW_orientation_from_char( char const o );
 
 ///////////////////////////////////////////////////////////////////////////////
 std::string const first_base_atom( conformation::Residue const & rsd );

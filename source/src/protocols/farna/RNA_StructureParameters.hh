@@ -13,6 +13,7 @@
 #define INCLUDED_protocols_rna_RNA_StructureParameters_HH
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/rna/BasePair.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/farna/RNA_JumpLibrary.fwd.hh>
 #include <protocols/farna/BasePairStep.hh>
@@ -35,30 +36,7 @@
 namespace protocols {
 namespace farna {
 
-////////////////////////////////////////////////////////////////////////////////////////////
-class RNA_Pairing {
-
-public:
-
-	RNA_Pairing(){}
-
-	RNA_Pairing( core::Size const pos1_in, core::Size const pos2_in ):
-		pos1( pos1_in ),
-		pos2( pos2_in ),
-		edge1( 'X' ),
-		edge2( 'X' ),
-		orientation( 'X' )
-	{}
-
-public:
-	core::Size pos1;
-	core::Size pos2;
-	char edge1; //W,H,S
-	char edge2; //W,H,S
-	char orientation; //A,P
-};
-
-typedef utility::vector1< RNA_Pairing > RNA_PairingList;
+typedef utility::vector1< core::pose::rna::BasePair > RNA_BasePairList;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 class RNA_StructureParameters : public utility::pointer::ReferenceCount {
@@ -115,7 +93,7 @@ public:
 		return obligate_pairing_sets_;
 	}
 
-	RNA_PairingList
+	RNA_BasePairList
 	get_rna_pairing_list() {
 		return rna_pairing_list_;
 	}
@@ -195,7 +173,7 @@ private:
 
 	Size
 	check_in_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > pairing_sets,
-		RNA_Pairing const & rna_pairing_check ) const;
+												 core::pose::rna::BasePair const & rna_pairing_check ) const;
 
 	utility::vector1< BasePairStep >
 	get_base_pair_steps( bool const just_canonical ) const;
@@ -203,7 +181,7 @@ private:
 private:
 
 	RNA_JumpLibraryOP rna_jump_library_;
-	RNA_PairingList rna_pairing_list_;
+	RNA_BasePairList rna_pairing_list_;
 
 	utility::vector1 < utility::vector1 <core::Size > > obligate_pairing_sets_;
 	utility::vector1 < utility::vector1 <core::Size > > stem_pairing_sets_;

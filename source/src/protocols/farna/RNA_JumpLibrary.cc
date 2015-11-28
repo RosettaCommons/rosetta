@@ -161,9 +161,9 @@ core::kinematics::Jump
 RNA_JumpLibrary::get_random_base_pair_jump(
 	char const aa1,
 	char const aa2,
-	char const edge1,
-	char const edge2,
-	char const orientation,
+	BaseEdge const edge1,
+	BaseEdge const edge2,
+	BaseDoubletOrientation const orientation,
 	std::string & atom_name1,
 	std::string & atom_name2,
 	bool & success,
@@ -171,7 +171,7 @@ RNA_JumpLibrary::get_random_base_pair_jump(
 	bool const forward2 /*= true*/ ) const
 {
 	// key for looking up the template geometry:
-	BasePairType key( aa1, aa2, edge1, edge2, orientation);
+	BasePairType key( aa1, aa2, edge1, edge2, orientation );
 	Size ntemplates = 0;
 
 	// tr << "Looking for: " << aa1 << ' ' << aa2 << ' ' << edge1 << ' ' << edge2 << ' ' << orientation << std::endl;
@@ -223,9 +223,9 @@ RNA_JumpLibrary::get_random_base_pair_jump(
 	// runtime_assert( atom_name1 != " ?  " || atom_name2 != " ?  " );
 	// check_forward_backward( atom_name1, forward1, j, templates[ index ] );
 	// check_forward_backward( atom_name2, forward2, j, templates[ index ] );
-	runtime_assert( edge1 != 'P' || edge2 != 'P' );
-	if ( edge1 == 'P' && !forward1 ) j = templates[ index ]->jump_backward();
-	if ( edge2 == 'P' && !forward2 ) j = templates[ index ]->jump_backward();
+	runtime_assert( edge1 != PHOSPHATE || edge2 != PHOSPHATE );
+	if ( edge1 == PHOSPHATE && !forward1 ) j = templates[ index ]->jump_backward();
+	if ( edge2 == PHOSPHATE && !forward2 ) j = templates[ index ]->jump_backward();
 
 	success = true;
 
@@ -239,7 +239,7 @@ void
 RNA_JumpLibrary::save_in_jump_library(
 	Size const reschar1, Size const reschar2,
 	char const edgechar1, char const edgechar2,
-	char const orientation,
+	char const orientationchar,
 	std::string const & atom_name1,
 	std::string const & atom_name2,
 	core::kinematics::Jump const & jump1,
@@ -249,28 +249,24 @@ RNA_JumpLibrary::save_in_jump_library(
 
 	RNA_PairingTemplateOP p( new RNA_PairingTemplate( jump1, jump2,  atom_name1, atom_name2) );
 
-	// std::cout << "JUMPY! " << reschar1 << " " << reschar2 << " " << edgechar1 << " " << edgechar2 << " "  << orientation << " " << jump << std::endl;
-
-	// fill in a new base-pairing template
-	// Pairing_template_RNA t( Epos1, Epos2);
-
-	// Base_pair_type base_pair_type( reschar1, reschar2, edgechar1, edgechar2, orientation);
-	// pairing_template_map_RNA[ base_pair_type ].push_back( t );
+	BaseEdge edge1( get_edge_from_char( edgechar1 ) );
+	BaseEdge edge2( get_edge_from_char( edgechar2 ) );
+	BaseDoubletOrientation orientation( get_orientation_from_char( orientationchar ) );
 
 	// Save to template lists with wildcards ('X') too.
 	for ( Size i = 0; i <= 1; i++ ) {
 
-		char const edgechar1_temp = i ? edgechar1:'X';
+	 	BaseEdge const edge1_temp = i ? edge1 : ANY_BASE_EDGE;
 
 		for ( Size j = 0; j <= 1; j++ ) {
 
-			char const edgechar2_temp = j ? edgechar2:'X';
+			BaseEdge const edge2_temp = j ? edge2 : ANY_BASE_EDGE;
 
 			for ( Size k = 0; k <= 1; k++ ) {
 
-				char const orientation_temp = k ? orientation:'X';
+				BaseDoubletOrientation const orientation_temp = k ? orientation : ANY_BASE_DOUBLET_ORIENTATION;
 
-				BasePairType base_pair_type( reschar1, reschar2, edgechar1_temp, edgechar2_temp, orientation_temp);
+				BasePairType base_pair_type( reschar1, reschar2, edge1_temp, edge2_temp, orientation_temp);
 				rna_pairing_template_map_[ base_pair_type ].push_back( p );
 
 			}

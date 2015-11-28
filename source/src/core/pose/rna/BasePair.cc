@@ -32,26 +32,12 @@ namespace rna {
     edge1_( edge1 ),
     edge2_( edge2 ),
     orientation_( orientation ),
-    LW_orientation_( ANY_LW_ORIENTATION )
+    LW_orientation_( ANY_LW_BASE_DOUBLET_ORIENTATION )
   {
     derive_LW_orientation();
   }
 
 	/////////////////////////////////////////////////////////////////////////
-  BasePair::BasePair( Size const res1, Size const res2,
-		      char const , char const ,
-		      char const ):
-    res1_( res1 ),
-    res2_( res2 ),
-    edge1_( ANY_BASE_EDGE ),
-    edge2_( ANY_BASE_EDGE ),
-    orientation_( ANY_BASE_DOUBLET_ORIENTATION ),
-    LW_orientation_( ANY_LW_ORIENTATION )
-  {
-    utility_exit_with_message( "not filled in" );
-    derive_LW_orientation();
-  }
-
   BasePair
   BasePair::flipped() const
   {
@@ -64,7 +50,7 @@ namespace rna {
     if ( ( edge1_ != WATSON_CRICK && edge1_ != HOOGSTEEN && edge1_ != SUGAR ) ||
 				 ( edge2_ != WATSON_CRICK && edge2_ != HOOGSTEEN && edge2_ != SUGAR ) ||
 				 ( orientation_ != ANTIPARALLEL && orientation_ != PARALLEL ) ) {
-      LW_orientation_ = ANY_LW_ORIENTATION;
+      LW_orientation_ = ANY_LW_BASE_DOUBLET_ORIENTATION;
       return;
     }
     LW_orientation_ = get_LW_orientation( edge1_, edge2_, orientation_ );

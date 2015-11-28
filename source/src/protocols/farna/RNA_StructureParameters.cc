@@ -27,6 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
+#include <core/pose/rna/leontis_westhof_util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
@@ -70,6 +71,7 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
+using namespace core::pose::rna;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -210,12 +212,9 @@ RNA_StructureParameters::append_virtual_anchor( pose::Pose & pose )
 
 	for ( Size n = 1; n <= virtual_anchor_attachment_points_.size(); n++ ) {
 
-		RNA_Pairing p;
-		p.pos1 = virtual_anchor_attachment_points_[ n ];
-		p.pos2 = virt_res;
-		p.edge1 = 'X';
-		p.edge2 = 'X';
-		p.orientation = 'X';
+		BasePair p;
+		p.set_res1( virtual_anchor_attachment_points_[ n ] );
+		p.set_res2( virt_res );
 		rna_pairing_list_.push_back( p );
 
 		utility::vector1< Size > obligate_pair;
@@ -241,14 +240,14 @@ RNA_StructureParameters::initialize_secstruct( core::pose::Pose & pose  )
 		}
 
 		for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
-			RNA_Pairing const & rna_pairing( rna_pairing_list_[ n ] );
-			if (  rna_pairing.edge1 == 'W' &&
-					rna_pairing.edge2 == 'W' &&
-					rna_pairing.orientation == 'A' &&
-					core::chemical::rna::possibly_canonical( pose.residue( rna_pairing.pos1 ).aa(),
-					pose.residue( rna_pairing.pos2 ).aa() ) )  {
-				rna_secstruct_[ rna_pairing.pos1 - 1 ] = 'H';
-				rna_secstruct_[ rna_pairing.pos2 - 1 ] = 'H';
+			BasePair const & rna_pairing( rna_pairing_list_[ n ] );
+			if (  rna_pairing.edge1() == WATSON_CRICK &&
+					rna_pairing.edge2() == WATSON_CRICK &&
+					rna_pairing.orientation() == ANTIPARALLEL &&
+					core::chemical::rna::possibly_canonical( pose.residue( rna_pairing.res1() ).aa(),
+					pose.residue( rna_pairing.res2() ).aa() ) )  {
+				rna_secstruct_[ rna_pairing.res1() - 1 ] = 'H';
+				rna_secstruct_[ rna_pairing.res2() - 1 ] = 'H';
 			}
 		}
 	}
@@ -265,14 +264,14 @@ RNA_StructureParameters::get_stem_residues( core::pose::Pose const & pose ) cons
 	std::list< Size > in_stem;
 
 	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
-		RNA_Pairing const & rna_pairing( rna_pairing_list_[ n ] );
-		if (  rna_pairing.edge1 == 'W' &&
-				rna_pairing.edge2 == 'W' &&
-				rna_pairing.orientation == 'A' &&
-				core::chemical::rna::possibly_canonical( pose.residue( rna_pairing.pos1 ).aa(),
-				pose.residue( rna_pairing.pos2 ).aa() ) )  {
-			in_stem.push_back( rna_pairing.pos1 );
-			in_stem.push_back( rna_pairing.pos2 );
+		BasePair const & rna_pairing( rna_pairing_list_[ n ] );
+		if (  rna_pairing.edge1() == WATSON_CRICK &&
+				rna_pairing.edge2() == WATSON_CRICK &&
+				rna_pairing.orientation() == ANTIPARALLEL &&
+				core::chemical::rna::possibly_canonical( pose.residue( rna_pairing.res1() ).aa(),
+				pose.residue( rna_pairing.res2() ).aa() ) )  {
+			in_stem.push_back( rna_pairing.res1() );
+			in_stem.push_back( rna_pairing.res2() );
 		}
 	}
 
@@ -331,7 +330,8 @@ RNA_StructureParameters::get_pairings_from_line(
 {
 
 	Size a,b;
-	char e1,e2,o;
+	BaseEdge e1( ANY_BASE_EDGE ),e2( ANY_BASE_EDGE );
+	BaseDoubletOrientation o( ANY_BASE_DOUBLET_ORIENTATION );
 	std::string tag;
 
 	utility::vector1< Size > line_pairings;
@@ -346,32 +346,39 @@ RNA_StructureParameters::get_pairings_from_line(
 
 		line_stream >> tag;
 		if ( line_stream.fail() || tag == "PAIR" ) {
-			e1 = 'W';
-			e2 = 'W';
-			o = 'A';
+			e1 = WATSON_CRICK;
+			e2 = WATSON_CRICK;
+			o = ANTIPARALLEL;
 		} else {
-			e1 = tag[0];
-			line_stream >> e2 >> o;
+			e1 = get_edge_from_char( tag[0] );
+			char e2_char, o_char;
+			line_stream >> e2_char >> o_char;
+			e2 = get_edge_from_char(e2_char );
+			if ( o_char == 'C' || o_char == 'T' ) { // convert from leontis-westhof cis/trans to antiparallel/antiparallel
+				o  = get_base_doublet_orientation_from_LW( e1, e2, get_LW_orientation_from_char( o_char ) );
+			} else {
+				o = get_orientation_from_char( o_char );
+			}
 			if ( line_stream.fail() )  utility_exit_with_message(  "Problem with PAIR readin: "+tag );
 		}
 
-		RNA_Pairing p;
+		BasePair p;
 
 		if ( a < b ) {
-			p.pos1 = a;
-			p.pos2 = b;
+			p.set_res1(a);
+			p.set_res2(b);
 		} else {
-			p.pos1 = b;
-			p.pos2 = a;
+			p.set_res1(b);
+			p.set_res2(a);
 		}
 
 		if ( a == b ) {
 			utility_exit_with_message(   "Can't base pair a residue with itself: "+I(3,a)+" "+I(3,b)  );
 		}
 
-		p.edge1 = e1;
-		p.edge2 = e2;
-		p.orientation = o;
+		p.set_edge1(e1);
+		p.set_edge2(e2);
+		p.set_orientation(o);
 
 		Size idx = check_in_pairing_sets( obligate_pairing_sets_, p );
 		if ( idx == 0 ) {
@@ -635,21 +642,22 @@ RNA_StructureParameters::add_new_RNA_jump(
 	// Later can be smart about virtual residue. (rigid body jumps)
 	if ( !pose.residue( jump_pos1 ).is_RNA() || !pose.residue( jump_pos2 ).is_RNA() ) return;
 
-	char e1('W') ,e2('W'), o('A');
+	BaseEdge e1( ANY_BASE_EDGE ), e2( ANY_BASE_EDGE);
+	BaseDoubletOrientation o( ANY_BASE_DOUBLET_ORIENTATION );
 	bool found_pairing( false );
 	for ( Size n = 1;  n <= rna_pairing_list_.size(); n++ ) {
-		RNA_Pairing pairing = rna_pairing_list_[n];
-		if ( pairing.pos1 == jump_pos1 && pairing.pos2 == jump_pos2 ) {
-			e1 = pairing.edge1;
-			e2 = pairing.edge2;
-			o  = pairing.orientation;
+		BasePair pairing = rna_pairing_list_[n];
+		if ( pairing.res1() == jump_pos1 && pairing.res2() == jump_pos2 ) {
+			e1 = pairing.edge1();
+			e2 = pairing.edge2();
+			o  = pairing.orientation();
 			found_pairing = true;
 			break;
 		}
-		if ( pairing.pos1 == jump_pos2 && pairing.pos2 == jump_pos1 ) {
-			e1 = pairing.edge2;
-			e2 = pairing.edge1;
-			o  = pairing.orientation;
+		if ( pairing.res1() == jump_pos2 && pairing.res2() == jump_pos1 ) {
+			e1 = pairing.edge2();
+			e2 = pairing.edge1();
+			o  = pairing.orientation();
 			found_pairing = true;
 			break;
 		}
@@ -658,9 +666,6 @@ RNA_StructureParameters::add_new_RNA_jump(
 	//The jump may have come from a "chain_connection", which
 	// doesn't know parallel vs. antiparallel..
 	if ( !found_pairing ) {
-		e1 = 'X';
-		e2 = 'X';
-		o  = 'X';
 
 		// To save time following could be as runtime_assert statement, only
 		// active in debug builds.
@@ -854,8 +859,8 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 
 		for ( Size n = 1; n <= base_pair_steps.size(); n++ ) {
 			BasePairStep const & base_pair_step = base_pair_steps[n];
-			runtime_assert( check_in_pairing_sets( obligate_pairing_sets, RNA_Pairing( base_pair_step.i(),      base_pair_step.j_next() ) ) );
-			runtime_assert( check_in_pairing_sets( obligate_pairing_sets, RNA_Pairing( base_pair_step.i_next(), base_pair_step.j()      ) ) );
+			runtime_assert( check_in_pairing_sets( obligate_pairing_sets, BasePair( base_pair_step.i(),      base_pair_step.j_next() ) ) );
+			runtime_assert( check_in_pairing_sets( obligate_pairing_sets, BasePair( base_pair_step.i_next(), base_pair_step.j()      ) ) );
 			runtime_assert ( base_pair_step.i_next() == base_pair_step.i()+1 );
 			if ( base_pair_step.j_next() != (base_pair_step.j() + 1) ) continue;
 
@@ -923,8 +928,8 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 			Size const pairing_index_in_stem( static_cast<Size>( numeric::random::rg().uniform() * obligate_pairing_sets[n].size() )  + 1 );
 			Size const which_pairing = obligate_pairing_sets[n][pairing_index_in_stem];
 			count++;
-			jump_points(1, count) = rna_pairing_list_[which_pairing].pos1;
-			jump_points(2, count) = rna_pairing_list_[which_pairing].pos2;
+			jump_points(1, count) = rna_pairing_list_[which_pairing].res1();
+			jump_points(2, count) = rna_pairing_list_[which_pairing].res2();
 			//   TR << "JUMPS1 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
 		}
 
@@ -976,8 +981,8 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 			//   std::cout  << "USING SET: " << m  << " ==> " << pairing_index_in_set << std::endl;
 
 			count++;
-			jump_points(1, count) = rna_pairing_list_[which_pairing].pos1;
-			jump_points(2, count) = rna_pairing_list_[which_pairing].pos2;
+			jump_points(1, count) = rna_pairing_list_[which_pairing].res1();
+			jump_points(2, count) = rna_pairing_list_[which_pairing].res2();
 
 			used_set( m ) = true;
 			num_sets_left--;
@@ -1189,12 +1194,12 @@ RNA_StructureParameters::check_base_pairs( pose::Pose & pose ) const
 
 	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
 
-		RNA_Pairing const & rna_pairing( rna_pairing_list_[ n ] );
-		Size i( rna_pairing.pos1 );
-		Size j( rna_pairing.pos2 );
+		BasePair const & rna_pairing( rna_pairing_list_[ n ] );
+		Size i( rna_pairing.res1() );
+		Size j( rna_pairing.res2() );
 		if ( i > j ) {
-			i = rna_pairing.pos2;
-			j = rna_pairing.pos1;
+			i = rna_pairing.res2();
+			j = rna_pairing.res1();
 		}
 
 		// Check for non-RNA residues
@@ -1210,7 +1215,7 @@ RNA_StructureParameters::check_base_pairs( pose::Pose & pose ) const
 			return false;
 		}
 
-		if ( rna_pairing.edge1 == 'W' && rna_pairing.edge2 == 'W' && rna_pairing.orientation=='A' ) {
+		if ( rna_pairing.edge1() == WATSON_CRICK && rna_pairing.edge2() == WATSON_CRICK && rna_pairing.orientation()==ANTIPARALLEL ) {
 
 			if ( is_cutpoint_open(pose, i) && is_cutpoint_open( pose, j-1) ) {
 
@@ -1246,13 +1251,13 @@ RNA_StructureParameters::setup_base_pair_constraints( core::pose::Pose & pose )
 	//  appropriate atoms on bases.
 	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
 
-		RNA_Pairing const & rna_pairing( rna_pairing_list_[ n ] );
-		Size const & i( rna_pairing.pos1 );
-		Size const & j( rna_pairing.pos2 );
+		BasePair const & rna_pairing( rna_pairing_list_[ n ] );
+		Size const & i( rna_pairing.res1() );
+		Size const & j( rna_pairing.res2() );
 
 		//Basic check that its canonical...
-		if ( !( rna_pairing.edge1 == 'W' && rna_pairing.edge2 == 'W' && rna_pairing.orientation == 'A' ) ) {
-			TR <<  "skipping constraints for non-canonical base pair: " << I(3,i) << " " << I(3,j) << " " << rna_pairing.edge1 << " " << rna_pairing.edge2 << " " << rna_pairing.orientation << std::endl;
+		if ( !( rna_pairing.edge1() == WATSON_CRICK && rna_pairing.edge2() == WATSON_CRICK && rna_pairing.orientation() == ANTIPARALLEL ) ) {
+			TR <<  "skipping constraints for non-canonical base pair: " << I(3,i) << " " << I(3,j) << " " << rna_pairing.edge1() << " " << rna_pairing.edge2() << " " << rna_pairing.orientation() << std::endl;
 			continue;
 		}
 
@@ -1276,9 +1281,9 @@ RNA_StructureParameters::connections() const
 
 	std::map< Size, Size > connections_local;
 	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
-		RNA_Pairing pairing = rna_pairing_list_[n];
-		connections_local[ pairing.pos1 ] = pairing.pos2;
-		connections_local[ pairing.pos2 ] = pairing.pos1;
+		BasePair pairing = rna_pairing_list_[n];
+		connections_local[ pairing.res1() ] = pairing.res2();
+		connections_local[ pairing.res2() ] = pairing.res1();
 	}
 	return connections_local;
 }
@@ -1304,12 +1309,12 @@ RNA_StructureParameters::set_jump_library( RNA_JumpLibraryOP rna_jump_library )
 ////////////////////////////////////////////////////////////////////////////////////////
 Size
 RNA_StructureParameters::check_in_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > pairing_sets,
-	RNA_Pairing const & rna_pairing_check ) const {
+	BasePair const & rna_pairing_check ) const {
 	for ( Size n = 1; n <= pairing_sets.size(); n++ ) {
 		for ( Size m = 1; m <= pairing_sets[n].size(); m++ ) {
-			RNA_Pairing rna_pairing = rna_pairing_list_[ pairing_sets[n][m] ];
-			if ( rna_pairing.pos1 == rna_pairing_check.pos1 && rna_pairing.pos2 == rna_pairing_check.pos2 ) return pairing_sets[n][m];
-			if ( rna_pairing.pos2 == rna_pairing_check.pos1 && rna_pairing.pos1 == rna_pairing_check.pos2 ) return pairing_sets[n][m];
+			BasePair rna_pairing = rna_pairing_list_[ pairing_sets[n][m] ];
+			if ( rna_pairing.res1() == rna_pairing_check.res1() && rna_pairing.res2() == rna_pairing_check.res2() ) return pairing_sets[n][m];
+			if ( rna_pairing.res2() == rna_pairing_check.res1() && rna_pairing.res1() == rna_pairing_check.res2() ) return pairing_sets[n][m];
 		}
 	}
 	return false;
@@ -1323,17 +1328,17 @@ RNA_StructureParameters::figure_out_partner( std::map< Size, Size > & partner, b
 {
 
 	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
-		RNA_Pairing const & rna_pairing( rna_pairing_list_[ n ] );
-		Size i( rna_pairing.pos1 );
-		Size j( rna_pairing.pos2 );
+		BasePair const & rna_pairing( rna_pairing_list_[ n ] );
+		Size i( rna_pairing.res1() );
+		Size j( rna_pairing.res2() );
 
-		//  TR << "PAIRING " << rna_pairing.pos1 << " " << rna_pairing.pos2 << " " << rna_pairing.edge1 << " " << rna_pairing.edge2 << " " << rna_pairing.orientation << " --> "  << std::endl;
+		//  TR << "PAIRING " << rna_pairing.res1() << " " << rna_pairing.res2() << " " << rna_pairing.edge1() << " " << rna_pairing.edge2() << " " << rna_pairing.orientation() << " --> "  << std::endl;
 
-		bool const pair_is_canonical = rna_pairing.edge1 == 'W' && rna_pairing.edge2 == 'W' && rna_pairing.orientation=='A';
+		bool const pair_is_canonical = rna_pairing.edge1() == WATSON_CRICK && rna_pairing.edge2() == WATSON_CRICK && rna_pairing.orientation()==ANTIPARALLEL;
 		if ( force_canonical && !pair_is_canonical ) continue;
 
 		// if pairing is user-specified to be, say, H/S/A, we won't be able to handle it.
-		bool const pair_is_ambiguous = rna_pairing.edge1 == 'X' && rna_pairing.edge2 == 'X' && rna_pairing.orientation=='X';
+		bool const pair_is_ambiguous = rna_pairing.edge1() == ANY_BASE_EDGE && rna_pairing.edge2() == ANY_BASE_EDGE && rna_pairing.orientation()==ANY_BASE_DOUBLET_ORIENTATION;
 		if ( !force_canonical && !pair_is_ambiguous ) continue;
 
 		if ( partner.find( i ) != partner.end() )  {

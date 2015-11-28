@@ -52,7 +52,6 @@ convert_acgu_to_1234( char const c )
 }
 
 /////////////////////////////////////////////////////////////////////////////
-//This may be used elsewhere -- set up a util.hh?
 char get_edge_from_num( Size const num ) {
 	if ( num == WATSON_CRICK ) return 'W';
 	if ( num == HOOGSTEEN )    return 'H';
@@ -78,6 +77,18 @@ get_full_edge_from_num( Size const num ) {
 }
 
 /////////////////////////////////////////////////////////////////////////////
+BaseEdge
+get_edge_from_char( char const e ) {
+	if ( e == 'W' ) return WATSON_CRICK;
+	if ( e == 'H' ) return HOOGSTEEN;
+	if ( e == 'S' ) return SUGAR;
+	if ( e == '2' ) return O2PRIME;
+	if ( e == 'P' ) return PHOSPHATE;
+	runtime_assert( e == 'X' );
+	return ANY_BASE_EDGE;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 //This may be used elsewhere -- set up a util.hh?
 char get_orientation_from_num( Size const num ) {
 	if ( num == 1 ) return 'A';
@@ -86,7 +97,6 @@ char get_orientation_from_num( Size const num ) {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-
 std::string //Parin March 7, 2011
 get_full_orientation_from_num( Size const num ) {
 	if ( num == 0 ) return "ANY ";
@@ -98,6 +108,25 @@ get_full_orientation_from_num( Size const num ) {
 	return "ERROR";
 }
 
+/////////////////////////////////////////////////////////////////////////////
+BaseDoubletOrientation
+get_orientation_from_char( char const o ) {
+	if ( o == 'A' ) return ANTIPARALLEL;
+	if ( o == 'P' ) return PARALLEL;
+	runtime_assert( o == 'X' );
+	return ANY_BASE_DOUBLET_ORIENTATION;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+LW_BaseDoubletOrientation
+get_LW_orientation_from_char( char const o ) {
+	if ( o == 'C' ) return CIS;
+	if ( o == 'T' ) return TRANS;
+	runtime_assert( o == 'X' );
+	return ANY_LW_BASE_DOUBLET_ORIENTATION;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 std::string //Parin April 19, 2011
 get_full_LW_orientation_from_num( Size const num ){
 	if ( num == 0 ) return "ANY  ";

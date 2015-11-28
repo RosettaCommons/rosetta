@@ -11,6 +11,7 @@
 
 #include <core/kinematics/Jump.hh>
 #include <core/types.hh>
+#include <core/chemical/rna/util.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
 // C++ Headers
@@ -19,6 +20,7 @@
 
 #include <utility/vector1.hh>
 
+using namespace core::chemical::rna;
 
 namespace protocols {
 namespace farna {
@@ -28,13 +30,13 @@ class BasePairType{
 public:
 	char aa1;
 	char aa2;
-	char edge1;
-	char edge2;
-	char orientation;
+	BaseEdge edge1;
+	BaseEdge edge2;
+	BaseDoubletOrientation orientation;
 
 	BasePairType( char const aa1_in, char const aa2_in,
-		char const edge1_in, char const edge2_in,
-		char const orientation_in){
+								BaseEdge const edge1_in, BaseEdge const edge2_in,
+								BaseDoubletOrientation const orientation_in){
 		aa1 = aa1_in;  aa2 = aa2_in;
 		edge1 = edge1_in;  edge2 = edge2_in;
 		orientation = orientation_in;
@@ -129,9 +131,9 @@ public:
 	get_random_base_pair_jump(
 		char const aa1,
 		char const aa2,
-		char const edge1,
-		char const edge2,
-		char const orientation,
+		BaseEdge const edge1,
+		BaseEdge const edge2,
+		BaseDoubletOrientation const orientation,
 		std::string & atom_name1,
 		std::string & atom_name2,
 		bool & success,
@@ -142,12 +144,12 @@ private:
 
 	void
 	save_in_jump_library( core::Size const reschar1, core::Size const reschar2,
-		char const edgechar1, char const edgechar2,
-		char const orientation,
-		std::string const & atom_name1,
-		std::string const & atom_name2,
-		core::kinematics::Jump const & jump1,
-		core::kinematics::Jump const & jump2 );
+												char const edgechar1, char const edgechar2,
+												char const orientation,
+												std::string const & atom_name1,
+												std::string const & atom_name2,
+												core::kinematics::Jump const & jump1,
+												core::kinematics::Jump const & jump2 );
 
 
 	RNA_PairingTemplateMap rna_pairing_template_map_;

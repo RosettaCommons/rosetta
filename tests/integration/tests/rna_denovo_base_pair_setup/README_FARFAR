@@ -1,0 +1,1 @@
+/Users/rhiju/src/rosetta/main/source/bin/rna_denovo -nstruct 500 -params_file farna.params -fasta farna.fasta  -out:file:silent farna.out -include_neighbor_base_stacks  -minimize_rna true -cycles 200 -output_res_num  1-2

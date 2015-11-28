@@ -20,6 +20,7 @@
 #include <core/pose/rna/BasePair.fwd.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/types.hh>
+#include <utility/vector1.hh>
 
 using namespace core::chemical::rna;
 
@@ -34,9 +35,6 @@ public:
 	BasePair( Size const res1 = 0, Size const res2 = 0,
 						BaseEdge const edge1 = ANY_BASE_EDGE, BaseEdge const edge2 = ANY_BASE_EDGE,
 						BaseDoubletOrientation const orientation = ANY_BASE_DOUBLET_ORIENTATION );
-
-	BasePair( Size const res1, Size const res2,
-						char const edge1, char const edge2, char const orientation );
 
 	~BasePair(){}
 
@@ -92,6 +90,8 @@ private:
 
 typedef std::pair< Real, BasePair > EnergyBasePair;
 typedef std::list < EnergyBasePair > EnergyBasePairList;
+
+typedef utility::vector1< BasePair > RNA_BasePairList; // used in protocols::farna
 
 } //rna
 } //pose
