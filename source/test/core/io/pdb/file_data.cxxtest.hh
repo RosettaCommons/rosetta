@@ -35,7 +35,6 @@ public:  // Standard methods //////////////////////////////////////////////////
 	// Initialization
 	void setUp()
 	{
-		core_init_with_additional_options( "-obey_ENDMDL -read_pdb_link_records -constraints_from_link_records -cst_weight 1");
 	}
 
 	// Destruction
@@ -51,6 +50,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace std;
 		using namespace utility;
 		using namespace core::io::pdb;
+		core_init_with_additional_options( "-obey_ENDMDL -read_pdb_link_records -constraints_from_link_records -cst_weight 1");
 		TS_TRACE( "Testing store_link_record() method of FileData." );
 
 		// These example lines are taken directly from the given examples at
@@ -110,6 +110,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace std;
 		using namespace utility;
 		using namespace core::io::pdb;
+		core_init_with_additional_options( "-obey_ENDMDL -read_pdb_link_records -constraints_from_link_records -cst_weight 1");
 		TS_TRACE( "Testing store_ssbond_record() method of FileData." );
 
 		// These example lines are taken directly from the given examples at
@@ -161,6 +162,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	// Confirm that HETNAM records are stored properly.
 	void test_store_heterogen_names()
 	{
+		core_init_with_additional_options( "-obey_ENDMDL -read_pdb_link_records -constraints_from_link_records -cst_weight 1");
 		TS_ASSERT( true );
 	}
 
@@ -169,6 +171,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	void test_get_connectivity_annotation_info()
 	{
 		using namespace core::io::pdb;
+		core_init_with_additional_options( "-obey_ENDMDL -read_pdb_link_records -constraints_from_link_records -cst_weight 1");
 
 		TS_TRACE( "Testing get_connectivity_annotation_info() method of FileData." );
 
@@ -213,6 +216,15 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TS_ASSERT_EQUALS( fd2.ssbond_map.size(), 0 );
 		TS_ASSERT_EQUALS( fd2.link_map.size(),   1 );
+	}
+	
+	/// @brief Tests PDB import when the -extra_res_fa flag is used to specify a noncanonical residue.
+	///
+	void test_extra_res_fa_flag() {
+		core_init_with_additional_options( "-obey_ENDMDL -read_pdb_link_records -constraints_from_link_records -cst_weight 1 -extra_res_fa core/io/pdb/test.params");
+		core::pose::Pose pose;
+		core::import_pose::pose_from_pdb( pose, "core/io/pdb/extra_res_pose.pdb" );
+		TS_ASSERT_EQUALS( pose.n_residue(), 181 );
 	}
 
 };  // class FileDataTests

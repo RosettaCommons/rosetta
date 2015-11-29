@@ -576,6 +576,8 @@ testinputfiles = [
 	"io/pdb/1BH4.pdb",
 	"io/pdb/4TTL.pdb",
 	"io/pdb/1e68_link.pdb",
+	"io/pdb/extra_res_pose.pdb",
+	"io/pdb/test.params",
 	"kinematics/test.pdb",
 	"optimization/test_in.pdb",
 	"optimization/symmetry/fibril.symm",
