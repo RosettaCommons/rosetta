@@ -1,4 +1,5 @@
 from _core_pose_ import *
+import rosetta.core.pose.datacache
 
 from cStringIO import StringIO
 
@@ -42,7 +43,7 @@ def __pose_setstate__(self, state):
         self.pdb_info().name(state["name"])
 
 def __pose_reduce_ex__(self, protocol_level):
-    """Pose reduce implementation.""" 
+    """Pose reduce implementation."""
     return (Pose, tuple(), self.__getstate__())
 
 # Add pickle support to pose objects.
