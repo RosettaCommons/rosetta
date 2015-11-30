@@ -24,6 +24,7 @@
 
 // C++ header
 #include <string>
+#include <map>
 
 
 namespace core {
@@ -85,6 +86,13 @@ void enlarge_h_lj_wdepth( AtomTypeSet & atom_type_set );
 // @brief Rhiju. O3', O4', O5' in nucleic acids are ethers -- should not be good acceptors for H-bonds.
 void
 turn_off_hbonds_to_ether_oxygens( AtomTypeSet & atom_type_set );
+
+void
+detect_ld_chirality_from_polymer_residue(
+	std::map< std::string, Vector > const & xyz,
+	std::string const & name3,
+	bool & is_d_aa,
+	bool & is_l_aa );
 
 }  // namespace chemical
 }  // namespace core

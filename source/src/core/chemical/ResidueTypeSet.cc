@@ -112,11 +112,6 @@ void ResidueTypeSet::init(
 
 	clock_t const time_start( clock() );
 
-	//XRW_B_T1
-	//coarse::RuleSetOP coarsify_rule_set;
-	//XRW_E_T1
-	//ResidueTypeSetCAP fine_res_set;
-
 	// read ResidueTypes
 	{
 		std::string const list_filename( database_directory_ + "residue_types.txt" );

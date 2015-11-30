@@ -21,6 +21,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/residue_support.hh>
 #include <core/chemical/Atom.hh>
+#include <core/chemical/util.hh>
 #include <core/chemical/Bond.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/MMAtomType.hh>
@@ -1205,6 +1206,33 @@ read_topology_file(
 		}
 		rsd->set_mainchain_atoms( mainchain_atoms );
 
+		// Okay, now that we have information about the residue's atomic positions
+		// we can re-evaluate if there could be an issue with the specification
+		// of L_AA and D_AA.
+		// Don't worry about GLY. This is properly handled inside the chirality detection
+		// but we just don't want to print the extra warning in 99% of poses!
+		// AMW: somehow, staple residues 08A and 08B are being counted as protein. WTF?
+		// They have no properties set!
+		if ( rsd->is_protein() && !rsd->is_achiral_backbone() && !rsd->is_l_aa() && !rsd->is_d_aa() ) {
+			
+			tr.Warning << "Warning: protein residue " << rsd->name3() << " is not explicitly listed"
+				<< " as either L or D in its params file." << std::endl;
+			tr.Warning << "To avoid seeing this warning in the future, add \"L_AA\", \"D_AA\", "
+				<< "or \"ACHIRAL_BACKBONE\" to the \"PROPERTIES\" line of the params file." << std::endl;
+
+			bool is_l_aa = false;
+			bool is_d_aa = false;
+			
+			detect_ld_chirality_from_polymer_residue( rsd_xyz, rsd->name3(), is_d_aa, is_l_aa );
+			
+			tr.Trace << "Detected chirality " << ( is_l_aa ? "L" : ( is_d_aa ? "D" : "ACHIRAL" ) ) << " from params " << std::endl;
+
+			if ( is_l_aa ) rsd->add_property( "L_AA" );
+			if ( is_d_aa ) rsd->add_property( "D_AA" );
+			debug_assert( !( rsd->is_l_aa() && rsd->is_d_aa() ) );
+			if ( !is_l_aa && !is_d_aa ) rsd->add_property( "ACHIRAL_BACKBONE" ); //Automatically set up achirality, too.
+			debug_assert( !( rsd->is_l_aa() && rsd->is_achiral_backbone() ) && !( rsd->is_d_aa() && rsd->is_achiral_backbone() ) ); //Double-check that a residue isn't both chiral and achiral.
+		}
 
 		// now also need to store the information about the geometry at the links...
 

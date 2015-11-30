@@ -44,7 +44,21 @@ public:  // Standard methods //////////////////////////////////////////////////
 
 public:  // Tests /////////////////////////////////////////////////////////////
 	// Input Methods //////////////////////////////////////////////////////////
+	
+	
+	/// @brief Tests PDB import when the -extra_res_fa flag is used to specify a noncanonical residue.
+	///
+	void test_extra_res_fa_flag() {
+		// This has to be the first one called because we don't re-initialize core and we really need to get this extra res
+		// in the RTS...
+		core_init_with_additional_options( "-obey_ENDMDL -read_pdb_link_records -constraints_from_link_records -cst_weight 1 -extra_res_fa core/io/pdb/test.params");
+		core::pose::Pose pose;
+		core::import_pose::pose_from_pdb( pose, "core/io/pdb/extra_res_pose.pdb" );
+		TS_ASSERT_EQUALS( pose.n_residue(), 181 );
+	}
+
 	// Confirm that LINK records are stored properly.
+	
 	void test_store_link_record()
 	{
 		using namespace std;
@@ -216,15 +230,6 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 		TS_ASSERT_EQUALS( fd2.ssbond_map.size(), 0 );
 		TS_ASSERT_EQUALS( fd2.link_map.size(),   1 );
-	}
-	
-	/// @brief Tests PDB import when the -extra_res_fa flag is used to specify a noncanonical residue.
-	///
-	void test_extra_res_fa_flag() {
-		core_init_with_additional_options( "-obey_ENDMDL -read_pdb_link_records -constraints_from_link_records -cst_weight 1 -extra_res_fa core/io/pdb/test.params");
-		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "core/io/pdb/extra_res_pose.pdb" );
-		TS_ASSERT_EQUALS( pose.n_residue(), 181 );
 	}
 
 };  // class FileDataTests

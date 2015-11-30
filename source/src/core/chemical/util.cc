@@ -36,6 +36,7 @@
 #include <utility/tools/make_vector1.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/string_util.hh>
+#include <numeric/xyz.functions.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -419,6 +420,107 @@ turn_off_hbonds_to_ether_oxygens( AtomTypeSet & atom_type_set ) {
 		Size const index = atom_type_set.atom_type_index( Oet_names[i] );
 		property = "ACCEPTOR";  atom_type_set[ index ].set_property( property, false );
 		property = "DONOR"   ;  atom_type_set[ index ].set_property( property, false );
+	}
+}
+
+void
+detect_ld_chirality_from_polymer_residue(
+	std::map< std::string, Vector > const & xyz,
+	std::string const & name3,
+	bool & is_d_aa,
+	bool & is_l_aa
+) {
+	is_d_aa = false;
+	is_l_aa = false;
+	
+	// Exclude known achiral.
+	if ( name3 == "GLY" || name3 == "C15" || name3 == "C16" || name3 == "MAL" ||
+		name3 == "A98" || name3 == "B02" || name3 == "B06" ) {
+		return;
+	}
+	
+	// Positive angles are D
+	core::Real characteristic_angle = 0;
+	
+	// Explicitly exclude peptoids and PNAs.
+	if ( xyz.find( " CA " ) != xyz.end() && xyz.find( " CA1" ) == xyz.end() && xyz.find( " NG " ) == xyz.end() ) {
+		// There are four atoms bonded to CA.
+		if ( xyz.find( " Pbb" ) != xyz.end() ) {
+			// Phosphonate
+			characteristic_angle = numeric::dihedral_degrees( xyz.at( " N  " ), xyz.at( " Pbb" ), xyz.at( " CB " ), xyz.at( " CA " ) );
+		} else if ( xyz.find( " CM " ) != xyz.end() && name3 != "MLZ" ) { // methyllysine also uses CM, illustrating the weakness of this method.
+			// beta
+			if ( xyz.find( " CB " ) != xyz.end() ) {
+				characteristic_angle = numeric::dihedral_degrees( xyz.at( " N  " ), xyz.at( " CM " ), xyz.at( " CB " ), xyz.at( " CA " ) );
+			} else if ( xyz.find( " CB1" ) != xyz.end() && xyz.find( " CB2" ) != xyz.end() ) {
+				characteristic_angle = numeric::dihedral_degrees( xyz.at( " N  " ), xyz.at( " CM " ), xyz.at( " CB1" ), xyz.at( " CB2" ) );
+			} // other possibilities: B3G
+		} else {
+			// alpha
+			if ( xyz.find( " CB " ) != xyz.end() ) {
+				characteristic_angle = numeric::dihedral_degrees( xyz.at( " N  " ), xyz.at( " C  " ), xyz.at( " CB " ), xyz.at( " CA " ) );
+			} else if ( xyz.find( " CB1" ) != xyz.end() && xyz.find( " CB2" ) != xyz.end() ) {
+				// CB1 is designated the L configuration controller.
+				characteristic_angle = numeric::dihedral_degrees( xyz.at( " N  " ), xyz.at( " C  " ), xyz.at( " CB1" ), xyz.at( " CA " ) );
+			} // other possibilities: GLY
+		}
+		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
+	
+	// Gammas--notably we need all this because just C2 C3 C4 are also had by sugars.
+	// What a terrible method.
+	} else if ( xyz.find( " C2 " ) != xyz.end() && xyz.find( " C3 " ) != xyz.end() && xyz.find( " C4 " ) != xyz.end() && xyz.find( " C  " ) != xyz.end() && xyz.find( " O  " ) != xyz.end() && xyz.find( " N  " ) != xyz.end() ) {
+		// If we have a gamma, assign based on the stereo of the first carbon from C
+		// This is an if else if NOT because we expect these to be mutually exclusive
+		// but because CB3 only matters if there is no CB2.
+		// We are NOT handling disubstituted.
+		// AMW: Vikram's params maintain the position of the 2 in the name...
+		if ( xyz.find( "CB2 " ) != xyz.end() ) {
+			characteristic_angle = numeric::dihedral_degrees( xyz.at( " C3 " ), xyz.at( " C  " ), xyz.at( "CB2 " ), xyz.at( " C2 " ) );
+		} else if ( xyz.find( "CB3 " ) != xyz.end() ) {
+			characteristic_angle = numeric::dihedral_degrees( xyz.at( " C4 " ), xyz.at( " C2 " ), xyz.at( "CB3 " ), xyz.at( " C3 " ) );
+		} else if ( xyz.find( "CB4 " ) != xyz.end() ) {
+			characteristic_angle = numeric::dihedral_degrees( xyz.at( " N  " ), xyz.at( " C3 " ), xyz.at( "CB4 " ), xyz.at( " C4 " ) );
+		}
+		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
+	}
+	
+	characteristic_angle = 0;
+	// If we're being called from a residue that's already trimmed.
+	// Explicitly exclude peptoids and PNAs.
+	if ( xyz.find( "CA" ) != xyz.end() && xyz.find( "CA1" ) == xyz.end() && xyz.find( "NG" ) == xyz.end() ) {
+		// There are four atoms bonded to CA.
+		if ( xyz.find( "Pbb" ) != xyz.end() ) {
+			// Phosphonate
+			characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "Pbb" ), xyz.at( "CB" ), xyz.at( "CA" ) );
+		} else if ( xyz.find( "CM" ) != xyz.end() && name3 != "MLZ" ) {			// beta
+			if ( xyz.find( "CB" ) != xyz.end() ) {
+				characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "CM" ), xyz.at( "CB" ), xyz.at( "CA" ) );
+			} else if ( xyz.find( "CB1" ) != xyz.end() && xyz.find( "CB2" ) != xyz.end() ) {
+				characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "CM" ), xyz.at( "CB1" ), xyz.at( "CB2" ) );
+			} // other possibilities: B3G
+		} else {
+			// alpha
+			if ( xyz.find( "CB" ) != xyz.end() ) {
+				characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "C" ), xyz.at( "CB" ), xyz.at( "CA" ) );
+			} else if ( xyz.find( "CB1" ) != xyz.end() && xyz.find( " CB2" ) != xyz.end() ) {
+				characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "C" ), xyz.at( "CB1" ), xyz.at( "CA" ) );
+			} // other possibilities: GLY
+		}
+		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
+		
+	// Gammas--notably we need all this because just C2 C3 C4 are also had by sugars.
+	// What a terrible method.
+	} else if ( xyz.find( "C2" ) != xyz.end() && xyz.find( "C3" ) != xyz.end() && xyz.find( "C4" ) != xyz.end() && xyz.find( "C" ) != xyz.end() && xyz.find( "O" ) != xyz.end() && xyz.find( "N" ) != xyz.end() ) {
+		if ( xyz.find( "CB2" ) != xyz.end() ) {
+			characteristic_angle = numeric::dihedral_degrees( xyz.at( "C3" ), xyz.at( "C" ), xyz.at( "CB2" ), xyz.at( "C2" ) );
+			( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
+		} else if ( xyz.find( "CB3 " ) != xyz.end() ) {
+			characteristic_angle = numeric::dihedral_degrees( xyz.at( "C4" ), xyz.at( "C2" ), xyz.at( "CB3" ), xyz.at( "C3" ) );
+			( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
+		} else if ( xyz.find( "CB4 " ) != xyz.end() ) {
+			characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "C3" ), xyz.at( "CB4" ), xyz.at( "C4" ) );
+		}
+		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
 	}
 }
 

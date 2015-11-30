@@ -119,7 +119,7 @@ main( int argc, char* argv[] )
 
 		pose.clear();
 		import_pose::pose_from_pdb( pose, "inputs/d98.pdb" );
-		TR << "Name of residue 2 is DA98: " << pose.residue( 2 ).type().name() << std::endl;
+		TR << "Name of residue 2 is A98 (it's not chiral!): " << pose.residue( 2 ).type().name() << std::endl;
 
 		pose.clear();
 		import_pose::pose_from_pdb( pose, "inputs/nlu.pdb" );

@@ -1973,6 +1973,9 @@ ResidueType::add_property( std::string const & property )
 		properties_->set_property( POLYMER, true );
 	} else if ( property == "PEPTOID" ) {
 		properties_->set_property( POLYMER, true );
+		// amw: This will no longer be true if we incorporate
+		// alanine peptoids (or update our chirality model entirely)
+		properties_->set_property( ACHIRAL_BACKBONE, true );
 	} else if ( property == "LOWERTERM_TRUNC" ) {
 		properties_->set_property( LOWER_TERMINUS, true );
 	} else if ( property == "UPPERTERM_TRUNC" ) {
@@ -2068,6 +2071,12 @@ bool
 ResidueType::is_l_aa() const
 {
 	return properties_->has_property( L_AA );
+}
+
+bool
+ResidueType::is_achiral_backbone() const
+{
+	return properties_->has_property( ACHIRAL_BACKBONE );
 }
 
 bool

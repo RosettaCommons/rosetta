@@ -43,6 +43,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/AA.hh>
+#include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>
@@ -1453,98 +1454,14 @@ build_pose_as_is1(
 				name3 == "PRO" || name3 == "GLN" || name3 == "ARG" || name3 == "SER" ||
 				name3 == "THR" || name3 == "VAL" || name3 == "TRP" || name3 == "TYR" ) {
 			is_l_aa = true;
+		
+		// Skip particular KNOWN ACHIRAL aas.
+		} else if ( name3 == "GLY" || name3 == "C15" || name3 == "C16" || name3 == "MAL" ||
+				    name3 == "A98" || name3 == "B02" || name3 == "B06" ) {
+		
+		// name isn't notable, so assume chirality detection is necessary
 		} else {
-			// Better method please.
-			// AMW: revised so it doesn't rely on hydrogens being present! d'oh.
-			// Explicitly exclude peptoids and PNAs.
-			if ( xyz.find( " CA " ) != xyz.end() && xyz.find( " CA1" ) == xyz.end() && xyz.find( " NG " ) == xyz.end() ) {
-				// There are four atoms bonded to CA.
-				if ( xyz.find( " Pbb" ) != xyz.end() ) {
-					// Phosphonate
-					core::Real characteristic_angle = numeric::dihedral_degrees( xyz.at( " N  " ), xyz.at( " Pbb" ), xyz.at( " CB " ), xyz.at( " CA " ) );
-					if ( characteristic_angle > 0 ) {
-						is_d_aa = true;
-					} else {
-						is_l_aa = true;
-					}
-				} else if ( xyz.find( " CM " ) != xyz.end() && name3 != "MLZ" ) { // methyllysine also uses CM, illustrating the weakness of this method.
-					// beta
-					if ( xyz.find( " CB " ) != xyz.end() ) {
-						core::Real characteristic_angle = numeric::dihedral_degrees( xyz.at( " N  " ), xyz.at( " CM " ), xyz.at( " CB " ), xyz.at( " CA " ) );
-						// Positive angles are D
-						//std::cout << "Characteristic 1b angle: " << characteristic_angle << std::endl;
-						if ( characteristic_angle > 0 ) {
-							is_d_aa = true;
-						} else {
-							is_l_aa = true;
-						}
-					} else if ( xyz.find( " CB1" ) != xyz.end() && xyz.find( " CB2" ) != xyz.end() ) {
-						core::Real characteristic_angle = numeric::dihedral_degrees( xyz.at( " N  " ), xyz.at( " CM " ), xyz.at( " CB1" ), xyz.at( " CB2" ) );
-						// Positive angles are D
-						//std::cout << "Characteristic 2b angle: " << characteristic_angle << std::endl;
-						if ( characteristic_angle > 0 ) {
-							is_d_aa = true;
-						} else {
-							is_l_aa = true;
-						}
-					} // other possibilities: B3G
-				} else {
-					// alpha
-					if ( xyz.find( " CB " ) != xyz.end() ) {
-						core::Real characteristic_angle = numeric::dihedral_degrees( xyz.at( " N  " ), xyz.at( " C  " ), xyz.at( " CB " ), xyz.at( " CA " ) );
-						// Positive angles are D
-						//std::cout << "Characteristic 1a angle: " << characteristic_angle << std::endl;
-						if ( characteristic_angle > 0 ) {
-							is_d_aa = true;
-						} else {
-							is_l_aa = true;
-						}
-					} else if ( xyz.find( " CB1" ) != xyz.end() && xyz.find( " CB2" ) != xyz.end() ) {
-						// CB1 is designated the L configuration controller.
-						core::Real characteristic_angle = numeric::dihedral_degrees( xyz.at( " N  " ), xyz.at( " C  " ), xyz.at( " CB1" ), xyz.at( " CA " ) );
-						// Positive angles are D
-						//std::cout << "Characteristic 2a angle: " << characteristic_angle << std::endl;
-						if ( characteristic_angle > 0 ) {
-							is_d_aa = true;
-						} else {
-							is_l_aa = true;
-						}
-					} // other possibilities: GLY
-				}
-			} else if ( xyz.find( " C2 " ) != xyz.end() && xyz.find( " C3 " ) != xyz.end() && xyz.find( " C4 " ) != xyz.end() ) {
-				// If we have a gamma, assign based on the stereo of the first carbon from C
-				// This is an if else if NOT because we expect these to be mutually exclusive
-				// but because CB3 only matters if there is no CB2.
-				// We are NOT handling disubstituted.
-				// AMW: Vikram's params maintain the position of the 2 in the name...
-				if ( xyz.find( "CB2 " ) != xyz.end() ) {
-					// This determines everything!
-					core::Real characteristic_angle = numeric::dihedral_degrees( xyz.at( " C3 " ), xyz.at( " C  " ), xyz.at( "CB2 " ), xyz.at( " C2 " ) );
-					if ( characteristic_angle > 0 ) {
-						is_d_aa = true;
-					} else {
-						is_l_aa = true;
-					}
-
-				} else if ( xyz.find( "CB3 " ) != xyz.end() ) {
-					// This determines everything!
-					core::Real characteristic_angle = numeric::dihedral_degrees( xyz.at( " C4 " ), xyz.at( " C2 " ), xyz.at( "CB3 " ), xyz.at( " C3 " ) );
-					if ( characteristic_angle > 0 ) {
-						is_d_aa = true;
-					} else {
-						is_l_aa = true;
-					}
-
-				} else if ( xyz.find( "CB4 " ) != xyz.end() ) {
-					// This determines everything!
-					core::Real characteristic_angle = numeric::dihedral_degrees( xyz.at( " N  " ), xyz.at( " C3 " ), xyz.at( "CB4 " ), xyz.at( " C4 " ) );
-					if ( characteristic_angle > 0 ) {
-						is_d_aa = true;
-					} else {
-						is_l_aa = true;
-					}
-				}
-			}
+			detect_ld_chirality_from_polymer_residue( xyz, name3, is_d_aa, is_l_aa );
 		}
 
 		// Get a list of ResidueTypes that could apply for this particular 3-letter PDB residue name.

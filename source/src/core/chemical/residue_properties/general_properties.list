@@ -92,6 +92,7 @@ BETA_AA
 GAMMA_AA
 L_AA #Chirality.  This is defined as the chirality of the first chiral mainchain atom closest to the LOWER_CONNECT -- so a trisubstituted 2D,3D,4L-gamma-amino acid would be considered an L_AA.
 D_AA #Chirality.  This is defined as the chirality of the first chiral mainchain atom closest to the LOWER_CONNECT -- so a trisubstituted 2L,3L,4D-gamma-amino acid would be considered a D_AA.
+ACHIRAL_BACKBONE
 TAUTOMER
 
 

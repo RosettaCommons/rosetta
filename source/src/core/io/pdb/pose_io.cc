@@ -473,14 +473,6 @@ dump_connect_info(
 
 				if ( ( pose.xyz( atom_id ) - pose.xyz( nbr_id ) ).length_squared() < CUTOFFSQ ) continue;
 
-				// Final check: actually look for a connection in the atom tree.
-				// V. Mulligan, 2 March 2014: This is a silly check!  It guarantees that the only connections we write out are between atoms and their parents,
-				// which means that we NEVER write inter-residue connections between side-chains, or even connections that close rings.  This means that most
-				// of the business above, checking residue numbers and whatnot, is for naught.  Commented out for now.
-				//core::kinematics::tree::AtomCOP atom( & pose.atom_tree().atom_dont_do_update( atom_id ) );
-				//core::kinematics::tree::AtomCOP  nbr( & pose.atom_tree().atom_dont_do_update( nbr_id ) );
-				//if( ( nbr->parent() != atom ) && ( atom->parent() != nbr ) ) continue;
-
 				out << "CONECT" << I(5,atom_id_output[ atom_id ]) << I(5,atom_id_output[  nbr_id  ]) << std::endl;
 
 			}

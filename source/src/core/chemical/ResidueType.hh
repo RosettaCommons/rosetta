@@ -1562,6 +1562,9 @@ public:
 	/// @brief is this an l-amino acid?
 	bool is_l_aa() const;
 
+	/// @brief is this an achiral backbone?
+	bool is_achiral_backbone() const;
+
 	/// @brief is DNA?
 	bool is_DNA() const;
 

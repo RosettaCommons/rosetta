@@ -25,7 +25,7 @@ BOND  CM  2HM
 BOND  CA  1HA 
 BOND  CA  2HA 
 BOND  C    O  
-PROPERTIES PROTEIN
+PROPERTIES PROTEIN ACHIRAL_BACKBONE
 NBR_ATOM CA
 # APL CA to O distance -- not yet measured; default to max CB to O distance
 NBR_RADIUS 3.4473

@@ -15,7 +15,7 @@ BOND  N    CA
 BOND  N    H  
 BOND  CA   C  
 BOND  C    O  
-PROPERTIES PROTEIN
+PROPERTIES PROTEIN ACHIRAL_BACKBONE
 NBR_ATOM CEN
 NBR_RADIUS 3.025 #fpd true neighbor radius is 2.400; keep this at prev. value so 12A neighbor graph is correct
 FIRST_SIDECHAIN_ATOM CEN
