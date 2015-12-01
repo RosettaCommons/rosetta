@@ -196,7 +196,7 @@ StepWiseConnectionSampler::apply( core::pose::Pose & pose ){
 	initialize_screeners( pose );
 
 	StepWiseSampleAndScreen sample_and_screen( sampler_, screeners_ );
-	sample_and_screen.set_verbose( !options_->choose_random() || options_->integration_test_mode() );
+	sample_and_screen.set_verbose( !options_->choose_random() || options_->integration_test_mode() || options_->verbose_sampler() );
 	sample_and_screen.set_max_ntries( get_max_ntries() );
 	sample_and_screen.set_num_random_samples( options_->num_random_samples() );
 	sample_and_screen.run();
@@ -388,7 +388,9 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	// screeners_.push_back( atr_rep_screener );
 
 	// phosphate screener, o2prime screener, should be here.
-	master_packer_->add_packer_screeners( screeners_, pose, screening_pose_ );
+	if ( !options_->lores() ) {
+		master_packer_->add_packer_screeners( screeners_, pose, screening_pose_ );
+	}
 
 	//  Want this legacy BulgeApplier to run in very specific SWA RNA cases.
 	// the atr_rep_checker has been replaced with a more general and efficient PartitionContactScreener, but
@@ -578,6 +580,7 @@ StepWiseConnectionSampler::get_max_ntries() {
 		max_ntries = std::max( 100000, 1000 * int( options_->num_random_samples() ) );
 		if ( options_->rmsd_screen() && !options_->integration_test_mode() ) max_ntries *= 10;
 	} else {
+		//  if ( options_->lores() ) return 100;
 		max_ntries = std::max( 10000, 100 * int( options_->num_random_samples() ) );
 		if ( rna_chain_closure_checkers_.size() > 0 ) {
 			max_ntries *= options_->max_tries_multiplier_for_ccd() /* default 10 */;

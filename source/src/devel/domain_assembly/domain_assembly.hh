@@ -13,6 +13,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/farna/RNA_FragmentsClasses.fwd.hh>
+#include <protocols/toolbox/AllowInsert.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -59,7 +60,7 @@ optimize_linkers_fullatom_mode(
 	core::pose::Pose & full_pose
 );
 
-ObjexxFCL::FArray1D_bool
+protocols::toolbox::AllowInsertOP
 set_moveable_rna(
 	core::pose::Pose & full_pose,
 	utility::vector1< std::pair < core::Size, core::Size > > & linker_rna

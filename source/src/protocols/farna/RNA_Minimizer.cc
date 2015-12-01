@@ -89,7 +89,7 @@ RNA_Minimizer::RNA_Minimizer():
 	use_coordinate_constraints_( true ),
 	coord_sdev_( 10.0 * std::sqrt(10.0) ), // awkward, but matches an old setting.
 	coord_cst_weight_( 1.0 ),
-	rounds_( basic::options::option[ basic::options::OptionKeys::rna::minimize_rounds ] ),
+	rounds_( basic::options::option[ basic::options::OptionKeys::rna::farna::minimize_rounds ] ),
 	skip_o2prime_trials_( false ),
 	perform_minimizer_run_( true ),
 	vary_bond_geometry_( false ),
@@ -100,11 +100,6 @@ RNA_Minimizer::RNA_Minimizer():
 	min_type_( "dfpmin" ) //Parin S. Jan 12, 2012
 {
 	Mover::type("RNA_Minimizer");
-	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
-		scorefxn_ = core::scoring::get_score_function();
-	} else {
-		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
-	}
 }
 
 /// @details  Apply the RNA full atom minimizer.
@@ -117,6 +112,8 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 	using namespace core::optimization;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+
+	if ( scorefxn_ == 0 ) scorefxn_ = get_rna_hires_scorefxn(); //->clone();
 
 	time_t pdb_start_time = time(NULL);
 	scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
@@ -338,13 +335,13 @@ RNA_Minimizer::update_allow_insert_with_extra_minimize_res( pose::Pose const & p
 
 /////////////////////////////////////////////////////////////////////////////////
 void
-RNA_Minimizer::set_score_function( core::scoring::ScoreFunctionOP const & scorefxn ){
+RNA_Minimizer::set_score_function( core::scoring::ScoreFunctionCOP scorefxn ){
 	scorefxn_ = scorefxn->clone();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 void
-RNA_Minimizer::set_allow_insert(toolbox::AllowInsertOP allow_insert ){
+RNA_Minimizer::set_allow_insert(toolbox::AllowInsertCOP allow_insert ){
 	allow_insert_ = allow_insert->clone();
 }
 

@@ -67,11 +67,11 @@ RDAT::RDAT():
 }
 
 //Constructor
-RDAT::RDAT( std::string const name,
-	std::string const sequence,
-	Size const offset,
+RDAT::RDAT( std::string const & name,
+	std::string const & sequence,
+	Size const & offset,
 	utility::vector1< Size > const & seqpos,
-	std::string const structure,
+	std::string const & structure,
 	utility::vector1< Annotation > const & annotations,
 	utility::vector1< utility::vector1< Annotation > > const & data_annotations,
 	utility::vector1< utility::vector1< core::Real > > const & reactivity,
@@ -95,7 +95,7 @@ RDAT::RDAT( std::string const name,
 
 
 //Constructor
-RDAT::RDAT( std::string const filename )
+RDAT::RDAT( std::string const & filename )
 {
 	read_rdat_file( filename );
 }
@@ -160,7 +160,7 @@ RDAT::output_rdat_header( utility::io::ozstream & out ) const {
 
 /////////////////////////////////////////////////////////////////////////////
 void
-RDAT::output_rdat_to_file( std::string const outfile ) const {
+RDAT::output_rdat_to_file( std::string const & outfile ) const {
 	utility::io::ozstream out( outfile.c_str());
 	TR << "Creating output RDAT file: " << outfile << std::endl;
 	output_rdat_header( out );
@@ -242,7 +242,7 @@ RDAT::output_data( utility::io::ozstream & out ) const {
 
 /////////////////////////////////////////////////////////////////////////////
 void
-RDAT::read_rdat_file( std::string const filename ) {
+RDAT::read_rdat_file( std::string const & filename ) {
 
 	TR <<  "Parsing file from rdat: " <<  filename  << std::endl;
 
@@ -342,7 +342,7 @@ RDAT::read_rdat_file( std::string const filename ) {
 void
 RDAT::fill_if_empty( std::string & data_string,
 	utility::vector1< std::string > & data_strings,
-	std::string const tag ) const {
+	std::string const & tag ) const {
 	if ( data_string.size() == 0 ) {
 		if ( data_strings.size() == 0 ) {
 			TR.Warning << "No "+tag+"s detected or "+tag+" indices do not start at one" << std::endl;
@@ -467,7 +467,7 @@ RDAT::fill_structures_if_empty() {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 Annotation
-RDAT::get_annotation( std::string const tag ) const {
+RDAT::get_annotation( std::string const & tag ) const {
 	Size const colon_idx = tag.find( ':' );
 	runtime_assert( colon_idx > 0 );
 	return std::make_pair( tag.substr( 0, colon_idx ), tag.substr( colon_idx + 1 ) );
@@ -499,7 +499,7 @@ RDAT::save_data( std::string const & line, utility::vector1< Real > & var  ) con
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RDAT::save_data_with_idx( utility::vector1< std::string > & var,
-	Size const idx,  std::string const & value ) const {
+													Size const & idx,  std::string const & value ) const {
 	runtime_assert( idx > 0 );
 	for ( Size n = var.size(); n < idx; n++ ) var.push_back( "" );
 	var[ idx ] = value;
@@ -508,7 +508,7 @@ RDAT::save_data_with_idx( utility::vector1< std::string > & var,
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RDAT::save_data_with_idx( utility::vector1< utility::vector1< Annotation > > & var,
-	Size const idx,  Annotation & value ) const {
+													Size const & idx,  Annotation & value ) const {
 	runtime_assert( idx > 0 );
 	for ( Size n = var.size(); n < idx; n++ ) var.push_back( vector1< Annotation >() );
 	runtime_assert( idx <= var.size() );
@@ -517,7 +517,7 @@ RDAT::save_data_with_idx( utility::vector1< utility::vector1< Annotation > > & v
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< std::string >
-RDAT::str2cell( std::string const s ) const {
+RDAT::str2cell( std::string const & s ) const {
 	char delim( '\t' );
 	if ( s.find( '\t' ) == std::string::npos )    delim = ' ';
 	return string_split_simple( s, delim );
@@ -526,7 +526,7 @@ RDAT::str2cell( std::string const s ) const {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::string
-RDAT::remove_tag( std::string & line, std::string const tag ) const {
+RDAT::remove_tag( std::string & line, std::string const & tag ) const {
 	//char delim( '\t' );
 	//if ( line.find( '\t' ) == std::string::npos )  delim = ' ';
 
@@ -553,7 +553,7 @@ RDAT::fill_data_annotations_if_empty() {
 //////////////////////////////////////////////////////////////////////////////////////
 void
 RDAT::fill_seqpos( std::string const & seqpos_info,
-	std::string & sequence_seqpos ) {
+									 std::string & sequence_seqpos ) {
 
 	vector1< std::string > seqpos_tags = str2cell( seqpos_info );
 	sequence_seqpos = "";

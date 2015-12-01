@@ -67,6 +67,8 @@ StepWiseBasicOptions::initialize_variables(){
 	vary_rna_bond_geometry_ = false;
 	vary_polar_hydrogen_geometry_ = false;
 	use_packer_instead_of_rotamer_trials_ = false;
+	lores_ = false;
+	verbose_sampler_ = false;
 }
 
 /// @brief clone the options
@@ -90,12 +92,13 @@ StepWiseBasicOptions::initialize_from_command_line(){
 	if ( option[ basic::options::OptionKeys::stepwise::num_pose_minimize ].user() ) num_pose_minimize_ = option[ basic::options::OptionKeys::stepwise::num_pose_minimize ]();
 	min_type_ = option[ basic::options::OptionKeys::stepwise::min_type ]();
 	min_tolerance_ = option[ basic::options::OptionKeys::stepwise::min_tolerance ]();
-	vary_rna_bond_geometry_ = option[ basic::options::OptionKeys::rna::vary_geometry ]();
+	vary_rna_bond_geometry_ = option[ basic::options::OptionKeys::rna::farna::vary_geometry ]();
 	vary_polar_hydrogen_geometry_ = option[ basic::options::OptionKeys::stepwise::vary_polar_hydrogen_geometry ]();
 	use_packer_instead_of_rotamer_trials_ = option[ basic::options::OptionKeys::stepwise::protein::use_packer_instead_of_rotamer_trials ]();
 	output_minimized_pose_list_ = option[ basic::options::OptionKeys::stepwise::output_minimized_pose_list ]();
 	output_cluster_size_ = option[ basic::options::OptionKeys::stepwise::output_cluster_size ]();
-
+	lores_ = option[ basic::options::OptionKeys::stepwise::lores ]();
+	verbose_sampler_ = option[ basic::options::OptionKeys::stepwise::verbose_sampler ]();
 }
 
 

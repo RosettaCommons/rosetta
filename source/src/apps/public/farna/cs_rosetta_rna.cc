@@ -140,7 +140,7 @@ setup_rna_struct_params(core::pose::Pose & pose) {
 	RNA_StructureParametersOP rna_structure_parameters( new RNA_StructureParameters );
 	std::string jump_library_file( basic::database::full_name( "sampling/rna/1jj2_RNA_jump_library.dat"  ) );
 	std::string rna_params_file(  option[ params_file ] );
-	rna_structure_parameters->initialize( pose, rna_params_file, jump_library_file, false );
+	rna_structure_parameters->initialize_for_de_novo_protocol( pose, rna_params_file, jump_library_file, false );
 
 	return rna_structure_parameters;
 

@@ -47,7 +47,7 @@ public:
 		core::Size const position,
 		core::Size const size,
 		core::Size const type,
-		toolbox::AllowInsertOP allow_insert  );
+		toolbox::AllowInsertCOP allow_insert ) const;
 
 
 	virtual bool

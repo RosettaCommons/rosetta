@@ -100,7 +100,7 @@ stepwise_monte_carlo()
 	pose::Pose & pose = *pose_op;
 	initialize_native_and_align_pose( native_pose, align_pose, rsd_set, pose_op );
 	// temporary, for scoring RNA chemical mapping data. Move into initalize_pose?
-	core::io::rna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::data_file ](), scorefxn );
+	core::io::rna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::farna::data_file ](), scorefxn );
 
 	// Get rid of this commented code when it is incorporated into a unit test.
 	// test_merge_and_slice_with_two_helix_test_case( input_poses, scorefxn ); exit( 0 );
@@ -213,7 +213,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::rna::integration_test );
 		option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
 		option.add_relevant( OptionKeys::rna::corrected_geo );
-		option.add_relevant( OptionKeys::rna::data_file );
+		option.add_relevant( OptionKeys::rna::farna::data_file );
 
 		core::init::init(argc, argv);
 

@@ -33,6 +33,7 @@
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.hh>
 #include <protocols/stepwise/modeler/precomputed/PrecomputedLibraryMover.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
+#include <protocols/farna/FARNA_Optimizer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/util.hh>
@@ -173,15 +174,23 @@ StepWiseModeler::do_sampling( core::pose::Pose & pose ) {
 ////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseModeler::do_minimizing( core::pose::Pose & pose ) {
-	StepWiseMinimizer stepwise_minimizer( pose_list_,
-		working_parameters_,
-		options_,
-		scorefxn_ );
-	if ( master_packer_->packer()->working_pack_res_was_inputted() ) {
-		stepwise_minimizer.set_working_pack_res( master_packer_->packer()->previous_working_pack_res() );
+	moves::MoverOP optimizer;
+	if ( options_->lores() ) {
+		optimizer =	moves::MoverOP( new protocols::farna::FARNA_Optimizer( pose_list_, scorefxn_, 100 /* cycles */ ) );
+	} else {
+		StepWiseMinimizerOP stepwise_minimizer( new StepWiseMinimizer( pose_list_,
+																																	 working_parameters_,
+																																	 options_,
+																																	 scorefxn_ ) );
+		if ( master_packer_->packer()->working_pack_res_was_inputted() ) {
+			stepwise_minimizer->set_working_pack_res( master_packer_->packer()->previous_working_pack_res() );
+		}
+		optimizer = stepwise_minimizer;
 	}
-	stepwise_minimizer.apply( pose ); // will save work in pose_list_
 
+	if ( optimizer == 0 ) return;
+
+	optimizer->apply( pose ); // will save work in pose_list_
 }
 
 //////////////////////////////////////////////////////////////////////////////

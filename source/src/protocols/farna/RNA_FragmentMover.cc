@@ -56,18 +56,9 @@ namespace farna {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Empty constructor
-RNA_FragmentMover::RNA_FragmentMover() : Mover(),
-	num_insertable_residues_( 0 ),
-	insert_map_frag_size_( 0 ),
-	frag_size_( 0 )
-{
-	Mover::type("RNA_FragmentMover");
-}
-
 RNA_FragmentMover::RNA_FragmentMover(
-	RNA_FragmentsOP rna_fragments,
-	protocols::toolbox::AllowInsertOP allow_insert
+	RNA_Fragments const & rna_fragments,
+	protocols::toolbox::AllowInsertCOP allow_insert
 ) : Mover(),
 	rna_fragments_( rna_fragments ),
 	allow_insert_( allow_insert ),
@@ -76,25 +67,6 @@ RNA_FragmentMover::RNA_FragmentMover(
 	frag_size_( 0 )
 {
 	Mover::type("RNA_FragmentMover");
-}
-
-// This constructor is not actually used anymore -- better to use AllowInsert object above.
-RNA_FragmentMover::RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
-	ObjexxFCL::FArray1D<bool> const & allow_insert_in,
-	pose::Pose const & pose ):
-	Mover(),
-	rna_fragments_( all_rna_fragments ),
-	num_insertable_residues_( 0 ),
-	insert_map_frag_size_( 0 ),
-	frag_size_( 0 )
-{
-	Mover::type("RNA_FragmentMover");
-
-	allow_insert_ = protocols::toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) );
-	allow_insert_->set( false );
-	for ( Size i = 1; i <= allow_insert_in.size(); i++ ) {
-		if ( pose.residue_type( i ).is_RNA() && allow_insert_in[ i ] ) allow_insert_->set( i, true );
-	}
 }
 
 // Copy constructor
@@ -124,11 +96,11 @@ RNA_FragmentMover::clone() const
 	return protocols::moves::MoverOP( new RNA_FragmentMover(*this) );
 }
 
-protocols::moves::MoverOP
-RNA_FragmentMover::fresh_instance() const
-{
-	return protocols::moves::MoverOP( new RNA_FragmentMover() );
-}
+// protocols::moves::MoverOP
+// RNA_FragmentMover::fresh_instance() const
+// {
+// 	return protocols::moves::MoverOP( new RNA_FragmentMover() );
+// }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -216,16 +188,6 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 
 	}
 
-	// std::cout << "NUM_INSERTABEL_RESIDUES: " << num_insertable_residues_ << " for FRAG SIZE " << frag_size_ << std::endl;
-
-	// std::cout << "ALLOW INSERT! ALLOW INSERT! ALLOW INSERT!" << std::endl;
-	// for (Size i = 1; i <= pose.total_residue(); i++ ){
-	//  std::cout << allow_insert_->get( i );
-	// }
-	// std::cout << std::endl;
-	// std::cout << "ALLOW INSERT! ALLOW INSERT! ALLOW INSERT!"<< std::endl;
-
-
 	insert_map_frag_size_ = frag_size_; //up to date!
 
 }
@@ -250,7 +212,7 @@ RNA_FragmentMover::random_fragment_insertion(
 
 	// std::cout << " --- Trying fragment! at " << position << std::endl;
 
-	rna_fragments_->apply_random_fragment( pose, position, frag_size_, type, allow_insert_ );
+	rna_fragments_.apply_random_fragment( pose, position, frag_size_, type, allow_insert_ );
 
 	return position;
 }

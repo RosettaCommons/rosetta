@@ -49,13 +49,13 @@ public:
 	RDAT();
 
 	//constructor
-	RDAT( std::string const filename );
+	RDAT( std::string const & filename );
 
 	//constructor
-	RDAT( std::string const name, std::string const sequence,
-		core::Size const offset,
+	RDAT( std::string const & name, std::string const & sequence,
+		core::Size const & offset,
 		utility::vector1< Size > const & seqpos,
-		std::string const structure,
+		std::string const & structure,
 		utility::vector1< Annotation > const & annotations,
 		utility::vector1< utility::vector1< Annotation > > const & data_annotations,
 		utility::vector1< utility::vector1< core::Real > > const & reactivity,
@@ -68,10 +68,10 @@ public:
 public:
 
 	void
-	output_rdat_to_file( std::string const filename ) const;
+	output_rdat_to_file( std::string const & filename ) const;
 
 	void
-	read_rdat_file( std::string const filename );
+	read_rdat_file( std::string const & filename );
 
 	void
 	fill_header_information( pose::Pose & pose );
@@ -138,8 +138,8 @@ private:
 
 	void
 	fill_if_empty( std::string & data_string,
-		utility::vector1< std::string > & data_strings,
-		std::string const tag ) const;
+								 utility::vector1< std::string > & data_strings,
+								 std::string const & tag ) const;
 
 	void
 	save_data( std::string const & line, utility::vector1< utility::vector1< Real > > & var  ) const;
@@ -149,27 +149,27 @@ private:
 
 	void
 	save_data_with_idx( utility::vector1< std::string > & var,
-		Size const idx,  std::string const & value ) const;
+											Size const & idx,  std::string const & value ) const;
 
 	void
 	save_data_with_idx( utility::vector1< utility::vector1< Annotation > > & var,
-		Size const idx,  Annotation & value ) const;
+											Size const & idx,  Annotation & value ) const;
 
 	Annotation
-	get_annotation( std::string const tag ) const;
+	get_annotation( std::string const & tag ) const;
 
 	utility::vector1< std::string >
-	str2cell( std::string const s ) const;
+	str2cell( std::string const & s ) const;
 
 	std::string
-	remove_tag( std::string & line, std::string const tag ) const;
+	remove_tag( std::string & line, std::string const & tag ) const;
 
 	void
 	fill_data_annotations_if_empty();
 
 	void
 	fill_seqpos( std::string const & seqpos_info,
-		std::string & sequence_seqpos );
+							 std::string & sequence_seqpos );
 
 	bool
 	check_sequence_seqpos( std::string const & sequence_seqpos ) const;

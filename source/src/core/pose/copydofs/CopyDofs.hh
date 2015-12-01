@@ -19,6 +19,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/pose/copydofs/CopyDofs.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
+#include <core/pose/copydofs/CopyDofsInfo.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -31,6 +32,8 @@ using namespace core;
 namespace core {
 namespace pose {
 namespace copydofs {
+
+extern core::Size const FIXED_DOMAIN;
 
 class CopyDofs: public utility::pointer::ReferenceCount {
 
@@ -66,18 +69,19 @@ private:
 	bool
 	check_domain_map( std::map< id::AtomID, Size > const & atom_id_domain_map,
 		id::AtomID const & atom_id1,
-		id::AtomID const & atom_id2 );
+		id::AtomID const & atom_id2 ) const;
+
 	bool
 	check_domain_map( std::map< id::AtomID, Size > const & atom_id_domain_map,
 		utility::vector1< id::AtomID > const & atom_ids1,
-		utility::vector1< id::AtomID > const & atom_ids2 );
+		utility::vector1< id::AtomID > const & atom_ids2 ) const;
 
 private:
 
 	pose::MiniPose const & scratch_pose_; // template_pose
 	std::map < id::AtomID , id::AtomID > const & atom_id_map_;
 	std::map< id::AtomID, Size > atom_id_domain_map_; // blank by default.
-	CopyDofsInfo copy_dofs_info_;
+	CopyDofsInfo  copy_dofs_info_;
 };
 
 

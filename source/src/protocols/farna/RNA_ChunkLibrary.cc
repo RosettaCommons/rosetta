@@ -56,14 +56,18 @@ using core::Real;
 
 using core::pose::ResMap;
 
+// magic number for special kind of chunk (base pair step) that is not user input,
+//  but instead read in from Rosetta database.
+Size const ROSETTA_LIBRARY_DOMAIN( 1000 );
+
 ///////////////////////////////////////////////////////////////////////
-ChunkSet::ChunkSet( utility::vector1< core::pose::MiniPoseOP > const & mini_pose_list,
-	ResMap const & res_map ) {
-
-	mini_pose_list_ = mini_pose_list;
-
-	res_map_ = res_map;
-
+ChunkSet::ChunkSet(
+	utility::vector1< core::pose::MiniPoseOP > const & mini_pose_list,
+	ResMap const & res_map ):
+	mini_pose_list_( mini_pose_list ),
+	res_map_( res_map ),
+	user_input_( true )
+{
 	// not much information in mini_pose --> assume that all atoms are OK for copying.
 	core::pose::MiniPose const & mini_pose = *(mini_pose_list[ 1 ]);
 	for ( Size i = 1; i <= mini_pose.total_residue(); i++ ) {
@@ -75,13 +79,15 @@ ChunkSet::ChunkSet( utility::vector1< core::pose::MiniPoseOP > const & mini_pose
 }
 
 ///////////////////////////////////////////////////////////////////////
-ChunkSet::ChunkSet( utility::vector1< core::pose::PoseOP > const & pose_list,
-	ResMap const & res_map ) {
-
+ChunkSet::ChunkSet(
+  utility::vector1< core::pose::PoseOP > const & pose_list,
+	ResMap const & res_map ):
+	res_map_( res_map ),
+	user_input_( true )
+{
 	for ( Size n = 1; n <= pose_list.size(); n++ ) {
 		mini_pose_list_.push_back( core::pose::MiniPoseOP( new core::pose::MiniPose( *(pose_list[n]) ) ) );
 	}
-	res_map_ = res_map;
 
 	core::pose::Pose const & pose = *( pose_list[1] );
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
@@ -97,8 +103,6 @@ ChunkSet::ChunkSet( utility::vector1< core::pose::PoseOP > const & pose_list,
 			for ( Size j = 1; j <= rsd.natoms(); j++ )  atom_id_mask_[ core::id::AtomID( j, i ) ] = true;
 		}
 	}
-
-
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -107,24 +111,26 @@ ChunkSet::~ChunkSet() {}
 
 ///////////////////////////////////////////////////////////////////////
 void
-ChunkSet::insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index,toolbox::AllowInsertOP const & allow_insert ) const{
+ChunkSet::insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index,
+																	toolbox::AllowInsertCOP allow_insert ) const{
 
 	using namespace core::pose;
 	using namespace core::id;
 
 	core::pose::MiniPose const & scratch_pose ( *(mini_pose_list_[ chunk_pose_index ]) );
 
-	//  TR << "SCRATCH_POSE " << scratch_pose.sequence() << ' ' << scratch_pose.fold_tree() << std::endl;
-
 	std::map< AtomID, AtomID > atom_id_map = get_atom_id_map( pose, allow_insert );
+	std::map< AtomID, Size > atom_id_domain_map;
+	if ( !user_input() ) atom_id_domain_map = get_atom_id_domain_map_for_rosetta_library_chunk( atom_id_map, pose, *allow_insert );
 
-	core::pose::copydofs::copy_dofs( pose, scratch_pose, atom_id_map  );
+	core::pose::copydofs::copy_dofs( pose, scratch_pose,
+																	 atom_id_map, atom_id_domain_map );
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 std::map< id::AtomID, id::AtomID >
-ChunkSet::get_atom_id_map(  core::pose::Pose & pose, toolbox::AllowInsertOP const & allow_insert ) const{
+ChunkSet::get_atom_id_map(  core::pose::Pose & pose, toolbox::AllowInsertCOP allow_insert ) const{
 
 	std::map< id::AtomID, id::AtomID > atom_id_map;
 
@@ -151,6 +157,7 @@ ChunkSet::filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::At
 		AtomID const & source_atom_id = it->second;
 
 		std::map< AtomID, bool >::const_iterator it_mask = atom_id_mask_.find( source_atom_id );
+
 		if ( it_mask == atom_id_mask_.end() ) utility_exit_with_message( "Some problem with atom_id_mask in defining atom_id_map " );
 
 		if ( !it_mask->second ) continue; // this source_atom_id is not allowed by mask, probably came from a virtual phosphate.
@@ -160,6 +167,40 @@ ChunkSet::filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::At
 
 	atom_id_map = atom_id_map_new;
 
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// 'Rosetta library' domains are not user input, and they should not be put into
+// the pose if some atoms are user inputted. At this point, atom_id_map should only
+// contain atoms whose dofs might be affected by copy_dofs (filter_atom_id_with_mask better have
+// been run). So the atoms either contain user-inputted domains or rosetta domains.
+// This function sets up an atom-wise domain map with 0 at rosetta domains (moveable)
+//////////////////////////////////////////////////////////////////////////////////////////////
+std::map< core::id::AtomID, core::Size >
+ChunkSet::get_atom_id_domain_map_for_rosetta_library_chunk(
+   std::map< id::AtomID, id::AtomID > atom_id_map,
+	 pose::Pose const & , toolbox::AllowInsert const & allow_insert ) const
+{
+	using namespace core::id;
+	runtime_assert( !user_input() ); // we are a in rosetta library ChunkSet, not a user-inputted ChunkSet.
+
+	std::map< AtomID, Size > atom_id_domain_map;
+	bool found_rosetta_library_domain( false );
+
+	for ( std::map< AtomID, AtomID >::const_iterator	it=atom_id_map.begin(),
+					it_end = atom_id_map.end(); it != it_end; ++it ) {
+		AtomID const & insert_atom_id = it->first;
+		Size domain( allow_insert.get_domain( insert_atom_id ) );
+		if ( domain == ROSETTA_LIBRARY_DOMAIN ) {
+			atom_id_domain_map[ insert_atom_id ] = 0; // OK to insert here.
+			found_rosetta_library_domain = true;
+		} else {
+			runtime_assert( domain > 0 );
+			atom_id_domain_map[ insert_atom_id ] = domain; // not OK to insert here.
+		}
+	}
+	runtime_assert( found_rosetta_library_domain );
+	return atom_id_domain_map;
 }
 
 
@@ -174,6 +215,15 @@ ChunkSet::mini_pose( Size const idx ) const {
 RNA_ChunkLibrary::RNA_ChunkLibrary(){
 	// currently nothing.
 	chunk_coverage_ = 0.0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+RNA_ChunkLibrary::RNA_ChunkLibrary(	core::pose::Pose const & pose )
+{
+	utility::vector1< std::string > pdb_files_BLANK;
+	utility::vector1< std::string > silent_files_BLANK;
+	utility::vector1< core::Size > input_res_BLANK;
+	initialize_rna_chunk_library( pdb_files_BLANK, silent_files_BLANK, pose, input_res_BLANK );
 }
 
 
@@ -200,6 +250,20 @@ RNA_ChunkLibrary::RNA_ChunkLibrary(
 	initialize_rna_chunk_library( pdb_files, silent_files, pose, input_res );
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// constructor -- needs a list of silent files. Each silent file
+//  has solutions for a particular piece of the desired pose.
+RNA_ChunkLibrary::RNA_ChunkLibrary( protocols::toolbox::AllowInsertOP allow_insert,
+																		utility::vector1 < std::string > const & pdb_files,
+																		utility::vector1 < std::string > const & silent_files,
+																		core::pose::Pose const & pose,
+																		utility::vector1< core::Size > const & input_res ):
+	allow_insert_( allow_insert )
+{
+	initialize_rna_chunk_library( pdb_files, silent_files, pose, input_res );
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 // destructor
 RNA_ChunkLibrary::~RNA_ChunkLibrary(){}
@@ -218,7 +282,9 @@ RNA_ChunkLibrary::initialize_rna_chunk_library(
 
 	// allow_insert keeps track of where chunks are placed -- only allow
 	// fragment insertions *outside* these regions.
-	allow_insert_ = toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) );
+	if ( allow_insert_ == 0 )	{
+		allow_insert_ = toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) );
+	}
 	covered_by_chunk_.dimension( sequence_of_big_pose.size(), false );
 
 	utility::vector1< std::string > all_input_files;
@@ -338,7 +404,8 @@ RNA_ChunkLibrary::random_chunk_insertion( core::pose::Pose & pose ) const{
 
 //////////////////////////////////////////////////////////////////////////////
 void
-RNA_ChunkLibrary::update_allow_insert( ResMap const & res_map,
+RNA_ChunkLibrary::update_allow_insert(
+  ResMap const & res_map,
 	core::pose::Pose const & pose,
 	core::pose::Pose const & scratch_pose,
 	core::Size const domain_num )
@@ -368,13 +435,17 @@ RNA_ChunkLibrary::update_allow_insert( ResMap const & res_map,
 
 			bool at_chainbreak =  ( i_scratch == 1 || scratch_pose.fold_tree().is_cutpoint( i_scratch - 1 ) || (i - i_prev ) > 1 );
 
+			// awful, special case.
 			if ( rsd_i.is_RNA() && involved_in_phosphate_torsion( atomname ) && at_chainbreak ) continue; // don't trust phosphates at beginning of chains.
 
 			if ( scratch_rsd.has( atomname ) ) {
 				Size const & scratch_index = scratch_pose.residue( i_scratch ).atom_index( atomname );
-				if ( !scratch_rsd.is_virtual( scratch_index ) ) {
-					allow_insert_->set_domain( AtomID(j,i), domain_num);
-				}
+				AtomID const atom_id(j,i);
+				if ( scratch_rsd.is_virtual( scratch_index ) ) continue;
+				// special case: base pair steps should not overwrite user input domain
+				if ( domain_num == ROSETTA_LIBRARY_DOMAIN &&
+						 allow_insert_->get_domain( atom_id ) > 0 ) continue;
+				allow_insert_->set_domain( atom_id, domain_num);
 			}
 		}
 
@@ -386,7 +457,7 @@ RNA_ChunkLibrary::update_allow_insert( ResMap const & res_map,
 
 //////////////////////////////////////////////////////////////////////////////
 bool
-RNA_ChunkLibrary::check_fold_tree_OK( pose::Pose const & pose ){
+RNA_ChunkLibrary::check_fold_tree_OK( pose::Pose const & pose ) const {
 
 	for ( Size k = 1; k <= chunk_sets_.size(); k++ )  {
 		ChunkSet & chunk_set = *(chunk_sets_[k]);
@@ -404,8 +475,8 @@ RNA_ChunkLibrary::check_fold_tree_OK( pose::Pose const & pose ){
 
 //////////////////////////////////////////////////////////////////////////////
 bool
-ChunkSet::check_fold_tree_OK( pose::Pose const & pose ){
-
+ChunkSet::check_fold_tree_OK( pose::Pose const & pose ) const
+{
 	// Check where the chunk is mapped to in the big pose.
 	// There should be at least the same number of jumps in the big pose
 	//  as there are chains in the scratch_pose.
@@ -451,6 +522,8 @@ RNA_ChunkLibrary::figure_out_chunk_coverage()
 {
 
 	Size const tot_res( allow_insert_->nres() );
+	runtime_assert( covered_by_chunk_.size() == tot_res );
+
 	Size num_chunk_res( 0 );
 	Size num_other_res( 0 );
 
@@ -508,23 +581,41 @@ RNA_ChunkLibrary::initialize_random_chunks( pose::Pose & pose, bool const dump_p
 
 		// useful for tracking homology modeling: perhaps we can align to first chunk as well -- 3D alignment of Rosetta poses are
 		// arbitrarily set to origin (except in special cases with virtual residues...)
-		if ( n==1  /*&&  pose.residue( pose.total_residue() ).name3() != "VRT"*/ ) align_to_chunk( pose, chunk_set, chunk_index  );
-
+		if ( n == 1 && chunk_set.user_input()
+				 /*&&  pose.residue( pose.total_residue() ).name3() != "VRT"*/ ) {
+			align_to_chunk( pose, chunk_set, chunk_index  );
+		}
 		if ( dump_pdb ) pose.dump_pdb( "start_"+string_of(n)+".pdb" );
 
 	}
 
-	//exit( 0 );
+}
 
+
+///////////////////////////////////////////////////////////////////////
+Size
+RNA_ChunkLibrary::single_user_input_chunk() const
+{
+	Size user_input_chunk( 0 );
+	for ( Size n = 1; n <= chunk_sets_.size(); n++ ) {
+		ChunkSet const & chunk_set( *chunk_sets_[ n ] );
+		if ( chunk_set.user_input() &&  chunk_set.num_chunks() == 1 ) {
+			if ( user_input_chunk > 0 ) return 0; // more than one single user-input chunk
+			user_input_chunk = n;
+		}
+	}
+	return user_input_chunk;
 }
 
 ///////////////////////////////////////////////////////////////////////
-void
-RNA_ChunkLibrary::superimpose_to_first_chunk( pose::Pose & pose ) const{
-	runtime_assert( chunk_sets_.size() > 0 );
-	ChunkSet const & chunk_set( *chunk_sets_[ 1 ] );
-	align_to_chunk( pose, chunk_set,  1  );
-
+bool
+RNA_ChunkLibrary::superimpose_to_single_user_input_chunk( pose::Pose & pose ) const{
+	Size user_input_chunk = single_user_input_chunk();
+	if ( user_input_chunk > 0 ) {
+		align_to_chunk( pose, *(chunk_sets_[ user_input_chunk ]),  1  );
+		return true;
+	}
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -555,18 +646,15 @@ RNA_ChunkLibrary::set_allow_insert(toolbox::AllowInsertOP allow_insert ){
 
 //////////////////////////////////////////////////////////////////////////////
 void
-RNA_ChunkLibrary::setup_base_pair_step_chunks( pose::Pose const & pose,
+RNA_ChunkLibrary::setup_base_pair_step_chunks(
+  pose::Pose const & pose,
 	utility::vector1< BasePairStep > const & base_pair_steps,
-	BasePairStepLibrary const & base_pair_step_library,
-	toolbox::AllowInsertCOP allow_insert_original /* = 0 */){
-
+	BasePairStepLibrary const & base_pair_step_library )
+{
 	using namespace core::id;
 	using namespace core::pose;
 
-	if ( allow_insert_original == 0 ) allow_insert_original = allow_insert_->clone();
-
-	Size q( 1000 ); // heh heh, magic number.
-	if ( chunk_sets_.size() > 900 ) utility_exit_with_message( "hey update AllowInsert & RNA_ChunkLibrary to not use 999 as a magic number" );
+	if ( chunk_sets_.size() > ( ROSETTA_LIBRARY_DOMAIN - 1 ) ) utility_exit_with_message( "hey update AllowInsert & RNA_ChunkLibrary to not use magic numbers like 999 and 1000" );
 
 	for ( Size m = 1; m <= base_pair_steps.size(); m++ ) {
 
@@ -582,30 +670,37 @@ RNA_ChunkLibrary::setup_base_pair_step_chunks( pose::Pose const & pose,
 			}
 		}
 
-		if ( !allow_insert_original->get( named_atom_id_to_atom_id( NamedAtomID( " C1'", base_pair_step.i() ), pose ) ) )       continue;
-		if ( !allow_insert_original->get( named_atom_id_to_atom_id( NamedAtomID( " C1'", base_pair_step.i_next() ), pose ) ) )  continue;
-		if ( !allow_insert_original->get( named_atom_id_to_atom_id( NamedAtomID( " C1'", base_pair_step.j() ), pose ) ) )       continue;
-		if ( !allow_insert_original->get( named_atom_id_to_atom_id( NamedAtomID( " C1'", base_pair_step.j_next() ), pose  ) ) ) continue;
-
 		ResMap res_map;
 		res_map[ base_pair_step.i()      ] = 1;
 		res_map[ base_pair_step.i_next() ] = 2;
 		res_map[ base_pair_step.j()      ] = 3;
 		res_map[ base_pair_step.j_next() ] = 4;
 
+		// look that at least one base in this base pair step is moveable.
+		bool pair_moving( false );
+		for ( ResMap::const_iterator it = res_map.begin(); it != res_map.end(); it++ ) {
+			Size domain(  allow_insert_->get_domain( NamedAtomID( " C1'", it->first ), pose  ) );
+			if ( domain == 0 || domain == ROSETTA_LIBRARY_DOMAIN ) {
+				pair_moving = true; break;
+			}
+		}
+		if (!pair_moving) continue;
+
 		ChunkSetOP chunk_set( new ChunkSet( base_pair_step_library.mini_pose_list( base_pair_step_sequence ), res_map ) );
+		chunk_set->set_user_input( false );
 		chunk_sets_.push_back( chunk_set );
 
 		pose::Pose const & scratch_pose = *( base_pair_step_library.scratch_pose( base_pair_step_sequence ) );
 		check_res_map( res_map, scratch_pose, pose.sequence() );
 
-		q++;
-		update_allow_insert( res_map, pose, scratch_pose, q );
+
+		update_allow_insert( res_map, pose, scratch_pose, ROSETTA_LIBRARY_DOMAIN );
 	}
 
 	figure_out_chunk_coverage();
 
 }
+
 
 
 } //farna

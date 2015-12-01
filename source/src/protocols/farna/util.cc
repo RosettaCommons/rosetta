@@ -29,6 +29,7 @@
 #include <core/scoring/func/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
@@ -70,6 +71,7 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 
 using namespace core;
@@ -1537,7 +1539,7 @@ virtualize_bulges( core::pose::Pose & input_pose,
 
 		for ( Size seq_num = 1; seq_num <= total_res; seq_num++ ) {
 			if ( !input_pose.residue( seq_num ).is_RNA() ) continue; //Fang's electron density code
-			if ( allow_bulge_res_list.has_value( seq_num ) == false ) continue;
+			if ( !allow_bulge_res_list.has_value( seq_num ) ) continue;
 
 			if ( input_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 				if ( ! input_pose.residue( seq_num + 1 ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) { //consistency_check
@@ -1605,6 +1607,34 @@ virtualize_bulges( core::pose::Pose & input_pose,
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////
+core::scoring::ScoreFunctionOP
+get_rna_hires_scorefxn() {
+	core::scoring::ScoreFunctionOP scorefxn_;
+	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
+		scorefxn_ = core::scoring::get_score_function();
+	} else {
+		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
+	}
+	return scorefxn_;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+get_moving_res( core::pose::Pose const & pose,
+								protocols::toolbox::AllowInsertCOP allow_insert ) {
+
+	utility::vector1< Size > moving_res;
+
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		if ( allow_insert->get( n ) ) {
+			moving_res.push_back( n );
+		}
+	}
+
+	return moving_res;
+
+}
 
 } //farna
 } //protocols

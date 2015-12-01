@@ -82,12 +82,6 @@ public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FragmentLibrary();
 
-	//constructor!
-	//FragmentLibrary();
-
-	//destructor -- necessary?
-	//~FragmentLibrary();
-
 	core::Real get_fragment_torsion(
 		core::Size const num_torsion,
 		Size const which_frag,
@@ -131,16 +125,10 @@ public:
 		core::Size const position,
 		core::Size const size,
 		core::Size const type,
-		toolbox::AllowInsertOP allow_insert );
+		toolbox::AllowInsertCOP allow_insert ) const;
 
 	virtual bool
 	is_fullatom();
-
-	void read_vall_torsions( std::string const filename );
-
-
-	core::Real
-	torsions( core::Size const & i, core::Size const & j ) const { return vall_torsions_( i, j ); }
 
 	std::string
 	name( core::Size const & i ) const { return vall_name_( i ); }
@@ -152,16 +140,21 @@ public:
 	non_main_chain_sugar_coords_defined() const { return vall_non_main_chain_sugar_coords_defined_; }
 
 	core::Real
-	non_main_chain_sugar_coords( core::Size const & i, core::Size const & j, core::Size const & k ) const{ return vall_non_main_chain_sugar_coords_( i, j, k);}
+	non_main_chain_sugar_coords( core::Size const & i, core::Size const & j, core::Size const & k ) const { return vall_non_main_chain_sugar_coords_( i, j, k);}
+
+	core::Real
+	torsions( core::Size const & i, core::Size const & j ) const { return vall_torsions_( i, j ); }
 
 private:
+
+	void read_vall_torsions( std::string const filename );
 
 	void
 	pick_random_fragment(
 		TorsionSet & torsion_set,
 		std::string const RNA_string,
 		std::string const RNA_secstruct_string,
-		core::Size const type = MATCH_YR );
+		core::Size const type = MATCH_YR ) const;
 
 	void
 	pick_random_fragment(
@@ -169,14 +162,16 @@ private:
 		core::pose::Pose & pose,
 		core::Size const position,
 		core::Size const size,
-		core::Size const type = MATCH_YR );
+		core::Size const type = MATCH_YR ) const;
 
 	void
 	insert_fragment(
 		core::pose::Pose & pose,
 		Size const position,
 		protocols::farna::TorsionSet const & torsion_set,
-		toolbox::AllowInsertOP allow_insert );
+		toolbox::AllowInsertCOP allow_insert ) const;
+
+	void pick_fragment_library( SequenceSecStructPair const & key ) const;
 
 private:
 
@@ -196,11 +191,7 @@ private:
 	// Need to hold on to some fragment libraries. These
 	// will be picked on the fly when the code requires them.
 	//   Indexed by sequence, e.g., AAA, AGA, GUA ... or even RYR ...  or even NNN (totally generic!)
-	FragmentLibraryPointerMap fragment_library_pointer_map;
-
-	void pick_fragment_library( SequenceSecStructPair const & key );
-
-	void pick_random_fragment( FArray1D <core::Real> & RNA_torsions, std::string const RNA_string );
+	mutable FragmentLibraryPointerMap fragment_library_pointer_map;
 
 };
 

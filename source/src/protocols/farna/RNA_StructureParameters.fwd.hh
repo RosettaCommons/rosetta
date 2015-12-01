@@ -22,6 +22,7 @@ namespace farna {
 class RNA_StructureParameters;
 
 typedef utility::pointer::shared_ptr< RNA_StructureParameters > RNA_StructureParametersOP;
+typedef utility::pointer::shared_ptr< RNA_StructureParameters const > RNA_StructureParametersCOP;
 
 } //farna
 } //protocols

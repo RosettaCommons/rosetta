@@ -71,7 +71,9 @@ CopyDofMover::apply( core::pose::Pose & pose )
 		std::map< id::AtomID, Size > atom_id_domain_map = blank_atom_id_domain_map( pose );
 		CopyDofs copy_dofs( template_mini_pose_, atom_id_map, atom_id_domain_map );
 		copy_dofs.apply( pose );
-		if ( use_hash_ ) copy_dofs_info_[ pose_string_ ] = copy_dofs.copy_dofs_info();
+		if ( use_hash_ ) {
+			copy_dofs_info_[ pose_string_ ]  = copy_dofs.copy_dofs_info();
+		}
 	}
 
 }

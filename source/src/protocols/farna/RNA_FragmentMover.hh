@@ -46,17 +46,10 @@ namespace farna {
 class RNA_FragmentMover: public protocols::moves::Mover {
 
 public:
-	/// @brief Empty constructor
-	RNA_FragmentMover();
 
 	/// @brief Construct the protocol object given the RNA fragment library to use.
-	RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
-		protocols::toolbox::AllowInsertOP allow_insert );
-
-	// is this defunct now? I think so.
-	RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
-		ObjexxFCL::FArray1D<bool> const & allow_insert,
-		core::pose::Pose const & pose );
+	RNA_FragmentMover( RNA_Fragments const & all_rna_fragments,
+										 protocols::toolbox::AllowInsertCOP allow_insert );
 
 	/// @brief Copy constructor
 	RNA_FragmentMover(RNA_FragmentMover const & object_to_copy);
@@ -70,7 +63,7 @@ public:
 
 	virtual protocols::moves::MoverOP clone() const;
 
-	virtual protocols::moves::MoverOP fresh_instance() const;
+	//	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	core::Size
 	random_fragment_insertion( core::pose::Pose & pose, Size const & frag_size );
@@ -86,8 +79,8 @@ private:
 	void
 	update_insert_map( core::pose::Pose const & pose );
 
-	protocols::farna::RNA_FragmentsOP rna_fragments_;
-	protocols::toolbox::AllowInsertOP allow_insert_;
+	protocols::farna::RNA_Fragments const & rna_fragments_;
+	protocols::toolbox::AllowInsertCOP allow_insert_;
 
 	std::map < Size, Size > insert_map_;
 	Size num_insertable_residues_;

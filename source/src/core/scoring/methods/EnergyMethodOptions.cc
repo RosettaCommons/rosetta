@@ -130,7 +130,7 @@ void EnergyMethodOptions::initialize_from_options() {
 	water_dielectric_= basic::options::option[basic::options::OptionKeys::score::water_dielectric]();
 	exclude_DNA_DNA_ = basic::options::option[basic::options::OptionKeys::dna::specificity::exclude_dna_dna](); // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	exclude_intra_res_protein_ = !basic::options::option[basic::options::OptionKeys::score::include_intra_res_protein]();
-	put_intra_into_total_ = basic::options::option[basic::options::OptionKeys::score::put_intra_into_total]();
+	put_intra_into_total( basic::options::option[basic::options::OptionKeys::score::put_intra_into_total]() );
 	geom_sol_interres_path_distance_cutoff_ = basic::options::option[basic::options::OptionKeys::score::geom_sol_interres_path_distance_cutoff]();
 	geom_sol_intrares_path_distance_cutoff_ = basic::options::option[basic::options::OptionKeys::score::geom_sol_intrares_path_distance_cutoff]();
 	intrares_elec_correction_scale_ = basic::options::option[ basic::options::OptionKeys::score::intrares_elec_correction_scale ]();

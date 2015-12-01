@@ -108,7 +108,7 @@ create_rna_vall_torsions_test( ){
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	utility::vector1 < std::string >  infiles  = option[ in::file::s ]();
-	std::string outfile  = option[ basic::options::OptionKeys::rna::vall_torsions ]();
+	std::string outfile  = option[ basic::options::OptionKeys::rna::farna::vall_torsions ]();
 	utility::vector1< core::Size > const exclude_res_list = option[exclude_res]();
 
 	if ( option[ out::file::o ].user() ) outfile = option[ out::file::o ](); // old syntax -- should deprecate.
@@ -643,7 +643,7 @@ void*
 my_main( void* )
 {
 	using namespace basic::options;
-	using namespace basic::options::OptionKeys::rna;
+	using namespace basic::options::OptionKeys::rna::farna;
 
 	if ( option[ jump_database ] ) {
 		create_bp_jump_database_test();
@@ -680,9 +680,9 @@ main( int argc, char * argv [] )
 		NEW_OPT( exclude_res, "Residues excluded for database creation (works for one file only)", blank_size_vector );
 		NEW_OPT( general_bps, "For bps_database, output base pair steps involving noncanonicals", false );
 		NEW_OPT( use_lores_base_pair_classification, "Use loose base-pair classifier (same as used in FARNA)", false );
-		option.add_relevant( basic::options::OptionKeys::rna::vall_torsions );
-		option.add_relevant( basic::options::OptionKeys::rna::jump_database );
-		option.add_relevant( basic::options::OptionKeys::rna::bps_database );
+		option.add_relevant( basic::options::OptionKeys::rna::farna::vall_torsions );
+		option.add_relevant( basic::options::OptionKeys::rna::farna::jump_database );
+		option.add_relevant( basic::options::OptionKeys::rna::farna::bps_database );
 
 
 		////////////////////////////////////////////////////////////////////////////

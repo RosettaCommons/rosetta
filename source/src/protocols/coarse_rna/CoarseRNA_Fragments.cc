@@ -142,7 +142,8 @@ CoarseRNA_Fragments::insert_fragment(
 	Size const & insert_res,
 	Size const & source_res,
 	Size const & frag_size,
-	protocols::toolbox::AllowInsertOP allow_insert ){
+	protocols::toolbox::AllowInsertCOP allow_insert ) const
+{
 
 	using namespace core::id;
 
@@ -169,7 +170,8 @@ CoarseRNA_Fragments::insert_fragment(
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void
-CoarseRNA_Fragments::find_source_positions( SequenceSecStructPair const & key ){
+CoarseRNA_Fragments::find_source_positions( SequenceSecStructPair const & key ) const
+{
 
 	using namespace protocols::farna;
 
@@ -230,7 +232,8 @@ Size
 CoarseRNA_Fragments::pick_random_fragment(
 	std::string const RNA_string,
 	std::string const RNA_secstruct_string,
-	Size const type ){
+	Size const type ) const
+{
 
 	std::string const RNA_string_local = protocols::farna::convert_based_on_match_type( RNA_string, type );
 
@@ -263,7 +266,8 @@ CoarseRNA_Fragments::pick_random_fragment(
 	core::pose::Pose & pose,
 	Size const position,
 	Size const size,
-	Size const type ){
+	Size const type ) const
+{
 
 	std::string const & RNA_sequence( pose.sequence() );
 	std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
@@ -282,7 +286,7 @@ CoarseRNA_Fragments::apply_random_fragment(
 	core::Size const position,
 	core::Size const size,
 	core::Size const type,
-	protocols::toolbox::AllowInsertOP allow_insert )
+	protocols::toolbox::AllowInsertCOP allow_insert ) const
 {
 	Size const source_res = pick_random_fragment( pose, position, size, type );
 	//  std::cout << "applying to fragment position " << position << " from source position " << source_res << std::endl;

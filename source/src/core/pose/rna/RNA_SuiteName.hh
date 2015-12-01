@@ -46,9 +46,9 @@ public:
 	Real dist;
 
 	RNA_SuiteAssignment(
-		std::string const name_in,
-		Real const suiteness_in,
-		Real const dist_in
+		std::string const & name_in,
+		Real const & suiteness_in,
+		Real const & dist_in
 	):
 		name( name_in ),
 		suiteness( suiteness_in ),
@@ -69,8 +69,8 @@ public:
 	utility::vector1<Real> torsion;
 
 	RNA_SuiteInfo(
-		std::string const name_in,
-		Size const classifier_in,
+		std::string const & name_in,
+		Size const & classifier_in,
 		utility::vector1<Real> const & torsion_in
 	):
 		name( name_in ),
@@ -91,7 +91,7 @@ public:
 
 	~RNA_SuiteName();
 
-	RNA_SuiteInfo name2suite( std::string const name ) const;
+	RNA_SuiteInfo name2suite( std::string const & name ) const;
 
 	RNA_SuiteAssignment assign(utility::vector1<Real> const & torsions_in) const;
 

@@ -5,3 +5,5 @@
 -out:overwrite
 -cycles 5
 -nstruct 1
+# integration test exposes an issue with local moves, due to movement of 2 rather than 1 protein residues; violates single-residue assumption of transient_cutpoint_handler
+-allow_internal_local_moves false

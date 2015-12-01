@@ -19,13 +19,13 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <core/types.hh>
 #include <core/id/DOF_ID.hh>
+#include <core/id/AtomID.hh>
+#include <core/kinematics/Jump.hh>
 #include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace pose {
 namespace copydofs {
-
-typedef utility::vector1< std::pair< id::DOF_ID, core::Real > > CopyDofsInfo;
 
 class CopyDofs;
 typedef utility::pointer::shared_ptr< CopyDofs > CopyDofsOP;

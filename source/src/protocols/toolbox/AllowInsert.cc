@@ -73,7 +73,7 @@ using core::id::NamedAtomID;
 namespace protocols {
 namespace toolbox {
 
-Size const FIXED_DOMAIN( 999 );
+//Size const FIXED_DOMAIN( 999 ); // now defined in CopyDofs.cc
 
 AllowInsert::AllowInsert( core::pose::Pose const & pose ):
 	nres_( pose.total_residue() ),
@@ -102,8 +102,6 @@ AllowInsert::operator=( AllowInsert const & src )
 	allow_insert_ = src.allow_insert_;
 	named_atom_id_map_ = src.named_atom_id_map_;
 	atom_ids_in_res_ = src.atom_ids_in_res_;
-
-	calculated_atom_id_domain_map_ = src.calculated_atom_id_domain_map_;
 
 	map_to_original_ = src.map_to_original_;
 
@@ -160,7 +158,6 @@ AllowInsert::initialize( core::pose::Pose const & pose )
 
 	}
 
-	calculate_atom_id_domain_map( pose );
 }
 
 //////////////////////////////////////////////////////////////////
@@ -370,11 +367,13 @@ AllowInsert::set_sugar( Size const & i,
 
 //////////////////////////////////////////////////////////////////
 void
-AllowInsert::show() {
+AllowInsert::show() const {
 	for ( Size i = 1; i <= nres_; i++ ) {
 		std::cout << "RES" << i;
 		for ( Size j = 1; j <= atom_ids_in_res_[ i ].size(); j++ ) {
-			std::cout << ' ' << I( 3, allow_insert_[ atom_ids_in_res_[ i ][ j ] ] );
+			std::map< core::id::AtomID, Size >::const_iterator iter( allow_insert_.find( atom_ids_in_res_[ i ][ j ] ) );
+			runtime_assert( iter != allow_insert_.end() );
+			std::cout << ' ' << I( 3, iter->second );
 		}
 		std::cout << std::endl;
 	}
@@ -382,14 +381,19 @@ AllowInsert::show() {
 
 //////////////////////////////////////////////////////////////////
 void
-AllowInsert::and_allow_insert(AllowInsertOP allow_insert_in ){
+AllowInsert::and_allow_insert( AllowInsertCOP other )
+{
 
 	for ( std::map< AtomID, Size >::iterator it = allow_insert_.begin(),
 			end = allow_insert_.end(); it != end; ++it ) {
 
+		AtomID const & atom_id       = it->first;
 		Size const & current_setting = it->second;
-		Size const & other_setting = allow_insert_in->get_domain( it->first );
 
+		std::map< AtomID, Size >::const_iterator iter( other->allow_insert_.find( atom_id ) );
+		runtime_assert( iter != other->allow_insert_.end() );;
+
+		Size const & other_setting   = iter->second;
 		if ( other_setting   > current_setting ) it->second = other_setting;
 
 	}
@@ -397,18 +401,13 @@ AllowInsert::and_allow_insert(AllowInsertOP allow_insert_in ){
 }
 
 //////////////////////////////////////////////////////////////////
-std::map< AtomID, Size > const &
-AllowInsert::calculated_atom_id_domain_map() {
-	return calculated_atom_id_domain_map_;
-}
-
-//////////////////////////////////////////////////////////////////
 void
-AllowInsert::calculate_atom_id_map( core::pose::Pose const & pose,
+AllowInsert::calculate_atom_id_map(
+	core::pose::Pose const & pose,
 	std::map< core::Size, core::Size > const & res_map,
 	core::kinematics::FoldTree const & scratch_fold_tree,
-	std::map< AtomID, AtomID > & atom_id_map  ){
-
+	std::map< AtomID, AtomID > & atom_id_map  ) const
+{
 	atom_id_map.clear();
 
 	std::map< core::Size, core::Size > in_source_res; //basically reverse of res_map.
@@ -445,17 +444,6 @@ AllowInsert::calculate_atom_id_map( core::pose::Pose const & pose,
 			if ( rsd_offset == +1 && scratch_fold_tree.is_cutpoint( source_pos   ) ) continue;
 			if ( rsd_offset == -1 && scratch_fold_tree.is_cutpoint( source_pos-1 ) ) continue;
 
-			// PUTTING IN MATT'S CRAZY OPTION FOR HOMOLOGY MODELING -- make this an option though!
-			//if ( true ){
-			//     if ( rsd_offset != 0) continue;
-			//    }
-
-			//    if ( source_pos + rsd_offset == 0 ) {
-			//     std::cout << pose.annotated_sequence( true ) << std::endl;
-			//     std::cout << "FAIL on Atom " << atom_id << "; ''original'' atom: " << original_atom_id << std::endl;
-			//     utility_exit_with_message( "mapping atom_id to rsd 0?" );
-			//    }
-
 			AtomID source_atom_id( source_atomno, source_pos + rsd_offset );
 
 			atom_id_map[ atom_id ] = source_atom_id;
@@ -472,6 +460,8 @@ AllowInsert::calculate_atom_id_map( core::pose::Pose const & pose,
 
 
 //////////////////////////////////////////////////////////////////
+// This is *really* specific to RNA. This basically assumes that the initial pose has no
+//  chainbreak variants and has pretty standard numbering scheme.
 void
 AllowInsert::renumber_after_variant_changes( core::pose::Pose const & pose ){
 
@@ -556,15 +546,15 @@ AllowInsert::renumber_after_variant_changes( core::pose::Pose const & pose ){
 	//  std::cout << std::endl;
 	// }
 
-	calculate_atom_id_domain_map( pose );
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-std::map< AtomID, Size > const &
-AllowInsert::calculate_atom_id_domain_map( core::pose::Pose const & pose ){
+std::map< AtomID, Size >
+AllowInsert::calculate_atom_id_domain_map( core::pose::Pose const & pose ) const
+{
 
-	calculated_atom_id_domain_map_.clear();
+	std::map< core::id::AtomID, Size > calculated_atom_id_domain_map;
 
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 
@@ -572,13 +562,13 @@ AllowInsert::calculate_atom_id_domain_map( core::pose::Pose const & pose ){
 
 			AtomID const atom_id( j, i );
 
-			calculated_atom_id_domain_map_[ atom_id ] = get_domain( atom_id );
+			calculated_atom_id_domain_map[ atom_id ] = get_domain( atom_id );
 
 		}
 
 	}
 
-	return calculated_atom_id_domain_map_;
+	return calculated_atom_id_domain_map;
 }
 
 //////////////////////////////////////////////////////////////////

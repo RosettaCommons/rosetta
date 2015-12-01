@@ -17,6 +17,7 @@
 #define INCLUDED_core_pose_copydofs_util_HH
 
 #include <core/pose/copydofs/CopyDofs.fwd.hh>
+#include <core/pose/copydofs/CopyDofsInfo.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
@@ -126,8 +127,9 @@ setup_atom_id_map_match_atom_names(
 
 ///////////////////////////////////////////////////////////////////
 void
-apply_dofs( pose::Pose & pose, CopyDofsInfo const & copy_dofs_info,
-	core::Real const dof_tolerance = 1.0e-5 );
+apply_dofs( pose::Pose & pose,
+						CopyDofsInfo const & copy_dofs_info,
+						core::Real const dof_tolerance = 1.0e-5 );
 
 std::map< id::AtomID, Size >
 blank_atom_id_domain_map( pose::Pose const & pose );

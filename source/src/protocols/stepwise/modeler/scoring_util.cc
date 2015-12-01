@@ -67,11 +67,12 @@ initialize_sample_scorefxn( core::scoring::ScoreFunctionCOP scorefxn,
 
 	ScoreFunctionOP sample_scorefxn;
 	std::string const & sample_weights = options->pack_weights();
-
 	if ( sample_weights.size() == 0 ) {
 		sample_scorefxn = scorefxn->clone();
 		/////////////////////////////////////////////////////
-		sample_scorefxn->set_weight( fa_rep, 0.12 ); // from RNA.
+		if ( !options->lores() ) {
+			sample_scorefxn->set_weight( fa_rep, 0.12 ); // from RNA.
+		}
 		sample_scorefxn->set_weight( linear_chainbreak, 0.0 ); // from RNA.
 		sample_scorefxn->set_weight( chainbreak, 0.0 ); // from RNA.
 		/////////////////////////////////////////////////////

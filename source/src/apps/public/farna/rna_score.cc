@@ -294,7 +294,7 @@ rna_score_test()
 
 	// if trying to compute stem RMSD
 	protocols::farna::RNA_StructureParameters parameters;
-	core::io::rna::RNA_DataReader rna_data_reader( option[OptionKeys::rna::data_file ]() );
+	core::io::rna::RNA_DataReader rna_data_reader( option[OptionKeys::rna::farna::data_file ]() );
 	RNA_ChemicalMappingEnergyOP rna_chemical_mapping_energy;
 	pose::Pose pose,start_pose;
 
@@ -331,7 +331,7 @@ rna_score_test()
 		}
 
 		if ( option[params_file].user() ) {
-			parameters.initialize(pose, option[params_file],
+			parameters.initialize_for_de_novo_protocol(pose, option[params_file],
 				basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
 				false /*ignore_secstruct*/ );
 			parameters.setup_base_pair_constraints( pose );
@@ -424,7 +424,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( full_model::cutpoint_open );
 		option.add_relevant( score::weights );
 		option.add_relevant( score::just_calc_rmsd );
-		option.add_relevant( OptionKeys::rna::data_file );
+		option.add_relevant( OptionKeys::rna::farna::data_file );
 		NEW_OPT( original_input, "If you want to rescore the poses using the original FullModelInfo from a SWM run, input those original PDBs here", blank_string_vector );
 		NEW_OPT( virtualize_free, "virtualize no-contact bases (and attached no-contact sugars/phosphates)", false );
 		NEW_OPT( params_file, "Input file for pairings", "" );

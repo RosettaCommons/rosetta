@@ -32,6 +32,7 @@
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueConnection.hh>
 
@@ -146,27 +147,29 @@ read_linker_file(
 }
 
 /// @brief function that parses the rna regions specified into a boolean array to be used by a RNA Fragment Mover Object
-ObjexxFCL::FArray1D_bool
+protocols::toolbox::AllowInsertOP
 set_moveable_rna(
 	pose::Pose & full_pose,
 	utility::vector1< std::pair < Size, Size > > & linker_rna
 )
 {
+	using namespace protocols::toolbox;
 	//FArray1D used to maintain RNA_FragmentMover compatability with other RNA protocols
-	ObjexxFCL::FArray1D_bool moveable_rna(full_pose.total_residue(), false);
+	AllowInsertOP allow_insert( new AllowInsert( full_pose ) );
 	for ( Size i = 1; i <= full_pose.total_residue(); ++i ) {
+		allow_insert->set( i, false );
 		if ( full_pose.residue_type(i).is_RNA() ) {
 			//If the residue is RNA and a linker range, set it as moveable, otherwise it will remain immobile
 			for ( Size ii = 1; ii <= linker_rna.size(); ++ii ) {
 				if ( i >= linker_rna[ii].first && i <= linker_rna[ii].second ) {
-					moveable_rna(i) = true;
+					allow_insert->set( i, true );
 					//If it's true for one linker range don't bother testing the following ranges
 					break;
 				}
 			}
 		}
 	}
-	return moveable_rna;
+	return allow_insert;;
 }
 
 
@@ -464,7 +467,7 @@ optimize_linkers_rna_fullatom_mode(
 	//Size outside_steps_stage2 ( 5 );
 
 	// Create a rna fragment mover, set its fragsize, and then do an initialization move
-	RNA_FragmentMoverOP rna_fragment_mover = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments, set_moveable_rna( full_pose, linker_rna), full_pose ) );
+	RNA_FragmentMoverOP rna_fragment_mover = RNA_FragmentMoverOP( new RNA_FragmentMover( *all_rna_fragments, set_moveable_rna( full_pose, linker_rna) ) );
 	rna_fragment_mover -> set_frag_size( Size(1) );
 	for ( Size i = 1; i <= rna_normalize_step; ++i ) {
 		rna_fragment_mover -> apply(full_pose);

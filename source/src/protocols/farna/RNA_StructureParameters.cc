@@ -15,10 +15,11 @@
 
 // Unit Headers
 #include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/farna/BasePairStepLibrary.hh>
 #include <protocols/farna/RNA_JumpLibrary.hh>
+#include <protocols/farna/RNA_LibraryManager.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/farna/RNA_SecStructInfo.hh>
-#include <protocols/farna/BasePairStepLibrary.hh>
 #include <protocols/toolbox/AllowInsert.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/data/RNA_DataInfo.hh>
@@ -27,6 +28,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/annotated_sequence.hh>
 #include <core/pose/rna/leontis_westhof_util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
@@ -147,19 +150,14 @@ RNA_StructureParameters::~RNA_StructureParameters() {}
 
 //////////////////////////////////////////////////////////////////
 void
-RNA_StructureParameters::initialize(
+RNA_StructureParameters::initialize_for_de_novo_protocol(
 	core::pose::Pose & pose,
 	std::string const rna_params_file,
 	std::string const jump_library_file,
 	bool const ignore_secstruct )
 {
 
-
 	if ( rna_params_file.length() > 0 ) read_parameters_from_file( rna_params_file );
-
-	if ( rna_pairing_list_.size() > 0 || chain_connections_.size() > 0 ) {
-		rna_jump_library_ = RNA_JumpLibraryOP( new RNA_JumpLibrary( jump_library_file) );
-	}
 
 	initialize_allow_insert( pose );
 
@@ -170,6 +168,57 @@ RNA_StructureParameters::initialize(
 	if ( virtual_anchor_attachment_points_.size() > 0 ) append_virtual_anchor( pose );
 
 	setup_virtual_phosphate_variants( pose );
+
+	if ( rna_pairing_list_.size() > 0 || chain_connections_.size() > 0 ) {
+		rna_jump_library_ = RNA_LibraryManager::get_instance()->rna_jump_library_cop( jump_library_file );
+	}
+
+}
+
+//////////////////////////////////////////////////////////////////
+/// @details following is for setup of RNA_FragmentMonteCarlo jobs
+///  that are encapsulated inside other protocols, like stepwise.
+/// Assumes that the pose already has a good fold-tree.
+void
+RNA_StructureParameters::initialize_from_pose( pose::Pose const & pose ) {
+	using namespace core::pose;
+	using namespace core::pose::full_model_info;
+
+	// following is pretty awful -- allow_insert makes use of atom indices for speed, and
+	//  some downstream applications (RNA_ChunkLibrary) assume that it was set up in a pose
+	//  without weird variants.
+	Pose pose_without_variants;
+	make_pose_from_sequence( pose_without_variants, pose.sequence(), pose.residue_type( 1 ).residue_type_set(), false /*auto_termini*/ );
+	if ( full_model_info_defined( pose ) ) { // contains domain information, fixed residues, etc.
+		FullModelInfoOP full_model_info = const_full_model_info( pose ).clone_info();
+		set_full_model_info( pose_without_variants, full_model_info  );
+	}
+	initialize_allow_insert( pose_without_variants );
+	allow_insert_->renumber_after_variant_changes( pose );
+	update_allow_insert_to_not_move_virtual_phosphates( pose ); // changes allow_insert but not pose
+	update_allow_insert_to_move_internal_phosphates( pose );
+
+	core::kinematics::FoldTree const & f( pose.fold_tree() );
+	for ( Size n = 1; n <= f.num_jump(); n++ ) {
+		Size const jump_pos1( f.upstream_jump_residue( n ) );
+		Size const jump_pos2( f.downstream_jump_residue( n ) );
+		if ( pose.residue_type( jump_pos1 ).is_RNA() &&
+				 pose.residue_type( jump_pos2 ).is_RNA() ) {
+			rna_pairing_list_.push_back( core::pose::rna::BasePair( jump_pos1, jump_pos2 ) /* note that edges are not specified*/ );
+			obligate_pairing_sets_.push_back( utility::tools::make_vector1( rna_pairing_list_.size() ) );
+		}
+	}
+
+	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+		if ( f.is_cutpoint( i ) ) {
+			if ( pose.residue_type( i ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ){
+				runtime_assert( pose.residue_type( i+1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) );
+				cutpoints_closed_.push_back( i );
+			} else {
+				cutpoints_open_.push_back( i );
+			}
+		}
+	}
 
 }
 
@@ -283,34 +332,29 @@ RNA_StructureParameters::get_stem_residues( core::pose::Pose const & pose ) cons
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_StructureParameters::initialize_allow_insert( core::pose::Pose & pose  )
+RNA_StructureParameters::initialize_allow_insert( core::pose::Pose const & pose )
 {
 
+	// AllowInsert can take advantage of pose's FullModelInfo, an object that
+	// handles all residue numberings, fixed residues, etc. for stepwise modeling
 	allow_insert_ = toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) );
 
-	if ( allow_insert_res_.size() > 0 ) {
+	if ( allow_insert_res_.size() > 0 ) { // this is a setting that comes from params files.
+		runtime_assert( !core::pose::full_model_info::full_model_info_defined( pose ) );
 		allow_insert_->set( false );
 		for ( Size n = 1; n <= allow_insert_res_.size(); n++ ) {
-
 			Size const i = allow_insert_res_[ n ];
 			allow_insert_->set( i, true );
-			// new -- make sure loops are moveable (& closeable!) at the 3'-endpoint
-			if ( i < pose.total_residue() ) allow_insert_->set_phosphate( i+1, pose, true );
-
 		}
+	} else if ( core::pose::full_model_info::full_model_info_defined( pose ) ){
 	} else {
 		allow_insert_->set( true );
 	}
 
-	//std::cout << "ALLOW_INSERT after INITIALIZE_ALLOW_INSERT " << std::endl;
-	//allow_insert_->show();
+	update_allow_insert_to_move_internal_phosphates( pose );
 
-	// We don't trust phosphates at the beginning of chains!
-	// Wait, this it total nonsense... captured by virtual phosphate stuff later on!
-	//  allow_insert_->set_phosphate( 1, pose, false );
-	// for ( Size i = 1; i <= cutpoints_open_.size(); i++ ) {
-	//  allow_insert_->set_phosphate( cutpoints_open_[i]+1, pose, false );
-	// }
+	//std::cout << "ALLOW_INSERT after INITIALIZE_ALLOW_INSERT " << std::endl;
+	//	allow_insert_->show();
 
 	// std::cout << "ALLOW_INSERT! ALLOW_INSERT! ALLOW_INSERT!" << std::endl;
 	// for (Size i = 1; i <= pose.total_residue(); i++ ){
@@ -321,6 +365,22 @@ RNA_StructureParameters::initialize_allow_insert( core::pose::Pose & pose  )
 
 
 }
+
+//////////////////////////////////////
+void
+RNA_StructureParameters::update_allow_insert_to_move_internal_phosphates( pose::Pose const & pose ) {
+	// new -- make sure loops are moveable (& closeable!) at the 3'-endpoint
+	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+		if ( pose.residue_type( i   ).is_RNA() &&
+				 pose.residue_type( i+1 ).is_RNA() &&
+				 allow_insert_->get_domain( id::NamedAtomID( " C1'", i ), pose ) == 0 &&
+				 !pose.residue_type( i+1 ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) {
+		  allow_insert_->set_phosphate( i+1, pose, true );
+		}
+	}
+}
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
@@ -634,6 +694,7 @@ RNA_StructureParameters::add_new_RNA_jump(
 	Size const & which_jump,
 	bool & success ) const
 {
+
 	kinematics::FoldTree fold_tree( pose.fold_tree() ); //Make a copy.
 
 	Size const jump_pos1( fold_tree.upstream_jump_residue( which_jump ) );
@@ -681,6 +742,7 @@ RNA_StructureParameters::add_new_RNA_jump(
 	bool const forward2 = check_forward_backward( pose, jump_pos2 );
 
 	std::string atom_name1, atom_name2;
+	runtime_assert( rna_jump_library_ != 0 );
 	kinematics::Jump const new_jump = rna_jump_library_->get_random_base_pair_jump(
 		pose.residue(jump_pos1).name1(),
 		pose.residue(jump_pos2).name1(),
@@ -792,7 +854,7 @@ RNA_StructureParameters::insert_base_pair_jumps( pose::Pose & pose, bool & succe
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_StructureParameters::setup_fold_tree_and_jumps_and_variants( pose::Pose & pose )
+RNA_StructureParameters::setup_fold_tree_and_jumps_and_variants( pose::Pose & pose ) const
 {
 	setup_jumps( pose );
 	setup_chainbreak_variants( pose );
@@ -805,7 +867,7 @@ RNA_StructureParameters::setup_fold_tree_and_jumps_and_variants( pose::Pose & po
 
 ///////////////////////////////////////////////////////////////
 void
-RNA_StructureParameters::setup_jumps( pose::Pose & pose )
+RNA_StructureParameters::setup_jumps( pose::Pose & pose ) const
 {
 
 	///////////////////////////////////////////////////////////
@@ -1069,7 +1131,7 @@ RNA_StructureParameters::fill_in_default_jump_atoms( kinematics::FoldTree & f, p
 
 ///////////////////////////////////////////////////////////////
 void
-RNA_StructureParameters::setup_chainbreak_variants( pose::Pose & pose )
+RNA_StructureParameters::setup_chainbreak_variants( pose::Pose & pose ) const
 {
 
 	pose::Pose pose_copy = pose;
@@ -1101,13 +1163,19 @@ RNA_StructureParameters::setup_chainbreak_variants( pose::Pose & pose )
 void
 RNA_StructureParameters::setup_virtual_phosphate_variants( pose::Pose & pose )
 {
+	add_virtual_phosphate_variants( pose ); //changes pose, but not allow_insert
+	update_allow_insert_to_not_move_virtual_phosphates( pose ); // changes allow_insert but not pose
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_StructureParameters::add_virtual_phosphate_variants( pose::Pose & pose ) const
+{
 	using namespace id;
 	using namespace chemical;
 
-	if ( pose.residue( 1 ).is_RNA() ) {
-		if ( ! pose.residue_type( 1 ).has_variant_type( VIRTUAL_PHOSPHATE) ) pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, 1  );
-		allow_insert_->set_phosphate( 1, pose, false );
-	}
+	if ( pose.residue( 1 ).is_RNA() )	 pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, 1  );
 
 	for ( Size i = 1; i <= cutpoints_open_.size(); i++ ) {
 
@@ -1118,19 +1186,28 @@ RNA_StructureParameters::setup_virtual_phosphate_variants( pose::Pose & pose )
 		}
 
 		if ( pose.residue_type( n   ).has_variant_type( CUTPOINT_LOWER ) ||
-				pose.residue_type( n+1 ).has_variant_type( CUTPOINT_UPPER ) ) {
+				 pose.residue_type( n+1 ).has_variant_type( CUTPOINT_UPPER ) ) {
 			utility_exit_with_message( "conflicting cutpoint_open & cutpoint_closed" );
 		}
 
 		if ( pose.residue_type( n+1 ).is_RNA() ) {
 			if ( ! pose.residue_type( n+1 ).has_variant_type( VIRTUAL_PHOSPHATE) ) pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, n+1  );
-			allow_insert_->set_phosphate( n+1, pose, false );
 		}
 
 	}
+}
 
+////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_StructureParameters::update_allow_insert_to_not_move_virtual_phosphates( pose::Pose const & pose )
+{
+	using namespace chemical;
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		if ( pose.residue_type( n ).has_variant_type( VIRTUAL_PHOSPHATE ) ) {
+			allow_insert_->set_phosphate( n, pose, false );
+		}
+	}
 	allow_insert_->renumber_after_variant_changes( pose );
-
 }
 
 /////////////////////////////////////////////////////////
@@ -1239,7 +1316,7 @@ RNA_StructureParameters::check_base_pairs( pose::Pose & pose ) const
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_StructureParameters::setup_base_pair_constraints( core::pose::Pose & pose )
+RNA_StructureParameters::setup_base_pair_constraints( core::pose::Pose & pose ) const
 {
 	using namespace core::id;
 
@@ -1297,11 +1374,11 @@ RNA_StructureParameters::set_allow_insert(toolbox::AllowInsertOP allow_insert_in
 
 ////////////////////////////////////////////////////////////////////////////////////////
 toolbox::AllowInsertOP
-RNA_StructureParameters::allow_insert(){ return allow_insert_; }
+RNA_StructureParameters::allow_insert() const { return allow_insert_; }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_StructureParameters::set_jump_library( RNA_JumpLibraryOP rna_jump_library )
+RNA_StructureParameters::set_jump_library( RNA_JumpLibraryCOP rna_jump_library )
 {
 	rna_jump_library_ = rna_jump_library;
 }

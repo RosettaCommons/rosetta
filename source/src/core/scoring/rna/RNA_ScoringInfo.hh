@@ -52,6 +52,8 @@ public:
 
 	RNA_ScoringInfo( RNA_ScoringInfo const & src );
 
+	~RNA_ScoringInfo(){};
+
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
@@ -150,6 +152,9 @@ rna_scoring_info_from_pose( pose::Pose const & pose );
 
 RNA_ScoringInfo &
 nonconst_rna_scoring_info_from_pose( pose::Pose & pose );
+
+void
+clear_rna_scoring_info( pose::Pose & pose );
 
 
 } //rna

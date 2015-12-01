@@ -11,6 +11,7 @@
 
 #include <protocols/toolbox/AllowInsert.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/copydofs/CopyDofs.hh> // for FIXED_DOMAIN (999)
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -20,8 +21,6 @@
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-
-//XRW2 suggestion: refactor to protocols/toolbox
 
 // C++ Headers
 #include <map>
@@ -34,6 +33,8 @@
 namespace protocols {
 namespace toolbox {
 
+using core::pose::copydofs::FIXED_DOMAIN;
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Contains a map of each atom to a "domain":
@@ -41,8 +42,6 @@ namespace toolbox {
 //   1,2... = domain occupied by a predefined "chunk". Don't shift relative atom
 //              positions within each domain.
 //   999    = (FIXED) part of a user-defined fixed domain.
-
-extern core::Size const FIXED_DOMAIN;
 
 class AllowInsert : public utility::pointer::ReferenceCount {
 public:
@@ -97,7 +96,7 @@ public:
 	set_domain( Size const & setting  );
 
 	void
-	and_allow_insert(AllowInsertOP allow_insert_in );
+	and_allow_insert(AllowInsertCOP allow_insert_in );
 
 	core::Size nres() const{ return nres_;}
 
@@ -132,13 +131,10 @@ public:
 	set( bool const & setting  );
 
 	void
-	show();
+	show() const;
 
-	std::map< core::id::AtomID, Size > const &
-	calculated_atom_id_domain_map();
-
-	std::map< core::id::AtomID, Size > const &
-	calculate_atom_id_domain_map( core::pose::Pose const & pose );
+	std::map< core::id::AtomID, Size >
+	calculate_atom_id_domain_map( core::pose::Pose const & pose ) const;
 
 	void
 	renumber_after_variant_changes( core::pose::Pose const & pose );
@@ -148,7 +144,7 @@ public:
 		core::pose::Pose const & pose,
 		std::map< core::Size, core::Size > const & res_map,
 		core::kinematics::FoldTree const & scratch_fold_tree,
-		std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
+		std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
 
 	void
 	set_force_ideal_chainbreak( bool const & setting ){ force_ideal_chainbreak_ = setting; }
@@ -171,8 +167,6 @@ private:
 	std::map< core::id::AtomID, Size > allow_insert_;
 	std::map< core::id::NamedAtomID, core::id::AtomID > named_atom_id_map_;
 	utility::vector1< utility::vector1< core::id::AtomID > > atom_ids_in_res_;
-
-	std::map< core::id::AtomID, Size > calculated_atom_id_domain_map_;
 
 	std::map< core::id::AtomID, core::id::AtomID > map_to_original_;
 

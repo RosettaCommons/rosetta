@@ -193,6 +193,12 @@ virtualize_bulges( core::pose::Pose & input_pose,
 	bool const allow_consecutive_bulges,
 	bool const verbose );
 
+core::scoring::ScoreFunctionOP
+get_rna_hires_scorefxn();
+
+utility::vector1< core::Size >
+get_moving_res( core::pose::Pose const & pose,
+								protocols::toolbox::AllowInsertCOP allow_insert );
 
 } //farna
 } //protocols

@@ -46,6 +46,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
+#include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/loop_graph/LoopGraph.hh>
 
@@ -456,6 +457,39 @@ reroot_based_on_full_model_info( pose::Pose & pose,
 		cutpoint_open_in_full_model, working_res );
 }
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+Size
+get_definite_terminal_root( pose::Pose const & pose,
+														utility::vector1< Size > const & partition_res /* should not be empty */,
+														utility::vector1< Size > const & res_list,
+														utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
+														utility::vector1< Size > const & cutpoint_open_in_full_model,
+														utility::vector1< Size > const & working_res ){
+	for ( Size n = 1; n <= partition_res.size(); n++ ) {
+		Size const i = partition_res[ n ];
+		if ( !pose.fold_tree().possible_root( i ) ) continue;
+		if ( definite_terminal_root( cutpoint_open_in_full_model, working_res, res_list, fixed_domain_map.size(), i ) ) {
+			return i;
+		}
+	}
+	return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+Size
+get_definite_terminal_root( pose::Pose const & pose,
+														utility::vector1< Size > const & partition_res /* should not be empty */ ) {
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+	utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
+	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+	utility::vector1< Size > const & working_res = full_model_info.working_res();
+	return get_definite_terminal_root( pose, partition_res,
+																		 res_list, fixed_domain_map, cutpoint_open_in_full_model, working_res );
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 reroot( pose::Pose & pose,
@@ -486,13 +520,8 @@ reroot( pose::Pose & pose,
 
 	// next preference: roots that are definitely terminal -- nothing will be built past them.
 	if ( new_root == 0 ) {
-		for ( Size n = 1; n <= root_partition_res_ordered.size(); n++ ) {
-			Size const i = root_partition_res_ordered[ n ];
-			if ( !pose.fold_tree().possible_root( i ) ) continue;
-			if ( definite_terminal_root( cutpoint_open_in_full_model, working_res, res_list, fixed_domain_map.size(), i ) ) {
-				new_root = i; break;
-			}
-		}
+		new_root = get_definite_terminal_root( pose, root_partition_res_ordered,
+																					 res_list, fixed_domain_map, cutpoint_open_in_full_model, working_res );
 	}
 
 	// if all else fails...
@@ -1155,6 +1184,7 @@ fix_up_jump_atoms_and_residue_type_variants( pose::Pose & pose_to_fix ) {
 	fix_up_jump_atoms( pose_to_fix );
 	fix_up_residue_type_variants( pose_to_fix );
 	update_constraint_set_from_full_model_info( pose_to_fix ); //atom numbers may have shifted around with variant changes.
+	core::scoring::rna::clear_rna_scoring_info( pose_to_fix );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -1615,6 +1645,12 @@ revise_root_and_moving_res( pose::Pose & pose, Size & moving_res /* note that th
 	if ( primary_domain_moving == 0 && primary_domain_root > 0 ) {
 		switch_moving_and_root_partitions = false;
 	} else if ( primary_domain_moving > 0 && primary_domain_root == 0 ) {
+		switch_moving_and_root_partitions = true;
+	} else if ( !get_definite_terminal_root( pose, moving_partition_res ) &&
+							 get_definite_terminal_root( pose, root_partition_res ) )  {
+		switch_moving_and_root_partitions = false;
+	} else if ( !get_definite_terminal_root( pose, root_partition_res ) &&
+ 							 get_definite_terminal_root( pose, moving_partition_res ) )  {
 		switch_moving_and_root_partitions = true;
 	} else {
 		// either both are fixed or both are free.

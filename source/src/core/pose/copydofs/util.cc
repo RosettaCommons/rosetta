@@ -288,21 +288,13 @@ setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong
 // specify dof_tolerance for speed -- changing dofs (even to the same
 // value) triggers pose refold which can take some time.
 //
-// Hey, what about jumps? -- rhiju, 2015
-//
 void
-apply_dofs( pose::Pose & pose, CopyDofsInfo const & copy_dofs_info,
-	core::Real const dof_tolerance /* = 1.0e-5*/ ){
-	for ( Size n = 1; n <= copy_dofs_info.size(); n++ ) {
+apply_dofs( pose::Pose & pose,
+						CopyDofsInfo  const & copy_dofs_info,
+						core::Real const dof_tolerance /* = 1.0e-5*/ ){
 
-		if ( dof_tolerance > 0.0 ) {
-			Real const dof_value_original = pose.dof( copy_dofs_info[n].first );
-			Real const dof_value_new      = copy_dofs_info[n].second;
-			if ( std::abs( dof_value_original - dof_value_new ) < dof_tolerance ) continue;
-		}
+	copy_dofs_info.apply_dofs( pose, dof_tolerance );
 
-		pose.set_dof( copy_dofs_info[n].first, copy_dofs_info[n].second );
-	}
 }
 
 /////////////////////////////////////////////////////////////////////

@@ -30,9 +30,14 @@ static THREAD_LOCAL basic::Tracer TR( "core.pose.copydofs.CopyDofs" );
 
 using namespace core;
 
+// atom_id_map        goes from big pose (target) into template pose (mini pose).
+// atom_id_domain_map goes over big pose.
+
 namespace core {
 namespace pose {
 namespace copydofs {
+
+Size const FIXED_DOMAIN( 999 );
 
 //Constructor
 CopyDofs::CopyDofs( pose::MiniPose const & template_pose,
@@ -63,7 +68,6 @@ CopyDofs::apply( pose::Pose & pose ){
 }
 
 ////////////////////////////////////////////////////////
-// Hey, what about jumps? -- rhiju, 2015
 void
 CopyDofs::figure_out_dofs( pose::Pose & pose ){
 	using namespace core::id;
@@ -180,16 +184,10 @@ CopyDofs::figure_out_dofs( pose::Pose & pose ){
 				std::cout << "OLD " << pose.jump( AtomID( j, i ) ) << std::endl;
 			}
 
-			//////////////////////////////////////////////////////////////
-			//////////////////////////////////////////////////////////////
-			// WARNING: NOT COMPLETE YET.
-			// Need to check atom_id_domain_map_ to make sure this is jump
-			//  is OK
-			//////////////////////////////////////////////////////////////
-			//////////////////////////////////////////////////////////////
-			pose.set_jump( AtomID( j, i ), jump );
-
-			if ( verbose ) std::cout << "NEW " << pose.jump( AtomID( j, i ) ) << std::endl;
+			if ( check_domain_map( atom_id_domain_map_, current_atom->id(), input_stub_atom1->id() ) ) {
+				copy_dofs_info_.push_back( std::make_pair( AtomID( j, i ), jump ) );
+				if ( verbose ) std::cout << "NEW " << pose.jump( AtomID( j, i ) ) << std::endl;
+			}
 
 			//    pose.dump_pdb( "after_jump_change.pdb" );
 			continue;
@@ -453,17 +451,18 @@ CopyDofs::get_scratch_atom_id( id::AtomID & other_scratch_atom_id,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-CopyDofs::check_domain_map( std::map< id::AtomID, Size > const & atom_id_domain_map,
+CopyDofs::check_domain_map(
+	std::map< id::AtomID, Size > const & atom_id_domain_map,
 	id::AtomID const & atom_id1,
-	id::AtomID const & atom_id2 ){
-
+	id::AtomID const & atom_id2 ) const
+{
 	if ( atom_id_domain_map.size() == 0 ) return true; //blank atom id domain map
 
 	std::map< id::AtomID, Size >::const_iterator it1 = atom_id_domain_map.find( atom_id1 );
 	std::map< id::AtomID, Size >::const_iterator it2 = atom_id_domain_map.find( atom_id2 );
 
-	Size domain1( 999 );
-	Size domain2( 999 );
+	Size domain1( FIXED_DOMAIN );
+	Size domain2( FIXED_DOMAIN );
 
 	if ( it1 != atom_id_domain_map.end() ) domain1 = it1->second;
 	if ( it2 != atom_id_domain_map.end() ) domain2 = it2->second;
@@ -473,7 +472,9 @@ CopyDofs::check_domain_map( std::map< id::AtomID, Size > const & atom_id_domain_
 	if ( domain2 == 0 )  return true; // domain "0" means OK to change.
 
 	//in different domains is OK.    [The only exception is the evil 999 --> code for a totally fixed atom.]
-	if ( domain1 < 999 && domain2 < 999 &&  domain1 != domain2 ) return true;
+	if ( domain1 < FIXED_DOMAIN &&
+			 domain2 < FIXED_DOMAIN &&
+			 domain1 != domain2 ) return true;
 
 	return false;
 
@@ -482,9 +483,11 @@ CopyDofs::check_domain_map( std::map< id::AtomID, Size > const & atom_id_domain_
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-CopyDofs::check_domain_map( std::map< id::AtomID, Size > const & atom_id_domain_map,
+CopyDofs::check_domain_map(
+  std::map< id::AtomID, Size > const & atom_id_domain_map,
 	utility::vector1< id::AtomID > const & atom_ids1,
-	utility::vector1< id::AtomID > const & atom_ids2 ){
+	utility::vector1< id::AtomID > const & atom_ids2 ) const
+{
 
 	if ( atom_id_domain_map.size() == 0 ) return true;
 

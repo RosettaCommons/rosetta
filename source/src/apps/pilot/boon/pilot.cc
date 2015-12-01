@@ -46,6 +46,7 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_KIC.hh>
 #include <protocols/farna/RNA_DeNovoProtocol.hh>
+#include <protocols/farna/RNA_DeNovoProtocolOptions.hh>
 #include <protocols/farna/RNA_Minimizer.hh>
 
 int main(int argc, char *argv[])
@@ -87,19 +88,9 @@ int main(int argc, char *argv[])
 		std::cout << rna_minimizer << std::endl;
 
 		/////////////////////////////////////RNA_DeNovoProtocol//////////////////////////////////////////////
-		Size const nstruct = 1;
-		std::string const silent_file = "output.txt";
-		bool const heat_structure( true );
-		bool const minimize_structure = false;
-		bool const relax_structure = false;
-		bool const is_allow_bulge = false;
-
-		protocols::farna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
-			silent_file,
-			heat_structure,
-			minimize_structure,
-			relax_structure,
-			is_allow_bulge );
+		protocols::farna::RNA_DeNovoProtocolOptionsOP rna_de_novo_protocol_options( new protocols::farna::RNA_DeNovoProtocolOptions );
+		rna_de_novo_protocol_options->set_silent_file( "output.txt" );
+		protocols::farna::RNA_DeNovoProtocol rna_de_novo_protocol( rna_de_novo_protocol_options );
 
 		std::cout << "\nPrint RNA_DeNovoProtocol:" << std::endl;
 		std::cout << rna_de_novo_protocol << std::endl;

@@ -32,7 +32,7 @@ RNA_Fragments::apply_random_fragment(
 	core::Size const /*position*/,
 	core::Size const /*size*/,
 	core::Size const /*type = MATCH_YR*/,
-	toolbox::AllowInsertOP  /*allow_insert*/ ){
+	toolbox::AllowInsertCOP  /*allow_insert*/ ) const {
 	std::cout << "Should not be in here! " << std::endl;
 }
 

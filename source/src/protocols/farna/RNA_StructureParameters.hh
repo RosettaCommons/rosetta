@@ -39,27 +39,36 @@ namespace farna {
 typedef utility::vector1< core::pose::rna::BasePair > RNA_BasePairList;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Object used in RNA_FragmentMonteCarlo to handle setup of pose & fold-tree, and
+///   jump changes.
 class RNA_StructureParameters : public utility::pointer::ReferenceCount {
 public:
 
 	//constructor
 	RNA_StructureParameters();
 	virtual ~RNA_StructureParameters();
+
+	/// @brief if pose already has desired fold-tree, cutpoints, etc., use this!
 	void
-	initialize(
+	initialize_from_pose( core::pose::Pose const & pose );
+
+	/// @brief "classic" setup, used in denovo protocol. Note: changes pose (virtualizes phosphate).
+	///    and requires later call of setup_fold_tree_and_jumps_and_variants
+	void
+	initialize_for_de_novo_protocol(
 		core::pose::Pose & pose,
 		std::string const rna_params_file,
 		std::string const jump_library_file,
 		bool const ignore_secstruct );
 
 	void
-	setup_fold_tree_and_jumps_and_variants( core::pose::Pose & pose );
+	setup_fold_tree_and_jumps_and_variants( core::pose::Pose & pose ) const;
 
 	bool
 	random_jump_change( core::pose::Pose & pose ) const;
 
 	toolbox::AllowInsertOP
-	allow_insert();
+	allow_insert() const;
 
 	void
 	set_allow_insert(toolbox::AllowInsertOP allow_insert );
@@ -83,7 +92,7 @@ public:
 	get_stem_residues(  core::pose::Pose const & pose ) const;
 
 	void
-	setup_base_pair_constraints( core::pose::Pose & pose );
+	setup_base_pair_constraints( core::pose::Pose & pose ) const;
 
 	void
 	setup_virtual_phosphate_variants( core::pose::Pose & pose );
@@ -104,6 +113,9 @@ public:
 	utility::vector1< BasePairStep >
 	get_noncanonical_base_pair_steps() const;
 
+	void
+	set_jump_library( RNA_JumpLibraryCOP rna_jump_library );
+
 private:
 
 	void
@@ -112,11 +124,17 @@ private:
 	void
 	override_secstruct( core::pose::Pose & pose );
 
+	void update_allow_insert_to_move_internal_phosphates( core::pose::Pose const & pose );
+
+	void add_virtual_phosphate_variants( core::pose::Pose & pose ) const;
+
+	void update_allow_insert_to_not_move_virtual_phosphates( core::pose::Pose const & pose );
+
 	void
 	append_virtual_anchor( core::pose::Pose & pose );
 
 	void
-	initialize_allow_insert( core::pose::Pose & pose  );
+	initialize_allow_insert( core::pose::Pose const & pose  );
 
 	void
 	get_pairings_from_line(
@@ -134,13 +152,10 @@ private:
 	read_parameters_from_file( std::string const & pairing_file );
 
 	void
-	setup_jumps( core::pose::Pose & pose );
+	setup_jumps( core::pose::Pose & pose ) const;
 
 	void
-	setup_chainbreak_variants( core::pose::Pose & pose );
-
-	void
-	set_jump_library( RNA_JumpLibraryOP rna_jump_library );
+	setup_chainbreak_variants( core::pose::Pose & pose ) const;
 
 	std::string const
 	read_secstruct_from_file( std::string const & rna_secstruct_file );
@@ -180,7 +195,7 @@ private:
 
 private:
 
-	RNA_JumpLibraryOP rna_jump_library_;
+	RNA_JumpLibraryCOP rna_jump_library_;
 	RNA_BasePairList rna_pairing_list_;
 
 	utility::vector1 < utility::vector1 <core::Size > > obligate_pairing_sets_;

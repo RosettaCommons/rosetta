@@ -38,7 +38,6 @@
 
 #include <utility/vector1.hh>
 
-
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 //
@@ -56,6 +55,8 @@
 namespace protocols {
 namespace farna {
 
+extern core::Size const ROSETTA_LIBRARY_DOMAIN;
+
 class ChunkSet : public utility::pointer::ReferenceCount  {
 public:
 
@@ -72,26 +73,35 @@ public:
 	~ChunkSet();
 
 	void
-	insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, protocols::toolbox::AllowInsertOP const & allow_insert ) const;
+	insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, protocols::toolbox::AllowInsertCOP allow_insert ) const;
 
 	Size
 	num_chunks() const{ return mini_pose_list_.size(); };
 
 	std::map< core::id::AtomID, core::id::AtomID >
-	get_atom_id_map(  core::pose::Pose & pose, protocols::toolbox::AllowInsertOP const & allow_insert ) const;
+	get_atom_id_map(  core::pose::Pose & pose, protocols::toolbox::AllowInsertCOP allow_insert ) const;
 
 	core::pose::MiniPoseOP const mini_pose( Size const idx ) const;
 
 	bool
-	check_fold_tree_OK( core::pose::Pose const & pose );
+	check_fold_tree_OK( core::pose::Pose const & pose ) const;
+
+	void set_user_input( bool const & setting ){ user_input_ = setting; }
+	bool user_input() const { return user_input_; }
 
 private:
+
+	std::map< core::id::AtomID, core::Size >
+	get_atom_id_domain_map_for_rosetta_library_chunk(
+												 std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
+												 core::pose::Pose const & pose, protocols::toolbox::AllowInsert const & allow_insert ) const;
 
 	void filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
 
 	utility::vector1< core::pose::MiniPoseOP > mini_pose_list_;
-	core::pose::ResMap res_map_;
+	core::pose::ResMap res_map_; // goes from big pose into chunk (mini) pose.
 	std::map< core::id::AtomID, bool > atom_id_mask_;
+	bool user_input_;
 
 };
 
@@ -115,6 +125,14 @@ public:
 		utility::vector1 < std::string > const & silent_files,
 		core::pose::Pose const & pose,
 		utility::vector1< core::Size > const & input_res );
+
+	RNA_ChunkLibrary( protocols::toolbox::AllowInsertOP allow_insert,
+										utility::vector1 < std::string > const & pdb_files,
+										utility::vector1 < std::string > const & silent_files,
+										core::pose::Pose const & pose,
+										utility::vector1< core::Size > const & input_res );
+
+	RNA_ChunkLibrary(	core::pose::Pose const & pose );
 
 	//destructor
 	~RNA_ChunkLibrary();
@@ -152,23 +170,26 @@ public:
 	void
 	initialize_random_chunks( core::pose::Pose & pose, bool const dump_pdb = false ) const;
 
-	toolbox::AllowInsertOP allow_insert(){ return allow_insert_; };
+	toolbox::AllowInsertOP allow_insert() const { return allow_insert_; };
 
 	void set_allow_insert(toolbox::AllowInsertOP allow_insert );
 
-	core::Real const & chunk_coverage() const{ return chunk_coverage_; };
+	core::Real const & chunk_coverage() const { return chunk_coverage_; };
 
-	void
-	superimpose_to_first_chunk( core::pose::Pose & pose ) const;
+	Size
+	single_user_input_chunk() const;
 
 	bool
-	check_fold_tree_OK( core::pose::Pose const & pose );
+	superimpose_to_single_user_input_chunk( core::pose::Pose & pose ) const;
+
+	bool
+	check_fold_tree_OK( core::pose::Pose const & pose ) const;
 
 	void
 	setup_base_pair_step_chunks( core::pose::Pose const & pose,
-		utility::vector1< BasePairStep > const & base_pair_steps,
-		BasePairStepLibrary const & base_pair_step_library,
-		toolbox::AllowInsertCOP allow_insert = 0 );
+															 utility::vector1< BasePairStep > const & base_pair_steps,
+															 BasePairStepLibrary const & base_pair_step_library );
+
 
 private:
 

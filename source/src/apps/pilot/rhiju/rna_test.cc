@@ -1566,185 +1566,6 @@ copy_rna_torsions( Size const new_pos, Size const src_pos, pose::Pose & new_pose
 }
 
 
-//////////////////////////////////////////////////////////////////////////////
-void
-rna_assemble_test() {
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::scoring;
-
-	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-
-	pose::Pose extended_pose;
-
-	core::sequence::Sequence fasta_sequence = *(core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]);
-	make_pose_from_sequence(
-		extended_pose,
-		fasta_sequence.sequence(),
-		*rsd_set );
-
-	dump_pdb( extended_pose, "extended.pdb");
-	pose::Pose pose = extended_pose;
-
-	///////////////////////////////
-	//Read in assemble_file
-	///////////////////////////////
-	std::string const assemble_filename = option[ assemble_file ];
-	utility::io::izstream data_stream( assemble_filename );
-
-	std::string pdb_file;
-	Size start, end;
-
-	utility::vector1 < std::string> pdb_files;
-	std::map < std::string, utility::vector1< std::pair< Size, Size > > > segments;
-
-	std::string line;
-
-	while (  getline(data_stream, line) ) {
-		std::istringstream line_stream( line );
-
-		line_stream >> pdb_file;
-		pdb_files.push_back( pdb_file );
-
-		while ( !line_stream.fail() ) {
-			line_stream >> start >> end;
-			if ( !line_stream.fail() ) segments[ pdb_file ].push_back( std::make_pair(start, end) );
-		}
-
-	}
-
-	FArray1D <bool> allow_insert( pose.total_residue(), true );
-
-	// Just a check.
-	ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
-
-	////////////////////////////////////////////////////////
-	// Read in individual PDBs and copy in torsions
-	////////////////////////////////////////////////////////
-	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
-		pose::Pose input_pose;
-		import_pose::pose_from_pdb( input_pose, *rsd_set, pdb_files[n] );
-		/////////////////////////////////////////
-		protocols::farna::ensure_phosphate_nomenclature_matches_mini( input_pose );
-		/////////////////////////////////////////
-
-		dump_pdb( input_pose, "temp.pdb" );
-
-		////////////////////////////////////
-		//Set up mapping
-		////////////////////////////////////
-		std::map <Size, Size > sequence_map;
-		Size count( 0 );
-		utility::vector1< std::pair< Size, Size > >  const & my_segments( segments[ pdb_files[n] ] );
-		for ( Size m = 1; m <= my_segments.size(); m++ ) {
-			start = (my_segments[m]).first;
-			end   = (my_segments[m]).second;
-			for ( Size i = start; i <= end; i++ ) {
-				count++;
-				sequence_map[ count ] = i;
-
-				if ( i > start && i < end ) allow_insert( i ) = false;
-
-			}
-		}
-
-		assert( count == input_pose.total_residue() );
-
-		////////////////////////////////////////////////////////
-		// Set fold tree to include new cutpoint, etc.
-		// Setup chainbreak residues?
-		////////////////////////////////////////////////////////
-		core::pose::rna::figure_out_reasonable_rna_fold_tree( input_pose );
-
-		kinematics::FoldTree f( pose.fold_tree() );
-		kinematics::FoldTree f_input( input_pose.fold_tree() );
-		Size const initial_num_jump = pose.num_jump();
-
-		std::cout <<  f << std::endl;
-		std::cout <<  f_input << std::endl;
-
-		for ( Size m = 1; m <= f_input.num_jump(); m++ ) {
-			Size const jump1 = sequence_map[ f_input.upstream_jump_residue(m) ];
-			Size const jump2 = sequence_map[ f_input.downstream_jump_residue(m) ];
-			Size const cutpt = sequence_map[ f_input.cutpoint(m) ];
-			std::cout << "Adding jump: " << jump1 << " " << jump2 << " " << cutpt << std::endl;
-			f.new_jump( jump1, jump2, cutpt );
-
-			conformation::Residue const & rsd1( pose.residue(jump1) );
-			conformation::Residue const & rsd2( pose.residue(jump2) );
-			f.set_jump_atoms( initial_num_jump + m,
-				core::chemical::rna::chi1_torsion_atom( rsd1 ),
-				core::chemical::rna::chi1_torsion_atom( rsd2 ) );
-		}
-		pose.fold_tree( f );
-
-		////////////////////////////////////////////////////////
-		// Copy over jumps
-		////////////////////////////////////////////////////////
-		for ( Size m = 1; m <= f_input.num_jump(); m++ ) {
-			//This correspondence may not actually hold.
-			pose.set_jump( initial_num_jump + m , input_pose.jump( m ) );
-		}
-
-		//Force a refold?
-		(*lores_scorefxn)( pose );
-
-		////////////////////////////////////////////////////////
-		// Copy over torsions
-		////////////////////////////////////////////////////////
-		for ( count = 1; count <= input_pose.total_residue(); count++ ) {
-			Size const i = sequence_map[ count ];
-			std::cout <<  "   transfer to " << pose.residue(i).name1() << i <<
-				"   from   " << input_pose.residue(count).name1() << count << std::endl;
-			copy_rna_torsions( i, count, pose, input_pose );
-		}
-
-		//Force a refold?
-		(*lores_scorefxn)( pose );
-
-	}
-
-
-	// Dump pdb.
-	dump_pdb( pose, "assemble_start.pdb" );
-
-	setup_rna_chainbreak_constraints( pose );
-
-	setup_rna_base_pair_constraints( pose );
-
-	//Read in Torsion Library. Here go ahead and use my personal fragment class
-	// because other instances of fragments in mini-rosetta (e.g., loop-modeling or ab initio)
-	// are protein-specific!
-	Size const nstruct = option[ out::nstruct ];
-	Size const monte_carlo_cycles = option[ cycles ];
-	std::string const silent_file = option[ out::file::silent  ]();
-	protocols::farna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
-		silent_file,
-		false /*heat_structure*/, true /*minimize structure*/ );
-	rna_de_novo_protocol.set_monte_carlo_cycles( monte_carlo_cycles );
-	// rna_de_novo_protocol.set_native_pose( native_pose_OP );
-	// for (Size i = 1; i <= pose.total_residue(); i++ ) std::cout << "ALLOW_INSERT: " << i << "  " << allow_insert(i) << std::endl;
-
-
-	///////////////////
-	///////////////////
-	///////////////////
-	///////////////////
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!
-	///////////////////
-	// WARNING! TOOK OUT THIS ALLOW INSERT FUNCTIONALITY...
-	///////////////////
-	///////////////////
-	//rna_de_novo_protocol.set_allow_insert( allow_insert );
-
-	rna_de_novo_protocol.apply( pose );
-
-}
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1956,84 +1777,6 @@ rna_close_chainbreaks_test(){
 	pose.dump_pdb( "minimize.pdb" );
 
 }
-
-///////////////////////////////////////////////////////////////////////////////
-void
-rna_jumping_test(){
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::scoring;
-
-	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-
-	pose::PoseOP native_pose_OP( new pose::Pose );
-	pose::Pose & native_pose = *native_pose_OP;
-
-	pose::Pose extended_pose;
-	bool native_exists = false;
-	//Read in native if it exists.
-	if ( option[ in::file::native ].active() ) {
-		std::string native_pdb_file  = option[ in::file::native ];
-		import_pose::pose_from_pdb( native_pose, *rsd_set, native_pdb_file );
-		/////////////////////////////////////////
-		protocols::farna::ensure_phosphate_nomenclature_matches_mini( native_pose );
-		/////////////////////////////////////////
-		dump_pdb( native_pose, "native.pdb");
-		native_exists = true;
-	}
-
-
-	//Prepare starting structure from scratch --> read from fasta.
-	core::sequence::Sequence fasta_sequence = *(core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]);
-	make_pose_from_sequence(extended_pose,fasta_sequence.sequence(), *rsd_set );
-
-	dump_pdb( extended_pose, "extended.pdb");
-
-	std::cout << "Check it! EXTEND " << extended_pose.sequence() << std::endl;
-
-	Real rmsd( 0.0 );
-	if ( native_exists ) {
-		std::cout << "Check it! NATIVE " << native_pose.sequence() << std::endl;
-		rmsd = all_atom_rmsd( native_pose, extended_pose );
-	}
-
-	std::cout << "All atom rmsd: " << rmsd << std::endl;
-
-
-	/////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////
-	// The good stuff
-	/////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////
-	//Read in pose with ideal bond lengths and angles if it exists.
-
-	pose::Pose pose = extended_pose;
-
-	//Read in Torsion Library. Here go ahead and use my personal fragment class
-	// because other instances of fragments in mini-rosetta (e.g., loop-modeling or ab initio)
-	// are protein-specific!
-	Size const nstruct = option[ out::nstruct ];
-	Size const monte_carlo_cycles = option[ cycles ];
-	std::string const all_rna_fragments_file( option[ vall_torsions ] );
-	std::string const silent_file = option[ out::file::silent  ]();
-	protocols::farna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct, silent_file );
-	rna_de_novo_protocol.set_monte_carlo_cycles( monte_carlo_cycles );
-	rna_de_novo_protocol.set_dump_pdb( true );
-
-	// Do this next.
-	// rna_de_novo_protocol.set_constraints_file( option[ constraints_file ] );
-
-	if ( native_exists ) rna_de_novo_protocol.set_native_pose( native_pose_OP );
-
-	rna_de_novo_protocol.apply( pose );
-
-	dump_pdb( pose, "final.pdb" );
-
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -2914,7 +2657,7 @@ rna_filter_base_pairs_test()
 		iter->fill_pose( pose, *rsd_set );
 
 		if ( !init ) {
-			rna_structure_parameters.initialize( pose, rna_params_file, rna_jump_library_file, false /*ignore_secstruct*/ );
+			rna_structure_parameters.initialize_for_de_novo_protocol( pose, rna_params_file, rna_jump_library_file, false /*ignore_secstruct*/ );
 			init = true;
 		}
 
@@ -2987,7 +2730,7 @@ crazy_minimize_test()
 				std::string const rna_params_file =  option[ params_file ]();
 				std::string const jump_library_file( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) );
 				RNA_StructureParametersOP rna_structure_parameters_( new RNA_StructureParameters );
-				rna_structure_parameters_->initialize( pose, rna_params_file, jump_library_file, false /* ignore_secstruct */ );
+				rna_structure_parameters_->initialize_for_de_novo_protocol( pose, rna_params_file, jump_library_file, false /* ignore_secstruct */ );
 			} else if ( option[ crazy_fold_tree ] ) {
 				setup_crazy_fold_tree( pose, rsd_set );
 			} else {
@@ -4762,7 +4505,7 @@ rna_stats_test()
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
 	std::string const silent_file = option[ out::file::silent  ]();
-	protocols::farna::RNA_DeNovoProtocol rna_de_novo_protocol( 0 /*nstruct*/, silent_file );
+	protocols::farna::RNA_DeNovoProtocol rna_de_novo_protocol;
 
 	pose::PoseOP native_pose_OP( new pose::Pose );
 	pose::Pose & native_pose = *native_pose_OP;
@@ -5074,16 +4817,12 @@ my_main( void* )
 		rna_design_gap_test();
 	} else if ( option[ rna_idealize ] ) {
 		rna_idealize_test();
-	} else if ( option[ rna_assemble ] ) {
-		rna_assemble_test();
 	} else if ( option[ rna_torsion_check ] ) {
 		rna_torsion_check_test();
 	} else if ( option[ rna_stats ] ) {
 		rna_stats_test();
 	} else if ( option[ close_chainbreaks_test ] ) {
 		rna_close_chainbreaks_test();
-	} else if ( option[ rna_jumping ] ) {
-		rna_jumping_test();
 	} else if ( option[ create_benchmark ] ) {
 		create_rna_benchmark_test();
 	} else if ( option[ chain_closure_test ] ) {

@@ -9,6 +9,7 @@
 #ifndef INCLUDED_protocols_rna_RNA_JumpLibrary_HH
 #define INCLUDED_protocols_rna_RNA_JumpLibrary_HH
 
+#include <protocols/farna/RNA_JumpLibrary.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/types.hh>
 #include <core/chemical/rna/util.hh>
@@ -113,12 +114,11 @@ typedef std::map< BasePairType, RNA_PairingTemplateList > RNA_PairingTemplateMap
 ///////////////////////////////////////////////////////////////////////////////////
 class RNA_JumpLibrary : public utility::pointer::ReferenceCount {
 public:
+
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~RNA_JumpLibrary();
-	RNA_JumpLibrary( std::string const filename ){ read_jumps_from_file( filename ); };
 
-	void
-	read_jumps_from_file( std::string const & jump_library_filename );
+	RNA_JumpLibrary( std::string const & filename );
 
 	void
 	check_forward_backward(
@@ -143,20 +143,23 @@ public:
 private:
 
 	void
+	read_jumps_from_file() const;
+
+	void
 	save_in_jump_library( core::Size const reschar1, core::Size const reschar2,
 												char const edgechar1, char const edgechar2,
 												char const orientation,
 												std::string const & atom_name1,
 												std::string const & atom_name2,
 												core::kinematics::Jump const & jump1,
-												core::kinematics::Jump const & jump2 );
+												core::kinematics::Jump const & jump2 ) const;
 
+private:
 
-	RNA_PairingTemplateMap rna_pairing_template_map_;
+	std::string jump_library_filename_;
+	mutable RNA_PairingTemplateMap rna_pairing_template_map_;
 
 };
-
-typedef utility::pointer::shared_ptr< RNA_JumpLibrary > RNA_JumpLibraryOP;
 
 } //farna
 } //protocols

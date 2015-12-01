@@ -190,7 +190,7 @@ RNA_SuiteName::update_centers( utility::vector1< utility::vector1< Real > > cons
 
 /////////////////////////////////////////////////////////
 RNA_SuiteInfo
-RNA_SuiteName::name2suite( std::string const name ) const{
+RNA_SuiteName::name2suite( std::string const & name ) const{
 	for ( Size i = 1; i <= all_suites_.size(); ++i ) {
 		if ( all_suites_[i].name == name ) {
 			return all_suites_[i];
@@ -204,7 +204,7 @@ RNA_SuiteName::name2suite( std::string const name ) const{
 //Suite assignment codes
 Size
 RNA_SuiteName::get_classifier( utility::vector1< Real > const & torsions_in,
-	bool & is_outlier ) const {
+															 bool & is_outlier ) const {
 
 	utility::vector1< Real > torsions;
 	for ( Size n = 1; n <= torsions_in.size(); n++ ) torsions.push_back( numeric::nonnegative_principal_angle_degrees( torsions_in[ n ] ) );

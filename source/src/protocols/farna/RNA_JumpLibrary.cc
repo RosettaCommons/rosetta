@@ -66,16 +66,24 @@ RNA_PairingTemplate::RNA_PairingTemplate(
 	atom_name2_( atom_name2 )
 {}
 
+
+///@brief constructor
+RNA_JumpLibrary::RNA_JumpLibrary( std::string const & filename ):
+	jump_library_filename_( filename )
+{
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
+///@details following is not actually const, but involves lazy loading to a mutable map.
 void
-RNA_JumpLibrary::read_jumps_from_file( std::string const & jump_library_filename )
+RNA_JumpLibrary::read_jumps_from_file() const
 {
 
-	utility::io::izstream data( jump_library_filename );
-	tr << "Reading RNA jump library: " << jump_library_filename << std::endl;
+	utility::io::izstream data( jump_library_filename_ );
+	tr << "Reading RNA jump library: " << jump_library_filename_ << std::endl;
 
 	if ( data.fail() )  {
-		utility_exit_with_message(  "Bad jumpdata file? " + jump_library_filename );
+		utility_exit_with_message(  "Bad jumpdata file? " + jump_library_filename_ );
 	}
 
 	std::string line;
@@ -134,6 +142,7 @@ RNA_JumpLibrary::read_jumps_from_file( std::string const & jump_library_filename
 
 	}
 
+	runtime_assert( !rna_pairing_template_map_.empty() );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -170,6 +179,9 @@ RNA_JumpLibrary::get_random_base_pair_jump(
 	bool const forward1 /*= true*/,
 	bool const forward2 /*= true*/ ) const
 {
+
+	if ( rna_pairing_template_map_.empty() ) read_jumps_from_file();
+
 	// key for looking up the template geometry:
 	BasePairType key( aa1, aa2, edge1, edge2, orientation );
 	Size ntemplates = 0;
@@ -244,7 +256,7 @@ RNA_JumpLibrary::save_in_jump_library(
 	std::string const & atom_name2,
 	core::kinematics::Jump const & jump1,
 	core::kinematics::Jump const & jump2
-)
+) const
 {
 
 	RNA_PairingTemplateOP p( new RNA_PairingTemplate( jump1, jump2,  atom_name1, atom_name2) );

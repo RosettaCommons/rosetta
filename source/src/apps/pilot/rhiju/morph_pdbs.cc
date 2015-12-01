@@ -14,6 +14,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/copydofs/CopyDofsInfo.hh>
 #include <core/init/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/simple_moves/CopyDofMover.hh>
@@ -62,6 +63,7 @@ OPT_KEY( Integer, nsamples )
 //
 //////////////////////////////////////////////////////////////////
 
+typedef utility::vector1< std::pair< core::id::DOF_ID, core::Real > > DofsInfo;
 void
 morph_by_internal_coords(
 	pose::Pose & pose /* for viewing */,
@@ -84,10 +86,10 @@ morph_by_internal_coords(
 	// grab info on DOFs.
 	pose = *pose_start;
 	copy_dof_mover_start.apply(   pose );
-	pose::copydofs::CopyDofsInfo copy_dofs_info_start( copy_dof_mover_start.copy_dofs_info( pose ) );
+	DofsInfo copy_dofs_info_start( copy_dof_mover_start.copy_dofs_info( pose ).dofs_info() );;
 
 	copy_dof_mover_end.apply( pose );
-	pose::copydofs::CopyDofsInfo copy_dofs_info_end  ( copy_dof_mover_end.copy_dofs_info( pose ) );
+	DofsInfo copy_dofs_info_end  ( copy_dof_mover_end.copy_dofs_info( pose ).dofs_info() );
 
 	for ( Size n = 1; n <= num_samples; n++ ) {
 

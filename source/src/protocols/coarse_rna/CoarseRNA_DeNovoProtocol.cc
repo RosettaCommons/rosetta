@@ -149,7 +149,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 
 	initialize_tag_is_done();
 
-	rna_structure_parameters_->initialize( pose, rna_params_file_, jump_library_file_, true /*ignore_secstruct*/ );
+	rna_structure_parameters_->initialize_for_de_novo_protocol( pose, rna_params_file_, jump_library_file_, true /*ignore_secstruct*/ );
 
 	rna_data_reader_ = core::io::rna::RNA_DataReaderOP( new core::io::rna::RNA_DataReader( rna_data_file_ ) );
 	rna_data_reader_->fill_rna_data_info( pose ); // this seems repeated below? get rid of one instance?
@@ -165,7 +165,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	if ( dump_pdb_ ) { std::cout << "Allow insert: " << std::endl; rna_structure_parameters_->allow_insert()->show(); }
 
 	protocols::farna::RNA_FragmentsOP rna_fragments( new CoarseRNA_Fragments( all_rna_fragments_file_ ) );
-	frag_mover_ = protocols::farna::RNA_FragmentMoverOP( new protocols::farna::RNA_FragmentMover( rna_fragments, rna_structure_parameters_->allow_insert() ) );
+	frag_mover_ = protocols::farna::RNA_FragmentMoverOP( new protocols::farna::RNA_FragmentMover( *rna_fragments, rna_structure_parameters_->allow_insert() ) );
 
 	rna_data_reader_->fill_rna_data_info( pose );
 	initialize_constraints( pose );

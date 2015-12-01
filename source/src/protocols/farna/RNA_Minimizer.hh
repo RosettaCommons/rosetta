@@ -71,7 +71,7 @@ public:
 	void set_min_type( std::string const setting){ min_type_ = setting; }
 
 	void
-	set_allow_insert(toolbox::AllowInsertOP allow_insert  );
+	set_allow_insert(toolbox::AllowInsertCOP allow_insert  );
 
 	void
 	set_extra_minimize_res( utility::vector1< core::Size > setting );
@@ -80,14 +80,13 @@ public:
 	set_extra_minimize_chi_res( utility::vector1< core::Size > setting );
 
 	void
-	set_score_function( core::scoring::ScoreFunctionOP const & scorefxn );
+	set_score_function( core::scoring::ScoreFunctionCOP scorefxn );
 
 	core::scoring::ScoreFunctionOP const &
 	score_function() const{ return scorefxn_; }
 
 	core::scoring::ScoreFunctionOP
 	clone_scorefxn() const{ return scorefxn_->clone(); }
-
 
 private:
 

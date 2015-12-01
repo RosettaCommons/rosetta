@@ -21,6 +21,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
+#include <utility/exit.hh>
+
 using namespace core;
 using namespace core::scoring::func;
 using ObjexxFCL::format::F;

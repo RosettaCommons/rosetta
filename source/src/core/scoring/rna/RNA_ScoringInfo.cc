@@ -92,6 +92,16 @@ nonconst_rna_scoring_info_from_pose( pose::Pose & pose )
 }
 
 
+/// @details remove RNA scoring info object so that it will be re-initialized if necessary
+void
+clear_rna_scoring_info( pose::Pose & pose )
+{
+	pose.data().clear( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO );
+}
+
+
+
+
 } //rna
 } //scoring
 } //core

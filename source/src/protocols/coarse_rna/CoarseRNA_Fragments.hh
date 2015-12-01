@@ -32,6 +32,9 @@
 //  should be able to generate fragments of size 1, 2, or 3, with
 //  exact sequence matches, partial Y/R matches, or ignoring sequence.
 //
+// Note: This is has not really been maintained since about 2011.
+//
+//
 namespace protocols {
 namespace coarse_rna {
 
@@ -71,7 +74,7 @@ public:
 		core::Size const position,
 		core::Size const size,
 		core::Size const type,
-		protocols::toolbox::AllowInsertOP allow_insert );
+		protocols::toolbox::AllowInsertCOP allow_insert ) const;
 
 	virtual bool
 	is_fullatom();
@@ -84,23 +87,23 @@ private:
 		Size const & insert_res,
 		Size const & source_res,
 		Size const & frag_size,
-		protocols::toolbox::AllowInsertOP allow_insert );
+		protocols::toolbox::AllowInsertCOP allow_insert ) const;
 
 	void
-	find_source_positions( SequenceSecStructPair const & key );
+	find_source_positions( SequenceSecStructPair const & key ) const;
 
 	Size
 	pick_random_fragment(
 		std::string const RNA_string,
 		std::string const RNA_secstruct_string,
-		Size const type /* = MATCH_YR */);
+		Size const type /* = MATCH_YR */) const;
 
 	Size
 	pick_random_fragment(
 		core::pose::Pose & pose,
 		Size const position,
 		Size const size,
-		Size const type );
+		Size const type ) const;
 
 	void
 	initialize_frag_source_pose();
@@ -109,7 +112,7 @@ private:
 
 	std::string const frag_source_file_;
 	core::pose::MiniPoseOP frag_source_pose_;
-	std::map< SequenceSecStructPair, SourcePositionsOP > source_positions_map_;
+	mutable std::map< SequenceSecStructPair, SourcePositionsOP > source_positions_map_;
 
 	std::map< std::string, Size > coarse_rna_name_to_num_;
 };

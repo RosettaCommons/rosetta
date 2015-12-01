@@ -37,6 +37,9 @@
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
+// Basic headers
+#include <basic/Tracer.hh>
+
 #include <numeric/xyzVector.hh>
 
 #include <core/types.hh>
@@ -60,6 +63,8 @@ namespace farna {
 
 /// @details Auto-generated virtual destructor
 FragmentLibrary::~FragmentLibrary() {}
+
+static THREAD_LOCAL basic::Tracer TR( "protocols.rna.FullAtomRNA_Fragments" );
 
 using core::Size;
 using core::Real;
@@ -177,10 +182,9 @@ FullAtomRNA_Fragments::FullAtomRNA_Fragments( std::string const & filename):
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void
-FullAtomRNA_Fragments::pick_fragment_library( SequenceSecStructPair const & key ){
-
-	FragmentLibraryOP fragment_library_p;
-	fragment_library_p = FragmentLibraryOP( new FragmentLibrary );
+FullAtomRNA_Fragments::pick_fragment_library( SequenceSecStructPair const & key ) const
+{
+	FragmentLibraryOP fragment_library_p( new FragmentLibrary );
 
 	std::string const RNA_string = key.first;
 	std::string const RNA_secstruct_string = key.second;
@@ -254,8 +258,8 @@ FullAtomRNA_Fragments::pick_random_fragment(
 	TorsionSet & torsion_set,
 	std::string const RNA_string,
 	std::string const RNA_secstruct_string,
-	Size const type /* = MATCH_YR */){
-
+	Size const type /* = MATCH_YR */) const
+{
 	std::string const RNA_string_local = convert_based_on_match_type( RNA_string, type );
 
 	SequenceSecStructPair const key( std::make_pair( RNA_string_local, RNA_secstruct_string ) );
@@ -288,14 +292,13 @@ FullAtomRNA_Fragments::pick_random_fragment(
 	core::pose::Pose & pose,
 	Size const position,
 	Size const size,
-	Size const type /* = MATCH_YR */){
+	Size const type /* = MATCH_YR */) const
+{
 
 	std::string const & RNA_sequence( pose.sequence() );
 	std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
 
 	//Desired "secondary structure".
-	// TEMPORARY HACK!!!
-	//  std::string const RNA_secstruct( pose.total_residue(), 'X' );
 	std::string const & RNA_secstruct( protocols::farna::get_rna_secstruct( pose ) );
 	std::string const & RNA_secstruct_string = RNA_secstruct.substr( position - 1, size );
 
@@ -311,8 +314,8 @@ FullAtomRNA_Fragments::apply_random_fragment(
 	Size const position,
 	Size const size,
 	Size const type,
-	toolbox::AllowInsertOP allow_insert ){
-
+	toolbox::AllowInsertCOP allow_insert ) const
+{
 	TorsionSet torsion_set( size );
 	pick_random_fragment( torsion_set, pose, position, size, type );
 	insert_fragment( pose, position, torsion_set, allow_insert );
@@ -324,8 +327,8 @@ FullAtomRNA_Fragments::insert_fragment(
 	core::pose::Pose & pose,
 	Size const position,
 	protocols::farna::TorsionSet const & torsion_set,
-	toolbox::AllowInsertOP allow_insert
-)
+	toolbox::AllowInsertCOP allow_insert
+) const
 {
 	using namespace core::chemical::rna;
 	using namespace core::id;

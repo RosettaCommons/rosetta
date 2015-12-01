@@ -136,10 +136,10 @@ rna_fullatom_minimize_test()
 
 	// minimizer setup
 	protocols::farna::RNA_Minimizer rna_minimizer;
-	rna_minimizer.deriv_check( option[ OptionKeys::rna::deriv_check ]() );
-	rna_minimizer.use_coordinate_constraints( !option[ OptionKeys::rna::skip_coord_constraints]() );
-	rna_minimizer.skip_o2prime_trials( option[ OptionKeys::rna::skip_o2prime_trials] );
-	rna_minimizer.vary_bond_geometry( option[ OptionKeys::rna::vary_geometry ] );
+	rna_minimizer.deriv_check( option[ OptionKeys::rna::farna::deriv_check ]() );
+	rna_minimizer.use_coordinate_constraints( !option[ OptionKeys::rna::farna::skip_coord_constraints]() );
+	rna_minimizer.skip_o2prime_trials( option[ OptionKeys::rna::farna::skip_o2prime_trials] );
+	rna_minimizer.vary_bond_geometry( option[ OptionKeys::rna::farna::vary_geometry ] );
 
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
@@ -176,7 +176,7 @@ rna_fullatom_minimize_test()
 
 		RNA_StructureParameters parameters;
 		if ( option[params_file].user() ) {
-			parameters.initialize(
+			parameters.initialize_for_de_novo_protocol(
 				pose, option[params_file],
 				basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
 				false /*ignore_secstruct*/
@@ -285,10 +285,10 @@ main( int argc, char * argv [] )
 
 		utility::vector1< Size > blank_size_vector;
 
-		option.add_relevant( OptionKeys::rna::vary_geometry );
-		option.add_relevant( OptionKeys::rna::skip_coord_constraints );
-		option.add_relevant( OptionKeys::rna::skip_o2prime_trials );
-		option.add_relevant( OptionKeys::rna::deriv_check );
+		option.add_relevant( OptionKeys::rna::farna::vary_geometry );
+		option.add_relevant( OptionKeys::rna::farna::skip_coord_constraints );
+		option.add_relevant( OptionKeys::rna::farna::skip_o2prime_trials );
+		option.add_relevant( OptionKeys::rna::farna::deriv_check );
 		option.add_relevant( OptionKeys::constraints::cst_fa_file );
 		option.add_relevant( in::file::minimize_res );
 		option.add_relevant( score::weights );

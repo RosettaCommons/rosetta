@@ -108,6 +108,12 @@ public:
 	void set_use_packer_instead_of_rotamer_trials( bool const & setting ){ use_packer_instead_of_rotamer_trials_ = setting; }
 	bool use_packer_instead_of_rotamer_trials() const{ return use_packer_instead_of_rotamer_trials_; }
 
+	void set_lores( bool const & setting ){ lores_ = setting; }
+	bool lores() const{ return lores_; }
+
+	void set_verbose_sampler( bool const & setting ){ verbose_sampler_ = setting; }
+	bool verbose_sampler() const{ return verbose_sampler_; }
+
 protected:
 
 	void
@@ -135,6 +141,8 @@ private:
 	bool vary_rna_bond_geometry_;
 	bool vary_polar_hydrogen_geometry_;
 	bool use_packer_instead_of_rotamer_trials_;
+	bool lores_;
+	bool verbose_sampler_;
 	std::string sampler_silent_file_;
 
 };

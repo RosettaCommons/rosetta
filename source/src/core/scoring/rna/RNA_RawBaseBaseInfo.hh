@@ -45,6 +45,8 @@ public:
 
 	RNA_RawBaseBaseInfo(): calculated_( false ) {};
 
+	~RNA_RawBaseBaseInfo(){};
+
 	RNA_RawBaseBaseInfo( RNA_RawBaseBaseInfo const & src );
 
 	basic::datacache::CacheableDataOP
