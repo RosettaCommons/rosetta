@@ -268,7 +268,7 @@ RNA_JumpLibrary::save_in_jump_library(
 	// Save to template lists with wildcards ('X') too.
 	for ( Size i = 0; i <= 1; i++ ) {
 
-	 	BaseEdge const edge1_temp = i ? edge1 : ANY_BASE_EDGE;
+		BaseEdge const edge1_temp = i ? edge1 : ANY_BASE_EDGE;
 
 		for ( Size j = 0; j <= 1; j++ ) {
 

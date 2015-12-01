@@ -290,8 +290,8 @@ setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong
 //
 void
 apply_dofs( pose::Pose & pose,
-						CopyDofsInfo  const & copy_dofs_info,
-						core::Real const dof_tolerance /* = 1.0e-5*/ ){
+	CopyDofsInfo  const & copy_dofs_info,
+	core::Real const dof_tolerance /* = 1.0e-5*/ ){
 
 	copy_dofs_info.apply_dofs( pose, dof_tolerance );
 

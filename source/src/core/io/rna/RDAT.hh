@@ -138,8 +138,8 @@ private:
 
 	void
 	fill_if_empty( std::string & data_string,
-								 utility::vector1< std::string > & data_strings,
-								 std::string const & tag ) const;
+		utility::vector1< std::string > & data_strings,
+		std::string const & tag ) const;
 
 	void
 	save_data( std::string const & line, utility::vector1< utility::vector1< Real > > & var  ) const;
@@ -149,11 +149,11 @@ private:
 
 	void
 	save_data_with_idx( utility::vector1< std::string > & var,
-											Size const & idx,  std::string const & value ) const;
+		Size const & idx,  std::string const & value ) const;
 
 	void
 	save_data_with_idx( utility::vector1< utility::vector1< Annotation > > & var,
-											Size const & idx,  Annotation & value ) const;
+		Size const & idx,  Annotation & value ) const;
 
 	Annotation
 	get_annotation( std::string const & tag ) const;
@@ -169,7 +169,7 @@ private:
 
 	void
 	fill_seqpos( std::string const & seqpos_info,
-							 std::string & sequence_seqpos );
+		std::string & sequence_seqpos );
 
 	bool
 	check_sequence_seqpos( std::string const & sequence_seqpos ) const;

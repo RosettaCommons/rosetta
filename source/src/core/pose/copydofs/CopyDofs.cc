@@ -473,8 +473,8 @@ CopyDofs::check_domain_map(
 
 	//in different domains is OK.    [The only exception is the evil 999 --> code for a totally fixed atom.]
 	if ( domain1 < FIXED_DOMAIN &&
-			 domain2 < FIXED_DOMAIN &&
-			 domain1 != domain2 ) return true;
+			domain2 < FIXED_DOMAIN &&
+			domain1 != domain2 ) return true;
 
 	return false;
 
@@ -484,7 +484,7 @@ CopyDofs::check_domain_map(
 ////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 CopyDofs::check_domain_map(
-  std::map< id::AtomID, Size > const & atom_id_domain_map,
+	std::map< id::AtomID, Size > const & atom_id_domain_map,
 	utility::vector1< id::AtomID > const & atom_ids1,
 	utility::vector1< id::AtomID > const & atom_ids2 ) const
 {

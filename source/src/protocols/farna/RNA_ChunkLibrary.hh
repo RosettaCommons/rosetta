@@ -93,8 +93,8 @@ private:
 
 	std::map< core::id::AtomID, core::Size >
 	get_atom_id_domain_map_for_rosetta_library_chunk(
-												 std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
-												 core::pose::Pose const & pose, protocols::toolbox::AllowInsert const & allow_insert ) const;
+		std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
+		core::pose::Pose const & pose, protocols::toolbox::AllowInsert const & allow_insert ) const;
 
 	void filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
 
@@ -127,12 +127,12 @@ public:
 		utility::vector1< core::Size > const & input_res );
 
 	RNA_ChunkLibrary( protocols::toolbox::AllowInsertOP allow_insert,
-										utility::vector1 < std::string > const & pdb_files,
-										utility::vector1 < std::string > const & silent_files,
-										core::pose::Pose const & pose,
-										utility::vector1< core::Size > const & input_res );
+		utility::vector1 < std::string > const & pdb_files,
+		utility::vector1 < std::string > const & silent_files,
+		core::pose::Pose const & pose,
+		utility::vector1< core::Size > const & input_res );
 
-	RNA_ChunkLibrary(	core::pose::Pose const & pose );
+	RNA_ChunkLibrary( core::pose::Pose const & pose );
 
 	//destructor
 	~RNA_ChunkLibrary();
@@ -187,8 +187,8 @@ public:
 
 	void
 	setup_base_pair_step_chunks( core::pose::Pose const & pose,
-															 utility::vector1< BasePairStep > const & base_pair_steps,
-															 BasePairStepLibrary const & base_pair_step_library );
+		utility::vector1< BasePairStep > const & base_pair_steps,
+		BasePairStepLibrary const & base_pair_step_library );
 
 
 private:

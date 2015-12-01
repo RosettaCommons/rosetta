@@ -1454,12 +1454,12 @@ build_pose_as_is1(
 				name3 == "PRO" || name3 == "GLN" || name3 == "ARG" || name3 == "SER" ||
 				name3 == "THR" || name3 == "VAL" || name3 == "TRP" || name3 == "TYR" ) {
 			is_l_aa = true;
-		
-		// Skip particular KNOWN ACHIRAL aas.
+
+			// Skip particular KNOWN ACHIRAL aas.
 		} else if ( name3 == "GLY" || name3 == "C15" || name3 == "C16" || name3 == "MAL" ||
-				    name3 == "A98" || name3 == "B02" || name3 == "B06" ) {
-		
-		// name isn't notable, so assume chirality detection is necessary
+				name3 == "A98" || name3 == "B02" || name3 == "B06" ) {
+
+			// name isn't notable, so assume chirality detection is necessary
 		} else {
 			detect_ld_chirality_from_polymer_residue( xyz, name3, is_d_aa, is_l_aa );
 		}

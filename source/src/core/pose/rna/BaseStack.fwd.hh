@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/pose/rna/BaseStack.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace core {
 namespace pose {
 namespace rna {
-	
-	class BaseStack;
-	typedef utility::pointer::shared_ptr< BaseStack > BaseStackOP;
-	typedef utility::pointer::shared_ptr< BaseStack const > BaseStackCOP;
-	
-} //rna 
-} //pose 
-} //core 
+
+class BaseStack;
+typedef utility::pointer::shared_ptr< BaseStack > BaseStackOP;
+typedef utility::pointer::shared_ptr< BaseStack const > BaseStackCOP;
+
+} //rna
+} //pose
+} //core
 
 #endif

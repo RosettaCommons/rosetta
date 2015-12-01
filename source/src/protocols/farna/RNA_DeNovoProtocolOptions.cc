@@ -30,18 +30,18 @@ using namespace basic::options::OptionKeys;
 namespace protocols {
 namespace farna {
 
-	//Constructor
-	RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions():
-		nstruct_( 1 ),
-		lores_scorefxn_( "farna/rna_lores.wts" ),
-		output_lores_silent_file_( false ),
-		output_filters_( false ),
-		binary_rna_output_( false )
-	{}
+//Constructor
+RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions():
+	nstruct_( 1 ),
+	lores_scorefxn_( "farna/rna_lores.wts" ),
+	output_lores_silent_file_( false ),
+	output_filters_( false ),
+	binary_rna_output_( false )
+{}
 
-	//Destructor
-	RNA_DeNovoProtocolOptions::~RNA_DeNovoProtocolOptions()
-	{}
+//Destructor
+RNA_DeNovoProtocolOptions::~RNA_DeNovoProtocolOptions()
+{}
 
 /// @brief copy constructor
 RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions( RNA_DeNovoProtocolOptions const & src ) :
@@ -79,9 +79,9 @@ RNA_DeNovoProtocolOptions::initialize_from_command_line() {
 	if ( option[ rna::farna::lores_scorefxn ].user() ) set_lores_scorefxn( option[ rna::farna::lores_scorefxn ] );
 
 	if ( option[ in::file::silent_struct_type ]() == "binary_rna"  ||
-			 option[ rna::farna::binary_output ]() ||
-			 close_loops() ||
-			 vary_bond_geometry() ) set_binary_rna_output( true );
+			option[ rna::farna::binary_output ]() ||
+			close_loops() ||
+			vary_bond_geometry() ) set_binary_rna_output( true );
 
 }
 

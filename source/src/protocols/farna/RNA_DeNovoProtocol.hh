@@ -63,7 +63,7 @@ public:
 
 	void
 	output_to_silent_file( core::pose::Pose & pose, std::string const & silent_file, std::string const & out_file_tag,
-												 bool const score_only = false ) const;
+		bool const score_only = false ) const;
 
 	void
 	align_and_output_to_silent_file( core::pose::Pose & pose, std::string const & silent_file, std::string const & out_file_tag ) const;

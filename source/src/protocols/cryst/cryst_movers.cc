@@ -302,7 +302,7 @@ core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
 		working_scorefxn->set_weight( (core::scoring::ScoreType)ii , reference_scorefxn->get_weight( (core::scoring::ScoreType)ii )  );
 
 		// lk ball hack
-		if ( (core::scoring::ScoreType)ii == lk_ball_wtd) {
+		if ( (core::scoring::ScoreType)ii == lk_ball_wtd ) {
 			working_scorefxn->set_weight( fa_atr, 1e-9 );
 		}
 

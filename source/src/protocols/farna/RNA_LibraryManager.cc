@@ -38,44 +38,44 @@ template <> RNA_LibraryManager * utility::SingletonBase< RNA_LibraryManager >::i
 namespace protocols {
 namespace farna {
 
-	RNA_LibraryManager *
-	RNA_LibraryManager::create_singleton_instance()
-	{
-		return new RNA_LibraryManager;
-	}
+RNA_LibraryManager *
+RNA_LibraryManager::create_singleton_instance()
+{
+	return new RNA_LibraryManager;
+}
 
-	RNA_Fragments const &
-	RNA_LibraryManager::rna_fragment_library( std::string const & tag ) {
-		if ( rna_fragment_libraries_.find( tag ) == rna_fragment_libraries_.end() ) {
-			rna_fragment_libraries_[ tag ] = RNA_FragmentsCOP( new FullAtomRNA_Fragments( tag ) );
-		}
-		return *rna_fragment_libraries_[ tag ];
+RNA_Fragments const &
+RNA_LibraryManager::rna_fragment_library( std::string const & tag ) {
+	if ( rna_fragment_libraries_.find( tag ) == rna_fragment_libraries_.end() ) {
+		rna_fragment_libraries_[ tag ] = RNA_FragmentsCOP( new FullAtomRNA_Fragments( tag ) );
 	}
+	return *rna_fragment_libraries_[ tag ];
+}
 
-	RNA_JumpLibrary const &
-	RNA_LibraryManager::rna_jump_library( std::string const & tag ) {
-		return *( rna_jump_library_cop( tag ) );
-	}
+RNA_JumpLibrary const &
+RNA_LibraryManager::rna_jump_library( std::string const & tag ) {
+	return *( rna_jump_library_cop( tag ) );
+}
 
-	RNA_JumpLibraryCOP const &
-	RNA_LibraryManager::rna_jump_library_cop( std::string const & tag ) {
-		if ( rna_jump_libraries_.find( tag ) == rna_jump_libraries_.end() ) {
-			rna_jump_libraries_[ tag ] = RNA_JumpLibraryCOP( new RNA_JumpLibrary( tag ) );
-		}
-		return rna_jump_libraries_[ tag ];
+RNA_JumpLibraryCOP const &
+RNA_LibraryManager::rna_jump_library_cop( std::string const & tag ) {
+	if ( rna_jump_libraries_.find( tag ) == rna_jump_libraries_.end() ) {
+		rna_jump_libraries_[ tag ] = RNA_JumpLibraryCOP( new RNA_JumpLibrary( tag ) );
 	}
+	return rna_jump_libraries_[ tag ];
+}
 
-	BasePairStepLibrary const &
-	RNA_LibraryManager::canonical_base_pair_step_library() {
-		if ( canonical_base_pair_step_library_ == 0 )  canonical_base_pair_step_library_ = BasePairStepLibraryCOP( new BasePairStepLibrary( true ) );
-		return *canonical_base_pair_step_library_;
-	}
+BasePairStepLibrary const &
+RNA_LibraryManager::canonical_base_pair_step_library() {
+	if ( canonical_base_pair_step_library_ == 0 )  canonical_base_pair_step_library_ = BasePairStepLibraryCOP( new BasePairStepLibrary( true ) );
+	return *canonical_base_pair_step_library_;
+}
 
-	BasePairStepLibrary const &
-	RNA_LibraryManager::general_base_pair_step_library() {
-		if ( general_base_pair_step_library_ == 0 )  general_base_pair_step_library_ = BasePairStepLibraryCOP( new BasePairStepLibrary( false ) );
-		return *general_base_pair_step_library_;
-	}
+BasePairStepLibrary const &
+RNA_LibraryManager::general_base_pair_step_library() {
+	if ( general_base_pair_step_library_ == 0 )  general_base_pair_step_library_ = BasePairStepLibraryCOP( new BasePairStepLibrary( false ) );
+	return *general_base_pair_step_library_;
+}
 
 } //farna
 } //protocols

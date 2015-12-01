@@ -83,14 +83,14 @@ rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
 		bool r2_is_indep = conf->Symmetry_Info()->bb_is_independent( upper_res );
 
 		Size s1master = lower_res, s2master = upper_res;
-		if (!r1_is_indep && !r2_is_indep) {
+		if ( !r1_is_indep && !r2_is_indep ) {
 			s1master = conf->Symmetry_Info()->bb_follows(lower_res);
 			s2master = conf->Symmetry_Info()->bb_follows(upper_res);
 		}
 		disulfides.push_back(std::make_pair(s1master,s2master));
 
 		// special logic if this crosses a symm boundary
-		if (r1_is_indep != r2_is_indep) {
+		if ( r1_is_indep != r2_is_indep ) {
 			Size A = r1_is_indep? lower_res : upper_res;
 			Size Bprime = r1_is_indep? upper_res : lower_res;
 			Size B = conf->Symmetry_Info()->bb_follows(Bprime);
@@ -103,12 +103,12 @@ rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
 				Size Aprime = clonesA[i];
 				numeric::xyzVector< core::Real > xyzAstar = conf->apply_transformation( conf->residue(Aprime).xyz(1), A, Bprime );
 				core::Real dist = (xyzAstar - xyzA).length();
-				if (dist < 1e-4) {
+				if ( dist < 1e-4 ) {
 					disulfides.push_back(std::make_pair(Aprime,B));
 					found = true;
 				}
 			}
-			if (!found) {
+			if ( !found ) {
 				TR << "Error in rebuild_disulfide: unable to find symmetry partner!" << std::endl;
 			}
 		}

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/pose/rna/BasePair.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace core {
 namespace pose {
 namespace rna {
-	
-	class BasePair;
-	typedef utility::pointer::shared_ptr< BasePair > BasePairOP;
-	typedef utility::pointer::shared_ptr< BasePair const > BasePairCOP;
-	
-} //rna 
-} //pose 
-} //core 
+
+class BasePair;
+typedef utility::pointer::shared_ptr< BasePair > BasePairOP;
+typedef utility::pointer::shared_ptr< BasePair const > BasePairCOP;
+
+} //rna
+} //pose
+} //core
 
 #endif

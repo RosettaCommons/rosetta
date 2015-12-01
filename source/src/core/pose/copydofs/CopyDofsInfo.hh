@@ -28,43 +28,43 @@ namespace core {
 namespace pose {
 namespace copydofs {
 
-	class CopyDofsInfo: public utility::pointer::ReferenceCount {
+class CopyDofsInfo: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		CopyDofsInfo();
+	//constructor
+	CopyDofsInfo();
 
-		//destructor
-		~CopyDofsInfo();
+	//destructor
+	~CopyDofsInfo();
 
-	public:
+public:
 
-		void
-		clear();
+	void
+	clear();
 
-		void
-		push_back( std::pair< core::id::DOF_ID, core::Real > const & dofs_info_pair );
+	void
+	push_back( std::pair< core::id::DOF_ID, core::Real > const & dofs_info_pair );
 
-		void
-		push_back( std::pair< core::id::AtomID, core::kinematics::Jump > const & jumps_info_pair );
+	void
+	push_back( std::pair< core::id::AtomID, core::kinematics::Jump > const & jumps_info_pair );
 
-		void
-		apply_dofs( core::pose::Pose & pose,
-								core::Real const dof_tolerance = 1.0e-5 ) const;
+	void
+	apply_dofs( core::pose::Pose & pose,
+		core::Real const dof_tolerance = 1.0e-5 ) const;
 
-		utility::vector1< std::pair< core::id::DOF_ID, core::Real > > const & dofs_info() const { return dofs_info_; }
-		utility::vector1< std::pair< core::id::AtomID, core::kinematics::Jump > > const & jumps_info() const { return jumps_info_; }
+	utility::vector1< std::pair< core::id::DOF_ID, core::Real > > const & dofs_info() const { return dofs_info_; }
+	utility::vector1< std::pair< core::id::AtomID, core::kinematics::Jump > > const & jumps_info() const { return jumps_info_; }
 
-	private:
+private:
 
-		utility::vector1< std::pair< core::id::DOF_ID, core::Real > > dofs_info_;
+	utility::vector1< std::pair< core::id::DOF_ID, core::Real > > dofs_info_;
 
-		// in principle, Jumps could also be stored in dofs_info via RB1, ... RB6 DOF_Types, but we don't have nice
-		//  ways to go back and forth, unfortunately.
-		utility::vector1< std::pair< core::id::AtomID, core::kinematics::Jump > > jumps_info_;
+	// in principle, Jumps could also be stored in dofs_info via RB1, ... RB6 DOF_Types, but we don't have nice
+	//  ways to go back and forth, unfortunately.
+	utility::vector1< std::pair< core::id::AtomID, core::kinematics::Jump > > jumps_info_;
 
-	};
+};
 
 } //copydofs
 } //pose

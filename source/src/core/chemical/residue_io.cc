@@ -1214,7 +1214,7 @@ read_topology_file(
 		// AMW: somehow, staple residues 08A and 08B are being counted as protein. WTF?
 		// They have no properties set!
 		if ( rsd->is_protein() && !rsd->is_achiral_backbone() && !rsd->is_l_aa() && !rsd->is_d_aa() ) {
-			
+
 			tr.Warning << "Warning: protein residue " << rsd->name3() << " is not explicitly listed"
 				<< " as either L or D in its params file." << std::endl;
 			tr.Warning << "To avoid seeing this warning in the future, add \"L_AA\", \"D_AA\", "
@@ -1222,9 +1222,9 @@ read_topology_file(
 
 			bool is_l_aa = false;
 			bool is_d_aa = false;
-			
+
 			detect_ld_chirality_from_polymer_residue( rsd_xyz, rsd->name3(), is_d_aa, is_l_aa );
-			
+
 			tr.Trace << "Detected chirality " << ( is_l_aa ? "L" : ( is_d_aa ? "D" : "ACHIRAL" ) ) << " from params " << std::endl;
 
 			if ( is_l_aa ) rsd->add_property( "L_AA" );

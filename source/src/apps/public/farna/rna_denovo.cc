@@ -64,8 +64,8 @@ using namespace basic::options::OptionKeys;
 using utility::vector1;
 
 vector1<pose::PoseOP> get_refine_pose_list( std::string const & input_silent_file,
-																						vector1< Size > const & output_res,
-																						core::chemical::ResidueTypeSetCOP rsd_set );
+	vector1< Size > const & output_res,
+	core::chemical::ResidueTypeSetCOP rsd_set );
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -152,8 +152,8 @@ rna_denovo_test()
 ///////////////////////////////////////////////////////////////
 vector1<pose::PoseOP>
 get_refine_pose_list( std::string const & input_silent_file,
-											vector1< Size > const & output_res,
-											core::chemical::ResidueTypeSetCOP rsd_set )
+	vector1< Size > const & output_res,
+	core::chemical::ResidueTypeSetCOP rsd_set )
 {
 
 	vector1<pose::PoseOP> refine_pose_list;

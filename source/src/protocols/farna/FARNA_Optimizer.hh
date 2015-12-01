@@ -23,35 +23,35 @@
 namespace protocols {
 namespace farna {
 
-	class FARNA_Optimizer: public protocols::moves::Mover {
+class FARNA_Optimizer: public protocols::moves::Mover {
 
-	public:
+public:
 
-		//constructor
-		FARNA_Optimizer( utility::vector1< core::pose::PoseOP > const & pose_list,
-										 core::scoring::ScoreFunctionCOP scorefxn,
-										 core::Size cycles = 0 );
+	//constructor
+	FARNA_Optimizer( utility::vector1< core::pose::PoseOP > const & pose_list,
+		core::scoring::ScoreFunctionCOP scorefxn,
+		core::Size cycles = 0 );
 
-		//destructor
-		~FARNA_Optimizer();
+	//destructor
+	~FARNA_Optimizer();
 
-	public:
+public:
 
 
-		virtual void apply( core::pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 
-		virtual std::string get_name() const{ return "FARNA_Optimizer"; }
+	virtual std::string get_name() const{ return "FARNA_Optimizer"; }
 
-		void set_cycles( core::Size const & setting ){ cycles_ = setting; }
-		core::Size cycles() const { return cycles_; }
+	void set_cycles( core::Size const & setting ){ cycles_ = setting; }
+	core::Size cycles() const { return cycles_; }
 
-	private:
+private:
 
-		utility::vector1< core::pose::PoseOP > pose_list_;
-		core::scoring::ScoreFunctionCOP scorefxn_;
-		Size cycles_;
+	utility::vector1< core::pose::PoseOP > pose_list_;
+	core::scoring::ScoreFunctionCOP scorefxn_;
+	Size cycles_;
 
-	};
+};
 
 } //farna
 } //protocols

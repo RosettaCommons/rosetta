@@ -1237,7 +1237,7 @@ SymmetricConformation::declare_chemical_bond(
 
 	Size s1master = seqpos1, s2master = seqpos2;
 
-	if (!r1_is_indep && !r2_is_indep) {
+	if ( !r1_is_indep && !r2_is_indep ) {
 		TR.Debug << "Making a chemical bond between two dependent residues, applying to parent!" << std::endl;
 		s1master = symm_info_->bb_follows(seqpos1);
 		s2master = symm_info_->bb_follows(seqpos2);
@@ -1247,7 +1247,7 @@ SymmetricConformation::declare_chemical_bond(
 	Conformation::declare_chemical_bond(s1master, atom_name1, s2master, atom_name2);
 
 	// special logic if this crosses a symm boundary
-	if (r1_is_indep != r2_is_indep) {
+	if ( r1_is_indep != r2_is_indep ) {
 		Size A = r1_is_indep? seqpos1 : seqpos2;
 		Size Bprime = r1_is_indep? seqpos2 : seqpos1;
 		Size B = symm_info_->bb_follows(Bprime);
@@ -1261,13 +1261,13 @@ SymmetricConformation::declare_chemical_bond(
 			Size Aprime = clonesA[i];
 			numeric::xyzVector< core::Real > xyzAstar = apply_transformation( residue(Aprime).xyz(1), A, Bprime );
 			core::Real dist = (xyzAstar - xyzA).length();
-			if (dist < 1e-4) {
+			if ( dist < 1e-4 ) {
 				TR << "Add symmetric chemical bond " << Aprime << " to " << B << std::endl;
 				Conformation::declare_chemical_bond(Aprime, atom_name1, B, atom_name2);
 				found = true;
 			}
 		}
-		if (!found) {
+		if ( !found ) {
 			TR << "Error in declare_chemical_bond: unable to find corresponding partner!" << std::endl;
 		}
 	}
@@ -1280,31 +1280,31 @@ SymmetricConformation::declare_chemical_bond(
 /// @author Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
 void
 SymmetricConformation::declare_chemical_bond(
-	Size seqpos1,
-	std::string const & atom_name1,
-	Size seqpos2,
-	std::string const & atom_name2
+Size seqpos1,
+std::string const & atom_name1,
+Size seqpos2,
+std::string const & atom_name2
 ) {
 
-	//First, declare the bond (using the base class) for the specified residues:
-	TR << "Declaring chemical bond in symmetric conformation between res " << seqpos1 << ", atom \"" << atom_name1;
-	TR << "\" and res " << seqpos2 << ",  atom \"" << atom_name2 << "\"." << std::endl;
-	core::conformation::Conformation::declare_chemical_bond( seqpos1, atom_name1, seqpos2, atom_name2 );
+//First, declare the bond (using the base class) for the specified residues:
+TR << "Declaring chemical bond in symmetric conformation between res " << seqpos1 << ", atom \"" << atom_name1;
+TR << "\" and res " << seqpos2 << ",  atom \"" << atom_name2 << "\"." << std::endl;
+core::conformation::Conformation::declare_chemical_bond( seqpos1, atom_name1, seqpos2, atom_name2 );
 
 
-	//Given seqpos1 and seqpos2, get a list of all of the pairs of residues corresponding to these
-	//two residues:
-	utility::vector1 < std::pair < core::Size, core::Size > > const symm_res_pairs( symm_info_->map_symmetric_res_pairs(seqpos1, seqpos2) );
+//Given seqpos1 and seqpos2, get a list of all of the pairs of residues corresponding to these
+//two residues:
+utility::vector1 < std::pair < core::Size, core::Size > > const symm_res_pairs( symm_info_->map_symmetric_res_pairs(seqpos1, seqpos2) );
 
-	//Loop through and declare the bond for all of the copies using the base class.
-	//
-	for ( core::Size i=1, imax=symm_res_pairs.size(); i<=imax; ++i ) {
-		TR << "Declaring chemical bond in symmetric conformation between res " << symm_res_pairs[i].first << ", atom \"" << atom_name1;
-		TR << "\" and res " << symm_res_pairs[i].second << ",  atom \"" << atom_name2 << "\"." << std::endl;
-		core::conformation::Conformation::declare_chemical_bond( symm_res_pairs[i].first, atom_name1, symm_res_pairs[i].second, atom_name2 );
-	}
+//Loop through and declare the bond for all of the copies using the base class.
+//
+for ( core::Size i=1, imax=symm_res_pairs.size(); i<=imax; ++i ) {
+TR << "Declaring chemical bond in symmetric conformation between res " << symm_res_pairs[i].first << ", atom \"" << atom_name1;
+TR << "\" and res " << symm_res_pairs[i].second << ",  atom \"" << atom_name2 << "\"." << std::endl;
+core::conformation::Conformation::declare_chemical_bond( symm_res_pairs[i].first, atom_name1, symm_res_pairs[i].second, atom_name2 );
+}
 
-	return;
+return;
 }
 */
 

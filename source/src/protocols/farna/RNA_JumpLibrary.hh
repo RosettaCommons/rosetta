@@ -36,8 +36,8 @@ public:
 	BaseDoubletOrientation orientation;
 
 	BasePairType( char const aa1_in, char const aa2_in,
-								BaseEdge const edge1_in, BaseEdge const edge2_in,
-								BaseDoubletOrientation const orientation_in){
+		BaseEdge const edge1_in, BaseEdge const edge2_in,
+		BaseDoubletOrientation const orientation_in){
 		aa1 = aa1_in;  aa2 = aa2_in;
 		edge1 = edge1_in;  edge2 = edge2_in;
 		orientation = orientation_in;
@@ -147,12 +147,12 @@ private:
 
 	void
 	save_in_jump_library( core::Size const reschar1, core::Size const reschar2,
-												char const edgechar1, char const edgechar2,
-												char const orientation,
-												std::string const & atom_name1,
-												std::string const & atom_name2,
-												core::kinematics::Jump const & jump1,
-												core::kinematics::Jump const & jump2 ) const;
+		char const edgechar1, char const edgechar2,
+		char const orientation,
+		std::string const & atom_name1,
+		std::string const & atom_name2,
+		core::kinematics::Jump const & jump1,
+		core::kinematics::Jump const & jump2 ) const;
 
 private:
 

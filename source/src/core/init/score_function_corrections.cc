@@ -516,10 +516,10 @@ void
 init_beta_correction() {
 	// -beta activates most recent
 	if ( option[corrections::beta]() ) {
-			option[ corrections::beta_nov15 ].value(true);
+		option[ corrections::beta_nov15 ].value(true);
 	}
 	if ( option[corrections::beta_cart]() ) {
-			option[ corrections::beta_nov15_cart ].value(true);
+		option[ corrections::beta_nov15_cart ].value(true);
 	}
 
 	// if multiple flags specified use the most recent

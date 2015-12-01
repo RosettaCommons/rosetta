@@ -155,7 +155,7 @@ lookup_cp_map(
 	core::Size atm_idx
 ) {
 	std::map<core::Size,core::Size>::const_iterator i = cp_reps.find(atm_idx);
-	if (i == cp_reps.end()) {
+	if ( i == cp_reps.end() ) {
 		return atm_idx;
 	} else {
 		return i->second;
@@ -190,7 +190,7 @@ create_trie(
 			CPDAT cpdata;
 			std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(ii_rotamer->type()));
 			core::Size jj_rep = jj;
-			if (it != cp_reps.end()) jj_rep=lookup_cp_map( it->second, jj );
+			if ( it != cp_reps.end() ) jj_rep=lookup_cp_map( it->second, jj );
 			initialize_cpdata_for_atom( cpdata, jj_rep, *ii_rotamer, cpdata_map );
 
 			RotamerDescriptorAtom< AT, CPDAT > rdatom( newatom, cpdata );
@@ -206,7 +206,7 @@ create_trie(
 				CPDAT cpdata;
 				std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(ii_rotamer->type()));
 				core::Size kk_rep = kk;
-				if (it != cp_reps.end()) kk_rep=lookup_cp_map( it->second, kk );
+				if ( it != cp_reps.end() ) kk_rep=lookup_cp_map( it->second, kk );
 				initialize_cpdata_for_atom( cpdata, kk_rep, *ii_rotamer, cpdata_map );
 
 				RotamerDescriptorAtom< AT, CPDAT > rdatom( newhatom, cpdata );
@@ -252,7 +252,7 @@ create_trie(
 		CPDAT cpdata;
 		std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(res.type()) );
 		core::Size jj_rep = jj;
-		if (it != cp_reps.end()) jj_rep=lookup_cp_map( it->second, jj );
+		if ( it != cp_reps.end() ) jj_rep=lookup_cp_map( it->second, jj );
 		initialize_cpdata_for_atom( cpdata, jj_rep, res, cpdata_map );
 
 
@@ -268,7 +268,7 @@ create_trie(
 			CPDAT cpdata;
 			std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator it=cp_reps.find( &(res.type()) );
 			core::Size kk_rep = kk;
-			if (it != cp_reps.end()) kk_rep=lookup_cp_map( it->second, kk );
+			if ( it != cp_reps.end() ) kk_rep=lookup_cp_map( it->second, kk );
 			initialize_cpdata_for_atom( cpdata, kk_rep, res, cpdata_map );
 			RotamerDescriptorAtom< AT, CPDAT > rdatom( newhatom, cpdata );
 			rotamer_descriptor[ 1 ].atom( ++count_added_atoms, rdatom );

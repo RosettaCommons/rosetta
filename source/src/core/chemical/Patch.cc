@@ -245,13 +245,13 @@ setup_patch_atomic_charge_reassignments_from_commandline(
 		///
 		std::string const & mod( mods[i] );
 		utility::vector1<std::string> tokens = utility::string_split( mod, ':');
-		if (tokens.size() != 5) utility_exit_with_message(errmsg);
+		if ( tokens.size() != 5 ) utility_exit_with_message(errmsg);
 
 		// 1: check rsd_type_set
-		if (tokens[1] != rsd_type_set_name) continue;
+		if ( tokens[1] != rsd_type_set_name ) continue;
 
 		// 2: check patch name
-		if (tokens[3] != patch_name) continue;
+		if ( tokens[3] != patch_name ) continue;
 
 		// 3: check residue
 		//    this is tricky since we can't get a representative (since we are in the process of building the residue type set)
@@ -264,7 +264,7 @@ setup_patch_atomic_charge_reassignments_from_commandline(
 		dummy.name(tokens[2]);
 		dummy.name3(tokens[2]);
 		dummy.name1(oneletter_code_from_aa(aatype));
-		if (!rsd_selector[ dummy ]) continue;
+		if ( !rsd_selector[ dummy ] ) continue;
 
 		// 4: add to list
 		if ( !ObjexxFCL::is_float( tokens[5] ) ) utility_exit_with_message(errmsg);

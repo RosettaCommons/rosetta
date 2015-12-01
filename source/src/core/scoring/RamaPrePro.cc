@@ -67,7 +67,7 @@ RamaPrePro::eval_rpp_rama_score(
 	Real & denergy_dpsi
 ) const
 {
-	if (res_aa2 == core::chemical::aa_pro) {
+	if ( res_aa2 == core::chemical::aa_pro ) {
 		score_rama = rama_pp_splines_[res_aa1].F(phi,psi);
 		denergy_dphi = rama_pp_splines_[res_aa1].dFdx(phi,psi);
 		denergy_dpsi = rama_pp_splines_[res_aa1].dFdy(phi,psi);
@@ -87,18 +87,18 @@ RamaPrePro::read_rpp_tables( ) {
 
 	// allocate space for raw data
 	utility::vector1<  ObjexxFCL::FArray2D< Real > > data(20);
-	for (int i=1; i<=20; ++i) {
+	for ( int i=1; i<=20; ++i ) {
 		data[i].dimension(36,36);
 	}
 
 	///fpd hardcode for now
 	read_rama_map_file_shapovalov("scoring/score_functions/rama/fd/all.ramaProb", data);
-	for (int i=1; i<=20; ++i) {
+	for ( int i=1; i<=20; ++i ) {
 		setup_interpolation( data[i], rama_splines_[i]);
 	}
 
 	read_rama_map_file_shapovalov("scoring/score_functions/rama/fd/prepro.ramaProb", data);
-	for (int i=1; i<=20; ++i) {
+	for ( int i=1; i<=20; ++i ) {
 		setup_interpolation( data[i], rama_pp_splines_[i]);
 	}
 }
@@ -160,9 +160,9 @@ RamaPrePro::read_rama_map_file_shapovalov (
 	} while (true);
 
 	// correct
-	for (int i=1; i<=20; ++i) {
-		for (int j=1; j<=36; ++j) {
-			for (int k=1; k<=36; ++k) {
+	for ( int i=1; i<=20; ++i ) {
+		for ( int j=1; j<=36; ++j ) {
+			for ( int k=1; k<=36; ++k ) {
 				data[i](j,k) = -std::log( data[i](j,k) ) + entropy[i];
 			}
 		}

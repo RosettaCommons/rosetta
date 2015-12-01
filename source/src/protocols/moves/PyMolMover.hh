@@ -459,7 +459,7 @@ protected:
 	virtual void
 	attach_impl(core::pose::Pose &pose);
 
-	virtual	void
+	virtual void
 	detach_impl();
 
 	void

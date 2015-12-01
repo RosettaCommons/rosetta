@@ -1705,8 +1705,8 @@ ReplaceProtonWithHydroxyl::apply( ResidueType & rsd ) const {
 
 PatchOperationOP
 patch_operation_from_patch_file_line(
-		std::string const & line,
-		std::map< std::string, Real > const & atomic_charge_reassignments
+	std::string const & line,
+	std::map< std::string, Real > const & atomic_charge_reassignments
 ) {
 	using numeric::conversions::radians;
 	std::istringstream l( line );

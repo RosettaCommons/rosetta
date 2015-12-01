@@ -22,43 +22,43 @@ namespace core {
 namespace pose {
 namespace rna {
 
-  ///////////////////////////////////////////////////////////////////
-  BaseStack::BaseStack():
-    res1_( 0 ),
-    res2_( 0 ),
-    orientation_( ANY_BASE_DOUBLET_ORIENTATION ),
-    which_side_( ANY_BASE_STACK_SIDE )
-  {
-  }
+///////////////////////////////////////////////////////////////////
+BaseStack::BaseStack():
+	res1_( 0 ),
+	res2_( 0 ),
+	orientation_( ANY_BASE_DOUBLET_ORIENTATION ),
+	which_side_( ANY_BASE_STACK_SIDE )
+{
+}
 
-  ///////////////////////////////////////////////////////////////////
-  bool
-  operator < ( BaseStack const & lhs, BaseStack const & rhs ){
-    //There must be a more elegant way to do this...
-    if ( lhs.res1_ < rhs.res1_ ) {
-      return true;
-    }  else if ( lhs.res1_ == rhs.res1_ ) {
-      if ( lhs.res2_ < rhs.res2_ ) {
-	return true;
-      } else if ( lhs.res2_ == rhs.res2_ ) {
-	if ( lhs.orientation_ < rhs.orientation_ ) {
-	  return true;
-	} else if ( lhs.orientation_ == rhs.orientation_ ) {
-	  return ( lhs.which_side_ < rhs.which_side_ );
+///////////////////////////////////////////////////////////////////
+bool
+operator < ( BaseStack const & lhs, BaseStack const & rhs ){
+	//There must be a more elegant way to do this...
+	if ( lhs.res1_ < rhs.res1_ ) {
+		return true;
+	}  else if ( lhs.res1_ == rhs.res1_ ) {
+		if ( lhs.res2_ < rhs.res2_ ) {
+			return true;
+		} else if ( lhs.res2_ == rhs.res2_ ) {
+			if ( lhs.orientation_ < rhs.orientation_ ) {
+				return true;
+			} else if ( lhs.orientation_ == rhs.orientation_ ) {
+				return ( lhs.which_side_ < rhs.which_side_ );
+			}
+		}
 	}
-      }
-    }
-    return false;
-  }
+	return false;
+}
 
 
-  ///////////////////////////////////////////////////////////////////
-  std::ostream &
-  operator << ( std::ostream & out, BaseStack const & s )
-  {
-    out << s.res1_ << " " << s.res2_ << " " <<  s.orientation_ << " " << s.which_side_;
-    return out;
-  }
+///////////////////////////////////////////////////////////////////
+std::ostream &
+operator << ( std::ostream & out, BaseStack const & s )
+{
+	out << s.res1_ << " " << s.res2_ << " " <<  s.orientation_ << " " << s.which_side_;
+	return out;
+}
 
 } //rna
 } //pose

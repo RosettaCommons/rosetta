@@ -53,327 +53,327 @@ using core::io::pdb::dump_pdb;
 namespace protocols {
 namespace farna {
 
-	//Constructor
-	RNA_FragmentMonteCarlo::RNA_FragmentMonteCarlo( RNA_FragmentMonteCarloOptionsCOP options ):
-		options_( options ),
-		monte_carlo_cycles_max_default_( 100000 ),
-		monte_carlo_cycles_( 0 ), // will be updated later based on options
-		rounds_( 0 ), // will be updated later based on options
-		frag_size_( 3 ),
-		do_close_loops_( true ), // will be updated later based on options
-		refine_pose_( false ),
-		jump_change_frequency_( 0.1 ), //  maybe updated based on options, or if rigid-body sampling
-		lores_score_early_( 0.0 ),
-		lores_score_final_( 0.0 ),
-		chunk_coverage_( 0.0 ) // will be updated later
-	{}
+//Constructor
+RNA_FragmentMonteCarlo::RNA_FragmentMonteCarlo( RNA_FragmentMonteCarloOptionsCOP options ):
+	options_( options ),
+	monte_carlo_cycles_max_default_( 100000 ),
+	monte_carlo_cycles_( 0 ), // will be updated later based on options
+	rounds_( 0 ), // will be updated later based on options
+	frag_size_( 3 ),
+	do_close_loops_( true ), // will be updated later based on options
+	refine_pose_( false ),
+	jump_change_frequency_( 0.1 ), //  maybe updated based on options, or if rigid-body sampling
+	lores_score_early_( 0.0 ),
+	lores_score_final_( 0.0 ),
+	chunk_coverage_( 0.0 ) // will be updated later
+{}
 
-	//Destructor
-	RNA_FragmentMonteCarlo::~RNA_FragmentMonteCarlo()
-	{}
+//Destructor
+RNA_FragmentMonteCarlo::~RNA_FragmentMonteCarlo()
+{}
 
-	////////////////////////////////////////////////////////////////////////////
-	void
-	RNA_FragmentMonteCarlo::initialize( pose::Pose & pose ) {
-		initialize_libraries( pose );
-		initialize_movers();
-		initialize_score_functions();
-		initialize_parameters();
+////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::initialize( pose::Pose & pose ) {
+	initialize_libraries( pose );
+	initialize_movers();
+	initialize_score_functions();
+	initialize_parameters();
+}
+
+////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::initialize_parameters() {
+	// parameters for run.
+	jump_change_frequency_ = options_->jump_change_frequency(); // might get overwritten if rigid_body movement, tested later.
+	rounds_ = refine_pose_ ? 1 : options_->rounds();
+}
+
+////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+// This sets up StructureParameters, AllowInsert, and various libraries (fragments, 'chunks', etc.)
+//
+// It is extremely sensitive to order of operations, unfortunately.
+// There are two modes:
+//
+//  1. De novo (standard FARFAR). This function then has to do some sensitive work
+//      on the input pose, which is assumed to be unfolded, and have no virtual phosphates.
+//
+//  2. Refine_pose mode -- accepts the pose as is. In this mode, the pose should actually be
+//      const -- need some way to check this.
+//
+///////////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::initialize_libraries( pose::Pose & pose ) {
+
+	rna_structure_parameters_ = RNA_StructureParametersOP( new RNA_StructureParameters );
+
+	// all jumping, secondary structure, base pair constraint, allow_insert information
+	// will be stored in a .prm file.
+	rna_structure_parameters_->set_bps_moves( options_->bps_moves() );
+	if ( refine_pose_ ) {
+		if ( get_rna_secstruct( pose ).size() != pose.total_residue() ) set_rna_secstruct( pose, std::string( pose.total_residue(), 'X' ) );
+		rna_structure_parameters_->initialize_from_pose( pose );
+		rna_structure_parameters_->set_jump_library( RNA_LibraryManager::get_instance()->rna_jump_library_cop( options_->jump_library_file() ) );
+	} else {
+		// assumes folding from scratch:
+		//  -- pose is assumed to have no variants (!), including any virtual phosphates or chainbreaks.
+		//  -- following actually adds virtual anchor to pose, updates pose secstruct
+		//  -- also: handles read in of params file.
+		rna_structure_parameters_->initialize_for_de_novo_protocol( pose, options_->rna_params_file(), options_->jump_library_file(), options_->ignore_secstruct() );
+	}
+	rna_structure_parameters_->set_root_at_first_rigid_body( options_->root_at_first_rigid_body() );
+	rna_structure_parameters_->set_suppress_bp_constraint( options_->suppress_bp_constraint() );
+
+	rna_chunk_library_ = protocols::farna::RNA_ChunkLibraryOP( new RNA_ChunkLibrary( rna_structure_parameters_->allow_insert(),
+		options_->chunk_pdb_files(), options_->chunk_silent_files(),
+		pose, options_->input_res() ) );
+
+	if ( options_->bps_moves() ) {
+		rna_chunk_library_->setup_base_pair_step_chunks( pose, rna_structure_parameters_->get_canonical_base_pair_steps(),
+			RNA_LibraryManager::get_instance()->canonical_base_pair_step_library() );
+		rna_chunk_library_->setup_base_pair_step_chunks( pose, rna_structure_parameters_->get_noncanonical_base_pair_steps(),
+			RNA_LibraryManager::get_instance()->general_base_pair_step_library() );
 	}
 
-	////////////////////////////////////////////////////////////////////////////
-	void
-	RNA_FragmentMonteCarlo::initialize_parameters() {
-		// parameters for run.
-		jump_change_frequency_ = options_->jump_change_frequency(); // might get overwritten if rigid_body movement, tested later.
-		rounds_ = refine_pose_ ? 1 : options_->rounds();
+	// following is used to figure out default frequency for chunk insertions.
+	chunk_coverage_ = rna_chunk_library_->chunk_coverage();
+
+
+	rna_structure_parameters_->allow_insert()->and_allow_insert( rna_chunk_library_->allow_insert() );
+
+	if ( !refine_pose_ ) {
+		// if input pose is setup from scratch, this is the place where we add variants, and update allow_insert.
+		// this still does not include chainbreak variants which are set up (randomly) in the main loop.
+		// there's potentially a much better way to handle all this -- setup a pose outside, and then skip this.
+		std::cout << pose.annotated_sequence() << std::endl;
+
+		// note this crazy order.
+		rna_structure_parameters_->setup_virtual_phosphate_variants( pose ); // needed to refreeze virtual phosphates!
 	}
+	rna_chunk_library_->set_allow_insert( rna_structure_parameters_->allow_insert() );
 
-	////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////
-	// This sets up StructureParameters, AllowInsert, and various libraries (fragments, 'chunks', etc.)
-	//
-	// It is extremely sensitive to order of operations, unfortunately.
-	// There are two modes:
-	//
-	//  1. De novo (standard FARFAR). This function then has to do some sensitive work
-	//      on the input pose, which is assumed to be unfolded, and have no virtual phosphates.
-	//
-	//  2. Refine_pose mode -- accepts the pose as is. In this mode, the pose should actually be
-	//      const -- need some way to check this.
-	//
-	///////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	RNA_FragmentMonteCarlo::initialize_libraries( pose::Pose & pose ) {
+}
 
-		rna_structure_parameters_ = RNA_StructureParametersOP( new RNA_StructureParameters );
+////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::initialize_movers() {
 
-		// all jumping, secondary structure, base pair constraint, allow_insert information
-		// will be stored in a .prm file.
-		rna_structure_parameters_->set_bps_moves( options_->bps_moves() );
-		if ( refine_pose_ ) {
-			if ( get_rna_secstruct( pose ).size() != pose.total_residue() ) set_rna_secstruct( pose, std::string( pose.total_residue(), 'X' ) );
-			rna_structure_parameters_->initialize_from_pose( pose );
-			rna_structure_parameters_->set_jump_library( RNA_LibraryManager::get_instance()->rna_jump_library_cop( options_->jump_library_file() ) );
+	protocols::farna::RNA_Fragments const & all_rna_fragments_( RNA_LibraryManager::get_instance()->rna_fragment_library( options_->all_rna_fragments_file() ) );
+	rna_fragment_mover_ = protocols::farna::RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, rna_structure_parameters_->allow_insert() ) );
+
+	rna_loop_closer_ = protocols::farna::RNA_LoopCloserOP( new protocols::farna::RNA_LoopCloser );
+
+	rna_minimizer_ = protocols::farna::RNA_MinimizerOP( new RNA_Minimizer );
+	rna_minimizer_->set_score_function( hires_scorefxn_ );
+	rna_minimizer_->set_allow_insert( rna_structure_parameters_->allow_insert() );
+	rna_minimizer_->vary_bond_geometry( options_->vary_bond_geometry() );
+	rna_minimizer_->set_extra_minimize_res( options_->extra_minimize_res() );
+	rna_minimizer_->set_extra_minimize_chi_res( options_->extra_minimize_chi_res() );
+	rna_minimizer_->set_move_first_rigid_body( options_->move_first_rigid_body() );
+	rna_minimizer_->use_coordinate_constraints( options_->minimizer_use_coordinate_constraints() );
+
+	rna_relaxer_ = protocols::farna::RNA_RelaxerOP( new RNA_Relaxer( rna_fragment_mover_, rna_minimizer_) );
+	rna_relaxer_->simple_rmsd_cutoff_relax( options_->simple_rmsd_cutoff_relax() );
+}
+
+////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::initialize_score_functions() {
+	// scorefxns
+	using namespace core::scoring;
+	working_denovo_scorefxn_ = denovo_scorefxn_->clone();
+	// RNA high-resolution score function + rna_chem_shift term
+	if ( options_->use_chem_shift_data() ) {
+		Real const CS_weight = 4.0; //hard-coded to 4.0 based on CS-ROSETTA-RNA work (Parin et al. 2012).
+		core::scoring::ScoreFunctionOP chem_shift_scorefxn = hires_scorefxn_->clone();
+		chem_shift_scorefxn->set_weight( rna_chem_shift, CS_weight );
+		chem_shift_scorefxn_ = chem_shift_scorefxn;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
+
+	initialize( pose );
+
+	pose::Pose start_pose = pose;
+
+	monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *denovo_scorefxn_, options_->temperature() ) );
+	setup_monte_carlo_cycles( pose );
+
+	Size max_tries( 1 );
+	if ( options_->filter_lores_base_pairs() || options_->filter_chain_closure() )  max_tries = 10;
+
+	for ( Size ntries = 1; ntries <= max_tries; ++ntries ) {
+
+		time_t pdb_start_time = time(NULL);
+
+		if ( ntries > 1 ) TR << TR.Red << "Did not pass filters. Trying the model again: trial " << ntries << " out of " << max_tries << TR.Reset << std::endl;
+
+		pose = start_pose;
+
+		if ( !refine_pose_ ) rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
+
+		rna_structure_parameters_->setup_base_pair_constraints( pose ); // needs to happen after setting cutpoint variants, etc.
+		constraint_set_ = pose.constraint_set()->clone();
+		rna_chunk_library_->initialize_random_chunks( pose ); //actually not random if only one chunk in each region.
+
+		if ( refine_pose_ ) core::pose::copydofs::copy_dofs_match_atom_names( pose, start_pose );
+
+		if ( options_->close_loops_after_each_move() ) {
+			rna_loop_closer_->apply( pose );
+			do_close_loops_ = true;
 		} else {
-			// assumes folding from scratch:
-			//  -- pose is assumed to have no variants (!), including any virtual phosphates or chainbreaks.
-			//  -- following actually adds virtual anchor to pose, updates pose secstruct
-			//  -- also: handles read in of params file.
-			rna_structure_parameters_->initialize_for_de_novo_protocol( pose, options_->rna_params_file(), options_->jump_library_file(), options_->ignore_secstruct() );
-		}
-		rna_structure_parameters_->set_root_at_first_rigid_body( options_->root_at_first_rigid_body() );
-		rna_structure_parameters_->set_suppress_bp_constraint( options_->suppress_bp_constraint() );
-
-		rna_chunk_library_ = protocols::farna::RNA_ChunkLibraryOP( new RNA_ChunkLibrary( rna_structure_parameters_->allow_insert(),
-																																										 options_->chunk_pdb_files(), options_->chunk_silent_files(),
-																																										 pose, options_->input_res() ) );
-
-		if ( options_->bps_moves() ) {
-			rna_chunk_library_->setup_base_pair_step_chunks( pose, rna_structure_parameters_->get_canonical_base_pair_steps(),
-																											 RNA_LibraryManager::get_instance()->canonical_base_pair_step_library() );
-			rna_chunk_library_->setup_base_pair_step_chunks( pose, rna_structure_parameters_->get_noncanonical_base_pair_steps(),
-																											 RNA_LibraryManager::get_instance()->general_base_pair_step_library() );
+			do_close_loops_ = false;
 		}
 
-		// following is used to figure out default frequency for chunk insertions.
-		chunk_coverage_ = rna_chunk_library_->chunk_coverage();
+		if ( options_->dump_pdb() ) dump_pdb( pose, "start.pdb" );
 
+		if ( !refine_pose_ ) do_random_moves( pose );
 
-		rna_structure_parameters_->allow_insert()->and_allow_insert( rna_chunk_library_->allow_insert() );
+		if ( options_->dump_pdb() ) dump_pdb( pose, "random.pdb" );
+		monte_carlo_->reset( pose );
 
-		if ( !refine_pose_ ) {
-			// if input pose is setup from scratch, this is the place where we add variants, and update allow_insert.
-			// this still does not include chainbreak variants which are set up (randomly) in the main loop.
-			// there's potentially a much better way to handle all this -- setup a pose outside, and then skip this.
-			std::cout << pose.annotated_sequence() << std::endl;
+		if ( options_->verbose() ) TR << "Beginning main loop... " << std::endl;
 
-			// note this crazy order.
-			rna_structure_parameters_->setup_virtual_phosphate_variants( pose ); // needed to refreeze virtual phosphates!
-		}
-		rna_chunk_library_->set_allow_insert( rna_structure_parameters_->allow_insert() );
+		frag_size_ = 3;
 
-	}
+		bool found_solution( true );
+		for ( Size r = 1; r <= rounds_; r++ ) {
 
-	////////////////////////////////////////////////////////////////////////////
-	void
-	RNA_FragmentMonteCarlo::initialize_movers() {
+			if ( options_->verbose() ) TR << TR.Blue << "Beginning round " << r << " of " << rounds_ << TR.Reset << std::endl;
 
-		protocols::farna::RNA_Fragments const & all_rna_fragments_( RNA_LibraryManager::get_instance()->rna_fragment_library( options_->all_rna_fragments_file() ) );
-		rna_fragment_mover_ = protocols::farna::RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, rna_structure_parameters_->allow_insert() ) );
+			if ( r == rounds_ && options_->close_loops() ) do_close_loops_ = true;
 
-		rna_loop_closer_ = protocols::farna::RNA_LoopCloserOP( new protocols::farna::RNA_LoopCloser );
+			//Keep score function coarse for early rounds.
+			update_denovo_scorefxn_weights( r );
 
-		rna_minimizer_ = protocols::farna::RNA_MinimizerOP( new RNA_Minimizer );
-		rna_minimizer_->set_score_function( hires_scorefxn_ );
-		rna_minimizer_->set_allow_insert( rna_structure_parameters_->allow_insert() );
-		rna_minimizer_->vary_bond_geometry( options_->vary_bond_geometry() );
-		rna_minimizer_->set_extra_minimize_res( options_->extra_minimize_res() );
-		rna_minimizer_->set_extra_minimize_chi_res( options_->extra_minimize_chi_res() );
-		rna_minimizer_->set_move_first_rigid_body( options_->move_first_rigid_body() );
-		rna_minimizer_->use_coordinate_constraints( options_->minimizer_use_coordinate_constraints() );
+			monte_carlo_->score_function( *working_denovo_scorefxn_ );
 
-		rna_relaxer_ = protocols::farna::RNA_RelaxerOP( new RNA_Relaxer( rna_fragment_mover_, rna_minimizer_) );
-		rna_relaxer_->simple_rmsd_cutoff_relax( options_->simple_rmsd_cutoff_relax() );
-	}
-
-	////////////////////////////////////////////////////////////////////////////
-	void
-	RNA_FragmentMonteCarlo::initialize_score_functions() {
-		// scorefxns
-		using namespace core::scoring;
-		working_denovo_scorefxn_ = denovo_scorefxn_->clone();
-		// RNA high-resolution score function + rna_chem_shift term
-		if ( options_->use_chem_shift_data() ) {
-			Real const CS_weight = 4.0; //hard-coded to 4.0 based on CS-ROSETTA-RNA work (Parin et al. 2012).
-			core::scoring::ScoreFunctionOP chem_shift_scorefxn = hires_scorefxn_->clone();
-			chem_shift_scorefxn->set_weight( rna_chem_shift, CS_weight );
-			chem_shift_scorefxn_ = chem_shift_scorefxn;
-		}
-	}
-
-	////////////////////////////////////////////////////////////////////////////
-	void
-	RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
-
-		initialize( pose );
-
-		pose::Pose start_pose = pose;
-
-		monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *denovo_scorefxn_, options_->temperature() ) );
-		setup_monte_carlo_cycles( pose );
-
-		Size max_tries( 1 );
-		if ( options_->filter_lores_base_pairs() || options_->filter_chain_closure() )  max_tries = 10;
-
-		for ( Size ntries = 1; ntries <= max_tries; ++ntries ) {
-
-			time_t pdb_start_time = time(NULL);
-
-			if ( ntries > 1 ) TR << TR.Red << "Did not pass filters. Trying the model again: trial " << ntries << " out of " << max_tries << TR.Reset << std::endl;
-
-			pose = start_pose;
-
-			if ( !refine_pose_ ) rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
-
-			rna_structure_parameters_->setup_base_pair_constraints( pose ); // needs to happen after setting cutpoint variants, etc.
-			constraint_set_ = pose.constraint_set()->clone();
-			rna_chunk_library_->initialize_random_chunks( pose ); //actually not random if only one chunk in each region.
-
-			if ( refine_pose_ ) core::pose::copydofs::copy_dofs_match_atom_names( pose, start_pose );
-
-			if ( options_->close_loops_after_each_move() ) {
-				rna_loop_closer_->apply( pose );
-				do_close_loops_ = true;
-			} else {
-				do_close_loops_ = false;
-			}
-
-			if ( options_->dump_pdb() ) dump_pdb( pose, "start.pdb" );
-
-			if ( !refine_pose_ ) do_random_moves( pose );
-
-			if ( options_->dump_pdb() ) dump_pdb( pose, "random.pdb" );
-			monte_carlo_->reset( pose );
-
-			if ( options_->verbose() ) TR << "Beginning main loop... " << std::endl;
-
-			frag_size_ = 3;
-
-			bool found_solution( true );
-			for ( Size r = 1; r <= rounds_; r++ ) {
-
-				if ( options_->verbose() ) TR << TR.Blue << "Beginning round " << r << " of " << rounds_ << TR.Reset << std::endl;
-
-				if ( r == rounds_ && options_->close_loops() ) do_close_loops_ = true;
-
-				//Keep score function coarse for early rounds.
-				update_denovo_scorefxn_weights( r );
-
-				monte_carlo_->score_function( *working_denovo_scorefxn_ );
-
-				pose = monte_carlo_->lowest_score_pose();
-
-				// Introduce constraints in stages.
-				update_pose_constraints( r, pose );
-				monte_carlo_->reset( pose );
-
-				// Finer and finer fragments
-				update_frag_size( r );
-
-				// finer rigid body moves
-				setup_rigid_body_mover( pose, r ); // needs to happen after fold_tree is decided...
-
-				//////////////////////
-				// This is it ... do the loop.
-				//////////////////////
-				for ( Size i = 1; i <= monte_carlo_cycles_ / rounds_; ++i ) {
-					// Make this generic fragment/jump multimover next?
-					RNA_move_trial( pose );
-				}
-
-				if ( get_native_pose() ) {
-					Real const rmsd = core::scoring::all_atom_rmsd( *get_native_pose(), pose );
-					if ( options_->verbose() ) TR << "All atom rmsd: " << rmsd << std::endl;
-				}
-
-				monte_carlo_->recover_low( pose );
-				monte_carlo_->show_counters();
-				monte_carlo_->reset_counters();
-
-				if ( r == 2 || rounds_ == 1 ) { //special 'early' stage
-					lores_score_early_ = (*working_denovo_scorefxn_)( pose );
-					if ( options_->filter_lores_base_pairs_early() ) {
-						bool const base_pairs_OK = rna_structure_parameters_->check_base_pairs( pose );
-						if ( options_->verbose() ) TR << "Checking base pairs early! Result: " << base_pairs_OK << std::endl;
-						if ( !base_pairs_OK ) {
-							found_solution = false;
-							break;
-						}
-					}
-				}
-
-				if ( r == rounds_ / 2 || rounds_ == 1 ) { // halfway point
-					if ( options_->filter_chain_closure_halfway() ) {
-						Real const filter_chain_closure_distance_halfway = 2 * options_->filter_chain_closure_distance();
-						bool const rna_loops_OK = rna_loop_closer_->check_closure( pose, filter_chain_closure_distance_halfway );
-						if ( options_->verbose() ) TR << "Checking loop closure with tolerance of " << filter_chain_closure_distance_halfway << " Angstroms! Result: " << rna_loops_OK << std::endl;
-						if ( !rna_loops_OK ) {
-							found_solution = false;
-							break;
-						}
-					}
-				}
-			}
-
-			time_t pdb_end_time = time(NULL);
-			if ( options_->verbose() ) TR << "Finished fragment assembly of " << out_file_tag_ << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
-
-			if ( !found_solution ) { // Just try again if early exit from above
-				if ( ntries == max_tries ) pose = monte_carlo_->lowest_score_pose();
-				continue;
-			}
 			pose = monte_carlo_->lowest_score_pose();
 
-			if ( options_->close_loops() ) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
+			// Introduce constraints in stages.
+			update_pose_constraints( r, pose );
+			monte_carlo_->reset( pose );
 
-			// A bunch of filters
-			if ( options_->filter_chain_closure() ) {
-				if ( !rna_loop_closer_->check_closure( pose, options_->filter_chain_closure_distance() ) ) {
-					if ( options_->verbose() ) TR << "Failed chain closure filter." << std::endl;
-					continue;
+			// Finer and finer fragments
+			update_frag_size( r );
+
+			// finer rigid body moves
+			setup_rigid_body_mover( pose, r ); // needs to happen after fold_tree is decided...
+
+			//////////////////////
+			// This is it ... do the loop.
+			//////////////////////
+			for ( Size i = 1; i <= monte_carlo_cycles_ / rounds_; ++i ) {
+				// Make this generic fragment/jump multimover next?
+				RNA_move_trial( pose );
+			}
+
+			if ( get_native_pose() ) {
+				Real const rmsd = core::scoring::all_atom_rmsd( *get_native_pose(), pose );
+				if ( options_->verbose() ) TR << "All atom rmsd: " << rmsd << std::endl;
+			}
+
+			monte_carlo_->recover_low( pose );
+			monte_carlo_->show_counters();
+			monte_carlo_->reset_counters();
+
+			if ( r == 2 || rounds_ == 1 ) { //special 'early' stage
+				lores_score_early_ = (*working_denovo_scorefxn_)( pose );
+				if ( options_->filter_lores_base_pairs_early() ) {
+					bool const base_pairs_OK = rna_structure_parameters_->check_base_pairs( pose );
+					if ( options_->verbose() ) TR << "Checking base pairs early! Result: " << base_pairs_OK << std::endl;
+					if ( !base_pairs_OK ) {
+						found_solution = false;
+						break;
+					}
 				}
 			}
 
-			if ( options_->filter_lores_base_pairs() ) {
-				if ( !rna_structure_parameters_->check_base_pairs( pose ) ) {
-					if ( options_->verbose() ) TR << "Failed base pairing filter." << std::endl;
-					continue;
+			if ( r == rounds_ / 2 || rounds_ == 1 ) { // halfway point
+				if ( options_->filter_chain_closure_halfway() ) {
+					Real const filter_chain_closure_distance_halfway = 2 * options_->filter_chain_closure_distance();
+					bool const rna_loops_OK = rna_loop_closer_->check_closure( pose, filter_chain_closure_distance_halfway );
+					if ( options_->verbose() ) TR << "Checking loop closure with tolerance of " << filter_chain_closure_distance_halfway << " Angstroms! Result: " << rna_loops_OK << std::endl;
+					if ( !rna_loops_OK ) {
+						found_solution = false;
+						break;
+					}
 				}
 			}
-
-			lores_score_final_ = (*working_denovo_scorefxn_)( pose );
-			if ( options_->autofilter() ) {
-				if ( !check_score_filter( lores_score_final_, all_lores_score_final_ ) ) {
-					if ( options_->verbose() ) TR << "Failed score filter." << std::endl;
-					continue;
-				}
-			}
-			break; //Pass all the filters, early exit
-		} // ++ntries <= max_tries
-
-		// Get the full strength constraint back
-		update_denovo_scorefxn_weights( rounds_ );
-		update_pose_constraints( rounds_, pose );
-		if ( options_->verbose() ) working_denovo_scorefxn_->show( std::cout, pose );
-		final_scorefxn_ = working_denovo_scorefxn_;
-
-		lores_pose_ = pose.clone();
-
-		if ( options_->minimize_structure() ) {
-			rna_minimizer_->set_allow_insert( rna_structure_parameters_->allow_insert() );
-			rna_minimizer_->apply( pose );
-			if ( options_->close_loops() ) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
-			final_scorefxn_ = hires_scorefxn_;
 		}
 
-		if ( options_->use_chem_shift_data() ) apply_chem_shift_data( pose );
+		time_t pdb_end_time = time(NULL);
+		if ( options_->verbose() ) TR << "Finished fragment assembly of " << out_file_tag_ << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 
-		if ( options_->relax_structure() ) rna_relaxer_->apply( pose );
+		if ( !found_solution ) { // Just try again if early exit from above
+			if ( ntries == max_tries ) pose = monte_carlo_->lowest_score_pose();
+			continue;
+		}
+		pose = monte_carlo_->lowest_score_pose();
 
-		if ( options_->allow_bulge() ) {
-			//Identify and virtual the bulge residues.
-			/*Size const num_res_virtualized =*/
-			virtualize_bulges(
-				pose, options_->allowed_bulge_res(), final_scorefxn_, out_file_tag_,
-				true /*allow_pre_virtualize*/, options_->allow_consecutive_bulges(),
-				true /*verbose*/
-			);
+		if ( options_->close_loops() ) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
+
+		// A bunch of filters
+		if ( options_->filter_chain_closure() ) {
+			if ( !rna_loop_closer_->check_closure( pose, options_->filter_chain_closure_distance() ) ) {
+				if ( options_->verbose() ) TR << "Failed chain closure filter." << std::endl;
+				continue;
+			}
 		}
 
-		final_score( pose ); // may include rna_chem_map score here.
+		if ( options_->filter_lores_base_pairs() ) {
+			if ( !rna_structure_parameters_->check_base_pairs( pose ) ) {
+				if ( options_->verbose() ) TR << "Failed base pairing filter." << std::endl;
+				continue;
+			}
+		}
 
+		lores_score_final_ = (*working_denovo_scorefxn_)( pose );
+		if ( options_->autofilter() ) {
+			if ( !check_score_filter( lores_score_final_, all_lores_score_final_ ) ) {
+				if ( options_->verbose() ) TR << "Failed score filter." << std::endl;
+				continue;
+			}
+		}
+		break; //Pass all the filters, early exit
+	} // ++ntries <= max_tries
+
+	// Get the full strength constraint back
+	update_denovo_scorefxn_weights( rounds_ );
+	update_pose_constraints( rounds_, pose );
+	if ( options_->verbose() ) working_denovo_scorefxn_->show( std::cout, pose );
+	final_scorefxn_ = working_denovo_scorefxn_;
+
+	lores_pose_ = pose.clone();
+
+	if ( options_->minimize_structure() ) {
+		rna_minimizer_->set_allow_insert( rna_structure_parameters_->allow_insert() );
+		rna_minimizer_->apply( pose );
+		if ( options_->close_loops() ) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
+		final_scorefxn_ = hires_scorefxn_;
 	}
+
+	if ( options_->use_chem_shift_data() ) apply_chem_shift_data( pose );
+
+	if ( options_->relax_structure() ) rna_relaxer_->apply( pose );
+
+	if ( options_->allow_bulge() ) {
+		//Identify and virtual the bulge residues.
+		/*Size const num_res_virtualized =*/
+		virtualize_bulges(
+			pose, options_->allowed_bulge_res(), final_scorefxn_, out_file_tag_,
+			true /*allow_pre_virtualize*/, options_->allow_consecutive_bulges(),
+			true /*verbose*/
+		);
+	}
+
+	final_score( pose ); // may include rna_chem_map score here.
+
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -672,7 +672,7 @@ RNA_FragmentMonteCarlo::random_jump_trial( pose::Pose & pose ) {
 
 	if ( !success ) return;
 
-	if ( do_close_loops_ ) 	rna_loop_closer_->apply( pose );
+	if ( do_close_loops_ )  rna_loop_closer_->apply( pose );
 
 	monte_carlo_->boltzmann( pose, move_type );
 
@@ -751,7 +751,7 @@ void
 RNA_FragmentMonteCarlo::show(std::ostream & output) const
 {
 	Mover::show(output);
-	output << 	"\nRounds:                        " << rounds_ <<
+	output <<  "\nRounds:                        " << rounds_ <<
 		"\nMonte Carlo cycles:            " << monte_carlo_cycles_ <<
 		"\nMC cycle max default:          " << monte_carlo_cycles_max_default_ <<
 		"\nFragment size:                 " << frag_size_ <<

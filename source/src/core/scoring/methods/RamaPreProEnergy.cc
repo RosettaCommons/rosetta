@@ -202,7 +202,7 @@ RamaPreProEnergy::eval_intraresidue_dof_derivative(
 	Real deriv(0.0);
 	if ( tor_id.valid() && tor_id.type() == id::BB ) {
 		core::Size i = tor_id.rsd();
-		if (i==1 || i==pose.total_residue()) return 0.0;
+		if ( i==1 || i==pose.total_residue() ) return 0.0;
 
 		conformation::Residue const &res_hi( pose.residue( i+1 ) );
 

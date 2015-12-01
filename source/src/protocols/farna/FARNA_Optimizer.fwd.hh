@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/farna/FARNA_Optimizer.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace farna {
-	
-	class FARNA_Optimizer;
-	typedef utility::pointer::shared_ptr< FARNA_Optimizer > FARNA_OptimizerOP;
-	typedef utility::pointer::shared_ptr< FARNA_Optimizer const > FARNA_OptimizerCOP;
-	
-} //farna 
-} //protocols 
+
+class FARNA_Optimizer;
+typedef utility::pointer::shared_ptr< FARNA_Optimizer > FARNA_OptimizerOP;
+typedef utility::pointer::shared_ptr< FARNA_Optimizer const > FARNA_OptimizerCOP;
+
+} //farna
+} //protocols
 
 #endif

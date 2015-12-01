@@ -221,13 +221,13 @@ RNA_FilteredBaseBaseInfo::figure_out_rna_base_pairs_to_score(
 		if ( rna_verbose_ ) {
 
 			std::cout << "BASE PAIR: " << I( 3, i ) << " " << I( 3, j ) << " "
-								<< get_edge_from_num( k ) << " "
-								<< get_edge_from_num( m ) << " "
-								<< get_orientation_from_num( base_pair.orientation() )
-								<< "  ==  > "
-								<< F( 5, 3, raw_base_pair_array( i, j, k ) ) << " " << F( 5, 3, raw_base_pair_array( j, i, m ) )  << " "
+				<< get_edge_from_num( k ) << " "
+				<< get_edge_from_num( m ) << " "
+				<< get_orientation_from_num( base_pair.orientation() )
+				<< "  ==  > "
+				<< F( 5, 3, raw_base_pair_array( i, j, k ) ) << " " << F( 5, 3, raw_base_pair_array( j, i, m ) )  << " "
 				//        << scaled_axis_energy
-								<< std::endl;
+				<< std::endl;
 
 		}
 

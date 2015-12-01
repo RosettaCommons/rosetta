@@ -24,16 +24,16 @@ namespace core {
 namespace pose {
 namespace rna {
 
-  LW_BaseDoubletOrientation
-  get_LW_orientation( BaseEdge const & edge1, BaseEdge const & edge2, BaseDoubletOrientation const & orientation );
+LW_BaseDoubletOrientation
+get_LW_orientation( BaseEdge const & edge1, BaseEdge const & edge2, BaseDoubletOrientation const & orientation );
 
-  BaseDoubletOrientation
-  get_base_doublet_orientation_from_LW( BaseEdge const & edge1, BaseEdge const & edge2, LW_BaseDoubletOrientation const & lw_orientation );
+BaseDoubletOrientation
+get_base_doublet_orientation_from_LW( BaseEdge const & edge1, BaseEdge const & edge2, LW_BaseDoubletOrientation const & lw_orientation );
 
-  typedef std::map< std::pair< BaseEdge, BaseEdge >, std::map< BaseDoubletOrientation, LW_BaseDoubletOrientation > > LW_Table;
+typedef std::map< std::pair< BaseEdge, BaseEdge >, std::map< BaseDoubletOrientation, LW_BaseDoubletOrientation > > LW_Table;
 
-  LW_Table const &
-  get_leontis_westhof_table();
+LW_Table const &
+get_leontis_westhof_table();
 
 } //rna
 } //pose

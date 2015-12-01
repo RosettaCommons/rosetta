@@ -144,9 +144,11 @@ get_interface_residues( core::pose::Pose & pose, utility::vector1< bool > &inter
 	// make pose polyA
 	core::pose::Pose pose_working = pose;
 	utility::vector1< Size > protein_residues;
-	for ( Size i=1, i_end = nres; i<= i_end; ++i )
-		if ( pose.residue( i ).is_protein() )
+	for ( Size i=1, i_end = nres; i<= i_end; ++i ) {
+		if ( pose.residue( i ).is_protein() ) {
 			protein_residues.push_back( i );
+		}
+	}
 	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose( "ALA", pose_working, protein_residues, false, false, false );
 
 	interface.clear();
@@ -182,14 +184,14 @@ get_interface_residues( core::pose::Pose & pose, utility::vector1< bool > &inter
 			core::Real angle1 = numeric::angle_degrees(rsd1.atom("CA").xyz(), rsd1.atom("CB").xyz(), rsd2.atom("CB").xyz() ) ;
 			core::Real angle2 = numeric::angle_degrees(rsd1.atom("CB").xyz(), rsd2.atom("CB").xyz(), rsd2.atom("CA").xyz() ) ;
 			core::Real angle_tgt = K*exp(b*dist);
-			if (angle_tgt < 180 && angle1 > angle_tgt && angle2 > angle_tgt) {
+			if ( angle_tgt < 180 && angle1 > angle_tgt && angle2 > angle_tgt ) {
 				interface[i] = interface[j] = true;
 				ninterface++;
 			}
 		}
 	}
 
-	if (ninterface==0) {
+	if ( ninterface==0 ) {
 		utility_exit_with_message( "No interface residues found!" );
 	}
 }
@@ -199,10 +201,10 @@ get_interface_residues( core::pose::Pose & pose, utility::vector1< bool > &inter
 // helper function, get neighbor residues (directional)
 void
 get_neighbor_residues(
-		core::pose::Pose & pose,
-		core::Size res_i,
-		utility::vector1< bool > &neighbor,
-		core::Real K) {
+	core::pose::Pose & pose,
+	core::Size res_i,
+	utility::vector1< bool > &neighbor,
+	core::Real K) {
 	using namespace core;
 	using namespace core::scoring;
 
@@ -213,9 +215,11 @@ get_neighbor_residues(
 	// make pose polyA
 	core::pose::Pose pose_working = pose;
 	utility::vector1< Size > protein_residues;
-	for ( Size i=1, i_end = nres; i<= i_end; ++i )
-		if ( pose.residue( i ).is_protein() )
+	for ( Size i=1, i_end = nres; i<= i_end; ++i ) {
+		if ( pose.residue( i ).is_protein() ) {
 			protein_residues.push_back( i );
+		}
+	}
 	protocols::toolbox::pose_manipulation::construct_poly_XXX_pose( "ALA", pose_working, protein_residues, false, false, true );
 
 	neighbor.clear();
@@ -235,7 +239,7 @@ get_neighbor_residues(
 
 		core::Real angle_tgt = K*exp(b*dist);
 
-		if (angle_tgt < 180 && angle1 > angle_tgt && angle2 > angle_tgt) {
+		if ( angle_tgt < 180 && angle1 > angle_tgt && angle2 > angle_tgt ) {
 			neighbor[res_j] = true;
 		}
 	}
@@ -254,7 +258,7 @@ public:
 		NEXP_=0;
 
 		// quick and dirty parallelization
-		if (basic::options::option[basic::options::OptionKeys::ssm::parallel].user()){
+		if ( basic::options::option[basic::options::OptionKeys::ssm::parallel].user() ) {
 			utility::vector1< core::Size > parallel_args = basic::options::option[basic::options::OptionKeys::ssm::parallel]();
 			runtime_assert( parallel_args.size() == 2);
 			runtime_assert( parallel_args[1]<=parallel_args[2] );
@@ -274,23 +278,23 @@ public:
 
 		// read resfile
 		core::pack::task::TaskFactoryOP task ( new core::pack::task::TaskFactory );
-		if (basic::options::option[basic::options::OptionKeys::packing::resfile].user()){
+		if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
 			task->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::ReadResfile ) );
 		}
 		core::pack::task::PackerTaskOP ptask_resfile = task->create_task_and_apply_taskoperations( pose );
 
 		// restrict to interface if requested
-		if (basic::options::option[basic::options::OptionKeys::ssm::interface].user()){
+		if ( basic::options::option[basic::options::OptionKeys::ssm::interface].user() ) {
 			utility::vector1< bool > interface;
 			get_interface_residues( pose, interface, K_);
 			ptask_resfile->restrict_to_residues(interface);
 		}
 
 		for ( Size i_res=1; i_res <= nres; ++i_res ) {
-			if (j_>1 && ( (i_res%j_) != (i_%j_) )) continue;
+			if ( j_>1 && ( (i_res%j_) != (i_%j_) ) ) continue;
 
 			bool design_i = ptask_resfile->design_residue( i_res );
-			if (!design_i) continue;
+			if ( !design_i ) continue;
 
 			// find neighbor residues
 			utility::vector1<bool> neighbor;
@@ -299,7 +303,7 @@ public:
 			// find neighbors' neighbors
 			utility::vector1<bool> neighbor_neighbor = neighbor;
 			for ( Size j_res=1; j_res <= nres; ++j_res ) {
-				if (neighbor[j_res]) {
+				if ( neighbor[j_res] ) {
 					utility::vector1<bool> neighbor_j;
 					get_neighbor_residues( pose, j_res, neighbor_j, K_);
 
@@ -325,9 +329,9 @@ public:
 				for ( Size j_res=1; j_res <= nres; ++j_res ) {
 					if ( i_res == j_res ) {
 						ptask_working->nonconst_residue_task( j_res ).restrict_absent_canonical_aas( allowed_aas );
-					} else if (neighbor[j_res]) {
+					} else if ( neighbor[j_res] ) {
 						; //do nothing
-					} else if (neighbor_neighbor[j_res]) {
+					} else if ( neighbor_neighbor[j_res] ) {
 						ptask_working->nonconst_residue_task( j_res ).restrict_to_repacking();
 					}
 				}
@@ -382,10 +386,10 @@ public:
 
 	void
 	optimization_loop(
-			core::pose::Pose & pose,
-			core::scoring::ScoreFunctionOP sf,
-			core::pack::task::PackerTaskOP ptask,
-			core::kinematics::MoveMapOP mm) {
+		core::pose::Pose & pose,
+		core::scoring::ScoreFunctionOP sf,
+		core::pack::task::PackerTaskOP ptask,
+		core::kinematics::MoveMapOP mm) {
 
 		core::pack::pack_rotamers( pose, *sf, ptask );
 
@@ -402,21 +406,21 @@ public:
 	///
 	void
 	apply(core::pose::Pose &pose) {
-    core::scoring::dssp::Dssp dssp( pose );
-    dssp.insert_ss_into_pose( pose );
+		core::scoring::dssp::Dssp dssp( pose );
+		dssp.insert_ss_into_pose( pose );
 
 		// load packer task from command line
 		core::Size nres = pose.total_residue();
 
 		// read resfile
 		core::pack::task::TaskFactoryOP task ( new core::pack::task::TaskFactory );
-		if (basic::options::option[basic::options::OptionKeys::packing::resfile].user()){
+		if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
 			task->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::ReadResfile ) );
 		}
 		core::pack::task::PackerTaskOP ptask_resfile = task->create_task_and_apply_taskoperations( pose );
 
 		// restrict to interface if requested
-		if (basic::options::option[basic::options::OptionKeys::ssm::interface].user()){
+		if ( basic::options::option[basic::options::OptionKeys::ssm::interface].user() ) {
 			utility::vector1< bool > interface;
 			get_interface_residues( pose, interface, K_);
 			ptask_resfile->restrict_to_residues(interface);
@@ -428,7 +432,7 @@ public:
 
 		for ( Size i_res=1; i_res <= nres; ++i_res ) {
 			bool design_i = ptask_resfile->design_residue( i_res );
-			if (!design_i) continue;
+			if ( !design_i ) continue;
 
 			// find neighbor residues
 			utility::vector1<bool> neighbor;
@@ -438,7 +442,7 @@ public:
 			core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap);
 			mm->set_jump(true); mm->set_chi(false); mm->set_bb(false);
 			for ( Size j_res=1; j_res <= nres; ++j_res ) {
-				if (i_res == j_res || neighbor[j_res] ) mm->set_chi(j_res, true);
+				if ( i_res == j_res || neighbor[j_res] ) mm->set_chi(j_res, true);
 			}
 
 			TR << i_res << " ";
@@ -462,7 +466,7 @@ public:
 				for ( Size j_res=1; j_res <= nres; ++j_res ) {
 					if ( i_res == j_res ) {
 						ptask_working->nonconst_residue_task( j_res ).restrict_absent_canonical_aas( allowed_aas );
-					} else if (neighbor[j_res]) {
+					} else if ( neighbor[j_res] ) {
 						ptask_working->nonconst_residue_task( j_res ).restrict_to_repacking();
 					}
 				}
@@ -515,7 +519,7 @@ int main( int argc, char * argv [] )
 
 		SequenceMoverOP seq( new SequenceMover() );
 
-		if (basic::options::option[basic::options::OptionKeys::ssm::packing]()) {
+		if ( basic::options::option[basic::options::OptionKeys::ssm::packing]() ) {
 			seq->add_mover( MoverOP(new Packing_energies()) );
 		} else {
 			seq->add_mover( MoverOP(new SSM_energies()) );

@@ -432,16 +432,16 @@ detect_ld_chirality_from_polymer_residue(
 ) {
 	is_d_aa = false;
 	is_l_aa = false;
-	
+
 	// Exclude known achiral.
 	if ( name3 == "GLY" || name3 == "C15" || name3 == "C16" || name3 == "MAL" ||
-		name3 == "A98" || name3 == "B02" || name3 == "B06" ) {
+			name3 == "A98" || name3 == "B02" || name3 == "B06" ) {
 		return;
 	}
-	
+
 	// Positive angles are D
 	core::Real characteristic_angle = 0;
-	
+
 	// Explicitly exclude peptoids and PNAs.
 	if ( xyz.find( " CA " ) != xyz.end() && xyz.find( " CA1" ) == xyz.end() && xyz.find( " NG " ) == xyz.end() ) {
 		// There are four atoms bonded to CA.
@@ -465,9 +465,9 @@ detect_ld_chirality_from_polymer_residue(
 			} // other possibilities: GLY
 		}
 		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
-	
-	// Gammas--notably we need all this because just C2 C3 C4 are also had by sugars.
-	// What a terrible method.
+
+		// Gammas--notably we need all this because just C2 C3 C4 are also had by sugars.
+		// What a terrible method.
 	} else if ( xyz.find( " C2 " ) != xyz.end() && xyz.find( " C3 " ) != xyz.end() && xyz.find( " C4 " ) != xyz.end() && xyz.find( " C  " ) != xyz.end() && xyz.find( " O  " ) != xyz.end() && xyz.find( " N  " ) != xyz.end() ) {
 		// If we have a gamma, assign based on the stereo of the first carbon from C
 		// This is an if else if NOT because we expect these to be mutually exclusive
@@ -483,7 +483,7 @@ detect_ld_chirality_from_polymer_residue(
 		}
 		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
 	}
-	
+
 	characteristic_angle = 0;
 	// If we're being called from a residue that's already trimmed.
 	// Explicitly exclude peptoids and PNAs.
@@ -492,7 +492,7 @@ detect_ld_chirality_from_polymer_residue(
 		if ( xyz.find( "Pbb" ) != xyz.end() ) {
 			// Phosphonate
 			characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "Pbb" ), xyz.at( "CB" ), xyz.at( "CA" ) );
-		} else if ( xyz.find( "CM" ) != xyz.end() && name3 != "MLZ" ) {			// beta
+		} else if ( xyz.find( "CM" ) != xyz.end() && name3 != "MLZ" ) {   // beta
 			if ( xyz.find( "CB" ) != xyz.end() ) {
 				characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "CM" ), xyz.at( "CB" ), xyz.at( "CA" ) );
 			} else if ( xyz.find( "CB1" ) != xyz.end() && xyz.find( "CB2" ) != xyz.end() ) {
@@ -507,9 +507,9 @@ detect_ld_chirality_from_polymer_residue(
 			} // other possibilities: GLY
 		}
 		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
-		
-	// Gammas--notably we need all this because just C2 C3 C4 are also had by sugars.
-	// What a terrible method.
+
+		// Gammas--notably we need all this because just C2 C3 C4 are also had by sugars.
+		// What a terrible method.
 	} else if ( xyz.find( "C2" ) != xyz.end() && xyz.find( "C3" ) != xyz.end() && xyz.find( "C4" ) != xyz.end() && xyz.find( "C" ) != xyz.end() && xyz.find( "O" ) != xyz.end() && xyz.find( "N" ) != xyz.end() ) {
 		if ( xyz.find( "CB2" ) != xyz.end() ) {
 			characteristic_angle = numeric::dihedral_degrees( xyz.at( "C3" ), xyz.at( "C" ), xyz.at( "CB2" ), xyz.at( "C2" ) );

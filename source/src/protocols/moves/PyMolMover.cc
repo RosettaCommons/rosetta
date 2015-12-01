@@ -637,13 +637,13 @@ PyMolObserver::attach_impl(core::pose::Pose & pose) {
 	energy_event_link_.invalidate();
 	conformation_event_link_.invalidate();
 
-	if( type_ & general_observer ) {
+	if ( type_ & general_observer ) {
 		general_event_link_ = pose.attach_general_obs( &PyMolObserver::generalEvent, this );
 	}
-	if( type_ & energy_observer ) {
+	if ( type_ & energy_observer ) {
 		energy_event_link_ = pose.attach_energy_obs( &PyMolObserver::energyEvent, this );
 	}
-	if( type_ & conformation_observer ) {
+	if ( type_ & conformation_observer ) {
 		conformation_event_link_ = pose.attach_conformation_obs( &PyMolObserver::conformationEvent, this );
 	}
 }

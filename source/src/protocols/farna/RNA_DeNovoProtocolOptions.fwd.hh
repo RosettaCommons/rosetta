@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/farna/RNA_DeNovoProtocolOptions.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace farna {
-	
-	class RNA_DeNovoProtocolOptions;
-	typedef utility::pointer::shared_ptr< RNA_DeNovoProtocolOptions > RNA_DeNovoProtocolOptionsOP;
-	typedef utility::pointer::shared_ptr< RNA_DeNovoProtocolOptions const > RNA_DeNovoProtocolOptionsCOP;
-	
-} //farna 
-} //protocols 
+
+class RNA_DeNovoProtocolOptions;
+typedef utility::pointer::shared_ptr< RNA_DeNovoProtocolOptions > RNA_DeNovoProtocolOptionsOP;
+typedef utility::pointer::shared_ptr< RNA_DeNovoProtocolOptions const > RNA_DeNovoProtocolOptionsCOP;
+
+} //farna
+} //protocols
 
 #endif

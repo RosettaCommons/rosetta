@@ -499,7 +499,7 @@ RDAT::save_data( std::string const & line, utility::vector1< Real > & var  ) con
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RDAT::save_data_with_idx( utility::vector1< std::string > & var,
-													Size const & idx,  std::string const & value ) const {
+	Size const & idx,  std::string const & value ) const {
 	runtime_assert( idx > 0 );
 	for ( Size n = var.size(); n < idx; n++ ) var.push_back( "" );
 	var[ idx ] = value;
@@ -508,7 +508,7 @@ RDAT::save_data_with_idx( utility::vector1< std::string > & var,
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RDAT::save_data_with_idx( utility::vector1< utility::vector1< Annotation > > & var,
-													Size const & idx,  Annotation & value ) const {
+	Size const & idx,  Annotation & value ) const {
 	runtime_assert( idx > 0 );
 	for ( Size n = var.size(); n < idx; n++ ) var.push_back( vector1< Annotation >() );
 	runtime_assert( idx <= var.size() );
@@ -553,7 +553,7 @@ RDAT::fill_data_annotations_if_empty() {
 //////////////////////////////////////////////////////////////////////////////////////
 void
 RDAT::fill_seqpos( std::string const & seqpos_info,
-									 std::string & sequence_seqpos ) {
+	std::string & sequence_seqpos ) {
 
 	vector1< std::string > seqpos_tags = str2cell( seqpos_info );
 	sequence_seqpos = "";

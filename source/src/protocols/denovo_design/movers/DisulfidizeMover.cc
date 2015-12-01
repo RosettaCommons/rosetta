@@ -227,7 +227,7 @@ DisulfidizeMover::prune_symmetric_disulfides (
 		bool n1_is_indep = symm_conf->Symmetry_Info()->bb_is_independent(  disulf_list[i].first );
 		bool n2_is_indep = symm_conf->Symmetry_Info()->bb_is_independent(  disulf_list[i].second );
 
-		if (n1_is_indep || n2_is_indep) {
+		if ( n1_is_indep || n2_is_indep ) {
 			disulf_list_out.push_back( disulf_list[i] );
 		}
 	}

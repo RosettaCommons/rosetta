@@ -44,8 +44,8 @@ public:  // Standard methods //////////////////////////////////////////////////
 
 public:  // Tests /////////////////////////////////////////////////////////////
 	// Input Methods //////////////////////////////////////////////////////////
-	
-	
+
+
 	/// @brief Tests PDB import when the -extra_res_fa flag is used to specify a noncanonical residue.
 	///
 	void test_extra_res_fa_flag() {
@@ -58,7 +58,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	}
 
 	// Confirm that LINK records are stored properly.
-	
+
 	void test_store_link_record()
 	{
 		using namespace std;

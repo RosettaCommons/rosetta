@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file core/pose/copydofs/CopyDofsInfo.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace core {
 namespace pose {
 namespace copydofs {
-	
-	class CopyDofsInfo;
-	typedef utility::pointer::shared_ptr< CopyDofsInfo > CopyDofsInfoOP;
-	typedef utility::pointer::shared_ptr< CopyDofsInfo const > CopyDofsInfoCOP;
-	
-} //copydofs 
-} //pose 
-} //core 
+
+class CopyDofsInfo;
+typedef utility::pointer::shared_ptr< CopyDofsInfo > CopyDofsInfoOP;
+typedef utility::pointer::shared_ptr< CopyDofsInfo const > CopyDofsInfoCOP;
+
+} //copydofs
+} //pose
+} //core
 
 #endif

@@ -199,7 +199,7 @@ FA_ElecEnergy::read_cp_tables_from_db(std::string filename) {
 
 		linestream >> name3 >> atom1 >> atom2;  // format is NAME REPRESENTATIVE_ATOM TARGET_ATOM
 
-		if (flip_cp_rep_) {
+		if ( flip_cp_rep_ ) {
 			cp_rep_map_byname_[name3].insert(std::make_pair( atom1, atom2 )) ;
 		} else {
 			cp_rep_map_byname_[name3].insert(std::make_pair( atom2, atom1 )) ;
@@ -214,29 +214,28 @@ FA_ElecEnergy::get_countpair_representative_atom(
 	core::chemical::ResidueType const & restype,
 	core::Size atm_i
 ) const {
-	if (!use_cp_rep_) return atm_i;
+	if ( !use_cp_rep_ ) return atm_i;
 
 	// for now ...
-	if (!restype.is_protein()) return atm_i;
+	if ( !restype.is_protein() ) return atm_i;
 
 	std::map< chemical::ResidueType const *, std::map<core::Size,core::Size> >::const_iterator iter = cp_rep_map_.find( & restype );
-	if (iter == cp_rep_map_.end()) {
+	if ( iter == cp_rep_map_.end() ) {
 		// make parameters
 		std::map<core::Size,core::Size> rsd_map;
 
 		std::map< std::string, std::map<std::string,std::string> >::const_iterator name_iter = cp_rep_map_byname_.find( restype.name3() );
 
-		if (name_iter == cp_rep_map_byname_.end()) {
+		if ( name_iter == cp_rep_map_byname_.end() ) {
 			TR.Trace << "Warning!  Unable to find countpair representatives for restype " << restype.name3() << std::endl;
 		} else {
 			std::map<std::string,std::string> const & atms = name_iter->second;
-			for (std::map<std::string,std::string>::const_iterator atom_iter = atms.begin(), atom_iter_end = atms.end(); atom_iter!=atom_iter_end; ++atom_iter) {
-				if (restype.has(atom_iter->first) &&  restype.has(atom_iter->second)) {
+			for ( std::map<std::string,std::string>::const_iterator atom_iter = atms.begin(), atom_iter_end = atms.end(); atom_iter!=atom_iter_end; ++atom_iter ) {
+				if ( restype.has(atom_iter->first) &&  restype.has(atom_iter->second) ) {
 					core::Size idx1 = restype.atom_index(atom_iter->first);
 					core::Size idx2 = restype.atom_index(atom_iter->second);
 					rsd_map.insert( std::make_pair(idx1,idx2) );
-				}
-				else {
+				} else {
 					TR.Trace << "Warning!  Unable to find atompair " << atom_iter->first << "," << atom_iter->second  << " for " << restype.name3() << " (" << restype.name() << ")" << std::endl;
 				}
 			}
@@ -249,7 +248,7 @@ FA_ElecEnergy::get_countpair_representative_atom(
 
 	std::map<core::Size,core::Size> const &mapping_i = iter->second;
 	std::map<core::Size,core::Size>::const_iterator iter_map_i = mapping_i.find(atm_i);
-	if (iter_map_i == mapping_i.end()) {
+	if ( iter_map_i == mapping_i.end() ) {
 		return atm_i;
 	} else {
 		return iter_map_i->second;
@@ -339,7 +338,7 @@ FA_ElecEnergy::setup_for_packing(
 		if ( pose.residue(ii).aa() == core::chemical::aa_vrt ) continue;
 
 		// ensure that the resmaps are initialized for this
-		if (use_cp_rep_ ) get_countpair_representative_atom(pose.residue( ii ).type(),1);
+		if ( use_cp_rep_ ) get_countpair_representative_atom(pose.residue( ii ).type(),1);
 
 		RotamerTrieBaseOP one_rotamer_trie = create_rotamer_trie( pose.residue( ii ), pose );
 		tries->trie( ii, one_rotamer_trie );
@@ -358,7 +357,7 @@ FA_ElecEnergy::prepare_rotamers_for_packing(
 {
 	// ensure that the resmaps are initialized for everyrestype in the set
 	for ( Size ii = 1; ii <= set.num_rotamers(); ++ii ) {
-	 get_countpair_representative_atom( set.rotamer( ii )->type(),1);
+		get_countpair_representative_atom( set.rotamer( ii )->type(),1);
 	}
 
 	trie::RotamerTrieBaseOP rottrie = create_rotamer_trie( set, pose );
@@ -593,7 +592,7 @@ FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
 	Real const XX2 = std::pow( coulomb().max_dis() + 2*tolerated_narrow_nblist_motion, 2 );
 
-	if (!use_cp_rep_ ) {
+	if ( !use_cp_rep_ ) {
 		nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair );
 	} else {
 		// ensure that the resmaps are initialized for this pair

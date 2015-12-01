@@ -203,7 +203,7 @@ RNA_StructureParameters::initialize_from_pose( pose::Pose const & pose ) {
 		Size const jump_pos1( f.upstream_jump_residue( n ) );
 		Size const jump_pos2( f.downstream_jump_residue( n ) );
 		if ( pose.residue_type( jump_pos1 ).is_RNA() &&
-				 pose.residue_type( jump_pos2 ).is_RNA() ) {
+				pose.residue_type( jump_pos2 ).is_RNA() ) {
 			rna_pairing_list_.push_back( core::pose::rna::BasePair( jump_pos1, jump_pos2 ) /* note that edges are not specified*/ );
 			obligate_pairing_sets_.push_back( utility::tools::make_vector1( rna_pairing_list_.size() ) );
 		}
@@ -211,7 +211,7 @@ RNA_StructureParameters::initialize_from_pose( pose::Pose const & pose ) {
 
 	for ( Size i = 1; i < pose.total_residue(); i++ ) {
 		if ( f.is_cutpoint( i ) ) {
-			if ( pose.residue_type( i ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ){
+			if ( pose.residue_type( i ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
 				runtime_assert( pose.residue_type( i+1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) );
 				cutpoints_closed_.push_back( i );
 			} else {
@@ -346,15 +346,15 @@ RNA_StructureParameters::initialize_allow_insert( core::pose::Pose const & pose 
 			Size const i = allow_insert_res_[ n ];
 			allow_insert_->set( i, true );
 		}
-	} else if ( core::pose::full_model_info::full_model_info_defined( pose ) ){
-	} else {
+	} else if ( core::pose::full_model_info::full_model_info_defined( pose ) ) {}
+	else {
 		allow_insert_->set( true );
 	}
 
 	update_allow_insert_to_move_internal_phosphates( pose );
 
 	//std::cout << "ALLOW_INSERT after INITIALIZE_ALLOW_INSERT " << std::endl;
-	//	allow_insert_->show();
+	// allow_insert_->show();
 
 	// std::cout << "ALLOW_INSERT! ALLOW_INSERT! ALLOW_INSERT!" << std::endl;
 	// for (Size i = 1; i <= pose.total_residue(); i++ ){
@@ -372,10 +372,10 @@ RNA_StructureParameters::update_allow_insert_to_move_internal_phosphates( pose::
 	// new -- make sure loops are moveable (& closeable!) at the 3'-endpoint
 	for ( Size i = 1; i < pose.total_residue(); i++ ) {
 		if ( pose.residue_type( i   ).is_RNA() &&
-				 pose.residue_type( i+1 ).is_RNA() &&
-				 allow_insert_->get_domain( id::NamedAtomID( " C1'", i ), pose ) == 0 &&
-				 !pose.residue_type( i+1 ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) {
-		  allow_insert_->set_phosphate( i+1, pose, true );
+				pose.residue_type( i+1 ).is_RNA() &&
+				allow_insert_->get_domain( id::NamedAtomID( " C1'", i ), pose ) == 0 &&
+				!pose.residue_type( i+1 ).has_variant_type( core::chemical::VIRTUAL_PHOSPHATE ) ) {
+			allow_insert_->set_phosphate( i+1, pose, true );
 		}
 	}
 }
@@ -1175,7 +1175,7 @@ RNA_StructureParameters::add_virtual_phosphate_variants( pose::Pose & pose ) con
 	using namespace id;
 	using namespace chemical;
 
-	if ( pose.residue( 1 ).is_RNA() )	 pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, 1  );
+	if ( pose.residue( 1 ).is_RNA() )  pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, 1  );
 
 	for ( Size i = 1; i <= cutpoints_open_.size(); i++ ) {
 
@@ -1186,7 +1186,7 @@ RNA_StructureParameters::add_virtual_phosphate_variants( pose::Pose & pose ) con
 		}
 
 		if ( pose.residue_type( n   ).has_variant_type( CUTPOINT_LOWER ) ||
-				 pose.residue_type( n+1 ).has_variant_type( CUTPOINT_UPPER ) ) {
+				pose.residue_type( n+1 ).has_variant_type( CUTPOINT_UPPER ) ) {
 			utility_exit_with_message( "conflicting cutpoint_open & cutpoint_closed" );
 		}
 

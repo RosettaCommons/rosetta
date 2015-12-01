@@ -188,7 +188,7 @@ private:
 
 	Size
 	check_in_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > pairing_sets,
-												 core::pose::rna::BasePair const & rna_pairing_check ) const;
+		core::pose::rna::BasePair const & rna_pairing_check ) const;
 
 	utility::vector1< BasePairStep >
 	get_base_pair_steps( bool const just_canonical ) const;

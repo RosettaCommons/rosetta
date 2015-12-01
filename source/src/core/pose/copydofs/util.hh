@@ -128,8 +128,8 @@ setup_atom_id_map_match_atom_names(
 ///////////////////////////////////////////////////////////////////
 void
 apply_dofs( pose::Pose & pose,
-						CopyDofsInfo const & copy_dofs_info,
-						core::Real const dof_tolerance = 1.0e-5 );
+	CopyDofsInfo const & copy_dofs_info,
+	core::Real const dof_tolerance = 1.0e-5 );
 
 std::map< id::AtomID, Size >
 blank_atom_id_domain_map( pose::Pose const & pose );

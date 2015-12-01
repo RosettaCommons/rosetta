@@ -427,11 +427,11 @@ public:
 
 		// add counts of ss elts to scorefile
 		core::Size nL=0,nH=0,nE=0;
-		for (core::Size i=1; i<=pose.total_residue(); ++i) {
-			if (!pose.residue(i).is_protein()) continue;
-			if (pose.secstruct(i) == 'L') nL++;
-			if (pose.secstruct(i) == 'H') nH++;
-			if (pose.secstruct(i) == 'E') nE++;
+		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+			if ( !pose.residue(i).is_protein() ) continue;
+			if ( pose.secstruct(i) == 'L' ) nL++;
+			if ( pose.secstruct(i) == 'H' ) nH++;
+			if ( pose.secstruct(i) == 'E' ) nE++;
 		}
 		core::pose::setPoseExtraScore( pose, "nL", nL);
 		core::pose::setPoseExtraScore( pose, "nH", nH);

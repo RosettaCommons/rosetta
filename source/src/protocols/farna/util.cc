@@ -135,7 +135,7 @@ get_base_pairing_info( pose::Pose const & pose,
 		Residue const & rsd_j( pose.residue( j ) );
 
 		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
-					 && base_pair.orientation() == ANTIPARALLEL )  &&
+				&& base_pair.orientation() == ANTIPARALLEL )  &&
 				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) {
 			std::string atom1, atom2;
 
@@ -161,7 +161,7 @@ get_base_pairing_info( pose::Pose const & pose,
 ///////////////////////////////////////////////////////////////////////////////
 void
 get_base_pairing_list( pose::Pose & pose,
-											 utility::vector1< std::pair<Size, Size> > & base_pairing_list )
+	utility::vector1< std::pair<Size, Size> > & base_pairing_list )
 {
 
 	using namespace core::scoring;
@@ -202,7 +202,7 @@ get_base_pairing_list( pose::Pose & pose,
 		Residue const & rsd_j( pose.residue( j ) );
 
 		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
-					 && base_pair.orientation() == ANTIPARALLEL )  &&
+				&& base_pair.orientation() == ANTIPARALLEL )  &&
 				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) {
 			std::string atom1, atom2;
 
@@ -598,7 +598,7 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 
 		bool WC_base_pair( false );
 		if ( ( base_pair.edge1() == WATSON_CRICK && base_pair.edge2() == WATSON_CRICK
-					 && base_pair.orientation() == ANTIPARALLEL )  &&
+				&& base_pair.orientation() == ANTIPARALLEL )  &&
 				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) )    {
 			//std::string atom1, atom2;
 			//  get_watson_crick_base_pair_atoms( rsd_i.aa(), rsd_j.aa(), atom1, atom2 );
@@ -1262,7 +1262,7 @@ figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partne
 		Residue const & rsd_j( pose.residue( j ) );
 
 		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
-					 && base_pair.orientation() == 1 )  &&
+				&& base_pair.orientation() == 1 )  &&
 				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) &&
 				pose.torsion( id::TorsionID( i, id::CHI, 1 ) ) > 0  && //Need to check syn/anti
 				pose.torsion( id::TorsionID( j, id::CHI, 1 ) ) > 0     //Need to check syn/anti
@@ -1622,7 +1622,7 @@ get_rna_hires_scorefxn() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 get_moving_res( core::pose::Pose const & pose,
-								protocols::toolbox::AllowInsertCOP allow_insert ) {
+	protocols::toolbox::AllowInsertCOP allow_insert ) {
 
 	utility::vector1< Size > moving_res;
 

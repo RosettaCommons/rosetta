@@ -1037,9 +1037,6 @@ void draw_rosetta_screensaver( int & width, int & height )
 		glLoadIdentity();
 		glColor3f( 0.5f, 0.5f, 0.5f );
 		glTranslatef( 0.0, 0.0, 0.0 );
-		glBegin( GL_LINE_STRIP ) ;
-		glVertex2f(0,1); glVertex2f(0,0); glVertex2f(1,0); glVertex2f(1,1); //glVertex2f(0,0);
-		glEnd();
 		glLoadIdentity();
 
 		display_wu_desc( height );
@@ -1054,19 +1051,51 @@ void draw_rosetta_screensaver( int & width, int & height )
 		display_text();
 	}
 
-	// SEARCHING BOX
+	// SEARCHING BOX -- INITIALIZATION
 	current_viewport_x      = 0;
 	current_viewport_y      = height-dim_main;
 	current_viewport_width  = current_viewport_height = dim_main;
-
 	glViewport( current_viewport_x, current_viewport_y, current_viewport_width, current_viewport_height );
 	mode_ortho_start();
-	glColor3f( 0.5f, 0.5f, 0.5f );
-	glTranslatef( 0.0, 0.0, 0.0 );
-	glBegin( GL_LINE_STRIP ) ;
-	glVertex2f(0,1); glVertex2f(1,1); glVertex2f(1,0);
-	glEnd();
+	protocols::viewer::draw_gradient_bg();
+	mode_ortho_done();
 
+	// ACCEPTED BOX -- INITIALIZATION
+	best_viewport_x      = dim_main;
+	best_viewport_y      = height-dim_main;
+	best_viewport_width  = best_viewport_height = dim_main;
+	glViewport( best_viewport_x, best_viewport_y, best_viewport_width, best_viewport_height );
+	mode_ortho_start();
+	protocols::viewer::draw_gradient_bg();
+	mode_ortho_done();
+
+	if ( native_exists ) {
+		// LOW ENERGY BOX (SMALL) -- INITIALIZATION
+		low_viewport_x      = 2 * dim_main;
+		low_viewport_y      = height - small_box;
+		low_viewport_width  = low_viewport_height = small_box;
+		glViewport( low_viewport_x, low_viewport_y, low_viewport_width, low_viewport_height );
+		mode_ortho_start();
+		protocols::viewer::draw_gradient_bg();
+		mode_ortho_done();
+		// NATIVE BOX (SMALL) -- INITIALIZATION
+		native_viewport_x      = 2 * dim_main;
+		native_viewport_y      = height - 2*small_box;
+		native_viewport_width  = native_viewport_height = small_box;
+		glViewport( native_viewport_x, native_viewport_y, native_viewport_width, native_viewport_height );
+		mode_ortho_start();
+		protocols::viewer::draw_gradient_bg();
+		mode_ortho_done();
+	} else {
+		// LOW ENERGY BOX (LARGE WITHOUT NATIVE) -- INITIALIZATION
+		low_viewport_x      = 2 * dim_main;
+		low_viewport_y      = height - dim_main;
+		low_viewport_width  = low_viewport_height = dim_main;
+		glViewport( 2*dim_main, height-dim_main, dim_main, dim_main );
+		mode_ortho_start();
+		protocols::viewer::draw_gradient_bg();
+		mode_ortho_done();
+	}
 
 	using namespace graphics;
 	using namespace protocols::viewer;
@@ -1119,6 +1148,11 @@ void draw_rosetta_screensaver( int & width, int & height )
 	glMultMatrixf(graphics::lowrotation);
 	glGetFloatv(GL_MODELVIEW_MATRIX, graphics::lowrotation);  // Store current model view in decoyrotation
 
+	// SEARCHING BOX
+	current_viewport_x      = 0;
+	current_viewport_y      = height-dim_main;
+	current_viewport_width  = current_viewport_height = dim_main;
+	glViewport( current_viewport_x, current_viewport_y, current_viewport_width, current_viewport_height );
 	Structure_display(CURRENT, window_size);
 	mode_ortho_start();
 	glColor3f( 0.5f, 0.5f, 0.5f );
@@ -1297,7 +1331,7 @@ int main(int argc, char** argv) {
 #endif
 
 		// create boinc object
-		protocols::boinc::Boinc boinc_wu = protocols::boinc::Boinc::instance();
+		/*protocols::boinc::Boinc boinc_wu =*/ protocols::boinc::Boinc::instance();
 
 		core::init::init( argc, argv );
 

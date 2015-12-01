@@ -176,12 +176,12 @@ void
 StepWiseModeler::do_minimizing( core::pose::Pose & pose ) {
 	moves::MoverOP optimizer;
 	if ( options_->lores() ) {
-		optimizer =	moves::MoverOP( new protocols::farna::FARNA_Optimizer( pose_list_, scorefxn_, 100 /* cycles */ ) );
+		optimizer = moves::MoverOP( new protocols::farna::FARNA_Optimizer( pose_list_, scorefxn_, 100 /* cycles */ ) );
 	} else {
 		StepWiseMinimizerOP stepwise_minimizer( new StepWiseMinimizer( pose_list_,
-																																	 working_parameters_,
-																																	 options_,
-																																	 scorefxn_ ) );
+			working_parameters_,
+			options_,
+			scorefxn_ ) );
 		if ( master_packer_->packer()->working_pack_res_was_inputted() ) {
 			stepwise_minimizer->set_working_pack_res( master_packer_->packer()->previous_working_pack_res() );
 		}

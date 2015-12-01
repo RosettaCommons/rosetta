@@ -62,7 +62,7 @@ P_AA_ss_EnergyCreator::score_types_for_method() const {
 void
 P_AA_ss_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
 	// if we're not minimizing, compute secstruct parse
-	if (!pose.energies().use_nblist() ) {
+	if ( !pose.energies().use_nblist() ) {
 		dssp::Dssp dssp( pose );
 		dssp.insert_ss_into_pose( pose );
 	}
@@ -70,10 +70,10 @@ P_AA_ss_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) co
 
 void
 P_AA_ss_Energy::setup_for_minimizing(
-		pose::Pose & pose,
-		ScoreFunction const & ,
-		kinematics::MinimizerMapBase const &
-	) const
+	pose::Pose & pose,
+	ScoreFunction const & ,
+	kinematics::MinimizerMapBase const &
+) const
 {
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.insert_ss_into_pose( pose );

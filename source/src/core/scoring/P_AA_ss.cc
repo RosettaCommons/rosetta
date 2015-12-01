@@ -71,7 +71,7 @@ P_AA_ss::read_P_AA_ss()
 		core::Real L_i, H_i, E_i;
 		stream >> id >> L_i >> H_i >> E_i;
 		if ( stream ) {
-			if (id == "XXX") {
+			if ( id == "XXX" ) {
 				p0_L_ = L_i;
 				p0_H_ = H_i;
 				p0_E_ = E_i;
@@ -93,17 +93,17 @@ P_AA_ss::read_P_AA_ss()
 core::Real
 P_AA_ss::P_AA_ss_energy( chemical::AA aa, char ss ) const
 {
-	if (aa > chemical::num_canonical_aas) {
+	if ( aa > chemical::num_canonical_aas ) {
 		return 0.0;
 	}
 
-	if (ss == 'L') {
+	if ( ss == 'L' ) {
 		return p_L_[aa] + p0_L_;
 	}
-	if (ss == 'H') {
+	if ( ss == 'H' ) {
 		return p_H_[aa] + p0_H_;
 	}
-	if (ss == 'E') {
+	if ( ss == 'E' ) {
 		return p_E_[aa] + p0_E_;
 	}
 

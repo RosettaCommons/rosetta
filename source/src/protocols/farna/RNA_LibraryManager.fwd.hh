@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/farna/RNA_LibraryManager.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace farna {
-	
-	class RNA_LibraryManager;
-	typedef utility::pointer::shared_ptr< RNA_LibraryManager > RNA_LibraryManagerOP;
-	typedef utility::pointer::shared_ptr< RNA_LibraryManager const > RNA_LibraryManagerCOP;
-	
-} //farna 
-} //protocols 
+
+class RNA_LibraryManager;
+typedef utility::pointer::shared_ptr< RNA_LibraryManager > RNA_LibraryManagerOP;
+typedef utility::pointer::shared_ptr< RNA_LibraryManager const > RNA_LibraryManagerCOP;
+
+} //farna
+} //protocols
 
 #endif

@@ -106,10 +106,10 @@ create_packer_graph(
 		}
 
 		//if ( pose.total_residue() > 468 ) {
-		//	Vector v316 = point_graph->get_vertex( 316 ).data().xyz();
-		//	Vector v468 = point_graph->get_vertex( 316 ).data().xyz();
-		//	std::cout << "point graph data: " << v316.x() << ", " << v316.y() << ", " << v316.z() << " and "
-		//		<< v468.x() << ", " << v468.y() << ", " << v468.z() << " sqrdist: " << v316.distance_squared( v468 ) << std::endl;
+		// Vector v316 = point_graph->get_vertex( 316 ).data().xyz();
+		// Vector v468 = point_graph->get_vertex( 316 ).data().xyz();
+		// std::cout << "point graph data: " << v316.x() << ", " << v316.y() << ", " << v316.z() << " and "
+		//  << v468.x() << ", " << v468.y() << ", " << v468.z() << " sqrdist: " << v316.distance_squared( v468 ) << std::endl;
 		//}
 
 		// add edges
@@ -133,7 +133,7 @@ create_packer_graph(
 				Distance const jj_rad = residue_radii[ jj_asu ];
 
 				//if ( ii == 316 && jj == 468 ) {
-				//	std::cout << "Packer neighbor graph creation; 316 and 468; " << iter->data().dsq() << std::endl;
+				// std::cout << "Packer neighbor graph creation; 316 and 468; " << iter->data().dsq() << std::endl;
 				//}
 
 				if ( jj_rad + ii_itxn_rad > 0 &&

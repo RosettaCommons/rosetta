@@ -240,12 +240,12 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 	using namespace core::id;
 
 	if ( !input_pose.residue( cutpoint ).is_RNA() ||
-			 !input_pose.residue( cutpoint+1 ).is_RNA() ) {
+			!input_pose.residue( cutpoint+1 ).is_RNA() ) {
 		utility_exit_with_message( "RNA CCD closure at "+string_of( cutpoint )+" but residues are not RNA?");
 	}
 
 	if ( !input_pose.residue( cutpoint ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
-			 !input_pose.residue( cutpoint+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
+			!input_pose.residue( cutpoint+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 		utility_exit_with_message( "RNA CCD closure at "+string_of( cutpoint )+" but CUTPOINT_LOWER or CUTPOINT_UPPER variants not properly set up." );
 	}
 
@@ -266,7 +266,7 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 	Size cutpoint_partner( 0 ), cutpoint_next_partner( 0 );
 
 	if ( connections.find( cutpoint ) != connections.end() &&
-			 connections.find( cutpoint+1 ) != connections.end() ) {
+			connections.find( cutpoint+1 ) != connections.end() ) {
 
 		cutpoint_partner = connections.find( cutpoint )->second;
 		cutpoint_next_partner = connections.find( cutpoint+1 )->second;

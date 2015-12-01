@@ -49,7 +49,7 @@ public:
 
 	/// @brief Construct the protocol object given the RNA fragment library to use.
 	RNA_FragmentMover( RNA_Fragments const & all_rna_fragments,
-										 protocols::toolbox::AllowInsertCOP allow_insert );
+		protocols::toolbox::AllowInsertCOP allow_insert );
 
 	/// @brief Copy constructor
 	RNA_FragmentMover(RNA_FragmentMover const & object_to_copy);
@@ -63,7 +63,7 @@ public:
 
 	virtual protocols::moves::MoverOP clone() const;
 
-	//	virtual protocols::moves::MoverOP fresh_instance() const;
+	// virtual protocols::moves::MoverOP fresh_instance() const;
 
 	core::Size
 	random_fragment_insertion( core::pose::Pose & pose, Size const & frag_size );

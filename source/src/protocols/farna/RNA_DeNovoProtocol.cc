@@ -241,7 +241,7 @@ RNA_DeNovoProtocol::show(std::ostream & output) const
 		"\nOutput Filters:                " << (options_->output_filters() ? "True" : "False") <<
 		"\nAutofilter:                    " << (options_->autofilter() ? "True" : "False") <<
 		"\nAutofilter score quantile:     " << options_->autofilter_score_quantile() <<
-	  "\nBase pair step moves:          " << (options_->bps_moves() ? "True" : "False");
+		"\nBase pair step moves:          " << (options_->bps_moves() ? "True" : "False");
 
 }
 
@@ -258,7 +258,7 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 		denovo_scorefxn_->set_weight( core::scoring::rna_chem_map_lores, option[ OptionKeys::score::rna_chem_map_lores_weight ]() );
 	}
 
-	//	initial_denovo_scorefxn_ = denovo_scorefxn_->clone();
+	// initial_denovo_scorefxn_ = denovo_scorefxn_->clone();
 	if ( options_->chainbreak_weight() > -1.0 ) denovo_scorefxn_->set_weight( chainbreak, options_->chainbreak_weight() );
 	if ( options_->linear_chainbreak_weight() > -1.0 ) denovo_scorefxn_->set_weight( linear_chainbreak, options_->linear_chainbreak_weight() );
 
@@ -328,7 +328,7 @@ RNA_DeNovoProtocol::check_for_loop_modeling_case( std::map< core::id::AtomID, co
 //////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocol::calc_rmsds( core::io::silent::SilentStruct & s, core::pose::Pose & pose,
-																std::string const & out_file_tag ) const
+	std::string const & out_file_tag ) const
 {
 	using namespace core::scoring;
 
@@ -500,7 +500,7 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 /////////////////////////////////////////////////////////////////////
 bool
 check_in_base_pair_list( pose::rna::BasePair const & base_pair /*from native*/,
-												 utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/)
+	utility::vector1< core::pose::rna::BasePair > const & base_pair_list /*for decoy*/)
 {
 	using namespace pose::rna;
 

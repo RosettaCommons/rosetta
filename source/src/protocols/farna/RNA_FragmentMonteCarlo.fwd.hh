@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/farna/RNA_FragmentMonteCarlo.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace farna {
-	
-	class RNA_FragmentMonteCarlo;
-	typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarlo > RNA_FragmentMonteCarloOP;
-	typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarlo const > RNA_FragmentMonteCarloCOP;
-	
-} //farna 
-} //protocols 
+
+class RNA_FragmentMonteCarlo;
+typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarlo > RNA_FragmentMonteCarloOP;
+typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarlo const > RNA_FragmentMonteCarloCOP;
+
+} //farna
+} //protocols
 
 #endif

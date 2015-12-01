@@ -33,8 +33,8 @@ class BasePair : public utility::pointer::ReferenceCount {
 public:
 
 	BasePair( Size const res1 = 0, Size const res2 = 0,
-						BaseEdge const edge1 = ANY_BASE_EDGE, BaseEdge const edge2 = ANY_BASE_EDGE,
-						BaseDoubletOrientation const orientation = ANY_BASE_DOUBLET_ORIENTATION );
+		BaseEdge const edge1 = ANY_BASE_EDGE, BaseEdge const edge2 = ANY_BASE_EDGE,
+		BaseDoubletOrientation const orientation = ANY_BASE_DOUBLET_ORIENTATION );
 
 	~BasePair(){}
 

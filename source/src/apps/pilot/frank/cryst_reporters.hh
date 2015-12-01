@@ -419,7 +419,7 @@ get_sc( protocols::cryst::MakeLatticeMover &setup, core::pose::Pose & pose, core
 				result = false;
 			}
 
-			if (result) {
+			if ( result ) {
 				numeric::xyzMatrix<core::Real> Ri;
 				numeric::xyzVector<core::Real> Ti;
 				setup.getRT( i, Ri, Ti );

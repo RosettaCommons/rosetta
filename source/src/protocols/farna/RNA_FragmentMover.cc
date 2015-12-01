@@ -99,7 +99,7 @@ RNA_FragmentMover::clone() const
 // protocols::moves::MoverOP
 // RNA_FragmentMover::fresh_instance() const
 // {
-// 	return protocols::moves::MoverOP( new RNA_FragmentMover() );
+//  return protocols::moves::MoverOP( new RNA_FragmentMover() );
 // }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

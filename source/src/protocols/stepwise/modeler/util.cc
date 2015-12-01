@@ -462,11 +462,11 @@ reroot_based_on_full_model_info( pose::Pose & pose,
 ////////////////////////////////////////////////////////////////////////////////////////////////
 Size
 get_definite_terminal_root( pose::Pose const & pose,
-														utility::vector1< Size > const & partition_res /* should not be empty */,
-														utility::vector1< Size > const & res_list,
-														utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
-														utility::vector1< Size > const & cutpoint_open_in_full_model,
-														utility::vector1< Size > const & working_res ){
+	utility::vector1< Size > const & partition_res /* should not be empty */,
+	utility::vector1< Size > const & res_list,
+	utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
+	utility::vector1< Size > const & cutpoint_open_in_full_model,
+	utility::vector1< Size > const & working_res ){
 	for ( Size n = 1; n <= partition_res.size(); n++ ) {
 		Size const i = partition_res[ n ];
 		if ( !pose.fold_tree().possible_root( i ) ) continue;
@@ -480,14 +480,14 @@ get_definite_terminal_root( pose::Pose const & pose,
 ////////////////////////////////////////////////////////////////////////////////////////////////
 Size
 get_definite_terminal_root( pose::Pose const & pose,
-														utility::vector1< Size > const & partition_res /* should not be empty */ ) {
+	utility::vector1< Size > const & partition_res /* should not be empty */ ) {
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & res_list = full_model_info.res_list();
 	utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
 	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
 	utility::vector1< Size > const & working_res = full_model_info.working_res();
 	return get_definite_terminal_root( pose, partition_res,
-																		 res_list, fixed_domain_map, cutpoint_open_in_full_model, working_res );
+		res_list, fixed_domain_map, cutpoint_open_in_full_model, working_res );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -521,7 +521,7 @@ reroot( pose::Pose & pose,
 	// next preference: roots that are definitely terminal -- nothing will be built past them.
 	if ( new_root == 0 ) {
 		new_root = get_definite_terminal_root( pose, root_partition_res_ordered,
-																					 res_list, fixed_domain_map, cutpoint_open_in_full_model, working_res );
+			res_list, fixed_domain_map, cutpoint_open_in_full_model, working_res );
 	}
 
 	// if all else fails...
@@ -1647,10 +1647,10 @@ revise_root_and_moving_res( pose::Pose & pose, Size & moving_res /* note that th
 	} else if ( primary_domain_moving > 0 && primary_domain_root == 0 ) {
 		switch_moving_and_root_partitions = true;
 	} else if ( !get_definite_terminal_root( pose, moving_partition_res ) &&
-							 get_definite_terminal_root( pose, root_partition_res ) )  {
+			get_definite_terminal_root( pose, root_partition_res ) )  {
 		switch_moving_and_root_partitions = false;
 	} else if ( !get_definite_terminal_root( pose, root_partition_res ) &&
- 							 get_definite_terminal_root( pose, moving_partition_res ) )  {
+			get_definite_terminal_root( pose, moving_partition_res ) )  {
 		switch_moving_and_root_partitions = true;
 	} else {
 		// either both are fixed or both are free.

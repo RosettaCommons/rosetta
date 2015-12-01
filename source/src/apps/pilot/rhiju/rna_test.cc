@@ -1784,7 +1784,7 @@ rna_close_chainbreaks_test(){
 ///////////////////////////////////////////////////////////////////////////////
 Size
 is_regular_helix( pose::Pose const & pose,
-									Size const & seqpos ){
+	Size const & seqpos ){
 
 	using namespace core::chemical::rna;
 	using namespace core::scoring::rna;
@@ -1824,7 +1824,7 @@ is_regular_helix( pose::Pose const & pose,
 		Residue const & rsd_j( pose.residue( j ) );
 
 		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
-					 && base_pair.orientation() == 1 )  &&
+				&& base_pair.orientation() == 1 )  &&
 				possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) { //&&
 			//     pose.torsion( id::TorsionID( i, id::CHI, 1 ) ) > 0  && //Need to check syn/anti
 			//     pose.torsion( id::TorsionID( j, id::CHI, 1 ) ) > 0     //Need to check syn/anti
