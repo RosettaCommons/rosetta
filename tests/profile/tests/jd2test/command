@@ -28,6 +28,7 @@
 #
 
 cd %(workdir)s
+
 rm -f output/*
 
 [ -x %(bin)s/jd2test.%(binext)s ] || exit 1
@@ -54,7 +55,7 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 ##     | egrep -v 'Finished.+in [0-9]+ seconds.' \
 ##     | egrep -v 'Dunbrack library took .+ seconds to load' \
 ##     | egrep -v 'core.init: command' \
-##     > log
+##     > output/log
 #
 # Or if you don't care whether the logging output changes:
 #

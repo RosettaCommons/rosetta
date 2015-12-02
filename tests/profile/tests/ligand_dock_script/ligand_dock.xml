@@ -3,14 +3,17 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
 		<ligand_soft_rep weights=ligand_soft_rep>
-			<Reweight scoretype=hack_elec weight=0.42/>
+			Reweight scoretype=hack_elec_bb_sc weight=0.42
+			
 			<Reweight scoretype=hbond_bb_sc weight=1.3/>
 			<Reweight scoretype=hbond_sc weight=1.3/>
 			<Reweight scoretype=rama weight=0.2/>
 		</ligand_soft_rep>
 		<hard_rep weights=ligand>
 			<Reweight scoretype=fa_intra_rep weight=0.004/>
-			<Reweight scoretype=hack_elec weight=0.42/>
+			
+			Reweight scoretype=hack_elec_bb_bb weight=0.42
+			
 			<Reweight scoretype=hbond_bb_sc weight=1.3/>
 			<Reweight scoretype=hbond_sc weight=1.3/>
 			<Reweight scoretype=rama weight=0.2/>
@@ -42,7 +45,7 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 		<SlideTogether name=slide_together chains=X/>
 		<HighResDocker name=high_res_docker cycles=6 repack_every_Nth=3 scorefxn=ligand_soft_rep movemap_builder=docking/>
 		<FinalMinimizer name=final scorefxn=hard_rep movemap_builder=final/>
-		<InterfaceScoreCalculator name=add_scores chains=X scorefxn=hard_rep native="inputs/7cpa_native.pdb"/>
+		<InterfaceScoreCalculator name=add_scores chains=X scorefxn=hard_rep native="inputs/7cpa_7cpa_native.pdb"/>
 	compound movers
 		<ParsedProtocol name=low_res_dock>
 			<Add mover_name=start_from/>

@@ -116,7 +116,7 @@ def run(test, options):
     if failed:
         error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
         print error_string,
-        with file(os.path.join(workdir, ".test_did_not_run.log"), 'w') as f: f.write(error_string)  # Writing error_string to a file, so regression test should fail for sure
+        with file(os.path.join(os.path.join(workdir, 'output'), ".test_did_not_run.log"), 'w') as f: f.write(error_string)  # Writing error_string to a file, so regression test should fail for sure
 
     return dict(state='failed' if failed else 'finished', max_memory_allocated=max_memory_allocated, execution_time=execution_time, memory_usage=[ dict(time=m[0], memory=m[1]) for m in memory])
 

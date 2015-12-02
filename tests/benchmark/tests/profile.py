@@ -51,9 +51,12 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
                            working_dir=working_dir, name='profile', shell_wrapper=True)
 
         files_location = '{rosetta_dir}//tests/profile/tests'.format( **vars() )
+
         for d in os.listdir(files_location):
             if os.path.isdir(files_location + '/' + d)  and  os.path.isdir(files_location + '/' + d + '/output'):
                 shutil.copytree(os.path.abspath(files_location + '/' + d + '/output'), working_dir + '/' + d)
+            # if os.path.isdir(files_location + '/' + d):
+            #     shutil.copytree(os.path.abspath(files_location + '/' + d), working_dir + '/' + d)
 
         tests = json.load( file(json_results_file) )
 

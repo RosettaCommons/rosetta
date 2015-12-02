@@ -5,7 +5,7 @@
  -file
   -s inputs/7cpa_7cpa_input.pdb
   -native inputs/7cpa_7cpa_native.pdb
-  -extra_res_fa inputs/7cpa.params inputs/ZN1.params
+  -extra_res_fa inputs/7cpa.params inputs/ZNx.params
 -out
  -prefix output/
  -nstruct 25

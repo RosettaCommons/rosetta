@@ -1,5 +1,5 @@
 -s 1l2y.pdb
--dun08
+-dun10
 -out:file:o 1l2y_dun08_0001.pdb
 -ex1
 -ex2
