@@ -2618,7 +2618,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	), # -loops
 
 	#Interface statistics app (JKLeman)
-	Option_Group( 'interface',
+	Option_Group( 'intf',
 		Option( 'chains', 'String', desc='Chains over which the statistics are taken, can be multiple. Example: \'AEF\'. If not given, takes statistics over unique chains in the PDB.'),
 	),
 

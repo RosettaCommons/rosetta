@@ -38,7 +38,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
-#include <basic/options/keys/interface.OptionKeys.gen.hh>
+#include <basic/options/keys/intf.OptionKeys.gen.hh>
 
 // Package Headers
 #include <core/scoring/sasa/SasaCalc.hh>
@@ -396,7 +396,7 @@ void MPInterfaceStatistics::register_options() {
 	using namespace basic::options;
 	option.add_relevant( OptionKeys::mp::setup::spanfiles );
 	option.add_relevant( OptionKeys::docking::partners );
-	option.add_relevant( OptionKeys::interface::chains );
+	option.add_relevant( OptionKeys::intf::chains );
 
 } // register options
 
@@ -421,8 +421,8 @@ void MPInterfaceStatistics::init_from_cmd() {
 	}
 
 	// which chains to consider for getting statistics
-	if ( option[ OptionKeys::interface::chains ].user() ) {
-		chains_ = option[ OptionKeys::interface::chains ]();
+	if ( option[ OptionKeys::intf::chains ].user() ) {
+		chains_ = option[ OptionKeys::intf::chains ]();
 	}
 
 } // init from commandline
