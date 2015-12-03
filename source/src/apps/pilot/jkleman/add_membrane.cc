@@ -42,7 +42,7 @@ using namespace core::pose;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
 
-static basic::Tracer TR( "apps.pilot.jkleman.add_membrane" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.add_membrane" );
 
 int
 main( int argc, char * argv [] ) {

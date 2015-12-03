@@ -264,6 +264,15 @@ utility::vector1< int > get_chains( core::pose::Pose const & pose );
 /// @brief compute last residue number of a chain
 core::Size chain_end_res( Pose const & pose, core::Size const chain );
 
+/// @brief compute last residue numbers of all chains
+utility::vector1< core::Size > chain_end_res( Pose const & pose );
+
+/// @brief Compute uniq chains in a complex
+/// @details Returns a vector of pose length with true/false of uniq chain
+///    true is unique, false is not
+utility::vector1< bool > compute_unique_chains( Pose & pose );
+
+
 /// @brief renumber PDBInfo based on Conformation chains; each chain starts from 1
 /// @param[in,out] pose The Pose to modify.
 /// @param[in] fix_chains If true, the procedure will attempt to fix any empty record

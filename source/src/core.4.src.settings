@@ -43,6 +43,7 @@ sources = {
 		"packer_neighbors",
 		"rotamer_trials",
 		"rtmin",
+		"util",
 	],
 	#"core/pack/fragment_rotamers": [
 #		"MutateFragment",

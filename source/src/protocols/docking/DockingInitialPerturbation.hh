@@ -26,6 +26,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreType.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.fwd.hh>
@@ -217,6 +218,88 @@ private:
 };  // class FaDockingSlideIntoContact
 
 std::ostream &operator<< ( std::ostream &os, FaDockingSlideIntoContact const &fadock );
+
+/// @brief More general function for low-res or highres DockingSlideIntoContact
+/// @details Both DockingSlideIntoContact and FaDockingSlideIntoContact have their
+///  issues and are not as general as they could be; they should be a single
+///  class, not two; since they are called quite often, I am rewriting the
+///  class for now and will replace it's use later on
+/// @details Contrary to the name, slides things apart first, then together.
+/// OK for proteins, bad for ligands (because they may escape the pocket permanently).
+class SlideIntoContact : public moves::Mover {
+public:
+
+	/// @brief default constructor, default jump = 1, default scorefunction is lowres
+	SlideIntoContact();
+
+	/// @brief  constructor with arguments
+	SlideIntoContact( core::Size const jump );
+
+	/// @brief destructor
+	~SlideIntoContact();
+
+	// protocol functions
+	virtual void apply( core::pose::Pose & pose );
+	virtual void show(std::ostream & output=std::cout) const;
+
+	// setters
+	void slide_axis( core::Vector slide_axis );
+	void vary_stepsize( bool yesno );
+	void stepsize( core::Real stepsize );
+	void move_apart_first( bool yesno );
+	void set_starting_rep( core::Real starting_rep );
+
+	/// @brief scorefunction and scoreterm used for evaluating closeness of partners
+	void scorefunction( std::string sfxn_name, std::string scoretype_for_sliding );
+
+	// getters
+	virtual std::string get_name() const;
+	core::Size get_jump_num() const;
+	core::Real get_stepsize() const;
+	std::string get_sfxn_name() const;
+
+private: // methods
+
+	/// @brief Register Options with JD2
+	void register_options();
+
+	/// @brief Initialize Mover options from the comandline
+	void init_from_cmd();
+
+private: // member variables
+
+	/// @brief which jump to use for docking
+	core::Size jump_;
+
+	/// @brief slide axis from the constructor
+	core::Vector slide_axis_;
+
+	/// @brief stepsize
+	bool vary_stepsize_;
+	core::Real stepsize_;
+
+	/// @brief Move apart first
+	bool move_apart_first_;
+
+	/// @brief scorefunction for sliding together
+	core::scoring::ScoreFunctionOP scorefxn_;
+
+	/// @brief scoreterm for evaluating closeness of partners
+	core::scoring::ScoreType scoretype_;
+
+	/// @brief Scoreterm threshold
+	core::Real threshold_;
+
+	/// @brief starting repulsion
+	core::Real starting_rep_;
+
+};  // class SlideIntoContact
+
+
+void move_apart( core::pose::Pose & pose, int jump, core::Vector axis );
+
+void move_together( core::pose::Pose & pose, int jump, core::scoring::ScoreFunctionOP sfxn );
+
 
 } // docking
 } // protocols

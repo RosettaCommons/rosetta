@@ -308,6 +308,7 @@ sources = {
 		"MPMutateRelaxMover",
 		"MPQuickRelaxMover",
 		"OptimizeMembranePositionMover",
+		"OptimizeProteinEmbeddingMover",
 		"RandomMembranePositionMover",
 		"SetMembranePositionMover",
 		"SpinAroundPartnerMover",
@@ -369,6 +370,7 @@ sources = {
 		"LocalRelax",
 		"MiniRelax",
 		"Ramady",
+		"RangeRelaxMover",
 		"relax_main",
 		"RelaxProtocolBase",
 		"util",
@@ -376,6 +378,7 @@ sources = {
 	],
     "protocols/relax/membrane": [
         "MPFastRelaxMover",
+				"MPRangeRelaxMover",
     ],
 	"protocols/pb_potential": [
 		"SetupPoissonBoltzmannPotential",

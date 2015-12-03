@@ -1,0 +1,7 @@
+-in:file:s inputs/1F3Y_A.pdb
+-in:file:native inputs/1JKN_A.pdb
+-relax:range:angle_max 0.5
+-relax:range:nmoves nres
+-nstruct 1
+-cst_fa_file inputs/cst_1F3Y.cst
+-cst_fa_weight 50

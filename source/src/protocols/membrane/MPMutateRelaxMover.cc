@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file    mp_mutate_relax.cc
-/// @brief   Mutate a residue, then do quick relax for a membrane protein
+/// @brief   Mutate a residue, then do range relax for a membrane protein
 /// @author  JKLeman (julia.koehler1982@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_MPMutateRelaxMover_cc
@@ -23,10 +23,13 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
-#include <protocols/membrane/MPQuickRelaxMover.hh>
+#include <protocols/relax/membrane/MPRangeRelaxMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/pack_rotamers.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
@@ -47,6 +50,7 @@
 #include <utility/io/util.hh>
 #include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
+#include <core/pose/util.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -71,12 +75,17 @@ MPMutateRelaxMover::MPMutateRelaxMover() : protocols::moves::Mover()
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
 MPMutateRelaxMover::MPMutateRelaxMover( MPMutateRelaxMover const & src ) : protocols::moves::Mover( src ),
+	sfxn_( src.sfxn_ ),
 	mutant_file_( src.mutant_file_ ),
 	wt_res_( src.wt_res_ ),
 	resn_( src.resn_ ),
 	new_res_( src.new_res_ ),
 	iter_( src.iter_ ),
-	protein_( src.protein_ )
+	protein_( src.protein_ ),
+	repack_mutation_only_( src.repack_mutation_only_ ),
+	repack_radius_( src.repack_radius_ ),
+	repack_residues_( src.repack_residues_ ),
+	relax_( src.relax_ )
 {}
 
 /// @brief Assignment Operator
@@ -110,7 +119,7 @@ MPMutateRelaxMover::fresh_instance() const {
 	return protocols::moves::MoverOP( new MPMutateRelaxMover() );
 }
 
-/// @brief Pase Rosetta Scripts Options for this Mover
+/// @brief Parse Rosetta Scripts Options for this Mover
 void
 MPMutateRelaxMover::parse_my_tag(
 	utility::tag::TagCOP /*tag*/,
@@ -154,29 +163,22 @@ MPMutateRelaxMover::get_name() const {
 /// Mover Methods ///
 /////////////////////
 
-/// @brief Mutate residue and then quick relax the membrane protein
+/// @brief Mutate residue and then range relax the membrane protein
 void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 
 	using namespace utility;
 	using namespace core::pose;
 	using namespace core::scoring;
 	using namespace protocols::membrane;
+	using namespace protocols::relax::membrane;
 	using namespace protocols::simple_moves;
 	using namespace core::scoring;
+	using namespace core::pack::task;
 
 	TR << "Running MPMutateRelax protocol..." << std::endl;
 
-	// read mutant file
-	if ( mutant_file_.size() > 0 ) {
-		read_mutant_file();
-	}
-
-	// error checking
-	check_mutant_file( pose );
-
-	// call AddMembraneMover
-	AddMembraneMoverOP addmem( new AddMembraneMover() );
-	addmem->apply( pose );
+	// finalize setup
+	finalize_setup( pose );
 
 	// final foldtree
 	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
@@ -195,10 +197,7 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 	Pose working_pose;
 
 	// construct counter
-	core::Size counter(0);
-
-	// create scorefunction
-	ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
+	Size counter(0);
 
 	// go through each construct (i.e. outer vector)
 	for ( core::Size c = 1; c <= wt_res_.size(); ++c ) {
@@ -206,7 +205,7 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 		TR << "going through construct " << c << std::endl;
 
 		// counter
-		counter = 0;
+		counter = 1;
 		std::string mutations;
 
 		// iterate over nstruct
@@ -214,36 +213,39 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 
 			TR << "working on nstruct " << counter << std::endl;
 
-			// mutations
-			mutations = "";
-
 			// get original starting pose
 			working_pose = Pose( original_pose );
 
-			// go through each mutation for this construct
-			for ( Size m = 1; m <= wt_res_[ c ].size(); ++m ) {
+			// make mutations
+			std::string mutations = make_mutations( working_pose, c );
 
-				// mutate residue
-				TR << "Mutating residue " << resn_[c][m] << " to " << new_res_[c][m] << std::endl;
-				MutateResidueOP mutate( new MutateResidue( resn_[c][m], one2three( new_res_[c][m] ) ) );
-				mutate->apply( working_pose );
+			// if repacking
+			if ( repack_mutation_only_ == true || repack_radius_ > 0 ) {
 
-				// get mutation as output tag
-				mutations += "_" + wt_res_[c][m] + to_string( resn_[c][m] ) + new_res_[c][m];
+				// create task factory and repack
+				TR << "Repacking only..." << std::endl;
+				PackerTaskOP repack = TaskFactory::create_packer_task( working_pose );
+				TR.Debug << "repacking vector size: " << repack_residues_[c].size() << std::endl;
+				TR.Debug << "pose length: " << working_pose.total_residue() << std::endl;
+				repack->restrict_to_residues( repack_residues_[c] );
+				repack->restrict_to_repacking();
+				core::pack::pack_rotamers( working_pose, *sfxn_, repack );
 
-			}// iterate over mutations in construct
+			} else if ( relax_ == true ) {
+				// if relaxing
 
-			// do quick relax
-			TR << "Running MP quick relax..." << std::endl;
-			MPQuickRelaxMoverOP relax( new MPQuickRelaxMover() );
-			relax->add_membrane_again( false );
-			relax->apply( working_pose );
+				// do range relax
+				TR << "Running MPRangeRelax..." << std::endl;
+				MPRangeRelaxMoverOP relax( new MPRangeRelaxMover() );
+				relax->optimize_membrane( false );
+				relax->apply( working_pose );
+			}
 
 			// create output filename
 			std::string output;
 
 			// if model exists, increment counter
-			// this means that the app can start from an existing file number
+			// this means that the app should be able to start from an existing file number
 			Size a = counter;
 			while ( a <= iter_ ) {
 				output = output_filename( mutations, a );
@@ -256,7 +258,7 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 			}
 
 			// dump pose
-			working_pose.dump_scored_pdb( output, *sfxn );
+			working_pose.dump_scored_pdb( output, *sfxn_ );
 
 			// increment counter
 			++counter;
@@ -281,8 +283,13 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 void MPMutateRelaxMover::register_options() {
 
 	using namespace basic::options;
+	option.add_relevant( OptionKeys::in::file::s );
 	option.add_relevant( OptionKeys::mp::mutate_relax::mutation );
 	option.add_relevant( OptionKeys::mp::mutate_relax::mutant_file );
+	option.add_relevant( OptionKeys::mp::mutate_relax::iter );
+	option.add_relevant( OptionKeys::mp::mutate_relax::repack_mutation_only );
+	option.add_relevant( OptionKeys::mp::mutate_relax::repack_radius );
+	option.add_relevant( OptionKeys::mp::mutate_relax::relax );
 
 }
 
@@ -318,23 +325,174 @@ void MPMutateRelaxMover::init_from_cmd() {
 		// input format A163F
 		std::string mutation = option[ OptionKeys::mp::mutate_relax::mutation ]();
 
+		TR << "Looking at mutation " << mutation << std::endl;
+
 		// add string to private data
 		add_mutant_to_vectors ( mutation );
 	}
 
 	// Number of iterations to run
+	iter_ = 0;
 	if ( option[ OptionKeys::mp::mutate_relax::iter ].user() ) {
 		iter_ = option[ OptionKeys::mp::mutate_relax::iter ]();
-	} else {
-		iter_ = 100;
+
 	}
 
 	// get protein name for dumping PDBs
 	if ( option[ OptionKeys::in::file::s ].user() ) {
 		protein_ = option[ OptionKeys::in::file::s ](1);
+	} else {
+		utility_exit_with_message("No PDB given, please use -in:file:s to provide PDB.");
+	}
+
+	// repack options
+	repack_mutation_only_ = false;
+	if ( option[ OptionKeys::mp::mutate_relax::repack_mutation_only ].user() ) {
+		repack_mutation_only_ = option[ OptionKeys::mp::mutate_relax::repack_mutation_only ]();
+		iter_ = 1;
+		TR << "Repacking only: setting number of iterations to 1." << std::endl;
+	}
+
+	repack_radius_ = 0;
+	if ( option[ OptionKeys::mp::mutate_relax::repack_radius ].user() ) {
+		repack_radius_ = option[ OptionKeys::mp::mutate_relax::repack_radius ]();
+		iter_ = 1;
+		TR << "Repacking only: setting number of iterations to 1." << std::endl;
+	}
+
+	// only running relax
+	relax_ = false;
+	if ( option[ OptionKeys::mp::mutate_relax::relax ].user() ) {
+		relax_ = option[ OptionKeys::mp::mutate_relax::relax ]();
+		TR << "Setting relax option to " << relax_ << std::endl;
+	}
+
+	// check number of iterations
+	if ( relax_ == true && iter_ == 0 ) {
+		iter_ = 100;
+		TR << "Relaxing structures: setting number of iterations to 100." << std::endl;
+	} else if ( relax_ == true ) {
+		TR << "Relaxing structures: number of iterations is " << iter_ << " as per user-input." << std::endl;
+		TR << "I assume you know what you are doing, a good number of iterations is 100." << std::endl;
+	} else if ( relax_ == false && repack_mutation_only_ == false && repack_radius_ == 0 ) {
+		iter_ = 1;
+		TR << "Neither repacking nor relaxing structures: setting number of iterations to 1." << std::endl;
+	}
+
+	// checking inputs
+	if ( repack_mutation_only_ == true && repack_radius_ > 0 ) {
+		utility_exit_with_message("Set EITHER repack_mutation_only OR repack_radius, not both!");
+	}
+	if ( ( repack_mutation_only_ == true || repack_radius_ > 0 ) && relax_ == true ) {
+		utility_exit_with_message("Set EITHER repacking option OR relax option, not both!");
 	}
 
 }// init from cmdline
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Get repack residues
+void MPMutateRelaxMover::get_repack_residues( Pose & pose ) {
+
+	using namespace core::pose;
+
+	// go through number of constructs
+	for ( Size i = 1; i <= resn_.size(); ++i ) {
+
+		// initialize boolean vector with false
+		utility::vector1< bool > repack_res( pose.total_residue(), false );
+
+		// if repacking
+		if ( repack_mutation_only_ == true ) {
+
+			// go through number of mutations within construct
+			for ( Size j = 1; j <= resn_[i].size(); ++j ) {
+
+				// set residue number of the mutation to true
+				core::Size resn = resn_[i][j];
+				repack_res[ resn ] = true;
+			}
+		} else if ( repack_radius_ > 0 ) {
+
+			// go through number of mutations within construct
+			for ( Size j = 1; j <= resn_[i].size(); ++j ) {
+
+				core::Size resn = resn_[i][j];
+				core::Vector xyz_mut = pose.residue( resn ).xyz( "CA" );
+
+				// go through residues in pose
+				for ( Size k = 1; k <= nres_protein( pose ); ++k ) {
+
+					// check whether the residue is within repack radius
+					core::Vector xyz_k = pose.residue( k ).xyz( "CA" );
+					core::Real dist = ( xyz_k - xyz_mut ).length();
+
+					// if yes, set repack flag of this residue to true
+					if ( dist <= repack_radius_ ) {
+						repack_res[ k ] = true;
+					}
+				}
+			}
+		}
+
+		// add vector describing construct to total constructs
+		repack_residues_.push_back( repack_res );
+	}
+
+} // get repack residues
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Finalize setup
+void MPMutateRelaxMover::finalize_setup( Pose & pose ){
+
+	// read mutant file
+	if ( mutant_file_.size() > 0 ) {
+		read_mutant_file();
+	}
+
+	// error checking
+	check_mutant_file( pose );
+
+	// call AddMembraneMover
+	AddMembraneMoverOP addmem( new AddMembraneMover() );
+	addmem->apply( pose );
+
+	// get repack residues
+	get_repack_residues( pose );
+
+	// create scorefunction
+	sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
+
+}// finalize setup
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Make mutations, returns string of output file
+std::string MPMutateRelaxMover::make_mutations( Pose & pose, core::Size num_construct ) {
+
+	using namespace protocols::simple_moves;
+	using namespace utility;
+
+	// mutations
+	std::string mutations = "";
+	core::Size c = num_construct;
+
+	// go through each mutation for this construct
+	for ( Size m = 1; m <= wt_res_[ c ].size(); ++m ) {
+
+		// mutate residue
+		TR << "Mutating residue " << wt_res_[c][m] << resn_[c][m] << " to " << new_res_[c][m] << std::endl;
+		MutateResidueOP mutate( new MutateResidue( resn_[c][m], one2three( new_res_[c][m] ) ) );
+		mutate->apply( pose );
+
+		// get mutation as output tag
+		mutations += "_" + wt_res_[c][m] + to_string( resn_[c][m] ) + new_res_[c][m];
+
+	}// iterate over mutations in construct
+
+	return mutations;
+} // make mutations
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -497,7 +655,7 @@ std::string MPMutateRelaxMover::one2three( std::string one ) {
 		}
 	}
 
-	return "this is wrong";
+	return "WARNING: Your mutant seems to be non-canonical. Please use a different application!";
 
 } // one to three letter code
 

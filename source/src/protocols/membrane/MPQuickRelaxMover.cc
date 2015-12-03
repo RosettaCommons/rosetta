@@ -372,6 +372,8 @@ void MPQuickRelaxMover::apply( core::pose::Pose & pose ) {
 		TR << "tot: " << tot_score << "fa_rep: " << fa_rep << " fa_atr: " << fa_atr << std::endl;
 		TR << "Iteration: " << breakpoint << " score: " << tot_score << " fa_rep: " << fa_rep << " fa_atr: " << fa_atr << std::endl;
 
+		pose.dump_pdb("relax_test_" + utility::to_string( breakpoint ) + ".pdb");
+
 	} // number of iterations for search
 
 	// reset the weight in the scorefunction to what it was before (for mpsmooth)

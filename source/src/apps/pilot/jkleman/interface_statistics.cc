@@ -9,7 +9,7 @@
 
 /// @file    interface_statistics.cc
 /// @brief   Computing interface statistics for membrane protein interfaces
-/// @details last Modified: 5/14/15
+/// @details last Modified: 8/28/15
 /// @author  JKLeman (julia.koehler1982@gmail.com)
 
 // App headers
@@ -38,6 +38,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
+#include <basic/options/keys/interface.OptionKeys.gen.hh>
 
 // Package Headers
 #include <core/scoring/sasa/SasaCalc.hh>
@@ -62,7 +63,7 @@
 #include <protocols/membrane/util.hh>
 
 
-static basic::Tracer TR( "apps.pilot.jkleman.interface_statistics" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.interface_statistics" );
 
 using namespace core;
 using namespace core::pose;
@@ -80,7 +81,7 @@ public:
 	////////////////////
 
 	/// @brief Construct a Default Membrane Position Mover
-	MPInterfaceStatistics( Size jump = 0 );
+	MPInterfaceStatistics();
 
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
@@ -131,6 +132,22 @@ private: // methods
 	/// @brief Initialize Mover options from the comandline
 	void init_from_cmd();
 
+	/// @brief Get the chains from the commandline
+	utility::vector1< bool > get_chains_from_cmd( Pose & pose );
+
+	/// @brief calculate interfaces
+	void calculate_interfaces( Pose & pose );
+
+	/// @brief fill vectors with data
+	void fill_vectors_with_data( Pose & pose );
+
+	/// @brief Add output to scorefile
+	void add_to_scorefile( Pose & pose );
+
+	/// @brief Print amino acid statistics
+	/// @details Doesn't print to scorefile, too many columns; prints to out
+	void print_aa_statistics( Pose & pose );
+
 	/// @brief Get size of the interface
 	Real get_size( Pose & pose );
 
@@ -175,32 +192,31 @@ private: // methods
 	///   over 20 AAs
 	utility::vector1< utility::vector1< Size > > get_aa_statistics( Pose & pose );
 
-	/// @brief Add output to scorefile
-	void add_to_scorefile( Pose & pose );
-
-	/// @brief Print amino acid statistics
-	/// @details Doesn't print to scorefile, too many columns; prints to out
-	void print_aa_statistics( Pose & pose );
-
-	/// @brief fill vectors with data
-	void fill_vectors_with_data( Pose & pose );
-
 private: // data
-
-	/// @brief jump
-	Size jump_;
-
-	/// @brief Interface
-	Interface interface_;
-
-	/// @brief Partners;
-	std::string partners_;
 
 	/// @brief Membrane protein?
 	bool membrane_;
 
 	/// @brief scorefunction
 	core::scoring::ScoreFunctionOP sfxn_;
+
+	/// @brief Partners;
+	std::string partner_;
+
+	/// @brief Partners split up
+	utility::vector1< std::string > partners_;
+
+	/// @brief jumps
+	utility::vector1< core::Size > jumps_;
+
+	/// @brief Interfaces
+	utility::vector1< Interface > interfaces_;
+
+	/// @brief Chains to consider for computing statistics
+	std::string chains_;
+
+	/// @brief Unique chains to minimize bias from multiple counts
+	utility::vector1< bool > uniq_;
 
 	/// @brief Are residues in the membrane?
 	utility::vector1< bool > in_mem_;
@@ -219,13 +235,16 @@ private: // data
 ////////////////////
 
 /// @brief Construct a Default Membrane Position Mover
-MPInterfaceStatistics::MPInterfaceStatistics( Size jump ) :
+MPInterfaceStatistics::MPInterfaceStatistics() :
 	Mover(),
-	jump_( jump ),
-	interface_(),
-	partners_(),
 	membrane_(),
 	sfxn_(),
+	partner_(),
+	partners_(),
+	jumps_(),
+	interfaces_(),
+	chains_(),
+	uniq_(),
 	in_mem_(),
 	intf_(),
 	exposed_()
@@ -235,11 +254,14 @@ MPInterfaceStatistics::MPInterfaceStatistics( Size jump ) :
 /// @details Make a deep copy of this mover object
 MPInterfaceStatistics::MPInterfaceStatistics( MPInterfaceStatistics const & src ) :
 	Mover( src ),
-	jump_( src.jump_ ),
-	interface_( src.interface_ ),
-	partners_( src.partners_ ),
 	membrane_( src.membrane_ ),
 	sfxn_( src.sfxn_ ),
+	partner_( src.partner_ ),
+	partners_( src.partners_ ),
+	jumps_( src.jumps_ ),
+	interfaces_( src.interfaces_ ),
+	chains_( src.chains_ ),
+	uniq_( src.uniq_ ),
 	in_mem_( src.in_mem_ ),
 	intf_( src.intf_ ),
 	exposed_( src.exposed_ )
@@ -295,38 +317,64 @@ void MPInterfaceStatistics::apply( Pose & pose ) {
 		// writing a scorefile anyway, we might as well...
 		sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
 
-		// get jump from partners
-		if ( jump_ == 0 ) {
-
-			// get foldtree from partners (setup_foldtree) and movable jump
-			// foldtree will have jump from 1st partner COM to 2nd partner COM
-			jump_ = create_membrane_docking_foldtree_from_partners( pose, partners_ );
-			TR << "membrane interface jump_ from foldtree: " << jump_ << std::endl;
+		// get foldtree from partners and movable jumps
+		// see ASCII art in protocols/membrane/util for how the foldtree is set up
+		jumps_ = create_membrane_multi_partner_foldtree_anchor_tmcom( pose, partner_ );
+		TR << "membrane interface jumps_ from foldtree: " << std::endl;
+		for ( core::Size i = 1; i <= jumps_.size(); ++i ) {
+			TR << jumps_[ i ] << " ";
 		}
+		TR << std::endl;
+
 	} else {
+		// for soluble protein
 		// create scorefunction and score the pose
 		// this isn't really the main objective of the application, but if we are
 		// writing a scorefile anyway, we might as well...
 		sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "talaris2014.wts" );
 
-		// get jump from partners
-		if ( jump_ == 0 ) {
+		// set up soluble foldtree and get interface jumps
+		utility::vector1< int > jumps;
+		setup_foldtree( pose, partner_, jumps );
 
-			// set up soluble foldtree and get interface jump
-			utility::vector1< int > jumps;
-			setup_foldtree( pose, partners_, jumps );
-			jump_ = jumps[1];
-			TR << "soluble protein interface jump_ from foldtree: " << jump_ << std::endl;
+		// cast ints in vector to core::Sizes
+		for ( core::Size i = 1; i <= jumps.size(); ++i ) {
+			core::Size thisjump = static_cast< core::Size >( jumps[ i ] );
+			jumps_.push_back( thisjump );
 		}
+
+		TR << "soluble protein interface jumps_ from foldtree: " << std::endl;
+		for ( core::Size i = 1; i <= jumps_.size(); ++i ) {
+			TR << jumps_[ i ] << " ";
+		}
+		TR << std::endl;
+
 	}
 
 	( *sfxn_ )( pose );
 
-	// calculate interface
-	interface_ = Interface( jump_ );
-	interface_.calculate( pose );
+	// get unique chains, either from commandline or unique chains from pose
+	if ( chains_.size() != 0 ) {
+		uniq_ = get_chains_from_cmd( pose );
+	} else {
+		uniq_ = compute_unique_chains( pose );
+	}
 
-	// fill vectors with data
+	// check uniq chains for correctness: output to std::out
+	utility::vector1< core::Size > chains = get_chains( pose );
+	utility::vector1< core::Size > chain_last_res = chain_end_res( pose );
+	for ( core::Size i = 1; i < chain_last_res.size(); ++i ) {
+		if ( uniq_[ chain_last_res[ i ] ] == true ) {
+			TR << "unique: " << get_chain_from_chain_id( chains[ i ], pose) << std::endl;
+		} else {
+			TR << "NOT unique: " << get_chain_from_chain_id( chains[ i ], pose) << std::endl;
+		}
+	}
+
+	// calculate interface
+	calculate_interfaces( pose );
+
+	// fill boolean vectors with data
 	fill_vectors_with_data( pose );
 
 	// add measures to scorefile
@@ -348,6 +396,7 @@ void MPInterfaceStatistics::register_options() {
 	using namespace basic::options;
 	option.add_relevant( OptionKeys::mp::setup::spanfiles );
 	option.add_relevant( OptionKeys::docking::partners );
+	option.add_relevant( OptionKeys::interface::chains );
 
 } // register options
 
@@ -359,17 +408,52 @@ void MPInterfaceStatistics::init_from_cmd() {
 	membrane_ = false;
 
 	// docking partners
+	// requires all chains in the PDB file and is only for setting up the foldtree!!!
 	if ( option[ OptionKeys::docking::partners ].user() ) {
-		partners_ = option[ OptionKeys::docking::partners ]();
+		partner_ = option[ OptionKeys::docking::partners ]();
+	} else {
+		utility_exit_with_message( "Please provide -docking:partners flag!" );
 	}
 
 	// membrane protein?
-	// docking partners
 	if ( option[ OptionKeys::mp::setup::spanfiles ].user() ) {
 		membrane_ = true;
 	}
 
+	// which chains to consider for getting statistics
+	if ( option[ OptionKeys::interface::chains ].user() ) {
+		chains_ = option[ OptionKeys::interface::chains ]();
+	}
+
 } // init from commandline
+
+/// @brief Get the chains from the commandline
+utility::vector1< bool > MPInterfaceStatistics::get_chains_from_cmd( Pose & pose ) {
+
+	// set residue vector to false, i.e. not unique
+	utility::vector1< bool > tmp ( pose.total_residue(), false );
+
+	// go through pose residues
+	for ( core::Size r = 1; r <= pose.total_residue(); ++r ) {
+
+		// get chain
+		core::Size res_chain = pose.residue( r ).chain();
+
+		// go through chains in string, 0-indexed
+		for ( core::Size c = 0; c < chains_.size(); ++c ) {
+
+			// get chain
+			core::Size chain = get_chain_id_from_chain( chains_[ c ], pose );
+
+			// if residue chain is the same as in user-provided string, set to true
+			if ( res_chain == chain ) {
+				tmp[ r ] = true;
+			}
+		} // chains
+	} // residues
+
+	return tmp;
+} // get chains from commandline
 
 /////////////////////////////////
 ///// Rosetta Scripts Methods ///
@@ -425,6 +509,8 @@ typedef utility::pointer::shared_ptr< MPInterfaceStatistics > MPInterfaceStatist
 //////////////////////////////////////////////////////////////////////
 
 /// @brief Get size of the interface in square Angstrom
+/// @details Supports multiple partners; the interface is sum of all interfaces,
+///   independent of uniq partners
 Real MPInterfaceStatistics::get_size( Pose & pose ) {
 
 	using namespace numeric;
@@ -432,20 +518,57 @@ Real MPInterfaceStatistics::get_size( Pose & pose ) {
 	using namespace core::scoring::sasa;
 	using namespace protocols::scoring;
 
-	// get per-residue SASA
+	// split pose by chains
+	utility::vector1< PoseOP > pose_chains( pose.split_by_chain() );
+	utility::vector1< core::Size > chains( get_chains( pose ) );
+	utility::vector1< Pose > pose_partners;
+
+	// go through partners and append the chains into subposes to fit the partners
+	for ( core::Size p = 1; p <= partners_.size(); ++p ) {
+
+		Pose subpose;
+
+		// go through chains in partner, string indexes from 0
+		for ( core::Size c = 0; c < partners_[ p ].size(); ++c ) {
+
+			// get chainID from chain
+			core::Size chainid( get_chain_id_from_chain( partners_[ p ][ c ], pose ) );
+
+			// go through pose chains to find pose chain in vector
+			for ( core::Size i = 1; i <= pose_chains.size(); ++i ) {
+
+				// if the chainids match, append chain to subpose
+				if ( chainid == chains[ i ] ) {
+					append_pose_to_pose( subpose, *pose_chains[ i ], true );
+				}
+
+			} // chains
+		} // chains in partner
+
+		// add subpose to vector
+		pose_partners.push_back( subpose );
+
+	} // partners
+
+	// get total SASA
 	SasaCalc calc = SasaCalc();
 	core::Real total_sasa( calc.calculate( pose ) );
 
-	// partition pose by jump
-	Pose partner1, partner2;
-	partition_pose_by_jump( pose, jump_, partner1, partner2 );
+	// start with total SASA for interface
+	core::Real intf_sasa = total_sasa;
 
-	// calculate SASAs of individual partners
-	core::Real p1_sasa( calc.calculate( partner1 ) );
-	core::Real p2_sasa( calc.calculate( partner2 ) );
+	// go through partners and subtract from SASA
+	for ( core::Size p = 1; p <= pose_partners.size(); ++p ) {
 
-	// calculate interface
-	core::Real intf_sasa = - ( total_sasa - p1_sasa - p2_sasa) / 2;
+		// compute SASA for that partner
+		core::Real p_sasa( calc.calculate( pose_partners[ p ] ) );
+
+		// subtract from total SASA
+		intf_sasa -= p_sasa;
+	}
+
+	// compute: intf_sasa = - ( total_sasa - sum( p_sasa ) ) / 2;
+	intf_sasa /= -2;
 
 	return intf_sasa;
 
@@ -481,34 +604,34 @@ utility::vector1< SSize > MPInterfaceStatistics::get_charge( Pose & pose ) {
 		}
 
 		// interface, membrane, positive / negative
-		if ( exposed_[i] && intf_[i] && in_mem_[i] && pos ) {
+		if ( uniq_[i] && intf_[i] && in_mem_[i] && pos ) {
 			++tm_int;
-		} else if ( exposed_[i] && intf_[i] && in_mem_[i] && neg ) {
+		} else if ( uniq_[i] && intf_[i] && in_mem_[i] && neg ) {
 			--tm_int;
-		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] && pos ) {
+		} else if ( uniq_[i] && intf_[i] && !in_mem_[i] && pos ) {
 			// interface, sol, positive / negative
 			++sol_int;
-		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] && neg ) {
+		} else if ( uniq_[i] && intf_[i] && !in_mem_[i] && neg ) {
 			--sol_int;
-		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] && pos ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && in_mem_[i] && pos ) {
 			// not interface, membrane, positive / negative
 			++tm_nonint;
-		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] && neg ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && in_mem_[i] && neg ) {
 			--tm_nonint;
-		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] && pos ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && !in_mem_[i] && pos ) {
 			// not interface, sol, positive / negative
 			++sol_nonint;
-		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] && neg ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && !in_mem_[i] && neg ) {
 			--sol_nonint;
-		} else if ( !exposed_[i] && in_mem_[i] && pos ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && in_mem_[i] && pos ) {
 			// if core, membrane, positive / negative
 			++tm_core;
-		} else if ( !exposed_[i] && in_mem_[i] && neg ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && in_mem_[i] && neg ) {
 			--tm_core;
-		} else if ( !exposed_[i] && !in_mem_[i] && pos ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && !in_mem_[i] && pos ) {
 			// if core, solution, positive / negative
 			++sol_core;
-		} else if ( !exposed_[i] && !in_mem_[i] && neg ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && !in_mem_[i] && neg ) {
 			--sol_core;
 		}
 
@@ -570,21 +693,21 @@ utility::vector1< Size > MPInterfaceStatistics::get_number_charges( Pose & pose 
 		}
 
 		// interface, membrane, charged
-		if ( exposed_[i] && intf_[i] && in_mem_[i] && charged ) {
+		if ( uniq_[i] && intf_[i] && in_mem_[i] && charged ) {
 			++tm_int;
-		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] && charged ) {
+		} else if ( uniq_[i] && intf_[i] && !in_mem_[i] && charged ) {
 			// interface, sol, charged
 			++sol_int;
-		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] && charged ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && in_mem_[i] && charged ) {
 			// not interface, membrane, charged
 			++tm_nonint;
-		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] && charged ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && !in_mem_[i] && charged ) {
 			// not interface, sol, charged
 			++sol_nonint;
-		} else if ( !exposed_[i] && in_mem_[i] && charged ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && in_mem_[i] && charged ) {
 			// core, membrane
 			++tm_core;
-		} else if ( !exposed_[i] && !in_mem_[i] && charged ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && !in_mem_[i] && charged ) {
 			// core, membrane
 			++sol_core;
 		}
@@ -670,21 +793,21 @@ utility::vector1< Real > MPInterfaceStatistics::get_hydrophobicity( Pose & pose 
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
 
 		// interface, mem
-		if ( exposed_[i] && intf_[i] && in_mem_[i] ) {
+		if ( uniq_[i] && intf_[i] && in_mem_[i] ) {
 			tm_int += hydro[ pose.residue( i ).name1() ];
-		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] ) {
+		} else if ( uniq_[i] && intf_[i] && !in_mem_[i] ) {
 			// interface, sol
 			sol_int += hydro[ pose.residue( i ).name1() ];
-		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && in_mem_[i] ) {
 			// not interface, mem
 			tm_nonint += hydro[ pose.residue( i ).name1() ];
-		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && !in_mem_[i] ) {
 			// not interface, sol
 			sol_nonint += hydro[ pose.residue( i ).name1() ];
-		} else if ( !exposed_[i] && in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && in_mem_[i] ) {
 			// core, mem
 			tm_core += hydro[ pose.residue( i ).name1() ];
-		} else if ( !exposed_[i] && !in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && !in_mem_[i] ) {
 			// core, sol
 			sol_core += hydro[ pose.residue( i ).name1() ];
 		}
@@ -738,21 +861,21 @@ utility::vector1< Size > MPInterfaceStatistics::get_number_of_residues( Pose & p
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
 
 		// interface, mem
-		if ( exposed_[i] && intf_[i] && in_mem_[i] ) {
+		if ( uniq_[i] && intf_[i] && in_mem_[i] ) {
 			++tm_int;
-		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] ) {
+		} else if ( uniq_[i] && intf_[i] && !in_mem_[i] ) {
 			// interface, sol
 			++sol_int;
-		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && in_mem_[i] ) {
 			// non interface, mem
 			++tm_nonint;
-		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && !in_mem_[i] ) {
 			// not interface, sol
 			++sol_nonint;
-		} else if ( !exposed_[i] && in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && in_mem_[i] ) {
 			// core, mem
 			++tm_core;
-		} else if ( !exposed_[i] && !in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && !in_mem_[i] ) {
 			// core, sol
 			++sol_core;
 		}
@@ -780,7 +903,8 @@ Real MPInterfaceStatistics::get_surface_complementarity( Pose & pose ) {
 	ShapeComplementarityCalculator shape;
 	shape.Init();
 
-	return shape.CalcSc( pose, jump_, 1 );
+	// takes jumpID and whether a quick computation or not
+	return shape.CalcSc( pose, jumps_[1], 1 );
 
 } // get surface complementarity of interface
 
@@ -800,21 +924,21 @@ utility::vector1 < Real > MPInterfaceStatistics::get_residue_size( Pose & pose )
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
 
 		// interface, mem
-		if ( exposed_[i] && intf_[i] && in_mem_[i] ) {
+		if ( uniq_[i] && intf_[i] && in_mem_[i] ) {
 			tm_int += static_cast< Real >( pose.residue( i ).natoms() );
-		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] ) {
+		} else if ( uniq_[i] && intf_[i] && !in_mem_[i] ) {
 			// interface, sol
 			sol_int += static_cast< Real >( pose.residue( i ).natoms() );
-		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && in_mem_[i] ) {
 			// not interface, mem
 			tm_nonint += static_cast< Real >( pose.residue( i ).natoms() );
-		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && !in_mem_[i] ) {
 			// not interface, sol
 			sol_nonint += static_cast< Real >( pose.residue( i ).natoms() );
-		} else if ( !exposed_[i] && in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && in_mem_[i] ) {
 			// core, mem
 			tm_core += static_cast< Real >( pose.residue( i ).natoms() );
-		} else if ( !exposed_[i] && !in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && !in_mem_[i] ) {
 			// core, sol
 			sol_core += static_cast< Real >( pose.residue( i ).natoms() );
 		}
@@ -869,7 +993,7 @@ Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
 	using namespace core::scoring::hbonds;
 
 	// get the partners
-	utility::vector1< std::string > partners( utility::string_split( partners_, '_' ) );
+	utility::vector1< std::string > partners( utility::string_split( partner_, '_' ) );
 	utility::vector1< std::string > partner1( utility::split( partners[1] ) );
 	utility::vector1< std::string > partner2( utility::split( partners[2] ) );
 
@@ -997,21 +1121,21 @@ MPInterfaceStatistics::get_aa_statistics( Pose & pose ) {
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
 
 		// increase counter at the correct place
-		if ( exposed_[i] && intf_[i] && in_mem_[i] ) {
+		if ( uniq_[i] && intf_[i] && in_mem_[i] ) {
 			tm_int[ aa_index[ pose.residue( i ).name1() ] ] += 1;
-		} else if ( exposed_[i] && intf_[i] && !in_mem_[i] ) {
+		} else if ( uniq_[i] && intf_[i] && !in_mem_[i] ) {
 			// interface, sol
 			sol_int[ aa_index[ pose.residue( i ).name1() ] ] += 1;
-		} else if ( exposed_[i] && !intf_[i] && in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && in_mem_[i] ) {
 			// not interface, mem
 			tm_nonint[ aa_index[ pose.residue( i ).name1() ] ] += 1;
-		} else if ( exposed_[i] && !intf_[i] && !in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && exposed_[i] && !in_mem_[i] ) {
 			// not interface, sol
 			sol_nonint[ aa_index[ pose.residue( i ).name1() ] ] += 1;
-		} else if ( !exposed_[i] && in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && in_mem_[i] ) {
 			// core, mem
 			tm_core[ aa_index[ pose.residue( i ).name1() ] ] += 1;
-		} else if ( !exposed_[i] && !in_mem_[i] ) {
+		} else if ( uniq_[i] && !intf_[i] && !exposed_[i] && !in_mem_[i] ) {
 			// core, sol
 			sol_core[ aa_index[ pose.residue( i ).name1() ] ] += 1;
 		}
@@ -1236,19 +1360,47 @@ void MPInterfaceStatistics::fill_vectors_with_data( Pose & pose ) {
 		}
 		in_mem_.push_back( in_mem );
 
-		// is the residue in the interface?
-		bool intf = interface_.is_interface( i );
-		intf_.push_back( intf );
-
 		// is the residue exposed?
 		bool exposed( false );
 		if ( sasa[i] >= 0.5 ) {
 			exposed = true;
 		}
 		exposed_.push_back( exposed );
+
+		TR << "res " << i << " " << pose.residue( i ).name3() << " uniq " << uniq_[ i ] << " mem " << in_mem << " exposed " << exposed << " sasa " << sasa[ i ] << " intf " << intf_[ i ] << std::endl;
 	}
 
 } // fill vectors with data
+
+/// @brief Calculate interfaces
+/// @detail This is for 2-body docking
+void MPInterfaceStatistics::calculate_interfaces( Pose & pose ) {
+
+	// fill partners_ vector
+	partners_ = utility::string_split( partner_, '_' );
+
+	// initialize intf_ vector with false for each residue
+	utility::vector1< bool > tmp( pose.total_residue(), false );
+	intf_ = tmp;
+
+	// go through jumps and compute interfaces
+	for ( core::Size i = 1; i <= jumps_.size(); ++i ) {
+
+		// compute interface
+		Interface intf = Interface( jumps_[ i ] );
+		intf.calculate( pose );
+		interfaces_.push_back( intf );
+
+		// go through residues and set interface residue to true
+		for ( core::Size r = 1; r <= nres_protein( pose ); ++r ) {
+			bool is_intf = intf.is_interface( r );
+			if ( is_intf == true ) {
+				intf_[ r ] = true;
+			}
+		}
+	}
+
+} // calculate interfaces
 
 ////////////////////////////// MAIN ////////////////////////////////////////////
 

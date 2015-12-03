@@ -29,11 +29,13 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/docking/RigidBodyInfo.hh> // zhe
 #include <protocols/docking/EllipsoidalRandomizationMover.hh> // NM
+#include <protocols/scoring/Interface.hh>
 #include <basic/datacache/DataMap.hh> // zhe
 
 #include <core/pose/selection.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/util.hh>
 
 #include <core/conformation/Conformation.hh>
 
@@ -44,7 +46,9 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/methods/RG_Energy_Fast.hh>
 
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -499,6 +503,7 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 {
 	using namespace moves;
 	using namespace protocols::membrane;
+	using namespace core::scoring;
 
 	bool vary_stepsize( false );
 
@@ -563,7 +568,7 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	core::Size counter( 0 );
 
 	// first try moving away from each other
-	while ( pose.energies().total_energies()[ scoring::interchain_vdw ] > 0.1 && counter <= counter_breakpoint ) {
+	while ( pose.energies().total_energies()[ interchain_vdw ] > 0.1 && counter <= counter_breakpoint ) {
 		mover->apply( pose );
 		( *scorefxn_ )( pose );
 		++counter;
@@ -578,7 +583,9 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	// then try moving towards each other
 	TR << "Moving together" << std::endl;
 	mover->trans_axis().negate();
-	while ( counter <= counter_breakpoint && pose.energies().total_energies()[ scoring::interchain_vdw ] < 0.1 ) {
+	while ( counter <= counter_breakpoint && pose.energies().total_energies()[ interchain_vdw ] < 0.1 ) {
+
+//		TR << "interchain_vdw: " << pose.energies().total_energies()[ interchain_vdw ] << std::endl;
 		mover->apply( pose );
 		( *scorefxn_ )( pose );
 		++counter;
@@ -594,11 +601,11 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	counter = 0;
 	if ( mover->step_size() > 1.0 ) {
 		TR << "step size of 1.0..." << std::endl;
-		TR << "interchain scores: " << pose.energies().total_energies()[ scoring::interchain_vdw ] << std::endl;
-		while ( counter <= 10 && pose.energies().total_energies()[ scoring::interchain_vdw ] < 0.1 ) {
+		TR << "interchain scores: " << pose.energies().total_energies()[ interchain_vdw ] << std::endl;
+		while ( counter <= 10 && pose.energies().total_energies()[ interchain_vdw ] < 0.1 ) {
 
 			TR << "moving partners together" << std::endl;
-			TR << "interchain scores: " << pose.energies().total_energies()[ scoring::interchain_vdw ] << std::endl;
+			TR << "interchain scores: " << pose.energies().total_energies()[ interchain_vdw ] << std::endl;
 			mover->vary_stepsize( false );
 			mover->step_size( 1.0 );
 			mover->apply( pose );
@@ -682,9 +689,9 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 	utility::vector1<rigid::RigidBodyTransMover> trans_movers;
 
 	if ( slide_axis_.length() != 0 ) {
-		trans_movers.push_back( rigid::RigidBodyTransMover(slide_axis_, rb_jump_));
+		trans_movers.push_back( rigid::RigidBodyTransMover( slide_axis_, rb_jump_ ));
 	} else if ( rb_jumps_.size()<1 ) {
-		trans_movers.push_back( rigid::RigidBodyTransMover(pose,rb_jump_));
+		trans_movers.push_back( rigid::RigidBodyTransMover( pose,rb_jump_ ));
 	} else {
 		for (
 				utility::vector1<core::Size>::iterator jump_idx = rb_jumps_.begin(),
@@ -692,7 +699,7 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 				jump_idx != end;
 				++jump_idx
 				) {
-			trans_movers.push_back( rigid::RigidBodyTransMover(pose, *jump_idx));
+			trans_movers.push_back( rigid::RigidBodyTransMover(pose, *jump_idx ));
 		}
 	}
 
@@ -763,6 +770,342 @@ std::ostream &operator<< ( std::ostream &os, FaDockingSlideIntoContact const &fa
 	fadock.show(os);
 	return os;
 }
+
+////////////////////////////////////////////////////////////////////////////
+
+/// @brief More general function for low-res or highres DockingSlideIntoContact
+/// @details Both DockingSlideIntoContact and FaDockingSlideIntoContact have their
+///  issues and are not as general as they could be; they should be a single
+///  class, not two; since they are called quite often, I am rewriting the
+///  class for now and will replace it's use later on
+/// @details Contrary to the name, slides things apart first, then together.
+/// OK for proteins, bad for ligands (because they may escape the pocket permanently).
+
+/// @brief default constructor, default jump = 1, default scorefunction is lowres
+SlideIntoContact::SlideIntoContact() : Mover(),
+	jump_( 1 ),
+	slide_axis_( 0 ),
+	vary_stepsize_( false ),
+	stepsize_( 1.0 ),
+	move_apart_first_ ( true ),
+	scorefxn_( 0 ),
+	scoretype_( ),
+	threshold_( 1.0 ),
+	starting_rep_( 0 )
+{}
+
+/// @brief constructor with arguments
+SlideIntoContact::SlideIntoContact( core::Size const jump ) : Mover(),
+	jump_( jump ),
+	slide_axis_( 0 ),
+	vary_stepsize_( false ),
+	stepsize_( 1.0 ),
+	move_apart_first_ ( true ),
+	scorefxn_( 0 ),
+	scoretype_( ),
+	threshold_( 1.0 ),
+	starting_rep_( 0 )
+{}
+
+/// @brief destructor
+SlideIntoContact::~SlideIntoContact() {}
+
+/// @brief apply
+void SlideIntoContact::apply( core::pose::Pose & pose ) {
+
+	using namespace moves;
+	using namespace core::scoring;
+	using namespace protocols::membrane;
+
+	register_options();
+	init_from_cmd();
+
+	// use centroid scorefunction if not previously defined
+	if ( scorefxn_ == 0 ) {
+		scorefxn_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
+		scoretype_ = score_type_from_name( "interchain_contact" );
+	}
+
+	rigid::RigidBodyTransMoverOP mover;
+
+	// if slide axis known
+	if ( slide_axis_.length() != 0 ) {
+		mover = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover( slide_axis_, jump_, vary_stepsize_ ) );
+	} else {
+		// if slide axis unknown, get it from partner COMs
+		mover = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover( pose, jump_, vary_stepsize_ ) );
+	}
+
+	// score the pose to update the coordinates and get a starting score for the repulsive score
+	// ( *scorefxn_ )( pose );
+	// core::Real starting_rep = pose.energies().total_energies()[ scoretype_ ];
+	TR << "starting repulsion: " << starting_rep_ << std::endl;
+
+	core::Size const counter_breakpoint( 200 );
+	core::Size counter( 0 );
+
+	// if first moving apart
+	if ( move_apart_first_ == true ) {
+
+		TR << "Moving away" << std::endl;
+
+		// negating axis for moving away
+		mover->trans_axis().negate();
+		mover->step_size( 500 );
+		mover->apply( pose );
+
+		//  // first try moving away from each other
+		//  while ( pose.energies().total_energies()[ scoretype_ ] - starting_rep_ > 10 && counter <= counter_breakpoint ) {
+		//   mover->apply( pose );
+		//   ( *scorefxn_ )( pose );
+		//
+		//   pose.energies().show_total_headers( TR );
+		//   TR << std::endl;
+		//   pose.energies().show_totals( TR );
+		//   TR << std::endl;
+		//
+		//   ++counter;
+		//  }
+		//  if ( counter > counter_breakpoint ) {
+		//   TR<<"failed moving away with original vector. Aborting SlideIntoContact."<<std::endl;
+		//   set_current_tag( "fail" );
+		//   return;
+		//  }
+		//  counter = 0;
+
+		// then try moving towards each other, negating axis again to move together
+		mover->trans_axis().negate();
+	}
+
+	TR << "Moving together" << std::endl;
+	counter = 0;
+	( *scorefxn_ )( pose );
+	core::Real diff = pose.energies().total_energies()[ scoretype_ ] - starting_rep_;
+	while ( counter <= counter_breakpoint && diff <= threshold_ ) {
+
+		TR << name_from_score_type( scoretype_ ) << ": " << pose.energies().total_energies()[ scoretype_ ] << std::endl;
+
+		mover->apply( pose );
+		( *scorefxn_ )( pose );
+		diff = pose.energies().total_energies()[ scoretype_ ] - starting_rep_;
+
+		TR << "counter" << counter << " break " << counter_breakpoint << " diff: " << diff << ", threshold: " << threshold_ << std::endl;
+		++counter;
+	}
+	if ( counter > counter_breakpoint ) {
+		TR<<"moving together failed. Aborting SlideIntoContact."<<std::endl;
+		set_current_tag( "fail" );
+		return;
+	}
+
+	// if the stepsize was variable, do a few more tries with stepsize of 1, before
+	// moving it back out
+	counter = 0;
+	if ( mover->step_size() > 1.0 ) {
+		TR << "step size of 1.0..." << std::endl;
+		mover->vary_stepsize( false );
+		mover->step_size( 1.0 );
+
+		( *scorefxn_ )( pose );
+		diff = pose.energies().total_energies()[ scoretype_ ] - starting_rep_;
+
+		TR << name_from_score_type( scoretype_ ) << ": " << pose.energies().total_energies()[ scoretype_ ] << std::endl;
+		TR << "starting rep: " << starting_rep_ << std::endl;
+		TR << "diff: " << diff << ", threshold: " << threshold_ << std::endl;
+
+		while ( counter <= 50 && diff <= threshold_ ) {
+
+			TR << "moving partners together" << std::endl;
+			TR << name_from_score_type( scoretype_ ) << ": " << pose.energies().total_energies()[ scoretype_ ] << std::endl;
+
+			mover->apply( pose );
+
+			( *scorefxn_ )( pose );
+			diff = pose.energies().total_energies()[ scoretype_ ] - starting_rep_;
+			TR << "diff: " << diff << ", threshold: " << threshold_ << std::endl;
+			++counter;
+		}
+	}
+	// move away again until just touching
+	// mover->trans_axis().negate();
+	// mover->apply( pose );
+
+} // apply
+
+/// @brief show
+void SlideIntoContact::show(std::ostream & output) const {
+	output << "Jump number: " << get_jump_num() << std::endl;
+}
+
+/// @brief set slide axis in Mover
+void SlideIntoContact::slide_axis( core::Vector slide_axis ) {
+	slide_axis_ = slide_axis;
+}
+
+/// @brief vary the stepsize depending on the distance between the partners
+void SlideIntoContact::vary_stepsize( bool yesno ) {
+	vary_stepsize_ = yesno;
+}
+
+/// @brief set the stepsize to walk between the partners
+void SlideIntoContact::stepsize( core::Real stepsize ) {
+	stepsize_ = stepsize;
+}
+
+/// @brief move partners apart first
+void SlideIntoContact::move_apart_first( bool yesno ) {
+	move_apart_first_ = yesno;
+}
+
+/// @brief set starting repulsion
+void SlideIntoContact::set_starting_rep( core::Real starting_rep ) {
+	starting_rep_ = starting_rep;
+}
+
+/// @brief scorefunction and scoreterm used for evaluating closeness of partners
+void SlideIntoContact::scorefunction( std::string sfxn_name, std::string scoreterm_for_sliding ) {
+	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( sfxn_name );
+	scoretype_ = core::scoring::score_type_from_name( scoreterm_for_sliding );
+}
+
+/// @brief Get the name of this mover
+std::string SlideIntoContact::get_name() const {
+	return "SlideIntoContact";
+}
+
+/// @brief get the jump number between the partners
+core::Size SlideIntoContact::get_jump_num() const {
+	return jump_;
+}
+
+/// @brief get the stepsize to walk between the partners
+core::Real SlideIntoContact::get_stepsize() const {
+	return stepsize_;
+}
+
+/// @brief get the scorefunction name that is used to evaluate closeness btw partners
+std::string SlideIntoContact::get_sfxn_name() const {
+	return scorefxn_->get_name();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Register Options with JD2
+void SlideIntoContact::register_options() {
+
+	using namespace basic::options;
+
+	option.add_relevant( OptionKeys::mp::dock::slide_threshold );
+
+} // register options
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Initialize Mover options from the comandline
+void SlideIntoContact::init_from_cmd() {
+
+	using namespace basic::options;
+
+	// docking partners
+	if ( option[ OptionKeys::mp::dock::slide_threshold ].user() ) {
+		threshold_ = option[ OptionKeys::mp::dock::slide_threshold ]();
+	}
+
+} // init from cmd
+
+void move_apart( core::pose::Pose & pose, int jump, core::Vector axis ) {
+
+	using namespace protocols::rigid;
+	using namespace protocols::membrane;
+	using namespace protocols::membrane::geometry;
+
+	TR << "move apart" << std::endl;
+
+	RigidBodyTransMoverOP mover( new RigidBodyTransMover( axis, jump ) );
+	mover->step_size( 500 );
+	mover->apply( pose );
+
+	// compute distance between partners
+	EmbeddingDef emb_up, emb_down;
+	update_partner_embeddings( pose, jump, emb_up, emb_down );
+	core::Real dist1 = ( emb_down.center() - emb_up.center() ).length();
+	TR << "distance between partners: " << dist1 << std::endl;
+
+}
+
+void move_together( core::pose::Pose & pose, int jump, core::scoring::ScoreFunctionOP sfxn ) {
+
+	using namespace basic::options;
+	using namespace core::pose;
+	using namespace protocols::rigid;
+	using namespace core::scoring::methods;
+	using namespace protocols::scoring;
+	using namespace protocols::membrane;
+	using namespace protocols::membrane::geometry;
+
+	// docking partners
+	core::Real max_contacts( 10 );
+	if ( option[ OptionKeys::mp::dock::slide_threshold ].user() ) {
+		max_contacts = option[ OptionKeys::mp::dock::slide_threshold ]();
+	}
+
+	// split pose by jump
+	Pose pose1, pose2;
+	partition_pose_by_jump( pose, jump, pose1, pose2 );
+
+	// compute radii of upstream and downstream partners
+	RG_Energy_Fast rg = RG_Energy_Fast();
+	core::Real rgyr1 = rg.calculate_rg_score( pose1 );
+	core::Real rgyr2 = rg.calculate_rg_score( pose2 );
+
+	// compute axis and distance between partners
+	EmbeddingDef emb_up, emb_down;
+	update_partner_embeddings( pose, jump, emb_up, emb_down );
+	core::Vector axis = emb_up.center() - emb_down.center();
+	core::Real dist1 = axis.length();
+	TR << "distance between partners before big step: " << dist1 << std::endl;
+
+	// initialize mover
+	RigidBodyTransMoverOP mover( new RigidBodyTransMover( axis, jump ) );
+
+	// compute first step size
+	core::Real step1 = axis.length() - rgyr1 - rgyr2 - 10;
+	TR << "axis length " << axis.length() << std::endl;
+	TR << "rgyr1 " << rgyr1 << std::endl;
+	TR << "rgyr2 " << rgyr2 << std::endl;
+	TR << "step1: " << step1 << std::endl;
+	TR << "jump " << jump << std::endl;
+	mover->step_size( step1 );
+	mover->apply( pose );
+
+	// compute distance between partners
+	update_partner_embeddings( pose, jump, emb_up, emb_down );
+	dist1 = ( emb_down.center() - emb_up.center() ).length();
+	TR << "distance between partners after big step: " << dist1 << std::endl;
+
+	// small steps to move closer, compute nres in interface
+	mover->step_size( 1.0 );
+	( *sfxn )( pose );
+	Interface interface = Interface( jump );
+	interface.calculate( pose );
+
+	core::Size counter(0);
+	core::Size cnt_stop(200);
+	while ( interface.interface_nres() <= max_contacts && counter <= cnt_stop ) {
+
+		mover->apply( pose );
+		( *sfxn )( pose );
+		interface.calculate( pose );
+
+		update_partner_embeddings( pose, jump, emb_up, emb_down );
+		dist1 = ( emb_down.center() - emb_up.center() ).length();
+		TR << "small step " << counter << " distance between partners: " << dist1 << std::endl;
+
+		TR << "interface nres " << interface.interface_nres() << std::endl;
+		counter++;
+	}
+}
+
 
 } // namespace docking
 } // namespace protocols

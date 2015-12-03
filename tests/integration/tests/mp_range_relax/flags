@@ -1,0 +1,5 @@
+-in:file:s inputs/1AFO__opm.pdb
+-mp:setup:spanfiles inputs/1AFO__opm.span
+-relax:range:angle_max 1
+-relax:range:nmoves nres
+-nstruct 1

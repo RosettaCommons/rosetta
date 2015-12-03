@@ -333,6 +333,9 @@ TransformIntoMembraneMover::apply( core::pose::Pose & pose ) {
 	TranslationRotationMoverOP rt( new TranslationRotationMover( current_embedding_->center(), current_embedding_->normal(), new_mem_cntr_, new_mem_norm_, jump_ ) );
 	rt->apply( pose );
 
+	// print tilt angle and distance from membrane center
+	pose_tilt_angle_and_center_distance( pose );
+
 	// reset foldtree and show final one
 	pose.fold_tree( orig_ft );
 	TR << "Final foldtree: Is membrane fixed? " << is_membrane_fixed( pose ) << std::endl;

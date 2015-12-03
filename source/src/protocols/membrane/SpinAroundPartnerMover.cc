@@ -65,7 +65,7 @@ namespace membrane {
 /// @brief Default Constructor
 /// @details Defaults: jump = 1, sampling range = 100
 ///    Sampling range of 100 means that both x and y are sampled from
-///    -100 to +100 before calling DockingSlideIntoContact
+///    -100 to +100
 SpinAroundPartnerMover::SpinAroundPartnerMover() :
 	protocols::moves::Mover()
 {
@@ -237,8 +237,21 @@ void SpinAroundPartnerMover::apply( core::pose::Pose & pose ) {
 
 		x_ = static_cast< core::Real > ( numeric::random::random_range( 0, range_ ) );
 		y_ = static_cast< core::Real > ( numeric::random::random_range( 0, range_ ) );
+
 		x_ -= ( range_ / 2 );
 		y_ -= ( range_ / 2 );
+
+		// reset if they are within 50A to the downstream center
+		core::Real radius = sqrt( pow( ( emb_up->center().x()-x_ ), 2 ) + pow( ( emb_up->center().y()-y_ ), 2 ) );
+		while ( radius <= 50.0 ) {
+			x_ = static_cast< core::Real > ( numeric::random::random_range( 0, range_ ) );
+			y_ = static_cast< core::Real > ( numeric::random::random_range( 0, range_ ) );
+			x_ -= ( range_ / 2 );
+			y_ -= ( range_ / 2 );
+			radius = sqrt( pow( ( emb_up->center().x()-x_ ), 2 ) + pow( ( emb_up->center().y()-y_ ), 2 ) );
+		}
+
+		TR << "radius " << radius << std::endl;
 	}
 
 	// set new embedding vector of downstream partner

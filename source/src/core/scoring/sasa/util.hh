@@ -34,7 +34,7 @@ namespace sasa {
 ///
 ///
 
-/// @brief Relative per residue sidechain SASA
+/// @brief Absolute per residue sidechain SASA
 /// @details Added by JKLeman (julia.koehler1982@gmail.com)
 ///   GXG tripeptide values for sidechain SASA are taken from
 ///   http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf

@@ -173,12 +173,12 @@ public: // tests
 		key_exists = getPoseExtraScore( pose, key, val );
 		TS_ASSERT( key_exists == false );
 		TS_ASSERT( val == 0.0 )
-			} // test_pose_float_map
+	} // test_pose_float_map
 
 
-			/// @brief test renumber_pdbinfo_based_on_conf_chains()
-			void test_renumber_pdbinfo_based_on_conf_chains() {
-			using core::pose::renumber_pdbinfo_based_on_conf_chains;
+	/// @brief test renumber_pdbinfo_based_on_conf_chains()
+	void test_renumber_pdbinfo_based_on_conf_chains() {
+	using core::pose::renumber_pdbinfo_based_on_conf_chains;
 
 		PoseOP pose_one = one_chain_pose();
 		PoseOP pose_two = two_chain_pose();
@@ -320,6 +320,44 @@ public: // tests
 		std::string p1_hash(core::pose::get_sha1_hash_excluding_chain('A',p1));
 		std::string p2_hash(core::pose::get_sha1_hash_excluding_chain('A',p2));
 		TS_ASSERT(p1_hash == p2_hash);
+	}
+
+	void test_unique_chains() {
+
+		core::pose::Pose pose;
+		core::import_pose::pose_from_pdb( pose, "core/pose/2WDQ__tr.pdb" );
+
+		utility::vector1< bool > uniq_chains( compute_unique_chains( pose ) );
+
+		TS_ASSERT( uniq_chains[1] == false );
+		TS_ASSERT( uniq_chains[588] == false );
+		TS_ASSERT( uniq_chains[589] == false );
+		TS_ASSERT( uniq_chains[826] == false );
+
+		TS_ASSERT( uniq_chains[827] == false );
+		TS_ASSERT( uniq_chains[947] == false );
+		TS_ASSERT( uniq_chains[948] == false );
+		TS_ASSERT( uniq_chains[1052] == false );
+
+		TS_ASSERT( uniq_chains[1053] == false );
+		TS_ASSERT( uniq_chains[1640] == false );
+		TS_ASSERT( uniq_chains[1641] == false );
+		TS_ASSERT( uniq_chains[1878] == false );
+
+		TS_ASSERT( uniq_chains[1879] == false );
+		TS_ASSERT( uniq_chains[1999] == false );
+		TS_ASSERT( uniq_chains[2000] == false );
+		TS_ASSERT( uniq_chains[2104] == false );
+
+		TS_ASSERT( uniq_chains[2105] == true );
+		TS_ASSERT( uniq_chains[2692] == true );
+		TS_ASSERT( uniq_chains[2693] == true );
+		TS_ASSERT( uniq_chains[2930] == true );
+
+		TS_ASSERT( uniq_chains[2931] == true );
+		TS_ASSERT( uniq_chains[3051] == true );
+		TS_ASSERT( uniq_chains[3052] == true );
+		TS_ASSERT( uniq_chains[3156] == true );
 	}
 
 }; // class PoseUtilTests

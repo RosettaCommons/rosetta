@@ -99,6 +99,15 @@ private: // methods
 	/// @brief Initialize from commandline
 	void init_from_cmd();
 
+	/// @brief Get repack residues
+	void get_repack_residues( Pose & pose );
+
+	/// @brief Finalize setup
+	void finalize_setup( Pose & pose );
+
+	/// @brief Make mutations
+	std::string make_mutations( Pose & pose, core::Size num_construct );
+
 	////////////////////////////////////////////////////////////////////////////////
 	/*
 	THIS IS HOW THE INPUT FORMAT OF THE FILE LOOKS LIKE:
@@ -136,23 +145,41 @@ private: // methods
 
 private: // data
 
+	/// @brief Scorefunction
+	core::scoring::ScoreFunctionOP sfxn_;
+
 	/// @brief Input file containing desired mutants to make
 	std::string mutant_file_;
 
 	/// @brief Wildtype residue
+	/// @details Outer vector is different constructs, inner vector
+	///   is multiple residues per construct
 	utility::vector1< utility::vector1< std::string > > wt_res_;
 
 	/// @brief Pose residue numbers to mutate
-	utility::vector1< utility::vector1< core::Size > > resn_;
+	/// @details Outer vector is different constructs, inner vector
+	///   is multiple residues per construct
+	utility::vector1< utility::vector1< Size > > resn_;
 
 	/// @brief Residue identities to mutate into, three letter code
+	/// @details Outer vector is different constructs, inner vector
+	///   is multiple residues per construct
 	utility::vector1< utility::vector1< std::string > > new_res_;
 
-	/// @brief Number of iterations the mover runs on the inside
+	/// @brief Number of iterations the mover runs on the inside, i.e. number of
+	///   output models (Mover doesn't run in JD2!)
 	core::Size iter_;
 
 	/// @brief Protein name for dumping PDBs
 	std::string protein_;
+
+	/// @brief Repack?
+	bool repack_mutation_only_;
+	core::Real repack_radius_;
+	utility::vector1< utility::vector1< bool > > repack_residues_;
+
+	/// @brief Full relax?
+	bool relax_;
 
 };
 

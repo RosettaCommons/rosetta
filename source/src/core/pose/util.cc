@@ -1284,6 +1284,104 @@ core::Size chain_end_res( Pose const & pose, core::Size const chain ) {
 
 } // chain end residue number
 
+/// @brief compute last residue numbers of all chains
+utility::vector1< core::Size > chain_end_res( Pose const & pose ) {
+
+	utility::vector1< int > chains( get_chains( pose ) );
+	utility::vector1< core::Size > end_resnumber;
+
+	for ( core::Size i = 1; i <= chains.size(); ++i ) {
+		core::Size end_res( chain_end_res( pose, static_cast< core::Size >( chains[ i ] ) ) );
+		end_resnumber.push_back( end_res );
+	}
+	return end_resnumber;
+
+} // chain end residue numbers
+
+
+/// @brief Compute uniq chains in a complex
+/// @detail Returns a vector of pose length with true/false of uniq chain
+utility::vector1< bool > compute_unique_chains( Pose & pose ) {
+
+	// initilize vector of pose length with false
+	utility::vector1< bool > uniq( pose.total_residue(), true );
+
+	// get chains, initialize uniq chains and vector of chain sequences
+	utility::vector1< core::Size > chains( get_chains( pose ) );
+	utility::vector1< bool > uniq_chains( chains.size(), true );
+	utility::vector1< std::string > sequences;
+
+	// get sequences of all chains into a vector of strings
+	for ( core::Size i = 1; i <= chains.size(); ++i ) {
+		std::string seq( pose.chain_sequence( i ) );
+		sequences.push_back( seq );
+	}
+
+	// compare sequences with respect to each other
+	// this is the simplest and dirties way to compute whether the chains
+	//  are similar, it does NOT do a proper sequence alignment
+	// the assumptions are:
+	// - if the sequences have different lengths, they are different
+	//   (this obviously goes wrong if there are single residue insertions
+	//   or deletions while the rest of the sequences are the same!)
+	// - if the sequences have the same length and the sequence identity is
+	//   above 95%, then they are "not unique"
+
+	// go through vectors of chain sequences to compare them
+	for ( core::Size i = 1; i <= sequences.size(); ++i ) {
+
+		std::string seq1 = sequences[ i ];
+
+		// no double counting
+		for ( core::Size j = i+1; j <= sequences.size(); ++j ) {
+
+			std::string seq2 = sequences[ j ];
+
+			// make sure that the sequences are of same length
+			core::Size num_ident_res( 0 );
+			if ( seq1.size() == seq2.size() ) {
+
+				TR << "sequences " << i << " and " << j << " have same length" << std::endl;
+
+				// go through sequence, std::string indexing from 0
+				for ( core::Size k = 0; k <= seq1.size(); ++k ) {
+
+					if ( seq1[ k ] == seq2[ k ] ) {
+						++num_ident_res;
+					}
+				}
+
+				// compute sequence identity
+				core::Real seqid = num_ident_res / seq1.size();
+				TR << "seqid " << seqid << std::endl;
+
+				// if sequence identity >= 95%, add a true to the uniq_chains
+				// vector
+				if ( seqid >= 0.95 ) {
+					TR << "adding a false to chain " << i << std::endl;
+					uniq_chains[ i ] = false;
+				}
+
+			} // same length sequences
+		} // iterate over chains vector
+	} // iterate over chains vector
+
+	// go through uniq chains vector
+	for ( core::Size i = 1; i <= uniq_chains.size(); ++i ) {
+
+		// go through residues
+		for ( core::Size j = 1; j <= pose.total_residue(); ++j ) {
+
+			// if residue belongs to uniq chain, set residue to true in uniq seq vector
+			if ( uniq_chains[ i ] == false && chains[ i ] == static_cast< core::Size >( pose.chain( j ) ) ) {
+				uniq[ j ] = false;
+			}
+		}
+	}
+
+	return uniq;
+
+} // compute unique chains
 
 /// @brief renumber PDBInfo based on Conformation chains; each chain starts from 1
 /// @param[in,out] pose The Pose to modify.

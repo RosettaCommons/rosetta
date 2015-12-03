@@ -70,7 +70,7 @@ using namespace ObjexxFCL::format;
 ///
 ///
 
-/// @brief Relative per residue sidechain SASA
+/// @brief Absolute per residue sidechain SASA
 /// @details Added by JKLeman (julia.koehler1982@gmail.com)
 ///   GXG tripeptide values for sidechain SASA are taken from
 ///   http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
@@ -107,7 +107,7 @@ utility::vector1< Real > rel_per_res_sc_sasa( const pose::Pose & pose ) {
 	sc_sasa[ 'C' ] = 104;
 	sc_sasa[ 'Q' ] = 144;
 	sc_sasa[ 'E' ] = 138;
-	sc_sasa[ 'G' ] = 0;
+	sc_sasa[ 'G' ] = 1;
 	sc_sasa[ 'H' ] = 151;
 	sc_sasa[ 'I' ] = 140;
 	sc_sasa[ 'L' ] = 137;
@@ -124,6 +124,11 @@ utility::vector1< Real > rel_per_res_sc_sasa( const pose::Pose & pose ) {
 	// create vector with relative sasa
 	utility::vector1< Real > rel_sasa;
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
+
+		// debug
+		//  if ( pose.residue( i ).name3() == "GLY" ) {
+		//   TR << "res_sasa " << i << " " << res_sasa[ i ] << std::endl;
+		//  }
 		rel_sasa.push_back( res_sasa[ i ] / sc_sasa[ pose.residue( i ).name1() ] );
 	}
 

@@ -53,6 +53,39 @@ using namespace core;
 namespace protocols {
 namespace docking {
 
+/// @brief Compute interface score between the input complex and complex with
+///   the two partners at 500A from each other
+core::Real calc_intf_score( const core::pose::Pose & pose, const core::scoring::ScoreFunctionOP scorefxn, int const jump ) {
+
+	using namespace core::pose;
+	using namespace core::scoring;
+	using namespace protocols::rigid;
+	using namespace protocols::membrane;
+
+	// initialize pose
+	Pose unbound_pose = pose;
+
+	// score pose, this is bound score
+	core::Real bound_score = ( *scorefxn )( unbound_pose );
+
+	// initialize new pose and move axis
+	core::Vector axis = membrane_axis( unbound_pose, jump );
+
+	// move partners apart
+	RigidBodyTransMoverOP mover( new RigidBodyTransMover( axis, jump ) );
+	mover->step_size( 500 );
+	mover->apply( unbound_pose );
+
+	// score pose, this is unbound score
+	core::Real unbound_score = ( *scorefxn )( unbound_pose );
+
+	// compute interface score
+	core::Real intf_score = bound_score - unbound_score;
+
+	return intf_score;
+}
+
+
 core::Real
 calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps ) {
 	using namespace scoring;

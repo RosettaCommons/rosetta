@@ -36,6 +36,10 @@
 namespace protocols {
 namespace docking {
 
+/// @brief Compute interface score between the input complex and complex with
+///   the two partners at 500A from each other
+core::Real calc_intf_score( const core::pose::Pose & pose, const core::scoring::ScoreFunctionOP scorefxn, int const jump );
+
 /// @brief Calculates the difference in energy between the inputted complex, and the complex with the two partners at 500A from each other
 core::Real calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps );  //@TODO These poses should be PoseCAPs!
 

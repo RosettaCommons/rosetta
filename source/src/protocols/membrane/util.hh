@@ -130,6 +130,8 @@ calc_helix_tilt_angle( core::pose::Pose & pose, core::Size span_no );
 /// @details Using the COM of the helix start & end position, calculate a helix
 /// describing its geometry relative to the memrbane normal. Takes a pose &
 /// span number. Not a good approx for helices with kinks.
+/// TODO: CODE INSIDE SHOULD BE REPLACED WITH SPAN EMBEDDING CALCULATIONS!
+///       THAT'S WHAT THEY ARE THERE FOR! (JKLeman)
 core::Vector
 calc_helix_axis( core::pose::Pose & pose, core::Size span_no );
 
@@ -145,6 +147,11 @@ com( core::Vector a, core::Vector b, core::Vector c );
 /// the measured tilt angle and reference angle (typically from experiment)
 core::Real
 calc_angle_rmsd( core::Real measured_angle, core::Real ref_angle );
+
+/// @brief Calculate tilt angle and distance from membrane center
+/// @details Computes the tilt angle and distance from membrane center for the
+///   protein embedding center and normal
+utility::vector1< core::Real > pose_tilt_angle_and_center_distance( core::pose::Pose & pose );
 
 ////////////////////////////////////////////////////////////////
 // Safety checks & convenience methods for membrane foldtrees //
@@ -180,6 +187,9 @@ void reorder_membrane_foldtree( core::pose::Pose & pose );
 ///      |        |       ||        |        |      |
 /// -------  -------  -------  -------  -------  M=root
 ///  chain1   chain2   chain3   chain4 ...
+///
+/// ^--------------^  ^-----------------------^
+///     partner 1             partner 2
 ///
 ///  iJ = interface jump, will be returned from the function
 ///
@@ -233,17 +243,85 @@ core::Size create_membrane_foldtree_anchor_tmcom( core::pose::Pose & pose );
 ///  chain1   chain2   chain3   chain4 ...
 core::Size create_membrane_foldtree_anchor_pose_tmcom( core::pose::Pose & pose );
 
+/// @brief Create foldtree for multiple docking partners
+/// @details The foldtree is setup such that the membrane is at the root and
+///   anchored at the residue closest to the TM COM of the first chain.
+///   The partner setup defines how the foldtree will look like: partners
+///   are anchored at the first chain, and multiple chains in a partner
+///   are anchored to the first chain of that partner, example below.
+///   Returns all interface jump numbers.
+///   Example: A_BCD_E
+///
+///      __________________________________________
+///     |________________________________          |
+///     |          _______________       |         |
+///     |_______  |_______        |      |         |
+///     |       | |       |       |      |         |
+/// -------  -------  -------  -------  -------  M=root
+///  chain1   chain2   chain3   chain4   chain5...
+///
+/// ^-----^  ^-----------------------^  ^-----^
+/// partner1          partner2          partner3
+///
+utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmcom( core::pose::Pose & pose, std::string partner );
+
 /// @brief Helper function to create membrane foldtrees
 /// @details The anchors vector is a vector of anchor residues in all chains,
 ///   one per chain. This function assumes that the first entry in the
 ///   vector is the root anchor point to which all other chains are
 ///   connected;
+///       ________________________________
+///      |__________________________      |
+///      |_________________         |     |
+///      |________         |        |     |
+///      |        |        |        |     |
+/// -------  -------  -------  -------  M=root
+///  chain1   chain2   chain3   chain4 ...
+///
 void create_membrane_foldtree_from_anchors( core::pose::Pose & pose, utility::vector1< core::Size > anchors );
+
+/// @brief Helper function to create a specific membrane foldtree
+/// @details I am hijacking xyzVectors to hold the jumps that need to be
+///   created in the foldtree: xyz = ( rsd1, rsd2, cutpoint )
+///   THE JUMP NUMBERS WILL BE CONSECUTIVE, ACCORDING TO THE VECTOR1
+core::Size create_specific_membrane_foldtree( core::pose::Pose & pose, utility::vector1< core::Vector > anchors );
 
 /// @brief Helper function to create membrane foldtrees
 /// @details Returns the residues closest to the COMs for each chain
 utility::vector1< core::Size > get_anchor_points_for_tmcom( core::pose::Pose & pose );
 
+/// @brief Setup foldtree from scratch
+/// @details The foldtree is setup such that the residue closest to the
+///   COM is at the root, with jumps from there to each chain COM;
+///   requires the membrane to be present;
+///   Returns the root anchoring point, i.e. rsd nearest pose COM that
+///   can be in any chain
+///                _________________
+///               |________         |
+///       ________|        |        |
+///      |        |        |        |
+/// -------  -------  -------  -------
+///  chain1   chain2   chain3   chain4 ...
+///               ^
+///       root anchor point
+///
+core::Size setup_foldtree_pose_com( core::pose::Pose & pose );
+
+/// @brief Helper function to setup foldtrees
+/// @details The anchors vector is a vector of anchor residues in all chains,
+///   one per chain. This function assumes that the first entry in the
+///   vector is the root anchor point to which all other chains are
+///   connected;
+///       __________________________
+///      |_________________         |
+///      |________         |        |
+///      |        |        |        |
+/// -------  -------  -------  -------
+///  chain1   chain2   chain3   chain4 ...
+///      ^
+/// root anchor point
+///
+void setup_foldtree_from_anchors( core::pose::Pose & pose, utility::vector1< core::Size > anchors );
 
 ///////////////////////////////////////////////////////////
 // Utilities for accessing dssp, z coords and chain info //

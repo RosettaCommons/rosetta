@@ -252,8 +252,8 @@ calc_helix_tilt_angle(
 	helix_axis.normalize();
 
 	// Check that both vectors have a positive orientation
-	if ( normal.length() > 0 ) normal.negate();
-	if ( helix_axis.length() > 0 ) helix_axis.negate();
+	if ( normal.z() < 0 ) normal.negate();
+	if ( helix_axis.z() < 0 ) helix_axis.negate();
 
 	// Calculate the angle between the normal & helix
 	core::Real tilt_angle( angle_of( normal, helix_axis ) );
@@ -264,6 +264,8 @@ calc_helix_tilt_angle(
 /// @details Using the COM of the helix start & end position, calculate a helix
 /// describing its geometry relative to the memrbane normal. Takes a pose &
 /// span number. Not a good approx for helices with kinks.
+/// TODO: CODE INSIDE SHOULD BE REPLACED WITH SPAN EMBEDDING CALCULATIONS!
+///       THAT'S WHAT THEY ARE THERE FOR! (JKLeman)
 core::Vector
 calc_helix_axis(
 	core::pose::Pose & pose,
@@ -344,6 +346,36 @@ calc_angle_rmsd( core::Real measured_angle, core::Real ref_angle ) {
 	core::Real rms = std::sqrt( ( std::pow( abs_diff, 2 ) / 2 ) );
 	return rms;
 }
+
+/// @brief Calculate tilt angle and distance from membrane center
+/// @details Computes the tilt angle and distance from membrane center for the
+///   protein embedding center and normal
+utility::vector1< core::Real > pose_tilt_angle_and_center_distance( core::pose::Pose & pose ) {
+
+	using namespace protocols::membrane::geometry;
+	utility::vector1< core::Real > angle_and_distance;
+
+	// membrane center
+	core::Vector mem_center = pose.conformation().membrane_info()->membrane_center();
+	core::Vector mem_normal = pose.conformation().membrane_info()->membrane_normal();
+
+	// compute structure-based embedding
+	EmbeddingDefOP emb( compute_structure_based_embedding( pose ) );
+
+	// compute tilt angle between embedding normal and membrane normal
+	core::Real tilt_angle( numeric::conversions::degrees( angle_of( mem_normal, emb->normal() ) ) );
+	TR << "tilt angle: " << tilt_angle << std::endl;
+
+	// compute distance from membrane center plane
+	core::Real dist_from_center = dot( emb->center() - mem_center, mem_normal );
+	TR << "dist from center plane: " << dist_from_center << std::endl;
+
+	angle_and_distance.push_back( tilt_angle );
+	angle_and_distance.push_back( dist_from_center );
+
+	return angle_and_distance;
+
+} // compute tilt angle and distance from membrane center
 
 ////////////////////////////////////////////////////////////////
 // Safety checks & convenience methods for membrane foldtrees //
@@ -671,6 +703,11 @@ core::Size create_membrane_foldtree_anchor_pose_tmcom( core::pose::Pose & pose )
 		}
 	}
 
+	// debug
+	// for ( core::Size i = 1; i <= anchors.size(); ++i ) {
+	//  TR << "anchor " << i << ": " << anchors[i] << std::endl;
+	// }
+
 	// create foldtree
 	create_membrane_foldtree_from_anchors( pose, anchors );
 
@@ -680,11 +717,118 @@ core::Size create_membrane_foldtree_anchor_pose_tmcom( core::pose::Pose & pose )
 
 /////////////////////////////////////////
 
+/// @brief Create foldtree for multiple docking partners
+utility::vector1< core::Size > create_membrane_multi_partner_foldtree_anchor_tmcom( core::pose::Pose & pose, std::string partner ) {
+
+	// get chains from pose
+	utility::vector1< int > chainids( get_chains( pose ) );
+	utility::vector1< core::Size > chain_ends( chain_end_res( pose ) );
+
+	// get chain TM COMs as anchor points
+	utility::vector1< core::Vector > all_anchors;
+	utility::vector1< core::Size > anchors ( get_anchor_points_for_tmcom( pose ) );
+
+	// print anchors
+	for ( core::Size i = 1; i <= anchors.size(); ++i ) {
+		TR << "anchor " << i << " " << anchors[ i ] << std::endl;
+	}
+
+	// add jump from MEM to first chain anchor
+	core::Size memrsd = pose.conformation().membrane_info()->membrane_rsd_num();
+	core::Size cutpoint = chain_ends[ 1 ];
+	core::Vector jump1( anchors[ 1 ], memrsd, cutpoint );
+	all_anchors.push_back( jump1 );
+	core::Size jumpnumber( 1 );
+	utility::vector1< core::Size > jumps;
+
+	// split partners by underscore
+	utility::vector1< std::string > partners( utility::string_split( partner, '_' ) );
+
+	// go through partners (AB / CD)
+	for ( core::Size p = 1; p <= partners.size(); ++p ) {
+
+		// get anchor for first chain
+		core::Size chainid;
+		core::Size first_chain_anchor( 0 );
+
+		// convert chain from partners (f.ex. B) into chainID (f.ex. 2)
+		chainid = get_chain_id_from_chain( partners[ p ][ 0 ], pose );
+
+		// go through chainids (except MEM) to find chain of interest  and first anchor point
+		for ( core::Size i = 1; i <= chainids.size()-1; ++i ) {
+			if ( chainid == static_cast< core::Size >( chainids[ i ] ) ) {
+				first_chain_anchor = anchors[ i ];
+			}
+		}
+
+		// add jump from first chain to this chain
+		if ( first_chain_anchor != anchors[ 1 ] ) {
+			++jumpnumber;
+			jumps.push_back( jumpnumber );
+			cutpoint = chain_ends[ chainid ];
+			core::Vector jump( anchors[ 1 ], first_chain_anchor, cutpoint );
+			all_anchors.push_back( jump );
+		}
+
+		// if multiple chains: anchor first chain on first chain, then the next
+		// on the first chain in the partner
+		if ( partners[ p ].size() > 1 ) {
+
+			core::Size chain_anchor( 0 );
+
+			// iterate through rest of chains in the partner (1,2,3), string indexes with 0
+			for ( core::Size c = 1; c < partners[ p ].size(); ++c ) {
+
+				// go through chainids (except MEM) to find chain of interest and anchor point
+				for ( core::Size i = 1; i <= chainids.size()-1; ++i ) {
+
+					// convert chain from partners (f.ex. B) into chainID (f.ex. 2)
+					chainid = get_chain_id_from_chain( partners[ p ][ c ], pose );
+
+					// get anchor point of current partner
+					if ( chainid == static_cast< core::Size >( chainids[ i ] ) ) {
+						chain_anchor = anchors[ chainid ];
+					}
+
+				} // iterate over chainids
+
+				// add jump from first chain anchor in the partner to this anchor point
+				cutpoint = chain_ends[ chainid ];
+				core::Vector jump( first_chain_anchor, chain_anchor, cutpoint );
+				all_anchors.push_back( jump );
+
+			} // iterate through rest of chains in the partner
+
+		} // multiple chains in partner
+
+	} // go through partners
+
+	for ( core::Size i = 1; i <= all_anchors.size(); ++i ) {
+		TR << all_anchors[ i ].to_string() << std::endl;
+	}
+
+	// create foldtree from anchors
+	create_specific_membrane_foldtree( pose, all_anchors );
+
+	return jumps;
+
+} // create membrane multi partner foldtree anchor tmcom
+
+/////////////////////////////////////////
+
 /// @brief Helper function to create membrane foldtrees
 /// @details The anchors vector is a vector of anchor residues in all chains,
 ///   one per chain. This function assumes that the first entry in the
 ///   vector is the root anchor point to which all other chains are
 ///   connected;
+///       ________________________________
+///      |__________________________      |
+///      |_________________         |     |
+///      |________         |        |     |
+///      |        |        |        |     |
+/// -------  -------  -------  -------  M=root
+///  chain1   chain2   chain3   chain4 ...
+///
 void create_membrane_foldtree_from_anchors(
 	core::pose::Pose & pose,
 	utility::vector1< core::Size > anchors
@@ -730,6 +874,7 @@ void create_membrane_foldtree_from_anchors(
 	// for each chain starting with the second one, add another jump with
 	// the cutpoint after the chain
 	for ( core::Size i = 2; i <= chain_poses.size()-1; ++i ) {
+		TR << "adding jump from " << anchors[1] << " to " << anchors[ i ] << " with cutpoint " << chain_nres[ i-1 ] << std::endl;
 		ft.new_jump( anchors[ 1 ], anchors[ i ], chain_nres[ i-1 ] );
 	}
 
@@ -743,7 +888,58 @@ void create_membrane_foldtree_from_anchors(
 
 } // create membrane foldtree from anchors
 
-/////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Helper function to create a specific membrane foldtree
+/// @details I am hijacking xyzVectors to hold the jumps that need to be
+///   created in the foldtree: xyz = ( rsd1, rsd2, cutpoint )
+///   THE JUMP NUMBERS WILL BE CONSECUTIVE, ACCORDING TO THE VECTOR1
+core::Size create_specific_membrane_foldtree( core::pose::Pose & pose, utility::vector1< core::Vector > anchors ) {
+
+	using namespace core::kinematics;
+
+	// if pose not membrane pose, cry
+	if ( ! pose.conformation().is_membrane() ) {
+		utility_exit_with_message( "Can't create a membrane foldtree on a non-membrane pose. Quitting..." );
+	}
+
+	// create a simple tree
+	FoldTree ft = FoldTree();
+	ft.simple_tree( pose.total_residue() );
+
+	// membrane residue and jump
+	core::Size mem_rsd = pose.conformation().membrane_info()->membrane_rsd_num();
+	core::Size mem_jump = static_cast< core::Size > ( pose.conformation().membrane_info()->membrane_jump() );
+
+	// go through anchor points
+	for ( core::Size i = 1; i <= anchors.size(); ++i ) {
+
+		TR << "adding jump from " << anchors[i].x() << " to " << anchors[i].y()
+			<< " with cutpoint " << anchors[i].z() << std::endl;
+
+		// add jumps with cutpoints, returns jump number of new jump:
+		ft.new_jump( anchors[ i ].x(), anchors[ i ].y(), anchors[ i ].z() );
+
+		// find membrane jump
+		if ( anchors[ i ].x() == mem_rsd || anchors[ i ].y() == mem_rsd ) {
+			mem_jump = i;
+		}
+	}
+
+	// set the foldtree in the pose to the newly created one
+	ft.reorder( mem_rsd );
+	ft.show( TR );
+	pose.fold_tree( ft );
+
+	// set the membrane jump in MembraneInfo
+	pose.conformation().membrane_info()->set_membrane_jump( static_cast< core::SSize >( mem_jump ) );
+
+	// returns main anchor for MEM on first chain
+	return anchors[1].x();
+
+} // create specific membrane foldtree
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Helper function to create membrane foldtrees
 /// @details Returns the residues closest to the COMs for each chain
@@ -758,12 +954,129 @@ utility::vector1< core::Size > get_anchor_points_for_tmcom( core::pose::Pose & p
 	// get residues closest to COMs for all chains which will be new jump anchor residues
 	// needs to < chains.size() because the MEM is an additional chain
 	for ( core::Size i = 1; i < chains.size(); ++i ) {
+		TR << "chain " << i << " " << chains[ i ] << std::endl;
 		core::Size anchor = protocols::membrane::rsd_closest_to_chain_tm_com( pose, chains[ i ] );
 		anchors.push_back( anchor );
 	}
 
 	return anchors;
 } //  get anchor points for TM COM
+
+/////////////////////////////////////////
+
+/// @brief Setup foldtree from scratch
+/// @details The foldtree is setup such that the residue closest to the
+///   COM is at the root, with jumps from there to each chain COM;
+///   requires the membrane to be present;
+///   Returns the root anchoring point, i.e. rsd nearest pose COM that
+///   can be in any chain
+///                _________________
+///               |________         |
+///       ________|        |        |
+///      |        |        |        |
+/// -------  -------  -------  -------
+///  chain1   chain2   chain3   chain4 ...
+///               ^
+///       root anchor point
+///
+core::Size setup_foldtree_pose_com( core::pose::Pose & pose ) {
+
+	using namespace core::kinematics;
+	using namespace core::pose;
+
+	// if pose is membrane pose, cry
+	if ( pose.conformation().is_membrane() ) {
+		utility_exit_with_message( "There are better foldtrees for membrane proteins than this: check out protocols/membrane/util. Quitting." );
+	}
+
+	// get anchor points for jumps: get all chainids
+	utility::vector1< int > chains = get_chains( pose );
+
+	// initialize empty vector for anchor points (i.e. jump rsd positions)
+	utility::vector1< core::Size > anchors;
+
+	// get rsd nearest pose COM
+	core::Size root_anchor( static_cast< core::Size >( residue_center_of_mass( pose, 1, pose.total_residue() ) ) );
+
+	// get chain for pose COM
+	core::Size root_anchor_chain( static_cast< core::Size >( pose.chain(root_anchor) ) );
+
+	// push back root anchor into anchors vector
+	anchors.push_back( root_anchor );
+
+	// get residues closest to COMs for all chains which will be new jump anchor residues
+	for ( core::Size i = 1; i < chains.size(); ++i ) {
+
+		// root anchor chain is already in vector at the first position
+		if ( i != root_anchor_chain ) {
+			core::Size anchor = rsd_closest_to_chain_com( pose, chains[ i ] );
+			anchors.push_back( anchor );
+		}
+	}
+
+	// setup foldtree
+	setup_foldtree_from_anchors( pose, anchors );
+
+	return anchors[1];
+
+} // setup foldtree chain COM
+
+/////////////////////////////////////////
+
+/// @brief Helper function to setup foldtrees
+/// @details The anchors vector is a vector of anchor residues in all chains,
+///   one per chain. This function assumes that the first entry in the
+///   vector is the root anchor point to which all other chains are
+///   connected;
+///       __________________________
+///      |_________________         |
+///      |________         |        |
+///      |        |        |        |
+/// -------  -------  -------  -------
+///  chain1   chain2   chain3   chain4 ...
+///      ^
+/// root anchor point
+///
+void setup_foldtree_from_anchors( core::pose::Pose & pose, utility::vector1< core::Size > anchors ) {
+
+	using namespace core::kinematics;
+	using namespace core::pose;
+
+	// if pose is membrane pose, cry
+	if ( pose.conformation().is_membrane() ) {
+		utility_exit_with_message( "There are better foldtrees for membrane proteins than this: check out protocols/membrane/util. Quitting." );
+	}
+
+	// get all chain poses to get number of residues in each chain
+	// this is to define the cutpoints later on
+	utility::vector1< PoseOP > chain_poses = pose.split_by_chain();
+
+	// go through chains to get number or residues in each chain
+	utility::vector1< core::Size > chain_nres;
+	core::Size rsd_counter( 0 );
+	for ( core::Size i = 1; i <= chain_poses.size(); ++i ) {
+		rsd_counter += chain_poses[ i ]->total_residue();
+		chain_nres.push_back( rsd_counter );
+	}
+
+	// start with simple tree
+	FoldTree ft = FoldTree();
+	ft.simple_tree( pose.total_residue() );
+
+	// for each chain starting with the second one, add another jump with
+	// the cutpoint after the chain
+	for ( core::Size i = 2; i <= chain_poses.size()-1; ++i ) {
+		ft.new_jump( anchors[ 1 ], anchors[ i ], chain_nres[ i-1 ] );
+	}
+
+	// reorder the foldtree such that the first anchor point is at the root
+	ft.reorder( anchors[ 1 ] );
+
+	// set the foldtree in the pose to the newly created one
+	ft.show( TR );
+	pose.fold_tree( ft );
+
+} // setup foldtree from anchors
 
 ///////////////////////////////////////////////////////////
 // Utilities for accessing dssp, z coords and chain info //
@@ -1153,9 +1466,25 @@ core::Vector chain_tm_com( core::pose::Pose const & pose, int chain ) {
 		}
 	}
 
+	// if there are no splice residues because the topology is empty for that chain
+	// i.e. for a soluble chain, get the COM of that chain without topology
+	if ( splice_rsd.size() == 0 ) {
+		core::pose::PoseOP sol_subpose = pose.split_by_chain( static_cast< core::Size >( chain ) );
+		core::Vector sol_com( get_center_of_mass( *sol_subpose ) );
+		return sol_com;
+	}
+
+	// debug
+	// for ( core::Size i = 1; i <= splice_rsd.size(); ++i ) {
+	//  TR << "splice res " << i << " " << splice_rsd[ i ] << std::endl;
+	// }
+
 	// create subpose of chain TM regions from the PDB into a new pose
 	core::pose::Pose subpose = core::pose::Pose();
 	pdbslice( subpose, pose, splice_rsd );
+
+//	subpose.dump_pdb("subpose.pdb");
+//	pose.dump_pdb("pose.pdb");
 
 	// compute COM of the newly created pose
 	core::Vector com( get_center_of_mass( subpose ) );
@@ -1227,8 +1556,29 @@ core::Size rsd_closest_to_chain_com( core::pose::Pose const & pose, int chainid 
 /// @details Gets the residue number closest to the chain TM center-of-mass
 core::Size rsd_closest_to_chain_tm_com( core::pose::Pose const & pose, int chainid ) {
 
+	// check for ligand:
+	// find out the residue number belonging to ligand, the entire chain is ligand
+	core::Size chain_end_rsd( chain_end_res( pose, static_cast< core::Size >( chainid ) ) );
+
+	// if residue is ligand, then return ligand residue number
+	if ( ! pose.residue( chain_end_rsd ).is_protein() ) {
+		TR << "chain end rsd " << chain_end_rsd << " is not protein" << std::endl;
+		return chain_end_rsd;
+	}
+
+	// get membrane residue number and chain for checking
+	core::Size memrsd = pose.conformation().membrane_info()->membrane_rsd_num();
+	int mem_chain = pose.residue( memrsd ).chain();
+
+	if ( chainid == mem_chain ) {
+		utility_exit_with_message( "You are trying to get the rsd closest to chain TM COM, but you are looking at the membrane residue. Quitting." );
+	}
+
 	// compute chain TM com
+	TR << "chainid " << chainid << " chain " << get_chain_from_chain_id( static_cast<core::Size >( chainid ), pose ) << std::endl;
 	core::Vector com = chain_tm_com( pose, chainid );
+
+	TR << "com " << com.to_string() << std::endl;
 
 	// go through each residue in the pose and find CA atom that is closest
 	core::Real min_dist = 999999.0;
@@ -1239,9 +1589,13 @@ core::Size rsd_closest_to_chain_tm_com( core::pose::Pose const & pose, int chain
 		core::Vector ca_pos = pose.residue( i ).atom( "CA" ).xyz() ;
 		core::Real distance = ( ca_pos - com ).length();
 
-		if ( distance < min_dist ) {
+		// get chainid and make sure we only pick a residue within that chain
+		int rsd_chainid = pose.residue( i ).chain();
+
+		if ( distance < min_dist && rsd_chainid == chainid ) {
 			min_dist = distance;
 			min_rsd = i;
+			//   TR << "min dist " << min_dist << " min rsd " << i << std::endl;
 		}
 	}
 

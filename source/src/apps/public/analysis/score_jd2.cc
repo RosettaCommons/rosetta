@@ -28,7 +28,7 @@
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
-#include <protocols/membrane/MembranePositionFromTopologyMover.hh>
+#include <protocols/membrane/OptimizeProteinEmbeddingMover.hh>
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
@@ -227,14 +227,14 @@ catch ( utility::excn::EXCN_Exception &excn )  {
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
 			seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::AddMembraneMover ) );
 
+			// transform the protein into the membrane
 			if ( option[ OptionKeys::mp::setup::transform_into_membrane ].user() ) {
 				seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::TransformIntoMembraneMover ) );
 			}
 
-			// If user asks, position the protein in a membrane, position determined
-			// by transmembrane spanning topology
-			if ( option[ OptionKeys::mp::setup::position_from_topo ].user() ) {
-				seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::MembranePositionFromTopologyMover ) );
+			// transform the protein into the membrane and optimize embedding
+			if ( option[ OptionKeys::mp::transform::optimize_embedding ].user() ) {
+				seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::OptimizeProteinEmbeddingMover ) );
 			}
 
 			seqmov->add_mover( scoremover );

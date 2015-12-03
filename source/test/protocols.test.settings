@@ -603,6 +603,8 @@ testinputfiles = [
 	"membrane/1AFO_AB_multi.pdb",
 	"membrane/1AFO_AB.span",
 	"membrane/1AFO_AB_before_out.pdb",
+	"membrane/1H2S__tr.pdb", 
+	"membrane/1H2S__tr.span",
 	"membrane/1mp6_transformed.pdb",
 	"membrane/1mp6.pdb",
 	"membrane/1mp6.span",

@@ -16,7 +16,7 @@
 
 @author  Sergey Lyskov, Johns Hopkins University
 
-@edits   Evan Baugh, Rebecca Alford & Jason Labonte
+@edits   Evan Baugh, Rebecca Alford, Jason Labonte & Julia Koehler Leman
 
 @details This is the script to run to let you view PyRosetta runs inside PyMOL.
          To run it:
@@ -727,7 +727,7 @@ class PR_PyMOLServer:
             print 'Unknown packet type: %s, - ignoring...' % ptype
 
 ###############################################################################
-# Membranes
+# Membrane
 class XYZCoord:
     """
     Class for storing xyz coord or just a triple of real values
@@ -860,10 +860,10 @@ def compute_plane_positions( center, normal, thickness, rg, npoints=4 ):
 
     # Scale point by radius of gyration
 #    p = XYZCoord( 2*rg*p.x, 2*rg*p.y, 2*rg*p.z )
-    p = XYZCoord( 5*p.x, 5*p.y, 5*p.z )
+    p = XYZCoord( 20*15*p.x, 20*15*p.y, 20*15*p.z )
 
     # Project center onto the normal by thickness to compute upper and lower
-    t = thickness / 15
+    t = thickness
     upper = add_vectors( center, XYZCoord( normal.x*t, normal.y*t, normal.z*t ) )
     lower = add_vectors( center, XYZCoord( -normal.x*t, -normal.y*t, -normal.z*t ) )
 

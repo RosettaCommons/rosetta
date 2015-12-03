@@ -56,7 +56,7 @@ public:
 	/// @brief Default Constructor
 	/// @details Defaults: jump = 1, sampling range = 100
 	///    Sampling range of 100 means that both x and y are sampled from
-	///    -100 to +100 before calling DockingSlideIntoContact
+	///    -100 to +100
 	SpinAroundPartnerMover();
 
 	/// @brief Custom Constructor

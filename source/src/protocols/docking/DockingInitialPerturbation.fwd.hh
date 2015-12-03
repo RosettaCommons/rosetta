@@ -32,6 +32,10 @@ class FaDockingSlideIntoContact; // fwd declaration
 typedef utility::pointer::shared_ptr< FaDockingSlideIntoContact > FaDockingSlideIntoContactOP;
 typedef utility::pointer::shared_ptr< FaDockingSlideIntoContact const > FaDockingSlideIntoContactCOP;
 
+class SlideIntoContact; // fwd declaration
+typedef utility::pointer::shared_ptr< SlideIntoContact > SlideIntoContactOP;
+typedef utility::pointer::shared_ptr< SlideIntoContact const > SlideIntoContactCOP;
+
 } // docking
 } // protocols
 

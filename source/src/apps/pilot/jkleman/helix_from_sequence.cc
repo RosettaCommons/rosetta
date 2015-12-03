@@ -21,7 +21,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <protocols/membrane/AddMembraneMover.hh>
-#include <protocols/membrane/OptimizeMembranePositionMover.hh>
+#include <protocols/membrane/OptimizeProteinEmbeddingMover.hh>
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
 
 #include <core/sequence/Sequence.hh>
@@ -85,13 +85,29 @@ bool read_membrane() {
 	bool membrane( false );
 
 	if ( option[OptionKeys::mp::setup::transform_into_membrane].user() ) {
-		membrane = true;
+		membrane = option[OptionKeys::mp::setup::transform_into_membrane]();
 		TR << "Pose is a membrane protein and will be transformed into the membrane" <<  std::endl;
 	}
 
 	return membrane;
 
 } // read membrane
+
+////////////////////////////////////////////////////////////////////////////
+
+// optimize embedding?
+bool optimize_embedding() {
+
+	bool optimize( false );
+
+	if ( option[OptionKeys::mp::transform::optimize_embedding].user() ) {
+		optimize = option[OptionKeys::mp::transform::optimize_embedding]();
+		TR << "Protein embedding in the membrane will be optimized" <<  std::endl;
+	}
+
+	return optimize;
+
+} // optimize embedding?
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -103,6 +119,7 @@ void helix_from_sequence() {
 
 	// is it a membrane protein?
 	bool mem = read_membrane();
+	bool opt = optimize_embedding();
 
 	// initialize pose
 	core::pose::Pose pose;
@@ -127,20 +144,31 @@ void helix_from_sequence() {
 	// if a membrane protein: transform helix into membrane:
 	if ( mem == true ) {
 
-		// 1. create topology object from first to last residue
+		// create topology object from first to last residue
 		SpanningTopologyOP topo( new SpanningTopology() );
 		topo->add_span( 1, pose.total_residue() );
 
-		// 2. run AddMembraneMover with topology
-		AddMembraneMoverOP addmem( new AddMembraneMover( topo, 1, 0 ));
-		addmem->apply( pose );
+		if ( opt == true ) {
 
-		// 3. transform into membrane
-		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
-		transform->apply( pose );
+			// run AddMembraneMover with topology
+			AddMembraneMoverOP addmem( new AddMembraneMover( topo, 1, 0 ));
+			addmem->apply( pose );
 
-		// TODO: find a way to optimize the embedding
-		//  transform->optimize_embedding( true );
+			// transform into membrane and optimize embedding
+			// runs TransformIntoMembrane underneath
+			OptimizeProteinEmbeddingMoverOP opt( new OptimizeProteinEmbeddingMover() );
+			opt->apply( pose );
+
+		} else {
+
+			// run AddMembraneMover with topology
+			AddMembraneMoverOP addmem( new AddMembraneMover( topo, 1, 0 ));
+			addmem->apply( pose );
+
+			// transform into membrane
+			TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
+			transform->apply( pose );
+		}
 	}
 
 	// dump PDB

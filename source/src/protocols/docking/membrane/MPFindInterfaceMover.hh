@@ -129,6 +129,9 @@ private: // methods
 
 private: // data
 
+	/// @brief Centroid mode?
+	bool mode_lowres_;
+
 	/// @brief Native pose
 	Pose native_;
 
@@ -145,7 +148,9 @@ private: // data
 	SpanningTopologyOP topo_down_;  // downstream partner
 
 	/// @brief scorefunction
-	core::scoring::ScoreFunctionOP sfxn_;
+	core::scoring::ScoreFunctionOP sfxn_lowres_;
+	core::scoring::ScoreFunctionOP sfxn_hires_;
+	core::scoring::ScoreFunctionOP sfxn_pack_;
 
 	/// @brief allow flips in the membrane?
 	bool flips_;

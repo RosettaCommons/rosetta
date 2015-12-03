@@ -1,8 +1,13 @@
 -in:file:s inputs/mpdocking_setup_out.pdb 
 -in:file:native inputs/mpdocking_setup_out.pdb 
 -mp:setup:spanfiles inputs/mpdocking_setup_out.span 
--mp:scoring:hbond 1 
--mp:dock:highres 1 
--docking:partners A_B 
--score::docking_interface_score 1 
+-mp:scoring:hbond true 
+-mp:dock:lowres false 
+-mp:dock:allow_flips false
+-mp:dock:flexible_bb true
+-mp:dock:slide_threshold 10
+-docking:partners A_B
+-relax:range:angle_max 0.5
+-relax:range:nmoves nres
+-score::docking_interface_score true
 -packing:pack_missing_sidechains false 

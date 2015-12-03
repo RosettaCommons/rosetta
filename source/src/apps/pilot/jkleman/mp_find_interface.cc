@@ -24,7 +24,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "apps.pilot.jkleman.mp_find_interface" );
+static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.mp_find_interface" );
 
 //////////////////////////////////////////////////////////////////////
 

@@ -1,3 +1,5 @@
 -in:file:s inputs/1AFO_A.pdb inputs/1AFO_B.pdb
 -mp:setup:spanfiles inputs/1AFO_A.span inputs/1AFO_B.span
 -docking:partners A_B
+-mp:setup:optimize1 1
+-mp:setup:optimize2 1

@@ -61,6 +61,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
@@ -90,6 +91,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/pack_rotamers.hh>
+#include <numeric/numeric.functions.hh>
 
 // C++ headers
 #include <iostream>
@@ -127,383 +129,140 @@ public:
 
 	/////////////////////////////////////////
 
-	// /// @brief compute last residue number of a chain
-	// core::Size chain_end_res( Pose & pose, core::Size chain ) {
-	//
-	//  // check whether chain exists in pose
-	//  if ( ! has_chain( chain, pose ) ) {
-	//   TR << "??? Chain should be " << chain << "???" << std::endl;
-	//   utility_exit_with_message("Cannot get chain end residue for chain that doesn't exist. Quitting");
-	//  }
-	//
-	//  int int_chain = static_cast< int >( chain );
-	//  int end_res(0);
-	//  int nres( static_cast< int > ( pose.total_residue() ) );
-	//
-	//  // go through residues
-	//  for ( int i = 1; i <= nres ; ++i ) {
-	//
-	//   if ( i == nres && pose.chain(i) == int_chain ) {
-	//    end_res = nres;
-	//   }
-	//   else if ( pose.chain( i ) == int_chain && pose.chain( i+1 ) != int_chain ) {
-	//    end_res = i;
-	//   }
-	//  }
-	//
-	//  return static_cast< core::Size >( end_res );
-	//
-	// } // chain end residue number
-
-	/////////////////////////////////////////
-
-	/// @brief Create a membrane foldtree with an interface
-	/// @details Currently only works for two-body-docking. Both partners can have
-	///   multiple chains in any order, the anchoring happens at the TM COM
-	///   of each chain
-	///
-	///       __________________________________________
-	///      |________________  _________________       |
-	///      |________   iJ   ||________         |      |
-	///      |        |       ||        |        |      |
-	/// -------  -------  -------  -------  -------  M=root
-	///  chain1   chain2   chain3   chain4 ...
-	///
-	///  iJ = interface jump, will be returned from the function
-	///
-	// core::Size create_membrane_docking_foldtree_from_partners( Pose const & pose, std::string const partners ) {
-	//
-	//  using namespace utility;
-	//  // pose/util
-	//
-	//  // split partner string (AB, CDE)
-	//  utility::vector1< std::string > partner( utility::string_split( partners, '_' ) );
-	//
-	//  // initialize partners with chains (will be 1,2 / 3,4,5)
-	//  // initialize anchor points within these chains (will be 19,234 / 287,354,528)
-	//  // (the anchor points are the chain TM COMs)
-	//  utility::vector1< core::Size > chains1;
-	//  utility::vector1< core::Size > chains2;
-	//  utility::vector1< core::Size > anchors1;
-	//  utility::vector1< core::Size > anchors2;
-	//  utility::vector1< core::Size > cutpoints1;
-	//  utility::vector1< core::Size > cutpoints2;
-	//
-	//  // go through first partner chainIDs, convert into chain numbers, add to vector
-	//  // also get anchor points for these chains
-	//  for ( core::Size i = 1; i <= partner[ 1 ].size(); ++i ){
-	//
-	//   // get chain, add to chains vector and get anchor point
-	//   core::Size chain = get_chain_id_from_chain( partner[ 1 ][ i-1 ], pose );
-	//   chains1.push_back( chain );
-	//   anchors1.push_back( rsd_closest_to_chain_tm_com( pose, chain ) );
-	//   cutpoints1.push_back( chain_end_res( pose, chain ) );
-	//  }
-	//
-	//  // go through second partner chainIDs, convert into chain numbers, add to vector
-	//  // also get anchor points for these chains
-	//  for ( core::Size i = 1; i <= partner[ 2 ].size(); ++i ){
-	//
-	//   // get chain, add to chains vector and get anchor point
-	//   core::Size chain = get_chain_id_from_chain( partner[ 2 ][ i-1 ], pose );
-	//   chains2.push_back( chain );
-	//   anchors2.push_back( rsd_closest_to_chain_tm_com( pose, chain ) );
-	//   cutpoints2.push_back( chain_end_res( pose, chain ) );
-	//  }
-	//
-	//  // create simple foldtree
-	//  FoldTree ft = FoldTree();
-	//  ft.simple_tree( pose.total_residue() );
-	//
-	//  // get membrane residue
-	//  core::Size memrsd = pose.conformation().membrane_info()->membrane_rsd_num();
-	//
-	//  // anchor MEM on the first chain of the first partner with the cutpoint
-	//  // right before the MEM residues
-	//  ft.new_jump( memrsd, anchors1[ 1 ], memrsd - 1 );
-	//
-	//  // create jumps between the chains in partner1
-	//  for ( core::Size i = 2; i <= anchors1.size(); ++i ) {
-	//   ft.new_jump( anchors1[ 1 ], anchors1[ i ], cutpoints1[ i-1 ] );
-	//  }
-	//
-	//  // create jumps between the chains in partner1
-	//  for ( core::Size i = 2; i <= anchors2.size(); ++i ) {
-	//   ft.new_jump( anchors2[ 1 ], anchors2[ i ], cutpoints2[ i-1 ] );
-	//  }
-	//
-	//  // create interface jump between the partners by connecting their 1st chains
-	//  // cutpoint is cutpoint of last chain in partner 1
-	//  int interface_jump = ft.new_jump( anchors1[ 1 ], anchors2[ 1 ], cutpoints1[ cutpoints1.size() ] );
-	//
-	//  // reorder and set the foldtree in the pose to the newly created one
-	//  ft.reorder( memrsd );
-	//  ft.show( TR );
-	//  pose.fold_tree( ft );
-	//
-	//  return static_cast< core::Size >( interface_jump );
-	//
-	// } // create_membrane_docking_foldtree_from_partners
 
 	/////////////////////////////////////////
 
 	/// @brief Apply Membrane Relax
 	void apply( Pose & pose ) {
 
-		core::import_pose::pose_from_pdb( pose, "/Users/julialeman/Documents/julia/git_final/Rosetta/main/source/test/protocols/membrane/3EFF_tr.pdb" );
-		AddMembraneMoverOP addmem( new AddMembraneMover( "/Users/julialeman/Documents/julia/git_final/Rosetta/main/source/test/protocols/membrane/3EFF_tr.span" ) );
-		addmem->apply( pose );
+		// MPDomainAssembly protocol
+		// read in N-terminal PDB
 
-		Size jumpnum = create_membrane_docking_foldtree_from_partners( pose, "MK_LN" );
-		TR << "jump num: " << jumpnum << std::endl;
+		// read in center domain (can also be refined TMdomain model)
+
+		// read in C-terminal domain model
+
+		// read in missing residues/make sure there aren't any inside the domains
+		// missing residues are allowed between the domains up to 15 residues,
+		// longer domains should be modeled de novo
+		// spit out a warning for this but don't crash!
+
+		// transform TMdomain into membrane and optimize embedding
+
+		// combine poses to single pose
+
+		// set foldtree root in center of TMdomain
+
+		// make sure loops file makes sense: all PDBs and loops files should be
+		// renumbered to match the single consecutive pose numbering scheme
+
+		// do loop modeling between domains 1 and 2
+		// use KIC without fragments as of yet, it's easier for now
+		// protocols/loops/loop_closure/kinematic_closure/KinematicMover
+
+		// do loop modeling between domains 2 and 3
+
+		// relax entire structure
+
+		// optionally: sample flexibility at regions X
+
+
+		TR << pose.total_residue() << std::endl;
 
 
 
-
-
-		//  create_membrane_foldtree_anchor_pose_tmcom( pose );
-		//  pose.fold_tree().show( TR );
-		//  core::Size pose_anchor( rsd_closest_to_pose_tm_com( pose ) );
-		//  TR << "pose anchor " << pose_anchor << std::endl;
-		//
-		//  for ( int i = 1; i <= static_cast< int >( get_chains( pose ).size() - 1 ); ++i ) {
-		//   core::Size chain_anchor ( rsd_closest_to_chain_tm_com( pose, i ) );
-		//   TR << "chain anchor " << chain_anchor << std::endl;
-		//  }
-
-
-		////// FOR VISUALIZATION //////
-
-		// initializations
-		//  EmbeddingOP embedding( new Embedding() );
-		//  core::Vector normal( 0, 0, 1 );
-		//
-		//  // add to embedding for visualization
-		//  embedding->add_span_embedding( tm_com, normal );
-		//  embedding->show();
-		//
-		//  // visualize embeddings
-		//  VisualizeEmbeddingMoverOP visemb( new VisualizeEmbeddingMover( embedding ) );
-		//  visemb->apply( pose );
 
 	}
-	////////////////////////////////////////////////////////////////////////////////
-	//
-	//  // MPQuickRelaxProtocol
-	//
-	//  // get job for adding rmsd to scorefile
-	//  protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	//
-	//  // read native
-	//  core::pose::Pose native_;
-	//  if( option[ OptionKeys::in::file::native ].user() ) {
-	//   core::import_pose::pose_from_pdb( native_, option[ OptionKeys::in::file::native ]() );
-	//   addmem->apply( native_ );
-	//  }
-	//
-	//  // create scorefunction
-	//  ScoreFunctionOP sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012.wts" );
-	//
-	//  // starting position: shake up the protein
-	//  using namespace core::kinematics;
-	//  MoveMapOP mm( new MoveMap() );
-	//  mm->set_bb( true );
-	//  mm->set_chi( true );
-	//  TR << "shaking up the protein for a random starting position" << std::endl;
-	//
-	//  // get number of residues
-	//  Size nres( nres_protein( pose ) );
-	//
-	//  // set small and shearmover
-	//  using namespace protocols::simple_moves;
-	//  core::Real kT = 1.0;
-	//  SmallMoverOP small( new SmallMover( mm, kT, nres ) );
-	//  small->angle_max( 1.0 );
-	//  small->apply( pose );
-	//
-	//  ShearMoverOP shear( new ShearMover( mm, kT, nres ) );
-	//  shear->angle_max( 1.0 );
-	//  shear->apply( pose );
-	//
-	//  // create MC object
-	//  protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *sfxn_, 1.0 ) );
-	//
-	//  // initialize AtomTreeMinimizer
-	//  core::optimization::MinimizerOptions min_opts( "lbfgs_armijo_atol", 0.01, true );
-	//  core::optimization::AtomTreeMinimizer atm;
-	//
-	//  // do this for a certain number of iterations
-	//  // since both the packer and especially minimization takes a while, just do one
-	//  for ( Size i = 1; i <= 1; ++i ){
-	//
-	//   // run small and shearmover again
-	//   TR << "SmallMover and ShearMover..." << std::endl;
-	//   small->apply( pose );
-	//   shear->apply( pose );
-	//
-	//   // packing
-	//   TR << "Packing rotamers..." << std::endl;
-	//   using namespace core::pack::task;
-	//   PackerTaskOP repack = TaskFactory::create_packer_task( pose );
-	//   repack->restrict_to_repacking();
-	//   core::pack::pack_rotamers( pose, *sfxn_, repack );
-	//
-	//   // minimize
-	//   TR << "Minimizing..." << std::endl;
-	//   atm.run( pose, *mm, *sfxn_, min_opts );
-	//
-	//   // evaluate Boltzmann
-	//   mc->boltzmann( pose );
-	//   TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
-	//
-	//  } // number of iterations for search
-	//
-	//  // superimpose poses with native
-	//  using namespace protocols::simple_moves;
-	//  SuperimposeMoverOP super( new SuperimposeMover( native_, 1, nres, 1, nres, true ) );
-	//  super->apply( pose );
-	//
-	//  // calculate and store the rmsd in the score file
-	//  using namespace core::scoring;
-	//  job->add_string_real_pair("rms", bb_rmsd( pose, native_ ));
-
-	////////////////////////////////////////////////////////////////////////////////
-
-	// VECTORS
-	// set new center and normal
-	//  Vector new_center( 0, 5, 10 );
-	//  Vector new_normal( 0, 15, 0 );
-	//  Vector new_center (0, 0, 0);
-	//  Vector new_normal (0, 0, 15);
-
-	// SPANNING TOPOLOGY
-	//  std::string spanfile("protocols/membrane/1AFO_AB.span");
-	// get topology
-	//  SpanningTopologyOP topo( pose.conformation().membrane_info()->spanning_topology() );
-	//  pose.conformation().membrane_info()->show();
-
-	// EMBEDDING
-	//  // get EmbeddingDef
-	//  EmbeddingOP embedding( new Embedding( topo, pose ) );
-	//  embedding->show();
-	//  embedding->invert();
-	//  embedding->show();
-
-	// get embedding object from pose and topology
-	////  PoseOP pose1( new Pose( pose ) );
-	//  EmbeddingOP embedding( new Embedding( topo, pose ) );
-	//  embedding->show();
-
-	//  EmbeddingDefOP embedding( compute_structure_based_embedding(pose) );
-	//  embedding->show();
-
-	// FOLDTREE
-	// reorder foldtree
-	//  pose.fold_tree().show(std::cout);
-	//  core::kinematics::FoldTree foldtree = pose.fold_tree();
-	//  foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
-	//  pose.fold_tree( foldtree );
-	//  TR << "foldtree reordered" << std::endl;
-	//  pose.fold_tree().show(std::cout);
-
-	// VISUALIZE EMBEDDING
-	//  VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover( embedding ) );
-	//  VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
-	//  vis_emb->apply( pose );
-
-	// MOVERS
-	//  SetMembranePositionMoverOP rt( new SetMembranePositionMover( new_center, new_normal ) );
-	//  rt->apply( pose );
-
-	//  TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover( new_center, new_normal, spanfile ) );
-	//  TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover() );
-	//  rt->apply( pose );
-
-	//  TranslationMoverOP trans = new TranslationMover( translation, jumpnum );
-	//  trans->apply( pose );
-
-	//  RotationMoverOP rot = new RotationMover( old_normal, new_normal, old_center, jumpnum );
-	//  rot->apply( pose );
-
-	//  TranslationRotationMoverOP rt = new TranslationRotationMover( old_center, old_normal, new_center, new_normal, jumpnum );
-	//  rt->apply( pose );
-
-	//  FlipMoverOP flip( new FlipMover(2, axis, 45) );
-	//  flip->apply( pose );
-
-	//  RigidBodyRandomizeMoverOP random( new RigidBodyRandomizeMover( pose, 1, partner_downstream, 180, 360, true ) );
-	//  random->apply( pose );
-
-	////////////////////////////////////////////////////////////////////////////////
-
-	// VECTORS
-	// set new center and normal
-	//  Vector new_center( 0, 5, 10 );
-	//  Vector new_normal( 0, 15, 0 );
-	//  Vector new_center (0, 0, 0);
-	//  Vector new_normal (0, 0, 15);
-
-	// SPANNING TOPOLOGY
-	//  std::string spanfile("protocols/membrane/1AFO_AB.span");
-	// get topology
-	//  SpanningTopologyOP topo( pose.conformation().membrane_info()->spanning_topology() );
-	//  pose.conformation().membrane_info()->show();
-
-	// EMBEDDING
-	//  // get EmbeddingDef
-	//  EmbeddingOP embedding( new Embedding( topo, pose ) );
-	//  embedding->show();
-	//  embedding->invert();
-	//  embedding->show();
-
-	// get embedding object from pose and topology
-	////  PoseOP pose1( new Pose( pose ) );
-	//  EmbeddingOP embedding( new Embedding( topo, pose ) );
-	//  embedding->show();
-
-	//  EmbeddingDefOP embedding( compute_structure_based_embedding(pose) );
-	//  embedding->show();
-
-	// FOLDTREE
-	// reorder foldtree
-	//  pose.fold_tree().show(std::cout);
-	//  core::kinematics::FoldTree foldtree = pose.fold_tree();
-	//  foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
-	//  pose.fold_tree( foldtree );
-	//  TR << "foldtree reordered" << std::endl;
-	//  pose.fold_tree().show(std::cout);
-
-	// VISUALIZE EMBEDDING
-	//  VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover( embedding ) );
-	//  VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
-	//  vis_emb->apply( pose );
-
-	// MOVERS
-	//  SetMembranePositionMoverOP rt( new SetMembranePositionMover( new_center, new_normal ) );
-	//  rt->apply( pose );
-
-	//  TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover( new_center, new_normal, spanfile ) );
-	//  TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover() );
-	//  rt->apply( pose );
-
-	//  TranslationMoverOP trans = new TranslationMover( translation, jumpnum );
-	//  trans->apply( pose );
-
-	//  RotationMoverOP rot = new RotationMover( old_normal, new_normal, old_center, jumpnum );
-	//  rot->apply( pose );
-
-	//  TranslationRotationMoverOP rt = new TranslationRotationMover( old_center, old_normal, new_center, new_normal, jumpnum );
-	//  rt->apply( pose );
-
-	//  FlipMoverOP flip( new FlipMover(2, axis, 45) );
-	//  flip->apply( pose );
-
-	//  RigidBodyRandomizeMoverOP random( new RigidBodyRandomizeMover( pose, 1, partner_downstream, 180, 360, true ) );
-	//  random->apply( pose );
-
-	////////////////////////////////////////////////////
 
 };
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Remove membrane residue(s)
+void remove_membrane_residue( Pose & pose ) {
+
+	// initialize vector of membrane residues
+	utility::vector1< core::Size > mem_rsds;
+
+	// make a copy of the pose
+	Pose pose_cp( pose );
+
+	// go through pose and find membrane residues
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+		if ( pose.residue( i ).name3() == "MEM" ) {
+			mem_rsds.push_back( i );
+		}
+	}
+
+	// remove residues from the end to the start, because otherwise the
+	// residue numbers will be incorrect because we changed them by removing
+	// a residue
+	for ( core::Size i = mem_rsds.size(); i >= 1; --i ) {
+		pose_cp.delete_polymer_residue( i );
+	}
+
+
+	// TODO: need to remove the jump from the foldtree, possibly with  /// @brief  Useful for removing a loop modeling jump+cut
+	//  void
+	//  delete_jump_and_intervening_cutpoint(
+	//            int jump_begin,
+	//            int jump_end
+	//            );
+	//
+	//   /// @brief  Useful for removing a loop modeling jump+cut
+	//  void
+	//  delete_jump_and_intervening_cutpoint(
+	//            int const jump_number
+	//            );
+
+	pose = pose_cp;
+
+} // remove membrane residue
+
+/////////////////////////////////////////
+
+utility::vector1< bool > interface_between_chains( Pose & pose ) {
+
+	// initialize bool of false for each residue
+	utility::vector1< bool > intf( nres_protein( pose ), false );
+
+	// iterate over residues
+	for ( core::Size r1 = 1; r1 <= nres_protein( pose ); ++r1 ) {
+
+		// get chain of residue 1
+		core::Size chain1 = pose.residue( r1 ).chain();
+
+		// get CA coordinates of that residue
+		core::Vector coord1 = pose.residue( r1 ).xyz( "CA" );
+
+		// iterate over residues again
+		for ( core::Size r2 = r1; r2 <= nres_protein( pose ); ++r2 ) {
+
+			// get chain of residue 2
+			core::Size chain2 = pose.residue( r2 ).chain();
+
+			if ( chain1 != chain2 ) {
+
+				// get CA coordinates of that residue
+				core::Vector coord2 = pose.residue( r2 ).xyz( "CA" );
+
+				// if distance between two residues is <8A, set interface
+				// of that residue to true
+				core::Real distance = ( coord1 - coord2 ).length();
+				if ( distance < 8.0 ) {
+					intf[ r1 ] = true;
+					intf[ r2 ] = true;
+				}
+			} // different chains
+		} // residues
+	} // residues
+
+	return intf;
+
+} // interface between chains
+
+
+/////////////////////////////////////////
 
 typedef utility::pointer::shared_ptr< MPframeworkTestMover > MPframeworkTestMoverOP;
 

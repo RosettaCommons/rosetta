@@ -2617,6 +2617,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		), # -loops:ccd' )
 	), # -loops
 
+	#Interface statistics app (JKLeman)
+	Option_Group( 'interface',
+		Option( 'chains', 'String', desc='Chains over which the statistics are taken, can be multiple. Example: \'AEF\'. If not given, takes statistics over unique chains in the PDB.'),
+	),
+
 	#New Membrane Protein Option group (RosettaMP)
 	Option_Group( 'mp',
 
@@ -2699,11 +2704,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'weights_cen', 'String', desc='Scorefunction for low-resolution step.'),
 			Option( 'weights_fa', 'String', desc='Scorefunction for high-resolution step.'),
 			Option( 'lowres', 'Boolean', desc='Use centroid score function for finding interface.'),
-			Option( 'highres', 'Boolean', desc='Use full-atom score function for finding interface.'),
+#			Option( 'highres', 'Boolean', desc='Use full-atom score function for finding interface.'),
 			Option( 'allow_flips', 'Boolean', desc='Allow partner 2 to flip in the membrane during global search. Default: yes.' ),
 			Option( 'flexible_bb', 'Boolean', desc='Do a flexible backbone docking: runs relax before and after docking.' ),
 			Option( 'flexible_sc', 'Boolean', desc='Do a flexible sidechain docking: repacks before and after docking.' ),
-
+			Option( 'slide_threshold', 'Real', desc='Theshold for scoreterm to define partner closeness in SlideIntoContact.' ),
 		),
 
 		#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)
@@ -2712,16 +2717,19 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			#Scoring options
 			Option( 'angle_max', 'Real', desc='Maximum allowed change in dihedral angles. Typical values around 1.'),
 			Option( 'nmoves', 'String', desc='Number of moves allowed. Typical value is close to the number of residues in the protein: [nres] is allowed value. '),
+			Option( 'repack_again', 'Boolean', desc='Do an additional round of sidechain repacking, simultaneously including all sidechains.'),
 
 		),
 
-		#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)
+		#mutate relax Option group - JKLeman (julia.koehler1982@gmail.com)
 		Option_Group( 'mutate_relax',
 
-			#Scoring options
 			Option( 'mutation', 'String', desc='Single mutation: Format: One-letter code / residue number / one-letter code. Example: A163F'),
 			Option( 'mutant_file', 'String', desc='Input file containing mutations'),
-			Option( 'iter', 'Integer', desc='Number of iterations to run. Typically 100.' )
+			Option( 'iter', 'Integer', desc='Number of iterations to run. Typically 100.' ),
+			Option( 'repack_mutation_only', 'Boolean', desc='Boolean - Only repack the mutated residue(s), no relax.' ),
+			Option( 'repack_radius', 'Real', desc='Float - Repack within a radius of X Angstrom of the mutated residue(s).' ),
+			Option( 'relax', 'Boolean', desc='Boolean - Do a full relax run with both backbone minimization and repacking.' ),
 
 		),
 
@@ -6064,6 +6072,19 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'default_repeats',            'Integer', desc='Default number of repeats done by FastRelax. Has no effect if a custom script is used!', default='5' ),
 		Option( 'dualspace',                 'Boolean', desc='Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cart_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended.  Use of the -nonideal flag switches all these and sets up correct min cycles, minimizer type, etc.' ),
 		Option( 'cyclic_peptide',            'Boolean', desc='Set up N-to-C constraints in a cyclic peptide' ),
+
+		## Options for Range Relax
+		Option_Group('range',
+			Option( 'set_tm_helical',  'Boolean',  desc="Set helical secondary structure in TM region", default='false'),			
+			Option( 'kT',              'Real',  desc="Advanced option: kT", default='1.0'),
+			Option( 'angle_max',       'Real',  desc="Maximum dihedral angle deviation for Small and ShearMover inside RangeRelax", default='0.1'),
+			Option( 'nmoves',          'String',  desc="Number of Small and Shear moves inside RangeRelax, can be \'nres\' for all residues or an integer", default='nres'),
+			Option( 'spherical_wave',  'Boolean',  desc="Relax in a spherical wave pattern starting at the center residue outwards.", default='false'),			
+			Option( 'repack_again',    'Boolean',  desc="Do an additional round of repacking all residues after the RangeRelax", default='false'),			
+			Option( 'cycles',          'Integer',  desc="Maximum number of cycles for repacking and minimization. Default 3", default='3'),
+			Option( 'min_cycles',      'Integer',  desc="Maximum number of cycles within the Minimizer. Default 2000", default='2000'),
+			Option( 'idealize',        'Boolean',  desc="Idealize decoy after run. Default: true", default='true'),	
+		),
 
 		## Options for Sequence Relax
 		Option( 'ramady',                    'Boolean', desc='Run ramady code which aleviates stuck bad ramachandran energies', default='false' ),

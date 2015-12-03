@@ -12,10 +12,11 @@
 /// @brief  Add "single" ligand to to membrane pose
 /// @details  Accommodate membrane protein ligand in the membrane framework by
 ///    reorganizing the current foldtree. Resulting foldtree will
-///    keep the membrane attached to the COM and ligand to the closest
-///    binding pocket residue, provided in the constructor.
+///    keep the membrane attached to the transmembrane COM and ligand to the
+///    closest binding pocket residue, provided in the constructor.
 ///
 /// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author JKLeman (julia.koehler1982@gmail.com)
 /// #RosettaMPMover
 
 #ifndef INCLUDED_protocols_membrane_AddMPLigandMover_hh

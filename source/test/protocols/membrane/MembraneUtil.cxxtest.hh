@@ -1204,6 +1204,85 @@ public: // test functions
 
 	} // create membrane docking foldtree from partners
 
+	// create membrane foldtree anchor TM COM with root anchor at pose TM COM
+	void test_create_specific_membrane_foldtree() {
+
+		TS_TRACE("=========Test create specific membrane foldtree from anchors");
+		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/1H2S__tr.pdb" );
+
+		// call AddMembraneMover for spanfile
+		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/1H2S__tr.span" ) );
+		addmem->apply(pose);
+
+		// create anchors vector
+		utility::vector1< core::Vector > anchors;
+		core::Vector anchor1( 76, 569, 225 );
+		core::Vector anchor2( 76, 235, 284 );
+		core::Vector anchor3( 235, 360, 509 );
+		core::Vector anchor4( 76, 519, 568 );
+		anchors.push_back( anchor1 );
+		anchors.push_back( anchor2 );
+		anchors.push_back( anchor3 );
+		anchors.push_back( anchor4 );
+
+		// create foldtree
+		core::Size anchor = create_specific_membrane_foldtree( pose, anchors );
+
+		// test
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 1 ), 569 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 1 ), 76 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 2 ), 76 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 2 ), 235 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 3 ), 235 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 3 ), 360 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 4 ), 76 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 4 ), 519 );
+		TS_ASSERT_EQUALS( pose.conformation().membrane_info()->membrane_jump(), 1 );
+		TS_ASSERT_EQUALS( anchor, 76 );
+
+	} // create specific membrane foldtree
+
+	// create_membrane_multi_partner_foldtree_anchor_tmcom
+	void test_create_membrane_multi_partner_foldtree_anchor_tmcom() {
+
+		TS_TRACE("=========Test create membrane multi-partner foldtree");
+		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/1H2S__tr.pdb" );
+
+		// call AddMembraneMover for spanfile
+		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/1H2S__tr.span" ) );
+		addmem->apply(pose);
+
+		// create foldtree
+		std::string partners = "A_BC_D";
+		utility::vector1< core::Size > interface_jumps = create_membrane_multi_partner_foldtree_anchor_tmcom( pose, partners );
+
+		// test
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 1 ), 569 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 1 ), 76 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 2 ), 76 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 2 ), 235 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 3 ), 235 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 3 ), 360 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 4 ), 76 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 4 ), 519 );
+		TS_ASSERT_EQUALS( pose.conformation().membrane_info()->membrane_jump(), 1 );
+		TS_ASSERT_EQUALS( interface_jumps[1], 2 );
+		TS_ASSERT_EQUALS( interface_jumps[2], 3 );
+
+	} // create membrane multi-partner foldtree
+
 private:
 
 	/// @brief Position equal within delta (helper method)

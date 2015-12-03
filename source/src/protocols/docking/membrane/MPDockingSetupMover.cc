@@ -30,7 +30,7 @@
 #include <protocols/membrane/util.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/FlipMover.hh>
-#include <protocols/membrane/OptimizeMembranePositionMover.hh>
+#include <protocols/membrane/OptimizeProteinEmbeddingMover.hh>
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/simple_moves/AddChainMover.hh>
@@ -318,17 +318,9 @@ void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector cent
 	// optimize membrane position if desired and then transform into membrane
 	if ( ( ( optimize1_ == true ) && ( partner == 1 ) ) || ( ( optimize2_ == true ) && ( partner == 2 ) ) ) {
 
-		TR << "Optimizing membrane position for partner " << partner << std::endl;
-		//  OptimizeMembranePositionMoverOP optmem( new OptimizeMembranePositionMover() );
-		//  optmem->apply( pose );
-
-		// transform pose into membrane and optimize embedding beforehand
-		TR << "Transforming partner " << partner << " into the membrane, keeping the relation between optimized embedding and membrane." << std::endl;
-		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal ) );
-
-		// TODO: find way to optimize embedding here!!!
-		//  transform->optimize_embedding( true );
-		transform->apply( pose );
+		TR << "Transforming into membrane and optimizing membrane position for partner " << partner << std::endl;
+		OptimizeProteinEmbeddingMoverOP opt_emb( new OptimizeProteinEmbeddingMover() );
+		opt_emb->apply( pose );
 
 	} else if ( ( ( optimize1_ == false ) && ( partner == 1 ) ) || ( ( optimize2_ == false ) && ( partner == 2 ) ) ) {
 
@@ -336,9 +328,6 @@ void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector cent
 
 		// transform pose into membrane, true for keep current embedding-membrane relation
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal ) );
-
-		// TODO: find way to optimize embedding here!!!
-		//  transform->optimize_embedding( false );
 		transform->apply( pose );
 
 		// tilt pose slightly with random flip angle, default jump is membrane jump

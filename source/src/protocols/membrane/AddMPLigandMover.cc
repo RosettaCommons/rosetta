@@ -12,15 +12,17 @@
 /// @brief  Add "single" ligand to to membrane pose
 /// @details  Accommodate membrane protein ligand in the membrane framework by
 ///    reorganizing the current foldtree. Resulting foldtree will
-///    keep the membrane attached to the COM and ligand to the closest
-///    binding pocket residue, provided in the constructor.
+///    keep the membrane attached to the transmembrane COM and ligand to the
+///    closest binding pocket residue, provided in the constructor.
 ///
 /// @author  Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author JKLeman (julia.koehler1982@gmail.com)
 /// #RosettaMPMover
 
 // Unit Headers
 #include <protocols/membrane/AddMPLigandMover.hh>
 #include <protocols/membrane/AddMPLigandMoverCreator.hh>
+#include <protocols/membrane/util.hh>
 
 #include <protocols/moves/Mover.hh>
 
@@ -161,6 +163,7 @@ AddMPLigandMover::apply( core::pose::Pose & pose ) {
 	}
 
 	TR << "Closest Residue: " << closest_rsd_ << " Ligand Seqpos: " << ligand_seqpos_ << std::endl;
+	TR << "WARNING: MAKE SURE YOUR LIGAND CHAIN IS DIFFERENT FROM ANY PROTEIN CHAINS!" << std::endl;
 
 	// Check the closest rsd and ligand seqpos parameters are valid
 	// Note - default constructor parameters will make at least one of these statements
@@ -174,24 +177,53 @@ AddMPLigandMover::apply( core::pose::Pose & pose ) {
 	}
 
 	if ( closest_rsd_ == ligand_seqpos_ ) {
-		utility_exit_with_message( "Cannot sepcify closest residue as the ligand. Self-attachemnt is not valid");
+		utility_exit_with_message( "Cannot sepcify closest residue as the ligand. Self-attachment is not valid");
 	}
 
 	// Get the following parameters from the foldtree: Residue COM, MP rsd position
 	core::Size mp_rsd( pose.conformation().membrane_info()->membrane_rsd_num() );
-	core::Size rsd_com( residue_center_of_mass( pose, 1, pose.total_residue() ) ); // COM calc includes the ligand!
 
-	// Create a new simple foldtree (assumes ligand at the end!)
-	FoldTree ft;
-	ft.simple_tree( pose.total_residue() ); // Exclude Ligand and MEM
-	ft.new_jump( rsd_com, mp_rsd, rsd_com );
-	ft.new_jump( closest_rsd_, ligand_seqpos_, closest_rsd_ );
-	ft.reorder( rsd_com );
+	// get all pose chains
+	utility::vector1< core::Size > chain_end_residues( chain_end_res( pose ) );
+
+	// get chainid of user-defined ligand anchor point
+	core::Size ligand_anchor_chain = static_cast< core::Size >( pose.chain( closest_rsd_ ) );
+	TR << "ligand anchor chain " << ligand_anchor_chain << std::endl;
+
+	// get the anchor residues as chain tm COMs
+	utility::vector1< core::Size > anchors( get_anchor_points_for_tmcom( pose ) );
+
+	// create an anchors vector that contains all jumps and cutpoints
+	utility::vector1< core::Vector > anchors_vector;
+	for ( core::Size i = 1; i <= chain_end_residues.size()-2; ++i ) {
+
+		// membrane residue
+		if ( i == 1 ) {
+			core::Vector jump1( anchors[ 1 ], mp_rsd, mp_rsd-1 );
+			anchors_vector.push_back( jump1 );
+		}
+
+		// ligand
+		if ( i == ligand_anchor_chain ) {
+			core::Vector jump2( closest_rsd_, ligand_seqpos_, ligand_seqpos_-1 );
+			anchors_vector.push_back( jump2 );
+		}
+
+		// else
+		if ( i != 1 && i != ligand_anchor_chain && i != static_cast< core::Size >( pose.chain( ligand_seqpos_ ) ) && i != mp_rsd ) {
+			core::Vector jump( anchors[ 1 ], anchors[ i ], chain_end_residues[i-1] );
+			anchors_vector.push_back( jump );
+		}
+	}
+
+	// create membrane foldtree from anchors, membrane jump is automatically set to 1
+	create_specific_membrane_foldtree( pose, anchors_vector );
+
+	// reorder such that pose_tm_com is at root
+	FoldTree ft = pose.fold_tree();
+	ft.reorder( anchors[1] );
 	pose.fold_tree( ft );
 	pose.fold_tree().show( std::cout );
-
-	// Update jump number in membrane info (will always be 1 here)
-	pose.conformation().membrane_info()->set_membrane_jump( 1 );
 
 }
 

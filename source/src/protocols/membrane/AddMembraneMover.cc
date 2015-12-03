@@ -453,17 +453,21 @@ AddMembraneMover::apply( Pose & pose ) {
 	// Step 4: Add membrane info object to the pose conformation
 	pose.conformation().set_membrane_info( mem_info );
 
-	// Step 5: Accommodate for user defined positions
+	// Step 5: Accommodate user defined positions
 	if ( user_defined_ ) {
 		TR << "Setting initial membrane center and normal to position used by the user-provided membrane residue" << std::endl;
 		center_ = pose.conformation().membrane_info()->membrane_center();
 		normal_ = pose.conformation().membrane_info()->membrane_normal();
 
-		// slide the membrane jump to match the desired anchor point
-		core::kinematics::FoldTree ft = pose.fold_tree();
-		core::Size memjump = pose.conformation().membrane_info()->membrane_jump();
-		ft.slide_jump( memjump, anchor_rsd_, membrane_pos );
-		pose.fold_tree( ft );
+		// get anchor points from chains
+		utility::vector1< core::Size > anchors( get_anchor_points_for_tmcom( pose ) );
+
+		// replace root anchor residue with user-defined one
+		anchors[1] = anchor_rsd_;
+
+		// create membrane foldtree from anchors
+		create_membrane_foldtree_from_anchors( pose, anchors );
+
 	}
 
 	// Step 5: Update the membrane position and orientation based on user settings
