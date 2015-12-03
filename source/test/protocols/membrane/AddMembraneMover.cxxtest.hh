@@ -297,15 +297,28 @@ public: // test functions
 
 	}
 
-	/// @brief Try loading in a pose with multiple membrane residues
-	void test_multi_mem_pose_throws() {
+	/// @brief Try loading in a pose with multiple membrane residues - should accept the first one
+	void test_multi_mem_pose1() {
 
-		TS_TRACE( "Testing that an exception is thrown when trying to load in a pose with multiple membrane residues" );
+		TS_TRACE( "Testing loading of pose with multiple membrane residues but unspecified position" );
 
 		using namespace protocols::membrane;
 		std::string spanfile = "protocols/membrane/1AFO_AB.span";
 		AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile ) );
-		TS_ASSERT_THROWS_ANYTHING( add_memb->apply( *multi_mem_pose_ ) );
+		add_memb->apply( *multi_mem_pose_ );
+		TS_ASSERT_EQUALS( multi_mem_pose_->conformation().membrane_info()->membrane_rsd_num(), 81 );
+	}
+
+	/// @brief Try loading in a pose with multiple membrane residues but a user specified position
+	void test_multi_mem_pose2() {
+
+		TS_TRACE( "esting loading of pose with multiple membrane residues and a specified position" );
+
+		using namespace protocols::membrane;
+		std::string spanfile = "protocols/membrane/1AFO_AB.span";
+		AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile, 82 ) );
+		add_memb->apply( *multi_mem_pose_ );
+		TS_ASSERT_EQUALS( multi_mem_pose_->conformation().membrane_info()->membrane_rsd_num(), 82 );
 	}
 
 	/// @brief Position equal within delta (helper method)
