@@ -22,6 +22,7 @@
 
 // Protocol headers
 #include <protocols/denovo_design/components/StructureData.fwd.hh>
+#include <protocols/forge/remodel/RemodelConstraintGenerator.fwd.hh>
 
 // Package headers
 #include <protocols/generalized_kinematic_closure/GeneralizedKIC.fwd.hh>
@@ -267,8 +268,14 @@ public:
 	inline void set_performs_orientation( bool const or_val ) { performs_orientation_ = or_val; }
 
 	/// @brief the number of residues adjacent to the loop to also include in remodeling
-	inline core::Size overlap() const { return overlap_; }
+	core::Size lower_overlap() const { return lower_overlap_; }
+	core::Size upper_overlap() const { return upper_overlap_; }
+	/// @brief sets overlap for both lower and upper segments
 	void set_overlap( core::Size const overlap_val );
+	/// @brief sets overlap for the lower segment only
+	void set_lower_overlap( core::Size const overlap_val );
+	/// @brief sets overlap for the upper segment only
+	void set_upper_overlap( core::Size const overlap_val );
 
 	/// @brief sets whether to allow components to connect to themselves to create cyclic peptides
 	inline bool allow_cyclic() const { return allow_cyclic_; }
@@ -346,6 +353,9 @@ public:
 
 	inline void set_connecting_bond_dist( core::Real const val ) { connecting_bond_dist_ = val; }
 
+	void add_rcg( protocols::forge::remodel::RemodelConstraintGeneratorOP rcg );
+	void clear_rcgs();
+
 public:
 	/// @brief Performs pre-build setup and makes loop residues
 	void setup( components::StructureData & perm ) const;
@@ -396,6 +406,12 @@ protected:
 		std::string const & seg2_upper,
 		core::Size const cut_resi_val ) const;
 
+	/// @brief parses subtag
+	void parse_subtag( utility::tag::TagCOP tag, protocols::moves::Movers_map const & movers );
+
+	void apply_constraints( components::StructureData & sd ) const;
+	void remove_constraints( components::StructureData & sd ) const;
+
 private:
 	// component on the n-terminal side
 	utility::vector1< std::string > comp1_ids_;
@@ -407,7 +423,8 @@ private:
 	// number of times to try to build a connection before failing
 	core::Size trials_;
 	// number of residues adjacent to the loop to include in modeling
-	core::Size overlap_;
+	core::Size lower_overlap_;
+	core::Size upper_overlap_;
 	// call remodel to fold connecting loop or just build residues?
 	bool do_remodel_;
 	// tells whether cyclic connections should be allowed (Default=false)
@@ -420,6 +437,8 @@ private:
 	utility::vector1< core::Size > cut_resis_;
 	// explicitly disabled pairings
 	std::set< std::pair< std::string, std::string > > disallowed_pairs_;
+	// constraint generators
+	utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP > rcgs_;
 	// Tells whether or not to construct motifs based on Nobu/Rie/YuRu abego rules
 	bool idealized_abego_;
 	// Tells whether or not to include SS extensions in the loop length, or just build loop residues only (defualt=true)
@@ -629,6 +648,11 @@ public:
 	virtual void show( std::ostream & os ) const { os << message_; }
 private:
 	std::string const message_;
+};
+
+class EXCN_UnknownSubtag : public utility::excn::EXCN_RosettaScriptsOption {
+public:
+	EXCN_UnknownSubtag( std::string const & msg ) : utility::excn::EXCN_RosettaScriptsOption( msg ) {}
 };
 
 } // connection

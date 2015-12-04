@@ -138,7 +138,6 @@ NamedMover::apply( core::pose::Pose & pose )
 	}
 
 	debug_assert( sd->pose() );
-	sd->save_into_pose();
 	pose.clear();
 	pose = *(sd->pose());
 }

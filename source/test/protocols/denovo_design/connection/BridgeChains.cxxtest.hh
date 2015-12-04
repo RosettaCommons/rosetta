@@ -392,11 +392,11 @@ public:
 		TS_ASSERT_EQUALS( len, 34 );
 
 		// find left and right boundaries
-		core::Size left( end1 - conn.overlap() + 1 );
-		if ( conn.overlap() > end1 ) {
+		core::Size left( end1 - conn.lower_overlap() + 1 );
+		if ( conn.lower_overlap() > end1 ) {
 			left = 0;
 		}
-		core::Size right( start2 + conn.overlap() - 1 );
+		core::Size right( start2 + conn.upper_overlap() - 1 );
 		if ( left < 1 ) {
 			left = 1;
 		} else if ( left > perm->pose()->total_residue() ) {

@@ -227,12 +227,14 @@ BridgeChains::apply_connection( components::StructureData & perm ) const
 		components::StructureDataOP orig = perm.clone();
 
 		try {
+			apply_constraints( perm );
 			// remodel the loop
 			build_loop( perm );
 		} catch ( utility::excn::EXCN_Base const & e ) {
 			perm = *orig;
 			throw EXCN_ConnectionFailed( id() );
 		}
+		remove_constraints( perm );
 	}
 
 	perm.declare_covalent_bond(

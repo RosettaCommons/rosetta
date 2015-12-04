@@ -316,6 +316,8 @@ StructureData::create_from_pose( core::pose::Pose const & pose, std::string cons
 			std::stringstream err;
 			err << newperm->id() << ": Size of StructureData does not match size of pose. ";
 			err << "XML: " << ss.str() << " chains: " << pose.conformation().chain_endings() << " pose length: " << pose.total_residue() << std::endl;
+			utility::vector1< core::Size > test;
+			test[2] = 2;
 			throw utility::excn::EXCN_Msg_Exception( err.str() );
 		}
 		newperm->set_pose( pose );
@@ -651,8 +653,7 @@ StructureData::load_pdb_info_old(
 void
 StructureData::save_into_pose()
 {
-	debug_assert( pose_ );
-	save_into_pose( *pose_ );
+	if ( pose_ ) save_into_pose( *pose_ );
 }
 
 /// @brief stores the data of this permutation into a pose pdb remarks
@@ -676,6 +677,18 @@ StructureData::save_into_pose( core::pose::Pose & pose ) const
 	while ( std::getline( ss, line ) ) {
 		add_perm_remark( pose.pdb_info()->remarks(), line );
 	}
+}
+
+utility::vector1< BondInfo >::const_iterator
+StructureData::non_peptidic_bond( std::string const & seg1, std::string const & seg2 ) const
+{
+	for ( utility::vector1< BondInfo >::const_iterator bi=covalent_bonds_begin(); bi!=covalent_bonds_end(); ++bi ) {
+		if ( ( ( seg1 == bi->seg1 ) && ( seg2 == bi->seg2 ) ) ||
+				( ( seg2 == bi->seg1 ) && ( seg1 == bi->seg2 ) ) ) {
+			return bi;
+		}
+	}
+	return covalent_bonds_end();
 }
 
 utility::vector1< BondInfo >::const_iterator
@@ -1036,6 +1049,7 @@ StructureData::mark_connected(
 	low->second.set_upper_segment( upper_seg );
 	debug_assert( up->second.lower_segment() == "" );
 	up->second.set_lower_segment( lower_seg );
+	save_into_pose();
 }
 
 /// @brief determine pose chains based on termini
@@ -1106,6 +1120,7 @@ StructureData::delete_jump_and_intervening_cutpoint( std::string const & segment
 			segments_[segment2].set_cutpoint( 0 );
 		}
 	}
+	save_into_pose();
 	if ( pose_ ) {
 		core::Size const res1 = segment(segment1).cterm_resi();
 		core::Size const res2 = segment(segment2).nterm_resi();
@@ -1150,6 +1165,13 @@ StructureData::delete_jump_and_intervening_cutpoint(
 	ft.delete_jump_and_intervening_cutpoint( jnum );
 	debug_assert( ft.check_fold_tree() );
 	pose_->fold_tree( ft );
+}
+
+void
+StructureData::set_fold_tree( core::kinematics::FoldTree const & ft )
+{
+	debug_assert( ft.check_fold_tree() );
+	if ( pose_ ) pose_->fold_tree( ft );
 }
 
 /// @brief switches residue type set of the contained pose
@@ -1583,7 +1605,6 @@ StructureData::delete_segment( std::string const & seg_val )
 		chains_from_termini();
 	}
 	TR << "Deleted segment " << seg << std::endl;
-	if ( pose_ ) save_into_pose();
 }
 
 /// @brief deletes the given residues from the pose
@@ -1970,6 +1991,7 @@ StructureData::set_resnum_alias(
 			<< *this << std::endl;
 		throw utility::excn::EXCN_BadInput( ss.str() );
 	}
+	save_into_pose();
 }
 
 /// @brief sets an "alias" for a particular residue which allows for it to be easily accessed
@@ -2044,6 +2066,7 @@ StructureData::add_prefix_to_segments( std::string const & prefix, char const de
 		}
 	}
 	segments_ = newmap;
+	save_into_pose();
 }
 
 /// @brief renames a residue segment and updates all connections
@@ -2076,6 +2099,7 @@ StructureData::rename_segment( std::string const & old_name, std::string const &
 			a->second.first = new_name;
 		}
 	}
+	save_into_pose();
 }
 
 /// @brief true if this permutation contains a residue segment named seg
@@ -2128,7 +2152,6 @@ StructureData::merge( StructureData const & other )
 	}
 
 	copy_data( other, false );
-	if ( pose_ ) save_into_pose();
 }
 
 void
@@ -2146,7 +2169,6 @@ StructureData::merge_before( StructureData const & other, std::string const & po
 	}
 
 	copy_data( other, false );
-	if ( pose_ ) save_into_pose();
 }
 
 /// @brief computes and returns a set of segments which are in the given movable group
@@ -2262,12 +2284,21 @@ StructureData::add_covalent_bond(
 void
 StructureData::add_covalent_bond( BondInfo const & bi )
 {
+	// look for this bond, stop if it's found
+	for ( utility::vector1< BondInfo >::const_iterator bi_it=covalent_bonds_.begin(); bi_it != covalent_bonds_.end(); ++bi_it ) {
+		if ( bi == *bi_it ) {
+			TR.Debug << "Skipping adding existing bond info " << *bi_it << std::endl;
+			return;
+		}
+	}
 	covalent_bonds_.push_back( bi );
+	save_into_pose();
 }
 
 void
 StructureData::update_covalent_bonds_in_pose()
 {
+	if ( !pose_ ) return;
 	for ( utility::vector1< BondInfo >::const_iterator p = covalent_bonds_.begin(); p != covalent_bonds_.end(); ++p ) {
 		TR.Debug << "Updating covalent bond " << p->seg1 << "-->" << p->seg2 << std::endl;
 		declare_covalent_bond_in_pose( pose_residue( p->seg1, p->res1 ), p->atom1, pose_residue( p->seg2, p->res2 ), p->atom2 );
@@ -2334,6 +2365,7 @@ StructureData::set_cutpoint( std::string const & seg, core::Size const resi )
 	if ( r != segments_.end() ) {
 		r->second.set_cutpoint( resi );
 	}
+	save_into_pose();
 }
 
 /// @brief connects the given chains together, doesn't update anything -- don't call this on its own unless you know what you're doing.
@@ -2359,6 +2391,7 @@ StructureData::connect_segments(
 		chains_from_termini();
 	}
 	TR.Debug << "Marked " << segment1_c << " and " << segment2_n << " as connected." << std::endl;
+	save_into_pose();
 }
 
 void
@@ -2375,6 +2408,7 @@ StructureData::mark_disconnected(
 	s2->second.set_lower_segment( "" );
 
 	TR.Debug << "Marked " << s1->first << " and " << s2->first << " as disconnected." << std::endl;
+	save_into_pose();
 }
 
 /// @brief disconnects the given chains doesn't update anything -- don't call this on its own unless you know what you're doing.
@@ -2476,7 +2510,6 @@ StructureData::merge_segments(
 	if ( mgs.find(mgs.size()+1) != mgs.end() ) {
 		renumber_movable_group( mgs.size()+1, del_group );
 	}
-
 }
 
 /// @brief sets the pose and does checks to ensure data is consistent
@@ -2539,9 +2572,7 @@ StructureData::set_pose( core::pose::PoseOP new_pose )
 	}
 	pose_ = new_pose;
 
-	if ( pose_ ) {
-		save_into_pose();
-	}
+	save_into_pose();
 }
 
 /// @brief based on the pose, determines the jump number for the jump pointing to the segment specified
@@ -2641,6 +2672,7 @@ StructureData::set_data_int( std::string const & data_name, int const val )
 	} else {
 		it->second = val;
 	}
+	save_into_pose();
 }
 
 /// @brief sets real number data
@@ -2660,6 +2692,7 @@ StructureData::set_data_real( std::string const & data_name, core::Real const va
 	} else {
 		it->second = val;
 	}
+	save_into_pose();
 }
 
 /// @brief sets string data
@@ -2679,6 +2712,7 @@ StructureData::set_data_str( std::string const & data_name, std::string const & 
 	} else {
 		it->second = val;
 	}
+	save_into_pose();
 }
 
 /// @brief gets int number data
@@ -2802,6 +2836,7 @@ StructureData::copy_data( StructureData const & perm, bool const do_rename )
 	for ( utility::vector1< BondInfo >::const_iterator bi=perm.covalent_bonds_begin(); bi!=perm.covalent_bonds_end(); ++bi ) {
 		add_covalent_bond( *bi );
 	}
+	save_into_pose();
 }
 
 /// @brief just return the pose (doesn't build pose if it doesn't exist)
@@ -2879,7 +2914,10 @@ StructureData::update_numbering()
 	ss_ = new_ss;
 	debug_assert( new_abego.size() == pose_length_ );
 	abego_ = new_abego;
-	if ( pose_ ) update_covalent_bonds_in_pose();
+	if ( pose_ ) {
+		update_covalent_bonds_in_pose();
+		save_into_pose();
+	}
 	TR.Debug << "Numbering updated - new pose length = " << pose_length_ << " new ss = " << new_ss << std::endl;
 }
 
@@ -2898,6 +2936,7 @@ StructureData::update_movable_groups_after_deletion( core::Size const mg_old )
 	}
 
 	TR.Debug << "Renumbered movable group " << replaced_mg << " to " << mg_old << std::endl;
+	save_into_pose();
 }
 
 /// @brief renumbers movable group "oldg" to have new number "newg"
@@ -3027,6 +3066,7 @@ StructureData::set_movable_group( std::string const & segid, core::Size const mg
 		throw utility::excn::EXCN_Msg_Exception( err.str() );
 	}
 	s->second.movable_group = mg;
+	save_into_pose();
 }
 
 /// @brief tells if the segment given has an available lower terminus
@@ -3222,9 +3262,7 @@ operator<<( std::ostream & os, StructureData const & perm )
 	}
 	// covalent bonds
 	for ( utility::vector1< BondInfo >::const_iterator b = perm.covalent_bonds_.begin(); b != perm.covalent_bonds_.end(); ++b ) {
-		os << "\t<CovalentBond segment1=\"" << b->seg1 << "\" segment2=\"" << b->seg2
-			<< "\" residue1=\"" << b->res1 << "\" residue2=\"" << b->res2
-			<< "\" atom1=\"" << b->atom1 << "\" atom2=\"" << b->atom2 << "\" />" << std::endl;
+		os << *b << std::endl;
 	}
 	os << "</StructureData>";
 	return os;

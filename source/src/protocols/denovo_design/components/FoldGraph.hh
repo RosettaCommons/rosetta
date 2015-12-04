@@ -131,6 +131,11 @@ private:
 		StructureData const & perm,
 		utility::vector1< Solution > const & solutions ) const;
 
+	/// @brief sorts solutions such that the ones maximizing segments w/ same MG are fixed.
+	void sort_solutions(
+		utility::vector1< Solution > & solutions,
+		StructureData const & sd ) const;
+
 	/// @brief checks a solution to ensure that covalently bound segments are not found both inside and outside of loops
 	bool check_solution( StructureData const & perm, Solution const & solution ) const;
 

@@ -339,7 +339,11 @@ ExtendChain::apply_connection( components::StructureData & perm ) const
 		perm.switch_residue_type_set( "centroid" );
 	}
 
-	if ( do_remodel() ) perm.apply_mover( remodel );
+	if ( do_remodel() ) {
+		apply_constraints( perm );
+		perm.apply_mover( remodel );
+		remove_constraints( perm );
+	}
 
 	if ( remodel->get_last_move_status() != protocols::moves::MS_SUCCESS ) {
 		throw EXCN_ConnectionFailed( "Failed to close loop during remodel in " + id() );
@@ -362,7 +366,6 @@ ExtendChain::apply_connection( components::StructureData & perm ) const
 		copy_rotamers( perm, stored );
 	}
 	perm.chains_from_termini();
-	perm.save_into_pose();
 }
 
 } // namespace connection

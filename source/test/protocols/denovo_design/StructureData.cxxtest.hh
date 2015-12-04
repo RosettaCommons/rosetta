@@ -25,6 +25,7 @@
 #include <protocols/denovo_design/util.hh>
 
 // Core headers
+#include <core/kinematics/FoldTree.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/pdb/file_data.hh>
@@ -43,6 +44,7 @@
 
 // Boost
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/assign.hpp>
 #include <boost/lexical_cast.hpp>
 
 // C++ headers
@@ -56,7 +58,7 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		// load params for ligand
-		protocols_init();
+		protocols_init_with_additional_options( "-extra_res_fa protocols/denovo_design/QTS.params -extra_patch_fa protocols/denovo_design/QTS_connectC6.txt -extra_patch_fa protocols/denovo_design/CYS_connectSG.txt" );
 
 		// set preserve header always
 		basic::options::option[basic::options::OptionKeys::run::preserve_header].value(true);
@@ -91,7 +93,7 @@ public:
 		// data includes silent files
 		read_perm->save_into_pose( *pdbpose );
 		core::pose::Pose testpose = *(read_perm->pose());
-		TS_ASSERT( read_perm->has_cached_string() );
+		TS_ASSERT( StructureData::has_cached_string( *(read_perm->pose()) ) );
 
 		std::stringstream silentfile;
 		core::io::silent::SilentFileData sfd;
@@ -104,7 +106,7 @@ public:
 		sfd.write_all( "test.silent" );
 		std::stringstream origstr;
 		origstr << *read_perm;
-		TS_ASSERT_EQUALS( read_perm->cached_string(), origstr.str() );
+		TS_ASSERT_EQUALS( StructureData::cached_string( *(read_perm->pose()) ), origstr.str() );
 
 		core::io::silent::SilentFileData sftest;
 		sftest.read_file( "test.silent" );
@@ -198,4 +200,41 @@ public:
 		}
 	}
 
+	void test_non_peptidic_bonds()
+	{
+		using namespace protocols::denovo_design;
+		using namespace protocols::denovo_design::components;
+		core::pose::Pose input_pose;
+		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/test_structuredata_nonpeptidic.pdb" );
+		StructureDataOP sd = StructureData::create_from_pose( input_pose, "" );
+
+		core::conformation::Residue const prev_cys = input_pose.residue( sd->alias_resnum( "bb.cys" ) );
+		core::conformation::Residue const prev_qts = input_pose.residue( sd->alias_resnum( "bb.ligand" ) );
+		sd->consolidate_movable_groups( boost::assign::list_of("1") );
+		TS_ASSERT( sd->pose()->fold_tree().check_fold_tree() );
+		input_pose.fold_tree( sd->pose()->fold_tree() );
+
+		// rotate a chi angle in QTS
+		core::Size const cysres = sd->alias_resnum( "bb.cys" );
+		core::Size const ligres = sd->alias_resnum( "bb.ligand" );
+		for ( core::Size chi=1; chi<=6; ++chi ) {
+			input_pose.set_chi( chi, ligres, 50.0 );
+		}
+
+		TS_ASSERT_DELTA( prev_cys.xyz( "CB" ).distance( input_pose.residue( cysres ).xyz( "CB" ) ), 0.0, 1e-4 );
+		TS_ASSERT_DELTA( prev_cys.xyz( "SG" ).distance( input_pose.residue( cysres ).xyz( "SG" ) ), 0.0, 1e-4 );
+		TS_ASSERT_DELTA( prev_qts.xyz( "C6" ).distance( input_pose.residue( ligres ).xyz( "C6" ) ), 0.0, 1e-4 );
+		TS_ASSERT_DELTA( prev_qts.xyz( "O2" ).distance( input_pose.residue( ligres ).xyz( "O2" ) ), 0.0, 1e-4 );
+		input_pose.dump_pdb( "test.pdb" );
+
+		// rotate chi in cys
+		input_pose.set_chi( 1, cysres, 50.0 );
+
+		TS_ASSERT_DELTA( prev_cys.xyz( "CB" ).distance( input_pose.residue( cysres ).xyz( "CB" ) ), 0.0, 1e-4 );
+		TS_ASSERT( prev_cys.xyz( "SG" ).distance( input_pose.residue( cysres ).xyz( "SG" ) ) > 1e-4 );
+		TS_ASSERT( prev_qts.xyz( "C6" ).distance( input_pose.residue( ligres ).xyz( "C6" ) ) > 1e-4 );
+		TS_ASSERT( prev_qts.xyz( "O2" ).distance( input_pose.residue( ligres ).xyz( "O2" ) ) > 1e-4 );
+		TR << input_pose.fold_tree() << std::endl;
+		input_pose.dump_pdb( "test2.pdb" );
+	}
 };

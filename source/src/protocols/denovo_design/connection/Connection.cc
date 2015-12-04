@@ -26,6 +26,8 @@
 //Protocol Headers
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 #include <protocols/denovo_design/util.hh>
+#include <protocols/forge/constraints/RemoveCsts.hh>
+#include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/generalized_kinematic_closure/GeneralizedKIC.hh>
 #include <protocols/moves/DsspMover.hh>
@@ -85,7 +87,8 @@ Connection::Connection() :
 	chain1_( 0 ),
 	chain2_( 0 ),
 	trials_( 1 ),
-	overlap_( 0 ),
+	lower_overlap_( 0 ),
+	upper_overlap_( 0 ),
 	do_remodel_( true ),
 	allow_cyclic_( false ),
 	connecting_bond_dist_( 1.5 ),
@@ -94,6 +97,7 @@ Connection::Connection() :
 	performs_orientation_( false ),
 	check_abego_( true )
 {
+	rcgs_.clear();
 	motifs_.clear();
 	motifs_.push_back( Motif( 0, 'L', "X" ) );
 	cut_resis_.clear();
@@ -140,7 +144,17 @@ Connection::parse_my_tag(
 	set_check_abego( tag->getOption< core::Size >( "check_abego", check_abego_ ) );
 	set_allow_cyclic( tag->getOption< bool >( "allow_cyclic", allow_cyclic_ ) );
 	set_trials( tag->getOption< core::Size >( "trials", trials_ ) );
-	set_overlap( tag->getOption< core::Size >( "overlap", overlap_ ) );
+
+	if ( tag->hasOption( "overlap" ) ) {
+		set_overlap( tag->getOption< core::Size >( "overlap" ) );
+	}
+	if ( tag->hasOption( "upper_overlap" ) ) {
+		set_upper_overlap( tag->getOption< core::Size >( "upper_overlap" ) );
+	}
+	if ( tag->hasOption( "lower_overlap" ) ) {
+		set_lower_overlap( tag->getOption< core::Size >( "lower_overlap" ) );
+	}
+
 	set_idealized_abego( tag->getOption< bool >( "idealized_abego", idealized_abego_ ) );
 	set_extend_ss( tag->getOption< bool >( "extend_ss", extend_ss_ ) );
 
@@ -171,13 +185,103 @@ Connection::parse_my_tag(
 	if ( cut_resi_str != "" ) {
 		set_cut_resis( cut_resi_str );
 	}
+
+	bool has_unknown = false;
+	EXCN_UnknownSubtag ex( "empty" );
+	for ( std::vector< utility::tag::TagCOP >::const_iterator subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
+		try {
+			parse_subtag( *subtag, movers );
+		} catch( EXCN_UnknownSubtag const & e ) {
+				has_unknown = true;
+				ex = e;
+		}
+	}
+	if ( has_unknown ) throw ex;
+}
+
+void
+Connection::clear_rcgs()
+{
+	rcgs_.clear();
+}
+
+void
+Connection::add_rcg( protocols::forge::remodel::RemodelConstraintGeneratorOP rcg )
+{
+	rcgs_.push_back( rcg );
+}
+
+void
+Connection::apply_constraints( components::StructureData & sd ) const
+{
+	for ( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP >::const_iterator rcg=rcgs_.begin(); rcg!=rcgs_.end(); ++rcg ) {
+		debug_assert( *rcg );
+		sd.apply_mover( **rcg );
+	}
+}
+
+void
+Connection::remove_constraints( components::StructureData & sd ) const
+{
+	for ( utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP >::const_iterator rcg=rcgs_.begin(); rcg!=rcgs_.end(); ++rcg ) {
+		debug_assert( *rcg );
+		protocols::forge::constraints::RemoveCsts remover;
+		remover.set_generator( *rcg );
+		sd.apply_mover( remover );
+	}
+}
+
+/// @brief parses subtag
+void
+Connection::parse_subtag( utility::tag::TagCOP tag, protocols::moves::Movers_map const & movers )
+{
+	if ( tag->getName() == "Add" ) {
+		if ( tag->hasOption( "rcg" ) ) {
+			std::string const rcgname = tag->getOption< std::string >( "rcg" );
+			protocols::moves::Movers_map::const_iterator mover_it = movers.find( rcgname );
+			if ( mover_it == movers.end() ) {
+				throw utility::excn::EXCN_RosettaScriptsOption( id() + ": can't find constraint generator named " + rcgname + " in the MOVERS section.\n" );
+			}
+			protocols::forge::remodel::RemodelConstraintGeneratorOP rcg =
+				utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover_it->second->clone() );
+			if ( !rcg ) {
+				throw utility::excn::EXCN_RosettaScriptsOption( id() + ": mover named " + rcgname + " is not a remodel constraint generator.\n" );
+			}
+			add_rcg( rcg );
+		} else {
+			std::stringstream msg;
+			msg << id() << ": no valid options found in connection subtag: " << *tag << std::endl;
+			throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+		}
+	} else {
+		static StringList const valid_tags = boost::assign::list_of ("Add");
+		std::stringstream msg;
+		msg << id() << ": Ignoring unknown connection subtag: " << tag->getName() << ". "
+			<< "Valid subtags are: " << valid_tags << " This tag may be used when being parsed by the Connection subclass." << std::endl;
+		throw EXCN_UnknownSubtag( msg.str() );
+	}
+}
+
+/// @brief sets overlap for the upper segment
+void
+Connection::set_lower_overlap( core::Size const overlap_val )
+{
+	lower_overlap_ = overlap_val;
+}
+
+/// @brief sets overlap for the upper segment
+void
+Connection::set_upper_overlap( core::Size const overlap_val )
+{
+	upper_overlap_ = overlap_val;
 }
 
 /// @brief sets overlap
 void
 Connection::set_overlap( core::Size const overlap_val )
 {
-	overlap_ = overlap_val;
+	set_lower_overlap( overlap_val );
+	set_upper_overlap( overlap_val );
 }
 
 /// @brief sets whether or not to extend SS elements to try to connect them,
@@ -646,7 +750,6 @@ Connection::apply( core::pose::Pose & pose )
 	}
 	if ( perm->pose() ) {
 		pose = *(perm->pose());
-		perm->save_into_pose( pose );
 	} else {
 		TR.Error << "we should never be here." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption( "We should never be here." );
@@ -731,7 +834,6 @@ Connection::post_process_permutation( components::StructureData & perm ) const
 			}
 		}
 	}
-	perm.save_into_pose();
 }
 
 void
@@ -1392,7 +1494,7 @@ Connection::build_left( components::StructureData const & perm ) const
 	core::Size left = loopstart;
 	core::Size inc_count = 0;
 	assert( perm.pose() );
-	while ( ( inc_count < overlap_ ) &&
+	while ( ( inc_count < lower_overlap_ ) &&
 			( left > 1 ) &&
 			( left <= perm.pose()->total_residue() ) &&
 			( perm.pose()->chain(left) == perm.pose()->chain(c1.safe()) ) ) {
@@ -1411,7 +1513,7 @@ Connection::build_right( components::StructureData const & perm ) const
 	core::Size right = loopend;
 	core::Size inc_count = 0;
 	assert( perm.pose() );
-	while ( ( inc_count < overlap_ ) &&
+	while ( ( inc_count < upper_overlap_ ) &&
 			( right > 1 ) &&
 			( right <= perm.pose()->total_residue() ) &&
 			( perm.pose()->chain(right) == perm.pose()->chain(c2.safe()) ) ) {
@@ -1693,7 +1795,10 @@ BridgeTomponents::parse_my_tag(
 		protocols::generalized_kinematic_closure::GeneralizedKICOP( new protocols::generalized_kinematic_closure::GeneralizedKIC() );
 	kic->parse_my_tag( tag, data, filters, movers, pose );
 	set_kic_mover( kic );
-	Connection::parse_my_tag( tag, data, filters, movers, pose );
+	try {
+		Connection::parse_my_tag( tag, data, filters, movers, pose );
+	} catch( EXCN_UnknownSubtag const & e ) {
+	}
 	if ( !tag->hasOption( "allow_cyclic" ) ) {
 		set_allow_cyclic( true );
 	}
@@ -1726,7 +1831,7 @@ BridgeTomponents::compute_loop_residues( components::StructureData const & perm 
 	core::Size s = perm.segment(loop_lower(perm)).nterm_resi();
 	core::Size pre_overlap = 0;
 	// add overlap so that start/end anchors are not in the loop
-	for ( core::Size i=1; i<=overlap(); ++i ) {
+	for ( core::Size i=1; i<=lower_overlap(); ++i ) {
 		if ( is_lower_terminus( *(perm.pose()), s ) ) {
 			break;
 		}
@@ -1741,7 +1846,7 @@ BridgeTomponents::compute_loop_residues( components::StructureData const & perm 
 	s = perm.segment(loop_upper(perm)).nterm_resi();
 	e = perm.segment(loop_upper(perm)).cterm_resi();
 	// add overlap to end of loop
-	for ( core::Size i=1; i<=overlap(); ++i ) {
+	for ( core::Size i=1; i<=upper_overlap(); ++i ) {
 		if ( is_upper_terminus( *(perm.pose()), e ) ) {
 			break;
 		}
@@ -1767,10 +1872,13 @@ BridgeTomponents::apply_connection( components::StructureData & perm ) const
 	TR.Debug << "Loop residues are " << new_loop_residues.first << std::endl;
 
 	if ( do_remodel() ) {
+		apply_constraints( perm );
+
 		// create and run kic protocol to close the loop
 		protocols::generalized_kinematic_closure::GeneralizedKICOP kic = create_kic_mover( perm, new_loop_residues.first, new_loop_residues.second );
 		debug_assert( kic );
 		perm.apply_mover( kic );
+		remove_constraints( perm );
 		if ( !kic->last_run_successful() || ( kic->get_last_move_status() != protocols::moves::MS_SUCCESS ) ) {
 			throw EXCN_ConnectionFailed( id() );
 		}

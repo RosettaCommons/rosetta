@@ -1,0 +1,39 @@
+## Patch for transglutaminase substate connected to protein
+## Tom Linsky 2015
+
+NAME connectC6
+TYPES PHOSPHORYLATION SHOVE_BB
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+NAME3 QTS
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_IO_STRING QTS Z
+SET_INTERCHANGEABILITY_GROUP QTS
+
+## here we add the new connection point, the icoor values are bogus
+##
+ADD_CONNECT C6 ICOOR 180.0 109.0 0.0 C6 C5 C4
+SET_ICOOR CONN%NCONN 180.0 109.0 0.0 C6 C5 C4
+
+#SET_ATOM_TYPE HG VIRT
+#REDEFINE_CHI 2  CA   CB   OG  CONN3
+#DELETE_ATOM HG 
+
+## Manually define rotamer bins for chi 2 using data from the 155 samples.
+##   Note: The rotamers are listed in the order of decreasing frequency.
+##   The percentages may not add up to 100% due to rounding or exclusion of outliers.
+##ADD_CHI_ROTAMER 2 -179.16  10.17  #32.9% (+/- 180 bin)
+##ADD_CHI_ROTAMER 2  152.48   4.57  #19.4%
+##ADD_CHI_ROTAMER 2  117.55  15.89  #16.1%
+##ADD_CHI_ROTAMER 2 -106.20  15.99  #15.5% 
+##ADD_CHI_ROTAMER 2  153.19   7.19  #14.8% 
+
+END_CASE

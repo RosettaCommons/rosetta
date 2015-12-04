@@ -63,6 +63,21 @@ public:
 		std::string const & a2
 	): seg1( s1 ), seg2( s2 ), res1( r1 ), res2( r2 ), atom1( a1 ), atom2( a2 ) {}
 
+	bool operator==( BondInfo const & other ) const {
+		if ( res1 != other.res1 ) return false;
+		if ( res1 != other.res2 ) return false;
+		if ( seg1 != other.seg1 ) return false;
+		if ( seg2 != other.seg2 ) return false;
+		if ( atom1 != other.atom1 ) return false;
+		if ( atom2 != other.atom2 ) return false;
+		return true;
+	}
+	friend std::ostream & operator<<( std::ostream & os, BondInfo const & b ) {
+		os << "\t<CovalentBond segment1=\"" << b.seg1 << "\" segment2=\"" << b.seg2
+			<< "\" residue1=\"" << b.res1 << "\" residue2=\"" << b.res2
+			<< "\" atom1=\"" << b.atom1 << "\" atom2=\"" << b.atom2 << "\" />";
+		return os;
+	}
 	std::string seg1, seg2;
 	core::Size res1, res2;
 	std::string atom1, atom2;
@@ -288,6 +303,10 @@ public:
 	utility::vector1< BondInfo >::const_iterator covalent_bonds_begin() const;
 	utility::vector1< BondInfo >::const_iterator covalent_bonds_end() const;
 
+	/// @brief finds a non-peptide bond between two segments, returns end() if there isn't one
+	utility::vector1< BondInfo >::const_iterator
+	non_peptidic_bond( std::string const & seg1, std::string const & seg2 ) const;
+
 	/// @brief finds a segment in the segment_order list and returns an iterator to it
 	StringList::const_iterator find_segment( std::string const & segname ) const;
 
@@ -346,23 +365,24 @@ public:
 	/// I/O with pose
 	/////////////////////////////////////////////////////////////////////////////
 public:
-	/// @brief stores the data in the permutation
-	void save_into_pose();
-
-	/// @brief stores the data of this permutation into a pose remarks
-	void save_into_pose( core::pose::Pose & pose ) const;
-
-	/// @brief checks to see whether a string for this permutation exists in the pose's datacache
-	bool has_cached_string() const;
-
 	/// @brief checks to see whether a string for this permutation exists in the pose's datacache
 	static bool has_cached_string( core::pose::Pose const & pose );
 
 	/// @brief retrieve a string stored in the pose's datacache
-	std::string cached_string() const;
+	static std::string cached_string( core::pose::Pose const & pose );
+
+	/// @brief stores the data of this permutation into a pose remarks
+	void save_into_pose( core::pose::Pose & pose ) const;
+
+protected:
+	/// @brief stores the data in the permutation
+	void save_into_pose();
+
+	/// @brief checks to see whether a string for this permutation exists in the pose's datacache
+	bool has_cached_string() const;
 
 	/// @brief retrieve a string stored in the pose's datacache
-	static std::string cached_string( core::pose::Pose const & pose );
+	std::string cached_string() const;
 
 	/// @brief retrieve a string stored in the pose's datacache
 	static std::string cached_string( core::pose::Pose const & pose, std::string const & data_name );
@@ -459,6 +479,9 @@ public:
 
 	/// @brief sets the pose and does checks to ensure data is consistent
 	void set_pose( core::pose::PoseOP new_pose );
+
+	/// @brief sets the fold tree in the pose
+	void set_fold_tree( core::kinematics::FoldTree const & ft );
 
 	/// @brief marks the given segments as covanlently connected
 	void mark_connected(

@@ -1,0 +1,107 @@
+REMARK 994 <StructureData name="" multi="1" length="4" pose_length="6#          
+REMARK 994 " >                                                                  
+REMARK 994 	<ResidueRange name="1" start="2" stop="4" safe="3" nterm=#          
+REMARK 994 "0" cterm="0" loop="0" mgroup="1" cutpoint="0" ss="LLLLL" #          
+REMARK 994 abego="EAAAX" />                                                     
+REMARK 994 	<ResidueRange name="2" start="6" stop="6" safe="6" nterm=#          
+REMARK 994 "1" cterm="1" loop="0" mgroup="1" cutpoint="0" ss="L" abeg#          
+REMARK 994 o="-" />                                                             
+REMARK 994 	<Alias name="bb.cys" segment="1" res="1" />                         
+REMARK 994 	<Alias name="bb.ligand" segment="2" res="1" />                      
+REMARK 994 	<CovalentBond segment1="1" segment2="2" residue1="1" resi#          
+REMARK 994 due2="1" atom1="SG" atom2="C6" />                                    
+REMARK 994 </StructureData>                                                     
+ATOM      1  N   ALA A   1       8.402  29.160  48.541  1.00  0.00           N  
+ATOM      2  CA  ALA A   1       8.233  30.567  48.209  1.00  0.00           C  
+ATOM      3  C   ALA A   1       9.417  31.370  48.727  1.00  0.00           C  
+ATOM      4  O   ALA A   1      10.512  30.830  48.840  1.00  0.00           O  
+ATOM      5  CB  ALA A   1       6.914  31.104  48.789  1.00  0.00           C  
+ATOM      6 1H   ALA A   1       7.620  28.640  48.197  1.00  0.00           H  
+ATOM      7 2H   ALA A   1       9.242  28.816  48.120  1.00  0.00           H  
+ATOM      8 3H   ALA A   1       8.461  29.056  49.534  1.00  0.00           H  
+ATOM      9  HA  ALA A   1       8.202  30.657  47.123  1.00  0.00           H  
+ATOM     10 1HB  ALA A   1       6.805  32.157  48.531  1.00  0.00           H  
+ATOM     11 2HB  ALA A   1       6.078  30.540  48.375  1.00  0.00           H  
+ATOM     12 3HB  ALA A   1       6.923  30.996  49.872  1.00  0.00           H  
+ATOM     13  N   CYS A   2       9.222  32.639  49.075  1.00  0.00           N  
+ATOM     14  CA  CYS A   2      10.293  33.525  49.514  1.00  0.00           C  
+ATOM     15  C   CYS A   2      11.019  32.952  50.725  1.00  0.00           C  
+ATOM     16  O   CYS A   2      12.229  33.270  50.894  1.00  0.00           O  
+ATOM     17  CB  CYS A   2       9.739  34.906  49.864  1.00  0.00           C  
+ATOM     18  SG  CYS A   2       8.352  34.873  51.025  1.00  0.00           S  
+ATOM     19  H   CYS A   2       8.278  32.994  49.028  1.00  0.00           H  
+ATOM     20  HA  CYS A   2      11.012  33.629  48.700  1.00  0.00           H  
+ATOM     21 1HB  CYS A   2      10.530  35.516  50.301  1.00  0.00           H  
+ATOM     22 2HB  CYS A   2       9.406  35.406  48.954  1.00  0.00           H  
+ATOM     23  N   GLY A   3      10.399  32.200  51.614  1.00  0.00           N  
+ATOM     24  CA  GLY A   3      11.124  31.697  52.783  1.00  0.00           C  
+ATOM     25  C   GLY A   3      12.291  30.803  52.354  1.00  0.00           C  
+ATOM     26  O   GLY A   3      13.289  30.677  53.073  1.00  0.00           O  
+ATOM     27  H   GLY A   3       9.424  31.963  51.501  1.00  0.00           H  
+ATOM     28 1HA  GLY A   3      11.497  32.536  53.371  1.00  0.00           H  
+ATOM     29 2HA  GLY A   3      11.543  32.546  53.322  1.00  0.00           H  
+ATOM     30  N   SER A   4      12.169  30.200  51.174  1.00  0.00           N  
+ATOM     31  CA  SER A   4      13.227  29.354  50.663  1.00  0.00           C  
+ATOM     32  C   SER A   4      14.003  30.015  49.528  1.00  0.00           C  
+ATOM     33  O   SER A   4      15.204  29.785  49.380  1.00  0.00           O  
+ATOM     34  CB  SER A   4      12.665  28.007  50.206  1.00  0.00           C  
+ATOM     35  OG  SER A   4      12.146  27.283  51.304  1.00  0.00           O  
+ATOM     36  H   SER A   4      11.333  30.329  50.623  1.00  0.00           H  
+ATOM     37  HA  SER A   4      13.946  29.177  51.464  1.00  0.00           H  
+ATOM     38 1HB  SER A   4      11.880  28.172  49.469  1.00  0.00           H  
+ATOM     39 2HB  SER A   4      13.452  27.430  49.722  1.00  0.00           H  
+ATOM     40  HG  SER A   4      12.288  27.837  52.075  1.00  0.00           H  
+ATOM     41  N   ALA A   5      13.331  30.847  48.737  1.00  0.00           N  
+ATOM     42  CA  ALA A   5      13.991  31.531  47.618  1.00  0.00           C  
+ATOM     43  C   ALA A   5      14.779  32.729  48.121  1.00  0.00           C  
+ATOM     44  O   ALA A   5      15.735  33.182  47.482  1.00  0.00           O  
+ATOM     45  OXT ALA A   5      14.477  33.254  49.157  1.00  0.00           O  
+ATOM     46  CB  ALA A   5      12.954  31.995  46.601  1.00  0.00           C  
+ATOM     47  H   ALA A   5      12.349  31.014  48.906  1.00  0.00           H  
+ATOM     48  HA  ALA A   5      14.666  30.822  47.138  1.00  0.00           H  
+ATOM     49 1HB  ALA A   5      13.455  32.501  45.776  1.00  0.00           H  
+ATOM     50 2HB  ALA A   5      12.407  31.133  46.220  1.00  0.00           H  
+ATOM     51 3HB  ALA A   5      12.258  32.683  47.079  1.00  0.00           H  
+HETATM   52  C4  QTS B   6       5.992  33.350  53.262  1.00  0.00           C  
+HETATM   53  C3  QTS B   6       4.843  34.103  53.969  1.00  0.00           C  
+HETATM   54  N1  QTS B   6       5.271  34.901  55.118  1.00  0.00           N  
+HETATM   55  C2  QTS B   6       4.692  36.082  55.500  1.00  0.00           C  
+HETATM   56  C1  QTS B   6       3.498  36.478  54.693  1.00  0.00           C  
+HETATM   57  O1  QTS B   6       5.098  36.765  56.450  1.00  0.00           O  
+HETATM   58  C7  QTS B   6       3.652  33.157  54.374  1.00  0.00           C  
+HETATM   59  O3  QTS B   6       3.209  33.130  55.518  1.00  0.00           O  
+HETATM   60  N3  QTS B   6       3.144  32.392  53.338  1.00  0.00           N  
+HETATM   61  C8  QTS B   6       2.042  31.464  53.460  1.00  0.00           C  
+HETATM   62  C5  QTS B   6       5.842  33.081  51.744  1.00  0.00           C  
+HETATM   63  C6  QTS B   6       5.485  34.286  50.851  1.00  0.00           C  
+HETATM   64  O2  QTS B   6       6.027  34.086  49.576  1.00  0.00           O  
+HETATM   65  N2  QTS B   6       4.089  34.565  50.665  1.00  0.00           N  
+HETATM   66  H6  QTS B   6       6.167  32.398  53.776  1.00  0.00           H  
+HETATM   67  H7  QTS B   6       6.926  33.906  53.386  1.00  0.00           H  
+HETATM   68  H1  QTS B   6       4.397  34.816  53.270  1.00  0.00           H  
+HETATM   69  H5  QTS B   6       6.150  34.637  55.555  1.00  0.00           H  
+HETATM   70  H2  QTS B   6       3.052  37.383  55.115  1.00  0.00           H  
+HETATM   71  H3  QTS B   6       2.753  35.676  54.722  1.00  0.00           H  
+HETATM   72  H4  QTS B   6       3.793  36.676  53.659  1.00  0.00           H  
+HETATM   73  H14 QTS B   6       3.522  32.550  52.408  1.00  0.00           H  
+HETATM   74  H15 QTS B   6       1.190  31.896  52.930  1.00  0.00           H  
+HETATM   75  H16 QTS B   6       1.769  31.258  54.497  1.00  0.00           H  
+HETATM   76  H17 QTS B   6       2.319  30.528  52.960  1.00  0.00           H  
+HETATM   77  H8  QTS B   6       5.082  32.292  51.635  1.00  0.00           H  
+HETATM   78  H9  QTS B   6       6.785  32.643  51.387  1.00  0.00           H  
+HETATM   79  H10 QTS B   6       5.902  34.963  49.173  1.00  0.00           H  
+HETATM   80  H12 QTS B   6       3.604  34.624  51.552  1.00  0.00           H  
+HETATM   81  H13 QTS B   6       3.668  33.812  50.127  1.00  0.00           H  
+TER                                                                             
+# All scores below are weighted scores, not raw scores.
+#BEGIN_POSE_ENERGIES_TABLE nuc_elbow_matched_0001.pdb
+label fa_atr fa_rep fa_sol fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 atom_pair_constraint coordinate_constraint angle_constraint dihedral_constraint rama omega fa_dun p_aa_pp ref backbone_stub_constraint total
+weights 0.8 0.44 0.75 0.004 0.7 1 1.17 1.17 1.17 1.1 1 1 1 1 1 0.2 0.5 0.56 0.32 1 0.1 NA
+pose -8.0835 1.74475 6.38346 0.03634 1.09945 0 -1.66 0 -0.11666 0 0 94966.5 0 304433 0 0.13936 0.08045 2.08863 0.3698 2.6721 0 399404
+ALA:NtermProteinFull_1 -1.78778 0.42979 1.38408 0.00086 -0.07601 0 0 0 0 0 0 0 0 0 0 0 0.06029 0 0 1 0 1.01124
+CYS:connectSG_2 -1.77626 0.58086 1.24277 0.00151 0.3874 0 0 0 -0.05833 0 0 47483.3 0 152216 0 -0.02529 0.01271 1.53387 0.15881 0.35499 0 199702
+GLY_3 -1.0012 0.21293 0.82148 3e-05 0.15426 0 0 0 0 0 0 0 0 0 0 0.03685 0.00746 0 0.25587 0.14053 0 0.62822
+SER_4 -1.29844 0.36251 1.17039 0.00151 0.38682 0 0 0 0 0 0 0 0 0 0 0.1278 0 0.55476 -0.04488 0.17658 0 1.43706
+ALA:CtermProteinFull_5 -1.61465 0.04477 1.2872 0.00102 0.44749 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1.16584
+QTS:connectC6_6 -0.60518 0.11388 0.47754 0.03141 -0.20052 0 0 0 -0.05833 0 0 47483.3 0 152216 0 0 0 0 0 0 0 199699
+#END_POSE_ENERGIES_TABLE nuc_elbow_matched_0001.pdb
