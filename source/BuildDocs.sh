@@ -15,7 +15,7 @@ cp src/index.html html/
 
 rm -rf html/core+protocols html/all_else
 
-for file in src/Doxyfile.* ; do
+for file in src/doxyfile_devel.* ; do
     echo "Building doc: $file"
     doxygen $file
 done
