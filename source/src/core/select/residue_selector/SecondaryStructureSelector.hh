@@ -37,10 +37,6 @@ public:
 	SecondaryStructureSelector();
 	SecondaryStructureSelector( std::string const & selected );
 
-	/// @brief Copy constructor
-	///
-	SecondaryStructureSelector( SecondaryStructureSelector const &src);
-
 	/// @brief Clone operator.
 	/// @details Copy this object and return an owning pointer to the new object.
 	virtual ResidueSelectorOP clone() const;
@@ -68,6 +64,9 @@ public:
 	void set_include_terminal_loops( bool const inc_term );
 	/// @brief Use this secstruct instead of the one found in the pose or DSSP, if set (default = not set)
 	void set_pose_secstruct( std::string const & ss );
+	/// @brief If set, dssp will be used to determine secondary structure. Otherwise, the pose SS will
+	/// be used IF it's not poly-L or empty (default=true)
+	void set_always_use_dssp( bool const always_use_dssp );
 
 private:
 	void add_overlap(
@@ -81,6 +80,7 @@ private:
 	std::string pose_secstruct_;
 	core::Size overlap_;
 	bool include_terminal_loops_;
+	bool always_use_dssp_;
 	std::set< char > selected_ss_;
 };
 

@@ -43,20 +43,11 @@ SecondaryStructureSelector::SecondaryStructureSelector() :
 	pose_secstruct_( "" ),
 	overlap_( 0 ),
 	include_terminal_loops_( false ),
+	always_use_dssp_( true ),
 	selected_ss_()
 {
 	selected_ss_.clear();
 }
-
-/// @brief Copy constructor
-///
-SecondaryStructureSelector::SecondaryStructureSelector( SecondaryStructureSelector const &src) :
-	ResidueSelector(),
-	pose_secstruct_( src.pose_secstruct_ ),
-	overlap_( src.overlap_ ),
-	include_terminal_loops_( src.include_terminal_loops_ ),
-	selected_ss_( src.selected_ss_ )
-{}
 
 /// @brief Clone operator.
 /// @details Copy this object and return an owning pointer to the new object.
@@ -65,7 +56,10 @@ ResidueSelectorOP SecondaryStructureSelector::clone() const { return ResidueSele
 SecondaryStructureSelector::SecondaryStructureSelector( std::string const & selected ) :
 	ResidueSelector(),
 	pose_secstruct_( "" ),
-	overlap_( 0 )
+	overlap_( 0 ),
+	include_terminal_loops_( false ),
+	always_use_dssp_( true ),
+	selected_ss_()
 {
 	if ( !check_ss( selected ) ) {
 		throw utility::excn::EXCN_BadInput( "SecondaryStructureSelector: invalid ss to select: " + selected + " -- only H, E and L are allowed.\n" );
@@ -127,7 +121,7 @@ SecondaryStructureSelector::apply( core::pose::Pose const & pose ) const
 	// first check pose secstruct, otherwise use dssp
 	std::string ss = "";
 	if ( pose_secstruct_.empty() ) {
-		if ( check_ss( pose.secstruct() ) && !is_poly_l( pose.secstruct() ) ) {
+		if ( (!always_use_dssp_) && check_ss( pose.secstruct() ) && !is_poly_l( pose.secstruct() ) ) {
 			ss = pose.secstruct();
 		} else {
 			core::scoring::dssp::Dssp dssp( pose );
@@ -167,6 +161,11 @@ void SecondaryStructureSelector::parse_my_tag(
 	if ( tag->hasOption( "include_terminal_loops" ) ) {
 		set_include_terminal_loops( tag->getOption< bool >( "include_terminal_loops" ) );
 	}
+
+	if ( tag->hasOption( "dssp" ) ) {
+			set_always_use_dssp( tag->getOption< bool >( "always_use_dssp" ) );
+	}
+
 	if ( tag->hasOption( "pose_secstruct" ) ) {
 		set_pose_secstruct( tag->getOption< std::string >( "pose_secstruct" ) );
 	}
@@ -203,7 +202,7 @@ SecondaryStructureSelector::class_name()
 bool
 SecondaryStructureSelector::check_ss( std::string const & ss ) const
 {
-	for ( std::string::const_iterator c = ss.begin(), endc = ss.end(); c != endc; ++c ) {
+	for ( std::string::const_iterator c = ss.begin(); c != ss.end(); ++c ) {
 		if ( *c == 'L' ) {
 			continue;
 		}
@@ -225,7 +224,7 @@ SecondaryStructureSelector::add_overlap(
 	std::string const & ss ) const
 {
 	IntervalVec intervals = subset_to_intervals( matching_ss );
-	for ( IntervalVec::iterator i = intervals.begin(), endi = intervals.end(); i != endi; ++i ) {
+	for ( IntervalVec::iterator i = intervals.begin(); i != intervals.end(); ++i ) {
 		Size count = Size( 0 );
 		while ( (count < overlap_) && !pose::pose_residue_is_terminal( pose, i->first ) ) {
 			i->first -= 1;
@@ -261,6 +260,12 @@ SecondaryStructureSelector::add_overlap(
 }
 
 void
+SecondaryStructureSelector::set_always_use_dssp( bool const always_use_dssp )
+{
+	always_use_dssp_ = always_use_dssp;
+}
+
+void
 SecondaryStructureSelector::set_overlap( core::Size const overlapval )
 {
 	overlap_ = overlapval;
@@ -270,9 +275,7 @@ void
 SecondaryStructureSelector::set_selected_ss( std::string const & selected )
 {
 	selected_ss_.clear();
-	for ( std::string::const_iterator c = selected.begin(), endc = selected.end(); c != endc; ++c ) {
-		selected_ss_.insert( *c );
-	}
+	selected_ss_ = std::set< char >( selected.begin(), selected.end() );
 }
 
 /// @brief if true, one-residue terminal "loops" will be included (default=false)
