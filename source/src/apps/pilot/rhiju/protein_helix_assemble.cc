@@ -141,9 +141,9 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 //RNA stuff.
-//#include <protocols/farna/RNA_FragmentsClasses.hh>
+//#include <protocols/farna/fragments/RNA_FragmentsClasses.hh>
 //#include <protocols/farna/RNA_DeNovoProtocol.hh>
-//#include <protocols/farna/RNA_StructureParameters.hh>
+//#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
 
 //Job dsitributor
 #include <protocols/jobdist/JobDistributors.hh>

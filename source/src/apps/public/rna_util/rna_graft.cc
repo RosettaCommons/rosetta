@@ -25,7 +25,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 #include <protocols/farna/util.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/viewer/viewers.hh>
 #include <devel/init.hh>
@@ -299,7 +299,7 @@ close_loops( core::pose::Pose & pose,
 		}
 	}
 
-	protocols::farna::RNA_LoopCloser rna_loop_closer;
+	protocols::farna::movers::RNA_LoopCloser rna_loop_closer;
 	rna_loop_closer.apply( pose, cutpoints );
 }
 

@@ -16,7 +16,7 @@
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
 
 // Package headers
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
 //
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
@@ -202,7 +202,7 @@ CoarseRNA_LoopCloser::output_forward_backward_res(){
 bool
 CoarseRNA_LoopCloser::figure_out_pivots( core::pose::Pose const & pose ){
 
-	if ( !allow_insert_ ) allow_insert_ = protocols::toolbox::AllowInsertOP( new protocols::toolbox::AllowInsert( pose ) );
+	if ( !atom_level_domain_map_ ) atom_level_domain_map_ = protocols::toolbox::AtomLevelDomainMapOP( new protocols::toolbox::AtomLevelDomainMap( pose ) );
 
 	figure_out_forward_backward_res_by_backtracking( pose );
 
@@ -288,7 +288,7 @@ CoarseRNA_LoopCloser::figure_out_forward_backward_res_by_backtracking( pose::Pos
 	//  shared in the backtrack paths from either end of the chainbreak
 	//  actually will have no effect on the relative positions of the chainbreak ends.
 	// Also, this is our opportunity to filter out atoms which are not allowed to move
-	//  (takes advantage of the allow_insert_ object).
+	//  (takes advantage of the atom_level_domain_map_ object).
 	filter_path( backward_res_, is_forward_res_, pose );
 	filter_path( forward_res_,  is_backward_res_, pose );
 
@@ -310,10 +310,10 @@ CoarseRNA_LoopCloser::filter_path( utility::vector1< core::Size > & upstream_res
 		// AtomID atom_id = named_atom_id_to_atom_id( NamedAtomID( " P  ", i ), pose ); // Unused variable causes warning.
 
 		//  if ( !is_filter_res[ i ] &&
-		//     allow_insert_->get( atom_id ) )  new_upstream_res.push_back( i );
+		//     atom_level_domain_map_->get( atom_id ) )  new_upstream_res.push_back( i );
 
 		if ( !is_filter_res[ i ] &&
-				allow_insert_->get( id::TorsionID( i, id::BB, 1 ), pose.conformation() ) )  new_upstream_res.push_back( i );
+				atom_level_domain_map_->get( id::TorsionID( i, id::BB, 1 ), pose.conformation() ) )  new_upstream_res.push_back( i );
 
 	}
 
@@ -970,14 +970,14 @@ CoarseRNA_LoopCloser::fill_chainTORS(
 
 ///////////////////////////////////////////////////////////
 void
-CoarseRNA_LoopCloser::set_allow_insert( protocols::toolbox::AllowInsertOP allow_insert ) {
-	allow_insert_ = allow_insert;
+CoarseRNA_LoopCloser::set_atom_level_domain_map( protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) {
+	atom_level_domain_map_ = atom_level_domain_map;
 }
 
 ///////////////////////////////////////////////////////////
-protocols::toolbox::AllowInsertOP
-CoarseRNA_LoopCloser::allow_insert(){
-	return allow_insert_;
+protocols::toolbox::AtomLevelDomainMapOP
+CoarseRNA_LoopCloser::atom_level_domain_map(){
+	return atom_level_domain_map_;
 }
 
 

@@ -14,9 +14,10 @@
 
 
 #include <protocols/coarse_rna/CoarseRNA_Fragments.hh>
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <protocols/toolbox/AtomID_Mapper.hh>
 #include <protocols/farna/util.hh>
-#include <protocols/farna/RNA_SecStructInfo.hh>
+#include <protocols/farna/secstruct/RNA_SecStructInfo.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
@@ -64,7 +65,7 @@ SourcePositions::~SourcePositions() {}
 CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// This sort of repeats a lot of stuff in protocols/farna/RNA_Fragments
+// This sort of repeats a lot of stuff in protocols/farna/fragments/RNA_Fragments
 //
 //  Not quite sure whether we should unify, or make subclasses of a Fragments class...
 //
@@ -91,7 +92,7 @@ CoarseRNA_Fragments::initialize_frag_source_pose(){
 		Pose pose;
 		import_pose::pose_from_pdb( pose, *rsd_set, frag_source_file_ );
 		protocols::farna::figure_out_secstruct( pose );
-		frag_source_secstruct_ = protocols::farna::get_rna_secstruct( pose );
+		frag_source_secstruct_ = protocols::farna::secstruct::get_rna_secstruct( pose );
 		frag_source_pose_ = core::pose::MiniPoseOP( new MiniPose( pose ) );
 	} else {
 
@@ -142,7 +143,7 @@ CoarseRNA_Fragments::insert_fragment(
 	Size const & insert_res,
 	Size const & source_res,
 	Size const & frag_size,
-	protocols::toolbox::AllowInsertCOP allow_insert ) const
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const
 {
 
 	using namespace core::id;
@@ -162,9 +163,8 @@ CoarseRNA_Fragments::insert_fragment(
 	}
 	//  std::cout << std::endl;
 
-	std::map< AtomID, AtomID > atom_id_map;
-	allow_insert->calculate_atom_id_map( pose, res_map, frag_source_pose_->fold_tree(), atom_id_map );
-	core::pose::copydofs::copy_dofs(  pose, *frag_source_pose_, atom_id_map, allow_insert->calculate_atom_id_domain_map( pose ) );
+	std::map< AtomID, AtomID > atom_id_map =	atom_level_domain_map->atom_id_mapper()->calculate_atom_id_map( pose, res_map, frag_source_pose_->fold_tree() );
+	core::pose::copydofs::copy_dofs(  pose, *frag_source_pose_, atom_id_map, atom_level_domain_map->calculate_atom_id_domain_map( pose ) );
 
 }
 
@@ -272,7 +272,7 @@ CoarseRNA_Fragments::pick_random_fragment(
 	std::string const & RNA_sequence( pose.sequence() );
 	std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
 
-	std::string const & RNA_secstruct( protocols::farna::get_rna_secstruct( pose ) );
+	std::string const & RNA_secstruct( protocols::farna::secstruct::get_rna_secstruct( pose ) );
 	std::string const & RNA_secstruct_string = RNA_secstruct.substr( position - 1, size );
 
 	return pick_random_fragment( RNA_string, RNA_secstruct_string, type );
@@ -286,11 +286,11 @@ CoarseRNA_Fragments::apply_random_fragment(
 	core::Size const position,
 	core::Size const size,
 	core::Size const type,
-	protocols::toolbox::AllowInsertCOP allow_insert ) const
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const
 {
 	Size const source_res = pick_random_fragment( pose, position, size, type );
 	//  std::cout << "applying to fragment position " << position << " from source position " << source_res << std::endl;
-	insert_fragment( pose, position, source_res, size, allow_insert );
+	insert_fragment( pose, position, source_res, size, atom_level_domain_map );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

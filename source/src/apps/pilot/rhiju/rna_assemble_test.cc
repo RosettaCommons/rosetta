@@ -54,14 +54,14 @@
 #include <protocols/idealize/idealize.hh>
 #include <protocols/viewer/viewers.hh>
 
-#include <protocols/farna/RNA_StructureParameters.fwd.hh>
-#include <protocols/farna/RNA_StructureParameters.hh>
-#include <protocols/farna/RNA_ChunkLibrary.hh>
-#include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.fwd.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
+#include <protocols/farna/libraries/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/stepwise/modeler/rna/helix/RNA_HelixAssembler.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
-#include <protocols/farna/RNA_Minimizer.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.hh>
+#include <protocols/farna/movers/RNA_Minimizer.hh>
 
 //Minimizer stuff
 #include <core/kinematics/MoveMap.hh>
@@ -161,7 +161,7 @@ rna_assemble_test()
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Initialize an RNA with extended sequence + base pairs.
-	//  Perhaps use RNA_StructureParameters class.
+	//  Perhaps use RNA_DeNovoPoseSetup class.
 	//Prepare starting structure from scratch --> read from fasta.
 
 	std::string seq_in;
@@ -177,7 +177,7 @@ rna_assemble_test()
 
 	make_pose_from_sequence( pose,	seq_in,	*rsd_set );
 
-	RNA_StructureParametersOP rna_structure_parameters( new RNA_StructureParameters );
+	RNA_DeNovoPoseSetupOP rna_structure_parameters( new RNA_DeNovoPoseSetup );
 	std::string jump_library_file( io::database::full_name("chemical/modeler/1jj2_RNA_jump_library.dat" ) );
 	std::string rna_params_file( 	option[ params_file ] );
 
@@ -269,7 +269,7 @@ score_and_minimize( pose::Pose & pose, pose::Pose const & native_pose,
 	static SilentFileData silent_file_data;
 	static protocols::farna::RNA_Minimizer rna_minimizer;
 	rna_minimizer.skip_o2prime_trials( true );
-	//	rna_minimizer.set_allow_insert( rna_chunk_library.allow_insert() );
+	//	rna_minimizer.set_atom_level_domain_map( rna_chunk_library.atom_level_domain_map() );
 
 	if ( option[ minimize ]() ) {
 		if ( atom_pair_constraint_score < 0.0 ) { /*arbitrary cutoff!!!*/
@@ -355,13 +355,13 @@ rna_assemble_all_combinations_test()
 
 	/////////////////////////////////////////////////////////////////////////////
 	// Initialize an RNA with extended sequence + base pairs.
-	//  Perhaps use RNA_StructureParameters class.
+	//  Perhaps use RNA_DeNovoPoseSetup class.
 	//Prepare starting structure from scratch --> read from fasta.
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
 	make_pose_from_sequence( pose,	fasta_sequence->sequence(),	*rsd_set );
 
-	RNA_StructureParametersOP rna_structure_parameters( new RNA_StructureParameters );
+	RNA_DeNovoPoseSetupOP rna_structure_parameters( new RNA_DeNovoPoseSetup );
 	std::string jump_library_file( io::database::full_name("chemical/modeler/1jj2_RNA_jump_library.dat" ) );
 	std::string rna_params_file( 	option[ params_file ] );
 

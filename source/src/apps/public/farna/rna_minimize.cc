@@ -43,12 +43,13 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
-#include <protocols/farna/RNA_StructureParameters.hh>
-#include <protocols/farna/RNA_Minimizer.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/movers/RNA_Minimizer.hh>
+#include <protocols/farna/options/RNA_MinimizerOptions.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/stepwise/modeler/util.hh> // for other_pose.
 #include <protocols/stepwise/modeler/align/util.hh>
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
 
 // C++ headers
 #include <iostream>
@@ -94,6 +95,7 @@ rna_fullatom_minimize_test()
 	using namespace core::pose::full_model_info;
 	using namespace protocols::toolbox;
 	using namespace protocols::farna;
+	using namespace protocols::farna::movers;
 	using namespace protocols::stepwise;
 	using namespace protocols::stepwise::setup;
 
@@ -135,11 +137,9 @@ rna_fullatom_minimize_test()
 	}
 
 	// minimizer setup
-	protocols::farna::RNA_Minimizer rna_minimizer;
-	rna_minimizer.deriv_check( option[ OptionKeys::rna::farna::deriv_check ]() );
-	rna_minimizer.use_coordinate_constraints( !option[ OptionKeys::rna::farna::skip_coord_constraints]() );
-	rna_minimizer.skip_o2prime_trials( option[ OptionKeys::rna::farna::skip_o2prime_trials] );
-	rna_minimizer.vary_bond_geometry( option[ OptionKeys::rna::farna::vary_geometry ] );
+	RNA_MinimizerOptionsOP options( new RNA_MinimizerOptions );
+	options->initialize_from_command_line();
+	RNA_Minimizer rna_minimizer( options );
 
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
@@ -152,6 +152,8 @@ rna_fullatom_minimize_test()
 	pose::Pose pose,start_pose;
 
 	Size i( 0 );
+
+	if ( option[params_file].user() ) utility_exit_with_message( " -params_file not supported in rna_minimize anymore." );
 
 	while ( input->has_another_pose() ) {
 
@@ -174,33 +176,34 @@ rna_fullatom_minimize_test()
 			pose.constraint_set( cst_set );
 		}
 
-		RNA_StructureParameters parameters;
-		if ( option[params_file].user() ) {
-			parameters.initialize_for_de_novo_protocol(
-				pose, option[params_file],
-				basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
-				false /*ignore_secstruct*/
-			);
-			// parameters.set_suppress_bp_constraint( 1.0 );
-			parameters.setup_base_pair_constraints( pose );
-			//rna_minimizer.set_allow_insert( parameters.allow_insert() );
-		}
+		// RNA_DeNovoPoseSetup parameters;
+		// if ( option[params_file].user() ) {
+		// 	parameters.initialize_for_de_novo_protocol(
+		// 		pose, option[params_file],
+		// 		basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
+		// 		false /*ignore_secstruct*/
+		// 	);
+		// 	// parameters.set_suppress_bp_constraint( 1.0 );
+		// 	parameters.setup_base_pair_constraints( pose );
+		// 	//rna_minimizer.set_atom_level_domain_map( parameters.atom_level_domain_map() );
+		// }
 
-		AllowInsertOP allow_insert( new AllowInsert( pose ) );
+		AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( pose ) );
 		if ( option[ in::file::minimize_res ].user() ) {
 			// don't allow anything to move, and then supply minimize_res as 'extra' minimize_res.
-			allow_insert->set( false );
-			rna_minimizer.set_extra_minimize_res( option[ in::file::minimize_res ]() );
+			atom_level_domain_map->set( false );
+			options->set_extra_minimize_res( option[ in::file::minimize_res ]() );
+			rna_minimizer.set_options( options );
 		} else if ( option[ one_torsion_test ]() ) {
-			// allow_insert->set( false );
-			// for ( Size n = 1; n <= pose.residue(1).natoms(); n++ ) allow_insert->set_domain( id::AtomID( n, 1 ), 1 );
-			// for ( Size n = 1; n <= pose.residue(2).natoms(); n++ ) allow_insert->set_domain( id::AtomID( n, 2 ), 2 );
-			// allow_insert->set( id::NamedAtomID( " P  ", 2 ), pose, false );
-			// allow_insert->set( id::NamedAtomID( " O5'", 2 ), pose, false );
+			// atom_level_domain_map->set( false );
+			// for ( Size n = 1; n <= pose.residue(1).natoms(); n++ ) atom_level_domain_map->set_domain( id::AtomID( n, 1 ), 1 );
+			// for ( Size n = 1; n <= pose.residue(2).natoms(); n++ ) atom_level_domain_map->set_domain( id::AtomID( n, 2 ), 2 );
+			// atom_level_domain_map->set( id::NamedAtomID( " P  ", 2 ), pose, false );
+			// atom_level_domain_map->set( id::NamedAtomID( " O5'", 2 ), pose, false );
 		} else {
-			allow_insert->set( true );
+			atom_level_domain_map->set( true );
 		}
-		rna_minimizer.set_allow_insert( allow_insert );
+		rna_minimizer.set_atom_level_domain_map( atom_level_domain_map );
 
 
 		// graphics viewer.
@@ -237,14 +240,14 @@ rna_fullatom_minimize_test()
 			s.add_energy( "rms_init", rmsd_init );
 
 			// Stem RMSD
-			if ( option[params_file].user() ) {
-				std::list< Size > stem_residues( parameters.get_stem_residues( pose ) );
-				if ( !stem_residues.empty()/*size() > 0*/ ) {
-					Real const rmsd_stems = all_atom_rmsd( native_pose, pose, stem_residues );
-					s.add_energy( "rms_stem", rmsd_stems );
-					std::cout << "Stems rmsd: " << rmsd_stems << std::endl;
-				}
-			}
+			// if ( option[params_file].user() ) {
+			// 	std::list< Size > stem_residues( parameters.get_stem_residues( pose ) );
+			// 	if ( !stem_residues.empty()/*size() > 0*/ ) {
+			// 		Real const rmsd_stems = all_atom_rmsd( native_pose, pose, stem_residues );
+			// 		s.add_energy( "rms_stem", rmsd_stems );
+			// 		std::cout << "Stems rmsd: " << rmsd_stems << std::endl;
+			// 	}
+			// }
 		}
 
 		std::cout << "Outputting " << tag << " to silent file: " << silent_file << std::endl;
@@ -285,10 +288,10 @@ main( int argc, char * argv [] )
 
 		utility::vector1< Size > blank_size_vector;
 
-		option.add_relevant( OptionKeys::rna::farna::vary_geometry );
-		option.add_relevant( OptionKeys::rna::farna::skip_coord_constraints );
-		option.add_relevant( OptionKeys::rna::farna::skip_o2prime_trials );
-		option.add_relevant( OptionKeys::rna::farna::deriv_check );
+		option.add_relevant( OptionKeys::rna::vary_geometry );
+		option.add_relevant( OptionKeys::rna::farna::minimize::skip_coord_constraints );
+		option.add_relevant( OptionKeys::rna::farna::minimize::skip_o2prime_trials );
+		option.add_relevant( OptionKeys::rna::farna::minimize::deriv_check );
 		option.add_relevant( OptionKeys::constraints::cst_fa_file );
 		option.add_relevant( in::file::minimize_res );
 		option.add_relevant( score::weights );

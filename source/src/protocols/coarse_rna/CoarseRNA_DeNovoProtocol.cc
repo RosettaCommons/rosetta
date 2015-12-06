@@ -21,19 +21,17 @@
 
 // Project headers
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/toolbox/AllowInsert.hh>
-#include <protocols/farna/MultipleDomainMover.hh>
-#include <protocols/farna/RNA_ChunkLibrary.hh>
-#include <protocols/farna/RNA_FragmentMover.hh>
-#include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <protocols/coarse_rna/MultipleDomainMover.hh>
+#include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
+#include <protocols/farna/movers/RNA_FragmentMover.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
 #include <protocols/farna/util.hh>
 #include <core/io/rna/RNA_DataReader.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/id/AtomID.hh>
@@ -112,7 +110,7 @@ CoarseRNA_DeNovoProtocol::CoarseRNA_DeNovoProtocol(
 	all_rna_fragments_file_( basic::database::full_name("1jj2_coarse_coords.txt") ),
 	jump_library_file_( basic::database::full_name("chemical/rna/1jj2_coarse_jumps.dat" ) ),
 	lores_scorefxn_( "farna/coarse_rna.wts" ),
-	rna_structure_parameters_( protocols::farna::RNA_StructureParametersOP( new protocols::farna::RNA_StructureParameters ) ),
+	rna_structure_parameters_( protocols::farna::RNA_DeNovoPoseSetupOP( new protocols::farna::RNA_DeNovoPoseSetup ) ),
 	rna_loop_closer_( protocols::coarse_rna::CoarseRNA_LoopCloserOP( new protocols::coarse_rna::CoarseRNA_LoopCloser ) ),
 	close_loops_( false ),
 	choose_best_solution_( false ),
@@ -155,25 +153,25 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	rna_data_reader_->fill_rna_data_info( pose ); // this seems repeated below? get rid of one instance?
 
 	if ( input_res_.size() > 0 ) rna_chunk_library_ = protocols::farna::RNA_ChunkLibraryOP( new protocols::farna::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ ) );
-	rna_structure_parameters_->set_allow_insert( rna_chunk_library_->allow_insert() );
+	rna_structure_parameters_->set_atom_level_domain_map( rna_chunk_library_->atom_level_domain_map() );
 	rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
 
 	if ( add_base_pair_constraints_ ) rna_structure_parameters_->setup_base_pair_constraints( pose );
 
 	rna_chunk_library_->initialize_random_chunks( pose, dump_pdb_ );
 
-	if ( dump_pdb_ ) { std::cout << "Allow insert: " << std::endl; rna_structure_parameters_->allow_insert()->show(); }
+	if ( dump_pdb_ ) { std::cout << "Allow insert: " << std::endl; rna_structure_parameters_->atom_level_domain_map()->show(); }
 
 	protocols::farna::RNA_FragmentsOP rna_fragments( new CoarseRNA_Fragments( all_rna_fragments_file_ ) );
-	frag_mover_ = protocols::farna::RNA_FragmentMoverOP( new protocols::farna::RNA_FragmentMover( *rna_fragments, rna_structure_parameters_->allow_insert() ) );
+	frag_mover_ = protocols::farna::RNA_FragmentMoverOP( new protocols::farna::RNA_FragmentMover( *rna_fragments, rna_structure_parameters_->atom_level_domain_map() ) );
 
 	rna_data_reader_->fill_rna_data_info( pose );
 	initialize_constraints( pose );
 
 	// "force_ideal_chainbreak" means you can't change angles and dists at cutpoints.
 	// This will also disallow torsion angle changes in OVL1, OVL2, OVU1 virtual atoms during fragment closure...
-	rna_chunk_library_->allow_insert()->set_force_ideal_chainbreak( force_ideal_chainbreak_ );
-	rna_loop_closer_->set_allow_insert( rna_structure_parameters_->allow_insert() );
+	rna_chunk_library_->atom_level_domain_map()->set_force_ideal_chainbreak( force_ideal_chainbreak_ );
+	rna_loop_closer_->set_atom_level_domain_map( rna_structure_parameters_->atom_level_domain_map() );
 	if ( choose_best_solution_ ) rna_loop_closer_->choose_best_solution_based_on_score_function( denovo_scorefxn_ );
 
 	multiple_domain_mover_ = protocols::farna::MultipleDomainMoverOP( new protocols::farna::MultipleDomainMover( pose, rna_loop_closer_ ) );

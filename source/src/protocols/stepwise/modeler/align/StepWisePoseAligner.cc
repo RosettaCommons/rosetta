@@ -576,13 +576,13 @@ StepWisePoseAligner::output_atom_id_map( std::map< id::AtomID, id::AtomID > cons
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWisePoseAligner::output_atom_id_map( std::map< id::AtomID, id::AtomID > const & atom_id_map,
-	pose::Pose const & pose1,
-	pose::Pose const & pose2 ) const {
+																				 pose::Pose const & pose1,
+																				 pose::Pose const & pose2 ) const {
 	for ( std::map < id::AtomID, id::AtomID >::const_iterator it = atom_id_map.begin(),
 			end = atom_id_map.end(); it != end; ++it ) {
 		TR << it->first << " " << pose1.residue( it->first.rsd() ).atom_name( it->first.atomno() ) <<
 			" mapped to " <<
-			it->second << " " << pose2.residue( it->second.rsd() ).atom_name( it->second.atomno() ) << std::endl;
+			it->second << " " << pose2.residue( it->second.rsd() ).atom_name( it->second.atomno() ) << "  distance: " << ( pose1.xyz( it->first ) - pose2.xyz( it->second) ).length() << std::endl;
 	}
 	TR << std::endl;
 }

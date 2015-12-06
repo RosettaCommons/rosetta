@@ -81,15 +81,16 @@
 #include <numeric/conversions.hh>
 //////////////////////////////////////////////////////////
 #include <protocols/viewer/viewers.hh>
-#include <protocols/farna/RNA_Minimizer.hh>
+#include <protocols/farna/movers/RNA_Minimizer.hh>
+#include <protocols/farna/options/RNA_MinimizerOptions.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/legacy/modeler/rna/util.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
-#include <protocols/farna/RNA_LoopCloser.fwd.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.fwd.hh>
 
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 
@@ -156,10 +157,6 @@ OPT_KEY( StringVector, decoy_tag_name )
 OPT_KEY( Boolean, dump )
 OPT_KEY( StringVector, input_tag_list )
 OPT_KEY( Boolean, graphic )
-OPT_KEY( Boolean, minimizer_deriv_check )
-OPT_KEY( String,  minimizer_min_type )
-OPT_KEY( Boolean, minimizer_skip_o2prime_trials )
-OPT_KEY( Boolean, minimizer_perform_minimizer_run )
 
 //////////////////////////////////////////////////////////////////////////////////////
 core::scoring::ScoreFunctionOP
@@ -1411,112 +1408,6 @@ pdb_to_silent_file(){
 
 }
 
-
-void
-rna_fullatom_minimize_test()
-{
-
-	using namespace core::chemical;
-	using namespace core::scoring;
-	using namespace core::kinematics;
-	using namespace core::optimization;
-	using namespace core::io::silent;
-	using namespace protocols::stepwise::modeler::rna;
-
-	/////////////////////////
-	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-
-
-	if ( option[ in::file::silent ].user() &&  option[ input_tag_list ].user() ) {
-		utility_exit_with_message( "user specify both silent_file and input_tag as pose source! ONLY one pose source allow!" );
-	}
-
-	//////////////////import from -s (need to setup pose)/////////////////////////////////////////////
-	pose::Pose pose;
-
-	std::string output_pose_name;
-
-	if ( option[ input_tag_list ].user() ) {
-
-		std::string const pdb_file =  option[ input_tag_list ]()[1];
-
-		std::cout << "importing " << pdb_file << std::endl;
-
-		output_pose_name =  "minimize_" + path_basename( pdb_file );
-
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
-
-
-	} else if ( option[ in::file::silent ].user() ) {
-
-		core::import_pose::pose_stream::SilentFilePoseInputStreamOP input( new core::import_pose::pose_stream::SilentFilePoseInputStream() );
-		input->set_order_by_energy( true );
-
-		utility::vector1< std::string > silent_files = option[in::file::silent ]();
-
-		input->filenames( silent_files ); //triggers read in of files, too.
-
-		bool found_silent_struct = false;
-		if ( input->has_another_pose() ) { //Just get the first structure
-			found_silent_struct = true;
-
-			core::io::silent::SilentStructOP silent_struct( input->next_struct() );
-			silent_struct->fill_pose( pose );
-			std::cout << "importing silent_ = " << silent_struct->decoy_tag() << std::endl;
-
-			output_pose_name = "minimize_silent_" + silent_struct->decoy_tag() + ".pdb";
-
-		}
-
-		if ( found_silent_struct == false ) utility_exit_with_message( "found_silent_struct == false!" );
-
-	} else {
-
-		utility_exit_with_message( "user need to specify input pose source!" );
-	}
-
-	////////////////////////
-
-	if ( option[ graphic ]() ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
-
-	protocols::farna::RNA_Minimizer rna_minimizer;
-
-	rna_minimizer.deriv_check( option[ minimizer_deriv_check ]() );
-
-	rna_minimizer.set_include_default_linear_chainbreak( false );
-
-	rna_minimizer.use_coordinate_constraints( false );
-	rna_minimizer.set_verbose( true );
-	rna_minimizer.vary_bond_geometry( false );
-	rna_minimizer.skip_o2prime_trials( option[ minimizer_skip_o2prime_trials ] );
-	rna_minimizer.set_perform_minimizer_run( option[ minimizer_perform_minimizer_run ] );
-
-	rna_minimizer.set_do_dump_pdb( true );
-
-	if ( option[ minimizer_min_type ].user() ) {
-		rna_minimizer.set_min_type( option[ minimizer_min_type ]() );
-	}
-
-	rna_minimizer.apply( pose );
-
-
-	dump_pdb( pose, output_pose_name );
-
-	/////////////////////////////////////////////
-	std::string silent_file = "output_silent.out";
-
-	SilentFileData silent_file_data;
-
-	BinarySilentStruct s( pose, output_pose_name );
-
-	std::cout << "Outputting " << output_pose_name << " to silent file: " << silent_file << std::endl;
-	silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
-
-
-}
-
-
 ///////////////////////////////////////////////////////////////
 void*
 my_main( void* )
@@ -1545,7 +1436,8 @@ my_main( void* )
 	} else if ( algorithm_input == "pdb_to_silent_file" ) {
 		pdb_to_silent_file();
 	} else if ( algorithm_input == "rna_fullatom_minimize_test" ) {
-		rna_fullatom_minimize_test();
+		//		rna_fullatom_minimize_test();
+		utility_exit_with_message( "-rna_fullatom_minimize_test no longer supported; use rna_minimize instead." );
 	} else {
 		std::cout << "Error no algorithm selected" << std::endl;
 	}
@@ -1587,10 +1479,6 @@ main( int argc, char * argv [] )
 		NEW_OPT( decoy_tag_name, "decoy tag from a silent_file", blank_string_vector );
 		NEW_OPT( dump, "dump pdb", false );
 		NEW_OPT( input_tag_list, "input_tag_list", blank_string_vector );
-		NEW_OPT( minimizer_deriv_check, "deriv_check", true );
-		NEW_OPT( minimizer_min_type, "minimizer_min_type", "" );
-		NEW_OPT( minimizer_skip_o2prime_trials, "minimizer_skip_o2prime_trials", true );        //Parin Jan 08, 2012 (Avoid randomness)
-		NEW_OPT( minimizer_perform_minimizer_run, "minimizer_perform_minimizer_run", true );  //Parin Jan 20, 2012 (for testing purposes)
 
 
 		////////////////////////////////////////////////////////////////////////////

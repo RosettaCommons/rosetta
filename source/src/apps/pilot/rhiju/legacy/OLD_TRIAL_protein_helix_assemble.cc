@@ -59,14 +59,14 @@
 #include <protocols/idealize/idealize.hh>
 #include <protocols/viewer/viewers.hh>
 
-#include <protocols/farna/RNA_StructureParameters.fwd.hh>
-#include <protocols/farna/RNA_StructureParameters.hh>
-#include <protocols/farna/RNA_ChunkLibrary.hh>
-#include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.fwd.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
+#include <protocols/farna/libraries/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/farna/util.hh>
 #include <protocols/stepwise/modeler/rna/helix/RNA_HelixAssembler.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
-#include <protocols/farna/RNA_Minimizer.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.hh>
+#include <protocols/farna/movers/RNA_Minimizer.hh>
 
 //Minimizer stuff
 #include <core/kinematics/MoveMap.hh>

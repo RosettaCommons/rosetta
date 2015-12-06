@@ -83,7 +83,7 @@
 //////////////////////////////////////////////////////////
 #include <protocols/viewer/viewers.hh>
 #include <protocols/farna/util.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.hh>
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueSampler.hh>

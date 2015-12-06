@@ -21,7 +21,7 @@
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_Closer.fwd.hh>
-#include <protocols/toolbox/AllowInsert.fwd.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -82,7 +82,7 @@ private:
 	void
 	do_clustering( core::pose::Pose & pose );
 
-	void get_move_map_and_allow_insert( core::kinematics::MoveMap & mm, core::pose::Pose const & pose );
+	void get_move_map_and_atom_level_domain_map( core::kinematics::MoveMap & mm, core::pose::Pose const & pose );
 
 	void close_chainbreaks( core::pose::Pose & pose, core::kinematics::MoveMap & mm );
 
@@ -128,7 +128,7 @@ private:
 	protein::loop_close::StepWiseProteinCCD_CloserOP protein_ccd_closer_;
 	working_parameters::StepWiseWorkingParametersCOP working_parameters_; // needed only for legacy SWA RNA main output.
 
-	protocols::toolbox::AllowInsertOP allow_insert_; // a atom-centric version of the DOF-centric movemap.
+	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map_; // a atom-centric version of the DOF-centric movemap.
 };
 
 } //modeler

@@ -24,13 +24,13 @@
 #include <protocols/stepwise/modeler/file_util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/farna/RNA_FragmentMonteCarlo.hh>
-#include <protocols/farna/RNA_FragmentMonteCarloOptions.hh>
-#include <protocols/farna/FullAtomRNA_Fragments.hh>
-#include <protocols/farna/RNA_StructureParameters.hh>
-#include <protocols/farna/RNA_JumpLibrary.hh>
-#include <protocols/farna/RNA_ChunkLibrary.hh>
-#include <protocols/farna/BasePairStepLibrary.hh>
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/farna/options/RNA_FragmentMonteCarloOptions.hh>
+#include <protocols/farna/fragments/FullAtomRNA_Fragments.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/libraries/RNA_JumpLibrary.hh>
+#include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
+#include <protocols/farna/libraries/BasePairStepLibrary.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <protocols/farna/util.hh>
 #include <basic/database/open.hh>
 

@@ -21,12 +21,12 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <protocols/farna/RNA_FragmentMover.fwd.hh>
+#include <protocols/farna/movers/RNA_FragmentMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/farna/MultipleDomainMover.fwd.hh>
-#include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
-#include <protocols/farna/RNA_StructureParameters.fwd.hh>
+#include <protocols/coarse_rna/MultipleDomainMover.fwd.hh>
+#include <protocols/farna/libraries/RNA_ChunkLibrary.fwd.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.fwd.hh>
 #include <core/io/rna/RNA_DataReader.fwd.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.fwd.hh>
 
@@ -196,7 +196,7 @@ private:
 	core::scoring::ScoreFunctionOP denovo_scorefxn_;
 
 	protocols::farna::RNA_FragmentMoverOP frag_mover_;
-	protocols::farna::RNA_StructureParametersOP rna_structure_parameters_;
+	protocols::farna::RNA_DeNovoPoseSetupOP rna_structure_parameters_;
 	core::io::rna::RNA_DataReaderOP rna_data_reader_;
 	protocols::farna::RNA_ChunkLibraryOP rna_chunk_library_;
 	protocols::coarse_rna::CoarseRNA_LoopCloserOP rna_loop_closer_;

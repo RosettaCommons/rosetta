@@ -106,9 +106,9 @@
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/farna/RNA_DeNovoProtocol.hh>
-#include <protocols/farna/RNA_Minimizer.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
-#include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/farna/movers/RNA_Minimizer.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
 #include <core/io/rna/RNA_DataReader.hh>
 #include <protocols/farna/util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
@@ -188,7 +188,6 @@ OPT_KEY( Boolean, fullatom_minimize )
 OPT_KEY( Boolean, fullatom_multiscore )
 OPT_KEY( Boolean, fullatom_minimize_silent)
 OPT_KEY( Boolean, o2prime_test )
-OPT_KEY( Boolean, deriv_check )
 OPT_KEY( Boolean, skip_o2prime_pack )
 OPT_KEY( Boolean, lores_score )
 OPT_KEY( Boolean, lores_score_silent )
@@ -792,110 +791,6 @@ setup_rna_base_pair_constraints( pose::Pose & pose ){
 
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-void
-rna_fullatom_minimize_test()
-{
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::scoring;
-	using namespace core::kinematics;
-	using namespace core::optimization;
-	using namespace core::io::silent;
-
-	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	if ( option[fa_standard] ) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-
-	std::string const silent_file = option[ out::file::silent  ]();
-	// Silent file setup?
-	SilentFileData silent_file_data;
-
-	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
-
-	pose::Pose native_pose;
-	bool native_exists( false );
-	if ( option[ in::file::native ].user() ) {
-		std::string native_pdb_file  = option[ in::file::native ];
-		import_pose::pose_from_pdb( native_pose, *rsd_set, native_pdb_file );
-		/////////////////////////////////////////
-		protocols::farna::ensure_phosphate_nomenclature_matches_mini( native_pose );
-		/////////////////////////////////////////
-		native_exists = true;
-	}
-
-	pose::Pose pose,start_pose;
-
-	for ( Size i = 1; i <= pdb_files.size(); i++ ) {
-		std::string const pdb_file = pdb_files[i];
-
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
-		/////////////////////////////////////////
-		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
-		/////////////////////////////////////////
-
-		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
-
-		//Don't check into general protocol?
-		//core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
-
-		pose::Pose pose_init = pose;
-		//  setup_rna_chainbreak_constraints( pose );
-		//  setup_rna_base_pair_constraints( pose );
-
-		//  if ( option[ params_file ].user() ){
-		//   protocols::farna::RNA_StructureParameters rna_structure_parameters;
-		//   std::string jump_library_file( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) );
-		//   std::string rna_params_file(  option[ params_file ] );
-		//   rna_structure_parameters.initialize( pose, rna_params_file, jump_library_file, false );
-		//  }
-
-		// checking boundary cases for weird sugar puckers
-		//  for ( Size n = 1; n < pose.total_residue() / 2 ; n++ ) {
-		//   pose.set_torsion( id::TorsionID( n, id::BB, 4 ), 109.0 );
-		//  }
-		//  pose.dump_pdb( "tweaked.pdb" );
-
-		if ( option[ data_file].user() ) {
-			core::io::rna::RNA_DataReader rna_data_reader( option[ data_file ] );
-			rna_data_reader.fill_rna_data_info( pose );
-		}
-
-		protocols::farna::RNA_Minimizer rna_minimizer;
-
-		rna_minimizer.deriv_check( option[ deriv_check ] );
-		rna_minimizer.use_coordinate_constraints( !option[ skip_coord_constraints]() );
-		//    rna_minimizer.skip_o2prime_pack( option[ skip_o2prime_pack] );
-		//  rna_minimizer.use_lores_plus_hires_scorefxn( option[ sum_lores_plus_hires ] );
-		rna_minimizer.vary_bond_geometry( option[ vary_geometry ] );
-
-		rna_minimizer.apply( pose );
-
-		// Tag
-		std::string const tag = "S_" +string_of( i );
-		BinarySilentStruct s( pose, tag );
-
-		if ( native_exists ) {
-			Real const rmsd_init = all_atom_rmsd( native_pose, pose_init );
-			Real const rmsd      = all_atom_rmsd( native_pose, pose );
-			std::cout << "All atom rmsd: " << rmsd_init  << " to " << rmsd << std::endl;
-			s.add_energy( "rms", rmsd );
-			s.add_energy( "rms_init", rmsd_init );
-		}
-
-		std::cout << "Outputting " << tag << " to silent file: " << silent_file << std::endl;
-		silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
-
-		std::string const out_file =  "minimize_"+pdb_file;
-		dump_pdb( pose, out_file );
-
-	}
-
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 rna_fullatom_multiscore_test()
@@ -1074,7 +969,7 @@ rna_fullatom_minimize_silent_test()
 		pose::Pose pose = ideal_pose;
 		iter->fill_pose( pose, *rsd_set /*, use_input_pose*/ );
 
-		protocols::farna::RNA_Minimizer rna_minimizer;
+		protocols::farna::movers::RNA_Minimizer rna_minimizer;
 		rna_minimizer.apply( pose );
 
 		RNA_SilentStruct s( pose, out_tag );
@@ -2338,7 +2233,7 @@ rna_chain_closure_test()
 	//Save "perturbed" configuration
 	pose.dump_pdb( "perturb.pdb" );
 
-	protocols::farna::RNA_LoopCloser rna_ccd_closer;
+	protocols::farna::movers::RNA_LoopCloser rna_ccd_closer;
 	Real mean_dist_err = rna_ccd_closer.apply( pose, cutpoint );
 	std::cout << "CCD closure at residue " << cutpoint << " ==> final mean distance error: " << mean_dist_err << std::endl;
 
@@ -2602,7 +2497,7 @@ rna_backbone_rebuild_test()
 	pose.dump_pdb( "close.pdb" );
 
 	// CCD close?
-	protocols::farna::RNA_LoopCloser rna_loop_closer;
+	protocols::farna::movers::RNA_LoopCloser rna_loop_closer;
 	for ( Size i = 1; i < nres_real; i++ ) {
 
 		//Real mean_dist_err = rna_ccd_close( pose, i );
@@ -2612,147 +2507,6 @@ rna_backbone_rebuild_test()
 
 	}
 	pose.dump_pdb( "ccd_close.pdb" );
-
-}
-
-///////////////////////////////////////////////////////////////////
-void
-rna_filter_base_pairs_test()
-{
-	using namespace chemical;
-	using namespace core::scoring;
-	using namespace core::chemical::rna;
-	using namespace core::conformation;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::io::silent;
-
-	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-
-	std::string const infile  = option[ in::file::silent  ][1];
-	std::string const outfile  = option[ out::file::silent  ]();
-
-	// Silent file setup?
-	SilentFileData silent_file_data_in, silent_file_data_out;
-	silent_file_data_in.read_file( infile );
-
-	//Input pose, tack on virtual atom.
-	// pose::Pose pose;
-	// import_pose::pose_from_pdb( pose, *rsd_set, infile );
-	// protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
-
-	std::string const in_path = option[ in::path::path ]()[1];
-	std::string const rna_params_file =  in_path + option[ params_file ]();
-	std::string const rna_jump_library_file( in_path + option[ jump_library_file ] );
-
-	protocols::farna::RNA_StructureParameters rna_structure_parameters;
-	bool init( false );
-
-	for ( core::io::silent::SilentFileData::iterator iter = silent_file_data_in.begin(), end = silent_file_data_in.end(); iter != end; ++iter ) {
-
-		std::string const tag = iter->decoy_tag();
-
-		pose::Pose pose;
-		iter->fill_pose( pose, *rsd_set );
-
-		if ( !init ) {
-			rna_structure_parameters.initialize_for_de_novo_protocol( pose, rna_params_file, rna_jump_library_file, false /*ignore_secstruct*/ );
-			init = true;
-		}
-
-		bool model_OK = rna_structure_parameters.check_base_pairs( pose );
-
-		if ( model_OK )  {
-			std::cout << "Outputting " << tag << " to silent file: " << outfile << std::endl;
-			RNA_SilentStruct s( pose, tag );
-			s.copy_scores( *(*iter) );
-			silent_file_data_out.write_silent_struct( s, outfile, false /*write score only*/ );
-		}
-
-	}
-
-
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void
-crazy_minimize_test()
-{
-	// Read in pdb.
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::scoring;
-	using namespace core::kinematics;
-	using namespace core::optimization;
-	using namespace core::io::silent;
-	using namespace protocols::farna;
-
-	ResidueTypeSetCOP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-
-	std::string const silent_file = option[ out::file::silent  ]();
-	// Silent file setup?
-	SilentFileData silent_file_data;
-
-	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
-
-	pose::Pose native_pose;
-	std::string native_pdb_file  = option[ in::file::native ];
-	import_pose::pose_from_pdb( native_pose, *rsd_set, native_pdb_file );
-	protocols::farna::ensure_phosphate_nomenclature_matches_mini( native_pose );
-
-	Size const nstruct = option[ out::nstruct ];
-
-	for ( Size i = 1; i <= pdb_files.size(); i++ ) {
-		std::string const pdb_file = pdb_files[i];
-
-		pose::Pose pose, start_pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
-		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
-
-		//Check rmsd
-		Real rmsd = all_atom_rmsd( native_pose, pose );
-		std::cout << "All atom rmsd: " << rmsd  << std::endl;
-
-		start_pose = pose;
-
-		//////////////////////////////////////////////////////////////////
-		for ( Size n = 1; n <= nstruct; n++ ) {
-
-			pose = start_pose;
-
-			if ( i == 1 && n == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
-
-			//User defined fold tree...
-			if ( option[ params_file ].user() ) {
-				std::string const rna_params_file =  option[ params_file ]();
-				std::string const jump_library_file( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) );
-				RNA_StructureParametersOP rna_structure_parameters_( new RNA_StructureParameters );
-				rna_structure_parameters_->initialize_for_de_novo_protocol( pose, rna_params_file, jump_library_file, false /* ignore_secstruct */ );
-			} else if ( option[ crazy_fold_tree ] ) {
-				setup_crazy_fold_tree( pose, rsd_set );
-			} else {
-				core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
-			}
-
-			protocols::farna::RNA_Minimizer rna_minimizer;
-			rna_minimizer.apply( pose );
-
-			std::string const out_file =  "minimize_"+lead_zero_string_of(n,3)+"_"+pdb_file;
-			rmsd = all_atom_rmsd( native_pose, pose );
-			std::cout << "All atom rmsd: " << rmsd  << std::endl;
-
-			RNA_SilentStruct s( pose, out_file );
-			s.add_energy( "rms", rmsd );
-			std::cout << "Outputting " << out_file << " to silent file: " << silent_file << std::endl;
-			silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
-
-			dump_pdb( pose, out_file );
-		}
-
-	}
 
 }
 
@@ -4801,8 +4555,6 @@ my_main( void* )
 		rna_fullatom_score_test();
 	} else if ( option[ o2prime_test ] ) {
 		rna_o2prime_test();
-	} else if ( option[ fullatom_minimize ] ) {
-		rna_fullatom_minimize_test();
 	} else if ( option[ fullatom_multiscore ] ) {
 		rna_fullatom_multiscore_test();
 	} else if ( option[ fullatom_minimize_silent ] ) {
@@ -4827,16 +4579,12 @@ my_main( void* )
 		create_rna_benchmark_test();
 	} else if ( option[ chain_closure_test ] ) {
 		rna_chain_closure_test();
-	} else if ( option[ filter_base_pairs ] ) {
-		rna_filter_base_pairs_test();
 	} else if ( option[ backbone_rebuild_test ] ) {
 		rna_backbone_rebuild_test();
 	} else if ( option[ convert_to_native ] ) {
 		convert_to_native_test();
 	} else if ( option[ pymol_struct_type ] ) {
 		pymol_struct_type_test();
-	} else if ( option[ crazy_minimize ] ) {
-		crazy_minimize_test();
 	} else if ( option[ env_test ] ) {
 		env_sugar_test();
 	} else if ( option[ sasatest ] ) {
@@ -4896,7 +4644,6 @@ main( int argc, char * argv [] )
 		NEW_OPT( fullatom_multiscore, "Test RNA fullatom scoring speed", false );
 		NEW_OPT( fullatom_minimize_silent, "Test RNA full minimize on silent file", false );
 		NEW_OPT( o2prime_test, "Test RNA 2'-OH rotamer trials", false );
-		NEW_OPT( deriv_check, "Check derivatives!", false );
 		NEW_OPT( skip_o2prime_pack, "Turn off RNA 2'-OH packing during minimize", false );
 		NEW_OPT( lores_score, "Test RNA low resolution score", false );
 		NEW_OPT( lores_score_silent, "Test RNA low resolution score on silent file", false );

@@ -24,7 +24,6 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.fwd.hh>
 #include <protocols/stepwise/modeler/precomputed/PrecomputedLibraryMover.fwd.hh>
-#include <protocols/toolbox/AllowInsert.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -113,6 +112,9 @@ private:
 
 	void
 	do_minimizing( core::pose::Pose & pose );
+
+	void
+	do_stepwise_lores( core::pose::Pose & pose );
 
 	void figure_out_moving_res_list( core::pose::Pose const & pose );
 

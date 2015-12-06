@@ -33,7 +33,7 @@
 #include <protocols/moves/Mover.hh>
 #include <string>
 #include <map>
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
 
 using namespace protocols::stepwise::modeler;
 using namespace protocols::stepwise::modeler::rna;
@@ -97,7 +97,7 @@ public:
 	set_vary_bond_geometry_frequency( core::Real const setting ) { vary_bond_geometry_frequency_ = setting; }
 
 	void
-	set_allow_insert( toolbox::AllowInsertOP setting ){ allow_insert_ = setting; }
+	set_atom_level_domain_map( toolbox::AtomLevelDomainMapOP setting ){ atom_level_domain_map_ = setting; }
 
 	void
 	set_options( protocols::stepwise::modeler::options::StepWiseModelerOptionsOP options );
@@ -161,7 +161,7 @@ private:
 
 	utility::vector1< core::Size > working_extra_minimize_res_;
 
-	toolbox::AllowInsertOP allow_insert_;
+	toolbox::AtomLevelDomainMapOP atom_level_domain_map_;
 
 	core::Real original_geometry_weight_;
 

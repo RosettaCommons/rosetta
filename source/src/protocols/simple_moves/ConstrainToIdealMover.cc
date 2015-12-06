@@ -24,7 +24,7 @@
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/pose/rna/util.hh>
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
 
 #include <core/conformation/Residue.hh>
 
@@ -59,7 +59,7 @@
 //
 //  -- This object is supposed to install constraints into the Pose, and update the MoveMap
 //      to move bond lengths and angles of atoms that are free to move. Its actually not
-//      clear to me if we need both MoveMap and AllowInsert given -- either one would be OK?
+//      clear to me if we need both MoveMap and AtomLevelDomainMap given -- either one would be OK?
 //
 //  -- This object's name should not be ConstrainToIdealMover.
 //
@@ -86,7 +86,7 @@ namespace simple_moves {
 
 ConstrainToIdealMover::ConstrainToIdealMover() :
 	protocols::moves::Mover( "ConstrainToIdealMover" ),
-	allow_insert_( /*0*/ ), //requires pose to initialize
+	atom_level_domain_map_( /*0*/ ), //requires pose to initialize
 	bond_length_sd_( 0.05 ), // might be better to have in a database for each atom
 	bond_length_sd_polar_hydrogen_( 0.20 ), // might be better to have in a database for each atom
 	bond_angle_sd_( numeric::conversions::radians( 5.0 ) ), // might be better to have in a database for each atom
@@ -117,7 +117,7 @@ ConstrainToIdealMover & ConstrainToIdealMover::operator = ( ConstrainToIdealMove
 	//abort self-assignment
 	if ( this == &rhs ) return *this;
 
-	allow_insert_     = rhs.get_allow_insert()->clone();
+	atom_level_domain_map_     = rhs.get_atom_level_domain_map()->clone();
 	just_rna_backbone_ = rhs.just_rna_backbone_;
 	just_polar_hydrogens_ = rhs.just_polar_hydrogens_;
 
@@ -132,11 +132,11 @@ ConstrainToIdealMover::get_name() const {
 protocols::moves::MoverOP ConstrainToIdealMover::fresh_instance() const { return protocols::moves::MoverOP( new ConstrainToIdealMover ); }
 protocols::moves::MoverOP ConstrainToIdealMover::clone() const { return protocols::moves::MoverOP( new ConstrainToIdealMover( *this ) ); }
 
-/// @brief setter for AllowInsert; shallow copy
-void ConstrainToIdealMover::set_allow_insert( protocols::toolbox::AllowInsertCOP allow_insert ) { allow_insert_ = allow_insert; }
+/// @brief setter for AtomLevelDomainMap; shallow copy
+void ConstrainToIdealMover::set_atom_level_domain_map( protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) { atom_level_domain_map_ = atom_level_domain_map; }
 
-/// @brief getter for AllowInsert
-protocols::toolbox::AllowInsertCOP ConstrainToIdealMover::get_allow_insert() const { return allow_insert_; }
+/// @brief getter for AtomLevelDomainMap
+protocols::toolbox::AtomLevelDomainMapCOP ConstrainToIdealMover::get_atom_level_domain_map() const { return atom_level_domain_map_; }
 
 /// @details This code will modify your input pose by adding constraints which will trend bond lengths and angles towards ideal.
 void ConstrainToIdealMover::apply( core::pose::Pose & pose ){
@@ -144,7 +144,7 @@ void ConstrainToIdealMover::apply( core::pose::Pose & pose ){
 	//this is not a clear() operation in case someone is still sharing the old pointer
 	core::kinematics::MoveMap mm;
 	apply( pose, mm );
-	if ( !allow_insert_ ) allow_insert_ = protocols::toolbox::AllowInsertOP( new protocols::toolbox::AllowInsert( pose ) );
+	if ( !atom_level_domain_map_ ) atom_level_domain_map_ = protocols::toolbox::AtomLevelDomainMapOP( new protocols::toolbox::AtomLevelDomainMap( pose ) );
 } //apply
 
 
@@ -413,7 +413,7 @@ ConstrainToIdealMover::i_want_this_atom_to_move( core::conformation::Residue con
 	}
 
 	core::id::AtomID id( k, residue2.seqpos() );
-	if ( !allow_insert_->get( id ) ) return false;
+	if ( !atom_level_domain_map_->get( id ) ) return false;
 
 	if ( residue2.is_virtual( k ) ) return false;
 
@@ -467,7 +467,7 @@ ConstrainToIdealMover::vary_bond_geometry(
 
 	for  ( core::Size i = 1; i <= nres; i++ )  {
 
-		if ( !allow_insert_->get( i ) ) continue;
+		if ( !atom_level_domain_map_->get( i ) ) continue;
 
 		core::conformation::Residue const & residue( pose.residue( i )  );
 
@@ -511,7 +511,7 @@ ConstrainToIdealMover::vary_bond_geometry(
 	for  ( core::Size i = 1; i <= nres; i++ )  {
 
 		//Go through all bonds in pose...
-		if ( !allow_insert_->get( i ) ) continue;
+		if ( !atom_level_domain_map_->get( i ) ) continue;
 
 		core::conformation::Residue const & residue( pose.residue( i )  );
 
@@ -578,7 +578,7 @@ ConstrainToIdealMover::vary_bond_geometry(
 
 		for  ( core::Size i = 1; i <= nres; i++ )  {
 
-			if ( !allow_insert_->get( i ) ) continue;
+			if ( !atom_level_domain_map_->get( i ) ) continue;
 
 			core::conformation::Residue const & residue( pose.residue( i )  );
 
@@ -683,10 +683,10 @@ ConstrainToIdealMover::set_score_type( core::scoring::ScoreType const setting ){
 // ideal bond lengths and angles! This came from RNA_Minimizer.
 void
 setup_vary_rna_bond_geometry( core::kinematics::MoveMap & mm,
-	core::pose::Pose & pose, toolbox::AllowInsertCOP allow_insert,
+	core::pose::Pose & pose, toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 	core::scoring::ScoreType score_type /* = rna_bond_geometry*/ ) {
 	ConstrainToIdealMover CTIMover;
-	CTIMover.set_allow_insert( allow_insert );
+	CTIMover.set_atom_level_domain_map( atom_level_domain_map );
 	CTIMover.set_just_rna_backbone( true );
 	CTIMover.set_score_type( score_type );
 	CTIMover.apply( pose, mm );
@@ -698,9 +698,9 @@ setup_vary_rna_bond_geometry( core::kinematics::MoveMap & mm,
 // ideal bond lengths and angles! This came from RNA_Minimizer.
 void
 setup_vary_polar_hydrogen_geometry( core::kinematics::MoveMap & mm,
-	core::pose::Pose & pose, toolbox::AllowInsertCOP allow_insert ) {
+	core::pose::Pose & pose, toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) {
 	ConstrainToIdealMover CTIMover;
-	CTIMover.set_allow_insert( allow_insert );
+	CTIMover.set_atom_level_domain_map( atom_level_domain_map );
 	CTIMover.set_just_polar_hydrogens( true );
 	CTIMover.set_score_type( core::scoring::bond_geometry );
 	CTIMover.apply( pose, mm );

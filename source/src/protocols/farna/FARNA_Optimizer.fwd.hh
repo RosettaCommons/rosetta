@@ -21,9 +21,9 @@
 namespace protocols {
 namespace farna {
 
-class FARNA_Optimizer;
-typedef utility::pointer::shared_ptr< FARNA_Optimizer > FARNA_OptimizerOP;
-typedef utility::pointer::shared_ptr< FARNA_Optimizer const > FARNA_OptimizerCOP;
+	class FARNA_Optimizer;
+	typedef utility::pointer::shared_ptr< FARNA_Optimizer > FARNA_OptimizerOP;
+	typedef utility::pointer::shared_ptr< FARNA_Optimizer const > FARNA_OptimizerCOP;
 
 } //farna
 } //protocols

@@ -69,13 +69,13 @@
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 
-#include <protocols/toolbox/AllowInsert.hh>
-#include <protocols/farna/MultipleDomainMover.hh>
-#include <protocols/farna/RNA_ChunkLibrary.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
+#include <protocols/coarse_rna/MultipleDomainMover.hh>
+#include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
 #include <core/io/rna/RNA_DataReader.hh>
 #include <protocols/farna/util.hh>
-#include <protocols/farna/RNA_SecStructInfo.hh>
-#include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/farna/secstruct/RNA_SecStructInfo.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/coarse_rna/CoarseRNA_DeNovoProtocol.hh>
@@ -148,7 +148,7 @@ OPT_KEY( Boolean, staged_constraints )
 OPT_KEY( Boolean, close_loop_test )
 OPT_KEY( Boolean, close_loops )
 OPT_KEY( Boolean, choose_best_solution )
-OPT_KEY( Boolean, force_ideal_chainbreak )
+//OPT_KEY( Boolean, force_ideal_chainbreak )
 OPT_KEY( Boolean, check_pairing_dists )
 OPT_KEY( Boolean, skip_base_pair_constraints )
 OPT_KEY( Boolean, dump )
@@ -586,10 +586,10 @@ create_bp_jump_database_test( ){
 void
 general_initialize( 	pose::Pose & pose,
 											pose::PoseOP & native_pose,
-											protocols::farna::RNA_StructureParametersOP & rna_structure_parameters_,
+											protocols::farna::RNA_DeNovoPoseSetupOP & rna_structure_parameters_,
 											protocols::coarse_rna::CoarseRNA_LoopCloserOP & rna_loop_closer_,
 											protocols::farna::RNA_ChunkLibraryOP & rna_chunk_library_,
-											protocols::toolbox::AllowInsertOP &  allow_insert_
+											protocols::toolbox::AtomLevelDomainMapOP &  atom_level_domain_map_
 ){
 
 	using namespace core::chemical;
@@ -627,7 +627,7 @@ general_initialize( 	pose::Pose & pose,
 	std::string const jump_library_file_( basic::database::full_name("sampling/rna/1jj2_coarse_jumps.dat" ) );
 	utility::vector1< std::string > chunk_silent_files_( option[ in::file::silent ]() );
 
-	rna_structure_parameters_ = new RNA_StructureParameters;
+	rna_structure_parameters_ = new RNA_DeNovoPoseSetup;
 	rna_structure_parameters_->initialize( pose, rna_params_file_, jump_library_file_, true /*ignore_secstruct*/ );
 
 	utility::vector1< Size > input_res_( option[ input_res ]() );
@@ -637,7 +637,7 @@ general_initialize( 	pose::Pose & pose,
 		rna_chunk_library_ = new protocols::farna::RNA_ChunkLibrary( chunk_silent_files_, pose, rna_structure_parameters_->connections() );
 	}
 
-	rna_structure_parameters_->set_allow_insert( rna_chunk_library_->allow_insert() );
+	rna_structure_parameters_->set_atom_level_domain_map( rna_chunk_library_->atom_level_domain_map() );
 	rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
 
 	pose.dump_pdb( "after_fold_tree.pdb" );
@@ -645,10 +645,10 @@ general_initialize( 	pose::Pose & pose,
 	rna_chunk_library_->initialize_random_chunks( pose, true /*dump_pdb*/ );
 
 	std::cout << "ALLOW INSERT " << std::endl;
-	allow_insert_ = rna_structure_parameters_->allow_insert();
-	allow_insert_->show();
+	atom_level_domain_map_ = rna_structure_parameters_->atom_level_domain_map();
+	atom_level_domain_map_->show();
 	rna_loop_closer_ = new CoarseRNA_LoopCloser;
-	rna_loop_closer_->set_allow_insert( allow_insert_ );
+	rna_loop_closer_->set_atom_level_domain_map( atom_level_domain_map_ );
 
 	//	if ( choose_best_solution_ ) rna_loop_closer_->choose_best_solution_based_on_score_function( denovo_scorefxn_ );
 
@@ -680,12 +680,12 @@ coarse_rb_test(){
 	// create extended coarse grained pose.
 	pose::Pose pose;
 	pose::PoseOP native_pose;
-	RNA_StructureParametersOP rna_structure_parameters_;
+	RNA_DeNovoPoseSetupOP rna_structure_parameters_;
 	CoarseRNA_LoopCloserOP rna_loop_closer_;
 	RNA_ChunkLibraryOP rna_chunk_library_;
-	AllowInsertOP allow_insert_;
+	AtomLevelDomainMapOP atom_level_domain_map_;
 
-	general_initialize( pose, native_pose, rna_structure_parameters_, rna_loop_closer_, rna_chunk_library_, allow_insert_ );
+	general_initialize( pose, native_pose, rna_structure_parameters_, rna_loop_closer_, rna_chunk_library_, atom_level_domain_map_ );
 
 	MultipleDomainMoverOP multiple_domain_mover = new MultipleDomainMover( pose, rna_loop_closer_ );
 	Size const num_domains = multiple_domain_mover->num_domains();
@@ -767,7 +767,7 @@ get_ideal_angle_sets(  	 utility::vector1< utility::vector1< Real > > & angle_se
 //////////////////////////////////////////////////////////////////////////////////////
 void
 get_angle_sets(  pose::Pose const & pose,
-								 protocols::toolbox::AllowInsertOP allow_insert,
+								 protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map,
 								 utility::vector1< utility::vector1< Real > > & angle_sets,
 								 utility::vector1< utility::vector1< core::id::AtomID > > & angle_ids,
 								 bool const sample_angles_ ){
@@ -778,7 +778,7 @@ get_angle_sets(  pose::Pose const & pose,
 
 		utility::vector1< AtomID > ids;
 		// P-S-P
-		if ( allow_insert->get( AtomID(2,i) /*sugar*/ )  ) {
+		if ( atom_level_domain_map->get( AtomID(2,i) /*sugar*/ )  ) {
 			ids.clear();
 			if ( pose.fold_tree().is_cutpoint( i ) && pose.residue_type( i ).has_variant_type( "CUTPOINT_LOWER" ) ) {
 				ids.push_back( AtomID( 1, i ) );
@@ -793,7 +793,7 @@ get_angle_sets(  pose::Pose const & pose,
 		}
 
 		// S-P-S
-		if ( allow_insert->get( AtomID(1,i+1) /*phosphate*/ )  ) {
+		if ( atom_level_domain_map->get( AtomID(1,i+1) /*phosphate*/ )  ) {
 			ids.clear();
 			if ( pose.fold_tree().is_cutpoint( i ) && pose.residue_type( i ).has_variant_type( "CUTPOINT_LOWER" ) ) {
 				ids.push_back( AtomID( 2, i ) );
@@ -1265,15 +1265,15 @@ modeler_map_test(){
 	// create extended coarse grained pose.
 	pose::Pose pose;
 	pose::PoseOP native_pose;
-	RNA_StructureParametersOP rna_structure_parameters_;
+	RNA_DeNovoPoseSetupOP rna_structure_parameters_;
 	CoarseRNA_LoopCloserOP rna_loop_closer_;
 	RNA_ChunkLibraryOP rna_chunk_library_;
-	AllowInsertOP allow_insert_;
-	general_initialize( pose, native_pose, rna_structure_parameters_, rna_loop_closer_, rna_chunk_library_, allow_insert_ );
+	AtomLevelDomainMapOP atom_level_domain_map_;
+	general_initialize( pose, native_pose, rna_structure_parameters_, rna_loop_closer_, rna_chunk_library_, atom_level_domain_map_ );
 
 	output_angles( pose );
 
-	// Choose first allow_insert phosphate to sample...
+	// Choose first atom_level_domain_map phosphate to sample...
 	Size sample_res( 0 );
 	utility::vector1< TorsionID > moving_torsions;
 	utility::vector1< bool > is_moving_res;
@@ -1282,12 +1282,12 @@ modeler_map_test(){
 
 		is_moving_res.push_back( false );
 
-		//		bool check_domain_boundary = ( allow_insert_->get_domain( AtomID(1,i) /*phosphate*/ ) != allow_insert_->get_domain( AtomID(2,i-1) /*sugar*/) );
-		//		std::cout << "CHECK " << i << ' ' << allow_insert_->get( AtomID(i,1) ) << ' ' << check_domain_boundary << std::endl;
+		//		bool check_domain_boundary = ( atom_level_domain_map_->get_domain( AtomID(1,i) /*phosphate*/ ) != atom_level_domain_map_->get_domain( AtomID(2,i-1) /*sugar*/) );
+		//		std::cout << "CHECK " << i << ' ' << atom_level_domain_map_->get( AtomID(i,1) ) << ' ' << check_domain_boundary << std::endl;
 
-		if// (allow_insert_->get( AtomID(i,1) ) && check_domain_boundary ){
-			(allow_insert_->get( TorsionID( i-1, BB, 2 ), pose.conformation() ) &&
-			 allow_insert_->get( TorsionID( i, BB, 1 ), pose.conformation() ) ){
+		if// (atom_level_domain_map_->get( AtomID(i,1) ) && check_domain_boundary ){
+			(atom_level_domain_map_->get( TorsionID( i-1, BB, 2 ), pose.conformation() ) &&
+			 atom_level_domain_map_->get( TorsionID( i, BB, 1 ), pose.conformation() ) ){
 			if ( sample_res == 0 ) sample_res = i;
 			std::cout << "FOUND SAMPLE RES: " << i << std::endl;
 			moving_torsions.push_back( TorsionID( i - 1, BB, 2 ) );
@@ -1303,7 +1303,7 @@ modeler_map_test(){
 	utility::vector1< utility::vector1< AtomID > > angle_ids;
 	utility::vector1< utility::vector1< Real > > angle_sets;
 	bool sample_angles_( option[ sample_angles ]() );
-	get_angle_sets( pose, allow_insert_, angle_sets, angle_ids, sample_angles_ );
+	get_angle_sets( pose, atom_level_domain_map_, angle_sets, angle_ids, sample_angles_ );
 
 	// virtualize base for internal residues.
 	for ( Size i = 1; i < pose.total_residue(); i++ ){
@@ -1575,7 +1575,7 @@ coarse_rna_denovo_test(){
 	de_novo_protocol.set_staged_constraints( option[ staged_constraints ]() );
 	de_novo_protocol.set_close_loops( option[ close_loops ]() );
 	de_novo_protocol.set_choose_best_solution( option[ choose_best_solution ]() );
-	de_novo_protocol.set_force_ideal_chainbreak( option[ force_ideal_chainbreak ]() );
+	//	de_novo_protocol.set_force_ideal_chainbreak( option[ force_ideal_chainbreak ]() );
 	de_novo_protocol.set_check_pairing_dists( option[ check_pairing_dists ]() );
 	de_novo_protocol.set_add_base_pair_constraints( !option[skip_base_pair_constraints ]() );
 	de_novo_protocol.set_dump_pdb( option[ dump ]() );
@@ -1658,7 +1658,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( close_loop_test, "blah",false);
 	NEW_OPT( close_loops, "blah",false);
 	NEW_OPT( choose_best_solution, "blah",false);
-	NEW_OPT( force_ideal_chainbreak, "blah",false);
+	//	NEW_OPT( force_ideal_chainbreak, "blah",false);
 	NEW_OPT( check_pairing_dists, "blah",false);
 	NEW_OPT( skip_base_pair_constraints, "blah",false);
 	NEW_OPT( dump, "blah",false);

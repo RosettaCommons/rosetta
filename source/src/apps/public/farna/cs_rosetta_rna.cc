@@ -34,14 +34,15 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/sequence/Sequence.hh>
 
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
 
 //RNA stuff.
-#include <protocols/farna/RNA_Minimizer.fwd.hh>
-#include <protocols/farna/RNA_Minimizer.hh>
-#include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/farna/movers/RNA_Minimizer.fwd.hh>
+#include <protocols/farna/movers/RNA_Minimizer.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/setup/RNA_DeNovoParameters.hh>
 #include <protocols/farna/RNA_DeNovoProtocol.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.hh>
 
 // C++ headers
 #include <iostream>
@@ -85,6 +86,7 @@ using namespace core::scoring::rna::chemical_shift;
 
 using namespace protocols;
 using namespace protocols::farna;
+using namespace protocols::farna::setup;
 
 using namespace ObjexxFCL;
 
@@ -102,6 +104,16 @@ using io::pdb::dump_pdb;
 // This is the score function used in the CS-ROSETTA-RNA study:
 //   "Structure determination of noncanonical RNA motifs guided by 1H NMR
 //    chemical shifts" (2014).
+//
+// This looks to have been written by P. Sripakdeevong in 2013-2014;
+//  modified in 2015 to work with 'renovated' FARFAR code by R. Das.
+//
+// NOTE: We should get rid of this, which copies code with rna_denovo,
+//  and instead use the 'normal' FARFAR workflow, which now has some nice
+//  bells and whistles. See rna_denovo.cc -- and possibly move its rna_denovo_test()
+//  function into protocols/farna/setup.cc or something, shared with this function.
+//
+
 ScoreFunctionOP
 create_cs_rosetta_rna_scorefxn(){
 
@@ -117,46 +129,15 @@ create_cs_rosetta_rna_scorefxn(){
 	return scorefxn;
 }
 
-// Setup RNA_StructureParametersOP (for setting up fold_tree, chainbreak and etcs).
-// Note
-// ----
-// Reuses existing functionality of FARNA.
-RNA_StructureParametersOP
-setup_rna_struct_params(core::pose::Pose & pose) {
-
-	/* Parin Original which did not work
-	string rna_params_file = option[ params_file ]();
-	string jump_lib_file = basic::database::full_name( "sampling/rna/1jj2_RNA_jump_library.dat" );
-	bool ignore_secstruct = false;
-
-	RNA_StructureParametersOP rna_struct_params = new RNA_StructureParameters;
-
-	rna_struct_params->initialize( pose,
-	rna_params_file,
-	jump_lib_file,
-	ignore_secstruct );
-	*/
-
-	RNA_StructureParametersOP rna_structure_parameters( new RNA_StructureParameters );
-	std::string jump_library_file( basic::database::full_name( "sampling/rna/1jj2_RNA_jump_library.dat"  ) );
-	std::string rna_params_file(  option[ params_file ] );
-	rna_structure_parameters->initialize_for_de_novo_protocol( pose, rna_params_file, jump_library_file, false );
-
-	return rna_structure_parameters;
-
-
-
-}
-
 // Get all obligated base pairs
 utility::vector1< BasePair >
-get_obligated_rna_pairings(RNA_StructureParametersOP rna_struct_params) {
+get_obligated_rna_pairings(RNA_DeNovoParameters const & rna_struct_params) {
 
 	utility::vector1 < utility::vector1 <core::Size > >
-		obligate_pairing_sets = rna_struct_params->get_obligate_pairing_sets();
+		obligate_pairing_sets = rna_struct_params.obligate_pairing_sets();
 
 	utility::vector1< BasePair >
-		all_rna_pairings = rna_struct_params->get_rna_pairing_list();
+		all_rna_pairings = rna_struct_params.rna_pairing_list();
 
 	utility::vector1< BasePair > obl_rna_pairings;
 
@@ -183,11 +164,11 @@ get_obligated_rna_pairings(RNA_StructureParametersOP rna_struct_params) {
 // Reuses existing functionality of FARNA.
 RNA_MinimizerOP
 setup_rna_minimizer(ScoreFunctionOP scorefxn,
-	RNA_StructureParametersOP rna_struct_params,
-	core::pose::Pose & pose){
+										RNA_DeNovoParameters const & rna_struct_params,
+										core::pose::Pose & pose ){
 
 	RNA_MinimizerOP rna_minimizer( new RNA_Minimizer );
-	rna_minimizer->vary_bond_geometry( false );
+	// 	rna_minimizer->vary_bond_geometry( false ); // defaults to false.
 	rna_minimizer->set_score_function( scorefxn );
 	//return rna_minimizer;
 
@@ -195,7 +176,7 @@ setup_rna_minimizer(ScoreFunctionOP scorefxn,
 		obl_rna_pairings = get_obligated_rna_pairings(rna_struct_params);
 
 	// Determine DOFs to allow minimization.
-	toolbox::AllowInsertOP allow_minimize ( new toolbox::AllowInsert( pose ) );
+	toolbox::AtomLevelDomainMapOP allow_minimize ( new toolbox::AtomLevelDomainMap( pose ) );
 
 	if ( obl_rna_pairings.size() > 0 ) {
 		allow_minimize->set( false );
@@ -226,7 +207,7 @@ setup_rna_minimizer(ScoreFunctionOP scorefxn,
 	allow_minimize->show();
 	cout << endl;
 
-	rna_minimizer->set_allow_insert( allow_minimize );
+	rna_minimizer->set_atom_level_domain_map( allow_minimize );
 
 	return rna_minimizer;
 
@@ -319,17 +300,16 @@ cs_rosetta_rna_pdb(bool perform_minimize)
 	protocols::viewer::add_conformation_viewer( pose.conformation(),
 		"current", 600, 600 );
 	// Setup fold_tree, jump points, variants and chain breaks.
-	RNA_StructureParametersOP rna_struct_params;
-	rna_struct_params = setup_rna_struct_params( pose );
-
-	rna_struct_params->setup_fold_tree_and_jumps_and_variants( pose );
+	RNA_DeNovoPoseSetup rna_denovo_pose_setup( option[ params_file ]() );
+	rna_denovo_pose_setup.initialize_for_de_novo_protocol( pose );
+	rna_denovo_pose_setup.setup_fold_tree_and_jumps_and_variants( pose );
 
 	// Setting fold_tree appear to introduce inproperly closed chain breaks.
 	// Apply CCD chain closure to these chain break positions.
 	close_chain_breaks( pose );
 
 	if ( perform_minimize ) {
-		RNA_MinimizerOP rna_minimizer = setup_rna_minimizer( scorefxn, rna_struct_params, pose);
+		RNA_MinimizerOP rna_minimizer = setup_rna_minimizer( scorefxn, rna_denovo_pose_setup.rna_params(), pose);
 		rna_minimizer->apply( pose );
 	} else { /*scores PDB*/
 		cout << "CS-ROSETTA-RNA score for PDB (" << pdb_file << "):" << endl;

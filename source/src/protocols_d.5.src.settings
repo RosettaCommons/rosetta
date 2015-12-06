@@ -11,31 +11,51 @@
 
 sources = {
     "protocols/coarse_rna": [
-	"CoarseRNA_DeNovoProtocol",
+	#"CoarseRNA_DeNovoProtocol", # deprecated?
 	"CoarseRNA_Fragments",
 	"CoarseRNA_LoopCloser",
+	"MultipleDomainMover", #deprecated?
     ],
     "protocols/farna": [
-	"BasePairStep",
-	"BasePairStepLibrary",
 	"FARNA_Optimizer",
-	"FullAtomRNA_Fragments",
-	"MultipleDomainMover",
-	"RNA_ChunkLibrary",
 	"RNA_DeNovoProtocol",
-	"RNA_DeNovoProtocolOptions",
-	"RNA_FragmentMover",
-	"RNA_Fragments",
 	"RNA_FragmentMonteCarlo",
-	"RNA_FragmentMonteCarloOptions",
+	"util",
+    ],
+    "protocols/farna/base_pairs": [
+	"BasePairStep",
+	"RNA_BasePairHandler",
+    ],
+    "protocols/farna/fragments": [
+	"FullAtomRNA_Fragments",
+	"RNA_Fragments",
+    ],
+    "protocols/farna/libraries": [
+	"BasePairStepLibrary",
+	"ChunkSet",
+	"RNA_ChunkLibrary",
 	"RNA_JumpLibrary",
 	"RNA_LibraryManager",
+    ],
+    "protocols/farna/movers": [
+	"RNA_FragmentMover",
+	"RNA_JumpMover",
 	"RNA_LoopCloser",
 	"RNA_Minimizer",
 	"RNA_Relaxer",
-	"RNA_SecStructInfo",
-	"RNA_StructureParameters",
-	"util",
+    ],
+    "protocols/farna/options": [
+	"RNA_BasicOptions",
+	"RNA_DeNovoProtocolOptions",
+	"RNA_FragmentMonteCarloOptions",
+	"RNA_MinimizerOptions",
+    ],
+    "protocols/farna/secstruct": [
+	 "RNA_SecStructInfo",
+    ],
+    "protocols/farna/setup": [
+	"RNA_DeNovoPoseSetup",
+	"RNA_DeNovoParameters",
     ],
     "protocols/magnesium": [
 	"MgOrbitalFrameFinder",

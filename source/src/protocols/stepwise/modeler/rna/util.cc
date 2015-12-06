@@ -58,7 +58,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/TorsionID.hh>

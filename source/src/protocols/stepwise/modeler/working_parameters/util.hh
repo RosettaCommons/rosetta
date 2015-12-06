@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_stepwise_modeler_rna_StepWiseRNA_WorkingParametersUtil_HH
 
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
-#include <protocols/toolbox/AllowInsert.fwd.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/kinematics/MoveMap.fwd.hh>

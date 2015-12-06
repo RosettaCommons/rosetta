@@ -34,7 +34,7 @@
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <protocols/farna/util.hh>
-#include <protocols/farna/RNA_Minimizer.hh>
+#include <protocols/farna/movers/RNA_Minimizer.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/phosphate/PhosphateMover.hh>
@@ -149,17 +149,6 @@ screen_phosphates()
 	// scorefxn->show( pose );
 	// protocols::farna::print_hbonds( pose );
 	pose.dump_pdb( "SCREEN_POSE.pdb" );
-
-	if ( false ) {
-		// do minimizing
-		protocols::farna::RNA_Minimizer rna_minimizer;
-		rna_minimizer.deriv_check( option[ OptionKeys::rna::farna::deriv_check ]() );
-		rna_minimizer.use_coordinate_constraints( !option[ OptionKeys::rna::farna::skip_coord_constraints]() );
-		rna_minimizer.skip_o2prime_trials( option[ OptionKeys::rna::farna::skip_o2prime_trials] );
-		rna_minimizer.vary_bond_geometry( option[ OptionKeys::rna::farna::vary_geometry ] );
-		rna_minimizer.apply( pose );
-	}
-
 
 }
 

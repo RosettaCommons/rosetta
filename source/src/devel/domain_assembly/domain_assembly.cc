@@ -32,7 +32,7 @@
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueConnection.hh>
 
@@ -41,10 +41,10 @@
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 // Headers for RNA
-#include <protocols/farna/FullAtomRNA_Fragments.hh>
+#include <protocols/farna/fragments/FullAtomRNA_Fragments.hh>
 #include <basic/database/open.hh>
-#include <protocols/farna/RNA_FragmentMover.hh>
-#include <protocols/farna/RNA_FragmentMover.fwd.hh>
+#include <protocols/farna/movers/RNA_FragmentMover.hh>
+#include <protocols/farna/movers/RNA_FragmentMover.fwd.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -84,6 +84,7 @@ using namespace protocols::moves;
 using namespace protocols::viewer;
 using namespace basic::options;
 using namespace farna;
+using namespace farna::movers;
 using namespace ObjexxFCL::format;
 //using namespace basic::options::OptionKeys;
 using namespace chemical;
@@ -147,7 +148,7 @@ read_linker_file(
 }
 
 /// @brief function that parses the rna regions specified into a boolean array to be used by a RNA Fragment Mover Object
-protocols::toolbox::AllowInsertOP
+protocols::toolbox::AtomLevelDomainMapOP
 set_moveable_rna(
 	pose::Pose & full_pose,
 	utility::vector1< std::pair < Size, Size > > & linker_rna
@@ -155,21 +156,21 @@ set_moveable_rna(
 {
 	using namespace protocols::toolbox;
 	//FArray1D used to maintain RNA_FragmentMover compatability with other RNA protocols
-	AllowInsertOP allow_insert( new AllowInsert( full_pose ) );
+	AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( full_pose ) );
 	for ( Size i = 1; i <= full_pose.total_residue(); ++i ) {
-		allow_insert->set( i, false );
+		atom_level_domain_map->set( i, false );
 		if ( full_pose.residue_type(i).is_RNA() ) {
 			//If the residue is RNA and a linker range, set it as moveable, otherwise it will remain immobile
 			for ( Size ii = 1; ii <= linker_rna.size(); ++ii ) {
 				if ( i >= linker_rna[ii].first && i <= linker_rna[ii].second ) {
-					allow_insert->set( i, true );
+					atom_level_domain_map->set( i, true );
 					//If it's true for one linker range don't bother testing the following ranges
 					break;
 				}
 			}
 		}
 	}
-	return allow_insert;;
+	return atom_level_domain_map;;
 }
 
 
@@ -432,7 +433,7 @@ void
 optimize_linkers_rna_fullatom_mode(
 	kinematics::MoveMapOP & mm,
 	pose::Pose & full_pose,
-	protocols::farna::RNA_FragmentsOP & all_rna_fragments,
+	protocols::farna::fragments::RNA_FragmentsOP & all_rna_fragments,
 	utility::vector1< std::pair< Size, Size > > linker_rna
 )
 {

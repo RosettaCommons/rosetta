@@ -18,20 +18,30 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/farna/RNA_FragmentMonteCarlo.fwd.hh>
-#include <protocols/farna/RNA_FragmentMonteCarloOptions.fwd.hh>
-#include <protocols/farna/RNA_FragmentMover.fwd.hh>
-#include <protocols/farna/RNA_Fragments.fwd.hh>
-#include <protocols/farna/RNA_StructureParameters.fwd.hh>
-#include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
-#include <protocols/farna/RNA_LoopCloser.fwd.hh>
-#include <protocols/farna/RNA_Minimizer.fwd.hh>
-#include <protocols/farna/RNA_Relaxer.fwd.hh>
+#include <protocols/farna/options/RNA_FragmentMonteCarloOptions.fwd.hh>
+#include <protocols/farna/movers/RNA_FragmentMover.fwd.hh>
+#include <protocols/farna/fragments/RNA_Fragments.fwd.hh>
+#include <protocols/farna/base_pairs/RNA_BasePairHandler.fwd.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.fwd.hh>
+#include <protocols/farna/libraries/RNA_ChunkLibrary.fwd.hh>
+#include <protocols/farna/movers/RNA_JumpMover.fwd.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.fwd.hh>
+#include <protocols/farna/movers/RNA_Minimizer.fwd.hh>
+#include <protocols/farna/movers/RNA_Relaxer.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
 #include <ObjexxFCL/format.hh>
+
+using namespace protocols::farna::fragments;
+using namespace protocols::farna::movers;
+using namespace protocols::farna::options;
+using namespace protocols::farna::base_pairs;
+using namespace protocols::farna::setup;
+using namespace protocols::farna::libraries;
 
 namespace protocols {
 namespace farna {
@@ -77,12 +87,31 @@ public:
 
 	core::Real lores_score_final() const { return lores_score_final_; }
 
-	RNA_StructureParametersCOP rna_structure_parameters() const { return rna_structure_parameters_; }
+	void
+	set_rna_base_pair_handler( RNA_BasePairHandlerCOP setting ) { rna_base_pair_handler_ = setting; }
+
+	RNA_BasePairHandlerCOP rna_base_pair_handler() const { return rna_base_pair_handler_; }
+
+	void
+	set_rna_de_novo_pose_setup( RNA_DeNovoPoseSetupCOP setting ) { rna_de_novo_pose_setup_ = setting; }
+
+	void
+	set_user_input_chunk_library( RNA_ChunkLibraryCOP setting ) { user_input_rna_chunk_library_ = setting; }
+
 	RNA_ChunkLibraryCOP rna_chunk_library() const { return rna_chunk_library_; }
 
 	void show(std::ostream & output) const;
 
-private:
+	void
+	align_pose( core::pose::Pose & pose, bool const verbose = false ) const;
+
+	core::Real
+	get_rmsd_no_superimpose( core::pose::Pose const & pose ) const;
+
+	core::Real
+	get_rmsd_stems_no_superimpose ( core::pose::Pose const & pose ) const;
+
+	private:
 
 	void
 	initialize( core::pose::Pose & pose );
@@ -144,20 +173,31 @@ private:
 	void
 	final_score( core::pose::Pose & pose );
 
-private:
+	core::Real
+	get_rmsd( core::pose::Pose const & const_pose ) const;
+
+	void
+	check_for_loop_modeling_case( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map, core::pose::Pose const & /* pose */ ) const;
+
+	private:
 
 	// The parameters in this OptionsCOP should not change:
 	RNA_FragmentMonteCarloOptionsCOP options_;
 	std::string out_file_tag_;
 
 	// Movers (currently must be set up outside, but should write auto-setup code)
-	RNA_StructureParametersOP rna_structure_parameters_;
+	RNA_BasePairHandlerCOP rna_base_pair_handler_;
+	RNA_ChunkLibraryCOP user_input_rna_chunk_library_;
 	RNA_ChunkLibraryOP rna_chunk_library_;
+	RNA_DeNovoPoseSetupCOP rna_de_novo_pose_setup_;
 	RNA_FragmentMoverOP rna_fragment_mover_;
+	RNA_JumpMoverOP rna_jump_mover_;
 	RNA_LoopCloserOP rna_loop_closer_;
 	RNA_MinimizerOP rna_minimizer_;
 	RNA_RelaxerOP rna_relaxer_;
 	protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_;
+
+	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map_;
 
 	core::scoring::ScoreFunctionCOP denovo_scorefxn_;
 	core::scoring::ScoreFunctionCOP hires_scorefxn_;

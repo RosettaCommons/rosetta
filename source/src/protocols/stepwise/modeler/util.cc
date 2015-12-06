@@ -1018,6 +1018,9 @@ fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) 
 			res_list[ res ] + 1 == res_list[ res + 1 ] &&
 			! cutpoint_open_in_full_model.has_value( res_list[ res ]) ) {
 
+		if ( pose.residue_type( res ).has_variant_type( CUTPOINT_LOWER ) &&
+				 pose.residue_type( res + 1 ).has_variant_type( CUTPOINT_UPPER ) ) return;
+
 		// can happen after additions
 		core::pose::correctly_add_cutpoint_variants( pose, res );
 
@@ -1065,6 +1068,9 @@ fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const 
 	if ( res > 1 &&
 			res_list[ res ] - 1 == res_list[ res - 1 ] &&
 			! cutpoint_open_in_full_model.has_value( res_list[ res - 1 ])  ) {
+
+		if ( pose.residue_type( res - 1 ).has_variant_type( CUTPOINT_LOWER ) &&
+				 pose.residue_type( res     ).has_variant_type( CUTPOINT_UPPER ) ) return;
 
 		// can happen after additions
 		core::pose::correctly_add_cutpoint_variants( pose, res - 1 );
@@ -1185,6 +1191,7 @@ fix_up_jump_atoms_and_residue_type_variants( pose::Pose & pose_to_fix ) {
 	fix_up_residue_type_variants( pose_to_fix );
 	update_constraint_set_from_full_model_info( pose_to_fix ); //atom numbers may have shifted around with variant changes.
 	core::scoring::rna::clear_rna_scoring_info( pose_to_fix );
+	protocols::farna::secstruct::clear_rna_secstruct_info( pose_to_fix );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

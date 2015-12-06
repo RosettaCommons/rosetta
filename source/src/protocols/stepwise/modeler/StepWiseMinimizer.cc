@@ -29,7 +29,7 @@
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/legacy/modeler/protein/util.hh> // for output_pose_list, maybe should deprecate soon
 #include <protocols/stepwise/monte_carlo/util.hh> // for output_to_silent_file, for RNA
-#include <protocols/farna/RNA_LoopCloser.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.hh>
 #include <protocols/simple_moves/ConstrainToIdealMover.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -161,7 +161,7 @@ StepWiseMinimizer::do_full_minimizing( pose::Pose & pose ){
 		if ( options_->rm_virt_phosphate() ) rna::remove_all_virtual_phosphates( pose ); // ERRASER.
 
 		// The movemap has all dofs for "non-fixed residues" free to move.
-		get_move_map_and_allow_insert( mm, pose );
+		get_move_map_and_atom_level_domain_map( mm, pose );
 
 		// We can also let sidechains minimize in fixed-residues -- for
 		// speed only look at neighbors of moving residues.
@@ -238,7 +238,7 @@ StepWiseMinimizer::close_chainbreaks( pose::Pose & pose, kinematics::MoveMap & m
 	utility::vector1< Size > const moving_chainbreaks = figure_out_moving_cutpoints_closed_from_moving_res( pose, working_moving_res_ ); // would be better to use moving_res.
 	if ( moving_chainbreaks.size() == 0 ) return;
 
-	farna::RNA_LoopCloser rna_loop_closer;
+	farna::movers::RNA_LoopCloser rna_loop_closer;
 	rna_loop_closer.apply( pose, rna::just_rna( moving_chainbreaks, pose ) ); // only handles RNA chainbreaks for now...
 
 	utility::vector1< Size > const protein_cutpoints_closed = protein::just_protein( moving_chainbreaks, pose );
@@ -253,11 +253,11 @@ StepWiseMinimizer::close_chainbreaks( pose::Pose & pose, kinematics::MoveMap & m
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseMinimizer::get_move_map_and_allow_insert( core::kinematics::MoveMap & mm, pose::Pose const & pose ){
+StepWiseMinimizer::get_move_map_and_atom_level_domain_map( core::kinematics::MoveMap & mm, pose::Pose const & pose ){
 	working_minimize_res_ = figure_out_working_minimize_res( pose );
 	bool const move_takeoff_torsions = !options_->disable_sampling_of_loop_takeoff();
-	allow_insert_ = toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) ); // can come in handy later...
-	movemap::figure_out_stepwise_movemap( mm, allow_insert_, pose, working_minimize_res_, move_takeoff_torsions );
+	atom_level_domain_map_ = toolbox::AtomLevelDomainMapOP( new toolbox::AtomLevelDomainMap( pose ) ); // can come in handy later...
+	movemap::figure_out_stepwise_movemap( mm, atom_level_domain_map_, pose, working_minimize_res_, move_takeoff_torsions );
 	output_movemap( mm, pose, TR.Debug );
 }
 
@@ -295,7 +295,7 @@ StepWiseMinimizer::move_side_chain( core::kinematics::MoveMap & mm,
 	// how about terminal phosphates?
 	if ( options_->vary_polar_hydrogen_geometry() ) {
 		utility::vector1< Size > const & Hpos_polar = pose.residue( j ).Hpos_polar();
-		for ( Size q = 1; q <= Hpos_polar.size(); q++ ) allow_insert_->set( id::AtomID( Hpos_polar[q], j ), true );
+		for ( Size q = 1; q <= Hpos_polar.size(); q++ ) atom_level_domain_map_->set( id::AtomID( Hpos_polar[q], j ), true );
 	}
 }
 
@@ -305,12 +305,12 @@ StepWiseMinimizer::setup_vary_bond_geometry( core::pose::Pose & pose, core::kine
 	if ( options_->vary_rna_bond_geometry() ) {
 		TR << TR.Magenta << "Performing variable geometry minimization for RNA backbone..." << TR.Reset << std::endl;
 		if ( !minimize_scorefxn_->has_nonzero_weight( core::scoring::bond_geometry ) ) minimize_scorefxn_->set_weight( core::scoring::bond_geometry, 1.0 );
-		simple_moves::setup_vary_rna_bond_geometry( mm, pose, allow_insert_, core::scoring::bond_geometry );
+		simple_moves::setup_vary_rna_bond_geometry( mm, pose, atom_level_domain_map_, core::scoring::bond_geometry );
 	}
 	if ( options_->vary_polar_hydrogen_geometry() ) {
 		TR << TR.Magenta << "Performing variable geometry minimization for polar hydrogens..." << TR.Reset << std::endl;
 		if ( !minimize_scorefxn_->has_nonzero_weight( core::scoring::bond_geometry ) ) minimize_scorefxn_->set_weight( core::scoring::bond_geometry, 1.0 );
-		simple_moves::setup_vary_polar_hydrogen_geometry( mm, pose, allow_insert_ );
+		simple_moves::setup_vary_polar_hydrogen_geometry( mm, pose, atom_level_domain_map_ );
 	}
 }
 

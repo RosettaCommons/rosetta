@@ -53,7 +53,7 @@
 #include <core/chemical/util.hh>
 #include <core/chemical/AtomType.hh> //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
 #include <core/conformation/Conformation.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>
@@ -232,7 +232,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 			TR << "Performing variable geometry minimization..." << std::endl;
 			ScoreFunctionOP scorefxn_vbg = scorefxn_->clone();
 			scorefxn_vbg->set_weight( rna_bond_geometry, 8.0 );
-			setup_vary_rna_bond_geometry( mm, pose, allow_insert_ );
+			setup_vary_rna_bond_geometry( mm, pose, atom_level_domain_map_ );
 			if ( !options_->skip_minimize() ) minimizer.run( pose, new_mm, *(scorefxn_vbg ), options );
 		}
 		if ( !options_->skip_minimize() ) minimizer.run( pose, mm, *( scorefxn_ ), options );
@@ -519,7 +519,7 @@ StepWiseRNA_Minimizer::get_working_moving_res( Size const & nres ) const {
 core::kinematics::MoveMapOP
 StepWiseRNA_Minimizer::get_default_movemap( core::pose::Pose const & pose ) {
 	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
-	figure_out_stepwise_movemap( *mm, allow_insert_, pose, working_parameters_->working_fixed_res(), working_extra_minimize_res_ );
+	figure_out_stepwise_movemap( *mm, atom_level_domain_map_, pose, working_parameters_->working_fixed_res(), working_extra_minimize_res_ );
 	return mm;
 }
 

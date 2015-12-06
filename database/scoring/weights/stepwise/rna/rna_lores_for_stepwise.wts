@@ -1,0 +1,19 @@
+rna_rg                  1.0
+rna_vdw                 1.0
+rna_base_pair           1.0
+rna_base_axis           0.2
+rna_base_stagger        1.0
+rna_base_stack          1.0
+rna_base_stack_axis     0.2
+rna_base_backbone       1.0
+rna_backbone_backbone   1.0
+rna_repulsive           1.0
+rna_data_backbone       1.0
+linear_chainbreak       5.0
+atom_pair_constraint    1.0
+ref                     1.0 # should be 1.0, apply METHOD_WEIGHTS without scaling.
+other_pose              1.0
+loop_close              1.0
+
+# first 20 reference weights are protein; then four for DNA; then four for RNA [G,A,C,U]
+METHOD_WEIGHTS ref 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0   0 0 0 0    4.14  3.58  2.82  3.76

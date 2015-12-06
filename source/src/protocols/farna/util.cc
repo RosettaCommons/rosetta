@@ -13,10 +13,10 @@
 /// @author Rhiju Das
 
 #include <protocols/farna/util.hh>
-#include <protocols/farna/RNA_SecStructInfo.hh>
+#include <protocols/farna/secstruct/RNA_SecStructInfo.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/forge/methods/fold_tree_functions.hh>
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/rna/util.hh>
 #include <core/chemical/rna/util.hh>
@@ -65,7 +65,7 @@
 #include <sstream>
 #include <fstream>
 
-#include <protocols/farna/RNA_MatchType.hh>
+#include <protocols/farna/fragments/RNA_MatchType.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
@@ -80,6 +80,9 @@ using namespace ObjexxFCL::format;
 using basic::T;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.farna.util" );
+
+using namespace protocols::farna::secstruct;
+using namespace protocols::farna::fragments;
 
 namespace protocols {
 namespace farna {
@@ -1399,10 +1402,10 @@ print_hbonds( pose::Pose & pose ){
 bool
 moveable_jump( id::AtomID const & jump_atom_id1,
 	id::AtomID const & jump_atom_id2,
-	protocols::toolbox::AllowInsert const & allow_insert)  {
-	if ( allow_insert.get( jump_atom_id1 ) ) return true;
-	if ( allow_insert.get( jump_atom_id2 ) ) return true;
-	if ( allow_insert.get_domain( jump_atom_id1 ) != allow_insert.get_domain( jump_atom_id2 ) ) return true;
+	protocols::toolbox::AtomLevelDomainMap const & atom_level_domain_map)  {
+	if ( atom_level_domain_map.get( jump_atom_id1 ) ) return true;
+	if ( atom_level_domain_map.get( jump_atom_id2 ) ) return true;
+	if ( atom_level_domain_map.get_domain( jump_atom_id1 ) != atom_level_domain_map.get_domain( jump_atom_id2 ) ) return true;
 	return false;
 }
 
@@ -1411,11 +1414,27 @@ moveable_jump( id::AtomID const & jump_atom_id1,
 bool
 moveable_jump( Size const jump_pos1,
 	Size const jump_pos2,
-	protocols::toolbox::AllowInsert const & allow_insert)  {
-	if ( allow_insert.get( jump_pos1 ) ) return true;
-	if ( allow_insert.get( jump_pos2 ) ) return true;
-	if ( allow_insert.get_domain( jump_pos1 ) != allow_insert.get_domain( jump_pos2 ) ) return true;
+	protocols::toolbox::AtomLevelDomainMap const & atom_level_domain_map)  {
+	if ( atom_level_domain_map.get( jump_pos1 ) ) return true;
+	if ( atom_level_domain_map.get( jump_pos2 ) ) return true;
+	if ( atom_level_domain_map.get_domain( jump_pos1 ) != atom_level_domain_map.get_domain( jump_pos2 ) ) return true;
 	return false;
+}
+
+///////////////////////////////////////////////////////////////
+void
+fill_in_default_jump_atoms( kinematics::FoldTree & f, pose::Pose const & pose )
+{
+
+	// default atoms for jump connections.
+	for ( Size i = 1; i <= f.num_jump(); i++ ) {
+		Size const jump_pos1( f.upstream_jump_residue( i ) );
+		Size const jump_pos2( f.downstream_jump_residue( i ) );
+		f.set_jump_atoms( i,
+			chemical::rna::default_jump_atom( pose.residue( jump_pos1 ) ),
+			chemical::rna::default_jump_atom( pose.residue( jump_pos2) ) );
+	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1622,12 +1641,12 @@ get_rna_hires_scorefxn() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 get_moving_res( core::pose::Pose const & pose,
-	protocols::toolbox::AllowInsertCOP allow_insert ) {
+								protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) {
 
 	utility::vector1< Size > moving_res;
 
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
-		if ( allow_insert->get( n ) ) {
+		if ( atom_level_domain_map->get( n ) ) {
 			moving_res.push_back( n );
 		}
 	}

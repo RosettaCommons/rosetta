@@ -23,6 +23,8 @@
 #include <core/pose/rna/util.hh>
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray2D.hh>
 
 #include <basic/Tracer.hh>
 

@@ -31,7 +31,7 @@
 #include <core/pack/task/rna/RNA_ResidueLevelTask.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <protocols/farna/util.hh>
-#include <protocols/farna/RNA_Minimizer.hh>
+#include <protocols/farna/movers/RNA_Minimizer.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarlo.hh>

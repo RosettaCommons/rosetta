@@ -223,6 +223,9 @@ public:
 	bool const & minimize_after_delete() const { return minimize_after_delete_; }
 	void set_minimize_after_delete( bool const & setting ){ minimize_after_delete_ = setting; }
 
+	bool const & force_submotif_without_intervening_bulge() const { return force_submotif_without_intervening_bulge_; }
+	void set_force_submotif_without_intervening_bulge( bool const & setting ){ force_submotif_without_intervening_bulge_ = setting; }
+
 private:
 
 	bool verbose_scores_;
@@ -272,6 +275,7 @@ private:
 	bool save_times_;
 	bool use_precomputed_library_;
 	bool minimize_after_delete_;
+	bool force_submotif_without_intervening_bulge_;
 };
 
 } //options

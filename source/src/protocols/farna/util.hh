@@ -26,7 +26,8 @@
 #include <core/id/AtomID.fwd.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/io/ozstream.fwd.hh>
-#include <protocols/toolbox/AllowInsert.fwd.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
+#include <protocols/farna/secstruct/RNA_SecStructInfo.hh> //courtesy to other namespaces that want clear_rna_secstruct_info()
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 
 // Utility headers
@@ -177,12 +178,15 @@ print_hbonds( core::pose::Pose & pose );
 bool
 moveable_jump( core::id::AtomID const & jump_atom_id1,
 	core::id::AtomID const & jump_atom_id2,
-	protocols::toolbox::AllowInsert const & allow_insert);
+	protocols::toolbox::AtomLevelDomainMap const & atom_level_domain_map);
 
 bool
 moveable_jump( core::Size const jump_pos1,
 	core::Size const jump_pos2,
-	protocols::toolbox::AllowInsert const & allow_insert);
+	protocols::toolbox::AtomLevelDomainMap const & atom_level_domain_map);
+
+void
+fill_in_default_jump_atoms( core::kinematics::FoldTree & f, core::pose::Pose const & pose );
 
 core::Size
 virtualize_bulges( core::pose::Pose & input_pose,
@@ -198,7 +202,7 @@ get_rna_hires_scorefxn();
 
 utility::vector1< core::Size >
 get_moving_res( core::pose::Pose const & pose,
-	protocols::toolbox::AllowInsertCOP allow_insert );
+								protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
 
 } //farna
 } //protocols

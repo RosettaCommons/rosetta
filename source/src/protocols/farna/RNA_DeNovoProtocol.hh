@@ -17,26 +17,22 @@
 #ifndef INCLUDED_protocols_rna_RNA_DeNovoProtocol_HH
 #define INCLUDED_protocols_rna_RNA_DeNovoProtocol_HH
 
-#include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <protocols/farna/RNA_FragmentMonteCarlo.fwd.hh>
-#include <protocols/farna/RNA_StructureParameters.hh>
-#include <protocols/farna/RNA_DeNovoProtocolOptions.fwd.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/options/RNA_DeNovoProtocolOptions.fwd.hh>
 
-//Oooh.
-#include <ObjexxFCL/FArray1D.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
+#include <core/types.hh>
 
 //// C++ headers
-#include <cstdlib>
-#include <string>
 #include <list>
-
 #include <core/io/silent/silent.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <utility/vector1.hh>
 
+using namespace protocols::farna::options;
 
 namespace protocols {
 namespace farna {

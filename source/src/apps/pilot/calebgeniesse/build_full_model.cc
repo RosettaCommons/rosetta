@@ -13,8 +13,8 @@
 
 
 // protocols
-#include <protocols/farna/RNA_LoopCloser.hh>
-#include <protocols/farna/RNA_LoopCloser.fwd.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.fwd.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh>
@@ -131,7 +131,7 @@ build_full_model_test()
 	utility::vector1< PoseOP > other_ops;
 
 	// setup movers
-	farna::RNA_LoopCloserOP rna_loop_closer( farna::RNA_LoopCloserOP( new farna::RNA_LoopCloser() ) );
+	farna::movers::RNA_LoopCloserOP rna_loop_closer( new farna::movers::RNA_LoopCloser() );
 	rna_loop_closer->set_verbose( true );
 
 	// iterate over input stream

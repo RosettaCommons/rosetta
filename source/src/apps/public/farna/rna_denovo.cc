@@ -35,7 +35,7 @@
 
 //RNA stuff.
 #include <protocols/farna/RNA_DeNovoProtocol.hh>
-#include <protocols/farna/RNA_DeNovoProtocolOptions.hh>
+#include <protocols/farna/options/RNA_DeNovoProtocolOptions.hh>
 #include <protocols/farna/util.hh>
 //#include <protocols/moves/PyMolMover.hh>
 
@@ -136,8 +136,8 @@ rna_denovo_test()
 		for ( Size i = 1; i <= refine_pose_list.size(); ++i ) refine_pose_list[i]->constraint_set( cst_set );
 	}
 
-	if ( option[ OptionKeys::rna::farna::data_file].user() ) {
-		core::io::rna::RNA_DataReader rna_data_reader( in_path + option[ OptionKeys::rna::farna::data_file ]  );
+	if ( option[ OptionKeys::rna::data_file].user() ) {
+		core::io::rna::RNA_DataReader rna_data_reader( in_path + option[ OptionKeys::rna::data_file ]  );
 		rna_data_reader.fill_rna_data_info( pose );
 	}
 
@@ -218,13 +218,12 @@ main( int argc, char * argv [] )
 		option.add_relevant( rna::farna::staged_constraints );
 		option.add_relevant( rna::farna::jump_library_file );
 		option.add_relevant( rna::farna::params_file );
+		option.add_relevant( basic::options::OptionKeys::rna::farna::vall_torsions );
 		option.add_relevant( rna::farna::use_1jj2_torsions );
 		option.add_relevant( rna::farna::rna_lores_chainbreak_weight );
 		option.add_relevant( rna::farna::rna_lores_linear_chainbreak_weight );
 		option.add_relevant( rna::farna::allow_bulge  );
 		option.add_relevant( rna::farna::allowed_bulge_res );
-		option.add_relevant( rna::farna::extra_minimize_res );
-		option.add_relevant( rna::farna::extra_minimize_chi_res );
 		option.add_relevant( rna::farna::allow_consecutive_bulges );
 		option.add_relevant( rna::farna::binary_output );
 		option.add_relevant( rna::farna::move_first_rigid_body );
@@ -236,12 +235,14 @@ main( int argc, char * argv [] )
 		option.add_relevant( rna::farna::refine_silent_file );
 		option.add_relevant( rna::farna::refine_native );
 		option.add_relevant( rna::farna::bps_moves );
-		option.add_relevant( rna::farna::minimizer_use_coordinate_constraints );
+		option.add_relevant( rna::vary_geometry );
+		option.add_relevant( basic::options::OptionKeys::rna::data_file );
+		option.add_relevant( rna::farna::minimize::minimizer_use_coordinate_constraints );
+		option.add_relevant( rna::farna::minimize::extra_minimize_res );
+		option.add_relevant( rna::farna::minimize::extra_minimize_chi_res );
+		option.add_relevant( rna::farna::minimize::minimize_bps );
 
 		option.add_relevant( constraints::cst_file );
-		option.add_relevant( basic::options::OptionKeys::rna::farna::vary_geometry );
-		option.add_relevant( basic::options::OptionKeys::rna::farna::vall_torsions );
-		option.add_relevant( basic::options::OptionKeys::rna::farna::data_file );
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup

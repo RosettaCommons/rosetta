@@ -50,7 +50,7 @@
 
 //RNA stuff.
 #include <protocols/farna/util.hh>
-#include <protocols/farna/BasePairStepLibrary.hh>
+#include <protocols/farna/libraries/BasePairStepLibrary.hh>
 
 
 // C++ headers
@@ -74,17 +74,14 @@
 #include <core/scoring/EnergyGraph.hh>
 
 #include <utility/excn/Exceptions.hh>
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
+using namespace ObjexxFCL::format;
 using namespace core;
 using namespace core::pose::rna;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 using io::pdb::dump_pdb;
-using protocols::farna::MAX_BULGE_LENGTH;
+using protocols::farna::libraries::MAX_BULGE_LENGTH;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -644,6 +641,7 @@ my_main( void* )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys::rna::farna;
+	using namespace basic::options::OptionKeys::rna::farna::db;
 
 	if ( option[ jump_database ] ) {
 		create_bp_jump_database_test();
@@ -681,9 +679,8 @@ main( int argc, char * argv [] )
 		NEW_OPT( general_bps, "For bps_database, output base pair steps involving noncanonicals", false );
 		NEW_OPT( use_lores_base_pair_classification, "Use loose base-pair classifier (same as used in FARNA)", false );
 		option.add_relevant( basic::options::OptionKeys::rna::farna::vall_torsions );
-		option.add_relevant( basic::options::OptionKeys::rna::farna::jump_database );
-		option.add_relevant( basic::options::OptionKeys::rna::farna::bps_database );
-
+		option.add_relevant( basic::options::OptionKeys::rna::farna::db::jump_database );
+		option.add_relevant( basic::options::OptionKeys::rna::farna::db::bps_database );
 
 		////////////////////////////////////////////////////////////////////////////
 		// setup

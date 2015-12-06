@@ -28,7 +28,7 @@
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/sampler/rna/RNA_SuiteStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/rna/RNA_NucleosideStepWiseSampler.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/types.hh>
@@ -205,7 +205,7 @@ VirtualSugarSampler::setup_sugar_conformations( utility::vector1< PoseOP > & pos
 	using namespace core::conformation;
 	using namespace core::scoring::rna;
 	using namespace sampler::rna;
-	using namespace protocols::farna;
+	using namespace protocols::farna::movers;
 	using namespace core::pose;
 
 	clock_t const time_start( clock() );
@@ -473,7 +473,7 @@ VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< PoseOP > & po
 	using namespace protocols::stepwise::modeler::rna::checker;
 	using namespace core::chemical::rna;
 	using namespace core::pose::rna;
-	using namespace protocols::farna;
+	using namespace protocols::farna::movers;
 
 	pose::Pose screening_pose = *(pose_list[1]);
 

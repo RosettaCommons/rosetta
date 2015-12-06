@@ -91,6 +91,7 @@ stepwise_monte_carlo()
 
 	ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
+	else if ( option[ OptionKeys::stepwise::lores ]() ) scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_lores_for_stepwise.wts" );
 	else if ( just_RNA ) scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
 	else scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/stepwise_res_level_energy.wts" ); // RNA/protein.
 	if ( option[ OptionKeys::constraints::cst_file ].user() && !scorefxn->has_nonzero_weight( atom_pair_constraint ) ) scorefxn->set_weight( atom_pair_constraint, 1.0 );
@@ -100,7 +101,7 @@ stepwise_monte_carlo()
 	pose::Pose & pose = *pose_op;
 	initialize_native_and_align_pose( native_pose, align_pose, rsd_set, pose_op );
 	// temporary, for scoring RNA chemical mapping data. Move into initalize_pose?
-	core::io::rna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::farna::data_file ](), scorefxn );
+	core::io::rna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::data_file ](), scorefxn );
 
 	// Get rid of this commented code when it is incorporated into a unit test.
 	// test_merge_and_slice_with_two_helix_test_case( input_poses, scorefxn ); exit( 0 );
@@ -125,7 +126,7 @@ stepwise_monte_carlo()
 	std::string const silent_file = option[ out::file::silent ]();
 	if ( option[ out::overwrite ]() ) remove_silent_file_if_it_exists( silent_file );
 	stepwise_monte_carlo->set_out_path( FileName( silent_file ).path() );
-	stepwise_monte_carlo->set_submotif_library( SubMotifLibraryCOP( new SubMotifLibrary( rsd_set ) ) );
+	stepwise_monte_carlo->set_submotif_library( SubMotifLibraryCOP( new SubMotifLibrary( rsd_set, options->lores() /*include_submotifs_from_jump_library*/ ) ) );
 
 	// main loop
 	StepWiseJobDistributorOP stepwise_job_distributor( new StepWiseMonteCarloJobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ]() ) );
@@ -213,7 +214,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::rna::integration_test );
 		option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
 		option.add_relevant( OptionKeys::rna::corrected_geo );
-		option.add_relevant( OptionKeys::rna::farna::data_file );
+		option.add_relevant( OptionKeys::rna::data_file );
 
 		core::init::init(argc, argv);
 

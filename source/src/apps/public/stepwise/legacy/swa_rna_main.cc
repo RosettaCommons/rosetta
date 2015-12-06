@@ -95,7 +95,7 @@
 //////////////////////////////////////////////////////////
 #include <protocols/viewer/viewers.hh>
 #include <protocols/farna/util.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>

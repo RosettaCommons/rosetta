@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_coarse_rna_CoarseRNA_LoopCloser_HH
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -73,9 +73,9 @@ public:
 		utility::vector1< core::pose::PoseOP > & pose_list );
 
 	void
-	set_allow_insert( protocols::toolbox::AllowInsertOP allow_insert );
+	set_atom_level_domain_map( protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map );
 
-	protocols::toolbox::AllowInsertOP  allow_insert();
+	protocols::toolbox::AtomLevelDomainMapOP  atom_level_domain_map();
 
 	Size nsol(){ return nsol_; }
 
@@ -167,7 +167,7 @@ private:
 	utility::vector1< core::Size > cutpos_list_;
 	int nsol_;
 
-	protocols::toolbox::AllowInsertOP allow_insert_;
+	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map_;
 	utility::vector1< core::Size > backward_res_, forward_res_, pivot_res_, scratch_res_, pivot_to_scratch_res_;
 	utility::vector1< bool > is_backward_res_, is_forward_res_, is_pivot_res_, is_scratch_res_;
 	core::Size which_scratch_res_is_cut_;

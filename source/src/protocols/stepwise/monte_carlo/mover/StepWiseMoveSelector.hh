@@ -125,6 +125,9 @@ public:
 	void set_force_unique_moves( bool const & setting ){ force_unique_moves_ = setting; }
 	bool force_unique_moves() const{ return force_unique_moves_; }
 
+	void set_force_submotif_without_intervening_bulge( bool const & setting ){ force_submotif_without_intervening_bulge_ = setting; }
+	bool force_submotif_without_intervening_bulge() const{ return force_submotif_without_intervening_bulge_; }
+
 	monte_carlo::submotif::SubMotifLibraryCOP submotif_library() { return submotif_library_; }
 	void set_submotif_library( monte_carlo::submotif::SubMotifLibraryCOP setting ) { submotif_library_ = setting; }
 
@@ -301,9 +304,6 @@ private:
 	ordered_move_from_partition( Size const actual_moving_res, Size const actual_attached_res,
 		pose::Pose const & pose, MoveType const & move_type ) const;
 
-
-	//////////////////////////////////////////////////////////////////////////////////////////
-	// filtering crazy cycles.
 	void
 	filter_complex_cycles( utility::vector1< StepWiseMove > & swa_moves, pose::Pose const & pose ) const;
 
@@ -328,6 +328,7 @@ private:
 	bool choose_random_;
 	bool force_unique_moves_;
 	bool filter_complex_cycles_;
+	bool force_submotif_without_intervening_bulge_;
 	monte_carlo::submotif::SubMotifLibraryCOP submotif_library_;
 
 	utility::vector1< StepWiseMove > swa_moves_;

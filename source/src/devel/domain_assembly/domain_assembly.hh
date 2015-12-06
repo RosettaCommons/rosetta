@@ -12,8 +12,8 @@
 #include <core/types.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/farna/RNA_FragmentsClasses.fwd.hh>
-#include <protocols/toolbox/AllowInsert.fwd.hh>
+#include <protocols/farna/fragments/RNA_FragmentsClasses.fwd.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -60,7 +60,7 @@ optimize_linkers_fullatom_mode(
 	core::pose::Pose & full_pose
 );
 
-protocols::toolbox::AllowInsertOP
+protocols::toolbox::AtomLevelDomainMapOP
 set_moveable_rna(
 	core::pose::Pose & full_pose,
 	utility::vector1< std::pair < core::Size, core::Size > > & linker_rna
@@ -70,7 +70,7 @@ void
 optimize_linkers_rna_fullatom_mode(
 	core::kinematics::MoveMapOP & mm,
 	core::pose::Pose & full_pose,
-	protocols::farna::RNA_FragmentsOP & all_rna_fragments
+	protocols::farna::fragments::RNA_FragmentsOP & all_rna_fragments
 );
 
 /// @brief a helper function for the domain assembly protocol. Selects

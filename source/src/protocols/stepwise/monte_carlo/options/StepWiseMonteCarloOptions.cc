@@ -81,7 +81,8 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	test_all_moves_( false ),
 	save_times_( false ),
 	use_precomputed_library_( true ),
-	minimize_after_delete_( true )
+	minimize_after_delete_( true ),
+	force_submotif_without_intervening_bulge_( false )
 {
 	StepWiseBasicOptions::initialize_variables();
 	set_silent_file( "default.out" );
@@ -170,6 +171,8 @@ StepWiseMonteCarloOptions::initialize_from_command_line() {
 	n_sample_ = option[ OptionKeys::stepwise::protein::n_sample ]();
 	protein_prepack_ = option[ OptionKeys::stepwise::protein::protein_prepack ]();
 	virtualize_packable_moieties_in_screening_pose_ = option[ OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
+	force_submotif_without_intervening_bulge_ = option[ OptionKeys::stepwise::monte_carlo::force_submotif_without_intervening_bulge ]();
+
 	if ( test_all_moves_ ) {
 		set_num_random_samples( 0 );
 		set_minimize_after_delete( false );

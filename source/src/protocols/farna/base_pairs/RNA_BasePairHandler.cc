@@ -184,7 +184,6 @@ RNA_BasePairHandler::figure_out_partner( std::map< Size, Size > & partner, bool 
 		Size i( rna_pairing.res1() );
 		Size j( rna_pairing.res2() );
 
-		//  TR << "PAIRING " << rna_pairing.res1() << " " << rna_pairing.res2() << " " << rna_pairing.edge1() << " " << rna_pairing.edge2() << " " << rna_pairing.orientation() << " --> "  << std::endl;
 
 		bool const pair_is_canonical = rna_pairing.edge1() == WATSON_CRICK && rna_pairing.edge2() == WATSON_CRICK &&
 			                             rna_pairing.orientation() == ANTIPARALLEL;
@@ -193,6 +192,7 @@ RNA_BasePairHandler::figure_out_partner( std::map< Size, Size > & partner, bool 
 		// if pairing is user-specified to be, say, H/S/A, we won't be able to handle it.
 		bool const pair_is_ambiguous = rna_pairing.edge1() == ANY_BASE_EDGE && rna_pairing.edge2() == ANY_BASE_EDGE &&
 			                             rna_pairing.orientation() == ANY_BASE_DOUBLET_ORIENTATION;
+		//		TR << TR.Red << "PAIRING " << rna_pairing.res1() << " " << rna_pairing.res2() << " " << rna_pairing.edge1() << " " << rna_pairing.edge2() << " " << rna_pairing.orientation() << " --> "  << pair_is_ambiguous << std::endl;
 		if ( !force_canonical && !pair_is_ambiguous ) continue;
 
 		if ( partner.find( i ) != partner.end() )  {

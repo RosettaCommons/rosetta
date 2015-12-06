@@ -9,8 +9,8 @@
 #ifndef INCLUDED_protocols_coarse_rna_CoarseRNA_Fragments_HH
 #define INCLUDED_protocols_coarse_rna_CoarseRNA_Fragments_HH
 
-#include <protocols/farna/RNA_Fragments.hh>
-#include <protocols/toolbox/AllowInsert.fwd.hh>
+#include <protocols/farna/fragments/RNA_Fragments.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/types.hh>
@@ -60,7 +60,7 @@ typedef utility::pointer::shared_ptr< SourcePositions > SourcePositionsOP;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-class CoarseRNA_Fragments : public protocols::farna::RNA_Fragments {
+class CoarseRNA_Fragments : public protocols::farna::fragments::RNA_Fragments {
 public:
 
 	//Constructor -- needs vall_torsions_file to get started.
@@ -74,7 +74,7 @@ public:
 		core::Size const position,
 		core::Size const size,
 		core::Size const type,
-		protocols::toolbox::AllowInsertCOP allow_insert ) const;
+		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
 
 	virtual bool
 	is_fullatom();
@@ -87,7 +87,7 @@ private:
 		Size const & insert_res,
 		Size const & source_res,
 		Size const & frag_size,
-		protocols::toolbox::AllowInsertCOP allow_insert ) const;
+		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
 
 	void
 	find_source_positions( SequenceSecStructPair const & key ) const;

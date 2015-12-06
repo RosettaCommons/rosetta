@@ -30,7 +30,7 @@ namespace setup {
 	public:
 
 		//constructor
-		RNA_DeNovoParameters( std::string const &  filename );
+		RNA_DeNovoParameters( std::string const & filename );
 
 		//destructor
 		~RNA_DeNovoParameters();

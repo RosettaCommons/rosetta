@@ -509,7 +509,7 @@ sources = {
         "JScoreEvaluator",
 		"JScoreEvaluatorCreator",
 		"JumpEvaluator",
-		"JumpNrEvaluatorCreator", 
+		"JumpNrEvaluatorCreator",
         "MotifScoreFilter",
 		"MutationsFilter",
 		"NativeEvaluatorCreator",
@@ -729,7 +729,8 @@ sources = {
 		"SS_predictor",
 	],
 	"protocols/toolbox": [
-		"AllowInsert",
+		"AtomLevelDomainMap",
+		"AtomID_Mapper",
 		"Cluster",
 		"CalcInterNeighborGroup",
 		"DecoySetEvaluation",

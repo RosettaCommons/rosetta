@@ -1,0 +1,22 @@
+-s srp_domainIV_HELIX1.pdb srp_domainIV_HELIX2.pdb
+-fasta srp_domainIV.fasta
+-superimpose_over_all
+-nstruct 1
+-intermolecular_frequency 0.0
+-save_times
+-native srp_domainIV_native_1lnt_RNA.pdb
+-motif_mode 
+
+-lores
+-num_random_samples 1
+-virtualize_free_moieties_in_native false
+-add_delete_frequency 0.80
+-from_scratch_frequency 0.0
+-allow_split_off false
+-cycles 5
+-save_times
+
+-out:file:silent swm_bps_rebuild_submotif0.9.out
+-submotif_frequency 0.9
+-jump_res A:3 B:22 A:4 B:21 A:9 B:16 A:10 B:15
+-cutpoint_closed A:3 A:9

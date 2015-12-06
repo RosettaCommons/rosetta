@@ -52,7 +52,10 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.setup.FullModelInfoSet
 using namespace core;
 using namespace core::pose;
 using namespace core::pose::full_model_info;
+using namespace core::id;
 using utility::vector1;
+using std::pair;
+using std::make_pair;
 
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -160,7 +163,7 @@ initialize_pose_and_other_poses_from_command_line( core::chemical::ResidueTypeSe
 		input_poses.push_back( pose );
 	}
 
-	std::pair< vector1< Size >, vector1< char > > const & input_resnum_and_chain = option[ in::file::input_res ].resnum_and_chain();
+	pair< vector1< Size >, vector1< char > > const & input_resnum_and_chain = option[ in::file::input_res ].resnum_and_chain();
 	vector1< Size > const & input_res_list = input_resnum_and_chain.first;
 	if ( input_res_list.size() ) {
 		vector1< char > input_chain_list = input_resnum_and_chain.second;
@@ -288,7 +291,7 @@ get_conventional_chains_and_numbering( vector1< core::sequence::SequenceCOP > co
 		while ( ss.good() ) {
 			ss >> tag;
 			bool string_is_ok( false );
-			std::pair< std::vector< int >, std::vector< char > > resnum_and_chain = utility::get_resnum_and_chain( tag, string_is_ok );
+			pair< std::vector< int >, std::vector< char > > resnum_and_chain = utility::get_resnum_and_chain( tag, string_is_ok );
 			if ( !string_is_ok ) continue;
 			for ( Size n = 0; n < resnum_and_chain.first.size(); n++ ) {
 				resnum.push_back( resnum_and_chain.first[n] );
@@ -416,7 +419,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	vector1< Size > input_domain_map( desired_sequence.size(), 0 );
 	for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 		Pose & pose = *pose_pointers[n];
-		vector1< Size > res_list = full_model_parameters->conventional_to_full( std::make_pair( get_res_num_from_pdb_info( pose ), get_chains_from_pdb_info( pose ) ) );
+		vector1< Size > res_list = full_model_parameters->conventional_to_full( make_pair( get_res_num_from_pdb_info( pose ), get_chains_from_pdb_info( pose ) ) );
 		reorder_pose( pose, res_list );
 		pose_res_lists.push_back( res_list );
 		for ( Size k = 1; k <= pose.total_residue(); k++ ) {
@@ -430,6 +433,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	if ( sample_res.size() == 0 )  sample_res  = figure_out_sample_res( input_domain_map, working_res );
 	if ( working_res.size() == 0 ) working_res = figure_out_working_res( input_domain_map, sample_res );
 	vector1< Size > fixed_domain_map = figure_out_fixed_domain_map( input_domain_map, extra_minimize_res ); //remove extra_minimize_res.
+
 
 	setup_fold_trees( pose_pointers, cutpoint_open_in_full_model /* can update */, fixed_domain_map /* can update */,
 		cutpoint_closed, extra_minimize_res, extra_minimize_jump_res,
@@ -467,7 +471,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	full_model_parameters->set_parameter_as_res_list( RNA_BULGE,  bulge_res );
 	full_model_parameters->set_parameter_as_res_list( RNA_SAMPLE_SUGAR,
 		full_model_parameters->conventional_to_full( option[ full_model::rna::sample_sugar_res ].resnum_and_chain() ) );
-	full_model_parameters->set_parameter_as_res_list_in_pairs( JUMP, jump_res );
+	full_model_parameters->set_parameter_as_res_list_in_pairs( full_model_info::JUMP, jump_res );
 	full_model_parameters->set_parameter_as_res_list_in_pairs( EXTRA_MINIMIZE_JUMP, extra_minimize_jump_res );
 	full_model_parameters->read_disulfides( option[ OptionKeys::stepwise::protein::disulfide_file]() );
 	if ( option[ constraints::cst_file ].user() ) full_model_parameters->read_cst_file( option[ constraints::cst_file ]()[ 1 ] );
@@ -481,6 +485,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 		update_pose_objects_from_full_model_info( pose ); // for output pdb or silent file (residue numbering), constraints, disulfides
 		modeler::fix_up_residue_type_variants( pose ); // for sample sugars...
 	}
+
 
 }
 
@@ -541,6 +546,7 @@ setup_fold_trees( vector1< Pose * > & pose_pointers,
 		vector1< Size> root_partition_res; for ( Size n = 1; n <= pose.total_residue(); n++ ) root_partition_res.push_back( n );
 		modeler::reroot( pose, root_partition_res, res_list, preferred_root_res, fixed_domain_map,
 			cutpoint_open_in_full_model, working_res );
+
 	}
 }
 
@@ -562,13 +568,13 @@ update_pose_fold_tree( pose::Pose & pose,
 	Size nchains = all_res_in_chain.size();
 
 	vector1< Size > jump_partners1, jump_partners2, cuts, blank_vector;
-	vector1< std::pair< Size, Size > > chain_connections;
+	vector1< pair< Size, Size > > chain_connections;
 	setup_user_defined_jumps( jump_res, jump_partners1, jump_partners2,
 		chain_connections, res_list, all_res_in_chain );
 	runtime_assert( jump_partners1.size() < nchains );
 
 	// needed to determine preferences for chain connections
-	std::pair< vector1< int >, vector1< char > > const resnum_and_chain_in_pose = full_model_parameters.full_to_conventional_resnum_and_chain( res_list );
+	pair< vector1< int >, vector1< char > > const resnum_and_chain_in_pose = full_model_parameters.full_to_conventional_resnum_and_chain( res_list );
 
 	// choose fixed_res as jump partners first.
 	setup_jumps( pose, jump_partners1, jump_partners2, chain_connections, all_fixed_res_in_chain, resnum_and_chain_in_pose );
@@ -611,7 +617,7 @@ void
 setup_user_defined_jumps( vector1< Size > const & jump_res,
 	vector1< Size > & jump_partners1,
 	vector1< Size > & jump_partners2,
-	vector1< std::pair< Size, Size > > & chain_connections,
+	vector1< pair< Size, Size > > & chain_connections,
 	vector1< Size > const & res_list,
 	vector1< vector1< Size > > const & all_res_in_chain ) {
 
@@ -627,7 +633,7 @@ setup_user_defined_jumps( vector1< Size > const & jump_res,
 			Size const chain_i( get_chain( i, all_res_in_chain ) );
 			Size const chain_j( get_chain( j, all_res_in_chain ) );
 			runtime_assert( connection_domains[ chain_i ] != connection_domains[ chain_j ] );
-			chain_connections.push_back( std::make_pair( chain_i, chain_j ) );
+			chain_connections.push_back( make_pair( chain_i, chain_j ) );
 			connection_domains = get_connection_domains( chain_connections, all_res_in_chain.size() );
 		}
 	}
@@ -648,9 +654,9 @@ void
 setup_jumps( core::pose::Pose const & pose,
 	vector1< Size > & jump_partners1,
 	vector1< Size > & jump_partners2,
-	vector1< std::pair< Size, Size > > & chain_connections,
+	vector1< pair< Size, Size > > & chain_connections,
 	vector1< vector1< Size > > const & all_res_in_chain,
-	std::pair< vector1< int >, vector1< char > > const & resnum_and_chain_in_pose ) {
+	pair< vector1< int >, vector1< char > > const & resnum_and_chain_in_pose ) {
 
 	Size const num_chains = all_res_in_chain.size();
 	if ( jump_partners1.size() == num_chains - 1 ) return;
@@ -671,21 +677,21 @@ setup_jumps( core::pose::Pose const & pose,
 	//
 	// chain_pair = ( -num_contacts, sequence_separation, ( ( chain_idx i, chain_idx j ), ( res in chain i, res in chain j ) ) )
 	//
-	utility::vector1< std::pair< int, std::pair< Size, std::pair< std::pair< Size, Size >, std::pair< Size, Size > > > > > chain_pairs;
+	utility::vector1< pair< int, pair< Size, pair< pair< Size, Size >, pair< Size, Size > > > > > chain_pairs;
 	Size const max_seq_separation = max( conventional_numbering_in_pose ) - min( conventional_numbering_in_pose ) + 1;
 	for ( Size i = 1; i < num_chains; i++ ) {
 		vector1< Size > const & fixed_res_in_chain_i = all_res_in_chain[ i ];
 		if ( fixed_res_in_chain_i.size() == 0 ) continue;
 
 		for ( Size j = i+1; j <= num_chains; j++ ) {
-			std::pair< Size, Size > jump_res_pair( 0, 0 );
+			pair< Size, Size > jump_res_pair( 0, 0 );
 			vector1< Size > const & fixed_res_in_chain_j = all_res_in_chain[ j ];
 			if ( fixed_res_in_chain_j.size() == 0 ) continue;
 
 			// num_contacts
 			static Distance const CONTACT_DIST_CUTOFF( 4.0 );
 			int num_contacts( 0 );
-			vector1< std::pair< Size, std::pair< Size, Size > > > num_contacts_pairwise;
+			vector1< pair< Size, pair< Size, Size > > > num_contacts_pairwise;
 			for ( Size m = 1; m <= fixed_res_in_chain_i.size(); m++ ) {
 				core::conformation::Residue rsd_i = pose.residue( fixed_res_in_chain_i[ m ] );
 				for ( Size n = 1; n <= fixed_res_in_chain_j.size(); n++ ) {
@@ -698,7 +704,7 @@ setup_jumps( core::pose::Pose const & pose,
 							}
 						}
 					}
-					num_contacts_pairwise.push_back( std::make_pair( count, std::make_pair( fixed_res_in_chain_i[m],
+					num_contacts_pairwise.push_back( make_pair( count, make_pair( fixed_res_in_chain_i[m],
 						fixed_res_in_chain_j[n] ) ) );
 					num_contacts += count;
 				}
@@ -715,11 +721,11 @@ setup_jumps( core::pose::Pose const & pose,
 				//runtime_assert( conventional_numbering_in_pose[ chain_j_begin ] > conventional_numbering_in_pose[ chain_i_end ] );
 				sequence_separation = std::abs( conventional_numbering_in_pose[ chain_j_begin ] - conventional_numbering_in_pose[ chain_i_end ] );
 			}
-			if ( jump_res_pair == std::make_pair( Size(0), Size(0) ) ) jump_res_pair = std::make_pair( chain_i_end, chain_j_begin);
+			if ( jump_res_pair == make_pair( Size(0), Size(0) ) ) jump_res_pair = make_pair( chain_i_end, chain_j_begin);
 
-			chain_pairs.push_back( std::make_pair( -num_contacts /*want to maximize contact*/,
-				std::make_pair( sequence_separation,
-				std::make_pair( std::make_pair( i, j ), jump_res_pair ) ) ) );
+			chain_pairs.push_back( make_pair( -num_contacts /*want to maximize contact*/,
+				make_pair( sequence_separation,
+				make_pair( make_pair( i, j ), jump_res_pair ) ) ) );
 		}
 	}
 
@@ -734,7 +740,7 @@ setup_jumps( core::pose::Pose const & pose,
 		Size const & jump_res_j = chain_pairs[ q ].second.second.second.second;
 		jump_partners1.push_back( jump_res_i );
 		jump_partners2.push_back( jump_res_j );
-		chain_connections.push_back( std::make_pair( i, j ) );
+		chain_connections.push_back( make_pair( i, j ) );
 		connection_domains = get_connection_domains( chain_connections, all_res_in_chain.size() );
 		if ( jump_partners1.size() == num_chains - 1 ) break;
 	}
@@ -795,7 +801,7 @@ void
 update_fixed_domain_from_extra_minimize_jump_pairs( utility::vector1< Size > & fixed_domain,
 	pose::Pose const & pose,
 	utility::vector1< Size > const & res_list,
-	utility::vector1< std::pair< Size, Size > > const & extra_minimize_jump_pairs ) {
+	utility::vector1< pair< Size, Size > > const & extra_minimize_jump_pairs ) {
 
 
 	for ( Size i = 1; i <= extra_minimize_jump_pairs.size(); i++ ) {
@@ -839,12 +845,46 @@ update_fixed_domain_from_extra_minimize_jump_res( vector1< Size > & fixed_domain
 	pose::Pose const & pose,
 	vector1< Size > const & res_list,
 	vector1< Size > const & extra_minimize_jump_res ) {
-	utility::vector1< std::pair< Size, Size > > extra_minimize_jump_pairs;
+	utility::vector1< pair< Size, Size > > extra_minimize_jump_pairs;
 	for ( Size n = 1; n <= extra_minimize_jump_res.size()/2; n++ ) {
-		extra_minimize_jump_pairs.push_back( std::make_pair( extra_minimize_jump_res[ 2*n - 1 ],
+		extra_minimize_jump_pairs.push_back( make_pair( extra_minimize_jump_res[ 2*n - 1 ],
 			extra_minimize_jump_res[ 2*n     ] ) );
 	}
 	update_fixed_domain_from_extra_minimize_jump_pairs( fixed_domain, pose, res_list, extra_minimize_jump_pairs );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+/// Could this be made more general? Figured out through knowledge of where side
+///  chain atoms connect to polymeric backbone?
+vector1< pair< TorsionID, Real > >
+get_suite_torsion_info( pose::Pose const & pose, Size const i )
+{
+	vector1< TorsionID > torsion_ids;
+	if ( pose.residue_type( i ).is_NA() ) {
+		torsion_ids.push_back( TorsionID( i  , BB, 5 ) ); // epsilon
+		torsion_ids.push_back( TorsionID( i  , BB, 6 ) ); // zeta
+		torsion_ids.push_back( TorsionID( i+1, BB, 1 ) ); // alpha
+		torsion_ids.push_back( TorsionID( i+1, BB, 2 ) ); // beta
+		torsion_ids.push_back( TorsionID( i+1, BB, 3 ) ); // gamma
+	} else if ( pose.residue_type( i ).is_protein() ) {
+		torsion_ids.push_back( TorsionID( i  , BB, 2 ) ); // psi
+		torsion_ids.push_back( TorsionID( i  , BB, 3 ) ); // omega
+		torsion_ids.push_back( TorsionID( i+1, BB, 1 ) ); // phi
+	}
+	vector1< pair< TorsionID, Real > > suite_torsion_info;
+	for ( Size n = 1; n <= torsion_ids.size(); n++ ) {
+		suite_torsion_info.push_back( make_pair( torsion_ids[ n ], pose.torsion( torsion_ids[ n ] ) ) );
+	}
+	return suite_torsion_info;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+void
+apply_suite_torsion_info( pose::Pose & pose,
+													vector1< pair< TorsionID, Real > > const & suite_torsion_info ) {
+	for ( Size n = 1; n <= suite_torsion_info.size(); n++ ) {
+		pose.set_torsion( suite_torsion_info[ n ].first, suite_torsion_info[ n ].second );
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -855,8 +895,11 @@ add_cutpoint_closed( pose::Pose & pose,
 	for ( Size n = 1; n <= cutpoint_closed.size(); n++ ) {
 		if ( !res_list.has_value( cutpoint_closed[ n ] ) ) continue;
 		Size const i = res_list.index( cutpoint_closed[ n ] );
+		// could be useful in general -- share this with TransientCutpointHandler?
+		vector1< pair< TorsionID, Real > > const suite_torsion_info = get_suite_torsion_info( pose ,i );
 		put_in_cutpoint( pose, i );
 		correctly_add_cutpoint_variants( pose, i );
+		apply_suite_torsion_info( pose, suite_torsion_info );
 	}
 }
 
@@ -1066,7 +1109,7 @@ figure_out_dock_domain_map( utility::vector1< Size > & cutpoint_open_in_full_mod
 	}
 
 	// which segments are connected by input poses?
-	vector1< std::pair< Size, Size > > chain_connections;
+	vector1< pair< Size, Size > > chain_connections;
 	for ( Size n = 1; n <= pose_res_lists.size(); n++ ) {
 		vector1< Size > const & res_list = pose_res_lists[ n ];
 		std::set< Size > chains_in_pose;
@@ -1077,7 +1120,7 @@ figure_out_dock_domain_map( utility::vector1< Size > & cutpoint_open_in_full_mod
 		}
 		for ( std::set< Size >::const_iterator it1 = chains_in_pose.begin(), end = chains_in_pose.end(); it1 != end; ++it1 ) {
 			for ( std::set< Size >::const_iterator it2 = it1; it2 != end; ++it2 ) {
-				if ( it1 != it2 ) chain_connections.push_back( std::make_pair( *it1, *it2 ) );
+				if ( it1 != it2 ) chain_connections.push_back( make_pair( *it1, *it2 ) );
 			}
 		}
 	}

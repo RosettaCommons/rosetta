@@ -262,6 +262,7 @@ StepWiseMasterMover::initialize(){
 	stepwise_move_selector_->set_add_delete_frequency( options_->add_delete_frequency() );
 	stepwise_move_selector_->set_switch_focus_frequency( options_->switch_focus_frequency() );
 	stepwise_move_selector_->set_choose_random( !options_->enumerate() );
+	stepwise_move_selector_->set_force_submotif_without_intervening_bulge( options_->force_submotif_without_intervening_bulge() );
 
 	if ( options_->new_move_selector() || options_->test_all_moves() ) stepwise_move_selector_->set_force_unique_moves( true );
 	stepwise_move_selector_->set_submotif_library( submotif_library_ );

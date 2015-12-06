@@ -15,25 +15,23 @@
 
 // Unit headers
 #include <protocols/farna/RNA_DeNovoProtocol.hh>
-#include <protocols/farna/RNA_DeNovoProtocolOptions.hh>
+#include <protocols/farna/options/RNA_DeNovoProtocolOptions.hh>
 #include <protocols/farna/RNA_FragmentMonteCarlo.hh>
-#include <protocols/farna/FullAtomRNA_Fragments.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
-#include <protocols/farna/RNA_Minimizer.hh>
-#include <protocols/farna/RNA_Relaxer.hh>
-#include <protocols/farna/RNA_StructureParameters.hh>
-#include <protocols/farna/RNA_ChunkLibrary.hh>
+#include <protocols/farna/fragments/FullAtomRNA_Fragments.hh>
+#include <protocols/farna/movers/RNA_LoopCloser.hh>
+#include <protocols/farna/base_pairs/RNA_BasePairHandler.hh>
+#include <protocols/farna/movers/RNA_Minimizer.hh>
+#include <protocols/farna/setup/RNA_DeNovoParameters.hh>
+#include <protocols/farna/movers/RNA_Relaxer.hh>
+#include <protocols/farna/setup/RNA_DeNovoPoseSetup.hh>
+#include <protocols/farna/libraries/RNA_ChunkLibrary.hh>
 
 // Package headers
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AtomLevelDomainMap.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
-#include <protocols/stepwise/modeler/align/util.hh> //move this to toolbox/
-#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/farna/util.hh>
 
 // Project headers
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -73,12 +71,7 @@
 // External library headers
 
 //C++ headers
-#include <vector>
-#include <list>
-#include <string>
 #include <iostream>
-#include <sstream>
-#include <fstream>
 #ifdef WIN32
 #include <ctime>
 #endif
@@ -116,7 +109,7 @@ using namespace core;
 namespace protocols {
 namespace farna {
 
-static THREAD_LOCAL basic::Tracer TR( "protocols.rna.RNA_DeNovoProtocol" );
+static THREAD_LOCAL basic::Tracer TR( "protocols.farna.RNA_DeNovoProtocol" );
 
 RNA_DeNovoProtocol::RNA_DeNovoProtocol( RNA_DeNovoProtocolOptionsCOP options ):
 	Mover(),
@@ -151,12 +144,19 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	// RNA score function (both low-res and high-res).
 	initialize_scorefxn( pose );
 
-	//Keep a copy for resetting after each decoy.
-	Pose start_pose = pose;
-
 	// Some other silent file setup
 	initialize_lores_silent_file();
 	initialize_tag_is_done();
+
+	RNA_DeNovoParametersCOP rna_params( new RNA_DeNovoParameters( options_->rna_params_file() ) );
+	RNA_DeNovoPoseSetupOP rna_de_novo_pose_setup( new RNA_DeNovoPoseSetup( *rna_params )  );
+	rna_de_novo_pose_setup->set_bps_moves( options_->bps_moves() );
+	rna_de_novo_pose_setup->set_root_at_first_rigid_body( options_->root_at_first_rigid_body() );
+	bool refine_pose( refine_pose_list_.size() > 0 || options_->refine_pose() );
+	if ( !refine_pose )	rna_de_novo_pose_setup->initialize_for_de_novo_protocol( pose, options_->ignore_secstruct() ); // virtualize phosphates, but no chainbreaks -- PUT HIGHER?
+
+	//Keep a copy for resetting after each decoy.
+	Pose start_pose = pose;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Main Loop.
@@ -176,17 +176,24 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 			pose = start_pose;
 		}
 
+		RNA_ChunkLibraryOP user_input_chunk_library( new RNA_ChunkLibrary( options_->chunk_pdb_files(), options_->chunk_silent_files(), pose,
+																																			 options_->input_res(), rna_params->allow_insert_res() ) );
+		RNA_BasePairHandlerOP rna_base_pair_handler( refine_pose ? new RNA_BasePairHandler( pose ) : new RNA_BasePairHandler( *rna_params ) );
+
 		rna_fragment_monte_carlo_ = RNA_FragmentMonteCarloOP( new RNA_FragmentMonteCarlo( options_ ) );
 		rna_fragment_monte_carlo_->set_out_file_tag( out_file_tag );
 		rna_fragment_monte_carlo_->set_native_pose( get_native_pose() );
 		rna_fragment_monte_carlo_->set_denovo_scorefxn( denovo_scorefxn_ );
 		rna_fragment_monte_carlo_->set_hires_scorefxn( hires_scorefxn_ );
-		rna_fragment_monte_carlo_->set_all_lores_score_final( all_lores_score_final );
-		rna_fragment_monte_carlo_->set_refine_pose( refine_pose_list_.size() > 0 || options_->refine_pose() );
+		rna_fragment_monte_carlo_->set_user_input_chunk_library( user_input_chunk_library );
+		rna_fragment_monte_carlo_->set_rna_base_pair_handler( rna_base_pair_handler ); // could later have this look inside pose's sec_struct_info
+		rna_fragment_monte_carlo_->set_refine_pose( refine_pose );
+		if ( !refine_pose ) rna_fragment_monte_carlo_->set_rna_de_novo_pose_setup( rna_de_novo_pose_setup ); // only used for resetting fold-tree & cutpoints on each try.
+		rna_fragment_monte_carlo_->set_all_lores_score_final( all_lores_score_final );  // used for filtering.
 
 		rna_fragment_monte_carlo_->apply( pose );
 
-		all_lores_score_final = rna_fragment_monte_carlo_->all_lores_score_final(); // might have been updated.
+		all_lores_score_final = rna_fragment_monte_carlo_->all_lores_score_final(); // might have been updated, user for filtering.
 		if ( options_->output_lores_silent_file() ) align_and_output_to_silent_file( *(rna_fragment_monte_carlo_->lores_pose()), lores_silent_file_, out_file_tag );
 
 		std::string const out_file_name = out_file_tag + ".pdb";
@@ -305,49 +312,22 @@ RNA_DeNovoProtocol::initialize_lores_silent_file() {
 	lores_silent_file_.replace( pos, new_prefix.length(), new_prefix );
 }
 
-//////////////////////////////////////////////////////////////////////
-void
-RNA_DeNovoProtocol::check_for_loop_modeling_case( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map, pose::Pose const & /*pose*/ ) const
-{
-	// special case -- we only care about the loop(s). Pose has already been aligned to fixed residues.
-	// this will be decided in align_and_output_to_silent_file.
-	if ( rna_fragment_monte_carlo_ != 0 && rna_fragment_monte_carlo_->rna_chunk_library()->single_user_input_chunk() ) {
-		std::map< core::id::AtomID, core::id::AtomID > loop_atom_id_map;
-		TR << "In loop modeling mode, since there is a single user-inputted pose" << std::endl;
-		for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator it = atom_id_map.begin(); it != atom_id_map.end(); it++ ) {
-			Size domain( rna_fragment_monte_carlo_->rna_chunk_library()->allow_insert()->get_domain( it->second ) );
-			if ( domain == 0 || domain == ROSETTA_LIBRARY_DOMAIN ) {
-				loop_atom_id_map[ it->first ] = it->second;
-				// TR << TR.Cyan << "Loop atom: " << atom_id_to_named_atom_id( it->second, pose ) << TR.Reset << std::endl;
-			}
-		}
-		atom_id_map = loop_atom_id_map;
-	}
-}
 
 //////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocol::calc_rmsds( core::io::silent::SilentStruct & s, core::pose::Pose & pose,
 	std::string const & out_file_tag ) const
 {
-	using namespace core::scoring;
 
-	std::map< core::id::AtomID, core::id::AtomID > atom_id_map;
-	setup_matching_heavy_atoms( *get_native_pose(), pose, atom_id_map ); // no virtuals, no hydrogens.
-	check_for_loop_modeling_case( atom_id_map, pose );
-
-	Real const rmsd = rms_at_corresponding_atoms_no_super( *get_native_pose(), pose, atom_id_map );
+	Real const rmsd = rna_fragment_monte_carlo_->get_rmsd_no_superimpose( pose );
 	TR << "All atom rmsd: " << rmsd << " for " << out_file_tag << std::endl;
-	s.add_energy( "rms", rmsd );
+	s.add_energy( "rms",  rmsd );
 
-	Real rmsd_stems = 0.0;
-	std::list< Size > stem_residues( rna_fragment_monte_carlo_->rna_structure_parameters()->get_stem_residues( pose ) );
-
-	if ( !stem_residues.empty() ) { //size() > 0 ) {
-		rmsd_stems = all_atom_rmsd( *get_native_pose(), pose, stem_residues );
+	Real const rmsd_stems = rna_fragment_monte_carlo_->get_rmsd_stems_no_superimpose( pose );
+	if ( rmsd_stems > 0.0 ) {
 		TR << "All atom rmsd over stems: " << rmsd_stems << " for " << out_file_tag << std::endl;
+		s.add_energy( "rms_stem", rmsd_stems );
 	}
-	s.add_energy( "rms_stem", rmsd_stems );
 
 }
 
@@ -415,40 +395,7 @@ RNA_DeNovoProtocol::output_to_silent_file(
 void
 RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, std::string const & silent_file, std::string const & out_file_tag ) const
 {
-
-	bool loop_modeling_into_single_structure( false );
-
-	// if input pdbs were specified with -s or -silent, then automatic alignment to first of these input chunks.
-	// otherwise, align to native pose, if specified.
-	if ( options_->input_res().size() > 0 ) {
-		loop_modeling_into_single_structure = rna_fragment_monte_carlo_->rna_chunk_library()->superimpose_to_single_user_input_chunk( pose );
-	}
-
-	if ( !loop_modeling_into_single_structure && get_native_pose() ) {
-
-		Pose const & native_pose = *get_native_pose();
-
-		//realign to native for ease of viewing.
-		// check for any fixed domains.
-		utility::vector1< Size > superimpose_res; // = get_moving_res( pose, rna_fragment_monte_carlo_->rna_structure_parameters()->allow_insert() );
-
-		// if no fixed domains, just superimpose over all residues.
-		if ( superimpose_res.size() == 0 ) {
-			for ( Size n = 1; n <= pose.total_residue(); n++ )  superimpose_res.push_back( n );
-		}
-
-		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-			protocols::stepwise::modeler::align::create_alignment_id_map_legacy( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
-
-		TR << "Aligning pose to native." << std::endl;
-
-		//pose.dump_pdb( "before_align.pdb");
-		//  native_pose.dump_pdb( "native.pdb" );
-		core::scoring::superimpose_pose( pose, native_pose, alignment_atom_id_map_native );
-		//  pose.dump_pdb( "after_align.pdb");
-
-	}
-
+	rna_fragment_monte_carlo_->align_pose( pose, true /*verbose*/ );
 	output_to_silent_file( pose, silent_file, out_file_tag, false /*score_only*/ );
 }
 

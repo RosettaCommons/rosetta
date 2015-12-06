@@ -38,7 +38,8 @@ class SubMotifLibrary: public utility::pointer::ReferenceCount {
 public:
 
 	//constructor
-	SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set );
+	SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set,
+									 bool const include_submotifs_from_jump_library = false );
 
 	//destructor
 	~SubMotifLibrary();
@@ -61,9 +62,14 @@ private:
 	void
 	initialize_from_directory( std::string const dir_name );
 
+	void
+	initialize_from_jump_library();
+
 	SubMotifSequenceSet
 	get_submotif_sequence_set( pose::Pose const & pose, bool sort_sequences = true ) const;
 
+	void
+	save_pose_as_submotif( pose::PoseOP pose, std::string const & tag );
 
 	utility::vector1< SequenceMapping >
 	get_matches_for_one_submotif_sequence_set( SubMotifSequenceSet const & submotif_sequence_set,
@@ -88,6 +94,7 @@ private:
 private:
 
 	core::chemical::ResidueTypeSetCAP rsd_set_;
+	bool const include_submotifs_from_jump_library_;
 
 	// central list of 'submotif sets', grouped by chain sequences. So [aa, uu] will not show up twice as [uu, aa].
 	std::set< SubMotifSequenceSet > submotif_sequence_sets_;

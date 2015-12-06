@@ -95,7 +95,8 @@ StepWiseMoveSelector::StepWiseMoveSelector():
 	remodeler_( false ),
 	choose_random_( true ),
 	force_unique_moves_( false ),
-	filter_complex_cycles_( true )
+	filter_complex_cycles_( true ),
+	force_submotif_without_intervening_bulge_( true )
 {}
 
 //Destructor
@@ -231,9 +232,9 @@ StepWiseMoveSelector::save_moves( utility::vector1< StepWiseMove > const & moves
 	for ( Size n = 1; n <= moves.size(); n++ ) {
 		// a bit hacky here -- reduce relative weight of skip_bulge moves.
 		if ( ( moves[ n ].move_type() == ADD ||
-				moves[ n ].move_type() == ADD_SUBMOTIF ) &&
-				( moves[ n ].attachment_type() == JUMP_TO_PREV_IN_CHAIN ||
-				moves[ n ].attachment_type() == JUMP_TO_NEXT_IN_CHAIN ) ) {
+					 moves[ n ].move_type() == ADD_SUBMOTIF ) &&
+				 ( moves[ n ].attachment_type() == JUMP_TO_PREV_IN_CHAIN ||
+					 moves[ n ].attachment_type() == JUMP_TO_NEXT_IN_CHAIN ) ) {
 			relative_weights.push_back( skip_bulge_frequency_ );
 		} else {
 			relative_weights.push_back( 1 );
@@ -859,6 +860,22 @@ StepWiseMoveSelector::get_submotif_add_moves( pose::Pose const & pose,
 	for ( Size n = 1; n <= submotif_from_scratch_moves.size(); n++ ) {
 		MoveElement const & move_element = submotif_from_scratch_moves[ n ].move_element();
 		std::string const & submotif_tag = submotif_from_scratch_moves[ n ].submotif_tag();
+
+		// this is a hack to force addition of base pair submotifs without intervening bulges.
+		if ( force_submotif_without_intervening_bulge_ ) {
+			std::map< Size, bool > addable;
+			for ( Size k = 1; k <= add_moves.size(); k++ ) {
+				StepWiseMove const & add_move = add_moves[ k ];
+				Size const add_move_res = add_move.moving_res();
+				addable[ add_move_res ] = true;
+			}
+			bool all_addable( true );
+			for ( Size k = 1; k <= move_element.size(); k++ ) {
+				if ( !addable[ move_element[ k ] ] ) all_addable = false;
+			}
+			if ( !all_addable ) continue;
+		}
+
 		for ( Size k = 1; k <= add_moves.size(); k++ ) {
 			StepWiseMove const & add_move = add_moves[ k ];
 			Size const add_move_res = add_move.moving_res();

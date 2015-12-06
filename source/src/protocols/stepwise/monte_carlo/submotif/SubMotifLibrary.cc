@@ -17,10 +17,15 @@
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.hh>
+#include <protocols/farna/libraries/RNA_JumpLibrary.hh>
+#include <protocols/farna/libraries/RNA_LibraryManager.hh>
+#include <protocols/farna/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/annotated_sequence.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/util.hh>
@@ -59,8 +64,10 @@ namespace monte_carlo {
 namespace submotif {
 
 //Constructor
-SubMotifLibrary::SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set ):
-	rsd_set_( rsd_set )
+	SubMotifLibrary::SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set,
+																		bool const include_submotifs_from_jump_library ):
+		rsd_set_( rsd_set ),
+		include_submotifs_from_jump_library_( include_submotifs_from_jump_library )
 {
 	initialize();
 }
@@ -78,6 +85,7 @@ void
 SubMotifLibrary::initialize(){
 	// could also create a protein library for, e.g., helices & beta strand pairings.
 	initialize_from_directory( basic::database::full_name( "sampling/rna/submotif/" ) );
+	if ( include_submotifs_from_jump_library_ ) initialize_from_jump_library();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -102,9 +110,17 @@ SubMotifLibrary::initialize_from_directory( std::string const directory ){
 
 		TR  << "Reading in submotif: " << full_filename << TR.Reset << std::endl;
 		PoseOP pose = setup::get_pdb_and_cleanup( full_filename, rsd_set_ );
+		save_pose_as_submotif( pose, tag );
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+void
+SubMotifLibrary::save_pose_as_submotif( pose::PoseOP pose, std::string const & tag )
+{
 		tag_into_pose( *pose, tag );
 		submotif_poses_by_tag_[ tag ] = pose;
-
 		SubMotifSequenceSet submotif_sequence_set = get_submotif_sequence_set( *pose );
 		submotif_sequence_sets_.insert( submotif_sequence_set );
 		utility::vector1< SequenceMapping > matches = get_matches_for_one_submotif_sequence_set( submotif_sequence_set, *pose, false /*use_full_model_info*/ );
@@ -113,9 +129,52 @@ SubMotifLibrary::initialize_from_directory( std::string const directory ){
 			if ( n > 1 ) continue; // hmm. trying to avoid redundancy -- all threadings will be enumerated in target full_model in get_matches_for_one_submotif_sequence_set later.
 			submotif_mappings_by_sequence_set_[ submotif_sequence_set ].push_back( std::make_pair( tag, matches[ n ] ) );
 		}
-	}
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////
+void
+SubMotifLibrary::initialize_from_jump_library()
+{
+	using namespace protocols::farna;
+	using namespace protocols::farna::libraries;
+	RNA_JumpLibraryCOP rna_jump_library( RNA_LibraryManager::get_instance()->rna_jump_library_cop() );
+	for ( Size i = 0; i <= 3; i++ ) {
+		for ( Size j = 0; j <= 3; j++ ) {
+			for ( Size e1 = 1; e1 <= 3; e1++ ) {
+				for ( Size e2 = 1; e2 <= 3; e2++ ) {
+					for ( Size o = 1; o <= 2; o++ ) {
+						BasePairType const base_pair_type( rna_nts[ i ], rna_nts[ j ], BaseEdge( e1 ), BaseEdge( e2 ), BaseDoubletOrientation( o ) );
+						if ( !rna_jump_library->has_template( base_pair_type ) ) continue;
+						TR << "filling out submotifs for: " << base_pair_type.tag() << std::endl;
+						RNA_PairingTemplateList const & templates( rna_jump_library->rna_pairing_template_map( base_pair_type ) );
+						for ( Size n = 1; n <= templates.size(); n++ ) {
+
+							PoseOP pose( new Pose );
+							std::string sequence;
+							sequence += rna_nts[ i ];
+							sequence += rna_nts[ j ];
+							core::chemical::ResidueTypeSetCOP rsd_set_op( rsd_set_ );
+							make_pose_from_sequence( *pose, sequence, *rsd_set_op, false /*auto termin*/  );
+
+							FoldTree f( 2 );
+							f.new_jump( 1, 2, 1 );
+							fill_in_default_jump_atoms( f, *pose );
+							pose->fold_tree( f );
+							core::kinematics::Jump const & j( templates[ n ]->jump_forward() );
+							pose->set_jump( 1, j );
+							setup::cleanup( *pose );
+
+							std::string tag( base_pair_type.tag() + "_" + ObjexxFCL::lead_zero_string_of( n, 5 ) );
+							//pose->dump_pdb( tag + ".pdb" );
+							save_pose_as_submotif( pose, tag );
+
+						} // n
+					} // o
+				} // e2
+			} // e1
+		} // j
+	} // i
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////
 SubMotifSequenceSet

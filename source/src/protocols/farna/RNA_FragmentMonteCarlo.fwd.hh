@@ -21,9 +21,9 @@
 namespace protocols {
 namespace farna {
 
-class RNA_FragmentMonteCarlo;
-typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarlo > RNA_FragmentMonteCarloOP;
-typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarlo const > RNA_FragmentMonteCarloCOP;
+	class RNA_FragmentMonteCarlo;
+	typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarlo > RNA_FragmentMonteCarloOP;
+	typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarlo const > RNA_FragmentMonteCarloCOP;
 
 } //farna
 } //protocols

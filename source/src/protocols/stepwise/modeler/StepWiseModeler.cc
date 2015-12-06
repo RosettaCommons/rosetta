@@ -125,10 +125,13 @@ StepWiseModeler::apply( pose::Pose & pose ){
 
 	initialize( pose );
 
-	do_prepacking( pose );
-	do_sampling( pose );
-	if ( sampling_successful() ) do_minimizing( pose );
-
+	if ( options_->lores() ) {
+		do_stepwise_lores( pose );
+	} else {
+		do_prepacking( pose );
+		do_sampling( pose );
+		if ( sampling_successful() ) do_minimizing( pose );
+	}
 	reinitialize( pose );
 }
 
@@ -174,23 +177,14 @@ StepWiseModeler::do_sampling( core::pose::Pose & pose ) {
 ////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseModeler::do_minimizing( core::pose::Pose & pose ) {
-	moves::MoverOP optimizer;
-	if ( options_->lores() ) {
-		optimizer = moves::MoverOP( new protocols::farna::FARNA_Optimizer( pose_list_, scorefxn_, 100 /* cycles */ ) );
-	} else {
-		StepWiseMinimizerOP stepwise_minimizer( new StepWiseMinimizer( pose_list_,
-			working_parameters_,
-			options_,
-			scorefxn_ ) );
-		if ( master_packer_->packer()->working_pack_res_was_inputted() ) {
-			stepwise_minimizer->set_working_pack_res( master_packer_->packer()->previous_working_pack_res() );
-		}
-		optimizer = stepwise_minimizer;
+	StepWiseMinimizerOP stepwise_minimizer( new StepWiseMinimizer( pose_list_,
+																																 working_parameters_,
+																																 options_,
+																																 scorefxn_ ) );
+	if ( master_packer_->packer()->working_pack_res_was_inputted() ) {
+		stepwise_minimizer->set_working_pack_res( master_packer_->packer()->previous_working_pack_res() );
 	}
-
-	if ( optimizer == 0 ) return;
-
-	optimizer->apply( pose ); // will save work in pose_list_
+	stepwise_minimizer->apply( pose ); // will save work in pose_list_
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -208,6 +202,22 @@ StepWiseModeler::reinitialize( pose::Pose & pose ){
 	working_minimize_res_.clear();
 	figure_out_prepack_res_ = false;
 	prepack_res_was_inputted_ = false;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// stepwise_lores runs cycles of fragment assembly between add/delete/resample
+void
+StepWiseModeler::do_stepwise_lores( core::pose::Pose & pose )
+{
+	// following virtual ribose would normally be needed in connection_sampler
+	for (Size n = 1; n <= pose.total_residue(); n++ ) {
+		remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, n );
+	}
+	pose_list_ = make_vector1( pose.clone() );
+
+	// following takes place of 'minimizer', i.e. global optimization in response to an add/move/delete
+	protocols::farna::FARNA_Optimizer optimizer( pose_list_, scorefxn_, 100 /* cycles */ );
+	optimizer.apply( pose );
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -271,7 +281,7 @@ StepWiseModeler::sampling_successful() {
 	Size const num_sampled = pose_list_.size();
 	if ( num_sampled == 0 ) {
 		if ( options_->num_random_samples() > 0 ) TR << TR.Red << "WARNING! WARNING! WARNING! pose_list_.size() == 0! " << TR.Reset << std::endl;
-		if ( options_ && !options_->output_minimized_pose_list() ) return false; // don't do a minimize...
+		if ( !options_->output_minimized_pose_list() ) return false; // don't do a minimize...
 	}
 	return true;
 }
