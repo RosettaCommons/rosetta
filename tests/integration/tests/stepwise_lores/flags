@@ -3,7 +3,6 @@
 -superimpose_over_all
 -nstruct 1
 -intermolecular_frequency 0.0
--save_times
 -native srp_domainIV_native_1lnt_RNA.pdb
 -motif_mode 
 
@@ -14,7 +13,6 @@
 -from_scratch_frequency 0.0
 -allow_split_off false
 -cycles 5
--save_times
 
 -out:file:silent swm_bps_rebuild_submotif0.9.out
 -submotif_frequency 0.9
