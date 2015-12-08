@@ -1,3 +1,6 @@
+#Score 4L means score for loops.  It is the patch used currently for loop modeling perturbation stage.
+
+
 hbond_lr_bb = 1.0
 hbond_sr_bb = 1.0
 rama = 0.1

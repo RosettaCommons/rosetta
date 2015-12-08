@@ -1,0 +1,6 @@
+#Smooth version of Cen Std using Frank Dimaio's updated centroid statistics.  Highly recommended.
+
+cen_env_smooth 1.0
+cen_pair_smooth 1.0
+cbeta_smooth 1.0
+vdw 1.0
