@@ -15,7 +15,8 @@ import version
 #os.popen( 'cd ..; python svn_version.py' )
 starting_directory = os.path.basename( os.getcwd() )
 os.chdir( '..' )
-version.svn_version()
+version.retrieve_version_information()
+version.generate_version_files()
 os.chdir( starting_directory )
 
 # (re)generate options files
