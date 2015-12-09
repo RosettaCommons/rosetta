@@ -91,7 +91,7 @@ public:
 		core::Real B_eff = B;
 		if ( B<0 ) B_eff = 0;
 		else if ( B<1 ) B_eff = B*B;
-		else if ( B>lim-10.0 ) B_eff = lim-(1.0/10.0)*(lim-B)*(lim-B);
+		else if ( B>lim-10.0 && B<=lim) B_eff = lim-(1.0/10.0)*(lim-B)*(lim-B);
 		else if ( B>lim ) B_eff = lim;
 		core::Real s = sigma_eff + B_eff/4;
 		core::Real k = M_PI*M_PI/s;
