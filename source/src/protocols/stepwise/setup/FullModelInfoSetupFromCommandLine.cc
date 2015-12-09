@@ -1165,15 +1165,9 @@ reorder_pose( pose::Pose & pose, utility::vector1< Size > & res_list ) {
 // in fasta file.
 bool
 just_modeling_RNA( utility::vector1< std::string > const & fasta_files ) {
-	if ( fasta_files.size() == 0 ) return false; // unknown
-	std::string const fasta_file = fasta_files[ 1 ]; // currently just reading in one fasta file.
-	utility::vector1< core::sequence::SequenceOP > fasta_sequences = core::sequence::read_fasta_file( fasta_file );
-	for ( Size n = 1; n <= fasta_sequences.size(); n++ ) {
-		std::string sequence = fasta_sequences[n]->sequence();
-		parse_out_non_standard_residues( sequence );
-		if ( !modeler::rna::just_modeling_RNA( sequence ) ) return false;
-	}
-	return true;
+	std::string sequence = core::sequence::read_fasta_file_return_str( fasta_files[1] );
+	parse_out_non_standard_residues( sequence );
+	return ( modeler::rna::just_modeling_RNA( sequence ) );
 }
 
 

@@ -6075,15 +6075,15 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 		## Options for Range Relax
 		Option_Group('range',
-			Option( 'set_tm_helical',  'Boolean',  desc="Set helical secondary structure in TM region", default='false'),			
+			Option( 'set_tm_helical',  'Boolean',  desc="Set helical secondary structure in TM region", default='false'),
 			Option( 'kT',              'Real',  desc="Advanced option: kT", default='1.0'),
 			Option( 'angle_max',       'Real',  desc="Maximum dihedral angle deviation for Small and ShearMover inside RangeRelax", default='0.1'),
 			Option( 'nmoves',          'String',  desc="Number of Small and Shear moves inside RangeRelax, can be \'nres\' for all residues or an integer", default='nres'),
-			Option( 'spherical_wave',  'Boolean',  desc="Relax in a spherical wave pattern starting at the center residue outwards.", default='false'),			
-			Option( 'repack_again',    'Boolean',  desc="Do an additional round of repacking all residues after the RangeRelax", default='false'),			
+			Option( 'spherical_wave',  'Boolean',  desc="Relax in a spherical wave pattern starting at the center residue outwards.", default='false'),
+			Option( 'repack_again',    'Boolean',  desc="Do an additional round of repacking all residues after the RangeRelax", default='false'),
 			Option( 'cycles',          'Integer',  desc="Maximum number of cycles for repacking and minimization. Default 3", default='3'),
 			Option( 'min_cycles',      'Integer',  desc="Maximum number of cycles within the Minimizer. Default 2000", default='2000'),
-			Option( 'idealize',        'Boolean',  desc="Idealize decoy after run. Default: true", default='true'),	
+			Option( 'idealize',        'Boolean',  desc="Idealize decoy after run. Default: true", default='true'),
 		),
 
 		## Options for Sequence Relax
@@ -6346,7 +6346,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		   Option( 'suppress_bp_constraint', 'Real', desc= "Factor by which to lower base pair constraint weight. ",default='1.0' ),
 		   Option( 'output_filters', 'Boolean',desc= "output lores scores at early stage (round  2 of 10) and at end -- could be useable for early termination of unpromising early starts", default='false' ),
 		   Option( 'autofilter', 'Boolean', desc= "Automatically skip output/minimize if lores score is worse than 20th percentile, updated on the fly.",default= 'true' ),
-		   Option( 'output_res_num', 'IntegerVector', desc= "Numbering of residues in output PDB or silent file",default=[]  ),
+		   Option( 'output_res_num', 'ResidueChainVector', desc= "Numbering (and chain) of residues in output PDB or silent file",default=[]  ),
 		   Option( 'refine_silent_file', 'String', desc= "Name of the silent file to be refined.",default="" ),
 		   Option( 'refine_native', 'Boolean', desc= "Refine starting from the native pose",default= 'false' ),
 		   Option( 'bps_moves', 'Boolean', desc= "Base pair step moves",default= 'false' ),

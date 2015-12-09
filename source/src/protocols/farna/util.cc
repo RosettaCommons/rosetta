@@ -1222,14 +1222,24 @@ involved_in_phosphate_torsion( std::string atomname )
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-set_output_res_num( pose::Pose & extended_pose,
-	utility::vector1< Size > const & output_res_num ){
+set_output_res_and_chain( pose::Pose & extended_pose,
+													std::pair< utility::vector1< int >, utility::vector1< char > > const & output_resnum_and_chain )
+{
 	using namespace pose;
+	utility::vector1< int > const & output_res_num = output_resnum_and_chain.first;
+	utility::vector1< char > const & output_chain = output_resnum_and_chain.second;
 	if ( output_res_num.size() == 0 ) return;
 	runtime_assert( output_res_num.size() == extended_pose.total_residue() );
 
 	PDBInfoOP pdb_info( new PDBInfo( extended_pose ) );
 	pdb_info->set_numbering( output_res_num );
+
+	bool chain_interesting( false );
+	for ( Size n = 1; n <= output_chain.size(); n++ ) {
+		if ( output_chain[ n ] != ' ' ) chain_interesting = true;
+	}
+	if ( chain_interesting) pdb_info->set_chains( output_chain );
+
 	extended_pose.pdb_info( pdb_info );
 }
 

@@ -22,6 +22,7 @@
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh> // for superimpose_over_all
 #include <basic/database/open.hh>
 #include <utility/file/file_sys_util.hh>
 
@@ -70,6 +71,7 @@ namespace options {
 		bps_moves_( false ),
 	// following is odd, but note that core::scoring::rna::chemical_shift machinery also checks global options system.
 		use_chem_shift_data_( option[ OptionKeys::score::rna_chemical_shift_exp_data].user() ),
+		superimpose_over_all_( false ),
 		all_rna_fragments_file_( basic::database::full_name("sampling/rna/RICHARDSON_RNA09.torsions") ),
 		rna_params_file_( "" ),
 		jump_library_file_( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) )
@@ -129,6 +131,8 @@ RNA_FragmentMonteCarloOptions::clone() const
 		set_allowed_bulge_res( option[ rna::farna::allowed_bulge_res ]() ) ;
 
 		set_simple_rmsd_cutoff_relax( option[ rna::farna::simple_relax ] );
+
+		set_superimpose_over_all( option[ stepwise::superimpose_over_all ]() );
 
 		std::string const in_path = option[ in::path::path ]()[1];
 		if ( option[ rna::farna::vall_torsions ].user() ) {

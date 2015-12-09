@@ -741,10 +741,11 @@ void
 RNA_FragmentMonteCarlo::align_pose( core::pose::Pose & pose, bool const verbose ) const
 {
 	bool loop_modeling_into_single_structure( false );
-
-	// if input pdbs were specified with -s or -silent, then automatic alignment to first of these input chunks.
-	// otherwise, align to native pose, if specified.
-	loop_modeling_into_single_structure = rna_chunk_library_->superimpose_to_single_user_input_chunk( pose );
+	if ( !options_->superimpose_over_all() ) {
+		// if input pdbs were specified with -s or -silent, then automatic alignment to first of these input chunks.
+		// otherwise, align to native pose, if specified.
+		loop_modeling_into_single_structure = rna_chunk_library_->superimpose_to_single_user_input_chunk( pose );
+	}
 
 	if ( !loop_modeling_into_single_structure && get_native_pose() ) {
 

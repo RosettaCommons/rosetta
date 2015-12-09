@@ -196,6 +196,7 @@ figure_out_dock_domain_map( utility::vector1< core::Size > & cutpoint_open_in_fu
 	utility::vector1< core::Size > const & working_res,
 	utility::vector1< core::Size > const & sample_res,
 	core::Size const nres );
+
 void
 reorder_pose( core::pose::Pose & pose, utility::vector1< core::Size > & res_list );
 

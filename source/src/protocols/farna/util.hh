@@ -156,8 +156,8 @@ bool
 involved_in_phosphate_torsion( std::string atomname );
 
 void
-set_output_res_num( core::pose::Pose & extended_pose,
-	utility::vector1< core::Size > const & output_res_num );
+set_output_res_and_chain( core::pose::Pose & extended_pose,
+													std::pair< utility::vector1< int >, utility::vector1< char > > const & output_resnum_and_chain );
 
 void
 figure_out_base_pair_partner( core::pose::Pose & pose, std::map< core::Size, core::Size > & partner,

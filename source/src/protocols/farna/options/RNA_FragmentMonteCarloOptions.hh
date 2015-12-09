@@ -80,6 +80,9 @@ public:
 	//void set_use_chem_shift_data( bool const & setting ){ use_chem_shift_data_ = setting; }
 	bool use_chem_shift_data() const { return use_chem_shift_data_; }
 
+	void set_superimpose_over_all( bool const & setting ){ superimpose_over_all_ = setting; }
+	bool superimpose_over_all() const { return superimpose_over_all_; }
+
 	void set_jump_change_frequency( core::Real const & setting ){ jump_change_frequency_ = setting; }
 	core::Real jump_change_frequency() const { return jump_change_frequency_; }
 
@@ -221,6 +224,8 @@ public:
 	bool refine_pose_;
 	bool bps_moves_;
 	bool use_chem_shift_data_;
+
+	bool superimpose_over_all_;
 
 	std::string all_rna_fragments_file_;
 	std::string rna_params_file_;

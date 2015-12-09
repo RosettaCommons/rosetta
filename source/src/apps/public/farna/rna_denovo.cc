@@ -64,8 +64,8 @@ using namespace basic::options::OptionKeys;
 using utility::vector1;
 
 vector1<pose::PoseOP> get_refine_pose_list( std::string const & input_silent_file,
-	vector1< Size > const & output_res,
-	core::chemical::ResidueTypeSetCOP rsd_set );
+																						std::pair< utility::vector1< int >, utility::vector1< char > > const & output_res_and_chain,
+																						core::chemical::ResidueTypeSetCOP rsd_set );
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -106,17 +106,16 @@ rna_denovo_test()
 	}
 
 	//Prepare starting structure from scratch --> read from fasta.
-	std::string const fasta_file = option[ in::file::fasta ]()[1];
-	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( in_path + fasta_file )[1];
 	if ( option[ OptionKeys::rna::farna::refine_native ]() ) {
 		extended_pose = native_pose;
 	} else {
-		core::pose::make_pose_from_sequence( extended_pose, fasta_sequence->sequence(), *rsd_set );
+		std::string const sequence = core::sequence::read_fasta_file_return_str( option[ in::file::fasta ]()[1] );
+		core::pose::make_pose_from_sequence( extended_pose, sequence, *rsd_set );
 	}
-	set_output_res_num( extended_pose, option[ OptionKeys::rna::farna::output_res_num ]() );
+	set_output_res_and_chain( extended_pose, option[ OptionKeys::rna::farna::output_res_num ].resnum_and_chain() );
 
 	// Silent file input for fine refinement
-	vector1<pose::PoseOP> refine_pose_list = get_refine_pose_list( option[ OptionKeys::rna::farna::refine_silent_file ](), option[ OptionKeys::rna::farna::output_res_num ](), rsd_set );
+	vector1<pose::PoseOP> refine_pose_list = get_refine_pose_list( option[ OptionKeys::rna::farna::refine_silent_file ](), option[ OptionKeys::rna::farna::output_res_num ].resnum_and_chain(), rsd_set );
 
 	//Score these suckers.
 	pose::Pose pose( extended_pose );
@@ -152,8 +151,8 @@ rna_denovo_test()
 ///////////////////////////////////////////////////////////////
 vector1<pose::PoseOP>
 get_refine_pose_list( std::string const & input_silent_file,
-	vector1< Size > const & output_res,
-	core::chemical::ResidueTypeSetCOP rsd_set )
+											std::pair< utility::vector1< int >, utility::vector1< char > > const & output_res_and_chain,
+											core::chemical::ResidueTypeSetCOP rsd_set )
 {
 
 	vector1<pose::PoseOP> refine_pose_list;
@@ -163,7 +162,7 @@ get_refine_pose_list( std::string const & input_silent_file,
 		while ( input.has_another_pose() ) {
 			pose::PoseOP new_pose( new pose::Pose );
 			input.fill_pose( *new_pose, *rsd_set );
-			protocols::farna::set_output_res_num( *new_pose, output_res );
+			protocols::farna::set_output_res_and_chain( *new_pose, output_res_and_chain );
 			refine_pose_list.push_back( new_pose );
 		}
 	}
