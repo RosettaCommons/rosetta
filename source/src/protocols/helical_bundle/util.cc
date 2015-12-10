@@ -323,6 +323,8 @@ void generate_atom_positions(
 	bool &failed
 ) {
 
+	runtime_assert_string_msg( z1 != 0, "Error in protocols::helical_bundle::generate_atom_positions(): The value of z1 cannot be zero!" );
+
 	outvector.clear();
 	failed=false;
 
