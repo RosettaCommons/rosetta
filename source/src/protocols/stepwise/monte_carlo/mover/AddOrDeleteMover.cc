@@ -90,8 +90,12 @@ AddOrDeleteMover::apply( core::pose::Pose & pose, StepWiseMove const & swa_move 
 	} else {
 		if ( swa_move.move_type() == ADD_SUBMOTIF ) {
 			runtime_assert( submotif_library_ != 0 );
-			nonconst_full_model_info( pose ).add_other_pose(
-				submotif_library_->create_new_submotif( swa_move.move_element(), swa_move.submotif_tag() , pose ) );
+
+			// could encapsulate in full_model_info.add_submotif();
+			FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+			full_model_info.add_other_pose(
+				submotif_library_->create_new_submotif( swa_move.move_element(), swa_move.submotif_tag() , pose )
+			);
 		} else {
 			runtime_assert( swa_move.move_type() == ADD );
 		}

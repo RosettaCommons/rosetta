@@ -27,6 +27,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
+#include <core/pose/full_model_info/SubMotifInfo.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/sequence/AnnotatedSequence.hh>
 
@@ -135,6 +136,8 @@ public:
 	virtual void print_comments    ( std::ostream & out ) const;
 	/// @brief print the resnum in this SilentStruct, if filled.
 	virtual void print_residue_numbers    ( std::ostream & out ) const;
+	/// @brief print the submotif_info in this SilentStruct, if filled.
+	virtual void print_submotif_info( std::ostream & out ) const;
 
 	/// @brief returns the number of residues contained by this
 	/// SilentStruct.
@@ -321,6 +324,12 @@ public:
 	void
 	figure_out_segment_ids_from_line( std::istream & line_stream );
 
+	void
+	add_submotif_info_from_line( std::istream & line_stream );
+	
+	void
+	fill_struct_with_submotif_info_list( pose::Pose const & pose );
+
 	utility::vector1< SilentStructOP > const & other_struct_list() const { return other_struct_list_; }
 
 	utility::vector1< SilentStructOP > & nonconst_other_struct_list() { return other_struct_list_; }
@@ -376,6 +385,7 @@ private:
 	utility::vector1< SilentStructOP > other_struct_list_;
 	core::pose::full_model_info::FullModelParametersCOP full_model_parameters_;
 	utility::vector1< std::string > segment_IDs_;
+  mutable	utility::vector1< core::pose::full_model_info::SubMotifInfoOP > submotif_info_list_;
 
 private:
 	/// @brief Updates the "score" entry in the silent_energies.

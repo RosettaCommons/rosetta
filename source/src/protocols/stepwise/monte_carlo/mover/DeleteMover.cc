@@ -31,8 +31,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
+#include <core/pose/full_model_info/SubMotifInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <utility/tools/make_vector1.hh>
@@ -132,8 +132,10 @@ DeleteMover::apply( core::pose::Pose & pose, utility::vector1< Size > const & re
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 DeleteMover::decide_to_keep_pose( pose::Pose const & pose ) const {
-	return ( check_for_input_domain( pose ) ||
-		( ( (options_->from_scratch_frequency() > 0.0) || options_->allow_split_off() ) && pose.total_residue() > 1 ) );
+	if ( const_full_model_info( pose ).is_a_submotif() ) return const_full_model_info( pose ).is_a_submotif_seed();
+	if ( check_for_input_domain( pose ) ) return true;
+	if ( ( (options_->from_scratch_frequency() > 0.0) || options_->allow_split_off() ) && pose.total_residue() > 1 )  return true;
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,11 +145,12 @@ DeleteMover::remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
 	bool & keep_remainder_pose,
 	bool & keep_sliced_out_pose ) const {
 
-	// make decision on which poses to keep.
-	keep_remainder_pose  =  decide_to_keep_pose( pose );
-	keep_sliced_out_pose =  decide_to_keep_pose( *sliced_out_pose_op );
-
 	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+
+	// make decision on which poses to keep.
+	keep_remainder_pose  = decide_to_keep_pose( pose );
+	keep_sliced_out_pose = decide_to_keep_pose( *sliced_out_pose_op );
+
 	if ( keep_sliced_out_pose ) full_model_info.add_other_pose( sliced_out_pose_op );
 
 	if ( !keep_remainder_pose ) { // remainder pose is a single nucleotide. no need to keep track of it anymore.
@@ -181,6 +184,7 @@ DeleteMover::remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
 			pose.append_residue_by_bond( *new_res );
 
 			new_full_model_info->clear_res_list();
+			new_full_model_info->update_submotif_info_list();
 			new_full_model_info->clear_other_pose_list();
 			set_full_model_info( pose, new_full_model_info );
 			modeler::rna::checker::set_vdw_cached_rep_screen_info_from_pose( pose, *old_pose_cop );

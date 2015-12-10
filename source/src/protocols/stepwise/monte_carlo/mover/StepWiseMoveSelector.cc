@@ -26,6 +26,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
+#include <core/pose/full_model_info/SubMotifInfo.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/loop_graph/LoopGraph.hh>
 #include <utility/tools/make_vector1.hh>
@@ -183,6 +184,10 @@ StepWiseMoveSelector::fill_denovo_moves( pose::Pose const & pose ) {
 
 	get_submotif_add_moves( pose, submotif_add_moves );
 	save_moves( submotif_add_moves, submotif_frequency() );
+
+	// not implemented yet ...
+	// get_submotif_seed_add_moves( pose, submotif_add_moves );
+	// save_moves( submotif_seed_add_moves, submotif_seed_frequency() );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -300,6 +305,7 @@ StepWiseMoveSelector::select_random_move( pose::Pose const &  ) const {
 Real
 StepWiseMoveSelector::proposal_probability( StepWiseMove const & swa_move ) const {
 	runtime_assert( swa_moves_.size() == proposal_probabilities_.size() );
+	runtime_assert( swa_moves_.has_value( swa_move ) );
 	if ( !swa_moves_.has_value( swa_move ) ) {
 		TR << TR.Red << "WARNING! WARNING! WARNING! swa_moves_.has_value( swa_move ) == false!" << TR.Reset << std::endl;
 		return 1.0;
@@ -550,7 +556,9 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 			partition_res1 = get_partition_res( partition_definition, true );
 			partition_res2 = get_partition_res( partition_definition, false );
 
-			if ( check_for_input_domain_or_from_scratch( pose, partition_res1 )  ) {
+			if ( partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
+
+			if ( check_for_input_domain_or_from_scratch( pose, partition_res1 ) ) {
 				swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full(partition_res2),
 					Attachment( full_model_info.sub_to_full(i), BOND_TO_PREVIOUS ), move_type ) );
 				if ( force_unique_moves_ ) continue;
@@ -580,7 +588,6 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 
 		// do not include jumps greater than a single residue (may exist in submotifs)
 		if ( std::abs( static_cast< int >( offset ) ) > 2 ) continue;
-
 		if ( chains[ moving_res ] != chains[ reference_res ] ) continue;
 
 		partition_res1 = get_partition_res( partition_definition, ( moving_res < reference_res ) );
@@ -588,6 +595,7 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 
 		// make sure that at least one partition is a single nucleotide.
 		if ( partition_res1.size() > 1 && partition_res2.size() > 1 ) continue;
+		if ( partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
 
 		if ( partition_res1.size() == 1 && check_for_input_domain_or_from_scratch( pose, partition_res2 ) ) {
 			Size const anchor_res = get_anchor_res( partition_res1[1], pose );
@@ -639,6 +647,49 @@ StepWiseMoveSelector::get_docking_split_move_elements( pose::Pose const & pose,
 
 	for ( Size n = 1; n <= swa_moves_split.size(); n++ ) swa_moves.push_back( swa_moves_split[ n ] );
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+bool
+StepWiseMoveSelector::partitions_split_a_submotif(
+	pose::Pose const & pose,
+	utility::vector1 < Size > const & partition1,
+	utility::vector1 < Size > const & partition2
+) const {
+	utility::vector1< SubMotifInfoOP > submotif_info_list = const_full_model_info( pose ).submotif_info_list();
+	utility::vector1< SubMotifInfoOP >::iterator itr;
+	for ( itr = submotif_info_list.begin(); itr != submotif_info_list.end(); ++itr ) {
+		bool in_partition1( false ), in_partition2( false );
+		for ( Size n = 1; n < (*itr)->res_list().size(); n++ ) {
+			if ( partition1.has_value( (*itr)->res_list( n ) ) ) {
+				in_partition1 = true;
+				continue;
+			}
+			if ( partition2.has_value( (*itr)->res_list( n ) ) ) {
+				in_partition2 = true;
+				continue;
+			}
+		}
+		if ( in_partition1 && in_partition2 ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool
+StepWiseMoveSelector::check_for_intramolecular_submotif_jump(
+	pose::Pose const & pose,
+	Size const & moving_res,
+	Size const & attached_res
+) const {
+	utility::vector1< Size > const & check_res = utility::tools::make_vector1( moving_res, attached_res );
+	bool const & in_a_submotif = const_full_model_info( pose ).in_a_submotif( check_res );
+	bool const & jump_exists = pose.fold_tree().jump_exists( moving_res, attached_res );
+	return ( in_a_submotif && jump_exists );
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
@@ -1398,11 +1449,15 @@ StepWiseMoveSelector::figure_out_attachment( Size const moving_res, Size const a
 		attachment = Attachment( attached_res, BOND_TO_PREVIOUS );
 	} else if ( moving_res == attached_res - 1 && !cutpoint_open_in_full_model.has_value( moving_res ) ) {
 		attachment = Attachment( attached_res, BOND_TO_NEXT );
-	} else if ( moving_res == attached_res + 2 &&
-			chains_full[ moving_res ] == chains_full[ attached_res ] ) {
+	} else if ( ( moving_res == attached_res + 2 &&
+			chains_full[ moving_res ] == chains_full[ attached_res ] ) ||
+			( moving_res > attached_res + 2 &&
+			check_for_intramolecular_submotif_jump( pose, moving_res, attached_res ) ) ) {
 		attachment = Attachment( attached_res, JUMP_TO_PREV_IN_CHAIN );
-	} else if ( moving_res == attached_res - 2 &&
-			chains_full[ moving_res ] == chains_full[ attached_res ] ) {
+	} else if ( ( moving_res == attached_res - 2 &&
+			chains_full[ moving_res ] == chains_full[ attached_res ] ) ||
+			( moving_res < attached_res - 2 &&
+			check_for_intramolecular_submotif_jump( pose, moving_res, attached_res ) ) ) {
 		attachment = Attachment( attached_res, JUMP_TO_NEXT_IN_CHAIN );
 	} else {
 		runtime_assert( dock_domain_map[ moving_res ] != dock_domain_map[ attached_res ] );
@@ -1421,31 +1476,19 @@ StepWiseMoveSelector::figure_out_attachment( Size const moving_res, Size const a
 void
 StepWiseMoveSelector::filter_complex_cycles( utility::vector1< StepWiseMove > & swa_moves, pose::Pose const & pose ) const {
 	utility::vector1< StepWiseMove > swa_moves_new;
-	utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map_const( pose );
-	utility::vector1< Size > const & cutpoint_open_in_full_model = const_full_model_info( pose ).cutpoint_open_in_full_model();
 	for ( Size n = 1; n <= swa_moves.size(); n++ ) {
-		if ( just_simple_cycles( swa_moves[ n ], pose_domain_map, cutpoint_open_in_full_model ) ) swa_moves_new.push_back( swa_moves[ n ] );
+		if ( just_simple_cycles( swa_moves[ n ], pose ) ) swa_moves_new.push_back( swa_moves[ n ] );
 	}
 	swa_moves = swa_moves_new;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-bool
-StepWiseMoveSelector::just_simple_cycles( StepWiseMove const & swa_move, pose::Pose const & pose, bool const verbose /* = false */ ) const {
-	utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map_const( pose );
-	utility::vector1< Size > const & cutpoint_open_in_full_model = const_full_model_info( pose ).cutpoint_open_in_full_model();
-	return just_simple_cycles( swa_move, pose_domain_map, cutpoint_open_in_full_model, verbose );
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
 // DEPRECATE verbose if not in use after March 2015.
 bool
-StepWiseMoveSelector::just_simple_cycles( StepWiseMove const & swa_move,
-	utility::vector1< Size > const & pose_domain_map_input,
-	utility::vector1< Size > const & cutpoint_open_in_full_model,
-	bool const verbose /* = false */ ) const {
+StepWiseMoveSelector::just_simple_cycles( StepWiseMove const & swa_move, pose::Pose const & pose, bool const verbose /* = false */ ) const {
 
-	utility::vector1< Size > pose_domain_map = pose_domain_map_input;
+	utility::vector1< Size > pose_domain_map = figure_out_pose_domain_map_const( pose );
+	utility::vector1< Size > const & cutpoint_open_in_full_model = const_full_model_info( pose ).cutpoint_open_in_full_model();
 
 	MoveType const & move_type = swa_move.move_type();
 	MoveElement const & move_element = swa_move.move_element();
@@ -1461,7 +1504,13 @@ StepWiseMoveSelector::just_simple_cycles( StepWiseMove const & swa_move,
 			}
 		}
 	} else if ( move_type == DELETE ) {
-		Size const new_domain = max( pose_domain_map ) + 1;
+		Size new_domain;
+		if ( const_full_model_info( pose ).is_a_submotif( move_element ) &&
+				!const_full_model_info( pose ).is_a_submotif_seed( move_element ) ) {
+			new_domain = 0;
+		} else {
+			new_domain = max( pose_domain_map ) + 1;
+		}
 		for ( Size k = 1; k <= move_element.size(); k++ ) pose_domain_map[ move_element[ k ] ] = new_domain;
 	} else if ( move_type == FROM_SCRATCH ) {
 		Size const new_domain = max( pose_domain_map ) + 1;

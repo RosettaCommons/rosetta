@@ -49,7 +49,8 @@ public:
 	pose::PoseOP
 	create_new_submotif( SequenceMapping const & sequence_mapping,
 		PoseTag const submotif_tag,
-		pose::Pose const & pose ) const;
+		pose::Pose const & pose,
+		bool const & seed = false ) const;
 
 	utility::vector1< monte_carlo::mover::StepWiseMove >
 	get_submotif_moves( pose::Pose const & pose ) const;

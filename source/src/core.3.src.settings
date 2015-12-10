@@ -99,6 +99,7 @@ sources = {
 		"FullModelInfo",
 		"FullModelParameters",
 		"FullModelParameterType",
+		"SubMotifInfo",
 		"util",
 	],
 	"core/pose/metrics": [

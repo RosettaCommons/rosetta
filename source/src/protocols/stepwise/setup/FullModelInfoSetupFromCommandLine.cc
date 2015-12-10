@@ -481,6 +481,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 		Pose & pose = *pose_pointers[n];
 		FullModelInfoOP full_model_info_for_pose( new FullModelInfo( full_model_parameters ) );
 		full_model_info_for_pose->set_res_list( pose_res_lists[ n ] );
+		full_model_info_for_pose->update_submotif_info_list();
 		set_full_model_info( pose, full_model_info_for_pose );
 		update_pose_objects_from_full_model_info( pose ); // for output pdb or silent file (residue numbering), constraints, disulfides
 		modeler::fix_up_residue_type_variants( pose ); // for sample sugars...

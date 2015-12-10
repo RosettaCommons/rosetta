@@ -50,6 +50,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/SubMotifInfo.hh>
 #include <core/pose/full_model_info/util.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -1070,6 +1071,7 @@ SilentStruct::fill_other_struct_list( pose::Pose const & pose ){
 		other_struct->scoreline_prefix( "OTHER:" ); // prevents confusion when grepping file for "SCORE:"
 		other_struct->fill_struct( *other_pose_list[ n ], decoy_tag_ /*use same tag*/ );
 		other_struct->add_comment( "OTHER_POSE", ObjexxFCL::string_of( n ) ); // will be used as consistency check when read from disk.
+		other_struct->fill_struct_with_submotif_info_list( *other_pose_list[ n ] );
 		add_other_struct( other_struct );
 	}
 }
@@ -1118,6 +1120,10 @@ SilentStruct::full_model_info_into_pose( pose::Pose & pose ) const {
 		for ( Size n = 1; n <= pose.total_residue(); n++ ) res_list.push_back( n );
 		full_model_info->set_res_list( res_list );
 	}
+
+	// calebgeniesse: setup submotif_info_list in full_model_info
+	full_model_info->add_submotif_info( submotif_info_list_ );
+
 	set_full_model_info( pose, full_model_info );
 	update_constraint_set_from_full_model_info( pose );
 }
@@ -1147,6 +1153,20 @@ SilentStruct::print_residue_numbers( std::ostream & out ) const {
 	if ( segment_IDs_.size() == 0 ) return;
 
 	out << "SEGMENT_IDS " << make_segtag_with_dashes( residue_numbers_, segment_IDs_ ) <<  " " << decoy_tag() << std::endl;
+}
+
+void
+SilentStruct::print_submotif_info( std::ostream & out ) const {
+	using namespace core::pose::full_model_info;
+	if ( submotif_info_list_.size() == 0 ) return;
+
+	utility::vector1< SubMotifInfoOP >::iterator itr;
+  for ( itr = submotif_info_list_.begin();
+				itr != submotif_info_list_.end();
+				++itr ) {
+		out << *itr << " " << decoy_tag() << std::endl;
+	}
+
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1197,6 +1217,28 @@ SilentStruct::figure_out_segment_ids_from_line( std::istream & line_stream ) {
 	}
 	set_segment_IDs( segment_ids );
 }
+///////////////////////////////////////////////////////////////////////////
+// @details: construct submotif_info from line, add to submotif_info_list_
+void
+SilentStruct::add_submotif_info_from_line( std::istream & line_stream ) {
+	using namespace core::pose::full_model_info;
+	if ( full_model_parameters_ == 0 )  return;
+
+	SubMotifInfoOP submotif_info( new SubMotifInfo() );
+	line_stream >> submotif_info;
+	submotif_info_list_.push_back( submotif_info );
+}
+
+///////////////////////////////////////////////////////////////////////////
+// @details: save submotif_info_list from pose, in struct
+void
+SilentStruct::fill_struct_with_submotif_info_list( core::pose::Pose const & pose ) {
+	using namespace core::pose::full_model_info;
+	if ( !full_model_info_defined( pose ) ) return;
+	
+	submotif_info_list_ = const_full_model_info( pose ).submotif_info_list();
+}
+
 
 void
 SilentStruct::add_other_struct( SilentStructOP silent_struct ){

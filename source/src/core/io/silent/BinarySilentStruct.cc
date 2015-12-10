@@ -189,6 +189,7 @@ BinarySilentStruct::fill_struct(
 	chain_endings( pose.conformation().chain_endings() );
 
 	fill_struct_with_residue_numbers( pose ); // grabs residue numbers from pose PDBInfo object.
+	fill_struct_with_submotif_info_list( pose );
 	fill_other_struct_list( pose );
 
 } // BinarySilentStruct
@@ -429,6 +430,9 @@ bool BinarySilentStruct::init_from_lines(
 				continue;
 			} else if ( iter->substr(0,11) == "SEGMENT_IDS" ) {
 				figure_out_segment_ids_from_line( line_stream );
+				continue;
+			} else if ( iter->substr(0,13) == "SUBMOTIF_INFO" ) {
+				add_submotif_info_from_line( line_stream );
 				continue;
 			}
 

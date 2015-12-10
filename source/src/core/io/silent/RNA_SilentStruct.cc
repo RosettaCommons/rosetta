@@ -269,7 +269,11 @@ bool RNA_SilentStruct::init_from_lines(
 			} else if ( iter->substr(0,11) == "SEGMENT_IDS" ) {
 				figure_out_segment_ids_from_line( line_stream );
 				continue;
+			} else if ( iter->substr(0,13) == "SUBMOTIF_INFO" ) {
+				add_submotif_info_from_line( line_stream );
+				continue;
 			}
+
 
 
 			// parse ss,torsions, and c-alpha coords

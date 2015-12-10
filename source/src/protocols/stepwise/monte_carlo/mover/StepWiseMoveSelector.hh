@@ -134,10 +134,10 @@ public:
 	StepWiseMove
 	reverse_move( StepWiseMove const & swa_move, pose::Pose const & pose_before, pose::Pose const & pose_after ) const;
 
+
 	bool
 	just_simple_cycles( StepWiseMove const & swa_move, pose::Pose const & pose,
 		bool const verbose = false ) const;
-
 private:
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -194,6 +194,13 @@ private:
 		utility::vector1< Size > const & bulge_res,
 		utility::vector1< Size > const & input_domain,
 		utility::vector1< Size > const & working_res );
+
+
+	bool
+	partitions_split_a_submotif( pose::Pose const & pose, utility::vector1< Size > const & partition1, utility::vector1< Size > const & partition2 ) const;
+
+	bool
+	check_for_intramolecular_submotif_jump( pose::Pose const & pose, Size const & moving_res, Size const & attached_res ) const;
 
 	bool
 	check_for_input_domain_or_from_scratch(  pose::Pose const & pose,
@@ -307,11 +314,6 @@ private:
 	void
 	filter_complex_cycles( utility::vector1< StepWiseMove > & swa_moves, pose::Pose const & pose ) const;
 
-	bool
-	just_simple_cycles( StepWiseMove const & swa_move,
-		utility::vector1< Size > const & pose_domain_map_input,
-		utility::vector1< Size > const & cutpoint_open_in_full_model,
-		bool const verbose = false) const;
 
 private:
 

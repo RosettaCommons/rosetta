@@ -377,7 +377,8 @@ SubMotifLibrary::output_tags() const {
 pose::PoseOP
 SubMotifLibrary::create_new_submotif( SequenceMapping const & move_element,
 	PoseTag const submotif_tag,
-	pose::Pose const & pose ) const {
+	pose::Pose const & pose,
+	bool const & seed /*= false*/ ) const {
 
 	TR.Debug << TR.Magenta << "Creating: " << submotif_tag << TR.Reset << std::endl;
 
@@ -397,6 +398,8 @@ SubMotifLibrary::create_new_submotif( SequenceMapping const & move_element,
 
 	FullModelInfoOP full_model_info_for_pose( new FullModelInfo( const_full_model_info( pose ).full_model_parameters() )  );
 	full_model_info_for_pose->set_res_list( move_element );
+	full_model_info_for_pose->add_submotif_info( move_element, submotif_tag, seed );
+	full_model_info_for_pose->update_submotif_info_list();
 	set_full_model_info( *new_pose, full_model_info_for_pose );
 
 	modeler::fix_up_residue_type_variants( *new_pose );

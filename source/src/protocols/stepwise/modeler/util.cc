@@ -579,7 +579,8 @@ merge_in_other_pose( pose::Pose & pose, pose::Pose const & pose2,
 	pose.conformation() = pose_scratch.conformation();
 
 	full_model_info.set_res_list( new_res_list );
-	//  pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info );
+	full_model_info.add_submotif_info( const_full_model_info( pose2 ).submotif_info_list() );
+	full_model_info.update_submotif_info_list();
 	update_pose_objects_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
 
 }
@@ -792,6 +793,7 @@ slice_out_pose( pose::Pose & pose,
 
 	FullModelInfoOP sliced_out_full_model_info = full_model_info.clone_info();
 	sliced_out_full_model_info->set_res_list( apply_numbering( residues_to_delete, original_res_list ) );
+	sliced_out_full_model_info->update_submotif_info_list();
 	sliced_out_full_model_info->clear_other_pose_list();
 	sliced_out_pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, sliced_out_full_model_info );
 	update_pose_objects_from_full_model_info( sliced_out_pose ); // for output pdb or silent file -- residue numbering.
@@ -804,7 +806,8 @@ slice_out_pose( pose::Pose & pose,
 	slice( pose_scratch, pose, residues_to_retain );
 	pose.conformation() = pose_scratch.conformation();
 
-	full_model_info.set_res_list( apply_numbering( residues_to_retain, original_res_list )  );
+	full_model_info.set_res_list( apply_numbering( residues_to_retain, original_res_list ) );
+	full_model_info.update_submotif_info_list();
 	update_pose_objects_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
 	rna::checker::set_vdw_cached_rep_screen_info_from_pose( pose, sliced_out_pose );
 

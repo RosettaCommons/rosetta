@@ -230,6 +230,7 @@ AddMover::append_other_pose( pose::Pose & pose, Size const offset,
 			res_to_build_off_in_full_model_numbering_, res_to_add_in_full_model_numbering_ );
 	}
 	nonconst_full_model_info( pose ).remove_other_pose_at_idx( other_pose_idx );
+
 	suite_num_ = 0;
 	nucleoside_num_ = get_res_list_from_full_model_info( pose ).index( res_to_add_in_full_model_numbering_ );
 }

@@ -26,6 +26,8 @@
 #include <core/pose/full_model_info/FullModelInfo.fwd.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <core/pose/full_model_info/SubMotifInfo.hh>
+
 
 // C++
 #include <string>
@@ -123,6 +125,8 @@ public:
 
 	Size find_index_in_other_pose_list( pose::Pose const & pose ) const;
 
+	Size get_idx_for_other_pose_with_residues( utility::vector1< Size > const & input_res ) const;
+
 	Size get_idx_for_other_pose_with_residue( Size const input_res ) const;
 
 	Size get_idx_for_other_pose( pose::Pose const & pose ) const;
@@ -130,6 +134,47 @@ public:
 	utility::vector1< Size > chains_in_full_model() const;
 
 	Size size() const;
+
+	// submotif accessors/modifiers
+	utility::vector1< SubMotifInfoOP > & submotif_info_list() const { return submotif_info_list_; }
+
+	bool is_a_submotif() const;
+
+	bool is_a_submotif_seed() const;
+
+	bool is_a_submotif( utility::vector1< Size > const & res_list, bool const & check_other_poses = false ) const;
+
+	bool is_a_submotif_seed( utility::vector1< Size > const & res_list, bool const & check_other_poses = false ) const;
+
+	SubMotifInfoOP submotif_info( utility::vector1< Size > const & res_list, bool const & check_other_poses = false ) const;
+
+	bool in_a_submotif( utility::vector1< Size > const & res_list, bool const & check_other_poses = false ) const;
+
+	bool in_a_submotif_seed( utility::vector1< Size > const & res_list, bool const & check_other_poses = false ) const;
+
+	SubMotifInfoOP submotif_info_containing_residues( utility::vector1< Size > const & res_list, bool const & check_other_poses = false ) const;
+
+	void update_submotif_info_list();
+
+	void add_submotif_info(
+		utility::vector1< Size > const & res_list,
+		std::string const & tag,
+		bool const & seed = false );
+
+	void add_submotif_info( utility::vector1< SubMotifInfoOP > submotif_info_list );
+
+	void add_submotif_info( SubMotifInfoOP submotif_info_op );
+
+	void delete_submotif_info(
+		utility::vector1< Size > const & res_list,
+		std::string const & tag,
+		bool const & seed = false );
+
+	void delete_submotif_info( utility::vector1< SubMotifInfoOP > submotif_info_list );
+
+	void delete_submotif_info( SubMotifInfoOP submotif_info_op );
+
+	void show_submotif_info_list( bool const & for_all_poses = false ) const;
 
 private:
 
@@ -155,6 +200,10 @@ private:
 	//  conventional numbering scheme, etc.
 	// And it should not change as pieces are added/deleted from the pose!
 	FullModelParametersCOP full_model_parameters_;
+
+	// SubMotifInfo: information about submotifs in poses;
+	mutable utility::vector1< SubMotifInfoOP > submotif_info_list_;
+
 
 };
 
