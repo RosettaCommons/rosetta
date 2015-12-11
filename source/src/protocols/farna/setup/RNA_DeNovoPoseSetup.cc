@@ -176,10 +176,10 @@ RNA_DeNovoPoseSetup::initialize_secstruct( core::pose::Pose & pose  )
 		for ( Size n = 1; n <= rna_params_.rna_pairing_list_.size(); n++ ) {
 			core::pose::rna::BasePair const & rna_pairing( rna_params_.rna_pairing_list_[ n ] );
 			if (  rna_pairing.edge1() == WATSON_CRICK &&
-						rna_pairing.edge2() == WATSON_CRICK &&
-						rna_pairing.orientation() == ANTIPARALLEL &&
-						core::chemical::rna::possibly_canonical( pose.residue( rna_pairing.res1() ).aa(),
-																										 pose.residue( rna_pairing.res2() ).aa() ) )  {
+					rna_pairing.edge2() == WATSON_CRICK &&
+					rna_pairing.orientation() == ANTIPARALLEL &&
+					core::chemical::rna::possibly_canonical( pose.residue( rna_pairing.res1() ).aa(),
+					pose.residue( rna_pairing.res2() ).aa() ) )  {
 				rna_secstruct[ rna_pairing.res1() - 1 ] = 'H';
 				rna_secstruct[ rna_pairing.res2() - 1 ] = 'H';
 			}
@@ -218,8 +218,8 @@ RNA_DeNovoPoseSetup::insert_base_pair_jumps( pose::Pose & pose, RNA_JumpMover co
 // but I want to make sure that user known that  atom_level_domain_map will get updated -- rhiju, 2015
 void
 RNA_DeNovoPoseSetup::setup_fold_tree_and_jumps_and_variants( pose::Pose & pose,
-																														 RNA_JumpMover const & rna_jump_mover,
-																														 protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const
+	RNA_JumpMover const & rna_jump_mover,
+	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const
 {
 	runtime_assert( rna_jump_mover.atom_level_domain_map() == atom_level_domain_map );
 	setup_jumps( pose, rna_jump_mover );
@@ -472,8 +472,8 @@ RNA_DeNovoPoseSetup::setup_jumps( pose::Pose & pose, RNA_JumpMover const & rna_j
 		//  for (Size n = pose.total_residue(); n >= 1; n-- ){ // not sure why I did this backwards...
 		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 			if ( pose.residue(n).is_RNA() &&
-					 rna_jump_mover.atom_level_domain_map()->get_domain( named_atom_id_to_atom_id( id::NamedAtomID( " C1'", n ), pose ) ) == 1 /*1 means the first inputted pose*/ &&
-					 f.possible_root(n) ) {
+					rna_jump_mover.atom_level_domain_map()->get_domain( named_atom_id_to_atom_id( id::NamedAtomID( " C1'", n ), pose ) ) == 1 /*1 means the first inputted pose*/ &&
+					f.possible_root(n) ) {
 				f.reorder( n );
 				break;
 			}
@@ -496,7 +496,7 @@ RNA_DeNovoPoseSetup::setup_jumps( pose::Pose & pose, RNA_JumpMover const & rna_j
 ///////////////////////////////////////////////////////////////
 void
 RNA_DeNovoPoseSetup::setup_chainbreak_variants( pose::Pose & pose,
-																								protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const
+	protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const
 {
 
 	pose::Pose pose_copy = pose;
@@ -532,7 +532,7 @@ RNA_DeNovoPoseSetup::setup_virtual_phosphate_variants( pose::Pose & pose ) const
 	using namespace id;
 	using namespace chemical;
 
-	if ( pose.residue( 1 ).is_RNA() )	pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, 1  );
+	if ( pose.residue( 1 ).is_RNA() ) pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, 1  );
 
 	utility::vector1< Size > const & cutpoints_open( rna_params_.cutpoints_open_ );
 	for ( Size i = 1; i <= cutpoints_open.size(); i++ ) {
@@ -544,7 +544,7 @@ RNA_DeNovoPoseSetup::setup_virtual_phosphate_variants( pose::Pose & pose ) const
 		}
 
 		if ( pose.residue_type( n   ).has_variant_type( CUTPOINT_LOWER ) ||
-				 pose.residue_type( n+1 ).has_variant_type( CUTPOINT_UPPER ) ) {
+				pose.residue_type( n+1 ).has_variant_type( CUTPOINT_UPPER ) ) {
 			utility_exit_with_message( "conflicting cutpoint_open & cutpoint_closed" );
 		}
 

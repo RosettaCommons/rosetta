@@ -326,7 +326,7 @@ public:
 
 	void
 	add_submotif_info_from_line( std::istream & line_stream );
-	
+
 	void
 	fill_struct_with_submotif_info_list( pose::Pose const & pose );
 
@@ -385,7 +385,7 @@ private:
 	utility::vector1< SilentStructOP > other_struct_list_;
 	core::pose::full_model_info::FullModelParametersCOP full_model_parameters_;
 	utility::vector1< std::string > segment_IDs_;
-  mutable	utility::vector1< core::pose::full_model_info::SubMotifInfoOP > submotif_info_list_;
+	mutable utility::vector1< core::pose::full_model_info::SubMotifInfoOP > submotif_info_list_;
 
 private:
 	/// @brief Updates the "score" entry in the silent_energies.

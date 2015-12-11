@@ -1161,9 +1161,9 @@ SilentStruct::print_submotif_info( std::ostream & out ) const {
 	if ( submotif_info_list_.size() == 0 ) return;
 
 	utility::vector1< SubMotifInfoOP >::iterator itr;
-  for ( itr = submotif_info_list_.begin();
-				itr != submotif_info_list_.end();
-				++itr ) {
+	for ( itr = submotif_info_list_.begin();
+			itr != submotif_info_list_.end();
+			++itr ) {
 		out << *itr << " " << decoy_tag() << std::endl;
 	}
 
@@ -1235,7 +1235,7 @@ void
 SilentStruct::fill_struct_with_submotif_info_list( core::pose::Pose const & pose ) {
 	using namespace core::pose::full_model_info;
 	if ( !full_model_info_defined( pose ) ) return;
-	
+
 	submotif_info_list_ = const_full_model_info( pose ).submotif_info_list();
 }
 

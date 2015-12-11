@@ -28,39 +28,39 @@ namespace protocols {
 namespace farna {
 namespace options {
 
-	//Constructor
-	RNA_BasicOptions::RNA_BasicOptions():
-		dump_pdb_( false ),
-		move_first_rigid_body_( false ),
-		verbose_( true )
-	{}
+//Constructor
+RNA_BasicOptions::RNA_BasicOptions():
+	dump_pdb_( false ),
+	move_first_rigid_body_( false ),
+	verbose_( true )
+{}
 
-	//Destructor
-	RNA_BasicOptions::~RNA_BasicOptions()
-	{}
+//Destructor
+RNA_BasicOptions::~RNA_BasicOptions()
+{}
 
 
-	/// @brief copy constructor
-	RNA_BasicOptions::RNA_BasicOptions( RNA_BasicOptions const & src ) :
-		ResourceOptions( src )
-	{
-		*this = src;
-	}
+/// @brief copy constructor
+RNA_BasicOptions::RNA_BasicOptions( RNA_BasicOptions const & src ) :
+	ResourceOptions( src )
+{
+	*this = src;
+}
 
-	/// @brief clone the options
-	RNA_BasicOptionsOP
-	RNA_BasicOptions::clone() const
-	{
-		return RNA_BasicOptionsOP( new RNA_BasicOptions( *this ) );
-	}
+/// @brief clone the options
+RNA_BasicOptionsOP
+RNA_BasicOptions::clone() const
+{
+	return RNA_BasicOptionsOP( new RNA_BasicOptions( *this ) );
+}
 
-	///////////////////////////////////////////////////////////////////
-	void
-	RNA_BasicOptions::initialize_from_command_line() {
-		set_dump_pdb( option[ rna::farna::dump ] ) ;
-		set_move_first_rigid_body(  option[ rna::farna::move_first_rigid_body ] );
+///////////////////////////////////////////////////////////////////
+void
+RNA_BasicOptions::initialize_from_command_line() {
+	set_dump_pdb( option[ rna::farna::dump ] ) ;
+	set_move_first_rigid_body(  option[ rna::farna::move_first_rigid_body ] );
 
-	}
+}
 
 } //options
 } //farna

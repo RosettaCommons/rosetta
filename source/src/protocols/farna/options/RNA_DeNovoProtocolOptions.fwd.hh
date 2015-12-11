@@ -22,9 +22,9 @@ namespace protocols {
 namespace farna {
 namespace options {
 
-	class RNA_DeNovoProtocolOptions;
-	typedef utility::pointer::shared_ptr< RNA_DeNovoProtocolOptions > RNA_DeNovoProtocolOptionsOP;
-	typedef utility::pointer::shared_ptr< RNA_DeNovoProtocolOptions const > RNA_DeNovoProtocolOptionsCOP;
+class RNA_DeNovoProtocolOptions;
+typedef utility::pointer::shared_ptr< RNA_DeNovoProtocolOptions > RNA_DeNovoProtocolOptionsOP;
+typedef utility::pointer::shared_ptr< RNA_DeNovoProtocolOptions const > RNA_DeNovoProtocolOptionsCOP;
 
 } //options
 } //farna

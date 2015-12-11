@@ -585,7 +585,7 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	mover->trans_axis().negate();
 	while ( counter <= counter_breakpoint && pose.energies().total_energies()[ interchain_vdw ] < 0.1 ) {
 
-//		TR << "interchain_vdw: " << pose.energies().total_energies()[ interchain_vdw ] << std::endl;
+		//  TR << "interchain_vdw: " << pose.energies().total_energies()[ interchain_vdw ] << std::endl;
 		mover->apply( pose );
 		( *scorefxn_ )( pose );
 		++counter;

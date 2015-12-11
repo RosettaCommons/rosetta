@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/farna/movers/RNA_JumpMover.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace farna {
 namespace movers {
-	
-	class RNA_JumpMover;
-	typedef utility::pointer::shared_ptr< RNA_JumpMover > RNA_JumpMoverOP;
-	typedef utility::pointer::shared_ptr< RNA_JumpMover const > RNA_JumpMoverCOP;
-	
+
+class RNA_JumpMover;
+typedef utility::pointer::shared_ptr< RNA_JumpMover > RNA_JumpMoverOP;
+typedef utility::pointer::shared_ptr< RNA_JumpMover const > RNA_JumpMoverCOP;
+
 } //movers
 } //farna
 } //protocols

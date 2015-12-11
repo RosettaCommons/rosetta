@@ -40,7 +40,7 @@ namespace movers {
 
 //constructor
 RNA_JumpMover::RNA_JumpMover( RNA_JumpLibraryCOP rna_jump_library,
-															protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ):
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ):
 	rna_jump_library_( rna_jump_library ),
 	atom_level_domain_map_( atom_level_domain_map )
 {
@@ -106,9 +106,9 @@ RNA_JumpMover::random_jump_change( pose::Pose & pose ) const
 /////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_JumpMover::add_new_RNA_jump(
-																pose::Pose & pose,
-																Size const & which_jump,
-																bool & success ) const
+	pose::Pose & pose,
+	Size const & which_jump,
+	bool & success ) const
 {
 
 	kinematics::FoldTree fold_tree( pose.fold_tree() ); //Make a copy.
@@ -158,12 +158,12 @@ RNA_JumpMover::add_new_RNA_jump(
 	std::string atom_name1, atom_name2;
 	runtime_assert( rna_jump_library_ != 0 );
 	kinematics::Jump const new_jump = rna_jump_library_->get_random_base_pair_jump(
-																																								 pose.residue(jump_pos1).name1(),
-																																								 pose.residue(jump_pos2).name1(),
-																																								 e1, e2, o,
-																																								 atom_name1, atom_name2,
-																																								 success,
-																																								 forward1, forward2 );
+		pose.residue(jump_pos1).name1(),
+		pose.residue(jump_pos2).name1(),
+		e1, e2, o,
+		atom_name1, atom_name2,
+		success,
+		forward1, forward2 );
 
 	if ( !success ) return; //shh don't do anything.
 

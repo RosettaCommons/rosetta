@@ -144,9 +144,9 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 		}
 	}
 
-	//	atom_level_domain_map->show();
+	// atom_level_domain_map->show();
 	atom_level_domain_map->setup_movemap( mm, pose );
-	//	output_movemap( mm, pose, TR );
+	// output_movemap( mm, pose, TR );
 }
 
 /////////////////////////////////////////////////////////

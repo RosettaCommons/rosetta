@@ -428,8 +428,9 @@ insert_mg(
 	T const & segname )
 {
 	typename std::map< core::Size, std::list< T > >::iterator fixed_mg = fixed_mgs.find( mg );
-	if ( fixed_mg == fixed_mgs.end() )
+	if ( fixed_mg == fixed_mgs.end() ) {
 		fixed_mg = fixed_mgs.insert( std::make_pair( mg, std::list< T >() ) ).first;
+	}
 	debug_assert( fixed_mg != fixed_mgs.end() );
 	fixed_mg->second.push_back( segname );
 }
@@ -681,8 +682,9 @@ private:
 	{
 		std::set< core::Size > fixed;
 		for ( std::map< core::Size, core::Size >::const_iterator n_mg=node_to_mg_.begin(); n_mg!=node_to_mg_.end(); ++n_mg ) {
-			if ( nodes_in_solution.find( n_mg->first ) == nodes_in_solution.end() )
+			if ( nodes_in_solution.find( n_mg->first ) == nodes_in_solution.end() ) {
 				fixed.insert( n_mg->first );
+			}
 		}
 		return fixed;
 	}

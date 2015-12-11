@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/farna/options/RNA_MinimizerOptions.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace farna {
 namespace options {
-	
-	class RNA_MinimizerOptions;
-	typedef utility::pointer::shared_ptr< RNA_MinimizerOptions > RNA_MinimizerOptionsOP;
-	typedef utility::pointer::shared_ptr< RNA_MinimizerOptions const > RNA_MinimizerOptionsCOP;
-	
+
+class RNA_MinimizerOptions;
+typedef utility::pointer::shared_ptr< RNA_MinimizerOptions > RNA_MinimizerOptionsOP;
+typedef utility::pointer::shared_ptr< RNA_MinimizerOptions const > RNA_MinimizerOptionsCOP;
+
 } //options
 } //farna
 } //protocols

@@ -67,11 +67,11 @@ public:
 
 	RNA_ChunkLibrary();
 
-	RNA_ChunkLibrary(	utility::vector1 < std::string > const & pdb_files,
-										utility::vector1 < std::string > const & silent_files,
-										core::pose::Pose const & pose,
-										utility::vector1< core::Size > const & input_res,
-										utility::vector1< core::Size > const & allow_insert_res = utility::vector1< core::Size >() );
+	RNA_ChunkLibrary( utility::vector1 < std::string > const & pdb_files,
+		utility::vector1 < std::string > const & silent_files,
+		core::pose::Pose const & pose,
+		utility::vector1< core::Size > const & input_res,
+		utility::vector1< core::Size > const & allow_insert_res = utility::vector1< core::Size >() );
 
 	// should not be in use in the future...
 	RNA_ChunkLibrary(

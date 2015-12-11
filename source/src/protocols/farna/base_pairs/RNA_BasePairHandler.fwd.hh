@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/farna/base_pairs/RNA_BasePairHandler.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace farna {
 namespace base_pairs {
-	
-	class RNA_BasePairHandler;
-	typedef utility::pointer::shared_ptr< RNA_BasePairHandler > RNA_BasePairHandlerOP;
-	typedef utility::pointer::shared_ptr< RNA_BasePairHandler const > RNA_BasePairHandlerCOP;
-	
+
+class RNA_BasePairHandler;
+typedef utility::pointer::shared_ptr< RNA_BasePairHandler > RNA_BasePairHandlerOP;
+typedef utility::pointer::shared_ptr< RNA_BasePairHandler const > RNA_BasePairHandlerCOP;
+
 } //base_pairs
 } //farna
 } //protocols

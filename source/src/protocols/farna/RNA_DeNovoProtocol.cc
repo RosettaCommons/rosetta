@@ -153,7 +153,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	rna_de_novo_pose_setup->set_bps_moves( options_->bps_moves() );
 	rna_de_novo_pose_setup->set_root_at_first_rigid_body( options_->root_at_first_rigid_body() );
 	bool refine_pose( refine_pose_list_.size() > 0 || options_->refine_pose() );
-	if ( !refine_pose )	rna_de_novo_pose_setup->initialize_for_de_novo_protocol( pose, options_->ignore_secstruct() ); // virtualize phosphates, but no chainbreaks -- PUT HIGHER?
+	if ( !refine_pose ) rna_de_novo_pose_setup->initialize_for_de_novo_protocol( pose, options_->ignore_secstruct() ); // virtualize phosphates, but no chainbreaks -- PUT HIGHER?
 
 	//Keep a copy for resetting after each decoy.
 	Pose start_pose = pose;
@@ -177,7 +177,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 		}
 
 		RNA_ChunkLibraryOP user_input_chunk_library( new RNA_ChunkLibrary( options_->chunk_pdb_files(), options_->chunk_silent_files(), pose,
-																																			 options_->input_res(), rna_params->allow_insert_res() ) );
+			options_->input_res(), rna_params->allow_insert_res() ) );
 		RNA_BasePairHandlerOP rna_base_pair_handler( refine_pose ? new RNA_BasePairHandler( pose ) : new RNA_BasePairHandler( *rna_params ) );
 
 		rna_fragment_monte_carlo_ = RNA_FragmentMonteCarloOP( new RNA_FragmentMonteCarlo( options_ ) );

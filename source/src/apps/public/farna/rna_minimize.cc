@@ -178,14 +178,14 @@ rna_fullatom_minimize_test()
 
 		// RNA_DeNovoPoseSetup parameters;
 		// if ( option[params_file].user() ) {
-		// 	parameters.initialize_for_de_novo_protocol(
-		// 		pose, option[params_file],
-		// 		basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
-		// 		false /*ignore_secstruct*/
-		// 	);
-		// 	// parameters.set_suppress_bp_constraint( 1.0 );
-		// 	parameters.setup_base_pair_constraints( pose );
-		// 	//rna_minimizer.set_atom_level_domain_map( parameters.atom_level_domain_map() );
+		//  parameters.initialize_for_de_novo_protocol(
+		//   pose, option[params_file],
+		//   basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
+		//   false /*ignore_secstruct*/
+		//  );
+		//  // parameters.set_suppress_bp_constraint( 1.0 );
+		//  parameters.setup_base_pair_constraints( pose );
+		//  //rna_minimizer.set_atom_level_domain_map( parameters.atom_level_domain_map() );
 		// }
 
 		AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( pose ) );
@@ -241,12 +241,12 @@ rna_fullatom_minimize_test()
 
 			// Stem RMSD
 			// if ( option[params_file].user() ) {
-			// 	std::list< Size > stem_residues( parameters.get_stem_residues( pose ) );
-			// 	if ( !stem_residues.empty()/*size() > 0*/ ) {
-			// 		Real const rmsd_stems = all_atom_rmsd( native_pose, pose, stem_residues );
-			// 		s.add_energy( "rms_stem", rmsd_stems );
-			// 		std::cout << "Stems rmsd: " << rmsd_stems << std::endl;
-			// 	}
+			//  std::list< Size > stem_residues( parameters.get_stem_residues( pose ) );
+			//  if ( !stem_residues.empty()/*size() > 0*/ ) {
+			//   Real const rmsd_stems = all_atom_rmsd( native_pose, pose, stem_residues );
+			//   s.add_energy( "rms_stem", rmsd_stems );
+			//   std::cout << "Stems rmsd: " << rmsd_stems << std::endl;
+			//  }
 			// }
 		}
 

@@ -1483,8 +1483,8 @@ core::Vector chain_tm_com( core::pose::Pose const & pose, int chain ) {
 	core::pose::Pose subpose = core::pose::Pose();
 	pdbslice( subpose, pose, splice_rsd );
 
-//	subpose.dump_pdb("subpose.pdb");
-//	pose.dump_pdb("pose.pdb");
+	// subpose.dump_pdb("subpose.pdb");
+	// pose.dump_pdb("pose.pdb");
 
 	// compute COM of the newly created pose
 	core::Vector com( get_center_of_mass( subpose ) );

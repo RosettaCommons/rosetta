@@ -63,20 +63,6 @@ HelixKinkFilter::HelixKinkFilter():
 {}
 
 
-// @brief copy constructor
-HelixKinkFilter::HelixKinkFilter( HelixKinkFilter const & rval ):
-	//utility::pointer::ReferenceCount(),
-	Super( rval ),
-	bend_angle_( rval.bend_angle_ ),
-	secstruct_( rval.secstruct_ ),
-	string_resnums_( rval.string_resnums_),
-	select_resnums_( rval.select_resnums_),
-	select_range_( rval.select_range_),
-	helix_start_( rval.helix_start_),
-	helix_end_( rval.helix_end_)
-{}
-
-
 /// @brief
 bool
 HelixKinkFilter::apply( Pose const & pose ) const
@@ -126,12 +112,13 @@ HelixKinkFilter::apply( Pose const & pose ) const
 	if ( select_range_ ) {
 		for ( Size ii=1; ii<=helices.size(); ++ii ) {
 			for ( Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it <= ite; ++it ) {
-				residues_to_check[it]=false;
+				TR.Debug << "Marking helix that begins at residue " << helices[ ii ]->begin() << " and ends at " << helices[ ii ]->end() << std::endl;
+				residues_to_check[it] = false;
 			}
 		}
 
 		for ( Size i=helix_start_; i<=helix_end_; ++i ) {
-			if ( residues_to_check[i]==true ) {
+			if ( residues_to_check[i] == true ) {
 				TR << "In range " << helix_start_ <<"-"<<helix_end_ << " contains broken helix at " << i << " already! Skip Kink" << std::endl;
 				return false;
 			}
@@ -144,23 +131,20 @@ HelixKinkFilter::apply( Pose const & pose ) const
 		if ( select_resnums_ ) {
 			for ( Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it != ite; ++it ) {
 				if ( residues_to_check[it] ) {
-					check=true;
+					check = true;
 					//TR << "Helix " << ii << ", " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << ", is considered" << std::endl;
 					break;
 				}
 				//TR << "Helix " << ii << ", " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << ", NOT considered" << std::endl;
 			}
-		} else {
-			check = true; // TL: we always want to check if no residue numbers are specified
-		}
-
-		if ( select_range_ ) {
+		} else if ( select_range_ ) {
 			//This will check if the select_range_ is not broken into multiple helix
 			if ( helices[ ii ]->begin() <= helix_start_ && helices[ ii ]->end() >= helix_end_ ) {
 				TR << "Helix " << ii << ", res " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << "contains specified range: " << helix_start_ <<"-" << helix_end_ << std::endl;
-				check=true;
+				check = true;
 			}
-
+		} else {
+			check = true; // TL: we always want to check if no residue numbers are specified
 		}
 
 		if ( !check ) continue;
@@ -218,11 +202,19 @@ HelixKinkFilter::parse_my_tag(
 {
 	bend_angle_  = tag->getOption<Real>( "bend",  20 );
 	// secondary strucuture info
+	// blueprint, or secstruct can be provided, but not both
+	if ( tag->hasOption( "blueprint" ) && tag->hasOption( "secstruct" ) ) {
+		std::stringstream msg;
+		msg << "HelixKinkFilter::parse_my_tag(): Both blueprint and secstruct cannot be specified at the same time." << std::endl;
+		throw utility::excn::EXCN_RosettaScriptsOption( msg.str() );
+	}
 	String const blueprint = tag->getOption<String>( "blueprint", "" );
-	if ( blueprint != "" ) {
+	if ( !blueprint.empty() ) {
 		protocols::jd2::parser::BluePrint blue( blueprint );
 		secstruct_ = blue.secstruct();
 	}
+	String const secstruct = tag->getOption<String>( "secstruct", "" );
+	if ( !secstruct.empty() ) secstruct_ = secstruct;
 
 	// residues that need to contained in helix
 	if ( tag->hasOption( "resnums" ) ) {

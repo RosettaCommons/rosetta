@@ -31,64 +31,64 @@ namespace protocols {
 namespace farna {
 namespace movers {
 
-	class RNA_JumpMover: public utility::pointer::ReferenceCount {
+class RNA_JumpMover: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		RNA_JumpMover( RNA_JumpLibraryCOP rna_jump_library,
-									 protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
+	//constructor
+	RNA_JumpMover( RNA_JumpLibraryCOP rna_jump_library,
+		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
 
-		//destructor
-		~RNA_JumpMover();
+	//destructor
+	~RNA_JumpMover();
 
-	public:
+public:
 
-		bool
-		random_jump_change( core::pose::Pose & pose ) const;
-
-
-		void
-		add_new_RNA_jump(
-										 pose::Pose & pose,
-										 Size const & which_jump,
-										 bool & success ) const;
+	bool
+	random_jump_change( core::pose::Pose & pose ) const;
 
 
-		void
-		set_chain_connections( 	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > > const & setting ) {
-			chain_connections_ = setting;
-		}
+	void
+	add_new_RNA_jump(
+		pose::Pose & pose,
+		Size const & which_jump,
+		bool & success ) const;
 
-		core::pose::rna::RNA_BasePairList
-		rna_pairing_list() const { return rna_pairing_list_; }
 
-		void
-		set_rna_pairing_list( core::pose::rna::RNA_BasePairList const & setting ) { rna_pairing_list_ = setting; }
+	void
+	set_chain_connections(  utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > > const & setting ) {
+		chain_connections_ = setting;
+	}
 
-		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map() const { return atom_level_domain_map_; }
+	core::pose::rna::RNA_BasePairList
+	rna_pairing_list() const { return rna_pairing_list_; }
 
-	private:
+	void
+	set_rna_pairing_list( core::pose::rna::RNA_BasePairList const & setting ) { rna_pairing_list_ = setting; }
 
-		bool
-		check_forward_backward(
-													 pose::Pose & pose,
-													 Size const jump_pos ) const;
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map() const { return atom_level_domain_map_; }
 
-		Size
-		check_in_chain_connections( Size const & pos1, Size const & pos2 ) const;
+private:
 
-		void
-		sample_alternative_chain_connection( pose::Pose & pose, Size const & which_jump ) const;
+	bool
+	check_forward_backward(
+		pose::Pose & pose,
+		Size const jump_pos ) const;
 
-	private:
+	Size
+	check_in_chain_connections( Size const & pos1, Size const & pos2 ) const;
 
-		RNA_JumpLibraryCOP rna_jump_library_;
-		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map_;
-		core::pose::rna::RNA_BasePairList rna_pairing_list_;
-		utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > > chain_connections_;
+	void
+	sample_alternative_chain_connection( pose::Pose & pose, Size const & which_jump ) const;
 
-	};
+private:
+
+	RNA_JumpLibraryCOP rna_jump_library_;
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map_;
+	core::pose::rna::RNA_BasePairList rna_pairing_list_;
+	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > > chain_connections_;
+
+};
 
 } //movers
 } //farna

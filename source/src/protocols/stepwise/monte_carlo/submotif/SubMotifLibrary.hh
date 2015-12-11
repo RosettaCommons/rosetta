@@ -39,7 +39,7 @@ public:
 
 	//constructor
 	SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set,
-									 bool const include_submotifs_from_jump_library = false );
+		bool const include_submotifs_from_jump_library = false );
 
 	//destructor
 	~SubMotifLibrary();

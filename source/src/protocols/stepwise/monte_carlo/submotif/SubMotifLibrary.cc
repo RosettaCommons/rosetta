@@ -64,10 +64,10 @@ namespace monte_carlo {
 namespace submotif {
 
 //Constructor
-	SubMotifLibrary::SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set,
-																		bool const include_submotifs_from_jump_library ):
-		rsd_set_( rsd_set ),
-		include_submotifs_from_jump_library_( include_submotifs_from_jump_library )
+SubMotifLibrary::SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set,
+	bool const include_submotifs_from_jump_library ):
+	rsd_set_( rsd_set ),
+	include_submotifs_from_jump_library_( include_submotifs_from_jump_library )
 {
 	initialize();
 }
@@ -119,16 +119,16 @@ SubMotifLibrary::initialize_from_directory( std::string const directory ){
 void
 SubMotifLibrary::save_pose_as_submotif( pose::PoseOP pose, std::string const & tag )
 {
-		tag_into_pose( *pose, tag );
-		submotif_poses_by_tag_[ tag ] = pose;
-		SubMotifSequenceSet submotif_sequence_set = get_submotif_sequence_set( *pose );
-		submotif_sequence_sets_.insert( submotif_sequence_set );
-		utility::vector1< SequenceMapping > matches = get_matches_for_one_submotif_sequence_set( submotif_sequence_set, *pose, false /*use_full_model_info*/ );
-		runtime_assert( matches.size() > 0 );
-		for ( Size n = 1; n <= matches.size(); n++ ) {
-			if ( n > 1 ) continue; // hmm. trying to avoid redundancy -- all threadings will be enumerated in target full_model in get_matches_for_one_submotif_sequence_set later.
-			submotif_mappings_by_sequence_set_[ submotif_sequence_set ].push_back( std::make_pair( tag, matches[ n ] ) );
-		}
+	tag_into_pose( *pose, tag );
+	submotif_poses_by_tag_[ tag ] = pose;
+	SubMotifSequenceSet submotif_sequence_set = get_submotif_sequence_set( *pose );
+	submotif_sequence_sets_.insert( submotif_sequence_set );
+	utility::vector1< SequenceMapping > matches = get_matches_for_one_submotif_sequence_set( submotif_sequence_set, *pose, false /*use_full_model_info*/ );
+	runtime_assert( matches.size() > 0 );
+	for ( Size n = 1; n <= matches.size(); n++ ) {
+		if ( n > 1 ) continue; // hmm. trying to avoid redundancy -- all threadings will be enumerated in target full_model in get_matches_for_one_submotif_sequence_set later.
+		submotif_mappings_by_sequence_set_[ submotif_sequence_set ].push_back( std::make_pair( tag, matches[ n ] ) );
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////

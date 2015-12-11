@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/farna/libraries/ChunkSet.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace protocols {
 namespace farna {
 namespace libraries {
-	
-	class ChunkSet;
-	typedef utility::pointer::shared_ptr< ChunkSet > ChunkSetOP;
-	typedef utility::pointer::shared_ptr< ChunkSet const > ChunkSetCOP;
-	
-} //libraries 
-} //farna 
-} //protocols 
+
+class ChunkSet;
+typedef utility::pointer::shared_ptr< ChunkSet > ChunkSetOP;
+typedef utility::pointer::shared_ptr< ChunkSet const > ChunkSetCOP;
+
+} //libraries
+} //farna
+} //protocols
 
 #endif

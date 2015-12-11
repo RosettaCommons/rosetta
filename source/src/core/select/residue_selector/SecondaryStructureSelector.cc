@@ -163,7 +163,7 @@ void SecondaryStructureSelector::parse_my_tag(
 	}
 
 	if ( tag->hasOption( "dssp" ) ) {
-			set_always_use_dssp( tag->getOption< bool >( "always_use_dssp" ) );
+		set_always_use_dssp( tag->getOption< bool >( "always_use_dssp" ) );
 	}
 
 	if ( tag->hasOption( "pose_secstruct" ) ) {

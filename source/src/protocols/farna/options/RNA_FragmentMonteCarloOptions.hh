@@ -179,7 +179,7 @@ public:
 	void set_input_res( utility::vector1< Size > const & input_res ) { input_res_ = input_res; }
 	utility::vector1< Size > const & input_res() const { return input_res_; };
 
-	private:
+private:
 
 	Size rounds_;
 	Size monte_carlo_cycles_;

@@ -30,55 +30,55 @@ namespace protocols {
 namespace farna {
 namespace options {
 
-	//Constructor
-	RNA_MinimizerOptions::RNA_MinimizerOptions():
-		minimize_rounds_( 2 ),
-		deriv_check_( false ),
-		skip_o2prime_trials_( false ),
-		vary_bond_geometry_( false ),
-    minimizer_use_coordinate_constraints_( false ),
-    minimize_bps_( false )
-	{}
+//Constructor
+RNA_MinimizerOptions::RNA_MinimizerOptions():
+	minimize_rounds_( 2 ),
+	deriv_check_( false ),
+	skip_o2prime_trials_( false ),
+	vary_bond_geometry_( false ),
+	minimizer_use_coordinate_constraints_( false ),
+	minimize_bps_( false )
+{}
 
-	//Destructor
-	RNA_MinimizerOptions::~RNA_MinimizerOptions()
-	{}
+//Destructor
+RNA_MinimizerOptions::~RNA_MinimizerOptions()
+{}
 
 
-	/// @brief copy constructor
-	RNA_MinimizerOptions::RNA_MinimizerOptions( RNA_MinimizerOptions const & src ) :
-		ResourceOptions( src ),
-		RNA_BasicOptions( src )
-	{
-		*this = src;
-	}
+/// @brief copy constructor
+RNA_MinimizerOptions::RNA_MinimizerOptions( RNA_MinimizerOptions const & src ) :
+	ResourceOptions( src ),
+	RNA_BasicOptions( src )
+{
+	*this = src;
+}
 
-	/// @brief clone the options
-	RNA_MinimizerOptionsOP
-	RNA_MinimizerOptions::clone() const
-	{
-		return RNA_MinimizerOptionsOP( new RNA_MinimizerOptions( *this ) );
-	}
+/// @brief clone the options
+RNA_MinimizerOptionsOP
+RNA_MinimizerOptions::clone() const
+{
+	return RNA_MinimizerOptionsOP( new RNA_MinimizerOptions( *this ) );
+}
 
-	///////////////////////////////////////////////////////////////////
-	void
-	RNA_MinimizerOptions::initialize_from_command_line() {
+///////////////////////////////////////////////////////////////////
+void
+RNA_MinimizerOptions::initialize_from_command_line() {
 
-		RNA_BasicOptions::initialize_from_command_line();
+	RNA_BasicOptions::initialize_from_command_line();
 
-		set_minimize_rounds( option[ OptionKeys::rna::farna::minimize::minimize_rounds ]() );
-		set_vary_bond_geometry( option[ OptionKeys::rna::vary_geometry ]() );
-		set_deriv_check( option[ OptionKeys::rna::farna::minimize::deriv_check ]() );
-		set_skip_o2prime_trials( option[ OptionKeys::rna::farna::minimize::skip_o2prime_trials]() );
+	set_minimize_rounds( option[ OptionKeys::rna::farna::minimize::minimize_rounds ]() );
+	set_vary_bond_geometry( option[ OptionKeys::rna::vary_geometry ]() );
+	set_deriv_check( option[ OptionKeys::rna::farna::minimize::deriv_check ]() );
+	set_skip_o2prime_trials( option[ OptionKeys::rna::farna::minimize::skip_o2prime_trials]() );
 
-		set_extra_minimize_res( option[ OptionKeys::rna::farna::minimize::extra_minimize_res ]() ) ;
-		set_extra_minimize_chi_res( option[ OptionKeys::rna::farna::minimize::extra_minimize_chi_res ]() ) ;
+	set_extra_minimize_res( option[ OptionKeys::rna::farna::minimize::extra_minimize_res ]() ) ;
+	set_extra_minimize_chi_res( option[ OptionKeys::rna::farna::minimize::extra_minimize_chi_res ]() ) ;
 
-		set_minimizer_use_coordinate_constraints( option[ OptionKeys::rna::farna::minimize::minimizer_use_coordinate_constraints ]() );
-		if ( option[ OptionKeys::rna::farna::minimize::skip_coord_constraints]() ) set_minimizer_use_coordinate_constraints( false );
-		set_minimize_bps( option[ OptionKeys::rna::farna::minimize::minimize_bps ]() ) ;
+	set_minimizer_use_coordinate_constraints( option[ OptionKeys::rna::farna::minimize::minimizer_use_coordinate_constraints ]() );
+	if ( option[ OptionKeys::rna::farna::minimize::skip_coord_constraints]() ) set_minimizer_use_coordinate_constraints( false );
+	set_minimize_bps( option[ OptionKeys::rna::farna::minimize::minimize_bps ]() ) ;
 
-	}
+}
 
 } //options
 } //farna

@@ -332,10 +332,10 @@ rna_score_test()
 
 		if ( option[params_file].user() ) utility_exit_with_message( " -params_file not supported in rna_minimize anymore." );
 		// if ( option[params_file].user() ) {
-		// 	parameters.initialize_for_de_novo_protocol(pose, option[params_file],
-		// 		basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
-		// 		false /*ignore_secstruct*/ );
-		// 	parameters.setup_base_pair_constraints( pose );
+		//  parameters.initialize_for_de_novo_protocol(pose, option[params_file],
+		//   basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
+		//   false /*ignore_secstruct*/ );
+		//  parameters.setup_base_pair_constraints( pose );
 		// }
 
 		// do it
@@ -355,12 +355,12 @@ rna_score_test()
 
 			// Stem RMSD
 			// if ( option[params_file].user() ) {
-			// 	std::list< Size > stem_residues( parameters.get_stem_residues( pose ) );
-			// 	if ( !stem_residues.empty()/*size() > 0*/ ) {
-			// 		Real const rmsd_stems = all_atom_rmsd( *native_pose, pose, stem_residues );
-			// 		s.add_energy( "rms_stem", rmsd_stems );
-			// 		std::cout << "Stems rmsd: " << rmsd_stems << std::endl;
-			// 	}
+			//  std::list< Size > stem_residues( parameters.get_stem_residues( pose ) );
+			//  if ( !stem_residues.empty()/*size() > 0*/ ) {
+			//   Real const rmsd_stems = all_atom_rmsd( *native_pose, pose, stem_residues );
+			//   s.add_energy( "rms_stem", rmsd_stems );
+			//   std::cout << "Stems rmsd: " << rmsd_stems << std::endl;
+			//  }
 			// }
 		}
 

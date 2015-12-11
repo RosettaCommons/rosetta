@@ -51,7 +51,7 @@ public:
 
 	/// @brief Construct the protocol object given the RNA fragment library to use.
 	RNA_FragmentMover( RNA_Fragments const & all_rna_fragments,
-										 protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
+		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
 
 	/// @brief Copy constructor
 	RNA_FragmentMover(RNA_FragmentMover const & object_to_copy);

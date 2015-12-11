@@ -164,11 +164,11 @@ get_obligated_rna_pairings(RNA_DeNovoParameters const & rna_struct_params) {
 // Reuses existing functionality of FARNA.
 RNA_MinimizerOP
 setup_rna_minimizer(ScoreFunctionOP scorefxn,
-										RNA_DeNovoParameters const & rna_struct_params,
-										core::pose::Pose & pose ){
+	RNA_DeNovoParameters const & rna_struct_params,
+	core::pose::Pose & pose ){
 
 	RNA_MinimizerOP rna_minimizer( new RNA_Minimizer );
-	// 	rna_minimizer->vary_bond_geometry( false ); // defaults to false.
+	//  rna_minimizer->vary_bond_geometry( false ); // defaults to false.
 	rna_minimizer->set_score_function( scorefxn );
 	//return rna_minimizer;
 

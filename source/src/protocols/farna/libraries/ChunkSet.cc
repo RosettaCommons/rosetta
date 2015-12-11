@@ -37,7 +37,7 @@ namespace libraries {
 
 ///////////////////////////////////////////////////////////////////////
 ChunkSet::ChunkSet(
-  utility::vector1< core::pose::PoseOP > const & pose_list,
+	utility::vector1< core::pose::PoseOP > const & pose_list,
 	ResMap const & res_map ):
 	res_map_( res_map ),
 	user_input_( true )
@@ -52,9 +52,9 @@ ChunkSet::ChunkSet(
 
 ///////////////////////////////////////////////////////////////////////
 ChunkSet::ChunkSet(
-									 utility::vector1< core::pose::MiniPoseOP > const & mini_pose_list,
-									 core::pose::Pose const & example_pose,
-									 ResMap const & res_map ):
+	utility::vector1< core::pose::MiniPoseOP > const & mini_pose_list,
+	core::pose::Pose const & example_pose,
+	ResMap const & res_map ):
 	mini_pose_list_( mini_pose_list ),
 	res_map_( res_map ),
 	user_input_( true )
@@ -106,11 +106,11 @@ ChunkSet::setup_atom_id_mapper_to_vanilla_chunk_pose( core::pose::Pose const & p
 // upper_terminus & lower_terminus currently do not do anything to RNA.
 utility::vector1< std::string >
 remove_terminus_variant_types_for_rna( utility::vector1< std::string > const & types, char seq ) {
-	utility::vector1< std::string >	types_filtered;
+	utility::vector1< std::string > types_filtered;
 	for ( Size n = 1; n <= types.size(); n++ ) {
 		std::string const & type( types[ n ] );
 		if ( core::chemical::rna::rna_nts.find( seq ) != std::string::npos &&
-				 ( type == "UPPER_TERMINUS_VARIANT" || type == "LOWER_TERMINUS_VARIANT" ) ) continue;
+				( type == "UPPER_TERMINUS_VARIANT" || type == "LOWER_TERMINUS_VARIANT" ) ) continue;
 		types_filtered.push_back( type );
 	}
 	return types_filtered;
@@ -158,7 +158,7 @@ ChunkSet::filter_poses_have_same_sequence_and_variants()
 ///////////////////////////////////////////////////////////////////////
 void
 ChunkSet::insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index,
-																	toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const{
+	toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const{
 
 	using namespace core::pose;
 	using namespace core::id;
@@ -170,7 +170,7 @@ ChunkSet::insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_po
 	if ( !user_input() ) atom_id_domain_map = get_atom_id_domain_map_for_rosetta_library_chunk( atom_id_map, pose, *atom_level_domain_map );
 
 	core::pose::copydofs::copy_dofs( pose, scratch_pose,
-																	 atom_id_map, atom_id_domain_map );
+		atom_id_map, atom_id_domain_map );
 
 }
 
@@ -179,8 +179,8 @@ std::map< id::AtomID, id::AtomID >
 ChunkSet::get_atom_id_map(  core::pose::Pose & pose, toolbox::AtomID_Mapper const & atom_id_mapper_to_target_vanilla_pose ) const{
 
 	std::map< id::AtomID, id::AtomID > atom_id_map = atom_id_mapper_to_target_vanilla_pose.calculate_atom_id_map( pose, res_map_,
-																																												 mini_pose_list_[1]->fold_tree(),
-																																												 atom_id_mapper_to_vanilla_chunk_pose_  );
+		mini_pose_list_[1]->fold_tree(),
+		atom_id_mapper_to_vanilla_chunk_pose_  );
 
 	// This should prevent copying dofs for virtual phosphates, if they are tagged as such in the input silent files.
 	filter_atom_id_map_with_mask( atom_id_map );
@@ -197,7 +197,7 @@ ChunkSet::filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::At
 	std::map< AtomID, AtomID > atom_id_map_new;
 
 	for ( std::map< AtomID, AtomID >::const_iterator
-					it=atom_id_map.begin(), it_end = atom_id_map.end(); it != it_end; ++it ) {
+			it=atom_id_map.begin(), it_end = atom_id_map.end(); it != it_end; ++it ) {
 
 		AtomID const & target_atom_id = it->first;
 		AtomID const & source_atom_id = it->second;
@@ -224,8 +224,8 @@ ChunkSet::filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::At
 //////////////////////////////////////////////////////////////////////////////////////////////
 std::map< core::id::AtomID, core::Size >
 ChunkSet::get_atom_id_domain_map_for_rosetta_library_chunk(
-   std::map< id::AtomID, id::AtomID > atom_id_map,
-	 pose::Pose const & pose, toolbox::AtomLevelDomainMap const & atom_level_domain_map ) const
+	std::map< id::AtomID, id::AtomID > atom_id_map,
+	pose::Pose const & pose, toolbox::AtomLevelDomainMap const & atom_level_domain_map ) const
 {
 	using namespace core::id;
 	runtime_assert( !user_input() ); // we are a in rosetta library ChunkSet, not a user-inputted ChunkSet.
@@ -233,8 +233,8 @@ ChunkSet::get_atom_id_domain_map_for_rosetta_library_chunk(
 	std::map< AtomID, Size > atom_id_domain_map;
 	bool found_rosetta_library_domain( false );
 
-	for ( std::map< AtomID, AtomID >::const_iterator	it=atom_id_map.begin(),
-					it_end = atom_id_map.end(); it != it_end; ++it ) {
+	for ( std::map< AtomID, AtomID >::const_iterator it=atom_id_map.begin(),
+			it_end = atom_id_map.end(); it != it_end; ++it ) {
 		AtomID const & target_atom_id = it->first;
 		Size domain( atom_level_domain_map.get_domain( target_atom_id ) );
 		if ( domain == ROSETTA_LIBRARY_DOMAIN ) {
@@ -244,8 +244,8 @@ ChunkSet::get_atom_id_domain_map_for_rosetta_library_chunk(
 			if ( domain == 0 ) {
 				/// following is verbiage helpful for debugging. Remove after 2015 if not in use.
 				atom_level_domain_map.show();
-				for ( std::map< AtomID, AtomID >::const_iterator	itx=atom_id_map.begin(),
-								itx_end = atom_id_map.end(); itx != itx_end; ++itx ) {
+				for ( std::map< AtomID, AtomID >::const_iterator itx=atom_id_map.begin(),
+						itx_end = atom_id_map.end(); itx != itx_end; ++itx ) {
 					TR << TR.Green << atom_id_to_named_atom_id( itx->first, pose ) << " in pose with domain " << atom_level_domain_map.get_domain( itx->first ) << " mapped to " << itx->second << " in chunk " << std::endl;
 				}
 

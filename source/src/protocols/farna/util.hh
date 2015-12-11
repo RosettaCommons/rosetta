@@ -157,7 +157,7 @@ involved_in_phosphate_torsion( std::string atomname );
 
 void
 set_output_res_and_chain( core::pose::Pose & extended_pose,
-													std::pair< utility::vector1< int >, utility::vector1< char > > const & output_resnum_and_chain );
+	std::pair< utility::vector1< int >, utility::vector1< char > > const & output_resnum_and_chain );
 
 void
 figure_out_base_pair_partner( core::pose::Pose & pose, std::map< core::Size, core::Size > & partner,
@@ -202,7 +202,7 @@ get_rna_hires_scorefxn();
 
 utility::vector1< core::Size >
 get_moving_res( core::pose::Pose const & pose,
-								protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map );
 
 } //farna
 } //protocols

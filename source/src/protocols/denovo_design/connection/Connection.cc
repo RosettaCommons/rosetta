@@ -192,8 +192,8 @@ Connection::parse_my_tag(
 		try {
 			parse_subtag( *subtag, movers );
 		} catch( EXCN_UnknownSubtag const & e ) {
-				has_unknown = true;
-				ex = e;
+			has_unknown = true;
+			ex = e;
 		}
 	}
 	if ( has_unknown ) throw ex;

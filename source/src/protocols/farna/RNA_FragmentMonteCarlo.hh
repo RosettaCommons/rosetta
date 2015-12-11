@@ -111,7 +111,7 @@ public:
 	core::Real
 	get_rmsd_stems_no_superimpose ( core::pose::Pose const & pose ) const;
 
-	private:
+private:
 
 	void
 	initialize( core::pose::Pose & pose );
@@ -179,7 +179,7 @@ public:
 	void
 	check_for_loop_modeling_case( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map, core::pose::Pose const & /* pose */ ) const;
 
-	private:
+private:
 
 	// The parameters in this OptionsCOP should not change:
 	RNA_FragmentMonteCarloOptionsCOP options_;

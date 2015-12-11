@@ -1436,7 +1436,7 @@ my_main( void* )
 	} else if ( algorithm_input == "pdb_to_silent_file" ) {
 		pdb_to_silent_file();
 	} else if ( algorithm_input == "rna_fullatom_minimize_test" ) {
-		//		rna_fullatom_minimize_test();
+		//  rna_fullatom_minimize_test();
 		utility_exit_with_message( "-rna_fullatom_minimize_test no longer supported; use rna_minimize instead." );
 	} else {
 		std::cout << "Error no algorithm selected" << std::endl;

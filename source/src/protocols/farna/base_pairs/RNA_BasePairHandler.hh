@@ -31,61 +31,61 @@ namespace protocols {
 namespace farna {
 namespace base_pairs {
 
-	class RNA_BasePairHandler: public utility::pointer::ReferenceCount {
+class RNA_BasePairHandler: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		RNA_BasePairHandler( core::pose::Pose const & pose );
+	//constructor
+	RNA_BasePairHandler( core::pose::Pose const & pose );
 
-		RNA_BasePairHandler( RNA_DeNovoParameters const & rna_params );
+	RNA_BasePairHandler( RNA_DeNovoParameters const & rna_params );
 
-		//destructor
-		~RNA_BasePairHandler();
+	//destructor
+	~RNA_BasePairHandler();
 
-	public:
+public:
 
-		bool
-		check_base_pairs( core::pose::Pose & pose, protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
+	bool
+	check_base_pairs( core::pose::Pose & pose, protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
 
-		std::map< Size, Size >
-		connections() const;
+	std::map< Size, Size >
+	connections() const;
 
-		void
-		setup_base_pair_constraints( core::pose::Pose & pose,
-																 protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-																 core::Real const suppress_bp_constraint = 1.0 ) const;
+	void
+	setup_base_pair_constraints( core::pose::Pose & pose,
+		protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+		core::Real const suppress_bp_constraint = 1.0 ) const;
 
-		core::pose::rna::RNA_BasePairList
-		rna_pairing_list() const { return rna_pairing_list_; }
+	core::pose::rna::RNA_BasePairList
+	rna_pairing_list() const { return rna_pairing_list_; }
 
-		utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > >  const &
-		chain_connections() const { return chain_connections_; }
+	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > >  const &
+	chain_connections() const { return chain_connections_; }
 
-		utility::vector1< Size >
-		get_stem_residues(  core::pose::Pose const & pose ) const;
+	utility::vector1< Size >
+	get_stem_residues(  core::pose::Pose const & pose ) const;
 
-		utility::vector1< BasePairStep >
-		get_canonical_base_pair_steps() const;
+	utility::vector1< BasePairStep >
+	get_canonical_base_pair_steps() const;
 
-		utility::vector1< BasePairStep >
-		get_noncanonical_base_pair_steps() const;
+	utility::vector1< BasePairStep >
+	get_noncanonical_base_pair_steps() const;
 
-		utility::vector1< BasePairStep >
-		get_base_pair_steps( bool const just_canonical ) const;
+	utility::vector1< BasePairStep >
+	get_base_pair_steps( bool const just_canonical ) const;
 
-	private:
+private:
 
-		void
-		figure_out_partner( std::map< Size, Size > & partner, bool const force_canonical ) const;
+	void
+	figure_out_partner( std::map< Size, Size > & partner, bool const force_canonical ) const;
 
-	private:
+private:
 
-		core::pose::rna::RNA_BasePairList rna_pairing_list_;
-		utility::vector1< Size > cutpoints_open_;
-		utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > > chain_connections_;
+	core::pose::rna::RNA_BasePairList rna_pairing_list_;
+	utility::vector1< Size > cutpoints_open_;
+	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > > chain_connections_;
 
-	};
+};
 
 } //base_pairs
 } //farna

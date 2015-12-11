@@ -68,9 +68,6 @@ public:// constructor/destructor
 	// @brief default constructor
 	HelixKinkFilter();
 
-	// @brief copy constructor
-	HelixKinkFilter( HelixKinkFilter const & rval );
-
 	virtual ~HelixKinkFilter(){}
 
 

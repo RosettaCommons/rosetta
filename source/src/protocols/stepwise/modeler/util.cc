@@ -1022,7 +1022,7 @@ fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) 
 			! cutpoint_open_in_full_model.has_value( res_list[ res ]) ) {
 
 		if ( pose.residue_type( res ).has_variant_type( CUTPOINT_LOWER ) &&
-				 pose.residue_type( res + 1 ).has_variant_type( CUTPOINT_UPPER ) ) return;
+				pose.residue_type( res + 1 ).has_variant_type( CUTPOINT_UPPER ) ) return;
 
 		// can happen after additions
 		core::pose::correctly_add_cutpoint_variants( pose, res );
@@ -1073,7 +1073,7 @@ fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const 
 			! cutpoint_open_in_full_model.has_value( res_list[ res - 1 ])  ) {
 
 		if ( pose.residue_type( res - 1 ).has_variant_type( CUTPOINT_LOWER ) &&
-				 pose.residue_type( res     ).has_variant_type( CUTPOINT_UPPER ) ) return;
+				pose.residue_type( res     ).has_variant_type( CUTPOINT_UPPER ) ) return;
 
 		// can happen after additions
 		core::pose::correctly_add_cutpoint_variants( pose, res - 1 );

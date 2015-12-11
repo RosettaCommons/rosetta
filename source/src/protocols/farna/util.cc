@@ -1223,7 +1223,7 @@ involved_in_phosphate_torsion( std::string atomname )
 ///////////////////////////////////////////////////////////////////////////////
 void
 set_output_res_and_chain( pose::Pose & extended_pose,
-													std::pair< utility::vector1< int >, utility::vector1< char > > const & output_resnum_and_chain )
+	std::pair< utility::vector1< int >, utility::vector1< char > > const & output_resnum_and_chain )
 {
 	using namespace pose;
 	utility::vector1< int > const & output_res_num = output_resnum_and_chain.first;
@@ -1238,7 +1238,7 @@ set_output_res_and_chain( pose::Pose & extended_pose,
 	for ( Size n = 1; n <= output_chain.size(); n++ ) {
 		if ( output_chain[ n ] != ' ' ) chain_interesting = true;
 	}
-	if ( chain_interesting) pdb_info->set_chains( output_chain );
+	if ( chain_interesting ) pdb_info->set_chains( output_chain );
 
 	extended_pose.pdb_info( pdb_info );
 }
@@ -1651,7 +1651,7 @@ get_rna_hires_scorefxn() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 get_moving_res( core::pose::Pose const & pose,
-								protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) {
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) {
 
 	utility::vector1< Size > moving_res;
 

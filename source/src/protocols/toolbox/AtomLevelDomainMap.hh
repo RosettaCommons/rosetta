@@ -47,8 +47,8 @@ public:
 
 	//constructor
 	AtomLevelDomainMap( core::pose::Pose const & pose,
-											bool const map_to_vanilla_pose = false,
-											utility::vector1< Size > const & allow_insert_res = utility::vector1< Size >() /* do not have to specify this*/ );
+		bool const map_to_vanilla_pose = false,
+		utility::vector1< Size > const & allow_insert_res = utility::vector1< Size >() /* do not have to specify this*/ );
 
 	virtual ~AtomLevelDomainMap();
 
@@ -141,7 +141,7 @@ public:
 
 	void
 	setup_movemap( core::kinematics::MoveMap & mm,
-								 core::pose::Pose const & pose );
+		core::pose::Pose const & pose );
 
 	AtomID_MapperCOP
 	atom_id_mapper() const { return atom_id_mapper_; }
@@ -150,8 +150,8 @@ private:
 
 	void
 	initialize( core::pose::Pose const & pose,
-							bool const map_to_vanilla_pose,
-							utility::vector1< Size > const & allow_insert_res );
+		bool const map_to_vanilla_pose,
+		utility::vector1< Size > const & allow_insert_res );
 
 	void
 	update_to_move_internal_phosphates( pose::Pose const & pose );

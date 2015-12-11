@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/farna/options/RNA_BasicOptions.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,11 +21,11 @@
 namespace protocols {
 namespace farna {
 namespace options {
-	
-	class RNA_BasicOptions;
-	typedef utility::pointer::shared_ptr< RNA_BasicOptions > RNA_BasicOptionsOP;
-	typedef utility::pointer::shared_ptr< RNA_BasicOptions const > RNA_BasicOptionsCOP;
-	
+
+class RNA_BasicOptions;
+typedef utility::pointer::shared_ptr< RNA_BasicOptions > RNA_BasicOptionsOP;
+typedef utility::pointer::shared_ptr< RNA_BasicOptions const > RNA_BasicOptionsCOP;
+
 } //options
 } //farna
 } //protocols

@@ -93,11 +93,11 @@ RNA_ChunkLibrary::RNA_ChunkLibrary(
 // constructor -- needs a list of silent files. Each silent file
 //  has solutions for a particular piece of the desired pose.
 RNA_ChunkLibrary::RNA_ChunkLibrary(
-																	  utility::vector1 < std::string > const & pdb_files,
-																		utility::vector1 < std::string > const & silent_files,
-																		core::pose::Pose const & pose,
-																		utility::vector1< core::Size > const & input_res,
-																		utility::vector1< core::Size > const & allow_insert_res /* = blank */ )
+	utility::vector1 < std::string > const & pdb_files,
+	utility::vector1 < std::string > const & silent_files,
+	core::pose::Pose const & pose,
+	utility::vector1< core::Size > const & input_res,
+	utility::vector1< core::Size > const & allow_insert_res /* = blank */ )
 {
 	initialize_rna_chunk_library( pdb_files, silent_files, pose, input_res, allow_insert_res );
 }
@@ -135,7 +135,7 @@ RNA_ChunkLibrary::initialize_rna_chunk_library(
 
 	// atom_level_domain_map keeps track of where chunks are placed -- only allow
 	// fragment insertions *outside* these regions.
-	if ( atom_level_domain_map_ == 0 )	{
+	if ( atom_level_domain_map_ == 0 ) {
 		atom_level_domain_map_ = toolbox::AtomLevelDomainMapOP( new toolbox::AtomLevelDomainMap( pose, true /*map_to_vanilla*/, allow_insert_res ) );
 	}
 	covered_by_chunk_.dimension( sequence_of_big_pose.size(), false );
@@ -258,7 +258,7 @@ RNA_ChunkLibrary::random_chunk_insertion( core::pose::Pose & pose ) const{
 //////////////////////////////////////////////////////////////////////////////
 void
 RNA_ChunkLibrary::update_atom_level_domain_map(
-  ResMap const & res_map,
+	ResMap const & res_map,
 	core::pose::Pose const & pose,
 	core::pose::Pose const & scratch_pose,
 	core::Size const domain_num )
@@ -297,7 +297,7 @@ RNA_ChunkLibrary::update_atom_level_domain_map(
 				if ( scratch_rsd.is_virtual( scratch_index ) ) continue;
 				// special case: base pair steps should not overwrite user input domain
 				if ( domain_num == ROSETTA_LIBRARY_DOMAIN &&
-						 atom_level_domain_map_->get_domain( atom_id ) > 0 ) continue;
+						atom_level_domain_map_->get_domain( atom_id ) > 0 ) continue;
 				atom_level_domain_map_->set_domain( atom_id, domain_num);
 			}
 		}
@@ -499,8 +499,8 @@ RNA_ChunkLibrary::setup_base_pair_step_chunks(
 		if ( !pair_moving ) continue;
 
 		ChunkSetOP chunk_set( new ChunkSet( base_pair_step_library.mini_pose_list( base_pair_step_sequence ),
-																				*base_pair_step_library.scratch_pose( base_pair_step_sequence ),
-																				res_map ) );
+			*base_pair_step_library.scratch_pose( base_pair_step_sequence ),
+			res_map ) );
 		chunk_set->set_user_input( false );
 		chunk_sets_.push_back( chunk_set );
 

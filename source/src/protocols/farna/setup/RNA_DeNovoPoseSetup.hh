@@ -56,8 +56,8 @@ public:
 
 	void
 	setup_fold_tree_and_jumps_and_variants( core::pose::Pose & pose,
-																					RNA_JumpMover const & rna_jump_mover,
-																					protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const;
+		RNA_JumpMover const & rna_jump_mover,
+		protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const;
 
 	void
 	setup_fold_tree_and_jumps_and_variants( core::pose::Pose & pose ) const;
@@ -84,11 +84,11 @@ private:
 
 	void
 	setup_jumps( core::pose::Pose & pose,
-							 RNA_JumpMover const & rna_jump_mover ) const;
+		RNA_JumpMover const & rna_jump_mover ) const;
 
 	void
 	setup_chainbreak_variants( core::pose::Pose & pose,
-														 protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const;
+		protocols::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const;
 
 	void
 	insert_base_pair_jumps( core::pose::Pose & pose, RNA_JumpMover const & jump_mover,  bool & success ) const;

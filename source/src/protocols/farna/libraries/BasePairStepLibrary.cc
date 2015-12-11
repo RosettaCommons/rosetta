@@ -161,9 +161,9 @@ BasePairStepLibrary::initialize_data( BasePairStepSequence const & base_pair_ste
 			core::pose::PoseOP pose = pose_list_raw[ k ];
 			core::kinematics::FoldTree const & f( pose->fold_tree() );
 			if ( ( f.is_cutpoint( 1 ) ) ||
-					 ( !f.is_cutpoint( 2 ) ) ||
-					 ( base_pair_step_sequence.num_bulge() == 0 && f.is_cutpoint( 3 ) ) ||
-					 ( base_pair_step_sequence.num_bulge() >  0 && !f.is_cutpoint( 3 ) ) ) {
+					( !f.is_cutpoint( 2 ) ) ||
+					( base_pair_step_sequence.num_bulge() == 0 && f.is_cutpoint( 3 ) ) ||
+					( base_pair_step_sequence.num_bulge() >  0 && !f.is_cutpoint( 3 ) ) ) {
 				TR << TR.Red << "Warning: screwed up fold tree " << pose->fold_tree() << " for base pair step sequence " << base_pair_step_sequence.tag() << " in pose " << tag_from_pose( *pose ) << " in input_file " << input_file << std::endl;
 				continue;
 			}
@@ -204,7 +204,7 @@ BasePairStepLibrary::mini_pose_list( BasePairStepSequence const & base_pair_step
 {
 	runtime_assert( has_value( base_pair_step_sequence ) );
 	initialize_data( base_pair_step_sequence ); // makes sure initialized -- no op if already initialized
-	//	TR << base_pair_step_sequence << " has " <<  mini_pose_lists_[ base_pair_step_sequence ].size() << " members " << std::endl;
+	// TR << base_pair_step_sequence << " has " <<  mini_pose_lists_[ base_pair_step_sequence ].size() << " members " << std::endl;
 	return mini_pose_lists_[ base_pair_step_sequence ];
 }
 

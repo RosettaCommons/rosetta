@@ -504,7 +504,7 @@ bool SilentFileData::write_silent_struct(
 	s.print_scores( out );
 	if ( !bWriteScoreOnly ) {
 		s.print_residue_numbers( out );
-		s.print_submotif_info(out); 
+		s.print_submotif_info(out);
 		s.print_conformation( out );
 	}
 

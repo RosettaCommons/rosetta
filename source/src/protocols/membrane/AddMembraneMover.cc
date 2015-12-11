@@ -566,15 +566,15 @@ AddMembraneMover::initialize_membrane_residue( core::pose::Pose & pose, core::Si
 		if ( found_mem_rsds.size() > 1 ) {
 
 			// Case 2a: Multiple membrane residues found, the user does not specify. Pick the first found RSD
-			if ( membrane_rsd_ == 0 ) { 
-				TR << "Multiple membrane residues found. Setting MEM to the first found residue. Proceed with caution" << std::endl; 
-				membrane_pos = found_mem_rsds[1]; 
-				user_defined_ = false; 
-			
-			// Case 2b: Multiple membrane residues found AND the user specified found residue
-			// matches a residue in the 'found' list
+			if ( membrane_rsd_ == 0 ) {
+				TR << "Multiple membrane residues found. Setting MEM to the first found residue. Proceed with caution" << std::endl;
+				membrane_pos = found_mem_rsds[1];
+				user_defined_ = false;
+
+				// Case 2b: Multiple membrane residues found AND the user specified found residue
+				// matches a residue in the 'found' list
 			} else {
-				core::SSize current_rsd = static_cast< core::SSize >( membrane_rsd_ ); 
+				core::SSize current_rsd = static_cast< core::SSize >( membrane_rsd_ );
 				for ( core::Size i = 1; i <= found_mem_rsds.size(); i++ ) {
 					if ( current_rsd == found_mem_rsds[1] ) {
 						TR << "Adding membrane residue from PDB at residue number " << membrane_rsd_ << std::endl;
@@ -584,24 +584,24 @@ AddMembraneMover::initialize_membrane_residue( core::pose::Pose & pose, core::Si
 				}
 			}
 
-		// Case 3: If one residue found in PDB and user didn't designate this residue, still accept found residue
+			// Case 3: If one residue found in PDB and user didn't designate this residue, still accept found residue
 		} else if ( (membrane_rsd_ == 0) && (found_mem_rsds[1] != -1) ) {
 			TR << "No flag given: Adding membrane residue from PDB at residue number " << found_mem_rsds[1] << std::endl;
 			membrane_pos = found_mem_rsds[1];
 			user_defined_ = true;
 
-		// Case 4: If membrane found and agrees with user specified value, accept
-		} else if ( static_cast< core::SSize >( membrane_rsd_ ) == found_mem_rsds[1] ) { 
+			// Case 4: If membrane found and agrees with user specified value, accept
+		} else if ( static_cast< core::SSize >( membrane_rsd_ ) == found_mem_rsds[1] ) {
 			TR << "User specified residue matches found membrane residue. Accepting." << std::endl;
-			membrane_pos = found_mem_rsds[1]; 
+			membrane_pos = found_mem_rsds[1];
 			user_defined_ = true;
 
-		// Case 5: If no membrane residue found, add a new one to the pose
+			// Case 5: If no membrane residue found, add a new one to the pose
 		} else if ( found_mem_rsds[1] == -1 ) {
 			TR << "Adding a new membrane residue to the pose" << std::endl;
 			membrane_pos = add_membrane_virtual( pose );
 
-		// Case 6: Doesn't exist ;)
+			// Case 6: Doesn't exist ;)
 		} else {
 			TR << "Congratulations - you have reached an edge case for adding the memrbane residue that we haven't thought of yet!" << std::endl;
 			TR << "Contact the developers - exiting for now..." << std::endl;

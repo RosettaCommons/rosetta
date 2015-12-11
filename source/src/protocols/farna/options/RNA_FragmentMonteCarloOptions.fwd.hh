@@ -22,9 +22,9 @@ namespace protocols {
 namespace farna {
 namespace options {
 
-	class RNA_FragmentMonteCarloOptions;
-	typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarloOptions > RNA_FragmentMonteCarloOptionsOP;
-	typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarloOptions const > RNA_FragmentMonteCarloOptionsCOP;
+class RNA_FragmentMonteCarloOptions;
+typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarloOptions > RNA_FragmentMonteCarloOptionsOP;
+typedef utility::pointer::shared_ptr< RNA_FragmentMonteCarloOptions const > RNA_FragmentMonteCarloOptionsCOP;
 
 } //options
 } //farna

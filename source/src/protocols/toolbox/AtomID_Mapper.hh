@@ -29,71 +29,71 @@
 namespace protocols {
 namespace toolbox {
 
-	class AtomID_Mapper: public utility::pointer::ReferenceCount {
+class AtomID_Mapper: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		AtomID_Mapper( core::pose::Pose const & pose,
-									 bool const map_to_vanilla_pose = false );
+	//constructor
+	AtomID_Mapper( core::pose::Pose const & pose,
+		bool const map_to_vanilla_pose = false );
 
-		//destructor
-		~AtomID_Mapper();
+	//destructor
+	~AtomID_Mapper();
 
-		//constructor
-    AtomID_Mapper( AtomID_Mapper const & src );
+	//constructor
+	AtomID_Mapper( AtomID_Mapper const & src );
 
-    AtomID_MapperOP
-		clone() const;
+	AtomID_MapperOP
+	clone() const;
 
-	public:
+public:
 
-		bool
-		has_atom_id( core::id::AtomID const & atom_id ) const;
+	bool
+	has_atom_id( core::id::AtomID const & atom_id ) const;
 
-		void
-		renumber_after_variant_changes( core::pose::Pose const & pose );
+	void
+	renumber_after_variant_changes( core::pose::Pose const & pose );
 
-		utility::vector1< core::id::AtomID > const &
-		atom_ids_in_res( Size const & n ) const {
-			return atom_ids_in_res_[ n ];
-		}
+	utility::vector1< core::id::AtomID > const &
+	atom_ids_in_res( Size const & n ) const {
+		return atom_ids_in_res_[ n ];
+	}
 
-		// @brief In use by RNA_ChunkLibrary.
-		std::map< core::id::AtomID, core::id::AtomID >
-		calculate_atom_id_map(	core::pose::Pose const & target_pose,
-														std::map< core::Size, core::Size > const & res_map /* from target to source */,
-														core::kinematics::FoldTree const & source_fold_tree,
-														AtomID_MapperCOP source_mapper_to_vanilla = 0 ) const;
+	// @brief In use by RNA_ChunkLibrary.
+	std::map< core::id::AtomID, core::id::AtomID >
+	calculate_atom_id_map( core::pose::Pose const & target_pose,
+		std::map< core::Size, core::Size > const & res_map /* from target to source */,
+		core::kinematics::FoldTree const & source_fold_tree,
+		AtomID_MapperCOP source_mapper_to_vanilla = 0 ) const;
 
-    core::id::AtomID const &
-		map_to_reference( core::id::AtomID const & atom_id ) const;
+	core::id::AtomID const &
+	map_to_reference( core::id::AtomID const & atom_id ) const;
 
-    core::id::AtomID const &
-		map_from_reference( core::id::AtomID const & atom_id ) const;
+	core::id::AtomID const &
+	map_from_reference( core::id::AtomID const & atom_id ) const;
 
-    core::Size nres() const { return atom_ids_in_res_.size();}
+	core::Size nres() const { return atom_ids_in_res_.size();}
 
-	private:
+private:
 
-		void
-		initialize( core::pose::Pose const & pose, bool const map_to_vanilla_pose );
+	void
+	initialize( core::pose::Pose const & pose, bool const map_to_vanilla_pose );
 
-		void
-		initialize_from_pose( core::pose::Pose const & pose );
+	void
+	initialize_from_pose( core::pose::Pose const & pose );
 
-	private:
+private:
 
-		// @brief The named_atom_id_map never changes after initialization.
-		std::map< core::id::NamedAtomID, core::id::AtomID > named_atom_id_map_;
-		std::string sequence_; // used to confirm viability of any renumbering requests.
+	// @brief The named_atom_id_map never changes after initialization.
+	std::map< core::id::NamedAtomID, core::id::AtomID > named_atom_id_map_;
+	std::string sequence_; // used to confirm viability of any renumbering requests.
 
-		// @brief These maps change around with calls to renumber_after_variant_changes()
-		std::map< core::id::AtomID, core::id::AtomID > map_to_reference_;
-		std::map< core::id::AtomID, core::id::AtomID > map_from_reference_;
-		utility::vector1< utility::vector1< core::id::AtomID > > atom_ids_in_res_;
+	// @brief These maps change around with calls to renumber_after_variant_changes()
+	std::map< core::id::AtomID, core::id::AtomID > map_to_reference_;
+	std::map< core::id::AtomID, core::id::AtomID > map_from_reference_;
+	utility::vector1< utility::vector1< core::id::AtomID > > atom_ids_in_res_;
 
-	};
+};
 
 } //toolbox
 } //protocols

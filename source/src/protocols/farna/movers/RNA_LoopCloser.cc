@@ -266,7 +266,7 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 	}
 
 	if ( !input_pose.residue( cutpoint ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
-			 !input_pose.residue( cutpoint+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
+			!input_pose.residue( cutpoint+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 		utility_exit_with_message( "RNA CCD closure at "+string_of( cutpoint )+" but CUTPOINT_LOWER or CUTPOINT_UPPER variants not properly set up." );
 	}
 
@@ -740,7 +740,7 @@ RNA_LoopCloser::local_minimize_at_chainbreaks(
 		if ( ! f.is_cutpoint( cutpos ) ) continue;
 
 		if ( !pose.residue( cutpos   ).has_variant_type( chemical::CUTPOINT_LOWER )  ||
-				 !pose.residue( cutpos+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
+				!pose.residue( cutpos+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
 
 		mm.set_bb( cutpos, true );
 		mm.set_bb( cutpos+1, true );

@@ -163,7 +163,7 @@ CoarseRNA_Fragments::insert_fragment(
 	}
 	//  std::cout << std::endl;
 
-	std::map< AtomID, AtomID > atom_id_map =	atom_level_domain_map->atom_id_mapper()->calculate_atom_id_map( pose, res_map, frag_source_pose_->fold_tree() );
+	std::map< AtomID, AtomID > atom_id_map = atom_level_domain_map->atom_id_mapper()->calculate_atom_id_map( pose, res_map, frag_source_pose_->fold_tree() );
 	core::pose::copydofs::copy_dofs(  pose, *frag_source_pose_, atom_id_map, atom_level_domain_map->calculate_atom_id_domain_map( pose ) );
 
 }

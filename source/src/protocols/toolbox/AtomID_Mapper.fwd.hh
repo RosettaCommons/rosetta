@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/toolbox/AtomID_Mapper.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -20,12 +20,12 @@
 
 namespace protocols {
 namespace toolbox {
-	
-	class AtomID_Mapper;
-	typedef utility::pointer::shared_ptr< AtomID_Mapper > AtomID_MapperOP;
-	typedef utility::pointer::shared_ptr< AtomID_Mapper const > AtomID_MapperCOP;
-	
-} //toolbox 
-} //protocols 
+
+class AtomID_Mapper;
+typedef utility::pointer::shared_ptr< AtomID_Mapper > AtomID_MapperOP;
+typedef utility::pointer::shared_ptr< AtomID_Mapper const > AtomID_MapperCOP;
+
+} //toolbox
+} //protocols
 
 #endif

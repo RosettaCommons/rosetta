@@ -178,9 +178,9 @@ StepWiseModeler::do_sampling( core::pose::Pose & pose ) {
 void
 StepWiseModeler::do_minimizing( core::pose::Pose & pose ) {
 	StepWiseMinimizerOP stepwise_minimizer( new StepWiseMinimizer( pose_list_,
-																																 working_parameters_,
-																																 options_,
-																																 scorefxn_ ) );
+		working_parameters_,
+		options_,
+		scorefxn_ ) );
 	if ( master_packer_->packer()->working_pack_res_was_inputted() ) {
 		stepwise_minimizer->set_working_pack_res( master_packer_->packer()->previous_working_pack_res() );
 	}
@@ -210,7 +210,7 @@ void
 StepWiseModeler::do_stepwise_lores( core::pose::Pose & pose )
 {
 	// following virtual ribose would normally be needed in connection_sampler
-	for (Size n = 1; n <= pose.total_residue(); n++ ) {
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, n );
 	}
 	pose_list_ = make_vector1( pose.clone() );

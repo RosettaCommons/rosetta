@@ -59,7 +59,7 @@ namespace toolbox {
 
 //Constructor
 AtomID_Mapper::AtomID_Mapper( core::pose::Pose const & pose,
-															bool const map_to_vanilla_pose /* = false */  )
+	bool const map_to_vanilla_pose /* = false */  )
 {
 	initialize( pose, map_to_vanilla_pose );
 }
@@ -90,7 +90,7 @@ AtomID_Mapper::initialize( core::pose::Pose const & pose, bool const map_to_vani
 		//  without weird variants.
 		Pose pose_without_variants;
 		make_pose_from_sequence( pose_without_variants, pose.sequence() /* note this is not annotated_sequence(), which would include variants*/,
-														 pose.residue_type( 1 ).residue_type_set(), false /*auto_termini*/ );
+			pose.residue_type( 1 ).residue_type_set(), false /*auto_termini*/ );
 		initialize_from_pose( pose_without_variants );
 		renumber_after_variant_changes( pose );
 	} else {
@@ -157,10 +157,10 @@ AtomID_Mapper::map_from_reference( AtomID const & atom_id ) const
 
 //////////////////////////////////////////////////////////////////
 std::map< AtomID, AtomID >
-AtomID_Mapper::calculate_atom_id_map(	core::pose::Pose const & target_pose,
-																			std::map< core::Size, core::Size > const & res_map /* from target to source */,
-																			core::kinematics::FoldTree const & source_fold_tree,
-																			AtomID_MapperCOP source_mapper_to_vanilla /* = 0 */ ) const
+AtomID_Mapper::calculate_atom_id_map( core::pose::Pose const & target_pose,
+	std::map< core::Size, core::Size > const & res_map /* from target to source */,
+	core::kinematics::FoldTree const & source_fold_tree,
+	AtomID_MapperCOP source_mapper_to_vanilla /* = 0 */ ) const
 {
 	std::map< AtomID, AtomID > atom_id_map;
 
@@ -292,7 +292,7 @@ AtomID_Mapper::renumber_after_variant_changes( core::pose::Pose const & pose ){
 		atom_ids_in_res_.push_back( atom_ids );
 	}
 
- }
+}
 
 } //toolbox
 } //protocols

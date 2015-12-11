@@ -44,14 +44,14 @@ RNA_BasePairHandler::RNA_BasePairHandler( core::pose::Pose const & pose ) {
 		Size const jump_pos1( f.upstream_jump_residue( n ) );
 		Size const jump_pos2( f.downstream_jump_residue( n ) );
 		if ( pose.residue_type( jump_pos1 ).is_RNA() &&
-				 pose.residue_type( jump_pos2 ).is_RNA() ) {
+				pose.residue_type( jump_pos2 ).is_RNA() ) {
 			rna_pairing_list_.push_back( core::pose::rna::BasePair( jump_pos1, jump_pos2 ) /* note that edges are not specified*/ );
 		}
 	}
 
 	for ( Size i = 1; i < pose.total_residue(); i++ ) {
 		if ( f.is_cutpoint( i ) ) {
-			if ( pose.residue_type( i ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ){
+			if ( pose.residue_type( i ).has_variant_type( core::chemical::CUTPOINT_LOWER ) ) {
 				runtime_assert( pose.residue_type( i+1 ).has_variant_type( core::chemical::CUTPOINT_UPPER ) );
 				// cutpoints_closed_.push_back( i );
 			} else {
@@ -61,7 +61,7 @@ RNA_BasePairHandler::RNA_BasePairHandler( core::pose::Pose const & pose ) {
 	}
 }
 
-RNA_BasePairHandler::RNA_BasePairHandler(	RNA_DeNovoParameters const & rna_params )
+RNA_BasePairHandler::RNA_BasePairHandler( RNA_DeNovoParameters const & rna_params )
 {
 	rna_pairing_list_  = rna_params.rna_pairing_list();
 	chain_connections_ = rna_params.chain_connections();
@@ -75,7 +75,7 @@ RNA_BasePairHandler::~RNA_BasePairHandler()
 /////////////////////////////////////////////////////////
 bool
 RNA_BasePairHandler::check_base_pairs( pose::Pose & pose,
-																			 protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const
 {
 	using namespace core::pose::rna;
 	static scoring::rna::RNA_LowResolutionPotential const rna_low_resolution_potential;
@@ -126,8 +126,8 @@ RNA_BasePairHandler::check_base_pairs( pose::Pose & pose,
 ///////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_BasePairHandler::setup_base_pair_constraints( core::pose::Pose & pose,
-																									protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-																									Real const suppress_bp_constraint /* = 1.0 */ ) const
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	Real const suppress_bp_constraint /* = 1.0 */ ) const
 {
 	using namespace core::id;
 
@@ -151,7 +151,7 @@ RNA_BasePairHandler::setup_base_pair_constraints( core::pose::Pose & pose,
 		if ( !pose.residue(j).is_RNA() ) continue;
 
 		if ( !atom_level_domain_map->get( named_atom_id_to_atom_id( NamedAtomID( "C1'", i ), pose ) ) &&
-				 !atom_level_domain_map->get( named_atom_id_to_atom_id( NamedAtomID( "C1'", j ), pose ) ) ) continue; //assumed to be frozen, so no need to set up constraints?
+				!atom_level_domain_map->get( named_atom_id_to_atom_id( NamedAtomID( "C1'", j ), pose ) ) ) continue; //assumed to be frozen, so no need to set up constraints?
 
 		pairings.push_back( std::make_pair( i, j ) ) ;
 	}
@@ -186,13 +186,13 @@ RNA_BasePairHandler::figure_out_partner( std::map< Size, Size > & partner, bool 
 
 
 		bool const pair_is_canonical = rna_pairing.edge1() == WATSON_CRICK && rna_pairing.edge2() == WATSON_CRICK &&
-			                             rna_pairing.orientation() == ANTIPARALLEL;
+			rna_pairing.orientation() == ANTIPARALLEL;
 		if ( force_canonical && !pair_is_canonical ) continue;
 
 		// if pairing is user-specified to be, say, H/S/A, we won't be able to handle it.
 		bool const pair_is_ambiguous = rna_pairing.edge1() == ANY_BASE_EDGE && rna_pairing.edge2() == ANY_BASE_EDGE &&
-			                             rna_pairing.orientation() == ANY_BASE_DOUBLET_ORIENTATION;
-		//		TR << TR.Red << "PAIRING " << rna_pairing.res1() << " " << rna_pairing.res2() << " " << rna_pairing.edge1() << " " << rna_pairing.edge2() << " " << rna_pairing.orientation() << " --> "  << pair_is_ambiguous << std::endl;
+			rna_pairing.orientation() == ANY_BASE_DOUBLET_ORIENTATION;
+		//  TR << TR.Red << "PAIRING " << rna_pairing.res1() << " " << rna_pairing.res2() << " " << rna_pairing.edge1() << " " << rna_pairing.edge2() << " " << rna_pairing.orientation() << " --> "  << pair_is_ambiguous << std::endl;
 		if ( !force_canonical && !pair_is_ambiguous ) continue;
 
 		if ( partner.find( i ) != partner.end() )  {
@@ -280,10 +280,10 @@ RNA_BasePairHandler::get_stem_residues( core::pose::Pose const & pose ) const
 	for ( Size n = 1; n <= rna_pairing_list_.size(); n++ ) {
 		BasePair const & rna_pairing( rna_pairing_list_[ n ] );
 		if (  rna_pairing.edge1() == WATSON_CRICK &&
-					rna_pairing.edge2() == WATSON_CRICK &&
-					rna_pairing.orientation() == ANTIPARALLEL &&
-					core::chemical::rna::possibly_canonical( pose.residue( rna_pairing.res1() ).aa(),
-																									 pose.residue( rna_pairing.res2() ).aa() ) )  {
+				rna_pairing.edge2() == WATSON_CRICK &&
+				rna_pairing.orientation() == ANTIPARALLEL &&
+				core::chemical::rna::possibly_canonical( pose.residue( rna_pairing.res1() ).aa(),
+				pose.residue( rna_pairing.res2() ).aa() ) )  {
 			in_stem.push_back( rna_pairing.res1() );
 			in_stem.push_back( rna_pairing.res2() );
 		}

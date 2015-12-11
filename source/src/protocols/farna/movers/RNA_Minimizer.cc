@@ -193,16 +193,16 @@ RNA_Minimizer::show(std::ostream & output) const
 {
 	Mover::show(output);
 	output <<
-	"Deriv check:              " << (options_->deriv_check() ? "True" : "False")  <<
-	"\nSkip o2prime trials:       " << (options_->skip_o2prime_trials() ? "True" : "False") <<
-	"\nPerform minimizer run:    " << (perform_minimizer_run_ ? "True" : "False") <<
-	"\nVary bond geometry:       " << (options_->vary_bond_geometry() ? "True" : "False") <<
-	"\nDump pdb:                 " << (options_->dump_pdb() ? "True" : "False") <<
-	"\nMove first rigid body:    " << (options_->move_first_rigid_body() ? "True" : "False") <<
-	"\nMin type:                 " << min_type_ <<
-	"\nScore function:           " << scorefxn_->get_name() <<
-	"\nUse coordinate constraints:        " << (options_->minimizer_use_coordinate_constraints() ? "True" : "False")  <<
-	"\nInclude default linear chainbreak: " << (include_default_linear_chainbreak_ ? "True" : "False");
+		"Deriv check:              " << (options_->deriv_check() ? "True" : "False")  <<
+		"\nSkip o2prime trials:       " << (options_->skip_o2prime_trials() ? "True" : "False") <<
+		"\nPerform minimizer run:    " << (perform_minimizer_run_ ? "True" : "False") <<
+		"\nVary bond geometry:       " << (options_->vary_bond_geometry() ? "True" : "False") <<
+		"\nDump pdb:                 " << (options_->dump_pdb() ? "True" : "False") <<
+		"\nMove first rigid body:    " << (options_->move_first_rigid_body() ? "True" : "False") <<
+		"\nMin type:                 " << min_type_ <<
+		"\nScore function:           " << scorefxn_->get_name() <<
+		"\nUse coordinate constraints:        " << (options_->minimizer_use_coordinate_constraints() ? "True" : "False")  <<
+		"\nInclude default linear chainbreak: " << (include_default_linear_chainbreak_ ? "True" : "False");
 }
 
 

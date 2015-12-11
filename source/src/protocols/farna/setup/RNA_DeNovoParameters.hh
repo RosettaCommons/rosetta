@@ -25,85 +25,85 @@ namespace protocols {
 namespace farna {
 namespace setup {
 
-	class RNA_DeNovoParameters: public utility::pointer::ReferenceCount {
+class RNA_DeNovoParameters: public utility::pointer::ReferenceCount {
 
-	public:
+public:
 
-		//constructor
-		RNA_DeNovoParameters( std::string const & filename );
+	//constructor
+	RNA_DeNovoParameters( std::string const & filename );
 
-		//destructor
-		~RNA_DeNovoParameters();
+	//destructor
+	~RNA_DeNovoParameters();
 
-	public:
+public:
 
-		friend class RNA_DeNovoPoseSetup;
+	friend class RNA_DeNovoPoseSetup;
 
-		utility::vector1 < utility::vector1 <core::Size > > const & obligate_pairing_sets() const {
-			return obligate_pairing_sets_;
-		}
+	utility::vector1 < utility::vector1 <core::Size > > const & obligate_pairing_sets() const {
+		return obligate_pairing_sets_;
+	}
 
-		core::pose::rna::RNA_BasePairList const &	rna_pairing_list() const {
-			return rna_pairing_list_;
-		}
+	core::pose::rna::RNA_BasePairList const & rna_pairing_list() const {
+		return rna_pairing_list_;
+	}
 
-		void set_cutpoints_open( utility::vector1 <core::Size > const & setting ){ cutpoints_open_ = setting; }
-		utility::vector1 <core::Size > cutpoints_open() const { return cutpoints_open_; }
+	void set_cutpoints_open( utility::vector1 <core::Size > const & setting ){ cutpoints_open_ = setting; }
+	utility::vector1 <core::Size > cutpoints_open() const { return cutpoints_open_; }
 
-		void set_cutpoints_closed( utility::vector1 <core::Size > const & setting ){ cutpoints_closed_ = setting; }
-		utility::vector1 <core::Size > cutpoints_closed() const { return cutpoints_closed_; }
+	void set_cutpoints_closed( utility::vector1 <core::Size > const & setting ){ cutpoints_closed_ = setting; }
+	utility::vector1 <core::Size > cutpoints_closed() const { return cutpoints_closed_; }
 
-		void set_virtual_anchor_attachment_points( utility::vector1 <core::Size > const & setting ){ virtual_anchor_attachment_points_ = setting; }
-		utility::vector1 <core::Size > virtual_anchor_attachment_points() const { return virtual_anchor_attachment_points_; }
+	void set_virtual_anchor_attachment_points( utility::vector1 <core::Size > const & setting ){ virtual_anchor_attachment_points_ = setting; }
+	utility::vector1 <core::Size > virtual_anchor_attachment_points() const { return virtual_anchor_attachment_points_; }
 
-		void set_allow_insert_res( utility::vector1 <core::Size > const & setting ){ allow_insert_res_ = setting; }
-		utility::vector1 <core::Size > allow_insert_res() const { return allow_insert_res_; }
+	void set_allow_insert_res( utility::vector1 <core::Size > const & setting ){ allow_insert_res_ = setting; }
+	utility::vector1 <core::Size > allow_insert_res() const { return allow_insert_res_; }
 
-		utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > >  const &
-		chain_connections() const { return chain_connections_; }
+	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > >  const &
+	chain_connections() const { return chain_connections_; }
 
-	private:
+private:
 
-		void
-		read_parameters_from_file( std::string const & filename );
+	void
+	read_parameters_from_file( std::string const & filename );
 
-		void
-		save_res_lists_to_chain_connections_and_clear( utility::vector1< Size > & res_list1,
-																									 utility::vector1< Size > & res_list2 );
+	void
+	save_res_lists_to_chain_connections_and_clear( utility::vector1< Size > & res_list1,
+		utility::vector1< Size > & res_list2 );
 
 
-		void
-		read_chain_connection( std::istringstream & line_stream );
+	void
+	read_chain_connection( std::istringstream & line_stream );
 
-		void
-		get_pairings_from_line(
-													 std::istringstream & line_stream,
-													 bool const in_stem );
+	void
+	get_pairings_from_line(
+		std::istringstream & line_stream,
+		bool const in_stem );
 
-		Size
-		check_in_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > pairing_sets,
-													 core::pose::rna::BasePair const & rna_pairing_check ) const;
+	Size
+	check_in_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > pairing_sets,
+		core::pose::rna::BasePair const & rna_pairing_check ) const;
 
-	private:
+private:
 
-		std::string const filename_;
+	std::string const filename_;
 
-		core::pose::rna::RNA_BasePairList rna_pairing_list_;
+	core::pose::rna::RNA_BasePairList rna_pairing_list_;
 
-		utility::vector1 < utility::vector1 <core::Size > > obligate_pairing_sets_;
-		utility::vector1 < utility::vector1 <core::Size > > stem_pairing_sets_;
+	utility::vector1 < utility::vector1 <core::Size > > obligate_pairing_sets_;
+	utility::vector1 < utility::vector1 <core::Size > > stem_pairing_sets_;
 
-		utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > > chain_connections_;
+	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > > chain_connections_;
 
-		utility::vector1 <core::Size > cutpoints_open_;
-		utility::vector1 <core::Size > cutpoints_closed_;
-		utility::vector1 <core::Size > virtual_anchor_attachment_points_;
+	utility::vector1 <core::Size > cutpoints_open_;
+	utility::vector1 <core::Size > cutpoints_closed_;
+	utility::vector1 <core::Size > virtual_anchor_attachment_points_;
 
-		utility::vector1 < core::Size > allow_insert_res_;
-		std::string rna_secstruct_;
-		bool secstruct_defined_;
+	utility::vector1 < core::Size > allow_insert_res_;
+	std::string rna_secstruct_;
+	bool secstruct_defined_;
 
-	};
+};
 
 } //setup
 } //farna

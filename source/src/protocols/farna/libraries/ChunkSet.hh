@@ -42,8 +42,8 @@ public:
 		core::pose::ResMap const & res_map );
 
 	ChunkSet( utility::vector1< core::pose::MiniPoseOP > const & mini_pose_list,
-						core::pose::Pose const & example_pose,
-						core::pose::ResMap const & res_map );
+		core::pose::Pose const & example_pose,
+		core::pose::ResMap const & res_map );
 
 
 	// Need a clone();
@@ -78,8 +78,8 @@ private:
 
 	std::map< core::id::AtomID, core::Size >
 	get_atom_id_domain_map_for_rosetta_library_chunk(
-												 std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
-												 core::pose::Pose const & pose, toolbox::AtomLevelDomainMap const & atom_level_domain_map ) const;
+		std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
+		core::pose::Pose const & pose, toolbox::AtomLevelDomainMap const & atom_level_domain_map ) const;
 
 	void filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
 

@@ -37,58 +37,58 @@ namespace protocols {
 namespace farna {
 namespace options {
 
-	//Constructor
-	RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
-		rounds_( 10 ),
-		monte_carlo_cycles_( 0 ), /* will be reset later */
-		user_defined_cycles_( false ), /* will change to true if set_monte_carlo_cycles() is called */
-		minimize_structure_( false ),
-		relax_structure_( false ),
-		temperature_( 2.0 ),
-		ignore_secstruct_( false ),
-		chainbreak_weight_( -1.0 ), /* use farna/rna_lores.wts number unless user specified. -1.0 is never really used. */
-		linear_chainbreak_weight_( -1.0 ),  /* use farna/rna_lores.wts number unless user specified. -1.0 is never really used. */
-		close_loops_( true ),
-		close_loops_in_last_round_( true ),
-		close_loops_after_each_move_( false ),
-		allow_bulge_( false ),
-		allow_consecutive_bulges_( false ),
-		jump_change_frequency_( 0.1 ),
-		autofilter_( false ),
-		autofilter_score_quantile_( 0.20 ),
-		titrate_stack_bonus_( true ),
-		root_at_first_rigid_body_( false ),
-		suppress_bp_constraint_( 1.0 ),
-		filter_lores_base_pairs_( false ),
-		filter_lores_base_pairs_early_( false ),
-		filter_chain_closure_( true ),
-		filter_chain_closure_distance_( 6.0 ), /* in Angstroms. This is pretty loose!*/
-		filter_chain_closure_halfway_( true ),
-		staged_constraints_( false ),
-		simple_rmsd_cutoff_relax_( false ),
-		refine_from_silent_( false ),
-		refine_pose_( false ),
-		bps_moves_( false ),
+//Constructor
+RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
+	rounds_( 10 ),
+	monte_carlo_cycles_( 0 ), /* will be reset later */
+	user_defined_cycles_( false ), /* will change to true if set_monte_carlo_cycles() is called */
+	minimize_structure_( false ),
+	relax_structure_( false ),
+	temperature_( 2.0 ),
+	ignore_secstruct_( false ),
+	chainbreak_weight_( -1.0 ), /* use farna/rna_lores.wts number unless user specified. -1.0 is never really used. */
+	linear_chainbreak_weight_( -1.0 ),  /* use farna/rna_lores.wts number unless user specified. -1.0 is never really used. */
+	close_loops_( true ),
+	close_loops_in_last_round_( true ),
+	close_loops_after_each_move_( false ),
+	allow_bulge_( false ),
+	allow_consecutive_bulges_( false ),
+	jump_change_frequency_( 0.1 ),
+	autofilter_( false ),
+	autofilter_score_quantile_( 0.20 ),
+	titrate_stack_bonus_( true ),
+	root_at_first_rigid_body_( false ),
+	suppress_bp_constraint_( 1.0 ),
+	filter_lores_base_pairs_( false ),
+	filter_lores_base_pairs_early_( false ),
+	filter_chain_closure_( true ),
+	filter_chain_closure_distance_( 6.0 ), /* in Angstroms. This is pretty loose!*/
+	filter_chain_closure_halfway_( true ),
+	staged_constraints_( false ),
+	simple_rmsd_cutoff_relax_( false ),
+	refine_from_silent_( false ),
+	refine_pose_( false ),
+	bps_moves_( false ),
 	// following is odd, but note that core::scoring::rna::chemical_shift machinery also checks global options system.
-		use_chem_shift_data_( option[ OptionKeys::score::rna_chemical_shift_exp_data].user() ),
-		superimpose_over_all_( false ),
-		all_rna_fragments_file_( basic::database::full_name("sampling/rna/RICHARDSON_RNA09.torsions") ),
-		rna_params_file_( "" ),
-		jump_library_file_( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) )
-	{}
+	use_chem_shift_data_( option[ OptionKeys::score::rna_chemical_shift_exp_data].user() ),
+	superimpose_over_all_( false ),
+	all_rna_fragments_file_( basic::database::full_name("sampling/rna/RICHARDSON_RNA09.torsions") ),
+	rna_params_file_( "" ),
+	jump_library_file_( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) )
+{}
 
-	//Destructor
-	RNA_FragmentMonteCarloOptions::~RNA_FragmentMonteCarloOptions()
-	{}
+//Destructor
+RNA_FragmentMonteCarloOptions::~RNA_FragmentMonteCarloOptions()
+{}
 
-	/// @brief copy constructor
-	RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions( RNA_FragmentMonteCarloOptions const & src ) :
-		ResourceOptions( src ),
-		RNA_BasicOptions( src ),
-		RNA_MinimizerOptions( src )
-	{
-		*this = src;
-	}
+/// @brief copy constructor
+RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions( RNA_FragmentMonteCarloOptions const & src ) :
+	ResourceOptions( src ),
+	RNA_BasicOptions( src ),
+	RNA_MinimizerOptions( src )
+{
+	*this = src;
+}
 
 /// @brief clone the options
 RNA_FragmentMonteCarloOptionsOP
@@ -97,59 +97,59 @@ RNA_FragmentMonteCarloOptions::clone() const
 	return RNA_FragmentMonteCarloOptionsOP( new RNA_FragmentMonteCarloOptions( *this ) );
 }
 
-	///////////////////////////////////////////////////////////////////
-	void
-	RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
+///////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 
-		RNA_MinimizerOptions::initialize_from_command_line(); // includes RNA_BasicOptions
+	RNA_MinimizerOptions::initialize_from_command_line(); // includes RNA_BasicOptions
 
-		if ( option[ rna::farna::cycles ].user() ) {
-			set_monte_carlo_cycles( option[ rna::farna::cycles ]() );
-			set_user_defined_cycles( true );
-		}
-		minimize_structure_ = option[ rna::farna::minimize_rna ]();
-		relax_structure_ = option[ rna::farna::relax_rna ]();
-		allow_bulge_ = option[ rna::farna::allow_bulge ]();
-		set_temperature( option[ rna::farna::temperature ] );
-		set_ignore_secstruct( option[ rna::farna::ignore_secstruct ] );
-		set_jump_change_frequency( option[ rna::farna::jump_change_frequency ] );
-		set_close_loops( option[ rna::farna::close_loops] );
-		set_close_loops_after_each_move( option[ rna::farna::close_loops_after_each_move ] );
-		set_staged_constraints( option[ rna::farna::staged_constraints ] ) ;
-		set_filter_lores_base_pairs(  option[ rna::farna::filter_lores_base_pairs] );
-		set_filter_lores_base_pairs_early(  option[ rna::farna::filter_lores_base_pairs_early] );
-		set_suppress_bp_constraint(  option[ rna::farna::suppress_bp_constraint]() );
-		set_filter_chain_closure(  option[ rna::farna::filter_chain_closure ]() );
-		set_filter_chain_closure_distance(  option[ rna::farna::filter_chain_closure_distance ]() );
-		set_filter_chain_closure_halfway(  option[ rna::farna::filter_chain_closure_halfway ]() );
-		set_vary_bond_geometry(  option[ rna::vary_geometry ] );
-		set_root_at_first_rigid_body(  option[ rna::farna::root_at_first_rigid_body ] );
-		set_autofilter( option[ rna::farna::autofilter ] );
-		set_bps_moves( option[ rna::farna::bps_moves ] );
-
-		set_allow_consecutive_bulges( option[ rna::farna::allow_consecutive_bulges ]() ) ;
-		set_allowed_bulge_res( option[ rna::farna::allowed_bulge_res ]() ) ;
-
-		set_simple_rmsd_cutoff_relax( option[ rna::farna::simple_relax ] );
-
-		set_superimpose_over_all( option[ stepwise::superimpose_over_all ]() );
-
-		std::string const in_path = option[ in::path::path ]()[1];
-		if ( option[ rna::farna::vall_torsions ].user() ) {
-			// check in database first
-			std::string vall_torsions_file = basic::database::full_name("/sampling/rna/" + option[ rna::farna::vall_torsions ]() );
-			if ( !utility::file::file_exists( vall_torsions_file ) && !utility::file::file_exists( vall_torsions_file + ".gz" ) )  vall_torsions_file = in_path + option[ rna::farna::vall_torsions ]();
-			set_vall_torsions_file( vall_torsions_file );
-		}
-		if ( option[ rna::farna::use_1jj2_torsions ]() ) set_vall_torsions_file( basic::database::full_name("sampling/rna/1jj2.torsions") );
-		if ( option[ rna::farna::jump_library_file ].user() ) set_jump_library_file( in_path + option[ rna::farna::jump_library_file] );
-		if ( option[ rna::farna::params_file ].user() ) set_rna_params_file( in_path + option[ rna::farna::params_file ] );
-
-		if ( option[ rna::farna::rna_lores_linear_chainbreak_weight ].user() ) set_linear_chainbreak_weight( option[ rna::farna::rna_lores_linear_chainbreak_weight ]() );
-		if ( option[ rna::farna::rna_lores_chainbreak_weight ].user() ) set_chainbreak_weight( option[ rna::farna::rna_lores_chainbreak_weight ]() );
-
-		if ( filter_lores_base_pairs_early_ ) set_filter_lores_base_pairs( true );
+	if ( option[ rna::farna::cycles ].user() ) {
+		set_monte_carlo_cycles( option[ rna::farna::cycles ]() );
+		set_user_defined_cycles( true );
 	}
+	minimize_structure_ = option[ rna::farna::minimize_rna ]();
+	relax_structure_ = option[ rna::farna::relax_rna ]();
+	allow_bulge_ = option[ rna::farna::allow_bulge ]();
+	set_temperature( option[ rna::farna::temperature ] );
+	set_ignore_secstruct( option[ rna::farna::ignore_secstruct ] );
+	set_jump_change_frequency( option[ rna::farna::jump_change_frequency ] );
+	set_close_loops( option[ rna::farna::close_loops] );
+	set_close_loops_after_each_move( option[ rna::farna::close_loops_after_each_move ] );
+	set_staged_constraints( option[ rna::farna::staged_constraints ] ) ;
+	set_filter_lores_base_pairs(  option[ rna::farna::filter_lores_base_pairs] );
+	set_filter_lores_base_pairs_early(  option[ rna::farna::filter_lores_base_pairs_early] );
+	set_suppress_bp_constraint(  option[ rna::farna::suppress_bp_constraint]() );
+	set_filter_chain_closure(  option[ rna::farna::filter_chain_closure ]() );
+	set_filter_chain_closure_distance(  option[ rna::farna::filter_chain_closure_distance ]() );
+	set_filter_chain_closure_halfway(  option[ rna::farna::filter_chain_closure_halfway ]() );
+	set_vary_bond_geometry(  option[ rna::vary_geometry ] );
+	set_root_at_first_rigid_body(  option[ rna::farna::root_at_first_rigid_body ] );
+	set_autofilter( option[ rna::farna::autofilter ] );
+	set_bps_moves( option[ rna::farna::bps_moves ] );
+
+	set_allow_consecutive_bulges( option[ rna::farna::allow_consecutive_bulges ]() ) ;
+	set_allowed_bulge_res( option[ rna::farna::allowed_bulge_res ]() ) ;
+
+	set_simple_rmsd_cutoff_relax( option[ rna::farna::simple_relax ] );
+
+	set_superimpose_over_all( option[ stepwise::superimpose_over_all ]() );
+
+	std::string const in_path = option[ in::path::path ]()[1];
+	if ( option[ rna::farna::vall_torsions ].user() ) {
+		// check in database first
+		std::string vall_torsions_file = basic::database::full_name("/sampling/rna/" + option[ rna::farna::vall_torsions ]() );
+		if ( !utility::file::file_exists( vall_torsions_file ) && !utility::file::file_exists( vall_torsions_file + ".gz" ) )  vall_torsions_file = in_path + option[ rna::farna::vall_torsions ]();
+		set_vall_torsions_file( vall_torsions_file );
+	}
+	if ( option[ rna::farna::use_1jj2_torsions ]() ) set_vall_torsions_file( basic::database::full_name("sampling/rna/1jj2.torsions") );
+	if ( option[ rna::farna::jump_library_file ].user() ) set_jump_library_file( in_path + option[ rna::farna::jump_library_file] );
+	if ( option[ rna::farna::params_file ].user() ) set_rna_params_file( in_path + option[ rna::farna::params_file ] );
+
+	if ( option[ rna::farna::rna_lores_linear_chainbreak_weight ].user() ) set_linear_chainbreak_weight( option[ rna::farna::rna_lores_linear_chainbreak_weight ]() );
+	if ( option[ rna::farna::rna_lores_chainbreak_weight ].user() ) set_chainbreak_weight( option[ rna::farna::rna_lores_chainbreak_weight ]() );
+
+	if ( filter_lores_base_pairs_early_ ) set_filter_lores_base_pairs( true );
+}
 
 } //options
 } //farna
