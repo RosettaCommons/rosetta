@@ -608,7 +608,7 @@ DockIntoDensityMover::density_grid_search (
 				<< " rms " << bestrms << " score " << bestscore << std::endl;
 		}
 		if ( i%100 == 0 ) {
-			TR << "[" << i << "/" << points_to_search_.size() << "]" << std::endl;
+			TR << "[" << i << "/" << points_to_search_.size() << "] " << results.top().score_ << " / " << results.size() << std::endl;
 		}
 	}
 

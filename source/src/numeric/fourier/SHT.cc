@@ -657,7 +657,7 @@ void SHT::so3_correlate(
 
 	double sumRWt = 0.0;
 	for ( int r_idx=1; r_idx<=nRsteps; ++r_idx ) {
-		sumRWt += numeric::constants::d::pi * ( 4.0 * square((double)r_idx) + 1.0/3.0 );
+		sumRWt += 4.0 * square((r_idx+1.0));
 	}
 
 	ObjexxFCL::FArray3D< std::complex<double> > so3Sig, so3Coef;
@@ -686,7 +686,7 @@ void SHT::so3_correlate(
 		// inverse so(3)
 		inverseSo3( so3Coef, so3Sig );
 
-		double thisRWt = numeric::constants::d::pi * ( 4.0 * square((r_idx+1.0)) + 1.0/3.0 ) / sumRWt;
+		double thisRWt = 4.0 * square((r_idx+1.0)) / sumRWt;
 
 		for ( int i=0; i<8*bw*bw*bw; ++i ) {
 			so3_correlation[i] += thisRWt * so3Sig[i].real();
