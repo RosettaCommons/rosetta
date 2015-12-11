@@ -10,7 +10,7 @@
 
 /// @file --path--/--class--.fwd.hh
 /// @brief --brief--
-/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @author --name-- (--email--)
 
 
 #ifndef INCLUDED_--path_underscore--_--class--_fwd_hh
