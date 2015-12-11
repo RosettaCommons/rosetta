@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/apps/pilot/the_developer/my_app.cc
-/// @brief Here is a breif description of my_app
-/// @author the_developer (the_developer@foo.edu)
+/// @file --path--/--app_name--.cc
+/// @brief --brief--
+/// @author --name-- (--email--)
 
 // devel headers
 #include <devel/init.hh>
@@ -23,20 +23,40 @@
 // basic headers
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR("apps.pilot.the_developer.my_app");
+static THREAD_LOCAL basic::Tracer TR("--app_name--");
+
+
+void register_options() {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	--app_options--
+
+}
+
+--new_app_options_out--
 
 int
 main( int argc, char * argv [] )
 {
 	try {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
+
+		--new_app_options_in--
+
+		if ( ( ! option [ in::file::l ].user() ) && ( ! option [ in::file::s ].user() ) ) {
+			utility_exit_with_message("Please specify either -s or -l to specify the input PDB.");
+		}
+
+		register_options();
 		devel::init( argc, argv );
 
-		protocols::moves::SequenceMoverOP seq_mvr( new protocols::moves::SequenceMover() );
 
-		protocols::jd2::JobDistributor::get_instance()->go( seq_mvr );
+		--class--OP mover_protocol( new --class--() );
 
-	TR << "************************************d**o**n**e***********************************" << std::endl;
+		protocols::jd2::JobDistributor::get_instance()->go( mover_protocol );
+
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

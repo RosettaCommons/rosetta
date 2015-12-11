@@ -1,0 +1,33 @@
+(c) Copyright Rosetta Commons Member Institutions.
+(c) This file is part of the Rosetta software suite and is made available under license.
+(c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+(c) For more information, see http://www.rosettacommons.org. Questions about this can be
+(c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+
+File types:
+-----------
+  *.fwd.hh - Header files with forward declarations for the class contained
+             in the equivalent *.hh.   The .hh will include the .fwd.hh as
+             its first header.
+             If no classes are present then there is no .fwd.hh: all forward
+             declared free functions live in a .hh as per normal.
+             *.fwd.hh exists to improve compilation time.  Anytime the
+             class is being used by pointer, smart pointer or reference only
+             the .fwd.hh should be included instead of the .hh
+  *.hh     - Header file templates
+  *.cc     - Source file templates.
+  *.dox    - Doxygen templates.
+
+  <package>.fwd.hh -
+            Header for the forward declarations of the entire package.
+            This should #include all the other .fwd.hh files.  If this affects
+            compilation time adversely, individual .fwd.hh files should be used
+            instead.
+  <package>.dox -
+            Doxygen file for the entire package.
+
+
+
+
+

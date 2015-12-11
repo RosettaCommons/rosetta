@@ -7,18 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// project/subproject: package forward header
-///
-/// @brief  Combination of all forward headers in package, for convenience
-/// @author
-/// @note   May cause unnecessary dependencies: use carefully.
+/// @file  --path--/--class--.cc
+/// @brief --brief--
+/// @author --name-- (--email--)
 
 
-#ifndef INCLUDED_project_subproject_package_FWD_HH
-#define INCLUDED_project_subproject_package_FWD_HH
+// Unit header or inline function header
+#include <--path--/--class--.hh>
+
+// NOTE: This file should have NO dependencies other than its header.
 
 
-// Package forward headers
+--namespace--
 
 
-#endif // INCLUDED_project_subproject_package_FWD_HH
+
+// Defined to prevent pure virtual destructor error at run time.
+--class--::~--class--(){}
+
+
+
+--end_namespace--
+
+

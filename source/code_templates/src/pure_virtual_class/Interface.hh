@@ -7,48 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   project/subproject/Interface.hh
-///
-/// @brief
-/// @author
+/// @file   --path--/--class--.hh
+/// @brief --brief--
+/// @author --name-- (--email--)
 /// @note   This is interface: it has no fields, and only
 ///         pure virtual methods.  No further constructors should
 ///         be defined.
 
 
-#ifndef INCLUDED_project_subproject_Interface_HH
-#define INCLUDED_project_subproject_Interface_HH
+#ifndef INCLUDED_--path_underscore--_--class--_hh
+#define INCLUDED_--path_underscore--_--class--_hh
 
 
 // Project forward headers
-#include <project/subproject/Interface.fwd.hh>
-
-
-// Other project headers
-
-
-// External library headers
-
-
-// C++ headers
-
-
-// Operating system headers
-
-
-// Forward declarations
+#include <--path--/--class--.fwd.hh>
 
 
 
 
-namespace project {
-namespace subproject {
+--namespace--
 
 
-	/// @brief
-class Interface
-{
-  // Friends
+/// @brief --brief--
+class --class--  {
 
 
 public: // Types
@@ -72,14 +53,14 @@ public: // Creation
 
 	/// @brief Destructor
 	virtual
-	~Interface() {};
+	~--class--() {};
 
 
 protected: // Creation
 
 
 	/// @brief Prevent direct instantiation: No other constructors allowed.
-	Interface() {};
+	--class--() {};
 
 
 public: // Methods
@@ -101,11 +82,13 @@ protected: // Properties
 	// NO FIELDS ALLOWED
 
 
-}; // Interface
+}; // --class--
 
 
-} // namespace subproject
-} // namespace project
+--end_namespace--
 
 
-#endif // INCLUDED_project_subproject_Interface_HH
+#endif //INCLUDED_--path_underscore--_--class--_hh
+
+
+

@@ -616,7 +616,8 @@ def generateIntegrationTestGlobalSubstitutionParameters(host=None):
 
     bin = path.join(minidir, "bin")
     pyapps = path.join(minidir, "scripts", "python")
-
+    template_dir = path.join(minidir, "code_templates")
+    
     if sys.platform.startswith("linux"):
         platform = "linux" # can be linux1, linux2, etc
     elif sys.platform == "darwin":

@@ -1,0 +1,94 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+cd %(workdir)s
+
+
+# It's nice to test that the executable exists first, to ensure the test actually runs:
+#
+
+[ -x %(template_dir)s/generate_templates.py ] || exit 1
+
+#
+# Files will be diffed verbatim, so if you want to log output and compare it,
+# you'll need to filter out lines that change randomly (e.g. timings).
+# Prefixing your tests with "nice" is probably good form as well.
+# Don't forget to use -constant_seed -nodelay  so results are reproducible.
+# Here's a typical test for a Mini binary, assuming there's a "flags" file
+# in this directory too:
+#
+
+##Test General Class
+ echo test_general
+ %(python)s %(template_dir)s/generate_templates.py --test --type general_class --class_name TestTemplates --brief "testing templates" --namespace protocols test_templates 2>&1 >> gen_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
+##Test Abstract Class
+ echo test_abstract
+ %(python)s %(template_dir)s/generate_templates.py --test --type pure_virtual_class --class_name TestTemplatePureVirtual --brief "testing templates" --namespace protocols test_templates 2>&1 >> abstract_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
+##Test Mover
+ echo test_mover
+ %(python)s %(template_dir)s/generate_templates.py --test --type mover --class_name TestTemplateMover --brief "testing templates" --namespace protocols test_templates 2>&1 >> mover_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
+##Test TaskOperation
+ echo test_task_operation
+ %(python)s %(template_dir)s/generate_templates.py --test --type task_operation --class_name TestTemplateTaskOperation --brief "testing templates" --namespace protocols test_templates 2>&1 >> task_op_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
+##Test ResidueSelector
+ echo test_residue_selector
+ %(python)s %(template_dir)s/generate_templates.py --test --type residue_selector --class_name TestTemplateResidueSelector --brief "testing templates" --namespace protocols test_templates 2>&1 >> res_selector_in_protocols_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
+##Test Core Residue Selector
+ echo test_residue_selector_in_core
+ %(python)s %(template_dir)s/generate_templates.py --test --type residue_selector --class_name TestTemplateResidueSelector --brief "testing templates" --namespace core select residue_selector 2>&1 >> res_selector_in_core_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
+##Test util
+ echo test_util
+ %(python)s %(template_dir)s/generate_templates.py --test --type util --brief "testing templates" --namespace protocols test_templates 2>&1 >> util_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+

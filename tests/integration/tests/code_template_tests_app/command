@@ -1,0 +1,65 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+cd %(workdir)s
+
+
+# It's nice to test that the executable exists first, to ensure the test actually runs:
+#
+
+[ -x %(template_dir)s/generate_app_template_JD2.py ] || exit 1
+
+#
+# Files will be diffed verbatim, so if you want to log output and compare it,
+# you'll need to filter out lines that change randomly (e.g. timings).
+# Prefixing your tests with "nice" is probably good form as well.
+# Don't forget to use -constant_seed -nodelay  so results are reproducible.
+# Here's a typical test for a Mini binary, assuming there's a "flags" file
+# in this directory too:
+#
+
+##Test Pilot App
+ %(python)s %(template_dir)s/generate_app_template_JD2.py --test --pilot --user_name Jtest --app_name test_templates --class_name TemplateTest --brief "test templates" 2>&1 >> pilot_app_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
+
+##Test Pilot App with options
+ %(python)s %(template_dir)s/generate_app_template_JD2.py --test --pilot --user_name Jtest --app_name test_templates_with_options --class_name TemplateTestWithOptions --brief "test templates" --app_options group1::bool1 group2::bool2 group1::group2::int1 --boolean_opt group1::bool1 group2::bool2 --integer_opt group1::group2::int1 2>&1 >> pilot_app_with_options_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
+
+##Test Public App
+%(python)s %(template_dir)s/generate_app_template_JD2.py --test --app_name test_templates_public --app_dir test1 test2 --class_name TemplateTestPublic --brief "test templates" 2>&1 >> public_app_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
