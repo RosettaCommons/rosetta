@@ -364,20 +364,21 @@ FileData::store_heterogen_names( std::string const & hetID, std::string & text )
 /// use, e.g., ->4)-alpha-D-glucopyranosyl or ->6)-alpha-D-glucopyranosyl or ->4)-alpha-D-glucofuranosyl, etc.  This
 /// function fills that map from a "Rosetta-ready" HETNAM text field, which includes the resID information (in the
 /// same order as in an ATOM or HETATOM record) followed by a space and the base (non-variant) ResidueType.
-/// @author Labonte
+/// @author Labonte <JWLabonte@jhu.edu>
 void
-FileData::parse_heterogen_name_for_carbohydrate_residues(std::string const & text)
+FileData::parse_heterogen_name_for_carbohydrate_residues( std::string const & text )
 {
 	using namespace std;
 
-	string chainID = string(text.begin(), text.begin() + 1);  // 1 character for chainID
-	string resSeq = string(text.begin() + 1, text.begin() + 5);  // 4 characters for resSeq
-	string iCode = string(text.begin() + 5, text.begin() + 6);  // 1 character for iCode
-	string key = resSeq + iCode + chainID;  // a resID, as defined elsewhere in FileData
+	string const chainID( string( text.begin(), text.begin() + 1 ) );  // 1 character for chainID
+	string const resSeq( string( text.begin() + 1, text.begin() + 5 ) );  // 4 characters for resSeq
+	string const iCode( string( text.begin() + 5, text.begin() + 6 ) );  // 1 character for iCode
+	string const key( resSeq + iCode + chainID );  // a resID, as defined elsewhere in FileData
 
-	string needed_residue_type_base_name = string(text.begin() + 7, text.end());  // name starts after 7th character
+	// name starts after 7th character
+	string const needed_residue_type_base_name( string( text.begin() + 7, text.end() ) );
 
-	residue_type_base_names[key] = needed_residue_type_base_name;
+	residue_type_base_names[ key ] = needed_residue_type_base_name;
 }
 
 
@@ -1224,10 +1225,7 @@ write_additional_pdb_data(
 // FileData to Pose ///////////////////////////////////////////////////////////
 
 void
-build_pose_from_pdb_as_is(
-	pose::Pose & pose,
-	std::string const & filename
-)
+build_pose_from_pdb_as_is( pose::Pose & pose, std::string const & filename )
 {
 	PDB_DReaderOptions options;
 	build_pose_from_pdb_as_is( pose, filename, options );
@@ -1346,7 +1344,7 @@ build_pose_as_is1(
 	std::string::const_iterator const check_Ctermini_end = chains_to_check_if_Ctermini.end();
 
 	//mjo do not add residue by bond if the last residue was not recognized
-	bool last_residue_was_recognized(true);
+	bool last_residue_was_recognized( true );
 
 	// Loop over every residue in the FileData extracted from the PDB file, select appropriate ResidueTypes,
 	// create Residues, and build the Pose.
@@ -1360,7 +1358,7 @@ build_pose_as_is1(
 
 		// Convert PDB 3-letter code to Rosetta 3-letter code, if a list of alternative codes has been provided.
 		std::pair< std::string, std::string > const & rosetta_names(
-			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( pdb_name ) );
+				NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( pdb_name ) );
 		std::string const & name3( rosetta_names.first );
 		if ( rosetta_names.second != "" ) {
 			fd.residue_type_base_names[ resid ] = rosetta_names.second;
@@ -1379,7 +1377,12 @@ build_pose_as_is1(
 		// Determine polymer information: termini, branch points, etc.
 		// Carbohydrate base names will have "->?)-" as a prefix if their main-chain connectivity requires LINK records
 		// to determine.
-		bool const unknown_main_chain_connectivity( fd.residue_type_base_names[ resid ][ 2 ] == '?' );
+		bool unknown_main_chain_connectivity( false );
+		if ( fd.residue_type_base_names.count( resid ) ) {
+			TR.Trace << "Current residue has its base name extracted from the PDB file: ";
+			TR.Trace << fd.residue_type_base_names[ resid ] << std::endl;
+			unknown_main_chain_connectivity = ( fd.residue_type_base_names[ resid ][ 2 ] == '?' );
+		}
 		Strings branch_points_on_this_residue;
 		bool is_branch_point( false );
 		TR.Trace << "Checking if resid " << resid << " is in the link map " << std::endl;

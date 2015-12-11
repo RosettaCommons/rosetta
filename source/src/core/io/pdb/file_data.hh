@@ -226,11 +226,11 @@ public:  // An instance of FileData should not preserve any 'state', so its data
 	// list for storing HETNAM records:
 	//  first value of the pair is hetID
 	//  second value of the pair is the chemical name field
-	utility::vector1<std::pair<std::string, std::string> > heterogen_names;
+	utility::vector1< std::pair< std::string, std::string > > heterogen_names;
 
 	// map for storing carbohydrate ResidueType base (non-variant) names; parsed from HETNAM records:
 	// key is 6-character resID
-	std::map<std::string, std::string> residue_type_base_names;
+	std::map< std::string, std::string > residue_type_base_names;
 
 	// Data for HETSYN records should be declared here if ever implemented.
 
@@ -246,12 +246,12 @@ public:  // An instance of FileData should not preserve any 'state', so its data
 	// key is 6-character resID of 1st residue in ssbond
 	// (A vector is needed because to futureproof if we ever handle weird disorder
 	// situations.)
-	std::map<std::string, utility::vector1<SSBondInformation> > ssbond_map;
+	std::map< std::string, utility::vector1< SSBondInformation > > ssbond_map;
 
 	// map for storing LINK records:
 	// key is 6-character resID of 1st residue in link
 	// (A vector is needed because a single saccharide residue can have multiple branches.)
-	std::map<std::string, utility::vector1<LinkInformation> > link_map;
+	std::map< std::string, utility::vector1< LinkInformation > > link_map;
 
 	// Data for CISPEP records should be declared here if ever implemented.
 

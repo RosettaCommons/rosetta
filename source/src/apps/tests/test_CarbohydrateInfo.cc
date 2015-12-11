@@ -67,6 +67,8 @@ test_sugar( Pose const & sugar )
 	filename.path( "output/" );
 	cout << "Writing file: " << filename.ext( "gws" ) << endl;
 	io::carbohydrates::dump_gws( sugar, filename.ext( "gws" ) );
+	cout << "Writing file: " << filename.ext( "pdb" ) << endl;
+	sugar.dump_pdb( filename.ext( "pdb" ) );
 
 	cout << endl << "Residue Info:" << endl;
 	Size const n_res( sugar.total_residue() );
