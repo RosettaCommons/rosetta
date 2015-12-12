@@ -6507,6 +6507,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'align_pdb', 'String', desc='PDB to align to. Default will be -native, or no alignment', default='' ),
 		Option( 'enumerate', 'Boolean', desc="For SWM. Force enumeration (SWA-like) instead of random", default="false" ),
 		Option( 'preminimize', 'Boolean', desc="For SWM. Just prepack and minimize", default="false" ),
+		Option( 'skip_preminimize', 'Boolean', desc="Skip preminimize before stepwise monte carlo", default="false" ),
 		Option( 'test_all_moves', 'Boolean', desc="Try all moves from starting pose, recursing through additions ", default="false" ),
 		Option( 'new_move_selector', 'Boolean', desc="For SWM. Use new move selector which does keep track of proposal probabilities.", default="false" ),
 		Option( 'dump', 'Boolean', desc="Dump intermediate silent & PDB files",default="false" ),

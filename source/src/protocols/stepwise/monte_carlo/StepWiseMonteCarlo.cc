@@ -103,7 +103,7 @@ StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 	}
 
 	master_mover_->initialize_pose_if_empty( pose );
-	master_mover_->preminimize_pose( pose );
+	if (!options_->skip_preminimize() ) master_mover_->preminimize_pose( pose );
 	do_main_loop( pose );
 }
 

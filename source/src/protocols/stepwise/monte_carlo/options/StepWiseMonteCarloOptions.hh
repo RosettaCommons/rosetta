@@ -208,6 +208,9 @@ public:
 	bool const & preminimize() const { return preminimize_; }
 	void set_preminimize( bool const & setting ){ preminimize_ = setting; }
 
+	bool const & skip_preminimize() const { return skip_preminimize_; }
+	void set_skip_preminimize( bool const & setting ){ skip_preminimize_ = setting; }
+
 	bool const & new_move_selector() const { return new_move_selector_; }
 	void set_new_move_selector( bool const & setting ){ new_move_selector_ = setting; }
 
@@ -270,6 +273,7 @@ private:
 	bool recover_low_;
 	bool enumerate_;
 	bool preminimize_;
+	bool skip_preminimize_;
 	bool new_move_selector_;
 	bool test_all_moves_;
 	bool save_times_;

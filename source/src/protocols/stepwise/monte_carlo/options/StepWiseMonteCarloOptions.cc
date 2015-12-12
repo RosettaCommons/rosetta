@@ -77,6 +77,7 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	recover_low_( false ),
 	enumerate_( false ),
 	preminimize_( false ),
+	skip_preminimize_( false ),
 	new_move_selector_( false ),
 	test_all_moves_( false ),
 	save_times_( false ),
@@ -159,6 +160,7 @@ StepWiseMonteCarloOptions::initialize_from_command_line() {
 	recover_low_ = option[ OptionKeys::stepwise::monte_carlo::recover_low ]();
 	enumerate_ = option[ OptionKeys::stepwise::enumerate ]();
 	preminimize_ = option[ OptionKeys::stepwise::preminimize ]();
+	skip_preminimize_ = option[ OptionKeys::stepwise::skip_preminimize ]();
 	new_move_selector_ = option[ OptionKeys::stepwise::new_move_selector ]();
 	test_all_moves_ = option[ OptionKeys::stepwise::test_all_moves ]();
 	save_times_ = option[ OptionKeys::stepwise::monte_carlo::save_times ]();
