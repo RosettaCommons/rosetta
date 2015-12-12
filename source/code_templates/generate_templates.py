@@ -264,8 +264,7 @@ class GenerateGeneralTemplates(GenerateRosettaTemplates):
                             choices = self.types)
 
         required.add_argument("--class_name", "-c",
-                            help = "The name of the class you are creating if not creating util files.",
-                            required = True)
+                            help = "The name of the class you are creating if not creating util files.")
 
         required.add_argument("--brief", "-b",
                             help = "A brief description of the class/file.  Enclose in quotes.",
