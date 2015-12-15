@@ -262,6 +262,7 @@ StepWiseMasterMover::initialize(){
 	stepwise_move_selector_->set_add_delete_frequency( options_->add_delete_frequency() );
 	stepwise_move_selector_->set_switch_focus_frequency( options_->switch_focus_frequency() );
 	stepwise_move_selector_->set_choose_random( !options_->enumerate() );
+	stepwise_move_selector_->set_allow_submotif_split( options_->allow_submotif_split() );
 	stepwise_move_selector_->set_force_submotif_without_intervening_bulge( options_->force_submotif_without_intervening_bulge() );
 
 	if ( options_->new_move_selector() || options_->test_all_moves() ) stepwise_move_selector_->set_force_unique_moves( true );
@@ -374,6 +375,13 @@ StepWiseMasterMover::build_full_model( pose::Pose const & start_pose, pose::Pose
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseMasterMover::set_options( options::StepWiseMonteCarloOptionsCOP options )
+{
+	options_ = options;
+	initialize(); // all movers accept options -- got to make them again.
+}
 
 } //mover
 } //monte_carlo

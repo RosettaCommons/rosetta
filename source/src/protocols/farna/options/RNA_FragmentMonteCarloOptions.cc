@@ -69,6 +69,8 @@ RNA_FragmentMonteCarloOptions::RNA_FragmentMonteCarloOptions():
 	refine_from_silent_( false ),
 	refine_pose_( false ),
 	bps_moves_( false ),
+	disallow_bps_at_extra_min_res_( false ),
+	allow_fragment_moves_in_bps_( false ),
 	// following is odd, but note that core::scoring::rna::chemical_shift machinery also checks global options system.
 	use_chem_shift_data_( option[ OptionKeys::score::rna_chemical_shift_exp_data].user() ),
 	superimpose_over_all_( false ),
@@ -126,6 +128,8 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 	set_root_at_first_rigid_body(  option[ rna::farna::root_at_first_rigid_body ] );
 	set_autofilter( option[ rna::farna::autofilter ] );
 	set_bps_moves( option[ rna::farna::bps_moves ] );
+	set_disallow_bps_at_extra_min_res( option[ rna::farna::disallow_bps_at_extra_min_res ] );
+	set_allow_fragment_moves_in_bps( option[ rna::farna::allow_fragment_moves_in_bps ] );
 
 	set_allow_consecutive_bulges( option[ rna::farna::allow_consecutive_bulges ]() ) ;
 	set_allowed_bulge_res( option[ rna::farna::allowed_bulge_res ]() ) ;
@@ -150,6 +154,22 @@ RNA_FragmentMonteCarloOptions::initialize_from_command_line() {
 
 	if ( filter_lores_base_pairs_early_ ) set_filter_lores_base_pairs( true );
 }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_FragmentMonteCarloOptions::initialize_for_farna_optimizer( Size const & cycles /* = 0 */ )
+{
+	initialize_from_command_line();
+	if ( cycles > 0 ) set_monte_carlo_cycles( cycles );
+	set_verbose( false );
+
+	// following are different default values for FARNA_Optimizer, compared to rna_denovo defaults.
+	if ( !option[ rna::farna::bps_moves ].user() ) set_bps_moves( true );
+	if ( !option[ rna::farna::filter_lores_base_pairs ].user() ) set_filter_lores_base_pairs( false );
+	if ( !option[ rna::farna::filter_chain_closure ].user() ) set_filter_chain_closure( false );
+}
+
 
 } //options
 } //farna

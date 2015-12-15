@@ -126,8 +126,12 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 
 	/////////////////////////////////////////////////////
 	kinematics::MoveMap mm;
-	if ( !atom_level_domain_map_ ) atom_level_domain_map_ = toolbox::AtomLevelDomainMapOP( new toolbox::AtomLevelDomainMap( pose ) ); // initialized to let all dofs move.
-	if ( options_->minimize_bps() ) update_atom_level_domain_map_to_move_rosetta_library_chunks( pose );
+	if ( atom_level_domain_map_input_ != 0 ) {
+		atom_level_domain_map_ = atom_level_domain_map_input_->clone();
+	} else {
+		atom_level_domain_map_ = toolbox::AtomLevelDomainMapOP( new toolbox::AtomLevelDomainMap( pose ) ); // initialized to let all dofs move.
+	}
+	if ( options_->minimize_bps() ) update_atom_level_domain_map_to_move_rosetta_library_chunks();
 	update_atom_level_domain_map_with_extra_minimize_res( pose );
 	setup_movemap( mm, pose );
 
@@ -293,17 +297,9 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 
 /////////////////////////////////////////////////////////////////////////////////
 void
-RNA_Minimizer::update_atom_level_domain_map_to_move_rosetta_library_chunks( pose::Pose const & pose )
+RNA_Minimizer::update_atom_level_domain_map_to_move_rosetta_library_chunks()
 {
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-		for ( Size j = 1; j <= pose.residue(i).natoms(); j++ ) {
-			core::id::AtomID atom_id( j, i );
-			if ( !atom_level_domain_map_->has_domain( atom_id )  ) continue;
-			if ( atom_level_domain_map_->get_domain( atom_id ) == libraries::ROSETTA_LIBRARY_DOMAIN ) {
-				atom_level_domain_map_->set_domain( atom_id, 0 ); // let it move.
-			}
-		}
-	}
+	atom_level_domain_map_->update_to_move_chunks_with_domain( libraries::ROSETTA_LIBRARY_DOMAIN );
 }
 
 
@@ -348,12 +344,6 @@ RNA_Minimizer::update_atom_level_domain_map_with_extra_minimize_res( pose::Pose 
 void
 RNA_Minimizer::set_score_function( core::scoring::ScoreFunctionCOP scorefxn ){
 	scorefxn_ = scorefxn->clone();
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-void
-RNA_Minimizer::set_atom_level_domain_map(toolbox::AtomLevelDomainMapCOP atom_level_domain_map ){
-	atom_level_domain_map_ = atom_level_domain_map->clone();
 }
 
 /////////////////////////////////////////////////////////////////////////////////

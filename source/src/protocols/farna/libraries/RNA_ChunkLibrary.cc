@@ -132,6 +132,7 @@ RNA_ChunkLibrary::initialize_rna_chunk_library(
 {
 	std::string const & sequence_of_big_pose( pose.sequence() );
 	coarse_rna_ = pose.residue( 1 ).is_coarse();
+	do_rosetta_library_domain_check_ = true;
 
 	// atom_level_domain_map keeps track of where chunks are placed -- only allow
 	// fragment insertions *outside* these regions.
@@ -219,7 +220,7 @@ void RNA_ChunkLibrary::insert_chunk_into_pose(
 	Size const & chunk_list_index,
 	Size const & chunk_pose_index ) const
 {
-	chunk_sets_[ chunk_list_index ]->insert_chunk_into_pose( pose, chunk_pose_index, atom_level_domain_map_ );
+	chunk_sets_[ chunk_list_index ]->insert_chunk_into_pose( pose, chunk_pose_index, atom_level_domain_map_, do_rosetta_library_domain_check_ );
 }
 
 
@@ -240,7 +241,8 @@ RNA_ChunkLibrary::num_moving_chunks() const { return get_indices_of_moving_chunk
 
 //////////////////////////////////////////////////////////////////////////////
 bool
-RNA_ChunkLibrary::random_chunk_insertion( core::pose::Pose & pose ) const{
+RNA_ChunkLibrary::random_chunk_insertion( core::pose::Pose & pose ) const
+{
 
 	utility::vector1< Size > const indices_of_moving_chunks = get_indices_of_moving_chunks();
 	if ( indices_of_moving_chunks.size() == 0 ) return false;
@@ -250,7 +252,7 @@ RNA_ChunkLibrary::random_chunk_insertion( core::pose::Pose & pose ) const{
 	runtime_assert( chunk_set.num_chunks() > 1 );
 
 	Size const chunk_index = static_cast <int> ( numeric::random::rg().uniform() * chunk_set.num_chunks() ) + 1;
-	chunk_set.insert_chunk_into_pose( pose, chunk_index, atom_level_domain_map_ );
+	chunk_set.insert_chunk_into_pose( pose, chunk_index, atom_level_domain_map_, do_rosetta_library_domain_check_ );
 
 	return true;
 }
@@ -386,7 +388,7 @@ RNA_ChunkLibrary::initialize_random_chunks( pose::Pose & pose, bool const dump_p
 		if ( dump_pdb ) chunk_index = 1;
 
 		//TR << "NUM_CHUNKS " << chunk_index << " " << chunk_set.num_chunks() << std::endl;
-		chunk_set.insert_chunk_into_pose( pose, chunk_index, atom_level_domain_map_ );
+		chunk_set.insert_chunk_into_pose( pose, chunk_index, atom_level_domain_map_, do_rosetta_library_domain_check_ );
 
 		// useful for tracking homology modeling: perhaps we can align to first chunk as well -- 3D alignment of Rosetta poses are
 		// arbitrarily set to origin (except in special cases with virtual residues...)
@@ -451,6 +453,15 @@ RNA_ChunkLibrary::align_to_chunk( pose::Pose & pose, ChunkSet const & chunk_set,
 void
 RNA_ChunkLibrary::set_atom_level_domain_map(toolbox::AtomLevelDomainMapOP atom_level_domain_map ){
 	atom_level_domain_map_ = atom_level_domain_map;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+void
+RNA_ChunkLibrary::update_to_move_rosetta_library_chunks()
+{
+	atom_level_domain_map_->update_to_move_chunks_with_domain( libraries::ROSETTA_LIBRARY_DOMAIN );
+	do_rosetta_library_domain_check_ = false; // now rosetta library positions are no longer marked with ROSETTA_LIBRARY_DOMAIN
 }
 
 //////////////////////////////////////////////////////////////////////////////

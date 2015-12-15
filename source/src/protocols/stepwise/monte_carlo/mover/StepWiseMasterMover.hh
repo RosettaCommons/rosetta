@@ -79,7 +79,7 @@ public:
 	preminimize_pose( core::pose::Pose & pose );
 
 	void
-	set_options( options::StepWiseMonteCarloOptionsCOP options ){ options_ = options; }
+	set_options( options::StepWiseMonteCarloOptionsCOP options ); // forces reinitalization.
 
 	void
 	set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ){ scorefxn_ = scorefxn; }

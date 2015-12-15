@@ -62,6 +62,9 @@ public:
 	void set_binary_rna_output( bool const & setting ){ binary_rna_output_ = setting; }
 	bool binary_rna_output() const { return binary_rna_output_; }
 
+	void set_save_times( bool const & setting ){ save_times_ = setting; }
+	bool save_times() const { return save_times_; }
+
 	void set_output_filters( bool const & setting ){ output_filters_ = setting; }
 	bool output_filters() const { return output_filters_; }
 
@@ -80,6 +83,7 @@ private:
 	bool output_lores_silent_file_;
 	bool output_filters_;
 	bool binary_rna_output_;
+	bool save_times_;
 
 };
 

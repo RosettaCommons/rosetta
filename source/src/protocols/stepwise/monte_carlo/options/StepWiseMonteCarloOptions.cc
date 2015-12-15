@@ -83,7 +83,9 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	save_times_( false ),
 	use_precomputed_library_( true ),
 	minimize_after_delete_( true ),
-	force_submotif_without_intervening_bulge_( false )
+	allow_submotif_split_( false ),
+	force_submotif_without_intervening_bulge_( false ),
+	use_first_jump_for_submotif_( false )
 {
 	StepWiseBasicOptions::initialize_variables();
 	set_silent_file( "default.out" );
@@ -163,7 +165,7 @@ StepWiseMonteCarloOptions::initialize_from_command_line() {
 	skip_preminimize_ = option[ OptionKeys::stepwise::skip_preminimize ]();
 	new_move_selector_ = option[ OptionKeys::stepwise::new_move_selector ]();
 	test_all_moves_ = option[ OptionKeys::stepwise::test_all_moves ]();
-	save_times_ = option[ OptionKeys::stepwise::monte_carlo::save_times ]();
+	save_times_ = option[ OptionKeys::out::save_times ]();
 	use_precomputed_library_ = option[ OptionKeys::stepwise::monte_carlo::use_precomputed_library ]();
 	local_redock_only_ = option[ OptionKeys::stepwise::monte_carlo::local_redock_only ]();
 	skip_coord_constraints_ = option[ OptionKeys::stepwise::protein::skip_coord_constraints ]();
@@ -173,7 +175,9 @@ StepWiseMonteCarloOptions::initialize_from_command_line() {
 	n_sample_ = option[ OptionKeys::stepwise::protein::n_sample ]();
 	protein_prepack_ = option[ OptionKeys::stepwise::protein::protein_prepack ]();
 	virtualize_packable_moieties_in_screening_pose_ = option[ OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
+	allow_submotif_split_ = option[ OptionKeys::stepwise::monte_carlo::allow_submotif_split ]();
 	force_submotif_without_intervening_bulge_ = option[ OptionKeys::stepwise::monte_carlo::force_submotif_without_intervening_bulge ]();
+	use_first_jump_for_submotif_ = option[ OptionKeys::stepwise::monte_carlo::use_first_jump_for_submotif ]();
 
 	if ( test_all_moves_ ) {
 		set_num_random_samples( 0 );

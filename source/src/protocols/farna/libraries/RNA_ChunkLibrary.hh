@@ -142,6 +142,8 @@ public:
 		utility::vector1< BasePairStep > const & base_pair_steps,
 		BasePairStepLibrary const & base_pair_step_library );
 
+	void
+	update_to_move_rosetta_library_chunks();
 
 private:
 
@@ -171,6 +173,7 @@ private:
 	ObjexxFCL::FArray1D <bool> covered_by_chunk_;
 	core::Real chunk_coverage_;
 	bool coarse_rna_;
+	bool do_rosetta_library_domain_check_;
 
 };
 

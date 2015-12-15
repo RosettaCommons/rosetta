@@ -589,6 +589,7 @@ Options = Option_Group( '',
 				default="tracer.out" ),
 		Option( 'user_tag', 'String', desc="add this tag to structure tags: e.g., a process id", default=""),
 		Option( 'output_tag', 'String', desc="Prefix output files with this tag, if code checks for it", default=""),
+		Option( 'save_times', 'Boolean', desc="Save modeling time for each model in seconds", default='false' ),
 
 		# File options -------------------------------------------------------
 		Option_Group( 'file',
@@ -6350,6 +6351,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		   Option( 'refine_silent_file', 'String', desc= "Name of the silent file to be refined.",default="" ),
 		   Option( 'refine_native', 'Boolean', desc= "Refine starting from the native pose",default= 'false' ),
 		   Option( 'bps_moves', 'Boolean', desc= "Base pair step moves",default= 'false' ),
+		   Option( 'disallow_bps_at_extra_min_res', 'Boolean', desc= "Disallow base pair step moves inside input domains, even extra_min_res",default= 'false' ),
+		   Option( 'allow_fragment_moves_in_bps', 'Boolean', desc= "Allow fragment/jump moves in regions claimed by base pair steps",default= 'false' ),
 
 		   Option_Group('db',
           Option( 'jump_database', 'Boolean', desc='Generate a database of jumps extracted from base pairings from a big RNA file', default='false' ),
@@ -6552,9 +6555,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'local_redock_only', 'Boolean', desc='In ResampleMover, docking partners can change anywhere across connected chains. Force the new partners to be close to the old ones.', default='true' ),
 			Option( 'make_movie', 'Boolean', desc= "create silent files in movie/ with all steps and accepted steps", default='false' ),
 		  Option( 'recover_low', 'Boolean', desc="Output lowest energy model in monte carlo, not the last frame", default='true' ),
-		  Option( 'save_times', 'Boolean', desc="Save modeling time for each model", default='false' ),
 		  Option( 'use_precomputed_library', 'Boolean', desc="In from_scratch moves, do not sample dinucleotides explicitly, but instead use library saved to disk.", default='true' ),
+		  Option( 'allow_submotif_split', 'Boolean', desc="for submotif moves, allow submotifs to be split. (inconsistent with detailed balance.)", default='false' ),
 		  Option( 'force_submotif_without_intervening_bulge', 'Boolean', desc="for submotif moves, only add base pairs that have an attachment point and a cutpoint closed, with no intervening bulge", default='false' ),
+		  Option( 'use_first_jump_for_submotif', 'Boolean', desc="for submotif moves, only use first jump from jump library -- does not change stepwise -lores (which resamples jump) except in balance of move selection.", default='false' ),
 		  Option_Group( 'csa',
 				  Option( 'csa_bank_size', 'Integer', desc='Do conformational space annealing (population monte carlo) with this number of models in the bank',default='0' ),
 				  Option( 'csa_rmsd', 'Real', desc='RMSD cutoff for calling two poses different in conformational space annealing (population monte carlo)',default='1.0' ),

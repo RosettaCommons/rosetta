@@ -39,7 +39,8 @@ public:
 
 	//constructor
 	SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set,
-		bool const include_submotifs_from_jump_library = false );
+									 bool const include_submotifs_from_jump_library = false,
+									 bool const use_first_jump_for_submotif = false );
 
 	//destructor
 	~SubMotifLibrary();
@@ -96,6 +97,7 @@ private:
 
 	core::chemical::ResidueTypeSetCAP rsd_set_;
 	bool const include_submotifs_from_jump_library_;
+	bool const use_first_jump_for_submotif_;
 
 	// central list of 'submotif sets', grouped by chain sequences. So [aa, uu] will not show up twice as [uu, aa].
 	std::set< SubMotifSequenceSet > submotif_sequence_sets_;

@@ -124,6 +124,8 @@ AddOrDeleteMover::apply( core::pose::Pose & pose, std::string & move_type_string
 	swa_move_selector_->set_submotif_frequency( options_->submotif_frequency() );
 	swa_move_selector_->set_choose_random( choose_random_ );
 	swa_move_selector_->set_submotif_library( submotif_library_ );
+	swa_move_selector_->set_allow_submotif_split( options_->allow_submotif_split() );
+	swa_move_selector_->set_force_submotif_without_intervening_bulge( options_->force_submotif_without_intervening_bulge() );
 
 	swa_move_selector_->get_add_or_delete_element( pose, swa_move );
 

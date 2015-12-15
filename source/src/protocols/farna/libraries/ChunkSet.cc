@@ -158,7 +158,9 @@ ChunkSet::filter_poses_have_same_sequence_and_variants()
 ///////////////////////////////////////////////////////////////////////
 void
 ChunkSet::insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index,
-	toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const{
+	toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+	bool do_rosetta_library_domain_check /* = true */ ) const
+{
 
 	using namespace core::pose;
 	using namespace core::id;
@@ -167,7 +169,7 @@ ChunkSet::insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_po
 
 	std::map< AtomID, AtomID > atom_id_map = get_atom_id_map( pose, *atom_level_domain_map->atom_id_mapper() );
 	std::map< AtomID, Size > atom_id_domain_map;
-	if ( !user_input() ) atom_id_domain_map = get_atom_id_domain_map_for_rosetta_library_chunk( atom_id_map, pose, *atom_level_domain_map );
+	if ( !user_input() ) atom_id_domain_map = get_atom_id_domain_map_for_rosetta_library_chunk( atom_id_map, pose, *atom_level_domain_map, do_rosetta_library_domain_check );
 
 	core::pose::copydofs::copy_dofs( pose, scratch_pose,
 		atom_id_map, atom_id_domain_map );
@@ -225,7 +227,8 @@ ChunkSet::filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::At
 std::map< core::id::AtomID, core::Size >
 ChunkSet::get_atom_id_domain_map_for_rosetta_library_chunk(
 	std::map< id::AtomID, id::AtomID > atom_id_map,
-	pose::Pose const & pose, toolbox::AtomLevelDomainMap const & atom_level_domain_map ) const
+	pose::Pose const & pose, toolbox::AtomLevelDomainMap const & atom_level_domain_map,
+	bool do_rosetta_library_domain_check /* = true */ ) const
 {
 	using namespace core::id;
 	runtime_assert( !user_input() ); // we are a in rosetta library ChunkSet, not a user-inputted ChunkSet.
@@ -241,7 +244,7 @@ ChunkSet::get_atom_id_domain_map_for_rosetta_library_chunk(
 			atom_id_domain_map[ target_atom_id ] = 0; // OK to insert here.
 			found_rosetta_library_domain = true;
 		} else {
-			if ( domain == 0 ) {
+			if ( do_rosetta_library_domain_check && domain == 0 ) {
 				/// following is verbiage helpful for debugging. Remove after 2015 if not in use.
 				atom_level_domain_map.show();
 				for ( std::map< AtomID, AtomID >::const_iterator itx=atom_id_map.begin(),
@@ -262,7 +265,7 @@ ChunkSet::get_atom_id_domain_map_for_rosetta_library_chunk(
 			atom_id_domain_map[ target_atom_id ] = domain; // not OK to insert here.
 		}
 	}
-	runtime_assert( found_rosetta_library_domain );
+	if ( do_rosetta_library_domain_check ) runtime_assert( found_rosetta_library_domain );
 	return atom_id_domain_map;
 }
 

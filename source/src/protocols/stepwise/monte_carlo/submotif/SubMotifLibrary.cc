@@ -65,9 +65,11 @@ namespace submotif {
 
 //Constructor
 SubMotifLibrary::SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set,
-	bool const include_submotifs_from_jump_library ):
-	rsd_set_( rsd_set ),
-	include_submotifs_from_jump_library_( include_submotifs_from_jump_library )
+																	bool const include_submotifs_from_jump_library,
+																	bool const use_first_jump_for_submotif):
+		rsd_set_( rsd_set ),
+		include_submotifs_from_jump_library_( include_submotifs_from_jump_library ),
+		use_first_jump_for_submotif_( use_first_jump_for_submotif )
 {
 	initialize();
 }
@@ -147,7 +149,8 @@ SubMotifLibrary::initialize_from_jump_library()
 						if ( !rna_jump_library->has_template( base_pair_type ) ) continue;
 						TR << "filling out submotifs for: " << base_pair_type.tag() << std::endl;
 						RNA_PairingTemplateList const & templates( rna_jump_library->rna_pairing_template_map( base_pair_type ) );
-						for ( Size n = 1; n <= templates.size(); n++ ) {
+						Size const num_templates = use_first_jump_for_submotif_ ? 1 : templates.size();
+						for ( Size n = 1; n <= num_templates; n++ ) {
 
 							PoseOP pose( new Pose );
 							std::string sequence;

@@ -146,6 +146,12 @@ public:
 	AtomID_MapperCOP
 	atom_id_mapper() const { return atom_id_mapper_; }
 
+	void
+	disallow_movement_of_input_res( core::pose::Pose const & pose );
+
+	void
+	update_to_move_chunks_with_domain( Size const & domain );
+
 private:
 
 	void

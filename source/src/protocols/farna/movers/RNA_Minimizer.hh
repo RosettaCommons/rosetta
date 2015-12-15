@@ -63,7 +63,9 @@ public:
 	void set_min_type( std::string const & setting){ min_type_ = setting; }
 
 	void
-	set_atom_level_domain_map(toolbox::AtomLevelDomainMapCOP atom_level_domain_map  );
+	set_atom_level_domain_map(toolbox::AtomLevelDomainMapCOP atom_level_domain_map  ) {
+		atom_level_domain_map_input_ = atom_level_domain_map;
+	}
 
 	void
 	set_score_function( core::scoring::ScoreFunctionCOP scorefxn );
@@ -87,7 +89,7 @@ private:
 	update_atom_level_domain_map_with_extra_minimize_res( core::pose::Pose const & pose );
 
 	void
-	update_atom_level_domain_map_to_move_rosetta_library_chunks( core::pose::Pose const & pose );
+	update_atom_level_domain_map_to_move_rosetta_library_chunks();
 
 private:
 
@@ -99,6 +101,7 @@ private:
 	bool close_loops_;
 	std::string min_type_;
 
+	toolbox::AtomLevelDomainMapCOP atom_level_domain_map_input_;
 	toolbox::AtomLevelDomainMapOP atom_level_domain_map_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;

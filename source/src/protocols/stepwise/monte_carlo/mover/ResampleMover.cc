@@ -92,6 +92,8 @@ ResampleMover::apply( pose::Pose & pose,
 	utility::vector1< StepWiseMove > swa_moves;
 	swa_move_selector_->set_allow_internal_hinge( options_->allow_internal_hinge_moves() );
 	swa_move_selector_->set_allow_internal_local( options_->allow_internal_local_moves() );
+	swa_move_selector_->set_allow_submotif_split( options_->allow_submotif_split() );
+	swa_move_selector_->set_force_submotif_without_intervening_bulge( options_->force_submotif_without_intervening_bulge() );
 	swa_move_selector_->set_docking_frequency( options_->docking_frequency() );
 	swa_move_selector_->get_resample_move_elements( pose, swa_moves );
 

@@ -37,7 +37,8 @@ RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions():
 	lores_scorefxn_( "farna/rna_lores.wts" ),
 	output_lores_silent_file_( false ),
 	output_filters_( false ),
-	binary_rna_output_( false )
+	binary_rna_output_( false ),
+	save_times_( false )
 {}
 
 //Destructor
@@ -85,6 +86,8 @@ RNA_DeNovoProtocolOptions::initialize_from_command_line() {
 			option[ rna::farna::binary_output ]() ||
 			close_loops() ||
 			vary_bond_geometry() ) set_binary_rna_output( true );
+
+	save_times_ = option[ OptionKeys::out::save_times ]();
 
 }
 

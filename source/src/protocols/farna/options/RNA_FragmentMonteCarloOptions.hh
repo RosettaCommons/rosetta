@@ -42,6 +42,9 @@ public:
 	void
 	initialize_from_command_line();
 
+	void
+	initialize_for_farna_optimizer( core::Size const & cycles /* = 0 */ );
+
 	/// @brief Initialize from the recursive "tag" structure.
 	virtual
 	void
@@ -152,6 +155,12 @@ public:
 	void set_bps_moves( bool const & setting ){ bps_moves_ = setting; }
 	bool bps_moves() const { return bps_moves_; }
 
+	void set_disallow_bps_at_extra_min_res( bool const & setting ){ disallow_bps_at_extra_min_res_ = setting; }
+	bool disallow_bps_at_extra_min_res() const { return disallow_bps_at_extra_min_res_; }
+
+	void set_allow_fragment_moves_in_bps( bool const & setting ){ allow_fragment_moves_in_bps_ = setting; }
+	bool allow_fragment_moves_in_bps() const { return allow_fragment_moves_in_bps_; }
+
 	void set_jump_library_file( std::string const & setting ){ jump_library_file_ = setting; }
 	std::string jump_library_file() const { return jump_library_file_; }
 
@@ -223,6 +232,8 @@ private:
 	bool refine_from_silent_;
 	bool refine_pose_;
 	bool bps_moves_;
+	bool disallow_bps_at_extra_min_res_;
+	bool allow_fragment_moves_in_bps_;
 	bool use_chem_shift_data_;
 
 	bool superimpose_over_all_;

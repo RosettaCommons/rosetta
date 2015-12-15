@@ -52,7 +52,8 @@ public:
 	~ChunkSet();
 
 	void
-	insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
+	insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
+													bool do_rosetta_library_domain_check = true ) const;
 
 	Size
 	num_chunks() const{ return mini_pose_list_.size(); };
@@ -78,8 +79,9 @@ private:
 
 	std::map< core::id::AtomID, core::Size >
 	get_atom_id_domain_map_for_rosetta_library_chunk(
-		std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
-		core::pose::Pose const & pose, toolbox::AtomLevelDomainMap const & atom_level_domain_map ) const;
+												 std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
+												 core::pose::Pose const & pose, toolbox::AtomLevelDomainMap const & atom_level_domain_map,
+												 bool do_rosetta_library_domain_check = true ) const;
 
 	void filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
 

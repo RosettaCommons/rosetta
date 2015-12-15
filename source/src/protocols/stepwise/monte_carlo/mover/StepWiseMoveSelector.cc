@@ -97,7 +97,8 @@ StepWiseMoveSelector::StepWiseMoveSelector():
 	choose_random_( true ),
 	force_unique_moves_( false ),
 	filter_complex_cycles_( true ),
-	force_submotif_without_intervening_bulge_( true )
+	allow_submotif_split_( false ),
+	force_submotif_without_intervening_bulge_( false )
 {}
 
 //Destructor
@@ -556,7 +557,7 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 			partition_res1 = get_partition_res( partition_definition, true );
 			partition_res2 = get_partition_res( partition_definition, false );
 
-			if ( partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
+			if ( !allow_submotif_split_ && partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
 
 			if ( check_for_input_domain_or_from_scratch( pose, partition_res1 ) ) {
 				swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full(partition_res2),
@@ -595,7 +596,7 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 
 		// make sure that at least one partition is a single nucleotide.
 		if ( partition_res1.size() > 1 && partition_res2.size() > 1 ) continue;
-		if ( partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
+		if ( !allow_submotif_split_ && partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
 
 		if ( partition_res1.size() == 1 && check_for_input_domain_or_from_scratch( pose, partition_res2 ) ) {
 			Size const anchor_res = get_anchor_res( partition_res1[1], pose );
@@ -1505,7 +1506,8 @@ StepWiseMoveSelector::just_simple_cycles( StepWiseMove const & swa_move, pose::P
 		}
 	} else if ( move_type == DELETE ) {
 		Size new_domain;
-		if ( const_full_model_info( pose ).is_a_submotif( move_element ) &&
+		if (!allow_submotif_split_ &&
+				 const_full_model_info( pose ).is_a_submotif( move_element ) &&
 				!const_full_model_info( pose ).is_a_submotif_seed( move_element ) ) {
 			new_domain = 0;
 		} else {

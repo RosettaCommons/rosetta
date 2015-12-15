@@ -91,7 +91,9 @@ stepwise_monte_carlo()
 
 	ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) scorefxn = get_score_function();
-	else if ( option[ OptionKeys::stepwise::lores ]() ) scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_lores_for_stepwise.wts" );
+	else if ( option[ OptionKeys::stepwise::lores ]() && !option[ OptionKeys::rna::farna::minimize_rna ]() ) {
+		scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_lores_for_stepwise.wts" );
+	}
 	else if ( just_RNA ) scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_res_level_energy.wts" );
 	else scorefxn = ScoreFunctionFactory::create_score_function( "stepwise/stepwise_res_level_energy.wts" ); // RNA/protein.
 	if ( option[ OptionKeys::constraints::cst_file ].user() && !scorefxn->has_nonzero_weight( atom_pair_constraint ) ) scorefxn->set_weight( atom_pair_constraint, 1.0 );
@@ -126,7 +128,7 @@ stepwise_monte_carlo()
 	std::string const silent_file = option[ out::file::silent ]();
 	if ( option[ out::overwrite ]() ) remove_silent_file_if_it_exists( silent_file );
 	stepwise_monte_carlo->set_out_path( FileName( silent_file ).path() );
-	stepwise_monte_carlo->set_submotif_library( SubMotifLibraryCOP( new SubMotifLibrary( rsd_set, options->lores() /*include_submotifs_from_jump_library*/ ) ) );
+	stepwise_monte_carlo->set_submotif_library( SubMotifLibraryCOP( new SubMotifLibrary( rsd_set, options->lores() /*include_submotifs_from_jump_library*/, options->use_first_jump_for_submotif() ) ) );
 
 	// main loop
 	StepWiseJobDistributorOP stepwise_job_distributor( new StepWiseMonteCarloJobDistributor( stepwise_monte_carlo, silent_file, option[ out::nstruct ]() ) );

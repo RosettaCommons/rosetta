@@ -226,8 +226,14 @@ public:
 	bool const & minimize_after_delete() const { return minimize_after_delete_; }
 	void set_minimize_after_delete( bool const & setting ){ minimize_after_delete_ = setting; }
 
+	bool const & allow_submotif_split() const { return allow_submotif_split_; }
+	void set_allow_submotif_split( bool const & setting ){ allow_submotif_split_ = setting; }
+
 	bool const & force_submotif_without_intervening_bulge() const { return force_submotif_without_intervening_bulge_; }
 	void set_force_submotif_without_intervening_bulge( bool const & setting ){ force_submotif_without_intervening_bulge_ = setting; }
+
+	bool const & use_first_jump_for_submotif() const { return use_first_jump_for_submotif_; }
+	void set_use_first_jump_for_submotif( bool const & setting ){ use_first_jump_for_submotif_ = setting; }
 
 private:
 
@@ -279,7 +285,10 @@ private:
 	bool save_times_;
 	bool use_precomputed_library_;
 	bool minimize_after_delete_;
+	bool allow_submotif_split_;
 	bool force_submotif_without_intervening_bulge_;
+	bool use_first_jump_for_submotif_;
+
 };
 
 } //options

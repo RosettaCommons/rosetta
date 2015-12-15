@@ -125,6 +125,9 @@ public:
 	void set_force_unique_moves( bool const & setting ){ force_unique_moves_ = setting; }
 	bool force_unique_moves() const{ return force_unique_moves_; }
 
+	void set_allow_submotif_split( bool const & setting ){ allow_submotif_split_ = setting; }
+	bool allow_submotif_split() const{ return allow_submotif_split_; }
+
 	void set_force_submotif_without_intervening_bulge( bool const & setting ){ force_submotif_without_intervening_bulge_ = setting; }
 	bool force_submotif_without_intervening_bulge() const{ return force_submotif_without_intervening_bulge_; }
 
@@ -330,6 +333,7 @@ private:
 	bool choose_random_;
 	bool force_unique_moves_;
 	bool filter_complex_cycles_;
+	bool allow_submotif_split_;
 	bool force_submotif_without_intervening_bulge_;
 	monte_carlo::submotif::SubMotifLibraryCOP submotif_library_;
 

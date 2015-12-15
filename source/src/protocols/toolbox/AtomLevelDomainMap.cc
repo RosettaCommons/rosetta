@@ -434,6 +434,33 @@ AtomLevelDomainMap::initialize( core::pose::Pose const & pose,
 
 }
 
+
+ //////////////////////////////////////////////////////////////////
+ /// @details  analogous to fixed_domain setting in initialize(), but
+ ///   this looks at input_domain -- so, for example, makes sure no movement
+ ///   even in 'extra_minimize_res'.
+ void
+ AtomLevelDomainMap::disallow_movement_of_input_res( core::pose::Pose const & pose ) {
+	 using namespace core::pose::full_model_info;
+
+	 utility::vector1< Size > input_domain( pose.total_residue(), 0 );
+	 runtime_assert ( full_model_info_defined( pose ) );
+
+	 // Pose can store some information on separate domains... check inside.
+	 // Any domains that are not claimed as input_domains will be assigned domain 0 (i.e., free)
+	 input_domain = get_input_domain_from_full_model_info_const( pose );
+
+	 for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		 for ( Size j = 1; j <= pose.residue_type( i ).natoms(); j++ ) {
+			 AtomID const atom_id( j, i );
+			 if ( atom_id_mapper_->has_atom_id( atom_id ) ) {
+				 domain_map_[ atom_id_mapper_->map_to_reference( atom_id ) ] = input_domain[ i ];
+			 }
+		 }
+	 }
+
+ }
+
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 AtomLevelDomainMap::update_to_not_move_last_virtual_residue( pose::Pose const & pose )
@@ -468,6 +495,23 @@ AtomLevelDomainMap::update_to_move_internal_phosphates( pose::Pose const & pose 
 		}
 	}
 }
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+void
+AtomLevelDomainMap::update_to_move_chunks_with_domain( Size const & domain )
+{
+	for ( Size i = 1; i <= atom_id_mapper_->nres(); i++ ) {
+		utility::vector1< core::id::AtomID > const & atom_ids_in_res( atom_id_mapper_->atom_ids_in_res( i ) );
+		for ( Size j = 1; j <= atom_ids_in_res.size(); j++ ) {
+			AtomID const & atom_id( atom_ids_in_res[ j ] );
+			if ( get_domain( atom_id ) == domain ) {
+				set_domain( atom_id, 0 ); // let it move.
+			}
+		}
+	}
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
