@@ -26,6 +26,7 @@
 
 // Core headers
 #include <core/kinematics/FoldTree.hh>
+#include <core/conformation/Residue.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/pdb/file_data.hh>

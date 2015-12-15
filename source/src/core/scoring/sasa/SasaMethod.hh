@@ -18,6 +18,12 @@
 #include <core/scoring/sasa/SasaMethod.fwd.hh>
 #include <core/id/AtomID_Map.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace sasa {
@@ -94,11 +100,26 @@ protected:
 	bool include_probe_radius_;
 	bool use_big_polar_H_;
 	//vector1<std::string> radii_names_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SasaMethod();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_sasa_SasaMethod )
+#endif // SERIALIZATION
+
 
 #endif //#ifndef INCLUDED_protocols/antibody_design_SASAMETHOD_HH

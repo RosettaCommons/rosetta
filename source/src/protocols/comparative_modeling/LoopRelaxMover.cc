@@ -891,7 +891,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 			if ( pose.residue( pose.total_residue() ).aa() != core::chemical::aa_vrt ) {
 				pose.append_residue_by_jump(
-					*ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ), pose.total_residue()/2 );
+					*ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ), pose.total_residue()/2 );
 			}
 
 			//fpd  nmonomerres is #residues in a single subunit (excluding virtuals)

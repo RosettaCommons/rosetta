@@ -21,9 +21,43 @@
 #include <sstream>
 
 // C++ Headers
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
+
+TopOutFunc::TopOutFunc( Real weight_in, Real x0_in, Real limit_in ) :
+	x0_( x0_in ), weight_( weight_in), limit_( limit_in ) {}
+
+FuncOP TopOutFunc::clone() const { return FuncOP( new TopOutFunc( *this ) ); }
+
+bool TopOutFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	TopOutFunc const & other_downcast( static_cast< TopOutFunc const & > (other) );
+	if ( x0_ != other_downcast.x0_ ) return false;
+	if ( weight_ != other_downcast.weight_ ) return false;
+	if ( limit_ != other_downcast.limit_ ) return false;
+
+	return true;
+}
+
+bool TopOutFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< TopOutFunc const * > ( &other );
+}
 
 Real
 TopOutFunc::func( Real const x ) const {
@@ -62,3 +96,34 @@ TopOutFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::func::TopOutFunc::TopOutFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::TopOutFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( x0_ ) ); // Real
+	arc( CEREAL_NVP( weight_ ) ); // Real
+	arc( CEREAL_NVP( limit_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::TopOutFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( x0_ ); // Real
+	arc( weight_ ); // Real
+	arc( limit_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::TopOutFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::TopOutFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_TopOutFunc )
+#endif // SERIALIZATION

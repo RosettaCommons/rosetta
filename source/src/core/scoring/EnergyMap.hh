@@ -383,6 +383,12 @@ private:
 
 	/// EMapVector is an array. EMapVector[score_type] = value. Can be used for storing either energy or weight for each score_type.
 	Real map_[ n_score_types ];
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 

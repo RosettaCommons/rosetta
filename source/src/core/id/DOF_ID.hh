@@ -36,7 +36,7 @@ class DOF_ID
 
 public: // Creation
 
-	DOF_ID(){};
+	DOF_ID(){}
 
 	DOF_ID(
 		AtomID const & atom_id_in,
@@ -44,7 +44,7 @@ public: // Creation
 	):
 		atom_id_( atom_id_in ),
 		type_( type_in )
-	{};
+	{}
 
 public: // Properties
 
@@ -115,6 +115,12 @@ private: // Fields
 
 	/// @brief DOF type
 	DOF_Type type_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; // DOF_ID
 

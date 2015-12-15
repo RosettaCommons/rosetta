@@ -30,6 +30,13 @@
 // C++ Headers
 #include <sstream>
 
+#ifdef SERIALIZATION
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 using core::kinematics::FoldTree;
 using core::kinematics::Edge;
 
@@ -500,6 +507,47 @@ public:
 		TS_ASSERT( ft.check_fold_tree() );
 		ft.delete_jump_and_intervening_cutpoint( 1 );
 		TS_ASSERT( ft.check_fold_tree() );
+	}
+
+	void test_fold_tree_serialization() {
+		TS_ASSERT( true );
+#ifdef    SERIALIZATION
+		using namespace core::kinematics;
+
+		FoldTree ft;
+		ft.add_edge(  1, 10, Edge::PEPTIDE );
+		ft.add_edge( 10, 15, Edge::PEPTIDE );
+		ft.add_edge( 10, 20, 1 );
+		ft.add_edge( 20, 16, Edge::PEPTIDE );
+		ft.add_edge( 20, 26, Edge::PEPTIDE );
+
+				// Now serialize the coordinates
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arch( oss );
+			arch( ft );
+		}
+
+		FoldTree ft2;
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arch( iss );
+			arch( ft2 );
+		}
+
+
+		TS_ASSERT_EQUALS( ft.size(), ft2.size() );
+		TS_ASSERT_EQUALS( ft.nres(), ft2.nres() );
+		TS_ASSERT_EQUALS( ft.num_jump(), ft2.num_jump() );
+
+		FoldTree const & ft1r( ft );
+		FoldTree const & ft2r( ft );
+
+		for ( FoldTree::const_iterator iter1 = ft1r.begin(), iter2 = ft2r.begin(); iter1 != ft1r.end() && iter2 != ft2r.end(); ++iter1, ++iter2 ) {
+			TS_ASSERT( *iter1 == *iter2 );
+		}
+#endif
+
 	}
 
 private:

@@ -16,18 +16,19 @@
 
 // Unit header
 #include <core/scoring/constraints/DOF_Constraint.fwd.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/id/DOF_ID.hh>
 
 //Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/exit.hh>
 
-#include <utility/vector1.hh>
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
-
-// C++ Headers
 
 namespace core {
 namespace scoring {
@@ -41,52 +42,36 @@ namespace constraints {
 /// This allows DOF_Constraints to be shared between copies of Poses (e.g. in Monte Carlo),
 /// and is important for both speed (with thousands of contraints) and correctness.
 ///
-/// To "change" a constraint, remove the old one and add a new and different one.
-/// The clone() and steal() methods have been removed because they are
-/// unneccessary and incompatible (respectively) with the idea of immutable constraints.
+/// DOF_Constraints are currently unsupported -- they are never evaluated if you
+/// put them into a Pose.
 class DOF_Constraint : public utility::pointer::ReferenceCount {
 
 public:
-	DOF_Constraint( id::DOF_ID const & id, core::scoring::func::FuncOP func, ScoreType t = dof_constraint ):
-		dof_id_( id ),
-		func_( func),
-		score_type_(t) {}
+	DOF_Constraint(
+		id::DOF_ID const & id,
+		core::scoring::func::FuncOP func,
+		ScoreType t = dof_constraint );
+
+	virtual
+	~DOF_Constraint();
 
 	/// @brief Returns the ScoreType
 	id::DOF_ID const &
-	dof_id() const
-	{
-		return dof_id_;
-	}
+	dof_id() const;
 
 	/// @brief Returns the ScoreType
 	ScoreType const &
-	score_type() const
-	{
-		return score_type_;
-	}
+	score_type() const;
 
 	/// @brief Returns the func::Function
 	Real
-	func( Real const val ) const
-	{
-		return func_->func( val );
-	}
+	func( Real const val ) const;
 
 	/// @brief Returns the func::Function Derivative
 	Real
-	dfunc( Real const val ) const
-	{
-		return func_->dfunc( val );
-	}
+	dfunc( Real const val ) const;
 
-
-	virtual
-	~DOF_Constraint(){}
-
-	virtual void show( std::ostream& out ) const {
-		out << "DOF_Constraint::show stubbed out!" << std::endl;
-	}
+	virtual void show( std::ostream& out ) const;
 
 private:
 
@@ -94,11 +79,25 @@ private:
 	func::FuncOP func_;
 	ScoreType const score_type_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	DOF_Constraint();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_DOF_Constraint )
+#endif // SERIALIZATION
 
 #endif

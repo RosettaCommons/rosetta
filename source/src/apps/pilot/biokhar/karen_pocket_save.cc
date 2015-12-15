@@ -206,7 +206,7 @@ int main( int argc, char * argv [] ) {
 			sp_mover->apply( comparison_pose );
 		}
 		// call function to make a grid around a target residue (seqpos)
-		std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(comparison_pose, resid_c);
+		std::vector< conformation::ResidueCOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(comparison_pose, resid_c);
 		protocols::pockets::PocketGrid comparison_pg( residues );
 		//call function to define the pocket
 		comparison_pg.autoexpanding_pocket_eval( residues, comparison_pose ) ;

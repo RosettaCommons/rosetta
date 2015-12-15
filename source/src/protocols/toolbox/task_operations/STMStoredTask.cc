@@ -23,6 +23,17 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/chemical/ResidueConnection.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
@@ -62,3 +73,27 @@ STMStoredTask::fresh_instance() const {
 } // task_operations
 } // toolbox
 } // protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::task_operations::STMStoredTask::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( tasks_ ) ); // std::map<std::string, core::pack::task::PackerTaskOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::task_operations::STMStoredTask::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( tasks_ ); // std::map<std::string, core::pack::task::PackerTaskOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::task_operations::STMStoredTask );
+CEREAL_REGISTER_TYPE( protocols::toolbox::task_operations::STMStoredTask )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_task_operations_STMStoredTask )
+#endif // SERIALIZATION

@@ -27,6 +27,11 @@
 
 #include <core/types.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -86,6 +91,12 @@ public:
 	virtual
 	void
 	show( std::ostream & out ) const = 0;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 inline
@@ -98,6 +109,11 @@ operator<<( std::ostream & out, RotamerSetsBase const & rs) {
 } // namespace rotamer_set
 } // namespace pack
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_rotamer_set_RotamerSetsBase )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_core_pack_RotamerSet_RotamerSetsBase_HH

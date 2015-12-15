@@ -39,6 +39,16 @@
 
 using namespace core;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace full_model_info {
@@ -159,3 +169,29 @@ operator >>( std::istream & is, SubMotifInfoOP submotif_info )
 } //full_model_info
 } //pose
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::full_model_info::SubMotifInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( res_list_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( tag_ ) ); // std::string
+	arc( CEREAL_NVP( seed_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::full_model_info::SubMotifInfo::load( Archive & arc ) {
+	arc( res_list_ ); // utility::vector1<Size>
+	arc( tag_ ); // std::string
+	arc( seed_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::full_model_info::SubMotifInfo );
+CEREAL_REGISTER_TYPE( core::pose::full_model_info::SubMotifInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_full_model_info_SubMotifInfo )
+#endif // SERIALIZATION

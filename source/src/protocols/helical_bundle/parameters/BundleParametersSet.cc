@@ -36,6 +36,14 @@
 #include <iostream>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace helical_bundle {
 namespace parameters {
@@ -95,3 +103,31 @@ void BundleParametersSet::get_pdb_remark(std::stringstream &remark) const {
 } // namespace helical_bundle
 } // namespace protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::helical_bundle::parameters::BundleParametersSet::save( Archive & arc ) const {
+	arc( cereal::base_class< core::conformation::parametric::ParametersSet >( this ) );
+	arc( CEREAL_NVP( bundle_symmetry_ ) ); // core::Size
+	arc( CEREAL_NVP( bundle_symmetry_copies_ ) ); // core::Size
+	arc( CEREAL_NVP( n_helices_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::helical_bundle::parameters::BundleParametersSet::load( Archive & arc ) {
+	arc( cereal::base_class< core::conformation::parametric::ParametersSet >( this ) );
+	arc( bundle_symmetry_ ); // core::Size
+	arc( bundle_symmetry_copies_ ); // core::Size
+	arc( n_helices_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::helical_bundle::parameters::BundleParametersSet );
+CEREAL_REGISTER_TYPE( protocols::helical_bundle::parameters::BundleParametersSet )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_helical_bundle_parameters_BundleParametersSet )
+#endif // SERIALIZATION

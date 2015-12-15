@@ -297,8 +297,8 @@ setup_symmetric_conformation(
 	// Setup virtual residues
 	{
 		// create the new residue
-		chemical::ResidueTypeSet const & rsd_set( src_conformation.residue(1).residue_type_set() );
-		conformation::ResidueOP rsd( conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
+		chemical::ResidueTypeSetCOP rsd_set( src_conformation.residue(1).residue_type_set() );
+		conformation::ResidueOP rsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "VRT" ) ) );
 
 		// root the fold_tree at this pseudo residue
 		//    {

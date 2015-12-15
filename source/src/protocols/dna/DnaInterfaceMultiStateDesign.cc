@@ -425,9 +425,9 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 
 	// temporary copy of Pose used to build DNA target and competitor states
 	Pose mutpose( pose );
-	ResidueTypeSet const & rts( mutpose.residue(1).residue_type_set() );
+	ResidueTypeSetCOP rts( mutpose.residue(1).residue_type_set() );
 
-	ResidueTypeCOPs dna_types = ResidueTypeFinder( rts ).base_property( DNA ).get_possible_base_residue_types();
+	ResidueTypeCOPs dna_types = ResidueTypeFinder( *rts ).base_property( DNA ).get_possible_base_residue_types();
 
 	TR(t_info) << "\nBuilding dna target state:\n";
 
@@ -502,7 +502,7 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 		for ( ResidueTypeCOPs::const_iterator rt( dna_types.begin() ); rt != dna_types.end(); ++rt ) {
 			std::string name( (*rt)->name() );
 			if ( (*rt)->name3() == orig_top.name3() ) continue; // add mutants only
-			ResidueType const & bot_type( rts.name_map( dna_comp_name_str( name ) ) );
+			ResidueType const & bot_type( rts->name_map( dna_comp_name_str( name ) ) );
 			TR(t_info) << " " << name << "/" << bot_type.name() << ",";
 			substitute_residue( mutpose, index, **rt );
 			substitute_residue( mutpose, pos.bottom(), bot_type );

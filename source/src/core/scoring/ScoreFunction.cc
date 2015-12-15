@@ -81,6 +81,16 @@ static THREAD_LOCAL basic::Tracer tr( "core.scoring" );
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -2923,3 +2933,52 @@ ScoreFunction::ready_for_nonideal_scoring() const
 
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::ScoreFunction::save( Archive & arc ) const {
+	arc( CEREAL_NVP( name_ ) ); // std::string
+	arc( CEREAL_NVP( weights_ ) ); // EnergyMap
+	arc( CEREAL_NVP( energy_method_options_ ) ); // methods::EnergyMethodOptionsOP
+
+	// The following data members are basically derived from the ones above, and
+	// therefore, should not be serialized
+	// EXEMPT ci_2b_methods_ cd_2b_methods_ ci_1b_methods_ cd_1b_methods_
+	// EXEMPT ci_lr_2b_methods_ cd_lr_2b_methods_
+	// EXEMPT lr_2b_methods_ ws_methods_ all_methods_ methods_by_score_type_
+	// EXEMPT score_types_by_method_type_ score_function_info_current_
+	// EXEMPT score_function_info_ any_intrares_energies_
+	// EXEMPT ci_2b_intrares_ cd_2b_intrares_
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::ScoreFunction::load( Archive & arc ) {
+	arc( name_ ); // std::string
+	arc( weights_ ); // EnergyMap
+	arc( energy_method_options_ ); // methods::EnergyMethodOptionsOP
+
+	// The following data members are basically derived from the ones above, and
+	// therefore, should not be serialized
+	// EXEMPT ci_2b_methods_ cd_2b_methods_ ci_1b_methods_ cd_1b_methods_
+	// EXEMPT ci_lr_2b_methods_ cd_lr_2b_methods_
+	// EXEMPT lr_2b_methods_ ws_methods_ all_methods_ methods_by_score_type_
+	// EXEMPT score_types_by_method_type_ score_function_info_current_
+	// EXEMPT score_function_info_ any_intrares_energies_
+	// EXEMPT ci_2b_intrares_ cd_2b_intrares_
+
+	for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
+		set_weight( ScoreType( ii ), weights_[ ScoreType( ii ) ] );
+	}
+
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::ScoreFunction );
+CEREAL_REGISTER_TYPE( core::scoring::ScoreFunction )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_ScoreFunction )
+#endif // SERIALIZATION

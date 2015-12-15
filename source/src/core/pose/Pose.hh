@@ -10,19 +10,19 @@
 /// @file   core/pose/Pose.hh
 /// @brief  Pose class
 /// @author Phil Bradley
+/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 /// @author Modified by Sergey Lyskov
 
 /// Be very careful with #includes in this file.  As almost every file in Rosetta
 /// #includes Pose.hh, any header file #included here will produce a huge
 /// recompile when modified.  I pledge a personally delivered, hand-crafted
 /// ass-whooping for any fool that #includes an unnecessary .hh file in Pose.hh.
-/// Allowed .hh files are few: Residue, ResidueType, Conformation, Energies
-/// AtomID and NamedAtomID.  Everything else should be forward included, or
-/// not included at all.  The above pledge applies to any header file
-/// unnecessarily #included in the .hh files #included here.
-/// If Pose were to hold a ConformationOP and an EnergiesOP, and not inline
-/// their access, then Residue.hh, ResidueType.hh, Conformation.hh and
-/// Energies.hh could be replaced with .fwd.hh's instead.
+/// Allowed .hh files are only those related to the (templated) event signaling
+/// files, those related to our smart pointer system (ReferenceCount.hh and owning_ptr.hh)
+/// or that contain enums (AA.hh), typedefs (types.hh).
+/// Everything else should be forward included, or not included at all.
+/// If you find yourself adding a #include of an .hh file, stop and write Andrew
+/// an email.  You are almost certainly doing something wrong.
 
 
 #ifndef INCLUDED_core_pose_Pose_hh
@@ -42,7 +42,7 @@
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
-namespace core { namespace chemical { namespace rings { struct RingConformer; } } }
+namespace core { namespace chemical { namespace rings { struct RingConformer; } } } // why no RingConformer.fwd.hh?
 #include <core/chemical/AA.hh>
 
 #include <core/conformation/Residue.fwd.hh>
@@ -58,14 +58,13 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 
-#include <core/conformation/Conformation.hh>
-
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
+#include <basic/datacache/ConstDataMap.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
@@ -96,6 +95,11 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 
 // C++ Headers
 #include <iostream>
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace pose {
@@ -165,6 +169,8 @@ public:
 	typedef scoring::constraints::ConstraintSetCOP ConstraintSetCOP;
 	typedef basic::datacache::BasicDataCache BasicDataCache;
 	typedef basic::datacache::BasicDataCacheOP BasicDataCacheOP;
+	typedef basic::datacache::ConstDataMap ConstDataMap;
+	typedef basic::datacache::ConstDataMapOP ConstDataMapOP;
 
 public:
 
@@ -189,7 +195,9 @@ public:
 	/// @brief Construct pose from pdb file
 	//Pose( std::string const & pdb_file );
 
-	/// @brief Copies  <src>  into the pose
+	/// @brief Copies <src> into the pose where it remains possible that two
+	/// Poses may point to each other in non-const ways or share non-bitwise
+	/// constant data between them (E.g. the AtomTree observer system).
 	///
 	/// example(s):
 	///     test_pose.assign(pose)
@@ -197,6 +205,12 @@ public:
 	///     Pose
 	Pose &
 	operator=( Pose const & src );
+
+	/// @brief Performs a deep copy of the src Pose into this Pose in a way
+	/// that guarantees that no non-bitwise-constant data is shared between
+	/// them (such as the AtomTree's observer system) -- this Pose will be
+	/// effectively detached from any data that lives in other objects.
+	void detached_copy( Pose const & src );
 
 	/// @brief clone the conformation
 	PoseOP
@@ -233,17 +247,12 @@ public:
 
 	/// @brief Returns the pose Conformation pointer (const access)
 	ConformationCOP
-	conformation_ptr() const
-	{
-		return conformation_;
-	}
+	conformation_ptr() const;
 
 	/// @brief Returns the pose Conformation pointer (const access)
+	/// @details WHOA: This is not cool.  The Pose cannot hand out access to the OP directly. Do not use.
 	ConformationOP &
-	conformation_ptr()
-	{
-		return conformation_;
-	}
+	conformation_ptr();
 
 	/// @brief Returns the pose FoldTree
 	///
@@ -366,11 +375,8 @@ public:
 
 	/// @brief Remove all sequence constraints from this pose.
 	///
-	inline void
-	clear_sequence_constraints() {
-		constraint_set_->clear_sequence_constraints();
-		return;
-	}
+	void
+	clear_sequence_constraints();
 
 	void
 	constraint_set( ConstraintSetOP );
@@ -615,6 +621,27 @@ public:
 		return *data_cache_;
 	}
 
+	/// @brief Controlled method for adding an object to the Pose's constant data cache; this
+	/// function is the only way to add data to the Pose's data cache.  An object, identified
+	/// by two strings, is freshly constructed and inserted into the ConstDataCache.  Objects
+	/// inserted into the ConstDataCache must remain bitwise const for thread-safety reasons.
+	/// The ConstDataCache has shallow-copy semantics, meaning that two poses would point to
+	/// the same object if one were copied into the other.  If these two Poses were then handed
+	/// to separate threads, and the data they were both pointing at were to change, that would
+	/// create race conditions.  For this reason, the Pose attempts to prevent non-constant
+	/// pointers to the data held in the ConstDataCache from existing.  Objects placed in the
+	/// ConstDataCache must have a copy constructor (either implicit or explicit).
+	template < class T >
+	inline
+	void
+	set_const_data(
+		std::string const & category,
+		std::string const & name,
+		T const & original
+	);
+
+	/// @brief Read access to the const data cache
+	basic::datacache::ConstDataMap const & const_data_cache() const;
 
 	/// @brief ObserverCache indexed by enum in core/pose/datacache/CacheableObserverType.hh
 	ObserverCache const &
@@ -1370,7 +1397,6 @@ public:
 	void
 	update_residue_neighbors();
 
-
 	/// @brief Called by ScoreFunction at the beginning of scoring
 	void
 	scoring_begin(
@@ -1549,11 +1575,19 @@ public: // observer attach/detach
 	///////////////////// internal methods ////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
-private: //
-	/// @brief initialize internal for a freshly build pose object. Use this function when you need
-	///        to create new constructor.
+private:
+
+	/// @brief initialize internal for a freshly build pose object. Use this function
+	/// when you need to create new constructor.
 	void init(void);
 
+	/// @brief Internal method for storing a shared pointer to some constant object in
+	/// the ConstantDataCache
+	void store_const_data(
+		std::string const & category,
+		std::string const & name,
+		utility::pointer::ReferenceCountCOP
+	);
 
 private: // observer notifications
 
@@ -1627,10 +1661,25 @@ private:
 	mutable metrics::PoseMetricContainerOP metrics_;
 
 	/// @brief BasicDataCache indexed by enum in core/pose/datacache/CacheableDataType.hh
-	/// @remarks contains data we can tuck inside the pose for convenience access
+	/// @remarks contains data we can tuck inside the pose for O(1) time access.
+	/// Each element cached in the data_cache_ is cloned in the Pose copy operations, and
+	/// so it is not a good place to store large, unchanging data, as that will be
 	/// @warning DataCache must always be initialized with the number of cacheable
-	///  data types -- see the last enum entry.
+	/// data types -- see the last enum entry.  Data that does not need to be retrieved
+	/// in O(1) time and does not need to ever change may be cached in either the Pose's
+	/// const DataMap.
 	BasicDataCacheOP data_cache_;
+
+	/// @brief The DataMap is a way to store arbitrarily complicated, constant data.  The
+	/// contents of the datamap are copied by value -- the pointers are copied -- meaning
+	/// that two poses can point to the same data.  For thread safety reasons, it is
+	/// essential that the data inside this map is *bitwise* const (i.e. no mutable data
+	/// is used or changes state).  Poses may be placed inside the constant datamap, but
+	/// it is important that ownership cycles are not created (e.g. A --> B; B-->C; C-->A)
+	/// or memory will be leaked.  Care must be taken that the this never happens.  One way
+	/// to avoid this possibility is to only cache freshly cloned Poses.  The other way
+	/// is to first call Pose::purge_cached_poses.
+	ConstDataMapOP constant_cache_;
 
 	/// @brief ObserverCache indexed by enum in core/pose/datacache/CacheableObserverType.hh
 	/// @warning ObserverCache must always be initialized with the number of cacheable
@@ -1665,13 +1714,60 @@ private:
 	mutable utility::signals::BufferedSignalHub< void, ConformationEvent > conformation_obs_hub_;
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // class Pose
+
+/// @details Arbitrary constant data can be stored in the Pose, but the Pose will make a clone of the
+/// starting data in an effort to ensure that the data it holds cannot be modified by anyone holding
+/// a non-constant pointer to that data.  Of course, if the data being held does not perform a
+/// deep copy in its copy constructor (e.g. if it itself holds pointers to other data) then this code
+/// does not actually succeed in making sure that the data is guaranteed bitwise const.
+template < class T >
+inline
+void
+Pose::set_const_data(
+	std::string const & category,
+	std::string const & name,
+	T const & original
+) {
+	utility::pointer::shared_ptr< T const > t_ptr( utility::pointer::shared_ptr< T > ( new T( original )));
+	store_const_data( category, name, t_ptr );
+}
+
+/// @details template specialization for when storing a Pose inside a Pose.  For the sake of
+/// thread safety, the Pose that should be stored must represent a deep copy -- one that does not
+/// contain pointers to any outside objects through which it might "communicate" behind the scenes
+/// or which might try to communicate with the starting pose.  Therefore, a "detached_copy" of
+/// the original pose is created.
+template <>
+inline
+void
+Pose::set_const_data(
+	std::string const & category,
+	std::string const & name,
+	Pose const & original
+) {
+	PoseOP pose_ptr( new Pose );
+	pose_ptr->detached_copy( original );
+	store_const_data( category, name, pose_ptr );
+}
+
 
 /// @brief Test IO operator for debug and Python bindings
 std::ostream & operator << ( std::ostream & os, Pose const & pose);
 
 } // namespace pose
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_Pose )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_core_pose_Pose_HH

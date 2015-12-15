@@ -49,6 +49,11 @@
 #endif
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace task {
@@ -291,6 +296,12 @@ private:
 	PackerTask &
 	operator=(PackerTask const &) = 0;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 //NOTE: parse_resfile is now an independent function in ResfileReader.hh, not a member function of the PackerTask hierarchy
@@ -299,5 +310,10 @@ private:
 } //namespace task
 } //namespace pack
 } //namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_task_PackerTask )
+#endif // SERIALIZATION
+
 
 #endif

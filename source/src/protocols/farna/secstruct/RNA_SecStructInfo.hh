@@ -30,6 +30,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace farna {
 namespace secstruct {
@@ -70,6 +75,12 @@ private:
 
 	std::string rna_secstruct_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 std::string const &
@@ -84,5 +95,10 @@ clear_rna_secstruct_info( core::pose::Pose & pose );
 } //secstruct
 } //farna
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_farna_secstruct_RNA_SecStructInfo )
+#endif // SERIALIZATION
+
 
 #endif

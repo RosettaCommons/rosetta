@@ -45,6 +45,8 @@ sources = {
 	],
 	"basic/datacache": [
 		"BasicDataCache",
+		"CacheableData",
+		"ConstDataMap",
 		"DataMap",
         "HierarchicalDataMap",
 		"WriteableCacheableDataCreator",

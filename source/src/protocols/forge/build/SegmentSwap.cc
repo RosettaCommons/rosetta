@@ -55,7 +55,7 @@ SegmentSwap::SegmentSwap(
 	MoveMap const & swap_in_movemap,
 	Pose const & swap_in
 ) :
-	Super( i, swap_in.residue( 1 ).residue_type_set().get_self_ptr() ),
+	Super( i, swap_in.residue( 1 ).residue_type_set() ),
 	interval_( i ),
 	swap_in_movemap_( swap_in_movemap ),
 	swap_in_( swap_in )

@@ -37,7 +37,17 @@
 #include <numeric/geometry/hashing/SixDHasher.hh>
 
 // Boost headers
+#ifdef CXX11
+#include <unordered_map>
+#else
 #include <boost/unordered_map.hpp>
+#endif
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace devel {
 namespace znhash {
@@ -99,6 +109,12 @@ private:
 	core::Size index_; // for identifying a particular zn
 	core::Size nhis_; // how many histadines are coordinating?
 	utility::fixedsizearray1< Vector, 5 > zn_and_orbitals_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class ZnHash : public utility::pointer::ReferenceCount {
@@ -108,7 +124,11 @@ public:
 	typedef core::Real Real;
 	typedef core::Size Size;
 	typedef numeric::geometry::hashing::bin_index_hasher bin_index_hasher;
+#ifdef CXX11
+	typedef std::unordered_map< boost::uint64_t, utility::vector1< ZnCoord >, bin_index_hasher > ZnCoordinateHash;
+#else
 	typedef boost::unordered_map< boost::uint64_t, utility::vector1< ZnCoord >, bin_index_hasher > ZnCoordinateHash;
+#endif
 	typedef utility::fixedsizearray1< Size, 3 > Size3;
 	typedef core::Vector Vector;
 
@@ -141,6 +161,12 @@ private:
 	bool hash_has_been_built_;
 	std::list< ZnCoord > zn_coords_; // Coordinates in reference frame
 	ZnCoordinateHash zn_hash_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class ZnMatchData
@@ -185,6 +211,12 @@ private:
 	core::conformation::ResidueCOP res1conf_;
 	core::conformation::ResidueCOP res2conf_;
 	core::conformation::ResidueCOP znconf_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class ZnCoordinationScorer : public utility::pointer::ReferenceCount
@@ -385,6 +417,12 @@ private:
 	core::id::AtomID third_resid_;
 
 	ZnHashOP hash_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class ZnCoordinationConstraint : public core::scoring::constraints::Constraint
@@ -396,6 +434,9 @@ public:
 	virtual
 	core::scoring::constraints::ConstraintOP
 	clone() const;
+
+	virtual bool operator == ( Constraint const & other ) const;
+	virtual bool same_type_as_me( Constraint const & other ) const;
 
 	/// @brief Returns the number of atoms involved in defining this constraint.
 	virtual
@@ -449,9 +490,24 @@ private:
 private:
 	ZnCoordinationScorerCOP zn_score_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ZnCoordinationConstraint();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( devel_znhash_ZnHash )
+#endif // SERIALIZATION
+
 
 #endif

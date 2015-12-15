@@ -28,6 +28,11 @@
 
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -72,6 +77,12 @@ private:
 	mutable utility::vector1< VDW_RepScreenInfo > VDW_rep_screen_info_list_;
 	VDW_GridCOP VDW_screen_bin_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -108,5 +119,10 @@ fill_vdw_cached_rep_screen_info_from_command_line( utility::vector1< core::pose:
 } //modeler
 } //stepwise
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_stepwise_modeler_rna_checker_VDW_CachedRepScreenInfo )
+#endif // SERIALIZATION
+
 
 #endif

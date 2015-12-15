@@ -43,6 +43,19 @@
 ///////////////////////////////////////////////////////
 using namespace core::chemical::rna;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// ObjexxFCL serialization headers
+#include <utility/serialization/ObjexxFCL/FArray2D.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/list.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace rna {
@@ -364,3 +377,61 @@ Real RNA_FilteredBaseBaseInfo::get_data_score( data::RNA_DataInfo const & rna_da
 } //rna
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::rna::RNA_FilteredBaseBaseInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( filtered_base_pair_array_ ) ); // ObjexxFCL::FArray2D<Real>
+	arc( CEREAL_NVP( filtered_base_axis_array_ ) ); // ObjexxFCL::FArray2D<Real>
+	arc( CEREAL_NVP( filtered_base_stagger_array_ ) ); // ObjexxFCL::FArray2D<Real>
+	arc( CEREAL_NVP( filtered_base_stack_array_ ) ); // ObjexxFCL::FArray2D<Real>
+	arc( CEREAL_NVP( filtered_base_stack_axis_array_ ) ); // ObjexxFCL::FArray2D<Real>
+	arc( CEREAL_NVP( scored_base_pair_list_ ) ); // pose::rna::EnergyBasePairList
+	arc( CEREAL_NVP( scored_base_stack_list_ ) ); // pose::rna::EnergyBaseStackList
+	arc( CEREAL_NVP( total_base_pair_score_ ) ); // Real
+	arc( CEREAL_NVP( total_base_axis_score_ ) ); // Real
+	arc( CEREAL_NVP( total_base_stagger_score_ ) ); // Real
+	arc( CEREAL_NVP( total_base_stack_score_ ) ); // Real
+	arc( CEREAL_NVP( total_base_stack_axis_score_ ) ); // Real
+	arc( CEREAL_NVP( scale_axis_stagger_ ) ); // _Bool
+	arc( CEREAL_NVP( basepair_axis_stagger_scaling_ ) ); // Real
+	arc( CEREAL_NVP( basestack_axis_scaling_ ) ); // Real
+	arc( CEREAL_NVP( include_neighbor_base_stacks_ ) ); // _Bool
+	arc( CEREAL_NVP( calculated_ ) ); // _Bool
+	arc( CEREAL_NVP( rna_verbose_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::rna::RNA_FilteredBaseBaseInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( filtered_base_pair_array_ ); // ObjexxFCL::FArray2D<Real>
+	arc( filtered_base_axis_array_ ); // ObjexxFCL::FArray2D<Real>
+	arc( filtered_base_stagger_array_ ); // ObjexxFCL::FArray2D<Real>
+	arc( filtered_base_stack_array_ ); // ObjexxFCL::FArray2D<Real>
+	arc( filtered_base_stack_axis_array_ ); // ObjexxFCL::FArray2D<Real>
+	arc( scored_base_pair_list_ ); // pose::rna::EnergyBasePairList
+	arc( scored_base_stack_list_ ); // pose::rna::EnergyBaseStackList
+	arc( total_base_pair_score_ ); // Real
+	arc( total_base_axis_score_ ); // Real
+	arc( total_base_stagger_score_ ); // Real
+	arc( total_base_stack_score_ ); // Real
+	arc( total_base_stack_axis_score_ ); // Real
+	arc( scale_axis_stagger_ ); // _Bool
+	arc( basepair_axis_stagger_scaling_ ); // Real
+	arc( basestack_axis_scaling_ ); // Real
+	arc( include_neighbor_base_stacks_ ); // _Bool
+	arc( calculated_ ); // _Bool
+	arc( rna_verbose_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::rna::RNA_FilteredBaseBaseInfo );
+CEREAL_REGISTER_TYPE( core::scoring::rna::RNA_FilteredBaseBaseInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_rna_RNA_FilteredBaseBaseInfo )
+#endif // SERIALIZATION

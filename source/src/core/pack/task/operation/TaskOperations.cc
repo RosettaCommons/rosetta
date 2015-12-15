@@ -650,9 +650,9 @@ ReadResfile::apply( pose::Pose const & pose, PackerTask & task ) const
 	//At this point, we're dealing with a cached resfile.
 	if ( residue_selector_ ) { //If there's a residue selector provided, use it to make a mask, then apply this TaskOperation only to unmasked (selected) residues:
 		core::select::residue_selector::ResidueSubset const mask( residue_selector_->apply(pose) );
-		parse_resfile_string(pose, task, resfile_cache_, mask );
+		parse_resfile_string(pose, task, resfile_filename_, resfile_cache_, mask );
 	} else { //Otherwise, apply this TaskOperation to all residues:
-		parse_resfile_string(pose, task, resfile_cache_ );
+		parse_resfile_string(pose, task, resfile_filename_, resfile_cache_ );
 	}
 
 	return;
@@ -805,11 +805,11 @@ ReadResfileAndObeyLengthEvents::apply(
 	//refactor ResfileReader a little bit to replace the
 	//following block by one call
 	std::string resfile_string;
-	utility::io::izstream file( this->filename() );
-	if ( !file ) utility_exit_with_message( "Cannot open file " + this->filename() );
+	utility::io::izstream file( filename() );
+	if ( !file ) utility_exit_with_message( "Cannot open file " + filename() );
 	utility::slurp( file, resfile_string );
 	std::istringstream resfile(resfile_string);
-	ResfileContents contents( pose, resfile );
+	ResfileContents contents( pose, filename(), resfile );
 
 
 	//3. apply the ResfileCommands to the remapped seqpos

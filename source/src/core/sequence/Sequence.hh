@@ -31,6 +31,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace sequence {
@@ -196,9 +201,20 @@ private:
 	char gap_char_;
 
 	std::string seq_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // class Sequence
 
 } // sequence
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_sequence_Sequence )
+#endif // SERIALIZATION
+
 
 #endif

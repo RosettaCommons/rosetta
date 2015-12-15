@@ -38,6 +38,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 
@@ -111,9 +116,20 @@ private:
 	/// @brief the set of neighbors to return - union of interfaces between groups
 	std::set< core::Size > neighbors_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace toolbox
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_CalcInterNeighborGroup )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_toolbox_CalcInterNeighborGroup_HH

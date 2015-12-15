@@ -58,6 +58,16 @@ source files: rosetta++/gb_elec*
 //////////////////////////////////////////////////////////////////////////////////
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -348,24 +358,24 @@ GenBornPotential::build_placeholders(
 {
 	Size const nres( pose.total_residue() );
 
-	chemical::ResidueTypeSet const & residue_set( pose.residue(1).residue_type_set() );
-	//chemical::ResidueType const & protein_placeholder_residue_type( residue_set.name_map("GB_AA_PLACEHOLDER") );
+	chemical::ResidueTypeSetCOP residue_set( pose.residue(1).residue_type_set() );
+	//chemical::ResidueType const & protein_placeholder_residue_type( residue_set->name_map("GB_AA_PLACEHOLDER") );
 
 	for ( Size i=1; i<= nres; ++i ) {
 		if ( gb_info.being_packed(i) ) {
 			Residue const & existing_rsd( pose.residue(i) );
 			// build a placeholder at this position
 			if ( existing_rsd.is_protein() ) {
-				chemical::ResidueTypeCOP protein_placeholder_residue_type( residue_set.name_map("GB_AA_PLACEHOLDER").get_self_ptr() );
+				chemical::ResidueTypeCOP protein_placeholder_residue_type( residue_set->name_map("GB_AA_PLACEHOLDER").get_self_ptr() );
 				// use appropriate termini variants if necessary:
 				if ( existing_rsd.is_lower_terminus() ) {
 					protein_placeholder_residue_type = chemical::ResidueTypeCOP(
-						residue_set.get_residue_type_with_variant_added( *protein_placeholder_residue_type,
+						residue_set->get_residue_type_with_variant_added( *protein_placeholder_residue_type,
 						chemical::LOWER_TERMINUS_VARIANT ).get_self_ptr() );
 				}
 				if ( existing_rsd.is_upper_terminus() ) {
 					protein_placeholder_residue_type = chemical::ResidueTypeCOP(
-						residue_set.get_residue_type_with_variant_added( *protein_placeholder_residue_type,
+						residue_set->get_residue_type_with_variant_added( *protein_placeholder_residue_type,
 						chemical::UPPER_TERMINUS_VARIANT ).get_self_ptr() );
 				}
 
@@ -798,3 +808,83 @@ GenBornPotential::eval_atom_derivative(
 
 } // namespace scoring
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::GenBornResidueInfo::GenBornResidueInfo() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::GenBornResidueInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( atomic_radius_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( born_radius_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( scale_factor_ ) ); // utility::vector1<Real>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::GenBornResidueInfo::load( Archive & arc ) {
+	arc( atomic_radius_ ); // utility::vector1<Real>
+	arc( born_radius_ ); // utility::vector1<Real>
+	arc( scale_factor_ ); // utility::vector1<Real>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::GenBornResidueInfo );
+CEREAL_REGISTER_TYPE( core::scoring::GenBornResidueInfo )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::GenBornPoseInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( residue_info_ ) ); // utility::vector1<GenBornResidueInfoOP>
+	arc( CEREAL_NVP( placeholder_residue_ ) ); // utility::vector1<ResidueOP>
+	arc( CEREAL_NVP( placeholder_info_ ) ); // utility::vector1<GenBornResidueInfoOP>
+	arc( CEREAL_NVP( being_packed_ ) ); // utility::vector1<_Bool>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::GenBornPoseInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( residue_info_ ); // utility::vector1<GenBornResidueInfoOP>
+	arc( placeholder_residue_ ); // utility::vector1<ResidueOP>
+	arc( placeholder_info_ ); // utility::vector1<GenBornResidueInfoOP>
+	arc( being_packed_ ); // utility::vector1<_Bool>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::GenBornPoseInfo );
+CEREAL_REGISTER_TYPE( core::scoring::GenBornPoseInfo )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::GenBornRotamerSetInfo::GenBornRotamerSetInfo() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::GenBornRotamerSetInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( residue_info_ ) ); // utility::vector1<GenBornResidueInfoOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::GenBornRotamerSetInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( residue_info_ ); // utility::vector1<GenBornResidueInfoOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::GenBornRotamerSetInfo );
+CEREAL_REGISTER_TYPE( core::scoring::GenBornRotamerSetInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_GenBornPotential )
+#endif // SERIALIZATION
+

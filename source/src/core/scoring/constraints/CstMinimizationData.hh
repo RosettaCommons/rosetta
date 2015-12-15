@@ -15,7 +15,7 @@
 #define INCLUDED_core_scoring_constraints_CstMinimizationData_hh
 
 // Package headers
-#include <core/scoring/constraints/Constraints.hh>
+#include <core/scoring/constraints/Constraints.fwd.hh>
 
 // Project headers
 #include <basic/datacache/CacheableData.hh>
@@ -23,6 +23,11 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace scoring {
@@ -39,21 +44,32 @@ public:
 	typedef basic::datacache::CacheableDataCOP CacheableDataCOP;
 
 public:
-	CstMinimizationData() {}
-	CstMinimizationData( ConstraintsOP constraints ) : constraints_( constraints ) {}
-	virtual ~CstMinimizationData() {}
-	virtual CacheableDataOP clone() const { return CacheableDataOP( new CstMinimizationData( *this ) ); };
+	CstMinimizationData();
+	CstMinimizationData( ConstraintsOP constraints );
+	virtual ~CstMinimizationData();
+	virtual CacheableDataOP clone() const;
 
 	Constraints const & constraints() const { return *constraints_; }
-	void set_constraints( ConstraintsOP constraints ) { constraints_ = constraints; }
+	void set_constraints( ConstraintsOP constraints );
 
 private:
 	ConstraintsOP constraints_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_CstMinimizationData )
+#endif // SERIALIZATION
+
 
 #endif

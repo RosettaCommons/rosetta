@@ -66,6 +66,18 @@
 
 static basic::Tracer TR("core.scoring.elec.FA_GrpElecEnergy");
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace elec {
@@ -957,3 +969,31 @@ FA_GrpElecEnergy::set_nres_mono(
 } // namespace elec
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::elec::FAElecContextData::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( n_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( dw_dr_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( boundary_neighs_ ) ); // utility::vector1<utility::vector1<Size> >
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::elec::FAElecContextData::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( n_ ); // utility::vector1<Real>
+	arc( dw_dr_ ); // utility::vector1<Vector>
+	arc( boundary_neighs_ ); // utility::vector1<utility::vector1<Size> >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::elec::FAElecContextData );
+CEREAL_REGISTER_TYPE( core::scoring::elec::FAElecContextData )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_elec_FA_GrpElecEnergy )
+#endif // SERIALIZATION

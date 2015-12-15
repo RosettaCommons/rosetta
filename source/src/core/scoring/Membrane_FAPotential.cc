@@ -47,6 +47,18 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.Membrane_FAEmbed" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -216,3 +228,45 @@ Membrane_FAEmbed & nonconst_Membrane_FAEmbed_from_pose( pose::Pose & pose )
 
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::Membrane_FAEmbed::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( fa_proj_ ) ); // utility::vector1<utility::vector1<Real> >
+	arc( CEREAL_NVP( fa_depth_ ) ); // utility::vector1<utility::vector1<Real> >
+	arc( CEREAL_NVP( fa_proj_coord_ ) ); // utility::vector1<utility::vector1<Vector> >
+	arc( CEREAL_NVP( fa_proj_deriv_ ) ); // utility::vector1<utility::vector1<Real> >
+	arc( CEREAL_NVP( calculated_ ) ); // _Bool
+	arc( CEREAL_NVP( fa_center_ ) ); // Real
+	arc( CEREAL_NVP( fa_penalty_ ) ); // Real
+	arc( CEREAL_NVP( thickness_ ) ); // Real
+	arc( CEREAL_NVP( steepness_ ) ); // Real
+	arc( CEREAL_NVP( Fa_Membed_update_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::Membrane_FAEmbed::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( fa_proj_ ); // utility::vector1<utility::vector1<Real> >
+	arc( fa_depth_ ); // utility::vector1<utility::vector1<Real> >
+	arc( fa_proj_coord_ ); // utility::vector1<utility::vector1<Vector> >
+	arc( fa_proj_deriv_ ); // utility::vector1<utility::vector1<Real> >
+	arc( calculated_ ); // _Bool
+	arc( fa_center_ ); // Real
+	arc( fa_penalty_ ); // Real
+	arc( thickness_ ); // Real
+	arc( steepness_ ); // Real
+	arc( Fa_Membed_update_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::Membrane_FAEmbed );
+CEREAL_REGISTER_TYPE( core::scoring::Membrane_FAEmbed )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_Membrane_FAPotential )
+#endif // SERIALIZATION

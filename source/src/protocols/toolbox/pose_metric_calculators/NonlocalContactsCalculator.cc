@@ -43,6 +43,16 @@ using namespace core::pose::metrics;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols/toolbox/PoseMetricCalculators/NonlocalContactsCalculator" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -258,3 +268,51 @@ NonlocalContactsCalculator::recompute( Pose const & this_pose )
 } //namespace pose_metric_calculators
 } //namespace toolbox
 } //namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::NonlocalContactsCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+	arc( CEREAL_NVP( total_nlcontacts_ ) ); // core::Size
+	arc( CEREAL_NVP( special_region1_nlcontacts_ ) ); // core::Size
+	arc( CEREAL_NVP( special_region2_nlcontacts_ ) ); // core::Size
+	arc( CEREAL_NVP( special_region1_intra_nlcontacts_ ) ); // core::Size
+	arc( CEREAL_NVP( special_region1_to_other_nlcontacts_ ) ); // core::Size
+	arc( CEREAL_NVP( region1_region2_nlcontacts_ ) ); // core::Size
+	arc( CEREAL_NVP( residue_nlcontacts_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( residue_nlscore_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( nlcontacts_graph_ ) ); // core::graph::GraphOP
+	arc( CEREAL_NVP( min_seq_separation_ ) ); // core::Size
+	arc( CEREAL_NVP( cutoffE_ ) ); // core::Real
+	arc( CEREAL_NVP( special_region1_ ) ); // std::set<core::Size>
+	arc( CEREAL_NVP( special_region2_ ) ); // std::set<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::NonlocalContactsCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+	arc( total_nlcontacts_ ); // core::Size
+	arc( special_region1_nlcontacts_ ); // core::Size
+	arc( special_region2_nlcontacts_ ); // core::Size
+	arc( special_region1_intra_nlcontacts_ ); // core::Size
+	arc( special_region1_to_other_nlcontacts_ ); // core::Size
+	arc( region1_region2_nlcontacts_ ); // core::Size
+	arc( residue_nlcontacts_ ); // utility::vector1<core::Size>
+	arc( residue_nlscore_ ); // utility::vector1<core::Real>
+	arc( nlcontacts_graph_ ); // core::graph::GraphOP
+	arc( min_seq_separation_ ); // core::Size
+	arc( cutoffE_ ); // core::Real
+	arc( special_region1_ ); // std::set<core::Size>
+	arc( special_region2_ ); // std::set<core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::NonlocalContactsCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::NonlocalContactsCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_NonlocalContactsCalculator )
+#endif // SERIALIZATION

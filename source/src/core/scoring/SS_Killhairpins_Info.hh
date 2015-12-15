@@ -35,6 +35,10 @@
 #include <utility/vector1.hh>
 #include <utility/io/izstream.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace scoring {
@@ -66,6 +70,11 @@ struct Hairpin {
 	friend
 	std::ostream &
 	operator<< ( std::ostream & out, Hairpin const & s );
+
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -99,6 +108,11 @@ struct Hairpins {
 	friend
 	std::ostream &
 	operator<< ( std::ostream & out, Hairpins const & s );
+
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -165,9 +179,20 @@ private:
 
 	Hairpins hairpins_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // ns scoring
 } // ns core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_SS_Killhairpins_Info )
+#endif // SERIALIZATION
+
 
 #endif

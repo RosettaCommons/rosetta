@@ -56,6 +56,15 @@
 using namespace ObjexxFCL;
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -808,3 +817,47 @@ RotamerSets::show( std::ostream & out ) const {
 } // namespace pack
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::rotamer_set::RotamerSets::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pack::rotamer_set::FixbbRotamerSets >( this ) );
+	arc( CEREAL_NVP( nmoltenres_ ) ); // uint
+	arc( CEREAL_NVP( total_residue_ ) ); // uint
+	arc( CEREAL_NVP( nrotamers_ ) ); // uint
+	arc( CEREAL_NVP( set_of_rotamer_sets_ ) ); // RotamerSetVector
+	arc( CEREAL_NVP( resid_2_moltenres_ ) ); // utility::vector1<uint>
+	arc( CEREAL_NVP( moltenres_2_resid_ ) ); // utility::vector1<uint>
+	arc( CEREAL_NVP( nrotamer_offsets_ ) ); // utility::vector1<uint>
+	arc( CEREAL_NVP( moltenres_for_rotamer_ ) ); // utility::vector1<uint>
+	arc( CEREAL_NVP( nrotamers_for_moltenres_ ) ); // utility::vector1<uint>
+	arc( CEREAL_NVP( task_ ) ); // PackerTaskCOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::rotamer_set::RotamerSets::load( Archive & arc ) {
+	arc( cereal::base_class< core::pack::rotamer_set::FixbbRotamerSets >( this ) );
+	arc( nmoltenres_ ); // uint
+	arc( total_residue_ ); // uint
+	arc( nrotamers_ ); // uint
+	arc( set_of_rotamer_sets_ ); // RotamerSetVector
+	arc( resid_2_moltenres_ ); // utility::vector1<uint>
+	arc( moltenres_2_resid_ ); // utility::vector1<uint>
+	arc( nrotamer_offsets_ ); // utility::vector1<uint>
+	arc( moltenres_for_rotamer_ ); // utility::vector1<uint>
+	arc( nrotamers_for_moltenres_ ); // utility::vector1<uint>
+	std::shared_ptr< core::pack::task::PackerTask > local_task;
+	arc( local_task ); // PackerTaskCOP
+	task_ = local_task; // copy the non-const pointer(s) into the const pointer(s)
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::RotamerSets );
+CEREAL_REGISTER_TYPE( core::pack::rotamer_set::RotamerSets )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_rotamer_set_RotamerSets )
+#endif // SERIALIZATION

@@ -21,6 +21,17 @@
 #include <boost/pool/pool.hpp>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -232,3 +243,62 @@ TenANeighborGraph::create_new_edge( graph::Edge const * example_edge )
 } // scoring
 } // core
 
+
+#ifdef    SERIALIZATION
+
+template < class Archive >
+void
+core::scoring::TenANeighborNode::save_to_archive( Archive & arc ) const {
+	arc( neighbor_mass_, sum_of_neighbors_masses_, since_last_sonm_update_ );
+}
+
+template < class Archive >
+void
+core::scoring::TenANeighborNode::load_from_archive( Archive & arc ) {
+	arc( neighbor_mass_, sum_of_neighbors_masses_, since_last_sonm_update_ );
+}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::TenANeighborGraph::save( Archive & arc ) const
+{
+  arc( num_nodes() );
+  for ( Size ii = 1; ii <= num_nodes(); ++ii ) {
+    (static_cast< TenANeighborNode const * > ( get_node( ii ) ))->save_to_archive( arc );
+  }
+  arc( num_edges() );
+  for ( EdgeListConstIter iter = const_edge_list_begin(), iter_end = const_edge_list_end(); iter != iter_end; ++iter ) {
+    arc( (*iter)->get_first_node_ind(), (*iter)->get_second_node_ind() );
+  }
+	// Don't serialize the pool
+	// EXEMPT tenA_edge_pool_
+
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::TenANeighborGraph::load( Archive & arc )
+{
+  Size num_nodes(0); arc( num_nodes );
+  set_num_nodes( num_nodes );
+
+  for ( Size ii = 1; ii <= num_nodes; ++ii ) {
+    (static_cast< TenANeighborNode * > ( get_node( ii ) ))->load_from_archive( arc );
+  }
+
+  Size num_edges(0); arc( num_edges );
+  for ( Size ii = 1; ii <= num_edges; ++ii ) {
+    Size node1(0), node2(0); arc( node1, node2 );
+    /*Edge * new_edge =*/ add_edge( node1, node2 );
+  }
+	// Don't deserialize the pool, either
+	// EXEMPT tenA_edge_pool_
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::TenANeighborGraph );
+CEREAL_REGISTER_TYPE( core::scoring::TenANeighborGraph )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_TenANeighborGraph )
+#endif // SERIALIZATION

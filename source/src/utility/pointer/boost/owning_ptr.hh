@@ -8,20 +8,23 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   utility/pointer/boost/owning_ptr.hh
-/// @brief  Owning smart pointer using C++11
+/// @brief  Owning smart pointer using boost header-only libraries
 /// @author Luki Goldschmidt <lugo@uw.edu>
 
 
 #ifndef INCLUDED_utility_pointer_boost_owning_ptr_hh
 #define INCLUDED_utility_pointer_boost_owning_ptr_hh
 
+#include <utility/pointer/boost/owning_ptr.fwd.hh>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
+
+#include <utility/pointer/ReferenceCount.hh>
 
 namespace utility {
 namespace pointer {
 
-	using boost::shared_ptr;
 	using boost::dynamic_pointer_cast;
 	using boost::static_pointer_cast;
 	using boost::const_pointer_cast;

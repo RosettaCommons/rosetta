@@ -15,19 +15,32 @@
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
+// Package headers
+#include <core/select/residue_selector/util.hh>
+
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
 
-// Package headers
+// Project headers
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
 #include <utility/assert.hh>
 
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace select {
@@ -104,6 +117,17 @@ std::string ResidueIndexSelector::class_name() {
 	return "Index";
 }
 
+void
+ResidueIndexSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	common_simple_types( xsd, "int_cslist" );
+
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "resnums", "int_cslist", true ));
+	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+}
+
+
 ResidueSelectorOP
 ResidueIndexSelectorCreator::create_residue_selector() const {
 	return ResidueSelectorOP( new ResidueIndexSelector );
@@ -114,6 +138,35 @@ ResidueIndexSelectorCreator::keyname() const {
 	return ResidueIndexSelector::class_name();
 }
 
+void
+ResidueIndexSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
+	return ResidueIndexSelector::provide_selector_xsd( xsd );
+}
+
 } //namespace residue_selector
 } //namespace select
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::residue_selector::ResidueIndexSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( index_str_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::residue_selector::ResidueIndexSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( index_str_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::ResidueIndexSelector );
+CEREAL_REGISTER_TYPE( core::select::residue_selector::ResidueIndexSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_residue_selector_ResidueIndexSelector )
+#endif // SERIALIZATION

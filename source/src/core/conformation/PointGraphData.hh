@@ -39,6 +39,11 @@ public:
 private:
 	numeric::xyzVector< core::Real > xyz_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -55,6 +60,13 @@ public:
 
 private:
 	core::Real dsq_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }

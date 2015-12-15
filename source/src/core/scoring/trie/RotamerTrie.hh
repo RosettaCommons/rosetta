@@ -21,12 +21,17 @@
 #include <core/scoring/trie/RotamerDescriptor.hh>
 #include <core/scoring/trie/RotamerTrieBase.hh>
 #include <core/scoring/trie/TrieCountPairBase.hh>
+#include <core/scoring/etable/EtableEnergy.fwd.hh>
 #include <core/scoring/etable/etrie/CountPairData_1_1.fwd.hh>
 #include <core/scoring/etable/etrie/CountPairData_1_2.fwd.hh>
 #include <core/scoring/etable/etrie/CountPairData_1_3.fwd.hh>
 #include <core/scoring/etable/etrie/CountPairDataGeneric.fwd.hh>
 #include <core/scoring/hbonds/hbtrie/HBCPData.hh> // we need full header here because we have inline template function with HBCPData as template specifier
 
+// Project Headers
+#include <core/types.hh>
+
+// WIN32 includes, because MSVC++ is pathetic
 #ifdef WIN32 //VC++ needs full class declaration
 #include <core/scoring/etable/etrie/EtableAtom.hh> // WIN32 INCLUDE
 #include <core/scoring/hbonds/hbtrie/HBAtom.hh> // WIN32 INCLUDE
@@ -39,12 +44,10 @@
 #include <core/scoring/hbonds/hbtrie/HBCPData.hh> // WIN32 INCLUDE
 #include <core/scoring/vdwaals/VDWTrie.hh>
 #endif
-// Project Headers
-#include <core/scoring/etable/EtableEnergy.fwd.hh>
-#include <core/types.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
@@ -52,11 +55,10 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
-#include <utility/vector1_bool.hh>
+#ifdef    SERIALIZATION
+#include <cereal/access.fwd.hpp>
+#endif // SERIALIZATION
 
-
-// STL Headers
-//#include <cmath>
 
 namespace core {
 namespace scoring {
@@ -146,6 +148,13 @@ private:
 	bool is_term_;
 	Size sibling_;
 	Size rotamers_in_subtree_;
+
+#ifdef SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 
 };
 
@@ -1358,6 +1367,16 @@ private: // DATA
 	Size max_branch_depth_; //rename this max branch depth
 	Size max_heavyatom_depth_;
 	Size max_atom_depth_;
+
+#ifdef SERIALIZATION
+protected:
+	RotamerTrie() {}
+	friend class cereal::access;
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 

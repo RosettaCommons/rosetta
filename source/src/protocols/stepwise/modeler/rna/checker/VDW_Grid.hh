@@ -22,6 +22,11 @@
 #include <core/types.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -78,6 +83,12 @@ private:
 	mutable utility::vector1< utility::vector1< utility::vector1< bool > > > bins_;
 	mutable bool is_occupied_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -86,5 +97,10 @@ private:
 } //modeler
 } //stepwise
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_stepwise_modeler_rna_checker_VDW_Grid )
+#endif // SERIALIZATION
+
 
 #endif

@@ -357,7 +357,8 @@ void CalcsTestMover::register_calculators(){
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		if ( basic::options::option[ basic::options::OptionKeys::bpf::variable_sasa_radii ] ) {
-			CalculatorFactory::Instance().register_calculator( Sasa_, PoseMetricCalculatorOP( new devel::vardist_solaccess::VarSolDistSasaCalculator ) );
+			using namespace devel::vardist_solaccess;
+			CalculatorFactory::Instance().register_calculator( Sasa_, VarSolDistSasaCalculatorOP( new VarSolDistSasaCalculator ) );
 		} else {
 			CalculatorFactory::Instance().register_calculator( Sasa_, PoseMetricCalculatorOP( new simple_calculators::SasaCalculatorLegacy ) );
 		}

@@ -100,7 +100,7 @@ switch_to_residue_type_set(
 			if ( (rsd.aa()==aa_unk) || (rsd.aa()==aa_vrt) ) continue; //skip invalid residue
 
 			//check current restype
-			std::string const & current_type_set_name ( rsd.type().residue_type_set().name() );
+			std::string const & current_type_set_name ( rsd.type().residue_type_set()->name() );
 			if ( current_type_set_name == chemical::CENTROID_ROT ) {
 				TR.Warning << "core::util::switch_to_residue_type_set: residue " << i
 					<< " already in centroid_rot residue_type_set" << std::endl;
@@ -251,7 +251,7 @@ switch_to_residue_type_set(
 
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		// in future we may have a conformation using mixed type set, so check this by residue
-		std::string const & current_type_set_name ( rsd.type().residue_type_set().name() ); // database_directory() );
+		std::string const & current_type_set_name ( rsd.type().residue_type_set()->name() ); // database_directory() );
 		if ( current_type_set_name == type_set_name ) {
 			TR.Warning << "core::util::switch_to_residue_type_set: residue " << i << " already in " << type_set_name
 				<< " residue_type_set" << std::endl;

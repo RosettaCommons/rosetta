@@ -19,11 +19,13 @@
 #include <basic/datacache/DataMap.hh>
 
 // Package headers
+#include <core/select/residue_selector/util.hh>
 #include <core/pose/PDBInfo.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
 #include <utility/assert.hh>
@@ -110,6 +112,14 @@ std::string ResiduePDBInfoHasLabelSelector::class_name() {
 	return "ResiduePDBInfoHasLabel";
 }
 
+void
+ResiduePDBInfoHasLabelSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "property", xs_string, true /*required*/ ));
+	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+}
+
 ResidueSelectorOP
 ResiduePDBInfoHasLabelSelectorCreator::create_residue_selector() const {
 	return ResidueSelectorOP( new ResiduePDBInfoHasLabelSelector );
@@ -118,6 +128,11 @@ ResiduePDBInfoHasLabelSelectorCreator::create_residue_selector() const {
 std::string
 ResiduePDBInfoHasLabelSelectorCreator::keyname() const {
 	return ResiduePDBInfoHasLabelSelector::class_name();
+}
+
+void
+ResiduePDBInfoHasLabelSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
+	return ResiduePDBInfoHasLabelSelector::provide_selector_xsd( xsd );
 }
 
 } //namespace residue_selector

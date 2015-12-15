@@ -41,6 +41,17 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.NamedAngleConstraint" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -50,7 +61,8 @@ NamedAngleConstraint::NamedAngleConstraint(
 	id::NamedAtomID const & a2,
 	id::NamedAtomID const & a3,
 	func::FuncOP func,
-	ScoreType scoretype ):
+	ScoreType scoretype
+) :
 	AngleConstraint( id::AtomID( 0, a1.rsd() ), id::AtomID( 0, a2.rsd() ), id::AtomID( 0, a3.rsd() ), func, scoretype ),
 	named_atom1_( a1 ),
 	named_atom2_( a2 ),
@@ -100,6 +112,25 @@ NamedAngleConstraint::remapped_clone(
 		return NULL;
 	}
 }
+
+bool NamedAngleConstraint::operator == ( Constraint const & rhs ) const {
+	// base class operator== ensures that both classes are of type NamedAngleConstraint
+	// through the mutual invocation of same_type_as_me
+	if ( ! AngleConstraint::operator == ( rhs ) ) return false;
+
+	NamedAngleConstraint const & rhs_napc( static_cast< NamedAngleConstraint const & > ( rhs ) );
+	if ( named_atom1_ != rhs_napc.named_atom1_ ) return false;
+	if ( named_atom2_ != rhs_napc.named_atom2_ ) return false;
+	if ( named_atom3_ != rhs_napc.named_atom3_ ) return false;
+
+	return true;
+}
+
+bool NamedAngleConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< NamedAngleConstraint const * > ( &other );
+}
+
 
 void
 NamedAngleConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
@@ -181,6 +212,45 @@ NamedAngleConstraint::read_def(
 	}
 } // read_def
 
+NamedAngleConstraint::NamedAngleConstraint( NamedAngleConstraint const & src ) :
+	AngleConstraint( src ),
+	named_atom1_( src.named_atom1_ ),
+	named_atom2_( src.named_atom2_ ),
+	named_atom3_( src.named_atom3_ )
+{}
+
+
 }
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::constraints::NamedAngleConstraint::NamedAngleConstraint() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::NamedAngleConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< AngleConstraint >( this ) );
+	arc( CEREAL_NVP( named_atom1_ ) ); // id::NamedAtomID
+	arc( CEREAL_NVP( named_atom2_ ) ); // id::NamedAtomID
+	arc( CEREAL_NVP( named_atom3_ ) ); // id::NamedAtomID
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::NamedAngleConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< AngleConstraint >( this ) );
+	arc( named_atom1_ ); // id::NamedAtomID
+	arc( named_atom2_ ); // id::NamedAtomID
+	arc( named_atom3_ ); // id::NamedAtomID
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::NamedAngleConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::NamedAngleConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_NamedAngleConstraint )
+#endif // SERIALIZATION

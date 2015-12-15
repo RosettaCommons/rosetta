@@ -35,6 +35,15 @@
 #include <iostream>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace helical_bundle {
 namespace parameters {
@@ -139,3 +148,63 @@ void BundleParameters::get_pdb_remark(std::stringstream &remark) const {
 } // namespace helical_bundle
 } // namespace protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::helical_bundle::parameters::BundleParameters::save( Archive & arc ) const {
+	arc( cereal::base_class< core::conformation::parametric::Parameters >( this ) );
+	arc( CEREAL_NVP( r0_ ) ); // core::Real
+	arc( CEREAL_NVP( omega0_ ) ); // core::Real
+	arc( CEREAL_NVP( delta_omega0_ ) ); // core::Real
+	arc( CEREAL_NVP( residues_per_repeat_ ) ); // core::Size
+	arc( CEREAL_NVP( repeating_unit_offset_ ) ); // core::Size
+	arc( CEREAL_NVP( atoms_per_residue_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( r1_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( omega1_ ) ); // core::Real
+	arc( CEREAL_NVP( delta_omega1_all_ ) ); // core::Real
+	arc( CEREAL_NVP( z1_ ) ); // core::Real
+	arc( CEREAL_NVP( delta_omega1_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( delta_z1_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( z1_offset_ ) ); // core::Real
+	arc( CEREAL_NVP( z0_offset_ ) ); // core::Real
+	arc( CEREAL_NVP( invert_helix_ ) ); // _Bool
+	arc( CEREAL_NVP( delta_t_ ) ); // core::Real
+	arc( CEREAL_NVP( allow_dihedrals_ ) ); // _Bool
+	arc( CEREAL_NVP( allow_bondangles_ ) ); // _Bool
+	arc( CEREAL_NVP( allow_bondlengths_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::helical_bundle::parameters::BundleParameters::load( Archive & arc ) {
+	arc( cereal::base_class< core::conformation::parametric::Parameters >( this ) );
+	arc( r0_ ); // core::Real
+	arc( omega0_ ); // core::Real
+	arc( delta_omega0_ ); // core::Real
+	arc( residues_per_repeat_ ); // core::Size
+	arc( repeating_unit_offset_ ); // core::Size
+	arc( atoms_per_residue_ ); // utility::vector1<core::Size>
+	arc( r1_ ); // utility::vector1<core::Real>
+	arc( omega1_ ); // core::Real
+	arc( delta_omega1_all_ ); // core::Real
+	arc( z1_ ); // core::Real
+	arc( delta_omega1_ ); // utility::vector1<core::Real>
+	arc( delta_z1_ ); // utility::vector1<core::Real>
+	arc( z1_offset_ ); // core::Real
+	arc( z0_offset_ ); // core::Real
+	arc( invert_helix_ ); // _Bool
+	arc( delta_t_ ); // core::Real
+	arc( allow_dihedrals_ ); // _Bool
+	arc( allow_bondangles_ ); // _Bool
+	arc( allow_bondlengths_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::helical_bundle::parameters::BundleParameters );
+CEREAL_REGISTER_TYPE( protocols::helical_bundle::parameters::BundleParameters )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_helical_bundle_parameters_BundleParameters )
+#endif // SERIALIZATION

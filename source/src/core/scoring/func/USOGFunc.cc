@@ -29,6 +29,17 @@
 
 #define SQRT_2PI 2.50662721600161
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -53,6 +64,25 @@ USOGFunc::USOGFunc(core::Real mean, core::Real std_dev, core::Real weight) {
 FuncOP USOGFunc::clone() const {
 	return FuncOP( new USOGFunc(*this) );
 }
+
+bool USOGFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	USOGFunc const & other_downcast( static_cast< USOGFunc const & > (other) );
+	if ( means_    != other_downcast.means_    ) return false;
+	if ( std_devs_ != other_downcast.std_devs_ ) return false;
+	if ( weights_  != other_downcast.weights_  ) return false;
+
+	return true;
+}
+
+bool USOGFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< USOGFunc const * > ( &other );
+}
+
 
 core::Real USOGFunc::func(const core::Real x) const {
 	Real score = 0;
@@ -127,3 +157,31 @@ core::Real readValueOrDie(std::istream& in) {
 }  // namespace constraints
 }  // namespace scoring
 }  // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::USOGFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( means_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( std_devs_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( weights_ ) ); // utility::vector1<core::Real>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::USOGFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( means_ ); // utility::vector1<core::Real>
+	arc( std_devs_ ); // utility::vector1<core::Real>
+	arc( weights_ ); // utility::vector1<core::Real>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::USOGFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::USOGFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_USOGFunc )
+#endif // SERIALIZATION

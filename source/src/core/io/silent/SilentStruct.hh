@@ -79,6 +79,13 @@ public:
 		core::pose::Pose & pose
 	) const;
 
+	/// @brief non-virtual interface that takes a ResidueTypeSetCOP (instead of a const & to one)
+	/// and invokes the virtual method that takes the const &.
+	void fill_pose(
+		core::pose::Pose & pose,
+		core::chemical::ResidueTypeSetCOP residue_set
+	) const;
+
 	/// @brief Fill a Pose with the conformation information in this
 	/// SilentStruct and the ResidueTypeSet provided by the caller. This is
 	/// a virtual method which should be implemented by classes derived from

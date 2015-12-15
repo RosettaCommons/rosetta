@@ -74,6 +74,18 @@
 #include <boost/unordered_map.hpp>
 
 #include <basic/Tracer.hh>
+
+#ifdef SERIALIZATION
+// Project serialization headers
+#include <core/scoring/trie/RotamerTrie.srlz.hh>
+
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 static basic::Tracer TR( "core.scoring.hbonds.HBondEnergy" );
 
 namespace core {
@@ -226,8 +238,8 @@ HBondEnergy::setup_for_packing(
 	} else if ( pose.conformation().is_membrane() || options_->mphbond() ) {
 
 		// Initialize membrane specific parameters
-		normal_ = pose.conformation().membrane_info()->membrane_normal();
-		center_ = pose.conformation().membrane_info()->membrane_center();
+		normal_ = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
+		center_ = pose.conformation().membrane_info()->membrane_center(pose.conformation());
 		thickness_ = pose.conformation().membrane_info()->membrane_thickness();
 		steepness_ = pose.conformation().membrane_info()->membrane_steepness();
 
@@ -305,8 +317,8 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 	} else if ( pose.conformation().is_membrane() || options_->mphbond() ) {
 
 		// Initialize membrane parameters
-		normal_ = pose.conformation().membrane_info()->membrane_normal();
-		center_ = pose.conformation().membrane_info()->membrane_center();
+		normal_ = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
+		center_ = pose.conformation().membrane_info()->membrane_center(pose.conformation());
 		thickness_ = pose.conformation().membrane_info()->membrane_thickness();
 		steepness_ = pose.conformation().membrane_info()->membrane_steepness();
 
@@ -1475,3 +1487,13 @@ HBondEnergy::version() const
 } // hbonds
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+typedef core::scoring::trie::RotamerTrie< core::scoring::hbonds::hbtrie::HBAtom, core::scoring::hbonds::hbtrie::HBCPData > HBRotTrie;
+
+SAVE_AND_LOAD_SERIALIZABLE( HBRotTrie );
+CEREAL_REGISTER_TYPE( HBRotTrie )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_hbonds_HBondEnergy )
+#endif

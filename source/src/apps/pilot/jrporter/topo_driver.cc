@@ -148,7 +148,7 @@ int main( int argc, char** argv ){
   devel::init( argc, argv );
 
   core::pose::Pose pose;
-  core::pose::make_pose_from_sequence(pose, "FRMQIFVYFRIENDS", "fa_standard");
+  core::pose::make_pose_from_sequence(pose, "FRMQIFVYFRIENDS", core::chemical::FA_STANDARD);
 
   for( core::Size i = 1; i <= pose.total_residue(); ++i ){
     pose.set_phi( i, -65 );

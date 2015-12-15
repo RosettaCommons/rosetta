@@ -51,6 +51,12 @@ private:
 	Energy max_rot_bumpenergy_;
 	Energy best_rot_bumpenergy_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 

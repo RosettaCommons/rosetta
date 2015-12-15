@@ -470,8 +470,8 @@ scan_hbond_jumps(
 	//if less than 4 atoms in res, add vrt res so final torsion exists
 	Size n_new_rsd( 1 );
 	if ( new_rsd.natoms() < 4 ) {
-		chemical::ResidueTypeSet const & rsd_set( rsd.residue_type_set() );
-		conformation::ResidueOP vrt_rsd( conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
+		chemical::ResidueTypeSetCOP rsd_set( rsd.residue_type_set() );
+		conformation::ResidueOP vrt_rsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "VRT" ) ) );
 		pose.append_residue_by_jump( *vrt_rsd, pose.total_residue() );
 		n_new_rsd += 1;
 	}
@@ -710,13 +710,13 @@ byres_analysis(
 	scorefxn->score( pose );
 	hbset.setup_for_residue_pair_energies( pose, false, false );
 
-	chemical::ResidueTypeSet const & rsd_set( pose.residue( 1 ).residue_type_set() );
+	chemical::ResidueTypeSetCOP rsd_set( pose.residue( 1 ).residue_type_set() );
 
 	//user defined residue type to scan with
 	std::string const restypes( option[ hbscan::restypes ] );
 	for ( Size iaa = 0; iaa <= restypes.length() - 1; ++iaa ) {
 		conformation::ResidueOP dock_rsd( conformation::ResidueFactory::create_residue(
-			*( rsd_set.get_representative_type_aa( chemical::AA( chemical::aa_from_oneletter_code( restypes[ iaa ] ) ) ) ) ) );
+			*( rsd_set->get_representative_type_aa( chemical::AA( chemical::aa_from_oneletter_code( restypes[ iaa ] ) ) ) ) ) );
 		for ( Size seqpos = 1; seqpos <= nres; ++seqpos ) {
 			//if option is set, only check the user defined sequence position
 			if ( option[ hbscan::lig_seqpos ].user() && seqpos != Size( option[ hbscan::lig_seqpos ] ) ) continue;

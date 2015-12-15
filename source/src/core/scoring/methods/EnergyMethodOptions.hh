@@ -24,7 +24,7 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/etable/EtableOptions.fwd.hh>
-#include <core/scoring/SecondaryStructureWeights.hh> /// REPLACE THIS WITH .fwd.hh
+#include <core/scoring/SecondaryStructureWeights.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/rna/RNA_EnergyMethodOptions.fwd.hh>
 #include <core/scoring/methods/FreeDOF_Options.fwd.hh>
@@ -39,6 +39,12 @@
 #include <map>
 
 #include <utility/vector1.hh>
+
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 
 namespace core {
@@ -556,6 +562,12 @@ private:
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;
 	core::scoring::mm::MMBondAngleResidueTypeParamSetOP bond_angle_residue_type_param_set_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -565,5 +577,10 @@ operator<< ( std::ostream & out, EnergyMethodOptions const & options );
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_methods_EnergyMethodOptions )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_scoring_ScoreFunction_HH

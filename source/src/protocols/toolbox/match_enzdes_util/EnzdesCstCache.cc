@@ -34,6 +34,18 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
@@ -333,3 +345,80 @@ EnzCstTemplateResCache::remap_resid( core::id::SequenceMapping const & smap ){
 }
 } // enzdes
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::match_enzdes_util::EnzdesCstCache::EnzdesCstCache() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzdesCstCache::save( Archive & arc ) const {
+	arc( CEREAL_NVP( param_cache_ ) ); // utility::vector1<EnzdesCstParamCacheOP>
+	arc( CEREAL_NVP( enzcst_io_ ) ); // EnzConstraintIOCOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzdesCstCache::load( Archive & arc ) {
+	arc( param_cache_ ); // utility::vector1<EnzdesCstParamCacheOP>
+	std::shared_ptr< protocols::toolbox::match_enzdes_util::EnzConstraintIO > local_enzcst_io;
+	arc( local_enzcst_io ); // EnzConstraintIOCOP
+	enzcst_io_ = local_enzcst_io; // copy the non-const pointer(s) into the const pointer(s)
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::EnzdesCstCache );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::EnzdesCstCache )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzdesCstParamCache::save( Archive & arc ) const {
+	arc( CEREAL_NVP( template_res_cache_ ) ); // utility::vector1<EnzCstTemplateResCacheOP>
+	arc( CEREAL_NVP( active_pose_constraints_ ) ); // utility::vector1<core::scoring::constraints::ConstraintCOP>
+	arc( CEREAL_NVP( covalent_connections_ ) ); // utility::vector1<CovalentConnectionReplaceInfoCOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzdesCstParamCache::load( Archive & arc ) {
+	arc( template_res_cache_ ); // utility::vector1<EnzCstTemplateResCacheOP>
+	utility::vector1< std::shared_ptr< core::scoring::constraints::Constraint > > local_active_pose_constraints;
+	arc( local_active_pose_constraints ); // utility::vector1<core::scoring::constraints::ConstraintCOP>
+	active_pose_constraints_ = local_active_pose_constraints; // copy the non-const pointer(s) into the const pointer(s)
+	utility::vector1< std::shared_ptr< protocols::toolbox::match_enzdes_util::CovalentConnectionReplaceInfo > > local_covalent_connections;
+	arc( local_covalent_connections ); // utility::vector1<CovalentConnectionReplaceInfoCOP>
+	covalent_connections_ = local_covalent_connections; // copy the non-const pointer(s) into the const pointer(s)
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::EnzdesCstParamCache );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::EnzdesCstParamCache )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzCstTemplateResCache::save( Archive & arc ) const {
+	arc( CEREAL_NVP( seqpos_map_ ) ); // SeqposTemplateAtomsMap
+	arc( CEREAL_NVP( not_in_pose_ ) ); // _Bool
+	arc( CEREAL_NVP( pose_data_uptodate_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzCstTemplateResCache::load( Archive & arc ) {
+	arc( seqpos_map_ ); // SeqposTemplateAtomsMap
+	arc( not_in_pose_ ); // _Bool
+	arc( pose_data_uptodate_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::EnzCstTemplateResCache );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::EnzCstTemplateResCache )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_EnzdesCstCache )
+#endif // SERIALIZATION

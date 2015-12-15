@@ -22,8 +22,13 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-
 #include <utility/vector1.hh>
+
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 
 namespace core {
@@ -75,7 +80,6 @@ public:
 	Size ur_conn_id() const;
 	void ur_conn_id( Size );
 
-
 	ResConnID lr_resconnid() const;
 	void lr_resconnid( ResConnID );
 
@@ -84,6 +88,18 @@ public:
 
 	Size nbonds() const;
 	void nbonds( Size );
+
+#ifdef SERIALIZATION
+	/// @brief Serialization method
+	template < class Archive >
+	void
+	save( Archive & arch ) const;
+
+	/// @brief De-serialization method
+	template < class Archive >
+	void
+	load( Archive & arch );
+#endif
 
 private:
 	ResConnID lr_conn_;
@@ -119,6 +135,18 @@ public:
 
 	Size size() const { return pseudo_bonds_.size(); }
 
+#ifdef SERIALIZATION
+	/// @brief Serialization method
+	template < class Archive >
+	void
+	save( Archive & arch ) const;
+
+	/// @brief De-serialization method
+	template < class Archive >
+	void
+	load( Archive & arch );
+#endif
+
 private:
 
 	utility::vector1< PseudoBond > pseudo_bonds_;
@@ -128,5 +156,9 @@ private:
 
 } // conformation
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_PseudoBond )
+#endif // SERIALIZATION
 
 #endif

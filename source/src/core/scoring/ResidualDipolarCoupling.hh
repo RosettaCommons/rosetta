@@ -23,6 +23,13 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/vector0.hh>
+#include <utility/fixedsizearray0.hh>
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace scoring {
@@ -40,11 +47,20 @@ class ResidualDipolarCoupling: public basic::datacache::CacheableData {
 	// friend class ResidualDipolarCouplingEnergy;
 public:
 	// typedefs
-	typedef core::Real Real;
-	typedef core::Size Size;
-	typedef utility::vector1<core::scoring::RDC> RDC_lines;
-	typedef core::Real Tensor[3][3];
-	typedef core::Real rvec[3];
+	typedef core::Real Real; // this seems unnecessary since this class lives in core
+	typedef core::Size Size; // this seems unnecessary since this class lives in core
+
+	typedef utility::vector1< core::scoring::RDC > RDC_lines;
+
+	//typedef core::Real rvec[3];
+	//typedef core::Real Tensor[3][3];
+	typedef utility::fixedsizearray0< core::Real, 3 > rvec;
+	typedef utility::fixedsizearray0< rvec, 3 >       Tensor;
+
+	// typedef core::Real rvec5[5];
+	// typedef core::Real Tensor5[5][5];
+	typedef utility::fixedsizearray0< core::Real, 5 > rvec5;
+	typedef utility::fixedsizearray0< rvec5, 5 >      Tensor5;
 
 public:
 	/// @brief standard c'stor -- will access option -in:file:rdc to read RDC data
@@ -55,7 +71,8 @@ public:
 	//  }
 
 	ResidualDipolarCoupling( std::string const& filename = "" ) :
-		nex_(0), nrows_(0), COMMON_DENOMINATOR(36.5089/1.041/1.041/1.041) {
+		nex_(0), nrows_(0)
+	{
 		reserve_buffers();
 		if ( filename != "" ) {
 			read_RDC_file( 1, filename );
@@ -69,7 +86,8 @@ public:
 
 	/// @brief alternative c'stor if you have a list of RDC lines
 	ResidualDipolarCoupling(RDC_lines data_in) :
-		All_RDC_lines_(data_in), COMMON_DENOMINATOR(36.5089/1.041/1.041/1.041) {
+		All_RDC_lines_(data_in)
+	{
 		preprocess_data();
 		reserve_buffers();
 	}
@@ -135,7 +153,8 @@ public:
 	core::Size get_n_alignments() const {return nex_;}
 
 	/// @brief return tensor of certain experiment... exp_id starts at 1
-	Tensor* tensor( ) {
+	utility::vector0< Tensor > &
+	tensor( ) {
 		return S_;
 	}
 
@@ -182,36 +201,41 @@ private:
 
 private:
 	/// some internal buffers in
-	typedef core::Real rvec5[5];
-	typedef core::Real Tensor5[5][5];
 	RDC_lines All_RDC_lines_;
-	rvec* EV_; // rvec3
-	rvec5* D_; //rvec5 x nrows
-	rvec5* rhs_; //rvec5 x nrows
-	Tensor* S_; // 3 x 3 x nex
-	Tensor5* T_; // 5 x 5 x nex
+	utility::vector0< rvec > EV_; // rvec3
+	utility::vector0< rvec5 > D_; //rvec5 x nrows
+	utility::vector0< rvec5 > rhs_; //rvec5 x nrows
+	utility::vector0< Tensor > S_; // 3 x 3 x nex
+	utility::vector0< Tensor5 > T_; // 5 x 5 x nex
 	core::Size nex_; //number of alignment media, i.e., how many tensors
 	core::Size nrows_;
 	core::Real R_; //clore R factor only valid after compute_dipscore...
 	core::Real rmsd_;
 
 	//stuff only computed for information purposes -- call compute_tensor_stats()
-	Tensor* SD_;//3 x 3 x nex
-	Tensor* EIG_;
-	core::Real* FA_;//Fractional Anisotropy of the diffusion tensor - NGS
-	core::Real* trace_;
-	core::Real* maxz_;
+	utility::vector0< Tensor > SD_;//3 x 3 x nex
+	utility::vector0< Tensor > EIG_;
+	utility::vector0< core::Real > FA_;//Fractional Anisotropy of the diffusion tensor - NGS
+	utility::vector0< core::Real > trace_;
+	utility::vector0< core::Real > maxz_;
 
 	//stuff for nls
-	core::Real* r0_;
-	core::Real* r1_;
-	core::Real* r2_;
-	core::Real* exprdc_;
-	core::Real* rdcconst_;
-	core::Real* rdcweight_;
-	core::Size* lenex_;
+	utility::vector0< core::Real > r0_;
+	utility::vector0< core::Real > r1_;
+	utility::vector0< core::Real > r2_;
+	utility::vector0< core::Real > exprdc_;
+	utility::vector0< core::Real > rdcconst_;
+	utility::vector0< core::Real > rdcweight_;
+	utility::vector0< core::Size > lenex_;
 
-	Real const COMMON_DENOMINATOR;
+	static Real const COMMON_DENOMINATOR;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /////////////////////////////////////////////////
@@ -367,6 +391,13 @@ private:
 	Size expid_;
 	std::string atom1_;
 	std::string atom2_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 extern std::ostream& operator<<(std::ostream&, ResidualDipolarCoupling const&);
@@ -374,5 +405,10 @@ extern std::ostream& operator<<(std::ostream&, RDC const&);
 
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_ResidualDipolarCoupling )
+#endif // SERIALIZATION
+
 
 #endif

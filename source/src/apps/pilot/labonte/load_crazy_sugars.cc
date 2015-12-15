@@ -20,6 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
+#include <utility/excn/Exceptions.hh>
 
 using namespace std;
 using namespace core;

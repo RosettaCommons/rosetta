@@ -42,6 +42,16 @@
 #include <iostream>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace reference_pose {
@@ -132,3 +142,27 @@ void ReferencePose::zero_reference_pose_mapping_at_seqpos( core::Size const seqp
 } // namespace pose
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::reference_pose::ReferencePose::save( Archive & arc ) const {
+	arc( CEREAL_NVP( stores_residue_map_ ) ); // _Bool
+	arc( CEREAL_NVP( residue_map_ ) ); // std::map<core::Size, core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::reference_pose::ReferencePose::load( Archive & arc ) {
+	arc( stores_residue_map_ ); // _Bool
+	arc( residue_map_ ); // std::map<core::Size, core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::reference_pose::ReferencePose );
+CEREAL_REGISTER_TYPE( core::pose::reference_pose::ReferencePose )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_reference_pose_ReferencePose )
+#endif // SERIALIZATION

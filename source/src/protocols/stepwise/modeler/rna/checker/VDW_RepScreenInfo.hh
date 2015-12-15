@@ -24,6 +24,11 @@
 #include <string>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -52,6 +57,12 @@ public:
 	bool in_root_partition;
 	core::Size import_ID;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -61,5 +72,10 @@ public:
 } //modeler
 } //stepwise
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_stepwise_modeler_rna_checker_VDW_RepScreenInfo )
+#endif // SERIALIZATION
+
 
 #endif

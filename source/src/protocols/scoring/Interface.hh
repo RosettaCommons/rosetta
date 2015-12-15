@@ -35,6 +35,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace scoring {
 
@@ -146,9 +151,21 @@ private:
 	void ligand_calculate( core::pose::Pose const & pose );
 	void NA_calculate( core::pose::Pose const & ); //currently set to protein_calculate()
 	void symmetric_protein_calculate( core::pose::Pose const & pose );
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace scoring
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_scoring_Interface )
+#endif // SERIALIZATION
+
 
 #endif

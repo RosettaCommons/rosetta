@@ -17,6 +17,16 @@
 // Utility header
 #include <algorithm>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#include <cereal/types/vector.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace symmetry {
@@ -119,3 +129,28 @@ operator!=(
 } // symmetry
 } // conformation
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::conformation::symmetry::SymSlideInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( slide_type_ ) ); // enum core::conformation::symmetry::SlideType
+	arc( CEREAL_NVP( score_criteria_ ) ); // enum core::conformation::symmetry::SlideCriteriaType
+	arc( CEREAL_NVP( SlideCriteriaVal_ ) ); // std::string
+	arc( CEREAL_NVP( slide_order_ ) ); // std::vector<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::conformation::symmetry::SymSlideInfo::load( Archive & arc ) {
+	arc( slide_type_ ); // enum core::conformation::symmetry::SlideType
+	arc( score_criteria_ ); // enum core::conformation::symmetry::SlideCriteriaType
+	arc( SlideCriteriaVal_ ); // std::string
+	arc( slide_order_ ); // std::vector<core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::symmetry::SymSlideInfo );
+#endif // SERIALIZATION

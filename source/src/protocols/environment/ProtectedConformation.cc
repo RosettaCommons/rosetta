@@ -356,8 +356,8 @@ ResidueOP ProtectedConformation::match_variants(
 	using namespace core::chemical;
 	using namespace core::conformation;
 
-	Residue const& old_rsd = residue( seqpos );
-	ResidueTypeSet const& rsd_set( in_rsd.residue_type_set() );
+	Residue const & old_rsd = residue( seqpos );
+	ResidueTypeSetCOP rsd_set( in_rsd.residue_type_set() );
 	ResidueOP new_rsd = ResidueOP( new Residue( in_rsd ) );
 
 	// add any variants in the old residue that aren't in the new residue
@@ -368,7 +368,7 @@ ResidueOP ProtectedConformation::match_variants(
 				old_rsd.type().has_variant_type( variant ) ) {
 			tr.Debug << "Adding variant " << old_variants[i] << " from " << old_rsd.name3() << old_rsd.seqpos()
 				<< " to " << new_rsd->name3() << new_rsd->seqpos() << std::endl;
-			new_rsd = add_variant( new_rsd, old_rsd, rsd_set, variant, *this );
+			new_rsd = add_variant( new_rsd, old_rsd, *rsd_set, variant, *this );
 		}
 	}
 
@@ -378,7 +378,7 @@ ResidueOP ProtectedConformation::match_variants(
 		VariantType variant = in_rsd.type().properties().get_variant_from_string( new_variants[i] );
 		if ( new_rsd->type().has_variant_type( variant ) &&
 				!old_rsd.type().has_variant_type( variant ) ) {
-			new_rsd = rm_variant( new_rsd, old_rsd, rsd_set, variant, *this );
+			new_rsd = rm_variant( new_rsd, old_rsd, *rsd_set, variant, *this );
 		}
 	}
 
@@ -411,9 +411,9 @@ ProtectedConformation::replace_residue_sandbox(
 				<< residue( seqpos ).natoms() << " atoms) failed because the input residue ("
 				<< new_rsd->name3() << ", " << new_rsd->natoms()
 				<< " atoms) differed in the number of atoms from the current residue." << std::endl
-				<< "Residue to replace (typeset: " << residue( seqpos ).residue_type_set().name() << "):" << std::endl
+				<< "Residue to replace (typeset: " << residue( seqpos ).residue_type_set()->name() << "):" << std::endl
 				<< residue( seqpos ).type() << std::endl
-				<< "Residue replacing (typeset: " << new_rsd->residue_type_set().name() << "):" << std::endl
+				<< "Residue replacing (typeset: " << new_rsd->residue_type_set()->name() << "):" << std::endl
 				<< in_rsd.type() << std::endl;
 			if ( tr.Debug.visible() ) { tr.Debug << ss.str() << std::endl; }
 

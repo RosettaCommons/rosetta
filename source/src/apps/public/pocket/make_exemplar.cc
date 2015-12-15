@@ -153,7 +153,7 @@ void ExemplarMover::apply( Pose & pose ) {
 		}
 		std::string out_exfname = get_current_tag().substr(0,get_current_tag().find_last_of("_")) +".pdb."+ resid_tag + ".exemplar.pdb";
 
-		std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(pose, resid_c);
+		std::vector< conformation::ResidueCOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(pose, resid_c);
 
 		protocols::pockets::PocketGrid comparison_pg( residues );
 		comparison_pg.zeroAngle();

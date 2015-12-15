@@ -39,6 +39,12 @@
 // C++ headers
 #include <string>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -279,11 +285,22 @@ private:
 	core::Real hb_env_dep_new_low_scale_;
 	core::Real hb_env_dep_new_low_nneigh_;
 	core::Real hb_env_dep_new_high_nneigh_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // hbonds
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_hbonds_HBondOptions )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDE_core_scoring_hbonds_HBondOptions_HH

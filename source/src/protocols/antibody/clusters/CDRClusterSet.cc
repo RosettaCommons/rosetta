@@ -21,6 +21,15 @@
 
 static THREAD_LOCAL basic::Tracer TR("protocols.antibody.clusters.CDRClusterSet");
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace antibody {
 namespace clusters {
@@ -171,3 +180,27 @@ BasicCDRClusterSet::get_cluster(CDRNameEnum cdr) const {
 } //clusters
 } //antibody
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::antibody::clusters::BasicCDRClusterSet::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( clusters_ ) ); // utility::vector1<CDRClusterOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::antibody::clusters::BasicCDRClusterSet::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( clusters_ ); // utility::vector1<CDRClusterOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::antibody::clusters::BasicCDRClusterSet );
+CEREAL_REGISTER_TYPE( protocols::antibody::clusters::BasicCDRClusterSet )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_antibody_clusters_CDRClusterSet )
+#endif // SERIALIZATION

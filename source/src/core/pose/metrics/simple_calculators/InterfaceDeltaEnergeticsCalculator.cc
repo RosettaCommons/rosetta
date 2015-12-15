@@ -41,6 +41,17 @@ using namespace core::pose;
 using namespace core::pose::metrics;
 using namespace utility;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace metrics {
@@ -246,3 +257,38 @@ void InterfaceDeltaEnergeticsCalculator::recompute( Pose const & this_pose ) {
 } // metrics
 } // pose
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator::InterfaceDeltaEnergeticsCalculator() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+	arc( CEREAL_NVP( name_of_InterfaceNeighborDefinitionCalculator_ ) ); // std::string
+	arc( CEREAL_NVP( score_types_to_ignore_ ) ); // utility::vector1<core::scoring::ScoreType>
+	arc( CEREAL_NVP( delta_energies_unweighted_ ) ); // core::scoring::EnergyMap
+	arc( CEREAL_NVP( weights_ ) ); // core::scoring::EnergyMap
+	arc( CEREAL_NVP( weighted_total_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+	arc( name_of_InterfaceNeighborDefinitionCalculator_ ); // std::string
+	arc( score_types_to_ignore_ ); // utility::vector1<core::scoring::ScoreType>
+	arc( delta_energies_unweighted_ ); // core::scoring::EnergyMap
+	arc( weights_ ); // core::scoring::EnergyMap
+	arc( weighted_total_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator );
+CEREAL_REGISTER_TYPE( core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_metrics_simple_calculators_InterfaceDeltaEnergeticsCalculator )
+#endif // SERIALIZATION

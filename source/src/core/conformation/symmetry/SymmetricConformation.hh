@@ -30,6 +30,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace symmetry {
@@ -54,14 +60,14 @@ public:
 	/// @brief copy constructor
 	//SymmetricConformation( SymmetricConformation const & src );
 
-	/// @brief operator
-	Conformation &
-	operator=( SymmetricConformation const & src );
-
-	/// @brief equals operator. Must override this, since the operator= that takes a SymmetricConformation will not be used if both references are of type Conformation.
+	/// @brief virtual assignment operator
 	virtual
 	Conformation &
 	operator=( Conformation const & src );
+
+	virtual
+	void
+	detached_copy( Conformation const & src );
 
 	ConformationOP
 	clone() const;
@@ -269,11 +275,22 @@ private:
 	//   computed when needed, invalidated when a jump changes
 	// multicomp: store transforms for each component
 	std::map< char, utility::vector1< numeric::HomogeneousTransform< core::Real > > > Tsymm_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // symmetry
 } // conformation
 } // core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_symmetry_SymmetricConformation )
+#endif // SERIALIZATION
 
 
 #endif

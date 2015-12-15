@@ -25,10 +25,16 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
 #include <list>
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace select {
@@ -63,6 +69,7 @@ public:
 	get_name() const;
 
 	static std::string class_name();
+	static void provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd );
 
 	utility::vector1< std::string > const &
 	chain_strings() const;
@@ -78,12 +85,23 @@ private: // data members
 
 	utility::vector1< std::string > chain_strings_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } //namespace residue_selector
 } //namespace select
 } //namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_task_residue_selector_ChainSelector )
+#endif // SERIALIZATION
 
 
 #endif

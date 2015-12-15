@@ -55,7 +55,8 @@ public:
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueOP res10( new core::conformation::Residue( trpcage.residue( 10 ) ) );
-		devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
+		devel::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new devel::vardist_solaccess::VarSolDistSasaCalculator );
+		//devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
 		VarSolDRotamerDots dots(res10, vsasa_calc);
 		dots.increment_self_overlap();
 		//ResidueKinWriter writer;
@@ -107,7 +108,8 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueOP res10( new core::conformation::Residue( trpcage.residue( 10 ) ) );
 		ResidueOP res11( new core::conformation::Residue( trpcage.residue( 11 ) ) );
-		devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
+		devel::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new devel::vardist_solaccess::VarSolDistSasaCalculator );
+		//devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
 		VarSolDRotamerDots dots10(res10, vsasa_calc);
 		VarSolDRotamerDots dots11(res11, vsasa_calc);
 		//dots10.increment_self_overlap();
@@ -205,7 +207,7 @@ public:
 	void radii_monotonically_increasing() {
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueOP res1( new core::conformation::Residue( trpcage.residue( 1 ) ) );
-		devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
+		devel::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new devel::vardist_solaccess::VarSolDistSasaCalculator );
 		VarSolDRotamerDots dots1(res1, vsasa_calc);
 		core::Size res1natoms = res1->natoms();
 		utility::vector1< core::Real > r1_collision_radii( res1natoms );
@@ -294,7 +296,8 @@ public:
 	void test_shells_evenly_spaced() {
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueOP res1( new core::conformation::Residue( trpcage.residue( 1 ) ) );
-		devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
+		devel::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new devel::vardist_solaccess::VarSolDistSasaCalculator );
+		//devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
 		VarSolDRotamerDots dots1(res1, vsasa_calc);
 		core::Size res1natoms = res1->natoms();
 
@@ -312,10 +315,14 @@ public:
 	}
 
 	void test_radii_setting() {
-		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueOP res1( new core::conformation::Residue( trpcage.residue( 1 ) ) );
-		devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc1;
-		devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc2;
+		TS_ASSERT( true );
+		// It's not clear where I was going with this unit test.
+		//
+		// core::pose::Pose trpcage = create_trpcage_ideal_pose();
+		// ResidueOP res1( new core::conformation::Residue( trpcage.residue( 1 ) ) );
+		// devel::vardist_solaccess::VarSolDistSasaCalculatorOP vsasa_calc( new devel::vardist_solaccess::VarSolDistSasaCalculator );
+		//devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc1;
+		//devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc2;
 	}
 
 };

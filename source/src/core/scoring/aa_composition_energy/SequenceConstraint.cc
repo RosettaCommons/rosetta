@@ -57,10 +57,6 @@ SequenceConstraint::SequenceConstraint( SequenceConstraint const &src ):
 ///
 SequenceConstraint::~SequenceConstraint() {}
 
-/// @brief Clone operator
-///
-core::scoring::constraints::ConstraintOP
-SequenceConstraint::clone() const { return core::scoring::constraints::ConstraintOP( new SequenceConstraint( *this ) ); }
 
 } // aa_composition_energy
 } // scoring

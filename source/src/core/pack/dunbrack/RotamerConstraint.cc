@@ -15,7 +15,8 @@
 
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 
-#include <basic/options/option.hh>
+
+#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
@@ -23,10 +24,7 @@
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 
 #include <basic/Tracer.hh>
-
-
-// option key includes
-
+#include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 //Auto Headers
@@ -37,6 +35,19 @@
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>
 
+
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/chemical/ResidueType.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace pack {
@@ -107,6 +118,7 @@ RotamerConstraint::RotamerConstraint():
 	seqpos_( 0 ),
 	rsd_type_name_(""),
 	atom_ids_(),
+	restype_( 0 ),
 	rotlib_( 0 ),
 	favored_rotamers_(),
 	favored_rotamer_numbers_()
@@ -117,6 +129,7 @@ RotamerConstraint::RotamerConstraint(RotamerConstraint const & other):
 	seqpos_( other.seqpos_ ),
 	rsd_type_name_( other.rsd_type_name_ ),
 	atom_ids_( other.atom_ids_ ),
+	restype_( other.restype_ ),
 	rotlib_( other.rotlib_ ),
 	favored_rotamers_( other.favored_rotamers_ ),
 	favored_rotamer_numbers_( other.favored_rotamer_numbers_ )
@@ -130,6 +143,7 @@ RotamerConstraint::RotamerConstraint(
 	seqpos_( seqpos ),
 	rsd_type_name_( pose.residue_type(seqpos).name() ),
 	atom_ids_(),
+	restype_( pose.residue_type(seqpos).get_self_ptr() ),
 	rotlib_( core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type(seqpos) ) ), // may be NULL
 	favored_rotamers_(),
 	favored_rotamer_numbers_()
@@ -150,6 +164,29 @@ RotamerConstraint::RotamerConstraint(
 
 RotamerConstraint::~RotamerConstraint() {}
 
+bool
+RotamerConstraint::operator == ( Constraint const & other_cst ) const
+{
+	if ( !           same_type_as_me( other_cst ) ) return false;
+	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
+
+	RotamerConstraint const & other( static_cast< RotamerConstraint const & > (other_cst) );
+	if ( seqpos_                  != other.seqpos_                  ) return false;
+	if ( rsd_type_name_           != other.rsd_type_name_           ) return false;
+	if ( atom_ids_                != other.atom_ids_                ) return false;
+	if ( rotlib_                  != other.rotlib_                  ) return false;
+	if ( favored_rotamers_        != other.favored_rotamers_        ) return false;
+	if ( favored_rotamer_numbers_ != other.favored_rotamer_numbers_ ) return false;
+
+	return true;
+}
+
+bool
+RotamerConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< RotamerConstraint const * > (&other);
+}
+
 
 void
 RotamerConstraint::add_residue( conformation::Residue const & rsd )
@@ -159,6 +196,11 @@ RotamerConstraint::add_residue( conformation::Residue const & rsd )
 	pack::dunbrack::RotVector rot;
 	pack::dunbrack::rotamer_from_chi( rsd, rot );
 	favored_rotamer_numbers_.push_back( rot );
+}
+
+scoring::constraints::ConstraintOP
+RotamerConstraint::clone() const {
+	return scoring::constraints::ConstraintOP( new RotamerConstraint( *this ) );
 }
 
 
@@ -242,3 +284,49 @@ void RotamerConstraint::show( std::ostream & out ) const
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::dunbrack::RotamerConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( CEREAL_NVP( seqpos_ ) ); // Size
+	arc( CEREAL_NVP( rsd_type_name_ ) ); // std::string
+	arc( CEREAL_NVP( atom_ids_ ) ); // utility::vector1<AtomID>
+	core::chemical::serialize_residue_type( arc, restype_ );
+
+	// do not serialize the (global) rotamer library
+	// arc( CEREAL_NVP( rotlib_ ) ); // core::pack::rotamers::SingleResidueRotamerLibraryCOP
+	// EXEMPT rotlib_
+
+	arc( CEREAL_NVP( favored_rotamers_ ) ); // utility::vector1<ChiVector>
+	arc( CEREAL_NVP( favored_rotamer_numbers_ ) ); // utility::vector1<RotVector>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::dunbrack::RotamerConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( seqpos_ ); // Size
+	arc( rsd_type_name_ ); // std::string
+	arc( atom_ids_ ); // utility::vector1<AtomID>
+
+	core::chemical::deserialize_residue_type( arc, restype_ );
+	rotlib_ = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *restype_ );
+
+	std::shared_ptr< core::pack::rotamers::SingleResidueRotamerLibrary > local_rotlib;
+	arc( local_rotlib ); // core::pack::rotamers::SingleResidueRotamerLibraryCOP
+	rotlib_ = local_rotlib; // copy the non-const pointer(s) into the const pointer(s)
+
+	arc( favored_rotamers_ ); // utility::vector1<ChiVector>
+	arc( favored_rotamer_numbers_ ); // utility::vector1<RotVector>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::dunbrack::RotamerConstraint );
+CEREAL_REGISTER_TYPE( core::pack::dunbrack::RotamerConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_dunbrack_RotamerConstraint )
+#endif // SERIALIZATION

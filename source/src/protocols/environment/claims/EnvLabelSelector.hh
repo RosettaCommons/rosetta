@@ -31,6 +31,11 @@
 // C++ headers
 #include <list>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace environment {
 namespace claims {
@@ -84,11 +89,22 @@ public:
 
 private: // data members
 	LocalPositions positions_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } //namespace claims
 } //namespace environment
 } //namespace protocols
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_environment_claims_EnvLabelSelector )
+#endif // SERIALIZATION
 
 
 #endif

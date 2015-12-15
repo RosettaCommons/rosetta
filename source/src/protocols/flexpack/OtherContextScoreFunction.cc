@@ -20,6 +20,14 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace flexpack {
 
@@ -91,3 +99,29 @@ OtherContextScoreFunction::eval_cd_intrares_energy(
 }
 }
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::flexpack::OtherContextScoreFunction::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::ScoreFunction >( this ) );
+	arc( CEREAL_NVP( context_pose_ ) ); // core::pose::PoseOP
+	arc( CEREAL_NVP( scored_context_pose_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::flexpack::OtherContextScoreFunction::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::ScoreFunction >( this ) );
+	arc( context_pose_ ); // core::pose::PoseOP
+	arc( scored_context_pose_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::flexpack::OtherContextScoreFunction );
+CEREAL_REGISTER_TYPE( protocols::flexpack::OtherContextScoreFunction )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_flexpack_OtherContextScoreFunction )
+#endif // SERIALIZATION

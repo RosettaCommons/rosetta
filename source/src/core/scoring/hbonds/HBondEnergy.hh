@@ -42,9 +42,13 @@
 #include <boost/unordered_map.hpp>
 
 #ifdef PYROSETTA
-	#include <core/scoring/hbonds/HBondOptions.hh>
-	#include <core/scoring/hbonds/HBondDatabase.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/hbonds/HBondDatabase.hh>
 #endif
+
+#ifdef    SERIALIZATION
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 
 namespace core {
@@ -491,6 +495,9 @@ private:
 } // scoring
 } // core
 
-#endif
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_hbonds_HBondEnergy )
+#endif // SERIALIZATION
 
+#endif
 

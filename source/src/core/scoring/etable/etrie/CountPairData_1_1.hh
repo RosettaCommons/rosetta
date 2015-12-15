@@ -69,6 +69,12 @@ public:
 private:
 	Size connection_distance_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 std::ostream & operator << ( std::ostream & os, CountPairData_1_1 const & cpdat );

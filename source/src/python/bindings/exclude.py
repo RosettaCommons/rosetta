@@ -101,6 +101,49 @@ BannedFiles = [
 
     'protocols/moves/ReportToDB.hh',  # need sqlite3, not sure if we need it...
 
+    # The following removed until JD3 comes online
+    'protocols/jd3',
+    'protocols/jd3/job_distributors',
+    'protocols/jd3/pose_inputters',
+    'protocols/jd3/pose_outputters',    
+    'protocols/jd3/MoverAndPoseJob.hh',
+    'protocols/jd3/JobDistributor.fwd.hh',
+    'protocols/jd3/LarvalJob.fwd.hh',
+    'protocols/jd3/pose_outputters/PDBPoseOutputter.hh',
+    'protocols/jd3/pose_outputters/PDBPoseOutputter.fwd.hh',
+    'protocols/jd3/PoseOutputter.fwd.hh',
+    'protocols/jd3/PoseInputter.hh',
+    'protocols/jd3/pose_inputters/PDBPoseInputter.hh',
+    'protocols/jd3/pose_inputters/PDBPoseInputter.fwd.hh',
+    'protocols/jd3/pose_inputters/util.hh',
+    'protocols/jd3/pose_inputters/SilentFilePoseInputter.hh',
+    'protocols/jd3/PoseInputterFactory.hh',
+    'protocols/jd3/StandardJobQueen.fwd.hh',
+    'protocols/jd3/JobResult.hh',
+    'protocols/jd3/MoverAndPoseJob.fwd.hh',
+    'protocols/jd3/SilentFilePoseInputter.hh',
+    'protocols/jd3/JobDistributor.hh',
+    'protocols/jd3/job_distributors/MultiThreadedJobDistributor.hh',
+    'protocols/jd3/job_distributors/MPIWorkPartitionJobDistributor.hh',
+    'protocols/jd3/job_distributors/MPIWorkPoolJobDistributor.hh',
+    'protocols/jd3/JobOutputWritter.hh',
+    'protocols/jd3/PoseInputSource.hh',
+    'protocols/jd3/InnerLarvalJob.fwd.hh',
+    'protocols/jd3/Job.hh',
+    'protocols/jd3/PoseOutputter.hh',
+    'protocols/jd3/PoseInputSource.fwd.hh',
+    'protocols/jd3/Job.fwd.hh',
+    'protocols/jd3/JobDistributorFactory.fwd.hh',
+    'protocols/jd3/PoseInputter.fwd.hh',
+    'protocols/jd3/InnerLarvalJob.hh',
+    'protocols/jd3/JobQueen.hh',
+    'protocols/jd3/JobQueen.fwd.hh',
+    'protocols/jd3/StandardJobQueen.hh',
+    'protocols/jd3/JobResult.fwd.hh',
+    'protocols/jd3/JobDistributorFactory.hh',
+    'protocols/jd3/LarvalJob.hh',
+
+
     'protocols/swa/rna/StepWiseRNA_Classes.hh', # not in scons (.hh only)
 
     'protocols/viewer',  # OpenGL

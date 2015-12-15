@@ -28,6 +28,13 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -52,11 +59,8 @@ public:
 		return "Dihedral";
 	}
 
-	virtual ConstraintOP clone() const {
-		return ConstraintOP( new DihedralConstraint(
-			atom1_, atom2_, atom3_, atom4_, func_, score_type()
-			) );
-	}
+	/// @breif Perform a deep clone by cloning the func_ pointer held by this %DihedralConstraint
+	virtual ConstraintOP clone() const;
 
 	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;
 
@@ -68,7 +72,8 @@ public:
 
 	/// @brief possibility to compare constraint according to data
 	/// and not just pointers
-	bool operator == ( Constraint const & other ) const;
+	virtual bool operator == ( Constraint const & other ) const;
+	virtual bool same_type_as_me( Constraint const & other ) const;
 
 	void
 	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
@@ -177,14 +182,35 @@ private:
 		Vector & F2
 	);
 
+protected:
+	/// @brief Explicit copy constructor so that derived classes will recieve a deep copy
+	/// of the Func this class contains.
+	DihedralConstraint( DihedralConstraint const & src );
+
+
 private:
 	// data
 	AtomID atom1_, atom2_, atom3_, atom4_;
 	func::FuncOP func_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	DihedralConstraint();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_DihedralConstraint )
+#endif // SERIALIZATION
+
 
 #endif

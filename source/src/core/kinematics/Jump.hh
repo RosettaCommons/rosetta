@@ -276,6 +276,12 @@ private:
 	*/
 	utility::vector1< Vector > rb_center; // 3x2
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // Jump
 
 

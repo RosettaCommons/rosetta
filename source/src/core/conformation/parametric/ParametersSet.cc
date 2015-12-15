@@ -32,6 +32,17 @@
 #include <iostream>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace parametric {
@@ -104,3 +115,25 @@ void ParametersSet::get_pdb_remark(std::stringstream &remark) const {
 } // namespace conformation
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::conformation::parametric::ParametersSet::save( Archive & arc ) const {
+	arc( CEREAL_NVP( parameters_ ) ); // utility::vector1<ParametersOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::conformation::parametric::ParametersSet::load( Archive & arc ) {
+	arc( parameters_ ); // utility::vector1<ParametersOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::parametric::ParametersSet );
+CEREAL_REGISTER_TYPE( core::conformation::parametric::ParametersSet )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_conformation_parametric_ParametersSet )
+#endif // SERIALIZATION

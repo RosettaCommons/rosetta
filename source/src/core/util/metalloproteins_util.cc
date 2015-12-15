@@ -25,6 +25,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/PatchOperation.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueConnection.hh>
@@ -146,7 +147,7 @@ add_covalent_linkage_helper(
 	std::string res_type_mod_name( current_residue_type_basename + res_patchname + current_residue_type_patches_name );
 
 	//check whether the modified residues have already been created earlier
-	if ( !pose.residue(res_pos).residue_type_set().has_name(res_type_mod_name) ) {
+	if ( !pose.residue(res_pos).residue_type_set()->has_name(res_type_mod_name) ) {
 
 		//holy jesus, we have to change the residue type set.
 		//we not only need to clone, modify and add  the residue type
@@ -159,7 +160,7 @@ add_covalent_linkage_helper(
 		// as the copied rotamer library specification will use atom names to build rotamers.
 		// Of course, if any atom name changes, then things may need to change.
 
-		ResidueTypeSetOP mod_restype_set = ChemicalManager::get_instance()->nonconst_residue_type_set_op( pose.residue(res_pos).residue_type_set().name() );
+		ResidueTypeSetOP mod_restype_set = ChemicalManager::get_instance()->nonconst_residue_type_set_op( pose.residue(res_pos).residue_type_set()->name() );
 
 		//first get all residue types that correspond to the type in question
 		ResidueTypeCOPs res_to_modify = mod_restype_set->name3_map_DO_NOT_USE( pose.residue_type(res_pos).name3() );
@@ -256,7 +257,7 @@ add_covalent_linkage_helper(
 
 	}
 
-	core::conformation::Residue new_res( pose.residue(res_pos).residue_type_set().name_map(res_type_mod_name), true);
+	core::conformation::Residue new_res( pose.residue(res_pos).residue_type_set()->name_map(res_type_mod_name), true);
 
 	//Temporarily make a copy of the old residue:
 	core::conformation::Residue old_res = (*pose.residue(res_pos).clone());

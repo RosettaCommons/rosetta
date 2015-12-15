@@ -81,6 +81,16 @@ using namespace core;
 using namespace core::pose::datacache;
 using namespace basic::datacache;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace full_model_info {
@@ -650,3 +660,40 @@ update_full_model_info_from_pose( pose::Pose & pose ){
 } //full_model_info
 } //pose
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::pose::full_model_info::FullModelInfo::FullModelInfo() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::full_model_info::FullModelInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( res_list_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( other_pose_list_ ) ); // utility::vector1<core::pose::PoseOP>
+	arc( CEREAL_NVP( full_model_parameters_ ) ); // FullModelParametersCOP
+	arc( CEREAL_NVP( submotif_info_list_ ) ); // utility::vector1<SubMotifInfoOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::full_model_info::FullModelInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( res_list_ ); // utility::vector1<Size>
+	arc( other_pose_list_ ); // utility::vector1<core::pose::PoseOP>
+
+	std::shared_ptr< core::pose::full_model_info::FullModelParameters > local_full_model_parameters;
+	arc( local_full_model_parameters ); // FullModelParametersCOP
+	full_model_parameters_ = local_full_model_parameters; // copy the non-const pointer(s) into the const pointer(s)
+
+	arc( CEREAL_NVP( submotif_info_list_ ) ); // utility::vector1<SubMotifInfoOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::full_model_info::FullModelInfo );
+CEREAL_REGISTER_TYPE( core::pose::full_model_info::FullModelInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_full_model_info_FullModelInfo )
+#endif // SERIALIZATION

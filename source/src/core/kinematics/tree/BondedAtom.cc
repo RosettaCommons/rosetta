@@ -36,6 +36,16 @@
 #include <iostream>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 namespace tree {
@@ -518,3 +528,33 @@ Jump BOGUS_JUMP;
 } // tree
 } // namespace kinematics
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::kinematics::tree::BondedAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< Atom_ >( this ) );
+	arc( CEREAL_NVP( phi_ ) ); // Real
+	arc( CEREAL_NVP( theta_ ) ); // Real
+	arc( CEREAL_NVP( d_ ) ); // Real
+	arc( CEREAL_NVP( dof_change_propagates_to_younger_siblings_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::kinematics::tree::BondedAtom::load( Archive & arc ) {
+	arc( cereal::base_class< Atom_ >( this ) );
+	arc( phi_ ); // Real
+	arc( theta_ ); // Real
+	arc( d_ ); // Real
+	arc( dof_change_propagates_to_younger_siblings_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::tree::BondedAtom );
+CEREAL_REGISTER_TYPE( core::kinematics::tree::BondedAtom )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_kinematics_tree_BondedAtom )
+#endif // SERIALIZATION

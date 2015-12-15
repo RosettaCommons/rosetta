@@ -19,11 +19,15 @@
 #include <basic/datacache/DataMap.hh>
 
 // Package headers
+#include <core/select/residue_selector/util.hh>
+
+// Project headers
 #include <core/pose/selection.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -31,6 +35,14 @@
 // C++ headers
 #include <utility/assert.hh>
 
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace select {
@@ -75,7 +87,8 @@ JumpUpstreamSelector::apply( core::pose::Pose const & pose ) const
 void
 JumpUpstreamSelector::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &)
+	basic::datacache::DataMap &
+)
 {
 	try {
 		set_jump( tag->getOption< int >( "jump" ) );
@@ -101,6 +114,15 @@ std::string JumpUpstreamSelector::class_name() {
 	return "JumpUpstream";
 }
 
+void
+JumpUpstreamSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "jump", xs_integer, true ));
+	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+}
+
+
 ResidueSelectorOP
 JumpUpstreamSelectorCreator::create_residue_selector() const {
 	return ResidueSelectorOP( new JumpUpstreamSelector );
@@ -111,6 +133,35 @@ JumpUpstreamSelectorCreator::keyname() const {
 	return JumpUpstreamSelector::class_name();
 }
 
+void
+JumpUpstreamSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
+	return JumpUpstreamSelector::provide_selector_xsd( xsd );
+}
+
 } //namespace residue_selector
 } //namespace select
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::residue_selector::JumpUpstreamSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( jump_ ) ); // int
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::residue_selector::JumpUpstreamSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( jump_ ); // int
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::JumpUpstreamSelector );
+CEREAL_REGISTER_TYPE( core::select::residue_selector::JumpUpstreamSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_residue_selector_JumpUpstreamSelector )
+#endif // SERIALIZATION

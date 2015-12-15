@@ -178,7 +178,7 @@ main( int argc, char * argv [] )
 
 	//	string sequence = "CASEDELVAEFLQDQN";
 	core::pose::Pose pose;
-	core::pose::make_pose_from_sequence( pose,"CASEDELVAEFLQDQN" , "fa_standard", true );
+	core::pose::make_pose_from_sequence( pose,"CASEDELVAEFLQDQN", core::chemical::FA_STANDARD, true );
 	pose.dump_pdb();
 
 // 	try{

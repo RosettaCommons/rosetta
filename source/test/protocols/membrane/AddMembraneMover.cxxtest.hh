@@ -155,8 +155,8 @@ public: // test functions
 		TS_TRACE( "Test correct setup of the default membrane position: center=origin, normal along z axis" );
 
 		// Grab current center/normal from the pose
-		core::Vector current_center( pose_->conformation().membrane_info()->membrane_center() );
-		core::Vector current_normal( pose_->conformation().membrane_info()->membrane_normal() );
+		core::Vector current_center( pose_->conformation().membrane_info()->membrane_center( pose_->conformation() ) );
+		core::Vector current_normal( pose_->conformation().membrane_info()->membrane_normal( pose_->conformation() ) );
 
 		// Define expected center/normal
 		core::Vector expected_center(0,0,0);
@@ -266,8 +266,8 @@ public: // test functions
 		TS_TRACE( "Test for correct setup of a user defined membrane position" );
 
 		// Grab current center/normal from the pose
-		core::Vector current_center( positioned_pose_->conformation().membrane_info()->membrane_center() );
-		core::Vector current_normal( positioned_pose_->conformation().membrane_info()->membrane_normal() );
+		core::Vector current_center( positioned_pose_->conformation().membrane_info()->membrane_center( positioned_pose_->conformation() ) );
+		core::Vector current_normal( positioned_pose_->conformation().membrane_info()->membrane_normal( positioned_pose_->conformation() ) );
 
 		// Define expected center/normal
 		core::Vector expected_center(10,10,10);
@@ -291,8 +291,8 @@ public: // test functions
 		TS_ASSERT_EQUALS( specially_positioned_pose2_->conformation().membrane_info()->membrane_rsd_num(), expected_rsd_seqpos );
 
 		// Check the membrane residue has the appropriate membrane position
-		position_equal_within_delta( specially_positioned_pose1_->conformation().membrane_info()->membrane_center(), expected_center, 0.001 );
-		position_equal_within_delta( specially_positioned_pose2_->conformation().membrane_info()->membrane_center(), expected_center, 0.001 );
+		position_equal_within_delta( specially_positioned_pose1_->conformation().membrane_info()->membrane_center( specially_positioned_pose1_->conformation() ), expected_center, 0.001 );
+		position_equal_within_delta( specially_positioned_pose2_->conformation().membrane_info()->membrane_center( specially_positioned_pose2_->conformation() ), expected_center, 0.001 );
 		// Not testing normal for now - test case related to a bug in relax
 
 	}

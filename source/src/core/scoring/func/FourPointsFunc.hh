@@ -21,11 +21,7 @@
 #include <core/scoring/func/XYZ_Func.hh>
 
 // Utility Headers
-
-// Numeric Headers
-
-#include <utility/vector1_bool.hh>
-
+#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {
@@ -61,6 +57,7 @@ public:
 
 private:
 	utility::vector1< Vector > points_;
+
 };
 
 

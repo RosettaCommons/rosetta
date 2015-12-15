@@ -30,6 +30,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace id {
@@ -62,7 +67,7 @@ public:
 	SequenceMapping( SequenceMapping const & src );
 
 	SequenceMapping &
-	operator=( SequenceMapping const & src );
+	operator = ( SequenceMapping const & src );
 
 public:
 
@@ -124,7 +129,12 @@ public:
 	Size & operator[]( Size const pos1 );
 
 	/// @brief Equality operator.
-	bool operator==( SequenceMapping const & other ) const;
+	virtual bool operator == ( SequenceMapping const & rhs ) const;
+
+	/// @brief virtual function for ensuring both sequence mappings are the same type;
+	/// essential for a valid equality operator.
+	virtual bool same_type_as_me( SequenceMapping const & other ) const;
+
 
 	/// @brief Construct an identity mapping, which means that for all positions,
 	/// i in seq1 maps to i in seq2.
@@ -154,6 +164,12 @@ public:
 private:
 	Size size2_; // length of second sequence
 	utility::vector1< Size > mapping_; // mapping_[ residue_i ] = residue_j
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // class SequenceMapping
 
 inline std::ostream & operator<< (
@@ -181,5 +197,10 @@ combine_sequence_mappings(
 
 } // id
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_id_SequenceMapping )
+#endif // SERIALIZATION
+
 
 #endif

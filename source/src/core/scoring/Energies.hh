@@ -59,6 +59,12 @@
 
 //Auto Headers
 #include <core/scoring/EnergyGraph.fwd.hh>
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -800,6 +806,12 @@ private:
 	/// Its purpose is solely to improve performance and the data is used
 	/// only inside the neighbor calculation function call.
 	conformation::PointGraphOP point_graph_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -816,6 +828,11 @@ Energies::require_scoring() const
 
 } // namespace scoring
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_Energies )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_core_scoring_Energies_HH

@@ -71,6 +71,21 @@
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzConstraintParameters" );
 
+#ifdef    SERIALIZATION
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+
+// Project serialization headers
+#include <core/chemical/ResidueTypeSet.srlz.hh>
+
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
@@ -84,7 +99,7 @@ CovalentConnectionReplaceInfo::CovalentConnectionReplaceInfo(
 	std::string resB_var_in,
 	core::Size Apos_in,
 	core::Size Bpos_in,
-	core::chemical::ResidueTypeSetCAP restype_set_in
+	core::chemical::ResidueTypeSetCOP restype_set_in
 ) : ReferenceCount(),
 	resA_basename_(resA_base_in), resB_basename_(resB_base_in),
 	resA_varname_(resA_var_in), resB_varname_(resB_var_in),
@@ -179,7 +194,7 @@ EnzConstraintParameters::~EnzConstraintParameters(){}
 
 void EnzConstraintParameters::init(
 	core::Size cst_block,
-	core::chemical::ResidueTypeSetCAP src_restype_set,
+	core::chemical::ResidueTypeSetCOP src_restype_set,
 	EnzConstraintIOCAP src_enz_io
 ) {
 	init();
@@ -535,7 +550,7 @@ EnzConstraintParameters::make_constraint_covalent(
 	);
 	EnzdesCstParamCacheOP param_cache( get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
 
-	param_cache->covalent_connections_.push_back( CovalentConnectionReplaceInfoOP( new CovalentConnectionReplaceInfo(resA_base, resB_base, resA_var, resB_var, resA_pos, resB_pos, restype_set_.lock() ) ) ); //new
+	param_cache->covalent_connections_.push_back( CovalentConnectionReplaceInfoOP( new CovalentConnectionReplaceInfo(resA_base, resB_base, resA_var, resB_var, resA_pos, resB_pos, restype_set_ ) ) ); //new
 
 } //make_constraint_covalent
 
@@ -951,3 +966,109 @@ EnzConstraintParameters::remap_resid( core::id::SequenceMapping const & smap )
 }
 } //enzdes
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzConstraintParameters::save( Archive & arc ) const {
+	arc( CEREAL_NVP( resA_ ) ); // EnzCstTemplateResOP
+	arc( CEREAL_NVP( resB_ ) ); // EnzCstTemplateResOP
+	arc( CEREAL_NVP( mcfi_ ) ); // toolbox::match_enzdes_util::MatchConstraintFileInfoCOP
+	arc( CEREAL_NVP( disAB_ ) ); // core::scoring::func::FuncOP
+	arc( CEREAL_NVP( angleA_ ) ); // core::scoring::func::FuncOP
+	arc( CEREAL_NVP( angleB_ ) ); // core::scoring::func::FuncOP
+	arc( CEREAL_NVP( torsionA_ ) ); // core::scoring::func::FuncOP
+	arc( CEREAL_NVP( torsionB_ ) ); // core::scoring::func::FuncOP
+	arc( CEREAL_NVP( torsionAB_ ) ); // core::scoring::func::FuncOP
+	arc( CEREAL_NVP( ndisAB_ ) ); // core::Real
+	arc( CEREAL_NVP( nangleA_ ) ); // core::Real
+	arc( CEREAL_NVP( nangleB_ ) ); // core::Real
+	arc( CEREAL_NVP( ntorsionA_ ) ); // core::Real
+	arc( CEREAL_NVP( ntorsionB_ ) ); // core::Real
+	arc( CEREAL_NVP( ntorsionAB_ ) ); // core::Real
+	arc( CEREAL_NVP( is_covalent_ ) ); // _Bool
+	arc( CEREAL_NVP( empty_ ) ); // _Bool
+	//arc( CEREAL_NVP( restype_set_ ) ); // core::chemical::ResidueTypeSetCAP
+	core::chemical::serialize_residue_type_set( arc, restype_set_ );
+	arc( CEREAL_NVP( enz_io_ ) ); // EnzConstraintIOCAP
+	arc( CEREAL_NVP( cst_block_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzConstraintParameters::load( Archive & arc ) {
+	arc( resA_ ); // EnzCstTemplateResOP
+	arc( resB_ ); // EnzCstTemplateResOP
+	std::shared_ptr< protocols::toolbox::match_enzdes_util::MatchConstraintFileInfo > local_mcfi;
+	arc( local_mcfi ); // toolbox::match_enzdes_util::MatchConstraintFileInfoCOP
+	mcfi_ = local_mcfi; // copy the non-const pointer(s) into the const pointer(s)
+	arc( disAB_ ); // core::scoring::func::FuncOP
+	arc( angleA_ ); // core::scoring::func::FuncOP
+	arc( angleB_ ); // core::scoring::func::FuncOP
+	arc( torsionA_ ); // core::scoring::func::FuncOP
+	arc( torsionB_ ); // core::scoring::func::FuncOP
+	arc( torsionAB_ ); // core::scoring::func::FuncOP
+	arc( ndisAB_ ); // core::Real
+	arc( nangleA_ ); // core::Real
+	arc( nangleB_ ); // core::Real
+	arc( ntorsionA_ ); // core::Real
+	arc( ntorsionB_ ); // core::Real
+	arc( ntorsionAB_ ); // core::Real
+	arc( is_covalent_ ); // _Bool
+	arc( empty_ ); // _Bool
+	core::chemical::deserialize_residue_type_set( arc, restype_set_ );
+
+	EnzConstraintIOAP local_enz_io;
+	arc( local_enz_io ); // EnzConstraintIOCAP
+	enz_io_ = local_enz_io;
+
+	arc( cst_block_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::EnzConstraintParameters );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::EnzConstraintParameters )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::match_enzdes_util::CovalentConnectionReplaceInfo::CovalentConnectionReplaceInfo() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::CovalentConnectionReplaceInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( resA_basename_ ) ); // std::string
+	arc( CEREAL_NVP( resB_basename_ ) ); // std::string
+	arc( CEREAL_NVP( resA_varname_ ) ); // std::string
+	arc( CEREAL_NVP( resB_varname_ ) ); // std::string
+	arc( CEREAL_NVP( resA_modname_ ) ); // std::string
+	arc( CEREAL_NVP( resB_modname_ ) ); // std::string
+	arc( CEREAL_NVP( resA_seqpos_ ) ); // core::Size
+	arc( CEREAL_NVP( resB_seqpos_ ) ); // core::Size
+	//arc( CEREAL_NVP( restype_set_ ) ); // core::chemical::ResidueTypeSetCAP
+	core::chemical::serialize_residue_type_set( arc, restype_set_ );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::CovalentConnectionReplaceInfo::load( Archive & arc ) {
+	arc( resA_basename_ ); // std::string
+	arc( resB_basename_ ); // std::string
+	arc( resA_varname_ ); // std::string
+	arc( resB_varname_ ); // std::string
+	arc( resA_modname_ ); // std::string
+	arc( resB_modname_ ); // std::string
+	arc( resA_seqpos_ ); // core::Size
+	arc( resB_seqpos_ ); // core::Size
+	//arc( restype_set_ ); // core::chemical::ResidueTypeSetCAP
+	core::chemical::deserialize_residue_type_set( arc, restype_set_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::CovalentConnectionReplaceInfo );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::CovalentConnectionReplaceInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_EnzConstraintParameters )
+#endif // SERIALIZATION

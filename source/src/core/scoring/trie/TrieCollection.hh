@@ -28,6 +28,11 @@
 #include <utility/vector1_bool.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace trie {
@@ -48,11 +53,22 @@ public:
 private:
 	utility::vector1< RotamerTrieBaseOP > tries_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace trie
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_trie_TrieCollection )
+#endif // SERIALIZATION
+
 
 #endif

@@ -31,6 +31,12 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/ubyte.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace sasa {
@@ -210,12 +216,27 @@ private:
 
 	//std::string angles_db_file_;
 	//std::string masks_db_file_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	LeGrandSasa();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 }
 }
 }
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_sasa_LeGrandSasa )
+#endif // SERIALIZATION
 
 
 #endif //#ifndef INCLUDED_protocols/antibody_design_LEGRANDSASA_HH

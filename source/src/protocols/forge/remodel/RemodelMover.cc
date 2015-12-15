@@ -602,8 +602,8 @@ void RemodelMover::apply( Pose & pose ) {
 					build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_oneLetter));
 				}
 				for ( Size i = 1; i<= len_diff; ++i ) {
-					core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
-					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map(build_aa_type) ) );
+					core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
+					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
 					pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
 					pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
 					pose.set_omega(pose.total_residue()-1,180);
@@ -647,8 +647,8 @@ void RemodelMover::apply( Pose & pose ) {
 				Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
 				// append a tail of the same length
 				for ( Size i = 1; i<= len_diff; ++i ) {
-					core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
-					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+					core::chemical::ResidueTypeSetCOP rsd_set = (pose.residue(1).residue_type_set());
+					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map("ALA") ) );
 					pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
 					pose.pdb_info()->obsolete(true);
 					pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
@@ -1351,7 +1351,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 	// will occur when restoring sidechains at the end of the procedure
 	bool mod_ap_is_full_atom = true;
 	for ( Size i = 1, ie = modified_archive_pose.n_residue(); mod_ap_is_full_atom && i != ie; ++i ) {
-		mod_ap_is_full_atom &= ( modified_archive_pose.residue( i ).residue_type_set().name() == core::chemical::FA_STANDARD );
+		mod_ap_is_full_atom &= ( modified_archive_pose.residue( i ).residue_type_set()->name() == core::chemical::FA_STANDARD );
 	}
 
 	if ( !mod_ap_is_full_atom ) {

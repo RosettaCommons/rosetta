@@ -1055,7 +1055,7 @@ make_base_pair_mutation(
 	using namespace core::conformation;
 	using namespace core::scoring::dna;
 
-	ResidueTypeSet const & residue_set( pose.residue(1).residue_type_set() );
+	ResidueTypeSetCOP residue_set( pose.residue(1).residue_type_set() );
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 
 	for ( int r=1; r<= 2; ++r ) {
@@ -1067,7 +1067,7 @@ make_base_pair_mutation(
 		assert( existing_residue.is_DNA() );
 
 		// search for the matching residue type
-		ResidueTypeCOP rsd_type( residue_set.get_representative_type_aa( aa, existing_residue.type().variant_types() ) );
+		ResidueTypeCOP rsd_type( residue_set->get_representative_type_aa( aa, existing_residue.type().variant_types() ) );
 		if ( rsd_type == 0 ) {
 			utility_exit_with_message("couldnt find residuetype for basepair mutation!");
 		}

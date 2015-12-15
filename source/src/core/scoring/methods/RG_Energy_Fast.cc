@@ -42,6 +42,17 @@
 // C++
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace methods {
@@ -314,3 +325,31 @@ RG_Energy_Fast::version() const
 } // methods
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::methods::RG_MinData::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( com ) ); // numeric::xyzVector<core::Real>
+	arc( CEREAL_NVP( rg ) ); // core::Real
+	arc( CEREAL_NVP( nres_scored ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::methods::RG_MinData::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( com ); // numeric::xyzVector<core::Real>
+	arc( rg ); // core::Real
+	arc( nres_scored ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::methods::RG_MinData );
+CEREAL_REGISTER_TYPE( core::scoring::methods::RG_MinData )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_methods_RG_Energy_Fast )
+#endif // SERIALIZATION

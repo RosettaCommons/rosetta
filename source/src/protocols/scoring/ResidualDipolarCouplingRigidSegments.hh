@@ -26,6 +26,11 @@
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace scoring {
 
@@ -44,6 +49,7 @@ public:
 	// typedefs
 	typedef core::Real Real;
 	typedef core::Size Size;
+	typedef core::scoring::ResidualDipolarCoupling ResidualDipolarCoupling;
 	typedef core::scoring::ResidualDipolarCoupling::RDC_lines RDC_lines;
 	typedef utility::vector1< core::scoring::ResidualDipolarCouplingOP > RDC_Segments;
 
@@ -106,11 +112,22 @@ private:
 private:
 	RDC_Segments rdc_segments_;
 	protocols::loops::Loops segment_definitions_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 extern std::ostream& operator<<(std::ostream&, ResidualDipolarCouplingRigidSegments const&);
 
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_scoring_ResidualDipolarCouplingRigidSegments )
+#endif // SERIALIZATION
+
 
 #endif

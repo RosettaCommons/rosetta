@@ -73,6 +73,18 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.MembranePotential" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -1187,3 +1199,37 @@ MembraneEmbed & nonconst_MembraneEmbed_from_pose( pose::Pose & pose )
 } // core
 
 #endif // INCLUDED_core_scoring_MembranePotential_cc
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::MembraneEmbed::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( depth_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( normal_ ) ); // Vector
+	arc( CEREAL_NVP( center_ ) ); // Vector
+	arc( CEREAL_NVP( calculated_ ) ); // _Bool
+	arc( CEREAL_NVP( spanning_ ) ); // _Bool
+	arc( CEREAL_NVP( penalty_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::MembraneEmbed::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( depth_ ); // utility::vector1<Real>
+	arc( normal_ ); // Vector
+	arc( center_ ); // Vector
+	arc( calculated_ ); // _Bool
+	arc( spanning_ ); // _Bool
+	arc( penalty_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::MembraneEmbed );
+CEREAL_REGISTER_TYPE( core::scoring::MembraneEmbed )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_MembranePotential )
+#endif // SERIALIZATION

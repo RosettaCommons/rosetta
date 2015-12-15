@@ -23,6 +23,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/signals/ConformationEvent.hh>
 #include <core/pose/signals/DestructionEvent.hh>
@@ -30,11 +31,24 @@
 #include <core/pose/signals/GeneralEvent.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <test/util/pose_funcs.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
+
+// C++ headers
+#include <iostream>
+
+#ifdef SERIALIZATION
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 
 namespace test_pose {
@@ -177,6 +191,66 @@ public: // tests
 		Pose pose;
 		core::import_pose::pose_from_pdb( pose, "core/pose/pdbinfo_test_in.pdb" );
 		pose.update_residue_neighbors();
+	}
+
+	void test_serialize_pose() {
+		TS_ASSERT( true );
+#ifdef SERIALIZATION
+		using namespace core::conformation;
+		using namespace core::pose;
+		using namespace core::id;
+		using namespace core::kinematics;
+		using namespace core::scoring::constraints;
+		using namespace core::scoring::func;
+
+		// TO DO: Test constraint set propertly observes the deserialized pose (i.e. following residue insertion)
+		// TO DO: Test CacheableObservers properly observe the deserialized pose
+		// TO DO: Test that a symmetric conformation is properly deserialized inside a pose
+
+		PoseOP trpcage = create_trpcage_ideal_poseop();
+		HarmonicFuncOP harm_0_1( new HarmonicFunc( 0, 1 ) );
+		ConstraintOP apc_1_10( new AtomPairConstraint( AtomID(3,1), AtomID(3,10), harm_0_1 ));
+		ConstraintOP apc_1_11( new AtomPairConstraint( AtomID(3,1), AtomID(3,11), harm_0_1 ));
+		trpcage->add_constraint( apc_1_10 );
+
+		// Now serialize the Pose
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arch( oss );
+			arch( trpcage );
+		}
+
+		PoseOP trpcage_copy;
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arch( iss );
+			arch( trpcage_copy );
+		}
+
+		TS_ASSERT( trpcage->total_residue() == trpcage_copy->total_residue() );
+
+		// Make sure constraint set was serialized properly
+		TS_ASSERT( ! trpcage_copy->constraint_set()->is_empty() );
+		TS_ASSERT( trpcage_copy->constraint_set()->get_all_constraints().size() == 1 );
+		TS_ASSERT( *trpcage_copy->constraint_set()->get_all_constraints()[1] == *apc_1_10 );
+		// make sure that constraint set is observing the conformation
+		// do something silly by making another copy of residue 15 and inserting it between
+		// residue 5 and residue 6 (set a foldtree that allows this insertion first)
+		FoldTree ft;
+		ft.add_edge( 1, 5, Edge::PEPTIDE );  ft.add_edge( 5, 10, 1  );
+		ft.add_edge( 10, 6, Edge::PEPTIDE ); ft.add_edge( 10, 20, Edge::PEPTIDE );
+		trpcage_copy->fold_tree( ft );
+		trpcage_copy->insert_residue_by_bond( trpcage_copy->residue(15), 6, 5 );
+		TS_ASSERT( ! ( *trpcage_copy->constraint_set()->get_all_constraints()[1] == *apc_1_10 ));
+		TS_ASSERT(     *trpcage_copy->constraint_set()->get_all_constraints()[1] == *apc_1_11 );
+
+		// Make sure that the deserialized PDBInfo object is reestablished as observing the
+		// Pose's Conformation
+		core::conformation::ConformationCOP obs_by_pdb_info = trpcage_copy->pdb_info()->is_observing().lock();
+		TS_ASSERT_EQUALS( obs_by_pdb_info.get(), &trpcage_copy->conformation() );
+
+
+#endif
 	}
 
 };

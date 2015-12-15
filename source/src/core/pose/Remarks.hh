@@ -23,6 +23,11 @@
 #include <string>
 #include <vector>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 
@@ -44,13 +49,30 @@ public:
 		return os;
 	}
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class Remarks : public std::vector< RemarkInfo >, public utility::pointer::ReferenceCount
 {
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace pose
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_Remarks )
+#endif // SERIALIZATION
+
 
 #endif

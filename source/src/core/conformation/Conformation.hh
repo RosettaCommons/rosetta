@@ -67,6 +67,14 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 
@@ -127,6 +135,13 @@ public:  // standard class methods
 	Conformation &
 	operator=( Conformation const & src );
 
+	/// @brief copy the other conformation into this, but make sure that the two
+	/// share no possibly-non-bitwise-const data nor do they refer to each other
+	/// (as the AtomTree does with its topological observer system).
+	virtual
+	void
+	detached_copy( Conformation const & src );
+
 	/// @brief clone the conformation
 	virtual
 	ConformationOP
@@ -163,7 +178,7 @@ public:  // Comparisons
 	/// @brief determine the type of the ConformationOP
 	virtual
 	bool
-	same_type_as_me( Conformation const & other, bool recurse /* = true */ ) const;
+	same_type_as_me( Conformation const & other, bool recurse = true ) const;
 
 	/// @brief do the names of all residues in this and src match?
 	bool
@@ -292,13 +307,13 @@ public:  // Secondary Structure
 public: // membrane
 
 	///////////////////////////////////////////////////////////////////////////////
-	/// Rosetta Membrane Framework            ///
-	/// Core data for interacting with membrane proteins in Rosetta       ///
-	///                   ///
-	/// Authors:                ///
-	///  - Rebecca Alford (rfalford12@gmail.com)        ///
-	///  - Julia Koehler Leman (julia.koehler1982@gmail.com)     ///
-	///  - Jeff Gray (jgray@jhu.edu)              ///
+	/// Rosetta Membrane Framework                                              ///
+	/// Core data for interacting with membrane proteins in Rosetta             ///
+	///                                                                         ///
+	/// Authors:                                                                ///
+	///  - Rebecca Alford (rfalford12@gmail.com)                                ///
+	///  - Julia Koehler Leman (julia.koehler1982@gmail.com)                    ///
+	///  - Jeff Gray (jgray@jhu.edu)                                            ///
 	///////////////////////////////////////////////////////////////////////////////
 
 
@@ -1160,15 +1175,34 @@ public: // signal management
 
 private:
 
-	/// @brief Returns a residue without triggering coordinate/torsion update
+protected:
+
+	/// @brief Returns a constant residue reference without triggering coordinate/torsion update
+	///
 	/// @details Use with care. Useful inside torsion/coordinate setters where we want chemical info
 	/// about a given residue but don't want to trigger the coordinate/torsion updates that go along
-	/// with a call to residue(seqpos)
+	/// with a call to residue(seqpos).
 	Residue const &
-	residue_( Size seqpos ) const
+	const_residue_( Size seqpos ) const
 	{
 		debug_assert( seqpos >=1 );
 		debug_assert( seqpos <= size() );
+		return *residues_[ seqpos ];
+	}
+
+private:
+
+	/// @brief Returns a non-constant residue reference without triggering coordinate/torsion update
+	/// @details Use with care. Useful inside torsion/coordinate setters where we want chemical info
+	/// about a given residue but don't want to trigger the coordinate/torsion updates that go along
+	/// with a call to residue(seqpos).
+	/// @note APL -- Conformation should not give out non-const access to its residues even to derived
+	/// classes.  This function should *not* be called by derived classes.
+	Residue &
+	residue_( Size seqpos )
+	{
+		assert( seqpos >=1 );
+		assert( seqpos <= size() );
 		return *residues_[ seqpos ];
 	}
 
@@ -1224,14 +1258,18 @@ private:
 
 
 	void
-	residues_append( Residue const & new_rsd, bool start_new_chain, bool by_jump = false,
-		std::string const & root_atom = "", id::NamedAtomID anchor_id = id::BOGUS_NAMED_ATOM_ID);
+	residues_append(
+		Residue const & new_rsd,
+		bool start_new_chain,
+		bool by_jump = false,
+		std::string const & root_atom = "",
+		id::NamedAtomID anchor_id = id::BOGUS_NAMED_ATOM_ID
+	);
 
 
 	void
 	residues_delete( Size seqpos );
 	//////////////////////////////////////////////////////////////////////////////
-
 
 	/// @brief (re-)builds the AtomTree using the FoldTree and the Residues
 	void
@@ -1364,26 +1402,21 @@ private: // observer notifications
 	void
 	notify_connection_obs( ConnectionEvent const & e ) const;
 
-
 	/// @brief notify GeneralEvent observers
 	void
 	notify_general_obs( GeneralEvent const & e ) const;
-
 
 	/// @brief notify IdentityEvent observers
 	void
 	notify_identity_obs( IdentityEvent const & e, bool fire_general = true ) const;
 
-
 	/// @brief notify LengthEvent observers
 	void
 	notify_length_obs( LengthEvent const & e, bool fire_general = true ) const;
 
-
 	/// @brief notify XYZEvent observers
 	void
 	notify_xyz_obs( XYZEvent const & e, bool fire_general = true ) const;
-
 
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
@@ -1391,13 +1424,10 @@ private: // observer notifications
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 
-protected:
-	/// @brief container of Residues
-	ResidueOPs residues_;
-
 private:
 
-	/// ResidueCOPs const_residues_; // mirrors residues_ allowing const access -- this will be reinstated soon.
+	/// @brief container of Residues
+	ResidueOPs residues_; // someone made this protected at one point, voilating a very clear prohibition of protected data
 
 	/// @brief chain number for each position
 	/**
@@ -1475,11 +1505,23 @@ private:
 
 	/// @brief LengthEvent observers
 	mutable utility::signals::BufferedSignalHub< void, XYZEvent > xyz_obs_hub_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
-std::ostream &operator<< (std::ostream &os, Conformation const &conf);
+std::ostream & operator << ( std::ostream &os, Conformation const &conf );
 
 } // conformation
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_Conformation )
+#endif // SERIALIZATION
+
 
 #endif

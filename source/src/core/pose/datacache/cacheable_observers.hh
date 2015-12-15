@@ -31,6 +31,11 @@
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace datacache {
@@ -124,6 +129,12 @@ private:
 
 	Link length_event_link_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -207,11 +218,22 @@ private: //data
 
 	Link length_event_link_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //SpecialSegmentsObserver
 
 } // namespace datacache
 } // namespace pose
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_datacache_cacheable_observers )
+#endif // SERIALIZATION
 
 
 #endif /* INCLUDED_core_pose_datacache_CacheableObserver_HH */

@@ -35,6 +35,11 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace devel {
 namespace denovo_design {
 namespace calculators {
@@ -113,11 +118,22 @@ private:// member variables
 	/// @brief a list of residues excluded from the calculation
 	utility::vector1< core::Size > excluded_residues_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //ResidueCentralityCalculator
 
 
 } // ns PoseMetricCalculators
 } // ns denovo_design
 } // ns devel
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( devel_denovo_design_calculators_ResidueCentralityCalculator )
+#endif // SERIALIZATION
+
 
 #endif

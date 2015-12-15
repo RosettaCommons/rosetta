@@ -27,6 +27,13 @@
 #include <numeric/xyzVector.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -58,7 +65,9 @@ public:
 
 	/// @brief possibility to compare constraint according to data
 	/// and not just pointers
-	bool operator == ( Constraint const & other ) const;
+	virtual bool operator == ( Constraint const & other ) const;
+
+	virtual bool same_type_as_me( Constraint const & other ) const;
 
 	virtual
 	void
@@ -111,8 +120,15 @@ private:
 	AtomID fixed_atom_id_;
 	core::Vector fixed_reference_point_;
 
-	/// why is this static?
-	static utility::pointer::shared_ptr< AngleConstraint > ang_cst_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	BackboneStubLinearConstraint();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; // BackboneStubLinearConstraint
 
@@ -120,5 +136,10 @@ private:
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_BackboneStubLinearConstraint )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_scoring_constraints_BackboneStubLinearConstraint_HH

@@ -17,10 +17,15 @@
 #include <protocols/constraints_additional/SequenceCouplingConstraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 
-
-#include <core/sequence/SequenceCoupling.hh>
+#include <core/sequence/SequenceCoupling.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
+
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 
 namespace protocols {
@@ -60,6 +65,10 @@ public:
 	virtual ~SequenceCouplingConstraint();
 
 	virtual ConstraintOP clone() const;
+
+	bool operator == ( core::scoring::constraints::Constraint const & other ) const;
+
+	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const;
 
 	virtual std::string type() const { return "SequenceCoupling"; }
 
@@ -112,10 +121,21 @@ private:
 	core::Size seqpos1_;
 	core::Size seqpos2_;
 	SequenceCouplingOP sequence_coupling_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace constraints_additional
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_constraints_additional_SequenceCouplingConstraint )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_protocols_constraints_additional_SequenceCouplingConstraint_HH

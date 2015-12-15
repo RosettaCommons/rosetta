@@ -22,6 +22,12 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace metrics {
@@ -57,6 +63,16 @@ protected:
 
 	virtual void fill_in_chain_terminii( core::pose::Pose const & pose );
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	InterfaceDefinitionCalculator();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -64,5 +80,10 @@ protected:
 } // namespace metrics
 } // namespace pose
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_metrics_simple_calculators_InterfaceDefinitionCalculatorBase )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_core_pose_metrics_simple_calculators_InterfaceDefinitionCalculatorBase_HH

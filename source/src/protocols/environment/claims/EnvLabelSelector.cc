@@ -34,6 +34,15 @@
 // C++ headers
 #include <utility/assert.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace environment {
 namespace claims {
@@ -128,3 +137,27 @@ std::string EnvLabelSelector::class_name() {
 } //namespace environment
 } //namespace protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::environment::claims::EnvLabelSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( positions_ ) ); // LocalPositions
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::environment::claims::EnvLabelSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( positions_ ); // LocalPositions
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::environment::claims::EnvLabelSelector );
+CEREAL_REGISTER_TYPE( protocols::environment::claims::EnvLabelSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_environment_claims_EnvLabelSelector )
+#endif // SERIALIZATION

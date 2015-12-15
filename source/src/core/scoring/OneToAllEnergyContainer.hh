@@ -27,6 +27,13 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -129,6 +136,7 @@ private:
 	ScoreType score_type_;
 	utility::vector1< Real > const * table_;
 	utility::vector1< bool > const * computed_;
+
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -207,9 +215,24 @@ private:
 	utility::vector1< Real > table_;
 	utility::vector1< bool > computed_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	OneToAllEnergyContainer();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_OneToAllEnergyContainer )
+#endif // SERIALIZATION
+
 
 #endif

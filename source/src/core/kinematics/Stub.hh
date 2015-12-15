@@ -162,6 +162,7 @@ public: // Methods
 	Vector
 	build_fake_xyz( Size const index ) const;
 
+	bool operator == ( Stub const & rhs ) const;
 
 public: // Fields
 	/// @brief coord frame by 3x3 matrix, each column is a unit vector
@@ -175,6 +176,12 @@ public: // Fields
 
 	/// @brief Coordinate frame center.
 	Vector center() const { return v; }
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // Stub
 
 /// @brief root squared deviation between two stubs

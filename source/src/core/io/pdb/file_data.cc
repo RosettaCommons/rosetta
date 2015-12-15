@@ -1110,8 +1110,8 @@ write_additional_pdb_data(
 		// Grab membrane residue & current data
 		core::Size resid( pose.conformation().membrane_info()->membrane_rsd_num() );
 		core::Real thkn( pose.conformation().membrane_info()->membrane_thickness() );
-		core::Vector cntr( pose.conformation().membrane_info()->membrane_center() );
-		core::Vector norm( pose.conformation().membrane_info()->membrane_normal() );
+		core::Vector cntr( pose.conformation().membrane_info()->membrane_center(pose.conformation()) );
+		core::Vector norm( pose.conformation().membrane_info()->membrane_normal(pose.conformation()) );
 
 		// Actually normalize the membrane residue to thk
 		norm.normalize( thkn );

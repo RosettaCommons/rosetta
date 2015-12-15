@@ -39,6 +39,12 @@
 #include <utility/vector1_bool.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace symmetry {
@@ -327,11 +333,22 @@ private:
 
 	utility::vector1<char> components_moved_by_jump(std::string const & jname) const;
 	utility::vector1<Size> subunits_moved_by_jump(std::string const & jname) const;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // SymmetryInfo
 
 
 } // symmetry
 } // conformation
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_symmetry_SymmetryInfo )
+#endif // SERIALIZATION
+
 
 #endif

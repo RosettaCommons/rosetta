@@ -86,7 +86,7 @@ void Environment::register_mover( moves::MoverOP mover ){
 		}
 	} else if ( mover_container ) {
 		for ( Size i = 0; i < mover_container->nr_moves(); ++i ) {
-			moves::MoverOP const& mover = mover_container->movers()[ i ];
+			moves::MoverOP const & mover = mover_container->movers()[ i ];
 			register_mover( mover );
 		}
 	} else if ( mover_applier ) {
@@ -101,7 +101,7 @@ void Environment::register_mover( moves::MoverOP mover ){
 	}
 }
 
-core::pose::Pose Environment::start( core::pose::Pose const& in_pose ){
+core::pose::Pose Environment::start( core::pose::Pose const & in_pose ){
 
 	this->input_pose_ = in_pose;
 
@@ -132,7 +132,7 @@ core::pose::Pose Environment::start( core::pose::Pose const& in_pose ){
 	return broker_result;
 }
 
-core::pose::Pose Environment::end( core::pose::Pose const& pose ){
+core::pose::Pose Environment::end( core::pose::Pose const & pose ){
 	ProtectedConformationCOP conf = utility::pointer::dynamic_pointer_cast< ProtectedConformation const >( pose.conformation_ptr() );
 	if ( !conf ) {
 		tr.Error << "[ERROR] Environment::end recieved a pose that contains an unprotcted Conformation."
@@ -295,7 +295,7 @@ void Environment::allow_pure_movers( bool setting ) {
 	bAllowPureMovers_ = setting;
 }
 
-core::pose::Pose Environment::broker( core::pose::Pose const& in_pose ){
+core::pose::Pose Environment::broker( core::pose::Pose const & in_pose ){
 	tr.Debug << "Beginning Broking for environment " << this->name() << " with "
 		<< registered_movers_.size() << " registered movers." << std::endl;
 	tr.Debug << "  Registered movers are:" << std::endl;
@@ -328,14 +328,12 @@ void Environment::remove_chainbreak_variants( core::pose::Pose& pose, core::Size
 
 	Conformation& conf = pose.conformation();
 
-	Residue const& rsd_lower( conf.residue( down_res ) );
-	Residue const& rsd_upper( conf.residue( up_res ) );
-	ResidueTypeSet const& rsd_set( rsd_lower.residue_type_set() );
+	Residue const & rsd_lower( conf.residue( down_res ) );
+	Residue const & rsd_upper( conf.residue( up_res ) );
+	ResidueTypeSetCOP rsd_set( rsd_lower.residue_type_set() );
 
-	ResidueType const& new_type_lower( rsd_set.get_residue_type_with_variant_removed( rsd_lower.type(),
-		CUTPOINT_LOWER ) );
-	ResidueType const& new_type_upper( rsd_set.get_residue_type_with_variant_removed( rsd_upper.type(),
-		CUTPOINT_UPPER ) );
+	ResidueType const & new_type_lower( rsd_set->get_residue_type_with_variant_removed( rsd_lower.type(), CUTPOINT_LOWER ) );
+	ResidueType const & new_type_upper( rsd_set->get_residue_type_with_variant_removed( rsd_upper.type(), CUTPOINT_UPPER ) );
 
 	ResidueOP new_lower( ResidueFactory::create_residue( new_type_lower, rsd_lower, conf ) );
 	ResidueOP new_upper( ResidueFactory::create_residue( new_type_upper, rsd_upper, conf ) );

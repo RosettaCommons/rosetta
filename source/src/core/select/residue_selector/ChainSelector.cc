@@ -16,6 +16,9 @@
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
 // Package headers
+#include <core/select/residue_selector/util.hh>
+
+// Project headers
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -25,11 +28,22 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
 #include <utility/assert.hh>
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace select {
@@ -103,6 +117,25 @@ std::string ChainSelector::class_name() {
 	return "Chain";
 }
 
+void
+ChainSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+
+	// first define the chain_cslist restriction -- this could be moved elsewhere
+	XMLSchemaRestriction chain_cslist;
+	chain_cslist.name( "chain_cslist" );
+	chain_cslist.base_type( xs_string );
+	chain_cslist.add_restriction( xsr_pattern, "[A-Z](,[A-Z])*" );
+
+	std::ostringstream oss;
+	chain_cslist.write_definition( 0, oss );
+	xsd.add_top_level_element( "chain_cslist", oss.str() );
+
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "chains", "chain_cslist" ) );
+	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+}
+
 utility::vector1< std::string > const &
 ChainSelector::chain_strings() const {
 	return chain_strings_;
@@ -157,6 +190,35 @@ ChainSelectorCreator::keyname() const {
 	return ChainSelector::class_name();
 }
 
+void
+ChainSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
+	return ChainSelector::provide_selector_xsd( xsd );
+}
+
 } //namespace residue_selector
 } //namespace select
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::residue_selector::ChainSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( chain_strings_ ) ); // utility::vector1<std::string>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::residue_selector::ChainSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( chain_strings_ ); // utility::vector1<std::string>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::ChainSelector );
+CEREAL_REGISTER_TYPE( core::select::residue_selector::ChainSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_residue_selector_ChainSelector )
+#endif // SERIALIZATION

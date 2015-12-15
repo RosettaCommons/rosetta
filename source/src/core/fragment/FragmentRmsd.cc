@@ -25,6 +25,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 namespace core {
 namespace fragment {
@@ -59,7 +60,7 @@ FragDataCOP FragmentRmsd::fragment(core::Size position, core::Size k) const {
 
 core::Real FragmentRmsd::rmsd(core::Size position, core::Size k, const core::pose::Pose& reference) const {
 	core::pose::Pose pose;
-	core::pose::make_pose_from_sequence(pose, reference.sequence(), "centroid");
+	core::pose::make_pose_from_sequence(pose, reference.sequence(), core::chemical::CENTROID );
 
 	FrameCOP f = frame(position);
 	f->apply(k, pose);

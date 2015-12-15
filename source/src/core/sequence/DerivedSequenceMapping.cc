@@ -55,6 +55,26 @@ DerivedSequenceMapping::operator = ( DerivedSequenceMapping const & src ) {
 	return *this;
 }
 
+bool DerivedSequenceMapping::operator == ( SequenceMapping const & rhs ) const
+{
+	if ( ! SequenceMapping::operator == (rhs) ) return false;
+
+	// the parent class will have ensured that both this and rhs are of type DerivedSequenceMapping,
+	// so this static cast is safe.
+	DerivedSequenceMapping const & rhs_downcast( static_cast< DerivedSequenceMapping const & > ( rhs ) );
+	if ( seq1_       != rhs_downcast.seq1_       ) return false;
+	if ( seq2_       != rhs_downcast.seq2_       ) return false;
+	if ( start_seq2_ != rhs_downcast.start_seq2_ ) return false;
+
+	return true;
+}
+
+bool DerivedSequenceMapping::same_type_as_me( SequenceMapping const & other ) const
+{
+	return dynamic_cast< DerivedSequenceMapping const *  > (&other);
+}
+
+
 } // sequence
 } // core
 

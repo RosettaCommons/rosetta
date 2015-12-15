@@ -129,7 +129,7 @@ MPNonHelixPenalty::residue_energy(
 	core::Size resnum = rsd.seqpos() - ( pose.conformation().chain_begin(chain) - 1);
 
 	// Compute Info for Penalty
-	core::Real z_position = pose.conformation().membrane_info()->residue_z_position( rsd.seqpos() );
+	core::Real z_position = pose.conformation().membrane_info()->residue_z_position( pose.conformation(), rsd.seqpos() );
 	bool tmregion = topology->in_span(resnum);
 	char secstruc = pose.conformation().secstruct( rsd.seqpos() );
 

@@ -20,6 +20,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 
 // Project Headers
 #include <core/chemical/types.hh>
@@ -78,7 +79,10 @@ using core::pose::Pose;
 
 ResfileContents::ResfileContents(
 	Pose const & pose,
-	istream & resfile ) :
+	std::string const & fname,
+	istream & resfile
+) :
+	fname_initialized_from_( fname ),
 	commands_( pose.total_residue() )
 {
 	using namespace std;
@@ -88,8 +92,8 @@ ResfileContents::ResfileContents(
 
 	// save the RANGE and CHAIN commands and apply them at the end
 	vector1< ResfileCommandOP > default_commands;
-	vector1< std::list< ResfileCommandOP > > residue_range_commands(pose.total_residue(), std::list< ResfileCommandOP >());
-	vector1< std::list< ResfileCommandOP > > residue_chain_commands(pose.total_residue(), std::list< ResfileCommandOP >());
+	vector1< std::list< ResfileCommandOP > > residue_range_commands( pose.total_residue(), std::list< ResfileCommandOP >());
+	vector1< std::list< ResfileCommandOP > > residue_chain_commands( pose.total_residue(), std::list< ResfileCommandOP >());
 
 	uint lineno = 0;
 	while ( resfile ) {
@@ -159,6 +163,11 @@ ResfileContents::commands_for_residue( Size resid ) const
 	return commands_[ resid ];
 }
 
+std::string const &
+ResfileContents::fname_initialized_from() const {
+	return fname_initialized_from_;
+}
+
 void
 ResfileContents::parse_header_line(
 	vector1< string > const & tokens,
@@ -200,8 +209,8 @@ ResfileContents::parse_body_line(
 	vector1< string > const & tokens,
 	map< string, ResfileCommandOP > const & command_map,
 	Size const lineno,
-	vector1< std::list<ResfileCommandOP > > & residue_range_commands,
-	vector1< std::list<ResfileCommandOP > > & residue_chain_commands
+	vector1< std::list< ResfileCommandOP > > & residue_range_commands,
+	vector1< std::list< ResfileCommandOP > > & residue_chain_commands
 ) {
 	Size which_token = 1, ntokens(tokens.size());
 	int PDBnum, PDBnum_end;
@@ -327,7 +336,8 @@ ResfileContents::parse_resid(
 	char & icode,
 	char & icode_end, // only defined for RANGE id_type
 	char & chain,
-	residue_identifier_type & id_type) const {
+	residue_identifier_type & id_type
+) const {
 
 	string token(get_token(which_token, tokens));
 	++which_token;
@@ -349,8 +359,11 @@ ResfileContents::parse_resid(
 
 		// this may turn out to be a range specification but we have to
 		// wait to the next token to figure that out.
-
-		parse_PDBnum_icode(token, lineno, PDBnum, icode);
+		try {
+			pose::parse_PDBnum_icode(token, fname_initialized_from_, lineno, PDBnum, icode);
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			onError( e.msg() );
+		}
 	}
 
 	token = get_token(which_token, tokens);
@@ -373,10 +386,14 @@ ResfileContents::parse_resid(
 		token = get_token( which_token, tokens );
 		++which_token;
 
-		parse_PDBnum_icode(token, lineno, PDBnum_end, icode_end);
+		try {
+			pose::parse_PDBnum_icode(token, fname_initialized_from_, lineno, PDBnum_end, icode_end);
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			onError( e.msg() );
+		}
 
-		// advance token counter in preparation for getting the chain
-		// token "again".
+// advance token counter in preparation for getting the chain
+// token "again".
 		++which_token;
 	}
 
@@ -407,33 +424,6 @@ ResfileContents::parse_resid(
 	}
 }
 
-void
-ResfileContents::parse_PDBnum_icode(
-	string const & token,
-	Size const lineno,
-	int & PDBnum,
-	char & icode) const {
-
-	istringstream PDBnum_s;
-	if ( std::isalpha( *token.rbegin() ) ) {
-		PDBnum_s.str(token.substr(0, token.length() - 1));
-		icode = *token.rbegin();
-	} else {
-		PDBnum_s.str(token);
-		icode = ' ';
-	}
-
-	char remaining;
-	if ( !(PDBnum_s >> PDBnum) || PDBnum_s.get(remaining) ) {
-		stringstream err_msg;
-		err_msg
-			<< "On line " << lineno << ", "
-			<< "the token '" << token << "' "
-			<< "is not a valid <PDBNUM>[<ICODE>] identifier.";
-		onError(err_msg.str());
-	}
-
-}
 
 Size
 ResfileContents::locate_resid(
@@ -1104,8 +1094,8 @@ NC::residue_action(
 	Size resid
 ) const
 {
-	core::chemical::ResidueTypeSet const & residue_set = task.residue_task( resid ).get_original_residue_set();
-	if ( residue_set.has_interchangeability_group( nc_to_include_ ) ) {
+	core::chemical::ResidueTypeSetCOP residue_set = task.residue_task( resid ).get_original_residue_set();
+	if ( residue_set->has_interchangeability_group( nc_to_include_ ) ) {
 		task.nonconst_residue_task(resid).allow_noncanonical_aa( nc_to_include_ );
 	} else {
 		std::stringstream err_msg;
@@ -1384,7 +1374,7 @@ parse_resfile(
 	utility::slurp( file, resfile );
 	file.close();
 	try{
-		parse_resfile_string( pose, the_task, resfile );
+		parse_resfile_string( pose, the_task, filename, resfile );
 	} catch (ResfileReaderException &) {
 		if ( basic::options::option[ basic::options::OptionKeys::run::interactive ].user() ) {
 			throw;
@@ -1402,11 +1392,12 @@ void
 parse_resfile_string(
 	pose::Pose const & pose,
 	PackerTask & the_task,
+	std::string const & resfile_fname,
 	std::string const & resfile_string
 ) throw(ResfileReaderException)
 {
 	core::select::residue_selector::ResidueSubset const mask( pose.n_residue(), true );
-	parse_resfile_string( pose, the_task, resfile_string, mask );
+	parse_resfile_string( pose, the_task, resfile_fname, resfile_string, mask );
 	return;
 }
 
@@ -1421,13 +1412,14 @@ void
 parse_resfile_string(
 	pose::Pose const & pose,
 	PackerTask & the_task,
+	std::string const & resfile_fname,
 	std::string const & resfile_string,
-	core::select::residue_selector::ResidueSubset const &mask
+	core::select::residue_selector::ResidueSubset const & mask
 ) throw(ResfileReaderException)
 {
 	using namespace std;
 	istringstream resfile(resfile_string);
-	ResfileContents contents( pose, resfile );
+	ResfileContents contents( pose, resfile_fname, resfile );
 
 	runtime_assert_string_msg( mask.size() == pose.n_residue(), "Error in core::pack::task::parse_resfile_string(): The mask passed to this function is not the same size as the pose.  The mask must have one entry for every residue." );
 
@@ -1458,7 +1450,8 @@ std::string
 get_token(
 	const Size which_token,
 	const utility::vector1<std::string> & tokens,
-	bool make_upper_case) {
+	bool make_upper_case
+) {
 
 	if ( which_token >  tokens.size() ) {
 		if ( which_token == 1 ) {
@@ -1517,7 +1510,7 @@ tokenize_line( std::istream & inputstream )
 	return tokens;
 }
 
-void onError( std::string message){
+void onError( std::string message ){
 	static bool interactive = basic::options::option[ basic::options::OptionKeys::run::interactive ].value();
 	TR << message << std::endl;
 	if ( interactive ) {

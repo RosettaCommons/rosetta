@@ -103,7 +103,7 @@ void run() {
   core::chemical::ResidueTypeSetCAP  rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose init,cys;
   core::import_pose::pose_from_pdb(init,*rs,option[in::file::s]()[1]);
-  make_pose_from_sequence(cys,"C","fa_standard",false);
+  make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
   remove_lower_terminus_type_from_pose_residue(cys,1);
   remove_upper_terminus_type_from_pose_residue(cys,1);
 	add_variant_type_to_pose_residue(cys,"DISULF_PARTNER",1);

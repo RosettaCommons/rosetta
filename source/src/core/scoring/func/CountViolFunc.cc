@@ -25,9 +25,40 @@
 // C++ Headers
 #include <string>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
+
+bool CountViolFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	CountViolFunc const & other_downcast( static_cast< CountViolFunc const & > (other) );
+	if ( weight_      != other_downcast.weight_      ) return false;
+
+	return func_to_weight_ == other_downcast.func_to_weight_ ||
+		( func_to_weight_ && other_downcast.func_to_weight_ &&
+		*func_to_weight_ == *other_downcast.func_to_weight_ );
+
+	return true;
+}
+
+bool CountViolFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< CountViolFunc const * > ( &other );
+}
 
 Real
 CountViolFunc::func( Real const x ) const
@@ -79,3 +110,34 @@ CountViolFunc::show_definition( std::ostream &out ) const
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::func::CountViolFunc::CountViolFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::CountViolFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( weight_ ) ); // Real
+	arc( CEREAL_NVP( count_viols_ ) ); // core::Size
+	arc( CEREAL_NVP( func_to_weight_ ) ); // FuncOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::CountViolFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( weight_ ); // Real
+	arc( count_viols_ ); // core::Size
+	arc( func_to_weight_ ); // FuncOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::CountViolFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::CountViolFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_CountViolFunc )
+#endif // SERIALIZATION

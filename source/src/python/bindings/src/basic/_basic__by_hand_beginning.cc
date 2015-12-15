@@ -29,6 +29,7 @@
 
 
 // Includes for dummy bindings to simplify import orders
+#include <basic/datacache/BasicDataCache.hh>
 // #include <basic/datacache/WriteableCacheableDataFactory.hh>
 // #include <basic/resource_manager/FallbackConfigurationFactory.hh>
 // #include <basic/resource_manager/ResourceManager.hh>
@@ -98,10 +99,10 @@ void __basic_by_hand_beginning__()
 	bp::def("set_file_vector_option",    &set_option< utility::vector1<std::string>, utility::options::FileVectorOptionKey> );
 
 	// Dummy imports to simplify monolith build imports logic
-	//typedef boost::python::class_< ::basic::datacache::DataCache<basic::datacache::CacheableData> > DataCache_T_basic_datacache_CacheableData_T_exposer_type;
-    //DataCache_T_basic_datacache_CacheableData_T_exposer_type DataCache_T_basic_datacache_CacheableData_T_exposer("__DataCache_T_basic_datacache_CacheableData_T", "Indexed storage for objects derived from a ReferenceCountable\n data type.\nIntended for use as a generic data cache by storing objects\n derived from a ReferenceCountable data type in a unique slot designated\n by an integer id (enum, size index, etc.). The DataCache will only store\n one object per slot/id.  For example, see the PoseDataCache used in\n core::pose::Pose, which is indexed by the enum basic::pose::datacache:CacheableDataType.\n Currently when data is set(), it is not cloned -- classes deriving from\n DataCache should remember to overload set() if they need cloning behavior.\n@tparam Data Class derived from utility::pointer::ReferenceCount that\n defines a virtual clone() method.\n", boost::python::init <  >() );
+	typedef boost::python::class_< ::basic::datacache::DataCache<basic::datacache::CacheableData> > DataCache_T_basic_datacache_CacheableData_T_exposer_type;
+    DataCache_T_basic_datacache_CacheableData_T_exposer_type DataCache_T_basic_datacache_CacheableData_T_exposer("__DataCache_T_basic_datacache_CacheableData_T", "Indexed storage for objects derived from a ReferenceCountable\n data type.\nIntended for use as a generic data cache by storing objects\n derived from a ReferenceCountable data type in a unique slot designated\n by an integer id (enum, size index, etc.). The DataCache will only store\n one object per slot/id.  For example, see the PoseDataCache used in\n core::pose::Pose, which is indexed by the enum basic::pose::datacache:CacheableDataType.\n Currently when data is set(), it is not cloned -- classes deriving from\n DataCache should remember to overload set() if they need cloning behavior.\n@tparam Data Class derived from utility::pointer::ReferenceCount that\n defines a virtual clone() method.\n", boost::python::init <  >() );
 
-	// Dummy bindings to simplify import orders
+	// dummy bindings to simplify import orders
 	// boost::python::class_< utility::SingletonBase<basic::datacache::WriteableCacheableDataFactory>, boost::noncopyable >( "__utility_SingletonBase_basic_datacache_WriteableCacheableDataFactory__");
 	// boost::python::class_< utility::SingletonBase<basic::resource_manager::FallbackConfigurationFactory>, boost::noncopyable >( "__utility_SingletonBase_basic_resource_manager_FallbackConfigurationFactory__");
 	// boost::python::class_< utility::SingletonBase<basic::resource_manager::ResourceManager>, boost::noncopyable >( "__utility_SingletonBase_basic_resource_manager_ResourceManager__");

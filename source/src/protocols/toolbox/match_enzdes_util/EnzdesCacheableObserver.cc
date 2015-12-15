@@ -48,6 +48,17 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
@@ -337,3 +348,51 @@ EnzdesCacheableObserver::remove_favor_native_constraints(
 } //match_enzdes_util
 } //toolbox
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzdesCacheableObserver::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::datacache::CacheableObserver >( this ) );
+	arc( CEREAL_NVP( cst_cache_ ) ); // toolbox::match_enzdes_util::EnzdesCstCacheOP
+	arc( CEREAL_NVP( seq_recovery_cache_ ) ); // EnzdesSeqRecoveryCacheOP
+	arc( CEREAL_NVP( favor_native_constraints_ ) ); // core::scoring::constraints::ConstraintCOPs
+	arc( CEREAL_NVP( enz_loops_file_ ) ); // EnzdesLoopsFileCOP
+	arc( CEREAL_NVP( lig_rigid_body_confs_ ) ); // std::map<core::Size, utility::vector1<core::conformation::ResidueCOP> >
+	// EXEMPT length_event_link_
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzdesCacheableObserver::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::datacache::CacheableObserver >( this ) );
+	arc( cst_cache_ ); // toolbox::match_enzdes_util::EnzdesCstCacheOP
+	arc( seq_recovery_cache_ ); // EnzdesSeqRecoveryCacheOP
+	utility::vector1< std::shared_ptr< core::scoring::constraints::Constraint > > local_favor_native_constraints;
+	arc( local_favor_native_constraints ); // core::scoring::constraints::ConstraintCOPs
+	favor_native_constraints_ = local_favor_native_constraints; // copy the non-const pointer(s) into the const pointer(s)
+
+	std::shared_ptr< protocols::toolbox::match_enzdes_util::EnzdesLoopsFile > local_enz_loops_file;
+	arc( local_enz_loops_file ); // EnzdesLoopsFileCOP
+	enz_loops_file_ = local_enz_loops_file; // copy the non-const pointer(s) into the const pointer(s)
+
+	std::map< core::Size, utility::vector1< core::conformation::ResidueOP > > local_lig_rigid_body_confs;
+	arc( local_lig_rigid_body_confs ); // std::map<core::Size, utility::vector1<core::conformation::ResidueCOP> >
+	// lig_rigid_body_confs_ = local_lig_rigid_body_confs; // copy the non-const pointer(s) into the const pointer(s)
+	for ( std::map< core::Size, utility::vector1< core::conformation::ResidueOP > >::const_iterator
+			iter = local_lig_rigid_body_confs.begin(), iter_end = local_lig_rigid_body_confs.end();
+			iter != iter_end; ++iter ) {
+		lig_rigid_body_confs_[ iter->first ] = iter->second;
+	}
+	// EXEMPT length_event_link_
+
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::EnzdesCacheableObserver );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::EnzdesCacheableObserver )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_EnzdesCacheableObserver )
+#endif // SERIALIZATION

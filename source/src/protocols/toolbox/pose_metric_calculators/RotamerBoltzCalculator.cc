@@ -39,6 +39,16 @@
 
 //Auto Headers
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -240,3 +250,42 @@ utility::vector0 <int> RotamerBoltzCalculator::init_rot_to_pack(core::pack::rota
 }//pose_metrics
 }//toolbox
 }//protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::pose_metric_calculators::RotamerBoltzCalculator::RotamerBoltzCalculator() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::RotamerBoltzCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( rb_jump_ ) ); // core::Real
+	arc( CEREAL_NVP( repacking_radius_ ) ); // core::Real
+	arc( CEREAL_NVP( scorefxn_ ) ); // core::scoring::ScoreFunctionOP
+	arc( CEREAL_NVP( temperature_ ) ); // core::Real
+	// apl unused? Don't bother serializing arc( CEREAL_NVP( stf_ ) ); // const protocols::simple_filters::ScoreTypeFilter
+	// EXEMPT stf_
+	arc( CEREAL_NVP( all_boltz_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( rotset_ ) ); // core::pack::rotamer_set::RotamerSetOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::RotamerBoltzCalculator::load( Archive & arc ) {
+	arc( rb_jump_ ); // core::Real
+	arc( repacking_radius_ ); // core::Real
+	arc( scorefxn_ ); // core::scoring::ScoreFunctionOP
+	arc( temperature_ ); // core::Real
+	// apl unused? arc( stf_ ); // const protocols::simple_filters::ScoreTypeFilter
+	// EXEMPT stf_
+	arc( all_boltz_ ); // utility::vector1<core::Real>
+	arc( rotset_ ); // core::pack::rotamer_set::RotamerSetOP
+}
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::RotamerBoltzCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::RotamerBoltzCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_RotamerBoltzCalculator )
+#endif // SERIALIZATION

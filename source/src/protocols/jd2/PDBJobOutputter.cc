@@ -146,7 +146,9 @@ std::string protocols::jd2::PDBJobOutputter::output_name( JobCOP job ){
 	return affixed_numbered_name( job );
 }
 
-std::string protocols::jd2::PDBJobOutputter::extended_name( JobCOP job, std::string const suffix ){
+std::string
+protocols::jd2::PDBJobOutputter::extended_name( JobCOP job, std::string const suffix )
+{
 	return output_name(job) + std::string(suffix.empty() ? "" : "_") + suffix + extension_;
 }
 
@@ -201,35 +203,7 @@ void protocols::jd2::PDBJobOutputter::extract_extra_scores(
 	utility::io::ozstream & out
 )
 {
-	// ARBITRARY_STRING_DATA
-	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
-		basic::datacache::CacheableStringMapCOP data
-			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringMap const >
-			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
-		assert( data.get() != NULL );
-
-		for ( std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
-				it != end;
-				++it ) {
-			//TR << it->first << " " << it->second << std::endl;
-			out << it->first << " " << it->second << std::endl;
-		}
-	}
-
-	// ARBITRARY_FLOAT_DATA
-	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
-		basic::datacache::CacheableStringFloatMapCOP data
-			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
-			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-		assert( data.get() != NULL );
-
-		for ( std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );
-				it != end;
-				++it ) {
-			//TR << it->first << " " << it->second << std::endl;
-			out << it->first << " " << it->second << std::endl;
-		}
-	}
+	core::io::pdb::extract_extra_scores( pose, out );
 }
 
 //CREATOR SECTION

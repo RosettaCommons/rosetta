@@ -638,7 +638,7 @@ simple_loop_modeling_test()
 	}
 
 	// now convert sequence of aligned positions
-	ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
+	ResidueTypeSet const & rsd_set( *pose.residue(1).residue_type_set() );
 	{
 		for ( Size i=1; i<= mapping.size1(); ++i ) {
 			char const new_seq( target_seq[ mapping[i]-1 ] ); // strings are 0-indexed
@@ -2419,7 +2419,7 @@ backrub_min_test()
 	edges.push_back( std::make_pair( 7, 4 ) ); //       seqpos+1 -->       seqpos
 	edges.push_back( std::make_pair( 4, 1 ) ); //       seqpos   -->       seqpos-1
 
-	ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
+	ResidueTypeSet const & rsd_set( *pose.residue(1).residue_type_set() );
 	ResidueOP psd( ResidueFactory::create_residue( rsd_set.name_map( "VRT1" ) ) );
 	pose.append_residue_by_jump( *psd, 1 );
 	pose.append_residue_by_jump( *psd, 1 );
@@ -2550,7 +2550,7 @@ bk_test2()
 	core::import_pose::pose_from_pdb( pose1, start_files()[1] );
 	core::import_pose::pose_from_pdb( pose2, start_files()[2] );
 
-	ResidueTypeSet const & rsd_set( pose1.residue(1).residue_type_set() );
+	ResidueTypeSet const & rsd_set( *pose1.residue(1).residue_type_set() );
 	Size const nres1( pose1.total_residue() );
 	Size const nres2( pose2.total_residue() );
 

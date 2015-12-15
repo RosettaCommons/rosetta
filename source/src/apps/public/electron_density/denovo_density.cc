@@ -1402,21 +1402,21 @@ ConsensusFragmentMover::run() {
 						done = true;
 
 						core::conformation::Residue old_rsd = frag_i->residue(j);
-						chemical::ResidueTypeSet const & rsd_set( old_rsd.residue_type_set() );
+						chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
 						chemical::ResidueType const & new_rsd_type(
-							rsd_set.get_residue_type_with_variant_removed( old_rsd.type(),
+							rsd_set->get_residue_type_with_variant_removed( old_rsd.type(),
 							chemical::LOWERTERM_TRUNC_VARIANT ) );
 						chemical::ResidueType const & new2_rsd_type(
-							rsd_set.get_residue_type_with_variant_removed( new_rsd_type,
+							rsd_set->get_residue_type_with_variant_removed( new_rsd_type,
 							chemical::UPPERTERM_TRUNC_VARIANT ) );
 						chemical::ResidueType const & new3_rsd_type(
-							rsd_set.get_residue_type_with_variant_removed( new2_rsd_type,
+							rsd_set->get_residue_type_with_variant_removed( new2_rsd_type,
 							chemical::UPPER_TERMINUS_VARIANT ) );
 						chemical::ResidueType const & new4_rsd_type(
-							rsd_set.get_residue_type_with_variant_removed( new3_rsd_type,
+							rsd_set->get_residue_type_with_variant_removed( new3_rsd_type,
 							chemical::LOWER_TERMINUS_VARIANT ) );
 						chemical::ResidueType const & new5_rsd_type(
-							rsd_set.get_residue_type_with_variant_removed( new4_rsd_type,
+							rsd_set->get_residue_type_with_variant_removed( new4_rsd_type,
 							chemical::DISULFIDE ) );
 
 						res_to_add = conformation::ResidueFactory::create_residue( new5_rsd_type );

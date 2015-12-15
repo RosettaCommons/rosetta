@@ -20,6 +20,7 @@
 #include <test/util/pose_funcs.hh>
 
 #include <core/sequence/util.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 
 #include <basic/Tracer.hh>

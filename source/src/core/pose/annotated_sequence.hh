@@ -80,7 +80,7 @@ void append_pose_with_glycan_residues( pose::Pose & pose, chemical::ResidueTypeC
 /// mark position 1, last_residue with lower, upper termini; default true
 ///
 /// example(s):
-///     make_pose_from_sequence(pose,"THANKSEVAN","fa_standard")
+///     make_pose_from_sequence(pose,"THANKSEVAN",core::chemical::FA_STANDARD)
 /// See also:
 ///     Pose
 ///     PDBInfo
@@ -97,6 +97,13 @@ void make_pose_from_sequence(
 	pose::Pose & pose,
 	std::string const & sequence,
 	chemical::ResidueTypeSet const & residue_set,
+	bool const auto_termini = true
+);
+
+void make_pose_from_sequence(
+	pose::Pose & pose,
+	std::string const & sequence,
+	chemical::ResidueTypeSetCOP residue_set,
 	bool const auto_termini = true
 );
 

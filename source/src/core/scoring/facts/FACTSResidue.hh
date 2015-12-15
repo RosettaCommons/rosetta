@@ -29,6 +29,12 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -113,6 +119,12 @@ private:
 	// Free dof atoms
 	utility::vector1< bool > is_freedof_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /**************************************************************************************************/
@@ -194,7 +206,7 @@ public:
 
 	inline bool flag_for_calculation( Size const atm ) const { return flag_for_calculation_[atm]; }
 
-public:
+public: // NO DATA SHOULD BE PUBLIC!
 	//const static Size MAXNEIGH = 300;
 	//const static Real max_selfdcut2 = 100.0;
 
@@ -236,6 +248,12 @@ public:
 private:
 	FACTSRsdTypeInfoCOP restypeinfo_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,9 +293,25 @@ public:
 
 private:
 	utility::vector1< FACTSResidueInfoOP > residue_info_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	FACTSRotamerSetInfo();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_facts_FACTSResidue )
+#endif // SERIALIZATION
+
 
 #endif

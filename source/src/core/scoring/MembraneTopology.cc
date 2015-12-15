@@ -36,6 +36,20 @@
 // C++
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// ObjexxFCL serialization headers
+#include <utility/serialization/ObjexxFCL/FArray1D.srlz.hh>
+#include <utility/serialization/ObjexxFCL/FArray2D.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -314,3 +328,61 @@ return *( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( ba
 */
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::MembraneTopology::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( spanfile_ ) ); // std::string
+	arc( CEREAL_NVP( helix_id_ ) ); // ObjexxFCL::FArray1D<Size>
+	arc( CEREAL_NVP( span_ ) ); // ObjexxFCL::FArray2D<Size>
+	arc( CEREAL_NVP( full_span_ ) ); // ObjexxFCL::FArray2D<Size>
+	arc( CEREAL_NVP( relative_tmh_ori_ ) ); // ObjexxFCL::FArray2D<Size>
+	arc( CEREAL_NVP( total_tmhelix_ ) ); // Size
+	arc( CEREAL_NVP( depth_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( LipidExposure_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( LipidBurial_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( LipoDefined_ ) ); // _Bool
+	arc( CEREAL_NVP( init_ ) ); // _Bool
+	arc( CEREAL_NVP( beta_barrel_ ) ); // _Bool
+	arc( CEREAL_NVP( N_term_inside_ ) ); // _Bool
+	arc( CEREAL_NVP( initialized_ ) ); // _Bool
+	arc( CEREAL_NVP( tmregion_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( allow_scoring_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( allow_tmh_scoring_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( tmh_inserted_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::MembraneTopology::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( spanfile_ ); // std::string
+	arc( helix_id_ ); // ObjexxFCL::FArray1D<Size>
+	arc( span_ ); // ObjexxFCL::FArray2D<Size>
+	arc( full_span_ ); // ObjexxFCL::FArray2D<Size>
+	arc( relative_tmh_ori_ ); // ObjexxFCL::FArray2D<Size>
+	arc( total_tmhelix_ ); // Size
+	arc( depth_ ); // utility::vector1<core::Real>
+	arc( LipidExposure_ ); // utility::vector1<core::Real>
+	arc( LipidBurial_ ); // utility::vector1<core::Real>
+	arc( LipoDefined_ ); // _Bool
+	arc( init_ ); // _Bool
+	arc( beta_barrel_ ); // _Bool
+	arc( N_term_inside_ ); // _Bool
+	arc( initialized_ ); // _Bool
+	arc( tmregion_ ); // utility::vector1<_Bool>
+	arc( allow_scoring_ ); // utility::vector1<_Bool>
+	arc( allow_tmh_scoring_ ); // utility::vector1<_Bool>
+	arc( tmh_inserted_ ); // Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::MembraneTopology );
+CEREAL_REGISTER_TYPE( core::scoring::MembraneTopology )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_MembraneTopology )
+#endif // SERIALIZATION

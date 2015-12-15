@@ -15,6 +15,7 @@
 #include <core/scoring/constraints/BoundConstraint.hh>
 
 // Package Headers
+#include <core/scoring/func/Func.hh>
 
 // Project Headers
 #include <basic/Tracer.hh>
@@ -30,10 +31,49 @@ static THREAD_LOCAL basic::Tracer tr( "core.constraints.BoundFunc", basic::t_inf
 
 // C++ headers
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
 
+BoundFunc::BoundFunc( Real const lb, Real const ub, Real sd, std::string type ):
+	lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( 0.5 ), type_( type )
+{}
+
+BoundFunc::BoundFunc( Real const lb, Real const ub, Real sd, Real rswitch, std::string type ) :
+	lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( rswitch ), type_( type )
+{}
+
+func::FuncOP
+BoundFunc::clone() const { return func::FuncOP( new BoundFunc( *this ) ); }
+
+bool BoundFunc::operator==( Func const & rhs ) const
+{
+	if ( !     same_type_as_me(   rhs ) ) return false;
+	if ( ! rhs.same_type_as_me( *this ) ) return false;
+
+	BoundFunc const & rhs_bound( static_cast< BoundFunc const & > (rhs) );
+	if ( lb_ != rhs_bound.lb_ ) return false;
+	if ( ub_ != rhs_bound.ub_ ) return false;
+	if ( sd_ != rhs_bound.sd_ ) return false;
+	if ( rswitch_ != rhs_bound.rswitch_ ) return false;
+	return type_ == rhs_bound.type_;
+}
+
+bool BoundFunc::same_type_as_me( Func const & other ) const {
+	return dynamic_cast< BoundFunc const * > (&other);
+}
 
 Real
 BoundFunc::func( Real const x ) const
@@ -136,12 +176,36 @@ BoundFunc::read_data( std::istream& in ) {
 }
 
 
-void
-PeriodicBoundFunc::show_definition( std::ostream &out ) const
-{
-	using namespace ObjexxFCL::format;
-	out << "PERIODICITYBOUNDED " << RJ(7, periodicity_) << " ";
-	parent::show_definition( out );
+PeriodicBoundFunc::PeriodicBoundFunc(
+	Real const lb,
+	Real const ub,
+	Real sd,
+	std::string type,
+	Real const periodicity_in
+) :
+	BoundFunc(
+	basic::periodic_range(lb, periodicity_in),
+	basic::periodic_range(ub,periodicity_in),
+	sd, type
+	),
+	periodicity_( periodicity_in )
+{}
+
+func::FuncOP
+PeriodicBoundFunc::clone() const { return func::FuncOP( new PeriodicBoundFunc( *this ) ); }
+
+bool PeriodicBoundFunc::operator == ( Func const & rhs ) const {
+	if ( !     same_type_as_me(   rhs ) ) return false;
+	if ( ! rhs.same_type_as_me( *this ) ) return false;
+
+	PeriodicBoundFunc const & rhs_pbf( static_cast< PeriodicBoundFunc const & > ( rhs ) );
+	if ( periodicity_ != rhs_pbf.periodicity_ ) return false;
+
+	return parent::operator == ( rhs );
+}
+
+bool PeriodicBoundFunc::same_type_as_me( Func const & rhs ) const {
+	return dynamic_cast< PeriodicBoundFunc const * > (&rhs);
 }
 
 void
@@ -151,14 +215,62 @@ PeriodicBoundFunc::read_data( std::istream& in )
 	parent::read_data( in );
 }
 
+Real PeriodicBoundFunc::func(Real const x ) const
+{
+	return parent::func( basic::periodic_range(x , periodicity_ ) );
+}
+
+Real
+PeriodicBoundFunc::dfunc( Real const x ) const
+{
+	return parent::dfunc( basic::periodic_range(x , periodicity_ ) );
+}
 
 void
-OffsetPeriodicBoundFunc::show_definition( std::ostream &out ) const
+PeriodicBoundFunc::show_definition( std::ostream &out ) const
 {
 	using namespace ObjexxFCL::format;
-	out << "OFFSETPERIODICITYBOUNDED offset" << RJ(7, offset_) << " period " << RJ(7, periodicity_) << " ";
+	out << "PERIODICITYBOUNDED " << RJ(7, periodicity_) << " ";
 	parent::show_definition( out );
 }
+
+Size
+PeriodicBoundFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold ) const
+{
+	return parent::show_violations( out, basic::periodic_range( x, periodicity_ ), verbose_level, threshold );
+}
+
+OffsetPeriodicBoundFunc::OffsetPeriodicBoundFunc(
+	Real const lb,
+	Real const ub,
+	Real sd,
+	std::string type,
+	Real const periodicity_in,
+	Real const offset_in
+) :
+	BoundFunc( lb, ub, sd, type ),
+	periodicity_( periodicity_in ),
+	offset_( offset_in )
+{}
+
+func::FuncOP OffsetPeriodicBoundFunc::clone() const { return func::FuncOP( new OffsetPeriodicBoundFunc( *this ) ); }
+
+bool OffsetPeriodicBoundFunc::operator == ( Func const & rhs ) const {
+	if ( !     same_type_as_me(   rhs ) ) return false;
+	if ( ! rhs.same_type_as_me( *this ) ) return false;
+
+	OffsetPeriodicBoundFunc const & rhs_opbf( static_cast< OffsetPeriodicBoundFunc const & > ( rhs ) );
+	if ( periodicity_ != rhs_opbf.periodicity_ ) return false;
+	if ( offset_ != rhs_opbf.offset_ ) return false;
+
+	return parent::operator == ( rhs );
+}
+
+bool OffsetPeriodicBoundFunc::same_type_as_me( Func const & rhs ) const
+{
+	return dynamic_cast< OffsetPeriodicBoundFunc const * > (&rhs);
+}
+
 
 void
 OffsetPeriodicBoundFunc::read_data( std::istream& in )
@@ -168,6 +280,114 @@ OffsetPeriodicBoundFunc::read_data( std::istream& in )
 }
 
 
+Real OffsetPeriodicBoundFunc::func(Real const x ) const
+{
+	return parent::func( basic::periodic_range(x - offset_, periodicity_ ) );
+}
+
+Real OffsetPeriodicBoundFunc::dfunc( Real const x ) const
+{
+	return parent::dfunc( basic::periodic_range(x - offset_, periodicity_ ) );
+}
+
+void
+OffsetPeriodicBoundFunc::show_definition( std::ostream &out ) const
+{
+	using namespace ObjexxFCL::format;
+	out << "OFFSETPERIODICITYBOUNDED offset" << RJ(7, offset_) << " period " << RJ(7, periodicity_) << " ";
+	parent::show_definition( out );
+}
+
+Size OffsetPeriodicBoundFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real threshold ) const
+{
+	return parent::show_violations( out, basic::periodic_range( x, periodicity_ ), verbose_level, threshold );
+}
+
+
+
 }
 }
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::constraints::OffsetPeriodicBoundFunc::OffsetPeriodicBoundFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::OffsetPeriodicBoundFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< BoundFunc >( this ) );
+	arc( CEREAL_NVP( periodicity_ ) ); // Real
+	arc( CEREAL_NVP( offset_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::OffsetPeriodicBoundFunc::load( Archive & arc ) {
+	arc( cereal::base_class< BoundFunc >( this ) );
+	arc( periodicity_ ); // Real
+	arc( offset_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::OffsetPeriodicBoundFunc );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::OffsetPeriodicBoundFunc )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::constraints::PeriodicBoundFunc::PeriodicBoundFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::PeriodicBoundFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< BoundFunc >( this ) );
+	arc( CEREAL_NVP( periodicity_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::PeriodicBoundFunc::load( Archive & arc ) {
+	arc( cereal::base_class< BoundFunc >( this ) );
+	arc( periodicity_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::PeriodicBoundFunc );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::PeriodicBoundFunc )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::constraints::BoundFunc::BoundFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::BoundFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< func::Func >( this ) );
+	arc( CEREAL_NVP( lb_ ) ); // Real
+	arc( CEREAL_NVP( ub_ ) ); // Real
+	arc( CEREAL_NVP( sd_ ) ); // Real
+	arc( CEREAL_NVP( rswitch_ ) ); // Real
+	arc( CEREAL_NVP( type_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::BoundFunc::load( Archive & arc ) {
+	arc( cereal::base_class< func::Func >( this ) );
+	arc( lb_ ); // Real
+	arc( ub_ ); // Real
+	arc( sd_ ); // Real
+	arc( rswitch_ ); // Real
+	arc( type_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::BoundFunc );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::BoundFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_BoundConstraint )
+#endif // SERIALIZATION

@@ -90,12 +90,12 @@ SideChainNeighborsEnergy::residue_energy(
 	Real my_neighbors = 0.0;
 	Vector my_sc_coordinates, my_bb_coordinates;
 	if ( rsd.name3() == "GLY" ) {
-		if ( rsd.type().residue_type_set().name() == "fa_standard" ) {
+		if ( rsd.type().residue_type_set()->name() == "fa_standard" ) {
 			my_sc_coordinates = rsd.atom(rsd.atom_index("2HA")).xyz();
-		} else if ( rsd.type().residue_type_set().name() == "centroid" ) {
+		} else if ( rsd.type().residue_type_set()->name() == "centroid" ) {
 			my_sc_coordinates = rsd.atom(rsd.atom_index("CEN")).xyz();
 		} else {
-			throw utility::excn::EXCN_BadInput( "Unknown residue type set for gly residue: " + rsd.type().residue_type_set().name() );
+			throw utility::excn::EXCN_BadInput( "Unknown residue type set for gly residue: " + rsd.type().residue_type_set()->name() );
 		}
 		my_bb_coordinates = rsd.atom(rsd.atom_index("CA")).xyz() ;
 	} else {

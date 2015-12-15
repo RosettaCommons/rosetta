@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/core/scoring/func/GaussianChainFunc.hh
+/// @file src/core/scoring/func/GaussianChainFunc.cc
 /// @brief Definition for functions used in loop closure terms.
 /// @author Rhiju Das
 
@@ -68,6 +68,18 @@
 //////////////////////////////////////////////////////////////////////////
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -105,6 +117,27 @@ GaussianChainFunc::clone() const
 {
 	return FuncOP( new GaussianChainFunc( gaussian_variance_, loop_fixed_cost_, other_distances_ ) );
 }
+
+bool GaussianChainFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	GaussianChainFunc const & other_downcast( static_cast< GaussianChainFunc const & > (other) );
+	if ( gaussian_variance_     != other_downcast.gaussian_variance_     ) return false;
+	if ( loop_fixed_cost_       != other_downcast.loop_fixed_cost_       ) return false;
+	if ( other_distances_       != other_downcast.other_distances_       ) return false;
+	if ( kB_T_                  != other_downcast.kB_T_                  ) return false;
+	if ( force_combined_gaussian_approximation_ != other_downcast.force_combined_gaussian_approximation_ ) return false;
+
+	return func_ == other_downcast.func_ || ( func_ && other_downcast.func_ && *func_ == *other_downcast.func_ );
+}
+
+bool GaussianChainFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< GaussianChainFunc const * > ( &other );
+}
+
 
 /////////////////////////////////////////////////////
 void
@@ -173,3 +206,40 @@ GaussianChainFunc::show_definition( std::ostream &out ) const {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::func::GaussianChainFunc::GaussianChainFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::GaussianChainFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( gaussian_variance_ ) ); // Real
+	arc( CEREAL_NVP( loop_fixed_cost_ ) ); // Real
+	arc( CEREAL_NVP( other_distances_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( kB_T_ ) ); // Real
+	arc( CEREAL_NVP( force_combined_gaussian_approximation_ ) ); // _Bool
+	arc( CEREAL_NVP( func_ ) ); // FuncOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::GaussianChainFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( gaussian_variance_ ); // Real
+	arc( loop_fixed_cost_ ); // Real
+	arc( other_distances_ ); // utility::vector1<Real>
+	arc( kB_T_ ); // Real
+	arc( force_combined_gaussian_approximation_ ); // _Bool
+	arc( func_ ); // FuncOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::GaussianChainFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::GaussianChainFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_GaussianChainFunc )
+#endif // SERIALIZATION

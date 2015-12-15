@@ -50,6 +50,11 @@
 #include <utility/vector1_bool.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace scoring {
 namespace methods {
@@ -59,11 +64,6 @@ namespace pcsTs4 {
 /// @brief PCS_line_data_Ts4 class: hold a line of the input file information (.npc format)
 /// One PCS_line_data_Ts4 per line in the input file
 class PCS_line_data_Ts4 {
-
-private:
-	/// @brief Cannot use default constructor!
-	PCS_line_data_Ts4();
-
 public:
 	~PCS_line_data_Ts4();
 
@@ -99,6 +99,15 @@ private:
 	std::string const atom_name_;
 	core::Real const PCS_experimental_;
 	core::Real const PCS_tolerance_;
+#ifdef    SERIALIZATION
+public:
+	PCS_line_data_Ts4();
+	friend class cereal::access;
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 

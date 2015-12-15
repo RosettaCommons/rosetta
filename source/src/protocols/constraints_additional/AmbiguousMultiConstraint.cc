@@ -25,6 +25,18 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace constraints_additional {
 
@@ -48,6 +60,22 @@ AmbiguousMultiConstraint::AmbiguousMultiConstraint(
 {
 	active_constraints_.clear();
 }
+
+bool AmbiguousMultiConstraint::operator == ( core::scoring::constraints::Constraint const & other ) const
+{
+	if ( ! core::scoring::constraints::AmbiguousConstraint::operator == ( other ) ) return false;
+
+	AmbiguousMultiConstraint const & other_downcast( static_cast< AmbiguousMultiConstraint const & > ( other ) );
+
+	return num_active_constraints_ == other_downcast.num_active_constraints_;
+}
+
+bool AmbiguousMultiConstraint::same_type_as_me( core::scoring::constraints::Constraint const & other ) const
+{
+	return dynamic_cast< AmbiguousMultiConstraint const * > (&other);
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief ScoreFunction, scores all member constraints but only reports the lowest N ones
 /// @brief note: this could potentially be made faster if the cur_emap isn't copied, but instead
@@ -116,13 +144,9 @@ AmbiguousMultiConstraint::remap_resid( core::id::SequenceMapping const &seqmap )
 	using namespace core::scoring::constraints;
 
 	ConstraintCOPs new_csts;
-
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints_.begin(); cst_it != member_constraints_.end(); ++cst_it ) {
-
+	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); ++cst_it ) {
 		ConstraintOP new_cst = (*cst_it)->remap_resid( seqmap );
-
 		if ( new_cst ) new_csts.push_back( new_cst );
-
 	}
 
 	if ( new_csts.size() > 0 ) {
@@ -183,3 +207,34 @@ AmbiguousMultiConstraint::show_violations( std::ostream& out, core::pose::Pose c
 
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::constraints_additional::AmbiguousMultiConstraint::AmbiguousMultiConstraint() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::constraints_additional::AmbiguousMultiConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::constraints::AmbiguousConstraint >( this ) );
+	arc( CEREAL_NVP( num_active_constraints_ ) ); // core::Size
+	arc( CEREAL_NVP( active_constraints_ ) ); // core::scoring::constraints::ConstraintCOPs
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::constraints_additional::AmbiguousMultiConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::constraints::AmbiguousConstraint >( this ) );
+	arc( num_active_constraints_ ); // core::Size
+	utility::vector1< std::shared_ptr< core::scoring::constraints::Constraint > > local_active_constraints;
+	arc( local_active_constraints ); // core::scoring::constraints::ConstraintCOPs
+	active_constraints_ = local_active_constraints; // copy the non-const pointer(s) into the const pointer(s)
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::constraints_additional::AmbiguousMultiConstraint );
+CEREAL_REGISTER_TYPE( protocols::constraints_additional::AmbiguousMultiConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_constraints_additional_AmbiguousMultiConstraint )
+#endif // SERIALIZATION

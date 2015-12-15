@@ -49,6 +49,12 @@
 #include <algorithm>
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 
@@ -82,6 +88,16 @@ private:
 	std::string res_name_, atom_name_;
 	numeric::xyzVector<Real> coords_;
 	Real temp_;
+
+#ifdef    SERIALIZATION
+public:
+	/// @brief Default constructor for the purpose of serialization only. Do not use.
+	UnrecognizedAtomRecord();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -148,6 +164,11 @@ private: // structs
 		Real occupancy;
 		/// @brief temperature factor
 		Real temperature;
+
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 	};
 
 
@@ -176,6 +197,11 @@ private: // structs
 		/// residue-based information that you want/can-use to communicate movers with moverts or afthermath for task-opperations
 		utility::vector1< std::string >  label;
 
+
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 	};
 
 
@@ -1299,6 +1325,12 @@ private: // data
 
 	// fpd spacegroup and crystal parameters
 	CrystInfo crystinfo_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //end class PDBInfo
 
 // for Python bindings
@@ -1306,6 +1338,11 @@ std::ostream & operator << ( std::ostream & os, PDBInfo const & info);
 
 } // namespace pose
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_PDBInfo )
+#endif // SERIALIZATION
 
 
 #endif //INCLUDED_core_pose_PDBInfo_HH

@@ -13,6 +13,9 @@
 // Unit headers
 #include <core/scoring/constraints/AngleConstraint.hh>
 
+// Package headers
+#include <core/scoring/func/Func.hh>
+
 // Project headers
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Conformation.hh>
@@ -34,11 +37,73 @@
 #include <utility/vector1.hh>
 #include <utility/assert.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
 
 static THREAD_LOCAL basic::Tracer TRACER( "core.io.constraints" );
+
+AngleConstraint::AngleConstraint(
+	AtomID const & a1,
+	AtomID const & a2,
+	AtomID const & a3,
+	core::scoring::func::FuncOP func_in, // we take ownership of this guy
+	ScoreType scotype /* = angle_constraint */
+):
+	Constraint( scotype ),
+	atom1_(a1),
+	atom2_(a2),
+	atom3_(a3),
+	func_( func_in )
+{}
+
+AngleConstraint::AngleConstraint(
+	core::scoring::func::FuncOP func_in,
+	ScoreType scoretype /* = angle_constraint */
+):
+	Constraint( scoretype ),
+	func_( func_in )
+{}
+
+std::string AngleConstraint::type() const {
+	return "Angle";
+}
+
+ConstraintOP
+AngleConstraint::clone() const {
+	return ConstraintOP( new AngleConstraint( *this ));
+}
+
+
+bool AngleConstraint::operator == ( Constraint const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	AngleConstraint const & other_ang( static_cast< AngleConstraint const & > (other));
+	if ( atom1_ != other_ang.atom1_ ) return false;
+	if ( atom2_ != other_ang.atom2_ ) return false;
+	if ( atom3_ != other_ang.atom3_ ) return false;
+	if ( score_type() != other_ang.score_type() ) return false;
+
+	return func_ == other_ang.func_ || ( func_ && other_ang.func_ && *func_ == *other_ang.func_ );
+}
+
+bool AngleConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< AngleConstraint const * > (&other);
+}
 
 void AngleConstraint::show( std::ostream & out ) const {
 	out << "Angle";
@@ -146,23 +211,6 @@ AngleConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, 
 	}
 }
 
-
-bool
-AngleConstraint::operator == ( Constraint const & other_cst ) const
-{
-	if ( !dynamic_cast< AngleConstraint const * > ( &other_cst ) ) return false;
-
-	AngleConstraint const & other( static_cast< AngleConstraint const & > (other_cst) );
-
-	if ( atom1_ != other.atom1_ ) return false;
-	if ( atom2_ != other.atom2_ ) return false;
-	if ( atom3_ != other.atom3_ ) return false;
-	if ( func_ != other.func_ ) return false;
-	if ( this->score_type() != other.score_type() ) return false;
-
-	return true;
-}
-
 /////////////////////////////////////////////////////////////////////////////
 Real
 AngleConstraint::score(
@@ -215,6 +263,20 @@ AngleConstraint::helper(
 {
 	F2 += w;
 	F1 += cross( w, M );
+}
+
+/// @brief evaluate func at theta
+Real
+AngleConstraint::func( Real const theta ) const
+{
+	return func_->func( theta );
+}
+
+/// @brief evaluate dfunc at theta
+Real
+AngleConstraint::dfunc( Real const theta ) const
+{
+	return func_->dfunc( theta );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -494,6 +556,53 @@ Size AngleConstraint::show_violations(
 	return 0;
 }
 
+AngleConstraint::AngleConstraint( AngleConstraint const & src ) :
+	Constraint( src ),
+	atom1_( src.atom1_ ),
+	atom2_( src.atom2_ ),
+	atom3_( src.atom3_ ),
+	func_( src.func_->clone() )
+{}
+
+/// @brief const access to func
+func::FuncCOP AngleConstraint::func() const { return func_; }
+
+/// @brief set func
+void AngleConstraint::set_func( func::FuncOP f ) { func_ = f; }
+
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::constraints::AngleConstraint::AngleConstraint() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::AngleConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( CEREAL_NVP( atom1_ ) ); // AtomID
+	arc( CEREAL_NVP( atom2_ ) ); // AtomID
+	arc( CEREAL_NVP( atom3_ ) ); // AtomID
+	arc( CEREAL_NVP( func_ ) ); // core::scoring::func::FuncOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::AngleConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( atom1_ ); // AtomID
+	arc( atom2_ ); // AtomID
+	arc( atom3_ ); // AtomID
+	arc( func_ ); // core::scoring::func::FuncOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::AngleConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::AngleConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_AngleConstraint )
+#endif // SERIALIZATION

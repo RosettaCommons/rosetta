@@ -24,6 +24,7 @@
 #include <protocols/helical_bundle/parameters/BundleParametersSet.hh>
 
 // Other Rosetta libraries:
+#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

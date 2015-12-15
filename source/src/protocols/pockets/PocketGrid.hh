@@ -33,6 +33,13 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace pockets {
 
@@ -58,11 +65,16 @@ public:
 	bool isTarget(core::Size numTargets = 2) const {return target_ && (numTargets==1 || subtarget_);};
 	bool isSolventExposed() const {return solventExposed_;};
 	void add (core::Size x, core::Size y, core::Size z);
-	typedef struct {
+	struct Cxyz {
 		core::Size x;
 		core::Size y;
 		core::Size z;
-	} Cxyz;
+#ifdef    SERIALIZATION
+		template< class Archive > void save( Archive & arc ) const;
+		template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+	};
 	std::list < Cxyz > points_;
 
 private:
@@ -70,6 +82,15 @@ private:
 	bool target_, subtarget_, solventExposed_;
 	core::Size maxX, minX, maxY, minY, maxZ, minZ;
 	core::Real step;
+
+#ifdef    SERIALIZATION
+public:
+	PCluster();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; //PCluster
 
@@ -97,6 +118,12 @@ public:
 private:
 	std::list <PCluster> clusters_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //PClusterSet
 
 /// @ Cluster of exemplar points
@@ -121,7 +148,7 @@ public:
 	bool isTarget(core::Size numTargets = 2) const {return target_ && (numTargets==1 || subtarget_);};
 	bool isSolventExposed() const {return solventExposed_;};
 	void add (core::Size x, core::Size y, core::Size z, std::string atype, core::Real absX=0., core::Real absY=0., core::Real absZ=0.);
-	typedef struct {
+	struct Cxyz {
 		core::Size x;
 		core::Size y;
 		core::Size z;
@@ -129,7 +156,12 @@ public:
 		core::Real absY;
 		core::Real absZ;
 		std::string atom_type;
-	} Cxyz;
+
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+	};
 	std::list < Cxyz > points_;
 
 private:
@@ -137,6 +169,15 @@ private:
 	bool target_, subtarget_, solventExposed_;
 	core::Size maxX, minX, maxY, minY, maxZ, minZ;
 	core::Real step;
+
+#ifdef    SERIALIZATION
+public:
+	CCluster();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; //CCluster
 
@@ -163,6 +204,12 @@ public:
 
 private:
 	std::list <CCluster> clusters_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; //CClusterSet
 
@@ -246,9 +293,9 @@ public:
 	numeric::xyzVector<core::Real> dim() const { return dim_; };
 	core::Real spacing() const { return spacing_; };
 	PocketGrid( core::conformation::Residue const & central_rsd );
-	PocketGrid( std::vector< core::conformation::ResidueOP > const & central_rsd );
+	PocketGrid( std::vector< core::conformation::ResidueCOP > const & central_rsd );
 	PocketGrid( core::conformation::Residue const & central_rsd, core::Real x, core::Real y, core::Real z );
-	PocketGrid( std::vector< core::conformation::ResidueOP > const & central_rsd, core::Real x, core::Real y, core::Real z );
+	PocketGrid( std::vector< core::conformation::ResidueCOP > const & central_rsd, core::Real x, core::Real y, core::Real z );
 	PocketGrid( core::Real const & xc, core::Real const & yc, core::Real const & zc, core::Real x, core::Real y, core::Real z, core::Real const & stepSize );
 	PocketGrid( core::Real const & xc, core::Real const & yc, core::Real const & zc, core::Real x, core::Real y, core::Real z );
 	PocketGrid( core::Real const & xc, core::Real const & yc, core::Real const & zc, core::Real x, core::Real y, core::Real z, core::Real const & stepSize, bool psp, bool sps);
@@ -261,12 +308,12 @@ public:
 	void initialize( core::Vector const & center, core::Real x, core::Real const & stepSize=1, bool psp=false, bool sps=false);
 	void initialize( core::Vector const & center, core::Real const & x, core::Real const & y, core::Real const & z, core::Real const & stepSize=1, bool psp=false, bool sps=false);
 	void initialize( core::conformation::Residue const & central_rsd, core::Real const & x, core::Real const & y, core::Real const & z, core::Real const & stepSize=1, bool psp=false, bool sps=false);
-	void initialize( std::vector< core::conformation::ResidueOP > const & central_rsd, core::Real const & x, core::Real const & y, core::Real const & z, core::Real const & stepSize=1, bool psp=false, bool sps=false);
+	void initialize( std::vector< core::conformation::ResidueCOP > const & central_rsd, core::Real const & x, core::Real const & y, core::Real const & z, core::Real const & stepSize=1, bool psp=false, bool sps=false);
 	void clear();
 
 	void recenter(core::Real const & xc, core::Real const & yc, core::Real const & zc);
 	void recenter( core::conformation::Residue const & central_rsd );
-	void recenter( std::vector< core::conformation::ResidueOP > const & central_rsds );
+	void recenter( std::vector< core::conformation::ResidueCOP > const & central_rsds );
 	void recenter( core::Vector const & center);
 
 	void findPockets(core::Size thr, core::Real max);
@@ -313,13 +360,13 @@ public:
 
 	bool autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0 );
 
-	bool autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsd, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0 );
+	bool autoexpanding_pocket_eval( std::vector< core::conformation::ResidueCOP > const & central_rsd, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0 );
 
 	bool autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::pose::Pose const & inPose, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0);
 
-	bool autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsd, core::pose::Pose const & inPose, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0);
+	bool autoexpanding_pocket_eval( std::vector< core::conformation::ResidueCOP > const & central_rsd, core::pose::Pose const & inPose, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0);
 	void move_pose_to_standard_orie( core::Size const & central_seqpos, core::pose::Pose & pose );
-	static std::vector< core::conformation::ResidueOP > getRelaxResidues( core::pose::Pose const & input_pose, std::string const & resids );
+	static std::vector< core::conformation::ResidueCOP > getRelaxResidues( core::pose::Pose const & input_pose, std::string const & resids );
 	void randomAngle();
 	void zeroAngle();
 	core::Real get_pocket_distance( PocketGrid const & template_pocket ) const { return get_pocket_distance( template_pocket, ""); };
@@ -331,6 +378,15 @@ public:
 	void alter_espGrid_with_bound_ligand( std::string const & espGrid_filename, core::pose::Pose const & protein_pose );
 	std::list< numeric::xyzVector<core::Real> > get_connolly_surfacePoints( core::pose::Pose const & protein_pose ) const;
 	std::list< numeric::xyzVector<core::Real> > get_connolly_surfacePoints_within_grid( std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list);
+
+	virtual bool operator == ( PocketGrid const & other ) const;
+	virtual bool same_type_as_me( PocketGrid const & other ) const;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //class PocketGrid
 
 
@@ -349,6 +405,17 @@ public:
 
 	//core::Real get_pocket_distance( TargetPocketGrid const & template_pocket ) const { return get_pocket_distance( template_pocket, ""); };
 	//core::Real get_pocket_distance( TargetPocketGrid const & template_pocket, std::string const & comparison_pdbname ) const;
+
+	virtual bool same_type_as_me( PocketGrid const & other ) const;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	TargetPocketGrid();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; //class TargetPocketGrid
 
@@ -383,6 +450,19 @@ public:
 	numeric::xyzVector<core::Real> calculate_center_xyz (std::list< numeric::xyzVector<core::Real> > const & pocketshell_coord_list );
 	core::Real get_eggshell_distance( EggshellGrid const & template_eggshell ) const { return get_eggshell_distance( template_eggshell, ""); };
 	core::Real get_eggshell_distance( EggshellGrid const & template_eggshell, std::string const & comparison_pdbname ) const;
+
+	virtual bool operator == ( PocketGrid const & rhs ) const;
+	virtual bool same_type_as_me( PocketGrid const & other ) const;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	EggshellGrid();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; //class EggshellGrid
 
@@ -432,6 +512,15 @@ public:
 	void set_protein_esp_to_zero();
 	void cap_espGrid();
 
+	virtual bool operator == ( PocketGrid const & other ) const;
+	virtual bool same_type_as_me( PocketGrid const & other ) const;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //class ElectrostaticpotentialGrid
 
 /// @
@@ -454,6 +543,16 @@ public:
 	core::Real mark (const protocols::pockets::PocketGrid& gr, core::Real x, core::Real y, core::Real z, core::Real const & vdWd, core::Real const & penalty);
 	core::Real compareCoverage(const PocketGrid& gr);
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ComparisonGrid();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //class ComparisonGrid
 
 inline void convert_cartesian_to_grid( numeric::xyzVector<core::Real> const & cart_coord, numeric::xyzVector<core::Real> const & mid, numeric::xyzVector<core::Size> const & dim, core::Real const & spacing, numeric::xyzVector<core::Real> & grid_coord ) {
@@ -470,5 +569,10 @@ inline void convert_grid_to_cartesian( numeric::xyzVector<core::Real> & grid_coo
 
 }//pockets
 }//protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_pockets_PocketGrid )
+#endif // SERIALIZATION
+
 
 #endif

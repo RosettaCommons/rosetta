@@ -23,6 +23,11 @@
 
 using namespace core::chemical::rna;
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace rna {
@@ -61,6 +66,12 @@ private:
 	BaseDoubletOrientation orientation_; // 1 = antiparallel; 2 = parallel
 	BaseStackWhichSide which_side_;  // 1 = residue 2 is 3' to residue1;  2 = residue 2 is 5' to residue 1
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 typedef std::pair< Real, BaseStack > EnergyBaseStack;
@@ -69,5 +80,10 @@ typedef std::list < EnergyBaseStack > EnergyBaseStackList;
 } //rna
 } //pose
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_rna_BaseStack )
+#endif // SERIALIZATION
+
 
 #endif

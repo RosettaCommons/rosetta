@@ -17,6 +17,15 @@
 #include <numeric/NumericTraits.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace antibody {
 namespace clusters {
@@ -87,3 +96,52 @@ CDRCluster::set_pdb_numbering(core::pose::Pose const & pose, core::Size start, c
 } //design
 } //antibody
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::antibody::clusters::CDRCluster::CDRCluster() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::antibody::clusters::CDRCluster::save( Archive & arc ) const {
+	arc( CEREAL_NVP( cdr_ ) ); // enum protocols::antibody::CDRNameEnum
+	arc( CEREAL_NVP( cluster_ ) ); // enum protocols::antibody::clusters::CDRClusterEnum
+	arc( CEREAL_NVP( distance_ ) ); // core::Real
+	arc( CEREAL_NVP( normalized_distance_ ) ); // core::Real
+	arc( CEREAL_NVP( pdb_start_ ) ); // core::Size
+	arc( CEREAL_NVP( pdb_end_ ) ); // core::Size
+	arc( CEREAL_NVP( pdb_start_insertion_code_ ) ); // char
+	arc( CEREAL_NVP( pdb_end_insertion_code_ ) ); // char
+	arc( CEREAL_NVP( start_ ) ); // core::Size
+	arc( CEREAL_NVP( end_ ) ); // core::Size
+	arc( CEREAL_NVP( length_ ) ); // core::Size
+	arc( CEREAL_NVP( chain_ ) ); // char
+	arc( CEREAL_NVP( cis_trans_match_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::antibody::clusters::CDRCluster::load( Archive & arc ) {
+	arc( cdr_ ); // enum protocols::antibody::CDRNameEnum
+	arc( cluster_ ); // enum protocols::antibody::clusters::CDRClusterEnum
+	arc( distance_ ); // core::Real
+	arc( normalized_distance_ ); // core::Real
+	arc( pdb_start_ ); // core::Size
+	arc( pdb_end_ ); // core::Size
+	arc( pdb_start_insertion_code_ ); // char
+	arc( pdb_end_insertion_code_ ); // char
+	arc( start_ ); // core::Size
+	arc( end_ ); // core::Size
+	arc( length_ ); // core::Size
+	arc( chain_ ); // char
+	arc( cis_trans_match_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::antibody::clusters::CDRCluster );
+CEREAL_REGISTER_TYPE( protocols::antibody::clusters::CDRCluster )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_antibody_clusters_CDRCluster )
+#endif // SERIALIZATION

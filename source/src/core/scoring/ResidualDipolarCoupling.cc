@@ -60,6 +60,21 @@
 
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.ResidualDipolarCoupling" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector0.srlz.hh>
+#include <utility/vector1.srlz.hh>
+#include <utility/fixedsizearray0.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -71,6 +86,10 @@ namespace scoring {
 inline Real sqr(Real x) {
 	return x * x;
 }
+
+Real const ResidualDipolarCoupling::COMMON_DENOMINATOR = 36.5089/1.041/1.041/1.041;
+
+
 //////////////////////////////////////////////////////
 //@brief reads in RDC data file
 //////////////////////////////////////////////////////
@@ -124,7 +143,8 @@ std::ostream& operator<<(std::ostream& out, ResidualDipolarCoupling const& rdc) 
 }
 
 ResidualDipolarCoupling::ResidualDipolarCoupling(ResidualDipolarCoupling const& other) :
-	basic::datacache::CacheableData(other), COMMON_DENOMINATOR(other.COMMON_DENOMINATOR) {
+	basic::datacache::CacheableData(other)
+{
 	All_RDC_lines_ = other.All_RDC_lines_;
 	preprocess_data();
 	reserve_buffers();
@@ -261,43 +281,43 @@ void ResidualDipolarCoupling::reserve_buffers() {
 		nrows = 1;
 	}
 	tr.Trace << "reserve buffers for nex: " << nex << " and nrows " << nrows << std::endl;
-	D_ = new rvec5[nrows];
-	rhs_ = new rvec5[nex];
-	T_ = new Tensor5[nex];
-	S_ = new Tensor[nex];
-	EV_ = new rvec[nex];
-	EIG_ = new Tensor[nex];
-	SD_ = new Tensor[nex];
-	FA_ =new core::Real[nex];
-	trace_=new core::Real[nex];
-	maxz_=new core::Real[nex];
-	r0_=new core::Real[nrows];
-	r1_=new core::Real[nrows];
-	r2_=new core::Real[nrows];
-	exprdc_=new core::Real[nrows];
-	rdcconst_=new core::Real[nrows];
-	rdcweight_=new core::Real[nrows];
-	lenex_=new core::Size[nex+1];
+	D_.resize( nrows );        // D_ = new rvec5[nrows];
+	rhs_.resize( nex );        // rhs_ = new rvec5[nex];
+	T_.resize( nex );          // T_ = new Tensor5[nex];
+	S_.resize( nex );          // S_ = new Tensor[nex];
+	EV_.resize( nex );         // EV_ = new rvec[nex];
+	EIG_.resize( nex );        // EIG_ = new Tensor[nex];
+	SD_.resize( nex );         // SD_ = new Tensor[nex];
+	FA_.resize( nex );         // FA_ =new core::Real[nex];
+	trace_.resize( nex );      // trace_=new core::Real[nex];
+	maxz_.resize( nex );       // maxz_=new core::Real[nex];
+	r0_.resize( nrows );       // r0_=new core::Real[nrows];
+	r1_.resize( nrows );       // r1_=new core::Real[nrows];
+	r2_.resize( nrows );       // r2_=new core::Real[nrows];
+	exprdc_.resize( nrows );   // exprdc_=new core::Real[nrows];
+	rdcconst_.resize( nrows ); // rdcconst_=new core::Real[nrows];
+	rdcweight_.resize( nrows );// rdcweight_=new core::Real[nrows];
+	lenex_.resize( nex + 1 );  // lenex_=new core::Size[nex+1];
 }
 
 void ResidualDipolarCoupling::release_buffers() {
-	delete[] D_;
-	delete[] rhs_;
-	delete[] T_;
-	delete[] S_;
-	delete[] SD_;
-	delete[] EV_;
-	delete[] FA_;
-	delete[] trace_;
-	delete[] maxz_;
-	delete[] EIG_;
-	delete[] r0_;
-	delete[] r1_;
-	delete[] r2_;
-	delete[] exprdc_;
-	delete[] rdcconst_;
-	delete[] rdcweight_;
-	delete[] lenex_;
+	D_.clear();        // delete[] D_;
+	rhs_.clear();			 // delete[] rhs_;
+	T_.clear();				 // delete[] T_;
+	S_.clear();				 // delete[] S_;
+	SD_.clear();			 // delete[] SD_;
+	EV_.clear();			 // delete[] EV_;
+	FA_.clear();			 // delete[] FA_;
+	trace_.clear();		 // delete[] trace_;
+	maxz_.clear();		 // delete[] maxz_;
+	EIG_.clear();			 // delete[] EIG_;
+	r0_.clear();			 // delete[] r0_;
+	r1_.clear();			 // delete[] r1_;
+	r2_.clear();			 // delete[] r2_;
+	exprdc_.clear();	 // delete[] exprdc_;
+	rdcconst_.clear(); // delete[] rdcconst_;
+	rdcweight_.clear();// delete[] rdcweight_;
+	lenex_.clear();		 // delete[] lenex_;
 }
 
 //initialize local buffers ( S, T, etc. )
@@ -357,12 +377,12 @@ RDC::RDC_TYPE RDC::get_RDC_data_type(std::string const & atom1,
 	return RDC_type;
 }
 
-typedef core::Real Tensor[3][3];
-typedef core::Real Tensor5[5][5];
-typedef core::Real rvec[3];
-int m_inv_gen(Tensor5 m, int n, Tensor5 minv);
-void jacobi(Real a[5][5], Real d[], Real v[5][5], int *nrot);
-void jacobi3(Real a[3][3], Real d[], Real v[3][3], int *nrot);
+//typedef core::Real Tensor[3][3];
+//typedef core::Real Tensor5[5][5];
+//typedef core::Real rvec[3];
+int m_inv_gen( ResidualDipolarCoupling::Tensor5 const & m, int n, ResidualDipolarCoupling::Tensor5 & minv );
+void jacobi( ResidualDipolarCoupling::Tensor5 & a, ResidualDipolarCoupling::rvec5 & d, ResidualDipolarCoupling::Tensor5 & v, int & nrot );
+void jacobi3( ResidualDipolarCoupling::Tensor & a, ResidualDipolarCoupling::rvec  & d, ResidualDipolarCoupling::Tensor  & v, int & nrot );
 
 //void sort_rvec(rvec rv);
 #define XX 0
@@ -1006,7 +1026,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 			p2 = tensorR[ex+1];
 		}
 
-		data_struct data( r0_+prelen, r1_+prelen, r2_+prelen, exprdc_+prelen, rdcconst_+prelen, rdcweight_+prelen, p1, p2, type_of_computation );
+		data_struct data( &r0_[prelen], &r1_[prelen], &r2_[prelen], &exprdc_[prelen], &rdcconst_[prelen], &rdcweight_[prelen], p1, p2, type_of_computation );
 
 		//definition of auxiliary parameters
 		numeric::nls::lm_status_struct status;
@@ -1433,7 +1453,7 @@ void ResidualDipolarCoupling::compute_tensor_stats() {
 		int nrot2;
 		rvec ev2;
 
-		jacobi3(SD_[ex],ev2,v2,&nrot2);
+		jacobi3(SD_[ex],ev2,v2,nrot2);
 
 		EIG_[ex][0][0] =  v2[0][0];
 		EIG_[ex][0][1] =  v2[0][1];
@@ -1445,7 +1465,7 @@ void ResidualDipolarCoupling::compute_tensor_stats() {
 		EIG_[ex][2][1] =  v2[2][1];
 		EIG_[ex][2][2] =  v2[2][2];
 
-		qsort(ev2, 3 ,sizeof(core::Real),compare_by_abs);
+		qsort(&ev2[0], 3 ,sizeof(core::Real),compare_by_abs);
 
 		EV_[ex][0] = ev2[2];
 		EV_[ex][1] = ev2[1];
@@ -1462,7 +1482,7 @@ void ResidualDipolarCoupling::compute_tensor_stats() {
 		tempvec[0] =  v2[0][2];
 		tempvec[1] =  v2[1][2];
 		tempvec[2] =  v2[2][2];
-		qsort(tempvec, 3, sizeof(core::Real),compare_by_abs);
+		qsort(&tempvec[0], 3, sizeof(core::Real),compare_by_abs);
 		maxz_[ex] = tempvec[0];
 		// Real ev_trace =  (ev2[2] + ev2[1] +ev2[0]) / 3;
 		//  FA_[ex] = 4.0;
@@ -1477,10 +1497,10 @@ void ResidualDipolarCoupling::compute_tensor_stats() {
 	} //for ( ex = 0 .. nex )
 }
 
-int m_inv_gen(Tensor5 m,int n,Tensor5 minv)
+int m_inv_gen( ResidualDipolarCoupling::Tensor5 const & m, int n, ResidualDipolarCoupling::Tensor5 & minv )
 {
-	Tensor5 md,v;
-	rvec5 eig;
+	ResidualDipolarCoupling::Tensor5 md,v;
+	ResidualDipolarCoupling::rvec5 eig;
 	Real tol,s;
 	int nzero,i,j,k,nrot;
 	//   md = new Real*[n];
@@ -1502,7 +1522,7 @@ int m_inv_gen(Tensor5 m,int n,Tensor5 minv)
 	}
 	tol = 1e-6*tol/n;
 
-	jacobi(md,eig,v,&nrot);
+	jacobi(md,eig,v,nrot);
 
 	nzero = 0;
 	for ( i=0; i<n; i++ ) {
@@ -1530,7 +1550,8 @@ int m_inv_gen(Tensor5 m,int n,Tensor5 minv)
 #define ROTATE(a,i,j,k,l) g=a[i][j];h=a[k][l];a[i][j]=g-s*(h+g*tau);\
   a[k][l]=h+s*(g-h*tau);
 
-void jacobi(Real a[5][5],Real d[],Real v[5][5],int *nrot) {
+void jacobi( ResidualDipolarCoupling::Tensor5 & a, ResidualDipolarCoupling::rvec5 & d, ResidualDipolarCoupling::Tensor5 & v, int & nrot )
+{
 	int j,i;
 	int iq,ip;
 	Real tresh,theta,tau,t,sm,s,h,g,c;
@@ -1545,7 +1566,7 @@ void jacobi(Real a[5][5],Real d[],Real v[5][5],int *nrot) {
 		b[ip]=d[ip]=a[ip][ip];
 		z[ip]=0.0;
 	}
-	*nrot=0;
+	nrot=0;
 	for ( i=1; i<=50; i++ ) {
 		sm=0.0;
 		for ( ip=0; ip<n-1; ip++ ) {
@@ -1597,7 +1618,7 @@ void jacobi(Real a[5][5],Real d[],Real v[5][5],int *nrot) {
 							for (j=0; j<n; j++) {
 							ROTATE(v,j,ip,j,iq)
 							}
-							++(*nrot);
+							++nrot;
 					}
 				}
 			}
@@ -1611,8 +1632,10 @@ void jacobi(Real a[5][5],Real d[],Real v[5][5],int *nrot) {
 		throw( utility::excn::EXCN_BadInput(" too many iterations in Jacobi when compute RDC tensor") );
 	}
 
-	void jacobi3(Real a[3][3],Real d[],Real v[3][3],int *nrot) {
-		int j,i;
+void jacobi3( ResidualDipolarCoupling::Tensor & a, ResidualDipolarCoupling::rvec & d, ResidualDipolarCoupling::Tensor & v, int & nrot )
+{
+
+	int j,i;
 	int iq,ip;
 	Real tresh,theta,tau,t,sm,s,h,g,c;
 	Real b[3];
@@ -1626,7 +1649,7 @@ void jacobi(Real a[5][5],Real d[],Real v[5][5],int *nrot) {
 		b[ip]=d[ip]=a[ip][ip];
 		z[ip]=0.0;
 	}
-	*nrot=0;
+	nrot=0;
 	for ( i=1; i<=50; i++ ) {
 		sm=0.0;
 		for ( ip=0; ip<n-1; ip++ ) {
@@ -1678,7 +1701,7 @@ void jacobi(Real a[5][5],Real d[],Real v[5][5],int *nrot) {
 					for ( j=0; j<n; j++ ) {
 						ROTATE(v,j,ip,j,iq);
 					}
-					++(*nrot);
+					++nrot;
 				}
 			}
 		}
@@ -1694,3 +1717,107 @@ void jacobi(Real a[5][5],Real d[],Real v[5][5],int *nrot) {
 
 } //namespace Scoring
 } //namespace core
+
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::RDC::save( Archive & arc ) const {
+	arc( CEREAL_NVP( type_ ) ); // enum core::scoring::RDC::RDC_TYPE
+	arc( CEREAL_NVP( res1_ ) ); // Size
+	arc( CEREAL_NVP( res2_ ) ); // Size
+	arc( CEREAL_NVP( Jdipolar_ ) ); // Real
+	arc( CEREAL_NVP( Reduced_Jdipolar_ ) ); // Real
+	arc( CEREAL_NVP( weight_ ) ); // Real
+	arc( CEREAL_NVP( Jdipolar_computed_ ) ); // Real
+	arc( CEREAL_NVP( fij_ ) ); // core::Vector
+	arc( CEREAL_NVP( expid_ ) ); // Size
+	arc( CEREAL_NVP( atom1_ ) ); // std::string
+	arc( CEREAL_NVP( atom2_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::RDC::load( Archive & arc ) {
+	arc( type_ ); // enum core::scoring::RDC::RDC_TYPE
+	arc( res1_ ); // Size
+	arc( res2_ ); // Size
+	arc( Jdipolar_ ); // Real
+	arc( Reduced_Jdipolar_ ); // Real
+	arc( weight_ ); // Real
+	arc( Jdipolar_computed_ ); // Real
+	arc( fij_ ); // core::Vector
+	arc( expid_ ); // Size
+	arc( atom1_ ); // std::string
+	arc( atom2_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::RDC );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::ResidualDipolarCoupling::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( All_RDC_lines_ ) ); // RDC_lines
+	arc( CEREAL_NVP( EV_ ) ); // utility::vector0<rvec>
+	arc( CEREAL_NVP( D_ ) ); // utility::vector0<rvec5>
+	arc( CEREAL_NVP( rhs_ ) ); // utility::vector0<rvec5>
+	arc( CEREAL_NVP( S_ ) ); // utility::vector0<Tensor>
+	arc( CEREAL_NVP( T_ ) ); // utility::vector0<Tensor5>
+	arc( CEREAL_NVP( nex_ ) ); // core::Size
+	arc( CEREAL_NVP( nrows_ ) ); // core::Size
+	arc( CEREAL_NVP( R_ ) ); // core::Real
+	arc( CEREAL_NVP( rmsd_ ) ); // core::Real
+	arc( CEREAL_NVP( SD_ ) ); // utility::vector0<Tensor>
+	arc( CEREAL_NVP( EIG_ ) ); // utility::vector0<Tensor>
+	arc( CEREAL_NVP( FA_ ) ); // utility::vector0<core::Real>
+	arc( CEREAL_NVP( trace_ ) ); // utility::vector0<core::Real>
+	arc( CEREAL_NVP( maxz_ ) ); // utility::vector0<core::Real>
+	arc( CEREAL_NVP( r0_ ) ); // utility::vector0<core::Real>
+	arc( CEREAL_NVP( r1_ ) ); // utility::vector0<core::Real>
+	arc( CEREAL_NVP( r2_ ) ); // utility::vector0<core::Real>
+	arc( CEREAL_NVP( exprdc_ ) ); // utility::vector0<core::Real>
+	arc( CEREAL_NVP( rdcconst_ ) ); // utility::vector0<core::Real>
+	arc( CEREAL_NVP( rdcweight_ ) ); // utility::vector0<core::Real>
+	arc( CEREAL_NVP( lenex_ ) ); // utility::vector0<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::ResidualDipolarCoupling::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( All_RDC_lines_ ); // RDC_lines
+	arc( EV_ ); // utility::vector0<rvec>
+	arc( D_ ); // utility::vector0<rvec5>
+	arc( rhs_ ); // utility::vector0<rvec5>
+	arc( S_ ); // utility::vector0<Tensor>
+	arc( T_ ); // utility::vector0<Tensor5>
+	arc( nex_ ); // core::Size
+	arc( nrows_ ); // core::Size
+	arc( R_ ); // core::Real
+	arc( rmsd_ ); // core::Real
+	arc( SD_ ); // utility::vector0<Tensor>
+	arc( EIG_ ); // utility::vector0<Tensor>
+	arc( FA_ ); // utility::vector0<core::Real>
+	arc( trace_ ); // utility::vector0<core::Real>
+	arc( maxz_ ); // utility::vector0<core::Real>
+	arc( r0_ ); // utility::vector0<core::Real>
+	arc( r1_ ); // utility::vector0<core::Real>
+	arc( r2_ ); // utility::vector0<core::Real>
+	arc( exprdc_ ); // utility::vector0<core::Real>
+	arc( rdcconst_ ); // utility::vector0<core::Real>
+	arc( rdcweight_ ); // utility::vector0<core::Real>
+	arc( lenex_ ); // utility::vector0<core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::ResidualDipolarCoupling );
+CEREAL_REGISTER_TYPE( core::scoring::ResidualDipolarCoupling )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_ResidualDipolarCoupling )
+#endif // SERIALIZATION

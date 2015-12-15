@@ -28,9 +28,8 @@
 #include <core/types.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
-
 #include <core/pose/Pose.fwd.hh>
-
+#include <core/scoring/func/Func.hh>
 #include <core/fragment/FrameList.fwd.hh>
 
 // ObjexxFCL Headers
@@ -49,10 +48,47 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace jumping {
+
+class ChainbreakDistFunc : public core::scoring::func::Func {
+public:
+	ChainbreakDistFunc( core::Real const x0_in );
+	virtual ~ChainbreakDistFunc();
+
+	core::scoring::func::FuncOP
+	clone() const;
+
+	virtual bool operator == ( core::scoring::func::Func const & other ) const;
+	virtual bool same_type_as_me( core::scoring::func::Func const & other ) const;
+
+	virtual core::Real func( core::Real const x ) const;
+	virtual core::Real dfunc( core::Real const x ) const;
+
+private:
+	core::Real d2target_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ChainbreakDistFunc();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
 class Interval;
 typedef utility::vector1< jumping::Interval > JumpList;
+
 //@brief JumpSample with a random choice of cut-points according to allowed cut_reg in JumpSetup
 //@details this class can handle all the intricacies of actually applying a choice of jumps and cuts to a pose
 class JumpSample  {
@@ -226,9 +262,15 @@ private:
 	ObjexxFCL::FArray1D_int cuts_;
 	core::kinematics::FoldTreeOP fold_tree_;
 	bool bValidTree_;
+
 };
 
 } //jumping
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_jumping_JumpSample )
+#endif // SERIALIZATION
+
 
 #endif

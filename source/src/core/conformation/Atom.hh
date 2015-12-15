@@ -26,7 +26,6 @@
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
-
 namespace core {
 namespace conformation {
 
@@ -111,16 +110,17 @@ public:
 		xyz_ = xyz_in;
 	}
 
-	// /// @brief access temperature Real
-	// Real temperature() const {
-	//  return temperature_;
-	// }
-	//
-	// /// @brief set temperature Real
-	// void
-	// temperature( Real temp ) {
-	//  temperature_ = temp;
-	// }
+#ifdef    SERIALIZATION
+	/// @brief Serialization method
+	template < class Archive >
+	void
+	save( Archive & arch ) const;
+
+	/// @brief De-serialization method
+	template < class Archive >
+	void
+	load( Archive & arch );
+#endif // SERIALIZATION
 
 private:
 	// data
@@ -128,12 +128,10 @@ private:
 	// position
 	Vector xyz_;
 
-	// FIXME: Why is this stored if it is also in chemical::Atom? ~Labonte
-	// rosetta atom_type
+	// rosetta atom_type, stored in conformation::Residue for the sake of speed in the Lennard-Jones calculation
 	ShortSize type_;
 
-	// FIXME: Why is this stored if it is also in chemical::Atom? ~Labonte
-	// mm_atom_type
+	// mm_atom_type, stored in conformation::Residue for the sake of speed in the the Charmm Lennard-Jones calculation
 	ShortSize mm_type_;
 
 	// b-factor from pdb file

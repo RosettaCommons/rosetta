@@ -42,6 +42,12 @@
 // C++ Headers
 #include <string>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace membrane {
@@ -161,6 +167,12 @@ private: // data
 	// nres from the spanfile; keep track for checks
 	core::Size nres_topo_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // class SpanningTopology
 
 /// @brief Show Spanning topology
@@ -171,5 +183,10 @@ std::ostream & operator << ( std::ostream & os, SpanningTopology const & spans )
 } // membrane
 } // conformation
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_membrane_SpanningTopology )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_conformation_membrane_SpanningTopology_hh

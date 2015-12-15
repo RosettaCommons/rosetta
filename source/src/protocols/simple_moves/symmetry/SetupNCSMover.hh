@@ -23,6 +23,12 @@
 #include <basic/datacache/CacheableData.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace simple_moves {
 namespace symmetry {
@@ -48,6 +54,16 @@ public:
 private:
 	utility::vector1< utility::vector1< core::Size > > mapping_;
 	core::Size ngroups_, nres_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	NCSResMapping();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -126,4 +142,9 @@ private:
 } // symmetry
 } // moves
 } // rosetta
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_simple_moves_symmetry_SetupNCSMover )
+#endif // SERIALIZATION
+
+
 #endif

@@ -14,6 +14,18 @@
 // Unit headers
 #include <core/scoring/PeptideBondedEnergyContainer.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -302,3 +314,36 @@ PeptideBondedEnergyContainer::upper_neighbor_iterator_end( int resid ) {
 } // namespace scoring
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::PeptideBondedEnergyContainer::PeptideBondedEnergyContainer() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::PeptideBondedEnergyContainer::save( Archive & arc ) const {
+	arc( CEREAL_NVP( size_ ) ); // Size
+	arc( CEREAL_NVP( offset_ ) ); // Size
+	arc( CEREAL_NVP( score_types_ ) ); // utility::vector1<ScoreType>
+	arc( CEREAL_NVP( tables_ ) ); // utility::vector1<utility::vector1<Real> >
+	arc( CEREAL_NVP( computed_ ) ); // utility::vector1<_Bool>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::PeptideBondedEnergyContainer::load( Archive & arc ) {
+	arc( size_ ); // Size
+	arc( offset_ ); // Size
+	arc( score_types_ ); // utility::vector1<ScoreType>
+	arc( tables_ ); // utility::vector1<utility::vector1<Real> >
+	arc( computed_ ); // utility::vector1<_Bool>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::PeptideBondedEnergyContainer );
+CEREAL_REGISTER_TYPE( core::scoring::PeptideBondedEnergyContainer )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_PeptideBondedEnergyContainer )
+#endif // SERIALIZATION

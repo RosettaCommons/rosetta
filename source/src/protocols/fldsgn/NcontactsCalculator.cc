@@ -44,6 +44,14 @@
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.fldsgn.NcontactsCalculator" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace fldsgn {
 
@@ -289,3 +297,45 @@ NcontactsCalculator::recompute( Pose const & pose )
 
 } // fldsgn
 } // protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::fldsgn::NcontactsCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( condist_ ) ); // Real
+	arc( CEREAL_NVP( isep_residue_ ) ); // Size
+	arc( CEREAL_NVP( ignore_loops_ ) ); // _Bool
+	arc( CEREAL_NVP( ignore_same_sselement_ ) ); // _Bool
+	arc( CEREAL_NVP( ignore_same_sheet_ ) ); // _Bool
+	arc( CEREAL_NVP( use_only_calpha_ ) ); // _Bool
+	arc( CEREAL_NVP( nc_allatm_ ) ); // Real
+	arc( CEREAL_NVP( nc_hpatm_ ) ); // Real
+	arc( CEREAL_NVP( nc_hpres_ ) ); // Real
+	arc( CEREAL_NVP( ss_entrpy_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::fldsgn::NcontactsCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( condist_ ); // Real
+	arc( isep_residue_ ); // Size
+	arc( ignore_loops_ ); // _Bool
+	arc( ignore_same_sselement_ ); // _Bool
+	arc( ignore_same_sheet_ ); // _Bool
+	arc( use_only_calpha_ ); // _Bool
+	arc( nc_allatm_ ); // Real
+	arc( nc_hpatm_ ); // Real
+	arc( nc_hpres_ ); // Real
+	arc( ss_entrpy_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::fldsgn::NcontactsCalculator );
+CEREAL_REGISTER_TYPE( protocols::fldsgn::NcontactsCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_fldsgn_NcontactsCalculator )
+#endif // SERIALIZATION

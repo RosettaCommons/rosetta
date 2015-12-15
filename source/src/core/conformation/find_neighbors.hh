@@ -567,7 +567,7 @@ find_neighbors_naive_restricted(
 		if ( !residue_selection[ ii ] ) continue;
 		PointPosition const & ii_pos( point_graph->get_vertex(ii).data().xyz() );
 		for ( core::Size jj = 1; jj <= n_points; ++jj ) {
-			if ( residue_selection[ jj ] && jj <= ii ) continue;
+			if ( jj <= ii && residue_selection[ jj ] ) continue;
 			core::Real const d_sq( ii_pos.distance_squared( point_graph->get_vertex(jj).data().xyz() ) ); // Using member version of distance_squared to work around GCC 3.4.5 ADL bug
 			if ( d_sq <= neighbor_cutoff_sq ) {
 				// Add neighbor link
@@ -963,7 +963,7 @@ find_neighbors_naive_surface(
 		for ( Size jj = non_surface_ranges[ ii ].first, jjend = non_surface_ranges[ ii ].second; jj <= jjend; ++jj ) {
 			PointPosition const & jj_pos( point_graph->get_vertex(jj).data().xyz() );
 			for ( Size kk = 1; kk <= n_points; ++kk ) {
-				if ( ! is_surface[ kk ] && kk <= jj ) continue;
+				if ( kk <= jj && ! is_surface[ kk ] ) continue;
 				Real const d_sq( jj_pos.distance_squared( point_graph->get_vertex( kk ).data().xyz() ) );
 				if ( d_sq <= neighbor_cutoff_sq ) {
 					Size lower = kk < jj ? kk : jj;

@@ -46,6 +46,18 @@
 
 static THREAD_LOCAL basic::Tracer tr( "core.io.constraints" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/serialization/ObjexxFCL/FArray2D.srlz.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace constraints_additional {
 
@@ -88,7 +100,7 @@ void BindingSiteConstraint::init( core::pose::Pose const &start_pose ) {
 
 	// also create centroid constraints
 	core::pose::Pose start_pose_copy = start_pose;
-	if ( start_pose_copy.residue(1).residue_type_set().name() != core::chemical::CENTROID ) {
+	if ( start_pose_copy.residue(1).residue_type_set()->name() != core::chemical::CENTROID ) {
 		core::util::switch_to_residue_type_set( start_pose_copy, core::chemical::CENTROID );
 	}
 	com = numeric::xyzVector< core::Real >(0,0,0);
@@ -130,6 +142,24 @@ BindingSiteConstraint::BindingSiteConstraint(
 	tgt_pos_centroid_(tgt_pos_centroid)
 {}
 
+bool BindingSiteConstraint::operator == ( core::scoring::constraints::Constraint const & other ) const
+{
+	if ( !       same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( other ) ) return false;
+
+	BindingSiteConstraint const & other_downcast( static_cast< BindingSiteConstraint const & > ( other ) );
+	if ( atms_             != other_downcast.atms_             ) return false;
+	if ( tgt_pos_          != other_downcast.tgt_pos_          ) return false;
+	if ( tgt_pos_centroid_ != other_downcast.tgt_pos_centroid_ ) return false;
+
+	return true;
+}
+
+bool BindingSiteConstraint::same_type_as_me( core::scoring::constraints::Constraint const & other ) const
+{
+	return dynamic_cast< BindingSiteConstraint const * > (&other);
+}
+
 
 void
 BindingSiteConstraint::score( core::scoring::func::XYZ_Func const&, core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const {
@@ -163,7 +193,7 @@ BindingSiteConstraint::setup_for_scoring( core::scoring::func::XYZ_Func const & 
 		bool aln_cent_i = false;
 
 		// is pose centroid?? then we need to remap atmids
-		if ( rsd_type.residue_type_set().name() == core::chemical::CENTROID && atms_[i].atomno() > 5 ) {
+		if ( rsd_type.residue_type_set()->name() == core::chemical::CENTROID && atms_[i].atomno() > 5 ) {
 			//std::cerr << "ATOM " << atms_[i].rsd() << " , " << atms_[i].atomno() << "  (" << pose.residue( atms_[i].rsd()  ).natoms() << ")" << std::endl;
 			//std::cerr << "Remapping ATOM " << atms_[i].rsd() << " , " << atms_[i].atomno() << " to CENTROID" << std::endl;
 			atm_i = core::id::AtomID( xyz.residue( atms_[i].rsd()  ).natoms() , atms_[i].rsd() );
@@ -434,3 +464,31 @@ BindingSiteConstraint::read_def(
 
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::constraints_additional::BindingSiteConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( CEREAL_NVP( atms_ ) ); // utility::vector1<AtomID>
+	arc( CEREAL_NVP( tgt_pos_ ) ); // ObjexxFCL::FArray2D<core::Real>; ObjexxFCL: ObjexxFCL::FArray2D<core::Real>
+	arc( CEREAL_NVP( tgt_pos_centroid_ ) ); // ObjexxFCL::FArray2D<core::Real>; ObjexxFCL: ObjexxFCL::FArray2D<core::Real>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::constraints_additional::BindingSiteConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( atms_ ); // utility::vector1<AtomID>
+	arc( tgt_pos_ ); // ObjexxFCL::FArray2D<core::Real>; ObjexxFCL: ObjexxFCL::FArray2D<core::Real>
+	arc( tgt_pos_centroid_ ); // ObjexxFCL::FArray2D<core::Real>; ObjexxFCL: ObjexxFCL::FArray2D<core::Real>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::constraints_additional::BindingSiteConstraint );
+CEREAL_REGISTER_TYPE( protocols::constraints_additional::BindingSiteConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_constraints_additional_BindingSiteConstraint )
+#endif // SERIALIZATION

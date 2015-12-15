@@ -41,6 +41,12 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -375,6 +381,12 @@ private:
 	utility::vector1< MultipoleParameterOP > mp_param_;
 	std::string rosetta_res_type_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 typedef utility::pointer::shared_ptr< MultipoleElecResidueInfo > MultipoleElecResidueInfoOP;
@@ -473,6 +485,12 @@ private:
 	// stores info from the packertask when setup_for_packing calls set_repack_list
 	utility::vector1< bool > being_packed_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -543,6 +561,16 @@ public:
 
 private:
 	utility::vector1< MultipoleElecResidueInfoOP > residue_info_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	MultipoleElecRotamerSetInfo();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -619,6 +647,15 @@ private:
 	Real pdamp_;
 	utility::vector1< Size > group_members_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	MultipoleParameter();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 };
 
 
@@ -854,5 +891,10 @@ private:
 
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_MultipoleElecPotential )
+#endif // SERIALIZATION
+
 
 #endif

@@ -30,6 +30,11 @@
 
 // C++
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace rna {
@@ -125,10 +130,21 @@ private:
 
 	bool calculated_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } //rna
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_rna_RNA_RawBaseBaseInfo )
+#endif // SERIALIZATION
+
 
 #endif

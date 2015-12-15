@@ -19,7 +19,11 @@
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
 // Package headers
+#include <core/select/residue_selector/util.hh>
+
+// Project headers
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 #include <core/chemical/AtomType.hh>
@@ -28,13 +32,9 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/conformation/Residue.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/types.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/packer_neighbors.hh>
 
 // Basic headers
@@ -42,10 +42,19 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
 #include <utility/assert.hh>
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace pack {
@@ -243,6 +252,16 @@ std::string ClashBasedRepackShellSelector::class_name() {
 	return "ClashBasedRepackShell";
 }
 
+void
+ClashBasedRepackShellSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	using namespace select::residue_selector;
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "bump_overlap_factor", "real", "0.5" )); // default value specified in XSD
+	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+}
+
+
 // setters
 void ClashBasedRepackShellSelector::set_packer_task( core::pack::task::PackerTaskOP packer_task ) { packer_task_ = packer_task; }
 void ClashBasedRepackShellSelector::set_score_fxn( core::scoring::ScoreFunctionOP score_fxn ) { score_fxn_ = score_fxn; }
@@ -263,7 +282,41 @@ ClashBasedRepackShellSelectorCreator::keyname() const {
 	return ClashBasedRepackShellSelector::class_name();
 }
 
+void
+ClashBasedRepackShellSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
+	return ClashBasedRepackShellSelector::provide_selector_xsd( xsd );
+}
+
+
 } //namespace residue_selector
 } //namespace task
 } //namespace pack
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::task::residue_selector::ClashBasedRepackShellSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( packer_task_ ) ); // core::pack::task::PackerTaskOP
+	arc( CEREAL_NVP( score_fxn_ ) ); // core::scoring::ScoreFunctionOP
+	arc( CEREAL_NVP( bump_overlap_factor_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::task::residue_selector::ClashBasedRepackShellSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( packer_task_ ); // core::pack::task::PackerTaskOP
+	arc( score_fxn_ ); // core::scoring::ScoreFunctionOP
+	arc( bump_overlap_factor_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::task::residue_selector::ClashBasedRepackShellSelector );
+CEREAL_REGISTER_TYPE( core::pack::task::residue_selector::ClashBasedRepackShellSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_residue_selector_ClashBasedRepackShellSelector )
+#endif // SERIALIZATION

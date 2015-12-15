@@ -14,6 +14,18 @@
 // Unit headers
 #include <core/scoring/DenseEnergyContainer.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/serialization/ObjexxFCL/FArray2D.srlz.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -327,3 +339,34 @@ DenseEnergyContainer::upper_neighbor_iterator_end( int resid )
 } // namespace scoring
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::DenseEnergyContainer::DenseEnergyContainer() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::DenseEnergyContainer::save( Archive & arc ) const {
+	arc( CEREAL_NVP( size_ ) ); // Size
+	arc( CEREAL_NVP( score_type_ ) ); // enum core::scoring::ScoreType
+	arc( CEREAL_NVP( table_ ) ); // ObjexxFCL::FArray2D<Real>
+	arc( CEREAL_NVP( computed_ ) ); // ObjexxFCL::FArray2D<_Bool>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::DenseEnergyContainer::load( Archive & arc ) {
+	arc( size_ ); // Size
+	arc( score_type_ ); // enum core::scoring::ScoreType
+	arc( table_ ); // ObjexxFCL::FArray2D<Real>
+	arc( computed_ ); // ObjexxFCL::FArray2D<_Bool>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::DenseEnergyContainer );
+CEREAL_REGISTER_TYPE( core::scoring::DenseEnergyContainer )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_DenseEnergyContainer )
+#endif // SERIALIZATION

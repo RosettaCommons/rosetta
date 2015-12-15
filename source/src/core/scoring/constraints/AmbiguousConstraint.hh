@@ -37,6 +37,11 @@
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -50,34 +55,25 @@ public:
 	AmbiguousConstraint();
 
 	/// @brief Constructor
-	AmbiguousConstraint( ConstraintCOPs & cst_in ) ;
+	AmbiguousConstraint( ConstraintCOPs const & cst_in ) ;
 
+	virtual ConstraintOP clone() const;
 
-	virtual
-	ConstraintOP clone() const {
-		return ConstraintOP( new AmbiguousConstraint(*this) );
-	}
-
-	virtual
-	MultiConstraintOP empty_clone() const {
-		return MultiConstraintOP( new AmbiguousConstraint );
-	}
+	virtual MultiConstraintOP empty_clone() const;
 
 	/// @brief
 	void
 	init_cst_score_types();
 
-	std::string type() const {
-		return "AmbiguousConstraint";
-	}
+	std::string type() const;
+
 
 	/// @brief read in constraint defiinition
 	void
-	read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory );
+	read_def( std::istream& data, pose::Pose const& pose, func::FuncFactory const& func_factory );
 
-	/// @brief possibility to compare constraint according to data
-	/// and not just pointers
-	bool operator == ( Constraint const & other ) const;
+	virtual bool operator == ( Constraint const & other ) const;
+	virtual bool same_type_as_me( Constraint const & other ) const;
 
 	/// @brief compute score
 	void
@@ -108,18 +104,34 @@ public:
 
 	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1.0 ) const;
 
+protected:
+	/// @brief Copy constructor for derived classes to ensure that they perform a deep copy on the
+	/// approriate data members
+	AmbiguousConstraint( AmbiguousConstraint const & src );
 
 private:
+
 	mutable ConstraintCOP active_constraint_;
-	mutable core::Real low_total_cst_score_;
+	//mutable core::Real low_total_cst_score_;
 	mutable EnergyMap low_EMap_;
 	mutable EnergyMap temp_EMap_;
 	ScoreTypes cst_score_types_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; //AmbiguousConstraint
 
 } //constraints
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_AmbiguousConstraint )
+#endif // SERIALIZATION
+
 
 #endif

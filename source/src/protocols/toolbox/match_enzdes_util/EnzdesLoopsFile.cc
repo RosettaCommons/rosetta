@@ -31,6 +31,16 @@
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.enzdes.EnzdesLoopsFile" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
@@ -677,3 +687,139 @@ EnzdesLoopsFile::clear()
 } //toolbox
 } //protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzdesLoopInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( loop_start_ ) ); // core::Size
+	arc( CEREAL_NVP( loop_end_ ) ); // core::Size
+	arc( CEREAL_NVP( loop_start_pdb_ ) ); // core::Size
+	arc( CEREAL_NVP( loop_end_pdb_ ) ); // core::Size
+	arc( CEREAL_NVP( loop_start_pdb_chain_ ) ); // char
+	arc( CEREAL_NVP( loop_end_pdb_chain_ ) ); // char
+	arc( CEREAL_NVP( pose_numb_ ) ); // _Bool
+	arc( CEREAL_NVP( pdb_numb_ ) ); // _Bool
+	arc( CEREAL_NVP( min_length_ ) ); // core::Size
+	arc( CEREAL_NVP( max_length_ ) ); // core::Size
+	arc( CEREAL_NVP( ss_strings_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( preserve_buried_contacts_ ) ); // _Bool
+	arc( CEREAL_NVP( contact_buried_problematic_res_ ) ); // _Bool
+	arc( CEREAL_NVP( res_interactions_ ) ); // utility::vector1<ResInteractions>
+	arc( CEREAL_NVP( cstres_interactions_ ) ); // utility::vector1<CstResInteractions>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzdesLoopInfo::load( Archive & arc ) {
+	arc( loop_start_ ); // core::Size
+	arc( loop_end_ ); // core::Size
+	arc( loop_start_pdb_ ); // core::Size
+	arc( loop_end_pdb_ ); // core::Size
+	arc( loop_start_pdb_chain_ ); // char
+	arc( loop_end_pdb_chain_ ); // char
+	arc( pose_numb_ ); // _Bool
+	arc( pdb_numb_ ); // _Bool
+	arc( min_length_ ); // core::Size
+	arc( max_length_ ); // core::Size
+	arc( ss_strings_ ); // utility::vector1<std::string>
+	arc( preserve_buried_contacts_ ); // _Bool
+	arc( contact_buried_problematic_res_ ); // _Bool
+	arc( res_interactions_ ); // utility::vector1<ResInteractions>
+	arc( cstres_interactions_ ); // utility::vector1<CstResInteractions>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::EnzdesLoopInfo );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::EnzdesLoopInfo )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzdesLoopsFile::save( Archive & arc ) const {
+	arc( CEREAL_NVP( file_read_ ) ); // _Bool
+	arc( CEREAL_NVP( enzloops_ ) ); // utility::vector1<EnzdesLoopInfoOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzdesLoopsFile::load( Archive & arc ) {
+	arc( file_read_ ); // _Bool
+	arc( enzloops_ ); // utility::vector1<EnzdesLoopInfoOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::EnzdesLoopsFile );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::EnzdesLoopsFile )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::CstResInteractions::save( Archive & arc ) const {
+	arc( cereal::base_class< protocols::toolbox::match_enzdes_util::ResInteractions >( this ) );
+	arc( CEREAL_NVP( resA_ ) ); // _Bool
+	arc( CEREAL_NVP( cst_block_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::CstResInteractions::load( Archive & arc ) {
+	arc( cereal::base_class< protocols::toolbox::match_enzdes_util::ResInteractions >( this ) );
+	arc( resA_ ); // _Bool
+	arc( cst_block_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::CstResInteractions );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::CstResInteractions )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::ResInteractions::save( Archive & arc ) const {
+	arc( CEREAL_NVP( targ_res_ ) ); // core::Size
+	arc( CEREAL_NVP( targ_atom_names_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( targ_base_atom_names_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( targ_base2_atom_names_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( num_interactions_ ) ); // core::Size
+	arc( CEREAL_NVP( dis_ ) ); // toolbox::match_enzdes_util::GeomSampleInfoOP
+	arc( CEREAL_NVP( loop_ang_ ) ); // toolbox::match_enzdes_util::GeomSampleInfoOP
+	arc( CEREAL_NVP( targ_ang_ ) ); // toolbox::match_enzdes_util::GeomSampleInfoOP
+	arc( CEREAL_NVP( loop_dih_ ) ); // toolbox::match_enzdes_util::GeomSampleInfoOP
+	arc( CEREAL_NVP( targ_dih_ ) ); // toolbox::match_enzdes_util::GeomSampleInfoOP
+	arc( CEREAL_NVP( lt_dih_ ) ); // toolbox::match_enzdes_util::GeomSampleInfoOP
+	arc( CEREAL_NVP( loopres_atom_names_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( loopres_base_atom_names_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( loopres_base2_atom_names_ ) ); // utility::vector1<std::string>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::ResInteractions::load( Archive & arc ) {
+	arc( targ_res_ ); // core::Size
+	arc( targ_atom_names_ ); // utility::vector1<std::string>
+	arc( targ_base_atom_names_ ); // utility::vector1<std::string>
+	arc( targ_base2_atom_names_ ); // utility::vector1<std::string>
+	arc( num_interactions_ ); // core::Size
+	arc( dis_ ); // toolbox::match_enzdes_util::GeomSampleInfoOP
+	arc( loop_ang_ ); // toolbox::match_enzdes_util::GeomSampleInfoOP
+	arc( targ_ang_ ); // toolbox::match_enzdes_util::GeomSampleInfoOP
+	arc( loop_dih_ ); // toolbox::match_enzdes_util::GeomSampleInfoOP
+	arc( targ_dih_ ); // toolbox::match_enzdes_util::GeomSampleInfoOP
+	arc( lt_dih_ ); // toolbox::match_enzdes_util::GeomSampleInfoOP
+	arc( loopres_atom_names_ ); // utility::vector1<std::string>
+	arc( loopres_base_atom_names_ ); // utility::vector1<std::string>
+	arc( loopres_base2_atom_names_ ); // utility::vector1<std::string>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::ResInteractions );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::ResInteractions )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_EnzdesLoopsFile )
+#endif // SERIALIZATION

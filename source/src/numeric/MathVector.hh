@@ -222,6 +222,15 @@ public:
 	// operators //
 	///////////////
 
+	bool operator == ( MathVector< T > const & rhs ) const
+	{
+		if ( size_ != rhs.size_ ) return false;
+		for ( Size ii = 0; ii < size_; ++ii ) {
+			if ( data_[ii] != rhs.data_[ii] ) return false;
+		}
+		return true;
+	}
+
 
 	/// return reference to changeable element ( POS)
 	T &operator()( const Size POS)

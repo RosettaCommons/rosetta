@@ -2007,5 +2007,4 @@ BaseEtableEnergy< Derived >::atomic_interaction_cutoff() const
 } // namespace scoring
 } // namespace core
 
-
 #endif

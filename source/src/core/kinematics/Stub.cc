@@ -19,6 +19,16 @@
 #include <numeric/conversions.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 
@@ -94,6 +104,16 @@ Stub::build_fake_xyz( Size const index ) const
 
 }
 
+/// @details Floating point comparison is notoriously fickle.  Perform the same
+/// series of rotations and translations with ever so slightly different code, and
+/// you will produce two different stubs.  The comparison operator is looking for
+/// exact matches.  The only reason to expect that stub A and stub B are the same
+/// is because A was copied from B; if neither have changed since the copy, then
+/// you will have the same stub.
+bool
+Stub::operator == ( Stub const & rhs ) const {
+	return M == rhs.M && v == rhs.v;
+}
 
 /// @details a stub center at 0.0 with lab frame(identity matrix)
 Stub /* const */ default_stub( Stub::Matrix::identity(), Stub::Vector( 0.0 ) );
@@ -101,3 +121,24 @@ Stub /* const */ default_stub( Stub::Matrix::identity(), Stub::Vector( 0.0 ) );
 
 } // namespace kinematics
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::kinematics::Stub::save( Archive & arc ) const {
+	arc( CEREAL_NVP( M ) ); // Matrix
+	arc( CEREAL_NVP( v ) ); // Vector
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::kinematics::Stub::load( Archive & arc ) {
+	arc( M ); // Matrix
+	arc( v ); // Vector
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::Stub );
+#endif // SERIALIZATION

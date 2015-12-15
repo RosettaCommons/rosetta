@@ -35,6 +35,11 @@
 
 
 //#include <map>
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -48,12 +53,7 @@ typedef utility::pointer::shared_ptr< LocalCoordinateConstraint const > LocalCoo
 class LocalCoordinateConstraint : public Constraint {
 public:
 
-
-	LocalCoordinateConstraint() :
-		Constraint( coordinate_constraint ),
-		atom_( id::BOGUS_ATOM_ID ),
-		fixed_stub_( id::BOGUS_STUB_ID ),
-		func_( /* NULL */ ) {}
+	LocalCoordinateConstraint();
 
 	///c-tor
 	LocalCoordinateConstraint(
@@ -62,26 +62,13 @@ public:
 		Vector const & xyz_target_in,
 		func::FuncOP func,
 		ScoreType scotype = coordinate_constraint
-	):
-		Constraint( scotype ),
-		atom_(a1),
-		fixed_stub_( fixed_stub_in ),
-		xyz_target_( xyz_target_in ),
-		func_( func )
-	{
-		runtime_assert( fixed_stub_.atom( 1 ) == fixed_stub_.center() || !fixed_stub_.center().valid() );
-		//don't allow 4-atom stubs, because that changes other functions
-	}
+	);
 
-	~LocalCoordinateConstraint() {};
+	~LocalCoordinateConstraint();
 
-	virtual std::string type() const {
-		return "LocalCoordinateConstraint";
-	}
+	virtual std::string type() const;
 
-	virtual ConstraintOP clone() const {
-		return ConstraintOP( new LocalCoordinateConstraint( *this ) );
-	}
+	virtual ConstraintOP clone() const;
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
@@ -93,14 +80,11 @@ public:
 	ConstraintOP
 	remap_resid( core::id::SequenceMapping const &seqmap ) const;
 
+	virtual bool operator == ( Constraint const & rhs ) const;
+	virtual bool same_type_as_me( Constraint const & other ) const;
 
-	void show( std::ostream& out ) const
-	{
-		out << "LocalCoordinateConstraint ("
-			<< atom_.atomno() << "," << atom_.rsd() << "-"
-			<< fixed_stub_ << ")" << std::endl;
-		func_->show( out );
-	}
+	///
+	void show( std::ostream& out ) const;
 
 	// @brief Reads the definition of a Constraint from the given std::istream,
 	// using the given Pose, and the given func::FuncFactory. This method is intended
@@ -126,16 +110,8 @@ public:
 		Vector const & s3 //fixed_stub.c
 	) const;
 
-
 	void
-	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
-	{
-		emap[ this->score_type() ] += score( xyz( atom_ ),
-			xyz( fixed_stub_.atom( 1 ) ),
-			xyz( fixed_stub_.atom( 2 ) ),
-			xyz( fixed_stub_.atom( 3 ) )
-		);
-	}
+	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
 	// atom deriv
 	void
@@ -145,45 +121,14 @@ public:
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
-	) const
-	{
-		utility_exit_with_message( " derivative of LocalCoordinateConstraint not supported yet " );
-		if ( atom != atom_ ) return;
+	) const;
 
-		Vector const & xyz1( xyz( atom_ ) ), xyz2( xyz_target_ );
-
-		Vector const f2( xyz1 - xyz2 );
-		Real const dist( f2.length() ), deriv( dfunc( dist ) );
-		if ( deriv != 0.0 && dist != 0.0 ) {
-			Vector const f1( xyz1.cross( xyz2 ) );
-			// jk: double F1 and F2 because the target is fixed
-			// (matches deriv_check, and minimizes faster)
-			// rhiju: No, JK, this isn't working...
-			F1 += ( ( deriv / dist ) * f1 ) * weights[ this->score_type() ];
-			F2 += ( ( deriv / dist ) * f2 ) * weights[ this->score_type() ];
-		}
-	}
-
-
+	///
 	Size
-	natoms() const
-	{
-		return 4;
-	}
-
+	natoms() const;
 
 	AtomID const &
-	atom( Size const n ) const
-	{
-		if ( n == 1 ) {
-			return atom_;
-		} else if ( n <= 4 ) {
-			return fixed_stub_.atom( n - 1 );
-		} else {
-			utility_exit_with_message( "LocalCoordinateConstraint::atom() bad argument" );
-		}
-		return atom_;
-	}
+	atom( Size const n ) const;
 
 	Real
 	dist( pose::Pose const & pose ) const;
@@ -195,9 +140,7 @@ public:
 		Real threshold = 1
 	) const;
 
-	void set_fixed_stub( id::StubID new_stub ) {
-		fixed_stub_ = new_stub;
-	}
+	void set_fixed_stub( id::StubID new_stub );
 
 	Vector xyz_target( core::pose::Pose const& local_frame_pose ) const;
 
@@ -207,17 +150,16 @@ private:
 
 	// functions
 	Real
-	func( Real const theta ) const
-	{
-		return func_->func( theta );
-	}
+	func( Real const theta ) const;
 
 	// deriv
 	Real
-	dfunc( Real const theta ) const
-	{
-		return func_->dfunc( theta );
-	}
+	dfunc( Real const theta ) const;
+
+protected:
+	/// @brief Explicit copy constructor so that derived classes will recieve a deep copy
+	/// of the Func this class contains.
+	LocalCoordinateConstraint( LocalCoordinateConstraint const & src );
 
 private:
 	// data
@@ -225,10 +167,21 @@ private:
 	id::StubID fixed_stub_;
 	Vector xyz_target_;
 	func::FuncOP func_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_LocalCoordinateConstraint )
+#endif // SERIALIZATION
+
 
 #endif

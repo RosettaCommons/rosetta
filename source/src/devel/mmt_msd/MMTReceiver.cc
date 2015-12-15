@@ -327,7 +327,8 @@ MMTReceiver::initialize_state_data( StateInputData const & sid )
 
 	// initialize the secondary resfile contents
 	std::istringstream sec_resfile_stream( sid.sec_resfile );
-	sd.secondary_resfile_contents = core::pack::task::ResfileContentsOP( new core::pack::task::ResfileContents( *sd.pose, sec_resfile_stream ) );
+	sd.secondary_resfile_contents = core::pack::task::ResfileContentsOP(
+		new core::pack::task::ResfileContents( *sd.pose, sid.sec_resfname, sec_resfile_stream ) );
 
 	sd.task = initialize_packer_task( sd.pose, sd.ent_corr, *sd.secondary_resfile_contents );
 	return sd;

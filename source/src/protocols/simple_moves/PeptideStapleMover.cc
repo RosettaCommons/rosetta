@@ -43,6 +43,7 @@
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
 //#include <protocols/simple_moves/PackRotamersMover.hh>
@@ -102,14 +103,14 @@ void PeptideStapleMover::apply( core::pose::Pose & pose )
 		}
 	}
 
-	core::chemical::ResidueTypeSet const & residue_set ( pose.residue(1).residue_type_set() );
+	core::chemical::ResidueTypeSetCOP residue_set ( pose.residue(1).residue_type_set() );
 	core::chemical::ResidueType const * stapleA_type = NULL;
 	core::chemical::ResidueType const * stapleB_type = NULL;
 
 	// AMW cppcheck fix, would dereference a null pointer if staple_gap wasn't 4.
 	if ( staple_gap_ == 4 ) {
-		stapleA_type = &residue_set.name_map("STAPLE08A") ;
-		stapleB_type = &residue_set.name_map("STAPLE08B") ;
+		stapleA_type = &residue_set->name_map("STAPLE08A") ;
+		stapleB_type = &residue_set->name_map("STAPLE08B") ;
 	} else if ( staple_gap_ == 7 ) {
 		// in theory this should be supported, but the residue types don't exist!
 		return;

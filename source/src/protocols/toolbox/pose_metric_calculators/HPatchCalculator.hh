@@ -24,6 +24,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -47,10 +52,21 @@ private:
 	bool remove_nonprotein_res_;
 	std::map< Size, std::pair< core::Real, core::Real > > patch_scores_;
 	std::map< Size, utility::vector1< core::id::AtomID > > atoms_in_patches_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace pose_metric_calculators
 } // namespace toolbox
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_HPatchCalculator )
+#endif // SERIALIZATION
+
 
 #endif

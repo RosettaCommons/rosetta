@@ -23,6 +23,15 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -77,3 +86,31 @@ WaterAnchorInfo::nstep( Size const nstep_in ) {
 } // namespace rotamer_set
 } // namespace pack
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::rotamer_set::WaterAnchorInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( anchor_residue_ ) ); // Size
+	arc( CEREAL_NVP( anchor_atom_name_ ) ); // std::string
+	arc( CEREAL_NVP( aa_ ) ); // AA
+	arc( CEREAL_NVP( nstep_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::rotamer_set::WaterAnchorInfo::load( Archive & arc ) {
+	arc( anchor_residue_ ); // Size
+	arc( anchor_atom_name_ ); // std::string
+	arc( aa_ ); // AA
+	arc( nstep_ ); // Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::WaterAnchorInfo );
+CEREAL_REGISTER_TYPE( core::pack::rotamer_set::WaterAnchorInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_rotamer_set_WaterAnchorInfo )
+#endif // SERIALIZATION

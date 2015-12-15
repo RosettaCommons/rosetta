@@ -30,6 +30,7 @@ class CovalentConnectionReplaceInfo;
 
 typedef utility::pointer::shared_ptr< EnzConstraintParameters > EnzConstraintParametersOP;
 typedef utility::pointer::shared_ptr< EnzConstraintParameters const > EnzConstraintParametersCOP;
+typedef utility::pointer::weak_ptr< EnzConstraintParameters > EnzConstraintParametersAP;
 typedef utility::pointer::weak_ptr< EnzConstraintParameters const > EnzConstraintParametersCAP;
 
 typedef utility::pointer::shared_ptr< EnzCstTemplateRes > EnzCstTemplateResOP;

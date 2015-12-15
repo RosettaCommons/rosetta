@@ -38,6 +38,14 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.FabConstraint" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -49,9 +57,20 @@ FabConstraint::FabConstraint():
 {}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
-FabConstraint::FabConstraint(ConstraintCOPs & cst_in):
+FabConstraint::FabConstraint(ConstraintCOPs const & cst_in) :
 	MultiConstraint(cst_in)
 {}
+
+///
+ConstraintOP
+FabConstraint::clone() const {
+	return ConstraintOP( new FabConstraint( *this ) );
+}
+
+std::string
+FabConstraint::type() const {
+	return "FabConstraint";
+}
 
 void
 FabConstraint::show(std::ostream& out) const
@@ -230,6 +249,40 @@ FabConstraint::setup_csts(
 
 } // setup_csts
 
+bool
+FabConstraint::operator==( Constraint const & rhs ) const
+{
+	// The base class will ensure both this and rhs are of the same type
+	return MultiConstraint::operator== ( rhs );
+}
+
+bool FabConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< FabConstraint const * > ( &other );
+}
+
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::FabConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< MultiConstraint >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::FabConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< MultiConstraint >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::FabConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::FabConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_FabConstraint )
+#endif // SERIALIZATION

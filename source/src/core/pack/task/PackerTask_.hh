@@ -44,6 +44,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace task {
@@ -446,6 +451,12 @@ private:
 	// sheffler
 	PackerTaskSymmetryStatus symmetry_status_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 //NOTE: parse_resfile is now an independent function in ResfileReader.hh, not a member function of the PackerTask hierarchy
@@ -453,5 +464,10 @@ private:
 } //namespace task
 } //namespace pack
 } //namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_task_PackerTask_ )
+#endif // SERIALIZATION
+
 
 #endif

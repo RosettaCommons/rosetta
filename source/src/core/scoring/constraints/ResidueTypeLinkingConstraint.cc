@@ -26,6 +26,16 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -115,7 +125,8 @@ return NULL;
 bool
 ResidueTypeLinkingConstraint::operator == ( Constraint const & other_cst ) const
 {
-	if ( !dynamic_cast< ResidueTypeLinkingConstraint const * > ( &other_cst ) ) return false;
+	if ( !           same_type_as_me( other_cst ) ) return false;
+	if ( ! other_cst.same_type_as_me( *this ) ) return false;
 
 	ResidueTypeLinkingConstraint const & other( static_cast< ResidueTypeLinkingConstraint const & > (other_cst) );
 
@@ -126,10 +137,16 @@ ResidueTypeLinkingConstraint::operator == ( Constraint const & other_cst ) const
 	if ( rsd1_type_name3_ != other.rsd1_type_name3_ ) return false;
 	if ( rsd2_type_name3_ != other.rsd2_type_name3_ ) return false;
 	if ( bonus_ != other.bonus_ ) return false;
-	if ( this->score_type() != other.score_type() ) return false;
+	if ( score_type() != other.score_type() ) return false;
 
 	return true;
 }
+
+bool ResidueTypeLinkingConstraint::same_type_as_me( Constraint const & other ) const {
+	return dynamic_cast< ResidueTypeLinkingConstraint const * > (&other);
+}
+
+
 /*
 ConstraintOP
 ResidueTypeLinkingConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP smap ) const {
@@ -181,3 +198,39 @@ ResidueTypeLinkingConstraint::fill_f1_f2(
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::ResidueTypeLinkingConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( CEREAL_NVP( seqpos1_ ) ); // Size
+	arc( CEREAL_NVP( seqpos2_ ) ); // Size
+	arc( CEREAL_NVP( AA1name ) ); // std::string
+	arc( CEREAL_NVP( AA2name ) ); // std::string
+	arc( CEREAL_NVP( rsd1_type_name3_ ) ); // std::string
+	arc( CEREAL_NVP( rsd2_type_name3_ ) ); // std::string
+	arc( CEREAL_NVP( bonus_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::ResidueTypeLinkingConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( seqpos1_ ); // Size
+	arc( seqpos2_ ); // Size
+	arc( AA1name ); // std::string
+	arc( AA2name ); // std::string
+	arc( rsd1_type_name3_ ); // std::string
+	arc( rsd2_type_name3_ ); // std::string
+	arc( bonus_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::ResidueTypeLinkingConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::ResidueTypeLinkingConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_ResidueTypeLinkingConstraint )
+#endif // SERIALIZATION

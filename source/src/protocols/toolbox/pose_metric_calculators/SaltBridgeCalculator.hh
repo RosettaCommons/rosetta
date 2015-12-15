@@ -42,6 +42,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -66,12 +71,23 @@ protected:
 	virtual std::string print( std::string const & key ) const;
 	virtual void recompute( core::pose::Pose const & this_pose );
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 }
 }
 }
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_SaltBridgeCalculator )
+#endif // SERIALIZATION
 
 
 #endif

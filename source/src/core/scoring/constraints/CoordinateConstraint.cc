@@ -42,6 +42,18 @@
 
 static THREAD_LOCAL basic::Tracer tr( "core.io.constraints" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -53,7 +65,17 @@ CoordinateConstraint::CoordinateConstraint() :
 	Constraint( coordinate_constraint ),
 	atom_( id::BOGUS_ATOM_ID ),
 	fixed_atom_( id::BOGUS_ATOM_ID ),
-	func_( /* NULL */ ) {}
+	func_( /* NULL */ )
+{}
+
+/// @brief Constructor as a deep copy of the src %CoordinateConstraint
+CoordinateConstraint::CoordinateConstraint( CoordinateConstraint const & src ) :
+	Constraint( src ),
+	atom_( src.atom_ ),
+	fixed_atom_( src.fixed_atom_ ),
+	xyz_target_( src.xyz_target_ ),
+	func_( src.func_ ? src.func_->clone() : src.func_ )
+{}
 
 ///c-tor
 CoordinateConstraint::CoordinateConstraint(
@@ -77,6 +99,7 @@ CoordinateConstraint::type() const {
 	return "CoordinateConstraint";
 }
 
+/// @details Invoke the copy constructor, which will perform a deep copy by cloning the func object
 ConstraintOP
 CoordinateConstraint::clone() const {
 	return ConstraintOP( new CoordinateConstraint( *this ) );
@@ -299,19 +322,23 @@ CoordinateConstraint::read_def(
 bool
 CoordinateConstraint::operator == ( Constraint const & other_cst ) const
 {
-	if ( !dynamic_cast< CoordinateConstraint const * > ( &other_cst ) ) return false;
+	if ( !           same_type_as_me( other_cst ) ) return false;
+	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
 	CoordinateConstraint const & other( static_cast< CoordinateConstraint const & > (other_cst) );
 
 	if ( atom_ != other.atom_ ) return false;
 	if ( fixed_atom_ != other.fixed_atom_ ) return false;
-	if ( func_ != other.func_ ) return false;
 	if ( xyz_target_ != other.xyz_target_ ) return false;
 	if ( this->score_type() != other.score_type() ) return false;
 
-	return true;
+	return func_ == other.func_ || ( func_ && other.func_ && *func_ == *other.func_ );
 }
 
+bool
+CoordinateConstraint::same_type_as_me( Constraint const & other ) const {
+	return dynamic_cast< CoordinateConstraint const * > (&other);
+}
 
 // functions
 Real
@@ -327,7 +354,36 @@ CoordinateConstraint::dfunc( Real const theta ) const
 	return func_->dfunc( theta );
 }
 
-
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::CoordinateConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( CEREAL_NVP( atom_ ) ); // AtomID
+	arc( CEREAL_NVP( fixed_atom_ ) ); // AtomID
+	arc( CEREAL_NVP( xyz_target_ ) ); // Vector
+	arc( CEREAL_NVP( func_ ) ); // core::scoring::func::FuncOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::CoordinateConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( atom_ ); // AtomID
+	arc( fixed_atom_ ); // AtomID
+	arc( xyz_target_ ); // Vector
+	arc( func_ ); // core::scoring::func::FuncOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::CoordinateConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::CoordinateConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_CoordinateConstraint )
+#endif // SERIALIZATION

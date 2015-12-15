@@ -1829,11 +1829,11 @@ StructureData::are_connectable(
 	// if the distance is > the fully extended Ca-Ca distance of an nres residue insert, this connection is physically impossible
 	core::Size const res1( segment(id1).stop() ), res2( segment(id2).start() );
 	// if there isn't a connect atom, find its name and use that
-	core::chemical::ResidueType const & rtype = pose()->residue(res1).residue_type_set().name_map( pose()->residue(res1).name3() );
+	core::chemical::ResidueType const & rtype = pose()->residue(res1).residue_type_set()->name_map( pose()->residue(res1).name3() );
 	std::string const & aname = rtype.atom_name( rtype.upper_connect_atom() );
 	core::Size const atom1 = pose()->residue(res1).type().atom_index( aname );
 	debug_assert( atom1 );
-	core::chemical::ResidueType const & rtype2 = pose()->residue(res2).residue_type_set().name_map( pose()->residue(res2).name3() );
+	core::chemical::ResidueType const & rtype2 = pose()->residue(res2).residue_type_set()->name_map( pose()->residue(res2).name3() );
 	std::string const & aname2 = rtype2.atom_name( rtype2.lower_connect_atom() );
 	core::Size const atom2 = pose()->residue(res2).type().atom_index( aname2 );
 	debug_assert( atom2 );

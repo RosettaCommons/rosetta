@@ -39,6 +39,18 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.SplineFunc" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -64,6 +76,40 @@ SplineFunc::SplineFunc():
 
 SplineFunc::~SplineFunc()
 {}
+
+bool SplineFunc::operator == ( Func const & other ) const
+{
+	if ( !       same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	SplineFunc const & other_downcast( static_cast< SplineFunc const & > (other) );
+
+	if ( exp_val_             != other_downcast.exp_val_             ) return false;
+	if ( filename_            != other_downcast.filename_            ) return false;
+	if ( KB_description_      != other_downcast.KB_description_      ) return false;
+	if ( weight_              != other_downcast.weight_              ) return false;
+	if ( bin_size_            != other_downcast.bin_size_            ) return false;
+	if ( lower_bound_x_       != other_downcast.lower_bound_x_       ) return false;
+	if ( lower_bound_y_       != other_downcast.lower_bound_y_       ) return false;
+	if ( upper_bound_x_       != other_downcast.upper_bound_x_       ) return false;
+	if ( upper_bound_y_       != other_downcast.upper_bound_y_       ) return false;
+	if ( lower_bound_dy_      != other_downcast.lower_bound_dy_      ) return false;
+	if ( upper_bound_dy_      != other_downcast.upper_bound_dy_      ) return false;
+	if ( bins_vect_           != other_downcast.bins_vect_           ) return false;
+	if ( bins_vect_size_      != other_downcast.bins_vect_size_      ) return false;
+	if ( potential_vect_      != other_downcast.potential_vect_      ) return false;
+	if ( potential_vect_size_ != other_downcast.potential_vect_size_ ) return false;
+
+	return interpolator_ == other_downcast.interpolator_ ||
+		( interpolator_ && other_downcast.interpolator_ && *interpolator_ == *other_downcast.interpolator_ );
+
+}
+
+bool SplineFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< SplineFunc const * > ( &other );
+}
+
 
 // get_ functions to obtain values of member variables (mostly for unit test)
 core::Real SplineFunc::get_exp_val()
@@ -303,3 +349,57 @@ core::Size SplineFunc::show_violations( std::ostream &out, core::Real x, core::S
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::SplineFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( exp_val_ ) ); // core::Real
+	arc( CEREAL_NVP( filename_ ) ); // std::string
+	arc( CEREAL_NVP( KB_description_ ) ); // std::string
+	arc( CEREAL_NVP( weight_ ) ); // core::Real
+	arc( CEREAL_NVP( bin_size_ ) ); // core::Real
+	arc( CEREAL_NVP( lower_bound_x_ ) ); // core::Real
+	arc( CEREAL_NVP( lower_bound_y_ ) ); // core::Real
+	arc( CEREAL_NVP( upper_bound_x_ ) ); // core::Real
+	arc( CEREAL_NVP( upper_bound_y_ ) ); // core::Real
+	arc( CEREAL_NVP( lower_bound_dy_ ) ); // core::Real
+	arc( CEREAL_NVP( upper_bound_dy_ ) ); // core::Real
+	arc( CEREAL_NVP( bins_vect_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( bins_vect_size_ ) ); // utility::vector1<core::Real>::size_type
+	arc( CEREAL_NVP( potential_vect_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( potential_vect_size_ ) ); // utility::vector1<core::Real>::size_type
+	arc( CEREAL_NVP( interpolator_ ) ); // numeric::interpolation::spline::InterpolatorOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::SplineFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( exp_val_ ); // core::Real
+	arc( filename_ ); // std::string
+	arc( KB_description_ ); // std::string
+	arc( weight_ ); // core::Real
+	arc( bin_size_ ); // core::Real
+	arc( lower_bound_x_ ); // core::Real
+	arc( lower_bound_y_ ); // core::Real
+	arc( upper_bound_x_ ); // core::Real
+	arc( upper_bound_y_ ); // core::Real
+	arc( lower_bound_dy_ ); // core::Real
+	arc( upper_bound_dy_ ); // core::Real
+	arc( bins_vect_ ); // utility::vector1<core::Real>
+	arc( bins_vect_size_ ); // utility::vector1<core::Real>::size_type
+	arc( potential_vect_ ); // utility::vector1<core::Real>
+	arc( potential_vect_size_ ); // utility::vector1<core::Real>::size_type
+	arc( interpolator_ ); // numeric::interpolation::spline::InterpolatorOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::SplineFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::SplineFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_SplineFunc )
+#endif // SERIALIZATION

@@ -48,6 +48,26 @@
 #include <utility/FixedSizeLexicographicalIterator.tmpl.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/fixedsizearray1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+#include <numeric/HomogeneousTransform.srlz.hh>
+#include <numeric/geometry/BoundingBox.srlz.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/list.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/unordered_map.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace devel {
 namespace znhash {
 
@@ -874,13 +894,13 @@ ZnCoordinationScorer::insert_match_onto_pose(
 	destresids[1] = chain_insertion_id == 1 ? match.res1() : match.res1() + r2() - r1();
 	destresids[2] = chain_insertion_id == 1 ? match.res2() : match.res2() + r2() - r1();
 
-	core::chemical::ResidueTypeSet const & restypeset( p.residue_type(r1()).residue_type_set() );
+	core::chemical::ResidueTypeSetCOP restypeset( p.residue_type(r1()).residue_type_set() );
 
 	for ( Size ii = 1; ii <= 2; ++ii ) {
 		core::conformation::Residue const & matchres = ii == 1 ? match.res1conf() : match.res2conf();
 		core::conformation::Residue const & dstres = p.residue( destresids[ ii ] );
-		assert( &restypeset == & dstres.type().residue_type_set() );
-		assert( &restypeset == & matchres.type().residue_type_set() );
+		assert( restypeset == dstres.type().residue_type_set() );
+		assert( restypeset == matchres.type().residue_type_set() );
 
 		// find the appropriate residue type for this position
 		core::chemical::ResidueTypeCOP newrestype( matchres.type().get_self_ptr() );
@@ -891,7 +911,7 @@ ZnCoordinationScorer::insert_match_onto_pose(
 				core::chemical::ResidueTypeCOP variantfree_newrestype;
 				// TODO: Refactor this to avoid working with strings.
 				variantfree_newrestype =
-					restypeset.get_residue_type_with_variant_removed(
+					restypeset->get_residue_type_with_variant_removed(
 					*newrestype,
 					core::chemical::ResidueProperties::get_variant_from_string( matchres_variants[ jj ] )
 					).get_self_ptr();
@@ -911,7 +931,7 @@ ZnCoordinationScorer::insert_match_onto_pose(
 				core::chemical::ResidueTypeCOP variantful_newrestype;
 				// TODO: Refactor this to avoid working with strings.
 				variantful_newrestype =
-					restypeset.get_residue_type_with_variant_added(
+					restypeset->get_residue_type_with_variant_added(
 					*newrestype,
 					core::chemical::ResidueProperties::get_variant_from_string( dstres_variants[ jj ] )
 					).get_self_ptr();
@@ -1055,6 +1075,23 @@ ZnCoordinationConstraint::clone() const {
 	return core::scoring::constraints::ConstraintOP( new ZnCoordinationConstraint( zn_score_ ) );
 }
 
+bool
+ZnCoordinationConstraint::operator == ( Constraint const & other_cst ) const
+{
+	if ( !           same_type_as_me( other_cst ) ) return false;
+	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
+
+	ZnCoordinationConstraint const & other( static_cast< ZnCoordinationConstraint const & > (other_cst) );
+	return zn_score_ == other.zn_score_;
+}
+
+bool
+ZnCoordinationConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< ZnCoordinationConstraint const * > (&other);
+}
+
+
 /// @brief Returns the number of atoms involved in defining this constraint.
 core::Size
 ZnCoordinationConstraint::natoms() const {
@@ -1104,3 +1141,186 @@ ZnCoordinationConstraint::fill_f1_f2(
 
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+devel::znhash::ZnCoord::save( Archive & arc ) const {
+	arc( CEREAL_NVP( index_ ) ); // core::Size
+	arc( CEREAL_NVP( nhis_ ) ); // core::Size
+	arc( CEREAL_NVP( zn_and_orbitals_ ) ); // utility::fixedsizearray1<Vector, 5>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+devel::znhash::ZnCoord::load( Archive & arc ) {
+	arc( index_ ); // core::Size
+	arc( nhis_ ); // core::Size
+	arc( zn_and_orbitals_ ); // utility::fixedsizearray1<Vector, 5>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( devel::znhash::ZnCoord );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+devel::znhash::ZnHash::save( Archive & arc ) const {
+	arc( CEREAL_NVP( grid_size_ ) ); // Real
+	arc( CEREAL_NVP( inv_grid_size_ ) ); // Real
+	arc( CEREAL_NVP( ngrid_cells_ ) ); // Size3
+	arc( CEREAL_NVP( ndim_prods_ ) ); // Size3
+	arc( CEREAL_NVP( bb_ ) ); // numeric::geometry::BoundingBox<numeric::xyzVector<core::Real> >
+	arc( CEREAL_NVP( bb_ext_ ) ); // numeric::geometry::BoundingBox<numeric::xyzVector<core::Real> >
+	arc( CEREAL_NVP( hash_has_been_built_ ) ); // _Bool
+	arc( CEREAL_NVP( zn_coords_ ) ); // std::list<ZnCoord>
+	arc( CEREAL_NVP( zn_hash_ ) ); // ZnCoordinateHash
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+devel::znhash::ZnHash::load( Archive & arc ) {
+	arc( grid_size_ ); // Real
+	arc( inv_grid_size_ ); // Real
+	arc( ngrid_cells_ ); // Size3
+	arc( ndim_prods_ ); // Size3
+	arc( bb_ ); // numeric::geometry::BoundingBox<numeric::xyzVector<core::Real> >
+	arc( bb_ext_ ); // numeric::geometry::BoundingBox<numeric::xyzVector<core::Real> >
+	arc( hash_has_been_built_ ); // _Bool
+	arc( zn_coords_ ); // std::list<ZnCoord>
+	arc( zn_hash_ ); // ZnCoordinateHash
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( devel::znhash::ZnHash );
+CEREAL_REGISTER_TYPE( devel::znhash::ZnHash )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+devel::znhash::ZnMatchData::save( Archive & arc ) const {
+	arc( CEREAL_NVP( index_ ) ); // Size
+	arc( CEREAL_NVP( res1_ ) ); // Size
+	arc( CEREAL_NVP( res2_ ) ); // Size
+	arc( CEREAL_NVP( zn_and_orbitals_ ) ); // class devel::znhash::ZnCoord
+	arc( CEREAL_NVP( match_pdb_file_ ) ); // std::string
+	arc( CEREAL_NVP( match_cst_file_ ) ); // std::string
+	arc( CEREAL_NVP( res1conf_ ) ); // core::conformation::ResidueCOP
+	arc( CEREAL_NVP( res2conf_ ) ); // core::conformation::ResidueCOP
+	arc( CEREAL_NVP( znconf_ ) ); // core::conformation::ResidueCOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+devel::znhash::ZnMatchData::load( Archive & arc ) {
+	arc( index_ ); // Size
+	arc( res1_ ); // Size
+	arc( res2_ ); // Size
+	arc( zn_and_orbitals_ ); // class devel::znhash::ZnCoord
+	arc( match_pdb_file_ ); // std::string
+	arc( match_cst_file_ ); // std::string
+	std::shared_ptr< core::conformation::Residue > local_res1conf;
+	arc( local_res1conf ); // core::conformation::ResidueCOP
+	res1conf_ = local_res1conf; // copy the non-const pointer(s) into the const pointer(s)
+	std::shared_ptr< core::conformation::Residue > local_res2conf;
+	arc( local_res2conf ); // core::conformation::ResidueCOP
+	res2conf_ = local_res2conf; // copy the non-const pointer(s) into the const pointer(s)
+	std::shared_ptr< core::conformation::Residue > local_znconf;
+	arc( local_znconf ); // core::conformation::ResidueCOP
+	znconf_ = local_znconf; // copy the non-const pointer(s) into the const pointer(s)
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( devel::znhash::ZnMatchData );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+devel::znhash::ZnCoordinationScorer::save( Archive & arc ) const {
+	arc( CEREAL_NVP( znx_ideal_coords_ ) ); // utility::vector1<core::Vector>
+	arc( CEREAL_NVP( matchcst_file_name_ ) ); // std::string
+	arc( CEREAL_NVP( ramp_to_zero_poly_ ) ); // numeric::Polynomial_1dOP
+	arc( CEREAL_NVP( well_depth_ ) ); // Real
+	arc( CEREAL_NVP( reach_ ) ); // Real
+	arc( CEREAL_NVP( reach2_ ) ); // Real
+	arc( CEREAL_NVP( reference_frame_ ) ); // HTReal
+	arc( CEREAL_NVP( inv_reference_frame_ ) ); // HTReal
+	arc( CEREAL_NVP( idealize_input_virtual_atoms_ ) ); // _Bool
+	arc( CEREAL_NVP( zn_matches_ ) ); // utility::vector1<ZnMatchData>
+	arc( CEREAL_NVP( max_natoms_ ) ); // Size
+	arc( CEREAL_NVP( clash_weight_ ) ); // Real
+	arc( CEREAL_NVP( require_3H_ ) ); // _Bool
+	arc( CEREAL_NVP( znreach_ ) ); // Real
+	arc( CEREAL_NVP( orbital_dist_ ) ); // Real
+	arc( CEREAL_NVP( orbital_reach_ ) ); // Real
+	arc( CEREAL_NVP( znwelldepth_ ) ); // Real
+	arc( CEREAL_NVP( asymm_chain_ ) ); // Size
+	arc( CEREAL_NVP( focsed_clone_chain_ ) ); // Size
+	arc( CEREAL_NVP( asymm_atids_ ) ); // utility::fixedsizearray1<core::id::AtomID, 3>
+	arc( CEREAL_NVP( focused_clone_atids_ ) ); // utility::fixedsizearray1<core::id::AtomID, 3>
+	arc( CEREAL_NVP( third_resid_ ) ); // core::id::AtomID
+	arc( CEREAL_NVP( hash_ ) ); // ZnHashOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+devel::znhash::ZnCoordinationScorer::load( Archive & arc ) {
+	arc( znx_ideal_coords_ ); // utility::vector1<core::Vector>
+	arc( matchcst_file_name_ ); // std::string
+	arc( ramp_to_zero_poly_ ); // numeric::Polynomial_1dOP
+	arc( well_depth_ ); // Real
+	arc( reach_ ); // Real
+	arc( reach2_ ); // Real
+	arc( reference_frame_ ); // HTReal
+	arc( inv_reference_frame_ ); // HTReal
+	arc( idealize_input_virtual_atoms_ ); // _Bool
+	arc( zn_matches_ ); // utility::vector1<ZnMatchData>
+	arc( max_natoms_ ); // Size
+	arc( clash_weight_ ); // Real
+	arc( require_3H_ ); // _Bool
+	arc( znreach_ ); // Real
+	arc( orbital_dist_ ); // Real
+	arc( orbital_reach_ ); // Real
+	arc( znwelldepth_ ); // Real
+	arc( asymm_chain_ ); // Size
+	arc( focsed_clone_chain_ ); // Size
+	arc( asymm_atids_ ); // utility::fixedsizearray1<core::id::AtomID, 3>
+	arc( focused_clone_atids_ ); // utility::fixedsizearray1<core::id::AtomID, 3>
+	arc( third_resid_ ); // core::id::AtomID
+	arc( hash_ ); // ZnHashOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( devel::znhash::ZnCoordinationScorer );
+CEREAL_REGISTER_TYPE( devel::znhash::ZnCoordinationScorer )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+devel::znhash::ZnCoordinationConstraint::ZnCoordinationConstraint() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+devel::znhash::ZnCoordinationConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( CEREAL_NVP( zn_score_ ) ); // ZnCoordinationScorerCOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+devel::znhash::ZnCoordinationConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	std::shared_ptr< devel::znhash::ZnCoordinationScorer > local_zn_score;
+	arc( local_zn_score ); // ZnCoordinationScorerCOP
+	zn_score_ = local_zn_score; // copy the non-const pointer(s) into the const pointer(s)
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( devel::znhash::ZnCoordinationConstraint );
+CEREAL_REGISTER_TYPE( devel::znhash::ZnCoordinationConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( devel_znhash_ZnHash )
+#endif // SERIALIZATION

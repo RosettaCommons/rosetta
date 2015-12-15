@@ -310,7 +310,7 @@ write_binary(const core::pose::Pose & pose, BUFFER & buf)
 		// residue name
 		//write_binary(residue.name(), buf);
 		// residue type set
-		write_binary(residue.type().residue_type_set().name(), buf);
+		write_binary(residue.type().residue_type_set()->name(), buf);
 		// residue type
 		write_binary(residue.type().name(), buf);
 		// residue chain

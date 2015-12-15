@@ -40,6 +40,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -106,12 +112,18 @@ private: // DATA
 
 	/// Residue types must match those of the pose for the indices
 	/// to match.
-	utility::vector1< chemical::ResidueType const * > residue_types_;
+	utility::vector1< chemical::ResidueTypeCOP > residue_types_;
 	utility::vector1< Size > N_index_;
 	utility::vector1< Size > CA_index_;
 	utility::vector1< Size > CB_index_;
 	utility::vector1< Size > C_index_;
 	utility::vector1< Size > O_index_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -178,6 +190,11 @@ struct Strands {
 	// need to re-add this logic if it turns out to be useful
 	//ObjexxFCL::FArray2D< Real > strand_strand_score;
 
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -225,6 +242,11 @@ struct Helices {
 	int total_HH_dimer;
 	FArray1D_int HH_resnum;
 	FArray2D_int HH_helix_end;
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -302,9 +324,20 @@ private:
 
 	Helices helices_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // ns scoring
 } // ns core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_SS_Info )
+#endif // SERIALIZATION
+
 
 #endif

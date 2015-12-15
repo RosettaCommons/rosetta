@@ -29,6 +29,11 @@
 // C++ headers
 #include <set>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace select {
 namespace residue_selector {
@@ -75,11 +80,22 @@ public:
 private: // data members
 	std::string res_name_str_;
 	std::string res_name3_str_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } //namespace residue_selector
 } //namespace select
 } //namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_task_residue_selector_ResidueNameSelector )
+#endif // SERIALIZATION
 
 
 #endif

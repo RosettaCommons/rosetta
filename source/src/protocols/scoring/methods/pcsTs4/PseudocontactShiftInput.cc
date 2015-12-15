@@ -49,6 +49,15 @@
 #include <iostream>
 #include <iomanip>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace scoring {
 namespace methods {
@@ -304,3 +313,31 @@ PCS_data_input_manager_Ts4 * PCS_data_input_manager_Ts4::instance_( 0 );
 }//namespace methods
 }//namespace scoring
 }//namespace protocols
+
+#ifdef    SERIALIZATION
+/// @brief Bogus default constructor to be used only for deserialization
+protocols::scoring::methods::pcsTs4::PCS_line_data_Ts4::PCS_line_data_Ts4() :
+	residue_num_( 0 ), atom_name_( "temp" ), PCS_experimental_( 1234 ), PCS_tolerance_( 1234 )
+{}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::scoring::methods::pcsTs4::PCS_line_data_Ts4::save( Archive & arc ) const {
+	arc( CEREAL_NVP( residue_num_ ) ); // const core::Size
+	arc( CEREAL_NVP( atom_name_ ) ); // const std::string
+	arc( CEREAL_NVP( PCS_experimental_ ) ); // const core::Real
+	arc( CEREAL_NVP( PCS_tolerance_ ) ); // const core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::scoring::methods::pcsTs4::PCS_line_data_Ts4::load( Archive & arc ) {
+	arc( const_cast< core::Size & > (residue_num_) ); // const core::Size
+	arc( const_cast< std::string & > (atom_name_) ); // const std::string
+	arc( const_cast< core::Real & > (PCS_experimental_) ); // const core::Real
+	arc( const_cast< core::Real & > (PCS_tolerance_) ); // const core::Real
+}
+SAVE_AND_LOAD_SERIALIZABLE( protocols::scoring::methods::pcsTs4::PCS_line_data_Ts4 );
+#endif // SERIALIZATION

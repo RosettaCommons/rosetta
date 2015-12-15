@@ -20,6 +20,11 @@
 #include <utility/assert.hh>
 #include <iostream>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace etable {
@@ -63,3 +68,22 @@ std::ostream & operator << ( std::ostream & os, CountPairData_1_1 const & cpdat 
 } // namespace scoring
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::etable::etrie::CountPairData_1_1::save( Archive & arc ) const {
+	arc( CEREAL_NVP( connection_distance_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::etable::etrie::CountPairData_1_1::load( Archive & arc ) {
+	arc( connection_distance_ ); // Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::etable::etrie::CountPairData_1_1 );
+#endif // SERIALIZATION

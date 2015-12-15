@@ -87,7 +87,7 @@ main( int argc, char *argv[] )
 		}
 
 		Pose pose;
-		make_pose_from_sequence( pose, "AAA", "fa_standard" );
+		make_pose_from_sequence( pose, "AAA", core::chemical::FA_STANDARD );
 
 		cout << pose.residue( 1 ) << endl;
 

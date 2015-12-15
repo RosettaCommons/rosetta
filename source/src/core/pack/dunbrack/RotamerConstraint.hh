@@ -22,8 +22,9 @@
 // Package headers
 #include <core/scoring/constraints/Constraint.hh>
 
+// Project headers
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
-
 #include <core/id/AtomID.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
@@ -31,6 +32,11 @@
 #include <utility/vector1_bool.hh>
 #include <utility/vector1.hh>
 
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace pack {
@@ -68,6 +74,7 @@ public:
 		pose::Pose const & pose,
 		Size seqpos
 	);
+
 	virtual ~RotamerConstraint();
 
 	virtual
@@ -76,7 +83,10 @@ public:
 
 	virtual
 	scoring::constraints::ConstraintOP
-	clone() const { return scoring::constraints::ConstraintOP( new RotamerConstraint( *this ) ); }
+	clone() const;
+
+	virtual bool operator == ( Constraint const & other ) const;
+	virtual bool same_type_as_me( Constraint const & other ) const;
 
 	virtual
 	Size
@@ -112,9 +122,16 @@ private:
 	Size seqpos_;
 	std::string rsd_type_name_;
 	utility::vector1< AtomID > atom_ids_;
+	core::chemical::ResidueTypeCOP restype_; // for serialization purposes
 	core::pack::rotamers::SingleResidueRotamerLibraryCOP rotlib_;
 	utility::vector1< ChiVector > favored_rotamers_;
 	utility::vector1< RotVector > favored_rotamer_numbers_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; // RotamerConstraint
 
@@ -122,5 +139,10 @@ private:
 } // namespace dunbrack
 } // namespace pack
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_dunbrack_RotamerConstraint )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_pack_dunbrack_RotamerConstraint_HH

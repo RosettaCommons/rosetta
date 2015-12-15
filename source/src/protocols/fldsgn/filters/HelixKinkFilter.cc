@@ -22,6 +22,7 @@
 #include <protocols/fldsgn/topology/util.hh>
 
 // Project Headers
+#include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/types.hh>

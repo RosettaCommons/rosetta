@@ -22,6 +22,15 @@
 #include <string>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 
@@ -135,3 +144,32 @@ operator !=( Edge const & a, Edge const & b )
 
 } // namespace kinematics
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::kinematics::Edge::save( Archive & arc ) const {
+	arc( CEREAL_NVP( start_ ) ); // int
+	arc( CEREAL_NVP( stop_ ) ); // int
+	arc( CEREAL_NVP( label_ ) ); // int
+	arc( CEREAL_NVP( start_atom_ ) ); // std::string
+	arc( CEREAL_NVP( stop_atom_ ) ); // std::string
+	arc( CEREAL_NVP( bKeepStubInResidue_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::kinematics::Edge::load( Archive & arc ) {
+	arc( start_ ); // int
+	arc( stop_ ); // int
+	arc( label_ ); // int
+	arc( start_atom_ ); // std::string
+	arc( stop_atom_ ); // std::string
+	arc( bKeepStubInResidue_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::Edge );
+#endif // SERIALIZATION

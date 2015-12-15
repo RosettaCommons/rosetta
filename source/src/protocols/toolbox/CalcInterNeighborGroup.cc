@@ -47,6 +47,17 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.CalcInterNeighborGroup" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 
@@ -132,3 +143,31 @@ CalcInterNeighborGroup::compute( core::pose::Pose const & pose )
 
 } //namespace toolbox
 } //namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::CalcInterNeighborGroup::save( Archive & arc ) const {
+	arc( CEREAL_NVP( groups_ ) ); // group_set
+	arc( CEREAL_NVP( dist_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( num_neighbors_ ) ); // core::Size
+	arc( CEREAL_NVP( neighbors_ ) ); // std::set<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::CalcInterNeighborGroup::load( Archive & arc ) {
+	arc( groups_ ); // group_set
+	arc( dist_cutoff_ ); // core::Real
+	arc( num_neighbors_ ); // core::Size
+	arc( neighbors_ ); // std::set<core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::CalcInterNeighborGroup );
+CEREAL_REGISTER_TYPE( protocols::toolbox::CalcInterNeighborGroup )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_CalcInterNeighborGroup )
+#endif // SERIALIZATION

@@ -34,6 +34,7 @@
 
 // Core headers
 #include <core/kinematics/FoldTree.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/io/pdb/file_data.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>

@@ -821,7 +821,10 @@ public:
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 
-	ResidueTypeSet const &
+	/// @brief Return an owning pointer to the ResidueTypeSet that this
+	/// ResidueType belongs to; it will return a null pointer if this
+	/// ResidueType does not belong to any ResidueTypeSet.
+	ResidueTypeSetCOP
 	residue_type_set() const;
 
 	/// @brief set the residue type set of origin.
@@ -2533,11 +2536,6 @@ public:
 	void nondefault(bool in) { nondefault_ = in;}
 	void base_restype_name(std::string const & in) { base_restype_name_ = in;}
 	std::string base_restype_name() const {return base_restype_name_;}
-
-	// this is a total hack, I'm tired
-	mutable bool serialized_;
-
-	// end hack?
 
 public:
 	static VD const null_vertex;

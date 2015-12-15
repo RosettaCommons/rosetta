@@ -65,7 +65,7 @@ int main( int argc, char * argv [] )
 		devel::init( argc, argv );
 
 		pose::Pose pose;
-		core::pose::make_pose_from_sequence( pose, "AAA", "fa_standard", true );
+		core::pose::make_pose_from_sequence( pose, "AAA", core::chemical::FA_STANDARD, true );
 
 		ScoreFunctionOP sfxn = get_score_function();
 

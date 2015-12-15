@@ -1356,7 +1356,7 @@ void MPInterfaceStatistics::fill_vectors_with_data( Pose & pose ) {
 		// default for soluble proteins, special for membrane protein
 		bool in_mem( false );
 		if ( membrane_ == true ) {
-			in_mem = pose.conformation().membrane_info()->in_membrane( i );
+			in_mem = pose.conformation().membrane_info()->in_membrane( pose.conformation(), i );
 		}
 		in_mem_.push_back( in_mem );
 

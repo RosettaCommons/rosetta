@@ -23,6 +23,13 @@
 //#include <numeric/angle.functions.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -36,6 +43,9 @@ public:
 
 	FuncOP
 	clone() const { return FuncOP( new AmberPeriodicFunc( *this ) ); }
+
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;
@@ -54,12 +64,27 @@ private:
 	Real n_periodic_;
 
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AmberPeriodicFunc();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //amber periodic func
 
 
 } // constraints
 } // scoring
 } // core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_AmberPeriodicFunc )
+#endif // SERIALIZATION
 
 
 #endif

@@ -40,6 +40,12 @@
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace devel {
 namespace vardist_solaccess {
 
@@ -54,7 +60,7 @@ public:
 
 	VarSolDRotamerDots(
 		core::conformation::ResidueCOP rotamer,
-		VarSolDistSasaCalculator const & vsasa_calc
+		VarSolDistSasaCalculatorCOP vsasa_calc
 	);
 
 	virtual ~VarSolDRotamerDots();
@@ -150,6 +156,7 @@ private:
 	) const;
 
 
+	VarSolDistSasaCalculatorCAP owner_;
 	core::conformation::ResidueCOP rotamer_;
 
 	//const core::Real& probe_radius_;
@@ -170,13 +177,32 @@ private:
 	utility::vector1< core::Vector > dot_coords_;
 
 	//VarSolDistSasaCalculatorCOP vsasa_calc_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > static void load_and_construct( Archive & arc, cereal::construct< VarSolDRotamerDots > & construct );
+#endif // SERIALIZATION
+
 };
 
 
-class VarSolDistSasaCalculator : public core::pose::metrics::StructureDependentCalculator {
+class VarSolDistSasaCalculator :
+		public core::pose::metrics::StructureDependentCalculator,
+		public utility::pointer::enable_shared_from_this< VarSolDistSasaCalculator >
+{
 	friend class VarSolDRotamerDots;
 public:
 	VarSolDistSasaCalculator();
+
+	inline VarSolDistSasaCalculatorCOP get_self_ptr() const      { return shared_from_this(); }
+	inline VarSolDistSasaCalculatorOP  get_self_ptr()            { return shared_from_this(); }
+	inline VarSolDistSasaCalculatorCAP get_self_weak_ptr() const { return VarSolDistSasaCalculatorCAP( shared_from_this() ); }
+	inline VarSolDistSasaCalculatorAP  get_self_weak_ptr()       { return VarSolDistSasaCalculatorAP( shared_from_this() ); }
+
+
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const;
 
@@ -214,10 +240,21 @@ private:
 	core::Real polar_expansion_radius_;
 
 	bool up_to_date;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // vardist_solaccess
 } // core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( devel_vardist_solaccess_VarSolDRotamerDots )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_devel_vardist_sollaccess_VarSolDRotamerDots_HH

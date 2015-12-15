@@ -42,6 +42,20 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace mm {
@@ -271,3 +285,37 @@ mm_bond_angle_residue_type_param_set(
 } // namespace mm
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::mm::MMBondAngleResidueTypeParamSet::save( Archive & arc ) const {
+	arc( CEREAL_NVP( use_residue_type_theta0_ ) ); // _Bool
+	arc( CEREAL_NVP( central_atoms_to_score_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( reside_type_param_map_ ) ); // std::map<std::string, MMBondAngleResidueTypeParam>
+
+	// The mm_bondangle_library_ data member is initialized in the default ctor
+	// from a singleton, and thus should not be serialized
+	// EXEMPT mm_bondangle_library_
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::mm::MMBondAngleResidueTypeParamSet::load( Archive & arc ) {
+	arc( use_residue_type_theta0_ ); // _Bool
+	arc( central_atoms_to_score_ ); // utility::vector1<std::string>
+	arc( reside_type_param_map_ ); // std::map<std::string, MMBondAngleResidueTypeParam>
+
+	// The mm_bondangle_library_ data member is initialized in the default ctor
+	// from a singleton, and thus should not be serialized
+	// EXEMPT mm_bondangle_library_
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::mm::MMBondAngleResidueTypeParamSet );
+CEREAL_REGISTER_TYPE( core::scoring::mm::MMBondAngleResidueTypeParamSet )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_mm_MMBondAngleResidueTypeParamSet )
+#endif // SERIALIZATION

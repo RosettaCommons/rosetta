@@ -545,7 +545,7 @@ bool BluePrintBDR::centroid_build(
 	// will occur when restoring sidechains at the end of the procedure
 	bool mod_ap_is_full_atom = true;
 	for ( Size i = 1, ie = modified_archive_pose.n_residue(); mod_ap_is_full_atom && i != ie; ++i ) {
-		mod_ap_is_full_atom &= ( modified_archive_pose.residue( i ).residue_type_set().name() == core::chemical::FA_STANDARD );
+		mod_ap_is_full_atom &= ( modified_archive_pose.residue( i ).residue_type_set()->name() == core::chemical::FA_STANDARD );
 	}
 
 	if ( !mod_ap_is_full_atom ) {

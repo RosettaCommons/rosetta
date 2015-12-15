@@ -11,26 +11,35 @@
 /// @brief  graph base classes
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-//Unit Headers
+// Unit Headers
 #include <core/graph/Graph.hh>
+
+// Package headers
+#include <core/graph/unordered_object_pool.hpp>
 
 //STL Headers
 #include <iostream>
 #include <utility/assert.hh>
 
+// ObjexxFCL headers
+#include <ObjexxFCL/FArray2D.hh>
+
 // Boost Headers
 #include <core/graph/unordered_object_pool.hpp>
 
-//ObjexxFCL Headers
-
-#include <platform/types.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <cstddef>
-#include <iosfwd>
-#include <string>
 #include <boost/pool/pool.hpp>
 
-#include <basic/Tracer.hh>
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
+// #include <basic/Tracer.hh>
 
 //static THREAD_LOCAL basic::Tracer TR( "core.graph.Graph" );
 using namespace ObjexxFCL;
@@ -870,8 +879,6 @@ platform::Size Graph::count_dynamic_memory() const
 	tot += sizeof( Node* ) * num_nodes_;
 	tot += sizeof( EdgeListElement ) * ( num_edges_ + 1 ); // edge list
 	return tot;
-
-	return tot;
 }
 
 
@@ -898,7 +905,54 @@ Edge* Graph::create_new_edge( Edge const * example_edge )
 	);
 }
 
+#ifdef    SERIALIZATION
+template < class Archive >
+void Graph::save( Archive & archive ) const
+{
+  archive( num_nodes_ );
+
+	// Nodes and edges will be freshly created when this graph is deserialized
+	// EXEMPT nodes_ edge_pool_ edge_list_element_pool_ edge_list_ focused_edge_
+
+  // for ( Size ii = 1; ii <= num_nodes_; ++ii ) {
+  //   nodes_[ ii ]->save( archive );
+  // }
+  archive( num_edges_ );
+  for ( EdgeListConstIter iter = const_edge_list_begin(), iter_end = const_edge_list_end(); iter != iter_end; ++iter ) {
+    archive( (*iter)->get_first_node_ind(), (*iter)->get_second_node_ind() );
+    // (*iter)->save( archive );
+  }
+}
+
+template < class Archive >
+void Graph::load( Archive & archive )
+{
+  Size num_nodes(0); archive( num_nodes );
+  set_num_nodes( num_nodes );
+	// EXEMPT num_nodes_
+	// The nodes will be freshly instantiated on this end
+	// so they will not be deserialized.  Same for edges.
+	// EXEMPT nodes_ num_edges_ edge_pool_ edge_list_element_pool_ edge_list_ focused_edge_
+
+  // for ( Size ii = 1; ii <= num_nodes; ++ii ) {
+  //   nodes_[ ii ]->load( archive );
+  // }
+
+  Size num_edges(0); archive( num_edges );
+  for ( Size ii = 1; ii <= num_edges; ++ii ) {
+    Size node1(0), node2(0); archive( node1, node2 );
+    /* Edge * new_edge = */ add_edge( node1, node2 );
+    // new_edge->load( archive );
+  }
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( Graph );
+#endif // SERIALIZATION
 
 } //end namespace graph
 } //end namespace core
 
+#ifdef    SERIALIZATION
+CEREAL_REGISTER_TYPE( core::graph::Graph )
+CEREAL_REGISTER_DYNAMIC_INIT( core_graph_Graph )
+#endif // SERIALIZATION

@@ -41,6 +41,18 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.N
 using basic::Error;
 using basic::Warning;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -190,3 +202,39 @@ NeighborhoodByDistanceCalculator::recompute( core::pose::Pose const & pose )
 } //namespace pose_metric_calculators
 } //namespace toolbox
 } //namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator::NeighborhoodByDistanceCalculator() :
+	dist_cutoff_( 0 )
+{}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( central_residues_ ) ); // std::set<core::Size>
+	arc( CEREAL_NVP( dist_cutoff_ ) ); // const core::Real
+	arc( CEREAL_NVP( num_neighbors_ ) ); // core::Size
+	arc( CEREAL_NVP( num_neighbors_map_ ) ); // std::map<core::Size, core::Size>
+	arc( CEREAL_NVP( neighbors_ ) ); // std::set<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( central_residues_ ); // std::set<core::Size>
+	arc( const_cast< core::Real & > (dist_cutoff_) ); // const core::Real
+	arc( num_neighbors_ ); // core::Size
+	arc( num_neighbors_map_ ); // std::map<core::Size, core::Size>
+	arc( neighbors_ ); // std::set<core::Size>
+}
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_NeighborhoodByDistanceCalculator )
+#endif // SERIALIZATION

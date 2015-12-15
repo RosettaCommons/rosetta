@@ -20,6 +20,7 @@
 // Package headers
 
 // Core headers
+#include <core/conformation/Residue.hh>
 
 // Basic/Numeric/Utility Headers
 #include <basic/Tracer.hh>

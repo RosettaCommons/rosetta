@@ -35,6 +35,15 @@
 
 using namespace core;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -127,3 +136,31 @@ SurfaceCalculator::recompute( pose::Pose const & this_pose ) {
 } // toolbox
 } // protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::SurfaceCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( total_surface_energy_ ) ); // core::Real
+	arc( CEREAL_NVP( remove_nonprotein_res_ ) ); // _Bool
+	arc( CEREAL_NVP( residue_surface_energy_ ) ); // utility::vector1<core::Real>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::SurfaceCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( total_surface_energy_ ); // core::Real
+	arc( remove_nonprotein_res_ ); // _Bool
+	arc( residue_surface_energy_ ); // utility::vector1<core::Real>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::SurfaceCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::SurfaceCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_SurfaceCalculator )
+#endif // SERIALIZATION

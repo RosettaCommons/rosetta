@@ -39,6 +39,15 @@
 
 static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.calculators.CavityCalculator" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace devel {
 namespace denovo_design {
 namespace calculators {
@@ -125,3 +134,29 @@ CavityCalculator::recompute( core::pose::Pose const & pose )
 } // denovo_design
 } // devel
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+devel::denovo_design::calculators::CavityCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( total_volume_ ) ); // core::Real
+	arc( CEREAL_NVP( clusters_ ) ); // utility::vector1<core::scoring::packstat::CavityBallCluster>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+devel::denovo_design::calculators::CavityCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( total_volume_ ); // core::Real
+	arc( clusters_ ); // utility::vector1<core::scoring::packstat::CavityBallCluster>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( devel::denovo_design::calculators::CavityCalculator );
+CEREAL_REGISTER_TYPE( devel::denovo_design::calculators::CavityCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( devel_denovo_design_calculators_CavityCalculator )
+#endif // SERIALIZATION

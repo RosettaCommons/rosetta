@@ -563,11 +563,11 @@ DaemonSet::add_pack_daemon(
 	Pose const & pose,
 	std::string const & correspondence_file_filename,
 	std::istream & correspondence_file,
-	std::string const & secondary_refile_file_filename,
+	std::string const & secondary_resfile_filename,
 	std::istream & secondary_resfile
 )
 {
-	TR << "Adding daemon: " << daemon_index << " " << pose_file_name << " " << correspondence_file_filename << " " << secondary_refile_file_filename << std::endl;
+	TR << "Adding daemon: " << daemon_index << " " << pose_file_name << " " << correspondence_file_filename << " " << secondary_resfile_filename << std::endl;
 
 	using namespace core;
 	using namespace core::pack::task;
@@ -587,7 +587,7 @@ DaemonSet::add_pack_daemon(
 
 	/// Setup the task
 	PackerTaskOP task = task_factory_->create_task_and_apply_taskoperations( pose );
-	ResfileContentsOP secondary_resfile_contents( new ResfileContents( pose, secondary_resfile ) );
+	ResfileContentsOP secondary_resfile_contents( new ResfileContents( pose, secondary_resfile_filename, secondary_resfile ) );
 
 	initialize_task_from_entity_resfile_and_secondary_resfile( pose, ec, *entity_resfile_, *secondary_resfile_contents, task );
 	task->initialize_from_command_line();

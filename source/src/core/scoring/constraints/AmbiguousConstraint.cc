@@ -25,6 +25,16 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -35,23 +45,33 @@ AmbiguousConstraint::AmbiguousConstraint():
 	MultiConstraint()
 {
 	active_constraint_ = NULL;
-
 	init_cst_score_types();
-
 	debug_assert ( member_constraints().size() == 0 );
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
-AmbiguousConstraint::AmbiguousConstraint( ConstraintCOPs & cst_in ):
+AmbiguousConstraint::AmbiguousConstraint( ConstraintCOPs const & cst_in ):
 	MultiConstraint( cst_in )
 {
 	active_constraint_ = NULL;
-
 	init_cst_score_types();
-
-	debug_assert ( member_constraints().size() > 0 );
-
+	debug_assert( member_constraints().size() > 0 );
 }
+
+/// @details Clone into a vector all of the member constraints held in the base
+/// class and then invoke the copy constructor with this vector of clones
+ConstraintOP
+AmbiguousConstraint::clone() const {
+	return ConstraintOP( new AmbiguousConstraint( cloned_member_constraints() ) );
+}
+
+MultiConstraintOP
+AmbiguousConstraint::empty_clone() const {
+	return MultiConstraintOP( new AmbiguousConstraint );
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 AmbiguousConstraint::init_cst_score_types()
@@ -66,6 +86,10 @@ AmbiguousConstraint::init_cst_score_types()
 	cst_score_types_.push_back(backbone_stub_linear_constraint);
 }
 
+std::string AmbiguousConstraint::type() const {
+	return "AmbiguousConstraint";
+}
+
 
 /// @detail this function only checks whether the passed in cst
 /// is the same type and then hands off to the multi cst. probably
@@ -73,10 +97,15 @@ AmbiguousConstraint::init_cst_score_types()
 bool
 AmbiguousConstraint::operator == ( Constraint const & other_cst ) const
 {
-	if ( !dynamic_cast< AmbiguousConstraint const * > ( &other_cst ) ) return false;
-
 	return MultiConstraint::operator==( other_cst);
 }
+
+bool
+AmbiguousConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< AmbiguousConstraint const * > (&other);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief ScoreFunction, scores all member constraints but only reports the lowest one
@@ -135,24 +164,26 @@ core::Real
 AmbiguousConstraint::calculate_total_cst_score( EnergyMap const & weights, EnergyMap & emap ) const
 {
 
-	core::Real total_score = emap[constant_constraint] * weights[constant_constraint] + emap[coordinate_constraint] * weights[coordinate_constraint] + emap[atom_pair_constraint] * weights[atom_pair_constraint] + emap[angle_constraint] * weights[angle_constraint] + emap[dihedral_constraint] * weights[dihedral_constraint] + emap[backbone_stub_constraint] * weights[backbone_stub_constraint] + emap[backbone_stub_linear_constraint] * weights[backbone_stub_linear_constraint];
+	core::Real total_score =
+		emap[constant_constraint]             * weights[constant_constraint] +
+		emap[coordinate_constraint]           * weights[coordinate_constraint] +
+		emap[atom_pair_constraint]            * weights[atom_pair_constraint] +
+		emap[angle_constraint]                * weights[angle_constraint] +
+		emap[dihedral_constraint]             * weights[dihedral_constraint] +
+		emap[backbone_stub_constraint]        * weights[backbone_stub_constraint] +
+		emap[backbone_stub_linear_constraint] * weights[backbone_stub_linear_constraint];
 
 	return total_score;
 }
 
 
 ConstraintOP
-AmbiguousConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
+AmbiguousConstraint::remap_resid( core::id::SequenceMapping const & seqmap ) const
 {
-
 	ConstraintCOPs new_csts;
-
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints_.begin(); cst_it != member_constraints_.end(); ++cst_it ) {
-
+	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); ++cst_it ) {
 		ConstraintOP new_cst = (*cst_it)->remap_resid( seqmap );
-
 		if ( new_cst ) new_csts.push_back( new_cst );
-
 	}
 
 	if ( new_csts.size() > 0 ) {
@@ -177,9 +208,7 @@ AmbiguousConstraint::fill_f1_f2(
 	//utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 
 	// fpd
-	if ( member_constraints_.size() == 0 ) {
-		return;
-	}
+	if ( member_constraints().size() == 0 ) return;
 
 	// fpd
 	if ( !active_constraint_ ) {
@@ -329,6 +358,45 @@ AmbiguousConstraint::read_def(
 	}
 }
 
+AmbiguousConstraint::AmbiguousConstraint( AmbiguousConstraint const & src ) :
+	MultiConstraint( src ),
+	low_EMap_(),
+	temp_EMap_(),
+	cst_score_types_( src.cst_score_types_ )
+{}
+
 } //constraints
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::AmbiguousConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< MultiConstraint >( this ) );
+	arc( CEREAL_NVP( active_constraint_ ) ); // ConstraintCOP
+	arc( CEREAL_NVP( low_EMap_ ) ); // EnergyMap
+	arc( CEREAL_NVP( temp_EMap_ ) ); // EnergyMap
+	arc( CEREAL_NVP( cst_score_types_ ) ); // ScoreTypes
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::AmbiguousConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< MultiConstraint >( this ) );
+	std::shared_ptr< core::scoring::constraints::Constraint > local_active_constraint;
+	arc( local_active_constraint ); // ConstraintCOP
+	active_constraint_ = local_active_constraint; // copy the non-const pointer(s) into the const pointer(s)
+	arc( low_EMap_ ); // EnergyMap
+	arc( temp_EMap_ ); // EnergyMap
+	arc( cst_score_types_ ); // ScoreTypes
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::AmbiguousConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::AmbiguousConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_AmbiguousConstraint )
+#endif // SERIALIZATION

@@ -31,6 +31,11 @@ using basic::Tracer;
 static basic::Tracer TR("core.scoring.fiber_diffraction.xray_scattering");
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace fiber_diffraction {
@@ -168,3 +173,24 @@ int findSampling(double MINSMP, int NMUL) {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::fiber_diffraction::OneGaussianScattering::save( Archive & arc ) const {
+	arc( CEREAL_NVP( sigma_ ) ); // float
+	arc( CEREAL_NVP( weight_ ) ); // int
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::fiber_diffraction::OneGaussianScattering::load( Archive & arc ) {
+	arc( sigma_ ); // float
+	arc( weight_ ); // int
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::fiber_diffraction::OneGaussianScattering );
+#endif // SERIALIZATION

@@ -322,7 +322,6 @@ void ShapeGrid::load_kbp_data()
 					core::Real kbp_value = res_list_it->get_real();
 					current_array->setValue(distance_bin, theta_bin, phi_bin, kbp_value);
 					++res_list_it;
-
 				}
 			}
 		}

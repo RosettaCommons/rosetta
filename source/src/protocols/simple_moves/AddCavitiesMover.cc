@@ -111,11 +111,11 @@ AddCavitiesMover::clear_suckers( Pose & pose ) {
 	//using namespace core::pose::datacache::CacheableDataType;
 	using namespace basic::datacache;
 	using namespace core::pose::datacache;
-	if ( !pose.data().has(core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED) ) {
+	if ( !pose.data().has( CacheableDataType::POSE_BEFORE_CAVITIES_ADDED ) ) {
 		return;
 	}
-	CacheableDataOP cd = pose.data().get_ptr( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED );
-	core::pose::Pose * cache_pose = utility::pointer::dynamic_pointer_cast< core::pose::datacache::CacheablePoseRawPtr>(cd)->pose(); // is this dynamic_cast correct?
+	CacheableDataOP cd = pose.data().get_ptr( CacheableDataType::POSE_BEFORE_CAVITIES_ADDED );
+	core::pose::PoseOP cache_pose = utility::pointer::dynamic_pointer_cast< CacheablePoseRawPtr >(cd)->pose();
 	pose.data().set( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED, NULL );
 	Pose orig_pose = *cache_pose;
 	orig_pose.copy_segment( orig_pose.total_residue(), pose, 1, 1 );
@@ -128,20 +128,22 @@ AddCavitiesMover::add_suckers( Pose & pose ) {
 	using namespace constraints;
 	//using namespace core::pose::datacache::CacheableDataType;
 	using namespace basic::datacache;
+	using namespace core::pose;
 	using namespace core::pose::datacache;
 
 	clear_suckers(pose);
 
 	using namespace basic;
 	using namespace basic::datacache;
-	pose.data().set( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED, DataCache_CacheableData::DataOP( new CacheablePoseRawPtr( new Pose(pose)) ) );
+
+	pose.data().set( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED, DataCache_CacheableData::DataOP( new CacheablePoseRawPtr( PoseOP( new Pose(pose))) ) );
 
 	CavBalls cbs = get_cavities(pose, 10.0, min_nb_, 3.0 );
 	int Ncb = max_cav_;
 
 	// add VRT res for coord constraints
 	pose.append_residue_by_jump
-		( *conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
+		( *conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
 		pose.total_residue()/2 );
 	int virt_resno = pose.total_residue();
 	core::scoring::func::FuncOP func( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );

@@ -26,18 +26,22 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 #include <utility/vector1.hh>
-
+#include <utility/file/FileName.hh>
 
 #ifdef WIN32
 #include <string>
 #endif
 
-
 namespace protocols {
 namespace jd2 {
 
+/// @brief Read the -s and -l flags to get a list of PDB files that should be
+/// read in and operated upon.
+utility::vector1< utility::file::FileName >
+input_pdb_files_from_command_line();
+
 /// @brief writes pose to intermediate-scorefile using current Job and JobOutputter ..
-/// @detail copy count is used if multiple poses with same job-tag are written as for instance into a trajectory.
+/// @details copy count is used if multiple poses with same job-tag are written as for instance into a trajectory.
 ///  -1 indicates no copy count
 ///  >=0 copy_count will be attached as zerofilled postfix to job-tag
 void output_intermediate_pose( core::pose::Pose const& pose, std::string const& stage_tag, int copy_count = -1, bool score_only = false );

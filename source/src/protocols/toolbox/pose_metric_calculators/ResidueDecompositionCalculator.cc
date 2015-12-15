@@ -28,6 +28,18 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -161,3 +173,31 @@ ResidueDecompositionCalculator::residue_set_numbers_to_decomposition()
 } // PoseMetricCalculators
 } // toolbox
 } // protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::ResidueDecompositionCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( residue_decomposition_ ) ); // utility::vector1<std::set<core::Size> >
+	arc( CEREAL_NVP( residue_set_numbers_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( set_names_ ) ); // utility::vector1<std::string>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::ResidueDecompositionCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( residue_decomposition_ ); // utility::vector1<std::set<core::Size> >
+	arc( residue_set_numbers_ ); // utility::vector1<core::Size>
+	arc( set_names_ ); // utility::vector1<std::string>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::ResidueDecompositionCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::ResidueDecompositionCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_ResidueDecompositionCalculator )
+#endif // SERIALIZATION

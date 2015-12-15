@@ -28,6 +28,13 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -85,6 +92,12 @@ private:
 	Real neighbor_mass_;
 	mutable Real sum_of_neighbors_masses_;
 	mutable Size since_last_sonm_update_;
+
+#ifdef    SERIALIZATION
+public:
+	template < class Archive > void save_to_archive( Archive & arc ) const;
+	template < class Archive > void load_from_archive( Archive & arc );
+#endif
 };
 
 class TenANeighborEdge : public graph::Edge
@@ -155,7 +168,6 @@ public:
 
 	virtual void delete_edge( graph::Edge * edge );
 
-
 protected:
 
 	virtual Size count_static_memory() const;
@@ -171,9 +183,20 @@ private:
 
 	boost::unordered_object_pool< TenANeighborEdge > * tenA_edge_pool_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_TenANeighborGraph )
+#endif // SERIALIZATION
+
 
 #endif

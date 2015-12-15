@@ -19,8 +19,14 @@
 
 
 #include <core/id/AtomID.hh>
+#include <core/id/SequenceMapping.fwd.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <utility/vector1.hh>
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 
 namespace core {
@@ -61,6 +67,9 @@ public:
 
 	virtual ConstraintOP clone() const;
 
+	virtual bool operator == ( Constraint const & ) const;
+	virtual bool same_type_as_me( Constraint const & ) const;
+
 	virtual std::string type() const { return "SequenceProfile"; }
 
 	/// @brief used by ConstraintIO and ConstraintFactory to construct this constraint from a input file stream (constraint file)
@@ -96,7 +105,7 @@ public:
 	virtual utility::vector1< core::Size > residues() const;
 
 	virtual ConstraintOP remap_resid( SequenceMapping const & ) const;
-	virtual ConstraintOP remapped_clone(pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map=NULL ) const;
+	virtual ConstraintOP remapped_clone(pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map ) const;
 
 	virtual void
 	score(
@@ -117,6 +126,9 @@ public:
 	void weight( core::Real const w );
 	core::Real weight() const;
 
+protected:
+	SequenceProfileConstraint( SequenceProfileConstraint const & src );
+
 private:
 	core::Size seqpos_;
 	// COP is deliberate, as sequence profiles are typically shared amoung many constraints, and as such probably shouldn't be fiddled with
@@ -124,10 +136,21 @@ private:
 	/// @brief A mapping of current pose numbers onto profile numbers.
 	core::id::SequenceMappingCOP mapping_;
 	core::Real weight_; //dflt 1; allows weighting the profile's contribution according to different criteria, for instance according to whether the position is close or far from the active site
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace constraints
 } // namespace scoring
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_SequenceProfileConstraint )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_scoring_constraints_SequenceProfileConstraint_HH

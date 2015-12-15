@@ -154,3 +154,51 @@ def build_rosetta(rosetta_dir, platform, jobs, mode='release', verbose=False, de
         res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, build_command_line), return_='tuple')
 
     return res, output, build_command_line
+
+
+
+def install_llvm_tool(name, source_location, config, clean=True):
+    ''' Install and update (if needed) custom LLVM tool at given prefix (from config).
+        Return absolute path to executable on success and raise BenchmarkError exception on failure (do not catch this! if you really need 'normal' exit from this function on failure - refactor it instead)
+    '''
+    prefix = config['prefix']
+    jobs = config['cpu_count']
+
+    release = 'release_37'
+    git_checkout = '( git checkout {0} && git reset --hard {0} )'.format(release) if clean else 'git checkout {}'.format(release)
+
+    if not os.path.isdir(prefix): os.makedirs(prefix)
+
+    if not os.path.isdir(prefix+'/llvm'): execute('Clonning llvm...', 'cd {} && git clone http://llvm.org/git/llvm.git llvm'.format(prefix) )
+    execute('Checking out LLVM revision: {}...'.format(release), 'cd {prefix}/llvm && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
+
+    if not os.path.isdir(prefix+'/llvm/tools/clang'): execute('Clonning clang...', 'cd {}/llvm/tools && git clone http://llvm.org/git/clang.git clang'.format(prefix) )
+    execute('Checking out Clang revision: {}...'.format(release), 'cd {prefix}/llvm/tools/clang && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
+
+    if not os.path.isdir(prefix+'/llvm/tools/clang/tools/extra'): execute('Clonning clang...', 'cd {}/llvm/tools/clang/tools && git clone http://llvm.org/git/clang-tools-extra.git extra'.format(prefix) )
+    execute('Checking out Clang-tools revision: {}...'.format(release), 'cd {prefix}/llvm/tools/clang/tools/extra && ( {git_checkout} || ( git fetch && {git_checkout} ) )'.format(prefix=prefix, git_checkout=git_checkout) )
+
+    tool_link_path = '{prefix}/llvm/tools/clang/tools/extra/{name}'.format(prefix=prefix, name=name)
+    if os.path.islink(tool_link_path): os.unlink(tool_link_path)
+    os.symlink(source_location, tool_link_path)
+
+    cmake_lists = prefix + '/llvm/tools/clang/tools/extra/CMakeLists.txt'
+    tool_build_line = 'add_subdirectory({})'.format(name)
+
+    for line in file(cmake_lists):
+        if line == tool_build_line: break
+    else:
+        with file(cmake_lists, 'w') as f: f.write( file(cmake_lists).read() + tool_build_line + '\n' )
+
+    build_dir = prefix+'/llvm/build-' + release
+    if not os.path.isdir(build_dir): os.makedirs(build_dir)
+    execute('Building tool: {}...'.format(name), 'cd {build_dir} && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j{jobs}'.format(build_dir=build_dir, jobs=jobs) )
+
+    # build_dir = prefix+'/llvm/build-ninja-' + release
+    # if not os.path.isdir(build_dir): os.makedirs(build_dir)
+    # execute('Building tool: {}...'.format(name), 'cd {build_dir} && cmake -DCMAKE_BUILD_TYPE=Release .. -G Ninja && ninja -j{jobs}'.format(build_dir=build_dir, jobs=jobs) )
+
+    executable = build_dir + '/bin/' + name
+    if not os.path.isfile(executable): raise BenchmarkError("\nEncounter error while running install_llvm_tool: Build is complete but executable {} is not there!!!".format(executable) )
+
+    return executable

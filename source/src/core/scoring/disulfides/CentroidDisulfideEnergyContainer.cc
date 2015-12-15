@@ -33,6 +33,22 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Project serialization headers
+#include <core/chemical/ResidueType.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace disulfides {
@@ -609,8 +625,8 @@ CentroidDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 			}
 			debug_assert( other_res_ii > ii );
 			//Can only bond residues of the same residue type set (eg centroid to centroid)
-			debug_assert( pose.residue_type(other_res_ii).residue_type_set().name() ==
-				pose.residue_type(ii).residue_type_set().name() );
+			debug_assert( pose.residue_type(other_res_ii).residue_type_set()->name() ==
+				pose.residue_type(ii).residue_type_set()->name() );
 
 			TR.Debug << "Found disulf between " << ii << " and " << other_res_ii << std::endl;
 
@@ -670,3 +686,66 @@ Size CentroidDisulfideEnergyContainer::num_disulfides() const
 }
 }
 
+
+#ifdef    SERIALIZATION
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::CentroidDisulfideEnergyComponents::save( Archive & arc ) const {
+	arc( CEREAL_NVP( dslfc_cen_dst_ ) ); // Energy
+	arc( CEREAL_NVP( dslfc_cb_dst_ ) ); // Energy
+	arc( CEREAL_NVP( dslfc_ang_ ) ); // Energy
+	arc( CEREAL_NVP( dslfc_cb_dih_ ) ); // Energy
+	arc( CEREAL_NVP( dslfc_bb_dih_ ) ); // Energy
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::CentroidDisulfideEnergyComponents::load( Archive & arc ) {
+	arc( dslfc_cen_dst_ ); // Energy
+	arc( dslfc_cb_dst_ ); // Energy
+	arc( dslfc_ang_ ); // Energy
+	arc( dslfc_cb_dih_ ); // Energy
+	arc( dslfc_bb_dih_ ); // Energy
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::CentroidDisulfideEnergyComponents );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::CentroidDisulfideEnergyContainer::save( Archive & arc ) const {
+	arc( CEREAL_NVP( resid_2_disulfide_index_ ) ); // utility::vector1<Size>
+
+	// individually serialize all of the ResidueTypeCOPs using the helper function
+	// in core::chemical.
+	core::chemical::serialize_residue_type_vector( arc, disulfide_residue_types_ );
+
+	arc( CEREAL_NVP( disulfide_partners_ ) ); // utility::vector1<std::pair<Size, Size> >
+	arc( CEREAL_NVP( disulfide_atom_indices_ ) ); // utility::vector1<std::pair<DisulfideAtomIndices, DisulfideAtomIndices> >
+	arc( CEREAL_NVP( disulfide_info_ ) ); // utility::vector1<std::pair<CentroidDisulfideEnergyComponents, _Bool> >
+}
+
+/// @details Deserialization method mostly auto-generated, but manually tweaked in order
+/// to correctly deserialize ResidueTypeCOPs / resolve them to one of the globally-held
+/// ResidueTypes.
+template< class Archive >
+void
+core::scoring::disulfides::CentroidDisulfideEnergyContainer::load( Archive & arc ) {
+	arc( resid_2_disulfide_index_ ); // utility::vector1<Size>
+
+	// individually deserialize the ResidueTypeCOPs, possibly resolving these
+	// ResidueTypeCOPs to globally-held ResidueTypes
+	core::chemical::deserialize_residue_type_vector( arc, disulfide_residue_types_ );
+
+	arc( disulfide_partners_ ); // utility::vector1<std::pair<Size, Size> >
+	arc( disulfide_atom_indices_ ); // utility::vector1<std::pair<DisulfideAtomIndices, DisulfideAtomIndices> >
+	arc( disulfide_info_ ); // utility::vector1<std::pair<CentroidDisulfideEnergyComponents, _Bool> >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::CentroidDisulfideEnergyContainer );
+CEREAL_REGISTER_TYPE( core::scoring::disulfides::CentroidDisulfideEnergyContainer )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_disulfides_CentroidDisulfideEnergyContainer )
+#endif // SERIALIZATION

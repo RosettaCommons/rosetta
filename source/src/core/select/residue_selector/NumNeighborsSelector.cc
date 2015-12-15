@@ -16,6 +16,9 @@
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
 // Package headers
+#include <core/select/residue_selector/util.hh>
+
+// Project headers
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
@@ -26,10 +29,19 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
 #include <utility/assert.hh>
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace select {
@@ -115,6 +127,17 @@ std::string NumNeighborsSelector::class_name() {
 	return "NumNeighbors";
 }
 
+void
+NumNeighborsSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "count_water",     xs_boolean, "false" )); // note false in quotes denotes a default value
+	attributes.push_back( XMLSchemaAttribute( "threshold",       xs_integer, "17"    ));
+	attributes.push_back( XMLSchemaAttribute( "distance_cutoff", xs_decimal, "10.0"  ));
+	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+}
+
+
 bool NumNeighborsSelector::count_water() const { return count_water_; }
 Size NumNeighborsSelector::threshold() const { return threshold_; }
 Real NumNeighborsSelector::distance_cutoff() const { return distance_cutoff_; }
@@ -132,7 +155,40 @@ NumNeighborsSelectorCreator::keyname() const {
 	return NumNeighborsSelector::class_name();
 }
 
+void
+NumNeighborsSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
+	return NumNeighborsSelector::provide_selector_xsd( xsd );
+}
+
 } //namespace residue_selector
 } //namespace select
 } //namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::residue_selector::NumNeighborsSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( count_water_ ) ); // _Bool
+	arc( CEREAL_NVP( threshold_ ) ); // Size
+	arc( CEREAL_NVP( distance_cutoff_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::residue_selector::NumNeighborsSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( count_water_ ); // _Bool
+	arc( threshold_ ); // Size
+	arc( distance_cutoff_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::NumNeighborsSelector );
+CEREAL_REGISTER_TYPE( core::select::residue_selector::NumNeighborsSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_residue_selector_NumNeighborsSelector )
+#endif // SERIALIZATION

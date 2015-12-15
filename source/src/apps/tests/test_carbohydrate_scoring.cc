@@ -17,6 +17,7 @@
 
 #include <core/types.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>

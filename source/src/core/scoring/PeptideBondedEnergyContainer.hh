@@ -26,6 +26,13 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -78,6 +85,7 @@ private:
 	utility::vector1< ScoreType > score_types_;
 	utility::vector1< utility::vector1< Real > > * tables_;
 	utility::vector1< bool > * computed_;
+
 };
 
 
@@ -124,6 +132,7 @@ private:
 	utility::vector1< ScoreType > score_types_;
 	utility::vector1< utility::vector1< Real > > const * tables_;
 	utility::vector1< bool > const * computed_;
+
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -197,9 +206,24 @@ private:
 	utility::vector1< utility::vector1< Real > > tables_;
 	utility::vector1< bool > computed_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	PeptideBondedEnergyContainer();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_PeptideBondedEnergyContainer )
+#endif // SERIALIZATION
+
 
 #endif

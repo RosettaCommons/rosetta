@@ -46,6 +46,22 @@ using namespace ObjexxFCL::format;
 
 using core::chemical::chr_chains;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 
@@ -866,3 +882,133 @@ std::ostream & operator << (std::ostream & os, PDBInfo const & info)
 
 } // pose
 } // core
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::pose::UnrecognizedAtomRecord::UnrecognizedAtomRecord() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::UnrecognizedAtomRecord::save( Archive & arc ) const {
+	arc( CEREAL_NVP( res_num_ ) ); // Size
+	arc( CEREAL_NVP( res_name_ ) ); // std::string
+	arc( CEREAL_NVP( atom_name_ ) ); // std::string
+	arc( CEREAL_NVP( coords_ ) ); // numeric::xyzVector<Real>
+	arc( CEREAL_NVP( temp_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::UnrecognizedAtomRecord::load( Archive & arc ) {
+	arc( res_num_ ); // Size
+	arc( res_name_ ); // std::string
+	arc( atom_name_ ); // std::string
+	arc( coords_ ); // numeric::xyzVector<Real>
+	arc( temp_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::UnrecognizedAtomRecord );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::PDBInfo::ResidueRecord::save( Archive & arc ) const {
+	arc( CEREAL_NVP( chainID ) ); // char
+	arc( CEREAL_NVP( resSeq ) ); // int
+	arc( CEREAL_NVP( iCode ) ); // char
+	arc( CEREAL_NVP( segmentID ) ); // std::string
+	arc( CEREAL_NVP( atomRec ) ); // AtomRecords
+	arc( CEREAL_NVP( label ) ); // utility::vector1<std::string>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::PDBInfo::ResidueRecord::load( Archive & arc ) {
+	arc( chainID ); // char
+	arc( resSeq ); // int
+	arc( iCode ); // char
+	arc( segmentID ); // std::string
+	arc( atomRec ); // AtomRecords
+	arc( label ); // utility::vector1<std::string>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::PDBInfo::ResidueRecord );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::PDBInfo::AtomRecord::save( Archive & arc ) const {
+	arc( CEREAL_NVP( isHet ) ); // _Bool
+	arc( CEREAL_NVP( altLoc ) ); // char
+	arc( CEREAL_NVP( occupancy ) ); // Real
+	arc( CEREAL_NVP( temperature ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::PDBInfo::AtomRecord::load( Archive & arc ) {
+	arc( isHet ); // _Bool
+	arc( altLoc ); // char
+	arc( occupancy ); // Real
+	arc( temperature ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::PDBInfo::AtomRecord );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::PDBInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( obsolete_ ) ); // _Bool
+	arc( CEREAL_NVP( name_ ) ); // String
+	arc( CEREAL_NVP( modeltag_ ) ); // String
+	arc( CEREAL_NVP( header_information_ ) ); // io::pdb::HeaderInformationOP
+	arc( CEREAL_NVP( remarks_ ) ); // Remarks
+	arc( CEREAL_NVP( residue_rec_ ) ); // ResidueRecords
+	arc( CEREAL_NVP( pdb2pose_ ) ); // class core::pose::PDBPoseMap
+	arc( CEREAL_NVP( conf_ ) ); // core::conformation::ConformationCAP
+	arc( CEREAL_NVP( unrecognized_atoms_ ) ); // utility::vector1<UnrecognizedAtomRecord>
+	arc( CEREAL_NVP( unrecognized_res_num2name_ ) ); // std::map<core::Size, std::string>
+	arc( CEREAL_NVP( unrecognized_res_size_ ) ); // std::map<core::Size, core::Size>
+	arc( CEREAL_NVP( num_unrecognized_res_ ) ); // core::Size
+	arc( CEREAL_NVP( num_unrecognized_atoms_ ) ); // core::Size
+	arc( CEREAL_NVP( crystinfo_ ) ); // class core::pose::CrystInfo
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::PDBInfo::load( Archive & arc ) {
+	arc( obsolete_ ); // _Bool
+	arc( name_ ); // String
+	arc( modeltag_ ); // String
+	arc( header_information_ ); // io::pdb::HeaderInformationOP
+	arc( remarks_ ); // Remarks
+	arc( residue_rec_ ); // ResidueRecords
+	arc( pdb2pose_ ); // class core::pose::PDBPoseMap
+
+	core::conformation::ConformationAP local_conf;
+	arc( local_conf ); // core::conformation::ConformationCAP
+	conf_ = local_conf;
+
+	arc( unrecognized_atoms_ ); // utility::vector1<UnrecognizedAtomRecord>
+	arc( unrecognized_res_num2name_ ); // std::map<core::Size, std::string>
+	arc( unrecognized_res_size_ ); // std::map<core::Size, core::Size>
+	arc( num_unrecognized_res_ ); // core::Size
+	arc( num_unrecognized_atoms_ ); // core::Size
+	arc( crystinfo_ ); // class core::pose::CrystInfo
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::PDBInfo );
+CEREAL_REGISTER_TYPE( core::pose::PDBInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_PDBInfo )
+#endif // SERIALIZATION
+
+

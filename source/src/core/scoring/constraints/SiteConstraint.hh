@@ -36,6 +36,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -49,17 +54,16 @@ public:
 	SiteConstraint();
 
 	/// @brief Constructor
-	SiteConstraint( ConstraintCOPs & cst_in ) ;
+	SiteConstraint( ConstraintCOPs const & cst_in ) ;
 
-
+	///
 	virtual
-	ConstraintOP clone() const {
-		return ConstraintOP( new SiteConstraint(*this) );
-	}
+	ConstraintOP clone() const;
 
-	std::string type() const {
-		return "SiteConstraint";
-	}
+	virtual bool operator == ( Constraint const & ) const;
+	virtual bool same_type_as_me( Constraint const & ) const;
+
+	std::string type() const;
 
 	/// @brief read in constraint defiinition
 	void
@@ -67,19 +71,27 @@ public:
 
 	void show( std::ostream& out) const;
 
-	/// @brief Sets up SiteConstaint between the residue of interest and a chain
+	///@brief Sets up SiteConstaint between the residue of interest and a chain
 	void setup_csts( Size res, std::string name, std::string chain, core::pose::Pose const & pose, func::FuncOP const & func );
 
-	/// @brief Sets up SiteConstraint between the residue of interest and a subset of residues
+	///@brief Sets up SiteConstraint between the residue of interest and a subset of residues
 	void setup_csts(Size res, std::string name, utility::vector1<bool> const & residues, core::pose::Pose const & pose, func::FuncOP const & func);
 
-private:
-
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; //SiteConstraint
 
 } //constraints
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_SiteConstraint )
+#endif // SERIALIZATION
+
 
 #endif

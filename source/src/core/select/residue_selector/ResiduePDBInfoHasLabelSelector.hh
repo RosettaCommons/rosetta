@@ -24,6 +24,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -61,6 +62,7 @@ public:
 	get_name() const;
 
 	static std::string class_name();
+	static void provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd );
 
 	void set_label( std::string const & label_str );
 

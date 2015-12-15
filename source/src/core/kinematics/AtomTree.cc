@@ -43,6 +43,21 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+#include <core/id/AtomID_Map.srlz.hh>
+
+// Cereal headers
+#include <cereal/cereal.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 
@@ -557,8 +572,8 @@ AtomTree::torsion_angle_dof_id(
 			offset = current_value - atom4->dof(id::PHI); // since torsion(id1...id4) = dof + offset;
 
 			ASSERT_ONLY( Real const actual_current_value
-				( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(), atom1->xyz() ) );)
-				debug_assert( std::abs( basic::subtract_radian_angles( actual_current_value, current_value ) ) < 1e-3 );
+				( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(), atom1->xyz() ) ); );
+			debug_assert( std::abs( basic::subtract_radian_angles( actual_current_value, current_value ) ) < 1e-3 );
 			debug_assert( std::abs( basic::subtract_radian_angles( current_value, atom4->dof( id::PHI ) + offset ) ) < 1e-3 );
 
 			return DOF_ID( atom4->id(), id::PHI );
@@ -566,8 +581,8 @@ AtomTree::torsion_angle_dof_id(
 			Real const current_value( atom3->dihedral_between_bonded_children( *atom1, *atom4 ) );
 			offset = current_value - atom1->dof( id::PHI ); // since torsion(id1...id4) = dof + offset;
 			ASSERT_ONLY( Real const actual_current_value
-				( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(), atom1->xyz() ) );)
-				debug_assert( std::abs( basic::subtract_radian_angles( actual_current_value, current_value ) ) < 1e-3 );
+				( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(), atom1->xyz() ) ););
+			debug_assert( std::abs( basic::subtract_radian_angles( actual_current_value, current_value ) ) < 1e-3 );
 			debug_assert( std::abs( basic::subtract_radian_angles( current_value, atom1->dof( id::PHI ) + offset ) ) < 1e-3 );
 			return DOF_ID( atom1->id(), id::PHI );
 		}
@@ -1205,7 +1220,7 @@ AtomTree::operator=( AtomTree const & src )
 		AtomTreeCOP topological_match_to( topological_match_to_.lock() );
 		if ( topological_match_to ) {
 			debug_assert( !this_weak_ptr_.expired() );
-			topological_match_to->detatch_topological_observer( this_weak_ptr_ );
+			topological_match_to->detach_topological_observer( this_weak_ptr_ );
 		}
 		/// topological observation only allowed if both this, and src hold weak pointers to themselves.
 		/// If either AtomTree had been declared on the stack, or if the code that instantiated either one
@@ -1216,6 +1231,14 @@ AtomTree::operator=( AtomTree const & src )
 	}
 	return *this;
 
+}
+
+/// @details This works by invoking this AtomTree's opeator = and then resetting
+/// the topological_match_to_ pointer by calling set_new_topology();
+void
+AtomTree::detached_copy( AtomTree const & src ) {
+	*this = src;
+	set_new_topology();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1435,9 +1458,10 @@ AtomTree::notify_topological_change( AtomTreeCAP ASSERT_ONLY( observee ) ) const
 /// @details When an AtomTree which was observing this AtomTree changes its
 /// topology or is deleted, it must invoke this method on this AtomTree.
 /// When this happens, this AtomTree marks the observer's position in
-/// its list of observers as null.
+/// its list of observers as null -- and it also resets the
+/// "topological_match_to_" pointer in the oberserver_ap AtomTree.
 void
-AtomTree::detatch_topological_observer( AtomTreeCAP observer_ap ) const
+AtomTree::detach_topological_observer( AtomTreeCAP observer_ap ) const
 {
 	AtomTreeCOP observer( observer_ap );
 	debug_assert( utility::pointer::equal(observer->topological_match_to_, this) );
@@ -1458,7 +1482,7 @@ AtomTree::detatch_topological_observer( AtomTreeCAP observer_ap ) const
 }
 
 /// @details If this tree changes its topology, then its no longer a match in topology
-/// to the tree it was copied from, nor are the trees that are a copy of it.  Detatch
+/// to the tree it was copied from, nor are the trees that are a copy of it.  Detach
 /// this as an observer of the AtomTree it is observing (if any) and inform all the
 /// trees observing this tree that the topology has changed before clearing the
 /// topological_observers_ array.
@@ -1467,7 +1491,7 @@ AtomTree::set_new_topology()
 {
 	AtomTreeCOP topological_match_to = topological_match_to_.lock();
 	if ( topological_match_to ) {
-		topological_match_to->detatch_topological_observer( this_weak_ptr_ );
+		topological_match_to->detach_topological_observer( this_weak_ptr_ );
 	}
 	for ( Size ii = 1; ii <= topological_observers_.size(); ++ii ) {
 		AtomTreeCOP topological_observers_ii = topological_observers_[ ii ].lock();
@@ -2029,3 +2053,43 @@ AtomTree::promote_sameresidue_nonjump_child( AtomID const & parent_atom_id )
 
 } // namespace kinematics
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::kinematics::AtomTree::save( Archive & arc ) const {
+	//arc( CEREAL_NVP( this_weak_ptr_ ) ); // AtomTreeCAP
+	// EXEMPT this_weak_ptr_ topological_match_to_ topological_observers_
+	arc( CEREAL_NVP( root_ ) ); // AtomOP
+	arc( CEREAL_NVP( atom_pointer_ ) ); // AtomPointer2D
+	arc( CEREAL_NVP( internal_coords_need_updating_ ) ); // _Bool
+	arc( CEREAL_NVP( xyz_coords_need_updating_ ) ); // _Bool
+	//arc( CEREAL_NVP( topological_match_to_ ) ); // AtomTreeCAP
+	//arc( CEREAL_NVP( topological_observers_ ) ); // utility::vector1<AtomTreeCAP>
+	arc( CEREAL_NVP( dof_changeset_ ) ); // AtomDOFChangeSet
+	arc( CEREAL_NVP( external_coordinate_residues_changed_ ) ); // ResidueCoordinateChangeListOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::kinematics::AtomTree::load( Archive & arc ) {
+	//arc( this_weak_ptr_ ); // AtomTreeCAP
+	// EXEMPT this_weak_ptr_ topological_match_to_ topological_observers_
+	arc( root_ ); // AtomOP
+	arc( atom_pointer_ ); // AtomPointer2D
+	arc( internal_coords_need_updating_ ); // _Bool
+	arc( xyz_coords_need_updating_ ); // _Bool
+	//arc( topological_match_to_ ); // AtomTreeCAP
+	//arc( topological_observers_ ); // utility::vector1<AtomTreeCAP>
+	arc( dof_changeset_ ); // AtomDOFChangeSet
+	arc( external_coordinate_residues_changed_ ); // ResidueCoordinateChangeListOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::AtomTree );
+CEREAL_REGISTER_TYPE( core::kinematics::AtomTree )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_kinematics_AtomTree )
+#endif // SERIALIZATION

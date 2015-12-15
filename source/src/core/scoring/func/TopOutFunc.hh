@@ -21,24 +21,31 @@
 
 // C++ Headers
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
 
 class TopOutFunc : public Func {
 public:
-	TopOutFunc( Real weight_in, Real x0_in, Real limit_in ) :
-		x0_( x0_in ), weight_( weight_in), limit_( limit_in ) {}
+	TopOutFunc( Real weight_in, Real x0_in, Real limit_in );
 
-	FuncOP
-	clone() const { return FuncOP( new TopOutFunc( *this ) ); }
+	virtual FuncOP clone() const;
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 
-	Real func( Real const x ) const;
-	Real dfunc( Real const x ) const;
+	virtual Real func( Real const x ) const;
+	virtual Real dfunc( Real const x ) const;
 
-	void read_data( std::istream & in );
+	virtual void read_data( std::istream & in );
 
-	void show_definition( std::ostream &out ) const;
+	virtual void show_definition( std::ostream &out ) const;
 
 	Real x0() const { return x0_; }
 	Real limit() const { return limit_; }
@@ -55,10 +62,25 @@ private:
 	Real x0_;
 	Real weight_;
 	Real limit_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	TopOutFunc();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_TopOutFunc )
+#endif // SERIALIZATION
+
 
 #endif

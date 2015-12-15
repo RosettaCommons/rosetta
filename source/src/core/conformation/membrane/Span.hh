@@ -28,6 +28,12 @@
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace membrane {
@@ -93,10 +99,21 @@ private: // data
 	core::Size start_;
 	core::Size end_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // membrane
 } // conformation
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_membrane_Span )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_conformation_membrane_Span_hh

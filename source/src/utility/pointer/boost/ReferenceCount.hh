@@ -9,7 +9,7 @@
 
 /// @file   utility/pointer/boost/ReferenceCount.hh
 /// @brief  Dummy base class
-/// @author 
+/// @author
 
 
 #ifndef INCLUDED_utility_pointer_boost_ReferenceCount_hh

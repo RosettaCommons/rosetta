@@ -115,7 +115,7 @@ using namespace id;
 	core::pose::Pose	sample_pose;
 
  	std::string seq = "TAKESMEFCKANDSMSHITMAKEAFCKSHITSTACKAFCKSHITSTACK";
-	make_pose_from_sequence(sample_pose, seq ,"fa_standard");
+	make_pose_from_sequence(sample_pose, seq , core::chemical::FA_STANDARD );
 
 	// make an alpha helix
 	for( core::Size ir = 1; ir < sample_pose.total_residue(); ir ++ ) {

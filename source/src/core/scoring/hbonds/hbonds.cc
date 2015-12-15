@@ -1252,8 +1252,8 @@ get_membrane_depth_dependent_weight(
 
 	if ( pose.conformation().is_membrane() ) {
 
-		center = pose.conformation().membrane_info()->membrane_center();
-		normal = pose.conformation().membrane_info()->membrane_normal();
+		center = pose.conformation().membrane_info()->membrane_center(pose.conformation());
+		normal = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
 		thickness = pose.conformation().membrane_info()->membrane_thickness();
 		steepness = pose.conformation().membrane_info()->membrane_steepness();
 

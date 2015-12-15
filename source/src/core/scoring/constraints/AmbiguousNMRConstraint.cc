@@ -29,6 +29,15 @@
 #include <numeric/xyzVector.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -44,13 +53,50 @@ AmbiguousNMRConstraint::AmbiguousNMRConstraint( func::FuncOP func ):
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
-AmbiguousNMRConstraint::AmbiguousNMRConstraint( ConstraintCOPs const& cst_in, func::FuncOP func ):
+AmbiguousNMRConstraint::AmbiguousNMRConstraint( ConstraintCOPs const & cst_in, func::FuncOP func ):
 	MultiConstraint( cst_in, atom_pair_constraint ),
 	func_( func )
 {
 	// init_cst_score_types();
 	debug_assert ( member_constraints().size() > 0 );
 }
+
+///
+ConstraintOP
+AmbiguousNMRConstraint::clone() const {
+	return ConstraintOP( new AmbiguousNMRConstraint( *this ) );
+}
+
+///
+ConstraintOP AmbiguousNMRConstraint::clone( func::FuncOP func ) const {
+	return ConstraintOP( new AmbiguousNMRConstraint( cloned_member_constraints(), func ) );
+}
+
+MultiConstraintOP AmbiguousNMRConstraint::empty_clone() const {
+	return MultiConstraintOP( new AmbiguousNMRConstraint( get_func().clone() ) );
+}
+
+std::string AmbiguousNMRConstraint::type() const {
+	return "AmbiguousNMRConstraint";
+}
+
+bool AmbiguousNMRConstraint::operator == ( Constraint const & other ) const
+{
+	if ( ! dynamic_cast< AmbiguousNMRConstraint const * > (&other) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	AmbiguousNMRConstraint const & other_anc( dynamic_cast< AmbiguousNMRConstraint const & > (other));
+	if ( (!func_ || ! other_anc.func_) && func_ != other_anc.func_ ) return false;
+	if ( func_ && other_anc.func_ && *func_ != *other_anc.func_ ) return false;
+
+	return MultiConstraint::operator==(other);
+}
+
+bool AmbiguousNMRConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< AmbiguousNMRConstraint const * > (&other);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // void
 // AmbiguousNMRConstraint::init_cst_score_types()
@@ -58,6 +104,7 @@ AmbiguousNMRConstraint::AmbiguousNMRConstraint( ConstraintCOPs const& cst_in, fu
 //  cst_score_types_.clear();
 //  cst_score_types_.push_back(atom_pair_constraint);
 // }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief ScoreFunction, scores all member constraints but only reports the lowest one
 void
@@ -130,13 +177,15 @@ ConstraintOP
 AmbiguousNMRConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
 {
 	ConstraintCOPs new_csts;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints_.begin(); cst_it != member_constraints_.end(); ++cst_it ) {
+	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); ++cst_it ) {
 		ConstraintOP new_cst = (*cst_it)->remap_resid( seqmap );
 		if ( new_cst ) new_csts.push_back( new_cst );
 	}
 	if ( new_csts.size() > 0 ) {
 		return ConstraintOP( new AmbiguousNMRConstraint( new_csts, get_func().clone() ) );
-	} else return NULL;
+	} else {
+		return NULL;
+	}
 }
 
 
@@ -179,6 +228,17 @@ AmbiguousNMRConstraint::fill_f1_f2(
 	//  tr.Trace << "wderiv " << wderiv << std::endl;
 	// F1 += out_wderiv * in_deriv * f1;
 	// F2 += out_wderiv * in_deriv * f2;
+}
+
+/// @brief Returns the func::Func object associated with this Constraint object.
+func::Func const & AmbiguousNMRConstraint::get_func() const {
+	runtime_assert( func_ != 0 );
+	return *func_;
+}
+
+
+Real AmbiguousNMRConstraint::score( pose::Pose const& pose ) const {
+	return func_->func( dist( pose ) );
 }
 
 
@@ -278,7 +338,36 @@ AmbiguousNMRConstraint::add_individual_constraint( ConstraintCOP cst_in )
 	MultiConstraint::add_individual_constraint( cst_in );
 }
 
+AmbiguousNMRConstraint::AmbiguousNMRConstraint( AmbiguousNMRConstraint const & src ) :
+	MultiConstraint( src ),
+	func_( src.func_ ? src.func_->clone() : src.func_ )
+{}
+
 
 } //constraints
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::AmbiguousNMRConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< MultiConstraint >( this ) );
+	arc( CEREAL_NVP( func_ ) ); // func::FuncOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::AmbiguousNMRConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< MultiConstraint >( this ) );
+	arc( func_ ); // func::FuncOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::AmbiguousNMRConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::AmbiguousNMRConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_AmbiguousNMRConstraint )
+#endif // SERIALIZATION

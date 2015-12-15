@@ -24,6 +24,7 @@
 
 #include <core/chemical/ResidueTypeSet.hh>
 
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
@@ -76,6 +77,20 @@ typedef numeric::xyzMatrix< core::Real > Matrix;
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace scoring {
@@ -3593,3 +3608,154 @@ MultipoleElecPotential::eval_residue_pair_derivatives(
 
 } // namespace scoring
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::MultipoleParameter::MultipoleParameter() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::MultipoleParameter::save( Archive & arc ) const {
+	arc( CEREAL_NVP( coord_type_ ) ); // enum core::scoring::MultipoleAxisType
+	arc( CEREAL_NVP( atom_type_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( chirality_sign_ ) ); // Real
+	arc( CEREAL_NVP( monopole_ ) ); // Real
+	arc( CEREAL_NVP( dipole_ ) ); // Vector
+	arc( CEREAL_NVP( quadrupole_ ) ); // Matrix
+	arc( CEREAL_NVP( polarity_ ) ); // Real
+	arc( CEREAL_NVP( thole_ ) ); // Real
+	arc( CEREAL_NVP( pdamp_ ) ); // Real
+	arc( CEREAL_NVP( group_members_ ) ); // utility::vector1<Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::MultipoleParameter::load( Archive & arc ) {
+	arc( coord_type_ ); // enum core::scoring::MultipoleAxisType
+	arc( atom_type_ ); // utility::vector1<Size>
+	arc( chirality_sign_ ); // Real
+	arc( monopole_ ); // Real
+	arc( dipole_ ); // Vector
+	arc( quadrupole_ ); // Matrix
+	arc( polarity_ ); // Real
+	arc( thole_ ); // Real
+	arc( pdamp_ ); // Real
+	arc( group_members_ ); // utility::vector1<Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::MultipoleParameter );
+CEREAL_REGISTER_TYPE( core::scoring::MultipoleParameter )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::MultipoleElecPoseInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( residue_info_ ) ); // utility::vector1<MultipoleElecResidueInfoOP>
+	arc( CEREAL_NVP( placeholder_residue_ ) ); // utility::vector1<ResidueOP>
+	arc( CEREAL_NVP( placeholder_info_ ) ); // utility::vector1<MultipoleElecResidueInfoOP>
+	arc( CEREAL_NVP( being_packed_ ) ); // utility::vector1<_Bool>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::MultipoleElecPoseInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( residue_info_ ); // utility::vector1<MultipoleElecResidueInfoOP>
+	arc( placeholder_residue_ ); // utility::vector1<ResidueOP>
+	arc( placeholder_info_ ); // utility::vector1<MultipoleElecResidueInfoOP>
+	arc( being_packed_ ); // utility::vector1<_Bool>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::MultipoleElecPoseInfo );
+CEREAL_REGISTER_TYPE( core::scoring::MultipoleElecPoseInfo )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::MultipoleElecResidueInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( type_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( coord_frame_ref_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( monopole_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( rKirkwood_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( dipole_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( induced_dipole_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( stored_induced_dipole_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( induced_rf_dipole_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( stored_induced_rf_dipole_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( Efield_fixed_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( Efield_induced_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( Efield_rf_fixed_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( Efield_rf_induced_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( quadrupole_ ) ); // utility::vector1<Matrix>
+	arc( CEREAL_NVP( local_coord_matrix_ ) ); // utility::vector1<Matrix>
+	arc( CEREAL_NVP( my_group_ ) ); // utility::vector1<utility::vector1<id::AtomID> >
+	arc( CEREAL_NVP( my_local_coord_frame_ ) ); // utility::vector1<utility::vector1<id::AtomID> >
+	arc( CEREAL_NVP( mp_param_ ) ); // utility::vector1<MultipoleParameterOP>
+	arc( CEREAL_NVP( rosetta_res_type_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::MultipoleElecResidueInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( type_ ); // utility::vector1<Size>
+	arc( coord_frame_ref_ ); // utility::vector1<Size>
+	arc( monopole_ ); // utility::vector1<Real>
+	arc( rKirkwood_ ); // utility::vector1<Real>
+	arc( dipole_ ); // utility::vector1<Vector>
+	arc( induced_dipole_ ); // utility::vector1<Vector>
+	arc( stored_induced_dipole_ ); // utility::vector1<Vector>
+	arc( induced_rf_dipole_ ); // utility::vector1<Vector>
+	arc( stored_induced_rf_dipole_ ); // utility::vector1<Vector>
+	arc( Efield_fixed_ ); // utility::vector1<Vector>
+	arc( Efield_induced_ ); // utility::vector1<Vector>
+	arc( Efield_rf_fixed_ ); // utility::vector1<Vector>
+	arc( Efield_rf_induced_ ); // utility::vector1<Vector>
+	arc( quadrupole_ ); // utility::vector1<Matrix>
+	arc( local_coord_matrix_ ); // utility::vector1<Matrix>
+	arc( my_group_ ); // utility::vector1<utility::vector1<id::AtomID> >
+	arc( my_local_coord_frame_ ); // utility::vector1<utility::vector1<id::AtomID> >
+	arc( mp_param_ ); // utility::vector1<MultipoleParameterOP>
+	arc( rosetta_res_type_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::MultipoleElecResidueInfo );
+CEREAL_REGISTER_TYPE( core::scoring::MultipoleElecResidueInfo )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::MultipoleElecRotamerSetInfo::MultipoleElecRotamerSetInfo() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::MultipoleElecRotamerSetInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( residue_info_ ) ); // utility::vector1<MultipoleElecResidueInfoOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::MultipoleElecRotamerSetInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( residue_info_ ); // utility::vector1<MultipoleElecResidueInfoOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::MultipoleElecRotamerSetInfo );
+CEREAL_REGISTER_TYPE( core::scoring::MultipoleElecRotamerSetInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_MultipoleElecPotential )
+#endif // SERIALIZATION
+
+

@@ -42,6 +42,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -122,6 +127,12 @@ private: // data
 
 	// unused Size tm_projection_;
 	Real penalty_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; // MembraneEmbed
 
@@ -341,5 +352,10 @@ MembraneEmbed & nonconst_MembraneEmbed_from_pose( pose::Pose & pose );
 
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_MembranePotential )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_scoring_MembranePotential_hh

@@ -14,6 +14,14 @@
 // Unit Headers
 #include <core/pack/rotamer_set/RotamerSetsBase.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -25,3 +33,21 @@ RotamerSetsBase::~RotamerSetsBase() {}
 } // namespace rotamer_set
 } // namespace pack
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::rotamer_set::RotamerSetsBase::save( Archive & ) const {}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::rotamer_set::RotamerSetsBase::load( Archive & ) {}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::RotamerSetsBase );
+CEREAL_REGISTER_TYPE( core::pack::rotamer_set::RotamerSetsBase )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_rotamer_set_RotamerSetsBase )
+#endif // SERIALIZATION

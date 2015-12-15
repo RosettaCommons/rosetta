@@ -40,6 +40,18 @@
 #include <utility>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/list.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace io {
 namespace pdb {
@@ -824,3 +836,47 @@ HeaderInformation::set_line_continuation(
 } // namespace core
 
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::io::pdb::HeaderInformation::save( Archive & arc ) const {
+	arc( CEREAL_NVP( classification_ ) ); // std::string
+	arc( CEREAL_NVP( dep_year_ ) ); // Size
+	arc( CEREAL_NVP( dep_month_ ) ); // Size
+	arc( CEREAL_NVP( dep_day_ ) ); // Size
+	arc( CEREAL_NVP( idCode_ ) ); // std::string
+	arc( CEREAL_NVP( title_ ) ); // std::string
+	arc( CEREAL_NVP( keywords_ ) ); // Keywords
+	arc( CEREAL_NVP( keyword_in_progress_ ) ); // _Bool
+	arc( CEREAL_NVP( compounds_ ) ); // Compounds
+	arc( CEREAL_NVP( compound_in_progress_ ) ); // _Bool
+	arc( CEREAL_NVP( experimental_techniques_ ) ); // ExperimentalTechniques
+	arc( CEREAL_NVP( experimental_technique_in_progress_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::io::pdb::HeaderInformation::load( Archive & arc ) {
+	arc( classification_ ); // std::string
+	arc( dep_year_ ); // Size
+	arc( dep_month_ ); // Size
+	arc( dep_day_ ); // Size
+	arc( idCode_ ); // std::string
+	arc( title_ ); // std::string
+	arc( keywords_ ); // Keywords
+	arc( keyword_in_progress_ ); // _Bool
+	arc( compounds_ ); // Compounds
+	arc( compound_in_progress_ ); // _Bool
+	arc( experimental_techniques_ ); // ExperimentalTechniques
+	arc( experimental_technique_in_progress_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::io::pdb::HeaderInformation );
+CEREAL_REGISTER_TYPE( core::io::pdb::HeaderInformation )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_io_pdb_HeaderInformation )
+#endif // SERIALIZATION

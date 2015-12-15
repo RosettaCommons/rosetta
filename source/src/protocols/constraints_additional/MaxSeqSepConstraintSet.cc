@@ -65,6 +65,18 @@ using core::scoring::constraints::ConstraintSet;
 using core::scoring::constraints::ConstraintSetOP;
 using core::kinematics::ShortestPathInFoldTree;
 using core::kinematics::ShortestPathInFoldTreeOP;
+using core::kinematics::ShortestPathInFoldTreeCOP;
+
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 
 namespace protocols {
 namespace constraints_additional {
@@ -81,17 +93,77 @@ MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const & other, cor
 	shortest_path_ = core::kinematics::ShortestPathInFoldTreeOP( new ShortestPathInFoldTree( f ) );
 }
 
-/// @copy constructor. Does nothing.
+/// @copy constructor. Performs a shallow copy of the constraints and the ShortestPathInFoldTree object
 MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( MaxSeqSepConstraintSet const &other )
 : ConstraintSet( other ),
 	max_seq_sep_ ( other.max_seq_sep_ ),
 	shortest_path_( other.shortest_path_ )
 { }
 
-MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const &other, ShortestPathInFoldTreeOP sp ) :
+MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const &other, ShortestPathInFoldTreeCOP sp ) :
 	ConstraintSet( other ),
 	shortest_path_( sp )
 {}
+
+ConstraintSet const &
+MaxSeqSepConstraintSet::operator = ( ConstraintSet const & rhs )
+{
+	if ( this != &rhs ) {
+		MaxSeqSepConstraintSet const * msscs_rhs = dynamic_cast< MaxSeqSepConstraintSet const * > ( & rhs );
+		if ( ! msscs_rhs ) {
+			throw utility::excn::EXCN_Msg_Exception( "MaxSeqSepConstraintSet handed a non MaxSeqSepConstraintSet in operator =" );
+		}
+		ConstraintSet::operator = ( rhs );
+
+		if ( max_seq_sep_ != msscs_rhs->max_seq_sep_ ) {
+			max_seq_sep_ = msscs_rhs->max_seq_sep_;
+			mark_revision_id_expired();
+		}
+		if ( shortest_path_ != msscs_rhs->shortest_path_ ) {
+			shortest_path_ = msscs_rhs->shortest_path_;
+			mark_revision_id_expired();
+		}
+
+		// mark_revision_id_expired();
+	}
+	return *this;
+}
+
+ConstraintSetOP
+MaxSeqSepConstraintSet::clone() const {
+	return ConstraintSetOP( new MaxSeqSepConstraintSet( *this ) );
+}
+
+void MaxSeqSepConstraintSet::detached_copy( ConstraintSet const & src ) {
+	MaxSeqSepConstraintSet const * msscs_src = dynamic_cast< MaxSeqSepConstraintSet const * > ( & src );
+	if ( ! msscs_src ) {
+		throw utility::excn::EXCN_Msg_Exception( "MaxSeqSepConstraintSet handed a non MaxSeqSepConstraintSet in detatched_copy" );
+	}
+	deep_copy( src );
+	max_seq_sep_ = msscs_src->max_seq_sep_;
+	shortest_path_ = core::kinematics::ShortestPathInFoldTreeOP( new core::kinematics::ShortestPathInFoldTree( *msscs_src->shortest_path_ ));
+}
+
+
+ConstraintSetOP
+MaxSeqSepConstraintSet::detached_clone() const
+{
+	MaxSeqSepConstraintSetOP newset( new MaxSeqSepConstraintSet );
+	newset->detached_copy( *this );
+	return newset;
+}
+
+bool
+MaxSeqSepConstraintSet::same_type_as_me( ConstraintSet const & other, bool recurse /* = true */ ) const
+{
+	MaxSeqSepConstraintSet const * msscs_other = dynamic_cast< MaxSeqSepConstraintSet const * > ( & other );
+	if ( ! msscs_other ) return false;
+	if ( recurse ) {
+		return other.same_type_as_me( *this, false );
+	}
+	return true;
+}
+
 
 ConstraintSetOP MaxSeqSepConstraintSet::remapped_clone(
 	core::pose::Pose const& src,
@@ -177,5 +249,35 @@ MaxSeqSepConstraintSet::eval_non_residue_pair_energy(
 	}
 }
 
+MaxSeqSepConstraintSet::MaxSeqSepConstraintSet() {}
+
 } //abinitio
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::constraints_additional::MaxSeqSepConstraintSet::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::constraints::ConstraintSet >( this ) );
+	arc( CEREAL_NVP( max_seq_sep_ ) ); // Size
+	arc( CEREAL_NVP( shortest_path_ ) ); // core::kinematics::ShortestPathInFoldTreeCOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::constraints_additional::MaxSeqSepConstraintSet::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::constraints::ConstraintSet >( this ) );
+	arc( max_seq_sep_ ); // Size
+	std::shared_ptr< core::kinematics::ShortestPathInFoldTree > local_shortest_path;
+	arc( local_shortest_path ); // core::kinematics::ShortestPathInFoldTreeCOP
+	shortest_path_ = local_shortest_path; // copy the non-const pointer(s) into the const pointer(s)
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::constraints_additional::MaxSeqSepConstraintSet );
+CEREAL_REGISTER_TYPE( protocols::constraints_additional::MaxSeqSepConstraintSet )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_constraints_additional_MaxSeqSepConstraintSet )
+#endif // SERIALIZATION

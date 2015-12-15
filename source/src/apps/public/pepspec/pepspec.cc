@@ -503,7 +503,7 @@ make_sequence_change(
 	conformation::Residue const & current_rsd( pose.residue( seqpos ) );
 	if ( current_rsd.aa() == new_aa ) return; // already done
 
-	ResidueTypeCOP rsd_type( current_rsd.residue_type_set().get_representative_type_aa( new_aa, current_rsd.type().variant_types() ) );
+	ResidueTypeCOP rsd_type( current_rsd.residue_type_set()->get_representative_type_aa( new_aa, current_rsd.type().variant_types() ) );
 
 	if ( ! rsd_type ) TR << "make_sequence_change failed: new_aa= "+name_from_aa(new_aa)+" -- no matching residue types" << std::endl;
 	else {
@@ -795,7 +795,7 @@ void add_pep_res(
 )
 {
 
-	ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
+	ResidueTypeSet const & rsd_set( *pose.residue(1).residue_type_set() );
 	ResidueOP vrt( ResidueFactory::create_residue( rsd_set.name_map( "GLY" ) ) );
 	//  ResidueOP vrt( ResidueFactory::create_residue( rsd_set.name_map( "VirtBB" ) ) );
 
@@ -871,7 +871,7 @@ initialize_peptide(
 	}
 
 	Pose start_pose( pose );
-	ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
+	ResidueTypeSet const & rsd_set( *pose.residue(1).residue_type_set() );
 	//remove pep_anchor termini
 	if ( pep_begin == pep_anchor && pep_end == pep_anchor ) {
 		std::string pep_anchor_type( pose.residue( pep_anchor ).name3() );
@@ -888,7 +888,7 @@ initialize_peptide(
 
 		pose = *pose.split_by_chain( prot_chain );
 
-		ResidueOP pep_anchor_res_ptr( ResidueFactory::create_residue( pose.residue( 1 ).residue_type_set().name_map( pep_anchor_type ) ) );
+		ResidueOP pep_anchor_res_ptr( ResidueFactory::create_residue( pose.residue( 1 ).residue_type_set()->name_map( pep_anchor_type ) ) );
 		pose.append_residue_by_jump( *pep_anchor_res_ptr, prot_anchor, "", "", true );
 		pose.conformation().set_stub_transform( upstubid, downstubid, rt );
 		for ( Size i_chi = 1; i_chi <= pose.residue( pep_anchor ).nchi(); ++i_chi ) {
@@ -1055,7 +1055,7 @@ gen_pep_bb_sequential(
 	clash_cutoff = std::max( clash_cutoff, pose.energies().total_energies()[ fa_rep ] );
 
 	Pose replace_res_pose( pose );
-	ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
+	ResidueTypeSet const & rsd_set( *pose.residue(1).residue_type_set() );
 	std::string cg_res_type( option[ pepspec::cg_res_type ] );
 	ResidueOP res( ResidueFactory::create_residue( rsd_set.name_map( cg_res_type ) ) );
 	Size break_loop( 0 );

@@ -141,6 +141,12 @@ private: // Fields
 
 	/// @brief Residue number within the complex
 	Size rsd_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // NamedAtomID
 
 

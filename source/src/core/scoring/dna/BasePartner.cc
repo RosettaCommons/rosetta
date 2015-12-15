@@ -20,6 +20,16 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace dna {
@@ -41,3 +51,30 @@ retrieve_base_partner_from_pose( pose::Pose const & pose )
 } // scoring
 } // core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::dna::BasePartner::BasePartner() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::dna::BasePartner::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( partner_ ) ); // utility::vector1<Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::dna::BasePartner::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( partner_ ); // utility::vector1<Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::dna::BasePartner );
+CEREAL_REGISTER_TYPE( core::scoring::dna::BasePartner )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_dna_BasePartner )
+#endif // SERIALIZATION

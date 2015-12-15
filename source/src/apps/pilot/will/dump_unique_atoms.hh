@@ -6,7 +6,7 @@
 
 void dump_unique_atoms() {
   core::pose::Pose p;
-  core::pose::make_pose_from_sequence(p,"D","fa_standard",false);
+  core::pose::make_pose_from_sequence(p,"D",core::chemical::FA_STANDARD,false);
   remove_lower_terminus_type_from_pose_residue(p,1);
   remove_upper_terminus_type_from_pose_residue(p,1);
   core::kinematics::Stub s( p.residue(1).xyz("CB"), p.residue(1).xyz("CG"), p.residue(1).xyz("CB"), p.residue(1).xyz("CA") );
@@ -15,7 +15,7 @@ void dump_unique_atoms() {
   vector1<string> seen_s;
   std::string const aas("ACDEFGHIKLMNPQRSTVWY");
   for(std::string::const_iterator i = aas.begin(); i != aas.end(); ++i) {
-    core::pose::make_pose_from_sequence(p,str(*i),"fa_standard",false);
+    core::pose::make_pose_from_sequence(p,str(*i),core::chemical::FA_STANDARD,false);
     remove_lower_terminus_type_from_pose_residue(p,1);
     remove_upper_terminus_type_from_pose_residue(p,1);
     xform_pose_rev(p,s);
@@ -37,7 +37,7 @@ void dump_unique_atoms() {
   }
   seen_x.clear();
   for(std::string::const_iterator i = aas.begin(); i != aas.end(); ++i) {
-    core::pose::make_pose_from_sequence(p,str(*i),"fa_standard",false);
+    core::pose::make_pose_from_sequence(p,str(*i),core::chemical::FA_STANDARD,false);
     remove_lower_terminus_type_from_pose_residue(p,1);
     remove_upper_terminus_type_from_pose_residue(p,1);
     xform_pose_rev(p,s);

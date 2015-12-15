@@ -29,6 +29,11 @@
 
 // ObjexxFCL Headers
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace environment {
 
@@ -67,6 +72,12 @@ private:
 
 	core::Size position_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // end LocalPosition base class
 
 static const LocalPosition NO_POSITION = LocalPosition( "", 0 );
@@ -75,5 +86,10 @@ extern std::ostream& operator<<( std::ostream&, LocalPosition const& );
 
 } // environment
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_environment_LocalPosition )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_environment_LocalPosition_hh

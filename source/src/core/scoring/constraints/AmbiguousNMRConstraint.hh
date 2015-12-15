@@ -36,6 +36,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -49,41 +54,21 @@ public:
 	AmbiguousNMRConstraint( func::FuncOP func = NULL );
 
 	/// @brief Constructor
-	AmbiguousNMRConstraint( const ConstraintCOPs & cst_in, func::FuncOP func );
-
-	//  /// @brief
-	//  void
-	//  init_cst_score_types();
-
+	AmbiguousNMRConstraint( ConstraintCOPs const & cst_in, func::FuncOP func );
 
 	virtual
-	ConstraintOP clone() const {
-		if ( size() > 0 ) {
-			return ConstraintOP( new AmbiguousNMRConstraint( member_constraints_, func_ ) );
-		} else {
-			return ConstraintOP( new AmbiguousNMRConstraint( func_ ) );
-		}
-	}
-
+	ConstraintOP clone() const;
 
 	virtual
-	ConstraintOP clone( func::FuncOP func ) const {
-		if ( size() > 0 ) {
-			return ConstraintOP( new AmbiguousNMRConstraint( member_constraints_, func ) );
-		} else {
-			return ConstraintOP( new AmbiguousNMRConstraint( func ) );
-		}
-	}
+	ConstraintOP clone( func::FuncOP func ) const;
 
 	virtual
-	MultiConstraintOP empty_clone() const {
-		return MultiConstraintOP( new AmbiguousNMRConstraint( get_func().clone() ) );
-	}
+	MultiConstraintOP empty_clone() const;
 
-	virtual std::string type() const {
-		return "AmbiguousNMRConstraint";
-	}
+	virtual std::string type() const;
 
+	virtual bool operator == ( Constraint const & other ) const;
+	virtual bool same_type_as_me( Constraint const & other ) const;
 
 	/// @brief compute score
 	virtual
@@ -121,16 +106,9 @@ public:
 
 	/// @brief Returns the func::Func object associated with this Constraint object.
 	virtual
-	func::Func const & get_func() const {
-		runtime_assert( func_ != 0 );
-		return *func_;
-	}
+	func::Func const & get_func() const;
 
-
-	virtual Real score( pose::Pose const& pose ) const {
-		return func_->func( dist( pose ) );
-	}
-
+	virtual Real score( pose::Pose const& pose ) const;
 
 	//  virtual
 	//  void show( std::ostream& out ) const;
@@ -150,13 +128,29 @@ public:
 	virtual
 	Size show_violations( std::ostream & out, pose::Pose const & pose, Size verbose_level, Real threshold = 1.0 ) const;
 
+protected:
+	/// @brief Explicit copy constructor so that derived classes will recieve a deep copy
+	/// of the Func this class contains.
+	AmbiguousNMRConstraint( AmbiguousNMRConstraint const & src );
+
 private:
 	func::FuncOP func_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; //AmbiguousNMRConstraint
 
 } //constraints
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_AmbiguousNMRConstraint )
+#endif // SERIALIZATION
+
 
 #endif

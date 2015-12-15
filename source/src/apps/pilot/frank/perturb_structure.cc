@@ -16,6 +16,9 @@
 #include <numeric/random/random.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -80,8 +83,8 @@ void do_mutate( core::pose::Pose & pose, core::Size nmut ) {
 		}
 
 		// random AA
-		core::chemical::ResidueTypeSet const & rsd_set( pose.residue(res_to_mut).residue_type_set() );
-		core::chemical::ResidueTypeCOP rtype = rsd_set.get_representative_type_aa(to_mutate);
+		core::chemical::ResidueTypeSetCOP rsd_set( pose.residue(res_to_mut).residue_type_set() );
+		core::chemical::ResidueTypeCOP rtype = rsd_set->get_representative_type_aa(to_mutate);
 		core::conformation::Residue replace_res( *rtype, true );
 
 		pose.replace_residue( res_to_mut, replace_res, true);

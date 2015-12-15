@@ -22,6 +22,16 @@
 #include <iostream>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace datacache {
@@ -35,6 +45,7 @@ ObserverCache::ObserverCache(
 	Pose & pose
 ) :
 	Super( n_slots ),
+	attached_( n_slots, false ),
 	pose_( &pose )
 {}
 
@@ -129,7 +140,6 @@ bool ObserverCache::is_attached( Size const slot ) const {
 	return false;
 }
 
-
 /// @brief attach all stored observers to the Pose
 void ObserverCache::attach() {
 	for ( Size i = 1, ie = data().size(); i <= ie; ++i ) {
@@ -151,6 +161,7 @@ void ObserverCache::detach() {
 void ObserverCache::attach( Size const slot ) {
 	if ( has( slot ) ) {
 		data()[ slot ]->attach_to( *pose_ );
+		attached_[ slot ] = true;
 	}
 }
 
@@ -160,6 +171,7 @@ void ObserverCache::attach( Size const slot ) {
 void ObserverCache::detach( Size const slot ) {
 	if ( has( slot ) ) {
 		data()[ slot ]->detach_from();
+		attached_[ slot ] = false;
 	}
 }
 
@@ -167,3 +179,59 @@ void ObserverCache::detach( Size const slot ) {
 } // namespace datacache
 } // namespace pose
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @details The default constructor is provided only for deserialization
+core::pose::datacache::ObserverCache::ObserverCache() :
+	Super(),
+	pose_( 0 )
+{}
+
+/// @details Following deserialization, attach a Pose to this observer (or the observer
+/// to the pose, really) and then make sure that all of the CacheableObservers that
+/// were attached prior to serialization become reattached.
+void
+core::pose::datacache::ObserverCache::attach_pose( Pose & pose )
+{
+	debug_assert( pose_ == 0 );
+	pose_ = &pose;
+	for ( Size ii = 1; ii <= attached_.size(); ++ii ) {
+		if ( attached_[ ii ] ) {
+			attach( ii );
+		}
+	}
+}
+
+
+/// @brief Serialization method
+/// @details This class does not serialize the raw pointer to the pose that it is
+/// observing; it will be the responsibility of the Pose that owns this cache to
+/// initialize the deserialized %ObserverCache with a pointer to itself when that
+/// pose itself is being deserialized.
+template< class Archive >
+void
+core::pose::datacache::ObserverCache::save( Archive & arc ) const {
+	arc( data() );
+	arc( attached_ );
+	// The raw pointer to the pose_ is not savable
+	// EXEMPT pose_
+}
+
+/// @brief Deserialization method; it will not attempt to deserialize the raw pointer
+/// to the Pose that it's meant to observer; rather, responsibility for initializing
+/// that pointer falls on the Pose that holds this %ObserverCache
+template< class Archive >
+void
+core::pose::datacache::ObserverCache::load( Archive & arc ) {
+	arc( data() );
+	arc( attached_ );
+	// The raw pointer to the pose_ is not savable
+	// EXEMPT pose_
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::datacache::ObserverCache );
+CEREAL_REGISTER_TYPE( core::pose::datacache::ObserverCache )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_datacache_ObserverCache )
+#endif // SERIALIZATION

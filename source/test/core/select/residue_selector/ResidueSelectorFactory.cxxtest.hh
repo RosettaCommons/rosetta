@@ -25,6 +25,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
@@ -61,6 +62,7 @@ public:
 	virtual
 	std::string keyname() const { return "DummyResidueSelector"; }
 
+	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const {}
 };
 
 
@@ -113,4 +115,11 @@ public:
 	}
 
 
+	void test_output_residue_selector_xsds() {
+		utility::tag::XMLSchemaDefinition xsd;
+		ResidueSelectorFactory * factory = ResidueSelectorFactory::get_instance();
+		factory->define_residue_selector_xml_schema( xsd );
+		std::cout << "XSD: " << std::endl;
+		std::cout << xsd.full_definition() << std::endl;
+	}
 };

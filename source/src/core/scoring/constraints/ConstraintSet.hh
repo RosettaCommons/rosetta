@@ -16,8 +16,7 @@
 
 // Unit headers
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/func/Func.hh> /// cant get to compile w/ func::Func.fwd.hh
-
+#include <core/scoring/func/Func.fwd.hh>
 
 // Package headers
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -40,16 +39,17 @@
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/conformation/signals/LengthEvent.fwd.hh> //for observing conformation length changes
 #include <core/conformation/signals/ConnectionEvent.fwd.hh>
+
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-
-//Utility Headers
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <map>
 
-#include <utility/vector1.hh>
-
+#ifdef    SERIALIZATION
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace scoring {
@@ -124,6 +124,21 @@ public:
 		map_.clear();
 	}
 
+#ifdef SERIALIZATION
+
+		/// @brief Serialize this object
+	template < class Archive >
+	void
+	save( Archive & arc ) const;
+
+	/// @brief Deserialize this object
+	template < class Archive >
+	void
+	load( Archive & arc );
+
+#endif
+
+
 private:
 	Map map_;
 };
@@ -156,10 +171,35 @@ public:
 		core::Size start_residue,
 		core::Size end_residue
 	);
-	/// @brief Destructor so far only detaches from conformation
-	virtual ~ConstraintSet() { this->detach_from_conformation(); }
+	virtual ~ConstraintSet();
 
+	/// @brief Assignment operator -- requires that "same_type_as_me" has already
+	/// been called. This performs a shallow copy of all of the constraints held
+	/// in the ConstraintSet, efficiently avoiding copy operations on ResidueConstraint
+	/// objects that are already identical.
+	virtual ConstraintSet const & operator = ( ConstraintSet const & rhs );
+
+
+	/// @brief Clone operator -- performs a shallow copy of the contained
+	/// constraints.
 	virtual ConstraintSetOP clone() const;
+
+	/// @brief Perform a deep copy of the source %ConstraintSet into this %ConstraintSet
+	/// so that the two do not share any data in common -- and can thus this %constraintSet
+	/// can be safely handed to another thread; this function relies on the Constraint
+	/// class's clone() method, which is required to create a deep copy of itself.
+	virtual void detached_copy( ConstraintSet const & src );
+
+	/// @brief Clone operator -- performs a shallow copy of the contained
+	/// constraints.
+	virtual ConstraintSetOP detached_clone() const;
+
+	/// @brief Does this ConstraintSet class have the same type as the other ConstraintSet
+	/// object?  If so, then the assignment operator can be used to copy constraints from
+	/// one ConstraintSet into the other. Always call this with recurse set to
+	/// true or unspecified -- derived classes should make sure that they set this variable
+	/// to false in their implementations of this method to avoid infinite recursion.
+	virtual bool same_type_as_me( ConstraintSet const & other, bool recurse = true ) const;
 
 	/// @brief Copies the data from this ConstraintSet into a new object and
 	/// returns its OP; atoms are mapped to atoms with the same name in dest pose
@@ -360,7 +400,7 @@ public:
 	void
 	add_dof_constraint(
 		DOF_ID const & id,
-		core::scoring::func::FuncOP func,
+		func::FuncOP func,
 		ScoreType const & t = dof_constraint
 	);
 
@@ -445,28 +485,35 @@ public:
 
 	/// @brief Discard any and all sequence constraints in the sequence_constraints_ list.
 	///
-	inline void
-	clear_sequence_constraints() {
-		sequence_constraints_.clear();
-		return;
-	}
+	void
+	clear_sequence_constraints();
 
 	/// @brief Get the number of sequence constraints.
 	///
-	inline core::Size n_sequence_constraints() const { return sequence_constraints_.size(); }
+	core::Size n_sequence_constraints() const;
 
 	/// @brief Get the owning pointer to the Nth sequence constraint.
-	///
-	inline core::scoring::aa_composition_energy::SequenceConstraintCOP sequence_constraint( core::Size const index ) const {
-		runtime_assert_string_msg( index > 0 && index <= sequence_constraints_.size(), "Error in core::scoring::constraints::ConstraintSet::sequence_constraint(): Index is out of range.  Must be greater than zero and less than or equal to the number of sequence constraints." );
-		return sequence_constraints_[index];
-	}
+	aa_composition_energy::SequenceConstraintCOP
+	sequence_constraint( core::Size const index ) const;
 
 	bool
 	is_empty() const;
 
-protected:
+#ifdef SERIALIZATION
 
+	/// @brief Serialize this object
+	template < class Archive >
+	void
+	save( Archive & arc ) const;
+
+	/// @brief Deserialize this object
+	template < class Archive >
+	void
+	load( Archive & arc );
+
+#endif
+
+protected:
 
 	virtual
 	void
@@ -483,6 +530,7 @@ protected:
 	mark_revision_id_expired();
 
 private:
+
 	void
 	add_residue_pair_constraint(
 		Size const pos1,
@@ -500,16 +548,13 @@ private:
 	);
 
 	/// @brief Add a sequence constraint to the sequence_constraints_ list.
-	///
-	inline void
+	void
 	add_sequence_constraint(
-		core::scoring::aa_composition_energy::SequenceConstraintCOP cst
-	) {
-		sequence_constraints_.push_back(cst);
-		return;
-	}
+		aa_composition_energy::SequenceConstraintCOP cst
+	);
 
 protected:
+
 	ResiduePairConstraints const &
 	residue_pair_constraints() const;
 
@@ -517,11 +562,16 @@ protected:
 		return non_residue_pair_constraints_;
 	}
 
+	void shallow_copy( ConstraintSet const & other, Size start, Size end );
+	void deep_copy( ConstraintSet const & other );
+
 private:
+
+	Size total_residue_;
 
 	/// @brief List of sequence constraints.
 	/// @details Sequence constraints constrain the sequence, just as geometric constraints constrain the geometry.
-	utility::vector1<core::scoring::aa_composition_energy::SequenceConstraintCOP> sequence_constraints_;
+	utility::vector1< aa_composition_energy::SequenceConstraintCOP > sequence_constraints_;
 
 	/// constraints are added symmetrically
 	ResiduePairConstraints residue_pair_constraints_;
@@ -549,5 +599,9 @@ std::ostream & operator << (std::ostream & os, ConstraintSet const & set);
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_ConstraintSet )
+#endif // SERIALIZATION
 
 #endif

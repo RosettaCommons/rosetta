@@ -28,6 +28,14 @@
 #include <limits>
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.MinScoreScoreFunction" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -101,3 +109,27 @@ MinScoreScoreFunction::operator()( pose::Pose & pose ) const
 ///////////////////////////////////////////////////////////////////////////////
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::MinScoreScoreFunction::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::ScoreFunction >( this ) );
+	arc( CEREAL_NVP( min_score_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::MinScoreScoreFunction::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::ScoreFunction >( this ) );
+	arc( min_score_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::MinScoreScoreFunction );
+CEREAL_REGISTER_TYPE( core::scoring::MinScoreScoreFunction )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_MinScoreScoreFunction )
+#endif // SERIALIZATION

@@ -88,7 +88,7 @@
 		Link( std::string const & seq ) : N(seq.size()*3),last_move_res(2),last_move_phi(-90.0),last_move_psi(90.0) {
 			P.reserve(N);
 			Pose p;
-			make_pose_from_sequence(p,seq,"centroid");
+			make_pose_from_sequence(p,seq,core::chemical::CENTROID);
 			for(core::Size ir = 1; ir <= p.n_residue(); ++ir){
 				p.set_phi(ir,-90.0);
 				p.set_psi(ir, 90.0);

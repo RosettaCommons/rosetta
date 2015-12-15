@@ -37,6 +37,17 @@
 #include <core/kinematics/Jump.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace metrics {
@@ -252,3 +263,37 @@ return;
 } // metrics
 } // pose
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::metrics::PoseMetricContainer::save( Archive & arc ) const {
+
+	// Do not serialize the raw pointer to the Pose being observed; it will
+	// be the responsibility of the deserialized Pose to reestablish the
+	// observation link.
+	// arc( CEREAL_NVP( pose_ptr_ ) ); // const core::pose::Pose *; raw pointer: const core::pose::Pose *
+	// EXEMPT pose_ptr_
+	arc( CEREAL_NVP( structure_is_outdated_ ) ); // _Bool
+	arc( CEREAL_NVP( energies_are_outdated_ ) ); // _Bool
+	arc( CEREAL_NVP( metric_calculators_ ) ); // Name2Calculator
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::metrics::PoseMetricContainer::load( Archive & arc ) {
+	// Do not deserialize the raw pointer to the Pose being observed
+	// arc( pose_ptr_ ); // const core::pose::Pose *; raw pointer: const core::pose::Pose *
+	// EXEMPT pose_ptr_
+	arc( structure_is_outdated_ ); // _Bool
+	arc( energies_are_outdated_ ); // _Bool
+	arc( metric_calculators_ ); // Name2Calculator
+}
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::metrics::PoseMetricContainer );
+CEREAL_REGISTER_TYPE( core::pose::metrics::PoseMetricContainer )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_metrics_PoseMetricContainer )
+#endif // SERIALIZATION

@@ -507,7 +507,7 @@ bool pose_from_atom_tree_diff(
 					TR << "error reading sequence mutation data" << std::endl;
 				} else if ( resnum < 1 || resnum > pose.total_residue() ) {
 					TR << "d'oh, pose doesn't have a residue " << resnum << std::endl;
-				} else if ( !pose.residue(resnum).residue_type_set().has_name(resname) ) {
+				} else if ( !pose.residue(resnum).residue_type_set()->has_name(resname) ) {
 					TR << "unrecognized residue type name '" << resname << "'" << std::endl;
 				} else if ( pose.residue_type(resnum).name() == resname ) {
 					// These will happen routinely when reading a reference pose,
@@ -517,7 +517,7 @@ bool pose_from_atom_tree_diff(
 					using namespace core::conformation;
 					ResidueOP newres = ResidueFactory::create_residue(
 						// if can't find residue name, name_map() calls exit()
-						pose.residue(resnum).residue_type_set().name_map(resname),
+						pose.residue(resnum).residue_type_set()->name_map(resname),
 						pose.residue(resnum), pose.conformation());
 					pose.replace_residue(resnum, *newres, true /*orient backbone*/);
 				}

@@ -16,6 +16,8 @@
 #include <protocols/magnesium/MgOrbitalFrameFinder.hh>
 #include <protocols/magnesium/util.hh>
 #include <core/id/AtomID.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <numeric/UniformRotationSampler.hh>

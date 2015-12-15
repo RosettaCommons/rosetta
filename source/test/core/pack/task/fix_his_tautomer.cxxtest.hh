@@ -85,7 +85,7 @@ public:
 	task_repack_with_resfile( core::pose::Pose & pose ) {
 		core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
 		task->restrict_to_repacking();
-		core::pack::task::parse_resfile_string( pose, *task, "NATAA FIX_HIS_TAUTOMER \n start");
+		core::pack::task::parse_resfile_string( pose, *task, "dummy_filename", "NATAA FIX_HIS_TAUTOMER \n start");
 		return task;
 	}
 

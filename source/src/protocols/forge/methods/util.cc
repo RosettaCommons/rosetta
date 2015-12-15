@@ -46,6 +46,7 @@
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/sasa.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 #include <core/pose/PDBPoseMap.hh>
 

@@ -17,11 +17,14 @@ sources = {
 		"color_util",
 		"constants",
 		"cyclic_coordinate_descent",
+		"HomogeneousTransform.srlz",
+		"MathVector.srlz",
 		"MultiDimensionalHistogram",
 		"polynomial",
 		"prob_util",
 		"roc_curve",
 		"util",
+		"xyz.serialization",
 	],
 	"numeric/crick_equations":[
 		"BundleParams",
@@ -37,6 +40,7 @@ sources = {
 		"SHT",
 	],
 	"numeric/geometry": [
+		"BoundingBox.srlz",
 		"ring_plane.functions",
 	],
 	"numeric/geometry/hashing": [
@@ -45,6 +49,7 @@ sources = {
 	],
 	"numeric/interpolation": [
 		"util",
+		"Histogram.srlz",
 	],
 	"numeric/interpolation/spline": [
 		"Bicubic_spline",

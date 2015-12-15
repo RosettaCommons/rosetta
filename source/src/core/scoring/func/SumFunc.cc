@@ -26,9 +26,40 @@
 #include <sstream>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
+
+bool SumFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	SumFunc const & other_downcast( static_cast< SumFunc const & > (other) );
+	if ( funcs_.size() != other_downcast.funcs_.size() ) return false;
+	for ( Size ii = 1; ii <= funcs_.size(); ++ii ) {
+		if ( funcs_[ ii ] == other_downcast.funcs_[ ii ] ) continue;
+		if ( funcs_[ii] && other_downcast.funcs_[ ii ] && ! (*funcs_[ii] == *other_downcast.funcs_[ii] ) ) return false;
+	}
+	return true;
+}
+
+bool SumFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< SumFunc const * > ( &other );
+}
+
 
 Real
 SumFunc::func( Real const x ) const {
@@ -78,3 +109,27 @@ SumFunc::read_data( std::istream& in ) {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::SumFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( funcs_ ) ); // utility::vector1<FuncOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::SumFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( funcs_ ); // utility::vector1<FuncOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::SumFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::SumFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_SumFunc )
+#endif // SERIALIZATION

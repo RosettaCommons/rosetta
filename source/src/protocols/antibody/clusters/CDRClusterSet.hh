@@ -26,6 +26,11 @@
 #include <core/types.hh>
 #include <basic/datacache/CacheableData.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace antibody {
 namespace clusters {
@@ -140,12 +145,23 @@ private:
 	///
 	utility::vector1< CDRClusterOP > clusters_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } //clusters
 } //antibody
 } //protocols
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_antibody_clusters_CDRClusterSet )
+#endif // SERIALIZATION
 
 
 #endif //#ifndef INCLUDED_protocols/antibody_design_CDRCLUSTERSET_HH

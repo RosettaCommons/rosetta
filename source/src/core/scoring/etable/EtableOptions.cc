@@ -26,6 +26,17 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace etable {
@@ -176,3 +187,43 @@ EtableOptions::parse_my_tag(
 } // core
 
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::etable::EtableOptions::save( Archive & arc ) const {
+	arc( CEREAL_NVP( etable_type ) ); // std::string
+	arc( CEREAL_NVP( analytic_etable_evaluation ) ); // _Bool
+	arc( CEREAL_NVP( max_dis ) ); // Real
+	arc( CEREAL_NVP( bins_per_A2 ) ); // int
+	arc( CEREAL_NVP( Wradius ) ); // Real
+	arc( CEREAL_NVP( lj_switch_dis2sigma ) ); // Real
+	arc( CEREAL_NVP( no_lk_polar_desolvation ) ); // _Bool
+	arc( CEREAL_NVP( lj_hbond_OH_donor_dis ) ); // Real
+	arc( CEREAL_NVP( lj_hbond_hdis ) ); // Real
+	arc( CEREAL_NVP( enlarge_h_lj_wdepth ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::etable::EtableOptions::load( Archive & arc ) {
+	arc( etable_type ); // std::string
+	arc( analytic_etable_evaluation ); // _Bool
+	arc( max_dis ); // Real
+	arc( bins_per_A2 ); // int
+	arc( Wradius ); // Real
+	arc( lj_switch_dis2sigma ); // Real
+	arc( no_lk_polar_desolvation ); // _Bool
+	arc( lj_hbond_OH_donor_dis ); // Real
+	arc( lj_hbond_hdis ); // Real
+	arc( enlarge_h_lj_wdepth ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::etable::EtableOptions );
+CEREAL_REGISTER_TYPE( core::scoring::etable::EtableOptions )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_etable_EtableOptions )
+#endif // SERIALIZATION

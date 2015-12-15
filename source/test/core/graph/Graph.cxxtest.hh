@@ -16,12 +16,17 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
+#include <core/types.hh>
 #include <core/graph/Graph.hh>
 
 // C++ headers, for debugging your tests
+#include <sstream>
 
-//Auto Headers
-
+#ifdef SERIALIZATION
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif
 
 using namespace core::graph;
 
@@ -233,6 +238,105 @@ public:
 		TS_ASSERT_EQUALS(g.get_node(1)->num_neighbors_counting_self(), 1);
 		TS_ASSERT_EQUALS(g.get_node(1)->num_neighbors_counting_self(), 1);
 	}
+
+
+	void test_serialize_graph() {
+		TS_ASSERT( true );
+#ifdef SERIALIZATION
+
+		using core::Size;
+
+		Graph g = Graph( 10 );
+		std::set< std::pair< Size, Size > > edges;
+		edges.insert( std::make_pair( 1, 2 ));
+		edges.insert( std::make_pair( 2, 3 ));
+		edges.insert( std::make_pair( 3, 4 ));
+		edges.insert( std::make_pair( 4, 5 ));
+		edges.insert( std::make_pair( 5, 6 ));
+		edges.insert( std::make_pair( 6, 7 ));
+		edges.insert( std::make_pair( 7, 8 ));
+		edges.insert( std::make_pair( 8, 9 ));
+		edges.insert( std::make_pair( 9, 10 ));
+		edges.insert( std::make_pair( 1, 5 ));
+		edges.insert( std::make_pair( 4, 9 ));
+		for ( std::set< std::pair< Size, Size > >::const_iterator iter = edges.begin(), iter_end = edges.end(); iter != iter_end; ++iter ) {
+			g.add_edge( iter->first, iter->second );
+		}
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( g );
+		}
+
+		std::istringstream iss( oss.str() );
+		Graph g2;
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( g2 );
+		}
+
+		TS_ASSERT_EQUALS( g2.num_nodes(), 10 );
+		for ( Size ii = 1; ii <= 10; ++ii ) {
+			for ( Size jj = ii+1; jj <= 10; ++jj ) {
+				if ( std::find( edges.begin(), edges.end(), std::make_pair( ii, jj ) ) == edges.end() ) {
+					TS_ASSERT( ! g2.get_edge_exists( ii, jj ) );
+				} else {
+					TS_ASSERT( g2.get_edge_exists( ii, jj ) );
+				}
+			}
+		}
+#endif
+	}
+
+	void test_serialize_graph_pointer() {
+		TS_ASSERT( true );
+#ifdef SERIALIZATION
+		using core::Size;
+
+		GraphOP g( new  Graph( 10 ));
+		std::set< std::pair< Size, Size > > edges;
+		edges.insert( std::make_pair( 1, 2 ));
+		edges.insert( std::make_pair( 2, 3 ));
+		edges.insert( std::make_pair( 3, 4 ));
+		edges.insert( std::make_pair( 4, 5 ));
+		edges.insert( std::make_pair( 5, 6 ));
+		edges.insert( std::make_pair( 6, 7 ));
+		edges.insert( std::make_pair( 7, 8 ));
+		edges.insert( std::make_pair( 8, 9 ));
+		edges.insert( std::make_pair( 9, 10 ));
+		edges.insert( std::make_pair( 1, 5 ));
+		edges.insert( std::make_pair( 4, 9 ));
+		for ( std::set< std::pair< Size, Size > >::const_iterator iter = edges.begin(), iter_end = edges.end(); iter != iter_end; ++iter ) {
+			g->add_edge( iter->first, iter->second );
+		}
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( g );
+		}
+
+		std::istringstream iss( oss.str() );
+		GraphOP g2;
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( g2 );
+		}
+
+		TS_ASSERT_EQUALS( g2->num_nodes(), 10 );
+		for ( Size ii = 1; ii <= 10; ++ii ) {
+			for ( Size jj = ii+1; jj <= 10; ++jj ) {
+				if ( std::find( edges.begin(), edges.end(), std::make_pair( ii, jj ) ) == edges.end() ) {
+					TS_ASSERT( ! g2->get_edge_exists( ii, jj ) );
+				} else {
+					TS_ASSERT( g2->get_edge_exists( ii, jj ) );
+				}
+			}
+		}
+#endif
+	}
+
 };
 
 

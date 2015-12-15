@@ -41,6 +41,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <core/chemical/ResidueType.hh>

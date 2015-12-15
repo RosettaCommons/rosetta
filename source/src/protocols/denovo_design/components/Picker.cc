@@ -31,6 +31,8 @@
 //Basic/Utility/Numeric Headers
 #include <basic/Tracer.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 // Boost/ObjexxFCL Headers
 #include <boost/lexical_cast.hpp>
 

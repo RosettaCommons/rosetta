@@ -28,6 +28,7 @@
 
 // Core headers
 #include <core/io/pdb/file_data.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

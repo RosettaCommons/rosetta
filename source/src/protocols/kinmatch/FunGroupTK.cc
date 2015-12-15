@@ -100,7 +100,7 @@ PoseOP alapose(Pose const & pose_in) {
 	PoseOP rpose( new Pose(pose_in) );
 	Pose & pose(*rpose);
 	for ( Size i=1; i<=pose.n_residue(); ++i ) {
-		core::pose::replace_pose_residue_copying_existing_coordinates(pose,i,pose.residue(i).residue_type_set().name_map("ALA"));
+		core::pose::replace_pose_residue_copying_existing_coordinates(pose,i,pose.residue(i).residue_type_set()->name_map("ALA"));
 	}
 	return rpose;
 }

@@ -44,6 +44,11 @@
 // C++ headers
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace reference_pose {
@@ -152,10 +157,21 @@ private:
 	std::map < std::string, ReferencePoseOP > reference_pose_map_;
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //class ReferencePoseSet
 
 } // namespace reference_pose
 } // namespace pose
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_reference_pose_ReferencePoseSet )
+#endif // SERIALIZATION
+
 
 #endif

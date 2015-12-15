@@ -18,6 +18,12 @@
 #include <core/types.hh>
 
 // C++ Headers
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -67,6 +73,9 @@ public:
 
 	/// @brief returns a clone of this MixtureFunc
 	FuncOP clone() const { return FuncOP( new MixtureFunc( *this ) ); }
+
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 
 	/// @brief Returns the value of this MixtureFunc evaluated at distance x.
 	Real func( Real const x ) const;
@@ -132,11 +141,26 @@ private:
 	Real mixture_param_;
 	Real bg_mean_;
 	Real bg_sd_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	MixtureFunc();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_MixtureFunc )
+#endif // SERIALIZATION
+
 
 #endif

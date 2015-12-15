@@ -21,6 +21,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace fiber_diffraction {
@@ -45,6 +51,16 @@ public:
 
 private:
 	utility::vector1< OneGaussianScattering > sig_centroid_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	CentroidScatter();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 CentroidScatter &
@@ -53,5 +69,10 @@ retrieve_centroid_scatter_from_pose( pose::Pose & pose );
 } // namespace fiber_diffraction
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_fiber_diffraction_CentroidScatter )
+#endif // SERIALIZATION
+
 
 #endif

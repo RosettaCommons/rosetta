@@ -7,15 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file _Exception
+/// @file   utility/excn/EXCN_Base.hh
 /// @brief  base class for Exception system
-/// @details responsibilities:
 /// @author Oliver Lange
 
 
-#ifndef INCLUDED_utility_excn_EXCN_Base_hh
-#define INCLUDED_utility_excn_EXCN_Base_hh
+#ifndef INCLUDED_utility_excn_EXCN_Base_HH
+#define INCLUDED_utility_excn_EXCN_Base_HH
+
 // Unit Headers
+#include <utility/excn/EXCN_Base.fwd.hh>
 
 // Package Headers
 #include <utility/assert.hh>

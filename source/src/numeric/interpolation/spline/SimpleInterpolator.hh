@@ -19,6 +19,11 @@
 #include <utility/vector1.hh>
 #include <numeric/interpolation/spline/spline_functions.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace numeric {
 namespace interpolation {
 namespace spline {
@@ -50,6 +55,9 @@ public:
 	/// @brief deserialize a json_spirit object to a Interpolator
 	virtual void deserialize(utility::json_spirit::mObject data);
 
+	virtual bool operator == ( Interpolator const & other ) const;
+	virtual bool same_type_as_me( Interpolator const & other ) const;
+
 	/// @brief accessor for the x-values defining the interpolation knots
 	utility::vector1< Real > const & x()   const { return x_; }
 
@@ -63,6 +71,12 @@ private:
 
 	utility::vector1<Real> x_, y_, ddy_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 typedef utility::pointer::shared_ptr< Interpolator > InterpolatorOP;
@@ -70,5 +84,10 @@ typedef utility::pointer::shared_ptr< Interpolator > InterpolatorOP;
 } // end namespace spline
 } // end namespace interpolation
 } // end namespace numeric
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( numeric_interpolation_spline_SimpleInterpolator )
+#endif // SERIALIZATION
+
 
 #endif

@@ -26,6 +26,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -78,6 +79,7 @@ public:
 	/// @brief Get the class name.
 	///
 	static std::string class_name();
+	static void provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd );
 
 	/// @brief Set the layers that this selector will choose.
 	///

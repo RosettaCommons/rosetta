@@ -20,6 +20,12 @@
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/tree/Atom_.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 namespace tree {
@@ -293,6 +299,12 @@ private: // Fields
 	Jump jump_;
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // JumpAtom
 
 typedef utility::pointer::shared_ptr< JumpAtom > JumpAtomOP;
@@ -303,6 +315,11 @@ typedef utility::pointer::weak_ptr< JumpAtom const > JumpAtomCAP;
 } // namespace tree
 } // namespace kinematics
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_kinematics_tree_JumpAtom )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_core_kinematics_JumpAtom_HH

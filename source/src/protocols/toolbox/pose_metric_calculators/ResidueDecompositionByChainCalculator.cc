@@ -29,6 +29,16 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -138,3 +148,31 @@ ResidueDecompositionByChainCalculator::recompute(
 } // PoseMetricCalculators
 } // toolbox
 } // protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::ResidueDecompositionByChainCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< protocols::toolbox::pose_metric_calculators::ResidueDecompositionCalculator >( this ) );
+	arc( CEREAL_NVP( chain_letters_ ) ); // utility::vector1<std::set<char> >
+	arc( CEREAL_NVP( chain_numbers_ ) ); // utility::vector1<std::set<core::Size> >
+	arc( CEREAL_NVP( use_numbers_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::ResidueDecompositionByChainCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< protocols::toolbox::pose_metric_calculators::ResidueDecompositionCalculator >( this ) );
+	arc( chain_letters_ ); // utility::vector1<std::set<char> >
+	arc( chain_numbers_ ); // utility::vector1<std::set<core::Size> >
+	arc( use_numbers_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::ResidueDecompositionByChainCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::ResidueDecompositionByChainCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_ResidueDecompositionByChainCalculator )
+#endif // SERIALIZATION

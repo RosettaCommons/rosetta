@@ -343,7 +343,6 @@ InterfaceAnalyzerMover::setup_scorefxn() {
 void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 
 	using namespace core;
-
 	init_on_new_input(pose);
 	core::pose::Pose complexed_pose( pose );
 
@@ -385,12 +384,10 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 		register_calculators();
 		calcs_ready_ = true;
 	}
-
 	make_interface_set(complexed_pose);
-
 	//If there are no residues detected at the interface, don't bother with anything else. Report everything as zero and return.
 	if ( interface_set_.empty() ) {
-		if ( !skip_reporting_ ) {
+		if ( ! skip_reporting_ ) {
 			setup_score_data();
 			report_data();
 		}
@@ -451,18 +448,16 @@ void InterfaceAnalyzerMover::set_pose_info( core::pose::Pose const & pose ) {
 		posename_ = pose.pdb_info()->name();
 		posename_base_ = posename_.base();
 	}
-
 	//Used only for two chain constructor.
-	chain1_ = pose.residue( pose.fold_tree().upstream_jump_residue( interface_jump_ ) ).chain();
-	chain2_ = pose.residue( pose.fold_tree().downstream_jump_residue( interface_jump_ ) ).chain();
+	chain1_ = pose.residue(pose.fold_tree().upstream_jump_residue(interface_jump_)).chain();
+	chain2_ = pose.residue(pose.fold_tree().downstream_jump_residue(interface_jump_)).chain();
 }
 
 void
 InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::string dock_chains){
-
-	TR << "Using interface constructor" << std::endl;
-	if ( !dock_chains.find( '_' ) ) {
-		utility_exit_with_message( "Unrecognized interface: " + dock_chains + " must have side1 and side2, ex: LH_A or L_H to calculate interface data" );
+	TR << "Using interface constructor" <<std::endl;
+	if ( ! dock_chains.find('_') ) {
+		utility_exit_with_message("Unrecognized interface: "+dock_chains+" must have side1 and side2, ex: LH_A or L_H to calculate interface data");
 	}
 
 	fixed_chains_.clear();

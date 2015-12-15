@@ -33,6 +33,14 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.SiteConstraint" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -44,9 +52,28 @@ SiteConstraint::SiteConstraint():
 {}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
-SiteConstraint::SiteConstraint( ConstraintCOPs & cst_in ):
+SiteConstraint::SiteConstraint( ConstraintCOPs const & cst_in ) :
 	AmbiguousConstraint( cst_in )
 {}
+
+///
+ConstraintOP SiteConstraint::clone() const {
+	return ConstraintOP( new SiteConstraint( *this ) );
+}
+
+bool SiteConstraint::operator == ( Constraint const & rhs ) const {
+	return AmbiguousConstraint::operator == ( rhs );
+}
+
+bool SiteConstraint::same_type_as_me( Constraint const & other ) const {
+	return dynamic_cast< SiteConstraint const * > (&other);
+}
+
+
+std::string SiteConstraint::type() const {
+	return "SiteConstraint";
+}
+
 
 void
 SiteConstraint::show( std::ostream& out) const
@@ -68,7 +95,7 @@ SiteConstraint::read_def(
 	std::istream & data,
 	core::pose::Pose const & pose,
 	func::FuncFactory const & func_factory
-) {
+){
 	TR.Debug << "ConstraintIO::read_site_cst" << std::endl;
 	Size res;
 	std::string tempres;
@@ -101,6 +128,7 @@ SiteConstraint::read_def(
 	}
 
 } // read_def
+
 void
 SiteConstraint::setup_csts(
 	Size res,
@@ -148,3 +176,25 @@ SiteConstraint::setup_csts(
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::SiteConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< AmbiguousConstraint >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::SiteConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< AmbiguousConstraint >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::SiteConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::SiteConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_SiteConstraint )
+#endif // SERIALIZATION

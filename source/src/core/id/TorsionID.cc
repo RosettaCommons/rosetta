@@ -16,6 +16,12 @@
 #include <core/id/TorsionID.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace id {
 
@@ -24,3 +30,27 @@ TorsionID const BOGUS_TORSION_ID( 0, BB, 0 );
 
 } // namespace id
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::id::TorsionID::save( Archive & arc ) const {
+	arc( CEREAL_NVP( rsd_ ) ); // Size
+	arc( CEREAL_NVP( type_ ) ); // enum core::id::TorsionType
+	arc( CEREAL_NVP( torsion_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::id::TorsionID::load( Archive & arc ) {
+	arc( rsd_ ); // Size
+	arc( type_ ); // enum core::id::TorsionType
+	arc( torsion_ ); // Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::id::TorsionID );
+#endif // SERIALIZATION
+

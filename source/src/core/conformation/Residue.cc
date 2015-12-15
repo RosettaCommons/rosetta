@@ -28,8 +28,9 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/rings/RingConformer.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
@@ -52,17 +53,74 @@
 // Boost headers
 #include <boost/foreach.hpp>
 
+#ifdef    SERIALIZATION
+// Package serialization headers
+#include <core/chemical/ResidueType.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace conformation {
 
 static THREAD_LOCAL basic::Tracer TR( "core.conformation.Residue" );
 
+/// @brief This function enforces the fact that ResidueTypes must
+/// be constructed with non-null-pointer ResidueTypeCOPs.
+/// @details This must be a function as the initialization of the
+/// Residue's rsd_type_ reference must occur in the constructor.
+chemical::ResidueType const &
+reference_from_restype_ptr( chemical::ResidueTypeCOP rsd_type )
+{
+	debug_assert( rsd_type );
+	return *rsd_type;
+}
+
+/// @details Constructor from ResidueTypeCOP; sets coords to ideal values
+/// create a residue of type residue_type_in.
+/// @note Dummmy arg to prevent secret type conversions from ResidueTypeCOP to Residue
+Residue::Residue( ResidueTypeCOP rsd_type_in, bool const /*dummy_arg*/ ):
+	utility::pointer::ReferenceCount(),
+	rsd_type_ptr_( rsd_type_in ),
+	rsd_type_( reference_from_restype_ptr( rsd_type_in )),
+	seqpos_( 0 ),
+	chain_( 0 ),
+	chi_( rsd_type_.nchi(), 0.0 ), // uninit
+	nus_( rsd_type_.n_nus(), 0.0 ),
+	mainchain_torsions_( rsd_type_.mainchain_atoms().size(), 0.0 ),
+	actcoord_( 0.0 ),
+	data_cache_( 0 ),
+	nonstandard_polymer_( false ),
+	connect_map_( rsd_type_.n_residue_connections() )
+{
+	// Assign atoms.
+	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
+		atoms_.push_back( Atom( rsd_type_.atom(i).ideal_xyz(), rsd_type_.atom(i).atom_type_index(),
+			rsd_type_.atom(i).mm_atom_type_index() ) );
+	}
+
+	assign_nus();
+	assign_orbitals();
+
+}
+
 /// @details Constructor from residue type; sets coords to ideal values
 /// create a residue of type residue_type_in.
 /// @note Dummmy arg to prevent secret type conversions from ResidueType to Residue
 Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	utility::pointer::ReferenceCount(),
+	rsd_type_ptr_( rsd_type_in.get_self_ptr() ),
 	rsd_type_( rsd_type_in ),
 	seqpos_( 0 ),
 	chain_( 0 ),
@@ -72,7 +130,7 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	actcoord_( 0.0 ),
 	data_cache_( 0 ),
 	nonstandard_polymer_( false ),
-	connect_map_( rsd_type_in.n_residue_connections() )
+	connect_map_( rsd_type_.n_residue_connections() )
 {
 	// Assign atoms.
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
@@ -80,30 +138,9 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 			rsd_type_.atom(i).mm_atom_type_index() ) );
 	}
 
-	// Assign nus.
-	Size const n_nus( rsd_type_.n_nus() );
-	for ( uint i( 1 ); i <= n_nus; ++i ) {
-		AtomIndices const & nu_atoms( rsd_type_.nu_atoms( i ) );
+	assign_nus();
+	assign_orbitals();
 
-		// Calculate the current nu angle from the coordinates.
-		Angle const current_nu( numeric::dihedral_degrees(
-			atom( nu_atoms[ 1 ] ).xyz(),
-			atom( nu_atoms[ 2 ] ).xyz(),
-			atom( nu_atoms[ 3 ] ).xyz(),
-			atom( nu_atoms[ 4 ] ).xyz() ) );
-
-		nus_[ i ] = current_nu;
-	}
-
-	// Assign orbitals.
-	BOOST_FOREACH ( core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index() ) {
-		utility::vector1<core::Size> const & orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
-		BOOST_FOREACH ( core::Size orbital_index, orbital_indices ) {
-			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
-			core::Size type = rsd_type_.orbital(orbital_index).orbital_type_index();
-			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));
-		}
-	}
 }
 
 /// @details Create a residue/rotamer of type rsd_type_in placed at the position occupied by current_rsd
@@ -119,6 +156,7 @@ Residue::Residue(
 	bool preserve_c_beta
 ):
 	utility::pointer::ReferenceCount(),
+	rsd_type_ptr_( rsd_type_in.get_self_ptr() ),
 	rsd_type_( rsd_type_in ),
 	seqpos_( current_rsd.seqpos() ),
 	chain_( current_rsd.chain() ),
@@ -173,36 +211,16 @@ Residue::Residue(
 		chi_[ chino ] = current_chi;
 	}
 
-	// Assign nus.
-	Size const n_nus( rsd_type_.n_nus() );
-	for ( uint i( 1 ); i <= n_nus; ++i ) {
-		AtomIndices const & nu_atoms( rsd_type_.nu_atoms( i ) );
+	assign_nus();
+	assign_orbitals();
 
-		// Calculate the current nu angle from the coordinates.
-		Angle const current_nu( numeric::dihedral_degrees(
-			atom( nu_atoms[ 1 ] ).xyz(),
-			atom( nu_atoms[ 2 ] ).xyz(),
-			atom( nu_atoms[ 3 ] ).xyz(),
-			atom( nu_atoms[ 4 ] ).xyz() ) );
-
-		nus_[ i ] = current_nu;
-	}
-
-	// Assign orbitals.
-	BOOST_FOREACH ( core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index() ) {
-		utility::vector1<core::Size> const & orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
-		BOOST_FOREACH ( core::Size orbital_index, orbital_indices ) {
-			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
-			core::Size type = rsd_type_.orbital(orbital_index).orbital_type_index();
-			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));
-		}
-	}
 }
 
 
 Residue::Residue( Residue const & src ) :
 	utility::pointer::ReferenceCount(),
 	utility::pointer::enable_shared_from_this< Residue >(),
+	rsd_type_ptr_( src.rsd_type_ptr_ ),
 	rsd_type_(src.rsd_type_),
 	atoms_(src.atoms_),
 	orbitals_(src.orbitals_),
@@ -1591,6 +1609,94 @@ Residue::nonconst_data_ptr()
 		data_cache_ = basic::datacache::BasicDataCacheOP( new basic::datacache::BasicDataCache( residue_datacache::n_cacheable_types ) );
 	}
 	return data_cache_;
+}
+
+#ifdef    SERIALIZATION
+
+template < class Archive >
+void
+Residue::save( Archive & arc ) const
+{
+	// with the ResidueTypeCOP, find out if the ResidueType is held in one of the (global)
+	// ResidueTypeSets and if so, then Residue will serialize the name of the RTS and the
+	// name of the ResidueType -- otherwise, it will serialize the RT itself.
+	core::chemical::serialize_residue_type( arc, rsd_type_ptr_ );
+	// EXEMPT rsd_type_
+
+	arc( atoms_, orbitals_ );
+	arc( seqpos_, chain_ );
+	arc( chi_, nus_, mainchain_torsions_, actcoord_ );
+	arc( data_cache_ );
+	arc( nonstandard_polymer_, connect_map_ );
+	arc( connections_to_residues_ );
+	arc( pseudobonds_ );
+}
+
+template < class Archive >
+void
+Residue::load_and_construct(
+	Archive & arc,
+	cereal::construct< Residue > & construct
+)
+{
+	ResidueTypeCOP restype;
+	core::chemical::deserialize_residue_type( arc, restype );
+	construct( restype, true );
+	// EXEMPT rsd_type_ptr_ rsd_type_
+
+	arc( construct->atoms_, construct->orbitals_ );
+	arc( construct->seqpos_, construct->chain_ );
+	arc( construct->chi_, construct->nus_, construct->mainchain_torsions_, construct->actcoord_ );
+	arc( construct->data_cache_ );
+	arc( construct->nonstandard_polymer_, construct->connect_map_ );
+	arc( construct->connections_to_residues_ );
+
+	// deserialization of constant owning pointers requires first deserializing
+	// into locally-declared non-constant owning pointers and then assigning
+	// from the non-const versions into const versions.  Sadly, this means
+	// iterating across the non-const map and inserting elements into the const-map
+	// one at a time.
+	// too bad the following code doesn't work! construct->pseudobonds_ = nonconst_pbs;
+	std::map< Size, PseudoBondCollectionOP > nonconst_pbs;
+	arc( nonconst_pbs );
+	for ( std::map< Size, PseudoBondCollectionOP >::const_iterator
+			ncpb = nonconst_pbs.begin(), ncpb_end = nonconst_pbs.end();
+			ncpb != ncpb_end; ++ncpb ) {
+		construct->pseudobonds_[ ncpb->first ] = ncpb->second;
+	}
+}
+
+SAVE_AND_LOAD_AND_CONSTRUCT_SERIALIZABLE( Residue );
+
+#endif // SERIALIZATION
+
+void Residue::assign_orbitals() {
+	// Assign orbitals.
+	BOOST_FOREACH ( core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index() ) {
+		utility::vector1<core::Size> const & orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
+		BOOST_FOREACH ( core::Size orbital_index, orbital_indices ) {
+			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
+			core::Size type = rsd_type_.orbital(orbital_index).orbital_type_index();
+			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));
+		}
+	}
+}
+
+void Residue::assign_nus() {
+	// Assign nus.
+	Size const n_nus( rsd_type_.n_nus() );
+	for ( uint i( 1 ); i <= n_nus; ++i ) {
+		AtomIndices const & nu_atoms( rsd_type_.nu_atoms( i ) );
+
+		// Calculate the current nu angle from the coordinates.
+		Angle const current_nu( numeric::dihedral_degrees(
+			atom( nu_atoms[ 1 ] ).xyz(),
+			atom( nu_atoms[ 2 ] ).xyz(),
+			atom( nu_atoms[ 3 ] ).xyz(),
+			atom( nu_atoms[ 4 ] ).xyz() ) );
+
+		nus_[ i ] = current_nu;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

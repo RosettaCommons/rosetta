@@ -454,6 +454,22 @@ public: // Comparison
 		return ( a.res_map_ != b.res_map_ );
 	}
 
+#ifdef    SERIALIZATION
+	/// @brief Serialization routine.  In order for this to successfully compile,
+	/// the code that is trying to serialize an instance of this class will need
+	/// to #include <utility/serialization/serialization.hh>, which should already
+	/// happen, and also #include <utility/vector1.srlz.hh>.
+	template < class Archive >
+	void save( Archive & arc ) const {
+		arc( CEREAL_NVP( default_value_ ), CEREAL_NVP( res_map_ ) );
+	}
+
+	/// @brief Deserialization routine
+	template < class Archive >
+	void load( Archive & arc ) {
+		arc( default_value_, res_map_ );
+	}
+#endif // SERIALIZATION
 
 private: // Fields
 

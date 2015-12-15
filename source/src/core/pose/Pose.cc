@@ -50,6 +50,7 @@
 // Basic headers
 #include <basic/init.hh>
 #include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/ConstDataMap.hh>
 #include <basic/prof.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -69,6 +70,14 @@
 #include <fstream>
 #include <boost/unordered_map.hpp>
 
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace pose {
@@ -93,6 +102,8 @@ void Pose::init(void)
 	energies_->set_owner( this );
 
 	data_cache_ = BasicDataCacheOP( new BasicDataCache( datacache::CacheableDataType::num_cacheable_data_types ) );
+
+	constant_cache_ = ConstDataMapOP( new ConstDataMap );
 
 	observer_cache_ = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, *this ) );
 
@@ -165,8 +176,13 @@ Pose::operator=( Pose const & src )
 		energies_->set_owner( this );
 	}
 
+	// Deep copy of the data held in the non-constant cache
 	data_cache_ = BasicDataCacheOP( new BasicDataCache( datacache::CacheableDataType::num_cacheable_data_types ) );
 	*data_cache_ = *(src.data_cache_);
+
+	// Shallow copy of the data held in the constant cache
+	if ( ! constant_cache_ ) 	constant_cache_ = ConstDataMapOP( new ConstDataMap );
+	*constant_cache_ = *src.constant_cache_;
 
 	observer_cache_ = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, *this ) );
 	*observer_cache_ = *src.observer_cache_;
@@ -176,13 +192,32 @@ Pose::operator=( Pose const & src )
 	metrics_ = metrics::PoseMetricContainerOP( new metrics::PoseMetricContainer( *src.metrics_ ) );
 	metrics_->attach_to( *this );
 
-	if ( constraint_set_ ) constraint_set_->detach_from_conformation();
+	// TEMP DEBUG CONSTRAINTS
+	// if ( constraint_set_ ) constraint_set_->detach_from_conformation();
+	// constraint_set_ = src.constraint_set_ ? src.constraint_set_->clone() : src.constraint_set_;
+	// if ( constraint_set_ ) constraint_set_->attach_to_conformation( ConformationCAP( conformation_ ));
 
+	// Copy the constraint set -- this will perform a shallow copy of the ConstraintOPs held in
+	// the ConstraintSet object (and the Constraints objects that the ConstraintSet holds) if
+	// the types of the two constraint set objects match.
 	if ( src.constraint_set_ ) {
-		constraint_set_ = src.constraint_set_->clone();
-		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
+		if ( constraint_set_ && src.constraint_set_->same_type_as_me( *constraint_set_ ) ) {
+			// shallow copy, possibly performing no reference count increments or decrements
+			// where possible, and avoids new and delete where possible; esp if several
+			// Poses are being copied back and forth into each other
+			*constraint_set_ = *src.constraint_set_;
+		} else {
+			if ( constraint_set_ ) {
+				constraint_set_->detach_from_conformation();
+			}
+			constraint_set_ = src.constraint_set_->clone();
+			constraint_set_->attach_to_conformation( ConformationAP( conformation_ ));
+		}
 	} else {
-		constraint_set_.reset();
+		if ( constraint_set_ ) {
+			constraint_set_->detach_from_conformation();
+			constraint_set_.reset();
+		}
 	}
 
 	//Clone the reference poses:
@@ -202,12 +237,67 @@ Pose::operator=( Pose const & src )
 	return *this;
 }
 
+/// @details This is basically a stub for an actual implementation of detached_copy
+/// which would not contain the "receive_observers_from" call that the operator =
+/// assignment does.
+void
+Pose::detached_copy( Pose const & src ) {
+
+	// TEMP! before Pose copying gets refactored, just use the existing operator =
+	*this = src;
+
+	// Now perform detached copying on the data members that have observer-
+	// or shallow-copy behavior. These are:
+	// 1. Conformation (since the AtomTree acts as an observer)
+	// 2. Constraint set (since some Constraints contain mutable data)
+
+	if ( conformation_ && conformation_->same_type_as_me( *src.conformation_, true ) ) {
+		conformation_->detached_copy( *src.conformation_ );
+	} else {
+		conformation_ = src.conformation_->clone();
+		conformation_->attach_xyz_obs( &Pose::on_conf_xyz_change, this );
+	}
+
+	if ( src.constraint_set_ ) {
+		if ( constraint_set_ && constraint_set_->same_type_as_me( *src.constraint_set_ ) ) {
+			constraint_set_->detached_copy( *src.constraint_set_ );
+		} else {
+			if ( constraint_set_ ) {
+				constraint_set_->detach_from_conformation();
+			}
+			constraint_set_ = src.constraint_set_->clone();
+			constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
+		}
+	} else {
+		if ( constraint_set_ ) {
+			constraint_set_->detach_from_conformation();
+			constraint_set_.reset();
+		}
+	}
+
+}
+
 /// @brief clone the pose
 PoseOP
 Pose::clone() const
 {
 	return PoseOP( new Pose( *this ) );
 }
+
+/// @brief Returns the pose Conformation pointer (const access)
+ConformationCOP
+Pose::conformation_ptr() const
+{
+	return conformation_;
+}
+
+/// @brief Returns the pose Conformation pointer (const access)
+ConformationOP &
+Pose::conformation_ptr()
+{
+	return conformation_;
+}
+
 
 kinematics::FoldTree const &
 Pose::fold_tree() const
@@ -631,6 +721,12 @@ Pose::copy_segment(
 	// now copy any other data
 }
 
+
+basic::datacache::ConstDataMap const &
+Pose::const_data_cache() const
+{
+	return *constant_cache_;
+}
 
 Size
 Pose::total_residue() const
@@ -1592,6 +1688,17 @@ Pose::remove_constraints(){
 }
 
 void
+Pose::clear_sequence_constraints() {
+	constraint_set_->clear_sequence_constraints();
+}
+
+
+/// @details FIX ME! This function should clone all of the constraints held
+/// in the input constraint set instead of allowing the input constraint set
+/// to perform a shallow copy of its constraints.  Someone may be nefariously
+/// holding onto non-const pointers to the constraints in the input constraint
+/// set.
+void
 Pose::constraint_set( ConstraintSetOP constraint_set )
 {
 	energies_->clear();
@@ -1828,52 +1935,64 @@ std::ostream & operator << ( std::ostream & os, Pose const & pose)
 } // pose
 } // core
 
+#ifdef    SERIALIZATION
 
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::Pose::save( Archive & arc ) const {
+	arc( CEREAL_NVP( conformation_ ) ); // ConformationOP
+	arc( CEREAL_NVP( energies_ ) ); // scoring::EnergiesOP
+	arc( CEREAL_NVP( metrics_ ) ); // metrics::PoseMetricContainerOP
+	arc( CEREAL_NVP( data_cache_ ) ); // BasicDataCacheOP
+	arc( CEREAL_NVP( constant_cache_ ) ); // ConstDataMapOP
+	arc( CEREAL_NVP( observer_cache_ ) ); // ObserverCacheOP
+	arc( CEREAL_NVP( pdb_info_ ) ); // PDBInfoOP
+	arc( CEREAL_NVP( constraint_set_ ) ); // ConstraintSetOP
+	arc( CEREAL_NVP( reference_pose_set_ ) ); // core::pose::reference_pose::ReferencePoseSetOP
+	// Observers are not serialized arc( CEREAL_NVP( destruction_obs_hub_ ) );
+	// Observers are not serialized arc( CEREAL_NVP( general_obs_hub_ ) );
+	// Observers are not serialized arc( CEREAL_NVP( energy_obs_hub_ ) );
+	// Observers are not serialized arc( CEREAL_NVP( conformation_obs_hub_ ) );
+	// EXEMPT destruction_obs_hub_ general_obs_hub_ energy_obs_hub_ conformation_obs_hub_
+}
 
+/// @Brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::Pose::load( Archive & arc ) {
+	arc( conformation_ ); // ConformationOP
+	conformation_->attach_xyz_obs( &Pose::on_conf_xyz_change, this );
 
+	arc( energies_ ); // scoring::EnergiesOP
+	energies_->set_owner( this );
 
+	arc( metrics_ ); // metrics::PoseMetricContainerOP
+	arc( data_cache_ ); // BasicDataCacheOP
+	arc( constant_cache_ ); // ConstDataMapOP
 
+	arc( observer_cache_ ); // ObserverCacheOP
+	observer_cache_->attach_pose( *this );
 
+	arc( pdb_info_ ); // PDBInfoOP
+	if ( pdb_info_ ) {
+		pdb_info_->attach_to( *conformation_ );
+	}
 
+	arc( constraint_set_ ); // ConstraintSetOP
+	if ( constraint_set_ ) constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 
+	arc( reference_pose_set_ ); // core::pose::reference_pose::ReferencePoseSetOP
+	// Observers are not serialized arc( destruction_obs_hub_ );
+	// Observers are not serialized arc( general_obs_hub_ );
+	// Observers are not serialized arc( energy_obs_hub_ );
+	// Observers are not serialized arc( conformation_obs_hub_ );
+	// EXEMPT destruction_obs_hub_ general_obs_hub_ energy_obs_hub_ conformation_obs_hub_
 
+}
 
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::Pose );
+CEREAL_REGISTER_TYPE( core::pose::Pose )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_Pose )
+#endif // SERIALIZATION

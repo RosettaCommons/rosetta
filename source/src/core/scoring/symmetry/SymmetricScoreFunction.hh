@@ -28,6 +28,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace symmetry {
@@ -139,6 +144,12 @@ public:
 	void
 	correct_finalize_score( pose::Pose & pose ) const;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 inline core::scoring::ScoreFunctionOP
@@ -158,5 +169,10 @@ symmetrize_scorefunction( ScoreFunction const & src ) {
 } // symmetry
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_symmetry_SymmetricScoreFunction )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_scoring_SymmetricScoreFunction_HH

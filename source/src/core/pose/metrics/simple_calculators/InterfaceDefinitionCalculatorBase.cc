@@ -27,6 +27,15 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace metrics {
@@ -87,3 +96,46 @@ void InterfaceDefinitionCalculator::fill_in_chain_terminii( pose::Pose const & p
 } // metrics
 } // pose
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::pose::metrics::simple_calculators::InterfaceDefinitionCalculator::InterfaceDefinitionCalculator() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::metrics::simple_calculators::InterfaceDefinitionCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( ch1_begin_num_ ) ); // core::Size
+	arc( CEREAL_NVP( ch1_end_num_ ) ); // core::Size
+	arc( CEREAL_NVP( ch2_begin_num_ ) ); // core::Size
+	arc( CEREAL_NVP( ch2_end_num_ ) ); // core::Size
+	arc( CEREAL_NVP( chain1_number_ ) ); // core::Size
+	arc( CEREAL_NVP( chain2_number_ ) ); // core::Size
+	arc( CEREAL_NVP( chain1_letter_ ) ); // char
+	arc( CEREAL_NVP( chain2_letter_ ) ); // char
+	arc( CEREAL_NVP( got_chain_numbers_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::metrics::simple_calculators::InterfaceDefinitionCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( ch1_begin_num_ ); // core::Size
+	arc( ch1_end_num_ ); // core::Size
+	arc( ch2_begin_num_ ); // core::Size
+	arc( ch2_end_num_ ); // core::Size
+	arc( chain1_number_ ); // core::Size
+	arc( chain2_number_ ); // core::Size
+	arc( chain1_letter_ ); // char
+	arc( chain2_letter_ ); // char
+	arc( got_chain_numbers_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::metrics::simple_calculators::InterfaceDefinitionCalculator );
+CEREAL_REGISTER_TYPE( core::pose::metrics::simple_calculators::InterfaceDefinitionCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_metrics_simple_calculators_InterfaceDefinitionCalculatorBase )
+#endif // SERIALIZATION

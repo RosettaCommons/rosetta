@@ -133,8 +133,8 @@ public:
 	void
 	show_membrane_position( Pose & pose ) {
 
-		Vector center( pose.conformation().membrane_info()->membrane_center() ); 
-		Vector normal( pose.conformation().membrane_info()->membrane_normal() );
+		Vector center( pose.conformation().membrane_info()->membrane_center(pose.conformation()) ); 
+		Vector normal( pose.conformation().membrane_info()->membrane_normal(pose.conformation()) );
 
 		TR << "Membrane Center: " << center.x() << " " << center.y() << " " << center.z() << std::endl;
 		TR << "Membrane Normal: " << normal.x() << " " << normal.y() << " " << normal.z() << std::endl;

@@ -39,6 +39,18 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace metrics {
@@ -183,3 +195,42 @@ void InterfaceNeighborDefinitionCalculator::recompute( Pose const & this_pose ) 
 } // metrics
 } // pose
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator::InterfaceNeighborDefinitionCalculator() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::simple_calculators::InterfaceDefinitionCalculator >( this ) );
+	arc( CEREAL_NVP( list_interface_ ) ); // std::pair<utility::vector1<core::Size>, utility::vector1<core::Size> >
+	arc( CEREAL_NVP( interface_residues_ ) ); // std::set<core::Size>
+	arc( CEREAL_NVP( chain1_interface_residues_ ) ); // std::set<core::Size>
+	arc( CEREAL_NVP( chain2_interface_residues_ ) ); // std::set<core::Size>
+	arc( CEREAL_NVP( num_interface_residues_ ) ); // core::Size
+	arc( CEREAL_NVP( num_chain1_interface_residues_ ) ); // core::Size
+	arc( CEREAL_NVP( num_chain2_interface_residues_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::simple_calculators::InterfaceDefinitionCalculator >( this ) );
+	arc( list_interface_ ); // std::pair<utility::vector1<core::Size>, utility::vector1<core::Size> >
+	arc( interface_residues_ ); // std::set<core::Size>
+	arc( chain1_interface_residues_ ); // std::set<core::Size>
+	arc( chain2_interface_residues_ ); // std::set<core::Size>
+	arc( num_interface_residues_ ); // core::Size
+	arc( num_chain1_interface_residues_ ); // core::Size
+	arc( num_chain2_interface_residues_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator );
+CEREAL_REGISTER_TYPE( core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_metrics_simple_calculators_InterfaceNeighborDefinitionCalculator )
+#endif // SERIALIZATION

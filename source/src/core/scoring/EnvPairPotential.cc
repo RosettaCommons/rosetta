@@ -41,6 +41,15 @@
 // C++
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -529,3 +538,33 @@ EnvPairPotential::nonconst_cenlist_from_pose( pose::Pose & pose )
 
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::CenListInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( fcen6_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( fcen10_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( fcen12_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( calculated_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::CenListInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( fcen6_ ); // utility::vector1<Real>
+	arc( fcen10_ ); // utility::vector1<Real>
+	arc( fcen12_ ); // utility::vector1<Real>
+	arc( calculated_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::CenListInfo );
+CEREAL_REGISTER_TYPE( core::scoring::CenListInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_EnvPairPotential )
+#endif // SERIALIZATION

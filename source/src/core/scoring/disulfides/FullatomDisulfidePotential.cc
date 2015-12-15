@@ -50,6 +50,16 @@ using basic::Warning;
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.disulfides.FullatomDisulfidePotential" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace disulfides {
@@ -293,7 +303,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 	if ( res1_atom_indices.derivative_atom( at1 ) == CYS_C_ALPHA ) {
 
 		f1 = f2 = 0;
-		DihedralConstraint dihedral_ang_cst = DihedralConstraint(
+		DihedralConstraint dihedral_ang_cst(
 			AtomID( at1, res1.seqpos() ),
 			AtomID( res1_atom_indices.c_beta_index(), res1.seqpos() ),
 			AtomID( res1_atom_indices.disulf_atom_index(), res1.seqpos() ),
@@ -306,7 +316,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 	} else if ( res1_atom_indices.derivative_atom( at1 ) == CYS_C_BETA  ) {
 
 		f1 = f2 = 0;
-		AngleConstraint ang_cst = AngleConstraint(
+		AngleConstraint ang_cst(
 			AtomID( at1, res1.seqpos() ),
 			AtomID( res1_atom_indices.disulf_atom_index(), res1.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
@@ -316,7 +326,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 		F2 += 0.5 * f2;
 
 		f1 = f2 = 0;
-		DihedralConstraint dihedral_ang_cst = DihedralConstraint(
+		DihedralConstraint dihedral_ang_cst(
 			AtomID( res1_atom_indices.c_alpha_index(), res1.seqpos() ),
 			AtomID( at1, res1.seqpos() ),
 			AtomID( res1_atom_indices.disulf_atom_index(), res1.seqpos() ),
@@ -327,7 +337,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 		F2 += 0.5 * f2;
 
 		f1 = f2 = 0;
-		DihedralConstraint ss_dihedral_ang_cst = DihedralConstraint(
+		DihedralConstraint ss_dihedral_ang_cst(
 			AtomID( at1, res1.seqpos() ),
 			AtomID( res1_atom_indices.disulf_atom_index(), res1.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
@@ -345,7 +355,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 		F2 += f2;
 
 		f1 = f2 = 0;
-		AngleConstraint ang_cst1 = AngleConstraint(
+		AngleConstraint ang_cst1(
 			AtomID( res1_atom_indices.c_beta_index(), res1.seqpos() ),
 			AtomID( at1, res1.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
@@ -355,7 +365,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 		F2 += 0.5 * f2;
 
 		f1 = f2 = 0;
-		AngleConstraint ang_cst2 = AngleConstraint(
+		AngleConstraint ang_cst2(
 			AtomID( at1, res1.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
 			AtomID( res2_atom_indices.c_beta_index(), res2.seqpos() ),
@@ -365,7 +375,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 		F2 += 0.5 * f2;
 
 		f1 = f2 = 0;
-		DihedralConstraint dihedral_ang_cst1 = DihedralConstraint(
+		DihedralConstraint dihedral_ang_cst1(
 			AtomID( res1_atom_indices.c_alpha_index(), res1.seqpos() ),
 			AtomID( res1_atom_indices.c_beta_index(), res1.seqpos() ),
 			AtomID( at1, res1.seqpos() ),
@@ -376,7 +386,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 		F2 += 0.5 * f2;
 
 		f1 = f2 = 0;
-		DihedralConstraint dihedral_ang_cst2 = DihedralConstraint(
+		DihedralConstraint dihedral_ang_cst2(
 			AtomID( res2.atom_index("CA"), res2.seqpos() ),
 			AtomID( res2_atom_indices.c_beta_index(), res2.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
@@ -387,7 +397,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 		F2 += 0.5 * f2;
 
 		f1 = f2 = 0;
-		DihedralConstraint ss_dihedral_ang_cst = DihedralConstraint(
+		DihedralConstraint ss_dihedral_ang_cst(
 			AtomID( res1_atom_indices.c_beta_index(), res1.seqpos() ),
 			AtomID( at1, res1.seqpos() ),
 			AtomID( res2_atom_indices.disulf_atom_index(), res2.seqpos() ),
@@ -672,6 +682,24 @@ CBSG_Dihedral_Func::CBSG_Dihedral_Func() :
 
 CBSG_Dihedral_Func::~CBSG_Dihedral_Func() {}
 
+bool CBSG_Dihedral_Func::operator == ( Func const & other ) const
+{
+	if ( !       same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	CBSG_Dihedral_Func const & other_downcast( static_cast< CBSG_Dihedral_Func const & > (other) );
+	if ( csf_cbang1_ != other_downcast.csf_cbang1_ ) return false;
+	if ( csf_cbang2_ != other_downcast.csf_cbang2_ ) return false;
+	if ( csf_cbang3_ != other_downcast.csf_cbang3_ ) return false;
+
+	return true;
+}
+
+bool CBSG_Dihedral_Func::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< CBSG_Dihedral_Func const * > ( &other );
+}
+
 /// @param ang[in] Dihedral angle in radians
 /// @note This function is not continuous across 0 or 180 degrees. This is bad,
 ///  and is only acceptable because it occurs at the maximums so we minimize
@@ -703,6 +731,25 @@ SGSG_Dihedral_Func::SGSG_Dihedral_Func() :
 
 SGSG_Dihedral_Func::~SGSG_Dihedral_Func() {}
 
+bool SGSG_Dihedral_Func::operator == ( Func const & other ) const
+{
+	if ( !       same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	SGSG_Dihedral_Func const & other_downcast( static_cast< SGSG_Dihedral_Func const & > (other) );
+	if ( csf_cbang1a_ != other_downcast.csf_cbang1a_ ) return false;
+	if ( csf_cbang2a_ != other_downcast.csf_cbang2a_ ) return false;
+	if ( csf_cbang1b_ != other_downcast.csf_cbang1b_ ) return false;
+	if ( csf_cbang2b_ != other_downcast.csf_cbang2b_ ) return false;
+
+	return true;
+}
+
+bool SGSG_Dihedral_Func::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< SGSG_Dihedral_Func const * > ( &other );
+}
+
 /// @param ang[in] Dihedral angle in radians
 Real
 SGSG_Dihedral_Func::func( Real const ang) const
@@ -726,6 +773,23 @@ CB_Angle_Func::CB_Angle_Func() :
 
 CB_Angle_Func::~CB_Angle_Func() {}
 
+bool CB_Angle_Func::operator == ( Func const & other ) const
+{
+	if ( !       same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	CB_Angle_Func const & other_downcast( static_cast< CB_Angle_Func const & > (other) );
+	if ( csf_cbang1_ != other_downcast.csf_cbang1_ ) return false;
+	if ( csf_cbang2_ != other_downcast.csf_cbang2_ ) return false;
+
+	return true;
+}
+
+bool CB_Angle_Func::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< CB_Angle_Func const * > ( &other );
+}
+
 /// @param csang[in] Dihedral angle in radians
 Real
 CB_Angle_Func::func( Real const ang) const
@@ -746,6 +810,16 @@ CB_Angle_Func::dfunc( Real const ang ) const
 SG_Dist_Func::SG_Dist_Func() {}
 
 SG_Dist_Func::~SG_Dist_Func() {}
+
+bool SG_Dist_Func::operator == ( Func const & other ) const
+{
+	return same_type_as_me( other ) && other.same_type_as_me( *this );
+}
+
+bool SG_Dist_Func::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< SG_Dist_Func const * > ( &other );
+}
 
 /// @param ssdist[in] S-S distance, in Angstroms
 Real
@@ -816,3 +890,98 @@ SG_Dist_Func::fa_ssdist_scores()
 }
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::CBSG_Dihedral_Func::save( Archive & arc ) const {
+	arc( cereal::base_class< func::Func >( this ) );
+	arc( CEREAL_NVP( csf_cbang1_ ) ); // core::scoring::func::CircularSigmoidalFunc
+	arc( CEREAL_NVP( csf_cbang2_ ) ); // core::scoring::func::CircularSigmoidalFunc
+	arc( CEREAL_NVP( csf_cbang3_ ) ); // core::scoring::func::CircularSigmoidalFunc
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::CBSG_Dihedral_Func::load( Archive & arc ) {
+	arc( cereal::base_class< func::Func >( this ) );
+	arc( csf_cbang1_ ); // core::scoring::func::CircularSigmoidalFunc
+	arc( csf_cbang2_ ); // core::scoring::func::CircularSigmoidalFunc
+	arc( csf_cbang3_ ); // core::scoring::func::CircularSigmoidalFunc
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::CBSG_Dihedral_Func );
+CEREAL_REGISTER_TYPE( core::scoring::disulfides::CBSG_Dihedral_Func )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::SGSG_Dihedral_Func::save( Archive & arc ) const {
+	arc( cereal::base_class< func::Func >( this ) );
+	arc( CEREAL_NVP( csf_cbang1a_ ) ); // core::scoring::func::CircularSigmoidalFunc
+	arc( CEREAL_NVP( csf_cbang2a_ ) ); // core::scoring::func::CircularSigmoidalFunc
+	arc( CEREAL_NVP( csf_cbang1b_ ) ); // core::scoring::func::CircularSigmoidalFunc
+	arc( CEREAL_NVP( csf_cbang2b_ ) ); // core::scoring::func::CircularSigmoidalFunc
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::SGSG_Dihedral_Func::load( Archive & arc ) {
+	arc( cereal::base_class< func::Func >( this ) );
+	arc( csf_cbang1a_ ); // core::scoring::func::CircularSigmoidalFunc
+	arc( csf_cbang2a_ ); // core::scoring::func::CircularSigmoidalFunc
+	arc( csf_cbang1b_ ); // core::scoring::func::CircularSigmoidalFunc
+	arc( csf_cbang2b_ ); // core::scoring::func::CircularSigmoidalFunc
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::SGSG_Dihedral_Func );
+CEREAL_REGISTER_TYPE( core::scoring::disulfides::SGSG_Dihedral_Func )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::CB_Angle_Func::save( Archive & arc ) const {
+	arc( cereal::base_class< func::Func >( this ) );
+	arc( CEREAL_NVP( csf_cbang1_ ) ); // core::scoring::func::CircularSigmoidalFunc
+	arc( CEREAL_NVP( csf_cbang2_ ) ); // core::scoring::func::CircularSigmoidalFunc
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::CB_Angle_Func::load( Archive & arc ) {
+	arc( cereal::base_class< func::Func >( this ) );
+	arc( csf_cbang1_ ); // core::scoring::func::CircularSigmoidalFunc
+	arc( csf_cbang2_ ); // core::scoring::func::CircularSigmoidalFunc
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::CB_Angle_Func );
+CEREAL_REGISTER_TYPE( core::scoring::disulfides::CB_Angle_Func )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::SG_Dist_Func::save( Archive & arc ) const {
+	arc( cereal::base_class< func::Func >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::SG_Dist_Func::load( Archive & arc ) {
+	arc( cereal::base_class< func::Func >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::SG_Dist_Func );
+CEREAL_REGISTER_TYPE( core::scoring::disulfides::SG_Dist_Func )
+
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_disulfides_FullatomDisulfidePotential )
+#endif // SERIALIZATION

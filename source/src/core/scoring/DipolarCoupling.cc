@@ -60,6 +60,18 @@
 
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.DipolarCoupling" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -340,3 +352,66 @@ Real DipolarCoupling::compute_dcscore(core::pose::Pose & pose) {
 
 } //namespace Scoring
 } //namespace core
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::DC::save( Archive & arc ) const {
+	arc( CEREAL_NVP( DCval_computed_ ) ); // Real
+	arc( CEREAL_NVP( f1ij_ ) ); // core::Vector
+	arc( CEREAL_NVP( f2ij_ ) ); // core::Vector
+	arc( CEREAL_NVP( type_ ) ); // enum core::scoring::DC::DC_TYPE
+	arc( CEREAL_NVP( res1_ ) ); // Size
+	arc( CEREAL_NVP( res2_ ) ); // Size
+	arc( CEREAL_NVP( atom1_ ) ); // std::string
+	arc( CEREAL_NVP( atom2_ ) ); // std::string
+	arc( CEREAL_NVP( DCval_ ) ); // Real
+	arc( CEREAL_NVP( DCerr_ ) ); // Real
+	arc( CEREAL_NVP( weight_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::DC::load( Archive & arc ) {
+	arc( DCval_computed_ ); // Real
+	arc( f1ij_ ); // core::Vector
+	arc( f2ij_ ); // core::Vector
+	arc( type_ ); // enum core::scoring::DC::DC_TYPE
+	arc( res1_ ); // Size
+	arc( res2_ ); // Size
+	arc( atom1_ ); // std::string
+	arc( atom2_ ); // std::string
+	arc( DCval_ ); // Real
+	arc( DCerr_ ); // Real
+	arc( weight_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::DC );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::DipolarCoupling::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( All_DC_lines_ ) ); // DC_lines
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::DipolarCoupling::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( All_DC_lines_ ); // DC_lines
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::DipolarCoupling );
+CEREAL_REGISTER_TYPE( core::scoring::DipolarCoupling )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_DipolarCoupling )
+#endif // SERIALIZATION
+
+

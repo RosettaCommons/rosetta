@@ -46,6 +46,19 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/id/AtomID_Map.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -336,3 +349,46 @@ NumberHBondsCalculator::sum_Hbond_terms(
 } //namespace pose_metric_calculators
 } //namespace toolbox
 } //namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+	// arc( CEREAL_NVP( hb_database ) ); // core::scoring::hbonds::HBondDatabaseCOP
+
+	// EXEMPT hb_database
+	// Don't serialize the hbond database -- instead, plan to get the global HBondDatabase
+	// during deserialization
+
+	arc( CEREAL_NVP( all_Hbonds_ ) ); // core::Size
+	arc( CEREAL_NVP( special_region_Hbonds_ ) ); // core::Size
+	arc( CEREAL_NVP( atom_Hbonds_ ) ); // core::id::AtomID_Map<core::Size>
+	arc( CEREAL_NVP( residue_Hbonds_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( ref_residue_total_energies_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( special_region_ ) ); // std::set<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+
+	hb_database = core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() );
+
+	arc( all_Hbonds_ ); // core::Size
+	arc( special_region_Hbonds_ ); // core::Size
+	arc( atom_Hbonds_ ); // core::id::AtomID_Map<core::Size>
+	arc( residue_Hbonds_ ); // utility::vector1<core::Size>
+	arc( ref_residue_total_energies_ ); // utility::vector1<core::Real>
+	arc( special_region_ ); // std::set<core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_NumberHBondsCalculator )
+#endif // SERIALIZATION

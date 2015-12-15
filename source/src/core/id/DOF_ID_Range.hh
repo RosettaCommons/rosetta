@@ -22,13 +22,6 @@
 #include <core/id/types.hh>
 #include <core/id/DOF_ID.hh>
 
-// Numeric headers
-//#include <numeric/constants.hh>
-//#include <numeric/numeric.functions.hh>
-
-// Utility headers
-//#include <utility/exit.hh>
-
 // C++ header
 #include <utility/assert.hh>
 
@@ -124,6 +117,12 @@ private: // Fields
 
 	/// @brief maximum value
 	core::Real max_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; // DOF_ID_Range
 

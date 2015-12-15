@@ -31,6 +31,16 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace sequence {
 
@@ -226,3 +236,31 @@ std::string Sequence::type() const {
 
 } // sequence
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::sequence::Sequence::save( Archive & arc ) const {
+	arc( CEREAL_NVP( id_ ) ); // std::string
+	arc( CEREAL_NVP( start_ ) ); // core::Size
+	arc( CEREAL_NVP( gap_char_ ) ); // char
+	arc( CEREAL_NVP( seq_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::sequence::Sequence::load( Archive & arc ) {
+	arc( id_ ); // std::string
+	arc( start_ ); // core::Size
+	arc( gap_char_ ); // char
+	arc( seq_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::sequence::Sequence );
+CEREAL_REGISTER_TYPE( core::sequence::Sequence )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_sequence_Sequence )
+#endif // SERIALIZATION

@@ -36,6 +36,15 @@
 
 static THREAD_LOCAL basic::Tracer TR( "devel.denovo_design.calculators.ResidueCentralityCalculator" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace devel {
 namespace denovo_design {
 namespace calculators {
@@ -325,3 +334,29 @@ ResidueCentralityCalculator::recompute( core::pose::Pose const & pose )
 } // denovo_design
 } // devel
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+devel::denovo_design::calculators::ResidueCentralityCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( centralities_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( excluded_residues_ ) ); // utility::vector1<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+devel::denovo_design::calculators::ResidueCentralityCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( centralities_ ); // utility::vector1<core::Real>
+	arc( excluded_residues_ ); // utility::vector1<core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( devel::denovo_design::calculators::ResidueCentralityCalculator );
+CEREAL_REGISTER_TYPE( devel::denovo_design::calculators::ResidueCentralityCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( devel_denovo_design_calculators_ResidueCentralityCalculator )
+#endif // SERIALIZATION

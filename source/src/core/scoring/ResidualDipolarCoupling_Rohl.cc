@@ -40,6 +40,15 @@
 
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.ResidualDipolarCoupling_Rohl" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -165,3 +174,52 @@ Size ResidualDipolarCoupling_Rohl::get_RDC_data_type(
 
 } //namespace Scoring
 } //namespace core
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::RDC_Rohl::save( Archive & arc ) const {
+	arc( CEREAL_NVP( type_ ) ); // Size
+	arc( CEREAL_NVP( res_ ) ); // Size
+	arc( CEREAL_NVP( Jdipolar_ ) ); // Real
+	arc( CEREAL_NVP( Reduced_Jdipolar_ ) ); // Real
+	arc( CEREAL_NVP( weight_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::RDC_Rohl::load( Archive & arc ) {
+	arc( type_ ); // Size
+	arc( res_ ); // Size
+	arc( Jdipolar_ ); // Real
+	arc( Reduced_Jdipolar_ ); // Real
+	arc( weight_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::RDC_Rohl );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::ResidualDipolarCoupling_Rohl::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( All_RDC_lines ) ); // RDC_lines
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::ResidualDipolarCoupling_Rohl::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( All_RDC_lines ); // RDC_lines
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::ResidualDipolarCoupling_Rohl );
+CEREAL_REGISTER_TYPE( core::scoring::ResidualDipolarCoupling_Rohl )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_ResidualDipolarCoupling_Rohl )
+#endif // SERIALIZATION

@@ -46,6 +46,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
@@ -57,7 +63,7 @@ void
 add_relevant_restypes_to_subset(
 	std::set< core::chemical::ResidueTypeCOP > & restype_subset,
 	std::string const & name3,
-	core::chemical::ResidueTypeSetCAP restype_set
+	core::chemical::ResidueTypeSetCOP restype_set
 );
 
 
@@ -135,6 +141,16 @@ private:
 
 	//step_size_ = tolerance / num_steps
 	core::Real step_size_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	GeomSampleInfo();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -148,7 +164,7 @@ public:  //construct / destruct
 
 	MatchConstraintFileInfo(
 		core::Size index,
-		core::chemical::ResidueTypeSetCAP restype_set
+		core::chemical::ResidueTypeSetCOP restype_set
 	);
 
 	virtual ~MatchConstraintFileInfo();
@@ -327,10 +343,20 @@ private:
 	//container for arbritrary algorithm specific information
 	std::map< std::string, utility::vector1< std::string > > algorithm_inputs_;
 
-	core::chemical::ResidueTypeSetCAP restype_set_;
+	core::chemical::ResidueTypeSetCOP restype_set_;
 
 	//Kui Native 110809
 	bool native_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	MatchConstraintFileInfo();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -342,7 +368,7 @@ class MatchConstraintFileInfoList : public utility::pointer::ReferenceCount
 public:
 
 	MatchConstraintFileInfoList(
-		core::chemical::ResidueTypeSetCAP restype_set );
+		core::chemical::ResidueTypeSetCOP restype_set );
 
 	virtual ~MatchConstraintFileInfoList();
 
@@ -397,13 +423,28 @@ private:
 	utility::vector1< MatchConstraintFileInfoOP > mcfis_;
 	utility::vector1< core::chemical::ResidueTypeCOP > upstream_restypes_;
 	std::map< core::chemical::ResidueTypeCOP, utility::vector1< MatchConstraintFileInfoCOP > > mcfis_for_restype_;
-	core::chemical::ResidueTypeSetCAP restype_set_;
+	core::chemical::ResidueTypeSetCOP restype_set_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	MatchConstraintFileInfoList();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
 }
 } //namespace enzdes
 } //namespace protocols
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_MatchConstraintFileInfo )
+#endif // SERIALIZATION
 
 
 #endif //

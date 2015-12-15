@@ -34,6 +34,11 @@
 #include <utility/string_util.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -252,6 +257,12 @@ private: // data
 	Size tmh_inserted_;
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 //extern MembraneTopology &  MembraneTopology_from_pose(core::pose:Pose const pose);
@@ -262,5 +273,10 @@ MembraneTopology & nonconst_MembraneTopology_from_pose( pose::Pose & pose );
 
 } // ns scoring
 } // ns core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_MembraneTopology )
+#endif // SERIALIZATION
+
 
 #endif

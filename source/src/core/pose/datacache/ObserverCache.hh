@@ -28,6 +28,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace datacache {
@@ -74,10 +80,6 @@ public: // construct/destruct
 
 
 private: // disallowed constructors
-
-
-	/// @brief default constructor
-	ObserverCache();
 
 
 	/// @brief copy constructor
@@ -133,7 +135,6 @@ public: // observer interface
 	///  exists in the slot
 	bool is_attached( Size const slot ) const;
 
-
 	/// @brief attach all stored observers to the Pose
 	void attach();
 
@@ -154,6 +155,9 @@ public: // observer interface
 
 private: // data
 
+	/// @brief Which of the cacheable observers are attached to the pose, and which
+	/// are just hanging out.
+	utility::vector1< bool > attached_;
 
 	/// @brief The Pose being watched by the observers in this cache.
 	/// @remarks This must be a pointer and not an owning pointer in case
@@ -161,12 +165,37 @@ private: // data
 	Pose * pose_;
 
 
+#ifdef    SERIALIZATION
+protected:
+
+	/// @brief default constructor -- used only during deserialization
+	ObserverCache();
+	friend class cereal::access;
+
+public:
+	/// @brief Attach the ObserverCache to a particular Pose; this is not the preferred
+	/// method of attaching observers to Poses -- the preferred method is to set it the
+	/// particular pose in the constructor.  It is, however, necessary for deserialization.
+	/// It may be called only once and it requires that the (private) default constructor
+	/// have been used to instantiate the class in the first place.
+	void attach_pose( Pose & pose );
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace datacache
 } // namespace pose
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_datacache_ObserverCache )
+#endif // SERIALIZATION
 
 
 #endif /* INCLUDED_core_pose_datacache_ObserverCache_HH */

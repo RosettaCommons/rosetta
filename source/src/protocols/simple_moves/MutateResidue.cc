@@ -135,11 +135,11 @@ void MutateResidue::apply( Pose & pose ) {
 			<< pose.residue( rosetta_target ).name3() << " to " << res_name_ <<" ." << std::endl;
 	}
 
-	chemical::ResidueTypeSet const& restype_set( pose.residue( rosetta_target ).residue_type_set() );
+	chemical::ResidueTypeSetCOP restype_set( pose.residue( rosetta_target ).residue_type_set() );
 
 	// Create the new residue and replace it
 	conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
-		restype_set.name_map(res_name_), pose.residue( rosetta_target ),
+		restype_set->name_map(res_name_), pose.residue( rosetta_target ),
 		pose.conformation());
 	// Make sure we retain as much info from the previous res as possible
 	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue( rosetta_target ),

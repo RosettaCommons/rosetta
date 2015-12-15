@@ -31,12 +31,10 @@
 
 // Package headers
 #include <core/id/AtomID.hh>
-
 #include <core/types.hh>
 
 // Utility headers
-
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 #ifdef WIN32
@@ -294,7 +292,6 @@ public: // Methods
 	}
 
 public: // Properties
-
 
 	/// @brief Size
 	inline

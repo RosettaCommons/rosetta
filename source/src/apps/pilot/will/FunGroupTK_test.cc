@@ -117,8 +117,8 @@ void run_hh(std::string fname) {
   using namespace scoring;
 
   Pose gln,his;
-  make_pose_from_sequence(gln,"Q","fa_standard",false);
-  make_pose_from_sequence(his,"H","fa_standard",false);
+  make_pose_from_sequence(gln,"Q",core::chemical::FA_STANDARD,false);
+  make_pose_from_sequence(his,"H",core::chemical::FA_STANDARD,false);
   if(gln.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(gln,1);
   if(gln.residue(1).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(gln,1);
   if(his.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(his,1);
@@ -223,8 +223,8 @@ void run_hd(std::string fname) {
   using namespace scoring;
 
   Pose asp,his;
-  make_pose_from_sequence(asp,"D","fa_standard",false);
-  make_pose_from_sequence(his,"H","fa_standard",false);
+  make_pose_from_sequence(asp,"D",core::chemical::FA_STANDARD,false);
+  make_pose_from_sequence(his,"H",core::chemical::FA_STANDARD,false);
   if(asp.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(asp,1);
   if(asp.residue(1).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(asp,1);
   if(his.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(his,1);

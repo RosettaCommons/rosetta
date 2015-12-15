@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 		// declare variables
 		Pose test_pose;
 		//std::string sequence = "ASDFG";
-		//core::pose::make_pose_from_sequence(test_pose, sequence, "fa_standard", true);
+		//core::pose::make_pose_from_sequence(test_pose, sequence, core::chemical::FA_STANDARD, true);
 		// import a test pose
 		pose_from_pdb(test_pose, "/home/boon/data/test.pdb");
 

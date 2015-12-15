@@ -32,6 +32,11 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
@@ -134,6 +139,12 @@ private:
 	utility::vector1< std::string > loopres_atom_names_;
 	utility::vector1< std::string > loopres_base_atom_names_;
 	utility::vector1< std::string > loopres_base2_atom_names_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -166,6 +177,12 @@ private:
 	bool resA_;
 
 	core::Size cst_block_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -298,6 +315,12 @@ private:
 
 	utility::vector1< CstResInteractions > cstres_interactions_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /// @brief class to process an enzdes loops file
@@ -333,12 +356,23 @@ private:
 	utility::vector1< EnzdesLoopInfoOP > enzloops_;
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //class EnzdesLoopsFile
 
 
 } //match_enzdes_util
 } //toolbox
 } //protocols
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_EnzdesLoopsFile )
+#endif // SERIALIZATION
 
 
 #endif //

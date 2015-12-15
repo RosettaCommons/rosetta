@@ -14,19 +14,27 @@
 
 
 //////////////////////////////////
+// Unit headers
 #include <protocols/stepwise/sampler/protein/util.hh>
+
+// Package headers
 #include <protocols/stepwise/sampler/input_streams/InputStreamStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/protein/ProteinBetaAntiParallelStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/protein/ProteinFragmentStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/protein/ProteinMainChainStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/NoOpStepWiseSampler.hh>
+#include <protocols/stepwise/sampler/StepWiseSamplerSizedComb.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/file_util.hh>
 #include <protocols/stepwise/modeler/align/StepWiseLegacyClustererSilentBased.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/protein/StepWiseProteinBackboneSampler.hh>
 #include <protocols/stepwise/setup/util.hh>
-#include <utility/io/ozstream.hh>
+
+// Protocols headers
+#include <protocols/jd2/util.hh>
+
+// Core headers
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/id/NamedAtomID.hh>
@@ -42,16 +50,23 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <protocols/stepwise/sampler/StepWiseSamplerSizedComb.hh>
+
+// Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
-#include <numeric/xyz.functions.hh>
-#include <ObjexxFCL/string.functions.hh>
+#include <basic/Tracer.hh>
+
+// utility headers
+#include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 
-#include <basic/Tracer.hh>
+// numeric headers
+#include <numeric/xyz.functions.hh>
+
+// ObjexxFCL headers
+#include <ObjexxFCL/string.functions.hh>
 
 using namespace core;
 
@@ -206,7 +221,7 @@ generate_beta_database_test(){
 	pose::remove_variant_type_from_pose_residue( scratch_pose, UPPER_TERMINUS_VARIANT, 2 );
 
 	// main loop
-	utility::vector1< std::string > in_files = setup::load_s_and_l();
+	utility::vector1< utility::file::FileName > in_files = jd2::input_pdb_files_from_command_line();
 
 	SilentFileDataOP silent_file_data( new SilentFileData );
 	std::string const silent_file( option[ out::file::silent ]() );
@@ -239,7 +254,6 @@ generate_beta_database_test(){
 			if ( hbond.don_hatm_is_protein_backbone() && hbond.acc_atm_is_protein_backbone() ) {
 				donor_to_acceptor_bb_hb[ std::make_pair( don_res_num, acc_res_num ) ] = true;
 			}
-
 		}
 
 		for ( Size i = 1; i <= pose.total_residue(); i++ ) {

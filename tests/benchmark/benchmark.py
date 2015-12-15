@@ -94,6 +94,8 @@ def main(args):
 
     config = Config.items('config')
     config = dict(config, cpu_count=Options.jobs, memory=memory)
+    if 'prefix' not in config: config['prefix'] = os.path.abspath('./results/prefix')
+
     print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True), Platform))
 
     if Options.compare: print('Comparing tests {} with suffixes: {}'.format(Options.args, Options.compare) )
@@ -127,7 +129,7 @@ def main(args):
 
             test = test_name
 
-        print 'Loading test from: ', file_name
+        print 'Loading test from:', file_name
         test_suite = imp.load_source('test_suite', file_name)
 
         if Options.compare:

@@ -330,6 +330,12 @@ private:
 	/// STUB Info for jumps
 	bool bKeepStubInResidue_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // Edge
 
 

@@ -94,13 +94,13 @@ int main(int argc, char *argv[]) {
 
   Pose hmd,hme,dm1,dm2,em1,em2,cys,p;
   pose_from_pdb(p,option[OptionKeys::in::file::s]()[1]);
-  make_pose_from_sequence(cys,"C[CYS_M]" ,"fa_standard",false); remove_termini(cys); to_canonical_sc_frame(cys);
-  make_pose_from_sequence(dm1,"D[ASP_M1]","fa_standard",false); remove_termini(dm1); to_canonical_sc_frame(dm1);
-  make_pose_from_sequence(dm2,"D[ASP_M2]","fa_standard",false); remove_termini(dm2); to_canonical_sc_frame(dm2);
-  make_pose_from_sequence(em1,"E[GLU_M1]","fa_standard",false); remove_termini(em1); to_canonical_sc_frame(em1);
-  make_pose_from_sequence(em2,"E[GLU_M2]","fa_standard",false); remove_termini(em2); to_canonical_sc_frame(em2);
-  make_pose_from_sequence(hmd,"H[HIS_MD]","fa_standard",false); remove_termini(hmd); to_canonical_sc_frame(hmd);
-  make_pose_from_sequence(hme,"H[HIS_ME]","fa_standard",false); remove_termini(hme); to_canonical_sc_frame(hme);
+  make_pose_from_sequence(cys,"C[CYS_M]" ,core::chemical::FA_STANDARD,false); remove_termini(cys); to_canonical_sc_frame(cys);
+  make_pose_from_sequence(dm1,"D[ASP_M1]",core::chemical::FA_STANDARD,false); remove_termini(dm1); to_canonical_sc_frame(dm1);
+  make_pose_from_sequence(dm2,"D[ASP_M2]",core::chemical::FA_STANDARD,false); remove_termini(dm2); to_canonical_sc_frame(dm2);
+  make_pose_from_sequence(em1,"E[GLU_M1]",core::chemical::FA_STANDARD,false); remove_termini(em1); to_canonical_sc_frame(em1);
+  make_pose_from_sequence(em2,"E[GLU_M2]",core::chemical::FA_STANDARD,false); remove_termini(em2); to_canonical_sc_frame(em2);
+  make_pose_from_sequence(hmd,"H[HIS_MD]",core::chemical::FA_STANDARD,false); remove_termini(hmd); to_canonical_sc_frame(hmd);
+  make_pose_from_sequence(hme,"H[HIS_ME]",core::chemical::FA_STANDARD,false); remove_termini(hme); to_canonical_sc_frame(hme);
 
   cout << std::setprecision(8) << std::fixed;
 

@@ -51,6 +51,11 @@
 // Boost headers
 #include <boost/unordered_map.hpp>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace devel {
 namespace znhash {
 
@@ -266,6 +271,12 @@ private:
 	bool fail_on_absent_coordinators_;
 	utility::vector1< core::Size > resinds_;
 	utility::vector1< core::id::AtomID > atomids_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class InsertZincCoordinationRemarkLines : public protocols::moves::Mover
@@ -333,6 +344,12 @@ private:
 
 	protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator nhbcalc_;
 	FindZnCoordinatingResidues finder_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -360,5 +377,10 @@ public:
 
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( devel_znhash_SymmZnMoversAndTaskOps )
+#endif // SERIALIZATION
+
 
 #endif

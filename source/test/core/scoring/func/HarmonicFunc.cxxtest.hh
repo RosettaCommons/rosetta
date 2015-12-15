@@ -20,6 +20,12 @@
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/types.hh>
 
+#ifdef	SERIALIZATION
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif
+
 //Auto Headers
 
 
@@ -85,4 +91,31 @@ public:
 		//TR.flush();
 
 	} // test_harmonic_func
+
+	void test_serialize_HarmonicFunc() {
+		TS_ASSERT( true ); // for non-serialization builds
+#ifdef SERIALIZATION
+		using namespace core::scoring::func;
+
+		FuncOP instance( new HarmonicFunc( 5.16, 1.5 ) ); // serialize this through a pointer to the base class
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( instance );
+		}
+
+		FuncOP instance2; // deserialize also through a pointer to the base class
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( instance2 );
+		}
+
+		// make sure the deserialized base class pointer points to a HarmonicFunc
+		TS_ASSERT( utility::pointer::dynamic_pointer_cast< HarmonicFunc > ( instance2 ));
+		TS_ASSERT( *instance == *instance2 );
+#endif // SERIALIZATION
+	}
+
 };

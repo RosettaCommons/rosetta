@@ -325,7 +325,7 @@ void ThreadingMover::apply(
 		if ( query_loops->size() > 0 ) {
 			// switch to centroid ResidueTypeSet for loop remodeling
 			std::string const orig_rsd_set_name(
-				query_pose.residue_type(1).residue_type_set().name()
+				query_pose.residue_type(1).residue_type_set()->name()
 			);
 
 			using core::util::switch_to_residue_type_set;

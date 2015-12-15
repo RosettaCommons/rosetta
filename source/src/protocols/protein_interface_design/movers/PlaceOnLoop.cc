@@ -214,8 +214,8 @@ PlaceOnLoop::loop_length( core::pose::Pose & pose )
 		using namespace core::chemical;
 		using namespace core::conformation;
 
-		ResidueTypeSet const & residue_set( pose.residue( 1 ).residue_type_set() ); // residuetypeset is noncopyable
-		ResidueCOP new_res = ResidueFactory::create_residue( residue_set.name_map( name_from_aa( aa_from_oneletter_code( 'A' ) ) ) );
+		ResidueTypeSetCOP residue_set( pose.residue( 1 ).residue_type_set() ); // residuetypeset is noncopyable
+		ResidueCOP new_res = ResidueFactory::create_residue( residue_set->name_map( name_from_aa( aa_from_oneletter_code( 'A' ) ) ) );
 		for ( core::Size leng(1); leng<=(core::Size) delta; ++leng ) {
 			pose.conformation().safely_append_polymer_residue_after_seqpos( *new_res, loop_begin_ + 1, true/*build_ideal_geometry*/ );
 			curr_loop_end_++;

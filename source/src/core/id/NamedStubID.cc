@@ -23,6 +23,12 @@
 #include <sstream>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace id {
 
@@ -107,3 +113,28 @@ operator >>( std::istream & is, NamedStubID& s )
 
 } // namespace id
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::id::NamedStubID::save( Archive & arc ) const {
+	arc( CEREAL_NVP( center_ ) ); // class core::id::NamedAtomID
+	arc( CEREAL_NVP( atom1 ) ); // class core::id::NamedAtomID
+	arc( CEREAL_NVP( atom2 ) ); // class core::id::NamedAtomID
+	arc( CEREAL_NVP( atom3 ) ); // class core::id::NamedAtomID
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::id::NamedStubID::load( Archive & arc ) {
+	arc( center_ ); // class core::id::NamedAtomID
+	arc( atom1 ); // class core::id::NamedAtomID
+	arc( atom2 ); // class core::id::NamedAtomID
+	arc( atom3 ); // class core::id::NamedAtomID
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::id::NamedStubID );
+#endif // SERIALIZATION

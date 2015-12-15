@@ -96,7 +96,7 @@ public:
 		xyz_move->apply( *pose_ );
 
 		// Check result
-		TS_ASSERT( xyz_trans == pose_->conformation().membrane_info()->membrane_center() );
+		TS_ASSERT( xyz_trans == pose_->conformation().membrane_info()->membrane_center( pose_->conformation() ) );
 
 	}
 
@@ -108,14 +108,14 @@ public:
 		using namespace protocols::membrane;
 
 		// Grab current normal
-		Vector current_normal( pose_->conformation().membrane_info()->membrane_normal() );
+		Vector current_normal( pose_->conformation().membrane_info()->membrane_normal( pose_->conformation() ) );
 
 		// Simple rotation 1
 		Vector rot_1( 0, 1, 0 );
 		SetMembraneNormalMoverOP first_move( new SetMembraneNormalMover( rot_1 ) );
 		first_move->apply( *pose_ );
-		TS_ASSERT_DELTA( angle_of( current_normal, pose_->conformation().membrane_info()->membrane_normal() ), 1.57, 0.001);
-		TS_ASSERT( position_equal_within_delta( rot_1, pose_->conformation().membrane_info()->membrane_normal(), 0.0001 ) );
+		TS_ASSERT_DELTA( angle_of( current_normal, pose_->conformation().membrane_info()->membrane_normal( pose_->conformation() ) ), 1.57, 0.001);
+		TS_ASSERT( position_equal_within_delta( rot_1, pose_->conformation().membrane_info()->membrane_normal( pose_->conformation() ), 0.0001 ) );
 
 	}
 
@@ -135,8 +135,8 @@ public:
 		rt->apply( *pose_ );
 
 		// Check the structure was moved to the correct position
-		TS_ASSERT( position_equal_within_delta( new_center, pose_->conformation().membrane_info()->membrane_center(), 0.0001 ) );
-		TS_ASSERT( position_equal_within_delta( new_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.0001 ) );
+		TS_ASSERT( position_equal_within_delta( new_center, pose_->conformation().membrane_info()->membrane_center( pose_->conformation() ), 0.0001 ) );
+		TS_ASSERT( position_equal_within_delta( new_normal, pose_->conformation().membrane_info()->membrane_normal( pose_->conformation() ), 0.0001 ) );
 	}
 
 	/// @brief Position equal within delta (helper method)

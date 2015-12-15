@@ -31,6 +31,11 @@
 #include <list>
 #include <utility>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace io {
 namespace pdb {
@@ -360,11 +365,22 @@ private: // data for EXPDTA Record
 	ExperimentalTechniques experimental_techniques_;
 
 	std::string experimental_technique_in_progress_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace pdb
 } // namespace io
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_io_pdb_HeaderInformation )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_core_io_pdb_HeaderInformation_HH

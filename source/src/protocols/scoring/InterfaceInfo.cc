@@ -35,6 +35,15 @@ using basic::Error;
 using basic::Warning;
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace scoring {
 
@@ -134,3 +143,35 @@ InterfaceInfo::closest_interface_residue( core::pose::Pose const & pose, core::S
 
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::scoring::InterfaceInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( calculated_ ) ); // _Bool
+	arc( CEREAL_NVP( num_jump_ ) ); // core::Size
+	arc( CEREAL_NVP( distance_ ) ); // core::Real
+	arc( CEREAL_NVP( rb_jump_ ) ); // utility::vector1_size
+	arc( CEREAL_NVP( interface_list_ ) ); // utility::vector1<InterfaceOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::scoring::InterfaceInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( calculated_ ); // _Bool
+	arc( num_jump_ ); // core::Size
+	arc( distance_ ); // core::Real
+	arc( rb_jump_ ); // utility::vector1_size
+	arc( interface_list_ ); // utility::vector1<InterfaceOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::scoring::InterfaceInfo );
+CEREAL_REGISTER_TYPE( protocols::scoring::InterfaceInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_scoring_InterfaceInfo )
+#endif // SERIALIZATION

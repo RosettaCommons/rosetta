@@ -23,6 +23,10 @@ namespace datacache {
 /// @brief templated class to make any data type compatible with ReferenceCounts and OPs.
 /// e.g., utility::pointer::owning_ptr< basic::datacache::DataMapObj< bool > > stop;
 /// You can then place such constructs on the basic::datacache::DataMap
+///
+/// This class can now be depricated with the conversion to the (non-intrusive)
+/// C++11 / boost shared_ptr system: arbitrary objects can now be put into smart
+/// pointers.
 template < class Ty >
 class DataMapObj : public utility::pointer::ReferenceCount {
 public:

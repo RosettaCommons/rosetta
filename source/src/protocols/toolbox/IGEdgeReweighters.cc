@@ -22,6 +22,16 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 
@@ -65,3 +75,57 @@ else return default_weight_;
 
 } //namespace toolbox
 } //namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::IGLigandDesignEdgeUpweighter::IGLigandDesignEdgeUpweighter() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::IGLigandDesignEdgeUpweighter::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pack::task::IGEdgeReweighter >( this ) );
+	arc( CEREAL_NVP( weight_factor_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::IGLigandDesignEdgeUpweighter::load( Archive & arc ) {
+	arc( cereal::base_class< core::pack::task::IGEdgeReweighter >( this ) );
+	arc( weight_factor_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::IGLigandDesignEdgeUpweighter );
+CEREAL_REGISTER_TYPE( protocols::toolbox::IGLigandDesignEdgeUpweighter )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::ResidueGroupIGEdgeUpweighter::ResidueGroupIGEdgeUpweighter() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::ResidueGroupIGEdgeUpweighter::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pack::task::IGEdgeReweighter >( this ) );
+	arc( CEREAL_NVP( weight_factor_ ) ); // core::Real
+	arc( CEREAL_NVP( group1_ ) ); // std::set<core::Size>
+	arc( CEREAL_NVP( group2_ ) ); // std::set<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::ResidueGroupIGEdgeUpweighter::load( Archive & arc ) {
+	arc( cereal::base_class< core::pack::task::IGEdgeReweighter >( this ) );
+	arc( weight_factor_ ); // core::Real
+	arc( group1_ ); // std::set<core::Size>
+	arc( group2_ ); // std::set<core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::ResidueGroupIGEdgeUpweighter );
+CEREAL_REGISTER_TYPE( protocols::toolbox::ResidueGroupIGEdgeUpweighter )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_IGEdgeReweighters )
+#endif // SERIALIZATION

@@ -20,6 +20,12 @@
 #include <core/scoring/methods/FreeDOF_Options.fwd.hh>
 #include <core/types.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace methods {
@@ -72,10 +78,21 @@ private:
 	core::Real pack_phosphate_penalty_;
 	core::Real free_side_chain_bonus_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } //methods
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_methods_FreeDOF_Options )
+#endif // SERIALIZATION
+
 
 #endif

@@ -15,6 +15,7 @@
 #define INCLUDED_devel_vardist_solaccess_VarSolDRotamerDots_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace devel {
 namespace vardist_solaccess {
@@ -26,6 +27,8 @@ typedef utility::pointer::shared_ptr< VarSolDRotamerDots const > VarSolDRotamerD
 class VarSolDistSasaCalculator;
 typedef utility::pointer::shared_ptr< VarSolDistSasaCalculator > VarSolDistSasaCalculatorOP;
 typedef utility::pointer::shared_ptr< VarSolDistSasaCalculator const > VarSolDistSasaCalculatorCOP;
+typedef utility::pointer::weak_ptr< VarSolDistSasaCalculator > VarSolDistSasaCalculatorAP;
+typedef utility::pointer::weak_ptr< VarSolDistSasaCalculator const > VarSolDistSasaCalculatorCAP;
 
 
 } // vardist_solaccess

@@ -39,6 +39,16 @@ using namespace core::pose::metrics;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols/toolbox/PoseMetricCalculators/PackstatCalculator" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -176,3 +186,37 @@ PackstatCalculator::recompute( Pose const & this_pose )
 } //namespace pose_metric_calculators
 } //namespace toolbox
 } //namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::PackstatCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( total_packstat_ ) ); // core::Real
+	arc( CEREAL_NVP( special_region_packstat_ ) ); // core::Real
+	arc( CEREAL_NVP( residue_packstat_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( oversample_ ) ); // core::Size
+	arc( CEREAL_NVP( remove_nonprotein_res_ ) ); // _Bool
+	arc( CEREAL_NVP( special_region_ ) ); // std::set<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::PackstatCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( total_packstat_ ); // core::Real
+	arc( special_region_packstat_ ); // core::Real
+	arc( residue_packstat_ ); // utility::vector1<core::Real>
+	arc( oversample_ ); // core::Size
+	arc( remove_nonprotein_res_ ); // _Bool
+	arc( special_region_ ); // std::set<core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::PackstatCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::PackstatCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_PackstatCalculator )
+#endif // SERIALIZATION

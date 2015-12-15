@@ -121,7 +121,7 @@ RandomPositionRotationMover::apply( Pose & pose ) {
 	}
 
 	// Compute random rotation
-	core::Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
+	core::Vector current_normal( pose.conformation().membrane_info()->membrane_normal(pose.conformation()) );
 	current_normal.normalize();
 	core::Real theta = 2*numeric::random::rg().uniform() * rot_mag_;
 
@@ -211,8 +211,9 @@ RandomPositionTranslationMover::apply( core::pose::Pose & pose ) {
 	}
 
 	// Compute new position based on random translation
-	Vector current_center( pose.conformation().membrane_info()->membrane_center() );
-	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
+	core::conformation::Conformation const & conf( pose.conformation() );
+	Vector current_center( conf.membrane_info()->membrane_center(conf) );
+	Vector current_normal( conf.membrane_info()->membrane_normal(conf) );
 	Vector delta_trans = 2*numeric::random::rg().uniform()-1 * trans_mag_ * current_normal;
 	Vector new_position = current_center + delta_trans;
 

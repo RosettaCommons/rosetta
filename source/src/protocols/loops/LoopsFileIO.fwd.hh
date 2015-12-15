@@ -22,7 +22,6 @@ namespace protocols {
 namespace loops {
 
 // Forward
-class ResidueIndexDescription;
 class LoopFromFileData;
 class LoopsFileIO;
 

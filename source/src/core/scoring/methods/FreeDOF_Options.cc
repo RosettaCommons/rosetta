@@ -21,6 +21,16 @@
 
 static basic::Tracer TR( "core.scoring.methods.FreeDOF_Options" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace methods {
@@ -76,3 +86,33 @@ FreeDOF_Options::show( std::ostream & out ) const
 } //methods
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::methods::FreeDOF_Options::save( Archive & arc ) const {
+	arc( CEREAL_NVP( free_suite_bonus_ ) ); // core::Real
+	arc( CEREAL_NVP( free_2HOprime_bonus_ ) ); // core::Real
+	arc( CEREAL_NVP( free_sugar_bonus_ ) ); // core::Real
+	arc( CEREAL_NVP( pack_phosphate_penalty_ ) ); // core::Real
+	arc( CEREAL_NVP( free_side_chain_bonus_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::methods::FreeDOF_Options::load( Archive & arc ) {
+	arc( free_suite_bonus_ ); // core::Real
+	arc( free_2HOprime_bonus_ ); // core::Real
+	arc( free_sugar_bonus_ ); // core::Real
+	arc( pack_phosphate_penalty_ ); // core::Real
+	arc( free_side_chain_bonus_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::methods::FreeDOF_Options );
+CEREAL_REGISTER_TYPE( core::scoring::methods::FreeDOF_Options )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_methods_FreeDOF_Options )
+#endif // SERIALIZATION

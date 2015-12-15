@@ -35,6 +35,16 @@
 //#include <core/id/SequenceMapping.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace constraints_additional {
 
@@ -88,6 +98,24 @@ ConstraintOP
 SequenceCouplingConstraint::clone() const {
 	return ConstraintOP( new SequenceCouplingConstraint( *this ) );
 }
+
+bool SequenceCouplingConstraint::operator == ( core::scoring::constraints::Constraint const & other ) const
+{
+	if ( !       same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( other ) ) return false;
+
+	SequenceCouplingConstraint const & other_downcast( static_cast< SequenceCouplingConstraint const & > ( other ) );
+	if ( seqpos1_ != other_downcast.seqpos1_ ) return false;
+	if ( seqpos2_ != other_downcast.seqpos2_ ) return false;
+	return sequence_coupling_ == other_downcast.sequence_coupling_ ||
+		( sequence_coupling_ && other_downcast.sequence_coupling_ && *sequence_coupling_ == *other_downcast.sequence_coupling_ );
+}
+
+bool SequenceCouplingConstraint::same_type_as_me( core::scoring::constraints::Constraint const & other ) const
+{
+	return dynamic_cast< SequenceCouplingConstraint const * > (&other);
+}
+
 
 /// @details one line definition "SequenceProfile resindex profilefilename" (profilefilename can also be set to "none" in the constraints file, and specified by -in::file::pssm)
 void
@@ -255,3 +283,31 @@ SequenceCouplingConstraint::fill_f1_f2(
 
 } // namespace constraints_additional
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::constraints_additional::SequenceCouplingConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( CEREAL_NVP( seqpos1_ ) ); // core::Size
+	arc( CEREAL_NVP( seqpos2_ ) ); // core::Size
+	arc( CEREAL_NVP( sequence_coupling_ ) ); // SequenceCouplingOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::constraints_additional::SequenceCouplingConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( seqpos1_ ); // core::Size
+	arc( seqpos2_ ); // core::Size
+	arc( sequence_coupling_ ); // SequenceCouplingOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::constraints_additional::SequenceCouplingConstraint );
+CEREAL_REGISTER_TYPE( protocols::constraints_additional::SequenceCouplingConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_constraints_additional_SequenceCouplingConstraint )
+#endif // SERIALIZATION

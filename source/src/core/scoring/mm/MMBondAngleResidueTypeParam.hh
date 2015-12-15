@@ -187,6 +187,12 @@ private:
 	// simultaneously, then calculate the theta0 value. Some additional instance variable data structures would need to
 	// be incorporated to store/lookup the information.
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace mm

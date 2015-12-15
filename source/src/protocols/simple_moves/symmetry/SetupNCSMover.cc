@@ -38,6 +38,16 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace simple_moves {
 namespace symmetry {
@@ -374,3 +384,34 @@ SetupNCSMover::get_name() const {
 } // symmetry
 } // moves
 } // protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::simple_moves::symmetry::NCSResMapping::NCSResMapping() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::simple_moves::symmetry::NCSResMapping::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( mapping_ ) ); // utility::vector1<utility::vector1<core::Size> >
+	arc( CEREAL_NVP( ngroups_ ) ); // core::Size
+	arc( CEREAL_NVP( nres_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::simple_moves::symmetry::NCSResMapping::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( mapping_ ); // utility::vector1<utility::vector1<core::Size> >
+	arc( ngroups_ ); // core::Size
+	arc( nres_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::simple_moves::symmetry::NCSResMapping );
+CEREAL_REGISTER_TYPE( protocols::simple_moves::symmetry::NCSResMapping )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_simple_moves_symmetry_SetupNCSMover )
+#endif // SERIALIZATION

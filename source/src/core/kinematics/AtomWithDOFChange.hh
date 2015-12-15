@@ -42,6 +42,12 @@ public:
 
 	id::AtomID atomid_;
 	bool   reached_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace kinematics

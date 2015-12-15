@@ -51,6 +51,16 @@ public:
 	bool incomplete() const;
 	void mark_incomplete();
 
+#ifdef    SERIALIZATION
+	template < class Archive >
+	void
+	save( Archive & arch ) const;
+
+	template < class Archive >
+	void
+	load( Archive & arch );
+#endif // SERIALIZATION
+
 private:
 	Size res_id_;
 	Size conn_id_;

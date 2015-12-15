@@ -183,7 +183,9 @@ sources = {
 	"jd2/parser" : [
 		"BluePrint",
 	],
-
+	#"jd3/pose_inputters" : [
+	#	"PDBPoseInputter",
+	#],
 	"jobdist" : [
 		"PlainSilentFileJobDistributor",
 	],

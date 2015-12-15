@@ -44,6 +44,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace flexpack {
 namespace rotamer_set {
@@ -418,11 +424,26 @@ private:
 	utility::vector1< utility::vector1< Size > > nrots_for_moltenres_bbconf_;
 	utility::vector1< utility::vector1< Size > > nrotoffset_for_moltenres_bbconf_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	FlexbbRotamerSets();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_flexpack_rotamer_set_FlexbbRotamerSets )
+#endif // SERIALIZATION
+
 
 #endif

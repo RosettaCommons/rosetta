@@ -33,6 +33,11 @@
 #include <basic/options/keys/sasa.OptionKeys.gen.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace metrics {
@@ -75,6 +80,12 @@ private:
 	vector1< core::Real > residue_sasa_sc_;
 	vector1< core::Real > residue_hsasa_sc_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -82,6 +93,11 @@ private:
 } // namespace metrics
 } // namespace pose
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_metrics_simple_calculators_SasaCalculator2 )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_core_pose_metrics_simple_calculators_SasaCalculator2_HH
 

@@ -53,6 +53,15 @@
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
 //Auto using namespaces
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+#endif // SERIALIZATION
+
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end
 
@@ -1348,3 +1357,30 @@ void output_packstat_pdb( core::pose::Pose & pose, std::ostream & out ) {
 } // namespace core
 
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::packstat::CavityBallCluster::save( Archive & arc ) const {
+	arc( CEREAL_NVP( center ) ); // numeric::xyzVector<core::Real>
+	arc( CEREAL_NVP( volume ) ); // core::Real
+	arc( CEREAL_NVP( surface_area ) ); // core::Real
+	arc( CEREAL_NVP( surface_accessibility ) ); // core::Real
+	arc( CEREAL_NVP( cavballs ) ); // utility::vector1<CavityBall>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::packstat::CavityBallCluster::load( Archive & arc ) {
+	arc( center ); // numeric::xyzVector<core::Real>
+	arc( volume ); // core::Real
+	arc( surface_area ); // core::Real
+	arc( surface_accessibility ); // core::Real
+	arc( cavballs ); // utility::vector1<CavityBall>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::packstat::CavityBallCluster );
+#endif // SERIALIZATION

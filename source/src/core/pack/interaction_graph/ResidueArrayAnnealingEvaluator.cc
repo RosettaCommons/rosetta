@@ -28,6 +28,7 @@
 #include <core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.hh>
 #include <core/scoring/annealing/ResidueArrayAnnealableEnergy.hh>
 
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>

@@ -25,6 +25,7 @@
 
 // Core Headers
 #include <core/kinematics/FoldTree.hh>
+#include <core/conformation/Residue.hh>
 
 //Basic/Utility/Numeric Headers
 #include <basic/Tracer.hh>

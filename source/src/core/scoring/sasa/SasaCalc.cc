@@ -24,6 +24,18 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.sasa.SasaCalc" );
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/id/AtomID_Map.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace sasa {
@@ -368,3 +380,69 @@ SasaCalc::calc_per_res_sasas(const pose::Pose & pose) {
 }
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::sasa::SasaCalc::save( Archive & arc ) const {
+	arc( CEREAL_NVP( method_type_ ) ); // enum core::scoring::sasa::SasaMethodEnum
+	arc( CEREAL_NVP( method_ ) ); // SasaMethodOP
+	arc( CEREAL_NVP( implicit_radii_set_ ) ); // enum core::scoring::sasa::SasaRadii
+	arc( CEREAL_NVP( explicit_radii_set_ ) ); // enum core::scoring::sasa::SasaRadii
+	arc( CEREAL_NVP( include_hydrogens_ ) ); // _Bool
+	arc( CEREAL_NVP( probe_radius_ ) ); // Real
+	arc( CEREAL_NVP( include_c_s_only_in_hsasa_ ) ); // _Bool
+	arc( CEREAL_NVP( exclude_polar_all_in_hsasa_ ) ); // _Bool
+	arc( CEREAL_NVP( polar_charge_cutoff_ ) ); // Real
+	arc( CEREAL_NVP( include_probe_radius_ ) ); // _Bool
+	arc( CEREAL_NVP( big_polar_h_ ) ); // _Bool
+	arc( CEREAL_NVP( atom_subset_ ) ); // id::AtomID_Map<_Bool>
+	arc( CEREAL_NVP( atom_sasa_ ) ); // id::AtomID_Map<Real>
+	arc( CEREAL_NVP( rsd_sasa_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( rsd_sasa_sc_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( rsd_hsasa_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( rsd_hsasa_sc_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( rel_hydrophobic_sasa_by_charge_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( total_sasa_ ) ); // Real
+	arc( CEREAL_NVP( total_sasa_sc_ ) ); // Real
+	arc( CEREAL_NVP( total_hsasa_ ) ); // Real
+	arc( CEREAL_NVP( total_hsasa_sc_ ) ); // Real
+	arc( CEREAL_NVP( total_rel_hsasa_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::sasa::SasaCalc::load( Archive & arc ) {
+	arc( method_type_ ); // enum core::scoring::sasa::SasaMethodEnum
+	arc( method_ ); // SasaMethodOP
+	arc( implicit_radii_set_ ); // enum core::scoring::sasa::SasaRadii
+	arc( explicit_radii_set_ ); // enum core::scoring::sasa::SasaRadii
+	arc( include_hydrogens_ ); // _Bool
+	arc( probe_radius_ ); // Real
+	arc( include_c_s_only_in_hsasa_ ); // _Bool
+	arc( exclude_polar_all_in_hsasa_ ); // _Bool
+	arc( polar_charge_cutoff_ ); // Real
+	arc( include_probe_radius_ ); // _Bool
+	arc( big_polar_h_ ); // _Bool
+	arc( atom_subset_ ); // id::AtomID_Map<_Bool>
+	arc( atom_sasa_ ); // id::AtomID_Map<Real>
+	arc( rsd_sasa_ ); // utility::vector1<Real>
+	arc( rsd_sasa_sc_ ); // utility::vector1<Real>
+	arc( rsd_hsasa_ ); // utility::vector1<Real>
+	arc( rsd_hsasa_sc_ ); // utility::vector1<Real>
+	arc( rel_hydrophobic_sasa_by_charge_ ); // utility::vector1<Real>
+	arc( total_sasa_ ); // Real
+	arc( total_sasa_sc_ ); // Real
+	arc( total_hsasa_ ); // Real
+	arc( total_hsasa_sc_ ); // Real
+	arc( total_rel_hsasa_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::sasa::SasaCalc );
+CEREAL_REGISTER_TYPE( core::scoring::sasa::SasaCalc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_sasa_SasaCalc )
+#endif // SERIALIZATION

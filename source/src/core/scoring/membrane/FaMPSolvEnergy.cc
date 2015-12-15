@@ -461,7 +461,7 @@ FaMPSolvEnergy::init( pose::Pose & pose ) const {
 			Vector const xyz( pose.residue( i ).xyz( j ) );
 
 			// Compute Standard Z Position
-			fa_z_position_[i][j] = pose.conformation().membrane_info()->atom_z_position( i, j );
+			fa_z_position_[i][j] = pose.conformation().membrane_info()->atom_z_position( pose.conformation(), i, j );
 
 			// Compute Fa Projection
 			fa_proj_[i][j] = compute_fa_proj( fa_z_position_[i][j], thickness, steepness );

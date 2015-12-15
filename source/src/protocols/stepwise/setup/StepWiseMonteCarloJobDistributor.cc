@@ -20,6 +20,7 @@
 #include <core/io/silent/util.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
+#include <ObjexxFCL/format.hh>
 
 static basic::Tracer TR( "protocols.stepwise.setup.StepWiseMonteCarloJobDistributor" );
 

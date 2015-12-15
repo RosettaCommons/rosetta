@@ -43,7 +43,7 @@ using core::Size;
 using core::Real;
 using core::chemical::num_canonical_aas;
 using core::chemical::ResidueType;
-using core::chemical::ResidueTypeSet;
+using core::chemical::ResidueTypeSetCOP;
 using core::conformation::Residue;
 using core::conformation::ResidueOP;
 using core::conformation::ResidueFactory;
@@ -98,16 +98,16 @@ RRComparerAutomorphicRMSD::measure_rotamer_recovery(
 		score = automorphic_rmsd( res1, res2, false /*superimpose*/ );
 		recovered = (score <= get_recovery_threshold() );
 	} else {
-		ResidueTypeSet const & res1_set( res1.residue_type_set() );
+		ResidueTypeSetCOP res1_set( res1.residue_type_set() );
 		ResidueType const & working_res1_type(
-			res1_set.get_residue_type_with_variant_added( res1.type(), core::chemical::VIRTUAL_BB ) );
+			res1_set->get_residue_type_with_variant_added( res1.type(), core::chemical::VIRTUAL_BB ) );
 		ResidueOP working_res1 = ResidueFactory::create_residue( working_res1_type );
 		copy_residue_coordinates_and_rebuild_missing_atoms(
 			res1, *working_res1, pose1.conformation() );
 
-		ResidueTypeSet const & res2_set( res2.residue_type_set() );
+		ResidueTypeSetCOP res2_set( res2.residue_type_set() );
 		ResidueType const & working_res2_type(
-			res2_set.get_residue_type_with_variant_added( res2.type(), core::chemical::VIRTUAL_BB ) );
+			res2_set->get_residue_type_with_variant_added( res2.type(), core::chemical::VIRTUAL_BB ) );
 		ResidueOP working_res2 = ResidueFactory::create_residue( working_res2_type );
 		copy_residue_coordinates_and_rebuild_missing_atoms(
 			res2, *working_res2, pose2.conformation() );

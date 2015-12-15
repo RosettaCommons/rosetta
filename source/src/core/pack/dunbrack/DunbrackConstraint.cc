@@ -28,6 +28,15 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace dunbrack {
@@ -76,6 +85,29 @@ scoring::constraints::ConstraintOP
 DunbrackConstraint::clone() const {
 	return scoring::constraints::ConstraintOP( new DunbrackConstraint( *this ) );
 }
+
+bool
+DunbrackConstraint::operator == ( Constraint const & other_cst ) const
+{
+	if ( !           same_type_as_me( other_cst ) ) return false;
+	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
+
+	DunbrackConstraint const & other( static_cast< DunbrackConstraint const & > (other_cst) );
+	if ( bonus_ != other.bonus_ ) return false;
+	if ( seqpos_ != other.seqpos_ ) return false;
+	if ( rot_vec_pos_ != other.rot_vec_pos_ ) return false;
+	if ( rot_bin_ != other.rot_bin_ ) return false;
+	if ( atom_ids_ != other.atom_ids_ ) return false;
+
+	return true;
+}
+
+bool
+DunbrackConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< DunbrackConstraint const * > (&other);
+}
+
 
 // Calculates a score for this constraint using XYZ_Func, and puts the
 // UNWEIGHTED score into emap. Although the current set of weights currently is
@@ -137,3 +169,35 @@ void DunbrackConstraint::read_def(
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::dunbrack::DunbrackConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( CEREAL_NVP( bonus_ ) ); // core::Real
+	arc( CEREAL_NVP( seqpos_ ) ); // core::Size
+	arc( CEREAL_NVP( rot_vec_pos_ ) ); // core::Size
+	arc( CEREAL_NVP( rot_bin_ ) ); // core::Size
+	arc( CEREAL_NVP( atom_ids_ ) ); // utility::vector1<AtomID>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::dunbrack::DunbrackConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( bonus_ ); // core::Real
+	arc( seqpos_ ); // core::Size
+	arc( rot_vec_pos_ ); // core::Size
+	arc( rot_bin_ ); // core::Size
+	arc( atom_ids_ ); // utility::vector1<AtomID>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::dunbrack::DunbrackConstraint );
+CEREAL_REGISTER_TYPE( core::pack::dunbrack::DunbrackConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_dunbrack_DunbrackConstraint )
+#endif // SERIALIZATION

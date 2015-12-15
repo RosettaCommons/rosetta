@@ -36,6 +36,17 @@
 
 using namespace core;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -118,3 +129,33 @@ HPatchCalculator::recompute( pose::Pose const & this_pose ) {
 } // toolbox
 } // protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::HPatchCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( total_hpatch_score_ ) ); // core::Real
+	arc( CEREAL_NVP( remove_nonprotein_res_ ) ); // _Bool
+	arc( CEREAL_NVP( patch_scores_ ) ); // std::map<Size, std::pair<core::Real, core::Real> >
+	arc( CEREAL_NVP( atoms_in_patches_ ) ); // std::map<Size, utility::vector1<core::id::AtomID> >
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::HPatchCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( total_hpatch_score_ ); // core::Real
+	arc( remove_nonprotein_res_ ); // _Bool
+	arc( patch_scores_ ); // std::map<Size, std::pair<core::Real, core::Real> >
+	arc( atoms_in_patches_ ); // std::map<Size, utility::vector1<core::id::AtomID> >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::HPatchCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::HPatchCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_HPatchCalculator )
+#endif // SERIALIZATION

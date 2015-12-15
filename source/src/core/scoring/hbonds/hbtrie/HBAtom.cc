@@ -23,6 +23,14 @@
 // Numceric Headers
 #include <numeric/xyzVector.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -75,3 +83,36 @@ std::ostream & operator << ( std::ostream & os, HBAtom const & atom )
 } // namespace scoring
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::hbonds::hbtrie::HBAtom::save( Archive & arc ) const {
+	arc( CEREAL_NVP( xyz_ ) ); // Vector
+	arc( CEREAL_NVP( base_xyz_ ) ); // Vector
+	arc( CEREAL_NVP( base2_xyz_ ) ); // Vector
+	arc( CEREAL_NVP( is_hydrogen_ ) ); // _Bool
+	arc( CEREAL_NVP( is_backbone_ ) ); // _Bool
+	arc( CEREAL_NVP( is_protein_ ) ); // _Bool
+	arc( CEREAL_NVP( is_dna_ ) ); // _Bool
+	arc( CEREAL_NVP( hb_chem_type_ ) ); // int
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::hbonds::hbtrie::HBAtom::load( Archive & arc ) {
+	arc( xyz_ ); // Vector
+	arc( base_xyz_ ); // Vector
+	arc( base2_xyz_ ); // Vector
+	arc( is_hydrogen_ ); // _Bool
+	arc( is_backbone_ ); // _Bool
+	arc( is_protein_ ); // _Bool
+	arc( is_dna_ ); // _Bool
+	arc( hb_chem_type_ ); // int
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::hbonds::hbtrie::HBAtom );
+#endif // SERIALIZATION

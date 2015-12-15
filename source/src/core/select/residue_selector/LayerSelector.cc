@@ -15,16 +15,18 @@
 #include <core/select/residue_selector/LayerSelector.hh>
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
-// Basic Headers
-#include <basic/datacache/DataMap.hh>
-
 // Package headers
+#include <core/select/residue_selector/util.hh>
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/select/util/SelectResiduesByLayer.hh>
 
+// Basic Headers
+#include <basic/datacache/DataMap.hh>
+
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
 #include <utility/assert.hh>
@@ -129,6 +131,26 @@ std::string
 LayerSelector::class_name() {
 	return "Layer";
 }
+
+void
+LayerSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "select_core",                    xs_boolean, "false" ));
+	attributes.push_back( XMLSchemaAttribute( "select_boundary",                xs_boolean, "false" ));
+	attributes.push_back( XMLSchemaAttribute( "select_surface",                 xs_boolean, "false" ));
+	attributes.push_back( XMLSchemaAttribute( "use_sidechain_neighbors",        xs_boolean, "true" ));
+	attributes.push_back( XMLSchemaAttribute( "ball_radius",                    xs_decimal ));
+	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_dist_midpoint",      xs_decimal ));
+	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_denominator",        xs_decimal ));
+	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_angle_shift_factor", xs_decimal ));
+	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_angle_exponent",     xs_decimal ));
+	attributes.push_back( XMLSchemaAttribute( "sc_neighbor_dist_exponent",      xs_decimal ));
+	attributes.push_back( XMLSchemaAttribute( "core_cutoff",                    xs_decimal ));
+	attributes.push_back( XMLSchemaAttribute( "surface_cutoff",                 xs_decimal ));
+	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+}
+
 
 /// @brief Set the layers that this selector will choose.
 ///
@@ -269,6 +291,11 @@ LayerSelectorCreator::create_residue_selector() const {
 std::string
 LayerSelectorCreator::keyname() const {
 	return LayerSelector::class_name();
+}
+
+void
+LayerSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
+	return LayerSelector::provide_selector_xsd( xsd );
 }
 
 } //namespace residue_selector

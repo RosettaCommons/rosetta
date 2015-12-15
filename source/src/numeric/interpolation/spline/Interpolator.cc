@@ -14,6 +14,14 @@
 
 #include <utility/tools/make_vector.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace numeric {
 namespace interpolation {
 namespace spline {
@@ -118,6 +126,64 @@ void Interpolator::deserialize(utility::json_spirit::mObject data)
 
 }
 
+bool Interpolator::operator == ( Interpolator const & other ) const
+{
+	if ( !       same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	if ( has_lb_function_   != other.has_lb_function_   ) return false;
+	if ( has_ub_function_   != other.has_ub_function_   ) return false;
+	if ( lb_cutoff_         != other.lb_cutoff_         ) return false;
+	if ( ub_cutoff_         != other.ub_cutoff_         ) return false;
+	if ( lb_slope_          != other.lb_slope_          ) return false;
+	if ( ub_slope_          != other.ub_slope_          ) return false;
+	if ( lb_intercept_      != other.lb_intercept_      ) return false;
+	if ( ub_intercept_      != other.ub_intercept_      ) return false;
+
+	return true;
+}
+
+bool Interpolator::same_type_as_me( Interpolator const & ) const
+{
+	return true;
+}
+
 }
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+numeric::interpolation::spline::Interpolator::save( Archive & arc ) const {
+	arc( CEREAL_NVP( has_lb_function_ ) ); // _Bool
+	arc( CEREAL_NVP( has_ub_function_ ) ); // _Bool
+	arc( CEREAL_NVP( lb_cutoff_ ) ); // Real
+	arc( CEREAL_NVP( ub_cutoff_ ) ); // Real
+	arc( CEREAL_NVP( lb_slope_ ) ); // Real
+	arc( CEREAL_NVP( ub_slope_ ) ); // Real
+	arc( CEREAL_NVP( lb_intercept_ ) ); // Real
+	arc( CEREAL_NVP( ub_intercept_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+numeric::interpolation::spline::Interpolator::load( Archive & arc ) {
+	arc( has_lb_function_ ); // _Bool
+	arc( has_ub_function_ ); // _Bool
+	arc( lb_cutoff_ ); // Real
+	arc( ub_cutoff_ ); // Real
+	arc( lb_slope_ ); // Real
+	arc( ub_slope_ ); // Real
+	arc( lb_intercept_ ); // Real
+	arc( ub_intercept_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( numeric::interpolation::spline::Interpolator );
+CEREAL_REGISTER_TYPE( numeric::interpolation::spline::Interpolator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( numeric_interpolation_spline_Interpolator )
+#endif // SERIALIZATION

@@ -199,7 +199,7 @@ main( int argc, char * argv [] )
 		std::string resid(option[ OptionKeys::pocket_grid::central_relax_pdb_num ]);
 
 
-		std::vector< conformation::ResidueOP > tmpresidues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
+		std::vector< conformation::ResidueCOP > tmpresidues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
 		if ( tmpresidues.size() == 0 ) {
 			std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
 			exit(1);
@@ -246,7 +246,7 @@ main( int argc, char * argv [] )
 			outpdb << tag.str() << ".pdb";
 			rotated_pose.dump_pdb(outpdb.str());
 
-			std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(rotated_pose, resid);
+			std::vector< conformation::ResidueCOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(rotated_pose, resid);
 			protocols::pockets::PocketGrid pg( residues );
 
 

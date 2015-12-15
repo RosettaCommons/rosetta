@@ -168,7 +168,8 @@ JobDistributor::JobDistributor() :
 	init_jd();
 }
 
-JobDistributor::JobDistributor(bool empty) :
+JobDistributor::JobDistributor(bool empty)
+:
 	// job_inputter_( JobDistributorFactory::create_job_inputter() ),
 	// non-NULL starting state for this pointer; this makes calls to the
 	// JobDistributor safe even when not inside go() (of course you will get a
@@ -204,8 +205,7 @@ void JobDistributor::init_jd()
 		tr.Debug << "batches present... " << std::endl;
 		current_batch_id_ = 1;
 		job_inputter_ = JobInputterOP( new BatchJobInputter(batches_[1]) );
-	} else {
-		//no batches...
+	} else { //no batches...
 		try{
 			job_inputter_ = JobDistributorFactory::create_job_inputter();
 		} catch (utility::excn::EXCN_Base & excn) {
@@ -220,20 +220,8 @@ void JobDistributor::init_jd()
 		}
 	}
 
-	// get jobs
-	try {
-		jobs_ = JobsContainerOP( new JobsContainer ); //Create the jobs container object
-		job_inputter_->fill_jobs(*jobs_);
-	} catch (utility::excn::EXCN_Base & excn) {
-		basic::Error()
-			<< "ERROR: Exception caught by JobDistributor while trying to fill the input jobs with JobInputter of type type '"
-			<< JobInputter::job_inputter_input_source_to_string(
-			job_inputter_->input_source())
-			<< "'" << std::endl;
-		basic::Error()
-			<< excn << std::endl;
-		utility_exit();
-	}
+
+	get_job_list_from_job_inputter();
 
 // have to initialize these AFTER BatchJobInputter->fill_jobs since a new batch might change options
 	job_outputter_ = JobDistributorFactory::create_job_outputter();
@@ -254,11 +242,7 @@ void JobDistributor::populate_batch_list_from_cmd()
 /// @details restart job-distribution from beginning -- useful if you need a second pass over decoys...
 void JobDistributor::restart()
 {
-	jobs_->clear();
-	current_job_id_ = 0;
-	last_completed_job_ = 0;
-	current_job_ = JD2_BOGUS_JOB->copy_without_output();
-	current_batch_id_ = 0;
+	reset_job_state();
 	init_jd();
 }
 
@@ -278,6 +262,25 @@ void JobDistributor::go(protocols::moves::MoverOP mover, JobOutputterOP jo)
 	job_outputter_ = jo;
 	go(mover);
 }
+
+/// @brief invokes go, after setting JobInputter
+void
+JobDistributor::go( protocols::moves::MoverOP mover, JobInputterOP ji )
+{
+	set_job_inputter( ji );
+	go( mover );
+}
+
+/// @brief invokes go, after setting JobInputter and JobOutputter
+void
+JobDistributor::go( protocols::moves::MoverOP mover, JobInputterOP ji, JobOutputterOP jo )
+{
+
+	set_job_inputter( ji );
+	job_outputter_ = jo;
+	go( mover );
+}
+
 
 void JobDistributor::go_main(protocols::moves::MoverOP mover)
 {
@@ -893,6 +896,15 @@ JobInputterOP JobDistributor::job_inputter() const
 	return job_inputter_;
 }
 
+void
+JobDistributor::set_job_inputter( JobInputterOP new_job_inputter )
+{
+	job_inputter_ = new_job_inputter;
+	reset_job_state();
+	get_job_list_from_job_inputter();
+}
+
+
 void JobDistributor::mpi_finalize(bool)
 {
 	//dummy default implementation
@@ -1090,6 +1102,31 @@ void JobDistributor::remove_system_signal_handler()
 #endif
 #endif
 }
+
+void JobDistributor::reset_job_state() {
+	jobs_->clear();
+	current_job_id_ = 0;
+	last_completed_job_ = 0;
+	current_job_ = JD2_BOGUS_JOB->copy_without_output();
+	current_batch_id_ = 0;
+}
+
+void JobDistributor::get_job_list_from_job_inputter() {
+	// get jobs
+	try {
+		jobs_ = JobsContainerOP( new JobsContainer ); //Create the jobs container object
+		job_inputter_->fill_jobs(*jobs_);
+	} catch (utility::excn::EXCN_Base & excn) {
+		basic::Error()
+			<< "ERROR: Exception caught by JobDistributor while trying to fill the input jobs with JobInputter of type type '"
+			<< JobInputter::job_inputter_input_source_to_string( job_inputter_->input_source() )
+			<< "'" << std::endl;
+		basic::Error()
+			<< excn << std::endl;
+		utility_exit();
+	}
+}
+
 
 } //jd2
 } //protocols

@@ -74,6 +74,16 @@
 #include <vector>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -88,10 +98,36 @@ KofNConstraint::KofNConstraint( core::Size K /*=0*/ ) : MultiConstraint() {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
-KofNConstraint::KofNConstraint(  ConstraintCOPs & cst_in , core::Size K /*=0*/  ) : MultiConstraint( cst_in ) {
+KofNConstraint::KofNConstraint(
+	ConstraintCOPs const & cst_in,
+	core::Size K /*=0*/
+) :
+	MultiConstraint( cst_in )
+{
 	K_ = K;
 	init_cst_score_types();
-	debug_assert ( member_constraints().size() > 0 );
+	assert( member_constraints().size() > 0 );
+}
+
+///
+void
+KofNConstraint::setK( core::Size K ) {
+	K_ = K;
+}
+
+core::Size
+KofNConstraint::getK() const {
+	return K_;
+}
+
+///
+ConstraintOP KofNConstraint::clone() const {
+	return ConstraintOP( new KofNConstraint( cloned_member_constraints(), K_ ) );
+}
+
+MultiConstraintOP KofNConstraint::empty_clone() const {
+	debug_assert( member_constraints().size() > 0 );
+	return MultiConstraintOP( new KofNConstraint );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,6 +143,11 @@ KofNConstraint::init_cst_score_types()
 	cst_score_types_.push_back(backbone_stub_constraint);
 	cst_score_types_.push_back(backbone_stub_linear_constraint);
 }
+
+std::string KofNConstraint::type() const {
+	return "KofNConstraint";
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief ScoreFunction, scores all member constraints; reports the lowest k
@@ -177,7 +218,7 @@ KofNConstraint::calculate_total_cst_score( EnergyMap const & weights, EnergyMap 
 ConstraintOP
 KofNConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const {
 	ConstraintCOPs new_csts;
-	for ( ConstraintCOPs::const_iterator cst_it = member_constraints_.begin(); cst_it != member_constraints_.end(); ++cst_it ) {
+	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); ++cst_it ) {
 		ConstraintOP new_cst = (*cst_it)->remap_resid( seqmap );
 		if ( new_cst ) new_csts.push_back( new_cst );
 	}
@@ -251,6 +292,23 @@ KofNConstraint::read_def( std::istream& data, core::pose::Pose const& pose,func:
 	std::cout << "Read K of N constraints! K = " << K_ << " N = " << member_constraints().size() << std::endl;
 }
 
+bool KofNConstraint::operator == ( Constraint const & rhs ) const
+{
+	if ( ! MultiConstraint::operator == ( rhs ) ) return false;
+
+	KofNConstraint const & rhs_kofn( static_cast< KofNConstraint const & > ( rhs ));
+	if ( cst_score_types_ != rhs_kofn.cst_score_types_ ) return false;
+	if ( K_ != rhs_kofn.K_ ) return false;
+
+	return true;
+}
+
+bool KofNConstraint::same_type_as_me( Constraint const & rhs ) const
+{
+	return dynamic_cast< KofNConstraint const * > ( &rhs );
+}
+
+
 // void
 // KofNConstraint::read_def(
 //  std::istream& data,
@@ -298,3 +356,35 @@ KofNConstraint::read_def( std::istream& data, core::pose::Pose const& pose,func:
 } //constraints
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::KofNConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< MultiConstraint >( this ) );
+	arc( CEREAL_NVP( active_constraints_ ) ); // utility::vector1<ConstraintCOP>
+	arc( CEREAL_NVP( cutoff_cst_score_ ) ); // core::Real
+	arc( CEREAL_NVP( cst_score_types_ ) ); // ScoreTypes
+	arc( CEREAL_NVP( K_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::KofNConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< MultiConstraint >( this ) );
+	utility::vector1< std::shared_ptr< core::scoring::constraints::Constraint > > local_active_constraints;
+	arc( local_active_constraints ); // utility::vector1<ConstraintCOP>
+	active_constraints_ = local_active_constraints; // copy the non-const pointer(s) into the const pointer(s)
+	arc( cutoff_cst_score_ ); // core::Real
+	arc( cst_score_types_ ); // ScoreTypes
+	arc( K_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::KofNConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::KofNConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_KofNConstraint )
+#endif // SERIALIZATION

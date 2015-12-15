@@ -97,8 +97,8 @@ public:
 		rt->apply( *pose_ );
 
 		// Check the structure was moved to the correct position
-		TS_ASSERT( position_equal_within_delta( new_center, pose_->conformation().membrane_info()->membrane_center(), 0.0001 ) );
-		TS_ASSERT( position_equal_within_delta( new_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.0001 ) );
+		TS_ASSERT( position_equal_within_delta( new_center, pose_->conformation().membrane_info()->membrane_center( pose_->conformation() ), 0.0001 ) );
+		TS_ASSERT( position_equal_within_delta( new_normal, pose_->conformation().membrane_info()->membrane_normal( pose_->conformation() ), 0.0001 ) );
 	}
 
 	/// @brief Position equal within delta (helper method)

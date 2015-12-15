@@ -30,6 +30,15 @@
 
 /// #define APL_TEMP_DEBUG
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -883,3 +892,72 @@ ResiduePairNeighborList::initialize_from_residues(
 
 }
 }
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::SmallAtNb::SmallAtNb() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::SmallAtNb::save( Archive & arc ) const {
+	arc( CEREAL_NVP( atomno1_ ) ); // Size
+	arc( CEREAL_NVP( atomno2_ ) ); // Size
+	arc( CEREAL_NVP( weight_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::SmallAtNb::load( Archive & arc ) {
+	arc( atomno1_ ); // Size
+	arc( atomno2_ ); // Size
+	arc( weight_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::SmallAtNb );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::ResidueNblistData::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( atom_neighbors_ ) ); // utility::vector1<SmallAtNb>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::ResidueNblistData::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( atom_neighbors_ ); // utility::vector1<SmallAtNb>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::ResidueNblistData );
+CEREAL_REGISTER_TYPE( core::scoring::ResidueNblistData )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::ResiduePairNeighborList::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( atom_neighbors_ ) ); // utility::vector1<SmallAtNb>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::ResiduePairNeighborList::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( atom_neighbors_ ); // utility::vector1<SmallAtNb>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::ResiduePairNeighborList );
+CEREAL_REGISTER_TYPE( core::scoring::ResiduePairNeighborList )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_ResidueNeighborList )
+#endif // SERIALIZATION
+

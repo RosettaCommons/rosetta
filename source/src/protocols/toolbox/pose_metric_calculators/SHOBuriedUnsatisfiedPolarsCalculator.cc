@@ -1,3 +1,6 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
@@ -27,6 +30,19 @@
 #include <map>
 #include <fstream>
 
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
 
 namespace protocols {
 namespace toolbox {
@@ -604,3 +620,62 @@ void residue_subset(std::string setf, utility::vector1<Size>& rset,
 } // pose_metric_calculators
 } // toolbox
 } // protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator::SHOBuriedUnsatisfiedPolarsCalculator() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( search_typ_ ) ); // enum protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator::SearchTyp
+	// Don't serialize the energy method; instead recreate it from the command line;
+	// since the only way it ever gets created is from the command line
+	// arc( CEREAL_NVP( sho_meth_ ) ); // core::scoring::geometric_solvation::ExactOccludedHbondSolEnergyOP
+	// EXEMPT sho_meth_
+	arc( CEREAL_NVP( sho_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( tgt_res_idxs_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( tgt_amino_ ) ); // std::string
+	arc( CEREAL_NVP( tgt_atom_ ) ); // std::string
+	arc( CEREAL_NVP( hbond_set_ ) ); // core::scoring::hbonds::HBondSet
+	arc( CEREAL_NVP( sho_energies_ ) ); // std::map<AtomID, Real>
+	arc( CEREAL_NVP( burunsat_atoms_ ) ); // utility::vector1<AtomID>
+	arc( CEREAL_NVP( num_burunsat_atoms_ ) ); // Size
+	arc( CEREAL_NVP( other_atoms_ ) ); // utility::vector1<AtomID>
+	arc( CEREAL_NVP( num_other_atoms_ ) ); // Size
+	arc( CEREAL_NVP( sfxn_ ) ); // core::scoring::ScoreFunctionCOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( search_typ_ ); // enum protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator::SearchTyp
+	// arc( sho_meth_ ); // core::scoring::geometric_solvation::ExactOccludedHbondSolEnergyOP
+	// instead, recreate the sho_meth_ from the command line
+	sho_meth_ = create_ExactSHOEnergy_from_cmdline();
+
+	arc( sho_cutoff_ ); // core::Real
+	arc( tgt_res_idxs_ ); // utility::vector1<Size>
+	arc( tgt_amino_ ); // std::string
+	arc( tgt_atom_ ); // std::string
+	arc( hbond_set_ ); // core::scoring::hbonds::HBondSet
+	arc( sho_energies_ ); // std::map<AtomID, Real>
+	arc( burunsat_atoms_ ); // utility::vector1<AtomID>
+	arc( num_burunsat_atoms_ ); // Size
+	arc( other_atoms_ ); // utility::vector1<AtomID>
+	arc( num_other_atoms_ ); // Size
+	std::shared_ptr< core::scoring::ScoreFunction > local_sfxn;
+	arc( local_sfxn ); // core::scoring::ScoreFunctionCOP
+	sfxn_ = local_sfxn; // copy the non-const pointer(s) into the const pointer(s)
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_SHOBuriedUnsatisfiedPolarsCalculator )
+#endif // SERIALIZATION

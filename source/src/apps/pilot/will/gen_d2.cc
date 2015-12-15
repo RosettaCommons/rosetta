@@ -827,8 +827,8 @@ void run(std::string fname) {
 
   // read pose info
   Pose cenp,hisp,natp,his,ile,homo;
-  make_pose_from_sequence(his,"H","fa_standard",false);
-  make_pose_from_sequence(ile,"I","centroid"   ,false);
+  make_pose_from_sequence(his,"H",core::chemical::FA_STANDARD,false);
+  make_pose_from_sequence(ile,"I",core::chemical::CENTROID   ,false);
   pose_from_pdb(cenp,*crs,fname);
   pose_from_pdb(natp,*frs,fname);
   Size nres=cenp.n_residue();

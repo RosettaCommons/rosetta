@@ -41,8 +41,11 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+// Boost headers
 #include <boost/foreach.hpp>
 
+// C++ headers
+#include <iomanip>
 
 namespace protocols {
 namespace rosetta_scripts {

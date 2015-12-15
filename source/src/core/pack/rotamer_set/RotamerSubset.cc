@@ -28,6 +28,16 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -520,3 +530,54 @@ RotamerSubset::show( std::ostream & out ) const {
 } // rotamer_set
 } // pack
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::pack::rotamer_set::RotamerSubset::RotamerSubset() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::rotamer_set::RotamerSubset::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pack::rotamer_set::RotamerSet >( this ) );
+	arc( CEREAL_NVP( rotamers_ ) ); // Rotamers
+	arc( CEREAL_NVP( n_residue_types_ ) ); // Size
+	arc( CEREAL_NVP( n_residue_groups_ ) ); // Size
+	arc( CEREAL_NVP( residue_type_rotamers_begin_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( residue_group_rotamers_begin_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( n_rotamers_for_restype_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( n_rotamers_for_resgroup_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( residue_type_for_rotamers_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( residue_group_for_rotamers_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( cached_tries_ ) ); // utility::vector1<conformation::AbstractRotamerTrieOP>
+	arc( CEREAL_NVP( id_for_current_rotamer_ ) ); // Size
+	arc( CEREAL_NVP( current_rotamer_copy_ ) ); // ResidueOP
+	arc( CEREAL_NVP( rotamer_offsets_require_update_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::rotamer_set::RotamerSubset::load( Archive & arc ) {
+	arc( cereal::base_class< core::pack::rotamer_set::RotamerSet >( this ) );
+	arc( rotamers_ ); // Rotamers
+	arc( n_residue_types_ ); // Size
+	arc( n_residue_groups_ ); // Size
+	arc( residue_type_rotamers_begin_ ); // utility::vector1<Size>
+	arc( residue_group_rotamers_begin_ ); // utility::vector1<Size>
+	arc( n_rotamers_for_restype_ ); // utility::vector1<Size>
+	arc( n_rotamers_for_resgroup_ ); // utility::vector1<Size>
+	arc( residue_type_for_rotamers_ ); // utility::vector1<Size>
+	arc( residue_group_for_rotamers_ ); // utility::vector1<Size>
+	arc( cached_tries_ ); // utility::vector1<conformation::AbstractRotamerTrieOP>
+	arc( id_for_current_rotamer_ ); // Size
+	arc( current_rotamer_copy_ ); // ResidueOP
+	arc( rotamer_offsets_require_update_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::RotamerSubset );
+CEREAL_REGISTER_TYPE( core::pack::rotamer_set::RotamerSubset )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_rotamer_set_RotamerSubset )
+#endif // SERIALIZATION

@@ -678,8 +678,8 @@ void run() {
 	int const iNN = bpy.residue(1).atom_index("NN1");
 	int const iNE = bpy.residue(1).atom_index("NE1");
 
-	make_pose_from_sequence(ala,"A","fa_standard",false);
-	make_pose_from_sequence(tyr,"Y","fa_standard",false);
+	make_pose_from_sequence(ala,"A",core::chemical::FA_STANDARD,false);
+	make_pose_from_sequence(tyr,"Y",core::chemical::FA_STANDARD,false);
 	remove_lower_terminus_type_from_pose_residue(ala,1);
 	remove_upper_terminus_type_from_pose_residue(ala,1);
 

@@ -55,6 +55,7 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/util.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/util/kinematics_util.hh>
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>

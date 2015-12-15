@@ -23,6 +23,13 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray3D.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -96,3 +103,28 @@ HBEvalTuple::show( std::ostream & out ) const {
 } // namespace hbonds
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::hbonds::HBEvalTuple::save( Archive & arc ) const {
+	arc( CEREAL_NVP( don_type_ ) ); // enum core::scoring::hbonds::HBDonChemType
+	arc( CEREAL_NVP( acc_type_ ) ); // enum core::scoring::hbonds::HBAccChemType
+	arc( CEREAL_NVP( seq_sep_ ) ); // enum core::scoring::hbonds::HBSeqSep
+	arc( CEREAL_NVP( eval_type_ ) ); // enum core::scoring::hbonds::HBEvalType
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::hbonds::HBEvalTuple::load( Archive & arc ) {
+	arc( don_type_ ); // enum core::scoring::hbonds::HBDonChemType
+	arc( acc_type_ ); // enum core::scoring::hbonds::HBAccChemType
+	arc( seq_sep_ ); // enum core::scoring::hbonds::HBSeqSep
+	arc( eval_type_ ); // enum core::scoring::hbonds::HBEvalType
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::hbonds::HBEvalTuple );
+#endif // SERIALIZATION

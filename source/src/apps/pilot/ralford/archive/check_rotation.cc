@@ -92,7 +92,7 @@ public:
 		//Vector center(16.6831, 3.8529, -1.39162);
 		//Vector normal(0.0437651, 0.00068703, 0.999042);
 
-		Vector center( 0, 5, 0 ); //= pose.conformation().membrane_info()->membrane_center();
+		Vector center( 0, 5, 0 ); //= pose.conformation().membrane_info()->membrane_center(pose.conformation());
 		Vector normal( 0, 0, 10 );
 		//SetMembranePositionMoverOP transform_memb2 = new SetMembranePositionMover( center, normal, 1 ); 
 		//transform_memb2->apply( pose ); 
@@ -106,7 +106,7 @@ public:
 		//initialize_memb->apply( pose ); 
 
 	
-	//	Vector normal = pose.conformation().membrane_info()->membrane_normal();
+	//	Vector normal = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
 
 		//SetMembranePositionMoverOP transform_memb = new SetMembranePositionMover( center, normal, 1 ); 
 		//TransformIntoMembraneMoverOP transform_memb = new TransformIntoMembraneMover( 2, center, normal );

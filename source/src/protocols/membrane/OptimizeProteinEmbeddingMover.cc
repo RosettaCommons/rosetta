@@ -169,8 +169,8 @@ void OptimizeProteinEmbeddingMover::apply( Pose & pose ) {
 	opt->apply( pose );
 
 	// get the optimized embedding from flexible MEM
-	core::Vector center( pose.conformation().membrane_info()->membrane_center() );
-	core::Vector normal( pose.conformation().membrane_info()->membrane_normal() );
+	core::Vector center( pose.conformation().membrane_info()->membrane_center( pose.conformation() ) );
+	core::Vector normal( pose.conformation().membrane_info()->membrane_normal( pose.conformation() ) );
 	EmbeddingDefOP current_emb( new EmbeddingDef( center, normal ) );
 
 	// use current embedding and transform into default membrane (fixed)

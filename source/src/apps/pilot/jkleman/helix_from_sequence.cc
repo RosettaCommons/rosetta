@@ -29,6 +29,7 @@
 
 // Package Headers
 #include <apps/benchmark/performance/init_util.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -126,7 +127,7 @@ void helix_from_sequence() {
 
 	// create ideal helix pose from the sequence:
 	// 1. create pose from sequence
-	make_pose_from_sequence( pose, seq, "fa_standard" );
+	make_pose_from_sequence( pose, seq, core::chemical::FA_STANDARD );
 	TR << "pose:total_residue: " << pose.total_residue() << std::endl;
 
 	// 2. need to set the PDBInfo object in the pose, because

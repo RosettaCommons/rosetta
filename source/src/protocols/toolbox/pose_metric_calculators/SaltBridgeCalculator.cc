@@ -46,6 +46,14 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.SaltBridgeCalculator" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -151,3 +159,29 @@ void SaltBridgeCalculator::recompute(core::pose::Pose const & pose){
 }
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::SaltBridgeCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( distance_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( salt_bridge_total_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::SaltBridgeCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( distance_cutoff_ ); // core::Real
+	arc( salt_bridge_total_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::SaltBridgeCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::SaltBridgeCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_SaltBridgeCalculator )
+#endif // SERIALIZATION

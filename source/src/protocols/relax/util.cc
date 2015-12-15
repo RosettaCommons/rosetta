@@ -24,6 +24,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <core/kinematics/MoveMap.hh>

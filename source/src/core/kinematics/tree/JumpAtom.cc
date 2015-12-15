@@ -34,6 +34,16 @@
 #include <iostream>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 namespace tree {
@@ -398,3 +408,27 @@ JumpAtom::raw_stub_atom3() const
 } // namespace tree
 } // namespace kinematics
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::kinematics::tree::JumpAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< Atom_ >( this ) );
+	arc( CEREAL_NVP( jump_ ) ); // class core::kinematics::Jump
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::kinematics::tree::JumpAtom::load( Archive & arc ) {
+	arc( cereal::base_class< Atom_ >( this ) );
+	arc( jump_ ); // class core::kinematics::Jump
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::tree::JumpAtom );
+CEREAL_REGISTER_TYPE( core::kinematics::tree::JumpAtom )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_kinematics_tree_JumpAtom )
+#endif // SERIALIZATION

@@ -56,6 +56,15 @@
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace task {
@@ -1022,3 +1031,75 @@ PackerTask_::operator=(PackerTask const &){
 } //namespace pack
 } //namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::task::PackerTask_::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pack::task::PackerTask >( this ) );
+	arc( CEREAL_NVP( nres_ ) ); // Size
+	arc( CEREAL_NVP( pack_residue_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( residue_tasks_ ) ); // utility::vector1<ResidueLevelTask_>
+	arc( CEREAL_NVP( n_to_be_packed_ ) ); // Size
+	arc( CEREAL_NVP( n_to_be_packed_up_to_date_ ) ); // _Bool
+	arc( CEREAL_NVP( linmem_ig_ ) ); // _Bool
+	arc( CEREAL_NVP( linmem_ig_history_size_at_default_ ) ); // _Bool
+	arc( CEREAL_NVP( linmem_ig_history_size_ ) ); // Size
+	arc( CEREAL_NVP( lazy_ig_ ) ); // _Bool
+	arc( CEREAL_NVP( double_lazy_ig_ ) ); // _Bool
+	arc( CEREAL_NVP( dlig_mem_limit_ ) ); // Size
+	arc( CEREAL_NVP( multi_cool_annealer_ ) ); // _Bool
+	arc( CEREAL_NVP( mca_history_size_ ) ); // Size
+	arc( CEREAL_NVP( optimize_H_ ) ); // _Bool
+	arc( CEREAL_NVP( bump_check_ ) ); // _Bool
+	arc( CEREAL_NVP( max_rotbump_energy_ ) ); // Real
+	arc( CEREAL_NVP( rotamer_couplings_ ) ); // RotamerCouplingsCOP
+	arc( CEREAL_NVP( rotamer_links_ ) ); // RotamerLinksCOP
+	arc( CEREAL_NVP( low_temp_ ) ); // Real
+	arc( CEREAL_NVP( high_temp_ ) ); // Real
+	arc( CEREAL_NVP( disallow_quench_ ) ); // _Bool
+	arc( CEREAL_NVP( IG_edge_reweights_ ) ); // IGEdgeReweightContainerOP
+	arc( CEREAL_NVP( symmetry_status_ ) ); // enum core::pack::task::PackerTaskSymmetryStatus
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::task::PackerTask_::load( Archive & arc ) {
+	arc( cereal::base_class< core::pack::task::PackerTask >( this ) );
+	arc( nres_ ); // Size
+	arc( pack_residue_ ); // utility::vector1<_Bool>
+	arc( residue_tasks_ ); // utility::vector1<ResidueLevelTask_>
+	arc( n_to_be_packed_ ); // Size
+	arc( n_to_be_packed_up_to_date_ ); // _Bool
+	arc( linmem_ig_ ); // _Bool
+	arc( linmem_ig_history_size_at_default_ ); // _Bool
+	arc( linmem_ig_history_size_ ); // Size
+	arc( lazy_ig_ ); // _Bool
+	arc( double_lazy_ig_ ); // _Bool
+	arc( dlig_mem_limit_ ); // Size
+	arc( multi_cool_annealer_ ); // _Bool
+	arc( mca_history_size_ ); // Size
+	arc( optimize_H_ ); // _Bool
+	arc( bump_check_ ); // _Bool
+	arc( max_rotbump_energy_ ); // Real
+	std::shared_ptr< core::pack::rotamer_set::RotamerCouplings > local_rotamer_couplings;
+	arc( local_rotamer_couplings ); // RotamerCouplingsCOP
+	rotamer_couplings_ = local_rotamer_couplings; // copy the non-const pointer(s) into the const pointer(s)
+	std::shared_ptr< core::pack::rotamer_set::RotamerLinks > local_rotamer_links;
+	arc( local_rotamer_links ); // RotamerLinksCOP
+	rotamer_links_ = local_rotamer_links; // copy the non-const pointer(s) into the const pointer(s)
+	arc( low_temp_ ); // Real
+	arc( high_temp_ ); // Real
+	arc( disallow_quench_ ); // _Bool
+	arc( IG_edge_reweights_ ); // IGEdgeReweightContainerOP
+	arc( symmetry_status_ ); // enum core::pack::task::PackerTaskSymmetryStatus
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::task::PackerTask_ );
+CEREAL_REGISTER_TYPE( core::pack::task::PackerTask_ )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_PackerTask_ )
+#endif // SERIALIZATION

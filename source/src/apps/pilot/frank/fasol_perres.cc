@@ -14,6 +14,7 @@
 // libRosetta headers
 #include <core/types.hh>
 
+#include <core/id/AtomID_Map.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>

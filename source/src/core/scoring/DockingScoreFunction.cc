@@ -29,6 +29,14 @@
 
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.DockingScoreFunction" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -109,3 +117,25 @@ DockingScoreFunction::operator()( pose::Pose & pose ) const
 ///////////////////////////////////////////////////////////////////////////////
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::DockingScoreFunction::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::ScoreFunction >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::DockingScoreFunction::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::ScoreFunction >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::DockingScoreFunction );
+CEREAL_REGISTER_TYPE( core::scoring::DockingScoreFunction )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_DockingScoreFunction )
+#endif // SERIALIZATION

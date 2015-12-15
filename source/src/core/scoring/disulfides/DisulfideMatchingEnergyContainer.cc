@@ -606,8 +606,8 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 			}
 			debug_assert( other_res_ii > ii );
 			//Can only bond residues of the same residue type set (eg centroid to centroid)
-			debug_assert( pose.residue_type(other_res_ii).residue_type_set().name() ==
-				pose.residue_type(ii).residue_type_set().name() );
+			debug_assert( pose.residue_type(other_res_ii).residue_type_set()->name() ==
+				pose.residue_type(ii).residue_type_set()->name() );
 
 			TR.Debug << "Found disulf between " << ii << " and " << other_res_ii << std::endl;
 

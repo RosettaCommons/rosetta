@@ -58,6 +58,21 @@
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/chemical/ResidueType.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/list.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/vector.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace task {
@@ -116,14 +131,14 @@ ResidueLevelTask_::ResidueLevelTask_(
 	// Note: we defer getting the residue set until we need it, as some types may not have a ResidueTypeSet
 	if ( original_residue.is_protein() || original_residue.is_peptoid() ) {
 
-		ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
+		ResidueTypeSetCOP residue_set( original_residue.residue_type_set() );
 
 		//default: all amino acids at all positions -- additional "and" operations will remove
 		// amino acids from the list of allowed ones
 		//no rule yet to treat chemically modified aa's differently
-		ResidueType const & match_residue_type( residue_set.get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_SIDE_CHAIN ) );
+		ResidueType const & match_residue_type( residue_set->get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_SIDE_CHAIN ) );
 		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
-			ResidueTypeCOPs const & aas( residue_set.get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
+			ResidueTypeCOPs const & aas( residue_set->get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types(), pH_mode_exceptions() ) );
 			for ( ResidueTypeCOPs::const_iterator
 					aas_iter = aas.begin(),
 					aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
@@ -137,16 +152,16 @@ ResidueLevelTask_::ResidueLevelTask_(
 
 	} else if ( original_residue.is_DNA() ) {
 
-		ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
-		ResidueTypeCOPs dna_types = ResidueTypeFinder( residue_set ).variants( original_residue.type().variant_types() ).
+		ResidueTypeSetCOP residue_set( original_residue.residue_type_set() );
+		ResidueTypeCOPs dna_types = ResidueTypeFinder( *residue_set ).variants( original_residue.type().variant_types() ).
 			base_property( DNA ).variant_exceptions( utility::tools::make_vector1( ADDUCT_VARIANT ) ).get_all_possible_residue_types();
 		for ( Size n = 1; n <= dna_types.size(); n++ ) allowed_residue_types_.push_back( dna_types[ n ] );
 
 	} else if ( original_residue.is_RNA() ) {
 
-		ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
+		ResidueTypeSetCOP residue_set( original_residue.residue_type_set() );
 		ResidueType const & match_residue_type(
-			residue_set.get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
+			residue_set->get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
 		allowed_residue_types_.push_back( match_residue_type.get_self_ptr() );
 
 	} else {
@@ -344,10 +359,10 @@ void ResidueLevelTask_::target_type( chemical::ResidueTypeCOP type ) {
 	target_residue_type_ = type; /// non-commutative if multiple target residue types are set.
 }
 void ResidueLevelTask_::target_type( chemical::AA aa ) {
-	target_type( original_residue_type_->residue_type_set().get_representative_type_aa( aa ) );
+	target_type( original_residue_type_->residue_type_set()->get_representative_type_aa( aa ) );
 }
 void ResidueLevelTask_::target_type( std::string name ) {
-	target_type( original_residue_type_->residue_type_set().name_map( name ).get_self_ptr() );
+	target_type( original_residue_type_->residue_type_set()->name_map( name ).get_self_ptr() );
 }
 
 void ResidueLevelTask_::or_adducts( bool setting )
@@ -875,11 +890,13 @@ bool ResidueLevelTask_::is_original_type( chemical::ResidueTypeCOP type ) const
 	}
 }
 
-chemical::ResidueTypeSet const & ResidueLevelTask_::get_original_residue_set() const {
+chemical::ResidueTypeSetCOP
+ResidueLevelTask_::get_original_residue_set() const {
 	return original_residue_type_->residue_type_set();
 }
 
-chemical::AA const & ResidueLevelTask_::get_original_residue() const {
+chemical::AA const &
+ResidueLevelTask_::get_original_residue() const {
 	return original_residue_type_->aa();
 }
 
@@ -915,7 +932,7 @@ void ResidueLevelTask_::allow_noncanonical_aa(
 /// @details Calls the overloaded allow_noncanonical_aas method using the same ResidueTypeSet as original_residue_type_
 void ResidueLevelTask_::allow_noncanonical_aa( std::string const & interchangeability_group )
 {
-	allow_noncanonical_aa( interchangeability_group, original_residue_type_->residue_type_set() );
+	allow_noncanonical_aa( interchangeability_group, *original_residue_type_->residue_type_set() );
 }
 
 /// @details Calls the overloaded allow_noncanonical_aas method using the same ResidueTypeSet as original_residue_type_
@@ -960,8 +977,8 @@ ResidueLevelTask_::allow_aa(
 	disabled_ = false;
 	design_disabled_ = false;
 
-	chemical::ResidueTypeSet const & residue_set( original_residue_type_->residue_type_set() );
-	chemical::ResidueTypeCOPs const aas( residue_set.get_all_types_with_variants_aa( aa, original_residue_type_->variant_types() ) );
+	chemical::ResidueTypeSetCOP residue_set( original_residue_type_->residue_type_set() );
+	chemical::ResidueTypeCOPs const aas( residue_set->get_all_types_with_variants_aa( aa, original_residue_type_->variant_types() ) );
 
 	for ( chemical::ResidueTypeCOPs::const_iterator
 			aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
@@ -1027,7 +1044,7 @@ void ResidueLevelTask_::reset() {
 	mode_tokens_.push_back( "RESET" );
 	disallow_noncanonical_aas();
 
-	ResidueTypeSet const & residue_set( get_original_residue_set() );
+	ResidueTypeSet const & residue_set( *get_original_residue_set() );
 	allowed_residue_types_.clear();
 	ResidueType const & match_residue_type( residue_set.get_residue_type_with_variant_removed( *original_residue_type_, chemical::VIRTUAL_SIDE_CHAIN ) );
 	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
@@ -1439,3 +1456,109 @@ ResidueLevelTask_::update_commutative(
 } //namespace pack
 } //namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::task::ResidueLevelTask_::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pack::task::ResidueLevelTask >( this ) );
+	arc( CEREAL_NVP( include_current_ ) ); // _Bool
+	arc( CEREAL_NVP( behaviors_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( adducts_ ) ); // _Bool
+	core::chemical::serialize_residue_type_list( arc, allowed_residue_types_ ); // ResidueTypeCOPList
+	core::chemical::serialize_residue_type( arc, original_residue_type_ ); // chemical::ResidueTypeCOP
+	core::chemical::serialize_residue_type( arc, target_residue_type_ ); // chemical::ResidueTypeCOP
+	arc( CEREAL_NVP( designing_ ) ); // _Bool
+	arc( CEREAL_NVP( repacking_ ) ); // _Bool
+	arc( CEREAL_NVP( optimize_H_mode_ ) ); // _Bool
+	arc( CEREAL_NVP( preserve_c_beta_ ) ); // _Bool
+	arc( CEREAL_NVP( flip_HNQ_ ) ); // _Bool
+	arc( CEREAL_NVP( fix_his_tautomer_ ) ); // _Bool
+	arc( CEREAL_NVP( include_virtual_side_chain_ ) ); // _Bool
+	arc( CEREAL_NVP( disabled_ ) ); // _Bool
+	arc( CEREAL_NVP( design_disabled_ ) ); // _Bool
+	arc( CEREAL_NVP( sample_proton_chi_ ) ); // _Bool
+	arc( CEREAL_NVP( ex1_ ) ); // _Bool
+	arc( CEREAL_NVP( ex2_ ) ); // _Bool
+	arc( CEREAL_NVP( ex3_ ) ); // _Bool
+	arc( CEREAL_NVP( ex4_ ) ); // _Bool
+	arc( CEREAL_NVP( ex1aro_ ) ); // _Bool
+	arc( CEREAL_NVP( ex2aro_ ) ); // _Bool
+	arc( CEREAL_NVP( ex1aro_exposed_ ) ); // _Bool
+	arc( CEREAL_NVP( ex2aro_exposed_ ) ); // _Bool
+	arc( CEREAL_NVP( ex1_sample_level_ ) ); // enum core::pack::task::ExtraRotSample
+	arc( CEREAL_NVP( ex2_sample_level_ ) ); // enum core::pack::task::ExtraRotSample
+	arc( CEREAL_NVP( ex3_sample_level_ ) ); // enum core::pack::task::ExtraRotSample
+	arc( CEREAL_NVP( ex4_sample_level_ ) ); // enum core::pack::task::ExtraRotSample
+	arc( CEREAL_NVP( ex1aro_sample_level_ ) ); // enum core::pack::task::ExtraRotSample
+	arc( CEREAL_NVP( ex2aro_sample_level_ ) ); // enum core::pack::task::ExtraRotSample
+	arc( CEREAL_NVP( ex1aro_exposed_sample_level_ ) ); // enum core::pack::task::ExtraRotSample
+	arc( CEREAL_NVP( ex2aro_exposed_sample_level_ ) ); // enum core::pack::task::ExtraRotSample
+	arc( CEREAL_NVP( exdna_sample_level_ ) ); // enum core::pack::task::ExtraRotSample
+	arc( CEREAL_NVP( extrachi_cutoff_ ) ); // Size
+	arc( CEREAL_NVP( operate_on_ex1_ ) ); // _Bool
+	arc( CEREAL_NVP( operate_on_ex2_ ) ); // _Bool
+	arc( CEREAL_NVP( operate_on_ex3_ ) ); // _Bool
+	arc( CEREAL_NVP( operate_on_ex4_ ) ); // _Bool
+	arc( CEREAL_NVP( rotamer_operations_ ) ); // rotamer_set::RotamerOperations
+	arc( CEREAL_NVP( rotsetops_ ) ); // rotamer_set::RotSetOperationList
+	arc( CEREAL_NVP( mode_tokens_ ) ); // std::vector<std::string>
+	arc( CEREAL_NVP( rna_task_ ) ); // rna::RNA_ResidueLevelTaskOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::task::ResidueLevelTask_::load( Archive & arc ) {
+	arc( cereal::base_class< core::pack::task::ResidueLevelTask >( this ) );
+	arc( include_current_ ); // _Bool
+	arc( behaviors_ ); // utility::vector1<std::string>
+	arc( adducts_ ); // _Bool
+	core::chemical::deserialize_residue_type_list( arc, allowed_residue_types_ );
+	core::chemical::deserialize_residue_type( arc, original_residue_type_ );
+	core::chemical::deserialize_residue_type( arc, target_residue_type_ );
+	arc( designing_ ); // _Bool
+	arc( repacking_ ); // _Bool
+	arc( optimize_H_mode_ ); // _Bool
+	arc( preserve_c_beta_ ); // _Bool
+	arc( flip_HNQ_ ); // _Bool
+	arc( fix_his_tautomer_ ); // _Bool
+	arc( include_virtual_side_chain_ ); // _Bool
+	arc( disabled_ ); // _Bool
+	arc( design_disabled_ ); // _Bool
+	arc( sample_proton_chi_ ); // _Bool
+	arc( ex1_ ); // _Bool
+	arc( ex2_ ); // _Bool
+	arc( ex3_ ); // _Bool
+	arc( ex4_ ); // _Bool
+	arc( ex1aro_ ); // _Bool
+	arc( ex2aro_ ); // _Bool
+	arc( ex1aro_exposed_ ); // _Bool
+	arc( ex2aro_exposed_ ); // _Bool
+	arc( ex1_sample_level_ ); // enum core::pack::task::ExtraRotSample
+	arc( ex2_sample_level_ ); // enum core::pack::task::ExtraRotSample
+	arc( ex3_sample_level_ ); // enum core::pack::task::ExtraRotSample
+	arc( ex4_sample_level_ ); // enum core::pack::task::ExtraRotSample
+	arc( ex1aro_sample_level_ ); // enum core::pack::task::ExtraRotSample
+	arc( ex2aro_sample_level_ ); // enum core::pack::task::ExtraRotSample
+	arc( ex1aro_exposed_sample_level_ ); // enum core::pack::task::ExtraRotSample
+	arc( ex2aro_exposed_sample_level_ ); // enum core::pack::task::ExtraRotSample
+	arc( exdna_sample_level_ ); // enum core::pack::task::ExtraRotSample
+	arc( extrachi_cutoff_ ); // Size
+	arc( operate_on_ex1_ ); // _Bool
+	arc( operate_on_ex2_ ); // _Bool
+	arc( operate_on_ex3_ ); // _Bool
+	arc( operate_on_ex4_ ); // _Bool
+	arc( rotamer_operations_ ); // rotamer_set::RotamerOperations
+	arc( rotsetops_ ); // rotamer_set::RotSetOperationList
+	arc( mode_tokens_ ); // std::vector<std::string>
+	arc( rna_task_ ); // rna::RNA_ResidueLevelTaskOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::task::ResidueLevelTask_ );
+CEREAL_REGISTER_TYPE( core::pack::task::ResidueLevelTask_ )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_ResidueLevelTask_ )
+#endif // SERIALIZATION

@@ -21,6 +21,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace numeric {
 namespace interpolation {
 namespace spline {
@@ -35,6 +40,10 @@ struct interp_range {
 	Real lb;
 	Real ub;
 	InterpolatorOP interp;
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 };
 
 class CompoundInterpolator : public Interpolator {
@@ -50,14 +59,28 @@ public:
 	/// @brief deserialize a json_spirit object to a Interpolator
 	virtual void deserialize(utility::json_spirit::mObject data);
 
+	virtual bool operator == ( Interpolator const & other ) const;
+	virtual bool same_type_as_me( Interpolator const & other ) const;
+
 private:
 
 	utility::vector1< interp_range > interpolators_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
 } // end namespace spline
 } // end namespace interpolation
 } // end namespace numeric
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( numeric_interpolation_spline_CompoundInterpolator )
+#endif // SERIALIZATION
+
 
 #endif

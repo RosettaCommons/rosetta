@@ -23,6 +23,7 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 
 // Utility headers
 #include <utility/json_spirit/json_spirit_reader.h>
@@ -47,68 +48,6 @@ validate_loop_start_stop(
 	core::Size linecount
 );
 
-/// @brief a class which can represent one of many ways in which to describe a
-/// particular residue in a pose, and can, when given a pose, find its index.
-/// The object should be constructed with all its needed parameters, but, one
-/// instance may be copied from another.
-class ResidueIndexDescription
-{
-public:
-	ResidueIndexDescription();
-	ResidueIndexDescription( core::Size pose_index );
-	ResidueIndexDescription(
-		char chain,
-		int resindex,
-		char insertion_code = ' ' // space character represents no insertion code
-	);
-
-	core::Size resolve_index( core::pose::Pose const & p ) const;
-
-	bool unassigned() const { return unassigned_; }
-	bool pose_numbered() const { return pose_numbered_; }
-	core::Size  pose_index() const { return pose_index_; }
-	char chain() const { return chain_; }
-	int resindex() const { return resindex_; }
-	char insertion_code() const { return insertion_code_; }
-
-private:
-	bool unassigned_;
-	bool pose_numbered_;
-	core::Size  pose_index_;
-	char chain_;   // chain character
-	int resindex_;
-	char insertion_code_;
-};
-
-class ResidueIndexDescriptionFromFile : public ResidueIndexDescription
-{
-public:
-	ResidueIndexDescriptionFromFile();
-
-	ResidueIndexDescriptionFromFile(
-		std::string fname,
-		core::Size linenum,
-		core::Size pose_index
-	);
-
-	ResidueIndexDescriptionFromFile(
-		std::string fname,
-		core::Size linenum,
-		char chain,
-		int resindex,
-		char insertion_code = ' ' // space character represents no insertion code
-	);
-
-	core::Size resolve_index( core::pose::Pose const & p ) const;
-
-	std::string const & fname() const { return fname_; }
-	core::Size linenum() const { return linenum_; }
-
-private:
-	std::string fname_; // file it was
-	core::Size linenum_;
-};
-
 
 class LoopFromFileData
 {
@@ -116,9 +55,9 @@ public:
 	LoopFromFileData();
 
 	LoopFromFileData(
-		ResidueIndexDescriptionFromFile const & start_res,
-		ResidueIndexDescriptionFromFile const & cutpoint_res,
-		ResidueIndexDescriptionFromFile const & end_res,
+		core::pose::ResidueIndexDescriptionFromFile const & start_res,
+		core::pose::ResidueIndexDescriptionFromFile const & cutpoint_res,
+		core::pose::ResidueIndexDescriptionFromFile const & end_res,
 		core::Real skip_rate,
 		bool extended,
 		bool prohibit_single_residue_loops = true
@@ -137,14 +76,14 @@ public:
 	SerializedLoop
 	resolve_as_serialized_loop_from_pose( core::pose::Pose const & pose ) const;
 
-	ResidueIndexDescriptionFromFile const & start_res() const { return start_res_; }
-	void start_res( ResidueIndexDescriptionFromFile const & setting ) { start_res_ = setting; }
+	core::pose::ResidueIndexDescriptionFromFile const & start_res() const { return start_res_; }
+	void start_res( core::pose::ResidueIndexDescriptionFromFile const & setting ) { start_res_ = setting; }
 
-	ResidueIndexDescriptionFromFile const & cutpoint_res() const { return cutpoint_res_; }
-	void cutpoint_res( ResidueIndexDescriptionFromFile const & setting ) { cutpoint_res_ = setting; }
+	core::pose::ResidueIndexDescriptionFromFile const & cutpoint_res() const { return cutpoint_res_; }
+	void cutpoint_res( core::pose::ResidueIndexDescriptionFromFile const & setting ) { cutpoint_res_ = setting; }
 
-	ResidueIndexDescriptionFromFile const & end_res() const { return end_res_; }
-	void end_res( ResidueIndexDescriptionFromFile const & setting ) { end_res_ = setting; }
+	core::pose::ResidueIndexDescriptionFromFile const & end_res() const { return end_res_; }
+	void end_res( core::pose::ResidueIndexDescriptionFromFile const & setting ) { end_res_ = setting; }
 
 	core::Real skip_rate() const { return skip_rate_; }
 	void skip_rate( core::Real setting ) { skip_rate_ = setting; }
@@ -156,9 +95,9 @@ public:
 	void prohibit_single_residue_loops( bool setting ) { prohibit_single_residue_loops_ = setting; }
 
 private:
-	ResidueIndexDescriptionFromFile start_res_;
-	ResidueIndexDescriptionFromFile cutpoint_res_;
-	ResidueIndexDescriptionFromFile end_res_;
+	core::pose::ResidueIndexDescriptionFromFile start_res_;
+	core::pose::ResidueIndexDescriptionFromFile cutpoint_res_;
+	core::pose::ResidueIndexDescriptionFromFile end_res_;
 	core::Real skip_rate_;
 	bool extended_;
 	bool prohibit_single_residue_loops_;
@@ -367,7 +306,7 @@ private: // methods
 	void
 	ensure_all_fields_are_valid( utility::json_spirit::mValue & json_data, std::string const & filename );
 
-	ResidueIndexDescriptionFromFile
+	core::pose::ResidueIndexDescriptionFromFile
 	parse_json_residue_info(
 		utility::json_spirit::mValue & json_loop_data,
 		ResidueIdentifier residue_identifier,

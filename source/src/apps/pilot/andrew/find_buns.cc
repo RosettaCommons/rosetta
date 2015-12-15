@@ -51,7 +51,7 @@
 
 utility::vector1< devel::vardist_solaccess::VarSolDRotamerDotsOP >
 varsoldist_rotamer_dots_for_pose(
-	devel::vardist_solaccess::VarSolDistSasaCalculator const & calc,
+	devel::vardist_solaccess::VarSolDistSasaCalculatorCOP calc,
 	core::pose::Pose const & pose
 )
 {
@@ -200,7 +200,7 @@ int main( int argc, char * argv [] )
 			HBondSet hbset;
 			fill_hbond_set( pose, false, hbset );
 
-			VarSolDistSasaCalculator calc;
+			VarSolDistSasaCalculatorOP calc( new VarSolDistSasaCalculator );
 			utility::vector1< VarSolDRotamerDotsOP > rotamer_dots = varsoldist_rotamer_dots_for_pose( calc, pose );
 			std::list< core::id::AtomID > buns = buns_for_pose( pose, rotamer_dots, hbset );
 

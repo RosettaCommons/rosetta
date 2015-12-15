@@ -1132,7 +1132,7 @@ MatcherTask::initialize_enzdes_input_data_from_command_line()
 	using namespace core::chemical;
 	/// create a local non-const version of the input data.
 	EnzConstraintIOOP enz_input_data( new EnzConstraintIO(
-		ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD ).get_self_weak_ptr() ) );
+		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) ) );
 	if ( ! option[ geometric_constraint_file ].user() ) {
 		utility_exit_with_message( "Option match::geometric_constraint_file must be specified on the command line" );
 	}

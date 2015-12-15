@@ -31,6 +31,13 @@
 
 // C++ Headers
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -57,6 +64,9 @@ public:
 		pose::Pose const & dest,
 		id::SequenceMappingCOP map = NULL ) const;
 
+	virtual bool operator == ( Constraint const & rhs ) const;
+	virtual bool same_type_as_me( Constraint const & other ) const;
+
 	virtual void show_def( std::ostream & out, pose::Pose const & pose ) const;
 	void show_def_nopose( std::ostream & out ) const;
 
@@ -67,15 +77,34 @@ public:
 
 	virtual void score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
+protected:
+	NamedAngleConstraint( NamedAngleConstraint const & src );
+
+
 private:
 	id::NamedAtomID named_atom1_;
 	id::NamedAtomID named_atom2_;
 	id::NamedAtomID named_atom3_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	NamedAngleConstraint();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_NamedAngleConstraint )
+#endif // SERIALIZATION
+
 
 #endif

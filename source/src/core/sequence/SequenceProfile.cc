@@ -37,6 +37,18 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace sequence {
 
@@ -485,6 +497,17 @@ SequenceProfile::probability_row( Size pos ) const {
 	return occurrence_data_[ pos ];
 }
 
+bool SequenceProfile::operator==( SequenceProfile const & other ) const
+{
+	if ( alphabet_        != other.alphabet_        ) return false;
+	if ( profile_         != other.profile_         ) return false;
+	if ( occurrence_data_ != other.occurrence_data_ ) return false;
+	if ( negative_better_ != other.negative_better_ ) return false;
+
+	return true;
+}
+
+
 void SequenceProfile::scores_to_probs_(
 	utility::vector1< core::Real > & scores,
 	core::Real kT,
@@ -546,3 +569,35 @@ bool SequenceProfile::check_internals_() const {
 
 } // sequence
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::sequence::SequenceProfile::save( Archive & arc ) const {
+	arc( cereal::base_class< Sequence >( this ) );
+	arc( CEREAL_NVP( alphabet_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( profile_ ) ); // utility::vector1<utility::vector1<Real> >
+	arc( CEREAL_NVP( occurrence_data_ ) ); // utility::vector1<utility::vector1<Real> >
+	arc( CEREAL_NVP( temp_ ) ); // core::Real
+	arc( CEREAL_NVP( negative_better_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::sequence::SequenceProfile::load( Archive & arc ) {
+	arc( cereal::base_class< Sequence >( this ) );
+	arc( alphabet_ ); // utility::vector1<std::string>
+	arc( profile_ ); // utility::vector1<utility::vector1<Real> >
+	arc( occurrence_data_ ); // utility::vector1<utility::vector1<Real> >
+	arc( temp_ ); // core::Real
+	arc( negative_better_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::sequence::SequenceProfile );
+CEREAL_REGISTER_TYPE( core::sequence::SequenceProfile )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_sequence_SequenceProfile )
+#endif // SERIALIZATION

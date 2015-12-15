@@ -27,6 +27,12 @@
 #include <core/scoring/ScoreType.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace metrics {
@@ -66,6 +72,16 @@ private:
 	core::scoring::EnergyMap weights_;
 	core::Real weighted_total_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	InterfaceDeltaEnergeticsCalculator();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -73,5 +89,10 @@ private:
 } // namespace metrics
 } // namespace pose
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_metrics_simple_calculators_InterfaceDeltaEnergeticsCalculator )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_core_pose_metrics_simple_calculators_InterfaceDeltaEnergeticsCalculator_HH

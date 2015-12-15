@@ -26,6 +26,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 #include <core/conformation/Residue.hh>
 

@@ -20,6 +20,13 @@
 #include <iostream>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace id {
 
@@ -39,3 +46,25 @@ DOF_ID const BOGUS_DOF_ID( BOGUS_ATOM_ID, PHI );
 
 } // namespace id
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::id::DOF_ID::save( Archive & arc ) const {
+	arc( CEREAL_NVP( atom_id_ ) ); // class core::id::AtomID
+	arc( CEREAL_NVP( type_ ) ); // enum core::id::DOF_Type
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::id::DOF_ID::load( Archive & arc ) {
+	arc( atom_id_ ); // class core::id::AtomID
+	arc( type_ ); // enum core::id::DOF_Type
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::id::DOF_ID );
+#endif // SERIALIZATION
+

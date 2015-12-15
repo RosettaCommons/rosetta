@@ -34,6 +34,12 @@
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -59,8 +65,12 @@ protected:
 	//core::kinematics::MoveMapOP mm();
 	//protocols::simple_moves::MinMover min_mover();
 	core::Real computeBoltzSum(core::Real init_score, utility::vector1<core::Real> scores);
+
 	protocols::simple_moves::MinMoverOP init_minmover(core::pose::Pose& pose, core::Size resi, bool unbound, core::pack::task::PackerTaskOP  task);
+
 	core::pack::task::PackerTaskOP init_task(core::pose::Pose& pose, core::Size resi);
+
+	/// @note This function returns an uninitialized filter; this should probably not be used.
 	protocols::simple_filters::ScoreTypeFilter stf(){
 		return stf_;
 	}
@@ -91,13 +101,28 @@ private:
 	//protocols::simple_moves::MinMover min_mover_;
 	core::Real temperature_;
 	protocols::simple_filters::ScoreTypeFilter const stf_;
-	utility::vector1<core::Real>all_boltz_;
+	utility::vector1< core::Real > all_boltz_;
 	core::pack::rotamer_set::RotamerSetOP rotset_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	RotamerBoltzCalculator();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
 } // namespace pose_metric_calculators
 } // namespace toolbox
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_RotamerBoltzCalculator )
+#endif // SERIALIZATION
+
 
 #endif

@@ -445,7 +445,7 @@ void test_MAT_VEC() {
 void test_chi_xform() {
   {
     core::pose::Pose p;
-    core::pose::make_pose_from_sequence(p,"N","fa_standard",false);
+    core::pose::make_pose_from_sequence(p,"N",core::chemical::FA_STANDARD,false);
     remove_lower_terminus_type_from_pose_residue(p,1);
     remove_upper_terminus_type_from_pose_residue(p,1);
 

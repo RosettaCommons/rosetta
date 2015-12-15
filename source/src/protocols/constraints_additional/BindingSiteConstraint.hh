@@ -35,6 +35,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace constraints_additional {
 
@@ -65,6 +71,9 @@ public:
 		return core::scoring::constraints::ConstraintOP( new BindingSiteConstraint( atms_, tgt_pos_, tgt_pos_centroid_ ) );
 	}
 
+	bool operator == ( core::scoring::constraints::Constraint const & other ) const;
+
+	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const;
 
 	void
 	score( core::scoring::func::XYZ_Func const & xyz, core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const;
@@ -122,13 +131,25 @@ private:
 	ObjexxFCL::FArray2D< core::Real >  tgt_pos_centroid_;
 
 	// map of pos->tgt in rotated struct
+	// This is an inappropriate use of global data
 	static std::map< AtomID , numeric::xyzVector< core::Real > > rot_db;
 
 	// database mapping constraints to RB transformations
 	// static std::map< AtomID , ?? > transformDB;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_constraints_additional_BindingSiteConstraint )
+#endif // SERIALIZATION
+
 
 #endif

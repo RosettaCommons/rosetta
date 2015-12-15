@@ -631,7 +631,7 @@ void make_pose_from_frags( pose::Pose & pose, std::string sequence, utility::vec
 	// clear the pose
 	pose.clear();
 	// generate pose
-	core::pose::make_pose_from_sequence(pose, sequence, "centroid");
+	core::pose::make_pose_from_sequence(pose, sequence, core::chemical::CENTROID );
 	// idealize and extend pose
 	for ( Size pos = 1; pos<=pose.total_residue(); pos++ ) {
 		core::conformation::idealize_position( pos, pose.conformation() );

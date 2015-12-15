@@ -203,7 +203,7 @@ int main( int argc, char * argv [] ) {
 
 			// setup pose
 			Pose pose;
-			core::pose::make_pose_from_sequence(pose,seq,"centroid",false);
+			core::pose::make_pose_from_sequence(pose,seq,core::chemical::CENTROID,false);
 			core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_UPPER",       1        );
 			core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_LOWER",pose.n_residue());
 			pose.conformation().declare_chemical_bond( 1, "N", pose.n_residue(), "C" );

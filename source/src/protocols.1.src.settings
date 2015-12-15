@@ -124,6 +124,26 @@ sources = {
 		"ScoreFunctionLoader",
 		"TaskOperationLoader",
 	],
+	#"protocols/jd3": [
+	#	"InnerLarvalJob",
+	#	"Job",
+	#	"JobDistributor",
+	#	"JobDistributorFactory",
+	#	"JobQueen",
+	#	"JobResult",
+	#	"LarvalJob",
+	#	"MoverAndPoseJob",
+	#	"PoseInputSource",
+	#	"PoseInputter",
+	#	"PoseOutputter",
+	#	"StandardJobQueen",
+	#],
+	#"protocols/jd3/pose_inputters": [
+	#	"PDBPoseInputter",
+	#],
+	#"protocols/jd3/pose_outputters": [
+	#	"PDBPoseOutputter",
+	#],
 	"protocols/jobdist": [
 		"JobDistributors",
 		"Jobs",

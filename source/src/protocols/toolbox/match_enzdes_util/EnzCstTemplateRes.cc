@@ -49,6 +49,20 @@
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzCstTemplateRes" );
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/chemical/ResidueType.srlz.hh>
+#include <core/chemical/ResidueTypeSet.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/vector.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
@@ -86,7 +100,7 @@ EnzCstTemplateResAtoms::remap_atomid_vector(
 
 
 EnzCstTemplateRes::EnzCstTemplateRes(
-	core::chemical::ResidueTypeSetCAP src_restype_set
+	core::chemical::ResidueTypeSetCOP src_restype_set
 ) : rb_minimizable_(true), is_backbone_(false),
 	identical_tag_found_(false), corresponding_res_block_(0),
 	corresponding_res_num_in_block_(0),
@@ -97,7 +111,7 @@ EnzCstTemplateRes::EnzCstTemplateRes(
 
 
 EnzCstTemplateRes::EnzCstTemplateRes(
-	core::chemical::ResidueTypeSetCAP src_restype_set,
+	core::chemical::ResidueTypeSetCOP src_restype_set,
 	EnzConstraintParametersCAP src_enzio_param )
 :
 	rb_minimizable_(true),
@@ -674,3 +688,112 @@ EnzCstTemplateRes::identical_info_consistency_check() const
 }
 }//enzdes
 }//protocols
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::match_enzdes_util::EnzCstTemplateRes::EnzCstTemplateRes() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzCstTemplateRes::save( Archive & arc ) const {
+	arc( CEREAL_NVP( atom1_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( atom2_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( atom3_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( at1_type_ ) ); // std::string
+	arc( CEREAL_NVP( at2_type_ ) ); // std::string
+	arc( CEREAL_NVP( at3_type_ ) ); // std::string
+	arc( CEREAL_NVP( allowed_res_types_ ) ); // utility::vector1<std::string>
+
+	core::chemical::serialize_residue_type_vector( arc, allowed_res_types_pointers_ );
+
+	//arc( CEREAL_NVP( atom_inds_for_restype_ ) ); // RestypeToTemplateAtomsMap
+	arc( atom_inds_for_restype_.size() );
+	for( RestypeToTemplateAtomsMap::const_iterator iter = atom_inds_for_restype_.begin();
+			 iter != atom_inds_for_restype_.end(); ++iter ) {
+		core::chemical::serialize_residue_type( arc, iter->first );
+		arc( iter->second );
+	}
+
+	arc( CEREAL_NVP( rb_minimizable_ ) ); // _Bool
+	arc( CEREAL_NVP( is_backbone_ ) ); // _Bool
+	arc( CEREAL_NVP( respos_from_external_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( identical_tag_found_ ) ); // _Bool
+	arc( CEREAL_NVP( corresponding_res_block_ ) ); // core::Size
+	arc( CEREAL_NVP( corresponding_res_num_in_block_ ) ); // core::Size
+
+	core::chemical::serialize_residue_type_set( arc, restype_set_ );
+
+	arc( CEREAL_NVP( enz_io_param_ ) ); // EnzConstraintParametersCAP
+	arc( CEREAL_NVP( param_index_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzCstTemplateRes::load( Archive & arc ) {
+	arc( atom1_ ); // utility::vector1<std::string>
+	arc( atom2_ ); // utility::vector1<std::string>
+	arc( atom3_ ); // utility::vector1<std::string>
+	arc( at1_type_ ); // std::string
+	arc( at2_type_ ); // std::string
+	arc( at3_type_ ); // std::string
+	arc( allowed_res_types_ ); // utility::vector1<std::string>
+
+	core::chemical::deserialize_residue_type_vector( arc, allowed_res_types_pointers_ );
+
+	core::Size nrestypes( 0 ); arc( nrestypes );
+	for ( core::Size ii = 1; ii <= nrestypes; ++ii ) {
+		core::chemical::ResidueTypeCOP restype;
+		core::chemical::deserialize_residue_type( arc, restype );
+		utility::vector1< utility::vector1< core::Size > > atominds;
+		arc( atominds );
+		atom_inds_for_restype_[ restype ] = atominds;
+	}
+
+	arc( rb_minimizable_ ); // _Bool
+	arc( is_backbone_ ); // _Bool
+	arc( respos_from_external_ ); // utility::vector1<core::Size>
+	arc( identical_tag_found_ ); // _Bool
+	arc( corresponding_res_block_ ); // core::Size
+	arc( corresponding_res_num_in_block_ ); // core::Size
+
+	core::chemical::deserialize_residue_type_set( arc, restype_set_ );
+
+	EnzConstraintParametersAP local_enz_io_param;
+	arc( local_enz_io_param ); // EnzConstraintParametersCAP
+	enz_io_param_ = local_enz_io_param;
+
+	arc( param_index_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::EnzCstTemplateRes );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::EnzCstTemplateRes )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzCstTemplateResAtoms::save( Archive & arc ) const {
+	arc( CEREAL_NVP( atom1_ ) ); // std::vector<core::id::AtomID>
+	arc( CEREAL_NVP( atom2_ ) ); // std::vector<core::id::AtomID>
+	arc( CEREAL_NVP( atom3_ ) ); // std::vector<core::id::AtomID>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzCstTemplateResAtoms::load( Archive & arc ) {
+	arc( atom1_ ); // std::vector<core::id::AtomID>
+	arc( atom2_ ); // std::vector<core::id::AtomID>
+	arc( atom3_ ); // std::vector<core::id::AtomID>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::EnzCstTemplateResAtoms );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::EnzCstTemplateResAtoms )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_EnzCstTemplateRes )
+#endif // SERIALIZATION
+

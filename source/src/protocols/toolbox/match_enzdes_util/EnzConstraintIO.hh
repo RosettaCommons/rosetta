@@ -45,6 +45,12 @@
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
@@ -66,7 +72,7 @@ class EnzConstraintIO : public utility::pointer::ReferenceCount, public utility:
 {
 public:
 
-	EnzConstraintIO (core::chemical::ResidueTypeSetCAP src_restype_set);
+	EnzConstraintIO (core::chemical::ResidueTypeSetCOP src_restype_set);
 	virtual ~EnzConstraintIO();
 
 	/// self pointers
@@ -268,11 +274,21 @@ private:
 	//convenience data structure that contains info about upstream / upstream interactions
 	utility::vector1< std::pair< core::Size, core::Size> > target_downstream_res_;
 
-	core::chemical::ResidueTypeSetCAP restype_set_;
+	core::chemical::ResidueTypeSetCOP restype_set_;
 	//bool cst_pair_data_consistent_;
 
 	//utility::vector1< core::scoring::constraints::ConstraintCOP > favor_native_constraints_;
 
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	EnzConstraintIO();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };  // class EnzConstraintIO
 
@@ -280,5 +296,10 @@ private:
 }
 } //toolbox
 } //protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_EnzConstraintIO )
+#endif // SERIALIZATION
+
 
 #endif

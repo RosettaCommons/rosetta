@@ -24,6 +24,11 @@
 
 // utility headers
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -54,12 +59,23 @@ public:
 private:
 
 	utility::vector1< std::pair< int, ResidueMatcherCOP > > couplings_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace rotamer_set
 } // namespace pack
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_rotamer_set_RotamerCouplings )
+#endif // SERIALIZATION
 
 
 #endif //

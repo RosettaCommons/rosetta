@@ -36,6 +36,11 @@
 // C++ Headers
 #include <iostream>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -51,6 +56,9 @@ public:
 
 	virtual
 	FuncOP clone() const { return FuncOP( new CircularSplineFunc( *this ) ); }
+
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 
 	core::Real get_weight() { return weight_; }
 
@@ -76,10 +84,21 @@ private:
 	core::Real weight_;
 	numeric::interpolation::spline::CubicSpline spline_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // CircularSplineFunc class
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_CircularSplineFunc )
+#endif // SERIALIZATION
+
 
 #endif

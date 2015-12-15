@@ -23,6 +23,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace constraints_additional {
 
@@ -58,6 +63,10 @@ public:
 
 	virtual ConstraintOP clone() const;
 
+	bool operator == ( core::scoring::constraints::Constraint const & other ) const;
+
+	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const;
+
 	virtual std::string type() const { return "SequenceCoupling1BD"; }
 
 	/// @brief used by ConstraintIO and ConstraintFactory to construct this constraint from a input file stream (constraint file)
@@ -88,10 +97,21 @@ public:
 		EnergyMap const &
 	) const;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace constraints_additional
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_constraints_additional_SequenceCoupling1BDConstraint )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_protocols_constraints_additional_SequenceCoupling1BDConstraint_hh

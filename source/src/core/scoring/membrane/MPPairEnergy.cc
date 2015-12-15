@@ -131,8 +131,9 @@ MPPairEnergy::residue_pair_energy(
 	chemical::AA const aa2( rsd2.aa() );
 
 	// Grab Initial z_positions
-	Real const z_position1( pose.conformation().membrane_info()->residue_z_position( rsd1.seqpos() ) );
-	Real const z_position2( pose.conformation().membrane_info()->residue_z_position( rsd2.seqpos() ) );
+	conformation::Conformation const & conf( pose.conformation() );
+	Real const z_position1( conf.membrane_info()->residue_z_position( conf, rsd1.seqpos() ) );
+	Real const z_position2( conf.membrane_info()->residue_z_position( conf, rsd2.seqpos() ) );
 
 	// Compute Centroid Info
 	conformation::Atom const & cen1 ( rsd1.atom( rsd1.nbr_atom() ) ), cen2 (rsd2.atom( rsd2.nbr_atom() ) );

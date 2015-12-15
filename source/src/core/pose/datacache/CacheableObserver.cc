@@ -18,6 +18,14 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace datacache {
@@ -71,3 +79,23 @@ void CacheableObserver::detach_from() {
 } // namespace datacache
 } // namespace pose
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::datacache::CacheableObserver::save( Archive & ) const {
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::datacache::CacheableObserver::load( Archive & ) {
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::datacache::CacheableObserver );
+CEREAL_REGISTER_TYPE( core::pose::datacache::CacheableObserver )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_datacache_CacheableObserver )
+#endif // SERIALIZATION

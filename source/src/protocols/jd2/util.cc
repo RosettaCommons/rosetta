@@ -44,15 +44,18 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
-#include <utility/mpi_util.hh>
-#include <utility/assert.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
 
+// Utility headers
+#include <utility/mpi_util.hh>
+#include <utility/assert.hh>
+#include <utility/vector1.hh>
+#include <utility/file/FileName.hh>
+#include <utility/io/izstream.hh>
 
 namespace protocols {
 namespace jd2 {
@@ -74,6 +77,47 @@ void register_options() {
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.jd2.JobDistributor" );
+
+utility::vector1< utility::file::FileName >
+input_pdb_files_from_command_line()
+{
+	using basic::options::option;
+	using utility::vector1;
+	using utility::file::FileName;
+	using namespace basic::options::OptionKeys;
+
+	// concatenate -s and -l flags together to get total list of PDB files
+	vector1< FileName > pdb_file_names;
+	if ( option[ in::file::s ].active() ) {
+		pdb_file_names = option[ in::file::s ]().vector(); // make a copy (-s)
+	}
+
+	vector1< FileName > list_file_names;
+	if ( option[ in::file::l ].active() ) {
+		list_file_names = option[ in::file::l ]().vector(); // make a copy (-l)
+	}
+	if ( option[ in::file::list ].active() ) {
+		vector1< FileName > better_list_file_names;
+		better_list_file_names = option[in::file::list ]().vector(); // make a copy (-list)
+		for ( vector1< FileName >::iterator i = better_list_file_names.begin(), i_end = better_list_file_names.end(); i != i_end; ++i ) {
+			list_file_names.push_back(*i); // make a copy (-l)
+		}
+	}
+
+	for ( vector1< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i ) {
+		std::string filename( i->name() );
+		utility::io::izstream data( filename.c_str() );
+		if ( !data.good() ) {
+			utility_exit_with_message( "Unable to open file: " + filename + '\n' );
+		}
+		std::string line;
+		while ( getline(data, line) ) {
+			pdb_file_names.push_back( FileName(line) );
+		}
+		data.close();
+	}
+	return pdb_file_names;
+}
 
 //multithreaded case requires specia
 ///end parser interface, start Job Distributor interface/////////////

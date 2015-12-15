@@ -35,6 +35,20 @@
 #include <string>
 #include <iostream>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+#include <utility/serialization/ObjexxFCL/FArray1D.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#include <cereal/types/vector.hpp>
+#endif // SERIALIZATION
+
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
@@ -2745,3 +2759,61 @@ void FoldTree::put_jump_stubs_intra_residue() {
 
 } // namespace kinematics
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::kinematics::FoldTree::save( Archive & arc ) const {
+	arc( CEREAL_NVP( edge_list_ ) ); // EdgeList
+	arc( CEREAL_NVP( new_topology ) ); // _Bool
+	arc( CEREAL_NVP( new_order ) ); // _Bool
+	arc( CEREAL_NVP( nres_ ) ); // int
+	arc( CEREAL_NVP( num_jump_ ) ); // int
+	arc( CEREAL_NVP( num_cutpoint_ ) ); // int
+	arc( CEREAL_NVP( jump_point_ ) ); // utility::vector1<std::pair<int, int> >
+	arc( CEREAL_NVP( is_jump_point_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( cutpoint_ ) ); // utility::vector1<int>
+	arc( CEREAL_NVP( cutpoint_map_ ) ); // utility::vector1<int>
+	arc( CEREAL_NVP( is_cutpoint_ ) ); // ObjexxFCL::FArray1D_bool
+	arc( CEREAL_NVP( jump_edge_ ) ); // utility::vector1<int>
+	arc( CEREAL_NVP( edge_count ) ); // utility::vector1<int>
+	arc( CEREAL_NVP( min_edge_count ) ); // int
+	arc( CEREAL_NVP( jump_edge_count ) ); // utility::vector1<int>
+	// turns out the "hasher" is never written to, it just hashes
+	// strings as needed; it probably doesn't need to be a member
+	// variable!
+	// arc( CEREAL_NVP( hasher ) ); // boost::hash<std::string>
+	// EXEMPT hasher
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::kinematics::FoldTree::load( Archive & arc ) {
+	arc( edge_list_ ); // EdgeList
+	arc( new_topology ); // _Bool
+	arc( new_order ); // _Bool
+	arc( nres_ ); // int
+	arc( num_jump_ ); // int
+	arc( num_cutpoint_ ); // int
+	arc( jump_point_ ); // utility::vector1<std::pair<int, int> >
+	arc( is_jump_point_ ); // utility::vector1<_Bool>
+	arc( cutpoint_ ); // utility::vector1<int>
+	arc( cutpoint_map_ ); // utility::vector1<int>
+	arc( is_cutpoint_ ); // ObjexxFCL::FArray1D_bool
+	arc( jump_edge_ ); // utility::vector1<int>
+	arc( edge_count ); // utility::vector1<int>
+	arc( min_edge_count ); // int
+	arc( jump_edge_count ); // utility::vector1<int>
+	// hasher is not serialized/deserialized; see above note
+	// arc( hasher ); // boost::hash<std::string>
+	// EXEMPT hasher
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::FoldTree );
+CEREAL_REGISTER_TYPE( core::kinematics::FoldTree )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_kinematics_FoldTree )
+#endif // SERIALIZATION

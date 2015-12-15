@@ -24,6 +24,7 @@
 
 // Core Headers
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>

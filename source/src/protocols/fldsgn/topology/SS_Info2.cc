@@ -32,6 +32,19 @@
 
 using namespace core;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace fldsgn {
 namespace topology {
@@ -550,3 +563,142 @@ SS_Info2::identify_ss( String const & secstruct )
 } // namespace topology
 } // namespace fldsgn
 } // namespace protocols
+
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::fldsgn::topology::SS_Base::save( Archive & arc ) const {
+	arc( CEREAL_NVP( begin_ ) ); // Size
+	arc( CEREAL_NVP( end_ ) ); // Size
+	arc( CEREAL_NVP( is_geometry_initialized_ ) ); // _Bool
+	arc( CEREAL_NVP( orient_ ) ); // Vector
+	arc( CEREAL_NVP( Nend_orient_ ) ); // Vector
+	arc( CEREAL_NVP( Cend_orient_ ) ); // Vector
+	arc( CEREAL_NVP( Nend_pos_ ) ); // Vector
+	arc( CEREAL_NVP( Cend_pos_ ) ); // Vector
+	arc( CEREAL_NVP( mid_pos_ ) ); // Vector
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::fldsgn::topology::SS_Base::load( Archive & arc ) {
+	arc( begin_ ); // Size
+	arc( end_ ); // Size
+	arc( is_geometry_initialized_ ); // _Bool
+	arc( orient_ ); // Vector
+	arc( Nend_orient_ ); // Vector
+	arc( Cend_orient_ ); // Vector
+	arc( Nend_pos_ ); // Vector
+	arc( Cend_pos_ ); // Vector
+	arc( mid_pos_ ); // Vector
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::fldsgn::topology::SS_Base );
+CEREAL_REGISTER_TYPE( protocols::fldsgn::topology::SS_Base )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::fldsgn::topology::Loop::save( Archive & arc ) const {
+	arc( cereal::base_class< class protocols::fldsgn::topology::SS_Base >( this ) );
+	arc( CEREAL_NVP( type_ ) ); // String
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::fldsgn::topology::Loop::load( Archive & arc ) {
+	arc( cereal::base_class< class protocols::fldsgn::topology::SS_Base >( this ) );
+	arc( type_ ); // String
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::fldsgn::topology::Loop );
+CEREAL_REGISTER_TYPE( protocols::fldsgn::topology::Loop )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::fldsgn::topology::Helix::save( Archive & arc ) const {
+	arc( cereal::base_class< class protocols::fldsgn::topology::SS_Base >( this ) );
+	arc( CEREAL_NVP( bend_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::fldsgn::topology::Helix::load( Archive & arc ) {
+	arc( cereal::base_class< class protocols::fldsgn::topology::SS_Base >( this ) );
+	arc( bend_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::fldsgn::topology::Helix );
+CEREAL_REGISTER_TYPE( protocols::fldsgn::topology::Helix )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::fldsgn::topology::Strand::save( Archive & arc ) const {
+	arc( cereal::base_class< class protocols::fldsgn::topology::SS_Base >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::fldsgn::topology::Strand::load( Archive & arc ) {
+	arc( cereal::base_class< class protocols::fldsgn::topology::SS_Base >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::fldsgn::topology::Strand );
+CEREAL_REGISTER_TYPE( protocols::fldsgn::topology::Strand )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::fldsgn::topology::SS_Info2::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( bbpos_is_set_ ) ); // _Bool
+	arc( CEREAL_NVP( secstruct_ ) ); // String
+	arc( CEREAL_NVP( bb_pos_ ) ); // BB_Pos
+	arc( CEREAL_NVP( strands_ ) ); // Strands
+	arc( CEREAL_NVP( strand_id_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( helices_ ) ); // Helices
+	arc( CEREAL_NVP( helix_id_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( loops_ ) ); // Loops
+	arc( CEREAL_NVP( loop_id_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( ss_element_id_ ) ); // utility::vector1<Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::fldsgn::topology::SS_Info2::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( bbpos_is_set_ ); // _Bool
+	arc( secstruct_ ); // String
+	arc( bb_pos_ ); // BB_Pos
+	arc( strands_ ); // Strands
+	arc( strand_id_ ); // utility::vector1<Size>
+	arc( helices_ ); // Helices
+	arc( helix_id_ ); // utility::vector1<Size>
+	arc( loops_ ); // Loops
+	arc( loop_id_ ); // utility::vector1<Size>
+	arc( ss_element_id_ ); // utility::vector1<Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::fldsgn::topology::SS_Info2 );
+CEREAL_REGISTER_TYPE( protocols::fldsgn::topology::SS_Info2 )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_fldsgn_topology_SS_Info2 )
+#endif // SERIALIZATION
+
+
+

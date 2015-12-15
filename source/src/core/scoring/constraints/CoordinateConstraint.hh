@@ -32,18 +32,35 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
 namespace constraints {
 
 
-/// @details CoordinateConstraint compares the coordinates of a given atom (AtomID atom_) to a fixed coordinate triplet (Vector xyz_target_).  Its other argument, fixed_atom_, is somewhat nonobvious.  CoordinateConstraints are meant to be used with a Pose that has a nonmoving virtual root residue.  An AtomID in this virtual root residue should be passed as fixed_atom_.  CoordinateConstraint does not use fixed_atom_, but the ScoreFunction code detects when fixed_atom_ and atom_ move relative to one another, and trigger re-scoring at that time.  In other words, CoordinateConstraints are really context-independent one body energies, but we wish them to be evaluated as context-independent two-body energies.  (Ideally, ScoreFunction would detect when atom_ moves relative to xyz_target_, but since ScoreFunction functions on atoms and not floating coordinate triplets, this is a good workaround.) -- SML
+/// @details CoordinateConstraint compares the coordinates of a given atom (AtomID atom_) to a
+/// fixed coordinate triplet (Vector xyz_target_).  Its other argument, fixed_atom_, is somewhat
+/// nonobvious.  CoordinateConstraints are meant to be used with a Pose that has a nonmoving
+/// virtual root residue.  An AtomID in this virtual root residue should be passed as fixed_atom_.
+/// CoordinateConstraint does not use fixed_atom_, but the ScoreFunction code detects when
+/// fixed_atom_ and atom_ move relative to one another, and trigger re-scoring at that time.  In
+/// other words, CoordinateConstraints are really context-independent one body energies, but we
+/// wish them to be evaluated as context-independent two-body energies.  (Ideally, ScoreFunction
+/// would detect when atom_ moves relative to xyz_target_, but since ScoreFunction functions on
+/// atoms and not floating coordinate triplets, this is a good workaround.) -- SML
 class CoordinateConstraint : public Constraint {
 public:
 
 
 	CoordinateConstraint();
+
+	/// @brief Constructor as a deep copy of the src %CoordinateConstraint
+	CoordinateConstraint( CoordinateConstraint const & src );
 
 	///c-tor
 	CoordinateConstraint(
@@ -80,15 +97,14 @@ public:
 
 	/// @brief possibility to do object comparison instead
 	/// of pointer comparison
-	bool operator == ( Constraint const & other_cst) const;
-
+	virtual bool operator == ( Constraint const & other_cst) const;
+	virtual bool same_type_as_me( Constraint const & other ) const;
 
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
 
 	// @brief take coordinates, distances, angles, etc from given pose
 	///
 	virtual void steal_def( pose::Pose const& );
-
 
 	Real
 	non_virtual_score(
@@ -152,10 +168,21 @@ private:
 	AtomID fixed_atom_;
 	Vector xyz_target_;
 	core::scoring::func::FuncOP func_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_CoordinateConstraint )
+#endif // SERIALIZATION
+
 
 #endif

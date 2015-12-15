@@ -32,6 +32,11 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -92,8 +97,19 @@ public:
 	utility::vector1< FACTSResidueInfoOP > placeholder_info_;
 	utility::vector1< bool > being_packed_; // stores info from the packertask when setup_for_packing calls set_repack_list
 	bool context_derivative_empty_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // scoring
 } // core
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_facts_FACTSPose )
+#endif // SERIALIZATION
+
+
 #endif

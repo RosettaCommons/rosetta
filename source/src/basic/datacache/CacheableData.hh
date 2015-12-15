@@ -33,10 +33,12 @@
 #include <cstddef>
 #include <iosfwd>
 
+#ifdef    SERIALIZATION
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 namespace basic {
 namespace datacache {
-
 
 /// @brief base class for data storable within a DataCache
 class CacheableData : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< CacheableData >
@@ -48,14 +50,26 @@ public:
 	inline CacheableDataCAP get_self_weak_ptr() const { return CacheableDataCAP( shared_from_this() ); }
 	inline CacheableDataAP get_self_weak_ptr() { return CacheableDataAP( shared_from_this() ); }
 
-	virtual
-	~CacheableData() {}
+	virtual ~CacheableData();
 
 	virtual CacheableDataOP clone() const = 0;
+
+#ifdef    SERIALIZATION
+	template < class Archive >
+	void save( Archive & archive ) const;
+
+	template < class Archive >
+	void load( Archive & archive );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace datacache
 } // namespace basic
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( basic_datacache_CacheableData )
+#endif // SERIALIZATION
 
 #endif /* INCLUDED_basic_datacache_CacheableData_HH */

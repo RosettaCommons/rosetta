@@ -18,6 +18,15 @@
 
 #include <algorithm>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace numeric {
 namespace interpolation {
 namespace spline {
@@ -103,6 +112,71 @@ void CompoundInterpolator::deserialize(utility::json_spirit::mObject data)
 	Interpolator::deserialize(data["base_data"].get_obj());
 }
 
+bool CompoundInterpolator::operator == ( Interpolator const & other ) const
+{
+	if ( ! Interpolator::operator==( other ) ) return false;
+
+	CompoundInterpolator const & other_downcast( static_cast< CompoundInterpolator const & > ( other ) );
+	if ( interpolators_.size() != other_downcast.interpolators_.size() ) return false;
+	for ( platform::Size ii = 1; ii <= interpolators_.size(); ++ii ) {
+		if ( interpolators_[ii].lb != other_downcast.interpolators_[ii].lb ) return false;
+		if ( interpolators_[ii].ub != other_downcast.interpolators_[ii].ub ) return false;
+		if ( ! (*interpolators_[ii].interp == *other_downcast.interpolators_[ii].interp) ) return false;
+	}
+	return true;
+}
+
+bool CompoundInterpolator::same_type_as_me( Interpolator const & other ) const
+{
+	return dynamic_cast< CompoundInterpolator const * > (&other);
+}
+
 } // end namespace spline
 } // end namespace interpolation
 } // end namespace numeric
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+numeric::interpolation::spline::interp_range::save( Archive & arc ) const {
+	arc( CEREAL_NVP( lb ) ); // Real
+	arc( CEREAL_NVP( ub ) ); // Real
+	arc( CEREAL_NVP( interp ) ); // InterpolatorOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+numeric::interpolation::spline::interp_range::load( Archive & arc ) {
+	arc( lb ); // Real
+	arc( ub ); // Real
+	arc( interp ); // InterpolatorOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( numeric::interpolation::spline::interp_range );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+numeric::interpolation::spline::CompoundInterpolator::save( Archive & arc ) const {
+	arc( cereal::base_class< class numeric::interpolation::spline::Interpolator >( this ) );
+	arc( CEREAL_NVP( interpolators_ ) ); // utility::vector1<interp_range>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+numeric::interpolation::spline::CompoundInterpolator::load( Archive & arc ) {
+	arc( cereal::base_class< class numeric::interpolation::spline::Interpolator >( this ) );
+	arc( interpolators_ ); // utility::vector1<interp_range>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( numeric::interpolation::spline::CompoundInterpolator );
+CEREAL_REGISTER_TYPE( numeric::interpolation::spline::CompoundInterpolator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( numeric_interpolation_spline_CompoundInterpolator )
+#endif // SERIALIZATION
+

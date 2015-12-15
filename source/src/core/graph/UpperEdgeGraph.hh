@@ -26,7 +26,6 @@
 #include <utility/vector1.fwd.hh>
 #include <utility/assert.hh>
 
-
 namespace core {
 namespace graph {
 

@@ -20,6 +20,18 @@
 
 // C++ Headers
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -37,6 +49,23 @@ MinMultiHarmonicFunc::MinMultiHarmonicFunc( utility::vector1<Real> const & x0_in
 	}
 }
 
+bool MinMultiHarmonicFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	MinMultiHarmonicFunc const & other_downcast( static_cast< MinMultiHarmonicFunc const & > (other) );
+	if ( x0_ != other_downcast.x0_ ) return false;
+	if ( sd_ != other_downcast.sd_ ) return false;
+	if ( n_  != other_downcast.n_  ) return false;
+
+	return true;
+}
+
+bool MinMultiHarmonicFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< MinMultiHarmonicFunc const * > ( &other );
+}
 
 Real
 MinMultiHarmonicFunc::func( Real const x )  const {
@@ -130,3 +159,36 @@ MinMultiHarmonicFunc::show_violations( std::ostream& out, Real x, Size verbose_l
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::func::MinMultiHarmonicFunc::MinMultiHarmonicFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::MinMultiHarmonicFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( x0_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( sd_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( n_ ) ); // Size
+	arc( CEREAL_NVP( which_component_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::MinMultiHarmonicFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( x0_ ); // utility::vector1<Real>
+	arc( sd_ ); // utility::vector1<Real>
+	arc( n_ ); // Size
+	arc( which_component_ ); // Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::MinMultiHarmonicFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::MinMultiHarmonicFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_MinMultiHarmonicFunc )
+#endif // SERIALIZATION

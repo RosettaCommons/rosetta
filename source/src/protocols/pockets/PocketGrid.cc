@@ -59,6 +59,50 @@
 
 //Auto Headers
 #include <numeric/random/random.fwd.hh>
+
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/list.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/vector.hpp>
+
+
+namespace numeric {
+
+template < class Archive >
+void
+save(
+	Archive & arch,
+	numeric::xyzVector< core::Size > const & xyz
+)
+{
+	arch( xyz.x(), xyz.y(), xyz.z() );
+}
+
+
+template < class Archive >
+void
+load(
+	Archive & arch,
+	numeric::xyzVector< core::Size > & xyz
+)
+{
+	arch( xyz.x(), xyz.y(), xyz.z() );
+}
+
+}
+#endif
+
 namespace protocols {
 namespace pockets {
 
@@ -583,7 +627,7 @@ PocketGrid::PocketGrid( core::conformation::Residue const & central_rsd ) {
 	}
 }
 
-PocketGrid::PocketGrid( std::vector< core::conformation::ResidueOP > const & central_rsds ) {
+PocketGrid::PocketGrid( std::vector< core::conformation::ResidueCOP > const & central_rsds ) {
 	setup_default_options();
 	initialize(central_rsds, size_x_, size_y_, size_z_, spacing_, markpsp_, marksps_);
 	using namespace basic::options;
@@ -605,7 +649,7 @@ PocketGrid::PocketGrid( core::conformation::Residue const & central_rsd, core::R
 	}
 }
 
-PocketGrid::PocketGrid( std::vector< core::conformation::ResidueOP > const & central_rsds, core::Real x, core::Real y, core::Real z ) {
+PocketGrid::PocketGrid( std::vector< core::conformation::ResidueCOP > const & central_rsds, core::Real x, core::Real y, core::Real z ) {
 	setup_default_options();
 	initialize(central_rsds, x, y, z, spacing_, markpsp_, marksps_);
 	using namespace basic::options;
@@ -749,7 +793,7 @@ void PocketGrid::initialize (core::conformation::Residue const & central_rsd, co
 	expdbno_=0;
 }
 
-void PocketGrid::initialize (std::vector< core::conformation::ResidueOP > const & central_rsds, core::Real const & x, core::Real const & y, core::Real const & z, core::Real const & stepSize, bool psp, bool sps){
+void PocketGrid::initialize (std::vector< core::conformation::ResidueCOP > const & central_rsds, core::Real const & x, core::Real const & y, core::Real const & z, core::Real const & stepSize, bool psp, bool sps){
 	markpsp_=psp;
 	marksps_=sps;
 	stepSize_=stepSize;
@@ -829,7 +873,7 @@ void PocketGrid::recenter( core::conformation::Residue const & central_rsd ){
 
 }
 
-void PocketGrid::recenter( std::vector< core::conformation::ResidueOP > const & central_rsds ){
+void PocketGrid::recenter( std::vector< core::conformation::ResidueCOP > const & central_rsds ){
 	core::Vector center;
 	center(1)=0.0;
 	center(2)=0.0;
@@ -848,7 +892,7 @@ void PocketGrid::recenter( std::vector< core::conformation::ResidueOP > const & 
 	//this should restrict the recentering to those atoms that define the grid.
 	if ( sz > (int)MAX_TARGETS ) sz = (int)MAX_TARGETS;
 	for ( int rnum = 0; rnum < sz; ++rnum ) {
-		core::conformation::ResidueOP central_rsd = central_rsds[rnum];
+		core::conformation::ResidueCOP central_rsd = central_rsds[rnum];
 		core::Vector local_center;
 		local_center(1)=0.0;
 		local_center(2)=0.0;
@@ -932,8 +976,8 @@ void PocketGrid::recenter(core::Vector const & center){
 	recenter(center(1), center(2), center(3));
 }
 
-std::vector< core::conformation::ResidueOP > PocketGrid::getRelaxResidues( core::pose::Pose const & input_pose, std::string const & resids ) {
-	std::vector< core::conformation::ResidueOP > residues;
+std::vector< core::conformation::ResidueCOP > PocketGrid::getRelaxResidues( core::pose::Pose const & input_pose, std::string const & resids ) {
+	std::vector< core::conformation::ResidueCOP > residues;
 
 	const std::string & delimiters = ",";
 	// Skip delimiters at beginning.
@@ -3704,7 +3748,7 @@ void PocketGrid::alter_espGrid( std::string const & espGrid_filename ) {
 
 
 bool PocketGrid::autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target, core::Real x, core::Real y, core::Real z ) {
-	std::vector< core::conformation::ResidueOP > residues;
+	std::vector< core::conformation::ResidueCOP > residues;
 	residues.push_back(central_rsd.clone());
 	core::pose::Pose tmp_pose;
 	int term=1;
@@ -3723,7 +3767,7 @@ bool PocketGrid::autoexpanding_pocket_eval( core::conformation::Residue const & 
 }
 
 
-bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsds, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target, core::Real x, core::Real y, core::Real z ) {
+bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueCOP > const & central_rsds, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target, core::Real x, core::Real y, core::Real z ) {
 	core::pose::Pose tmp_pose;
 	int term=1;
 	for ( Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
@@ -3741,13 +3785,13 @@ bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::Res
 
 
 bool PocketGrid::autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::pose::Pose const & inPose, bool center_target, core::Real x, core::Real y, core::Real z ) {
-	std::vector< core::conformation::ResidueOP > residues;
+	std::vector< core::conformation::ResidueCOP > residues;
 	residues.push_back(central_rsd.clone());
 	return autoexpanding_pocket_eval(residues, inPose, center_target, x, y, z);
 }
 
 
-bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsds, core::pose::Pose const & inPose, bool center_target, core::Real x, core::Real y, core::Real z  ) {
+bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueCOP > const & central_rsds, core::pose::Pose const & inPose, bool center_target, core::Real x, core::Real y, core::Real z  ) {
 
 	using namespace core::chemical;
 	bool too_small=true;
@@ -4101,6 +4145,27 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 }
 
 
+bool PocketGrid::operator == ( PocketGrid const & other ) const
+{
+	if ( ! same_type_as_me( other ) || ! other.same_type_as_me( *this ) ) return false;
+
+	if ( size_x_  != other.size_x_  ) return false;
+	if ( size_y_  != other.size_y_  ) return false;
+	if ( size_z_  != other.size_z_  ) return false;
+	if ( xcorn_   != other.xcorn_   ) return false;
+	if ( ycorn_   != other.ycorn_   ) return false;
+	if ( zcorn_   != other.zcorn_   ) return false;
+	if ( spacing_ != other.spacing_ ) return false;
+
+	return true;
+}
+
+bool PocketGrid::same_type_as_me( PocketGrid const & other ) const
+{
+	return dynamic_cast< PocketGrid const * > (&other);
+}
+
+
 TargetPocketGrid::TargetPocketGrid( const PocketGrid& ext_grd): PocketGrid(ext_grd)
 {
 	init();
@@ -4295,6 +4360,12 @@ void ElectrostaticpotentialGrid::initialize_typGrid(){
 		}
 	}
 }
+
+bool TargetPocketGrid::same_type_as_me( PocketGrid const & other ) const
+{
+	return dynamic_cast< TargetPocketGrid const * > (&other);
+}
+
 
 void ElectrostaticpotentialGrid::set_surface_esp_to_zero() {
 
@@ -5084,6 +5155,25 @@ void EggshellGrid::get_connolly_eggshell_on_grid( std::list< numeric::xyzVector<
 	return;
 }
 
+// David, does this look right? Is the right data being compared to make sure two grids are the same?
+bool ElectrostaticpotentialGrid::operator == ( PocketGrid const & other ) const {
+	if ( ! PocketGrid::operator == ( other ) ) return false;
+
+	ElectrostaticpotentialGrid const & other_downcast( static_cast< ElectrostaticpotentialGrid const & > ( other ));
+	if ( espGrid_dim_         != other_downcast.espGrid_dim_         ) return false;
+	if ( espGrid_mid_         != other_downcast.espGrid_mid_         ) return false;
+	if ( espGrid_spacing_     != other_downcast.espGrid_spacing_     ) return false;
+	if ( espGrid_points_list_ != other_downcast.espGrid_points_list_ ) return false;
+	return true;
+}
+
+
+bool ElectrostaticpotentialGrid::same_type_as_me( PocketGrid const & other ) const
+{
+	return dynamic_cast< ElectrostaticpotentialGrid const * > (&other);
+}
+
+
 void EggshellGrid::get_connolly_eggshell( std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list, const PocketGrid& eggGrid, const PocketGrid& extGrid ) {
 
 	numeric::xyzVector<core::Real> grid_coord;
@@ -5656,6 +5746,22 @@ core::Real EggshellGrid::get_eggshell_distance( EggshellGrid const & template_eg
 	return 1. - match_score;
 }
 
+// David, does this look right? Is the right data being compared to make sure two grids are the same?
+bool EggshellGrid::operator == ( PocketGrid const & other ) const {
+	if ( ! PocketGrid::operator == ( other ) ) return false;
+	EggshellGrid const & other_downcast( static_cast< EggshellGrid const & > ( other ));
+	if ( eggshell_coord_list_ != other_downcast.eggshell_coord_list_ ) return false;
+	if ( extra_coord_list_    != other_downcast.extra_coord_list_    ) return false;
+	if ( eggshell_CoM_        != other_downcast.eggshell_CoM_        ) return false;
+	return true;
+}
+
+bool EggshellGrid::same_type_as_me( PocketGrid const & other ) const
+{
+	return dynamic_cast< EggshellGrid const * > (&other);
+}
+
+
 ComparisonGrid::ComparisonGrid(const PocketGrid& gr){
 	xdim_ = gr.xdim_;
 	xcorn_ = gr.xcorn_;
@@ -5734,3 +5840,384 @@ core::Real ComparisonGrid::compareCoverage(const PocketGrid& gr){
 
 } // pockets
 } // protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::pockets::PCluster::Cxyz::save( Archive & arc ) const {
+	arc( CEREAL_NVP( x ) ); // core::Size
+	arc( CEREAL_NVP( y ) ); // core::Size
+	arc( CEREAL_NVP( z ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::pockets::PCluster::Cxyz::load( Archive & arc ) {
+	arc( x ); // core::Size
+	arc( y ); // core::Size
+	arc( z ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::pockets::PCluster::Cxyz );
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::pockets::EggshellGrid::EggshellGrid() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::pockets::EggshellGrid::save( Archive & arc ) const {
+	arc( cereal::base_class< PocketGrid >( this ) );
+	arc( CEREAL_NVP( eggshell_coord_list_ ) ); // std::list<numeric::xyzVector<core::Real> >
+	arc( CEREAL_NVP( extra_coord_list_ ) ); // std::list<numeric::xyzVector<core::Real> >
+	arc( CEREAL_NVP( eggshell_CoM_ ) ); // numeric::xyzVector<core::Real>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::pockets::EggshellGrid::load( Archive & arc ) {
+	arc( cereal::base_class< PocketGrid >( this ) );
+	arc( eggshell_coord_list_ ); // std::list<numeric::xyzVector<core::Real> >
+	arc( extra_coord_list_ ); // std::list<numeric::xyzVector<core::Real> >
+	arc( eggshell_CoM_ ); // numeric::xyzVector<core::Real>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::pockets::EggshellGrid );
+CEREAL_REGISTER_TYPE( protocols::pockets::EggshellGrid )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::pockets::PocketGrid::save( Archive & arc ) const {
+	arc( CEREAL_NVP( grid_ ) ); // std::vector<std::vector<std::vector<PtType> > >
+	arc( CEREAL_NVP( c_grid_ ) ); // std::vector<std::vector<std::vector<PtType> > >
+	arc( CEREAL_NVP( pockets_ ) ); // std::vector<std::vector<std::vector<core::Size> > >
+	arc( CEREAL_NVP( xdim_ ) ); // core::Size
+	arc( CEREAL_NVP( ydim_ ) ); // core::Size
+	arc( CEREAL_NVP( zdim_ ) ); // core::Size
+	arc( CEREAL_NVP( xcorn_ ) ); // core::Real
+	arc( CEREAL_NVP( ycorn_ ) ); // core::Real
+	arc( CEREAL_NVP( zcorn_ ) ); // core::Real
+	arc( CEREAL_NVP( spacing_ ) ); // core::Real
+	arc( CEREAL_NVP( stepSize_ ) ); // core::Real
+	arc( CEREAL_NVP( mid_ ) ); // numeric::xyzVector<core::Real>
+	arc( CEREAL_NVP( dim_ ) ); // numeric::xyzVector<core::Size>
+	arc( CEREAL_NVP( maxLen_ ) ); // core::Real
+	arc( CEREAL_NVP( tag_ ) ); // std::string
+	arc( CEREAL_NVP( pdbno_ ) ); // core::Size
+	arc( CEREAL_NVP( expdbno_ ) ); // core::Size
+	arc( CEREAL_NVP( numTargets_ ) ); // core::Size
+	arc( CEREAL_NVP( clusters_ ) ); // class protocols::pockets::PClusterSet
+	arc( CEREAL_NVP( c_clusters_ ) ); // class protocols::pockets::CClusterSet
+	arc( CEREAL_NVP( size_x_ ) ); // core::Real
+	arc( CEREAL_NVP( size_y_ ) ); // core::Real
+	arc( CEREAL_NVP( size_z_ ) ); // core::Real
+	arc( CEREAL_NVP( limit_x_ ) ); // core::Real
+	arc( CEREAL_NVP( limit_y_ ) ); // core::Real
+	arc( CEREAL_NVP( limit_z_ ) ); // core::Real
+	arc( CEREAL_NVP( restrictSize_ ) ); // _Bool
+	arc( CEREAL_NVP( ignoreBuriedPockets_ ) ); // _Bool
+	arc( CEREAL_NVP( ignoreExposedPockets_ ) ); // _Bool
+	arc( CEREAL_NVP( probe_rad_ ) ); // core::Real
+	arc( CEREAL_NVP( surf_score_ ) ); // core::Real
+	arc( CEREAL_NVP( surf_dist_ ) ); // core::Real
+	arc( CEREAL_NVP( bur_score_ ) ); // core::Real
+	arc( CEREAL_NVP( bur_dist_ ) ); // core::Real
+	arc( CEREAL_NVP( side_chains_only_ ) ); // _Bool
+	arc( CEREAL_NVP( markpsp_ ) ); // _Bool
+	arc( CEREAL_NVP( marksps_ ) ); // _Bool
+	arc( CEREAL_NVP( exemplarRestriction_ ) ); // _Bool
+	arc( CEREAL_NVP( dumpExemplars_ ) ); // _Bool
+	arc( CEREAL_NVP( search13_ ) ); // _Bool
+	arc( CEREAL_NVP( minPockSize_ ) ); // core::Real
+	arc( CEREAL_NVP( maxPockSize_ ) ); // core::Real
+	arc( CEREAL_NVP( rot_mat_ ) ); // numeric::xyzMatrix<core::Real>
+	arc( CEREAL_NVP( static_grid_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::pockets::PocketGrid::load( Archive & arc ) {
+	arc( grid_ ); // std::vector<std::vector<std::vector<PtType> > >
+	arc( c_grid_ ); // std::vector<std::vector<std::vector<PtType> > >
+	arc( pockets_ ); // std::vector<std::vector<std::vector<core::Size> > >
+	arc( xdim_ ); // core::Size
+	arc( ydim_ ); // core::Size
+	arc( zdim_ ); // core::Size
+	arc( xcorn_ ); // core::Real
+	arc( ycorn_ ); // core::Real
+	arc( zcorn_ ); // core::Real
+	arc( spacing_ ); // core::Real
+	arc( stepSize_ ); // core::Real
+	arc( mid_ ); // numeric::xyzVector<core::Real>
+	arc( dim_ ); // numeric::xyzVector<core::Size>
+	arc( maxLen_ ); // core::Real
+	arc( tag_ ); // std::string
+	arc( pdbno_ ); // core::Size
+	arc( expdbno_ ); // core::Size
+	arc( numTargets_ ); // core::Size
+	arc( clusters_ ); // class protocols::pockets::PClusterSet
+	arc( c_clusters_ ); // class protocols::pockets::CClusterSet
+	arc( size_x_ ); // core::Real
+	arc( size_y_ ); // core::Real
+	arc( size_z_ ); // core::Real
+	arc( limit_x_ ); // core::Real
+	arc( limit_y_ ); // core::Real
+	arc( limit_z_ ); // core::Real
+	arc( restrictSize_ ); // _Bool
+	arc( ignoreBuriedPockets_ ); // _Bool
+	arc( ignoreExposedPockets_ ); // _Bool
+	arc( probe_rad_ ); // core::Real
+	arc( surf_score_ ); // core::Real
+	arc( surf_dist_ ); // core::Real
+	arc( bur_score_ ); // core::Real
+	arc( bur_dist_ ); // core::Real
+	arc( side_chains_only_ ); // _Bool
+	arc( markpsp_ ); // _Bool
+	arc( marksps_ ); // _Bool
+	arc( exemplarRestriction_ ); // _Bool
+	arc( dumpExemplars_ ); // _Bool
+	arc( search13_ ); // _Bool
+	arc( minPockSize_ ); // core::Real
+	arc( maxPockSize_ ); // core::Real
+	arc( rot_mat_ ); // numeric::xyzMatrix<core::Real>
+	arc( static_grid_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::pockets::PocketGrid );
+CEREAL_REGISTER_TYPE( protocols::pockets::PocketGrid )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::pockets::CCluster::CCluster() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::pockets::CCluster::save( Archive & arc ) const {
+	arc( CEREAL_NVP( points_ ) ); // std::list<Cxyz>
+	arc( CEREAL_NVP( count_ ) ); // int
+	arc( CEREAL_NVP( target_ ) ); // _Bool
+	arc( CEREAL_NVP( subtarget_ ) ); // _Bool
+	arc( CEREAL_NVP( solventExposed_ ) ); // _Bool
+	arc( CEREAL_NVP( maxX ) ); // core::Size
+	arc( CEREAL_NVP( minX ) ); // core::Size
+	arc( CEREAL_NVP( maxY ) ); // core::Size
+	arc( CEREAL_NVP( minY ) ); // core::Size
+	arc( CEREAL_NVP( maxZ ) ); // core::Size
+	arc( CEREAL_NVP( minZ ) ); // core::Size
+	arc( CEREAL_NVP( step ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::pockets::CCluster::load( Archive & arc ) {
+	arc( points_ ); // std::list<Cxyz>
+	arc( count_ ); // int
+	arc( target_ ); // _Bool
+	arc( subtarget_ ); // _Bool
+	arc( solventExposed_ ); // _Bool
+	arc( maxX ); // core::Size
+	arc( minX ); // core::Size
+	arc( maxY ); // core::Size
+	arc( minY ); // core::Size
+	arc( maxZ ); // core::Size
+	arc( minZ ); // core::Size
+	arc( step ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::pockets::CCluster );
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::pockets::PCluster::PCluster() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::pockets::PCluster::save( Archive & arc ) const {
+	arc( CEREAL_NVP( points_ ) ); // std::list<Cxyz>
+	arc( CEREAL_NVP( count_ ) ); // int
+	arc( CEREAL_NVP( target_ ) ); // _Bool
+	arc( CEREAL_NVP( subtarget_ ) ); // _Bool
+	arc( CEREAL_NVP( solventExposed_ ) ); // _Bool
+	arc( CEREAL_NVP( maxX ) ); // core::Size
+	arc( CEREAL_NVP( minX ) ); // core::Size
+	arc( CEREAL_NVP( maxY ) ); // core::Size
+	arc( CEREAL_NVP( minY ) ); // core::Size
+	arc( CEREAL_NVP( maxZ ) ); // core::Size
+	arc( CEREAL_NVP( minZ ) ); // core::Size
+	arc( CEREAL_NVP( step ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::pockets::PCluster::load( Archive & arc ) {
+	arc( points_ ); // std::list<Cxyz>
+	arc( count_ ); // int
+	arc( target_ ); // _Bool
+	arc( subtarget_ ); // _Bool
+	arc( solventExposed_ ); // _Bool
+	arc( maxX ); // core::Size
+	arc( minX ); // core::Size
+	arc( maxY ); // core::Size
+	arc( minY ); // core::Size
+	arc( maxZ ); // core::Size
+	arc( minZ ); // core::Size
+	arc( step ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::pockets::PCluster );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::pockets::ElectrostaticpotentialGrid::save( Archive & arc ) const {
+	arc( cereal::base_class< PocketGrid >( this ) );
+	arc( CEREAL_NVP( espGrid_dim_ ) ); // numeric::xyzVector<core::Size>
+	arc( CEREAL_NVP( espGrid_mid_ ) ); // numeric::xyzVector<core::Real>
+	arc( CEREAL_NVP( espGrid_spacing_ ) ); // core::Real
+	arc( CEREAL_NVP( espGrid_points_list_ ) ); // std::list<utility::vector1<core::Real> >
+	arc( CEREAL_NVP( espGrid_ ) ); // std::vector<std::vector<std::vector<core::Real> > >
+	arc( CEREAL_NVP( typGrid_ ) ); // std::vector<std::vector<std::vector<PtType> > >
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::pockets::ElectrostaticpotentialGrid::load( Archive & arc ) {
+	arc( cereal::base_class< PocketGrid >( this ) );
+	arc( espGrid_dim_ ); // numeric::xyzVector<core::Size>
+	arc( espGrid_mid_ ); // numeric::xyzVector<core::Real>
+	arc( espGrid_spacing_ ); // core::Real
+	arc( espGrid_points_list_ ); // std::list<utility::vector1<core::Real> >
+	arc( espGrid_ ); // std::vector<std::vector<std::vector<core::Real> > >
+	arc( typGrid_ ); // std::vector<std::vector<std::vector<PtType> > >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::pockets::ElectrostaticpotentialGrid );
+CEREAL_REGISTER_TYPE( protocols::pockets::ElectrostaticpotentialGrid )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::pockets::PClusterSet::save( Archive & arc ) const {
+	arc( CEREAL_NVP( clusters_ ) ); // std::list<PCluster>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::pockets::PClusterSet::load( Archive & arc ) {
+	arc( clusters_ ); // std::list<PCluster>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::pockets::PClusterSet );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::pockets::CClusterSet::save( Archive & arc ) const {
+	arc( CEREAL_NVP( clusters_ ) ); // std::list<CCluster>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::pockets::CClusterSet::load( Archive & arc ) {
+	arc( clusters_ ); // std::list<CCluster>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::pockets::CClusterSet );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::pockets::CCluster::Cxyz::save( Archive & arc ) const {
+	arc( CEREAL_NVP( x ) ); // core::Size
+	arc( CEREAL_NVP( y ) ); // core::Size
+	arc( CEREAL_NVP( z ) ); // core::Size
+	arc( CEREAL_NVP( absX ) ); // core::Real
+	arc( CEREAL_NVP( absY ) ); // core::Real
+	arc( CEREAL_NVP( absZ ) ); // core::Real
+	arc( CEREAL_NVP( atom_type ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::pockets::CCluster::Cxyz::load( Archive & arc ) {
+	arc( x ); // core::Size
+	arc( y ); // core::Size
+	arc( z ); // core::Size
+	arc( absX ); // core::Real
+	arc( absY ); // core::Real
+	arc( absZ ); // core::Real
+	arc( atom_type ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::pockets::CCluster::Cxyz );
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::pockets::TargetPocketGrid::TargetPocketGrid() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::pockets::TargetPocketGrid::save( Archive & arc ) const {
+	arc( cereal::base_class< PocketGrid >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::pockets::TargetPocketGrid::load( Archive & arc ) {
+	arc( cereal::base_class< PocketGrid >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::pockets::TargetPocketGrid );
+CEREAL_REGISTER_TYPE( protocols::pockets::TargetPocketGrid )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::pockets::ComparisonGrid::ComparisonGrid() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::pockets::ComparisonGrid::save( Archive & arc ) const {
+	arc( CEREAL_NVP( grid_ ) ); // std::vector<std::vector<std::vector<PtType> > >
+	arc( CEREAL_NVP( xdim_ ) ); // core::Size
+	arc( CEREAL_NVP( ydim_ ) ); // core::Size
+	arc( CEREAL_NVP( zdim_ ) ); // core::Size
+	arc( CEREAL_NVP( xcorn_ ) ); // core::Real
+	arc( CEREAL_NVP( ycorn_ ) ); // core::Real
+	arc( CEREAL_NVP( zcorn_ ) ); // core::Real
+	arc( CEREAL_NVP( stepSize_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::pockets::ComparisonGrid::load( Archive & arc ) {
+	arc( grid_ ); // std::vector<std::vector<std::vector<PtType> > >
+	arc( xdim_ ); // core::Size
+	arc( ydim_ ); // core::Size
+	arc( zdim_ ); // core::Size
+	arc( xcorn_ ); // core::Real
+	arc( ycorn_ ); // core::Real
+	arc( zcorn_ ); // core::Real
+	arc( stepSize_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::pockets::ComparisonGrid );
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_pockets_PocketGrid )
+#endif // SERIALIZATION

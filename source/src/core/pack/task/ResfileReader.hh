@@ -47,10 +47,9 @@ namespace task {
 
 class ResfileReaderException: public utility::excn::EXCN_Msg_Exception
 {
-
 public:
 
-	ResfileReaderException( std::string message):
+	ResfileReaderException( std::string message ) :
 		utility::excn::EXCN_Msg_Exception( message )
 	{}
 
@@ -64,7 +63,7 @@ class ResfileContents : public utility::pointer::ReferenceCount
 {
 public:
 
-	ResfileContents( pose::Pose const & pose, std::istream & istream );
+	ResfileContents( pose::Pose const & pose, std::string const & fname, std::istream & istream );
 	virtual ~ResfileContents();
 
 	std::list< ResfileCommandCOP > const &
@@ -74,6 +73,8 @@ public:
 
 	std::list< ResfileCommandCOP > const &
 	commands_for_residue( Size resid ) const;
+
+	std::string const & fname_initialized_from() const;
 
 private: // helper types and functions for parsing
 
@@ -134,6 +135,7 @@ private: // helper types and functions for parsing
 		Size const lineno) const;
 
 private:
+	std::string fname_initialized_from_;
 	std::list< ResfileCommandCOP > default_commands_;
 	utility::vector1< std::list< ResfileCommandCOP > > commands_;
 };
@@ -753,8 +755,9 @@ void
 parse_resfile_string(
 	pose::Pose const & pose,
 	PackerTask & the_task,
+	std::string const & resfile_fname,
 	std::string const & resfile_string
-) throw(ResfileReaderException);
+) throw( ResfileReaderException );
 
 
 /// @brief changes the state of the given PackerTask according to the commands in the resfile.
@@ -764,6 +767,7 @@ void
 parse_resfile_string(
 	pose::Pose const & pose,
 	PackerTask & the_task,
+	std::string const & resfile_fname,
 	std::string const & resfile_string,
 	core::select::residue_selector::ResidueSubset const &mask
 

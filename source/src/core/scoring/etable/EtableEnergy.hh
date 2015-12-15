@@ -29,6 +29,9 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace scoring {
@@ -1236,5 +1239,8 @@ AnalyticEtableEvaluator::eval_dE_dR_over_r(
 } // scoring
 } // core
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_etable_EtableEnergy )
+#endif // SERIALIZATION
 
 #endif // INCLUDED_core_scoring_EtableEnergy_HH

@@ -53,6 +53,21 @@
 static THREAD_LOCAL basic::Tracer TR( "devel.buns.BuriedUnsatisfiedPolarsCalculator2" );
 
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/id/AtomID_Map.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace devel {
 namespace buns {
 
@@ -124,9 +139,10 @@ BuriedUnsatisfiedPolarsCalculator2::assert_calculators() {
 		std::string sasa_calc_name("sasa_calc_name");
 		if ( !CalculatorFactory::Instance().check_calculator_exists( sasa_calc_name ) ) {
 			if ( layered_sasa_ ) {
+				using namespace devel::vardist_solaccess;
 				TR << "Registering VarSolDist SASA Calculator" << std::endl;
 				CalculatorFactory::Instance().register_calculator(sasa_calc_name,
-					PoseMetricCalculatorOP( new devel::vardist_solaccess::VarSolDistSasaCalculator() ));
+					VarSolDistSasaCalculatorOP( new VarSolDistSasaCalculator() ));
 			} else {
 				TR << "Registering SASA Calculator" << std::endl;
 				CalculatorFactory::Instance().register_calculator(sasa_calc_name,
@@ -139,11 +155,10 @@ BuriedUnsatisfiedPolarsCalculator2::assert_calculators() {
 				PoseMetricCalculatorOP( new NumberHBondsCalculator() ));
 		}
 		if ( !CalculatorFactory::Instance().check_calculator_exists( name_of_weak_bunsat_calc_ ) ) {
+			using namespace protocols::toolbox::pose_metric_calculators;
 			TR << "Registering new basic buried unsat calculator." << std::endl;
-			CalculatorFactory::Instance().register_calculator( name_of_weak_bunsat_calc_,
-				PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::
-				BuriedUnsatisfiedPolarsCalculator(sasa_calc_name, num_hbonds_calc_name,
-				sasa_burial_cutoff_) ) );
+			CalculatorFactory::Instance().register_calculator( name_of_weak_bunsat_calc_, PoseMetricCalculatorOP(
+				new BuriedUnsatisfiedPolarsCalculator(sasa_calc_name, num_hbonds_calc_name, sasa_burial_cutoff_)));
 		}
 	}
 }
@@ -727,3 +742,56 @@ BuriedUnsatisfiedPolarsCalculator2::show() {
 
 } // namespace buns
 } // namespace devel
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+devel::buns::BuriedUnsatisfiedPolarsCalculator2::BuriedUnsatisfiedPolarsCalculator2() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+devel::buns::BuriedUnsatisfiedPolarsCalculator2::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+	arc( CEREAL_NVP( all_bur_unsat_polars_ ) ); // Size
+	arc( CEREAL_NVP( special_region_bur_unsat_polars_ ) ); // Size
+	arc( CEREAL_NVP( atom_bur_unsat_ ) ); // core::id::AtomID_Map<_Bool>
+	arc( CEREAL_NVP( residue_bur_unsat_polars_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( name_of_weak_bunsat_calc_ ) ); // std::string
+	arc( CEREAL_NVP( special_region_ ) ); // std::set<Size>
+	arc( CEREAL_NVP( layered_sasa_ ) ); // _Bool
+	arc( CEREAL_NVP( generous_hbonds_ ) ); // _Bool
+	arc( CEREAL_NVP( sasa_burial_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( AHD_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( dist_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( hxl_dist_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( sulph_dist_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( metal_dist_cutoff_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+devel::buns::BuriedUnsatisfiedPolarsCalculator2::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+	arc( all_bur_unsat_polars_ ); // Size
+	arc( special_region_bur_unsat_polars_ ); // Size
+	arc( atom_bur_unsat_ ); // core::id::AtomID_Map<_Bool>
+	arc( residue_bur_unsat_polars_ ); // utility::vector1<Size>
+	arc( name_of_weak_bunsat_calc_ ); // std::string
+	arc( special_region_ ); // std::set<Size>
+	arc( layered_sasa_ ); // _Bool
+	arc( generous_hbonds_ ); // _Bool
+	arc( sasa_burial_cutoff_ ); // core::Real
+	arc( AHD_cutoff_ ); // core::Real
+	arc( dist_cutoff_ ); // core::Real
+	arc( hxl_dist_cutoff_ ); // core::Real
+	arc( sulph_dist_cutoff_ ); // core::Real
+	arc( metal_dist_cutoff_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( devel::buns::BuriedUnsatisfiedPolarsCalculator2 );
+CEREAL_REGISTER_TYPE( devel::buns::BuriedUnsatisfiedPolarsCalculator2 )
+
+CEREAL_REGISTER_DYNAMIC_INIT( devel_buns_BuriedUnsatisfiedPolarsCalculator2 )
+#endif // SERIALIZATION

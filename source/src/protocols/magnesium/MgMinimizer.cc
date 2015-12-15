@@ -18,6 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/conformation/Residue.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>

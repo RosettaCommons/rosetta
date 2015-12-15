@@ -34,6 +34,12 @@
 
 // STL Headers
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace task {
@@ -60,6 +66,12 @@ protected:
 	//this is the default non-upweighted weight. all reweighters derived from this class
 	//should return this variable for edges with no specific upweighting
 	core::Real const default_weight_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -94,11 +106,26 @@ private:
 	utility::vector1< IGEdgeReweighterOP > edge_reweighters_;
 	Size nres_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	IGEdgeReweightContainer();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } //task
 } //pack
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_task_IGEdgeReweightContainer )
+#endif // SERIALIZATION
+
 
 #endif

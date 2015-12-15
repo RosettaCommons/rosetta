@@ -29,6 +29,17 @@
 
 using numeric::constants::d::pi;
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -49,6 +60,28 @@ FuncOP
 GaussianChainQuadrupleFunc::clone() const
 {
 	return FuncOP( new GaussianChainQuadrupleFunc( gaussian_variance_, loop_fixed_cost_, D2_, D3_, D4_ ) );
+}
+
+bool GaussianChainQuadrupleFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	GaussianChainQuadrupleFunc const & other_downcast( static_cast< GaussianChainQuadrupleFunc const & > (other) );
+	if ( gaussian_variance_     != other_downcast.gaussian_variance_     ) return false;
+	if ( loop_fixed_cost_       != other_downcast.loop_fixed_cost_       ) return false;
+	if ( D2_                    != other_downcast.D2_                    ) return false;
+	if ( D3_                    != other_downcast.D3_                    ) return false;
+	if ( D4_                    != other_downcast.D4_                    ) return false;
+	if ( kB_T_                  != other_downcast.kB_T_                  ) return false;
+	if ( loop_fixed_cost_total_ != other_downcast.loop_fixed_cost_total_ ) return false;
+
+	return true;
+}
+
+bool GaussianChainQuadrupleFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< GaussianChainQuadrupleFunc const * > ( &other );
 }
 
 void
@@ -161,3 +194,42 @@ GaussianChainQuadrupleFunc::show_definition( std::ostream &out ) const {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::func::GaussianChainQuadrupleFunc::GaussianChainQuadrupleFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::GaussianChainQuadrupleFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( gaussian_variance_ ) ); // Real
+	arc( CEREAL_NVP( loop_fixed_cost_ ) ); // Real
+	arc( CEREAL_NVP( D2_ ) ); // Real
+	arc( CEREAL_NVP( D3_ ) ); // Real
+	arc( CEREAL_NVP( D4_ ) ); // Real
+	arc( CEREAL_NVP( kB_T_ ) ); // Real
+	arc( CEREAL_NVP( loop_fixed_cost_total_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::GaussianChainQuadrupleFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( gaussian_variance_ ); // Real
+	arc( loop_fixed_cost_ ); // Real
+	arc( D2_ ); // Real
+	arc( D3_ ); // Real
+	arc( D4_ ); // Real
+	arc( kB_T_ ); // Real
+	arc( loop_fixed_cost_total_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::GaussianChainQuadrupleFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::GaussianChainQuadrupleFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_GaussianChainQuadrupleFunc )
+#endif // SERIALIZATION

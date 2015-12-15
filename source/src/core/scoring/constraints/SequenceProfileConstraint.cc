@@ -37,6 +37,15 @@
 #include <boost/lexical_cast.hpp>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -92,8 +101,26 @@ SequenceProfileConstraint::~SequenceProfileConstraint() {}
 
 ConstraintOP
 SequenceProfileConstraint::clone() const {
-	return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( *this ) );
+	return SequenceProfileConstraintOP( new SequenceProfileConstraint(*this) );
 }
+
+bool SequenceProfileConstraint::operator == ( Constraint const & rhs ) const {
+	if ( ! same_type_as_me( rhs ) ) return false;
+	if ( ! rhs.same_type_as_me( *this ) ) return false;
+
+	SequenceProfileConstraint const & rhs_spc( static_cast< SequenceProfileConstraint const & > (rhs) );
+	if ( seqpos_ != rhs_spc.seqpos_ ) return false;
+	if ( sequence_profile_ != rhs_spc.sequence_profile_ && !( *sequence_profile_ == *rhs_spc.sequence_profile_ ) ) return false;
+	if ( mapping_ != rhs_spc.mapping_ && ! ( *mapping_ == *rhs_spc.mapping_ ) ) return false;
+	if ( weight_ != rhs_spc.weight_ ) return false;
+
+	return true;
+}
+
+bool SequenceProfileConstraint::same_type_as_me( Constraint const & other ) const {
+	return dynamic_cast< SequenceProfileConstraint const * > (&other);
+}
+
 
 /// @details one line definition "SequenceProfile resindex profilefilename" (profilefilename can also be set to "none" in the constraints file, and specified by -in::file::pssm)
 void
@@ -245,7 +272,7 @@ SequenceProfileConstraint::remapped_clone(
 	id::SequenceMappingCOP map /*=NULL*/ ) const
 {
 	if ( ! map ) {
-		return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( seqpos_, sequence_profile_, mapping_ ) );
+		return clone();
 	}
 
 	// Hereafter map is valid
@@ -261,7 +288,12 @@ SequenceProfileConstraint::remapped_clone(
 		new_map->downstream_combine( *mapping_ ); // Combine new->old and old->profile into new->profile
 	}
 
-	return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( newseqpos, sequence_profile_, new_map ) );
+	return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint(
+		newseqpos,
+		sequence_profile_ ?
+		utility::pointer::dynamic_pointer_cast< sequence::SequenceProfile > ( sequence_profile_->clone() ) :
+		sequence_profile_,
+		new_map ) );
 }
 
 
@@ -336,6 +368,50 @@ SequenceProfileConstraint::weight( core::Real const w ){
 	weight_ = w;
 }
 
+SequenceProfileConstraint::SequenceProfileConstraint( SequenceProfileConstraint const & src ) :
+	Constraint( src ),
+	seqpos_( src.seqpos_ ),
+	sequence_profile_( src.sequence_profile_ ?
+	utility::pointer::dynamic_pointer_cast< SequenceProfile > ( src.sequence_profile_->clone() ) : src.sequence_profile_ ),
+	mapping_( src.mapping_ ? core::id::SequenceMappingCOP( new core::id::SequenceMapping( *src.mapping_ )) : src.mapping_ ),
+	weight_(src.weight_ )
+{}
+
+
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::SequenceProfileConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( CEREAL_NVP( seqpos_ ) ); // core::Size
+	arc( CEREAL_NVP( sequence_profile_ ) ); // SequenceProfileCOP
+	arc( CEREAL_NVP( mapping_ ) ); // core::id::SequenceMappingCOP
+	arc( CEREAL_NVP( weight_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::SequenceProfileConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( seqpos_ ); // core::Size
+	std::shared_ptr< core::sequence::SequenceProfile > local_sequence_profile;
+	arc( local_sequence_profile ); // SequenceProfileCOP
+	sequence_profile_ = local_sequence_profile; // copy the non-const pointer(s) into the const pointer(s)
+	std::shared_ptr< core::id::SequenceMapping > local_mapping;
+	arc( local_mapping ); // core::id::SequenceMappingCOP
+	mapping_ = local_mapping; // copy the non-const pointer(s) into the const pointer(s)
+	arc( weight_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::SequenceProfileConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::SequenceProfileConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_SequenceProfileConstraint )
+#endif // SERIALIZATION

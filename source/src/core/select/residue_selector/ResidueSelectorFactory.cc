@@ -22,6 +22,7 @@
 // Utility headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 namespace core {
 namespace select {
@@ -71,6 +72,39 @@ ResidueSelectorOP ResidueSelectorFactory::new_residue_selector(
 	new_selector->parse_my_tag( tag, datamap );
 	return new_selector;
 }
+
+void ResidueSelectorFactory::define_residue_selector_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	using namespace utility::tag;
+
+	XMLSchemaComplexType rs_group_type;
+	std::string residue_selector_group_name( "residue_selector" );
+	rs_group_type.name( residue_selector_group_name );
+	XMLSchemaComplexTypeOP rs_group( new XMLSchemaComplexType );
+	rs_group->type( xsctt_choice );
+	for ( std::map< std::string, ResidueSelectorCreatorOP >::const_iterator
+			iter = creator_map_.begin(), iter_end = creator_map_.end();
+			iter != iter_end; ++iter ) {
+		XMLSchemaElementOP rs_element( new XMLSchemaElement );
+		rs_element->name( iter->first );
+		rs_element->type_name( iter->first + "Type" );
+		rs_group->add_subelement( rs_element );
+	}
+	rs_group_type.subtype( rs_group );
+
+	std::ostringstream oss;
+	rs_group_type.write_definition( 0, oss );
+	xsd.add_top_level_element( residue_selector_group_name, oss.str() );
+
+	// Now iterate across all ResidueSelectors in the map, and have each one write their definition to the XSD
+	for ( std::map< std::string, ResidueSelectorCreatorOP >::const_iterator
+			iter = creator_map_.begin(), iter_end = creator_map_.end();
+			iter != iter_end; ++iter ) {
+		iter->second->provide_selector_xsd( xsd );
+	}
+
+}
+
 
 void ResidueSelectorFactory::set_throw_on_double_registration()
 {

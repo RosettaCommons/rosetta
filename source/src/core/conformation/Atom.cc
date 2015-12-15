@@ -15,6 +15,13 @@
 // Unit header
 #include <core/conformation/Atom.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+#endif
 
 namespace core {
 namespace conformation {
@@ -25,6 +32,24 @@ Atom::show( std::ostream & output ) const
 	output << xyz_.x() << ", " << xyz_.y() << ", " << xyz_.z();
 }
 
+#ifdef     SERIALIZATION
+template < class Archive >
+void
+Atom::save( Archive & arch ) const
+{
+	arch( xyz_, type_, mm_type_ );
+}
+
+template < class Archive >
+void
+Atom::load( Archive & arch )
+{
+	arch( xyz_, type_, mm_type_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( Atom );
+
+#endif // SERIALIZATION
 
 std::ostream &
 operator << ( std::ostream & out, Atom const & atom )

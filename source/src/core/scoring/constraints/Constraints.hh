@@ -40,6 +40,11 @@
 
 
 // C++ Headers
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -55,11 +60,18 @@ public:
 	typedef ConstraintCOPs::const_iterator const_iterator;
 
 public:
-
+	/// @brief Default constructor creates an empy Constraints object
 	Constraints();
+	/// @brief Copy constructor copies all of the Constraint pointers so that two Poses may share
+	/// the same constraints -- this only works if constraints are immutable.
 	Constraints( Constraints const & );
+	/// @brief Create a copy of this %Constraints object using the shallow-copy-constructor.
 	ConstraintsOP clone() const;
-	Constraints const & operator = ( Constraints const & );
+	/// @brief Create a deep copy of this %Constraints object, cloning all of the individual constraints
+	ConstraintsOP deep_clone() const;
+	/// @brief Copy the contents of the rhs %Constraints object into this %Constraints object
+	Constraints const & operator = ( Constraints const & rhs );
+
 
 	// call the setup_for_derivatives for each constraint
 	void
@@ -173,9 +185,18 @@ private:
 	void
 	copy_from( Constraints const & );
 
+	void
+	deep_copy_from( Constraints const & );
+
 private:
 
 	ConstraintCOPs constraints_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -183,5 +204,10 @@ private:
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_Constraints )
+#endif // SERIALIZATION
+
 
 #endif

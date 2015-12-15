@@ -25,6 +25,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace flexpack {
 
@@ -90,6 +95,12 @@ private:
 
 	core::pose::PoseOP context_pose_;
 	bool scored_context_pose_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /// CREATE A .FWD.HH FILE AND PUT THIS TYPEDEF THERE
@@ -98,5 +109,10 @@ typedef utility::pointer::shared_ptr< OtherContextScoreFunction const > OtherCon
 
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_flexpack_OtherContextScoreFunction )
+#endif // SERIALIZATION
+
 
 #endif

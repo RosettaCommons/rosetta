@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
     Pose p;
     //std::string seq; seq += oneletter_code_from_aa((AA)aa);
     cout << "// " << seq << std::endl;
-    make_pose_from_sequence(p,seq,"fa_standard",false);
+    make_pose_from_sequence(p,seq,core::chemical::FA_STANDARD,false);
     if(p.residue(1).nheavyatoms() < 6) continue;
     remove_termini(p);
     ResidueType const & t(p.residue(1).type());

@@ -33,6 +33,18 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/id/AtomID_Map.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace metrics {
@@ -91,3 +103,33 @@ void SasaCalculatorLegacy::recompute( Pose const & this_pose ) {
 } // metrics
 } // pose
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::metrics::simple_calculators::SasaCalculatorLegacy::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( total_sasa_ ) ); // core::Real
+	arc( CEREAL_NVP( atom_sasa_ ) ); // core::id::AtomID_Map<core::Real>
+	arc( CEREAL_NVP( residue_sasa_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( probe_radius_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::metrics::simple_calculators::SasaCalculatorLegacy::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( total_sasa_ ); // core::Real
+	arc( atom_sasa_ ); // core::id::AtomID_Map<core::Real>
+	arc( residue_sasa_ ); // utility::vector1<core::Real>
+	arc( probe_radius_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::metrics::simple_calculators::SasaCalculatorLegacy );
+CEREAL_REGISTER_TYPE( core::pose::metrics::simple_calculators::SasaCalculatorLegacy )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_metrics_simple_calculators_SasaCalculatorLegacy )
+#endif // SERIALIZATION

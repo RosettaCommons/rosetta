@@ -25,6 +25,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -47,6 +52,9 @@ public:
 
 	/// @brief returns a clone of this SOGFunc
 	FuncOP clone() const { return FuncOP( new SOGFunc( *this ) ); }
+
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 
 	/// @brief Returns the value of this SOGFunc evaluated at distance x.
 	Real func( Real const x ) const;
@@ -86,11 +94,22 @@ private:
 	core::Real get_alt_score_( core::Real const x ) const;
 
 	SOGFunc_Impl member_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_SOGFunc )
+#endif // SERIALIZATION
+
 
 #endif

@@ -28,11 +28,21 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace comparative_modeling {
 
 class IgnoreSubsetConstraintSet : public core::scoring::constraints::ConstraintSet {
+public:
 	typedef core::scoring::constraints::ConstraintSetOP ConstraintSetOP;
+	typedef core::scoring::constraints::ConstraintSet ConstraintSet;
+
 public:
 	//IgnoreSubsetConstraintSet( ConstraintSet const & other );
 
@@ -43,10 +53,25 @@ public:
 		ConstraintSet const & other
 	);
 
+	virtual
+	ConstraintSet const &
+	operator = ( ConstraintSet const & rhs );
 
-	ConstraintSetOP clone() const {
-		return ConstraintSetOP( new IgnoreSubsetConstraintSet( *this ) );
-	}
+	virtual
+	ConstraintSetOP
+	clone() const;
+
+	virtual
+	void
+	detached_copy( ConstraintSet const & src );
+
+	virtual
+	ConstraintSetOP
+	detached_clone() const;
+
+	virtual
+	bool
+	same_type_as_me( ConstraintSet const & other, bool recurse = true ) const;
 
 	void
 	residue_pair_energy(
@@ -115,9 +140,24 @@ protected:
 
 private:
 	std::set< int > ignore_list_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	IgnoreSubsetConstraintSet();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // class IgnoreSubsetConstraintSet
 
 } // comparative_modeling
 } // protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_comparative_modeling_IgnoreSubsetConstraintSet )
+#endif // SERIALIZATION
+
 
 #endif

@@ -19,10 +19,39 @@
 #include <iostream>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
 
+bool CharmmPeriodicFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	CharmmPeriodicFunc const & other_downcast( static_cast< CharmmPeriodicFunc const & > (other) );
+
+	if ( x0_         != other_downcast.x0_         ) return false;
+	if ( k_          != other_downcast.k_          ) return false;
+	if ( n_periodic_ != other_downcast.n_periodic_ ) return false;
+
+	return true;
+}
+
+bool CharmmPeriodicFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< CharmmPeriodicFunc const * > ( &other );
+}
 
 Real
 CharmmPeriodicFunc::func( Real const x ) const
@@ -63,3 +92,34 @@ CharmmPeriodicFunc::show_violations( std::ostream& out, Real x, Size verbose_lev
 } //constraints
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::func::CharmmPeriodicFunc::CharmmPeriodicFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::CharmmPeriodicFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( x0_ ) ); // Real
+	arc( CEREAL_NVP( k_ ) ); // Real
+	arc( CEREAL_NVP( n_periodic_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::CharmmPeriodicFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( x0_ ); // Real
+	arc( k_ ); // Real
+	arc( n_periodic_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::CharmmPeriodicFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::CharmmPeriodicFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_CharmmPeriodicFunc )
+#endif // SERIALIZATION

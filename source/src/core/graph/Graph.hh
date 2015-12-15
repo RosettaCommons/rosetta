@@ -21,6 +21,7 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1_bool.hh>
 
 // STL Headers
 #include <iosfwd>
@@ -32,11 +33,16 @@
 #include <core/graph/unordered_object_pool.hpp>
 #endif
 
-// ObjexxFCL Headers
-
+// Utility Headers
 #include <utility/vector1.hh>
+
+// ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal Headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace graph {
@@ -517,6 +523,7 @@ public:
 
 	/// NOTE TO SELF: remove loop support
 	bool loop_incident() const { return loop_incident_; }
+
 protected:
 
 	/// @brief derived class access to the owner
@@ -822,6 +829,14 @@ public:
 	friend class Node;
 	friend class Edge;
 
+#ifdef    SERIALIZATION
+	template < class Archive >
+	void save( Archive & archive ) const;
+
+	template < class Archive >
+	void load( Archive & archive );
+#endif // SERIALIZATION
+
 protected:
 
 	virtual platform::Size count_static_memory() const;
@@ -883,5 +898,9 @@ bool EdgeListConstIterator::valid() const
 
 } //end namespace graph
 } //end namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_graph_Graph )
+#endif // SERIALIZATION
 
 #endif

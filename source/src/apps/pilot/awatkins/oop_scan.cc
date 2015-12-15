@@ -66,7 +66,7 @@ Pose pose;
 
 // Make an oop.
 std::string sequence = "A[ALA:oop_pre]A[ALA:CtermProteinFull:oop_post]";
-core::pose::make_pose_from_sequence( pose, sequence, "fa_standard" );
+core::pose::make_pose_from_sequence( pose, sequence, core::chemical::FA_STANDARD );
 std::cout << pose;
 
 ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "mm_std" );

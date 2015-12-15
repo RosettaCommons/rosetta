@@ -15,21 +15,12 @@
 #include <core/scoring/methods/LK_BallInfo.hh>
 
 // // Package headers
-// #include <core/scoring/methods/LK_BallEnergy.hh>
-// #include <core/scoring/ScoringManager.hh>
-// #include <core/scoring/NeighborList.hh>
-// #include <core/scoring/EnergyGraph.hh>
-// #include <core/scoring/etable/Etable.hh>
-// #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-// #include <core/scoring/etable/count_pair/CountPairFactory.hh>
-// #include <core/scoring/etable/count_pair/types.hh>
+//#include <core/pack/rotamer_set/WaterPackingInfo.hh>
 
 // // Project headers
 #include <core/pose/Pose.hh>
-// #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-//#include <core/pack/rotamer_set/WaterPackingInfo.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/database/open.hh>
@@ -64,6 +55,21 @@
 //#include <core/pack/rotamer_set/WaterAnchorInfo.hh>
 //#endif
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/chemical/ResidueType.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace methods {
@@ -97,12 +103,7 @@ LKB_ResidueInfo::WaterBuilderMap LKB_ResidueInfo::water_builder_map_;
 LKB_ResidueInfo::AtomWeightsMap LKB_ResidueInfo::atom_weights_map_;
 
 
-void
-LKB_ResidueInfo::reset_arrays_danger_expert_only()
-{
-	water_builder_map_.clear();
-	atom_weights_map_.clear();
-}
+
 /////////////////////////////////////////////////////////////////////////////
 
 WaterBuilder::WaterBuilder(
@@ -649,7 +650,7 @@ LKB_ResidueInfo::get_water_builder( conformation::Residue const & rsd , Size hea
 void
 LKB_ResidueInfo::initialize( ResidueType const & rsd )
 {
-	rsd_type_ = &rsd;
+	rsd_type_ = rsd.get_self_ptr();
 
 	waters_.clear(); waters_.resize( rsd.nheavyatoms() );
 	dwater_datom1_.clear(); dwater_datom1_.resize( rsd.nheavyatoms() );
@@ -746,7 +747,77 @@ LKB_ResidueInfo::remove_irrelevant_waters(
 
 }
 
+void
+LKB_ResidueInfo::reset_arrays_danger_expert_only()
+{
+	water_builder_map_.clear();
+	atom_weights_map_.clear();
+}
+
+bool
+LKB_ResidueInfo::matches_residue_type( chemical::ResidueType const & rsd_type ) const {
+	return ( rsd_type_.get() == &(rsd_type) );
+}
+
+chemical::ResidueType const &
+LKB_ResidueInfo::residue_type() const { return *rsd_type_; }
+
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::methods::LKB_ResidueInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	core::chemical::serialize_residue_type( arc, rsd_type_ );
+	arc( CEREAL_NVP( waters_ ) ); // utility::vector1<Vectors>
+	arc( CEREAL_NVP( dwater_datom1_ ) );
+	arc( CEREAL_NVP( dwater_datom2_ ) );
+	arc( CEREAL_NVP( dwater_datom3_ ) );
+	arc( CEREAL_NVP( atom_weights_ ) ); // utility::vector1<utility::vector1<Real> >
+	arc( CEREAL_NVP( has_waters_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::methods::LKB_ResidueInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	core::chemical::deserialize_residue_type( arc, rsd_type_ ); // const chemical::ResidueTypeCOP;
+	arc( waters_ ); // utility::vector1<Vectors>
+	arc( dwater_datom1_ );
+	arc( dwater_datom2_ );
+	arc( dwater_datom3_ );
+	arc( atom_weights_ ); // utility::vector1<utility::vector1<Real> >
+	arc( has_waters_ ); // _Bool
+}
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::methods::LKB_ResidueInfo );
+CEREAL_REGISTER_TYPE( core::scoring::methods::LKB_ResidueInfo )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::methods::LKB_ResiduesInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( residues_info_ ) ); // utility::vector1<LKB_ResidueInfoOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::methods::LKB_ResiduesInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( residues_info_ ); // utility::vector1<LKB_ResidueInfoOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::methods::LKB_ResiduesInfo );
+CEREAL_REGISTER_TYPE( core::scoring::methods::LKB_ResiduesInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_methods_LK_BallInfo )
+#endif // SERIALIZATION

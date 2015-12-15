@@ -48,6 +48,20 @@
 
 static THREAD_LOCAL basic::Tracer tr( "core.io.constraints" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace constraints_additional {
 
@@ -125,7 +139,7 @@ COMCoordinateConstraint::setup_for_scoring( scoring::func::XYZ_Func const & xyz,
 		id::AtomID atm_i;
 
 		// is pose centroid?? then we need to remap atmids
-		if ( rsd_type.residue_type_set().name() == chemical::CENTROID && atms_[i].atomno() > 5 ) {
+		if ( rsd_type.residue_type_set()->name() == chemical::CENTROID && atms_[i].atomno() > 5 ) {
 			atm_i = id::AtomID( xyz.residue( atms_[i].rsd()  ).natoms() , atms_[i].rsd() );
 		} else {
 			atm_i = atms_[i];
@@ -269,6 +283,56 @@ scoring::constraints::ConstraintOP COMCoordinateConstraint::remapped_clone(
 	}
 }
 
+bool COMCoordinateConstraint::operator == ( core::scoring::constraints::Constraint const & other ) const
+{
+	if ( !       same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( other ) ) return false;
+
+	COMCoordinateConstraint const & other_downcast( static_cast< COMCoordinateConstraint const & > ( other ) );
+	if ( COM_target_ != other_downcast.COM_target_ ) return false;
+	if ( atms_       != other_downcast.atms_       ) return false;
+	if ( stdv_       != other_downcast.stdv_       ) return false;
+	if ( interval_   != other_downcast.interval_   ) return false;
+	return true;
+}
+
+bool COMCoordinateConstraint::same_type_as_me( core::scoring::constraints::Constraint const & other ) const
+{
+	return dynamic_cast< COMCoordinateConstraint const * > (&other);
+}
+
 
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::constraints_additional::COMCoordinateConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< scoring::constraints::Constraint >( this ) );
+	arc( CEREAL_NVP( dCOM_ ) ); // Vector
+	arc( CEREAL_NVP( COM_target_ ) ); // Vector
+	arc( CEREAL_NVP( atms_ ) ); // utility::vector1<AtomID>
+	arc( CEREAL_NVP( stdv_ ) ); // Real
+	arc( CEREAL_NVP( interval_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::constraints_additional::COMCoordinateConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< scoring::constraints::Constraint >( this ) );
+	arc( dCOM_ ); // Vector
+	arc( COM_target_ ); // Vector
+	arc( atms_ ); // utility::vector1<AtomID>
+	arc( stdv_ ); // Real
+	arc( interval_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::constraints_additional::COMCoordinateConstraint );
+CEREAL_REGISTER_TYPE( protocols::constraints_additional::COMCoordinateConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_constraints_additional_COMCoordinateConstraint )
+#endif // SERIALIZATION

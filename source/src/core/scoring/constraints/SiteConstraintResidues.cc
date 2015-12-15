@@ -31,20 +31,49 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.SiteConstraintResidues" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
-SiteConstraintResidues::SiteConstraintResidues():
+SiteConstraintResidues::SiteConstraintResidues() :
 	AmbiguousConstraint()
 {}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
-SiteConstraintResidues::SiteConstraintResidues( ConstraintCOPs & cst_in ):
+SiteConstraintResidues::SiteConstraintResidues( ConstraintCOPs const & cst_in ) :
 	AmbiguousConstraint( cst_in )
 {}
+
+///
+ConstraintOP SiteConstraintResidues::clone() const {
+	return ConstraintOP( new SiteConstraintResidues( *this ));
+}
+
+bool SiteConstraintResidues::operator == ( Constraint const & rhs ) const
+{
+	return AmbiguousConstraint::operator== ( rhs );
+}
+
+bool SiteConstraintResidues::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< SiteConstraintResidues const * > ( &other );
+}
+
+std::string SiteConstraintResidues::type() const {
+	return "SiteConstraintResidues";
+}
+
 
 void
 SiteConstraintResidues::show( std::ostream& out) const
@@ -112,9 +141,30 @@ SiteConstraintResidues::setup_csts(
 		runtime_assert( target_atom.valid() && atom2.valid() );
 		add_individual_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint( target_atom, atom2, func ) ) ) );
 	}
-
 } // setup_csts
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::SiteConstraintResidues::save( Archive & arc ) const {
+	arc( cereal::base_class< AmbiguousConstraint >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::SiteConstraintResidues::load( Archive & arc ) {
+	arc( cereal::base_class< AmbiguousConstraint >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::SiteConstraintResidues );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::SiteConstraintResidues )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_SiteConstraintResidues )
+#endif // SERIALIZATION

@@ -285,7 +285,7 @@ dock(Pose & init, string /*fname*/) {
   core::chemical::ResidueTypeSetCAP  rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose cys;
 
-  make_pose_from_sequence(cys,"C","fa_standard",false);
+  make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
   remove_lower_terminus_type_from_pose_residue(cys,1);
   remove_upper_terminus_type_from_pose_residue(cys,1);
   //  add_variant_type_to_pose_residue(cys,"DISULF_PARTNER",1);
@@ -862,8 +862,8 @@ void design_hits(Pose & p, string fn, vector1<Hit> h, vector1<Hit> allh) {
 
   core::chemical::ResidueTypeSetCAP  rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose cys,ala;
-  make_pose_from_sequence(cys,"C","fa_standard",false);
-  make_pose_from_sequence(ala,"A","fa_standard",false);
+  make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
+  make_pose_from_sequence(ala,"A",core::chemical::FA_STANDARD,false);
   remove_lower_terminus_type_from_pose_residue(cys,1);
   remove_upper_terminus_type_from_pose_residue(cys,1);
   remove_lower_terminus_type_from_pose_residue(ala,1);

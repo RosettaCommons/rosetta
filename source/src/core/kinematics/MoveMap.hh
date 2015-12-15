@@ -38,6 +38,12 @@
 // C++ headers
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 
@@ -793,6 +799,12 @@ private:
 	DOF_ID_Map dof_id_map_;
 
 	JumpID_Map jump_id_map_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };  // MoveMap
 
 inline
@@ -805,5 +817,10 @@ operator <<( std::ostream & out, MoveMap const & mm )
 
 }  // namespace kinematics
 }  // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_kinematics_MoveMap )
+#endif // SERIALIZATION
+
 
 #endif  // INCLUDED_core_kinematics_DOF_ID_HH

@@ -22,6 +22,16 @@
 
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.VDW_RepScreenInfo" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -68,3 +78,41 @@ VDW_RepScreenInfo::~VDW_RepScreenInfo()
 } //modeler
 } //stepwise
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::stepwise::modeler::rna::checker::VDW_RepScreenInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( VDW_align_res ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( working_align_res ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( full_align_res ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( VDW_ignore_res ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( VDW_pose ) ); // core::pose::PoseOP
+	arc( CEREAL_NVP( input_string ) ); // std::string
+	arc( CEREAL_NVP( pose_name ) ); // std::string
+	arc( CEREAL_NVP( in_root_partition ) ); // _Bool
+	arc( CEREAL_NVP( import_ID ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::stepwise::modeler::rna::checker::VDW_RepScreenInfo::load( Archive & arc ) {
+	arc( VDW_align_res ); // utility::vector1<core::Size>
+	arc( working_align_res ); // utility::vector1<core::Size>
+	arc( full_align_res ); // utility::vector1<core::Size>
+	arc( VDW_ignore_res ); // utility::vector1<core::Size>
+	arc( VDW_pose ); // core::pose::PoseOP
+	arc( input_string ); // std::string
+	arc( pose_name ); // std::string
+	arc( in_root_partition ); // _Bool
+	arc( import_ID ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::stepwise::modeler::rna::checker::VDW_RepScreenInfo );
+CEREAL_REGISTER_TYPE( protocols::stepwise::modeler::rna::checker::VDW_RepScreenInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_stepwise_modeler_rna_checker_VDW_RepScreenInfo )
+#endif // SERIALIZATION

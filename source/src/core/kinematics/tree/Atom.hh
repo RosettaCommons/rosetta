@@ -45,6 +45,13 @@
 #include <utility/vector0_bool.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 namespace tree {
@@ -97,9 +104,7 @@ public: // Creation
 
 	/// @brief Destructor
 	virtual
-	~Atom()
-	{}
-
+	~Atom() {}
 
 public: // self pointers
 

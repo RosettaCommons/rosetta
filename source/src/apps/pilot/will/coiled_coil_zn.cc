@@ -133,7 +133,7 @@ inline void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & an
 
 core::pose::Pose make_helix(std::string seq) {
 	core::pose::Pose pose;
-	core::pose::make_pose_from_sequence(pose,seq,"centroid",true);
+	core::pose::make_pose_from_sequence(pose,seq,core::chemical::CENTROID,true);
 
 	utility::vector1<Real> tmpphi(98,0.0),tmppsi(98,0.0),tmpomg(98,0.0);
 	tmpphi[1 ] = -69.3868; tmppsi[1 ] = -37.2318; tmpomg[1 ] = 171.228;
@@ -996,7 +996,7 @@ add_symm_zns(
 		std::string seq = tmppose.sequence().substr(0,p.nres);
 
 		core::pose::Pose pose;
-		core::pose::make_pose_from_sequence(pose,seq,"centroid",true);
+		core::pose::make_pose_from_sequence(pose,seq,core::chemical::CENTROID,true);
 		pose.copy_segment(p.nres,tmppose,1,1);
 		for(Size i = 1; i <= zns->nheavyatoms(); ++i ) {
 			zns->set_xyz(i,tp.xyz(AtomID(i,5)));

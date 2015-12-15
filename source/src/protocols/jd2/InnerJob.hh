@@ -68,16 +68,23 @@ public:
 	///
 	InnerJobOP clone() const;
 
-	/// @brief Note: only compare if the pointers to the poses are to the
-	///same location
-	friend
+	/// @brief Mutual comparison of this inner job to the other inner job
+	/// so that if either one thinks it's not the same as the other, then
+	/// it returns false.  Invokes the same() function on both this and other
+	///
+	/// @details Note: only compare if the pointers to the poses are to the
+	/// same location
 	bool
-	operator==(InnerJob const & a, InnerJob const & b);
+	operator == ( InnerJob const & other ) const;
 
-
-	friend
 	bool
-	operator!=(InnerJob const & a, InnerJob const & b);
+	operator != (InnerJob const & other ) const;
+
+	/// @brief returns true if this is the same as other;
+	/// does not call other.same()
+	virtual
+	bool
+	same( InnerJob const & other ) const;
 
 	virtual
 	void

@@ -25,6 +25,17 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -122,3 +133,33 @@ ScoreFunctionInfo::requires_context_graph( ContextGraphType cgt ) const {
 
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::ScoreFunctionInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( max_atomic_interaction_distance_ ) ); // Distance
+	arc( CEREAL_NVP( max_context_neighbor_cutoff_ ) ); // Distance
+	arc( CEREAL_NVP( context_graphs_required_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( scores_present_ ) ); // EnergyMap
+	arc( CEREAL_NVP( energy_method_options_ ) ); // methods::EnergyMethodOptionsOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::ScoreFunctionInfo::load( Archive & arc ) {
+	arc( max_atomic_interaction_distance_ ); // Distance
+	arc( max_context_neighbor_cutoff_ ); // Distance
+	arc( context_graphs_required_ ); // utility::vector1<_Bool>
+	arc( scores_present_ ); // EnergyMap
+	arc( energy_method_options_ ); // methods::EnergyMethodOptionsOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::ScoreFunctionInfo );
+CEREAL_REGISTER_TYPE( core::scoring::ScoreFunctionInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_ScoreFunctionInfo )
+#endif // SERIALIZATION

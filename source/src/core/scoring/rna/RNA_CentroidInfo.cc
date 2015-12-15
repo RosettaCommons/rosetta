@@ -36,6 +36,18 @@ using namespace core::chemical::rna;
 // useful for RNA scoring.
 ///////////////////////////////////////////////////////
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace rna {
@@ -113,3 +125,31 @@ RNA_CentroidInfo::update( pose::Pose const & pose )
 } //rna
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::rna::RNA_CentroidInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( base_centroids_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( base_stubs_ ) ); // utility::vector1<kinematics::Stub>
+	arc( CEREAL_NVP( calculated_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::rna::RNA_CentroidInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( base_centroids_ ); // utility::vector1<Vector>
+	arc( base_stubs_ ); // utility::vector1<kinematics::Stub>
+	arc( calculated_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::rna::RNA_CentroidInfo );
+CEREAL_REGISTER_TYPE( core::scoring::rna::RNA_CentroidInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_rna_RNA_CentroidInfo )
+#endif // SERIALIZATION

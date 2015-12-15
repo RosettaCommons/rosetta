@@ -39,6 +39,12 @@
 #include <string>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace mm {
@@ -165,6 +171,12 @@ private:
 	/// @brief mapping from ResidueType name to ResidueTypeParam
 	std::map<std::string, MMBondAngleResidueTypeParam> reside_type_param_map_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /// @brief extract a MMBondAngleResidueTypeParamSet from a ScoreFunction, returning NULL if none exists
@@ -176,6 +188,11 @@ mm_bond_angle_residue_type_param_set(
 } // namespace mm
 } // namespace scoring
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_mm_MMBondAngleResidueTypeParamSet )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_core_mm_MMBondAngleResidueTypeParamSet_HH

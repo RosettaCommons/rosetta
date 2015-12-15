@@ -41,29 +41,21 @@ class SequenceConstraint : public core::scoring::constraints::Constraint {
 public: //Constructor, destructor, copy, clone:
 
 	/// @brief Constructor
-	///
 	SequenceConstraint( core::scoring::ScoreType const & t );
 
 	/// @brief Copy constructor
-	///
 	SequenceConstraint( SequenceConstraint const &src );
 
 	/// @brief Destructor
-	///
 	~SequenceConstraint();
 
-	/// @brief Clone operator
-	///
-	virtual core::scoring::constraints::ConstraintOP clone() const;
 
 public: //Functions that all Constraints must implement, but which aren't really applicable for a seqeunce constraint:
 
 	/// @brief Implemented because the base class requires it; not used by a sequence constraint.
-	///
 	virtual void score( core::scoring::func::XYZ_Func const &, EnergyMap const &, EnergyMap & ) const { return; }
 
 	/// @brief Implemented because the base class requires it; not used by a sequence constraint.
-	///
 	virtual void fill_f1_f2( core::id::AtomID const &, core::scoring::func::XYZ_Func const &, Vector &, Vector &, EnergyMap const & ) const { return; }
 
 	/// @brief Implemented because the base class requires it; not used by a sequence constraint.

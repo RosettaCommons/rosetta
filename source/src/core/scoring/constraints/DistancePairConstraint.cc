@@ -14,6 +14,7 @@
 #include <core/scoring/constraints/DistancePairConstraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/FuncFactory.hh>
+#include <core/scoring/func/Func.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -31,6 +32,17 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>
+
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -230,24 +242,6 @@ DistancePairConstraint::fill_f1_f2(
 	F2 += dE_dist * weights[ this->score_type() ] * f2;
 }
 
-
-bool
-DistancePairConstraint::operator == ( Constraint const & other_cst ) const {
-	if ( !dynamic_cast< DistancePairConstraint const * > ( &other_cst ) ) return false;
-
-	DistancePairConstraint const & other( static_cast< DistancePairConstraint const & > (other_cst) );
-
-	if ( atomA1_ != other.atomA1_ ) return false;
-	if ( atomA2_ != other.atomA2_ ) return false;
-	if ( atomB1_ != other.atomB1_ ) return false;
-	if ( atomB2_ != other.atomB2_ ) return false;
-	if ( func_ != other.func_ ) return false;
-	if ( this->score_type() != other.score_type() ) return false;
-
-	return true;
-}
-
-
 void DistancePairConstraint::show( std::ostream & out ) const {
 	out << "DistancePairConstraint";
 	for ( Size i = 1; i <= natoms(); ++i ) {
@@ -258,6 +252,13 @@ void DistancePairConstraint::show( std::ostream & out ) const {
 	func_->show_definition(out);
 }
 
+std::string DistancePairConstraint::type() const {
+	return "DistancePair";
+}
+
+ConstraintOP DistancePairConstraint::clone() const {
+	return ConstraintOP( new DistancePairConstraint( *this ) );
+}
 
 Size DistancePairConstraint::show_violations(
 	std::ostream& out,
@@ -279,6 +280,25 @@ Size DistancePairConstraint::show_violations(
 	return func_->show_violations( out, 0.0, verbose_level, threshold );
 }
 
+bool DistancePairConstraint::operator == ( Constraint const & rhs ) const
+{
+	if ( !     same_type_as_me(   rhs ) ) return false;
+	if ( ! rhs.same_type_as_me( *this ) ) return false;
+
+	DistancePairConstraint const & rhs_dpc( static_cast< DistancePairConstraint const & > ( rhs ));
+	if ( atomA1_      != rhs_dpc.atomA1_ ) return false;
+	if ( atomA2_      != rhs_dpc.atomA2_ ) return false;
+	if ( atomB1_      != rhs_dpc.atomB1_ ) return false;
+	if ( atomB2_      != rhs_dpc.atomB2_ ) return false;
+	if ( score_type() != rhs_dpc.score_type() ) return false;
+
+	return func_ == rhs_dpc.func_ || ( func_ && rhs_dpc.func_ && *func_ == *rhs_dpc.func_ );
+}
+
+bool DistancePairConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< DistancePairConstraint const * > ( &other );
+}
 
 Real
 DistancePairConstraint::func( Real const theta ) const {
@@ -290,6 +310,50 @@ DistancePairConstraint::dfunc( Real const theta ) const {
 	return func_->dfunc( theta );
 }
 
+DistancePairConstraint::DistancePairConstraint( DistancePairConstraint const & src ) :
+	Constraint( src ),
+	atomA1_( src.atomA1_ ),
+	atomA2_( src.atomA2_ ),
+	atomB1_( src.atomB1_ ),
+	atomB2_( src.atomB2_ ),
+	func_( src.func_ ? src.func_->clone() : src.func_ )
+{}
+
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::constraints::DistancePairConstraint::DistancePairConstraint() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::DistancePairConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( CEREAL_NVP( atomA1_ ) ); // AtomID
+	arc( CEREAL_NVP( atomA2_ ) ); // AtomID
+	arc( CEREAL_NVP( atomB1_ ) ); // AtomID
+	arc( CEREAL_NVP( atomB2_ ) ); // AtomID
+	arc( CEREAL_NVP( func_ ) ); // func::FuncOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::DistancePairConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( atomA1_ ); // AtomID
+	arc( atomA2_ ); // AtomID
+	arc( atomB1_ ); // AtomID
+	arc( atomB2_ ); // AtomID
+	arc( func_ ); // func::FuncOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::DistancePairConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::DistancePairConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_DistancePairConstraint )
+#endif // SERIALIZATION

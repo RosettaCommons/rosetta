@@ -59,6 +59,18 @@
 
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.ChemicalShiftAnisotropy" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -554,3 +566,82 @@ Real ChemicalShiftAnisotropy::compute_csascore(core::pose::Pose & pose) {
 
 } //namespace Scoring
 } //namespace core
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::CSA::save( Archive & arc ) const {
+	arc( CEREAL_NVP( CSAval_computed_ ) ); // Real
+	arc( CEREAL_NVP( f1ij_ ) ); // core::Vector
+	arc( CEREAL_NVP( f2ij_ ) ); // core::Vector
+	arc( CEREAL_NVP( f3ij_ ) ); // core::Vector
+	arc( CEREAL_NVP( res1_ ) ); // Size
+	arc( CEREAL_NVP( res2_ ) ); // Size
+	arc( CEREAL_NVP( res3_ ) ); // Size
+	arc( CEREAL_NVP( atom1_ ) ); // std::string
+	arc( CEREAL_NVP( atom2_ ) ); // std::string
+	arc( CEREAL_NVP( atom3_ ) ); // std::string
+	arc( CEREAL_NVP( sigma1_ ) ); // Real
+	arc( CEREAL_NVP( sigma2_ ) ); // Real
+	arc( CEREAL_NVP( sigma3_ ) ); // Real
+	arc( CEREAL_NVP( alpha_ ) ); // Real
+	arc( CEREAL_NVP( beta_ ) ); // Real
+	arc( CEREAL_NVP( gamma_ ) ); // Real
+	arc( CEREAL_NVP( CSAval_ ) ); // Real
+	arc( CEREAL_NVP( CSAerr_ ) ); // Real
+	arc( CEREAL_NVP( weight_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::CSA::load( Archive & arc ) {
+	arc( CSAval_computed_ ); // Real
+	arc( f1ij_ ); // core::Vector
+	arc( f2ij_ ); // core::Vector
+	arc( f3ij_ ); // core::Vector
+	arc( res1_ ); // Size
+	arc( res2_ ); // Size
+	arc( res3_ ); // Size
+	arc( atom1_ ); // std::string
+	arc( atom2_ ); // std::string
+	arc( atom3_ ); // std::string
+	arc( sigma1_ ); // Real
+	arc( sigma2_ ); // Real
+	arc( sigma3_ ); // Real
+	arc( alpha_ ); // Real
+	arc( beta_ ); // Real
+	arc( gamma_ ); // Real
+	arc( CSAval_ ); // Real
+	arc( CSAerr_ ); // Real
+	arc( weight_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::CSA );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::ChemicalShiftAnisotropy::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( All_CSA_lines_ ) ); // CSA_lines
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::ChemicalShiftAnisotropy::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( All_CSA_lines_ ); // CSA_lines
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::ChemicalShiftAnisotropy );
+CEREAL_REGISTER_TYPE( core::scoring::ChemicalShiftAnisotropy )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_ChemicalShiftAnisotropy )
+#endif // SERIALIZATION
+
+

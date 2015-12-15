@@ -96,11 +96,11 @@ public:
 		core::Real score1 = (*scorefxn)(pose);
 
 		// add jump to vrt res
-		TS_ASSERT( pose.residue(1).residue_type_set().has_name("VRT") );
+		TS_ASSERT( pose.residue(1).residue_type_set()->has_name("VRT") );
 
-		if ( pose.residue(1).residue_type_set().has_name("VRT") ) {
+		if ( pose.residue(1).residue_type_set()->has_name("VRT") ) {
 			pose.append_residue_by_jump
-				( *core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
+				( *core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
 				pose.total_residue()/2 );
 
 			// make the virt atom the root
@@ -148,7 +148,7 @@ public:
 
 		// add jump to vrt res
 		pose.append_residue_by_jump
-			( *core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
+			( *core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
 			pose.total_residue()/2 );
 
 		// make the virt atom the root

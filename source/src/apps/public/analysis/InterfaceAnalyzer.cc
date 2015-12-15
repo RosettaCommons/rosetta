@@ -19,6 +19,8 @@
 
 #include <protocols/moves/Mover.hh>
 
+#include <core/conformation/Conformation.hh>
+
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 

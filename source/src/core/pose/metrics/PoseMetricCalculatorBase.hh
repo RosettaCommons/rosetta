@@ -29,6 +29,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace metrics {
@@ -70,6 +75,12 @@ protected:
 
 	virtual void recompute( Pose const & this_pose ) = 0;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -93,6 +104,12 @@ protected:
 	virtual void recompute( Pose const & this_pose ) = 0;
 private:
 	bool structure_is_outdated_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /*
@@ -139,12 +156,23 @@ protected:
 	virtual void recompute( Pose const & this_pose ) = 0;
 private:
 	bool energies_are_outdated_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace metrics
 } // namespace pose
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_metrics_PoseMetricCalculatorBase )
+#endif // SERIALIZATION
 
 
 #endif

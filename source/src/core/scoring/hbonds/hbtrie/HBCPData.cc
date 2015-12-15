@@ -17,6 +17,11 @@
 // STL Headers
 #include <iostream>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -47,3 +52,24 @@ std::ostream & operator << ( std::ostream & os, HBCPData const & hbcpdat )
 } // namespace scoring
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::hbonds::hbtrie::HBCPData::save( Archive & arc ) const {
+	arc( CEREAL_NVP( avoid_sc_hbonds_ ) ); // _Bool
+	arc( CEREAL_NVP( is_sc_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::hbonds::hbtrie::HBCPData::load( Archive & arc ) {
+	arc( avoid_sc_hbonds_ ); // _Bool
+	arc( is_sc_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::hbonds::hbtrie::HBCPData );
+#endif // SERIALIZATION

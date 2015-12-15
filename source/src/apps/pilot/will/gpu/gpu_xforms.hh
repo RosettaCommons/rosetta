@@ -143,7 +143,7 @@ his_bb2m(float const chi1, float const chi2, float const chi3, bool DorE){
   // m.zx = -0.7922787987667861; m.zy = -0.2961208524098708; m.zz = -0.5334854691486076;
 
   Pose hmd;
-  make_pose_from_sequence(hmd,"H[HIS_MD]","fa_standard",false);
+  make_pose_from_sequence(hmd,"H[HIS_MD]",core::chemical::FA_STANDARD,false);
   hmd.set_chi(1,1,numeric::conversions::degrees(chi1));
   hmd.set_chi(2,1,numeric::conversions::degrees(chi2));
   hmd.set_chi(3,1,numeric::conversions::degrees(chi3));

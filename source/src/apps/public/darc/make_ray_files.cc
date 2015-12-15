@@ -137,7 +137,7 @@ int main( int argc, char * argv [] ) {
 		utility::vector1<core::Real> original_pocket_angle_transform(3, 0.);
 
 		//find sequence position for the target residue
-		std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(protein_pose, resid);
+		std::vector< conformation::ResidueCOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(protein_pose, resid);
 		if ( residues.size() == 0 ) {
 			std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
 			exit(1);

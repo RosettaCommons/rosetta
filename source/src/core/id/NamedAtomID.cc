@@ -25,6 +25,15 @@
 
 static THREAD_LOCAL basic::Tracer tr( "core.id.NamedAtomID", basic::t_info );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace id {
 
@@ -70,3 +79,25 @@ NamedAtomID const CHAINBREAK_BOGUS_NAMED_ATOM_ID( "", 0 );
 
 } // namespace id
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::id::NamedAtomID::save( Archive & arc ) const {
+	arc( CEREAL_NVP( atom_ ) ); // std::string
+	arc( CEREAL_NVP( rsd_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::id::NamedAtomID::load( Archive & arc ) {
+	arc( atom_ ); // std::string
+	arc( rsd_ ); // Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::id::NamedAtomID );
+
+#endif // SERIALIZATION

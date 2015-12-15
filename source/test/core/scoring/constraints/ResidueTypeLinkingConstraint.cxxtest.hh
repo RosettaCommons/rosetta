@@ -25,12 +25,18 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 
+#ifdef	SERIALIZATION
+#include <core/id/AtomID.hh>
+
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif
+
 
 class ResidueTypeLinkingConstraintTests : public CxxTest::TestSuite
 {
-
 public:
-	ResidueTypeLinkingConstraintTests() {};
 
 	// Shared initialization goes here.
 	void setUp() {
@@ -44,26 +50,58 @@ public:
 	void test_constraints()
 	{
 		using namespace core;
+		using namespace core::scoring::constraints;
+
 		pose::Pose start_pose( create_test_in_pdb_pose() );
 		pose::Pose pose1 (start_pose);
-		scoring::ScoreFunctionOP scorefxn = new scoring::ScoreFunction;
+		scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
 		scorefxn->set_weight( scoring::res_type_linking_constraint, 1.0);
-		pose1.add_constraint(new scoring::constraints::ResidueTypeLinkingConstraint(
+		pose1.add_constraint( ConstraintOP( new scoring::constraints::ResidueTypeLinkingConstraint(
 				pose1, 1, 10, 1.0
-				));
+																																															 )));
 		( *scorefxn )( pose1 );
 		TS_ASSERT_EQUALS( pose1.energies().total_energies()[ scoring::res_type_linking_constraint ], 0 );
-		pose1.add_constraint(new scoring::constraints::ResidueTypeLinkingConstraint(
+		pose1.add_constraint( ConstraintOP( new scoring::constraints::ResidueTypeLinkingConstraint(
 				pose1, 1, 2, 1.0
-				));
+																																															 )));
 		( *scorefxn )( pose1 );
 		TS_ASSERT_EQUALS( pose1.energies().total_energies()[ scoring::res_type_linking_constraint ], 1 );
-		pose1.add_constraint(new scoring::constraints::ResidueTypeLinkingConstraint(
+		pose1.add_constraint( ConstraintOP( new scoring::constraints::ResidueTypeLinkingConstraint(
 				pose1, 1, 3, 2.0
-				));
+																																															 )));
 		( *scorefxn )( pose1 );
 		TS_ASSERT_EQUALS( pose1.energies().total_energies()[ scoring::res_type_linking_constraint ], 3 );
 	}
 
+
+
+	void test_serialize_ResidueTypeLinkingConstraint() {
+		TS_ASSERT( true ); // for non-serialization builds
+#ifdef SERIALIZATION
+		using namespace core::scoring::constraints;
+		using namespace core::scoring::func;
+		using namespace core::id;
+
+		core::pose::Pose pose1( create_test_in_pdb_pose() );
+		ConstraintOP instance( new ResidueTypeLinkingConstraint( pose1, 1, 10, 1.0 ) ); // serialize this through a pointer to the base class
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( instance );
+		}
+
+		ConstraintOP instance2; // deserialize also through a pointer to the base class
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( instance2 );
+		}
+
+		// make sure the deserialized base class pointer points to a ResidueTypeLinkingConstraint
+		TS_ASSERT( utility::pointer::dynamic_pointer_cast< ResidueTypeLinkingConstraint > ( instance2 ));
+		TS_ASSERT( *instance == *instance2 );
+#endif // SERIALIZATION
+	}
 
 };

@@ -33,6 +33,14 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace constraints_additional {
 
@@ -72,6 +80,18 @@ ConstraintOP
 SequenceCoupling1BDConstraint::clone() const {
 	return ConstraintOP( new SequenceCoupling1BDConstraint( *this ) );
 }
+
+bool SequenceCoupling1BDConstraint::operator == ( core::scoring::constraints::Constraint const & other ) const
+{
+	return SequenceProfileConstraint::operator==( other );
+}
+
+bool SequenceCoupling1BDConstraint::same_type_as_me( core::scoring::constraints::Constraint const & other ) const
+{
+	return dynamic_cast< SequenceCoupling1BDConstraint const * > (&other);
+}
+
+
 
 /// @details one line definition "SequenceProfile resindex profilefilename" (profilefilename can also be set to "none" in the constraints file, and specified by -in::file::pssm)
 void
@@ -164,3 +184,25 @@ SequenceCoupling1BDConstraint::fill_f1_f2(
 
 } // namespace constraints_additional
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::constraints_additional::SequenceCoupling1BDConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::constraints::SequenceProfileConstraint >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::constraints_additional::SequenceCoupling1BDConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::constraints::SequenceProfileConstraint >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::constraints_additional::SequenceCoupling1BDConstraint );
+CEREAL_REGISTER_TYPE( protocols::constraints_additional::SequenceCoupling1BDConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_constraints_additional_SequenceCoupling1BDConstraint )
+#endif // SERIALIZATION

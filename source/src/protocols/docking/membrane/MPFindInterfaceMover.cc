@@ -393,7 +393,7 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		} else {
 			TR << "====================SMALL TILTS WITH FLIP MOVER==================" << std::endl;
 			update_partner_embeddings( pose, jump_, emb_up, emb_down );
-			core::Vector mem_norm = pose.conformation().membrane_info()->membrane_normal();
+			core::Vector mem_norm = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
 			core::Real angle_mem_emb = numeric::conversions::degrees( angle_of( mem_norm, emb_down.normal() ) );
 
 			// if angle between membrane normal and embedding is smaller 90

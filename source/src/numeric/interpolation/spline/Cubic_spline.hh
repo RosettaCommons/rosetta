@@ -149,6 +149,16 @@ public:
 		return values_;
 	}
 
+	bool
+	operator == ( CubicSpline const & rhs ) const {
+		return border_ == rhs.border_ && start_ == rhs.start_ && delta_ == rhs.delta_ &&
+			values_ == rhs.values_ && dsecox_ == rhs.dsecox_;
+	}
+
+	bool
+	operator != ( CubicSpline const & rhs ) const {
+		return ! ( *this == rhs );
+	}
 
 private:
 	BorderFlag border_; //!< controls the behavior at x_0 and x_dim-1
@@ -172,6 +182,12 @@ private:
 	//! @return derivative depending on relative distance DXP
 	Real Derivative( const int INDEX_LEFT, const int INDEX_RIGHT, const Real DXP) const;
 
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 

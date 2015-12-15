@@ -13,6 +13,7 @@
 #include <protocols/kinematic_closure/perturbers/Rama2bPerturber.hh>
 
 // Core headers
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Ramachandran2B.hh>
 #include <core/scoring/ScoringManager.hh>

@@ -34,6 +34,18 @@
 #include <utility/vector1.hh>
 #include <sstream>
 
+#ifdef SERIALIZATION
+// Project serialization headers
+#include <core/scoring/trie/RotamerTrie.srlz.hh>
+
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+#include <boost/preprocessor/punctuation/comma.hpp>
+
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -582,3 +594,26 @@ AnalyticEtableEvaluator::atom_pair_lk_energy_and_deriv_v_efficient(
 } // namespace etable
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+typedef core::scoring::trie::RotamerTrie< core::scoring::etable::etrie::EtableAtom, core::scoring::etable::etrie::CountPairDataGeneric > EtableRotTrieGeneric;
+
+SAVE_AND_LOAD_SERIALIZABLE( EtableRotTrieGeneric );
+CEREAL_REGISTER_TYPE( EtableRotTrieGeneric )
+
+typedef core::scoring::trie::RotamerTrie< core::scoring::etable::etrie::EtableAtom, core::scoring::etable::etrie::CountPairData_1_1 > EtableRotTrie11;
+SAVE_AND_LOAD_SERIALIZABLE( EtableRotTrie11 );
+CEREAL_REGISTER_TYPE( EtableRotTrie11 )
+
+typedef core::scoring::trie::RotamerTrie< core::scoring::etable::etrie::EtableAtom, core::scoring::etable::etrie::CountPairData_1_2 > EtableRotTrie12;
+SAVE_AND_LOAD_SERIALIZABLE( EtableRotTrie12 );
+CEREAL_REGISTER_TYPE( EtableRotTrie12 )
+
+typedef core::scoring::trie::RotamerTrie< core::scoring::etable::etrie::EtableAtom, core::scoring::etable::etrie::CountPairData_1_3 > EtableRotTrie13;
+SAVE_AND_LOAD_SERIALIZABLE( EtableRotTrie13 );
+CEREAL_REGISTER_TYPE( EtableRotTrie13 )
+
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_etable_EtableEnergy )
+#endif

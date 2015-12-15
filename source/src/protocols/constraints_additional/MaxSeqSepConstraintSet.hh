@@ -46,25 +46,51 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace constraints_additional {
 
 class MaxSeqSepConstraintSet : public core::scoring::constraints::ConstraintSet
 {
+public:
 	typedef ConstraintSet Parent;
 	typedef core::scoring::constraints::ConstraintSetOP ConstraintSetOP;
+
 public:
 	MaxSeqSepConstraintSet( ConstraintSet const & other, core::kinematics::FoldTree const&f );
 
 	MaxSeqSepConstraintSet( MaxSeqSepConstraintSet const &other );
 	~MaxSeqSepConstraintSet( );
 protected:
-	MaxSeqSepConstraintSet( ConstraintSet const &other, core::kinematics::ShortestPathInFoldTreeOP sp );
+	MaxSeqSepConstraintSet( ConstraintSet const &other, core::kinematics::ShortestPathInFoldTreeCOP sp );
 
 public:
-	ConstraintSetOP clone() const {
-		return ConstraintSetOP( new MaxSeqSepConstraintSet ( *this ) );
-	};
+
+	virtual
+	ConstraintSet const &
+	operator = ( ConstraintSet const & rhs );
+
+	virtual
+	ConstraintSetOP
+	clone() const;
+
+	virtual
+	void
+	detached_copy( ConstraintSet const & src );
+
+	virtual
+	ConstraintSetOP
+	detached_clone() const;
+
+	virtual
+	bool
+	same_type_as_me( ConstraintSet const & other, bool recurse = true ) const;
 
 	virtual ConstraintSetOP remapped_clone(
 		core::pose::Pose const& src,
@@ -156,11 +182,25 @@ protected:
 
 
 private:
+	MaxSeqSepConstraintSet(); // private default constructor for use in the call to detached_clone
+
 	Size max_seq_sep_;
-	core::kinematics::ShortestPathInFoldTreeOP shortest_path_;
+	core::kinematics::ShortestPathInFoldTreeCOP shortest_path_;
+#ifdef    SERIALIZATION
+	friend class cereal::access;
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // constraints_additional
 } // protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_constraints_additional_MaxSeqSepConstraintSet )
+#endif // SERIALIZATION
+
 
 #endif

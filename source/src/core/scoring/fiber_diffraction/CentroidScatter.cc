@@ -20,6 +20,16 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace fiber_diffraction {
@@ -42,3 +52,30 @@ retrieve_centroid_scatter_from_pose( pose::Pose & pose )
 } // scoring
 } // core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::fiber_diffraction::CentroidScatter::CentroidScatter() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::fiber_diffraction::CentroidScatter::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( sig_centroid_ ) ); // utility::vector1<OneGaussianScattering>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::fiber_diffraction::CentroidScatter::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( sig_centroid_ ); // utility::vector1<OneGaussianScattering>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::fiber_diffraction::CentroidScatter );
+CEREAL_REGISTER_TYPE( core::scoring::fiber_diffraction::CentroidScatter )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_fiber_diffraction_CentroidScatter )
+#endif // SERIALIZATION

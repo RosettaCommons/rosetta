@@ -31,6 +31,11 @@
 
 //// C++ headers
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace fldsgn {
 
@@ -131,10 +136,21 @@ private:
 	/// @brief
 	Real ss_entrpy_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //NontactCalculator
 
 
 } // ns toolbox
 } // ns protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_fldsgn_NcontactsCalculator )
+#endif // SERIALIZATION
+
 
 #endif

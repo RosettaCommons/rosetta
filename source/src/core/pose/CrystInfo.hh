@@ -62,6 +62,12 @@ private:
 	/// For now, all member names have the same names as fields in PDB standard.
 	Real A_,B_,C_,alpha_,beta_,gamma_;
 	std::string spacegroup_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace pose

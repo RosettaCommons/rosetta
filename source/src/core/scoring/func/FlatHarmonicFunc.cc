@@ -26,9 +26,37 @@
 // C++ Headers
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
+
+bool FlatHarmonicFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	FlatHarmonicFunc const & other_downcast( static_cast< FlatHarmonicFunc const & > (other) );
+	if ( x0_  != other_downcast.x0_  ) return false;
+	if ( sd_  != other_downcast.sd_  ) return false;
+	if ( tol_ != other_downcast.tol_ ) return false;
+	return true;
+}
+
+bool FlatHarmonicFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< FlatHarmonicFunc const * > ( &other );
+}
 
 Real
 FlatHarmonicFunc::func( Real const x ) const
@@ -83,3 +111,34 @@ FlatHarmonicFunc::show_violations( std::ostream& out, Real x, Size verbose_level
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::func::FlatHarmonicFunc::FlatHarmonicFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::FlatHarmonicFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( x0_ ) ); // Real
+	arc( CEREAL_NVP( sd_ ) ); // Real
+	arc( CEREAL_NVP( tol_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::FlatHarmonicFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( x0_ ); // Real
+	arc( sd_ ); // Real
+	arc( tol_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::FlatHarmonicFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::FlatHarmonicFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_FlatHarmonicFunc )
+#endif // SERIALIZATION

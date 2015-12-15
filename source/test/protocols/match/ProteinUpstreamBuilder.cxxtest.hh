@@ -323,8 +323,8 @@ public:
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 
-		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set.aa_map_DO_NOT_USE( aa_phe ));
+		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
 
 		BuildSet build_set;
 
@@ -357,8 +357,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set.aa_map_DO_NOT_USE( aa_phe ));
+		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
 
 		BuildSet build_set;
 
@@ -413,8 +413,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set.aa_map_DO_NOT_USE( aa_phe ));
+		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
 
 		BuildSet build_set;
 
@@ -465,8 +465,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set.aa_map_DO_NOT_USE( aa_phe ));
+		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
 
 		BuildSet build_set;
 
@@ -552,8 +552,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set.aa_map_DO_NOT_USE( aa_phe ));
+		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
 
 		BuildSet build_set;
 
@@ -636,8 +636,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set.aa_map_DO_NOT_USE( aa_phe ));
+		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
 
 		BuildSet build_set;
 
@@ -688,8 +688,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set.aa_map_DO_NOT_USE( aa_phe ));
+		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
 
 		BuildSet build_set;
 
@@ -744,8 +744,8 @@ public:
 
 		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
-		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCOPs const & aas( res2_set.aa_map_DO_NOT_USE( aa_phe ));
+		ResidueTypeSetCOP res2_set( trpcage.residue( 2 ).residue_type_set() );
+		ResidueTypeCOPs const & aas( res2_set->aa_map_DO_NOT_USE( aa_phe ));
 
 		BuildSet build_set;
 

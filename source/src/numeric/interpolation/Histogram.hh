@@ -315,23 +315,7 @@ protected:
 				<< ")." << endl;
 		}
 
-		// create spline interpolator
-		if ( interpolator_ == spline ) {
-			Real lx  = minimum();
-			Real ly  = densities_[1];
-			Real ldy = (densities_[2]-densities_[1])/step_;
-			Real ux  = maximum();
-			Real uy  = densities_[nbins()];
-			Real udy = 0.0;
-			numeric::interpolation::spline::SplineGenerator gen( lx, ly, ldy, ux, uy, udy );
-			// add values skipping minimum and maximum
-			for ( Size i = 2; i < densities_.size(); ++i ) {
-				Real modx = minimum() + (step_*(i-1));
-				Real mody = densities_[i];
-				gen.add_known_value( modx, mody );
-			}
-			spline_interpolator_ = gen.get_interpolator();
-		}
+		set_interpolator( interpolator_ );
 
 	}
 
@@ -366,7 +350,7 @@ public:
 		step_(h.step_),
 		periodic_(h.periodic_),
 		bin_placement_(h.bin_placement_),
-		interpolator_(h.interpolator_)
+		interpolator_( h.interpolator_ )
 	{ }
 
 	/**
@@ -425,6 +409,27 @@ public:
 
 	inline Interpolator interpolator() const { return interpolator_; }
 	inline Interpolator & interpolator() { return interpolator_; }
+
+	void set_interpolator( Interpolator interpolator ) {
+		interpolator_ = interpolator;
+		// create spline interpolator
+		if ( interpolator_ == spline ) {
+			Real lx  = minimum();
+			Real ly  = densities_[1];
+			Real ldy = (densities_[2]-densities_[1])/step_;
+			Real ux  = maximum();
+			Real uy  = densities_[nbins()];
+			Real udy = 0.0;
+			numeric::interpolation::spline::SplineGenerator gen( lx, ly, ldy, ux, uy, udy );
+			// add values skipping minimum and maximum
+			for ( Size i = 2; i < densities_.size(); ++i ) {
+				Real modx = minimum() + (step_*(i-1));
+				Real mody = densities_[i];
+				gen.add_known_value( modx, mody );
+			}
+			spline_interpolator_ = gen.get_interpolator();
+		}
+	}
 
 	/// @brief The smallest value for which we can interpolate
 	/// @details All values of x where minimum()<=x<maximum() can be interpolated.
@@ -684,6 +689,11 @@ protected:
 	BinPlacement bin_placement_;
 	Interpolator interpolator_;
 	utility::pointer::shared_ptr< numeric::interpolation::spline::Interpolator > spline_interpolator_;
+#ifdef SERIALIZATION
+public:
+	Histogram() {}
+#endif
+
 }; //Histogram
 
 } //interpolation

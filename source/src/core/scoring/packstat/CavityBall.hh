@@ -26,6 +26,11 @@
 #include <iosfwd>
 #include <string>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace packstat {
@@ -106,6 +111,17 @@ public:
 	//
 	// int cluster_id_; // used for grouping holesa
 	// CavityBallCluster *cluster_;
+
+#ifdef    SERIALIZATION
+public:
+	/// @brief Default constructor that should only be used when deserializing
+	/// %CavityBalls or containers of %CavityBalls.
+	CavityBall();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 

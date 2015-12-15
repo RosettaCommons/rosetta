@@ -35,6 +35,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace disulfides {
@@ -84,6 +90,7 @@ struct FullatomDisulfideParams13 {
 	Real dss_logA1, dss_kappa1, dss_mu1, dss_logA2, dss_kappa2, dss_mu2;
 	// CS dih
 	Real dcs_logA1, dcs_mu1, dcs_kappa1, dcs_logA2, dcs_mu2, dcs_kappa2, dcs_logA3, dcs_mu3, dcs_kappa3;
+
 };
 
 
@@ -187,12 +194,15 @@ public:
 	CBSG_Dihedral_Func();
 	virtual ~CBSG_Dihedral_Func();
 
+	func::FuncOP
+	clone() const { return func::FuncOP( new CBSG_Dihedral_Func( *this ) ); };
+
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
+
 	virtual
 	Real
 	func( Real const ) const;
-
-	func::FuncOP
-	clone() const { return func::FuncOP( new CBSG_Dihedral_Func( *this ) ); };
 
 	virtual
 	Real
@@ -201,6 +211,12 @@ private:
 	core::scoring::func::CircularSigmoidalFunc csf_cbang1_;
 	core::scoring::func::CircularSigmoidalFunc csf_cbang2_;
 	core::scoring::func::CircularSigmoidalFunc csf_cbang3_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class SGSG_Dihedral_Func : public func::Func
@@ -210,12 +226,15 @@ public:
 
 	~SGSG_Dihedral_Func();
 
+	func::FuncOP
+	clone() const { return func::FuncOP( new SGSG_Dihedral_Func( *this ) ); };
+
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
+
 	virtual
 	Real
 	func( Real const ) const;
-
-	func::FuncOP
-	clone() const { return func::FuncOP( new SGSG_Dihedral_Func( *this ) ); };
 
 	virtual
 	Real
@@ -226,6 +245,12 @@ private:
 	core::scoring::func::CircularSigmoidalFunc csf_cbang2a_;
 	core::scoring::func::CircularSigmoidalFunc csf_cbang1b_;
 	core::scoring::func::CircularSigmoidalFunc csf_cbang2b_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class CB_Angle_Func : public func::Func
@@ -238,6 +263,9 @@ public:
 	func::FuncOP
 	clone() const { return func::FuncOP( new CB_Angle_Func( *this ) ); };
 
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
+
 	virtual
 	Real
 	func( Real const ) const;
@@ -250,6 +278,12 @@ private:
 	core::scoring::func::CircularSigmoidalFunc csf_cbang1_;
 	core::scoring::func::CircularSigmoidalFunc csf_cbang2_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class SG_Dist_Func : public func::Func
@@ -261,6 +295,9 @@ public:
 
 	func::FuncOP
 	clone() const { return func::FuncOP( new SG_Dist_Func( *this ) ); };
+
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 
 	virtual
 	Real
@@ -280,11 +317,22 @@ private:
 	static
 	numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type
 	fa_ssdist_scores_deriv();
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace disulfides
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_disulfides_FullatomDisulfidePotential )
+#endif // SERIALIZATION
+
 
 #endif

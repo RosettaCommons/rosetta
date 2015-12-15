@@ -49,6 +49,7 @@
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/loop_graph/LoopGraph.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <numeric/xyz.functions.hh>

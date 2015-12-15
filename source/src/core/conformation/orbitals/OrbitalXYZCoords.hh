@@ -11,8 +11,8 @@
 /// @brief Created on: Jun 30, 2011
 /// @author combss
 
-#ifndef INCLUDED_core_conformation_orbitals_ORBITALXYZCOORDS_HH
-#define INCLUDED_core_conformation_orbitals_ORBITALXYZCOORDS_HH
+#ifndef INCLUDED_core_conformation_orbitals_OrbitalXYZCoords_HH
+#define INCLUDED_core_conformation_orbitals_OrbitalXYZCoords_HH
 
 // Project headers
 #include <core/types.hh>
@@ -24,7 +24,6 @@
 namespace core {
 namespace conformation {
 namespace orbitals {
-
 
 class OrbitalXYZCoords {
 public:
@@ -44,7 +43,6 @@ public:
 
 
 	/// @brief destructor
-	virtual
 	~OrbitalXYZCoords() {}
 
 
@@ -68,10 +66,22 @@ public:
 	}
 
 	void
-	type(ShortSize const & type_in)
+	type( ShortSize const & type_in )
 	{
 		type_ = type_in;
 	}
+
+#ifdef    SERIALIZATION
+	/// @brief Serialization method
+	template < class Archive >
+	void
+	save( Archive & arch ) const;
+
+	/// @brief De-serialization method
+	template < class Archive >
+	void
+	load( Archive & arch );
+#endif // SERIALIZATION
 
 private:
 	/// xyz coordinates

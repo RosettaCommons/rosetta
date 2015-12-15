@@ -40,6 +40,18 @@
 
 #endif
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/vector.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace pockets {
 
@@ -320,9 +332,76 @@ PocketConstraint::fill_f1_f2(
 
 
 core::scoring::constraints::ConstraintOP PocketConstraint::clone() const {
-	return core::scoring::constraints::ConstraintOP( new PocketConstraint( *this ) );
+	PocketConstraintOP myclone( new PocketConstraint( *this ) );
+	myclone->pocketgrid_ = PocketGridOP( new PocketGrid( *pocketgrid_ ));
+	return myclone;
+}
+
+bool PocketConstraint::operator == ( core::scoring::constraints::Constraint const & other ) const
+{
+	if ( ! same_type_as_me( other ) || ! other.same_type_as_me( *this ) ) return false;
+	PocketConstraint const & other_downcast( static_cast< PocketConstraint const & >( other ) );
+
+	if ( seqpos_ != other_downcast.seqpos_ ) return false;
+	if ( totalres_ != other_downcast.totalres_ ) return false;
+	if ( angles_ != other_downcast.angles_ ) return false;
+	if ( weight_     != other_downcast.weight_ ) return false;
+	if ( ! ( pocketgrid_ == other_downcast.pocketgrid_ || ( pocketgrid_ && other_downcast.pocketgrid_ && *pocketgrid_ == *other_downcast.pocketgrid_ )) ) return false;
+	if ( atom_ids_   != other_downcast.atom_ids_ ) return false;
+	if ( dumppdb_    != other_downcast.dumppdb_ ) return false;
+	if ( residues_   != other_downcast.residues_ ) return false;
+
+	return true;
+}
+bool PocketConstraint::same_type_as_me( core::scoring::constraints::Constraint const & other ) const
+{
+	return dynamic_cast< PocketConstraint const *  > (&other);
 }
 
 
 } // namespace constraints_additional
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::pockets::PocketConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( CEREAL_NVP( seqpos_ ) ); // core::Size
+	arc( CEREAL_NVP( totalres_ ) ); // core::Size
+	arc( CEREAL_NVP( angles_ ) ); // core::Size
+	arc( CEREAL_NVP( weight_ ) ); // core::Real
+	arc( CEREAL_NVP( pocketgrid_ ) ); // protocols::pockets::PocketGridOP
+	arc( CEREAL_NVP( atom_ids_ ) ); // utility::vector1<AtomID>
+	arc( CEREAL_NVP( dumppdb_ ) ); // _Bool
+	arc( CEREAL_NVP( residues_ ) ); // std::vector<core::conformation::ResidueCOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::pockets::PocketConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::constraints::Constraint >( this ) );
+	arc( seqpos_ ); // core::Size
+	arc( totalres_ ); // core::Size
+	arc( angles_ ); // core::Size
+	arc( weight_ ); // core::Real
+	arc( pocketgrid_ ); // protocols::pockets::PocketGridOP
+	arc( atom_ids_ ); // utility::vector1<AtomID>
+	arc( dumppdb_ ); // _Bool
+	std::vector< core::conformation::ResidueOP > local_residues;
+	arc( local_residues ); // std::vector<core::conformation::ResidueCOP>
+	// booo! too bad this doesn't work residues_ = local_residues; // copy the non-const pointer(s) into the const pointer(s)
+	for ( std::vector< core::conformation::ResidueOP >::const_iterator iter = local_residues.begin();
+			iter != local_residues.end(); ++iter ) {
+		residues_.push_back( *iter );
+	}
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::pockets::PocketConstraint );
+CEREAL_REGISTER_TYPE( protocols::pockets::PocketConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_pockets_PocketConstraint )
+#endif // SERIALIZATION

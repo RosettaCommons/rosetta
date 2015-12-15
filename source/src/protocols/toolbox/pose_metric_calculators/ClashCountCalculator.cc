@@ -40,6 +40,15 @@ using namespace core::pose::metrics;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.metrics.ClashCountCalculator" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -133,3 +142,36 @@ void ClashCountCalculator::recompute( Pose const& pose ) {
 } // PoseMetricCalculators
 } // toolbox
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::pose_metric_calculators::ClashCountCalculator::ClashCountCalculator() :
+	vdw_scale_factor_( 0 )
+{}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::ClashCountCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( total_clashes_ ) ); // core::Size
+	arc( CEREAL_NVP( clash_threshold_ ) ); // core::Real
+	arc( CEREAL_NVP( bb_clashes_ ) ); // core::Size
+	arc( CEREAL_NVP( vdw_scale_factor_ ) ); // const core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::ClashCountCalculator::load( Archive & arc ) {
+	arc( total_clashes_ ); // core::Size
+	arc( clash_threshold_ ); // core::Real
+	arc( bb_clashes_ ); // core::Size
+	arc( const_cast< core::Real & > (vdw_scale_factor_) ); // const core::Real
+}
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::ClashCountCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::ClashCountCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_ClashCountCalculator )
+#endif // SERIALIZATION

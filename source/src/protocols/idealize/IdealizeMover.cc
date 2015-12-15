@@ -197,7 +197,7 @@ IdealizeMover::apply( pose::Pose & pose ) {
 		/// bugfix for single-residue pose: don't append residue by jump from residue 0
 		Size const midpoint( pose.total_residue() == 1 ? 1 : pose.total_residue() / 2 );
 		pose.append_residue_by_jump(
-			*conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
+			*conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRT" ) ),
 			midpoint
 		);
 

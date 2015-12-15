@@ -51,7 +51,7 @@ static const Real EXT_PSI = +150;
 static const Real EXT_OMG = +180;
 
 void generate_extended_pose(Pose* extended_pose, const std::string& sequence) {
-	core::pose::make_pose_from_sequence(*extended_pose, sequence, "centroid");
+	core::pose::make_pose_from_sequence(*extended_pose, sequence, core::chemical::CENTROID );
 
 	for ( Size i = 1; i <= extended_pose->total_residue(); ++i ) {
 		extended_pose->set_phi(i, EXT_PHI);

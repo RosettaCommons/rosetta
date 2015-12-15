@@ -38,6 +38,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -157,11 +163,26 @@ private:
 	utility::vector1< uint > moltenres_for_rotamer_;
 	utility::vector1< uint > nrotamers_for_moltenres_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	RotamerSubsets();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace rotamer_set
 } // namespace pack
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_rotamer_set_RotamerSubsets )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_core_pack_RotamerSet_RotamerSets_HH

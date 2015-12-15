@@ -26,6 +26,12 @@
 #include <utility/vector1_bool.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace disulfides {
@@ -57,6 +63,15 @@ private:
 	Size disulf_atom_index_;
 
 	utility::vector1< DisulfideDerivativeAtom > derivative_atom_types_;
+#ifdef    SERIALIZATION
+public:
+	DisulfideAtomIndices();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }

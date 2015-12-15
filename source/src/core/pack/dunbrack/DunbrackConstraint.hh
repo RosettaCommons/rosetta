@@ -22,6 +22,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace dunbrack {
@@ -37,6 +42,9 @@ public:
 	virtual
 	scoring::constraints::ConstraintOP
 	clone() const;
+
+	virtual bool operator == ( Constraint const & other ) const;
+	virtual bool same_type_as_me( Constraint const & other ) const;
 
 	virtual
 	Size
@@ -79,10 +87,21 @@ private:
 	core::Size rot_vec_pos_; // position in RotVector
 	core::Size rot_bin_;     // desired bin at this position
 	utility::vector1< AtomID > atom_ids_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // DunbrackConstraint
 
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_dunbrack_DunbrackConstraint )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_pack_dunbrack_DunbrackConstraint_HH

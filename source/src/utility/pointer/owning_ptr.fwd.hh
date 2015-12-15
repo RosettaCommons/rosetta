@@ -12,9 +12,9 @@
 /// @author Luki Goldschmidt <lugo@uw.edu>
 
 #ifdef PTR_STD
-#include <utility/pointer/std/owning_ptr.hh>
+#include <utility/pointer/std/owning_ptr.fwd.hh>
 #endif
 
 #ifdef PTR_BOOST
-#include <utility/pointer/boost/owning_ptr.hh>
+#include <utility/pointer/boost/owning_ptr.fwd.hh>
 #endif

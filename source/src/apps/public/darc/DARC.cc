@@ -34,6 +34,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/pose/util.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/Energies.hh>

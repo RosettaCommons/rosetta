@@ -47,6 +47,17 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.SpanningTopology" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace membrane {
@@ -566,3 +577,27 @@ std::ostream & operator << ( std::ostream & os, SpanningTopology const & spans )
 } // membrane
 } // conformation
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::conformation::membrane::SpanningTopology::save( Archive & arc ) const {
+	arc( CEREAL_NVP( topology_ ) ); // utility::vector1<SpanOP>
+	arc( CEREAL_NVP( nres_topo_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::conformation::membrane::SpanningTopology::load( Archive & arc ) {
+	arc( topology_ ); // utility::vector1<SpanOP>
+	arc( nres_topo_ ); // Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::membrane::SpanningTopology );
+CEREAL_REGISTER_TYPE( core::conformation::membrane::SpanningTopology )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_conformation_membrane_SpanningTopology )
+#endif // SERIALIZATION

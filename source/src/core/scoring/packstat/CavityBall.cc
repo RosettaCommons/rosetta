@@ -23,6 +23,17 @@
 #include <ObjexxFCL/format.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace packstat {
@@ -146,3 +157,43 @@ string const CavityBall::hetero_atom_line( int const hetresnum, int const /*chai
 } // namespace packstat
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::packstat::CavityBall::CavityBall() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::packstat::CavityBall::save( Archive & arc ) const {
+	arc( CEREAL_NVP( id_ ) ); // int
+	arc( CEREAL_NVP( sphere_ ) ); // int
+	arc( CEREAL_NVP( cluster_ ) ); // int
+	arc( CEREAL_NVP( xyz_ ) ); // numeric::xyzVector<PackstatReal>
+	arc( CEREAL_NVP( radius_ ) ); // PackstatReal
+	arc( CEREAL_NVP( area ) ); // PackstatReal
+	arc( CEREAL_NVP( vol ) ); // PackstatReal
+	arc( CEREAL_NVP( evdw ) ); // PackstatReal
+	arc( CEREAL_NVP( exposed_radius ) ); // PackstatReal
+	arc( CEREAL_NVP( anb ) ); // int
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::packstat::CavityBall::load( Archive & arc ) {
+	arc( id_ ); // int
+	arc( sphere_ ); // int
+	arc( cluster_ ); // int
+	arc( xyz_ ); // numeric::xyzVector<PackstatReal>
+	arc( radius_ ); // PackstatReal
+	arc( area ); // PackstatReal
+	arc( vol ); // PackstatReal
+	arc( evdw ); // PackstatReal
+	arc( exposed_radius ); // PackstatReal
+	arc( anb ); // int
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::packstat::CavityBall );
+#endif // SERIALIZATION

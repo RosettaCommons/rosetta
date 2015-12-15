@@ -53,9 +53,15 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 // Numeric headers
 #include <numeric/xyzMatrix.fwd.hh>
 
+#ifdef SERIALIZATION
+// Cereal headers
+#include <cereal/access.hpp>
+#endif
+
 // C++ headers
 #include <map>
 #include <limits>
+
 
 
 namespace core {
@@ -84,13 +90,19 @@ hold the centroid position for centroid-mode scoring??
 class Residue : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Residue >
 {
 public:
-	typedef chemical::AtomType AtomType;
-	typedef chemical::ResidueType ResidueType;
-	typedef chemical::AtomIndices AtomIndices;
+	typedef chemical::AtomType       AtomType;
+	typedef chemical::ResidueType    ResidueType;
+	typedef chemical::ResidueTypeCOP ResidueTypeCOP;
+	typedef chemical::AtomIndices    AtomIndices;
 
 public:
 
-	/// @brief constructors
+	/// @brief constructor with a ResidueTypeCOP.  The dummy arg is there to prevent
+	/// implicit casts from a ResidueTypeCOP to a Residue.
+	Residue( ResidueTypeCOP rsd_type_in, bool const dummy_arg );
+
+	/// @brief constructor with a ResidueType const &.  The dummy arg is there to prevent
+	/// implicit casts from a ResidueType to a Residue.
 	Residue( ResidueType const & rsd_type_in, bool const dummy_arg );
 
 	// this is for boost serialize
@@ -1096,7 +1108,7 @@ public:
 	}
 
 	/// @brief Returns this residue's ResidueTypeSet
-	chemical::ResidueTypeSet const &
+	chemical::ResidueTypeSetCOP
 	residue_type_set() const
 	{
 		return rsd_type_.residue_type_set();
@@ -2038,6 +2050,24 @@ public:
 	basic::datacache::BasicDataCacheOP
 	nonconst_data_ptr();
 
+#ifdef SERIALIZATION
+	/// @brief Serialize this object
+	template < class Archive >
+	void
+	save( Archive & arc ) const;
+
+	/// @brief Deserialize this object using a non-default-constructor
+	/// since the Residue class requires its source ResidueType to be
+	/// present before the constructor can be called (since a Residue
+	/// holds a ResidueType reference).
+	template < class Archive >
+	static
+	void
+	load_and_construct(
+		Archive & arc,
+		cereal::construct< Residue > & construct
+	);
+#endif
 
 	/////////////////////////////////////////////////////////////////////////////
 	// private methods
@@ -2049,7 +2079,6 @@ private:
 	void
 	update_connections_to_residues();
 
-
 	/// @brief apply transform of rotation R and translation V for all atoms downstream
 	/// @note note this is not for general atom tree folding. only used in set_chi in which
 	/// changes for a chi angle is fast propagated within one residue and not to invoke
@@ -2060,7 +2089,6 @@ private:
 		numeric::xyzMatrix< Real > const & R,
 		Vector const & v
 	);
-
 
 	void
 	determine_nonstandard_polymer_status();
@@ -2074,13 +2102,30 @@ private:
 	void orient_onto_residue(
 		Residue const & src,
 		Size center, Size nbr1, Size nbr2,
-		Size src_center, Size src_nbr1, Size src_nbr2);
+		Size src_center, Size src_nbr1, Size src_nbr2
+	);
+
+	/// @brief Determine the set of orbitals that are needed and compute their
+	/// coordinates; invoked from within the constructors.
+	void
+	assign_orbitals();
+
+	/// @brief Determine the set of nu dihedrals and store them; invoked from
+	/// within the constrors.
+	void
+	assign_nus();
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data
 	/////////////////////////////////////////////////////////////////////////////
 
 private:
+
+	/// @brief Pointer to the ResidueType that this Residue derives its chemical
+	/// identity from.  The ResidueType is pointed to through both a pointer and
+	/// a reference; the pointer for the sake of serialization, and the reference
+	/// for access speed.
+	ResidueTypeCOP rsd_type_ptr_;
 
 	/// @brief our Residue type
 	//-- should be CAP, perhaps?
@@ -2089,7 +2134,7 @@ private:
 	/// @brief our conformation atoms (not kinematic atom pointers) with xyz positions and atom type
 	Atoms atoms_;
 
-	utility::vector1<orbitals::OrbitalXYZCoords> orbitals_;
+	utility::vector1< orbitals::OrbitalXYZCoords > orbitals_;
 
 
 	/// @brief the sequence position

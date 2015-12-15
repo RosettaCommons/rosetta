@@ -72,6 +72,11 @@
 #include <core/scoring/methods/WholeStructureEnergy.hh> // WIN32 INCLUDE
 #endif
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -1121,6 +1126,12 @@ private:
 	bool any_intrares_energies_;
 	TWO_B_Methods ci_2b_intrares_;
 	TWO_B_Methods cd_2b_intrares_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // ScoreFunction
 
 inline
@@ -1140,6 +1151,11 @@ find_weights_file(std::string name, std::string extension=".wts");
 
 } // namespace scoring
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_ScoreFunction )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_core_scoring_ScoreFunction_HH

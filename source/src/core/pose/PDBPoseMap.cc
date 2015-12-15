@@ -27,6 +27,16 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 
@@ -104,3 +114,46 @@ PDBPoseMap::fill( PDBInfo const & info )
 
 } // pose
 } // core
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::PDBPoseMap::ResidueKey::save( Archive & arc ) const {
+	arc( CEREAL_NVP( chainID ) ); // char
+	arc( CEREAL_NVP( resSeq ) ); // int
+	arc( CEREAL_NVP( iCode ) ); // char
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::PDBPoseMap::ResidueKey::load( Archive & arc ) {
+	arc( chainID ); // char
+	arc( resSeq ); // int
+	arc( iCode ); // char
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::PDBPoseMap::ResidueKey );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::PDBPoseMap::save( Archive & arc ) const {
+	arc( CEREAL_NVP( pdb2pose_ ) ); // Pdb2Pose
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::PDBPoseMap::load( Archive & arc ) {
+	arc( pdb2pose_ ); // Pdb2Pose
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::PDBPoseMap );
+CEREAL_REGISTER_TYPE( core::pose::PDBPoseMap )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_PDBPoseMap )
+#endif // SERIALIZATION

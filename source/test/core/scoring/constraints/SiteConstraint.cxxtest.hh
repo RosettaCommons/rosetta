@@ -27,6 +27,12 @@
 //Auto Headers
 #include <utility/vector1.hh>
 
+#ifdef	SERIALIZATION
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif
+
 
 using basic::T;
 using basic::Error;
@@ -103,4 +109,35 @@ public:
 		std::cout.precision( before_precision );
 
 	}
+
+	void test_serialize_SiteConstraint() {
+		TS_ASSERT( true ); // for non-serialization builds
+#ifdef SERIALIZATION
+		using namespace core::scoring::constraints;
+
+		Size res = 192;
+		SiteConstraintOP site_cst( new SiteConstraint() );
+		site_cst->setup_csts( res, name, "I", *the_pose, func );
+
+		ConstraintOP instance( site_cst ); // serialize this through a pointer to the base class
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( instance );
+		}
+
+		ConstraintOP instance2; // deserialize also through a pointer to the base class
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( instance2 );
+		}
+
+		// make sure the deserialized base class pointer points to a SiteConstraint
+		TS_ASSERT( utility::pointer::dynamic_pointer_cast< SiteConstraint > ( instance2 ));
+		TS_ASSERT( *instance == *instance2 );
+#endif // SERIALIZATION
+	}
+
 };

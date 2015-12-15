@@ -214,7 +214,7 @@ char * argv []
 						for ( core::Size revft = 0; revft <= 1; ++revft ) {
 							core::pose::PoseOP pose_op( new core::pose::Pose );
 							core::pose::Pose & pose = *pose_op;
-							core::pose::make_pose_from_sequence(pose, protseq, "fa_standard");
+							core::pose::make_pose_from_sequence(pose, protseq, core::chemical::FA_STANDARD );
 							if ( revft ) {
 								core::kinematics::FoldTree foldtree;
 								foldtree.add_edge(3, 1, core::kinematics::Edge::PEPTIDE);

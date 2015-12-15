@@ -17,6 +17,15 @@
 
 #include <utility/tools/make_vector.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace numeric {
 namespace interpolation {
 namespace spline {
@@ -106,7 +115,50 @@ void SimpleInterpolator::deserialize(utility::json_spirit::mObject data)
 
 }
 
+bool SimpleInterpolator::operator == ( Interpolator const & other ) const
+{
+	if ( ! Interpolator::operator==( other ) ) return false;
+	SimpleInterpolator const & other_downcast( static_cast< SimpleInterpolator const & > ( other ) );
+	if ( x_   != other_downcast.x_   ) return false;
+	if ( y_   != other_downcast.y_   ) return false;
+	if ( ddy_ != other_downcast.ddy_ ) return false;
+	return true;
+}
+
+bool SimpleInterpolator::same_type_as_me( Interpolator const & other ) const
+{
+	return dynamic_cast< SimpleInterpolator const * > (&other);
+}
+
 
 } // end namespace spline
 } // end namespace interpolation
 } // end namespace numeric
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+numeric::interpolation::spline::SimpleInterpolator::save( Archive & arc ) const {
+	arc( cereal::base_class< class numeric::interpolation::spline::Interpolator >( this ) );
+	arc( CEREAL_NVP( x_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( y_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( ddy_ ) ); // utility::vector1<Real>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+numeric::interpolation::spline::SimpleInterpolator::load( Archive & arc ) {
+	arc( cereal::base_class< class numeric::interpolation::spline::Interpolator >( this ) );
+	arc( x_ ); // utility::vector1<Real>
+	arc( y_ ); // utility::vector1<Real>
+	arc( ddy_ ); // utility::vector1<Real>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( numeric::interpolation::spline::SimpleInterpolator );
+CEREAL_REGISTER_TYPE( numeric::interpolation::spline::SimpleInterpolator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( numeric_interpolation_spline_SimpleInterpolator )
+#endif // SERIALIZATION

@@ -69,10 +69,10 @@ mutate_position( pose::Pose & pose, Size const i, char const & new_seq ){
 
 	if ( new_seq == pose.sequence()[i-1] ) return false;
 
-	ResidueTypeSet const & rsd_set = pose.residue( i ).residue_type_set();
+	ResidueTypeSetCOP rsd_set = pose.residue( i ).residue_type_set();
 
 	ResidueProperty base_property = ( pose.residue( i ).is_RNA() ) ? RNA : NO_PROPERTY;
-	ResidueTypeCOP new_rsd_type( ResidueTypeFinder( rsd_set ).name1( new_seq ).variants( pose.residue(i).type().variant_types() ).base_property( base_property ).get_representative_type() );
+	ResidueTypeCOP new_rsd_type( ResidueTypeFinder( *rsd_set ).name1( new_seq ).variants( pose.residue(i).type().variant_types() ).base_property( base_property ).get_representative_type() );
 
 	ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
 

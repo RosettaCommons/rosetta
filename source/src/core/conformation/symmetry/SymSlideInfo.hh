@@ -89,6 +89,12 @@ private:
 	std::string SlideCriteriaVal_;
 	std::vector<core::Size> slide_order_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // symmetry

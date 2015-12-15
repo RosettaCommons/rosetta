@@ -22,6 +22,16 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -38,6 +48,22 @@ SOGFunc::SOGFunc(
 ) : member_(utility::vector1< core::Real >(1,mean),
 	utility::vector1< core::Real >(1,sdev),
 	utility::vector1< core::Real >(1,1.0)) {}
+
+
+bool SOGFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	SOGFunc const & other_downcast( static_cast< SOGFunc const & > (other) );
+	return member_ == other_downcast.member_;
+
+}
+
+bool SOGFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< SOGFunc const * > ( &other );
+}
 
 void
 SOGFunc::read_data( std::istream & in ) {
@@ -75,3 +101,27 @@ void SOGFunc::show_definition( std::ostream & out ) const {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::SOGFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( member_ ) ); // class core::scoring::func::SOGFunc_Impl
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::SOGFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( member_ ); // class core::scoring::func::SOGFunc_Impl
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::SOGFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::SOGFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_SOGFunc )
+#endif // SERIALIZATION

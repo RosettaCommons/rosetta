@@ -460,8 +460,8 @@ Real ik_his_clamp(Pose & pose,
   // Real his_rep_th = 5.0;
 
   Pose his,cys;
-  make_pose_from_sequence(his,"H","fa_standard",false);
-  make_pose_from_sequence(cys,"C","fa_standard",false);
+  make_pose_from_sequence(his,"H",core::chemical::FA_STANDARD,false);
+  make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
   if(cys.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(cys,1);
   if(cys.residue(1).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(cys,1);
   if(his.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(his,1);
@@ -778,8 +778,8 @@ void run(std::string fname) {
 
   // read pose info
   Pose natp,his,cys;
-  make_pose_from_sequence(his,"H","fa_standard",false);
-  make_pose_from_sequence(cys,"C","fa_standard",false);
+  make_pose_from_sequence(his,"H",core::chemical::FA_STANDARD,false);
+  make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
   if(cys.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(cys,1);
   if(cys.residue(1).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(cys,1);
   if(his.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(his,1);

@@ -124,8 +124,7 @@ ResidueType::ResidueType(
 	nbr_atom_indices_( 0 ),
 	finalized_(false),
 	nondefault_(false),
-	base_restype_name_(""),
-	serialized_(false)
+	base_restype_name_("")
 {}
 
 ResidueType::~ResidueType()
@@ -249,7 +248,6 @@ ResidueType::operator=( ResidueType const & residue_type )
 	defined_adducts_ = residue_type.defined_adducts_;
 	nondefault_ = residue_type.nondefault_;
 	base_restype_name_ = residue_type.base_restype_name_;
-	serialized_ = residue_type.serialized_;
 
 	// When you copy vertex descriptors from cached data, the vertex descriptors are pointing to the old copied graph.
 	// New vertices are assigned.  You have to map the old vertex to the new vertex.
@@ -464,14 +462,10 @@ ResidueType::operator=( ResidueType const & residue_type )
 }
 
 
-ResidueTypeSet const &
+ResidueTypeSetCOP
 ResidueType::residue_type_set() const
 {
-	ResidueTypeSetCOP residue_type_set = residue_type_set_.lock();
-	if ( !residue_type_set ) {
-		utility_exit_with_message( "ResidueType::residue_type_set: pointer is not set!");
-	}
-	return *residue_type_set;
+	return residue_type_set_.lock();
 }
 
 bool

@@ -659,8 +659,8 @@ add_variant_type_to_conformation_residue(
 	Residue const & old_rsd( conformation.residue( seqpos ) );
 
 	// the type of the desired variant residue
-	chemical::ResidueTypeSet const & rsd_set( old_rsd.residue_type_set() );
-	chemical::ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_added( old_rsd.type(), variant_type ) );
+	chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
+	chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_added( old_rsd.type(), variant_type ) );
 
 	core::conformation::replace_conformation_residue_copying_existing_coordinates( conformation, seqpos, new_rsd_type );
 }
@@ -677,8 +677,8 @@ remove_variant_type_from_conformation_residue(
 	Residue const & old_rsd( conformation.residue( seqpos ) );
 
 	// the type of the desired variant residue
-	chemical::ResidueTypeSet const & rsd_set( old_rsd.residue_type_set() );
-	chemical::ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_removed( old_rsd.type(), variant_type ) );
+	chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
+	chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_removed( old_rsd.type(), variant_type ) );
 
 	core::conformation::replace_conformation_residue_copying_existing_coordinates( conformation, seqpos, new_rsd_type );
 }
@@ -1824,7 +1824,7 @@ bool change_cys_state(
 
 	// Cache information on old residue.
 	Residue const & res( conf.residue( index ) );
-	chemical::ResidueTypeSet const & residue_type_set = res.type().residue_type_set();
+	chemical::ResidueTypeSetCOP residue_type_set = res.type().residue_type_set();
 
 	// make sure we're working on a cys
 	if ( ( ! res.type().is_sidechain_thiol() ) && ( ! res.type().is_disulfide_bonded() ) ) {
@@ -1855,7 +1855,7 @@ bool change_cys_state(
 	else if ( cys_type_name3=="CYD" && removing /*removing if the disulfide variant was found*/ ) return true; //Similarly, if we're asked for a cyd and we already have a cyd, do nothing.
 
 	// Get the residue type of the desired new residue type.
-	chemical::ResidueTypeCOP replacement_type( residue_type_set.get_representative_type_name3( res.type().name3(), variant_types ) );
+	chemical::ResidueTypeCOP replacement_type( residue_type_set->get_representative_type_name3( res.type().name3(), variant_types ) );
 	if ( replacement_type ) {
 		ResidueOP new_res = ResidueFactory::create_residue( *replacement_type, res, conf );
 		copy_residue_coordinates_and_rebuild_missing_atoms( res, *new_res, conf );

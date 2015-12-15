@@ -25,6 +25,13 @@
 #include <numeric/xyzVector.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 namespace tree {
@@ -671,11 +678,23 @@ private:
 	/// 0 when my dofs have not changed since the last update_coords.
 	Size dof_refold_index_;
 
+#ifdef    SERIALIZATION
+	friend class cereal::access;
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // Atom_
 
 } // namespace tree
 } // namespace kinematics
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_kinematics_tree_Atom_ )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_core_kinematics_Atom__HH

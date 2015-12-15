@@ -21,6 +21,12 @@
 #include <core/types.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace methods {
@@ -45,11 +51,26 @@ public:
 private:
 	utility::vector1< core::Real > rmsd_history_;  //residue rmsd
 	utility::vector1< bool > res_changed_history_; //residue changed
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	VallLookbackData();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 }//end methods
 }//end scoring
 }//end core
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_methods_vall_lookback_VallLookbackData )
+#endif // SERIALIZATION
+
+
 #endif
 

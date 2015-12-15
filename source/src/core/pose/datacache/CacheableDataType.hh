@@ -90,14 +90,15 @@ public:
 		FULL_MODEL_INFO, // pose/full_model_info/FullModelInfo.cc [map residues/chains to full model, for stepwise buildup]
 		MULTIPLE_POSE_INFO, // pose/multiple_pose_info/MultiplePoseInfo.cc [info on sister poses, for stepwise buildup]
 		NCS_RESIDUE_MAPPING,
+		WRITEABLE_DATA,
+		INTERFACE_DDG_MUTATION, // the mutation to be considered; set by the InterfaceDDGJobInputter
 		FLOATING_POINT_CLOUD_INFO,
 		FAELEC_CONTEXT_DATA,
-		WRITEABLE_DATA,
 		CDR_CLUSTER_INFO, // antibody/clusters/CDRClusterSet.cc ( Cacheable Antibody CDR Cluster Information)
 		VDW_REP_SCREEN_INFO, // for stepwise modeling -- grid of peripheral regions that are sterically disallowed.
 		NATIVE_ANTIBODY_SEQ, //For keeping track of the near-native sequence during antibody design.
 
-		// The 'num_cacheable_data_types' below must be the last enum, and must
+		// *** IMPORTANT ***		// The 'num_cacheable_data_types' below must be the last enum, and must
 		// always be set equal to the (last-2) enum. The 'dummy_cacheable_data_type'
 		// below must be the (last-1) enum, so that 'num_cacheable_data_types' does
 		// NOT require a manual update everytime a new cachaeable_data_type is added.

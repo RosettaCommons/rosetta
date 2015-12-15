@@ -39,6 +39,20 @@
 #include <basic/Tracer.hh>
 
 //Auto using namespaces
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/serialization/ObjexxFCL/FArray2D.srlz.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace ObjexxFCL {
 namespace format {
 }
@@ -68,6 +82,18 @@ ShortestPathInFoldTree::ShortestPathInFoldTree(
 		build_peptide_table( f );
 	}
 }
+
+/// @detail cs-tor
+ShortestPathInFoldTree::ShortestPathInFoldTree(
+	ShortestPathInFoldTree const & src
+) :
+	jump_res_( src.jump_res_ ),
+	node_dist_( src.node_dist_ ),
+	res2jumps_( src.res2jumps_ ),
+	nres_( src.nres_ ),
+	simple_fold_tree_( src.simple_fold_tree_ ),
+	max_dist_( src.max_dist_ )
+{}
 
 
 /// @detail the core of the distance cache is build here: node_dist_
@@ -376,3 +402,38 @@ ShortestPathInFoldTree::dist( Size pos1, Size pos2 ) const {
 
 } //kinematics
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::kinematics::ShortestPathInFoldTree::ShortestPathInFoldTree() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::kinematics::ShortestPathInFoldTree::save( Archive & arc ) const {
+	arc( CEREAL_NVP( jump_res_ ) ); // std::map<Size, Size>
+	arc( CEREAL_NVP( node_dist_ ) ); // ObjexxFCL::FArray2D_int
+	arc( CEREAL_NVP( res2jumps_ ) ); // ObjexxFCL::FArray2D_int
+	arc( CEREAL_NVP( nres_ ) ); // Size
+	arc( CEREAL_NVP( simple_fold_tree_ ) ); // _Bool
+	arc( CEREAL_NVP( max_dist_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::kinematics::ShortestPathInFoldTree::load( Archive & arc ) {
+	arc( jump_res_ ); // std::map<Size, Size>
+	arc( node_dist_ ); // ObjexxFCL::FArray2D_int
+	arc( res2jumps_ ); // ObjexxFCL::FArray2D_int
+	arc( nres_ ); // Size
+	arc( simple_fold_tree_ ); // _Bool
+	arc( max_dist_ ); // Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::ShortestPathInFoldTree );
+CEREAL_REGISTER_TYPE( core::kinematics::ShortestPathInFoldTree )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_kinematics_ShortestPathInFoldTree )
+#endif // SERIALIZATION

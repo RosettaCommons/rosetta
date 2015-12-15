@@ -26,6 +26,17 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -213,6 +224,53 @@ void SOGFunc_Impl::set_defaults() {
 	}
 }
 
+bool SOGFunc_Impl::operator == ( SOGFunc_Impl const & other ) const
+{
+	if ( means_ != other.means_ ) return false;
+	if ( sdevs_ != other.sdevs_ ) return false;
+	if ( weights_ != other.weights_ ) return false;
+	if ( upper_bound_ != other.upper_bound_ ) return false;
+	if ( score_upper_ != other.score_upper_ ) return false;
+	if ( sog_cst_param_ != other.sog_cst_param_ ) return false;
+	if ( smooth_ != other.smooth_ ) return false;
+	return true;
+}
+
+
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::SOGFunc_Impl::save( Archive & arc ) const {
+	arc( CEREAL_NVP( means_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( sdevs_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( weights_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( upper_bound_ ) ); // core::Real
+	arc( CEREAL_NVP( score_upper_ ) ); // core::Real
+	arc( CEREAL_NVP( sog_cst_param_ ) ); // core::Real
+	arc( CEREAL_NVP( smooth_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::SOGFunc_Impl::load( Archive & arc ) {
+	arc( means_ ); // utility::vector1<core::Real>
+	arc( sdevs_ ); // utility::vector1<core::Real>
+	arc( weights_ ); // utility::vector1<core::Real>
+	arc( upper_bound_ ); // core::Real
+	arc( score_upper_ ); // core::Real
+	arc( sog_cst_param_ ); // core::Real
+	arc( smooth_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::SOGFunc_Impl );
+CEREAL_REGISTER_TYPE( core::scoring::func::SOGFunc_Impl )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_SOGFunc_Impl )
+#endif // SERIALIZATION

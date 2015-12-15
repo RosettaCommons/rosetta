@@ -154,6 +154,10 @@ void extract_scores(
 	std::ostream & out
 );
 
+void extract_extra_scores(
+	core::pose::Pose const & pose,
+	utility::io::ozstream & out
+);
 
 /// @brief dump_connect_info  Figure out CONECT  fields for PDB output -- atoms that are bonded in Rosetta but won't
 /// look that way to RASMOL or Pymol because of distance -- useful for centroid poses.

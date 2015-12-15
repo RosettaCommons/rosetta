@@ -17,6 +17,7 @@
 
 // Package Headers
 #include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/scoring/func/FuncFactory.hh>
 
 // Project Headers
@@ -44,6 +45,15 @@
 static THREAD_LOCAL basic::Tracer tr( "core.io.constraints" );
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -51,12 +61,43 @@ namespace constraints {
 using core::pose::atom_id_to_named_atom_id;
 using core::pose::named_atom_id_to_atom_id;
 
+// default c-tor
+AtomPairConstraint::AtomPairConstraint() : Constraint( atom_pair_constraint ) {}
 
+///c-tor
+AtomPairConstraint::AtomPairConstraint(
+	AtomID const & a1,
+	AtomID const & a2,
+	core::scoring::func::FuncOP func,
+	ScoreType scoretype /* = atom_pair_constraint*/
+):
+	Constraint( scoretype ),
+	atom1_(a1),
+	atom2_(a2),
+	func_( func )
+{}
+
+
+ConstraintOP
+AtomPairConstraint::clone() const {
+	return ConstraintOP( new AtomPairConstraint( *this ));
+}
+
+ConstraintOP
+AtomPairConstraint::clone( func::FuncOP func ) const {
+	return ConstraintOP( new AtomPairConstraint( atom1_, atom2_, func, score_type() ) );
+}
+
+///
 void
 AtomPairConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
 {
 	Real const score_val =  score( xyz( atom1_ ), xyz( atom2_ ) );
 	emap[ this->score_type() ] += score_val;
+}
+
+Real AtomPairConstraint::score( pose::Pose const& pose ) const {
+	return func_->func( dist( pose ) );
 }
 
 
@@ -98,16 +139,21 @@ ConstraintOP AtomPairConstraint::remapped_clone( pose::Pose const& src, pose::Po
 bool
 AtomPairConstraint::operator == ( Constraint const & other_cst ) const
 {
-	if ( !dynamic_cast< AtomPairConstraint const * > ( &other_cst ) ) return false;
+	if ( !           same_type_as_me( other_cst ) ) return false;
+	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
 	AtomPairConstraint const & other( static_cast< AtomPairConstraint const & > (other_cst) );
-
 	if ( atom1_ != other.atom1_ ) return false;
 	if ( atom2_ != other.atom2_ ) return false;
-	if ( func_ != other.func_ ) return false; //this still compares the pointers !!!
 	if ( this->score_type() != other.score_type() ) return false;
 
-	return true;
+	return func_ == other.func_ || ( func_ && other.func_ && *func_ == *other.func_ );
+}
+
+bool
+AtomPairConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< AtomPairConstraint const * > (&other);
 }
 
 void AtomPairConstraint::show( std::ostream& out ) const {
@@ -164,6 +210,10 @@ Real AtomPairConstraint::dist( func::XYZ_Func const & xyz ) const {
 	debug_assert( atom1_.atomno() );
 	debug_assert( atom2_.atomno() );
 	return xyz( atom1_ ).distance( xyz( atom2_ ) );
+}
+
+func::Func const & AtomPairConstraint::get_func() const {
+	return *func_;
 }
 
 Size AtomPairConstraint::show_violations(
@@ -307,6 +357,70 @@ AtomPairConstraint::effective_sequence_separation( core::kinematics::ShortestPat
 	return sp.dist( atom1_.rsd(), atom2_.rsd() );
 }
 
+// functions
+Real
+AtomPairConstraint::func( Real const theta ) const
+{
+	return func_->func( theta );
+}
+
+// deriv
+Real
+AtomPairConstraint::dfunc( Real const theta ) const
+{
+	return func_->dfunc( theta );
+}
+
+void
+AtomPairConstraint::set_func( func::FuncOP setting ) {
+	func_ = setting;
+}
+
+void
+AtomPairConstraint::atom1( AtomID setting ) const {
+	atom1_ = setting;
+}
+
+void
+AtomPairConstraint::atom2( AtomID setting ) const {
+	atom2_ = setting;
+}
+
+AtomPairConstraint::AtomPairConstraint( AtomPairConstraint const & src ) :
+	Constraint( src ),
+	atom1_( src.atom1_ ),
+	atom2_( src.atom2_ ),
+	func_( src.func_ ? src.func_->clone() : src.func_ )
+{}
+
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::AtomPairConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( CEREAL_NVP( atom1_ ) ); // AtomID
+	arc( CEREAL_NVP( atom2_ ) ); // AtomID
+	arc( CEREAL_NVP( func_ ) ); // core::scoring::func::FuncOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::AtomPairConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( atom1_ ); // AtomID
+	arc( atom2_ ); // AtomID
+	arc( func_ ); // core::scoring::func::FuncOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::AtomPairConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::AtomPairConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_AtomPairConstraint )
+#endif // SERIALIZATION

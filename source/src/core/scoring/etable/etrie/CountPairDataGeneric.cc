@@ -22,6 +22,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace etable {
@@ -101,3 +107,38 @@ std::ostream & operator << ( std::ostream & os, CountPairDataGeneric const & cpd
 } // namespace scoring
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::etable::etrie::CountPairDataGeneric::save( Archive & arc ) const {
+	arc( CEREAL_NVP( residue_connection_data_ ) ); // utility::vector1<GenericResidueConnectionData>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::etable::etrie::CountPairDataGeneric::load( Archive & arc ) {
+	arc( residue_connection_data_ ); // utility::vector1<GenericResidueConnectionData>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::etable::etrie::CountPairDataGeneric );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::etable::etrie::GenericResidueConnectionData::save( Archive & arc ) const {
+	arc( CEREAL_NVP( path_distances_to_connection_points_ ) ); // utility::vector1<Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::etable::etrie::GenericResidueConnectionData::load( Archive & arc ) {
+	arc( path_distances_to_connection_points_ ); // utility::vector1<Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::etable::etrie::GenericResidueConnectionData );
+#endif // SERIALIZATION

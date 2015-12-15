@@ -42,6 +42,11 @@
 #include <ostream>
 #include <string>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace loops {
 
@@ -168,7 +173,9 @@ public:
 
 	LoopList const & loops() const;
 
-	LoopsFileIOOP get_loop_file_reader() const;
+	/// @brief Convenience function for creating a (stateless!) class that is able
+	/// to read in loops files in several different formats.
+	static LoopsFileIOOP get_loop_file_reader();
 
 	/// @brief  Is seqpos contained in any of my loops?
 	bool
@@ -292,16 +299,27 @@ private:
 private:
 
 	LoopList loops_;
-	mutable LoopsFileIOOP loop_file_reader_;
+	// This doesn't need to be a data member! mutable LoopsFileIOOP loop_file_reader_;
 
 	bool strict_looprelax_checks_on_file_reads_;
 
 	std::string loop_filename_;
 	std::string file_reading_token_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // Loops
 
 } //namespace loops
 } //namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_loops_Loops )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_loops_Loops_HH

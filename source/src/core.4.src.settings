@@ -110,6 +110,8 @@ sources = {
 		"FixbbRotamerSets",
 		"rotamer_building_functions",
 		"rna_rotamer_building_functions",
+		"RotamerCouplings",
+		"RotamerLinks",
 		"RotamerSet",
 		"RotamerSet_",
 		"RotamerSetFactory",

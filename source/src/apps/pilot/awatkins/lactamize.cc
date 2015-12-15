@@ -47,6 +47,7 @@
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/TopOutFunc.hh>
 
 #include <core/kinematics/FoldTree.hh>

@@ -37,6 +37,21 @@
 //Auto Headers
 #include <core/kinematics/Jump.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -44,7 +59,7 @@ namespace constraints {
 
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.constraints.BackboneStubConstraint" );
 
-utility::pointer::shared_ptr< AngleConstraint > BackboneStubConstraint::ang_cst_(0);
+//utility::pointer::shared_ptr< AngleConstraint > BackboneStubConstraint::ang_cst_(0);
 
 
 std::map< std::string, core::id::AtomID >
@@ -203,11 +218,9 @@ BackboneStubConstraint::BackboneStubConstraint(
 	fixed_reference_point_ = pose.xyz(fixed_atom_id_);
 
 	// to get access to AngleConstraint derivatives
-	if ( ang_cst_ == 0 ) {
-		// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
-		func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
-		ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
-	}
+	// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
+	func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
+	ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
 }
 
 //kdrew: this is the non-peptidic implementation (peptoids, beta-peptides, etc),
@@ -269,11 +282,9 @@ BackboneStubConstraint::BackboneStubConstraint(
 	fixed_reference_point_ = pose.xyz(fixed_atom_id_);
 
 	// to get access to AngleConstraint derivatives
-	if ( ang_cst_ == 0 ) {
-		// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
-		func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
-		ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
-	}
+	// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
+	func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
+	ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
 }
 
 //kdrew: this is the peptide centric implementation
@@ -331,12 +342,31 @@ BackboneStubConstraint::BackboneStubConstraint(
 	fixed_reference_point_ = pose.xyz(fixed_atom_id_);
 
 	// to get access to AngleConstraint derivatives
-	if ( ang_cst_ == 0 ) {
-		// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
-		func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
-		ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
-	}
+	// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
+	func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
+	ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
 }
+
+BackboneStubConstraint::BackboneStubConstraint( BackboneStubConstraint const & src ) :
+	Constraint( core::scoring::backbone_stub_constraint ),
+	superposition_bonus_( src.superposition_bonus_ ),
+	force_constant_( src.force_constant_ ),
+	seqpos_( src.seqpos_ ),
+	sidechain_atom_id_( src.sidechain_atom_id_ ),
+	primary_atom_id_( src.primary_atom_id_ ),
+	backbone_atom2_id_( src.backbone_atom2_id_ ),
+	backbone_atom1_id_( src.backbone_atom1_id_ ),
+	atom_ids_( src.atom_ids_ ),
+	sidechain_target_( src.sidechain_target_ ),
+	primary_backbone_target_( src.primary_backbone_target_ ),
+	backbone2_target_( src.backbone2_target_ ),
+	backbone1_target_( src.backbone1_target_ ),
+	primary_sidechain_target_( src.primary_sidechain_target_ ),
+	backbone1_2_target_( src.backbone1_2_target_ ),
+	fixed_atom_id_( src.fixed_atom_id_ ),
+	fixed_reference_point_( src.fixed_reference_point_ ),
+	ang_cst_( src.ang_cst_ ? utility::pointer::dynamic_pointer_cast< AngleConstraint > (src.ang_cst_->clone()) : src.ang_cst_ )
+{}
 
 core::Size
 BackboneStubConstraint::seqpos() const
@@ -352,7 +382,8 @@ bool
 BackboneStubConstraint::operator == ( Constraint const & other_cst ) const
 {
 
-	if ( !dynamic_cast< BackboneStubConstraint const * > ( &other_cst ) ) return false;
+	if ( !           same_type_as_me( other_cst ) ) return false;
+	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
 	BackboneStubConstraint const & other( static_cast< BackboneStubConstraint const & > (other_cst) );
 
@@ -376,6 +407,11 @@ BackboneStubConstraint::operator == ( Constraint const & other_cst ) const
 	if ( fixed_reference_point_ != other.fixed_reference_point_ ) return false;
 
 	return true;
+}
+
+bool BackboneStubConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< BackboneStubConstraint const * > (&other) != 0;
 }
 
 
@@ -640,3 +676,62 @@ return NULL;
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::constraints::BackboneStubConstraint::BackboneStubConstraint() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::BackboneStubConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( CEREAL_NVP( superposition_bonus_ ) ); // core::Real
+	arc( CEREAL_NVP( force_constant_ ) ); // core::Real
+	arc( CEREAL_NVP( seqpos_ ) ); // Size
+	arc( CEREAL_NVP( sidechain_atom_id_ ) ); // AtomID
+	arc( CEREAL_NVP( primary_atom_id_ ) ); // AtomID
+	arc( CEREAL_NVP( backbone_atom2_id_ ) ); // AtomID
+	arc( CEREAL_NVP( backbone_atom1_id_ ) ); // AtomID
+	arc( CEREAL_NVP( atom_ids_ ) ); // utility::vector1<AtomID>
+	arc( CEREAL_NVP( sidechain_target_ ) ); // core::Vector
+	arc( CEREAL_NVP( primary_backbone_target_ ) ); // core::Vector
+	arc( CEREAL_NVP( backbone2_target_ ) ); // core::Vector
+	arc( CEREAL_NVP( backbone1_target_ ) ); // core::Vector
+	arc( CEREAL_NVP( primary_sidechain_target_ ) ); // core::Vector
+	arc( CEREAL_NVP( backbone1_2_target_ ) ); // core::Vector
+	arc( CEREAL_NVP( fixed_atom_id_ ) ); // AtomID
+	arc( CEREAL_NVP( fixed_reference_point_ ) ); // core::Vector
+	arc( CEREAL_NVP( ang_cst_ ) ); // utility::pointer::shared_ptr<AngleConstraint>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::BackboneStubConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( superposition_bonus_ ); // core::Real
+	arc( force_constant_ ); // core::Real
+	arc( seqpos_ ); // Size
+	arc( sidechain_atom_id_ ); // AtomID
+	arc( primary_atom_id_ ); // AtomID
+	arc( backbone_atom2_id_ ); // AtomID
+	arc( backbone_atom1_id_ ); // AtomID
+	arc( atom_ids_ ); // utility::vector1<AtomID>
+	arc( sidechain_target_ ); // core::Vector
+	arc( primary_backbone_target_ ); // core::Vector
+	arc( backbone2_target_ ); // core::Vector
+	arc( backbone1_target_ ); // core::Vector
+	arc( primary_sidechain_target_ ); // core::Vector
+	arc( backbone1_2_target_ ); // core::Vector
+	arc( fixed_atom_id_ ); // AtomID
+	arc( fixed_reference_point_ ); // core::Vector
+	arc( ang_cst_ ); // utility::pointer::shared_ptr<AngleConstraint>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::BackboneStubConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::BackboneStubConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_BackboneStubConstraint )
+#endif // SERIALIZATION

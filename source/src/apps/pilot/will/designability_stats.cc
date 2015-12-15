@@ -288,7 +288,7 @@ collect_stats(
 	std::string tag
 ){
 	Pose ala;
- 	core::pose::make_pose_from_sequence(ala,"A","fa_standard",false);
+ 	core::pose::make_pose_from_sequence(ala,"A",core::chemical::FA_STANDARD,false);
 	remove_lower_terminus_type_from_pose_residue(ala,1);
 	remove_upper_terminus_type_from_pose_residue(ala,1);
 	for(Size ir = 1; ir <= pose.n_residue(); ++ir){

@@ -38,6 +38,7 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/jobdist/Jobs.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <numeric/random/random_permutation.hh>
@@ -93,36 +94,8 @@ utility::vector1< BasicJobOP > load_s_and_l()
 	using utility::file::FileName;
 	using namespace basic::options::OptionKeys;
 
-	// concatenate -s and -l flags together to get total list of PDB files
-	vector1< FileName > pdb_file_names;
-	if ( option[ in::file::s ].active() ) {
-		pdb_file_names = option[ in::file::s ]().vector(); // make a copy (-s)
-	}
-
-	vector1< FileName > list_file_names;
-	if ( option[ in::file::l ].active() ) {
-		list_file_names = option[ in::file::l ]().vector(); // make a copy (-l)
-	}
-	if ( option[ in::file::list ].active() ) {
-		vector1< FileName > better_list_file_names;
-		better_list_file_names= option[in::file::list ]().vector(); // make a copy (-list)
-		for ( vector1< FileName >::iterator i = better_list_file_names.begin(), i_end = better_list_file_names.end(); i != i_end; ++i ) {
-			list_file_names.push_back(*i); // make a copy (-l)
-		}
-	}
-
-	for ( vector1< FileName >::iterator i = list_file_names.begin(), i_end = list_file_names.end(); i != i_end; ++i ) {
-		std::string filename( i->name() );
-		utility::io::izstream data( filename.c_str() );
-		if ( !data.good() ) {
-			utility_exit_with_message( "Unable to open file: " + filename + '\n' );
-		}
-		std::string line;
-		while ( getline(data, line) ) {
-			pdb_file_names.push_back( FileName(line) );
-		}
-		data.close();
-	}
+	// read both the -s and -l flags together to get total list of PDB files
+	vector1< FileName > pdb_file_names = jd2::input_pdb_files_from_command_line();
 
 	vector1< BasicJobOP > jobs;
 	int const nstruct_flag = option[ out::nstruct ];

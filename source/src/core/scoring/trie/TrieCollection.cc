@@ -19,6 +19,15 @@
 
 // STL Headers
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace trie {
@@ -59,3 +68,27 @@ TrieCollection::clone() const
 } // namespace scoring
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::trie::TrieCollection::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( tries_ ) ); // utility::vector1<RotamerTrieBaseOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::trie::TrieCollection::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( tries_ ); // utility::vector1<RotamerTrieBaseOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::trie::TrieCollection );
+CEREAL_REGISTER_TYPE( core::scoring::trie::TrieCollection )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_trie_TrieCollection )
+#endif // SERIALIZATION

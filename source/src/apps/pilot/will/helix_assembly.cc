@@ -375,7 +375,7 @@ int main(int argc, char *argv[]) {
 	Pose helix; Size idealres=0; Vec idealcen,idealaxs,idealori;
 	{
 		string seq = ""; for(int i=-14; i<MAX_HELIX_LEN; ++i) seq+="A";
-		core::pose::make_pose_from_sequence( helix, seq, "fa_standard", false );
+		core::pose::make_pose_from_sequence( helix, seq, core::chemical::FA_STANDARD, false );
 		for(int i = 1; i <= (int)helix.n_residue(); ++i){
 			helix.set_phi  (i,-57);
 			helix.set_psi  (i,-47);

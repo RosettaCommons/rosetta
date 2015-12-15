@@ -192,6 +192,12 @@ private:
 	int hb_chem_type_; // an integer either representing an HBDonChemType or an HBAccChemType
 	//int seqpos_; // for hbe_classify_BB_by_separation
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 std::ostream & operator << ( std::ostream & os, HBAtom const & atom );

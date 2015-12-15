@@ -45,6 +45,20 @@
 using std::string;
 using utility::vector1;
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace methods {
@@ -1095,3 +1109,127 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 }
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
+	arc( CEREAL_NVP( aa_composition_setup_files_ ) );
+	arc( CEREAL_NVP( atom_vdw_atom_type_set_name_ ) ); // std::string
+	arc( CEREAL_NVP( unfolded_energies_type_ ) ); // std::string
+	arc( CEREAL_NVP( split_unfolded_label_type_ ) ); // std::string
+	arc( CEREAL_NVP( split_unfolded_value_type_ ) ); // std::string
+	arc( CEREAL_NVP( method_weights_ ) ); // MethodWeights
+	arc( CEREAL_NVP( ss_weights_ ) ); // class core::scoring::SecondaryStructureWeights
+	arc( CEREAL_NVP( exclude_protein_protein_fa_elec_ ) ); // _Bool
+	arc( CEREAL_NVP( exclude_monomer_fa_elec_ ) ); // _Bool
+	arc( CEREAL_NVP( elec_max_dis_ ) ); // core::Real
+	arc( CEREAL_NVP( elec_min_dis_ ) ); // core::Real
+	arc( CEREAL_NVP( elec_die_ ) ); // core::Real
+	arc( CEREAL_NVP( elec_no_dis_dep_die_ ) ); // _Bool
+	arc( CEREAL_NVP( smooth_fa_elec_ ) ); // _Bool
+	arc( CEREAL_NVP( elec_sigmoidal_die_ ) ); // _Bool
+	arc( CEREAL_NVP( elec_sigmoidal_D_ ) ); // Real
+	arc( CEREAL_NVP( elec_sigmoidal_D0_ ) ); // Real
+	arc( CEREAL_NVP( elec_sigmoidal_S_ ) ); // Real
+	arc( CEREAL_NVP( grpelec_fade_type_ ) ); // std::string
+	arc( CEREAL_NVP( grpelec_fade_param1_ ) ); // core::Real
+	arc( CEREAL_NVP( grpelec_fade_param2_ ) ); // core::Real
+	arc( CEREAL_NVP( grpelec_fade_hbond_ ) ); // _Bool
+	arc( CEREAL_NVP( grp_cpfxn_ ) ); // _Bool
+	arc( CEREAL_NVP( elec_group_file_ ) ); // std::string
+	arc( CEREAL_NVP( grpelec_context_dependent_ ) ); // _Bool
+	arc( CEREAL_NVP( use_polarization_ ) ); // _Bool
+	arc( CEREAL_NVP( use_gen_kirkwood_ ) ); // _Bool
+	arc( CEREAL_NVP( protein_dielectric_ ) );
+	arc( CEREAL_NVP( water_dielectric_ ) );
+	arc( CEREAL_NVP( exclude_DNA_DNA_ ) ); // _Bool
+	arc( CEREAL_NVP( exclude_intra_res_protein_ ) ); // _Bool
+	arc( CEREAL_NVP( put_intra_into_total_ ) ); // _Bool
+	arc( CEREAL_NVP( geom_sol_interres_path_distance_cutoff_ ) ); // core::Size
+	arc( CEREAL_NVP( geom_sol_intrares_path_distance_cutoff_ ) ); // core::Size
+	arc( CEREAL_NVP( intrares_elec_correction_scale_ ) ); // core::Real
+	arc( CEREAL_NVP( envsmooth_zero_negatives_ ) ); // _Bool
+	arc( CEREAL_NVP( hbond_options_ ) ); // hbonds::HBondOptionsOP
+	arc( CEREAL_NVP( etable_options_ ) ); // core::scoring::etable::EtableOptionsOP
+	arc( CEREAL_NVP( rna_options_ ) ); // rna::RNA_EnergyMethodOptionsOP
+	arc( CEREAL_NVP( free_dof_options_ ) ); // methods::FreeDOF_OptionsOP
+	arc( CEREAL_NVP( cst_max_seq_sep_ ) ); // core::Size
+	arc( CEREAL_NVP( cartbonded_len_ ) ); // core::Real
+	arc( CEREAL_NVP( cartbonded_ang_ ) ); // core::Real
+	arc( CEREAL_NVP( cartbonded_tors_ ) ); // core::Real
+	arc( CEREAL_NVP( cartbonded_proton_ ) ); // core::Real
+	arc( CEREAL_NVP( cartbonded_improper_ ) ); // core::Real
+	arc( CEREAL_NVP( cartbonded_linear_ ) ); // _Bool
+	arc( CEREAL_NVP( pb_bound_tag_ ) ); // std::string
+	arc( CEREAL_NVP( pb_unbound_tag_ ) ); // std::string
+	arc( CEREAL_NVP( fastdens_perres_weights_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( bond_angle_central_atoms_to_score_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( bond_angle_residue_type_param_set_ ) ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
+	arc( aa_composition_setup_files_ );
+	arc( atom_vdw_atom_type_set_name_ ); // std::string
+	arc( unfolded_energies_type_ ); // std::string
+	arc( split_unfolded_label_type_ ); // std::string
+	arc( split_unfolded_value_type_ ); // std::string
+	arc( method_weights_ ); // MethodWeights
+	arc( ss_weights_ ); // class core::scoring::SecondaryStructureWeights
+	arc( exclude_protein_protein_fa_elec_ ); // _Bool
+	arc( exclude_monomer_fa_elec_ ); // _Bool
+	arc( elec_max_dis_ ); // core::Real
+	arc( elec_min_dis_ ); // core::Real
+	arc( elec_die_ ); // core::Real
+	arc( elec_no_dis_dep_die_ ); // _Bool
+	arc( smooth_fa_elec_ ); // _Bool
+	arc( elec_sigmoidal_die_ ); // _Bool
+	arc( elec_sigmoidal_D_ ); // Real
+	arc( elec_sigmoidal_D0_ ); // Real
+	arc( elec_sigmoidal_S_ ); // Real
+	arc( grpelec_fade_type_ ); // std::string
+	arc( grpelec_fade_param1_ ); // core::Real
+	arc( grpelec_fade_param2_ ); // core::Real
+	arc( grpelec_fade_hbond_ ); // _Bool
+	arc( grp_cpfxn_ ); // _Bool
+	arc( elec_group_file_ ); // std::string
+	arc( grpelec_context_dependent_ ); // _Bool
+	arc( use_polarization_ ); // _Bool
+	arc( use_gen_kirkwood_ ); // _Bool
+	arc( protein_dielectric_ );
+	arc( water_dielectric_ );
+	arc( exclude_DNA_DNA_ ); // _Bool
+	arc( exclude_intra_res_protein_ ); // _Bool
+	arc( put_intra_into_total_ ); // _Bool
+	arc( geom_sol_interres_path_distance_cutoff_ ); // core::Size
+	arc( geom_sol_intrares_path_distance_cutoff_ ); // core::Size
+	arc( intrares_elec_correction_scale_ ); // core::Real
+	arc( envsmooth_zero_negatives_ ); // _Bool
+	arc( hbond_options_ ); // hbonds::HBondOptionsOP
+	arc( etable_options_ ); // core::scoring::etable::EtableOptionsOP
+	arc( rna_options_ ); // rna::RNA_EnergyMethodOptionsOP
+	arc( free_dof_options_ ); // methods::FreeDOF_OptionsOP
+	arc( cst_max_seq_sep_ ); // core::Size
+	arc( cartbonded_len_ ); // core::Real
+	arc( cartbonded_ang_ ); // core::Real
+	arc( cartbonded_tors_ ); // core::Real
+	arc( cartbonded_proton_ ); // core::Real
+	arc( cartbonded_improper_ ); // core::Real
+	arc( cartbonded_linear_ ); // _Bool
+	arc( pb_bound_tag_ ); // std::string
+	arc( pb_unbound_tag_ ); // std::string
+	arc( fastdens_perres_weights_ ); // utility::vector1<core::Real>
+	arc( bond_angle_central_atoms_to_score_ ); // utility::vector1<std::string>
+	arc( bond_angle_residue_type_param_set_ ); // core::scoring::mm::MMBondAngleResidueTypeParamSetOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::methods::EnergyMethodOptions );
+CEREAL_REGISTER_TYPE( core::scoring::methods::EnergyMethodOptions )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_methods_EnergyMethodOptions )
+#endif // SERIALIZATION

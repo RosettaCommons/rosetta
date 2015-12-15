@@ -32,6 +32,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace scoring {
 
@@ -133,9 +138,20 @@ private:
 	utility::vector1_size rb_jump_;
 
 	utility::vector1< InterfaceOP > interface_list_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // ns scoring
 } // ns protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_scoring_InterfaceInfo )
+#endif // SERIALIZATION
+
 
 #endif

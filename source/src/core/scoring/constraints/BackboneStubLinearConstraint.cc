@@ -36,6 +36,21 @@
 //Auto Headers
 #include <core/kinematics/Jump.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -43,7 +58,7 @@ namespace constraints {
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.BackboneStubLinearConstraint" );
 
-utility::pointer::shared_ptr< AngleConstraint > BackboneStubLinearConstraint::ang_cst_(0);
+//utility::pointer::shared_ptr< AngleConstraint > BackboneStubLinearConstraint::ang_cst_(0);
 
 BackboneStubLinearConstraint::BackboneStubLinearConstraint(
 	pose::Pose const & pose,
@@ -95,11 +110,11 @@ BackboneStubLinearConstraint::BackboneStubLinearConstraint(
 	fixed_reference_point_ = pose.xyz(fixed_atom_id_);
 
 	// to get access to AngleConstraint derivatives
-	if ( ang_cst_ == 0 ) {
-		// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
-		func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
-		ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
-	}
+	//if ( ang_cst_ == 0 ) {
+	// // note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
+	// func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
+	// ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
+	//}
 }
 
 core::Size BackboneStubLinearConstraint::seqpos() const
@@ -112,8 +127,8 @@ void BackboneStubLinearConstraint::show( std::ostream& out ) const
 
 bool BackboneStubLinearConstraint::operator == ( Constraint const & other_cst ) const
 {
-
-	if ( !dynamic_cast< BackboneStubLinearConstraint const * > ( &other_cst ) ) return false;
+	if ( !           same_type_as_me( other_cst ) ) return false;
+	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
 	BackboneStubLinearConstraint const & other( static_cast< BackboneStubLinearConstraint const & > (other_cst) );
 
@@ -137,6 +152,11 @@ bool BackboneStubLinearConstraint::operator == ( Constraint const & other_cst ) 
 	if ( fixed_reference_point_ != other.fixed_reference_point_ ) return false;
 
 	return true;
+}
+
+bool BackboneStubLinearConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< BackboneStubLinearConstraint const * > (&other);
 }
 
 // Calculates a score for this constraint using XYZ_Func, and puts the UNWEIGHTED score into
@@ -478,3 +498,60 @@ ConstraintOP BackboneStubLinearConstraint::remapped_clone( pose::Pose const& /*s
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::constraints::BackboneStubLinearConstraint::BackboneStubLinearConstraint() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::BackboneStubLinearConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( CEREAL_NVP( superposition_bonus_ ) ); // core::Real
+	arc( CEREAL_NVP( CB_force_constant_ ) ); // core::Real
+	arc( CEREAL_NVP( seqpos_ ) ); // Size
+	arc( CEREAL_NVP( CB_atom_id_ ) ); // AtomID
+	arc( CEREAL_NVP( CA_atom_id_ ) ); // AtomID
+	arc( CEREAL_NVP( C_atom_id_ ) ); // AtomID
+	arc( CEREAL_NVP( N_atom_id_ ) ); // AtomID
+	arc( CEREAL_NVP( atom_ids_ ) ); // utility::vector1<AtomID>
+	arc( CEREAL_NVP( CB_target_ ) ); // core::Vector
+	arc( CEREAL_NVP( CA_target_ ) ); // core::Vector
+	arc( CEREAL_NVP( C_target_ ) ); // core::Vector
+	arc( CEREAL_NVP( N_target_ ) ); // core::Vector
+	arc( CEREAL_NVP( CB_CA_target_ ) ); // core::Vector
+	arc( CEREAL_NVP( C_N_target_ ) ); // core::Vector
+	arc( CEREAL_NVP( fixed_atom_id_ ) ); // AtomID
+	arc( CEREAL_NVP( fixed_reference_point_ ) ); // core::Vector
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::BackboneStubLinearConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( superposition_bonus_ ); // core::Real
+	arc( CB_force_constant_ ); // core::Real
+	arc( seqpos_ ); // Size
+	arc( CB_atom_id_ ); // AtomID
+	arc( CA_atom_id_ ); // AtomID
+	arc( C_atom_id_ ); // AtomID
+	arc( N_atom_id_ ); // AtomID
+	arc( atom_ids_ ); // utility::vector1<AtomID>
+	arc( CB_target_ ); // core::Vector
+	arc( CA_target_ ); // core::Vector
+	arc( C_target_ ); // core::Vector
+	arc( N_target_ ); // core::Vector
+	arc( CB_CA_target_ ); // core::Vector
+	arc( C_N_target_ ); // core::Vector
+	arc( fixed_atom_id_ ); // AtomID
+	arc( fixed_reference_point_ ); // core::Vector
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::BackboneStubLinearConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::BackboneStubLinearConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_BackboneStubLinearConstraint )
+#endif // SERIALIZATION

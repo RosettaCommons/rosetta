@@ -15,6 +15,7 @@
 #include <test/core/init_util.hh>
 
 // Unit Headers
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>

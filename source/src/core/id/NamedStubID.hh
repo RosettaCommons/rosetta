@@ -111,6 +111,13 @@ public: // tmp hack -- phil fix this
 	NamedAtomID atom1;
 	NamedAtomID atom2;
 	NamedAtomID atom3;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 

@@ -45,6 +45,12 @@
 
 // C++ Headers
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
@@ -65,7 +71,7 @@ public:
 		std::string resB_var_in,
 		core::Size Apos_in,
 		core::Size Bpos_in,
-		core::chemical::ResidueTypeSetCAP restype_set_in
+		core::chemical::ResidueTypeSetCOP restype_set_in
 	);
 
 	CovalentConnectionReplaceInfo( CovalentConnectionReplaceInfo const & other );
@@ -85,7 +91,17 @@ private:
 	std::string resA_modname_, resB_modname_;
 
 	core::Size resA_seqpos_, resB_seqpos_;
-	core::chemical::ResidueTypeSetCAP restype_set_;
+	core::chemical::ResidueTypeSetCOP restype_set_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	CovalentConnectionReplaceInfo();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; //class CovalentConnection
 
@@ -103,7 +119,7 @@ public:
 
 	void init(
 		core::Size cst_block,
-		core::chemical::ResidueTypeSetCAP src_restype_set,
+		core::chemical::ResidueTypeSetCOP src_restype_set,
 		EnzConstraintIOCAP src_enz_io
 	);
 	void init(); // partial init, on copy
@@ -259,10 +275,16 @@ private: //data
 	bool is_covalent_;
 
 	mutable bool empty_; //safeguard if someone reads in a cstfile with all force constants set to 0
-	core::chemical::ResidueTypeSetCAP restype_set_;
+	core::chemical::ResidueTypeSetCOP restype_set_;
 
 	EnzConstraintIOCAP enz_io_; //the EnzConstraintIO object that this template res belongs to
 	core::Size cst_block_; //the block in the cst file that corresponds to this residue
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; // class EnzConstraintParameters
 
@@ -270,6 +292,11 @@ private: //data
 }
 } //enzdes
 } //protocols
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_EnzConstraintParameters )
+#endif // SERIALIZATION
 
 
 #endif

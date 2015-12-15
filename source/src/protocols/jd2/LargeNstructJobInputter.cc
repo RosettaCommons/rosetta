@@ -19,6 +19,7 @@
 #include <core/pose/symmetry/util.hh>
 
 // Project headers
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/sequence/util.hh>
@@ -70,7 +71,7 @@ void LargeNstructJobInputter::pose_from_job( core::pose::Pose& pose, protocols::
 		if ( option[OptionKeys::in::file::fasta].user() ) {
 			string fasta = option[in::file::fasta]()[1];
 			string sequence = core::sequence::read_fasta_file_str(fasta)[1];
-			core::pose::make_pose_from_sequence(pose, sequence, "centroid");
+			core::pose::make_pose_from_sequence(pose, sequence, core::chemical::CENTROID );
 			//ExtendedPoseMover m(sequence);
 			//m.apply(pose);
 		}

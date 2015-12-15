@@ -85,6 +85,21 @@ using numeric::constants::f::pi_2;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.SemiExplicitWaterUnsatisfiedPolarsCalculator" );
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/id/AtomID_Map.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -307,8 +322,8 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 	Size dbatm( pose.residue( don_pos ).atom_base( datm ) ); //hpol base2
 
 	//add vrt res so final torsion exists
-	chemical::ResidueTypeSet const & rsd_set( rsd.residue_type_set() );
-	conformation::ResidueOP vrt_rsd( conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
+	chemical::ResidueTypeSetCOP rsd_set( rsd.residue_type_set() );
+	conformation::ResidueOP vrt_rsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "VRT" ) ) );
 	pose.append_residue_by_jump( *vrt_rsd, pose.total_residue() );
 	FoldTree f_jump( pose.fold_tree() );
 	//just min the new jump
@@ -464,8 +479,8 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::recompute( Pose const & in_pose )
 	special_region_unsat_polars_ = 0;
 	//Real min_dist( core::scoring::hbonds::MIN_R );
 	//Real shell_cutoff( core::scoring::hbonds::MAX_R );
-	chemical::ResidueTypeSet const & rsd_set( in_pose.residue( 1 ).residue_type_set() );
-	conformation::ResidueOP wat_rsd( conformation::ResidueFactory::create_residue( rsd_set.name_map( "TP3" ) ) );
+	chemical::ResidueTypeSetCOP rsd_set( in_pose.residue( 1 ).residue_type_set() );
+	conformation::ResidueOP wat_rsd( conformation::ResidueFactory::create_residue( rsd_set->name_map( "TP3" ) ) );
 	Size wat_O_at( 1 ); //warning! hardcoded for TP3 water!
 	Size wat_H1_at( 2 ); //warning! hardcoded for TP3 water!
 	//turn off solvation score
@@ -593,3 +608,55 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::satisfaction_cutoff( std::string a
 } //namespace pose_metric_calculators
 } //namespace toolbox
 } //namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::pose_metric_calculators::SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolarsCalculator() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::SemiExplicitWaterUnsatisfiedPolarsCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+
+	// don't save this pointer to global data arc( CEREAL_NVP( hb_database_ ) );
+	// EXEMPT hb_database_
+
+	arc( CEREAL_NVP( all_unsat_polars_ ) ); // core::Size
+	arc( CEREAL_NVP( special_region_unsat_polars_ ) ); // core::Size
+	arc( CEREAL_NVP( atom_unsat_ ) ); // core::id::AtomID_Map<_Bool>
+	arc( CEREAL_NVP( residue_unsat_polars_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( residue_semiexpl_score_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( atom_semiexpl_score_ ) ); // core::id::AtomID_Map<core::Real>
+	arc( CEREAL_NVP( semiexpl_water_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( name_of_hbond_calc_ ) ); // std::string
+	arc( CEREAL_NVP( scorefxn_ ) ); // core::scoring::ScoreFunctionOP
+	arc( CEREAL_NVP( special_region_ ) ); // std::set<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::SemiExplicitWaterUnsatisfiedPolarsCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+
+	hb_database_ = core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() );
+
+	arc( all_unsat_polars_ ); // core::Size
+	arc( special_region_unsat_polars_ ); // core::Size
+	arc( atom_unsat_ ); // core::id::AtomID_Map<_Bool>
+	arc( residue_unsat_polars_ ); // utility::vector1<core::Size>
+	arc( residue_semiexpl_score_ ); // utility::vector1<core::Real>
+	arc( atom_semiexpl_score_ ); // core::id::AtomID_Map<core::Real>
+	arc( semiexpl_water_cutoff_ ); // core::Real
+	arc( name_of_hbond_calc_ ); // std::string
+	arc( scorefxn_ ); // core::scoring::ScoreFunctionOP
+	arc( special_region_ ); // std::set<core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::SemiExplicitWaterUnsatisfiedPolarsCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::SemiExplicitWaterUnsatisfiedPolarsCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_SemiExplicitWaterUnsatisfiedPolarsCalculator )
+#endif // SERIALIZATION

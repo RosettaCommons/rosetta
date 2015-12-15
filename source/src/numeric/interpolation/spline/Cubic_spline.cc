@@ -26,6 +26,15 @@
 
 #include <numeric/types.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/MathVector.srlz.hh>
+#endif // SERIALIZATION
+
+
 namespace numeric {
 namespace interpolation {
 namespace spline {
@@ -304,3 +313,30 @@ Real CubicSpline::Derivative( const int INDEX_LEFT, const int INDEX_RIGHT, const
 }//interpolation
 }//numeric
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+numeric::interpolation::spline::CubicSpline::save( Archive & arc ) const {
+	arc( CEREAL_NVP( border_ ) ); // enum numeric::interpolation::spline::BorderFlag
+	arc( CEREAL_NVP( start_ ) ); // Real
+	arc( CEREAL_NVP( delta_ ) ); // Real
+	arc( CEREAL_NVP( values_ ) ); // MathVector<Real>
+	arc( CEREAL_NVP( dsecox_ ) ); // MathVector<Real>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+numeric::interpolation::spline::CubicSpline::load( Archive & arc ) {
+	arc( border_ ); // enum numeric::interpolation::spline::BorderFlag
+	arc( start_ ); // Real
+	arc( delta_ ); // Real
+	arc( values_ ); // MathVector<Real>
+	arc( dsecox_ ); // MathVector<Real>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( numeric::interpolation::spline::CubicSpline );
+#endif // SERIALIZATION

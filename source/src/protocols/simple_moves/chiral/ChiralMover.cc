@@ -56,7 +56,7 @@ namespace chiral {
 
 ResidueType const & get_chiral_residue_type( ResidueType const & rt, Chirality chirality )
 {
-	chemical::ResidueTypeSet const & residue_type_set = rt.residue_type_set();
+	chemical::ResidueTypeSetCOP residue_type_set = rt.residue_type_set();
 	//kdrew: first letters of a residuetype name (before '_p') are the letter code for the aa and is what is stored in the map
 	//std::string base_name;
 	//std::string patch_name;
@@ -93,9 +93,9 @@ ResidueType const & get_chiral_residue_type( ResidueType const & rt, Chirality c
 
 	// Prepend or remove D depending on targeting.
 	if ( chirality == L_CHIRALITY && rt.is_d_aa() ) {
-		return residue_type_set.name_map( rt.name().substr( 1 ) );
+		return residue_type_set->name_map( rt.name().substr( 1 ) );
 	} else if ( chirality == D_CHIRALITY && rt.is_l_aa() ) {
-		return residue_type_set.name_map( "D"+rt.name() );
+		return residue_type_set->name_map( "D"+rt.name() );
 	}
 
 	// if all else fails, return original rt

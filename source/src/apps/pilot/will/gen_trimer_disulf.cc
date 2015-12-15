@@ -396,7 +396,7 @@ void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size icy
 	//Real start_chi1b = dihedral_degrees(pose.xyz(AtomID(1,3*N+icys)),pose.xyz(AtomID(2,3*N+icys)),pose.xyz(AtomID(5,3*N+icys)),pose.xyz(AtomID(6,3*N+icys)));
 	// swap in a CYS with HG placed where paired S goes
 	Pose cys;
- 	make_pose_from_sequence(cys,"C","fa_standard",false);
+ 	make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
 	remove_lower_terminus_type_from_pose_residue(cys,1);
 	remove_upper_terminus_type_from_pose_residue(cys,1);
 	cys.set_dof(core::id::DOF_ID(core::id::AtomID(cys.residue(1).atom_index("HG"),1),core::id::D    ),2.02);

@@ -42,6 +42,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace custom_pair_distance {
@@ -262,13 +268,25 @@ class DistanceFunc : public func::Func
 public:
 	DistanceFunc( std::string const name );
 	virtual ~DistanceFunc();
-	func::FuncOP clone() const { return func::FuncOP( new DistanceFunc( *this ) ); }
+	func::FuncOP clone() const;
+	virtual bool operator == ( func::Func const & rhs ) const;
+	virtual bool same_type_as_me( func::Func const & other ) const;
 	virtual Real func( Real const ) const;
 	virtual Real dfunc( Real const ) const;
 	virtual Real max_dis() const;
 	virtual Real min_dis() const;
 private:
 	numeric::interpolation::HistogramCOP<Real,Real>::Type scores_hist_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	DistanceFunc();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -294,6 +312,11 @@ core::Size version() const;
 }
 }
 }
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_custom_pair_distance_FullatomCustomPairDistanceEnergy )
+#endif // SERIALIZATION
 
 
 #endif

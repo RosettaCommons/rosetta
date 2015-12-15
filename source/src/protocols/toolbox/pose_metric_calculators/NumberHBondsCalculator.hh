@@ -33,6 +33,11 @@
 #include <set>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -86,11 +91,22 @@ private:
 	utility::vector1< core::Real > ref_residue_total_energies_;
 
 	std::set< core::Size > special_region_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace pose_metric_calculators
 } // namespace toolbox
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_NumberHBondsCalculator )
+#endif // SERIALIZATION
+
 
 #endif

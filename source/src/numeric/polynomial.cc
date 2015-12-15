@@ -27,6 +27,17 @@
 #include <string>
 #include <cmath>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace numeric {
 
 using std::string;
@@ -250,3 +261,44 @@ Polynomial_1d::show( ostream & out ) const{
 }
 
 } // namespace
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+numeric::Polynomial_1d::Polynomial_1d() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+numeric::Polynomial_1d::save( Archive & arc ) const {
+	arc( CEREAL_NVP( polynomial_name_ ) ); // std::string
+	arc( CEREAL_NVP( xmin_ ) ); // Real
+	arc( CEREAL_NVP( xmax_ ) ); // Real
+	arc( CEREAL_NVP( min_val_ ) ); // Real
+	arc( CEREAL_NVP( max_val_ ) ); // Real
+	arc( CEREAL_NVP( root1_ ) ); // Real
+	arc( CEREAL_NVP( root2_ ) ); // Real
+	arc( CEREAL_NVP( degree_ ) ); // Size
+	arc( CEREAL_NVP( coefficients_ ) ); // utility::vector1<Real>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+numeric::Polynomial_1d::load( Archive & arc ) {
+	arc( polynomial_name_ ); // std::string
+	arc( xmin_ ); // Real
+	arc( xmax_ ); // Real
+	arc( min_val_ ); // Real
+	arc( max_val_ ); // Real
+	arc( root1_ ); // Real
+	arc( root2_ ); // Real
+	arc( degree_ ); // Size
+	arc( coefficients_ ); // utility::vector1<Real>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( numeric::Polynomial_1d );
+CEREAL_REGISTER_TYPE( numeric::Polynomial_1d )
+
+CEREAL_REGISTER_DYNAMIC_INIT( numeric_polynomial )
+#endif // SERIALIZATION

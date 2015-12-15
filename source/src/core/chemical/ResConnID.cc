@@ -15,6 +15,9 @@
 // Unit Headers
 #include <core/chemical/ResConnID.hh>
 
+// Utility headers
+#include <utility/serialization/serialization.hh>
+
 namespace core {
 namespace chemical {
 
@@ -79,6 +82,22 @@ void ResConnID::mark_incomplete()
 {
 	res_id_ = conn_id_ = 0;
 }
+
+#ifdef SERIALIZATION
+template < class Archive >
+void
+ResConnID::save( Archive & arch ) const {
+	arch( res_id_, conn_id_ );
+}
+
+template < class Archive >
+void
+ResConnID::load( Archive & arch ) {
+	arch( res_id_, conn_id_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( ResConnID );
+#endif
 
 }
 }

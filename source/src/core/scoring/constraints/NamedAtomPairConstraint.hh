@@ -37,6 +37,13 @@
 //#include <utility>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -72,6 +79,16 @@ private:
 	id::NamedAtomID atom1_;
 	id::NamedAtomID atom2_;
 	AtomPairConstraintOP cst_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	Obsolet_NamedAtomPairConstraint();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class NamedAtomPairConstraint : public AtomPairConstraint {
@@ -81,17 +98,9 @@ public:
 		id::NamedAtomID const& a2,
 		func::FuncOP func,
 		ScoreType scoretype = atom_pair_constraint
-	) :
-		AtomPairConstraint( id::AtomID( 0, a1.rsd() ), id::AtomID( 0, a2.rsd() ), func, scoretype ),
-		named_atom1_( a1 ),
-		named_atom2_( a2 ),
-		type1_id_( 0 ),
-		type2_id_( 0 )
-	{}
+	);
 
-	virtual ConstraintOP clone() const {
-		return ConstraintOP( new NamedAtomPairConstraint( named_atom1_, named_atom2_, func_, score_type() ) );
-	}
+	virtual ConstraintOP clone() const;
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
@@ -99,6 +108,8 @@ public:
 	/// to the new object. Intended to be implemented by derived classes.
 	virtual ConstraintOP remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map=NULL ) const;
 
+	virtual bool operator == ( Constraint const & rhs ) const;
+	virtual bool same_type_as_me( Constraint const & other ) const;
 
 	//@brief translates the atom-names into numbers
 	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const;
@@ -117,11 +128,26 @@ private:
 	core::Size type2_id_;
 	//@brief this could contain a checksum made from the "annotated-sequence"
 	// unused Size pose_chemical_checksum_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	NamedAtomPairConstraint();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_NamedAtomPairConstraint )
+#endif // SERIALIZATION
+
 
 #endif

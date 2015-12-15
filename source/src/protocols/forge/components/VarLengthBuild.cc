@@ -316,7 +316,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 	Original2Modified original2modified; // keep track of old -> new mapping
 	if ( get_last_move_status() == MS_SUCCESS ) {
 		// alter residue type set if necessary
-		if ( pose.residue( 1 ).residue_type_set().name() != bi_rts_name ) {
+		if ( pose.residue( 1 ).residue_type_set()->name() != bi_rts_name ) {
 			core::util::switch_to_residue_type_set( pose, bi_rts_name );
 		}
 
@@ -461,7 +461,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 
 	// centroid level protocol
 	if ( get_last_move_status() == MS_SUCCESS ) {
-		if ( pose.residue( 1 ).residue_type_set().name() != core::chemical::CENTROID ) {
+		if ( pose.residue( 1 ).residue_type_set()->name() != core::chemical::CENTROID ) {
 			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 		}
 		//pose.dump_pdb("vlb_bef_centroid_build.pdb");
@@ -477,8 +477,8 @@ void VarLengthBuild::apply( Pose & pose ) {
 	//archive_pose.dump_pdb("arc_pose_vlb_aft_centroid_build.pdb");
 
 	// flip back to prior residue type set if necessary
-	if ( pose.residue( 1 ).residue_type_set().name() != archive_pose.residue( 1 ).residue_type_set().name() ) {
-		core::util::switch_to_residue_type_set( pose, archive_pose.residue( 1 ).residue_type_set().name() );
+	if ( pose.residue( 1 ).residue_type_set()->name() != archive_pose.residue( 1 ).residue_type_set()->name() ) {
+		core::util::switch_to_residue_type_set( pose, archive_pose.residue( 1 ).residue_type_set()->name() );
 	}
 
 	if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {

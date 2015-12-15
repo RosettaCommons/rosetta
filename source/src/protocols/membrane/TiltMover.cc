@@ -219,7 +219,7 @@ void TiltMover::apply( core::pose::Pose & pose ) {
 
 	// compute tilt axis
 	core::Vector emb_cnt_vector = emb_down->center() - emb_up->center();
-	core::Vector mem_normal = pose.conformation().membrane_info()->membrane_normal();
+	core::Vector mem_normal = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
 	core::Vector tangent_axis = cross( emb_cnt_vector, mem_normal );
 
 	// tilt the downstream partner

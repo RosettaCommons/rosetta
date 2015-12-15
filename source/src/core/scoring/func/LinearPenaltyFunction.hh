@@ -23,6 +23,13 @@
 // #include <ObjexxFCL/format.hh>
 // #include <basic/Tracer.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -34,6 +41,9 @@ public:
 
 	FuncOP
 	clone() const { return FuncOP( new LinearPenaltyFunction( *this ) ); }
+
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;
@@ -58,11 +68,26 @@ private:
 	Real well_depth_;
 	Real half_width_;
 	Real slope_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	LinearPenaltyFunction();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_LinearPenaltyFunction )
+#endif // SERIALIZATION
+
 
 #endif

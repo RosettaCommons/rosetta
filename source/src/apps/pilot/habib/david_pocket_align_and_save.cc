@@ -305,7 +305,7 @@ int main( int argc, char * argv [] ) {
 			}
 		}
 		std::cout << "done aligning\n";
-		std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(comparison_pose, resid_c);
+		std::vector< conformation::ResidueCOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(comparison_pose, resid_c);
 		// call function to make a grid around a target residue (seqpos)
 		protocols::pockets::PocketGrid comparison_pg( residues );
 		//call function to define the pocket

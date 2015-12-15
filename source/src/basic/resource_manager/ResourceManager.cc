@@ -29,19 +29,19 @@
 #include <iomanip>
 
 
-// Singleton instance and mutex static data members
-namespace utility {
-
-using basic::resource_manager::ResourceManager;
-
-#if defined MULTI_THREADED && defined CXX11
-template <> std::mutex utility::SingletonBase< ResourceManager >::singleton_mutex_{};
-template <> std::atomic< ResourceManager * > utility::SingletonBase< ResourceManager >::instance_( 0 );
-#else
-template <> ResourceManager * utility::SingletonBase< ResourceManager >::instance_( 0 );
-#endif
-
-}
+// // Singleton instance and mutex static data members
+// namespace utility {
+//
+// using basic::resource_manager::ResourceManager;
+//
+// #if defined MULTI_THREADED && defined CXX11
+// template <> std::mutex utility::SingletonBase< ResourceManager > ::singleton_mutex_;
+// template <> std::atomic< ResourceManager * > utility::SingletonBase< ResourceManager >::instance_( 0 );
+// #else
+// template <> ResourceManager * utility::SingletonBase< ResourceManager >::instance_( 0 );
+// #endif
+//
+// }
 
 namespace basic {
 namespace resource_manager {
@@ -51,12 +51,26 @@ using std::endl;
 using std::setw;
 
 ResourceManager *
-ResourceManager::create_singleton_instance()
+ResourceManager::get_instance()
 {
-	return ResourceManagerFactory::get_instance()->create_resource_manager_from_options_system();
+	static ResourceManager * instance_( 0 );
+	// NOT THREAD SAFE!
+	if ( ! instance_ ) {
+		instance_ = ResourceManagerFactory::get_instance()->create_resource_manager_from_options_system();
+	}
+	return instance_;
 }
 
-ResourceManager::ResourceManager(){}
+//ResourceManager *
+//ResourceManager::create_singleton_instance()
+//{
+// return ResourceManagerFactory::get_instance()->create_resource_manager_from_options_system();
+//}
+
+ResourceManager::ResourceManager() {}
+
+ResourceManager::~ResourceManager() {}
+
 
 void
 ResourceManager::add_resource(

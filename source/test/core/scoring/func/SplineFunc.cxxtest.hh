@@ -33,6 +33,12 @@
 //Auto Headers
 #include <utility/vector1.hh>
 
+#ifdef	SERIALIZATION
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif
+
 
 class SplineFuncTests : public CxxTest::TestSuite {
 
@@ -123,4 +129,40 @@ public:
 
 		} // if arrays' size are equal
 	} // test_spline_func()
+
+	void test_serialize_SplineFunc() {
+		TS_ASSERT( true ); // for non-serialization builds
+#ifdef SERIALIZATION
+		using namespace core::scoring::func;
+
+		SplineFuncOP func( new SplineFunc() );
+
+		// Get the scoring/constraints/epr_distance_potential.histogram from mini database
+		std::string epr_dist_histogram( basic::database::full_name("scoring/constraints/epr_distance_potential.histogram"));
+
+		std::stringstream test_input;
+		test_input << "EPR_DISTANCE " << epr_dist_histogram << " 0.0 1.0 0.5";
+		func->read_data( test_input);
+
+		FuncOP instance( func ); // serialize this through a pointer to the base class
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( instance );
+		}
+
+		FuncOP instance2; // deserialize also through a pointer to the base class
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( instance2 );
+		}
+
+		// make sure the deserialized base class pointer points to a SplineFunc
+		TS_ASSERT( utility::pointer::dynamic_pointer_cast< SplineFunc > ( instance2 ));
+		TS_ASSERT( *instance == *instance2 );
+#endif // SERIALIZATION
+	}
+
 }; // SplineFunc test suite

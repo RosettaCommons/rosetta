@@ -23,9 +23,72 @@
 
 static THREAD_LOCAL basic::Tracer tr( "core.io.constraints" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
+
+/// @brief default Constructor
+MultiConstraint::MultiConstraint( ScoreType const & t /* = dof_constraint */ ) :
+	Constraint( t ),
+	report_this_as_effective_sequence_separation_( 0 )
+{}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Constructor
+MultiConstraint::MultiConstraint( ConstraintCOPs const & cst_in, ScoreType const & t ):
+	Constraint( t ),  //this is temporary, multi constraint shouldn't have a score type
+	report_this_as_effective_sequence_separation_( 0 )
+{
+	for ( ConstraintCOPs::const_iterator it = cst_in.begin(); it != cst_in.end(); ++it ) {
+		add_individual_constraint( *it );
+	} //loop over all input csts that make up this multi constraint
+}// constructor
+
+
+
+/// @details Clone all of the member constraints into a new vector and then invoke the
+/// (shallow-copy) constructor that accepts a vector of ConstriantCOPs -- if this
+/// %MultiConstraint doesn't have any member constraints, then return a default-constructed
+/// one.
+ConstraintOP
+MultiConstraint::clone() const {
+	return ConstraintOP( new MultiConstraint( *this ) );
+}
+
+
+MultiConstraintOP
+MultiConstraint::empty_clone() const {
+	return MultiConstraintOP( new MultiConstraint );
+}
+
+/// @brief number of atoms involved in this MultiConstraint container
+Size
+MultiConstraint::natoms() const
+{
+	return member_atoms_.size();
+}
+
+/// @brief number of constraints data
+Size
+MultiConstraint::size() const { return member_constraints_.size(); }
+
+std::string
+MultiConstraint::type() const {
+	return "MultiConstraint";
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details read definition of a multiconstraint. Since a MultiConstraint is essentially a vector of ?????? (Please someone finish this)
@@ -38,11 +101,11 @@ MultiConstraint::read_def(
 {
 	Size ct ( 0 );
 	ConstraintCOP cst_op = ConstraintIO::get_instance()->read_individual_constraint_new( data, pose, func_factory );
-	if ( cst_op ) ct++;
+	if ( cst_op ) ++ct;
 	while ( cst_op ) {
 		add_individual_constraint( cst_op );
 		cst_op = ConstraintIO::get_instance()->read_individual_constraint_new( data, pose, func_factory );
-		if ( cst_op ) ct++;
+		if ( cst_op ) ++ct;
 	}
 	if ( member_constraints_.size() > 0 ) {
 		if ( tr.Debug.visible() ) {
@@ -56,24 +119,28 @@ MultiConstraint::read_def(
 
 /// @detail this function only checks whether the member_constraints_
 /// are identical. should mean by inference that the member_residues_, member_atoms_
-/// and AtomID_to_Csts_ are also identical
+/// and atomid_to_csts_ are also identical
 bool
 MultiConstraint::operator == ( Constraint const & other_cst ) const
 {
-	if ( !dynamic_cast< MultiConstraint const * > ( &other_cst ) ) return false;
+	if ( !           same_type_as_me( other_cst ) ) return false;
+	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
 	MultiConstraint const & other( static_cast< MultiConstraint const & > (other_cst) );
 
 	if ( report_this_as_effective_sequence_separation_ != other.report_this_as_effective_sequence_separation_ ) return false;
-
-	core::Size num_csts = member_constraints_.size();
-	if ( num_csts != other.member_constraints_.size() ) return false;
-	for ( core::Size i =1; i <= num_csts; ++i ) {
+	if ( member_constraints_.size() != other.member_constraints_.size() ) return false;
+	for ( core::Size i =1; i <= member_constraints_.size(); ++i ) {
 		if ( *(member_constraints_[i]) != *(other.member_constraints_[i]) ) return false;
 	}
 	if ( this->score_type() != other.score_type() ) return false;
 
 	return true;
+}
+
+bool MultiConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< MultiConstraint const * > ( &other );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,16 +151,7 @@ MultiConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weigh
 		(*member_it)->score( xyz_func, weights, emap );
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Constructor
-MultiConstraint::MultiConstraint( const ConstraintCOPs & cst_in, ScoreType const & t ):
-	Constraint( t ),  //this is temporary, multi constraint shouldn't have a score type
-	report_this_as_effective_sequence_separation_( 0 )
-{
-	for ( ConstraintCOPs::const_iterator it = cst_in.begin(), end = cst_in.end(); it != end; ++it ) {
-		add_individual_constraint( *it );
-	} //loop over all input csts that make up this multi constraint
-}// constructor
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 MultiConstraint::add_individual_constraint( ConstraintCOP cst_in )
@@ -102,22 +160,22 @@ MultiConstraint::add_individual_constraint( ConstraintCOP cst_in )
 
 	//examine this constraint with respect to whether it contains
 	//not yet seen atoms
-	for ( Size i = 1; i <= cst_in->natoms(); i++ ) {
+	for ( Size i = 1; i <= cst_in->natoms(); ++i ) {
 		AtomID cur_atomid = cst_in->atom(i);
 
 		if ( std::find( member_residues_.begin(), member_residues_.end(), cur_atomid.rsd() ) == member_residues_.end() ) {
 			member_residues_.push_back( cur_atomid.rsd() );
 		}
 
-		std::map< AtomID, ConstraintCOPs >::iterator map_it = AtomID_to_Csts_.find(cur_atomid);
+		std::map< AtomID, ConstraintCOPs >::iterator map_it = atomid_to_csts_.find(cur_atomid);
 
 		//if it does, add the atom id to the atom_members and the atomid/vect pair to the map
-		if ( map_it == AtomID_to_Csts_.end() ) {
+		if ( map_it == atomid_to_csts_.end() ) {
 			member_atoms_.push_back(cur_atomid);
 			ConstraintCOPs cst_vect;
 			cst_vect.push_back( cst_in );
 
-			AtomID_to_Csts_.insert( std::pair< AtomID, ConstraintCOPs > (cur_atomid, cst_vect) );
+			atomid_to_csts_.insert( std::pair< AtomID, ConstraintCOPs > (cur_atomid, cst_vect) );
 		} else { //if it doesn't we have to add this constraint to the right list in the map
 			map_it->second.push_back( cst_in );
 		}
@@ -172,14 +230,14 @@ MultiConstraint::fill_f1_f2(
 {
 
 	//std::cout << "we are in a multicst containing the following atoms (test AtomID is " << atom.rsd() << " " << atom.atomno() << ": ";
-	//  for(Size i = 1; i <= member_atoms_.size(); i++){
+	//  for(Size i = 1; i <= member_atoms_.size(); ++i){
 	//std::cout << member_atoms_[i].rsd() << " " << member_atoms_[i].atomno() << " ";
 	// }
-	//std::cout << ", the atom map has " << AtomID_to_Csts_.size() << " atoms." << std::endl;
+	//std::cout << ", the atom map has " << atomid_to_csts_.size() << " atoms." << std::endl;
 
-	std::map< AtomID, ConstraintCOPs >::const_iterator map_it = AtomID_to_Csts_.find(atom);
+	std::map< AtomID, ConstraintCOPs >::const_iterator map_it = atomid_to_csts_.find(atom);
 
-	if ( map_it != AtomID_to_Csts_.end() ) {
+	if ( map_it != atomid_to_csts_.end() ) {
 		ConstraintCOPs cur_csts = map_it->second;
 		//std::cout << "now taking deriv of atom " << map_it->first.atomno() << " , vector 1 element before is " << F1[1];
 
@@ -243,7 +301,69 @@ MultiConstraint::choose_effective_sequence_separation(
 	return report_this_as_effective_sequence_separation_;
 }
 
+MultiConstraint::MultiConstraint( MultiConstraint const & src ) :
+	Constraint( src ),
+	report_this_as_effective_sequence_separation_( src.report_this_as_effective_sequence_separation_ )
+{
+	for ( ConstraintCOPs::const_iterator it = src.member_constraints_.begin(); it != src.member_constraints_.end(); ++it ) {
+		add_individual_constraint( (*it)->clone() );
+	}
+}
+
+/// @brief Return a vector of Constraints that are clones of the member constraints.
+ConstraintCOPs
+MultiConstraint::cloned_member_constraints() const
+{
+	ConstraintCOPs member_constraint_clones( member_constraints_.size() );
+	for ( Size ii = 1; ii <= member_constraints_.size(); ++ii ) {
+		member_constraint_clones[ ii ] = ConstraintCOP( member_constraints_[ii]->clone() );
+	}
+	return member_constraint_clones;
+}
 
 } //constraints
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::MultiConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( CEREAL_NVP( member_constraints_ ) ); // ConstraintCOPs
+	arc( CEREAL_NVP( member_residues_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( member_atoms_ ) ); // utility::vector1<AtomID>
+	arc( CEREAL_NVP( atomid_to_csts_ ) ); // std::map<AtomID, ConstraintCOPs>
+	arc( CEREAL_NVP( report_this_as_effective_sequence_separation_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::MultiConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< Constraint >( this ) );
+	utility::vector1< std::shared_ptr< core::scoring::constraints::Constraint > > local_member_constraints;
+	arc( local_member_constraints ); // ConstraintCOPs
+	member_constraints_ = local_member_constraints; // copy the non-const pointer(s) into the const pointer(s)
+	arc( member_residues_ ); // utility::vector1<core::Size>
+	arc( member_atoms_ ); // utility::vector1<AtomID>
+
+	std::map< AtomID, core::scoring::constraints::ConstraintOPs > local_atomid_to_csts;
+	arc( local_atomid_to_csts );
+	for ( std::map< AtomID, ConstraintOPs >::const_iterator
+			iter = local_atomid_to_csts.begin(), iter_end = local_atomid_to_csts.end();
+			iter != iter_end; ++iter ) {
+		atomid_to_csts_[ iter->first ] = iter->second;
+	}
+	// atomid_to_csts_ = local_atomid_to_csts; // copy the non-const pointer(s) into the const pointer(s)
+
+	arc( report_this_as_effective_sequence_separation_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::MultiConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::MultiConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_MultiConstraint )
+#endif // SERIALIZATION

@@ -20,6 +20,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace sasa {
@@ -276,12 +281,23 @@ private:
 
 	Real total_rel_hsasa_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } //sasa
 } //scoring
 } //core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_sasa_SasaCalc )
+#endif // SERIALIZATION
 
 
 #endif //#ifndef INCLUDED_core_scoring_sasa_SASACALC_HH

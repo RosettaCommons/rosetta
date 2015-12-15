@@ -38,6 +38,16 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.constraints.CircularSplineFunc" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -46,6 +56,23 @@ CircularSplineFunc::CircularSplineFunc( core::Real weight_in, utility::vector1< 
 	weight_ = weight_in;
 	train( energies_in );
 }
+
+bool CircularSplineFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	CircularSplineFunc const & other_downcast( static_cast< CircularSplineFunc const & > (other) );
+	if ( weight_ != other_downcast.weight_ ) return false;
+	if ( spline_ != other_downcast.spline_ ) return false;
+	return true;
+}
+
+bool CircularSplineFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< CircularSplineFunc const * > ( &other );
+}
+
 
 void
 CircularSplineFunc::train( utility::vector1< core::Real> energies_in ) {
@@ -107,3 +134,29 @@ core::Size CircularSplineFunc::show_violations( std::ostream &out, core::Real x,
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::CircularSplineFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( weight_ ) ); // core::Real
+	arc( CEREAL_NVP( spline_ ) ); // numeric::interpolation::spline::CubicSpline
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::CircularSplineFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( weight_ ); // core::Real
+	arc( spline_ ); // numeric::interpolation::spline::CubicSpline
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::CircularSplineFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::CircularSplineFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_CircularSplineFunc )
+#endif // SERIALIZATION

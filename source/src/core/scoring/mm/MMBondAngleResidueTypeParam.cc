@@ -37,6 +37,19 @@
 static THREAD_LOCAL basic::Tracer TR( "core.mm.MMBondAngleResidueTypeParam" );
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/keys/Key2Tuple.srlz.hh>
+#include <utility/keys/Key3Tuple.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace mm {
@@ -208,3 +221,38 @@ operator <<(
 } // namespace mm
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::mm::MMBondAngleResidueTypeParam::save( Archive & arc ) const {
+	arc( CEREAL_NVP( bondangle_atom_sets_ ) ); // utility::vector1<three_atom_set>
+	arc( CEREAL_NVP( Ktheta_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( theta0_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( bondangles_for_atom_ ) ); // utility::vector1<utility::vector1<Size> >
+	arc( CEREAL_NVP( bondangle_index_ ) ); // std::map<three_atom_set, core::Size>
+	arc( CEREAL_NVP( connection_atom_sets_ ) ); // utility::vector1<utility::vector1<two_atom_set> >
+	arc( CEREAL_NVP( connection_theta0_ ) ); // utility::vector1<utility::vector1<core::Real> >
+	arc( CEREAL_NVP( connection_use_theta0_ ) ); // utility::vector1<utility::vector1<_Bool> >
+	arc( CEREAL_NVP( connection_index_ ) ); // utility::vector1<std::map<two_atom_set, core::Size> >
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::mm::MMBondAngleResidueTypeParam::load( Archive & arc ) {
+	arc( bondangle_atom_sets_ ); // utility::vector1<three_atom_set>
+	arc( Ktheta_ ); // utility::vector1<core::Real>
+	arc( theta0_ ); // utility::vector1<core::Real>
+	arc( bondangles_for_atom_ ); // utility::vector1<utility::vector1<Size> >
+	arc( bondangle_index_ ); // std::map<three_atom_set, core::Size>
+	arc( connection_atom_sets_ ); // utility::vector1<utility::vector1<two_atom_set> >
+	arc( connection_theta0_ ); // utility::vector1<utility::vector1<core::Real> >
+	arc( connection_use_theta0_ ); // utility::vector1<utility::vector1<_Bool> >
+	arc( connection_index_ ); // utility::vector1<std::map<two_atom_set, core::Size> >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::mm::MMBondAngleResidueTypeParam );
+#endif // SERIALIZATION

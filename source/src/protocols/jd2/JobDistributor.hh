@@ -98,6 +98,14 @@ public:
 	void
 	go( protocols::moves::MoverOP mover, JobOutputterOP jo );
 
+	/// @brief invokes go, after setting JobInputter
+	void
+	go( protocols::moves::MoverOP mover, JobInputterOP ji );
+
+	/// @brief invokes go, after setting JobInputter and JobOutputter
+	void
+	go( protocols::moves::MoverOP mover, JobInputterOP ji, JobOutputterOP jo );
+
 	/// @brief Movers may ask their controlling job distributor for information about the current job.
 	/// They may also write information to this job for later output, though this use is now discouraged
 	/// as the addition of the MultiplePoseMover now means that a single job may include several
@@ -121,6 +129,10 @@ public:
 	/// @brief JobInputter access
 	JobInputterOP
 	job_inputter() const;
+
+	/// @brief Set the JobInputter and reset the Job list -- this is not something you want to do
+	/// after go() has been called, but before it has returned.
+	void set_job_inputter( JobInputterOP new_job_inputter );
 
 	/// @brief should the go() function call MPI_finalize()? It probably should, this is true by default.
 	virtual
@@ -403,12 +415,15 @@ private:
 
 	/// @brief read -run:batches
 	void populate_batch_list_from_cmd();
+	void reset_job_state();
+	void get_job_list_from_job_inputter();
 
 	/// @brief current_batch or 0
 	core::Size current_batch_id_;
 
 	/// @brief all batches if present
 	utility::vector1< std::string > batches_;
+
 };
 
 }//jd2

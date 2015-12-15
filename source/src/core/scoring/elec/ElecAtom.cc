@@ -28,6 +28,14 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace elec {
@@ -70,3 +78,31 @@ std::ostream & operator << ( std::ostream & os, ElecAtom const & atom )
 } // namespace scoring
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::elec::ElecAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< core::conformation::Atom >( this ) );
+	arc( CEREAL_NVP( isbb_ ) ); // _Bool
+	arc( CEREAL_NVP( is_hydrogen_ ) ); // _Bool
+	arc( CEREAL_NVP( charge_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::elec::ElecAtom::load( Archive & arc ) {
+	arc( cereal::base_class< core::conformation::Atom >( this ) );
+	arc( isbb_ ); // _Bool
+	arc( is_hydrogen_ ); // _Bool
+	arc( charge_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::elec::ElecAtom );
+CEREAL_REGISTER_TYPE( core::scoring::elec::ElecAtom )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_elec_ElecAtom )
+#endif // SERIALIZATION

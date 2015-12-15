@@ -41,6 +41,15 @@
 
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.VDW_CachedRepScreenInfo" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -228,3 +237,31 @@ fill_vdw_cached_rep_screen_info_from_command_line( utility::vector1< core::pose:
 } //modeler
 } //stepwise
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::stepwise::modeler::rna::checker::VDW_CachedRepScreenInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( VDW_rep_screen_info_list_ ) ); // utility::vector1<VDW_RepScreenInfo>
+	arc( CEREAL_NVP( VDW_screen_bin_ ) ); // VDW_GridCOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::stepwise::modeler::rna::checker::VDW_CachedRepScreenInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( VDW_rep_screen_info_list_ ); // utility::vector1<VDW_RepScreenInfo>
+	std::shared_ptr< protocols::stepwise::modeler::rna::checker::VDW_Grid > local_VDW_screen_bin;
+	arc( local_VDW_screen_bin ); // VDW_GridCOP
+	VDW_screen_bin_ = local_VDW_screen_bin; // copy the non-const pointer(s) into the const pointer(s)
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::stepwise::modeler::rna::checker::VDW_CachedRepScreenInfo );
+CEREAL_REGISTER_TYPE( protocols::stepwise::modeler::rna::checker::VDW_CachedRepScreenInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_stepwise_modeler_rna_checker_VDW_CachedRepScreenInfo )
+#endif // SERIALIZATION

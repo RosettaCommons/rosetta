@@ -9,8 +9,8 @@
 
 /// @file src/core/scoring/constraints/FabConstraint.hh
 /// @brief This class is specific to antibodies and penalizes presence of residues flanking
-/// @brief antibody cdr residues at Antigen-Antibody interfaces (ported from Fab constraint
-/// @brief in rosetta++ which uses a constant constraint score of 0.5/flanking residue)
+///        antibody cdr residues at Antigen-Antibody interfaces (ported from Fab constraint
+///        in rosetta++ which uses a constant constraint score of 0.5/flanking residue)
 /// @author Krishna Kilambi (kkpraneeth@jhu.edu, April 2012)
 
 #ifndef INCLUDED_core_scoring_constraints_FabConstraint_hh
@@ -37,6 +37,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -50,17 +55,13 @@ public:
 	FabConstraint();
 
 	/// @brief Constructor
-	FabConstraint(ConstraintCOPs & cst_in) ;
+	FabConstraint(ConstraintCOPs const & cst_in) ;
 
-
+	///
 	virtual
-	ConstraintOP clone() const {
-		return ConstraintOP( new FabConstraint(*this) );
-	}
+	ConstraintOP clone() const;
 
-	std::string type() const {
-		return "FabConstraint";
-	}
+	std::string type() const;
 
 	void
 	show(std::ostream& out) const;
@@ -78,13 +79,27 @@ public:
 	void
 	setup_csts(core::pose::Pose const & pose, utility::vector1<Size> res1, utility::vector1<Size> res2, std::string antchains);
 
+	virtual bool operator==( Constraint const & rhs ) const;
+	virtual bool same_type_as_me( Constraint const & other ) const;
+
 private:
 
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; //FabConstraint
 
 } //constraints
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_FabConstraint )
+#endif // SERIALIZATION
+
 
 #endif

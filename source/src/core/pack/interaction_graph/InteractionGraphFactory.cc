@@ -121,7 +121,7 @@ InteractionGraphFactory::create_interaction_graph(
 
 		if ( rotsets.nmoltenres() >= 1 ) { //we are altering at least one residue
 			if ( rotsets.rotamer_set_for_moltenresidue(1)->num_rotamers() >= 1 ) { //and it has at least one rotamer
-				if ( rotsets.rotamer_set_for_moltenresidue(1)->rotamer(1)->residue_type_set().name() != chemical::CENTROID ) { //and it's not centroid repacking
+				if ( rotsets.rotamer_set_for_moltenresidue(1)->rotamer(1)->residue_type_set()->name() != chemical::CENTROID ) { //and it's not centroid repacking
 					if ( surface_weight ) { //Note that surface overrides lazy!
 						T << "Instantiating PDSurfaceInteractionGraph" << std::endl;
 						PDSurfaceInteractionGraphOP pdsig( new PDSurfaceInteractionGraph( the_task.num_to_be_packed() ) );

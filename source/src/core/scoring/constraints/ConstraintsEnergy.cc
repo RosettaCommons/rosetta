@@ -37,7 +37,6 @@
 
 #include <utility/vector1.hh>
 
-
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -588,3 +587,4 @@ ConstraintsEnergy::version() const
 } // constraints
 } // scoring
 } // core
+

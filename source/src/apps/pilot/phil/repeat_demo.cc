@@ -129,7 +129,7 @@ setup_repeat_pose(
 	Size const nres_protein( nrepeat * repeatlen );
 	remove_upper_terminus_type_from_pose_residue( pose, pose.total_residue() );
 	ResidueOP vrtrsd
-		( conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRTBB" ) ) );
+		( conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map( "VRTBB" ) ) );
 	pose.append_residue_by_bond( *vrtrsd, true ); // since is polymer...
 	pose.conformation().insert_chain_ending( nres_protein );
 

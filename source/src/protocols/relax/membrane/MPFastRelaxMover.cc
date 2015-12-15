@@ -95,8 +95,8 @@ MPFastRelaxMover::show_protocol( core::pose::Pose & pose ) {
 	using namespace core;
 
 	// Get the membrane position
-	Vector center( pose.conformation().membrane_info()->membrane_center() );
-	Vector normal( pose.conformation().membrane_info()->membrane_normal() );
+	Vector center( pose.conformation().membrane_info()->membrane_center(pose.conformation()) );
+	Vector normal( pose.conformation().membrane_info()->membrane_normal(pose.conformation()) );
 
 	TR << "Membrane Relax protocol + MEM Optimization" << std::endl;
 	TR << "Relax Type: " << relax_protocol_->get_name() << std::endl;

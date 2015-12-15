@@ -41,6 +41,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace task {
@@ -212,7 +217,7 @@ public:
 	virtual bool is_original_type( chemical::ResidueTypeCOP type ) const;
 
 	/// @brief
-	virtual chemical::ResidueTypeSet const & get_original_residue_set() const;
+	virtual chemical::ResidueTypeSetCOP get_original_residue_set() const;
 
 	/// @brief
 	virtual chemical::AA const & get_original_residue() const;
@@ -417,10 +422,21 @@ private:
 
 	rna::RNA_ResidueLevelTaskOP rna_task_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } //namespace task
 } //namespace pack
 } //namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_task_ResidueLevelTask_ )
+#endif // SERIALIZATION
+
 
 #endif

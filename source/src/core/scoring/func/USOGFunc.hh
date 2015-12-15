@@ -26,6 +26,11 @@
 
 // C/C++ headers
 #include <iostream>
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -53,6 +58,8 @@ public:
 	~USOGFunc() {}
 
 	FuncOP clone() const;
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 
 	/// @brief Returns a value representing this function evaluated at a given point
 	core::Real func(const core::Real x) const;
@@ -76,6 +83,12 @@ private:
 	utility::vector1<core::Real> means_;
 	utility::vector1<core::Real> std_devs_;
 	utility::vector1<core::Real> weights_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -86,5 +99,10 @@ core::Real readValueOrDie(std::istream& in);
 }  // namespace constraints
 }  // namespace scoring
 }  // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_USOGFunc )
+#endif // SERIALIZATION
+
 
 #endif  // CORE_SCORING_CONSTRAINTS_USOGFUNC_HH_

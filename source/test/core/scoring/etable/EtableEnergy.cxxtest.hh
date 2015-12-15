@@ -23,10 +23,13 @@
 // Unit headers
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/etrie/EtableAtom.hh>
+#include <core/scoring/etable/etrie/CountPairData_1_2.hh>
 #include <core/scoring/etable/EtableOptions.hh>
 
 // Package headers
 #include <core/scoring/ScoringManager.hh>
+#include <core/scoring/trie/RotamerTrie.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
@@ -47,6 +50,13 @@
 // Utility headers
 #include <utility/vector1.hh>
 
+#ifdef SERIALIZATION
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 
 using basic::T;
 using basic::Error;
@@ -59,6 +69,7 @@ using namespace std;
 using namespace core;
 using namespace scoring;
 using namespace etable;
+
 
 ///////////////////////////////////////////////////////////////////////////
 /// @name EtableEnergyTest
@@ -1129,6 +1140,82 @@ public:
 		EtableCOP etable2op = etable2.lock();
 
 		TS_ASSERT_EQUALS( etable1op, etable2op );
+	}
+
+	void test_serialize_etable_trie() {
+		TS_ASSERT( true );
+#ifdef    SERIALIZATION
+		using namespace core::graph;
+		using namespace core::pose;
+		using namespace core::scoring::etable;
+		using namespace core::scoring::etable::etrie;
+		using namespace core::scoring::methods;
+		using namespace core::scoring::trie;
+		using namespace core::pack;
+		using namespace core::pack::rotamer_set;
+		using namespace core::pack::task;
+
+		Pose pose = create_trpcage_ideal_pose();
+		ScoreFunction sfxn;
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.25 );
+		sfxn.set_weight( fa_sol, 0.125 );
+		sfxn( pose );
+
+		PackerTaskOP task = TaskFactory::create_packer_task( pose );
+		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			if ( ii == 8 ) continue;
+			task->nonconst_residue_task(ii).prevent_repacking();
+		}
+		task->nonconst_residue_task( 8 ).or_ex1( true );
+		task->nonconst_residue_task( 8 ).or_ex2( true );
+
+		GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
+		RotamerSets rotsets; rotsets.set_task( task );
+		rotsets.build_rotamers( pose, sfxn, packer_neighbor_graph );
+
+		EnergyMethodOptions options; // default is fine
+		AnalyticEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options, true );
+		RotamerSetOP rotset8 = rotsets.rotamer_set_for_residue( 8 );
+
+		etab_energy.prepare_rotamers_for_packing( pose, *rotset8 );
+
+		conformation::AbstractRotamerTrieCOP trie8 = rotset8->get_trie( methods::etable_method );
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( trie8 );
+		}
+
+		conformation::AbstractRotamerTrieOP trie8copy;
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( trie8copy );
+		}
+
+		typedef RotamerTrie< EtableAtom, CountPairData_1_2 > etable_rotamer_trie_12;
+		typedef std::shared_ptr< etable_rotamer_trie_12 const > etable_rotamer_trie_12_COP;
+		etable_rotamer_trie_12_COP orig_trie = utility::pointer::dynamic_pointer_cast< etable_rotamer_trie_12 const > ( trie8 );
+		etable_rotamer_trie_12_COP copy_trie = utility::pointer::dynamic_pointer_cast< etable_rotamer_trie_12 const > ( trie8copy );
+		TS_ASSERT( trie8copy );
+
+		for ( Size ii = 1; ii <= orig_trie->atoms().size(); ++ii ) {
+			TS_ASSERT_EQUALS( orig_trie->atoms()[ ii ].atom(), copy_trie->atoms()[ ii ].atom() );
+			TS_ASSERT_EQUALS( orig_trie->atoms()[ ii ].cp_data(), copy_trie->atoms()[ ii ].cp_data() );
+			TS_ASSERT_EQUALS( orig_trie->atoms()[ ii ].sibling(), copy_trie->atoms()[ ii ].sibling() );
+			TS_ASSERT_EQUALS( orig_trie->atoms()[ ii ].subtree_interaction_sphere_square_radius(), copy_trie->atoms()[ ii ].subtree_interaction_sphere_square_radius() );
+			TS_ASSERT_EQUALS( orig_trie->atoms()[ ii ].num_rotamers_in_subtree(), copy_trie->atoms()[ ii ].num_rotamers_in_subtree() );
+			TS_ASSERT_EQUALS( orig_trie->atoms()[ ii ].first_atom_in_branch(), copy_trie->atoms()[ ii ].first_atom_in_branch() );
+			TS_ASSERT_EQUALS( orig_trie->atoms()[ ii ].has_sibling(), copy_trie->atoms()[ ii ].has_sibling() );
+			TS_ASSERT_EQUALS( orig_trie->atoms()[ ii ].is_hydrogen(), copy_trie->atoms()[ ii ].is_hydrogen() );
+			TS_ASSERT_EQUALS( orig_trie->atoms()[ ii ].is_rotamer_terminal(), copy_trie->atoms()[ ii ].is_rotamer_terminal() );
+		}
+
+
+#endif // SERIALIZATION
+
 	}
 
 };

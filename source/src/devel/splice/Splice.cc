@@ -53,6 +53,7 @@
 #include <core/chemical/Atom.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/id/SequenceMapping.hh>
 
 
 // Package headers
@@ -2850,7 +2851,7 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 					TR_constraints<<"Applying constraints to atom:"<<pose.residue(i).atom_name(atmnum)<<",of residue "<<pose.residue(i).name3()<<i;
 					TR_constraints<<"Taking xyz coordinates from atom:"<<source_pose.residue(i + res_diff).xyz(atmnum)[0]<<"(x),"<<source_pose.residue(i + res_diff).xyz(atmnum)[1]<<"(y),"<<source_pose.residue(i + res_diff).xyz(atmnum)[2]<<"(z), pose atom xyz: "<<pose.residue(i).xyz(atmnum)[0]<<std::endl;
 					cst.push_back(core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(atmnum, i),anchor_atom, source_pose.residue(i + res_diff).xyz(atmnum), coor_cont_fun) ));
-					pose.add_constraints(cst);
+					// fixing O(N^2) constraint additions pose.add_constraints(cst);
 				}//for atom_it
 				//using namespace std;
 				//string String = static_cast<ostringstream*>( &(ostringstream() << i) )->str();
@@ -2865,7 +2866,8 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 						core::scoring::func::FuncOP coor_cont_fun( new core::scoring::func::HarmonicFunc(0.0, 1) );
 						cst.push_back(core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(chiAtoms[chiAtom], i),anchor_atom, source_pose.residue(i + res_diff).xyz(chiAtoms[chiAtom]), coor_cont_fun) ));
 						TR<<"Applying constraints to chi_atom:"<<chiAtoms[chiAtom]<<pose.residue(i).atom_name(chiAtoms[chiAtom])<<",of residue "<<pose.residue(i).name3()<<i<<std::endl;
-						pose.add_constraints(cst);
+						// fixing O(N^2) constraint additions pose.add_constraints(cst);
+
 					}//for chiAtom
 				}//for chi
 				// using namespace std;
@@ -2882,9 +2884,11 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 			<< "," << pose.residue(i).atom(atom_type).xyz()[2] << " / " << i + res_diff << source_pose.aa(i + res_diff) << " "
 			<< source_pose.residue(i + res_diff).atom(atom_type).xyz()[0] << "," << source_pose.residue(i + res_diff).atom(atom_type).xyz()[1] << "," << source_pose.residue(i + res_diff).atom(atom_type).xyz()[2]
 			<< std::endl;
-		pose.add_constraints(cst);
 	}//for
 	//scorefxn()->show(pose);
+
+	pose.add_constraints(cst);
+
 }//func
 
 void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose const & source_pose, core::Size start_res_on_pose, core::Size end_res_on_pose) {

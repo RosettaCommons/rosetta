@@ -13,10 +13,12 @@
 #include <protocols/seeded_abinitio/CAcstGenerator.hh>
 #include <protocols/seeded_abinitio/CAcstGeneratorCreator.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/selection.hh>
-#include <boost/foreach.hpp>
-#include <core/types.hh>
 
+#include <core/types.hh>
+#include <core/pose/selection.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+
+#include <boost/foreach.hpp>
 
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>

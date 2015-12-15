@@ -420,7 +420,7 @@ FaMPEnvSmoothEnergy::calc_energy(
 		low_bin = high_bin = 1; inter = 0;
 	}
 
-	Real const z_position( pose.conformation().membrane_info()->residue_z_position( rsd.seqpos() ) );
+	Real const z_position( pose.conformation().membrane_info()->residue_z_position( pose.conformation(), rsd.seqpos() ) );
 
 	Real thickness = 2.0;
 	int  slope = 14;

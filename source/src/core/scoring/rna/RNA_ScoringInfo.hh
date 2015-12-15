@@ -38,6 +38,11 @@
 
 // C++
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace rna {
@@ -144,6 +149,12 @@ private:
 	std::string vdw_calculation_annotated_sequence_;
 	std::string mg_calculation_annotated_sequence_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -160,4 +171,9 @@ clear_rna_scoring_info( pose::Pose & pose );
 } //rna
 } //scoring
 } //core
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_rna_RNA_ScoringInfo )
+#endif // SERIALIZATION
+
+
 #endif

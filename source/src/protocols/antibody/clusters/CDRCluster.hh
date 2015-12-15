@@ -23,6 +23,12 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace antibody {
 namespace clusters {
@@ -115,11 +121,26 @@ private:
 
 	bool cis_trans_match_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	CDRCluster();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_antibody_clusters_CDRCluster )
+#endif // SERIALIZATION
+
 
 #endif //#ifndef INCLUDED_protocols/antibody_design_CDRCLUSTER_HH
 

@@ -27,6 +27,13 @@
 #include <numeric/xyzVector.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -74,6 +81,9 @@ public:
 		core::Real const & force_constant
 	);
 
+	/// @brief Copy constructor -- performs a deep copy
+	BackboneStubConstraint( BackboneStubConstraint const & src );
+
 	virtual ~BackboneStubConstraint() {};
 
 	virtual Size natoms() const { return atom_ids_.size(); };
@@ -83,6 +93,8 @@ public:
 	/// @brief possibility to compare constraint according to data
 	/// and not just pointers
 	bool operator == ( Constraint const & other ) const;
+
+	bool same_type_as_me( Constraint const & other ) const;
 
 	virtual
 	void
@@ -102,6 +114,7 @@ public:
 
 	/// @brief returns the private member seqpos_
 	core::Size seqpos() const;
+
 	virtual
 	ConstraintOP clone() const;
 
@@ -135,8 +148,17 @@ private:
 	AtomID fixed_atom_id_;
 	core::Vector fixed_reference_point_;
 
-	/// why is this static?
-	static utility::pointer::shared_ptr< AngleConstraint > ang_cst_;
+	utility::pointer::shared_ptr< AngleConstraint > ang_cst_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	BackboneStubConstraint();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; // BackboneStubConstraint
 
@@ -144,5 +166,10 @@ private:
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_BackboneStubConstraint )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_scoring_constraints_BackboneStubConstraint_HH

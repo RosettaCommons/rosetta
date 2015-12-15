@@ -24,6 +24,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 
@@ -41,6 +47,16 @@ public:
 
 private:
 	core::Real weight_factor_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	IGLigandDesignEdgeUpweighter();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -92,10 +108,25 @@ private:
 	std::set< core::Size > group1_;
 	std::set< core::Size > group2_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ResidueGroupIGEdgeUpweighter();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } //namespace toolbox
 } //namespace protocols
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_IGEdgeReweighters )
+#endif // SERIALIZATION
 
 
 #endif

@@ -24,6 +24,9 @@
 
 #include <core/types.hh>
 
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/ncbb/util.hh>
 
@@ -36,8 +39,6 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-
-#include <core/conformation/Residue.hh>
 
 #include <core/kinematics/MoveMap.hh>
 

@@ -123,7 +123,7 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 			if ( ionizables_[i_restype].name3() == rsd_i.type().name3() ) {
 				core::pose::Pose pose_copy(pose);
 
-				chemical::ResidueTypeSet const& restype_set( pose_copy.residue(i).residue_type_set() );
+				chemical::ResidueTypeSetCOP restype_set( pose_copy.residue(i).residue_type_set() );
 
 				core::pose::Pose ref_pose;
 				ref_pose.append_residue_by_bond(rsd_i);
@@ -133,7 +133,7 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 
 					// Create the new residue and replace it
 					conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
-						restype_set.name_map(ionizables_[i_restype].neutral_restypes()[i_neutral_type] ), pose_copy.residue(i),
+						restype_set->name_map(ionizables_[i_restype].neutral_restypes()[i_neutral_type] ), pose_copy.residue(i),
 						pose_copy.conformation());
 					// Make sure we retain as much info from the previous res as possible
 					conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose_copy.residue(i),
@@ -165,7 +165,7 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 
 					// Create the new residue and replace it
 					conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
-						restype_set.name_map(ionizables_[i_restype].ionized_restypes()[i_ionized_type] ), pose_copy.residue(i),
+						restype_set->name_map(ionizables_[i_restype].ionized_restypes()[i_ionized_type] ), pose_copy.residue(i),
 						pose_copy.conformation());
 					// Make sure we retain as much info from the previous res as possible
 					conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose_copy.residue(i),

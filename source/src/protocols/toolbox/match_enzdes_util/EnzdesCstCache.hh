@@ -38,6 +38,12 @@
 // C++ headers
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
@@ -98,6 +104,16 @@ private:
 
 	utility::vector1< EnzdesCstParamCacheOP > param_cache_;
 	EnzConstraintIOCOP enzcst_io_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	EnzdesCstCache();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -175,6 +191,12 @@ private:
 	utility::vector1< core::scoring::constraints::ConstraintCOP > active_pose_constraints_;
 	utility::vector1< CovalentConnectionReplaceInfoCOP > covalent_connections_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class EnzCstTemplateResCache : public utility::pointer::ReferenceCount {
@@ -237,11 +259,22 @@ private:
 	bool not_in_pose_;
 	bool pose_data_uptodate_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }
 } //toolbox
 } //protocols
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_EnzdesCstCache )
+#endif // SERIALIZATION
 
 
 #endif

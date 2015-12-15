@@ -98,7 +98,7 @@ int main( int argc, char * argv [] ) {
 
 			//read in pdb file from command line
 			core::import_pose::pose_from_pdb( input_pose, fname1 );
-			std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
+			std::vector< conformation::ResidueCOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
 
 
 			protocols::pockets::PocketGrid pg( residues );

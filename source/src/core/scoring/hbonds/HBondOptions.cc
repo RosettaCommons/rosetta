@@ -41,6 +41,17 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -597,3 +608,79 @@ HBondOptions::show( std::ostream & out ) const
 }
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::hbonds::HBondOptions::save( Archive & arc ) const {
+	arc( CEREAL_NVP( exclude_DNA_DNA_ ) ); // _Bool
+	arc( CEREAL_NVP( exclude_intra_res_protein_ ) ); // _Bool
+	arc( CEREAL_NVP( exclude_intra_res_RNA_ ) ); // _Bool
+	arc( CEREAL_NVP( put_intra_into_total_ ) ); // _Bool
+	arc( CEREAL_NVP( exclude_self_hbonds_ ) ); // _Bool
+	arc( CEREAL_NVP( use_hb_env_dep_ ) ); // _Bool
+	arc( CEREAL_NVP( use_hb_env_dep_DNA_ ) ); // _Bool
+	arc( CEREAL_NVP( smooth_hb_env_dep_ ) ); // _Bool
+	arc( CEREAL_NVP( bb_donor_acceptor_check_ ) ); // _Bool
+	arc( CEREAL_NVP( decompose_bb_hb_into_pair_energies_ ) ); // _Bool
+	arc( CEREAL_NVP( params_database_tag_ ) ); // std::string
+	arc( CEREAL_NVP( use_sp2_chi_penalty_ ) ); // _Bool
+	arc( CEREAL_NVP( sp2_BAH180_rise_ ) ); // Real
+	arc( CEREAL_NVP( sp2_outer_width_ ) ); // Real
+	arc( CEREAL_NVP( measure_sp3acc_BAH_from_hvy_ ) ); // _Bool
+	arc( CEREAL_NVP( fade_energy_ ) ); // _Bool
+	arc( CEREAL_NVP( Mbhbond_ ) ); // _Bool
+	arc( CEREAL_NVP( mphbond_ ) ); // _Bool
+	arc( CEREAL_NVP( hbond_energy_shift_ ) ); // Real
+	arc( CEREAL_NVP( length_dependent_srbb_ ) ); // _Bool
+	arc( CEREAL_NVP( ldsrbb_low_scale_ ) ); // Real
+	arc( CEREAL_NVP( ldsrbb_high_scale_ ) ); // Real
+	arc( CEREAL_NVP( ldsrbb_minlength_ ) ); // Size
+	arc( CEREAL_NVP( ldsrbb_maxlength_ ) ); // Size
+	arc( CEREAL_NVP( use_hb_env_dep_new_ ) ); // _Bool
+	arc( CEREAL_NVP( hb_env_dep_new_low_scale_ ) ); // core::Real
+	arc( CEREAL_NVP( hb_env_dep_new_low_nneigh_ ) ); // core::Real
+	arc( CEREAL_NVP( hb_env_dep_new_high_nneigh_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::hbonds::HBondOptions::load( Archive & arc ) {
+	arc( exclude_DNA_DNA_ ); // _Bool
+	arc( exclude_intra_res_protein_ ); // _Bool
+	arc( exclude_intra_res_RNA_ ); // _Bool
+	arc( put_intra_into_total_ ); // _Bool
+	arc( exclude_self_hbonds_ ); // _Bool
+	arc( use_hb_env_dep_ ); // _Bool
+	arc( use_hb_env_dep_DNA_ ); // _Bool
+	arc( smooth_hb_env_dep_ ); // _Bool
+	arc( bb_donor_acceptor_check_ ); // _Bool
+	arc( decompose_bb_hb_into_pair_energies_ ); // _Bool
+	arc( params_database_tag_ ); // std::string
+	arc( use_sp2_chi_penalty_ ); // _Bool
+	arc( sp2_BAH180_rise_ ); // Real
+	arc( sp2_outer_width_ ); // Real
+	arc( measure_sp3acc_BAH_from_hvy_ ); // _Bool
+	arc( fade_energy_ ); // _Bool
+	arc( Mbhbond_ ); // _Bool
+	arc( mphbond_ ); // _Bool
+	arc( hbond_energy_shift_ ); // Real
+	arc( length_dependent_srbb_ ); // _Bool
+	arc( ldsrbb_low_scale_ ); // Real
+	arc( ldsrbb_high_scale_ ); // Real
+	arc( ldsrbb_minlength_ ); // Size
+	arc( ldsrbb_maxlength_ ); // Size
+	arc( use_hb_env_dep_new_ ); // _Bool
+	arc( hb_env_dep_new_low_scale_ ); // core::Real
+	arc( hb_env_dep_new_low_nneigh_ ); // core::Real
+	arc( hb_env_dep_new_high_nneigh_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::hbonds::HBondOptions );
+CEREAL_REGISTER_TYPE( core::scoring::hbonds::HBondOptions )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_hbonds_HBondOptions )
+#endif // SERIALIZATION

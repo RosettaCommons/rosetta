@@ -29,6 +29,12 @@
 #include <protocols/pockets/PocketGrid.fwd.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace pockets {
 
@@ -73,6 +79,9 @@ public:
 	virtual
 	core::scoring::constraints::ConstraintOP clone() const;
 
+	virtual bool operator == ( core::scoring::constraints::Constraint const & other ) const;
+	virtual bool same_type_as_me ( core::scoring::constraints::Constraint const & other ) const;
+
 	void set_target_res( core::pose::Pose const & pose, core::Size new_seqpos );
 	void set_target_res_pdb(core::pose::Pose const & pose, std::string resid );
 
@@ -85,13 +94,24 @@ private:
 	mutable protocols::pockets::PocketGridOP pocketgrid_;
 	utility::vector1< AtomID > atom_ids_;
 	bool dumppdb_;
-	std::vector< core::conformation::ResidueOP > residues_;
+	std::vector< core::conformation::ResidueCOP > residues_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; // PocketConstraint
 
 
 } // namespace constraints_additional
 } // namespace protocols
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_pockets_PocketConstraint )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_protocols_pockets_PocketConstraint_HH

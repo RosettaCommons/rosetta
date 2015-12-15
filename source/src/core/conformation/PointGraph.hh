@@ -31,6 +31,11 @@
 #include <core/conformation/Conformation.fwd.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATON
+
 namespace core {
 namespace conformation {
 
@@ -55,8 +60,17 @@ residue_point_graph_from_conformation(
 	//class PointGraphPy : public UpperEdgeGraphPy< PointGraphVertexData, PointGraphEdgeData > {};  // for PyRosetta
 #endif
 
+#ifdef    SERIALIZATION
+template < class Archive > void save( Archive & arc, PointGraph const & pointgraph );
+template < class Archive > void load( Archive & arc, PointGraph & pointgraph );
+#endif // SERIALIZATION
+
 
 } // namespace conformation
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_PointGraph )
+#endif // SERIALIZATION
 
 #endif

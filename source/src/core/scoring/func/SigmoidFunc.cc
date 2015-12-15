@@ -26,9 +26,36 @@
 // C++ Headers
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
+
+bool SigmoidFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	SigmoidFunc const & other_downcast( static_cast< SigmoidFunc const & > (other) );
+	if ( x0_    != other_downcast.x0_    ) return false;
+	if ( slope_ != other_downcast.slope_ ) return false;
+	return true;
+}
+
+bool SigmoidFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< SigmoidFunc const * > ( &other );
+}
 
 Real
 SigmoidFunc::func( Real const x ) const
@@ -70,3 +97,32 @@ SigmoidFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Rea
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::func::SigmoidFunc::SigmoidFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::SigmoidFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( x0_ ) ); // Real
+	arc( CEREAL_NVP( slope_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::SigmoidFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( x0_ ); // Real
+	arc( slope_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::SigmoidFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::SigmoidFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_SigmoidFunc )
+#endif // SERIALIZATION

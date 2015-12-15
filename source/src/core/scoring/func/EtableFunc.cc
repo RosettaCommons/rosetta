@@ -25,11 +25,42 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
 
 using namespace core::scoring::constraints;
+
+bool EtableFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	EtableFunc const & other_downcast( static_cast< EtableFunc const & > (other) );
+	if ( func_     != other_downcast.func_     ) return false;
+	if ( min_      != other_downcast.min_      ) return false;
+	if ( max_      != other_downcast.max_      ) return false;
+	if ( stepsize_ != other_downcast.stepsize_ ) return false;
+
+	return true;
+}
+
+bool EtableFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< EtableFunc const * > ( &other );
+}
 
 void
 EtableFunc::read_data( std::istream& in ) {
@@ -75,3 +106,36 @@ void EtableFunc::show_definition( std::ostream& out ) const {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::func::EtableFunc::EtableFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::EtableFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( func_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( min_ ) ); // core::Real
+	arc( CEREAL_NVP( max_ ) ); // core::Real
+	arc( CEREAL_NVP( stepsize_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::EtableFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( func_ ); // utility::vector1<core::Real>
+	arc( min_ ); // core::Real
+	arc( max_ ); // core::Real
+	arc( stepsize_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::EtableFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::EtableFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_EtableFunc )
+#endif // SERIALIZATION

@@ -28,6 +28,11 @@
 
 // C++ headers
 #include <utility/vector1.hh>
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace sequence {
@@ -205,6 +210,8 @@ public:
 		std::ostream & out, const SequenceProfile & p
 	);
 
+	bool operator==( SequenceProfile const & other ) const;
+
 private:
 
 	/// @brief converts a vector1 of arbitrary scores to values using Bolztmann
@@ -218,6 +225,7 @@ private:
 
 	/// @brief Internal consistency check. Returns true if passed, causes a runtime_assertion failure if not.
 	bool check_internals_() const;
+
 	utility::vector1< std::string > alphabet_;
 	utility::vector1< utility::vector1< Real > > profile_;
 	utility::vector1< utility::vector1< Real > > occurrence_data_;//This matrix holds the the % of occurrences of an amino acid in the data base used to construct the pssm matrix.
@@ -229,9 +237,20 @@ private:
 	/// @brief The orientation of the values. Are negative values better than zero/positive ones?
 	bool negative_better_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // class SequenceProfile
 
 } // sequence
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_sequence_SequenceProfile )
+#endif // SERIALIZATION
+
 
 #endif

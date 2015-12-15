@@ -29,12 +29,25 @@
 //#include <map>
 //#include <utility>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
 
 /// @details Auto-generated virtual destructor
 Func::~Func() {}
+
+bool
+Func::operator != ( Func const & other ) const {
+	return ! ( *this == other );
+}
 
 void
 Func::read_data( std::istream& ) {
@@ -83,7 +96,8 @@ Size Func::show_violations( std::ostream& out, Real r, Size verbose_level,  Real
 	return f > threshold;
 }
 
-std::ostream& operator<<( std::ostream& out, const Func& f ) {
+std::ostream &
+operator << ( std::ostream & out, Func const & f ) {
 	f.show( out );
 	return out;
 }
@@ -91,3 +105,26 @@ std::ostream& operator<<( std::ostream& out, const Func& f ) {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::Func::save( Archive & ) const {
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::Func::load( Archive & ) {
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::Func );
+CEREAL_REGISTER_TYPE( core::scoring::func::Func )
+
+#endif // SERIALIZATION
+
+#ifdef    SERIALIZATION
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_Func )
+#endif // SERIALIZATION

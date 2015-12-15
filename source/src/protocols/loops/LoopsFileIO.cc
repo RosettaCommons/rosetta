@@ -33,10 +33,14 @@
 namespace protocols {
 namespace loops {
 
+using core::pose::ResidueIndexDescription;
+using core::pose::ResidueIndexDescriptionFromFile;
+
 /// @details Auto-generated virtual destructor
 LoopsFileData::~LoopsFileData() {}
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.loops.LoopsFileIO" );
+
 bool JSONFormattedLoopsFileReader::initialized_( false );
 utility::vector1<std::string> JSONFormattedLoopsFileReader::valid_loop_file_keys_;
 
@@ -57,118 +61,6 @@ validate_loop_start_stop(
 	}
 }
 
-ResidueIndexDescription::ResidueIndexDescription() :
-	unassigned_( true ),
-	pose_numbered_( false ),
-	pose_index_( 0 ),
-	chain_( ' ' ),
-	resindex_( 0 ),
-	insertion_code_( ' ' )
-{}
-
-ResidueIndexDescription::ResidueIndexDescription(
-	core::Size pose_index
-) :
-	unassigned_( false ),
-	pose_numbered_( true ),
-	pose_index_( pose_index ),
-	chain_( ' ' ),
-	resindex_( 0 ),
-	insertion_code_( ' ' )
-{}
-
-ResidueIndexDescription::ResidueIndexDescription(
-	char chain,
-	int  resindex,
-	char insertion_code
-) :
-	unassigned_( false ),
-	pose_numbered_( false ),
-	pose_index_ ( 0 ),
-	chain_( chain ),
-	resindex_( resindex ),
-	insertion_code_( insertion_code )
-{}
-
-core::Size
-ResidueIndexDescription::resolve_index(
-	core::pose::Pose const & pose
-) const
-{
-	/// return bogus index, but do not trip an error.
-	if ( unassigned_ ) { return 0; }
-	if ( pose_numbered_ ) {
-		if ( pose_index_ > pose.total_residue() ) {
-			utility_exit_with_message( "Residue index description exceeds the number of residues in the Pose: pose_index_ = " +
-				utility::to_string( pose_index_ ) + " vs pose.total_residue() " + utility::to_string( pose.total_residue() ));
-		}
-		return pose_index_;
-	} else {
-		/// THIS HAS NOT BEEN TESTED OR CAREFULLY CONSIDERED
-		/// ONLY A SKETCH OF CODE THAT COULD BE PUT HERE
-		core::Size resid = pose.pdb_info()->pdb2pose().find( chain_, resindex_, insertion_code_ );
-		if ( resid == 0 ) {
-			// Dealing with the inability to return a null char constant by having two error messages.  LAAAAAAME.
-			if ( insertion_code() != ' ' ) utility_exit_with_message( "Unable to find PDB residue " + utility::to_string( resindex_ ) + insertion_code_ + ' ' + "on chain " + chain_ + " in input Pose" );
-			utility_exit_with_message( "Unable to find PDB residue " + utility::to_string( resindex_ ) + insertion_code_ + "on chain " + chain_ + " in input Pose" );
-		}
-		return resid;
-	}
-}
-
-ResidueIndexDescriptionFromFile::ResidueIndexDescriptionFromFile() :
-	ResidueIndexDescription(),
-	linenum_( 0 )
-{}
-
-ResidueIndexDescriptionFromFile::ResidueIndexDescriptionFromFile(
-	std::string fname,
-	core::Size linenum,
-	core::Size pose_index
-) :
-	ResidueIndexDescription( pose_index ),
-	fname_( fname ),
-	linenum_( linenum )
-{}
-
-ResidueIndexDescriptionFromFile::ResidueIndexDescriptionFromFile(
-	std::string fname,
-	core::Size linenum,
-	char chain,
-	int  resindex,
-	char insertion_code
-) :
-	ResidueIndexDescription( chain, resindex, insertion_code ),
-	fname_( fname ),
-	linenum_( linenum )
-{}
-
-core::Size
-ResidueIndexDescriptionFromFile::resolve_index(
-	core::pose::Pose const & pose
-) const
-{
-	/// return bogus index, but do not trip an error.
-	if ( unassigned() ) { return 0; }
-	if ( pose_numbered() ) {
-		if ( pose_index() > pose.total_residue() ) {
-			utility_exit_with_message( "Residue index description given on line " + utility::to_string( linenum_ ) +
-				" of the file named " + fname_ + " exceeds the number of residues in the Pose: pose_index_ = " +
-				utility::to_string( pose_index() ) + " vs pose.total_residue() " + utility::to_string( pose.total_residue() ));
-		}
-		return pose_index();
-	} else {
-		/// THIS HAS NOT BEEN TESTED OR CAREFULLY CONSIDERED
-		/// ONLY A SKETCH OF CODE THAT COULD BE PUT HERE
-		core::Size resid = pose.pdb_info()->pdb2pose().find( chain(), resindex(), insertion_code() );
-		if ( resid == 0 ) {
-			// Dealing with the inability to return a null char constant by having two error messages.  LAAAAAAME.
-			if ( insertion_code() != ' ' ) utility_exit_with_message( "Unable to find PDB residue " + utility::to_string( resindex() ) + insertion_code() + ' ' + "on chain " + chain() + " in input Pose" );
-			utility_exit_with_message( "Unable to find PDB residue " + utility::to_string( resindex() ) + insertion_code() + "on chain " + chain() + " in input Pose" );
-		}
-		return resid;
-	}
-}
 
 LoopFromFileData::LoopFromFileData() :
 	skip_rate_( 0.0 ),

@@ -37,8 +37,12 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-
 #include <cmath>
+
+#ifdef SERIALIZATION
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -501,5 +505,10 @@ private:
 } // namespace elec
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_elec_FA_ElecEnergy )
+#endif // SERIALIZATION
+
 
 #endif

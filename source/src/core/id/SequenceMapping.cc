@@ -24,6 +24,15 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace id {
 
@@ -322,14 +331,15 @@ SequenceMapping::operator[]( Size const pos1 ) {
 	return mapping_[ pos1 ];
 }
 
-bool SequenceMapping::operator==( SequenceMapping const & other ) const {
-	if ( other.size1() != size1() ) return false;
+bool SequenceMapping::operator == ( SequenceMapping const & rhs ) const
+{
+	if ( ! same_type_as_me( rhs ) || ! rhs.same_type_as_me( *this ) ) return false;
+	return size2_ == rhs.size2_ && mapping_ == rhs.mapping_;
+}
 
-	for ( Size ii = 1; ii <= size1(); ++ii ) {
-		if ( mapping_[ii] != other[ii] ) return false;
-	}
-
-	return true;
+bool SequenceMapping::same_type_as_me( SequenceMapping const & other ) const
+{
+	return dynamic_cast< SequenceMapping const *  > (&other);
 }
 
 std::string SequenceMapping::to_string() const {
@@ -382,3 +392,30 @@ combine_sequence_mappings(
 } // id
 } // core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::id::SequenceMapping::save( Archive & arc ) const {
+	arc( CEREAL_NVP( size2_ ) ); // Size
+	arc( CEREAL_NVP( mapping_ ) ); // utility::vector1<Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::id::SequenceMapping::load( Archive & arc ) {
+	arc( size2_ ); // Size
+	arc( mapping_ ); // utility::vector1<Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::id::SequenceMapping );
+CEREAL_REGISTER_TYPE( core::id::SequenceMapping )
+
+#endif // SERIALIZATION
+
+#ifdef    SERIALIZATION
+CEREAL_REGISTER_DYNAMIC_INIT( core_id_SequenceMapping )
+#endif // SERIALIZATION

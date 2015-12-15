@@ -63,7 +63,7 @@ void coordinate_constrain_selection(
 	if ( pose.residue(pose.total_residue()).name() != "VRT" ) {
 		pose.append_residue_by_jump(
 			*ResidueFactory::create_residue(
-			pose.residue(1).residue_type_set().name_map( "VRT" )
+			pose.residue(1).residue_type_set()->name_map( "VRT" )
 			),
 			static_cast< Size > (pose.total_residue() / 2)
 		);
@@ -171,7 +171,7 @@ void add_virtual_residue_to_cterm(
 	if ( pose.residue(pose.total_residue()).name() != "VRT" ) {
 		pose.append_residue_by_jump(
 			*ResidueFactory::create_residue(
-			pose.residue(1).residue_type_set().name_map( "VRT" )
+			pose.residue(1).residue_type_set()->name_map( "VRT" )
 			),
 			static_cast< Size > (pose.total_residue() / 2)
 		);

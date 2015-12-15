@@ -36,6 +36,11 @@
 // C++ Headers
 #include <iostream>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -52,6 +57,8 @@ public:
 	/// @brief returns a clone of this SplineFunc
 	virtual
 	FuncOP clone() const { return FuncOP( new SplineFunc( *this ) ); }
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 
 	/// @brief return SplineFunc member variables
 	core::Real get_exp_val();
@@ -115,10 +122,21 @@ private:
 	utility::vector1<core::Real>::size_type potential_vect_size_;
 	numeric::interpolation::spline::InterpolatorOP interpolator_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // SplineFunc class
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_SplineFunc )
+#endif // SERIALIZATION
+
 
 #endif

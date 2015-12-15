@@ -11,108 +11,37 @@
 /// @brief  test suite for angle constraints
 /// @author Andrew Leaver-Fay
 
+// Unit headers
+#include <core/scoring/constraints/AngleConstraint.hh>
+
 // Test headers
 #include <cxxtest/TestSuite.h>
-
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
 #include <test/util/deriv_funcs.hh>
 
-#include <core/scoring/constraints/AngleConstraint.hh>
+// Package headers
 #include <core/scoring/func/FourPointsFunc.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 
+// Project headers
 #include <core/types.hh>
 
+// Basic headers
 #include <basic/Tracer.hh>
 
+// Numeric headers
 #include <numeric/conversions.hh>
 
-#include <platform/types.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/Adduct.fwd.hh>
-#include <core/chemical/Adduct.hh>
-#include <core/chemical/AtomICoor.fwd.hh>
-#include <core/chemical/AtomICoor.hh>
-#include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomTypeSet.fwd.hh>
-#include <core/chemical/ElementSet.fwd.hh>
-#include <core/chemical/MMAtomType.fwd.hh>
-#include <core/chemical/MMAtomTypeSet.fwd.hh>
-#include <core/chemical/ResidueConnection.fwd.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/orbitals/ICoorOrbitalData.hh>
-#include <core/chemical/orbitals/OrbitalType.fwd.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
+#ifdef	SERIALIZATION
 #include <core/id/AtomID.hh>
-#include <core/id/SequenceMapping.fwd.hh>
-#include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/func/FourPointsFunc.fwd.hh>
-#include <core/scoring/func/Func.fwd.hh>
-#include <core/scoring/func/FuncFactory.fwd.hh>
-#include <core/scoring/func/HarmonicFunc.fwd.hh>
-#include <core/scoring/func/XYZ_Func.fwd.hh>
-#include <utility/down_cast.hh>
-#include <utility/exit.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/keys/Key2Tuple.fwd.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <utility/keys/Key3Tuple.fwd.hh>
-#include <utility/keys/Key3Tuple.hh>
-#include <utility/keys/Key4Tuple.fwd.hh>
-#include <utility/keys/Key4Tuple.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/access_ptr.fwd.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/numeric.functions.hh>
-#include <numeric/sphericalVector.fwd.hh>
-#include <numeric/trig.functions.hh>
-#include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyzMatrix.fwd.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/random/random.fwd.hh>
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <cstddef>
-#include <cstdlib>
-#include <iomanip>
-#include <iosfwd>
-#include <iostream>
-#include <limits>
-#include <map>
-#include <ostream>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <basic/Tracer.fwd.hh>
+
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif
 
 
 using basic::T;
@@ -210,9 +139,100 @@ public:
 				adv.simple_deriv_check( true, 1e-6 );
 			}
 		}
+	}
 
+	void test_angle_constraint_clone() {
+		using namespace core;
+		using namespace core::id;
+		using namespace core::scoring;
+		using namespace core::scoring::constraints;
+
+		AtomID at1( 1, 1), at2( 2, 1 ), at3( 3, 1 );
+		core::scoring::func::HarmonicFuncOP func( new core::scoring::func::HarmonicFunc( numeric::conversions::radians( 109 ), 10 ) );
+		AngleConstraintOP ang_cst(  new AngleConstraint( at1, at2, at3, func ));
+
+		ConstraintOP cloned_cst = ang_cst->clone();
+		AngleConstraintOP cloned_angcst = utility::pointer::dynamic_pointer_cast< AngleConstraint > ( cloned_cst );
+
+		// ensure the dynamic cast succeeds
+		TS_ASSERT( cloned_angcst );
+
+		// Make sure that the clone isn't the same as the original -- of course, right?
+		TS_ASSERT_DIFFERS( ang_cst, cloned_cst    );
+		TS_ASSERT_DIFFERS( ang_cst, cloned_angcst );
+
+		// check mutual equality; a == b and b == a
+		TS_ASSERT( *ang_cst == *cloned_cst );
+		TS_ASSERT( *cloned_cst == *ang_cst );
+
+		// clone() should perform a deep copy of the internal func object, verifiable by looking
+		// at the func pointers and making sure they point at different objects.
+		TS_ASSERT_DIFFERS( & ang_cst->get_func(), & cloned_cst->get_func() );
 
 	}
 
+	void test_angle_constraint_equality_operator() {
+		using namespace core;
+		using namespace core::id;
+		using namespace core::scoring;
+		using namespace core::scoring::constraints;
+
+		AtomID at1( 1, 1), at2( 2, 1 ), at3( 3, 1 );
+		core::scoring::func::HarmonicFuncOP func( new core::scoring::func::HarmonicFunc( 1.5, 0.5 ) );
+
+		AngleConstraintOP angle_cst1( new AngleConstraint( at1, at2, at3, func ));
+
+		core::scoring::func::HarmonicFuncOP func2( new core::scoring::func::HarmonicFunc( 1.5, 0.75 ) );
+		AngleConstraintOP angle_cst2( new AngleConstraint( at1, at2, at3, func2 ));
+
+		AtomID at4( 4, 1), at5( 5, 1 ), at6( 6, 1 );
+		AngleConstraintOP angle_cst3( new AngleConstraint( at4, at2, at3, func ));
+		AngleConstraintOP angle_cst4( new AngleConstraint( at1, at5, at3, func ));
+		AngleConstraintOP angle_cst5( new AngleConstraint( at1, at2, at5, func ));
+
+		// func objects differ; check mutual inequality; a != b and b != a
+		TS_ASSERT( *angle_cst1 != *angle_cst2 );
+		TS_ASSERT( *angle_cst2 != *angle_cst1 );
+
+		// atom1s differ; check mutual inequality; a != b and b != a
+		TS_ASSERT( *angle_cst1 != *angle_cst3 );
+		TS_ASSERT( *angle_cst3 != *angle_cst1 );
+
+		// atom2s differ; check mutual inequality; a != b and b != a
+		TS_ASSERT( *angle_cst1 != *angle_cst4 );
+		TS_ASSERT( *angle_cst4 != *angle_cst1 );
+
+		// atom3s differ; check mutual inequality; a != b and b != a
+		TS_ASSERT( *angle_cst1 != *angle_cst5 );
+		TS_ASSERT( *angle_cst5 != *angle_cst1 );
+	}
+
+
+
+	void test_serialize_AngleConstraint() {
+		TS_ASSERT( true ); // for non-serialization builds
+#ifdef SERIALIZATION
+		using namespace core::scoring::constraints;
+		using namespace core::scoring::func;
+		using namespace core::id;
+
+		FuncOP some_func( new HarmonicFunc( 1, 2 ));
+		AngleConstraintOP instance( new AngleConstraint( AtomID( 2,3 ), AtomID( 3,4 ), AtomID( 4,5 ), some_func ) );
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( instance );
+		}
+
+		AngleConstraintOP instance2;
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( instance2 );
+		}
+		TS_ASSERT( *instance == *instance2 );
+#endif // SERIALIZATION
+	}
 
 };

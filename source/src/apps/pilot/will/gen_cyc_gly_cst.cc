@@ -184,7 +184,7 @@ int main( int argc, char * argv [] ) {
 
       // setup pose
       Pose pose;
-      core::pose::make_pose_from_sequence(pose,seq,"centroid",false);
+      core::pose::make_pose_from_sequence(pose,seq,core::chemical::CENTROID,false);
 			core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_GLY",1);
 			Size N = pose.n_residue();
 			pose.add_constraint(new AtomPairConstraint(            AtomID(1,1),AtomID(3,N)            ,new core::scoring::constraints::HarmonicFunc(1.3       ,0.001)));

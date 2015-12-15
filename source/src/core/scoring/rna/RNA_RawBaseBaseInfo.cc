@@ -36,6 +36,18 @@ using namespace core::chemical::rna;
 // useful for RNA scoring.
 ///////////////////////////////////////////////////////
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// ObjexxFCL serialization headers
+#include <utility/serialization/ObjexxFCL/FArray2D.srlz.hh>
+#include <utility/serialization/ObjexxFCL/FArray3D.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace rna {
@@ -102,3 +114,41 @@ RNA_RawBaseBaseInfo::copy_values( RNA_RawBaseBaseInfo const & src, Size const & 
 } //rna
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::rna::RNA_RawBaseBaseInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( base_pair_array_ ) ); // ObjexxFCL::FArray3D<Real>; ObjexxFCL: ObjexxFCL::FArray3D<Real>
+	arc( CEREAL_NVP( base_axis_array_ ) ); // ObjexxFCL::FArray3D<Real>; ObjexxFCL: ObjexxFCL::FArray3D<Real>
+	arc( CEREAL_NVP( base_stagger_array_ ) ); // ObjexxFCL::FArray3D<Real>; ObjexxFCL: ObjexxFCL::FArray3D<Real>
+	arc( CEREAL_NVP( base_stack_array_ ) ); // ObjexxFCL::FArray2D<Real>
+	arc( CEREAL_NVP( base_stack_axis_array_ ) ); // ObjexxFCL::FArray2D<Real>
+	arc( CEREAL_NVP( base_geometry_orientation_array_ ) ); // ObjexxFCL::FArray2D<Real>
+	arc( CEREAL_NVP( base_geometry_height_array_ ) ); // ObjexxFCL::FArray2D<Real>
+	arc( CEREAL_NVP( calculated_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::rna::RNA_RawBaseBaseInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( base_pair_array_ ); // ObjexxFCL::FArray3D<Real>; ObjexxFCL: ObjexxFCL::FArray3D<Real>
+	arc( base_axis_array_ ); // ObjexxFCL::FArray3D<Real>; ObjexxFCL: ObjexxFCL::FArray3D<Real>
+	arc( base_stagger_array_ ); // ObjexxFCL::FArray3D<Real>; ObjexxFCL: ObjexxFCL::FArray3D<Real>
+	arc( base_stack_array_ ); // ObjexxFCL::FArray2D<Real>
+	arc( base_stack_axis_array_ ); // ObjexxFCL::FArray2D<Real>
+	arc( base_geometry_orientation_array_ ); // ObjexxFCL::FArray2D<Real>
+	arc( base_geometry_height_array_ ); // ObjexxFCL::FArray2D<Real>
+	arc( calculated_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::rna::RNA_RawBaseBaseInfo );
+CEREAL_REGISTER_TYPE( core::scoring::rna::RNA_RawBaseBaseInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_rna_RNA_RawBaseBaseInfo )
+#endif // SERIALIZATION

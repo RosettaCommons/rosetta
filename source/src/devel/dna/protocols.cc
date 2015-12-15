@@ -477,8 +477,7 @@ packing_specificity_test(
 		}
 	}
 
-	ResidueTypeSet const & residue_set
-		( start_pose.residue(1).residue_type_set() );
+	ResidueTypeSetCOP residue_set( start_pose.residue(1).residue_type_set() );
 
 	tt << "Motif size = " << motif_size << ". Trying " << aa_combinations.size() << " different motif sequences" <<
 		std::endl;
@@ -497,7 +496,7 @@ packing_specificity_test(
 			int const seqpos( pos_list[i] );
 
 			// Representative type should have no/minimal variants
-			ResidueTypeCOP rsd_type( residue_set.get_representative_type_aa( aa ) );
+			ResidueTypeCOP rsd_type( residue_set->get_representative_type_aa( aa ) );
 
 			Residue const & existing_residue( pose.residue( seqpos ) );
 			assert( existing_residue.is_DNA() );

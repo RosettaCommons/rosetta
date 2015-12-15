@@ -32,8 +32,8 @@
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-#include <utility/file/FileName.fwd.hh>
-#include <utility/file/PathName.fwd.hh>
+#include <utility/file/FileName.hh>
+#include <utility/file/PathName.hh>
 
 // Platform Headers
 #include <platform/types.hh>
@@ -60,13 +60,6 @@ public: // management methods
 	void
 	show( std::ostream & out ) const;
 
-	/// @brief This friend function output-operator function invokes the %JobOption's show() method
-	friend
-	std::ostream &
-	operator<< (
-		std::ostream & out,
-		const JobOptions & job_options );
-
 public: // accessor methods
 
 	/// @brief Set the value for the indicated boolean option
@@ -74,6 +67,10 @@ public: // accessor methods
 	add_option(
 		utility::options::BooleanOptionKey key,
 		bool val);
+
+	/// @brief Unset the value for the indicated boolean option
+	void
+	remove_option( utility::options::BooleanOptionKey key );
 
 	/// @brief Return true if a value for the indicated boolean option has been set
 	bool
@@ -92,6 +89,10 @@ public: // accessor methods
 		utility::options::BooleanVectorOptionKey key,
 		utility::vector1< bool > const & val);
 
+	/// @brief Unset the value for the indicated boolean-vector option
+	void
+	remove_option( utility::options::BooleanVectorOptionKey key );
+
 	/// @brief Return true if a value for the indicated boolean-vector option has been set
 	bool
 	has_option(
@@ -109,6 +110,10 @@ public: // accessor methods
 		utility::options::FileOptionKey key,
 		utility::file::FileName const & val);
 
+	/// @brief Unset the value for the indicated file option
+	void
+	remove_option( utility::options::FileOptionKey key );
+
 	/// @brief Return true if a value for the indicated file option has been set
 	bool
 	has_option(
@@ -124,6 +129,10 @@ public: // accessor methods
 	add_option(
 		utility::options::FileVectorOptionKey key,
 		utility::vector1< utility::file::FileName > const & val);
+
+	/// @brief Unset the value for the indicated file-vector option
+	void
+	remove_option( utility::options::FileVectorOptionKey key );
 
 	/// @brief Return true if a value for the indicated file-vector option has been set
 	bool
@@ -142,6 +151,10 @@ public: // accessor methods
 		utility::options::IntegerOptionKey key,
 		int val);
 
+	/// @brief Unset the value for the indicated integer option
+	void
+	remove_option( utility::options::IntegerOptionKey key );
+
 	/// @brief Return true if a value for the indicated integer option has been set
 	bool
 	has_option(
@@ -158,6 +171,10 @@ public: // accessor methods
 	add_option(
 		utility::options::IntegerVectorOptionKey key,
 		utility::vector1< int > const & val);
+
+	/// @brief Unset the value for the indicated integer-vector option
+	void
+	remove_option( utility::options::IntegerVectorOptionKey key );
 
 	/// @brief Return true if a value for the indicated integer-vector option has been set
 	bool
@@ -176,6 +193,10 @@ public: // accessor methods
 		utility::options::PathOptionKey key,
 		utility::file::PathName const & val);
 
+	/// @brief Unset the value for the indicated path option
+	void
+	remove_option( utility::options::PathOptionKey key );
+
 	/// @brief Return true if a value for the indicated path option has been set
 	bool
 	has_option(
@@ -192,6 +213,10 @@ public: // accessor methods
 	add_option(
 		utility::options::PathVectorOptionKey key,
 		utility::vector1< utility::file::PathName > const & val);
+
+	/// @brief Unset the value for the indicated path-vector option
+	void
+	remove_option( utility::options::PathVectorOptionKey key );
 
 	/// @brief Return true if a value for the indicated path-vector option has been set
 	bool
@@ -210,6 +235,10 @@ public: // accessor methods
 		utility::options::RealOptionKey key,
 		platform::Real val);
 
+	/// @brief Unset the value for the indicated real option
+	void
+	remove_option( utility::options::RealOptionKey key );
+
 	/// @brief Return true if a value for the indicated real option has been set
 	bool
 	has_option(
@@ -225,6 +254,10 @@ public: // accessor methods
 	add_option(
 		utility::options::RealVectorOptionKey key,
 		utility::vector1< platform::Real > const & val);
+
+	/// @brief Unset the value for the indicated real-vector option
+	void
+	remove_option( utility::options::RealVectorOptionKey key );
 
 	/// @brief Return true if a value for the indicated real-vector option has been set
 	bool
@@ -242,6 +275,10 @@ public: // accessor methods
 		utility::options::StringOptionKey key,
 		std::string val);
 
+	/// @brief Unset the value for the indicated string option
+	void
+	remove_option( utility::options::StringOptionKey key );
+
 	/// @brief Return true if a value for the indicated string option has been set
 	bool
 	has_option(
@@ -258,6 +295,10 @@ public: // accessor methods
 		utility::options::StringVectorOptionKey key,
 		utility::vector1< std::string > const & val);
 
+	/// @brief Unset the value for the indicated string-vector option
+	void
+	remove_option( utility::options::StringVectorOptionKey key );
+
 	/// @brief Return true if a value for the indicated string-vector option has been set
 	bool
 	has_option(
@@ -268,6 +309,59 @@ public: // accessor methods
 	get_option(
 		utility::options::StringVectorOptionKey key) const;
 
+	bool operator == ( JobOptions const & rhs ) const;
+
+private:
+
+	std::map< utility::options::BooleanOptionKey, bool > const &
+	map_for_key( utility::options::BooleanOptionKey const & ) const;
+	std::map< utility::options::BooleanVectorOptionKey, utility::vector1< bool > > const &
+	map_for_key( utility::options::BooleanVectorOptionKey const & ) const;
+	std::map< utility::options::FileOptionKey, utility::file::FileName > const &
+	map_for_key( utility::options::FileOptionKey const & ) const;
+	std::map< utility::options::FileVectorOptionKey, utility::vector1< utility::file::FileName > > const &
+	map_for_key( utility::options::FileVectorOptionKey const & ) const;
+	std::map< utility::options::IntegerOptionKey, int > const &
+	map_for_key( utility::options::IntegerOptionKey const & ) const;
+	std::map< utility::options::IntegerVectorOptionKey, utility::vector1< int > > const &
+	map_for_key( utility::options::IntegerVectorOptionKey const & ) const;
+	std::map< utility::options::PathOptionKey, utility::file::PathName > const &
+	map_for_key( utility::options::PathOptionKey const & ) const;
+	std::map< utility::options::PathVectorOptionKey, utility::vector1< utility::file::PathName > > const &
+	map_for_key( utility::options::PathVectorOptionKey const & ) const;
+	std::map< utility::options::RealOptionKey, platform::Real > const &
+	map_for_key( utility::options::RealOptionKey const & ) const;
+	std::map< utility::options::RealVectorOptionKey, utility::vector1< platform::Real > > const &
+	map_for_key( utility::options::RealVectorOptionKey const & ) const;
+	std::map< utility::options::StringOptionKey, std::string > const &
+	map_for_key( utility::options::StringOptionKey const & ) const;
+	std::map< utility::options::StringVectorOptionKey, utility::vector1< std::string > > const &
+	map_for_key( utility::options::StringVectorOptionKey const & ) const;
+
+	std::map< utility::options::BooleanOptionKey, bool > &
+	map_for_key( utility::options::BooleanOptionKey const & );
+	std::map< utility::options::BooleanVectorOptionKey, utility::vector1< bool > > &
+	map_for_key( utility::options::BooleanVectorOptionKey const & );
+	std::map< utility::options::FileOptionKey, utility::file::FileName > &
+	map_for_key( utility::options::FileOptionKey const & );
+	std::map< utility::options::FileVectorOptionKey, utility::vector1< utility::file::FileName > > &
+	map_for_key( utility::options::FileVectorOptionKey const & );
+	std::map< utility::options::IntegerOptionKey, int > &
+	map_for_key( utility::options::IntegerOptionKey const & );
+	std::map< utility::options::IntegerVectorOptionKey, utility::vector1< int > > &
+	map_for_key( utility::options::IntegerVectorOptionKey const & );
+	std::map< utility::options::PathOptionKey, utility::file::PathName > &
+	map_for_key( utility::options::PathOptionKey const & );
+	std::map< utility::options::PathVectorOptionKey, utility::vector1< utility::file::PathName > > &
+	map_for_key( utility::options::PathVectorOptionKey const & );
+	std::map< utility::options::RealOptionKey, platform::Real > &
+	map_for_key( utility::options::RealOptionKey const & );
+	std::map< utility::options::RealVectorOptionKey, utility::vector1< platform::Real > > &
+	map_for_key( utility::options::RealVectorOptionKey const & );
+	std::map< utility::options::StringOptionKey, std::string > &
+	map_for_key( utility::options::StringOptionKey const & );
+	std::map< utility::options::StringVectorOptionKey, utility::vector1< std::string > > &
+	map_for_key( utility::options::StringVectorOptionKey const & );
 private:
 	std::map< utility::options::BooleanOptionKey, bool >
 		boolean_options_;
@@ -300,6 +394,13 @@ private:
 		string_vector_options_;
 
 };
+
+/// @brief This output-operator function invokes the %JobOption's show() method
+std::ostream &
+operator << (
+	std::ostream & out,
+	JobOptions const & job_options
+);
 
 } // namespace
 } // namespace

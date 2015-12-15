@@ -32,6 +32,16 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.Span" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace membrane {
@@ -171,3 +181,27 @@ void Span::not_valid() const {
 } // conformation
 } // core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::conformation::membrane::Span::save( Archive & arc ) const {
+	arc( CEREAL_NVP( start_ ) ); // Size
+	arc( CEREAL_NVP( end_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::conformation::membrane::Span::load( Archive & arc ) {
+	arc( start_ ); // Size
+	arc( end_ ); // Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::membrane::Span );
+CEREAL_REGISTER_TYPE( core::conformation::membrane::Span )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_conformation_membrane_Span )
+#endif // SERIALIZATION

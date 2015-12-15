@@ -77,6 +77,16 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
+#ifdef SERIALIZATION
+// Project serialization headers
+#include <core/scoring/trie/RotamerTrie.srlz.hh>
+
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.elec.FA_ElecEnergy" );
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -1445,7 +1455,29 @@ FA_ElecEnergy::monomer_test(
 
 }
 
-
 } // namespace elec
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+typedef core::scoring::trie::RotamerTrie< core::scoring::elec::ElecAtom, core::scoring::etable::etrie::CountPairDataGeneric > EtrieRotTrieGeneric;
+
+SAVE_AND_LOAD_SERIALIZABLE( EtrieRotTrieGeneric );
+CEREAL_REGISTER_TYPE( EtrieRotTrieGeneric )
+
+typedef core::scoring::trie::RotamerTrie< core::scoring::elec::ElecAtom, core::scoring::etable::etrie::CountPairData_1_1 > EtrieRotTrie11;
+SAVE_AND_LOAD_SERIALIZABLE( EtrieRotTrie11 );
+CEREAL_REGISTER_TYPE( EtrieRotTrie11 )
+
+typedef core::scoring::trie::RotamerTrie< core::scoring::elec::ElecAtom, core::scoring::etable::etrie::CountPairData_1_2 > EtrieRotTrie12;
+SAVE_AND_LOAD_SERIALIZABLE( EtrieRotTrie12 );
+CEREAL_REGISTER_TYPE( EtrieRotTrie12 )
+
+typedef core::scoring::trie::RotamerTrie< core::scoring::elec::ElecAtom, core::scoring::etable::etrie::CountPairData_1_3 > EtrieRotTrie13;
+SAVE_AND_LOAD_SERIALIZABLE( EtrieRotTrie13 );
+CEREAL_REGISTER_TYPE( EtrieRotTrie13 )
+
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_elec_FA_ElecEnergy )
+#endif

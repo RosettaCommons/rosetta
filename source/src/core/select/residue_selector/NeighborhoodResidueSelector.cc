@@ -19,16 +19,30 @@
 #include <basic/datacache/DataMap.hh>
 
 // Package headers
+#include <core/select/residue_selector/util.hh>
+#include <core/select/residue_selector/ResidueSelectorFactory.hh>
+
+// Project headers
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
-#include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 // C++ headers
 #include <utility/assert.hh>
 
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace select {
@@ -237,6 +251,17 @@ std::string NeighborhoodResidueSelector::class_name() {
 	return "Neighborhood";
 }
 
+void
+NeighborhoodResidueSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "selector", xs_string        ));
+	attributes.push_back( XMLSchemaAttribute( "resnums",  "int_cslist"     ));
+	attributes.push_back( XMLSchemaAttribute( "distance", xs_decimal, true ));
+	xsd_type_definition_w_attributes_and_subselector( xsd, class_name(), attributes );
+}
+
+
 ResidueSelectorOP
 NeighborhoodResidueSelectorCreator::create_residue_selector() const {
 	return ResidueSelectorOP( new NeighborhoodResidueSelector );
@@ -247,6 +272,47 @@ NeighborhoodResidueSelectorCreator::keyname() const {
 	return NeighborhoodResidueSelector::class_name();
 }
 
+void
+NeighborhoodResidueSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
+	return NeighborhoodResidueSelector::provide_selector_xsd( xsd );
+}
+
 } //namespace residue_selector
 } //namespace select
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::residue_selector::NeighborhoodResidueSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( focus_ ) ); // std::set<Size>
+	arc( CEREAL_NVP( focus_str_ ) ); // std::string
+	arc( CEREAL_NVP( distance_ ) ); // Real
+	arc( CEREAL_NVP( focus_selector_ ) ); // ResidueSelectorCOP
+	arc( CEREAL_NVP( focus_set_ ) ); // _Bool
+	arc( CEREAL_NVP( use_focus_selector_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::residue_selector::NeighborhoodResidueSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( focus_ ); // std::set<Size>
+	arc( focus_str_ ); // std::string
+	arc( distance_ ); // Real
+	std::shared_ptr< core::select::residue_selector::ResidueSelector > local_focus_selector;
+	arc( local_focus_selector ); // ResidueSelectorCOP
+	focus_selector_ = local_focus_selector; // copy the non-const pointer(s) into the const pointer(s)
+	arc( focus_set_ ); // _Bool
+	arc( use_focus_selector_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::NeighborhoodResidueSelector );
+CEREAL_REGISTER_TYPE( core::select::residue_selector::NeighborhoodResidueSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_residue_selector_NeighborhoodResidueSelector )
+#endif // SERIALIZATION

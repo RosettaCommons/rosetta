@@ -24,6 +24,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -69,6 +74,12 @@ public:
 
 private:
 	RDC_lines All_RDC_lines;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -167,6 +178,12 @@ public:
 		return invDcnst;
 	}
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 private:
 	Size type_, res_;
 	Real Jdipolar_, Reduced_Jdipolar_;
@@ -176,5 +193,10 @@ private:
 
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_ResidualDipolarCoupling_Rohl )
+#endif // SERIALIZATION
+
 
 #endif

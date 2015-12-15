@@ -33,6 +33,16 @@
 #include <boost/foreach.hpp>
 
 //Auto Headers
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace datacache {
@@ -274,3 +284,54 @@ SpecialSegmentsObserver::detach_impl(){
 } // namespace datacache
 } // namespace pose
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Serialization method for LengthEventCollector
+/// @details This does not serialize either the length_event_ nor length_event_link_
+/// data members as these hold raw pointers and would be invalid following deserialization.
+template< class Archive >
+void
+core::pose::datacache::LengthEventCollector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::datacache::CacheableObserver >( this ) );
+	// EXEMPT length_events_ length_event_link_
+}
+
+/// @brief Deserialization method
+/// @brief This does not deserialize either the length_event_ vector nor the length_event_link_
+/// data member because both of these classes hold raw pointers and would be invalid following
+/// deserialization.
+template< class Archive >
+void
+core::pose::datacache::LengthEventCollector::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::datacache::CacheableObserver >( this ) );
+	// EXEMPT length_events_ length_event_link_
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::datacache::LengthEventCollector );
+CEREAL_REGISTER_TYPE( core::pose::datacache::LengthEventCollector )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::datacache::SpecialSegmentsObserver::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::datacache::CacheableObserver >( this ) );
+	arc( CEREAL_NVP( segments_ ) ); // utility::vector1<Segment>
+	// EXEMPT length_event_link_
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::datacache::SpecialSegmentsObserver::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::datacache::CacheableObserver >( this ) );
+	arc( segments_ ); // utility::vector1<Segment>
+	// EXEMPT length_event_link_
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::datacache::SpecialSegmentsObserver );
+CEREAL_REGISTER_TYPE( core::pose::datacache::SpecialSegmentsObserver )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_datacache_cacheable_observers )
+#endif // SERIALIZATION

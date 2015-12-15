@@ -31,6 +31,22 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+#include <utility/serialization/ObjexxFCL/FArray1D.srlz.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -232,3 +248,113 @@ NeighborList::declare_atom_neighbor_1sided( id::AtomID at1, id::AtomID at2, Size
 
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::NeighborList::save( Archive & arc ) const {
+	arc( CEREAL_NVP( domain_map_ ) ); // const kinematics::DomainMap
+	arc( CEREAL_NVP( XX_cutoff_ ) ); // const DistanceSquared
+	arc( CEREAL_NVP( XH_cutoff_ ) ); // const DistanceSquared
+	arc( CEREAL_NVP( HH_cutoff_ ) ); // const DistanceSquared
+
+
+	arc( CEREAL_NVP( auto_update_ ) ); // _Bool
+	arc( CEREAL_NVP( move_tolerance_sqr_ ) ); // DistanceSquared
+	arc( CEREAL_NVP( wide_nblist_extension_ ) ); // const Distance
+	arc( CEREAL_NVP( wide_move_tolerance_sqr_ ) ); // DistanceSquared
+	arc( CEREAL_NVP( nblist_ ) ); // utility::vector1<utility::vector1<AtomNeighbors> >
+	arc( CEREAL_NVP( upper_nblist_ ) ); // utility::vector1<utility::vector1<AtomNeighbors> >
+	arc( CEREAL_NVP( intrares_upper_nblist_ ) ); // utility::vector1<utility::vector1<AtomNeighbors> >
+	arc( CEREAL_NVP( wide_nblist_ ) ); // utility::vector1<utility::vector1<AtomNeighbors> >
+	arc( CEREAL_NVP( reference_coords_ ) ); // utility::vector1<utility::vector1<Vector> >
+	arc( CEREAL_NVP( wide_reference_coords_ ) ); // utility::vector1<utility::vector1<Vector> >
+	arc( CEREAL_NVP( sqrt_XX_cutoff_ ) ); // const Distance
+	arc( CEREAL_NVP( sqrt_XH_cutoff_ ) ); // const Distance
+	arc( CEREAL_NVP( sqrt_HH_cutoff_ ) ); // const Distance
+	arc( CEREAL_NVP( XX_cutoff_wide_ ) ); // const DistanceSquared
+	arc( CEREAL_NVP( XH_cutoff_wide_ ) ); // const DistanceSquared
+	arc( CEREAL_NVP( HH_cutoff_wide_ ) ); // const DistanceSquared
+	arc( CEREAL_NVP( atom_needs_update_from_wide_ ) ); // utility::vector1<utility::vector1<Size> >
+	arc( CEREAL_NVP( atoms_to_update_ ) ); // utility::vector1<id::AtomID>
+	arc( CEREAL_NVP( n_prepare_for_scorings_ ) ); // Size
+	arc( CEREAL_NVP( n_update_from_wide_ ) ); // Size
+	arc( CEREAL_NVP( n_full_updates_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::NeighborList::load_and_construct( Archive & arc, cereal::construct< core::scoring::NeighborList > & construct ) {
+	kinematics::DomainMap domain_map; arc( domain_map );
+	DistanceSquared XX_cutoff; arc( XX_cutoff );
+	DistanceSquared XH_cutoff; arc( XH_cutoff );
+	DistanceSquared HH_cutoff; arc( HH_cutoff );
+
+	construct( domain_map, XX_cutoff, XH_cutoff, HH_cutoff );
+	// The line below says to the serialization validator that four variables
+	// do not need to be explicitly initialized.
+	// EXEMPT domain_map_ XX_cutoff_ XH_cutoff_ HH_cutoff_
+
+	arc( construct->auto_update_ ); // _Bool
+	arc( construct->move_tolerance_sqr_ ); // DistanceSquared
+	arc( const_cast< Real & > ( construct->wide_nblist_extension_ ) ); // const Distance
+	arc( construct->wide_move_tolerance_sqr_ ); // DistanceSquared
+	arc( construct->nblist_ ); // utility::vector1<utility::vector1<AtomNeighbors> >
+	arc( construct->upper_nblist_ ); // utility::vector1<utility::vector1<AtomNeighbors> >
+	arc( construct->intrares_upper_nblist_ ); // utility::vector1<utility::vector1<AtomNeighbors> >
+	arc( construct->wide_nblist_ ); // utility::vector1<utility::vector1<AtomNeighbors> >
+	arc( construct->reference_coords_ ); // utility::vector1<utility::vector1<Vector> >
+	arc( construct->wide_reference_coords_ ); // utility::vector1<utility::vector1<Vector> >
+
+	arc( const_cast< Real & > ( construct->sqrt_XX_cutoff_ ) ); // const Distance
+	arc( const_cast< Real & > ( construct->sqrt_XH_cutoff_ ) ); // const Distance
+	arc( const_cast< Real & > ( construct->sqrt_HH_cutoff_ ) ); // const Distance
+	arc( const_cast< Real & > ( construct->XX_cutoff_wide_ ) ); // const DistanceSquared
+	arc( const_cast< Real & > ( construct->XH_cutoff_wide_ ) ); // const DistanceSquared
+	arc( const_cast< Real & > ( construct->HH_cutoff_wide_ ) ); // const DistanceSquared
+	arc( construct->atom_needs_update_from_wide_ ); // utility::vector1<utility::vector1<Size> >
+	arc( construct->atoms_to_update_ ); // utility::vector1<id::AtomID>
+	arc( construct->n_prepare_for_scorings_ ); // Size
+	arc( construct->n_update_from_wide_ ); // Size
+	arc( construct->n_full_updates_ ); // Size
+}
+SAVE_AND_LOAD_AND_CONSTRUCT_SERIALIZABLE( core::scoring::NeighborList );
+CEREAL_REGISTER_TYPE( core::scoring::NeighborList )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::AtomNeighbor::save( Archive & arc ) const {
+	arc( CEREAL_NVP( rsd_ ) ); // int
+	arc( CEREAL_NVP( atomno_ ) ); // int
+	arc( CEREAL_NVP( path_dist_ ) ); // Size
+	arc( CEREAL_NVP( weight_ ) ); // Real
+	arc( CEREAL_NVP( weight_func_ ) ); // Real
+	arc( CEREAL_NVP( temp1_ ) ); // Real
+	arc( CEREAL_NVP( temp2_ ) ); // Real
+	arc( CEREAL_NVP( temp3_ ) ); // Real
+	arc( CEREAL_NVP( temp4_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::AtomNeighbor::load( Archive & arc ) {
+	arc( rsd_ ); // int
+	arc( atomno_ ); // int
+	arc( path_dist_ ); // Size
+	arc( weight_ ); // Real
+	arc( weight_func_ ); // Real
+	arc( temp1_ ); // Real
+	arc( temp2_ ); // Real
+	arc( temp3_ ); // Real
+	arc( temp4_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::AtomNeighbor );
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_NeighborList )
+#endif // SERIALIZATION

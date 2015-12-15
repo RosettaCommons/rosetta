@@ -22,6 +22,16 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace task {
@@ -84,3 +94,51 @@ IGEdgeReweightContainer::add_reweighter( IGEdgeReweighterOP reweighter ){
 } //namespace task
 } //namespace pack
 } //namespace core
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::task::IGEdgeReweighter::save( Archive & ) const {
+	// The default weight is set to 1.0 in the constructor and cannot be otherwise set.
+	// EXEMPT default_weight_
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::task::IGEdgeReweighter::load( Archive & ) {
+	// EXEMPT default_weight_
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::task::IGEdgeReweighter );
+CEREAL_REGISTER_TYPE( core::pack::task::IGEdgeReweighter )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::pack::task::IGEdgeReweightContainer::IGEdgeReweightContainer() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::task::IGEdgeReweightContainer::save( Archive & arc ) const {
+	arc( CEREAL_NVP( edge_reweighters_ ) ); // utility::vector1<IGEdgeReweighterOP>
+	arc( CEREAL_NVP( nres_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::task::IGEdgeReweightContainer::load( Archive & arc ) {
+	arc( edge_reweighters_ ); // utility::vector1<IGEdgeReweighterOP>
+	arc( nres_ ); // Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::task::IGEdgeReweightContainer );
+CEREAL_REGISTER_TYPE( core::pack::task::IGEdgeReweightContainer )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_IGEdgeReweightContainer )
+#endif // SERIALIZATION
+

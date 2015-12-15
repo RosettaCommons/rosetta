@@ -25,6 +25,11 @@
 // STL Headers
 #include <iostream>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace elec {
@@ -134,6 +139,12 @@ private:
 	bool is_hydrogen_;
 	Real charge_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 std::ostream & operator << ( std::ostream & os, ElecAtom const & atom );
@@ -141,5 +152,10 @@ std::ostream & operator << ( std::ostream & os, ElecAtom const & atom );
 } // namespace elec
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_elec_ElecAtom )
+#endif // SERIALIZATION
+
 
 #endif

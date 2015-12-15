@@ -223,6 +223,8 @@ public:
 		}
 	}
 
+	platform::Size size() const { return array_.size(); }
+
 	template< typename > friend class ArrayPool;
 
 private:

@@ -21,6 +21,12 @@
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace fiber_diffraction {
@@ -45,6 +51,16 @@ public:
 
 private:
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > > form_factors_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	FAScatter();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 FAScatter &
@@ -53,5 +69,10 @@ retrieve_fa_scatter_from_pose( pose::Pose & pose );
 } // namespace fiber_diffraction
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_fiber_diffraction_FAScatter )
+#endif // SERIALIZATION
+
 
 #endif

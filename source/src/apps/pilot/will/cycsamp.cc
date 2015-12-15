@@ -438,7 +438,7 @@ void* doit(void*) {
 
 	TR << "setup pose & constraints" << std::endl;
 	Pose pose;
-	// core::pose::make_pose_from_sequence(pose,seq,"centroid",false);
+	// core::pose::make_pose_from_sequence(pose,seq,core::chemical::CENTROID,false);
 	core::import_pose::pose_from_pdb(pose,option[in::file::s]()[1]);
 	Size N = pose.n_residue();
 	if( N > 4 * (Size)sizeof(BINTYPE) ) {

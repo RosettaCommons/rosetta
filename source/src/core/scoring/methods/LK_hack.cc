@@ -26,6 +26,7 @@
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
+#include <core/scoring/func/Func.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -73,6 +74,9 @@ public:
 	func::FuncOP
 	clone() const;
 
+	virtual bool operator == ( func::Func const & rhs ) const;
+	virtual bool same_type_as_me( func::Func const & other ) const;
+
 	virtual Real func( Real const x ) const;
 	virtual Real dfunc( Real const x ) const;
 
@@ -98,6 +102,17 @@ Real const LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_LOW(  std::cos( pi - LK_Si
 LK_SigmoidalFunc::LK_SigmoidalFunc() {}
 
 core::scoring::func::FuncOP LK_SigmoidalFunc::clone() const { return core::scoring::func::FuncOP( new LK_SigmoidalFunc ); }
+
+bool
+LK_SigmoidalFunc::operator == ( func::Func const & rhs ) const {
+	return same_type_as_me( rhs ) && rhs.same_type_as_me( *this );
+}
+
+bool LK_SigmoidalFunc::same_type_as_me( func::Func const & other ) const
+{
+	return dynamic_cast< LK_SigmoidalFunc const * > (&other);
+}
+
 
 /// @brief a Sigmoidal function that ramps from 1 to 0 over a certain range.
 /// Thanks to Mike Tyka for having a sigmoidal function on the top of his head.

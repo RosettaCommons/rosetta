@@ -213,7 +213,7 @@ void Xfres::chi3(Real _chi3){ chi_[3] = real_to_uint8(_chi3,-180.0,180.0); }
 void Xfres::chi4(Real _chi4){ chi_[4] = real_to_uint8(_chi4,-180.0,180.0); }
 void Xfres::place_sidechain_in_pose(Pose & pose, int ir) const{
 	string const & name( core::chemical::name_from_aa(core::chemical::aa_from_oneletter_code(aa())) );
-	core::conformation::ResidueOP newres = core::conformation::ResidueFactory::create_residue(pose.residue(ir).residue_type_set().name_map(name));
+	core::conformation::ResidueOP newres = core::conformation::ResidueFactory::create_residue(pose.residue(ir).residue_type_set()->name_map(name));
 	pose.replace_residue(ir,*newres,true);
 	if ( pose.residue(ir).nchi() >= 1 ) pose.set_chi(1,ir,chi1());
 	if ( pose.residue(ir).nchi() >= 2 ) pose.set_chi(2,ir,chi2());
@@ -388,7 +388,7 @@ void    Xfrag::insert (Pose & pose, vector1<Xfres> const & xfres, int lowres, in
 		cout << "delete " << lowres+1 << endl;
 		pose.delete_polymer_residue(lowres+1);
 	}
-	core::conformation::ResidueOP dummyres = core::conformation::ResidueFactory::create_residue(pose.residue(1).residue_type_set().name_map("GLY"));
+	core::conformation::ResidueOP dummyres = core::conformation::ResidueFactory::create_residue(pose.residue(1).residue_type_set()->name_map("GLY"));
 	for ( int ir=2; ir <= (int)size(); ++ir ) pose.append_polymer_residue_after_seqpos(*dummyres,lowres-2+ir,true);
 	vector1<Xfres>::const_iterator ifrag = xfres.begin() + position();
 	for ( int ir=1; ir <= (int)size(); ++ir,++ifrag ) {

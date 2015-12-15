@@ -36,6 +36,17 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -44,6 +55,29 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 using namespace core::scoring::constraints;
+
+bool MixtureFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	MixtureFunc const & other_downcast( static_cast< MixtureFunc const & > (other) );
+	if ( rmax_           != other_downcast.rmax_           ) return false;
+	if ( fmax_           != other_downcast.fmax_           ) return false;
+	if ( anchor_         != other_downcast.anchor_         ) return false;
+	if ( gaussian_param_ != other_downcast.gaussian_param_ ) return false;
+	if ( exp_param_      != other_downcast.exp_param_      ) return false;
+	if ( mixture_param_  != other_downcast.mixture_param_  ) return false;
+	if ( bg_mean_        != other_downcast.bg_mean_        ) return false;
+	if ( bg_sd_          != other_downcast.bg_sd_          ) return false;
+
+	return true;
+}
+
+bool MixtureFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< MixtureFunc const * > ( &other );
+}
 
 void
 MixtureFunc::read_data( std::istream & in ) {
@@ -212,3 +246,43 @@ Real MixtureFunc::calc_kl_divergence() const {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::func::MixtureFunc::MixtureFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::MixtureFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( rmax_ ) ); // Real
+	arc( CEREAL_NVP( fmax_ ) ); // Real
+	arc( CEREAL_NVP( anchor_ ) ); // Real
+	arc( CEREAL_NVP( gaussian_param_ ) ); // Real
+	arc( CEREAL_NVP( exp_param_ ) ); // Real
+	arc( CEREAL_NVP( mixture_param_ ) ); // Real
+	arc( CEREAL_NVP( bg_mean_ ) ); // Real
+	arc( CEREAL_NVP( bg_sd_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::MixtureFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( rmax_ ); // Real
+	arc( fmax_ ); // Real
+	arc( anchor_ ); // Real
+	arc( gaussian_param_ ); // Real
+	arc( exp_param_ ); // Real
+	arc( mixture_param_ ); // Real
+	arc( bg_mean_ ); // Real
+	arc( bg_sd_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::MixtureFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::MixtureFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_MixtureFunc )
+#endif // SERIALIZATION

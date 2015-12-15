@@ -280,10 +280,10 @@ void run(std::string fname) {
 
   // read pose info
   Pose cenp,cysp,natp,cys,ile,homo;
-  make_pose_from_sequence(cys,"C","fa_standard",false);
+  make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
   if(cys.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(cenp,1);
   if(cys.residue(1).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(cenp,1);
-  make_pose_from_sequence(ile,"I","centroid"   ,false);
+  make_pose_from_sequence(ile,"I",core::chemical::CENTROID   ,false);
   if(ile.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(cenp,1);
   if(ile.residue(1).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(cenp,1);
   pose_from_pdb(cenp,*crs,fname);

@@ -27,26 +27,50 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace datacache {
 
 
-/// @brief pose *
+/// @brief Holds a smart pointer (no longer a raw pointer) to a Pose so that it
+/// can be tucked inside another Pose.
 class CacheablePoseRawPtr : public basic::datacache::CacheableData
 {
 public:
-	CacheablePoseRawPtr( core::pose::Pose * pose ) : CacheableData(), pose_(pose) {}
-	virtual ~CacheablePoseRawPtr(){};
-	virtual basic::datacache::CacheableDataOP clone() const { return basic::datacache::CacheableDataOP( new CacheablePoseRawPtr(*this) ); }
-	virtual core::pose::Pose * pose() const { return pose_; }
+	CacheablePoseRawPtr( core::pose::PoseOP pose );
+	virtual ~CacheablePoseRawPtr();
+	virtual basic::datacache::CacheableDataOP clone() const;
+	virtual core::pose::PoseOP pose();
+
 private:
-	core::pose::Pose * pose_;
+	core::pose::PoseOP pose_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	CacheablePoseRawPtr();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace datacache
 } // namespace util
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_datacache_CacheablePoseRawPtr )
+#endif // SERIALIZATION
+
 
 #endif /* INCLUDED_core_pose_datacache_CacheablePoseRawPtr_HH */

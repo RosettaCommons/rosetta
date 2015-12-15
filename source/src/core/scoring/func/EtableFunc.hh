@@ -23,6 +23,13 @@
 #include <utility/vector1_bool.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -50,6 +57,9 @@ public:
 	/// @brief returns a clone of this EtableFunc
 	FuncOP clone() const { return FuncOP( new EtableFunc( *this ) ); }
 
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
+
 	/// @brief Returns the value of this EtableFunc evaluated at distance x.
 	Real func( Real const x ) const;
 
@@ -73,11 +83,26 @@ private:
 	core::Real min_;
 	core::Real max_;
 	core::Real stepsize_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	EtableFunc();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_EtableFunc )
+#endif // SERIALIZATION
+
 
 #endif

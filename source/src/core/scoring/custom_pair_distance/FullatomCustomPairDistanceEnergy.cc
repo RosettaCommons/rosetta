@@ -20,6 +20,7 @@
 // Package headers
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/MinimizationData.hh>
+#include <core/scoring/func/Func.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -42,6 +43,18 @@
 //#include <numeric/deriv/distance_deriv.hh>
 
 // option key includes
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/interpolation/Histogram.srlz.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace scoring {
@@ -527,6 +540,23 @@ DistanceFunc::DistanceFunc( std::string const name ) {
 	scores_stream.close();
 }
 
+func::FuncOP DistanceFunc::clone() const { return func::FuncOP( new DistanceFunc( *this ) ); }
+
+bool
+DistanceFunc::operator == ( func::Func const & rhs ) const {
+	if ( !     same_type_as_me(   rhs ) ) return false;
+	if ( ! rhs.same_type_as_me( *this ) ) return false;
+
+	DistanceFunc const & rhs_downcast( static_cast< DistanceFunc const & > (rhs) );
+	return scores_hist_ == rhs_downcast.scores_hist_;
+}
+
+bool DistanceFunc::same_type_as_me( func::Func const & other ) const
+{
+	return dynamic_cast< DistanceFunc const * > (&other);
+}
+
+
 DistanceFunc::~DistanceFunc() {}
 Real DistanceFunc::func( Real const dist_sq ) const {
 	Real e(0.0);
@@ -555,3 +585,32 @@ Real DistanceFunc::min_dis() const {
 }
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::custom_pair_distance::DistanceFunc::DistanceFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::custom_pair_distance::DistanceFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::func::Func >( this ) );
+	arc( CEREAL_NVP( scores_hist_ ) ); // numeric::interpolation::HistogramCOP<Real, Real>::Type
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::custom_pair_distance::DistanceFunc::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::func::Func >( this ) );
+	std::shared_ptr< numeric::interpolation::Histogram< double, double > > local_scores_hist;
+	arc( local_scores_hist ); // numeric::interpolation::HistogramCOP<Real, Real>::Type
+	scores_hist_ = local_scores_hist; // copy the non-const pointer(s) into the const pointer(s)
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::custom_pair_distance::DistanceFunc );
+CEREAL_REGISTER_TYPE( core::scoring::custom_pair_distance::DistanceFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_custom_pair_distance_FullatomCustomPairDistanceEnergy )
+#endif // SERIALIZATION

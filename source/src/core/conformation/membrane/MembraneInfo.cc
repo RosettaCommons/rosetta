@@ -31,7 +31,7 @@
 
 // Project Headers
 #include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/conformation/membrane/LipidAccInfo.fwd.hh>
+#include <core/conformation/membrane/LipidAccInfo.hh>
 #include <core/conformation/membrane/MembraneParams.hh>
 
 // Package Headers
@@ -54,6 +54,16 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.MembraneInfo" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace membrane {
@@ -63,7 +73,7 @@ namespace membrane {
 /// Use the fully specified constructors instead. MembraneInfo is a
 /// data container but is NOT responsible for initialization.
 MembraneInfo::MembraneInfo() :
-	conformation_( *(new core::conformation::Conformation()) ),
+	// conformation_( *(new Conformation()) ),
 	thickness_( 0 ),
 	steepness_( 0 ),
 	membrane_rsd_num_( 0 ),
@@ -76,12 +86,12 @@ MembraneInfo::MembraneInfo() :
 /// spanning topology object and optional lipophilicity data. Thickness and
 /// steepness are currently constants
 MembraneInfo::MembraneInfo(
-	core::conformation::Conformation & conformation,
+	Conformation & /*conformation*/,
 	core::Size membrane_pos,
 	core::SSize membrane_jump,
 	SpanningTopologyOP topology
 ) :
-	conformation_( conformation ),
+	// conformation_( conformation ),
 	thickness_( 15 ),
 	steepness_( 10 ),
 	membrane_rsd_num_( membrane_pos ),
@@ -96,13 +106,13 @@ MembraneInfo::MembraneInfo(
 /// spanning topology object and optional lipophilicity data. Thickness and
 /// steepness are currently constants
 MembraneInfo::MembraneInfo(
-	core::conformation::Conformation & conformation,
+	Conformation & /*conformation*/,
 	core::Size membrane_pos,
 	core::SSize membrane_jump,
 	LipidAccInfoOP lips,
 	SpanningTopologyOP topology
 ) :
-	conformation_( conformation ),
+	//conformation_( conformation ),
 	thickness_( 15 ),
 	steepness_( 10 ),
 	membrane_rsd_num_( membrane_pos ),
@@ -114,7 +124,7 @@ MembraneInfo::MembraneInfo(
 /// @brief Create a deep copy of all data in this object.
 MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
 	utility::pointer::ReferenceCount(),
-	conformation_( src.conformation_ ),
+	//conformation_( src.conformation_ ),
 	thickness_( src.thickness_ ),
 	steepness_( src.steepness_ ),
 	membrane_rsd_num_( src.membrane_rsd_num_ ),
@@ -133,7 +143,7 @@ MembraneInfo::operator=( MembraneInfo const & src ) {
 	}
 
 	// Make a deep copy of everything
-	this->conformation_ = src.conformation_;
+	// this->conformation_ = src.conformation_;
 	this->thickness_ = src.thickness_;
 	this->steepness_ = src.steepness_;
 	this->membrane_rsd_num_ = src.membrane_rsd_num_;
@@ -149,7 +159,7 @@ MembraneInfo::~MembraneInfo() {}
 
 /// @brief Generate a string representation of information represented by ths MembraneInfo
 void
-MembraneInfo::show(std::ostream & output ) const {
+MembraneInfo::show( std::ostream & output ) const {
 
 	// Show generic membrane info
 	output << "MembraneInfo: Information about this Membrane Protein" << std::endl;
@@ -160,12 +170,12 @@ MembraneInfo::show(std::ostream & output ) const {
 	output << "Membrane Spanning Topology " << std::endl;
 
 	// Grab membrane center/normal
-	core::Vector center( membrane_center() );
-	core::Vector normal( membrane_normal() );
+	// Vector center( membrane_center() );
+	// Vector normal( membrane_normal() );
 
 	// Show Current Membrane Position
-	output << "Membrane Center: " << center.x() << " " << center.y() << " " << center.z() << std::endl;
-	output << "Membrane Normal: " << normal.x() << " " << normal.y() << " " << normal.z() << std::endl;
+	// output << "Membrane Center: " << center.x() << " " << center.y() << " " << center.z() << std::endl;
+	// output << "Membrane Normal: " << normal.x() << " " << normal.y() << " " << normal.z() << std::endl;
 
 	// SHow spanning topology object
 	spanning_topology_->show();
@@ -198,21 +208,20 @@ MembraneInfo::membrane_steepness() const {
 /// @brief Membrane center
 /// @details Returns the xyzVector describing the center of the membrane
 /// This is the same as the MPct atom of the membrane (MEM) residue.
-core::Vector
-MembraneInfo::membrane_center() const  {
-
-	return conformation_.residue( membrane_rsd_num() ).xyz( membrane::center );
+Vector
+MembraneInfo::membrane_center( Conformation const & conf ) const  {
+	return conf.residue( membrane_rsd_num() ).xyz( membrane::center );
 }
 
 /// @brief Membrane normal
 /// @details Returns the membrane normal, which describes the membrane
 /// orientation. This is the same as the xyzVector in the MPnm atom
 /// in the membrane residue.
-core::Vector
-MembraneInfo::membrane_normal() const {
+Vector
+MembraneInfo::membrane_normal( Conformation const & conf ) const {
 
-	core::Vector normal_tracked = conformation_.residue( membrane_rsd_num() ).xyz( membrane::normal );
-	core::Vector normal = normal_tracked - membrane_center();
+	Vector normal_tracked = conf.residue( membrane_rsd_num() ).xyz( membrane::normal );
+	Vector normal = normal_tracked - membrane_center( conf );
 
 	return normal.normalize();
 }
@@ -220,12 +229,12 @@ MembraneInfo::membrane_normal() const {
 /// @brief Is residue in the membrane? Takes CA coordinate
 /// @details Uses the thickness stored in MembraneInfon and the residue_z_position
 bool
-MembraneInfo::in_membrane( core::Size resnum ) const {
+MembraneInfo::in_membrane( Conformation const & conf, core::Size resnum ) const {
 
 	bool in_mem( false );
 
-	if ( residue_z_position( resnum ) >= -membrane_thickness() &&
-			residue_z_position( resnum ) <= membrane_thickness() ) {
+	if ( residue_z_position( conf, resnum ) >= -membrane_thickness() &&
+			residue_z_position( conf, resnum ) <= membrane_thickness() ) {
 		in_mem = true;
 	}
 
@@ -236,16 +245,16 @@ MembraneInfo::in_membrane( core::Size resnum ) const {
 /// @details Calculate the z coordinate of the residue, projected onto
 /// the membrane normal axis. Objective is to maintain correct coordinates
 /// in relative coordinate frame.
-core::Real
-MembraneInfo::residue_z_position( core::Size resnum ) const {
+Real
+MembraneInfo::residue_z_position( Conformation const & conf, core::Size resnum ) const {
 
 	// Compute z_position
-	core::Vector const & xyz( conformation_.residue( resnum ).atom( "CA" ).xyz() );
+	Vector const & xyz( conf.residue( resnum ).atom( "CA" ).xyz() );
 
 	// membrane normal is normalized to 15, that's why dividing it here by 15
-	core::Vector normalized_to_1( membrane_normal() );
+	core::Vector normalized_to_1( membrane_normal( conf ) );
 	normalized_to_1.normalize();
-	core::Real result = dot( xyz - membrane_center(), normalized_to_1 );
+	core::Real result = dot( xyz - membrane_center( conf ), normalized_to_1 );
 	return result;
 }
 
@@ -253,16 +262,16 @@ MembraneInfo::residue_z_position( core::Size resnum ) const {
 /// @details Calculate the z coordinate of the atom, projected onto
 /// the membrane normal axis. Objective is to maintain correct coordinates
 /// in relative coordinate frame.
-core::Real
-MembraneInfo::atom_z_position( core::Size resnum, core::Size atomnum ) const {
+Real
+MembraneInfo::atom_z_position( Conformation const & conf, core::Size resnum, core::Size atomnum ) const {
 
 	// Compute z_position
-	core::Vector const & xyz( conformation_.residue( resnum ).atom( atomnum ).xyz() );
+	Vector const & xyz( conf.residue( resnum ).atom( atomnum ).xyz() );
 
 	// membrane normal is normalized to 15, that's why dividing it here by 15
-	core::Vector normalized_to_1( membrane_normal() );
+	core::Vector normalized_to_1( membrane_normal( conf ) );
 	normalized_to_1.normalize();
-	core::Real result = dot( xyz - membrane_center(), normalized_to_1 );
+	core::Real result = dot( xyz - membrane_center( conf ), normalized_to_1 );
 	return result;
 }
 
@@ -346,13 +355,13 @@ std::ostream & operator << ( std::ostream & os, MembraneInfo const & mem_info )
 {
 
 	// Grab membrane position from the pose
-	core::Vector center( mem_info.membrane_center() );
-	core::Vector normal( mem_info.membrane_normal() );
+	// Vector center( mem_info.membrane_center() );
+	// Vector normal( mem_info.membrane_normal() );
 
 	// Grab a const version of spanning topology
 	os << "Membrane residue located at position " << mem_info.membrane_rsd_num();
-	os << "Membrane Position: " << "center = " << center.to_string() << "; normal = " << normal.to_string() << std::endl;
-	os << "Number of transmembrane spans: " << mem_info.spanning_topology()->nspans() << std::endl;
+	//os << "Membrane Position: " << "center = " << center.to_string() << "; normal = " << normal.to_string() << std::endl;
+	os << "Membrane Number of transmembrane spans: " << mem_info.spanning_topology()->nspans() << std::endl;
 
 	return os;
 }
@@ -360,3 +369,34 @@ std::ostream & operator << ( std::ostream & os, MembraneInfo const & mem_info )
 } // membrane
 } // conformation
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::conformation::membrane::MembraneInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( thickness_ ) ); // core::Real
+	arc( CEREAL_NVP( steepness_ ) ); // core::Real
+	arc( CEREAL_NVP( membrane_rsd_num_ ) ); // core::Size
+	arc( CEREAL_NVP( membrane_jump_ ) ); // core::SSize
+	arc( CEREAL_NVP( lipid_acc_data_ ) ); // LipidAccInfoOP
+	arc( CEREAL_NVP( spanning_topology_ ) ); // SpanningTopologyOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::conformation::membrane::MembraneInfo::load( Archive & arc ) {
+	arc( thickness_ ); // core::Real
+	arc( steepness_ ); // core::Real
+	arc( membrane_rsd_num_ ); // core::Size
+	arc( membrane_jump_ ); // core::SSize
+	arc( lipid_acc_data_ ); // LipidAccInfoOP
+	arc( spanning_topology_ ); // SpanningTopologyOP
+}
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::membrane::MembraneInfo );
+CEREAL_REGISTER_TYPE( core::conformation::membrane::MembraneInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_conformation_membrane_MembraneInfo )
+#endif // SERIALIZATION

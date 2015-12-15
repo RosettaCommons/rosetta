@@ -46,6 +46,13 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace membrane {
@@ -108,31 +115,31 @@ public: // membrane position & orientation
 	/// @brief Membrane center
 	/// @details Returns the xyzVector describing the center of the membrane
 	/// This is the same as the MPct atom of the membrane (MEM) residue.
-	core::Vector membrane_center() const;
+	Vector membrane_center( Conformation const & conf ) const;
 
 	/// @brief Membrane normal
 	/// @details Returns the membrane normal, which describes the membrane
 	/// orientation. This is the same as the xyzVector in the MPnm atom
 	/// in the membrane residue.
-	core::Vector membrane_normal() const;
+	Vector membrane_normal( Conformation const & conf ) const;
 
 	/// @brief Is residue in the membrane? Takes CA coordinate
 	/// @details Uses the thickness stored in MembraneInfon and the residue_z_position
-	bool in_membrane( core::Size resnum ) const;
+	bool in_membrane( Conformation const & conf, core::Size resnum ) const;
 
 	/// @brief Compute residue position relative to membrane normal
 	/// @details Calculate the z coordinate of the residue, projected onto
 	/// the membrane normal axis. Objective is to maintain correct coordinates
 	/// in relative coordinate frame.
-	core::Real
-	residue_z_position( core::Size resnum ) const;
+	Real
+	residue_z_position( Conformation const & conf, core::Size resnum ) const;
 
 	/// @brief Compute atom position relative to membrane normal
 	/// @details Calculate the z coordinate of the atom, projected onto
 	/// the membrane normal axis. Objective is to maintain correct coordinates
 	/// in relative coordinate frame.
-	core::Real
-	atom_z_position( core::Size resnum, core::Size atomnum ) const;
+	Real
+	atom_z_position( Conformation const & conf, core::Size resnum, core::Size atomnum ) const;
 
 	/// @brief Sequence position of the membrane residue
 	/// @details Return the residue number of MEM (rsd.seqpos()) in the pose
@@ -183,7 +190,7 @@ private: // default constructor
 private: // data
 
 	// Keep track of the Pose's conformation
-	core::conformation::Conformation& conformation_;
+	// Conformation& conformation_;
 
 	// Fullatom constants
 	core::Real thickness_;
@@ -199,6 +206,13 @@ private: // data
 	LipidAccInfoOP lipid_acc_data_;
 	SpanningTopologyOP spanning_topology_;
 
+#ifdef    SERIALIZATION
+public:
+	friend class cereal::access;
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // MembraneInfo
 
 /// @brief Show MembraneInfo method for pyrosetta
@@ -208,5 +222,11 @@ std::ostream & operator << ( std::ostream & os, MembraneInfo const & mem_info );
 } // conformation
 } // core
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_membrane_MembraneInfo )
+#endif // SERIALIZATION
+
+
 #endif // INCLUDED_core_conformation_membrane_MembraneInfo_hh
+
 

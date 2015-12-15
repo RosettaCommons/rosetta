@@ -69,19 +69,16 @@ namespace resource_manager {
 /// should be instantiated depends on the options system, the ResourceManager should
 /// not be requested until after core::init::init() has been called (i.e. it should not
 /// be requested at load time.)
-class ResourceManager : public utility::SingletonBase< ResourceManager >
+class ResourceManager : public utility::pointer::ReferenceCount
 {
 public:
-	friend class utility::SingletonBase< ResourceManager >;
-protected:
-	/// @brief singleton, protected constructor for derived types instances
-	ResourceManager();
 
-private:
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	/// Not clear that this is appropriate for the ResourceManager.
-	static ResourceManager * create_singleton_instance();
+	ResourceManager();
+	virtual ~ResourceManager();
+
+	/// @brief Deprecated access to a global (not-quite singleton) ResourceManager instance that
+	/// should be removed
+	static ResourceManager * get_instance();
 
 protected: // Derived class interface
 

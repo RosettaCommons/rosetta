@@ -19,6 +19,7 @@
 #include <devel/init.hh>
 
 #include <core/types.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -69,7 +70,7 @@ get_n_mer_polyalanine( Size n )
 	}
 
 	PoseOP pose( new Pose );
-	make_pose_from_sequence( *pose, sequence, "fa_standard" );
+	make_pose_from_sequence( *pose, sequence, core::chemical::FA_STANDARD );
 
 	for ( core::uint i = 1; i < n; ++i ) {
 		pose->set_omega( i, 180.0 );  // Make extended.

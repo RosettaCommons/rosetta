@@ -37,9 +37,7 @@ namespace func {
 
 XYZ_Func::~XYZ_Func(){}
 
-
 ResidueXYZ::ResidueXYZ( Residue const & rsd_in ): rsd_( rsd_in ) {}
-
 
 Vector const &
 ResidueXYZ::operator()( AtomID const & id ) const
@@ -63,7 +61,6 @@ ResiduePairXYZ::ResiduePairXYZ( Residue const & rsd1_in, Residue const & rsd2_in
 	rsd1_( rsd1_in ),
 	rsd2_( rsd2_in )
 {}
-
 
 Vector const &
 ResiduePairXYZ::operator()( AtomID const & id ) const

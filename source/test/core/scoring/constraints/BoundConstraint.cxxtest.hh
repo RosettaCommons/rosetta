@@ -30,8 +30,11 @@
 // C++ Headers
 #include <sstream>
 
-//Auto Headers
-//#include <utility/vector1.hh>
+#ifdef	SERIALIZATION
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif
 
 class BoundConstraintTests : public CxxTest::TestSuite {
 
@@ -251,4 +254,90 @@ public:
 		TS_ASSERT(compare_stream.str() == "4.99386 5.6732247\nBOUNDED       0       0   1 \n4.99386 5.6732247\n\n");
 
 	}
+
+	void test_serialize_BoundFunc() {
+		TS_ASSERT( true ); // for non-serialization builds
+#ifdef SERIALIZATION
+		using namespace core::scoring::constraints;
+		using namespace core::scoring::func;
+
+		FuncOP instance( new BoundFunc(1.23, 2.34, 3.45, 4.56, "testing" ) ); // serialize this through a pointer to the base class
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( instance );
+		}
+
+		FuncOP instance2; // deserialize also through a pointer to the base class
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( instance2 );
+		}
+
+		// make sure the deserialized base class pointer points to a BoundFunc
+		TS_ASSERT( utility::pointer::dynamic_pointer_cast< BoundFunc > ( instance2 ));
+		TS_ASSERT( *instance == *instance2 );
+#endif // SERIALIZATION
+	}
+
+
+
+	void test_serialize_PeriodicBoundFunc() {
+		TS_ASSERT( true ); // for non-serialization builds
+#ifdef SERIALIZATION
+		using namespace core::scoring::constraints;
+		using namespace core::scoring::func;
+
+		FuncOP instance( new PeriodicBoundFunc(1.2,2.3,3.4,"yo!",4.5) ); // serialize this through a pointer to the base class
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( instance );
+		}
+
+		FuncOP instance2; // deserialize also through a pointer to the base class
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( instance2 );
+		}
+
+		// make sure the deserialized base class pointer points to a PeriodicBoundFunc
+		TS_ASSERT( utility::pointer::dynamic_pointer_cast< PeriodicBoundFunc > ( instance2 ));
+		TS_ASSERT( *instance == *instance2 );
+#endif // SERIALIZATION
+	}
+
+
+	void test_serialize_OffsetPeriodicBoundFunc() {
+		TS_ASSERT( true ); // for non-serialization builds
+#ifdef SERIALIZATION
+		using namespace core::scoring::constraints;
+		using namespace core::scoring::func;
+
+		FuncOP instance( new OffsetPeriodicBoundFunc(1.2,2.3,3.4,"mtv",4.5,0.25) ); // serialize this through a pointer to the base class
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( instance );
+		}
+
+		FuncOP instance2; // deserialize also through a pointer to the base class
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( instance2 );
+		}
+
+		// make sure the deserialized base class pointer points to a OffsetPeriodicBoundFunc
+		TS_ASSERT( utility::pointer::dynamic_pointer_cast< OffsetPeriodicBoundFunc > ( instance2 ));
+		TS_ASSERT( *instance == *instance2 );
+#endif // SERIALIZATION
+	}
+
 }; // BoundedFunc test suite
+

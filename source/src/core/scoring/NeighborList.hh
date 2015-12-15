@@ -40,6 +40,13 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -161,6 +168,12 @@ private:
 	mutable Real temp2_;
 	mutable Real temp3_;
 	mutable Real temp4_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -353,12 +366,24 @@ private:
 	mutable Size n_prepare_for_scorings_;
 	mutable Size n_update_from_wide_;
 	mutable Size n_full_updates_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > static void load_and_construct( Archive & arc, cereal::construct< NeighborList > & construct );
+#endif // SERIALIZATION
+
 };
 
 typedef utility::pointer::shared_ptr< NeighborList > NeighborListOP;
 
 } // namespace scoring
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_NeighborList )
+#endif // SERIALIZATION
 
 
 #endif

@@ -17,6 +17,14 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -29,3 +37,25 @@ FixbbRotamerSets::~FixbbRotamerSets() {}
 } // namespace pack
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::rotamer_set::FixbbRotamerSets::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pack::rotamer_set::RotamerSetsBase >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::rotamer_set::FixbbRotamerSets::load( Archive & arc ) {
+	arc( cereal::base_class< core::pack::rotamer_set::RotamerSetsBase >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::FixbbRotamerSets );
+CEREAL_REGISTER_TYPE( core::pack::rotamer_set::FixbbRotamerSets )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_rotamer_set_FixbbRotamerSets )
+#endif // SERIALIZATION

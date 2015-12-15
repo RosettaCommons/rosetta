@@ -49,7 +49,6 @@
 #include <vector>
 #include <basic/datacache/CacheableData.fwd.hh>
 
-
 namespace basic {
 namespace datacache {
 

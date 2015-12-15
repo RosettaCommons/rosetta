@@ -1243,6 +1243,27 @@ settings = {
         },
     },
 
+    "gcc, cxx11serialization" : {
+        "appends" : {
+            "flags" : {
+                "cxx" : [ "std=c++11" ],
+            },
+            "defines" : [
+                "CXX11",
+                "PTR_STD",
+		"SERIALIZATION",
+            ],
+        },
+        "removes" : {
+            "flags" : {
+                "cxx" : [ "std=c++98", "std=c++0x" ],
+            },
+            "defines" : [
+                "PTR_BOOST"
+            ]
+        },
+    },
+
 
     "gcc, apbs" : {
         "appends" : {
@@ -2054,6 +2075,29 @@ settings = {
             ],
         },
     },
+
+    "clang, cxx11serialization" : {
+        "appends" : {
+            "flags" : {
+                "cxx" : [ "std=c++11" ],
+                "warn" : [ "Wno-unused-function", ],
+            },
+            "defines" : [
+                "CXX11",
+                "PTR_STD",
+		"SERIALIZATION",
+            ],
+        },
+        "removes" : {
+            "flags" : {
+                "cxx" : [ "std=c++98", "std=c++0x" ],
+            },
+            "defines" : [
+                "PTR_BOOST"
+            ]
+        },
+    },
+
 
     "clang, graphics" : {
         "appends" : {

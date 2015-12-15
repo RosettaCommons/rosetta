@@ -19,6 +19,11 @@
 #include <core/types.hh>
 
 // C++ Headers
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -32,6 +37,8 @@ public:
 	clone() const {
 		return FuncOP( new IdentityFunc( *this ) );
 	}
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;
@@ -45,13 +52,21 @@ public:
 		std::ostream & out, Real x, Size verbose_level, core::Real threshold = 1
 	) const;
 
-private:
-	Real x0_;
-	Real sd_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_IdentityFunc )
+#endif // SERIALIZATION
+
 
 #endif

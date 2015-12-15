@@ -40,6 +40,11 @@
 
 #include <cmath>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace elec {
@@ -67,6 +72,12 @@ private:
 	utility::vector1< Real > n_;
 	utility::vector1< Vector > dw_dr_;
 	utility::vector1< utility::vector1< Size > > boundary_neighs_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -380,5 +391,10 @@ private:
 } // namespace elec
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_elec_FA_GrpElecEnergy )
+#endif // SERIALIZATION
+
 
 #endif

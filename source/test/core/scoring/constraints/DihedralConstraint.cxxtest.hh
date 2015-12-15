@@ -46,6 +46,15 @@
 #include <core/id/AtomID_Mask.hh>
 #include <utility/vector1.hh>
 
+#ifdef	SERIALIZATION
+#include <core/id/AtomID.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif
+
 
 using basic::T;
 using basic::Error;
@@ -223,7 +232,7 @@ public:
 		TS_ASSERT( pose.constraint_set() != pose_copy.constraint_set() );
 		utility::vector1< ConstraintCOP > constraints_orig = pose.constraint_set()->get_all_constraints();
 		utility::vector1< ConstraintCOP > constraints_copy = pose_copy.constraint_set()->get_all_constraints();
-		TS_ASSERT( constraints_orig.size() == 1 );
+		TS_ASSERT_EQUALS( constraints_orig.size(), 1 );
 		TS_ASSERT( constraints_orig.size() == constraints_copy.size() );
 		for ( core::Size i = 1; i <= constraints_orig.size(); ++i ) {
 			TR << "Original " << i << ": " << constraints_orig[i]->to_string() << std::endl;
@@ -246,5 +255,65 @@ public:
 		TS_ASSERT( pose.remove_constraint(constraint) == false );
 	}
 
+	void test_dihedral_constraint_clone() {
+		using namespace core;
+		using namespace core::id;
+		using namespace core::scoring;
+		using namespace core::scoring::constraints;
+
+		AtomID at1( 1, 1), at2( 2, 1 ), at3( 3, 1 ), at4( 4, 1 );
+		core::scoring::func::FuncOP func( new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( 109 ), 10 ) );
+		DihedralConstraintOP dihedral_cst(  new DihedralConstraint( at1, at2, at3, at4, func ));
+
+		ConstraintOP cloned_cst = dihedral_cst->clone();
+		DihedralConstraintOP cloned_dihcst = utility::pointer::dynamic_pointer_cast< DihedralConstraint > ( cloned_cst );
+
+		// ensure the dynamic cast succeeds
+		TS_ASSERT( cloned_dihcst );
+
+		// Make sure that the clone isn't the same as the original -- of course, right?
+		TS_ASSERT_DIFFERS( dihedral_cst, cloned_cst    );
+		TS_ASSERT_DIFFERS( dihedral_cst, cloned_dihcst );
+
+		// check mutual equality; a == b and b == a
+		TS_ASSERT( *dihedral_cst == *cloned_cst );
+		TS_ASSERT( *cloned_cst == *dihedral_cst );
+
+		// clone() should perform a deep copy of the internal func object, verifiable by looking
+		// at the func pointers and making sure they point at different objects.
+		TS_ASSERT_DIFFERS( & dihedral_cst->get_func(), & cloned_cst->get_func() );
+
+	}
+
+
+	void test_serialize_DihedralConstraint() {
+		TS_ASSERT( true ); // for non-serialization builds
+#ifdef SERIALIZATION
+		using namespace core::scoring::constraints;
+		using namespace core::scoring::func;
+		using namespace core::id;
+
+		FuncOP some_func( new HarmonicFunc( 1, 2 ));
+		AtomID at1( 1, 1), at2( 2, 1 ), at3( 3, 1 ), at4( 4, 1 );
+		ConstraintOP instance( new DihedralConstraint( at1, at2, at3, at4, some_func ) ); // serialize this through a pointer to the base class
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( instance );
+		}
+
+		ConstraintOP instance2; // deserialize also through a pointer to the base class
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( instance2 );
+		}
+
+		// make sure the deserialized base class pointer points to a DihedralConstraint
+		TS_ASSERT( utility::pointer::dynamic_pointer_cast< DihedralConstraint > ( instance2 ));
+		TS_ASSERT( *instance == *instance2 );
+#endif // SERIALIZATION
+	}
 
 };

@@ -17,6 +17,14 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace select {
 namespace residue_selector {
@@ -36,3 +44,21 @@ void ResidueSelector::parse_my_tag(
 } //namespace residue_selector
 } //namespace select
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::residue_selector::ResidueSelector::save( Archive & ) const {}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::residue_selector::ResidueSelector::load( Archive & ) {}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::ResidueSelector );
+CEREAL_REGISTER_TYPE( core::select::residue_selector::ResidueSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_select_residue_selector_ResidueSelector )
+#endif // SERIALIZATION

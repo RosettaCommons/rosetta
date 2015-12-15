@@ -13,8 +13,15 @@
 
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
+#include <core/scoring/func/SOGFunc.hh>
 #include <core/scoring/func/SOGFunc_Impl.hh>
 #include <core/types.hh>
+
+#ifdef	SERIALIZATION
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif
 
 using core::Size;
 using core::Real;
@@ -78,4 +85,44 @@ public:
 			TS_ASSERT_DELTA(actual_d, expect_d, TOLERATED_ERROR);
 		}
 	}
+
+	void test_serialize_SOGFunc() {
+		TS_ASSERT( true ); // for non-serialization builds
+#ifdef SERIALIZATION
+		using namespace core::scoring::func;
+
+		vector1< Real > means, sdevs, weights;
+		means.push_back( 0.5 );
+		sdevs.push_back( 1.0 );
+		weights.push_back( 0.3333 );
+
+		means.push_back( 1.5 );
+		sdevs.push_back( 0.5 );
+		weights.push_back( 0.3333 );
+
+		means.push_back( 5.0 );
+		sdevs.push_back( 2.0 );
+		weights.push_back( 0.3334 );
+
+		FuncOP instance( new SOGFunc(means, sdevs, weights) ); // serialize this through a pointer to the base class
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( instance );
+		}
+
+		FuncOP instance2; // deserialize also through a pointer to the base class
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( instance2 );
+		}
+
+		// make sure the deserialized base class pointer points to a SOGFunc
+		TS_ASSERT( utility::pointer::dynamic_pointer_cast< SOGFunc > ( instance2 ));
+		TS_ASSERT( *instance == *instance2 );
+#endif // SERIALIZATION
+	}
+
 };

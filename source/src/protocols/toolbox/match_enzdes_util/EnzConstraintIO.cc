@@ -61,12 +61,26 @@
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzConstraintIO" );
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/chemical/ResidueTypeSet.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
 /// @ brief constructor for EnzConstraintIO class, builds up function types
-EnzConstraintIO::EnzConstraintIO (core::chemical::ResidueTypeSetCAP src_restype_set) {
+EnzConstraintIO::EnzConstraintIO (core::chemical::ResidueTypeSetCOP src_restype_set) {
 	restype_set_ = src_restype_set;
 	//favor_native_constraints_.clear();
 	mcfi_lists_.clear();
@@ -908,3 +922,34 @@ EnzConstraintIO::determine_target_downstream_res()
 } //protocols
 
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::match_enzdes_util::EnzConstraintIO::EnzConstraintIO() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzConstraintIO::save( Archive & arc ) const {
+	arc( CEREAL_NVP( cst_pairs_ ) ); // utility::vector1<EnzConstraintParametersOP>
+	arc( CEREAL_NVP( mcfi_lists_ ) ); // utility::vector1<toolbox::match_enzdes_util::MatchConstraintFileInfoListOP>
+	arc( CEREAL_NVP( target_downstream_res_ ) ); // utility::vector1<std::pair<core::Size, core::Size> >
+	core::chemical::serialize_residue_type_set( arc, restype_set_ ); // core::chemical::ResidueTypeSetCAP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzConstraintIO::load( Archive & arc ) {
+	arc( cst_pairs_ ); // utility::vector1<EnzConstraintParametersOP>
+	arc( mcfi_lists_ ); // utility::vector1<toolbox::match_enzdes_util::MatchConstraintFileInfoListOP>
+	arc( target_downstream_res_ ); // utility::vector1<std::pair<core::Size, core::Size> >
+	core::chemical::deserialize_residue_type_set( arc, restype_set_ ); // core::chemical::ResidueTypeSetCAP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::EnzConstraintIO );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::EnzConstraintIO )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_EnzConstraintIO )
+#endif // SERIALIZATION

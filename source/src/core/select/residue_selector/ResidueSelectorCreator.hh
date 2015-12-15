@@ -19,6 +19,7 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
 #include <string>
@@ -29,8 +30,16 @@ namespace residue_selector {
 
 class ResidueSelectorCreator : public utility::pointer::ReferenceCount {
 public:
+	/// @brief Instantiate a particular ResidueSelector
 	virtual ResidueSelectorOP create_residue_selector() const = 0;
+
+	/// @brief Return a string that will be used to instantiate the particular ResidueSelector
+	/// from an XML file -- the name for the tag. E.g. "Neighborhood" for the NeighborhoodResidueSelector
 	virtual std::string keyname() const = 0;
+
+	/// @brief Define the structure of the XML file for a the ResidueSelector that this
+	/// %ResidueSelectorCreator instantiates using the XML Schema language.
+	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const = 0;
 };
 
 

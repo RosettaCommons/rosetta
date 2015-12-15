@@ -14,6 +14,15 @@
 // Unit Headers
 #include <core/conformation/PseudoBond.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal serialization headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace conformation {
 
@@ -72,6 +81,23 @@ void      PseudoBond::ur_resconnid( ResConnID setting ) { ur_conn_ = setting; }
 Size PseudoBond::nbonds() const { return nbonds_; }
 void PseudoBond::nbonds( Size setting ) { nbonds_ = setting; }
 
+#ifdef SERIALIZATION
+template < class Archive >
+void
+PseudoBond::save( Archive & arch ) const
+{
+	arch( lr_conn_, ur_conn_, nbonds_ );
+}
+
+template < class Archive >
+void
+PseudoBond::load( Archive & arch )
+{
+	arch( lr_conn_, ur_conn_, nbonds_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( PseudoBond );
+#endif
 
 // A PBCollection stores all of the PBs between a pair of residues.
 // PBs can be added to the collection, and iterated over, but cannot
@@ -107,6 +133,27 @@ PseudoBondCollection::PBIter PseudoBondCollection::iter_end() const {
 	return pseudo_bonds_.end();
 }
 
+#ifdef SERIALIZATION
+template < class Archive >
+void
+PseudoBondCollection::save( Archive & arch ) const
+{
+	arch( pseudo_bonds_ );
+}
+
+template < class Archive >
+void
+PseudoBondCollection::load( Archive & arch )
+{
+	arch( pseudo_bonds_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( PseudoBondCollection );
+#endif
 
 } // conformation
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_REGISTER_DYNAMIC_INIT( core_conformation_PseudoBond )
+#endif // SERIALIZATION

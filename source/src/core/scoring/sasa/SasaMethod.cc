@@ -13,6 +13,15 @@
 
 #include <core/scoring/sasa/SasaMethod.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace sasa {
@@ -53,3 +62,34 @@ SasaMethod::set_use_big_polar_hydrogen(bool big_polar_h){
 }
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::sasa::SasaMethod::SasaMethod() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::sasa::SasaMethod::save( Archive & arc ) const {
+	arc( CEREAL_NVP( probe_radius_ ) ); // Real
+	arc( CEREAL_NVP( radii_set_ ) ); // enum core::scoring::sasa::SasaRadii
+	arc( CEREAL_NVP( include_probe_radius_ ) ); // _Bool
+	arc( CEREAL_NVP( use_big_polar_H_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::sasa::SasaMethod::load( Archive & arc ) {
+	arc( probe_radius_ ); // Real
+	arc( radii_set_ ); // enum core::scoring::sasa::SasaRadii
+	arc( include_probe_radius_ ); // _Bool
+	arc( use_big_polar_H_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::sasa::SasaMethod );
+CEREAL_REGISTER_TYPE( core::scoring::sasa::SasaMethod )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_sasa_SasaMethod )
+#endif // SERIALIZATION

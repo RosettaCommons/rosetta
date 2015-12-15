@@ -26,6 +26,11 @@
 //Auto Headers
 #include <utility/vector1_bool.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -87,6 +92,12 @@ private:
 private:
 	/// some internal buffers in
 	CSA_lines All_CSA_lines_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -226,6 +237,12 @@ private:
 	Real CSAval_, CSAerr_;
 	Real weight_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 extern std::ostream& operator<<(std::ostream&, ChemicalShiftAnisotropy const&);
@@ -233,4 +250,9 @@ extern std::ostream& operator<<(std::ostream&, CSA const&);
 
 } //scoring
 } //core
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_ChemicalShiftAnisotropy )
+#endif // SERIALIZATION
+
+
 #endif

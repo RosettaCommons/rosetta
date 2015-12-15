@@ -257,8 +257,8 @@ OopCreatorMover::apply(
 
 
 	//kdrew: create glycine residue
-	ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
-	ResidueOP gly( ResidueFactory::create_residue( rsd_set.name_map( "GLY" ) ) );
+	ResidueTypeSetCOP rsd_set( pose.residue(1).residue_type_set() );
+	ResidueOP gly( ResidueFactory::create_residue( rsd_set->name_map( "GLY" ) ) );
 
 	Size pep_begin( pose.conformation().chain_begin( 1 ) );
 	Size pep_end( pose.conformation().chain_end( 1 ) );

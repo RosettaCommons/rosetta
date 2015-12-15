@@ -31,6 +31,14 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace loops {
 
@@ -169,3 +177,33 @@ operator<<( std::ostream & os, Loop const & loop )
 } // namespace loops
 } // namespace protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::loops::Loop::save( Archive & arc ) const {
+	arc( CEREAL_NVP( start_ ) ); // core::Size
+	arc( CEREAL_NVP( stop_ ) ); // core::Size
+	arc( CEREAL_NVP( cut_ ) ); // core::Size
+	arc( CEREAL_NVP( skip_rate_ ) ); // core::Real
+	arc( CEREAL_NVP( extended_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::loops::Loop::load( Archive & arc ) {
+	arc( start_ ); // core::Size
+	arc( stop_ ); // core::Size
+	arc( cut_ ); // core::Size
+	arc( skip_rate_ ); // core::Real
+	arc( extended_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::loops::Loop );
+CEREAL_REGISTER_TYPE( protocols::loops::Loop )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_loops_Loop )
+#endif // SERIALIZATION

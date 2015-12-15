@@ -21,24 +21,16 @@
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 #include <core/pack/rotamer_set/bb_independent_rotamers.hh>
 
-//#include <protocols/enzdes/EnzConstraintIO.hh>
-//#include <protocols/enzdes/EnzConstraintParameters.hh>
-
 // Project headers
 #include <core/conformation/Residue.hh>
-//#include <core/chemical/AA.hh> //needed to convert one letter AA codes
-#include <core/chemical/ResidueTypeSet.hh> //have to include complete file
-//#include <core/pose/Pose.hh>
-//#include <core/id/AtomID.hh>
-//#include <basic/options/option.hh>
-//#include <core/id/SequenceMapping.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.srlz.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/util.hh>
+
+// Basic headers
 #include <basic/basic.hh>
-//#include <core/io/pdb/pose_io.hh>  //debug only include
-//#include <core/pack/dunbrack/RotamerLibrary.hh> //debug only include
-//#include <utility/io/izstream.hh>  //debug only include
 
 // numeric headers
 #include <numeric/HomogeneousTransform.hh>
@@ -62,6 +54,23 @@
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.toolbox.match_enzdes_util.MatchConstraintFileIfo" );
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/chemical/ResidueType.srlz.hh>
+#include <core/chemical/ResidueTypeSet.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
@@ -74,10 +83,10 @@ void
 add_relevant_restypes_to_subset(
 	std::set< core::chemical::ResidueTypeCOP > & restype_subset,
 	std::string const & name3,
-	core::chemical::ResidueTypeSetCAP restype_set )
+	core::chemical::ResidueTypeSetCOP restype_set )
 {
 	using namespace core::chemical;
-	core::chemical::ResidueTypeCOPs restypes( restype_set.lock()->get_base_types_name3( name3 ) );
+	core::chemical::ResidueTypeCOPs restypes( restype_set->get_base_types_name3( name3 ) );
 	for ( core::Size i = 1; i <= restypes.size(); ++i ) {
 		restype_subset.insert( restypes[i] );
 	}
@@ -268,7 +277,7 @@ GeomSampleInfo::create_sample_vector() const
 
 MatchConstraintFileInfo::MatchConstraintFileInfo(
 	core::Size index,
-	core::chemical::ResidueTypeSetCAP restype_set )
+	core::chemical::ResidueTypeSetCOP restype_set )
 :
 	index_( index ),
 	is_covalent_(false),
@@ -711,7 +720,7 @@ MatchConstraintFileInfo::create_exgs() const
 
 
 MatchConstraintFileInfoList::MatchConstraintFileInfoList(
-	core::chemical::ResidueTypeSetCAP restype_set
+	core::chemical::ResidueTypeSetCOP restype_set
 ) :
 	restype_set_( restype_set )
 {
@@ -842,3 +851,134 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 }
 }//enzdes
 }//protocols
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::match_enzdes_util::MatchConstraintFileInfoList::MatchConstraintFileInfoList() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::MatchConstraintFileInfoList::save( Archive & arc ) const {
+	arc( CEREAL_NVP( mcfis_ ) ); // utility::vector1<MatchConstraintFileInfoOP>
+	core::chemical::serialize_residue_type_vector( arc, upstream_restypes_ );
+
+	arc( mcfis_for_restype_.size() );
+	for ( std::map<core::chemical::ResidueTypeCOP, utility::vector1<MatchConstraintFileInfoCOP> >::const_iterator
+					iter = mcfis_for_restype_.begin(), iter_end = mcfis_for_restype_.end(); iter != iter_end; ++iter ) {
+		core::chemical::serialize_residue_type( arc, iter->first );
+		arc( iter->second );
+	}
+
+	core::chemical::serialize_residue_type_set( arc, restype_set_ );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::MatchConstraintFileInfoList::load( Archive & arc ) {
+	arc( mcfis_ ); // utility::vector1<MatchConstraintFileInfoOP>
+	core::chemical::deserialize_residue_type_vector( arc, upstream_restypes_ );
+
+	core::Size nrestypes; arc( nrestypes );
+	for ( core::Size ii = 1; ii <= nrestypes; ++ii ) {
+		core::chemical::ResidueTypeCOP restype;
+		core::chemical::deserialize_residue_type( arc, restype );
+		utility::vector1< MatchConstraintFileInfoOP > mcfis;
+		arc( mcfis );
+		mcfis_for_restype_[ restype ] = mcfis;
+	}
+
+	core::chemical::deserialize_residue_type_set( arc, restype_set_ ); // core::chemical::ResidueTypeSetCAP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::MatchConstraintFileInfoList );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::MatchConstraintFileInfoList )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::match_enzdes_util::MatchConstraintFileInfo::MatchConstraintFileInfo() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::MatchConstraintFileInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( index_ ) ); // core::Size
+	arc( CEREAL_NVP( allowed_seqpos_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( enz_template_res_ ) ); // std::map<core::Size, EnzCstTemplateResOP>
+	arc( CEREAL_NVP( is_covalent_ ) ); // _Bool
+	arc( CEREAL_NVP( dis_U1D1_ ) ); // GeomSampleInfoOP
+	arc( CEREAL_NVP( ang_U1D2_ ) ); // GeomSampleInfoOP
+	arc( CEREAL_NVP( ang_U2D1_ ) ); // GeomSampleInfoOP
+	arc( CEREAL_NVP( tor_U1D3_ ) ); // GeomSampleInfoOP
+	arc( CEREAL_NVP( tor_U3D1_ ) ); // GeomSampleInfoOP
+	arc( CEREAL_NVP( tor_U2D2_ ) ); // GeomSampleInfoOP
+	arc( CEREAL_NVP( algorithm_inputs_ ) ); // std::map<std::string, utility::vector1<std::string> >
+	core::chemical::serialize_residue_type_set( arc, restype_set_ );
+	arc( CEREAL_NVP( native_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::MatchConstraintFileInfo::load( Archive & arc ) {
+	arc( index_ ); // core::Size
+	arc( allowed_seqpos_ ); // utility::vector1<core::Size>
+	arc( enz_template_res_ ); // std::map<core::Size, EnzCstTemplateResOP>
+	arc( is_covalent_ ); // _Bool
+	arc( dis_U1D1_ ); // GeomSampleInfoOP
+	arc( ang_U1D2_ ); // GeomSampleInfoOP
+	arc( ang_U2D1_ ); // GeomSampleInfoOP
+	arc( tor_U1D3_ ); // GeomSampleInfoOP
+	arc( tor_U3D1_ ); // GeomSampleInfoOP
+	arc( tor_U2D2_ ); // GeomSampleInfoOP
+	arc( algorithm_inputs_ ); // std::map<std::string, utility::vector1<std::string> >
+
+	core::chemical::deserialize_residue_type_set( arc, restype_set_ );
+
+	arc( native_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::MatchConstraintFileInfo );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::MatchConstraintFileInfo )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::match_enzdes_util::GeomSampleInfo::GeomSampleInfo() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::GeomSampleInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( tag_ ) ); // std::string
+	arc( CEREAL_NVP( function_tag_ ) ); // std::string
+	arc( CEREAL_NVP( ideal_val_ ) ); // core::Real
+	arc( CEREAL_NVP( tolerance_ ) ); // core::Real
+	arc( CEREAL_NVP( periodicity_ ) ); // core::Real
+	arc( CEREAL_NVP( force_const_ ) ); // core::Real
+	arc( CEREAL_NVP( num_steps_ ) ); // core::Size
+	arc( CEREAL_NVP( step_size_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::GeomSampleInfo::load( Archive & arc ) {
+	arc( tag_ ); // std::string
+	arc( function_tag_ ); // std::string
+	arc( ideal_val_ ); // core::Real
+	arc( tolerance_ ); // core::Real
+	arc( periodicity_ ); // core::Real
+	arc( force_const_ ); // core::Real
+	arc( num_steps_ ); // core::Size
+	arc( step_size_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::GeomSampleInfo );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::GeomSampleInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_MatchConstraintFileInfo )
+#endif // SERIALIZATION
+

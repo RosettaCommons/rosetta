@@ -19,6 +19,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/rna/util.hh>
 #include <numeric/random/random.hh>

@@ -456,7 +456,7 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 	core::scoring::ScoreFunctionOP scorefxn(  scoring::get_score_function() );
 	scorefxn->set_weight( core::scoring::fa_dun, 0 ); //since we use the JumpRotamer Mover the dunbrack energy is already in the sampling bias
 	core::pose::Pose pose;
-	core::pose::make_pose_from_sequence( pose, sequence_, "fa_standard", true );
+	core::pose::make_pose_from_sequence( pose, sequence_, core::chemical::FA_STANDARD, true );
 
 	//SizeList natoms( pose.total_residue(), 0);
 	// initialize_natoms( natoms, pose );
@@ -474,7 +474,7 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 		core::pose::make_pose_from_sequence(
 			short_pose,
 			sequence_.substr( frame->start()-1, frame->length() ),
-			"fa_standard",
+			core::chemical::FA_STANDARD,
 			true
 		);
 		//  tr << " my test   " << short_pose.sequence() << "   "<<std::endl;

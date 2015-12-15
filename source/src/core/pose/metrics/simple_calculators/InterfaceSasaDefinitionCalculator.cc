@@ -44,6 +44,20 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/id/AtomID_Map.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace metrics {
@@ -278,3 +292,52 @@ void InterfaceSasaDefinitionCalculator::recompute( Pose const & this_pose ) {
 } // metrics
 } // pose
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator::InterfaceSasaDefinitionCalculator() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::simple_calculators::InterfaceDefinitionCalculator >( this ) );
+	arc( CEREAL_NVP( delta_sasa_ ) ); // core::Real
+	arc( CEREAL_NVP( fraction_chain1_delta_sasa_ ) ); // core::Real
+	arc( CEREAL_NVP( fraction_chain2_delta_sasa_ ) ); // core::Real
+	arc( CEREAL_NVP( atom_delta_sasa_ ) ); // core::id::AtomID_Map<core::Real>
+	arc( CEREAL_NVP( residue_delta_sasa_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( interface_atoms_ ) ); // core::id::AtomID_Map<_Bool>
+	arc( CEREAL_NVP( interface_residues_ ) ); // std::set<core::Size>
+	arc( CEREAL_NVP( chain1_interface_residues_ ) ); // std::set<core::Size>
+	arc( CEREAL_NVP( chain2_interface_residues_ ) ); // std::set<core::Size>
+	arc( CEREAL_NVP( num_interface_residues_ ) ); // core::Size
+	arc( CEREAL_NVP( num_chain1_interface_residues_ ) ); // core::Size
+	arc( CEREAL_NVP( num_chain2_interface_residues_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::simple_calculators::InterfaceDefinitionCalculator >( this ) );
+	arc( delta_sasa_ ); // core::Real
+	arc( fraction_chain1_delta_sasa_ ); // core::Real
+	arc( fraction_chain2_delta_sasa_ ); // core::Real
+	arc( atom_delta_sasa_ ); // core::id::AtomID_Map<core::Real>
+	arc( residue_delta_sasa_ ); // utility::vector1<core::Real>
+	arc( interface_atoms_ ); // core::id::AtomID_Map<_Bool>
+	arc( interface_residues_ ); // std::set<core::Size>
+	arc( chain1_interface_residues_ ); // std::set<core::Size>
+	arc( chain2_interface_residues_ ); // std::set<core::Size>
+	arc( num_interface_residues_ ); // core::Size
+	arc( num_chain1_interface_residues_ ); // core::Size
+	arc( num_chain2_interface_residues_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator );
+CEREAL_REGISTER_TYPE( core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_metrics_simple_calculators_InterfaceSasaDefinitionCalculator )
+#endif // SERIALIZATION

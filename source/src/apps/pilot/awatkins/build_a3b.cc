@@ -38,6 +38,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <core/kinematics/MoveMap.hh>
 

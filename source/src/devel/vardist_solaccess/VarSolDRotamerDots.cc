@@ -68,6 +68,25 @@ static THREAD_LOCAL basic::Tracer TR( "devel.vardist_solaccess" );
 using namespace ObjexxFCL::format;
 using namespace core;
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/id/AtomID_Map.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// ObjexxFCL serialization headers
+#include <utility/serialization/ObjexxFCL/FArray2D.srlz.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace devel {
 namespace vardist_solaccess {
 
@@ -118,19 +137,20 @@ atom_coverage_[ ii ].resize( radii_[ rotamer_->atom( ii ).type() ].size() );
 
 VarSolDRotamerDots::VarSolDRotamerDots(
 	conformation::ResidueCOP rotamer,
-	VarSolDistSasaCalculator const & vsasa_calc
+	VarSolDistSasaCalculatorCOP vsasa_calc
 ) :
+	owner_( vsasa_calc ),
 	rotamer_(rotamer),
-	radii_(vsasa_calc.radii_),
-	msas_radii_(vsasa_calc.msas_radii_),
-	coll_radii_(vsasa_calc.coll_radii_),
-	int_radii_(vsasa_calc.int_radii_),
-	int_radii_sum_(vsasa_calc.int_radii_sum_),
-	int_radii_sum2_(vsasa_calc.int_radii_sum2_),
-	lg_angles_(vsasa_calc.lg_angles_),
-	lg_masks_(vsasa_calc.lg_masks_),
-	num_bytes_(vsasa_calc.num_bytes_),
-	polar_expansion_radius_(vsasa_calc.polar_expansion_radius_)
+	radii_(vsasa_calc->radii_),
+	msas_radii_(vsasa_calc->msas_radii_),
+	coll_radii_(vsasa_calc->coll_radii_),
+	int_radii_(vsasa_calc->int_radii_),
+	int_radii_sum_(vsasa_calc->int_radii_sum_),
+	int_radii_sum2_(vsasa_calc->int_radii_sum2_),
+	lg_angles_(vsasa_calc->lg_angles_),
+	lg_masks_(vsasa_calc->lg_masks_),
+	num_bytes_(vsasa_calc->num_bytes_),
+	polar_expansion_radius_(vsasa_calc->polar_expansion_radius_)
 {
 	num_atoms_ = rotamer->natoms();
 	atom_coverage_.resize( num_atoms_ );
@@ -150,6 +170,7 @@ VarSolDRotamerDots::~VarSolDRotamerDots() {
 ///
 VarSolDRotamerDots::VarSolDRotamerDots( VarSolDRotamerDots const & rhs ) :
 	utility::pointer::ReferenceCount(),
+	owner_( rhs.owner_ ),
 	rotamer_(rhs.rotamer_),
 	radii_(rhs.radii_),
 	msas_radii_(rhs.msas_radii_),
@@ -695,7 +716,7 @@ VarSolDistSasaCalculator::VarSolDistSasaCalculator():
 
 core::pose::metrics::PoseMetricCalculatorOP
 VarSolDistSasaCalculator::clone() const{
-	return core::pose::metrics::PoseMetricCalculatorOP( new VarSolDistSasaCalculator() );
+	return VarSolDistSasaCalculatorOP( new VarSolDistSasaCalculator() );
 }
 
 void VarSolDistSasaCalculator::set_atom_type_radii(std::string atype_name, Real coll_radius, Real int_radius, Size nshells) {
@@ -796,7 +817,9 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 	residue_sasa_.resize( this_pose.total_residue() );
 	// TR << "Initializing vSASA arrays with probe radius = " << probe_radius_ << " and wobble = " << wobble_ << std::endl;
 	for ( Size ii = 1; ii <= this_pose.total_residue(); ++ii ) {
-		rotamer_dots_vec_[ ii ] = VarSolDRotamerDotsOP( new VarSolDRotamerDots( core::conformation::ResidueOP( new core::conformation::Residue(this_pose.residue( ii ) ) ), *this ) );
+		rotamer_dots_vec_[ ii ] = VarSolDRotamerDotsOP( new VarSolDRotamerDots(
+			core::conformation::ResidueOP( new core::conformation::Residue( this_pose.residue( ii ) ) ),
+			get_self_ptr() ) );
 		rotamer_dots_vec_[ ii ]->increment_self_overlap();
 	}
 	core::scoring::EnergyGraph const & energy_graph( this_pose.energies().energy_graph() );
@@ -853,7 +876,7 @@ LoadVarSolDistSasaCalculatorMover::apply( core::pose::Pose & )
 	if ( CalculatorFactory::Instance().check_calculator_exists( "bur_unsat_calc_default_sasa_calc" ) ) {
 		CalculatorFactory::Instance().remove_calculator( "bur_unsat_calc_default_sasa_calc" );
 	}
-	CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_default_sasa_calc", core::pose::metrics::PoseMetricCalculatorOP( new VarSolDistSasaCalculator() ) );
+	CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_default_sasa_calc", VarSolDistSasaCalculatorOP( new VarSolDistSasaCalculator() ) );
 }
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
@@ -868,3 +891,102 @@ void LoadVarSolDistSasaCalculatorMover::parse_my_tag(
 
 } // vardist_solaccess
 } // devel
+
+
+#ifdef    SERIALIZATION
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+devel::vardist_solaccess::VarSolDRotamerDots::save( Archive & arc ) const {
+	arc( CEREAL_NVP( owner_ ) );
+	arc( CEREAL_NVP( rotamer_ ) ); // core::conformation::ResidueCOP
+	arc( CEREAL_NVP( num_atoms_ ) ); // core::Size
+	arc( CEREAL_NVP( atom_coverage_ ) ); // utility::vector1<utility::vector1<core::pack::interaction_graph::DotSphere> >
+	arc( CEREAL_NVP( dot_coords_ ) ); // utility::vector1<core::Vector>
+
+	// EXEMPT num_bytes_ polar_expansion_radius_ radii_ msas_radii_ coll_radii_ int_radii_ int_radii_sum_ int_radii_sum2_
+	// EXEMPT lg_angles_ lg_masks_
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+devel::vardist_solaccess::VarSolDRotamerDots::load_and_construct( Archive & arc, cereal::construct< devel::vardist_solaccess::VarSolDRotamerDots > & construct ) {
+
+	VarSolDistSasaCalculatorAP owner_weak; arc( owner_weak );
+	VarSolDistSasaCalculatorCOP owner_strong( owner_weak.lock() );
+
+	core::conformation::ResidueOP residue; arc( residue );
+
+	construct( residue, owner_strong );
+	// EXEMPT owner_ rotamer_
+	arc( construct->num_atoms_ ); // core::Size
+	arc( construct->atom_coverage_ ); // utility::vector1<utility::vector1<core::pack::interaction_graph::DotSphere> >
+	arc( construct->dot_coords_ ); // utility::vector1<core::Vector>
+
+	// EXEMPT num_bytes_ polar_expansion_radius_ radii_ msas_radii_ coll_radii_ int_radii_ int_radii_sum_ int_radii_sum2_
+	// EXEMPT lg_angles_ lg_masks_
+
+}
+SAVE_AND_LOAD_AND_CONSTRUCT_SERIALIZABLE( devel::vardist_solaccess::VarSolDRotamerDots );
+CEREAL_REGISTER_TYPE( devel::vardist_solaccess::VarSolDRotamerDots )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+devel::vardist_solaccess::VarSolDistSasaCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( probe_radius_ ) ); // core::Real
+	arc( CEREAL_NVP( wobble_ ) ); // core::Real
+	arc( CEREAL_NVP( total_sasa_ ) ); // core::Real
+	arc( CEREAL_NVP( atom_sasa_ ) ); // core::id::AtomID_Map<core::Real>
+	arc( CEREAL_NVP( residue_sasa_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( rotamer_dots_vec_ ) ); // utility::vector1<VarSolDRotamerDotsOP>
+	arc( CEREAL_NVP( radii_ ) ); // utility::vector1<utility::vector1<core::Real> >
+	arc( CEREAL_NVP( msas_radii_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( coll_radii_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( int_radii_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( int_radii_sum_ ) ); // utility::vector1<utility::vector1<core::Real> >
+	arc( CEREAL_NVP( int_radii_sum2_ ) ); // utility::vector1<utility::vector1<core::Real> >
+	// This is basically a constant; don't serialize arc( CEREAL_NVP( num_bytes_ ) ); // const core::Size
+	// Don't serialize / deserialize these pointers to global arrays.
+	// arc( CEREAL_NVP( lg_masks_ ) ); // const ObjexxFCL::FArray2D_ubyte *; raw pointer: const ObjexxFCL::FArray2D_ubyte *
+	// arc( CEREAL_NVP( lg_angles_ ) ); // const ObjexxFCL::FArray2D_int *; raw pointer: const ObjexxFCL::FArray2D_int *
+	// EXEMPT num_bytes_ lg_masks_ lg_angles_
+	arc( CEREAL_NVP( polar_expansion_radius_ ) ); // core::Real
+	arc( CEREAL_NVP( up_to_date ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+devel::vardist_solaccess::VarSolDistSasaCalculator::load( Archive & arc ) {
+	arc( probe_radius_ ); // core::Real
+	arc( wobble_ ); // core::Real
+	arc( total_sasa_ ); // core::Real
+	arc( atom_sasa_ ); // core::id::AtomID_Map<core::Real>
+	arc( residue_sasa_ ); // utility::vector1<core::Real>
+	arc( rotamer_dots_vec_ ); // utility::vector1<VarSolDRotamerDotsOP>
+	arc( radii_ ); // utility::vector1<utility::vector1<core::Real> >
+	arc( msas_radii_ ); // utility::vector1<core::Real>
+	arc( coll_radii_ ); // utility::vector1<core::Real>
+	arc( int_radii_ ); // utility::vector1<core::Real>
+	arc( int_radii_sum_ ); // utility::vector1<utility::vector1<core::Real> >
+	arc( int_radii_sum2_ ); // utility::vector1<utility::vector1<core::Real> >
+	// This is basically a constant -- don't serialize arc( num_bytes_ ); // const core::Size
+	// Don't serialize/deserialize these pointers to global arrays
+	// arc( lg_masks_ ); // const ObjexxFCL::FArray2D_ubyte *; raw pointer: const ObjexxFCL::FArray2D_ubyte *
+	// arc( lg_angles_ ); // const ObjexxFCL::FArray2D_int *; raw pointer: const ObjexxFCL::FArray2D_int *
+	// EXEMPT num_bytes_ lg_masks_ lg_angles_
+	arc( polar_expansion_radius_ ); // core::Real
+	arc( up_to_date ); // _Bool
+}
+SAVE_AND_LOAD_SERIALIZABLE( devel::vardist_solaccess::VarSolDistSasaCalculator );
+CEREAL_REGISTER_TYPE( devel::vardist_solaccess::VarSolDistSasaCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( devel_vardist_solaccess_VarSolDRotamerDots )
+#endif // SERIALIZATION
+
+
+

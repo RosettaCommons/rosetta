@@ -46,6 +46,16 @@ using core::conformation::Residue;
 using std::string;
 using utility::vector1;
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace disulfides {
@@ -348,6 +358,18 @@ histogram_from_db(string file) {
 //Cb_Distance_Func
 Cb_Distance_Func::Cb_Distance_Func() {}
 Cb_Distance_Func::~Cb_Distance_Func() {}
+
+bool Cb_Distance_Func::operator == ( Func const & other ) const
+{
+	return same_type_as_me( other ) && other.same_type_as_me( *this );
+}
+
+bool Cb_Distance_Func::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< Cb_Distance_Func const * > ( &other );
+}
+
+
 Real Cb_Distance_Func::func( Real const cb_dist_sq_) const {
 	using core::scoring::constraints::dgaussian;
 	Energy score = base_score_;
@@ -360,6 +382,7 @@ Real Cb_Distance_Func::func( Real const cb_dist_sq_) const {
 Real Cb_Distance_Func::dfunc( Real const) const {
 	return 0.0;
 }
+
 const Real Cb_Distance_Func::means_[3] = { 12.445, 15.327, 14.0 };
 const Real Cb_Distance_Func::sds_[3]   = { 1.1737973, 2.1955666, 0.3535534 };
 const Real Cb_Distance_Func::weights_[3] = {10.8864116, 33.5711622, 0.2658681 };
@@ -368,6 +391,15 @@ const Real Cb_Distance_Func::base_score_ = 0.0;
 //Cen_Distance_Func
 Cen_Distance_Func::Cen_Distance_Func() {}
 Cen_Distance_Func::~Cen_Distance_Func() {}
+bool Cen_Distance_Func::operator == ( Func const & other ) const
+{
+	return same_type_as_me( other ) && other.same_type_as_me( *this );
+}
+
+bool Cen_Distance_Func::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< Cen_Distance_Func const * > ( &other );
+}
 Real Cen_Distance_Func::func( Real const cen_dist_sq) const {
 	if ( centroid_dist_scores_ == 0 ) {
 		centroid_dist_scores_ = histogram_from_db("scoring/score_functions/disulfides/centroid_distance_score");
@@ -384,6 +416,15 @@ HistogramCOP<Real,Real>::Type Cen_Distance_Func::centroid_dist_scores_ = 0;
 //CaCbCb_Angle_Func
 CaCbCb_Angle_Func::CaCbCb_Angle_Func() {}
 CaCbCb_Angle_Func::~CaCbCb_Angle_Func() {}
+bool CaCbCb_Angle_Func::operator == ( Func const & other ) const
+{
+	return same_type_as_me( other ) && other.same_type_as_me( *this );
+}
+
+bool CaCbCb_Angle_Func::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< CaCbCb_Angle_Func const * > ( &other );
+}
 Real CaCbCb_Angle_Func::func( Real const cacbcb_angle) const {
 	if ( CaCbCb_angle_scores_ == 0 ) {
 		CaCbCb_angle_scores_ = histogram_from_db("scoring/score_functions/disulfides/centroid_CaCbCb_angle_score");
@@ -401,6 +442,15 @@ HistogramCOP<core::Real,core::Real>::Type CaCbCb_Angle_Func::CaCbCb_angle_scores
 //NCaCaC_Dihedral_Func
 NCaCaC_Dihedral_Func::NCaCaC_Dihedral_Func() {}
 NCaCaC_Dihedral_Func::~NCaCaC_Dihedral_Func() {}
+bool NCaCaC_Dihedral_Func::operator == ( Func const & other ) const
+{
+	return same_type_as_me( other ) && other.same_type_as_me( *this );
+}
+
+bool NCaCaC_Dihedral_Func::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< NCaCaC_Dihedral_Func const * > ( &other );
+}
 Real NCaCaC_Dihedral_Func::func( Real const backbone_dihedral) const {
 	if ( backbone_dihedral_scores_ == 0 ) {
 		backbone_dihedral_scores_ = histogram_from_db("scoring/score_functions/disulfides/centroid_backbone_dihedral_score");
@@ -418,6 +468,15 @@ HistogramCOP<core::Real,core::Real>::Type NCaCaC_Dihedral_Func::backbone_dihedra
 //CaCbCbCa_Dihedral_Func
 CaCbCbCa_Dihedral_Func::CaCbCbCa_Dihedral_Func() {}
 CaCbCbCa_Dihedral_Func::~CaCbCbCa_Dihedral_Func() {}
+bool CaCbCbCa_Dihedral_Func::operator == ( Func const & other ) const
+{
+	return same_type_as_me( other ) && other.same_type_as_me( *this );
+}
+
+bool CaCbCbCa_Dihedral_Func::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< CaCbCbCa_Dihedral_Func const * > ( &other );
+}
 Real CaCbCbCa_Dihedral_Func::func( Real const cacbcbca_dihedral) const {
 	if ( CaCbCbCa_dihedral_scores_ == 0 ) {
 		CaCbCbCa_dihedral_scores_ = histogram_from_db("scoring/score_functions/disulfides/centroid_CaCbCbCa_dihedral_score");
@@ -435,3 +494,96 @@ HistogramCOP<core::Real,core::Real>::Type CaCbCbCa_Dihedral_Func::CaCbCbCa_dihed
 } // disulfides
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::Cb_Distance_Func::save( Archive & arc ) const {
+	arc( cereal::base_class< func::Func >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::Cb_Distance_Func::load( Archive & arc ) {
+	arc( cereal::base_class< func::Func >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::Cb_Distance_Func );
+CEREAL_REGISTER_TYPE( core::scoring::disulfides::Cb_Distance_Func )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::NCaCaC_Dihedral_Func::save( Archive & arc ) const {
+	arc( cereal::base_class< func::Func >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::NCaCaC_Dihedral_Func::load( Archive & arc ) {
+	arc( cereal::base_class< func::Func >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::NCaCaC_Dihedral_Func );
+CEREAL_REGISTER_TYPE( core::scoring::disulfides::NCaCaC_Dihedral_Func )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::CaCbCbCa_Dihedral_Func::save( Archive & arc ) const {
+	arc( cereal::base_class< func::Func >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::CaCbCbCa_Dihedral_Func::load( Archive & arc ) {
+	arc( cereal::base_class< func::Func >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::CaCbCbCa_Dihedral_Func );
+CEREAL_REGISTER_TYPE( core::scoring::disulfides::CaCbCbCa_Dihedral_Func )
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::Cen_Distance_Func::save( Archive & arc ) const {
+	arc( cereal::base_class< func::Func >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::Cen_Distance_Func::load( Archive & arc ) {
+	arc( cereal::base_class< func::Func >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::Cen_Distance_Func );
+CEREAL_REGISTER_TYPE( core::scoring::disulfides::Cen_Distance_Func )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::CaCbCb_Angle_Func::save( Archive & arc ) const {
+	arc( cereal::base_class< func::Func >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::CaCbCb_Angle_Func::load( Archive & arc ) {
+	arc( cereal::base_class< func::Func >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::CaCbCb_Angle_Func );
+CEREAL_REGISTER_TYPE( core::scoring::disulfides::CaCbCb_Angle_Func )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_disulfides_CentroidDisulfidePotential )
+#endif // SERIALIZATION

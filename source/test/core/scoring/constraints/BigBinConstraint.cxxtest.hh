@@ -108,6 +108,14 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+#ifdef	SERIALIZATION
+#include <core/id/AtomID.hh>
+
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif
+
 
 class BigBinConstraintTests : public CxxTest::TestSuite {
 
@@ -150,4 +158,33 @@ public:
 		TS_ASSERT( bb_cst.bin() == 'G' );
 		TS_ASSERT_DELTA( bb_cst.sdev(), 0.5, 1e-5 );
 	} // test_func
+
+	void test_serialize_BigBinConstraint() {
+		TS_ASSERT( true ); // for non-serialization builds
+#ifdef SERIALIZATION
+		using namespace core::scoring::constraints;
+		using namespace core::id;
+
+		// serialize this through a pointer to the base class
+		ConstraintOP instance( new BigBinConstraint( AtomID(3,3), AtomID(1,4), AtomID(2,4), AtomID(3,4), AtomID(1,5), AtomID(2,5), 'E' ) );
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( instance );
+		}
+
+		ConstraintOP instance2; // deserialize also through a pointer to the base class
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( instance2 );
+		}
+
+		// make sure the deserialized base class pointer points to a BigBinConstraint
+		TS_ASSERT( utility::pointer::dynamic_pointer_cast< BigBinConstraint > ( instance2 ));
+		TS_ASSERT( *instance == *instance2 );
+#endif // SERIALIZATION
+	}
+
 };

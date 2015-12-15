@@ -41,6 +41,11 @@
 // C++ headers
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace helical_bundle {
 namespace parameters {
@@ -136,10 +141,21 @@ private:
 	core::Size n_helices_;
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //class BundleParametersSet
 
 } // namespace parameters
 } // namespace helical_bundle
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_helical_bundle_parameters_BundleParametersSet )
+#endif // SERIALIZATION
+
 
 #endif

@@ -21,6 +21,17 @@
 
 static basic::Tracer TR( "core.scoring.rna.RNA_EnergyMethodOptions" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace rna {
@@ -73,3 +84,29 @@ RNA_EnergyMethodOptions::show( std::ostream & out ) const
 } //rna
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::rna::RNA_EnergyMethodOptions::save( Archive & arc ) const {
+	arc( CEREAL_NVP( syn_G_potential_bonus_ ) ); // core::Real
+	arc( CEREAL_NVP( torsion_potential_ ) ); // std::string
+	arc( CEREAL_NVP( suiteness_bonus_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::rna::RNA_EnergyMethodOptions::load( Archive & arc ) {
+	arc( syn_G_potential_bonus_ ); // core::Real
+	arc( torsion_potential_ ); // std::string
+	arc( suiteness_bonus_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::rna::RNA_EnergyMethodOptions );
+CEREAL_REGISTER_TYPE( core::scoring::rna::RNA_EnergyMethodOptions )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_rna_RNA_EnergyMethodOptions )
+#endif // SERIALIZATION

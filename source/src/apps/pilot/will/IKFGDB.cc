@@ -132,7 +132,7 @@ public:
     vector1<Size>::const_iterator ip = pos_.begin();
     vector1<Vec> ::const_iterator ic = cb_ .begin();
     Pose asn;
-    make_pose_from_sequence(asn,"N","fa_standard",false);
+    make_pose_from_sequence(asn,"N",core::chemical::FA_STANDARD,false);
     if(asn.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(asn,1);
     if(asn.residue(1).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(asn,1);
 
@@ -238,7 +238,7 @@ void run(std::string fname) {
   using namespace scoring;
 
   Pose gln;
-  make_pose_from_sequence(gln,"Q","fa_standard",false);
+  make_pose_from_sequence(gln,"Q",core::chemical::FA_STANDARD,false);
   if(gln.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(gln,1);
   if(gln.residue(1).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(gln,1);
 
@@ -299,7 +299,7 @@ void run(std::string fname) {
 
   // utility::io::ozstream out("test.pdb");
   // Pose res;
-  // make_pose_from_sequence(res,"N","fa_standard",false);
+  // make_pose_from_sequence(res,"N",core::chemical::FA_STANDARD,false);
   // core::pose::remove_lower_terminus_type_from_pose_residue(res,1);
   // core::pose::remove_upper_terminus_type_from_pose_residue(res,1);
   // Stub s(res.xyz(AtomID(5,1)),res.xyz(AtomID(2,1)),res.xyz(AtomID(1,1)));

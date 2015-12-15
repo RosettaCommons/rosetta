@@ -85,7 +85,7 @@ public:
 		residue_set.read_files_for_custom_residue_types(params_files);
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
-		tim_enz_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr()) );
+		tim_enz_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(const_residue_set) );
 	}
 
 	// Shared finalization goes here.

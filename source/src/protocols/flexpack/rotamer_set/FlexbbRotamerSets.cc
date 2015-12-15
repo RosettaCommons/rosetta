@@ -57,6 +57,17 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace flexpack {
 namespace rotamer_set {
@@ -994,3 +1005,68 @@ FlexbbRotamerSets::show( std::ostream & out ) const {
 }
 
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::flexpack::rotamer_set::FlexbbRotamerSets::FlexbbRotamerSets() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::flexpack::rotamer_set::FlexbbRotamerSets::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pack::rotamer_set::RotamerSetsBase >( this ) );
+	arc( CEREAL_NVP( nmoltenres_ ) ); // Size
+	arc( CEREAL_NVP( total_residue_ ) ); // Size
+	arc( CEREAL_NVP( nbbconfs_ ) ); // Size
+	arc( CEREAL_NVP( task_ ) ); // PackerTaskCOP
+	arc( CEREAL_NVP( rotamers_ ) ); // utility::vector1<utility::vector1<rotamer_set::FlexbbRotamerSetOP> >
+	arc( CEREAL_NVP( nrotamers_ ) ); // Size
+	arc( CEREAL_NVP( nrotamers_for_moltenres_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( moltenres_2_resid_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( resid_2_moltenres_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( moltenres_for_rotamer_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( bbconf_for_rotamer_of_moltenres_ ) ); // utility::vector1<utility::vector1<Size> >
+	arc( CEREAL_NVP( conformations_for_flexible_segments_ ) ); // utility::vector1<utility::vector1<core::conformation::ResidueCOP> >
+	arc( CEREAL_NVP( flexsegment_span_ ) ); // utility::vector1<std::pair<Size, Size> >
+	arc( CEREAL_NVP( nbbconfs_for_flexseg_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( moltenres_2_flexseg_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( nrotoffset_for_moltenres_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( nrots_for_moltenres_bbconf_ ) ); // utility::vector1<utility::vector1<Size> >
+	arc( CEREAL_NVP( nrotoffset_for_moltenres_bbconf_ ) ); // utility::vector1<utility::vector1<Size> >
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::flexpack::rotamer_set::FlexbbRotamerSets::load( Archive & arc ) {
+	arc( cereal::base_class< core::pack::rotamer_set::RotamerSetsBase >( this ) );
+	arc( nmoltenres_ ); // Size
+	arc( total_residue_ ); // Size
+	arc( nbbconfs_ ); // Size
+	std::shared_ptr< core::pack::task::PackerTask > local_task;
+	arc( local_task ); // PackerTaskCOP
+	task_ = local_task; // copy the non-const pointer(s) into the const pointer(s)
+	arc( rotamers_ ); // utility::vector1<utility::vector1<rotamer_set::FlexbbRotamerSetOP> >
+	arc( nrotamers_ ); // Size
+	arc( nrotamers_for_moltenres_ ); // utility::vector1<Size>
+	arc( moltenres_2_resid_ ); // utility::vector1<Size>
+	arc( resid_2_moltenres_ ); // utility::vector1<Size>
+	arc( moltenres_for_rotamer_ ); // utility::vector1<Size>
+	arc( bbconf_for_rotamer_of_moltenres_ ); // utility::vector1<utility::vector1<Size> >
+	utility::vector1< utility::vector1< std::shared_ptr< core::conformation::Residue > > > local_conformations_for_flexible_segments;
+	arc( local_conformations_for_flexible_segments ); // utility::vector1<utility::vector1<core::conformation::ResidueCOP> >
+	conformations_for_flexible_segments_ = local_conformations_for_flexible_segments; // copy the non-const pointer(s) into the const pointer(s)
+	arc( flexsegment_span_ ); // utility::vector1<std::pair<Size, Size> >
+	arc( nbbconfs_for_flexseg_ ); // utility::vector1<Size>
+	arc( moltenres_2_flexseg_ ); // utility::vector1<Size>
+	arc( nrotoffset_for_moltenres_ ); // utility::vector1<Size>
+	arc( nrots_for_moltenres_bbconf_ ); // utility::vector1<utility::vector1<Size> >
+	arc( nrotoffset_for_moltenres_bbconf_ ); // utility::vector1<utility::vector1<Size> >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::flexpack::rotamer_set::FlexbbRotamerSets );
+CEREAL_REGISTER_TYPE( protocols::flexpack::rotamer_set::FlexbbRotamerSets )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_flexpack_rotamer_set_FlexbbRotamerSets )
+#endif // SERIALIZATION

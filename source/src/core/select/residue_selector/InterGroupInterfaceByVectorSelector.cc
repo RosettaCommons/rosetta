@@ -17,12 +17,15 @@
 // Package headers
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/select/util/interface_vector_calculate.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
 
 // Basic headers
@@ -31,6 +34,16 @@
 // C++ headers
 #include <set>
 #include <string>
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace select {
@@ -260,6 +273,20 @@ std::string InterGroupInterfaceByVectorSelector::class_name() {
 }
 
 void
+InterGroupInterfaceByVectorSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "cb_dist_cut",      xs_decimal, "11.0" ));
+	attributes.push_back( XMLSchemaAttribute( "nearby_atom_cut",  xs_decimal, "5.5"  ));
+	attributes.push_back( XMLSchemaAttribute( "vector_angle_cut", xs_decimal, "75.0" ));
+	attributes.push_back( XMLSchemaAttribute( "vector_dist_cut",  xs_decimal, "9.0"  ));
+	attributes.push_back( XMLSchemaAttribute( "grp1_selector",    xs_string  ));
+	attributes.push_back( XMLSchemaAttribute( "grp2_selector",    xs_string  ));
+	xsd_type_definition_w_attributes_and_subselectors( xsd, class_name(), 0, 2, attributes );
+}
+
+
+void
 InterGroupInterfaceByVectorSelector::set_from_residue_selector(
 	core::pose::Pose const & pose,
 	ResidueSelector const & selector,
@@ -295,6 +322,58 @@ InterGroupInterfaceByVectorSelectorCreator::keyname() const {
 	return InterGroupInterfaceByVectorSelector::class_name();
 }
 
+void
+InterGroupInterfaceByVectorSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
+	return InterGroupInterfaceByVectorSelector::provide_selector_xsd( xsd );
+}
+
+
 } //namespace residue_selector
 } //namespace select
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::residue_selector::InterGroupInterfaceByVectorSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( group1_selector_ ) ); // ResidueSelectorCOP
+	arc( CEREAL_NVP( group1_set_ ) ); // std::set<core::Size>
+	arc( CEREAL_NVP( group1_resstring_ ) ); // std::string
+	arc( CEREAL_NVP( group2_selector_ ) ); // ResidueSelectorCOP
+	arc( CEREAL_NVP( group2_set_ ) ); // std::set<core::Size>
+	arc( CEREAL_NVP( group2_resstring_ ) ); // std::string
+	arc( CEREAL_NVP( cb_dist_cut_ ) ); // Real
+	arc( CEREAL_NVP( nearby_atom_cut_ ) ); // Real
+	arc( CEREAL_NVP( vector_angle_cut_ ) ); // Real
+	arc( CEREAL_NVP( vector_dist_cut_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::residue_selector::InterGroupInterfaceByVectorSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	std::shared_ptr< core::select::residue_selector::ResidueSelector > local_group1_selector;
+	arc( local_group1_selector ); // ResidueSelectorCOP
+	group1_selector_ = local_group1_selector; // copy the non-const pointer(s) into the const pointer(s)
+	arc( group1_set_ ); // std::set<core::Size>
+	arc( group1_resstring_ ); // std::string
+	std::shared_ptr< core::select::residue_selector::ResidueSelector > local_group2_selector;
+	arc( local_group2_selector ); // ResidueSelectorCOP
+	group2_selector_ = local_group2_selector; // copy the non-const pointer(s) into the const pointer(s)
+	arc( group2_set_ ); // std::set<core::Size>
+	arc( group2_resstring_ ); // std::string
+	arc( cb_dist_cut_ ); // Real
+	arc( nearby_atom_cut_ ); // Real
+	arc( vector_angle_cut_ ); // Real
+	arc( vector_dist_cut_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::InterGroupInterfaceByVectorSelector );
+CEREAL_REGISTER_TYPE( core::select::residue_selector::InterGroupInterfaceByVectorSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_residue_selector_InterGroupInterfaceByVectorSelector )
+#endif // SERIALIZATION

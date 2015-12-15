@@ -16,6 +16,16 @@
 // Project headers
 #include <core/types.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#include <cereal/types/unordered_map.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace datacache {
@@ -37,3 +47,27 @@ void PositionConservedResiduesStore::set_conserved(core::Size residue, bool cons
 }  // namespace datacache
 }  // namespace pose
 }  // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::datacache::PositionConservedResiduesStore::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( conservation_ ) ); // ConservationMap
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::datacache::PositionConservedResiduesStore::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( conservation_ ); // ConservationMap
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::datacache::PositionConservedResiduesStore );
+CEREAL_REGISTER_TYPE( core::pose::datacache::PositionConservedResiduesStore )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_datacache_PositionConservedResiduesStore )
+#endif // SERIALIZATION

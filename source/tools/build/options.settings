@@ -140,13 +140,16 @@ options = {
 
 	# Build with C++11 std:: pointers
 	"cxx11",
-	
+
         # Build with the C++11 thread utilities enabled
         "cxx11thread",
 
+	# Build with C++11 serialization
+	"cxx11serialization",
+
 	# Build with boost non-intrusive pointers
 	"ptr_boost",
-	
+
 	# Enable APBS integration
 	"apbs",
 

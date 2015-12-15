@@ -22,6 +22,16 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace methods {
@@ -69,3 +79,32 @@ VallLookbackData::get_res_changed( core::Size resid ) const{
 }//end scoring
 }//end core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::methods::VallLookbackData::VallLookbackData() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::methods::VallLookbackData::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( rmsd_history_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( res_changed_history_ ) ); // utility::vector1<_Bool>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::methods::VallLookbackData::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( rmsd_history_ ); // utility::vector1<core::Real>
+	arc( res_changed_history_ ); // utility::vector1<_Bool>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::methods::VallLookbackData );
+CEREAL_REGISTER_TYPE( core::scoring::methods::VallLookbackData )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_methods_vall_lookback_VallLookbackData )
+#endif // SERIALIZATION

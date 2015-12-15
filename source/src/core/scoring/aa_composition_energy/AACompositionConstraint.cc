@@ -67,6 +67,23 @@ AACompositionConstraint::~AACompositionConstraint() {}
 core::scoring::constraints::ConstraintOP
 AACompositionConstraint::clone() const { return core::scoring::constraints::ConstraintOP( new AACompositionConstraint( *this ) ); }
 
+bool AACompositionConstraint::operator == ( Constraint const & other ) const
+{
+	if ( ! other.same_type_as_me( *this ) ) return false;
+	if ( !       same_type_as_me( other ) ) return false;
+
+	// TO DO: implement ResidueSelector comparison operators.
+	// TO DO: implement AACompositionEnergySetup comparison operator
+	return false;
+}
+
+bool
+AACompositionConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< AACompositionConstraint const * > (&other);
+}
+
+
 /// @brief Set the selector to be used by this constraint.
 /// @details Clones the input.
 void
@@ -74,6 +91,15 @@ AACompositionConstraint::set_selector( core::select::residue_selector::ResidueSe
 	selector_ = selector_in->clone();
 	return;
 }
+
+select::residue_selector::ResidueSelectorCOP
+AACompositionConstraint::selector() const {
+	return selector_;
+}
+
+AACompositionEnergySetupCOP
+AACompositionConstraint::aa_composition_energy_setup() const
+{ return aa_comp_setup_; }
 
 /// @brief Initialize the AACompositionEnergySetup object from a file.
 ///

@@ -16,6 +16,8 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/types.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
@@ -175,7 +177,7 @@ update_constraint_set_from_full_model_info( pose::Pose & pose ){
 	std::string const cst_string = full_model_parameters->cst_string();
 
 	if ( cst_string.size() > 0 ) {
-		full_model_parameters->update_pose_and_cst_set_from_cst_string( pose.residue( 1 ).residue_type_set() );
+		full_model_parameters->update_pose_and_cst_set_from_cst_string( *pose.residue( 1 ).residue_type_set() );
 		Pose const & full_model_pose = full_model_parameters->full_model_pose_for_constraints();
 		ConstraintSetCOP full_model_cst_set = full_model_parameters->cst_set();
 

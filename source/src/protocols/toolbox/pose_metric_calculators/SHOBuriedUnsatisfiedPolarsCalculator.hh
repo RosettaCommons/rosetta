@@ -22,6 +22,12 @@
 #include <string>
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -153,6 +159,16 @@ private:
 
 	/// @brief score function used to (previously) score the pose
 	core::scoring::ScoreFunctionCOP sfxn_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	SHOBuriedUnsatisfiedPolarsCalculator();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /// @brief extracts the pose indexes of a selected subset of residues
@@ -162,5 +178,10 @@ void residue_subset(std::string setf, utility::vector1<Size>& rset,
 } // pose_metric_calculators
 } // toolbox
 } // protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_SHOBuriedUnsatisfiedPolarsCalculator )
+#endif // SERIALIZATION
+
 
 #endif

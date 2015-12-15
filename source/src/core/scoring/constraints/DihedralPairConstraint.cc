@@ -14,6 +14,7 @@
 #include <core/scoring/constraints/DihedralPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/FuncFactory.hh>
+#include <core/scoring/func/Func.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -32,12 +33,26 @@
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
 
 static THREAD_LOCAL basic::Tracer TR( "core.io.constraints" );
 
+ConstraintOP DihedralPairConstraint::clone() const {
+	return ConstraintOP( new DihedralPairConstraint( *this ) );
+}
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -298,7 +313,8 @@ DihedralPairConstraint::fill_f1_f2(
 
 bool
 DihedralPairConstraint::operator == ( Constraint const & other_cst ) const {
-	if ( !dynamic_cast< DihedralPairConstraint const * > ( &other_cst ) ) return false;
+	if ( !           same_type_as_me( other_cst ) ) return false;
+	if ( ! other_cst.same_type_as_me(     *this ) ) return false;
 
 	DihedralPairConstraint const & other( static_cast< DihedralPairConstraint const & > (other_cst) );
 
@@ -310,10 +326,13 @@ DihedralPairConstraint::operator == ( Constraint const & other_cst ) const {
 	if ( atomB2_ != other.atomB2_ ) return false;
 	if ( atomB3_ != other.atomB3_ ) return false;
 	if ( atomB4_ != other.atomB4_ ) return false;
-	if ( func_ != other.func_ ) return false;
-	if ( this->score_type() != other.score_type() ) return false;
+	if ( score_type() != other.score_type() ) return false;
 
-	return true;
+	return func_ == other.func_ || ( func_ && other.func_ && *func_ == *other.func_ );
+}
+
+bool DihedralPairConstraint::same_type_as_me( Constraint const & other ) const {
+	return dynamic_cast< DihedralPairConstraint const * > (&other);
 }
 
 
@@ -335,7 +354,8 @@ Size DihedralPairConstraint::show_violations(
 	Real threshold
 ) const {
 	if ( verbose_level > 80 ) {
-		out << "DihedralPair ("
+		out
+			<< "DihedralPair ("
 			<< pose.residue_type(atomA2_.rsd() ).atom_name( atomA2_.atomno() ) << ":"
 			<< atomA2_.atomno() << "," << atomA2_.rsd() << "-"
 			<< pose.residue_type(atomA3_.rsd() ).atom_name( atomA3_.atomno() ) << ":"
@@ -359,6 +379,62 @@ DihedralPairConstraint::dfunc( Real const theta ) const {
 	return func_->dfunc( theta );
 }
 
+DihedralPairConstraint::DihedralPairConstraint( DihedralPairConstraint const & src ) :
+	Constraint( src ),
+	atomA1_( src.atomA1_ ),
+	atomA2_( src.atomA2_ ),
+	atomA3_( src.atomA3_ ),
+	atomA4_( src.atomA4_ ),
+	atomB1_( src.atomB1_ ),
+	atomB2_( src.atomB2_ ),
+	atomB3_( src.atomB3_ ),
+	atomB4_( src.atomB4_ ),
+	func_( src.func_ ? src.func_->clone() : src.func_ )
+{}
+
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::constraints::DihedralPairConstraint::DihedralPairConstraint() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::DihedralPairConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( CEREAL_NVP( atomA1_ ) ); // AtomID
+	arc( CEREAL_NVP( atomA2_ ) ); // AtomID
+	arc( CEREAL_NVP( atomA3_ ) ); // AtomID
+	arc( CEREAL_NVP( atomA4_ ) ); // AtomID
+	arc( CEREAL_NVP( atomB1_ ) ); // AtomID
+	arc( CEREAL_NVP( atomB2_ ) ); // AtomID
+	arc( CEREAL_NVP( atomB3_ ) ); // AtomID
+	arc( CEREAL_NVP( atomB4_ ) ); // AtomID
+	arc( CEREAL_NVP( func_ ) ); // func::FuncOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::DihedralPairConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( atomA1_ ); // AtomID
+	arc( atomA2_ ); // AtomID
+	arc( atomA3_ ); // AtomID
+	arc( atomA4_ ); // AtomID
+	arc( atomB1_ ); // AtomID
+	arc( atomB2_ ); // AtomID
+	arc( atomB3_ ); // AtomID
+	arc( atomB4_ ); // AtomID
+	arc( func_ ); // func::FuncOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::DihedralPairConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::DihedralPairConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_DihedralPairConstraint )
+#endif // SERIALIZATION

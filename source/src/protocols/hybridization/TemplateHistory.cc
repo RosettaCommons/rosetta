@@ -23,6 +23,16 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 //namespace comparative_modeling {
 namespace hybridization {
@@ -62,3 +72,30 @@ TemplateHistory::set( core::Size start_res, core::Size stop_res, int template_id
 }
 //}
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::hybridization::TemplateHistory::TemplateHistory() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::hybridization::TemplateHistory::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( history_ ) ); // utility::vector1<int>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::hybridization::TemplateHistory::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( history_ ); // utility::vector1<int>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::hybridization::TemplateHistory );
+CEREAL_REGISTER_TYPE( protocols::hybridization::TemplateHistory )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_hybridization_TemplateHistory )
+#endif // SERIALIZATION

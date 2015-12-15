@@ -146,7 +146,7 @@ main( int argc, char *argv[] )
 			sequence += 'A';
 		}
 
-		core::pose::make_pose_from_sequence( ala_pose, sequence, "fa_standard" );
+		core::pose::make_pose_from_sequence( ala_pose, sequence, core::chemical::FA_STANDARD );
 
 		utility::vector1< Size > plus_pos;
 		utility::vector1< Size > empty;

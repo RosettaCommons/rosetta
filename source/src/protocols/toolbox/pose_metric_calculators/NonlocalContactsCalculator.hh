@@ -33,6 +33,11 @@
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -96,11 +101,22 @@ private:
 	std::set< core::Size > special_region1_;
 	std::set< core::Size > special_region2_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace pose_metric_calculators
 } // namespace toolbox
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_NonlocalContactsCalculator )
+#endif // SERIALIZATION
+
 
 #endif

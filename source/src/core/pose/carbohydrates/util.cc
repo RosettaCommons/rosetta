@@ -648,10 +648,10 @@ glycosylate_pose(
 	using namespace conformation;
 
 	conformation::Residue const & residue( pose.residue( sequence_position ) );
-	ResidueTypeSet const & residue_set( residue.type().residue_type_set() );
+	ResidueTypeSetCOP residue_set( residue.type().residue_type_set() );
 
 	// Get list of carbohydrate ResidueTypes from which to construct the Pose.
-	ResidueTypeCOPs residue_types( residue_types_from_saccharide_sequence( iupac_sequence, residue_set ) );
+	ResidueTypeCOPs residue_types( residue_types_from_saccharide_sequence( iupac_sequence, *residue_set ) );
 
 	Size const n_types( residue_types.size() );
 	if ( ! n_types ) {

@@ -114,7 +114,7 @@ MPTerminiPenalty::residue_energy(
 	if ( rsd.aa() == core::chemical::aa_vrt ) return;
 
 	// Compute my actual penalty
-	core::Real z_position = pose.conformation().membrane_info()->residue_z_position( rsd.seqpos() );
+	core::Real z_position = pose.conformation().membrane_info()->residue_z_position( pose.conformation(), rsd.seqpos() );
 	termini_pen = compute_termini_penalty( z_position ) * 50;
 
 	// Add to Score Map

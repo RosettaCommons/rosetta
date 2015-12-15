@@ -26,6 +26,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -133,6 +139,12 @@ private:
 	core::scoring::EnergyMap weight_map_;
 	bool use_original_weights_;
 	core::Real master_weight_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class EmptyVertexData {
@@ -141,6 +153,12 @@ public:
 
 	// set to 1 because there will often only be two vertices
 	static int const NUM_EDGES_TO_RESERVE = 1;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & ) const {}
+	template< class Archive > void load( Archive & ) {}
+#endif // SERIALIZATION
+
 };
 
 class DecomposeAndReweightEnergiesCalculator : public core::pose::metrics::EnergyDependentCalculator {
@@ -248,6 +266,16 @@ private:
 	utility::vector1<std::string> set_names_;
 
 	core::Real weighted_total_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	DecomposeAndReweightEnergiesCalculator();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 typedef utility::pointer::shared_ptr< DecomposeAndReweightEnergiesCalculator > DecomposeAndReweightEnergiesCalculatorOP;
@@ -257,5 +285,10 @@ typedef utility::pointer::shared_ptr< DecomposeAndReweightEnergiesCalculator con
 } // namespace pose_metric_calculators
 } // namespace toolbox
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_DecomposeAndReweightEnergiesCalculator )
+#endif // SERIALIZATION
+
 
 #endif

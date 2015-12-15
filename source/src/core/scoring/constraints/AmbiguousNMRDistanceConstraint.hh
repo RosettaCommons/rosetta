@@ -35,6 +35,11 @@
 //#include <map>
 //#include <utility>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -44,18 +49,15 @@ namespace constraints {
 class AmbiguousNMRDistanceConstraint : public Constraint {
 public:
 	typedef utility::vector1< AtomID > Atoms;
-	///c-tor
+
+public:
+	/// @brief c-tor
 	AmbiguousNMRDistanceConstraint(
 		Atoms const & a1,
 		Atoms const & a2,
 		func::FuncOP func,
 		ScoreType scoretype = atom_pair_constraint
-	):
-		Constraint( scoretype ),
-		atoms1_(a1),
-		atoms2_(a2),
-		func_( func )
-	{}
+	);
 
 	AmbiguousNMRDistanceConstraint(
 		id::NamedAtomID const & a1, //digests names like "QG1"
@@ -65,27 +67,26 @@ public:
 		ScoreType scoretype = atom_pair_constraint
 	);
 
-	AmbiguousNMRDistanceConstraint() :
-		Constraint( atom_pair_constraint ),
-		func_( /* NULL */ )
-	{}
+	AmbiguousNMRDistanceConstraint();
 
-	virtual ConstraintOP clone() const {
-		return ConstraintOP( new AmbiguousNMRDistanceConstraint( atoms1_, atoms2_, func_, score_type() ) );
-	}
-
+	virtual ConstraintOP clone() const;
 
 	virtual
-	ConstraintOP clone( func::FuncOP func ) const {
-		return ConstraintOP( new AmbiguousNMRDistanceConstraint( atoms1_, atoms2_, func, score_type() ) );
-	}
+	ConstraintOP clone( func::FuncOP func ) const;
 
+	bool operator == ( Constraint const & other ) const;
+
+	bool same_type_as_me( Constraint const & other ) const;
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
 	/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
 	/// to the new object. Intended to be implemented by derived classes.
 	virtual ConstraintOP remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map=NULL ) const;
+
+	void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
+	// //@brief set constraint such that the pose doesn't violate it.
+	// virtual void steal( pose::Pose& );
 
 	///returns AtomPairConstraint or AmbigousNMRDistanceConstraint (e.g. for GLY HA1-HA2 ... )
 	ConstraintOP map_to_CEN( pose::Pose const& src, pose::Pose const& centroid, core::Size& nr_mapped, std::string const& map_atom ) const;
@@ -157,10 +158,6 @@ public:
 	void show( std::ostream& out ) const;
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
 
-	void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
-	// //@brief set constraint such that the pose doesn't violate it.
-	// virtual void steal( pose::Pose& );
-
 	Real dist( pose::Pose const & pose ) const;
 	Real dist( func::XYZ_Func const & xyz ) const;
 
@@ -199,10 +196,27 @@ private:
 	}
 
 protected:
-	// data -- write accessed by NamedAmbiguousNMRDistanceConstraint
+	Atoms const & atoms1() const;
+	Atoms const & atoms2() const;
 
+	void atoms1( Atoms const & setting );
+	void atoms2( Atoms const & setting );
+
+protected:
+	/// @brief Explicit copy constructor so that derived classes will recieve a deep copy
+	/// of the Func this class contains.
+	AmbiguousNMRDistanceConstraint( AmbiguousNMRDistanceConstraint const & src );
+
+private:
 	Atoms atoms1_, atoms2_;
 	func::FuncOP func_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // class AmbiguousNMRDistanceConstraint
 
 typedef utility::vector1< core::id::NamedAtomID > NamedAtoms;
@@ -211,5 +225,10 @@ void parse_NMR_name( std::string name, core::Size res, core::chemical::AA aa, Na
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_AmbiguousNMRDistanceConstraint )
+#endif // SERIALIZATION
+
 
 #endif

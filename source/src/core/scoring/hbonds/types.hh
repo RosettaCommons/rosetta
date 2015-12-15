@@ -41,6 +41,11 @@ struct HBondDerivs {
 	DerivVectorPair acc_deriv;    // derivative vectors for the heavyatom acceptor for a hydrogen
 	DerivVectorPair abase_deriv;  // derivative vectors for the acceptor base
 	DerivVectorPair abase2_deriv; // derivative vectors for the acceptor base 2 -- for sp2 acceptors
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /////////////////////////////////////////////////////////////////////////////////

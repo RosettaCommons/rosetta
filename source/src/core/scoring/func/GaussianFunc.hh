@@ -17,6 +17,13 @@
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -43,6 +50,9 @@ public:
 
 	/// @brief returns a clone of this GaussianFunc
 	FuncOP clone() const { return FuncOP( new GaussianFunc( *this ) ); }
+
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 
 	/// @brief Returns the value of this GaussianFunc evaluated at distance x.
 	Real func( Real const x ) const;
@@ -76,11 +86,26 @@ private:
 	Real mean_;
 	Real sd_;
 	bool use_log_score_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	GaussianFunc();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_GaussianFunc )
+#endif // SERIALIZATION
+
 
 #endif

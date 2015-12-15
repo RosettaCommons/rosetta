@@ -103,6 +103,12 @@ private:
 	mutable core::Size num_covered_;
 	mutable bool num_covered_current_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 std::ostream & operator<< ( std::ostream & os, DotSphere const & ds );

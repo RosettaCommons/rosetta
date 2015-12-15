@@ -18,6 +18,14 @@
 
 static basic::Tracer TR( "core.pose.rna.BaseStack" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace rna {
@@ -63,3 +71,31 @@ operator << ( std::ostream & out, BaseStack const & s )
 } //rna
 } //pose
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::rna::BaseStack::save( Archive & arc ) const {
+	arc( CEREAL_NVP( res1_ ) ); // Size
+	arc( CEREAL_NVP( res2_ ) ); // Size
+	arc( CEREAL_NVP( orientation_ ) ); // enum core::chemical::rna::BaseDoubletOrientation
+	arc( CEREAL_NVP( which_side_ ) ); // enum core::chemical::rna::BaseStackWhichSide
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::rna::BaseStack::load( Archive & arc ) {
+	arc( res1_ ); // Size
+	arc( res2_ ); // Size
+	arc( orientation_ ); // enum core::chemical::rna::BaseDoubletOrientation
+	arc( which_side_ ); // enum core::chemical::rna::BaseStackWhichSide
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::rna::BaseStack );
+CEREAL_REGISTER_TYPE( core::pose::rna::BaseStack )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_rna_BaseStack )
+#endif // SERIALIZATION

@@ -36,6 +36,16 @@
 // useful for RNA scoring.
 ///////////////////////////////////////////////////////
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace rna {
@@ -105,3 +115,43 @@ clear_rna_scoring_info( pose::Pose & pose )
 } //rna
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::rna::RNA_ScoringInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( rna_centroid_info_ ) ); // rna::RNA_CentroidInfo
+	arc( CEREAL_NVP( rna_raw_base_base_info_ ) ); // rna::RNA_RawBaseBaseInfo
+	arc( CEREAL_NVP( rna_filtered_base_base_info_ ) ); // rna::RNA_FilteredBaseBaseInfo
+	arc( CEREAL_NVP( rna_data_info_ ) ); // rna::data::RNA_DataInfo
+	arc( CEREAL_NVP( atom_numbers_for_vdw_calculation_ ) ); // utility::vector1<utility::vector1<Size> >
+	arc( CEREAL_NVP( atom_numbers_for_mg_calculation_ ) ); // utility::vector1<utility::vector1<Size> >
+	arc( CEREAL_NVP( is_magnesium_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( vdw_calculation_annotated_sequence_ ) ); // std::string
+	arc( CEREAL_NVP( mg_calculation_annotated_sequence_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::rna::RNA_ScoringInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( rna_centroid_info_ ); // rna::RNA_CentroidInfo
+	arc( rna_raw_base_base_info_ ); // rna::RNA_RawBaseBaseInfo
+	arc( rna_filtered_base_base_info_ ); // rna::RNA_FilteredBaseBaseInfo
+	arc( rna_data_info_ ); // rna::data::RNA_DataInfo
+	arc( atom_numbers_for_vdw_calculation_ ); // utility::vector1<utility::vector1<Size> >
+	arc( atom_numbers_for_mg_calculation_ ); // utility::vector1<utility::vector1<Size> >
+	arc( is_magnesium_ ); // utility::vector1<_Bool>
+	arc( vdw_calculation_annotated_sequence_ ); // std::string
+	arc( mg_calculation_annotated_sequence_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::rna::RNA_ScoringInfo );
+CEREAL_REGISTER_TYPE( core::scoring::rna::RNA_ScoringInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_rna_RNA_ScoringInfo )
+#endif // SERIALIZATION

@@ -47,15 +47,24 @@
 
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.ResidualDipolarCouplingRigidSegments" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace scoring {
 using namespace core;
 using namespace scoring;
 
-typedef utility::vector1<core::scoring::RDC> RDC_lines;
+	//typedef utility::vector1<core::scoring::RDC> RDC_lines;
 typedef utility::vector1< core::scoring::ResidualDipolarCoupling::RDC_lines > RDC_lines_collection;
-typedef core::Real Tensor[3][3];
-typedef core::Real rvec[3];
+	//typedef core::Real Tensor[3][3];
+	//typedef core::Real rvec[3];
 
 
 extern void store_RDC_segments_in_pose(ResidualDipolarCouplingRigidSegmentsOP rdcrs_info,
@@ -99,8 +108,8 @@ Real ResidualDipolarCouplingRigidSegments::compute_pairwise_score() const{
 		for ( Size exp=0; exp < n_of_exps; ++exp ) {
 			for ( RDC_Segments::const_iterator it1=rdc_segments_.begin(); it1 != rdc_segments_.end(); ++it1 ) {
 				for ( RDC_Segments::const_iterator it2=it1; (it2+1) != rdc_segments_.end(); ++it2 ) {
-					Tensor* S1 = (*it1)->tensor();
-					Tensor* S2 = (*it2)->tensor();
+					utility::vector0< ResidualDipolarCoupling::Tensor > & S1 = (*it1)->tensor();
+					utility::vector0< ResidualDipolarCoupling::Tensor > & S2 = (*it2)->tensor();
 					Real dot = (S1[exp][0][0] * S2[exp][0][0]) + (S1[exp][0][1] * S2[exp][0][1]) +
 						(S1[exp][0][2] * S2[exp][0][2]) + (S1[exp][1][1] * S2[exp][1][1]) + (S1[exp][1][2] * S2[exp][1][2]);
 					score += dot;
@@ -264,3 +273,29 @@ std::ostream& operator<<(std::ostream& out, ResidualDipolarCouplingRigidSegments
 }
 } //namespace protocol
 } //namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::scoring::ResidualDipolarCouplingRigidSegments::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( rdc_segments_ ) ); // RDC_Segments
+	arc( CEREAL_NVP( segment_definitions_ ) ); // protocols::loops::Loops
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::scoring::ResidualDipolarCouplingRigidSegments::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( rdc_segments_ ); // RDC_Segments
+	arc( segment_definitions_ ); // protocols::loops::Loops
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::scoring::ResidualDipolarCouplingRigidSegments );
+CEREAL_REGISTER_TYPE( protocols::scoring::ResidualDipolarCouplingRigidSegments )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_scoring_ResidualDipolarCouplingRigidSegments )
+#endif // SERIALIZATION

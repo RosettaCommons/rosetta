@@ -21,6 +21,17 @@
 
 static THREAD_LOCAL basic::Tracer tr( "core.kinematics", basic::t_info );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 
@@ -145,3 +156,29 @@ ResidueCoordinateChangeList::residues_moved_end() const
 } // namespace kinematics
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::kinematics::ResidueCoordinateChangeList::save( Archive & arc ) const {
+	arc( CEREAL_NVP( changed_residues_ ) ); // ResidueIndexList
+	arc( CEREAL_NVP( residue_change_id_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( total_residue_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::kinematics::ResidueCoordinateChangeList::load( Archive & arc ) {
+	arc( changed_residues_ ); // ResidueIndexList
+	arc( residue_change_id_ ); // utility::vector1<Size>
+	arc( total_residue_ ); // Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::ResidueCoordinateChangeList );
+CEREAL_REGISTER_TYPE( core::kinematics::ResidueCoordinateChangeList )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_kinematics_ResidueCoordinateChangeList )
+#endif // SERIALIZATION

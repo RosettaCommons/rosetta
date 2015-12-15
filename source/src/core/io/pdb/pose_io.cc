@@ -25,6 +25,7 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 
@@ -33,6 +34,10 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/CacheableString.hh>
+#include <basic/datacache/CacheableStringFloatMap.hh>
+#include <basic/datacache/CacheableStringMap.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -476,6 +481,42 @@ dump_connect_info(
 				out << "CONECT" << I(5,atom_id_output[ atom_id ]) << I(5,atom_id_output[  nbr_id  ]) << std::endl;
 
 			}
+		}
+	}
+}
+
+void extract_extra_scores(
+	pose::Pose const & pose,
+	utility::io::ozstream & out
+)
+{
+	// ARBITRARY_STRING_DATA
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
+		basic::datacache::CacheableStringMapCOP data
+			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringMap const >
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
+		assert( data.get() != NULL );
+
+		for ( std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
+				it != end;
+				++it ) {
+			//TR << it->first << " " << it->second << std::endl;
+			out << it->first << " " << it->second << std::endl;
+		}
+	}
+
+	// ARBITRARY_FLOAT_DATA
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
+		basic::datacache::CacheableStringFloatMapCOP data
+			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
+			( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+		assert( data.get() != NULL );
+
+		for ( std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );
+				it != end;
+				++it ) {
+			//TR << it->first << " " << it->second << std::endl;
+			out << it->first << " " << it->second << std::endl;
 		}
 	}
 }

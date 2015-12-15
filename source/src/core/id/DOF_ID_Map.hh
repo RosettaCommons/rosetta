@@ -37,12 +37,19 @@
 // Package headers
 #include <core/id/types.hh>
 #include <core/id/DOF_ID.hh>
+#include <core/id/AtomID_Map.fwd.hh>
 
 // Utility headers
-
-#include <core/id/AtomID_Map.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/cereal.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace id {
@@ -388,6 +395,23 @@ public: // Comparison
 	{
 		return ( a.dof_map_ != b.dof_map_ );
 	}
+
+#ifdef    SERIALIZATION
+	/// @brief Serialization routine.  In order for this to successfully compile,
+	/// the code that is trying to serialize an instance of this class will need
+	/// to #include <utility/serialization/serialization.hh>, which should already
+	/// happen, and also #include <utility/vector1.srlz.hh>.
+	template < class Archive >
+	void save( Archive & arc ) const {
+		arc( CEREAL_NVP( dof_map_ ) );
+	}
+
+	/// @brief Deserialization routine
+	template < class Archive >
+	void load( Archive & arc ) {
+		arc( dof_map_ );
+	}
+#endif // SERIALIZATION
 
 
 private: // Fields

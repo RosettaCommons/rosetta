@@ -122,7 +122,7 @@ ResidueCountFilter::parse_my_tag(
 		core::chemical::ResidueTypeSetCOP restype_set;
 		if ( pose.total_residue() ) {
 			// get the residue type set from the first residue of the input pose
-			restype_set = core::chemical::ResidueTypeSetCOP( pose.residue(1).residue_type_set().get_self_ptr() );
+			restype_set = core::chemical::ResidueTypeSetCOP( pose.residue(1).residue_type_set() );
 		} else {
 			restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		}

@@ -553,8 +553,8 @@ RNA_DMS_Potential::update_virtual_base_if_necessary( pose::Pose & pose, Size con
 void
 RNA_DMS_Potential::add_probe_to_pose( pose::Pose & pose ){
 	Size const i = pose.total_residue();
-	core::chemical::ResidueTypeSet const & rsd_set = pose.residue( i ).residue_type_set();
-	core::chemical::ResidueTypeCOP rsd_type ( rsd_set.get_representative_type_name3 ( " CZ" ) ); // just a carbon atom.
+	core::chemical::ResidueTypeSetCOP rsd_set = pose.residue( i ).residue_type_set();
+	core::chemical::ResidueTypeCOP rsd_type ( rsd_set->get_representative_type_name3 ( " CZ" ) ); // just a carbon atom.
 	core::conformation::ResidueOP probe_res = ( core::conformation::ResidueFactory::create_residue ( *rsd_type ) );
 	pose.append_residue_by_jump( *probe_res, i );
 }

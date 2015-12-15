@@ -21,6 +21,11 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace numeric {
 namespace interpolation {
 namespace spline {
@@ -63,6 +68,9 @@ public:
 	/// @brief deserialize a json_spirit object to a Interpolator
 	virtual void deserialize(utility::json_spirit::mObject data);
 
+	virtual bool operator == ( Interpolator const & other ) const;
+	virtual bool same_type_as_me( Interpolator const & other ) const;
+
 private:
 
 	bool has_lb_function_;
@@ -78,6 +86,12 @@ private:
 	Real ub_intercept_;
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 typedef utility::pointer::shared_ptr< Interpolator > InterpolatorOP;
@@ -85,5 +99,10 @@ typedef utility::pointer::shared_ptr< Interpolator > InterpolatorOP;
 } // end namespace spline
 } // end namespace interpolation
 } // end namespace numeric
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( numeric_interpolation_spline_Interpolator )
+#endif // SERIALIZATION
+
 
 #endif

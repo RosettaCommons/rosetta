@@ -47,6 +47,12 @@
 #include <map>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 
@@ -120,11 +126,27 @@ public: // Creation
 
 public: // Assignment
 
-	/// @brief Copy assignment, makes complete copy of another AtomTree
+	/// @brief Copy assignment. If these two AtomTrees do not know anything about each other,
+	/// then this function makes this AtomTree a complete copy of the src AtomTree, and then
+	/// keeps track of the fact that the topology of the trees are identical by keeping a (raw) pointer
+	/// to the src AtomTree and letting the src AtomTree keep a (raw) pointer to it.  The
+	/// next time this AtomTree's topology changes, or the next time the src AtomTree's topology
+	/// changes, the "observer" connection between the two of them is severed -- each AtomTree
+	/// getting modified. This is not a thread-safe operation! If the AtomTree's have matching
+	/// topologies, then this function simply iterates across all the atoms in both trees and copies
+	/// the DOFs and coordinates from src into this.
 	AtomTree &
 	operator=( AtomTree const & src );
 
+	/// @brief Copy assignment that first invokes operator =, and then immediately severs the connection
+	/// between the src and this AtomTrees.  This function modifies the src AtomTree briefly while
+	/// it executes, but then makes sure that there is no further (behind the sceens) communication between
+	/// the two trees (e.g. that might happen when the topology of one of the trees changes, so that the
+	/// "topological match to" status has to be severed).
+	void detached_copy( AtomTree const & src );
+
 public:
+
 	/// @brief Weak-pointer setter.  The object that instantiates an owning pointer to an AtomTree object
 	/// must hand that AtomTree a weak pointer to itself so that the AtomTree may share that weak pointer
 	/// with other AtomTrees.  Such sharing allows for crucial speedups when copying between AtomTrees.
@@ -437,7 +459,7 @@ private:
 
 	/// @brief When an atom tree observing this tree decides it wants to become an observer
 	/// of another tree, it must notify the tree that it formerly observed of this change.
-	void detatch_topological_observer( AtomTreeCAP observer ) const;
+	void detach_topological_observer( AtomTreeCAP observer ) const;
 
 public:
 	/// Functions only necessary for unit tests
@@ -610,9 +632,20 @@ private: // Fields
 	/// time the owning Conformation object has asked for an update.
 	//ResidueCoordinateChangeListOP internal_coordinate_residues_changed_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // AtomTree
 
 } // namespace kinematics
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_kinematics_AtomTree )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_kinematics_AtomTree_HH

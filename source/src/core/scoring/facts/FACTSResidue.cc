@@ -63,6 +63,19 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.FACTSPotential" );
 
 using namespace std;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -590,3 +603,175 @@ void FACTSRotamerSetInfo::initialize( RotamerSet const & rotamer_set, FACTSRsdTy
 
 } // namespace scoring
 } // namespace core
+
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::FACTSRsdTypeInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( natoms_ ) ); // Size
+	arc( CEREAL_NVP( not_using_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( q_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( COradius2_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( volume_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( alpha_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( b1_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( b2_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( a0_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( a1_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( a2_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( a3_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( d1_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( d2_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( c0_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( c1_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( c2_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( c3_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( intra_solv_scale_ ) ); // utility::vector1<utility::vector1<Real> >
+	arc( CEREAL_NVP( intra_elec_scale_ ) ); // utility::vector1<utility::vector1<Real> >
+	arc( CEREAL_NVP( is_chargedH_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( charged_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( is_freedof_ ) ); // utility::vector1<_Bool>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::FACTSRsdTypeInfo::load( Archive & arc ) {
+	arc( natoms_ ); // Size
+	arc( not_using_ ); // utility::vector1<_Bool>
+	arc( q_ ); // utility::vector1<Real>
+	arc( COradius2_ ); // utility::vector1<Real>
+	arc( volume_ ); // utility::vector1<Real>
+	arc( alpha_ ); // utility::vector1<Real>
+	arc( b1_ ); // utility::vector1<Real>
+	arc( b2_ ); // utility::vector1<Real>
+	arc( a0_ ); // utility::vector1<Real>
+	arc( a1_ ); // utility::vector1<Real>
+	arc( a2_ ); // utility::vector1<Real>
+	arc( a3_ ); // utility::vector1<Real>
+	arc( d1_ ); // utility::vector1<Real>
+	arc( d2_ ); // utility::vector1<Real>
+	arc( c0_ ); // utility::vector1<Real>
+	arc( c1_ ); // utility::vector1<Real>
+	arc( c2_ ); // utility::vector1<Real>
+	arc( c3_ ); // utility::vector1<Real>
+	arc( intra_solv_scale_ ); // utility::vector1<utility::vector1<Real> >
+	arc( intra_elec_scale_ ); // utility::vector1<utility::vector1<Real> >
+	arc( is_chargedH_ ); // utility::vector1<_Bool>
+	arc( charged_ ); // utility::vector1<_Bool>
+	arc( is_freedof_ ); // utility::vector1<_Bool>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::FACTSRsdTypeInfo );
+CEREAL_REGISTER_TYPE( core::scoring::FACTSRsdTypeInfo )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::FACTSResidueInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( natoms_ ) ); // Size
+	arc( CEREAL_NVP( esolvE_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( sasa_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( Ai_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( Bi_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( Ci_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( Di_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( Ei_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( flag_for_calculation_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( nmtr_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( dnmtr_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( BR_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( E_elec_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( E_solv_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( E_solv_self_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( E_solv_pair_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( xyz_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( changed_ ) ); // _Bool
+	arc( CEREAL_NVP( enumeration_shell_ ) ); // _Bool
+	arc( CEREAL_NVP( dG_dCi_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( dSA_dDi_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( dsolv_dBR_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( dB_dBnmtr_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( dB_dBdnmtr_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( dBR_dG_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( elecF2_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( solvF2d_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( solvF2BR_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( sasaF2_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( restypeinfo_ ) ); // FACTSRsdTypeInfoCOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::FACTSResidueInfo::load( Archive & arc ) {
+	arc( natoms_ ); // Size
+	arc( esolvE_ ); // utility::vector1<Real>
+	arc( sasa_ ); // utility::vector1<Real>
+	arc( Ai_ ); // utility::vector1<Real>
+	arc( Bi_ ); // utility::vector1<Real>
+	arc( Ci_ ); // utility::vector1<Real>
+	arc( Di_ ); // utility::vector1<Real>
+	arc( Ei_ ); // utility::vector1<Real>
+	arc( flag_for_calculation_ ); // utility::vector1<_Bool>
+	arc( nmtr_ ); // utility::vector1<Vector>
+	arc( dnmtr_ ); // utility::vector1<Real>
+	arc( BR_ ); // utility::vector1<Real>
+	arc( E_elec_ ); // utility::vector1<Real>
+	arc( E_solv_ ); // utility::vector1<Real>
+	arc( E_solv_self_ ); // utility::vector1<Real>
+	arc( E_solv_pair_ ); // utility::vector1<Real>
+	arc( xyz_ ); // utility::vector1<Vector>
+	arc( changed_ ); // _Bool
+	arc( enumeration_shell_ ); // _Bool
+	arc( dG_dCi_ ); // utility::vector1<Real>
+	arc( dSA_dDi_ ); // utility::vector1<Real>
+	arc( dsolv_dBR_ ); // utility::vector1<Real>
+	arc( dB_dBnmtr_ ); // utility::vector1<Real>
+	arc( dB_dBdnmtr_ ); // utility::vector1<Real>
+	arc( dBR_dG_ ); // utility::vector1<Real>
+	arc( elecF2_ ); // utility::vector1<Vector>
+	arc( solvF2d_ ); // utility::vector1<Vector>
+	arc( solvF2BR_ ); // utility::vector1<Vector>
+	arc( sasaF2_ ); // utility::vector1<Vector>
+	std::shared_ptr< core::scoring::FACTSRsdTypeInfo > local_restypeinfo;
+	arc( local_restypeinfo ); // FACTSRsdTypeInfoCOP
+	restypeinfo_ = local_restypeinfo; // copy the non-const pointer(s) into the const pointer(s)
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::FACTSResidueInfo );
+CEREAL_REGISTER_TYPE( core::scoring::FACTSResidueInfo )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::FACTSRotamerSetInfo::FACTSRotamerSetInfo() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::FACTSRotamerSetInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( residue_info_ ) ); // utility::vector1<FACTSResidueInfoOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::FACTSRotamerSetInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( residue_info_ ); // utility::vector1<FACTSResidueInfoOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::FACTSRotamerSetInfo );
+CEREAL_REGISTER_TYPE( core::scoring::FACTSRotamerSetInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_facts_FACTSResidue )
+#endif // SERIALIZATION
+
+
+

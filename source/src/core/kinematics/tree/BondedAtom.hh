@@ -23,6 +23,12 @@
 #include <core/types.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 namespace tree {
@@ -305,6 +311,12 @@ private: // Fields
 	bool dof_change_propagates_to_younger_siblings_;
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // BondedAtom
 
 typedef utility::pointer::shared_ptr< BondedAtom > BondedAtomOP;
@@ -315,6 +327,11 @@ typedef utility::pointer::weak_ptr< BondedAtom const > BondedAtomCAP;
 } // namespace tree
 } // namespace kinematics
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_kinematics_tree_BondedAtom )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_core_kinematics_BondedAtom_HH

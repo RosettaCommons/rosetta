@@ -38,6 +38,13 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace disulfides {
@@ -91,6 +98,16 @@ private:
 	CentroidDisulfideEnergyContainer * owner_;
 	Size focused_residue_;
 	Size disulfide_index_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	CentroidDisulfideNeighborIterator();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > static void load_and_construct( Archive & arc, cereal::construct< CentroidDisulfideNeighborIterator > & construct );
+#endif // SERIALIZATION
+
 };
 
 /// @brief Just a const version of CentroidDisulfideNeighborIterator
@@ -126,6 +143,16 @@ private:
 	CentroidDisulfideEnergyContainer const * owner_;
 	Size focused_residue_;
 	Size disulfide_index_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	CentroidDisulfideNeighborConstIterator();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > static void load_and_construct( Archive & arc, cereal::construct< CentroidDisulfideNeighborConstIterator > & construct );
+#endif // SERIALIZATION
 
 };
 
@@ -164,6 +191,12 @@ private:
 	Energy dslfc_ang_;
 	Energy dslfc_cb_dih_;
 	Energy dslfc_bb_dih_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class CentroidDisulfideEnergyContainer : public LREnergyContainer {
@@ -268,10 +301,21 @@ private:
 	utility::vector1< std::pair< Size, Size > > disulfide_partners_;
 	utility::vector1< std::pair< DisulfideAtomIndices, DisulfideAtomIndices > > disulfide_atom_indices_;
 	utility::vector1< std::pair< CentroidDisulfideEnergyComponents, bool > > disulfide_info_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_disulfides_CentroidDisulfideEnergyContainer )
+#endif // SERIALIZATION
+
 
 #endif

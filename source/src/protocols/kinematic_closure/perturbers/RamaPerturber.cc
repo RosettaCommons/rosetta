@@ -13,6 +13,7 @@
 #include <protocols/kinematic_closure/perturbers/RamaPerturber.hh>
 
 // Core headers
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoringManager.hh>

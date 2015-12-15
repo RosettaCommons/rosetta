@@ -28,6 +28,11 @@
 // Numceric Headers
 #include <numeric/xyzVector.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace etable {
@@ -115,6 +120,12 @@ private:
 
 	bool is_hydrogen_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 std::ostream & operator << ( std::ostream & os, EtableAtom const & atom );
@@ -123,5 +134,10 @@ std::ostream & operator << ( std::ostream & os, EtableAtom const & atom );
 } // namespace etable
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_etable_etrie_EtableAtom )
+#endif // SERIALIZATION
+
 
 #endif

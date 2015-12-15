@@ -102,6 +102,13 @@ public:
 	size() const {
 		return path_distances_to_connection_points_.size();
 	}
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class CountPairDataGeneric
@@ -172,6 +179,12 @@ public:
 	conn_dat( Size which_connection ) const {
 		return residue_connection_data_[ which_connection+1 ];
 	}
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 

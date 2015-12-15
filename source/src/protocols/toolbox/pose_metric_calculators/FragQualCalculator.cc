@@ -51,6 +51,15 @@
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.FragQualCalculator" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -273,3 +282,43 @@ FragQualCalculator::parse_my_tag(
 } // fldsgn
 } // protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::FragQualCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( rmsd_cutoff_goodfrag_ ) ); // Real
+	arc( CEREAL_NVP( ratio_cutoff_goodfrag_ ) ); // Real
+	arc( CEREAL_NVP( total_goodfrags_ ) ); // Real
+	arc( CEREAL_NVP( coverage_ ) ); // Real
+	arc( CEREAL_NVP( goodfrags_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( frag_ ) ); // FragSetOP
+	arc( CEREAL_NVP( begin_ ) ); // Size
+	arc( CEREAL_NVP( end_ ) ); // Size
+	arc( CEREAL_NVP( verbose_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::FragQualCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( rmsd_cutoff_goodfrag_ ); // Real
+	arc( ratio_cutoff_goodfrag_ ); // Real
+	arc( total_goodfrags_ ); // Real
+	arc( coverage_ ); // Real
+	arc( goodfrags_ ); // utility::vector1<Size>
+	arc( frag_ ); // FragSetOP
+	arc( begin_ ); // Size
+	arc( end_ ); // Size
+	arc( verbose_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::FragQualCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::FragQualCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_FragQualCalculator )
+#endif // SERIALIZATION

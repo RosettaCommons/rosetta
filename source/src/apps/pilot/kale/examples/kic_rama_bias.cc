@@ -323,8 +323,8 @@ int main(int argc, char** argv) {
 	ofstream uniform_log; uniform_log.open(uniform_path.c_str());
 
 	Pose rama_pose, uniform_pose;
-	make_pose_from_sequence(rama_pose, "GGGGGG", "fa_standard", false);
-	make_pose_from_sequence(uniform_pose, "GGGGGG", "fa_standard", false);
+	make_pose_from_sequence(rama_pose, "GGGGGG", core::chemical::FA_STANDARD, false);
+	make_pose_from_sequence(uniform_pose, "GGGGGG", core::chemical::FA_STANDARD, false);
 
 	ScoreFunction score_function;
 	score_function.set_weight(core::scoring::rama, 1);

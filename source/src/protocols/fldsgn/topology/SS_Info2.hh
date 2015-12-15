@@ -33,6 +33,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace fldsgn {
 namespace topology {
@@ -146,6 +151,11 @@ private: ///data
 	/// @brief positional vector of mid point
 	Vector mid_pos_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -173,6 +183,12 @@ public:// construct/destruct
 
 	/// @brief
 	friend std::ostream & operator<<(std::ostream & out, const Strand & st );
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 
 public:
@@ -226,6 +242,11 @@ private: // data
 
 	Real bend_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -265,6 +286,11 @@ public:
 	/// @brief
 	String type_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -485,10 +511,21 @@ private: //data
 	utility::vector1< Size > ss_element_id_;
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace topology
 } // namespace fldsgn
 } // naemspace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_fldsgn_topology_SS_Info2 )
+#endif // SERIALIZATION
+
 
 #endif

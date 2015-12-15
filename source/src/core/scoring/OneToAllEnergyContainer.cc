@@ -14,6 +14,18 @@
 // Unit headers
 #include <core/scoring/OneToAllEnergyContainer.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -355,3 +367,36 @@ OneToAllEnergyContainer::upper_neighbor_iterator_end( int resid )
 
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::OneToAllEnergyContainer::OneToAllEnergyContainer() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::OneToAllEnergyContainer::save( Archive & arc ) const {
+	arc( CEREAL_NVP( fixed_ ) ); // int
+	arc( CEREAL_NVP( size_ ) ); // Size
+	arc( CEREAL_NVP( score_type_ ) ); // enum core::scoring::ScoreType
+	arc( CEREAL_NVP( table_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( computed_ ) ); // utility::vector1<_Bool>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::OneToAllEnergyContainer::load( Archive & arc ) {
+	arc( fixed_ ); // int
+	arc( size_ ); // Size
+	arc( score_type_ ); // enum core::scoring::ScoreType
+	arc( table_ ); // utility::vector1<Real>
+	arc( computed_ ); // utility::vector1<_Bool>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::OneToAllEnergyContainer );
+CEREAL_REGISTER_TYPE( core::scoring::OneToAllEnergyContainer )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_OneToAllEnergyContainer )
+#endif // SERIALIZATION

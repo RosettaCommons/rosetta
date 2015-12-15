@@ -63,6 +63,11 @@ static THREAD_LOCAL basic::Tracer TR_RDRD( "core.pack.interaction_graph.RotamerD
 using namespace ObjexxFCL::format;
 
 // Singleton instance and mutex static data members
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
 namespace utility {
 
 using core::pack::interaction_graph::RotamerDotsRadiusData;
@@ -2016,3 +2021,26 @@ void InvRotamerDots::print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > 
 
 
 //  LocalWords:  endl
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::interaction_graph::DotSphere::save( Archive & arc ) const {
+	arc( CEREAL_NVP( dots_coverage_count_ ) ); // unsigned char [168]
+	arc( CEREAL_NVP( num_covered_ ) ); // core::Size
+	arc( CEREAL_NVP( num_covered_current_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::interaction_graph::DotSphere::load( Archive & arc ) {
+	arc( dots_coverage_count_ ); // unsigned char [168]
+	arc( num_covered_ ); // core::Size
+	arc( num_covered_current_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::interaction_graph::DotSphere );
+#endif // SERIALIZATION

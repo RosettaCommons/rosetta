@@ -34,7 +34,14 @@ namespace protocols {
 namespace jd2 {
 
 
-/// @details the JobInputter class is responsible for A) determining what jobs exist, and B) taking a job object and returning the starting pose associated with that job.  NOTE: your JobInputter should order Job objects in the Jobs vector to have as few "transitions" between inputs as possible (group all Jobs of the same input next to each other).  This improves efficiency of the "FAIL_BAD_INPUT" functionality.  I said "should", not "must" on purpose.
+/// @brief The %JobInputter class is responsible for
+/// - determining what jobs exist, and
+/// - taking a job object and returning the starting pose associated with that job.
+///
+/// @details NOTE: your JobInputter should order Job objects in the Jobs vector to
+/// have as few "transitions" between inputs as possible (group all Jobs of the
+/// same input next to each other).  This improves efficiency of the "FAIL_BAD_INPUT"
+/// functionality.  I said "should", not "must" on purpose.
 class JobInputter : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< JobInputter >
 {
 public:
@@ -57,10 +64,20 @@ public:
 	///
 	inline JobInputterAP get_self_weak_ptr() { return JobInputterAP( shared_from_this() ); }
 
-	/// @brief this function is responsible for filling the pose reference with the pose indicated by the job.  The Job object (within its InnerJob) contains a PoseCOP.  This function needs to either fill the pose reference from the InnerJob or, on first demand of a pose from that InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill the reference.
+
+	/// @brief this function is responsible for returning the starting pose to use for
+	/// the input job.  The Job object (within its InnerJob) contains a PoseCOP.
+	/// This function needs to either create a new Pose from the InnerJob Pose or, on
+	/// first demand of a pose from that InnerJob, instantiate the pose, hand off a COP
+	/// to the InnerJob, and fill the reference.
 	virtual void pose_from_job( core::pose::Pose & pose, JobOP job ) = 0;
 
-	/// @brief this function determines what jobs exist.  This function neither knows nor cares what jobs are already complete on disk/memory - it just figures out what ones should exist given the input.  NOTE: your JobInputter should order Job objects in the Jobs vector to have as few "transitions" between inputs as possible (group all Jobs of the same input next to each other).  This improves efficiency of the "FAIL_BAD_INPUT" functionality.  Note I said "should", not "must".
+	/// @brief this function determines what jobs exist.  This function neither knows nor
+	/// cares what jobs are already complete on disk/memory - it just figures out what
+	/// ones should exist given the input.  NOTE: your JobInputter should order Job objects
+	/// in the Jobs vector to have as few "transitions" between inputs as possible (group
+	/// all Jobs of the same input next to each other).  This improves efficiency of the
+	/// "FAIL_BAD_INPUT" functionality.  Note I (Brave Sir Steven) said "should", not "must".
 	virtual void fill_jobs( JobsContainer & jobs ) = 0;
 
 	/// @brief This function is only called by certain JobInputters to update the jobs list after it has already been created.
@@ -68,22 +85,23 @@ public:
 	virtual void update_jobs_list( JobsContainerOP jobs );
 
 	/// @brief return the type of input source that the JobInputter is currently
-	///  using
+	/// using
 	virtual JobInputterInputSource::Enum input_source() const = 0;
 
 	/// @brief call this with input_source() to get the input source of a
-	///particular job inputter
+	/// particular job inputter
 	static
 	std::string
 	job_inputter_input_source_to_string(
-		JobInputterInputSource::Enum source);
+		JobInputterInputSource::Enum source
+	);
 
 	/// @brief Does this type of JobInputter update the jobs list?
 	/// @details False by default.  Override this function in derived classes to make it true.
 	virtual bool updates_jobs_list() const { return false; }
 
-
 protected:
+
 	/// @brief this function modifies the InnerJob's pose.  Access to that pose is via friendship.
 	void load_pose_into_job( core::pose::Pose const & pose, JobOP job );
 

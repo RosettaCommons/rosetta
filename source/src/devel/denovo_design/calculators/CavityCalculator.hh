@@ -37,6 +37,11 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace devel {
 namespace denovo_design {
 namespace calculators {
@@ -67,11 +72,22 @@ private: // private member functions
 private:// member variables
 	core::Real total_volume_;
 	utility::vector1< core::scoring::packstat::CavityBallCluster > clusters_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //CavityCalculator
 
 
 } // ns calculators
 } // ns denovo_design
 } // ns devel
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( devel_denovo_design_calculators_CavityCalculator )
+#endif // SERIALIZATION
+
 
 #endif

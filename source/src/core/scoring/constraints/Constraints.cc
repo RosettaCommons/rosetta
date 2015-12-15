@@ -28,6 +28,16 @@
 #include <numeric/xyzVector.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -48,30 +58,29 @@ Constraints::Constraints( Constraints const & other ) :
 ConstraintsOP
 Constraints::clone() const
 {
-
 	ConstraintsOP new_constraints( new Constraints() );
 	new_constraints->copy_from( *this );
+	return new_constraints;
+}
+
+ConstraintsOP
+Constraints::deep_clone() const
+{
+	ConstraintsOP new_constraints( new Constraints() );
+	new_constraints->deep_copy_from( *this );
 	return new_constraints;
 }
 
 Constraints const &
 Constraints::operator = ( Constraints const & rhs )
 {
-	copy_from( rhs );
+	if ( this != & rhs ) {
+		copy_from( rhs );
+	}
 	return *this;
 }
 
 
-void
-Constraints::copy_from( Constraints const & other ) {
-	for ( ConstraintCOPs::const_iterator
-			iter = other.constraints_.begin(), iter_end = other.constraints_.end();
-			iter != iter_end; ++iter ) {
-		// All Constraints are now immutable, and so do not ever need to be cloned.
-		//constraints_.push_back( (*iter)->clone() );
-		constraints_.push_back( (*iter) );
-	}
-}
 
 // call the setup_for_derivatives for each constraint
 void
@@ -304,6 +313,71 @@ Constraints::clear()
 	constraints_.clear();
 }
 
+void
+Constraints::copy_from( Constraints const & other ) {
+	// If these two Constraints objects point to the same Constraint objects
+	// (determined via pointer comparison) then we can avoid any copying
+	if ( other.constraints_.size() == constraints_.size() ) {
+		bool all_same = true;
+		for ( Size ii = 1; ii <= constraints_.size(); ++ii ) {
+			if ( other.constraints_[ ii ] != constraints_[ ii ] ) {
+				all_same = false;
+				break;
+			}
+		}
+		if ( all_same ) return;
+	}
+
+	// otherwise, clear out the contents of this Constraints object and copy
+	// all of the pointers from the other constraints_ array into this one.
+	constraints_.clear();
+	constraints_.reserve( other.constraints_.size() );
+	for ( ConstraintCOPs::const_iterator
+			iter = other.constraints_.begin(), iter_end = other.constraints_.end();
+			iter != iter_end; ++iter ) {
+		constraints_.push_back( (*iter) );
+	}
+}
+
+void
+Constraints::deep_copy_from( Constraints const & other ) {
+
+	// clear out the contents of this Constraints object and clone
+	// all of the constraints from the other constraints_ array into this one.
+	constraints_.clear();
+	constraints_.reserve( other.constraints_.size() );
+	for ( ConstraintCOPs::const_iterator
+			iter = other.constraints_.begin(), iter_end = other.constraints_.end();
+			iter != iter_end; ++iter ) {
+		constraints_.push_back( (*iter)->clone() );
+	}
+}
+
+
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::Constraints::save( Archive & arc ) const {
+	arc( CEREAL_NVP( constraints_ ) ); // ConstraintCOPs
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::Constraints::load( Archive & arc ) {
+	utility::vector1< std::shared_ptr< core::scoring::constraints::Constraint > > local_constraints;
+	arc( local_constraints ); // deserialize the ConstraintCOPs into a vector of ConstraintOP objects.
+	constraints_ = local_constraints; // copy the non-const pointers into the const pointers
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::Constraints );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::Constraints )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_Constraints )
+#endif // SERIALIZATION

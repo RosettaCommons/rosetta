@@ -29,6 +29,15 @@
 #include <utility/assert.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace select {
 namespace residue_selector {
@@ -77,7 +86,7 @@ ResidueNameSelector::apply( core::pose::Pose const & pose ) const
 			continue;
 		}
 		// check if the given name is valid
-		if ( !pose.residue(1).residue_type_set().has_name( *n ) ) {
+		if ( !pose.residue(1).residue_type_set()->has_name( *n ) ) {
 			std::stringstream err;
 			err << "ResidueNameSelector: " << *n << " is not a valid residue type name.";
 			throw utility::excn::EXCN_BadInput( err.str() );
@@ -92,7 +101,7 @@ ResidueNameSelector::apply( core::pose::Pose const & pose ) const
 			continue;
 		}
 		// check if the given name is valid
-		if ( !pose.residue(1).residue_type_set().has_name3( *n ) ) {
+		if ( !pose.residue(1).residue_type_set()->has_name3( *n ) ) {
 			std::stringstream err;
 			err << "ResidueNameSelector: " << *n << " is not a valid residue type name.";
 			throw utility::excn::EXCN_BadInput( err.str() );
@@ -161,7 +170,38 @@ ResidueNameSelectorCreator::keyname() const {
 	return ResidueNameSelector::class_name();
 }
 
+void ResidueNameSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const
+{
+	// TO DO!
+}
+
 } //namespace residue_selector
 } //namespace select
 } //namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::residue_selector::ResidueNameSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( res_name_str_ ) ); // std::string
+	arc( CEREAL_NVP( res_name3_str_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::residue_selector::ResidueNameSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( res_name_str_ ); // std::string
+	arc( res_name3_str_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::ResidueNameSelector );
+CEREAL_REGISTER_TYPE( core::select::residue_selector::ResidueNameSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_residue_selector_ResidueNameSelector )
+#endif // SERIALIZATION

@@ -16,40 +16,22 @@
 
 
 // Unit headers
-// #include <core/scoring/methods/LK_BallEnergy.hh>
-
-// // Package headers
-// #include <core/scoring/methods/LK_BallEnergy.hh>
-// #include <core/scoring/ScoringManager.hh>
-// #include <core/scoring/NeighborList.hh>
-// #include <core/scoring/EnergyGraph.hh>
-// #include <core/scoring/etable/Etable.hh>
-// #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-// #include <core/scoring/etable/count_pair/CountPairFactory.hh>
-// #include <core/scoring/etable/count_pair/types.hh>
+// #include <core/scoring/methods/LK_BallInfo.fwd.hh> ??
 
 // // Project headers
 #include <core/pose/Pose.fwd.hh>
-// #include <core/scoring/ScoreFunction.hh>
-// #include <ObjexxFCL/formatted.o.hh>
-#include <core/conformation/Residue.hh>
-// #include <core/conformation/ResidueFactory.hh>
-// // #include <core/io/pdb/pose_io.hh> // HACK
-// // #include <fstream> // HACK
-
-// #include <core/scoring/constraints/AngleConstraint.hh>
-
-// #include <core/options/util.hh> // HACK
-
-// #include <core/util/prof.hh>
-// #include <core/util/tracer.hh>
+#include <core/chemical/ResidueType.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
-// #include <core/conformation/residue_datacache.hh>
 
-// #include <numeric/constants.hh>
-// #include <numeric/xyz.functions.hh>
+// Numeric headers
+#include <numeric/xyzVector.hh>
 
-// #include <utility/vector1.functions.hh> // HACK
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace methods {
@@ -102,7 +84,6 @@ typedef utility::pointer::shared_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
 
 class LKB_ResidueInfo : public basic::datacache::CacheableData {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~LKB_ResidueInfo();
 	typedef utility::vector1< Vector > Vectors;
 
@@ -163,10 +144,10 @@ public:
 	reset_arrays_danger_expert_only();
 
 	bool
-	matches_residue_type( chemical::ResidueType const & rsd_type ) const { return ( rsd_type_ == &(rsd_type) ); }
+	matches_residue_type( chemical::ResidueType const & rsd_type ) const;
 
 	chemical::ResidueType const &
-	residue_type() const { return *rsd_type_; }
+	residue_type() const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// STATIC data
@@ -190,13 +171,19 @@ private:
 	) const;
 
 private:
-	chemical::ResidueType const * rsd_type_; // bad form
+	chemical::ResidueTypeCOP rsd_type_;
 	utility::vector1< Vectors > waters_;
 	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > dwater_datom1_;
 	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > dwater_datom2_;
 	utility::vector1< utility::vector1< numeric::xyzMatrix< Real > > > dwater_datom3_;
 	utility::vector1< utility::vector1< Real > > atom_weights_;
 	bool has_waters_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -232,6 +219,12 @@ public:
 private:
 	utility::vector1< LKB_ResidueInfoOP > residues_info_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 typedef LKB_ResiduesInfo LKB_PoseInfo;
@@ -244,4 +237,9 @@ typedef utility::pointer::shared_ptr< LKB_RotamerSetInfo > LKB_RotamerSetInfoOP;
 }
 }
 }
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_methods_LK_BallInfo )
+#endif // SERIALIZATION
+
+
 #endif

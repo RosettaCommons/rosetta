@@ -19,6 +19,15 @@
 
 // utility headers
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -63,3 +72,27 @@ WaterPackingInfo::clear() {
 } // namespace rotamer_set
 } // namespace pack
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::rotamer_set::WaterPackingInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( data_ ) ); // utility::vector1<WaterAnchorInfoOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::rotamer_set::WaterPackingInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( data_ ); // utility::vector1<WaterAnchorInfoOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::WaterPackingInfo );
+CEREAL_REGISTER_TYPE( core::pack::rotamer_set::WaterPackingInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_rotamer_set_WaterPackingInfo )
+#endif // SERIALIZATION

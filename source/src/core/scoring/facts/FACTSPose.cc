@@ -49,6 +49,15 @@ static THREAD_LOCAL basic::Tracer TR( "core.scoring.FACTSPoseInfo" );
 
 using namespace std;
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -194,3 +203,35 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::FACTSPoseInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( residue_info_ ) ); // utility::vector1<FACTSResidueInfoOP>
+	arc( CEREAL_NVP( placeholder_residue_ ) ); // utility::vector1<ResidueOP>
+	arc( CEREAL_NVP( placeholder_info_ ) ); // utility::vector1<FACTSResidueInfoOP>
+	arc( CEREAL_NVP( being_packed_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( context_derivative_empty_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::FACTSPoseInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( residue_info_ ); // utility::vector1<FACTSResidueInfoOP>
+	arc( placeholder_residue_ ); // utility::vector1<ResidueOP>
+	arc( placeholder_info_ ); // utility::vector1<FACTSResidueInfoOP>
+	arc( being_packed_ ); // utility::vector1<_Bool>
+	arc( context_derivative_empty_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::FACTSPoseInfo );
+CEREAL_REGISTER_TYPE( core::scoring::FACTSPoseInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_facts_FACTSPose )
+#endif // SERIALIZATION

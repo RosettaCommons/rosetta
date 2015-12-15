@@ -56,6 +56,14 @@
 //Auto Headers
 #include <core/scoring/EnergyGraph.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace symmetry {
@@ -1104,3 +1112,25 @@ SymmetricScoreFunction::correct_finalize_score( pose::Pose & pose ) const
 } // symmetry
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::symmetry::SymmetricScoreFunction::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::ScoreFunction >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::symmetry::SymmetricScoreFunction::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::ScoreFunction >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::symmetry::SymmetricScoreFunction );
+CEREAL_REGISTER_TYPE( core::scoring::symmetry::SymmetricScoreFunction )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_symmetry_SymmetricScoreFunction )
+#endif // SERIALIZATION

@@ -30,6 +30,18 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.pose.full_model_info.FullModelParameters" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace full_model_info {
@@ -686,3 +698,45 @@ FullModelParameters::set_parameter_as_res_list_in_pairs( FullModelParameterType 
 } //full_model_info
 } //pose
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pose::full_model_info::FullModelParameters::save( Archive & arc ) const {
+	arc( CEREAL_NVP( full_sequence_ ) ); // std::string
+	arc( CEREAL_NVP( conventional_numbering_ ) ); // utility::vector1<int>
+	arc( CEREAL_NVP( conventional_chains_ ) ); // utility::vector1<char>
+	arc( CEREAL_NVP( non_standard_residues_ ) ); // std::map<Size, std::string>
+	arc( CEREAL_NVP( cst_string_ ) ); // std::string
+	arc( CEREAL_NVP( cst_set_ ) ); // core::scoring::constraints::ConstraintSetCOP
+	arc( CEREAL_NVP( full_model_pose_for_constraints_ ) ); // pose::PoseCOP
+	arc( CEREAL_NVP( parameter_values_at_res_ ) ); // std::map<FullModelParameterType, utility::vector1<Size> >
+	arc( CEREAL_NVP( parameter_values_as_res_lists_ ) ); // std::map<FullModelParameterType, std::map<Size, utility::vector1<Size> > >
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pose::full_model_info::FullModelParameters::load( Archive & arc ) {
+	arc( full_sequence_ ); // std::string
+	arc( conventional_numbering_ ); // utility::vector1<int>
+	arc( conventional_chains_ ); // utility::vector1<char>
+	arc( non_standard_residues_ ); // std::map<Size, std::string>
+	arc( cst_string_ ); // std::string
+	std::shared_ptr< core::scoring::constraints::ConstraintSet > local_cst_set;
+	arc( local_cst_set ); // core::scoring::constraints::ConstraintSetCOP
+	cst_set_ = local_cst_set; // copy the non-const pointer(s) into the const pointer(s)
+	std::shared_ptr< core::pose::Pose > local_full_model_pose_for_constraints;
+	arc( local_full_model_pose_for_constraints ); // pose::PoseCOP
+	full_model_pose_for_constraints_ = local_full_model_pose_for_constraints; // copy the non-const pointer(s) into the const pointer(s)
+	arc( parameter_values_at_res_ ); // std::map<FullModelParameterType, utility::vector1<Size> >
+	arc( parameter_values_as_res_lists_ ); // std::map<FullModelParameterType, std::map<Size, utility::vector1<Size> > >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pose::full_model_info::FullModelParameters );
+CEREAL_REGISTER_TYPE( core::pose::full_model_info::FullModelParameters )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pose_full_model_info_FullModelParameters )
+#endif // SERIALIZATION

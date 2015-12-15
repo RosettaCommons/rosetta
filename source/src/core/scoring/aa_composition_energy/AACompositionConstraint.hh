@@ -42,37 +42,40 @@ class AACompositionConstraint : public core::scoring::aa_composition_energy::Seq
 public: //Constructor, destructor, copy, clone:
 
 	/// @brief Constructor
-	///
 	AACompositionConstraint();
 
 	/// @brief Copy constructor
-	///
-	AACompositionConstraint( AACompositionConstraint const &src );
+	AACompositionConstraint( AACompositionConstraint const & src );
 
 	/// @brief Destructor
-	///
 	~AACompositionConstraint();
 
 	/// @brief Clone operator
-	///
-	virtual core::scoring::constraints::ConstraintOP clone() const;
+	virtual constraints::ConstraintOP clone() const;
+
+	virtual
+	bool operator == ( constraints::Constraint const & /*other*/ ) const;
+
+	virtual
+	bool
+	same_type_as_me( constraints::Constraint const & other ) const;
+
 
 public: //Functions that actually do stuff:
 
 	/// @brief Set the selector to be used by this constraint.
 	/// @details Clones the input.
-	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector_in );
+	void set_selector( select::residue_selector::ResidueSelectorCOP selector_in );
 
 	/// @brief Const access to the selector.
 	/// @details Returns a null pointer if no selector has been specified.
-	inline core::select::residue_selector::ResidueSelectorCOP selector() const { return selector_; }
+	select::residue_selector::ResidueSelectorCOP selector() const;
 
 	/// @brief Const access to the AACompositionEnergySetup object.
-	///
-	inline core::scoring::aa_composition_energy::AACompositionEnergySetupCOP aa_composition_energy_setup() const { return aa_comp_setup_; }
+	AACompositionEnergySetupCOP
+	aa_composition_energy_setup() const;
 
 	/// @brief Initialize the AACompositionEnergySetup object from a file.
-	///
 	void initialize_from_file( std::string const &filename );
 
 private:
@@ -80,11 +83,11 @@ private:
 
 	/// @brief Owning pointer to a ResidueSelector.
 	/// @details Optional; will serve as a mask for this AACompositionConstraint if provided.
-	core::select::residue_selector::ResidueSelectorOP selector_;
+	select::residue_selector::ResidueSelectorOP selector_;
 
 	/// @brief AACompositionEnergySetup object stored by this object.
 	/// @details Created on object construction
-	core::scoring::aa_composition_energy::AACompositionEnergySetupOP aa_comp_setup_;
+	AACompositionEnergySetupOP aa_comp_setup_;
 
 };
 

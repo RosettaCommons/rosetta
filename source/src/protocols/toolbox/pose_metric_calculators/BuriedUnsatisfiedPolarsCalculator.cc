@@ -68,6 +68,21 @@ using namespace core::pose::metrics;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.BuriedUnsatisfiedPolarsCalculator" );
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/id/AtomID_Map.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -267,3 +282,44 @@ BuriedUnsatisfiedPolarsCalculator::satisfaction_cutoff( std::string atom_type )
 } //namespace pose_metric_calculators
 } //namespace toolbox
 } //namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+	arc( CEREAL_NVP( all_bur_unsat_polars_ ) ); // core::Size
+	arc( CEREAL_NVP( special_region_bur_unsat_polars_ ) ); // core::Size
+	arc( CEREAL_NVP( atom_bur_unsat_ ) ); // core::id::AtomID_Map<_Bool>
+	arc( CEREAL_NVP( residue_bur_unsat_polars_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( name_of_hbond_calc_ ) ); // std::string
+	arc( CEREAL_NVP( name_of_sasa_calc_ ) ); // std::string
+	arc( CEREAL_NVP( burial_sasa_cutoff_ ) ); // core::Real
+	arc( CEREAL_NVP( special_region_ ) ); // std::set<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+	arc( all_bur_unsat_polars_ ); // core::Size
+	arc( special_region_bur_unsat_polars_ ); // core::Size
+	arc( atom_bur_unsat_ ); // core::id::AtomID_Map<_Bool>
+	arc( residue_bur_unsat_polars_ ); // utility::vector1<core::Size>
+	arc( name_of_hbond_calc_ ); // std::string
+	arc( name_of_sasa_calc_ ); // std::string
+	arc( burial_sasa_cutoff_ ); // core::Real
+	arc( special_region_ ); // std::set<core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_BuriedUnsatisfiedPolarsCalculator )
+#endif // SERIALIZATION

@@ -167,7 +167,7 @@ read_additional_pdb_data(
 }
 
 
-pose::PoseOP pose_from_pdb(std::string const & filename, bool read_fold_tree)
+pose::PoseOP pose_from_pdb( std::string const & filename, bool read_fold_tree )
 {
 	pose::PoseOP pose( new pose::Pose() );
 	pose_from_pdb( *pose, filename, read_fold_tree);
@@ -203,7 +203,7 @@ pose_from_pdb(
 	bool read_fold_tree
 )
 {
-	utility::vector1<std::string> filenames = utility::split(filenames_string);
+	utility::vector1< std::string > filenames = utility::split(filenames_string);
 
 	std::string res;
 

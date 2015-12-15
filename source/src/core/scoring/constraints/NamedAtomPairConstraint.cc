@@ -41,6 +41,17 @@
 static THREAD_LOCAL basic::Tracer tr( "core.io.constraints" );
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -48,29 +59,68 @@ namespace constraints {
 /// @details Auto-generated virtual destructor
 Obsolet_NamedAtomPairConstraint::~Obsolet_NamedAtomPairConstraint() {}
 
+NamedAtomPairConstraint::NamedAtomPairConstraint(
+	id::NamedAtomID const& a1,
+	id::NamedAtomID const& a2,
+	func::FuncOP func,
+	ScoreType scoretype /* = atom_pair_constraint */
+) :
+	AtomPairConstraint( id::AtomID( 0, a1.rsd() ), id::AtomID( 0, a2.rsd() ), func, scoretype ),
+	named_atom1_( a1 ),
+	named_atom2_( a2 ),
+	type1_id_( 0 ),
+	type2_id_( 0 )
+{}
+
+ConstraintOP
+NamedAtomPairConstraint::clone() const {
+	/// invokes the parent copy-ctor, which performs a deep copy of the Func object
+	return ConstraintOP( new NamedAtomPairConstraint( *this ));
+}
+
 
 /// @brief Copies the data from this Constraint into a new object and returns an OP
 /// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
 /// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
 /// to the new object. Intended to be implemented by derived classes.
 ConstraintOP NamedAtomPairConstraint::remapped_clone( pose::Pose const&, pose::Pose const& dest, id::SequenceMappingCOP smap ) const {
-	id::NamedAtomID atom1( named_atom1_ );
-	id::NamedAtomID atom2( named_atom2_ );
+	id::NamedAtomID named_atom1( named_atom1_ );
+	id::NamedAtomID named_atom2( named_atom2_ );
 
 	if ( smap ) {
-		atom1.rsd() = (*smap)[ atom1_.rsd() ];
-		atom2.rsd() = (*smap)[ atom2_.rsd() ];
+		named_atom1.rsd() = (*smap)[ atom1().rsd() ];
+		named_atom2.rsd() = (*smap)[ atom2().rsd() ];
 	}
 
 	//get AtomIDs for target pose
-	id::AtomID id1( core::pose::named_atom_id_to_atom_id( atom1, dest ) );
-	id::AtomID id2( core::pose::named_atom_id_to_atom_id( atom2, dest ) );
+	id::AtomID id1( core::pose::named_atom_id_to_atom_id( named_atom1, dest ) );
+	id::AtomID id2( core::pose::named_atom_id_to_atom_id( named_atom2, dest ) );
 	if ( id1.valid() && id2.valid() ) {
-		return ConstraintOP( new NamedAtomPairConstraint( atom1, atom2, func_, score_type() ) );
+		return ConstraintOP( new NamedAtomPairConstraint( named_atom1, named_atom2, get_func().clone(), score_type() ) );
 	} else {
 		return NULL;
 	}
 }
+
+bool NamedAtomPairConstraint::operator == ( Constraint const & rhs ) const {
+	// base class operator== ensures that both classes are of type NamedAtomPairConstraint
+	// through the mutual invocation of same_type_as_me
+	if ( ! AtomPairConstraint::operator == ( rhs ) ) return false;
+
+	NamedAtomPairConstraint const & rhs_napc( static_cast< NamedAtomPairConstraint const & > ( rhs ) );
+	if ( named_atom1_ != rhs_napc.named_atom1_ ) return false;
+	if ( named_atom2_ != rhs_napc.named_atom2_ ) return false;
+	if ( type1_id_ != rhs_napc.type1_id_ ) return false;
+	if ( type2_id_ != rhs_napc.type2_id_ ) return false;
+
+	return true;
+}
+
+bool NamedAtomPairConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< NamedAtomPairConstraint const * > ( & other );
+}
+
 
 void
 NamedAtomPairConstraint::setup_for_scoring(  func::XYZ_Func const & xyz, ScoreFunction const& ) const {
@@ -78,16 +128,16 @@ NamedAtomPairConstraint::setup_for_scoring(  func::XYZ_Func const & xyz, ScoreFu
 	core::Size type1_id_now = (core::Size)&( xyz.residue( named_atom1_.rsd() ).type() );
 	core::Size type2_id_now = (core::Size)&( xyz.residue( named_atom2_.rsd() ).type() );
 	if ( type1_id_ != type1_id_now || type2_id_ != type2_id_now ) {
-		atom1_ = id::AtomID( xyz.residue( named_atom1_.rsd() ).atom_index( named_atom1_.atom() ), named_atom1_.rsd() );
-		atom2_ = id::AtomID( xyz.residue( named_atom2_.rsd() ).atom_index( named_atom2_.atom() ), named_atom2_.rsd() );
-		if ( !atom1_.valid() || !atom2_.valid() ) {
+		atom1( id::AtomID( xyz.residue( named_atom1_.rsd() ).atom_index( named_atom1_.atom() ), named_atom1_.rsd() ));
+		atom2( id::AtomID( xyz.residue( named_atom2_.rsd() ).atom_index( named_atom2_.atom() ), named_atom2_.rsd() ));
+		if ( !atom1().valid() || !atom2().valid() ) {
 			tr.Warning << "[WARNING] can't find atom for constraint"; show_def_nopose( tr.Warning );
 			tr.Warning << std::endl;
 		}
-		if ( !atom1_.valid() ) {
+		if ( !atom1().valid() ) {
 			throw core::id::EXCN_AtomNotFound( named_atom1_ );
 		}
-		if ( !atom2_.valid() ) {
+		if ( !atom2().valid() ) {
 			throw core::id::EXCN_AtomNotFound( named_atom2_ );
 		}
 	}
@@ -99,7 +149,7 @@ void NamedAtomPairConstraint::show_def( std::ostream& out, pose::Pose const& ) c
 
 void NamedAtomPairConstraint::show_def_nopose( std::ostream& out ) const {
 	out << type() << " " << named_atom1_ << " " << named_atom2_ << " ";
-	func_->show_definition( out );
+	get_func().show_definition( out );
 }
 
 /// @details one line definition "AtomPairs atom1 res1 atom2 res2 function_type function_definition"
@@ -132,24 +182,28 @@ NamedAtomPairConstraint::read_def(
 
 	named_atom1_ =  id::NamedAtomID( name1, res1 );
 	named_atom2_ =  id::NamedAtomID( name2, res2 );
-	atom1_ = id::AtomID( core::pose::named_atom_id_to_atom_id(named_atom1_, pose ));
-	atom2_ = id::AtomID( core::pose::named_atom_id_to_atom_id(named_atom2_, pose ));
-	if ( atom1_.atomno() == 0 || atom2_.atomno() == 0 ) {
+	atom1( id::AtomID( core::pose::named_atom_id_to_atom_id(named_atom1_, pose )));
+	atom2( id::AtomID( core::pose::named_atom_id_to_atom_id(named_atom2_, pose )));
+	if ( atom1().atomno() == 0 || atom2().atomno() == 0 ) {
 		tr.Warning << "Error reading atoms: read in atom names("
 			<< name1 << "," << name2 << "), "
-			<< "and found AtomIDs (" << atom1_ << "," << atom2_ << ")" << std::endl;
+			<< "and found AtomIDs (" << atom1() << "," << atom2() << ")" << std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;
 	}
 
-	func_ = func_factory.new_func( func_type );
-	func_->read_data( data );
+	func::FuncOP new_func = func_factory.new_func( func_type );
+	if ( ! new_func ) {
+		throw utility::excn::EXCN_Msg_Exception( "The function type '" + func_type + "' is not valid" );
+	}
+	new_func->read_data( data );
+	set_func( new_func );
 
 	//chu skip the rest of line since this is a single line defintion.
 	while ( data.good() && (data.get() != '\n') ) {}
 
 	if ( tr.Debug.visible() ) {
-		func_->show_definition( tr.Debug );
+		get_func().show_definition( tr.Debug );
 		tr.Debug << std::endl;
 	}
 } // read_def
@@ -217,3 +271,61 @@ std::ostream& operator<< ( std::ostream& out, Obsolet_NamedAtomPairConstraint co
 }
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::constraints::NamedAtomPairConstraint::NamedAtomPairConstraint() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::NamedAtomPairConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< AtomPairConstraint >( this ) );
+	arc( CEREAL_NVP( named_atom1_ ) ); // id::NamedAtomID
+	arc( CEREAL_NVP( named_atom2_ ) ); // id::NamedAtomID
+	arc( CEREAL_NVP( type1_id_ ) ); // core::Size
+	arc( CEREAL_NVP( type2_id_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::NamedAtomPairConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< AtomPairConstraint >( this ) );
+	arc( named_atom1_ ); // id::NamedAtomID
+	arc( named_atom2_ ); // id::NamedAtomID
+	arc( type1_id_ ); // core::Size
+	arc( type2_id_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::NamedAtomPairConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::NamedAtomPairConstraint )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::constraints::Obsolet_NamedAtomPairConstraint::Obsolet_NamedAtomPairConstraint() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::Obsolet_NamedAtomPairConstraint::save( Archive & arc ) const {
+	arc( CEREAL_NVP( atom1_ ) ); // id::NamedAtomID
+	arc( CEREAL_NVP( atom2_ ) ); // id::NamedAtomID
+	arc( CEREAL_NVP( cst_ ) ); // AtomPairConstraintOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::Obsolet_NamedAtomPairConstraint::load( Archive & arc ) {
+	arc( atom1_ ); // id::NamedAtomID
+	arc( atom2_ ); // id::NamedAtomID
+	arc( cst_ ); // AtomPairConstraintOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::Obsolet_NamedAtomPairConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::Obsolet_NamedAtomPairConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_NamedAtomPairConstraint )
+#endif // SERIALIZATION

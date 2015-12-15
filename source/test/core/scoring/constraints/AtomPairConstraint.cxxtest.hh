@@ -84,6 +84,15 @@
 #include <vector>
 #include <basic/Tracer.fwd.hh>
 
+#ifdef	SERIALIZATION
+#include <core/id/AtomID.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif
+
 
 using basic::T;
 using basic::Error;
@@ -179,5 +188,94 @@ public:
 		}
 	}
 
+
+	void test_atom_pair_constraint_clone() {
+		using namespace core;
+		using namespace core::id;
+		using namespace core::scoring;
+		using namespace core::scoring::constraints;
+
+		AtomID at1( 1, 1), at2( 2, 1 );
+		core::scoring::func::HarmonicFuncOP func( new core::scoring::func::HarmonicFunc( 1.2, 0.5 ) );
+
+		AtomPairConstraintOP atom_pair_cst( new AtomPairConstraint( at1, at2, func ));
+		ConstraintOP cloned_cst = atom_pair_cst->clone();
+		AtomPairConstraintOP cloned_apc = utility::pointer::dynamic_pointer_cast< AtomPairConstraint > ( cloned_cst );
+
+		// ensure the dynamic cast succeeds
+		TS_ASSERT( cloned_apc );
+
+		// Make sure that the clone isn't the same as the original -- of course, right?
+		TS_ASSERT_DIFFERS( atom_pair_cst, cloned_cst );
+		TS_ASSERT_DIFFERS( atom_pair_cst, cloned_apc );
+
+		// check mutual equality; a == b and b == a
+		TS_ASSERT( *atom_pair_cst == *cloned_cst );
+		TS_ASSERT( *cloned_cst == *atom_pair_cst );
+
+		// clone() should perform a deep copy of the internal func object, verifiable by looking
+		// at the func pointers and making sure they point at different objects.
+		TS_ASSERT_DIFFERS( & atom_pair_cst->get_func(), & cloned_cst->get_func() );
+
+	}
+
+	void test_atom_pair_constraint_equality_operator() {
+		using namespace core;
+		using namespace core::id;
+		using namespace core::scoring;
+		using namespace core::scoring::constraints;
+
+		AtomID at1( 1, 1), at2( 2, 1 );
+		core::scoring::func::HarmonicFuncOP func( new core::scoring::func::HarmonicFunc( 1.2, 0.5 ) );
+
+		AtomPairConstraintOP atom_pair_cst1( new AtomPairConstraint( at1, at2, func ));
+
+		core::scoring::func::HarmonicFuncOP func2( new core::scoring::func::HarmonicFunc( 1.2, 0.75 ) );
+		AtomPairConstraintOP atom_pair_cst2( new AtomPairConstraint( at1, at2, func2 ));
+
+		AtomID at3( 3, 1), at4( 4, 1 );
+		AtomPairConstraintOP atom_pair_cst3( new AtomPairConstraint( at3, at2, func ));
+		AtomPairConstraintOP atom_pair_cst4( new AtomPairConstraint( at1, at4, func ));
+
+		// func objects differ; check mutual inequality; a != b and b != a
+		TS_ASSERT( *atom_pair_cst1 != *atom_pair_cst2 );
+		TS_ASSERT( *atom_pair_cst2 != *atom_pair_cst1 );
+
+		// atom1s differ; check mutual inequality; a != b and b != a
+		TS_ASSERT( *atom_pair_cst1 != *atom_pair_cst3 );
+		TS_ASSERT( *atom_pair_cst3 != *atom_pair_cst1 );
+
+		// atom2s differ; check mutual inequality; a != b and b != a
+		TS_ASSERT( *atom_pair_cst1 != *atom_pair_cst4 );
+		TS_ASSERT( *atom_pair_cst4 != *atom_pair_cst1 );
+	}
+
+
+	void test_serialize_AtomPairConstraint() {
+		TS_ASSERT( true ); // for non-serialization builds
+#ifdef	SERIALIZATION
+		using namespace core::scoring::constraints;
+		using namespace core::scoring::func;
+		using namespace core::id;
+
+		FuncOP some_func( new HarmonicFunc( 1, 2 ));
+		AtomID at3( 3, 1), at4( 4, 1 );
+		AtomPairConstraintOP instance( new AtomPairConstraint( at3, at4, some_func ) );
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( instance );
+		}
+
+		AtomPairConstraintOP instance2( new AtomPairConstraint() );
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( instance2 );
+		}
+		TS_ASSERT( *instance == *instance2 );
+#endif // SERIALIZATION
+	}
 
 };

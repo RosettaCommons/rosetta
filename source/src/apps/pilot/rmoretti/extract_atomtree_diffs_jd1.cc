@@ -121,7 +121,7 @@ main( int argc, char * argv [] )
 		protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraint_io = NULL;
 		if ( option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
 			//we need the residue type set, assuming FA standard is used
-			core::chemical::ResidueTypeSetCAP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+			core::chemical::ResidueTypeSetCOP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 			option[basic::options::OptionKeys::run::preserve_header ].value(true);
 			constraint_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO( restype_set ) );
 			constraint_io->read_enzyme_cstfile(basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);

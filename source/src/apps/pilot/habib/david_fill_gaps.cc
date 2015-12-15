@@ -121,7 +121,7 @@ main( int argc, char * argv [] )
 		}
 
 		int last = -100;
-		core::chemical::ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
+		core::chemical::ResidueTypeSet const & rsd_set( *pose.residue(1).residue_type_set() );
 
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 			if ( last == -100 ) {

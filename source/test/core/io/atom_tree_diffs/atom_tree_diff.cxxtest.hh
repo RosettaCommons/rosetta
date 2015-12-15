@@ -88,7 +88,7 @@ public:
 			Size rsd_no = rg().random_range( 2, modified_pose.total_residue()-1 );
 			using namespace core::conformation;
 			ResidueOP newres = ResidueFactory::create_residue(
-				modified_pose.residue(rsd_no).residue_type_set().name_map("LYS"),
+				modified_pose.residue(rsd_no).residue_type_set()->name_map("LYS"),
 				modified_pose.residue(rsd_no), modified_pose.conformation());
 			modified_pose.replace_residue(rsd_no, *newres, true /*orient backbone*/);
 			// Change chi angles for mutated res away from their default values

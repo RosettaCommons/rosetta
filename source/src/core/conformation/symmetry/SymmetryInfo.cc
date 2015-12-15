@@ -51,6 +51,20 @@ using basic::Warning;
 
 static THREAD_LOCAL basic::Tracer TR( "core.conformation.SymmetryInfo" );
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace symmetry {
@@ -1855,3 +1869,85 @@ SymmetryInfo::set_multicomponent_info(
 } // symmetry
 } // conformation
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::conformation::symmetry::SymmetryInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( bb_clones_ ) ); // std::map<Size, Clones>
+	arc( CEREAL_NVP( chi_clones_ ) ); // std::map<Size, Clones>
+	arc( CEREAL_NVP( jump_clones_ ) ); // std::map<Size, Clones>
+	arc( CEREAL_NVP( jump_clone_wts_ ) ); // std::map<Size, Real>
+	arc( CEREAL_NVP( bb_follows_ ) ); // std::map<Size, Size>
+	arc( CEREAL_NVP( chi_follows_ ) ); // std::map<Size, Size>
+	arc( CEREAL_NVP( jump_follows_ ) ); // std::map<Size, Size>
+	arc( CEREAL_NVP( empty_list ) ); // Clones
+	arc( CEREAL_NVP( nres_monomer_ ) ); // Size
+	arc( CEREAL_NVP( scoring_subunit_ ) ); // Size
+	arc( CEREAL_NVP( npseudo_ ) ); // Size
+	arc( CEREAL_NVP( njump_monomer_ ) ); // Size
+	arc( CEREAL_NVP( last_indep_residue_ ) ); // Size
+	arc( CEREAL_NVP( type_ ) ); // std::string
+	arc( CEREAL_NVP( interfaces_ ) ); // Size
+	arc( CEREAL_NVP( score_multiply_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( reweight_symm_interactions_ ) ); // Real
+	arc( CEREAL_NVP( score_multiply_factor_ ) ); // core::Size
+	arc( CEREAL_NVP( dofs_ ) ); // std::map<Size, SymDof>
+	arc( CEREAL_NVP( use_symmetry_ ) ); // _Bool
+	arc( CEREAL_NVP( slide_info_ ) ); // class core::conformation::symmetry::SymSlideInfo
+	arc( CEREAL_NVP( jnum2dofname_ ) ); // std::map<Size, std::string>
+	arc( CEREAL_NVP( dofname2jnum_ ) ); // std::map<std::string, Size>
+	arc( CEREAL_NVP( contiguous_monomers_ ) ); // _Bool
+	arc( CEREAL_NVP( torsion_changes_move_other_monomers_ ) ); // _Bool
+	arc( CEREAL_NVP( num_components_ ) ); // Size
+	arc( CEREAL_NVP( components_ ) ); // utility::vector1<char>
+	arc( CEREAL_NVP( component_bounds_ ) ); // std::map<char, std::pair<Size, Size> >
+	arc( CEREAL_NVP( name2component_ ) ); // std::map<std::string, char>
+	arc( CEREAL_NVP( jname2components_ ) ); // std::map<std::string, utility::vector1<char> >
+	arc( CEREAL_NVP( jname2subunits_ ) ); // std::map<std::string, utility::vector1<Size> >
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::conformation::symmetry::SymmetryInfo::load( Archive & arc ) {
+	arc( bb_clones_ ); // std::map<Size, Clones>
+	arc( chi_clones_ ); // std::map<Size, Clones>
+	arc( jump_clones_ ); // std::map<Size, Clones>
+	arc( jump_clone_wts_ ); // std::map<Size, Real>
+	arc( bb_follows_ ); // std::map<Size, Size>
+	arc( chi_follows_ ); // std::map<Size, Size>
+	arc( jump_follows_ ); // std::map<Size, Size>
+	arc( empty_list ); // Clones
+	arc( nres_monomer_ ); // Size
+	arc( scoring_subunit_ ); // Size
+	arc( npseudo_ ); // Size
+	arc( njump_monomer_ ); // Size
+	arc( last_indep_residue_ ); // Size
+	arc( type_ ); // std::string
+	arc( interfaces_ ); // Size
+	arc( score_multiply_ ); // utility::vector1<Size>
+	arc( reweight_symm_interactions_ ); // Real
+	arc( score_multiply_factor_ ); // core::Size
+	arc( dofs_ ); // std::map<Size, SymDof>
+	arc( use_symmetry_ ); // _Bool
+	arc( slide_info_ ); // class core::conformation::symmetry::SymSlideInfo
+	arc( jnum2dofname_ ); // std::map<Size, std::string>
+	arc( dofname2jnum_ ); // std::map<std::string, Size>
+	arc( contiguous_monomers_ ); // _Bool
+	arc( torsion_changes_move_other_monomers_ ); // _Bool
+	arc( num_components_ ); // Size
+	arc( components_ ); // utility::vector1<char>
+	arc( component_bounds_ ); // std::map<char, std::pair<Size, Size> >
+	arc( name2component_ ); // std::map<std::string, char>
+	arc( jname2components_ ); // std::map<std::string, utility::vector1<char> >
+	arc( jname2subunits_ ); // std::map<std::string, utility::vector1<Size> >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::symmetry::SymmetryInfo );
+CEREAL_REGISTER_TYPE( core::conformation::symmetry::SymmetryInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_conformation_symmetry_SymmetryInfo )
+#endif // SERIALIZATION

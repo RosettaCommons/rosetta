@@ -35,6 +35,15 @@
 // useful for RNA scoring.
 ///////////////////////////////////////////////////////
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace farna {
 namespace secstruct {
@@ -87,3 +96,27 @@ clear_rna_secstruct_info( core::pose::Pose & pose )
 } //farna
 } //protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::farna::secstruct::RNA_SecStructInfo::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( rna_secstruct_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::farna::secstruct::RNA_SecStructInfo::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( rna_secstruct_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::farna::secstruct::RNA_SecStructInfo );
+CEREAL_REGISTER_TYPE( protocols::farna::secstruct::RNA_SecStructInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_farna_secstruct_RNA_SecStructInfo )
+#endif // SERIALIZATION

@@ -17,6 +17,9 @@
 
 // Package headers
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
+#include <core/select/residue_selector/util.hh>
+
+// Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -26,6 +29,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
@@ -33,6 +37,16 @@
 #include <utility/assert.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "core.select.residue_selector.SecondaryStructureSelector" );
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace select {
@@ -199,6 +213,17 @@ SecondaryStructureSelector::class_name()
 	return "SecondaryStructure";
 }
 
+void
+SecondaryStructureSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	AttributeList attributes;
+	attributes.push_back( XMLSchemaAttribute( "overlap",                xs_integer ));
+	attributes.push_back( XMLSchemaAttribute( "include_terminal_loops", xs_boolean ));
+	attributes.push_back( XMLSchemaAttribute( "pose_secstruct",         xs_string ));
+	attributes.push_back( XMLSchemaAttribute( "ss",                     xs_string, true ));
+	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+}
+
 bool
 SecondaryStructureSelector::check_ss( std::string const & ss ) const
 {
@@ -297,7 +322,44 @@ SecondaryStructureSelectorCreator::keyname() const
 	return SecondaryStructureSelector::class_name();
 }
 
+void
+SecondaryStructureSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
+	return SecondaryStructureSelector::provide_selector_xsd( xsd );
+}
+
 } //namespace residue_selector
 } //namespace select
 } //namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::residue_selector::SecondaryStructureSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( CEREAL_NVP( pose_secstruct_ ) ); // std::string
+	arc( CEREAL_NVP( overlap_ ) ); // core::Size
+	arc( CEREAL_NVP( include_terminal_loops_ ) ); // _Bool
+	arc( CEREAL_NVP( always_use_dssp_ ) ); // _Bool
+	arc( CEREAL_NVP( selected_ss_ ) ); // std::set<char>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::residue_selector::SecondaryStructureSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+	arc( pose_secstruct_ ); // std::string
+	arc( overlap_ ); // core::Size
+	arc( include_terminal_loops_ ); // _Bool
+	arc( always_use_dssp_ ); // _Bool
+	arc( selected_ss_ ); // std::set<char>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::SecondaryStructureSelector );
+CEREAL_REGISTER_TYPE( core::select::residue_selector::SecondaryStructureSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_residue_selector_SecondaryStructureSelector )
+#endif // SERIALIZATION

@@ -25,6 +25,16 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 
@@ -152,3 +162,24 @@ operator >>(
 
 } // namespace kinematics
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::kinematics::RT::save( Archive & arc ) const {
+	arc( CEREAL_NVP( rotation ) ); // Matrix
+	arc( CEREAL_NVP( translation ) ); // Vector
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::kinematics::RT::load( Archive & arc ) {
+	arc( rotation ); // Matrix
+	arc( translation ); // Vector
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::RT );
+#endif // SERIALIZATION

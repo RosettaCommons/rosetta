@@ -24,6 +24,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace dna {
@@ -69,6 +75,16 @@ public:
 
 private:
 	utility::vector1< Size > partner_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	BasePartner();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /// helper fcn
@@ -79,5 +95,10 @@ retrieve_base_partner_from_pose( pose::Pose const & pose );
 } // namespace dna
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_dna_BasePartner )
+#endif // SERIALIZATION
+
 
 #endif

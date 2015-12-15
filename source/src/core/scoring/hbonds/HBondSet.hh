@@ -47,6 +47,13 @@
 //#include <set>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -224,6 +231,16 @@ private:
 	Real energy_;
 	Real weight_;
 	HBondDerivs derivs_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	HBond();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -492,10 +509,21 @@ private:
 	utility::vector1< int > nbrs_;
 	mutable HBondAtomMap atom_map_;
 	mutable bool atom_map_init_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace hbonds
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_hbonds_HBondSet )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_scoring_ScoreFunction_HH

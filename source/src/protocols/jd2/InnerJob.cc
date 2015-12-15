@@ -82,24 +82,27 @@ void InnerJob::set_pose( core::pose::PoseCOP pose ) { pose_ = pose; }
 /// @details Only compare the pointer value of the pose the inner
 ///job is referencing.
 bool
-operator==(
-	InnerJob const & a,
-	InnerJob const & b
-) {
-	return
-		!(a.input_tag_.compare(b.input_tag_)) &&
-		a.nstruct_max_ == b.nstruct_max_ &&
-		a.pose_.get() == b.pose_.get() &&
-		a.bad_ == b.bad_;
+InnerJob::operator == (
+	InnerJob const & other
+) const {
+	return same( other ) && other.same( *this );
 }
 
 
 bool
-operator!=(
-	InnerJob const & a,
-	InnerJob const & b
-) {
-	return !(a == b);
+InnerJob::operator!=(
+	InnerJob const & other
+) const {
+	return !(*this == other);
+}
+
+bool
+InnerJob::same( InnerJob const & other ) const
+{
+	return !( input_tag_.compare( other.input_tag_) ) &&
+		nstruct_max_ == other.nstruct_max_ &&
+		pose_.get() == other.pose_.get() &&
+		bad_ == other.bad_;
 }
 
 

@@ -24,6 +24,11 @@
 
 using namespace core::chemical::rna;
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace rna {
@@ -86,6 +91,12 @@ private:
 	LW_BaseDoubletOrientation LW_orientation_; // 1 = cis; 2 = trans
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 typedef std::pair< Real, BasePair > EnergyBasePair;
@@ -96,5 +107,10 @@ typedef utility::vector1< BasePair > RNA_BasePairList; // used in protocols::far
 } //rna
 } //pose
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_rna_BasePair )
+#endif // SERIALIZATION
+
 
 #endif

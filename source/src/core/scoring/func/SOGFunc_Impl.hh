@@ -22,6 +22,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -101,6 +106,8 @@ public:
 	core::Real sog_cst_param() const;
 	void sog_cst_param( core::Real const param );
 
+	bool operator == ( SOGFunc_Impl const & other ) const;
+
 private:
 	utility::vector1< core::Real > means_;
 	utility::vector1< core::Real > sdevs_;
@@ -112,10 +119,21 @@ private:
 	core::Real sog_cst_param_;
 
 	bool smooth_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_SOGFunc_Impl )
+#endif // SERIALIZATION
+
 
 #endif

@@ -33,6 +33,12 @@
 #include <map>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -79,12 +85,27 @@ private:
 	/// @brief the set of neighbors, INCLUSIVE of central_residues
 	std::set< core::Size > neighbors_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	NeighborhoodByDistanceCalculator();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace pose_metric_calculators
 } // namespace toolbox
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_NeighborhoodByDistanceCalculator )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_toolbox_PoseMetricCalculators_NeighborhoodByDistanceCalculator_HH
 

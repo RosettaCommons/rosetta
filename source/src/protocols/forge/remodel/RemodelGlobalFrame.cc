@@ -557,8 +557,8 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 		residue_indices.push_back(i);
 	}
 	PoseOP singleton_pose( new Pose );
-	core::chemical::ResidueTypeSet const & typeSet = (pose.residue(1).residue_type_set());
-	core::io::pdb::pose_from_pose( *singleton_pose, pose, typeSet, residue_indices);
+	core::chemical::ResidueTypeSetCOP type_set = (pose.residue(1).residue_type_set());
+	core::io::pdb::pose_from_pose( *singleton_pose, pose, *type_set, residue_indices);
 
 	// However the constraint type maps the same atoms, so we actually need yet another pose, with two copies.
 	// the strategy is to use the singleton to figure out the coordinates, and dump the xyz to the second segment.
@@ -570,7 +570,7 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 	}
 
 	PoseOP double_pose( new Pose );
-	core::io::pdb::pose_from_pose( *double_pose, pose, typeSet, residue_indices);
+	core::io::pdb::pose_from_pose( *double_pose, pose, *type_set, residue_indices);
 
 	TR.Debug << "setup RGF cst 2" << std::endl;
 	// make residue list, needed for rotational transformation

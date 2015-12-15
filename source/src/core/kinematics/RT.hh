@@ -213,6 +213,12 @@ private: // Fields
 	/// tranlsation vector, written in stub1 frame
 	Vector translation; // 3
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // RT
 
 

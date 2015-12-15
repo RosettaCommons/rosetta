@@ -17,6 +17,17 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -182,3 +193,25 @@ TwelveANeighborGraph::create_new_edge( graph::Edge const * example_edge )
 } // scoring
 } // core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::TwelveANeighborGraph::save( Archive & arc ) const {
+	arc( cereal::base_class< core::graph::Graph >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::TwelveANeighborGraph::load( Archive & arc ) {
+	arc( cereal::base_class< core::graph::Graph >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::TwelveANeighborGraph );
+CEREAL_REGISTER_TYPE( core::scoring::TwelveANeighborGraph )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_TwelveANeighborGraph )
+#endif // SERIALIZATION

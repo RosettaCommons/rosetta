@@ -91,7 +91,6 @@ public:
 	std::ostream &
 	operator << ( std::ostream & out, const Job & job );
 
-
 	/// @brief access to inner-job ... use is discouraged - use sparingly!
 	/// --- DO NOT use my_job->inner_job()->get_pose()
 	/// INSTEAD use my_job->get_pose()
@@ -118,9 +117,12 @@ public:
 	core::Size nstruct_max() const;
 
 	///////////////////////////THIS SECTION OF FUNCTIONS IS MEANT TO BE USED BY MOVERS/////////////////////////////
-	//It is safe to call these functions even in the absence of a job distributor - it will store the data in a dummy object.  You are not making your protocol dependent on JD2 by using these functions (although this extra output might get "lost" if you do not emit it by another method like the Tracers.) -- SML 10/20/11
-	//functions for loading output info into the job
-	/// @brief add an output string
+	// It is safe to call these functions even in the absence of a job distributor - it will store the data in a
+	// dummy object.  You are not making your protocol dependent on JD2 by using these functions (although this
+	// extra output might get "lost" if you do not emit it by another method like the Tracers.) -- SML 10/20/11
+	// These functions are for loading output info into the job
+
+	///@brief add an output string
 	void add_string( std::string const & string_in );
 
 	/// @brief add output strings
@@ -138,9 +140,12 @@ public:
 
 
 	////////////////////THIS SECTION OF FUNCTIONS IS FORBIDDEN FOR USE BY MOVERS//////////////////////////////////
-	//If Movers try to use these functions, those Movers become tied to JD2 and may fail if JD2 is not present (because there will be no data in these strings).  To prevent this, DO NOT CALL these functions from within Movers. SML 10/20/11
+	// If Movers try to use these functions, those Movers become tied to JD2 and may fail if JD2 is not
+	// present (because there will be no data in these strings).  To prevent this, DO NOT CALL these functions
+	// from within Movers. SML 10/20/11
 
-	//functions for returning output info from the job.  You get iterators so that this interface can stay constant as the underlying implementation changes
+	//functions for returning output info from the job.  You get iterators so that this interface can stay
+	// constant as the underlying implementation changes
 	Strings::const_iterator output_strings_begin() const;
 	Strings::const_iterator output_strings_end() const;
 
@@ -214,6 +219,7 @@ public:
 	void call_output_observers( core::pose::Pose const & pose );
 
 private:
+
 	//InnerJobCOP inner_job() const;
 	//bookkeeping data
 	/// @brief a pointer to the "heavy" InnerJob which maintains the starting pose for the job (shared across nstruct)

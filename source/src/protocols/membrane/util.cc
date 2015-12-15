@@ -242,7 +242,7 @@ calc_helix_tilt_angle(
 	using namespace core::conformation::membrane;
 
 	// Get membrane normal from membrane info
-	Vector normal( pose.conformation().membrane_info()->membrane_normal() );
+	Vector normal( pose.conformation().membrane_info()->membrane_normal( pose.conformation() ) );
 
 	// Calculate an axis representing the "axis of the helix"
 	Vector helix_axis( calc_helix_axis( pose, span_no ) );
@@ -356,8 +356,8 @@ utility::vector1< core::Real > pose_tilt_angle_and_center_distance( core::pose::
 	utility::vector1< core::Real > angle_and_distance;
 
 	// membrane center
-	core::Vector mem_center = pose.conformation().membrane_info()->membrane_center();
-	core::Vector mem_normal = pose.conformation().membrane_info()->membrane_normal();
+	core::Vector mem_center = pose.conformation().membrane_info()->membrane_center( pose.conformation() );
+	core::Vector mem_normal = pose.conformation().membrane_info()->membrane_normal( pose.conformation() );
 
 	// compute structure-based embedding
 	EmbeddingDefOP emb( compute_structure_based_embedding( pose ) );
@@ -1630,8 +1630,9 @@ void membrane_normal_to_length_15( core::pose::Pose & pose ){
 	using namespace core;
 
 	// get center and normal
-	Vector center = pose.conformation().membrane_info()->membrane_center();
-	Vector normal = pose.conformation().membrane_info()->membrane_normal();
+	core::conformation::Conformation const & conf( pose.conformation() );
+	Vector center = conf.membrane_info()->membrane_center(conf);
+	Vector normal = conf.membrane_info()->membrane_normal(conf);
 
 	// normalize normal vector
 	normal.normalize( 15 );
@@ -1661,7 +1662,7 @@ core::Vector const membrane_axis( core::pose::Pose & pose, int jumpnum )
 	core::Vector tmp_axis = emb_up.center() - emb_down.center();
 
 	// get membrane normal
-	core::Vector mem_normal = pose.conformation().membrane_info()->membrane_normal();
+	core::Vector mem_normal = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
 
 	// compute axis orthogonal to both tmp_axis and membrane normal
 	core::Vector ortho = cross( mem_normal, tmp_axis );

@@ -71,7 +71,7 @@ main( int argc, char *argv[] )
 		Pose pose, ref;
 
 		// Make a test pose.
-		//make_pose_from_sequence( pose, "AAAAAAAAAA", "fa_standard" );
+		//make_pose_from_sequence( pose, "AAAAAAAAAA", core::chemical::FA_STANDARD );
 
 		pose_from_pdb( pose, "/home/labonte/Workspace/Carbohydrates/4NCO_fixed3.pdb" );
 		core::io::carbohydrates::dump_gws( pose, "/home/labonte/Workspace/Carbohydrates/4NCO_fixed3.gws" );

@@ -1860,8 +1860,8 @@ remove_variant_type_from_residue(
 	if ( !old_rsd.has_variant_type( variant_type ) ) return old_rsd.clone();
 
 	// the type of the desired variant residue
-	core::chemical::ResidueTypeSet const & rsd_set( old_rsd.residue_type_set() );
-	core::chemical::ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_removed( old_rsd.type(), variant_type ) );
+	core::chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
+	core::chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_removed( old_rsd.type(), variant_type ) );
 	core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( new_rsd_type, old_rsd, pose.conformation() ) );
 	core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms( old_rsd, *new_rsd, pose.conformation() );
 	if ( old_rsd.nchi() == new_rsd_type.nchi() ) {
@@ -1887,8 +1887,8 @@ add_variant_type_to_residue(
 	if ( old_rsd.has_variant_type( variant_type ) ) return old_rsd.clone();
 
 	// the type of the desired variant residue
-	chemical::ResidueTypeSet const & rsd_set( old_rsd.residue_type_set() );
-	chemical::ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_added( old_rsd.type(), variant_type ) );
+	chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
+	chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_added( old_rsd.type(), variant_type ) );
 	conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( new_rsd_type, old_rsd, pose.conformation() ) );
 	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( old_rsd, *new_rsd, pose.conformation() );
 	if ( old_rsd.nchi() == new_rsd_type.nchi() ) {
@@ -1918,8 +1918,8 @@ add_variant_type_to_pose_residue(
 	conformation::Residue const & old_rsd( pose.residue( seqpos ) );
 
 	// the type of the desired variant residue
-	chemical::ResidueTypeSet const & rsd_set( old_rsd.residue_type_set() );
-	chemical::ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_added( old_rsd.type(), variant_type ) );
+	chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
+	chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_added( old_rsd.type(), variant_type ) );
 
 	core::pose::replace_pose_residue_copying_existing_coordinates( pose, seqpos, new_rsd_type );
 
@@ -1947,8 +1947,8 @@ remove_variant_type_from_pose_residue(
 	conformation::Residue const & old_rsd( pose.residue( seqpos ) );
 
 	// the type of the desired variant residue
-	chemical::ResidueTypeSet const & rsd_set( old_rsd.residue_type_set() );
-	chemical::ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_removed( old_rsd.type(), variant_type ) );
+	chemical::ResidueTypeSetCOP rsd_set( old_rsd.residue_type_set() );
+	chemical::ResidueType const & new_rsd_type( rsd_set->get_residue_type_with_variant_removed( old_rsd.type(), variant_type ) );
 
 	core::pose::replace_pose_residue_copying_existing_coordinates( pose, seqpos, new_rsd_type );
 

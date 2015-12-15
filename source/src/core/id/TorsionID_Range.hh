@@ -35,7 +35,7 @@ class TorsionID_Range
 
 public: // Creation
 
-	TorsionID_Range(){};
+	TorsionID_Range(){}
 
 	TorsionID_Range(
 		TorsionID const & torsion_id,
@@ -45,7 +45,7 @@ public: // Creation
 		torsion_id_( torsion_id ),
 		min_( min ),
 		max_( max )
-	{};
+	{}
 
 public: // Properties
 
@@ -109,6 +109,12 @@ private: // Fields
 
 	/// @brief maximum value
 	core::Real max_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; // TorsionID_Range
 

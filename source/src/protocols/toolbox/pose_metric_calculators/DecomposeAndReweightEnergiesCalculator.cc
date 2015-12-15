@@ -45,6 +45,20 @@ using namespace core::pose::metrics;
 using namespace utility;
 using namespace ObjexxFCL::format;
 
+#ifdef    SERIALIZATION
+// Package serialization headers
+#include <core/graph/UpperEdgeGraph.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -503,7 +517,92 @@ DecomposeAndReweightEnergiesCalculator::update_weighted_total()
 	}
 }
 
+#ifdef    SERIALIZATION
+template < class Archive >
+void
+save(
+	Archive & arc,
+	DecomposeAndReweightEnergiesCalculator::EnergiesGraph const & g
+)
+{
+	core::graph::save_to_archive( arc, g );
+}
+
+template < class Archive >
+void
+load(
+	Archive & arc,
+	DecomposeAndReweightEnergiesCalculator::EnergiesGraph & g )
+{
+	core::graph::load_from_archive( arc, g );
+}
+
+EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( DecomposeAndReweightEnergiesCalculator::EnergiesGraph );
+
+#endif
 
 } // PoseMetricCalculators
 } // toolbox
 } // protocols
+
+
+#ifdef    SERIALIZATION
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::EnergiesData::save( Archive & arc ) const {
+	arc( CEREAL_NVP( energy_map_ ) ); // core::scoring::EnergyMap
+	arc( CEREAL_NVP( weight_map_ ) ); // core::scoring::EnergyMap
+	arc( CEREAL_NVP( use_original_weights_ ) ); // _Bool
+	arc( CEREAL_NVP( master_weight_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::EnergiesData::load( Archive & arc ) {
+	arc( energy_map_ ); // core::scoring::EnergyMap
+	arc( weight_map_ ); // core::scoring::EnergyMap
+	arc( use_original_weights_ ); // _Bool
+	arc( master_weight_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::EnergiesData );
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::toolbox::pose_metric_calculators::DecomposeAndReweightEnergiesCalculator::DecomposeAndReweightEnergiesCalculator() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::DecomposeAndReweightEnergiesCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+	arc( CEREAL_NVP( name_of_ResidueDecompositionCalculator_ ) ); // std::string
+	arc( CEREAL_NVP( original_weights_ ) ); // core::scoring::EnergyMap
+	arc( CEREAL_NVP( other_energies_ ) ); // class protocols::toolbox::pose_metric_calculators::EnergiesData
+	arc( CEREAL_NVP( onebody_energies_ ) ); // utility::vector1<EnergiesData>
+	arc( CEREAL_NVP( twobody_energies_ ) ); // EnergiesGraph
+	arc( CEREAL_NVP( set_names_ ) ); // utility::vector1<std::string>
+	arc( CEREAL_NVP( weighted_total_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::DecomposeAndReweightEnergiesCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+	arc( name_of_ResidueDecompositionCalculator_ ); // std::string
+	arc( original_weights_ ); // core::scoring::EnergyMap
+	arc( other_energies_ ); // class protocols::toolbox::pose_metric_calculators::EnergiesData
+	arc( onebody_energies_ ); // utility::vector1<EnergiesData>
+	arc( twobody_energies_ ); // EnergiesGraph
+	arc( set_names_ ); // utility::vector1<std::string>
+	arc( weighted_total_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::DecomposeAndReweightEnergiesCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::DecomposeAndReweightEnergiesCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_DecomposeAndReweightEnergiesCalculator )
+
+#endif // SERIALIZATION

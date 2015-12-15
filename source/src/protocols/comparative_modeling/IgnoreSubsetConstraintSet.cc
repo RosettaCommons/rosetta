@@ -41,6 +41,18 @@ static THREAD_LOCAL basic::Tracer tr( "protocols.comparative_modeling" );
 using core::scoring::constraints::ConstraintSet;
 using core::scoring::constraints::ConstraintSetOP;
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace comparative_modeling {
 
@@ -61,6 +73,55 @@ IgnoreSubsetConstraintSet::IgnoreSubsetConstraintSet(
 	ConstraintSet( other ),
 	ignore_list_( other.ignore_list() )
 {}
+
+ConstraintSet const &
+IgnoreSubsetConstraintSet::operator = ( ConstraintSet const & rhs )
+{
+	if ( this != & rhs ) {
+		IgnoreSubsetConstraintSet const * iscs_rhs = dynamic_cast< IgnoreSubsetConstraintSet const * > ( & rhs );
+		if ( ! iscs_rhs ) {
+			throw utility::excn::EXCN_Msg_Exception( "IgnoreSubsetConstraintSet handed a non IgnoreSubsetConstraintSet in operator =" );
+		}
+		ConstraintSet::operator = ( rhs );
+		ignore_list_ = iscs_rhs->ignore_list_;
+	}
+	return *this;
+}
+
+ConstraintSetOP
+IgnoreSubsetConstraintSet::clone() const {
+	return ConstraintSetOP( new IgnoreSubsetConstraintSet( *this ) );
+}
+
+void IgnoreSubsetConstraintSet::detached_copy( ConstraintSet const & src ) {
+	IgnoreSubsetConstraintSet const * iscs_src = dynamic_cast< IgnoreSubsetConstraintSet const * > ( & src );
+	if ( ! iscs_src ) {
+		throw utility::excn::EXCN_Msg_Exception( "IgnoreSubsetConstraintSet handed a non IgnoreSubsetConstraintSet in detatched_copy" );
+	}
+	deep_copy( src );
+	ignore_list_ = iscs_src->ignore_list_;
+}
+
+
+ConstraintSetOP
+IgnoreSubsetConstraintSet::detached_clone() const
+{
+	IgnoreSubsetConstraintSetOP newset( new IgnoreSubsetConstraintSet(*this) );
+	newset->detached_copy( *this );
+	return newset;
+}
+
+bool
+IgnoreSubsetConstraintSet::same_type_as_me( ConstraintSet const & other, bool recurse /* = true */ ) const
+{
+	IgnoreSubsetConstraintSet const * iscs_other = dynamic_cast< IgnoreSubsetConstraintSet const * > ( &other );
+	if ( ! iscs_other ) return false;
+	if ( recurse ) {
+		return other.same_type_as_me( *this, false );
+	}
+	return true;
+}
+
 
 /*void
 IgnoreSubsetConstraintSet::eval_atom_derivative_for_residue_pairs (
@@ -160,3 +221,30 @@ IgnoreSubsetConstraintSet::ignore_list() const {
 } // comparative_modeling
 } // protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::comparative_modeling::IgnoreSubsetConstraintSet::IgnoreSubsetConstraintSet() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::comparative_modeling::IgnoreSubsetConstraintSet::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::constraints::ConstraintSet >( this ) );
+	arc( CEREAL_NVP( ignore_list_ ) ); // std::set<int>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::comparative_modeling::IgnoreSubsetConstraintSet::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::constraints::ConstraintSet >( this ) );
+	arc( ignore_list_ ); // std::set<int>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::comparative_modeling::IgnoreSubsetConstraintSet );
+CEREAL_REGISTER_TYPE( protocols::comparative_modeling::IgnoreSubsetConstraintSet )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_comparative_modeling_IgnoreSubsetConstraintSet )
+#endif // SERIALIZATION

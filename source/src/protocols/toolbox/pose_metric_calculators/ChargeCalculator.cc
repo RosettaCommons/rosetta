@@ -35,6 +35,15 @@ using namespace core::pose;
 using namespace core::pose::metrics;
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -146,3 +155,39 @@ ChargeCalculator::recompute( Pose const & this_pose )
 } //namespace PoseMetricCalculators
 } //namespace toolbox
 } //namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::ChargeCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( CEREAL_NVP( total_charge_ ) ); // core::Real
+	arc( CEREAL_NVP( total_pos_charges_ ) ); // core::Size
+	arc( CEREAL_NVP( total_neg_charges_ ) ); // core::Size
+	arc( CEREAL_NVP( SR_total_charge_ ) ); // core::Real
+	arc( CEREAL_NVP( SR_total_pos_charges_ ) ); // core::Size
+	arc( CEREAL_NVP( SR_total_neg_charges_ ) ); // core::Size
+	arc( CEREAL_NVP( special_region_ ) ); // std::set<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::pose_metric_calculators::ChargeCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
+	arc( total_charge_ ); // core::Real
+	arc( total_pos_charges_ ); // core::Size
+	arc( total_neg_charges_ ); // core::Size
+	arc( SR_total_charge_ ); // core::Real
+	arc( SR_total_pos_charges_ ); // core::Size
+	arc( SR_total_neg_charges_ ); // core::Size
+	arc( special_region_ ); // std::set<core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::pose_metric_calculators::ChargeCalculator );
+CEREAL_REGISTER_TYPE( protocols::toolbox::pose_metric_calculators::ChargeCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_ChargeCalculator )
+#endif // SERIALIZATION

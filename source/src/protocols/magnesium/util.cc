@@ -294,7 +294,7 @@ instantiate_water_at_octahedral_vertex( pose::Pose & pose,
 		vec[ k ] = ( pose.residue( mg_res ).xyz( k+1 ) - xyz_mg ).normalized();
 	}
 	Vector Oc, OH1c, OH2c;
-	ResidueOP water_rsd = get_useful_HOH_coords( Oc, OH1c, OH2c, pose.residue( mg_res ).residue_type_set() );
+	ResidueOP water_rsd = get_useful_HOH_coords( Oc, OH1c, OH2c, *pose.residue( mg_res ).residue_type_set() );
 	// set appropriate frame, pointing towards water, and with axes set by
 	// O_h geometry.
 	Vector x = vec[ n ];

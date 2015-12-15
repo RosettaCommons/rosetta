@@ -330,7 +330,7 @@ public:
 
 		std::string resfile_mutate_l26s( "NATRO\nstart\n30 _ PIKAA S\n" );
 		core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
-		core::pack::task::parse_resfile_string( pose, *task, resfile_mutate_l26s );
+		core::pack::task::parse_resfile_string( pose, *task, "dummy_filename", resfile_mutate_l26s );
 		core::pack::pack_rotamers( pose, sfxn, task );
 
 		TS_ASSERT( pose.residue_type( 8 ).aa() == chemical::aa_ser );

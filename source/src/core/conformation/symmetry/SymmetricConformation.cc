@@ -39,6 +39,22 @@
 #include <core/conformation/find_neighbors.hh>
 #include <core/conformation/util.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/HomogeneousTransform.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace symmetry {
@@ -63,17 +79,6 @@ SymmetricConformation::SymmetricConformation(Conformation const & conf, Symmetry
 }
 
 
-/// @brief operator=
-Conformation &
-SymmetricConformation::operator=( SymmetricConformation const & src )
-{
-	// will this work?
-	Conformation::operator=( src );
-	symm_info_ = src.symm_info_->clone();
-	Tsymm_.clear();  // force recompute
-	return *this;
-}
-
 Conformation &
 SymmetricConformation::operator=( Conformation const & src )
 {
@@ -81,11 +86,28 @@ SymmetricConformation::operator=( Conformation const & src )
 	if ( sym_conf ) {
 		SymmetricConformation::operator=( *sym_conf );
 	} else {
-		Conformation::operator=( src );
+		//Conformation::operator=( src );
+		throw utility::excn::EXCN_Msg_Exception( "SymmetricConformation::operator= was handed a non-SymmetricConformation" );
 	}
 
 	return *this;
 }
+
+void
+SymmetricConformation::detached_copy( Conformation const & src ) {
+	Conformation::detached_copy( src );
+	SymmetricConformation const * sym_conf = dynamic_cast< SymmetricConformation const * > ( &src );
+	if ( sym_conf ) {
+
+		// Copy the private data members of the symmetric conformation.
+		symm_info_ = sym_conf->symm_info_->clone();
+		Tsymm_ = sym_conf->Tsymm_;
+
+	} else {
+		throw utility::excn::EXCN_Msg_Exception( "SymmetricConformation detached_copy was handed a non-SymmetricConformation" );
+	}
+}
+
 
 /// @details make a copy of this conformation( allocate actual memory for it )
 ConformationOP
@@ -793,7 +815,7 @@ SymmetricConformation::recalculate_transforms( ) {
 
 				if ( !vrt_res_op ) {
 					/// slow, create residueop
-					vrt_res_op = conformation::ResidueFactory::create_residue( coordframe_rsd.residue_type_set().name_map("VRT"));
+					vrt_res_op = conformation::ResidueFactory::create_residue( coordframe_rsd.residue_type_set()->name_map("VRT"));
 				}
 
 				/// create some reasonable coords based on coordframe_rsd
@@ -967,7 +989,7 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 		// If all the cys are fullatom, use stricter criteria
 		bool fullatom(true);
 		for ( Size ii = 1; ii <= num_cys; ++ii ) {
-			if ( residue_type(cysid_2_resid[ii]).residue_type_set().name()
+			if ( residue_type(cysid_2_resid[ii]).residue_type_set()->name()
 					!= core::chemical::FA_STANDARD ) {
 				fullatom = false;
 				break;
@@ -1017,34 +1039,34 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 			// happened.
 			TR << "Found "<< (fullatom?"":"CEN ") << "disulfide between residues " << ii_resid << " " << best_neighbor << std::endl;
 			// amw: output whole name, not just CYS vs CYD, to be clear.
-			std::string ii_name_start = residues_[ ii_resid ]->type().name();
-			std::string bn_name_start = residues_[ best_neighbor ]->type().name();
+			std::string ii_name_start = residue( ii_resid ).type().name();
+			std::string bn_name_start = residue( best_neighbor ).type().name();
 			// unless it's for cys/cyd itself, condense that part for integration test clarity.
-			if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
-				ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+			if ( residue( ii_resid ).type().name3() == "CYS" ) {
+				ii_name_start = ( residue( ii_resid ).has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
 			}
-			if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
-				bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+			if ( residue( best_neighbor ).type().name3() == "CYS" ) {
+				bn_name_start = ( residue( best_neighbor ).has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
 			}
 
 			TR << "current variant for " << ii_resid   << " " << ii_name_start << std::endl;
 			TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
 
 			bool const success_at_ii = conformation::change_cys_state( ii_resid, "CYD", *this )
-				&& residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
+				&& residue( ii_resid ).has_variant_type( chemical::DISULFIDE );
 			bool const success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this )
-				&& residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
+				&& residue( best_neighbor ).has_variant_type( chemical::DISULFIDE );
 
 			if ( !success_at_ii )   TR.Error << "ERROR: unable to create appropriate residue type for disulfide at resid " << ii_resid   << std::endl;
 			if ( !success_at_best_neighbor ) TR.Error << "ERROR: unable to create appropriate residue type for disulfide at resid " << best_neighbor << std::endl;
 
-			ii_name_start = residues_[ ii_resid ]->type().name();
-			bn_name_start = residues_[ best_neighbor ]->type().name();
-			if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
-				ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+			ii_name_start = residue( ii_resid ).type().name();
+			bn_name_start = residue( best_neighbor ).type().name();
+			if ( residue( ii_resid ).type().name3() == "CYS" ) {
+				ii_name_start = ( residue( ii_resid ).has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
 			}
-			if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
-				bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+			if ( residue( best_neighbor ).type().name3() == "CYS" ) {
+				bn_name_start = ( residue( best_neighbor ).has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
 			}
 			TR << "current variant for " << ii_resid   << " " << ii_name_start << std::endl;
 			TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
@@ -1053,7 +1075,6 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 			if ( success_at_ii && success_at_best_neighbor ) {
 				Residue const & ii_new_res( residue( ii_resid ) );
 				// ASSUMPTION Disulfide forming cystein SG atoms for exactly one inter-residue chemical bond.
-				Size ii_connid = ii_new_res.type().residue_connection_id_for_atom( ii_sg_atomno );
 				Size jj_resid  = best_neighbor;
 				Residue const & jj_res = residue( jj_resid );
 				Size jj_sg_atomno(0);
@@ -1064,10 +1085,12 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 					jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );
 				}
 
-				Size jj_connid = jj_res.type().residue_connection_id_for_atom( jj_sg_atomno );
+				// Size ii_connid = ii_new_res.type().residue_connection_id_for_atom( ii_sg_atomno );
+				// Size jj_connid = jj_res.type().residue_connection_id_for_atom( jj_sg_atomno );
+				// residues_[ ii_resid ]->residue_connection_partner( ii_connid, jj_resid, jj_connid );
+				// residues_[ jj_resid ]->residue_connection_partner( jj_connid, ii_resid, ii_connid );
 
-				residues_[ ii_resid ]->residue_connection_partner( ii_connid, jj_resid, jj_connid );
-				residues_[ jj_resid ]->residue_connection_partner( jj_connid, ii_resid, ii_connid );
+				declare_chemical_bond( ii_resid, ii_new_res.atom_name(ii_sg_atomno), jj_resid, jj_res.atom_name(jj_sg_atomno ));
 			}
 
 			// mark both cys as processed
@@ -1159,22 +1182,22 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 				// happened.
 				TR << "Found "<< (fullatom?"":"CEN ") << "disulfide between residues " << ii_resid << " " << best_neighbor << std::endl;
 				// amw: output whole name, not just CYS vs CYD, to be clear.
-				std::string ii_name_start = residues_[ ii_resid ]->type().name();
-				std::string bn_name_start = residues_[ best_neighbor ]->type().name();
+				std::string ii_name_start = const_residue_( ii_resid ).type().name();
+				std::string bn_name_start = const_residue_( best_neighbor ).type().name();
 				// unless it's for cys/cyd itself, condense that part for integration test clarity.
-				if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
-					ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+				if ( const_residue_( ii_resid ).type().name3() == "CYS" ) {
+					ii_name_start = ( const_residue_( ii_resid ).has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
 				}
-				if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
-					bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+				if ( const_residue_( best_neighbor ).type().name3() == "CYS" ) {
+					bn_name_start = ( const_residue_( best_neighbor ).has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
 				}
 				TR << "current variant for " << ii_resid << " " << ii_name_start << std::endl;
 				TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
 
 				bool const success_at_ii = conformation::change_cys_state( ii_resid, "CYD", *this )
-					&& residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE );
+					&& const_residue_( ii_resid ).has_variant_type( chemical::DISULFIDE );
 				bool const success_at_best_neighbor = conformation::change_cys_state( best_neighbor, "CYD", *this )
-					&& residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE );
+					&& const_residue_( best_neighbor ).has_variant_type( chemical::DISULFIDE );
 
 				if ( !success_at_ii ) {
 					TR.Error << "ERROR: unable to create residue type CYD for disulfide at resid " << ii_resid << std::endl;
@@ -1184,13 +1207,13 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 					TR.Error << "ERROR: unable to create residue type CYD for disulfide at resid " << best_neighbor << std::endl;
 				}
 
-				ii_name_start = residues_[ ii_resid ]->type().name();
-				bn_name_start = residues_[ best_neighbor ]->type().name();
-				if ( residues_[ ii_resid ]->type().name3() == "CYS" ) {
-					ii_name_start = ( residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+				ii_name_start = const_residue_( ii_resid ).type().name();
+				bn_name_start = const_residue_( best_neighbor ).type().name();
+				if ( const_residue_( ii_resid ).type().name3() == "CYS" ) {
+					ii_name_start = ( const_residue_( ii_resid ).has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
 				}
-				if ( residues_[ best_neighbor ]->type().name3() == "CYS" ) {
-					bn_name_start = ( residues_[ best_neighbor ]->has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
+				if ( const_residue_( best_neighbor ).type().name3() == "CYS" ) {
+					bn_name_start = ( const_residue_( best_neighbor ).has_variant_type( chemical::DISULFIDE ) ) ? "CYD" : "CYS";
 				}
 				TR << "current variant for " << ii_resid << " " << ii_name_start << std::endl;
 				TR << "current variant for " << best_neighbor << " " << bn_name_start << std::endl;
@@ -1199,7 +1222,7 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 				if ( success_at_ii && success_at_best_neighbor ) {
 					Residue const & ii_new_res( residue( ii_resid ) );
 					// ASSUMPTION Disulfide forming cystein SG atoms for exactly one inter-residue chemical bond.
-					Size ii_connid = ii_new_res.type().residue_connection_id_for_atom( ii_sg_atomno );
+
 					Size jj_resid  = best_neighbor;
 					Residue const & jj_res = residue( jj_resid );
 					Size jj_sg_atomno(0);
@@ -1210,10 +1233,13 @@ SymmetricConformation::detect_disulfides( utility::vector1< Size > const & disul
 						jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );
 					}
 
-					Size jj_connid = jj_res.type().residue_connection_id_for_atom( jj_sg_atomno );
-
-					residues_[ ii_resid ]->residue_connection_partner( ii_connid, jj_resid, jj_connid );
-					residues_[ jj_resid ]->residue_connection_partner( jj_connid, ii_resid, ii_connid );
+					// Do not modify residues directly -- instead use the declare_chemical_bond function in the base class.
+					// upshot is: this eliminates code duplication!
+					// Size ii_connid = ii_new_res.type().residue_connection_id_for_atom( ii_sg_atomno );
+					// Size jj_connid = jj_res.type().residue_connection_id_for_atom( jj_sg_atomno );
+					// const_residue_( ii_resid ).residue_connection_partner( ii_connid, jj_resid, jj_connid );
+					// const_residue_( jj_resid ).residue_connection_partner( jj_connid, ii_resid, ii_connid );
+					declare_chemical_bond( ii_resid, ii_new_res.atom_name(ii_sg_atomno), jj_resid, jj_res.atom_name(jj_sg_atomno ));
 				}
 				// mark both cys as processed
 				processed_cys.insert( ii_resid );
@@ -1313,4 +1339,28 @@ return;
 } // conformation
 } // core
 
+#ifdef    SERIALIZATION
 
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::conformation::symmetry::SymmetricConformation::save( Archive & arc ) const {
+	arc( cereal::base_class< core::conformation::Conformation >( this ) );
+	arc( CEREAL_NVP( symm_info_ ) ); // SymmetryInfoOP
+	arc( CEREAL_NVP( Tsymm_ ) ); // std::map<char, utility::vector1<numeric::HomogeneousTransform<core::Real> > >
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::conformation::symmetry::SymmetricConformation::load( Archive & arc ) {
+	arc( cereal::base_class< core::conformation::Conformation >( this ) );
+	arc( symm_info_ ); // SymmetryInfoOP
+	arc( Tsymm_ ); // std::map<char, utility::vector1<numeric::HomogeneousTransform<core::Real> > >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::symmetry::SymmetricConformation );
+CEREAL_REGISTER_TYPE( core::conformation::symmetry::SymmetricConformation )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_conformation_symmetry_SymmetricConformation )
+#endif // SERIALIZATION

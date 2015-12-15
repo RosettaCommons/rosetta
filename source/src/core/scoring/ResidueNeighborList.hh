@@ -33,6 +33,11 @@
 #include <map>
 
 //Auto Headers
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -49,6 +54,17 @@ private:
 	Size atomno1_;
 	Size atomno2_;
 	Real weight_;
+
+#ifdef    SERIALIZATION
+public:
+	/// @brief Default constructor to be used only for deserialization
+	SmallAtNb();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /*class ResidueNblistData : public basic::datacache::CacheableData
@@ -288,6 +304,12 @@ public:
 private:
 	utility::vector1< SmallAtNb > atom_neighbors_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class ResiduePairNeighborList : public basic::datacache::CacheableData
@@ -329,9 +351,21 @@ public:
 
 private:
 	utility::vector1< SmallAtNb > atom_neighbors_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_ResidueNeighborList )
+#endif // SERIALIZATION
+
 
 #endif

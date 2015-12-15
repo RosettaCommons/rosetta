@@ -23,6 +23,12 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -75,3 +81,23 @@ EMapVector::weighted_string_of( EMapVector const & weights ) const
 
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::EMapVector::save( Archive & arc ) const {
+	arc( CEREAL_NVP( map_ ) ); // Real [361]
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::EMapVector::load( Archive & arc ) {
+	arc( map_ ); // Real [361]
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::EMapVector );
+
+#endif // SERIALIZATION

@@ -32,6 +32,22 @@
 #include <core/scoring/disulfides/DisulfideAtomIndices.hh>
 #include <utility/vector1.hh>
 
+#ifdef SERIALIZATION
+// Project serialization headers
+#include <core/chemical/ResidueType.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace disulfides {
@@ -677,3 +693,71 @@ Size FullatomDisulfideEnergyContainer::num_residues() const
 }
 }
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::FullatomDisulfideEnergyContainer::save( Archive & arc ) const {
+
+	arc( CEREAL_NVP( resid_2_disulfide_index_ ) ); // utility::vector1<Size>
+
+	// individually serialize all of the ResidueTypeCOPs using the helper function
+	// in core::chemical.
+	core::chemical::serialize_residue_type_vector( arc, disulfide_residue_types_ );
+
+	arc( CEREAL_NVP( disulfide_partners_ ) ); // utility::vector1<std::pair<Size, Size> >
+	arc( CEREAL_NVP( disulfide_atom_indices_ ) ); // utility::vector1<std::pair<DisulfideAtomIndices, DisulfideAtomIndices> >
+	arc( CEREAL_NVP( disulfide_info_ ) ); // utility::vector1<std::pair<FullatomDisulfideEnergyComponents, _Bool> >
+}
+
+/// @details Deserialization method mostly auto-generated, but manually tweaked in order
+/// to correctly deserialize ResidueTypeCOPs / resolve them to one of the globally-held
+/// ResidueTypes.
+template< class Archive >
+void
+core::scoring::disulfides::FullatomDisulfideEnergyContainer::load( Archive & arc ) {
+	arc( resid_2_disulfide_index_ ); // utility::vector1<Size>
+
+	// individually deserialize the ResidueTypeCOPs, possibly resolving these
+	// ResidueTypeCOPs to globally-held ResidueTypes
+	core::chemical::deserialize_residue_type_vector( arc, disulfide_residue_types_ );
+
+	arc( disulfide_partners_ ); // utility::vector1<std::pair<Size, Size> >
+	arc( disulfide_atom_indices_ ); // utility::vector1<std::pair<DisulfideAtomIndices, DisulfideAtomIndices> >
+	arc( disulfide_info_ ); // utility::vector1<std::pair<FullatomDisulfideEnergyComponents, _Bool> >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::FullatomDisulfideEnergyContainer );
+CEREAL_REGISTER_TYPE( core::scoring::disulfides::FullatomDisulfideEnergyContainer )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::FullatomDisulfideEnergyComponents::save( Archive & arc ) const {
+	arc( CEREAL_NVP( dslf_ss_dst_ ) ); // Energy
+	arc( CEREAL_NVP( dslf_cs_ang_ ) ); // Energy
+	arc( CEREAL_NVP( dslf_ss_dih_ ) ); // Energy
+	arc( CEREAL_NVP( dslf_ca_dih_ ) ); // Energy
+	arc( CEREAL_NVP( dslf_cbs_ds_ ) ); // Energy
+	arc( CEREAL_NVP( dslf_fa13_ ) ); // Energy
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::FullatomDisulfideEnergyComponents::load( Archive & arc ) {
+	arc( dslf_ss_dst_ ); // Energy
+	arc( dslf_cs_ang_ ); // Energy
+	arc( dslf_ss_dih_ ); // Energy
+	arc( dslf_ca_dih_ ); // Energy
+	arc( dslf_cbs_ds_ ); // Energy
+	arc( dslf_fa13_ ); // Energy
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::FullatomDisulfideEnergyComponents );
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_disulfides_FullatomDisulfideEnergyContainer )
+#endif // SERIALIZATION

@@ -296,7 +296,7 @@ bool PyMolMover::is_it_time()
 
 void PyMolMover::apply( Pose const & pose)
 {
-	TR.Trace << "PyMolMover::apply( Pose const & pose)..." << std::endl;
+	TR.Trace << "PyMolMover::apply( Pose const & pose) ..." << std::endl;
 
 	if ( !is_it_time() ) return;
 	TR.Trace << "PyMOL_Mover::apply It is time!" << std::endl;
@@ -478,11 +478,12 @@ void PyMolMover::send_membrane_planes( Pose const & pose ) {
 	core::Real rg =  2*rg_method.calculate_rg_score( pose, relevant_residues );
 
 	// Get the normal vector and center position
-	core::Vector normal( pose.conformation().membrane_info()->membrane_normal() );
-	core::Vector center( pose.conformation().membrane_info()->membrane_center() );
+	core::conformation::Conformation const & conf( pose.conformation() );
+	core::Vector normal( conf.membrane_info()->membrane_normal( conf ) );
+	core::Vector center( conf.membrane_info()->membrane_center( conf ) );
 
 	// Get the plane thickness used by Rosetta
-	core::Real thickness( pose.conformation().membrane_info()->membrane_thickness() );
+	core::Real thickness( conf.membrane_info()->membrane_thickness() );
 
 	// Encode the Center vector
 	std::string center_msg = "";

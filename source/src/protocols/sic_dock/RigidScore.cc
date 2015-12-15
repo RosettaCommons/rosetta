@@ -32,6 +32,7 @@
 #include <protocols/loophash/LoopHashMap.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <boost/foreach.hpp>
 

@@ -228,6 +228,11 @@ struct CavityBallCluster {
 	numeric::xyzVector<core::Real> center;
 	core::Real volume,surface_area,surface_accessibility;
 	utility::vector1<CavityBall> cavballs;
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 struct OrderCBC {
 	bool operator() ( CavityBallCluster const & a, CavityBallCluster const & b ) {

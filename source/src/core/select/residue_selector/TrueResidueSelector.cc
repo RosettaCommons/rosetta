@@ -16,6 +16,7 @@
 #include <core/select/residue_selector/ResidueSelectorCreators.hh>
 
 // Package headers
+#include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
@@ -24,11 +25,20 @@
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
 #include <utility/assert.hh>
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace select {
@@ -71,6 +81,13 @@ std::string TrueResidueSelector::class_name() {
 	return "True";
 }
 
+void
+TrueResidueSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
+	using namespace utility::tag;
+	AttributeList attributes;
+	xsd_type_definition_w_attributes( xsd, class_name(), attributes );
+}
+
 ResidueSelectorOP
 TrueResidueSelectorCreator::create_residue_selector() const {
 	return ResidueSelectorOP( new TrueResidueSelector );
@@ -81,7 +98,34 @@ TrueResidueSelectorCreator::keyname() const {
 	return TrueResidueSelector::class_name();
 }
 
+void
+TrueResidueSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
+	TrueResidueSelector::provide_selector_xsd( xsd );
+}
+
 } //namespace residue_selector
 } //namespace select
 } //namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::select::residue_selector::TrueResidueSelector::save( Archive & arc ) const {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::select::residue_selector::TrueResidueSelector::load( Archive & arc ) {
+	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::select::residue_selector::TrueResidueSelector );
+CEREAL_REGISTER_TYPE( core::select::residue_selector::TrueResidueSelector )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_residue_selector_TrueResidueSelector )
+#endif // SERIALIZATION

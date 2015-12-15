@@ -7,17 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file _Exception
-/// @brief  base class for Exception system
-/// @details responsibilities:
+/// @file   utility/excn/Exceptions.hh
+/// @brief  common derived classes for thrown exceptions
 /// @author Oliver Lange
 
 
-#ifndef INCLUDED_utility_excn_Exceptions_hh
-#define INCLUDED_utility_excn_Exceptions_hh
+#ifndef INCLUDED_utility_excn_Exceptions_HH
+#define INCLUDED_utility_excn_Exceptions_HH
 
 
 // Unit Headers
+#include <utility/excn/Exceptions.fwd.hh>
+
 #include <utility/excn/EXCN_Base.hh>
 
 // Package Headers

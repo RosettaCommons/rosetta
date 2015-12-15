@@ -51,6 +51,19 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.sasa.LeGrandSasa" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// ObjexxFCL serialization headers
+#include <utility/serialization/ObjexxFCL/FArray2D.srlz.hh>
+#include <utility/serialization/ObjexxFCL/ubyte.srlz.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace sasa {
@@ -654,3 +667,44 @@ LeGrandSasa::print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > & values
 } //sasa
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::sasa::LeGrandSasa::LeGrandSasa() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::sasa::LeGrandSasa::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::sasa::SasaMethod >( this ) );
+	arc( CEREAL_NVP( num_bytes_ ) ); // int
+	arc( CEREAL_NVP( num_phi_ ) ); // int
+	arc( CEREAL_NVP( num_theta_ ) ); // int
+	arc( CEREAL_NVP( num_overlaps_ ) ); // int
+	arc( CEREAL_NVP( num_orientations_ ) ); // int
+	arc( CEREAL_NVP( maskbits_ ) ); // int
+	arc( CEREAL_NVP( angles_ ) ); // ObjexxFCL::FArray2D<int>
+	arc( CEREAL_NVP( masks_ ) ); // ObjexxFCL::FArray2D<ObjexxFCL::ubyte>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::sasa::LeGrandSasa::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::sasa::SasaMethod >( this ) );
+	arc( num_bytes_ ); // int
+	arc( num_phi_ ); // int
+	arc( num_theta_ ); // int
+	arc( num_overlaps_ ); // int
+	arc( num_orientations_ ); // int
+	arc( maskbits_ ); // int
+	arc( angles_ ); // ObjexxFCL::FArray2D<int>
+	arc( masks_ ); // ObjexxFCL::FArray2D<ObjexxFCL::ubyte>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::sasa::LeGrandSasa );
+CEREAL_REGISTER_TYPE( core::scoring::sasa::LeGrandSasa )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_sasa_LeGrandSasa )
+#endif // SERIALIZATION

@@ -410,7 +410,7 @@ PoseWrap make_pose(Size Nprev, Size Npost) {
 
 
 	// string seq = seq1 + "X[BPY]" + seq2''
-	// core::pose::make_pose_from_sequence(pose,seq,"fa_standard",true);
+	// core::pose::make_pose_from_sequence(pose,seq,core::chemical::FA_STANDARD,true);
 
 
 	ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );

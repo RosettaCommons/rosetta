@@ -16,7 +16,6 @@
 #include <core/scoring/constraints/NonResidueTypeConstraint.hh>
 
 #include <core/conformation/Residue.hh>
-//#include <core/io/pdb/pose_io.hh> -- REALLY?
 #include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>
 
@@ -25,6 +24,18 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>
+
+
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
 
 
 namespace core {
@@ -139,6 +150,57 @@ NonResidueTypeConstraint::fill_f1_f2(
 	// so we just "add zero" to F1 and F2.
 }
 
+bool NonResidueTypeConstraint::operator == ( Constraint const & rhs ) const
+{
+	if ( ! same_type_as_me( rhs ) ) return false;
+	if ( ! rhs.same_type_as_me( *this ) ) return false;
+
+	NonResidueTypeConstraint const & rhs_nrtc( static_cast< NonResidueTypeConstraint const & > ( rhs ) );
+	if ( seqpos_ != rhs_nrtc.seqpos_ ) return false;
+	if ( AAname != rhs_nrtc.AAname ) return false;
+	if ( rsd_type_name3_ != rhs_nrtc.rsd_type_name3_ ) return false;
+	return favor_non_native_bonus_ == rhs_nrtc.favor_non_native_bonus_;
+}
+
+bool NonResidueTypeConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< NonResidueTypeConstraint const *  > ( & other );
+}
+
+
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::constraints::NonResidueTypeConstraint::NonResidueTypeConstraint() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::NonResidueTypeConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( CEREAL_NVP( seqpos_ ) ); // Size
+	arc( CEREAL_NVP( AAname ) ); // std::string
+	arc( CEREAL_NVP( rsd_type_name3_ ) ); // std::string
+	arc( CEREAL_NVP( favor_non_native_bonus_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::NonResidueTypeConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( seqpos_ ); // Size
+	arc( AAname ); // std::string
+	arc( rsd_type_name3_ ); // std::string
+	arc( favor_non_native_bonus_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::NonResidueTypeConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::NonResidueTypeConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_NonResidueTypeConstraint )
+#endif // SERIALIZATION

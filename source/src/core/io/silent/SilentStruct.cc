@@ -125,7 +125,16 @@ void SilentStruct::fill_pose(
 	using namespace core::chemical;
 	ResidueTypeSetCOP residue_set
 		= ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-	fill_pose( pose, *residue_set );
+	fill_pose( pose, residue_set );
+}
+
+/// @brief Fill a Pose with the conformation information in this SilentStruct
+/// and the ResidueTypeSetCOP provided by the caller
+void SilentStruct::fill_pose(
+	core::pose::Pose & pose,
+	core::chemical::ResidueTypeSetCOP rts
+) const {
+	fill_pose( pose, *rts );
 }
 
 /// @brief Fill a Pose with the conformation information in this SilentStruct

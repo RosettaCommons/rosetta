@@ -316,7 +316,7 @@ public:
 		//If you want non-devel code stripped from the release, see the release machinery in tools/release and contact the release manager (Steven Lewis smlewi@gmail.com at this time)
 		///DONOTRELEASE_TOP
 		if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
-			core::pose::metrics::PoseMetricCalculatorOP sasa_calculator( new devel::vardist_solaccess::VarSolDistSasaCalculator );
+			devel::vardist_solaccess::VarSolDistSasaCalculatorOP sasa_calculator( new devel::vardist_solaccess::VarSolDistSasaCalculator );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 		}
 		///DONOTRELEASE_BOTTOM

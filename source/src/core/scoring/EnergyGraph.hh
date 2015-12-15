@@ -25,9 +25,12 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace scoring {
@@ -53,6 +56,21 @@ public:
 
 	bool moved() const; // getter
 	void moved( bool ); // setter
+
+#ifdef SERIALIZATION
+	/// @brief Serialization function, but one that is called by the graph so that
+	/// the EnergyNode object can save and then later restore its data.
+	/// The archive is not expected to construct the EnergyNode iself, so instead
+	/// of calling this function "save" as the archive would need if it were to
+	/// perform the construction itself, it's named "save_to_archive".
+	template < class Archive >
+	void save_to_archive( Archive & archive ) const;
+
+	/// @brief Deserialization function, but one that is called on the already-constructed
+	/// EnergyNode object instead of being called by the archive directly.
+	template < class Archive >
+	void load_from_archive( Archive & archive );
+#endif // SERIALIZATION
 
 private:
 	bool moved_;
@@ -115,6 +133,21 @@ public:
 
 	virtual Size count_static_memory() const;
 	virtual Size count_dynamic_memory() const;
+
+#ifdef    SERIALIZATION
+	/// @brief Serialization function, but one that is called by the graph so that
+	/// the EnergyEdge object can save and then later restore its data.
+	/// The archive is not expected to construct the EnergyEdge iself, so instead
+	/// of calling this function "save" as the archive would need if it were to
+	/// perform the construction itself, it's named "save_to_archive".
+	template < class Archive >
+	void save_to_archive( Archive & archive ) const;
+
+	/// @brief Deserialization function, but one that is called on the already-constructed
+	/// EnergyEdge object instead of being called by the archive directly.
+	template < class Archive >
+	void load_from_archive( Archive & archive );
+#endif // SERIALIZATION
 
 protected:
 	/// Downcasts
@@ -212,6 +245,14 @@ public:
 	/// be called by class EnergyEdge.  I wish C++ let me declare this function private
 	/// and that EnergyEdge could be a "friend" of this function.
 	graph::ArrayPool< Real > & array_pool() { return energy_array_pool_; }
+
+#ifdef     SERIALIZATION
+	template < class Archive >
+	void save( Archive & archive ) const;
+
+	template < class Archive >
+	void load( Archive & archive );
+#endif // SERIALIZATION
 
 protected:
 	virtual Size count_static_memory() const;
@@ -341,6 +382,10 @@ EnergyEdge::get_energy_owner() {
 
 } //namespace scoring
 } //namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_EnergyGraph )
+#endif
 
 #endif
 

@@ -40,6 +40,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -50,40 +55,25 @@ class MultiConstraint : public Constraint {
 public:
 
 	/// @brief default Constructor
-	MultiConstraint( ScoreType const & t = dof_constraint ):
-		Constraint( t ),
-		report_this_as_effective_sequence_separation_( 0 )
-	{}
+	MultiConstraint( ScoreType const & t = dof_constraint );
 
-	/// @brief Constructor
-	MultiConstraint( const ConstraintCOPs & cst_in, ScoreType const & t = dof_constraint );
+	/// @brief Constructor -- performs a shallow copy of the input ConstraintCOPs.
+	MultiConstraint( ConstraintCOPs const & cst_in, ScoreType const & t = dof_constraint );
 
+	/// @brief Creates a deep copy of this %MultiConstaint, cloning all constraints that it holds.
+	virtual
+	ConstraintOP clone() const;
 
 	virtual
-	ConstraintOP clone() const {
-		if ( member_constraints_.size() > 0 ) {
-			return ConstraintOP( new MultiConstraint( member_constraints_ ) );
-		} else {
-			return ConstraintOP( new MultiConstraint() );
-		}
-	}
-
-	virtual
-	MultiConstraintOP empty_clone() const {
-		return MultiConstraintOP( new MultiConstraint );
-	}
+	MultiConstraintOP empty_clone() const;
 
 	/// @brief number of atoms involved in this MultiConstraint container
-	Size natoms() const
-	{
-		return member_atoms_.size();
-	}
-	/// @brief number of constraints data
-	Size size() const { return member_constraints_.size(); }
+	Size natoms() const;
 
-	virtual std::string type() const {
-		return "MultiConstraint";
-	}
+	/// @brief number of constraints that are held by this %MultiConstraint
+	Size size() const;
+
+	virtual std::string type() const;
 
 	/// @brief read in constraint defiinition
 	virtual
@@ -93,6 +83,9 @@ public:
 	/// and not just pointers
 	virtual
 	bool operator == ( Constraint const & other ) const;
+
+	virtual
+	bool same_type_as_me( Constraint const & other ) const;
 
 	/// @brief compute score
 	virtual
@@ -164,24 +157,41 @@ public:
 	}
 
 protected:
+	/// @brief Explicit copy constructor so that derived classes will recieve a deep copy
+	/// of the member constraints held in this class.
+	MultiConstraint( MultiConstraint const & src );
+
+	/// @brief Return a vector of Constraints that are clones of the member constraints.
+	ConstraintCOPs cloned_member_constraints() const;
+
+private:
 
 	//vector that holds the constraints
 	ConstraintCOPs member_constraints_;
 
-private:
-
 	//data structure that holds the atoms and atom numbers
 	utility::vector1< core::Size > member_residues_;
 	utility::vector1< AtomID > member_atoms_;
-	std::map< AtomID, ConstraintCOPs > AtomID_to_Csts_;
+	std::map< AtomID, ConstraintCOPs > atomid_to_csts_;
 
 
 	core::Size report_this_as_effective_sequence_separation_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; //MultiConstraint
 
 } //constraints
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_MultiConstraint )
+#endif // SERIALIZATION
+
 
 #endif

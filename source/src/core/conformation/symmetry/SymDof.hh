@@ -141,6 +141,12 @@ private:
 	utility::vector1< bool > has_range2_upper_; // Is there a upper bound on range2?
 	utility::vector1< int > jump_dir_; // store jump dir for each dof
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // symmetry

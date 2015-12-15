@@ -105,18 +105,19 @@ MPTMProjPenalty::finalize_total_energy(
 
 
 	// Initialize WHole Pose Data
-	core::Vector center = pose.conformation().membrane_info()->membrane_center();
-	core::Vector normal = pose.conformation().membrane_info()->membrane_normal();
+	core::conformation::Conformation const & conf( pose.conformation() );
+	core::Vector center = conf.membrane_info()->membrane_center(conf);
+	core::Vector normal = conf.membrane_info()->membrane_normal(conf);
 
 	// Get Topology from the pose
-	SpanningTopologyOP topology = pose.conformation().membrane_info()->spanning_topology();
+	SpanningTopologyOP topology = conf.membrane_info()->spanning_topology();
 
 	// Read through spanning topology
 	for ( Size j = 1; j <= topology->nspans(); ++j ) {
 
 		// Get the center and normal z position
-		Real const & start_z_pos = pose.conformation().membrane_info()->residue_z_position( topology->span(j)->start() );
-		Real const & end_z_pos = pose.conformation().membrane_info()->residue_z_position( topology->span(j)->end() );
+		Real const & start_z_pos = conf.membrane_info()->residue_z_position( conf, topology->span(j)->start() );
+		Real const & end_z_pos   = conf.membrane_info()->residue_z_position( conf, topology->span(j)->end() );
 
 		// Compute seuqnece distance between the two residues
 		core::Real dist = topology->span(j)->end()-topology->span(j)->start()+1;

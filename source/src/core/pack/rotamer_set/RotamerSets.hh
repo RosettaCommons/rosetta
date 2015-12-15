@@ -45,6 +45,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -265,11 +270,22 @@ private:
 	utility::vector1< uint > nrotamers_for_moltenres_;
 
 	PackerTaskCOP task_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace rotamer_set
 } // namespace pack
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_rotamer_set_RotamerSets )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_core_pack_RotamerSet_RotamerSets_HH

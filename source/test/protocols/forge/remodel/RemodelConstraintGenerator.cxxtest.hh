@@ -327,7 +327,7 @@ public:
 		to_centroid_mover.apply( testpose );
 
 		sheet_csts_badpair->apply( testpose );
-		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)146 );
+		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)186 );
 		rm_csts.apply( testpose );
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)91 );
 

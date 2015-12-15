@@ -101,7 +101,7 @@ main( int argc, char * argv [] )
 		std::string resid(option[ OptionKeys::pocket_grid::central_relax_pdb_num ]);
 
 
-		std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
+		std::vector< conformation::ResidueCOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
 
 		/*
 		int  central_relax_pdb_number;

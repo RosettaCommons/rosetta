@@ -42,6 +42,16 @@
 //Auto Headers
 #include <numeric/random/random.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/utility.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -404,4 +414,66 @@ SS_Killhairpins_Info::setup_killhairpins()
 
 } // ns scoring
 } // ns core
+
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::Hairpin::save( Archive & arc ) const {
+	arc( CEREAL_NVP( range_pair_ ) ); // std::pair<std::pair<core::Size, core::Size>, std::pair<core::Size, core::Size> >
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::Hairpin::load( Archive & arc ) {
+	arc( range_pair_ ); // std::pair<std::pair<core::Size, core::Size>, std::pair<core::Size, core::Size> >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::Hairpin );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::Hairpins::save( Archive & arc ) const {
+	arc( CEREAL_NVP( hairpin_list_ ) ); // utility::vector1<Hairpin>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::Hairpins::load( Archive & arc ) {
+	arc( hairpin_list_ ); // utility::vector1<Hairpin>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::Hairpins );
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::SS_Killhairpins_Info::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( kill_parallel_ ) ); // _Bool
+	arc( CEREAL_NVP( kill_antiparallel_ ) ); // _Bool
+	arc( CEREAL_NVP( hairpins_ ) ); // struct core::scoring::Hairpins
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::SS_Killhairpins_Info::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( kill_parallel_ ); // _Bool
+	arc( kill_antiparallel_ ); // _Bool
+	arc( hairpins_ ); // struct core::scoring::Hairpins
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::SS_Killhairpins_Info );
+CEREAL_REGISTER_TYPE( core::scoring::SS_Killhairpins_Info )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_SS_Killhairpins_Info )
+#endif // SERIALIZATION
 

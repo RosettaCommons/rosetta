@@ -55,6 +55,12 @@
 #include <utility/vectorL.hh>     // for vectorL
 #include <vector>                 // for __vector_base<>::value_type
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
 namespace basic {
 namespace svd {
 
@@ -715,3 +721,44 @@ SVD_Solver::svdcmp(){
 
 }//namespace svd
 }//namespace basic
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+basic::svd::SVD_Solver::save( Archive & arc ) const {
+	arc( CEREAL_NVP( cstyle_b_ ) ); // utility::vector1<double>
+	arc( CEREAL_NVP( cstyle_A_decomp_ ) ); // utility::vector1<utility::vector1<double> >
+	arc( CEREAL_NVP( cstyle_v_ ) ); // utility::vector1<utility::vector1<double> >
+	arc( CEREAL_NVP( cstyle_x_ ) ); // utility::vector1<double>
+	arc( CEREAL_NVP( cstyle_w_ ) ); // utility::vector1<double>
+	arc( CEREAL_NVP( cstyle_tmp_ ) ); // utility::vector1<double>
+	arc( CEREAL_NVP( M_ ) ); // platform::Size
+	arc( CEREAL_NVP( N_ ) ); // platform::Size
+	arc( CEREAL_NVP( b_is_set_ ) ); // _Bool
+	arc( CEREAL_NVP( A_is_set_ ) ); // _Bool
+	arc( CEREAL_NVP( A_is_decomp_ ) ); // _Bool
+	arc( CEREAL_NVP( x_is_solved_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+basic::svd::SVD_Solver::load( Archive & arc ) {
+	arc( cstyle_b_ ); // utility::vector1<double>
+	arc( cstyle_A_decomp_ ); // utility::vector1<utility::vector1<double> >
+	arc( cstyle_v_ ); // utility::vector1<utility::vector1<double> >
+	arc( cstyle_x_ ); // utility::vector1<double>
+	arc( cstyle_w_ ); // utility::vector1<double>
+	arc( cstyle_tmp_ ); // utility::vector1<double>
+	arc( M_ ); // platform::Size
+	arc( N_ ); // platform::Size
+	arc( b_is_set_ ); // _Bool
+	arc( A_is_set_ ); // _Bool
+	arc( A_is_decomp_ ); // _Bool
+	arc( x_is_solved_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( basic::svd::SVD_Solver );
+#endif // SERIALIZATION

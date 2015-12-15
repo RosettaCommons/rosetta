@@ -17,6 +17,18 @@
 
 #include <cstddef>  // for size_t
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal serialization headers
+#include <cereal/cereal.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace basic {
 namespace datacache {
 
@@ -55,3 +67,25 @@ BasicDataCache & BasicDataCache::operator =( BasicDataCache const & rval ) {
 
 } // namespace datacache
 } // namespace basic
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+basic::datacache::BasicDataCache::save( Archive & arc ) const {
+	arc( data() );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+basic::datacache::BasicDataCache::load( Archive & arc ) {
+	arc( data() );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( basic::datacache::BasicDataCache );
+CEREAL_REGISTER_TYPE( basic::datacache::BasicDataCache )
+
+CEREAL_REGISTER_DYNAMIC_INIT( basic_datacache_BasicDataCache )
+#endif // SERIALIZATION

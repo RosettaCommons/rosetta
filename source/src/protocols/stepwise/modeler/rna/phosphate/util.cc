@@ -64,8 +64,8 @@ remove_terminal_phosphates( pose::Pose & pose, utility::vector1< Size > const & 
 void
 correctly_position_five_prime_phosphate_SLOW( pose::Pose & pose, Size const res ) {
 	using namespace core::chemical;
-	ResidueTypeSet const & rsd_set = pose.residue( res ).residue_type_set();
-	conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set.get_representative_type_aa( aa_from_name( "RAD") ) ) ) ;
+	ResidueTypeSetCOP rsd_set = pose.residue( res ).residue_type_set();
+	conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->get_representative_type_aa( aa_from_name( "RAD") ) ) ) ;
 	pose.prepend_polymer_residue_before_seqpos( *new_rsd, res, true );
 	pose.delete_polymer_residue( res );
 }

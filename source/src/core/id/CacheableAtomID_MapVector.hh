@@ -30,6 +30,10 @@
 // numeric headers
 #include <numeric/xyzVector.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace id {
@@ -37,17 +41,29 @@ namespace id {
 /// @brief AtomID_Map< xyzVector< Real > >
 class CacheableAtomID_MapVector : public basic::datacache::CacheableData {
 public:
-	CacheableAtomID_MapVector() {}
-	virtual ~CacheableAtomID_MapVector(){};
-	virtual basic::datacache::CacheableDataOP clone() const { return basic::datacache::CacheableDataOP( new CacheableAtomID_MapVector(*this) ); }
+	CacheableAtomID_MapVector();
+	virtual ~CacheableAtomID_MapVector();
+	virtual basic::datacache::CacheableDataOP clone() const;
 	core::id::AtomID_Map< numeric::xyzVector<core::Real> > & map() { return map_; }
 	core::id::AtomID_Map< numeric::xyzVector<core::Real> > const & map() const { return map_; }
 private:
 	core::id::AtomID_Map< numeric::xyzVector<core::Real> > map_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace id
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_id_CacheableAtomID_MapVector )
+#endif // SERIALIZATION
+
 
 #endif /* INCLUDED_core_util_datacache_CacheableAtomID_MapVector_HH */

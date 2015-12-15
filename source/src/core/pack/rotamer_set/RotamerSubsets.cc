@@ -31,6 +31,16 @@
 // C++
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -186,3 +196,46 @@ RotamerSubsets::show( std::ostream & out ) const {
 } // namespace pack
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::pack::rotamer_set::RotamerSubsets::RotamerSubsets() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::rotamer_set::RotamerSubsets::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pack::rotamer_set::FixbbRotamerSets >( this ) );
+	arc( CEREAL_NVP( nmoltenres_ ) ); // uint
+	arc( CEREAL_NVP( total_residue_ ) ); // uint
+	arc( CEREAL_NVP( nrotamers_ ) ); // uint
+	arc( CEREAL_NVP( set_of_rotamer_sets_ ) ); // RotamerSetVector
+	arc( CEREAL_NVP( resid_2_moltenres_ ) ); // utility::vector1<uint>
+	arc( CEREAL_NVP( moltenres_2_resid_ ) ); // utility::vector1<uint>
+	arc( CEREAL_NVP( nrotamer_offsets_ ) ); // utility::vector1<uint>
+	arc( CEREAL_NVP( moltenres_for_rotamer_ ) ); // utility::vector1<uint>
+	arc( CEREAL_NVP( nrotamers_for_moltenres_ ) ); // utility::vector1<uint>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::rotamer_set::RotamerSubsets::load( Archive & arc ) {
+	arc( cereal::base_class< core::pack::rotamer_set::FixbbRotamerSets >( this ) );
+	arc( nmoltenres_ ); // uint
+	arc( total_residue_ ); // uint
+	arc( nrotamers_ ); // uint
+	arc( set_of_rotamer_sets_ ); // RotamerSetVector
+	arc( resid_2_moltenres_ ); // utility::vector1<uint>
+	arc( moltenres_2_resid_ ); // utility::vector1<uint>
+	arc( nrotamer_offsets_ ); // utility::vector1<uint>
+	arc( moltenres_for_rotamer_ ); // utility::vector1<uint>
+	arc( nrotamers_for_moltenres_ ); // utility::vector1<uint>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::RotamerSubsets );
+CEREAL_REGISTER_TYPE( core::pack::rotamer_set::RotamerSubsets )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_rotamer_set_RotamerSubsets )
+#endif // SERIALIZATION

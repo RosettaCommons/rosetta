@@ -17,8 +17,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 
+// Utility headers
 #include <utility/string_util.hh>
-
 #include <utility/vector1.hh>
 
 

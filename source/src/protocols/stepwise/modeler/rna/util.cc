@@ -54,6 +54,7 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/util.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/FadeFunc.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>

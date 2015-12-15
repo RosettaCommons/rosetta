@@ -32,6 +32,10 @@
 namespace core {
 namespace sequence {
 
+/// @brief This is quite possibly the laziest form of class naming ever.  What does the name of this class
+/// tell you about it? It's a SequenceMapping, and it's derived from SequenceMapping.  Oops, it said it twice.
+/// What is different about this sequence mapping from the parent class? Who knows!  When should you use it?
+/// Who knows!</snark>
 class DerivedSequenceMapping : public core::id::SequenceMapping {
 
 public:
@@ -57,6 +61,9 @@ public:
 
 	DerivedSequenceMapping &
 	operator=( DerivedSequenceMapping const & src );
+
+	virtual bool operator == ( SequenceMapping const & rhs ) const;
+	virtual bool same_type_as_me( SequenceMapping const & other ) const;
 
 public:
 

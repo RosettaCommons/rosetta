@@ -14,6 +14,7 @@
 
 
 #include <protocols/magnesium/SampleGrid.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 

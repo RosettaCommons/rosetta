@@ -114,6 +114,18 @@
 #include <sstream>
 
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/id/AtomID_Map.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace devel {
 namespace znhash {
 
@@ -1233,4 +1245,60 @@ void LoadZnCoordNumHbondCalculatorMover::parse_my_tag(
 }
 }
 
+
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+devel::znhash::FindZnCoordinatingResidues::save( Archive & arc ) const {
+	arc( CEREAL_NVP( fail_on_absent_coordinators_ ) ); // _Bool
+	arc( CEREAL_NVP( resinds_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( atomids_ ) ); // utility::vector1<core::id::AtomID>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+devel::znhash::FindZnCoordinatingResidues::load( Archive & arc ) {
+	arc( fail_on_absent_coordinators_ ); // _Bool
+	arc( resinds_ ); // utility::vector1<core::Size>
+	arc( atomids_ ); // utility::vector1<core::id::AtomID>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( devel::znhash::FindZnCoordinatingResidues );
+CEREAL_REGISTER_TYPE( devel::znhash::FindZnCoordinatingResidues )
+
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+devel::znhash::ZnCoordNumHbondCalculator::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+	arc( CEREAL_NVP( all_Hbonds_ ) ); // core::Size
+	arc( CEREAL_NVP( atom_Hbonds_ ) ); // core::id::AtomID_Map<core::Size>
+	arc( CEREAL_NVP( residue_Hbonds_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( nhbcalc_ ) ); // protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator
+	arc( CEREAL_NVP( finder_ ) ); // class devel::znhash::FindZnCoordinatingResidues
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+devel::znhash::ZnCoordNumHbondCalculator::load( Archive & arc ) {
+	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
+	arc( all_Hbonds_ ); // core::Size
+	arc( atom_Hbonds_ ); // core::id::AtomID_Map<core::Size>
+	arc( residue_Hbonds_ ); // utility::vector1<core::Size>
+	arc( nhbcalc_ ); // protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator
+	arc( finder_ ); // class devel::znhash::FindZnCoordinatingResidues
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( devel::znhash::ZnCoordNumHbondCalculator );
+CEREAL_REGISTER_TYPE( devel::znhash::ZnCoordNumHbondCalculator )
+
+CEREAL_REGISTER_DYNAMIC_INIT( devel_znhash_SymmZnMoversAndTaskOps )
+#endif // SERIALIZATION
 

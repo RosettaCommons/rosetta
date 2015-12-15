@@ -23,7 +23,8 @@
 #include <string>                                     // for char_traits
 #include <utility/excn/Exceptions.hh>                 // for EXCN_Msg_Exception
 #include <utility>                                    // for pair
-#include <utility/pointer/std/ReferenceCount.hh>      // for ReferenceCount
+#include <utility/pointer/owning_ptr.hh>              // for dynamic_pointer_cast
+#include <utility/pointer/ReferenceCount.hh>          // for ReferenceCount
 
 namespace basic {
 namespace datacache {
@@ -40,10 +41,13 @@ public:
 public:
 	DataMap();
 	virtual ~DataMap();
+
 	iterator begin();
 	iterator end();
+
 	const_iterator begin() const;
 	const_iterator end() const;
+
 	// @brief add an object to the map, returning false if an object of that
 	// name already exists
 	bool add(
@@ -51,12 +55,15 @@ public:
 		std::string const & name,
 		utility::pointer::ReferenceCountOP const op
 	);
+
 	bool has( std::string const & type, std::string const & name="" ) const;
 	template< class Ty > Ty get( std::string const & type, std::string const & name ) const;
 	template< class Ty > utility::pointer::shared_ptr< Ty > get_ptr( std::string const & type, std::string const & name ) const;
+
 	std::map< std::string, utility::pointer::ReferenceCountOP > & operator [](
 		std::string const & type
 	);
+
 	/// @brief returns the size of the map (how many different types are in data_map_
 	platform::Size size() const;
 

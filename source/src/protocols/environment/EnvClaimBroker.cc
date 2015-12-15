@@ -94,7 +94,7 @@ using core::conformation::Conformation;
 void update_pdb_info(
 	core::pose::PDBInfoCOP input_pdb_info,
 	core::pose::Pose& pose,
-	EnvClaimBroker::BrokerResult const& result )
+	EnvClaimBroker::BrokerResult const & result )
 {
 	//Rebuild an appropriate PDBInfo object.
 	if ( pose.pdb_info() ) {
@@ -139,8 +139,8 @@ void safe_set_conf( core::pose::Pose& pose, core::conformation::ConformationOP c
 }
 
 EnvClaimBroker::EnvClaimBroker( EnvironmentCAP env,
-	MoverPassMap const& movers_and_passes,
-	core::pose::Pose const& in_pose,
+	MoverPassMap const & movers_and_passes,
+	core::pose::Pose const & in_pose,
 	SequenceAnnotationOP ann ):
 	movers_and_passes_( movers_and_passes ),
 	ann_( ann ),
@@ -187,7 +187,7 @@ EnvClaimBroker::EnvClaimBroker( EnvironmentCAP env,
 
 EnvClaimBroker::~EnvClaimBroker() {}
 
-EnvClaimBroker::BrokerResult const& EnvClaimBroker::result() const {
+EnvClaimBroker::BrokerResult const & EnvClaimBroker::result() const {
 	return result_;
 }
 
@@ -244,8 +244,8 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
 	tr.Info << "Broking finished. Consensus fold tree: " << core::kinematics::visualize_fold_tree(*ft) << std::endl;
 }
 
-core::Size find_implied_cut( utility::vector1< core::Size > const& cycle,
-	core::conformation::Conformation const& conf ){
+core::Size find_implied_cut( utility::vector1< core::Size > const & cycle,
+	core::conformation::Conformation const & conf ){
 	utility::vector1< core::Size > cuts;
 
 	core::Real const CA_CA_CUTOFF = 4.0;
@@ -259,7 +259,7 @@ core::Size find_implied_cut( utility::vector1< core::Size > const& cycle,
 
 	tr.Debug << "  Looking for implied cuts from spatial information indicating cuts at: " << cuts << std::endl;;
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
-		core::Size const& cut = cuts[i];
+		core::Size const & cut = cuts[i];
 		if ( std::find( cycle.begin(), cycle.end(), cut ) != cycle.end() ) {
 			tr.Debug << "  Inheriting implied cut at " << cut << " to close ft cycle." << std::endl;
 			return cut;
@@ -269,7 +269,7 @@ core::Size find_implied_cut( utility::vector1< core::Size > const& cycle,
 	return 0;
 }
 
-utility::vector1< core::Size > introduce_datamap_cuts( FoldTreeSketch const& fts,
+utility::vector1< core::Size > introduce_datamap_cuts( FoldTreeSketch const & fts,
 	basic::datacache::BasicDataCache& datacache ){
 
 	using namespace basic::datacache;
@@ -323,8 +323,8 @@ utility::vector1< core::Size > introduce_datamap_cuts( FoldTreeSketch const& fts
 	return cuts;
 }
 
-core::Size inherit_cuts( utility::vector1< core::Size > const& cycle,
-	core::kinematics::FoldTree const& input_ft ) {
+core::Size inherit_cuts( utility::vector1< core::Size > const & cycle,
+	core::kinematics::FoldTree const & input_ft ) {
 	for ( int i = 1; i <= input_ft.num_cutpoint(); ++i ) {
 		if ( std::find( cycle.begin(), cycle.end(), input_ft.cutpoint( i ) ) != cycle.end() ) {
 			return input_ft.cutpoint( i );
@@ -339,9 +339,9 @@ core::Size inherit_cuts( utility::vector1< core::Size > const& cycle,
 
 core::kinematics::FoldTreeOP
 EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
-	utility::vector1< core::Real > const& bias,
+	utility::vector1< core::Real > const & bias,
 	basic::datacache::BasicDataCache& datacache,
-	core::conformation::Conformation const& input_conf ) {
+	core::conformation::Conformation const & input_conf ) {
 
 
 	utility::vector1< core::Size > const datamap_autocuts = introduce_datamap_cuts( fts, datacache );
@@ -464,12 +464,12 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 }
 
 void EnvClaimBroker::annotate_fold_tree( core::kinematics::FoldTreeOP ft,
-	JumpDataMap const& new_jumps,
+	JumpDataMap const & new_jumps,
 	SequenceAnnotationOP ann ) {
 
 	//Bind jump numbers to labels in annotations
 	BOOST_FOREACH ( JumpDataMap::value_type pair, new_jumps ) {
-		std::string const& label = pair.first;
+		std::string const & label = pair.first;
 		BrokeredJumpDataCOP jump_data = pair.second;
 
 		Size jump_id = ft->jump_nr( jump_data->pos.first, jump_data->pos.second );
@@ -479,8 +479,8 @@ void EnvClaimBroker::annotate_fold_tree( core::kinematics::FoldTreeOP ft,
 				ann->add_jump_label( label, jump_id );
 			}
 
-			std::string const& a1 = jump_data->atoms.first;
-			std::string const& a2 = jump_data->atoms.second;
+			std::string const & a1 = jump_data->atoms.first;
+			std::string const & a2 = jump_data->atoms.second;
 
 			ft->set_jump_atoms( (int) jump_id, a1, a2,
 				jump_data->put_jump_stub_intra_residue );
@@ -493,16 +493,16 @@ void EnvClaimBroker::annotate_fold_tree( core::kinematics::FoldTreeOP ft,
 }
 
 void EnvClaimBroker::add_virtual_residues( Conformation& conf,
-	SizeToStringMap const& new_vrts,
+	SizeToStringMap const & new_vrts,
 	SequenceAnnotationOP ASSERT_ONLY(ann) )
 {
 	// Add new virtual residues into conformation.
 	BOOST_FOREACH ( SizeToStringMap::value_type pair, new_vrts ) {
 		// Steal the residue type set of the first residue. Will obviously break if the conformation
 		// has no residues. Is this a case I need to worry about?
-		core::chemical::ResidueTypeSet const & rsd_set( conf.residue(1).residue_type_set() );
+		core::chemical::ResidueTypeSetCOP rsd_set( conf.residue(1).residue_type_set() );
 		core::conformation::ResidueOP rsd(
-			core::conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
+			core::conformation::ResidueFactory::create_residue( rsd_set->name_map( "VRT" ) ) );
 
 		// where the jump goes doesn't matter since the current fold tree is about to be replaced by 'ft'.
 		conf.append_residue_by_jump( *rsd, conf.size() );
@@ -512,11 +512,11 @@ void EnvClaimBroker::add_virtual_residues( Conformation& conf,
 	}
 }
 
-ControlStrength const& init_str_selector( std::pair< claims::DOFElement, ClientMoverOP > const& d ){
+ControlStrength const & init_str_selector( std::pair< claims::DOFElement, ClientMoverOP > const & d ){
 	return d.first.i_str;
 }
 
-ControlStrength const& ctrl_str_selector( std::pair< claims::DOFElement, ClientMoverOP > const& d ){
+ControlStrength const & ctrl_str_selector( std::pair< claims::DOFElement, ClientMoverOP > const & d ){
 	return d.first.c_str;
 }
 
@@ -564,18 +564,18 @@ void EnvClaimBroker::broker_dofs( core::pose::Pose& pose ){
 /// @brief A brief comparator object initialized with the correct strength accessor for reuse of setup_passports
 class Comparator {
 public:
-	Comparator( claims::ControlStrength const& (*str_access)( std::pair< claims::DOFElement, ClientMoverOP > const& ) ):
+	Comparator( claims::ControlStrength const & (*str_access)( std::pair< claims::DOFElement, ClientMoverOP > const & ) ):
 		str_access_( str_access ) {}
-	bool operator() ( std::pair< claims::DOFElement, ClientMoverOP > const& a,
-		std::pair< claims::DOFElement, ClientMoverOP > const& b ){
+	bool operator() ( std::pair< claims::DOFElement, ClientMoverOP > const & a,
+		std::pair< claims::DOFElement, ClientMoverOP > const & b ){
 		return str_access_( a ) > str_access_( b );
 	}
 private:
-	claims::ControlStrength const& (*str_access_)( std::pair< claims::DOFElement, ClientMoverOP > const& );
+	claims::ControlStrength const & (*str_access_)( std::pair< claims::DOFElement, ClientMoverOP > const & );
 };
 
 void EnvClaimBroker::setup_passports( DOFElemVect& elems,
-	claims::ControlStrength const& (*str_access)( std::pair< claims::DOFElement, ClientMoverOP > const& ) ) {
+	claims::ControlStrength const & (*str_access)( std::pair< claims::DOFElement, ClientMoverOP > const & ) ) {
 
 	// Figure out if we're doing initialization or not for output purposes.
 	std::string const style = ( str_access == *init_str_selector ) ? "initialization" : "sampling";
@@ -588,8 +588,8 @@ void EnvClaimBroker::setup_passports( DOFElemVect& elems,
 	// Using max_strength, we can check to see if somebody else has already claimed, and
 	// if we have a conflict.
 	BOOST_FOREACH ( DOFElemVect::Value pair, elems ) {
-		DOFElement const& element = pair.first;
-		ClientMoverOP const& owner = pair.second;
+		DOFElement const & element = pair.first;
+		ClientMoverOP const & owner = pair.second;
 		ControlStrength const strength = str_access( pair );
 
 		tr.Trace << "    considering: " << element.id << " from " << owner->get_name();
@@ -629,7 +629,7 @@ void EnvClaimBroker::setup_passports( DOFElemVect& elems,
 	}
 }
 
-void EnvClaimBroker::grant_access( DOFElement const& e, ClientMoverOP owner ) const {
+void EnvClaimBroker::grant_access( DOFElement const & e, ClientMoverOP owner ) const {
 	using namespace core::id;
 	using namespace core::kinematics::tree;
 
@@ -639,7 +639,7 @@ void EnvClaimBroker::grant_access( DOFElement const& e, ClientMoverOP owner ) co
 }
 
 template < typename T, typename I >
-utility::vector1< std::pair< T, ClientMoverOP > > EnvClaimBroker::collect_elements( I const& info ) const {
+utility::vector1< std::pair< T, ClientMoverOP > > EnvClaimBroker::collect_elements( I const & info ) const {
 	typedef utility::vector1< std::pair< T, ClientMoverOP > > ElementList;
 
 	utility::vector1< T > tmp;
@@ -664,7 +664,7 @@ utility::vector1< std::pair< T, ClientMoverOP > > EnvClaimBroker::collect_elemen
 	return elements;
 }
 
-EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
+EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const & movers_and_passes,
 	core::pose::Pose& pose ) {
 	using namespace basic::datacache;
 	using namespace core::pose::datacache;
@@ -688,7 +688,7 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
 	for ( MoverPassMap::const_iterator mp_it = movers_and_passes.begin();
 			mp_it != movers_and_passes.end(); ++mp_it ) {
 
-		// a modifiable sandbox_map must be passed in separately, as pose is a const&.
+		// a modifiable sandbox_map must be passed in separately, as pose is a const &.
 		WriteableCacheableMapOP sandbox_map( new WriteableCacheableMap( *orig_map ) );
 
 		claims::EnvClaims in_claims = mp_it->first->yield_claims( pose, sandbox_map );
@@ -735,10 +735,10 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
 	return claims;
 }
 
-void EnvClaimBroker::process_elements( ResElemVect const& elems, FoldTreeSketch& fts, SizeToStringMap& new_vrts ){
+void EnvClaimBroker::process_elements( ResElemVect const & elems, FoldTreeSketch& fts, SizeToStringMap& new_vrts ){
 
 	for ( ResElemVect::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ) {
-		ResidueElement const& element = e_it->first;
+		ResidueElement const & element = e_it->first;
 		ClientMoverCOP owner = e_it->second;
 
 		if ( !element.allow_duplicates ) {
@@ -757,7 +757,7 @@ void EnvClaimBroker::process_elements( ResElemVect const& elems, FoldTreeSketch&
 	}
 
 	for ( ResElemVect::const_iterator e_it = elems.begin(); e_it != elems.end(); ++e_it ) {
-		ResidueElement const& element = e_it->first;
+		ResidueElement const & element = e_it->first;
 		ClientMoverCOP owner = e_it->second;
 
 		if ( element.allow_duplicates ) {
@@ -778,14 +778,14 @@ void EnvClaimBroker::process_elements( ResElemVect const& elems, FoldTreeSketch&
 	}
 }
 
-void EnvClaimBroker::process_elements( JumpElemVect const& elems,
+void EnvClaimBroker::process_elements( JumpElemVect const & elems,
 	FoldTreeSketch& fts,
 	JumpDataMap& new_jumps ){
 	typedef std::map< std::pair< core::Size, core::Size >, BrokeredJumpDataCOP > PositionDataMap;
 	PositionDataMap brokered_jumps;
 
 	BOOST_FOREACH ( JumpElemVect::Value pair, elems ) {
-		JumpElement const& element = pair.first;
+		JumpElement const & element = pair.first;
 		ClientMoverCOP owner = pair.second;
 
 		Size abs_p1 = ann_->resolve_seq( element.p1 );
@@ -835,7 +835,7 @@ void EnvClaimBroker::process_elements( JumpElemVect const& elems,
 	}
 }
 
-void EnvClaimBroker::process_elements( CutElemVect const& elems,
+void EnvClaimBroker::process_elements( CutElemVect const & elems,
 	FoldTreeSketch& fts ){
 	BOOST_FOREACH ( CutElemVect::Value pair, elems ) {
 		CutElement element = pair.first;
@@ -854,7 +854,7 @@ void EnvClaimBroker::process_elements( CutElemVect const& elems,
 	}
 }
 
-void EnvClaimBroker::process_elements( CutBiasElemVect const& elems, BiasVector& bias ){
+void EnvClaimBroker::process_elements( CutBiasElemVect const & elems, BiasVector& bias ){
 
 	BOOST_FOREACH ( CutBiasElemVect::Value pair, elems ) {
 		CutBiasElement element = pair.first;
@@ -876,13 +876,13 @@ void EnvClaimBroker::add_chainbreak_variants( core::Size rsd_num_lower,
 
 	assert( conf.fold_tree().is_cutpoint( (int) rsd_num_lower ) );
 
-	Residue const& rsd_lower( conf.residue( rsd_num_lower ) );
-	Residue const& rsd_upper( conf.residue( rsd_num_lower + 1 ) );
-	ResidueTypeSet const& rsd_set( rsd_lower.residue_type_set() );
+	Residue const & rsd_lower( conf.residue( rsd_num_lower ) );
+	Residue const & rsd_upper( conf.residue( rsd_num_lower + 1 ) );
+	ResidueTypeSetCOP rsd_set( rsd_lower.residue_type_set() );
 
-	ResidueType const& new_type_lower( rsd_set.get_residue_type_with_variant_added( rsd_lower.type(),
+	ResidueType const & new_type_lower( rsd_set->get_residue_type_with_variant_added( rsd_lower.type(),
 		CUTPOINT_LOWER ) );
-	ResidueType const& new_type_upper( rsd_set.get_residue_type_with_variant_added( rsd_upper.type(),
+	ResidueType const & new_type_upper( rsd_set->get_residue_type_with_variant_added( rsd_upper.type(),
 		CUTPOINT_UPPER ) );
 
 	ResidueOP new_lower( ResidueFactory::create_residue( new_type_lower, rsd_lower, conf ) );
@@ -896,8 +896,8 @@ void EnvClaimBroker::add_chainbreak_variants( core::Size rsd_num_lower,
 
 }
 
-EnvClaimBroker::BrokeredJumpData::BrokeredJumpData( std::pair< core::Size, core::Size > const& positions,
-	std::pair< std::string, std::string > const& atoms,
+EnvClaimBroker::BrokeredJumpData::BrokeredJumpData( std::pair< core::Size, core::Size > const & positions,
+	std::pair< std::string, std::string > const & atoms,
 	bool put_jump_stub_intra_residue  ) :
 	pos( positions ),
 	atoms( atoms ),
@@ -913,7 +913,7 @@ EnvClaimBroker::BrokeredJumpData::BrokeredJumpData( std::pair< core::Size, core:
 	}
 }
 
-bool EnvClaimBroker::BrokeredJumpData::operator==( BrokeredJumpData const& other ) const {
+bool EnvClaimBroker::BrokeredJumpData::operator==( BrokeredJumpData const & other ) const {
 	if ( this == &other ) return true;
 
 	return ( other.atoms == this->atoms ) &&

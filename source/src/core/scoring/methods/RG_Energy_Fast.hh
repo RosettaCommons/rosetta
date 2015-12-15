@@ -34,6 +34,11 @@
 // Utility headers
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace methods {
@@ -49,6 +54,12 @@ public:
 	numeric::xyzVector< core::Real > com;
 	core::Real rg;
 	core::Size nres_scored;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 typedef utility::pointer::shared_ptr< RG_MinData > RG_MinDataOP;
@@ -124,5 +135,10 @@ private:
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_methods_RG_Energy_Fast )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_scoring_methods_RG_Energy_Fast_HH

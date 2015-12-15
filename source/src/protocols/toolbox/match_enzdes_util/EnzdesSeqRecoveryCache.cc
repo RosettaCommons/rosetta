@@ -33,6 +33,17 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/set.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
@@ -140,3 +151,27 @@ EnzdesSeqRecoveryCache::remap_residues(
 } //match_enzdes_util
 } //toolbox
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzdesSeqRecoveryCache::save( Archive & arc ) const {
+	arc( CEREAL_NVP( sequence_ ) ); // std::map<core::Size, char>
+	arc( CEREAL_NVP( designable_residues_ ) ); // std::set<core::Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::toolbox::match_enzdes_util::EnzdesSeqRecoveryCache::load( Archive & arc ) {
+	arc( sequence_ ); // std::map<core::Size, char>
+	arc( designable_residues_ ); // std::set<core::Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::toolbox::match_enzdes_util::EnzdesSeqRecoveryCache );
+CEREAL_REGISTER_TYPE( protocols::toolbox::match_enzdes_util::EnzdesSeqRecoveryCache )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_EnzdesSeqRecoveryCache )
+#endif // SERIALIZATION

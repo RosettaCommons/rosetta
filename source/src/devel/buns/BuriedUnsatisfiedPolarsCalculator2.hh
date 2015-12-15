@@ -33,6 +33,12 @@
 
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace devel {
 namespace buns {
 
@@ -235,9 +241,24 @@ private:
 	core::Real sulph_dist_cutoff_;
 	core::Real metal_dist_cutoff_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	BuriedUnsatisfiedPolarsCalculator2();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // BuriedUnsatisfiedPolarsCalculator2
 
 } // namespace buns
 } // namespace devel
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( devel_buns_BuriedUnsatisfiedPolarsCalculator2 )
+#endif // SERIALIZATION
+
 
 #endif

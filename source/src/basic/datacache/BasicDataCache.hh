@@ -19,12 +19,18 @@
 #include <basic/datacache/BasicDataCache.fwd.hh>
 
 // package headers
+#include <basic/datacache/DataCache.hh>  // for DataCache
 #ifdef WIN32
 #include <basic/datacache/CacheableData.hh>
 #endif
 
-#include <basic/datacache/DataCache.hh>  // for DataCache
+// C++ headers
 #include <cstddef>                       // for size_t
+
+#ifdef    SERIALIZATION
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 
 namespace basic {
 namespace datacache {
@@ -68,12 +74,20 @@ public: // construct/destruct
 	~BasicDataCache();
 
 
+
 public: // assignment
 
 
 	/// @brief copy assignment
 	BasicDataCache & operator =( BasicDataCache const & rval );
 
+#ifdef    SERIALIZATION
+	template < class Archive >
+	void save( Archive & archive ) const;
+
+	template < class Archive >
+	void load( Archive & archive );
+#endif // SERIALIZATION
 
 };
 
@@ -81,5 +95,8 @@ public: // assignment
 } // namespace datacache
 } // namespace basic
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( basic_datacache_BasicDataCache )
+#endif // SERIALIZATION
 
 #endif /* INCLUDED_basic_datacache_BasicDataCache_HH */

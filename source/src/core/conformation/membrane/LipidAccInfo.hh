@@ -30,6 +30,12 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace membrane {
@@ -80,11 +86,22 @@ private: // data
 	utility::vector1< core::Real > lipid_exposure_;
 	utility::vector1< core::Real > lipid_burial_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // class LipidAccInfo
 
 } // membrane
 } // conformation
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_membrane_LipidAccInfo )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_conformation_membrane_LipidAccInfo_hh
 

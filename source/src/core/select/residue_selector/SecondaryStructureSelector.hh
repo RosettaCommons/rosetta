@@ -24,9 +24,15 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
 #include <set>
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace select {
@@ -52,6 +58,7 @@ public:
 	virtual std::string get_name() const;
 
 	static std::string class_name();
+	static void provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd );
 
 public:
 	// mutators
@@ -82,6 +89,12 @@ private:
 	bool include_terminal_loops_;
 	bool always_use_dssp_;
 	std::set< char > selected_ss_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 typedef std::pair< Size, Size > Interval;
@@ -91,6 +104,11 @@ IntervalVec subset_to_intervals( ResidueSubset const & subset );
 } //namespace residue_selector
 } //namespace select
 } //namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_task_residue_selector_SecondaryStructureSelector )
+#endif // SERIALIZATION
 
 
 #endif

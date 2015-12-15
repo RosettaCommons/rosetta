@@ -42,6 +42,12 @@
 #include <iostream>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 
@@ -964,6 +970,12 @@ private:
 
 	/// @brief computes fixed-size identifier for a string input
 	boost::hash<std::string> hasher;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // FoldTree
 
 
@@ -1113,5 +1125,10 @@ FoldTree::is_cutpoint( int const seqpos ) const
 
 } // namespace kinematics
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_kinematics_FoldTree )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_kinematics_FoldTree_HH

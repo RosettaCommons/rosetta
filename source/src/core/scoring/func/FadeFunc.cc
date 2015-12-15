@@ -27,6 +27,17 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -37,6 +48,25 @@ FadeFunc::clone() const
 	return FuncOP( new FadeFunc( cutoff_lower_, cutoff_upper_,
 		fade_zone_, well_depth_,
 		well_offset_ ) );
+}
+
+bool FadeFunc::operator == ( Func const & other ) const
+{
+	if ( !       same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	FadeFunc const & other_downcast( static_cast< FadeFunc const & > (other) );
+	if ( cutoff_lower_ != other_downcast.cutoff_lower_ ) return false;
+	if ( cutoff_upper_ != other_downcast.cutoff_upper_ ) return false;
+	if ( fade_zone_    != other_downcast.fade_zone_    ) return false;
+	if ( well_depth_   != other_downcast.well_depth_   ) return false;
+	if ( well_offset_  != other_downcast.well_offset_  ) return false;
+	return true;
+}
+
+bool FadeFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< FadeFunc const * > ( &other );
 }
 
 Real
@@ -134,3 +164,38 @@ FadeFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real t
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::func::FadeFunc::FadeFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::FadeFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( cutoff_lower_ ) ); // Real
+	arc( CEREAL_NVP( cutoff_upper_ ) ); // Real
+	arc( CEREAL_NVP( fade_zone_ ) ); // Real
+	arc( CEREAL_NVP( well_depth_ ) ); // Real
+	arc( CEREAL_NVP( well_offset_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::FadeFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( cutoff_lower_ ); // Real
+	arc( cutoff_upper_ ); // Real
+	arc( fade_zone_ ); // Real
+	arc( well_depth_ ); // Real
+	arc( well_offset_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::FadeFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::FadeFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_FadeFunc )
+#endif // SERIALIZATION

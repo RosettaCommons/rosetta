@@ -42,6 +42,16 @@
 #include <string>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace loops {
 
@@ -479,12 +489,9 @@ Loops::clear(){
 
 Loops::LoopList const & Loops::loops() const { return loops_; }
 
-LoopsFileIOOP Loops::get_loop_file_reader() const
+LoopsFileIOOP Loops::get_loop_file_reader()
 {
-	if ( !loop_file_reader_ ) {
-		loop_file_reader_ = LoopsFileIOOP( new LoopsFileIO );
-	}
-	return loop_file_reader_;
+	return LoopsFileIOOP( new LoopsFileIO );
 }
 
 Loops::LoopList Loops::setup_loops_from_data( SerializedLoopList const & loop_data )
@@ -849,3 +856,33 @@ Loops::make_sequence_shift( int shift )
 
 } // namespace loops
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::loops::Loops::save( Archive & arc ) const {
+	arc( CEREAL_NVP( loops_ ) ); // LoopList
+	//arc( CEREAL_NVP( loop_file_reader_ ) ); // LoopsFileIOOP
+	arc( CEREAL_NVP( strict_looprelax_checks_on_file_reads_ ) ); // _Bool
+	arc( CEREAL_NVP( loop_filename_ ) ); // std::string
+	arc( CEREAL_NVP( file_reading_token_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::loops::Loops::load( Archive & arc ) {
+	arc( loops_ ); // LoopList
+	//arc( loop_file_reader_ ); // LoopsFileIOOP
+	arc( strict_looprelax_checks_on_file_reads_ ); // _Bool
+	arc( loop_filename_ ); // std::string
+	arc( file_reading_token_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::loops::Loops );
+CEREAL_REGISTER_TYPE( protocols::loops::Loops )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_loops_Loops )
+#endif // SERIALIZATION

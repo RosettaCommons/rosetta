@@ -77,7 +77,7 @@
 #include <numeric/conversions.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
-#include <basic/Tracer.hh> 
+#include <basic/Tracer.hh>
 #include <protocols/docking/util.hh>
 #include <utility/string_util.hh>
 #include <protocols/toolbox/superimpose.hh>
@@ -85,7 +85,7 @@
 
 // C++ headers
 #include <iostream>
-#include <cstdlib> 
+#include <cstdlib>
 
 static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.mp_find_interface_test" );
 
@@ -108,7 +108,7 @@ using namespace basic::options;
 /// using Rosetta's new Membrane Framework
 class MPFindInterfaceTestMover : public Mover {
 
-public: 
+public:
 
 	/// @brief Default Constructor
 	MPFindInterfaceTestMover() : Mover() {}
@@ -119,8 +119,8 @@ public:
 	/// @brief Apply Membrane Relax
 	void apply( Pose & pose ) {
 
-		TR << "center: " << pose.conformation().membrane_info()->membrane_center().to_string() << std::endl;
-		TR << "normal: " << pose.conformation().membrane_info()->membrane_normal().to_string()  << std::endl;
+		TR << "center: " << pose.conformation().membrane_info()->membrane_center(pose.conformation()).to_string() << std::endl;
+		TR << "normal: " << pose.conformation().membrane_info()->membrane_normal(pose.conformation()).to_string()  << std::endl;
 		TR << "thickness: " << pose.conformation().membrane_info()->membrane_thickness()  << std::endl;
 		TR << "anchor: " << 1 << std::endl;
 
@@ -151,11 +151,11 @@ public:
 		if( option[ OptionKeys::docking::partners ].user() ) {
 			partners_ = option[ OptionKeys::docking::partners ]();
 		}
-		
+
 		// read in native and superimpose the first partner of the pose with the native
 		if( option[ OptionKeys::in::file::native ].user() ) {
 			core::import_pose::pose_from_pdb( native_, option[ OptionKeys::in::file::native ]() );
-			
+
 			// call AddMembraneMover on native for RMSD calculation
 			AddMembraneMoverOP addmem( new AddMembraneMover() );
 			addmem->apply( native_ );
@@ -191,7 +191,7 @@ public:
 		} // if native given
 		pose.dump_pdb("pose_superimposed_to_native.pdb");
 		TR << "dumped superimposed pose" << std::endl;
-	
+
 		// get foldtree from partners (setup_foldtree) and movable jump
 		setup_foldtree( pose, partners_, jumps_);
 		jump_ = jumps_[1];
@@ -201,7 +201,7 @@ public:
 		// COM of the upstream partner
 		int anchor = pose.fold_tree().upstream_jump_residue( jump_ );
 		TR << "anchor point: " << std::endl;
-		
+
 		// Add Membrane, appends MEM as jump1
 		AddMembraneMoverOP add_memb( new AddMembraneMover( anchor, 0 ) );
 		add_memb->apply( pose );
@@ -219,7 +219,7 @@ public:
 
 		// split_topology_by_jump_noshift
 		split_topology_by_jump_noshift( pose, jump_, topo_, topo_up_, topo_down_ );
-		
+
 		// setup lowres scorefunction
 		if ( option[ OptionKeys::mp::dock::lowres ].user() ) {
 			sfxn_lowres_ = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_docking_cen_2015.wts" );
@@ -232,35 +232,35 @@ public:
 		}
 
 		TR << "Sampling protein-protein interface in the membrane..." << std::endl;
-		
+
 		// compute embedding for partners (compute structure-based embedding with split topologies)
 		EmbeddingDefOP emb_up( compute_structure_based_embedding( pose, *topo_up_ ) );
 		EmbeddingDefOP emb_down( compute_structure_based_embedding( pose, *topo_down_ ) );
-		
+
 		// create random starting position by moving partners apart in the membrane
 		TR << "creating random starting position..." << std::endl;
 		SpinAroundPartnerMoverOP move_apart( new SpinAroundPartnerMover( jump_, 200 ) );
 		move_apart->apply( pose );
-		
+
 		// create MC object
 		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *sfxn_lowres_, 1.0 ) );
-		
+
 		// do this for a certain number of iterations
 		for ( Size i = 1; i <= 10; ++i ){
-		
+
 			// SPIN MOVER
 			// get a random spin angle between 0 and 360 degrees
 			int spin_angle( numeric::random::random_range( 0, 360 ) );
 			TR << "=========================SPIN MOVER==========================" << std::endl;
 			TR << "random spin angle: " << spin_angle << std::endl;
-			
+
 			// spin downstream partner around spin angle
 			emb_up = compute_structure_based_embedding( pose, *topo_up_ );
 			emb_down = compute_structure_based_embedding( pose, *topo_down_ );
 			RigidBodyDeterministicSpinMoverOP spin( new RigidBodyDeterministicSpinMover(
 							jump_, emb_down->normal(), emb_down->center(), spin_angle ) );
 			spin->apply( pose );
-			
+
 			// slide into contact
 			TR << "=========================SLIDE-INTO-CONTACT==========================" << std::endl;
 			DockingSlideIntoContactOP slide( new DockingSlideIntoContact( jump_ ) );
@@ -272,7 +272,7 @@ public:
 			TR << "=========================SPIN-AROUND-PARTNER MOVER==========================" << std::endl;
 			SpinAroundPartnerMoverOP around( new SpinAroundPartnerMover( jump_, 100 ) );
 			around->apply( pose );
-			
+
 			// slide into contact
 			TR << "=========================SLIDE-INTO-CONTACT==========================" << std::endl;
 			slide->apply( pose );
@@ -317,7 +317,7 @@ public:
 			TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
 
 		} // number of iterations for search
-		
+
 		// calculate and store the rmsd in the score file
 		using namespace protocols::docking;
 		job->add_string_real_pair("Lrms", calc_Lrmsd( pose, native_, jumps_ ));
@@ -339,12 +339,12 @@ public:
 //			out += "d";
 ////			pose.dump_pdb( out + ".pdb" );
 //			pose.dump_scored_pdb( out + ".pdb", *sfxn_lowres_ );
-			
+
 			// add all movers into random mover = Mover container
 //			randmover->add_mover( spin, 0.4 );
 //	//		randmover->add_mover( tilt, 0.4 );
 //			randmover->add_mover( flip, 0.2 );
-			
+
 			// slide into contact
 	//		DockingSlideIntoContactOP slide( new DockingSlideIntoContact( jump_ ) );
 	//		slide->apply( pose );
@@ -353,7 +353,7 @@ public:
 //			mc->boltzmann( pose );
 //			TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
 //		}
-	
+
 		// visualize embedding
 //		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
 //		vis_emb->apply( pose );
@@ -370,14 +370,14 @@ public:
 //		DockingInitialPerturbationOP initial( new DockingInitialPerturbation( 1, true ) );
 //		initial->set_randomize1( true );
 //		initial->set_randomize2( false );
-		
+
 // slide together
 //		Vector axis = membrane_axis( pose, 1 );
 //		DockingSlideIntoContactOP slide( new DockingSlideIntoContact( 1, axis ) );
 //		slide->apply( pose );
 
 //		ScoreFunctionOP lowres_scorefxn = ScoreFunctionFactory::create_score_function( "mpframework_docking_cen_2015.wts" );
-//		
+//
 //		DockingLowResOP lowresdocking( new DockingLowRes( lowres_scorefxn, 1 ) );
 //		lowresdocking->set_trans_magnitude( 100 );
 //		lowresdocking->set_rot_magnitude( 360 );
@@ -421,12 +421,12 @@ public:
 //		pose.fold_tree( foldtree );
 //		TR << "foldtree reordered" << std::endl;
 //		pose.fold_tree().show(std::cout);
-		
+
 		// VISUALIZE EMBEDDING
 //		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover( embedding ) );
 //		VisualizeEmbeddingMoverOP vis_emb( new VisualizeEmbeddingMover() );
 //		vis_emb->apply( pose );
-		
+
 		// MOVERS
 //		SetMembranePositionMoverOP rt( new SetMembranePositionMover( new_center, new_normal ) );
 //		rt->apply( pose );
@@ -434,7 +434,7 @@ public:
 //		TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover( new_center, new_normal, spanfile ) );
 //		TransformIntoMembraneMoverOP rt( new TransformIntoMembraneMover() );
 //		rt->apply( pose );
-		
+
 //		TranslationMoverOP trans = new TranslationMover( translation, jumpnum );
 //		trans->apply( pose );
 
@@ -473,11 +473,10 @@ main( int argc, char * argv [] )
 		MPFindInterfaceTestMoverOP load_memb( new MPFindInterfaceTestMover() );
 		protocols::jd2::JobDistributor::get_instance()->go( load_memb );
 
-		return 0; 
+		return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 }
-

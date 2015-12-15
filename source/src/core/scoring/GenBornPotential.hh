@@ -49,6 +49,12 @@ source files: rosetta++/gb_elec*
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -129,6 +135,16 @@ public:
 
 	void
 	initialize( Residue const & rsd );
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	GenBornResidueInfo();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 private:
 	utility::vector1< Real > atomic_radius_;
@@ -229,6 +245,12 @@ private:
 	// stores info from the packertask when setup_for_packing calls set_repack_list
 	utility::vector1< bool > being_packed_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -298,6 +320,16 @@ public:
 
 private:
 	utility::vector1< GenBornResidueInfoOP > residue_info_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	GenBornRotamerSetInfo();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -477,5 +509,10 @@ private:
 
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_GenBornPotential )
+#endif // SERIALIZATION
+
 
 #endif

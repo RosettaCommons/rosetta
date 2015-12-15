@@ -121,7 +121,7 @@ GrowPeptides::ddg(){
 void
 GrowPeptides::append_residues_nterminally ( Size seq_register, Size res_pos, Size stop, std::string & nat_seq , pose::Pose & target_seeds ){
 	TR<<" ---- growing N-terminal stretch from residues: "<<res_pos <<" to " <<stop <<"----------" << std::endl;
-	core::chemical::ResidueTypeSet const & rsd_set( target_seeds.residue(1).residue_type_set() );// this could be changed as needed
+	core::chemical::ResidueTypeSetCOP rsd_set( target_seeds.residue(1).residue_type_set() );// this could be changed as needed
 	//std::cout<<"nseq size: " << nat_seq.size() << " template sequence: "<< nat_seq << std::endl;
 	//std::cout<< "sequence register : "<< seq_register << std::endl;
 
@@ -130,7 +130,7 @@ GrowPeptides::append_residues_nterminally ( Size seq_register, Size res_pos, Siz
 		const char aa = nat_seq[ stop - k - 1 + seq_register - 1];//in case this is called within the sequence, -1 because strings start counting at 0
 		TR.Debug << "RES AA N-terminal extension:  " << resi << aa <<std::endl;
 		// Representative type should have no/minimal variants
-		core::chemical::ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( aa ) );
+		core::chemical::ResidueTypeCOP new_rsd_type( rsd_set->get_representative_type_name1( aa ) );
 		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
 		target_seeds.conformation().safely_prepend_polymer_residue_before_seqpos(*new_rsd, res_pos, true);
 		target_seeds.set_omega( res_pos, 180.0 );
@@ -141,7 +141,7 @@ GrowPeptides::append_residues_nterminally ( Size seq_register, Size res_pos, Siz
 void
 GrowPeptides::append_residues_cterminally ( Size seq_register, Size res_pos, Size stop, std::string & nat_seq , pose::Pose & target_seeds ){
 	TR<<" ----- growing C-terminal extension from residues: "<<res_pos <<" to " <<stop <<"--------" <<std::endl;
-	core::chemical::ResidueTypeSet const & rsd_set( target_seeds.residue( res_pos - 1 ).residue_type_set() );
+	core::chemical::ResidueTypeSetCOP rsd_set( target_seeds.residue( res_pos - 1 ).residue_type_set() );
 	//std::cout<<"cseq size: " << nat_seq.size() << " sequence: "<< nat_seq << std::endl;
 	//std::cout<<"seq_register: " << seq_register << std::endl;
 
@@ -150,7 +150,7 @@ GrowPeptides::append_residues_cterminally ( Size seq_register, Size res_pos, Siz
 		Size resi =  j ;
 		TR.Debug << "RES AA C-terminal extension  " << resi << aa <<std::endl;
 		// Representative type should have no/minimal variants
-		core::chemical::ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( aa ) );
+		core::chemical::ResidueTypeCOP new_rsd_type( rsd_set->get_representative_type_name1( aa ) );
 		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
 		target_seeds.conformation().safely_append_polymer_residue_after_seqpos( *new_rsd, resi /*- 1*/ , true );// stop
 		target_seeds.set_omega( resi , 180.0 );

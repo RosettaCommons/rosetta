@@ -329,9 +329,9 @@ void run(std::string fname) {
 
   // read pose info
   Pose cenp,alap,natp,his,cys,ala;
-  make_pose_from_sequence(his,"H","fa_standard",false);
-  make_pose_from_sequence(ala,"A","fa_standard",false);
-  make_pose_from_sequence(cys,"C","fa_standard",false);
+  make_pose_from_sequence(his,"H",core::chemical::FA_STANDARD,false);
+  make_pose_from_sequence(ala,"A",core::chemical::FA_STANDARD,false);
+  make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
   pose_from_pdb(cenp,*crs,fname);
   pose_from_pdb(natp,*frs,fname);
   Size nres=cenp.n_residue();

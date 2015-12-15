@@ -26,6 +26,7 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.simple_moves.PSSM2BfactorMover"
 
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
+#include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/PDBInfo.hh>

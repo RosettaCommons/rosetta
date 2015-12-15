@@ -129,13 +129,13 @@ RNA_DeNovoPoseSetup::append_virtual_anchor( pose::Pose & pose )
 	if ( pose.residue( pose.total_residue() ).name3() == "XXX" ) return; //already did virtual residue attachment.
 
 	// Fix up the pose.
-	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type(1).residue_type_set();
+	core::chemical::ResidueTypeSetCOP residue_set = pose.residue_type(1).residue_type_set();
 
 	// std::cout << " CHECK XXX " << residue_set.name3_map("XXX").size() << std::endl;
 	// std::cout << " CHECK YYY " << residue_set.name3_map("YYY").size() << std::endl;
 	// std::cout << " CHECK VRT " << residue_set.name3_map("VRT").size() << std::endl;
 
-	core::chemical::ResidueTypeCOP rsd_type( residue_set.get_representative_type_name3("XXX") );
+	core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("XXX") );
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 	pose.append_residue_by_jump( *new_res, rna_params_.virtual_anchor_attachment_points_[1] );
 

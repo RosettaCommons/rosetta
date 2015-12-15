@@ -20,6 +20,9 @@
 // Unit headers
 #include <core/select/residue_selector/ResidueSelectorCreator.hh>
 
+// Utility headers
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
 namespace core {
 namespace pack {
 namespace task {
@@ -27,8 +30,9 @@ namespace residue_selector {
 
 class ClashBasedRepackShellSelectorCreator : public core::select::residue_selector::ResidueSelectorCreator {
 public:
-	virtual core::select::residue_selector::ResidueSelectorOP create_residue_selector() const;
+	virtual select::residue_selector::ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
+	virtual void provide_selector_xsd( utility::tag::XMLSchemaDefinition & ) const;
 };
 
 } //namespace residue_selector

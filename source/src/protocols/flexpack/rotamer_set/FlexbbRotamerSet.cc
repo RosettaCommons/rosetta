@@ -25,6 +25,14 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace flexpack {
 namespace rotamer_set {
@@ -148,3 +156,35 @@ FlexbbRotamerSet::bump_check(
 }
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::flexpack::rotamer_set::FlexbbRotamerSet::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pack::rotamer_set::RotamerSet_ >( this ) );
+	arc( CEREAL_NVP( existing_residue_ ) ); // ResidueCOP
+	arc( CEREAL_NVP( owner_ ) ); // FlexbbRotamerSetsCAP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::flexpack::rotamer_set::FlexbbRotamerSet::load( Archive & arc ) {
+	arc( cereal::base_class< core::pack::rotamer_set::RotamerSet_ >( this ) );
+
+	std::shared_ptr< core::conformation::Residue > local_existing_residue;
+	arc( local_existing_residue ); // ResidueCOP
+	existing_residue_ = local_existing_residue; // copy the non-const pointer(s) into the const pointer(s)
+
+	std::weak_ptr< FlexbbRotamerSets > local_owner;
+	arc( local_owner ); // FlexbbRotamerSetsCAP
+	owner_ = local_owner;
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::flexpack::rotamer_set::FlexbbRotamerSet );
+CEREAL_REGISTER_TYPE( protocols::flexpack::rotamer_set::FlexbbRotamerSet )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_flexpack_rotamer_set_FlexbbRotamerSet )
+#endif // SERIALIZATION

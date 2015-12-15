@@ -19,6 +19,11 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/pack/task/rna/RNA_ResidueLevelTask.fwd.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace task {
@@ -55,11 +60,22 @@ private:
 	bool sample_three_prime_phosphate_;
 	bool allow_phosphate_virtualization_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } //rna
 } //task
 } //pack
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_task_rna_RNA_ResidueLevelTask )
+#endif // SERIALIZATION
+
 
 #endif

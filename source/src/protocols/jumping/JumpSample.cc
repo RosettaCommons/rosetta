@@ -14,9 +14,10 @@
 /// @author Christopher Miles (cmiles@uw.edu)
 
 // Unit Headers
-#include <protocols/jumping/JumpSetup.hh>
+#include <protocols/jumping/JumpSample.hh>
 
 // Package Headers
+#include <protocols/jumping/JumpSetup.hh>
 #include <protocols/jumping/util.hh>
 #include <core/scoring/dssp/PairingsList.hh>
 
@@ -55,25 +56,43 @@
 #include <protocols/jumping/JumpSample.hh>
 #include <utility/vector1.hh>
 
-namespace core {
-namespace scoring {
-namespace constraints {
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
 
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
+
+namespace protocols {
+namespace jumping {
+
+using namespace core;
 using namespace ObjexxFCL::format;
 
-class ChainbreakDistFunc : public core::scoring::func::Func {
-public:
-	ChainbreakDistFunc( Real const x0_in ): d2target_( x0_in*x0_in ){}
+ChainbreakDistFunc::ChainbreakDistFunc( Real const x0_in ) : d2target_( x0_in*x0_in ) {}
+ChainbreakDistFunc::~ChainbreakDistFunc() {}
 
-	core::scoring::func::FuncOP
-	clone() const { return core::scoring::func::FuncOP( new ChainbreakDistFunc( *this ) ); }
+core::scoring::func::FuncOP
+ChainbreakDistFunc::clone() const { return core::scoring::func::FuncOP( new ChainbreakDistFunc( *this ) ); }
 
-	Real func( Real const x ) const;
-	Real dfunc( Real const x ) const;
+bool
+ChainbreakDistFunc::operator == ( core::scoring::func::Func const & other ) const {
+	if ( !same_type_as_me( other ) || !other.same_type_as_me(*this) ) return false;
+	ChainbreakDistFunc const & other_downcast( static_cast< ChainbreakDistFunc const & > (other) );
+	return d2target_ == other_downcast.d2target_;
+}
 
-private:
-	Real d2target_;
-};
+bool
+ChainbreakDistFunc::same_type_as_me( core::scoring::func::Func const & other ) const {
+	return dynamic_cast< ChainbreakDistFunc const * > (&other);
+}
+
 
 Real ChainbreakDistFunc::func( Real const x ) const {
 	return std::sqrt( std::abs( x*x - d2target_ ) );
@@ -83,15 +102,8 @@ Real ChainbreakDistFunc::dfunc( Real const x ) const {
 	return std::sqrt( std::abs( x*x - d2target_ ) );
 }
 
-}
-}
-} //namespaces
 
 
-namespace protocols {
-namespace jumping {
-
-using namespace core;
 using namespace ObjexxFCL;
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.jumping" );
@@ -604,3 +616,30 @@ JumpSample::dump_pymol( std::string fn ) const {
 
 } //jumping
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+protocols::jumping::ChainbreakDistFunc::ChainbreakDistFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::jumping::ChainbreakDistFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< core::scoring::func::Func >( this ) );
+	arc( CEREAL_NVP( d2target_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::jumping::ChainbreakDistFunc::load( Archive & arc ) {
+	arc( cereal::base_class< core::scoring::func::Func >( this ) );
+	arc( d2target_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::jumping::ChainbreakDistFunc );
+CEREAL_REGISTER_TYPE( protocols::jumping::ChainbreakDistFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_jumping_JumpSample )
+#endif // SERIALIZATION

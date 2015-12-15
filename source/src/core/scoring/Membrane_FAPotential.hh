@@ -48,6 +48,11 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -137,6 +142,12 @@ private: // data
 
 	// Turn on updates
 	bool Fa_Membed_update_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /// @brief  Mmebrane Fullatom Potential - Scoring Class
@@ -181,5 +192,10 @@ Membrane_FAEmbed & nonconst_Membrane_FAEmbed_from_pose( pose::Pose & );
 
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_Membrane_FAPotential )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_core_scoring_Membrane_FA_Potential_hh

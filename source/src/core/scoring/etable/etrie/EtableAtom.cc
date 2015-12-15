@@ -28,6 +28,14 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace etable {
@@ -69,3 +77,27 @@ std::ostream & operator << ( std::ostream & os, EtableAtom const & atom )
 } // namespace scoring
 } // namespace core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::etable::etrie::EtableAtom::save( Archive & arc ) const {
+	arc( cereal::base_class< core::conformation::Atom >( this ) );
+	arc( CEREAL_NVP( is_hydrogen_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::etable::etrie::EtableAtom::load( Archive & arc ) {
+	arc( cereal::base_class< core::conformation::Atom >( this ) );
+	arc( is_hydrogen_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::etable::etrie::EtableAtom );
+CEREAL_REGISTER_TYPE( core::scoring::etable::etrie::EtableAtom )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_etable_etrie_EtableAtom )
+#endif // SERIALIZATION

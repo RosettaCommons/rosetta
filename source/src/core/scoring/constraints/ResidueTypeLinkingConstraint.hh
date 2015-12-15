@@ -25,6 +25,11 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -91,7 +96,9 @@ public:
 
 	/// @brief possibility to compare constraint according to data
 	/// and not just pointers
-	bool operator == ( Constraint const & other ) const;
+	virtual bool operator == ( Constraint const & other ) const;
+	virtual bool same_type_as_me( Constraint const & ) const;
+
 	/*
 	virtual ConstraintOP remapped_clone(
 	pose::Pose const & src,
@@ -123,11 +130,22 @@ private:
 	std::string rsd1_type_name3_;
 	std::string rsd2_type_name3_;
 	core::Real bonus_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // RotamerConstraint
 
 
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_ResidueTypeLinkingConstraint )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_core_scoring_constraints_ResidueTypeLinkingConstraint_HH

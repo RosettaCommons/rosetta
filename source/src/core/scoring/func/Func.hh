@@ -20,6 +20,11 @@
 
 #include <core/types.hh>
 #include <core/scoring/func/Func.fwd.hh>
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -33,8 +38,27 @@ public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Func();
 
+	/// @brief This method must return a deep copy of this %Func, meaning if this %Func holds pointers
+	/// to other %Func objects, that it must clone those %Func objects as well.
 	virtual
 	FuncOP clone() const = 0;
+
+	/// @brief Equality operator.  Looks for strict equality.  Floating-point comparison is the
+	/// rule rather than the exception.
+	virtual
+	bool
+	operator == ( Func const & other ) const = 0;
+
+	/// @brief inequality operator -- simply the negation of the (virtual) equality operator
+	bool
+	operator != ( Func const & other ) const;
+
+	/// @brief Does the input Func, "other", have the same type as me?  Necessary for the
+	/// equality operator to function correctly.  All derived Func classes must implement
+	/// this function.
+	virtual
+	bool
+	same_type_as_me( Func const & other ) const = 0;
 
 	/// @brief initialize this Func from the given std::istream.
 	virtual
@@ -78,11 +102,23 @@ public:
 		std::ostream& out, Real r, Size verbose_level, Real threshold = 1
 	) const;
 
-	friend std::ostream& operator<<(std::ostream& out, const Func& f );
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // class Func
+
+std::ostream & operator << (std::ostream & out, Func const & f );
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_Func )
+#endif // SERIALIZATION
+
 
 #endif

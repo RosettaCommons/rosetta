@@ -65,6 +65,20 @@ static THREAD_LOCAL basic::Tracer tr( "core.scoring.Energies" );
 
 using namespace ObjexxFCL::format;
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+#include <utility/serialization/ObjexxFCL/FArray1D.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -1488,3 +1502,84 @@ Energies::res_moved( int const seqpos ) const
 
 
 // }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::Energies::save( Archive & arc ) const {
+	arc( CEREAL_NVP( size_ ) ); // Size
+	// The owner_ pointer will be set by the Pose that deserializes this Energies object
+	// arc( CEREAL_NVP( owner_ ) ); // pose::Pose *; raw pointer: pose::Pose *
+	// EXEMPT owner_
+
+	arc( CEREAL_NVP( energy_graph_ ) ); // EnergyGraphOP
+	arc( CEREAL_NVP( context_graphs_ ) ); // utility::vector1<ContextGraphOP>
+	arc( CEREAL_NVP( externally_required_context_graphs_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( required_context_graphs_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( max_context_neighbor_cutoff_ ) ); // Real
+	arc( CEREAL_NVP( long_range_energy_containers_ ) ); // utility::vector1<LREnergyContainerOP>
+	arc( CEREAL_NVP( nblist_ ) ); // std::map<EnergiesCacheableDataType::Enum, scoring::NeighborListOP>
+	arc( CEREAL_NVP( use_nblist_ ) ); // _Bool
+	arc( CEREAL_NVP( use_nblist_auto_update_ ) ); // _Bool
+	arc( CEREAL_NVP( minimization_graph_ ) ); // MinimizationGraphOP
+	arc( CEREAL_NVP( onebody_energies_ ) ); // utility::vector1<EnergyMap>
+	arc( CEREAL_NVP( residue_total_energies_uptodate_ ) ); // _Bool
+	arc( CEREAL_NVP( residue_total_energies_ ) ); // utility::vector1<EnergyMap>
+	arc( CEREAL_NVP( residue_total_energy_uptodate_ ) ); // _Bool
+	arc( CEREAL_NVP( residue_total_energy_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( total_energies_ ) ); // EnergyMap
+	arc( CEREAL_NVP( total_energy_ ) ); // Real
+	arc( CEREAL_NVP( finalized_energies_ ) ); // EnergyMap
+	arc( CEREAL_NVP( scorefxn_info_ ) ); // scoring::ScoreFunctionInfoOP
+	arc( CEREAL_NVP( scorefxn_weights_ ) ); // EnergyMap
+	arc( CEREAL_NVP( domain_map_ ) ); // DomainMap
+	arc( CEREAL_NVP( scoring_ ) ); // _Bool
+	arc( CEREAL_NVP( energy_state_ ) ); // enum core::scoring::Energies::EnergyState
+	arc( CEREAL_NVP( graph_state_ ) ); // enum core::scoring::Energies::EnergyState
+	arc( CEREAL_NVP( data_cache_ ) ); // BasicDataCache
+	arc( CEREAL_NVP( point_graph_ ) ); // conformation::PointGraphOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::Energies::load( Archive & arc ) {
+	arc( size_ ); // Size
+
+	// arc( owner_ ); // pose::Pose *; raw pointer: pose::Pose *
+	// EXEMPT owner_
+
+	arc( energy_graph_ ); // EnergyGraphOP
+	arc( context_graphs_ ); // utility::vector1<ContextGraphOP>
+	arc( externally_required_context_graphs_ ); // utility::vector1<_Bool>
+	arc( required_context_graphs_ ); // utility::vector1<_Bool>
+	arc( max_context_neighbor_cutoff_ ); // Real
+	arc( long_range_energy_containers_ ); // utility::vector1<LREnergyContainerOP>
+	arc( nblist_ ); // std::map<EnergiesCacheableDataType::Enum, scoring::NeighborListOP>
+	arc( use_nblist_ ); // _Bool
+	arc( use_nblist_auto_update_ ); // _Bool
+	arc( minimization_graph_ ); // MinimizationGraphOP
+	arc( onebody_energies_ ); // utility::vector1<EnergyMap>
+	arc( residue_total_energies_uptodate_ ); // _Bool
+	arc( residue_total_energies_ ); // utility::vector1<EnergyMap>
+	arc( residue_total_energy_uptodate_ ); // _Bool
+	arc( residue_total_energy_ ); // utility::vector1<Real>
+	arc( total_energies_ ); // EnergyMap
+	arc( total_energy_ ); // Real
+	arc( finalized_energies_ ); // EnergyMap
+	arc( scorefxn_info_ ); // scoring::ScoreFunctionInfoOP
+	arc( scorefxn_weights_ ); // EnergyMap
+	arc( domain_map_ ); // DomainMap
+	arc( scoring_ ); // _Bool
+	arc( energy_state_ ); // enum core::scoring::Energies::EnergyState
+	arc( graph_state_ ); // enum core::scoring::Energies::EnergyState
+	arc( data_cache_ ); // BasicDataCache
+	arc( point_graph_ ); // conformation::PointGraphOP
+}
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::Energies );
+CEREAL_REGISTER_TYPE( core::scoring::Energies )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_Energies )
+#endif // SERIALIZATION

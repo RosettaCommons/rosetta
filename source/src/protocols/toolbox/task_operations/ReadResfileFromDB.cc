@@ -111,9 +111,9 @@ ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 	}
 	string resfile;
 	res >> resfile;
-	try{
-		parse_resfile_string(pose, task, resfile);
-	} catch(ResfileReaderException const & e){
+	try {
+		parse_resfile_string(pose, task, "<resfile from database table '" + database_table_ + "' with tag '" + tag + "'>", resfile);
+	} catch( ResfileReaderException const & e ){
 		stringstream error_message;
 		error_message
 			<< "Failed to process resfile stored for input tag '" << tag << "'" << endl

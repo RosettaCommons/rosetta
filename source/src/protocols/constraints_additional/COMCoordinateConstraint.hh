@@ -33,6 +33,12 @@
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace constraints_additional {
 
@@ -77,6 +83,11 @@ public:
 		pose::Pose const& dest,
 		id::SequenceMappingCOP smap
 	) const ;
+
+	bool operator == ( core::scoring::constraints::Constraint const & other ) const;
+
+	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const;
+
 
 
 	void
@@ -132,9 +143,20 @@ private:
 	utility::vector1< AtomID > atms_;
 	Real stdv_;
 	Real interval_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_constraints_additional_COMCoordinateConstraint )
+#endif // SERIALIZATION
+
 
 #endif

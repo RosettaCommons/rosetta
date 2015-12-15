@@ -28,6 +28,11 @@
 // Numceric Headers
 #include <numeric/xyzVector.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace mm {
@@ -115,6 +120,12 @@ private:
 
 	bool is_hydrogen_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 std::ostream & operator << ( std::ostream & os, MMEnergyTableAtom const & atom );
@@ -123,5 +134,10 @@ std::ostream & operator << ( std::ostream & os, MMEnergyTableAtom const & atom )
 } // namespace mm
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_mm_mmtrie_MMEnergyTableAtom )
+#endif // SERIALIZATION
+
 
 #endif

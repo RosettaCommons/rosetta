@@ -53,6 +53,20 @@
 
 //#include <set>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -956,3 +970,102 @@ HBondSet::show(
 }
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::hbonds::HBondSet::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( options_ ) ); // HBondOptionsCOP
+	arc( CEREAL_NVP( hbonds_ ) ); // utility::vector1<HBondOP>
+	arc( CEREAL_NVP( backbone_backbone_donor_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( backbone_backbone_acceptor_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( nbrs_ ) ); // utility::vector1<int>
+	arc( CEREAL_NVP( atom_map_ ) ); // HBondAtomMap
+	arc( CEREAL_NVP( atom_map_init_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::hbonds::HBondSet::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	std::shared_ptr< core::scoring::hbonds::HBondOptions > local_options;
+	arc( local_options ); // HBondOptionsCOP
+	options_ = local_options; // copy the non-const pointer(s) into the const pointer(s)
+	arc( hbonds_ ); // utility::vector1<HBondOP>
+	arc( backbone_backbone_donor_ ); // utility::vector1<_Bool>
+	arc( backbone_backbone_acceptor_ ); // utility::vector1<_Bool>
+	arc( nbrs_ ); // utility::vector1<int>
+
+	std::map< core::id::AtomID, utility::vector1< HBondOP > > local_atom_map;
+	arc( local_atom_map ); // HBondAtomMap
+	//atom_map_ = local_atom_map; // this doesn't work!
+	for ( std::map< core::id::AtomID, utility::vector1< HBondOP > >::const_iterator
+					iter = local_atom_map.begin(), iter_end = local_atom_map.end();
+				iter != iter_end; ++iter ) {
+		atom_map_[ iter->first ] = iter->second;
+	}
+
+
+	arc( atom_map_init_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::hbonds::HBondSet );
+CEREAL_REGISTER_TYPE( core::scoring::hbonds::HBondSet )
+
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::hbonds::HBond::HBond() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::hbonds::HBond::save( Archive & arc ) const {
+	arc( CEREAL_NVP( don_hatm_ ) ); // Size
+	arc( CEREAL_NVP( don_hatm_is_protein_backbone_ ) ); // _Bool
+	arc( CEREAL_NVP( don_res_is_protein_ ) ); // _Bool
+	arc( CEREAL_NVP( don_res_is_dna_ ) ); // _Bool
+	arc( CEREAL_NVP( don_hatm_is_backbone_ ) ); // _Bool
+	arc( CEREAL_NVP( don_res_ ) ); // Size
+	arc( CEREAL_NVP( acc_atm_ ) ); // Size
+	arc( CEREAL_NVP( acc_atm_is_protein_backbone_ ) ); // _Bool
+	arc( CEREAL_NVP( acc_res_is_protein_ ) ); // _Bool
+	arc( CEREAL_NVP( acc_res_is_dna_ ) ); // _Bool
+	arc( CEREAL_NVP( acc_atm_is_backbone_ ) ); // _Bool
+	arc( CEREAL_NVP( acc_res_ ) ); // Size
+	arc( CEREAL_NVP( eval_tuple_ ) ); // class core::scoring::hbonds::HBEvalTuple
+	arc( CEREAL_NVP( energy_ ) ); // Real
+	arc( CEREAL_NVP( weight_ ) ); // Real
+	arc( CEREAL_NVP( derivs_ ) ); // struct core::scoring::hbonds::HBondDerivs
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::hbonds::HBond::load( Archive & arc ) {
+	arc( don_hatm_ ); // Size
+	arc( don_hatm_is_protein_backbone_ ); // _Bool
+	arc( don_res_is_protein_ ); // _Bool
+	arc( don_res_is_dna_ ); // _Bool
+	arc( don_hatm_is_backbone_ ); // _Bool
+	arc( don_res_ ); // Size
+	arc( acc_atm_ ); // Size
+	arc( acc_atm_is_protein_backbone_ ); // _Bool
+	arc( acc_res_is_protein_ ); // _Bool
+	arc( acc_res_is_dna_ ); // _Bool
+	arc( acc_atm_is_backbone_ ); // _Bool
+	arc( acc_res_ ); // Size
+	arc( eval_tuple_ ); // class core::scoring::hbonds::HBEvalTuple
+	arc( energy_ ); // Real
+	arc( weight_ ); // Real
+	arc( derivs_ ); // struct core::scoring::hbonds::HBondDerivs
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::hbonds::HBond );
+CEREAL_REGISTER_TYPE( core::scoring::hbonds::HBond )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_hbonds_HBondSet )
+#endif // SERIALIZATION

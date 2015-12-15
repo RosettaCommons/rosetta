@@ -32,6 +32,11 @@
 // C++ Headers
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 
@@ -95,6 +100,11 @@ private: // structs
 		/// @brief insertion code
 		char iCode;
 
+
+#ifdef    SERIALIZATION
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 	};
 
 
@@ -230,10 +240,21 @@ private: // data
 	Pdb2Pose pdb2pose_;
 
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //end class PDBPoseMap
 
 } // namespace pose
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_PDBPoseMap )
+#endif // SERIALIZATION
 
 
 #endif

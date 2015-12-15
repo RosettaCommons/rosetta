@@ -14,6 +14,11 @@
 //Unit headers
 #include <core/pack/rotamer_set/BumpSelector.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -120,3 +125,26 @@ BumpSelector::iterate_bump_selector(
 } // pack
 } // core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::rotamer_set::BumpSelector::save( Archive & arc ) const {
+	// EXEMPT starting_rot_bumpenergy_
+	arc( CEREAL_NVP( max_rot_bumpenergy_ ) ); // Energy
+	arc( CEREAL_NVP( best_rot_bumpenergy_ ) ); // Energy
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::rotamer_set::BumpSelector::load( Archive & arc ) {
+	// EXEMPT starting_rot_bumpenergy_
+	arc( max_rot_bumpenergy_ ); // Energy
+	arc( best_rot_bumpenergy_ ); // Energy
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::BumpSelector );
+#endif // SERIALIZATION

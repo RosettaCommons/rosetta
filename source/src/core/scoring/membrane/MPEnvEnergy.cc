@@ -133,7 +133,7 @@ MPEnvEnergy::residue_energy(
 
 	// Initialize Info for Scoring
 	CenListInfo const & cenlist = mpdata_.get_cenlist_from_pose( pose );
-	core::Real const z_position = pose.conformation().membrane_info()->residue_z_position( rsd.seqpos() );
+	core::Real const z_position = pose.conformation().membrane_info()->residue_z_position( pose.conformation(), rsd.seqpos() );
 	core::Size const seqpos = rsd.seqpos();
 	core::chemical::AA const & aa = rsd.aa();
 

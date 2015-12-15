@@ -27,6 +27,11 @@
 
 // Package Headers
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace flexpack {
 namespace rotamer_set {
@@ -96,11 +101,22 @@ private:
 	ResidueCOP existing_residue_;
 	FlexbbRotamerSetsCAP owner_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 }
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_flexpack_rotamer_set_FlexbbRotamerSet )
+#endif // SERIALIZATION
+
 
 #endif

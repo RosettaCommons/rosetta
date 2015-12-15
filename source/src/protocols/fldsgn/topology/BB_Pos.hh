@@ -111,12 +111,18 @@ private: // DATA
 
 	/// Residue types must match those of the pose for the indices
 	/// to match.
-	utility::vector1< core::chemical::ResidueType const * > residue_types_;
+	utility::vector1< core::chemical::ResidueTypeCOP > residue_types_;
 	utility::vector1< Size > N_index_;
 	utility::vector1< Size > CA_index_;
 	utility::vector1< Size > CB_index_;
 	utility::vector1< Size > C_index_;
 	utility::vector1< Size > O_index_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 

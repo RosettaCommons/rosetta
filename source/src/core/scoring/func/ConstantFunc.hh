@@ -21,6 +21,13 @@
 // C++ Headers
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -38,6 +45,9 @@ public:
 
 	/// @brief returns a clone of this ConstantFunc
 	FuncOP clone() const { return FuncOP( new ConstantFunc( *this ) ); }
+
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 
 	/// @brief Returns the value of this ConstantFunc evaluated at distance x.
 	Real func( Real const ) const;
@@ -59,10 +69,25 @@ public:
 private:
 
 	Real return_val_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ConstantFunc();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_func_ConstantFunc )
+#endif // SERIALIZATION
+
 
 #endif

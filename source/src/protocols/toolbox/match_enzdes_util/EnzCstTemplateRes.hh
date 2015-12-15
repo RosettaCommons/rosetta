@@ -47,6 +47,12 @@
 #endif
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
@@ -77,6 +83,12 @@ private:
 	std::vector< core::id::AtomID > atom1_;
 	std::vector< core::id::AtomID > atom2_;
 	std::vector< core::id::AtomID > atom3_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -97,11 +109,11 @@ public:
 public:
 
 	EnzCstTemplateRes(
-		core::chemical::ResidueTypeSetCAP src_restype_set
+		core::chemical::ResidueTypeSetCOP src_restype_set
 	);
 
 	EnzCstTemplateRes(
-		core::chemical::ResidueTypeSetCAP src_restype_set,
+		core::chemical::ResidueTypeSetCOP src_restype_set,
 		EnzConstraintParametersCAP src_enzio_param );
 
 	EnzCstTemplateRes(
@@ -243,10 +255,20 @@ private:
 	core::Size corresponding_res_block_, corresponding_res_num_in_block_;
 
 	//residue set that we are working with, needed to look up allowed res types
-	core::chemical::ResidueTypeSetCAP restype_set_;
+	core::chemical::ResidueTypeSetCOP restype_set_;
 
 	EnzConstraintParametersCAP enz_io_param_; // the params object that this residue belongs to
 	core::Size param_index_; //index in CstParams, resA=1, resB =2
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	EnzCstTemplateRes();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 
 }; //class EnzCstTemplateRes
@@ -255,6 +277,11 @@ private:
 }
 } //protocols
 } //enzdes
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_match_enzdes_util_EnzCstTemplateRes )
+#endif // SERIALIZATION
 
 
 #endif

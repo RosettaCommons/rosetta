@@ -22,6 +22,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/kinematics/FoldTree.hh>

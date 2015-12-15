@@ -25,6 +25,20 @@
 #include <core/graph/UpperEdgeGraph.hh>
 
 
+#ifdef    SERIALIZATION
+// Package serialization headers
+#include <core/graph/UpperEdgeGraph.srlz.hh>
+
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif
+
 namespace core {
 namespace conformation {
 
@@ -40,5 +54,24 @@ residue_point_graph_from_conformation(
 	}
 }
 
+#ifdef    SERIALIZATION
+template < class Archive > void save( Archive & arc, PointGraph const & pointgraph )
+{
+	core::graph::save_to_archive( arc, pointgraph );
+}
+
+template < class Archive > void load( Archive & arc, PointGraph & pointgraph )
+{
+	core::graph::load_from_archive( arc, pointgraph );
+}
+
+EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( PointGraph );
+#endif // SERIALIZATION
+
 } // namespace conformation
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_REGISTER_TYPE( core::conformation::PointGraph )
+CEREAL_REGISTER_DYNAMIC_INIT( core_conformation_PointGraph )
+#endif // SERIALIZATION

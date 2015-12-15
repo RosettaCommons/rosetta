@@ -69,7 +69,7 @@ public: // Methods
 private:
 
 	core::pose::Pose input_pose;
-	std::vector< conformation::ResidueOP > residues;
+	std::vector< conformation::ResidueCOP > residues;
 	protocols::pockets::PocketGrid pg;
 	core::Real cRad;
 	core::Real repW;

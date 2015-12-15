@@ -35,6 +35,21 @@
 #include <core/kinematics/types.hh>
 #include <utility/vector1.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector0.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 namespace tree {
@@ -824,3 +839,40 @@ Atom_::raw_get_nonjump_atom(
 }
 } // namespace kinematics
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::kinematics::tree::Atom_::save( Archive & arc ) const {
+	arc( CEREAL_NVP( atom_id_ ) ); // AtomID
+	arc( CEREAL_NVP( parent_ ) ); // AtomAP
+	// don't serialize the raw pointer to the parent
+	// EXEMPT raw_parent_
+	arc( CEREAL_NVP( position_ ) ); // PointPosition
+	arc( CEREAL_NVP( atoms_ ) ); // Atoms
+	arc( CEREAL_NVP( dof_refold_index_ ) ); // Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::kinematics::tree::Atom_::load( Archive & arc ) {
+
+	arc( atom_id_ ); // AtomID
+	arc( parent_ ); // AtomAP
+	AtomOP parent( parent_.lock() );
+	if ( parent ) {
+		raw_parent_ = parent.get();
+	}
+	arc( position_ ); // PointPosition
+	arc( atoms_ ); // Atoms
+	arc( dof_refold_index_ ); // Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::tree::Atom_ );
+CEREAL_REGISTER_TYPE( core::kinematics::tree::Atom_ )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_kinematics_tree_Atom_ )
+#endif // SERIALIZATION

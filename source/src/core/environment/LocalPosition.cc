@@ -29,6 +29,15 @@
 
 static THREAD_LOCAL basic::Tracer tr( "protocols.environment.LocalPosition", basic::t_info );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/string.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace environment {
 
@@ -116,3 +125,27 @@ std::ostream& operator<<( std::ostream& str, LocalPosition const& dof_passport )
 
 } // environment
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::environment::LocalPosition::save( Archive & arc ) const {
+	arc( CEREAL_NVP( label_ ) ); // std::string
+	arc( CEREAL_NVP( position_ ) ); // core::Size
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::environment::LocalPosition::load( Archive & arc ) {
+	arc( label_ ); // std::string
+	arc( position_ ); // core::Size
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::environment::LocalPosition );
+CEREAL_REGISTER_TYPE( core::environment::LocalPosition )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_environment_LocalPosition )
+#endif // SERIALIZATION

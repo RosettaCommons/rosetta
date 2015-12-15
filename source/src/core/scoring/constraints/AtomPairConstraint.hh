@@ -16,7 +16,7 @@
 #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
 
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -31,6 +31,11 @@
 //#include <map>
 //#include <utility>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
@@ -41,7 +46,7 @@ class AtomPairConstraint : public Constraint {
 public:
 
 	// default c-tor
-	AtomPairConstraint() : Constraint( atom_pair_constraint ) {}
+	AtomPairConstraint();
 
 	///c-tor
 	AtomPairConstraint(
@@ -49,23 +54,15 @@ public:
 		AtomID const & a2,
 		core::scoring::func::FuncOP func,
 		ScoreType scoretype = atom_pair_constraint
-	):
-		Constraint( scoretype ),
-		atom1_(a1),
-		atom2_(a2),
-		func_( func )
-	{}
+	);
 
-	virtual ConstraintOP clone() const {
-		return ConstraintOP( new AtomPairConstraint( atom1_, atom2_, func_, score_type() ) );
-	}
+	/// @brief Create a deep copy of this %AtomPairConstraint, cloning its Func
+	virtual ConstraintOP clone() const;
 
-
+	/// @brief Create a deep copy of this %AtomPairConstraint except that the copy should
+	/// use the input Func instead of its existing one.
 	virtual
-	ConstraintOP clone( core::scoring::func::FuncOP func ) const {
-		return ConstraintOP( new AtomPairConstraint( atom1_, atom2_, func, score_type() ) );
-	}
-
+	ConstraintOP clone( func::FuncOP func ) const;
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
@@ -77,9 +74,11 @@ public:
 		id::SequenceMappingCOP map = NULL
 	) const;
 
-	/// @brief possibility to compare constraint according to data
-	/// and not just pointers
-	bool operator == ( Constraint const & other ) const;
+	/// @brief Compare a) the class types (w/ same_type_as_me), b) the atoms being constrained,
+	/// c) the score_type being used, and d) the Func objects (the FuncOPs may point at different
+	/// objects, but as long as those objects are equal, that counts)
+	virtual bool operator == ( Constraint const & other ) const;
+	virtual bool same_type_as_me( Constraint const & other ) const;
 
 	using Constraint::score;
 
@@ -94,9 +93,7 @@ public:
 	void
 	score( core::scoring::func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
-	Real score( pose::Pose const& pose ) const {
-		return func_->func( dist( pose ) );
-	}
+	Real score( pose::Pose const& pose ) const;
 
 	// atom deriv
 	virtual
@@ -139,10 +136,13 @@ public:
 		return atom1_;
 	}
 
+	AtomID const & atom1() const { return atom1_; }
+	AtomID const & atom2() const { return atom2_; }
+
 	void show( std::ostream& out ) const;
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
 
-	void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
+	void read_def( std::istream& in, pose::Pose const& pose, func::FuncFactory const & func_factory );
 	// //@brief set constraint such that the pose doesn't violate it.
 	// virtual void steal( pose::Pose& );
 	virtual
@@ -155,37 +155,62 @@ public:
 
 	virtual Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;
 
-	virtual func::Func const& get_func() const {
-		return *func_;
-	}
+	virtual func::Func const & get_func() const;
 
 	virtual
 	core::Size effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp ) const;
 
-
 private:
 	// functions
 	Real
-	func( Real const theta ) const
-	{
-		return func_->func( theta );
-	}
+	func( Real const theta ) const;
 
 	// deriv
 	Real
-	dfunc( Real const theta ) const
-	{
-		return func_->dfunc( theta );
-	}
+	dfunc( Real const theta ) const;
 
 protected:
-	// data -- write accessed by NamedAtomPairConstraint
+	/// @brief Setter for the derived class
+	void set_func( func::FuncOP setting );
+
+	/// @brief Setter for the mutable atom1_ data member to be used by
+	/// derived classes.  Remember: data must never be protected, only
+	/// private.  Instead, protected mutators can be added if derived
+	/// classes ought to have the ability to change the base class data
+	/// that other classes/functions should not.
+	void atom1( AtomID newid ) const;
+
+	/// @brief Setter for the mutable atom2_ data member to be used by
+	/// derived classes.  Remember: data must never be protected, only
+	/// private.  Instead, protected mutators can be added if derived
+	/// classes ought to have the ability to change the base class data
+	/// that other classes/functions should not.
+	void atom2( AtomID newid ) const;
+
+protected:
+	/// @brief Explicit copy constructor so that derived classes will recieve a deep copy
+	/// of the Func this class contains.
+	AtomPairConstraint( AtomPairConstraint const & src );
+
+private:
+	// no data
 	mutable AtomID atom1_, atom2_;
 	core::scoring::func::FuncOP func_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // class AtomPairConstraint
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_AtomPairConstraint )
+#endif // SERIALIZATION
+
 
 #endif

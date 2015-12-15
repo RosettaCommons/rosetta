@@ -42,6 +42,11 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -230,6 +235,12 @@ private:
 	///  data types -- see the last enum entry.
 	//BasicDataCache data_cache_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 inline
@@ -242,6 +253,11 @@ operator<<( std::ostream & out, RotamerSet const & rs ) {
 } // namespace rotamer_set
 } // namespace pack
 } // namespace core
+
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pack_rotamer_set_RotamerSet )
+#endif // SERIALIZATION
 
 
 #endif // INCLUDED_core_pack_RotamerSet_RotamerSet_HH

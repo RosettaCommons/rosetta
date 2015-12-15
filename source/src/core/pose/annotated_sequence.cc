@@ -676,6 +676,33 @@ void make_pose_from_sequence(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+/// @details Given a Pose, a protein sequence where each character represents an
+/// amino acid, and a ResidueTypeSet, give the Pose a conformation of covalently
+/// linked residues that match the sequence. NOTE: support making pose from a
+/// fully annotated sequence now, that is, for each residue variant or ligand
+/// which cannot be deduced from one letter code directly, a [] is added
+/// directly following the one letter code containing the residue's fullname, e.g.
+/// K[lys:NtermProteinFull]ADFGCH[HIS_D]QNVE[glu:CtermProteinFull]Z[ZN].
+/// This allows a pose to be constructed with full features from a silent output
+/// file, such as with distinguished HIS tautomers, various chain termini and
+/// cutpoint variants etc. Currently not working with disulfide variant CYD, but
+/// this is on to-do list.
+void make_pose_from_sequence(
+	pose::Pose & pose,
+	std::string const & sequence_in,
+	chemical::ResidueTypeSetCOP residue_set,
+	bool const auto_termini /* true */
+)
+{
+	// grab residue types
+	chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( sequence_in, *residue_set, auto_termini );
+	debug_assert( core::pose::annotated_to_oneletter_sequence( sequence_in ).length() == requested_types.size() );
+
+	make_pose_from_sequence(
+		pose, requested_types, auto_termini);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 /// @details overloaded version of make_pose_from_sequence, does the same
 /// function, but reads in a string of the residue type set instead of a
 /// ResidueTypeSet object.

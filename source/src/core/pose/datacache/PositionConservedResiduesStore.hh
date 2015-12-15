@@ -17,13 +17,22 @@
 #include <core/pose/datacache/PositionConservedResiduesStore.fwd.hh>
 
 // External headers
+#ifdef CXX11
+#include <unordered_map>
+#else
 #include <boost/unordered/unordered_map.hpp>
+#endif
 
 // Utility headers
 #include <basic/datacache/CacheableData.hh>
 
 // Project headers
 #include <core/types.hh>
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace pose {
@@ -37,7 +46,13 @@ namespace datacache {
 /// bool is_conserved = core::pose::is_position_conserved_residue(pose, residue)
 //
 class PositionConservedResiduesStore : public basic::datacache::CacheableData {
+
+#ifdef CXX11
+	typedef std::unordered_map<core::Size, bool>   ConservationMap;
+#else
 	typedef boost::unordered_map<core::Size, bool> ConservationMap;
+#endif
+
 
 public:
 	/// @brief Default constructor
@@ -55,10 +70,21 @@ public:
 private:
 	/// @brief Associates real-valued structural conservation scores with residues
 	mutable ConservationMap conservation_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 }  // namespace datacache
 }  // namespace pose
 }  // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_datacache_PositionConservedResiduesStore )
+#endif // SERIALIZATION
+
 
 #endif  // CORE_POSE_DATACACHE_POSITIONCONSERVEDRESIDUESSTORE_HH_

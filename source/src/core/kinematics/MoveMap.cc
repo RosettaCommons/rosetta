@@ -36,6 +36,18 @@
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/utility.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 
@@ -652,3 +664,35 @@ Size MoveMap::import(
 
 } // namespace kinematics
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::kinematics::MoveMap::save( Archive & arc ) const {
+	arc( CEREAL_NVP( torsion_type_map_ ) ); // TorsionTypeMap
+	arc( CEREAL_NVP( move_map_torsion_id_map_ ) ); // MoveMapTorsionID_Map
+	arc( CEREAL_NVP( torsion_id_map_ ) ); // TorsionID_Map
+	arc( CEREAL_NVP( dof_type_map_ ) ); // DOF_TypeMap
+	arc( CEREAL_NVP( dof_id_map_ ) ); // DOF_ID_Map
+	arc( CEREAL_NVP( jump_id_map_ ) ); // JumpID_Map
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::kinematics::MoveMap::load( Archive & arc ) {
+	arc( torsion_type_map_ ); // TorsionTypeMap
+	arc( move_map_torsion_id_map_ ); // MoveMapTorsionID_Map
+	arc( torsion_id_map_ ); // TorsionID_Map
+	arc( dof_type_map_ ); // DOF_TypeMap
+	arc( dof_id_map_ ); // DOF_ID_Map
+	arc( jump_id_map_ ); // JumpID_Map
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::MoveMap );
+CEREAL_REGISTER_TYPE( core::kinematics::MoveMap )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_kinematics_MoveMap )
+#endif // SERIALIZATION

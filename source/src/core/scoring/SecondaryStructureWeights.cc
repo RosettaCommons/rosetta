@@ -25,6 +25,16 @@
 
 // C++ headers
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -79,3 +89,43 @@ SecondaryStructureWeights::setup_parallel_antiparallel_weights(
 
 }
 }
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::SecondaryStructureWeights::save( Archive & arc ) const {
+	arc( CEREAL_NVP( parallel_weight_ ) ); // Real
+	arc( CEREAL_NVP( antiparallel_weight_ ) ); // Real
+	arc( CEREAL_NVP( ss_lowstrand_ ) ); // int
+	arc( CEREAL_NVP( ss_cutoff_ ) ); // int
+	arc( CEREAL_NVP( localstrandpair_penalty_ ) ); // Real
+	arc( CEREAL_NVP( seq_sep_scale_ ) ); // Real
+	arc( CEREAL_NVP( max_strand_dist_cutoff_ ) ); // Real
+	arc( CEREAL_NVP( strand_dist_cutoff_ ) ); // Real
+	arc( CEREAL_NVP( stretch_strand_dist_cutoff_ ) ); // _Bool
+	arc( CEREAL_NVP( handedness_score_flag_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::SecondaryStructureWeights::load( Archive & arc ) {
+	arc( parallel_weight_ ); // Real
+	arc( antiparallel_weight_ ); // Real
+	arc( ss_lowstrand_ ); // int
+	arc( ss_cutoff_ ); // int
+	arc( localstrandpair_penalty_ ); // Real
+	arc( seq_sep_scale_ ); // Real
+	arc( max_strand_dist_cutoff_ ); // Real
+	arc( strand_dist_cutoff_ ); // Real
+	arc( stretch_strand_dist_cutoff_ ); // _Bool
+	arc( handedness_score_flag_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::SecondaryStructureWeights );
+CEREAL_REGISTER_TYPE( core::scoring::SecondaryStructureWeights )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_SecondaryStructureWeights )
+#endif // SERIALIZATION

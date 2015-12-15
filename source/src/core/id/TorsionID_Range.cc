@@ -18,6 +18,12 @@
 // C++ headers
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace id {
 
@@ -33,3 +39,27 @@ operator <<( std::ostream & os, TorsionID_Range const & a )
 
 } // namespace id
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::id::TorsionID_Range::save( Archive & arc ) const {
+	arc( CEREAL_NVP( torsion_id_ ) ); // class core::id::TorsionID
+	arc( CEREAL_NVP( min_ ) ); // core::Real
+	arc( CEREAL_NVP( max_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::id::TorsionID_Range::load( Archive & arc ) {
+	arc( torsion_id_ ); // class core::id::TorsionID
+	arc( min_ ); // core::Real
+	arc( max_ ); // core::Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::id::TorsionID_Range );
+#endif // SERIALIZATION
+

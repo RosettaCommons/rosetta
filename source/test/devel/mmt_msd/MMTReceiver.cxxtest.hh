@@ -193,7 +193,7 @@ public:
 		std::string message_tag
 	)
 	{
-		double msg;
+		double msg( 0 );
 		try {
 			msg = utility::receive_double_from_node( source );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {

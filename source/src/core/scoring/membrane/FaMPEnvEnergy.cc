@@ -149,7 +149,8 @@ FaMPEnvEnergy::eval_atom_derivative(
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
 
 	// Get Membrane Center from Pose
-	core::Vector center = pose.conformation().membrane_info()->membrane_center();
+	core::conformation::Conformation const & conf( pose.conformation() );
+	core::Vector center = conf.membrane_info()->membrane_center(conf);
 	Real cp_weight = 1.0;
 
 	// Initialize f1, f2
@@ -218,11 +219,12 @@ FaMPEnvEnergy::init( pose::Pose & pose ) const {
 	setup_for_fullatom( pose );
 
 	// Grab membrane center/normal from pose conf
-	core::Vector center = pose.conformation().membrane_info()->membrane_center();
-	core::Vector normal = pose.conformation().membrane_info()->membrane_normal();
+	core::conformation::Conformation const & conf( pose.conformation() );
+	core::Vector center = conf.membrane_info()->membrane_center(conf);
+	core::Vector normal = conf.membrane_info()->membrane_normal(conf);
 
-	core::Real thickness = pose.conformation().membrane_info()->membrane_thickness();
-	core::Real steepness = pose.conformation().membrane_info()->membrane_steepness();
+	core::Real thickness = conf.membrane_info()->membrane_thickness();
+	core::Real steepness = conf.membrane_info()->membrane_steepness();
 
 	// For convenience - grab nres
 	Real nres = pose.total_residue();
@@ -233,7 +235,7 @@ FaMPEnvEnergy::init( pose::Pose & pose ) const {
 			Vector const xyz( pose.residue( i ).xyz( j ) );
 
 			// Compute Standard Z Position
-			fa_z_position_[i][j] = pose.conformation().membrane_info()->atom_z_position( i, j );
+			fa_z_position_[i][j] = conf.membrane_info()->atom_z_position( conf, i, j );
 
 			// Compute Fa Projection
 			fa_proj_[i][j] = compute_fa_proj( fa_z_position_[i][j], thickness, steepness );

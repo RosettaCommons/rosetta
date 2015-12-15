@@ -17,6 +17,17 @@
 #include <basic/datacache/BasicDataCache.hh>
 
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector0.srlz.hh>
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace fiber_diffraction {
@@ -39,3 +50,30 @@ retrieve_fa_scatter_from_pose( pose::Pose & pose )
 } // scoring
 } // core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::fiber_diffraction::FAScatter::FAScatter() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::fiber_diffraction::FAScatter::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( form_factors_ ) ); // utility::vector0<utility::vector1<utility::vector1<core::Real> > >
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::fiber_diffraction::FAScatter::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( form_factors_ ); // utility::vector0<utility::vector1<utility::vector1<core::Real> > >
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::fiber_diffraction::FAScatter );
+CEREAL_REGISTER_TYPE( core::scoring::fiber_diffraction::FAScatter )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_fiber_diffraction_FAScatter )
+#endif // SERIALIZATION

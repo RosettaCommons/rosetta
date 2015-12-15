@@ -15,6 +15,7 @@
 #include <test/core/init_util.hh>
 
 // Unit Headers
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
@@ -88,8 +89,8 @@ public: // test functions
 		SpanningTopologyOP topo = pose_.conformation().membrane_info()->spanning_topology();
 
 		// get membrane center and normal
-		core::Vector mem_cntr = pose_.conformation().membrane_info()->membrane_center();
-		core::Vector mem_norm = pose_.conformation().membrane_info()->membrane_normal();
+		core::Vector mem_cntr = pose_.conformation().membrane_info()->membrane_center( pose_.conformation() );
+		core::Vector mem_norm = pose_.conformation().membrane_info()->membrane_normal( pose_.conformation() );
 		Vector cntr_before(0.0, 0.0, 0.0);
 		Vector norm_before(0.0, 0.0, 1.0);
 
@@ -102,8 +103,8 @@ public: // test functions
 		optmem->apply( pose_ );
 
 		// get membrane center and normal
-		core::Vector mem_cntr1 = pose_.conformation().membrane_info()->membrane_center();
-		core::Vector mem_norm1 = pose_.conformation().membrane_info()->membrane_normal();
+		core::Vector mem_cntr1 = pose_.conformation().membrane_info()->membrane_center( pose_.conformation() );
+		core::Vector mem_norm1 = pose_.conformation().membrane_info()->membrane_normal( pose_.conformation() );
 		Vector cntr_after(0.0, 0.0, 2.2);
 		Vector norm_after(0.1874, -0.1874, 0.9642);
 

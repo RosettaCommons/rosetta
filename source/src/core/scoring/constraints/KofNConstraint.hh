@@ -34,11 +34,15 @@
 
 #include <utility/vector1.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 
 namespace core {
 namespace scoring {
 namespace constraints {
-
 
 class KofNConstraint : public MultiConstraint {
 public:
@@ -47,37 +51,25 @@ public:
 	KofNConstraint( core::Size K=0 );
 
 	/// @brief Constructor
-	KofNConstraint( ConstraintCOPs & cst_in, core::Size K=0 );
-
+	KofNConstraint( ConstraintCOPs const & cst_in, core::Size K=0 );
 
 	void
-	setK( core::Size K ) {
-		K_ = K;
-	}
+	setK( core::Size K );
 
 	core::Size
-	getK() const {
-		return K_;
-	}
-
+	getK() const;
 
 	virtual
-	ConstraintOP clone() const {
-		return ConstraintOP( new KofNConstraint(*this) );
-	}
+	ConstraintOP clone() const;
 
 	virtual
-	MultiConstraintOP empty_clone() const {
-		return MultiConstraintOP( new KofNConstraint );
-	}
+	MultiConstraintOP empty_clone() const;
 
 	/// @brief
 	void
 	init_cst_score_types();
 
-	std::string type() const {
-		return "KofNConstraint";
-	}
+	std::string type() const;
 
 	/// @brief read in constraint defiinition
 	void
@@ -111,16 +103,29 @@ public:
 	// void read_def( std::istream& in, pose::Pose const& pose, func::FuncFactory const& func_factory );
 	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1.0 ) const;
 
+	virtual bool operator == ( Constraint const & rhs ) const;
+	virtual bool same_type_as_me( Constraint const & rhs ) const;
 
 private:
 	mutable utility::vector1<ConstraintCOP> active_constraints_;
 	mutable core::Real cutoff_cst_score_;
 	ScoreTypes cst_score_types_;
 	core::Size K_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //KofNConstraint
 
 } //constraints
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_KofNConstraint )
+#endif // SERIALIZATION
+
 
 #endif

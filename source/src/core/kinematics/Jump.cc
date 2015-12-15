@@ -30,6 +30,17 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 
@@ -505,3 +516,26 @@ bool Jump::operator==( Jump const& other ) const {
 
 } // namespace kinematics
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::kinematics::Jump::save( Archive & arc ) const {
+	arc( CEREAL_NVP( rt_ ) ); // class core::kinematics::RT
+	arc( CEREAL_NVP( rb_delta ) ); // utility::vector1<utility::vector1<Real> >
+	arc( CEREAL_NVP( rb_center ) ); // utility::vector1<Vector>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::kinematics::Jump::load( Archive & arc ) {
+	arc( rt_ ); // class core::kinematics::RT
+	arc( rb_delta ); // utility::vector1<utility::vector1<Real> >
+	arc( rb_center ); // utility::vector1<Vector>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::kinematics::Jump );
+#endif // SERIALIZATION

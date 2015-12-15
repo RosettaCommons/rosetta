@@ -28,6 +28,12 @@
 #include <string>
 #include <iostream>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace numeric {
 
 class Polynomial_1d : public utility::pointer::ReferenceCount {
@@ -106,11 +112,26 @@ private:
 	Size degree_;
 	utility::vector1< Real > coefficients_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	Polynomial_1d();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 std::ostream &
 operator<< ( std::ostream & out, const Polynomial_1d & poly );
 
 } // numeric
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( numeric_polynomial )
+#endif // SERIALIZATION
+
 
 #endif // INCLUDED_numeric_polynomial_HH

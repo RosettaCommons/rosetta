@@ -64,6 +64,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>

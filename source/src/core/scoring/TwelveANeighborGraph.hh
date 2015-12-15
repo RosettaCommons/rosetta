@@ -27,6 +27,13 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 
@@ -63,6 +70,16 @@ public:
 
 private:
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	TwelveANeighborEdge();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class TwelveANeighborGraph : public ContextGraph
@@ -75,7 +92,7 @@ public:
 	virtual ~TwelveANeighborGraph();
 
 	TwelveANeighborGraph();
-	TwelveANeighborGraph(Size num_nodes);
+	TwelveANeighborGraph( Size num_nodes );
 	TwelveANeighborGraph( TwelveANeighborGraph const & source );
 	TwelveANeighborGraph & operator = ( TwelveANeighborGraph const & source );
 
@@ -115,9 +132,20 @@ private:
 	static Distance const twelveA_;
 	static DistanceSquared const twelveA_squared_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_TwelveANeighborGraph )
+#endif // SERIALIZATION
+
 
 #endif

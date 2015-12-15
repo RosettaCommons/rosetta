@@ -244,7 +244,7 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 
 		//add virtual residue, as star foldtree requires it
 		if ( pose.residue( pose.total_residue()).aa() != core::chemical::aa_vrt ) {
-			pose.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map("VRT")), second_start);
+			pose.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set()->name_map("VRT")), second_start);
 		}
 
 		//update foldtree to new foldtree

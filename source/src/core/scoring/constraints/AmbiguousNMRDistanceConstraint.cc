@@ -44,49 +44,20 @@
 static THREAD_LOCAL basic::Tracer tr( "core.io.constraints" );
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
-
-
-/// @brief Copies the data from this Constraint into a new object and returns an OP
-/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
-/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
-/// to the new object. Intended to be implemented by derived classes.
-ConstraintOP AmbiguousNMRDistanceConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP smap ) const {
-	Atoms ids1, ids2;
-	for ( Atoms::const_iterator it = atoms1_.begin(); it != atoms1_.end(); ++it ) {
-		id::NamedAtomID atom(pose::atom_id_to_named_atom_id( *it, src ) );
-		if ( smap ) {
-			atom.rsd() = (*smap)[ it->rsd() ];
-		}
-		id::AtomID id1( core::pose::named_atom_id_to_atom_id(atom, dest ));
-		if ( !id1.valid() ) return NULL;
-		ids1.push_back( id1 );
-	}
-	for ( Atoms::const_iterator it = atoms2_.begin(); it != atoms2_.end(); ++it ) {
-		id::NamedAtomID atom(atom_id_to_named_atom_id( *it, src ) );
-		if ( smap ) {
-			atom.rsd() = (*smap)[ it->rsd() ];
-		}
-		id::AtomID id2( core::pose::named_atom_id_to_atom_id( atom, dest ));
-		if ( !id2.valid() ) return NULL;
-		ids2.push_back( id2 );
-	}
-	return ConstraintOP( new AmbiguousNMRDistanceConstraint( ids1, ids2, func_, score_type() ) );
-}
-
-void AmbiguousNMRDistanceConstraint::show( std::ostream& out ) const {
-	out << "AmbiguousNMRDistanceConstraint (";
-	for ( Atoms::const_iterator it = atoms1_.begin(); it != atoms1_.end(); ++it ) {
-		out << it->atomno() << "," << it->rsd() << "||";
-	}
-	out << " - ";
-	for ( Atoms::const_iterator it = atoms2_.begin(); it != atoms2_.end(); ++it ) {
-		out << it->atomno() << "," << it->rsd();
-	}
-	func_->show( out );
-}
 
 inline bool is_aromatic( pose::Pose const& pose, core::Size res ) {
 	using namespace core::chemical;
@@ -696,6 +667,165 @@ void combine_NMR_atom_string( AmbiguousNMRDistanceConstraint::Atoms atoms, std::
 	eat_white_space >> atom_str;
 }
 
+
+///c-tor
+AmbiguousNMRDistanceConstraint::AmbiguousNMRDistanceConstraint(
+	Atoms const & a1,
+	Atoms const & a2,
+	func::FuncOP func,
+	ScoreType scoretype /* = atom_pair_constraint */
+):
+	Constraint( scoretype ),
+	atoms1_(a1),
+	atoms2_(a2),
+	func_( func )
+{}
+
+AmbiguousNMRDistanceConstraint::AmbiguousNMRDistanceConstraint(
+	id::NamedAtomID const & a1, //digests names like "QG1"
+	id::NamedAtomID const & a2,
+	core::pose::Pose const& pose,
+	func::FuncOP func,
+	ScoreType scoretype
+) : Constraint( scoretype ),
+	func_( func )
+{
+	parse_NMR_name( a1.atom(), a1.rsd(), atoms1_, pose );
+	parse_NMR_name( a2.atom(), a2.rsd(), atoms2_, pose );
+
+	if ( atoms1_.size() == 0 || atoms2_.size() == 0 ) {
+		tr.Warning << "Error constructing from atoms: read in atom names("
+			<< a1.atom() << "," << a2.atom() << "), " << std::endl;
+	}
+}
+
+AmbiguousNMRDistanceConstraint::AmbiguousNMRDistanceConstraint() :
+	Constraint( atom_pair_constraint ),
+	func_( /* NULL */ )
+{}
+
+ConstraintOP AmbiguousNMRDistanceConstraint::clone() const {
+	return ConstraintOP( new AmbiguousNMRDistanceConstraint( *this ));
+}
+
+///
+ConstraintOP AmbiguousNMRDistanceConstraint::clone( func::FuncOP func ) const {
+	return ConstraintOP( new AmbiguousNMRDistanceConstraint( atoms1_, atoms2_, func, score_type() ) );
+}
+
+bool AmbiguousNMRDistanceConstraint::operator == ( Constraint const & other ) const {
+	if ( !       same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	AmbiguousNMRDistanceConstraint const & other_amb( static_cast< AmbiguousNMRDistanceConstraint const & > (other));
+	if ( atoms1_ != other_amb.atoms1_ ) return false;
+	if ( atoms2_ != other_amb.atoms2_ ) return false;
+
+	return func_ == other_amb.func_ || ( func_ && other_amb.func_ && *func_ == *other_amb.func_ );
+}
+
+bool AmbiguousNMRDistanceConstraint::same_type_as_me( Constraint const & other ) const
+{
+	return dynamic_cast< AmbiguousNMRDistanceConstraint const * > (&other);
+}
+
+
+/// @brief Copies the data from this Constraint into a new object and returns an OP
+/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
+/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
+/// to the new object. Intended to be implemented by derived classes.
+ConstraintOP AmbiguousNMRDistanceConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP smap ) const {
+	Atoms ids1, ids2;
+	for ( Atoms::const_iterator it = atoms1_.begin(); it != atoms1_.end(); ++it ) {
+		id::NamedAtomID atom(pose::atom_id_to_named_atom_id( *it, src ) );
+		if ( smap ) {
+			atom.rsd() = (*smap)[ it->rsd() ];
+		}
+		id::AtomID id1( core::pose::named_atom_id_to_atom_id(atom, dest ));
+		if ( !id1.valid() ) return NULL;
+		ids1.push_back( id1 );
+	}
+	for ( Atoms::const_iterator it = atoms2_.begin(); it != atoms2_.end(); ++it ) {
+		id::NamedAtomID atom(atom_id_to_named_atom_id( *it, src ) );
+		if ( smap ) {
+			atom.rsd() = (*smap)[ it->rsd() ];
+		}
+		id::AtomID id2( core::pose::named_atom_id_to_atom_id( atom, dest ));
+		if ( !id2.valid() ) return NULL;
+		ids2.push_back( id2 );
+	}
+	return ConstraintOP( new AmbiguousNMRDistanceConstraint( ids1, ids2, func_, score_type() ) );
+}
+
+///@details one line definition "AmbiguousNMRDistance atom1 res1 atom2 res2 function_type function_definition"
+void
+AmbiguousNMRDistanceConstraint::read_def(
+	std::istream & data,
+	core::pose::Pose const & pose,
+	func::FuncFactory const & func_factory
+) {
+	Size res1, res2;
+	std::string tempres1, tempres2;
+	std::string name1, name2;
+	std::string func_type;
+	std::string type;
+
+	data
+		>> name1 >> tempres1
+		>> name2 >> tempres2
+		>> func_type;
+
+	ConstraintIO::parse_residue( pose, tempres1, res1 );
+	ConstraintIO::parse_residue( pose, tempres2, res2 );
+
+	tr.Debug << "read: " << name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
+	if ( res1 > pose.total_residue() || res2 > pose.total_residue() ) {
+		tr.Warning  << "ignored constraint (residue number to high for pose: " << pose.total_residue() << " !)"
+			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
+		data.setstate( std::ios_base::failbit );
+		return;
+	}
+
+	parse_NMR_name( name1, res1, atoms1_, pose );
+	parse_NMR_name( name2, res2, atoms2_, pose );
+
+	if ( atoms1_.size() == 0 || atoms2_.size() == 0 ) {
+		tr.Warning << "Error reading atoms: read in atom names("
+			<< name1 << "," << name2 << "), " << std::endl;
+		//   << "and found AtomIDs (" << atom1_ << "," << atom2_ << ")" << std::endl;
+		data.setstate( std::ios_base::failbit );
+		return;
+	}
+
+	func_ = func_factory.new_func( func_type );
+	func_->read_data( data );
+
+	if ( data.good() ) {
+		//chu skip the rest of line since this is a single line defintion.
+		while ( data.good() && (data.get() != '\n') ) {}
+		if ( !data.good() ) data.setstate( std::ios_base::eofbit );
+	}
+
+	if ( tr.Debug.visible() ) {
+		func_->show_definition( tr.Debug );
+		tr.Debug << std::endl;
+	}
+} // read_def
+
+void AmbiguousNMRDistanceConstraint::show( std::ostream& out ) const {
+	out << "AmbiguousNMRDistanceConstraint (";
+	for ( Atoms::const_iterator it = atoms1_.begin(); it != atoms1_.end(); ++it ) {
+		out << it->atomno() << "," << it->rsd() << "||";
+	}
+	out << " - ";
+	for ( Atoms::const_iterator it = atoms2_.begin(); it != atoms2_.end(); ++it ) {
+		out << it->atomno() << "," << it->rsd();
+	}
+	func_->show( out );
+}
+
+
+
 void AmbiguousNMRDistanceConstraint::show_def( std::ostream& out, pose::Pose const& pose ) const {
 	std::string def_atoms1;
 	std::string def_atoms2;
@@ -856,83 +986,55 @@ AmbiguousNMRDistanceConstraint::remap_resid( core::id::SequenceMapping const &sm
 	return ConstraintOP( new AmbiguousNMRDistanceConstraint( ids1, ids2, func_, score_type() ) );
 }
 
-
-AmbiguousNMRDistanceConstraint::AmbiguousNMRDistanceConstraint(
-	id::NamedAtomID const & a1, //digests names like "QG1"
-	id::NamedAtomID const & a2,
-	core::pose::Pose const& pose,
-	func::FuncOP func,
-	ScoreType scoretype
-) : Constraint( scoretype ),
-	func_( func )
-{
-	parse_NMR_name( a1.atom(), a1.rsd(), atoms1_, pose );
-	parse_NMR_name( a2.atom(), a2.rsd(), atoms2_, pose );
-
-	if ( atoms1_.size() == 0 || atoms2_.size() == 0 ) {
-		tr.Warning << "Error constructing from atoms: read in atom names("
-			<< a1.atom() << "," << a2.atom() << "), " << std::endl;
-	}
-}
-
-/// @details one line definition "AmbiguousNMRDistance atom1 res1 atom2 res2 function_type function_definition"
-void
-AmbiguousNMRDistanceConstraint::read_def(
-	std::istream & data,
-	core::pose::Pose const & pose,
-	func::FuncFactory const & func_factory
-) {
-	Size res1, res2;
-	std::string tempres1, tempres2;
-	std::string name1, name2;
-	std::string func_type;
-	data
-		>> name1 >> tempres1
-		>> name2 >> tempres2
-		>> func_type;
-
-	ConstraintIO::parse_residue( pose, tempres1, res1 );
-	ConstraintIO::parse_residue( pose, tempres2, res2 );
-
-	tr.Debug << "read: " << name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
-	if ( res1 > pose.total_residue() || res2 > pose.total_residue() ) {
-		tr.Warning  << "ignored constraint (residue number to high for pose: " << pose.total_residue() << " !)"
-			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
-		data.setstate( std::ios_base::failbit );
-		return;
-	}
-
-	parse_NMR_name( name1, res1, atoms1_, pose );
-	parse_NMR_name( name2, res2, atoms2_, pose );
-
-	if ( atoms1_.size() == 0 || atoms2_.size() == 0 ) {
-		tr.Warning << "Error reading atoms: read in atom names("
-			<< name1 << "," << name2 << "), " << std::endl;
-		//   << "and found AtomIDs (" << atom1_ << "," << atom2_ << ")" << std::endl;
-		data.setstate( std::ios_base::failbit );
-		return;
-	}
-
-	func_ = func_factory.new_func( func_type );
-	func_->read_data( data );
-
-	if ( data.good() ) {
-		//chu skip the rest of line since this is a single line defintion.
-		while ( data.good() && (data.get() != '\n') ) {}
-		if ( !data.good() ) data.setstate( std::ios_base::eofbit );
-	}
-
-	if ( tr.Debug.visible() ) {
-		func_->show_definition( tr.Debug );
-		tr.Debug << std::endl;
-	}
-} // read_def
-
 core::Size
 AmbiguousNMRDistanceConstraint::effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp ) const {
 	return sp.dist( resid( 1 ), resid( 2 ) );
 }
 
+void AmbiguousNMRDistanceConstraint::atoms1( Atoms const & setting ) {
+	atoms1_ = setting;
+}
+
+void AmbiguousNMRDistanceConstraint::atoms2( Atoms const & setting ) {
+	atoms2_ = setting;
+}
+
+AmbiguousNMRDistanceConstraint::AmbiguousNMRDistanceConstraint( AmbiguousNMRDistanceConstraint const & src ) :
+	Constraint( src ),
+	atoms1_( src.atoms1_ ),
+	atoms2_( src.atoms2_ ),
+	func_( src.func_ ? src.func_->clone() : src.func_ )
+{}
+
+
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::AmbiguousNMRDistanceConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( CEREAL_NVP( atoms1_ ) ); // Atoms
+	arc( CEREAL_NVP( atoms2_ ) ); // Atoms
+	arc( CEREAL_NVP( func_ ) ); // func::FuncOP
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::AmbiguousNMRDistanceConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( atoms1_ ); // Atoms
+	arc( atoms2_ ); // Atoms
+	arc( func_ ); // func::FuncOP
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::AmbiguousNMRDistanceConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::AmbiguousNMRDistanceConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_AmbiguousNMRDistanceConstraint )
+#endif // SERIALIZATION

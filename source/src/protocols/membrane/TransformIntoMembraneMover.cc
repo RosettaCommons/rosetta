@@ -273,10 +273,9 @@ TransformIntoMembraneMover::apply( core::pose::Pose & pose ) {
 	// starting point is default membrane, this is overwritten here with the MEM
 	// info from the pose
 	if ( use_default_membrane_ == false && user_defined_membrane_ == false ) {
-
 		TR << "Getting membrane position from PDB" << std::endl;
-		new_mem_cntr_ = pose.conformation().membrane_info()->membrane_center();
-		new_mem_norm_ = pose.conformation().membrane_info()->membrane_normal();
+		new_mem_cntr_ = pose.conformation().membrane_info()->membrane_center(pose.conformation());
+		new_mem_norm_ = pose.conformation().membrane_info()->membrane_normal(pose.conformation());
 	}
 
 	// for user-defined membrane, set membrane position
@@ -326,8 +325,8 @@ TransformIntoMembraneMover::apply( core::pose::Pose & pose ) {
 	TR.Debug << "current embedding normal: " << current_embedding_->normal().to_string() << std::endl;
 	TR.Debug << "new membrane center: " << new_mem_cntr_.to_string() << std::endl;
 	TR.Debug << "new membrane normal: " << new_mem_norm_.to_string() << std::endl;
-	TR.Debug << "membrane center: " << pose.conformation().membrane_info()->membrane_center().to_string() << std::endl;
-	TR.Debug << "membrane normal: " << pose.conformation().membrane_info()->membrane_normal().to_string() << std::endl;
+	TR.Debug << "membrane center: " << pose.conformation().membrane_info()->membrane_center(pose.conformation()).to_string() << std::endl;
+	TR.Debug << "membrane normal: " << pose.conformation().membrane_info()->membrane_normal(pose.conformation()).to_string() << std::endl;
 
 	// translate and rotate pose into membrane
 	TranslationRotationMoverOP rt( new TranslationRotationMover( current_embedding_->center(), current_embedding_->normal(), new_mem_cntr_, new_mem_norm_, jump_ ) );

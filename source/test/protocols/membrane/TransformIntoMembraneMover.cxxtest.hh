@@ -121,8 +121,8 @@ public:
 
 		// check positions of center and normal
 		TS_ASSERT_DELTA( m_thickness, pose_->conformation().membrane_info()->membrane_thickness(), 0.001 );
-		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center( pose_->conformation() ), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal( pose_->conformation() ), 0.001 ) );
 
 	}
 
@@ -167,8 +167,8 @@ public:
 
 		// check positions of center and normal
 		TS_ASSERT_DELTA( m_thickness, pose_->conformation().membrane_info()->membrane_thickness(), 0.001 );
-		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center( pose_->conformation() ), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal( pose_->conformation() ), 0.001 ) );
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -203,8 +203,8 @@ public:
 
 		// check positions of center and normal
 		TS_ASSERT_DELTA( m_thickness, pose_->conformation().membrane_info()->membrane_thickness(), 0.001 );
-		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center( pose_->conformation() ), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal( pose_->conformation() ), 0.001 ) );
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -244,8 +244,8 @@ public:
 
 		// check positions of center and normal
 		TS_ASSERT_DELTA( m_thickness, pose_->conformation().membrane_info()->membrane_thickness(), 0.001 );
-		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center( pose_->conformation() ), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal( pose_->conformation() ), 0.001 ) );
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -261,7 +261,7 @@ public:
 		transform->apply( *m2_pose_ );
 
 		// Get membrane normal from membrane info
-		Vector normal( m2_pose_->conformation().membrane_info()->membrane_normal() );
+		Vector normal( m2_pose_->conformation().membrane_info()->membrane_normal( m2_pose_->conformation() ) );
 
 		// Calculate the "vector" representing the helix as the difference
 		// between start & end TM helices.

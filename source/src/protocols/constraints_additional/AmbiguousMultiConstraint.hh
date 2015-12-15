@@ -35,6 +35,13 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace protocols {
 namespace constraints_additional {
 
@@ -56,6 +63,11 @@ public:
 	core::scoring::constraints::ConstraintOP clone() const {
 		return core::scoring::constraints::ConstraintOP( new AmbiguousMultiConstraint(*this) );
 	}
+
+	bool operator == ( core::scoring::constraints::Constraint const & other ) const;
+
+	bool same_type_as_me( core::scoring::constraints::Constraint const & other ) const;
+
 
 	std::string type() const {
 		return "AmbiguousMultiConstraint";
@@ -99,9 +111,24 @@ private:
 
 	mutable core::scoring::constraints::ConstraintCOPs active_constraints_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AmbiguousMultiConstraint();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; //AmbiguousMultiConstraint
 
 }
 }
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_constraints_additional_AmbiguousMultiConstraint )
+#endif // SERIALIZATION
+
 
 #endif

@@ -33,6 +33,12 @@
 #include <string>
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pose {
 namespace full_model_info {
@@ -204,6 +210,16 @@ private:
 	// SubMotifInfo: information about submotifs in poses;
 	mutable utility::vector1< SubMotifInfoOP > submotif_info_list_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	FullModelInfo();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 
 };
 
@@ -229,4 +245,9 @@ update_full_model_info_from_pose( pose::Pose & pose );
 } //full_model_info
 } //pose
 } //core
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_pose_full_model_info_FullModelInfo )
+#endif // SERIALIZATION
+
+
 #endif

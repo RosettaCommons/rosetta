@@ -32,6 +32,12 @@
 // option key includes
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -76,12 +82,27 @@ private:
 	/// @brief the set of neighbors, INCLUSIVE of this residue
 	std::set< core::Size > neighbors_;
 
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	NeighborsByDistanceCalculator();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // namespace pose_metric_calculators
 } // namespace toolbox
 } // namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_toolbox_pose_metric_calculators_NeighborsByDistanceCalculator )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_toolbox_PoseMetricCalculators_NeighborsByDistanceCalculator_HH
 

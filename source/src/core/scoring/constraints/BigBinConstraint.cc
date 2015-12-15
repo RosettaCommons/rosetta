@@ -37,9 +37,120 @@
 
 // C++ Headers
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
+
+std::string BigBinConstraint::type() const {
+	return "BigBin";
+}
+
+ConstraintOP
+BigBinConstraint::clone() const {
+	return ConstraintOP( new BigBinConstraint( *this ) );
+}
+
+
+bool BigBinConstraint::operator == ( Constraint const & other ) const
+{
+	if ( !       same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	BigBinConstraint const & other_bbcst( static_cast< BigBinConstraint const & > (other) );
+	if ( C0_   != other_bbcst.C0_   ) return false;
+	if ( N1_   != other_bbcst.N1_   ) return false;
+	if ( CA1_  != other_bbcst.CA1_  ) return false;
+	if ( C1_   != other_bbcst.C1_   ) return false;
+	if ( N2_   != other_bbcst.N2_   ) return false;
+	if ( CA1_  != other_bbcst.CA1_  ) return false;
+	if ( res_  != other_bbcst.res_  ) return false;
+	if ( bin_  != other_bbcst.bin_  ) return false;
+	if ( sdev_ != other_bbcst.sdev_ ) return false;
+
+	if ( my_csts_.size() != other_bbcst.my_csts_.size() ) return false;
+	for ( core::Size ii = 1; ii <= my_csts_.size(); ++ii ) {
+		if ( *my_csts_[ii] != *other_bbcst.my_csts_[ii] ) return false;
+	}
+	return true;
+}
+
+bool BigBinConstraint::same_type_as_me( Constraint const & other ) const {
+	return dynamic_cast< BigBinConstraint const * > ( &other );
+}
+
+///c-tor
+BigBinConstraint::BigBinConstraint(
+	AtomID C0,
+	AtomID N1,
+	AtomID CA1,
+	AtomID C1,
+	AtomID N2,
+	AtomID CA2,
+	char bin,
+	ScoreType scotype /* = dihedral_constraint */
+):
+	Constraint( scotype ),
+	C0_( C0 ),
+	N1_( N1 ),
+	CA1_( CA1 ),
+	C1_( C1 ),
+	N2_( N2 ),
+	CA2_( CA2 ),
+	bin_(bin)
+{}
+
+BigBinConstraint::BigBinConstraint() :
+	Constraint( dihedral_constraint ),
+	res_( 0 ),
+	bin_( 'A' ),
+	sdev_( 0.5 )
+{}
+
+BigBinConstraint::BigBinConstraint( Size const res, char const bin, core::Real const sdev ) :
+	Constraint( dihedral_constraint ),
+	res_( res ),
+	bin_( bin ),
+	sdev_( sdev )
+{}
+
+///
+Size
+BigBinConstraint::natoms() const {
+	return 6;
+}
+
+id::AtomID const &
+BigBinConstraint::atom( Size const n ) const
+{
+	switch( n ) {
+	case 1 :
+		return C0_;
+	case 2 :
+		return N1_;
+	case 3 :
+		return CA1_;
+	case 4 :
+		return C1_;
+	case 5 :
+		return N2_;
+	case 6 :
+		return CA2_;
+	default :
+		utility_exit_with_message( "BigBinConstraint::atom() bad argument" );
+	}
+	return C0_;
+}
+
 
 /// @brief one line definition "BigBin res_number bin_char sdev"
 void BigBinConstraint::read_def(
@@ -158,6 +269,66 @@ BigBinConstraint::fill_f1_f2(
 	}
 }
 
+BigBinConstraint::BigBinConstraint( BigBinConstraint const & src ) :
+	Constraint( src ),
+	C0_  ( src.C0_   ),
+	N1_  ( src.N1_   ),
+	CA1_ ( src.CA1_  ),
+	C1_  ( src.C1_   ),
+	N2_  ( src.N2_   ),
+	CA2_ ( src.CA2_  ),
+	res_ ( src.res_  ),
+	bin_ ( src.bin_  ),
+	sdev_( src.sdev_ ),
+	my_csts_( src.my_csts_.size() )
+{
+	for ( Size ii = 1; ii <= src.my_csts_.size(); ++ii ) {
+		my_csts_[ ii ] = src.my_csts_[ ii ]->clone();
+	}
+}
+
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::constraints::BigBinConstraint::save( Archive & arc ) const {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( CEREAL_NVP( C0_ ) ); // AtomID
+	arc( CEREAL_NVP( N1_ ) ); // AtomID
+	arc( CEREAL_NVP( CA1_ ) ); // AtomID
+	arc( CEREAL_NVP( C1_ ) ); // AtomID
+	arc( CEREAL_NVP( N2_ ) ); // AtomID
+	arc( CEREAL_NVP( CA2_ ) ); // AtomID
+	arc( CEREAL_NVP( res_ ) ); // Size
+	arc( CEREAL_NVP( bin_ ) ); // char
+	arc( CEREAL_NVP( sdev_ ) ); // core::Real
+	arc( CEREAL_NVP( my_csts_ ) ); // utility::vector1<ConstraintOP>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::constraints::BigBinConstraint::load( Archive & arc ) {
+	arc( cereal::base_class< Constraint >( this ) );
+	arc( C0_ ); // AtomID
+	arc( N1_ ); // AtomID
+	arc( CA1_ ); // AtomID
+	arc( C1_ ); // AtomID
+	arc( N2_ ); // AtomID
+	arc( CA2_ ); // AtomID
+	arc( res_ ); // Size
+	arc( bin_ ); // char
+	arc( sdev_ ); // core::Real
+	arc( my_csts_ ); // utility::vector1<ConstraintOP>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::constraints::BigBinConstraint );
+CEREAL_REGISTER_TYPE( core::scoring::constraints::BigBinConstraint )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_BigBinConstraint )
+#endif // SERIALIZATION

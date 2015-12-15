@@ -21,6 +21,16 @@
 #include <utility/vector1.hh>
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace disulfides {
@@ -64,3 +74,31 @@ DisulfideAtomIndices::derivative_atom( Size atom_index ) const
 } // namespace disulfides
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::disulfides::DisulfideAtomIndices::DisulfideAtomIndices() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::disulfides::DisulfideAtomIndices::save( Archive & arc ) const {
+	arc( CEREAL_NVP( c_alpha_index_ ) ); // Size
+	arc( CEREAL_NVP( c_beta_index_ ) ); // Size
+	arc( CEREAL_NVP( disulf_atom_index_ ) ); // Size
+	arc( CEREAL_NVP( derivative_atom_types_ ) ); // utility::vector1<DisulfideDerivativeAtom>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::disulfides::DisulfideAtomIndices::load( Archive & arc ) {
+	arc( c_alpha_index_ ); // Size
+	arc( c_beta_index_ ); // Size
+	arc( disulf_atom_index_ ); // Size
+	arc( derivative_atom_types_ ); // utility::vector1<DisulfideDerivativeAtom>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::disulfides::DisulfideAtomIndices );
+#endif // SERIALIZATION

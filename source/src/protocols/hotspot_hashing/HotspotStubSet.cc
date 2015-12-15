@@ -1001,7 +1001,7 @@ HotspotStubSet::random_stub( std::string const resname )
 void HotspotStubSet::create_hotspot_after_pose(core::pose::Pose & pose, std::string const & resname )
 {
 	core::conformation::ResidueOP residue;
-	core::chemical::ResidueTypeSet const & residue_set ( pose.residue(1).residue_type_set() );
+	core::chemical::ResidueTypeSetCOP residue_set ( pose.residue(1).residue_type_set() );
 
 	// if we're targeting a residue, make a copy of it to get a nearby location (we'll switch identity later)
 	if ( target_resnum_ && target_distance_ ) {
@@ -1020,11 +1020,11 @@ void HotspotStubSet::create_hotspot_after_pose(core::pose::Pose & pose, std::str
 		residue->mainchain_torsions( helix_phipsi );
 	} else {
 		// otherwise, make a new residue from scratch at 0,0,0
-		core::chemical::ResidueType const & restype( residue_set.name_map( resname ) );
+		core::chemical::ResidueType const & restype( residue_set->name_map( resname ) );
 		residue = core::conformation::ResidueFactory::create_residue( restype );
 	}
 	core::conformation::ResidueOP ala;
-	core::chemical::ResidueType const & alatype( residue_set.name_map( "ALA" ) );
+	core::chemical::ResidueType const & alatype( residue_set->name_map( "ALA" ) );
 	ala = core::conformation::ResidueFactory::create_residue( alatype );
 
 	// this scorefxn doesn't really matter, since we're just using it to repack the new residue and make sure the pose is scored.

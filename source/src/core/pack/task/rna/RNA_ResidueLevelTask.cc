@@ -19,6 +19,14 @@
 
 static THREAD_LOCAL basic::Tracer TR( "core.pack.task.rna.RNA_ResidueLevelTask" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace task {
@@ -40,3 +48,31 @@ RNA_ResidueLevelTask::~RNA_ResidueLevelTask()
 } //task
 } //pack
 } //core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::task::rna::RNA_ResidueLevelTask::save( Archive & arc ) const {
+	arc( CEREAL_NVP( sample_rna_chi_ ) ); // _Bool
+	arc( CEREAL_NVP( sample_five_prime_phosphate_ ) ); // _Bool
+	arc( CEREAL_NVP( sample_three_prime_phosphate_ ) ); // _Bool
+	arc( CEREAL_NVP( allow_phosphate_virtualization_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::task::rna::RNA_ResidueLevelTask::load( Archive & arc ) {
+	arc( sample_rna_chi_ ); // _Bool
+	arc( sample_five_prime_phosphate_ ); // _Bool
+	arc( sample_three_prime_phosphate_ ); // _Bool
+	arc( allow_phosphate_virtualization_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::task::rna::RNA_ResidueLevelTask );
+CEREAL_REGISTER_TYPE( core::pack::task::rna::RNA_ResidueLevelTask )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_task_rna_RNA_ResidueLevelTask )
+#endif // SERIALIZATION

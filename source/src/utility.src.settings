@@ -13,6 +13,8 @@ sources = {
 	"utility": [
 		"basic_sys_util",
 		"Binary_Util",
+		"CSI_Sequence",
+		"curl",
 		"exit",
 		"heap",
 		"inline_file_provider",
@@ -23,8 +25,8 @@ sources = {
 		"recent_history_queue",
 		"static_database",
 		"string_util",
-		"curl",
-		"CSI_Sequence",
+		"vector0.srlz",
+		"vector1.srlz",
 	],
 	"utility/boinc": [
 		"boinc_util",
@@ -45,6 +47,10 @@ sources = {
 		"ozstream",
 		"FileContentsMap",
 		"util",
+	],
+	"utility/keys": [
+		"Key2Tuple.srlz",
+		"Key3Tuple.srlz",
 	],
 	"utility/libsvm":[
 		"Svm_rosetta",
@@ -67,7 +73,7 @@ sources = {
 		"OptionKeys",
 	],
 	"utility/pointer": [
-		# leave this here so Xcode will include the headers in the project!
+		"ReferenceCount.srlz",
 	],
 	"utility/pointer/boost": [
 		# leave this here so Xcode will include the headers in the project!
@@ -78,12 +84,23 @@ sources = {
 	"utility/py": [
 		"PyExitCallback",
 	],
+	"utility/serialization": [
+		"serialization",
+	],
+	"utility/serialization/ObjexxFCL": [
+		"DynamicIndexRange.srlz",
+		"FArray1D.srlz",
+		"FArray2D.srlz",
+		"FArray3D.srlz",
+		"ubyte.srlz",
+	],
 	"utility/sql_database": [
 		"DatabaseSessionManager",
 		"types",
 	],
 	"utility/tag": [
 		"Tag",
+		"XMLSchemaGeneration",
 	],
 	"utility/thread": [
 		"ReadWriteMutex",

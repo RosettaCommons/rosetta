@@ -40,6 +40,12 @@
 //  totally experimental (but nicely generic).
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 namespace rna {
@@ -66,6 +72,17 @@ private:
 	Size position_;
 	Size edge_;
 	Real weight_;
+
+#ifdef    SERIALIZATION
+public:
+	/// @brief Default constructor to be used only for deserialization
+	RNA_Datum();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 typedef utility::vector1< RNA_Datum > RNA_Data;
@@ -91,6 +108,16 @@ private:
 	Size position_;
 	RNA_ReactivityType type_;
 	Real value_;
+#ifdef    SERIALIZATION
+public:
+	/// @brief Default constructor to be used only for deserialization
+	RNA_Reactivity();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 typedef utility::vector1< RNA_Reactivity > RNA_Reactivities;
@@ -151,11 +178,22 @@ private:
 
 	RNA_Reactivities rna_reactivities_;
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } //data
 } //rna
 } //scoring
 } //core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_rna_data_RNA_DataInfo )
+#endif // SERIALIZATION
+
 
 #endif

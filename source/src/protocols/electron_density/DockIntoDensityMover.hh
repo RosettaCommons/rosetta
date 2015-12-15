@@ -18,6 +18,7 @@
 
 #include <basic/datacache/DataMap.fwd.hh>
 
+#include <core/conformation/Residue.hh> // only necessary here because of functions that ought to be in the .cc
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
@@ -75,6 +76,7 @@ public:
 	core::Real score_;
 	core::pose::PoseOP pose_;
 
+	// code like this belongs in a .cc file, not a header file.
 	numeric::xyzVector< core::Real > center() {
 		core::Size centerres = (pose_->total_residue()+1)/2;
 		return (pose_->residue(centerres).xyz(2));

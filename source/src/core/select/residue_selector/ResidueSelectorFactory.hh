@@ -23,6 +23,7 @@
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
 #include <map>
@@ -46,6 +47,8 @@ public:
 	) const;
 
 	void set_throw_on_double_registration();
+
+	void define_residue_selector_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 
 private:
 	static ResidueSelectorFactory * instance_;

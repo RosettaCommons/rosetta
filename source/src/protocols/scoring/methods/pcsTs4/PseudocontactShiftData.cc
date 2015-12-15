@@ -55,6 +55,19 @@
 #include <iostream>
 #include <iomanip>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// ObjexxFCL serialization headers
+#include <utility/serialization/ObjexxFCL/FArray1D.srlz.hh>
+#include <utility/serialization/ObjexxFCL/FArray2D.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace scoring {
 namespace methods {
@@ -66,12 +79,6 @@ static THREAD_LOCAL basic::Tracer TR_pcs_d_p_l_Ts4( "protocols.scoring.methods.p
 static THREAD_LOCAL basic::Tracer TR_pcs_d_Ts4( "protocols.scoring.methods.pcsTs4.PCS_data_Ts4" );
 
 PCS_data_per_lanthanides_Ts4::~PCS_data_per_lanthanides_Ts4(){
-}
-
-PCS_data_per_lanthanides_Ts4::PCS_data_per_lanthanides_Ts4():
-	filename_(""), weight_(0)
-{
-	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_data_per_lanthanides_Ts4 class" );
 }
 
 PCS_data_per_lanthanides_Ts4::PCS_data_per_lanthanides_Ts4(PCS_data_per_lanthanides_Ts4 const &other):
@@ -113,10 +120,6 @@ PCS_data_per_lanthanides_Ts4::operator=( PCS_data_per_lanthanides_Ts4 const & ot
 		normalization_factor_ = other.normalization_factor_;
 	}
 	return *this;
-}
-
-PCS_data_Ts4::PCS_data_Ts4(){
-	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_data_Ts4 class" );
 }
 
 PCS_data_Ts4::~PCS_data_Ts4(){
@@ -631,3 +634,88 @@ operator<<(std::ostream& out, const PCS_data_per_lanthanides_Ts4 &PCS_d_p_l){
 }//namespace methods
 }//namespace scoring
 }//namespace protocols
+
+
+#ifdef    SERIALIZATION
+/// @brief Default constructor to be used only during deserialization.
+protocols::scoring::methods::pcsTs4::PCS_data_per_lanthanides_Ts4::PCS_data_per_lanthanides_Ts4() :
+	filename_( "temp" ),
+	weight_( -1234 )
+{}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::scoring::methods::pcsTs4::PCS_data_per_lanthanides_Ts4::save( Archive & arc ) const {
+	arc( CEREAL_NVP( filename_ ) ); // const std::string
+	arc( CEREAL_NVP( n_pcs_ ) ); // core::Size
+	arc( CEREAL_NVP( A_index_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( fstyle_A_ ) ); // ObjexxFCL::FArray2D<core::Real>
+	arc( CEREAL_NVP( fstyle_b_ ) ); // ObjexxFCL::FArray1D<core::Real>
+	arc( CEREAL_NVP( svd_s_ ) ); // basic::svd::SVD_Solver
+	arc( CEREAL_NVP( weight_ ) ); // const core::Real
+	arc( CEREAL_NVP( normalization_1_ ) ); // core::Real
+	arc( CEREAL_NVP( normalization_2_ ) ); // core::Real
+	arc( CEREAL_NVP( normalization_3_ ) ); // core::Real
+	arc( CEREAL_NVP( normalization_factor_ ) ); // core::Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::scoring::methods::pcsTs4::PCS_data_per_lanthanides_Ts4::load( Archive & arc ) {
+	arc( const_cast< std::string & > (filename_) ); // const std::string
+	arc( n_pcs_ ); // core::Size
+	arc( A_index_ ); // utility::vector1<core::Size>
+	arc( fstyle_A_ ); // ObjexxFCL::FArray2D<core::Real>
+	arc( fstyle_b_ ); // ObjexxFCL::FArray1D<core::Real>
+	arc( svd_s_ ); // basic::svd::SVD_Solver
+	arc( const_cast< core::Real & > (weight_) ); // const core::Real
+	arc( normalization_1_ ); // core::Real
+	arc( normalization_2_ ); // core::Real
+	arc( normalization_3_ ); // core::Real
+	arc( normalization_factor_ ); // core::Real
+}
+SAVE_AND_LOAD_SERIALIZABLE( protocols::scoring::methods::pcsTs4::PCS_data_per_lanthanides_Ts4 );
+
+
+/// @brief default constructor to be used during deserialization
+protocols::scoring::methods::pcsTs4::PCS_data_Ts4::PCS_data_Ts4() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::scoring::methods::pcsTs4::PCS_data_Ts4::save( Archive & arc ) const {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( CEREAL_NVP( n_lanthanides_ ) ); // core::Size
+	arc( CEREAL_NVP( n_pcs_spin_ ) ); // core::Size
+	arc( CEREAL_NVP( PCS_data_line_all_spin_ ) ); // utility::vector1<PCS_line_data_Ts4>
+	arc( CEREAL_NVP( PCS_data_per_lanthanides_all_ ) ); // utility::vector1<PCS_data_per_lanthanides_Ts4>
+	arc( CEREAL_NVP( A_all_ ) ); // utility::vector1<utility::vector1<core::Real> >
+	arc( CEREAL_NVP( X_all_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( Y_all_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( Z_all_ ) ); // utility::vector1<core::Real>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::scoring::methods::pcsTs4::PCS_data_Ts4::load( Archive & arc ) {
+	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
+	arc( n_lanthanides_ ); // core::Size
+	arc( n_pcs_spin_ ); // core::Size
+	arc( PCS_data_line_all_spin_ ); // utility::vector1<PCS_line_data_Ts4>
+	arc( PCS_data_per_lanthanides_all_ ); // utility::vector1<PCS_data_per_lanthanides_Ts4>
+	arc( A_all_ ); // utility::vector1<utility::vector1<core::Real> >
+	arc( X_all_ ); // utility::vector1<core::Real>
+	arc( Y_all_ ); // utility::vector1<core::Real>
+	arc( Z_all_ ); // utility::vector1<core::Real>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::scoring::methods::pcsTs4::PCS_data_Ts4 );
+CEREAL_REGISTER_TYPE( protocols::scoring::methods::pcsTs4::PCS_data_Ts4 )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_scoring_methods_pcsTs4_PseudocontactShiftData )
+#endif // SERIALIZATION
+
+

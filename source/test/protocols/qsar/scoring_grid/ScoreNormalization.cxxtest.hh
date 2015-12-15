@@ -68,8 +68,8 @@ public:
 
 		core::conformation::ResidueCOPs residue_list;
 		core::chemical::ResidueTypeSetCOP fa_std_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-		core::chemical::ResidueType ser_type = fa_std_set->name_map("SER");
-		core::chemical::ResidueType gly_type = fa_std_set->name_map("GLY");
+		core::chemical::ResidueType const & ser_type = fa_std_set->name_map("SER");
+		core::chemical::ResidueType const & gly_type = fa_std_set->name_map("GLY");
 
 		residue_list.push_back(core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(ser_type,false) )));
 		residue_list.push_back(core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(gly_type,false) )));
@@ -91,8 +91,8 @@ public:
 
 		core::conformation::ResidueCOPs residue_list;
 		core::chemical::ResidueTypeSetCOP fa_std_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-		core::chemical::ResidueType ser_type = fa_std_set->name_map("SER");
-		core::chemical::ResidueType gly_type = fa_std_set->name_map("GLY");
+		core::chemical::ResidueType const & ser_type = fa_std_set->name_map("SER");
+		core::chemical::ResidueType const & gly_type = fa_std_set->name_map("GLY");
 
 		residue_list.push_back(core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(ser_type,false) )));
 		residue_list.push_back(core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(gly_type,false) )));
@@ -114,8 +114,8 @@ public:
 
 		core::conformation::ResidueCOPs residue_list;
 		core::chemical::ResidueTypeSetCOP fa_std_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-		core::chemical::ResidueType ser_type = fa_std_set->name_map("SER");
-		core::chemical::ResidueType gly_type = fa_std_set->name_map("GLY");
+		core::chemical::ResidueType const & ser_type = fa_std_set->name_map("SER");
+		core::chemical::ResidueType const & gly_type = fa_std_set->name_map("GLY");
 
 		residue_list.push_back(core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(ser_type,false) )));
 		residue_list.push_back(core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(gly_type,false) )));
@@ -137,8 +137,8 @@ public:
 
 		core::conformation::ResidueCOPs residue_list;
 		core::chemical::ResidueTypeSetCOP fa_std_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-		core::chemical::ResidueType ser_type = fa_std_set->name_map("SER");
-		core::chemical::ResidueType gly_type = fa_std_set->name_map("GLY");
+		core::chemical::ResidueType const & ser_type = fa_std_set->name_map("SER");
+		core::chemical::ResidueType const & gly_type = fa_std_set->name_map("GLY");
 
 		residue_list.push_back(core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(ser_type,false) )));
 		residue_list.push_back(core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue(gly_type,false) )));

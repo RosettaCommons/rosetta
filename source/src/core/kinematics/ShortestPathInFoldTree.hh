@@ -37,6 +37,13 @@
 #include <core/kinematics/Edge.fwd.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace kinematics {
 
@@ -47,15 +54,20 @@ typedef utility::pointer::shared_ptr< ShortestPathInFoldTree > ShortestPathInFol
 
 class ShortestPathInFoldTree : public utility::pointer::ReferenceCount {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ShortestPathInFoldTree();
-
 	// types
 	typedef utility::vector1< Edge > EdgeList;
 
+public:
 	/// @brief cs-tor, parses fold-tree and caches important distances:
 	///        memory N^2+M*5    N: 2 x number of jumps     M: number of residues
 	ShortestPathInFoldTree( core::kinematics::FoldTree const& f );
+
+	/// @brief copy constructor
+	ShortestPathInFoldTree( ShortestPathInFoldTree const & src );
+
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ShortestPathInFoldTree();
+
 
 	/// @brief returns the shortest distance of two residues going along Fold-Tree edges.
 	Size dist( Size pos1, Size pos2 ) const;
@@ -112,10 +124,25 @@ private:
 
 	/// @brief the furthest distance a query to dist() can return
 	mutable Size max_dist_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ShortestPathInFoldTree();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
 } // kinematics
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_kinematics_ShortestPathInFoldTree )
+#endif // SERIALIZATION
+
 
 #endif

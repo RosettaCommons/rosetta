@@ -40,6 +40,11 @@
 // C++
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace scoring {
 
@@ -140,6 +145,12 @@ private:
 	utility::vector1< Real > fcen10_;
 	utility::vector1< Real > fcen12_;
 	bool calculated_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 class EnvPairPotential : public utility::pointer::ReferenceCount {
@@ -239,5 +250,10 @@ private: // data
 };
 } // ns scoring
 } // ns core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_EnvPairPotential )
+#endif // SERIALIZATION
+
 
 #endif

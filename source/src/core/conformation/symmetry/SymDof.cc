@@ -21,6 +21,14 @@
 #include <utility/vector1.hh>
 #include <algorithm>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace symmetry {
@@ -359,3 +367,42 @@ operator!=(
 } // symmetry
 } // conformation
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::conformation::symmetry::SymDof::save( Archive & arc ) const {
+	arc( CEREAL_NVP( range2_is_bound_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( allowed_dof_jumps_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( lower_range_dof_jumps1_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( upper_range_dof_jumps1_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( lower_range_dof_jumps2_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( upper_range_dof_jumps2_ ) ); // utility::vector1<Real>
+	arc( CEREAL_NVP( has_range1_lower_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( has_range1_upper_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( has_range2_lower_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( has_range2_upper_ ) ); // utility::vector1<_Bool>
+	arc( CEREAL_NVP( jump_dir_ ) ); // utility::vector1<int>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::conformation::symmetry::SymDof::load( Archive & arc ) {
+	arc( range2_is_bound_ ); // utility::vector1<_Bool>
+	arc( allowed_dof_jumps_ ); // utility::vector1<_Bool>
+	arc( lower_range_dof_jumps1_ ); // utility::vector1<Real>
+	arc( upper_range_dof_jumps1_ ); // utility::vector1<Real>
+	arc( lower_range_dof_jumps2_ ); // utility::vector1<Real>
+	arc( upper_range_dof_jumps2_ ); // utility::vector1<Real>
+	arc( has_range1_lower_ ); // utility::vector1<_Bool>
+	arc( has_range1_upper_ ); // utility::vector1<_Bool>
+	arc( has_range2_lower_ ); // utility::vector1<_Bool>
+	arc( has_range2_upper_ ); // utility::vector1<_Bool>
+	arc( jump_dir_ ); // utility::vector1<int>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::symmetry::SymDof );
+#endif // SERIALIZATION

@@ -154,7 +154,7 @@ main( int argc, char * argv [] )
 					basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 					0.01,
 					true
-					) );
+					));
 			}
 			protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover( new protocols::simple_moves::TaskAwareMinMover(min_mover, main_task_factory) );
 			seq_mover->add_mover( TAmin_mover );

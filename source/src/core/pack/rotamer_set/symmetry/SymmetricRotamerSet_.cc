@@ -51,6 +51,14 @@
 //Auto Headers
 #include <ObjexxFCL/FArray2D.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace pack {
 namespace rotamer_set {
@@ -346,3 +354,25 @@ SymmetricRotamerSet_::orient_rotamer_set_to_symmetric_partner(
 } // rotamer_set
 } // pack
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::pack::rotamer_set::symmetry::SymmetricRotamerSet_::save( Archive & arc ) const {
+	arc( cereal::base_class< core::pack::rotamer_set::RotamerSet_ >( this ) );
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::pack::rotamer_set::symmetry::SymmetricRotamerSet_::load( Archive & arc ) {
+	arc( cereal::base_class< core::pack::rotamer_set::RotamerSet_ >( this ) );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ );
+CEREAL_REGISTER_TYPE( core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_pack_rotamer_set_symmetry_SymmetricRotamerSet_ )
+#endif // SERIALIZATION

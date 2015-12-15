@@ -15,7 +15,7 @@
 #ifndef INCLUDED_utility_pointer_boost_ReferenceCount_fwd_hh
 #define INCLUDED_utility_pointer_boost_ReferenceCount_fwd_hh
 
-#include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace utility {
 namespace pointer {
@@ -24,8 +24,8 @@ namespace pointer {
 // Forward
 class ReferenceCount;
 
-typedef shared_ptr< ReferenceCount > ReferenceCountOP;
-typedef shared_ptr< ReferenceCount const > ReferenceCountCOP;
+typedef boost::shared_ptr< ReferenceCount > ReferenceCountOP;
+typedef boost::shared_ptr< ReferenceCount const > ReferenceCountCOP;
 
 } // namespace pointer
 } // namespace utility

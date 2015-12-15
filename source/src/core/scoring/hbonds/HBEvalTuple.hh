@@ -94,6 +94,12 @@ public:
 private:
 	void update_hbevaltype();
 
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 inline

@@ -25,6 +25,17 @@
 // C++ Headers
 
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
@@ -34,6 +45,24 @@ HarmonicFunc::clone() const
 {
 	return FuncOP( new HarmonicFunc( x0_, sd_ ) );
 }
+
+bool HarmonicFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	HarmonicFunc const & other_downcast( static_cast< HarmonicFunc const & > (other) );
+	if ( x0_ != other_downcast.x0_ ) return false;
+	if ( sd_ != other_downcast.sd_ ) return false;
+
+	return true;
+}
+
+bool HarmonicFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< HarmonicFunc const * > ( &other );
+}
+
 
 Real
 HarmonicFunc::func( Real const x ) const
@@ -73,3 +102,32 @@ HarmonicFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Re
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::func::HarmonicFunc::HarmonicFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::HarmonicFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( x0_ ) ); // Real
+	arc( CEREAL_NVP( sd_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::HarmonicFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( x0_ ); // Real
+	arc( sd_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::HarmonicFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::HarmonicFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_HarmonicFunc )
+#endif // SERIALIZATION

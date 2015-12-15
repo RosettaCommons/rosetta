@@ -22,6 +22,11 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace conformation {
 
@@ -29,9 +34,21 @@ class AbstractRotamerTrie : public utility::pointer::ReferenceCount
 {
 public:
 	virtual ~AbstractRotamerTrie() {}
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // namespace conformation
 } // namespace core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_conformation_AbstractRotamerTrie )
+#endif // SERIALIZATION
+
 
 #endif

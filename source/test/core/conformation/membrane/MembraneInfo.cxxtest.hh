@@ -122,11 +122,11 @@ public: // test functions
 
 		TS_TRACE( pose_->total_residue() );
 
-		Vector center = pose_->conformation().membrane_info()->membrane_center();
+		Vector center = pose_->conformation().membrane_info()->membrane_center( pose_->conformation() );
 		Vector expected_center( 0, 0, 0 );
 		TS_ASSERT( position_equal_within_delta( center, expected_center, 0.0001 ) );
 
-		Vector normal = pose_->conformation().membrane_info()->membrane_normal();
+		Vector normal = pose_->conformation().membrane_info()->membrane_normal( pose_->conformation() );
 		Vector expected_normal( 0, 0, 1 );
 		TS_ASSERT( position_equal_within_delta( normal, expected_normal, 0.0001 ) );
 
@@ -138,7 +138,7 @@ public: // test functions
 		TS_TRACE( "Check computing relative residue z position in the membrane" );
 
 		core::Real expected_z( -22.089 );
-		core::Real z( pose_->conformation().membrane_info()->residue_z_position( 1 ) );
+		core::Real z( pose_->conformation().membrane_info()->residue_z_position( pose_->conformation(), 1 ) );
 		TS_ASSERT_DELTA( z, expected_z, 0.0001 );
 	}
 
@@ -148,7 +148,7 @@ public: // test functions
 		TS_TRACE( "Check computing relative atom z position in the membrane" );
 
 		core::Real expected_z( -22.089 );
-		core::Real z( pose_->conformation().membrane_info()->atom_z_position( 1, 2 ) );
+		core::Real z( pose_->conformation().membrane_info()->atom_z_position( pose_->conformation(),  1, 2 ) );
 		TS_ASSERT_DELTA( z, expected_z, 0.0001 );
 	}
 

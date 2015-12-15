@@ -29,6 +29,12 @@
 #include <numeric/interpolation/Histogram.fwd.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace disulfides {
@@ -141,6 +147,8 @@ public:
 	Cb_Distance_Func();
 	virtual ~Cb_Distance_Func();
 	func::FuncOP clone() const { return func::FuncOP( new Cb_Distance_Func( *this ) ); }
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:
@@ -151,6 +159,12 @@ private:
 	static const Real weights_[3];
 	//Score at infinity; The gaussians are subtracted from this base.
 	static const Real base_score_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -163,10 +177,18 @@ public:
 	Cen_Distance_Func();
 	virtual ~Cen_Distance_Func();
 	func::FuncOP clone() const { return func::FuncOP( new Cen_Distance_Func( *this ) ); }
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:
 	static numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type centroid_dist_scores_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /**
@@ -178,10 +200,18 @@ public:
 	CaCbCb_Angle_Func();
 	virtual ~CaCbCb_Angle_Func();
 	func::FuncOP clone() const { return func::FuncOP( new CaCbCb_Angle_Func( *this ) ); }
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:
 	static numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type CaCbCb_angle_scores_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /**
@@ -193,10 +223,18 @@ public:
 	NCaCaC_Dihedral_Func();
 	virtual ~NCaCaC_Dihedral_Func();
 	func::FuncOP clone() const { return func::FuncOP( new NCaCaC_Dihedral_Func( *this ) ); }
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:
 	static numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type backbone_dihedral_scores_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 /**
@@ -208,14 +246,27 @@ public:
 	CaCbCbCa_Dihedral_Func();
 	virtual ~CaCbCbCa_Dihedral_Func();
 	func::FuncOP clone() const { return func::FuncOP( new CaCbCbCa_Dihedral_Func( *this ) ); }
+	virtual bool operator == ( Func const & other ) const;
+	virtual bool same_type_as_me( Func const & other ) const;
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:
 	static numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type CaCbCbCa_dihedral_scores_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // disulfides
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_disulfides_CentroidDisulfidePotential )
+#endif // SERIALIZATION
+
 
 #endif

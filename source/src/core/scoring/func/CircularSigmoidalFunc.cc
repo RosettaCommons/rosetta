@@ -22,9 +22,39 @@
 
 #include <iostream>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace func {
+
+bool CircularSigmoidalFunc::operator == ( Func const & other ) const
+{
+	if ( ! same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	CircularSigmoidalFunc const & other_downcast( static_cast< CircularSigmoidalFunc const & > (other) );
+	if ( xC_     != other_downcast.xC_     ) return false;
+	if ( m_      != other_downcast.m_      ) return false;
+	if ( o1_     != other_downcast.o1_     ) return false;
+	if ( o2_     != other_downcast.o2_     ) return false;
+	if ( offset_ != other_downcast.offset_ ) return false;
+	return true;
+}
+
+bool CircularSigmoidalFunc::same_type_as_me( Func const & other ) const
+{
+	return dynamic_cast< CircularSigmoidalFunc const * > ( &other );
+}
 
 Real
 CircularSigmoidalFunc::func( Real const x ) const {
@@ -58,3 +88,38 @@ void CircularSigmoidalFunc::show_definition( std::ostream & out ) const
 } // namespace constraints
 } // namespace scoring
 } // namespace core
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::func::CircularSigmoidalFunc::CircularSigmoidalFunc() {}
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::func::CircularSigmoidalFunc::save( Archive & arc ) const {
+	arc( cereal::base_class< Func >( this ) );
+	arc( CEREAL_NVP( xC_ ) ); // Real
+	arc( CEREAL_NVP( m_ ) ); // Real
+	arc( CEREAL_NVP( o1_ ) ); // Real
+	arc( CEREAL_NVP( o2_ ) ); // Real
+	arc( CEREAL_NVP( offset_ ) ); // Real
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::func::CircularSigmoidalFunc::load( Archive & arc ) {
+	arc( cereal::base_class< Func >( this ) );
+	arc( xC_ ); // Real
+	arc( m_ ); // Real
+	arc( o1_ ); // Real
+	arc( o2_ ); // Real
+	arc( offset_ ); // Real
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::func::CircularSigmoidalFunc );
+CEREAL_REGISTER_TYPE( core::scoring::func::CircularSigmoidalFunc )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_func_CircularSigmoidalFunc )
+#endif // SERIALIZATION

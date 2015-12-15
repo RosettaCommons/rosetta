@@ -33,6 +33,12 @@
 //Auto Headers
 #include <utility/vector1.hh>
 
+#ifdef	SERIALIZATION
+// Cereal headers
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif
+
 class ScalarWeightedFuncTests : public CxxTest::TestSuite{
 
 public:
@@ -191,5 +197,54 @@ public:
 		}
 
 	}// test_ScalarWeightedFunc()
+
+
+	void test_serialize_ScalarWeightedFunc() {
+		TS_ASSERT( true ); // for non-serialization builds
+#ifdef SERIALIZATION
+		using namespace core::scoring::func;
+
+		core::Real weight=0.0;
+		FuncOP myfunc;
+
+		ScalarWeightedFuncOP func( new ScalarWeightedFunc(weight,myfunc) );
+
+		// Get the scoring/constraints/epr_distance_potential.histogram from mini database
+		std::string epr_dist_histogram( basic::database::full_name("scoring/constraints/epr_distance_potential.histogram"));
+
+		// Need to give some test input
+		std::stringstream test_input;
+		std::string line;
+		test_input << "1.0\tSPLINE\tEPR_DISTANCE\t" << epr_dist_histogram << "\t0.0\t1.0\t0.5\n"
+			"2.0\tBOUNDED\t-7.0\t17.0\t1.0\ttest_sd1.0\n"
+			"0.5\tHARMONIC\t1.0\t1.0\n"
+			"5.0\tCONSTANTFUNC\t2.0";
+
+		// Call the read_data() function from BoundConstraint.cc to read in the above test data
+		while ( getline(test_input,line) ) {
+			// use ScalarWeightedFunc::read_data(in) to read in the test input
+			func->read_data(test_input);
+		}
+
+		FuncOP instance( func ); // serialize this through a pointer to the base class
+
+		std::ostringstream oss;
+		{
+			cereal::BinaryOutputArchive arc( oss );
+			arc( instance );
+		}
+
+		FuncOP instance2; // deserialize also through a pointer to the base class
+		std::istringstream iss( oss.str() );
+		{
+			cereal::BinaryInputArchive arc( iss );
+			arc( instance2 );
+		}
+
+		// make sure the deserialized base class pointer points to a ScalarWeightedFunc
+		TS_ASSERT( utility::pointer::dynamic_pointer_cast< ScalarWeightedFunc > ( instance2 ));
+		TS_ASSERT( *instance == *instance2 );
+#endif // SERIALIZATION
+	}
 
 };

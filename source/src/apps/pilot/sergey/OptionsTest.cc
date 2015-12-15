@@ -163,7 +163,7 @@ int main( int argc, char * argv [] )
 				T("Testing pose_from_sequence...") << std::endl;
 				std::string sequence(1000, 'V');
 				core::pose::Pose pose;
-				core::pose::make_pose_from_sequence(pose, sequence, "fa_standard");
+				core::pose::make_pose_from_sequence(pose, sequence, core::chemical::FA_STANDARD );
 				T("Testing pose_from_sequence... Done!") << std::endl;
 			}
 		}

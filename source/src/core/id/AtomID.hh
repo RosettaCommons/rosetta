@@ -45,7 +45,7 @@ public: // Creation
 	AtomID() :
 		atomno_( 0 ),
 		rsd_( 0 )
-	{};
+	{}
 
 	/// @brief Copy constructor
 	inline
@@ -89,6 +89,7 @@ public: // Properties
 	inline
 	bool
 	valid() const { return ( atomno_ > 0 ) && ( rsd_ > 0 ); }
+
 public: // Friends
 
 	friend
@@ -138,6 +139,12 @@ private: // Fields
 	/// @brief Residue number within the complex
 	Size rsd_;
 
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 }; // AtomID
 
@@ -195,6 +202,12 @@ public:
 public:
 	AtomID atom1;
 	AtomID atom2;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -264,12 +277,20 @@ public:
 		StubID const &
 	);
 
+	bool operator == ( StubID const & rhs ) const;
+	bool operator != ( StubID const & rhs ) const;
 
 public: // tmp hack -- phil fix this
 	AtomID atom1;
 	AtomID atom2;
 	AtomID atom3;
 	AtomID center_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 

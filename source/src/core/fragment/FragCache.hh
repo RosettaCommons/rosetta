@@ -52,8 +52,10 @@ public:
 
 	void remap_value( BaseCacheUnit const& source, Size source_id, Size new_id ) {
 		T value;
-		dynamic_cast< MapCacheUnit<T> const& > (source).retrieve( source_id, value );
-		store( new_id, value );
+		bool succ = dynamic_cast< MapCacheUnit<T> const& > (source).retrieve( source_id, value );
+		if ( succ ) {
+			store( new_id, value );
+		}
 	};
 
 

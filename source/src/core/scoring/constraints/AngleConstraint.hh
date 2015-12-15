@@ -28,6 +28,13 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -36,13 +43,31 @@ namespace constraints {
 class AngleConstraint : public Constraint {
 public:
 
-	virtual std::string type() const {
-		return "Angle";
-	}
+	/// @brief Constructor
+	AngleConstraint(
+		AtomID const & a1,
+		AtomID const & a2,
+		AtomID const & a3,
+		core::scoring::func::FuncOP func_in, // we take ownership of this guy
+		ScoreType scotype = angle_constraint
+	);
 
-	virtual ConstraintOP clone() const {
-		return ConstraintOP( new AngleConstraint( atom1_, atom2_, atom3_, func_, score_type() ) );
-	}
+	/// @brief Constructor without atom IDs -- if you create an AngleConstraint with
+	/// this constructor, you must never call its score( XYZFunc ) method!  Dangerous and stupid!
+	AngleConstraint(
+		core::scoring::func::FuncOP func_in,
+		ScoreType scoretype = angle_constraint
+	);
+
+	virtual std::string type() const;
+
+	virtual ConstraintOP clone() const;
+
+	/// @brief possibility to compare constraint according to data
+	/// and not just pointers
+	bool operator == ( Constraint const & other ) const;
+
+	virtual bool same_type_as_me( Constraint const & other ) const;
 
 	/// @brief read in constraint defiinition
 	void read_def( std::istream & data, pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory );
@@ -56,11 +81,6 @@ public:
 		pose::Pose const & dest,
 		id::SequenceMappingCOP map = NULL
 	) const;
-
-
-	/// @brief possibility to compare constraint according to data
-	/// and not just pointers
-	bool operator == ( Constraint const & other ) const;
 
 	using Constraint::score;
 
@@ -85,32 +105,6 @@ public:
 		Vector & F2,
 		EnergyMap const & weights
 	) const;
-
-	/// @brief Constructor
-	AngleConstraint(
-		AtomID const & a1,
-		AtomID const & a2,
-		AtomID const & a3,
-		core::scoring::func::FuncOP func_in, // we take ownership of this guy
-		ScoreType scotype = angle_constraint
-	):
-		Constraint( scotype ),
-		atom1_(a1),
-		atom2_(a2),
-		atom3_(a3),
-		func_( func_in )
-	{}
-
-	/// @brief Constructor without atom IDs -- if you create an AngleConstraint with
-	/// this constructor, you must never call its score( XYZFunc ) method!  Dangerous and stupid!
-	AngleConstraint(
-		core::scoring::func::FuncOP func_in,
-		ScoreType scoretype = angle_constraint
-	):
-		Constraint( scoretype ),
-		func_( func_in )
-	{}
-
 
 	/// @brief number of atoms --- always 3 for angles
 	Size
@@ -139,25 +133,18 @@ public:
 	}
 
 
-	//private: /*functions*/
-
 public:
+
 	/// Previously private member functions made public so that in the absence of atom_ids,
 	/// these functions could still be called externally.
 
 	/// @brief evaluate func at theta
 	Real
-	func( Real const theta ) const
-	{
-		return func_->func( theta );
-	}
+	func( Real const theta ) const;
 
 	/// @brief evaluate dfunc at theta
 	Real
-	dfunc( Real const theta ) const
-	{
-		return func_->dfunc( theta );
-	}
+	dfunc( Real const theta ) const;
 
 	static
 	void
@@ -200,20 +187,39 @@ public:
 	) const;
 
 protected:
+	/// @brief Explicit copy constructor so that derived classes will recieve a deep copy
+	/// of the Func this class contains.
+	AngleConstraint( AngleConstraint const & src );
+
 	/// @brief const access to func
-	func::FuncCOP func() const { return func_; }
+	func::FuncCOP func() const;
 
 	/// @brief set func
-	void set_func( func::FuncOP f ) { func_ = f; }
+	void set_func( func::FuncOP f );
 
 private:
 	// data
 	AtomID atom1_, atom2_, atom3_;
 	core::scoring::func::FuncOP func_;
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	AngleConstraint();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_constraints_AngleConstraint )
+#endif // SERIALIZATION
+
 
 #endif

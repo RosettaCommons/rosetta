@@ -21,6 +21,15 @@
 
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.VDW_Grid" );
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace stepwise {
 namespace modeler {
@@ -129,3 +138,27 @@ VDW_Grid::is_occupied() const
 } //modeler
 } //stepwise
 } //protocols
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::stepwise::modeler::rna::checker::VDW_Grid::save( Archive & arc ) const {
+	arc( CEREAL_NVP( bins_ ) ); // utility::vector1<utility::vector1<utility::vector1<_Bool> > >
+	arc( CEREAL_NVP( is_occupied_ ) ); // _Bool
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::stepwise::modeler::rna::checker::VDW_Grid::load( Archive & arc ) {
+	arc( bins_ ); // utility::vector1<utility::vector1<utility::vector1<_Bool> > >
+	arc( is_occupied_ ); // _Bool
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::stepwise::modeler::rna::checker::VDW_Grid );
+CEREAL_REGISTER_TYPE( protocols::stepwise::modeler::rna::checker::VDW_Grid )
+
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_stepwise_modeler_rna_checker_VDW_Grid )
+#endif // SERIALIZATION

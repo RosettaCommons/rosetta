@@ -39,6 +39,17 @@ static THREAD_LOCAL basic::Tracer TR( "core.conformation.membrane.LipidAccInfo" 
 /// @details    Stores lipid accessibility data derived from OCTOPUS spanning file
 ///             and psiblast search using run_lips.pl script
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace conformation {
 namespace membrane {
@@ -154,3 +165,27 @@ LipidAccInfo::copy_data( LipidAccInfo src, LipidAccInfo copy ) {
 } // conformation
 } // core
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::conformation::membrane::LipidAccInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( lipid_exposure_ ) ); // utility::vector1<core::Real>
+	arc( CEREAL_NVP( lipid_burial_ ) ); // utility::vector1<core::Real>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::conformation::membrane::LipidAccInfo::load( Archive & arc ) {
+	arc( lipid_exposure_ ); // utility::vector1<core::Real>
+	arc( lipid_burial_ ); // utility::vector1<core::Real>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::conformation::membrane::LipidAccInfo );
+CEREAL_REGISTER_TYPE( core::conformation::membrane::LipidAccInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_conformation_membrane_LipidAccInfo )
+#endif // SERIALIZATION

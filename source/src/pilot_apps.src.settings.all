@@ -33,6 +33,7 @@ sources = {
 	],
 	"pilot/andrew" : [
 		"domain_assembly_jd2",
+		"interface_ddg_bind",
 		#"optest",
 		"measure_catalytic_geometry",
 		"measure_lcaa_neighbor_radii",
@@ -42,6 +43,7 @@ sources = {
 		"zn_match_symmdock", #Note: used for scorefunction version tests; no itest needed
 		"sweep_respair_energies",
 		"find_buns",
+		#"fixbb_jd3",
 		#"test_ik_match",
 	],
 	"pilot/aroop" : [

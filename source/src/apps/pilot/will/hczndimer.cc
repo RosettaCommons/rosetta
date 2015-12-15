@@ -297,7 +297,7 @@ utility_exit_with_message("NOT DONE CODING!!!!!!!");
 
 Pose make_single_res_pose(string rt) {
   Pose tmp;
-  make_pose_from_sequence(tmp,rt,"fa_standard",false);
+  make_pose_from_sequence(tmp,rt,core::chemical::FA_STANDARD,false);
   remove_lower_terminus_type_from_pose_residue(tmp,1);
   remove_upper_terminus_type_from_pose_residue(tmp,1);
   return tmp;

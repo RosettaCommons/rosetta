@@ -126,8 +126,8 @@ public:
 
 		// check positions of center and normal
 		TS_ASSERT_DELTA( new_thickness, pose_->conformation().membrane_info()->membrane_thickness(), 0.001 );
-		TS_ASSERT( position_equal_within_delta( new_center, pose_->conformation().membrane_info()->membrane_center(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( new_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( new_center, pose_->conformation().membrane_info()->membrane_center( pose_->conformation() ), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( new_normal, pose_->conformation().membrane_info()->membrane_normal( pose_->conformation() ), 0.001 ) );
 	}
 
 	/// @brief test rotation of membrane pose
@@ -169,8 +169,8 @@ public:
 
 		// check positions of center and normal
 		TS_ASSERT_DELTA( m_thickness, pose_->conformation().membrane_info()->membrane_thickness(), 0.001 );
-		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center( pose_->conformation() ), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal( pose_->conformation() ), 0.001 ) );
 	}
 
 	/// @brief test rotation and translation of membrane pose

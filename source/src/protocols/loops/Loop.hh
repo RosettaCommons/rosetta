@@ -38,6 +38,11 @@
 //#include <ostream>
 
 ///////////////////////////////////////////////////////////////////////////////
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace loops {
 
@@ -160,6 +165,12 @@ private:
 	core::Size cut_;
 	core::Real skip_rate_;
 	bool extended_;
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 }; // Loop
 
 //////////////////////////////////////////////////////////////////////
@@ -184,5 +195,10 @@ public:
 
 } //namespace loops
 } //namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_loops_Loop )
+#endif // SERIALIZATION
+
 
 #endif //INCLUDED_protocols_loops_Loop_HH

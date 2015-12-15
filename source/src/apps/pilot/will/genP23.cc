@@ -547,7 +547,7 @@ vector1<DsfHit> find_dsf( Pose & p3a, Pose & p3b, ImplicitFastClashCheck const &
   vector1<DsfHit> hits;
   core::chemical::ResidueTypeSetCAP  rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose cys;
-  make_pose_from_sequence(cys,"C","fa_standard",false);
+  make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
   remove_lower_terminus_type_from_pose_residue(cys,1);
   remove_upper_terminus_type_from_pose_residue(cys,1);
   Size Nres = p3a.n_residue()/3;
@@ -1017,8 +1017,8 @@ vector1<Hit> dock(Pose & init, string fname) {
 
   core::chemical::ResidueTypeSetCAP  rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose cys,ala;
-  make_pose_from_sequence(cys,"C","fa_standard",false);
-  make_pose_from_sequence(ala,"A","fa_standard",false);
+  make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
+  make_pose_from_sequence(ala,"A",core::chemical::FA_STANDARD,false);
   remove_lower_terminus_type_from_pose_residue(cys,1);
   remove_upper_terminus_type_from_pose_residue(cys,1);
   remove_lower_terminus_type_from_pose_residue(ala,1);

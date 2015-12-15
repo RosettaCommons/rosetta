@@ -21,6 +21,18 @@
 #include <utility/vector1.hh>
 
 
+#ifdef    SERIALIZATION
+// Project serialization headers
+#include <core/chemical/ResidueType.srlz.hh>
+
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Numeric serialization headers
+#include <numeric/xyz.serialization.hh>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace fldsgn {
 namespace topology {
@@ -38,7 +50,7 @@ BB_Pos::resize( Size const nres )
 	O_.resize( nres, NullVector );
 	CB_.resize( nres, NullVector );
 
-	residue_types_.resize( nres ); std::fill( residue_types_.begin(), residue_types_.end(), static_cast< core::chemical::ResidueType const * > (0) );
+	residue_types_.resize( nres ); std::fill( residue_types_.begin(), residue_types_.end(), core::chemical::ResidueTypeOP() );
 	N_index_.resize( nres );       std::fill( N_index_.begin(), N_index_.end(), 0 );
 	CA_index_.resize( nres );      std::fill( CA_index_.begin(), CA_index_.end(), 0 );
 	CB_index_.resize( nres );      std::fill( CB_index_.begin(), CB_index_.end(), 0 );
@@ -108,7 +120,7 @@ BB_Pos::bbindices_up_to_date( Pose const & pose ) const
 	if ( N_.size() != pose.total_residue() ) return false;
 
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		if ( residue_types_[ ii ] != & ( pose.residue_type( ii ) ) ) return false;
+		if ( residue_types_[ ii ].get() != & ( pose.residue_type( ii ) ) ) return false;
 	}
 	return true;
 }
@@ -126,7 +138,7 @@ BB_Pos::update_indices( Pose const & pose )
 
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
-		residue_types_[ i ] = & ( rsd.type() );
+		residue_types_[ i ] = rsd.type().get_self_ptr();
 		if ( rsd.is_protein() ) {
 
 			N_index_[  i ] = rsd.atom_index( bbN );
@@ -155,3 +167,43 @@ BB_Pos::update_indices( Pose const & pose )
 } // ns fldsgn
 } // ns protocols
 
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+protocols::fldsgn::topology::BB_Pos::save( Archive & arc ) const {
+	arc( CEREAL_NVP( N_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( CA_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( CB_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( C_ ) ); // utility::vector1<Vector>
+	arc( CEREAL_NVP( O_ ) ); // utility::vector1<Vector>
+	core::chemical::serialize_residue_type_vector( arc, residue_types_ );
+	arc( CEREAL_NVP( N_index_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( CA_index_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( CB_index_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( C_index_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( O_index_ ) ); // utility::vector1<Size>
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+protocols::fldsgn::topology::BB_Pos::load( Archive & arc )
+{
+	arc( N_ ); // utility::vector1<Vector>
+	arc( CA_ ); // utility::vector1<Vector>
+	arc( CB_ ); // utility::vector1<Vector>
+	arc( C_ ); // utility::vector1<Vector>
+	arc( O_ ); // utility::vector1<Vector>
+	core::chemical::deserialize_residue_type_vector( arc, residue_types_ );
+	arc( N_index_ ); // utility::vector1<Size>
+	arc( CA_index_ ); // utility::vector1<Size>
+	arc( CB_index_ ); // utility::vector1<Size>
+	arc( C_index_ ); // utility::vector1<Size>
+	arc( O_index_ ); // utility::vector1<Size>
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( protocols::fldsgn::topology::BB_Pos );
+#endif // SERIALIZATION

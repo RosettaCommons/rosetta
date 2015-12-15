@@ -7,7 +7,7 @@
 	<SCOREFXNS>
 		<sc12_w_correction weights=talaris2013_calibrated>
 			<Reweight scoretype="res_type_constraint" weight=0.5/>
-			<Reweight scoretype="coordinate_constraint" weight=3/>
+			<Reweight scoretype="coordinate_constraint" weight=10/>
 			<Reweight scoretype="dihedral_constraint" weight=1/>
 		</sc12_w_correction>
   		<score12_chainbreak weights=talaris2013_calibrated>

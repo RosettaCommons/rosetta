@@ -17,6 +17,13 @@
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
+#ifdef SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+
+#endif // SERIALIZATION
+
+
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -1244,3 +1251,30 @@ get_hbond_weight_type( HBEvalType const & hbe_type )
 } // hbonds
 } // scoring
 } // core
+
+#ifdef    SERIALIZATION
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::scoring::hbonds::HBondDerivs::save( Archive & arc ) const {
+	arc( CEREAL_NVP( don_deriv ) ); // class core::scoring::DerivVectorPair
+	arc( CEREAL_NVP( h_deriv ) ); // class core::scoring::DerivVectorPair
+	arc( CEREAL_NVP( acc_deriv ) ); // class core::scoring::DerivVectorPair
+	arc( CEREAL_NVP( abase_deriv ) ); // class core::scoring::DerivVectorPair
+	arc( CEREAL_NVP( abase2_deriv ) ); // class core::scoring::DerivVectorPair
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::scoring::hbonds::HBondDerivs::load( Archive & arc ) {
+	arc( don_deriv ); // class core::scoring::DerivVectorPair
+	arc( h_deriv ); // class core::scoring::DerivVectorPair
+	arc( acc_deriv ); // class core::scoring::DerivVectorPair
+	arc( abase_deriv ); // class core::scoring::DerivVectorPair
+	arc( abase2_deriv ); // class core::scoring::DerivVectorPair
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::hbonds::HBondDerivs );
+#endif // SERIALIZATION

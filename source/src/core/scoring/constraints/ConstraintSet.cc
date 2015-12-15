@@ -39,6 +39,16 @@
 #include <core/conformation/signals/ConnectionEvent.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/serialization/serialization.hh>
+#include <utility/vector1.srlz.hh>
+
+// Cereal headers
+#include <cereal/types/map.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace scoring {
@@ -47,10 +57,32 @@ namespace constraints {
 /// @details Auto-generated virtual destructor
 ResidueConstraints::~ResidueConstraints() {}
 
+#ifdef    SERIALIZATION
+template < class Archive >
+void
+ResidueConstraints::save( Archive & arc ) const
+{
+	arc( map_ );
+}
+
+template < class Archive >
+void
+ResidueConstraints::load(
+	Archive & arc
+)
+{
+	arc( map_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( ResidueConstraints );
+
+#endif // SERIALIZATION
+
 static THREAD_LOCAL basic::Tracer tr( "core.scoring.ConstraintSet" );
 
 ConstraintSet::ConstraintSet()
 :
+	total_residue_( 0 ),
 	sequence_constraints_(),
 	revision_id_( 0 ),
 	revision_id_current_( false ),
@@ -60,121 +92,180 @@ ConstraintSet::ConstraintSet()
 ConstraintSet::ConstraintSet( ConstraintSet const & other )
 :
 	ReferenceCount(),
+	total_residue_( other.total_residue_ ),
 	sequence_constraints_( other.sequence_constraints_.size() ),
 	residue_pair_constraints_( other.residue_pair_constraints_.size() ),
 	revision_id_( 0 ),
 	revision_id_current_( false ),
 	conformation_pt_( /* NULL */ )
 {
-	basic::ProfileThis doit( basic::CONSTRAINT_SET_COPY );
-
-	//Clone the sequence constraints:
-	for ( core::Size ii=1, iimax=other.sequence_constraints_.size(); ii<=iimax; ++ii ) {
-		if ( other.sequence_constraints_[ii] ) {
-			sequence_constraints_[ii] = utility::pointer::dynamic_pointer_cast< core::scoring::aa_composition_energy::SequenceConstraint const >( other.sequence_constraints_[ii]->clone() );
-		}
-	}
-
-	// Loop over residue 1
-	for ( Size ii = 1; ii <= other.residue_pair_constraints_.size(); ++ii ) {
-
-		if ( ! other.residue_pair_constraints_exists( ii ) ) continue;
-
-		bool first_insert ( true );
-
-		// Loop over residue 2
-		for ( ResiduePairConstraintsIterator
-				iter = other.residue_pair_constraints_[ ii ]->begin(),
-				iter_end = other.residue_pair_constraints_[ ii ]->end();
-				iter  != iter_end; ++iter ) {
-			if ( first_insert ) {
-				residue_pair_constraints_[ ii ] = ResidueConstraintsOP( new ResidueConstraints );
-				first_insert = false;
-			}
-			residue_pair_constraints_[ ii ]->insert( iter->first, iter->second->clone() );
-		}
-	}
-
-	for ( ResiduePairConstraintsIterator
-			iter = other.intra_residue_constraints_.begin(),
-			iter_end = other.intra_residue_constraints_.end();
-			iter  != iter_end; ++iter ) {
-		intra_residue_constraints_.insert( iter->first, iter->second->clone() );
-	}
-
-	non_residue_pair_constraints_ = other.non_residue_pair_constraints_;
-
-	dof_constraints_ = other.dof_constraints_;
-
+	shallow_copy( other, 1, other.total_residue_ );
 }
 
-ConstraintSet::ConstraintSet( ConstraintSet const & other,
+ConstraintSet::ConstraintSet(
+	ConstraintSet const & other,
 	Size start_residue,
-	Size end_residue )
-:
+	Size end_residue
+) :
 	ReferenceCount(),
+	total_residue_( end_residue ),
 	sequence_constraints_( other.sequence_constraints_.size() ),
-	residue_pair_constraints_( other.residue_pair_constraints_.size() ),
+	residue_pair_constraints_( end_residue ),
 	revision_id_( 0 ),
 	revision_id_current_( false ),
 	conformation_pt_( /* NULL */ )
 {
-	basic::ProfileThis doit( basic::CONSTRAINT_SET_COPY );
-
-	//Clone the sequence constraints:
-	for ( core::Size ii=1, iimax=other.sequence_constraints_.size(); ii<=iimax; ++ii ) {
-		if ( other.sequence_constraints_[ii] ) {
-			sequence_constraints_[ii] = utility::pointer::dynamic_pointer_cast< core::scoring::aa_composition_energy::SequenceConstraint const >( other.sequence_constraints_[ii]->clone() );
-		}
-	}
-
-	for ( Size ii = 1; ii <= other.residue_pair_constraints_.size(); ++ii ) {
-
-		if ( ! other.residue_pair_constraints_exists( ii ) ) continue;
-
-		bool first_insert ( true );
-		for ( ResiduePairConstraintsIterator
-				iter = other.residue_pair_constraints_[ ii ]->begin(),
-				iter_end = other.residue_pair_constraints_[ ii ]->end();
-				iter  != iter_end; ++iter ) {
-
-			if (   ((ii < start_residue) || (ii > end_residue)) &&
-					(( iter->first < start_residue) || (iter->first > end_residue )) ) {
-				continue; // do not insert unless eihter end of constraint is in range
-			}
-
-
-			if ( first_insert ) {
-				residue_pair_constraints_[ ii ] = ResidueConstraintsOP( new ResidueConstraints );
-				first_insert = false;
-			}
-			// All Constraints are now immutable, and so do not ever need to be cloned.
-			//residue_pair_constraints_[ ii ]->insert( iter->first, iter->second->clone() );
-			residue_pair_constraints_[ ii ]->insert( iter->first, iter->second );
-		}
-	}
-
-	for ( ResiduePairConstraintsIterator
-			iter = other.intra_residue_constraints_.begin(),
-			iter_end = other.intra_residue_constraints_.end();
-			iter  != iter_end; ++iter ) {
-		// All Constraints are now immutable, and so do not ever need to be cloned.
-		//intra_residue_constraints_.insert( iter->first, iter->second->clone() );
-		if ( (( iter->first < start_residue) || (iter->first > end_residue )) ) {
-			continue; // do not insert unless eihter end of constraint is in range
-		}
-		intra_residue_constraints_.insert( iter->first, iter->second );
-	}
-
-	non_residue_pair_constraints_ = other.non_residue_pair_constraints_;
-
-	dof_constraints_ = other.dof_constraints_;
-
+	shallow_copy( other, start_residue, end_residue );
 }
+
+/// @brief Destructor must detach from conformation
+ConstraintSet::~ConstraintSet() { this->detach_from_conformation(); }
 
 ConstraintSetOP ConstraintSet::clone() const {
 	return ConstraintSetOP( new ConstraintSet( *this ) );
 }
+
+/// @details This can be called by derived classes to make sure
+/// that all of the base class data is efficiently copied.
+ConstraintSet const &
+ConstraintSet::operator = ( ConstraintSet const & rhs ) {
+
+	if ( this == &rhs ) return *this;
+
+	if ( residue_pair_constraints_.size() != rhs.residue_pair_constraints_.size() ) {
+		residue_pair_constraints_.resize( rhs.residue_pair_constraints_.size() );
+		mark_revision_id_expired();
+	}
+
+	for ( Size ii = 1; ii <= residue_pair_constraints_.size(); ++ii ) {
+		if ( ! rhs.residue_pair_constraints_[ ii ] && ! residue_pair_constraints_[ ii ] ) continue;
+
+		if ( ! rhs.residue_pair_constraints_[ ii ] ) {
+			residue_pair_constraints_[ ii ].reset();
+			mark_revision_id_expired();
+			continue;
+		} else if ( ! residue_pair_constraints_[ ii ] ) {
+			residue_pair_constraints_[ ii ] = ResidueConstraintsOP( new ResidueConstraints );
+			mark_revision_id_expired();
+		}
+
+		ResiduePairConstraintsIterator rhs_iter = rhs.residue_pair_constraints_[ ii ]->begin();
+		ResiduePairConstraintsIterator this_iter = residue_pair_constraints_[ ii ]->begin();
+		ResiduePairConstraintsIterator rhs_iter_end = rhs.residue_pair_constraints_[ ii ]->end();
+		ResiduePairConstraintsIterator this_iter_end = residue_pair_constraints_[ ii ]->end();
+		while ( rhs_iter != rhs_iter_end && this_iter != this_iter_end ) {
+			if ( rhs_iter->first == this_iter->first ) {
+				// assignment operator for the Constraints class will perform pointer comparisons
+				// to avoid copying data it doesn't have to
+				(*this_iter->second) = (*rhs_iter->second );
+				++this_iter;
+				++rhs_iter;
+			} else if ( this_iter->first < rhs_iter->first ) {
+				mark_revision_id_expired();
+				ResiduePairConstraintsIterator next_this_iter( this_iter );
+				++next_this_iter;
+				residue_pair_constraints_[ ii ]->erase( this_iter->first );
+				this_iter = next_this_iter;
+			} else {
+				mark_revision_id_expired();
+				residue_pair_constraints_[ ii ]->insert( rhs_iter->first, rhs_iter->second->clone() );
+				++rhs_iter;
+			}
+		}
+
+		// handle extra constraints in this; i.e. there are some constraints that must
+		// be deleted because they aren't in the rhs ConstrainSet
+		while ( this_iter != this_iter_end ) {
+			mark_revision_id_expired();
+			ResiduePairConstraintsIterator next_this_iter( this_iter );
+			++next_this_iter;
+			residue_pair_constraints_[ ii ]->erase( this_iter->first );
+			this_iter = next_this_iter;
+		}
+		// handle extra constraints in rhs; i.e. there are some constraints in the rhs
+		// ConstraintSet that should be copied over into this
+		while ( rhs_iter != rhs_iter_end ) {
+			mark_revision_id_expired();
+			residue_pair_constraints_[ ii ]->insert( rhs_iter->first, rhs_iter->second->clone() );
+			++rhs_iter;
+		}
+	}
+
+	ResiduePairConstraintsIterator rhs_intra_iter = rhs.intra_residue_constraints_.begin();
+	ResiduePairConstraintsIterator this_intra_iter = intra_residue_constraints_.begin();
+	ResiduePairConstraintsIterator rhs_intra_iter_end = rhs.intra_residue_constraints_.end();
+	ResiduePairConstraintsIterator this_intra_iter_end = intra_residue_constraints_.end();
+
+	while ( rhs_intra_iter != rhs_intra_iter_end && this_intra_iter != this_intra_iter_end ) {
+		if ( rhs_intra_iter->first == this_intra_iter->first ) {
+			// assignment operator for the Constraints class will perform pointer comparisons
+			// to avoid copying data it doesn't have to
+			(*this_intra_iter->second) = (*rhs_intra_iter->second );
+			++this_intra_iter;
+			++rhs_intra_iter;
+		} else if ( this_intra_iter->first < rhs_intra_iter->first ) {
+			mark_revision_id_expired();
+			ResiduePairConstraintsIterator next_this_intra_iter( this_intra_iter );
+			++next_this_intra_iter;
+			intra_residue_constraints_.erase( this_intra_iter->first );
+			this_intra_iter = next_this_intra_iter;
+		} else {
+			mark_revision_id_expired();
+			intra_residue_constraints_.insert( rhs_intra_iter->first, rhs_intra_iter->second->clone() );
+			++rhs_intra_iter;
+		}
+	}
+
+	// handle extra constraints in this
+	while ( this_intra_iter != this_intra_iter_end ) {
+		ResiduePairConstraintsIterator next_this_intra_iter( this_intra_iter );
+		++next_this_intra_iter;
+		intra_residue_constraints_.erase( this_intra_iter->first );
+		this_intra_iter = next_this_intra_iter;
+	}
+	// handle extra constraints in rhs
+	while ( rhs_intra_iter != rhs_intra_iter_end ) {
+		intra_residue_constraints_.insert( rhs_intra_iter->first, rhs_intra_iter->second->clone() );
+		++rhs_intra_iter;
+	}
+
+	non_residue_pair_constraints_ = rhs.non_residue_pair_constraints_;
+	dof_constraints_ = rhs.dof_constraints_;
+
+	total_residue_ = rhs.total_residue_;
+
+	// shallow copy of the sequence constraints.
+	sequence_constraints_.resize( rhs.sequence_constraints_.size() );
+	for ( Size ii = 1; ii <= rhs.sequence_constraints_.size(); ++ii ) {
+		if ( sequence_constraints_[ ii ] != rhs.sequence_constraints_[ ii ] ) {
+			// avoid smart-pointer copy if unnecessary.
+			sequence_constraints_[ ii ] = rhs.sequence_constraints_[ ii ];
+		}
+	}
+
+	return *this;
+}
+
+void ConstraintSet::detached_copy( ConstraintSet const & src ) {
+	deep_copy( src );
+}
+
+ConstraintSetOP
+ConstraintSet::detached_clone() const
+{
+	ConstraintSetOP newset( new ConstraintSet );
+	newset->detached_copy( *this );
+	return newset;
+}
+
+bool
+ConstraintSet::same_type_as_me( ConstraintSet const & other, bool recurse /* = true */ ) const {
+	if ( recurse ) {
+		return other.same_type_as_me( *this, false );
+	}
+	return true;
+}
+
 
 /// @brief Copies the data from this ConstraintSet into a new object and returns
 /// an OP atoms are mapped to atoms with the same name in dest pose ( e.g. for
@@ -230,15 +321,10 @@ ConstraintSet::remap_residue_positions(
 	clear();
 
 	for ( ConstraintCOPs::const_iterator it = all_cst.begin(), eit = all_cst.end(); it!=eit; ++it ) {
-
 		ConstraintCOP new_cst = (*it)->remap_resid( smap );
-
 		if ( new_cst ) this->add_constraint( new_cst );
-
 		else tr.Debug << "when remapping the constraint set, one constraint could not be remapped. :( "<< std::endl;
-
 	}
-
 }
 
 void
@@ -503,12 +589,11 @@ add_constraint_to_residue_constraints(
 	residue_constraints.find( seqpos )->second->add_constraint( cst );
 }
 
-
-/// private
-// this function is called twice with interchanged pos1/pos2 parameters ---> all constraints are added symmetrically
 void
 ConstraintSet::add_residue_pair_constraint( Size const pos1, Size const pos2, ConstraintCOP cst )
 {
+	if (  total_residue_ < pos1 ) total_residue_ = pos1;
+	if (  total_residue_ < pos2 ) total_residue_ = pos2;
 	if (  residue_pair_constraints_.size() < pos1 ) residue_pair_constraints_.resize( pos1, 0 );
 	if ( !residue_pair_constraints_[ pos1 ] ) residue_pair_constraints_[ pos1 ] = ResidueConstraintsOP( new ResidueConstraints() );
 
@@ -527,7 +612,7 @@ ConstraintSet::add_constraints( ConstraintCOPs cst_list ) {
 /// @details copy another constraint set into this one
 void
 ConstraintSet::add_constraints( ConstraintSetCOP const cst_set ) {
-	add_constraints(cst_set->get_all_constraints());
+	add_constraints( cst_set->get_all_constraints() );
 	return;
 }
 
@@ -537,16 +622,18 @@ ConstraintSet::add_constraint( ConstraintCOP cst )
 {
 	mark_revision_id_expired();
 
-	core::scoring::aa_composition_energy::SequenceConstraintCOP seq_cst( utility::pointer::dynamic_pointer_cast<core::scoring::aa_composition_energy::SequenceConstraint const>(cst) ); //See whether this is a SequenceConstraint
+	aa_composition_energy::SequenceConstraintCOP seq_cst( utility::pointer::dynamic_pointer_cast< aa_composition_energy::SequenceConstraint const > (cst) ); //see whether this is a SequenceConstraint
 	if ( seq_cst ) { // If it is a sequence constraint, store it as such
 		add_sequence_constraint( seq_cst );
-	} else { //If it is not a sequence constraint (i.e. it's a geometric constraint) store it appropriately:
+	} else {
+
 		// figure out if it's inter-res, residue_pair, or 3+body
 		utility::vector1< int > pos_list( cst->residues() );
 
 		if ( pos_list.size() == 1 ) {
 			// intra-res
 			//  tr.Trace << "add intra-res constraint " << std::endl;
+			if ( total_residue_ < Size(pos_list[1]) ) total_residue_ = pos_list[1];
 			add_constraint_to_residue_constraints( pos_list[1], cst, intra_residue_constraints_ );
 		} else if ( pos_list.size() == 2 ) {
 			// rsd-pai
@@ -556,6 +643,9 @@ ConstraintSet::add_constraint( ConstraintCOP cst )
 		} else {
 			// 3+ body
 			//  tr.Trace << "add 3+body constraint " << std::endl;
+			for ( core::Size ii = 1; ii <= pos_list.size(); ++ii ) {
+				if ( total_residue_ < Size(pos_list[ ii ]) ) total_residue_ = pos_list[ii];
+			}
 			non_residue_pair_constraints_.add_constraint( cst );
 		}
 	}
@@ -617,12 +707,19 @@ ConstraintSet::remove_residue_pair_constraint(
 }
 
 
+void
+ConstraintSet::add_sequence_constraint(
+	core::scoring::aa_composition_energy::SequenceConstraintCOP cst
+)
+{
+	sequence_constraints_.push_back( cst );
+}
+
 bool
 ConstraintSet::remove_constraints(
 	ConstraintCOPs cst_list,
 	bool object_comparison  )
 {
-
 	bool success = false;
 	for ( ConstraintCOPs::iterator it = cst_list.begin(), end = cst_list.end();
 			it != end; ++it ) {
@@ -637,7 +734,8 @@ ConstraintSet::remove_constraints(
 bool
 ConstraintSet::remove_constraint(
 	ConstraintCOP cst,
-	bool object_comparison  )
+	bool object_comparison
+)
 {
 	mark_revision_id_expired();
 
@@ -676,37 +774,48 @@ ConstraintSet::add_dof_constraint( DOF_ID const & id, func::FuncOP func, ScoreTy
 utility::vector1< ConstraintCOP >
 ConstraintSet::get_all_constraints() const
 {
-	// OPs implement operator< so they're OK to use in sets and maps.
-	// Set takes care of duplicate insertions (from residue pair constraints).
-	std::map<std::string, ConstraintCOP> all_constr;
-	std::stringstream constraintString;
+	// NOTE: the old implementation which relied on Constraint::show to create a
+	// string describing each constraint and then put that constraint in a
+	// map from strings to ConstraintOPs had a pretty big bug: if two constraints
+	// produced the same output in their show methods, then only one of them
+	// would be returned by this function.
+	//
+	// This implementation avoids sorting constraints by their address, which can
+	// produce "instabilities" if the address a constraint is allocated in varies
+	// from one run to the next.  The use of std::set< ConstraintOP > would produce
+	// this effect.
+	utility::vector1< ConstraintCOP > all;
 	for ( ResidueConstraints::const_iterator j = intra_residue_constraints_.begin(), i_end = intra_residue_constraints_.end(); j != i_end; ++j ) {
 		for ( Constraints::const_iterator i = j->second->begin(), i_end = j->second->end(); i != i_end; ++i ) {
-			constraintString.str("");
-			(*i)->show(constraintString);
-			all_constr.insert(std::make_pair(constraintString.str(),*i));
+			all.push_back( *i );
 		}
 	}
-	for ( ResiduePairConstraints::const_iterator k = residue_pair_constraints_.begin(), j_end = residue_pair_constraints_.end(); k != j_end; ++k ) {
-		if ( ! *k ) continue; // some entries may be null
-		for ( ResidueConstraints::const_iterator j = (**k).begin(), i_end = (**k).end(); j != i_end; ++j ) {
-			for ( Constraints::const_iterator i = j->second->begin(), i_end = j->second->end(); i != i_end; ++i ) {
-				constraintString.str("");
-				(*i)->show(constraintString);
-				all_constr.insert(std::make_pair(constraintString.str(),*i));
+
+	// since the constraint between residues i and j is held twice in the ConstraintSet,
+	// (once in residue i's residue pair constraints and once in residue j's residue pair
+	// constraints), we cannot blithely insert all residue pair constraints into the list,
+	// but instead, should insert a constraint between i and j only when i < j (because later,
+	// the constraint will appear again in the opposite order -- i.e. as between j and i).
+	for ( core::Size ii = 1; ii <= residue_pair_constraints_.size(); ++ii ) {
+		if ( ! residue_pair_constraints_[ ii ] ) continue; // some entries may be null
+		for ( ResidueConstraints::const_iterator ij_csts = residue_pair_constraints_[ii]->begin(),
+				ij_csts_end = residue_pair_constraints_[ii]->end(); ij_csts != ij_csts_end; ++ij_csts ) {
+			if ( ij_csts->first < ii ) continue; // "j" is ij_csts->first; compare this against the index for i.
+			for ( Constraints::const_iterator cst_iter = ij_csts->second->begin(),
+					cst_iter_end = ij_csts->second->end(); cst_iter != cst_iter_end; ++cst_iter ) {
+				all.push_back( *cst_iter );
 			}
 		}
 	}
+
 	for ( Constraints::const_iterator i = non_residue_pair_constraints_.begin(), i_end = non_residue_pair_constraints_.end(); i != i_end; ++i ) {
-		constraintString.str("");
-		(*i)->show(constraintString);
-		all_constr.insert(std::make_pair(constraintString.str(),*i));
+		all.push_back( *i );
 	}
-	// Copy final set contents into a list to return to user...
-	utility::vector1< ConstraintCOP > all;
-	for ( std::map<std::string, ConstraintCOP>::iterator i = all_constr.begin(), i_end = all_constr.end(); i != i_end; ++i ) {
-		all.push_back(i->second);
+
+	for ( Size ii = 1; ii <= sequence_constraints_.size(); ++ii ) {
+		all.push_back( sequence_constraints_[ ii ] );
 	}
+
 	return all;
 }
 
@@ -726,8 +835,8 @@ ConstraintSet::residue_pair_constraints_end( Size resid ) const
 
 
 void
-ConstraintSet::on_length_change( conformation::signals::LengthEvent const & event ) {
-
+ConstraintSet::on_length_change( conformation::signals::LengthEvent const & event )
+{
 	if ( ! utility::pointer::equal(conformation_pt_, event.conformation) ) {
 		std::cerr << "HUH?!? weird stuff is going on. ConstraintSet is hearing length voices that it shouldn't: " << conformation_pt_.lock() << " != " << event.conformation << std::endl;
 		return;
@@ -748,7 +857,8 @@ ConstraintSet::on_length_change( conformation::signals::LengthEvent const & even
 
 
 void
-ConstraintSet::on_connection_change( core::conformation::signals::ConnectionEvent const & event ) {
+ConstraintSet::on_connection_change( core::conformation::signals::ConnectionEvent const & event )
+{
 	using core::conformation::signals::ConnectionEvent;
 
 	switch ( event.tag ) {
@@ -987,10 +1097,28 @@ ConstraintSet::clear()
 	residue_pair_constraints_.clear();
 	non_residue_pair_constraints_.clear();
 	dof_constraints_.clear();
+	total_residue_ = 0;
 
 	mark_revision_id_expired();
 
 }
+
+void
+ConstraintSet::clear_sequence_constraints() {
+	sequence_constraints_.clear();
+	return;
+}
+
+
+core::Size
+ConstraintSet::n_sequence_constraints() const { return sequence_constraints_.size(); }
+
+core::scoring::aa_composition_energy::SequenceConstraintCOP
+ConstraintSet::sequence_constraint( core::Size const index ) const {
+	runtime_assert_string_msg( index > 0 && index <= sequence_constraints_.size(), "Error in core::scoring::constraints::ConstraintSet::sequence_constraint(): Index is out of range.  Must be greater than zero and less than or equal to the number of sequence constraints." );
+	return sequence_constraints_[index];
+}
+
 
 bool
 ConstraintSet::is_empty() const
@@ -1004,6 +1132,50 @@ ConstraintSet::is_empty() const
 	return empty;
 }
 
+#ifdef    SERIALIZATION
+
+/// @brief Serialize this object
+template < class Archive >
+void
+ConstraintSet::save( Archive & arc ) const
+{
+	arc( total_residue_ );
+	arc( sequence_constraints_ );
+	arc( residue_pair_constraints_ );
+	arc( intra_residue_constraints_ );
+	arc( non_residue_pair_constraints_ );
+	arc( empty_rsdcst_ );
+	arc( dof_constraints_ );
+	arc( revision_id_ );
+	arc( revision_id_current_ );
+	// When a Pose is deserialized, it must re-establish the observation
+	// of the constraint set on the conformation; this pointer cannot
+	// be serialized.
+	// EXEMPT conformation_pt_
+}
+
+/// @brief Deserialize this object
+template < class Archive >
+void
+ConstraintSet::load( Archive & arc )
+{
+	arc( total_residue_ );
+	arc( sequence_constraints_ );
+	arc( residue_pair_constraints_ );
+	arc( intra_residue_constraints_ );
+	arc( non_residue_pair_constraints_ );
+	arc( empty_rsdcst_ );
+	arc( dof_constraints_ );
+	arc( revision_id_ );
+	arc( revision_id_current_ );
+
+	// EXEMPT conformation_pt_
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( ConstraintSet );
+
+#endif // SERIALIZATION
+
 
 std::ostream & operator << (std::ostream & os, ConstraintSet const & set)
 {
@@ -1011,7 +1183,98 @@ std::ostream & operator << (std::ostream & os, ConstraintSet const & set)
 	return os;
 }
 
+/// @details Copy all of the Constraint pointers from other into this so that the
+/// two sets points to the same Constraint objects, but different Constraints. (Reminder,
+/// a Constraint is a single constraint and a Constraints is a container of
+/// Constraint objects). All of the Constraints objects must be cloned -- cloning
+/// a Constraints object creates a shallow copy.  Only constraints that have at least
+/// one residue between start_residue and end_residue will be copied.
+void ConstraintSet::shallow_copy(
+	ConstraintSet const & other,
+	Size start_residue,
+	Size end_residue
+)
+{
+	basic::ProfileThis doit( basic::CONSTRAINT_SET_COPY );
+
+	residue_pair_constraints_.clear();
+	residue_pair_constraints_.resize( other.residue_pair_constraints_.size() );
+
+	for ( Size ii = 1; ii <= other.residue_pair_constraints_.size(); ++ii ) {
+
+		if ( ! other.residue_pair_constraints_exists( ii ) ) continue;
+
+		bool first_insert ( true );
+		for ( ResiduePairConstraintsIterator
+				iter = other.residue_pair_constraints_[ ii ]->begin(),
+				iter_end = other.residue_pair_constraints_[ ii ]->end();
+				iter  != iter_end; ++iter ) {
+
+			if ( ((ii < start_residue) || (ii > end_residue)) &&
+					(( iter->first < start_residue) || (iter->first > end_residue )) ) {
+				continue; // do not insert unless eihter end of constraint is in range
+			}
+
+			if ( first_insert ) {
+				residue_pair_constraints_[ ii ] = ResidueConstraintsOP( new ResidueConstraints );
+				first_insert = false;
+			}
+			// Shallow copy of the Constraint objects all held in a single Constraints object
+			// which must be cloned
+			residue_pair_constraints_[ ii ]->insert( iter->first, iter->second->clone() );
+		}
+	}
+
+	intra_residue_constraints_.clear();
+	for ( ResiduePairConstraintsIterator
+			iter = other.intra_residue_constraints_.begin(),
+			iter_end = other.intra_residue_constraints_.end();
+			iter  != iter_end; ++iter ) {
+		// All Constraints are now immutable, and so do not ever need to be cloned.
+		//intra_residue_constraints_.insert( iter->first, iter->second->clone() );
+		if ( (( iter->first < start_residue) || (iter->first > end_residue )) ) {
+			continue; // do not insert unless eihter end of constraint is in range
+		}
+		intra_residue_constraints_.insert( iter->first, iter->second->clone() );
+	}
+
+	// Constraints assignment operator performs a shallow copy
+	non_residue_pair_constraints_ = other.non_residue_pair_constraints_;
+
+	// DOF_Constraints
+	dof_constraints_ = other.dof_constraints_;
+
+	// Shallow copy of the sequence constraints:
+	sequence_constraints_.resize( other.sequence_constraints_.size() );
+	for ( core::Size ii = 1, iimax = other.sequence_constraints_.size(); ii <= iimax; ++ii ) {
+		if ( sequence_constraints_[ ii ] != other.sequence_constraints_[ii] ) {
+			// pointer comparison -- avoid pointer copy if the two constraint sets are already
+			// pointing at the same constraint object
+			sequence_constraints_[ii] = other.sequence_constraints_[ ii ];
+		}
+	}
+
+}
+
+/// @details Clone all of the constraints from other into this so that the
+/// two sets do not point at any shared data
+void ConstraintSet::deep_copy(
+	ConstraintSet const & other
+)
+{
+	clear();
+	ConstraintCOPs all_other_csts = other.get_all_constraints();
+	for ( ConstraintCOPs::const_iterator iter = all_other_csts.begin(),
+			iter_end = all_other_csts.end(); iter != iter_end; ++iter ) {
+		add_constraint( (*iter)->clone() );
+	}
+}
+
 
 } // constraints
 } // scoring
 } // core
+
+#ifdef SERIALIZATION
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_constraints_ConstraintSet )
+#endif

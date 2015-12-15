@@ -50,6 +50,12 @@
 // C++ headers
 #include <iostream>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace protocols {
 namespace scoring {
 namespace methods {
@@ -75,9 +81,6 @@ public:
 	//PCS_data_per_lanthanides_Ts4(std::string, PCS_file_data_Ts4 & P_f_d, core::Real const weight);
 
 	PCS_data_per_lanthanides_Ts4(std::string, core::Real const weight, utility::vector1< PCS_line_data_Ts4 > & PCS_d_l_a);
-
-private:
-	PCS_data_per_lanthanides_Ts4();
 
 public:
 	~PCS_data_per_lanthanides_Ts4();
@@ -138,6 +141,15 @@ public:
 	calculate_tensor_and_cost_with_svd(PCS_tensor_Ts4 &PCS_t);
 
 	//core::Real calculate_tensor_and_cost_with_svd_precalc(PCS_tensor_Ts4 &PCS_t);
+#ifdef    SERIALIZATION
+public:
+	PCS_data_per_lanthanides_Ts4();
+	friend class cereal::access;
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 
@@ -153,7 +165,6 @@ private:
 	utility::vector1<core::Real> Z_all_;
 
 public:
-	PCS_data_Ts4();
 
 	~PCS_data_Ts4();
 
@@ -213,6 +224,17 @@ public:
 private:
 	void
 	update_matrix_A();
+
+#ifdef    SERIALIZATION
+protected:
+	PCS_data_Ts4();
+	friend class cereal::access;
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 void
@@ -229,4 +251,10 @@ fill_A_line(utility::vector1<core::Real> & A_line,
 }//namespace methods
 }//namespace scoring
 }//namespace protocols
+
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( protocols_scoring_methods_pcsTs4_PseudocontactShiftData )
+#endif // SERIALIZATION
+
+
 #endif
