@@ -74,8 +74,8 @@ struct FullatomDisulfideParams13 {
 
 		a_logA=-419.8120; a_kappa=419.7; a_mu=104.22;
 
-		dss_logA1=-32.9599; dss_kappa1=30.9053; dss_mu1=-86.0964;
-		dss_logA2=-23.3471; dss_kappa2=20.9805; dss_mu2=92.3915;
+		dss_logA1=-32.9599; dss_mixed_logA1=-28.1535; dss_kappa1=30.9053; dss_mixed_kappa1=25.9429; dss_mu1=-86.0964; dss_mixed_mu1=-90.0;
+		dss_logA2=-23.3471; dss_mixed_logA2=-28.1535; dss_kappa2=20.9805; dss_mixed_kappa2=25.9429; dss_mu2=92.3915; dss_mixed_mu2=90.0;
 
 		dcs_logA1=-15.8644; dcs_mu1=-72.2016;  dcs_kappa1=13.3778;
 		dcs_logA2=-16.9017; dcs_mu2=78.0303;   dcs_kappa2=13.6370;
@@ -88,6 +88,8 @@ struct FullatomDisulfideParams13 {
 	Real a_logA, a_kappa, a_mu;
 	// SS dih
 	Real dss_logA1, dss_kappa1, dss_mu1, dss_logA2, dss_kappa2, dss_mu2;
+		// SS dih -- mixed D/L
+	Real dss_mixed_logA1, dss_mixed_kappa1, dss_mixed_mu1, dss_mixed_logA2, dss_mixed_kappa2, dss_mixed_mu2;	
 	// CS dih
 	Real dcs_logA1, dcs_mu1, dcs_kappa1, dcs_logA2, dcs_mu2, dcs_kappa2, dcs_logA3, dcs_mu3, dcs_kappa3;
 

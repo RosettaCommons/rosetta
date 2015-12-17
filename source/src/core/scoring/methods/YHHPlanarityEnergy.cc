@@ -141,7 +141,7 @@ YHHPlanarityEnergy::version() const
 bool
 YHHPlanarityEnergy::defines_score_for_rsd( conformation::Residue const & rsd ) const
 {
-	return rsd.aa() == chemical::aa_tyr && rsd.type().nchi() == 3 && rsd.type().atom_is_hydrogen( rsd.type().chi_atoms(3)[4] );
+	return (rsd.aa() == chemical::aa_tyr || rsd.aa() == chemical::aa_dty ) && rsd.type().nchi() == 3 && rsd.type().atom_is_hydrogen( rsd.type().chi_atoms(3)[4] );
 }
 
 } // methods

@@ -86,6 +86,19 @@ setup_icoor_reassignments_from_commandline(
 	std::map< std::string, utility::vector1< std::string > > & icoor_reassignments
 );
 
+/// @brief Symmetrize the glycine params file (if the user has used the -symmetric_gly_tables option).
+/// @details Ugh.  Special-case logic.
+/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
+void
+apply_symm_gly_corrections(
+	std::string const &child_atom,
+	core::Real &phi,
+	core::Real &theta,
+	core::Real &d,
+	std::string &parent_atom,
+	std::string &angle_atom,
+	std::string &torsion_atom
+);
 
 } // chemical
 } // core

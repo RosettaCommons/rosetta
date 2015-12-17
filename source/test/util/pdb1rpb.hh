@@ -25,6 +25,7 @@ pdb1rpb_pose()
 	return fullatom_pose_from_string( pdb1rpb() );
 }
 
+inline
 core::pose::PoseOP
 pdb1rpb_poseop()
 {

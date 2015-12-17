@@ -196,6 +196,8 @@ sources = {
 		"ScoreTest",
 		"SplitUnfoldedTwoBodyPotential",
 		"SurfacePotential",
+		"SymmDL",
+		"SymmGly",
 		"UnfoldedStatePotential",
 		"use_bicubic_interpolation",
 		"VirtualResidues",

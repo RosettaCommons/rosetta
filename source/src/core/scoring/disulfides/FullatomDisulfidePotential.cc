@@ -426,6 +426,11 @@ FullatomDisulfidePotential::score_this_disulfide(
 	Real ssdist, csang_1, csang_2, dihed, disulf_ca_dihedral_angle_1, disulf_ca_dihedral_angle_2;
 	get_disulfide_params(res1,res2,res1_atom_indices,res2_atom_indices,
 		ssdist,csang_1,csang_2,dihed,disulf_ca_dihedral_angle_1,disulf_ca_dihedral_angle_2);
+		
+	bool const res1_is_d( res1.type().is_d_aa() );
+	bool const res2_is_d( res2.type().is_d_aa() );
+	core::Real const res1_d_multiplier( res1_is_d ? -1.0 : 1.0 );
+	core::Real const res2_d_multiplier( res2_is_d ? -1.0 : 1.0 );
 
 	score = -shift_;
 
@@ -435,35 +440,46 @@ FullatomDisulfidePotential::score_this_disulfide(
 		core::Real z = (ssdist-params_.d_location)/params_.d_scale;
 		core::Real score_d = z*z/2 - log( errfc( -params_.d_shape*z / sqrt(2.) ) + mest_ );
 		score += wt_len_*score_d;
+		//std::cout << "z=" << z << " score_d=" << score_d << " score_dist=" << score << std::endl; //DELETE ME
 	}
 
 	{ // angles
 		// add scores for csang_1 and csang_2
 		score += wt_ang_ * ( -params_.a_logA - params_.a_kappa*cos( pi/180 * (csang_1-params_.a_mu) ) );
-
 		score += wt_ang_*( -params_.a_logA - params_.a_kappa*cos( pi/180 * (csang_2-params_.a_mu) ) );
+		//std::cout << "csang_1=" << csang_1 << " csang_2=" << csang_2 << " score_ang=" << score << std::endl; //DELETE ME
 	}
 
 	{ // SS dih
-		Real ang_ss = dihed;
-		Real exp_score1 = exp(params_.dss_logA1)*exp(params_.dss_kappa1*cos(  pi/180 * (ang_ss-params_.dss_mu1) ));
-		Real exp_score2 = exp(params_.dss_logA2)*exp(params_.dss_kappa2*cos(  pi/180 * (ang_ss-params_.dss_mu2) ));
+		core::Real ang_ss(dihed), exp_score1(0.0), exp_score2(0.0);
+		if( !(res1_is_d == res2_is_d) ) { //Case 1: mixed D/L disulfide (they're not the same)
+			//std::cout << "Mixed D/L." << std::endl; //DELETE ME
+			exp_score1 = exp(params_.dss_mixed_logA1)*exp(params_.dss_mixed_kappa1*cos(  pi/180 * (ang_ss-params_.dss_mixed_mu1) ));
+			exp_score2 = exp(params_.dss_mixed_logA2)*exp(params_.dss_mixed_kappa2*cos(  pi/180 * (ang_ss-params_.dss_mixed_mu2) ));
+		} else { //Case 2: Both L or both D.  (Note that res1_is_d == res2_is_d in this case).
+			//std::cout << "Both L or both D." << std::endl; //DELETE ME
+			exp_score1 = exp(params_.dss_logA1)*exp(params_.dss_kappa1*cos(  pi/180 * (res1_d_multiplier*ang_ss - params_.dss_mu1) ));
+			exp_score2 = exp(params_.dss_logA2)*exp(params_.dss_kappa2*cos(  pi/180 * (res1_d_multiplier*ang_ss - params_.dss_mu2) ));
+		}
 		Real score_ss = -log (exp_score1 + exp_score2 + mest_);
 		score += wt_dihSS_*score_ss;
+		//std::cout << "exp_score1=" << exp_score1 << " exp_score2=" << exp_score2 << " score_SS=" << score << std::endl; //DELETE ME
 	}
 
 	{ // CB-S dihedrals
 		// score disulf_ca_dihedral_angle_1 and disulf_ca_dihedral_angle_2
-		Real exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (disulf_ca_dihedral_angle_1-params_.dcs_mu1) ));
-		Real exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (disulf_ca_dihedral_angle_1-params_.dcs_mu2) ));
-		Real exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (disulf_ca_dihedral_angle_1-params_.dcs_mu3) ));
+		Real exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (res1_d_multiplier*disulf_ca_dihedral_angle_1-params_.dcs_mu1) ));
+		Real exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (res1_d_multiplier*disulf_ca_dihedral_angle_1-params_.dcs_mu2) ));
+		Real exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (res1_d_multiplier*disulf_ca_dihedral_angle_1-params_.dcs_mu3) ));
 		score += wt_dihCS_* ( -log (exp_score1 + exp_score2 + exp_score3 + mest_) );
 
-		exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (disulf_ca_dihedral_angle_2-params_.dcs_mu1) ));
-		exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (disulf_ca_dihedral_angle_2-params_.dcs_mu2) ));
-		exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (disulf_ca_dihedral_angle_2-params_.dcs_mu3) ));
+		exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (res2_d_multiplier*disulf_ca_dihedral_angle_2-params_.dcs_mu1) ));
+		exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (res2_d_multiplier*disulf_ca_dihedral_angle_2-params_.dcs_mu2) ));
+		exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (res2_d_multiplier*disulf_ca_dihedral_angle_2-params_.dcs_mu3) ));
 		score += wt_dihCS_* ( -log (exp_score1 + exp_score2 + exp_score3 + mest_) );
+		//std::cout << "exp_score1=" << exp_score1 << " exp_score2=" << exp_score2 << " exp_score3=" << exp_score3 << " score_CB-S=" << score << std::endl; //DELETE ME
 	}
+	//std::cout.flush(); //DELETE ME!!!
 }
 
 
@@ -484,6 +500,11 @@ FullatomDisulfidePotential::get_disulfide_derivatives(
 	Real ssdist, csang_1, csang_2, dihed, disulf_ca_dihedral_angle_1, disulf_ca_dihedral_angle_2;
 	get_disulfide_params(res1,res2,res1_atom_indices,res2_atom_indices,
 		ssdist,csang_1,csang_2,dihed,disulf_ca_dihedral_angle_1,disulf_ca_dihedral_angle_2);
+
+	bool const res1_is_d( res1.type().is_d_aa() );
+	bool const res2_is_d( res2.type().is_d_aa() );
+	core::Real const res1_d_multiplier( res1_is_d ? -1.0 : 1.0 );
+	core::Real const res2_d_multiplier( res2_is_d ? -1.0 : 1.0 );
 
 	// atom indices
 	Size i_ca1=res1_atom_indices.c_alpha_index(), i_cb1=res1_atom_indices.c_beta_index(), i_sg1=res1_atom_indices.disulf_atom_index();
@@ -538,11 +559,18 @@ FullatomDisulfidePotential::get_disulfide_derivatives(
 
 	{ // SS dih
 		Real ang_ss = dihed;
-		Real exp_score1 = exp(params_.dss_logA1)*exp(params_.dss_kappa1*cos(  pi/180 * (ang_ss-params_.dss_mu1) ));
-		Real exp_score2 = exp(params_.dss_logA2)*exp(params_.dss_kappa2*cos(  pi/180 * (ang_ss-params_.dss_mu2) ));
-		Real dscore_ss = 0.0;
-		dscore_ss += exp_score1 * params_.dss_kappa1 * sin( pi/180 * (ang_ss-params_.dss_mu1) );
-		dscore_ss += exp_score2 * params_.dss_kappa2 * sin( pi/180 * (ang_ss-params_.dss_mu2) );
+		Real exp_score1(0.0), exp_score2(0.0), dscore_ss(0.0);
+		if( !(res1_is_d == res2_is_d) ) { //Case 1: mixed D/L disulfide (they're not the same)
+			exp_score1 = exp(params_.dss_logA1)*exp(params_.dss_kappa1*cos(  pi/180 * (ang_ss-params_.dss_mu1) ));
+			exp_score2 = exp(params_.dss_logA2)*exp(params_.dss_kappa2*cos(  pi/180 * (ang_ss-params_.dss_mu2) ));
+			dscore_ss += exp_score1 * params_.dss_kappa1 * sin( pi/180 * (ang_ss-params_.dss_mu1) );
+			dscore_ss += exp_score2 * params_.dss_kappa2 * sin( pi/180 * (ang_ss-params_.dss_mu2) );
+		} else { //Case 2: All-L or all-D.
+			exp_score1 = exp(params_.dss_logA1)*exp(params_.dss_kappa1*cos(  pi/180 * (res1_d_multiplier*ang_ss-params_.dss_mu1) ));
+			exp_score2 = exp(params_.dss_logA2)*exp(params_.dss_kappa2*cos(  pi/180 * (res1_d_multiplier*ang_ss-params_.dss_mu2) ));
+			dscore_ss += exp_score1 * params_.dss_kappa1 * sin( pi/180 * (res1_d_multiplier*ang_ss-params_.dss_mu1) );
+			dscore_ss += exp_score2 * params_.dss_kappa2 * sin( pi/180 * (res1_d_multiplier*ang_ss-params_.dss_mu2) );
+		}
 		dscore_ss /= ( exp_score1 + exp_score2 + mest_);
 		dscore_ss = weights[ dslf_fa13 ]*wt_dihSS_*dscore_ss;
 
@@ -561,7 +589,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives(
 	}
 
 	{ // CB-S dihedrals
-		Real ang_cs = disulf_ca_dihedral_angle_1;
+		Real ang_cs = res1_d_multiplier*disulf_ca_dihedral_angle_1;
 		Real exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (ang_cs-params_.dcs_mu1) ));
 		Real exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (ang_cs-params_.dcs_mu2) ));
 		Real exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (ang_cs-params_.dcs_mu3) ));
@@ -586,7 +614,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives(
 		r2_atom_derivs[ i_sg2 ].f2() += dscore_cs * f2;
 
 
-		ang_cs = disulf_ca_dihedral_angle_2;
+		ang_cs = res2_d_multiplier*disulf_ca_dihedral_angle_2;
 		exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (ang_cs-params_.dcs_mu1) ));
 		exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (ang_cs-params_.dcs_mu2) ));
 		exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (ang_cs-params_.dcs_mu3) ));

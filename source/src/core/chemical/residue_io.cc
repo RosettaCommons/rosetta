@@ -40,12 +40,14 @@
 // Basic headers
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
+#include <numeric/constants.hh>
 //#include <numeric/xyz.functions.hh>
 
 // Utility headers
@@ -1104,6 +1106,7 @@ read_topology_file(
 
 			l >> child_atom >> phi >> theta >> d >> parent_atom >> angle_atom >> torsion_atom;
 
+			bool const symm_gly_corrections( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ].user() ); //Are we symmetrizing the glycine params file?
 			if ( icoor_reassignments.find( child_atom ) != icoor_reassignments.end() ) {
 				utility::vector1< std::string > const & new_params( icoor_reassignments.find( child_atom )->second );
 				phi   = ObjexxFCL::float_of( new_params[1] );
@@ -1115,6 +1118,10 @@ read_topology_file(
 				tr.Trace << "reassigning icoor: " << myname << ' ' << child_atom << ' ' <<
 					phi << ' ' << theta << ' ' << d  << ' ' <<
 					parent_atom << ' ' << angle_atom<< ' ' << torsion_atom << std::endl;
+			}
+			
+			if( symm_gly_corrections && rsd->aa() == core::chemical::aa_gly ) { //If the user has used the -symmetric_gly_tables option, we need to symmetrize the glycine params file.
+				apply_symm_gly_corrections( child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom  ); 
 			}
 
 			phi = radians(phi); theta = radians(theta); // in degrees in the file for human readability
@@ -1155,6 +1162,7 @@ read_topology_file(
 						}
 						torsion_xyz = rsd_xyz[ torsion_atom ];
 					}
+										
 					kinematics::Stub const stub( rsd_xyz[ parent_atom ], rsd_xyz[ angle_atom ], torsion_xyz );
 					rsd_xyz[ child_atom ] = stub.spherical( phi, theta, d );
 				}
@@ -1545,8 +1553,35 @@ setup_icoor_reassignments_from_commandline(
 
 		icoor_reassignments[ atom_name ] = new_icoor_params;
 	}
+}
 
+/// @brief Symmetrize the glycine params file (if the user has used the -symmetric_gly_tables option).
+/// @details Ugh.  Special-case logic.
+/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
+void
+apply_symm_gly_corrections(
+	std::string const &child_atom,
+	core::Real &phi,
+	core::Real &/*theta*/,
+	core::Real &d,
+	std::string &/*parent_atom*/,
+	std::string &/*angle_atom*/,
+	std::string &torsion_atom
+) {
 
+	if( child_atom == "UPPER") {
+		phi = 180.0;
+	} else if ( child_atom == "1HA" ) {
+		d = 1.089761;
+	} else if ( child_atom == "2HA" ) {
+		phi = -121.4;
+		d = 1.089761;
+		torsion_atom = "C";
+	} else if ( child_atom == "LOWER" ) {
+		phi = 180.0;
+	}
+
+	return;
 }
 
 } // chemical
