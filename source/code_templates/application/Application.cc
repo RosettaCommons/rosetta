@@ -41,20 +41,16 @@ main( int argc, char * argv [] )
 	try {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-
-
+		
+		devel::init( argc, argv );
 		--new_app_options_in--
-
+		register_options();
+		
 		if ( ( ! option [ in::file::l ].user() ) && ( ! option [ in::file::s ].user() ) ) {
 			utility_exit_with_message("Please specify either -s or -l to specify the input PDB.");
 		}
 
-		register_options();
-		devel::init( argc, argv );
-
-
 		--class--OP mover_protocol( new --class--() );
-
 		protocols::jd2::JobDistributor::get_instance()->go( mover_protocol );
 
 
