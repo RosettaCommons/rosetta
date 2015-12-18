@@ -190,8 +190,8 @@ public:
 
 
 class VarSolDistSasaCalculator :
-		public core::pose::metrics::StructureDependentCalculator,
-		public utility::pointer::enable_shared_from_this< VarSolDistSasaCalculator >
+	public core::pose::metrics::StructureDependentCalculator,
+	public utility::pointer::enable_shared_from_this< VarSolDistSasaCalculator >
 {
 	friend class VarSolDRotamerDots;
 public:

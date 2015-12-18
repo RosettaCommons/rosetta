@@ -147,7 +147,7 @@ RNA_LoopCloser::get_cutpoints_closed( pose::Pose const & pose ) {
 			Size const domain1( atom_level_domain_map_->get_domain( NamedAtomID( "OVL1", i ), pose ) );
 			Size const domain2( atom_level_domain_map_->get_domain( NamedAtomID( "OVU1", i+1 ), pose ) );
 			if ( domain1 == domain2 && domain1 > 0 && domain1 != libraries::ROSETTA_LIBRARY_DOMAIN ) {
-				//				TR << TR.Red << "Will not close!!!!!!!!!!!!! " << i << " " << domain1 << std::endl;
+				//    TR << TR.Red << "Will not close!!!!!!!!!!!!! " << i << " " << domain1 << std::endl;
 				continue;
 			}
 		}

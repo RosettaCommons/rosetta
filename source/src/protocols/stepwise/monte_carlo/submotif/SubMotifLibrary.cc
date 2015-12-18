@@ -65,11 +65,11 @@ namespace submotif {
 
 //Constructor
 SubMotifLibrary::SubMotifLibrary( core::chemical::ResidueTypeSetCAP rsd_set,
-																	bool const include_submotifs_from_jump_library,
-																	bool const use_first_jump_for_submotif):
-		rsd_set_( rsd_set ),
-		include_submotifs_from_jump_library_( include_submotifs_from_jump_library ),
-		use_first_jump_for_submotif_( use_first_jump_for_submotif )
+	bool const include_submotifs_from_jump_library,
+	bool const use_first_jump_for_submotif):
+	rsd_set_( rsd_set ),
+	include_submotifs_from_jump_library_( include_submotifs_from_jump_library ),
+	use_first_jump_for_submotif_( use_first_jump_for_submotif )
 {
 	initialize();
 }

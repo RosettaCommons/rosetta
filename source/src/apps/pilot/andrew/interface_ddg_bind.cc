@@ -131,7 +131,7 @@ public:
 		return subset;
 	}
 
-	
+
 
 private:
 	core::Size seqpos_;

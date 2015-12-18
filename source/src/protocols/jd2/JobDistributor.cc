@@ -223,7 +223,7 @@ void JobDistributor::init_jd()
 
 	get_job_list_from_job_inputter();
 
-// have to initialize these AFTER BatchJobInputter->fill_jobs since a new batch might change options
+	// have to initialize these AFTER BatchJobInputter->fill_jobs since a new batch might change options
 	job_outputter_ = JobDistributorFactory::create_job_outputter();
 	parser_ = JobDistributorFactory::create_parser();
 }

@@ -20,7 +20,7 @@
 // unit headers
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <core/id/AtomID.hh>
 #include <core/sequence/SequenceProfile.hh>
 

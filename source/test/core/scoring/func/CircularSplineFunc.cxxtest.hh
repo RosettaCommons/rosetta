@@ -20,7 +20,7 @@
 // unit headers
 #include <core/scoring/func/CircularSplineFunc.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <numeric/constants.hh>
 
 // Cereal headers

@@ -20,7 +20,7 @@
 // unit headers
 #include <core/scoring/func/KarplusFunc.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 // Cereal headers
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>

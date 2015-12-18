@@ -46,7 +46,7 @@
 #include <core/id/AtomID_Mask.hh>
 #include <utility/vector1.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <core/id/AtomID.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 

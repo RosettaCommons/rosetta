@@ -21,7 +21,7 @@
 // unit headers
 #include <core/scoring/constraints/FabConstraint.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <test/util/pose_funcs.hh>

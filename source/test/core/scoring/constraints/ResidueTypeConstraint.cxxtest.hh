@@ -20,7 +20,7 @@
 // unit headers
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <core/id/AtomID.hh>
 
 // Cereal headers

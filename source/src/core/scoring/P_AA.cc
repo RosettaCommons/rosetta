@@ -466,7 +466,8 @@ P_AA::get_Paa_pp_deriv(
 	using numeric::conversions::degrees;
 	using numeric::interpolation::periodic_range::half::bilinearly_interpolated;
 
-	AA const aa( res.backbone_aa() == aa_unk ? res.aa() : res.backbone_aa() ); //This handles D-canonical amino acids, as well as noncanonicals templated on an L-canonical.
+	AA const aa( is_canonical_d_aminoacid( res.aa() ) ? get_l_equivalent( res.aa() ) : ( res.backbone_aa() == aa_unk ? res.aa() : res.backbone_aa() ) ); //This handles D-canonical amino acids, as well as noncanonicals templated on an L-canonical.
+
 	if ( aa > chemical::num_canonical_aas ) return 0.0; //Excludes non-templated noncanonicals.
 
 	const core::Real d_multiplier = res.has_property( "D_AA" ) ? -1.0 : 1.0 ; //A multiplier that's -1 for D-amino acids and 1 for L-amino acids, used to inverte phi and psi for D.

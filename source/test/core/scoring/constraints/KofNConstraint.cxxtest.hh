@@ -20,7 +20,7 @@
 // unit headers
 #include <core/scoring/constraints/KofNConstraint.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <core/id/AtomID.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>

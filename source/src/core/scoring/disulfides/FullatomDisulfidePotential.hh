@@ -88,8 +88,8 @@ struct FullatomDisulfideParams13 {
 	Real a_logA, a_kappa, a_mu;
 	// SS dih
 	Real dss_logA1, dss_kappa1, dss_mu1, dss_logA2, dss_kappa2, dss_mu2;
-		// SS dih -- mixed D/L
-	Real dss_mixed_logA1, dss_mixed_kappa1, dss_mixed_mu1, dss_mixed_logA2, dss_mixed_kappa2, dss_mixed_mu2;	
+	// SS dih -- mixed D/L
+	Real dss_mixed_logA1, dss_mixed_kappa1, dss_mixed_mu1, dss_mixed_logA2, dss_mixed_kappa2, dss_mixed_mu2;
 	// CS dih
 	Real dcs_logA1, dcs_mu1, dcs_kappa1, dcs_logA2, dcs_mu2, dcs_kappa2, dcs_logA3, dcs_mu3, dcs_kappa3;
 

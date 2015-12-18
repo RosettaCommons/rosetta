@@ -1506,8 +1506,8 @@ StepWiseMoveSelector::just_simple_cycles( StepWiseMove const & swa_move, pose::P
 		}
 	} else if ( move_type == DELETE ) {
 		Size new_domain;
-		if (!allow_submotif_split_ &&
-				 const_full_model_info( pose ).is_a_submotif( move_element ) &&
+		if ( !allow_submotif_split_ &&
+				const_full_model_info( pose ).is_a_submotif( move_element ) &&
 				!const_full_model_info( pose ).is_a_submotif_seed( move_element ) ) {
 			new_domain = 0;
 		} else {

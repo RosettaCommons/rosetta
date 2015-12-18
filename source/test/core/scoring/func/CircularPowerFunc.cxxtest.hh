@@ -20,7 +20,7 @@
 // unit headers
 #include <core/scoring/func/CircularPowerFunc.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 // Cereal headers
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>

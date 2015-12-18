@@ -31,7 +31,7 @@ namespace pose {
 namespace datacache {
 
 CacheablePoseRawPtr::CacheablePoseRawPtr( core::pose::PoseOP pose )
-	: CacheableData(), pose_(pose)
+: CacheableData(), pose_(pose)
 {}
 
 CacheablePoseRawPtr::~CacheablePoseRawPtr(){}

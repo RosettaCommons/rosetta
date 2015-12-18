@@ -54,7 +54,7 @@ detect_base_contacts( core::pose::Pose const & pose ) {
 				if ( i == j ) continue;
 				if ( ( pose.residue( i ).nbr_atom_xyz() - pose.residue( j ).nbr_atom_xyz() ).length() > NBR_DIST_CUTOFF ) continue;
 
-				for ( Size jj = 1;jj < pose.residue_type( j ).nheavyatoms(); jj++ ) {
+				for ( Size jj = 1; jj < pose.residue_type( j ).nheavyatoms(); jj++ ) {
 					if ( pose.residue_type( j ).is_virtual( jj ) ) continue;
 					if ( ( pose.residue( i ).xyz( ii ) - pose.residue( j ).xyz( jj ) ).length() < CONTACT_DIST_CUTOFF ) {
 						//      TR << "FOUND CONTACT " << pose.pdb_info()->chain(i) << ":" << pose.pdb_info()->number( i ) << " " << pose.residue(i).atom_name(ii)

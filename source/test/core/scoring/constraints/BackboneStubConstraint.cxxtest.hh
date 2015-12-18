@@ -21,7 +21,7 @@
 // unit headers
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <core/id/AtomID.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/pose/Pose.hh>

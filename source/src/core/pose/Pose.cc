@@ -181,7 +181,7 @@ Pose::operator=( Pose const & src )
 	*data_cache_ = *(src.data_cache_);
 
 	// Shallow copy of the data held in the constant cache
-	if ( ! constant_cache_ ) 	constant_cache_ = ConstDataMapOP( new ConstDataMap );
+	if ( ! constant_cache_ )  constant_cache_ = ConstDataMapOP( new ConstDataMap );
 	*constant_cache_ = *src.constant_cache_;
 
 	observer_cache_ = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, *this ) );

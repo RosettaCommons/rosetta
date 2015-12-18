@@ -27,7 +27,7 @@
 //Auto Headers
 #include <utility/vector1.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 // Cereal headers
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>

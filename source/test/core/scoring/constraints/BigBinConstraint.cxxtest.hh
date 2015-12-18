@@ -108,7 +108,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <core/id/AtomID.hh>
 
 // Cereal headers

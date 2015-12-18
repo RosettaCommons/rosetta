@@ -20,7 +20,7 @@
 // unit headers
 #include <core/scoring/func/CountViolFunc.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <core/scoring/func/HarmonicFunc.hh>
 
 // Cereal headers

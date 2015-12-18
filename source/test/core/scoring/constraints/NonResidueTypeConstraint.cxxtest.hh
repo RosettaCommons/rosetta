@@ -20,7 +20,7 @@
 // unit headers
 #include <core/scoring/constraints/NonResidueTypeConstraint.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <core/id/AtomID.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 

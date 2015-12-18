@@ -20,7 +20,7 @@
 // unit headers
 #include <core/scoring/func/SoedingFunc.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <string>
 #include <sstream>
 

@@ -20,7 +20,7 @@
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/types.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 // Cereal headers
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>

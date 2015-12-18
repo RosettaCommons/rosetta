@@ -98,7 +98,7 @@ public:
 		VDW_REP_SCREEN_INFO, // for stepwise modeling -- grid of peripheral regions that are sterically disallowed.
 		NATIVE_ANTIBODY_SEQ, //For keeping track of the near-native sequence during antibody design.
 
-		// *** IMPORTANT ***		// The 'num_cacheable_data_types' below must be the last enum, and must
+		// *** IMPORTANT ***  // The 'num_cacheable_data_types' below must be the last enum, and must
 		// always be set equal to the (last-2) enum. The 'dummy_cacheable_data_type'
 		// below must be the (last-1) enum, so that 'num_cacheable_data_types' does
 		// NOT require a manual update everytime a new cachaeable_data_type is added.

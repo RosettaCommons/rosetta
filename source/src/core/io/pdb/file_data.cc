@@ -1358,7 +1358,7 @@ build_pose_as_is1(
 
 		// Convert PDB 3-letter code to Rosetta 3-letter code, if a list of alternative codes has been provided.
 		std::pair< std::string, std::string > const & rosetta_names(
-				NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( pdb_name ) );
+			NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( pdb_name ) );
 		std::string const & name3( rosetta_names.first );
 		if ( rosetta_names.second != "" ) {
 			fd.residue_type_base_names[ resid ] = rosetta_names.second;

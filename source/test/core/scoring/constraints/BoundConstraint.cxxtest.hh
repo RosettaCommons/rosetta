@@ -30,7 +30,7 @@
 // C++ Headers
 #include <sstream>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 // Cereal headers
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>

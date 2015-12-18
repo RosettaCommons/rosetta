@@ -20,7 +20,7 @@
 // unit headers
 #include <core/scoring/func/EtableFunc.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 
 // C++ headers used in the serialization unit test
 #include <string>

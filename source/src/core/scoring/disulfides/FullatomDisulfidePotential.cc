@@ -426,7 +426,7 @@ FullatomDisulfidePotential::score_this_disulfide(
 	Real ssdist, csang_1, csang_2, dihed, disulf_ca_dihedral_angle_1, disulf_ca_dihedral_angle_2;
 	get_disulfide_params(res1,res2,res1_atom_indices,res2_atom_indices,
 		ssdist,csang_1,csang_2,dihed,disulf_ca_dihedral_angle_1,disulf_ca_dihedral_angle_2);
-		
+
 	bool const res1_is_d( res1.type().is_d_aa() );
 	bool const res2_is_d( res2.type().is_d_aa() );
 	core::Real const res1_d_multiplier( res1_is_d ? -1.0 : 1.0 );
@@ -452,7 +452,7 @@ FullatomDisulfidePotential::score_this_disulfide(
 
 	{ // SS dih
 		core::Real ang_ss(dihed), exp_score1(0.0), exp_score2(0.0);
-		if( !(res1_is_d == res2_is_d) ) { //Case 1: mixed D/L disulfide (they're not the same)
+		if ( !(res1_is_d == res2_is_d) ) { //Case 1: mixed D/L disulfide (they're not the same)
 			//std::cout << "Mixed D/L." << std::endl; //DELETE ME
 			exp_score1 = exp(params_.dss_mixed_logA1)*exp(params_.dss_mixed_kappa1*cos(  pi/180 * (ang_ss-params_.dss_mixed_mu1) ));
 			exp_score2 = exp(params_.dss_mixed_logA2)*exp(params_.dss_mixed_kappa2*cos(  pi/180 * (ang_ss-params_.dss_mixed_mu2) ));
@@ -560,7 +560,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives(
 	{ // SS dih
 		Real ang_ss = dihed;
 		Real exp_score1(0.0), exp_score2(0.0), dscore_ss(0.0);
-		if( !(res1_is_d == res2_is_d) ) { //Case 1: mixed D/L disulfide (they're not the same)
+		if ( !(res1_is_d == res2_is_d) ) { //Case 1: mixed D/L disulfide (they're not the same)
 			exp_score1 = exp(params_.dss_logA1)*exp(params_.dss_kappa1*cos(  pi/180 * (ang_ss-params_.dss_mu1) ));
 			exp_score2 = exp(params_.dss_logA2)*exp(params_.dss_kappa2*cos(  pi/180 * (ang_ss-params_.dss_mu2) ));
 			dscore_ss += exp_score1 * params_.dss_kappa1 * sin( pi/180 * (ang_ss-params_.dss_mu1) );

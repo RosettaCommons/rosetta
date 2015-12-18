@@ -302,22 +302,22 @@ void ResidualDipolarCoupling::reserve_buffers() {
 
 void ResidualDipolarCoupling::release_buffers() {
 	D_.clear();        // delete[] D_;
-	rhs_.clear();			 // delete[] rhs_;
-	T_.clear();				 // delete[] T_;
-	S_.clear();				 // delete[] S_;
-	SD_.clear();			 // delete[] SD_;
-	EV_.clear();			 // delete[] EV_;
-	FA_.clear();			 // delete[] FA_;
-	trace_.clear();		 // delete[] trace_;
-	maxz_.clear();		 // delete[] maxz_;
-	EIG_.clear();			 // delete[] EIG_;
-	r0_.clear();			 // delete[] r0_;
-	r1_.clear();			 // delete[] r1_;
-	r2_.clear();			 // delete[] r2_;
-	exprdc_.clear();	 // delete[] exprdc_;
+	rhs_.clear();    // delete[] rhs_;
+	T_.clear();     // delete[] T_;
+	S_.clear();     // delete[] S_;
+	SD_.clear();    // delete[] SD_;
+	EV_.clear();    // delete[] EV_;
+	FA_.clear();    // delete[] FA_;
+	trace_.clear();   // delete[] trace_;
+	maxz_.clear();   // delete[] maxz_;
+	EIG_.clear();    // delete[] EIG_;
+	r0_.clear();    // delete[] r0_;
+	r1_.clear();    // delete[] r1_;
+	r2_.clear();    // delete[] r2_;
+	exprdc_.clear();  // delete[] exprdc_;
 	rdcconst_.clear(); // delete[] rdcconst_;
 	rdcweight_.clear();// delete[] rdcweight_;
-	lenex_.clear();		 // delete[] lenex_;
+	lenex_.clear();   // delete[] lenex_;
 }
 
 //initialize local buffers ( S, T, etc. )
@@ -1632,10 +1632,10 @@ void jacobi( ResidualDipolarCoupling::Tensor5 & a, ResidualDipolarCoupling::rvec
 		throw( utility::excn::EXCN_BadInput(" too many iterations in Jacobi when compute RDC tensor") );
 	}
 
-void jacobi3( ResidualDipolarCoupling::Tensor & a, ResidualDipolarCoupling::rvec & d, ResidualDipolarCoupling::Tensor & v, int & nrot )
-{
+	void jacobi3( ResidualDipolarCoupling::Tensor & a, ResidualDipolarCoupling::rvec & d, ResidualDipolarCoupling::Tensor & v, int & nrot )
+		{
 
-	int j,i;
+		int j,i;
 	int iq,ip;
 	Real tresh,theta,tau,t,sm,s,h,g,c;
 	Real b[3];

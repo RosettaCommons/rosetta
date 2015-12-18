@@ -61,10 +61,10 @@ namespace scoring {
 using namespace core;
 using namespace scoring;
 
-	//typedef utility::vector1<core::scoring::RDC> RDC_lines;
+//typedef utility::vector1<core::scoring::RDC> RDC_lines;
 typedef utility::vector1< core::scoring::ResidualDipolarCoupling::RDC_lines > RDC_lines_collection;
-	//typedef core::Real Tensor[3][3];
-	//typedef core::Real rvec[3];
+//typedef core::Real Tensor[3][3];
+//typedef core::Real rvec[3];
 
 
 extern void store_RDC_segments_in_pose(ResidualDipolarCouplingRigidSegmentsOP rdcrs_info,

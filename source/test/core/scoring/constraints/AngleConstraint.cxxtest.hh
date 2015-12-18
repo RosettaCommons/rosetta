@@ -35,7 +35,7 @@
 // Numeric headers
 #include <numeric/conversions.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <core/id/AtomID.hh>
 
 // Cereal headers

@@ -1119,9 +1119,9 @@ read_topology_file(
 					phi << ' ' << theta << ' ' << d  << ' ' <<
 					parent_atom << ' ' << angle_atom<< ' ' << torsion_atom << std::endl;
 			}
-			
-			if( symm_gly_corrections && rsd->aa() == core::chemical::aa_gly ) { //If the user has used the -symmetric_gly_tables option, we need to symmetrize the glycine params file.
-				apply_symm_gly_corrections( child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom  ); 
+
+			if ( symm_gly_corrections && rsd->aa() == core::chemical::aa_gly ) { //If the user has used the -symmetric_gly_tables option, we need to symmetrize the glycine params file.
+				apply_symm_gly_corrections( child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom  );
 			}
 
 			phi = radians(phi); theta = radians(theta); // in degrees in the file for human readability
@@ -1162,7 +1162,7 @@ read_topology_file(
 						}
 						torsion_xyz = rsd_xyz[ torsion_atom ];
 					}
-										
+
 					kinematics::Stub const stub( rsd_xyz[ parent_atom ], rsd_xyz[ angle_atom ], torsion_xyz );
 					rsd_xyz[ child_atom ] = stub.spherical( phi, theta, d );
 				}
@@ -1569,7 +1569,7 @@ apply_symm_gly_corrections(
 	std::string &torsion_atom
 ) {
 
-	if( child_atom == "UPPER") {
+	if ( child_atom == "UPPER" ) {
 		phi = 180.0;
 	} else if ( child_atom == "1HA" ) {
 		d = 1.089761;

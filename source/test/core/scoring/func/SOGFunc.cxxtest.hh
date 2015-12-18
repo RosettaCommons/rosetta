@@ -17,7 +17,7 @@
 #include <core/scoring/func/SOGFunc_Impl.hh>
 #include <core/types.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 // Cereal headers
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>

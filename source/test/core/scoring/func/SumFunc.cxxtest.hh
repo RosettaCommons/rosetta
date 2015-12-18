@@ -20,7 +20,7 @@
 // unit headers
 #include <core/scoring/func/SumFunc.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/PeriodicFunc.hh>
 

@@ -84,7 +84,7 @@
 #include <vector>
 #include <basic/Tracer.fwd.hh>
 
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 #include <core/id/AtomID.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
@@ -253,7 +253,7 @@ public:
 
 	void test_serialize_AtomPairConstraint() {
 		TS_ASSERT( true ); // for non-serialization builds
-#ifdef	SERIALIZATION
+#ifdef SERIALIZATION
 		using namespace core::scoring::constraints;
 		using namespace core::scoring::func;
 		using namespace core::id;
