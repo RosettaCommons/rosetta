@@ -1282,7 +1282,7 @@ SymmetryInfo::resize_asu( Size nres_new ) {
 			last_indep_residue_ = i;
 
 	// update score multiply
-	utility::vector1< Size > score_multiply_new(num_total_residues(), 1);
+	utility::vector1< Size > score_multiply_new(num_total_residues_with_pseudo(), 1);
 	for ( Size i=1; i<= nres_monomer_; ++i ) {
 		for ( Size k=0; k<N; ++k ) {
 			Size res_old = 1 + k * nres_monomer_old;  // just use 1st res of subunit
