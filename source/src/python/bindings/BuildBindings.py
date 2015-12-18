@@ -952,7 +952,7 @@ def prepareMiniLibs(mini_path, bindings_build_path, binding_source_path):
 
         for i, o in enumerate(objs):
             if not o.startswith('/'):
-                name = 'd/{:x}.o'.format(i)
+                name = 'd/{0:x}.o'.format(i)
 
                 source_path = mini_path+'/'+lib_path+ o[len('default/'):]
                 link_path = mini_path+'/'+lib_path+name[len('d/'):]
