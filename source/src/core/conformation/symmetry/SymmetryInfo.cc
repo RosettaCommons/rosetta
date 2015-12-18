@@ -1249,25 +1249,19 @@ SymmetryInfo::jump_clones( Size const seqpos ) const
 
 //fpd remap bb_clones/chi_clones when the ASU size changes
 //fpd this recreates the arrays from scratch so it may be somewhat inefficient
+//sboyken@gmail.com 15/05/03 updating with Frank's code; properly update score_multiply_factor, etc. when new residue appended
 void
 SymmetryInfo::resize_asu( Size nres_new ) {
 	if ( nres_new == nres_monomer_ ) return; // nothing to do
 
 	Size N = subunits();
+	Size nres_monomer_old = nres_monomer_;
 
 	nres_monomer_ = nres_new;
 	bb_clones_.clear();
 	bb_follows_.clear();
 	chi_clones_.clear();
 	chi_follows_.clear();
-
-	// make empty clones array
-	for ( Size i=1; i<= nres_monomer_; ++i ) {
-		Clones clones;
-		clones.clear();
-		bb_clones_.insert( std::make_pair( i, clones ) );
-		chi_clones_.insert( std::make_pair( i, clones ) );
-	}
 
 	for ( Size i=1; i<= nres_monomer_; ++i ) {
 		Clones clones;
@@ -1282,8 +1276,22 @@ SymmetryInfo::resize_asu( Size nres_new ) {
 		bb_clones_.insert( std::make_pair( base, clones ) );
 		chi_clones_.insert( std::make_pair( base, clones ) );
 	}
-}
+	// update last_independent_residue
+ 	 for ( Size i=1; i <=num_total_residues_without_pseudo(); ++i )
+		if ( bb_is_independent(i) )
+			last_indep_residue_ = i;
 
+	// update score multiply
+	utility::vector1< Size > score_multiply_new(num_total_residues(), 1);
+	for ( Size i=1; i<= nres_monomer_; ++i ) {
+		for ( Size k=0; k<N; ++k ) {
+			Size res_old = 1 + k * nres_monomer_old;  // just use 1st res of subunit
+			Size res_new = i + k * nres_monomer_;
+			score_multiply_new[res_new] = score_multiply_[res_old];
+		}
+	}
+	score_multiply_ = score_multiply_new;
+}
 
 //fpd remap jump_clones when the number of monomer jumps changes
 void
