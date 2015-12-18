@@ -34,7 +34,7 @@ typedef utility::pointer::shared_ptr< --class-- const > --class--COP;
 --end_namespace--
 
 
-#endif //INCLUDED_--path--_--class--_fwd_hh
+#endif //INCLUDED_--path_underscore--_--class--_fwd_hh
 
 
 

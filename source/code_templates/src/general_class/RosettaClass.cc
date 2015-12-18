@@ -12,7 +12,7 @@
 /// @brief --brief--
 /// @author --name-- (--email--)
 
-#include <--path_underscore--/--class--.hh>
+#include <--path--/--class--.hh>
 #include <basic/Tracer.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
@@ -20,7 +20,9 @@ static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --namespace--
 
---class--::--class--() {
+--class--::--class--():
+ utility::pointer::ReferenceCount()
+{
 
 }
 

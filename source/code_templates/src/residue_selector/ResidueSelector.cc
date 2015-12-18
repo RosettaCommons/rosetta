@@ -9,7 +9,7 @@
 
 /// @file   core/pack/task/residue_selector/--class--.hh
 /// @brief  The --class-- selects residues in a given proximity of set focus residues
-/// @author Robert Lindner (rlindner@mpimf-heidelberg.mpg.de)
+/// @author --name-- (--email--)
 
 // Unit headers
 #include <--path--/--class--.hh>
@@ -80,6 +80,3 @@ std::string
 
 
 --end_namespace--
-
-
-

@@ -259,8 +259,8 @@ class GenerateGeneralTemplates(GenerateRosettaTemplates):
 
         required = parser.add_argument_group("Required")
         required.add_argument("--type",
-                            help = "The type of template you will be needing. Default = mover",
-                            default = "mover",
+                            help = "The type of template you will be needing.",
+                            required = True,
                             choices = self.types)
 
         required.add_argument("--class_name", "-c",

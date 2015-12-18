@@ -16,9 +16,11 @@
 #ifndef INCLUDED_--path_underscore--_--class--_hh
 #define INCLUDED_--path_underscore--_--class--_hh
 
+#include <--path--/--class--.fwd.hh>
+
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-
+#include <utility/pointer/ReferenceCount.hh>
 
 --namespace--
 
