@@ -68,6 +68,8 @@ public:
 		pose::Pose &pose,
 		utility::vector1<core::fragment::FragSetOP> fragments );
 
+	void include_residues( std::set< core::Size > residues_to_include );
+
 	void exclude_residues( std::set< core::Size > residues_to_exclude );
 
 	/////////////////////////////////////////////////////////////

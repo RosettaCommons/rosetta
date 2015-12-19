@@ -302,6 +302,20 @@ assign_fragprobs(
 
 void
 FragmentBiasAssigner::
+include_residues(
+	std::set< core::Size > residues_to_include
+	//int window_size
+){
+	for ( int r=1; r<=(int)nres_; ++r ) {
+		if ( residues_to_include.find(r) != residues_to_include.end() ) {
+			fragmentProbs_[r] = 1.0; // should I add window here?
+		}
+	}
+}
+
+
+void
+FragmentBiasAssigner::
 exclude_residues(
 	std::set< core::Size > residues_to_exclude
 	//int window_size

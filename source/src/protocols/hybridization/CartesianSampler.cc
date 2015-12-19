@@ -200,6 +200,7 @@ CartesianSampler::init() {
 	force_ss_='D';
 	// ray added
 	exclude_residues_ = false;
+	include_residues_ = false;
 	dump_pdb_ = false;
 	dump_pdb_tag_ = "1";
 	automode_rsd_window_size_ = 0;
@@ -727,6 +728,11 @@ compute_fragment_bias(
 	}
 
 	// remove residues form the frag_bias container - should probably consider window as well
+	if ( include_residues_ ) {
+		frag_bias_assigner.include_residues( residues_to_include_ );
+	}
+
+	// remove residues form the frag_bias container - should probably consider window as well
 	if ( exclude_residues_ ) {
 		frag_bias_assigner.exclude_residues( residues_to_exclude_ );
 	}
@@ -1051,6 +1057,11 @@ CartesianSampler::parse_my_tag(
 	if ( tag->hasOption( "residues_to_exclude" ) ) {
 		residues_to_exclude_ = core::pose::get_resnum_list( tag->getOption<std::string>( "residues_to_exclude" ), pose );
 		exclude_residues_=true;
+	}
+	// residues_to_include duing modeling, prob assigned to be one
+	if ( tag->hasOption( "residues_to_include" ) ) {
+		residues_to_include_ = core::pose::get_resnum_list( tag->getOption<std::string>( "residues_to_include" ), pose );
+		include_residues_=true;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////

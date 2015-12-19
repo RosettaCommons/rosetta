@@ -144,9 +144,10 @@ private:
 	core::Real temp_;
 
 	// FragmentBiasAssigner
-	bool cumulate_prob_, exclude_residues_;
+	bool cumulate_prob_, exclude_residues_, include_residues_;
 	std::set<core::Size> user_pos_;
 	std::set<core::Size> residues_to_exclude_;
+	std::set<core::Size> residues_to_include_;
 
 	// dump pdb right before changing anything
 	bool dump_pdb_;
