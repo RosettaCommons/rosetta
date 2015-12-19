@@ -73,7 +73,6 @@ namespace membrane {
 /// Use the fully specified constructors instead. MembraneInfo is a
 /// data container but is NOT responsible for initialization.
 MembraneInfo::MembraneInfo() :
-	// conformation_( *(new Conformation()) ),
 	thickness_( 0 ),
 	steepness_( 0 ),
 	membrane_rsd_num_( 0 ),
@@ -86,12 +85,10 @@ MembraneInfo::MembraneInfo() :
 /// spanning topology object and optional lipophilicity data. Thickness and
 /// steepness are currently constants
 MembraneInfo::MembraneInfo(
-	Conformation & /*conformation*/,
 	core::Size membrane_pos,
 	core::SSize membrane_jump,
 	SpanningTopologyOP topology
 ) :
-	// conformation_( conformation ),
 	thickness_( 15 ),
 	steepness_( 10 ),
 	membrane_rsd_num_( membrane_pos ),
@@ -106,13 +103,11 @@ MembraneInfo::MembraneInfo(
 /// spanning topology object and optional lipophilicity data. Thickness and
 /// steepness are currently constants
 MembraneInfo::MembraneInfo(
-	Conformation & /*conformation*/,
 	core::Size membrane_pos,
 	core::SSize membrane_jump,
 	LipidAccInfoOP lips,
 	SpanningTopologyOP topology
 ) :
-	//conformation_( conformation ),
 	thickness_( 15 ),
 	steepness_( 10 ),
 	membrane_rsd_num_( membrane_pos ),
@@ -124,7 +119,6 @@ MembraneInfo::MembraneInfo(
 /// @brief Create a deep copy of all data in this object.
 MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
 	utility::pointer::ReferenceCount(),
-	//conformation_( src.conformation_ ),
 	thickness_( src.thickness_ ),
 	steepness_( src.steepness_ ),
 	membrane_rsd_num_( src.membrane_rsd_num_ ),
@@ -143,7 +137,6 @@ MembraneInfo::operator=( MembraneInfo const & src ) {
 	}
 
 	// Make a deep copy of everything
-	// this->conformation_ = src.conformation_;
 	this->thickness_ = src.thickness_;
 	this->steepness_ = src.steepness_;
 	this->membrane_rsd_num_ = src.membrane_rsd_num_;
@@ -169,20 +162,8 @@ MembraneInfo::show( std::ostream & output ) const {
 	output << "Membrane Steepness: " << steepness_ << std::endl;
 	output << "Membrane Spanning Topology " << std::endl;
 
-	// Grab membrane center/normal
-	// Vector center( membrane_center() );
-	// Vector normal( membrane_normal() );
-
-	// Show Current Membrane Position
-	// output << "Membrane Center: " << center.x() << " " << center.y() << " " << center.z() << std::endl;
-	// output << "Membrane Normal: " << normal.x() << " " << normal.y() << " " << normal.z() << std::endl;
-
 	// SHow spanning topology object
 	spanning_topology_->show();
-
-	// TODO
-	// Skipping lips for now, will go back to it
-
 }
 
 // Chemical Information about this Membrane
@@ -353,10 +334,6 @@ MembraneInfo::lipid_acc_data() const {
 /// @brief Show MembraneInfo method for pyrosetta
 std::ostream & operator << ( std::ostream & os, MembraneInfo const & mem_info )
 {
-
-	// Grab membrane position from the pose
-	// Vector center( mem_info.membrane_center() );
-	// Vector normal( mem_info.membrane_normal() );
 
 	// Grab a const version of spanning topology
 	os << "Membrane residue located at position " << mem_info.membrane_rsd_num();

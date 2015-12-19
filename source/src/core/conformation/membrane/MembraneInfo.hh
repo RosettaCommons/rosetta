@@ -68,7 +68,6 @@ public: // Constructors & Setup
 	/// spanning topology object and optional lipophilicity data. Thickness and
 	/// steepness are currently constants
 	MembraneInfo(
-		core::conformation::Conformation & conformation,
 		core::Size membrane_pos,
 		core::SSize membrane_jump,
 		SpanningTopologyOP topology
@@ -80,7 +79,6 @@ public: // Constructors & Setup
 	/// spanning topology object and optional lipophilicity data. Thickness and
 	/// steepness are currently constants
 	MembraneInfo(
-		core::conformation::Conformation & conformation,
 		core::Size membrane_pos,
 		core::SSize membrane_jump,
 		LipidAccInfoOP lips,
@@ -188,9 +186,6 @@ private: // default constructor
 	MembraneInfo();
 
 private: // data
-
-	// Keep track of the Pose's conformation
-	// Conformation& conformation_;
 
 	// Fullatom constants
 	core::Real thickness_;
