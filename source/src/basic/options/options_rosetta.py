@@ -246,6 +246,8 @@ Options = Option_Group( '',
 			Option( 'database', 'PathVector',
 				desc="Database file input search paths.  If the database is not found the ROSETTA3_DB environment "
 					"variable is tried."),
+			Option( 'database_cache_dir', 'Path',
+				desc="Which directory to use when caching processed database files."),
 		), # in:path
 
 		# File options --------------------------------------------------------

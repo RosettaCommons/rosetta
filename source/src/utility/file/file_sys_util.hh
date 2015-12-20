@@ -60,6 +60,10 @@ file_size( std::string const & filename );
 bool
 create_blank_file( std::string const & blank_file );
 
+/// @brief Find an unused random tempfile name with a given prefix (which may include a directory)
+std::string
+create_temp_filename( std::string const & dir, std::string const & prefix );
+
 /// @brief Create a directory if it doesn't already exist
 bool
 create_directory(

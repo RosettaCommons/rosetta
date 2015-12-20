@@ -50,15 +50,8 @@ SpliceSegment::read_many( string const Protein_family_path , string const segmen
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	std::string fname;
-	for ( size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i ) {
-		fname = option[ in::path::database ](i).name();
-		//TR<<"Trying to open folder:"<<fname<<std::endl;
-	}
-
-
 	//Get all PDB_profile_Match files from raltive path
-	const std::string target_path = (fname+Protein_family_path+"pssm/"+segment+"/");
+	const std::string target_path = basic::database::full_name( Protein_family_path+"pssm/"+segment+"/" );
 
 
 	DIR *dir;
@@ -215,15 +208,8 @@ SpliceSegment::all_pdb_profile( string const Protein_family_path, string const s
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	std::string path_to_db;
-	for ( size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i ) {
-		path_to_db = option[ in::path::database ](i).name();
-		//TR<<"Trying to open folder:"<<fname<<std::endl;
-	}
-
-
 	//Get all PDB_profile_Match files from raltive path
-	const std::string target_path = (path_to_db+Protein_family_path+"pdb_profile_match/");
+	const std::string target_path = basic::database::full_name( Protein_family_path+"pdb_profile_match/" );
 
 
 	DIR *dir;
@@ -262,11 +248,7 @@ read_H3_seq( std::string const & Protein_family_path){
 	using namespace basic::options::OptionKeys;
 	std::map< std::string, std::string>pdb_to_H3_seq_map_;
 	pdb_to_H3_seq_map_.clear();
-	std::string path_to_db;
-	for ( size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i ) {
-		path_to_db = option[ in::path::database ](i).name();
-	}
-	const std::string H3_seq_file = (path_to_db+Protein_family_path+"pssm/H3/H3_seq");
+	const std::string H3_seq_file = basic::database::full_name( Protein_family_path+"pssm/H3/H3_seq" );
 	utility::io::izstream data( H3_seq_file );
 	if ( !data ) {
 		TR<<"!!Can't open H3 seq file: "<<H3_seq_file<<". This is probably an error. Using PSSM files instead!!"<<std::endl;

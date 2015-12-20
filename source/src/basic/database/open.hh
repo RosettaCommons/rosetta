@@ -51,6 +51,24 @@ full_name(
 	bool warn = true
 );
 
+/// @brief Does cache file (absolute path) exist?
+/// if dir_only is true, will return true if the cache file could be created.
+bool
+find_cache_file(
+	std::string const & cache_file,
+	bool dir_only
+);
+
+/// @brief Get the (absolute) path to a given cached file.
+/// If source_file is given, it's the full path to the source database file that's being cached.
+/// If for_writing is true, will only check that the given file would be creatable.
+/// Will return an empty string if it can't find a cache file.
+std::string
+full_cache_name(
+	std::string const & short_name,
+	std::string const & source_file,
+	bool for_writing
+);
 
 } // namespace database
 } // namespace basic

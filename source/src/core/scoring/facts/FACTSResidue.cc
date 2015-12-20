@@ -48,6 +48,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <basic/database/open.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -152,13 +153,13 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 	// Read new charge set specified by "score::facts_charge_dir"
 	std::string filename;
 	if ( option[ score::facts_eq_type ]().compare("apprx") == 0 ) { // Call neutral aliphatic charge set
-		filename = option[ in::path::database ](1).name() + "/"
-			+ option[ score::facts_eff_charge_dir ]() + "/"
-			+ rsd.name() + ".params";
+		filename = basic::database::full_name(
+			option[ score::facts_eff_charge_dir ]() + "/"
+			+ rsd.name() + ".params" );
 	} else {
-		filename = option[ in::path::database ](1).name() + "/"
-			+ option[ score::facts_charge_dir ]() + "/"
-			+ rsd.name() + ".params";
+		filename = basic::database::full_name(
+			option[ score::facts_charge_dir ]() + "/"
+			+ rsd.name() + ".params" );
 	}
 
 	// Option for binding affinity calculation

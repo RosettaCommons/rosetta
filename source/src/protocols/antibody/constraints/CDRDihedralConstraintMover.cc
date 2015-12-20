@@ -333,7 +333,8 @@ CDRDihedralConstraintMover::get_number_of_struct_used_for_csts(CDRClusterEnum co
 	std::string path = get_harmonic_cluster_constraint_db_directory();
 	std::string extension = ".txt";
 	std::string specific_path = path + "/"+"MEAN_SD" + extension;
-	std::string fname = option[ OptionKeys::in::path::database ](1).name() + specific_path;
+	std::string fname = basic::database::full_name( specific_path );
+
 	if ( !utility::file::file_exists(fname) ) {
 		throw utility::excn::EXCN_Msg_Exception(" "+fname+" does not exist.  Cannot load load dihedral cst mean_sd data");
 	}
@@ -372,7 +373,6 @@ CDRDihedralConstraintMover::get_harmonic_cluster_constraint_filename(CDRClusterE
 
 	using namespace basic::options;
 
-	std::string fname;
 	std::string cluster_type = ab_info_->get_cluster_name(cluster);
 	if ( cluster_type=="NA" ) {
 		TR<< "Cannot add cluster dihedral constraint to cdr cluster of type NA.  Skipping."<<std::endl;
@@ -381,7 +381,7 @@ CDRDihedralConstraintMover::get_harmonic_cluster_constraint_filename(CDRClusterE
 	std::string path = get_harmonic_cluster_constraint_db_directory();
 	std::string extension = ".txt";
 	std::string specific_path = path + "/"+cluster_type + extension;
-	fname = option[ OptionKeys::in::path::database ](1).name() + specific_path;
+	std::string fname = basic::database::full_name( specific_path );
 	if ( !utility::file::file_exists(fname) ) {
 		TR<< "Fname "<<fname<<" Does not exist.  No constraint will be added."<<std::endl;
 		return "NA";

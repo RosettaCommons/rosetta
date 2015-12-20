@@ -50,6 +50,7 @@
 #include <utility/io/ozstream.hh>
 #include <utility/thread/threadsafe_creation.hh>
 #include <utility/vector1.hh>
+#include <utility/file/file_sys_util.hh>
 
 // External headers
 #include <boost/lexical_cast.hpp>
@@ -521,6 +522,10 @@ RotamerLibrary::decide_read_from_binary() const {
 	}
 
 	std::string binary_filename = get_binary_name();
+	if( binary_filename.size() == 0 ) {
+		return false;
+	}
+
 	//MaximCode
 	if (
 			option[ corrections::shapovalov_lib_fixes_enable ] &&
@@ -748,12 +753,14 @@ bool RotamerLibrary::decide_write_binary() const {
 #endif
 
 	std::string binary_filename = get_binary_name();
-	utility::io::izstream binlib(binary_filename.c_str(),
-		std::ios::in | std::ios::binary);
+	if( binary_filename.size() > 0 ) {
+		utility::io::izstream binlib(binary_filename.c_str(),
+			std::ios::in | std::ios::binary);
 
-	if ( binlib && binary_is_up_to_date(binlib) ) {
-		/// Do not overwrite a binary if it already exists and is up-to-date.
-		return false;
+		if ( binlib && binary_is_up_to_date(binlib) ) {
+			/// Do not overwrite a binary if it already exists and is up-to-date.
+			return false;
+		}
 	}
 	/// if we get this far, then the binary file either doesn't exist or isn't up-to-date.
 
@@ -789,6 +796,25 @@ std::string RotamerLibrary::get_library_name_02() const {
 	return basic::database::full_name(option[corrections::score::dun02_file]);
 }
 
+std::string RotamerLibrary::get_library_name_10() const {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	std::string dirname;
+	if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable] ) {
+		dirname = basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir];
+	} else {
+		dirname = basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir];
+	}
+	// The dun10 directory can be a non-database directory
+	if( utility::file::file_exists( dirname ) && utility::file::is_directory( dirname ) ) {
+		TR.Debug << "Using local directory '" << dirname << "' for dun10 library." << std::endl;
+		return dirname;
+	}
+	return basic::database::full_name(dirname);
+}
+
+// Can return an empty string if the appropriate binary file does not exist.
 std::string RotamerLibrary::get_binary_name() const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -800,23 +826,27 @@ std::string RotamerLibrary::get_binary_name() const {
 	}
 }
 
-std::string RotamerLibrary::get_binary_name_02() const {
+std::string RotamerLibrary::get_binary_name_02(bool for_writing /*=false*/ ) const {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	// Keep the binaries for multiple dun02 libraries seperate.
-	return get_library_name_02() + ".Dunbrack02.lib.bin";
+	return basic::database::full_cache_name( option[corrections::score::dun02_file] + ".Dunbrack02.lib.bin",
+		get_library_name_02(),
+		for_writing );
 }
 
-std::string RotamerLibrary::get_binary_name_10() const {
-	//MaximCode
+std::string RotamerLibrary::get_binary_name_10(bool for_writing /*=false*/ ) const {
+	std::string dirname;
 	if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
 			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable] ) {
-		return basic::database::full_name(
-			basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]
-			+ "/" + "Dunbrack10.lib.bin");
+		dirname = basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir];
 	} else {
-		return basic::database::full_name(
-			basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir]
-			+ "/" + "Dunbrack10.lib.bin");
+		dirname = basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir];
 	}
+
+	return basic::database::full_cache_name( dirname + "/Dunbrack10.lib.bin",
+		get_library_name_10() + "/Dunbrack10.lib", // Needed, as one layer will be stripped off.
+		for_writing );
 }
 
 /// @details The older binary formats did not have a version number, instead,
@@ -978,6 +1008,7 @@ void RotamerLibrary::create_fa_dunbrack_libraries_02_from_binary() {
 	clock_t starttime = clock();
 
 	std::string binary_filename = get_binary_name_02();
+	TR << "Using Dunbrack library binary file '" << binary_filename << "'." << std::endl;
 	utility::io::izstream binlib(binary_filename.c_str(),
 		std::ios::in | std::ios::binary);
 
@@ -1009,6 +1040,8 @@ void RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII() {
 	using namespace utility;
 
 	TR << "Reading Dunbrack Libraries" << std::endl;
+
+	std::string const dun10_dir( get_library_name_10() + "/" );
 
 	clock_t starttime = clock();
 
@@ -1074,39 +1107,11 @@ void RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII() {
 		std::string ii_lc_3lc(chemical::name_from_aa(ii_aa));
 		std::transform(ii_lc_3lc.begin(), ii_lc_3lc.end(), ii_lc_3lc.begin(),
 			tolower);
-		//MaximCode
-		std::string library_name;
-		if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-				|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable] ) {
-			library_name =
-				basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]()
-				+ "/" + ii_lc_3lc + regular_lib_suffix;
-		} else {
-			library_name =
-				basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir]()
-				+ "/" + ii_lc_3lc + regular_lib_suffix;
-		}
+		std::string library_name = dun10_dir + ii_lc_3lc + regular_lib_suffix;
 		utility::io::izstream lib(library_name.c_str());
 		if ( !lib.good() ) {
-			lib.close();
-			//MaximCode
-			if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-					|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable] ) {
-				library_name =
-					basic::database::full_name(
-					basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]()
-					+ "/" + ii_lc_3lc + regular_lib_suffix);
-			} else {
-				library_name =
-					basic::database::full_name(
-					basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir]()
-					+ "/" + ii_lc_3lc + regular_lib_suffix);
-			}
-			lib.open(library_name);
-		}
-		if ( !lib.good() ) {
 			utility_exit_with_message(
-				"Unable to open database file for Dun10 rotamer library: "
+				"Unable to open database file for dun10 rotamer library: "
 				+ library_name);
 		}
 		TR << "Reading " << library_name << std::endl;
@@ -1131,85 +1136,14 @@ void RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII() {
 			tolower);
 		Size const nrchi = srnchi[ii] + 1;
 
-		//MaximCode
-		std::string reg_lib_name;
-		std::string conmin_name;
-		std::string rotdef_name;
-		if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-				|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable] ) {
-			reg_lib_name =
-				basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]()
-				+ "/" + ii_lc_3lc + regular_lib_suffix;
-			conmin_name =
-				basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]()
-				+ "/" + ii_lc_3lc + bbdep_contmin;
-			rotdef_name =
-				basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]()
-				+ "/" + ii_lc_3lc + bbind_midfix + to_string(nrchi)
-				+ bbind_defs;
-			//std::string probs_name   = basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]() + "/" + ii_lc_3lc + bbind_midfix + to_string(nrchi) + bbind_probs ;
-		} else {
-			reg_lib_name =
-				basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir]()
-				+ "/" + ii_lc_3lc + regular_lib_suffix;
-			conmin_name =
-				basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir]()
-				+ "/" + ii_lc_3lc + bbdep_contmin;
-			rotdef_name =
-				basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir]()
-				+ "/" + ii_lc_3lc + bbind_midfix + to_string(nrchi)
-				+ bbind_defs;
-		}
+		std::string reg_lib_name = dun10_dir + ii_lc_3lc + regular_lib_suffix;
+		std::string conmin_name = dun10_dir + ii_lc_3lc + bbdep_contmin;
+		std::string rotdef_name = dun10_dir + ii_lc_3lc + bbind_midfix + to_string(nrchi) + bbind_defs;
 
 		utility::io::izstream lib(  reg_lib_name.c_str() );
 		utility::io::izstream contmin( conmin_name.c_str()  );
 		utility::io::izstream defs( rotdef_name.c_str()  );
 		//utility::io::izstream probs(   probs_name.c_str()   );
-
-		if ( !lib.good() ) {
-			defs.close();
-			lib.close();
-			contmin.close();
-			//probs.close();
-
-			//MaximCode
-			if ( !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
-					|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable] ) {
-				reg_lib_name =
-					basic::database::full_name(
-					basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]()
-					+ "/" + ii_lc_3lc + regular_lib_suffix);
-				conmin_name =
-					basic::database::full_name(
-					basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]()
-					+ "/" + ii_lc_3lc + bbdep_contmin);
-				rotdef_name =
-					basic::database::full_name(
-					basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]()
-					+ "/" + ii_lc_3lc + bbind_midfix
-					+ to_string(nrchi) + bbind_defs);
-				//probs_name   = basic::database::full_name( basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]() + "/" + ii_lc_3lc + bbind_midfix + to_string(nrchi) + bbind_probs );
-			} else {
-				reg_lib_name =
-					basic::database::full_name(
-					basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir]()
-					+ "/" + ii_lc_3lc + regular_lib_suffix);
-				conmin_name =
-					basic::database::full_name(
-					basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir]()
-					+ "/" + ii_lc_3lc + bbdep_contmin);
-				rotdef_name =
-					basic::database::full_name(
-					basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir]()
-					+ "/" + ii_lc_3lc + bbind_midfix
-					+ to_string(nrchi) + bbind_defs);
-			}
-
-			lib.open(reg_lib_name);
-			contmin.open(conmin_name);
-			defs.open(rotdef_name);
-			//probs.open(probs_name);
-		}
 
 		if ( !lib.good() ) {
 			utility_exit_with_message(
@@ -1271,6 +1205,7 @@ void RotamerLibrary::create_fa_dunbrack_libraries_10_from_binary() {
 	clock_t starttime = clock();
 
 	std::string binary_filename = get_binary_name_10();
+	TR << "Using Dunbrack library binary file '" << binary_filename << "'." << std::endl;
 	utility::io::izstream binlib(binary_filename.c_str(),
 		std::ios::in | std::ios::binary);
 
@@ -1336,8 +1271,12 @@ void RotamerLibrary::write_binary_fa_dunbrack_libraries() const {
 
 void RotamerLibrary::write_binary_fa_dunbrack_libraries_02() const {
 #ifndef __native_client__
-	std::string binary_filename = get_binary_name_02();
-	std::string tempfilename = random_tempname("dun02_binary");
+	std::string binary_filename = get_binary_name_02(/*for_writing=*/ true );
+	if( binary_filename.size() == 0 ) {
+		TR << "Unable to open temporary file for writing the binary version of the Dunbrack02 library." << std::endl;
+		return;
+	}
+	std::string tempfilename = random_tempname(binary_filename, "dun02_binary");
 
 	TR << "Opening file " << tempfilename << " for output." << std::endl;
 
@@ -1372,8 +1311,12 @@ void RotamerLibrary::write_binary_fa_dunbrack_libraries_02() const {
 
 void RotamerLibrary::write_binary_fa_dunbrack_libraries_10() const {
 #ifndef __native_client__
-	std::string binary_filename = get_binary_name_10();
-	std::string tempfilename = random_tempname("dun10_binary");
+	std::string binary_filename = get_binary_name_10(/*for_writing=*/ true);
+	if( binary_filename.size() == 0 ) {
+		TR << "Unable to open temporary file for writing the binary version of the Dunbrack10 library." << std::endl;
+		return;
+	}
+	std::string tempfilename = random_tempname(binary_filename, "dun10_binary");
 
 	TR << "Opening file " << tempfilename << " for output." << std::endl;
 
@@ -1476,49 +1419,14 @@ void RotamerLibrary::write_binary_fa_dunbrack_libraries_10() const {
 #endif
 }
 
-std::string RotamerLibrary::random_tempname(std::string const & prefix) const {
+std::string RotamerLibrary::random_tempname(std::string const & same_dir_as, std::string const & prefix) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	// Ugly C stuff...
-#ifdef WIN32
-	char * tmpname_output = _tempnam( option[ in::path::database ](1).name().c_str(), prefix.c_str() );
-	std::string tempfilename = tmpname_output;
-	free( tmpname_output );
-#elif __CYGWIN__
-	char * tmpname_output = tempnam( option[ in::path::database ](1).name().c_str(), prefix.c_str() );
-	std::string tempfilename = tmpname_output;
-	free( tmpname_output );
-#else
-	bool exists = false;
-	std::string dirname = option[in::path::database](1).name();
-	if ( *dirname.rbegin() != '/' ) {
-		dirname += "/";
-	}
-	const char charset[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	const platform::Size max_index = (sizeof(charset) - 1);
-	std::string str = "";
-	std::string tempfilename;
-	do {
-		static numeric::random::uniform_RG_OP RG = 0;
+	std::string dirname = utility::file::FileName( same_dir_as ).path();
+	std::string tempfilename = utility::file::create_temp_filename( dirname, prefix );
 
-		if ( RG == 0 ) {
-			//RG = new numeric::random::mt19937_RG;
-			RG = numeric::random::uniform_RG_OP( new numeric::random::standard_RG );
-			RG->setSeed( time(NULL) );
-		}
-		str += charset[/*rand() % max_index*/int(RG->getRandom()*max_index)];
-		tempfilename  = dirname + str + prefix;
-		std::ifstream file(tempfilename.c_str());
-		if ( file ) {
-			file.close();
-			exists = true;
-		} else exists = false;
-		// char * tmpname_output = tempnam( option[ in::path::database ](1).name().c_str(), prefix.c_str() );
-	} while (exists);
-#endif
 	TR << "Random tempname will be: " << tempfilename << std::endl;
-
 	return tempfilename;
 }
 

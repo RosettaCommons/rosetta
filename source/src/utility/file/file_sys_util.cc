@@ -49,6 +49,10 @@
 // only needed for linux?
 #include <errno.h>
 
+#ifdef CXX11
+#include <random>
+#endif
+
 // Platform headers - Win32
 #ifndef _WIN32
 // #include <unistd.h>
@@ -59,6 +63,11 @@
 #include <windows.h>
 #include <direct.h>
 #include <io.h>
+#endif
+
+#if defined(WIN32) || defined(__CYGWIN__)
+#include <io.h>
+#include <sys/types.h>
 #endif
 
 #ifdef WIN_PYROSETTA
@@ -223,6 +232,55 @@ create_blank_file( std::string const & blank_file )
 	return true;
 }
 
+/// @brief Find an unused random tempfile name with a given prefix (which may include a directory)
+std::string
+create_temp_filename( std::string const & dir, std::string const & prefix ) {
+	// Ugly C stuff...
+#ifdef WIN32
+	char * tmpname_output = _tempnam( dir.c_str(), prefix.c_str() );
+	std::string tempfilename = tmpname_output;
+	free( tmpname_output );
+#elif __CYGWIN__
+	char * tmpname_output = tempnam( dir.c_str(), prefix.c_str() );
+	std::string tempfilename = tmpname_output;
+	free( tmpname_output );
+#else
+	std::string dirname = dir;
+	if ( *dirname.rbegin() != '/' ) {
+		dirname += "/";
+	}
+	bool exists = false;
+	std::string const charset("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+	std::string str = "";
+	std::string tempfilename;
+#ifdef CXX11
+	std::random_device rd; // Gets unseeded random numbers from OS.
+	std::mt19937 mt(rd()); // Start the mt with the random device.
+	std::uniform_int_distribution< int > rand_int(0,charset.size()-1); // Inclusive range
+#else
+	srand(time(NULL));
+#endif
+	do {
+		// We're using the C++ random number generator because we don't want
+		// to pull extra draws on the Rosetta one - besides,
+		// in utility we don't have access to it
+#ifdef CXX11
+		str += charset[rand_int(mt)];
+#else
+		str += charset[rand()%charset.size()];
+#endif
+		tempfilename  = dirname + str + prefix;
+		std::ifstream file(tempfilename.c_str());
+		if ( file ) {
+			file.close();
+			exists = true;
+		} else {
+			exists = false;
+		}
+	} while (exists);
+#endif
+	return tempfilename;
+}
 
 /// @details
 /// Code is based on a discussion on this web site:

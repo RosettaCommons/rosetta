@@ -2023,9 +2023,6 @@ void AbrelaxApplication::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP
 /// @detail after setup() run either fold() or rerun()
 void AbrelaxApplication::run() {
 	using namespace basic::options::OptionKeys;
-	if ( !basic::options::option[ basic::options::OptionKeys::in::path::database ].user() ) {
-		basic::options::option[ basic::options::OptionKeys::in::path::database ].def( "/work/olange/minirosetta_database");
-	}
 	setup();
 
 	if ( option [ OptionKeys::abinitio::rerun ] ) {

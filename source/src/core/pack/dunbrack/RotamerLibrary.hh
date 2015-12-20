@@ -170,6 +170,7 @@ private:
 	bool decide_write_binary_10() const;
 
 	std::string get_library_name_02() const;
+	std::string get_library_name_10() const;
 
 public: // public such that people can see which binary we're reading from.
 
@@ -177,8 +178,8 @@ public: // public such that people can see which binary we're reading from.
 
 private:
 
-	std::string get_binary_name_02() const;
-	std::string get_binary_name_10() const;
+	std::string get_binary_name_02(bool for_writing = false) const;
+	std::string get_binary_name_10(bool for_writing = false) const;
 
 	Size current_binary_format_version_id_02() const;
 	Size current_binary_format_version_id_10() const;
@@ -212,7 +213,7 @@ private:
 	void write_binary_fa_dunbrack_libraries_02() const;
 	void write_binary_fa_dunbrack_libraries_10() const;
 
-	std::string random_tempname( std::string const & prefix ) const;
+	std::string random_tempname( std::string const & same_dir_as, std::string const & prefix ) const;
 
 	/// @brief Instantiate the appropriate RSRDL< T > library given the n_chi input and initialize
 	/// the library from the input stream.  Return the string that the library returns after reading
