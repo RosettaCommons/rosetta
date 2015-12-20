@@ -144,6 +144,15 @@ get_residue_base_state( core::pose::Pose const & pose, Size const seq_num );
 PuckerState
 get_residue_pucker_state( core::pose::Pose const & pose, Size const seq_num );
 
+/// @brief 'suite' backbone torsion -- useful in setting up cutpoint with OVL1, OVL2, OVU atoms
+utility::vector1< std::pair< id::TorsionID, Real > >
+get_suite_torsion_info( core::pose::Pose const & pose, Size const i );
+
+/// @brief useful in setting up cutpoint with OVL1, OVL2, OVU atoms
+void
+apply_suite_torsion_info( core::pose::Pose & pose,
+													utility::vector1< std::pair< id::TorsionID, Real > > const & suite_torsion_info );
+
 
 } //ns rna
 } //ns pose

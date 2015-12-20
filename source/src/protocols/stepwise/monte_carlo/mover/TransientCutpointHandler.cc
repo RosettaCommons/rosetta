@@ -22,6 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
+#include <core/id/TorsionID.hh>
 #include <protocols/stepwise/modeler/util.hh>
 
 #include <basic/Tracer.hh>
@@ -58,7 +59,10 @@ TransientCutpointHandler::~TransientCutpointHandler()
 void
 TransientCutpointHandler::put_in_cutpoints( core::pose::Pose & viewer_pose ){
 
+	using namespace core::pose::rna;
+
 	Pose pose = viewer_pose; // prevent some conflicts with graphics. Note potential slowdown.
+	utility::vector1< std::pair< id::TorsionID, Real > > const suite_torsion_info = get_suite_torsion_info( pose, cutpoint_suite_ );
 
 	fold_tree_save_ = pose.fold_tree();
 
@@ -66,6 +70,7 @@ TransientCutpointHandler::put_in_cutpoints( core::pose::Pose & viewer_pose ){
 	prepare_fold_tree_for_erraser( pose );
 
 	pose::correctly_add_cutpoint_variants( pose, cutpoint_suite_ );
+	apply_suite_torsion_info( pose, suite_torsion_info );
 
 	viewer_pose = pose;
 }

@@ -974,6 +974,42 @@ get_residue_pucker_state( core::pose::Pose const & pose, Size const seq_num ){
 	return core::chemical::rna::get_residue_pucker_state( pose.residue( seq_num ) );
 }
 
+/////////////////////////////////////////////////////////////////////////////////////
+/// Could this be made more general? Figured out through knowledge of where side
+///  chain atoms connect to polymeric backbone?
+utility::vector1< std::pair< core::id::TorsionID, core::Real > >
+get_suite_torsion_info( core::pose::Pose const & pose, Size const i )
+{
+	using namespace utility;
+	using namespace core::id;
+	vector1< TorsionID > torsion_ids;
+	if ( pose.residue_type( i ).is_NA() ) {
+		torsion_ids.push_back( TorsionID( i  , BB, 5 ) ); // epsilon
+		torsion_ids.push_back( TorsionID( i  , BB, 6 ) ); // zeta
+		torsion_ids.push_back( TorsionID( i+1, BB, 1 ) ); // alpha
+		torsion_ids.push_back( TorsionID( i+1, BB, 2 ) ); // beta
+		torsion_ids.push_back( TorsionID( i+1, BB, 3 ) ); // gamma
+	} else if ( pose.residue_type( i ).is_protein() ) {
+		torsion_ids.push_back( TorsionID( i  , BB, 2 ) ); // psi
+		torsion_ids.push_back( TorsionID( i  , BB, 3 ) ); // omega
+		torsion_ids.push_back( TorsionID( i+1, BB, 1 ) ); // phi
+	}
+	vector1< std::pair< TorsionID, Real > > suite_torsion_info;
+	for ( Size n = 1; n <= torsion_ids.size(); n++ ) {
+		suite_torsion_info.push_back( std::make_pair( torsion_ids[ n ], pose.torsion( torsion_ids[ n ] ) ) );
+	}
+	return suite_torsion_info;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+void
+apply_suite_torsion_info( core::pose::Pose & pose,
+													utility::vector1< std::pair< core::id::TorsionID, core::Real > > const & suite_torsion_info ) {
+	for ( Size n = 1; n <= suite_torsion_info.size(); n++ ) {
+		pose.set_torsion( suite_torsion_info[ n ].first, suite_torsion_info[ n ].second );
+	}
+}
+
 
 } //ns rna
 } //ns pose

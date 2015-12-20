@@ -855,49 +855,16 @@ update_fixed_domain_from_extra_minimize_jump_res( vector1< Size > & fixed_domain
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-/// Could this be made more general? Figured out through knowledge of where side
-///  chain atoms connect to polymeric backbone?
-vector1< pair< TorsionID, Real > >
-get_suite_torsion_info( pose::Pose const & pose, Size const i )
-{
-	vector1< TorsionID > torsion_ids;
-	if ( pose.residue_type( i ).is_NA() ) {
-		torsion_ids.push_back( TorsionID( i  , BB, 5 ) ); // epsilon
-		torsion_ids.push_back( TorsionID( i  , BB, 6 ) ); // zeta
-		torsion_ids.push_back( TorsionID( i+1, BB, 1 ) ); // alpha
-		torsion_ids.push_back( TorsionID( i+1, BB, 2 ) ); // beta
-		torsion_ids.push_back( TorsionID( i+1, BB, 3 ) ); // gamma
-	} else if ( pose.residue_type( i ).is_protein() ) {
-		torsion_ids.push_back( TorsionID( i  , BB, 2 ) ); // psi
-		torsion_ids.push_back( TorsionID( i  , BB, 3 ) ); // omega
-		torsion_ids.push_back( TorsionID( i+1, BB, 1 ) ); // phi
-	}
-	vector1< pair< TorsionID, Real > > suite_torsion_info;
-	for ( Size n = 1; n <= torsion_ids.size(); n++ ) {
-		suite_torsion_info.push_back( make_pair( torsion_ids[ n ], pose.torsion( torsion_ids[ n ] ) ) );
-	}
-	return suite_torsion_info;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////
-void
-apply_suite_torsion_info( pose::Pose & pose,
-	vector1< pair< TorsionID, Real > > const & suite_torsion_info ) {
-	for ( Size n = 1; n <= suite_torsion_info.size(); n++ ) {
-		pose.set_torsion( suite_torsion_info[ n ].first, suite_torsion_info[ n ].second );
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////////////
 void
 add_cutpoint_closed( pose::Pose & pose,
 	vector1< Size > const & res_list,
 	vector1< Size > const & cutpoint_closed ) {
+	using namespace core::pose::rna;
 	for ( Size n = 1; n <= cutpoint_closed.size(); n++ ) {
 		if ( !res_list.has_value( cutpoint_closed[ n ] ) ) continue;
 		Size const i = res_list.index( cutpoint_closed[ n ] );
 		// could be useful in general -- share this with TransientCutpointHandler?
-		vector1< pair< TorsionID, Real > > const suite_torsion_info = get_suite_torsion_info( pose ,i );
+		vector1< pair< TorsionID, Real > > const suite_torsion_info = get_suite_torsion_info( pose, i );
 		put_in_cutpoint( pose, i );
 		correctly_add_cutpoint_variants( pose, i );
 		apply_suite_torsion_info( pose, suite_torsion_info );
