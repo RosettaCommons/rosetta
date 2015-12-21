@@ -1277,9 +1277,11 @@ SymmetryInfo::resize_asu( Size nres_new ) {
 		chi_clones_.insert( std::make_pair( base, clones ) );
 	}
 	// update last_independent_residue
- 	 for ( Size i=1; i <=num_total_residues_without_pseudo(); ++i )
-		if ( bb_is_independent(i) )
+	for ( Size i=1; i <=num_total_residues_without_pseudo(); ++i ) {
+		if ( bb_is_independent(i) ) {
 			last_indep_residue_ = i;
+		}
+	}
 
 	// update score multiply
 	utility::vector1< Size > score_multiply_new(num_total_residues_with_pseudo(), 1);

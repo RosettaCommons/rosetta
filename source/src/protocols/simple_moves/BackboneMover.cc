@@ -24,6 +24,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/id/DOF_ID_Range.hh>
 #include <core/id/TorsionID_Range.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -59,9 +60,20 @@ using namespace core;
 //constructor
 BackboneMover::BackboneMover() :
 	protocols::canonical_sampling::ThermodynamicMover(),
+	movemap_(),
 	temperature_( 0.5 ),
 	nmoves_( 1 ),
-	preserve_detailed_balance_(false)
+	num_( 0 ),
+	resnum_( 0 ),
+	tries_( 0 ),
+	big_angle_( 0 ),
+	small_angle_( 0 ),
+	pos_list_( ),
+	already_moved_( ),
+	old_phi_(0), new_phi_(0), old_psi_(0), new_psi_(0), old_rama_score_(0), new_rama_score_(0),
+	preserve_detailed_balance_(false),
+	selector_(),
+	selection_()
 {
 	moves::Mover::type( "BackboneMoverBase" );
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
@@ -80,13 +92,55 @@ BackboneMover::BackboneMover(
 	movemap_( movemap_in ),
 	temperature_( temperature_in),
 	nmoves_( nmoves_in ),
-	preserve_detailed_balance_(false)
+	num_( 0 ),
+	resnum_( 0 ),
+	tries_( 0 ),
+	big_angle_( 0 ),
+	small_angle_( 0 ),
+	pos_list_( ),
+	already_moved_( ),
+	old_phi_(0), new_phi_(0), old_psi_(0), new_psi_(0), old_rama_score_(0), new_rama_score_(0),
+	preserve_detailed_balance_(false),
+	selector_(),
+	selection_()
 {
 	moves::Mover::type( "BackboneMoverBase" );
 	// set default values for angle_max since it is not passed in
 	angle_max( 'H', 0.0 ); // helix
 	angle_max( 'L', 6.0 ); // other
 	angle_max( 'E', 5.0 ); // strand
+}
+
+///@brief Copy constructor
+///
+BackboneMover::BackboneMover( BackboneMover const &src ) :
+	protocols::canonical_sampling::ThermodynamicMover( src ),
+	movemap_(), // Copied below
+	temperature_( src.temperature_ ),
+	nmoves_( src.nmoves_ ),
+	angle_max_( src.angle_max_),
+	num_( src.num_ ),
+	resnum_( src.resnum_ ),
+	tries_( src.tries_ ),
+	big_angle_( src.big_angle_ ),
+	small_angle_( src.small_angle_ ),
+	pos_list_( src.pos_list_ ),
+	already_moved_( src.already_moved_ ),
+	old_phi_(src.old_phi_), new_phi_(src.new_phi_), old_psi_(src.old_psi_), new_psi_(src.new_psi_), old_rama_score_(src.old_rama_score_), new_rama_score_(src.new_rama_score_),
+	preserve_detailed_balance_( src.preserve_detailed_balance_ ),
+	selector_(), // Cloned below
+	selection_( src.selection_ )
+{
+	if ( src.movemap_ ) {
+		movemap_ = src.movemap_;
+	} else {
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
+		movemap->set_bb( true ); // allow all backbone residues to move
+		movemap_=movemap; // and make this a constant object
+	}
+	if ( src.selector_ ) {
+		selector_ = src.selector_->clone();
+	}
 }
 
 //destructor
@@ -148,6 +202,17 @@ core::Real BackboneMover::new_phi() { return new_phi_; }
 
 core::Real BackboneMover::new_psi() { return new_psi_; }
 
+/// @brief Set the ResidueSelector that this mover will use.
+/// @details Clones the input.
+void
+BackboneMover::set_residue_selector(
+	core::select::residue_selector::ResidueSelectorCOP selector
+) {
+	runtime_assert_string_msg( selector, "Error in protocols::simple_moves::BackboneMover::set_residue_selector(): An invalid ResidueSelector owning pointer was passed to this function." );
+	selector_ = selector->clone();
+	return;
+}
+
 void
 BackboneMover::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -164,6 +229,19 @@ BackboneMover::parse_my_tag(
 	nmoves( tag->getOption<core::Size>( "nmoves", nmoves_ ) );
 	angle_max( tag->getOption<core::Real>( "angle_max", 6.0 ) );
 	set_preserve_detailed_balance( tag->getOption<bool>( "preserve_detailed_balance", preserve_detailed_balance_ ) );
+	if ( tag->hasOption("selector") ) {
+		std::string const selector_name ( tag->getOption< std::string >( "selector" ) );
+		if ( TR.visible() ) TR << "Set selector name to " << selector_name << "." << std::endl;
+		core::select::residue_selector::ResidueSelectorCOP residue_selector;
+		try {
+			residue_selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from AddCompositionConstraintMover::parse_tag()\n" + e.msg();
+			throw utility::excn::EXCN_Msg_Exception( error_message );
+		}
+		runtime_assert( residue_selector );
+		set_residue_selector( residue_selector );
+	}
 }
 
 void BackboneMover::apply( core::pose::Pose & pose )
@@ -206,6 +284,7 @@ void BackboneMover::apply( core::pose::Pose & pose )
 			//choose a random position from the list of positions previously chose to be candidate positions
 			std::pair< int, Real > const & random_pos( pos_list_[ static_cast< int >( numeric::random::rg().uniform() * pos_list_.size() + 1 ) ] );
 			resnum_ = random_pos.first;
+
 			set_angles( random_pos.second );
 
 			//  next three lines skip ends of structure !!
@@ -258,6 +337,7 @@ void BackboneMover::clear() {
 	tries_=0;
 	pos_list_.erase(pos_list_.begin(), pos_list_.end());
 	already_moved_.erase(already_moved_.begin(), already_moved_.end());
+	selection_.clear();
 }
 
 bool BackboneMover::check_rama() {
@@ -332,8 +412,15 @@ SmallMover::fresh_instance() const {
 
 void SmallMover::setup_list( core::pose::Pose & pose )
 {
+	//Mask by ResidueSelector:
+	selection_ = core::select::residue_selector::ResidueSubset( pose.n_residue(), true);
+	if ( selector_ ) { //If a ResidueSelector is specified, apply it now.
+		selection_ = selector_->apply(pose);
+	}
+
 	using namespace id;
 	for ( int i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+		if ( !selection_[i] ) continue; //Skip residues masked by the ResidueSelector.
 		conformation::Residue const & rsd( pose.residue( i ) );
 		//Checks if the residue is protein and has a free psi and phi angle as determined by the move map
 		if ( rsd.is_protein() && movemap_->get( TorsionID( i, BB, phi_torsion ) ) &&
@@ -495,10 +582,17 @@ ShearMover::fresh_instance() const {
 
 void protocols::simple_moves::ShearMover::setup_list( core::pose::Pose & pose )
 {
+	//Mask by ResidueSelector:
+	selection_ = core::select::residue_selector::ResidueSubset( pose.n_residue(), true);
+	if ( selector_ ) { //If a ResidueSelector is specified, apply it now.
+		selection_ = selector_->apply(pose);
+	}
+
 	using namespace id;
 
 	// Compare code below to that for SmallMover above.
 	for ( int i=2, i_end = pose.total_residue(); i<= i_end; ++i ) {
+		if ( !selection_[i] ) continue;
 		conformation::Residue const & rsd( pose.residue( i ) );
 		if ( rsd.is_protein() && movemap_->get( TorsionID( i, BB, phi_torsion ) /*phi of i*/) &&
 				movemap_->get( TorsionID( i-1, BB, psi_torsion ) /*psi of i-1*/) ) {
