@@ -18,4 +18,4 @@ testinputfiles = [
 include_path = [ "#external/cxxtest", "#" ]
 library_path = []
 libraries    = []
-subprojects  = [ "sqlite3", "cppdb", ]
+subprojects  = []

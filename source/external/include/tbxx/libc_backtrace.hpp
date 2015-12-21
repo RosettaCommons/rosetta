@@ -5,16 +5,30 @@
 #include <cstdlib>
 #include <cstring>
 
+// Provide workaround for modern compiler feature, if missing
+#ifdef __has_include
+#define MY__has_include( x ) __has_include( x )
+#else
+#define MY__has_include( x ) 1
+#endif
+
 #if defined(__GNUC__)
 #if (defined(__linux) \
  || (defined(__APPLE_CC__) && __APPLE_CC__ >= 5465)) && !defined(ANDROID)
+
+#if MY__has_include( <execinfo.h> )
 #include <execinfo.h>
 #define TBXX_LIBC_BACKTRACE_HAVE_EXECINFO_H
+#endif
+
 #if ((__GNUC__ > 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1))) \
- && !defined(__EDG_VERSION__)
+ && !defined(__EDG_VERSION__) 
+#if MY__has_include( <cxxabi.h> )
 #include <cxxabi.h>
 #define TBXX_LIBC_BACKTRACE_HAVE_CXXABI_H
 #endif
+#endif
+
 #endif
 #endif
 

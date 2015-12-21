@@ -23,17 +23,12 @@
 ###########################################################################
 
 if( ${COMPILER} STREQUAL "gcc" )
+	ADD_DEFINITIONS(-DPTR_BOOST)
 	set( cc
 			#-std=c99
-			-isystem external/boost_1_55_0/
-			-isystem external/include/
-			-isystem external/dbio/
 	)
 	set( cxx
 			-std=c++98
-			-isystem external/boost_1_55_0/
-			-isystem external/include/
-			-isystem external/dbio/
 	)
 	set( compile
 			-pipe
@@ -113,17 +108,12 @@ endif()
 set(WITH_LIBSTDC++ ON CACHE BOOL "Build libraries using libstdc++ when using clang compiler. ")
 
 if( ${COMPILER} STREQUAL "clang" )
+	ADD_DEFINITIONS(-DPTR_BOOST)
 	set( cc
 			#-std=c99
-			-isystem external/boost_1_55_0/
-			-isystem external/include/
-			-isystem external/dbio/
 	)
 	set( cxx
 			-std=c++98
-			-isystem external/boost_1_55_0/
-			-isystem external/include/
-			-isystem external/dbio/
 	)
 	set( compile
 			-pipe
@@ -169,7 +159,6 @@ if(APPLE AND ${COMPILER} STREQUAL "clang")
 	-stdlib=libstdc++
     )
 
-    REMOVE_DEFINITIONS(-DPTR_MODERN)
     REMOVE_DEFINITIONS(-DPTR_BOOST)
 
     ADD_DEFINITIONS(-DCXX11)
@@ -177,9 +166,6 @@ if(APPLE AND ${COMPILER} STREQUAL "clang")
 
     set( cxx
           -std=c++11
-          -isystem external/boost_1_55_0/
-          -isystem external/include/
-          -isystem external/dbio/
 	  -stdlib=libc++
     )
     set( shlink
@@ -235,16 +221,9 @@ if( EXTRAS )
 	if( ${EXTRAS} STREQUAL "cxx11" )
 	    set( cc
 			    #-std=c99
-			    -isystem external/boost_1_55_0/
-			    -isystem external/include/
-			    -isystem external/dbio/
 	    )
 	    set( cxx
 			    -std=c++11
-			    -isystem external/boost_1_55_0/
-			    -isystem external/include/
-			    -isystem external/dbio/
-
 	    )
 	    set( compile
 			    -pipe
@@ -295,9 +274,6 @@ if( EXTRAS )
 		link_directories( /usr/X11R6/lib )
 		set( cxx
 			    -std=c++98
-			    -isystem external/boost_1_55_0/
-			    -isystem external/include/
-			    -isystem external/dbio/
 
 	        )
 		REMOVE_DEFINITIONS(-DCXX11)

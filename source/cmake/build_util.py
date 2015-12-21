@@ -6,6 +6,7 @@ PROJECTS_SETTINGS = {}
 execfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../projects.settings") ,PROJECTS_SETTINGS)
 KNOWN_PROJECTS = PROJECTS_SETTINGS["projects"]["src"]
 KNOWN_TESTS =PROJECTS_SETTINGS["projects"]["test"]
+KNOWN_EXTERNAL =PROJECTS_SETTINGS["projects"]["external"]
 
 def list_project_files(path_to_source_dir, project_name, look_for_extension = 'all'):
 	path_to_project = path_to_source_dir + 'src/'
@@ -119,6 +120,49 @@ def list_test_files(path_to_source_dir, test_name):
 
 	return (path_to_test, test_files, test_inputs)
 
+def list_external_files(path_to_mini, external_name):
+	path_to_external = path_to_mini + '/external/'
+	settings_file_name = path_to_external + external_name + '.external.settings'
+        if not os.path.exists( settings_file_name ):
+            return ( "", [] , [] )
+	settings_dict = {}
+	execfile(settings_file_name, settings_dict)
+
+	project_files = []
+	for dir, srcfiles in settings_dict['sources'].iteritems():
+		if len(dir) != 0 and dir[-1] != '/':
+			dir += '/'
+
+		full_path = path_to_external + dir
+
+		old_srcfiles = srcfiles
+		srcfiles = []
+		for srcfile in old_srcfiles:
+			if srcfile.endswith( ".cu" ):
+				continue # APL NOTE: cannot currently compile cuda files with cmake
+                        if os.path.exists( full_path + srcfile):
+                                srcfiles.append(srcfile)
+			elif os.path.exists(full_path + srcfile + '.cc'):
+				srcfiles.append(srcfile + '.cc')
+			elif os.path.exists(full_path + srcfile + '.c'):
+				srcfiles.append(srcfile + '.c')
+			else:
+				raise RuntimeError('Nonexistent source file: ' + full_path + srcfile)
+
+		if not os.path.exists(full_path):
+			# Git ignores empty directories, so if there aren't any headers or source files the listdir() below may choke.
+			# A missing directory where something was expected should error out above.
+			continue
+
+		hdrfiles = os.listdir(full_path)
+		hdrfiles = [hdrfile for hdrfile in hdrfiles if hdrfile.endswith('.hh') or hdrfile.endswith('.h')]
+
+		dirfiles = sorted(hdrfiles + srcfiles)
+		project_files.append((dir, dirfiles))
+
+	return (path_to_external, project_files, settings_dict.get('defines',[]))
+
+
 def update_libraries_list(projects):
 	exclude = ['apps', 'pilot_apps']
 	out = open( 'build/libraries.cmake', 'w')
@@ -129,6 +173,13 @@ def update_test_list(projects, test_path):
 	try:
 		out.write('SET( TEST_LIBRARIES ' + ' '.join( projects) + ')\n')
 		out.write('SET( SRCDIR ' + test_path + ' )\n' )
+	finally:
+		out.close()
+
+def update_externals_list(projects):
+	out = open('build/external_libraries.cmake', 'w')
+	try:
+		out.write('SET( EXTERNAL_LIBRARIES ' + ' '.join( projects) + ')\n')
 	finally:
 		out.close()
 
@@ -149,6 +200,27 @@ def test_main(path_to_source_dir, argv, project_test_callback = None):
 		project_test_callback(test, path_to_source_dir, "build/", test_files, test_inputs)
 
 	update_test_list(tests, path_to_source_dir + "test/")
+
+def external_main(path_to_mini, argv, project_external_callback = None):
+	externals =  [ "all" ]
+
+	if externals == [ "all" ]:
+		externals = KNOWN_EXTERNAL
+
+        buildable_externals = []
+	for external in externals:
+
+		if external not in KNOWN_EXTERNAL:
+			print 'unknown external project: ' + external
+			sys.exit(-1)
+
+		project_path, project_files, defines = list_external_files(path_to_mini, external)
+                if project_files:
+		    project_external_callback(external, project_path, project_files, defines)
+                    buildable_externals.append(external)
+
+	update_externals_list(buildable_externals)
+
 
 def project_main(path_to_source_dir, argv, project_callback):
 	if len(argv) < 2:

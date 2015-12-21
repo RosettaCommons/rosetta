@@ -29,8 +29,15 @@
 
 #include <cassert>
 
+// Provide workaround for modern compiler feature, if missing
+#ifdef __has_include
+#define MY__has_include( x ) __has_include( x )
+#else
+#define MY__has_include( x ) 1
+#endif
+
 // C++ headers
-#if defined(__GNUC__)  &&  !defined(WIN32)  &&  !defined(__CYGWIN__)
+#if defined(__GNUC__)  &&  !defined(WIN32)  &&  !defined(__CYGWIN__) && MY__has_include( <cxxabi.h> )
 
 #include <execinfo.h>
 #include <cxxabi.h>

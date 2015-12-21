@@ -87,7 +87,10 @@ sources = {
 
 include_path = [ "#external/cxxtest", "#" ]
 library_path = []
-libraries    = [ "sqlite3", "cppdb", "utility", "ObjexxFCL", "z", ]
+libraries    = [ 
+	"utility", 
+	"ObjexxFCL",
+]
 subprojects  = []
 testinputfiles = [
     "io/no_final_newline.txt",

@@ -78,7 +78,8 @@ actual.library_path = \
 # Libraries.  Gives priority to user defined libraries.
 actual.libraries = \
     requested.libraries + \
-    requested.subprojects
+    requested.subprojects + \
+    build.all_libraries["external"]
 
 # The Boost library extensions vary by OS which is a huge nuisance.
 # XXX: This is a temporary solution: the right answer is a Boost

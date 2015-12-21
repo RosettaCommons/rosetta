@@ -114,7 +114,4 @@ libraries = [
 ]
 subprojects = [
 	"ObjexxFCL",
-	"z",
-	"cppdb",
-	"sqlite3",
 ]

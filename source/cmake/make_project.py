@@ -73,6 +73,27 @@ def project_callback(project, project_path, project_files):
 		open('build/' + project + '.cmake', 'w').write(output)
 	print 'done.'
 
+def project_external_callback(project, project_path, project_files, defines):
+	print 'making external project files for project ' + project + ' ...',
+
+	cmake_files = ''
+	for dir, files in project_files:
+		cmake_files += '\n\t' + string.join([project_path + dir + file for file in files], '\n\t')
+
+        cmake_defines = ''
+
+        if defines :
+            cmake_defines = ';'.join( defines )
+
+	#print 'making project files for ' + project + ' from ' + project_path
+
+	output = ''
+	output += 'SET(' + project + '_files' + cmake_files + '\n)\n'
+        output += 'SET(' + project + '_defines ' + cmake_defines + ')\n'
+
+	open('build/external_' + project + '.cmake', 'w').write(output)
+	print 'done.'
+
 def project_test_callback(test, project_path, test_path, test_files, test_inputs):
 	print 'making test files for test ' + test + ' ...',
 
@@ -113,6 +134,8 @@ os.chdir( rosetta_cmake_directory or "./" )
 update_version()
 update_options()
 update_ResidueType_enum_files()
+
+build_util.external_main(PATH_TO_SOURCE_DIR, sys.argv, project_external_callback)
 
 build_util.project_main(PATH_TO_SOURCE_DIR, sys.argv, project_callback)
 

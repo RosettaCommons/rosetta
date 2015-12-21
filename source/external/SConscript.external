@@ -14,129 +14,142 @@ Import("build", "project")
 from tools.build.settings import Settings, ProjectSettings
 import os
 
-#this is different from all the other SConscripts.
-#typically external libraries have their own build requirements and so
-#there is no real way of making a generalized build scheme for any arbitrary
-#external library, so we make a function for each library, and then have an
-#if statement that goes through and runs the proper function for each project
+subscript = build.toplevel + "/external/SConscript.external." + project
+subsettings = build.toplevel + "/external/" + project + ".external.settings"
 
-#if there is a better way of going about this, we should do that, this is pretty hacky
+if os.path.exists( subscript ):
+    build_path = "build/external/%s" % (build.platform)
+    # Specialized SConscript for this project - invoke that instead.
+    SConscript(subscript, exports = ["build", "project"],
+          variant_dir = "./", duplicate = False) # Variant dir already set by calling script
 
-def build_sqlite3(current_project):
-    actual = ProjectSettings(current_project)
-    env = build.environment.Clone()
-    env.Append(CPPDEFINES={"SQLITE_THREADSAFE" :"0"})
-    env.Append(CPPDEFINES=["SQLITE_OMIT_LOAD_EXTENSION"])
-    # for maximum portability: see note in sqlite.c -> line 47
-    # in particular the testing server requires this
-    env.Append(CPPDEFINES=["SQLITE_DISABLE_LFS"])
+elif os.path.exists( subsettings ):
+  # Load the settings from the Rosetta-like settings file 
+  requested = Settings.load(subsettings)
+  use_this = True
+  if 'only_with_extras' in requested:
+    # Use if any of the relevant extras is present
+    use_this = False
+    for extra in requested['only_with_extras']:
+        if extra in build.options.extras:
+            use_this = True
+            break
+  requested = ProjectSettings(project, requested)
 
-    ccflags = env['CCFLAGS'].split()
-    ccflags = [f for f in ccflags if not f.startswith("-W") and f != '-pedantic' and f != "-ffor-scope" and f != '-std=c++98']
-    ccflags.append("-fno-fast-math")
-    env.Replace(CCFLAGS=ccflags)
+  # Add the default settings for source builds.
+  actual = ProjectSettings(project)
 
-    #print env.Dictionary()
-    env.Append(LIBPATH='#external/lib')
+  # Subprojects are used to determine dependencies on other projects
+  actual.subprojects = requested.subprojects
 
-    cflags = str(env['CFLAGS']).split()
-    new_cflags = []
-    for flag in cflags:
-        if flag != '-std=c99':
-            new_cflags.append(flag)
-    env.Replace(CFLAGS=new_cflags)
-
-    if "static" not in build.options.extras:
-        lib = env.SharedLibrary(current_project, "dbio/sqlite3/sqlite3.c")
-    else:
-        if 'macos' in build.options:
-            # On OS X, if it can, gcc always tries to link against
-            # shared libraries before static libraries.  see:
-            # http://developer.apple.com/library/mac/#qa/qa1393/_index.html
-            # If there is a shared version of sqlite in the system
-            # then it will try to link against that one rather than
-            # this one. So make this one a shared library so it will
-            # be used.
-            lib = env.SharedLibrary(current_project, "dbio/sqlite3/sqlite3.c")
+  # Sources.  Currently we assume they are all C++.  If this ever changes
+  # we will need to differentiate language types in the .src.settings files.
+  if use_this: 
+   for package, modules in requested.sources.items():
+    for module in modules:
+        # CUDA files have extension '.cu'
+        if module.endswith(".cu"):
+            #print "build.options.extras", build.options.extras
+            if "cuda" not in build.options.extras : continue # skip .cu files if the "cuda" extra is not supplied
+            source = module
+        elif '.' not in module:
+            source = module + ".cc"
+        else: # Already has extension, and it's probably not ".cc"
+            source = module
+        if package:
+            actual.sources += [ "%s/%s" % (package, source) ]
         else:
-            lib = env.StaticLibrary(current_project, "dbio/sqlite3/sqlite3.c")
+            actual.sources += [ "%s" % (source) ]
+
+  # Include paths.  Gives priority to user defined paths.
+  actual.include_path = \
+    requested.include_path + \
+    [ "#external/include" ]
+
+  # Library paths.  Gives priority to user defined paths.
+  actual.library_path = \
+    requested.library_path + \
+    [ "#external/lib" ] + \
+    [ "#build/external/" + build.platform ]
+
+  # Libraries.  Gives priority to user defined libraries.
+  actual.libraries = \
+    requested.libraries + \
+    requested.subprojects
+
+  # The Boost library extensions vary by OS which is a huge nuisance.
+  # XXX: This is a temporary solution: the right answer is a Boost
+  # XXX: build script which does the work of selecting the extension.
+  boost_ext = {
+    "linux" : "-gcc",
+    # "macos" : "",
+    # "windows" : "",
+    }.get(build.options.os, "")
+  if "mingw" in build.options.extras and build.options.os == "windows":
+    boost_ext = "-mgw"
+  pre_boostified = actual.libraries
+  actual.libraries = []
+  for lib in pre_boostified:
+    if lib.startswith("boost_"):
+        lib += boost_ext
+    actual.libraries += [ lib ]
+
+
+  # Transform the modified settings into SCons Environment variables.
+  # Gives priority to project settings over global settings.
+  env = build.environment.Clone()
+  env.Prepend(**actual.symbols())
+
+  #Kill warning-increasing flags for C and C++
+  #This is external - we can't be responsible for warnings in external code.
+
+  ccflags = env['CCFLAGS'].split()
+  ccflags = [f for f in ccflags if not (f.startswith("-W") and not f.startswith("-Wno")) and f != '-pedantic' ]
+  # We may need additional defines for compilation
+  if( requested.defines ):
+      ccflags.extend( ["-D"+d for d in requested.defines] )
+  env.Replace(CCFLAGS=ccflags)
+  cflags = str(env['CFLAGS']).split()
+  cflags = [f for f in cflags if not (f.startswith("-W") and not f.startswith("-Wno")) and f != '-pedantic' ]
+  # We may need additional defines for compilation
+  if( requested.defines ):
+      cflags.extend( ["-D"+d for d in requested.defines] )
+  env.Replace(CFLAGS=cflags)
+
+  if "static" not in build.options.extras:
+    env["RPATH"] = [
+      build.toplevel + "/build/external/" + build.platform,
+      env.Literal("\\$$ORIGIN"),
+      env.Literal(os.path.join("\\$$ORIGIN", os.pardir, "lib")),
+  ]
+  # direct SCons to the nvcc tool for CUDA source
+  env.Tool('nvcc', toolpath = ['#tools/build/'])
+
+  target = project
+  if "static" not in build.options.extras:
+    #print "In SConscript.src"
+    #print "actual.sources:"
+    #print actual.sources
+    #print "target"
+    #print target
+
+    lib = env.SharedLibrary(target, actual.sources)
+    # Lacking this, doing a build of '<project>' won't build the library,
+    # because the library is created above the '<project>' directory.
     Alias(project, lib)
-    Default(project)
-
-def build_cppdb(current_project):
-    actual = ProjectSettings(current_project)
-    env = build.environment.Clone()
-
-    #env['CCFLAGS'] += ' -stdlib=libstdc++'
-    #env['LINK'] += ' -stdlib=libstdc++'
-
-    actual.libraries.append("sqlite3")
-    #actual.libraries.append('stdc++')
-
-    actual.include_path.append("dbio/sqlite3")
-
-    if "postgres" in build.options.extras:
-        actual.include_path.append("dbio/postgreSQL")
-        actual.libraries.append("pq")
-
-    if "mysql" in build.options.extras:
-        actual.include_path.append("dbio/mysql")
-        actual.libraries.append("mysqlclient")
-
-	#env.Append(LIBPATH='#external/lib')
-
-	#actual.library_path.append('#/usr/lib/mysql')
-	#actual.library_path.append('#/usr/local/lib/mysql')
-
-    actual.library_path.append("#build/external/" + build.platform)
-    env.Prepend(**actual.symbols())
-
-    env.Append(CPPDEFINES=["CPPDB_EXPORTS"])
-    env.Append(CPPDEFINES=['CPPDB_LIBRARY_SUFFIX=\\"%s\\"' % env['SHLIBSUFFIX'] ])
-    env.Append(CPPDEFINES=['CPPDB_LIBRARY_PREFIX=\\"lib\\"'])
-    env.Append(CPPDEFINES=['CPPDB_DISABLE_SHARED_OBJECT_LOADING'])
-    env.Append(CPPDEFINES=['CPPDB_DISABLE_THREAD_SAFETY'])
-    env.Append(CPPDEFINES=['CPPDB_SOVERSION=\\"0\\"'])
-    env.Append(CPPDEFINES=['CPPDB_MAJOR=0'])
-    env.Append(CPPDEFINES=['CPPDB_MINOR=3'])
-    env.Append(CPPDEFINES=['CPPDB_PATCH=0'])
-    env.Append(CPPDEFINES=['CPPDB_VERSION=\\"0.3.0\\"'])
-    env.Append(CPPDEFINES=['CPPDB_WITH_SQLITE3'])
-    #if "mpi" in build.options.extras:
-    #    env.Append(LIBS=File('/usr/lib64/libstdc++.so.6.0.16'))
-    #    env.Append(LIBS=File('/usr/local/lib/libmpichcxx.a'))
-    if "postgres" in build.options.extras:
-    	env.Append(CPPDEFINES=['CPPDB_WITH_PQ'])
-    if "mysql" in build.options.extras:
-        env.Append(CPPDEFINES=['CPPDB_WITH_MYSQL'])
-    env.Append(LIBPATH='#external/lib')
-
-    cppdb_files = [
-        "dbio/cppdb/atomic_counter.cpp",
-        "dbio/cppdb/conn_manager.cpp",
-        "dbio/cppdb/driver_manager.cpp",
-        "dbio/cppdb/frontend.cpp",
-        "dbio/cppdb/backend.cpp",
-        "dbio/cppdb/mutex.cpp",
-        "dbio/cppdb/pool.cpp",
-        "dbio/cppdb/shared_object.cpp",
-        "dbio/cppdb/sqlite3_backend.cpp",
-        "dbio/cppdb/utils.cpp",
-        ]
-    if "postgres" in build.options.extras:
-        cppdb_files.append("dbio/cppdb/postgres_backend.cpp")
-    if "mysql" in build.options.extras:
-        cppdb_files.append("dbio/cppdb/mysql_backend.cpp")
-
-    if "static" not in build.options.extras:
-        lib = env.SharedLibrary(current_project, cppdb_files)
-    else:
-        lib = env.StaticLibrary(current_project, cppdb_files)
-
+  else:
+    lib = env.StaticLibrary(target, actual.sources)
     Alias(project, lib)
-    Default(project)
+  Default(project)
 
-if project == "sqlite3":
-    build_sqlite3(project)
-elif project == "cppdb":
-    build_cppdb(project)
+  # Install the library in an easily accessible location
+  # Install("#lib", target)
+
+  # Setup useful aliases for building subdirectories of project.
+  # This allows a target to be project + package and have SCons build only
+  # that package.
+  # TODO: Allow building of specific source units.
+  for package in map(str, BUILD_TARGETS) :
+    if package.startswith(project):
+        Alias(package, "#build/external/" + build.platform + "/" + package)
+

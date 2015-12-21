@@ -1,0 +1,101 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# SCons build script for sources.
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+# SCons imports
+Import("build", "project")
+
+# Python imports
+from tools.build.settings import Settings, ProjectSettings
+import os
+
+#this is different from all the other SConscripts.
+#typically external libraries have their own build requirements and so
+#there is no real way of making a generalized build scheme for any arbitrary
+#external library, so we make a function for each library, and then have an
+#if statement that goes through and runs the proper function for each project
+
+#if there is a better way of going about this, we should do that, this is pretty hacky
+
+def build_cppdb(current_project):
+    actual = ProjectSettings(current_project)
+    env = build.environment.Clone()
+
+    #env['CCFLAGS'] += ' -stdlib=libstdc++'
+    #env['LINK'] += ' -stdlib=libstdc++'
+
+    actual.libraries.append("sqlite3")
+    #actual.libraries.append('stdc++')
+
+    actual.include_path.append("dbio/sqlite3")
+
+    if "postgres" in build.options.extras:
+        actual.include_path.append("dbio/postgreSQL")
+        actual.libraries.append("pq")
+
+    if "mysql" in build.options.extras:
+        actual.include_path.append("dbio/mysql")
+        actual.libraries.append("mysqlclient")
+
+	#env.Append(LIBPATH='#external/lib')
+
+	#actual.library_path.append('#/usr/lib/mysql')
+	#actual.library_path.append('#/usr/local/lib/mysql')
+
+    actual.library_path.append("#build/external/" + build.platform)
+    env.Prepend(**actual.symbols())
+
+    env.Append(CPPDEFINES=["CPPDB_EXPORTS"])
+    env.Append(CPPDEFINES=['CPPDB_LIBRARY_SUFFIX=\\"%s\\"' % env['SHLIBSUFFIX'] ])
+    env.Append(CPPDEFINES=['CPPDB_LIBRARY_PREFIX=\\"lib\\"'])
+    env.Append(CPPDEFINES=['CPPDB_DISABLE_SHARED_OBJECT_LOADING'])
+    env.Append(CPPDEFINES=['CPPDB_DISABLE_THREAD_SAFETY'])
+    env.Append(CPPDEFINES=['CPPDB_SOVERSION=\\"0\\"'])
+    env.Append(CPPDEFINES=['CPPDB_MAJOR=0'])
+    env.Append(CPPDEFINES=['CPPDB_MINOR=3'])
+    env.Append(CPPDEFINES=['CPPDB_PATCH=0'])
+    env.Append(CPPDEFINES=['CPPDB_VERSION=\\"0.3.0\\"'])
+    env.Append(CPPDEFINES=['CPPDB_WITH_SQLITE3'])
+    #if "mpi" in build.options.extras:
+    #    env.Append(LIBS=File('/usr/lib64/libstdc++.so.6.0.16'))
+    #    env.Append(LIBS=File('/usr/local/lib/libmpichcxx.a'))
+    if "postgres" in build.options.extras:
+    	env.Append(CPPDEFINES=['CPPDB_WITH_PQ'])
+    if "mysql" in build.options.extras:
+        env.Append(CPPDEFINES=['CPPDB_WITH_MYSQL'])
+    env.Append(LIBPATH='#external/lib')
+
+    cppdb_files = [
+        "dbio/cppdb/atomic_counter.cpp",
+        "dbio/cppdb/conn_manager.cpp",
+        "dbio/cppdb/driver_manager.cpp",
+        "dbio/cppdb/frontend.cpp",
+        "dbio/cppdb/backend.cpp",
+        "dbio/cppdb/mutex.cpp",
+        "dbio/cppdb/pool.cpp",
+        "dbio/cppdb/shared_object.cpp",
+        "dbio/cppdb/sqlite3_backend.cpp",
+        "dbio/cppdb/utils.cpp",
+        ]
+    if "postgres" in build.options.extras:
+        cppdb_files.append("dbio/cppdb/postgres_backend.cpp")
+    if "mysql" in build.options.extras:
+        cppdb_files.append("dbio/cppdb/mysql_backend.cpp")
+
+    if "static" not in build.options.extras:
+        lib = env.SharedLibrary(current_project, cppdb_files)
+    else:
+        lib = env.StaticLibrary(current_project, cppdb_files)
+
+    Alias(project, lib)
+    Default(project)
+
+if project == "cppdb":
+    build_cppdb(project)
+else:
+    pass # Raise an error? We shouldn't ever get here.

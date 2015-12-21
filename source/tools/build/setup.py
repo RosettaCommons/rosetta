@@ -279,16 +279,8 @@ These are of the form:
     return includes
 
 
-def setup_projects(targets):
-    """The projects are not specified as keyword arguments but
-as unadorned ones, which SCons stores as COMMAND_LINE_TARGETS.
-Check to see that all command line targets are ones which are
-legitimately in the project settings, and apply those that are
-as the final project list.
-    """
-
-    actual = []
-    invalid = []
+def get_projects():
+    """Get a structure of all the allowed projects."""
 
     # Import project names from the settings files
     allowed = Settings.load("../../projects.settings", "projects")
@@ -322,9 +314,24 @@ as the final project list.
                         for removed_project in site[modification]["removes"]["projects"][cat] :
                             if removed_project == project :
                                 allowed[cat].remove(project)
+
     #Print allowed projects
     #print allowed
 
+    return allowed
+
+def setup_projects(targets):
+    """The projects are not specified as keyword arguments but
+as unadorned ones, which SCons stores as COMMAND_LINE_TARGETS.
+Check to see that all command line targets are ones which are
+legitimately in the project settings, and apply those that are
+as the final project list.
+    """
+
+    actual = []
+    invalid = []
+
+    allowed = get_projects()
 
     # Keep those project names which are found in the path
     # elements of the targets.
@@ -376,12 +383,12 @@ what SCons will use to build the system.
         if setting.removes:
             removes = setting.removes.symbols()
             for name, values in removes.items():
-	        existing = env.Dictionary()[name]
+                existing = env.Dictionary()[name]
                 if isinstance( existing, list ): # list of values
                      for value in values:
                           if value in existing:
                                existing.remove(value)
-	        else: # everything else
+                else: # everything else
                      # A little extra work here because flag values in
                      # env.Dictionary() are being stored as strings not lists.
                      # See BuildSettings.symbols() for further comments.
@@ -414,6 +421,7 @@ def setup():
     build.environment = setup_environment(build.settings)
     build.platform = setup_platform_path(build.options)
     build.platform_includes = setup_platform_includes(build.options)
+    build.all_libraries = get_projects()
     build.projects = setup_projects(COMMAND_LINE_TARGETS)
     build.targets = BUILD_TARGETS
     return build

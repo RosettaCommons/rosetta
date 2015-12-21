@@ -1,0 +1,69 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# SCons build script for sources.
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+# SCons imports
+Import("build", "project")
+
+# Python imports
+from tools.build.settings import Settings, ProjectSettings
+import os
+
+#this is different from all the other SConscripts.
+#typically external libraries have their own build requirements and so
+#there is no real way of making a generalized build scheme for any arbitrary
+#external library, so we make a function for each library, and then have an
+#if statement that goes through and runs the proper function for each project
+
+#if there is a better way of going about this, we should do that, this is pretty hacky
+
+def build_sqlite3(current_project):
+    actual = ProjectSettings(current_project)
+    env = build.environment.Clone()
+    env.Append(CPPDEFINES={"SQLITE_THREADSAFE" :"0"})
+    env.Append(CPPDEFINES=["SQLITE_OMIT_LOAD_EXTENSION"])
+    # for maximum portability: see note in sqlite.c -> line 47
+    # in particular the testing server requires this
+    env.Append(CPPDEFINES=["SQLITE_DISABLE_LFS"])
+
+    ccflags = env['CCFLAGS'].split()
+    ccflags = [f for f in ccflags if not f.startswith("-W") and f != '-pedantic' and f != "-ffor-scope" and f != '-std=c++98']
+    ccflags.append("-fno-fast-math")
+    env.Replace(CCFLAGS=ccflags)
+
+    #print env.Dictionary()
+    env.Append(LIBPATH='#external/lib')
+
+    cflags = str(env['CFLAGS']).split()
+    new_cflags = []
+    for flag in cflags:
+        if flag != '-std=c99':
+            new_cflags.append(flag)
+    env.Replace(CFLAGS=new_cflags)
+
+    if "static" not in build.options.extras:
+        lib = env.SharedLibrary(current_project, "dbio/sqlite3/sqlite3.c")
+    else:
+        if 'macos' in build.options:
+            # On OS X, if it can, gcc always tries to link against
+            # shared libraries before static libraries.  see:
+            # http://developer.apple.com/library/mac/#qa/qa1393/_index.html
+            # If there is a shared version of sqlite in the system
+            # then it will try to link against that one rather than
+            # this one. So make this one a shared library so it will
+            # be used.
+            lib = env.SharedLibrary(current_project, "dbio/sqlite3/sqlite3.c")
+        else:
+            lib = env.StaticLibrary(current_project, "dbio/sqlite3/sqlite3.c")
+    Alias(project, lib)
+    Default(project)
+
+if project == "sqlite3":
+    build_sqlite3(project)
+else:
+    pass # Raise an error? We shouldn't ever get here

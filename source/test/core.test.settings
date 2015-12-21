@@ -428,9 +428,7 @@ libraries	 = [
 	"numeric",
 	"utility",
 	"ObjexxFCL",
-	"z",
-	"cppdb",
-	"sqlite3"]
+]
 subprojects	 = []
 testinputfiles = [
 	"chemical/1pqc.params",

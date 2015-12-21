@@ -443,9 +443,7 @@ libraries    = [ "devel",
 "numeric",
 "utility",
 "ObjexxFCL",
-"z",
-"cppdb",
-"sqlite3" ]
+]
 subprojects  = []
 testinputfiles = [
 	"abinitio/2GB3.pdb",

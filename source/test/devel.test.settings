@@ -61,9 +61,7 @@ libraries    = ["devel",
 "numeric",
 "utility",
 "ObjexxFCL",
-"z",
-"cppdb",
-"sqlite3" ]
+]
 subprojects  = []
 testinputfiles = [
 		"denovo_design/test_input.pdb",

@@ -50,7 +50,8 @@ projects = {
 		"devel",
 	],
 	"external": [
+		"z",
+		"cppdb",  # Must come before sqlite3 for static build
 		"sqlite3",
-		"cppdb",
 	]
 }

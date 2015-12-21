@@ -46,9 +46,7 @@ libraries    = [
 	"numeric",
 	"utility",
 	"ObjexxFCL",
-	"z",
-	"cppdb",
-	"sqlite3"]
+]
 subprojects  = []
 testinputfiles = [
     "public/ligand_docking/ZNx.params",

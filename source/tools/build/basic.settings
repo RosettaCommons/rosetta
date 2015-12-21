@@ -143,18 +143,20 @@ settings = {
                 "cc" : [
                     "std=c99",
                     "isystem external/boost_1_55_0/",
+                    "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
                 ],
                 "cxx" : [
                     "std=c++98",
+                    "ffor-scope",
                     "isystem external/boost_1_55_0/",
+                    "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
                 ],
                 "compile" : [
                     "pipe",
-                    "ffor-scope"
                 ],
                 # By default, warn about everything except the use of
                 # long long, which we need for certain database functionality.
@@ -225,10 +227,12 @@ settings = {
         "overrides" : {
             "flags" : {
                 "cc" : [ "std=c99" ],
-                "cxx" : [ "std=c++98" ],
+                "cxx" : [ 
+                    "std=c++98",
+                    "ffor-scope",
+                ],
                 "compile" : [
                     "pipe",
-                    "ffor-scope"
                 ],
                 "warn" : [],
             },
@@ -1327,7 +1331,7 @@ settings = {
                 ],
            },
            "defines"  : [ "BOINC_GRAPHICS", ],
-           "include_path" : [ "/usr/local/include", "/usr/include", "/usr/include/GL", "#external/include" ],
+           "include_path" : [ "/usr/local/include", "/usr/include", "/usr/include/GL", "#external/include", "#external" ],
            "library_path"  : [ "/lib", "/usr/lib", "/usr/local/lib","#external/lib", "#external", ],
         },
     },
@@ -1901,12 +1905,14 @@ settings = {
                 "cc" : [
                     "std=c99",
                     "isystem external/boost_1_55_0/",
+                    "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/"
                 ],
                 "cxx" : [
                     "std=c++98",
                     "isystem external/boost_1_55_0/",
+                    "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/"
                 ],

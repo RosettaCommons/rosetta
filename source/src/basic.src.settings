@@ -130,8 +130,5 @@ libraries = [
 subprojects = [
 	"numeric",
 	"utility",
-	"z",
 	"ObjexxFCL",
-	"sqlite3",
-	"cppdb",
 ]

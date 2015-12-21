@@ -1,3 +1,14 @@
+INCLUDE(../build/external_libraries.cmake)
+
+## Library definitions
+FOREACH(LIBRARY ${EXTERNAL_LIBRARIES})
+	INCLUDE(../build/external_${LIBRARY}.cmake)
+	ADD_LIBRARY(${LIBRARY} ${LINK_TYPE} ${${LIBRARY}_files})
+	SET_TARGET_PROPERTIES(${LIBRARY} PROPERTIES COMPILE_DEFINITIONS ${${LIBRARY}_defines})
+	SET_TARGET_PROPERTIES(${LIBRARY} PROPERTIES COMPILE_FLAGS "-Wno-error -w ") #Turn off warnings for external libraries
+	SET(LINK_EXTERNAL_LIBS ${LINK_EXTERNAL_LIBS} ${LIBRARY})
+ENDFOREACH( LIBRARY )
+
 # This mostly follows 
 # URL: http://cppcms.svn.sourceforge.net/svnroot/cppcms/cppdb/trunk/CMakeLists.txt
 # at revision -r1700

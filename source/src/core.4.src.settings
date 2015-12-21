@@ -204,7 +204,4 @@ subprojects = [
 	"core.3",
 	"utility",
 	"ObjexxFCL",
-	"z",
-	"sqlite3",
-	"cppdb",
 ]

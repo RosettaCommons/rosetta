@@ -394,7 +394,7 @@ class BuildState (Settings):
         "toplevel", "projects",
         "platform", "platform_includes",
         "options", "options_requested",
-        "settings", "targets",
+        "settings", "targets", "all_libraries"
     ]
 
     def __init__(self, state = None):

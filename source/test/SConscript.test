@@ -62,7 +62,8 @@ actual.library_path = \
 # (because we don't have test libraries)
 actual.libraries = \
     requested.libraries + \
-    requested.subprojects
+    requested.subprojects + \
+    build.all_libraries["external"]
 
 # The Boost library extensions vary by OS which is a huge nuisance.
 # XXX: This is a temporary solution: the right answer is a Boost
