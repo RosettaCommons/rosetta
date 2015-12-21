@@ -49,7 +49,7 @@ C7_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of s
 C8_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
 C9_BRANCH_POINT  # for branched polymers and glycosylations from position 1 of saccharide residues
 
-SIDECHAIN_CONJUGATION  # for chemically conjugable residues and side-chain conjugation (like ubiquitination)
+SIDECHAIN_CONJUGATION  # for chemically conjugatable residues and side-chain conjugation (like ubiquitination)
 
 
 # PROTONATION STATES

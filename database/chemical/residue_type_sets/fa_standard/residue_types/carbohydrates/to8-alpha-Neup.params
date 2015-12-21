@@ -13,11 +13,13 @@ ATOM  C6  CH1  CT1   0.04
 ATOM  C7  CH1  CT1   0.14
 ATOM  C8  CH1  CT1   0.14
 ATOM  O8  OOC   OS  -0.66
+
 # Other backbone heavy atoms:
 ATOM  O6  OOC   OS  -0.13
 ATOM_ALIAS  O6   O  
 ATOM  VO6 VIRT VIRT  0.00  # to superimpose with O6
 ATOM  VC2 VIRT VIRT  0.00  # to C2; required for ring flipping
+
 # Side-chain heavy atoms:
 ATOM  C1  COO   CC   0.52
 ATOM 1O1  OOC   OC  -0.76
@@ -31,6 +33,7 @@ ATOM  N5  Nlys NH3  -0.30
 ATOM  O7  OH   OH1  -0.66
 ATOM  C9  CH2  CT2   0.05
 ATOM  O9  OH   OH1  -0.66
+
 # Hydrogens:
 ATOM H1O1 VIRT VIRT  0.00  # allows for consistent chi angles; replaced with real atom for a protonated patch
 ATOM  HO2 VIRT VIRT  0.0   # for internal res, virtual; allows for consistent chi angles; replaced with real atom by patch for lower terminus
@@ -110,12 +113,6 @@ VIRTUAL_SHADOW VC2   C2
 
 CHI 1  C2   C1  1O1  H1O1  # meaningless chi; this is just a placeholder
 CHI 2  VO6  C2   O2   HO2  # cannot use O6 to define torsion, since atom tree doesn't treat it as connected; chi(O6-C2-O2-H) -- chi(2) is ambiguous
-CHI_ROTAMERS 2   0 0
-CHI_ROTAMERS 2  60 0
-CHI_ROTAMERS 2 120 0
-CHI_ROTAMERS 2 180 0
-CHI_ROTAMERS 2 240 0
-CHI_ROTAMERS 2 300 0
 CHI 3  C2   C3   O3   HO3  # meaningless chi; this is just a placeholder
 CHI 4  C3   C4   O4   HO4
 CHI_ROTAMERS 4   0 0

@@ -47,7 +47,7 @@
 #endif
 #include <core/chemical/rna/RNA_ResidueType.fwd.hh>
 #include <core/chemical/rotamers/RotamerLibrarySpecification.fwd.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>  // TODO: Fix this to use the fwd.hh.
+#include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.fwd.hh>

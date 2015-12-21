@@ -18,6 +18,8 @@ SET_ATOM_TYPE HO6 VIRT
 SET_MM_ATOM_TYPE HO6 VIRT
 SET_ATOMIC_CHARGE HO6 0.00
 
+CLEAR_CHI_ROTAMERS 6  # If this is exocyclic, it would be best to clear the rotamers from position 5 also, but we'd need a way for the patch file to know that.
+
 ADD_CONNECT O6 ICOOR -178.777685   69.501511    1.499799   O6    C6    C5
 
 ADD_PROPERTY BRANCH_POINT

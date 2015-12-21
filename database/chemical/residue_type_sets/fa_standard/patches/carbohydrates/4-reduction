@@ -29,6 +29,8 @@ SET_ATOMIC_CHARGE O4 0.00
 
 DELETE_ATOM  H4 
 
+CLEAR_CHI_ROTAMERS 4
+
 # Next, add the new atoms.
 ADD_ATOM 1H4  Hapo HA    0.09  # pro-S
 ADD_ATOM 2H4  Hapo HA    0.09  # pro-R

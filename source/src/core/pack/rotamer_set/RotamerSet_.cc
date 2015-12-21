@@ -265,29 +265,26 @@ RotamerSet_::build_rotamers_for_concrete(
 			push_back_rotamer( new_rotamers[ii] );
 		}
 
-	} else if ( concrete_residue->is_carbohydrate() ) { // Carbohydrates ////////////////////////////////////////////////
+	} else if ( concrete_residue->is_carbohydrate() ) {  // Carbohydrates /////////////////////////////////////////////
 		// For now, rotamer bins are stored in the params files themselves.  This code will generate all the rotamers
 		// from the torsion angles listed in the params files.  (The params files do not contain PROTON_CHI records and
 		// use CHI_ROTAMER records exclusively.)  All of this will likely change in the future.
 
-		tt.Warning << "Residue " << resid() <<
-			" is a carbohydrate; rotamers for carbohydrates are not yet fully implemented." << std::endl;
+		utility::vector1< ResidueOP > new_rotamers;
 
-		utility::vector1<ResidueOP> new_rotamers;
-
-		build_rotamers_from_rotamer_bins(existing_residue, new_rotamers);
+		build_rotamers_from_rotamer_bins( existing_residue, new_rotamers );
 
 		// Add current rotamer, if applicable.
-		if ( task.include_current(resid()) && existing_residue.name() == concrete_residue->name() ) {
+		if ( task.include_current( resid() ) && existing_residue.name() == concrete_residue->name() ) {
 			ResidueOP rot = existing_residue.create_rotamer();
-			new_rotamers.push_back(rot);
+			new_rotamers.push_back( rot );
 			id_for_current_rotamer_ = new_rotamers.size();
 		}
 
 		// Push back rotamers.
-		Size n_rotamers = new_rotamers.size();
-		for ( uint i=1; i <= n_rotamers; ++i ) {
-			push_back_rotamer(new_rotamers[i]);
+		Size const n_rotamers( new_rotamers.size() );
+		for ( uint i( 1 ); i <= n_rotamers; ++i ) {
+			push_back_rotamer( new_rotamers[ i ] );
 		}
 
 	} else if ( concrete_residue->name() == "VRT1" ) { // Single-atom virtual residue /////////////////////////////////
@@ -306,6 +303,16 @@ RotamerSet_::build_rotamers_for_concrete(
 
 	} else if ( concrete_residue->name() == "TP3" ) { // TIP3 water /////////////////////////////////
 		build_tp3_water_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph );
+	
+	} else if ( concrete_residue->has_variant_type( chemical::SC_BRANCH_POINT ) ) {// Single-sc branch point residues /
+		// At no point do we want to sample rotamers at a branch point, because
+		// A) doing so does not move the downstream branch chain, thus ripping apart the molecule and
+		// B) rotamer library data does not include conjugated residues, so the rotamers selected would not be valid
+		// anyway.
+		// In other words, the side chain of a branch point residue must be treated as part of the main chain of the
+		// branch.
+		return;
+	
 	} else { // All other residues ///////////////////////////////////////////////////////////////////////
 
 		utility::vector1< utility::vector1< Real > > extra_chi_steps( concrete_residue->nchi() );

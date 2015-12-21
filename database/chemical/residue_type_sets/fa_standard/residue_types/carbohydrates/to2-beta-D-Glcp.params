@@ -6,12 +6,11 @@ AA UNK
 # Main-chain atoms:
 ATOM  C1  CH1  CT1   0.18  # anomeric carbon
 ATOM  C2  CH1  CT1   0.13
-ATOM  C3  CH1  CT1   0.11
-ATOM  C4  CH1  CT1   0.11
-ATOM  O2  OH   OH1  -0.39
+ATOM  O2  OH    OS  -0.39
 
 # Other backbone heavy atoms:
-ATOM  O4  OH    OS  -0.38
+ATOM  C3  CH1  CT1   0.11
+ATOM  C4  CH1  CT1   0.11
 ATOM  C5  CH1  CT1   0.11
 ATOM  O5  OOC   OS  -0.34
 ATOM_ALIAS  O5   O  
@@ -21,22 +20,28 @@ ATOM  VC1 VIRT VIRT  0.00  # to C1; required for ring flipping
 # Side-chain heavy atoms:
 ATOM  O1  VIRT VIRT  0.00  # for internal res, virtual to previous residue; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
 ATOM  O3  OH   OH1  -0.39
+ATOM  O4  OH   OH1  -0.38
 ATOM  C6  CH2  CT2   0.07
 ATOM  O6  OH   OH1  -0.39
 
 # Hydrogens:
 ATOM  H1  Hapo  HA   0.10
 ATOM  HO1 VIRT VIRT  0.00  # for internal res, virtual; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
+ATOM_ALIAS  HO1  H1O 
 ATOM  H2  Hapo  HA   0.07
 ATOM  HO2 VIRT VIRT  0.00  # to next residue; allows for consistent chi angles
+ATOM_ALIAS  HO2  H2O 
 ATOM  H3  Hapo  HA   0.07
 ATOM  HO3 Hpol  H    0.21
+ATOM_ALIAS  HO3  H3O 
 ATOM  H4  Hapo  HA   0.07
 ATOM  HO4 Hpol  H    0.21
+ATOM_ALIAS  HO4  H4O 
 ATOM  H5  Hapo  HA   0.07
 ATOM 1H6  Hapo  HA   0.06  # pro-S
 ATOM 2H6  Hapo  HA   0.06  # pro-R
 ATOM  HO6 Hpol  H    0.21
+ATOM_ALIAS  HO6  H6O 
 
 LOWER_CONNECT C1
 UPPER_CONNECT O2
@@ -73,19 +78,7 @@ VIRTUAL_SHADOW VO5   O5
 VIRTUAL_SHADOW VC1   C1
 
 CHI 1  VO5  C1   O1   HO1  # cannot use O5 to define torsion, since atom tree doesn't treat it as connected
-CHI_ROTAMERS 1   0 0
-CHI_ROTAMERS 1  60 0
-CHI_ROTAMERS 1 120 0
-CHI_ROTAMERS 1 180 0
-CHI_ROTAMERS 1 240 0
-CHI_ROTAMERS 1 300 0
-CHI 2  C1   C2   O2   HO2
-CHI_ROTAMERS 2   0 0
-CHI_ROTAMERS 2  60 0
-CHI_ROTAMERS 2 120 0
-CHI_ROTAMERS 2 180 0
-CHI_ROTAMERS 2 240 0
-CHI_ROTAMERS 2 300 0
+CHI 2  C1   C2   O2   HO2  # duplicates BB 2
 CHI 3  C2   C3   O3   HO3
 CHI_ROTAMERS 3   0 0
 CHI_ROTAMERS 3  60 0
@@ -93,7 +86,13 @@ CHI_ROTAMERS 3 120 0
 CHI_ROTAMERS 3 180 0
 CHI_ROTAMERS 3 240 0
 CHI_ROTAMERS 3 300 0
-CHI 4  C3   C4   O4   HO4  # duplicates BB 4
+CHI 4  C3   C4   O4   HO4
+CHI_ROTAMERS 4   0 0
+CHI_ROTAMERS 4  60 0
+CHI_ROTAMERS 4 120 0
+CHI_ROTAMERS 4 180 0
+CHI_ROTAMERS 4 240 0
+CHI_ROTAMERS 4 300 0
 CHI 5  C4   C5   C6   O6
 CHI_ROTAMERS 5   0 0
 CHI_ROTAMERS 5  60 0
@@ -109,11 +108,11 @@ CHI_ROTAMERS 6 180 0
 CHI_ROTAMERS 6 240 0
 CHI_ROTAMERS 6 300 0
 
-ADD_RING 1 C1 C2 C3 C4 C5 O5
+ADD_RING 1 C1 C2 C3 C4 C5 O5 
 
 NU 1  VO5  C1   C2   C3    # duplicates BB 1, but defined differently
-NU 2  C1   C2   C3   C4    # duplicates BB 2
-NU 3  C2   C3   C4   C5    # duplicates BB 3
+NU 2  C1   C2   C3   C4
+NU 3  C2   C3   C4   C5
 NU 4  C3   C4   C5   O5
 NU 5  C4   C5   O5   VC1
 #NU 6 is across the CUT_BOND
