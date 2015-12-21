@@ -15,7 +15,7 @@
 ## @author Rocco Moretti (rmorettiase@gmail.com)
 
 import os, os.path, commands
-import sys
+import sys, errno
 
 INCLUDES = "-I ./ -I ./platform/linux/ -isystem ../external/boost_1_55_0/ -isystem ../external/include/ -isystem ../external/dbio/"
 
@@ -95,14 +95,20 @@ def process_file( filename, compile_type ):
     res, output = commands.getstatusoutput( commandline )
 
     if res:
-        selected_lines = "Error running cppcheck: " + commandline + "\n\n" + output
+        selected_lines = ["Error running cppcheck: " + commandline + "\n\n"] + output.splitlines()
     else:
         selected_lines = [ line.strip() for line in output.splitlines() if line.startswith('[') ]
 
     #Filename may contain directories - we need to make sure they're present first.
     dirname = os.path.dirname( cache_filename )
     if not os.path.exists( dirname ):
-        os.makedirs( dirname )
+        try:
+            os.makedirs( dirname )
+        except OSError as e:
+            if e.args[0] == errno.EEXIST:
+                pass # To avoid race conditions in the multi-processor situation
+            else:
+                raise
     with open( cache_filename, 'w' ) as f:
         if selected_lines:
             f.write( '\n'.join(selected_lines) + '\n' )

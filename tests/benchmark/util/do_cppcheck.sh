@@ -1,7 +1,9 @@
 #!/bin/bash
 
+# Usage: ../../tests/benchmark/util/do_cppcheck.sh -j ${JOBS} -e ${extras}
+#
 # Assumes you're running it from within the Rosetta/main/source/src directory
-# Need to set JOBS, and COMPILETYPE
+# Need to set JOBS, and COMPILETYPE (extras)
 
 JOBS=1
 COMPILETYPE=default
@@ -68,6 +70,7 @@ grep '^\[' ${CACHEDIR}/all_lines.txt | sort | uniq > ${CACHEDIR}/output.txt
 
 if [ -s ${CACHEDIR}/error_output.txt ]; then
     #error file size is zero, i.e. we have errors
+    echo
     echo "ERRORS RUNNING CPPCHECK:"
     echo
     cat ${CACHEDIR}/error_output.txt
@@ -77,6 +80,7 @@ if [ -s ${CACHEDIR}/error_output.txt ]; then
     cat ${CACHEDIR}/newissues.txt
     echo
     echo "Remaining historical issues:"
+    echo
     cat ${CACHEDIR}/oldissues.txt
     echo
     echo "New issues found:" `cat ${CACHEDIR}/newissues.txt | wc -l`
@@ -86,11 +90,13 @@ if [ -s ${CACHEDIR}/error_output.txt ]; then
     exit 127
 elif [ -s ${CACHEDIR}/newissues.txt ]; then
     #file size is non-zero, i.e. we have issues
+    echo
     echo "New Issues found:"
     echo
     cat ${CACHEDIR}/newissues.txt
     echo
     echo "Remaining historical issues:"
+    echo
     cat ${CACHEDIR}/oldissues.txt
     echo
     echo "New issues found:" `cat ${CACHEDIR}/newissues.txt | wc -l`
@@ -100,7 +106,9 @@ elif [ -s ${CACHEDIR}/newissues.txt ]; then
     exit 1
 elif [ -s ${CACHEDIR}/oldissues.txt ]; then
     #We don't have any new issues, but we do have old issues
+    echo
     echo "Remaining historical issues:"
+    echo
     cat ${CACHEDIR}/oldissues.txt
     echo
     echo "New issues found: None"
@@ -110,6 +118,7 @@ elif [ -s ${CACHEDIR}/oldissues.txt ]; then
     exit 0
 else
     # No errors, success!
+    echo
     echo "New issues found: None"
     echo "Total issues found: None"
     echo

@@ -68,8 +68,12 @@ public:
 	):
 		grid_size_(grid_size),
 		grid_size2_(grid_size*grid_size),
+		natom_(0),
 		grid_atoms_(NULL),
-		grid_stripe_(NULL)//,
+		grid_stripe_(NULL),
+		xdim_(1),
+		ydim_(1),
+		zdim_(1)//,
 		// neighbor_end_(*this)
 	{}
 	xyzStripeHashWithMeta( T grid_size,

@@ -172,11 +172,8 @@ rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
 				// Not totally sure about this one, may want Ntrp instead if more than one heavy neighbor:
 				restype.set_atom_type(vd, "NH2O"); // Narg would also be a possibility, but they're fairly similar
 			} else if ( num_H == 1 ) {
-				if ( heavy_nbrs <= 2 ) {
-					restype.set_atom_type(vd, "Ntrp"); // should always be 2 neighbors, not less
-				} else {
-					restype.set_atom_type(vd, "Ntrp"); // Npro? protonated tertiary amine
-				} // I know they're the same -- I'm just copying molfile_to_params, which splits the case.
+				// molfile_to_params splits out the heavy_nbrs <= 2 case, but gives it the same type
+				restype.set_atom_type(vd, "Ntrp"); // should always be 2 neighbors, not less
 			} else {
 				if ( heavy_nbrs <= 2 ) {
 					restype.set_atom_type(vd, "Nhis");

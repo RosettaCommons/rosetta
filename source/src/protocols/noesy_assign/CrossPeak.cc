@@ -474,15 +474,17 @@ bool CrossPeak::eliminated( bool recompute, bool do_not_compute ) const {
 	for ( PeakAssignments::const_iterator it = begin(); it != end() && !min_peak_volume_reached ; ++it ) {
 		min_peak_volume_reached = (*it)->normalized_peak_volume() > params.min_volume_;
 	}
+	if ( !min_peak_volume_reached ) {
+		eliminated_ = EL_MINPEAKVOL;
+		//tr.Trace << "eliminated (min_peak_volume)" << std::endl;
+		return true;
+	}
 
-	eliminated_ = !min_peak_volume_reached ? EL_MINPEAKVOL : eliminated_;
-	// if ( eliminated_ ) tr.Trace << "eliminated (min_peak_volume)" << std::endl;
-	if ( eliminated_ ) return true;
-
-	bool const too_many_assignments( assignments().size() > params.nmax_ );
-	eliminated_ = too_many_assignments ? EL_MAXASSIGN : eliminated_;
-	// if ( eliminated_ ) tr.Trace << "eliminated (too many assignments)" << std::endl;
-	if ( eliminated_ ) return true;
+	if ( assignments().size() > params.nmax_ ) {
+		eliminated_ = EL_MAXASSIGN;
+		// tr.Trace << "eliminated (too many assignments)" << std::endl;
+		return true;
+	}
 
 	//network anchoring
 	Real N_atom_sum( 0.0 );
@@ -492,14 +494,17 @@ bool CrossPeak::eliminated( bool recompute, bool do_not_compute ) const {
 		N_atom_sum +=  vol * (*it)->network_anchoring();
 		N_res_sum += vol * (*it)->network_anchoring_per_residue();
 	}
-	bool pass_network_test( N_res_sum > params.network_reswise_high_ );
-	if ( !pass_network_test ) pass_network_test = N_res_sum >= params.network_reswise_min_ && N_atom_sum >= params.network_atom_min_;
-	eliminated_ = !pass_network_test ? EL_NETWORK : eliminated_;
-	// if ( eliminated_ ) tr.Trace << "eliminated (network)" << std::endl;
 
-	if ( eliminated_ ) return true;
-	// tr.Trace << "passed" << std::endl;
+	if ( N_res_sum <= params.network_reswise_high_  &&
+			( N_res_sum < params.network_reswise_min_ ||
+			N_atom_sum < params.network_atom_min_ ) ) {
+		eliminated_ = EL_NETWORK;
+		// tr.Trace << "eliminated (network)" << std::endl;
+		return true;
+	}
+
 #endif
+	// tr.Trace << "passed" << std::endl;
 	return false;
 }
 

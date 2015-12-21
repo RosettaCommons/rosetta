@@ -73,7 +73,8 @@ TaskAwareMinMover::TaskAwareMinMover()
 	minmover_(/* 0 */),
 	factory_(/* 0 */),
 	chi_(true),
-	bb_(false)
+	bb_(false),
+	jump_(false)
 {}
 
 /// @brief constructor with TaskFactory
