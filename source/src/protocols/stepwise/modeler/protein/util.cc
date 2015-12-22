@@ -178,9 +178,12 @@ just_protein( utility::vector1< Size > const & res_list, pose::Pose const & pose
 
 //////////////////////////////////////////////////////////////////////////
 bool
-contains_protein( core::pose::Pose const & pose ){
-	utility::vector1< Size > protein_res_list;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) { if ( pose.residue_type( n ).is_protein() ) return true; }
+contains_protein( core::pose::Pose const & pose,
+									utility::vector1< Size > const & res_list /* = blank, meaning check all residues */ ){
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		if ( res_list.size() > 0 && !res_list.has_value( n ) ) continue;
+		if ( pose.residue_type( n ).is_protein() ) return true;
+	}
 	return false;
 }
 

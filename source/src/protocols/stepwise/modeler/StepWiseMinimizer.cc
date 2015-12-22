@@ -95,14 +95,17 @@ StepWiseMinimizer::StepWiseMinimizer( utility::vector1< pose::PoseOP > const & p
 	runtime_assert( !options_->skip_coord_constraints() );
 	runtime_assert( !options_->skip_minimize() );
 	runtime_assert( !options_->move_jumps_between_chains() );
-	runtime_assert( pose_list.size() > 0 || options_->rna_legacy_output_mode() );
-
-	// note this choice -- found that 5 really is necessary for protein stepwise monte carlo. can't minimize all due to slowdown.
-	if ( pose_list_.size() > 0 && options_->choose_random() && num_pose_minimize_ == 0 /*asking this class for default*/ ) {
-		num_pose_minimize_ =  ( protein::contains_protein( *pose_list[1] ) ? 5 : 1 );
+	if ( pose_list_.size() > 0 ) {
+		pose::Pose const & pose = *pose_list[1];
+		working_minimize_res_ = figure_out_working_minimize_res( pose );
+		// note this choice -- found that 5 really is necessary for protein stepwise monte carlo. can't minimize all due to slowdown.
+		if ( options_->choose_random() && num_pose_minimize_ == 0 /*asking this class for default*/ ) {
+			num_pose_minimize_ =  ( protein::contains_protein( pose, working_minimize_res_ ) ? 5 : 1 );
+		}
+	} else {
+		runtime_assert( options_->rna_legacy_output_mode() );
 	}
 
-	working_minimize_res_.clear();
 }
 
 //Destructor
@@ -132,8 +135,7 @@ StepWiseMinimizer::do_clustering( pose::Pose & pose ){
 	StepWiseClusterer clusterer( options_ );
 	clusterer.set_pose_list( pose_list_ );
 	clusterer.set_max_decoys( pose_list_.size() );
-
-	working_minimize_res_ = figure_out_working_minimize_res( pose );
+	runtime_assert( working_minimize_res_ == figure_out_working_minimize_res( pose ) );
 	clusterer.set_calc_rms_res( working_minimize_res_ );
 
 	if ( pose_list_.size() > 1 && clusterer.cluster_rmsd() > 0.0 ) TR << "Will cluster "  << pose_list_.size() << " poses with cluster radius " << clusterer.cluster_rmsd() << std::endl;
@@ -149,7 +151,7 @@ StepWiseMinimizer::do_full_minimizing( pose::Pose & pose ){
 
 	kinematics::MoveMap mm;
 	utility::vector1< pose::PoseOP > output_pose_list;
-	if ( pose_list_.size() > 0 && num_pose_minimize_ != 1 ) TR << "Will minimize "  << pose_list_.size() << " poses." << std::endl;
+	if ( pose_list_.size() > 0 && num_pose_minimize_ > 1 ) TR << "Will minimize "  << std::min<Size>( pose_list_.size(), num_pose_minimize_ )  << " poses." << std::endl;
 
 	for ( Size n = 1; n <= pose_list_.size(); n++ ) {
 
@@ -254,7 +256,7 @@ StepWiseMinimizer::close_chainbreaks( pose::Pose & pose, kinematics::MoveMap & m
 //////////////////////////////////////////////////////////////////////////
 void
 StepWiseMinimizer::get_move_map_and_atom_level_domain_map( core::kinematics::MoveMap & mm, pose::Pose const & pose ){
-	working_minimize_res_ = figure_out_working_minimize_res( pose );
+	runtime_assert( working_minimize_res_ == figure_out_working_minimize_res( pose ) );
 	bool const move_takeoff_torsions = !options_->disable_sampling_of_loop_takeoff();
 	atom_level_domain_map_ = toolbox::AtomLevelDomainMapOP( new toolbox::AtomLevelDomainMap( pose ) ); // can come in handy later...
 	movemap::figure_out_stepwise_movemap( mm, atom_level_domain_map_, pose, working_minimize_res_, move_takeoff_torsions );

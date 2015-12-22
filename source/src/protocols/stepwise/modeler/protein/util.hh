@@ -60,7 +60,7 @@ utility::vector1< core::Size >
 just_protein( utility::vector1< core::Size > const & res_list, core::pose::Pose const & pose );
 
 bool
-contains_protein( core::pose::Pose const & pose );
+contains_protein( core::pose::Pose const & pose, utility::vector1< Size > const & res_list = utility::vector1< Size >()  );
 
 } //protein
 } //modeler

@@ -411,13 +411,20 @@ StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const 
 		for ( Size n = 1; n <= user_defined_calc_rms_res_.size(); n++ )  domain_map[ user_defined_calc_rms_res_[n] ] = 0;
 	}
 
-	// figure out 'primary' domain number. Smallest number that is not zero.
-	// must be drawn from root_partition (if that partition is defined)
-	Size d_primary = 0;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
-		if ( root_partition_res_.size() > 0 && !root_partition_res_.has_value( n ) ) continue;
-		Size const d = domain_map[ n ];
-		if ( d > 0 && ( d_primary == 0 || d < d_primary ) ) d_primary = d;
+	// First choice for primary domain is the domain encompassing the root. That
+	// should stay fixed.
+	Size d_primary = domain_map[ pose.fold_tree().root() ];
+
+	if ( d_primary > 0 ) {
+		if ( root_partition_res_.size() > 0 ) runtime_assert( root_partition_res_.has_value( pose.fold_tree().root() ) );
+	} else {
+		// Next strategy, figure out 'primary' domain number. Smallest number that is not zero.
+		// must be drawn from root_partition (if that partition is defined)
+		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+			if ( root_partition_res_.size() > 0 && !root_partition_res_.has_value( n ) ) continue;
+			Size const d = domain_map[ n ];
+			if ( d > 0 && ( d_primary == 0 || d < d_primary ) ) d_primary = d;
+		}
 	}
 
 	rmsd_res_in_pose_.clear();

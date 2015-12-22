@@ -17,6 +17,7 @@
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.hh>
+#include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/monte_carlo/util.hh> // for output_to_silent_file
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -191,6 +192,7 @@ StepWiseClusterer::check_for_closeness( pose::Pose const & pose1, pose::Pose con
 		if ( pose_aligner_ == 0 ) {
 			pose_aligner_ = StepWisePoseAlignerOP( new StepWisePoseAligner( pose2 ) );
 			pose_aligner_->set_user_defined_calc_rms_res( calc_rms_res_ );
+			pose_aligner_->set_root_partition_res( figure_out_root_partition_res( pose2, calc_rms_res_ ) );
 			pose_aligner_->initialize( pose1 );
 		}
 		if ( pose_aligner_->check_matching_atom_names( pose1, pose2, false /*verbose*/ ) ) { // terminal phosphate variants can reorder atom order...
