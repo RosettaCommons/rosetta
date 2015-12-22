@@ -200,6 +200,13 @@ Connection::parse_my_tag(
 }
 
 void
+Connection::set_id( std::string const & newid )
+{
+	NamedMover::set_id( newid );
+	set_segment_names( boost::assign::list_of (id()) (id() + "_1") );
+}
+
+void
 Connection::clear_rcgs()
 {
 	rcgs_.clear();
@@ -541,10 +548,24 @@ Connection::set_motifs( std::string const & motif_str )
 void
 Connection::set_motifs( utility::vector1< std::string > const & motif_strs )
 {
+	set_motifs( parse_motifs( motif_strs ) );
+}
+
+void
+Connection::set_motifs( Connection::MotifList const & mlist )
+{
 	motifs_.clear();
-	for ( core::Size i=1; i<=motif_strs.size(); ++i ) {
-		motifs_.push_back( parse_motif( motif_strs[i] ) );
+	motifs_ = mlist;
+}
+
+Connection::MotifList
+Connection::parse_motifs( utility::vector1< std::string > const & motif_strs ) const
+{
+	MotifList mlist;
+	for ( utility::vector1< std::string >::const_iterator mstr=motif_strs.begin(); mstr!=motif_strs.end(); ++mstr ) {
+		mlist.push_back( parse_motif( *mstr ) );
 	}
+	return mlist;
 }
 
 /// @brief set possible lengths of the connection with a string
@@ -770,16 +791,21 @@ Connection::setup_permutation( components::StructureData & perm ) const
 void
 Connection::apply_permutation( components::StructureData & perm ) const
 {
+	/*
+	if ( !perm.pose() )
 	core::pose::PoseCOP newpose = build_pose( perm );
+
 	if ( !newpose ) {
-		throw components::EXCN_Process( id() + " failed to build pose" );
+	throw components::EXCN_Process( id() + " failed to build pose" );
 	}
+	TR << "Before setting pose in apply_perm()" << std::endl;
 
 	if ( newpose->total_residue() ) {
-		core::pose::PoseOP total = perm.pose()->clone();
-		add_chain_from_pose( newpose, total );
-		perm.set_pose( total );
+	add_chain_from_pose( newpose, existing );
+	perm.set_pose( existing );
 	}
+	TR << "After setting pose in apply_perm()" << std::endl;
+	*/
 
 	process_permutation( perm );
 }
@@ -1083,10 +1109,8 @@ Connection::setup_structuredata(
 	set_cut_resi( perm, cut_resi_val );
 }
 
-/// @brief sets up the connection mover based on the information in the permutation and a random number
-/// @throw EXCN_Setup if no valid free connection points can be found
-void
-Connection::setup_from_random( components::StructureData & perm, core::Real random ) const
+std::pair< utility::vector1< std::string >, utility::vector1< std::string > >
+Connection::clear_segments_and_compute_valid_segment_values( components::StructureData & perm ) const
 {
 	// if a segment exists that was built by a connection of the same name, maintain the same termini as before
 	utility::vector1< std::string > local_comp1_ids;
@@ -1094,7 +1118,7 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 
 	// determine alternate id -- strip off all parent names
 	std::string alt_id = id();
-	for ( StringList::const_iterator c = perm.segments_begin(); c != perm.segments_end(); ++c ) {
+	for ( StringList::const_iterator c=perm.segments_begin(); c!=perm.segments_end(); ++c ) {
 		if ( boost::ends_with( *c, id() ) ) {
 			alt_id = *c;
 		}
@@ -1108,10 +1132,12 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 		// copy conection points and delete the old loop
 		local_comp1_ids.push_back( lower_segment_id( perm ) );
 		local_comp2_ids.push_back( upper_segment_id( perm ) );
-		if ( perm.has_segment( alt_id ) ) {
-			perm.delete_segment( alt_id );
-		} else {
-			perm.disconnect_segments( lower_segment_id( perm ), upper_segment_id( perm ) );
+		for ( StringList::const_iterator l=segment_names().begin(); l!=segment_names().end(); ++l ) {
+			if ( perm.has_segment( *l ) ) {
+				perm.delete_segment( *l );
+			} else {
+				perm.disconnect_segments( lower_segment_id( perm ), upper_segment_id( perm ) );
+			}
 		}
 	} else {
 		if ( chain1_ ) {
@@ -1144,20 +1170,30 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 		err << perm << std::endl;
 		throw utility::excn::EXCN_Msg_Exception( err.str() );
 	}
+	return std::make_pair( local_comp1_ids, local_comp2_ids );
+}
+
+Connection::ConnectionInfo
+Connection::select_connection_info(
+	components::StructureData const & perm,
+	utility::vector1< std::string > const & local_comp1_ids,
+	utility::vector1< std::string > const & local_comp2_ids,
+	core::Real & random ) const
+{
 	debug_assert( local_comp1_ids.size() > 0 );
 	debug_assert( local_comp2_ids.size() > 0 );
 
 	std::set< core::Size > lenset;
 	if ( idealized_abego_ ) {
-		for ( MotifList::const_iterator m = motifs_.begin(); m != motifs_.end(); ++m ) {
+		for ( MotifList::const_iterator m=motifs_.begin(); m!=motifs_.end(); ++m ) {
 			lenset.insert( m->len );
 		}
 	}
 
 	// which combinations of components and lengths are connectable
 	utility::vector1< utility::vector1< core::Size > > valid_idxs;
-	for ( core::Size i = 1; i <= local_comp1_ids.size(); ++i ) {
-		for ( core::Size j = 1; j <= local_comp2_ids.size(); ++j ) {
+	for ( core::Size i=1; i<=local_comp1_ids.size(); ++i ) {
+		for ( core::Size j=1; j<=local_comp2_ids.size(); ++j ) {
 			if ( !pair_allowed( local_comp1_ids[i], local_comp2_ids[j] ) ) {
 				TR.Debug << "c1, c2, len : connectable " << local_comp1_ids[i] << ", " << local_comp2_ids[j] << " DISALLOWED by user setting." << std::endl;
 				continue;
@@ -1217,101 +1253,54 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 	debug_assert( motifs.size() >= motifidx );
 	Motif const & motif = motifs[ motifidx ];
 
-	std::pair< std::string, std::string > comp1_segment( perm.termini(c1) );
-	std::pair< std::string, std::string > comp2_segment( perm.termini(c2) );
-	debug_assert( comp1_segment.second == c1 );
-	debug_assert( comp2_segment.first == c2 );
+	return ConnectionInfo( c1, c2, motif );
+}
 
-	// find cutpoint (relative to built loop) if it's not set
-	core::Size cut_resi_val = 0;
-	if ( motif.len && ( cut_resis_.size() > 0 ) && ( !performs_orientation() ) ) {
-		if ( cut_resis_.size() == 1 ) {
-			cut_resi_val = cut_resis_[1];
-		} else {
-			cut_resi_val = cut_resis_[ extract_int( random, 1, cut_resis_.size() ) ];
+/// @brief sets up the connection mover based on the information in the permutation and a random number
+/// @throw EXCN_Setup if no valid free connection points can be found
+void
+Connection::setup_from_random( components::StructureData & perm, core::Real random ) const
+{
+	// find free termini
+	std::pair< utility::vector1< std::string >, utility::vector1< std::string > > const segment_values =
+		clear_segments_and_compute_valid_segment_values( perm );
+	// choose info from random number
+	ConnectionInfo const c_info = select_connection_info( perm, segment_values.first, segment_values.second, random );
+	setup_from_connection_info( perm, random, c_info );
+}
+
+void
+Connection::setup_from_connection_info(
+	components::StructureData & perm,
+	core::Real & random,
+	ConnectionInfo const & c_info ) const
+{
+	// create loop sd (and optionally residues)
+	std::pair< std::string, std::string > comp1_segment( perm.termini( c_info.segment1 ) );
+	std::pair< std::string, std::string > comp2_segment( perm.termini( c_info.segment2 ) );
+	debug_assert( comp1_segment.second == c_info.segment1 );
+	debug_assert( comp2_segment.first == c_info.segment2 );
+	components::StructureDataOP loop_sd = create_loop_sd( comp1_segment, comp2_segment, c_info.motif, random );
+
+	if ( loop_sd->pose_length() && perm.pose() ) {
+		core::pose::PoseOP loop_pose = build_pose( *loop_sd );
+		if ( loop_pose->total_residue() ) {
+			loop_sd->set_pose( build_pose( *loop_sd ) );
 		}
-	} else if ( motif.len == 0 ) {
-		cut_resi_val = 0;
-	} else if ( performs_orientation() ) {
-		cut_resi_val = 0;
-	} else {
-		if ( motif.len == 1 ) {
-			cut_resi_val = 0;
-		} else {
-			cut_resi_val = extract_int( random, 1, motif.len - 1 );
-		}
 	}
 
-	setup_structuredata( perm, motif.len, motif.ss, motif.abego, c1, c2, comp1_segment.first, comp1_segment.second, cut_resi_val );
-	debug_assert( ( motif.len == 0 ) || ( cut_resi( perm ) < motif.len ) );
-
-	TR << "Cut resi is " << cut_resi(perm) << " out of " << build_len(perm) << std::endl;
-	core::Size prepend_residues = 0, append_residues = 0;
-	std::string prepend_ss = "", append_ss = "";
-	std::stringstream prepend_abego, append_abego;
-
-	if ( cut_resi(perm) ) {
-		prepend_residues = build_len(perm) - cut_resi(perm);
-		append_residues = cut_resi(perm);
-	} else {
-		prepend_residues = 0;
-		append_residues = build_len(perm);
-	}
-
-	std::string const ss = build_ss(perm);
-	std::string const ab = build_abego(perm);
-
-	append_ss += 'L';
-	append_abego << 'X';
-	for ( core::Size i = 1; i <= append_residues; ++i ) {
-		append_ss += ss[i-1];
-		append_abego << ab[i-1];
-	}
-	append_abego << 'X';
-	append_ss += 'L';
-
-	prepend_ss += 'L';
-	prepend_abego << 'X';
-	for ( core::Size i = 1; i <= prepend_residues; ++i ) {
-		prepend_ss += ss[append_residues+i-1];
-		prepend_abego << ab[append_residues+i-1];
-	}
-	prepend_ss += 'L';
-	prepend_abego << 'X';
-	debug_assert( append_residues + 2 == append_ss.size() );
-	debug_assert( append_residues + 2 == append_abego.str().size() );
-	debug_assert( prepend_residues + 2 == prepend_ss.size() );
-	debug_assert( prepend_residues + 2 == prepend_abego.str().size() );
-	debug_assert( append_residues + prepend_residues == build_len(perm) );
-
-	if ( append_residues ) {
-		components::StructureDataOP loop_sd(
-			new components::SingleChainStructureData(
-			id(),
-			append_residues,
-			append_residues + 2,
-			true,
-			append_ss,
-			abego_vector( append_abego.str() ) ) );
-		perm.merge( *loop_sd );
+	perm.merge( *loop_sd );
+	if ( loop_sd->has_segment( id() ) ) {
 		set_loop_lower( perm, id() );
 	} else {
-		set_loop_lower( perm, c1 );
+		set_loop_lower( perm, c_info.segment1 );
 	}
-
-	if ( prepend_residues ) {
-		components::StructureDataOP loop_sd(
-			new components::SingleChainStructureData(
-			id() + "_1",
-			prepend_residues,
-			prepend_residues + 2,
-			true,
-			prepend_ss,
-			abego_vector( prepend_abego.str() ) ) );
-		perm.merge( *loop_sd );
-		set_loop_upper( perm, id() + "_1" );
+	std::string const loop2id = id() + "_1";
+	if ( loop_sd->has_segment( loop2id ) ) {
+		set_loop_upper( perm, loop2id );
+		perm.set_movable_group( loop2id, perm.choose_new_movable_group() );
 	} else {
-		set_loop_upper( perm, c2 );
+		set_loop_upper( perm, c_info.segment2 );
 	}
 
 	debug_assert( perm.has_free_upper_terminus( lower_segment_id( perm ) ) );
@@ -1343,27 +1332,18 @@ Connection::build_pose( components::StructureData const & perm ) const
 	core::chemical::ResidueType const & typ = typeset->name_map( "VAL" );
 	core::conformation::ResidueOP newres = core::conformation::ResidueFactory::create_residue( typ );
 
-	if ( perm.has_segment( id() ) ) {
-		for ( core::Size i=1; i<=perm.segment( id() ).length(); ++i ) {
-			if ( i > 1 ) {
-				newpose->append_polymer_residue_after_seqpos( *newres, newpose->total_residue(), true );
-			} else {
-				newpose->append_residue_by_jump( *newres, 1, "", "", true );
-				core::pose::add_lower_terminus_type_to_pose_residue( *newpose, newpose->total_residue() );
+	for ( StringList::const_iterator s=segment_names().begin(); s!=segment_names().end(); ++s ) {
+		if ( perm.has_segment( *s ) ) {
+			for ( core::Size i=1; i<=perm.segment( *s ).length(); ++i ) {
+				if ( i > 1 ) {
+					newpose->append_polymer_residue_after_seqpos( *newres, newpose->total_residue(), true );
+				} else {
+					newpose->append_residue_by_jump( *newres, 1, "", "", true );
+					core::pose::add_lower_terminus_type_to_pose_residue( *newpose, newpose->total_residue() );
+				}
 			}
+			core::pose::add_upper_terminus_type_to_pose_residue( *newpose, newpose->total_residue() );
 		}
-		core::pose::add_upper_terminus_type_to_pose_residue( *newpose, newpose->total_residue() );
-	}
-	if ( perm.has_segment( id() + "_1" ) ) {
-		for ( core::Size i=1; i<=perm.segment( id() + "_1" ).length(); ++i ) {
-			if ( i > 1 ) {
-				newpose->append_polymer_residue_after_seqpos( *newres, newpose->total_residue(), true );
-			} else {
-				newpose->append_residue_by_jump( *newres, 1, "", "", true );
-				core::pose::add_lower_terminus_type_to_pose_residue( *newpose, 1 );
-			}
-		}
-		core::pose::add_upper_terminus_type_to_pose_residue( *newpose, newpose->total_residue() );
 	}
 
 	// set extended conformation
@@ -1373,7 +1353,113 @@ Connection::build_pose( components::StructureData const & perm ) const
 		newpose->set_psi( i, 180.0 );
 	}
 
+	// check vs sd
+	core::Size expected_size = 0;
+	for ( StringList::const_iterator s=segment_names().begin(); s!=segment_names().end(); ++ s ) {
+		if ( perm.has_segment( *s ) ) expected_size += perm.segment( *s ).length();
+	}
+	if ( newpose->total_residue() != expected_size ) {
+		std::stringstream msg;
+		msg << id() << ": Size of built loops = " << newpose->total_residue() << " does not match expected size from SD = "
+			<< expected_size << " sd=" << perm << std::endl;
+		throw components::EXCN_PoseInconsistent( msg.str() );
+	} else {
+		TR << "Loop size for segments " << segment_names() << " checks out ok = " << expected_size << std::endl;
+	}
+
 	return newpose;
+}
+
+components::StructureDataOP
+Connection::create_loop_sd(
+	std::pair< std::string, std::string > const & comp1_segment,
+	std::pair< std::string, std::string > const & comp2_segment,
+	Motif const & motif,
+	core::Real & random ) const
+{
+	// find cutpoint (relative to built loop) if it's not set
+	core::Size cut_resi_val = 0;
+	if ( motif.len && ( cut_resis_.size() > 0 ) && ( !performs_orientation() ) ) {
+		if ( cut_resis_.size() == 1 ) {
+			cut_resi_val = cut_resis_[1];
+		} else {
+			cut_resi_val = cut_resis_[ extract_int( random, 1, cut_resis_.size() ) ];
+		}
+	} else if ( motif.len == 0 ) {
+		cut_resi_val = 0;
+	} else if ( performs_orientation() ) {
+		cut_resi_val = 0;
+	} else {
+		if ( motif.len == 1 ) {
+			cut_resi_val = 0;
+		} else {
+			cut_resi_val = extract_int( random, 1, motif.len - 1 );
+		}
+	}
+
+	debug_assert( ( motif.len == 0 ) || ( cut_resi_val < motif.len ) );
+	TR << "Cut resi is " << cut_resi_val << " out of " << motif.len << std::endl;
+	core::Size prepend_residues = 0, append_residues = 0;
+	std::string prepend_ss = "", append_ss = "";
+	std::stringstream prepend_abego, append_abego;
+
+	if ( cut_resi_val ) {
+		prepend_residues = motif.len - cut_resi_val;
+		append_residues = cut_resi_val;
+	} else {
+		prepend_residues = 0;
+		append_residues = motif.len;
+	}
+
+	append_ss += 'L';
+	append_abego << 'X';
+	for ( core::Size i = 1; i <= append_residues; ++i ) {
+		append_ss += motif.ss[i-1];
+		append_abego << motif.abego[i-1];
+	}
+	append_abego << 'X';
+	append_ss += 'L';
+
+	prepend_ss += 'L';
+	prepend_abego << 'X';
+	for ( core::Size i = 1; i <= prepend_residues; ++i ) {
+		prepend_ss += motif.ss[append_residues+i-1];
+		prepend_abego << motif.abego[append_residues+i-1];
+	}
+	prepend_ss += 'L';
+	prepend_abego << 'X';
+	debug_assert( append_residues + 2 == append_ss.size() );
+	debug_assert( append_residues + 2 == append_abego.str().size() );
+	debug_assert( prepend_residues + 2 == prepend_ss.size() );
+	debug_assert( prepend_residues + 2 == prepend_abego.str().size() );
+	debug_assert( append_residues + prepend_residues == motif.len );
+
+	components::StructureDataOP loop_sd( new components::MultiChainStructureData( id() ) );
+	if ( append_residues ) {
+		components::StructureDataOP append_loop_sd(
+			new components::SingleChainStructureData(
+			id(),
+			append_residues,
+			append_residues + 2,
+			true,
+			append_ss,
+			abego_vector( append_abego.str() ) ) );
+		loop_sd->merge( *append_loop_sd );
+	}
+	if ( prepend_residues ) {
+		components::StructureDataOP prepend_loop_sd(
+			new components::SingleChainStructureData(
+			id() + "_1",
+			prepend_residues,
+			prepend_residues + 2,
+			true,
+			prepend_ss,
+			abego_vector( prepend_abego.str() ) ) );
+		loop_sd->merge( *prepend_loop_sd );
+	}
+	setup_structuredata( *loop_sd, motif.len, motif.ss, motif.abego, comp1_segment.second, comp2_segment.first, comp1_segment.first, comp1_segment.second, cut_resi_val );
+	TR << "Created loopsd=" << *loop_sd << std::endl;
+	return loop_sd;
 }
 
 void
@@ -1401,7 +1487,7 @@ Connection::move_segments( components::StructureData & perm, StringList const & 
 	// find c1_end
 	StringList::const_iterator n = desired_order.begin();
 	++n;
-	for ( StringList::const_iterator s = desired_order.begin(); n != desired_order.end(); ++s, ++n ) {
+	for ( StringList::const_iterator s=desired_order.begin(); n!=desired_order.end(); ++s, ++n ) {
 		if ( perm.segment( *s ).cterm_resi() + 1 != perm.segment( *n ).nterm_resi() ) {
 			c1_end = s;
 			break;
@@ -1803,11 +1889,36 @@ BridgeTomponents::parse_my_tag(
 		set_allow_cyclic( true );
 	}
 	// loop for loop length of 0 -- this is illegal for KIC
-	for ( core::Size i=1, s=motifs().size(); i<=s; ++i ) {
-		if ( !motifs()[i].len ) {
+	MotifList my_motifs;
+	for ( MotifList::const_iterator m=motifs().begin(); m!=motifs().end(); ++m ) {
+		if ( !m->len ) {
 			throw utility::excn::EXCN_RosettaScriptsOption("No loop lengths are specified to ConnectByKIC named " + id());
 		}
+		Motif newmotif = *m;
+		newmotif.len += 2;
+		std::stringstream newss, newabego;
+		newss << 'L' << m->ss << 'L';
+		newmotif.ss = newss.str();
+		newabego << 'X' << m->abego << 'X';
+		newmotif.abego = newabego.str();
+		my_motifs.push_back( newmotif );
 	}
+	//set_motifs( my_motifs );
+}
+
+void
+BridgeTomponents::setup_structuredata(
+	components::StructureData & perm,
+	core::Size const len,
+	std::string const & ss,
+	std::string const & abego,
+	std::string const & seg1,
+	std::string const & seg2,
+	std::string const & seg1_lower,
+	std::string const & seg2_upper,
+	core::Size const cut_resi_val ) const
+{
+	Connection::setup_structuredata( perm, len, ss, abego, seg1, seg2, seg1_lower, seg2_upper, cut_resi_val );
 }
 
 /// @brief sets kic selector scorefunction
@@ -1883,7 +1994,7 @@ BridgeTomponents::apply_connection( components::StructureData & perm ) const
 			throw EXCN_ConnectionFailed( id() );
 		}
 
-		TR << "Terminal residues are " << perm.segment(loop_lower(perm)).cterm_resi() << " and " << std::endl;
+		TR << "Terminal residues are " << perm.segment(loop_lower(perm)).cterm_resi() << " and " << perm.segment(loop_upper(perm)).nterm_resi() << std::endl;
 	}
 	// clean up fold tree if necessary
 	TR << "BEfore removing jump/cut, ft=" << perm.pose()->fold_tree() << std::endl;
@@ -1901,10 +2012,10 @@ BridgeTomponents::setup_kic_closure(
 	// add pivots to KIC
 	core::Size const loop_midpoint = lres[(lres.size()/2)+1];
 	kic->set_pivot_atoms( lres[1], "CA", loop_midpoint, "CA", lres[lres.size()], "CA" );
-	assert( cut_resi(perm) );
+	debug_assert( cut_resi(perm) );
 	core::Size const cut_idx = cut_resi(perm)+pre_overlap;
 	assert( cut_idx );
-	assert( cut_idx < lres.size() );
+	assert( cut_idx+1 < lres.size() );
 	kic->close_bond( lres[cut_idx], "C", lres[cut_idx+1], "N",
 		lres[cut_idx], "CA", //prioratom
 		lres[cut_idx+1], "CA", //followingatom
@@ -1996,10 +2107,10 @@ std::pair< core::Size, core::Size >
 ConnectTerminiWithDisulfide::create_cyd_pair( components::StructureData & perm, utility::vector1< core::Size > const & loop_residues ) const
 {
 	assert( cut_resi(perm) );
-	assert( loop_residues.size() >= cut_resi(perm)+1 );
+	assert( loop_residues.size() >= cut_resi(perm)+2 );
 	TR << "LOop residues are: " << loop_residues << std::endl;
-	core::Size const pos1 = loop_residues[cut_resi(perm)];
-	core::Size const pos2 = loop_residues[cut_resi(perm)+1];
+	core::Size const pos1 = loop_residues[cut_resi(perm)+1];
+	core::Size const pos2 = loop_residues[cut_resi(perm)+2];
 	TR << "Making CYS:disulfide at positions " << pos1 << " and " << pos2 << std::endl;
 	using namespace protocols::simple_moves;
 	protocols::simple_moves::MutateResidueOP make_cyd1 = MutateResidueOP( new MutateResidue( pos1, "CYS:disulfide" ) );

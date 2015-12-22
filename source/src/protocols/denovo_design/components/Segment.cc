@@ -392,6 +392,43 @@ Segment::delete_residues( core::Size const local_resnum_start, core::Size const 
 	abego_ = newabego;
 }
 
+/// output residueinfo
+std::ostream &
+operator<<( std::ostream & os, Segment const & res )
+{
+	std::string ab_str = "";
+	for ( core::Size i=1, end=res.abego().size(); i<=end; ++i ) {
+		ab_str += res.abego()[i][0];
+	}
+	os << "start=\"" << res.start()
+		<< "\" stop=\"" << res.stop()
+		<< "\" safe=\"" << res.safe()
+		<< "\" nterm=\"" << res.nterm_included_
+		<< "\" cterm=\"" << res.cterm_included_
+		<< "\" loop=\"" << res.is_loop
+		<< "\" mgroup=\"" << res.movable_group
+		<< "\" cutpoint=\"" << res.cutpoint()
+		<< "\" ss=\"" << res.ss()
+		<< "\" abego=\"" << ab_str;
+
+	if ( res.lower_segment() != "" ) {
+		os << "\" lower_segment=\"" << res.lower_segment();
+	}
+	if ( res.upper_segment() != "" ) {
+		os << "\" upper_segment=\"" << res.upper_segment();
+	}
+
+	os << "\"";
+	return os;
+}
+
+std::ostream &
+operator<<( std::ostream & os, NamedSegment const & resis )
+{
+	os << "<ResidueRange name=\"" << resis.first << "\" " << resis.second << " />";
+	return os;
+}
+
 } // namespace components
 } // namespace denovo_design
 } // namespace protocols

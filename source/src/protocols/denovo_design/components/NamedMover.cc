@@ -43,15 +43,19 @@ namespace components {
 NamedMover::NamedMover() :
 	protocols::moves::Mover(),
 	id_( "" ),
-	parent_id_( "" )
+	parent_id_( "" ),
+	segment_names_()
 {
+	segment_names_.clear();
 }
 
 NamedMover::NamedMover( std::string const & idval, std::string const & parent_id ):
 	protocols::moves::Mover(),
 	id_( idval ),
-	parent_id_( parent_id )
+	parent_id_( parent_id ),
+	segment_names_()
 {
+	segment_names_.clear();
 }
 
 /// @brief setup the parameters via an xml tag
@@ -65,6 +69,7 @@ NamedMover::parse_my_tag(
 {
 	if ( tag->hasOption( "name" ) ) {
 		set_id( tag->getOption< std::string >( "name" ) );
+		if ( segment_names().empty() ) add_segment_name( id() );
 	} else {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Name is required for " + tag->getName() );
 	}
@@ -177,6 +182,11 @@ void
 NamedMover::set_parent_id( std::string const & parentid )
 {
 	parent_id_ = parentid;
+	for ( StringList::iterator s=segment_names_.begin(); s!=segment_names_.end(); ++s ) {
+		utility::vector1< std::string > const names = utility::string_split( *s, PARENT_DELIMETER );
+		std::string const & basename = names[ names.size() ];
+		*s = parent_id_ + PARENT_DELIMETER + basename;
+	}
 	if ( ! id_.empty() ) {
 		set_id( id() );
 	}

@@ -36,6 +36,7 @@
 #include <core/types.hh>
 
 // Basic/Numeric/Utility Headers
+#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -49,7 +50,14 @@ namespace denovo_design {
 namespace components {
 
 typedef std::map< std::string, Segment > SegmentMap;
-typedef std::pair< std::string, core::Size > Alias;
+class Alias : public std::pair< std::string, core::Size > {
+public:
+	Alias():
+		std::pair< std::string, core::Size >() {}
+
+	Alias( std::string const & segment, core::Size const resid ):
+		std::pair< std::string, core::Size >( segment, resid ) {}
+};
 
 struct BondInfo {
 private:
@@ -207,6 +215,13 @@ public:
 	/// @brief adds a residues segment -- will be ordered at the given index
 	void add_segment( std::string const & id_val, Segment const & resis, StringList::iterator insert_pos );
 
+	/// @brief adds a residues segment -- also adds pose residues
+	void add_segment(
+		std::string const & id_val,
+		Segment const & resis,
+		StringList::iterator insert_pos,
+		core::pose::PoseCOP residues );
+
 	/// @brief adds a segment of residues -- start_resid MUST be the nterm_resi() of a segment if segments exist yet
 	void add_segment(
 		std::string const & id_val,
@@ -225,9 +240,13 @@ public:
 
 	/// @brief merge all data and segments from "other" into this StructureData
 	void merge( StructureData const & other );
+	/// @brief merge given data and segments from "other" into this StructureData
+	void merge( StructureData const & other, StringList const & segments );
 
 	/// @brief merge all data and segments from "other" into this StructureData before the given position
 	void merge_before( StructureData const & other, std::string const & position );
+	/// @brief merge all data and given segments from "other" into this StructureData before the given position
+	void merge_before( StructureData const & other, std::string const & position, StringList const & segments );
 
 	/// @brief sets real number data
 	void set_data_int( std::string const & segment_id, std::string const & data_name, int const val );
@@ -249,11 +268,15 @@ public:
 		std::string const & alias_name,
 		core::Size const resi );
 
-	/// @brief copies user data fields from one permutation to this one
-	void copy_data( StructureData const & perm, bool const do_rename );
+	/// @brief copies user data fields from one permutation to this one -- overwrites existing data
+	void copy_data( StructureData const & perm );
+
+private:
+	/// @brief copies user data fields from one permutation to this one -- optionally overwrites
+	void copy_data( StructureData const & perm, bool const overwrite );
 
 	// const methods
-
+public:
 	/// @brief Total number of chains WARNING: This is an O(n) operation, where n is number of residue segments
 	core::Size num_chains() const;
 
@@ -284,9 +307,6 @@ public:
 
 	/// @brief counts and returns the number of movable residue groups
 	core::Size movable_group( std::string const & id ) const;
-
-	/// @brief sets movable group of a segment
-	void set_movable_group( std::string const & id, core::Size const mg );
 
 	/// @brief returns segments which have free lower termini
 	utility::vector1< std::string > available_lower_termini() const;
@@ -430,7 +450,7 @@ public:
 	std::string const & get_data_str( std::string const & segment_id, std::string const & data_name ) const;
 
 	/// @brief given a residue alias, returns a pose residue number
-	bool inline has_alias( std::string const & alias ) const { return ( aliases_.find(alias) != aliases_.end() ); }
+	bool has_alias( std::string const & alias ) const { return ( aliases_.find(alias) != aliases_.end() ); }
 
 	/// @brief given a residue alias, returns a pose residue number
 	core::Size alias_resnum( std::string const & alias ) const;
@@ -451,7 +471,7 @@ public:
 	inline std::map< std::string, std::string > const & data_str() const { return data_str_; }
 
 	/// @brief gets all alias data
-	inline std::map< std::string, std::pair< std::string, core::Size > > const & aliases() const { return aliases_; }
+	std::map< std::string, Alias > const & aliases() const { return aliases_; }
 
 	/// @brief return secondary structure string
 	inline std::string const & ss() const { return ss_; }
@@ -470,7 +490,8 @@ public:
 	bool polymer_bond_exists( std::string const & segment1, std::string const & segment2 ) const;
 
 	/// @brief checks the permutation for internal consistency
-	bool check_consistency() const;
+	void check_consistency() const;
+	void check_consistency( core::pose::Pose const & pose ) const;
 
 	/// @brief for output
 	friend std::ostream & operator<<( std::ostream & os, StructureData const & perm );
@@ -536,9 +557,6 @@ public:
 	/// @brief removes constraints added by the given RCG
 	void remove_constraints_from_pose( protocols::forge::remodel::RemodelConstraintGeneratorOP rcg );
 
-	/// @brief renumbers movable group "oldg" to have new number "newg"
-	void renumber_movable_group( core::Size const oldg, core::Size const newg );
-
 	/// @brief sets jump with index jumpidx to the given datastructure
 	void set_jump( int const jumpidx, core::kinematics::Jump const & j );
 
@@ -585,6 +603,15 @@ public:
 		core::Size const resnum,
 		core::conformation::Residue const & res_in,
 		bool const orient_bb );
+
+	/// @brief chooses a new movable group which doesn't conflict with existing ones
+	core::Size choose_new_movable_group() const;
+
+	/// @brief sets movable group of a segment
+	void set_movable_group( std::string const & id, core::Size const mg );
+
+	/// @brief renumbers movable group "oldg" to have new number "newg"
+	void renumber_movable_group( core::Size const oldg, core::Size const newg );
 
 	/// @brief updates numbering based on the saved order of Segment objects
 	void update_numbering();
@@ -657,6 +684,9 @@ protected:
 		core::Size start,
 		core::Size end );
 
+	/// @brief deletes segment in SD without touching pose -- doesn't update numbering
+	void delete_segment_nopose( std::string const & seg_val, SegmentMap::iterator r );
+
 	/// @brief add lower cutpoint to residue cut and upper cutpoint to residue cut+1
 	void add_cutpoint_variants( core::Size const cut_res );
 
@@ -680,8 +710,21 @@ private:
 	/// @brief updates movable group numbering after a deletion -- deleted mg is passed
 	void update_movable_groups_after_deletion( core::Size const mg_old );
 
-	/// @brief chooses a new movable group which doesn't conflict with existing ones
-	core::Size choose_new_movable_group() const;
+	/// @brief checks pose vs. StructureData info
+	/// @throw EXCN_PoseInconsistent if things don't match
+	void check_pose( core::pose::Pose const & pose ) const;
+
+	/// @brief checks residues in SD -- makes sure everything is sequential and accounted for
+	void check_residues() const;
+
+	/// @brief checks chain termini in pose vs SD
+	/// @throws EXCN_PoseInconsistent if there is a problem
+	void check_improper_termini( core::pose::Pose const & pose ) const;
+	void check_chain_beginnings( core::pose::Pose const & pose ) const;
+	void check_chain_endings( core::pose::Pose const & pose ) const;
+
+	/// @brief check pose movable groups vs SD
+	void check_movable_groups() const;
 
 	// member variables
 private:
@@ -753,8 +796,15 @@ public:
 private:
 };
 
+class EXCN_PoseInconsistent : public utility::excn::EXCN_BadInput {
+public:
+	EXCN_PoseInconsistent( std::string const & msg ):
+		utility::excn::EXCN_BadInput( msg ) {}
+};
+
 /// dump contents of residues map
 std::ostream & operator<<( std::ostream & os, SegmentMap const & resmap );
+std::ostream & operator<<( std::ostream & os, Alias const & alias );
 
 } // components
 } // denovo_design

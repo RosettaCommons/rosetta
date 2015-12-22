@@ -162,7 +162,7 @@ public:
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/connection/test_pdbcomp_BridgeChains.pdb" );
 		StructureDataOP perm = StructureData::create_from_pose( input_pose, "BridgeChainsUnit" );
 		TS_ASSERT( perm->pose() );
-		TS_ASSERT( perm->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( perm->check_consistency() );
 		TS_ASSERT_EQUALS( perm->pose()->conformation().num_chains(), 5 );
 
 		// save original for testing
@@ -210,12 +210,6 @@ public:
 		TS_ASSERT( conn.segments_fixed( *perm ) );
 		TS_ASSERT( perm->pose() );
 
-		core::pose::PoseCOP newpose = conn.build_pose( *perm );
-		TS_ASSERT( newpose );
-		core::pose::PoseOP total = perm->pose()->clone();
-		protocols::denovo_design::add_chain_from_pose( newpose, total );
-		perm->set_pose( total );
-
 		// perform setup tasks (e.g. loop building)
 		conn.setup( *perm );
 		TS_ASSERT_EQUALS( conn.get_last_move_status(), protocols::moves::MS_SUCCESS );
@@ -236,7 +230,7 @@ public:
 		roots.push_back( conn.lower_segment_id(*perm) );
 		roots.push_back( conn.upper_segment_id(*perm) );
 		perm->consolidate_movable_groups( roots );
-		TS_ASSERT( perm->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( perm->check_consistency() );
 		for ( core::Size i=1; i<=perm->pose()->total_residue(); ++i ) {
 			TR << perm->pose()->residue(i).name() << i << std::endl;
 		}
@@ -315,7 +309,7 @@ public:
 		components::StructureDataOP perm = components::StructureData::create_from_pose( input_pose, id_tag );
 		TS_ASSERT( perm );
 		TS_ASSERT( perm->pose() );
-		TS_ASSERT( perm->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( perm->check_consistency() );
 
 		// save original for comparison
 		components::StructureDataOP orig = perm->clone();
@@ -329,12 +323,7 @@ public:
 		conn.set_overlap( 2 );
 		conn.setup_permutation( *perm );
 
-		core::pose::PoseCOP newpose = conn.build_pose( *perm );
-		TS_ASSERT( newpose );
-		core::pose::PoseOP total = perm->pose()->clone();
-		add_chain_from_pose( newpose, total );
-		perm->set_pose( total );
-		TS_ASSERT( perm->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( perm->check_consistency() );
 
 		// segment1-->segment2, segment1-->helixconn, segment1-->helixconn_1
 		TS_ASSERT_EQUALS( perm->pose()->fold_tree().num_jump(), 3 );

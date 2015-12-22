@@ -144,7 +144,7 @@ public:
 
 	/// output residueinfo
 	friend std::ostream &
-	operator<<( std::ostream & os, std::pair< std::string, Segment > const & res );
+	operator<<( std::ostream & os, Segment const & res );
 
 	core::Size movable_group;
 	bool is_loop;
@@ -161,6 +161,15 @@ private:
 	bool cterm_included_;
 	std::string lower_segment_;
 	std::string upper_segment_;
+};
+
+class NamedSegment : public std::pair< std::string, Segment > {
+public:
+	NamedSegment( std::string const & name, Segment const & res ):
+		std::pair< std::string, Segment >( name, res ) {}
+	NamedSegment( std::pair< std::string, Segment > const & resp ):
+		std::pair< std::string, Segment >( resp ) {}
+	friend std::ostream & operator<<( std::ostream & os, NamedSegment const & resis );
 };
 
 } // components

@@ -100,7 +100,7 @@ public:
 		core::pose::Pose input_pose;
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/connection/test_bundle_disconnected.pdb" );
 		StructureDataOP sd = StructureData::create_from_pose( input_pose, "UnitTest" );
-		TS_ASSERT( sd->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
 
 		BridgeTomponentsProtected conn;
 		conn.set_id( "bridge" );
@@ -127,13 +127,8 @@ public:
 		core::pose::PoseOP loop = conn.build_pose( *sd );
 		TS_ASSERT_EQUALS( loop->total_residue(), 14 );
 		TS_ASSERT_EQUALS( loop->conformation().num_chains(), 2 );
-		core::pose::PoseOP total = sd->pose()->clone();
-		add_chain_from_pose( loop, total );
-		TS_ASSERT_EQUALS( total->total_residue(), 46 );
-		TS_ASSERT_EQUALS( total->conformation().num_chains(), 4 );
 
-		sd->set_pose( total );
-		TS_ASSERT( sd->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
 		StructureDataOP orig = sd->clone();
 
 		// move segments into proper order
@@ -148,7 +143,7 @@ public:
 		TS_ASSERT_EQUALS( segs[4], "UnitTest.2" );
 
 		conn.move_segments_prot( *sd, desired_order );
-		TS_ASSERT( sd->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
 		TS_ASSERT_EQUALS( sd->pose()->conformation().num_chains(), 4 );
 		check_unwanted_movement( *orig, *sd );
 		orig = sd->clone();
@@ -174,7 +169,7 @@ public:
 		}
 		conn.connect_lower_loop_prot( *sd );
 
-		TS_ASSERT( sd->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
 		check_unwanted_movement( *orig, *sd );
 		orig = sd->clone();
 		TS_ASSERT_EQUALS( sd->pose()->conformation().num_chains(), 3 );
@@ -202,7 +197,7 @@ public:
 		}
 
 		conn.connect_upper_loop_prot( *sd );
-		TS_ASSERT( sd->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
 		check_unwanted_movement( *orig, *sd );
 		TS_ASSERT_EQUALS( sd->pose()->conformation().num_chains(), 2 );
 		TS_ASSERT_EQUALS( sd->pose()->total_residue(), 42 );
@@ -230,14 +225,14 @@ public:
 		sd->consolidate_movable_groups( boost::assign::list_of ("UnitTest.1") ("UnitTest.2") );
 
 		conn.apply_connection( *sd );
-		TS_ASSERT( sd->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
 		sd->delete_trailing_residues( "bridge" );
 		sd->delete_leading_residues( "bridge_1" );
-		TS_ASSERT( sd->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
 		check_unwanted_movement( *orig, *sd );
 
 		conn.post_process_permutation_prot( *sd );
-		TS_ASSERT( sd->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
 		TS_ASSERT( ! sd->has_segment( "bridge_1" ) );
 		TS_ASSERT( sd->has_segment( "bridge" ) );
 		TS_ASSERT_EQUALS( sd->segment( "bridge" ).elem_length(), 10 );
@@ -363,13 +358,7 @@ public:
 		TS_ASSERT_EQUALS( conn.lower_segment_id( *sd2 ), "sheet1.s2" );
 		TS_ASSERT_EQUALS( conn.upper_segment_id( *sd2 ), "sheet1.s1" );
 
-		// build and set pose
-		core::pose::PoseCOP newpose = conn.build_pose( *sd2 );
-		core::pose::PoseOP total = sd2->pose()->clone();
-		add_chain_from_pose( newpose, total );
-		sd2->set_pose( total );
-		TR << *sd2 << std::endl;
-		TS_ASSERT( sd2->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( sd2->check_consistency() );
 
 		// test building loop residues
 		conn.setup( *sd2 );
@@ -408,17 +397,8 @@ public:
 		sd2 = sd->clone();
 		conn.set_overlap( 4 );
 		conn.setup_from_random( *sd2, core::Real( 0.000 ) );
-
-		newpose = conn.build_pose( *sd2 );
-		total = sd2->pose()->clone();
-		add_chain_from_pose( newpose, total );
-
-		TS_ASSERT( newpose );
-		TS_ASSERT( total );
-		sd2->set_pose( total );
-		TS_ASSERT( sd2->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( sd2->check_consistency() );
 		StructureDataOP orig = sd2->clone();
-
 		conn.setup( *sd2 );
 		TS_ASSERT_EQUALS( conn.build_left( *sd2 ), sd2->segment( conn.loop_lower( *sd2 ) ).nterm_resi() - 4 );
 		TS_ASSERT_EQUALS( conn.build_right( *sd2 ), sd2->segment( conn.loop_upper( *sd2 ) ).cterm_resi() + 4 );
@@ -494,11 +474,7 @@ public:
 		// check proper loop abego and ss
 		conn->setup_permutation( *poseperm );
 
-		core::pose::PoseOP newpose = conn->build_pose( *poseperm );
-		core::pose::PoseOP total = poseperm->pose()->clone();
-		add_chain_from_pose( newpose, total );
-		poseperm->set_pose( total );
-		TS_ASSERT( poseperm->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( poseperm->check_consistency() );
 
 		StructureDataOP orig = poseperm->clone();
 		conn->setup( *poseperm );

@@ -581,9 +581,7 @@ add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined )
 	runtime_assert( to_add );
 	runtime_assert( combined );
 
-	if ( ! to_add->total_residue() ) {
-		return;
-	}
+	if ( ! to_add->total_residue() ) return;
 
 	if ( combined->total_residue() ) {
 		// here we want an anchor equal to the root of the fold tree
@@ -596,15 +594,16 @@ add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined )
 	}
 	// copy remarks
 	if ( to_add->pdb_info() ) {
-		for ( core::pose::Remarks::const_iterator r=to_add->pdb_info()->remarks().begin(); r != to_add->pdb_info()->remarks().end(); ++r ) {
+		for ( core::pose::Remarks::const_iterator r=to_add->pdb_info()->remarks().begin(); r!=to_add->pdb_info()->remarks().end(); ++r ) {
 			TR.Debug << "Copying remark to new pose: " << r->value << std::endl;
 			if ( !combined->pdb_info() ) {
 				combined->pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( *combined, true ) ) );
 			}
-			assert( combined->pdb_info() );
+			debug_assert( combined->pdb_info() );
 			combined->pdb_info()->remarks().push_back( *r );
 		}
 	}
+	TR << "Added segment to pose of length " << to_add->total_residue() << std::endl;
 }
 
 } // protocols

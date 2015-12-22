@@ -95,6 +95,18 @@ public:
 	};
 	typedef utility::vector1< Motif > MotifList;
 
+	class ConnectionInfo {
+	public:
+		ConnectionInfo( std::string const & seg1, std::string const & seg2, Motif const & conn_motif ):
+			segment1( seg1 ), segment2( seg2 ), motif( conn_motif ) {}
+	private:
+		ConnectionInfo() {};
+	public:
+		std::string const segment1;
+		std::string const segment2;
+		Motif const motif;
+	};
+
 public:
 	Connection();
 	virtual ~Connection();
@@ -189,6 +201,7 @@ public:
 	virtual void
 	process_permutation( components::StructureData & perm ) const;
 
+	virtual void set_id( std::string const & newid );
 	///////////////////////////////////////////////////////////////////////////
 	/// Methods for setting/getting data in StructureData Object
 	///////////////////////////////////////////////////////////////////////////
@@ -295,6 +308,7 @@ public:
 	void set_motifs( std::string const & motif_str );
 	/// @brief set possible motifs of the connection with a vector of strings
 	void set_motifs( utility::vector1< std::string > const & motif_strs );
+	void set_motifs( Connection::MotifList const & mlist );
 
 	/// @brief name of component1
 	inline utility::vector1< std::string > const & comp1_ids() const { return comp1_ids_; }
@@ -369,6 +383,7 @@ public:
 
 	/// @brief parse a motif string, return a list of paired lengths and ss+abegos
 	Motif parse_motif( std::string const & motif_str ) const;
+	MotifList parse_motifs( utility::vector1< std::string > const & motif_strs ) const;
 
 	/// @brief finds usable/available upper termini (i.e. those for comp1)
 	utility::vector1< std::string >
@@ -385,6 +400,27 @@ public:
 		std::set< core::Size > const & len_set ) const;
 
 protected:
+	std::pair< utility::vector1< std::string >, utility::vector1< std::string > >
+	clear_segments_and_compute_valid_segment_values( components::StructureData & perm ) const;
+
+	Connection::ConnectionInfo
+	select_connection_info(
+		components::StructureData const & perm,
+		utility::vector1< std::string > const & valid_segment1_ids,
+		utility::vector1< std::string > const & valid_segment2_ids,
+		core::Real & random ) const;
+
+	void setup_from_connection_info(
+		components::StructureData & perm,
+		core::Real & random,
+		ConnectionInfo const & c_info ) const;
+
+	components::StructureDataOP create_loop_sd(
+		std::pair< std::string, std::string > const & c1,
+		std::pair< std::string, std::string > const & c2,
+		Motif const & motif,
+		core::Real & random ) const;
+
 	void move_segments( components::StructureData & perm, StringList const & desired_order ) const;
 	void move_segments_cyclic( components::StructureData & perm ) const;
 	void connect_lower_loop( components::StructureData & perm ) const;
@@ -395,7 +431,7 @@ protected:
 	/// @throw EXCN_ConnectionFailed if checks fail
 	void post_process_permutation( components::StructureData & perm ) const;
 
-	void setup_structuredata(
+	virtual void setup_structuredata(
 		components::StructureData & perm,
 		core::Size const len,
 		std::string const & ss,
@@ -570,6 +606,18 @@ public:
 	inline void set_kic_mover( protocols::generalized_kinematic_closure::GeneralizedKICOP const kic_val ) { kic_template_ = kic_val; }
 	/// @brief sets kic selector scorefunction
 	void set_selector_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
+
+private:
+	virtual void setup_structuredata(
+		components::StructureData & perm,
+		core::Size const len,
+		std::string const & ss,
+		std::string const & abego,
+		std::string const & seg1,
+		std::string const & seg2,
+		std::string const & seg1_lower,
+		std::string const & seg2_upper,
+		core::Size const cut_resi_val ) const;
 
 private:
 	protocols::generalized_kinematic_closure::GeneralizedKICCOP kic_template_;

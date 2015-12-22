@@ -182,10 +182,17 @@ Picker::fragments_for_permutation(
 	//utility::vector1< std::string > complete_abego = core::sequence::ABEGOManager().get_symbols( *(perm.pose()), 1 );
 
 	for ( StringList::const_iterator s = comp_ids.begin(); s != comp_ids.end(); ++s ) {
-		Segment residues = perm.segment( *s );
-		assert( residues.stop() >= residues.start() );
-		assert( residues.start() >= 1 );
-		fragset->add( get_framelist( "", perm.ss(), perm.abego(), residues.nterm_resi(), residues.cterm_resi(), frag_length ) );
+		Segment const & residues = perm.segment( *s );
+		debug_assert( residues.stop() >= residues.start() );
+		debug_assert( residues.start() >= 1 );
+
+		std::string ss = perm.ss();
+		utility::vector1< std::string > abego = perm.abego();
+		if ( residues.upper_segment().empty() ) {
+			ss = ss.substr( 0, residues.cterm_resi() );
+			abego = utility::vector1< std::string >( abego.begin(), abego.begin() + residues.cterm_resi() );
+		}
+		fragset->add( get_framelist( "", ss, abego, residues.nterm_resi(), residues.cterm_resi(), frag_length ) );
 	}
 	return fragset;
 }

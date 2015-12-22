@@ -128,7 +128,7 @@ FoldGraph::nodeidx( std::string const & segment ) const
 	std::map< std::string, core::Size >::const_iterator it = seg2node_.find(segment);
 	if ( it == seg2node_.end() ) {
 		TR.Error << "Component " << segment << " not found in map: " << seg2node_ << std::endl;
-		assert( it != seg2node_.end() );
+		debug_assert( it != seg2node_.end() );
 	}
 	return it->second;
 }

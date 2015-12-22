@@ -25,6 +25,7 @@
 //Protocol Headers
 
 //Core Headers
+#include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 
 //Basic Headers
@@ -201,7 +202,22 @@ ExtendChain::setup_permutation( components::StructureData & perm ) const
 		throw utility::excn::EXCN_BadInput( msg.str() );
 	}
 
-	setup_structuredata( perm,
+	std::string const segname = id();
+	std::stringstream complete_ss;
+	complete_ss << 'L' << motif.ss << 'L';
+	std::stringstream complete_abego;
+	complete_abego << 'X' << motif.abego << 'X';
+
+	components::StructureDataOP loop_sd(
+		new components::SingleChainStructureData(
+		segname,
+		motif.len,
+		motif.len + 2,
+		false,
+		complete_ss.str(),
+		abego_vector( complete_abego.str() ) ) );
+
+	setup_structuredata( *loop_sd,
 		motif.len,
 		motif.ss,
 		motif.abego,
@@ -216,21 +232,10 @@ ExtendChain::setup_permutation( components::StructureData & perm ) const
 		return;
 	}
 
-	std::stringstream complete_ss;
-	complete_ss << 'L' << motif.ss << 'L';
-	std::stringstream complete_abego;
-	complete_abego << 'X' << motif.abego << 'X';
-
-	std::string segname = id();
-
-	components::StructureDataOP loop_sd(
-		new components::SingleChainStructureData(
-		segname,
-		motif.len,
-		motif.len + 2,
-		false,
-		complete_ss.str(),
-		abego_vector( complete_abego.str() ) ) );
+	if ( perm.pose() ) {
+		core::pose::PoseOP newpose = build_pose( *loop_sd );
+		loop_sd->set_pose( newpose );
+	}
 	perm.merge( *loop_sd );
 
 	if ( !seg1.empty() ) {
@@ -278,7 +283,17 @@ ExtendChain::process_permutation( components::StructureData & perm ) const
 	}
 
 	perm.chains_from_termini();
-	apply_connection( perm );
+
+	// do the work
+	try {
+		apply_connection( perm );
+	} catch ( EXCN_ConnectionFailed const & e ) {
+		throw components::EXCN_Process( e.message() );
+	}
+
+	for ( core::Size i=1; i<=perm.pose()->total_residue(); ++i ) {
+		TR << i << " : " << perm.pose()->residue( i ).name() << " " << perm.pose()->chain( i ) << std::endl;
+	}
 }
 
 /// @brief Does the work of remodeling the connection

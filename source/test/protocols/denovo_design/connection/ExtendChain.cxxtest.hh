@@ -189,10 +189,10 @@ public:
 		extend.set_do_remodel( false );
 
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/connection/test_pdbcomp_BridgeChains.pdb" );
-
 		StructureDataOP sd = StructureData::create_from_pose( input_pose, "extend" );
 		TS_ASSERT( sd );
-		TS_ASSERT( sd->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
+		TS_ASSERT_EQUALS( sd->pose()->conformation().num_chains(), input_pose.conformation().num_chains() );
 		StructureDataOP orig = sd->clone();
 
 		extend.setup_permutation( *sd );
@@ -210,9 +210,14 @@ public:
 		orig = sd->clone();
 
 		extend.apply_permutation( *sd );
-		TS_ASSERT( sd->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
+
 		// show have same # of chains that we started with
-		TS_ASSERT_EQUALS( orig->pose()->conformation().num_chains(), sd->pose()->conformation().num_chains() );
+		for ( core::Size i=1; i<=input_pose.total_residue(); ++i ) {
+			TR << i << " : " << input_pose.residue( i ).name() << " " << input_pose.chain( i ) << std::endl;
+		}
+		sd->chains_from_termini();
+		TS_ASSERT_EQUALS( input_pose.conformation().num_chains(), sd->pose()->conformation().num_chains() );
 		// should have 8 more residues
 		TS_ASSERT_EQUALS( input_pose.total_residue() + 8, sd->pose_length() );
 		// should not have any linear chainbreak
@@ -242,7 +247,7 @@ public:
 
 		StructureDataOP sd = StructureData::create_from_pose( input_pose, "extend" );
 		TS_ASSERT( sd );
-		TS_ASSERT( sd->check_consistency() );
+		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
 		StructureDataOP orig = sd->clone();
 
 		extend.setup_permutation( *sd );
@@ -260,9 +265,10 @@ public:
 		orig = sd->clone();
 
 		extend.apply_permutation( *sd );
-		TS_ASSERT( sd->check_consistency() );
+		sd->chains_from_termini();
+		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
 		// show have same # of chains that we started with
-		TS_ASSERT_EQUALS( orig->pose()->conformation().num_chains(), sd->pose()->conformation().num_chains() );
+		TS_ASSERT_EQUALS( input_pose.conformation().num_chains(), sd->pose()->conformation().num_chains() );
 		// should have 8 more residues
 		TS_ASSERT_EQUALS( input_pose.total_residue() + 8, sd->pose_length() );
 		// should not have any linear chainbreak

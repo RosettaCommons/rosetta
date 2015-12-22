@@ -113,18 +113,31 @@ public:
 	std::string const & parent_id() const;
 
 	/// @brief sets an identifier for this mover
-	void set_id( std::string const & idval );
+	virtual void set_id( std::string const & idval );
 
 	/// @brief sets an identifier for the parent of this mover, for nested moves
 	void set_parent_id( std::string const & parent );
+
+	/// @brief names of segment pieces built by this mover
+	StringList const & segment_names() const { return segment_names_; }
 
 protected:
 	/// @brief adds prefix if necessary, returns result
 	std::string add_parent_prefix( std::string const & s ) const;
 
+	/// @brief adds a segment name
+	void add_segment_name( std::string const & sname ) { segment_names_.push_back( sname ); }
+
+	/// @brief sets segment names
+	void set_segment_names( StringList const & snames ) { segment_names_.clear(); segment_names_ = snames; }
+
+	/// @brief clears segment names
+	void clear_segment_names() { segment_names_.clear(); }
+
 private:
 	std::string id_;
 	std::string parent_id_;
+	StringList segment_names_;
 };
 
 class EXCN_Setup : public utility::excn::EXCN_Base {

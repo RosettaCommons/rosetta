@@ -573,7 +573,7 @@ DisulfidizeMover::find_possible_disulfides(
 	sfxn_disulfide_only->set_weight(core::scoring::dslf_fa13, 1.0);
 
 	for ( std::set< core::Size >::const_iterator itr=set1.begin(), end=set1.end(); itr!=end; ++itr ) {
-		//gly/non-protein check
+		//gly/pro/non-protein check
 		if ( !check_residue_type( pose, *itr ) ) {
 			continue;
 		}
@@ -584,7 +584,7 @@ DisulfidizeMover::find_possible_disulfides(
 
 			if ( TR.Debug.visible() ) TR.Debug << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
 
-			// gly/non-protein check
+			// gly/pro/non-protein check
 			if ( !check_residue_type( pose, *itr2 ) ) {
 				continue;
 			}
@@ -745,6 +745,7 @@ bool
 DisulfidizeMover::check_residue_type( core::pose::Pose const & pose, core::Size const res ) const
 {
 	bool const retval = ( pose.residue(res).is_protein() &&
+		( pose.residue(res).aa() != core::chemical::aa_pro ) &&
 		( pose.residue(res).aa() != core::chemical::aa_gly ) );
 	if ( !retval && TR.Debug.visible() ) {
 		TR.Debug << "DISULF \tSkipping residue " << res << ". Residue of this type (" << pose.residue(res).name() << " ) cannot be mutated to CYD." << std::endl;

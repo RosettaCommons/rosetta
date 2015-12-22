@@ -53,6 +53,7 @@
 
 // Boost/ObjexxFCL Headers
 #include <boost/algorithm/string.hpp>
+#include <boost/assign.hpp>
 #include <boost/lexical_cast.hpp>
 
 //C++ Headers
@@ -660,6 +661,8 @@ StructureData::save_into_pose()
 void
 StructureData::save_into_pose( core::pose::Pose & pose ) const
 {
+	check_consistency( pose );
+
 	// eventually, I would like to make the cached string the only place permutation is stored
 	std::stringstream ss;
 	ss << *this;
@@ -1352,8 +1355,17 @@ StructureData::move_segment(
 		core::Size e1 = segment(segment1_c).cterm_resi();
 		core::Size s2 = segment(segment2_n).nterm_resi();
 		core::Size e2 = segment(segment2_c).cterm_resi();
+		TR << "moving segment " << segment2_n << "(" << s2 << ") <--> " << segment2_c << "(" << e2 << ")" << " to after " << segment1_c << "(" << e1 << ")" << std::endl;
+		TR << "Before moving SD: " << *this << std::endl;
+		try {
+			check_consistency();
+		} catch ( EXCN_PoseInconsistent const & e ) {
+			TR.Error << "Input to move_segment() is not consistent with pose -- dumping to predump.pdb" << std::endl;
+			if ( pose_ ) pose_->dump_pdb( "predump.pdb" );
+			throw e;
+		}
 
-		// find all involved segments
+// find all involved segments
 		StringList::iterator segment2_segment_begin = find_segment( segment2_n );
 		StringList::iterator segment2_segment_end = find_segment( segment2_c );
 		debug_assert( segment2_segment_begin != segment_order_.end() );
@@ -1361,13 +1373,11 @@ StructureData::move_segment(
 		++segment2_segment_end;
 
 		if ( pose_ ) {
+			move_jumps_to_safety();
 			move_segment_in_pose( s1, e1, s2, e2 );
 		}
 
-		StringList segment2_segments;
-		for ( StringList::iterator s=segment2_segment_begin; s != segment2_segment_end; ++s ) {
-			segment2_segments.push_back( *s );
-		}
+		StringList segment2_segments( segment2_segment_begin, segment2_segment_end );
 		debug_assert( segment_order_.size() == segments_.size() );
 		segment_order_.erase( segment2_segment_begin, segment2_segment_end );
 		StringList::iterator insert_pos = find_segment( segment1_c );
@@ -1376,6 +1386,13 @@ StructureData::move_segment(
 		segment_order_.insert( insert_pos, segment2_segments.begin(), segment2_segments.end() );
 		debug_assert( segment_order_.size() == segments_.size() );
 		update_numbering();
+		try {
+			check_consistency();
+		} catch ( EXCN_PoseInconsistent const & e ) {
+			TR.Error << "SD inconsistent with pose. Dumping to dump.pdb. SD=" << *this << std::endl;
+			if ( pose_ ) pose_->dump_pdb( "dump.pdb" );
+			throw e;
+		}
 		move_jumps_to_safety();
 	}
 }
@@ -1543,6 +1560,31 @@ StructureData::delete_trailing_residues( std::string const & seg )
 	update_numbering();
 }
 
+void
+StructureData::delete_segment_nopose( std::string const & seg_val, SegmentMap::iterator r )
+{
+	std::string const segment1_c = r->second.lower_segment();
+	std::string const segment2_n = r->second.upper_segment();
+	if ( !r->second.has_free_lower_terminus() ) {
+		SegmentMap::iterator r2 = segments_.find( segment1_c );
+		debug_assert( r2 != segments_.end() );
+		r2->second.set_upper_segment( "" );
+	}
+	if ( !r->second.has_free_upper_terminus() ) {
+		SegmentMap::iterator r2 = segments_.find( segment2_n );
+		debug_assert( r2 != segments_.end() );
+		r2->second.set_lower_segment( "" );
+	}
+	StringList::iterator remove_me = find_segment( seg_val );
+	debug_assert( remove_me != segment_order_.end() );
+	segment_order_.erase( remove_me );
+	core::Size const removed_mg = r->second.movable_group;
+	segments_.erase( r );
+	debug_assert( segment_order_.size() == segments_.size() );
+
+	update_movable_groups_after_deletion( removed_mg );
+}
+
 /// @brief removes all traces of the given segment from the object
 void
 StructureData::delete_segment( std::string const & seg_val )
@@ -1564,7 +1606,6 @@ StructureData::delete_segment( std::string const & seg_val )
 	if ( !r->second.has_free_lower_terminus() ) {
 		SegmentMap::iterator r2 = segments_.find( segment1_c );
 		debug_assert( r2 != segments_.end() );
-		r2->second.set_upper_segment( "" );
 		if ( start_del <= stop_del ) {
 			start_del += 1;
 			r2->second.set_cterm_included( false );
@@ -1573,7 +1614,6 @@ StructureData::delete_segment( std::string const & seg_val )
 	if ( !r->second.has_free_upper_terminus() ) {
 		SegmentMap::iterator r2 = segments_.find( segment2_n );
 		debug_assert( r2 != segments_.end() );
-		r2->second.set_lower_segment( "" );
 		if ( start_del <= stop_del ) {
 			debug_assert( stop_del > 1 );
 			stop_del -= 1;
@@ -1585,14 +1625,7 @@ StructureData::delete_segment( std::string const & seg_val )
 		delete_residues_in_pose( start_del, stop_del );
 		debug_assert( resi_count - (stop_del-start_del+1) == pose_->total_residue() );
 	}
-	StringList::iterator remove_me = find_segment( seg );
-	debug_assert( remove_me != segment_order_.end() );
-	segment_order_.erase( remove_me );
-	core::Size const removed_mg = r->second.movable_group;
-	segments_.erase( r );
-	debug_assert( segment_order_.size() == segments_.size() );
-
-	update_movable_groups_after_deletion( removed_mg );
+	delete_segment_nopose( seg, r );
 	update_numbering();
 
 	if ( pose_ ) {
@@ -1603,6 +1636,14 @@ StructureData::delete_segment( std::string const & seg_val )
 			add_lower_terminus_variant_type( segment( segment2_n ).nterm_resi() );
 		}
 		chains_from_termini();
+		utility::vector1< std::string > roots;
+		if ( !segment1_c.empty() ) roots.push_back( segment1_c );
+		if ( !segment2_n.empty() ) roots.push_back( segment2_n );
+		if ( roots.empty() ) {
+			move_jumps_to_safety();
+		} else {
+			consolidate_movable_groups( roots );
+		}
 	}
 	TR << "Deleted segment " << seg << std::endl;
 }
@@ -1874,7 +1915,7 @@ StructureData::add_segment(
 void
 StructureData::add_segment( std::string const & id_val, Segment const & resis )
 {
-	TR.Debug << "Adding " << std::make_pair( id_val, resis ) << " to end of list" << std::endl;
+	TR.Debug << "Adding " << NamedSegment( id_val, resis ) << " to end of list" << std::endl;
 	add_segment( id_val, resis, segment_order_.end() );
 }
 
@@ -1888,17 +1929,22 @@ StructureData::add_segment( std::string const & id_val, Segment const & resis, s
 
 /// @brief adds a residues segment -- final will be inserted before the iterator given as insert_pose
 void
-StructureData::add_segment( std::string const & id_val, Segment const & resis, StringList::iterator insert_pos )
+StructureData::add_segment(
+	std::string const & id_val,
+	Segment const & resis,
+	StringList::iterator insert_pos,
+	core::pose::PoseCOP residues )
 {
+	NamedSegment toadd( id_val, resis );
 	if ( insert_pos != segment_order_.end() ) {
-		TR.Debug << "Adding " << std::make_pair( id_val, resis ) << " to after " << *insert_pos << std::endl;
+		TR.Debug << "Adding " << toadd << " to after " << *insert_pos << std::endl;
 	} else {
-		TR.Debug << "Adding " << std::make_pair( id_val, resis ) << " to end of list" << std::endl;
+		TR.Debug << "Adding " << toadd << " to end of list" << std::endl;
 	}
 	debug_assert( segment_order_.size() == segments_.size() );
 	SegmentMap::iterator s = segments_.find( id_val );
 	if ( s == segments_.end() ) {
-		if ( !segments_.insert( std::make_pair( id_val, resis ) ).second ) {
+		if ( !segments_.insert( toadd ).second ) {
 			throw utility::excn::EXCN_Msg_Exception( "failed to insert segment " + id_val );
 		}
 		segment_order_.insert( insert_pos, id_val );
@@ -1908,8 +1954,29 @@ StructureData::add_segment( std::string const & id_val, Segment const & resis, S
 		debug_assert( std::count( segment_order_.begin(), segment_order_.end(), id_val ) == 1 );
 	}
 	TR.Debug << "Segment order is now " << segment_order_ << std::endl;
-
+	if ( pose_ && residues ) {
+		core::Size insert_resid = pose_->total_residue() + 1;
+		if ( insert_pos != segment_order_.end() ) {
+			insert_resid = segment( *insert_pos ).nterm_resi();
+		}
+		TR << "Inserting new residues before position " << insert_resid << std::endl;
+		pose_->conformation().insert_conformation_by_jump(
+			residues->conformation(),
+			insert_resid,
+			pose_->num_jump()+2,
+			1,
+			pose_->num_jump()+1 );
+	}
 	update_numbering();
+}
+
+void
+StructureData::add_segment(
+	std::string const & id_val,
+	Segment const & resid,
+	StringList::iterator insert_pos )
+{
+	add_segment( id_val, resid, insert_pos, core::pose::PoseOP() );
 }
 
 /// @brief finds all segments that are loops
@@ -1981,7 +2048,7 @@ StructureData::set_resnum_alias(
 	if ( has_segment( segment_name ) ) {
 		debug_assert( resi );
 		debug_assert( resi <= segment(segment_name).length() );
-		aliases_[ alias_name ] = std::make_pair( segment_name, resi );
+		aliases_[ alias_name ] = Alias( segment_name, resi );
 	} else if ( has_alias( segment_name ) ) {
 		aliases_[ alias_name ] = aliases_[ segment_name ];
 	} else {
@@ -2012,7 +2079,7 @@ StructureData::set_resnum_alias(
 core::Size
 StructureData::alias_resnum( std::string const & alias ) const
 {
-	std::map< std::string, std::pair< std::string, core::Size > >::const_iterator alias_it = aliases_.find( alias );
+	std::map< std::string, Alias >::const_iterator alias_it = aliases_.find( alias );
 	if ( alias_it == aliases_.end() ) {
 		TR.Warning << " alias " << alias << " not found!!  returning 0" << std::endl;
 	}
@@ -2060,7 +2127,7 @@ StructureData::add_prefix_to_segments( std::string const & prefix, char const de
 		}
 	}
 	// fix aliases too
-	for ( std::map< std::string, std::pair< std::string, core::Size > >::iterator a=aliases_.begin(), enda=aliases_.end(); a!=enda; ++a ) {
+	for ( std::map< std::string, Alias >::iterator a=aliases_.begin(); a!=aliases_.end(); ++a ) {
 		if ( !boost::starts_with( a->second.first, prepend_str ) ) {
 			a->second.first = prepend_str + a->second.first;
 		}
@@ -2094,10 +2161,8 @@ StructureData::rename_segment( std::string const & old_name, std::string const &
 	}
 
 	// fix aliases too
-	for ( std::map< std::string, std::pair< std::string, core::Size > >::iterator a=aliases_.begin(), enda=aliases_.end(); a!=enda; ++a ) {
-		if ( a->second.first == old_name ) {
-			a->second.first = new_name;
-		}
+	for ( std::map< std::string, Alias >::iterator a=aliases_.begin(); a!=aliases_.end(); ++a ) {
+		if ( a->second.first == old_name ) a->second.first = new_name;
 	}
 	save_into_pose();
 }
@@ -2140,35 +2205,65 @@ StructureData::choose_new_movable_group() const
 void
 StructureData::merge( StructureData const & other )
 {
-	// this should only be called on multi-chain permutations
-	runtime_assert( is_multi() );
-
-	core::Size const movable_group_new = choose_new_movable_group();
-	for ( StringList::const_iterator c = other.segments_begin(); c != other.segments_end(); ++c ) {
-		Segment newseg = other.segment( *c );
-		newseg.movable_group = movable_group_new;
-		add_segment( *c, newseg, segment_order_.end() );
-		TR.Debug << "Added " << std::make_pair( *c, newseg ) << std::endl;
-	}
-
-	copy_data( other, false );
+	merge( other, StringList( other.segments_begin(), other.segments_end() ) );
 }
 
+
+/// @brief merge given data and segments from "other" into this StructureData
 void
-StructureData::merge_before( StructureData const & other, std::string const & position )
+StructureData::merge( StructureData const & other, StringList const & segments )
 {
 	// this should only be called on multi-chain permutations
 	runtime_assert( is_multi() );
 
 	core::Size const movable_group_new = choose_new_movable_group();
-	for ( StringList::const_iterator c = other.segments_begin(); c != other.segments_end(); ++c ) {
-		Segment newseg = other.segment( *c );
+	for ( StringList::const_iterator s=segments.begin(); s!=segments.end(); ++s ) {
+		Segment newseg = other.segment( *s );
 		newseg.movable_group = movable_group_new;
-		add_segment( *c, newseg, position );
-		TR.Debug << "Added " << std::make_pair( *c, newseg ) << std::endl;
+		core::pose::PoseOP newpose;
+		if ( other.pose() ) {
+			newpose = core::pose::PoseOP(
+				new core::pose::Pose(
+				*(other.pose()),
+				other.segment( *s ).nterm_resi(),
+				other.segment( *s ).cterm_resi() ) );
+		}
+		add_segment( *s, newseg, segment_order_.end(), newpose );
+		TR.Debug << "Added " << NamedSegment( *s, newseg ) << std::endl;
 	}
 
-	copy_data( other, false );
+	copy_data( other );
+}
+
+void
+StructureData::merge_before( StructureData const & other, std::string const & position, StringList const & segments )
+{
+	// this should only be called on multi-chain permutations
+	runtime_assert( is_multi() );
+
+	core::Size const movable_group_new = choose_new_movable_group();
+	for ( StringList::const_iterator c=segments.begin(); c!=segments.end(); ++c ) {
+		Segment newseg = other.segment( *c );
+		newseg.movable_group = movable_group_new;
+		core::pose::PoseOP newpose;
+		if ( other.pose() ) {
+			newpose = core::pose::PoseOP(
+				new core::pose::Pose(
+				*(other.pose()),
+				other.segment( *c ).nterm_resi(),
+				other.segment( *c ).cterm_resi() ) );
+		}
+		add_segment( *c, newseg, find_segment( position ), newpose );
+		TR.Debug << "Added " << NamedSegment( *c, newseg ) << std::endl;
+	}
+
+	copy_data( other );
+}
+
+void
+StructureData::merge_before( StructureData const & other, std::string const & position )
+{
+	merge_before( other, position, StringList( other.segments_begin(), other.segments_end() ) );
 }
 
 /// @brief computes and returns a set of segments which are in the given movable group
@@ -2199,14 +2294,13 @@ StructureData::movable_groups() const
 void
 StructureData::move_jumps_to_safety()
 {
-	if ( !pose() ) {
-		return;
-	}
+	if ( !pose() ) return;
 
 	core::kinematics::FoldTree ft = pose()->fold_tree();
 
 	for ( core::Size i = 1; i <= ft.num_jump(); ++i ) {
 		core::kinematics::Edge e = ft.jump_edge(i);
+		TR << "Jump " << e << " connects " << segment_name( e.start() ) << " to " << segment_name( e.stop() ) << std::endl;
 		std::string const upname = segment_name( e.start() );
 		e.start() = segment( upname ).safe();
 		std::string const downname = segment_name( e.stop() );
@@ -2215,7 +2309,10 @@ StructureData::move_jumps_to_safety()
 		TR.Debug << "Sliding jump " << e << std::endl;
 		ft.slide_jump( e.label(), e.start(), e.stop() );
 	}
-	debug_assert( ft.check_fold_tree() );
+	if ( !ft.check_fold_tree() ) {
+		TR << "FAILING fold tree check:" << *this << std::endl;
+		debug_assert( ft.check_fold_tree() );
+	}
 	pose_->fold_tree( ft );
 }
 
@@ -2444,11 +2541,11 @@ StructureData::merge_segments(
 	utility::vector1< std::string > c1_grp = segments_in_movable_group( c1.movable_group );
 	utility::vector1< std::string > c2_grp = segments_in_movable_group( c2.movable_group );
 	core::Size new_group = c1.movable_group;
-	core::Size del_group = c2.movable_group;
+	//core::Size del_group = c2.movable_group;
 	debug_assert( ( c1_grp.size() <= 1 ) || ( c2_grp.size() <= 1 ) );
 	if ( c2_grp.size() > c1_grp.size() ) {
 		new_group = c2.movable_group;
-		del_group = c1.movable_group;
+		//del_group = c1.movable_group;
 	}
 
 	// remove terminal variants if necessary
@@ -2457,7 +2554,6 @@ StructureData::merge_segments(
 		remove_lower_terminus_variant_type( segment(segment2).nterm_resi() );
 		chains_from_termini();
 	}
-
 	debug_assert( c1.cterm_resi()+1 == c2.nterm_resi() );
 
 	std::string const newss = segment(segment1).ss() + segment(segment2).ss();
@@ -2470,6 +2566,8 @@ StructureData::merge_segments(
 	debug_assert( new_abego.size() == c1.length() + c2.length() );
 
 	// handle merging of residues segments
+	std::string const low_seg = segment( segment1 ).lower_segment();
+	std::string const upp_seg = segment( segment2 ).upper_segment();
 	Segment resis(
 		c1.length() + c2.length(), // length
 		( ( c1.start() + c2.stop() ) / 2 ) - c1.nterm_resi() + 1, // safe residue
@@ -2478,11 +2576,30 @@ StructureData::merge_segments(
 		( c1.is_loop && c2.is_loop ),
 		c1.nterm_included(),
 		c2.cterm_included(),
-		segment(segment1).lower_segment(),
-		segment(segment2).upper_segment(),
+		"",
+		"",
 		newss,
 		new_abego );
 
+	TR << "Removing old segments " << NamedSegment( *segments_.find( segment1 ) ) << " and " << NamedSegment( *segments_.find( segment2 ) )
+		<< " and adding new merged segment " << NamedSegment( new_name, resis ) << std::endl;
+	StringList::const_iterator after_me = find_segment( segment2 );
+	if ( after_me != segment_order_.end() ) ++after_me;
+	std::string const after_str = *after_me;
+	delete_segment_nopose( segment2, segments_.find( segment2 ) );
+	core::Size const num_groups = movable_groups().size();
+	delete_segment_nopose( segment1, segments_.find( segment1 ) );
+	if ( movable_groups().size() < num_groups ) {
+		resis.movable_group = movable_groups().size() + 1;
+	}
+	add_segment( new_name, resis, find_segment( after_str ) );
+	if ( !low_seg.empty() ) {
+		connect_segments( low_seg, new_name );
+	}
+	if ( !upp_seg.empty() ) {
+		connect_segments( new_name, upp_seg );
+	}
+	/*
 	// erase old residues objects
 	segments_.erase( segment1 );
 	segments_.erase( segment2 );
@@ -2495,21 +2612,22 @@ StructureData::merge_segments(
 	debug_assert( *pos == segment2 );
 	pos = segment_order_.erase( pos );
 
-	add_segment( new_name, resis, pos );
-
 	//rename within residues
-	for ( SegmentMap::iterator r = segments_.begin(); r != segments_.end(); ++r ) {
-		if ( ( r->second.upper_segment() == segment2 ) || ( r->second.upper_segment() == segment1 ) ) {
-			r->second.set_upper_segment( new_name );
-		}
-		if ( ( r->second.lower_segment() == segment2 ) || ( r->second.lower_segment() == segment1 ) ) {
-			r->second.set_lower_segment( new_name );
-		}
+	for ( SegmentMap::iterator r=segments_.begin(); r!=segments_.end(); ++r ) {
+	if ( ( r->second.upper_segment() == segment2 ) || ( r->second.upper_segment() == segment1 ) ) {
+	r->second.set_upper_segment( new_name );
+	}
+	if ( ( r->second.lower_segment() == segment2 ) || ( r->second.lower_segment() == segment1 ) ) {
+	TR << "Renaming lower segment of " << NamedSegment(*r) << " from " << r->second.lower_segment() << " to " << new_name << std::endl;
+	r->second.set_lower_segment( new_name );
+	}
 	}
 	std::set< core::Size > mgs = movable_groups();
-	if ( mgs.find(mgs.size()+1) != mgs.end() ) {
-		renumber_movable_group( mgs.size()+1, del_group );
+	if ( mgs.find( mgs.size() + 1 ) != mgs.end() ) {
+	renumber_movable_group( mgs.size()+1, del_group );
 	}
+	add_segment( new_name, resis, pos );
+	*/
 }
 
 /// @brief sets the pose and does checks to ensure data is consistent
@@ -2519,14 +2637,38 @@ StructureData::set_pose( core::pose::Pose const & new_pose )
 	set_pose( new_pose.clone() );
 }
 
+/// @brief checks pose vs. StructureData info
+/// @throw EXCN_BadInput if things don't match
+void
+StructureData::check_pose( core::pose::Pose const & pose ) const
+{
+	if ( ! pose.total_residue() ) return;
+	if ( pose.total_residue() != pose_length() ) {
+		std::stringstream msg;
+		msg << id() << ": pose length does not match StructureData.  Pose length = "
+			<< pose.total_residue() << " SD length = " << pose_length() << std::endl;
+		msg << *this << std::endl;
+		//debug_assert( pose.total_residue() == pose_length() );
+		throw EXCN_PoseInconsistent( msg.str() );
+	}
+	if ( pose.total_residue() != ss().size()  ) {
+		std::stringstream msg;
+		msg << id() << ": pose length does not match StructureData secstruct length. Pose length = "
+			<< pose.total_residue() << " SS length = " << ss().size() << " SD: " << *this << std::endl;
+		//debug_assert( pose.total_residue() == pose_length() );
+		throw EXCN_PoseInconsistent( msg.str() );
+	}
+}
+
 /// @brief sets the pose and does checks to ensure data is consistent
+/// @throws EXCN_PoseInconsistent if the pose doesn't match up with SD
 void
 StructureData::set_pose( core::pose::PoseOP new_pose )
 {
 	if ( new_pose && new_pose->total_residue() ) {
 		TR.Debug << id() << ": new_pose len=" << new_pose->total_residue() << " pose residue =" << pose_length() << " perm len=" << length() << std::endl;
-		debug_assert( new_pose->total_residue() == pose_length() );
-		debug_assert( new_pose->total_residue() == ss().size() );
+
+		check_consistency( *new_pose );
 
 		// put terminal variants onto chain endings
 		utility::vector1< core::Size > const conformation_chainend = new_pose->conformation().chain_endings();
@@ -2571,7 +2713,6 @@ StructureData::set_pose( core::pose::PoseOP new_pose )
 		new_pose->conformation().chains_from_termini();
 	}
 	pose_ = new_pose;
-
 	save_into_pose();
 }
 
@@ -2784,60 +2925,114 @@ StructureData::get_data_str( std::string const & data_name ) const
 	return it->second;
 }
 
-/// @brief copies user data fields from one permutation to this one
+/// @brief copies user data fields from one permutation to this one -- existing data is overridden
 void
-StructureData::copy_data( StructureData const & perm, bool const do_rename )
+StructureData::copy_data( StructureData const & perm )
 {
-	for ( std::map< std::string, core::Real >::const_iterator d=perm.data_real().begin(), end=perm.data_real().end(); d != end; ++d ) {
-		std::pair< std::string, core::Real > p = *d;
-		if ( do_rename && ( !boost::starts_with( p.first, perm.id() ) ) ) {
-			p.first = perm.id() + PARENT_DELIMETER + p.first;
-		}
-		if ( data_real_.insert( p ).second == false ) {
-			if ( p.second != d->second ) {
-				TR.Info << "skipping data with different value " << p.first << " : " << p.second << " vs " << d->first << " : " << d->second << std::endl;
-			}
-		}
-	}
-	for ( std::map< std::string, int >::const_iterator d=perm.data_int().begin(), end=perm.data_int().end(); d != end; ++d ) {
-		std::pair< std::string, int > p = *d;
-		if ( do_rename && ( !boost::starts_with( p.first, perm.id() ) ) ) {
-			TR << "Renaming " << p.first << " with id " << perm.id() << " to " << perm.id() + PARENT_DELIMETER + p.first << std::endl;
-			p.first = perm.id() + PARENT_DELIMETER + p.first;
-		}
-		if ( data_int_.insert( p ).second == false ) {
-			if ( p.second != d->second ) {
-				TR.Info << "skipping data with different value " << p.first << " : " << p.second << " vs " << d->first << " : " << d->second << std::endl;
-			}
+	copy_data( perm, true );
+}
+
+template< class T >
+void
+set_map_data(
+	std::map< std::string, T > & map,
+	std::string const & key,
+	T const & value,
+	bool const overwrite )
+{
+	if ( overwrite ) {
+		map[ key ] = value;
+	} else {
+		if ( map.insert( std::make_pair( key, value ) ).second == false ) {
+			TR.Debug << "skipping new map data with different value for key " << key
+				<< " : " << map.find( key )->second << " exists vs. new value " << value << std::endl;
 		}
 	}
-	for ( std::map< std::string, std::string >::const_iterator d=perm.data_str().begin(), end=perm.data_str().end(); d != end; ++d ) {
-		std::pair< std::string, std::string > p = *d;
-		if ( do_rename && ( !boost::starts_with( p.first, perm.id() ) ) ) {
-			p.first = perm.id() + PARENT_DELIMETER + p.first;
-		}
-		if ( data_str_.insert( p ).second == false ) {
-			if ( p.second != d->second ) {
-				TR.Info << "skipping data with different value " << p.first << " : " << p.second << " vs " << d->first << " : " << d->second << std::endl;
-			}
-		}
+}
+
+/// @brief copies user data fields from one permutation to this one -- gives the option to not overwrite data
+void
+StructureData::copy_data( StructureData const & perm, bool const overwrite )
+{
+	for ( std::map< std::string, core::Real >::const_iterator d=perm.data_real().begin(); d!=perm.data_real().end(); ++d ) {
+		set_map_data( data_real_, d->first, d->second, overwrite );
 	}
-	for ( std::map< std::string, std::pair< std::string, core::Size > >::const_iterator a=perm.aliases().begin(), enda=perm.aliases().end(); a != enda; ++ a ) {
-		std::pair< std::string, std::pair< std::string, core::Size > > p = *a;
-		if ( do_rename && ( !boost::starts_with( p.second.first, perm.id() ) ) ) {
-			p.second.first = perm.id() + PARENT_DELIMETER + p.second.first;
-		}
-		if ( aliases_.insert( p ).second == false ) {
-			if ( p.second != a->second ) {
-				TR.Info << "skipping data with different value " << p.first << " : " << p.second.first << "__" << p.second.second << " vs " << a->first << " : " << a->second.first << "__" << a->second.second << std::endl;
-			}
-		}
+	for ( std::map< std::string, int >::const_iterator d=perm.data_int().begin(); d!=perm.data_int().end(); ++d ) {
+		set_map_data( data_int_, d->first, d->second, overwrite );
+	}
+	for ( std::map< std::string, std::string >::const_iterator d=perm.data_str().begin(); d!=perm.data_str().end(); ++d ) {
+		set_map_data( data_str_, d->first, d->second, overwrite );
+	}
+	for ( std::map< std::string, Alias >::const_iterator a=perm.aliases().begin(); a!=perm.aliases().end(); ++a ) {
+		set_map_data( aliases_, a->first, a->second, overwrite );
 	}
 	for ( utility::vector1< BondInfo >::const_iterator bi=perm.covalent_bonds_begin(); bi!=perm.covalent_bonds_end(); ++bi ) {
 		add_covalent_bond( *bi );
 	}
 	save_into_pose();
 }
+/*
+void
+StructureData::copy_data( StructureData const & perm, bool const do_rename )
+{
+for ( std::map< std::string, core::Real >::const_iterator d=perm.data_real().begin(), end=perm.data_real().end(); d != end; ++d ) {
+std::pair< std::string, core::Real > p = *d;
+if ( do_rename && ( !boost::starts_with( p.first, perm.id() ) ) ) {
+p.first = perm.id() + PARENT_DELIMETER + p.first;
+}
+data_real_[ p.first ] = p.second;
+if ( data_real_.insert( p ).second == false ) {
+if ( p.second != d->second ) {
+TR.Debug << "overwriting data with different value " << p.first << " : " << p.second << " vs " << d->first << " : " << d->second << std::endl;
+data_real_[ p.first ] = p.second;
+}
+}
+}
+for ( std::map< std::string, int >::const_iterator d=perm.data_int().begin(), end=perm.data_int().end(); d != end; ++d ) {
+std::pair< std::string, int > p = *d;
+if ( do_rename && ( !boost::starts_with( p.first, perm.id() ) ) ) {
+TR << "Renaming " << p.first << " with id " << perm.id() << " to " << perm.id() + PARENT_DELIMETER + p.first << std::endl;
+p.first = perm.id() + PARENT_DELIMETER + p.first;
+}
+data_int_[ p.first ] = p.second;
+if ( data_int_.insert( p ).second == false ) {
+if ( p.second != d->second ) {
+TR.Debug << "overwriting data with different value " << p.first << " : " << p.second << " vs " << d->first << " : " << d->second << std::endl;
+data_int_[ p.first ] = p.second;
+}
+}
+}
+for ( std::map< std::string, std::string >::const_iterator d=perm.data_str().begin(), end=perm.data_str().end(); d != end; ++d ) {
+std::pair< std::string, std::string > p = *d;
+if ( do_rename && ( !boost::starts_with( p.first, perm.id() ) ) ) {
+p.first = perm.id() + PARENT_DELIMETER + p.first;
+}
+data_str_[ p.first ] = p.second;
+if ( data_str_.insert( p ).second == false ) {
+if ( p.second != d->second ) {
+TR.Debug << "overwriting data with different value " << p.first << " : " << p.second << " vs " << d->first << " : " << d->second << std::endl;
+data_str_[ p.first ] = p.second;
+}
+}
+}
+for ( std::map< std::string, std::pair< std::string, core::Size > >::const_iterator a=perm.aliases().begin(), enda=perm.aliases().end(); a != enda; ++ a ) {
+std::pair< std::string, std::pair< std::string, core::Size > > p = *a;
+if ( do_rename && ( !boost::starts_with( p.second.first, perm.id() ) ) ) {
+p.second.first = perm.id() + PARENT_DELIMETER + p.second.first;
+}
+aliases_[ p.first ] = p.second;
+if ( aliases_.insert( p ).second == false ) {
+if ( p.second != a->second ) {
+TR.Debug << "overwriting data with different value " << p.first << " : " << p.second.first << "__" << p.second.second << " vs " << a->first << " : " << a->second.first << "__" << a->second.second << std::endl;
+aliases_[ p.first ] = p.second;
+}
+}
+}
+for ( utility::vector1< BondInfo >::const_iterator bi=perm.covalent_bonds_begin(); bi!=perm.covalent_bonds_end(); ++bi ) {
+add_covalent_bond( *bi );
+}
+save_into_pose();
+} */
 
 /// @brief just return the pose (doesn't build pose if it doesn't exist)
 core::pose::PoseCOP
@@ -2936,7 +3131,6 @@ StructureData::update_movable_groups_after_deletion( core::Size const mg_old )
 	}
 
 	TR.Debug << "Renumbered movable group " << replaced_mg << " to " << mg_old << std::endl;
-	save_into_pose();
 }
 
 /// @brief renumbers movable group "oldg" to have new number "newg"
@@ -2949,14 +3143,16 @@ StructureData::renumber_movable_group( core::Size const oldg, core::Size const n
 		}
 	}
 	update_movable_groups_after_deletion( oldg );
+	save_into_pose();
 }
 
 /// @brief returns true if this object has a group of segments with the given name
 bool
 StructureData::has_segment_group( std::string const & sname ) const
 {
+	if ( has_segment( sname ) ) return true;
 	std::string const match_str = sname + PARENT_DELIMETER;
-	for ( StringList::const_iterator c = segments_begin(); c != segments_end(); ++c ) {
+	for ( StringList::const_iterator c=segments_begin(); c!=segments_end(); ++c ) {
 		if ( boost::starts_with( *c, match_str ) ) {
 			return true;
 		}
@@ -2986,65 +3182,149 @@ StructureData::segment_group( std::string const & sname ) const
 }
 
 /// @brief checks consistency of the data
-bool
+/// @throws EXCN_PoseInconsistent if there is a problem
+void
 StructureData::check_consistency() const
 {
+	if ( pose_ ) {
+		check_consistency( *pose_ );
+	} else {
+		check_residues();
+		check_movable_groups();
+	}
+}
+
+void
+StructureData::check_consistency( core::pose::Pose const & pose ) const
+{
+	check_residues();
+	check_movable_groups();
+	check_pose( pose );
+	check_chain_endings( pose );
+	check_chain_beginnings( pose );
+	check_improper_termini( pose );
+}
+
+void
+StructureData::check_residues() const
+{
+	std::stringstream msg;
 	utility::vector1< bool > accounted_for( pose_length(), false );
 	for ( SegmentMap::const_iterator r = segments_.begin(); r != segments_.end(); ++r ) {
 		for ( core::Size i=r->second.nterm_resi(); i<=r->second.cterm_resi(); ++i ) {
 			if ( !accounted_for[i] ) {
 				accounted_for[i] = true;
 			} else {
-				TR.Error << *r << " overlaps with something else at position " << i << std::endl << *this << std::endl;
-				return false;
+				msg << NamedSegment( r->first, r->second ) << " overlaps with something else at position " << i << std::endl << *this << std::endl;
+				throw EXCN_PoseInconsistent( msg.str() );
 			}
 		}
 		if ( r->second.lower_segment() != "" ) {
 			SegmentMap::const_iterator r2 = segments_.find( r->second.lower_segment() );
 			if ( r2 == segments_.end() ) {
-				TR.Error << "Lower segment of " << *r << " does not exist." << std::endl;
-				return false;
+				msg << "Lower segment of " << NamedSegment( r->first, r->second ) << " does not exist. SD=" << *this << std::endl;
+				throw EXCN_PoseInconsistent( msg.str() );
 			}
 		}
 		if ( r->second.upper_segment() != "" ) {
 			SegmentMap::const_iterator r2 = segments_.find( r->second.upper_segment() );
 			if ( r2 == segments_.end() ) {
-				TR.Error << "Upper segment of " << *r << " does not exist." << std::endl;
-				return false;
+				msg << "Upper segment of " << NamedSegment( r->first, r->second ) << " does not exist. SD=" << *this << std::endl;
+				throw EXCN_PoseInconsistent( msg.str() );
 			}
 		}
 
-		// check for improper terminal variants
-		if ( !pose_ ) {
-			continue;
-		}
-		debug_assert( pose_ );
-		for ( core::Size i=r->second.nterm_resi()+1; i<r->second.cterm_resi(); ++i ) {
-			if ( pose_->residue(i).is_terminus() ) {
-				TR.Error << " Residue " << i << " has a terminal variant." << std::endl;
-				return false;
-			}
-		}
 	}
 	for ( core::Size i=1; i<=pose_length(); ++i ) {
 		if ( !accounted_for[i] ) {
-			TR.Error << " Residue " << i << " is not accounted for by the permutation. " << *this << std::endl;
-			return false;
+			msg << " Residue " << i << " is not accounted for by the permutation. " << *this << std::endl;
+			throw EXCN_PoseInconsistent( msg.str() );
 		}
 	}
+}
+
+void
+StructureData::check_improper_termini( core::pose::Pose const & pose ) const
+{
+	for ( SegmentMap::const_iterator r=segments_.begin(); r!=segments_.end(); ++r ) {
+		for ( core::Size i=r->second.nterm_resi()+1; i<r->second.cterm_resi(); ++i ) {
+			if ( pose.residue(i).is_terminus() ) {
+				std::stringstream msg;
+				msg << " Residue " << i << " has a terminal variant but is inside segment " << NamedSegment( r->first, r->second ) << "." << std::endl;
+				throw EXCN_PoseInconsistent( msg.str() );
+			}
+		}
+	}
+}
+
+void
+StructureData::check_chain_endings( core::pose::Pose const & pose ) const
+{
+	// check chain endings -- they should be on segment boundaries
+	utility::vector1< core::Size > chain_endings = pose.conformation().chain_endings();
+	if ( pose.total_residue() ) {
+		chain_endings.push_back( pose.total_residue() );
+	}
+	for ( utility::vector1< core::Size >::const_iterator c_end=chain_endings.begin(); c_end!=chain_endings.end(); ++c_end ) {
+		bool found = false;
+		for ( SegmentMap::const_iterator s=segments_.begin(); s!=segments_.end(); ++s ) {
+			if ( *c_end == s->second.cterm_resi() ) {
+				found = true;
+				break;
+			}
+		}
+		if ( !found ) {
+			std::stringstream msg;
+			msg << "Chain ending " << *c_end << " does not match up with the upper terminus of any segment. " << *this << std::endl;
+			throw EXCN_PoseInconsistent( msg.str() );
+		}
+	}
+}
+
+void
+StructureData::check_chain_beginnings( core::pose::Pose const & pose ) const
+{
+	utility::vector1< core::Size > chain_beginnings( 1, 1 );
+	for ( utility::vector1< core::Size >::const_iterator c_end=pose.conformation().chain_endings().begin(); c_end!=pose.conformation().chain_endings().end(); ++c_end ) {
+		if ( chain_beginnings.size() == pose.conformation().chain_endings().size() ) break;
+		chain_beginnings.push_back( *c_end + 1 );
+	}
+	for ( utility::vector1< core::Size >::const_iterator c_begin=chain_beginnings.begin(); c_begin!=chain_beginnings.end(); ++c_begin ) {
+		bool found = false;
+		for ( SegmentMap::const_iterator s=segments_.begin(); s!=segments_.end(); ++s ) {
+			if ( *c_begin == s->second.nterm_resi() ) {
+				found = true;
+				break;
+			}
+		}
+		if ( !found ) {
+			std::stringstream msg;
+			msg << "Chain beginning " << *c_begin << " does not match up with the lower terminus of any segment. " << *this << std::endl;
+			throw EXCN_PoseInconsistent( msg.str() );
+		}
+	}
+}
+
+void
+StructureData::check_movable_groups() const
+{
 	// check movable groups
-	std::set< core::Size > mg = movable_groups();
+	std::set< core::Size > const mg = movable_groups();
+	TR.Debug << "Movable groups set is " << mg << std::endl;
 	for ( std::set< core::Size >::const_iterator g = mg.begin(); g != mg.end(); ++g ) {
 		if ( *g <= 0 ) {
-			TR.Error << " StructureData has a movable group <= 0 : " << *this << std::endl;
-			return false;
+			std::stringstream msg;
+			msg << " StructureData has a movable group <= 0 : " << *this << std::endl;
+			throw EXCN_PoseInconsistent( msg.str() );
 		}
+		/*
 		if ( *g > mg.size() ) {
-			TR.Error << " StructureData has a movable group (" << *g << ") >= size (" << mg.size() << ") : " << *this << std::endl;
-			return false;
+		std::stringstream msg;
+		msg << " StructureData has a movable group (" << *g << ") >= size (" << mg.size() << ") : " << *this << std::endl;
+		throw EXCN_PoseInconsistent( msg.str() );
 		}
+		*/
 	}
-	return true;
 }
 
 /// @brief counts and returns the number of movable residue groups
@@ -3237,7 +3517,7 @@ operator<<( std::ostream & os, StructureData const & perm )
 			err << "Segment List = " << perm.segment_order_ << std::endl;
 			throw utility::excn::EXCN_Msg_Exception( err.str() );
 		}
-		os << "\t" << *res << std::endl;
+		os << "\t" << NamedSegment(*res) << std::endl;
 	}
 	// int data
 	std::map< std::string, int >::const_iterator dat;
@@ -3255,10 +3535,8 @@ operator<<( std::ostream & os, StructureData const & perm )
 		os << "\t<Str name=\"" << dats->first << "\" value=\"" << dats->second << "\" />" << std::endl;
 	}
 	// aliases
-	std::map< std::string, std::pair< std::string, core::Size > >::const_iterator a_it, a_end;
-	for ( a_it = perm.aliases_.begin(), a_end = perm.aliases_.end(); a_it != a_end; ++a_it ) {
-		os << "\t<Alias name=\"" << a_it->first << "\" segment=\""
-			<< a_it->second.first << "\" res=\"" << a_it->second.second << "\" />" << std::endl;
+	for ( std::map< std::string, Alias >::const_iterator a_it=perm.aliases_.begin(); a_it!=perm.aliases_.end(); ++a_it ) {
+		os << "\t<Alias name=\"" << a_it->first << "\" " << a_it->second << " />" << std::endl;
 	}
 	// covalent bonds
 	for ( utility::vector1< BondInfo >::const_iterator b = perm.covalent_bonds_.begin(); b != perm.covalent_bonds_.end(); ++b ) {
@@ -3273,39 +3551,15 @@ std::ostream &
 operator<<( std::ostream & os, SegmentMap const & resmap )
 {
 	for ( SegmentMap::const_iterator r=resmap.begin(), endr=resmap.end(); r!=endr; ++r ) {
-		os << *r << std::endl;
+		os << NamedSegment( *r );
 	}
 	return os;
 }
 
-/// output residueinfo
 std::ostream &
-operator<<( std::ostream & os, std::pair< std::string, Segment > const & res )
+operator<<( std::ostream & os, Alias const & alias )
 {
-	std::string ab_str = "";
-	for ( core::Size i=1, end=res.second.abego().size(); i<=end; ++i ) {
-		ab_str += res.second.abego()[i][0];
-	}
-	os << "<ResidueRange name=\"" << res.first
-		<< "\" start=\"" << res.second.start()
-		<< "\" stop=\"" << res.second.stop()
-		<< "\" safe=\"" << res.second.safe()
-		<< "\" nterm=\"" << res.second.nterm_included_
-		<< "\" cterm=\"" << res.second.cterm_included_
-		<< "\" loop=\"" << res.second.is_loop
-		<< "\" mgroup=\"" << res.second.movable_group
-		<< "\" cutpoint=\"" << res.second.cutpoint()
-		<< "\" ss=\"" << res.second.ss()
-		<< "\" abego=\"" << ab_str;
-
-	if ( res.second.lower_segment() != "" ) {
-		os << "\" lower_segment=\"" << res.second.lower_segment();
-	}
-	if ( res.second.upper_segment() != "" ) {
-		os << "\" upper_segment=\"" << res.second.upper_segment();
-	}
-
-	os << "\" />";
+	os << "segment=\"" << alias.first << "\" res=\"" << alias.second << "\"";
 	return os;
 }
 
