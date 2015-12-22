@@ -384,6 +384,7 @@ LocalRelax::apply( core::pose::Pose & pose) {
 				if ( symminfo && !symminfo->bb_is_independent(i) ) visited[i] = true;
 			}
 
+			Size nvis=0;
 			// main loop
 			while ( true ) {
 				// find most connected residue
@@ -399,7 +400,7 @@ LocalRelax::apply( core::pose::Pose & pose) {
 				if ( maxneighb==0 ) {
 					// all done
 					break;
-				} else if ( maxneighb < 2 ) {
+				} else if ( maxneighb<10 || (nres_asu-nvis)<25 ) {
 					TR << "PACK SURFACE" << std::endl;
 
 					utility::vector1<bool> neigh_merge(nres, false);
@@ -476,16 +477,15 @@ LocalRelax::apply( core::pose::Pose & pose) {
 					core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 				}
 
-				Size nvis=0,nsh0=0,nsh1=0;
+				nvis = 0;
 				for ( Size j=1, j_end = nres; j<= j_end; ++j ) {
+					if ( symminfo && !symminfo->bb_is_independent(j) ) continue;
 					if ( visited[j] ) nvis++;
-					if ( shell0[j] ) nsh0++;
-					if ( shell1[j] ) nsh1++;
 				}
 
 				// optimize
 				optimization_loop( pose, ptask_working, mm,  ramp_schedule_[innercyc], 1e-4 );
-				TR << "[" << cyc << "." << innercyc << "] res " << currres << " [" << nsh0 << "/" << nsh1 << "] ("
+				TR << "[" << cyc << "." << innercyc << "] res " << currres << " [ nneigh=" << maxneighb << " ] ("
 					<< nvis << "/" << nres_asu << ")  E=" << (*min_sfxn_)(pose)
 					<< "  ramp=" << ramp_schedule_[innercyc] << std::endl;
 			}
