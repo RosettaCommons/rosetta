@@ -19,6 +19,7 @@
 
 // Project Headers
 #include <core/scoring/ScoreFunction.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
@@ -36,7 +37,7 @@ namespace simple_filters {
 class GeometryFilter : public filters::Filter
 {
 public:
-	GeometryFilter() : filters::Filter( "GeometryFilter" ) {}
+	GeometryFilter();
 	bool apply( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
@@ -57,6 +58,7 @@ private:
 	core::Real cst_cutoff_;
 	core::Size start_;
 	core::Size end_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 };
 
 }

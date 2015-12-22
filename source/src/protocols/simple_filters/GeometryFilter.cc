@@ -72,17 +72,29 @@ GeometryFilterCreator::create_filter() const { return protocols::filters::Filter
 std::string
 GeometryFilterCreator::keyname() const { return "Geometry"; }
 
-GeometryFilter::~GeometryFilter(){}
+GeometryFilter::GeometryFilter() :
+	filters::Filter( "GeometryFilter" ),
+	omega_cutoff_( 165.0 ),
+	cart_bonded_cutoff_( 20.0 ),
+	filename_( "none" ),
+	cst_cutoff_( 10000.0 ),
+	start_( 1 ),
+	end_( 100000 ),
+	selector_()
+{}
+
+GeometryFilter::~GeometryFilter() {}
 
 void
-GeometryFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+GeometryFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
-	omega_cutoff_ = tag->getOption<core::Real>( "omega", 165 );
-	cart_bonded_cutoff_ = tag->getOption<core::Real>( "cart_bonded", 20 );
-	filename_ = tag->getOption< std::string >( "cstfile", "none" );
-	cst_cutoff_ = tag->getOption< core::Real >( "cst_cutoff", 10000 );
-	start_ = tag->getOption< core::Size>( "start", 1 );
-	end_ = tag->getOption< core::Size >( "end", 100000 );
+	omega_cutoff_ = tag->getOption<core::Real>( "omega", omega_cutoff_ );
+	cart_bonded_cutoff_ = tag->getOption<core::Real>( "cart_bonded", cart_bonded_cutoff_ );
+	filename_ = tag->getOption< std::string >( "cstfile", filename_ );
+	cst_cutoff_ = tag->getOption< core::Real >( "cst_cutoff", cst_cutoff_ );
+	start_ = tag->getOption< core::Size>( "start", start_ );
+	end_ = tag->getOption< core::Size >( "end", end_ );
+	selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
 }
 
 bool
@@ -134,10 +146,19 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 	scorefxn->set_weight( cart_bonded, 1.0);
 	(*scorefxn)(copy_pose);
 
+	// find subset of residues to scan
+	core::select::residue_selector::ResidueSubset scan_me;
+	if ( selector_ ) {
+		scan_me = selector_->apply( copy_pose );
+	} else {
+		scan_me = core::select::residue_selector::ResidueSubset( copy_pose.total_residue(), true );
+	}
+
 	core::Size const start = std::max( start_, Size( 1 ) );
 	core::Size const stop = std::min( copy_pose.total_residue(), end_ );
 	TR << "Scan residues between " << start << " and " << stop << std::endl;
 	for ( Size resnum = start; resnum < stop; resnum++ ) {
+		if ( !scan_me[ resnum ] ) continue;
 
 		if ( copy_pose.fold_tree().is_cutpoint( resnum+1 ) || copy_pose.fold_tree().is_jump_point( resnum+1 ) ) continue;
 		// TL: skip checking omega values at the end of chains
