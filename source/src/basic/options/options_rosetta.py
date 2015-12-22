@@ -2810,7 +2810,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'default_max_cycles','Integer', desc='max cycles for MinimizerOptions', default='2000'),
 		Option( 'armijo_min_stepsize','Real', desc='min stepsize in armijo minimizer', default='1e-8'),
 		Option( 'scale_normalmode_dampen','Real', desc='dampening scale over normal mode index, used for NormalModeMinimizer', default='0.05'),
-		Option( 'lbfgs_M','Integer', desc='number of corrections to approximate the inverse hessian matrix.', default='64'),
+		Option( 'lbfgs_M','Integer', desc='number of corrections to approximate the inverse hessian matrix.', default='128'),
 		Option( 'scale_d','Real', desc='max cycles for MinimizerOptions', default='1'),
 		Option( 'scale_theta','Real', desc='max cycles for MinimizerOptions', default='1'),
 		Option( 'scale_rb','Real', desc='max cycles for MinimizerOptions', default='10'),

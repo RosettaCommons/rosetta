@@ -436,36 +436,18 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 				TR.Debug << "Warning: Correcting disulfide at residue " << i << std::endl;
 
 				// convert CYS->CYD
-				core::conformation::Residue newCys = rsd_i;
-				chemical::ResidueTypeSet const & residue_type_set = newCys.type().residue_type_set();
-				chemical::ResidueTypeCOPs const & possible_types = residue_type_set.name3_map_DO_NOT_USE( "CYS" );
-				utility::vector1< std::string > variant_types = newCys.type().properties().get_list_of_variants();
+				utility::vector1< std::string > variant_types = rsd_i.type().properties().get_list_of_variants();
 				variant_types.erase( std::find( variant_types.begin(), variant_types.end(), "DISULFIDE" ) );
 
-				// Run through all possible new residue types.
-				chemical::ResidueTypeCOP matchedRes;
-				bool matched;
-				for ( chemical::ResidueTypeCOPs::const_iterator
-					type_iter = possible_types.begin(), type_end = possible_types.end();
-					type_iter != type_end; ++type_iter ) {
-
-					matched = true;
-					for ( Size kk = 1; kk <= variant_types.size(); ++kk ) {
-						if ( ! (*type_iter)->has_variant_type( variant_types[ kk ] ) ) {
-							matched = false;
-							break;
-						}
-					}
-
-					if ( matched ) { // Do replacement.
-						core::conformation::ResidueOP new_res = core::conformation::ResidueFactory::create_residue( **type_iter, newCys, pose.conformation()  );
-						copy_residue_coordinates_and_rebuild_missing_atoms( newCys, *new_res, pose.conformation() );
-						coords.push_back( new_res->xyz( new_res->atom_index(" HG ")) );
-						break;
-					}
-				}
-				if (!matched) {
-					// fallback: just copy ref_pose_
+				// Get the residue type of the desired new residue type.
+				chemical::ResidueTypeSetCOP residue_type_set = rsd_i.type().residue_type_set();
+				chemical::ResidueTypeCOP replacement_type( residue_type_set->get_representative_type_name3( rsd_i.type().name3(), variant_types ) );
+				if ( replacement_type ) {
+					conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue( *replacement_type, rsd_i, pose.conformation() );
+					copy_residue_coordinates_and_rebuild_missing_atoms( rsd_i, *new_res, pose.conformation() );
+					coords.push_back( new_res->xyz( new_res->atom_index(" HG ")) );
+				} else {
+					// fallback: just copy ref_pose_ ....
 					coords.push_back( ref_pose_->residue(i).xyz( ref_pose_->residue(i).atom_index(" HG ")) );
 				}
 			}

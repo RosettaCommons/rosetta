@@ -115,33 +115,6 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 		TS << " Gradient ratio = " << w_xtal1 << " = sqrt( " << grad2_ros << " / " << grad2_xtal << " )" << std::endl;
 
 		return w_xtal1;
-
-		// now take a step in the grad direction and recompute
-		//   {
-		//    (*rosetta_scorefxn)(pose);  // score pose first
-		//    rosetta_scorefxn->setup_for_minimizing( pose, min_map );
-		//    BrentLineMinimization test_brent( f_ros, vars.size() );
-		//    core::Real newval = test_brent( vars, dEros_dvars );
-		//
-		//    f_ros.dfunc( vars, dEros_dvars );
-		//
-		//    min_map.copy_dofs_to_pose( pose, vars );
-		//    (*xtal_scorefxn)(pose);  // score pose first
-		//    xtal_scorefxn->setup_for_minimizing( pose, min_map );
-		//    f_xtal.dfunc( vars, dExtal_dvars );
-		//
-		//    // sum
-		//    grad2_xtal = grad2_ros = 0;
-		//    for (int i=1; i<=(int)vars.size(); ++i) {
-		//     grad2_xtal += dExtal_dvars[ i ]*dExtal_dvars[ i ];
-		//     grad2_ros += dEros_dvars[ i ]*dEros_dvars[ i ];
-		//    }
-		//   }
-		//
-		//   core::Real w_xtal2 = (grad2_xtal != 0) ?  1 * sqrt( grad2_ros / grad2_xtal ) : 1;
-		//   std::cerr << " w2 = " << w_xtal2 << " = sqrt( " << grad2_ros << " / " << grad2_xtal << " )" << std::endl;
-		//
-		//   return 0.5*(w_xtal1+w_xtal2);
 	} else {
 		// compute gradients using both scorefunctions
 		MinimizerMap min_map;
@@ -203,9 +176,6 @@ core::Real getMLweight_cart( core::scoring::ScoreFunction & scorefxn, core::pose
 
 	rosetta_scorefxn->set_weight( core::scoring::xtal_ml, 0.0 );
 	xtal_scorefxn->set_weight( core::scoring::xtal_ml, 1.0 );
-
-	// dont use cart bonded term to fit weights
-	//rosetta_scorefxn->set_weight( core::scoring::cart_bonded, 0.0 );
 
 	core::Real grad2_ros=0, grad2_xtal=0;
 

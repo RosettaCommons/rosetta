@@ -604,14 +604,16 @@ Minimizer::lbfgs(
 	int const N( X.size() );
 	static int M( basic::options::option[ basic::options::OptionKeys::optimization::lbfgs_M ]() );
 	int const PAST( line_min->nonmonotone() ? 3 : 1 );
-	//Real const EPS( 1.E-5 );
+	Real const EPS( 1.E-5 );
 
 	int K = 1; // number of func evaluations
 
 	// Allocate working space.
 	Multivec XP( N );
+	Multivec Xtemp( N );
 	Multivec G( N );
 	Multivec GP( N );
+	Multivec Gtemp( N );
 	Multivec D( N );
 	Multivec W( N );
 
@@ -649,14 +651,16 @@ Minimizer::lbfgs(
 
 	if ( line_min->nonmonotone() ) line_min->_last_accepted_step = 0.005;
 
-
 	// initial stepsize = 1/sqrt ( dot(D,D) )
-	//line_min->_last_accepted_step = 2*invdnorm;
+	//line_min->_last_accepted_step = invdnorm;
 
+	bool last_step_good = true;
 	for ( int ITER = 1; ITER <= ITMAX; ++ITER ) {
 		// Store the current position and gradient vectors
-		XP = X;
-		GP = G;
+		if (last_step_good) {
+			XP = X;
+			GP = G;
+		}
 
 		// line min
 		line_min->_deriv_sum = 0.0;
@@ -678,6 +682,40 @@ Minimizer::lbfgs(
 			}
 		}
 
+		// check 1: if derivative is positive, flip signs of positive components
+		if (line_min->_deriv_sum > -EPS) {
+			//std::cerr << "reset 1" << std::endl;
+			line_min->_deriv_sum = 0.0;
+			for ( int i = 1; i <= N; ++i ) {
+				 if (D[i]*G[i] >= 0) D[i] = -D[i];
+
+				 line_min->_deriv_sum += D[i]*G[i];
+				 Gnorm += G[i]*G[i];
+				 if ( std::abs( G[i] ) > Gmax ) {
+						Gmax=std::abs( G[i] );
+				 }
+			}
+			Gnorm = std::sqrt(Gnorm);
+		}
+
+		// check 2: if derivative still positive, reset Hessian
+		if (line_min->_deriv_sum > -EPS) {
+			//std::cerr << "reset 2" << std::endl;
+ 		 	line_min->_deriv_sum = 0.0;
+ 		 	for ( int i = 1; i <= N; ++i ) {
+ 		 		D[i] = -G[i];
+ 		 		line_min->_deriv_sum += D[i]*G[i];
+ 		 	}
+
+ 		 	if ( sqrt( -line_min->_deriv_sum ) > 1e-6 ) {
+ 		 		invdnorm = 1.0/sqrt( -line_min->_deriv_sum );
+ 		 		//line_min->_last_accepted_step = invdnorm;  // keep prev stepsize
+ 		 		func_memory_filled = 1;
+ 		 		line_min->_func_to_beat = pf[1] = prior_func_value = FRET;
+ 		 	}
+		}
+
+
 		// X is returned as new pt, and D is returned as the change
 		FRET = (*line_min)( X, D );
 
@@ -686,7 +724,6 @@ Minimizer::lbfgs(
 				return;
 			} else {
 				if ( line_min->_last_accepted_step == 0 ) { // failed line search
-
 					// Reset Hessian
 					CURPOS = 1;
 					K = 1;
@@ -698,11 +735,11 @@ Minimizer::lbfgs(
 						line_min->_deriv_sum += D[i]*G[i];
 					}
 
-					if ( sqrt( -line_min->_deriv_sum ) > 1e-6 ) {
+					if ( line_min->_deriv_sum <= -EPS ) {
 						invdnorm = 1.0/sqrt( -line_min->_deriv_sum );
 
 						// delete prior function memory
-						line_min->_last_accepted_step = 0.1*invdnorm;  // start with a smaller initial step???
+						line_min->_last_accepted_step = invdnorm; // reset initial step size (in case default of '1' is too large)
 						func_memory_filled = 1;
 						prior_func_value = FRET;
 						pf[1] = prior_func_value;
@@ -753,10 +790,10 @@ Minimizer::lbfgs(
 		}
 
 		line_min->_deriv_sum = 0.0;
-		core::Real DRVNEW = 0.0;
+		core::Real deriv_new = 0.0;
 		for ( int i = 1; i <= N; ++i ) {
 			line_min->_deriv_sum += D[i]*GP[i];
-			DRVNEW += D[i]*G[i];
+			deriv_new += D[i]*G[i];
 		}
 
 		// LBFGS updates
@@ -768,27 +805,37 @@ Minimizer::lbfgs(
 		//   ys = y^t \cdot s = 1 / \rho.
 		//   yy = y^t \cdot y.
 		// Notice that yy is used for scaling the hessian matrix H_0 (Cholesky factor).
-		if ( DRVNEW > 0.95*line_min->_deriv_sum ) {
-			core::Real ys=0, yy=0;
+		core::Real ys=0, yy=0;
+		for ( int i = 1; i <= N; ++i ) {
+			 Xtemp[i] = X[i] - XP[i];
+			 Gtemp[i] = G[i] - GP[i];
+			 ys += Gtemp[i]*Xtemp[i];
+			 yy += Gtemp[i]*Gtemp[i];
+		}
+
+		if ( std::fabs( ys ) < 1e-6 ) {
+			last_step_good = false;
+		} else {
+			last_step_good = true;
 			for ( int i = 1; i <= N; ++i ) {
-				lm[CURPOS].s[i] = X[i] - XP[i];
-				lm[CURPOS].y[i] = G[i] - GP[i];
-				ys += lm[CURPOS].y[i]*lm[CURPOS].s[i];
-				yy += lm[CURPOS].y[i]*lm[CURPOS].y[i];
+				 lm[CURPOS].s[i] = Xtemp[i];
+				 lm[CURPOS].y[i] = Gtemp[i];
 			}
 			lm[CURPOS].ys = ys;
+
+			// increment
+			K++;
 			CURPOS++;
 			if ( CURPOS > M ) CURPOS = 1;
 		}
 
 		// Recursive formula to compute dir = -(H \cdot g).
-		//   This is described in page 779 of:
-		//   Jorge Nocedal.
-		//   Updating Quasi-Newton Matrices with Limited Storage.
-		//   Mathematics of Computation, Vol. 35, No. 151,
-		//   pp. 773--782, 1980.
-		int bound = std::min( M,K );
-		K++;
+		// 		This is described in page 779 of:
+		// 		Jorge Nocedal.
+		// 		Updating Quasi-Newton Matrices with Limited Storage.
+		// 		Mathematics of Computation, Vol. 35, No. 151,
+		// 		pp. 773--782, 1980.
+		int bound = std::min( M,K-1 );
 
 		// Compute the negative of gradients
 		for ( int i = 1; i <= N; ++i ) {
@@ -798,8 +845,8 @@ Minimizer::lbfgs(
 		int j = CURPOS;
 		for ( int pts=0; pts<bound; ++pts ) {
 			j--;
-			if ( j<=0 ) j=M; // wrap around
-			if ( std::fabs(lm[j].ys) < 1e-6 ) continue;
+			if (j<=0) j=M; // wrap around
+			//if (std::fabs(lm[j].ys) < 1e-6) continue;
 
 			// \alpha_{j} = \rho_{j} s^{t}_{j} \cdot q_{k+1}
 			lm[j].alpha = 0;
@@ -819,7 +866,7 @@ Minimizer::lbfgs(
 		//}
 
 		for ( int pts=0; pts<bound; ++pts ) {
-			if ( std::fabs(lm[j].ys) < 1e-4 ) continue;
+			//if (std::fabs(lm[j].ys) < 1e-6) continue;
 
 			// \beta_{j} = \rho_{j} y^t_{j} \cdot \gamma_{i}
 			core::Real beta=0.0;
@@ -836,6 +883,7 @@ Minimizer::lbfgs(
 			j++;
 			if ( j>M ) j=1; // wrap around
 		}
+
 	}
 
 	if ( !options_.silent() ) {
