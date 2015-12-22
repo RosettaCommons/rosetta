@@ -559,13 +559,14 @@ settings = {
                     "funroll-loops",
                     "finline-functions",
                     "finline-limit=20000",
-                    "s"
+                    "s",
                 ],
                 "mode" : [
                     "g",
                     "ggdb",
-                    "ffloat-store"
-                    # "fstack-check"
+                    "ffloat-store",
+                    "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
+                    # "fstack-check",
                 ],
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
@@ -2016,7 +2017,10 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile" : [ "O3" ],
-                "mode" : [ "g" ],
+                "mode" : [ 
+                    "g",
+                    "fno-omit-frame-pointer", # Keep frame pointer information, to help with stack traces
+		],
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
                 "warn" : [
