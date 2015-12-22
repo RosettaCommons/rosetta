@@ -69,6 +69,8 @@ public:
 public:
 	/// @brief sets the residue selector used to decide which residues to evaluate
 	void set_selector( core::select::residue_selector::ResidueSelectorCOP rs );
+	/// @brief sets the cutoff used to define a residue as core
+	void set_core_cutoff( core::Real const core_cutoff );
 
 	// protected functions
 protected:
@@ -91,6 +93,7 @@ protected:
 private:   // options
 
 private:   // other data
+	core::Real core_cutoff_;
 	/// @brief residue selector to identify positions to rebuild
 	core::select::residue_selector::ResidueSelectorCOP selector_;
 };

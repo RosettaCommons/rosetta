@@ -21,6 +21,7 @@
 // Protocol Headers
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/moves/DsspMover.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // Core Headers
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -70,6 +71,7 @@ CoreResiduesPerElementFilterCreator::filter_name()
 ///  ---------------------------------------------------------------------------------
 CoreResiduesPerElementFilter::CoreResiduesPerElementFilter() :
 	Filter( "CoreResiduesPerElementFilter" ),
+	core_cutoff_( 5.2 ),
 	selector_()
 {
 }
@@ -101,18 +103,13 @@ CoreResiduesPerElementFilter::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
-	if ( tag->hasOption("selector") ) {
-		std::string const selectorname = tag->getOption< std::string >("selector");
-		try {
-			selector_ = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::stringstream error_msg;
-			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from CoreResiduesPerElement filter.";
-			error_msg << e.msg();
-			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
-		}
-		assert( selector_ );
-		TR << "Using residue selector " << selectorname << std::endl;
+	if ( tag->hasOption( "core_cutoff" ) ) {
+		set_core_cutoff( tag->getOption< core::Real >( "core_cutoff" ) );
+	}
+
+	selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
+	if ( selector_ ) {
+		TR << "Using residue selector " << std::endl;
 	}
 }
 
@@ -247,20 +244,23 @@ CoreResiduesPerElementFilter::evaluate_element(
 	utility::vector1< core::Size > const & residues ) const
 {
 	// eventually, make these options
-	// above -2.0, this residue is surface
-	static core::Real const boundary_threshold = -2.0;
-	//static core::Real const core_threshold = -5.2;
 
 	core::Size found = 0;
 	for ( utility::vector1< core::Size >::const_iterator r=residues.begin(), endr=residues.end(); r!=endr; ++r ) {
 		core::scoring::EnergyMap emap;
 		scn.residue_energy( pose.residue(*r), pose, emap );
 		TR.Debug << "Res " << *r << " " << pose.residue(*r).name() << " score=" << emap[ core::scoring::sidechain_neighbors ] << std::endl;
-		if ( emap[ core::scoring::sidechain_neighbors ] <= boundary_threshold ) {
+		if ( emap[ core::scoring::sidechain_neighbors ] <= -core_cutoff_ ) {
 			++found;
 		}
 	}
 	return found;
+}
+
+void
+CoreResiduesPerElementFilter::set_core_cutoff( core::Real const core_cutoff )
+{
+	core_cutoff_ = core_cutoff;
 }
 
 } // namespace filters

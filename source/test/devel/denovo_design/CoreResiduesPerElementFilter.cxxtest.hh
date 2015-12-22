@@ -72,6 +72,7 @@ public:
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "devel/denovo_design/test_foldability.pdb" );
 
 		CoreResiduesPerElementFilter corefilt;
+		corefilt.set_core_cutoff( 2.0 );
 		TS_ASSERT( corefilt.apply( input_pose ) );
 	}
 
