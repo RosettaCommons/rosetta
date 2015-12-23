@@ -93,7 +93,6 @@ StepWiseMoveSelector::StepWiseMoveSelector():
 	submotif_frequency_( 0.0 ),
 	switch_focus_frequency_( 0.2 ),
 	skip_bulge_frequency_( 0.0 ),
-	remodeler_( false ),
 	choose_random_( true ),
 	force_unique_moves_( false ),
 	filter_complex_cycles_( true ),
@@ -164,6 +163,7 @@ StepWiseMoveSelector::fill_moves_for_pose( pose::Pose const & pose ) {
 	// might be better to have delete moves paired with resample moves, as they both look at
 	// existing, *internal*  DOFs. And have add moves separated, as they involve new DOFs.
 	get_intramolecular_add_and_delete_elements( pose, intramolecular_add_and_delete_moves );
+
 	save_moves( intramolecular_add_and_delete_moves, add_delete_frequency_  );
 
 	get_docking_add_and_delete_elements( pose, docking_add_and_delete_moves );
@@ -359,7 +359,6 @@ void
 StepWiseMoveSelector::get_resample_move_elements( pose::Pose const & pose,
 	utility::vector1< StepWiseMove > & swa_moves,
 	bool save_resample_moves /* = true */ ) {
-	remodeler_ = true;
 	if ( allow_internal_hinge_ ) {
 		get_resample_internal_move_elements( pose, swa_moves );
 	} else {
@@ -369,7 +368,6 @@ StepWiseMoveSelector::get_resample_move_elements( pose::Pose const & pose,
 	if ( allow_internal_local_ ) {
 		get_resample_internal_local_move_elements( pose, swa_moves );
 	}
-	remodeler_ = false;
 
 	if ( save_resample_moves ) { // when called as stand-alone.
 		swa_moves_.clear();
@@ -553,18 +551,17 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 
 			partition_definition = get_partition_definition( pose, i /*suite*/ );
 			if ( partition_splits_an_input_domain( partition_definition, domain_map ) ) continue;
+			if ( move_type == DELETE && check_from_scratch( pose, partition_definition ) ) continue; // handled elsewhere
 
 			partition_res1 = get_partition_res( partition_definition, true );
 			partition_res2 = get_partition_res( partition_definition, false );
 
 			if ( !allow_submotif_split_ && partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
 
-			if ( check_for_input_domain_or_from_scratch( pose, partition_res1 ) ) {
-				swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full(partition_res2),
-					Attachment( full_model_info.sub_to_full(i), BOND_TO_PREVIOUS ), move_type ) );
-				if ( force_unique_moves_ ) continue;
-			}
-			if ( check_for_input_domain_or_from_scratch( pose, partition_res2 ) ) {
+			swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full(partition_res2),
+																							 Attachment( full_model_info.sub_to_full(i), BOND_TO_PREVIOUS ), move_type ) );
+
+			if ( !force_unique_moves_ ) { // to match legacy code.
 				swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full(partition_res1),
 					Attachment( full_model_info.sub_to_full(i+1), BOND_TO_NEXT ), move_type ) );
 			}
@@ -598,14 +595,14 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 		if ( partition_res1.size() > 1 && partition_res2.size() > 1 ) continue;
 		if ( !allow_submotif_split_ && partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
 
-		if ( partition_res1.size() == 1 && check_for_input_domain_or_from_scratch( pose, partition_res2 ) ) {
+		if ( partition_res1.size() == 1 ) {
 			Size const anchor_res = get_anchor_res( partition_res1[1], pose );
 			AttachmentType type = ( anchor_res > partition_res1[1] ) ? JUMP_TO_NEXT_IN_CHAIN : JUMP_TO_PREV_IN_CHAIN;
 			swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full(partition_res1),
 				Attachment( full_model_info.sub_to_full(anchor_res), type ), move_type ) );
 			if ( force_unique_moves_ ) continue;
 		}
-		if ( partition_res2.size() == 1 && check_for_input_domain_or_from_scratch( pose, partition_res1 ) ) {
+		if ( partition_res2.size() == 1 ) {
 			Size const anchor_res = get_anchor_res( partition_res2[1], pose );
 			AttachmentType type = ( anchor_res > partition_res2[1] ) ? JUMP_TO_NEXT_IN_CHAIN : JUMP_TO_PREV_IN_CHAIN;
 			swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full(partition_res2),
@@ -615,6 +612,19 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 	for ( Size n = 1; n <= swa_moves_split.size(); n++ ) swa_moves.push_back( swa_moves_split[ n ] );
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+StepWiseMoveSelector::check_from_scratch(  pose::Pose const & pose,
+																					 utility::vector1< bool > const & partition_definition) const {
+	if ( from_scratch_frequency_ > 0.0 &&
+			 pose.total_residue() == 2 &&
+			 !pose.fold_tree().is_cutpoint( 1 ) &&
+			 partition_definition[ 1 ] != partition_definition[ 2 ] ) {
+		return true;
+	}
+	return false;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // docking (cross-chain)
@@ -657,16 +667,19 @@ StepWiseMoveSelector::partitions_split_a_submotif(
 	utility::vector1 < Size > const & partition1,
 	utility::vector1 < Size > const & partition2
 ) const {
+
+	utility::vector1< Size > const & pose_res_list( get_res_list_from_full_model_info_const( pose ) );
 	utility::vector1< SubMotifInfoOP > submotif_info_list = const_full_model_info( pose ).submotif_info_list();
 	utility::vector1< SubMotifInfoOP >::iterator itr;
 	for ( itr = submotif_info_list.begin(); itr != submotif_info_list.end(); ++itr ) {
 		bool in_partition1( false ), in_partition2( false );
-		for ( Size n = 1; n < (*itr)->res_list().size(); n++ ) {
-			if ( partition1.has_value( (*itr)->res_list( n ) ) ) {
+		for ( Size n = 1; n <= (*itr)->res_list().size(); n++ ) {
+			Size const submotif_res_in_pose_numbering( pose_res_list.index( (*itr)->res_list( n ) ) );
+			if ( partition1.has_value( submotif_res_in_pose_numbering ) ) {
 				in_partition1 = true;
 				continue;
 			}
-			if ( partition2.has_value( (*itr)->res_list( n ) ) ) {
+			if ( partition2.has_value( submotif_res_in_pose_numbering ) ) {
 				in_partition2 = true;
 				continue;
 			}
@@ -689,24 +702,6 @@ StepWiseMoveSelector::check_for_intramolecular_submotif_jump(
 	bool const & in_a_submotif = const_full_model_info( pose ).in_a_submotif( check_res );
 	bool const & jump_exists = pose.fold_tree().jump_exists( moving_res, attached_res );
 	return ( in_a_submotif && jump_exists );
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool
-StepWiseMoveSelector::check_for_input_domain_or_from_scratch(  pose::Pose const & pose,
-	utility::vector1< Size> const & partition_res ) const {
-	if ( remodeler_ ) return true;
-
-	if ( pose.total_residue() == 2 && !pose.fold_tree().is_cutpoint( 1 ) ) {
-		// special case of deleting a dinucleotide -- let from_scratch_delete_move_elements take care of this.
-		runtime_assert( partition_res.size() == 1 );
-		return false;
-	}
-
-	if ( from_scratch_frequency_ > 0.0 ) return true;
-
-	return check_for_input_domain( pose, partition_res );
 }
 
 
@@ -782,8 +777,9 @@ StepWiseMoveSelector::figure_out_from_scratch_delete_move_elements( pose::Pose c
 	utility::vector1< StepWiseMove > & swa_moves ) const {
 
 	utility::vector1< Size > const domain_map = core::pose::full_model_info::get_input_domain_from_full_model_info_const( pose );
-	if ( pose.total_residue() == 2 && !pose.fold_tree().is_cutpoint( 1 ) &&
-			!partition_splits_an_input_domain( utility::tools::make_vector1(true,false), domain_map ) ) {
+	utility::vector1< Size > const partition_definition = utility::tools::make_vector1(true,false);
+	if ( check_from_scratch( pose, partition_definition ) &&
+			!partition_splits_an_input_domain( partition_definition, domain_map ) ) {
 		swa_moves.push_back( StepWiseMove( sub_to_full( 2, pose ), Attachment( sub_to_full( 1, pose ), BOND_TO_PREVIOUS ), DELETE ) );
 		if ( !force_unique_moves_ ) {
 			swa_moves.push_back( StepWiseMove( sub_to_full( 1, pose ), Attachment( sub_to_full( 2, pose ), BOND_TO_NEXT ), DELETE ) );
@@ -1505,15 +1501,22 @@ StepWiseMoveSelector::just_simple_cycles( StepWiseMove const & swa_move, pose::P
 			}
 		}
 	} else if ( move_type == DELETE ) {
-		Size new_domain;
-		if ( !allow_submotif_split_ &&
-				const_full_model_info( pose ).is_a_submotif( move_element ) &&
-				!const_full_model_info( pose ).is_a_submotif_seed( move_element ) ) {
-			new_domain = 0;
-		} else {
-			new_domain = max( pose_domain_map ) + 1;
+		// need to figure out if either parition will disappear.
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+		utility::vector1< Size > other_element;
+		for ( Size n = 1; n <= res_list.size(); n++ ) {
+			if ( !move_element.has_value( res_list[ n ] ) ) other_element.push_back( res_list[ n ] );
 		}
-		for ( Size k = 1; k <= move_element.size(); k++ ) pose_domain_map[ move_element[ k ] ] = new_domain;
+		if ( const_full_model_info( pose ).is_a_submotif( move_element ) &&
+				!const_full_model_info( pose ).is_a_submotif_seed( move_element ) ) {
+			for ( Size k = 1; k <= move_element.size(); k++ ) pose_domain_map[ move_element[ k ] ] = 0;
+		} else if (  const_full_model_info( pose ).is_a_submotif( other_element ) &&
+								 !const_full_model_info( pose ).is_a_submotif_seed( other_element ) ) {
+			for ( Size k = 1; k <= other_element.size(); k++ ) pose_domain_map[ other_element[ k ] ] = 0;
+		} else {
+			Size const new_domain = max( pose_domain_map ) + 1;
+			for ( Size k = 1; k <= move_element.size(); k++ ) pose_domain_map[ move_element[ k ] ] = new_domain;
+		}
 	} else if ( move_type == FROM_SCRATCH ) {
 		Size const new_domain = max( pose_domain_map ) + 1;
 		for ( Size k = 1; k <= move_element.size(); k++ ) pose_domain_map[ move_element[ k ] ] = new_domain;

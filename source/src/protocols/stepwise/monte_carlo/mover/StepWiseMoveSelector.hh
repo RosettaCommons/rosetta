@@ -181,6 +181,10 @@ private:
 		utility::vector1< StepWiseMove > & swa_moves,
 		MoveType const move_type );
 
+	bool
+	check_from_scratch(  pose::Pose const & pose,
+											 utility::vector1< bool > const & partition_definition) const;
+
 	void
 	remove_from_consideration_first_multi_residue_move_element( utility::vector1< StepWiseMove > & swa_moves,
 		bool remove_even_if_not_singlet );
@@ -329,7 +333,6 @@ private:
 	Real submotif_frequency_;
 	Real switch_focus_frequency_;
 	Real skip_bulge_frequency_;
-	bool remodeler_;
 	bool choose_random_;
 	bool force_unique_moves_;
 	bool filter_complex_cycles_;
