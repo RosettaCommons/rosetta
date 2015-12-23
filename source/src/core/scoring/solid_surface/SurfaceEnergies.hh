@@ -46,7 +46,7 @@ public:
 	SurfaceEnergies( SurfaceEnergies const & src );
 
 	// Explicit assignmnet operator to avoid #include .hh's
-	virtual Energies const & operator = ( Energies const & rhs );
+	virtual Energies & operator = ( Energies const & rhs );
 
 	/// @details determine whether my type is the same as another Conformation's
 	virtual

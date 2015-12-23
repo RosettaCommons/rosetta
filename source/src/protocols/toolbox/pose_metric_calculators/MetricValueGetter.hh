@@ -46,7 +46,7 @@ public:
 
 	~MetricValueGetter();
 
-	MetricValueGetter const &
+	MetricValueGetter &
 	operator = (
 		MetricValueGetter const & getter
 	);

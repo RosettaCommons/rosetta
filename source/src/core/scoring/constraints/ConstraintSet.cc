@@ -127,7 +127,7 @@ ConstraintSetOP ConstraintSet::clone() const {
 
 /// @details This can be called by derived classes to make sure
 /// that all of the base class data is efficiently copied.
-ConstraintSet const &
+ConstraintSet &
 ConstraintSet::operator = ( ConstraintSet const & rhs ) {
 
 	if ( this == &rhs ) return *this;

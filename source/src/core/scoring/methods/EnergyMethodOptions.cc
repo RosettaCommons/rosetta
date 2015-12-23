@@ -175,8 +175,8 @@ EnergyMethodOptions::EnergyMethodOptions(EnergyMethodOptions const & src)
 EnergyMethodOptions::~EnergyMethodOptions() {}
 
 /// copy operator
-EnergyMethodOptions const &
-EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
+EnergyMethodOptions &
+EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 	if ( this != &src ) {
 		aa_composition_setup_files_ = src.aa_composition_setup_files_;
 		atom_vdw_atom_type_set_name_ = src.atom_vdw_atom_type_set_name_;

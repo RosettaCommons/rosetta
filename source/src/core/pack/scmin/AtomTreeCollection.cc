@@ -59,7 +59,7 @@ ResidueAtomTreeCollectionMomento::ResidueAtomTreeCollectionMomento(
 {
 }
 
-ResidueAtomTreeCollectionMomento const &
+ResidueAtomTreeCollectionMomento &
 ResidueAtomTreeCollectionMomento::operator = ( ResidueAtomTreeCollectionMomento const & rhs )
 {
 	if ( this != & rhs ) {

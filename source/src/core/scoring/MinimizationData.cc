@@ -36,7 +36,7 @@ ResSingleMinimizationData::ResSingleMinimizationData( ResSingleMinimizationData 
 	}
 }
 
-ResSingleMinimizationData const &
+ResSingleMinimizationData &
 ResSingleMinimizationData::operator = ( ResSingleMinimizationData const & rhs ) {
 	if ( this != & rhs ) {
 		for ( Size ii = 1; ii <= n_min_single_data; ++ii ) {
@@ -74,7 +74,7 @@ ResPairMinimizationData::ResPairMinimizationData( ResPairMinimizationData const 
 	}
 }
 
-ResPairMinimizationData const &
+ResPairMinimizationData &
 ResPairMinimizationData::operator = ( ResPairMinimizationData const & rhs )
 {
 	if ( this != & rhs ) {

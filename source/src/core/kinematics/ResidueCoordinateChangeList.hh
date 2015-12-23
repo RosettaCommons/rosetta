@@ -46,7 +46,7 @@ public:
 
 	virtual ~ResidueCoordinateChangeList();
 
-	ResidueCoordinateChangeList const &
+	ResidueCoordinateChangeList &
 	operator = ( ResidueCoordinateChangeList const & rhs );
 
 	/// @brief Set the number of residues in the conformation being tracked.

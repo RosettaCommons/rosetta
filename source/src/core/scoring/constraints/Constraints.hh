@@ -70,7 +70,7 @@ public:
 	/// @brief Create a deep copy of this %Constraints object, cloning all of the individual constraints
 	ConstraintsOP deep_clone() const;
 	/// @brief Copy the contents of the rhs %Constraints object into this %Constraints object
-	Constraints const & operator = ( Constraints const & rhs );
+	Constraints & operator = ( Constraints const & rhs );
 
 
 	// call the setup_for_derivatives for each constraint

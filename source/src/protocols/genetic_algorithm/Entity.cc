@@ -90,7 +90,7 @@ EntityElement::operator == ( EntityElement const & rhs ) const {
 	return index_ == rhs.index_;
 }
 
-EntityElement const &
+EntityElement &
 EntityElement::operator =  ( EntityElement const & rhs )
 {
 	if ( this != &rhs ) {
@@ -182,7 +182,7 @@ Entity::Entity( Entity const & entity ) :
 }
 
 
-Entity const &
+Entity &
 Entity::operator = ( Entity const & rhs ) {
 	if ( this != & rhs ) {
 		if ( traits_.size() == rhs.traits_.size() ) {

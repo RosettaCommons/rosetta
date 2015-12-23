@@ -177,7 +177,7 @@ public:
 	/// been called. This performs a shallow copy of all of the constraints held
 	/// in the ConstraintSet, efficiently avoiding copy operations on ResidueConstraint
 	/// objects that are already identical.
-	virtual ConstraintSet const & operator = ( ConstraintSet const & rhs );
+	virtual ConstraintSet & operator = ( ConstraintSet const & rhs );
 
 
 	/// @brief Clone operator -- performs a shallow copy of the contained

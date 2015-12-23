@@ -54,12 +54,14 @@ core::Real MainChainTorsionSet::phi() const{ return phi_; }
 core::Real MainChainTorsionSet::psi() const{ return psi_; }
 core::Real MainChainTorsionSet::omega() const{ return omega_; }
 
-MainChainTorsionSet
+MainChainTorsionSet &
 MainChainTorsionSet::operator=( MainChainTorsionSet const & src )
 {
-	phi_ =  src.phi();
-	psi_ =  src.psi();
-	omega_ =  src.omega();
+	if ( this != & src ) {
+		phi_ =  src.phi();
+		psi_ =  src.psi();
+		omega_ =  src.omega();
+	}
 	return (*this );
 }
 

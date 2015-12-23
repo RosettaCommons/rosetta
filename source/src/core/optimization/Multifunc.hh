@@ -66,7 +66,7 @@ protected: // Assignment
 
 	/// @brief Copy assignment
 	inline
-	Multifunc const &
+	Multifunc &
 	operator =( Multifunc const & )
 	{
 		return *this;

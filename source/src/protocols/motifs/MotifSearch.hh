@@ -69,7 +69,7 @@ public:
 		MotifSearch const & src
 	);
 
-	MotifSearch const &
+	MotifSearch &
 	operator = (
 		MotifSearch const & src
 	);

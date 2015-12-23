@@ -110,7 +110,7 @@ bool PosType::operator == ( EntityElement const & rhs ) const
 	return false;
 }
 
-genetic_algorithm::EntityElement const &
+genetic_algorithm::EntityElement &
 PosType::operator =  ( EntityElement const & rhs )
 {
 	if ( this != &rhs ) {

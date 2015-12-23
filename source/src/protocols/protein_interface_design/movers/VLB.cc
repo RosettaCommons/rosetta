@@ -139,7 +139,7 @@ VLB::VLB( VLB const & init ) :
 	scorefxn_ = init.scorefxn_->clone();
 }
 
-VLB const & VLB::operator=( VLB const & init ) {
+VLB & VLB::operator=( VLB const & init ) {
 	manager_ = protocols::forge::build::BuildManagerOP( new BuildManager( *init.manager_ ) );
 	scorefxn_ = init.scorefxn_->clone();
 	return *this;

@@ -156,7 +156,7 @@ public:
 	ExternalGeomSampler();
 	ExternalGeomSampler( ExternalGeomSampler const & );
 
-	ExternalGeomSampler const &
+	ExternalGeomSampler &
 	operator = ( ExternalGeomSampler const & rhs );
 
 

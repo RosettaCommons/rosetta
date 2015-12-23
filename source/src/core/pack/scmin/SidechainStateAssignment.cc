@@ -43,7 +43,7 @@ SidechainStateAssignment::SidechainStateAssignment( SidechainStateAssignment con
 	n_unassigned_( src.n_unassigned_ )
 {}
 
-SidechainStateAssignment const &
+SidechainStateAssignment &
 SidechainStateAssignment::operator = ( SidechainStateAssignment const & rhs )
 {
 	if ( this != &rhs ) {

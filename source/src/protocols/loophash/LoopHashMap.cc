@@ -357,12 +357,14 @@ LoopHashMap::LoopHashMap(LoopHashMap const & other ) :
 
 { }
 
-LoopHashMap LoopHashMap::operator=(LoopHashMap const & other)
+LoopHashMap & LoopHashMap::operator=(LoopHashMap const & other)
 {
-	hash_ = other.hash_;
-	backbone_index_map_ = other.backbone_index_map_;
-	loopdb_ = other.loopdb_;
-	loop_size_ = other.loop_size_;
+	if ( this != & other ) {
+		hash_ = other.hash_;
+		backbone_index_map_ = other.backbone_index_map_;
+		loopdb_ = other.loopdb_;
+		loop_size_ = other.loop_size_;
+	}
 	return *this;
 
 }

@@ -230,7 +230,7 @@ LoopRelaxMover::LoopRelaxMover( LoopRelaxMover const & src ) : moves::Mover(),
 {}
 
 /// @brief assignment operator; Shallow copy of all data.
-LoopRelaxMover const &
+LoopRelaxMover &
 LoopRelaxMover::operator = ( LoopRelaxMover const & rhs )
 {
 	if ( this != &rhs ) {

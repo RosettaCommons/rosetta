@@ -285,7 +285,7 @@ BuildSet::BuildSet( BuildSet const & other ) : parent() {
 }
 
 
-BuildSet const &
+BuildSet &
 BuildSet::operator = ( BuildSet const & rhs )
 {
 	if ( this != &rhs ) {

@@ -105,7 +105,7 @@ MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const &other, Shor
 	shortest_path_( sp )
 {}
 
-ConstraintSet const &
+ConstraintSet &
 MaxSeqSepConstraintSet::operator = ( ConstraintSet const & rhs )
 {
 	if ( this != &rhs ) {

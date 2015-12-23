@@ -101,7 +101,7 @@ LigandMotifSearch::LigandMotifSearch( LigandMotifSearch const & src ) :
 	(*this) = src;
 }
 
-LigandMotifSearch const &
+LigandMotifSearch &
 LigandMotifSearch::operator = ( LigandMotifSearch const & src )
 {
 	if ( this != &src ) {

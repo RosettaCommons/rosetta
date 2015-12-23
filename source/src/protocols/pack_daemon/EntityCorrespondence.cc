@@ -61,7 +61,7 @@ EntityCorrespondence::EntityCorrespondence(EntityCorrespondence const & src ) :
 	funcnames_( src.funcnames_ )
 {}
 
-EntityCorrespondence const &
+EntityCorrespondence &
 EntityCorrespondence::operator = ( EntityCorrespondence const & other )
 {
 	if ( this != &other ) {

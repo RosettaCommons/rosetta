@@ -51,7 +51,7 @@ public:
 		utility::vector1< bool > * computed_in
 	);
 
-	virtual ResidueNeighborIterator const & operator = ( ResidueNeighborIterator const & src );
+	virtual ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & src );
 
 	virtual ResidueNeighborIterator const & operator ++ ();
 
@@ -104,7 +104,7 @@ public:
 		utility::vector1< bool > const * computed_in
 	);
 
-	virtual ResidueNeighborConstIterator const & operator = ( ResidueNeighborConstIterator const & src );
+	virtual ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & src );
 
 	virtual ResidueNeighborConstIterator const & operator ++ ();
 

@@ -56,7 +56,7 @@ public:
 		ObjexxFCL::FArray2D< bool > * computed_in
 	);
 
-	virtual ResidueNeighborIterator const & operator = ( ResidueNeighborIterator const & src );
+	virtual ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & src );
 
 	virtual ResidueNeighborIterator const & operator ++ ();
 
@@ -109,7 +109,7 @@ public:
 		ObjexxFCL::FArray2D< bool > const * computed_in
 	);
 
-	virtual ResidueNeighborConstIterator const & operator = ( ResidueNeighborConstIterator const & src );
+	virtual ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & src );
 
 	virtual ResidueNeighborConstIterator const & operator ++ ();
 

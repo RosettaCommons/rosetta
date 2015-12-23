@@ -51,7 +51,7 @@ public:
 	ActiveSiteGrid();
 	ActiveSiteGrid( ActiveSiteGrid const & );
 
-	ActiveSiteGrid const &
+	ActiveSiteGrid &
 	operator = ( ActiveSiteGrid const & rhs );
 
 	/// @brief Set the bounding box for this grid

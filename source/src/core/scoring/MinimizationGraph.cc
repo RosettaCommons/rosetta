@@ -711,7 +711,7 @@ MinimizationGraph::~MinimizationGraph() {
 
 
 /// @brief assignment operator -- performs a deep copy
-MinimizationGraph const &
+MinimizationGraph &
 MinimizationGraph::operator = ( MinimizationGraph const & rhs )
 {
 	parent::operator = ( rhs );

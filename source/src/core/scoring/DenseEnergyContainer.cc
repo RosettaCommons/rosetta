@@ -47,7 +47,7 @@ DenseNeighborIterator::DenseNeighborIterator(
 	computed_( computed_in )
 {}
 
-ResidueNeighborIterator const &
+ResidueNeighborIterator &
 DenseNeighborIterator::operator = ( ResidueNeighborIterator const & src )
 {
 	debug_assert( dynamic_cast< DenseNeighborIterator const * >( &src ) );
@@ -162,7 +162,7 @@ DenseNeighborConstIterator::DenseNeighborConstIterator(
 	computed_( computed_in )
 {}
 
-ResidueNeighborConstIterator const &
+ResidueNeighborConstIterator &
 DenseNeighborConstIterator::operator = ( ResidueNeighborConstIterator const & src )
 {
 	debug_assert( dynamic_cast< DenseNeighborConstIterator const * >( &src ) );

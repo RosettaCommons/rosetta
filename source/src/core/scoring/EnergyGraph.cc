@@ -257,7 +257,7 @@ EnergyGraph::add_energy_edge(
 
 
 /// @brief assignment operator -- performs a deep copy
-EnergyGraph const &
+EnergyGraph &
 EnergyGraph::operator = ( EnergyGraph const & rhs )
 {
 	active_score_types( rhs.active_2b_score_types_ );

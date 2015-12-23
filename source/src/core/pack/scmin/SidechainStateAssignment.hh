@@ -35,7 +35,7 @@ class SidechainStateAssignment : public utility::pointer::ReferenceCount {
 public:
 	SidechainStateAssignment( Size nmoltenres );
 	SidechainStateAssignment( SidechainStateAssignment const & );
-	SidechainStateAssignment const &
+	SidechainStateAssignment &
 	operator = ( SidechainStateAssignment const & );
 
 	Size nmoltenres() const { return nmoltenres_; }

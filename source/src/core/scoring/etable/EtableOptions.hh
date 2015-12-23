@@ -38,7 +38,7 @@ public:
 
 	EtableOptions( EtableOptions const & src );
 
-	EtableOptions const &
+	EtableOptions &
 	operator=( EtableOptions const & src );
 
 	friend

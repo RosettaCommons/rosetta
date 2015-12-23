@@ -210,7 +210,7 @@ void Strands::clear() {
 }
 
 /// @brief copy assignment
-Strands const &
+Strands &
 Strands::operator =( Strands const & s )
 {
 	if ( this != &s ) {
@@ -272,7 +272,7 @@ Helices::Helices(
 Helices::~Helices()
 {}
 
-Helices const &
+Helices &
 Helices::operator =( Helices const & h )
 {
 	if ( this != &h ) {

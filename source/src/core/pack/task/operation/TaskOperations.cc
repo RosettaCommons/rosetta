@@ -868,7 +868,7 @@ SetRotamerCouplings::SetRotamerCouplings( SetRotamerCouplings const & src )
 	rotamer_couplings_( src.rotamer_couplings_ )
 {}
 
-SetRotamerCouplings const &
+SetRotamerCouplings &
 SetRotamerCouplings::operator = ( SetRotamerCouplings const & rhs )
 {
 	rotamer_couplings_ = rhs.rotamer_couplings_;
@@ -911,7 +911,7 @@ SetRotamerLinks::SetRotamerLinks( SetRotamerLinks const & src )
 	rotamer_links_( src.rotamer_links_ )
 {}
 
-SetRotamerLinks const &
+SetRotamerLinks &
 SetRotamerLinks::operator = ( SetRotamerLinks const & rhs )
 {
 	rotamer_links_ = rhs.rotamer_links_;

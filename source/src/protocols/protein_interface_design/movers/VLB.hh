@@ -36,7 +36,7 @@ public:
 	VLB(); // default ctor//design_ = true;
 	VLB( VLB const & init ); // copy ctor
 	~VLB(); // dtor
-	VLB const & operator=( VLB const & init );
+	VLB & operator=( VLB const & init );
 
 	VLB( protocols::forge::build::BuildManagerCOP manager, core::scoring::ScoreFunctionCOP scorefxn );
 	void apply( core::pose::Pose & pose );

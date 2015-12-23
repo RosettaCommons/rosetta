@@ -55,7 +55,7 @@ public:
 	TaskFactory( TaskFactory const & );
 	virtual ~TaskFactory();
 
-	TaskFactory const & operator = ( TaskFactory const & );
+	TaskFactory & operator = ( TaskFactory const & );
 
 	virtual TaskFactoryOP clone() const;
 

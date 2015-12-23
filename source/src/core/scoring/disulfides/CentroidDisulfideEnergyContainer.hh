@@ -74,7 +74,7 @@ public:
 
 	virtual ~CentroidDisulfideNeighborIterator();
 
-	virtual ResidueNeighborIterator const & operator = ( ResidueNeighborIterator const & );
+	virtual ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & );
 	virtual ResidueNeighborIterator const & operator ++ ();
 	virtual bool operator == ( ResidueNeighborIterator const & ) const;
 	virtual bool operator != ( ResidueNeighborIterator const & ) const;
@@ -123,7 +123,7 @@ public:
 
 	virtual ~CentroidDisulfideNeighborConstIterator();
 
-	virtual ResidueNeighborConstIterator const & operator = ( ResidueNeighborConstIterator const & );
+	virtual ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & );
 	virtual ResidueNeighborConstIterator const & operator ++ ();
 	virtual bool operator == ( ResidueNeighborConstIterator const & ) const;
 	virtual bool operator != ( ResidueNeighborConstIterator const & ) const;

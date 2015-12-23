@@ -47,7 +47,7 @@ public:
 	FragID( FrameCOP frame, Size frag_id );
 	FragID( FragID const & );
 	~FragID();
-	FragID const & operator = ( FragID const & rhs );
+	FragID & operator = ( FragID const & rhs );
 
 	FrameCOP frame_ptr() const;
 	Frame const& frame() const;

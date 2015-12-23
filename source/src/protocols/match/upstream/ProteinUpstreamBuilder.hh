@@ -234,7 +234,7 @@ public:
 	virtual ~BuildSet();
 	BuildSet( BuildSet const & );
 
-	BuildSet const & operator = ( BuildSet const & rhs );
+	BuildSet & operator = ( BuildSet const & rhs );
 
 public:
 	/// initialization

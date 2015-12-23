@@ -94,7 +94,7 @@ MotifSearch::MotifSearch( MotifSearch const & src ) :
 	(*this) = src;
 }
 
-MotifSearch const &
+MotifSearch &
 MotifSearch::operator = ( MotifSearch const & src )
 {
 	if ( this != &src ) {

@@ -60,7 +60,7 @@ SurfaceEnergies::SurfaceEnergies( SurfaceEnergies const & other ) :
 {}
 
 /// assignment operator -- deep copy
-Energies const &
+Energies &
 SurfaceEnergies::operator = ( Energies const & rhs )
 {
 	debug_assert( dynamic_cast< SurfaceEnergies const * > ( & rhs ) );

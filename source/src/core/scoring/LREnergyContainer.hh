@@ -31,7 +31,7 @@ class ResidueNeighborIterator : public utility::pointer::ReferenceCount
 public:
 	virtual ~ResidueNeighborIterator();
 
-	virtual ResidueNeighborIterator const & operator = ( ResidueNeighborIterator const & ) = 0;
+	virtual ResidueNeighborIterator & operator = ( ResidueNeighborIterator const & ) = 0;
 	virtual ResidueNeighborIterator const & operator ++ () = 0;
 	virtual bool operator == ( ResidueNeighborIterator const & ) const = 0;
 	virtual bool operator != ( ResidueNeighborIterator const & ) const = 0;
@@ -58,7 +58,7 @@ class ResidueNeighborConstIterator : public utility::pointer::ReferenceCount
 public:
 	virtual ~ResidueNeighborConstIterator();
 
-	virtual ResidueNeighborConstIterator const & operator = ( ResidueNeighborConstIterator const & ) = 0;
+	virtual ResidueNeighborConstIterator & operator = ( ResidueNeighborConstIterator const & ) = 0;
 	virtual ResidueNeighborConstIterator const & operator ++ () = 0;
 	virtual bool operator == ( ResidueNeighborConstIterator const & ) const = 0;
 	virtual bool operator != ( ResidueNeighborConstIterator const & ) const = 0;

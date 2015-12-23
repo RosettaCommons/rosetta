@@ -64,7 +64,7 @@ DisulfideMatchingNeighborIterator::~DisulfideMatchingNeighborIterator()
 {}
 
 /// @brief Assignment
-ResidueNeighborIterator const &
+ResidueNeighborIterator &
 DisulfideMatchingNeighborIterator::operator = ( ResidueNeighborIterator const & rhs)
 {
 	debug_assert( &(dynamic_cast< DisulfideMatchingNeighborIterator const & > ( rhs )) );
@@ -209,7 +209,7 @@ DisulfideMatchingNeighborConstIterator::DisulfideMatchingNeighborConstIterator(
 DisulfideMatchingNeighborConstIterator::~DisulfideMatchingNeighborConstIterator()
 {}
 
-ResidueNeighborConstIterator const &
+ResidueNeighborConstIterator &
 DisulfideMatchingNeighborConstIterator::operator = ( ResidueNeighborConstIterator const & rhs )
 {
 	debug_assert( &(dynamic_cast< DisulfideMatchingNeighborConstIterator const & > ( rhs )) );

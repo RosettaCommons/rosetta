@@ -72,7 +72,7 @@ public:
 	ResSingleMinimizationData();
 	virtual ~ResSingleMinimizationData();
 	ResSingleMinimizationData( ResSingleMinimizationData const & ); // deep copy
-	ResSingleMinimizationData const & operator = ( ResSingleMinimizationData const & ); // deep copy
+	ResSingleMinimizationData & operator = ( ResSingleMinimizationData const & ); // deep copy
 
 	void set_data( min_single_data index, CacheableDataOP data );
 	CacheableDataOP get_data( min_single_data index );
@@ -98,7 +98,7 @@ public:
 	ResPairMinimizationData();
 	virtual ~ResPairMinimizationData();
 	ResPairMinimizationData( ResPairMinimizationData const & ); // deep copy
-	ResPairMinimizationData const & operator = ( ResPairMinimizationData const & ); // deep copy
+	ResPairMinimizationData & operator = ( ResPairMinimizationData const & ); // deep copy
 
 	void set_data( min_pair_data index, CacheableDataOP );
 	CacheableDataOP get_data( min_pair_data index );

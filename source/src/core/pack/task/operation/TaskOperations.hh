@@ -395,7 +395,7 @@ public:
 	SetRotamerCouplings();
 	SetRotamerCouplings(SetRotamerCouplings const & );
 	virtual ~SetRotamerCouplings();
-	SetRotamerCouplings const & operator = ( SetRotamerCouplings const & );
+	SetRotamerCouplings & operator = ( SetRotamerCouplings const & );
 
 	virtual TaskOperationOP clone() const;
 
@@ -421,7 +421,7 @@ public:
 	SetRotamerLinks();
 	SetRotamerLinks(SetRotamerLinks const & );
 	virtual ~SetRotamerLinks();
-	SetRotamerLinks const & operator = ( SetRotamerLinks const & );
+	SetRotamerLinks & operator = ( SetRotamerLinks const & );
 
 	virtual TaskOperationOP clone() const;
 

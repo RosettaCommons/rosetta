@@ -63,7 +63,7 @@ public:
 		eval_type_( src.eval_type_ )
 	{}
 
-	HBEvalTuple const & operator = ( HBEvalTuple const & rhs ) {
+	HBEvalTuple & operator = ( HBEvalTuple const & rhs ) {
 		if ( this != & rhs ) {
 			don_type_ = rhs.don_type_;
 			acc_type_ = rhs.acc_type_;

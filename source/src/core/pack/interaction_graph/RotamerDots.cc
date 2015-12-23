@@ -220,7 +220,7 @@ DotSphere::DotSphere( DotSphere const & rhs ) {
 /// @brie=
 /// assignment operator
 ///
-DotSphere const & DotSphere::operator= ( DotSphere const & rhs ) {
+DotSphere & DotSphere::operator= ( DotSphere const & rhs ) {
 	num_covered_ = rhs.num_covered_;
 	num_covered_current_ = rhs.num_covered_current_;
 	memcpy( dots_coverage_count_, rhs.dots_coverage_count_, NUM_COUNTS_TO_ALLOCATE );
@@ -576,7 +576,7 @@ void RotamerDots::copy( RotamerDots const & rhs ) {
 }
 
 ///
-RotamerDots const & RotamerDots::operator=( RotamerDots const & rhs ) {
+RotamerDots & RotamerDots::operator=( RotamerDots const & rhs ) {
 	copy( rhs );
 	return *this;
 }
@@ -1609,7 +1609,7 @@ RotamerDotsCache::~RotamerDotsCache() {}
 /// @brief
 /// assignment operator
 ///
-RotamerDotsCache const & RotamerDotsCache::operator=( RotamerDotsCache const & rhs ) {
+RotamerDotsCache & RotamerDotsCache::operator=( RotamerDotsCache const & rhs ) {
 	atom_counts_ = rhs.atom_counts_;
 	return *this;
 }
@@ -1713,7 +1713,7 @@ InvRotamerDots::InvRotamerDots( InvRotamerDots const & src ) :
 
 InvRotamerDots::~InvRotamerDots() {}
 
-InvRotamerDots const &
+InvRotamerDots &
 InvRotamerDots::operator= ( InvRotamerDots const & rhs ) {
 	if ( this != & rhs ) {
 		rotamer_  = rhs.rotamer_;

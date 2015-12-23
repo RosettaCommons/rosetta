@@ -44,7 +44,7 @@ CstResNeighbIterator::CstResNeighbIterator(
 CstResNeighbIterator::~CstResNeighbIterator()
 {}
 
-ResidueNeighborIterator const &
+ResidueNeighborIterator &
 CstResNeighbIterator::operator = ( ResidueNeighborIterator const & rhs)
 {
 	debug_assert( &(dynamic_cast< CstResNeighbIterator const & > ( rhs )) );
@@ -191,7 +191,7 @@ CstResNeighbConstIterator::CstResNeighbConstIterator(
 CstResNeighbConstIterator::~CstResNeighbConstIterator()
 {}
 
-ResidueNeighborConstIterator const &
+ResidueNeighborConstIterator &
 CstResNeighbConstIterator::operator = ( ResidueNeighborConstIterator const & rhs )
 {
 	//debug_assert( dynamic_cast< CstResNeighbConstIterator const & > ( rhs ) );

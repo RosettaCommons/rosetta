@@ -84,7 +84,7 @@ core::Size
 Hairpin::s2_end() const { return range_pair_.second.second; }
 
 /// @brief copy assignment
-Hairpin const &
+Hairpin &
 Hairpin::operator =( Hairpin const & s )
 {
 	if ( this != &s ) {
@@ -119,7 +119,7 @@ Hairpins::~Hairpins()
 {}
 
 /// @brief copy assignment
-Hairpins const &
+Hairpins &
 Hairpins::operator =( Hairpins const & s )
 {
 	if ( this != &s ) {

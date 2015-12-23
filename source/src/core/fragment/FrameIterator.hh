@@ -72,7 +72,7 @@ public:
 	ConstFrameIterator & operator++ ();
 	ConstFrameIterator & operator+ ( Size offset );
 
-	ConstFrameIterator const & operator = ( ConstFrameIterator const& itr );
+	ConstFrameIterator & operator = ( ConstFrameIterator const& itr );
 
 	// FrameOP operator* ();
 
@@ -105,7 +105,7 @@ public:
 	FrameIterator & operator++ ();
 	FrameIterator & operator+ ( Size offset );
 
-	FrameIterator const & operator = ( FrameIterator const& itr );
+	FrameIterator & operator = ( FrameIterator const& itr );
 
 	FrameOP operator* ();
 

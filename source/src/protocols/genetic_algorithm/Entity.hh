@@ -61,7 +61,7 @@ public:
 
 	virtual bool operator <  ( EntityElement const & rhs ) const;
 	virtual bool operator == ( EntityElement const & rhs ) const;
-	virtual EntityElement const & operator = ( EntityElement const & rhs );
+	virtual EntityElement & operator = ( EntityElement const & rhs );
 
 	virtual std::string to_string() const;
 	virtual std::string name() const = 0; // Each entity element must have a distinct name
@@ -129,7 +129,7 @@ public:
 	Entity();
 	//// @brief construct a duplicate Entity from another entity
 	Entity( Entity const & entity );
-	Entity const & operator = ( Entity const & );
+	Entity & operator = ( Entity const & );
 
 	virtual ~Entity();
 

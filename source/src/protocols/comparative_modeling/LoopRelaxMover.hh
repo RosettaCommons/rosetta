@@ -86,7 +86,7 @@ public:
 	LoopRelaxMover( LoopRelaxMover const & src );
 
 	/// @brief assignment operator; Shallow copy of all data.
-	LoopRelaxMover const & operator = ( LoopRelaxMover const & rhs );
+	LoopRelaxMover & operator = ( LoopRelaxMover const & rhs );
 
 
 	//destructor

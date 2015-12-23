@@ -45,7 +45,7 @@ ResidueCoordinateChangeList::ResidueCoordinateChangeList()
 ResidueCoordinateChangeList::~ResidueCoordinateChangeList()
 {}
 
-ResidueCoordinateChangeList const &
+ResidueCoordinateChangeList &
 ResidueCoordinateChangeList::operator = ( ResidueCoordinateChangeList const & rhs )
 {
 	if ( this == &rhs ) return *this;

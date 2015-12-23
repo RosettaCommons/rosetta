@@ -73,7 +73,7 @@ public:
 	~EnergyMethodOptions();
 
 	/// copy operator
-	EnergyMethodOptions const &
+	EnergyMethodOptions &
 	operator=( EnergyMethodOptions const & src );
 
 	/// clone

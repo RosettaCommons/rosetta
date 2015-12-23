@@ -48,7 +48,7 @@ ExternalGeomSampler::ExternalGeomSampler( ExternalGeomSampler const & other )
 	transforms_( other.transforms_ )
 {}
 
-ExternalGeomSampler const &
+ExternalGeomSampler &
 ExternalGeomSampler::operator = ( ExternalGeomSampler const & rhs )
 {
 	if ( & rhs != this ) {

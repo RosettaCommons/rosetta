@@ -52,7 +52,7 @@ ConstDataMap::~ConstDataMap() {}
 /// @details merge-sort style iteration over the elements of both data-maps. This
 /// implementation may not be necessary as the STL library may already implement
 /// map's assignment operator this way.
-ConstDataMap const &
+ConstDataMap &
 ConstDataMap::operator = ( ConstDataMap const & rhs )
 {
 	if ( this != &rhs ) {

@@ -963,7 +963,7 @@ BumpGrid::BumpGrid( BumpGrid const & rhs ) :
 
 BumpGrid::~BumpGrid() {}
 
-BumpGrid const & BumpGrid::operator = ( BumpGrid const & rhs )
+BumpGrid & BumpGrid::operator = ( BumpGrid const & rhs )
 {
 	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
 		grids_[ ii ] = protocols::match::Bool3DGridOP( new Bool3DGrid( *rhs.grids_[ ii ] ) );

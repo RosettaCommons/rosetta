@@ -106,7 +106,7 @@ MatcherTask::MatcherTask( MatcherTask const & other ) :
 	(*this) = other;
 }
 
-MatcherTask const &
+MatcherTask &
 MatcherTask::operator = ( MatcherTask const & rhs )
 {
 	if ( this != & rhs ) {

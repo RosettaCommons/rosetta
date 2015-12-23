@@ -43,7 +43,7 @@ TaskFactoryOP TaskFactory::clone() const
 
 TaskFactory::~TaskFactory() {}
 
-TaskFactory const &
+TaskFactory &
 TaskFactory::operator = ( TaskFactory const & rhs )
 {
 	copy_operations( rhs );

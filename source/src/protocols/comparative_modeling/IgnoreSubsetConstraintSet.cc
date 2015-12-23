@@ -74,7 +74,7 @@ IgnoreSubsetConstraintSet::IgnoreSubsetConstraintSet(
 	ignore_list_( other.ignore_list() )
 {}
 
-ConstraintSet const &
+ConstraintSet &
 IgnoreSubsetConstraintSet::operator = ( ConstraintSet const & rhs )
 {
 	if ( this != & rhs ) {

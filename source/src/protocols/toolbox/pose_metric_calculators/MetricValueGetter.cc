@@ -48,7 +48,7 @@ MetricValueGetter::MetricValueGetter(
 MetricValueGetter::~MetricValueGetter()
 {}
 
-MetricValueGetter const &
+MetricValueGetter &
 MetricValueGetter::operator = (
 	MetricValueGetter const & getter
 )

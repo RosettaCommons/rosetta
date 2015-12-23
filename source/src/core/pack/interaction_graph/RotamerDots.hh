@@ -70,7 +70,7 @@ public:
 	DotSphere();
 	~DotSphere();
 	DotSphere( DotSphere const & rhs );
-	DotSphere const & operator= ( DotSphere const & rhs );
+	DotSphere & operator= ( DotSphere const & rhs );
 	bool operator!= ( DotSphere const & rhs );
 
 	void zero();
@@ -146,7 +146,7 @@ public:
 	RotamerDots( RotamerDots const & rhs );
 
 	void copy(RotamerDots const & rhs);
-	RotamerDots const & operator= ( RotamerDots const & rhs );
+	RotamerDots & operator= ( RotamerDots const & rhs );
 	bool operator!= ( RotamerDots const & rhs );
 	// zeros out the dot coverage counts on all atoms. only used to reinit IG's for multiple packing runs.
 	void zero();
@@ -340,7 +340,7 @@ public:
 	RotamerDotsCache();
 	RotamerDotsCache( core::Size num_atoms );
 	RotamerDotsCache( RotamerDotsCache const & rhs );
-	RotamerDotsCache const & operator= ( RotamerDotsCache const & rhs );
+	RotamerDotsCache & operator= ( RotamerDotsCache const & rhs );
 	~RotamerDotsCache();
 
 	void resize( core::Size num_atoms );
@@ -371,7 +371,7 @@ public:
 	InvRotamerDots( InvRotamerDots const & src );
 	virtual ~InvRotamerDots();
 
-	InvRotamerDots const & operator = ( InvRotamerDots const & rhs );
+	InvRotamerDots & operator = ( InvRotamerDots const & rhs );
 
 	void setup_from_rotamer_dots( RotamerDots const & rdots );
 	void setup_from_rotamer_dots(

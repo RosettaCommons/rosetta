@@ -211,7 +211,7 @@ public:
 	BumpGrid( BumpGrid const & );
 	virtual ~BumpGrid();
 
-	BumpGrid const & operator = ( BumpGrid const & );
+	BumpGrid & operator = ( BumpGrid const & );
 
 
 public:

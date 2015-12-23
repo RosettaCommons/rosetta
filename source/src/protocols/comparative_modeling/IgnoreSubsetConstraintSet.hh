@@ -54,7 +54,7 @@ public:
 	);
 
 	virtual
-	ConstraintSet const &
+	ConstraintSet &
 	operator = ( ConstraintSet const & rhs );
 
 	virtual

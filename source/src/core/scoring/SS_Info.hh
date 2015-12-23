@@ -158,7 +158,7 @@ struct Strands {
 	void clear();
 
 	/// @brief copy assignment
-	Strands const &
+	Strands &
 	operator =( Strands const & s );
 
 	friend
@@ -226,7 +226,7 @@ struct Helices {
 	~Helices();
 
 	/// @brief copy assignment
-	Helices const &
+	Helices &
 	operator = ( Helices const & h );
 
 	friend

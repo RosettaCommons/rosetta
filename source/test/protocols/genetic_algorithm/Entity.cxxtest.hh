@@ -91,7 +91,7 @@ public:
 		return dummy_ == rhs_dummy_ptr->dummy_;
 	}
 
-	virtual EntityElement const & operator =  ( EntityElement const & rhs ) {
+	virtual EntityElement & operator =  ( EntityElement const & rhs ) {
 		parent::operator = ( rhs );
 		if ( this != &rhs ) {
 			DummyEntityElement const * rhs_dummy_ptr = dynamic_cast< DummyEntityElement const * > ( &rhs );

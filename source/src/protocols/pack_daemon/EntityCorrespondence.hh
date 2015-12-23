@@ -43,7 +43,7 @@ public:
 	EntityCorrespondence();
 	virtual ~EntityCorrespondence();
 	EntityCorrespondence(EntityCorrespondence const &);
-	EntityCorrespondence const & operator = ( EntityCorrespondence const & );
+	EntityCorrespondence & operator = ( EntityCorrespondence const & );
 
 	void set_pose( core::pose::PoseCOP pose );
 	void set_num_entities( Size num_entities );

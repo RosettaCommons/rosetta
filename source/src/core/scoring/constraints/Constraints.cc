@@ -71,7 +71,7 @@ Constraints::deep_clone() const
 	return new_constraints;
 }
 
-Constraints const &
+Constraints &
 Constraints::operator = ( Constraints const & rhs )
 {
 	if ( this != & rhs ) {

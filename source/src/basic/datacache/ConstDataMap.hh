@@ -63,7 +63,7 @@ public:
 	virtual ~ConstDataMap();
 
 	/// @brief Performs a shallow copy of all of the pointers stored in rhs into this.
-	ConstDataMap const & operator = ( ConstDataMap const & rhs );
+	ConstDataMap & operator = ( ConstDataMap const & rhs );
 
 	/// @brief Performs pointer comparison to determine if these two maps point at the same data.
 	bool operator== ( ConstDataMap const & rhs ) const;

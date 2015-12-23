@@ -111,8 +111,8 @@ public:
 	///constructor
 	TopologyBroker();
 	virtual ~TopologyBroker();
-	TopologyBroker( TopologyBroker const& );
-	TopologyBroker const& operator = ( TopologyBroker const& );
+	TopologyBroker( TopologyBroker const & );
+	TopologyBroker & operator = ( TopologyBroker const & );
 
 	/// self pointers
 	inline TopologyBrokerCOP get_self_ptr() const { return shared_from_this(); }
@@ -136,7 +136,7 @@ public:
 	}
 
 	/// @brief Returns the ith topology claimer if it exists.
-	const TopologyClaimerOP& claimer(core::Size i) const {
+	const TopologyClaimerOP & claimer(core::Size i) const {
 		assert(i >= 1 && i <= claimers_.size());
 		return claimers_[i];
 	}
@@ -157,7 +157,7 @@ public:
 	/// ----------------------- Job Setup ------------------------------------------
 	/// @brief at the start of a job this is called, e.g., by the AbrelaxMover
 	/// it generates a pose with appropriate foldtree and initializes dofs, adds constraints, etc.
-	void apply( core::pose::Pose& );
+	void apply( core::pose::Pose & );
 
 	////----------------------------------  Consulting  ----------------------------------------------------
 	/// the following interface is for the Mover to consult the Broker during the course of a simulation
@@ -166,28 +166,28 @@ public:
 	/// a basic FragmentClaimer will not
 
 	/// @brief return a set of Movers ( RandomMover, i.e. container of movers )
-	moves::MoverOP mover( core::pose::Pose const&, abinitio::StageID, core::scoring::ScoreFunction const& scorefxn, core::Real progress ) const;
+	moves::MoverOP mover( core::pose::Pose const &, abinitio::StageID, core::scoring::ScoreFunction const & scorefxn, core::Real progress ) const;
 
 	/// @brief apply filter (TopologyClaimer::passes_filter() ) and raise exception EXCN_FILTER_FAILED if failed
-	void apply_filter( core::pose::Pose const&, abinitio::StageID, core::Real progress ) const;
+	void apply_filter( core::pose::Pose const &, abinitio::StageID, core::Real progress ) const;
 
 	/// @brief if some claimer wants to influence the movemap for relax he can do it here:
-	void adjust_relax_movemap( core::kinematics::MoveMap& ) const;
+	void adjust_relax_movemap( core::kinematics::MoveMap & ) const;
 
 	/// @brief the SlidingWindowLoopClosure needs pure fragments, because it changes the the residue number in the ShortLoopClosure part
 	/// thus extra hook for this --- > only some Claimers will answer
-	core::fragment::FragSetCOP loop_frags( core::kinematics::MoveMap& ) const;
+	core::fragment::FragSetCOP loop_frags( core::kinematics::MoveMap & ) const;
 
 	/// @brief do we need to close loops ( unphysical chainbreaks have been introduced? )
 	bool has_chainbreaks_to_close() const;
 
 	/// @brief add chainbreak variant residue to the unphysical chainbreaks
-	void add_chainbreak_variants( core::pose::Pose &pose, core::Size max_dist = 0, core::kinematics::ShortestPathInFoldTreeCOP sp = NULL) const;
+	void add_chainbreak_variants( core::pose::Pose & pose, core::Size max_dist = 0, core::kinematics::ShortestPathInFoldTreeCOP sp = NULL) const;
 	/// @brief check that each chainbreak residue has a chainbreak variant
-	bool check_chainbreak_variants( core::pose::Pose &pose ) const;
+	bool check_chainbreak_variants( core::pose::Pose & pose ) const;
 
 	/// @brief switch to fullatom --- some Claimers might help by providing template based side-chain information
-	void switch_to_fullatom( core::pose::Pose& );
+	void switch_to_fullatom( core::pose::Pose & );
 
 	bool does_final_fold_tree_exist() const
 	{
@@ -198,7 +198,7 @@ public:
 	}
 
 	/// @brief access for hacky claimers
-	core::kinematics::FoldTree& final_fold_tree() const {
+	core::kinematics::FoldTree & final_fold_tree() const {
 		//std::cout << "Broker FinalFoldTree is:  ";
 		//final_fold_tree_->show(std::cout);
 		runtime_assert( final_fold_tree_ != 0 );
@@ -207,16 +207,16 @@ public:
 
 	/// @brief get the sequence claim that is consistent with the label,
 	/// throws EXCN_Unknown_SequenceLabel if not found
-	claims::SequenceClaim& resolve_sequence_label( std::string const& label ) const;
+	claims::SequenceClaim & resolve_sequence_label( std::string const & label ) const;
 
-	//core::Size resolve_residue( std::string const& chain_label, core::Size pos ) const;
+	//core::Size resolve_residue( std::string const & chain_label, core::Size pos ) const;
 
-	const SequenceNumberResolver& sequence_number_resolver() const {
+	const SequenceNumberResolver & sequence_number_resolver() const {
 		runtime_assert( sequence_number_resolver_ != 0 );
 		return *sequence_number_resolver_;
 	}
 
-	void relay_message( ClaimerMessage& msg ) const;
+	void relay_message( ClaimerMessage & msg ) const;
 	//// ------------------------------- End Consulting --------------------------------------------
 
 	bool has_sequence_claimer();
@@ -227,47 +227,47 @@ public:
 
 private:
 	/// @brief first round claims are collected
-	void generate_sequence_claims( claims::DofClaims& all_claims );
+	void generate_sequence_claims( claims::DofClaims & all_claims );
 
 	/// @brief collects symmetry claims
-	void generate_symmetry_claims( claims::SymmetryClaims& all_claims );
+	void generate_symmetry_claims( claims::SymmetryClaims & all_claims );
 
 	/// @brief checks whether only one sequence claim is there, otherwise crashes.
-	SymmetryClaimerOP resolve_symmetry_claims( claims::SymmetryClaims& symm_claims );
+	SymmetryClaimerOP resolve_symmetry_claims( claims::SymmetryClaims & symm_claims );
 
-	void make_sequence_symmetric( claims::DofClaims pre_accepted, core::pose::Pose& pose);
+	void make_sequence_symmetric( claims::DofClaims pre_accepted, core::pose::Pose & pose);
 
 
 	/// @brief first round claims are collected
-	void generate_round1( claims::DofClaims& all_claims );
+	void generate_round1( claims::DofClaims & all_claims );
 
 	/// @brief second round claims are collected
-	void generate_final_claims( claims::DofClaims& all_claims );
+	void generate_final_claims( claims::DofClaims & all_claims );
 
 	/// @brief notify owner of accepted claims
-	void accept_claims( claims::DofClaims& claims );
+	void accept_claims( claims::DofClaims & claims );
 
 	/// @brief run thru list of claims, ask all claimers if this claims is acceptable --- > returns accepted claims in pre_accepted
 	/// throws EXCN_ExclusiveClaimDeclined if the call to the owners TopologyClaimer::accept_declined_claim( declined_claim ) returns false
-	bool broking( claims::DofClaims const& all_claims, claims::DofClaims& pre_accepted );
+	bool broking( claims::DofClaims const & all_claims, claims::DofClaims & pre_accepted );
 
 	/// @brief creates a fold-tree from the Jump- and CutClaims
 	/// throws EXCN_InvalidFoldTree at failure
-	void build_fold_tree( claims::DofClaims& claims, Size nres );
+	void build_fold_tree( claims::DofClaims & claims, Size nres );
 
-	void build_fold_tree_from_claimer(core::pose::Pose& pose, core::kinematics::FoldTree& fold_tree);
+	void build_fold_tree_from_claimer(core::pose::Pose & pose, core::kinematics::FoldTree & fold_tree);
 
 	/// @brief create new pose from SeqClaims
-	void initialize_sequence( claims::DofClaims& claims, core::pose::Pose& new_pose );
+	void initialize_sequence( claims::DofClaims & claims, core::pose::Pose & new_pose );
 
 	/// @brief creates the list "to_be_closed_cuts_" from current fold-tree and CutClaims
-	void initialize_cuts( claims::DofClaims& claims, core::pose::Pose& new_pose );
+	void initialize_cuts( claims::DofClaims & claims, core::pose::Pose & new_pose );
 
 	/// @brief initialize dofs
-	void initialize_dofs( claims::DofClaims& claims, core::pose::Pose& new_pose );
+	void initialize_dofs( claims::DofClaims & claims, core::pose::Pose & new_pose );
 
 	/// @brief add constraints --> referred to Claimers ( e.g., ConstraintClaimer, RigidChunkClaimer )
-	void add_constraints( core::pose::Pose& ) const;
+	void add_constraints( core::pose::Pose & ) const;
 
 private:
 	/// @brief vector of Claimers --- RigidChunkClaimer, FragmentClaimer, ConstraintClaimer, etc.

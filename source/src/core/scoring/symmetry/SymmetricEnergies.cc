@@ -66,7 +66,7 @@ SymmetricEnergies::SymmetricEnergies( Energies & other ) :
 {}
 
 /// assignment operator -- deep copy
-Energies const &
+Energies &
 SymmetricEnergies::operator = ( Energies const & rhs )
 {
 	Energies::operator=( rhs );

@@ -68,7 +68,7 @@ public:
 		LigandMotifSearch const & src
 	);
 
-	LigandMotifSearch const &
+	LigandMotifSearch &
 	operator = (
 		LigandMotifSearch const & src
 	);

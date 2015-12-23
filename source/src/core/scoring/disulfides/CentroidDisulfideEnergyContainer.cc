@@ -80,7 +80,7 @@ CentroidDisulfideNeighborIterator::~CentroidDisulfideNeighborIterator()
 {}
 
 /// @brief Assignment
-ResidueNeighborIterator const &
+ResidueNeighborIterator &
 CentroidDisulfideNeighborIterator::operator = ( ResidueNeighborIterator const & rhs)
 {
 	debug_assert( &(dynamic_cast< CentroidDisulfideNeighborIterator const & > ( rhs )) );
@@ -225,7 +225,7 @@ CentroidDisulfideNeighborConstIterator::CentroidDisulfideNeighborConstIterator(
 CentroidDisulfideNeighborConstIterator::~CentroidDisulfideNeighborConstIterator()
 {}
 
-ResidueNeighborConstIterator const &
+ResidueNeighborConstIterator &
 CentroidDisulfideNeighborConstIterator::operator = ( ResidueNeighborConstIterator const & rhs )
 {
 	debug_assert( &(dynamic_cast< CentroidDisulfideNeighborConstIterator const & > ( rhs )) );

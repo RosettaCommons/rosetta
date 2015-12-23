@@ -79,7 +79,7 @@ EtableOptions::EtableOptions( EtableOptions const & src ) :
 
 EtableOptions::~EtableOptions(){}
 
-EtableOptions const &
+EtableOptions &
 EtableOptions::operator=( EtableOptions const & src )
 {
 	if ( this != & src ) {

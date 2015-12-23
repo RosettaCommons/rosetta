@@ -54,7 +54,7 @@ public:
 	/// Construction and Destruction
 	MatcherTask();
 	MatcherTask( MatcherTask const & other );
-	MatcherTask const & operator = ( MatcherTask const & rhs );
+	MatcherTask & operator = ( MatcherTask const & rhs );
 
 	virtual ~MatcherTask();
 

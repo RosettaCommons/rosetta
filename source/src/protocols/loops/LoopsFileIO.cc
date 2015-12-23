@@ -229,7 +229,7 @@ GuardedLoopsFromFile::GuardedLoopsFromFile( GuardedLoopsFromFile const & src, bo
 
 GuardedLoopsFromFile::~GuardedLoopsFromFile() {}
 
-GuardedLoopsFromFile const &
+GuardedLoopsFromFile &
 GuardedLoopsFromFile::operator = ( GuardedLoopsFromFile const & rhs ) {
 	if ( this != & rhs ) {
 		// should this be set to false under the assumption that "this" is subserviant to "rhs" (rhs may or may not be in charge)?

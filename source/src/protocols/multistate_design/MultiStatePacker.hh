@@ -51,7 +51,7 @@ public:
 	virtual Size hash() const;
 	virtual bool operator <  ( EntityElement const & rhs ) const;
 	virtual bool operator == ( EntityElement const & rhs ) const;
-	virtual EntityElement const & operator =  ( EntityElement const & rhs );
+	virtual EntityElement & operator =  ( EntityElement const & rhs );
 	virtual std::string to_string() const;
 	virtual std::string name() const; // Each entity element must have a distinct name
 

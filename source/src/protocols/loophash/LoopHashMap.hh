@@ -90,7 +90,7 @@ public:
 
 	LoopHashMap(LoopHashMap const & other);
 
-	LoopHashMap operator=(LoopHashMap const & other);
+	LoopHashMap & operator=(LoopHashMap const & other);
 
 private:
 	/// @brief Setup this class give a loop_size

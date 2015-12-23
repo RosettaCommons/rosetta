@@ -151,7 +151,7 @@ public:
 	virtual ~GuardedLoopsFromFile();
 
 	/// @brief assignment operator; takes it's "in charge" state from rhs
-	GuardedLoopsFromFile const & operator = ( GuardedLoopsFromFile const & rhs );
+	GuardedLoopsFromFile & operator = ( GuardedLoopsFromFile const & rhs );
 
 	/// @brief set to "in charge" state.
 	void in_charge( bool setting );

@@ -73,7 +73,7 @@ DisulfResNeighbIterator::DisulfResNeighbIterator(
 DisulfResNeighbIterator::~DisulfResNeighbIterator()
 {}
 
-ResidueNeighborIterator const &
+ResidueNeighborIterator &
 DisulfResNeighbIterator::operator = ( ResidueNeighborIterator const & rhs)
 {
 	debug_assert( &(dynamic_cast< DisulfResNeighbIterator const & > ( rhs )) );
@@ -213,7 +213,7 @@ DisulfResNeighbConstIterator::DisulfResNeighbConstIterator(
 DisulfResNeighbConstIterator::~DisulfResNeighbConstIterator()
 {}
 
-ResidueNeighborConstIterator const &
+ResidueNeighborConstIterator &
 DisulfResNeighbConstIterator::operator = ( ResidueNeighborConstIterator const & rhs )
 {
 	debug_assert( &(dynamic_cast< DisulfResNeighbConstIterator const & > ( rhs )) );

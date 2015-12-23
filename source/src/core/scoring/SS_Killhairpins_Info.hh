@@ -64,7 +64,7 @@ struct Hairpin {
 	core::Size s2_end() const;
 
 	/// @brief copy assignment
-	Hairpin const &
+	Hairpin &
 	operator =( Hairpin const & s );
 
 	friend
@@ -94,7 +94,7 @@ struct Hairpins {
 	~Hairpins();
 
 	/// @brief copy assignment
-	Hairpins const &
+	Hairpins &
 	operator =( Hairpins const & s );
 
 	void append_hairpin( core::Size s1_1, core::Size s1_2, core::Size s2_1, core::Size s2_2);

@@ -373,7 +373,7 @@ public:
 	MinimizationGraph();
 	MinimizationGraph( MinimizationGraph const & src );
 
-	MinimizationGraph const & operator = ( MinimizationGraph const & rhs );
+	MinimizationGraph & operator = ( MinimizationGraph const & rhs );
 
 	inline
 	MinimizationNode const *

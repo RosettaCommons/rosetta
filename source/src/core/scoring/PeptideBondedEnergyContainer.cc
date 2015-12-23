@@ -47,7 +47,7 @@ PeptideBondedNeighborIterator::PeptideBondedNeighborIterator(
 	computed_( computed_in )
 {}
 
-ResidueNeighborIterator const & PeptideBondedNeighborIterator::operator = ( ResidueNeighborIterator const & src ) {
+ResidueNeighborIterator & PeptideBondedNeighborIterator::operator = ( ResidueNeighborIterator const & src ) {
 	debug_assert( dynamic_cast< PeptideBondedNeighborIterator const * >( &src ) );
 	PeptideBondedNeighborIterator const & my_src( static_cast< PeptideBondedNeighborIterator const & >( src ) );
 	base_ = my_src.base_;
@@ -140,7 +140,7 @@ PeptideBondedNeighborConstIterator::PeptideBondedNeighborConstIterator(
 	computed_( computed_in )
 {}
 
-ResidueNeighborConstIterator const & PeptideBondedNeighborConstIterator::operator = ( ResidueNeighborConstIterator const & src ) {
+ResidueNeighborConstIterator & PeptideBondedNeighborConstIterator::operator = ( ResidueNeighborConstIterator const & src ) {
 	debug_assert( dynamic_cast< PeptideBondedNeighborConstIterator const * >( &src ) );
 	PeptideBondedNeighborConstIterator const & my_src( static_cast< PeptideBondedNeighborConstIterator const & >( src ) );
 	pos_ = my_src.pos_;

@@ -164,7 +164,7 @@ public:
 	~EdgeListIterator() {}
 
 	/// @brief assignmnet operator
-	EdgeListIterator const & operator = ( EdgeListIterator const & rhs )
+	EdgeListIterator & operator = ( EdgeListIterator const & rhs )
 	{
 		owner_ = rhs.owner_;
 		element_ = rhs.element_;
@@ -254,7 +254,7 @@ public:
 	~EdgeListConstIterator() {}
 
 	/// @brief assignmnet operator
-	EdgeListConstIterator const & operator = ( EdgeListConstIterator const & rhs )
+	EdgeListConstIterator & operator = ( EdgeListConstIterator const & rhs )
 	{
 		owner_ = rhs.owner_;
 		element_ = rhs.element_;

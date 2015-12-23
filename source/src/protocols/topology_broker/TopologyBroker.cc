@@ -114,7 +114,7 @@ TopologyBroker::TopologyBroker() :
 
 TopologyBroker::~TopologyBroker() {}
 
-TopologyBroker::TopologyBroker( const TopologyBroker& tp ) :
+TopologyBroker::TopologyBroker( const TopologyBroker & tp ) :
 	ReferenceCount(),
 	utility::pointer::enable_shared_from_this< TopologyBroker >(),
 	claimers_( tp.claimers_ )
@@ -131,7 +131,7 @@ TopologyBroker::TopologyBroker( const TopologyBroker& tp ) :
 	sequence_number_resolver_ = SequenceNumberResolverOP( new SequenceNumberResolver( *tp.sequence_number_resolver_ ) );
 }
 
-TopologyBroker const& TopologyBroker::operator = ( TopologyBroker const& src ) {
+TopologyBroker & TopologyBroker::operator = ( TopologyBroker const & src ) {
 	if ( this != &src ) {
 		claimers_ = src.claimers_;
 		current_claims_ = src.current_claims_;
@@ -152,7 +152,7 @@ void TopologyBroker::add( TopologyClaimerOP cl ) {
 	cl->set_broker( get_self_weak_ptr() );
 }
 
-void TopologyBroker::generate_sequence_claims( claims::DofClaims& all_claims ) {
+void TopologyBroker::generate_sequence_claims( claims::DofClaims & all_claims ) {
 	for ( TopologyClaimers::iterator top = claimers_.begin();
 			top != claimers_.end(); ++top ) {
 		(*top)->generate_sequence_claims( all_claims );
@@ -160,14 +160,14 @@ void TopologyBroker::generate_sequence_claims( claims::DofClaims& all_claims ) {
 	tr.Trace << "All sequence claims: \n" << all_claims << std::endl;
 }
 
-void TopologyBroker::generate_symmetry_claims( claims::SymmetryClaims& all_claims ) {
+void TopologyBroker::generate_symmetry_claims( claims::SymmetryClaims & all_claims ) {
 	for ( TopologyClaimers::iterator top = claimers_.begin();
 			top != claimers_.end(); ++top ) {
 		(*top)->generate_symmetry_claims( all_claims );
 	}
 }
 
-SymmetryClaimerOP TopologyBroker::resolve_symmetry_claims( claims::SymmetryClaims& symm_claims ){
+SymmetryClaimerOP TopologyBroker::resolve_symmetry_claims( claims::SymmetryClaims & symm_claims ){
 	if ( symm_claims.size() > 1 ) {
 		tr.Error << "Multiple Symmetry Claims found; Topology Broker does not support multiple symmetries."
 			<< std::endl;
@@ -182,7 +182,7 @@ SymmetryClaimerOP TopologyBroker::resolve_symmetry_claims( claims::SymmetryClaim
 	return NULL;
 }
 
-void TopologyBroker::relay_message( ClaimerMessage& msg ) const {
+void TopologyBroker::relay_message( ClaimerMessage & msg ) const {
 	for ( TopologyClaimers::const_iterator top = claimers_.begin();
 			top != claimers_.end(); ++top ) {
 		if ( msg.matches( (*top)->label() ) ) {
@@ -191,7 +191,7 @@ void TopologyBroker::relay_message( ClaimerMessage& msg ) const {
 	}
 }
 
-void TopologyBroker::generate_round1( claims::DofClaims& all_claims ) {
+void TopologyBroker::generate_round1( claims::DofClaims & all_claims ) {
 	for ( TopologyClaimers::iterator top = claimers_.begin();
 			top != claimers_.end(); ++top ) {
 		tr.Trace << "generate claim for " << (*top)->type() << " with label "<< (*top)->label() << std::endl;
@@ -200,7 +200,7 @@ void TopologyBroker::generate_round1( claims::DofClaims& all_claims ) {
 	tr.Trace << "All round1 claims: \n" << all_claims << std::endl;
 }
 
-void TopologyBroker::generate_final_claims( claims::DofClaims& all_claims ) {
+void TopologyBroker::generate_final_claims( claims::DofClaims & all_claims ) {
 	for ( TopologyClaimers::iterator top = claimers_.begin();
 			top != claimers_.end(); ++top ) {
 		(*top)->finalize_claims( all_claims );
@@ -208,7 +208,7 @@ void TopologyBroker::generate_final_claims( claims::DofClaims& all_claims ) {
 	tr.Trace << "all final claims: \n " << all_claims << std::endl;
 }
 
-core::fragment::FragSetCOP TopologyBroker::loop_frags( core::kinematics::MoveMap& movemap ) const {
+core::fragment::FragSetCOP TopologyBroker::loop_frags( core::kinematics::MoveMap & movemap ) const {
 	fragment::FragSetCOP frags( NULL );
 	for ( TopologyClaimers::const_iterator top = claimers_.begin();
 			top != claimers_.end(); ++top ) {
@@ -221,7 +221,7 @@ core::fragment::FragSetCOP TopologyBroker::loop_frags( core::kinematics::MoveMap
 	return frags;
 }
 
-void TopologyBroker::add_constraints( core::pose::Pose &pose ) const {
+void TopologyBroker::add_constraints( core::pose::Pose & pose ) const {
 	pose.constraint_set( NULL );
 	for ( TopologyClaimers::const_iterator top = claimers_.begin();
 			top != claimers_.end(); ++top ) {
@@ -234,9 +234,9 @@ void TopologyBroker::add_constraints( core::pose::Pose &pose ) const {
 	}
 }
 
-moves::MoverOP TopologyBroker::mover(core::pose::Pose const& pose,
+moves::MoverOP TopologyBroker::mover(core::pose::Pose const & pose,
 	abinitio::StageID stage_id,
-	core::scoring::ScoreFunction const& scorefxn,
+	core::scoring::ScoreFunction const & scorefxn,
 	core::Real progress ) const {
 
 	//tr.Debug << "stage:  " << stage_id << " Progress:  " << progress << std::endl;
@@ -270,7 +270,7 @@ moves::MoverOP TopologyBroker::mover(core::pose::Pose const& pose,
 	return random_mover;
 }
 
-void TopologyBroker::apply_filter( core::pose::Pose const& pose,
+void TopologyBroker::apply_filter( core::pose::Pose const & pose,
 	abinitio::StageID stage_id,
 	core::Real progress ) const {
 	tr.Debug << "apply filter: \n";
@@ -289,7 +289,7 @@ void TopologyBroker::apply_filter( core::pose::Pose const& pose,
 	tr.Debug.flush();
 }
 
-void TopologyBroker::accept_claims( claims::DofClaims& claims ) {
+void TopologyBroker::accept_claims( claims::DofClaims & claims ) {
 	for ( claims::DofClaims::iterator claim=claims.begin(); claim != claims.end(); ++claim ) {
 		//tr.Debug << "accept_claims: " << (*claim)->owner()->type() << std::endl;
 		//if(tr.Trace.visible())
@@ -306,7 +306,7 @@ void TopologyBroker::accept_claims( claims::DofClaims& claims ) {
 // for each claim, ask all claimers if they have a problem with the given game,
 // if declined, tell the owner of claim --> accept_declined_claim
 // if ok, store in list 'pre_accepted'
-bool TopologyBroker::broking( claims::DofClaims const& all_claims, claims::DofClaims& pre_accepted ) {
+bool TopologyBroker::broking( claims::DofClaims const & all_claims, claims::DofClaims & pre_accepted ) {
 	// claims::DofClaims pre_accepted;
 	tr.Debug << "broking claims..." << std::endl;
 	bool fatal( false );
@@ -341,7 +341,7 @@ bool TopologyBroker::has_sequence_claimer() {
 	return nres > 0;
 }
 
-void TopologyBroker::build_fold_tree( claims::DofClaims& claims, Size nres ) {
+void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 	claims::JumpClaims exclusive_jumps;
 	claims::JumpClaims negotiable_jumps;
 	utility::vector1< std::pair< claims::CutClaimOP , core::Size > > must_cut;
@@ -514,7 +514,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims& claims, Size nres ) {
 }
 
 //build the fold tree if the claimer builds its on fold tree
-void TopologyBroker::build_fold_tree_from_claimer(core::pose::Pose& pose, core::kinematics::FoldTree& fold_tree)
+void TopologyBroker::build_fold_tree_from_claimer(core::pose::Pose & pose, core::kinematics::FoldTree & fold_tree)
 {
 	//if(tr.Debug.visible())
 	//{
@@ -538,11 +538,11 @@ void TopologyBroker::build_fold_tree_from_claimer(core::pose::Pose& pose, core::
 }
 
 //@brief This function is here to enable the std::sort call in initialize_sequence()
-bool compare_sequence_claim_priority (claims::SequenceClaimOP const& a, claims::SequenceClaimOP const& b ) {
+bool compare_sequence_claim_priority (claims::SequenceClaimOP const & a, claims::SequenceClaimOP const & b ) {
 	return a->priority() > b->priority();
 }
 
-void TopologyBroker::initialize_sequence( claims::DofClaims& claims, core::pose::Pose& new_pose ) {
+void TopologyBroker::initialize_sequence( claims::DofClaims & claims, core::pose::Pose & new_pose ) {
 
 	// type cast all claims into SequenceClaim...
 	tr.Debug << "Initializing sequence claims...";
@@ -593,7 +593,7 @@ void TopologyBroker::initialize_sequence( claims::DofClaims& claims, core::pose:
 
 /// @brief get the sequence claim that is consistent with the label,
 /// throws EXCN_Unknown_SequenceLabel if not found
-claims::SequenceClaim& TopologyBroker::resolve_sequence_label( std::string const& label ) const {
+claims::SequenceClaim & TopologyBroker::resolve_sequence_label( std::string const & label ) const {
 	claims::SequenceClaimOP found(NULL);
 	for ( claims::SequenceClaims::const_iterator claim = sequence_claims_.begin(); claim != sequence_claims_.end(); ++claim ) {
 		if ( (*claim)->label() == label ) {
@@ -605,11 +605,11 @@ claims::SequenceClaim& TopologyBroker::resolve_sequence_label( std::string const
 	return *found;
 }
 
-/*core::Size TopologyBroker::resolve_residue( std::string const& chain_label, core::Size pos ) const {
+/*core::Size TopologyBroker::resolve_residue( std::string const & chain_label, core::Size pos ) const {
 return resolve_sequence_label( chain_label ).offset() + pos - 1;
 }*/
 
-void TopologyBroker::initialize_dofs( claims::DofClaims& claims, core::pose::Pose& pose ) {
+void TopologyBroker::initialize_dofs( claims::DofClaims & claims, core::pose::Pose & pose ) {
 	claims::DofClaims bb_claims( pose.total_residue(), NULL ); //one claim per position
 	claims::DofClaims jumps( pose.num_jump(), NULL );
 	for ( claims::DofClaims::iterator claim = claims.begin(); claim != claims.end(); ++claim ) {
@@ -709,7 +709,7 @@ void TopologyBroker::initialize_dofs( claims::DofClaims& claims, core::pose::Pos
 
 }
 
-void TopologyBroker::initialize_cuts( claims::DofClaims& claims, core::pose::Pose& pose ) {
+void TopologyBroker::initialize_cuts( claims::DofClaims & claims, core::pose::Pose & pose ) {
 	//cuts will contain NULL for automatic cutpoints
 	//and the fold-tree cut-point nr for those which we keep since they have been CUT-Claimed
 	claims::DofClaims cuts( pose.num_jump(), NULL );
@@ -759,7 +759,7 @@ void TopologyBroker::initialize_cuts( claims::DofClaims& claims, core::pose::Pos
 	//}
 }
 
-void TopologyBroker::apply( core::pose::Pose& pose ) {
+void TopologyBroker::apply( core::pose::Pose & pose ) {
 	claims::DofClaims pre_accepted;
 	bool ok( true );
 
@@ -927,7 +927,7 @@ bool TopologyBroker::has_chainbreaks_to_close() const {
 }
 
 void TopologyBroker::add_chainbreak_variants(
-	pose::Pose &pose,
+	pose::Pose & pose,
 	Size max_dist,
 	core::kinematics::ShortestPathInFoldTreeCOP sp
 ) const {
@@ -950,7 +950,7 @@ void TopologyBroker::add_chainbreak_variants(
 }
 
 bool TopologyBroker::check_chainbreak_variants(
-	pose::Pose &pose
+	pose::Pose & pose
 ) const {
 	bool success ( true );
 	for ( utility::vector1< Size >::const_iterator it = to_be_closed_cuts_.begin();
@@ -974,7 +974,7 @@ bool TopologyBroker::check_chainbreak_variants(
 }
 
 /// @brief if some claimer wants to influence the movemap for relax he can do it here:
-void TopologyBroker::adjust_relax_movemap( core::kinematics::MoveMap& mm) const {
+void TopologyBroker::adjust_relax_movemap( core::kinematics::MoveMap & mm) const {
 	for ( TopologyClaimers::const_iterator top = claimers_.begin();
 			top != claimers_.end(); ++top ) {
 		(*top)->adjust_relax_movemap( mm );
@@ -982,7 +982,7 @@ void TopologyBroker::adjust_relax_movemap( core::kinematics::MoveMap& mm) const 
 
 }
 
-void TopologyBroker::switch_to_fullatom( core::pose::Pose& pose ) {
+void TopologyBroker::switch_to_fullatom( core::pose::Pose & pose ) {
 	pose::Pose init_pose = pose;
 	std::string sequence_old( pose.annotated_sequence() );
 	tr.Debug << "switch_to_fullatom... " << std::endl;

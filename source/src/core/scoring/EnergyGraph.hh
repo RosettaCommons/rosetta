@@ -186,7 +186,7 @@ public:
 	EnergyGraph();
 	EnergyGraph( EnergyGraph const & src );
 
-	EnergyGraph const & operator = ( EnergyGraph const & rhs );
+	EnergyGraph & operator = ( EnergyGraph const & rhs );
 
 	//bool energy_exists( scoring::ScoreType const & type ) const;
 

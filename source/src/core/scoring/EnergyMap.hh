@@ -58,7 +58,7 @@ public:
 		}
 	}
 
-	EMapVector const & operator = ( EMapVector const & rhs ) {
+	EMapVector & operator = ( EMapVector const & rhs ) {
 		if ( &rhs == this ) return *this;
 		for ( Size ii = 0; ii < n_score_types; ++ii ) {
 			map_[ ii ] = rhs.map_[ ii ];

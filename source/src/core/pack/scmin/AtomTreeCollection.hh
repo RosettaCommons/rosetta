@@ -58,7 +58,7 @@ public:
 	virtual ~ResidueAtomTreeCollectionMomento();
 
 	ResidueAtomTreeCollectionMomento( ResidueAtomTreeCollectionMomento const & );
-	ResidueAtomTreeCollectionMomento const & operator = ( ResidueAtomTreeCollectionMomento const & );
+	ResidueAtomTreeCollectionMomento & operator = ( ResidueAtomTreeCollectionMomento const & );
 
 	void set_restype_index( Size setting );
 	void copy_coords( conformation::Residue const & );
@@ -166,7 +166,7 @@ private:
 
 	//uncopyable -- unimplemented
 	ResidueAtomTreeCollection( ResidueAtomTreeCollection const & );
-	ResidueAtomTreeCollection const & operator = ( ResidueAtomTreeCollection const & );
+	ResidueAtomTreeCollection & operator = ( ResidueAtomTreeCollection const & );
 
 
 private:

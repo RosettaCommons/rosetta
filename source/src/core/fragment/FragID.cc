@@ -42,7 +42,7 @@ FragID::FragID( FragID const & src ) :
 
 FragID::~FragID() {}
 
-FragID const & FragID::operator = ( FragID const & rhs )
+FragID & FragID::operator = ( FragID const & rhs )
 {
 	if ( this != &rhs ) {
 		first = rhs.first;

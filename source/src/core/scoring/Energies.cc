@@ -145,7 +145,7 @@ Energies::Energies( Energies const & other )
 }
 
 /// assignment operator -- deep copy
-Energies const &
+Energies &
 Energies::operator = ( Energies const & rhs )
 {
 	if ( this == &rhs ) return *this;

@@ -56,7 +56,7 @@ ActiveSiteGrid::ActiveSiteGrid( ActiveSiteGrid const & other ) :
 {
 }
 
-ActiveSiteGrid const &
+ActiveSiteGrid &
 ActiveSiteGrid::operator = ( ActiveSiteGrid const & rhs )
 {
 	if ( this != & rhs ) {
