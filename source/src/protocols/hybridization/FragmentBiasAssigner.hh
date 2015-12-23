@@ -78,7 +78,6 @@ public:
 	////////////////////////////////////
 	// ray's protocol to select residues to refine
 	void automode( pose::Pose &pose,
-		Size rsd_window_size,
 		Real score_cut );
 
 	/////////////////////////////////////////////////////////////
@@ -91,12 +90,10 @@ public:
 	void density_nbr( pose::Pose &pose );
 
 	void rama( pose::Pose &pose,
-		core::Real weight=0.2,
-		core::Real threshold=0.7 );
+		core::Real weight=0.2 );
 
 	void geometry( pose::Pose &pose,
-		core::Real weight=1.0,
-		core::Real threshold=0.6 );
+		core::Real weight=1.0 );
 
 	void density( pose::Pose &pose );
 
@@ -107,8 +104,9 @@ public:
 	void fragbias_reporter( pose::Pose &pose );
 	void cumulate_probability(){ cumulative_=true; }
 
-
+	void set_rsd_wdw_to_assign_prob( int wdw=0 ){ rsd_wdw_size_=wdw; }
 	void set_wdw_to_freeze( int wdw=0 ){ wdw_to_freeze_=wdw; }
+	void set_score_threshold( Real threshold=123456789 ){ score_threshold_=threshold; } 
 
 private:
 	// functions
@@ -121,13 +119,18 @@ private:
 		utility::vector1<core::Real> &zscore_v,
 		bool negating=false);
 
+  // This function calls assign_prob_with_rsd_wdw(rsn) to assign probability to the residue with a window controlled by "rsd_wdw_size_".
 	void assign_fragprobs( utility::vector1<core::Real> const &perrsd_score,
 		Real threshold );
+
+	void assign_prob_with_rsd_wdw( int rsn );
 
 
 	// variables
 	core::Size nres_, n_symm_subunit_;
 	int wdw_to_freeze_;
+	int rsd_wdw_size_; // to assign prob
+	Real score_threshold_; // to assign prob
 	bool cumulative_;
 	bool fragProbs_assigned_;
 	core::conformation::symmetry::SymmetryInfoCOP symminfo_;

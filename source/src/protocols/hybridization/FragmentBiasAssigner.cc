@@ -218,13 +218,36 @@ cal_zscore(
 	}
 }
 
+
+// rsd window size is controlled through set_rsd_wdw_to_assign_prob(rsd_wdw_size_)
+void
+FragmentBiasAssigner::
+assign_prob_with_rsd_wdw(
+	int rsn
+){
+	int offset=((int)rsd_wdw_size_-1)/2; 
+	runtime_assert( offset >= 0 );
+
+	int start_rsn = rsn-offset;
+	if ( start_rsn < 1 ) start_rsn = 1;
+
+	Size end_rsn = rsn+offset;
+	if ( end_rsn > nres_ ) end_rsn = nres_;
+
+	for ( int i=start_rsn; i<=(int)end_rsn; ++i ) {
+		fragmentProbs_[i] = 1.0;
+		fragbias_tr << "rsn(rsn): " << rsn << " fragProb[" << i << "]: " << fragmentProbs_[i] << " rsd_window_size: " << rsd_wdw_size_ << std::endl;
+	}
+
+}
+
+
 ////////////////////////////////////////////////////
 //
 void
 FragmentBiasAssigner::
 automode(
 	pose::Pose &pose,
-	Size rsd_window_size, /*5 is controlled through CartesianSampler*/
 	Real score_cut /*-0.5 is controlled through CartesianSampler*/
 ){
 	fragbias_tr << "you are using automode!" << std::endl;
@@ -258,25 +281,10 @@ automode(
 			+ 0.15*zscore_rama[r]
 			+ 0.35*zscore_geometry[r];
 
-		if ( score < score_cut ) {
-			int offset=((int)rsd_window_size-1)/2;
-			runtime_assert( offset >= 0 );
-
-			int start_rsn = r-offset;
-			if ( start_rsn < 1 ) start_rsn = 1;
-
-			Size end_rsn = r+offset;
-			if ( end_rsn > nres_ ) end_rsn = nres_;
-
-			for ( int i=start_rsn; i<=(int)end_rsn; ++i ) {
-				fragmentProbs_[i] = 1.0;
-				fragbias_tr << "rsn(r): " << r << " fragProb[" << i << "]: " << fragmentProbs_[i] << " score: " << score
-					<< " scorecut: " << score_cut << " rsd_window_size" << std::endl;
-			}
-		}
-		fragbias_tr << "rsn: " << r << " fragProb: " << fragmentProbs_[r] << " score: " << score << std::endl;
+		if ( score < score_cut ) assign_prob_with_rsd_wdw(r);
+		
+		//fragbias_tr << "rsn: " << r << " fragProb: " << fragmentProbs_[r] << " score: " << score << std::endl;
 	}
-
 }
 
 // assign 1 or 0
@@ -290,9 +298,9 @@ assign_fragprobs(
 	for ( int r=1; r<=(int)nres_; ++r ) {
 		if ( perrsd_score[r] >= threshold ) {
 			if ( cumulative_ ) {
-				fragmentProbs_[r] += 1.0;
+				fragmentProbs_[r] += 1.0; // no residue window size control here
 			} else {
-				fragmentProbs_[r] = 1.0;
+				assign_prob_with_rsd_wdw(r);
 			}
 		}
 		fragbias_tr << "rsn: " << r << " fragProb: " << fragmentProbs_[r] << " score: " << perrsd_score[r] << std::endl;
@@ -308,7 +316,7 @@ include_residues(
 ){
 	for ( int r=1; r<=(int)nres_; ++r ) {
 		if ( residues_to_include.find(r) != residues_to_include.end() ) {
-			fragmentProbs_[r] = 1.0; // should I add window here?
+			assign_prob_with_rsd_wdw(r);
 		}
 	}
 }
@@ -322,7 +330,7 @@ exclude_residues(
 ){
 	for ( int r=1; r<=(int)nres_; ++r ) {
 		if ( residues_to_exclude.find(r) != residues_to_exclude.end() ) {
-			fragmentProbs_[r] = 0.0; // should I add window here?
+			fragmentProbs_[r] = 0.0; // should I add window here? rw: probably no need
 		}
 	}
 }
@@ -356,8 +364,8 @@ user(
 	runtime_assert( user_pos.size()>0 || (loops && !loops->empty()) );
 
 	for ( int r=1; r<=(int)nres_; ++r ) {
-		fragmentProbs_[r] = 0.0;
-		if ( user_pos.find(r) != user_pos.end() ) fragmentProbs_[r] = 1.0;
+		//fragmentProbs_[r] = 0.0;
+		if ( user_pos.find(r) != user_pos.end() ) assign_prob_with_rsd_wdw(r);
 		if ( loops && loops->is_loop_residue(r) ) fragmentProbs_[r] = 1.0;
 		fragbias_tr.Debug << "Prob_dens_user( " << r << " ) = " << fragmentProbs_[r] << std::endl;
 	}
@@ -594,11 +602,11 @@ void
 FragmentBiasAssigner::
 geometry(
 	pose::Pose &pose,
-	Real weight, /*1.0*/
-	Real threshold /*=0.6*/
+	Real weight  /*1.0*/
 ){
 	fragbias_tr << "geometry is chose" << std::endl;
 	fragProbs_assigned_=true;
+	if( score_threshold_ == 123456789 ) set_score_threshold( 0.6 );
 
 	// clean the container
 	perrsd_geometry_.resize(nres_, 0.0);
@@ -608,7 +616,7 @@ geometry(
 		weight );
 
 	assign_fragprobs( perrsd_geometry_,
-		threshold );
+		score_threshold_ );
 }
 
 
@@ -616,11 +624,11 @@ void
 FragmentBiasAssigner::
 rama(
 	pose::Pose &pose,
-	Real weight, /*=0.2*/
-	Real threshold /*=0.7*/
+	Real weight /*=0.2*/
 ){
-	fragbias_tr << "rama is chosen" << std::endl;
 	fragProbs_assigned_=true;
+	if( score_threshold_ == 123456789 ) set_score_threshold( 0.7 );
+	fragbias_tr << "rama is chosen, and the score_threshold is " << score_threshold_ << std::endl;
 
 	// clean the container
 	perrsd_rama_.resize(nres_, 0.0);
@@ -630,7 +638,7 @@ rama(
 		weight );
 
 	assign_fragprobs( perrsd_rama_,
-		threshold );
+		score_threshold_ ); 
 }
 
 

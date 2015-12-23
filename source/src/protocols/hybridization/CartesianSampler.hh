@@ -153,9 +153,14 @@ private:
 	bool dump_pdb_;
 	std::string dump_pdb_tag_;
 
-	// for automode()
-	core::Size automode_rsd_window_size_;
+	// for auto strategy
 	core::Real automode_scorecut_;
+	// for rama, geometry strategy
+	core::Real score_threshold_;
+
+	// control residue window size to refine
+	// for modes: user, auto, rama, geometry, and "include_residues"
+	core::Size rsd_wdw_to_refine_;
 
 	// freeze floppy tails: when see jump at the end, how many residues are you chewing back to disallow fragment stitching moves, default=3
 	int wdw_to_freeze_;

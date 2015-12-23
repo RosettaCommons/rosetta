@@ -203,10 +203,11 @@ CartesianSampler::init() {
 	include_residues_ = false;
 	dump_pdb_ = false;
 	dump_pdb_tag_ = "1";
-	automode_rsd_window_size_ = 0;
 	automode_scorecut_ = -0.5;
+	rsd_wdw_to_refine_ = 0; // 
 	wdw_to_freeze_ = 0;
 	freeze_endpoints_ = true;
+	score_threshold_ = 123456789;
 
 	selection_bias_ = "none";
 	cumulate_prob_ = false;
@@ -688,11 +689,14 @@ compute_fragment_bias(
 		fragment_bias_strategies_.push_back("uniform");
 	}
 
+	frag_bias_assigner.set_rsd_wdw_to_assign_prob( rsd_wdw_to_refine_ );
+	frag_bias_assigner.set_score_threshold( score_threshold_ );
+
 	// select residues
 	if ( std::find( fragment_bias_strategies_.begin(), fragment_bias_strategies_.end(), "uniform" ) !=fragment_bias_strategies_.end() ) {
 		frag_bias_assigner.uniform();
 	} else if ( std::find( fragment_bias_strategies_.begin(), fragment_bias_strategies_.end(), "auto" ) !=fragment_bias_strategies_.end() ) {
-		frag_bias_assigner.automode( pose, automode_rsd_window_size_, automode_scorecut_ );
+		frag_bias_assigner.automode( pose, automode_scorecut_ );
 	} else {
 		if ( cumulate_prob_ ) {
 			frag_bias_assigner.cumulate_probability();
@@ -1020,11 +1024,15 @@ CartesianSampler::parse_my_tag(
 	if ( tag->hasOption( "strategy" ) ) {
 		fragment_bias_strategies_ = utility::string_split( tag->getOption<std::string>("strategy"), ',' );
 	}
+	// to control window of residues to refine for strategy: user, rama, geometry, auto and "residues_to_include"
+	if ( tag->hasOption( "rsd_wdw_to_refine" ) ) {
+		rsd_wdw_to_refine_ = tag->getOption<core::Size>( "rsd_wdw_to_refine" );
+	}
+	if ( tag->hasOption( "score_threshold" ) ) {
+		score_threshold_ = tag->getOption<core::Real>( "score_threshold" );
+	}
 	if ( tag->hasOption( "cumulate_prob" ) ) {
 		cumulate_prob_ = tag->getOption<bool>( "cumulate_prob" );
-	}
-	if ( tag->hasOption( "automode_rsd_window_size" ) ) {
-		automode_rsd_window_size_ = tag->getOption<core::Size>( "automode_rsd_window_size" );
 	}
 	if ( tag->hasOption( "automode_scorecut" ) ) {
 		automode_scorecut_ = tag->getOption<core::Real>( "automode_scorecut" );
