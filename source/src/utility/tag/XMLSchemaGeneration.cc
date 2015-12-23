@@ -281,7 +281,6 @@ XMLSchemaElement::XMLSchemaElement() : category_( xs_element_is_type_reference )
 void XMLSchemaElement::name( std::string const & setting ) { name_ = setting; }
 void XMLSchemaElement::type_name( XMLSchemaType setting ) { type_name_ = setting; category_ = xs_element_is_type_reference; }
 void XMLSchemaElement::group_name( std::string const & setting ) { ref_name_ = setting; category_ = xs_element_is_group_reference; }
-// I can't remember why I thought this was important void XMLSchemaElement::element_type_def( XMLSchemaAttributeOP setting ) {  }
 void XMLSchemaElement::element_type_def( XMLSchemaComplexTypeOP setting ) { complex_type_ = setting; category_ = xs_element_is_complex_type_w_definition; }
 void XMLSchemaElement::restriction_type_def( XMLSchemaRestrictionOP setting ) { restriction_type_def_ = setting; category_ = xs_element_is_restriction_w_definition; }
 void XMLSchemaElement::min_occurs( int setting ) { min_occurs_ = setting; }

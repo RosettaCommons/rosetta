@@ -161,7 +161,7 @@ NotResidueSelectorCreator::keyname() const {
 
 void
 NotResidueSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	return NotResidueSelector::provide_selector_xsd( xsd );
+	NotResidueSelector::provide_selector_xsd( xsd );
 }
 
 

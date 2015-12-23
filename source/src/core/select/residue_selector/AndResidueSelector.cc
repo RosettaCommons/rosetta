@@ -175,7 +175,7 @@ std::string AndResidueSelector::class_name() {
 void
 AndResidueSelector::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) {
 	AttributeList no_attributes;
-	return xsd_type_definition_w_attributes_and_subselectors( xsd, class_name(), 2, no_attributes );
+	xsd_type_definition_w_attributes_and_subselectors( xsd, class_name(), 2, no_attributes );
 }
 
 
@@ -191,7 +191,7 @@ AndResidueSelectorCreator::keyname() const {
 
 void
 AndResidueSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	return AndResidueSelector::provide_selector_xsd( xsd );
+	AndResidueSelector::provide_selector_xsd( xsd );
 }
 
 

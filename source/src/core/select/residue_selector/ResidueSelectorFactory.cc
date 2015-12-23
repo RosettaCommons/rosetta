@@ -18,6 +18,7 @@
 // Package headers
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelectorCreator.hh>
+#include <core/select/residue_selector/util.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
@@ -73,6 +74,12 @@ ResidueSelectorOP ResidueSelectorFactory::new_residue_selector(
 	return new_selector;
 }
 
+/// @details By convention, the named assigned to each of the complexTypes for ResidueSelectors should be
+/// what is returned by the function "complex_type_name_for_residue_selector" (declared in
+/// core/select/residue_selectors/util.hh) when given the argument returned by that ResidueSelector's
+/// ResidueSelectorCreator's keyname() function. So long as the writing of XML schema for your residue
+/// selector is accomplished by the calling the functions in core/select/residue_selectors/util.hh, then
+/// this should happen automatically.
 void ResidueSelectorFactory::define_residue_selector_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
 	using namespace utility::tag;
@@ -87,7 +94,7 @@ void ResidueSelectorFactory::define_residue_selector_xml_schema( utility::tag::X
 			iter != iter_end; ++iter ) {
 		XMLSchemaElementOP rs_element( new XMLSchemaElement );
 		rs_element->name( iter->first );
-		rs_element->type_name( iter->first + "Type" );
+		rs_element->type_name( complex_type_name_for_residue_selector( iter->first ));
 		rs_group->add_subelement( rs_element );
 	}
 	rs_group_type.subtype( rs_group );

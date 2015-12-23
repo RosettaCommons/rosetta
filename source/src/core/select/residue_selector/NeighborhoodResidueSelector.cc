@@ -274,7 +274,7 @@ NeighborhoodResidueSelectorCreator::keyname() const {
 
 void
 NeighborhoodResidueSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	return NeighborhoodResidueSelector::provide_selector_xsd( xsd );
+	NeighborhoodResidueSelector::provide_selector_xsd( xsd );
 }
 
 } //namespace residue_selector

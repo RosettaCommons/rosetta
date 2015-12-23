@@ -35,6 +35,12 @@ namespace residue_selector {
 //  required( required_in )
 // {}
 
+std::string
+complex_type_name_for_residue_selector( std::string const & rs_type )
+{
+	return "rs_" + rs_type + "Type";
+}
+
 void
 common_simple_types(
 	utility::tag::XMLSchemaDefinition & xsd,
@@ -112,12 +118,13 @@ xsd_type_definition_w_attributes(
 )
 {
 	utility::tag::XMLSchemaComplexType rs_def;
-	rs_def.name( rs_type );
+	std::string complex_type_name = complex_type_name_for_residue_selector( rs_type );
+	rs_def.name( complex_type_name );
 	append_name_and_attributes_to_complex_type( attributes, rs_def );
 
 	std::ostringstream oss;
 	rs_def.write_definition( 0, oss );
-	xsd.add_top_level_element( rs_type, oss.str() );
+	xsd.add_top_level_element( complex_type_name, oss.str() );
 }
 
 void
@@ -131,14 +138,15 @@ xsd_type_definition_w_attributes_and_subselector(
 	rsgroup->group_name( "residue_selector" ); // the "residue_selector" group is written out by the ResidueSelectorFactory directly.
 
 	utility::tag::XMLSchemaComplexType rs_def;
-	rs_def.name( rs_type );
+	std::string complex_type_name = complex_type_name_for_residue_selector( rs_type );
+	rs_def.name( complex_type_name );
 	rs_def.type( utility::tag::xsctt_choice );
 	rs_def.add_subelement( rsgroup );
 	append_name_and_attributes_to_complex_type( attributes, rs_def );
 
 	std::ostringstream oss;
 	rs_def.write_definition( 0, oss );
-	xsd.add_top_level_element( rs_type, oss.str() );
+	xsd.add_top_level_element( complex_type_name, oss.str() );
 }
 
 void
@@ -155,14 +163,15 @@ xsd_type_definition_w_attributes_and_subselectors(
 	rsgroup->max_occurs( utility::tag::xsminmax_unbounded );
 
 	utility::tag::XMLSchemaComplexType rs_def;
-	rs_def.name( rs_type );
+	std::string complex_type_name = complex_type_name_for_residue_selector( rs_type );
+	rs_def.name( complex_type_name );
 	rs_def.type( utility::tag::xsctt_choice );
 	rs_def.add_subelement( rsgroup );
 	append_name_and_attributes_to_complex_type( attributes, rs_def );
 
 	std::ostringstream oss;
 	rs_def.write_definition( 0, oss );
-	xsd.add_top_level_element( rs_type, oss.str() );
+	xsd.add_top_level_element( complex_type_name, oss.str() );
 
 	// std::ostringstream oss;
 	// oss << "<xs:complexType name=\"" << rs_type << "Type mixed=1\">\n";
@@ -187,14 +196,15 @@ xsd_type_definition_w_attributes_and_subselectors(
 	rsgroup->max_occurs( max_occurrence );
 
 	utility::tag::XMLSchemaComplexType rs_def;
-	rs_def.name( rs_type );
+	std::string complex_type_name = complex_type_name_for_residue_selector( rs_type );
+	rs_def.name( complex_type_name );
 	rs_def.type( utility::tag::xsctt_choice );
 	rs_def.add_subelement( rsgroup );
 	append_name_and_attributes_to_complex_type( attributes, rs_def );
 
 	std::ostringstream oss;
 	rs_def.write_definition( 0, oss );
-	xsd.add_top_level_element( rs_type, oss.str() );
+	xsd.add_top_level_element( complex_type_name, oss.str() );
 
 	// std::ostringstream oss;
 	// oss << "<xs:complexType name=\"" << rs_type << "Type mixed=1\">\n";

@@ -30,9 +30,18 @@ namespace residue_selector {
 
 typedef std::list< utility::tag::XMLSchemaAttribute > AttributeList;
 
+/// @brief Used to name the xs:complexType for a residue selector that is
+/// created with the "rs_type" tag-name.  Does so by prepending "rs_" and
+/// appending "Type" to the "rs_type".  E.g., "rs_AndType" would be the
+/// name given to the complexType to describe the format of the
+/// AndResidueSelector.
+std::string
+complex_type_name_for_residue_selector( std::string const & rs_type );
+
 /// @brief Add a type to the XML Schema Definition that might be used
 /// in several places.  Available options are:
 /// 1) int_cslist -- a comma-separated list of integers
+/// This should be moved to src/utility/tag
 void
 common_simple_types(
 	utility::tag::XMLSchemaDefinition & xsd,

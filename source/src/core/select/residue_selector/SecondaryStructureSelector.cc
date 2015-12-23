@@ -324,7 +324,7 @@ SecondaryStructureSelectorCreator::keyname() const
 
 void
 SecondaryStructureSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	return SecondaryStructureSelector::provide_selector_xsd( xsd );
+	SecondaryStructureSelector::provide_selector_xsd( xsd );
 }
 
 } //namespace residue_selector

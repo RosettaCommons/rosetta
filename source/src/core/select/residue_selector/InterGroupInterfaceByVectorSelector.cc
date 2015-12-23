@@ -324,7 +324,7 @@ InterGroupInterfaceByVectorSelectorCreator::keyname() const {
 
 void
 InterGroupInterfaceByVectorSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	return InterGroupInterfaceByVectorSelector::provide_selector_xsd( xsd );
+	InterGroupInterfaceByVectorSelector::provide_selector_xsd( xsd );
 }
 
 

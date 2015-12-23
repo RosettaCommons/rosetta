@@ -187,7 +187,7 @@ OrResidueSelectorCreator::keyname() const {
 
 void
 OrResidueSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	return OrResidueSelector::provide_selector_xsd( xsd );
+	OrResidueSelector::provide_selector_xsd( xsd );
 }
 
 } //namespace residue_selector

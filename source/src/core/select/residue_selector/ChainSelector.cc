@@ -192,7 +192,7 @@ ChainSelectorCreator::keyname() const {
 
 void
 ChainSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	return ChainSelector::provide_selector_xsd( xsd );
+	ChainSelector::provide_selector_xsd( xsd );
 }
 
 } //namespace residue_selector

@@ -284,7 +284,7 @@ ClashBasedRepackShellSelectorCreator::keyname() const {
 
 void
 ClashBasedRepackShellSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	return ClashBasedRepackShellSelector::provide_selector_xsd( xsd );
+	ClashBasedRepackShellSelector::provide_selector_xsd( xsd );
 }
 
 

@@ -295,7 +295,7 @@ LayerSelectorCreator::keyname() const {
 
 void
 LayerSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	return LayerSelector::provide_selector_xsd( xsd );
+	LayerSelector::provide_selector_xsd( xsd );
 }
 
 } //namespace residue_selector

@@ -157,7 +157,7 @@ NumNeighborsSelectorCreator::keyname() const {
 
 void
 NumNeighborsSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	return NumNeighborsSelector::provide_selector_xsd( xsd );
+	NumNeighborsSelector::provide_selector_xsd( xsd );
 }
 
 } //namespace residue_selector

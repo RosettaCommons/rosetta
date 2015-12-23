@@ -132,7 +132,7 @@ ResiduePDBInfoHasLabelSelectorCreator::keyname() const {
 
 void
 ResiduePDBInfoHasLabelSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	return ResiduePDBInfoHasLabelSelector::provide_selector_xsd( xsd );
+	ResiduePDBInfoHasLabelSelector::provide_selector_xsd( xsd );
 }
 
 } //namespace residue_selector

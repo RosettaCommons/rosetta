@@ -140,7 +140,7 @@ ResidueIndexSelectorCreator::keyname() const {
 
 void
 ResidueIndexSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	return ResidueIndexSelector::provide_selector_xsd( xsd );
+	ResidueIndexSelector::provide_selector_xsd( xsd );
 }
 
 } //namespace residue_selector

@@ -135,7 +135,7 @@ JumpUpstreamSelectorCreator::keyname() const {
 
 void
 JumpUpstreamSelectorCreator::provide_selector_xsd( utility::tag::XMLSchemaDefinition & xsd ) const {
-	return JumpUpstreamSelector::provide_selector_xsd( xsd );
+	JumpUpstreamSelector::provide_selector_xsd( xsd );
 }
 
 } //namespace residue_selector
