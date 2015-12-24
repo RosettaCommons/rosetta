@@ -86,7 +86,7 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 		if ( at_interface[i] ) interface_res.push_back( i );
 	}
 
-	//  TR << TR.Magenta << make_tag_with_dashes( interface_res ) << TR.Reset << std::endl;
+	//	TR << TR.Magenta << make_tag_with_dashes( interface_res ) << TR.Reset << std::endl;
 	return interface_res;
 }
 
@@ -115,6 +115,8 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 	utility::vector1< bool > & interface_res /* save work here */,
 	utility::vector1< utility::vector1< bool > > & checked_pair /* save work here */ ) {
 
+	interface_res[ working_moving_res ] = true;
+
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() ); // note -- pose must have been scored already.
 
 	utility::vector1< Size > const moving_partition_res = figure_out_moving_partition_res( pose, working_moving_res );
@@ -130,6 +132,9 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 				++iter ) {
 			Size const j( (*iter)->get_other_ind( i ) );
 			if ( pose.residue_type(j).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
+
+			// only looking for pairs of residues *across* moving interface! One in moving_partition, one outside.
+			if ( moving_partition_res.has_value( j ) ) continue;
 
 			if ( checked_pair[ i ][ j ] ) continue;
 			if ( interface_res[ i ] && interface_res[ j ] ) continue;
