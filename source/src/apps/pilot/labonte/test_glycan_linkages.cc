@@ -55,7 +55,7 @@ main( int argc, char *argv[] )
 		using namespace scoring;
 		using namespace pack::task;
 		using namespace protocols::simple_moves;
-		
+
 		// Initialize core.
 		devel::init( argc, argv );
 
@@ -69,48 +69,48 @@ main( int argc, char *argv[] )
 		pose::carbohydrates::glycosylate_pose( starting_pose, 2, "b-D-GlcpNAc-(1->4)-b-D-GlcpNAc-" );
 
 		std::cout << "Created pose." << std::endl;
-		
+
 		// Extend peptide.
 		for ( core::uint i( 1 ); i <= 4; ++i ) {
 			starting_pose.set_omega( i, 180.0 );
 		}
-		
+
 		std::cout << "Extended peptide." << std::endl;
-		
+
 		// Idealize glycan.
 		starting_pose.set_phi( 6, -75.0 );
 		starting_pose.set_phi( 7, -75.0 );
 		starting_pose.set_psi( 7, 115.0 );
-		
+
 		std::cout << "Idealized glycan." << std::endl;
-		
+
 		starting_pose.dump_pdb( PATH + "N-linked_test.start.pdb" );
 
 		std::cout << "Output starting pose." << std::endl;
-		
+
 		// Set up ScoreFunction.
 		ScoreFunctionOP sf( get_score_function() );
-		
+
 		// Set up PackerTask.
 		PackerTaskOP task( TaskFactory::create_packer_task( starting_pose ) );
 		task->restrict_to_repacking();
-		
+
 		// Set up two test Movers.
 		PackRotamersMover pack_rotamers_mover( sf, task );
 		RotamerTrialsMover rotamer_trials_mover( sf, *task );
-		
+
 		pose = starting_pose;
 		pack_rotamers_mover.apply( pose );
 		pose.dump_pdb( PATH + "N-linked_test.prm.pdb" );
-		
+
 		std::cout << "Output pose packed with PackRotamersMover." << std::endl;
-		
+
 		pose = starting_pose;
 		rotamer_trials_mover.apply( pose );
 		pose.dump_pdb( PATH + "N-linked_test.rtm.pdb" );
-		
+
 		std::cout << "Output pose packed with RotamerTrialsMover." << std::endl;
-		
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
 		return FAILURE;

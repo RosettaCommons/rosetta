@@ -153,6 +153,14 @@ public:
 	Real
 	brent_abs_tolerance() const;
 
+	/// @brief The derivative cutoff used for Brent.
+	///
+	Real linmin_deriv_cutoff() const;
+
+	/// @brief Set the derivative cutoff used for Brent.
+	///
+	void linmin_deriv_cutoff( core::Real const &val );
+
 	int max_iter() const;
 	void max_iter(int n);
 
@@ -187,6 +195,7 @@ private:
 	Real bx_init_;
 
 	Real brent_abs_tolerance_;
+	Real linmin_deriv_cutoff_;
 
 	Real ga_mutation_probability_;
 

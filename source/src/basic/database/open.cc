@@ -117,16 +117,16 @@ find_cache_file(
 	std::string const & cache_file,
 	bool dir_only
 ) {
-	if( ! dir_only ) {
+	if ( ! dir_only ) {
 		bool exists = (utility::file::file_exists(cache_file) || utility::file::file_exists(cache_file + ".gz") );
-		if( TR.Debug.visible() && exists ) {
+		if ( TR.Debug.visible() && exists ) {
 			TR.Debug << "Using '" << cache_file << "' as the cached file." << std::endl;
 		}
 		return exists;
 	} else {
 		// Does the directory exist/can it be created?
 		std::string cache_dir = utility::file::FileName( cache_file ).path();
-		if( ! utility::file::create_directory_recursive( cache_dir ) ) {
+		if ( ! utility::file::create_directory_recursive( cache_dir ) ) {
 			return false;
 		}
 		// Can we write a file in the directory?
@@ -136,7 +136,7 @@ find_cache_file(
 		bool usable = tempfile.good();
 		tempfile.close();
 		utility::file::file_delete(tempfilename); // Has internal file exist checks.
-		if( TR.Debug.visible() && usable ) {
+		if ( TR.Debug.visible() && usable ) {
 			TR.Debug << "Using '" << cache_dir << "' as a cache directory." << std::endl;
 		}
 		return usable;
@@ -160,9 +160,9 @@ full_cache_name(
 	std::string cache_name;
 
 	// First try the specified cache directories, if possible.
-	if( option[ in::path::database_cache_dir ].user() ) {
+	if ( option[ in::path::database_cache_dir ].user() ) {
 		cache_name = std::string(option[ in::path::database_cache_dir ]()) + short_name;
-		if( find_cache_file( cache_name, for_writing ) ) {
+		if ( find_cache_file( cache_name, for_writing ) ) {
 			return cache_name;
 		}
 	}
@@ -170,7 +170,7 @@ full_cache_name(
 	char const * path = getenv("ROSETTA3_DBCACHE");
 	if ( path && strlen(path) > 0 ) {
 		cache_name = std::string(path) + "/" + short_name;
-		if( find_cache_file( cache_name, for_writing ) ) {
+		if ( find_cache_file( cache_name, for_writing ) ) {
 			return cache_name;
 		}
 	}
@@ -178,9 +178,9 @@ full_cache_name(
 	// Then try the database directory
 	// We don't iterate through all database directories, because in a multiple directory situation we don't want
 	// to put the cache for one database into a different one
-	if( source_file.size() != 0 ) {
+	if ( source_file.size() != 0 ) {
 		cache_name = utility::file::FileName( source_file ).path() + utility::file::FileName( short_name ).bare_name();
-		if( find_cache_file( cache_name, for_writing ) ) {
+		if ( find_cache_file( cache_name, for_writing ) ) {
 			return cache_name;
 		}
 	}
@@ -193,7 +193,7 @@ full_cache_name(
 #if defined(MAC) || defined(__APPLE__)  ||  defined(__OSX__) || defined(linux) || defined(__linux__) || defined(__linux)
 	if ( ! homedir || strlen(homedir) == 0 ) {
 		passwd const * unix_pwd( getpwuid(getuid()) );
-		if( unix_pwd ) {
+		if ( unix_pwd ) {
 			homedir = unix_pwd->pw_dir;
 		}
 	}
@@ -201,7 +201,7 @@ full_cache_name(
 
 	if ( homedir && strlen(homedir) > 0 ) {
 		cache_name = std::string(homedir) + "/.rosetta/database/" + short_name;
-		if( find_cache_file( cache_name, for_writing ) ) {
+		if ( find_cache_file( cache_name, for_writing ) ) {
 			return cache_name;
 		}
 	}

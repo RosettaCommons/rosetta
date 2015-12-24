@@ -522,7 +522,7 @@ RotamerLibrary::decide_read_from_binary() const {
 	}
 
 	std::string binary_filename = get_binary_name();
-	if( binary_filename.size() == 0 ) {
+	if ( binary_filename.size() == 0 ) {
 		return false;
 	}
 
@@ -753,7 +753,7 @@ bool RotamerLibrary::decide_write_binary() const {
 #endif
 
 	std::string binary_filename = get_binary_name();
-	if( binary_filename.size() > 0 ) {
+	if ( binary_filename.size() > 0 ) {
 		utility::io::izstream binlib(binary_filename.c_str(),
 			std::ios::in | std::ios::binary);
 
@@ -807,7 +807,7 @@ std::string RotamerLibrary::get_library_name_10() const {
 		dirname = basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_dir];
 	}
 	// The dun10 directory can be a non-database directory
-	if( utility::file::file_exists( dirname ) && utility::file::is_directory( dirname ) ) {
+	if ( utility::file::file_exists( dirname ) && utility::file::is_directory( dirname ) ) {
 		TR.Debug << "Using local directory '" << dirname << "' for dun10 library." << std::endl;
 		return dirname;
 	}
@@ -1272,7 +1272,7 @@ void RotamerLibrary::write_binary_fa_dunbrack_libraries() const {
 void RotamerLibrary::write_binary_fa_dunbrack_libraries_02() const {
 #ifndef __native_client__
 	std::string binary_filename = get_binary_name_02(/*for_writing=*/ true );
-	if( binary_filename.size() == 0 ) {
+	if ( binary_filename.size() == 0 ) {
 		TR << "Unable to open temporary file for writing the binary version of the Dunbrack02 library." << std::endl;
 		return;
 	}
@@ -1312,7 +1312,7 @@ void RotamerLibrary::write_binary_fa_dunbrack_libraries_02() const {
 void RotamerLibrary::write_binary_fa_dunbrack_libraries_10() const {
 #ifndef __native_client__
 	std::string binary_filename = get_binary_name_10(/*for_writing=*/ true);
-	if( binary_filename.size() == 0 ) {
+	if ( binary_filename.size() == 0 ) {
 		TR << "Unable to open temporary file for writing the binary version of the Dunbrack10 library." << std::endl;
 		return;
 	}

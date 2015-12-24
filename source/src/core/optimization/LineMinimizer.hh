@@ -144,8 +144,11 @@ class BrentLineMinimization : public LineMinimizationAlgorithm
 public:
 	BrentLineMinimization( Multifunc const & score_fxn, Size dim ) :
 		LineMinimizationAlgorithm( score_fxn, dim ),
-		_ax( 0.0 ), _bx( 0.2 ), _xx( 0.1 ), _abs_tolerance( 0.01 ){};
+		_ax( 0.0 ), _bx( 0.2 ), _xx( 0.1 ), _abs_tolerance( 0.01 ),
+		deriv_cutoff_(0.0001)
+	{};
 	virtual Real operator()( Multivec & curr_pos, Multivec & curr_dir );
+	void set_deriv_cutoff( core::Real const &val ) { deriv_cutoff_=val; }
 	void MNBRAK( Real & AX, Real & BX, Real & CX, Real & FA, Real & FB,
 		Real & FC, func_1d & func_eval) const;
 	Real BRENT( Real const AX, Real const BX, Real const CX, Real & FA,
@@ -154,6 +157,7 @@ public:
 	Real _bx;
 	Real _xx;
 	Real _abs_tolerance;
+	Real deriv_cutoff_;
 };
 
 /////////////////////////////////////////////////////////

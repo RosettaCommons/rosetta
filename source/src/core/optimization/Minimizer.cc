@@ -70,6 +70,10 @@ Minimizer::run(
 	if ( type == "linmin" ) {
 		func_.dfunc( phipsi, dE_dphipsi );
 		linmin( phipsi, dE_dphipsi, end_func, ITMAX );
+	} else if ( type == "linmin_iterated" ) {
+		linmin_iterated( phipsi, end_func, fractional_converge_test, ITMAX );
+	} else if ( type == "linmin_iterated_atol" ) {
+		linmin_iterated( phipsi, end_func, absolute_converge_test, ITMAX );
 	} else if ( type == "dfpmin" ) {
 		dfpmin( phipsi, end_func, fractional_converge_test, ITMAX );
 	} else if ( type == "dfpmin_armijo" ) {
@@ -313,6 +317,7 @@ Minimizer::dfpmin(
 
 } // dfpmin
 ////////////////////////////////////////////////////////////////////////
+
 
 ////////////////////////////////////////////////////////////////////////
 // dfpmin Armijo
@@ -657,7 +662,7 @@ Minimizer::lbfgs(
 	bool last_step_good = true;
 	for ( int ITER = 1; ITER <= ITMAX; ++ITER ) {
 		// Store the current position and gradient vectors
-		if (last_step_good) {
+		if ( last_step_good ) {
 			XP = X;
 			GP = G;
 		}
@@ -683,36 +688,36 @@ Minimizer::lbfgs(
 		}
 
 		// check 1: if derivative is positive, flip signs of positive components
-		if (line_min->_deriv_sum > -EPS) {
+		if ( line_min->_deriv_sum > -EPS ) {
 			//std::cerr << "reset 1" << std::endl;
 			line_min->_deriv_sum = 0.0;
 			for ( int i = 1; i <= N; ++i ) {
-				 if (D[i]*G[i] >= 0) D[i] = -D[i];
+				if ( D[i]*G[i] >= 0 ) D[i] = -D[i];
 
-				 line_min->_deriv_sum += D[i]*G[i];
-				 Gnorm += G[i]*G[i];
-				 if ( std::abs( G[i] ) > Gmax ) {
-						Gmax=std::abs( G[i] );
-				 }
+				line_min->_deriv_sum += D[i]*G[i];
+				Gnorm += G[i]*G[i];
+				if ( std::abs( G[i] ) > Gmax ) {
+					Gmax=std::abs( G[i] );
+				}
 			}
 			Gnorm = std::sqrt(Gnorm);
 		}
 
 		// check 2: if derivative still positive, reset Hessian
-		if (line_min->_deriv_sum > -EPS) {
+		if ( line_min->_deriv_sum > -EPS ) {
 			//std::cerr << "reset 2" << std::endl;
- 		 	line_min->_deriv_sum = 0.0;
- 		 	for ( int i = 1; i <= N; ++i ) {
- 		 		D[i] = -G[i];
- 		 		line_min->_deriv_sum += D[i]*G[i];
- 		 	}
+			line_min->_deriv_sum = 0.0;
+			for ( int i = 1; i <= N; ++i ) {
+				D[i] = -G[i];
+				line_min->_deriv_sum += D[i]*G[i];
+			}
 
- 		 	if ( sqrt( -line_min->_deriv_sum ) > 1e-6 ) {
- 		 		invdnorm = 1.0/sqrt( -line_min->_deriv_sum );
- 		 		//line_min->_last_accepted_step = invdnorm;  // keep prev stepsize
- 		 		func_memory_filled = 1;
- 		 		line_min->_func_to_beat = pf[1] = prior_func_value = FRET;
- 		 	}
+			if ( sqrt( -line_min->_deriv_sum ) > 1e-6 ) {
+				invdnorm = 1.0/sqrt( -line_min->_deriv_sum );
+				//line_min->_last_accepted_step = invdnorm;  // keep prev stepsize
+				func_memory_filled = 1;
+				line_min->_func_to_beat = pf[1] = prior_func_value = FRET;
+			}
 		}
 
 
@@ -807,10 +812,10 @@ Minimizer::lbfgs(
 		// Notice that yy is used for scaling the hessian matrix H_0 (Cholesky factor).
 		core::Real ys=0, yy=0;
 		for ( int i = 1; i <= N; ++i ) {
-			 Xtemp[i] = X[i] - XP[i];
-			 Gtemp[i] = G[i] - GP[i];
-			 ys += Gtemp[i]*Xtemp[i];
-			 yy += Gtemp[i]*Gtemp[i];
+			Xtemp[i] = X[i] - XP[i];
+			Gtemp[i] = G[i] - GP[i];
+			ys += Gtemp[i]*Xtemp[i];
+			yy += Gtemp[i]*Gtemp[i];
 		}
 
 		if ( std::fabs( ys ) < 1e-6 ) {
@@ -818,8 +823,8 @@ Minimizer::lbfgs(
 		} else {
 			last_step_good = true;
 			for ( int i = 1; i <= N; ++i ) {
-				 lm[CURPOS].s[i] = Xtemp[i];
-				 lm[CURPOS].y[i] = Gtemp[i];
+				lm[CURPOS].s[i] = Xtemp[i];
+				lm[CURPOS].y[i] = Gtemp[i];
 			}
 			lm[CURPOS].ys = ys;
 
@@ -830,11 +835,11 @@ Minimizer::lbfgs(
 		}
 
 		// Recursive formula to compute dir = -(H \cdot g).
-		// 		This is described in page 779 of:
-		// 		Jorge Nocedal.
-		// 		Updating Quasi-Newton Matrices with Limited Storage.
-		// 		Mathematics of Computation, Vol. 35, No. 151,
-		// 		pp. 773--782, 1980.
+		//   This is described in page 779 of:
+		//   Jorge Nocedal.
+		//   Updating Quasi-Newton Matrices with Limited Storage.
+		//   Mathematics of Computation, Vol. 35, No. 151,
+		//   pp. 773--782, 1980.
 		int bound = std::min( M,K-1 );
 
 		// Compute the negative of gradients
@@ -845,7 +850,7 @@ Minimizer::lbfgs(
 		int j = CURPOS;
 		for ( int pts=0; pts<bound; ++pts ) {
 			j--;
-			if (j<=0) j=M; // wrap around
+			if ( j<=0 ) j=M; // wrap around
 			//if (std::fabs(lm[j].ys) < 1e-6) continue;
 
 			// \alpha_{j} = \rho_{j} s^{t}_{j} \cdot q_{k+1}
@@ -907,6 +912,58 @@ Minimizer::linmin(
 	// See if this is good enough
 	FRET = test_brent( P, XI );
 }
+
+////////////////////////////////////////////////////////////////////////
+// linmin_iterated
+////////////////////////////////////////////////////////////////////////
+
+/// @brief Carry out many iterations of line searches, using only the gradient vector
+/// (that is, don't approximate the Hessian or use it in any way).
+/// @details Useful for testing minimization protocols.  In theory, this should converge
+/// less efficiently than something that uses a Hessian approximation, but it will be entirely
+/// free of any erratic behaviour that results from the approximation used.  Note that DFP/LBFGS
+/// approximations are not guaranteed to work well with all functions.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+void
+Minimizer::linmin_iterated(
+	Multivec & P,
+	Real & FRET,
+	ConvergenceTest & converge_test,
+	core::Size const ITMAX
+) const {
+
+	//Storage for the derivative:
+	Multivec dE_dphipsi(P.size(), 0.0);
+
+	//The line minimizer:
+	BrentLineMinimization test_brent( func_, P.size() );
+	test_brent.set_deriv_cutoff( options_.linmin_deriv_cutoff() );
+
+	core::Size ITER(1);
+
+	for ( ITER = 1; ITER <= ITMAX; ++ITER ) {
+		core::Real const prior_func_value = func_(P);
+		func_.dfunc( P, dE_dphipsi );
+
+		//Perform line minimization and return final value:
+		FRET = test_brent( P, dE_dphipsi );
+
+		// Check for convergence
+		if ( converge_test( FRET, prior_func_value ) ) {
+			break;
+		}
+	}
+
+	if ( ITER == ITMAX ) {
+		TR.Warning << "Warning: maximum number of minimization iterations (" << ITMAX << ") was reached.  Function likely not converged." << std::endl;
+		TR.Warning.flush();
+	}
+
+	return;
+} //linmin_iterated
+
+////////////////////////////////////////////////////////////////////////
+
 
 } // namespace optimization
 } // namespace core

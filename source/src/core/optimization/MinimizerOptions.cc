@@ -56,6 +56,7 @@ MinimizerOptions::MinimizerOptions(
 	xx_init_( 0.1 ),
 	bx_init_( 0.2 ),
 	brent_abs_tolerance_( 0.01 ),
+	linmin_deriv_cutoff_( 0.0001 ),
 	ga_mutation_probability_( 0.5 )
 {
 	using namespace basic::options;
@@ -225,6 +226,24 @@ MinimizerOptions::brent_abs_tolerance() const
 {
 	return brent_abs_tolerance_;
 }
+
+/// @brief The derivative cutoff used for Brent.
+///
+Real
+MinimizerOptions::linmin_deriv_cutoff() const {
+	return linmin_deriv_cutoff_;
+}
+
+/// @brief Set the derivative cutoff used for Brent.
+///
+void
+MinimizerOptions::linmin_deriv_cutoff(
+	core::Real const &val
+) {
+	linmin_deriv_cutoff_ = val;
+	return;
+}
+
 
 int MinimizerOptions::max_iter() const { return max_iter_; }
 void MinimizerOptions::max_iter(int n) { max_iter_ = n; }

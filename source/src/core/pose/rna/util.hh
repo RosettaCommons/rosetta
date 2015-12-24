@@ -151,7 +151,7 @@ get_suite_torsion_info( core::pose::Pose const & pose, Size const i );
 /// @brief useful in setting up cutpoint with OVL1, OVL2, OVU atoms
 void
 apply_suite_torsion_info( core::pose::Pose & pose,
-													utility::vector1< std::pair< id::TorsionID, Real > > const & suite_torsion_info );
+	utility::vector1< std::pair< id::TorsionID, Real > > const & suite_torsion_info );
 
 
 } //ns rna

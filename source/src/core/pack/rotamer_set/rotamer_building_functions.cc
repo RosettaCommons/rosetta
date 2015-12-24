@@ -650,9 +650,9 @@ build_dna_rotamers(
 /// carbohydrate rotamers.  Ideally, we will find an alternative method for handling carbohydrate rotamer libraries....
 void
 build_rotamers_from_rotamer_bins( conformation::Residue const & residue,
-		utility::vector1< conformation::ResidueOP > & rotamers,
-		uint current_chi_index,
-		utility::vector1< uint > *current_bin_indices )
+	utility::vector1< conformation::ResidueOP > & rotamers,
+	uint current_chi_index,
+	utility::vector1< uint > *current_bin_indices )
 {
 	using namespace std;
 
@@ -690,7 +690,7 @@ build_rotamers_from_rotamer_bins( conformation::Residue const & residue,
 				RotamerBin bin = bins[ bin_index ];
 				Angle const torsion( bin.first );  // first is the setting; second is the SD.
 				tt.Debug << "bin #" << current_bin_indices->at(i) <<
-						" from torsion angle chi" << i << " (" << torsion << ")  ";
+					" from torsion angle chi" << i << " (" << torsion << ")  ";
 				rotamers[ rotamers.size() ]->set_chi( i, torsion );  // Set the rotamer's torsion angle.
 			}
 		}

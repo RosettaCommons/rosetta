@@ -27,6 +27,7 @@
 
 
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/types.hh>
 
@@ -61,6 +62,110 @@ public:
 
 	// Shared finalization goes here.
 	void tearDown() {
+	}
+
+	/// @brief Test minimization with a particular algorithm.
+	/// @details Just runs the algorithm and makes sure it doesn't crash.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void run_an_algorithm( std::string const &algo_name) {
+		using namespace optimization;
+		using pose::Pose;
+		using id::AtomID;
+		using id::DOF_ID;
+		using id::PHI;
+		using id::THETA;
+		using id::D;
+
+		//Pose and MoevMap:
+		pose::Pose start_pose(create_test_in_pdb_pose());
+		kinematics::MoveMapOP mm( new kinematics::MoveMap );
+
+		// Set up moving dofs
+		for ( int i=30; i<= 35; ++i ) {
+			mm->set_bb ( i, true );
+			mm->set_chi( i, true );
+		}
+
+		// Set up the scorefunction -- use the current Rosetta default.
+		scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function(true) );
+
+		AtomTreeMinimizer minimizer;
+		MinimizerOptionsOP min_options( new MinimizerOptions( algo_name, 0.01, true, false, false ) );
+
+		// Just run the minimizer and make sure there's no segfault.
+		minimizer.run( start_pose, *mm, *scorefxn, *min_options );
+
+		return;
+	}
+
+	/// @brief Test minimization with the linmin_iterated algorithm.
+	/// @details Just runs the algorithm and makes sure it doesn't crash.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_linmin_iterated()
+	{
+		TR << "Testing linmin_iterated..." << std::endl;
+		run_an_algorithm("linmin_iterated");
+		return;
+	}
+
+	/// @brief Test minimization with the linmin_iterated_atol algorithm.
+	/// @details Just runs the algorithm and makes sure it doesn't crash.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_linmin_iterated_atol()
+	{
+		TR << "Testing linmin_iterated_atol..." << std::endl;
+		run_an_algorithm("linmin_iterated_atol");
+		return;
+	}
+
+	/// @brief Test minimization with the dfpmin algorithm.
+	/// @details Just runs the algorithm and makes sure it doesn't crash.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_dfpmin()
+	{
+		TR << "Testing dfpmin..." << std::endl;
+		run_an_algorithm("dfpmin");
+		return;
+	}
+
+	/// @brief Test minimization with the dfpmin_armijo algorithm.
+	/// @details Just runs the algorithm and makes sure it doesn't crash.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_dfpmin_armijo()
+	{
+		TR << "Testing dfpmin_armijo..." << std::endl;
+		run_an_algorithm("dfpmin_armijo");
+		return;
+	}
+
+	/// @brief Test minimization with the dfpmin_armijo_nonmonotone algorithm.
+	/// @details Just runs the algorithm and makes sure it doesn't crash.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_dfpmin_armijo_nonmonotone()
+	{
+		TR << "Testing dfpmin_armijo_nonmonotone..." << std::endl;
+		run_an_algorithm("dfpmin_armijo_nonmonotone");
+		return;
+	}
+
+	/// @brief Test minimization with the lbfgs_armijo algorithm.
+	/// @details Just runs the algorithm and makes sure it doesn't crash.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_lbfgs_armijo()
+	{
+		TR << "Testing lbfgs_armijo..." << std::endl;
+		run_an_algorithm("lbfgs_armijo");
+		return;
+	}
+
+	/// @brief Test minimization with the lbfgs_armijo_nonmonotone algorithm.
+	/// @details Just runs the algorithm and makes sure it doesn't crash.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void test_lbfgs_armijo_nonmonotone()
+	{
+		TR << "Testing lbfgs_armijo_nonmonotone..." << std::endl;
+		run_an_algorithm("lbfgs_armijo_nonmonotone");
+		return;
 	}
 
 

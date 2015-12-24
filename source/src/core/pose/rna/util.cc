@@ -1004,7 +1004,7 @@ get_suite_torsion_info( core::pose::Pose const & pose, Size const i )
 /////////////////////////////////////////////////////////////////////////////////////
 void
 apply_suite_torsion_info( core::pose::Pose & pose,
-													utility::vector1< std::pair< core::id::TorsionID, core::Real > > const & suite_torsion_info ) {
+	utility::vector1< std::pair< core::id::TorsionID, core::Real > > const & suite_torsion_info ) {
 	for ( Size n = 1; n <= suite_torsion_info.size(); n++ ) {
 		pose.set_torsion( suite_torsion_info[ n ].first, suite_torsion_info[ n ].second );
 	}

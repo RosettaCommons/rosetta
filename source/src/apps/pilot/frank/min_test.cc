@@ -334,7 +334,7 @@ public:
 			loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
 			loadCsts->apply(pose);
 
-			if (scorefxn->get_weight( core::scoring::atom_pair_constraint ) == 0) {
+			if ( scorefxn->get_weight( core::scoring::atom_pair_constraint ) == 0 ) {
 				scorefxn->set_weight( core::scoring::atom_pair_constraint, option[ OptionKeys::constraints::cst_fa_weight ] );
 			}
 		}

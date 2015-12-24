@@ -153,6 +153,21 @@ private:
 		int const ITMAX
 	) const;
 
+	/// @brief Carry out many iterations of line searches, using only the gradient vector
+	/// (that is, don't approximate the Hessian or use it in any way).
+	/// @details Useful for testing minimization protocols.  In theory, this should converge
+	/// less efficiently than something that uses a Hessian approximation, but it will be entirely
+	/// free of any erratic behaviour that results from the approximation used.  Note that DFP/LBFGS
+	/// approximations are not guaranteed to work well with all functions.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void
+	linmin_iterated(
+		Multivec & P,
+		Real & FRET,
+		ConvergenceTest & converge_test,
+		core::Size const ITMAX
+	) const;
+
 	void
 	dfpmin(
 		Multivec & P,

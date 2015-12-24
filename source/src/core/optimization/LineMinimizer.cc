@@ -82,7 +82,7 @@ BrentLineMinimization::operator()(
 		}
 	}
 
-	if ( std::abs(derivmax) <= .0001 ) {
+	if ( std::abs(derivmax) <= deriv_cutoff_ ) {
 		Real final_value =_func(current_position);
 		return final_value; // deriv = 0, return value
 	}
