@@ -78,7 +78,7 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
     execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
 
 
-    results = {_StateKey_ : _S_finished_,  _ResultsKey_ : {},  _LogKey_ : '' }
+    results = {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : '' }
     json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
     return results
@@ -146,7 +146,7 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
 
     execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
 
-    results = {_StateKey_ : _S_finished_,  _ResultsKey_ : {},  _LogKey_ : '' }
+    results = {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : '' }
     json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
     return results
@@ -300,7 +300,7 @@ def py_rosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_dri
             #r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
             #results[_LogKey_] = output
 
-            res_code = _S_finished_
+            res_code = _S_passed_
             results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
             json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 

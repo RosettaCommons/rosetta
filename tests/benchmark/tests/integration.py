@@ -189,7 +189,7 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_dri
     if json_file_results[ "failed" ] > 0:
         results[_StateKey_] = _S_failed_
     else:
-        results[_StateKey_] = _S_finished_
+        results[_StateKey_] = _S_passed_
 
     json_results = dict(tests={}, summary=dict(total=json_file_results[ "total" ], failed=json_file_results[ "failed" ], failed_tests=[]))
     for test, nfailures in json_file_results[ "details" ].items():
@@ -205,7 +205,7 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_dri
             if os.path.isfile(files_location+'/'+test+'/valgrind.out'):
                 log += open(files_location+'/'+test+'/valgrind.out').read()
         else:
-            state = _S_finished_
+            state = _S_passed_
         json_results['tests'][test] = {_StateKey_: state, _LogKey_: log }
 
     results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
@@ -246,20 +246,20 @@ def compare(test, results, files_path, previous_results, previous_files_path):
                 diff = 'Brief Diff:\n' + brief_diff + ( ('\n\nFull Diff:\n' + full_diff[:1024*1024*1]) if full_diff != brief_diff else '' )
 
                 if os.path.isfile(files_path+'/'+test+'/.test_did_not_run.log')  or  os.path.isfile(files_path+'/'+test+'/.test_got_timeout_kill.log'): state = _S_script_failed_;  has_failed_scripts=True
-                else: state = _S_failed_ if res else _S_finished_
-                results['tests'][test] = {_StateKey_: state, _LogKey_: diff if state != _S_finished_ else ''}
+                else: state = _S_failed_ if res else _S_passed_
+                results['tests'][test] = {_StateKey_: state, _LogKey_: diff if state != _S_passed_ else ''}
 
                 results['summary']['total'] += 1
                 if res: results['summary']['failed'] += 1; results['summary']['failed_tests'].append(test)
 
-    else: # no previous tests case, returning 'finished' for all sub_tests
+    else: # no previous tests case, returning 'passed' for all sub_tests
         for test in os.listdir(files_path):
             if os.path.isdir(files_path + '/' + test):
-                results['tests'][test] = {_StateKey_: _S_finished_, _LogKey_: 'First run, no previous results available. Skipping comparison...\n'}
+                results['tests'][test] = {_StateKey_: _S_passed_, _LogKey_: 'First run, no previous results available. Skipping comparison...\n'}
                 results['summary']['total'] += 1
 
     #if has_failed_scripts: state = _S_script_failed_
-    #else: state = _S_failed_ if results['summary']['failed'] else _S_finished_
-    state = _S_failed_ if results['summary']['failed'] else _S_finished_
+    #else: state = _S_failed_ if results['summary']['failed'] else _S_passed_
+    state = _S_failed_ if results['summary']['failed'] else _S_passed_
 
     return {_StateKey_: state, _LogKey_: '', _ResultsKey_: results}

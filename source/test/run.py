@@ -359,7 +359,7 @@ class Tester:
             all_yaml = {}
             all_json = dict(tests={}, summary=dict(total=0, failed=0), config=dict(test_path=self.testpath))
             _failed_ = 'failed'
-            _finished_ = 'finished'
+            _finished_ = 'passed'
             for lib in UnitTestExecutable:
                 log_file = self.testpath + '/' + lib + '.log'
                 yaml_file = self.testpath + '/' + lib + '.yaml'

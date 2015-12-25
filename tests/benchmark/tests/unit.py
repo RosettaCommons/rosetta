@@ -91,9 +91,9 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     # for lib in json_results:
     #     key = lib[:-5]  # core.test → core
     #     # u'∙'
-    #     for t in json_results[lib]['ALL_TESTS']: r[ key.replace('.', '_') + '_' + t.replace(':', '_')] = _S_failed_ if t in json_results[lib]['FAILED_TESTS'] else _S_finished_
+    #     for t in json_results[lib]['ALL_TESTS']: r[ key.replace('.', '_') + '_' + t.replace(':', '_')] = _S_failed_ if t in json_results[lib]['FAILED_TESTS'] else _S_passed_
 
-    results[_StateKey_]   = reduce(lambda a, b: _S_finished_ if a==_S_finished_ and b==_S_finished_ else _S_failed_, [ json_results['tests'][t][_StateKey_] for t in json_results['tests'] ] )
+    results[_StateKey_]   = reduce(lambda a, b: _S_passed_ if a==_S_passed_ and b==_S_passed_ else _S_failed_, [ json_results['tests'][t][_StateKey_] for t in json_results['tests'] ] )
     results[_LogKey_]     = output  # ommiting compilation log and only including unit tests output
     results[_ResultsKey_] = json_results
 

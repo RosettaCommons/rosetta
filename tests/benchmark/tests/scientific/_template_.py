@@ -57,7 +57,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         if not ( os.path.isfile(working_dir+'/default.sc') and
                  os.path.isfile(working_dir+'/hpc_score.sc') ): res = 1 # No score files found - something is wrong, terminating with error!!!
 
-        state = _S_failed_ if res else _S_finished_
+        state = _S_failed_ if res else _S_passed_
 
         # Simple form when our test does not have any sub-tests:
         # return {_StateKey_ : state,  _ResultsKey_ : {},  _LogKey_ : output }
@@ -66,7 +66,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         # _SummaryKey_ is dict to provide optional information specific to this test
         results = { _SummaryKey_ : { 'arbitrary_key_1' : 'arbitrary_info_1' },
 
-                    _TestsKey_ : {'sub-test-1' : dict(state=_S_finished_, log='sub-test-1 log...'),
+                    _TestsKey_ : {'sub-test-1' : dict(state=_S_passed_, log='sub-test-1 log...'),
                                   'sub-test-2' : dict(state=_S_failed_, log='sub-test-2 log...') } }
 
         return {_StateKey_ : state,  _ResultsKey_ : results,  _LogKey_ : output }

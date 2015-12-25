@@ -38,7 +38,7 @@ def run_build_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     file(working_dir+'/build-log.txt', 'w').write(output)
 
-    res_code = _S_failed_ if res else _S_finished_
+    res_code = _S_failed_ if res else _S_passed_
     if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
     output = 'Running: {}\n'.format(command_line) + output  # Making sure that exact command line used is stored
     r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }

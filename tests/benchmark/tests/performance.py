@@ -115,7 +115,7 @@ def compare(test, results, files_path, previous_results, previous_files_path):
             cr[_SummaryKey_][_TotalKey_] += 1
 
             cr[_TestsKey_][test] = dict(results[_TestsKey_][test])
-            cr[_TestsKey_][test].update( {_StateKey_: _S_finished_, 'previous_values': previous_values,
+            cr[_TestsKey_][test].update( {_StateKey_: _S_passed_, 'previous_values': previous_values,
                                           _LogKey_: 'previous_cycles={}\ncycles={}\n'.format(previous_cycles, cycles) } )
 
             if previous_cycles  and  2.0 * abs(previous_cycles - cycles) / abs(previous_cycles + cycles + 1.0e-200) > _failure_threshold_pct_/100.0:  # mark test as failed if there is more then 5% difference in run time
@@ -123,13 +123,13 @@ def compare(test, results, files_path, previous_results, previous_files_path):
                 cr[_SummaryKey_][_FailedKey_] += 1
                 cr[_SummaryKey_][_FailedTestsKey_].append(test)
 
-    else: # no previous tests case, returning 'finished' for all sub_tests
+    else: # no previous tests case, returning 'passed' for all sub_tests
         for test in results[_TestsKey_]:
             cr[_TestsKey_][test] = dict(results[_TestsKey_][test])
-            cr[_TestsKey_][test].update( {_StateKey_: _S_finished_, 'previous_values':None, _LogKey_: 'First run, no previous results available. Skipping comparison...\n'} )
+            cr[_TestsKey_][test].update( {_StateKey_: _S_passed_, 'previous_values':None, _LogKey_: 'First run, no previous results available. Skipping comparison...\n'} )
             cr[_SummaryKey_][_TotalKey_] += 1
 
-    state = _S_failed_ if cr[_SummaryKey_][_FailedKey_] else _S_finished_
+    state = _S_failed_ if cr[_SummaryKey_][_FailedKey_] else _S_passed_
 
     cr[_PlotsKey_] = [ dict(type='sub_test:revision_value', data=[ dict(y='cycles', legend='cycles', color='#66f') ] ) ]
 

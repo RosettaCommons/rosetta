@@ -127,25 +127,25 @@ def compare(test, results, files_path, previous_results, previous_files_path):
             cr[_TestsKey_][test] = dict(results[_TestsKey_][test])
             cr[_TestsKey_][test].update( {_StateKey_: state, 'previous_values': previous_values, _LogKey_: log } )
 
-            if state != _S_finished_:
+            if state != _S_passed_:
                 cr[_SummaryKey_][_FailedKey_] += 1
                 cr[_SummaryKey_][_FailedTestsKey_].append(test)
 
-    else: # no previous tests case, returning 'finished' for all sub_tests
+    else: # no previous tests case, returning 'passed' for all sub_tests
         for test in results[_TestsKey_]:
             cr[_TestsKey_][test] = dict(results[_TestsKey_][test])
 
-            if results[_TestsKey_][test][_StateKey_] != _S_finished_:
+            if results[_TestsKey_][test][_StateKey_] != _S_passed_:
                 cr[_TestsKey_][test].update( {_StateKey_: _S_script_failed_, 'previous_values':None, _LogKey_: 'Test bash script termiated with error! Skipping comparison...\n'} )
                 cr[_SummaryKey_][_FailedKey_] += 1
                 cr[_SummaryKey_][_FailedTestsKey_].append(test)
 
             else:
-                cr[_TestsKey_][test].update( {_StateKey_: _S_finished_, 'previous_values':None, _LogKey_: 'First run, no previous results available. Skipping comparison...\n'} )
+                cr[_TestsKey_][test].update( {_StateKey_: _S_passed_, 'previous_values':None, _LogKey_: 'First run, no previous results available. Skipping comparison...\n'} )
 
             cr[_SummaryKey_][_TotalKey_] += 1
 
-    state = _S_failed_ if cr[_SummaryKey_][_FailedKey_] else _S_finished_
+    state = _S_failed_ if cr[_SummaryKey_][_FailedKey_] else _S_passed_
 
     # Two values on same plot:
     #cr[_PlotsKey_] = [ dict(type='sub_test:revision_value', data=[ dict(y='execution_time',       legend='execution_time',       color='#66f'),

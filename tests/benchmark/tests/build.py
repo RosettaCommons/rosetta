@@ -77,7 +77,7 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     file(working_dir+'/build-log.txt', 'w').write( 'Running: {}\n{}\n'.format(command_line, output) )
 
-    res_code = _S_failed_ if res else _S_finished_
+    res_code = _S_failed_ if res else _S_passed_
 
     if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
 

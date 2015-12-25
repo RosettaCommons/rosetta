@@ -91,7 +91,7 @@ def run_test(test):
 
     output += run_time
 
-    with file(json_file, 'w') as f: json.dump({ name : dict(log=output, state='failed' if res else 'finished') }, f, sort_keys=True, indent=2)
+    with file(json_file, 'w') as f: json.dump({ name : dict(log=output, state='failed' if res else 'passed') }, f, sort_keys=True, indent=2)
     sys.stdout.flush()
 
 
@@ -167,25 +167,25 @@ def main(args):
 
 
     results = dict(tests={})
-    state = 'finished'
+    state = 'passed'
     for t in tests:
         test_results = json.load( file( json_file_name(t) ) )
-        if 'state' not in test_results[ test_name(t) ]  or  test_results[ test_name(t) ]['state']!= 'finished': state = 'failed'
+        if 'state' not in test_results[ test_name(t) ]  or  test_results[ test_name(t) ]['state']!= 'passed': state = 'failed'
         results['tests'].update(test_results)
 
     with file(json_file, 'w') as f: json.dump(dict(state=state, results=results, log=''), f, sort_keys=True, indent=2)
 
 
     for t in sorted(results['tests']):
-        if results['tests'][t]['state'] == 'finished': print t, '- passed'
+        if results['tests'][t]['state'] == 'passed': print t, '- passed'
 
-    failed_tests = [ t for t in results['tests'] if results['tests'][t]['state'] != 'finished' ]
+    failed_tests = [ t for t in results['tests'] if results['tests'][t]['state'] != 'passed' ]
 
     if failed_tests:
         print '\nFollowing PyRosetta Tests FAILED:'
         for t in failed_tests: print t, '- FAILED'
 
-    if state == 'finished': print '\nAll PyRosetta Tests passed!\n'
+    if state == 'passed': print '\nAll PyRosetta Tests passed!\n'
     else: sys.exit(1)
 
 

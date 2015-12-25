@@ -43,7 +43,7 @@ def run_serialization_test(rosetta_dir, working_dir, platform, config, hpc_drive
 
     json_files = [f for f in os.listdir(json_output_dir) if f.endswith('.json')]
     if json_files:
-        state = _S_failed_ if res else _S_finished_
+        state = _S_failed_ if res else _S_passed_
         tests = {}
         results = {_TestsKey_:tests}
 
@@ -51,7 +51,7 @@ def run_serialization_test(rosetta_dir, working_dir, platform, config, hpc_drive
             jr = json.load( file(json_output_dir+'/'+f) )
             for k in jr:
                 key = k[ len('src/') : ].replace('/', '_')
-                if _StateKey_ not in jr[k]  or  jr[k][_StateKey_] != _S_finished_:
+                if _StateKey_ not in jr[k]  or  jr[k][_StateKey_] != _S_passed_:
                     tests[key] = jr[k]
                     state = _S_failed_
                 else:

@@ -18,20 +18,20 @@ import commands
 # ⚔ do not change wording below, it have to stay in sync with upstream (up to benchmark-model).
 # Copied from benchmark-model, standard state code's for tests results.
 
-__all__ = ['_S_Values_', '_S_draft_', '_S_queued_', '_S_running_', '_S_finished_', '_S_failed_', '_S_build_failed_', '_S_script_failed_',
+__all__ = ['_S_Values_', '_S_draft_', '_S_queued_', '_S_running_', '_S_passed_', '_S_failed_', '_S_build_failed_', '_S_script_failed_',
            '_StateKey_', '_ResultsKey_', '_LogKey_'
 ]
 
 _S_draft_                 = 'draft'
 _S_queued_                = 'queued'
 _S_running_               = 'running'
-_S_finished_              = 'finished'
+_S_passed_                = 'passed'
 _S_failed_                = 'failed'
 _S_build_failed_          = 'build failed'
 _S_script_failed_         = 'script failed'
 _S_queued_for_comparison_ = 'queued for comparison'
 
-_S_Values_ = [_S_draft_, _S_queued_, _S_running_, _S_finished_, _S_failed_, _S_build_failed_, _S_script_failed_, _S_queued_for_comparison_]
+_S_Values_ = [_S_draft_, _S_queued_, _S_running_, _S_passed_, _S_failed_, _S_build_failed_, _S_script_failed_, _S_queued_for_comparison_]
 
 _IgnoreKey_      = 'ignore'
 _StateKey_       = 'state'
