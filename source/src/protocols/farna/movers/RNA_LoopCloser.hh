@@ -97,10 +97,10 @@ public:
 	void
 	set_atom_level_domain_map( toolbox::AtomLevelDomainMapCOP setting ){ atom_level_domain_map_ = setting; }
 
-private:
-
 	utility::vector1< core::Size >
-	get_cutpoints_closed( core::pose::Pose const & pose );
+	get_cutpoints_closed( core::pose::Pose const & pose ) const;
+
+private:
 
 	bool
 	passes_fast_scan( core::pose::Pose & pose, Size const i ) const;

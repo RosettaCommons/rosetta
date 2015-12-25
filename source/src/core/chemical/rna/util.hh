@@ -122,6 +122,9 @@ get_residue_base_state( conformation::Residue const & rsd );
 PuckerState
 get_residue_pucker_state( conformation::Residue const & rsd );
 
+bool
+rna_dna_match( core::chemical::AA const & aa1, core::chemical::AA const & aa2 );
+
 
 } //ns rna
 } //ns chemical

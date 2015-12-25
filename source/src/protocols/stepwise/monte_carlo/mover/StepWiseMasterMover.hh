@@ -95,6 +95,8 @@ public:
 
 	void set_submotif_library( monte_carlo::submotif::SubMotifLibraryCOP setting ) { submotif_library_ = setting; }
 
+	StepWiseMoveSelectorCOP stepwise_move_selector() const { return stepwise_move_selector_; }
+
 private:
 
 	void initialize();

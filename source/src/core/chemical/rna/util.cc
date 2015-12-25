@@ -501,6 +501,35 @@ get_residue_pucker_state( conformation::Residue const & rsd ) {
 }
 
 
+
+bool
+rna_dna_match( core::chemical::AA const & aa1, core::chemical::AA const & aa2 )
+{
+	if ( aa1 == aa2 ) return true;
+	using namespace core::chemical;
+	switch ( aa1 ) {
+	case( na_rad ) :
+		return ( aa2 == na_ade );
+	case( na_rcy ) :
+		return ( aa2 == na_cyt );
+	case( na_rgu ) :
+		return ( aa2 == na_gua );
+	case( na_ura ) :
+		return ( aa2 == na_thy );
+	case( na_ade ) :
+		return ( aa2 == na_rad );
+	case( na_cyt ) :
+		return ( aa2 == na_rcy );
+	case( na_gua ) :
+		return ( aa2 == na_rgu );
+	case( na_thy ) :
+		return ( aa2 == na_ura );
+	default:
+		break;
+	}
+	return false;
+}
+
 } //ns rna
 } //ns chemical
 } //ns core

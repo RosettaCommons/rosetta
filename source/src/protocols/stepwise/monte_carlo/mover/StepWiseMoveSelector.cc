@@ -1501,7 +1501,7 @@ StepWiseMoveSelector::just_simple_cycles( StepWiseMove const & swa_move, pose::P
 			}
 		}
 	} else if ( move_type == DELETE ) {
-		// need to figure out if either parition will disappear.
+		// need to figure out if either partition will disappear.
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 		utility::vector1< Size > other_element;
 		for ( Size n = 1; n <= res_list.size(); n++ ) {

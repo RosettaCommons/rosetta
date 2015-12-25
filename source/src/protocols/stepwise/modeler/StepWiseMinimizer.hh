@@ -60,7 +60,14 @@ public:
 
 	void set_working_pack_res( utility::vector1< core::Size > const & setting ){ working_pack_res_ = setting; }
 
+	utility::vector1< core::Size > const &
+	working_pack_res() const { return working_pack_res_; }
+
 	utility::vector1< core::pose::PoseOP > pose_list() const { return pose_list_; }
+
+	Size const & num_pose_minimize() const { return num_pose_minimize_; }
+
+	utility::vector1< core::Size > const & working_minimize_res() const { return working_minimize_res_; }
 
 private:
 

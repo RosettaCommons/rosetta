@@ -83,7 +83,8 @@ StepWisePacker::StepWisePacker( utility::vector1< Size > const & working_moving_
 	allow_virtual_side_chains_( false ),
 	allow_virtual_o2prime_hydrogens_( false ),
 	pack_o2prime_hydrogens_( true ),
-	working_pack_res_was_inputted_( false )
+	working_pack_res_was_inputted_( false ),
+	pack_all_side_chains_( false )
 {
 }
 
@@ -128,7 +129,7 @@ StepWisePacker::do_packing( core::pose::Pose & pose ) {
 // I will change this soon to smartly look at moving residues & partitions -- likely
 // make this an external function.
 void
-StepWisePacker::figure_out_neighbors( core::pose::Pose & pose ) {
+StepWisePacker::figure_out_neighbors( core::pose::Pose & pose /*not const because need to score to get energygraph*/ ) {
 	using namespace core::scoring;
 
 	if ( pack_all_side_chains_ ) {

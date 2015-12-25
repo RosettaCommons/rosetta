@@ -112,6 +112,7 @@ FromScratchMover::update_full_model_info_and_switch_focus_to_new_pose( pose::Pos
 //////////////////////////////////////////////////////////////////////////////
 void
 FromScratchMover::sample_by_swa( pose::Pose & pose, Size const sample_res ) const {
+	if ( stepwise_modeler_ == 0 ) return;
 	stepwise_modeler_->set_moving_res_and_reset( sample_res );
 	stepwise_modeler_->set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );
 	stepwise_modeler_->apply( pose );

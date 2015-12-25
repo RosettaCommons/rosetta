@@ -67,6 +67,10 @@ public:
 	void
 	set_refine_pose_list( utility::vector1<core::pose::PoseOP> const & setting ) { refine_pose_list_ = setting; };
 
+	RNA_DeNovoProtocolOptionsCOP options() const { return options_; }
+
+	RNA_FragmentMonteCarloCOP rna_fragment_monte_carlo() const { return rna_fragment_monte_carlo_; }
+
 private:
 
 	void

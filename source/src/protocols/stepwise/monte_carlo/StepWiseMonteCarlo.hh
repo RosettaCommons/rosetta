@@ -81,6 +81,8 @@ public:
 
 	void set_submotif_library( monte_carlo::submotif::SubMotifLibraryCOP setting );
 
+	mover::StepWiseMasterMoverCOP master_mover() const { return master_mover_; }
+
 private:
 
 	void initialize();

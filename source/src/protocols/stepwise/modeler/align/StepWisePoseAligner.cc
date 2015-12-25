@@ -182,6 +182,15 @@ StepWisePoseAligner::initialize( pose::Pose const & pose ){
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
+bool
+match_up_to_rna_dna( char const & nt1, char const & nt2 ) {
+	if ( nt1 == nt2 ) return true;
+	if ( nt1 == 't' && nt2 == 'u' ) return true;
+	if ( nt1 == 'u' && nt2 == 't' ) return true;
+	return false;
+}
+
+///////////////////////////////////////////////////////////////////////////////////
 void
 StepWisePoseAligner::update_reference_pose_local( pose::Pose const & pose ){
 
@@ -203,7 +212,7 @@ StepWisePoseAligner::update_reference_pose_local( pose::Pose const & pose ){
 		} else {
 			runtime_assert( full_sequence[ res_list[ n ] - 1 ] == pose_nt );
 		}
-		runtime_assert( reference_pose_local_->sequence()[ res_list_in_reference[n] - 1] == pose_nt );
+		runtime_assert( match_up_to_rna_dna( reference_pose_local_->sequence()[ res_list_in_reference[n] - 1], pose_nt ) );
 	}
 }
 
@@ -557,7 +566,11 @@ StepWisePoseAligner::add_to_atom_id_map_after_checks( std::map< id::AtomID, id::
 	if ( n1 == 0 || n2 == 0 ) return false;
 	runtime_assert ( n1 >= 1 && n1 <= pose1.total_residue() );
 	runtime_assert ( n2 >= 1 && n2 <= pose2.total_residue() );
-	runtime_assert( pose1.residue_type( n1 ).aa() == pose2.residue_type( n2 ).aa() );
+	if ( pose1.residue_type( n1 ).aa() != pose2.residue_type( n2 ).aa() &&
+			 !rna_dna_match( pose1.residue_type( n1 ).aa(), pose2.residue_type( n2 ).aa() ) ) {
+		TR << "pose1 at n1 " << n1 << " has aa: " << pose1.residue_type( n1 ).aa() << "; vs pose2 at n2 " << n2 << " has aa: " <<  pose2.residue_type( n2 ).aa()  << std::endl;
+		runtime_assert( pose1.residue_type( n1 ).aa() == pose2.residue_type( n2 ).aa() );
+	}
 
 	if ( do_the_checks ) {
 		if ( !do_checks( atom_name, n1, pose1 ) ) return false;

@@ -131,7 +131,7 @@ public:
 	set_fixed_if_moving( core::id::AtomID const & atom_id );
 
 	void
-	show() const;
+	show( std::ostream & out = std::cout ) const;
 
 	std::map< core::id::AtomID, Size >
 	calculate_atom_id_domain_map( core::pose::Pose const & pose ) const;

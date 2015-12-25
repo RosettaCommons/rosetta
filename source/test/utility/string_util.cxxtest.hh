@@ -11,21 +11,27 @@
 /// @brief  string_util.cxxtest: test suite for utility::string_util
 /// @author James Thompson
 /// @author Christopher Miles (cmiles@uw.edu)
+/// @author Rhiju Das
 
 // Testing headers
 #include <cxxtest/TestSuite.h>
 
 // Project headers
 #include <utility/string_util.hh>
+#include <utility/tools/make_vector1.hh>
 
 // C/C++ headers
 #include <iostream>
 #include <string>
 #include <sstream>
 
+//#include <basic/Tracer.hh>
+
 using std::endl;
 using std::string;
 using std::stringstream;
+
+//static THREAD_LOCAL basic::Tracer TR("StringUtil");
 
 class StringUtilTests : public CxxTest::TestSuite {
  public:
@@ -77,4 +83,112 @@ class StringUtilTests : public CxxTest::TestSuite {
 		std::string test_hash = utility::string_to_sha1(test_string);
 		TS_ASSERT_EQUALS(real_hash,test_hash);
 	}
+
+
+	void test_reschain_to_string() {
+		utility::vector1< int >  res_vector = utility::tools::make_vector1( -5, -4, -3, 1, 2, 3, 1, 2);
+		utility::vector1< char > chain_vector = utility::tools::make_vector1( 'A','A','A','A','A','A',' ','B' );
+		std::string tag = make_tag_with_dashes( res_vector, chain_vector );
+		TS_ASSERT_EQUALS( tag, "A:-5--3 A:1-3 1 B:2" );
+	}
+
+	void run_test_of_get_resnum_and_chain( std::string const & tag ) {
+		bool ok;
+		std::pair< std::vector<int>, std::vector<char> > resnum_chain = utility::get_resnum_and_chain( tag, ok );
+
+		TS_ASSERT( ok );
+		utility::vector1<int>  resnum( resnum_chain.first );
+		utility::vector1<char> chains( resnum_chain.second );
+		TS_ASSERT_EQUALS( resnum.size(), 8 );
+		TS_ASSERT_EQUALS( resnum[1], -5 );
+		TS_ASSERT_EQUALS( resnum[2], -4 );
+		TS_ASSERT_EQUALS( resnum[3], -3 );
+		TS_ASSERT_EQUALS( resnum[4],  1 );
+		TS_ASSERT_EQUALS( resnum[5],  2 );
+		TS_ASSERT_EQUALS( resnum[6],  3 );
+		TS_ASSERT_EQUALS( resnum[7],  1 );
+		TS_ASSERT_EQUALS( resnum[8],  2 );
+
+		TS_ASSERT_EQUALS( chains.size(), 8 );
+		TS_ASSERT_EQUALS( chains[1], 'A' );
+		TS_ASSERT_EQUALS( chains[2], 'A' );
+		TS_ASSERT_EQUALS( chains[3], 'A' );
+		TS_ASSERT_EQUALS( chains[4], 'A' );
+		TS_ASSERT_EQUALS( chains[5], 'A' );
+		TS_ASSERT_EQUALS( chains[6], 'A' );
+		TS_ASSERT_EQUALS( chains[7], ' ' );
+		TS_ASSERT_EQUALS( chains[8], 'B' );
+	}
+
+	void test_string_to_reschain() {
+		std::string tag( "hello world" );
+		bool ok;
+		utility::get_resnum_and_chain( tag, ok );
+		TS_ASSERT( !ok );
+
+		tag = "A:-5--3 A:1-3 1 B:2";
+		run_test_of_get_resnum_and_chain( tag );
+
+		// try an edge case
+		tag = "  A-5--3,A1-3 :1 B2-2";
+		run_test_of_get_resnum_and_chain( tag );
+	}
+
+	void test_make_segtag() {
+		utility::vector1< int >  res_vector = utility::tools::make_vector1( -5, -4, 2, 3, 0, 0, 1, 2);
+		utility::vector1< std::string > segid_vector = utility::tools::make_vector1( "    ","    ",
+																																								 "   A","   A",
+																																								 "X   ","Y   ",
+																																								 "BLAH","BLAH" );
+		std::string tag = make_segtag_with_dashes( res_vector, segid_vector );
+		// comma delimiters would be easier to see...
+		TS_ASSERT_EQUALS( tag, "    :-5--4    A:2-3 X   :0 Y   :0 BLAH:1-2" );
+	}
+
+	void run_test_of_get_resnum_and_segid( std::string const & tag )
+	{
+		bool ok;
+		std::pair< std::vector<int>, std::vector<std::string> > resnum_segid = utility::get_resnum_and_segid( tag, ok );
+		TS_ASSERT( ok );
+		utility::vector1<int>  resnum( resnum_segid.first );
+		utility::vector1<string> segids( resnum_segid.second );
+		TS_ASSERT_EQUALS( resnum.size(), 8 );
+		TS_ASSERT_EQUALS( resnum[1], -5 );
+		TS_ASSERT_EQUALS( resnum[2], -4 );
+		TS_ASSERT_EQUALS( resnum[3],  2 );
+		TS_ASSERT_EQUALS( resnum[4],  3 );
+		TS_ASSERT_EQUALS( resnum[5],  0 );
+		TS_ASSERT_EQUALS( resnum[6],  0 );
+		TS_ASSERT_EQUALS( resnum[7],  1 );
+		TS_ASSERT_EQUALS( resnum[8],  2 );
+
+		TS_ASSERT_EQUALS( segids.size(), 8 );
+		TS_ASSERT_EQUALS( segids[1], "    " );
+		TS_ASSERT_EQUALS( segids[2], "    " );
+		TS_ASSERT_EQUALS( segids[3], "   A" );
+		TS_ASSERT_EQUALS( segids[4], "   A" );
+		TS_ASSERT_EQUALS( segids[5], "X   " );
+		TS_ASSERT_EQUALS( segids[6], "Y   " );
+		TS_ASSERT_EQUALS( segids[7], "BLAH" );
+		TS_ASSERT_EQUALS( segids[8], "BLAH" );
+	}
+
+	void test_string_to_res_and_segid() {
+		std::string tag( "hello world" );
+		bool ok;
+		utility::get_resnum_and_segid( tag, ok );
+		TS_ASSERT( !ok );
+
+		tag = "    :-5--4    A:2-3 X   :0 Y   :0 BLAH:1-2";
+		run_test_of_get_resnum_and_segid( tag );
+
+		tag = "    :-5--4,   A:2-3,X   :0,Y   :0,BLAH:1-2";
+		run_test_of_get_resnum_and_segid( tag );
+
+		// how the tag might look from, e.g., a silent file -- weird spaces.
+		tag = ":-5--4   A:2-3 X   :0    Y   :0    BLAH:1-2";
+		run_test_of_get_resnum_and_segid( tag );
+
+	}
+
 };

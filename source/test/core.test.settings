@@ -173,6 +173,9 @@ sources = {
 		"Pose",
 		"util",
 	],
+	"pose/copydofs" : [
+		"CopyDofsTest",
+	],
 	"pose/carbohydrates" : [
 		"util",
 	],
@@ -671,6 +674,7 @@ testinputfiles = [
 	"pose/pdbinfo_test_in.pdb",
 	"pose/2WDQ__tr.pdb",
 	"pose/reference_pose/1AFO_AB.pdb",
+	"pose/copydofs/excise_bp_7_14_min_again_relax_full_RNA_P_overlap_reR-hbond_sc_wildtype_bound.pdb",
 	"scoring/2GB3.pdb",
 	"scoring/4dO8B.pdb",
 	"scoring/1pqc.params",

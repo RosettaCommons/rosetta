@@ -319,14 +319,15 @@ AtomLevelDomainMap::set_sugar( Size const & i,
 
 //////////////////////////////////////////////////////////////////
 void
-AtomLevelDomainMap::show() const {
+AtomLevelDomainMap::show(std::ostream & out /* = std::cout */ ) const
+{
 	for ( Size i = 1; i <= atom_id_mapper_->nres(); i++ ) {
-		std::cout << "RES" << i;
+		out << "RES" << i;
 		utility::vector1< core::id::AtomID > const & atom_ids_in_res( atom_id_mapper_->atom_ids_in_res( i ) );
 		for ( Size j = 1; j <= atom_ids_in_res.size(); j++ ) {
-			std::cout << ' ' << I( 3, get_domain( atom_ids_in_res[ j ] ) );
+			out << ' ' << I( 3, get_domain( atom_ids_in_res[ j ] ) );
 		}
-		std::cout << std::endl;
+		out << std::endl;
 	}
 }
 

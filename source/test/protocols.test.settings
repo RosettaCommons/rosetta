@@ -90,6 +90,11 @@ sources = {
 		"ResfileAutoRemap",
 	],
 
+        "farna" : [
+            "FARNA_OptimizerTest",
+            "RNA_DeNovoProtocolTest",
+        ],
+
 	"features" : [
 		"BetaTurnDetectionFeatures",
 		"FeaturesReporterTests",
@@ -386,6 +391,26 @@ sources = {
 		"Sparta",
 	],
 
+        "stepwise/modeler" : [
+                "StepWiseMinimizerTest",
+        ],
+
+        "stepwise/modeler/align" : [
+                "StepWisePoseAlignerTest",
+        ],
+
+        "stepwise/modeler/rna" : [
+            "stepwise_modeler_rna_util_test",
+        ],
+
+        "stepwise/monte_carlo" : [
+                "StepWiseMonteCarloTest",
+        ],
+
+        "stepwise/monte_carlo/mover" : [
+                "StepWiseMoveSelectorTest",
+        ],
+
 	"surface_docking" : [
 		"SurfaceVectorLoader",
 	],
@@ -526,6 +551,10 @@ testinputfiles = [
 	"enzdes/mcfi_test.cst",
 	"enzdes/parse_cst_test.xml",
 	"enzdes/resfile_remap.resfile",
+        "farna/farna_rebuild.fasta",
+        "farna/farna_rebuild.params",
+        "farna/bps_test.params",
+        "farna/srl_fixed_START1_1q9a_RNA.pdb",
 	"features/2J88.pdb",
         "features/3B83_nochain.pdb", # needed for SandwichFeaturesTests.cxxtest, I can't use 2J88 for this
 	"fldsgn/filters/test_sheet.pdb",
@@ -608,7 +637,7 @@ testinputfiles = [
 	"membrane/1AFO_AB_multi.pdb",
 	"membrane/1AFO_AB.span",
 	"membrane/1AFO_AB_before_out.pdb",
-	"membrane/1H2S__tr.pdb", 
+	"membrane/1H2S__tr.pdb",
 	"membrane/1H2S__tr.span",
 	"membrane/1mp6_transformed.pdb",
 	"membrane/1mp6.pdb",
@@ -692,6 +721,13 @@ testinputfiles = [
 	"sparta/solution_0022372568.ir_solution.pdb",
 	"sparta/SAM-T08-server_TS3.pdb",
 	"sparta/17280_trim.tab",
+        "stepwise/modeler/align/1_scaff_subset_stepwise_input_seq_1.pdb",
+        "stepwise/modeler/align/2_scaff_subset_stepwise_input_seq_1.pdb",
+        "stepwise/modeler/align/scaff_subset_stepwise_input_seq_1.pdb",
+        "stepwise/modeler/align/scaff_subset_stepwise_input_seq_1_mutated_to_DNA.pdb",
+        "stepwise/modeler/align/seq_with_AAmismatch.fasta",
+        "stepwise/monte_carlo/mover/up_to_ua_handle_t_loop_3l0u_RNA.pdb",
+        "stepwise/monte_carlo/mover/t_loop.fasta",
 	"toolbox/task_operations/ConservativeDesignOperation_defaults.u",
 	"toolbox/task_operations/ConservativeDesignOperation_no_native.u",
         "toolbox/task_operations/ConservativeDesignOperation_blosum62.u",

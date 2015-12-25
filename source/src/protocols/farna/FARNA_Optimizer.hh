@@ -18,6 +18,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/farna/FARNA_Optimizer.fwd.hh>
+#include <protocols/farna/RNA_FragmentMonteCarlo.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 namespace protocols {
@@ -45,11 +46,15 @@ public:
 	void set_cycles( core::Size const & setting ){ cycles_ = setting; }
 	core::Size cycles() const { return cycles_; }
 
+	RNA_FragmentMonteCarloCOP rna_fragment_monte_carlo() const { return rna_fragment_monte_carlo_; }
+
 private:
 
 	utility::vector1< core::pose::PoseOP > pose_list_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	Size cycles_;
+
+	RNA_FragmentMonteCarloOP rna_fragment_monte_carlo_;
 
 };
 

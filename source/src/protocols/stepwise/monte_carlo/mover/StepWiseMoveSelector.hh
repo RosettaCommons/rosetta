@@ -137,7 +137,6 @@ public:
 	StepWiseMove
 	reverse_move( StepWiseMove const & swa_move, pose::Pose const & pose_before, pose::Pose const & pose_after ) const;
 
-
 	bool
 	just_simple_cycles( StepWiseMove const & swa_move, pose::Pose const & pose,
 		bool const verbose = false ) const;

@@ -401,7 +401,11 @@ FullModelParameters::conventional_to_full( int const res_num, char const chain )
 		res_num_in_full_numbering = n;
 		found_match = true;
 	}
-	if ( !found_match ) utility_exit_with_message( "Could not match residue number  " + string_of( res_num ) + " and chain " + string_of(chain) );
+	if ( !found_match ) {
+		TR << "Chains: " << conventional_chains_ << std::endl;
+		TR << "Resnum: " << conventional_numbering_ << std::endl;
+		utility_exit_with_message( "Could not match residue number  " + string_of( res_num ) + " and chain " + string_of(chain) );
+	}
 	return res_num_in_full_numbering;
 }
 

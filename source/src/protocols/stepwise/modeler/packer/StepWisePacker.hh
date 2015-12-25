@@ -80,12 +80,13 @@ public:
 	bool working_pack_res_was_inputted() const { return working_pack_res_was_inputted_; }
 
 	void set_working_pack_res( utility::vector1< Size > const & setting ) { working_pack_res_ = setting; }
-	utility::vector1< Size > previous_working_pack_res() const { return previous_working_pack_res_; }
-
-private:
+	utility::vector1< Size > const & working_pack_res() const { return working_pack_res_; }
+	utility::vector1< Size > const & previous_working_pack_res() const { return previous_working_pack_res_; }
 
 	void
 	figure_out_neighbors( pose::Pose & pose );
+
+private:
 
 	void
 	reinstate_side_chain_angles( pose::Pose & pose, pose::Pose const & src_pose );

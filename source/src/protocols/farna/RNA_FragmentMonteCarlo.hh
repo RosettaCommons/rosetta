@@ -111,6 +111,13 @@ public:
 	core::Real
 	get_rmsd_stems_no_superimpose ( core::pose::Pose const & pose ) const;
 
+	protocols::toolbox::AtomLevelDomainMapCOP atom_level_domain_map() const { return atom_level_domain_map_; }
+
+	RNA_LoopCloserCOP rna_loop_closer() const { return rna_loop_closer_; }
+
+	bool
+	loop_modeling() const;
+
 private:
 
 	void
@@ -177,7 +184,7 @@ private:
 	get_rmsd( core::pose::Pose const & const_pose ) const;
 
 	void
-	check_for_loop_modeling_case( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map, core::pose::Pose const & /* pose */ ) const;
+	check_for_loop_modeling_case( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
 
 private:
 

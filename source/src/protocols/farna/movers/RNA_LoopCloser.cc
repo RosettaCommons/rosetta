@@ -130,7 +130,7 @@ RNA_LoopCloser::get_name() const {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
-RNA_LoopCloser::get_cutpoints_closed( pose::Pose const & pose ) {
+RNA_LoopCloser::get_cutpoints_closed( pose::Pose const & pose ) const {
 
 	using namespace core::id;
 

@@ -785,7 +785,7 @@ RNA_FragmentMonteCarlo::get_rmsd_no_superimpose( core::pose::Pose const & pose )
 	runtime_assert( get_native_pose() != 0 );
 	std::map< core::id::AtomID, core::id::AtomID > atom_id_map;
 	setup_matching_heavy_atoms( *get_native_pose(), pose, atom_id_map ); // no virtuals, no hydrogens.
-	check_for_loop_modeling_case( atom_id_map, pose );
+	check_for_loop_modeling_case( atom_id_map );
 
 	return rms_at_corresponding_atoms_no_super( *get_native_pose(), pose, atom_id_map );
 }
@@ -804,15 +804,19 @@ RNA_FragmentMonteCarlo::get_rmsd_stems_no_superimpose ( core::pose::Pose const &
 	return rms_at_corresponding_atoms_no_super( *get_native_pose(), pose, atom_id_map, stem_residues );
 }
 
+//////////////////////////////////////////////////////////////////////
+bool
+RNA_FragmentMonteCarlo::loop_modeling() const {
+	return ( rna_chunk_library_->single_user_input_chunk() );
+}
 
 //////////////////////////////////////////////////////////////////////
 void
-RNA_FragmentMonteCarlo::check_for_loop_modeling_case( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map,
-	core::pose::Pose const & /* pose */ ) const
+RNA_FragmentMonteCarlo::check_for_loop_modeling_case( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const
 {
 	// special case -- we only care about the loop(s). Pose has already been aligned to fixed residues.
 	// this will be decided in align_and_output_to_silent_file.
-	if ( rna_chunk_library()->single_user_input_chunk() ) {
+	if ( loop_modeling() ) {
 		std::map< core::id::AtomID, core::id::AtomID > loop_atom_id_map;
 		TR << "In loop modeling mode, since there is a single user-inputted pose" << std::endl;
 		for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator it = atom_id_map.begin(); it != atom_id_map.end(); it++ ) {

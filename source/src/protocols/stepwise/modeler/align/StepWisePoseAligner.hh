@@ -89,6 +89,8 @@ public:
 	bool check_matching_atom_names( pose::Pose const & pose1, pose::Pose const & pose2,
 		std::map< id::AtomID, id::AtomID > const & atom_id_map, bool const verbose = true );
 
+	utility::vector1< Size > const & superimpose_res_in_pose(){ return superimpose_res_in_pose_;}
+
 private:
 
 	void
