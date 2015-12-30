@@ -6514,7 +6514,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'preminimize', 'Boolean', desc="For SWM. Just prepack and minimize", default="false" ),
 		Option( 'skip_preminimize', 'Boolean', desc="Skip preminimize before stepwise monte carlo", default="false" ),
 		Option( 'test_all_moves', 'Boolean', desc="Try all moves from starting pose, recursing through additions ", default="false" ),
-		Option( 'new_move_selector', 'Boolean', desc="For SWM. Use new move selector which does keep track of proposal probabilities.", default="false" ),
+		Option( 'new_move_selector', 'Boolean', desc="For SWM. Use new move selector which does keep track of proposal probabilities.", default="true" ),
 		Option( 'dump', 'Boolean', desc="Dump intermediate silent & PDB files",default="false" ),
 		Option( 'VERBOSE', 'Boolean', desc= "VERBOSE", default='false' ),
 		Option( 'use_green_packer', 'Boolean', desc= "use packer instead of rotamer trials for side-chain packing and O2' optimization", default='false' ),

@@ -116,7 +116,7 @@ StepWiseMasterMover::apply( pose::Pose & pose,
 	StepWiseMoveSelectorOP reverse_stepwise_move_selector = stepwise_move_selector_->clone();
 	reverse_stepwise_move_selector->figure_out_all_possible_moves( pose );
 	TR << TR.Magenta << "Reverse of " << stepwise_move << " is " << reverse_move << TR.Reset << std::endl;
-	reverse_stepwise_move_selector->output_moves();
+	//	reverse_stepwise_move_selector->output_moves();
 	Real const reverse_proposal_probability = reverse_stepwise_move_selector->proposal_probability( reverse_move );
 	proposal_density_ratio_ = ( reverse_proposal_probability / forward_proposal_probability );
 

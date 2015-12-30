@@ -386,7 +386,7 @@ FullModelInfo::remove_other_pose_at_idx( Size const idx ){
 bool
 FullModelInfo::is_a_submotif() const
 {
-	return ( submotif_info_list_.size() == 1 && is_a_submotif( res_list_ ) );
+	return ( submotif_info_list_.size() > 0 && is_a_submotif( res_list_ ) );
 }
 
 
@@ -395,7 +395,7 @@ FullModelInfo::is_a_submotif() const
 bool
 FullModelInfo::is_a_submotif_seed() const
 {
-	return ( submotif_info_list_.size() == 1 && is_a_submotif_seed( res_list_ ) );
+	return ( submotif_info_list_.size() > 0 && is_a_submotif_seed( res_list_ ) );
 }
 
 

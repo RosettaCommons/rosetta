@@ -93,6 +93,18 @@ private:
 	figure_out_loop_cycles();
 
 	void
+	figure_out_loop_cycles_tiernan();
+
+	void
+	record_loop_cycle(
+										utility::vector1< Size > const & elementary_cycle,
+										Size const & idx,
+										utility::vector1< Loop > const & loops_for_cycle_in );
+
+	void
+	figure_out_loop_cycles_legacy();
+
+	void
 	look_for_cycles_recursively( Size const current_domain,
 		utility::vector1< Size > parent_domains_in,
 		utility::vector1< Loop > loops_so_far_in );

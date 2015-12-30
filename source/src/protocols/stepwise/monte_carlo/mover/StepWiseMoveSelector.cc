@@ -551,11 +551,12 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 
 			partition_definition = get_partition_definition( pose, i /*suite*/ );
 			if ( partition_splits_an_input_domain( partition_definition, domain_map ) ) continue;
-			if ( move_type == DELETE && check_from_scratch( pose, partition_definition ) ) continue; // handled elsewhere
 
 			partition_res1 = get_partition_res( partition_definition, true );
 			partition_res2 = get_partition_res( partition_definition, false );
 
+			// from-scratch handled elsewhere
+			if ( move_type == DELETE && both_remnants_would_be_deleted( pose, partition_res1, partition_res2  ) ) continue;
 			if ( !allow_submotif_split_ && partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
 
 			swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full(partition_res2),
@@ -651,9 +652,18 @@ StepWiseMoveSelector::get_docking_split_move_elements( pose::Pose const & pose,
 		runtime_assert( dock_domain_map[ moving_res_full ] > 0 );
 		runtime_assert( dock_domain_map[ reference_res_full ] > 0 );
 		if ( dock_domain_map[ moving_res_full ] == dock_domain_map[ reference_res_full ] ) continue;
-		utility::vector1< Size > moving_partition_res = get_partition_res( partition_definition,  partition_definition[ moving_res ] );
-		swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full( moving_partition_res ),
-			Attachment( reference_res_full, JUMP_DOCK ), move_type ) );
+		utility::vector1< Size > const moving_partition_res = get_partition_res( partition_definition,  partition_definition[ moving_res ] );
+		utility::vector1< Size > const reference_partition_res = get_partition_res( partition_definition,  partition_definition[ reference_res ] );
+		if ( !allow_submotif_split_ && partitions_split_a_submotif( pose, moving_partition_res, reference_partition_res ) ) continue;
+
+		// order 'moving'/'attachment' based on order in sequence -- help enforce unique StepWiseMove definition.
+		if ( moving_res > reference_res ) {
+			swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full( moving_partition_res ),
+																							 Attachment( reference_res_full, JUMP_DOCK ), move_type ) );
+		} else {
+			swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full( reference_partition_res ),
+																							 Attachment( moving_res_full, JUMP_DOCK ), move_type ) );
+		}
 	}
 
 	for ( Size n = 1; n <= swa_moves_split.size(); n++ ) swa_moves.push_back( swa_moves_split[ n ] );
@@ -689,6 +699,28 @@ StepWiseMoveSelector::partitions_split_a_submotif(
 		}
 	}
 	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool
+StepWiseMoveSelector::remnant_would_be_deleted(
+	pose::Pose const & pose,
+	utility::vector1 < Size > const & partition ) const
+{
+	if ( const_full_model_info( pose ).is_a_submotif( partition ) &&
+			 !const_full_model_info( pose ).is_a_submotif_seed( partition ) ) return true;
+	if ( partition.size() == 1 ) return true;
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool
+StepWiseMoveSelector::both_remnants_would_be_deleted(
+	pose::Pose const & pose,
+	utility::vector1 < Size > const & partition1,
+	utility::vector1 < Size > const & partition2 ) const
+{
+	return ( remnant_would_be_deleted( pose, partition1 ) && remnant_would_be_deleted( pose, partition2 ) );
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1302,7 +1334,6 @@ StepWiseMoveSelector::get_actual_moving_res( StepWiseMove const & swa_move, pose
 	}
 
 	// rerooting may have occurred between poses.
-	MoveElement move_element( full_model_info.sub_to_full( moving_partition_res ) );
 	Size actual_moving_res = find_downstream_connection_res( pose, moving_partition_res );
 	if ( actual_moving_res == 0 ) actual_moving_res = find_downstream_connection_res( pose, root_partition_res );
 	return actual_moving_res;
@@ -1339,9 +1370,14 @@ StepWiseMoveSelector::reverse_delete_move( StepWiseMove const & swa_move, pose::
 	} else if ( pose_domain2 == 0 && pose_domain1 > 0 ) {
 		return StepWiseMove( res2, figure_out_attachment( res2, res1, old_pose ), ADD );
 	} else {
-		// must have been "FROM SCRATCH"
 		runtime_assert( pose_domain1 == 0 && pose_domain2 == 0 );
-		runtime_assert( old_pose.total_residue() && !old_pose.fold_tree().is_cutpoint( 1 ) );
+		if ( old_pose.total_residue() != 2 || !old_pose.fold_tree().is_cutpoint( 1 ) ) {
+			TR << "Was expecting old_pose to be a result of from_scratch, with two residues and no cutpoints" << std::endl;
+			TR << "old_pose res_list: " << const_full_model_info( old_pose ).res_list() << "  and fold_tree " << old_pose.fold_tree() << std::endl;
+			TR << "old_pose submotif_info_list: ";
+			const_full_model_info( old_pose ).show_submotif_info_list();
+		}
+		runtime_assert( old_pose.total_residue() == 2 && !old_pose.fold_tree().is_cutpoint( 1 ) );
 		runtime_assert( std::abs( int( res1 ) - int( res2 ) ) == 1 );
 		return StepWiseMove( utility::tools::make_vector1( std::min(res1,res2), std::max(res1,res2) ), Attachments(), FROM_SCRATCH );
 	}
@@ -1376,23 +1412,16 @@ StepWiseMoveSelector::reverse_add_move( StepWiseMove const & swa_move, pose::Pos
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// NOTE -- the ADD_SUBMOTIF move is not rigorously reversible.  It is really two moves.
+// NOTE -- the ADD_SUBMOTIF move is now reversible.  It is really two moves.
 //  It (1) creates a submotif anew, and (2) adds the submotif to the existing pose.
-//
-// The reverse move, as encoded below and by the SWM machinery, will only 'split' submotif
-//  from rest of pose, and the submotif will *not* disappear. I.e., it reverses step (2) but
-//  not step (1).
-//
-// Probably cannot use ADD_SUBMOTIF if we want to really maintain detailed balance...
-//  instead would need to create/delete submotif's via FROM_SCRATCH pathway.
-//
+// However, we now recorded SubMotifInfo in full_model_info, so that if a submotif is
+//  split off, it is also deleted -- providing an exact reverse!
 //////////////////////////////////////////////////////////////////////////////////////////////
 StepWiseMove
 StepWiseMoveSelector::reverse_add_submotif_move( StepWiseMove const & swa_move, pose::Pose const & pose_after ) const {
-	Size const actual_moving_res = get_actual_moving_res( swa_move, pose_after );
-	StepWiseMove swa_move_just_add = swa_move;
-	swa_move_just_add.set_move_element( utility::tools::make_vector1( sub_to_full( actual_moving_res, pose_after ) ) );
-	return reverse_add_move( swa_move_just_add, pose_after );
+	Size const actual_moving_res   = get_actual_moving_res( swa_move, pose_after );
+	Size const actual_attached_res = pose_after.fold_tree().get_parent_residue( actual_moving_res );
+	return ordered_move_from_partition( actual_moving_res, actual_attached_res, pose_after, DELETE );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

@@ -84,6 +84,7 @@ AddOrDeleteMover::apply( core::pose::Pose & pose, StepWiseMove const & swa_move 
 	runtime_assert( swa_move_selector_->just_simple_cycles( swa_move, pose, false /*verbose*/ ) );
 	TR.Debug << "Starting from: " << pose.annotated_sequence() << std::endl;
 	if ( swa_move.move_type() == DELETE ) {
+		TR << "Fold-tree before delete: " << pose.fold_tree() << std::endl;
 		rna_delete_mover_->apply( pose, swa_move.move_element() );
 	} else if ( swa_move.move_type() == FROM_SCRATCH ) {
 		rna_from_scratch_mover_->apply( pose, swa_move.move_element() );

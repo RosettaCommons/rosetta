@@ -201,6 +201,16 @@ private:
 		utility::vector1< Size > const & input_domain,
 		utility::vector1< Size > const & working_res );
 
+	bool
+	remnant_would_be_deleted(
+													 pose::Pose const & pose,
+													 utility::vector1 < Size > const & partition ) const;
+
+	bool
+	both_remnants_would_be_deleted(
+																 pose::Pose const & pose,
+																 utility::vector1 < Size > const & partition1,
+																 utility::vector1 < Size > const & partition2 ) const;
 
 	bool
 	partitions_split_a_submotif( pose::Pose const & pose, utility::vector1< Size > const & partition1, utility::vector1< Size > const & partition2 ) const;

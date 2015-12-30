@@ -30,9 +30,14 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
+// for figuring out elementary cycles
+#include <boost/graph/directed_graph.hpp>
+#include <boost/graph/tiernan_all_cycles.hpp>
+
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
+#include <utility/tools/make_vector1.hh>
 
 static THREAD_LOCAL basic::Tracer TR( "core.scoring.loop_graph.LoopGraph" );
 
@@ -229,11 +234,133 @@ LoopGraph::update_loops_and_cycles( utility::vector1< Size > const & pose_domain
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
+// let's figure out cycles, for which we can use GaussianChainFunc term developed by Rhiju.
 // pose_domains are vertices.
-// loops are edges (directed! not sure if that's actually important here.).
+// loops are edges (directed!)
 void
 LoopGraph::figure_out_loop_cycles(){
+	figure_out_loop_cycles_tiernan();
+	//	figure_out_loop_cycles_legacy();
+}
 
+// stolen from http://www.boost.org/doc/libs/1_55_0/libs/graph/example/tiernan_print_cycles.cpp
+using namespace std;
+using namespace boost;
+
+struct cycle_printer
+{
+	cycle_printer( utility::vector1< utility::vector1< Size > > & cycles ):
+		cycles_( cycles )
+	{
+	}
+
+	template <typename Path, typename Graph>
+	void cycle(const Path& p, const Graph& g)
+	{
+		// Get the property map containing the vertex indices
+		// so we can print them.
+		typedef typename property_map<Graph, vertex_index_t>::const_type IndexMap;
+		IndexMap indices = get(vertex_index, g);
+
+		// Iterate over path printing each vertex that forms the cycle.
+		typename Path::const_iterator i, end = p.end();
+		utility::vector1< Size > cycle;
+		for(i = p.begin(); i != end; ++i) {
+			// add 1, to convert from 0-indexed vertices to 1-indexed domains
+			cycle.push_back( get(indices, *i)+1 );
+		}
+		cycles_.push_back( cycle );
+	}
+
+	utility::vector1< utility::vector1< Size > > & cycles_;
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// using canned function in boost library. there is apparently a more efficient one
+// by donaldson, but not available in library.
+void
+LoopGraph::figure_out_loop_cycles_tiernan() {
+	loop_cycles_.clear();
+
+	typedef boost::directed_graph<> Graph;
+	Size const num_domains = loops_from_domain_.size();
+  Graph g( num_domains );
+	//	for ( Size n = 1; n <= num_domains; n++ ) add_vertex( int(n), g );
+	for ( Size n = 1; n <= loops_.size(); n++ ) {
+		Size const domain1 = loops_[n].takeoff_domain();
+		if ( domain1 == 0 ) continue; // terminal loop
+		Size const domain2 = loops_[n].landing_domain();
+		if ( domain2 == 0 ) continue; // terminal loop
+		// subtract 1, to convert to 0-indexed vertices.
+		add_edge( vertex( domain1-1, g ), vertex( domain2-1,g ), g  );
+		// internal loops won't be caught by elementary cycles decomposition below -- save now
+		if ( domain1 == domain2 )	loop_cycles_.push_back( utility::tools::make_vector1( loops_[n] ) );
+	}
+
+  // Instantiate the visitor for saving cycles
+	utility::vector1< utility::vector1< Size > > elementary_cycles;
+	cycle_printer vis( elementary_cycles );
+
+	// Use the Tiernan algorithm to visit all cycles, printing them
+	// as they are found.
+	tiernan_all_cycles(g, vis);
+	//	TR << elementary_cycles << std::endl;
+
+	// The cycles above are in terms of domain numbers.
+	// For calculating loop scores, we need to work out cycles in terms of loops.
+	// Set them up via a recursion, since each domain edge may actually
+	// correspond to multiple connections.
+	for ( Size n = 1; n <= elementary_cycles.size(); n++ ) {
+		utility::vector1< Loop > loops_for_cycle;
+		record_loop_cycle( elementary_cycles[ n ], 1, loops_for_cycle );
+	}
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+void
+LoopGraph::record_loop_cycle(
+   utility::vector1< Size > const & elementary_cycle,
+	 Size const & idx,
+	 utility::vector1< Loop > const & loops_for_cycle_in )
+{
+	Size const & current_domain = elementary_cycle[ idx ];
+	Size const next_idx = ( idx < elementary_cycle.size() ) ? (idx + 1) : 1;
+	Size const & next_domain = elementary_cycle[ next_idx ];
+
+	utility::vector1< Size > const & loops_from_current_domain = loops_from_domain_[ current_domain ];
+	bool found_loop( false );
+	for ( Size k = 1; k <= loops_from_current_domain.size(); k++ ) {
+		Size const & loop_idx = loops_from_current_domain[ k ];
+		Loop const & loop = loops_[ loop_idx ];
+		if ( loop.landing_domain() != next_domain ) continue;
+
+		found_loop = true;
+
+		utility::vector1< Loop > loops_for_cycle = loops_for_cycle_in;
+		loops_for_cycle.push_back( loop );
+
+		if ( idx == elementary_cycle.size() ) { // done with cycle
+			loop_cycles_.push_back( LoopCycle( loops_for_cycle ) );
+		} else {
+			runtime_assert( idx < elementary_cycle.size() );
+			record_loop_cycle( elementary_cycle, idx + 1, loops_for_cycle );
+		}
+	}
+	if ( !found_loop ){
+		TR << "All loops " << std::endl;
+		TR << loops_ << std::endl;
+		TR << "loops_from_current_domain (by idx)" << loops_from_current_domain << std::endl;
+		TR << "checking elementary_cycle" << elementary_cycle << " at idx " << idx << " looking for loop from current_domain " << current_domain << " to next_domain " << next_domain << "  [ next_idx: " << next_idx << " ] " << std::endl;
+	}
+	runtime_assert( found_loop );
+}
+
+// does not handle cases with complex cycles (multiple cycles sharing same loop)
+// remove from code in 2016 if boost replacement (tiernan algorithm) does the trick.
+void
+LoopGraph::figure_out_loop_cycles_legacy()
+{
 	loop_cycles_.clear();
 	Size const num_domains = loops_from_domain_.size();
 	if ( num_domains == 0 ) return; // no domains means there's no graph...
@@ -263,8 +390,9 @@ LoopGraph::figure_out_loop_cycles(){
 	check_loop_cycles_are_disjoint();
 
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////
+// does not handle cases with complex cycles (multiple cycles sharing same loop)
+// remove from code in 2016 if boost replacement (tiernan algorithm) does the trick.
 void
 LoopGraph::look_for_cycles_recursively( Size const current_domain,
 	utility::vector1< Size > const parent_domains_in,
