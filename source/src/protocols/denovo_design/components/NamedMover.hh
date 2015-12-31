@@ -97,7 +97,8 @@ public:
 	process_permutation( StructureData & perm ) const = 0;
 
 	/// @brief checks an unbuilt permutation modified by setup_permutation to see if it is acceptable for building
-	virtual bool check_permutation( StructureData const & perm ) const = 0;
+	/// @throw EXCN_PreFilterFailed on failure
+	virtual void check_permutation( StructureData const & perm ) const = 0;
 
 	/// @brief checks the built StructureData vs. the desired params.
 	/// @details should return true if it matches, false otherwise
@@ -175,6 +176,17 @@ public:
 	EXCN_Process( std::string const & msg ):
 		EXCN_Apply( msg )
 	{}
+};
+
+class EXCN_PreFilterFailed : public utility::excn::EXCN_Msg_Exception {
+public:
+	EXCN_PreFilterFailed( std::string const & msg, StringList const & problematic_segments ) :
+		utility::excn::EXCN_Msg_Exception( msg ), segments_( problematic_segments )
+	{}
+	StringList::const_iterator segments_begin() const { return segments_.begin(); }
+	StringList::const_iterator segments_end() const { return segments_.end(); }
+private:
+	StringList const segments_;
 };
 
 } // components

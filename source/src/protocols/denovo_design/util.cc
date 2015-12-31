@@ -470,8 +470,11 @@ strand_pair_str(
 		throw utility::excn::EXCN_BadInput( ss.str() );
 	}
 
-	int const orientation = perm.get_data_int( strand2, "orientation" );
-	int const prevorientation = perm.get_data_int( strand1, "orientation" );
+	int orientation = 1;
+	if ( perm.has_data_int( strand2, "orientation" ) ) orientation = perm.get_data_int( strand2, "orientation" );
+
+	int prevorientation = 1;
+	if ( perm.has_data_int( strand1, "orientation" ) ) prevorientation = perm.get_data_int( strand1, "orientation" );
 
 	bool parallel = true;
 	out << '.';
@@ -483,7 +486,8 @@ strand_pair_str(
 	}
 	out << '.';
 
-	int const shift = perm.get_data_int( strand2, "shift" );
+	int shift = 0;
+	if ( perm.has_data_int( strand2, "shift" ) ) shift = perm.get_data_int( strand2, "shift" );
 
 	if ( use_register_shift ) {
 		// determine "Nobu-style" register shift
@@ -517,7 +521,7 @@ get_strandpairings(
 	std::map< std::string, core::Size > name_to_strandnum;
 	StringVec strandnames;
 	core::Size strandcount = 0;
-	for ( StringList::const_iterator s = perm.segments_begin(); s != perm.segments_end(); ++s ) {
+	for ( StringList::const_iterator s=perm.segments_begin(); s!=perm.segments_end(); ++s ) {
 		// scan to see if this is a strand
 		bool strand = false;
 		for ( std::string::const_iterator ch = perm.segment( *s ).ss().begin(); ch != perm.segment( *s ).ss().end(); ++ch ) {
@@ -539,7 +543,7 @@ get_strandpairings(
 	// now build sheet topology string
 	std::stringstream sheet_str;
 	std::set< std::pair< std::string, std::string > > visited;
-	for ( StringVec::const_iterator s = strandnames.begin(); s != strandnames.end(); ++s ) {
+	for ( StringVec::const_iterator s=strandnames.begin(); s!=strandnames.end(); ++s ) {
 		if ( !perm.has_data_str( *s, "paired_strands" ) ) {
 			continue;
 		}

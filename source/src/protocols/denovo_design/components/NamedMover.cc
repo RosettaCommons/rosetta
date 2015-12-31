@@ -116,10 +116,14 @@ NamedMover::apply( core::pose::Pose & pose )
 			TR.Error << std::endl << "sd=" << *sd << std::endl;
 			continue;
 		}
-		if ( check_permutation( *sd ) ) {
-			permutation_is_valid = true;
-			break;
+		try {
+			check_permutation( *sd );
+		} catch ( EXCN_PreFilterFailed const & e ) {
+			e.show( TR.Debug );
+			continue;
 		}
+		permutation_is_valid = true;
+		break;
 	}
 	if ( !permutation_is_valid ) {
 		set_last_move_status( protocols::moves::FAIL_RETRY );

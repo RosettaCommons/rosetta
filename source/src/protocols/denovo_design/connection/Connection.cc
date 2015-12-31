@@ -1530,11 +1530,11 @@ Connection::move_segments( components::StructureData & perm, StringList const & 
 
 /// @brief checks the generated StructureData object to ensure it fits with what the user wants
 /// before building
+/// @throw EXCN_PreFilterFailed if there is a problem
 /// @details default behavior is to always pass this check. Subclasses can implement more stringent checks.
-bool
+void
 Connection::check_permutation( components::StructureData const & ) const
 {
-	return true;
 }
 
 /// @brief checks the inserted region vs. the desired ss/abego.  True if it matches, false otherwise

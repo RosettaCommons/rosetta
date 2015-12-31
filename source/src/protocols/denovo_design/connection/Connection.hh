@@ -174,8 +174,9 @@ public:
 
 	/// @brief checks the generated StructureData object to ensure it fits with what the user wants
 	/// before building
+	/// @throw EXCN_PreFilterFailed if there is a problem
 	/// @details default behavior is to always pass this check. Subclasses can implement more stringent checks.
-	virtual bool check_permutation( components::StructureData const & perm ) const;
+	virtual void check_permutation( components::StructureData const & perm ) const;
 
 	/// @brief checks the inserted region vs. the desired ss/abego.  True if it matches, false otherwise
 	/// @details One can add checks by overriding this function

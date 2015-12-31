@@ -3118,19 +3118,21 @@ StructureData::update_numbering()
 
 /// @brief updates movable group numbering after a deletion -- deleted mg is passed
 void
-StructureData::update_movable_groups_after_deletion( core::Size const mg_old )
+StructureData::update_movable_groups_after_deletion( core::Size const /*mg_old*/ )
 {
+	/* TL: commented out because I don't think this is necessary anymore
 	std::set< core::Size > mgs = movable_groups();
 	core::Size replaced_mg = 0;
-	// fix movable groups
+
 	for ( SegmentMap::iterator r = segments_.begin(); r != segments_.end(); ++r ) {
-		if ( r->second.movable_group > mgs.size() ) {
+		if ( r->second.movable_group == mg_old ) {
 			replaced_mg = r->second.movable_group;
 			r->second.movable_group = mg_old;
 		}
 	}
 
 	TR.Debug << "Renumbered movable group " << replaced_mg << " to " << mg_old << std::endl;
+	*/
 }
 
 /// @brief renumbers movable group "oldg" to have new number "newg"
