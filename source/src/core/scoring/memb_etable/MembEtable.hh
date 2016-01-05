@@ -8,60 +8,54 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file  core/scoring/memb_etable/MembEtable.hh
-///
-/// @brief  Generate the table for fa_atr/rep and fa_sol with membrane additions
-/// @details Used by the scoring manager. becasue computing LJ potentials is time
-///    consuming, precomputes and discritizes the potential (broken down into bins).
-///    Once bins are created, will smooth bins for better interpolation.
-///    Last Modified: 5/13/14
-///
-/// @author Patrick Barth
-/// @author (Updates) Rebecca Alford (rfalford12@gmail.com)
+/// @brief Table of pre-computed LK membrane solvation energies
+/// @author Patrick Barth (original)
+/// @author Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_memb_etable_MembEtable_hh
 #define INCLUDED_core_scoring_memb_etable_MembEtable_hh
 
 // Unit Headers
-#include <core/scoring/etable/Etable.fwd.hh>
-#include <core/scoring/etable/Etable.hh>
 #include <core/scoring/memb_etable/MembEtable.fwd.hh>
 
 // Package Headers
+#include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableOptions.hh>
 
+// Project Headers
 #include <core/chemical/AtomTypeSet.hh>
 #include <utility/pointer/access_ptr.hh>
 
-// ObjexxFCL Headers
+// Utility Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray3D.hh>
-
-#include <utility/pointer/ReferenceCount.hh>
-
 #include <ObjexxFCL/FArray1.fwd.hh>
 #include <ObjexxFCL/FArray2.fwd.hh>
+
+#include <utility/pointer/ReferenceCount.hh>
 
 namespace core {
 namespace scoring {
 namespace etable {
 
-/// @brief Class for Definition of a Membrane Protein Specific Etable
+/// @brief Table of pre-computed LK membrane solvation energies
 class MembEtable : public Etable {
 
 public:
 
-	typedef Etable Etable;
+	// Constructors
 
-	/// @brief Construct Membrane Etable
-	/// @details Construct membrane etable from an atom typeset, generic
-	/// set of etable options and alternate parameter set
 	MembEtable(
 		chemical::AtomTypeSetCAP atom_set_in,
 		EtableOptions const & options,
 		std::string const alternate_parameter_set = ""
 	);
 
-	void copy_from( Etable const * source );
+	MembEtable( MembEtable const & src ); 
+
+	virtual ~MembEtable(); 
+
+	// Accessors
 
 	/// @brief Provide Constnat Access to Arrays
 	ObjexxFCL::FArray3D< Real > const &
@@ -116,97 +110,51 @@ public:
 		return memb_dsolv2_;
 	}
 
-	Real
-	max_dis() const
-	{
-		return max_dis_;
-	}
-
-	Real
-	get_safe_max_dis2() const
-	{
-		return safe_max_dis2;
-	}
-
-	int
-	get_bins_per_A2() const
-	{
-		return bins_per_A2;
-	}
-
-	chemical::AtomTypeSetCAP
-	atom_set() const
-	{
-		return atom_set_;
-	}
-
-	Real
-	hydrogen_interaction_cutoff2() const
-	{
-		return hydrogen_interaction_cutoff2_;
-	}
-
-
-	Real
-	nblist_dis2_cutoff_XX() const
-	{
-		return nblist_dis2_cutoff_XX_;
-	}
-
-
-	Real
-	nblist_dis2_cutoff_XH() const
-	{
-		return nblist_dis2_cutoff_XH_;
-	}
-
-
-	Real
-	nblist_dis2_cutoff_HH() const
-	{
-		return nblist_dis2_cutoff_HH_;
-	}
-
 	/// @brief Returns the maximum lj radius for any non-hydrogen
 	/// atom as defined by the atom-type-set used to create this Etable.
+	virtual
 	Real
-	max_non_hydrogen_lj_radius() const;
+	max_non_hydrogen_lj_radius() const { 
+		return max_non_hydrogen_lj_radius_;
+	}
 
 	/// @brief Returns the maximum lj radius for any hydrogen atom as
 	/// defined by the input atom-type-set used to create this Etable.
+	virtual
 	Real
-	max_hydrogen_lj_radius() const;
+	max_hydrogen_lj_radius() const {
+		return max_hydrogen_lj_radius_; 
+	}
 
 	/// set these up in the ctor
-	inline
+	virtual
 	Real
 	lj_radius( int const i ) const
 	{
 		return lj_radius_[i];
 	}
 
-
+	virtual
 	Real
 	lk_dgfree( int const i ) const
 	{
 		return lk_dgfree_[i];
 	}
 
-
+	virtual
 	Real
 	lk_volume( int const i ) const
 	{
 		return lk_volume_[i];
 	}
 
-
+	virtual
 	Real
 	lk_lambda( int const i ) const
 	{
 		return lk_lambda_[i];
 	}
 
-	//pba
 	Real
 	memb_lk_dgfree( int const i ) const
 	{
@@ -225,8 +173,9 @@ public:
 		return memb_lk_dgrefce_;
 	}
 
-private:
+public: // Interfaces for convenient IO
 
+	virtual
 	void
 	output_etable(
 		ObjexxFCL::FArray3D<Real> & etable,
@@ -234,6 +183,7 @@ private:
 		std::ostream & out
 	);
 
+	virtual
 	void
 	input_etable(
 		ObjexxFCL::FArray3D<Real> & etable,
@@ -241,76 +191,14 @@ private:
 		std::istream & in
 	);
 
-private: // data
-
-	// Atom type set
-	chemical::AtomTypeSetCAP atom_set_;
-
-	// Additional Parameters
-	int const n_atomtypes;
-
-	// Fullatom Energies Options
-	Real const max_dis_;
-	int const bins_per_A2;
-	Real const Wradius; // global mod to radii
-	Real const lj_switch_dis2sigma; // actual value used for switch
-	Real const max_dis2;
-	int const etable_disbins;
-
-	// Hard-Coded Parameter Set
-	bool const lj_use_lj_deriv_slope;
-	Real const lj_slope_intercept;
-	bool const lj_use_hbond_radii;
-	Real const lj_hbond_dis;
-	Real const lj_hbond_hdis;
-	Real const lj_hbond_accOch_dis;
-	Real const lj_hbond_accOch_hdis;
-	bool const lj_use_water_radii;
-	Real const lj_water_dis;
-	Real const lj_water_hdis;
-	Real const lk_min_dis2sigma;
-	Real const min_dis;
-	Real const min_dis2; // was double
-	bool const add_long_range_damping;
-	Real const long_range_damping_length;
-	Real const epsilon;
-	Real const safe_max_dis2;
-	Real hydrogen_interaction_cutoff2_;
-	Real const nblist_dis2_cutoff_XX_;
-	Real const nblist_dis2_cutoff_XH_;
-	Real const nblist_dis2_cutoff_HH_;
-	Real max_non_hydrogen_lj_radius_;
-	Real max_hydrogen_lj_radius_;
-
-	// No idea, what this does
-	utility::vector1< Real > lj_radius_;
-	utility::vector1< Real > lk_dgfree_;
-	utility::vector1< Real > lk_volume_;
-	utility::vector1< Real > lk_lambda_;
-	utility::vector1< Real > memb_lk_dgfree_;
-	ObjexxFCL::FArray1D< Real > lk_dgrefce_;
-	ObjexxFCL::FArray1D< Real > memb_lk_dgrefce_;
-
-	// Store the Etable itself (both non membrane and membrane)
-	ObjexxFCL::FArray3D< Real > solv1_;
-	ObjexxFCL::FArray3D< Real > solv2_;
-	ObjexxFCL::FArray3D< Real > dsolv1_;
-	ObjexxFCL::FArray3D< Real > dsolv2_;
-	ObjexxFCL::FArray3D< Real > memb_solv1_;
-	ObjexxFCL::FArray3D< Real > memb_solv2_;
-	ObjexxFCL::FArray3D< Real > memb_dsolv2_;
-	ObjexxFCL::FArray3D< Real > memb_dsolv1_;
 
 private: // methods
 
-	/// @brief Get Atom Type corresponding to index
-	chemical::AtomType const &
-	atom_type( int const type )
-	{
-		chemical::AtomTypeSetCOP atom_set( atom_set_ );
-		return (*atom_set)[ type ];
-	}
+	// Initialization functions
+	void dimension_memb_etable_arrays();
+	void initialize_from_atomset( chemical::AtomTypeSetCAP atom_set_in );
 
+	// Etable Calculations
 	void smooth_etables();
 	void modify_pot();
 	void make_pairenergy_table();
@@ -346,10 +234,32 @@ private: // methods
 		Real & memb_dsolvE2
 	);
 
+private: // data
+
+	Real max_non_hydrogen_lj_radius_;
+	Real max_hydrogen_lj_radius_;
+
+	utility::vector1< Real > lj_radius_;
+	utility::vector1< Real > lk_dgfree_;
+	utility::vector1< Real > lk_volume_;
+	utility::vector1< Real > lk_lambda_;
+	utility::vector1< Real > memb_lk_dgfree_;
+	ObjexxFCL::FArray1D< Real > lk_dgrefce_;
+	ObjexxFCL::FArray1D< Real > memb_lk_dgrefce_;
+
+	ObjexxFCL::FArray3D< Real > solv1_;
+	ObjexxFCL::FArray3D< Real > solv2_;
+	ObjexxFCL::FArray3D< Real > dsolv1_;
+	ObjexxFCL::FArray3D< Real > dsolv2_;
+	ObjexxFCL::FArray3D< Real > memb_solv1_;
+	ObjexxFCL::FArray3D< Real > memb_solv2_;
+	ObjexxFCL::FArray3D< Real > memb_dsolv2_;
+	ObjexxFCL::FArray3D< Real > memb_dsolv1_;
+
 };
 
 } // etable
 } // scoring
 } // core
 
-#endif
+#endif // INCLUDED_core_scoring_memb_etable_MembEtable_hh

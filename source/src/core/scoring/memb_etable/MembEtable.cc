@@ -8,15 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file  core/scoring/memb_etable/MembEtable.cc
-///
-/// @brief  Generate the table for fa_atr/rep and fa_sol with membrane additions
-/// @details Used by the scoring manager. becasue computing LJ potentials is time
-///    consuming, precomputes and discritizes the potential (broken down into bins).
-///    Once bins are created, will smooth bins for better interpolation.
-///    Last Modified: 5/13/14
-///
-/// @author Patrick Barth
-/// @author (Updates) Rebecca Alford (rfalford12@gmail.com)
+/// @brief Table of pre-computed LK membrane solvation energies
+/// @author Patrick Barth (original)
+/// @author Rebecca Alford (rfalford12@gmail.com)
 
 // Unit Headers
 #include <core/scoring/memb_etable/MembEtable.hh>
@@ -58,82 +52,61 @@ namespace etable {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-///  constructor
+// Constructors & Setup
+
 MembEtable::MembEtable(
-	chemical::AtomTypeSetCAP atom_set_in_ap, // like etable namespace
+	chemical::AtomTypeSetCAP atom_set_in_ap,
 	EtableOptions const & options,
-	std::string const alternate_parameter_set // = ""
-):
-
-	Etable( atom_set_in_ap, options, alternate_parameter_set ),
-
-	// from atop_props_in:
-	atom_set_                 ( atom_set_in_ap ),
-	n_atomtypes               ( atom_set_in_ap.lock()->n_atomtypes() ),
-
-	// from options
-	max_dis_                  ( options.max_dis ),
-	bins_per_A2               ( options.bins_per_A2 ),
-	Wradius                   ( options.Wradius ), // global mod to radii
-	lj_switch_dis2sigma       ( options.lj_switch_dis2sigma ),
-	max_dis2                  ( max_dis_*max_dis_ ),
-	etable_disbins            ( static_cast< int >( max_dis2 * bins_per_A2 )+1 ),
-
-	// hard-coded for now
-	lj_use_lj_deriv_slope     ( true ),
-	lj_slope_intercept        ( 0.0 ),
-	lj_use_hbond_radii        ( true ),
-	lj_hbond_dis              ( 3.0 ),
-	lj_hbond_hdis             ( 1.95 ),
-	lj_hbond_accOch_dis       ( 2.80 ),
-	lj_hbond_accOch_hdis      ( 1.75 ),
-	lj_use_water_radii        ( true ),
-	lj_water_dis              ( 3.0 ),
-	lj_water_hdis             ( 1.95 ),
-	lk_min_dis2sigma          ( 0.89 ),
-	min_dis                   ( 0.01 ),
-	min_dis2                  ( min_dis * min_dis ),
-	add_long_range_damping    ( true ),
-	long_range_damping_length ( 0.5 ),
-	epsilon                   ( 0.0001 ),
-	safe_max_dis2             ( max_dis2 - epsilon ),
-	hydrogen_interaction_cutoff2_( option[ score::fa_Hatr ] ?
-	std::pow( max_dis_ + 2*chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH, 2 ) :
-	std::pow(5.0,2) ),
-	nblist_dis2_cutoff_XX_    ((options.max_dis+1.5)          *  (options.max_dis+1.5)          ),
-	nblist_dis2_cutoff_XH_    ( option[ score::fa_Hatr ] ?
-	nblist_dis2_cutoff_XX_ :
-	((options.max_dis+0.5)/2.0+2.2) * ((options.max_dis+0.5)/2.0+2.2) ),
-	nblist_dis2_cutoff_HH_    ( option[ score::fa_Hatr ] ?
-	nblist_dis2_cutoff_XX_ :
-	4.4 * 4.4 ),
+	std::string const alternate_parameter_set
+) : Etable( atom_set_in_ap, options, alternate_parameter_set ),
 	max_non_hydrogen_lj_radius_( 0.0 ),
 	max_hydrogen_lj_radius_( 0.0 )
-
 {
-	chemical::AtomTypeSetCOP atom_set_in( atom_set_in_ap );
+
+	dimension_memb_etable_arrays(); 
+	initialize_from_atomset( atom_set_in_ap ); 
+	make_pairenergy_table();
+}
+
+MembEtable::MembEtable( MembEtable const & src ) : 
+	Etable( src ), 
+	max_non_hydrogen_lj_radius_( src.max_hydrogen_lj_radius_ ), 
+	max_hydrogen_lj_radius_( src.max_hydrogen_lj_radius_ )
+{}
+
+MembEtable::~MembEtable() {}
+
+// Initialization Functions
+
+void 
+MembEtable::dimension_memb_etable_arrays() {
 
 	// size the arrays
+	solv1_.dimension( etable_disbins(), n_atomtypes(), n_atomtypes() );
+	solv2_.dimension( etable_disbins(), n_atomtypes(), n_atomtypes() );
+	memb_solv1_.dimension(  etable_disbins(), n_atomtypes(), n_atomtypes() );
+	memb_solv2_.dimension(  etable_disbins(), n_atomtypes(), n_atomtypes() );
+	dsolv2_.dimension(  etable_disbins(), n_atomtypes(), n_atomtypes() );
+	dsolv1_.dimension( etable_disbins(), n_atomtypes(), n_atomtypes() );
+	memb_dsolv2_.dimension(  etable_disbins(), n_atomtypes(), n_atomtypes() ); 
+	memb_dsolv1_.dimension( etable_disbins(), n_atomtypes(), n_atomtypes() ); 
 
-	solv1_.dimension( etable_disbins, n_atomtypes, n_atomtypes );
-	solv2_.dimension( etable_disbins, n_atomtypes, n_atomtypes );
-	memb_solv1_.dimension(  etable_disbins, n_atomtypes, n_atomtypes );
-	memb_solv2_.dimension(  etable_disbins, n_atomtypes, n_atomtypes );
-	dsolv2_.dimension(  etable_disbins, n_atomtypes, n_atomtypes );
-	dsolv1_.dimension( etable_disbins, n_atomtypes, n_atomtypes );
-	memb_dsolv2_.dimension(  etable_disbins, n_atomtypes, n_atomtypes ); //pba
-	memb_dsolv1_.dimension( etable_disbins, n_atomtypes, n_atomtypes ); //pba
+	lj_radius_.resize( n_atomtypes(), 0.0 );
+	lk_dgfree_.resize( n_atomtypes(), 0.0 );
+	lk_lambda_.resize( n_atomtypes(), 0.0 );
+	lk_volume_.resize( n_atomtypes(), 0.0 );
+	memb_lk_dgfree_.resize( n_atomtypes(), 0.0 );
+	lk_dgrefce_.dimension( n_atomtypes() );
+	memb_lk_dgrefce_.dimension( n_atomtypes() );
 
-	lj_radius_.resize( n_atomtypes, 0.0 );
-	lk_dgfree_.resize( n_atomtypes, 0.0 );
-	lk_lambda_.resize( n_atomtypes, 0.0 );
-	lk_volume_.resize( n_atomtypes, 0.0 );
-	memb_lk_dgfree_.resize( n_atomtypes, 0.0 );
-	lk_dgrefce_.dimension( n_atomtypes );
-	memb_lk_dgrefce_.dimension( n_atomtypes );
+}
 
+void 
+MembEtable::initialize_from_atomset( chemical::AtomTypeSetCAP atom_set_in_ap ) {
 
-	for ( int i=1; i<= n_atomtypes; ++i ) {
+	chemical::AtomTypeSetCOP atom_set_in( atom_set_in_ap );
+
+	for ( int i=1; i<= n_atomtypes(); ++i ) {
 		lj_radius_[i] = (*atom_set_in)[i].lj_radius();
 		lk_lambda_[i] = (*atom_set_in)[i].lk_lambda();
 		lk_volume_[i] = (*atom_set_in)[i].lk_volume();
@@ -150,27 +123,27 @@ MembEtable::MembEtable(
 	param_name = "LK_DGFREE";
 	TR << "Using alternate parameters: " << param_name << " in MembEtable construction." << std::endl;
 	Size const lkfree_index( atom_set_in->extra_parameter_index( param_name ) );
-	for ( int i=1; i<= n_atomtypes; ++i ) lk_dgfree_[i] = (*atom_set_in)[i].extra_parameter( lkfree_index );
+	for ( int i=1; i<= n_atomtypes(); ++i ) lk_dgfree_[i] = (*atom_set_in)[i].extra_parameter( lkfree_index );
 
 
 	param_name = "MEMB_LK_DGFREE";
 	TR << "Using alternate parameters: " << param_name << " in MembEtable construction." << std::endl;
 	Size const mb_lkfree_index( atom_set_in->extra_parameter_index( param_name ) );
-	for ( int i=1; i<= n_atomtypes; ++i ) memb_lk_dgfree_[i] = (*atom_set_in)[i].extra_parameter( mb_lkfree_index );
+	for ( int i=1; i<= n_atomtypes(); ++i ) memb_lk_dgfree_[i] = (*atom_set_in)[i].extra_parameter( mb_lkfree_index );
 
 	param_name = "LK_DGREFCE";
 	TR << "Using alternate parameters: " << param_name << " in MembEtable construction." << std::endl;
 	Size const lkref_index( atom_set_in->extra_parameter_index( param_name ) );
-	for ( int i=1; i<= n_atomtypes; ++i ) lk_dgrefce_(i) = (*atom_set_in)[i].extra_parameter( lkref_index );
+	for ( int i=1; i<= n_atomtypes(); ++i ) lk_dgrefce_(i) = (*atom_set_in)[i].extra_parameter( lkref_index );
 
 
 	param_name = "MEMB_LK_DGREFCE";
 	TR << "Using alternate parameters: " << param_name << " in MembEtable construction." << std::endl;
 	Size const mb_lkref_index( atom_set_in->extra_parameter_index( param_name ) );
-	for ( int i=1; i<= n_atomtypes; ++i ) memb_lk_dgrefce_(i) = (*atom_set_in)[i].extra_parameter( mb_lkref_index );
+	for ( int i=1; i<= n_atomtypes(); ++i ) memb_lk_dgrefce_(i) = (*atom_set_in)[i].extra_parameter( mb_lkref_index );
 
-	make_pairenergy_table();
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Make Pair Energy Table: Compute Fast Lookup for vdw and solvation energy
@@ -192,17 +165,17 @@ MembEtable::make_pairenergy_table()
 
 	Real dis2,dis,dis2_step;
 	Real solvE1,solvE2,dsolvE1,dsolvE2;
-	Real memb_solvE1,memb_solvE2,memb_dsolvE1,memb_dsolvE2; //pba
+	Real memb_solvE1,memb_solvE2,memb_dsolvE1,memb_dsolvE2; 
 
 	// Pre-Computed coefficients for high-speed potential calculation computed
 	// in intiailization. Note: +1 atom type is a disulfide bonded cyzteine
 	// (only if using the old dissulfide hack)
-	FArray2D< Real > lj_sigma( n_atomtypes + 1, n_atomtypes + 1 );
-	FArray1D< Real > lk_inv_lambda2( n_atomtypes );
-	FArray2D< Real > lk_coeff( n_atomtypes, n_atomtypes );
-	FArray2D< Real > lk_min_dis2sigma_value( n_atomtypes + 1, n_atomtypes + 1 );
-	FArray2D< Real > memb_lk_coeff( n_atomtypes, n_atomtypes );
-	FArray2D< Real > memb_lk_min_dis2sigma_value( n_atomtypes + 1, n_atomtypes + 1 );
+	FArray2D< Real > lj_sigma( n_atomtypes() + 1, n_atomtypes() + 1 );
+	FArray1D< Real > lk_inv_lambda2( n_atomtypes() );
+	FArray2D< Real > lk_coeff( n_atomtypes(), n_atomtypes() );
+	FArray2D< Real > lk_min_dis2sigma_value( n_atomtypes() + 1, n_atomtypes() + 1 );
+	FArray2D< Real > memb_lk_coeff( n_atomtypes(), n_atomtypes() );
+	FArray2D< Real > memb_lk_min_dis2sigma_value( n_atomtypes() + 1, n_atomtypes() + 1 );
 
 	// Parameters to compute damping at max_dis range
 	Real damping_thresh_dis2;
@@ -214,21 +187,21 @@ MembEtable::make_pairenergy_table()
 	precalc_etable_coefficients( lj_sigma, lk_inv_lambda2, lk_coeff, memb_lk_coeff, lk_min_dis2sigma_value, memb_lk_min_dis2sigma_value);
 
 	// calc distance**2 step per bin
-	dis2_step = 1.0 / bins_per_A2;
+	dis2_step = 1.0 / get_bins_per_A2();
 
 	int normal_disbins;
 	// get the number of damping disbins
-	if ( add_long_range_damping ) {
-		Real const dif = max_dis_ - long_range_damping_length;
-		damping_thresh_dis2 = max_dis2 - ( dif * dif );
-		int damping_disbins = static_cast< int >( damping_thresh_dis2*bins_per_A2 );
-		normal_disbins = etable_disbins-damping_disbins;
+	if ( add_long_range_damping() ) {
+		Real const dif = max_dis() - long_range_damping_length();
+		damping_thresh_dis2 = max_dis2() - ( dif * dif );
+		int damping_disbins = static_cast< int >( damping_thresh_dis2*get_bins_per_A2() );
+		normal_disbins = etable_disbins()-damping_disbins;
 	} else {
-		normal_disbins = etable_disbins;
+		normal_disbins = etable_disbins();
 	}
 
 	// ctsa - step through distance**2 bins and calculate potential
-	for ( int atype1 = 1, atype_end = n_atomtypes; atype1 <= atype_end; ++atype1 ) {
+	for ( int atype1 = 1, atype_end = n_atomtypes(); atype1 <= atype_end; ++atype1 ) {
 		for ( int atype2 = 1; atype2 <= atype_end; ++atype2 ) {
 
 			// ctsa - normal bins have their lj and lk values
@@ -238,7 +211,7 @@ MembEtable::make_pairenergy_table()
 
 				calc_etable_value(dis2,atype1,atype2,solvE1,solvE2,dsolvE1,dsolvE2,lj_sigma,lk_inv_lambda2,
 					lk_coeff, lk_min_dis2sigma_value,memb_solvE1, memb_solvE2,
-					memb_lk_coeff, memb_lk_min_dis2sigma_value, memb_dsolvE1, memb_dsolvE2); //pba
+					memb_lk_coeff, memb_lk_min_dis2sigma_value, memb_dsolvE1, memb_dsolvE2);
 
 				solv1_(disbin,atype2,atype1) = solvE1;
 				solv2_(disbin,atype2,atype1) = solvE2;
@@ -250,26 +223,26 @@ MembEtable::make_pairenergy_table()
 				memb_dsolv1_(disbin,atype2,atype1) = memb_dsolvE1;
 			}
 
-			if ( add_long_range_damping ) {
+			if ( add_long_range_damping() ) {
 
 				dsolv1_damp = -solv1_(normal_disbins,atype2,atype1) /
-					long_range_damping_length;
+					long_range_damping_length();
 				dsolv2_damp = -solv2_(normal_disbins,atype2,atype1) /
-					long_range_damping_length;
-				//pba
+					long_range_damping_length();
+				
 				memb_dsolv1_damp = -memb_solv1_(normal_disbins,atype2,atype1) /
-					long_range_damping_length;
+					long_range_damping_length();
 				memb_dsolv2_damp = -memb_solv2_(normal_disbins,atype2,atype1) /
-					long_range_damping_length;
+					long_range_damping_length();
 
 
-				intercept_solv1_damp = -dsolv1_damp*max_dis_;
-				intercept_solv2_damp = -dsolv2_damp*max_dis_;
+				intercept_solv1_damp = -dsolv1_damp*max_dis();
+				intercept_solv2_damp = -dsolv2_damp*max_dis();
 
-				intercept_memb_solv1_damp = -memb_dsolv1_damp*max_dis_;
-				intercept_memb_solv2_damp = -memb_dsolv2_damp*max_dis_;
+				intercept_memb_solv1_damp = -memb_dsolv1_damp*max_dis();
+				intercept_memb_solv2_damp = -memb_dsolv2_damp*max_dis();
 
-				for ( int disbin = normal_disbins+1; disbin <= etable_disbins; ++disbin ) {
+				for ( int disbin = normal_disbins+1; disbin <= etable_disbins(); ++disbin ) {
 					dis2 = ( disbin - 1 ) * dis2_step;
 					dis = std::sqrt(dis2);
 
@@ -286,10 +259,10 @@ MembEtable::make_pairenergy_table()
 				}
 			}
 
-			solv1_(etable_disbins,atype2,atype1) = 0.0;
-			solv2_(etable_disbins,atype2,atype1) = 0.0;
-			memb_solv1_(etable_disbins,atype2,atype1) = 0.0;
-			memb_solv2_(etable_disbins,atype2,atype1) = 0.0;
+			solv1_(etable_disbins(),atype2,atype1) = 0.0;
+			solv2_(etable_disbins(),atype2,atype1) = 0.0;
+			memb_solv1_(etable_disbins(),atype2,atype1) = 0.0;
+			memb_solv2_(etable_disbins(),atype2,atype1) = 0.0;
 
 		}
 	}
@@ -321,8 +294,8 @@ MembEtable::make_pairenergy_table()
 	etables[ "solv1"] = &  solv1_; etables[ "solv2"] = &  solv2_;
 	etables["dsolv1"]  = & dsolv1_;
 	etables["dsolv2"]  = & dsolv2_;
-	etables[ "memb_solv1"] = &  memb_solv1_;  etables[ "memb_solv2"] = &  memb_solv2_; //pba
-	etables["memb_dsolv2"]  = & memb_dsolv2_; etables["memb_dsolv1"]  = & memb_dsolv1_;  //pba
+	etables[ "memb_solv1"] = &  memb_solv1_;  etables[ "memb_solv2"] = &  memb_solv2_; 
+	etables["memb_dsolv2"]  = & memb_dsolv2_; etables["memb_dsolv1"]  = & memb_dsolv1_;  
 
 	if ( option[ score::input_etables ].user() ) {
 		string tag = option[ score::input_etables ];
@@ -385,12 +358,11 @@ MembEtable::modify_pot()
 
 	using namespace std;
 
-	bool mod_hhrep      = false; //truefalseoption("mod_hhrep");
-	Real const h = 0.0;// fullatom_setup_ns::mod_hhrep_height;
-	Real const c = 0.0;// fullatom_setup_ns::mod_hhrep_center;
-	Real const w = 0.0;// fullatom_setup_ns::mod_hhrep_width;
-	Real const e = 0.0;// fullatom_setup_ns::mod_hhrep_exponent;
-
+	bool mod_hhrep = false; 
+	Real const h = 0.0;
+	Real const c = 0.0;
+	Real const w = 0.0;
+	Real const e = 0.0;
 
 	if ( mod_hhrep ) {
 		TR << "fullatom_setup: modifying h-h repulsion "
@@ -399,22 +371,20 @@ MembEtable::modify_pot()
 			<< " hhrep width "    << w
 			<< " hhrep exponent " << e
 			<< std::endl;
-	}
+	} {
 
-	{
-
-		Real const bin = ( 4.2 * 4.2 / .05 ) + 1.0; // SGM Off-by-1 bug fix: Add + 1.0: Index 1 is at distance^2==0
+		Real const bin = ( 4.2 * 4.2 / .05 ) + 1.0; 
 		Real dis;
 		int const ibin( static_cast< int >( bin ) );
-		chemical::AtomTypeSetCOP atom_set( atom_set_ );
-		for ( int k = 1; k <= etable_disbins; ++k ) {
-			dis = std::sqrt( ( k - 1 ) * .05f ); //SGM Off-by-1 bug fix: k -> ( k - 1 )
+		chemical::AtomTypeSetCOP atom_set_ac( atom_set() );
+		for ( int k = 1; k <= etable_disbins(); ++k ) {
+			dis = std::sqrt( ( k - 1 ) * .05f ); 
 
 			utility::vector1<int> carbon_types;
-			carbon_types.push_back( atom_set->atom_type_index("CH1") );
-			carbon_types.push_back( atom_set->atom_type_index("CH2") );
-			carbon_types.push_back( atom_set->atom_type_index("CH3") );
-			carbon_types.push_back( atom_set->atom_type_index("aroC") );
+			carbon_types.push_back( atom_set_ac->atom_type_index("CH1") );
+			carbon_types.push_back( atom_set_ac->atom_type_index("CH2") );
+			carbon_types.push_back( atom_set_ac->atom_type_index("CH3") );
+			carbon_types.push_back( atom_set_ac->atom_type_index("aroC") );
 
 			if ( dis < 4.2 ) {
 				for ( int i = 1, i_end = carbon_types.size(); i <= i_end; ++i ) {
@@ -424,27 +394,26 @@ MembEtable::modify_pot()
 						int const jj = carbon_types[j];
 
 						solv1_(k,jj,ii) = solv1_(ibin,jj,ii);
-						solv1_(k,ii,jj) = solv1_(ibin,ii,jj); // Why is this duplicated?
+						solv1_(k,ii,jj) = solv1_(ibin,ii,jj); 
 						solv2_(k,jj,ii) = solv2_(ibin,jj,ii);
-						solv2_(k,ii,jj) = solv2_(ibin,ii,jj); // Why is this duplicated?
+						solv2_(k,ii,jj) = solv2_(ibin,ii,jj); 
 						dsolv2_(k,jj,ii) = 0.0;
-						dsolv2_(k,ii,jj) = 0.0; // Why is this duplicated?
+						dsolv2_(k,ii,jj) = 0.0; 
 						dsolv1_(k,ii,jj) = 0.0;
-						dsolv1_(k,jj,ii) = 0.0; // Why is this duplicated?
+						dsolv1_(k,jj,ii) = 0.0; 
 						memb_solv1_(k,jj,ii) = memb_solv1_(ibin,jj,ii);
-						memb_solv1_(k,ii,jj) = memb_solv1_(ibin,ii,jj); // Why is this duplicated?
+						memb_solv1_(k,ii,jj) = memb_solv1_(ibin,ii,jj); 
 						memb_solv2_(k,jj,ii) = memb_solv2_(ibin,jj,ii);
-						memb_solv2_(k,ii,jj) = memb_solv2_(ibin,ii,jj); // Why is this duplicated?
+						memb_solv2_(k,ii,jj) = memb_solv2_(ibin,ii,jj); 
 						memb_dsolv2_(k,jj,ii) = 0.0;
-						memb_dsolv2_(k,ii,jj) = 0.0; // Why is this duplicated?
+						memb_dsolv2_(k,ii,jj) = 0.0; 
 						memb_dsolv1_(k,ii,jj) = 0.0;
-						memb_dsolv1_(k,jj,ii) = 0.0; // Why is this duplicated?
+						memb_dsolv1_(k,jj,ii) = 0.0; 
 					}
 				}
 			}
 		}
 	}
-	// ralford just commented out a giant block of dead code here. If all opposed, move to previous reviison!
 }
 
 void
@@ -454,16 +423,16 @@ MembEtable::smooth_etables()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	FArray1D<Real> dis(etable_disbins);
-	for ( int i = 1; i <= etable_disbins; ++i ) {
-		dis(i) = sqrt( ( i - 1 ) * 1.0 / bins_per_A2 );
+	FArray1D<Real> dis(etable_disbins());
+	for ( int i = 1; i <= etable_disbins(); ++i ) {
+		dis(i) = sqrt( ( i - 1 ) * 1.0 / get_bins_per_A2() );
 	}
 
 	FArray1D<int> bin_of_dis(100);
 
 	for ( int i = 1; i <= 100; ++i ) {
 		float d = ((float)i)/10.0;
-		bin_of_dis(i) = (int)( d*d * bins_per_A2 + 1 );
+		bin_of_dis(i) = (int)( d*d * get_bins_per_A2() + 1 );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -471,13 +440,13 @@ MembEtable::smooth_etables()
 	/////////////////////////////////////////////////////////////////////////////
 
 	using namespace numeric::interpolation::spline;
-	TR << "smooth_etable: spline smoothing solvation etables (max_dis = " << max_dis_ << ")" << std::endl;
+	TR << "smooth_etable: spline smoothing solvation etables (max_dis = " << max_dis() << ")" << std::endl;
 
-	for ( int at1 = 1; at1 <= n_atomtypes; ++at1 ) {
-		for ( int at2 = 1; at2 <= n_atomtypes; ++at2 ) {
+	for ( int at1 = 1; at1 <= n_atomtypes(); ++at1 ) {
+		for ( int at2 = 1; at2 <= n_atomtypes(); ++at2 ) {
 
 			int SWTCH = 1;
-			for ( SWTCH=1; SWTCH <= etable_disbins; ++SWTCH ) {
+			for ( SWTCH=1; SWTCH <= etable_disbins(); ++SWTCH ) {
 				if ( (solv1_(SWTCH,at1,at2) != solv1_(1,at1,at2)) ||
 						(solv2_(SWTCH,at1,at2) != solv2_(1,at1,at2)) ||
 						(memb_solv1_(SWTCH,at1,at2) != memb_solv1_(1,at1,at2)) ||
@@ -485,12 +454,12 @@ MembEtable::smooth_etables()
 					break;
 				}
 			}
-			if ( SWTCH > etable_disbins ) continue;
+			if ( SWTCH > etable_disbins() ) continue;
 
 			int const S1 = std::max(1,SWTCH - 30);
 			int const E1 = std::min(SWTCH + 20,406);
-			int const S2 = bin_of_dis( (int)((max_dis_-1.5)*10.0) );
-			int const E2 = etable_disbins;
+			int const S2 = bin_of_dis( (int)((max_dis()-1.5)*10.0) );
+			int const E2 = etable_disbins();
 
 			Real dsolv1e1 = (solv1_(E1+1,at1,at2)-solv1_(E1  ,at1,at2))/(dis(E1+1)-dis(E1  ));
 			Real dsolv1s2 = (solv1_(S2  ,at1,at2)-solv1_(S2-1,at1,at2))/(dis(S2  )-dis(S2-1));
@@ -556,7 +525,7 @@ MembEtable::smooth_etables()
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Output Etable: Output etable data in a file in the same format used in input
-/// @details File first line is <etable> <etable_disbins> and other lines are <atom type 1>
+/// @details File first line is <etable> <etable_disbins()> and other lines are <atom type 1>
 /// <atomtype 1> <eval bin 1> <eval bin 2>...
 ///
 /// @author sheffler (last modified: mar 19 2006)
@@ -571,12 +540,12 @@ MembEtable::output_etable(
 	using namespace std;
 	using namespace ObjexxFCL;
 
-	out << label << " " << etable_disbins << endl;
-	for ( int at1 = 1; at1 <= n_atomtypes; at1++ ) {
-		for ( int at2 = 1; at2 <= n_atomtypes; at2++ ) {
+	out << label << " " << etable_disbins() << endl;
+	for ( int at1 = 1; at1 <= n_atomtypes(); at1++ ) {
+		for ( int at2 = 1; at2 <= n_atomtypes(); at2++ ) {
 			out << at1 << " "
 				<< at2 << " ";
-			for ( int bin = 1; bin <= etable_disbins; bin++ ) {
+			for ( int bin = 1; bin <= etable_disbins(); bin++ ) {
 				float evalue = etable(bin,at1,at2);
 				out << evalue << ' ';
 			}
@@ -589,7 +558,7 @@ MembEtable::output_etable(
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief: Input Etable: read in etable from a datafile
-/// @details file first line is <etable> <etable_disbins> and other lines are
+/// @details file first line is <etable> <etable_disbins()> and other lines are
 /// <atom type 1> <atomtype 1> <eval bin 1> <eval bin 2>...
 ///
 /// @author sheffler (last modified: mar 19 2006)
@@ -615,13 +584,13 @@ MembEtable::input_etable(
 		TR << "input_etable: WARNING bad etable header " << buf << endl;
 		return;
 	}
-	if ( lblin != label || etable_disbins != numdisbin ) {
+	if ( lblin != label || etable_disbins() != numdisbin ) {
 		TR << "input_etable: WARNING etable types don't match! "<< endl;
-		TR << "              expected " << label << "," << etable_disbins
+		TR << "              expected " << label << "," << etable_disbins()
 			<< " got " << lblin << ',' << numdisbin<< endl;
 		utility_exit_with_message( "input_etable: WARNING etable types don't match! " );
 	} else {
-		TR << "input_etable expected etable " << label << " of size " << etable_disbins
+		TR << "input_etable expected etable " << label << " of size " << etable_disbins()
 			<< ", got " << lblin << ',' << numdisbin<< endl;
 
 	}
@@ -676,33 +645,33 @@ MembEtable::precalc_etable_coefficients(
 	FArray2< Real > & lj_sigma,
 	FArray1< Real > & lk_inv_lambda2,
 	FArray2< Real > & lk_coeff,
-	FArray2< Real > & memb_lk_coeff, //pba
+	FArray2< Real > & memb_lk_coeff, 
 	FArray2< Real > & lk_min_dis2sigma_value,
-	FArray2< Real > & memb_lk_min_dis2sigma_value //pba
+	FArray2< Real > & memb_lk_min_dis2sigma_value 
 )
 {
 
 	// locals
 	Real sigma; //sigma6,sigma12,wdepth;
 	Real inv_lambda;
-	FArray1D< Real > lk_coeff_tmp( n_atomtypes );
-	FArray1D< Real > memb_lk_coeff_tmp( n_atomtypes ); //pba
+	FArray1D< Real > lk_coeff_tmp( n_atomtypes() );
+	FArray1D< Real > memb_lk_coeff_tmp( n_atomtypes() ); 
 	Real thresh_dis,inv_thresh_dis2,x_thresh;
 	Real const inv_neg2_tms_pi_sqrt_pi = { -0.089793561062583294 };
 	// coefficient for lk solvation
 
 	// include follows locals so that data statements can initialize included arrays
-	for ( int i = 1, e = n_atomtypes; i <= e; ++i ) {
+	for ( int i = 1, e = n_atomtypes(); i <= e; ++i ) {
 		inv_lambda = 1.0/lk_lambda(i);
 		lk_inv_lambda2(i) = inv_lambda * inv_lambda;
 		lk_coeff_tmp(i) = inv_neg2_tms_pi_sqrt_pi * lk_dgfree(i) * inv_lambda;
-		memb_lk_coeff_tmp(i) = inv_neg2_tms_pi_sqrt_pi * memb_lk_dgfree(i) * inv_lambda; //pba
+		memb_lk_coeff_tmp(i) = inv_neg2_tms_pi_sqrt_pi * memb_lk_dgfree(i) * inv_lambda; 
 	}
 
-	for ( int i = 1, e = n_atomtypes; i <= e; ++i ) {
+	for ( int i = 1, e = n_atomtypes(); i <= e; ++i ) {
 		for ( int j = i; j <= e; ++j ) {
 
-			sigma = Wradius * ( lj_radius(i) + lj_radius(j) );
+			sigma = Wradius() * ( lj_radius(i) + lj_radius(j) );
 			sigma = ( sigma < 1.0e-9 ? 1.0e-9 : sigma );
 
 			// (bk) modify sigma for hbond donors and acceptors
@@ -714,31 +683,31 @@ MembEtable::precalc_etable_coefficients(
 			// pb hydroxyl O donor/charged O acceptor and charged NH donor/charged O acceptor
 			// pb distances.
 
-			if ( lj_use_hbond_radii ) {
+			if ( lj_use_hbond_radii() ) {
 				if ( ( atom_type(i).is_acceptor() && atom_type(j).is_donor() ) ||
 						( atom_type(i).is_donor() && atom_type(j).is_acceptor() ) ) {
-					sigma = lj_hbond_dis;
+					sigma = get_lj_hbond_dis();
 				} else if ( ( atom_type(i).is_acceptor() && atom_type(j).is_polar_hydrogen() ) ||
 						( atom_type(i).is_polar_hydrogen() && atom_type(j).is_acceptor() ) ) {
-					sigma = lj_hbond_hdis;
+					sigma = get_lj_hbond_hdis();
 
 				}
 			}
 
 			//lin   modify sigma for water and hbond donors/acceptors
-			if ( lj_use_water_radii ) {
+			if ( lj_use_water_radii() ) {
 				if ( ( ( atom_type(i).is_acceptor() ||
 						atom_type(i).is_donor() ) &&
 						atom_type(j).is_h2o() ) ||
 						( ( atom_type(j).is_acceptor() ||
 						atom_type(j).is_donor() ) &&
 						atom_type(i).is_h2o() ) ) {
-					sigma = lj_water_dis;
+					sigma = lj_water_dis();
 				} else if ( ( atom_type(i).is_polar_hydrogen() &&
 						atom_type(j).is_h2o() ) ||
 						( atom_type(j).is_polar_hydrogen() &&
 						atom_type(i).is_h2o() ) ) {
-					sigma = lj_water_hdis;
+					sigma = lj_water_hdis();
 				}
 			}
 
@@ -748,21 +717,21 @@ MembEtable::precalc_etable_coefficients(
 			// ctsa - precalculated lk solvation coefficients
 			lk_coeff(i,j) = lk_coeff_tmp(i) * lk_volume(j);
 			lk_coeff(j,i) = lk_coeff_tmp(j) * lk_volume(i);
-			memb_lk_coeff(i,j) = memb_lk_coeff_tmp(i) * lk_volume(j); //pba
-			memb_lk_coeff(j,i) = memb_lk_coeff_tmp(j) * lk_volume(i); //pba
+			memb_lk_coeff(i,j) = memb_lk_coeff_tmp(i) * lk_volume(j); 
+			memb_lk_coeff(j,i) = memb_lk_coeff_tmp(j) * lk_volume(i); 
 
 			// ctsa - when dis/sigma drops below lk_min_dis2sigma,
 			//   a constant lk solvation value equal to the value at the
 			//   switchover point is used. That switchover-point value
 			//   is calculated here and stored in lk_min_dis2sigma_value
-			thresh_dis = lk_min_dis2sigma*sigma;
+			thresh_dis = lk_min_dis2sigma()*sigma;
 			inv_thresh_dis2 = 1./( thresh_dis * thresh_dis );
 			Real dis_rad = thresh_dis - lj_radius(i);
 			x_thresh = ( dis_rad * dis_rad ) * lk_inv_lambda2(i);
 			lk_min_dis2sigma_value(i,j) = std::exp(-x_thresh) * lk_coeff(i,j) *
 				inv_thresh_dis2;
 			memb_lk_min_dis2sigma_value(i,j) = std::exp(-x_thresh) * memb_lk_coeff(i,j) *
-				inv_thresh_dis2; //pba
+				inv_thresh_dis2; 
 
 			dis_rad = thresh_dis - lj_radius(j);
 			x_thresh = ( dis_rad * dis_rad ) * lk_inv_lambda2(j);
@@ -824,7 +793,7 @@ MembEtable::calc_etable_value(
 	FArray1< Real > & lk_inv_lambda2,
 	FArray2< Real > & lk_coeff,
 	FArray2< Real > & lk_min_dis2sigma_value,
-	Real & memb_solvE1, //pba
+	Real & memb_solvE1, 
 	Real & memb_solvE2,
 	FArray2< Real > & memb_lk_coeff,
 	FArray2< Real > & memb_lk_min_dis2sigma_value,
@@ -832,91 +801,63 @@ MembEtable::calc_etable_value(
 	Real & memb_dsolvE2
 )
 {
-	//  using namespace etable;
-	//  using namespace param;
-	//  using namespace pdbstatistics_pack;
-
 	// locals
 	//Real ljE,d_ljE,
 	Real x1,x2;
 	Real dis;
-	Real inv_dis,inv_dis2; //,inv_dis6,inv_dis7,inv_dis12,inv_dis13;
+	Real inv_dis,inv_dis2;
 	Real dis2sigma;
 	int xtra_atype1,xtra_atype2;
-	//int const atype_sulfur = { 16 };
 
 	// include after local variables to allow data statements to initialize
 	solvE1 = 0.;
 	solvE2 = 0.;
 	dsolvE1 = 0.;
 	dsolvE2 = 0.;
-	memb_solvE1 = 0.; //pba
+	memb_solvE1 = 0.; 
 	memb_solvE2 = 0.;
 	memb_dsolvE1 = 0.;
 	memb_dsolvE2 = 0.;
 
 	//  ctsa - epsilon allows final bin value to be calculated
-	if ( dis2 > max_dis2 + epsilon ) return;
-
-	if ( dis2 < min_dis2 ) dis2 = min_dis2;
+	if ( dis2 > max_dis2() + epsilon() ) return;
+	if ( dis2 < min_dis2() ) dis2 = min_dis2();
 
 	dis = std::sqrt(dis2);
 	inv_dis = 1.0/dis;
 	inv_dis2 = inv_dis * inv_dis;
 
-
-	//  ctsa - switch to disulfide bonded atom types
-	//    when conditions are met
-	//  if ( ( atype1 == atype_sulfur && atype2 == atype_sulfur ) &&
-	//   dis < disulfide_dis_thresh ) {
-	//   xtra_atype1 = n_atomtypes + 1;
-	//   xtra_atype2 = n_atomtypes + 1;
-	//  } else {
 	xtra_atype1 = atype1;
 	xtra_atype2 = atype2;
-	//}
-
 
 	dis2sigma = dis / lj_sigma(xtra_atype1,xtra_atype2);
 
-	//pbadebug WARNING
-	//if(atype1==18 && atype2==19)
-	//  std::cout << "d lj d2s lkmin " << dis << " " << lj_sigma(xtra_atype1,xtra_atype2) << " " << dis2sigma << " " << lk_min_dis2sigma << std::endl;
-	// ctsa - calc lk
-	if ( dis2sigma < lk_min_dis2sigma ) {
-		// ctsa - solvation is constant when the dis/sigma ratio
-		//   falls below minimum threshold
+	if ( dis2sigma < lk_min_dis2sigma() ) {
 		solvE1 = lk_min_dis2sigma_value(xtra_atype1,xtra_atype2);
 		solvE2 = lk_min_dis2sigma_value(xtra_atype2,xtra_atype1);
 		dsolvE1 = 0.0;
 		dsolvE2 = 0.0;
-		memb_solvE1 = memb_lk_min_dis2sigma_value(xtra_atype1,xtra_atype2); //pba
+		memb_solvE1 = memb_lk_min_dis2sigma_value(xtra_atype1,xtra_atype2); 
 		memb_solvE2 = memb_lk_min_dis2sigma_value(xtra_atype2,xtra_atype1);
 		memb_dsolvE1 = memb_dsolvE2 = 0.0;
 
 	} else {
 
 		Real dis_rad = dis - lj_radius(atype1);
-		//Real dis_rad = dis - atom_type(atype1).lj_radius();
 		x1 = ( dis_rad * dis_rad ) * lk_inv_lambda2(atype1);
 		dis_rad = dis - lj_radius(atype2);
-		//dis_rad = dis - atom_type(atype2).lj_radius();
 		x2 = ( dis_rad * dis_rad ) * lk_inv_lambda2(atype2);
 
 		solvE1 = std::exp(-x1) * lk_coeff(atype1,atype2) * inv_dis2;
 		solvE2 = std::exp(-x2) * lk_coeff(atype2,atype1) * inv_dis2;
-		memb_solvE1 = std::exp(-x1) * memb_lk_coeff(atype1,atype2) * inv_dis2; //pba
+		memb_solvE1 = std::exp(-x1) * memb_lk_coeff(atype1,atype2) * inv_dis2; 
 		memb_solvE2 = std::exp(-x2) * memb_lk_coeff(atype2,atype1) * inv_dis2;
 
-		// ctsa - get d(lk_E)/dr
 		dsolvE1 = -2.0 * solvE1 *
 			(((dis-lj_radius(atype1))*lk_inv_lambda2(atype1))+inv_dis);
-		//(((dis-atom_type(atype1).lj_radius())*lk_inv_lambda2(atype1))+inv_dis);
 		dsolvE2 = -2.0 * solvE2 *
 			(((dis-lj_radius(atype2))*lk_inv_lambda2(atype2))+inv_dis);
-		//(((dis-atom_type(atype2).lj_radius())*lk_inv_lambda2(atype2))+inv_dis);
 
-		// pba - get d(memblk_E)/dr
 		memb_dsolvE1 = -2.0 * memb_solvE1 *
 			(((dis-lj_radius(atype1))*lk_inv_lambda2(atype1))+inv_dis);
 		memb_dsolvE2 = -2.0 * memb_solvE2 *
@@ -925,23 +866,6 @@ MembEtable::calc_etable_value(
 	}
 
 }
-
-/// @brief Returns the maximum lj radius for any non-hydrogen
-/// atom as defined by the atom-type-set used to create this Etable.
-Real
-MembEtable::max_non_hydrogen_lj_radius() const
-{
-	return max_non_hydrogen_lj_radius_;
-}
-
-/// @brief Returns the maximum lj radius for any hydrogen atom as
-/// defined by the input atom-type-set used to create this Etable.
-Real
-MembEtable::max_hydrogen_lj_radius() const
-{
-	return max_hydrogen_lj_radius_;
-}
-
 
 } // etable
 } // scoring

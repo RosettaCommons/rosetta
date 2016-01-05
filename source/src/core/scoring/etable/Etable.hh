@@ -197,9 +197,86 @@ public:
 		std::string const alternate_parameter_set = ""
 	);
 
-	Size
+	// Const Access methods for constants
+	int
 	n_atomtypes() const {
 		return n_atomtypes_;
+	}
+
+	Real
+	Wradius() const {
+		return Wradius_; 
+	}
+
+	Real
+	lj_switch_dis2sigma() const {
+		return lj_switch_dis2sigma_; 
+	}
+
+	Real
+	etable_disbins() const {
+		return etable_disbins_; 
+	}
+
+
+	bool
+	lj_use_lj_deriv_slope() const {
+		return lj_use_lj_deriv_slope_; 
+	}
+
+	Real
+	lj_slope_intercept() const {
+		return lj_slope_intercept_;
+	}
+
+	bool
+	lj_use_hbond_radii() const {
+		return lj_use_hbond_radii_; 
+	}
+
+	bool
+	lj_use_water_radii() const {
+		return lj_use_water_radii_; 
+	}
+
+	Real
+	lj_water_dis() const {
+		return lj_water_dis_; 
+	}
+
+	Real
+	lj_water_hdis() const {
+		return lj_water_hdis_; 
+	}
+
+	Real
+	lk_min_dis2sigma() const {
+		return lk_min_dis2sigma_; 
+	}
+
+	Real
+	min_dis() const {
+		return min_dis_; 
+	}
+
+	Real
+	min_dis2() const {
+		return min_dis2_; 
+	}
+
+	bool
+	add_long_range_damping() const {
+		return add_long_range_damping_; 
+	}
+
+	Real
+	long_range_damping_length() const {
+		return long_range_damping_length_; 
+	}
+
+	Real
+	epsilon() const {
+		return epsilon_; 
 	}
 
 	/// const access to the arrays
@@ -215,12 +292,14 @@ public:
 		return ljrep_;
 	}
 
+	virtual
 	ObjexxFCL::FArray3D< Real > const &
 	solv1() const
 	{
 		return solv1_;
 	}
 
+	virtual
 	ObjexxFCL::FArray3D< Real > const &
 	solv2() const
 	{
@@ -241,6 +320,7 @@ public:
 	}
 
 	/// @brief return the solvation derivative table for the desolvation of atom1 by atom2
+	virtual
 	ObjexxFCL::FArray3D< Real > const &
 	dsolv1() const
 	{
@@ -261,15 +341,21 @@ public:
 	}
 
 	Real
+	max_dis2() const
+	{
+		return max_dis2_; 
+	}
+
+	Real
 	get_safe_max_dis2() const
 	{
-		return safe_max_dis2;
+		return safe_max_dis2_;
 	}
 
 	int
 	get_bins_per_A2() const
 	{
-		return bins_per_A2;
+		return bins_per_A2_;
 	}
 
 	chemical::AtomTypeSetCAP
@@ -302,6 +388,7 @@ public:
 	/// @brief The distance cutoff beyond which any pair of heavy-atoms is
 	/// guaranteed to have an interaction energy of zero.  This function is
 	/// used by the NeighborList
+	virtual
 	Real
 	nblist_dis2_cutoff_XX() const
 	{
@@ -311,6 +398,7 @@ public:
 	/// @brief The distance cutoff beyond which a hydrogen/heavy-atom pair is
 	/// guaranteed to have an interaction energy of zero.  This function is used
 	/// by the NeighborList
+	virtual
 	Real
 	nblist_dis2_cutoff_XH() const
 	{
@@ -319,6 +407,7 @@ public:
 
 	/// @brief The distance cutoff beyond which any hydrogen/hydrogen pair is guaranteed
 	/// to have an interaction energy of zero.  This function is used by the NeighborList
+	virtual
 	Real
 	nblist_dis2_cutoff_HH() const
 	{
@@ -336,7 +425,7 @@ public:
 	max_hydrogen_lj_radius() const;
 
 	/// @brief Return the Lennard-Jones radius for an atom.
-	inline
+	virtual
 	Real
 	lj_radius( int const i ) const
 	{
@@ -351,6 +440,7 @@ public:
 	}
 
 	/// @brief Return the Lazardis Karplus DGFree value for an atom
+	virtual
 	Real
 	lk_dgfree( int const i ) const
 	{
@@ -358,6 +448,7 @@ public:
 	}
 
 	/// @brief Return the Lazaridis Karplus volume for an atom
+	virtual
 	Real
 	lk_volume( int const i ) const
 	{
@@ -365,6 +456,7 @@ public:
 	}
 
 	/// @brief Return the Lazaridis Karplus "lambda" value (correlation distance) for an atom
+	virtual
 	Real
 	lk_lambda( int const i ) const
 	{
@@ -374,6 +466,14 @@ public:
 	Real
 	lk_inv_lambda2( int const i ) const {
 		return lk_inv_lambda2_[i];
+	}
+
+	// get the AtomType object corresponding to a give type index
+	chemical::AtomType const &
+	atom_type( int const type )
+	{
+		chemical::AtomTypeSetCOP atom_set( atom_set_ );
+		return (*atom_set)[ type ];
 	}
 
 	inline Real fasol_cubic_poly_far_xlo() const { return fasol_cubic_poly_far_xlo_; }
@@ -562,8 +662,9 @@ public:
 		Size atype2
 	) const;
 
-private:
+public: // Interfaces for convenient IO
 
+	virtual
 	void
 	output_etable(
 		ObjexxFCL::FArray3D<Real> & etable,
@@ -571,12 +672,15 @@ private:
 		std::ostream & out
 	);
 
+	virtual
 	void
 	input_etable(
 		ObjexxFCL::FArray3D<Real> & etable,
 		const std::string label,
 		std::istream & in
 	);
+
+private:
 
 	inline
 	EtableParamsOnePair &
@@ -586,8 +690,9 @@ private:
 	);
 
 public:
-	Real get_lj_hbond_OH_donor_dis() const { return lj_hbond_OH_donor_dis; }
-	Real get_lj_hbond_hdis() const { return lj_hbond_hdis; }
+	Real get_lj_hbond_OH_donor_dis() const { return lj_hbond_OH_donor_dis_; }
+	Real get_lj_hbond_hdis() const { return lj_hbond_hdis_; }
+	Real get_lj_hbond_dis() const { return lj_hbond_dis_; }
 
 private:
 
@@ -598,33 +703,31 @@ private:
 
 	// from options
 	Real const max_dis_;
-	int const bins_per_A2;
-	Real const Wradius; // global mod to radii
-	Real const lj_switch_dis2sigma; // actual value used for switch
-	Real const max_dis2;
-	int const etable_disbins;
-	Real const lj_hbond_OH_donor_dis;
-	Real const lj_hbond_dis;
+	int const bins_per_A2_;
+	Real const Wradius_; // global mod to radii
+	Real const lj_switch_dis2sigma_; // actual value used for switch
+	Real const max_dis2_;
+	int const etable_disbins_;
+	Real const lj_hbond_OH_donor_dis_;
+	Real const lj_hbond_dis_;
 
 	// hard-coded for now
-	bool const lj_use_lj_deriv_slope;
-	Real const lj_slope_intercept;
-	bool const lj_use_hbond_radii;
-	Real const lj_hbond_hdis;
-	// unused Real const lj_hbond_accOch_dis;
-	// unused Real const lj_hbond_accOch_hdis;
-	bool const lj_use_water_radii;
-	Real const lj_water_dis;
-	Real const lj_water_hdis;
+	bool const lj_use_lj_deriv_slope_;
+	Real const lj_slope_intercept_;
+	bool const lj_use_hbond_radii_;
+	Real const lj_hbond_hdis_;
+	bool const lj_use_water_radii_;
+	Real const lj_water_dis_;
+	Real const lj_water_hdis_;
 	bool const enlarge_h_lj_wdepth_;
-	Real const lk_min_dis2sigma;
+	Real const lk_min_dis2sigma_;
 	bool const no_lk_polar_desolvation_;
-	Real const min_dis;
-	Real const min_dis2; // was double
-	bool const add_long_range_damping;
-	Real const long_range_damping_length;
-	Real const epsilon;
-	Real const safe_max_dis2;
+	Real const min_dis_;
+	Real const min_dis2_; // was double
+	bool const add_long_range_damping_;
+	Real const long_range_damping_length_;
+	Real const epsilon_;
+	Real const safe_max_dis2_;
 	Real hydrogen_interaction_cutoff2_;
 	Real max_heavy_hydrogen_cutoff_;
 	Real max_hydrogen_hydrogen_cutoff_;
@@ -635,9 +738,9 @@ private:
 	Real max_hydrogen_lj_radius_;
 
 	// these three derived from other data
-	Real lj_switch_sigma2dis;
-	Real lj_switch_value2wdepth;
-	Real lj_switch_slope_sigma2wdepth;
+	Real lj_switch_sigma2dis_;
+	Real lj_switch_value2wdepth_;
+	Real lj_switch_slope_sigma2wdepth_;
 
 	ObjexxFCL::FArray2D< Real > lj_sigma_;
 	ObjexxFCL::FArray2D< Real > lj_r6_coeff_;
@@ -673,24 +776,16 @@ private:
 	ObjexxFCL::FArray3D< Real > dsolv_;
 	ObjexxFCL::FArray3D< Real > dsolv1_;
 
-	utility::vector1< Size > carbon_types; // indices for the standard carbon types
+	utility::vector1< Size > carbon_types_; // indices for the standard carbon types
 
 	// upper-triangle of the n_atomtypes x n_atomtypes table.  N^2 - (N*(N-1))/2) entries.
 	// indexed for at1, at2 w/ at1<at2:
 	// ((at1-1)*n_atomtypes + (at2-1) + 1 - (at1*(at1-1)/2)
-	utility::vector1< EtableParamsOnePair > analytic_parameters;
+	utility::vector1< EtableParamsOnePair > analytic_parameters_;
 
 	bool slim_;
 
 	// private methods
-
-	// get the AtomType object corresponding to a give type index
-	chemical::AtomType const &
-	atom_type( int const type )
-	{
-		chemical::AtomTypeSetCOP atom_set( atom_set_ );
-		return (*atom_set)[ type ];
-	}
 
 	//void smooth_etables();
 	//void modify_pot();
@@ -839,18 +934,12 @@ Etable::analytic_etable_evaluation(
 	Real repE = 0.;
 
 	//  ctsa - epsilon allows final bin value to be calculated
-	if ( dis2 > max_dis2 + epsilon ) return;
+	if ( dis2 > max_dis2_ + epsilon_ ) return;
 
 	EtableParamsOnePair const & p = analytic_params_for_pair( atype1, atype2 );
-	if ( dis2 < min_dis2 ) dis2 = min_dis2;
+	if ( dis2 < min_dis2_ ) dis2 = min_dis2_;
 
 	if ( dis2 > p.maxd2 ) return;
-
-	//if ( p.hydrogen_interaction ) {
-	// analytic_etable_evaluation_H(
-	//  at1, at2, p, dis2, lj_atrE, lj_repE, fa_solE );
-	// return;
-	//}
 
 	Real const dis = std::sqrt(dis2);
 	Real const inv_dis = 1.0/dis;
@@ -921,14 +1010,14 @@ Etable::analytic_lk_energy(
 	Real dis2 = at1.xyz().distance_squared( at2.xyz() );
 
 	//  ctsa - epsilon allows final bin value to be calculated
-	if ( dis2 > max_dis2 + epsilon ) return;
+	if ( dis2 > max_dis2_ + epsilon_ ) return;
 
 	int atype1 = at1.type() < at2.type() ? at1.type() : at2.type();
 	int atype2 = at1.type() < at2.type() ? at2.type() : at1.type();
 	bool inorder = at1.type() < at2.type(); // otherwise, atype1 and atype2 are swapped
 
 	EtableParamsOnePair const & p = analytic_params_for_pair( atype1, atype2 );
-	if ( dis2 < min_dis2 ) dis2 = min_dis2;
+	if ( dis2 < min_dis2_ ) dis2 = min_dis2_;
 
 	Real const dis = std::sqrt(dis2);
 	Real const inv_dis = 1.0/dis;
@@ -959,19 +1048,13 @@ Etable::analytic_etable_derivatives(
 	// locals
 	Real dljE(1), inv_dis6(1);
 
-	//  ctsa - epsilon allows final bin value to be calculated
-	if ( dis2 > max_dis2 + epsilon ) return;
+	//  ctsa - epsilon allows final_ bin value to be calculated
+	if ( dis2 > max_dis2_ + epsilon_ ) return;
 
 	EtableParamsOnePair const & p = analytic_params_for_pair( atype1, atype2 );
-	if ( dis2 < min_dis2 ) dis2 = min_dis2;
+	if ( dis2 < min_dis2_ ) dis2 = min_dis2_;
 
 	if ( dis2 > p.maxd2 ) return;
-
-	//if ( p.hydrogen_interaction ) {
-	// analytic_etable_evaluation_H(
-	//  at1, at2, p, dis2, lj_atrE, lj_repE, fa_solE );
-	// return;
-	//}
 
 	Real const dis = std::sqrt(dis2);
 	Real const inv_dis = 1.0/dis; inv_d = inv_dis;
@@ -1076,10 +1159,10 @@ Etable::analytic_lk_derivatives(
 	inv_d = 1;
 
 	//  ctsa - epsilon allows final bin value to be calculated
-	if ( dis2 > max_dis2 + epsilon ) return;
+	if ( dis2 > max_dis2_ + epsilon_ ) return;
 
 	EtableParamsOnePair const & p = analytic_params_for_pair( atype1, atype2 );
-	if ( dis2 < min_dis2 ) dis2 = min_dis2;
+	if ( dis2 < min_dis2_ ) dis2 = min_dis2_;
 
 	if ( dis2 > p.maxd2 ) return;
 	Real const dis = std::sqrt(dis2);
@@ -1113,28 +1196,6 @@ Etable::analytic_lk_derivatives(
 	}
 
 }
-
-//void
-//Etable::analytic_etable_evaluation_H(
-// conformation::Atom const & at1,
-// conformation::Atom const & at2,
-// EtableParamsOnePair const & p,
-// Real const dis2,
-// Real & lj_atrE,
-// Real & lj_repE,
-// Real & fa_solE
-//) const
-//{
-//debug_assert( dis2 <= p.maxd2 );
-//  if ( dis2  < p.ljrep_linear_ramp_d2_cutoff ) {
-//    //  ctsa - use linear ramp instead of lj when the dis/sigma
-//    //    ratio drops below theshold
-//  Real dis = std::sqrt( dis2 );
-//  lj_repE = analytic_ljrep_linearized( dis, p ) - p.lj_val_at_minimum;
-//  } else {
-//    lj_repE = analytic_lj_generic_form( 1/dis2, p ) - p.lj_val_at_minimum;
-//  }
-//}
 
 /// @details only to be called when the distance, dis, is less than the switch-point for
 /// the lj_switch_dis2sigma value.
@@ -1317,7 +1378,7 @@ Etable::analytic_params_for_pair(
 	Size i1 = atype1 < atype2 ? atype1 : atype2;
 	Size i2 = atype1 < atype2 ? atype2 : atype1;
 	Size index = (i1-1)*n_atomtypes_ + i2 - (i1*(i1-1)/2 );
-	return analytic_parameters[ index ];
+	return analytic_parameters_[ index ];
 }
 
 inline
@@ -1330,7 +1391,7 @@ Etable::analytic_params_for_pair(
 	Size i1 = atype1 < atype2 ? atype1 : atype2;
 	Size i2 = atype1 < atype2 ? atype2 : atype1;
 	Size index = (i1-1)*n_atomtypes_ + i2 - (i1*(i1-1)/2 );
-	return analytic_parameters[ index ];
+	return analytic_parameters_[ index ];
 }
 
 

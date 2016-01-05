@@ -123,9 +123,9 @@ public:
 		//Real d2;
 
 		Real offset = 0; //1e-5;
-		for ( Size ii = 1; ii <= etable.n_atomtypes(); ++ii ) {
+		for ( Size ii = 1; ii <= static_cast< Size >(etable.n_atomtypes()); ++ii ) {
 			at1.type(ii);
-			for ( Size jj = 1; jj <= etable.n_atomtypes(); ++jj ) {
+			for ( Size jj = 1; jj <= static_cast< Size >(etable.n_atomtypes()); ++jj ) {
 				at2.type(jj);
 				//std::cout << "looking at " << (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set())[jj].name() << std::endl;
 
@@ -183,9 +183,9 @@ public:
 		//Real d2;
 
 		Real offset = 0; //1e-5;
-		for ( Size ii = 1; ii <= etable.n_atomtypes(); ++ii ) {
+		for ( Size ii = 1; ii <= static_cast< Size >(etable.n_atomtypes()); ++ii ) {
 			at1.type(ii);
-			for ( Size jj = 1; jj <= etable.n_atomtypes(); ++jj ) {
+			for ( Size jj = 1; jj <= static_cast< Size >(etable.n_atomtypes()); ++jj ) {
 				at2.type(jj);
 				//std::cout << "looking at " << (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set())[jj].name() << std::endl;
 
@@ -240,9 +240,9 @@ public:
 
 		Size count_failures = 0;
 		ifstream infile( "save_etable_values.txt"  );
-		for ( Size ii = 1; ii <= etable.n_atomtypes(); ++ii ) {
+		for ( Size ii = 1; ii <= static_cast< Size >(etable.n_atomtypes()); ++ii ) {
 			at1.type(ii);
-			for ( Size jj = ii; jj <= etable.n_atomtypes(); ++jj ) {
+			for ( Size jj = ii; jj <= static_cast< Size >(etable.n_atomtypes()); ++jj ) {
 				at2.type(jj);
 				//std::cout << "looking at " << (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set())[jj].name() << std::endl;
 

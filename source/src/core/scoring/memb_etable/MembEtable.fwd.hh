@@ -7,9 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-/// @author
+/// @file  core/scoring/memb_etable/MembEtable.fwd.hh
+/// @brief Table of pre-computed LK membrane solvation energies
+/// @author Patrick Barth (original)
+/// @author Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_memb_etable_MembEtable_fwd_hh
 #define INCLUDED_core_scoring_memb_etable_MembEtable_fwd_hh
@@ -24,7 +25,7 @@ namespace etable {
 class MembEtable;
 
 typedef utility::pointer::shared_ptr< MembEtable > MembEtableOP;
-//typedef utility::pointer::owning_ptr< Etable const > EtableCOP;
+typedef utility::pointer::shared_ptr< MembEtable const > MembEtableCOP; 
 typedef utility::pointer::weak_ptr< MembEtable const > MembEtableCAP;
 
 } // etable
