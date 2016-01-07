@@ -124,8 +124,10 @@ exit(
 	print_backtrace();
 	std::cerr.flush();
 
+#ifndef BOINC
+	// why did this get placed here basically skipping the logic below?!
 	throw EXCN_utility_exit( message, file, line );
-
+#endif
 
 #ifdef USEMPI
 	MPI_Abort( MPI_COMM_WORLD, 911 );
@@ -171,6 +173,9 @@ exit(
 		std::exit( status );
 	}
 #endif // BOINC
+
+	throw EXCN_utility_exit( message, file, line );
+
 }
 
 
