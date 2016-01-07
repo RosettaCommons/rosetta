@@ -225,7 +225,7 @@ FragmentBiasAssigner::
 assign_prob_with_rsd_wdw(
 	int rsn
 ){
-	int offset=((int)rsd_wdw_size_-1)/2; 
+	int offset=((int)rsd_wdw_size_-1)/2;
 	runtime_assert( offset >= 0 );
 
 	int start_rsn = rsn-offset;
@@ -282,7 +282,7 @@ automode(
 			+ 0.35*zscore_geometry[r];
 
 		if ( score < score_cut ) assign_prob_with_rsd_wdw(r);
-		
+
 		//fragbias_tr << "rsn: " << r << " fragProb: " << fragmentProbs_[r] << " score: " << score << std::endl;
 	}
 }
@@ -606,7 +606,7 @@ geometry(
 ){
 	fragbias_tr << "geometry is chose" << std::endl;
 	fragProbs_assigned_=true;
-	if( score_threshold_ == 123456789 ) set_score_threshold( 0.6 );
+	if ( score_threshold_ == 123456789 ) set_score_threshold( 0.6 );
 
 	// clean the container
 	perrsd_geometry_.resize(nres_, 0.0);
@@ -627,7 +627,7 @@ rama(
 	Real weight /*=0.2*/
 ){
 	fragProbs_assigned_=true;
-	if( score_threshold_ == 123456789 ) set_score_threshold( 0.7 );
+	if ( score_threshold_ == 123456789 ) set_score_threshold( 0.7 );
 	fragbias_tr << "rama is chosen, and the score_threshold is " << score_threshold_ << std::endl;
 
 	// clean the container
@@ -638,7 +638,7 @@ rama(
 		weight );
 
 	assign_fragprobs( perrsd_rama_,
-		score_threshold_ ); 
+		score_threshold_ );
 }
 
 

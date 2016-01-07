@@ -196,6 +196,7 @@ residue_types/l-ncaa/4-hydroxy-phenylglycine.params
 residue_types/l-ncaa/4-methyl-phenylalanine.params
 residue_types/l-ncaa/4-methyl-tryptophan.params
 residue_types/l-ncaa/4-phenyl-phenylalanine.params
+residue_types/l-ncaa/4-phenyl-phenylalanine_tyr_rot.params
 residue_types/l-ncaa/4-tert-butyl-phenylalanine.params
 residue_types/l-ncaa/5-bromo-tryptophan.params
 residue_types/l-ncaa/5-chloro-tryptophan.params

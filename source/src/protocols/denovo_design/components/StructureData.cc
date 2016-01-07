@@ -3125,10 +3125,10 @@ StructureData::update_movable_groups_after_deletion( core::Size const /*mg_old*/
 	core::Size replaced_mg = 0;
 
 	for ( SegmentMap::iterator r = segments_.begin(); r != segments_.end(); ++r ) {
-		if ( r->second.movable_group == mg_old ) {
-			replaced_mg = r->second.movable_group;
-			r->second.movable_group = mg_old;
-		}
+	if ( r->second.movable_group == mg_old ) {
+	replaced_mg = r->second.movable_group;
+	r->second.movable_group = mg_old;
+	}
 	}
 
 	TR.Debug << "Renumbered movable group " << replaced_mg << " to " << mg_old << std::endl;

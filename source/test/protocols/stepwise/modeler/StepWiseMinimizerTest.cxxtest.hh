@@ -63,15 +63,15 @@ public:
 		using namespace core::pose::full_model_info;
 		using namespace core::scoring;
 		using namespace core::id;
-    using namespace protocols::stepwise::setup;
-    using namespace protocols::stepwise::monte_carlo;
-    using namespace protocols::stepwise::monte_carlo::mover;
-    using namespace protocols::stepwise::modeler;
-    using namespace protocols::stepwise::modeler::options;
-    using namespace protocols::stepwise::modeler::working_parameters;
-    using namespace protocols::stepwise::modeler::packer;
-    using namespace utility;
-    using namespace utility::tools;
+		using namespace protocols::stepwise::setup;
+		using namespace protocols::stepwise::monte_carlo;
+		using namespace protocols::stepwise::monte_carlo::mover;
+		using namespace protocols::stepwise::modeler;
+		using namespace protocols::stepwise::modeler::options;
+		using namespace protocols::stepwise::modeler::working_parameters;
+		using namespace protocols::stepwise::modeler::packer;
+		using namespace utility;
+		using namespace utility::tools;
 
 		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );

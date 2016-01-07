@@ -106,7 +106,7 @@ public:
 
 	void set_rsd_wdw_to_assign_prob( int wdw=0 ){ rsd_wdw_size_=wdw; }
 	void set_wdw_to_freeze( int wdw=0 ){ wdw_to_freeze_=wdw; }
-	void set_score_threshold( Real threshold=123456789 ){ score_threshold_=threshold; } 
+	void set_score_threshold( Real threshold=123456789 ){ score_threshold_=threshold; }
 
 private:
 	// functions
@@ -119,7 +119,7 @@ private:
 		utility::vector1<core::Real> &zscore_v,
 		bool negating=false);
 
-  // This function calls assign_prob_with_rsd_wdw(rsn) to assign probability to the residue with a window controlled by "rsd_wdw_size_".
+	// This function calls assign_prob_with_rsd_wdw(rsn) to assign probability to the residue with a window controlled by "rsd_wdw_size_".
 	void assign_fragprobs( utility::vector1<core::Real> const &perrsd_score,
 		Real threshold );
 

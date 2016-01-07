@@ -51,9 +51,9 @@ public:
 		std::string const alternate_parameter_set = ""
 	);
 
-	MembEtable( MembEtable const & src ); 
+	MembEtable( MembEtable const & src );
 
-	virtual ~MembEtable(); 
+	virtual ~MembEtable();
 
 	// Accessors
 
@@ -114,7 +114,7 @@ public:
 	/// atom as defined by the atom-type-set used to create this Etable.
 	virtual
 	Real
-	max_non_hydrogen_lj_radius() const { 
+	max_non_hydrogen_lj_radius() const {
 		return max_non_hydrogen_lj_radius_;
 	}
 
@@ -123,7 +123,7 @@ public:
 	virtual
 	Real
 	max_hydrogen_lj_radius() const {
-		return max_hydrogen_lj_radius_; 
+		return max_hydrogen_lj_radius_;
 	}
 
 	/// set these up in the ctor

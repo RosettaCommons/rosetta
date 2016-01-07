@@ -404,8 +404,8 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 		}
 
 		if ( rsd.atom_type( i ).is_repulsive() ) {
-		 	if ( verbose ) std::cout << "  Repulsive: Ignore! " << std::endl;
-		 	continue;
+			if ( verbose ) std::cout << "  Repulsive: Ignore! " << std::endl;
+			continue;
 		}
 
 		if ( verbose ) std::cout << std::endl;
@@ -552,7 +552,7 @@ rna_dna_match( core::chemical::AA const & aa1, core::chemical::AA const & aa2 )
 		return ( aa2 == na_rgu );
 	case( na_thy ) :
 		return ( aa2 == na_ura );
-	default:
+	default :
 		break;
 	}
 	return false;

@@ -55,8 +55,8 @@ public:
 		using namespace core::scoring::loop_graph;
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
-    using namespace protocols::stepwise::setup;
-    using namespace utility::tools;
+		using namespace protocols::stepwise::setup;
+		using namespace utility::tools;
 
 		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		PoseOP pose = initialize_pose_and_other_poses_from_command_line( rsd_set );
@@ -74,12 +74,12 @@ public:
 		TS_ASSERT( loop_cycles.has_value( LoopCycle( make_vector1( Loop( 11,16,4,4) ) ) ) );
 		// following two loop cycles are *nested*, which is what is called a complex_loop_graph.
 		TS_ASSERT( loop_cycles.has_value( LoopCycle( make_vector1( Loop(   23, 25, 1, 6 ),
-																															 Loop(   53, 55, 6, 2 ),
-																															 Loop(   5, 7, 2, 3 ),
-																															 Loop(  20, 23, 3, 1 ) ) ) ) );
+			Loop(   53, 55, 6, 2 ),
+			Loop(   5, 7, 2, 3 ),
+			Loop(  20, 23, 3, 1 ) ) ) ) );
 		TS_ASSERT( loop_cycles.has_value( LoopCycle( make_vector1( Loop(   23, 25, 1, 6 ),
-																															 Loop(   53, 55, 6, 2 ),
-																															 Loop(   59, 60, 2, 1 ) ) ) ) );
+			Loop(   53, 55, 6, 2 ),
+			Loop(   59, 60, 2, 1 ) ) ) ) );
 		TS_ASSERT( !loop_graph.has_just_simple_cycles() );
 
 

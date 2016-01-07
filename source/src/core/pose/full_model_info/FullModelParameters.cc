@@ -293,9 +293,9 @@ FullModelParameters::get_cutpoint_open_from_pdb_info( pose::Pose const & pose, u
 	for ( Size n = 1; n < pose.total_residue(); n++ ) {
 
 		if ( ( pdb_info &&  (pdb_info->chain( n ) != pdb_info->chain( n+1 ) ) ) ||
-				 ( pose.residue_type( n ).is_protein() != pose.residue_type( n+1 ).is_protein() ) ||
-				 ( pose.residue_type( n ).is_RNA() != pose.residue_type( n+1 ).is_RNA() ) ||
-				 ( !pose.residue_type( n ).is_polymer() ) )	{
+				( pose.residue_type( n ).is_protein() != pose.residue_type( n+1 ).is_protein() ) ||
+				( pose.residue_type( n ).is_RNA() != pose.residue_type( n+1 ).is_RNA() ) ||
+				( !pose.residue_type( n ).is_polymer() ) ) {
 			cutpoint_open.push_back( res_list[ n ] );
 		}
 	}

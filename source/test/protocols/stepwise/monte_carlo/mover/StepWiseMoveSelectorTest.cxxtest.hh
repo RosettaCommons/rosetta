@@ -53,11 +53,11 @@ public:
 
 		using namespace core::chemical;
 		using namespace core::pose;
-    using namespace protocols::stepwise::setup;
-    using namespace protocols::stepwise::monte_carlo::submotif;
-    using namespace protocols::stepwise::monte_carlo::mover;
-    using namespace protocols::stepwise::monte_carlo::mover::options;
-    using namespace utility;
+		using namespace protocols::stepwise::setup;
+		using namespace protocols::stepwise::monte_carlo::submotif;
+		using namespace protocols::stepwise::monte_carlo::mover;
+		using namespace protocols::stepwise::monte_carlo::mover::options;
+		using namespace utility;
 
 		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		pose = initialize_pose_and_other_poses_from_command_line( rsd_set );
@@ -80,9 +80,9 @@ public:
 
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
-    using namespace protocols::stepwise::monte_carlo::mover;
-    using namespace protocols::stepwise::monte_carlo::mover::options;
-    using namespace utility::tools;
+		using namespace protocols::stepwise::monte_carlo::mover;
+		using namespace protocols::stepwise::monte_carlo::mover::options;
+		using namespace utility::tools;
 
 		stepwise_move_selector->figure_out_all_possible_moves( *pose );
 		TS_ASSERT( stepwise_move_selector->swa_moves().has_value( StepWiseMove( 5, Attachment( 4, BOND_TO_PREVIOUS ), ADD ) ) );
@@ -99,7 +99,7 @@ public:
 		StepWiseMove swa_move( uturn_addition_move1 );
 		nonconst_full_model_info( *pose_add_submotif ).add_other_pose(
 			submotif_library->create_new_submotif( swa_move.move_element(),
-																						 swa_move.submotif_tag(), *pose_add_submotif ) );
+			swa_move.submotif_tag(), *pose_add_submotif ) );
 
 		AddMover add_mover;
 		add_mover.set_start_added_residue_in_aform( true );
@@ -107,7 +107,7 @@ public:
 		add_mover.apply( *pose_add_submotif, swa_move );
 		stepwise_move_selector->figure_out_all_possible_moves( *pose_add_submotif );
 
-		StepWiseMove reverse_submotif_move = stepwise_move_selector->reverse_move( swa_move, *pose, *pose_add_submotif );		TS_ASSERT_EQUALS( reverse_submotif_move, StepWiseMove( make_vector1( 5,6,7 ), Attachment( 4, BOND_TO_PREVIOUS ), DELETE ) );
+		StepWiseMove reverse_submotif_move = stepwise_move_selector->reverse_move( swa_move, *pose, *pose_add_submotif );  TS_ASSERT_EQUALS( reverse_submotif_move, StepWiseMove( make_vector1( 5,6,7 ), Attachment( 4, BOND_TO_PREVIOUS ), DELETE ) );
 
 		StepWiseMove split_submotif_move( make_vector1( 6,7 ), Attachment( 5, BOND_TO_PREVIOUS ), DELETE );
 
@@ -127,8 +127,8 @@ public:
 	void test_reverse_of_FROM_SCRATCH_move(){
 
 		using namespace core::pose;
-    using namespace protocols::stepwise::monte_carlo::mover;
-    using namespace utility::tools;
+		using namespace protocols::stepwise::monte_carlo::mover;
+		using namespace utility::tools;
 
 		stepwise_move_selector->figure_out_all_possible_moves( *pose );
 		StepWiseMove swa_move( make_vector1(5,6), Attachments(), FROM_SCRATCH );

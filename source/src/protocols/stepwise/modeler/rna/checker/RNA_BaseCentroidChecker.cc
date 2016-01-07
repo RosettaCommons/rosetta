@@ -204,7 +204,7 @@ RNA_BaseCentroidChecker::Initialize_terminal_res( pose::Pose const & pose ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 RNA_BaseCentroidChecker::check_base_stack(
-  core::kinematics::Stub const & moving_residue_base_stub,
+	core::kinematics::Stub const & moving_residue_base_stub,
 	core::kinematics::Stub const & other_base_stub,
 	core::Real const base_axis_CUTOFF,
 	core::Real const base_planarity_CUTOFF,
@@ -538,8 +538,8 @@ RNA_BaseCentroidChecker::check_that_terminal_res_are_unstacked( bool const verbo
 /////////////////////////////////////////////////////////////////////////////////
 bool
 RNA_BaseCentroidChecker::check_block_stack_res(
-		utility::vector1< Size > const & block_stack_res,
-		BaseStackWhichSide const & block_stack_side ) const
+	utility::vector1< Size > const & block_stack_res,
+	BaseStackWhichSide const & block_stack_side ) const
 {
 	for ( Size i = 1; i <= block_stack_res.size(); i++ ) {
 		Size const & res = block_stack_res[ i ];
@@ -553,17 +553,18 @@ RNA_BaseCentroidChecker::check_block_stack_res(
 /////////////////////////////////////////////////////////////////////////////////
 bool
 RNA_BaseCentroidChecker::check_base_stack_in_partition(
-    Size const & block_stack_res,
-		utility::vector1< Size > const & other_res,
-		BaseStackWhichSide const & block_stack_side ) const
+	Size const & block_stack_res,
+	utility::vector1< Size > const & other_res,
+	BaseStackWhichSide const & block_stack_side ) const
 {
 	BaseStackWhichSide base_stack_side( core::chemical::rna::ANY_BASE_STACK_SIDE );
 	for ( Size m = 1; m <= other_res.size(); m++ ) {
 		if ( check_base_stack( base_stub_list_[ block_stack_res ],
-													 base_stub_list_[ other_res[ m ] ],
-													 base_stack_side ) &&
-				 base_stack_side == block_stack_side )
+				base_stub_list_[ other_res[ m ] ],
+				base_stack_side ) &&
+				base_stack_side == block_stack_side ) {
 			return true;
+		}
 	}
 	return false;
 }

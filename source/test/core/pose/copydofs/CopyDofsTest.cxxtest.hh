@@ -78,7 +78,7 @@ public:
 		f.reassign_atoms_for_intra_residue_stubs();
 		new_pose.fold_tree( f );
 		TS_ASSERT( !f.is_simple_tree() );
-		//		new_pose.dump_pdb( "extended.pdb" );
+		//  new_pose.dump_pdb( "extended.pdb" );
 
 		TS_ASSERT_DIFFERS( pose.annotated_sequence(), new_pose.annotated_sequence() );
 
@@ -100,8 +100,8 @@ public:
 		// above did the superposition.
 		TS_ASSERT_LESS_THAN( rms_at_corresponding_atoms_no_super( new_pose, pose, atom_id_map ), 1.0e-4 );
 
-		//		pose.dump_pdb( "test.pdb" );
-		//		new_pose.dump_pdb( "copydofs_superimpose.pdb" );
+		//  pose.dump_pdb( "test.pdb" );
+		//  new_pose.dump_pdb( "copydofs_superimpose.pdb" );
 	}
 
 

@@ -58,9 +58,9 @@ public:
 		//
 		//    _________________ Jump___
 		//   |                         |
-    //   1x (2)                (8)x9x 10
+		//   1x (2)                (8)x9x 10
 		//   |   |                  |  |
-    //  19 (18)                (13)12 11
+		//  19 (18)                (13)12 11
 		//
 		//  x mark cutpoints_closed
 		//
@@ -72,9 +72,9 @@ public:
 		//
 		//    _________________ Jump___
 		//   |                         |
-    //   1x (2)                (3)x4x 5
+		//   1x (2)                (3)x4x 5
 		//   |   |                  |  |
-    //  10  (9)                (8) 7 6
+		//  10  (9)                (8) 7 6
 		//
 		/////////////////////////////////////////////////////
 		// Following is 'standard' setup from stepwise.cc
@@ -84,9 +84,9 @@ public:
 		using namespace core::pose::full_model_info;
 		using namespace core::scoring;
 		using namespace core::id;
-    using namespace protocols::farna;
-    using namespace protocols::toolbox;
-    using namespace protocols::stepwise::setup;
+		using namespace protocols::farna;
+		using namespace protocols::toolbox;
+		using namespace protocols::stepwise::setup;
 
 		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
@@ -148,9 +148,9 @@ public:
 		//
 		//    _________________ Jump___
 		//   |                         |
-    //   1x (2)--3---4--5  6--7---(8)x9x 10
+		//   1x (2)--3---4--5  6--7---(8)x9x 10
 		//   |   |                         |  |
-    //  19 (18) 17--16-----15-14-(13)12 11
+		//  19 (18) 17--16-----15-14-(13)12 11
 		////////////////////////////////////////////////////////////////////////
 		using namespace protocols::stepwise::monte_carlo::mover;
 		AddMover add_mover;

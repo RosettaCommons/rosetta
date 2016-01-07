@@ -58,11 +58,11 @@ public:
 	{
 		using namespace core::chemical;
 		using namespace core::pose::full_model_info;
-    using namespace protocols::stepwise::setup;
-    using namespace protocols::stepwise::monte_carlo;
-    using namespace protocols::stepwise::monte_carlo::mover;
-    using namespace protocols::stepwise::modeler;
-    using namespace protocols::stepwise::modeler::align;
+		using namespace protocols::stepwise::setup;
+		using namespace protocols::stepwise::monte_carlo;
+		using namespace protocols::stepwise::monte_carlo::mover;
+		using namespace protocols::stepwise::modeler;
+		using namespace protocols::stepwise::modeler::align;
 
 		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		PoseOP pose = initialize_pose_and_other_poses_from_command_line( rsd_set );
@@ -126,9 +126,9 @@ public:
 		using namespace core::import_pose;
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
-    using namespace protocols::stepwise::setup;
-    using namespace protocols::stepwise::modeler::align;
-    using namespace utility::tools;
+		using namespace protocols::stepwise::setup;
+		using namespace protocols::stepwise::modeler::align;
+		using namespace utility::tools;
 
 		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		PoseOP pose = initialize_pose_and_other_poses_from_command_line( rsd_set );

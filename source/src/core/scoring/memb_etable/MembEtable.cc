@@ -63,14 +63,14 @@ MembEtable::MembEtable(
 	max_hydrogen_lj_radius_( 0.0 )
 {
 
-	dimension_memb_etable_arrays(); 
-	initialize_from_atomset( atom_set_in_ap ); 
+	dimension_memb_etable_arrays();
+	initialize_from_atomset( atom_set_in_ap );
 	make_pairenergy_table();
 }
 
-MembEtable::MembEtable( MembEtable const & src ) : 
-	Etable( src ), 
-	max_non_hydrogen_lj_radius_( src.max_hydrogen_lj_radius_ ), 
+MembEtable::MembEtable( MembEtable const & src ) :
+	Etable( src ),
+	max_non_hydrogen_lj_radius_( src.max_hydrogen_lj_radius_ ),
 	max_hydrogen_lj_radius_( src.max_hydrogen_lj_radius_ )
 {}
 
@@ -78,7 +78,7 @@ MembEtable::~MembEtable() {}
 
 // Initialization Functions
 
-void 
+void
 MembEtable::dimension_memb_etable_arrays() {
 
 	// size the arrays
@@ -88,8 +88,8 @@ MembEtable::dimension_memb_etable_arrays() {
 	memb_solv2_.dimension(  etable_disbins(), n_atomtypes(), n_atomtypes() );
 	dsolv2_.dimension(  etable_disbins(), n_atomtypes(), n_atomtypes() );
 	dsolv1_.dimension( etable_disbins(), n_atomtypes(), n_atomtypes() );
-	memb_dsolv2_.dimension(  etable_disbins(), n_atomtypes(), n_atomtypes() ); 
-	memb_dsolv1_.dimension( etable_disbins(), n_atomtypes(), n_atomtypes() ); 
+	memb_dsolv2_.dimension(  etable_disbins(), n_atomtypes(), n_atomtypes() );
+	memb_dsolv1_.dimension( etable_disbins(), n_atomtypes(), n_atomtypes() );
 
 	lj_radius_.resize( n_atomtypes(), 0.0 );
 	lk_dgfree_.resize( n_atomtypes(), 0.0 );
@@ -101,7 +101,7 @@ MembEtable::dimension_memb_etable_arrays() {
 
 }
 
-void 
+void
 MembEtable::initialize_from_atomset( chemical::AtomTypeSetCAP atom_set_in_ap ) {
 
 	chemical::AtomTypeSetCOP atom_set_in( atom_set_in_ap );
@@ -165,7 +165,7 @@ MembEtable::make_pairenergy_table()
 
 	Real dis2,dis,dis2_step;
 	Real solvE1,solvE2,dsolvE1,dsolvE2;
-	Real memb_solvE1,memb_solvE2,memb_dsolvE1,memb_dsolvE2; 
+	Real memb_solvE1,memb_solvE2,memb_dsolvE1,memb_dsolvE2;
 
 	// Pre-Computed coefficients for high-speed potential calculation computed
 	// in intiailization. Note: +1 atom type is a disulfide bonded cyzteine
@@ -229,7 +229,7 @@ MembEtable::make_pairenergy_table()
 					long_range_damping_length();
 				dsolv2_damp = -solv2_(normal_disbins,atype2,atype1) /
 					long_range_damping_length();
-				
+
 				memb_dsolv1_damp = -memb_solv1_(normal_disbins,atype2,atype1) /
 					long_range_damping_length();
 				memb_dsolv2_damp = -memb_solv2_(normal_disbins,atype2,atype1) /
@@ -294,8 +294,8 @@ MembEtable::make_pairenergy_table()
 	etables[ "solv1"] = &  solv1_; etables[ "solv2"] = &  solv2_;
 	etables["dsolv1"]  = & dsolv1_;
 	etables["dsolv2"]  = & dsolv2_;
-	etables[ "memb_solv1"] = &  memb_solv1_;  etables[ "memb_solv2"] = &  memb_solv2_; 
-	etables["memb_dsolv2"]  = & memb_dsolv2_; etables["memb_dsolv1"]  = & memb_dsolv1_;  
+	etables[ "memb_solv1"] = &  memb_solv1_;  etables[ "memb_solv2"] = &  memb_solv2_;
+	etables["memb_dsolv2"]  = & memb_dsolv2_; etables["memb_dsolv1"]  = & memb_dsolv1_;
 
 	if ( option[ score::input_etables ].user() ) {
 		string tag = option[ score::input_etables ];
@@ -358,7 +358,7 @@ MembEtable::modify_pot()
 
 	using namespace std;
 
-	bool mod_hhrep = false; 
+	bool mod_hhrep = false;
 	Real const h = 0.0;
 	Real const c = 0.0;
 	Real const w = 0.0;
@@ -373,12 +373,12 @@ MembEtable::modify_pot()
 			<< std::endl;
 	} {
 
-		Real const bin = ( 4.2 * 4.2 / .05 ) + 1.0; 
+		Real const bin = ( 4.2 * 4.2 / .05 ) + 1.0;
 		Real dis;
 		int const ibin( static_cast< int >( bin ) );
 		chemical::AtomTypeSetCOP atom_set_ac( atom_set() );
 		for ( int k = 1; k <= etable_disbins(); ++k ) {
-			dis = std::sqrt( ( k - 1 ) * .05f ); 
+			dis = std::sqrt( ( k - 1 ) * .05f );
 
 			utility::vector1<int> carbon_types;
 			carbon_types.push_back( atom_set_ac->atom_type_index("CH1") );
@@ -394,21 +394,21 @@ MembEtable::modify_pot()
 						int const jj = carbon_types[j];
 
 						solv1_(k,jj,ii) = solv1_(ibin,jj,ii);
-						solv1_(k,ii,jj) = solv1_(ibin,ii,jj); 
+						solv1_(k,ii,jj) = solv1_(ibin,ii,jj);
 						solv2_(k,jj,ii) = solv2_(ibin,jj,ii);
-						solv2_(k,ii,jj) = solv2_(ibin,ii,jj); 
+						solv2_(k,ii,jj) = solv2_(ibin,ii,jj);
 						dsolv2_(k,jj,ii) = 0.0;
-						dsolv2_(k,ii,jj) = 0.0; 
+						dsolv2_(k,ii,jj) = 0.0;
 						dsolv1_(k,ii,jj) = 0.0;
-						dsolv1_(k,jj,ii) = 0.0; 
+						dsolv1_(k,jj,ii) = 0.0;
 						memb_solv1_(k,jj,ii) = memb_solv1_(ibin,jj,ii);
-						memb_solv1_(k,ii,jj) = memb_solv1_(ibin,ii,jj); 
+						memb_solv1_(k,ii,jj) = memb_solv1_(ibin,ii,jj);
 						memb_solv2_(k,jj,ii) = memb_solv2_(ibin,jj,ii);
-						memb_solv2_(k,ii,jj) = memb_solv2_(ibin,ii,jj); 
+						memb_solv2_(k,ii,jj) = memb_solv2_(ibin,ii,jj);
 						memb_dsolv2_(k,jj,ii) = 0.0;
-						memb_dsolv2_(k,ii,jj) = 0.0; 
+						memb_dsolv2_(k,ii,jj) = 0.0;
 						memb_dsolv1_(k,ii,jj) = 0.0;
-						memb_dsolv1_(k,jj,ii) = 0.0; 
+						memb_dsolv1_(k,jj,ii) = 0.0;
 					}
 				}
 			}
@@ -645,9 +645,9 @@ MembEtable::precalc_etable_coefficients(
 	FArray2< Real > & lj_sigma,
 	FArray1< Real > & lk_inv_lambda2,
 	FArray2< Real > & lk_coeff,
-	FArray2< Real > & memb_lk_coeff, 
+	FArray2< Real > & memb_lk_coeff,
 	FArray2< Real > & lk_min_dis2sigma_value,
-	FArray2< Real > & memb_lk_min_dis2sigma_value 
+	FArray2< Real > & memb_lk_min_dis2sigma_value
 )
 {
 
@@ -655,7 +655,7 @@ MembEtable::precalc_etable_coefficients(
 	Real sigma; //sigma6,sigma12,wdepth;
 	Real inv_lambda;
 	FArray1D< Real > lk_coeff_tmp( n_atomtypes() );
-	FArray1D< Real > memb_lk_coeff_tmp( n_atomtypes() ); 
+	FArray1D< Real > memb_lk_coeff_tmp( n_atomtypes() );
 	Real thresh_dis,inv_thresh_dis2,x_thresh;
 	Real const inv_neg2_tms_pi_sqrt_pi = { -0.089793561062583294 };
 	// coefficient for lk solvation
@@ -665,7 +665,7 @@ MembEtable::precalc_etable_coefficients(
 		inv_lambda = 1.0/lk_lambda(i);
 		lk_inv_lambda2(i) = inv_lambda * inv_lambda;
 		lk_coeff_tmp(i) = inv_neg2_tms_pi_sqrt_pi * lk_dgfree(i) * inv_lambda;
-		memb_lk_coeff_tmp(i) = inv_neg2_tms_pi_sqrt_pi * memb_lk_dgfree(i) * inv_lambda; 
+		memb_lk_coeff_tmp(i) = inv_neg2_tms_pi_sqrt_pi * memb_lk_dgfree(i) * inv_lambda;
 	}
 
 	for ( int i = 1, e = n_atomtypes(); i <= e; ++i ) {
@@ -717,8 +717,8 @@ MembEtable::precalc_etable_coefficients(
 			// ctsa - precalculated lk solvation coefficients
 			lk_coeff(i,j) = lk_coeff_tmp(i) * lk_volume(j);
 			lk_coeff(j,i) = lk_coeff_tmp(j) * lk_volume(i);
-			memb_lk_coeff(i,j) = memb_lk_coeff_tmp(i) * lk_volume(j); 
-			memb_lk_coeff(j,i) = memb_lk_coeff_tmp(j) * lk_volume(i); 
+			memb_lk_coeff(i,j) = memb_lk_coeff_tmp(i) * lk_volume(j);
+			memb_lk_coeff(j,i) = memb_lk_coeff_tmp(j) * lk_volume(i);
 
 			// ctsa - when dis/sigma drops below lk_min_dis2sigma,
 			//   a constant lk solvation value equal to the value at the
@@ -731,7 +731,7 @@ MembEtable::precalc_etable_coefficients(
 			lk_min_dis2sigma_value(i,j) = std::exp(-x_thresh) * lk_coeff(i,j) *
 				inv_thresh_dis2;
 			memb_lk_min_dis2sigma_value(i,j) = std::exp(-x_thresh) * memb_lk_coeff(i,j) *
-				inv_thresh_dis2; 
+				inv_thresh_dis2;
 
 			dis_rad = thresh_dis - lj_radius(j);
 			x_thresh = ( dis_rad * dis_rad ) * lk_inv_lambda2(j);
@@ -793,7 +793,7 @@ MembEtable::calc_etable_value(
 	FArray1< Real > & lk_inv_lambda2,
 	FArray2< Real > & lk_coeff,
 	FArray2< Real > & lk_min_dis2sigma_value,
-	Real & memb_solvE1, 
+	Real & memb_solvE1,
 	Real & memb_solvE2,
 	FArray2< Real > & memb_lk_coeff,
 	FArray2< Real > & memb_lk_min_dis2sigma_value,
@@ -814,7 +814,7 @@ MembEtable::calc_etable_value(
 	solvE2 = 0.;
 	dsolvE1 = 0.;
 	dsolvE2 = 0.;
-	memb_solvE1 = 0.; 
+	memb_solvE1 = 0.;
 	memb_solvE2 = 0.;
 	memb_dsolvE1 = 0.;
 	memb_dsolvE2 = 0.;
@@ -837,7 +837,7 @@ MembEtable::calc_etable_value(
 		solvE2 = lk_min_dis2sigma_value(xtra_atype2,xtra_atype1);
 		dsolvE1 = 0.0;
 		dsolvE2 = 0.0;
-		memb_solvE1 = memb_lk_min_dis2sigma_value(xtra_atype1,xtra_atype2); 
+		memb_solvE1 = memb_lk_min_dis2sigma_value(xtra_atype1,xtra_atype2);
 		memb_solvE2 = memb_lk_min_dis2sigma_value(xtra_atype2,xtra_atype1);
 		memb_dsolvE1 = memb_dsolvE2 = 0.0;
 
@@ -850,7 +850,7 @@ MembEtable::calc_etable_value(
 
 		solvE1 = std::exp(-x1) * lk_coeff(atype1,atype2) * inv_dis2;
 		solvE2 = std::exp(-x2) * lk_coeff(atype2,atype1) * inv_dis2;
-		memb_solvE1 = std::exp(-x1) * memb_lk_coeff(atype1,atype2) * inv_dis2; 
+		memb_solvE1 = std::exp(-x1) * memb_lk_coeff(atype1,atype2) * inv_dis2;
 		memb_solvE2 = std::exp(-x2) * memb_lk_coeff(atype2,atype1) * inv_dis2;
 
 		dsolvE1 = -2.0 * solvE1 *

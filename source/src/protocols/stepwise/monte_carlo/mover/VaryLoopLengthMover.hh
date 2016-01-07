@@ -58,7 +58,7 @@ private:
 
 	void
 	update_full_model_parameters( core::pose::Pose & pose,
-																core::pose::full_model_info::FullModelParametersCOP full_model_parameters_new ) const;
+		core::pose::full_model_info::FullModelParametersCOP full_model_parameters_new ) const;
 
 
 };

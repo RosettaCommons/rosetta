@@ -44,7 +44,7 @@ class GaussianChainFuncTests : public CxxTest::TestSuite
 {
 public:
 
-   // Shared initialization goes here.
+	// Shared initialization goes here.
 	void setUp() {
 		core_init();
 	}
@@ -80,7 +80,7 @@ public:
 
 
 	void double_func_test( core::Distance const distance2, core::Real const &loop_fixed_cost,
-												 bool const & single_gaussian_approximation_should_be_good )
+		bool const & single_gaussian_approximation_should_be_good )
 	{
 		using namespace core;
 		using namespace core::scoring::func;
@@ -122,7 +122,7 @@ public:
 
 
 	void triple_func_test( core::Distance const distance2, core::Distance const distance3, core::Real const &loop_fixed_cost,
-												 bool const & single_gaussian_approximation_should_be_good  )
+		bool const & single_gaussian_approximation_should_be_good  )
 	{
 		using namespace core;
 		using namespace core::scoring::func;
@@ -171,8 +171,8 @@ public:
 
 	void
 	quadruple_func_test( core::Distance const distance2, core::Distance const distance3, core::Distance const distance4,
-											 core::Real const &loop_fixed_cost,
-											 bool const & single_gaussian_approximation_should_be_good  )
+		core::Real const &loop_fixed_cost,
+		bool const & single_gaussian_approximation_should_be_good  )
 	{
 		using namespace core;
 		using namespace core::scoring::func;

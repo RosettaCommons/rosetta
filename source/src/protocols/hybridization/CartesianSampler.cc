@@ -204,7 +204,7 @@ CartesianSampler::init() {
 	dump_pdb_ = false;
 	dump_pdb_tag_ = "1";
 	automode_scorecut_ = -0.5;
-	rsd_wdw_to_refine_ = 0; // 
+	rsd_wdw_to_refine_ = 0; //
 	wdw_to_freeze_ = 0;
 	freeze_endpoints_ = true;
 	score_threshold_ = 123456789;

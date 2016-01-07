@@ -87,7 +87,7 @@ private:
 
 	bool
 	check_base_stack(
-    core::kinematics::Stub const & moving_residue_base_stub,
+		core::kinematics::Stub const & moving_residue_base_stub,
 		core::kinematics::Stub const & other_base_stub,
 		core::Real const base_axis_CUTOFF,
 		core::Real const base_planarity_CUTOFF,
@@ -103,9 +103,9 @@ private:
 
 	bool
 	check_base_stack(
-	   core::kinematics::Stub const & moving_residue_base_stub,
-		 core::kinematics::Stub const & other_base_stub,
-		 core::chemical::rna::BaseStackWhichSide & base_stack_side );
+		core::kinematics::Stub const & moving_residue_base_stub,
+		core::kinematics::Stub const & other_base_stub,
+		core::chemical::rna::BaseStackWhichSide & base_stack_side );
 
 	bool
 	check_base_stack( Size const & pos1, Size const & pos2, bool const verbose  = false  );
@@ -154,7 +154,7 @@ private:
 
 	bool
 	check_base_stack_in_partition(
-    Size const & block_stack_res,
+		Size const & block_stack_res,
 		utility::vector1< Size > const & other_res,
 		core::chemical::rna::BaseStackWhichSide const & block_stack_side ) const;
 

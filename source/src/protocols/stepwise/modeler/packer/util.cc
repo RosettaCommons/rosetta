@@ -86,7 +86,7 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 		if ( at_interface[i] ) interface_res.push_back( i );
 	}
 
-	//	TR << TR.Magenta << make_tag_with_dashes( interface_res ) << TR.Reset << std::endl;
+	// TR << TR.Magenta << make_tag_with_dashes( interface_res ) << TR.Reset << std::endl;
 	return interface_res;
 }
 

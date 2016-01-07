@@ -810,7 +810,7 @@ Vector get_atom_color(
 		return Vector( 1.0, 1.0, 1.0);
 
 	case RHIJU_COLOR :
-		if ( residues[r]->is_virtual(i) || residues[r]->is_repulsive(i)) {
+		if ( residues[r]->is_virtual(i) || residues[r]->is_repulsive(i) ) {
 			return Vector( 1.0, 1.0, 1.0 );
 		} else if ( residues[r]->atom_is_backbone(i)  ) {
 			rainbow_color( float(r)/ float(gs.nres_for_graphics), red, green, blue, false /*mute_color*/);

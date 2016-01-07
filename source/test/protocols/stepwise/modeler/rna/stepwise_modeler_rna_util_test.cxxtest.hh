@@ -53,9 +53,9 @@ public:
 		using namespace core::chemical;
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
-    using namespace protocols::stepwise::setup;
-    using namespace protocols::stepwise::modeler::rna;
-    using namespace utility;
+		using namespace protocols::stepwise::setup;
+		using namespace protocols::stepwise::modeler::rna;
+		using namespace utility;
 
 		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
@@ -94,7 +94,7 @@ public:
 		// check that another A gets virtualized.
 		// Actually a second one also gets virtualized but should not be. =( Let's not assert that it is bulged
 		TS_ASSERT_EQUALS( pose.sequence(), "acugaggaucacccagu" );
-		//		TS_ASSERT_EQUALS( pose.annotated_sequence(), "a[RAD:LowerRNA:Virtual_Phosphate]cu[URA:Virtual_Phosphate]ga[RAD:Virtual_RNA_Residue]g[RGU:Virtual_Phosphate]ga[RAD:3PrimePhos]u[URA:Virtual_RNA_Residue]c[RCY:Virtual_Phosphate]a[RAD:Virtual_RNA_Residue]c[RCY:Virtual_Phosphate]ccag[RGU:Virtual_Phosphate]u[URA:UpperRNA]" );
+		//  TS_ASSERT_EQUALS( pose.annotated_sequence(), "a[RAD:LowerRNA:Virtual_Phosphate]cu[URA:Virtual_Phosphate]ga[RAD:Virtual_RNA_Residue]g[RGU:Virtual_Phosphate]ga[RAD:3PrimePhos]u[URA:Virtual_RNA_Residue]c[RCY:Virtual_Phosphate]a[RAD:Virtual_RNA_Residue]c[RCY:Virtual_Phosphate]ccag[RGU:Virtual_Phosphate]u[URA:UpperRNA]" );
 		TS_ASSERT(  pose.residue_type( const_full_model_info( pose ).full_to_sub( U_bulge ) ).has_variant_type( VIRTUAL_RNA_RESIDUE ) );
 		TS_ASSERT(  pose.residue_type( const_full_model_info( pose ).full_to_sub( A_bulge ) ).has_variant_type( VIRTUAL_RNA_RESIDUE ) );
 

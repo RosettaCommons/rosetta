@@ -349,7 +349,7 @@ LoopGraph::record_loop_cycle(
 		}
 	}
 	// verbiage for debugging -- DEPRECATE in 2016 if not in use.
-	if ( !found_loop ){
+	if ( !found_loop ) {
 		TR << "All loops " << std::endl;
 		TR << loops_ << std::endl;
 		TR << "loops_from_current_domain (by idx)" << loops_from_current_domain << std::endl;

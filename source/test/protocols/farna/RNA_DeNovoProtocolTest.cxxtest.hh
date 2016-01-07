@@ -85,9 +85,9 @@ public:
 		//
 		//       _________________ Jump 1
 		//      |                 |
-    //   1  2 (3  4 5 x 6  7) 8  9  10
+		//   1  2 (3  4 5 x 6  7) 8  9  10
 		//                               |
-    //  19 18 (17 16x 15 14)  13 12 11
+		//  19 18 (17 16x 15 14)  13 12 11
 		//      |_________________| Jump 2
 		//
 		//  x mark possible cutpoints_closed
@@ -163,7 +163,7 @@ public:
 				TS_ASSERT( pose.fold_tree().is_cutpoint( n ) );
 				TS_ASSERT( n < pose.total_residue() );
 				if ( atom_level_domain_map.get_domain( NamedAtomID( " C1'", n ), pose ) == 1 &&
-						 atom_level_domain_map.get_domain( NamedAtomID( " C1'", n ), pose ) == 1 ) {
+						atom_level_domain_map.get_domain( NamedAtomID( " C1'", n ), pose ) == 1 ) {
 					found_cutpoint_closed_in_fixed_domain = true;
 					TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( "OVL1", n ), pose ), 1);
 					TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( "OVL2", n ), pose ), 1);
@@ -192,9 +192,9 @@ public:
 		/////////////////////////////////////////////////////
 		//
 		//
-    //   1 -2 x3 x4-5 x6 -7 x8-9  x 10
+		//   1 -2 x3 x4-5 x6 -7 x8-9  x 10
 		//   |  |  |  |    |  |  |     /
-    //  19 x18-17-16--15-14-13-12-11
+		//  19 x18-17-16--15-14-13-12-11
 		//
 		//  x mark possible cutpoints_closed
 		//
@@ -264,7 +264,7 @@ public:
 				TS_ASSERT( pose.fold_tree().is_cutpoint( n ) );
 				TS_ASSERT( n < pose.total_residue() );
 				if ( atom_level_domain_map.get_domain( NamedAtomID( " C1'", n ), pose ) == 1 &&
-						 atom_level_domain_map.get_domain( NamedAtomID( " C1'", n ), pose ) == 1 ) {
+						atom_level_domain_map.get_domain( NamedAtomID( " C1'", n ), pose ) == 1 ) {
 					found_cutpoint_closed_in_fixed_domain = true;
 					TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( "OVL1", n ), pose ), 1);
 					TS_ASSERT_EQUALS( atom_level_domain_map.get_domain( NamedAtomID( "OVL2", n ), pose ), 1);

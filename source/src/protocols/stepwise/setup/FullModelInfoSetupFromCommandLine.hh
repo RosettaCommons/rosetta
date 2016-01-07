@@ -177,9 +177,9 @@ figure_out_motif_mode( utility::vector1< core::Size > & extra_min_res,
 
 void
 add_block_stack_variants( utility::vector1< core::pose::Pose * > const & pose_pointers,
-													utility::vector1< utility::vector1< core::Size > > const & pose_res_lists,
-													utility::vector1< core::Size > const & block_stack_above_res,
-													utility::vector1< core::Size > const & block_stack_below_res );
+	utility::vector1< utility::vector1< core::Size > > const & pose_res_lists,
+	utility::vector1< core::Size > const & block_stack_above_res,
+	utility::vector1< core::Size > const & block_stack_below_res );
 
 void
 update_jump_res( utility::vector1< core::Size > & jump_res,

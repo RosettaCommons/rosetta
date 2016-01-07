@@ -43,7 +43,7 @@ public:
 
 	//constructor
 	StepWiseMasterMover( core::scoring::ScoreFunctionCOP scorefxn,
-											 protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options );
+		protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options );
 
 	//destructor
 	~StepWiseMasterMover();

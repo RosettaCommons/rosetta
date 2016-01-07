@@ -607,7 +607,7 @@ get_resnum_and_segid( std::string const & s, bool & string_is_ok ){
 	// populate tags
 	while ( true ) {
 		// get rid of spaces (will get filled back in by get_resnum_and_segid_from_one_tag)
-		while ( s_nocommas.size() > 0 && s_nocommas[0]==' ') s_nocommas = s_nocommas.substr(1);
+		while ( s_nocommas.size() > 0 && s_nocommas[0]==' ' ) s_nocommas = s_nocommas.substr(1);
 
 		std::string tag = s_nocommas.substr( 0, s_nocommas.find_first_of( ':' )+1 );
 		s_nocommas = s_nocommas.substr( s_nocommas.find_first_of( ':' ) +1 );
@@ -644,7 +644,7 @@ get_resnum_and_chain_from_one_tag( std::string const & tag,
 	if ( tag.size() == 0 ) return true;
 
 	size_t found_colon = tag.find( ":" );
- 	if ( found_colon == std::string::npos ) {
+	if ( found_colon == std::string::npos ) {
 		if ( numerical.find( tag[0] ) == std::string::npos ) { // looks like a chain character at beginning
 			chain= tag[0];
 			resnum_from_tag = ObjexxFCL::ints_of( tag.substr(1), string_is_ok );

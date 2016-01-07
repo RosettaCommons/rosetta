@@ -107,7 +107,7 @@ public:
 
 	void set_conventional_numbering( utility::vector1< int > const & setting ) { conventional_numbering_  = setting; }
 	void set_conventional_chains( utility::vector1< char > const & setting ) { conventional_chains_  = setting; }
-	void set_non_standard_residue_map( 	std::map< Size, std::string > const & setting ) { non_standard_residue_map_  = setting; }
+	void set_non_standard_residue_map(  std::map< Size, std::string > const & setting ) { non_standard_residue_map_  = setting; }
 
 	// this is res_at_value
 	void
@@ -222,7 +222,7 @@ private:
 
 	utility::vector1< Size >
 	get_cutpoint_open_from_pdb_info( pose::Pose const & pose,
-																	 utility::vector1< Size > const & res_list) const;
+		utility::vector1< Size > const & res_list) const;
 
 	void
 	keep_chain_and_cutpoint_open_matched( FullModelParameterType const & type );

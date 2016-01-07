@@ -92,7 +92,7 @@ VaryLoopLengthMover::apply( core::pose::Pose & pose, StepWiseMove const & swa_mo
 
 	if ( swa_move.move_type() == DELETE_LOOP_RES ) {
 		Size const & delete_res = swa_move.moving_res();
-		//		runtime_assert( !all_res_list.has_value( delete_res ) );
+		//  runtime_assert( !all_res_list.has_value( delete_res ) );
 		Size const delete_res_in_parent_full_model_numbering = slice_res_list[ delete_res ];
 
 		utility::vector1< Size > slice_res_list_new;
@@ -147,7 +147,7 @@ VaryLoopLengthMover::update_full_model_parameters( pose::Pose & pose, pose::full
 	// better be derived from same parent full_model with maximal loop lengths.
 	runtime_assert( full_model_parameters->parent_full_model_parameters() != 0 );
 	runtime_assert( full_model_parameters->parent_full_model_parameters() ==
-									full_model_parameters_new->parent_full_model_parameters() );
+		full_model_parameters_new->parent_full_model_parameters() );
 
 	vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
 	vector1< Size > const & slice_res_list = full_model_parameters->slice_res_list();

@@ -1008,11 +1008,11 @@ figure_out_motif_mode( utility::vector1< Size > & extra_min_res,
 			( ( input_domain_map[ m + 1 ] == 0 &&  ( working_res.size() == 0 || working_res.has_value( m + 1 ) ) ) ||
 			( input_domain_map[ m + 1 ] != input_domain_map[ m ] ) );
 		if ( ( right_after_chainbreak  && !right_before_chainbreak && !next_moving ) ||
-				 ( right_before_chainbreak && !right_after_chainbreak  && !prev_moving ) ) {
+				( right_before_chainbreak && !right_after_chainbreak  && !prev_moving ) ) {
 			terminal_res.push_back( m );
 		}
 		if ( ( prev_moving && !next_moving && !right_before_chainbreak ) ||
-				 ( next_moving && !prev_moving && !right_after_chainbreak ) ) {
+				( next_moving && !prev_moving && !right_after_chainbreak ) ) {
 			extra_min_res.push_back( m );
 		}
 	}
@@ -1040,9 +1040,9 @@ figure_out_motif_mode( utility::vector1< Size > & extra_min_res,
 // prevent stacking during both sampling and minimization.
 void
 add_block_stack_variants( vector1< pose::Pose * > const & pose_pointers,
-													vector1< vector1< Size > > const & pose_res_lists,
-													vector1< Size > const & block_stack_above_res,
-													vector1< Size > const & block_stack_below_res ) {
+	vector1< vector1< Size > > const & pose_res_lists,
+	vector1< Size > const & block_stack_above_res,
+	vector1< Size > const & block_stack_below_res ) {
 	using namespace core::chemical;
 	for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 		pose::Pose & pose = *( pose_pointers[ n ] ) ;

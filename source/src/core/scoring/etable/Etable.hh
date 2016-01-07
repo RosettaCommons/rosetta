@@ -205,23 +205,23 @@ public:
 
 	Real
 	Wradius() const {
-		return Wradius_; 
+		return Wradius_;
 	}
 
 	Real
 	lj_switch_dis2sigma() const {
-		return lj_switch_dis2sigma_; 
+		return lj_switch_dis2sigma_;
 	}
 
 	Real
 	etable_disbins() const {
-		return etable_disbins_; 
+		return etable_disbins_;
 	}
 
 
 	bool
 	lj_use_lj_deriv_slope() const {
-		return lj_use_lj_deriv_slope_; 
+		return lj_use_lj_deriv_slope_;
 	}
 
 	Real
@@ -231,52 +231,52 @@ public:
 
 	bool
 	lj_use_hbond_radii() const {
-		return lj_use_hbond_radii_; 
+		return lj_use_hbond_radii_;
 	}
 
 	bool
 	lj_use_water_radii() const {
-		return lj_use_water_radii_; 
+		return lj_use_water_radii_;
 	}
 
 	Real
 	lj_water_dis() const {
-		return lj_water_dis_; 
+		return lj_water_dis_;
 	}
 
 	Real
 	lj_water_hdis() const {
-		return lj_water_hdis_; 
+		return lj_water_hdis_;
 	}
 
 	Real
 	lk_min_dis2sigma() const {
-		return lk_min_dis2sigma_; 
+		return lk_min_dis2sigma_;
 	}
 
 	Real
 	min_dis() const {
-		return min_dis_; 
+		return min_dis_;
 	}
 
 	Real
 	min_dis2() const {
-		return min_dis2_; 
+		return min_dis2_;
 	}
 
 	bool
 	add_long_range_damping() const {
-		return add_long_range_damping_; 
+		return add_long_range_damping_;
 	}
 
 	Real
 	long_range_damping_length() const {
-		return long_range_damping_length_; 
+		return long_range_damping_length_;
 	}
 
 	Real
 	epsilon() const {
-		return epsilon_; 
+		return epsilon_;
 	}
 
 	/// const access to the arrays
@@ -343,7 +343,7 @@ public:
 	Real
 	max_dis2() const
 	{
-		return max_dis2_; 
+		return max_dis2_;
 	}
 
 	Real
