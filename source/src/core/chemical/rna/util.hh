@@ -67,6 +67,10 @@ std::string get_full_orientation_from_num( Size const num );
 
 std::string get_full_LW_orientation_from_num( Size const num );
 
+char get_side_from_num( Size const num );
+
+std::string get_full_side_from_num( Size const num );
+
 BaseDoubletOrientation
 get_orientation_from_char( char const o );
 

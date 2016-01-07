@@ -59,6 +59,7 @@ StepWiseBasicOptions::initialize_variables(){
 	num_random_samples_ = 20;
 	max_tries_multiplier_for_ccd_ = 10;
 	atr_rep_screen_ = true;
+	atr_rep_screen_for_docking_ = false;
 	rmsd_screen_ = 0.0;
 	output_minimized_pose_list_ = false;
 	output_cluster_size_ = false;
@@ -87,6 +88,7 @@ StepWiseBasicOptions::initialize_from_command_line(){
 	sampler_num_pose_kept_ = option[ basic::options::OptionKeys::stepwise::rna::sampler_num_pose_kept ]();
 	if ( option[ basic::options::OptionKeys::cluster::radius ].user() ) cluster_rmsd_ = option[ basic::options::OptionKeys::cluster::radius ]();
 	atr_rep_screen_ = option[ basic::options::OptionKeys::stepwise::atr_rep_screen ]();
+	atr_rep_screen_for_docking_ = option[ basic::options::OptionKeys::stepwise::atr_rep_screen_for_docking ]();
 	rmsd_screen_ = option[ basic::options::OptionKeys::stepwise::rmsd_screen ]();
 	VDW_rep_screen_info_ = option[ OptionKeys::stepwise::rna::VDW_rep_screen_info ]();
 	if ( option[ basic::options::OptionKeys::stepwise::num_pose_minimize ].user() ) num_pose_minimize_ = option[ basic::options::OptionKeys::stepwise::num_pose_minimize ]();

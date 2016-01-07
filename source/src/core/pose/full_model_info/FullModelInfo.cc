@@ -203,6 +203,14 @@ FullModelInfo::rna_terminal_res() const {
 	return full_model_parameters_->get_res_list( RNA_TERMINAL );
 }
 utility::vector1< Size > const &
+FullModelInfo::rna_block_stack_above_res() const {
+	return full_model_parameters_->get_res_list( RNA_BLOCK_STACK_ABOVE );
+}
+utility::vector1< Size > const &
+FullModelInfo::rna_block_stack_below_res() const {
+	return full_model_parameters_->get_res_list( RNA_BLOCK_STACK_BELOW );
+}
+utility::vector1< Size > const &
 FullModelInfo::rna_bulge_res() const {
 	return full_model_parameters_->get_res_list( RNA_BULGE );
 }
@@ -404,7 +412,7 @@ FullModelInfo::is_a_submotif_seed() const
 bool
 FullModelInfo::is_a_submotif( utility::vector1< Size > const & res_list, bool const & check_other_poses /*= false*/ ) const
 {
-
+	// The !! converts pointer to boolean. For some reason, some compilers are not happy checking if the SubMotifInfoOP == 0.
 	return ( !!submotif_info( res_list, check_other_poses ) );
 }
 
@@ -443,6 +451,7 @@ FullModelInfo::submotif_info( utility::vector1< Size > const & res_list, bool co
 bool
 FullModelInfo::in_a_submotif( utility::vector1< Size > const & res_list, bool const & check_other_poses /*= false*/ ) const
 {
+	// The !! converts pointer to boolean. For some reason, some compilers are not happy checking if the SubMotifInfoOP == 0.
 	return ( !!submotif_info_containing_residues( res_list, check_other_poses ) );
 }
 

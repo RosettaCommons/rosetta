@@ -296,6 +296,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 		//Need to be careful nheavyatoms count includes hydrogen! when the hydrogen is made virtual..
 
 		if ( rsd1.is_virtual( m ) ) continue;
+		if ( rsd1.is_repulsive( m ) ) continue;
 		if ( m == rsd1.first_sidechain_atom() ) continue; // 2'-OH for RNA
 
 		Vector const heavy_atom_i( rsd1.xyz( m ) );
@@ -306,6 +307,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 		for ( Size n = atom_num_start; n <= rsd2.nheavyatoms(); ++n ) {
 
 			if ( rsd2.is_virtual( n ) ) continue;
+			if ( rsd2.is_repulsive( n ) ) continue;
 			if ( base_base_only_ && n == rsd2.first_sidechain_atom() ) continue; // 2'-OH for RNA
 
 			runtime_assert( check_base_base_OK( rsd1, rsd2, m, n ) );
@@ -413,6 +415,7 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	if ( base_base_only_ && !rsd1.is_RNA() ) return;
 	if ( m > rsd1.nheavyatoms() ) return;
 	if ( rsd1.is_virtual( m ) ) return;
+	if ( rsd1.is_repulsive( m ) ) return;
 
 	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
@@ -450,6 +453,7 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 		for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 
 			if ( rsd2.is_virtual( n ) ) continue;
+			if ( rsd2.is_repulsive( n ) ) continue;
 
 			//   if ( !check_base_base_OK( rsd1, rsd2, m, n ) && !check_base_base_OK( rsd2, rsd1, n, m ) ) continue;
 

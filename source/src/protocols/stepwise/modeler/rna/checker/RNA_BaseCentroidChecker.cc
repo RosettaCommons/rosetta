@@ -36,6 +36,7 @@ using namespace core;
 using basic::T;
 using core::Real;
 using ObjexxFCL::format::F;
+using core::chemical::rna::BaseStackWhichSide;
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.RNA_BaseCentroidChecker" );
 
@@ -44,6 +45,7 @@ namespace stepwise {
 namespace modeler {
 namespace rna {
 namespace checker {
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
@@ -154,7 +156,15 @@ RNA_BaseCentroidChecker::Initialize_base_stub_list( pose::Pose const & pose, boo
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+// Note that terminal_res setup is kind of complicated below --
+//  Some terminal res are allowed to be stacked on some other residues if they
+//  are in the same partition.
+// This should soon be deprecated by block_stack_above, block_stack_below...
+//  Sorry, rhiju.
+//
+//////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_BaseCentroidChecker::Initialize_terminal_res( pose::Pose const & pose ){
 
@@ -185,16 +195,22 @@ RNA_BaseCentroidChecker::Initialize_terminal_res( pose::Pose const & pose ){
 			}
 		}
 	}
+
+	block_stack_above_res_ = working_parameters_->working_block_stack_above_res();
+	block_stack_below_res_ = working_parameters_->working_block_stack_below_res();
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-RNA_BaseCentroidChecker::check_base_stack( core::kinematics::Stub const & moving_residue_base_stub,
+RNA_BaseCentroidChecker::check_base_stack(
+  core::kinematics::Stub const & moving_residue_base_stub,
 	core::kinematics::Stub const & other_base_stub,
 	core::Real const base_axis_CUTOFF,
 	core::Real const base_planarity_CUTOFF,
-	bool const verbose  /* = false */ ) const{
-
+	BaseStackWhichSide & base_stack_side,
+	bool const verbose  /* = false */ ) const
+{
 	numeric::xyzVector< Real > const other_z_vector = other_base_stub.M.col_z();
 	numeric::xyzVector< Real > rebuild_z_vector = moving_residue_base_stub.M.col_z();
 
@@ -206,6 +222,9 @@ RNA_BaseCentroidChecker::check_base_stack( core::kinematics::Stub const & moving
 
 	Real base_z_offset_one = std::abs( dot( centroid_diff, other_z_vector ) );
 	Real base_z_offset_two = std::abs( dot( centroid_diff, rebuild_z_vector ) );
+
+	using namespace core::chemical::rna;
+	base_stack_side = ( dot( centroid_diff, rebuild_z_vector ) < 0 ) ? ABOVE : BELOW;
 
 	if ( verbose ) TR << "Base Z offset 1: " << base_z_offset_one << std::endl;
 	if ( verbose ) TR << "Base Z offset 2: " << base_z_offset_two << std::endl;
@@ -228,6 +247,28 @@ RNA_BaseCentroidChecker::check_base_stack( core::kinematics::Stub const & moving
 	if ( base_planarity < base_planarity_CUTOFF ) return false;
 
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+RNA_BaseCentroidChecker::check_base_stack( core::kinematics::Stub const & moving_residue_base_stub,
+	core::kinematics::Stub const & other_base_stub,
+	core::Real const base_axis_CUTOFF,
+	core::Real const base_planarity_CUTOFF,
+	bool const verbose  /* = false */ ) const
+{
+	BaseStackWhichSide base_stack_side( core::chemical::rna::ANY_BASE_STACK_SIDE );
+	return check_base_stack( moving_residue_base_stub, other_base_stub, base_axis_CUTOFF, base_planarity_CUTOFF, base_stack_side, verbose );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+RNA_BaseCentroidChecker::check_base_stack(
+	core::kinematics::Stub const & moving_residue_base_stub,
+	core::kinematics::Stub const & other_base_stub,
+	BaseStackWhichSide & base_stack_side )
+{
+	return check_base_stack( moving_residue_base_stub, other_base_stub, base_stack_axis_cutoff_, base_stack_planarity_cutoff_, base_stack_side, false );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -487,8 +528,44 @@ RNA_BaseCentroidChecker::check_that_terminal_res_are_unstacked( bool const verbo
 
 	}
 
+	if ( check_block_stack_res( block_stack_above_res_, core::chemical::rna::ABOVE ) ) return false;
+	if ( check_block_stack_res( block_stack_below_res_, core::chemical::rna::BELOW ) ) return false;
+
 	return true;
 
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+bool
+RNA_BaseCentroidChecker::check_block_stack_res(
+		utility::vector1< Size > const & block_stack_res,
+		BaseStackWhichSide const & block_stack_side ) const
+{
+	for ( Size i = 1; i <= block_stack_res.size(); i++ ) {
+		Size const & res = block_stack_res[ i ];
+		// if not in moving_res, look for stack with moving partitions
+		utility::vector1< Size > other_partition = ( is_moving_res_( res ) ? fixed_residues_ : moving_residues_ );
+		if ( check_base_stack_in_partition( res, other_partition, block_stack_side ) ) return true;
+	}
+	return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+bool
+RNA_BaseCentroidChecker::check_base_stack_in_partition(
+    Size const & block_stack_res,
+		utility::vector1< Size > const & other_res,
+		BaseStackWhichSide const & block_stack_side ) const
+{
+	BaseStackWhichSide base_stack_side( core::chemical::rna::ANY_BASE_STACK_SIDE );
+	for ( Size m = 1; m <= other_res.size(); m++ ) {
+		if ( check_base_stack( base_stub_list_[ block_stack_res ],
+													 base_stub_list_[ other_res[ m ] ],
+													 base_stack_side ) &&
+				 base_stack_side == block_stack_side )
+			return true;
+	}
+	return false;
 }
 
 } //checker

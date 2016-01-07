@@ -122,6 +122,18 @@ StepWiseWorkingParameters::set_terminal_res( utility::vector1< core::Size > cons
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 void
+StepWiseWorkingParameters::set_block_stack_above_res( utility::vector1< core::Size > const & setting ){
+	block_stack_above_res_ = setting;
+	working_block_stack_above_res_ = apply_full_to_sub_mapping( block_stack_above_res_ );
+}
+//////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseWorkingParameters::set_block_stack_below_res( utility::vector1< core::Size > const & setting ){
+	block_stack_below_res_ = setting;
+	working_block_stack_below_res_ = apply_full_to_sub_mapping( block_stack_below_res_ );
+}
+//////////////////////////////////////////////////////////////////////////////////////////
+void
 StepWiseWorkingParameters::set_force_north_sugar_list( utility::vector1< core::Size > const & setting ){
 	force_north_sugar_list_ = setting;
 	working_force_north_sugar_list_ = apply_full_to_sub_mapping( force_north_sugar_list_ );

@@ -81,10 +81,9 @@ AddOrDeleteMover::apply( core::pose::Pose & pose ){
 void
 AddOrDeleteMover::apply( core::pose::Pose & pose, StepWiseMove const & swa_move ){
 	TR << swa_move << std::endl;
-	runtime_assert( swa_move_selector_->just_simple_cycles( swa_move, pose, false /*verbose*/ ) );
+	if ( options_->filter_complex_cycles() ) runtime_assert( swa_move_selector_->just_simple_cycles( swa_move, pose, false /*verbose*/ ) );
 	TR.Debug << "Starting from: " << pose.annotated_sequence() << std::endl;
 	if ( swa_move.move_type() == DELETE ) {
-		TR << "Fold-tree before delete: " << pose.fold_tree() << std::endl;
 		rna_delete_mover_->apply( pose, swa_move.move_element() );
 	} else if ( swa_move.move_type() == FROM_SCRATCH ) {
 		rna_from_scratch_mover_->apply( pose, swa_move.move_element() );
@@ -118,15 +117,10 @@ AddOrDeleteMover::apply( core::pose::Pose & pose, std::string & move_type_string
 	if ( options_->skip_deletions() ||  options_->rebuild_bulge_mode() ) disallow_delete = true;
 
 	StepWiseMove swa_move;
+	swa_move_selector_->set_options( options_ );
 	swa_move_selector_->set_allow_delete( !disallow_delete );
-	swa_move_selector_->set_skip_bulge_frequency( options_->skip_bulge_frequency() );
-	swa_move_selector_->set_from_scratch_frequency( options_->from_scratch_frequency() );
-	swa_move_selector_->set_docking_frequency( options_->docking_frequency() );
-	swa_move_selector_->set_submotif_frequency( options_->submotif_frequency() );
 	swa_move_selector_->set_choose_random( choose_random_ );
 	swa_move_selector_->set_submotif_library( submotif_library_ );
-	swa_move_selector_->set_allow_submotif_split( options_->allow_submotif_split() );
-	swa_move_selector_->set_force_submotif_without_intervening_bulge( options_->force_submotif_without_intervening_bulge() );
 
 	swa_move_selector_->get_add_or_delete_element( pose, swa_move );
 
@@ -152,7 +146,7 @@ AddOrDeleteMover::get_name() const {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-AddOrDeleteMover::set_options( options::StepWiseMonteCarloOptionsCOP options ){
+AddOrDeleteMover::set_options( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options ){
 	options_ = options;
 }
 

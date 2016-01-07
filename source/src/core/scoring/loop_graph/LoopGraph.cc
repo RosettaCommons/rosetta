@@ -240,7 +240,8 @@ LoopGraph::update_loops_and_cycles( utility::vector1< Size > const & pose_domain
 void
 LoopGraph::figure_out_loop_cycles(){
 	figure_out_loop_cycles_tiernan();
-	//	figure_out_loop_cycles_legacy();
+	// figure_out_loop_cycles_legacy();
+	check_loop_cycles_are_disjoint();
 }
 
 // stolen from http://www.boost.org/doc/libs/1_55_0/libs/graph/example/tiernan_print_cycles.cpp
@@ -265,7 +266,7 @@ struct cycle_printer
 		// Iterate over path printing each vertex that forms the cycle.
 		typename Path::const_iterator i, end = p.end();
 		utility::vector1< Size > cycle;
-		for(i = p.begin(); i != end; ++i) {
+		for ( i = p.begin(); i != end; ++i ) {
 			// add 1, to convert from 0-indexed vertices to 1-indexed domains
 			cycle.push_back( get(indices, *i)+1 );
 		}
@@ -284,8 +285,8 @@ LoopGraph::figure_out_loop_cycles_tiernan() {
 
 	typedef boost::directed_graph<> Graph;
 	Size const num_domains = loops_from_domain_.size();
-  Graph g( num_domains );
-	//	for ( Size n = 1; n <= num_domains; n++ ) add_vertex( int(n), g );
+	Graph g( num_domains );
+	// for ( Size n = 1; n <= num_domains; n++ ) add_vertex( int(n), g );
 	for ( Size n = 1; n <= loops_.size(); n++ ) {
 		Size const domain1 = loops_[n].takeoff_domain();
 		if ( domain1 == 0 ) continue; // terminal loop
@@ -294,17 +295,17 @@ LoopGraph::figure_out_loop_cycles_tiernan() {
 		// subtract 1, to convert to 0-indexed vertices.
 		add_edge( vertex( domain1-1, g ), vertex( domain2-1,g ), g  );
 		// internal loops won't be caught by elementary cycles decomposition below -- save now
-		if ( domain1 == domain2 )	loop_cycles_.push_back( utility::tools::make_vector1( loops_[n] ) );
+		if ( domain1 == domain2 ) loop_cycles_.push_back( utility::tools::make_vector1( loops_[n] ) );
 	}
 
-  // Instantiate the visitor for saving cycles
+	// Instantiate the visitor for saving cycles
 	utility::vector1< utility::vector1< Size > > elementary_cycles;
 	cycle_printer vis( elementary_cycles );
 
 	// Use the Tiernan algorithm to visit all cycles, printing them
 	// as they are found.
 	tiernan_all_cycles(g, vis);
-	//	TR << elementary_cycles << std::endl;
+	// TR << "Elementary cycles: " << elementary_cycles << std::endl;
 
 	// The cycles above are in terms of domain numbers.
 	// For calculating loop scores, we need to work out cycles in terms of loops.
@@ -320,9 +321,9 @@ LoopGraph::figure_out_loop_cycles_tiernan() {
 //////////////////////////////////////////////////////////////////////////////////////////////
 void
 LoopGraph::record_loop_cycle(
-   utility::vector1< Size > const & elementary_cycle,
-	 Size const & idx,
-	 utility::vector1< Loop > const & loops_for_cycle_in )
+	utility::vector1< Size > const & elementary_cycle,
+	Size const & idx,
+	utility::vector1< Loop > const & loops_for_cycle_in )
 {
 	Size const & current_domain = elementary_cycle[ idx ];
 	Size const next_idx = ( idx < elementary_cycle.size() ) ? (idx + 1) : 1;
@@ -347,6 +348,7 @@ LoopGraph::record_loop_cycle(
 			record_loop_cycle( elementary_cycle, idx + 1, loops_for_cycle );
 		}
 	}
+	// verbiage for debugging -- DEPRECATE in 2016 if not in use.
 	if ( !found_loop ){
 		TR << "All loops " << std::endl;
 		TR << loops_ << std::endl;
@@ -357,7 +359,7 @@ LoopGraph::record_loop_cycle(
 }
 
 // does not handle cases with complex cycles (multiple cycles sharing same loop)
-// remove from code in 2016 if boost replacement (tiernan algorithm) does the trick.
+// DEPRECATE! remove from code in 2016 if boost replacement (tiernan algorithm) does the trick.
 void
 LoopGraph::figure_out_loop_cycles_legacy()
 {
@@ -386,8 +388,6 @@ LoopGraph::figure_out_loop_cycles_legacy()
 			}
 		}
 	}
-
-	check_loop_cycles_are_disjoint();
 
 }
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -480,7 +480,7 @@ LoopGraph::check_disjoint( LoopCycle loop_cycle1, LoopCycle loop_cycle2 ) const 
 					TR << loop_cycle1 << std::endl;
 					TR << "Cycle2: " << std::endl;
 					TR << loop_cycle2 << std::endl;
-					utility_exit_with_message( "Cannot handle multiloops beyond simple cycles!" );
+					utility_exit_with_message( "The term loop_close cannot handle multiloops beyond simple cycles! You can run again with approximate handling of nested cycles using the flag: -allow_complex_loop_graph." );
 				}
 				return false;
 			}
@@ -505,6 +505,7 @@ void
 LoopGraph::update_loops( utility::vector1< Size > const & pose_domain_map,
 	utility::vector1< Size > const & cutpoint_open ){
 	loops_.clear();
+
 
 	Size takeoff_pos( 0 ), takeoff_domain( 0 ), landing_pos( 0 ), landing_domain( 0 );
 	Size nres = pose_domain_map.size();

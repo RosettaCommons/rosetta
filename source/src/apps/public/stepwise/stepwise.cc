@@ -173,7 +173,6 @@ main( int argc, char * argv [] )
 		option.add_relevant( score::weights );
 		option.add_relevant( constraints::cst_file );
 		option.add_relevant( OptionKeys::full_model::other_poses );
-		option.add_relevant( OptionKeys::full_model::extra_min_res );
 		option.add_relevant( OptionKeys::full_model::jump_res );
 		option.add_relevant( OptionKeys::full_model::root_res );
 		option.add_relevant( OptionKeys::full_model::virtual_sugar_res );
@@ -183,13 +182,17 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::full_model::motif_mode );
 		option.add_relevant( OptionKeys::full_model::rna::force_syn_chi_res_list );
 		option.add_relevant( OptionKeys::full_model::rna::bulge_res );
+		option.add_relevant( OptionKeys::full_model::extra_min_res );
 		option.add_relevant( OptionKeys::full_model::rna::terminal_res );
+		option.add_relevant( OptionKeys::full_model::rna::block_stack_above_res );
+		option.add_relevant( OptionKeys::full_model::rna::block_stack_below_res );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::cycles );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::skip_deletions );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::add_delete_frequency );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::minimize_single_res_frequency );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::switch_focus_frequency );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::just_min_after_mutation_frequency );
+		option.add_relevant( OptionKeys::stepwise::monte_carlo::submotif_frequency );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_internal_hinge_moves );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_internal_local_moves );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_skip_bulge );
@@ -209,6 +212,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::min_type );
 		option.add_relevant( OptionKeys::stepwise::min_tolerance );
 		option.add_relevant( OptionKeys::stepwise::virtualize_free_moieties_in_native );
+		option.add_relevant( OptionKeys::stepwise::new_move_selector );
 		option.add_relevant( OptionKeys::stepwise::rna::erraser );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
 		option.add_relevant( OptionKeys::stepwise::rna::rebuild_bulge_mode );

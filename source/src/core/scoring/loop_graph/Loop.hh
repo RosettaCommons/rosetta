@@ -25,6 +25,10 @@ namespace core {
 namespace scoring {
 namespace loop_graph {
 
+///  Directed edge between one position in the pose to another position.
+///  Records takeoff_pos & landing_pos (in full_model numbering).
+///  Also records 'domain', i.e. if there are multiple poses in a collection,
+///   which pose.
 class Loop: public utility::pointer::ReferenceCount {
 
 public:

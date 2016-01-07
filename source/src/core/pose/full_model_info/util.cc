@@ -315,6 +315,20 @@ get_chains_from_cutpoint_open( utility::vector1< Size > const & cutpoint_open, S
 	return chains;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+// @brief Goes from chains (number at each residue) to location of chain boundaries ('cutpoint_open')
+// @details E.g., goes from [ 1, 1, 1, 2, 2, 2 ] to [ 3 ].
+utility::vector1< Size >
+get_cutpoint_open_from_chains( utility::vector1< Size > const & chains ) {
+	utility::vector1< Size > cutpoint_open;
+	for ( Size i = 1; i < chains.size(); i++ ) {
+		if ( chains[ i ] != chains[ i+1 ] ) {
+			cutpoint_open.push_back( i );
+		}
+	}
+	return cutpoint_open;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // assign to different chains. [Note: we could actually use PDBInfo for this bookkeeping... perhaps that's a good idea]
 // label them 1, 2, 3, etc.

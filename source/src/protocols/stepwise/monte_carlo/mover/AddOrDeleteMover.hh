@@ -44,7 +44,7 @@ public:
 		DeleteMoverOP rna_delete_mover,
 		FromScratchMoverOP rna_from_scratch_mover );
 
-	//destructor -- necessary? -- YES destructors are necessary.
+	//destructor
 	~AddOrDeleteMover();
 	using protocols::moves::Mover::apply;
 
@@ -63,7 +63,7 @@ public:
 	void set_minimize_single_res( bool const setting );
 
 	void
-	set_options( options::StepWiseMonteCarloOptionsCOP options );
+	set_options( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options );
 
 	void
 	set_choose_random( bool const setting ){ choose_random_ = setting; }
@@ -86,7 +86,7 @@ private:
 	monte_carlo::submotif::SubMotifLibraryCOP submotif_library_;
 
 	bool choose_random_;
-	options::StepWiseMonteCarloOptionsCOP options_;
+	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options_;
 
 };
 

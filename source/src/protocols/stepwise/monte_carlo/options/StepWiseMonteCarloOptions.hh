@@ -18,6 +18,7 @@
 
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.fwd.hh>
 #include <protocols/stepwise/options/StepWiseBasicOptions.hh>
+#include <protocols/stepwise/monte_carlo/mover/options/StepWiseMoveSelectorOptions.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <core/types.hh>
 
@@ -40,7 +41,9 @@ namespace stepwise {
 namespace monte_carlo {
 namespace options {
 
-class StepWiseMonteCarloOptions: virtual public protocols::stepwise::options::StepWiseBasicOptions {
+class StepWiseMonteCarloOptions: virtual
+      public protocols::stepwise::options::StepWiseBasicOptions,
+			public protocols::stepwise::monte_carlo::mover::options::StepWiseMoveSelectorOptions {
 
 public:
 
@@ -103,32 +106,14 @@ public:
 	bool const & erraser() const { return erraser_; }
 	void set_erraser(  bool const & setting ){ erraser_ = setting; }
 
-	bool const & allow_internal_hinge_moves() const { return allow_internal_hinge_moves_; }
-	void set_allow_internal_hinge_moves( bool const & setting ){ allow_internal_hinge_moves_ = setting; }
-
-	bool const & allow_internal_local_moves() const { return allow_internal_local_moves_; }
-	void set_allow_internal_local_moves( bool const & setting ){ allow_internal_local_moves_ = setting; }
-
 	core::Size const & cycles() const { return cycles_; }
 	void set_cycles( core::Size const & setting ){ cycles_ = setting; }
 
 	core::Real const & add_proposal_density_factor() const { return add_proposal_density_factor_; }
 	void set_add_proposal_density_factor( core::Real const & setting ){ add_proposal_density_factor_ = setting; }
 
-	core::Real const & add_delete_frequency() const { return add_delete_frequency_; }
-	void set_add_delete_frequency( core::Real const & setting ){ add_delete_frequency_ = setting; }
-
-	core::Real const & submotif_frequency() const { return submotif_frequency_; }
-	void set_submotif_frequency( core::Real const & setting ){ submotif_frequency_ = setting; }
-
-	core::Real const & docking_frequency() const { return docking_frequency_; }
-	void set_docking_frequency( core::Real const & setting ){ docking_frequency_ = setting; }
-
 	core::Real const & minimize_single_res_frequency() const { return minimize_single_res_frequency_; }
 	void set_minimize_single_res_frequency(  core::Real const & setting ){ minimize_single_res_frequency_ = setting; }
-
-	core::Real const & switch_focus_frequency() const { return switch_focus_frequency_; }
-	void set_switch_focus_frequency( core::Real const & setting ){ switch_focus_frequency_ = setting; }
 
 	core::Real const & just_min_after_mutation_frequency() const { return just_min_after_mutation_frequency_; }
 	void set_just_min_after_mutation_frequency(  core::Real const & setting ){ just_min_after_mutation_frequency_ = setting; }
@@ -141,12 +126,6 @@ public:
 
 	core::Real const & chainbreak_weight() const { return chainbreak_weight_; }
 	void set_chainbreak_weight(  core::Real const & setting ){ chainbreak_weight_ = setting; }
-
-	core::Real const & skip_bulge_frequency() const { return skip_bulge_frequency_; }
-	void set_skip_bulge_frequency( core::Real const & setting ){ skip_bulge_frequency_ = setting; }
-
-	core::Real const & from_scratch_frequency() const { return from_scratch_frequency_; }
-	void set_from_scratch_frequency( core::Real const & setting ){ from_scratch_frequency_ = setting; }
 
 	bool const & allow_split_off() const { return allow_split_off_; }
 	void set_allow_split_off( bool const & setting ){ allow_split_off_ = setting; }
@@ -226,12 +205,6 @@ public:
 	bool const & minimize_after_delete() const { return minimize_after_delete_; }
 	void set_minimize_after_delete( bool const & setting ){ minimize_after_delete_ = setting; }
 
-	bool const & allow_submotif_split() const { return allow_submotif_split_; }
-	void set_allow_submotif_split( bool const & setting ){ allow_submotif_split_ = setting; }
-
-	bool const & force_submotif_without_intervening_bulge() const { return force_submotif_without_intervening_bulge_; }
-	void set_force_submotif_without_intervening_bulge( bool const & setting ){ force_submotif_without_intervening_bulge_ = setting; }
-
 	bool const & use_first_jump_for_submotif() const { return use_first_jump_for_submotif_; }
 	void set_use_first_jump_for_submotif( bool const & setting ){ use_first_jump_for_submotif_ = setting; }
 
@@ -244,21 +217,13 @@ private:
 	bool use_phenix_geo_;
 	bool skip_deletions_;
 	bool erraser_;
-	bool allow_internal_hinge_moves_;
-	bool allow_internal_local_moves_;
 	core::Size cycles_;
 	core::Real add_proposal_density_factor_;
-	core::Real add_delete_frequency_;
-	core::Real submotif_frequency_;
-	core::Real docking_frequency_;
 	core::Real minimize_single_res_frequency_;
-	core::Real switch_focus_frequency_;
 	core::Real just_min_after_mutation_frequency_;
 	core::Real temperature_;
 	core::Real max_missing_weight_;
 	core::Real chainbreak_weight_;
-	core::Real skip_bulge_frequency_;
-	core::Real from_scratch_frequency_;
 	bool allow_split_off_;
 	bool virtual_sugar_keep_base_fixed_;
 	bool virtual_sugar_do_minimize_;
@@ -285,8 +250,6 @@ private:
 	bool save_times_;
 	bool use_precomputed_library_;
 	bool minimize_after_delete_;
-	bool allow_submotif_split_;
-	bool force_submotif_without_intervening_bulge_;
 	bool use_first_jump_for_submotif_;
 
 };

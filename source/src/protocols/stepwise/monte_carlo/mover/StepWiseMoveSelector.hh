@@ -19,8 +19,11 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
-#include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh>
+#include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.fwd.hh>
+#include <protocols/stepwise/monte_carlo/mover/options/StepWiseMoveSelectorOptions.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <set>
+#include <map>
 
 using namespace core;
 using namespace core::pose;
@@ -36,6 +39,9 @@ public:
 
 	//constructor
 	StepWiseMoveSelector();
+
+	//constructor
+	StepWiseMoveSelector( options::StepWiseMoveSelectorOptionsCOP options );
 
 	//constructor
 	StepWiseMoveSelector( StepWiseMoveSelector const & src );
@@ -95,41 +101,11 @@ public:
 	void set_allow_delete( bool const & setting ){ allow_delete_ = setting; }
 	bool allow_delete() const{ return allow_delete_; }
 
-	void set_allow_internal_hinge( bool const & setting ){ allow_internal_hinge_ = setting; }
-	bool allow_internal_hinge() const{ return allow_internal_hinge_; }
-
-	void set_allow_internal_local( bool const & setting ){ allow_internal_local_ = setting; }
-	bool allow_internal_local() const{ return allow_internal_local_; }
-
-	void set_add_delete_frequency( Real const & setting ){ add_delete_frequency_ = setting; }
-	Real add_delete_frequency() const{ return add_delete_frequency_; }
-
-	void set_from_scratch_frequency( Real const & setting ){ from_scratch_frequency_ = setting; }
-	Real from_scratch_frequency() const{ return from_scratch_frequency_; }
-
-	void set_docking_frequency( Real const & setting ){ docking_frequency_ = setting; }
-	Real docking_frequency() const{ return docking_frequency_; }
-
-	void set_submotif_frequency( Real const & setting ){ submotif_frequency_ = setting; }
-	Real submotif_frequency() const{ return submotif_frequency_; }
-
-	void set_switch_focus_frequency( Real const & setting ){ switch_focus_frequency_ = setting; }
-	Real switch_focus_frequency() const{ return switch_focus_frequency_; }
-
-	void set_skip_bulge_frequency( Real const & setting ){ skip_bulge_frequency_ = setting; }
-	Real skip_bulge_frequency() const{ return skip_bulge_frequency_; }
-
 	void set_choose_random( bool const & setting ){ choose_random_ = setting; }
 	bool choose_random() const{ return choose_random_; }
 
 	void set_force_unique_moves( bool const & setting ){ force_unique_moves_ = setting; }
 	bool force_unique_moves() const{ return force_unique_moves_; }
-
-	void set_allow_submotif_split( bool const & setting ){ allow_submotif_split_ = setting; }
-	bool allow_submotif_split() const{ return allow_submotif_split_; }
-
-	void set_force_submotif_without_intervening_bulge( bool const & setting ){ force_submotif_without_intervening_bulge_ = setting; }
-	bool force_submotif_without_intervening_bulge() const{ return force_submotif_without_intervening_bulge_; }
 
 	monte_carlo::submotif::SubMotifLibraryCOP submotif_library() { return submotif_library_; }
 	void set_submotif_library( monte_carlo::submotif::SubMotifLibraryCOP setting ) { submotif_library_ = setting; }
@@ -140,6 +116,12 @@ public:
 	bool
 	just_simple_cycles( StepWiseMove const & swa_move, pose::Pose const & pose,
 		bool const verbose = false ) const;
+
+	void
+	set_options( protocols::stepwise::monte_carlo::mover::options::StepWiseMoveSelectorOptionsCOP setting ){ options_ = setting; }
+	protocols::stepwise::monte_carlo::mover::options::StepWiseMoveSelectorOptionsCOP options() const { return options_; }
+
+
 private:
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -151,6 +133,9 @@ private:
 
 	void
 	fill_denovo_moves( pose::Pose const & pose );
+
+	void
+	fill_vary_loop_length_moves( pose::Pose const & pose );
 
 	void
 	save_moves( utility::vector1< StepWiseMove > const & moves,
@@ -182,7 +167,7 @@ private:
 
 	bool
 	check_from_scratch(  pose::Pose const & pose,
-											 utility::vector1< bool > const & partition_definition) const;
+		utility::vector1< bool > const & partition_definition) const;
 
 	void
 	remove_from_consideration_first_multi_residue_move_element( utility::vector1< StepWiseMove > & swa_moves,
@@ -191,26 +176,16 @@ private:
 	bool
 	is_addable_res( Size const n, pose::Pose const & pose ) const;
 
-	void
-	filter_by_sample_res( utility::vector1< StepWiseMove > & swa_moves, pose::Pose const & pose );
-
-	void
-	filter_by_sample_res( utility::vector1< StepWiseMove > & swa_moves,
-		utility::vector1< Size > const & sample_res,
-		utility::vector1< Size > const & bulge_res,
-		utility::vector1< Size > const & input_domain,
-		utility::vector1< Size > const & working_res );
-
 	bool
 	remnant_would_be_deleted(
-													 pose::Pose const & pose,
-													 utility::vector1 < Size > const & partition ) const;
+		pose::Pose const & pose,
+		utility::vector1 < Size > const & partition ) const;
 
 	bool
 	both_remnants_would_be_deleted(
-																 pose::Pose const & pose,
-																 utility::vector1 < Size > const & partition1,
-																 utility::vector1 < Size > const & partition2 ) const;
+		pose::Pose const & pose,
+		utility::vector1 < Size > const & partition1,
+		utility::vector1 < Size > const & partition2 ) const;
 
 	bool
 	partitions_split_a_submotif( pose::Pose const & pose, utility::vector1< Size > const & partition1, utility::vector1< Size > const & partition2 ) const;
@@ -230,6 +205,15 @@ private:
 	get_docking_add_and_delete_elements( pose::Pose const & pose,
 		utility::vector1< StepWiseMove > & swa_moves );
 
+	std::set< Size >
+	get_dock_domains( utility::vector1< Size > const & move_element,
+		pose::Pose const & pose ) const;
+
+	void
+	figure_out_already_docked(
+		pose::Pose const & pose,
+		std::map< std::pair< Size, Size >, bool > & already_docked ) const;
+
 	void
 	get_docking_add_move_elements( pose::Pose const & pose,
 		utility::vector1< StepWiseMove > & swa_moves );
@@ -248,6 +232,9 @@ private:
 	get_submotif_add_moves( pose::Pose const & pose,
 		utility::vector1< StepWiseMove > & swa_moves );
 
+	void
+	filter_add_submotif_moves_to_not_redock_domain( utility::vector1< StepWiseMove > & submotif_add_moves, pose::Pose const & pose ) const;
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	get_from_scratch_add_and_delete_elements( pose::Pose const & pose,
@@ -264,6 +251,10 @@ private:
 	void
 	get_from_scratch_delete_move_elements( pose::Pose const & pose,
 		utility::vector1< StepWiseMove > & swa_moves );
+
+	void
+	get_vary_loop_length_moves( pose::Pose const & pose,
+		utility::vector1< StepWiseMove > & vary_loop_length_moves ) const;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// other moves [used in remodeler]
@@ -330,23 +321,14 @@ private:
 	void
 	filter_complex_cycles( utility::vector1< StepWiseMove > & swa_moves, pose::Pose const & pose ) const;
 
-
 private:
 
+	protocols::stepwise::monte_carlo::mover::options::StepWiseMoveSelectorOptionsCOP options_;
+
 	bool allow_delete_;
-	bool allow_internal_hinge_;
-	bool allow_internal_local_;
-	Real add_delete_frequency_;
-	Real from_scratch_frequency_;
-	Real docking_frequency_;
-	Real submotif_frequency_;
-	Real switch_focus_frequency_;
-	Real skip_bulge_frequency_;
-	bool choose_random_;
 	bool force_unique_moves_;
-	bool filter_complex_cycles_;
-	bool allow_submotif_split_;
-	bool force_submotif_without_intervening_bulge_;
+	bool choose_random_;
+
 	monte_carlo::submotif::SubMotifLibraryCOP submotif_library_;
 
 	utility::vector1< StepWiseMove > swa_moves_;

@@ -71,7 +71,7 @@ namespace mover {
 //////////////////////////////////////////////////////////////////////////
 //constructor!
 DeleteMover::DeleteMover( ):
-	options_( options::StepWiseMonteCarloOptionsCOP( options::StepWiseMonteCarloOptionsOP( new options::StepWiseMonteCarloOptions ) ) )
+	options_( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions ) )
 {}
 
 //////////////////////////////////////////////////////////////////////////
@@ -259,7 +259,7 @@ DeleteMover::get_name() const {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-DeleteMover::set_options( options::StepWiseMonteCarloOptionsCOP options ){
+DeleteMover::set_options( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options ){
 	options_ = options;
 }
 

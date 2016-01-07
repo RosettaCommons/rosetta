@@ -97,14 +97,35 @@ char get_orientation_from_num( Size const num ) {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-std::string //Parin March 7, 2011
+std::string
 get_full_orientation_from_num( Size const num ) {
-	if ( num == 0 ) return "ANY ";
-	if ( num == 1 ) return "ANTI";
-	if ( num == 2 ) return "PARA";
+	if ( num == ANY_BASE_DOUBLET_ORIENTATION ) return "ANY ";
+	if ( num == ANTIPARALLEL ) return "ANTI";
+	if ( num == PARALLEL ) return "PARA";
 
 	std::cout << "Invalid orientation num = " << num << std::endl;
 	utility_exit_with_message( "Invalid orientation num!" );
+	return "ERROR";
+}
+
+/////////////////////////////////////////////////////////////////////////////
+char
+get_side_from_num( Size const num ) {
+	if ( num == ANY_BASE_STACK_SIDE ) return 'X';
+	if ( num == ABOVE ) return 'A';
+	if ( num == BELOW ) return 'B';
+	utility_exit_with_message( "Invalid side num!" );
+	return 'X';
+}
+
+/////////////////////////////////////////////////////////////////////////////
+/// @details for stacking
+std::string
+get_full_side_from_num( Size const num ) {
+	if ( num == ANY_BASE_STACK_SIDE ) return "ANY  ";
+	if ( num == ABOVE ) return "ABOVE";
+	if ( num == BELOW ) return "BELOW";
+	utility_exit_with_message( "Invalid side num!" );
 	return "ERROR";
 }
 
@@ -192,6 +213,8 @@ std::string const default_jump_atom( conformation::Residue const & rsd ) {
 	if ( rsd.name3() == "HOH" )  return " O  ";
 	if ( rsd.name3() == " ZN" )  return "ZN  ";
 	if ( rsd.name3() == "XXX" ) return " Y  ";
+
+	if ( rsd.name1() == 'Z' && !rsd.is_polymer() ) return rsd.atom_name( 1 ); // some other ligand
 
 	std::cerr << "Residue ??? " << rsd.name3() << std::endl;
 	utility_exit_with_message( "Do not know jump atom for this residue" );
@@ -380,6 +403,11 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 			continue;
 		}
 
+		if ( rsd.atom_type( i ).is_repulsive() ) {
+		 	if ( verbose ) std::cout << "  Repulsive: Ignore! " << std::endl;
+		 	continue;
+		}
+
 		if ( verbose ) std::cout << std::endl;
 
 		centroid += rsd.xyz( i );
@@ -441,7 +469,7 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 
 	y = H_coord - centroid; //not orthonormal yet...
 	z = cross( x, y );
-	z.normalize(); // Should poSize roughly 5' to 3' if in a double helix.
+	z.normalize(); // Should point roughly 5' to 3' if in a double helix.
 
 	y = cross( z, x );
 	y.normalize(); //not necessary but doesn't hurt.

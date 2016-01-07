@@ -1,0 +1,101 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file protocols/stepwise/monte_carlo/mover/options/StepWiseMoveSelectorOptions.cc
+/// @brief
+/// @detailed
+/// @author Rhiju Das, rhiju@stanford.edu
+
+
+#include <protocols/stepwise/monte_carlo/mover/options/StepWiseMoveSelectorOptions.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
+
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
+
+static THREAD_LOCAL basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.options.StepWiseMoveSelectorOptions" );
+
+namespace protocols {
+namespace stepwise {
+namespace monte_carlo {
+namespace mover {
+namespace options {
+
+//Constructor
+StepWiseMoveSelectorOptions::StepWiseMoveSelectorOptions():
+	allow_internal_hinge_moves_( true ),
+	allow_internal_local_moves_( true ),
+	add_delete_frequency_( 0.5 ),
+	from_scratch_frequency_( 0.0 ),
+	docking_frequency_( 0.2 ),
+	submotif_frequency_( 0.2 ),
+	switch_focus_frequency_( 0.2 ),
+	skip_bulge_frequency_( 0.0 ),
+	vary_loop_length_frequency_( 0.0 ),
+	filter_complex_cycles_( true ),
+	allow_submotif_split_( false ),
+	force_submotif_without_intervening_bulge_( false )
+{
+}
+
+//Destructor
+StepWiseMoveSelectorOptions::~StepWiseMoveSelectorOptions()
+{}
+
+/// @brief copy constructor
+StepWiseMoveSelectorOptions::StepWiseMoveSelectorOptions( StepWiseMoveSelectorOptions const & src ) :
+	ResourceOptions( src )
+{
+	*this = src;
+}
+
+/// @brief clone the options
+StepWiseMoveSelectorOptionsOP
+StepWiseMoveSelectorOptions::clone() const
+{
+	return StepWiseMoveSelectorOptionsOP( new StepWiseMoveSelectorOptions( *this ) );
+}
+
+///////////////////////////////////////////////////////////////////
+void
+StepWiseMoveSelectorOptions::initialize_from_command_line() {
+	set_allow_internal_hinge_moves( option[ OptionKeys::stepwise::monte_carlo::allow_internal_hinge_moves ]() );
+	set_allow_internal_local_moves( option[ OptionKeys::stepwise::monte_carlo::allow_internal_local_moves ]() );
+	set_add_delete_frequency( option[ OptionKeys::stepwise::monte_carlo::add_delete_frequency ]() );
+	set_from_scratch_frequency( option[ OptionKeys::stepwise::monte_carlo::from_scratch_frequency ]() );
+
+	set_docking_frequency( option[ OptionKeys::stepwise::monte_carlo::docking_frequency ]() );
+	if ( option[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ].user() ) {
+		TR << TR.Red << "Use -docking_frequency instead of -intermolecular_frequency -- will be deprecated soon." << TR.Reset << std::endl;
+		set_docking_frequency( option[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ]() );
+	}
+	if ( option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ].user() ) { // old option.
+		set_skip_bulge_frequency( option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ]() ? 0.2 : 0.0 );
+	}
+
+	set_submotif_frequency( option[ OptionKeys::stepwise::monte_carlo::submotif_frequency ]() );
+	set_switch_focus_frequency( option[ OptionKeys::stepwise::monte_carlo::switch_focus_frequency ]() );
+	if ( option[ OptionKeys::stepwise::monte_carlo::skip_bulge_frequency ].user() ) set_skip_bulge_frequency( option[ OptionKeys::stepwise::monte_carlo::skip_bulge_frequency ]() );
+	set_vary_loop_length_frequency( option[ OptionKeys::stepwise::monte_carlo::vary_loop_length_frequency ]() );
+
+	// hey what about force_unique_moves?
+	filter_complex_cycles_ = !basic::options::option[ basic::options::OptionKeys::score::allow_complex_loop_graph ]();
+	allow_submotif_split_ = option[ OptionKeys::stepwise::monte_carlo::allow_submotif_split ]();
+	force_submotif_without_intervening_bulge_ = option[ OptionKeys::stepwise::monte_carlo::force_submotif_without_intervening_bulge ]();
+}
+
+} //options
+} //mover
+} //monte_carlo
+} //stepwise
+} //protocols

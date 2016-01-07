@@ -328,6 +328,9 @@ sources = {
 		"HBondsForDemos",
 		"polynomial",
 	],
+        "scoring/loop_graph" : [
+                "LoopGraphTest"
+        ],
 	"scoring/methods" : [
 		"AARepeatEnergy",
 		"CartesianBondedEnergy",
@@ -728,6 +731,13 @@ testinputfiles = [
 	"scoring/aa_composition_energy/tailfunction_const.comp",
 	"scoring/aa_composition_energy/tailfunction_linear.comp",
 	"scoring/aa_composition_energy/tailfunction_quadratic.comp",
+        "scoring/loop_graph/GC_pair.pdb",
+        "scoring/loop_graph/P1.pdb",
+        "scoring/loop_graph/P2_part1.pdb",
+        "scoring/loop_graph/P2_part2.pdb",
+        "scoring/loop_graph/P3.pdb",
+        "scoring/loop_graph/SRL_1JBT.pdb",
+        "scoring/loop_graph/bound_seq_GC_SRL.fasta",
 	"scoring/methods/MMBondAngleEnergyTests.u",
 	"scoring/methods/score3_in.silent_out",
 	"scoring/methods/test_in.pdb",

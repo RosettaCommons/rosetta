@@ -73,6 +73,9 @@ utility::vector1< Size >
 get_chains_from_cutpoint_open( utility::vector1< Size > const & cutpoint_open, Size const nres );
 
 utility::vector1< Size >
+get_cutpoint_open_from_chains( utility::vector1< Size > const & chains );
+
+utility::vector1< Size >
 get_sample_res_for_pose( pose::Pose const & pose );
 
 bool

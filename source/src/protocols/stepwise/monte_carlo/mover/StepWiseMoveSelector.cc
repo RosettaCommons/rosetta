@@ -15,6 +15,7 @@
 
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
+#include <protocols/stepwise/monte_carlo/mover/options/StepWiseMoveSelectorOptions.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/rna/util.hh> // probably do not need RNA in here.
 #include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.hh>
@@ -49,13 +50,18 @@ using namespace protocols::stepwise::modeler;
 // Now with detailed balance! See how this is called in stepwise/moves/StepWiseMasterMover,
 //   including use of proposal_probabilities.
 //
-//
 // Historically, this class accreted out of some simple functions to figure out what could
 //   be added or deleted to a pose; probably could be rewritten now to make logic
 //   clear. In particular, 'delete' and 'resample' both involve basicaly the same
 //   subset of internal DOFs already existing in a pose -- could be computed at the
 //   same time. Also, less emphasis now on moves for a specific pose, as opposed to
-//   all poses involved in a full model (encoded in other_pose_list in FullModelInfo).
+//   all poses involved in a full model (encoded in other_pose_list in FullModelInfo) -- this works in
+//   new_move_selector mode (becoming default in late 2015).
+//
+// dock_domain defines two domains that might be docked. If they are alread docked, don't do any moves
+//  that might dock them 'again'. This data structure is rather limiting to two dock domains, and was originally
+//  introduced to avoid 'complex loop cycles' (nested cycles), but the code can now filter for those separately.
+//  we might want to deprecate this check.
 //
 //  Also, StepWiseMove should probably be refactored -- it really just requires 2 residue sets that
 //   define partitions connected by the DOF to add, delete, or resample. The order
@@ -83,22 +89,21 @@ namespace monte_carlo {
 namespace mover {
 
 //Constructor
-StepWiseMoveSelector::StepWiseMoveSelector():
+StepWiseMoveSelector::StepWiseMoveSelector( options::StepWiseMoveSelectorOptionsCOP options ):
+	options_( options ),
 	allow_delete_( true ),
-	allow_internal_hinge_( true ),
-	allow_internal_local_( true ),
-	add_delete_frequency_( 0.5 ),
-	from_scratch_frequency_( 0.0 ),
-	docking_frequency_( 0.2 ),
-	submotif_frequency_( 0.0 ),
-	switch_focus_frequency_( 0.2 ),
-	skip_bulge_frequency_( 0.0 ),
-	choose_random_( true ),
 	force_unique_moves_( false ),
-	filter_complex_cycles_( true ),
-	allow_submotif_split_( false ),
-	force_submotif_without_intervening_bulge_( false )
+	choose_random_( true )
 {}
+
+//Constructor
+StepWiseMoveSelector::StepWiseMoveSelector():
+	options_( options::StepWiseMoveSelectorOptionsCOP( new options::StepWiseMoveSelectorOptions ) ),
+	allow_delete_( true ),
+	force_unique_moves_( false ),
+	choose_random_( true )
+{
+}
 
 //Destructor
 StepWiseMoveSelector::~StepWiseMoveSelector()
@@ -137,6 +142,9 @@ StepWiseMoveSelector::figure_out_all_possible_moves( pose::Pose const & pose,
 	// de novo stuff. independent of the specific pose that we're looking at.
 	fill_denovo_moves( pose );
 
+	// in design runs, can vary lengths of designable loops, in or connecting the different poses
+	fill_vary_loop_length_moves( pose );
+
 	normalize_probabilities();
 	if ( verbose ) output_moves();
 
@@ -164,13 +172,13 @@ StepWiseMoveSelector::fill_moves_for_pose( pose::Pose const & pose ) {
 	// existing, *internal*  DOFs. And have add moves separated, as they involve new DOFs.
 	get_intramolecular_add_and_delete_elements( pose, intramolecular_add_and_delete_moves );
 
-	save_moves( intramolecular_add_and_delete_moves, add_delete_frequency_  );
+	save_moves( intramolecular_add_and_delete_moves, options_->add_delete_frequency()  );
 
 	get_docking_add_and_delete_elements( pose, docking_add_and_delete_moves );
-	save_moves( docking_add_and_delete_moves, docking_frequency_  );
+	save_moves( docking_add_and_delete_moves, options_->docking_frequency()  );
 
 	get_resample_move_elements( pose, resample_moves, false /* save_moves */ );
-	save_moves( resample_moves, ( 1 - add_delete_frequency_ )  );
+	save_moves( resample_moves, ( 1 - options_->add_delete_frequency() )  );
 
 }
 
@@ -181,14 +189,25 @@ StepWiseMoveSelector::fill_denovo_moves( pose::Pose const & pose ) {
 	utility::vector1< StepWiseMove >  from_scratch_add_and_delete_moves, submotif_add_moves;
 
 	get_from_scratch_add_and_delete_elements( pose, from_scratch_add_and_delete_moves );
-	save_moves( from_scratch_add_and_delete_moves, from_scratch_frequency()  );
+	save_moves( from_scratch_add_and_delete_moves, options_->from_scratch_frequency()  );
 
 	get_submotif_add_moves( pose, submotif_add_moves );
-	save_moves( submotif_add_moves, submotif_frequency() );
+	save_moves( submotif_add_moves, options_->submotif_frequency() );
 
 	// not implemented yet ...
 	// get_submotif_seed_add_moves( pose, submotif_add_moves );
 	// save_moves( submotif_seed_add_moves, submotif_seed_frequency() );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseMoveSelector::fill_vary_loop_length_moves( pose::Pose const & pose ) {
+	if ( options_->vary_loop_length_frequency() == 0 ) return;
+
+	utility::vector1< StepWiseMove >  vary_loop_length_moves;
+	get_vary_loop_length_moves( pose, vary_loop_length_moves );
+
+	save_moves( vary_loop_length_moves, options_->vary_loop_length_frequency() );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -217,7 +236,7 @@ StepWiseMoveSelector::fill_moves_for_other_poses( pose::Pose const & pose ) {
 
 	Size const move_idx_final = swa_moves_.size();
 	normalize_probabilities( move_idx_original + 1, move_idx_final,
-		original_weight * switch_focus_frequency_ );
+		original_weight * options_->switch_focus_frequency() );
 
 }
 
@@ -241,7 +260,7 @@ StepWiseMoveSelector::save_moves( utility::vector1< StepWiseMove > const & moves
 				moves[ n ].move_type() == ADD_SUBMOTIF ) &&
 				( moves[ n ].attachment_type() == JUMP_TO_PREV_IN_CHAIN ||
 				moves[ n ].attachment_type() == JUMP_TO_NEXT_IN_CHAIN ) ) {
-			relative_weights.push_back( skip_bulge_frequency_ );
+			relative_weights.push_back( options_->skip_bulge_frequency() );
 		} else {
 			relative_weights.push_back( 1 );
 		}
@@ -323,12 +342,14 @@ StepWiseMoveSelector::get_add_or_delete_element( pose::Pose const & pose,
 
 	utility::vector1< StepWiseMove > swa_moves;
 	if ( choose_random_ ) {
-		if ( numeric::random::rg().uniform() < docking_frequency_ ) {
+		if ( numeric::random::rg().uniform() < options_->docking_frequency() ) {
 			get_docking_add_and_delete_elements( pose, swa_moves ); // docking
-		} else if ( numeric::random::rg().uniform() < from_scratch_frequency_ ) {
+		} else if ( numeric::random::rg().uniform() < options_->from_scratch_frequency() ) {
 			get_from_scratch_add_and_delete_elements( pose, swa_moves );
-		} else if ( numeric::random::rg().uniform() < submotif_frequency_ ) {
+		} else if ( numeric::random::rg().uniform() < options_->submotif_frequency() ) {
 			get_submotif_add_moves( pose, swa_moves );
+			// } else if ( numeric::random::rg().uniform() < options_->vary_loop_length_frequency() ) {
+			//  get_vary_loop_length_moves( pose, swa_moves );
 		}
 	}
 
@@ -338,6 +359,7 @@ StepWiseMoveSelector::get_add_or_delete_element( pose::Pose const & pose,
 	if ( swa_moves.size() == 0  ) get_docking_add_and_delete_elements( pose, swa_moves ); // docking
 	if ( swa_moves.size() == 0  ) get_from_scratch_add_and_delete_elements( pose, swa_moves ); // folding
 	if ( swa_moves.size() == 0  ) get_submotif_add_moves( pose, swa_moves ); // special submotifs
+	//if ( swa_moves.size() == 0  ) get_vary_loop_length_moves( pose, swa_moves ); // vary loop length
 
 	save_moves( swa_moves, 1, true /* clear_moves_before_saving */ );
 
@@ -359,13 +381,13 @@ void
 StepWiseMoveSelector::get_resample_move_elements( pose::Pose const & pose,
 	utility::vector1< StepWiseMove > & swa_moves,
 	bool save_resample_moves /* = true */ ) {
-	if ( allow_internal_hinge_ ) {
+	if ( options_->allow_internal_hinge_moves() ) {
 		get_resample_internal_move_elements( pose, swa_moves );
 	} else {
 		get_resample_terminal_move_elements( pose, swa_moves );
 	}
 
-	if ( allow_internal_local_ ) {
+	if ( options_->allow_internal_local_moves() ) {
 		get_resample_internal_local_move_elements( pose, swa_moves );
 	}
 
@@ -392,7 +414,7 @@ StepWiseMoveSelector::get_resample_internal_move_elements( pose::Pose const & po
 	utility::vector1< StepWiseMove > & swa_moves ) {
 	utility::vector1< StepWiseMove > swa_moves_internal;
 	get_intramolecular_split_move_elements( pose, swa_moves_internal, RESAMPLE );
-	if ( docking_frequency_ > 0.0 ) get_docking_split_move_elements( pose, swa_moves_internal, RESAMPLE );
+	if ( options_->docking_frequency() > 0.0 ) get_docking_split_move_elements( pose, swa_moves_internal, RESAMPLE );
 	for ( Size n = 1; n <= swa_moves_internal.size(); n++ ) swa_moves.push_back( swa_moves_internal[ n ] );
 }
 
@@ -419,9 +441,8 @@ StepWiseMoveSelector::get_intramolecular_add_and_delete_elements( pose::Pose con
 	if ( allow_delete_ )     get_intramolecular_delete_move_elements( pose, swa_moves );
 	get_intramolecular_add_move_elements( pose, swa_moves );
 
-	filter_by_sample_res( swa_moves, pose );
 	if ( force_unique_moves_ ) filter_pose_order( swa_moves, pose );
-	if ( filter_complex_cycles_ ) filter_complex_cycles( swa_moves, pose );
+	if ( options_->filter_complex_cycles() ) filter_complex_cycles( swa_moves, pose );
 
 }
 
@@ -461,7 +482,7 @@ StepWiseMoveSelector::get_intramolecular_add_move_elements( pose::Pose const & p
 				}
 
 				// bulge skip...
-				if ( ( skip_bulge_frequency_ > 0.0 ) &&
+				if ( ( options_->skip_bulge_frequency() > 0.0 ) &&
 						(i == nres || res_list[ i ] + 2 < res_list[ i+1 ]) &&
 						i_full < (nres_full - 1)  &&
 						!is_cutpoint_in_full_pose[ i_full + 1 ] ) {
@@ -492,7 +513,7 @@ StepWiseMoveSelector::get_intramolecular_add_move_elements( pose::Pose const & p
 				}
 
 				// bulge skip...
-				if ( ( skip_bulge_frequency_ > 0.0 ) &&
+				if ( ( options_->skip_bulge_frequency() > 0.0 ) &&
 						(i == 1 || res_list[ i ] - 2 > res_list[ i - 1 ]) &&
 						i_full > 2 &&
 						!is_cutpoint_in_full_pose[ i_full - 2 ] ) {
@@ -556,11 +577,11 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 			partition_res2 = get_partition_res( partition_definition, false );
 
 			// from-scratch handled elsewhere
-			if ( move_type == DELETE && both_remnants_would_be_deleted( pose, partition_res1, partition_res2  ) ) continue;
-			if ( !allow_submotif_split_ && partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
+			if ( move_type == DELETE && both_remnants_would_be_deleted( pose, partition_res1, partition_res2 ) ) continue;
+			if ( !options_->allow_submotif_split() && partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
 
 			swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full(partition_res2),
-																							 Attachment( full_model_info.sub_to_full(i), BOND_TO_PREVIOUS ), move_type ) );
+				Attachment( full_model_info.sub_to_full(i), BOND_TO_PREVIOUS ), move_type ) );
 
 			if ( !force_unique_moves_ ) { // to match legacy code.
 				swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full(partition_res1),
@@ -594,7 +615,7 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 
 		// make sure that at least one partition is a single nucleotide.
 		if ( partition_res1.size() > 1 && partition_res2.size() > 1 ) continue;
-		if ( !allow_submotif_split_ && partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
+		if ( !options_->allow_submotif_split() && partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
 
 		if ( partition_res1.size() == 1 ) {
 			Size const anchor_res = get_anchor_res( partition_res1[1], pose );
@@ -617,11 +638,11 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 StepWiseMoveSelector::check_from_scratch(  pose::Pose const & pose,
-																					 utility::vector1< bool > const & partition_definition) const {
-	if ( from_scratch_frequency_ > 0.0 &&
-			 pose.total_residue() == 2 &&
-			 !pose.fold_tree().is_cutpoint( 1 ) &&
-			 partition_definition[ 1 ] != partition_definition[ 2 ] ) {
+	utility::vector1< bool > const & partition_definition) const {
+	if ( options_->from_scratch_frequency() > 0.0 &&
+			pose.total_residue() == 2 &&
+			!pose.fold_tree().is_cutpoint( 1 ) &&
+			partition_definition[ 1 ] != partition_definition[ 2 ] ) {
 		return true;
 	}
 	return false;
@@ -654,15 +675,16 @@ StepWiseMoveSelector::get_docking_split_move_elements( pose::Pose const & pose,
 		if ( dock_domain_map[ moving_res_full ] == dock_domain_map[ reference_res_full ] ) continue;
 		utility::vector1< Size > const moving_partition_res = get_partition_res( partition_definition,  partition_definition[ moving_res ] );
 		utility::vector1< Size > const reference_partition_res = get_partition_res( partition_definition,  partition_definition[ reference_res ] );
-		if ( !allow_submotif_split_ && partitions_split_a_submotif( pose, moving_partition_res, reference_partition_res ) ) continue;
+		if ( move_type == DELETE && both_remnants_would_be_deleted( pose, moving_partition_res, reference_partition_res ) ) continue;
+		if ( !options_->allow_submotif_split() && partitions_split_a_submotif( pose, moving_partition_res, reference_partition_res ) ) continue;
 
 		// order 'moving'/'attachment' based on order in sequence -- help enforce unique StepWiseMove definition.
 		if ( moving_res > reference_res ) {
 			swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full( moving_partition_res ),
-																							 Attachment( reference_res_full, JUMP_DOCK ), move_type ) );
+				Attachment( reference_res_full, JUMP_DOCK ), move_type ) );
 		} else {
 			swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full( reference_partition_res ),
-																							 Attachment( moving_res_full, JUMP_DOCK ), move_type ) );
+				Attachment( moving_res_full, JUMP_DOCK ), move_type ) );
 		}
 	}
 
@@ -707,8 +729,9 @@ StepWiseMoveSelector::remnant_would_be_deleted(
 	pose::Pose const & pose,
 	utility::vector1 < Size > const & partition ) const
 {
-	if ( const_full_model_info( pose ).is_a_submotif( partition ) &&
-			 !const_full_model_info( pose ).is_a_submotif_seed( partition ) ) return true;
+	utility::vector1< Size > const partition_in_full_model_numbering = sub_to_full( partition, pose );
+	if ( const_full_model_info( pose ).is_a_submotif( partition_in_full_model_numbering ) &&
+			!const_full_model_info( pose ).is_a_submotif_seed( partition_in_full_model_numbering ) ) return true;
 	if ( partition.size() == 1 ) return true;
 	return false;
 }
@@ -776,8 +799,7 @@ StepWiseMoveSelector::get_from_scratch_add_and_delete_elements( pose::Pose const
 
 	get_from_scratch_add_move_elements( pose, swa_moves );
 	if ( allow_delete_ ) get_from_scratch_delete_move_elements( pose, swa_moves );
-	filter_by_sample_res( swa_moves, pose );
-	if ( filter_complex_cycles_ ) filter_complex_cycles( swa_moves, pose );
+	if ( options_->filter_complex_cycles() ) filter_complex_cycles( swa_moves, pose );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -845,20 +867,17 @@ StepWiseMoveSelector::get_docking_add_and_delete_elements( pose::Pose const & po
 	get_docking_add_move_elements( pose, swa_moves );
 	if ( allow_delete_ ) get_docking_delete_move_elements( pose, swa_moves );
 	if ( force_unique_moves_ ) filter_pose_order( swa_moves, pose );
-	if ( filter_complex_cycles_ ) filter_complex_cycles( swa_moves, pose );
+	if ( options_->filter_complex_cycles() ) filter_complex_cycles( swa_moves, pose );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-figure_out_docked_domains( pose::Pose const & pose,
-	std::map< std::pair< Size, Size >, bool > & already_docked ) {
-
-	utility::vector1< Size > const dock_domain_map = const_full_model_info( pose ).dock_domain_map();
+StepWiseMoveSelector::figure_out_already_docked(
+	pose::Pose const & pose,
+	std::map< std::pair< Size, Size >, bool > & already_docked ) const
+{
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-	std::set< Size > dock_domains;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-		if ( dock_domain_map[ res_list[ i ] ] > 0 ) dock_domains.insert( dock_domain_map[ res_list[ i ] ] );
-	}
+	std::set< Size > dock_domains = get_dock_domains( res_list, pose );
 	for ( std::set< Size >::const_iterator it1 = dock_domains.begin(),
 			end1 = dock_domains.end(); it1 != end1; ++it1 ) {
 		for ( std::set< Size >::const_iterator it2 = it1,
@@ -871,9 +890,23 @@ figure_out_docked_domains( pose::Pose const & pose,
 
 	utility::vector1< PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
 	for ( Size k = 1; k <= other_pose_list.size(); k++ ) {
-		figure_out_docked_domains( *other_pose_list[ k ], already_docked );
+		figure_out_already_docked( *other_pose_list[ k ], already_docked );
 	}
 	return;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+std::set< Size >
+StepWiseMoveSelector::get_dock_domains(
+	utility::vector1< Size > const & move_element,
+	pose::Pose const & pose ) const
+{
+	std::set< Size > dock_domains;
+	utility::vector1< Size > const & dock_domain_map = const_full_model_info( pose ).dock_domain_map();
+	for ( Size i = 1; i <= move_element.size(); i++ ) {
+		if ( dock_domain_map[ move_element[ i ] ] > 0 ) dock_domains.insert( dock_domain_map[ move_element[ i ] ] );
+	}
+	return dock_domains;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -895,7 +928,7 @@ StepWiseMoveSelector::get_docking_add_move_elements( pose::Pose const & pose,
 
 	// check for domains that are already docked.
 	std::map< std::pair< Size, Size >, bool > already_docked;
-	figure_out_docked_domains( pose, already_docked );
+	figure_out_already_docked( pose, already_docked );
 
 	for ( Size i = 1; i <= nres; i++ ) {
 		Size const i_full = res_list[ i ] ;
@@ -923,6 +956,27 @@ StepWiseMoveSelector::get_docking_add_move_elements( pose::Pose const & pose,
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// quick hack -- actually this selects for submotifs that have no intervening bulges *and*
+// for which each residue connects to the rest of the pose through some bond -- force base pairs!
+bool
+check_for_connections_for_all_submotif_residues(
+	MoveElement const & move_element,
+	utility::vector1< StepWiseMove > const & add_moves )
+{
+	std::map< Size, bool > addable;
+	for ( Size k = 1; k <= add_moves.size(); k++ ) {
+		StepWiseMove const & add_move = add_moves[ k ];
+		Size const add_move_res = add_move.moving_res();
+		addable[ add_move_res ] = true;
+	}
+	bool all_addable( true );
+	for ( Size k = 1; k <= move_element.size(); k++ ) {
+		if ( !addable[ move_element[ k ] ] ) all_addable = false;
+	}
+	return all_addable;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseMoveSelector::get_submotif_add_moves( pose::Pose const & pose,
 	utility::vector1< StepWiseMove > & swa_moves ) {
@@ -942,19 +996,8 @@ StepWiseMoveSelector::get_submotif_add_moves( pose::Pose const & pose,
 		std::string const & submotif_tag = submotif_from_scratch_moves[ n ].submotif_tag();
 
 		// this is a hack to force addition of base pair submotifs without intervening bulges.
-		if ( force_submotif_without_intervening_bulge_ ) {
-			std::map< Size, bool > addable;
-			for ( Size k = 1; k <= add_moves.size(); k++ ) {
-				StepWiseMove const & add_move = add_moves[ k ];
-				Size const add_move_res = add_move.moving_res();
-				addable[ add_move_res ] = true;
-			}
-			bool all_addable( true );
-			for ( Size k = 1; k <= move_element.size(); k++ ) {
-				if ( !addable[ move_element[ k ] ] ) all_addable = false;
-			}
-			if ( !all_addable ) continue;
-		}
+		if ( options_->force_submotif_without_intervening_bulge() &&
+				!check_for_connections_for_all_submotif_residues( move_element, add_moves ) ) continue;
 
 		for ( Size k = 1; k <= add_moves.size(); k++ ) {
 			StepWiseMove const & add_move = add_moves[ k ];
@@ -964,11 +1007,51 @@ StepWiseMoveSelector::get_submotif_add_moves( pose::Pose const & pose,
 			}
 		} // add_moves
 	} // submotifs
-	if ( filter_complex_cycles_ ) filter_complex_cycles( submotif_add_moves, pose );
+	filter_add_submotif_moves_to_not_redock_domain( submotif_add_moves, pose );
+	if ( options_->filter_complex_cycles() ) filter_complex_cycles( submotif_add_moves, pose );
 
 	for ( Size n = 1; n <= submotif_add_moves.size(); n++ ) swa_moves.push_back( submotif_add_moves[ n ] );
 
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// don't introduce a second connection between two 'domains' if  there already is one, either via
+//  a ADD JUMP_DOCK move or by a previous ADD_SUBMOTIF move.
+void
+StepWiseMoveSelector::filter_add_submotif_moves_to_not_redock_domain(
+	utility::vector1< StepWiseMove > & submotif_add_moves,
+	pose::Pose const & pose ) const
+{
+	utility::vector1< StepWiseMove > swa_moves_new;
+
+	// check for domains that are already docked
+	std::map< std::pair< Size, Size >, bool > already_docked;
+	figure_out_already_docked( pose, already_docked );
+
+	for ( Size n = 1; n <= submotif_add_moves.size(); n++ ) {
+		runtime_assert( submotif_add_moves[ n ].move_type() == ADD_SUBMOTIF );
+		// what domains might be docked in submotif?
+		std::set< Size > const dock_domains = get_dock_domains( submotif_add_moves[ n ].move_element(), pose );
+		// if any are already docked in pose, better not make a second jump connection via this submotif.
+		bool ok_to_dock( true );
+		for ( std::set< Size >::const_iterator it1 = dock_domains.begin(),
+				end1 = dock_domains.end(); it1 != end1; ++it1 ) {
+			for ( std::set< Size >::const_iterator it2 = it1,
+					end2 = dock_domains.end(); it2 != end2; ++it2 ) {
+				if ( already_docked[ std::make_pair( *it1, *it2 ) ] ) {
+					ok_to_dock = false;
+					break;
+				}
+			}
+			if ( !ok_to_dock ) break;
+		}
+		if ( ok_to_dock ) {
+			swa_moves_new.push_back( submotif_add_moves[ n ] );
+		}
+	}
+	submotif_add_moves = swa_moves_new;
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1020,56 +1103,122 @@ StepWiseMoveSelector::is_addable_res( Size const n, pose::Pose const & pose ) co
 	return ( working_res.has_value( n ) && !bulge_res.has_value( n ) );
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-StepWiseMoveSelector::filter_by_sample_res( utility::vector1< StepWiseMove > & swa_moves, pose::Pose const & pose ) {
-	filter_by_sample_res( swa_moves,
-		const_full_model_info( pose ).sample_res(),
-		const_full_model_info( pose ).rna_bulge_res(),
-		const_full_model_info( pose ).input_domain_map(),
-		const_full_model_info( pose ).working_res() );
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// Note that loops are returned in parent full_model numbering, i.e. numbering assuming maximal
+// loop lengths.
+// Following assumes that loops cannot be split into multiple loops, e.g., through submotif moves...
+// That case could be handled too.
+utility::vector1< std::pair< Size, Size > >
+get_design_loops( FullModelParametersCOP parent_full_model_parameters )
+{
+	utility::vector1< std::pair< Size, Size > > design_loops;
+	utility::vector1< Size > const & cutpoint_open = parent_full_model_parameters->get_res_list( CUTPOINT_OPEN );
+	std::string const & full_sequence( parent_full_model_parameters->full_sequence() );
+	bool in_loop( false );
+	Size start_loop( 1 );
+	Size const nres( full_sequence.size() );
+	for ( Size n = 1; n <= nres + 1; n++ ) {
+		bool const is_designable_residue = ( n <= nres && full_sequence[ n - 1 ] == 'n' );
+		if ( in_loop && ( !is_designable_residue || cutpoint_open.has_value( n - 1 ) ) ) {
+			in_loop = false;
+			Size const end_loop = n - 1;
+			runtime_assert( end_loop >= start_loop );
+			design_loops.push_back( std::make_pair( start_loop, end_loop ) );
+		}
+		if ( !in_loop && is_designable_residue ) {
+			in_loop = true;
+			start_loop = n;
+		}
+	}
+	return design_loops;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseMoveSelector::filter_by_sample_res( utility::vector1< StepWiseMove > & swa_moves,
-	utility::vector1< Size > const & /* sample_res */,
-	utility::vector1< Size > const & bulge_res,
-	utility::vector1< Size > const & /* input_domain */,
-	utility::vector1< Size > const & working_res ){
+StepWiseMoveSelector::get_vary_loop_length_moves( pose::Pose const & pose,
+	utility::vector1< StepWiseMove > & vary_loop_length_moves ) const
+{
+	FullModelParametersCOP full_model_parameters( const_full_model_info( pose ).full_model_parameters() );
+	FullModelParametersCOP parent_full_model_parameters( full_model_parameters->parent_full_model_parameters() );
+	runtime_assert( parent_full_model_parameters != 0 );
+	utility::vector1< Size > const & slice_res_list = const_full_model_info( pose ).full_model_parameters()->slice_res_list();
+	utility::vector1< Size > const & cutpoint_open_in_full_model = const_full_model_info( pose ).cutpoint_open_in_full_model();
+	Size const nres = full_model_parameters->size();
 
-	utility::vector1< StepWiseMove > swa_moves_filtered;
+	// loops in parent full model numbering:
+	utility::vector1< std::pair< Size, Size > > design_loops = get_design_loops( parent_full_model_parameters );
+	for ( Size n = 1; n <= design_loops.size(); n++ ) {
+		std::pair< Size, Size > const & design_loop = design_loops[ n ];
+		Size const max_gap_size = design_loop.second - design_loop.first + 1;
+		runtime_assert( max_gap_size > 0 );
 
-	for ( Size i = 1; i <= swa_moves.size(); i++ ) {
-
-		StepWiseMove const & swa_move = swa_moves[ i ];
-		if ( swa_move.move_type() != DELETE ) {
-			runtime_assert( swa_move.move_type() == ADD || swa_move.move_type() == FROM_SCRATCH );
-			MoveElement add_element = swa_move.move_element();
-			bool addable_res( true );
-
-			for ( Size n = 1; n <= add_element.size(); n++ ) {
-				if ( !working_res.has_value( add_element[ n ] ) || bulge_res.has_value( add_element[ n ] ) ) {
-					addable_res = false;
-					break; // total dealbreaker.
+		// following are in full_model numbering.
+		// takeoff_res is position immediately previous to loop residues, landing_res is immediately after.
+		Size takeoff_res( 0 ), landing_res( 0 );
+		if ( slice_res_list.has_value( design_loop.first - 1 ) ) {
+			takeoff_res = slice_res_list.index( design_loop.first - 1 );
+		} else {
+			bool found_takeoff_res( false );
+			for ( Size q = design_loop.first; q <= design_loop.second + 1; q++ ) {
+				if ( slice_res_list.has_value( q ) ) {
+					takeoff_res = slice_res_list.index( q ) - 1;
+					found_takeoff_res = true;
+					break;
 				}
 			}
-			runtime_assert( addable_res ); // if this passes, DEPRECATE filter_by_sample_res!
-			if ( !addable_res ) continue;
+			runtime_assert( found_takeoff_res );
 		}
 
-		swa_moves_filtered.push_back( swa_move );
+		if ( slice_res_list.has_value( design_loop.second + 1 ) ) {
+			landing_res = slice_res_list.index( design_loop.second + 1 );
+		} else {
+			bool found_landing_res( false );
+			for ( Size q = design_loop.second; q >= design_loop.first - 1; q-- ) {
+				if ( slice_res_list.has_value( q ) ) {
+					landing_res = slice_res_list.index( q ) + 1;
+					found_landing_res = true;
+					break;
+				}
+			}
+			runtime_assert( found_landing_res );
+		}
+
+		runtime_assert( takeoff_res < landing_res );
+		Size const gap_size = landing_res - takeoff_res - 1;
+		runtime_assert( gap_size <= max_gap_size );
+
+		bool const tethered_at_takeoff = ( takeoff_res >= 1    && !cutpoint_open_in_full_model.has_value( takeoff_res ) );
+		bool const tethered_at_landing = ( landing_res <= nres && !cutpoint_open_in_full_model.has_value( landing_res - 1 ) );
+		runtime_assert( tethered_at_takeoff || tethered_at_landing );
+
+		// can we remove a nucleotide from the loop? Must be at a terminal
+		if ( gap_size > 0 ) {
+			// can either remove from beginning or end of loop -- move is equivalent. by convention, remove at end, unless
+			// beginning is 'free', in which case remove from there.
+			if ( tethered_at_takeoff ) {
+				vary_loop_length_moves.push_back( StepWiseMove( landing_res-1, Attachment( landing_res-2, BOND_TO_PREVIOUS ), DELETE_LOOP_RES ) );
+			} else {
+				vary_loop_length_moves.push_back( StepWiseMove( takeoff_res+1, Attachment( takeoff_res+2, BOND_TO_NEXT ), DELETE_LOOP_RES ) );
+			}
+		}
+
+		// can we insert a nucleotide into the loop? Again, must be inserted at a terminal
+		if ( gap_size < max_gap_size ) {
+			// can either insert into beginning or end of loop -- move is equivalent. by convention, insert at end, unless
+			// beginning is 'free', in which case insert there.
+			if ( tethered_at_takeoff ) {
+				vary_loop_length_moves.push_back( StepWiseMove( landing_res, Attachment( landing_res-1, BOND_TO_PREVIOUS ), ADD_LOOP_RES ) );
+			} else {
+				vary_loop_length_moves.push_back( StepWiseMove( takeoff_res, Attachment( takeoff_res+1, BOND_TO_NEXT ), ADD_LOOP_RES ) );
+			}
+		}
 	}
 
-	swa_moves = swa_moves_filtered;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // helper functions
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // don't break up any fixed domains by a split.
 bool
@@ -1294,7 +1443,6 @@ StepWiseMoveSelector::filter_pose_order( utility::vector1< StepWiseMove > & swa_
 	swa_moves = swa_moves_filtered;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Need to do some serious cleanup after getting this to compile...
 StepWiseMove
@@ -1313,7 +1461,9 @@ StepWiseMoveSelector::reverse_move( StepWiseMove const & swa_move, pose::Pose co
 		return swa_move;
 	} else if ( move_type == ADD_SUBMOTIF ) {
 		return reverse_add_submotif_move( swa_move, pose_after );
-	} else {
+	} else if ( move_type == ADD_LOOP_RES ) {}
+	else if ( move_type == DELETE_LOOP_RES ) {}
+	else {
 		runtime_assert( move_type == NO_MOVE );
 	}
 	return StepWiseMove(); // empty
@@ -1391,7 +1541,7 @@ StepWiseMove
 StepWiseMoveSelector::reverse_add_move( StepWiseMove const & swa_move, pose::Pose const & pose_after ) const {
 
 	FullModelInfo const & full_model_info = const_full_model_info( pose_after );
-	utility::vector1< Size > res_list = full_model_info.res_list();
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
 	runtime_assert( res_list.has_value( swa_move.moving_res() ) && res_list.has_value( swa_move.attached_res() ) );
 
 	Size working_moving_res   = res_list.index( swa_move.moving_res() );
@@ -1402,6 +1552,12 @@ StepWiseMoveSelector::reverse_add_move( StepWiseMove const & swa_move, pose::Pos
 		actual_attached_res = working_attached_res;
 	} else {
 		// may have re-rooted
+		if ( Size( pose_after.fold_tree().get_parent_residue( working_attached_res ) ) != working_moving_res )  {
+			TR << "Res list in pose (full-model): " << res_list << std::endl;
+			TR << "Checking that moving_res " << swa_move.moving_res() << " is parent of attached_res " << swa_move.attached_res() << std::endl;
+			TR << "Checking that working_moving_res " << working_moving_res << " is parent of working_attached_res " << working_attached_res << std::endl;
+			TR << "Fold tree (working-numbering): " << pose_after.fold_tree() << std::endl;
+		}
 		runtime_assert( Size( pose_after.fold_tree().get_parent_residue( working_attached_res ) ) == working_moving_res );
 		actual_moving_res   = working_attached_res;
 		actual_attached_res = working_moving_res;
@@ -1540,7 +1696,7 @@ StepWiseMoveSelector::just_simple_cycles( StepWiseMove const & swa_move, pose::P
 				!const_full_model_info( pose ).is_a_submotif_seed( move_element ) ) {
 			for ( Size k = 1; k <= move_element.size(); k++ ) pose_domain_map[ move_element[ k ] ] = 0;
 		} else if (  const_full_model_info( pose ).is_a_submotif( other_element ) &&
-								 !const_full_model_info( pose ).is_a_submotif_seed( other_element ) ) {
+				!const_full_model_info( pose ).is_a_submotif_seed( other_element ) ) {
 			for ( Size k = 1; k <= other_element.size(); k++ ) pose_domain_map[ other_element[ k ] ] = 0;
 		} else {
 			Size const new_domain = max( pose_domain_map ) + 1;

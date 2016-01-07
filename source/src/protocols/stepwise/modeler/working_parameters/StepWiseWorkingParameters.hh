@@ -115,6 +115,14 @@ public:
 	void set_terminal_res( utility::vector1< core::Size > const & terminal_res );
 	utility::vector1< core::Size > const &  working_terminal_res() const { return working_terminal_res_; }
 
+	utility::vector1< core::Size > const &  block_stack_above_res() const { return block_stack_above_res_; }
+	void set_block_stack_above_res( utility::vector1< core::Size > const & block_stack_above_res );
+	utility::vector1< core::Size > const &  working_block_stack_above_res() const { return working_block_stack_above_res_; }
+
+	utility::vector1< core::Size > const &  block_stack_below_res() const { return block_stack_below_res_; }
+	void set_block_stack_below_res( utility::vector1< core::Size > const & block_stack_below_res );
+	utility::vector1< core::Size > const &  working_block_stack_below_res() const { return working_block_stack_below_res_; }
+
 	utility::vector1< core::Size > const & force_north_sugar_list() const { return force_north_sugar_list_; }
 	void set_force_north_sugar_list( utility::vector1< core::Size > const & setting );  // updates working list, too
 	utility::vector1< core::Size > const & working_force_north_sugar_list() const { return working_force_north_sugar_list_; }
@@ -171,6 +179,15 @@ private:
 
 	utility::vector1< core::Size > global_sample_res_list_;
 	utility::vector1< core::Size > working_global_sample_res_list_;
+
+	utility::vector1< core::Size > terminal_res_;
+	utility::vector1< core::Size > working_terminal_res_;
+
+	utility::vector1< core::Size > block_stack_above_res_;
+	utility::vector1< core::Size > working_block_stack_above_res_;
+
+	utility::vector1< core::Size > block_stack_below_res_;
+	utility::vector1< core::Size > working_block_stack_below_res_;
 
 	utility::vector1< core::Size > force_syn_chi_res_list_;
 	utility::vector1< core::Size > working_force_syn_chi_res_list_;

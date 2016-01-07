@@ -51,6 +51,30 @@ public:
 	/// @brief Test IO operator for debug and Python bindings
 	std::ostream & operator << ( std::ostream & os, LoopCycle const & loop_cycle);
 
+	/// @brief a and b are the same up to circular permutation
+	friend
+	inline
+	bool
+	operator == (
+		LoopCycle const & a,
+		LoopCycle const & b )
+	{
+		if ( a.loops_.size() != b.loops_.size() ) return false;
+		int const N( a.loops_.size() );
+		for ( int offset = 0; offset < N; offset++ ) {
+			bool match = true;
+			for ( int n = 1; n <= N; n++ ) {
+				int n_offset = 1 + ( ( n + offset - 1 ) % N );
+				if ( !( a.loops_[ n ] == b.loops_[ n_offset ] ) ) {
+					match = false;
+					break;
+				}
+			} // n loops
+			if ( match ) return true;
+		}
+		return false;
+	}
+
 private:
 
 	utility::vector1< Loop > loops_;

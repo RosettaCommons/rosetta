@@ -115,6 +115,7 @@ FromScratchMover::sample_by_swa( pose::Pose & pose, Size const sample_res ) cons
 	if ( stepwise_modeler_ == 0 ) return;
 	stepwise_modeler_->set_moving_res_and_reset( sample_res );
 	stepwise_modeler_->set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );
+	// currently, this will actually look for a precomputed move, without doing anything.
 	stepwise_modeler_->apply( pose );
 }
 

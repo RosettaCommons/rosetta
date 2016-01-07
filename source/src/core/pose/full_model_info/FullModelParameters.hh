@@ -68,7 +68,7 @@ namespace core {
 namespace pose {
 namespace full_model_info {
 
-class FullModelParameters: public utility::pointer::ReferenceCount {
+class FullModelParameters: public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< FullModelParameters > {
 
 public:
 
@@ -97,6 +97,9 @@ public:
 		return FullModelParametersOP( new FullModelParameters( *this ) );
 	}
 
+	FullModelParametersOP
+	slice( utility::vector1< Size > const & slice_res ) const;
+
 	std::string const & full_sequence() const { return full_sequence_;}
 
 	utility::vector1< int >  const & conventional_numbering() const { return conventional_numbering_;}
@@ -104,6 +107,7 @@ public:
 
 	void set_conventional_numbering( utility::vector1< int > const & setting ) { conventional_numbering_  = setting; }
 	void set_conventional_chains( utility::vector1< char > const & setting ) { conventional_chains_  = setting; }
+	void set_non_standard_residue_map( 	std::map< Size, std::string > const & setting ) { non_standard_residue_map_  = setting; }
 
 	// this is res_at_value
 	void
@@ -175,7 +179,6 @@ public:
 	void
 	read_cst_file( std::string const cst_file );
 
-
 	scoring::constraints::ConstraintSetCOP cst_set() const;
 
 	void
@@ -183,7 +186,14 @@ public:
 
 	Pose const & full_model_pose_for_constraints() const;
 
+	void set_cst_string( std::string const & setting ) { cst_string_ = setting; }
 	std::string cst_string() const { return cst_string_; }
+
+	void set_slice_res_list( utility::vector1< Size > const & setting ){ slice_res_list_  = setting; }
+	utility::vector1< Size > const & slice_res_list() const { return slice_res_list_; }
+
+	void set_parent_full_model_parameters( FullModelParametersCOP setting ){ parent_full_model_parameters_ = setting; }
+	FullModelParametersCOP parent_full_model_parameters() const { return parent_full_model_parameters_; }
 
 	void
 	read_disulfides( std::string const disulfide_file );
@@ -211,7 +221,8 @@ private:
 		utility::vector1< Size > & res_list ) const;
 
 	utility::vector1< Size >
-	get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const;
+	get_cutpoint_open_from_pdb_info( pose::Pose const & pose,
+																	 utility::vector1< Size > const & res_list) const;
 
 	void
 	keep_chain_and_cutpoint_open_matched( FullModelParameterType const & type );
@@ -244,7 +255,7 @@ private:
 	std::string full_sequence_;
 	utility::vector1< int >  conventional_numbering_; // permits user to use numbering other than 1, 2, 3...
 	utility::vector1< char > conventional_chains_;    // permits user to use chains other than A, B, C, ..
-	std::map< Size, std::string > non_standard_residues_; // for DNA, non-natural protein/RNA, ligands, ions, etc.
+	std::map< Size, std::string > non_standard_residue_map_; // for DNA, non-natural protein/RNA, ligands, ions, etc.
 
 	std::string cst_string_; // constraints in text format, with atom names.
 	mutable core::scoring::constraints::ConstraintSetCOP cst_set_;
@@ -253,6 +264,10 @@ private:
 	std::map< FullModelParameterType, utility::vector1< Size > > parameter_values_at_res_;
 	// this is set at the same time as above.
 	std::map< FullModelParameterType, std::map< Size, utility::vector1< Size > > > parameter_values_as_res_lists_;
+
+	// following are blank except in special jobs where loops can expand/contract
+	utility::vector1< Size > slice_res_list_;
+	FullModelParametersCOP parent_full_model_parameters_;
 
 #ifdef    SERIALIZATION
 public:

@@ -364,15 +364,9 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new RNA_ChainClosableGeometryScreener( rna_chain_closable_geometry_checkers_[ n ], screening_pose_, strict  /*strict*/ ) ) );
 	}
 
-	// Replaced with PartitionContactScreener. REMOVE THIS COMMENT IN MAR 2015 IF SWA RUNS ARE OK.
-	// RNA_AtrRepScreenerOP atr_rep_screener;
-	// if ( options_->atr_rep_screen() && atr_rep_checker_ ) {
-	//  atr_rep_screener = new RNA_AtrRepScreener( atr_rep_checker_, *screening_pose_ );
-	//  screeners_.push_back( atr_rep_screener );
-	// }
-
 	PartitionContactScreenerOP atr_rep_screener;
-	if ( options_->atr_rep_screen() && moving_res_list_.size() > 0 ) {
+	if ( options_->atr_rep_screen() && moving_res_list_.size() > 0 &&
+			 ( options_->atr_rep_screen_for_docking() || !rigid_body_modeler_ ) ) {
 		atr_rep_screener = PartitionContactScreenerOP( new PartitionContactScreener( *screening_pose_, working_parameters_, use_loose_rep_cutoff, scorefxn_->energy_method_options() ) );
 		screeners_.push_back( atr_rep_screener );
 	}
@@ -383,9 +377,6 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	}
 
 	for ( Size n = 1; n <= protein_ccd_closers_.size(); n++ )  screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new ProteinCCD_ClosureScreener( protein_ccd_closers_[n], *protein_ccd_poses_[n] ) ) );
-
-	// really should be higher -- OK, moved up to PartitionContactScreener. REMOVE THIS COMMENT IN MAR 2015 IF SWA RUNS ARE OK.
-	// screeners_.push_back( atr_rep_screener );
 
 	// phosphate screener, o2prime screener, should be here.
 	if ( !options_->lores() ) {
@@ -407,22 +398,11 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	/////////////////////////////////////////////////////
 	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new SampleApplier( pose ) ) );
 
-	// could be way earlier, and unified with RNA. Just ignore atoms at cutpoints that will be closed, and at moving suite.
-	// OK, moved up to PartitionContactScreener.  REMOVE THIS COMMENT IN MAR 2015 IF SWA RUNS ARE OK.
-	// if ( protein_connection_ /*&& !master_packer_->pack_all_side_chains()*/ && !protein_cutpoints_closed_.size() &&
-	//    options_->atr_rep_screen() ) {
-	//  protein_atr_rep_screening_pose_ = pose.clone();
-	//  screeners_.push_back( new ProteinAtrRepScreener( *protein_atr_rep_screening_pose_,
-	//                           new protein::checker::ProteinAtrRepChecker( pose, moving_res_list_ ) ) );
-	// }
-
 	if ( !tag_definition_ ) { // may have been defined above in residue level modeler.
 		tag_definition_ = screener::TagDefinitionOP( new TagDefinition( pose, screeners_[1], options_->sampler_include_torsion_value_in_tag(),
 			moving_res_, reference_res_, "" /* extra_tag_ */ ) );
 		screeners_.push_back( tag_definition_ );
 	}
-
-	// BulgeApplier used to be here, but I think its supposed to happen before the SampleApplier.
 
 	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new PoseSelectionScreener( pose, scorefxn_, clusterer_ ) ) );
 

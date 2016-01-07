@@ -39,6 +39,8 @@ patches/nucleic/rna/Virtual_Ribose.txt   # VIRTUAL_RIBOSE
 patches/nucleic/rna/VirtualBase.txt # VIRTUAL_BASE
 patches/nucleic/rna/Virtual_RNA_Residue.txt       # VIRTUAL_RNA_RESIDUE
 patches/nucleic/rna/3prime5prime_methyl_phosphate.txt # capping for optimization
+patches/nucleic/rna/BlockStackAbove.txt # blocker to define terminal base pairs
+patches/nucleic/rna/BlockStackBelow.txt # blocker to define terminal base pairs
 
 # Special
 patches/SpecialRotamer.txt

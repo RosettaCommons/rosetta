@@ -115,7 +115,7 @@ FullModelParameters::FullModelParameters( pose::Pose const & pose,
 
 	initialize_parameters( *this );
 
-	set_parameter( CUTPOINT_OPEN, convert_to_parameter_values_at_res( get_cutpoint_open_from_pdb_info( pose ) ) );
+	set_parameter( CUTPOINT_OPEN, convert_to_parameter_values_at_res( get_cutpoint_open_from_pdb_info( pose, res_list ) ) );
 
 	// not sure what's best here -- for now setting that the pose's residues are 'fixed' within the domain map.
 	utility::vector1< Size > fixed_domain_map( full_sequence_.size(), 0 );
@@ -132,6 +132,7 @@ FullModelParameters::FullModelParameters( pose::Pose const & pose,
 // copy
 FullModelParameters::FullModelParameters( FullModelParameters const & src ) :
 	ReferenceCount( src ),
+	utility::pointer::enable_shared_from_this< FullModelParameters >( src ),
 	full_sequence_( src.full_sequence_ ),
 	conventional_numbering_( src.conventional_numbering_ ),
 	conventional_chains_( src.conventional_chains_ ),
@@ -139,7 +140,9 @@ FullModelParameters::FullModelParameters( FullModelParameters const & src ) :
 	cst_set_( src.cst_set_ ),
 	full_model_pose_for_constraints_( src.full_model_pose_for_constraints_ ),
 	parameter_values_at_res_( src.parameter_values_at_res_ ),
-	parameter_values_as_res_lists_( src.parameter_values_as_res_lists_ )
+	parameter_values_as_res_lists_( src.parameter_values_as_res_lists_ ),
+	slice_res_list_( src.slice_res_list_ ),
+	parent_full_model_parameters_( src.parent_full_model_parameters_ )
 {
 }
 
@@ -282,27 +285,20 @@ FullModelParameters::get_sequence_with_gaps_filled_with_n( pose::Pose const & po
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
-FullModelParameters::get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const {
+FullModelParameters::get_cutpoint_open_from_pdb_info( pose::Pose const & pose, utility::vector1< Size > const & res_list ) const {
 
 	PDBInfoCOP pdb_info = pose.pdb_info();
 	utility::vector1< Size > cutpoint_open;
 
 	for ( Size n = 1; n < pose.total_residue(); n++ ) {
 
-		if ( pdb_info &&  (pdb_info->chain( n ) != pdb_info->chain( n+1 )) ) {
-			cutpoint_open.push_back( n );
-			continue;
-		}
-		if ( pose.residue_type( n ).is_protein() != pose.residue_type( n+1 ).is_protein() ) {
-			cutpoint_open.push_back( n );
-			continue;
-		}
-		if ( pose.residue_type( n ).is_RNA() != pose.residue_type( n+1 ).is_RNA() ) {
-			cutpoint_open.push_back( n );
-			continue;
+		if ( ( pdb_info &&  (pdb_info->chain( n ) != pdb_info->chain( n+1 ) ) ) ||
+				 ( pose.residue_type( n ).is_protein() != pose.residue_type( n+1 ).is_protein() ) ||
+				 ( pose.residue_type( n ).is_RNA() != pose.residue_type( n+1 ).is_RNA() ) ||
+				 ( !pose.residue_type( n ).is_polymer() ) )	{
+			cutpoint_open.push_back( res_list[ n ] );
 		}
 	}
-
 	return cutpoint_open;
 }
 
@@ -699,6 +695,69 @@ FullModelParameters::set_parameter_as_res_list_in_pairs( FullModelParameterType 
 	set_parameter( type, parameter );
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Create a sliced out version of this full_model_parameters and return it --
+//  save the slice_res_list and 'parent' full_model_parameters inside the new object.
+FullModelParametersOP
+FullModelParameters::slice( utility::vector1< Size > const & slice_res ) const
+{
+	// following asserts may not actually be necessary -- perhaps at some
+	// future time we'll want to have recursive slicing.
+	runtime_assert( slice_res_list_.size() == 0 );
+	runtime_assert( parent_full_model_parameters_ == 0 );
+
+	std::string full_sequence_new;
+	utility::vector1< int >  conventional_numbering_new; // permits user to use numbering other than 1, 2, 3...
+	utility::vector1< char > conventional_chains_new;    // permits user to use chains other than A, B, C, ..
+	std::map< Size, std::string > non_standard_residue_map_new; // for DNA, non-natural protein/RNA, ligands, ions, etc.
+
+	std::map< FullModelParameterType, utility::vector1< Size > > parameter_values_at_res_new;
+	for ( Size q = 1; q < LAST_TYPE; q++ ) {
+		FullModelParameterType type = static_cast< FullModelParameterType >( q );
+		parameter_values_at_res_new[ type ] = utility::vector1< Size >();
+	}
+
+	// Needed for properly setting CUTPOINT_OPEN, which marks boundaries between chains:
+	utility::vector1< Size > const chains = chains_in_full_model(); // derived from CUTPOINT_OPEN
+	utility::vector1< Size > chains_new;
+
+	for ( Size i = 1; i <= slice_res.size(); i++ ) {
+		Size const & n = slice_res[ i ];
+		full_sequence_new += full_sequence_[ n - 1 ];
+		conventional_numbering_new.push_back( conventional_numbering_[ n ] );
+		conventional_chains_new.push_back( conventional_chains_[ n ] );
+
+		std::map< Size, std::string >::const_iterator it = non_standard_residue_map_.find( n );
+		if ( it != non_standard_residue_map_.end() ) non_standard_residue_map_new[ i ] = it->second;
+
+		chains_new.push_back( chains[ n ] );
+
+		for ( Size q = 1; q < LAST_TYPE; q++ ) {
+			FullModelParameterType type = static_cast< FullModelParameterType >( q );
+			parameter_values_at_res_new[ type ].push_back( get_parameter( type )[ n ] );
+		}
+	}
+
+	FullModelParametersOP full_model_parameters_new( new FullModelParameters( full_sequence_new ) );
+	full_model_parameters_new->set_conventional_numbering( conventional_numbering_new );
+	full_model_parameters_new->set_conventional_chains( conventional_chains_new );
+	full_model_parameters_new->set_non_standard_residue_map( non_standard_residue_map_new );
+	for ( Size q = 1; q < LAST_TYPE; q++ ) {
+		FullModelParameterType type = static_cast< FullModelParameterType >( q );
+		full_model_parameters_new->set_parameter( type, parameter_values_at_res_new[ type ] );
+	}
+	full_model_parameters_new->set_parameter_as_res_list( CUTPOINT_OPEN, get_cutpoint_open_from_chains( chains_new ) );
+	full_model_parameters_new->set_cst_string( cst_string_ );
+
+	// records information on parentage.
+	full_model_parameters_new->set_slice_res_list( slice_res );
+	full_model_parameters_new->set_parent_full_model_parameters( this->shared_from_this() );
+
+	return full_model_parameters_new;
+}
+
+
 } //full_model_info
 } //pose
 } //core
@@ -712,12 +771,14 @@ core::pose::full_model_info::FullModelParameters::save( Archive & arc ) const {
 	arc( CEREAL_NVP( full_sequence_ ) ); // std::string
 	arc( CEREAL_NVP( conventional_numbering_ ) ); // utility::vector1<int>
 	arc( CEREAL_NVP( conventional_chains_ ) ); // utility::vector1<char>
-	arc( CEREAL_NVP( non_standard_residues_ ) ); // std::map<Size, std::string>
+	arc( CEREAL_NVP( non_standard_residue_map_ ) ); // std::map<Size, std::string>
 	arc( CEREAL_NVP( cst_string_ ) ); // std::string
 	arc( CEREAL_NVP( cst_set_ ) ); // core::scoring::constraints::ConstraintSetCOP
 	arc( CEREAL_NVP( full_model_pose_for_constraints_ ) ); // pose::PoseCOP
 	arc( CEREAL_NVP( parameter_values_at_res_ ) ); // std::map<FullModelParameterType, utility::vector1<Size> >
 	arc( CEREAL_NVP( parameter_values_as_res_lists_ ) ); // std::map<FullModelParameterType, std::map<Size, utility::vector1<Size> > >
+	arc( CEREAL_NVP( slice_res_list_ ) );
+	arc( CEREAL_NVP( parent_full_model_parameters_ ) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -727,7 +788,7 @@ core::pose::full_model_info::FullModelParameters::load( Archive & arc ) {
 	arc( full_sequence_ ); // std::string
 	arc( conventional_numbering_ ); // utility::vector1<int>
 	arc( conventional_chains_ ); // utility::vector1<char>
-	arc( non_standard_residues_ ); // std::map<Size, std::string>
+	arc( non_standard_residue_map_ ); // std::map<Size, std::string>
 	arc( cst_string_ ); // std::string
 	std::shared_ptr< core::scoring::constraints::ConstraintSet > local_cst_set;
 	arc( local_cst_set ); // core::scoring::constraints::ConstraintSetCOP
@@ -737,6 +798,10 @@ core::pose::full_model_info::FullModelParameters::load( Archive & arc ) {
 	full_model_pose_for_constraints_ = local_full_model_pose_for_constraints; // copy the non-const pointer(s) into the const pointer(s)
 	arc( parameter_values_at_res_ ); // std::map<FullModelParameterType, utility::vector1<Size> >
 	arc( parameter_values_as_res_lists_ ); // std::map<FullModelParameterType, std::map<Size, utility::vector1<Size> > >
+	arc( slice_res_list_ );
+	std::shared_ptr< FullModelParameters > local_parent_full_model_parameters;
+	arc( local_parent_full_model_parameters );
+	parent_full_model_parameters_ = local_parent_full_model_parameters;
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pose::full_model_info::FullModelParameters );

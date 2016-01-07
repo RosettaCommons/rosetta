@@ -457,6 +457,7 @@ StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const 
 			}
 		}
 	}
+
 	return d_primary;
 }
 

@@ -1136,6 +1136,29 @@ fix_up_residue_type_variants_at_floating_base( pose::Pose & pose, Size const res
 
 }
 
+////////////////////////////////////////////////////////////////////
+void
+update_block_stack_variants( pose::Pose & pose, Size const & n ) {
+	using namespace core::chemical;
+	using namespace core::pose::full_model_info;
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+	utility::vector1< Size > const & block_stack_above_res = full_model_info.rna_block_stack_above_res();
+	utility::vector1< Size > const & block_stack_below_res = full_model_info.rna_block_stack_below_res();
+
+	if ( block_stack_above_res.has_value( res_list[ n ] ) ) {
+		add_variant_type_to_pose_residue( pose, BLOCK_STACK_ABOVE, n );
+	} else {
+		runtime_assert( !pose.residue_type( n ).has_variant_type( BLOCK_STACK_ABOVE ) );
+	}
+	if ( block_stack_below_res.has_value( res_list[ n ] ) ) {
+		add_variant_type_to_pose_residue( pose, BLOCK_STACK_BELOW, n );
+	} else {
+		runtime_assert( !pose.residue_type( n ).has_variant_type( BLOCK_STACK_BELOW ) );
+	}
+
+}
+
 
 ////////////////////////////////////////////////////////////////////
 void
@@ -1171,6 +1194,13 @@ fix_up_residue_type_variants( pose::Pose & pose_to_fix ) {
 
 		// check for floating_base
 		if ( at_strand_end && at_strand_beginning ) fix_up_residue_type_variants_at_floating_base( pose,  n );
+
+		// internal -- can run some checks
+		if ( !at_strand_end && !at_strand_beginning ) {
+			runtime_assert( !pose.residue_type( n ).has_variant_type( BLOCK_STACK_ABOVE ) );
+			runtime_assert( !pose.residue_type( n ).has_variant_type( BLOCK_STACK_BELOW ) );
+		}
+		update_block_stack_variants( pose, n );
 	}
 
 	// Just copying the conformation() makes sure that other objects (such as other_pose_list) don't get cloned --

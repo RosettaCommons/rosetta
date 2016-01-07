@@ -309,6 +309,10 @@ sources = {
 	"StepWiseMove",
 	"StepWiseMoveSelector",
 	"TransientCutpointHandler",
+	"VaryLoopLengthMover",
+    ],
+    "protocols/stepwise/monte_carlo/mover/options": [
+	"StepWiseMoveSelectorOptions",
     ],
     "protocols/stepwise/monte_carlo/options": [
 	"StepWiseMonteCarloOptions",

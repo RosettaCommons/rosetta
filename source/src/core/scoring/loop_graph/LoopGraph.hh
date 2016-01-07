@@ -80,6 +80,8 @@ public:
 	void
 	check_loop_cycles_are_disjoint( bool const verbose = false );
 
+	utility::vector1< LoopCycle > const & loop_cycles() const { return loop_cycles_;}
+
 private:
 
 	void
@@ -97,9 +99,9 @@ private:
 
 	void
 	record_loop_cycle(
-										utility::vector1< Size > const & elementary_cycle,
-										Size const & idx,
-										utility::vector1< Loop > const & loops_for_cycle_in );
+		utility::vector1< Size > const & elementary_cycle,
+		Size const & idx,
+		utility::vector1< Loop > const & loops_for_cycle_in );
 
 	void
 	figure_out_loop_cycles_legacy();

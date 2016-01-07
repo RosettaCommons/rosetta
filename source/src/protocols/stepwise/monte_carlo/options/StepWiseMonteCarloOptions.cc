@@ -19,6 +19,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 
@@ -44,19 +45,11 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	use_phenix_geo_( true ),
 	skip_deletions_( false ),
 	erraser_( true ),
-	allow_internal_hinge_moves_( true ),
-	allow_internal_local_moves_( true ),
 	cycles_( 500 ),
 	add_proposal_density_factor_( 1.0 ),
-	add_delete_frequency_( 0.5 ),
-	submotif_frequency_( 0.5 ),
-	docking_frequency_( 0.2 ),
 	minimize_single_res_frequency_( 0.0 ),
-	switch_focus_frequency_( 0.5 ),
 	just_min_after_mutation_frequency_( 0.5 ),
 	temperature_( 1.0 ),
-	skip_bulge_frequency_( 0.0 ),
-	from_scratch_frequency_( 0.0 ),
 	allow_split_off_( true ),
 	virtual_sugar_keep_base_fixed_( false ),
 	virtual_sugar_do_minimize_( false /*true*/ ),
@@ -83,8 +76,6 @@ StepWiseMonteCarloOptions::StepWiseMonteCarloOptions():
 	save_times_( false ),
 	use_precomputed_library_( true ),
 	minimize_after_delete_( true ),
-	allow_submotif_split_( false ),
-	force_submotif_without_intervening_bulge_( false ),
 	use_first_jump_for_submotif_( false )
 {
 	StepWiseBasicOptions::initialize_variables();
@@ -98,7 +89,8 @@ StepWiseMonteCarloOptions::~StepWiseMonteCarloOptions()
 /// @brief copy constructor
 StepWiseMonteCarloOptions::StepWiseMonteCarloOptions( StepWiseMonteCarloOptions const & src ) :
 	ResourceOptions( src ),
-	StepWiseBasicOptions( src )
+	StepWiseBasicOptions( src ),
+	StepWiseMoveSelectorOptions( src )
 {
 	*this = src;
 }
@@ -115,6 +107,7 @@ void
 StepWiseMonteCarloOptions::initialize_from_command_line() {
 
 	StepWiseBasicOptions::initialize_from_command_line();
+	StepWiseMoveSelectorOptions::initialize_from_command_line();
 
 	set_silent_file( option[ OptionKeys::out::file::silent ]() );
 	set_verbose_scores( option[ OptionKeys::stepwise::monte_carlo::verbose_scores ]() );
@@ -124,25 +117,9 @@ StepWiseMonteCarloOptions::initialize_from_command_line() {
 	set_erraser( option[ OptionKeys::stepwise::rna::erraser ]() );
 	set_cycles( option[ OptionKeys::stepwise::monte_carlo::cycles ]() );
 	set_add_proposal_density_factor( option[ OptionKeys::stepwise::monte_carlo::add_proposal_density_factor ]() );
-	set_add_delete_frequency( option[ OptionKeys::stepwise::monte_carlo::add_delete_frequency ]() );
-	set_submotif_frequency( option[ OptionKeys::stepwise::monte_carlo::submotif_frequency ]() );
-	set_docking_frequency( option[ OptionKeys::stepwise::monte_carlo::docking_frequency ]() );
-	if ( option[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ].user() ) {
-		TR << TR.Red << "Use -docking_frequency instead of -intermolecular_frequency -- will be deprecated soon." << TR.Reset << std::endl;
-		set_docking_frequency( option[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ]() );
-	}
 	set_minimize_single_res_frequency( option[ OptionKeys::stepwise::monte_carlo::minimize_single_res_frequency ]() );
-	set_switch_focus_frequency( option[ OptionKeys::stepwise::monte_carlo::switch_focus_frequency ]() );
 	set_just_min_after_mutation_frequency( option[ OptionKeys::stepwise::monte_carlo::just_min_after_mutation_frequency ]() );
-	set_allow_internal_hinge_moves( option[ OptionKeys::stepwise::monte_carlo::allow_internal_hinge_moves ]() );
-	set_allow_internal_local_moves( option[ OptionKeys::stepwise::monte_carlo::allow_internal_local_moves ]() );
 
-	if ( option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ].user() ) { // old option.
-		set_skip_bulge_frequency( option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ]() ? 0.2 : 0.0 );
-	}
-	if ( option[ OptionKeys::stepwise::monte_carlo::skip_bulge_frequency ].user() ) set_skip_bulge_frequency( option[ OptionKeys::stepwise::monte_carlo::skip_bulge_frequency ]() );
-
-	set_from_scratch_frequency( option[ OptionKeys::stepwise::monte_carlo::from_scratch_frequency ]() );
 	set_allow_split_off( option[ OptionKeys::stepwise::monte_carlo::allow_split_off ]() );
 	set_temperature( option[ OptionKeys::stepwise::monte_carlo::temperature ]() );
 	set_virtual_sugar_keep_base_fixed( option[ OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed ]() );
@@ -175,8 +152,6 @@ StepWiseMonteCarloOptions::initialize_from_command_line() {
 	n_sample_ = option[ OptionKeys::stepwise::protein::n_sample ]();
 	protein_prepack_ = option[ OptionKeys::stepwise::protein::protein_prepack ]();
 	virtualize_packable_moieties_in_screening_pose_ = option[ OptionKeys::stepwise::virtualize_packable_moieties_in_screening_pose ]();
-	allow_submotif_split_ = option[ OptionKeys::stepwise::monte_carlo::allow_submotif_split ]();
-	force_submotif_without_intervening_bulge_ = option[ OptionKeys::stepwise::monte_carlo::force_submotif_without_intervening_bulge ]();
 	use_first_jump_for_submotif_ = option[ OptionKeys::stepwise::monte_carlo::use_first_jump_for_submotif ]();
 
 	if ( test_all_moves_ ) {

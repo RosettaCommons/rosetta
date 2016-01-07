@@ -81,6 +81,9 @@ public:
 	void set_atr_rep_screen( bool const & setting ){ atr_rep_screen_ = setting; }
 	bool atr_rep_screen() const{ return atr_rep_screen_; }
 
+	void set_atr_rep_screen_for_docking( bool const & setting ){ atr_rep_screen_for_docking_ = setting; }
+	bool atr_rep_screen_for_docking() const{ return atr_rep_screen_for_docking_; }
+
 	utility::vector1< std::string > const & VDW_rep_screen_info() const { return VDW_rep_screen_info_; }
 	void set_VDW_rep_screen_info( utility::vector1< std::string > const & setting ){ VDW_rep_screen_info_ = setting; }
 
@@ -131,6 +134,7 @@ private:
 	core::Size num_random_samples_;
 	core::Size max_tries_multiplier_for_ccd_;
 	bool atr_rep_screen_;
+	bool atr_rep_screen_for_docking_;
 	core::Real rmsd_screen_;
 	utility::vector1< std::string > VDW_rep_screen_info_;
 

@@ -224,6 +224,8 @@ initialize_move_type_name(){
 		move_type_name[ RESAMPLE ] = "RESAMPLE";
 		move_type_name[ RESAMPLE_INTERNAL_LOCAL ] = "RESAMPLE_INTERNAL_LOCAL";
 		move_type_name[ ADD_SUBMOTIF ]    = "ADD_SUBMOTIF";
+		move_type_name[ ADD_LOOP_RES ]    = "ADD_LOOP_RES";
+		move_type_name[ DELETE_LOOP_RES ] = "DELETE_LOOP_RES";
 		init = true;
 	}
 }

@@ -72,8 +72,9 @@ enum FullModelParameterType {
 	RNA_ANTI_CHI,
 	RNA_NORTH_SUGAR,
 	RNA_SOUTH_SUGAR,
-	RNA_TERMINAL, // base pairs on which new bases cannot stack/pair.
-
+	RNA_TERMINAL, // base pairs on which new bases cannot stack
+	RNA_BLOCK_STACK_ABOVE, // base pairs on which new bases cannot stack 'above' (3' direction)
+	RNA_BLOCK_STACK_BELOW, // base pairs on which new bases cannot stack 'below' (5' direction)
 	// next-section: anything protein-specific
 	DISULFIDE,
 

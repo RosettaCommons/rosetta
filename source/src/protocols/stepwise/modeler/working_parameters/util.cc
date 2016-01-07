@@ -180,6 +180,8 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & calc_rms_res = full_model_info.calc_rms_res();
 	utility::vector1< Size > const & terminal_res = full_model_info.rna_terminal_res();
+	utility::vector1< Size > const & block_stack_above_res = full_model_info.rna_block_stack_above_res();
+	utility::vector1< Size > const & block_stack_below_res = full_model_info.rna_block_stack_below_res();
 	utility::vector1< Size > const & syn_chi_res_list = full_model_info.rna_syn_chi_res();
 	utility::vector1< Size > const & anti_chi_res_list = full_model_info.rna_anti_chi_res();
 	utility::vector1< Size > const & north_sugar_list = full_model_info.full_model_parameters()->get_res_list( RNA_NORTH_SUGAR );
@@ -291,6 +293,8 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 	working_parameters->set_working_fixed_res( working_fixed_res_guess ); // will get updated later, I think.
 	working_parameters->set_calc_rms_res( calc_rms_res_ );
 	working_parameters->set_terminal_res( terminal_res );
+	working_parameters->set_block_stack_above_res( block_stack_above_res );
+	working_parameters->set_block_stack_below_res( block_stack_below_res );
 	working_parameters->set_working_moving_partition_res( moving_partition_res );
 	working_parameters->set_input_res_vectors( make_vector1( full_model_info.sub_to_full( input_res1 ),
 		full_model_info.sub_to_full( input_res2 ) ) );

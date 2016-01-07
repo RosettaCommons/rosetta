@@ -3970,6 +3970,13 @@ ResidueType::is_virtual( Size const & atomno ) const
 	return ( atom_type( atomno ).is_virtual() );
 }
 
+/// @brief  Check if atom is repulsive.
+bool
+ResidueType::is_repulsive( Size const & atomno ) const
+{
+	return ( atom_type( atomno ).is_repulsive() );
+}
+
 
 ///////////////////////////////////////////////////////////////
 core::chemical::rna::RNA_ResidueType const &

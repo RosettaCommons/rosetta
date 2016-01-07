@@ -74,12 +74,12 @@ public:
 	void set_stepwise_modeler( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler );
 
 	void
-	set_options( options::StepWiseMonteCarloOptionsCOP options );
+	set_options( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options );
 
 private:
 
 	protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
-	options::StepWiseMonteCarloOptionsCOP options_;
+	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options_;
 	bool minimize_after_delete_;
 	utility::vector1< Size > interface_res_;
 

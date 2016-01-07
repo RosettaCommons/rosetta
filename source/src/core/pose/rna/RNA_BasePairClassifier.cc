@@ -649,6 +649,15 @@ get_number_base_stacks(
 	core::pose::Pose const & pose_input
 )
 {
+	return get_scored_base_stack_list( pose_input ).size();
+}
+
+//////////////////////////////////////////////////////////////////////
+EnergyBaseStackList
+get_scored_base_stack_list(
+	core::pose::Pose const & pose_input
+)
+{
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
 
@@ -660,10 +669,8 @@ get_number_base_stacks(
 
 	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
 	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	EnergyBaseStackList const & scored_base_stack_list( rna_filtered_base_base_info.scored_base_stack_list() );
 
-	return scored_base_stack_list.size();
-
+	return rna_filtered_base_base_info.scored_base_stack_list();
 }
 
 } //rna

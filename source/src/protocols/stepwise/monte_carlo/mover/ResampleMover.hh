@@ -68,7 +68,7 @@ public:
 	bool minimize_single_res() const{ return minimize_single_res_; }
 
 	void
-	set_options( options::StepWiseMonteCarloOptionsCOP options );
+	set_options( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options ){ options_ = options; }
 
 	Size
 	get_remodel_res( StepWiseMove const & swa_move, pose::Pose const & pose ) const;
@@ -80,7 +80,7 @@ private:
 
 	protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
 	StepWiseMoveSelectorOP swa_move_selector_;
-	options::StepWiseMonteCarloOptionsCOP options_;
+	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options_;
 
 	bool minimize_single_res_;
 	bool slide_docking_jumps_;

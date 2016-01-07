@@ -31,7 +31,6 @@ void
 initialize_parameters( FullModelParameters & full_model_parameters ){
 	for ( Size n = 1; n < LAST_TYPE; n++ ) {
 		FullModelParameterType type = static_cast< FullModelParameterType >( n );
-		//   if ( type == CHAIN ) continue; // special case, must match CUTPOINT_OPEN
 		full_model_parameters.set_parameter_as_res_list( type,           utility::vector1< Size >() );
 	}
 	utility::vector1< Size > working_res;
@@ -62,6 +61,8 @@ initialize_full_model_parameter_type_name(){
 		full_model_parameter_type_name[ RNA_NORTH_SUGAR ] = "RNA_NORTH_SUGAR";
 		full_model_parameter_type_name[ RNA_SOUTH_SUGAR ] = "RNA_SOUTH_SUGAR";
 		full_model_parameter_type_name[ RNA_TERMINAL ]    = "RNA_TERMINAL";
+		full_model_parameter_type_name[ RNA_BLOCK_STACK_ABOVE ]    = "RNA_BLOCK_STACK_ABOVE";
+		full_model_parameter_type_name[ RNA_BLOCK_STACK_BELOW ]    = "RNA_BLOCK_STACK_BELOW";
 		full_model_parameter_type_name[ DISULFIDE ]      = "DISULFIDE";
 		init = true;
 	}

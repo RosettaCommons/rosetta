@@ -64,7 +64,8 @@ operator < ( BaseStack const & lhs, BaseStack const & rhs ){
 std::ostream &
 operator << ( std::ostream & out, BaseStack const & s )
 {
-	out << s.res1_ << " " << s.res2_ << " " <<  s.orientation_ << " " << s.which_side_;
+	out << s.res1_ << " " << s.res2_ << " "
+			<< get_full_orientation_from_num( s.orientation_ ) << " " << get_full_side_from_num( s.which_side_ );
 	return out;
 }
 

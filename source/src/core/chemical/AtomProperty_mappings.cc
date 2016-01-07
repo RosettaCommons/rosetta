@@ -36,6 +36,7 @@ AtomPropertiesManager::property_to_string_map()
 		property_to_string_map_.insert( make_pair( AROMATIC_HYDROGEN, "AROMATIC_HYDROGEN" ) );
 		property_to_string_map_.insert( make_pair( HAS_ORBITALS, "HAS_ORBITALS" ) );
 		property_to_string_map_.insert( make_pair( VIRTUAL_ATOM, "VIRTUAL_ATOM" ) );
+		property_to_string_map_.insert( make_pair( REPULSIVE, "REPULSIVE" ) );
 		property_to_string_map_.insert( make_pair( AROMATIC_CARBON_WITH_FREE_VALENCE, "AROMATIC_CARBON_WITH_FREE_VALENCE" ) );
 	}
 	return property_to_string_map_;
@@ -55,6 +56,7 @@ AtomPropertiesManager::string_to_property_map()
 		string_to_property_map_.insert( make_pair( "AROMATIC_HYDROGEN", AROMATIC_HYDROGEN ) );
 		string_to_property_map_.insert( make_pair( "HAS_ORBITALS", HAS_ORBITALS ) );
 		string_to_property_map_.insert( make_pair( "VIRTUAL_ATOM", VIRTUAL_ATOM ) );
+		string_to_property_map_.insert( make_pair( "REPULSIVE", REPULSIVE ) );
 		string_to_property_map_.insert( make_pair( "AROMATIC_CARBON_WITH_FREE_VALENCE", AROMATIC_CARBON_WITH_FREE_VALENCE ) );
 	}
 	return string_to_property_map_;

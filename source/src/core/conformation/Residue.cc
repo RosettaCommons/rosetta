@@ -1591,6 +1591,13 @@ Residue::is_virtual( Size const & atomno ) const
 	return rsd_type_.atom_type( atomno ).is_virtual();
 }
 
+/// @note A misnomer; this should really be called "is_repulsive_atom()". ~Labonte
+bool
+Residue::is_repulsive( Size const & atomno ) const
+{
+	return rsd_type_.atom_type( atomno ).is_repulsive();
+}
+
 
 /// @details Return a COP to the data cache
 /// @note Might be a null pointer if the cache has not been initialized

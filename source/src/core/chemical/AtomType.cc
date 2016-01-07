@@ -82,12 +82,6 @@ operator<< (std::ostream & out, const AtomType & atom_type ){
 }
 
 
-// /// @brief is atom type virtual?
-// bool AtomType::is_virtual() const
-// {
-//   return (atom_is_virtual_);
-// }
-
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief set LJ and LK solvation parameter for this atom type
 ///
@@ -152,6 +146,8 @@ AtomType::set_property(
 		atom_has_orbitals_ = setting;
 	} else if ( property == "VIRTUAL" ) { //is the atom type virtual? defined in atom_properties.txt
 		atom_is_virtual_ = setting;
+	} else if ( property == "REPULSIVE" ) {
+		atom_is_repulsive_ = setting;
 	} else if ( property == "SP2_HYBRID" ) {
 		hybridization_ = SP2_HYBRID;
 	} else if ( property == "SP3_HYBRID" ) {
@@ -194,6 +190,8 @@ AtomType::add_property(
 		atom_has_orbitals_ = true;
 	} else if ( property == "VIRTUAL" ) {
 		atom_is_virtual_ = true;
+	} else if ( property == "REPULSIVE" ) {
+		atom_is_repulsive_ = true;
 	} else if ( property == "SP2_HYBRID" ) {
 		hybridization_ = SP2_HYBRID;
 	} else if ( property == "SP3_HYBRID" ) {
@@ -217,6 +215,7 @@ AtomType::get_all_properties() const {
 	if ( is_h2o() ) properties.push_back("H2O");
 	if ( atom_has_orbital() ) properties.push_back("ORBITALS");
 	if ( is_virtual() ) properties.push_back("VIRTUAL");
+	if ( is_repulsive() ) properties.push_back("REPULSIVE");
 
 	switch(hybridization()){
 	case SP2_HYBRID : properties.push_back("SP2_HYBRID"); break;

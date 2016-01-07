@@ -87,12 +87,12 @@ public:
 	void test_force_submotif_without_intervening_bulge(){
 		using namespace protocols::stepwise::monte_carlo::options;
 
-		TS_ASSERT( !stepwise_monte_carlo->master_mover()->stepwise_move_selector()->force_submotif_without_intervening_bulge() );
+		TS_ASSERT( !stepwise_monte_carlo->master_mover()->stepwise_move_selector()->options()->force_submotif_without_intervening_bulge() );
 
 		StepWiseMonteCarloOptionsOP options( stepwise_monte_carlo->options()->clone() );
 		options->set_force_submotif_without_intervening_bulge( true );
 		stepwise_monte_carlo->set_options( options );
-		TS_ASSERT( stepwise_monte_carlo->master_mover()->stepwise_move_selector()->force_submotif_without_intervening_bulge() );
+		TS_ASSERT( stepwise_monte_carlo->master_mover()->stepwise_move_selector()->options()->force_submotif_without_intervening_bulge() );
 	}
 
 

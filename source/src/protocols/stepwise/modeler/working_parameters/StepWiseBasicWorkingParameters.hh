@@ -181,8 +181,6 @@ protected:
 	utility::vector1< core::Size > working_fixed_res_;
 	utility::vector1< core::Size > calc_rms_res_;
 	utility::vector1< core::Size > working_calc_rms_res_;
-	utility::vector1< core::Size > terminal_res_;
-	utility::vector1< core::Size > working_terminal_res_;
 	utility::vector1< core::Size > working_moving_partition_res_;
 
 };

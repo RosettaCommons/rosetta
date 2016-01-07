@@ -20,6 +20,7 @@
 #include <protocols/stepwise/monte_carlo/mover/AddOrDeleteMover.hh>
 #include <protocols/stepwise/monte_carlo/mover/ResampleMover.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.hh>
+#include <protocols/stepwise/monte_carlo/mover/VaryLoopLengthMover.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/modeler/precomputed/PrecomputedLibraryMover.hh>
@@ -59,7 +60,8 @@ namespace monte_carlo {
 namespace mover {
 
 //Constructor
-StepWiseMasterMover::StepWiseMasterMover( core::scoring::ScoreFunctionCOP scorefxn, options::StepWiseMonteCarloOptionsCOP options ):
+StepWiseMasterMover::StepWiseMasterMover( core::scoring::ScoreFunctionCOP scorefxn,
+	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options ):
 	minimize_single_res_( false ), // changes during run
 	success_( false ),
 	proposal_density_ratio_( 1.0 ),
@@ -113,12 +115,16 @@ StepWiseMasterMover::apply( pose::Pose & pose,
 
 	// check reverse -- to get detailed balance factor:
 	StepWiseMove const reverse_move = stepwise_move_selector_->reverse_move( stepwise_move, pose_original, pose );
-	StepWiseMoveSelectorOP reverse_stepwise_move_selector = stepwise_move_selector_->clone();
-	reverse_stepwise_move_selector->figure_out_all_possible_moves( pose );
-	TR << TR.Magenta << "Reverse of " << stepwise_move << " is " << reverse_move << TR.Reset << std::endl;
-	//	reverse_stepwise_move_selector->output_moves();
-	Real const reverse_proposal_probability = reverse_stepwise_move_selector->proposal_probability( reverse_move );
-	proposal_density_ratio_ = ( reverse_proposal_probability / forward_proposal_probability );
+
+	// silly hack -- reverse moves are not defined yet for ADD_LOOP_RES and DELETE_LOOP_RES
+	if ( reverse_move != StepWiseMove() || ( stepwise_move.move_type() != ADD_LOOP_RES && stepwise_move.move_type() != DELETE_LOOP_RES ) ) {
+		StepWiseMoveSelectorOP reverse_stepwise_move_selector = stepwise_move_selector_->clone();
+		reverse_stepwise_move_selector->figure_out_all_possible_moves( pose );
+		TR << TR.Magenta << "Reverse of " << stepwise_move << " is " << reverse_move << TR.Reset << std::endl;
+		// reverse_stepwise_move_selector->output_moves();
+		Real const reverse_proposal_probability = reverse_stepwise_move_selector->proposal_probability( reverse_move );
+		proposal_density_ratio_ = ( reverse_proposal_probability / forward_proposal_probability );
+	}
 
 	// bias the acceptance of add moves, default factor is 1.0
 	if ( stepwise_move.move_type() == ADD ) proposal_density_ratio_ *= options_->add_proposal_density_factor();
@@ -133,6 +139,8 @@ StepWiseMasterMover::do_the_move( StepWiseMove const & move, core::pose::Pose & 
 	MoveType const & move_type = move.move_type();
 	if ( move_type == ADD || move_type == DELETE || move_type == FROM_SCRATCH || move_type == ADD_SUBMOTIF ) {
 		add_or_delete_mover_->apply( pose, move );
+	} else if ( move_type == ADD_LOOP_RES || move_type == DELETE_LOOP_RES ) {
+		vary_loop_length_mover_->apply( pose, move );
 	} else {
 		runtime_assert( move_type == RESAMPLE ||
 			move_type == RESAMPLE_INTERNAL_LOCAL );
@@ -207,7 +215,7 @@ StepWiseMasterMover::apply_legacy( pose::Pose & pose ) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseMasterMover::initialize( core::scoring::ScoreFunctionCOP scorefxn,
-	options::StepWiseMonteCarloOptionsCOP options ){
+	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options ){
 	scorefxn_ = scorefxn;
 	options_ = options;
 	initialize();
@@ -252,19 +260,10 @@ StepWiseMasterMover::initialize(){
 	resample_mover_->set_native_pose( get_native_pose() );
 	resample_mover_->set_options( options_ );
 
-	stepwise_move_selector_ = StepWiseMoveSelectorOP( new StepWiseMoveSelector );
-	stepwise_move_selector_->set_allow_internal_hinge( options_->allow_internal_hinge_moves() );
-	stepwise_move_selector_->set_allow_internal_local( options_->allow_internal_local_moves() );
-	stepwise_move_selector_->set_from_scratch_frequency( options_->from_scratch_frequency() );
-	stepwise_move_selector_->set_skip_bulge_frequency( options_->skip_bulge_frequency() );
-	stepwise_move_selector_->set_docking_frequency( options_->docking_frequency() );
-	stepwise_move_selector_->set_submotif_frequency( options_->submotif_frequency() );
-	stepwise_move_selector_->set_add_delete_frequency( options_->add_delete_frequency() );
-	stepwise_move_selector_->set_switch_focus_frequency( options_->switch_focus_frequency() );
-	stepwise_move_selector_->set_choose_random( !options_->enumerate() );
-	stepwise_move_selector_->set_allow_submotif_split( options_->allow_submotif_split() );
-	stepwise_move_selector_->set_force_submotif_without_intervening_bulge( options_->force_submotif_without_intervening_bulge() );
+	vary_loop_length_mover_ = VaryLoopLengthMoverOP( new VaryLoopLengthMover );
 
+	stepwise_move_selector_ = StepWiseMoveSelectorOP( new StepWiseMoveSelector( options_ ) );
+	stepwise_move_selector_->set_choose_random( !options_->enumerate() );
 	if ( options_->new_move_selector() || options_->test_all_moves() ) stepwise_move_selector_->set_force_unique_moves( true );
 	stepwise_move_selector_->set_submotif_library( submotif_library_ );
 
@@ -377,7 +376,7 @@ StepWiseMasterMover::build_full_model( pose::Pose const & start_pose, pose::Pose
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseMasterMover::set_options( options::StepWiseMonteCarloOptionsCOP options )
+StepWiseMasterMover::set_options( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options )
 {
 	options_ = options;
 	initialize(); // all movers accept options -- got to make them again.

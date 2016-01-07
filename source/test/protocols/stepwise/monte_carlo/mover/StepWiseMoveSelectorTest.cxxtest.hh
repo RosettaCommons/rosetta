@@ -19,6 +19,7 @@
 
 // Project headers
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.hh>
+#include <protocols/stepwise/monte_carlo/mover/options/StepWiseMoveSelectorOptions.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddMover.hh>
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.hh>
 
@@ -55,17 +56,21 @@ public:
     using namespace protocols::stepwise::setup;
     using namespace protocols::stepwise::monte_carlo::submotif;
     using namespace protocols::stepwise::monte_carlo::mover;
+    using namespace protocols::stepwise::monte_carlo::mover::options;
     using namespace utility;
 
 		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		pose = initialize_pose_and_other_poses_from_command_line( rsd_set );
 
 		submotif_library = SubMotifLibraryOP( new SubMotifLibrary( rsd_set ) );
-		stepwise_move_selector = StepWiseMoveSelectorOP( new StepWiseMoveSelector );
+
+		StepWiseMoveSelectorOptionsOP options( new StepWiseMoveSelectorOptions );
+		options->set_submotif_frequency( 0.2 );
+		options->set_from_scratch_frequency( 0.1 );
+		options->set_docking_frequency( 0.0 );
+
+		stepwise_move_selector = StepWiseMoveSelectorOP( new StepWiseMoveSelector( options ) );
 		stepwise_move_selector->set_submotif_library( submotif_library );
-		stepwise_move_selector->set_submotif_frequency( 0.2 );
-		stepwise_move_selector->set_from_scratch_frequency( 0.1 );
-		stepwise_move_selector->set_docking_frequency( 0.0 );
 	}
 
 	void tearDown(){
@@ -76,6 +81,7 @@ public:
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
     using namespace protocols::stepwise::monte_carlo::mover;
+    using namespace protocols::stepwise::monte_carlo::mover::options;
     using namespace utility::tools;
 
 		stepwise_move_selector->figure_out_all_possible_moves( *pose );
@@ -108,12 +114,12 @@ public:
 		TS_ASSERT( stepwise_move_selector->swa_moves().has_value( reverse_submotif_move ) );
 		TS_ASSERT( !stepwise_move_selector->swa_moves().has_value( split_submotif_move ) );
 
-
-		stepwise_move_selector->set_allow_submotif_split( true );
+		StepWiseMoveSelectorOptionsOP options = stepwise_move_selector->options()->clone();
+		options->set_allow_submotif_split( true );
+		stepwise_move_selector->set_options( options );
 		stepwise_move_selector->figure_out_all_possible_moves( *pose_add_submotif );
 		TS_ASSERT( stepwise_move_selector->swa_moves().has_value( reverse_submotif_move ) );
 		TS_ASSERT( stepwise_move_selector->swa_moves().has_value( split_submotif_move ) );
-		stepwise_move_selector->set_allow_submotif_split( false );
 
 
 	}

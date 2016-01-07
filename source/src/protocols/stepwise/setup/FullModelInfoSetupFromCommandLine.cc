@@ -248,7 +248,8 @@ vector1< Size >
 get_cutpoints( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
 	vector1< char > const & conventional_chains,
 	vector1< int  > const & conventional_numbering ) {
-
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	vector1< Size > cutpoints;
 	Size ntot( 0 );
 	// explicit chain boundaries
@@ -259,11 +260,15 @@ get_cutpoints( vector1< core::sequence::SequenceCOP > const & fasta_sequences,
 	runtime_assert( ntot == conventional_chains.size() );
 	runtime_assert( ntot == conventional_numbering.size() );
 	for ( Size k = 1; k < ntot; k++ ) {
+		if ( cutpoints.has_value( k ) ) continue;
 		if ( conventional_chains[ k ] != conventional_chains[ k+1 ] ) {
-			if ( !cutpoints.has_value( k ) ) cutpoints.push_back( k );
+			cutpoints.push_back( k );
 		} else { // break within chain.
-			if ( conventional_numbering[ k+1 ] > conventional_numbering[ k ] + 1 ) {
-				if ( !cutpoints.has_value( k ) ) cutpoints.push_back( k );
+			if ( conventional_numbering[ k+1 ] > conventional_numbering[ k ] + 1  ) {
+				if ( !option[ full_model::allow_jump_in_numbering ]() ) {
+					TR << TR.Red << "There appears to be a break in numbering at " << conventional_numbering[k] << " so adding to cutpoint list. If that is wrong, use flag -allow_jump_in_numbering." << TR.Reset << std::endl;
+					cutpoints.push_back( k );
+				}
 			}
 		}
 	}
@@ -376,7 +381,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	vector1< core::sequence::SequenceOP > fasta_sequences = core::sequence::read_fasta_file( fasta_file );
-	//std::map< Size, std::string > non_standard_residues  = parse_out_non_standard_residues( fasta_sequences /*will reduce to one-letter*/ );
+	std::map< Size, std::string > non_standard_residue_map  = parse_out_non_standard_residues( fasta_sequences /*will reduce to one-letter*/ );
 
 	std::string const desired_sequence           = core::sequence::get_concatenated_sequence( fasta_sequences );
 
@@ -386,6 +391,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	get_conventional_chains_and_numbering( fasta_sequences, conventional_chains, conventional_numbering );
 	full_model_parameters->set_conventional_numbering( conventional_numbering );
 	full_model_parameters->set_conventional_chains( conventional_chains );
+	full_model_parameters->set_non_standard_residue_map( non_standard_residue_map );
 	vector1< Size > cutpoint_open_in_full_model  = get_cutpoints( fasta_sequences, conventional_chains, conventional_numbering );
 
 	if ( option[ full_model::cutpoint_open ].user() ) {
@@ -400,6 +406,10 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 		full_model_parameters->conventional_to_full( option[ full_model::working_res ].resnum_and_chain() ); //all working stuff
 	vector1< Size > terminal_res       =
 		full_model_parameters->conventional_to_full( option[ full_model::rna::terminal_res ].resnum_and_chain() );
+	vector1< Size > block_stack_above_res  =
+		full_model_parameters->conventional_to_full( option[ full_model::rna::block_stack_above_res ].resnum_and_chain() );
+	vector1< Size > block_stack_below_res  =
+		full_model_parameters->conventional_to_full( option[ full_model::rna::block_stack_below_res ].resnum_and_chain() );
 	vector1< Size > preferred_root_res =
 		full_model_parameters->conventional_to_full( option[ full_model::root_res ].resnum_and_chain() );
 	vector1< Size > jump_res           =
@@ -428,6 +438,7 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	}
 
 	if ( option[ full_model::motif_mode ]() ) figure_out_motif_mode( extra_minimize_res, terminal_res, working_res, input_domain_map, cutpoint_open_in_full_model );
+	add_block_stack_variants( pose_pointers, pose_res_lists, block_stack_above_res, block_stack_below_res );
 
 	// everything that is not fixed is sampleable (unless -sample_res explicitly specified).
 	if ( sample_res.size() == 0 )  sample_res  = figure_out_sample_res( input_domain_map, working_res );
@@ -468,6 +479,8 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	full_model_parameters->set_parameter_as_res_list( RNA_SOUTH_SUGAR,
 		full_model_parameters->conventional_to_full( option[ full_model::rna::force_south_sugar_list ].resnum_and_chain() ) );
 	full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, terminal_res );
+	full_model_parameters->set_parameter_as_res_list( RNA_BLOCK_STACK_ABOVE, block_stack_above_res );
+	full_model_parameters->set_parameter_as_res_list( RNA_BLOCK_STACK_BELOW, block_stack_below_res );
 	full_model_parameters->set_parameter_as_res_list( RNA_BULGE,  bulge_res );
 	full_model_parameters->set_parameter_as_res_list( RNA_SAMPLE_SUGAR,
 		full_model_parameters->conventional_to_full( option[ full_model::rna::sample_sugar_res ].resnum_and_chain() ) );
@@ -476,6 +489,25 @@ fill_full_model_info_from_command_line( vector1< Pose * > & pose_pointers ) {
 	full_model_parameters->read_disulfides( option[ OptionKeys::stepwise::protein::disulfide_file]() );
 	if ( option[ constraints::cst_file ].user() ) full_model_parameters->read_cst_file( option[ constraints::cst_file ]()[ 1 ] );
 
+	// move this code block somewhere else when ready.
+	if ( option[ basic::options::OptionKeys::stepwise::monte_carlo::vary_loop_length_frequency ] > 0.0 ) {
+		// placeholder -- testing if loops can be 'evaporated'.
+		vector1< Size > full_model_res_no_loops;
+		for ( Size n = 1; n <= desired_sequence.size(); n++ ) {
+			if ( desired_sequence[ n-1 ] != 'n' || input_domain_map[ n ] ) full_model_res_no_loops.push_back( n );
+		}
+		full_model_parameters = full_model_parameters->slice( full_model_res_no_loops );
+		for ( Size n = 1; n <= pose_res_lists.size(); n++ ) {
+			vector1< Size > const & pose_res_list = pose_res_lists[ n ];
+			vector1< Size > pose_res_list_new;
+			for ( Size i = 1; i <= pose_res_list.size(); i++ ) {
+				if ( full_model_res_no_loops.has_value( pose_res_list[ i ] ) ) {
+					pose_res_list_new.push_back( full_model_res_no_loops.index( pose_res_list[ i ] ) );
+				}
+			}
+			pose_res_lists[ n ] = pose_res_list_new;
+		}
+	}
 
 	for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 		Pose & pose = *pose_pointers[n];
@@ -933,7 +965,6 @@ check_working_res( utility::vector1< Size > const & working_res,
 	for ( Size i = 1; i <= sample_res.size(); i++ ) {
 		runtime_assert( working_res.has_value( sample_res[ i ] ) );
 	}
-	//  bool const reference_pose = looks_like_reference_pose( input_domain_map );
 	for ( Size n = 1; n <= input_domain_map.size(); n++ ) {
 		if ( input_domain_map[ n ] > 0 ) {
 			if ( !working_res.has_value( n ) /* && !reference_pose */ ) {
@@ -976,12 +1007,12 @@ figure_out_motif_mode( utility::vector1< Size > & extra_min_res,
 		bool const next_moving = m < input_domain_map.size() && !right_before_chainbreak &&
 			( ( input_domain_map[ m + 1 ] == 0 &&  ( working_res.size() == 0 || working_res.has_value( m + 1 ) ) ) ||
 			( input_domain_map[ m + 1 ] != input_domain_map[ m ] ) );
-		if ( ( right_after_chainbreak && !next_moving ) ||
-				( right_before_chainbreak && !prev_moving ) ) {
+		if ( ( right_after_chainbreak  && !right_before_chainbreak && !next_moving ) ||
+				 ( right_before_chainbreak && !right_after_chainbreak  && !prev_moving ) ) {
 			terminal_res.push_back( m );
 		}
 		if ( ( prev_moving && !next_moving && !right_before_chainbreak ) ||
-				( next_moving && !prev_moving && !right_after_chainbreak ) ) {
+				 ( next_moving && !prev_moving && !right_after_chainbreak ) ) {
 			extra_min_res.push_back( m );
 		}
 	}
@@ -994,19 +1025,39 @@ figure_out_motif_mode( utility::vector1< Size > & extra_min_res,
 		}
 		runtime_assert( extra_min_res_save.size() == 0 || extra_min_res == extra_min_res_save );
 	}
+	if ( terminal_res_save.size() > 0 ) {
+		if ( terminal_res != terminal_res_save ) {
+			TR << TR.Red << "Auto-computed TERMINAL_RES " << terminal_res <<      TR.Reset << std::endl;
+			TR << TR.Red << "User-input    TERMINAL_RES " << terminal_res_save << TR.Reset << std::endl;
+		}
+	}
 	runtime_assert( terminal_res_save.size() == 0 || terminal_res == terminal_res_save );
 
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// DEPRECATE in Feb 2015 if this remains not in use -- align_pose & native_pose no longer
-//  setup full_model_info via fasta file.
-bool
-looks_like_reference_pose( utility::vector1< Size > const & input_domain_map ) {
-	for ( Size m = 1; m <= input_domain_map.size(); m++ ) {
-		if ( input_domain_map[ m ] != 1 ) return false;
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// An 'advanced' version of terminal_res -- places 'repulsion atoms' above or below base faces to
+// prevent stacking during both sampling and minimization.
+void
+add_block_stack_variants( vector1< pose::Pose * > const & pose_pointers,
+													vector1< vector1< Size > > const & pose_res_lists,
+													vector1< Size > const & block_stack_above_res,
+													vector1< Size > const & block_stack_below_res ) {
+	using namespace core::chemical;
+	for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
+		pose::Pose & pose = *( pose_pointers[ n ] ) ;
+		vector1 < Size > const & pose_res_list = pose_res_lists[ n ] ;
+		for ( Size i = 1; i <= pose_res_list.size(); i++ ) {
+			if ( block_stack_above_res.has_value( pose_res_list[ i ] ) ) {
+				runtime_assert( pose.residue_type( i ).is_RNA() );
+				add_variant_type_to_pose_residue( pose, BLOCK_STACK_ABOVE, i );
+			}
+			if ( block_stack_below_res.has_value( pose_res_list[ i ] ) ) {
+				runtime_assert( pose.residue_type( i ).is_RNA() );
+				add_variant_type_to_pose_residue( pose, BLOCK_STACK_BELOW, i );
+			}
+		}
 	}
-	return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1137,7 +1188,6 @@ just_modeling_RNA( utility::vector1< std::string > const & fasta_files ) {
 	parse_out_non_standard_residues( sequence );
 	return ( modeler::rna::just_modeling_RNA( sequence ) );
 }
-
 
 } //setup
 } //stepwise

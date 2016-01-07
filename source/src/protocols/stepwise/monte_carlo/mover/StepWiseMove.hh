@@ -52,6 +52,8 @@ enum MoveType { NO_MOVE = 0,
 	RESAMPLE, // resample existing suite or jump between two partitions
 	RESAMPLE_INTERNAL_LOCAL, // ERRASER-style, KIC move.
 	ADD_SUBMOTIF, // may be deprecated in factor of FROM_SCRATCH
+	ADD_LOOP_RES, // add residue to design loop
+	DELETE_LOOP_RES, // delete residue from design loop
 	LAST_ADD_OR_DELETE_CHOICE };
 
 std::string to_string( AttachmentType const & attachment_type );
@@ -136,6 +138,12 @@ public:
 	friend
 	bool
 	operator==( StepWiseMove const & a, StepWiseMove const & b );
+
+	friend
+	bool
+	operator!=( StepWiseMove const & a, StepWiseMove const & b ) {
+		return !( a == b );
+	}
 
 	//destructor
 	~StepWiseMove();

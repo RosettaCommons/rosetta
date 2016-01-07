@@ -58,7 +58,7 @@ namespace mover {
 ResampleMover::ResampleMover( protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler ):
 	stepwise_modeler_( stepwise_modeler ),
 	swa_move_selector_( StepWiseMoveSelectorOP( new StepWiseMoveSelector ) ),
-	options_( options::StepWiseMonteCarloOptionsCOP( options::StepWiseMonteCarloOptionsOP( new options::StepWiseMonteCarloOptions ) ) ),
+	options_( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions ) ),
 	minimize_single_res_( false ),
 	slide_docking_jumps_( false )
 {}
@@ -90,11 +90,7 @@ ResampleMover::apply( pose::Pose & pose,
 	std::string & move_type ){
 
 	utility::vector1< StepWiseMove > swa_moves;
-	swa_move_selector_->set_allow_internal_hinge( options_->allow_internal_hinge_moves() );
-	swa_move_selector_->set_allow_internal_local( options_->allow_internal_local_moves() );
-	swa_move_selector_->set_allow_submotif_split( options_->allow_submotif_split() );
-	swa_move_selector_->set_force_submotif_without_intervening_bulge( options_->force_submotif_without_intervening_bulge() );
-	swa_move_selector_->set_docking_frequency( options_->docking_frequency() );
+	swa_move_selector_->set_options( options_ );
 	swa_move_selector_->get_resample_move_elements( pose, swa_moves );
 
 	if ( swa_moves.size() == 0 ) return false;
@@ -291,13 +287,6 @@ ResampleMover::slide_jump_randomly( pose::Pose & pose, Size & remodel_res ) cons
 
 	remodel_res = new_remodel_res;
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-ResampleMover::set_options( options::StepWiseMonteCarloOptionsCOP options ){
-	options_ = options;
-}
-
 
 } //mover
 } //monte_carlo

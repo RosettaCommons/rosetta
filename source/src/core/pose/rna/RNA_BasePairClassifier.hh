@@ -42,6 +42,11 @@ get_number_base_stacks(
 	core::pose::Pose const & pose_input
 );
 
+EnergyBaseStackList
+get_scored_base_stack_list(
+	core::pose::Pose const & pose_input
+);
+
 } //rna
 } //pose
 } //core

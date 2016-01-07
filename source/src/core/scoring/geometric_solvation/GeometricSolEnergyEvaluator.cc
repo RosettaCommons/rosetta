@@ -657,7 +657,9 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
 	deriv = ZERO_DERIV2D;
 
 	if ( occ_rsd.is_virtual( occ_atm ) ) return;
+	if ( occ_rsd.is_repulsive( occ_atm ) ) return;
 	if ( don_rsd.is_virtual( don_h_atm ) ) return;
+	runtime_assert( !don_rsd.is_repulsive( don_h_atm ) );
 
 	debug_assert( don_rsd.atom_is_polar_hydrogen( don_h_atm ) );
 
@@ -788,7 +790,9 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 	deriv = ZERO_DERIV2D;
 
 	if ( occ_rsd.is_virtual( occ_atm ) ) return;
+	if ( occ_rsd.is_repulsive( occ_atm ) ) return;
 	if ( acc_rsd.is_virtual( acc_atm ) ) return;
+	runtime_assert( !acc_rsd.is_repulsive( acc_atm ) );
 
 	debug_assert( acc_rsd.heavyatom_is_an_acceptor( acc_atm ) );
 
@@ -897,7 +901,7 @@ GeometricSolEnergyEvaluator::atom_is_heavy( conformation::Residue const & rsd, S
 {
 	//Could check if its hydrogen, but this is the same delineation used in the
 	// residue-residue pair energy loop.
-	return (atm <= rsd.nheavyatoms() && !rsd.is_virtual( atm ));
+	return (atm <= rsd.nheavyatoms() && !rsd.is_virtual( atm ) && !rsd.is_repulsive( atm ) );
 }
 
 // COPIED OVER FROM HBondEnergy.cc ==> comment is not rhiju's!

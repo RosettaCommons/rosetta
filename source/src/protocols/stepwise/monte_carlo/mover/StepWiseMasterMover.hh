@@ -23,6 +23,7 @@
 #include <protocols/stepwise/monte_carlo/mover/FromScratchMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/AddOrDeleteMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/ResampleMover.fwd.hh>
+#include <protocols/stepwise/monte_carlo/mover/VaryLoopLengthMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.fwd.hh>
@@ -41,7 +42,8 @@ class StepWiseMasterMover: public protocols::moves::Mover {
 public:
 
 	//constructor
-	StepWiseMasterMover( core::scoring::ScoreFunctionCOP scorefxn, options::StepWiseMonteCarloOptionsCOP options );
+	StepWiseMasterMover( core::scoring::ScoreFunctionCOP scorefxn,
+											 protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options );
 
 	//destructor
 	~StepWiseMasterMover();
@@ -64,7 +66,7 @@ public:
 	bool apply_legacy( Pose & );
 
 	void
-	initialize( core::scoring::ScoreFunctionCOP scorefxn, options::StepWiseMonteCarloOptionsCOP options );
+	initialize( core::scoring::ScoreFunctionCOP scorefxn, protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options );
 
 	void initialize_pose_if_empty( core::pose::Pose & pose );
 
@@ -79,7 +81,7 @@ public:
 	preminimize_pose( core::pose::Pose & pose );
 
 	void
-	set_options( options::StepWiseMonteCarloOptionsCOP options ); // forces reinitalization.
+	set_options( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options ); // forces reinitalization.
 
 	void
 	set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ){ scorefxn_ = scorefxn; }
@@ -115,7 +117,7 @@ private:
 private:
 
 	core::scoring::ScoreFunctionCOP scorefxn_;
-	options::StepWiseMonteCarloOptionsCOP options_;
+	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options_;
 
 	modeler::StepWiseModelerOP stepwise_modeler_;
 	DeleteMoverOP delete_mover_;
@@ -123,6 +125,7 @@ private:
 	FromScratchMoverOP from_scratch_mover_;
 	AddOrDeleteMoverOP add_or_delete_mover_;
 	ResampleMoverOP resample_mover_;
+	VaryLoopLengthMoverOP vary_loop_length_mover_;
 	monte_carlo::submotif::SubMotifLibraryCOP submotif_library_;
 	StepWiseMoveSelectorOP stepwise_move_selector_;
 

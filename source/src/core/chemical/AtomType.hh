@@ -78,6 +78,7 @@ public:
 		is_aromatic_( false ),
 		atom_has_orbitals_(false),
 		atom_is_virtual_(false),
+		atom_is_repulsive_(false),
 		hybridization_( UNKNOWN_HYBRID )
 	{}
 
@@ -97,6 +98,7 @@ public:
 		is_aromatic_(src.is_aromatic_),
 		atom_has_orbitals_(src.atom_has_orbitals_),
 		atom_is_virtual_(src.atom_is_virtual_),
+		atom_is_repulsive_(src.atom_is_repulsive_),
 		hybridization_(src.hybridization_)
 	{}
 
@@ -183,6 +185,11 @@ public:
 	bool is_virtual() const {
 		debug_assert( (name_ == "VIRT") ? atom_is_virtual_ : true ); // Raise an error if an atom type named VIRT is not virtual.
 		return atom_is_virtual_;
+	}
+
+	/// @brief is atom type repulsive (REPL, REPLS, HREPS)
+	bool is_repulsive() const {
+		return atom_is_repulsive_;
 	}
 
 	/// @brief whether atom is a water
@@ -321,6 +328,7 @@ private:
 	bool is_aromatic_;
 	bool atom_has_orbitals_;
 	bool atom_is_virtual_;
+	bool atom_is_repulsive_;
 
 	Hybridization hybridization_;
 };

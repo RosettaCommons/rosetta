@@ -21,6 +21,7 @@
 #include <core/types.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/chemical/rna/util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.fwd.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
@@ -85,11 +86,26 @@ private:
 	Initialize_terminal_res( core::pose::Pose const & pose );
 
 	bool
+	check_base_stack(
+    core::kinematics::Stub const & moving_residue_base_stub,
+		core::kinematics::Stub const & other_base_stub,
+		core::Real const base_axis_CUTOFF,
+		core::Real const base_planarity_CUTOFF,
+		core::chemical::rna::BaseStackWhichSide & base_stack_side,
+		bool const verbose = false ) const;
+
+	bool
 	check_base_stack( core::kinematics::Stub const & moving_residue_base_stub,
 		core::kinematics::Stub const & other_base_stub,
 		core::Real const base_axis_CUTOFF,
 		core::Real const base_planarity_CUTOFF,
 		bool const verbose = false ) const;
+
+	bool
+	check_base_stack(
+	   core::kinematics::Stub const & moving_residue_base_stub,
+		 core::kinematics::Stub const & other_base_stub,
+		 core::chemical::rna::BaseStackWhichSide & base_stack_side );
 
 	bool
 	check_base_stack( Size const & pos1, Size const & pos2, bool const verbose  = false  );
@@ -131,6 +147,17 @@ private:
 	bool
 	is_medium_base_stack_and_medium_base_pair( core::kinematics::Stub const & moving_res_base ) const;
 
+	bool
+	check_block_stack_res(
+		utility::vector1< Size > const & block_stack_res,
+		core::chemical::rna::BaseStackWhichSide const & block_stack_side ) const;
+
+	bool
+	check_base_stack_in_partition(
+    Size const & block_stack_res,
+		utility::vector1< Size > const & other_res,
+		core::chemical::rna::BaseStackWhichSide const & block_stack_side ) const;
+
 private:
 
 	working_parameters::StepWiseWorkingParametersCOP working_parameters_;
@@ -158,6 +185,8 @@ private:
 	utility::vector1 < core::kinematics::Stub > base_stub_list_;
 
 	utility::vector1< core::Size > terminal_res_;
+	utility::vector1< core::Size > block_stack_below_res_;
+	utility::vector1< core::Size > block_stack_above_res_;
 	ObjexxFCL::FArray1D < bool > is_terminal_res_;
 	ObjexxFCL::FArray1D < bool > is_fixed_res_;
 	ObjexxFCL::FArray1D < bool > is_moving_res_;
