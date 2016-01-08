@@ -1,0 +1,46 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" />
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name=only_two_disulfs resnums="11,14,31,54" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<RestrictToRepacking name=nodesign />
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<MakeBundle name=bundle1 set_bondlengths=true set_bondangles=true residue_name=ALA use_degrees=true crick_params_file="alpha_helix" r0=6 delta_omega1=180 omega0=5 helix_length=20 >
+			<Helix />
+			<Helix delta_omega0=120 />
+			<Helix delta_omega0=240 />
+		</MakeBundle>
+		
+		<DeclareBond name=add_termini atom1=C res1=2 atom2=N res2=3 add_termini=true />
+
+		<MutateResidue name=mut1 target=14 new_res="CYS" />
+		<MutateResidue name=mut2 target=11 new_res="CYS" />
+		<MutateResidue name=mut3 target=34 new_res="CYS" />
+		<MutateResidue name=mut4 target=31 new_res="CYS" />
+		<MutateResidue name=mut5 target=54 new_res="CYS" />
+		<MutateResidue name=mut6 target=51 new_res="CYS" />
+
+		<TryDisulfPermutations name=trydisulf selector="only_two_disulfs" />
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=bundle1 />
+		<Add mover=add_termini />
+		<Add mover=mut1 />
+		<Add mover=mut2 />
+		<Add mover=mut3 />
+		<Add mover=mut4 />
+		<Add mover=mut5 />
+		<Add mover=mut6 />
+		<Add mover=trydisulf />
+	</PROTOCOLS>
+	<OUTPUT scorefxn=tala />
+</ROSETTASCRIPTS>

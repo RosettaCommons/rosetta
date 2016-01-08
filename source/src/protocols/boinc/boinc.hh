@@ -183,18 +183,18 @@ public:
 
 	// shared memory
 	static void create_shared_memory( void );
-	
+
 	/// @brief Signals that the shared memory object has been fully initialized by the worker,
 	/// so that the graphics app may read from it.
 	/// @details The shared memory object must be fully created and initialized before calling this.
 	/// @author Vikram K. Mulligan, Baker lab.
 	static void set_shared_memory_fully_initialized();
-	
+
 	/// @brief Waits for the signal that the shared memory object has been fully initialized by the worker,
 	/// so that the graphics app may read from it.
 	/// @author Vikram K. Mulligan, Baker lab.
 	static void wait_for_shared_memory_initialization();
-	
+
 	static void attach_shared_memory( void );
 	static void update_status_shmem( void );
 	static BoincSharedMemory* get_shmem( void );

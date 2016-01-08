@@ -14,11 +14,14 @@
 #ifndef INCLUDED_protocols_simple_filters_ScoreTypeFilter_fwd_hh
 #define INCLUDED_protocols_simple_filters_ScoreTypeFilter_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace simple_filters {
 
 class ScoreTypeFilter;
+typedef utility::pointer::shared_ptr< ScoreTypeFilter > ScoreTypeFilterOP;
+typedef utility::pointer::shared_ptr< ScoreTypeFilter const > ScoreTypeFilterCOP;
 
 }
 }

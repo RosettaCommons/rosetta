@@ -1942,6 +1942,46 @@ named_stub_id_to_stub_id(
 	}
 }
 
+/// @brief Gets a disulfide-forming residue's partner in the disulfide bond.
+/// @author Vikram K. Mulligan, Baker lab (vmullig@uw.edu).
+core::Size get_disulf_partner (
+	core::conformation::Conformation const &conformation,
+	core::Size const res_index
+) {
+	runtime_assert( res_index <= conformation.size() );
+	runtime_assert( conformation.residue( res_index ).type( ).is_disulfide_bonded() ) ;
+	std::string lcatom = conformation.residue(res_index).type( ).get_disulfide_atom_name();
+	Size const connect_atom( conformation.residue( res_index ).atom_index( lcatom ) );
+	Size other_res( 0 );
+	for ( core::Size conn = conformation.residue( res_index ).type().n_residue_connections(); conn >= 1; --conn ) {
+		if ( static_cast<core::Size>( conformation.residue( res_index ).type().residue_connection(conn).atomno() ) == connect_atom ) {
+			other_res = conformation.residue( res_index ).connect_map( conn ).resid();
+			break;
+		}
+	}
+	if ( other_res == 0 ) {
+		if ( TR.Error.visible() ) TR.Error << "Error: Residue " << res_index << " was disulfide bonded but had no partner" << std::endl;
+		utility_exit();
+	}
+	return other_res;
+}
+
+/// @brief Breaks a disulfide bond.
+/// @author Vikram K. Mulligan, Baker lab (vmullig@uw.edu).
+void break_disulfide(
+	core::conformation::Conformation &conformation,
+	core::Size const res1,
+	core::Size const res2
+) {
+	runtime_assert( res1 <= conformation.size() && res2 <= conformation.size() );
+	runtime_assert( conformation.residue(res1).type().is_disulfide_bonded() && conformation.residue(res2).type().is_disulfide_bonded() );
+	runtime_assert_string_msg( get_disulf_partner( conformation, res1 ) == res2, "Error: cannot break a disulfide bond, because the residues in question are not bonded." );
+	bool result = change_cys_state( res1, "", conformation );
+	runtime_assert_msg(result,"Error removing disulfide variant from "+conformation.residue(res1).name3());
+	result = change_cys_state( res2, "", conformation );
+	runtime_assert_msg(result,"Error removing disulfide variant from "+conformation.residue(res2).name3());
+	return;
+}
 
 /// @brief Introduce cysteines at the specified location and define a
 ///  disulfide bond between them.
@@ -2045,15 +2085,15 @@ void form_disulfide_helper(
 	using namespace core::chemical;
 	AA query_type( aa_cys );
 
-	// amw: This was not explicit enough to me and I briefly altered this function's semantics!
+	// AMW: This was not explicit enough to me and I briefly altered this function's semantics!
 	// If the residues aren't already a disulfide-forming type, we must make them one. Functions like
 	// disulfide insertion mover assume we do this.
+	// VKM: This was failing to act properly on residues that were thiol-containing.  I'm taking out the
+	// unncessary check for !thiol-containing and !disulfide-bonded.
 	if ( force_d_residues ) {
 		query_type = aa_dcs;
 	} else {
-		if ( ! conformation.residue_type(res_index).is_disulfide_bonded() &&
-				! conformation.residue_type(res_index).is_sidechain_thiol() &&
-				conformation.residue_type(res_index).is_alpha_aa() ) {
+		if ( conformation.residue_type(res_index).is_alpha_aa() ) {
 			if ( !conformation.residue_type(res_index).is_d_aa() || !preserve_d_residues ) {
 				query_type = aa_cys;
 			} else {

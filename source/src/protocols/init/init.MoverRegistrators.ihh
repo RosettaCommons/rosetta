@@ -73,6 +73,7 @@ static MoverRegistrator< cyclic_peptide::CreateDistanceConstraintCreator > reg_C
 static MoverRegistrator< cyclic_peptide::CreateTorsionConstraintCreator > reg_CreateTorsionConstraintCreator;
 static MoverRegistrator< cyclic_peptide::DeclareBondCreator > reg_DeclareBondCreator;
 static MoverRegistrator< cyclic_peptide::PeptideStubMoverCreator > reg_PeptideStubMoverCreator;
+static MoverRegistrator< cyclic_peptide::TryDisulfPermutationsCreator > reg_TryDisulfPermutationsCreator;
 
 static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
 

@@ -240,7 +240,7 @@ main( int argc, char * argv [] )
 				protocols::boinc::Boinc::set_graphics_native_pose( *native_pose_ );
 			}
 		}
-		
+
 		protocols::boinc::Boinc::set_shared_memory_fully_initialized(); //Signal that the shared memory is fully initialized at this point, and can be used by the graphics app.
 #endif
 

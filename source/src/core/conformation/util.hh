@@ -334,6 +334,21 @@ bool is_disulfide_bond( core::conformation::Conformation const& conformation, co
 /// @brief Generate a list of all disulfide bonds in the conformation
 void disulfide_bonds( core::conformation::Conformation const& conformation, utility::vector1< std::pair<core::Size,core::Size> > & disulfides );
 
+/// @brief Gets a disulfide-forming residue's partner in the disulfide bond.
+/// @author Vikram K. Mulligan, Baker lab (vmullig@uw.edu).
+core::Size get_disulf_partner (
+	core::conformation::Conformation const &conformation,
+	core::Size const res_index
+);
+
+/// @brief Breaks a disulfide bond.
+/// @author Vikram K. Mulligan, Baker lab (vmullig@uw.edu).
+void break_disulfide(
+	core::conformation::Conformation &conformation,
+	core::Size const res1,
+	core::Size const res2
+);
+
 /// @brief Introduce cysteines at the specified location and define a disulfide bond between them.
 /// @details Does not do the repacking & minimization required to place the disulfide correctly.
 void form_disulfide(

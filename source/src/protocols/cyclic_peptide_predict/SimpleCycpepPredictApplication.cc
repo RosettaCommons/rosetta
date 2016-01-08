@@ -27,6 +27,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 #include <utility/exit.hh>
@@ -65,6 +66,10 @@
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+
+//Disulfides
+#include <protocols/cyclic_peptide/TryDisulfPermutations.hh>
+#include <protocols/simple_filters/ScoreTypeFilter.hh>
 
 // Project Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
@@ -112,6 +117,9 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::rama_sampling_table_by_res   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::checkpoint_file              );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::rand_checkpoint_file         );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::require_disulfides           );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_prerelax       );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_postrelax      );
 
 	return;
 }
@@ -146,7 +154,10 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication() :
 	checkpoint_filename_("checkpoint.txt"),
 	default_rama_table_type_( core::scoring::unknown_ramatable_type ),
 	rama_table_type_by_res_(),
-	rand_checkpoint_file_("rng.state.gz")
+	rand_checkpoint_file_("rng.state.gz"),
+	try_all_disulfides_(false),
+	disulf_energy_cutoff_prerelax_(15.0),
+	disulf_energy_cutoff_postrelax_(0.5)
 {
 	initialize_from_options();
 }
@@ -182,7 +193,10 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	checkpoint_filename_(src.checkpoint_filename_),
 	default_rama_table_type_( src.default_rama_table_type_ ),
 	rama_table_type_by_res_( src.rama_table_type_by_res_ ),
-	rand_checkpoint_file_(src.rand_checkpoint_file_)
+	rand_checkpoint_file_(src.rand_checkpoint_file_),
+	try_all_disulfides_(src.try_all_disulfides_),
+	disulf_energy_cutoff_prerelax_(src.disulf_energy_cutoff_prerelax_),
+	disulf_energy_cutoff_postrelax_(src.disulf_energy_cutoff_postrelax_)
 	//TODO -- copy variables here.
 {}
 
@@ -216,6 +230,9 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	hbond_energy_cutoff_ = static_cast<core::Real>( option[basic::options::OptionKeys::cyclic_peptide::hbond_energy_cutoff]() );
 	fast_relax_rounds_ = static_cast<core::Size>( option[basic::options::OptionKeys::cyclic_peptide::fast_relax_rounds]() );
 	count_sc_hbonds_ = option[basic::options::OptionKeys::cyclic_peptide::count_sc_hbonds]();
+	try_all_disulfides_ = option[basic::options::OptionKeys::cyclic_peptide::require_disulfides].user();
+	disulf_energy_cutoff_prerelax_ = static_cast<core::Real>( option[basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_prerelax]() );
+	disulf_energy_cutoff_postrelax_ = static_cast<core::Real>( option[basic::options::OptionKeys::cyclic_peptide::disulf_cutoff_postrelax]() );
 
 	//Get the native, if it exists:
 	if ( option[in::file::native].user() ) {
@@ -878,8 +895,27 @@ SimpleCycpepPredictApplication::genkic_close(
 	//Create the pre-selection mover and set options.
 	protocols::rosetta_scripts::ParsedProtocolOP pp( new protocols::rosetta_scripts::ParsedProtocol );
 	pp->add_mover_filter_pair( NULL, "Total_Hbonds", total_hbond );
+
+	core::Size disulf_count(0);
+	//If we're considering disulfides, add the TryDisulfPermutations mover and a filter to the ParsedProtocol:
+	if ( try_all_disulfides_ ) {
+		protocols::cyclic_peptide::TryDisulfPermutationsOP trydisulf( new protocols::cyclic_peptide::TryDisulfPermutations ); //Default settings should be fine.
+		core::Size disulf_res_count(0);
+		for ( core::Size ir=1, irmax=pose->n_residue(); ir<=irmax; ++ir ) { if ( pose->residue(ir).type().get_disulfide_atom_name() != "NONE" ) ++disulf_res_count; } //Count disulfide-forming residues in the pose.
+		disulf_count = disulf_res_count / 2; //Div operator -- gives correct number of disulfides even in odd disulfide-forming residue case.
+		protocols::simple_filters::ScoreTypeFilterOP disulf_filter1( new protocols::simple_filters::ScoreTypeFilter( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_prerelax_ * static_cast<core::Real>(disulf_count) ) );
+		pp->add_mover_filter_pair( trydisulf, "Try_Disulfide_Permutations", disulf_filter1 );
+	}
+
+	//Add the FastRelax with high hbond weight to the pre-selection parsed protocol.
 	protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn_highhbond, fast_relax_rounds_) );
 	pp->add_mover_filter_pair( frlx, "High_Hbond_FastRelax", NULL );
+
+	//Add more stringent disulfide filtering post-relax:
+	if ( try_all_disulfides_ ) {
+		protocols::simple_filters::ScoreTypeFilterOP disulf_filter2( new protocols::simple_filters::ScoreTypeFilter( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_postrelax_ * static_cast<core::Real>(disulf_count) ) );
+		pp->add_mover_filter_pair( NULL, "Post-relax disulfide filter", disulf_filter2 );
+	}
 
 	//Create the mover and set options:
 	GeneralizedKICOP genkic( new GeneralizedKIC );
@@ -961,6 +997,63 @@ SimpleCycpepPredictApplication::genkic_close(
 	return genkic->last_run_successful();
 }
 
+/// @brief Given a pose, store a list of the disulfides in the pose.
+/// @details Clears the old_disulfides list and repopulates it.
+void
+SimpleCycpepPredictApplication::store_disulfides (
+	core::pose::PoseCOP pose,
+	utility::vector1 < std::pair < core::Size, core::Size > > &old_disulfides
+) const {
+	old_disulfides.clear();
+	core::conformation::disulfide_bonds( pose->conformation(), old_disulfides );
+	return;
+}
+
+/// @brief Given a pose and a list of the disulfides in the pose, break the disulfides.
+///
+void
+SimpleCycpepPredictApplication::break_disulfides (
+	core::pose::PoseOP pose,
+	utility::vector1 < std::pair < core::Size, core::Size > > const &disulfides
+) const {
+	for ( core::Size i=1, imax=disulfides.size(); i<=imax; ++i ) {
+		core::conformation::break_disulfide( pose->conformation(), disulfides[i].first, disulfides[i].second );
+	}
+	return;
+}
+
+/// @brief Given a pose and a list of the disulfides that should be in the pose, form the disulfides.
+///
+void
+SimpleCycpepPredictApplication::rebuild_disulfides (
+	core::pose::PoseOP pose,
+	utility::vector1 < std::pair < core::Size, core::Size > > const &disulfides
+) const {
+	for ( core::Size i=1, imax=disulfides.size(); i<=imax; ++i ) {
+		core::conformation::form_disulfide( pose->conformation(), disulfides[i].first, disulfides[i].second, true, false );
+	}
+	return;
+}
+
+/// @brief Given a list of old disulfide positions, generate a list of new disulfide positions based on the offset.
+/// @details Replaces the new_disulfides list.
+void
+SimpleCycpepPredictApplication::depermute_disulfide_list(
+	utility::vector1 < std::pair < core::Size, core::Size > > const &old_disulfides,
+	utility::vector1 < std::pair < core::Size, core::Size > > &new_disulfides,
+	core::Size const offset,
+	core::Size const nres
+) const {
+	new_disulfides.clear();
+	for ( core::Size i=1, imax=old_disulfides.size(); i<=imax; ++i ) {
+		core::Size res1( old_disulfides[i].first + offset );
+		if ( res1 > nres ) res1 -= nres;
+		core::Size res2( old_disulfides[i].second + offset );
+		if ( res2 > nres ) res2 -= nres;
+		new_disulfides.push_back( std::pair< core::Size, core::Size >( res1, res2 ) );
+	}
+	return;
+}
 
 /// @brief Given a pose that has undergone an N-residue cyclic permutation, restore
 /// the original pose, without the permutation.
@@ -983,6 +1076,12 @@ SimpleCycpepPredictApplication::depermute (
 
 	//TR << "nres=" << nres << " offset=" << offset << " old_first_res_index=" << old_first_res_index << std::endl; //DELETE ME
 
+	//Store the old disulfides:
+	utility::vector1 < std::pair < core::Size, core::Size > > old_disulfides;
+	store_disulfides( pose, old_disulfides );
+	//Break the old disulfides:
+	break_disulfides( pose, old_disulfides );
+
 	core::pose::PoseOP newpose( new core::pose::Pose );
 
 	for ( core::Size ir=old_first_res_index; ir<=nres; ++ir ) {
@@ -996,6 +1095,13 @@ SimpleCycpepPredictApplication::depermute (
 	for ( core::Size ir=1; ir<old_first_res_index; ++ir ) {
 		newpose->append_residue_by_bond( *(pose->residue(ir).clone()), false, 0, 0, 0, false, false );
 	}
+
+	//Depermute the old disulfide list:
+	utility::vector1 < std::pair < core::Size, core::Size > > new_disulfides;
+	depermute_disulfide_list( old_disulfides, new_disulfides, offset, nres );
+
+	//Re-form the disulfides:
+	rebuild_disulfides( pose, new_disulfides );
 
 	//I don't bother to set up cyclic constraints, since we won't be doing any more minimization after calling this function.
 

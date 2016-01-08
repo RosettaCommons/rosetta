@@ -100,6 +100,7 @@ ResidueType::ResidueType(
 	n_hbond_donors_(0),
 	n_backbone_heavyatoms_(0),
 	first_sidechain_hydrogen_( 0 ),
+	disulfide_atom_name_( "NONE" ),
 	rotamer_library_specification_( 0 ),
 	properties_( ResiduePropertiesOP( new ResidueProperties( this ) ) ),
 	aa_( aa_unk ),

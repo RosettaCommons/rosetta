@@ -16,6 +16,7 @@ sources = {
 		"CreateTorsionConstraint",
         	"DeclareBond",
         	"PeptideStubMover",
+		"TryDisulfPermutations",
 	],
 		"protocols/denovo_design" : [
 		"util",

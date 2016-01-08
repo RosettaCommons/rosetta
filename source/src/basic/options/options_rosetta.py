@@ -4059,6 +4059,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'hbond_energy_cutoff', 'Real', desc="The mainchain hbond energy threshold for something to be counted as a hydrogen bond in the simple_cycpep_predict app.  Default -0.25.", default='-0.25' ),
 		Option( 'fast_relax_rounds', 'Integer', desc="The number of rounds of FastRelax to perform at each FastRelax step in the simple_cycpep_predict protocol.  Note that there are two such steps: a high-hbond initial FastRelax applied to all GenKIC solutions, and a regular scorefunction final FastRelax applied to the best GenKIC solution.  Default 3.", default='3' ),
 		Option( 'count_sc_hbonds', 'Boolean', desc="Should sidechain-backbone and sidechain-sidechain hydrogen bonds be counted in the total hydrogen bond count in the simple_cycpep_predict protocol?  Default false.", default='false' ),
+		Option( 'require_disulfides', 'Boolean', desc="If true, accepted conformations must permit disulfides to be formed.  All permutations of disulfides will be considered, between all disulfide-forming residues.  Default false.", default='false' ),
+		Option( 'disulf_cutoff_prerelax', 'Real', desc="If require_disulfides is true, this is the maximum disulfide energy per disulfide bond that is allowed prior to relaxation.  If the energy exceeds this value, the solution is rejected.  Default 15.0.", default='15.0' ),
+		Option( 'disulf_cutoff_postrelax', 'Real', desc="If require_disulfides is true, this is the maximum disulfide energy per disulfide bond that is allowed following relaxation.  If the energy exceeds this value, the solution is rejected.  Default 0.5.", default='0.5' ),
 	), # -cyclic_peptide
 
 	Option_Group('dc',

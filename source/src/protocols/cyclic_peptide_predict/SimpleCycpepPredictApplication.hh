@@ -163,6 +163,40 @@ private:
 		core::Size const cyclic_offset
 	) const;
 
+	/// @brief Given a pose, store a list of the disulfides in the pose.
+	/// @details Clears the old_disulfides list and repopulates it.
+	void
+	store_disulfides (
+		core::pose::PoseCOP pose,
+		utility::vector1 < std::pair < core::Size, core::Size > > &old_disulfides
+	) const;
+
+	/// @brief Given a pose and a list of the disulfides in the pose, break the disulfides.
+	///
+	void
+	break_disulfides (
+		core::pose::PoseOP pose,
+		utility::vector1 < std::pair < core::Size, core::Size > > const &disulfides
+	) const;
+
+	/// @brief Given a pose and a list of the disulfides that should be in the pose, form the disulfides.
+	///
+	void
+	rebuild_disulfides (
+		core::pose::PoseOP pose,
+		utility::vector1 < std::pair < core::Size, core::Size > > const &disulfides
+	) const;
+
+	/// @brief Given a list of old disulfide positions, generate a list of new disulfide positions based on the offset.
+	/// @details Replaces the new_disulfides list.
+	void
+	depermute_disulfide_list(
+		utility::vector1 < std::pair < core::Size, core::Size > > const &old_disulfides,
+		utility::vector1 < std::pair < core::Size, core::Size > > &new_disulfides,
+		core::Size const offset,
+		core::Size const nres
+	) const;
+
 	/// @brief Given a pose that has undergone an N-residue cyclic permutation, restore
 	/// the original pose, without the permutation.
 	void
@@ -355,6 +389,19 @@ private:
 	/// @brief The name of the checkpoint file for the random number generator.
 	/// @details Defaults to "rng.state.gz".  Read from options.
 	std::string rand_checkpoint_file_;
+
+	/// @brief Should we try all disulfide combinations during structure prediction?
+	/// @details Default false.  Read from options.
+	bool try_all_disulfides_;
+
+	/// @brief The cutoff dslf_fa13 energy, pre-relaxation, above which closure solutions are rejected.
+	/// @details Read from options.
+	core::Real disulf_energy_cutoff_prerelax_;
+
+	/// @brief The cutoff dslf_fa13 energy, post-relaxation, above which closure solutions are rejected.
+	/// @details Read from options.
+	core::Real disulf_energy_cutoff_postrelax_;
+
 
 };
 
