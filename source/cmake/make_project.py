@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python2.7
 
 # make_project.py - modified from mini-interactive by tex.
 
@@ -11,7 +11,7 @@ import build_util
 PATH_TO_SOURCE_DIR = os.path.dirname( os.path.dirname( os.path.abspath(sys.argv[0]) ) ) + "/"
 
 def update_version():
-	cmd = 'cd ..; python2 version.py'
+	cmd = 'cd ..; python2.7 version.py'
 	os.system(cmd)
 
 def update_options():
@@ -52,7 +52,7 @@ def project_callback(project, project_path, project_files):
 
 			symlink_var = key + '_symlink'
 			output += 'ADD_CUSTOM_TARGET( %s  ALL)\n' % ( symlink_var )
-			output += 'ADD_CUSTOM_COMMAND( TARGET %s POST_BUILD COMMAND python2 ../smart_symlink.py ${COMPILER} ${MODE} %s )\n' % ( symlink_var, key )
+			output += 'ADD_CUSTOM_COMMAND( TARGET %s POST_BUILD COMMAND python2.7 ../smart_symlink.py ${COMPILER} ${MODE} %s )\n' % ( symlink_var, key )
 			output += 'ADD_DEPENDENCIES( %s %s )\n' % ( symlink_var, key )
 			output += 'ADD_DEPENDENCIES( %s BUILD_ROSETTA_LIBS )\n' % ( key )
 			output += 'ADD_DEPENDENCIES( %s %s )\n' % ( project, symlink_var )
