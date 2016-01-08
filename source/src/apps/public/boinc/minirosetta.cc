@@ -112,7 +112,7 @@ main( int argc, char * argv [] )
 	// initialize boinc
 	using namespace protocols::boinc;
 	Boinc boinc_wu = Boinc::instance();
-	boinc_wu.initialize_worker();
+	boinc_wu.initialize_worker(); //The shared memory gets created here.
 
 	// make sure -use_filters flag is not ambiguous
 	for (int i=0; i<argc; ++i) {
@@ -173,6 +173,7 @@ main( int argc, char * argv [] )
 	// read the work unit description file if one exists
 	std::cerr << "Setting WU description ..." << std::endl;std::cerr.flush();
 	Boinc::set_wu_desc();
+	Boinc::set_randomly_cycle_appearance( option[run::protocol]() != "simple_cycpep_predict" );  // Set whether the app should randomly cycle the graphics
 #endif
 
 	// unzip an archive?
@@ -239,23 +240,18 @@ main( int argc, char * argv [] )
 				protocols::boinc::Boinc::set_graphics_native_pose( *native_pose_ );
 			}
 		}
+		
+		protocols::boinc::Boinc::set_shared_memory_fully_initialized(); //Signal that the shared memory is fully initialized at this point, and can be used by the graphics app.
 #endif
+
 
 		// RUN PROTOCOL
 		// catch *any* exception.
 		try{
-#ifdef BOINC_GRAPHICS
-			// Set whether the app should randomly cycle the graphics
-			Boinc::set_randomly_cycle_appearance( true );
-#endif
 			if ( option[ run::protocol ]() == "abrelax" ) {
 				protocols::abinitio::AbrelaxApplication abrelax;
 				abrelax.run();
 			} else if ( option[run::protocol]() == "simple_cycpep_predict" ) {
-#ifdef BOINC_GRAPHICS
-				// Special case -- don't randomly cycle the appearance.
-				Boinc::set_randomly_cycle_appearance( false );
-#endif
 				protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication peppredict;
 				peppredict.run();
 			} else if ( option[ run::protocol ]() == "symdock" ) {

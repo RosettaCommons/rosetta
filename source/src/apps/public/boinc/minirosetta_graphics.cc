@@ -504,6 +504,8 @@ void app_graphics_init() {
 	if ( !option[ OptionKeys::boinc::noshmem ]() ) {
 		protocols::boinc::Boinc::attach_shared_memory();
 		shmem =  protocols::boinc::Boinc::get_shmem();
+		//Wait until the shared memory has been initialized:
+		protocols::boinc::Boinc::wait_for_shared_memory_initialization();
 	}
 
 	// get workunit description

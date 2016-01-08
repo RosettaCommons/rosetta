@@ -640,12 +640,40 @@ void Boinc::create_shared_memory() {
 		} else {
 			std::cout << "Created shared memory segment " << std::endl;
 		}
+		shmem_->fully_initialized = false; //Must be set to true explicitly.
 	}
+}
+
+/// @brief Signals that the shared memory object has been fully initialized by the worker,
+/// so that the graphics app may read from it.
+/// @details The shared memory object must be fully created and initialized before calling this.
+/// @author Vikram K. Mulligan, Baker lab.
+void Boinc::set_shared_memory_fully_initialized() {
+	runtime_assert_string_msg( shmem_, "Error in protocols::boinc::set_shared_memory_fully_initialized(): The shared memory object must be created before calling this function!" );
+	shmem_->fully_initialized = true;
+	return;
+}
+
+/// @brief Waits for the signal that the shared memory object has been fully initialized by the worker,
+/// so that the graphics app may read from it.
+/// @author Vikram K. Mulligan, Baker lab.
+void Boinc::wait_for_shared_memory_initialization() {
+	runtime_assert_string_msg( shmem_, "Error in protocols::boinc::wait_for_shared_memory_initialization(): The shared memory object must be created before calling this function!" );
+	while(true) {
+		if(!wait_semaphore()) {
+			if( shmem_->fully_initialized ) {
+				unlock_semaphore();
+				break;
+			}
+			unlock_semaphore();
+		}
+	}
+	return;
 }
 
 void Boinc::attach_shared_memory() {
 	if (shmem_ == NULL) {
-		int attempts = 15;
+		int attempts = 60;
 		while (attempts>1) {
 			shmem_ = (BoincSharedMemory*)boinc_graphics_get_shmem(BOINC_SHMEM_NAME);
 			if (!shmem_) {

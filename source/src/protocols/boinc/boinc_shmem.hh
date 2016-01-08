@@ -94,6 +94,9 @@ struct BoincSharedMemory {
 
 	// Should we randomly cycle appearance?
 	bool randomly_cycle_appearance;
+	
+	// Has the main app initialized the shared memory object completely, so that the graphics app can read what it needs?
+	bool fully_initialized;
 
 };
 
