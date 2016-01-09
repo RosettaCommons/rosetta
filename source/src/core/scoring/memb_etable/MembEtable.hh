@@ -253,8 +253,8 @@ private: // data
 	ObjexxFCL::FArray3D< Real > dsolv2_;
 	ObjexxFCL::FArray3D< Real > memb_solv1_;
 	ObjexxFCL::FArray3D< Real > memb_solv2_;
-	ObjexxFCL::FArray3D< Real > memb_dsolv2_;
 	ObjexxFCL::FArray3D< Real > memb_dsolv1_;
+	ObjexxFCL::FArray3D< Real > memb_dsolv2_;
 
 };
 

@@ -53,14 +53,28 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 // Constructors & Setup
-
 MembEtable::MembEtable(
 	chemical::AtomTypeSetCAP atom_set_in_ap,
 	EtableOptions const & options,
 	std::string const alternate_parameter_set
 ) : Etable( atom_set_in_ap, options, alternate_parameter_set ),
 	max_non_hydrogen_lj_radius_( 0.0 ),
-	max_hydrogen_lj_radius_( 0.0 )
+	max_hydrogen_lj_radius_( 0.0 ), 
+	lj_radius_(), 
+	lk_dgfree_(), 
+	lk_volume_(), 
+	lk_lambda_(), 
+	memb_lk_dgfree_(), 
+	lk_dgrefce_(), 
+	memb_lk_dgrefce_(),
+	solv1_(), 
+	solv2_(), 
+	dsolv1_(), 
+	dsolv2_(), 
+	memb_solv1_(), 
+	memb_solv2_(), 
+	memb_dsolv1_(), 
+	memb_dsolv2_()
 {
 
 	dimension_memb_etable_arrays();
@@ -71,7 +85,22 @@ MembEtable::MembEtable(
 MembEtable::MembEtable( MembEtable const & src ) :
 	Etable( src ),
 	max_non_hydrogen_lj_radius_( src.max_hydrogen_lj_radius_ ),
-	max_hydrogen_lj_radius_( src.max_hydrogen_lj_radius_ )
+	max_hydrogen_lj_radius_( src.max_hydrogen_lj_radius_ ),
+	lj_radius_( src.lj_radius_ ), 
+	lk_dgfree_( src.lk_dgfree_ ), 
+	lk_volume_( src.lk_volume_ ), 
+	lk_lambda_( src.lk_lambda_ ), 
+	memb_lk_dgfree_( src.memb_lk_dgfree_ ), 
+	lk_dgrefce_( src.lk_dgrefce_ ), 
+	memb_lk_dgrefce_( src.memb_lk_dgrefce_ ),
+	solv1_( src.solv1_ ), 
+	solv2_( src.solv2_ ), 
+	dsolv1_( src.dsolv1_ ), 
+	dsolv2_( src.dsolv2_ ), 
+	memb_solv1_( src.memb_solv1_ ), 
+	memb_solv2_( src.memb_solv2_ ), 
+	memb_dsolv1_( src.memb_dsolv1_ ), 
+	memb_dsolv2_( src.memb_dsolv2_ )
 {}
 
 MembEtable::~MembEtable() {}
