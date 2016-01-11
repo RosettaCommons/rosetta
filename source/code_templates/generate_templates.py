@@ -107,7 +107,7 @@ class GenerateRosettaTemplates(object):
 
         matches = self.replacement.keys()
 
-        for template in files:
+        for template in sorted(files):
             extension = "."+".".join(os.path.basename(template).split(".")[1:])
 
             if hasattr(self.options, "type") and self.options.type == "util":
