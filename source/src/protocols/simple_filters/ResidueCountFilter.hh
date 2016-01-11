@@ -26,6 +26,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 //C library
 #include <math.h> // for round, floor, ceil, trunc, sqrt
@@ -38,10 +39,6 @@ class ResidueCountFilter : public filters::Filter
 public:
 	//default ctor
 	ResidueCountFilter();
-
-	ResidueCountFilter(
-		ResidueCountFilter const & src
-	);
 
 	virtual ~ResidueCountFilter();
 
@@ -131,6 +128,9 @@ public:
 		core::pack::task::TaskFactoryOP task_factory
 	);
 
+	void
+	residue_selector( core::select::residue_selector::ResidueSelectorCOP selector );
+
 	bool packable() const;
 
 	void
@@ -155,6 +155,7 @@ private:
 	utility::vector1< std::string > res_types_;
 	bool packable_;
 	core::pack::task::TaskFactoryOP task_factory_;
+	core::select::residue_selector::ResidueSelectorCOP selector_;
 };
 
 }

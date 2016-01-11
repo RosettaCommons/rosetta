@@ -24,6 +24,8 @@
 //Project Headers
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+//Basic Headers
 #include <basic/Tracer.hh>
 //Utility Headers
 #include <utility/string_util.hh>
@@ -52,23 +54,9 @@ ResidueCountFilter::ResidueCountFilter() :
 	enable_min_residue_count_(false),
 	count_as_percentage_(false), // for a user who does not use rosetta_scripts, count_as_percentage_ = false by default here
 	packable_( 0 ),
-	task_factory_( /* NULL */ )
+	task_factory_( /* NULL */ ),
+	selector_()
 {}
-
-ResidueCountFilter::ResidueCountFilter(
-	ResidueCountFilter const & src
-) :
-	protocols::filters::Filter( "ResidueCount" ),
-	max_residue_count_(src.max_residue_count_),
-	enable_max_residue_count_(src.enable_max_residue_count_),
-	min_residue_count_(src.min_residue_count_),
-	enable_min_residue_count_(src.enable_min_residue_count_),
-	count_as_percentage_(src.count_as_percentage_),
-	res_types_( src.res_types_ ),
-	packable_( src.packable_ ),
-	task_factory_( src.task_factory_ )
-{}
-
 
 ResidueCountFilter::~ResidueCountFilter() {}
 
@@ -141,6 +129,7 @@ ResidueCountFilter::parse_my_tag(
 	if ( tag->hasOption("task_operations") ) {
 		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	}
+	residue_selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );
 	packable( tag->getOption< bool >( "packable", 0 ) );
 }
 
@@ -151,11 +140,12 @@ ResidueCountFilter::apply(
 	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		TR.Debug << "Residue " << i << " name3=" << pose.residue(i).name3() << "; name=" << pose.residue(i).name() << ";" << std::endl;
 	}
-	if ( enable_max_residue_count() && compute(pose) > max_residue_count() ) {
+	core::Size const computed_count = compute( pose );
+	if ( enable_max_residue_count() && computed_count > max_residue_count() ) {
 		return false;
 	}
 
-	if ( enable_min_residue_count() && compute(pose) < min_residue_count() ) {
+	if ( enable_min_residue_count() && computed_count < min_residue_count() ) {
 		return false;
 	}
 
@@ -195,8 +185,16 @@ ResidueCountFilter::compute(
 	utility::vector1< core::Size > target_res;
 	target_res.clear();
 	if ( !task_factory() ) {
-		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
-			target_res.push_back( i );
+		core::select::residue_selector::ResidueSubset subset;
+		if ( selector_ ) {
+			subset = selector_->apply( pose );
+		} else {
+			subset.assign( pose.total_residue(), true );
+		}
+		for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
+			if ( subset[ resid ] ) {
+				target_res.push_back( resid );
+			}
 		}
 	} else {
 		if ( packable_ ) {
@@ -301,6 +299,12 @@ void
 ResidueCountFilter::task_factory( core::pack::task::TaskFactoryOP task_factory )
 {
 	task_factory_ = task_factory;
+}
+
+void
+ResidueCountFilter::residue_selector( core::select::residue_selector::ResidueSelectorCOP selector )
+{
+	selector_ = selector;
 }
 
 bool
