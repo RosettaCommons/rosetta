@@ -177,7 +177,8 @@ public:
 
 			for ( core::Size ir=1, irmax=h1params->n_residue(); ir<=irmax; ++ir ) {
 				residue_indices.push_back( h1params->residue(ir)->seqpos() );
-				sprintf(outbuffer, "%s %lu", outbuffer, residue_indices[residue_indices.size()]);
+				std::string outbuffer2( outbuffer );
+				sprintf(outbuffer, "%s %lu", outbuffer2.c_str(), residue_indices[residue_indices.size()]);
 			}
 
 			TS_TRACE(outbuffer);
