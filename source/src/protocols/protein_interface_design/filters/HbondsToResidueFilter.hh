@@ -27,7 +27,6 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <utility/exit.hh>
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -175,12 +174,14 @@ public :
 
 	/// @brief Set the scorefunction to use for hbond calculation.
 	///
-	void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in);
-	
-	/// @brief Set the ResidueSelector to use.
-	/// @details Only hydrogen bonds between this residue and the residues selected by the ResidueSelector will be counted,
-	/// if a ResidueSelector is provided.
-	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector_in );
+	inline void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in) {
+		if ( sfxn_in ) {
+			sfxn_ = sfxn_in->clone();
+		} else {
+			utility_exit_with_message("Error in protocols::protein_interface_design::filters::HbondsToResidueFilter::set_scorefxn(): Null pointer passed to function!");
+		}
+		return;
+	}
 
 private:
 
@@ -219,11 +220,7 @@ private:
 	/// @brief Owning pointer to the scorefunction to use.
 	///
 	core::scoring::ScoreFunctionOP sfxn_;
-	
-	/// @brief Owning pointer to a ResidueSelector, optionally used to select the residues to count.
-	/// @details Only hydrogen bonds between this residue and the residues selected by the ResidueSelector will be counted,
-	/// if a ResidueSelector is provided.
-	core::select::residue_selector::ResidueSelectorCOP selector_;
+
 
 };
 
