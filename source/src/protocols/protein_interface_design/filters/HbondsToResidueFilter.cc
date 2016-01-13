@@ -38,11 +38,11 @@
 #include <core/pose/selection.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
-//#include <protocols/moves/ResidueMover.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <basic/MetricValue.hh>
 #include <numeric/random/random.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -103,7 +103,8 @@ HbondsToResidueFilter::HbondsToResidueFilter() :
 	bb_bb_(true),
 	from_other_chains_(true),
 	from_same_chain_(true),
-	sfxn_()
+	sfxn_(),
+	selector_()
 {}
 
 /// @brief Constructor
@@ -127,7 +128,8 @@ HbondsToResidueFilter::HbondsToResidueFilter(
 	bb_bb_(bb_bb),
 	from_other_chains_(from_other_chains),
 	from_same_chain_(from_same_chain),
-	sfxn_()
+	sfxn_(),
+	selector_()
 {
 	std::stringstream resnumstr;
 	resnumstr << resnum;
@@ -148,7 +150,8 @@ HbondsToResidueFilter::HbondsToResidueFilter( HbondsToResidueFilter const &src )
 	bb_bb_(src.bb_bb_),
 	from_other_chains_(src.from_other_chains_),
 	from_same_chain_(src.from_same_chain_),
-	sfxn_( )
+	sfxn_(),
+	selector_( src.selector_ ) //Copy the owning pointer; don't clone.
 {
 	if ( src.sfxn_ ) {
 		sfxn_ = src.sfxn_->clone();
@@ -189,6 +192,10 @@ HbondsToResidueFilter::parse_my_tag(
 
 	if ( tag->hasOption("scorefxn") ) {
 		set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
+	}
+	
+	if ( tag->hasOption("residue_selector") ) {
+		set_selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );
 	}
 
 	set_from_same_chain( tag->getOption<bool>( "from_same_chain", true ) );
@@ -234,10 +241,17 @@ HbondsToResidueFilter::compute( Pose const & pose, core::Size const resnum_roset
 	}
 	(*scorefxn)(temp_pose);
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( temp_pose );
+	
+	//Get the ResidueSubset that could form hydrogen bonds with this residue:
+	core::select::residue_selector::ResidueSubset selection( pose.n_residue(), true );
+	if( selector_ ) {
+		selection = selector_->apply( pose );
+	}
 
 	std::set<Size> binders;
 	for ( Size i=1, imax=pose.n_residue(); i<=imax; ++i ) {
 		if ( i == resnum_rosetta ) continue; //Don't consider hbonds of this residue to itself.
+		if ( !selection[i] ) continue; //Don't consider hbonds to residues that aren't selected by the ResidueSelector (if used).  Note that the selection vector is all true if no ResidueSelector is provided.
 		if ( pose.chain(i) == pose.chain(resnum_rosetta) && !from_same_chain() ) continue; //Skip hbonds from same chain if the from_same_chain option is not set.
 		if ( pose.chain(i) != pose.chain(resnum_rosetta) && !from_other_chains() ) continue; //Skip hbonds from different chains if the from_other_chain option is not set.
 		binders.insert( i );
@@ -245,6 +259,33 @@ HbondsToResidueFilter::compute( Pose const & pose, core::Size const resnum_roset
 	std::list< Size> hbonded_res( hbonded( temp_pose, resnum_rosetta, binders, backbone_, sidechain_, energy_cutoff_, bb_bb_, scorefxn) );
 
 	return( hbonded_res.size() );
+}
+
+/// @brief Set the scorefunction to use for hbond calculation.
+///
+void
+HbondsToResidueFilter::set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in) {
+	if ( sfxn_in ) {
+		sfxn_ = sfxn_in->clone();
+	} else {
+		utility_exit_with_message("Error in protocols::protein_interface_design::filters::HbondsToResidueFilter::set_scorefxn(): Null pointer passed to function!");
+	}
+	return;
+}
+
+/// @brief Set the ResidueSelector to use.
+/// @details Only hydrogen bonds between this residue and the residues selected by the ResidueSelector will be counted,
+/// if a ResidueSelector is provided.
+void
+HbondsToResidueFilter::set_selector(
+	core::select::residue_selector::ResidueSelectorCOP selector_in
+) {
+	if(selector_in) {
+		selector_ = selector_in;
+	} else {
+		utility_exit_with_message("Error in protocols::protein_interface_design::filters::HbondsToResidueFilter::set_selector(): Null pointer passed to function!");
+	}
+	return;
 }
 
 HbondsToResidueFilter::~HbondsToResidueFilter() {}

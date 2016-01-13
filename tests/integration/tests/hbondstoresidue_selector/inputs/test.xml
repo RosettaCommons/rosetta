@@ -1,0 +1,33 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name=before resnums="1-9" />
+		<Index name=beyond resnums="11-40" />
+		<Index name=otherhelix resnums="21-40" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+		<HbondsToResidue name=count_all partners=0 backbone=true bb_bb=true sidechain=true residue=10 from_other_chains=true from_same_chain=true />
+		<HbondsToResidue name=count_before partners=0 backbone=true bb_bb=true sidechain=true residue=10 from_other_chains=true from_same_chain=true residue_selector=before />
+		<HbondsToResidue name=count_beyond partners=0 backbone=true bb_bb=true sidechain=true residue=10 from_other_chains=true from_same_chain=true residue_selector=beyond/>
+		<HbondsToResidue name=count_otherhelix partners=0 backbone=true bb_bb=true sidechain=true residue=10 from_other_chains=true from_same_chain=true residue_selector=otherhelix/>
+	</FILTERS>
+	<MOVERS>
+		<MakeBundle name=bundle1 set_bondlengths=true set_bondangles=true residue_name=ALA crick_params_file=alpha_helix_100 r0=5.0 omega0=1.0 use_degrees=true helix_length=20 >
+			<Helix />
+			<Helix delta_omega0=180 invert=1 />
+		</MakeBundle>
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=bundle1 />
+		<Add filter=count_all />
+		<Add filter=count_before />
+		<Add filter=count_beyond />
+		<Add filter=count_otherhelix />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
