@@ -41,6 +41,8 @@ public:
 
 	void init();
 
+	void update_last_template();
+
 	void add_template(
 		std::string template_fn,
 		std::string cst_fn,

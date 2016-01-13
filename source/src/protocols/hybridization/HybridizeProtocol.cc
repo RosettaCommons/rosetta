@@ -738,6 +738,25 @@ void HybridizeProtocol::add_template(
 	non_null_template_indices_.push_back( templates_.size() );
 }
 
+void HybridizeProtocol::update_last_template()
+{
+	core::pose::PoseOP template_pose = templates_[templates_.size()];
+
+	// add secondary structure information to the template pose
+	core::scoring::dssp::Dssp dssp_obj( *template_pose );
+	dssp_obj.insert_ss_into_pose( *template_pose );
+
+	// find ss chunks in template
+	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose);
+	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 4);
+
+	if ( chunks.num_loop() == 0 ) chunks = contigs;
+
+	template_chunks_[templates_.size()] = chunks;
+	template_contigs_[templates_.size()] = contigs;
+}
+
+
 // validate input templates match input sequence
 // TO DO: if only sequences mismatch try realigning
 void HybridizeProtocol::validate_template(
@@ -796,14 +815,30 @@ void HybridizeProtocol::validate_template(
 		core::sequence::SequenceAlignment fasta2template;
 
 		fasta2template = sw_align.align(full_length_seq, t_pdb_seq, ss);
+
+		TR << fasta2template << std::endl;
+
+
 		core::id::SequenceMapping sequencemap = fasta2template.sequence_mapping(1,2);
 		sequencemap.reverse();
-		for ( Size i=1; i<=template_pose->total_residue(); i++ ) {
+		core::Size ndel = 0;
+		core::Size currres = 1;
+		core::Size nres = template_pose->total_residue();
+		for ( Size i=1; i<=nres; i++ ) {
 			Size pdbnumber = template_pose->pdb_info()->number(i);
+			if ( sequencemap[i] == 0) { // extra residues in template
+				template_pose->delete_residue_range_slow( currres,currres );
+				ndel++;
+				continue;
+			}
 			if ( pdbnumber != sequencemap[i] ) {
 				Size fastanumber = sequencemap[i];
-				template_pose->pdb_info()->number(i,fastanumber);
+				template_pose->pdb_info()->number(currres,fastanumber);
 			}
+			currres++;
+		}
+		if (ndel > 0) {
+			TR.Error << "WARNING! Realignment removed " << ndel << " residues!" << std::endl;
 		}
 	} else {
 		align_pdb_info = false;
@@ -1714,9 +1749,11 @@ HybridizeProtocol::parse_my_tag(
 
 			// validate here since we have the pose (add_template does not) ... could do this in apply as well (?)
 			validate_template( template_fn, fasta, templates_[templates_.size()], align_pdb_info );
+
 			if ( align_pdb_info ) {
-				bool referencebool = false;
-				validate_template( template_fn, fasta, templates_[templates_.size()], referencebool );
+				align_pdb_info = false;
+				validate_template( template_fn, fasta, templates_[templates_.size()], align_pdb_info );
+				update_last_template();
 			}
 		}
 
