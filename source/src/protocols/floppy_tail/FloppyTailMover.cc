@@ -385,6 +385,249 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 
 	return;
 }
+	
+void FloppyTailMover::low_res( core::pose::Pose & pose ) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	//centroid
+	clock_t starttime = clock();
+	TR << "entering perturb steps" << std::endl;
+	
+	core::pose::Pose const saved_input_pose( pose ); //used to return sidechains later
+	
+	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
+	typeset_swap.apply( pose );
+	//centroid score
+	TR << "centroid score of starting PDB: " << (*centroid_scorefunction_)(pose) << std::endl;
+	centroid_scorefunction_->show( TR, pose );
+	TR << std::flush; //show doesn't flush the buffer
+	
+	////////////////////////////////////backbone_mover_cent/////////////////////////////////////
+	protocols::moves::RandomMoverOP backbone_mover_cen( new protocols::moves::RandomMover() );
+	
+	using protocols::simple_moves::SmallMover;
+	using protocols::simple_moves::BackboneMoverOP;
+	protocols::simple_moves::BackboneMoverOP small_mover_cen( new protocols::simple_moves::SmallMover(movemap_, 0.8, 0) );
+	small_mover_cen->angle_max( 'H', 180.0 );
+	small_mover_cen->angle_max( 'E', 180.0 );
+	small_mover_cen->angle_max( 'L', 180.0 );
+	backbone_mover_cen->add_mover(small_mover_cen, 1.0);
+	
+	protocols::simple_moves::BackboneMoverOP shear_mover_cen( new protocols::simple_moves::ShearMover(movemap_, 0.8, 0) );
+	shear_mover_cen->angle_max( 'H', 180.0 );
+	shear_mover_cen->angle_max( 'E', 180.0 );
+	shear_mover_cen->angle_max( 'L', 180.0 );
+	//backbone_mover_cen->add_mover(shear_mover_cen, 1.0); //not yet
+	
+	if ( fragset3mer_ ) { //if we have fragments
+		using protocols::simple_moves::ClassicFragmentMover;
+		protocols::simple_moves::ClassicFragmentMoverOP frag_mover( new ClassicFragmentMover(fragset3mer_, movemap_) );
+		frag_mover->enable_end_bias_check(false);
+		backbone_mover_cen->add_mover(frag_mover, 0.5);
+	}
+	
+	/////////////////////////minimizer mover/////////////////////////////////////////
+	//using protocols::simple_moves::symmetry::SymMinMoverOP;
+	//using protocols::simple_moves::symmetry::SymMinMover;
+	protocols::simple_moves::MinMoverOP min_mover_cen;
+	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
+		min_mover_cen = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::symmetry::SymMinMover(
+																																																						movemap_,
+																																																						centroid_scorefunction_,
+																																																						basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+																																																						0.01,
+																																																						true /*use_nblist*/ ) );
+	} else {
+		min_mover_cen = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(
+																																															 movemap_,
+																																															 centroid_scorefunction_,
+																																															 basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+																																															 0.01,
+																																															 true /*use_nblist*/ ) );
+	}
+	
+	/////////////////////////Monte Carlo//////////////////////////////////////////////////////////
+	//make the monte carlo object
+	using protocols::moves::MonteCarlo;
+	using protocols::moves::MonteCarloOP;
+	using basic::options::option;
+	MonteCarloOP mc_cen( new MonteCarlo( pose, *centroid_scorefunction_, option[ FloppyTail::perturb_temp ].value() ) );
+	
+	///////////////////////////////////for loop///////////////////////////////////////////////////
+	protocols::moves::PDBDumpMover cen_out("cen_cycle");
+	core::Size const perturb_applies = option[ FloppyTail::perturb_cycles ].value(); //default 5
+	core::Size shear_on_cyc(core::Size(core::Real(perturb_applies) * option[ FloppyTail::shear_on ]));
+	if ( shear_on_cyc == 0 ) shear_on_cyc = 1; //0 should mean shear on immediately, but the if below never sees 0.
+	TR << "shear on at " << shear_on_cyc << std::endl;
+	TR << "   Current     Low    total cycles =" << perturb_applies << std::endl;
+	for ( core::Size i = 1; i <= perturb_applies; ++i ) {
+		if ( i == shear_on_cyc ) backbone_mover_cen->add_mover(shear_mover_cen, 1.0);
+		if ( (i % 20 == 0) || (i == perturb_applies) ) min_mover_cen->apply(pose);
+		else backbone_mover_cen->apply(pose);
+		
+		if ( option[ FloppyTail::debug ] ) cen_out.apply(pose); //check trajectory
+		mc_cen->boltzmann(pose);
+		
+		TR << i << "  " << mc_cen->last_accepted_score() << "  " << mc_cen->lowest_score() << std::endl;
+		
+		//constraint report
+		//using core::scoring::atom_pair_constraint;
+		//core::Real const cstscore_in(pose.energies().total_energies()[atom_pair_constraint] * pose.energies().weights()[atom_pair_constraint]);
+		//TR << "cst score " << cstscore_in << std::endl;
+	}//end the exciting for loop
+	mc_cen->recover_low(pose);
+	
+	//filter based on constraints score - if not less than 1 (close to 0), cancel this trajectory
+	// using core::scoring::atom_pair_constraint;
+	// core::Real const cstscore(pose.energies().total_energies()[atom_pair_constraint] * pose.energies().weights()[atom_pair_constraint]);
+	// if (cstscore > 1.0) {
+	//  TR << "centroid constraints not satisfied; final constraint score: " << cstscore << ", restarting centroid" << std::endl;
+	//  set_last_move_status(protocols::moves::FAIL_RETRY);
+	//  return;
+	// }
+	
+	//dump centroid-stage result pose
+	if ( basic::options::option[basic::options::OptionKeys::FloppyTail::perturb_show ].value() ) {
+		using namespace protocols::jd2;
+		JobOP job_me( JobDistributor::get_instance()->current_job() );
+		JobDistributor::get_instance()->job_outputter()->other_pose( job_me, pose, "centroid");
+	}
+	
+	//show centroid score (duplicates last line above)
+	TR << "centroid score of final perturbed PDB: " << (*centroid_scorefunction_)(pose) << std::endl;
+	centroid_scorefunction_->show( TR, pose );
+	TR << std::flush; //show doesn't flush the buffer
+	
+	clock_t stoptime = clock();
+	TR << "One perturb took " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
+	TR << "perturb steps complete" << std::endl;
+	starttime = clock();
+	
+	// convert back to full atom
+	protocols::simple_moves::ReturnSidechainMover return_sidechains( saved_input_pose );
+	return_sidechains.apply( pose );
+	
+	// remove centroid constraints; add fullatom constraints
+	pose.remove_constraints();
+	core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose); //protected internally if no csts
+
+} // low-res
+	
+void FloppyTailMover::high_res( core::pose::Pose & pose ){
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	/////////////////////////////generate full repack&minimize mover//////////////////////////////
+	protocols::simple_moves::PackRotamersMoverOP pack_mover;
+	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+		pack_mover = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover );
+	} else {
+		pack_mover = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover );
+	}
+	
+	pack_mover->task_factory( task_factory_ );
+	pack_mover->score_function( fullatom_scorefunction_ );
+	
+	protocols::simple_moves::MinMoverOP min_mover_fa;
+	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+		min_mover_fa = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::symmetry::SymMinMover(
+																																																					 movemap_,
+																																																					 fullatom_scorefunction_,
+																																																					 basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+																																																					 0.01,
+																																																					 true /*use_nblist*/ ) );
+	} else {
+		min_mover_fa = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(
+																																															movemap_,
+																																															fullatom_scorefunction_,
+																																															basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+																																															0.01,
+																																															true /*use_nblist*/ ) );
+	}
+	
+	
+	//definitely want sidechain minimization here
+	using protocols::simple_moves::TaskAwareMinMoverOP;
+	using protocols::simple_moves::TaskAwareMinMover;
+	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_fa;
+	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() ) {
+		TAmin_mover_fa = protocols::simple_moves::TaskAwareMinMoverOP( new protocols::simple_moves::symmetry::TaskAwareSymMinMover(min_mover_fa, task_factory_) );
+	} else {
+		TAmin_mover_fa = protocols::simple_moves::TaskAwareMinMoverOP( new protocols::simple_moves::TaskAwareMinMover(min_mover_fa, task_factory_) );
+	}
+	
+	//TR << TAmin_mover_fa->get_name() << std::endl;
+	
+	/////////////////////////repack/minimize once to fix sidechains//////////////////////////////////
+	// TR << "packing" << std::endl;
+	pack_mover->apply(pose);
+	// TR << "minimizing" << std::endl;
+	TAmin_mover_fa->apply(pose);
+	
+	//////////////////////////////////////// backbone mover/////////////////////////////////////////
+	protocols::moves::RandomMoverOP backbone_mover_fa( new protocols::moves::RandomMover() );
+	
+	protocols::simple_moves::BackboneMoverOP small_mover_fa( new protocols::simple_moves::SmallMover(movemap_lesstail_, 0.8, 0) );
+	small_mover_fa->angle_max( 'H', 4.0 );
+	small_mover_fa->angle_max( 'E', 4.0 );
+	small_mover_fa->angle_max( 'L', 4.0 );
+	
+	protocols::simple_moves::BackboneMoverOP shear_mover_fa( new protocols::simple_moves::ShearMover(movemap_lesstail_, 0.8, 0) );
+	shear_mover_fa->angle_max( 'H', 4.0 );
+	shear_mover_fa->angle_max( 'E', 4.0 );
+	shear_mover_fa->angle_max( 'L', 4.0 );
+	
+	backbone_mover_fa->add_mover(small_mover_fa, 1.0);
+	backbone_mover_fa->add_mover(shear_mover_fa, 1.0);
+	
+	/////////////////fullatom Monte Carlo//////////////////////////////////////////////////////////
+	//make the monte carlo object
+	protocols::moves::MonteCarloOP mc_fa( new protocols::moves::MonteCarlo( pose, *fullatom_scorefunction_, option[ FloppyTail::refine_temp ].value() ) );
+	
+	/////////////////////////////////rotamer trials mover///////////////////////////////////////////
+	using protocols::simple_moves::RotamerTrialsMoverOP;
+	using protocols::simple_moves::EnergyCutRotamerTrialsMover;
+	protocols::simple_moves::RotamerTrialsMoverOP rt_mover;
+	if ( option[ symmetry::symmetry_definition ].user() ) {
+		rt_mover = protocols::simple_moves::RotamerTrialsMoverOP( new protocols::simple_moves::symmetry::SymEnergyCutRotamerTrialsMover(
+																																																																		fullatom_scorefunction_,
+																																																																		task_factory_,
+																																																																		mc_fa,
+																																																																		0.01) );
+	} else {
+		rt_mover = protocols::simple_moves::RotamerTrialsMoverOP( new protocols::simple_moves::EnergyCutRotamerTrialsMover(
+																																																											 fullatom_scorefunction_,
+																																																											 task_factory_,
+																																																											 mc_fa,
+																																																											 0.01 /*energycut*/ ) );
+	}
+	/////////////////////////////////////////refine loop///////////////////////////////////////////
+	core::Size const refine_applies = option[ FloppyTail::refine_cycles ].value(); //default 5
+	core::Size const repack_cycles = option[ FloppyTail::refine_repack_cycles ].value();
+	core::Size const min_cycles = repack_cycles/2;
+	core::Size const switch_movemaps(core::Size(core::Real(refine_applies) * option[ FloppyTail::short_tail::short_tail_off ]));
+	TR << "   Current     Low    total cycles =" << refine_applies << std::endl;
+	for ( core::Size i(1); i <= refine_applies; ++i ) {
+		if ( i == switch_movemaps ) {
+			small_mover_fa->movemap(movemap_);
+			shear_mover_fa->movemap(movemap_);
+		}
+		if ( (i % repack_cycles == 0) || (i == refine_applies) ) { //full repack
+			pack_mover->apply(pose);
+			TAmin_mover_fa->apply(pose);
+		} else if ( i % min_cycles == 0 ) { //minimize
+			TAmin_mover_fa->apply(pose);
+		} else {
+			backbone_mover_fa->apply(pose);
+			rt_mover->apply(pose);
+		}
+		
+		mc_fa->boltzmann(pose);
+		TR << i << "  " << mc_fa->last_accepted_score() << "  " << mc_fa->lowest_score() << std::endl;
+	}//end the exciting for loop
+	mc_fa->recover_low( pose );
+} // high-res
 
 void FloppyTailMover::apply( core::pose::Pose & pose ){
 	using namespace basic::options;
@@ -414,19 +657,6 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 
 	core::scoring::constraints::add_constraints_from_cmdline_to_pose( pose ); //protected internally if no constraints
 
-	//centroid
-	clock_t starttime = clock();
-	TR << "entering perturb steps" << std::endl;
-
-	core::pose::Pose const saved_input_pose( pose ); //used to return sidechains later
-
-	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
-	typeset_swap.apply( pose );
-	//centroid score
-	TR << "centroid score of starting PDB: " << (*centroid_scorefunction_)(pose) << std::endl;
-	centroid_scorefunction_->show( TR, pose );
-	TR << std::flush; //show doesn't flush the buffer
-
 	/*
 	perturbmover of either type
 	minimize every once in a while
@@ -440,229 +670,17 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 			option[OptionKeys::run::keep_pymol_simulation_history](),
 			option[OptionKeys::run::show_simulation_in_pymol].value());
 	}
-
-	////////////////////////////////////backbone_mover_cent/////////////////////////////////////
-	protocols::moves::RandomMoverOP backbone_mover_cen( new protocols::moves::RandomMover() );
-
-	using protocols::simple_moves::SmallMover;
-	using protocols::simple_moves::BackboneMoverOP;
-	protocols::simple_moves::BackboneMoverOP small_mover_cen( new protocols::simple_moves::SmallMover(movemap_, 0.8, 0) );
-	small_mover_cen->angle_max( 'H', 180.0 );
-	small_mover_cen->angle_max( 'E', 180.0 );
-	small_mover_cen->angle_max( 'L', 180.0 );
-	backbone_mover_cen->add_mover(small_mover_cen, 1.0);
-
-	protocols::simple_moves::BackboneMoverOP shear_mover_cen( new protocols::simple_moves::ShearMover(movemap_, 0.8, 0) );
-	shear_mover_cen->angle_max( 'H', 180.0 );
-	shear_mover_cen->angle_max( 'E', 180.0 );
-	shear_mover_cen->angle_max( 'L', 180.0 );
-	//backbone_mover_cen->add_mover(shear_mover_cen, 1.0); //not yet
-
-	if ( fragset3mer_ ) { //if we have fragments
-		using protocols::simple_moves::ClassicFragmentMover;
-		protocols::simple_moves::ClassicFragmentMoverOP frag_mover( new ClassicFragmentMover(fragset3mer_, movemap_) );
-		frag_mover->enable_end_bias_check(false);
-		backbone_mover_cen->add_mover(frag_mover, 0.5);
+	
+	// if low-res perturb cycles are given, do low-res phase
+	if (option[ FloppyTail::perturb_cycles ].value() > 0 ) {
+		low_res(pose);
 	}
-
-	/////////////////////////minimizer mover/////////////////////////////////////////
-	//using protocols::simple_moves::symmetry::SymMinMoverOP;
-	//using protocols::simple_moves::symmetry::SymMinMover;
-	protocols::simple_moves::MinMoverOP min_mover_cen;
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
-		min_mover_cen = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::symmetry::SymMinMover(
-			movemap_,
-			centroid_scorefunction_,
-			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-			0.01,
-			true /*use_nblist*/ ) );
-	} else {
-		min_mover_cen = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(
-			movemap_,
-			centroid_scorefunction_,
-			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-			0.01,
-			true /*use_nblist*/ ) );
+	
+	// if high-res perturb cycles are given, do high-res phase
+	if ( option[ FloppyTail::refine_cycles ].value() > 0 ) {
+		high_res(pose);
 	}
-
-	/////////////////////////Monte Carlo//////////////////////////////////////////////////////////
-	//make the monte carlo object
-	using protocols::moves::MonteCarlo;
-	using protocols::moves::MonteCarloOP;
-	using basic::options::option;
-	MonteCarloOP mc_cen( new MonteCarlo( pose, *centroid_scorefunction_, option[ FloppyTail::perturb_temp ].value() ) );
-
-	///////////////////////////////////for loop///////////////////////////////////////////////////
-	protocols::moves::PDBDumpMover cen_out("cen_cycle");
-	core::Size const perturb_applies = option[ FloppyTail::perturb_cycles ].value(); //default 5
-	core::Size shear_on_cyc(core::Size(core::Real(perturb_applies) * option[ FloppyTail::shear_on ]));
-	if ( shear_on_cyc == 0 ) shear_on_cyc = 1; //0 should mean shear on immediately, but the if below never sees 0.
-	TR << "shear on at " << shear_on_cyc << std::endl;
-	TR << "   Current     Low    total cycles =" << perturb_applies << std::endl;
-	for ( core::Size i = 1; i <= perturb_applies; ++i ) {
-		if ( i == shear_on_cyc ) backbone_mover_cen->add_mover(shear_mover_cen, 1.0);
-		if ( (i % 20 == 0) || (i == perturb_applies) ) min_mover_cen->apply(pose);
-		else backbone_mover_cen->apply(pose);
-
-		if ( option[ FloppyTail::debug ] ) cen_out.apply(pose); //check trajectory
-		mc_cen->boltzmann(pose);
-
-		TR << i << "  " << mc_cen->last_accepted_score() << "  " << mc_cen->lowest_score() << std::endl;
-
-		//constraint report
-		//using core::scoring::atom_pair_constraint;
-		//core::Real const cstscore_in(pose.energies().total_energies()[atom_pair_constraint] * pose.energies().weights()[atom_pair_constraint]);
-		//TR << "cst score " << cstscore_in << std::endl;
-	}//end the exciting for loop
-	mc_cen->recover_low(pose);
-
-	//filter based on constraints score - if not less than 1 (close to 0), cancel this trajectory
-	// using core::scoring::atom_pair_constraint;
-	// core::Real const cstscore(pose.energies().total_energies()[atom_pair_constraint] * pose.energies().weights()[atom_pair_constraint]);
-	// if (cstscore > 1.0) {
-	//  TR << "centroid constraints not satisfied; final constraint score: " << cstscore << ", restarting centroid" << std::endl;
-	//  set_last_move_status(protocols::moves::FAIL_RETRY);
-	//  return;
-	// }
-
-	//dump centroid-stage result pose
-	if ( basic::options::option[basic::options::OptionKeys::FloppyTail::perturb_show ].value() ) {
-		using namespace protocols::jd2;
-		JobOP job_me( JobDistributor::get_instance()->current_job() );
-		JobDistributor::get_instance()->job_outputter()->other_pose( job_me, pose, "centroid");
-	}
-
-	//show centroid score (duplicates last line above)
-	TR << "centroid score of final perturbed PDB: " << (*centroid_scorefunction_)(pose) << std::endl;
-	centroid_scorefunction_->show( TR, pose );
-	TR << std::flush; //show doesn't flush the buffer
-
-	clock_t stoptime = clock();
-	TR << "One perturb took " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
-	TR << "perturb steps complete" << std::endl;
-	starttime = clock();
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////fullatom///////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	protocols::simple_moves::ReturnSidechainMover return_sidechains( saved_input_pose );
-	return_sidechains.apply( pose );
-
-	//remove centroid constraints; add fullatom constraints
-	pose.remove_constraints();
-	core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose); //protected internally if no csts
-
-	/////////////////////////////generate full repack&minimize mover//////////////////////////////
-	protocols::simple_moves::PackRotamersMoverOP pack_mover;
-	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-		pack_mover = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover );
-	} else {
-		pack_mover = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover );
-	}
-
-	pack_mover->task_factory( task_factory_ );
-	pack_mover->score_function( fullatom_scorefunction_ );
-
-	protocols::simple_moves::MinMoverOP min_mover_fa;
-	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-		min_mover_fa = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::symmetry::SymMinMover(
-			movemap_,
-			fullatom_scorefunction_,
-			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-			0.01,
-			true /*use_nblist*/ ) );
-	} else {
-		min_mover_fa = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(
-			movemap_,
-			fullatom_scorefunction_,
-			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-			0.01,
-			true /*use_nblist*/ ) );
-	}
-
-
-	//definitely want sidechain minimization here
-	using protocols::simple_moves::TaskAwareMinMoverOP;
-	using protocols::simple_moves::TaskAwareMinMover;
-	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_fa;
-	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() ) {
-		TAmin_mover_fa = protocols::simple_moves::TaskAwareMinMoverOP( new protocols::simple_moves::symmetry::TaskAwareSymMinMover(min_mover_fa, task_factory_) );
-	} else {
-		TAmin_mover_fa = protocols::simple_moves::TaskAwareMinMoverOP( new protocols::simple_moves::TaskAwareMinMover(min_mover_fa, task_factory_) );
-	}
-
-	//TR << TAmin_mover_fa->get_name() << std::endl;
-
-	/////////////////////////repack/minimize once to fix sidechains//////////////////////////////////
-	// TR << "packing" << std::endl;
-	pack_mover->apply(pose);
-	// TR << "minimizing" << std::endl;
-	TAmin_mover_fa->apply(pose);
-
-	//////////////////////////////////////// backbone mover/////////////////////////////////////////
-	protocols::moves::RandomMoverOP backbone_mover_fa( new protocols::moves::RandomMover() );
-
-	protocols::simple_moves::BackboneMoverOP small_mover_fa( new protocols::simple_moves::SmallMover(movemap_lesstail_, 0.8, 0) );
-	small_mover_fa->angle_max( 'H', 4.0 );
-	small_mover_fa->angle_max( 'E', 4.0 );
-	small_mover_fa->angle_max( 'L', 4.0 );
-
-	protocols::simple_moves::BackboneMoverOP shear_mover_fa( new protocols::simple_moves::ShearMover(movemap_lesstail_, 0.8, 0) );
-	shear_mover_fa->angle_max( 'H', 4.0 );
-	shear_mover_fa->angle_max( 'E', 4.0 );
-	shear_mover_fa->angle_max( 'L', 4.0 );
-
-	backbone_mover_fa->add_mover(small_mover_fa, 1.0);
-	backbone_mover_fa->add_mover(shear_mover_fa, 1.0);
-
-	/////////////////fullatom Monte Carlo//////////////////////////////////////////////////////////
-	//make the monte carlo object
-	MonteCarloOP mc_fa( new MonteCarlo( pose, *fullatom_scorefunction_, option[ FloppyTail::refine_temp ].value() ) );
-
-	/////////////////////////////////rotamer trials mover///////////////////////////////////////////
-	using protocols::simple_moves::RotamerTrialsMoverOP;
-	using protocols::simple_moves::EnergyCutRotamerTrialsMover;
-	protocols::simple_moves::RotamerTrialsMoverOP rt_mover;
-	if ( option[ symmetry::symmetry_definition ].user() ) {
-		rt_mover = protocols::simple_moves::RotamerTrialsMoverOP( new protocols::simple_moves::symmetry::SymEnergyCutRotamerTrialsMover(
-			fullatom_scorefunction_,
-			task_factory_,
-			mc_fa,
-			0.01) );
-	} else {
-		rt_mover = protocols::simple_moves::RotamerTrialsMoverOP( new protocols::simple_moves::EnergyCutRotamerTrialsMover(
-			fullatom_scorefunction_,
-			task_factory_,
-			mc_fa,
-			0.01 /*energycut*/ ) );
-	}
-	/////////////////////////////////////////refine loop///////////////////////////////////////////
-	core::Size const refine_applies = option[ FloppyTail::refine_cycles ].value(); //default 5
-	core::Size const repack_cycles = option[ FloppyTail::refine_repack_cycles ].value();
-	core::Size const min_cycles = repack_cycles/2;
-	core::Size const switch_movemaps(core::Size(core::Real(refine_applies) * option[ FloppyTail::short_tail::short_tail_off ]));
-	TR << "   Current     Low    total cycles =" << refine_applies << std::endl;
-	for ( core::Size i(1); i <= refine_applies; ++i ) {
-		if ( i == switch_movemaps ) {
-			small_mover_fa->movemap(movemap_);
-			shear_mover_fa->movemap(movemap_);
-		}
-		if ( (i % repack_cycles == 0) || (i == refine_applies) ) { //full repack
-			pack_mover->apply(pose);
-			TAmin_mover_fa->apply(pose);
-		} else if ( i % min_cycles == 0 ) { //minimize
-			TAmin_mover_fa->apply(pose);
-		} else {
-			backbone_mover_fa->apply(pose);
-			rt_mover->apply(pose);
-		}
-
-		mc_fa->boltzmann(pose);
-		TR << i << "  " << mc_fa->last_accepted_score() << "  " << mc_fa->lowest_score() << std::endl;
-	}//end the exciting for loop
-	mc_fa->recover_low( pose );
-
+	
 	//let's store some energies/etc of interest
 	//this code is specific to the E2/RING/E3 system for which this code was written; it is refactored elsewhere
 	// BARAK: this line should be commented out if applied to other systems
