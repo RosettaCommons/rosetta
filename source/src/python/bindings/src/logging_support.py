@@ -34,12 +34,18 @@ def _logging_callback(logstring):
     if logstring is not "":
         _logger.info(logstring)
 
-def set_logging_handler():
+
+def _notebook_logging_callback(logstring):
+    """Logging callback which pring Rosetta output on Jupyter notenook."""
+    sys.stdout.write(logstring)
+
+
+def set_logging_handler(notebook):
     """Redirect all rosetta trace output through the logging.Logger 'rosetta'."""
     #global _logging_tracer
     _logging_tracer = rosetta.basic.PyTracer()
     rosetta.utility.py_xinc_ref(_logging_tracer)
-    _logging_tracer.output_callback = _logging_callback
+    _logging_tracer.output_callback = _notebook_logging_callback if notebook else _logging_callback
 
     # Set the tracer hook, do not enable 'raw' in order to
     # allow rosetta's tracing settings to have priority.

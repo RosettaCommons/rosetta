@@ -291,7 +291,7 @@ _ROSETTA_DATABASE_PATH_ = None
 def get_rosetta_database_path(): return _ROSETTA_DATABASE_PATH_
 
 # rosetta.init()
-def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True):
+def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True, notebook=False):
     import rosetta
 
     """Initialize Rosetta.  Includes core data and global options.
@@ -318,7 +318,7 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True):
     rosetta.utility.py.PyExitCallback.set_PyExitCallBack(_python_py_exit_callback)
     #rosetta.utility.set_pyexit_callback()
 
-    if set_logging_handler: logging_support.set_logging_handler()
+    if set_logging_handler: logging_support.set_logging_handler(notebook=notebook)
 
     args = ['PyRosetta'] + options.split() + extra_options.split()
 
