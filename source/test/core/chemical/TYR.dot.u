@@ -1,0 +1,49 @@
+// Graphviz dot output for residue TYR
+// To use, save to file and run 'neato -T png < residue.dot > residue.png
+graph G {
+label="TYR"
+0[label=" N  ",color=blue,style=bold,shape=circle];
+1[label=" CA ",color=black,style=bold,shape=circle];
+2[label=" C  ",color=black,style=bold,shape=circle];
+3[label=" O  ",color=red,style=bold,shape=circle];
+4[label=" CB ",color=black,style=bold,shape=circle];
+5[label=" CG ",color=black,style=bold,shape=circle];
+6[label=" CD1",color=black,style=bold,shape=circle];
+7[label=" CD2",color=black,style=bold,shape=circle];
+8[label=" CE1",color=black,style=bold,shape=circle];
+9[label=" CE2",color=black,style=bold,shape=circle];
+10[label=" CZ ",color=black,style=bold,shape=circle];
+11[label=" OH ",color=red,style=bold,shape=circle];
+12[label=" H  ",color=lightgrey,style=bold,shape=circle];
+13[label=" HH ",color=lightgrey,style=bold,shape=circle];
+14[label=" HD1",color=lightgrey,style=bold,shape=circle];
+15[label=" HE1",color=lightgrey,style=bold,shape=circle];
+16[label=" HE2",color=lightgrey,style=bold,shape=circle];
+17[label=" HD2",color=lightgrey,style=bold,shape=circle];
+18[label=" HA ",color=lightgrey,style=bold,shape=circle];
+19[label="1HB ",color=lightgrey,style=bold,shape=circle];
+20[label="2HB ",color=lightgrey,style=bold,shape=circle];
+0--1 [color=black];
+0--12 [color=black];
+1--2 [color=black];
+1--4 [color=black];
+1--18 [color=black];
+2--3 [color="black:white:black"];
+4--5 [color=black];
+4--19 [color=black];
+4--20 [color=black];
+5--6 [style=dashed];
+5--7 [style=dashed];
+6--8 [style=dashed];
+6--14 [color=black];
+7--9 [style=dashed];
+7--17 [color=black];
+8--10 [style=dashed];
+8--15 [color=black];
+9--10 [style=dashed];
+9--16 [color=black];
+10--11 [color=black];
+11--13 [color=black];
+}
+
+

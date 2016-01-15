@@ -23,6 +23,7 @@
 #include <core/chemical/Atom.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/Bond.hh>
+#include <core/chemical/Elements.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/rotamers/RotamerLibrarySpecificationFactory.hh>
@@ -61,9 +62,13 @@
 
 // External headers
 #include <boost/foreach.hpp>
+#include <boost/graph/graphviz.hpp>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
+// C++ headers
+
+#include <sstream>
 
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 
@@ -1402,6 +1407,98 @@ write_topology_file(
 	out.close();
 
 } // write_topology_file
+
+/// @brief Callback class for write_graphviz - outputs properties for the nodes and edges.
+class GraphvizPropertyWriter {
+public:
+	GraphvizPropertyWriter( ResidueType const & rsd ):
+			rsd_(rsd)
+	{}
+
+	/// @brief write properties for the graph as a whole
+	void operator()(std::ostream & out) const {
+		out << "label=\"" << rsd_.name() << "\"\n";
+		//out << "overlap=scale" << "\n";
+	}
+
+	/// @brief write properties for atoms
+	void operator()(std::ostream & out, VD const & vd) const {
+		out << "[";
+		Atom const & aa( rsd_.atom(vd) );
+		out << "label=\"" << aa.name() << "\"";
+
+		element::Elements elem = aa.element_type()->element();
+		if( elem == element::H ) {
+			out << ",color=lightgrey";
+		} else if ( elem == element::C ) {
+			out << ",color=black";
+		} else if ( elem == element::N ) {
+			out << ",color=blue";
+		} else if ( elem == element::O ) {
+			out << ",color=red";
+		} else if ( elem == element::S ) {
+			out << ",color=gold";
+		} else if ( elem == element::P ) {
+			out << ",color=orange";
+		} else if ( elem == element::F ) {
+			out << ",color=chartreuse";
+		} else if ( elem == element::Cl) {
+			out << ",color=green";
+		} else if ( elem == element::Br) {
+			out << ",color=indianred";
+		} else if ( elem == element::I ) {
+			out << ",color=indigo";
+		} else {
+			out << ",color=slategrey";
+		}
+		out << ",style=bold,shape=circle";
+		out << "]";
+	}
+
+	/// @brief write properties for bonds
+	void operator()(std::ostream & out, ED const & ed) const {
+		out << "[";
+		Bond const & ee( rsd_.bond(ed) );
+		switch ( ee.order() ) {
+			case SingleBondOrder : out << "color=black"; break;
+			case DoubleBondOrder : out << "color=\"black:white:black\""; break;
+			case TripleBondOrder : out << "color=\"black:white:black:white:black\""; break;
+			case OrbitalBondOrder: out << "style=dotted"; break;
+			case PseudoBondOrder : out << "style=dotted"; break;
+			default:
+				if( ee.aromaticity() == IsAromaticBond ) {
+					out << "style=dashed";
+				} else {
+					out << "style=dotted";
+				}
+		}
+		out << "]";
+	}
+
+private:
+	ResidueType const & rsd_;
+
+};
+
+
+/// @brief Produces a graphviz dot representation of the ResidueType to the given output stream
+/// If header is true (the default) a line with an explanitory message will be printed first.
+void
+write_graphviz(
+	ResidueType const & rsd,
+	std::ostream & out,
+	bool header /*= true*/
+) {
+	GraphvizPropertyWriter gpw( rsd );
+	if ( header ) {
+		out << "// Graphviz dot output for residue " << rsd.name() << std::endl;
+		out << "// To use, save to file and run 'neato -T png < residue.dot > residue.png" << "\n"; //supress tracer on next line
+	}
+	// Go through stringstream to avoid std::endl flushes and tracer name printing.
+	std::stringstream ss;
+	boost::write_graphviz( ss, rsd.graph(), gpw, gpw, gpw );
+	out << ss.str() << std::endl;
+} // write_graphviz
 
 ////////////////////////////////////////////////////////
 void

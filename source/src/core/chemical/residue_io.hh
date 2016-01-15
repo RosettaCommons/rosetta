@@ -63,6 +63,15 @@ write_topology_file(
 	std::string filename = ""
 );
 
+/// @brief Produces a graphviz dot representation of the ResidueType to the given output stream
+/// If header is true (the default) a line with an explanitory message will be printed first.
+void
+write_graphviz(
+	ResidueType const & rsd,
+	std::ostream & out,
+	bool header = true
+);
+
 void
 setup_atom_type_reassignments_from_commandline(
 	std::string const & rsd_type_name,
