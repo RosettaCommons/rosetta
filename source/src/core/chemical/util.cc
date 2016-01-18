@@ -430,6 +430,14 @@ detect_ld_chirality_from_polymer_residue(
 	bool & is_d_aa,
 	bool & is_l_aa
 ) {
+	// We need a list of name3s with a given property like RNA.
+	// So basically you could ask if a string has a given property
+	// this way we don't have to have these disgusting things
+	// We would populate this from the database.
+	
+	// Also, we need this function not to call on everything including e.g. water,
+	// ions...
+
 	is_d_aa = false;
 	is_l_aa = false;
 
@@ -438,7 +446,32 @@ detect_ld_chirality_from_polymer_residue(
 			name3 == "A98" || name3 == "B02" || name3 == "B06" ) {
 		return;
 	}
+	
+	// return false,false for peptoids and pna
+	if ( xyz.find( " NG " ) != xyz.end() && ( name3 == "UPN" || name3 == "APN" || name3 == "TPN" || name3 == "GPN" || name3 == "CPN" ) ) {
+		return;
+	}
+	
+	// If termini are missing, then properly speaking chirality can't be inferred at all.
+	// Let this be an unrecognized residue (as before).
+	
+	// Note that because there is that one phosphonate-Cterm residue
+	// we have to check for EITHER Pbb or C being there.
 
+	// AMW: no, we have to assume L or we break chainbreak stuff?
+	
+	// OK, we need ONE or more but not three protein bb atoms.
+	// This will protect against carbohydrates and nucleic acids.
+	Size bb_atoms_found = 0;
+	if ( xyz.find( " N  " ) != xyz.end() ) ++bb_atoms_found;
+	if ( xyz.find( " CA " ) != xyz.end() ) ++bb_atoms_found;
+	if ( xyz.find( " C  " ) != xyz.end() ) ++bb_atoms_found;
+	if ( xyz.find( " Pbb" ) != xyz.end() ) ++bb_atoms_found;
+
+	if ( bb_atoms_found >= 1 && bb_atoms_found < 3 ) {
+		is_l_aa = true;
+		return;
+	}
 	// Positive angles are D
 	core::Real characteristic_angle = 0;
 
@@ -483,45 +516,10 @@ detect_ld_chirality_from_polymer_residue(
 		}
 		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
 	}
-
-	characteristic_angle = 0;
-	// If we're being called from a residue that's already trimmed.
-	// Explicitly exclude peptoids and PNAs.
-	if ( xyz.find( "CA" ) != xyz.end() && xyz.find( "CA1" ) == xyz.end() && xyz.find( "NG" ) == xyz.end() ) {
-		// There are four atoms bonded to CA.
-		if ( xyz.find( "Pbb" ) != xyz.end() ) {
-			// Phosphonate
-			characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "Pbb" ), xyz.at( "CB" ), xyz.at( "CA" ) );
-		} else if ( xyz.find( "CM" ) != xyz.end() && name3 != "MLZ" ) {   // beta
-			if ( xyz.find( "CB" ) != xyz.end() ) {
-				characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "CM" ), xyz.at( "CB" ), xyz.at( "CA" ) );
-			} else if ( xyz.find( "CB1" ) != xyz.end() && xyz.find( "CB2" ) != xyz.end() ) {
-				characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "CM" ), xyz.at( "CB1" ), xyz.at( "CB2" ) );
-			} // other possibilities: B3G
-		} else {
-			// alpha
-			if ( xyz.find( "CB" ) != xyz.end() ) {
-				characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "C" ), xyz.at( "CB" ), xyz.at( "CA" ) );
-			} else if ( xyz.find( "CB1" ) != xyz.end() && xyz.find( " CB2" ) != xyz.end() ) {
-				characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "C" ), xyz.at( "CB1" ), xyz.at( "CA" ) );
-			} // other possibilities: GLY
-		}
-		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
-
-		// Gammas--notably we need all this because just C2 C3 C4 are also had by sugars.
-		// What a terrible method.
-	} else if ( xyz.find( "C2" ) != xyz.end() && xyz.find( "C3" ) != xyz.end() && xyz.find( "C4" ) != xyz.end() && xyz.find( "C" ) != xyz.end() && xyz.find( "O" ) != xyz.end() && xyz.find( "N" ) != xyz.end() ) {
-		if ( xyz.find( "CB2" ) != xyz.end() ) {
-			characteristic_angle = numeric::dihedral_degrees( xyz.at( "C3" ), xyz.at( "C" ), xyz.at( "CB2" ), xyz.at( "C2" ) );
-			( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
-		} else if ( xyz.find( "CB3 " ) != xyz.end() ) {
-			characteristic_angle = numeric::dihedral_degrees( xyz.at( "C4" ), xyz.at( "C2" ), xyz.at( "CB3" ), xyz.at( "C3" ) );
-			( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
-		} else if ( xyz.find( "CB4 " ) != xyz.end() ) {
-			characteristic_angle = numeric::dihedral_degrees( xyz.at( "N" ), xyz.at( "C3" ), xyz.at( "CB4" ), xyz.at( "C4" ) );
-		}
-		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
-	}
+	
+	//if ( characteristic_angle == 0 ) {
+	//	TR.Warning << "No chiral information detected for " << name3 << std::endl;
+	//}
 }
 
 

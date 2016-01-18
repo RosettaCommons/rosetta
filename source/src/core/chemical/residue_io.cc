@@ -1226,6 +1226,8 @@ read_topology_file(
 		// but we just don't want to print the extra warning in 99% of poses!
 		// AMW: somehow, staple residues 08A and 08B are being counted as protein. WTF?
 		// They have no properties set!
+		// Not surprising--SOME of the 08A/08B params are set as protein, so depending
+		// on your RTS this will happen.
 		if ( rsd->is_protein() && !rsd->is_achiral_backbone() && !rsd->is_l_aa() && !rsd->is_d_aa() ) {
 
 			tr.Warning << "Warning: protein residue " << rsd->name3() << " is not explicitly listed"
