@@ -176,6 +176,9 @@ sources = {
 		"hotspot_hashing",
 	],
 
+        "hybridization" : [
+            "TMalign",
+        ],
 	"jd2" : [
 		"JD2ResourceManager",
 		"JD2ResourceManagerJobInputter",

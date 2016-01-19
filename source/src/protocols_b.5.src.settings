@@ -68,6 +68,7 @@ sources = {
 		"InsertChunkMover",
 		"MRMover",
 		"TemplateHistory",
+	        "TMalign",
 		"WeightedFragmentTrialMover",
 		"WeightedFragmentSmoothTrialMover",
 		"util",
