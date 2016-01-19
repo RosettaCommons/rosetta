@@ -7,15 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    mp_mutate_relax.cc
-/// @brief   Mutate a residue, then do quick relax for a membrane protein
-/// @author  JKLeman (julia.koehler1982@gmail.com)
+/// @file  apps/pilot/jkleman/mp_range_relax.cc
+/// @brief      Relaxes a membrane protein by relaxing in ranges
+/// @details Relaxes a protein by iteratively relaxing ranges of the protein;
+///    No ramping required. Much faster than FastRelax and good for
+///    large to very large proteins (tested up to 5250 residues);
+///    This app runs MPRangeRelax which runs RangeRelax underneath
+/// @author     JKLeman (julia.koehler1982@gmail.com)
 
 // App headers
 #include <devel/init.hh>
 
 // Project headers
-#include <protocols/membrane/MPMutateRelaxMover.hh>
+#include <protocols/relax/membrane/MPRangeRelaxMover.hh>
 
 // Package headers
 #include <protocols/jd2/JobDistributor.hh>
@@ -23,7 +27,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
-static THREAD_LOCAL basic::Tracer TR( "apps.pilot.jkleman.mp_mutate_relax" );
+static THREAD_LOCAL basic::Tracer TR( "apps.public.membrane.mp_range_relax" );
 
 //////////////////////////////////////////////////////////////////////
 
@@ -31,14 +35,16 @@ int
 main( int argc, char * argv [] )
 {
 	try {
+
 		using namespace protocols::jd2;
-		using namespace protocols::membrane;
+		using namespace protocols::relax::membrane;
 
 		// initialize options, RNG, and factory-registrators
 		devel::init(argc, argv);
 
-		MPMutateRelaxMoverOP mmr( new MPMutateRelaxMover() );
-		JobDistributor::get_instance()->go(mmr);
+		MPRangeRelaxMoverOP mprelax( new MPRangeRelaxMover() );
+		JobDistributor::get_instance()->go( mprelax );
+
 	}
 catch ( utility::excn::EXCN_Base const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;

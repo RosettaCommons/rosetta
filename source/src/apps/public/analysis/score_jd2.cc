@@ -228,12 +228,13 @@ catch ( utility::excn::EXCN_Exception &excn )  {
 			seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::AddMembraneMover ) );
 
 			// transform the protein into the membrane
-			if ( option[ OptionKeys::mp::setup::transform_into_membrane ].user() ) {
+			if ( option[ OptionKeys::mp::setup::transform_into_membrane ].user() && option[ OptionKeys::mp::setup::transform_into_membrane ]() == true ) {
 				seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::TransformIntoMembraneMover ) );
 			}
 
 			// transform the protein into the membrane and optimize embedding
-			if ( option[ OptionKeys::mp::transform::optimize_embedding ].user() ) {
+			if ( option[ OptionKeys::mp::transform::optimize_embedding ].user() &&
+			option[ OptionKeys::mp::transform::optimize_embedding ]() == true ) {
 				seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::OptimizeProteinEmbeddingMover ) );
 			}
 

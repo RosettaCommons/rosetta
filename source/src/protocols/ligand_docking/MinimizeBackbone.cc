@@ -193,6 +193,11 @@ core::kinematics::FoldTreeOP MinimizeBackbone::create_fold_tree_with_cutpoints(
 ) {
 	core::kinematics::FoldTreeOP f_new( new core::kinematics::FoldTree() );// Deleting edges is bad so add them to a new foldtree
 
+	if ( pose.conformation().is_membrane() ) {
+		f_new = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( pose.fold_tree() ) );
+		return f_new;
+	}
+
 	int new_jump = f->num_jump();
 
 	for (
@@ -291,28 +296,34 @@ MinimizeBackbone::create_fold_tree_with_ligand_jumps_from_attach_pts(
 
 	core::kinematics::FoldTreeOP new_fold_tree( new core::kinematics::FoldTree() );
 
-	for (
-			core::kinematics::FoldTree::const_iterator e = f_const.begin(),
-			edge_end = f_const.end();
-			e != edge_end;
-			++e
-			) {
-		std::map<core::Size, core::Size>::const_iterator const jump_attach = jump_to_attach.find(e->label());
-		if ( jump_attach != jump_to_attach.end() ) {
-			core::Size const jump_id = jump_attach->first;
-			core::Size const attach_pt = jump_attach->second;
-			core::Size const ligand_residue_id = pose.fold_tree().downstream_jump_residue(jump_id);
-			new_fold_tree->add_edge(attach_pt, ligand_residue_id, jump_id);
-		} else {
-			core::Size const attach_pt= find_peptide_attach_pt(e->start(), e->stop(), jump_to_attach);
+	if ( pose.conformation().is_membrane() ) {
+		new_fold_tree = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( pose.fold_tree() ) );
+	}
+	else {
 
-			if ( e->label() == core::kinematics::Edge::PEPTIDE && attach_pt != 0 ) {
-				new_fold_tree->add_edge(e->start(), attach_pt, core::kinematics::Edge::PEPTIDE);
-				new_fold_tree->add_edge(attach_pt, e->stop(), core::kinematics::Edge::PEPTIDE);
-			} else if ( e->label() == core::kinematics::Edge::CHEMICAL ) {
-				new_fold_tree->add_edge(e->start(), e->stop(), e->start_atom(), e->stop_atom());
-			} else { // add a jump edge
-				new_fold_tree->add_edge(e->start(), e->stop(), e->label());
+		for (
+				core::kinematics::FoldTree::const_iterator e = f_const.begin(),
+				edge_end = f_const.end();
+				e != edge_end;
+				++e
+				) {
+			std::map<core::Size, core::Size>::const_iterator const jump_attach = jump_to_attach.find(e->label());
+			if ( jump_attach != jump_to_attach.end() ) {
+				core::Size const jump_id = jump_attach->first;
+				core::Size const attach_pt = jump_attach->second;
+				core::Size const ligand_residue_id = pose.fold_tree().downstream_jump_residue(jump_id);
+				new_fold_tree->add_edge(attach_pt, ligand_residue_id, jump_id);
+			} else {
+				core::Size const attach_pt= find_peptide_attach_pt(e->start(), e->stop(), jump_to_attach);
+
+				if ( e->label() == core::kinematics::Edge::PEPTIDE && attach_pt != 0 ) {
+					new_fold_tree->add_edge(e->start(), attach_pt, core::kinematics::Edge::PEPTIDE);
+					new_fold_tree->add_edge(attach_pt, e->stop(), core::kinematics::Edge::PEPTIDE);
+				} else if ( e->label() == core::kinematics::Edge::CHEMICAL ) {
+					new_fold_tree->add_edge(e->start(), e->stop(), e->start_atom(), e->stop_atom());
+				} else { // add a jump edge
+					new_fold_tree->add_edge(e->start(), e->stop(), e->label());
+				}
 			}
 		}
 	}
