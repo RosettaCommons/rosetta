@@ -66,10 +66,10 @@ safely_create_singleton(
 	if ( ! local_instance ) {
 		std::lock_guard< std::mutex > lock( T::singleton_mutex() );
 		local_instance = instance.load( std::memory_order_relaxed );
-		if ( ! instance ) {
+		if ( ! local_instance ) {
 			local_instance = creation_func();
-			instance.store( local_instance, std::memory_order_relaxed );
 			std::atomic_thread_fence( std::memory_order_release );
+			instance.store( local_instance, std::memory_order_relaxed );
 		}
 	}
 #else
