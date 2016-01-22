@@ -157,9 +157,38 @@ SwitchChainOrderMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & )
+	core::pose::Pose const & pose )
 {
-	chain_order( tag->getOption< std::string >( "chain_order" ) );
+	if ( tag->hasOption("chain_order") && (tag->hasOption("chain_name") || tag->hasOption("chain_num")) )  {
+		throw utility::excn::EXCN_RosettaScriptsOption("You can specify a chain_order string or the comma separated chain names or numbers, but not both");
+	}
+
+	if ( tag->hasOption("chain_order") ) {
+		chain_order( tag->getOption< std::string >( "chain_order" ) );
+	} else {
+		if ( tag->hasOption("chain_num") ) {
+			chain_ids_ = utility::string_split(tag->getOption<std::string>("chain_num"),',',core::Size());
+		}
+
+		if ( tag->hasOption("chain_name") ) {
+			utility::vector1<std::string> chain_names = utility::string_split(tag->getOption<std::string>("chain_name"),',',std::string());
+			for ( utility::vector1<std::string>::iterator chain_name_it = chain_names.begin(); chain_name_it != chain_names.end(); ++chain_name_it ) {
+				chain_ids_.push_back(core::pose::get_chain_id_from_chain(*chain_name_it,pose));
+			}
+		}
+	}
+
+	if ( tag->getOption<bool>("invert_chains", 0) ) {
+		// Invert the chain selection
+		utility::vector1<core::Size> inverted_chain_ids_;
+		for ( core::Size i=1 ; i <= pose.conformation().num_chains() ; i++ ) {
+			if ( std::find(chain_ids_.begin(), chain_ids_.end(), i) == chain_ids_.end() ) {
+				inverted_chain_ids_.push_back(i);
+			}
+		}
+		chain_ids_ = inverted_chain_ids_;
+	}
+
 	std::string const residue_numbers_setter( tag->getOption< std::string >( "residue_numbers_setter", "" ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	if ( residue_numbers_setter != "" ) {
@@ -170,13 +199,22 @@ SwitchChainOrderMover::parse_my_tag(
 
 void
 SwitchChainOrderMover::chain_order( std::string const co ){
-	chain_order_ = co;
+	utility::vector1<core::Size> new_chain_ids;
+	BOOST_FOREACH ( char const chaini, co ) {
+		core::Size const chain( chaini - '0' );
+		new_chain_ids.push_back( chain );
+	}
+	chain_ids_ = new_chain_ids;
 }
 
 std::string
 SwitchChainOrderMover::chain_order() const
 {
-	return chain_order_;
+	std::string chain_order;
+	BOOST_FOREACH ( core::Size const chain, chain_ids_ ) {
+		chain_order += utility::to_string<core::Size>(chain);
+	}
+	return chain_order;
 }
 
 void

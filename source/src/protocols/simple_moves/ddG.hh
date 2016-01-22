@@ -58,6 +58,7 @@ public :
 	void repeats( core::Size repeats ) { repeats_ = repeats; }
 	core::Real translate_by() const { return translate_by_; }
 	void translate_by( core::Real translate_by ) { translate_by_ = translate_by; }
+	utility::vector1<core::Size> chain_ids() const { return chain_ids_; }
 	virtual ~ddG();
 	protocols::moves::MoverOP fresh_instance() const { return (protocols::moves::MoverOP) protocols::moves::MoverOP( new ddG ); }
 	protocols::moves::MoverOP clone() const;

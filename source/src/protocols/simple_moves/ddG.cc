@@ -13,6 +13,7 @@
 ///
 /// @author Sarel Fleishman (sarelf@u.washington.edu)
 /// @author Sachko Honda (honda@apl.washington.edu)
+/// @author Kyle Barlow (kb@kylebarlow.com)
 /// Additional notes by Honda on 12/16/2012
 /// When this mover is called with PB_elec (PB potential energy) in scorefxn,
 /// it enables caching poses in two (bound/unbound) states so that subsequent calls can avoid
@@ -241,8 +242,15 @@ void ddG::parse_my_tag(
 		}
 	}
 
-	if ( std::find(chain_ids_.begin(),chain_ids_.end(),1) != chain_ids_.end() ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("You can't move the first chain.  Moving chain 2 is the same as moving chain 1, so do that instead.");
+	if ( std::find(chain_ids_.begin(), chain_ids_.end(), 1) != chain_ids_.end() ) {
+		// Instead of throwing error in the case, we invert the chains to be moved to take care of this
+		utility::vector1<core::Size> inverted_chain_ids_;
+		for ( core::Size i=1 ; i <= pose.conformation().num_chains() ; i++ ) {
+			if ( std::find(chain_ids_.begin(), chain_ids_.end(), i) == chain_ids_.end() ) {
+				inverted_chain_ids_.push_back(i);
+			}
+		}
+		chain_ids_ = inverted_chain_ids_;
 	}
 
 	// Construct score function.

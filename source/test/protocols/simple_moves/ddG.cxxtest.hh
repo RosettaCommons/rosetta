@@ -10,6 +10,7 @@
 /// @file   protocols/simple_moves/ddG.cxxtest.hh
 /// @brief  test for ddG mover
 /// @author Rocco Moretti (rmoretti@u.washington.edu)
+/// @author Kyle Barlow (kb@kylebarlow.com)
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -70,6 +71,30 @@ public:
 		ddg_mover.relax_bound( false );
 		ddg_mover.apply( *test_dimer_pose_ );
 		TS_ASSERT_EQUALS( ddg_mover.sum_ddG(), 111 );
+	}
+
+	/// @details This test tests the ability of the mover to move all other chains (other than 1)
+	/// if chain 1 is originally asked to be moved
+	void test_chains_to_move_invert() {
+		basic::datacache::DataMap data;
+		Filters_map filters;
+		Movers_map movers;
+
+		prime_Data( data );
+
+		protocols::simple_moves::ddG testmover;
+		TagCOP tag = tagptr_from_string("<ddG name=test chain_num=1 />\n");
+		testmover.parse_my_tag( tag, data, filters, movers, *test_dimer_pose_ );
+
+		TS_ASSERT_EQUALS( testmover.chain_ids().size(), 1 );
+		TS_ASSERT_EQUALS( testmover.chain_ids()[1], 2 );
+
+		testmover = *(new protocols::simple_moves::ddG());
+		tag = tagptr_from_string("<ddG name=test chain_num=3 />\n");
+		testmover.parse_my_tag( tag, data, filters, movers, *test_dimer_pose_ );
+
+		TS_ASSERT_EQUALS( testmover.chain_ids().size(), 1 );
+		TS_ASSERT_EQUALS( testmover.chain_ids()[1], 3 );
 	}
 
 	void test_filter_parsing_dimer() {
