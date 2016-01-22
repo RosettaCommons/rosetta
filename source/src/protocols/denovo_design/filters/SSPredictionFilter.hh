@@ -36,7 +36,6 @@ namespace filters {
 class SSPredictionFilter : public protocols::filters::Filter {
 public:
 	SSPredictionFilter();
-	SSPredictionFilter( SSPredictionFilter const & rval );
 	SSPredictionFilter( core::Real const threshold,
 		std::string const & cmd,
 		std::string const & blueprint_filename,

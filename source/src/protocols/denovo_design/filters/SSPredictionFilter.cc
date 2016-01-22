@@ -17,6 +17,7 @@
 #include <protocols/denovo_design/filters/SSPredictionFilterCreator.hh>
 
 // package headers
+#include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/filters/PsiPredInterface.hh>
 
 // project headers
@@ -72,21 +73,6 @@ SSPredictionFilter::SSPredictionFilter( core::Real const threshold,
 	temp_( 0.6 ),
 	ss_predictor_( /* NULL */ ),
 	psipred_interface_( PsiPredInterfaceOP( new PsiPredInterface( cmd ) ) )
-{}
-
-// copy constructor
-SSPredictionFilter::SSPredictionFilter( SSPredictionFilter const & rval )
-: protocols::filters::Filter( rval ),
-	threshold_( rval.threshold_ ),
-	cmd_( rval.cmd_ ),
-	blueprint_( rval.blueprint_ ),
-	use_probability_( rval.use_probability_ ),
-	mismatch_probability_( rval.mismatch_probability_),
-	use_confidence_( rval.use_confidence_ ),
-	use_svm_( rval.use_svm_ ),
-	temp_( rval.temp_ ),
-	ss_predictor_( rval.ss_predictor_ ),
-	psipred_interface_( rval.psipred_interface_ )
 {}
 
 SSPredictionFilter::~SSPredictionFilter()
@@ -156,22 +142,27 @@ core::Real
 SSPredictionFilter::compute( core::pose::Pose const & pose ) const {
 	std::string wanted_ss;
 
-	// if a blueprint is specified, use it. If not, use Dssp.
+	// if a blueprint is specified, use it. If not, use Dssp or pose metadata.
 	if ( blueprint_ ) {
 		wanted_ss = blueprint_->secstruct();
+	} else if ( components::StructureData::has_cached_string( pose ) ) {
+		components::StructureDataOP sd = components::StructureData::create_from_pose( pose, "" );
+		debug_assert( sd );
+		wanted_ss = sd->ss();
 	} else {
 		core::scoring::dssp::Dssp dssp( pose );
 		wanted_ss = dssp.get_dssp_secstruct();
-		// strip ligands from the ss string -- dssp now includes a character for ligand
-		runtime_assert( pose.total_residue() == wanted_ss.size() );
-		std::string pruned_ss( "" );
-		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
-			if ( pose.residue(i).is_protein() ) {
-				pruned_ss += wanted_ss[i-1];
-			}
-		}
-		wanted_ss = pruned_ss;
 	}
+
+	// strip ligands from the ss string -- dssp now includes a character for ligand
+	runtime_assert( pose.total_residue() == wanted_ss.size() );
+	std::string pruned_ss( "" );
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		if ( pose.residue(i).is_protein() ) {
+			pruned_ss += wanted_ss[i-1];
+		}
+	}
+	wanted_ss = pruned_ss;
 
 	if ( use_svm_ ) {
 		runtime_assert( ss_predictor_ != 0 );
