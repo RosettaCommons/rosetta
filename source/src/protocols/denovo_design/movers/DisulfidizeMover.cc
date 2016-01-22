@@ -327,7 +327,7 @@ DisulfidizeMover::process_pose(
 	// create initial list of possible disulfides between residue subset 1 and subset 2
 	DisulfideList disulf_partners = find_possible_disulfides( pose, subset1, subset2, sfxn ); //Updated for D-residues
 	if ( include_current_ds_ ) {
-		for ( DisulfideList::const_iterator ds=current_ds.begin(), endds=current_ds.end(); ds!=endds; ++ds ) {
+		for ( DisulfideList::const_iterator ds=current_ds.begin(); ds!=current_ds.end(); ++ds ) {
 			disulf_partners.push_back( *ds );
 		}
 	}
@@ -563,7 +563,7 @@ DisulfidizeMover::find_possible_disulfides(
 
 	// work on a poly-ala copy of the input pose
 	core::pose::Pose pose_copy = pose;
-	construct_poly_ala_pose( pose_copy, false, set1, set2 ); //Updated to work with D-residues.
+	construct_poly_ala_pose( pose_copy, keep_current_ds_, set1, set2 ); //Updated to work with D-residues.
 
 	core::scoring::ScoreFunctionOP sfxn_disulfide_only (
 		core::pose::symmetry::is_symmetric(pose) ?
