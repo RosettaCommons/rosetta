@@ -173,7 +173,7 @@ SewGraph::SewGraph():
 	hash_edge_pool_( new boost::unordered_object_pool< HashEdge > ( 256 ) )
 {}
 
-///@details iterate through the models and add all the nodes to the graph
+/// @details iterate through the models and add all the nodes to the graph
 SewGraph::SewGraph(
 	std::map< int, Model > const & models,
 	core::Size segment_matches_per_edge

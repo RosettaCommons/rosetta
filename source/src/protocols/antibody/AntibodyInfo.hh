@@ -55,24 +55,24 @@ class AntibodyInfo : public utility::pointer::ReferenceCount {
 
 public:
 
-	///@brief Constructor that Loads default numbering scheme and cdr definition from options (Chothia/Aroop)
+	/// @brief Constructor that Loads default numbering scheme and cdr definition from options (Chothia/Aroop)
 	AntibodyInfo( core::pose::Pose const & pose, bool const cdr_pdb_numbered = true);
 
-	///@brief Constructor that uses the numbering scheme and cdr_definition given.
+	/// @brief Constructor that uses the numbering scheme and cdr_definition given.
 	AntibodyInfo( core::pose::Pose const & pose,
 		AntibodyNumberingSchemeEnum const & numbering_scheme,
 		CDRDefinitionEnum const cdr_definition,
 		bool const cdr_pdb_numbered = true);
 
-	///@brief Constructor using just the cdr definition
+	/// @brief Constructor using just the cdr definition
 	AntibodyInfo( core::pose::Pose const & pose,
 		CDRDefinitionEnum const cdr_definition,
 		bool const cdr_pdb_numbered = true);
 
-	///@brief Copy Constructor
+	/// @brief Copy Constructor
 	AntibodyInfo(AntibodyInfo const & src);
 
-	///@brief Clone the pointer.
+	/// @brief Clone the pointer.
 	AntibodyInfoOP
 	clone() const;
 
@@ -94,7 +94,7 @@ public:
 	core::Size
 	get_CDR_length(CDRNameEnum const cdr_name) const;
 
-	///@breif On-the-fly CDR length.
+	/// @breif On-the-fly CDR length.
 	core::Size
 	get_CDR_length(CDRNameEnum const cdr_name, core::pose::Pose const & pose) const;
 
@@ -145,7 +145,7 @@ public:
 	CDRNameEnum
 	get_total_num_CDRs(bool include_proto_cdr4 = false) const;
 
-	///@brief Does the antibody have this CDR?
+	/// @brief Does the antibody have this CDR?
 	/// See also:
 	///                   is_camelid())
 	///                   get_total_num_CDRs())
@@ -303,7 +303,7 @@ public:
 	void
 	setup_CDR_clusters(core::pose::Pose const & pose, utility::vector1<bool> const & cdrs, bool attempt_set_from_pose=false);
 
-	///@brief setup the clustering information for a particular CDR.
+	/// @brief setup the clustering information for a particular CDR.
 	///  Optionally, attempt to set the CDR cluster from the Pose data cache if any data is there.
 	void
 	setup_CDR_cluster(core::pose::Pose const & pose, CDRNameEnum cdr, bool attempt_set_from_pose=false);
@@ -512,7 +512,7 @@ private:
 	/// @brief check the input pose is nanobody, antibody or wrong.  Sets sequence.  Sets Antigen chains.
 	void identify_antibody(core::pose::Pose const & pose);
 
-	///@brief place-holder for identification of light chain type: lambda/kappa/unknown.
+	/// @brief place-holder for identification of light chain type: lambda/kappa/unknown.
 	void identify_light_chain(core::pose::Pose const & pose);
 
 	void init(core::pose::Pose const & pose);
@@ -547,7 +547,7 @@ private:
 	//           packing_numbering_[VL_sheet_1][stop]
 	void setup_numbering_info_for_scheme(AntibodyNumberingSchemeEnum const & numbering_scheme, CDRDefinitionEnum const cdr_definition);
 
-	///@brief Gets transform for numbering scheme.  Allows const qualification for other functions.
+	/// @brief Gets transform for numbering scheme.  Allows const qualification for other functions.
 	utility::vector1< utility::vector1< PDBLandmarkOP > >
 	get_cdr_definition_transform(CDRDefinitionEnum const cdr_definition) const;
 

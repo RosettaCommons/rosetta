@@ -66,7 +66,7 @@ public:
 		return design_strategy_;
 	}
 
-	///@brief Set the fallback strategy - which will be used if using a profile-based primary strategy, and there is not enough data
+	/// @brief Set the fallback strategy - which will be used if using a profile-based primary strategy, and there is not enough data
 	void
 	fallback_strategy(SeqDesignStrategyEnum strategy);
 
@@ -109,7 +109,7 @@ public:
 	CDRSeqDesignOptionsOP
 	parse_options(CDRNameEnum cdr, std::string filename);
 
-	///@brief Parse default_instructions (mainly used for AbDesign) then parse user file
+	/// @brief Parse default_instructions (mainly used for AbDesign) then parse user file
 	CDRSeqDesignOptionsOP
 	parse_default_and_user_options(CDRNameEnum cdr, std::string filename);
 

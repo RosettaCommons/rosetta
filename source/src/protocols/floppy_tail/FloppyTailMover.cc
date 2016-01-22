@@ -153,7 +153,7 @@ FloppyTailMover::FloppyTailMover() :
 
 FloppyTailMover::~FloppyTailMover(){}
 
-///@brief copy ctor
+/// @brief copy ctor
 FloppyTailMover::FloppyTailMover( FloppyTailMover const & rhs ) :
 	Mover(rhs)
 {
@@ -191,7 +191,7 @@ void FloppyTailMover::set_cen_scorefxn(core::scoring::ScoreFunctionOP const cen_
 	centroid_scorefunction_=cen_scorefxn->clone();
 }
 
-///@brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
+/// @brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
 void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	init_for_input_yet_ = true;
 

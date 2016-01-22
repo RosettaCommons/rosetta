@@ -39,12 +39,12 @@ namespace antibody {
 
 
 
-///@brief Geta boolean vector of CDRs from a RosettaScripts tag.
+/// @brief Geta boolean vector of CDRs from a RosettaScripts tag.
 utility::vector1<bool>
 get_cdr_bool_from_tag(utility::tag::TagCOP tag, std::string const & name, bool include_cdr4 = false);
 
 
-///@brief Get a set of loops for a boolean vector of CDRNameEnums including any stem residues.
+/// @brief Get a set of loops for a boolean vector of CDRNameEnums including any stem residues.
 protocols::loops::LoopsOP
 get_cdr_loops(
 	AntibodyInfoCOP ab_info,
@@ -77,7 +77,7 @@ cutpoint_separation(core::pose::Pose & pose_in, core::Size cutpoint);
 
 /////////////////////////////////// Epitope + Paratope ////////////////////////////////////////////////////////////////////
 
-///@brief Get the epitope residues using the InterGroupNeighborsCalculator.
+/// @brief Get the epitope residues using the InterGroupNeighborsCalculator.
 utility::vector1<bool>
 select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, core::Size const interface_distance = 10.0);
 
@@ -86,7 +86,7 @@ select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, 
 
 ////////////////////////////////// Numbering ///////////////////////////////////
 
-///@brief Checks the length of the CDR, fixes AHO numbering for longer CDR loops that don't
+/// @brief Checks the length of the CDR, fixes AHO numbering for longer CDR loops that don't
 /// fit within the numbering scheme
 void
 check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose::Pose & pose);
@@ -113,11 +113,11 @@ simple_fold_tree(
 	core::Size cutpoint,
 	core::Size jumppoint2);
 
-///@brief Setup LH_A foldtree via docking.  Return dock_chains string.
+/// @brief Setup LH_A foldtree via docking.  Return dock_chains string.
 std::string
 setup_LH_A_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose);
 
-///@brief Setup A_LH foldtree via docking. Return dock_chains string.
+/// @brief Setup A_LH foldtree via docking. Return dock_chains string.
 std::string
 setup_A_LH_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose);
 
@@ -147,7 +147,7 @@ CDR_H3_cter_filter(
 	const core::pose::Pose & pose_in,
 	AntibodyInfoOP ab_info);
 
-///@brief Very basic kink function based on rama groups.  Kink is defined as having AB + DB at the C-terminal stem.
+/// @brief Very basic kink function based on rama groups.  Kink is defined as having AB + DB at the C-terminal stem.
 /// This is in the North/Dunbrack CDR definition.
 /// Avoid this definition if you can and talk to brain.  This is currently used for a quick filtering for design.
 bool

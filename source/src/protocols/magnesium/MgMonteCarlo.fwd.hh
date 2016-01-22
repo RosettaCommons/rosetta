@@ -9,7 +9,7 @@
 
 /// @file protocols/magnesium/MgMonteCarlo.fwd.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

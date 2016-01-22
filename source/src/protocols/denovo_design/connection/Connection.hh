@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/connection/Connection.hh
 /// @brief Connection classes for building structures from components
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

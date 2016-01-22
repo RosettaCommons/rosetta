@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/components/Segment.cc
 /// @brief Named segment of residues
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 //Unit Headers

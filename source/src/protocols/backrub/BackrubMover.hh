@@ -189,7 +189,7 @@ public:
 		utility::vector1<core::Size> const & pivot_residues
 	);
 
-	///@brief Sets Pivot Residues from the Movemap.  Each contiguous set of residues
+	/// @brief Sets Pivot Residues from the Movemap.  Each contiguous set of residues
 	/// with BB enabled will be used as a segment.
 	void
 	set_movemap( core::kinematics::MoveMapCOP movemap );

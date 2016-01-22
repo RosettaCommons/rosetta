@@ -9,7 +9,7 @@
 
 /// @file protocols/magnesium/MgScanner.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

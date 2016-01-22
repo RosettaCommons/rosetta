@@ -50,7 +50,7 @@ public:
 	std::string
 	get_name() const;
 
-	///@details we accumulate state, so we definitely need to reinitialize
+	/// @details we accumulate state, so we definitely need to reinitialize
 	virtual bool
 	reinitialize_for_new_input() const;
 

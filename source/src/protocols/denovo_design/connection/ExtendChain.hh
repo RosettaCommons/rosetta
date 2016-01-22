@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/connection/ExtendChain.hh
 /// @brief The ExtendChain Protocol
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

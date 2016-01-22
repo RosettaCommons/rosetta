@@ -143,7 +143,7 @@ RequirementSet::satisfies(
 }
 
 
-///@details This function should return true if any of the requirements contained
+/// @details This function should return true if any of the requirements contained
 ///in this set are guaranteed to fail in the case of future edge additions. This is
 ///implemented by considering a 'hypothetical' assembly in which segments which do not
 ///yet exist auto-pass all requirements.

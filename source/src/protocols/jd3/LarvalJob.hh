@@ -66,7 +66,7 @@ public:
 	void
 	show( std::ostream & out ) const;
 
-	///@brief read access to the inner-job
+	/// @brief read access to the inner-job
 	InnerLarvalJobCOP inner_job() const;
 
 	/// @brief The input tag (a short string, generally), is used to specify the input structure,
@@ -83,7 +83,7 @@ public:
 	/// but different random number seeds (controlled by the command-line flag "nstruct")
 	core::Size nstruct_index() const;
 
-	///@brief The total number of jobs with the same inputs, but different random number seeds.
+	/// @brief The total number of jobs with the same inputs, but different random number seeds.
 	core::Size nstruct_max() const;
 
 	void set_status_prefix( std::string prefix );
@@ -103,7 +103,7 @@ private:
 	/// LarvalJobs (that themselves differ only in their nstruct index).
 	InnerLarvalJobCOP inner_job_;
 
-	///@brief which nstruct is this?
+	/// @brief which nstruct is this?
 	core::Size const nstruct_index_;
 
 	/// @brief string giving a brief indication for whether or not the job has failed (but for when the structure

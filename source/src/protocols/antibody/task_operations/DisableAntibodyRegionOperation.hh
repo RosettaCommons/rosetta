@@ -33,22 +33,22 @@ namespace antibody {
 namespace task_operations {
 
 
-///@brief A TaskOperation that Disables packing +/or design of a particular antibody region.
+/// @brief A TaskOperation that Disables packing +/or design of a particular antibody region.
 /// By Default, disables packing and design of the cdr_region.  Make sure to set the region you want disabled.
 ///
 class DisableAntibodyRegionOperation : public core::pack::task::operation::TaskOperation {
 public:
 
-	///@brief Default constructor.  Do not use this.
+	/// @brief Default constructor.  Do not use this.
 	DisableAntibodyRegionOperation();
 
-	///@brief Constructor setting only AntibodyInfo.
+	/// @brief Constructor setting only AntibodyInfo.
 	DisableAntibodyRegionOperation(AntibodyInfoCOP ab_info);
 
-	///@brief Constructor setting AntibodyInfo and the region.
+	/// @brief Constructor setting AntibodyInfo and the region.
 	DisableAntibodyRegionOperation(AntibodyInfoCOP ab_info, AntibodyRegionEnum region);
 
-	///@brief Constructor setting the region and to fully disable the region.
+	/// @brief Constructor setting the region and to fully disable the region.
 	/// If disable_packing_and_design is set to False, will only disable design.
 	DisableAntibodyRegionOperation(AntibodyInfoCOP ab_info, AntibodyRegionEnum region, bool disable_packing_and_design);
 
@@ -75,7 +75,7 @@ public:
 	void
 	set_region(AntibodyRegionEnum region);
 
-	///@brief If disable_packing_and_design is set to False, will only disable design.
+	/// @brief If disable_packing_and_design is set to False, will only disable design.
 	void
 	set_disable_packing_and_design(bool disable_packing_and_design);
 

@@ -48,7 +48,7 @@ public:
 	std::string
 	get_name() const;
 
-	///@brief The starting node for the Assembly from the append mover
+	/// @brief The starting node for the Assembly from the append mover
 	///will always be the input PDB
 	virtual
 	void

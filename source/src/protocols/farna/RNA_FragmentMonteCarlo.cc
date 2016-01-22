@@ -9,7 +9,7 @@
 
 /// @file protocols/farna/RNA_FragmentMonteCarlo.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

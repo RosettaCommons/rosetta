@@ -62,7 +62,7 @@ namespace local{
 basic::options::RealOptionKey const hsasa_residue_cutoff("hsasa_residue_cutoff");
 }//local
 
-///@brief
+/// @brief
 class zinc_helix_cap : public protocols::moves::Mover {
 public:
   zinc_helix_cap()

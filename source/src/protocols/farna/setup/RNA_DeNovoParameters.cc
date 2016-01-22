@@ -9,7 +9,7 @@
 
 /// @file protocols/farna/setup/RNA_DeNovoParameters.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

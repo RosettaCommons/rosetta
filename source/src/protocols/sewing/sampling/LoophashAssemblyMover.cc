@@ -261,7 +261,7 @@ LoophashAssemblyMover::rearrange_assembly(
 
 
 
-///@details count the number of loophash fragments for each
+/// @details count the number of loophash fragments for each
 ///unclosed loop in the current Assembly. Return the number
 ///of fragments for the jump with the least number of fragments
 core::Size
@@ -547,7 +547,7 @@ LoophashAssemblyMover::trim_bb_segs(
 
 }
 
-///@details query the loophash library for backbone segments across the jump
+/// @details query the loophash library for backbone segments across the jump
 ///from loop_anchor to loop_anchor+1. Return a map from loop size to backbone segment
 LoophashAssemblyMover::BackboneSegments
 LoophashAssemblyMover::get_backbone_segments(
@@ -599,7 +599,7 @@ LoophashAssemblyMover::get_backbone_segments(
 
 
 
-///@details create a loop size given the backbone segment from the loop library. Return the
+/// @details create a loop size given the backbone segment from the loop library. Return the
 ///newly created pose.
 std::pair<core::pose::Pose, core::Real>
 LoophashAssemblyMover::build_loop_pose(

@@ -35,7 +35,7 @@ class ClashScorer : public AssemblyScorer {
 
 public:
 
-	///@brief default construct
+	/// @brief default construct
 	ClashScorer();
 
 	virtual ~ClashScorer(){}

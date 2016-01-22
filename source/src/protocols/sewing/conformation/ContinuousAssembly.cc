@@ -66,7 +66,7 @@ ContinuousAssembly::clone(){
 }
 
 
-///@details add a model to assembly
+/// @details add a model to assembly
 void
 ContinuousAssembly::append_model(
 	Model const & model,

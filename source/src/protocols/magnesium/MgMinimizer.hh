@@ -9,7 +9,7 @@
 
 /// @file protocols/magnesium/MgMinimizer.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

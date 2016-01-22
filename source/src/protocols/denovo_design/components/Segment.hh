@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/components/Segment.hh
 /// @brief Segment functions for building structures from components
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

@@ -9,7 +9,7 @@
 
 /// @file core/pose/rna/BasePair.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

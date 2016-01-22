@@ -87,33 +87,33 @@ public:
 	};
 
 
-	///@brief return the set of features reporters that are required to
+	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
 
-	///@brief generate the table schemas and write them to the database
+	/// @brief generate the table schemas and write them to the database
 	virtual
 	void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session
 	) const;
 
-	///@brief get the vector of beginnings/ends of secondary structure segments
+	/// @brief get the vector of beginnings/ends of secondary structure segments
 	utility::vector1<Segment>
 	find_segments(
 		protocols::features::StructureID struct_id,
 		utility::sql_database::sessionOP db_session
 	);
 
-	///@brief for testing purposes only
+	/// @brief for testing purposes only
 	void
 	trim_pose(
 		core::pose::Pose & pose,
 		std::set<core::Size> resnums
 	) const;
 
-	///@brief collect all the feature data for the pose
+	/// @brief collect all the feature data for the pose
 	virtual
 	core::Size
 	report_features(

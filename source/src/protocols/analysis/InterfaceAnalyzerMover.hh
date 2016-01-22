@@ -255,7 +255,7 @@ public:
 	virtual void
 	report_data();
 
-	///@brief Add all the scoring data normally output via job to the pose instead.  Can't add this to method due to const apply.
+	/// @brief Add all the scoring data normally output via job to the pose instead.  Can't add this to method due to const apply.
 	/// Use after you have used the apply for the class.
 	///
 	void

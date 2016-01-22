@@ -43,7 +43,7 @@ PartnerMotifScorer::PartnerMotifScorer():
 	MotifScorer()
 {}
 
-///@details Use the negative normalized motif score
+/// @details Use the negative normalized motif score
 core::Real
 PartnerMotifScorer::score(
 	AssemblyCOP assembly
@@ -51,7 +51,7 @@ PartnerMotifScorer::score(
 	return -1.0 * interface_motif_score(assembly);
 }
 
-///@details use Will's Motif score to calculate the motif score for the entire Assembly
+/// @details use Will's Motif score to calculate the motif score for the entire Assembly
 core::Real
 PartnerMotifScorer::interface_motif_score(
 	AssemblyCOP assembly

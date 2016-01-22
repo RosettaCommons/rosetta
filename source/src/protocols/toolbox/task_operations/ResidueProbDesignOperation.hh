@@ -30,14 +30,14 @@ namespace toolbox {
 namespace task_operations {
 
 
-///@brief A TaskOperation that allows amino acids at designable positions through a set of aa probabilities (aa profile).
+/// @brief A TaskOperation that allows amino acids at designable positions through a set of aa probabilities (aa profile).
 ///
 ///    Each time a task is generated, it will choose one amino acid from the set for that position and add it to (or replace)
 ///     the set of packable residues chosen for that position.
 ///     Decreases number of rotamers for packing and the space for design.  Instead of using energy for profiles, we use selection of residues through
 ///     probabilities at each task generation.  If picking rounds is higher can result in more than one additional residue in the task from the native.
 ///
-///@details Default is for the TaskOp to control the allowed amino acids only if the class has probabilities to use for that resnum.
+/// @details Default is for the TaskOp to control the allowed amino acids only if the class has probabilities to use for that resnum.
 /// If no probabilities were set in general, it will not do anything.
 /// Probabilities should add to one, but if not, they will act as weights.
 /// Does NOT control which positions are set to design or repack, only what can be designed into.
@@ -81,7 +81,7 @@ public:
 	/// @brief Set the probability for a particular aa @ a particular resnum.
 	//set_aa_probability( Size resnum, core::chemical::AA const amino_acid, Real probability );
 
-	///@brief Sets aa probabilities for all positions not given specifically. All designable residues will use these probabilities this if not specified through other functions.
+	/// @brief Sets aa probabilities for all positions not given specifically. All designable residues will use these probabilities this if not specified through other functions.
 	void
 	set_overall_aa_probabilities( AAProbabilities aa_probs );
 
@@ -136,8 +136,8 @@ public:
 	picking_rounds() const;
 
 
-	///@brief Add the aa types chosen from the probabilities to the  allowed aa at the position instead of overwriting it.
-	///@details  Will result in very different results.
+	/// @brief Add the aa types chosen from the probabilities to the  allowed aa at the position instead of overwriting it.
+	/// @details  Will result in very different results.
 	void
 	set_keep_task_allowed_aas(bool setting);
 
@@ -170,7 +170,7 @@ private:
 	void init_for_equal_operator_and_copy_constructor( ResidueProbDesignOperation & lhs, ResidueProbDesignOperation const & rhs);
 
 
-	///@brief  Create full weight set for all amino acids from a probability set.
+	/// @brief  Create full weight set for all amino acids from a probability set.
 	utility::vector1<core::Real>
 	get_weights(AAProbabilities & aa_prob_set) const;
 

@@ -9,7 +9,7 @@
 
 /// @file protocols/farna/movers/RNA_JumpMover.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

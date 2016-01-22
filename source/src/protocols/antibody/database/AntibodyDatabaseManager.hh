@@ -99,7 +99,7 @@ typedef std::map< core::chemical::AA, core::Real > AAProbabilities;
 
 
 
-///@brief Class responsible for loading information from the AntibodyDatabase.
+/// @brief Class responsible for loading information from the AntibodyDatabase.
 class AntibodyDatabaseManager : public utility::pointer::ReferenceCount{
 public:
 
@@ -109,12 +109,12 @@ public:
 
 	virtual ~AntibodyDatabaseManager();
 
-	///@brief Set to parse outliers for both sequence and structural data.  Default False.
+	/// @brief Set to parse outliers for both sequence and structural data.  Default False.
 	void
 	set_outlier_use(bool use_outliers);
 
-	///@brief Load CDRs from options of all cdrs..
-	///@details Will attempt to use Pose Datacache for identification of CDR clusters first.
+	/// @brief Load CDRs from options of all cdrs..
+	/// @details Will attempt to use Pose Datacache for identification of CDR clusters first.
 	///
 	CDRDBPoseSet
 	load_cdr_poses(
@@ -122,14 +122,14 @@ public:
 		core::pose::Pose const & pose,
 		core::Size overhang=3);
 
-	///@brief Load CDRs from single cdr options.
-	///@details Will attempt to use Pose Datacache for identification of CDR clusters first.
+	/// @brief Load CDRs from single cdr options.
+	/// @details Will attempt to use Pose Datacache for identification of CDR clusters first.
 	///
 	//CDRDBPoseSet
 	//load_cdr_poses(CDRDBPoseSetOptions const & options, core::pose::Pose const & pose, bool const use_light_chain_type = true, core::Size overhang=3);
 
-	///@brief Load probability data for CDR Design.  Returns CDRs where data could not be loaded. Cutoff indicates number of total sequences needed to use the data.
-	///@details Will attempt to use Pose Datacache for identification of CDR clusters first.
+	/// @brief Load probability data for CDR Design.  Returns CDRs where data could not be loaded. Cutoff indicates number of total sequences needed to use the data.
+	/// @details Will attempt to use Pose Datacache for identification of CDR clusters first.
 	///
 	utility::vector1< bool >
 	load_cdr_design_data(
@@ -145,7 +145,7 @@ public:
 		std::map< core::Size, AAProbabilities > & prob_set,
 		core::Size const cutoff);
 
-	///@brief Load a set of CDR sequences from the database
+	/// @brief Load a set of CDR sequences from the database
 	CDRDBSequenceSet
 	load_cdr_sequences(
 		utility::vector1< bool > cdrs,
@@ -173,7 +173,7 @@ public:
 	//std::map< core::Size, AAProbabilities >
 	//load_framework_design_data(AntibodyInfoCOP ab_info, core::pose::Pose const & pose);
 
-	///@brief Use the light chain type for CDRPoses and CDRSequences if set in AntibodyInfo.
+	/// @brief Use the light chain type for CDRPoses and CDRSequences if set in AntibodyInfo.
 	void
 	use_light_chain_type(bool use_light_chain_type);
 
@@ -197,20 +197,20 @@ private:
 	start_database_session(std::string const database_path);
 
 
-	///@brief  Checks to make sure the instructions make sense before trying to create the statement for the db..
+	/// @brief  Checks to make sure the instructions make sense before trying to create the statement for the db..
 	void
 	check_for_graft_instruction_inconsistencies(AntibodyCDRSetOptions const & options);
 
 
 
-	///@brief Checks for inconsistency in include_only and leave_out string vectors from GraftInstructions.
+	/// @brief Checks for inconsistency in include_only and leave_out string vectors from GraftInstructions.
 	template < typename T >
 	bool
 	has_vec_inconsistency(vector1<T> const &  include, vector1<T> const & leave_out) const;
 
 	//Tried explicit function specialization here, but could not get it to work with clang.
 
-	///@brief Bind the values in the vector to the select statement.
+	/// @brief Bind the values in the vector to the select statement.
 	void
 	bind_vec_constraint(utility::vector1< std::string> const & vec, cppdb::statement  & select_statement, core::Size & col) const;
 
@@ -218,11 +218,11 @@ private:
 	utility::vector1<std::string>
 	get_cluster_string_vec(utility::vector1<clusters::CDRClusterEnum> const & clusters);
 
-	///@brief Does the work.  Not pretty.
+	/// @brief Does the work.  Not pretty.
 	utility::vector1<core::Size>
 	get_cluster_totals(bool use_outliers) const;
 
-	///@brief Main function called - deals with outliers vs H3_outliers
+	/// @brief Main function called - deals with outliers vs H3_outliers
 	utility::vector1<core::Size>
 	get_cluster_totals() const;
 

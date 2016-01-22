@@ -52,7 +52,7 @@ LarvalJob::show( std::ostream & out ) const {
 	out << "LarvalJob show has been stubbed out" << std::endl;
 }
 
-///@brief read access to the inner-job
+/// @brief read access to the inner-job
 InnerLarvalJobCOP
 LarvalJob::inner_job() const {
 	return inner_job_;
@@ -78,7 +78,7 @@ core::Size LarvalJob::nstruct_index() const {
 	return nstruct_index_;
 }
 
-///@brief The total number of jobs with the same inputs, but different random number seeds.
+/// @brief The total number of jobs with the same inputs, but different random number seeds.
 core::Size LarvalJob::nstruct_max() const {
 	return inner_job_->nstruct_max();
 }

@@ -30,7 +30,7 @@ namespace antibody {
 namespace task_operations {
 			
 
-///@brief Add Framework Profiles as the task operation for a framework chain.
+/// @brief Add Framework Profiles as the task operation for a framework chain.
 /// See protocols/toolbox/task_operations/ResidueProbTaskOperation for more.
 ///
 class AddFrameworkProfilesOperation : public core::pack::task::operation::TaskOperation {
@@ -48,7 +48,7 @@ public:
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
 	
-	///@brief Use the set of conservative mutations instead of profiles.
+	/// @brief Use the set of conservative mutations instead of profiles.
 	void
 	set_use_conservative_set( bool use_conservatives);
 	

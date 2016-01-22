@@ -26,12 +26,12 @@ namespace protocols {
 namespace simple_moves {
 namespace a3b_hbs {
 
-///@details
+/// @details
 class A3BHbsMover : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
 	A3BHbsMover( core::Size seq_position );
 	A3BHbsMover( core::Size seq_position, core::Real phi_angle, core::Real psi_angle );
 

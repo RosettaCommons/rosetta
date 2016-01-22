@@ -166,7 +166,7 @@ AddLoopResidues::update_loops(
 	return new_loops;
 }
 
-///@brief update the loops to reflect
+/// @brief update the loops to reflect
 ///the position changes after an insertion
 void
 AddLoopResidues::update_anchors(

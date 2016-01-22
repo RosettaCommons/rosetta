@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/components/StructureData.hh
 /// @brief StructureData functions for building structures from components
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

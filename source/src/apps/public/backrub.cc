@@ -10,7 +10,7 @@
 /// @file backrub.cc
 /// @brief run backrub Monte Carlo
 /// @author Colin A. Smith (colin.smith@mpibpc.mpg.de)
-/// @detailed
+/// @details
 /// Currently a work in progress. The goal is to match the features of rosetta++ -backrub_mc
 
 

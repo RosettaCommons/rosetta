@@ -65,7 +65,7 @@ public:
 	/// @brief copy constructor
 	ShortestPathInFoldTree( ShortestPathInFoldTree const & src );
 
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ShortestPathInFoldTree();
 
 

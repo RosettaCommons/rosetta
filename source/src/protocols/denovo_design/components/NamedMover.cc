@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/components/NamedMover.cc
 /// @brief Named segment of residues
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 //Unit Headers

@@ -9,7 +9,7 @@
 
 /// @file protocols/farna/options/RNA_FragmentMonteCarloOptions.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

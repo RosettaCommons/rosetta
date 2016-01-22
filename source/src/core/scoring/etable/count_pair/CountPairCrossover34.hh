@@ -37,7 +37,7 @@ public:
 
 	virtual ~CountPairCrossover34();
 
-	///@brief function used by derived classes and associated classes (like the trie's count pair hierarchy)
+	/// @brief function used by derived classes and associated classes (like the trie's count pair hierarchy)
 	static
 	inline
 	bool

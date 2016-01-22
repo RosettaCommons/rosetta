@@ -275,7 +275,7 @@ private:
 };
 
 
-///@details Simple wrapper around a vector1 of SewSegments, which
+/// @details Simple wrapper around a vector1 of SewSegments, which
 ///maintains connection information.
 class SegmentGraph : public utility::vector1<SewSegment> {
 
@@ -362,23 +362,23 @@ struct Model : public utility::pointer::ReferenceCount {
 		meridian_angle_degrees_(0.0)
 	{}
 
-	///@brief create a pose for this model from the database
+	/// @brief create a pose for this model from the database
 	core::pose::Pose
 	to_pose_from_db() const;
 
-	///@brief trim the given pose to include only model residues
+	/// @brief trim the given pose to include only model residues
 	void
 	trim_db_pose(
 		core::pose::Pose & pose
 	) const;
 
-	///@brief get the corresponding pose resnum from the
+	/// @brief get the corresponding pose resnum from the
 	core::Size
 	pose_number(
 		core::Size resnum
 	) const;
 
-	///@brief return the set of segment ids for this model
+	/// @brief return the set of segment ids for this model
 	std::set<core::Size>
 	segment_ids() const;
 
@@ -457,7 +457,7 @@ add_linker_segments(
 void
 create_alpha_beta_models_table();
 
-///@brief create a Model from the pose
+/// @brief create a Model from the pose
 Model
 create_model_from_pose(
 	core::pose::Pose const & pose,

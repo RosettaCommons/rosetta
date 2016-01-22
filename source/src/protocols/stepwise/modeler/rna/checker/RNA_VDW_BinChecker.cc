@@ -9,7 +9,7 @@
 
 /// @file RNA_VDW_BinChecker.cc
 /// @brief Very fast version of VWD repulsion screening
-/// @detailed
+/// @details
 /// @author Parin Sripakdeevong
 
 

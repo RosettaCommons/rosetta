@@ -9,7 +9,7 @@
 
 /// @file protocols/magnesium/MgHydrater.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/components/StructureData.cc
 /// @brief StructureData of a segment -- basically interfaces between segment and pose
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 //Unit Headers

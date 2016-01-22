@@ -33,7 +33,7 @@ class BlosumScorer : public AssemblyScorer {
 
 public:
 
-	///@brief default construct
+	/// @brief default construct
 	BlosumScorer();
 
 	virtual ~BlosumScorer(){}

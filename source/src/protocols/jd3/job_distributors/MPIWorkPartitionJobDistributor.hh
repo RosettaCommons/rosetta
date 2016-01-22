@@ -67,7 +67,7 @@
 namespace protocols {
 namespace jd2 {
 
-///@details This job distributor is meant for running jobs where the number of jobs is equal to the number of processors
+/// @details This job distributor is meant for running jobs where the number of jobs is equal to the number of processors
 ///(or, similarly, the jobs % processors calculation is very close to the number of processors and NOT a small number).
 ///It will blindly divide up jobs across processors and then start running them; it will NOT attempt load-balancing by
 ///giving more jobs to the processors that finished their original jobs.  This is intended for use on smaller numbers of
@@ -77,7 +77,7 @@ namespace jd2 {
 class MPIWorkPartitionJobDistributor : public JobDistributor
 {
 protected:
-	///@brief ctor is protected; singleton pattern
+	/// @brief ctor is protected; singleton pattern
   MPIWorkPartitionJobDistributor();
 
   virtual void handle_interrupt() {}
@@ -106,14 +106,14 @@ public:
   friend class JobDistributorFactory;  //singleton management
 
 private:
-	///@brief ctor helper function splits up job list
+	/// @brief ctor helper function splits up job list
   void
   determine_job_ids_to_run();
 
-  ///@brief total number of processing elements
+  /// @brief total number of processing elements
   core::Size npes_;
 
-  ///@brief rank of the "local" instance
+  /// @brief rank of the "local" instance
   core::Size rank_;
 
   //@brief start of Jobs vector slice

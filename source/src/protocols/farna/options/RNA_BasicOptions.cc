@@ -9,7 +9,7 @@
 
 /// @file protocols/farna/options/RNA_BasicOptions.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

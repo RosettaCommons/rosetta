@@ -97,7 +97,7 @@ public:
 		core::Size cycle
 	) const;
 
-	///@brief add several outputs to the score file
+	/// @brief add several outputs to the score file
 	///Pose can't be const due to scoring.
 	virtual
 	void

@@ -78,7 +78,7 @@ centroids_by_jump_int(
 /// @begin center_of_mass
 ///
 /// @brief calculates the center of mass of a pose
-/// @detailed
+/// @details
 ///    the start and stop positions (or residues) within the pose are used to
 ///    find the starting and finishing locations
 ///

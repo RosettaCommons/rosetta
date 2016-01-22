@@ -77,7 +77,7 @@ BackboneGridSamplerHelper::BackboneGridSamplerHelper( BackboneGridSamplerHelper 
 BackboneGridSamplerHelper::~BackboneGridSamplerHelper() {}
 
 
-///@brief make a copy of this BackboneGridSamplerHelper object (allocate actual memory for it)
+/// @brief make a copy of this BackboneGridSamplerHelper object (allocate actual memory for it)
 ///
 BackboneGridSamplerHelperOP
 BackboneGridSamplerHelper::clone() const

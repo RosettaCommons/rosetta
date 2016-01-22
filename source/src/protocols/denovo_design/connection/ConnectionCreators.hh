@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/connection/ConnectionCreators.hh
 /// @brief Creators for classes that connect chains
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

@@ -55,7 +55,7 @@ public:
 	void
 	init();
 
-	///@brief override complete assembly to include building
+	/// @brief override complete assembly to include building
 	///of Loophash segments
 	virtual
 	bool
@@ -63,7 +63,7 @@ public:
 		AssemblyOP & assembly
 	);
 
-	///@brief override statistics output
+	/// @brief override statistics output
 	///to include some loop-related output
 	virtual
 	void
@@ -78,21 +78,21 @@ public:
 		AssemblyOP & assembly
 	) const;
 
-	///@brief count the number of loophash segments between unconnected jumps in the assembly
+	/// @brief count the number of loophash segments between unconnected jumps in the assembly
 	core::Size
 	count_loophash_fragments(
 		AssemblyOP const assembly,
 		core::pose::Pose const & pose
 	) const;
 
-	///@brief try to add a loophash segments to the assembly
+	/// @brief try to add a loophash segments to the assembly
 	protocols::loops::Loops
 	add_loophash_segments(
 		AssemblyOP & assembly,
 		core::pose::Pose & pose
 	) const;
 
-	///@brief try to add a signle loophash segment to the pose at the anchor residue
+	/// @brief try to add a signle loophash segment to the pose at the anchor residue
 	protocols::loops::Loop
 	add_single_loop(
 		core::pose::Pose & pose,
@@ -101,7 +101,7 @@ public:
 		core::Size c_segment_end
 	) const;
 
-	///@brief Get the backbone segments between loop_anchor and loop_anchor+1
+	/// @brief Get the backbone segments between loop_anchor and loop_anchor+1
 	BackboneSegments
 	get_backbone_segments(
 		core::pose::Pose & pose,
@@ -109,7 +109,7 @@ public:
 		core::Size loophash_fragment_end
 	) const;
 
-	///@brief Build residues and cart-min close the given loophash backbone segment
+	/// @brief Build residues and cart-min close the given loophash backbone segment
 	std::pair<core::pose::Pose, core::Real>
 	build_loop_pose(
 		core::pose::Pose const & pose,
@@ -131,7 +131,7 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	///@brief Remove all backbone segments not within the torsion RMS
+	/// @brief Remove all backbone segments not within the torsion RMS
 	//limits for the flanking regions of the loop
 	void
 	trim_bb_segs(

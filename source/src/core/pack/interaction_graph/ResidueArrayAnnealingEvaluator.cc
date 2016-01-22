@@ -61,12 +61,12 @@ ResidueArrayAnnealingEvaluator::ResidueArrayAnnealingEvaluator():
 	considered_energy_ = 0.0;
 }
 
-///@brief Destructor
+/// @brief Destructor
 //.
 ResidueArrayAnnealingEvaluator::~ResidueArrayAnnealingEvaluator()
 {}
 
-///@brief Copy constructor
+/// @brief Copy constructor
 ///
 ResidueArrayAnnealingEvaluator::ResidueArrayAnnealingEvaluator( ResidueArrayAnnealingEvaluator const &src ) :
 	core::pack::interaction_graph::AnnealableGraphBase( src ),

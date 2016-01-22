@@ -30,8 +30,8 @@
 namespace protocols {
 namespace simple_moves {
 
-///@brief Delete a chain from a Pose, or a set of chains.
-///@details
+/// @brief Delete a chain from a Pose, or a set of chains.
+/// @details
 /// 1) Deletes Each chain using conformation.delete_residue_range_slow
 ///      2) Calls detect bonds, pseudobonds, and disulfides
 ///      3) Makes sure PDBInfo is still intact
@@ -40,13 +40,13 @@ namespace simple_moves {
 class DeleteChainsMover : public moves::Mover {
 public:
 
-	///@brief Default Constructor
+	/// @brief Default Constructor
 	DeleteChainsMover();
 
-	///@brief Constructor with chain
+	/// @brief Constructor with chain
 	DeleteChainsMover( utility::vector1< core::Size > const chains );
 
-	///@brief Constructor with chain
+	/// @brief Constructor with chain
 	DeleteChainsMover( std::string const chains, core::pose::Pose const & pose );
 
 
@@ -62,25 +62,25 @@ public:
 
 public:
 
-	///@brief Set the chain
+	/// @brief Set the chain
 	void
 	set_chains( utility::vector1< core::Size > const chains );
 
-	///@brief Set the chain
+	/// @brief Set the chain
 	void
 	set_chains( std::string const chains, core::pose::Pose const & pose );
 
-	///@brief Get the chain
+	/// @brief Get the chain
 	utility::vector1< core::Size >
 	chains() const;
 
-	///@brief Set the class to detect bonds after full deletion of chains?
+	/// @brief Set the class to detect bonds after full deletion of chains?
 	///    Default True.
 	///    Override for speed and if you know there are no bonds between chains other than possible disulfides.
 	void set_detect_bonds(bool detect_bonds);
 	bool detect_bonds() const;
 
-	///@brief Set the class to detect psuedobonds after full deletion of chains?
+	/// @brief Set the class to detect psuedobonds after full deletion of chains?
 	///   Default True.
 	///   Override for speed and if you know there are no pseudobonds between chains other than possible disulfides.
 	void set_detect_pseudobonds(bool detect_pseudobonds);

@@ -29,13 +29,13 @@ namespace constraints {
 
 
 // AMW: do not pass constraint_type by reference; it'll break a unit test
-///@brief Check if all residues already have a specific constraint type.  Useful for coordinate and dihedral constraints.
+/// @brief Check if all residues already have a specific constraint type.  Useful for coordinate and dihedral constraints.
 bool
 cdr_has_res_constraints(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRNameEnum const cdr, std::string const constraint_type);
 
 
-///@brief Add dihedral constraints to CDR with mean being the current phi/psi.
-///@details Values for avg SD for each cluster not including H3 were 16 and 16 degrees respectively.  Using cluster outliers, values were at 21 and 23 degrees respectively.
+/// @brief Add dihedral constraints to CDR with mean being the current phi/psi.
+/// @details Values for avg SD for each cluster not including H3 were 16 and 16 degrees respectively.  Using cluster outliers, values were at 21 and 23 degrees respectively.
 ///                   Mean SD for both dihedrals was 16 and 22 for without/with outliers.
 ///                   Use this especially if doing cartesian-space minimization
 ///

@@ -9,7 +9,7 @@
 
 /// @file StepWiseBetaAntiParallelJumpSampleGenerator
 /// @brief Subclass of StepWisePoseSampleGenerator
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 

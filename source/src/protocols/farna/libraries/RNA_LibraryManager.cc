@@ -9,7 +9,7 @@
 
 /// @file protocols/farna/libraries/RNA_LibraryManager.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

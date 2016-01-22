@@ -38,7 +38,7 @@ class GlobalRequirement : public utility::pointer::ReferenceCount {
 
 public:
 
-	///@brief does the Assembly, as a whole, currently satisfy this requirement?
+	/// @brief does the Assembly, as a whole, currently satisfy this requirement?
 	//This should return TRUE iff the Assembly as it is now, with no consideration
 	//of future Assemblies, satisfies the requirement.
 	virtual
@@ -47,7 +47,7 @@ public:
 		AssemblyCOP assembly
 	) const = 0;
 
-	///@brief does the Assembly violate this segment? Unlike satisfies, violates
+	/// @brief does the Assembly violate this segment? Unlike satisfies, violates
 	//implies an irreparable violation, I.E. it should return TRUE iff the Assembly
 	//and all possible Assemblies built thereon will violate the Requirement.
 	virtual
@@ -57,7 +57,7 @@ public:
 	) const = 0;
 
 
-	///@brief Can we add more edges to the Assembly? Base class implementation
+	/// @brief Can we add more edges to the Assembly? Base class implementation
 	///returns true, so only implement for requirements that require Assemblies
 	///of a specific size
 	bool can_be_added_to(

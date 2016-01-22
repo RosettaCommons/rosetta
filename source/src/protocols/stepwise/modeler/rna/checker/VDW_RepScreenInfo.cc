@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/rna/checker/VDW_RepScreenInfo.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

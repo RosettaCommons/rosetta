@@ -41,7 +41,7 @@ InterModelMotifScorer::InterModelMotifScorer():
 	MotifScorer()
 {}
 
-///@details Use the negative normalized motif score
+/// @details Use the negative normalized motif score
 core::Real
 InterModelMotifScorer::score(
 	AssemblyCOP assembly
@@ -49,7 +49,7 @@ InterModelMotifScorer::score(
 	return -1.0 * full_motif_score(assembly);
 }
 
-///@details use Will's Motif score to calculate the motif score for interactions between
+/// @details use Will's Motif score to calculate the motif score for interactions between
 ///a given segment and segments from other models. Divide by total number of segments
 core::Real
 InterModelMotifScorer::full_motif_score(

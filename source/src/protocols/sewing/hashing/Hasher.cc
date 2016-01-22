@@ -100,7 +100,7 @@ Hasher::score_one(
 }
 
 
-///@details Insert the features  into the HashMap. This is done by
+/// @details Insert the features  into the HashMap. This is done by
 ///iterating through all possible basis sets (coordinate frames defined by atom positions), and for each set
 ///transform all features to the corresponding local coordinates and then insert then into the
 ///hash table. The complexity of this operation should be O(m^4) where m is the number of features.
@@ -146,7 +146,7 @@ Hasher::score(
 }
 
 
-///@details Tally the score of each model/basis_set in the HashMap against the input pose. This is very
+/// @details Tally the score of each model/basis_set in the HashMap against the input pose. This is very
 ///similar to the insert function, but instead of populating the hash with the transformed features,
 ///you tally the number of HashMap hits corresponding to each structure/basis_set pair.
 ScoreResults
@@ -312,7 +312,7 @@ Hasher::score_basis_125(
 } //score_basis_125
 
 
-///@details trim the given ScoreResults based on the number of segments that match
+/// @details trim the given ScoreResults based on the number of segments that match
 ///between two models, the number of atom matches for each of these segments, and the
 ///clash score (number of hits between atoms of different atom_types)
 void
@@ -363,7 +363,7 @@ Hasher::trim_scores(
 	}
 }//trim_scores
 
-///@details Keep only the segment matches between
+/// @details Keep only the segment matches between
 ///two models that has the most aligned atoms.
 ScoreResults
 Hasher::remove_duplicates(
@@ -471,7 +471,7 @@ Hasher::remove_connection_inconsistencies(
 }
 
 
-///@details when doing a lookup, look in each of the quarter angstrom bins surrounding
+/// @details when doing a lookup, look in each of the quarter angstrom bins surrounding
 ///the query key. This should prevent issues of close matches being missed due to being
 ///across bin boundaries.
 //utility::vector1<HashValue>
@@ -499,7 +499,7 @@ Hasher::neighborhood_lookup(
 
 
 
-///@details when doing a lookup, look in each of the quarter angstrom bins surrounding
+/// @details when doing a lookup, look in each of the quarter angstrom bins surrounding
 ///the query key. This should prevent issues of close matches being missed due to being
 ///across bin boundaries.
 //utility::vector1<HashValue>
@@ -535,7 +535,7 @@ Hasher::neighborhood_lookup_125(
 
 
 
-///@details Construct a HomogenousTransform using the 3 points in the BasisSet. Use this
+/// @details Construct a HomogenousTransform using the 3 points in the BasisSet. Use this
 ///HomogenousTransform to transform all features into the local coordinate frame
 Model
 Hasher::transform_model(
@@ -562,7 +562,7 @@ Hasher::transform_model(
 	return model;
 }
 
-///@details For each of the transformed features, insert the appropriate
+/// @details For each of the transformed features, insert the appropriate
 ///key-value pair into the hash table. The key is the 3D-voxel (or bin)
 ///corresponding to the basis set. The value is the residues number for the
 ///residue that generated basis set that the transformed atom coordinates are in frame of
@@ -602,7 +602,7 @@ Hasher::generate_key(
 
 
 
-///@details write the hash table to disk!
+/// @details write the hash table to disk!
 void
 Hasher::write_to_disk(std::string filename) const {
 
@@ -622,7 +622,7 @@ Hasher::write_to_disk(std::string filename) const {
 
 
 
-///@details read the hash table from disk. This function clears the contents of the hash map
+/// @details read the hash table from disk. This function clears the contents of the hash map
 void
 Hasher::read_from_disk(std::string filename) {
 

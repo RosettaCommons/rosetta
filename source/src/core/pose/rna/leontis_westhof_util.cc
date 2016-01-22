@@ -9,7 +9,7 @@
 
 /// @file core/pose/rna/leontis_westhof_util.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 #include <core/pose/rna/leontis_westhof_util.hh>
@@ -56,7 +56,7 @@ get_base_doublet_orientation_from_LW( BaseEdge const & edge1, BaseEdge const & e
 }
 
 ///////////////////////////////////////////////////////////////////
-/// @detailed
+/// @details
 /// From: RNA. 2001 Apr;7(4):499-512. "Geometric nomenclature and classification of RNA base pairs." Leontis NB, Westhof E.
 /// Table formatted to match personal communication from N. Leontis to R. Das.
 LW_Table const &

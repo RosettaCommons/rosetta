@@ -41,7 +41,7 @@ public:
 	/// @brief Default constructor.  Will use native aa from apply (Changes each pack if tf is passed).
 	ConservativeDesignOperation();
 
-	///@brief Constructor with setting of data source.
+	/// @brief Constructor with setting of data source.
 	ConservativeDesignOperation(std::string data_source);
 
 	virtual ~ConservativeDesignOperation();
@@ -88,7 +88,7 @@ public:
 	void
 	set_native_sequence( std::string seq);
 
-	///@brief Set the source of the data used to define what is conservative.
+	/// @brief Set the source of the data used to define what is conservative.
 	/// Options are: chothia_76, and the Blosum matrices from 30 to 100; designated as blosum30, 62, etc.
 	/// Default is blosum62.  The higher the number, the more conservative the set of mutations (numbers are sequence identity cutoffs)
 	void

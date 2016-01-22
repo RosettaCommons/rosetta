@@ -48,11 +48,11 @@ public:
 	///
 	ResidueArrayAnnealingEvaluator();
 
-	///@brief Destructor
+	/// @brief Destructor
 	//.
 	~ResidueArrayAnnealingEvaluator();
 
-	///@brief Copy constructor
+	/// @brief Copy constructor
 	///
 	ResidueArrayAnnealingEvaluator( ResidueArrayAnnealingEvaluator const &src );
 

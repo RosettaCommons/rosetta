@@ -170,7 +170,7 @@ A3BHbsPatcher::get_name() const {
 	return "A3BHbsPatcher";
 }
 
-///@brief
+/// @brief
 A3BHbsPatcher::A3BHbsPatcher(
 	core::Size hbs_seq_position
 ): Mover(), hbs_pre_pos_(hbs_seq_position), hbs_post_pos_(hbs_seq_position+2)

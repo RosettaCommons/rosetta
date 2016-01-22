@@ -9,7 +9,7 @@
 
 /// @file core/chemical/ResidueTypeFinder.hh
 /// @brief Functions to find residue_type(s) from ResidueTypeSet without requiring instantiation of all rsd_types.
-/// @detailed Intended to be super-efficient replacement for aa_map(), name3_map() in ResidueTypeSet.
+/// @details Intended to be super-efficient replacement for aa_map(), name3_map() in ResidueTypeSet.
 /// @author Rhiju Das, rhiju@stanford.edu
 
 #include <core/chemical/ResidueTypeFinder.hh>

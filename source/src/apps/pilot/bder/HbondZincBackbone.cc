@@ -92,7 +92,7 @@ using namespace core;
 basic::options::FileOptionKey const scaffold_protein( "scaffold_protein" );
 
 
-///@brief
+/// @brief
 class HbondZincBackbone : public protocols::moves::Mover {
 public:
   HbondZincBackbone()

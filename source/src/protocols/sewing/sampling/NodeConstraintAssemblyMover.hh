@@ -99,7 +99,7 @@ public:
 		ModelNode const * node
 	) const;
 
-	///@brief Extend base class method to
+	/// @brief Extend base class method to
 	///with checks for constraints
 	virtual
 	bool

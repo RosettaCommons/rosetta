@@ -83,7 +83,7 @@ static basic::Tracer TR("protocols.sewing.Assembly");
 
 Assembly::Assembly(){}
 
-///@brief Only used to add the first model to the Assembly, subsequent models
+/// @brief Only used to add the first model to the Assembly, subsequent models
 ///should be added using the follow_edge function
 void
 Assembly::add_model(
@@ -600,7 +600,7 @@ Assembly::follow_edge(
 
 
 
-///@details Use the given atom alignments to create mappings between SewResidues in the Assembly.
+/// @details Use the given atom alignments to create mappings between SewResidues in the Assembly.
 ///These mappings will be used to generate 'Native' Rotamers for positions in the final Pose
 void
 Assembly::map_residues(
@@ -661,7 +661,7 @@ Assembly::map_residues(
 }
 
 
-///@details create a map of sequence positions to ResidueOP objects for each of the 'natives' seen during the Assembly process. Ensure that if a residue
+/// @details create a map of sequence positions to ResidueOP objects for each of the 'natives' seen during the Assembly process. Ensure that if a residue
 ///is the first or last in the Assembly then we create lower and upper terminus types for that residues at tha position.
 NativeRotamersMap
 Assembly::generate_native_rotamers_map()
@@ -729,7 +729,7 @@ const {
 }
 
 
-///@details prepare the pose for packing by adding all the rotmaers defined by the chi-angles in SewResidue. Also,
+/// @details prepare the pose for packing by adding all the rotmaers defined by the chi-angles in SewResidue. Also,
 ///add residue type constraints to the Pose for each of the 'native' residue types for each position in the pose.
 void
 Assembly::prepare_for_packing(
@@ -847,7 +847,7 @@ Assembly::align_model(
 
 
 
-///@details convert this assembly to a pose. This involves
+/// @details convert this assembly to a pose. This involves
 ///creating ideal residues and placing them on the backbone atom
 ///coordinates held by the assembly. This function assembles the pose
 ///residues in the order they are contained in the segments_ vector
@@ -955,7 +955,7 @@ Assembly::to_pose(
 
 
 
-///@details for testing purposes, create a pose that includes all untrimmed
+/// @details for testing purposes, create a pose that includes all untrimmed
 ///segments. These will (or at least, should) heavily overlap with one another.
 ///Make each model a new chain
 core::pose::Pose
@@ -1080,7 +1080,7 @@ Assembly::delete_segments(
 }
 
 
-///@details find all possible segment orders where the CA-CA
+/// @details find all possible segment orders where the CA-CA
 ///distance of all unclosed loops is less than the max distance
 ///respect any current connections.
 utility::vector1< utility::vector1<core::Size> >
@@ -1196,7 +1196,7 @@ const {
 	return sum;
 }
 
-///@brief Records which positions in the given pose match the sequence identify of at least
+/// @brief Records which positions in the given pose match the sequence identify of at least
 ///one of the amino acids from the underlying models at that position.
 std::set<core::Size>
 Assembly::native_positions(

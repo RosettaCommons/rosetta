@@ -40,12 +40,12 @@ namespace antibody {
 namespace task_operations {
 
 
-///@brief Add Cluster-based CDR Profiles as the task operation for the set of CDRs by default.
+/// @brief Add Cluster-based CDR Profiles as the task operation for the set of CDRs by default.
 /// See protocols/toolbox/task_operations/ResidueProbTaskOperation for more.
 ///
 /// CDR definitions used are North/Dunbrack as the clusters are defined using it.
 ///
-///@details If Cluster-based profiles cannot be used, will use the fallback strategy.
+/// @details If Cluster-based profiles cannot be used, will use the fallback strategy.
 /// This can happen if the the CDR is of an unknown cluster or there is too little data
 /// about the cluster to use profiles.
 ///
@@ -91,7 +91,7 @@ public:
 
 	////////////////////
 
-	///@brief Pre load the profile data with this function instead of loading it when we apply.
+	/// @brief Pre load the profile data with this function instead of loading it when we apply.
 	/// Use this function after all settings are ready to save time with each apply.
 	/// This is needed due to const apply for TaskOps
 	void
@@ -103,7 +103,7 @@ public:
 
 
 
-	///@brief Set the CDR-level options as opposed to the defaults.
+	/// @brief Set the CDR-level options as opposed to the defaults.
 	void
 	set_design_options(design::AntibodyCDRSeqDesignOptions seq_design_options);
 
@@ -118,12 +118,12 @@ public:
 
 	//////// Set stategy options in CDRSeqDesignOptions //////
 
-	///@brief Set the primary strategy for all CDRs.  See AntibodyDesignEnum.hh for more
+	/// @brief Set the primary strategy for all CDRs.  See AntibodyDesignEnum.hh for more
 	/// Default is Cluster-based Sequence Probabilities - seq_design_profiles
 	void
 	set_primary_strategy(design::SeqDesignStrategyEnum primary_strategy);
 
-	///@brief Set the fallback strategy for all CDRs. If the primary strategy could not be
+	/// @brief Set the fallback strategy for all CDRs. If the primary strategy could not be
 	/// completed due to lack of data, will use this fallback strategy.
 	/// See AntibodyDesignEnum.hh for more
 	///
@@ -136,22 +136,22 @@ public:
 
 	////////
 
-	///@brief Set the number of times a sequence each chosen.  Increase this number to increase variability of design.
+	/// @brief Set the number of times a sequence each chosen.  Increase this number to increase variability of design.
 	/// Default 1 round
 	void
 	set_picking_rounds(core::Size rounds);
 
-	///@brief Add to the current set of amino acids in the task or replace them?
+	/// @brief Add to the current set of amino acids in the task or replace them?
 	/// Default False
 	void
 	set_add_to_current(bool add_to_current);
 
-	///@brief Include the poses current residue type in the allowed amino acids.
+	/// @brief Include the poses current residue type in the allowed amino acids.
 	/// Default True.
 	void
 	set_include_native_type(bool use_native);
 
-	///@brief Use cluster outliers as defined using DihedralDistance and RMSD.
+	/// @brief Use cluster outliers as defined using DihedralDistance and RMSD.
 	/// Default false.
 	void
 	set_use_outliers( bool use_outliers);
@@ -159,24 +159,24 @@ public:
 	void
 	set_defaults();
 
-	///@brief Force the use of the north paper DB.  Used for benchmarking and Unit Tests.
+	/// @brief Force the use of the north paper DB.  Used for benchmarking and Unit Tests.
 	void
 	set_force_north_paper_db(bool force_north_db);
 
-	///@brief Set the cutoff.  Will not add the profile set if the total is less than or equal to this number.
+	/// @brief Set the cutoff.  Will not add the profile set if the total is less than or equal to this number.
 	/// Default is 10.
 	void
 	set_stats_cutoff( core::Size stats_cutoff);
 
-	///@brief For residue types that have a probability of 0, use this setting
+	/// @brief For residue types that have a probability of 0, use this setting
 	/// to give a probability to them that is not zero.
 	/// Used to increase variability of designs.
 	void
 	set_sample_zero_probs_at( core::Real zero_prob_sample);
 
-	///@brief Set the data source for conservative design.  Default is blosum62.  Increased blosum are more stringent, more conservative design.
+	/// @brief Set the data source for conservative design.  Default is blosum62.  Increased blosum are more stringent, more conservative design.
 	///
-	///@details
+	/// @details
 	///legal = 'chothia_1976', 'BLOSUM30', 'blosum30', 'BLOSUM35', 'blosum35', 'BLOSUM40', 'blosum40',
 	///  'BLOSUM45', 'blosum45', 'BLOSUM50', 'blosum50', 'BLOSUM55', 'blosum55', 'BLOSUM60', 'blosum60',
 	/// 'BLOSUM62', 'blosum62', 'BLOSUM65', 'blosum65', 'BLOSUM70', 'blosum70', 'BLOSUM75', 'blosum75',

@@ -29,7 +29,7 @@ namespace antibody {
 //typedef std::map<CDRNameEnum, CDRSetInstructions> AntibodyCDRSetOptions;
 typedef utility::vector1<CDRSetOptionsOP> AntibodyCDRSetOptions;
 
-///@brief Class that holds instructions for a single CDR for loading from the antibody database.
+/// @brief Class that holds instructions for a single CDR for loading from the antibody database.
 /// Default is instructions to load all CDRs from the database
 class CDRSetOptions : public utility::pointer::ReferenceCount {
 
@@ -68,7 +68,7 @@ public:
 
 	/////////// Length Types ////////////
 
-	///@brief Set to only sample with clusters of the given type for this CDR.
+	/// @brief Set to only sample with clusters of the given type for this CDR.
 	void
 	length_type(core::Size const type, bool const setting);
 
@@ -80,7 +80,7 @@ public:
 
 	////////////// CDR Lengths /////////////////
 
-	///@brief set the minimum cdr length to sample.  Nothing shorter then this will be used during graft.
+	/// @brief set the minimum cdr length to sample.  Nothing shorter then this will be used during graft.
 	void
 	min_length(core::Size length);
 
@@ -90,7 +90,7 @@ public:
 	}
 
 
-	///@brief set the maximum cdr length to sample.  Nothing longer then this will be used.  Useful for H3.
+	/// @brief set the maximum cdr length to sample.  Nothing longer then this will be used.  Useful for H3.
 	void
 	max_length(core::Size length);
 
@@ -209,10 +209,10 @@ public:
 
 	/////// Current Cluster ////////
 
-	///@brief
+	/// @brief
 	/// If antibody CDRs are loaded in relation to the current PDB in whatever algorithm or app is using this,
 	///  Should we only pull clusters of the same type as this PDB?
-	///@details
+	/// @details
 	/// May or may not be used.  In AntibodyGraftDesign, this is used.
 	///
 	void
@@ -221,7 +221,7 @@ public:
 	bool
 	include_only_current_cluster() const;
 
-	///@brief
+	/// @brief
 	/// Do we only include the center members of the clusters in the CDRSet?
 	void
 	include_only_center_clusters(bool centers_only);
@@ -229,7 +229,7 @@ public:
 	bool
 	include_only_center_clusters() const;
 
-	///@brief Set a sampling cutoff.  Use zero for no cutoff as default.
+	/// @brief Set a sampling cutoff.  Use zero for no cutoff as default.
 	void
 	cluster_sampling_cutoff(core::Size cutoff);
 

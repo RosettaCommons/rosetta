@@ -9,7 +9,7 @@
 
 /// @file core/chemical/ResidueTypeSetCache.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -41,7 +41,7 @@ public:
 
 public:
 
-	///@details Main accessor function into ResidueTypeSetCache
+	/// @details Main accessor function into ResidueTypeSetCache
 	ResidueType const &
 	name_map( std::string const & name_in ) const;
 

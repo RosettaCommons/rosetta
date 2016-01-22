@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/components/NamedMover.hh
 /// @brief NamedMover functions for building structures from components
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

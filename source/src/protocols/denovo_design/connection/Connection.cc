@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/Connection.cc
 /// @brief Connection objects for piece-wise assembly of structures
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

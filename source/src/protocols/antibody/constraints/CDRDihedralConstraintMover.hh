@@ -35,7 +35,7 @@ namespace protocols {
 namespace antibody {
 namespace constraints {
 
-///@brief Add Cluster or General Dihedral CircularHarmonic constraints to a CDR.
+/// @brief Add Cluster or General Dihedral CircularHarmonic constraints to a CDR.
 ///  Cluster constraints currently only work for AHO renumbered CDRs.
 ///   (This will be rafactored to create constraints on-the-fly from cluster Mean/SD instead of from cst files.)
 ///
@@ -63,12 +63,12 @@ public:
 
 
 
-	///@brief Attempt to add cluster-based dihedral constraints.  If this is set to false will simply add General Dihedral constraints instead.
+	/// @brief Attempt to add cluster-based dihedral constraints.  If this is set to false will simply add General Dihedral constraints instead.
 	/// Default True
 	void
 	set_use_cluster_csts(bool use_cluster_csts);
 
-	///@brief If we are set to use cluster csts and:
+	/// @brief If we are set to use cluster csts and:
 	///  1) the cluster is NA,
 	///  2) there is sparse data for the cluster, or
 	///  3) The CDR is H3 and we have chosen not to use cluster data for H3 (default),
@@ -86,18 +86,18 @@ public:
 
 public:
 
-	///@brief Do not use AntibodyInfo to for cluster - use this cluster instead
+	/// @brief Do not use AntibodyInfo to for cluster - use this cluster instead
 	void
 	set_force_cluster(clusters::CDRClusterEnum cluster);
 
-	///@brief Remove any forced cluster settings.
+	/// @brief Remove any forced cluster settings.
 	void
 	set_remove_any_set_forced_cluster();
 
 	void
 	set_cluster_csts_data_cutoff(core::Size cutoff);
 
-	///@brief Use constraints which have the means as the actual cluster means.
+	/// @brief Use constraints which have the means as the actual cluster means.
 	///  Setting this to false will use constraints that have the cst means set as cluster center data.
 	void
 	set_cluster_csts_use_mean_cst_data(bool use_mean_cst_data);
@@ -105,7 +105,7 @@ public:
 	void
 	set_cluster_csts_use_outlier_data(bool use_outlier_data);
 
-	///@brief Set to use H3 cluster data for constraints if we are doing cluster-based constraints.
+	/// @brief Set to use H3 cluster data for constraints if we are doing cluster-based constraints.
 	/// Default False - H3 does not cluster well.  If use_general_data_on_failure is false, we will skip H3.
 	void
 	set_use_cluster_for_H3(bool use_cluster_for_H3);
@@ -117,7 +117,7 @@ public:
 	void
 	set_general_psi_sd(core::Real psi_sd);
 
-	///@brief By default, if cluster information is present in the datacache, we attempt to use that first.
+	/// @brief By default, if cluster information is present in the datacache, we attempt to use that first.
 	/// Override this behavior by setting this option to true.
 	void
 	set_ignore_pose_datacache(bool ignore_pose_datacache);

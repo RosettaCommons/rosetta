@@ -80,7 +80,7 @@ BackboneGridSamplerCreator::mover_name()
 }
 
 ///
-///@brief Creator for BackboneGridSampler mover.
+/// @brief Creator for BackboneGridSampler mover.
 BackboneGridSampler::BackboneGridSampler():
 	Mover("BackboneGridSampler"),
 	nstruct_mode_(false),
@@ -137,17 +137,17 @@ BackboneGridSampler::BackboneGridSampler( BackboneGridSampler const & src ):
 }
 
 ///
-///@brief Destructor for BackboneGridSampler mover.
+/// @brief Destructor for BackboneGridSampler mover.
 BackboneGridSampler::~BackboneGridSampler() {}
 
 ///
-///@brief Clone operator to create a pointer to a fresh BackboneGridSampler object that copies this one.
+/// @brief Clone operator to create a pointer to a fresh BackboneGridSampler object that copies this one.
 protocols::moves::MoverOP BackboneGridSampler::clone() const {
 	return protocols::moves::MoverOP( new BackboneGridSampler( *this ) );
 }
 
 ///
-///@brief Fresh_instance operator to create a pointer to a fresh BackboneGridSampler object that does NOT copy this one.
+/// @brief Fresh_instance operator to create a pointer to a fresh BackboneGridSampler object that does NOT copy this one.
 protocols::moves::MoverOP BackboneGridSampler::fresh_instance() const {
 	return protocols::moves::MoverOP( new BackboneGridSampler );
 }
@@ -415,7 +415,7 @@ void BackboneGridSampler::apply (core::pose::Pose & pose)
 ////////////////////////////////////////////////////////////////////////////////
 
 ///
-///@brief Returns the name of this mover ("BackboneGridSampler").
+/// @brief Returns the name of this mover ("BackboneGridSampler").
 std::string BackboneGridSampler::get_name() const{
 	return "BackboneGridSampler";
 }
@@ -424,7 +424,7 @@ std::string BackboneGridSampler::get_name() const{
 //          PARSE MY TAG FUNCTION                                            ///
 ////////////////////////////////////////////////////////////////////////////////
 
-///@brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
 ///
 void
 BackboneGridSampler::parse_my_tag(

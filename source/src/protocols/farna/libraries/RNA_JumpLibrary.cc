@@ -79,7 +79,7 @@ RNA_PairingTemplate::RNA_PairingTemplate(
 	atom_name2_( atom_name2 )
 {}
 
-///@brief constructor
+/// @brief constructor
 RNA_JumpLibrary::RNA_JumpLibrary( std::string const & filename ):
 	jump_library_filename_( filename )
 {
@@ -87,7 +87,7 @@ RNA_JumpLibrary::RNA_JumpLibrary( std::string const & filename ):
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-///@details following is not actually const, but involves lazy loading to a mutable map.
+/// @details following is not actually const, but involves lazy loading to a mutable map.
 void
 RNA_JumpLibrary::read_jumps_from_file() const
 {

@@ -67,14 +67,14 @@ SmotifFeatures::SmotifFeatures( SmotifFeatures const & /*src*/ ) : FeaturesRepor
 
 SmotifFeatures::~SmotifFeatures(){}
 
-///@brief return string with class name
+/// @brief return string with class name
 std::string
 SmotifFeatures::type_name() const
 {
 	return "SmotifFeatures";
 }
 
-///@brief generate the table schemas and write them to the database
+/// @brief generate the table schemas and write them to the database
 void
 SmotifFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
 {
@@ -143,7 +143,7 @@ SmotifFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) 
 	smotifs.write(db_session);
 }
 
-///@brief return the set of features reporters that are required to
+/// @brief return the set of features reporters that are required to
 ///also already be extracted by the time this one is used.
 utility::vector1<std::string>
 SmotifFeatures::features_reporter_dependencies() const
@@ -213,7 +213,7 @@ SmotifFeatures::calculate_angles(
 	meridian_angle_degrees = dihedral_degrees(p0,p1,p2,p3);
 }
 
-///@brief collect all the feature data for the pose
+/// @brief collect all the feature data for the pose
 core::Size
 SmotifFeatures::report_features(
 	core::pose::Pose const & pose,

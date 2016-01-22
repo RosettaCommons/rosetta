@@ -71,10 +71,10 @@ public:
 
 	void show( std::ostream& out) const;
 
-	///@brief Sets up SiteConstaint between the residue of interest and a chain
+	/// @brief Sets up SiteConstaint between the residue of interest and a chain
 	void setup_csts( Size res, std::string name, std::string chain, core::pose::Pose const & pose, func::FuncOP const & func );
 
-	///@brief Sets up SiteConstraint between the residue of interest and a subset of residues
+	/// @brief Sets up SiteConstraint between the residue of interest and a subset of residues
 	void setup_csts(Size res, std::string name, utility::vector1<bool> const & residues, core::pose::Pose const & pose, func::FuncOP const & func);
 
 #ifdef    SERIALIZATION

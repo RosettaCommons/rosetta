@@ -57,7 +57,7 @@ public:
 
 	virtual ~CountPair2B() {} // inlined when declared on the stack
 
-	///@brief function required by templated functions in atom_pair_energy_inline
+	/// @brief function required by templated functions in atom_pair_energy_inline
 	inline
 	bool
 	operator () (

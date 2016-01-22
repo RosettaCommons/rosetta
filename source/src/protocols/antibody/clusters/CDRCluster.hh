@@ -90,7 +90,7 @@ public:
 	core::Real
 	normalized_distance_in_degrees() const;
 
-	///@brief Does the closest cluster match at cis_trans positions?
+	/// @brief Does the closest cluster match at cis_trans positions?
 	/// Currently, this should always be True.
 	bool
 	cis_trans_match() const { return cis_trans_match_; }

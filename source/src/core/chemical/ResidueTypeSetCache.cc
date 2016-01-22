@@ -9,7 +9,7 @@
 
 /// @file core/chemical/ResidueTypeSetCache.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 #include <core/chemical/ResidueTypeSetCache.hh>
@@ -35,7 +35,7 @@ ResidueTypeSetCache::ResidueTypeSetCache( ResidueTypeSet const & rsd_type_set ):
 ResidueTypeSetCache::~ResidueTypeSetCache()
 {}
 
-///@details Main accessor function into ResidueTypeSetCache
+/// @details Main accessor function into ResidueTypeSetCache
 ResidueType const &
 ResidueTypeSetCache::name_map( std::string const & name_in ) const
 {

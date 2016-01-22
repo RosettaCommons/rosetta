@@ -284,7 +284,7 @@ private:
 
 	/// @brief Load a custom Ramachandran table, in addition to the 20x3 standard
 	/// ones that are always loaded.
-	/// @detailed Intended for sampling with alternative Ramachandran distributions.  Custom
+	/// @details Intended for sampling with alternative Ramachandran distributions.  Custom
 	/// tables are lazily loaded so as not to add to total Rosetta memory footprint.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void load_custom_rama_table( Rama_Table_Type const type );

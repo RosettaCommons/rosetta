@@ -9,7 +9,7 @@
 
 /// @file core/pose/rna/leontis_westhof_util.hh
 /// @brief  Implementation of Leontis/Westhof nucleic acid base-pair classification
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

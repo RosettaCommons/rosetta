@@ -74,19 +74,19 @@ public:
 	//  InterSegmentRequirementOP inter_segment_requirement
 	// );
 
-	///@brief Evaluated if this Assembly satisfies all
+	/// @brief Evaluated if this Assembly satisfies all
 	///contained AssemblyRequirements
 	bool satisfies(
 		AssemblyCOP assembly
 	) const;
 
-	///@brief Evaluate if this Assembly violates any contained
+	/// @brief Evaluate if this Assembly violates any contained
 	///AssemblyRequirements
 	bool violates(
 		AssemblyCOP assembly
 	) const;
 
-	///@brief Check all Global requirements to see if we
+	/// @brief Check all Global requirements to see if we
 	///can add more edges to this Assembly
 	bool can_be_added_to(
 		AssemblyCOP assembly

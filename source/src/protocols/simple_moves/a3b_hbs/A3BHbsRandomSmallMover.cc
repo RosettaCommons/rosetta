@@ -69,7 +69,7 @@ namespace protocols {
 namespace simple_moves {
 namespace a3b_hbs {
 
-///@details
+/// @details
 void A3BHbsRandomSmallMover::apply( core::pose::Pose & pose ){
 
 	using numeric::conversions::radians;

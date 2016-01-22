@@ -31,7 +31,7 @@ namespace protocols {
 namespace antibody {
 
 
-///@brief Parses CDRSetOptions for a single CDR at a time from a simple instruction file
+/// @brief Parses CDRSetOptions for a single CDR at a time from a simple instruction file
 class CDRSetOptionsParser : public utility::pointer::ReferenceCount {
 public:
 
@@ -42,7 +42,7 @@ public:
 	CDRSetOptionsOP
 	parse_options(CDRNameEnum cdr, std::string filename);
 
-	///@brief Parse default instructions (mainly used for AbDesign) then parse user file
+	/// @brief Parse default instructions (mainly used for AbDesign) then parse user file
 	CDRSetOptionsOP
 	parse_default_and_user_options(CDRNameEnum cdr, std::string filename);
 
@@ -64,7 +64,7 @@ public:
 
 private:
 
-	///@brief Tries to find the path in either database, relative, or absolute, sets it.
+	/// @brief Tries to find the path in either database, relative, or absolute, sets it.
 	void
 	check_path();
 

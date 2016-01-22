@@ -28,12 +28,12 @@ namespace simple_moves {
 namespace a3b_hbs {
 
 
-///@details
+/// @details
 class A3BHbsRandomSmallMover : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
 	A3BHbsRandomSmallMover(
 	);
 

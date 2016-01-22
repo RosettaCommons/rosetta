@@ -9,7 +9,7 @@
 
 /// @file protocols/toolbox/AtomID_Mapper.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -29,7 +29,7 @@ using namespace core::id;
 using namespace core::pose;
 
 ///////////////////////////////////////////////////////////////////////////
-/// @detailed
+/// @details
 ///
 /// Developed for RNA_DeNovo (farna) applications; also in use (as part
 ///  of AtomLevelDomainMap) in ConstrainToIdealMover.

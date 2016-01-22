@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/connection/ExtendChain.hh
 /// @brief The ExtendChain Protocol, for connecting oligomeric structures
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

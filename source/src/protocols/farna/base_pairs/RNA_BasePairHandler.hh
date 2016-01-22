@@ -9,7 +9,7 @@
 
 /// @file protocols/farna/base_pairs/RNA_BasePairHandler.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

@@ -39,7 +39,7 @@ namespace protocols {
 namespace antibody {
 namespace design {
 
-///@brief Main AntibodyDesignProtocol, tieing together individual movers and classes.  Main mover for application.
+/// @brief Main AntibodyDesignProtocol, tieing together individual movers and classes.  Main mover for application.
 ///
 class AntibodyDesignProtocol : public protocols::moves::Mover {
 
@@ -58,7 +58,7 @@ public:
 	protocols::moves::MoverOP
 	fresh_instance() const;
 
-	///@brief Parse my tag for RosettaScripts.  Main RS interface is in AntibodyDesignMover.
+	/// @brief Parse my tag for RosettaScripts.  Main RS interface is in AntibodyDesignMover.
 	/// This is just a small implementation, controlled mainly through cmd-line flags.
 	virtual void
 	parse_my_tag(
@@ -74,17 +74,17 @@ public:
 	//
 	//
 
-	///@brief Set the global scorefunction.  Used for snugdock/relax/total energy/etc.
+	/// @brief Set the global scorefunction.  Used for snugdock/relax/total energy/etc.
 	/// Not Used for Docking within the protocol.
 	void
 	set_scorefxn(core::scoring::ScoreFunctionOP scorefxn);
 
-	///@brief Set the min scorefunction used by the AntibodyDesignMover during the Minimization step.
+	/// @brief Set the min scorefunction used by the AntibodyDesignMover during the Minimization step.
 	/// Should include dihedral_constraint weights if using default CDR constraints added during the protocol.
 	void
 	set_scorefxn_min(core::scoring::ScoreFunctionOP scorefxn);
 
-	///@brief Set the instruction file path instead of reading it from the cmd-line options.
+	/// @brief Set the instruction file path instead of reading it from the cmd-line options.
 	void
 	set_instruction_file_path(std::string instruction_file);
 
@@ -95,11 +95,11 @@ public:
 	//
 
 
-	///@brief Run SnugDock after main design runs
+	/// @brief Run SnugDock after main design runs
 	void
 	set_run_snugdock(bool setting);
 
-	///@brief Run Dualspace Relax after main design runs
+	/// @brief Run Dualspace Relax after main design runs
 	void
 	set_run_relax(bool setting);
 
@@ -119,7 +119,7 @@ private:
 	void
 	setup_design_mover();
 
-	///@brief Set constraint and chainbreak score on scorefunction if not already set.
+	/// @brief Set constraint and chainbreak score on scorefunction if not already set.
 	void
 	setup_scorefxns();
 
@@ -129,7 +129,7 @@ private:
 
 
 
-	///@brief Post-design step modeling.  Less aggressive, more high resolution.  Default false.
+	/// @brief Post-design step modeling.  Less aggressive, more high resolution.  Default false.
 	void
 	model_post_design(core::pose::Pose & pose);
 
@@ -139,7 +139,7 @@ private:
 	void
 	init_on_new_input( core::pose::Pose const & pose );
 
-	///@brief Used to output ongoing current ensembles during the protocol.  Specify a range in the vector to output
+	/// @brief Used to output ongoing current ensembles during the protocol.  Specify a range in the vector to output
 	void
 	output_ensemble( utility::vector1< core::pose::PoseOP > ensemble, core::Size range_start, core::Size range_end, std::string prefix);
 

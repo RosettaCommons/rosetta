@@ -204,7 +204,7 @@ MonteCarloAssemblyMover::generate_assembly(){
 } //generate_assembly
 
 
-///@details If we haven't added an edges yet, pick a random node to start from. Otherwise
+/// @details If we haven't added an edges yet, pick a random node to start from. Otherwise
 ///Pick a random node from the current assembly that has the ability to have edges built
 ///from it. This method returns true if an edge was added, false if we couldn't add an edge
 ///either due to no edges being in the graph, or no edges satisfying requirements.
@@ -307,7 +307,7 @@ MonteCarloAssemblyMover::add_edge(
 
 
 
-///@details Simply go back to the Assembly before
+/// @details Simply go back to the Assembly before
 ///the most recent edge addition
 void
 MonteCarloAssemblyMover::delete_edge(
@@ -329,7 +329,7 @@ MonteCarloAssemblyMover::delete_edge(
 }
 
 
-///@details A switch is just an auto-accepted delete followed by an add, the
+/// @details A switch is just an auto-accepted delete followed by an add, the
 ///reason it needs to be its own operation is due to the fact
 ///that our scoring doesn't properly weight the value of an empty
 ///Assembly, and thus removing the first node will never be accepted.

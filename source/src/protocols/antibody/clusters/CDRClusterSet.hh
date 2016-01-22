@@ -106,7 +106,7 @@ private:
 
 };
 
-///@brief Basic container class for CDRClusterSet, with some extra information
+/// @brief Basic container class for CDRClusterSet, with some extra information
 class BasicCDRClusterSet : public basic::datacache::CacheableData {
 public:
 	BasicCDRClusterSet();

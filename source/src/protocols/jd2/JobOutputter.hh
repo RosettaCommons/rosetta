@@ -54,7 +54,7 @@ public:
 
 	virtual ~JobOutputter();
 
-	///@brief this function is meant to be redefined in child classes to allow for flushing of memory buffers.
+	/// @brief this function is meant to be redefined in child classes to allow for flushing of memory buffers.
 	/// Here's the long version: The SilentFileJobOutputter wanted to buffer output, but needed to guaruntee that
 	/// the output would be flushed at end of runtime.  The original implementation was to A) bend over backward to ensure
 	/// that the destructor was run (JobOutputter lives inside static JobDistributor, which was previously not destructed

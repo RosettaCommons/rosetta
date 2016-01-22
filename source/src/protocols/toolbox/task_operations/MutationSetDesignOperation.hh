@@ -37,11 +37,11 @@ namespace task_operations {
 
 typedef std::map<core::Size, core::chemical::AA> MutationSet;
 
-///@brief  Sample a set of mutations each time packer is generated.
+/// @brief  Sample a set of mutations each time packer is generated.
 /// A MutationSet is a simple map of resnum:aa.
 /// Each apply will sample a set either at random, or with a set of weights.
 ///
-///@details Does not enable/disable packing or design by default.  Simply controls what the design set will be.
+/// @details Does not enable/disable packing or design by default.  Simply controls what the design set will be.
 /// Typically each set would be of the same resnums, but this is not necessary.
 /// Iterative Sampling can be achieved somewhat by setting the sample index with each pack.
 ///  Does not touch any resnums not in a sampled mutation set.
@@ -66,43 +66,43 @@ public:
 
 	virtual ~MutationSetDesignOperation();
 
-	///@brief Set the mutation sets.
+	/// @brief Set the mutation sets.
 	/// Each MutationSet is a std::map of resnum:aa
 	/// Will use a weight of 1 for each.
 	void
 	set_mutation_sets( utility::vector1< MutationSet > mutation_sets);
 
-	///@brief Set the mutation sets and corresponding weights
+	/// @brief Set the mutation sets and corresponding weights
 	/// Each MutationSet is a std::map of resnum:aa
 	void
 	set_mutation_sets(
 		utility::vector1< MutationSet > mutation_sets,
 		utility::vector1< core::Real > mutation_set_weights);
 
-	///@brief add a mutation set with weight 1.
+	/// @brief add a mutation set with weight 1.
 	void
 	add_mutation_set( MutationSet mutation_set);
 
-	///@brief add a mutation set with a weight.
+	/// @brief add a mutation set with a weight.
 	void
 	add_mutation_set( MutationSet mutation_set, core::Real weight);
 
-	///@brief Clear any stored mutation sets and weights.
+	/// @brief Clear any stored mutation sets and weights.
 	void
 	clear_mutation_sets();
 
 
 	///////// Sampling Control /////////////
 
-	///@brief Add to the allowed amino acids list instead of replacing them.  Default false.
+	/// @brief Add to the allowed amino acids list instead of replacing them.  Default false.
 	void
 	add_to_allowed_aas(bool const & setting);
 
-	///@brief Include native amino acid in the allowed_aas list.  Default False.
+	/// @brief Include native amino acid in the allowed_aas list.  Default False.
 	void
 	include_native_aa(bool const & setting);
 
-	///@brief Number of times we sample from our sets. Default 1/apply.
+	/// @brief Number of times we sample from our sets. Default 1/apply.
 	/// The more rounds, the closer the final amino acid set for each position will be to the full profile for that position.
 	/// If using weights for the residue sets, this would increase variability.
 	void
@@ -111,15 +111,15 @@ public:
 
 	///////// Iterative Sampling Mode ///////////  This can't work as apply is const. Fuck.
 
-	///@brief Set the class to iterate through the sets instead of sampling from them.
+	/// @brief Set the class to iterate through the sets instead of sampling from them.
 	//void
 	//use_iterative_mode(bool setting);
 
-	///@brief Get the sampling number if using iterative mode.  Starts at zero, resets with size of mutation set.
+	/// @brief Get the sampling number if using iterative mode.  Starts at zero, resets with size of mutation set.
 	//core::Size
 	//get_sample_number() const;
 
-	///@brief Used to sample particular indexes, since we can't do this iteratively due to const apply. 1 through n
+	/// @brief Used to sample particular indexes, since we can't do this iteratively due to const apply. 1 through n
 	/// Set to 0 in order to sample from the weights.
 	void
 	set_sample_index( core::Size sample_index);
@@ -127,11 +127,11 @@ public:
 	core::Size
 	get_sample_index() const;
 
-	///@brief Get the total number of mutation sets housed.
+	/// @brief Get the total number of mutation sets housed.
 	core::Size
 	get_total_mutation_sets() const;
 
-	///@brief Set the sample index back to zero - which means we will sample from all of them according to weights.
+	/// @brief Set the sample index back to zero - which means we will sample from all of them according to weights.
 	void
 	reset_sample_index();
 

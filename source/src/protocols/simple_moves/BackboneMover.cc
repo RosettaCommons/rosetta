@@ -111,7 +111,7 @@ BackboneMover::BackboneMover(
 	angle_max( 'E', 5.0 ); // strand
 }
 
-///@brief Copy constructor
+/// @brief Copy constructor
 ///
 BackboneMover::BackboneMover( BackboneMover const &src ) :
 	protocols::canonical_sampling::ThermodynamicMover( src ),

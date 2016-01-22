@@ -203,7 +203,7 @@ utility::vector1<HelicalFragmentOP> HelixBundleFeatures::get_helices(StructureID
 	return all_valid_helices;
 }
 
-///@brief calculate the shared fa_attr for each pair of helices
+/// @brief calculate the shared fa_attr for each pair of helices
 /// in the bundle
 //void
 //HelixBundleFeatures::calc_fa_energy(
@@ -405,7 +405,7 @@ HelixBundleFeatures::report_features(
 
 
 
-///@details validate that the bundle fits all the requirements. Currently, the only
+/// @details validate that the bundle fits all the requirements. Currently, the only
 ///requirement is that each helix in the bundle has a c-alpha, c-alpha distance less
 ///than the specified cutoff with at least 2 other helices in the same bundle
 bool
@@ -449,7 +449,7 @@ HelixBundleFeatures::validate_bundle(
 }
 
 
-///@details Write the given bundle to the database. This involves writing
+/// @details Write the given bundle to the database. This involves writing
 ///to three tables:
 ///helix_bundles - the top-level table. Has a unique bundle_id. FK to the structure
 ///bundle_helices - the individual helical segments that make up the bundle. FK to the bundle table

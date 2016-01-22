@@ -11,7 +11,7 @@
 /// @brief run backrub Monte Carlo
 /// @author Colin A. Smith (colin.smith@ucsf.edu)
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) (Move to Protocols from apps, add Movemap support, some refactoring)
-/// @detailed
+/// @details
 /// Currently a work in progress. The goal is to match the features of rosetta++ -backrub_mc
 
 

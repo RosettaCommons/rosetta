@@ -78,7 +78,7 @@ basic::options::RealOptionKey const zn_constraint_weight("zn_constraint_weight")
 
 
 
-///@brief
+/// @brief
 class ZincMinimize : public protocols::moves::Mover {
 public:
   ZincMinimize()

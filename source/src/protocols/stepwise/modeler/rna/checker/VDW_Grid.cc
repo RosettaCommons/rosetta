@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/rna/checker/VDW_Grid.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Caleb Geniesse, geniesse@stanford.edu
 
 

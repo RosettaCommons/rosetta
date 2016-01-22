@@ -76,7 +76,7 @@ public:
 
 	AnchoredGraftMover();
 
-	///@brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
+	/// @brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
 	AnchoredGraftMover(core::Size const start, core::Size const end, bool copy_pdbinfo = false);
 
 	AnchoredGraftMover(
@@ -147,21 +147,21 @@ public:
 	virtual void
 	set_fa_scorefunction(core::scoring::ScoreFunctionCOP score);
 
-	///@brief Sets the mintype for the MinMover
+	/// @brief Sets the mintype for the MinMover
 	void
 	set_mintype(std::string mintype);
 
-	///@brief Sets the mover to skip the small mover sampling step.
+	/// @brief Sets the mover to skip the small mover sampling step.
 	void
 	set_skip_sampling(bool skip_sampling);
 
 public:
 
-	///@brief Sets scaffold flexiblity on either end of scaffold
+	/// @brief Sets scaffold flexiblity on either end of scaffold
 	virtual void
 	set_scaffold_flexibility(core::Size const Nter_scaffold_flexibility, core::Size const Cter_scaffold_flexibility);
 
-	///@brief Sets insert flexibility on either end of insert
+	/// @brief Sets insert flexibility on either end of insert
 	virtual void
 	set_insert_flexibility(core::Size const Nter_insert_flexibility, core::Size const Cter_insert_flexibility);
 
@@ -188,7 +188,7 @@ public:
 	core::Size get_nterm_insert_flexibility();
 	core::Size get_cterm_insert_flexibility();
 
-	///@returns the Cterminal loop end (Last flexible residue).  Useful to use after insertion.
+	/// @returns the Cterminal loop end (Last flexible residue).  Useful to use after insertion.
 	core::Size get_Cter_loop_end();
 
 	protocols::loops::Loops

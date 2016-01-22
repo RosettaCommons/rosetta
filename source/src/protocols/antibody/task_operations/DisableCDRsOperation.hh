@@ -32,24 +32,24 @@ namespace antibody {
 namespace task_operations {
 
 
-///@brief TaskOperation to Disable Packing and/or design of a set of CDRs.
+/// @brief TaskOperation to Disable Packing and/or design of a set of CDRs.
 /// By default, disables both Packing and Design of all CDRs.
 ///
-///@details See options for setting specific CDRs and whether to only disable design.
+/// @details See options for setting specific CDRs and whether to only disable design.
 ///
 class DisableCDRsOperation : public core::pack::task::operation::TaskOperation {
 public:
 
-	///@brief Default Constructor.
+	/// @brief Default Constructor.
 	DisableCDRsOperation();
 
-	///@brief Regular Constructor
+	/// @brief Regular Constructor
 	DisableCDRsOperation(AntibodyInfoCOP ab_info);
 
-	///@brief Constructor Specifying set of cdrs to use
+	/// @brief Constructor Specifying set of cdrs to use
 	DisableCDRsOperation(AntibodyInfoCOP ab_info, utility::vector1<bool> const & cdrs);
 
-	///@brief Constructor Specifying set of cdrs and what to disable
+	/// @brief Constructor Specifying set of cdrs and what to disable
 	DisableCDRsOperation(
 		AntibodyInfoCOP ab_info,
 		utility::vector1<bool> const & cdrs,
@@ -75,15 +75,15 @@ public:
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
 
-	///@brief Set the CDRs we will be disabling - 6/8 long vector corresponding to Enum.
+	/// @brief Set the CDRs we will be disabling - 6/8 long vector corresponding to Enum.
 	void
 	set_cdrs(utility::vector1<bool> const & cdrs);
 
-	///@brief Set only a single CDR to disable.
+	/// @brief Set only a single CDR to disable.
 	void
 	set_cdr_only(CDRNameEnum cdr);
 
-	///@brief Set to disable packing and design, or only just design.
+	/// @brief Set to disable packing and design, or only just design.
 	void
 	set_disable_packing_and_design(bool disable_packing_and_design);
 

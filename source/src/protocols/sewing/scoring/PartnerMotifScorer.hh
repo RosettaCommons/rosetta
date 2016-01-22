@@ -37,7 +37,7 @@ class PartnerMotifScorer : public MotifScorer {
 
 public:
 
-	///@brief default construct
+	/// @brief default construct
 	PartnerMotifScorer();
 
 	virtual ~PartnerMotifScorer(){}

@@ -79,7 +79,7 @@ A3BHbsMover::get_name() const {
 	return "HbsMover";
 }
 
-///@brief
+/// @brief
 A3BHbsMover::A3BHbsMover(
 		core::Size seq_position 
 	): Mover(), seq_pos_(seq_position)

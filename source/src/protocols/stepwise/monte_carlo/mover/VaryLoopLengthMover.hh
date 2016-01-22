@@ -29,7 +29,7 @@ namespace stepwise {
 namespace monte_carlo {
 namespace mover {
 
-///@brief In stepwise design, vary desired loop lengths by updating FullModelParameters
+/// @brief In stepwise design, vary desired loop lengths by updating FullModelParameters
 class VaryLoopLengthMover : public protocols::moves::Mover {
 
 public:

@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/components/Picker.cc
 /// @brief Auto-caching fragment picker
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

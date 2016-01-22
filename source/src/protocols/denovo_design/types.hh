@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/components/types.hh
 /// @brief Useful types for Tomponent movers
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

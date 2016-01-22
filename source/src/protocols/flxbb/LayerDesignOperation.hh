@@ -252,7 +252,7 @@ public:
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
 
 private:
-	///@brief gets a list of allowed amino acids, and includes the current amino acid in addition to those allowed by layer
+	/// @brief gets a list of allowed amino acids, and includes the current amino acid in addition to those allowed by layer
 	utility::vector1< bool >
 	get_restrictions(
 		std::string const & layer,

@@ -757,7 +757,7 @@ ConstraintOP AmbiguousNMRDistanceConstraint::remapped_clone( pose::Pose const& s
 	return ConstraintOP( new AmbiguousNMRDistanceConstraint( ids1, ids2, func_, score_type() ) );
 }
 
-///@details one line definition "AmbiguousNMRDistance atom1 res1 atom2 res2 function_type function_definition"
+/// @details one line definition "AmbiguousNMRDistance atom1 res1 atom2 res2 function_type function_definition"
 void
 AmbiguousNMRDistanceConstraint::read_def(
 	std::istream & data,

@@ -9,7 +9,7 @@
 
 /// @file core/chemical/ResidueTypeSetCache.fwd.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/connection/BridgeChains.cc
 /// @brief The BridgeChains
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 //Unit Headers

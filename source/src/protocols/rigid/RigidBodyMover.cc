@@ -739,7 +739,7 @@ RigidBodyTiltMover::RigidBodyTiltMover():
 	moves::Mover::type( "RigidBodyTilt" );
 }
 
-///@brief constructor with arguments
+/// @brief constructor with arguments
 ///       spin axis is initialized to 0 and then calculated during apply()
 RigidBodyTiltMover::RigidBodyTiltMover(
 	int const rb_jump_in,

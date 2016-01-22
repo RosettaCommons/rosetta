@@ -28,11 +28,11 @@ class ResidueArrayAnnealableEnergy
 {
 public:
 
-	///@brief Constructor.
+	/// @brief Constructor.
 	///
 	ResidueArrayAnnealableEnergy();
 
-	///@brief Copy constructor.
+	/// @brief Copy constructor.
 	///
 	ResidueArrayAnnealableEnergy( ResidueArrayAnnealableEnergy const &src );
 

@@ -162,7 +162,7 @@ bool LocalCoordinateConstraint::same_type_as_me( Constraint const & other ) cons
 
 
 
-///@details one line definition "LocalCoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom3_Name Atom4_Name Atom234_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate func::Func_Type func::Func_Def"
+/// @details one line definition "LocalCoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom3_Name Atom4_Name Atom234_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate func::Func_Type func::Func_Def"
 void
 LocalCoordinateConstraint::read_def(
 	std::istream& data,

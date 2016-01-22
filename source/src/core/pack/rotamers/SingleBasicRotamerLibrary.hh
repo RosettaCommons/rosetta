@@ -28,9 +28,9 @@ namespace core {
 namespace pack {
 namespace rotamers {
 
-///@brief A simple Rotamer library, which serves as a default for ResidueTypes which don't have some other
+/// @brief A simple Rotamer library, which serves as a default for ResidueTypes which don't have some other
 /// more specific rotamer library.
-///@details In practice just diversifies the proton chi records.
+/// @details In practice just diversifies the proton chi records.
 class SingleBasicRotamerLibrary : public rotamers::SingleResidueRotamerLibrary
 {
 public:

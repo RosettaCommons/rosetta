@@ -30,12 +30,12 @@ namespace a3b_hbs {
 void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position );
 */
 
-///@details
+/// @details
 class A3BHbsPatcher : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
 	A3BHbsPatcher( core::Size hbs_pre_position );
 
 	virtual ~A3BHbsPatcher();

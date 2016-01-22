@@ -63,12 +63,12 @@ namespace design {
 //};
 
 
-///@brief This class designs antibodies by grafting, using cluster information and constraints to help.
+/// @brief This class designs antibodies by grafting, using cluster information and constraints to help.
 /// It represents the first step in The Rosetta Antibody Designer, but can be used outside of the application.
 /// A 2011 Antibody Database is included in the rosetta datase.  Up-to-date versions can be downloaded from
 ///
 ///
-///@details To use this class:
+/// @details To use this class:
 /// 1) Use default instruction path, or set one.  Loads CDRs from AntibodyDatabase
 ///     *See rosetta_database/sampling/antibodies for file format.
 /// 2) Use class interface settings to control sampling.  Loads CDRs from AntibodyDatabase.
@@ -84,11 +84,11 @@ public:
 
 	virtual ~AntibodyDesignMover();
 
-	///@brief Reads default CDRGraftInstruction file and creates structs.
+	/// @brief Reads default CDRGraftInstruction file and creates structs.
 	void
 	set_defaults();
 
-	///@brief Parse my tag for RosettaScripts.  Main RS interface to full antibody design protocol.
+	/// @brief Parse my tag for RosettaScripts.  Main RS interface to full antibody design protocol.
 	virtual void
 	parse_my_tag(
 		TagCOP tag,
@@ -110,36 +110,36 @@ public:
 
 public:
 
-	///@brief Set the design protocol.  Default is classic_monte_carlo.
+	/// @brief Set the design protocol.  Default is classic_monte_carlo.
 	/// Available options are: generalized_monte_carlo, deterministc_graft.
 	///
 	/// @details. Deterministic Protocol only available if GraftDesigning a single CDR.
 	void
 	set_design_protocol( AntibodyDesignProtocolEnum design_protocol);
 
-	///@brief Set the options which will be used for querying the database
+	/// @brief Set the options which will be used for querying the database
 	void
 	set_cdr_set_options(AntibodyCDRSetOptions cdr_set_options);
 
-	///@brief Set CDR-specific GraftDesign options
+	/// @brief Set CDR-specific GraftDesign options
 	void
 	set_graft_design_options(AntibodyCDRGraftDesignOptions graft_design_options);
 
-	///@brief Set CDR-specific SeqDesign options
+	/// @brief Set CDR-specific SeqDesign options
 	void
 	set_seq_design_options(AntibodyCDRSeqDesignOptions seq_design_options);
 
-	///@brief Will not initialize CDRs from the AntibodyDatabase.  Use if you have your own CDR's you are interested in grafting.
-	///@details Overhang residues will be used for superposition.  To identify your CDRs, use the functions in AntibodyInfo or the pilot app identify_cdr_clusters
+	/// @brief Will not initialize CDRs from the AntibodyDatabase.  Use if you have your own CDR's you are interested in grafting.
+	/// @details Overhang residues will be used for superposition.  To identify your CDRs, use the functions in AntibodyInfo or the pilot app identify_cdr_clusters
 	/// in pilot/jadolfbr/cluster_utils
 	//void
 	//set_cdr_set(CDRDBPoseSet & cdr_set, core::Size overhang);
 
-	///@brief Graft and Sequence design these CDRs.  Overrides all options settings.
+	/// @brief Graft and Sequence design these CDRs.  Overrides all options settings.
 	void
 	set_cdr_override(utility::vector1<CDRNameEnum> cdrs_to_design);
 
-	///@brief Set the instruction file path to load options from instead of setting these via associated options functions
+	/// @brief Set the instruction file path to load options from instead of setting these via associated options functions
 	/// Or loading via cmd-line option.  Gotta love supporting 3 different Rosetta interfaces.
 	void
 	set_instruction_file(std::string instruction_file);
@@ -156,35 +156,35 @@ public:
 	void
 	set_scorefunction_min(core::scoring::ScoreFunctionOP min_scorefxn);
 
-	///@brief Set the number of overall rounds.  Each round will choose a CDR and design it and others based on options
+	/// @brief Set the number of overall rounds.  Each round will choose a CDR and design it and others based on options
 	void
 	set_outer_cycles(core::Size outer_cycles);
 
-	///@brief Set the number of inner cycles, which optimizes the structure and sequence of the antibody after any graft.
+	/// @brief Set the number of inner cycles, which optimizes the structure and sequence of the antibody after any graft.
 	/// Essentially min cycles.  Recommend 3 cycles if not doing relax as the mintype.
 	void
 	set_inner_cycles(core::Size inner_cycles);
 
 
-	///@brief Set the algorithm to run a low-resolution docking step after each graft.  Default false.
-	///@details Uses command-line options for docking.  Lower inner or outer cycles if you are grafting many CDRs.  Still quicker then relax.
+	/// @brief Set the algorithm to run a low-resolution docking step after each graft.  Default false.
+	/// @details Uses command-line options for docking.  Lower inner or outer cycles if you are grafting many CDRs.  Still quicker then relax.
 	void
 	set_dock_post_graft(bool dock_post_graft);
 
 	void
 	set_dock_rounds(core::Size dock_rounds);
 
-	///@brief Set the algorithm to run a final rigid-body minimization of antigen/antibody interface post graft.  Useful if not docking - quicker, but less reliable then full dock.
+	/// @brief Set the algorithm to run a final rigid-body minimization of antigen/antibody interface post graft.  Useful if not docking - quicker, but less reliable then full dock.
 	void
 	set_rb_min_post_graft(bool rb_min_post_graft);
 
 
-	///@brief Sets the protocol to keep a specific number of top designs.  Default is 10
+	/// @brief Sets the protocol to keep a specific number of top designs.  Default is 10
 	void
 	set_keep_top_designs(core::Size top_designs);
 
-	///@brief Get the top designs found.  You can then use them in other protocols, dump them, etc. They are in order.
-	///@details - This should be refactored to get_additional_output.
+	/// @brief Get the top designs found.  You can then use them in other protocols, dump them, etc. They are in order.
+	/// @details - This should be refactored to get_additional_output.
 	utility::vector1< core::pose::PoseOP>
 	get_top_designs(){
 		return top_designs_;
@@ -198,16 +198,16 @@ public:
 	//
 
 
-	///@brief Set any paratope CDRs.  If not set, will use all CDRs as the paratope where needed.
+	/// @brief Set any paratope CDRs.  If not set, will use all CDRs as the paratope where needed.
 	/// Used mainly for constraints
 	void
 	set_paratope_cdrs(utility::vector1<bool> const & cdrs);
 
-	///@brief Set any epitope residues in PDB numbering.  If not set, they will be detected automatically via the interface.
+	/// @brief Set any epitope residues in PDB numbering.  If not set, they will be detected automatically via the interface.
 	void
 	set_epitope_residues(utility::vector1<PDBNumbering > epitope_residues);
 
-	///@brief Setting to use epitope constraints.  Without this false, will not use any set epitope residues.
+	/// @brief Setting to use epitope constraints.  Without this false, will not use any set epitope residues.
 	void
 	set_use_epitope_constraints(bool use_epitope_csts);
 
@@ -227,7 +227,7 @@ private:
 	void
 	read_command_line_options();
 
-	///@brief Setup ALL options classes
+	/// @brief Setup ALL options classes
 	void
 	setup_options_classes();
 
@@ -256,36 +256,36 @@ private:
 	void
 	setup_scorefxn();
 
-	///@brief Extend the native CDRs to be designed for benchmarking.
+	/// @brief Extend the native CDRs to be designed for benchmarking.
 	void
 	setup_random_start_pose(core::pose::Pose & pose, vector1<CDRNameEnum> & cdrs_to_design);
 
 	void
 	setup_default_graft_settings();
 
-	///@brief Setup alternative cdr pose indexes and sampling strategies.
+	/// @brief Setup alternative cdr pose indexes and sampling strategies.
 	void
 	setup_cdr_pose_sampling_strategies();
 
 
-	///@brief Uses instructions to Query the AntibodyDatabase and load poses.
+	/// @brief Uses instructions to Query the AntibodyDatabase and load poses.
 	void
 	initialize_cdr_set(core::pose::Pose const & pose);
 
 	void
 	check_for_top_designs(core::pose::Pose & pose);
 
-	///@brief Gets a list of vectors whose indexes correspond to CDRNameEnum, and whose values correspond to the cdr_set index.  If the value is 0, it means no cdr in set.
+	/// @brief Gets a list of vectors whose indexes correspond to CDRNameEnum, and whose values correspond to the cdr_set index.  If the value is 0, it means no cdr in set.
 	utility::vector1< utility::vector1< core::Size > >
 	get_cdr_set_index_list();
 
 
-	///@details Applies graft, modeling, etc. to a single CDR.
+	/// @details Applies graft, modeling, etc. to a single CDR.
 	bool
 	apply_to_cdr(core::pose::Pose & pose, CDRNameEnum cdr, core::Size index, bool min_post_graft = true);
 
-	///@brief Grafts a single CDR into framework. Index is the vector index of CDRSet/CDRClusterMap.
-	///@details Return success or failure
+	/// @brief Grafts a single CDR into framework. Index is the vector index of CDRSet/CDRClusterMap.
+	/// @details Return success or failure
 	bool
 	graft_in_cdr(core::pose::Pose & pose, CDRNameEnum const cdr, CDRDBPose & cdr_pose);
 
@@ -293,11 +293,11 @@ private:
 	std::pair<bool, core::Size>
 	run_graft(core::pose::Pose & pose, CDRNameEnum const cdr, CDRDBPose & cdr_pose, grafting::AnchoredGraftMoverOP grafter);
 
-	///@brief Run the inner structure/sequence optimization cycle
+	/// @brief Run the inner structure/sequence optimization cycle
 	void
 	run_optimization_cycle(core::pose::Pose & pose, protocols::moves::MonteCarlo & mc, CDRNameEnum cdr);
 
-	///@brief Mutates framework residues needed to stay within a particular cluster.  Only one  (L1-11-1) is known to have framework dependencies.  For now.
+	/// @brief Mutates framework residues needed to stay within a particular cluster.  Only one  (L1-11-1) is known to have framework dependencies.  For now.
 	/// Will be replaced by AntibodyDesignOptimizer
 	//void
 	//mutate_framework_residues(pose::Pose pose, CDRClusterEnum cluster);
@@ -308,12 +308,12 @@ private:
 	//
 	//
 
-	///@brief.  If rounds >= number of possible combinations - Try them all.
-	///@details Grafts CDRs on the input structure, in a random order.
+	/// @brief.  If rounds >= number of possible combinations - Try them all.
+	/// @details Grafts CDRs on the input structure, in a random order.
 	void
 	run_deterministic_graft_algorithm(core::pose::Pose & pose, utility::vector1<CDRNameEnum>& cdrs_to_design);
 
-	///@brief Basic mc algorithm that randomly samples from the cdr set.
+	/// @brief Basic mc algorithm that randomly samples from the cdr set.
 	void
 	run_basic_mc_algorithm(core::pose::Pose & pose, utility::vector1<CDRNameEnum>& cdrs_to_design, AntibodyDesignProtocolEnum mc_algorithm);
 
@@ -337,12 +337,12 @@ private:
 
 	//CDRSet Indexing for CDR sampling strategies:
 
-	///@brief Even cluster sampling (even_cluster_mc protocol)
+	/// @brief Even cluster sampling (even_cluster_mc protocol)
 	std::map< CDRNameEnum,
 		std::map< clusters::CDRClusterEnum,
 		utility::vector1< core::Size > > > cluster_based_CDRDBPose_indexes_;
 
-	///@brief Even Length and Cluster sampling (even_length_cluster_mc protocol)
+	/// @brief Even Length and Cluster sampling (even_length_cluster_mc protocol)
 	std::map< CDRNameEnum,
 		std::map< core::Size,
 		std::map< clusters::CDRClusterEnum,

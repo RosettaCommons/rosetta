@@ -18,11 +18,11 @@ namespace core {
 namespace scoring {
 namespace annealing {
 
-///@brief Constructor.
+/// @brief Constructor.
 ///
 ResidueArrayAnnealableEnergy::ResidueArrayAnnealableEnergy() {}
 
-///@brief Copy constructor.
+/// @brief Copy constructor.
 ///
 ResidueArrayAnnealableEnergy::ResidueArrayAnnealableEnergy( ResidueArrayAnnealableEnergy const &/*src*/ )
 //TODO -- copy private member variables here.

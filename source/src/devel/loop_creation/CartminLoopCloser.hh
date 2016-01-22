@@ -31,10 +31,10 @@ class CartminLoopCloser : public LoopCloser
 {
 public:
 
-	///@brief default constructor
+	/// @brief default constructor
 	CartminLoopCloser();
 
-	///@brief explicit constructor
+	/// @brief explicit constructor
 	CartminLoopCloser(
 		core::scoring::ScoreFunctionOP scorefxn,
 		core::Real minimization_tolerance,
@@ -59,7 +59,7 @@ public:
 	bool
 	check_closure ( core::pose::Pose & pose );
 
-	///@brief parse tag for use in RosettaScripts
+	/// @brief parse tag for use in RosettaScripts
 	void
 	parse_my_tag(
 		TagCOP tag,

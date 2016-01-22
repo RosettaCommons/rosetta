@@ -122,7 +122,7 @@ public:
 	// extra output might get "lost" if you do not emit it by another method like the Tracers.) -- SML 10/20/11
 	// These functions are for loading output info into the job
 
-	///@brief add an output string
+	/// @brief add an output string
 	void add_string( std::string const & string_in );
 
 	/// @brief add output strings

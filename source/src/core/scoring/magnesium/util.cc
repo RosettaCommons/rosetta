@@ -9,7 +9,7 @@
 
 /// @file core/scoring/magnesium/util.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

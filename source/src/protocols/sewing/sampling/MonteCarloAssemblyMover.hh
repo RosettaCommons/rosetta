@@ -54,7 +54,7 @@ public:
 	AssemblyOP
 	generate_assembly();
 
-	///@brief Add a new edge to the Assembly. If this fails for any reason then
+	/// @brief Add a new edge to the Assembly. If this fails for any reason then
 	///revert to the pre-operation state and return false.
 	bool
 	add_edge(
@@ -64,7 +64,7 @@ public:
 		utility::vector1<AssemblyOP> & assembly_list
 	) const;
 
-	///@brief Remove the most recently added edge from the Assembly
+	/// @brief Remove the most recently added edge from the Assembly
 	///return void since this operation can never fail
 	void
 	delete_edge(
@@ -72,7 +72,7 @@ public:
 		utility::vector1<AssemblyOP> & assembly_list
 	) const;
 
-	///@brief Replace the most recently added node (try a different edge,
+	/// @brief Replace the most recently added node (try a different edge,
 	///or start with a new node). Implemented as a delete followed by an
 	///add and returns the result of the add operation. A return of false
 	///reverts to the pre-operation state.

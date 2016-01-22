@@ -30,7 +30,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-///@brief Adds in rotamers from a list of Residues,
+/// @brief Adds in rotamers from a list of Residues,
 class DeleteAllRotamerSetOperation : public RotamerSetOperation
 {
 public:

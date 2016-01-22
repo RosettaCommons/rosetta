@@ -122,7 +122,7 @@ RepeatAssemblyMover::RepeatAssemblyMover():
 		basic::options::option[ basic::options::OptionKeys::sewing::num_repeats ].value();
 }
 
-///@brief recursive function. Start with a given reference node and randomly traverse
+/// @brief recursive function. Start with a given reference node and randomly traverse
 ///edges in a depth-first-search of a cycle of a given size (number of nodes).
 std::pair< bool, AssemblyOP >
 RepeatAssemblyMover::dfs_cycle_finder(

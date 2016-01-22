@@ -65,13 +65,13 @@ private:
 	write_residue_scores_1b_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief 2b schema helper
+	/// @brief 2b schema helper
 	void
 	write_residue_scores_2b_table_schema_helper(
 		std::string name,
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the residue_scores_2b table schema
+	/// @brief generate the residue_scores_2b table schema
 	void
 	write_residue_scores_2b_table_schema(
 		utility::sql_database::sessionOP db_session) const;

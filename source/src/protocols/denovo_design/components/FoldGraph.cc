@@ -8,7 +8,7 @@
 
 /// @file src/protocols/denovo_design/components/FoldGraph.cc
 /// @brief FoldGraph - a fold-tree which takes two-way dependencies into account
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 //Unit Headers

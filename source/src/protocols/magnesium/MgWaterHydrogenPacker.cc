@@ -9,7 +9,7 @@
 
 /// @file protocols/magnesium/MgWaterHydrogenPacker.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

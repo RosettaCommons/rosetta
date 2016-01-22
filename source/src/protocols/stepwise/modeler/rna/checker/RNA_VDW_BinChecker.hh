@@ -9,7 +9,7 @@
 
 /// @file RNA_VDW_BinChecker.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Parin Sripkaddevong
 

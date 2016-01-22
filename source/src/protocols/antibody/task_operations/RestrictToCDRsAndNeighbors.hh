@@ -33,10 +33,10 @@ namespace antibody {
 namespace task_operations {
 
 
-///@brief Task Operation to restrict packing/design to specific CDRs and neighbors.
+/// @brief Task Operation to restrict packing/design to specific CDRs and neighbors.
 /// See DisableAntibodyRegionOperation and DisableCDRsOperation further restrict TaskFactory.
 ///
-///@details See options for control of the design of CDRs, antigen, and framework.
+/// @details See options for control of the design of CDRs, antigen, and framework.
 /// By default, restricts to all packing of all CDRs and neighbors.
 ///  See options for control of which CDRs, including whether to only restrict design and control of whether we design
 ///  neighbor antigen and/or framework residues.
@@ -47,19 +47,19 @@ public:
 	///Default Constructor.
 	RestrictToCDRsAndNeighbors();
 
-	///@brief Constructor with AntibodyInfo
+	/// @brief Constructor with AntibodyInfo
 	RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info);
 
-	///@brief Constructor specifying CDRs to restrict to.
+	/// @brief Constructor specifying CDRs to restrict to.
 	RestrictToCDRsAndNeighbors(AntibodyInfoCOP ab_info, utility::vector1< bool > const & cdrs);
 
-	///@brief Constructor with more options
+	/// @brief Constructor with more options
 	RestrictToCDRsAndNeighbors(
 		AntibodyInfoCOP ab_info,
 		utility::vector1<bool> const & cdrs,
 		bool allow_cdr_design);
 
-	///@brief Constructor with most options
+	/// @brief Constructor with most options
 	RestrictToCDRsAndNeighbors(
 		AntibodyInfoCOP ab_info,
 		utility::vector1<bool> const & cdrs,
@@ -92,24 +92,24 @@ public:
 	void
 	set_cdr_only(CDRNameEnum cdr);
 
-	///@brief Set the distance for the detection of neighbor residues. 6A default
+	/// @brief Set the distance for the detection of neighbor residues. 6A default
 	void
 	set_neighbor_distance(core::Real neighbor_dis);
 
 
-	///@brief Allow design of CDRs?
+	/// @brief Allow design of CDRs?
 	void
 	set_allow_design_cdr(bool allow_cdr_design);
 
-	///@brief Allow design of neighbor framework residues?
+	/// @brief Allow design of neighbor framework residues?
 	void
 	set_allow_design_neighbor_framework(bool allow_framework_design);
 
-	///@brief Allow design of neighbor antigen residues?
+	/// @brief Allow design of neighbor antigen residues?
 	void
 	set_allow_design_neighbor_antigen(bool allow_antigen_design);
 
-	///@brief Set the size of the stem - the number of residues going into the framework.  This will be included as part of the loop when determining neighbors.
+	/// @brief Set the size of the stem - the number of residues going into the framework.  This will be included as part of the loop when determining neighbors.
 	/// However, the residues of the stem itself count as part of the framework
 	void
 	set_stem_size(core::Size stem_size);

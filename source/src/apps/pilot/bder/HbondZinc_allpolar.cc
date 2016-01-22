@@ -70,7 +70,7 @@ using namespace core;
 basic::options::FileOptionKey const scaffold_protein( "scaffold_protein" );
 
 
-///@brief
+/// @brief
 class HbondZinc : public protocols::moves::Mover {
 public:
   HbondZinc()

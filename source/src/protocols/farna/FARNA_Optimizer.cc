@@ -9,7 +9,7 @@
 
 /// @file protocols/farna/FARNA_Optimizer.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

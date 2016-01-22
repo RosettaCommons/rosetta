@@ -184,7 +184,7 @@ ModelFeatures::find_segments(
 	return segments;
 }
 
-///@details
+/// @details
 core::Size
 ModelFeatures::report_features(
 	core::pose::Pose const & pose,

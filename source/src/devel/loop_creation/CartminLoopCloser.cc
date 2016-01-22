@@ -69,7 +69,7 @@ CartminLoopCloserCreator::mover_name()
 //****END CREATOR METHODS****//
 
 
-///@brief default constructor
+/// @brief default constructor
 CartminLoopCloser::CartminLoopCloser():
 	scorefxn_(0),
 	minimization_tolerance_( 0.01 ),
@@ -78,7 +78,7 @@ CartminLoopCloser::CartminLoopCloser():
 	init();
 }
 
-///@brief explicit constructor
+/// @brief explicit constructor
 CartminLoopCloser::CartminLoopCloser(
 	core::scoring::ScoreFunctionOP scorefxn,
 	core::Real minimization_tolerance,
@@ -166,7 +166,7 @@ CartminLoopCloser::check_closure(core::pose::Pose & pose){
 	return false;
 }
 
-///@brief parse tag for use in RosettaScripts
+/// @brief parse tag for use in RosettaScripts
 void
 CartminLoopCloser::parse_my_tag(
 	TagCOP const tag,

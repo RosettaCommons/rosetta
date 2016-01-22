@@ -40,7 +40,7 @@
 namespace protocols {
 namespace helical_bundle {
 
-///@brief  BackboneGridSamplerHelper class, which stores options for the PerturbBundle mover.
+/// @brief  BackboneGridSamplerHelper class, which stores options for the PerturbBundle mover.
 ///
 class BackboneGridSamplerHelper : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< BackboneGridSamplerHelper >
 {

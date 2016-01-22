@@ -135,7 +135,7 @@ NodeConstraintAssemblyMover::check_constraints(
 
 
 
-///@brief check all constraints that will be evaluated
+/// @brief check all constraints that will be evaluated
 bool
 NodeConstraintAssemblyMover::check_all_nodes() const {
 	core::Size n_nodes = graph_->num_nodes();
@@ -155,7 +155,7 @@ NodeConstraintAssemblyMover::check_all_nodes() const {
 
 
 
-///@details get a starting node that conforms to the
+/// @details get a starting node that conforms to the
 ///first node definition. No sense in starting with something
 ///that won't work
 ModelNode const *
@@ -184,7 +184,7 @@ NodeConstraintAssemblyMover::get_starting_model_node() {
 
 
 
-///@details setup the node constraints and then apply the base
+/// @details setup the node constraints and then apply the base
 ///class method
 void
 NodeConstraintAssemblyMover::apply(

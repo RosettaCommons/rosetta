@@ -50,10 +50,10 @@ struct MutantPosition{
 
 };
 
-///@brief Mutates framework positions to what is needed for a particular cluster
+/// @brief Mutates framework positions to what is needed for a particular cluster
 /// if that cluster has needed mutations.
 ///
-///@details Will use clusters from pose data cache if there, otherwise,
+/// @details Will use clusters from pose data cache if there, otherwise,
 /// will use clusters set from AntibodyInfo.
 ///
 /// Use set_cdr or set_cdrs to limit to a particular CDR or set of CDRs.
@@ -62,7 +62,7 @@ struct MutantPosition{
 class MutateFrameworkForCluster : public protocols::moves::Mover {
 public:
 
-	///@brief Constructor for RosettaScripts only.
+	/// @brief Constructor for RosettaScripts only.
 	MutateFrameworkForCluster();
 
 	MutateFrameworkForCluster(AntibodyInfoCOP ab_info);
@@ -101,22 +101,22 @@ public:
 	void
 	set_cdrs(utility::vector1<bool> const & cdrs);
 
-	///@brief Set the distance for the packing shell.
+	/// @brief Set the distance for the packing shell.
 	void
 	set_pack_shell(core::Real const pack_shell);
 
 	void
 	set_scorefxn(core::scoring::ScoreFunctionCOP scorefxn);
 
-	///@brief Set custom data instead of loading it from the database.
+	/// @brief Set custom data instead of loading it from the database.
 	void
 	set_custom_data(std::map<clusters::CDRClusterEnum, utility::vector1<MutantPosition> > const & mutant_info);
 
-	///@brief Get data used to do the design.
+	/// @brief Get data used to do the design.
 	std::map<clusters::CDRClusterEnum, utility::vector1<MutantPosition> >
 	get_data();
 
-	///@brief Set to keep the current amino acid(s) for the position in the mutation set.
+	/// @brief Set to keep the current amino acid(s) for the position in the mutation set.
 	/// Each position is not 100 percent a particular mutant for a cluster, so we allow this by default and hope Rosetta can choose properly.
 	void
 	keep_current( bool keep_current);
@@ -131,19 +131,19 @@ public:
 	bool
 	has_framework_dependant_cluster(core::pose::Pose const & pose, CDRNameEnum const cdr);
 
-	///@brief Get all framework dependant clusters in list
+	/// @brief Get all framework dependant clusters in list
 	utility::vector1< clusters::CDRClusterEnum >
 	framework_dependant_clusters();
 
-	///@brief Get all framework positions that would be required by clusters regardless of whether that cluster is in the pose.
+	/// @brief Get all framework positions that would be required by clusters regardless of whether that cluster is in the pose.
 	utility::vector1< bool >
 	framework_dependant_positions(core::pose::Pose const & pose);
 
-	///@brief Get all framework positions that would be required by a cluster regardless of whether that cluster is in the pose.
+	/// @brief Get all framework positions that would be required by a cluster regardless of whether that cluster is in the pose.
 	utility::vector1< bool >
 	framework_dependant_positions(core::pose::Pose const & pose, clusters::CDRClusterEnum const cluster);
 
-	///@brief Get all framework mutations for a particular framework dependent position, regardless of whether that cluster is in the pose.
+	/// @brief Get all framework mutations for a particular framework dependent position, regardless of whether that cluster is in the pose.
 	utility::vector1<bool>
 	framework_dependant_mutations(core::pose::Pose const & pose, clusters::CDRClusterEnum const cluster, core::Size const resnum);
 
