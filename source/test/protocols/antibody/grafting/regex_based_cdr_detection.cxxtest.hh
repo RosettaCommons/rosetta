@@ -18,10 +18,14 @@
 #include <utility/json_spirit/json_spirit_reader.h>
 #include <utility/string_util.hh>
 
+#include <basic/Tracer.hh>
+
 #include <test/core/init_util.hh>
 #include <cxxtest/TestSuite.h>
 
 #include <fstream>
+
+static THREAD_LOCAL basic::Tracer TR("protocols.antibody.grafting.regex_based_cdr_detection.cxxtest");
 
 using std::string;
 
@@ -79,6 +83,11 @@ public:
 	/// @brief test if CDR detection match knownw results from our DB
 	void test_cdr_regions_detection() {
 #ifdef __ANTIBODY_GRAFTING__
+
+		if( ! protocols::antibody::grafting::antibody_grafting_usable() ) {
+			TR << "SKIPPING Regex_based_cdr_detection_tests:test_cdr_regions_detection() - current compile does not support regex." << std::endl;
+			return; // Don't attempt to run test on system which doesn't support it.
+		}
 
 		using namespace protocols::antibody::grafting;
 		using Value = utility::json_spirit::mValue;

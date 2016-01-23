@@ -40,6 +40,10 @@ typedef utility::pointer::shared_ptr< SCS_Results > SCS_ResultsOP;
 typedef utility::pointer::shared_ptr< SCS_Results const > SCS_ResultsCOP;
 
 
+struct SCS_ResultSet;
+typedef utility::pointer::shared_ptr< SCS_ResultSet > SCS_ResultSetOP;
+typedef utility::pointer::shared_ptr< SCS_ResultSet const > SCS_ResultSetCOP;
+
 } // namespace grafting
 } // namespace antibody
 } // namespace protocols

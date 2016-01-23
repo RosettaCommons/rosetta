@@ -22,6 +22,7 @@
 #include <protocols/antibody/grafting/scs_blast.hh>
 #include <protocols/antibody/grafting/exception.hh>
 #include <protocols/antibody/grafting/scs_functor.hh>
+#include <protocols/antibody/grafting/grafter.hh>
 
 
 // Grafting util function related includes
@@ -29,10 +30,13 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
+#include <protocols/simple_moves/SuperimposeMover.hh>
 
 
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/keys/antibody.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 
 //#include <utility/CSI_Sequence.fwd.hh>
 
@@ -48,6 +52,7 @@
 //#include <typeinfo>
 
 using std::string;
+using core::Size;
 
 static THREAD_LOCAL basic::Tracer TR("antibody");
 
@@ -110,6 +115,7 @@ int antibody_main()
 		// std::cout << "Light Numbering: " << an.heavy << std::endl << std::endl;
 
 		SCS_BlastPlus scs;
+		scs.init_from_options();
 
 		scs.add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_sequence_length) );
 		scs.add_filter( SCS_FunctorCOP(new SCS_BlastFilter_by_alignment_length) );
@@ -118,131 +124,41 @@ int antibody_main()
 
 		SCS_ResultsOP scs_results { scs.select(as) };
 
-		if( scs_results->frh.size()  and  scs_results->frl.size()  and  scs_results->orientation.size() ) {
+		if( scs_results->frh.size()  and  scs_results->frl.size()  and  scs_results->orientation.size() and
+			scs_results->h1.size() and scs_results->h2.size() and scs_results->h3.size() and
+			scs_results->l1.size() and scs_results->l2.size() and scs_results->l3.size()
+			) {
 			TR << "SCS frh best template: " << TR.Bold << TR.Blue  << scs_results->frh[0]->pdb << TR.Reset << std::endl;
 			TR << "SCS frl best template: " << TR.Bold << TR.Green << scs_results->frl[0]->pdb << TR.Reset << std::endl;
 			TR << "SCS Orientation best template: " << TR.Bold << TR.Yellow << scs_results->orientation[0]->pdb << TR.Reset << std::endl;
 
-			string frh_pdb_name = "./../../tools/antibody/antibody_database/pdb" + scs_results->frh[0]->pdb + "_chothia.pdb";
-			string frl_pdb_name = "./../../tools/antibody/antibody_database/pdb" + scs_results->frh[0]->pdb + "_chothia.pdb";
-			string orientation_pdb_name = "./../../tools/antibody/antibody_database/pdb" + scs_results->orientation[0]->pdb + "_chothia.pdb";
-
-			core::pose::PoseOP frh = core::import_pose::pose_from_pdb( frh_pdb_name );
-			core::pose::PoseOP frl = core::import_pose::pose_from_pdb( frh_pdb_name );
-
-			frh->dump_pdb("../_ab_/frh.pdb");
-			frl->dump_pdb("../_ab_/frl.pdb");
-
-			AntibodyFramework trimmed_heavy_fr = as.heavy_framework();
-			AntibodyFramework trimmed_light_fr = as.light_framework();
-
-			trim_framework(as, trimmed_heavy_fr, trimmed_light_fr);
-
-			AntibodyNumbering an( Chothia_Numberer().number(as, trimmed_heavy_fr, trimmed_light_fr) );
-
-			//std::map<char, char> opposite_chain { {'L', 'H'},  {'H', 'L'} };
-
-			struct {
-				char chain;
-				core::pose::PoseOP &pose;
-				//AntibodyChainNumbering::NumberingVector numbering;
-				AntibodyChainNumbering numbering;
-				string trimmed_sequence;
-				string color;
-			} J[] {
-				{'H', frh, an.heavy, trimmed_heavy_fr.fr1 + as.h1_sequence() + trimmed_heavy_fr.fr2 + as.h2_sequence() + trimmed_heavy_fr.fr3 + as.h3_sequence() + trimmed_heavy_fr.fr4, TR.Blue},
-				{'L', frl, an.light, trimmed_light_fr.fr1 + as.l1_sequence() + trimmed_light_fr.fr2 + as.l2_sequence() + trimmed_light_fr.fr3 + as.l3_sequence() + trimmed_light_fr.fr4, TR.Green},
-			};
-
-
-			for(auto &j : J) {
-				TR << "Adjusting fr" << char(std::tolower(j.chain)) << " template sequence [" << j.pose->pdb_info()->name() << "]..." << std::endl;
-
-				AntibodyChainNumbering::NumberingVector numbering = j.numbering.all();
-
-				TR << "By using numbering: " << utility::join( numbering, " ") << std::endl;
-
-				int chain = -1;
-				// Finding right chain in SCS template and delete eveything else
-				for(uint i=1; i<=j.pose->total_residue(); ++i) {
-					if( j.pose->pdb_info()->chain(i) == j.chain ) { chain=j.pose->chain(i);  break; }
-				}
-
-				TR.Debug << "Sequence before (all chains): " << j.pose->sequence() << std::endl;
-
-				if( chain >= 0 ) j.pose = j.pose->split_by_chain(chain);
-				else throw _AE_grafting_failed_( string("Could not find chain: ") + j.chain + " in template " + j.pose->pdb_info()->name() );
-
-				// for(uint i=1; i<=j.pose->total_residue(); ++i) {
-				// 	TR << "New pose pdb info for res " << i << ":" << j.pose->pdb_info()->pose2pdb(i) << " i:" << j.pose->pdb_info()->icode(i) << std::endl;
-				// }
-
-				TR << "Sequence before: " << j.color << j.pose->sequence() << TR.Reset << std::endl;
-
-				for(uint i=j.pose->total_residue()-1; i>=1; --i) {
-					string pdb_res_n = std::to_string(j.pose->pdb_info()->number(i)) + ( j.pose->pdb_info()->icode(i) == ' ' ?  "" : string(1, j.pose->pdb_info()->icode(i) ) );
-					auto np = std::find(numbering.begin(), numbering.end(), pdb_res_n);
-
-					if( np < numbering.end() ) {
-						char aa = j.trimmed_sequence[ np-numbering.begin() ];
-						TR.Trace << "Replacing pose residue " << i << " with " << aa << std::endl;
-						protocols::simple_moves::MutateResidue(i, aa).apply( *j.pose.get() );
-
-						j.trimmed_sequence.erase( j.trimmed_sequence.begin() + ( np - numbering.begin() ) );
-						numbering.erase( np );
-					}
-				}
-				if( numbering.size() ) {
-					TR << TR.Red << "WARNING: Was not able to adjust all residue in chain: " << j.chain << "!!!" << TR.Reset << std::endl;
-					TR << TR.Red << "Leftovers numbering: " << numbering  << "  AA: " << j.trimmed_sequence << TR.Reset << std::endl;
-					TR << TR.Red << TR.Underline << "Original numbering was:" << TR.Reset << ' ' << j.numbering << std::endl;
-				}
-
-				TR << "Sequence after:  " << TR.Bold << j.color << j.pose->sequence() << TR.Reset << std::endl;
-			}
-
-			frh->dump_pdb("../_ab_/frh_after_grafting.pdb");
-			frl->dump_pdb("../_ab_/frl_after_grafting.pdb");
-
-			frh->append_pose_by_jump(*frl, 1);
-			frh->pdb_info()->obsolete(false);
-			//frh->update_pose_chains_from_pdb_chains();
-
-			frh->dump_pdb("../_ab_/frh_frl.pdb");
-
-			// for(uint i=1; i<=frh->total_residue(); ++i) {
-			// 	TR << "New pose pdb info for res " << i << ":" << frh->pdb_info()->pose2pdb(i) << " i:" << frh->pdb_info()->icode(i) << std::endl;
-			// }
-
-
-
-			core::pose::PoseOP orientation = core::import_pose::pose_from_pdb( orientation_pdb_name );
-			orientation->dump_pdb("../_ab_/orientation.pdb");
-
-			//TR << "Pose: " << std::endl;
-			//TR <<  *orientation.get() << std::endl;
-
-
+			graft_cdr_loops(as, scs_results->get_result_set(0),
+							basic::options::option[basic::options::OptionKeys::antibody::prefix](),
+							basic::options::option[basic::options::OptionKeys::antibody::grafting_database]()
+							);
 		}
-
+		else {
+			TR << TR.Red << "Blast+ results for some of the regions are empty!!! Exiting..." << std::endl;
+			return 1;
+		}
 	}
 	catch(Grafting_Base_Exception e) {
 		std::cout << e << std::endl;
 	}
 
-	// CDR1_Sequence cdr1 = get_cdr<AntibodyLightChain, CDR1_Sequence>()(as);
-	// std::cout << "AntibodyLightChain, CDR1_Sequence: (" << cdr1.start << ", " << cdr1.stop << ")" << " valid:" << cdr1.valid(light_chain_sequence) << std::endl;
-
-
-	// std::cout << CDR_Bounds() << std::endl;
-
 	return 0;
 }
+
 
 int main(int argc, char * argv [])
 {
 	try {
 		register_options();
+
+		basic::options::option.add_relevant( basic::options::OptionKeys::antibody::prefix );
+		basic::options::option.add_relevant( basic::options::OptionKeys::antibody::grafting_database );
+		basic::options::option.add_relevant( basic::options::OptionKeys::antibody::blastp );
+
 		devel::init(argc, argv);
 		return antibody_main();
 

@@ -23,6 +23,9 @@
 #include <basic/Tracer.hh>
 #include <basic/execute.hh>
 
+#include <basic/options/keys/antibody.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+
 #include <utility/string_util.hh>
 //#include <utility/stream_util.hh>
 
@@ -37,6 +40,39 @@ namespace grafting {
 using std::string;
 
 static THREAD_LOCAL basic::Tracer TR("protocols.antibody.grafting");
+
+
+
+
+/// @brief Create result set from 'row' element of each SCS_ResultsVector vector
+///        if strict is true then throw if no resuls found otherwise use empty OP
+///
+/// @throw std::out_of_range if for some of the row is not present and strict==true
+SCS_ResultSet SCS_Results::get_result_set(uint row, bool strict)
+{
+	if( h1.size()  <= row  and  h2.size()  <= row  and  h3.size() <= row  and
+		l1.size()  <= row  and  l2.size()  <= row  and  l3.size() <= row  and
+		frh.size() <= row  and  frl.size() <= row  and  orientation.size() <= row  and  strict) throw std::out_of_range("SCS_Results::get_result_set could not find ALL results for row:" + std::to_string(row));
+
+	SCS_ResultSet r;
+
+	r.h1 = h1.size() > row ? h1[row] : SCS_ResultOP();
+	r.h2 = h2.size() > row ? h2[row] : SCS_ResultOP();
+	r.h3 = h3.size() > row ? h3[row] : SCS_ResultOP();
+
+	r.l1 = l1.size() > row ? l1[row] : SCS_ResultOP();
+	r.l2 = l1.size() > row ? l1[row] : SCS_ResultOP();
+	r.l3 = l1.size() > row ? l1[row] : SCS_ResultOP();
+
+	r.frh = frh.size() > row ? frh[row] : SCS_ResultOP();
+	r.frl = frl.size() > row ? frl[row] : SCS_ResultOP();
+
+	r.orientation = orientation.size() > row ? orientation[row] : SCS_ResultOP();
+
+	return r;
+}
+
+
 
 void SCS_Base::add_filter(SCS_FunctorCOP filter)
 {
@@ -169,6 +205,22 @@ SCS_ResultsVector parse_blastp_output(string file_name, string query, std::map< 
 }
 
 
+void SCS_BlastPlus::init_from_options()
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	TR << "Setting output prefix from command line-options to: " << TR.bgWhite << TR.Black << option[OptionKeys::antibody::prefix]() << std::endl;
+	set_output_prefix( option[OptionKeys::antibody::prefix]() );
+
+	TR << "Setting antibody grafting database path from command line-options to: " << TR.bgWhite << TR.Black << option[OptionKeys::antibody::grafting_database]() << std::endl;
+	set_database_path( option[OptionKeys::antibody::grafting_database]() );
+
+	TR << "Setting path to NCBI-Blast+ executable from command line-options to: " << TR.bgWhite << TR.Black << option[OptionKeys::antibody::blastp]() << std::endl;
+	set_blastp_executable( option[OptionKeys::antibody::blastp]() );
+}
+
+
 SCS_ResultsOP SCS_BlastPlus::raw_select(AntibodySequence const &A) //, AntibodyNumbering const &N)
 {
 	//AntibodyFramework const frh( A.heavy_framework() );
@@ -202,23 +254,21 @@ SCS_ResultsOP SCS_BlastPlus::raw_select(AntibodySequence const &A) //, AntibodyN
 	    {"orientation", orientation, results->orientation},
 	};
 
-	string working_dir("./../_ab_");
-	string blast("blastp");
-	string blast_database("./../../tools/antibody/blast_database/database");
+	string blast_database( database_ + "/blast_database/database" );
 
-	utility::vector0< std::map<string, string> > antibody_info_lines( parse_plain_text_with_columns("./../../tools/antibody/info/antibody.info") );
+	utility::vector0< std::map<string, string> > antibody_info_lines( parse_plain_text_with_columns(database_ + "/info/antibody.info") );
 	std::map< string, std::map<string, string> > antibody_info_db;
 	for(auto fields : antibody_info_lines) antibody_info_db[fields["pdb"]] = fields;
 
 	//TR << antibody_info_db;
 
 	for(auto &j : J) {
-		string fasta_file_name(j.name + ".fasta");
-		string align_file_name(j.name + ".align");
+		string fasta_file_name(prefix_ + j.name + ".fasta");
+		string align_file_name(prefix_ + j.name + ".align");
 
 		//TR << "Working on: " << j.name << std::endl;
 
-		std::ofstream f(working_dir+"/"+fasta_file_name);  f << "> " << fasta_file_name << '\n' << j.sequence << '\n';  f.close();
+		std::ofstream f(fasta_file_name);  f << "> " << fasta_file_name << '\n' << j.sequence << '\n';  f.close();
 
 		// len_cdr = len(cdr_query[k])
 		// if k.count('FR') or k.count('heavy') or k.count('light'): db = blast_database + '/database.%s' % k
@@ -241,14 +291,14 @@ SCS_ResultsOP SCS_BlastPlus::raw_select(AntibodySequence const &A) //, AntibodyN
 						j.name.find("orientation") < string::npos or \
 						j.name.find("heavy") < string::npos  or  j.name.find("light") < string::npos) ? "-evalue 0.00001 -matrix BLOSUM62" : "-evalue 2000 -matrix PAM30";
 
-		//string command_line( format("cd {} && {} -db {} -query {} -out {} -word_size 2 -outfmt 7 -max_target_seqs 600 {}", working_dir, blast, blast_db, fasta_file_name, align_file_name, extra) );
-		string command_line ("cd "+working_dir+" && "+blast+" -db "+blast_database+'.'+db_suffix+" -query "+fasta_file_name+" -out "+align_file_name+" -word_size 2 -outfmt 7 -max_target_seqs 1024 "+extra);
+		//string command_line ("cd "+working_dir+" && "+blast+" -db "+blast_database+'.'+db_suffix+" -query "+fasta_file_name+" -out "+align_file_name+" -word_size 2 -outfmt 7 -max_target_seqs 1024 "+extra);
+		string command_line (blastp_+" -db "+blast_database+'.'+db_suffix+" -query "+fasta_file_name+" -out "+align_file_name+" -word_size 2 -outfmt 7 -max_target_seqs 1024 "+extra);
 
 		basic::execute("Running blast+ for " + j.name + "...", command_line);
 
 		//j.results.name = j.name;
 		//j.results.sequence = j.sequence;
-		j.results = parse_blastp_output(working_dir + "/" + align_file_name, fasta_file_name, antibody_info_db);
+		j.results = parse_blastp_output(align_file_name, fasta_file_name, antibody_info_db);
 	}
 
 	return results;

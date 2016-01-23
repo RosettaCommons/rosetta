@@ -78,10 +78,12 @@ sources = {
 	],
 	"protocols/antibody/grafting":[
 		"antibody_sequence",
-		'regex_based_cdr_detection',
 		'chothia_numberer',
+		'grafter',
+		'regex_based_cdr_detection',
 		'scs_blast',
 		'scs_functor',
+		'util',
 	],
 	"protocols/antibody/snugdock":[
 		"SnugDock",

@@ -7,35 +7,32 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/antibody/grafting/util.hh
+/// @file src/protocols/antibody/grafting/util.cc
 /// @brief Helpers for antibody grafting code
-/// @author Sergey Lyskov
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody_grafting_util_hh
-#define INCLUDED_protocols_antibody_grafting_util_hh
+#include <protocols/antibody/grafting/util.hh>
 
-#ifdef CXX11
-
-#ifdef __clang__
-
-		#define __ANTIBODY_GRAFTING__
-	#else
-		#if (__GNUC__ > 3  &&  __GNUC_MINOR__ > 8)  || (__GNUC__ > 4) // We need at least GCC-4.9 to compiler Antibody code
-			#define __ANTIBODY_GRAFTING__
-		#endif
-	#endif
-
-#endif // CXX11
-
+#ifdef __ANTIBODY_GRAFTING__
+#include <regex>
+#include <string>
+#endif
 
 namespace protocols {
 namespace antibody {
 namespace grafting {
 
-bool antibody_grafting_usable();
+// It's only usable if the regex works.
+bool antibody_grafting_usable() {
+#ifndef __ANTIBODY_GRAFTING__
+	return false;
+#else
+	std::string s("is the regex code working?");
+	std::regex reg("regex");
+	return std::regex_search(s,reg); // Problematic GCC versions return false for everything
+#endif
+}
 
 } // grafting
 } // antibody
 } // protocols
-
-#endif // INCLUDED_protocols_antibody_grafting_util_hh

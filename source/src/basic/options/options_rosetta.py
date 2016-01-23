@@ -3202,6 +3202,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='Antibody option group',
 			legal='true', default='true'
 			),
+
 		Option('numbering_scheme', 'String',
 			desc='The numbering scheme of the PDB file. Options are: Chothia_Scheme, Enhanced_Chothia_Scheme, AHO_Scheme, IMGT_Scheme. Kabat_Scheme is also accepted, but not fully supported due to H1 numbering conventions.  Use Kabat_Scheme with caution.',
 			default='Chothia_Scheme'
@@ -3389,6 +3390,18 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='Value for cluster-based dihedral csts -> general dihedral csts switch.  If number of total structures used for cluster-based constraints is less than this value, general dihedral constraints will be used.  More data = better predictability.',
 			default='10'
 			),
+
+
+                     Option('prefix', 'String', desc="File name prefix for antibody grafting outout", default='grafting.'),
+
+                     Option('grafting_database', 'String',
+			    desc='Path to the Antibody Grafting Database from Rosetta tools repository. Should be point to tools/antibody',
+			    default='../../tools/antibody'
+		     ),
+
+                     Option('blastp', 'String', desc="Path to NCBI-Blast+ executable", default='blastp'),
+
+
         Option('general_dihedral_cst_phi_sd', 'Real',
             desc = 'Standard deviation to use for phi while using general dihedral circular harmonic constraints',
             default='16.0'

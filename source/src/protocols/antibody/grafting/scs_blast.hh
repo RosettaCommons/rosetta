@@ -69,6 +69,20 @@ struct SCS_Results
 	SCS_ResultsVector h1, h2, h3, l1, l2, l3, frh, frl, orientation;
 
 	SCS_Results& operator=(SCS_Results&&) = default;
+
+
+	/// @brief Create result set from 'row' element of each SCS_ResultsVector vector
+	///        if strict is true the throw if no resuls found otherwise use empty OP
+	///
+	/// @throw std::out_of_range if for some of the row is not present and strict==true
+	SCS_ResultSet get_result_set(uint row, bool strict=true);
+};
+
+
+// 'Horisontal' cut though SCS results. We storing OP here to allow fields to be optional and to accomodate for various results type (and possible mix of them)
+struct SCS_ResultSet
+{
+	SCS_ResultOP h1, h2, h3, l1, l2, l3, frh, frl, orientation;
 };
 
 
@@ -96,13 +110,37 @@ public:
 
 
 
-class SCS_BlastPlus : public SCS_Base {
+class SCS_BlastPlus : public SCS_Base
+{
 public:
-
 	/// @brief Select CDR's template
 	/// @throw _AE_scs_failed_ on failure
-	SCS_ResultsOP raw_select(AntibodySequence const &);  //, AntibodyNumbering const &);
+	SCS_ResultsOP raw_select(AntibodySequence const &) override;  //, AntibodyNumbering const &);
+
+
+
+	/// @brief set working dir/output-prefix for intermediate files based on command-line options
+	void init_from_options();
+
+	/// @brief set custom working dir/output-prefix for intermediate files
+	void set_output_prefix(std::string const &prefix) { prefix_ = prefix; }
+
+	/// @brief set path to antibody grafting database root, should point to tools/antibody
+	void set_database_path(std::string const &database) { database_ = database; }
+
+	/// @brief set path to NCBI-Blast+ executable
+	void set_blastp_executable(std::string const &blastp) { blastp_ = blastp; }
+
+
+private:
+	std::string prefix_; // output prefix for intermediate files
+
+	std::string database_; // path to antibody grafting database root, should point to tools/antibody
+
+
+	std::string blastp_ = "blastp"; // path to NCBI-Blast+ executable
 };
+
 
 struct FRH_FRL
 {

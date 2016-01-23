@@ -331,6 +331,7 @@ using basic::Warning;
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/CSI_Sequence.hh>
 
 
 #ifdef UNICODE
@@ -854,7 +855,7 @@ init_random_number_generators(){
 			real_seed += mpi_rank;
 		}
 #endif
-		T("core.init") << "Constant seed mode, seed=" << seed << " seed_offset=" << seed_offset
+		T("core.init") << utility::CSI_Red << utility::CSI_Underline << "Constant seed mode" << utility::CSI_Reset << ", seed=" << seed << " seed_offset=" << seed_offset
 			<< " real_seed=" << real_seed << std::endl;
 	} else {
 #if (defined WIN32) && (!defined WIN_PYROSETTA)

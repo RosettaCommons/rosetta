@@ -267,6 +267,9 @@ AntibodyChainNumbering Chothia_Numberer::number_light_chain(AntibodySequence con
 	string pattern_a("[A-Z][QE][A-Z]{9}[A-Z][A-Z]{4}[LVIMF][A-Z]C");
 	string pattern_b("[A-Z][QE][A-Z]{8}[A-Z][A-Z]{4}[LVIMF][A-Z]C");
 
+	if( ! antibody_grafting_usable() ) {
+		utility_exit_with_message("ERROR: Your compiler does not have full support for C++11 regex, and therefore can't support Chothia_Numberer/antibody grafting.");
+	}
 	std::regex re_a(pattern_a, std::regex::extended );
 	std::regex re_b(pattern_b, std::regex::extended );
 	if( std::regex_search( f.fr1, _, re_a ) ) {

@@ -43,7 +43,11 @@ void RegEx_based_CDR_Detector::detect(AntibodySequence &A)
 
 void RegEx_based_CDR_Detector::detect_heavy_chain(AntibodySequence &A)
 {
-    AntibodyChain & H(A.heavy);
+	if( ! antibody_grafting_usable() ) {
+		utility_exit_with_message("ERROR: Your compiler does not have full support for C++11 regex, and therefore can't support RegEx_based_CDR_Detector/antibody grafting.");
+	}
+
+	AntibodyChain & H(A.heavy);
 	string const & heavy_chain_sequence(H.sequence);
 
 
@@ -153,7 +157,11 @@ void RegEx_based_CDR_Detector::detect_heavy_chain(AntibodySequence &A)
 
 void RegEx_based_CDR_Detector::detect_light_chain(AntibodySequence &A)
 {
-    AntibodyChain & L(A.light);
+	if( ! antibody_grafting_usable() ) {
+		utility_exit_with_message("ERROR: Your compiler does not have full support for C++11 regex, and therefore can't support RegEx_based_CDR_Detector/antibody grafting.");
+	}
+
+	AntibodyChain & L(A.light);
 	string const & light_chain_sequence(L.sequence);
 
 
