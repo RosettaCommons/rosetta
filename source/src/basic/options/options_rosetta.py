@@ -2819,6 +2819,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'scmin_cartesian', 'Boolean', desc='Toggle Cartesian-space minimization during scmin (e.g. rmin and min_pack)', default='false'),
 		Option( 'nonideal', 'Boolean', desc='Permit bond geometries to vary from ideal values', default='false'),
 		Option( 'new_sym_min', 'Boolean', desc='New approach to sym-min where all dofs, dep+indep, go into the map', default='false'),
+		Option( 'debug_inaccurate_G', 'Boolean', desc='Debug innacurate G messages', default='false'),
 	), # -optimization
 
 	################STEVEN COMBS#######################

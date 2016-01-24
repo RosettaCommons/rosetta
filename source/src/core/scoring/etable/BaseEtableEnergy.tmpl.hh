@@ -847,11 +847,17 @@ BaseEtableEnergy< Derived >::setup_for_minimizing(
 
 		if ( pose.energies().use_nblist_auto_update() ) {
 			Real const tolerated_narrow_nblist_motion = option[ run::nblist_autoupdate_narrow ];
-			Real const XX = etable_.max_dis() + 2 * tolerated_narrow_nblist_motion;
-			Real const XH = etable_.max_non_hydrogen_lj_radius() + etable_.max_hydrogen_lj_radius()
-				+ 2 * tolerated_narrow_nblist_motion;
-			Real const HH = etable_.max_hydrogen_lj_radius() + etable_.max_hydrogen_lj_radius()
-				+ 2 * tolerated_narrow_nblist_motion;
+			Real XX, HH, XH;
+
+			if (option[ score::fa_Hatr ]()) {
+				HH = XH = XX = etable_.max_dis() + 2 * tolerated_narrow_nblist_motion;
+			} else {
+				XX = etable_.max_dis() + 2 * tolerated_narrow_nblist_motion;
+				XH = etable_.max_non_hydrogen_lj_radius() + etable_.max_hydrogen_lj_radius()
+					+ 2 * tolerated_narrow_nblist_motion;
+				HH = etable_.max_hydrogen_lj_radius() + etable_.max_hydrogen_lj_radius()
+					+ 2 * tolerated_narrow_nblist_motion;
+			}
 
 			nblist = NeighborListOP( new NeighborList(
 				min_map.domain_map(),
@@ -860,7 +866,6 @@ BaseEtableEnergy< Derived >::setup_for_minimizing(
 				HH*HH) );
 			nblist->set_auto_update( tolerated_narrow_nblist_motion );
 		} else {
-
 			/// Use the default parameters
 			nblist = NeighborListOP( new NeighborList(
 				min_map.domain_map(),
