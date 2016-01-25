@@ -117,8 +117,8 @@ sugar_modifications_from_suffix( std::string const & suffix )
 	Size const suffix_length( suffix.size() );
 	for ( uint i( 0 ); i < suffix_length; ++i ) {
 		char const letter( suffix[ i ] );
-		char prev_letter = char();
-		char next_letter = char();
+		char prev_letter = '\0';
+		char next_letter = '\0';
 		if ( i != 0 ) { prev_letter = suffix[ i - 1 ]; }
 		if ( i != suffix_length - 1 ) { next_letter = suffix[ i + 1 ]; }
 
@@ -127,18 +127,18 @@ sugar_modifications_from_suffix( std::string const & suffix )
 		// * a comma, which indicates that we have multiple modifications of the same kind, or
 		// * an alphabetic symbol, which is or is part of the affix for a modification.
 		if ( letter == ',' ) {
-			if ( atoi( &prev_letter ) == 0 || atoi( &next_letter ) == 0 ) {
+			if ( char_to_int( prev_letter ) == 0 || char_to_int( next_letter ) == 0 ) {
 				utility_exit_with_message( "Saccharide sequence input error: "
 					"A comma must come between two numerals in a suffix." );
 			}
 			// If it's a valid location for a comma, we just move on.
-		} else if ( atoi( &letter ) != 0 ) {  // It's a number.
-			if ( atoi( &next_letter ) != 0 ) {  // If the next letter is also a number....
+		} else if ( char_to_int( letter ) != 0 ) {  // It's a number.
+			if ( char_to_int( next_letter ) != 0 ) {  // If the next letter is also a number....
 				utility_exit_with_message( "Saccharide sequence input error: "
 					"A comma must come between two numerals in a suffix and "
 					"Rosetta cannot handle sugars with more than 9 carbons." );;
 			}
-			if ( i != 0 && atoi( &prev_letter ) == 0 && prev_letter != ',' ) {
+			if ( i != 0 && char_to_int( prev_letter ) == 0 && prev_letter != ',' ) {
 				// If the previous letter was a letter, the information about the previous modifications are complete;
 				// store them.
 				Size const n_modifications( current_positions.size() );
@@ -148,7 +148,7 @@ sugar_modifications_from_suffix( std::string const & suffix )
 				current_positions.clear();
 				current_affix.clear();
 			}
-			current_positions.push_back( atoi( &letter ) );
+			current_positions.push_back( char_to_int( letter ) );
 		} else {  // It's an alphabetic letter (or nonsense).
 			if ( i == 0 ) {  // A default position is only allowed for the first modification.
 				current_positions.push_back( 0 );  // This will be filled in with a real value later.
@@ -402,6 +402,16 @@ dump_gws( core::pose::Pose const & pose, std::string const & filename )
 	}
 	file << gws_string.str() << endl;
 	file.close();
+}
+
+// Utility /////////////////////////////////////////////////////////////////////
+
+/// @brief Given a char, parse it as an integer.
+/// @details Returns 0 for anything outside of the range 1-9.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+core::uint char_to_int( char const char_in ) {
+	if(char_in > '9' || char_in < '1') return 0;
+	return static_cast<core::uint>( char_in - '0' );
 }
 
 }  // namespace carbohydrates

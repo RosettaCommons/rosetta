@@ -71,6 +71,13 @@ void dump_gws_chain( core::pose::Pose const & pose, core::uint const chain_id, s
 /// @brief  Write the GlycoWorkbench structure file for all carbohydrate chains of the given pose to <filename>.
 void dump_gws( core::pose::Pose const & pose, std::string const & filename );
 
+// Utility /////////////////////////////////////////////////////////////////////
+
+/// @brief Given a char, parse it as an integer.
+/// @details Returns 0 for anything outside of the range 1-9.
+/// @author Vikram K. Mulligan (vmullig@uw.edu).
+core::uint char_to_int( char const char_in );
+
 }  // namespace carbohydrates
 }  // namespace io
 }  // namespace core
