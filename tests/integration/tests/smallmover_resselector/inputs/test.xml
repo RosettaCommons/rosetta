@@ -17,7 +17,7 @@
 		
 		<DeclareBond name=add_termini res1=2 res2=3 atom1=C atom2=N add_termini=true />
 		
-		<Small name=small1 nmoves=100 angle_max=10 temperature=1.0 selector=firstthree />
+		<Small name=small1 nmoves=100 angle_max=10 temperature=1.0 residue_selector=firstthree />
 
 	</MOVERS>
 	<APPLY_TO_POSE>
