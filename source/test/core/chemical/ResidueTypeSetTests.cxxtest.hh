@@ -124,6 +124,16 @@ public:
 		// This is here mainly to make sure it doesn't crash.
 		ResidueType const & dec_gen( rtset->get_residue_type_with_variant_added( plain, SPECIAL_ROT ) );
 
+		TR << "BASE\tFULL" << std::endl;
+		TR << plain.base_name() << "\t" << plain.name() << std::endl;
+		TR << decorated.base_name() << "\t" << decorated.name() << std::endl;
+		TR << std::endl; TR.flush();
+
+		TS_ASSERT_EQUALS( decorated.name(), "QC1:1pqcTestPatch" );
+		TS_ASSERT_EQUALS( decorated.base_name(), "QC1" );
+		TS_ASSERT_EQUALS( plain.name(), "QC1" );
+		TS_ASSERT_EQUALS( plain.base_name(), "QC1" );
+
 		TS_ASSERT_EQUALS( plain.natoms(), 43 );
 		TS_ASSERT_EQUALS( decorated.natoms(), 48 );
 		TS_ASSERT_EQUALS( dec_gen.natoms(), 48 );

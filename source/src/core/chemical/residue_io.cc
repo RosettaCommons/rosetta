@@ -18,6 +18,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/residue_support.hh>
 #include <core/chemical/Atom.hh>
@@ -908,8 +909,8 @@ read_topology_file(
 
 		} else if ( tag == "NAME" ) {
 			l >> tag;
-			rsd->name( tag );
-
+			rsd->name( tag ); //The name will have variant types appended to it; it will be the unique identifer for a ResidueType.
+			rsd->base_name( tag ); //The base name stays the same once set.  It's common to all ResidueTypes that share a base type but differ in their VariantTypes.
 		} else if ( tag == "CHI_ROTAMERS" ) {
 			Size chino;
 			Real mean, sdev;

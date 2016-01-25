@@ -37,6 +37,8 @@
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 
+#include <core/chemical/ResidueProperties.hh>
+
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 

@@ -34,7 +34,8 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
-#include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/ResidueProperties.fwd.hh>
+#include <core/chemical/ResidueProperty.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
 
@@ -1536,27 +1537,19 @@ public:
 
 	/// @brief Is this an alpha-amino acid?
 	///
-	inline bool is_alpha_aa() const {
-		return properties_->has_property( ALPHA_AA );
-	}
+	bool is_alpha_aa() const;
 
 	/// @brief Is this a beta-amino acid?
 	///
-	inline bool is_beta_aa() const {
-		return properties_->has_property( BETA_AA );
-	}
+	bool is_beta_aa() const;
 
 	/// @brief Is this a gamma-amino acid?
 	///
-	inline bool is_gamma_aa() const {
-		return properties_->has_property( GAMMA_AA );
-	}
+	bool is_gamma_aa() const;
 
 	/// @brief Is this one of SRI's special heteropolymer building blocks?
 	///
-	inline bool is_sri() const {
-		return properties_->has_property( SRI );
-	}
+	bool is_sri() const;
 
 	/// @brief Is this a triazolemer?
 	///
@@ -1652,26 +1645,17 @@ public:
 
 
 	/// @brief  Generic property access.
-	bool
-	has_property( std::string const & property ) const
-	{
-		return properties_->has_property( property );
-	}
+	bool has_property( std::string const & property ) const;
 
 	/// @brief  Generic property access, by ResidueProperty.
 	///
-	inline bool
-	has_property( ResidueProperty const property ) const
-	{
-		return properties_->has_property( property );
-	}
-
+	bool has_property( ResidueProperty const property ) const;
+	
 	/// @brief Get a numeric property, if it exists.
 	core::Real get_numeric_property(std::string const & tag) const;
 
 	/// @brief Get a string property, if it exists.
 	std::string get_string_property(std::string const & tag) const;
-
 
 	/// @brief Add a variant type to this ResidueType.
 	void add_variant_type( VariantType const variant_type );
@@ -1686,19 +1670,11 @@ public:
 	void remove_variant_type( std::string const & variant_type );
 
 	/// @brief  Generic variant access.
-	bool
-	has_variant_type( VariantType const variant_type ) const
-	{
-		return properties_->is_variant_type( variant_type );
-	}
+	bool has_variant_type( VariantType const variant_type ) const;
 
 	// TODO: Find a way to remove this; it only exists because of how ResidueTypeSelectors are currently written. ~Labonte
 	/// @brief  Generic variant access by string.
-	bool
-	has_variant_type( std::string const & variant_type ) const
-	{
-		return properties_->is_variant_type( variant_type );
-	}
+	bool has_variant_type( std::string const & variant_type ) const;
 
 	/// @brief  Turn on the ability to create VariantTypes "on-the-fly".
 	void enable_custom_variant_types();
@@ -1745,6 +1721,13 @@ public:
 	//////////////////////////////////////////////////////////////////////
 
 
+	/// @brief Get this ResidueType's base name (shared with other residue types with the same base type).
+	///
+	std::string const &
+	base_name() const {
+		return base_name_;
+	}
+
 	/// @brief get our (unique) residue name
 	std::string const &
 	name() const
@@ -1752,6 +1735,12 @@ public:
 		return name_;
 	}
 
+	/// @brief Set this ResidueType's base name (shared with other residue types with the same base type).
+	///
+	void base_name( std::string const &base_name_in ) {
+		base_name_ = base_name_in;
+	}
+	
 	/// @brief set our (unique) residue name
 	void
 	name( std::string const & name_in )
@@ -2393,11 +2382,16 @@ private:
 	/// @brief standard rosetta aa-type for knowledge-based potentials, may be aa_unk -- Primary
 	// aa_ = THIS residue's aa-type; rotamer_aa_ = the aa-type on which rotamers will be based; backbone_aa_ = the aa-type on which the backbone scoring (rama, p_aa_pp) will be based.
 	AA aa_, rotamer_aa_, backbone_aa_;
+	
+	/// @brief Residue id for the base type (i.e. sans variants).
+	/// @details Does not accumulate VariantType names (e.g. "ALA").
+	std::string base_name_;
 
-	/// @brief residue id -- Primary, should be unique
+	/// @brief Residue id -- Primary, should be unique
+	/// @details Accumulates VariantType names (e.g. "ALA:NtermProteinFull").
 	std::string name_;
 
-	/// @brief pdb-file id, need not be unique -- Primary
+	/// @brief PDB-file id, need not be unique -- Primary
 	std::string name3_;
 
 	/// @brief one-letter code, also not necessarily unique -- Primary

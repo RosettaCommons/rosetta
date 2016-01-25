@@ -52,6 +52,7 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/ResidueProperties.hh>
 
 // Filter headers
 #include <basic/MetricValue.hh>

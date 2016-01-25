@@ -106,9 +106,10 @@ ResidueType::ResidueType(
 	aa_( aa_unk ),
 	rotamer_aa_( aa_unk ),
 	backbone_aa_( aa_unk ),
-	name_(),
-	name3_(),
-	name1_(),
+	base_name_(""),
+	name_(""),
+	name3_(""),
+	name1_(' '),
 	interchangeability_group_(),
 	root_atom_( ResidueType::null_vertex ),
 	nbr_atom_( ResidueType::null_vertex ),
@@ -210,6 +211,7 @@ ResidueType::operator=( ResidueType const & residue_type )
 	aa_ = residue_type.aa_;
 	rotamer_aa_ = residue_type.rotamer_aa_;
 	backbone_aa_ = residue_type.backbone_aa_;
+	base_name_ = residue_type.base_name_,
 	name_ = residue_type.name_;
 	name3_ = residue_type.name3_;
 	name1_ = residue_type.name1_;
@@ -2047,6 +2049,34 @@ ResidueType::is_protein() const
 	return properties_->has_property( PROTEIN );
 }
 
+/// @brief Is this an alpha-amino acid?
+///
+bool
+ResidueType::is_alpha_aa() const {
+	return properties_->has_property( ALPHA_AA );
+}
+
+/// @brief Is this a beta-amino acid?
+///
+bool
+ResidueType::is_beta_aa() const {
+	return properties_->has_property( BETA_AA );
+}
+
+/// @brief Is this a gamma-amino acid?
+///
+bool
+ResidueType::is_gamma_aa() const {
+	return properties_->has_property( GAMMA_AA );
+}
+
+/// @brief Is this one of SRI's special heteropolymer building blocks?
+///
+bool
+ResidueType::is_sri() const {
+	return properties_->has_property( SRI );
+}
+
 /// @brief Is this a triazolemer?
 ///
 bool
@@ -2234,6 +2264,20 @@ ResidueType::is_adduct() const
 	return properties_->has_property( ADDUCT );
 }
 
+/// @brief  Generic property access.
+bool
+ResidueType::has_property( std::string const & property ) const
+{
+	return properties_->has_property( property );
+}
+
+/// @brief  Generic property access, by ResidueProperty.
+///
+bool
+ResidueType::has_property( ResidueProperty const property ) const
+{
+	return properties_->has_property( property );
+}
 
 core::Real
 ResidueType::get_numeric_property(std::string const & tag) const
@@ -2297,6 +2341,20 @@ ResidueType::remove_variant_type( std::string const & variant_type )
 	properties_->set_variant_type( variant_type, false );
 }
 
+/// @brief  Generic variant access.
+bool
+ResidueType::has_variant_type( VariantType const variant_type ) const
+{
+	return properties_->is_variant_type( variant_type );
+}
+
+// TODO: Find a way to remove this; it only exists because of how ResidueTypeSelectors are currently written. ~Labonte
+/// @brief  Generic variant access by string.
+bool
+ResidueType::has_variant_type( std::string const & variant_type ) const
+{
+	return properties_->is_variant_type( variant_type );
+}
 
 /// @details "Custom" VariantTypes as strings are permitted for the enzdes and metalloproteins cases.
 /// Do not enable unless you have a good reason to, as string look-ups are less efficient and more error-prone.
@@ -3993,6 +4051,8 @@ ResidueType::show( std::ostream & output, bool output_atomic_details ) const
 	using namespace utility;
 
 	output << name_ << " (" << name3_ << ", " << name1_ << "):" << endl;
+	
+	output << "Base: " << base_name_ << std::endl;
 
 	properties_->show( output );
 
