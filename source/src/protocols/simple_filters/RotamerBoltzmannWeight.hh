@@ -114,6 +114,7 @@ private:
 	mutable std::map< core::Size, core::Real > rotamer_probabilities_;//ditto for the probabilities
 	std::string type_;
 	bool skip_ala_scan_;//dflt false; if true, only considers the task_factory
+	bool skip_report_;// dflt false; if true, value will NOT be recomputed when report() is called
 	bool fast_calc_; //default false for now
 	bool no_modified_ddG_;
 	std::string target_residues_;

@@ -80,6 +80,7 @@ RotamerBoltzmannWeight::RotamerBoltzmannWeight() :
 	repack_( true ),
 	type_( "" ),
 	skip_ala_scan_( false ),
+	skip_report_( false ),
 	fast_calc_(false),
 	no_modified_ddG_(false)
 {
@@ -466,6 +467,8 @@ RotamerBoltzmannWeight::interface_interaction_energy( core::pose::Pose const & p
 void
 RotamerBoltzmannWeight::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
+	if ( skip_report_ ) return;
+
 	if ( type_ == "monomer" || no_modified_ddG_ ) {
 		out<<"RotamerBoltzmannWeightFilter returns "<<compute( pose )<<std::endl;
 		out<<"RotamerBoltzmannWeightFilter final report\n";
@@ -504,6 +507,7 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP tag,
 	energy_reduction_factor( tag->getOption< core::Real >( "energy_reduction_factor", 0.5 ) );
 	compute_entropy_reduction( tag->getOption< bool >( "compute_entropy_reduction", 0 ) );
 	repack( tag->getOption< bool >( "repack", 1 ) );
+	skip_report_ = tag->getOption< bool >( "skip_report", skip_report_ );
 	utility::vector0< TagCOP > const & branch( tag->getTags() );
 	BOOST_FOREACH ( TagCOP const tag, branch ) {
 		using namespace core::chemical;
