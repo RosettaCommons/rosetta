@@ -1,0 +1,34 @@
+## This directory
+
+This directory contains the CIFPARSE-OBJ C++ Parser from Rutgers, the RCSB and the wwPDB.
+<http://mmcif.wwpdb.org/docs/sw-examples/cpp/html/index.html>
+
+See the VERSION file for the current version number information.
+
+See the LICENSE file for the licensing information of CIFPARSE-OBJ, and 
+regex_COPYRIGHT copyright for the included regex library. Other files may 
+have additional licensing information included in their text. 
+(Note that Rosetta explicitly invokes the "special exception" clause in 
+the parser-generator generated files CifParser.* and DICParser.*) 
+
+### Updating.
+
+1. As some of the files are generated from lex/yacc//flex/bison files, it's useful to build CIFPARSE-OBJ 
+using the provided MakeFiles to generate these files. (Rosetta does not have lex/yacc//flex/bison integration.)
+
+2. After compiling, ignore the compiled files and copy all the *.C, *.c, *.h and *.ih files from the CIFPARSE-OBJ directory 
+(except for the main()-containing test files in the parser-test-app/ directory) to the Rosetta/main/source/external/cifparse/ 
+directory. 
+
+3. Update Rosetta/main/source/external/cifparse.external.settings, if necessary, to update the files which need to be compiled.
+(The Rosetta build system should be able to handle invoking the appropriate compiler for *.C and *.c files.)
+
+4. The regex directory is an external library for CIFPARSE-OBJ. Special care is needed for these files. 
+Particularly, some *.c files (e.g. engine.c) are actually pseudo-header files which should not be compiled separately.
+Additionally, I've found that you may need to change some `#include <regex.h>` into `#include "regex.h"` to get the compiler
+not to choke on the include search paths.
+
+5. I found that `#define _POSIX_C_SOURCE 1` needed to be added at the top of *Scanner.c files in order to silence some compiler warnings.
+
+6. Be sure to update the VERSION, LICENSE, and regex COPYRIGHT notices, if necessary, along with any other such file which might be added.
+(Some of the README files seems to be unnecessary, as they talk only about installation.) 

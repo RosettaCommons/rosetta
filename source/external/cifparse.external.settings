@@ -1,0 +1,60 @@
+# -*- mode:python;indent-tabs-mode:t;show-trailing-whitespace:t; -*-
+#
+# Project settings for rosetta sources
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+sources = {
+	"cifparse": [
+		"BlockIO.C",
+		"CifDataInfo.C",
+		"CifExcept.C",
+		"CifFile.C",
+		"CifFileReadDef.C",
+		"CifParentChild.C",
+		"CifParserBase.C",
+		"CifScannerBase.C",
+		"CifString.C",
+		"DataInfo.C",
+		"DicFile.C",
+		"DICParserBase.C",
+		"DICScannerBase.C",
+		"Exceptions.C",
+		"GenCont.C",
+		"GenString.C",
+		"ISTable.C",
+		"ITTable.C",
+		"mapped_ptr_vector.C",
+		"mapped_vector.C",
+		"ParentChild.C",
+		"RcsbFile.C",
+		"RcsbPlatform.C",
+		"Serializer.C",
+		"TableFile.C",
+		"TTable.C",
+		"CifParser.c",
+		"CifScanner.c",
+		"DICParser.c",
+		"DICScanner.c",
+		#"engine.c", // This *.c file is #included by regexec.c, and is not independant 
+		"regcomp.c",
+		"regerror.c",
+		"regexec.c",
+		"regfree.c",
+
+	],
+}
+include_path = [
+]
+library_path = [
+]
+libraries = [
+]
+subprojects = [
+]
+defines = [
+		"POSIX_MISTAKE",
+]

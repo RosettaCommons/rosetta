@@ -96,6 +96,7 @@ sources = {
 	],
 	"io" : [
 		"PDB_IO",
+		"mmcif_IO",
 	],
 	"io/atom_tree_diffs": [
 		"atom_tree_diff",
@@ -435,6 +436,7 @@ libraries	 = [
 	"numeric",
 	"utility",
 	"ObjexxFCL",
+	"cifparse",
 ]
 subprojects	 = []
 testinputfiles = [
@@ -628,6 +630,7 @@ testinputfiles = [
 	"indexed_structure_store/test_store/fragments/full_test_fragments/coordinates.dat",
 	"indexed_structure_store/test_store/fragments/full_test_fragments/threshold_distance.dat",
 	"io/1ten.pdb",
+	"io/1QYS.cif",
 	"io/GTP.params",
 	"io/bin_silentfile_test.out",
 	"io/bin_silentfile_test.pdb",
