@@ -267,10 +267,8 @@ FoldTreeHybridize::init() {
 	small_frag_insertion_weight_ = 0.0;
 	big_frag_insertion_weight_ = 0.50;
 	chunk_insertion_weight_ = 5.;
-	temp_stage1_ = option[ abinitio::temperature ]();
 
-	//top_n_big_frag_ = 25;
-	top_n_big_frag_ = option[abinitio::number_9mer_frags]();
+	top_n_big_frag_ = 25;
 	top_n_small_frag_ = 200;
 	add_hetatm_ = false;
 	hetatm_self_cst_weight_ = 10.;
@@ -1134,9 +1132,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	utility::vector1< core::Size > jump_anchors = get_jump_anchors();
 
 	// set montecarlo temp
-	//core::Real temp = 2.0;
-	core::Real temp = temp_stage1_;
-	TR << "temp: " << temp << std::endl;
+	core::Real temp = 2.0;
 
 	// set up movers
 	// Stage 1-3: chunks + big + small (at positions skipped by big) + 1mer (at positions skipped by small) frags + strand pair jumps if given
@@ -1323,8 +1319,6 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		mc2->show_counters();
 		mc2->recover_low(pose);
 		mc2->reset( pose );
-		TR << "stage2, temp: " << temp << std::endl;
-
 	}
 
 	// evaluation
