@@ -221,6 +221,7 @@ private:
 
 	Loops ss_chunks_pose_;
 
+	core::Real temp_stage1_;
 	core::Size top_n_big_frag_;
 	core::Size top_n_small_frag_;
 
