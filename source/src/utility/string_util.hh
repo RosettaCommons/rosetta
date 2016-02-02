@@ -136,12 +136,25 @@ bool endswith(std::string const & haystack, std::string const & needle);
 
 void slurp(std::istream & in, std::string & out);
 
+/// @brief Remove any charachters in drop from the front and back of the string
+/// Use strip() for the value return version
 void trim( std::string & s, const std::string & drop = " " );
 
-/// @brief create a new string that drops all the unwanted substrings of
-/// the original string.
+/// @brief Return a copy of the string with leading and trailing characters removed
+std::string strip(std::string const & source, char c=' ');
+
+/// @brief Return a copy of the string with leading and trailing characters removed
+/// Any charachters in drop will be removed
+/// For the in place version, see trim()
+std::string strip(std::string const & source, std::string const & drop);
+
+/// @brief Ambiguious with the trim( std::string & s ) -- Deprecated:
+/// use strip() instead for return-value trimming
+inline
 std::string
-trim( std::string const & s, std::string const & drop = " " );
+trim( std::string const & s, std::string const & drop = " " ) {
+	return strip( s, drop );
+}
 
 /// @brief compares two strings ignoring leading and trailing spaces
 bool trimmed_compare( std::string const & s1, std::string const & s2 );
@@ -336,10 +349,6 @@ get_resnum_and_segid_from_one_tag( std::string const & tag,
 
 platform::Size
 get_num_digits( platform::Size value);
-
-
-/// @brief Return a copy of the string with leading and trailing characters removed
-std::string strip(std::string const & source, char c=' ');
 
 }  // namespace utility
 

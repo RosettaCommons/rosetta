@@ -1205,7 +1205,7 @@ VD
 ResidueType::atom_vertex( std::string const & name) const{
 	NameVDMap::const_iterator atom_name_to_vd_iter( atom_name_to_vd_.find( name ) );
 	if ( atom_name_to_vd_iter == atom_name_to_vd_.end() ) {
-		tr.Error << "atom name : " << name << " not available in residue " << name3() << std::endl;
+		tr.Error << "atom name : '" << name << "' not available in residue " << name3() << std::endl;
 		show_all_atom_names( tr.Error );
 		tr.Error << std::endl;
 		debug_assert(false);
@@ -4017,7 +4017,7 @@ ResidueType::show_all_atom_names( std::ostream & out ) const {
 		VIter v_iter= vp.first;
 		VD vd = *v_iter;
 		Atom a = graph_[vd];
-		out << a.name() << " " << &graph_[vd] << std::endl;
+		out << "'" << a.name() << "' " << &graph_[vd] << std::endl;
 	}
 
 }
@@ -4051,7 +4051,7 @@ ResidueType::show( std::ostream & output, bool output_atomic_details ) const
 	using namespace utility;
 
 	output << name_ << " (" << name3_ << ", " << name1_ << "):" << endl;
-	
+
 	output << "Base: " << base_name_ << std::endl;
 
 	properties_->show( output );

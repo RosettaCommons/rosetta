@@ -158,16 +158,19 @@ POSSIBILITY THEREOF.
 #include "CifParserBase.h"
 #include "CifParser.h"
 
-extern int cifparser_leng;
-extern char* cifparser_text;
-extern YYSTYPE cifparser_lval;
-extern FILE* cifparser_in;
+// WIN32 - all extern as "C"
+
+extern "C" int cifparser_leng;
+extern "C" char* cifparser_text;
+extern "C" YYSTYPE cifparser_lval;
+extern "C" FILE* cifparser_in;
 
 #define yyleng cifparser_leng
 #define yytext cifparser_text
 #define yylval cifparser_lval
 #define yyin cifparser_in
 
+// WIN32 - extern C
 extern "C" void cif_yy_less(int i);
 
 extern CifParser* CifParserP;

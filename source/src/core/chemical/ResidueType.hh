@@ -1650,7 +1650,7 @@ public:
 	/// @brief  Generic property access, by ResidueProperty.
 	///
 	bool has_property( ResidueProperty const property ) const;
-	
+
 	/// @brief Get a numeric property, if it exists.
 	core::Real get_numeric_property(std::string const & tag) const;
 
@@ -1740,7 +1740,7 @@ public:
 	void base_name( std::string const &base_name_in ) {
 		base_name_ = base_name_in;
 	}
-	
+
 	/// @brief set our (unique) residue name
 	void
 	name( std::string const & name_in )
@@ -1752,6 +1752,10 @@ public:
 	/// @brief get our 3letter code.  This is set in the
 	/// ResidueType .params file through the IO_STRING
 	/// tag along with the name1 string
+	/// NOTE: The "name3" is not necessarily three characters
+	/// long. e.g. Metal ions may be only two characters.
+	/// @details If you need three characters, the PDB convention
+	/// is to right pad.
 	std::string const &
 	name3() const
 	{
@@ -2382,7 +2386,7 @@ private:
 	/// @brief standard rosetta aa-type for knowledge-based potentials, may be aa_unk -- Primary
 	// aa_ = THIS residue's aa-type; rotamer_aa_ = the aa-type on which rotamers will be based; backbone_aa_ = the aa-type on which the backbone scoring (rama, p_aa_pp) will be based.
 	AA aa_, rotamer_aa_, backbone_aa_;
-	
+
 	/// @brief Residue id for the base type (i.e. sans variants).
 	/// @details Does not accumulate VariantType names (e.g. "ALA").
 	std::string base_name_;
@@ -2392,6 +2396,8 @@ private:
 	std::string name_;
 
 	/// @brief PDB-file id, need not be unique -- Primary
+	/// NOTE: The "name3" is not necessarily three characters long.
+	/// e.g. Metal ions may be only two characters.
 	std::string name3_;
 
 	/// @brief one-letter code, also not necessarily unique -- Primary

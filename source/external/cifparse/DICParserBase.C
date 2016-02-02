@@ -164,17 +164,19 @@ POSSIBILITY THEREOF.
 #include "DICParserInt.h"
 #include "DICParserBase.h"
 
-extern FILE* dicparser_in;
+extern "C" FILE* dicparser_in;
 
 extern "C"
 {
   int dicparser_parse();
   void dicparser_restart(FILE*);
-}
 
+// WIN32 - move inside extern C
 char* Glob_tBufKeywordSaveDIC;
 char* Glob_pBufValueDIC;
 char* Glob_dataBlockNameDIC;
+
+}
 
 DICParser* DICParserP = NULL;
 

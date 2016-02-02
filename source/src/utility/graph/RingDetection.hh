@@ -32,7 +32,6 @@
 #include <vector>
 #include <utility/graph/BFS_prune.hh>
 
-
 namespace utility {
 namespace graph {
 
@@ -63,19 +62,19 @@ public:
 	//! @brief constructor from a graph (either GraphWithData or ConstGraph)
 	//! @param graph graph for exhaustive ring detection
 	//! @note prefer using ConstGraph here, it is often many times faster than GraphWithData
-	RingDetection( const Graph &graph) :
-		graph_size_( boost::num_vertices(graph) )
+	RingDetection( const Graph &graph ) :
+		graph_size_( boost::num_vertices( graph) )
 	{
 		// initialize paths_ with all edges
 		Initialize( graph);
+			// remove all vertices, update paths, collect rings
+			while ( !paths_.empty() )
+			{
+				// in the paper it's suggested to remove vertices with smaller amount of edges first
+				// such a heuristic should go here instead of taking the 'next' vertex
+				Remove( paths_.front().front());
+			}
 
-		// remove all vertices, update paths, collect rings
-		while ( !paths_.empty() )
-				{
-			// in the paper it's suggested to remove vertices with smaller amount of edges first
-			// such a heuristic should go here instead of taking the 'next' vertex
-			Remove( paths_.front().front());
-		}
 	}
 
 	//! clone the object
@@ -142,6 +141,7 @@ private:
 			shortest_cycles[vertex_number] = LengthOfSmallestCycleWithVertex(graph, vertex_number);
 		}
 
+
 		// our graphs are not directed // const bool is_directed( false ); // determine whether the graph is undirected
 		// initialize paths_
 		for (
@@ -163,15 +163,20 @@ private:
 				VD target = boost::target(*itr_edge_target, graph); //get the vertex that is the target of edge (boost::source would return original vertex)
 				source_vertex_number_neighbors.push_back(vd_to_index_[target]);
 			}
+
+
 			for ( utility::vector1<size_t>::iterator itr_edge_target = source_vertex_number_neighbors.begin(); itr_edge_target != source_vertex_number_neighbors.end(); ++itr_edge_target ) {
 				if ( shortest_cycles[ *itr_edge_target ] > graph_size ) { // the edge target vertex is not part of any cycle
 					continue;
 				}
+//continue;
+
 				if ( source_vertex_number <= *itr_edge_target ) {
 					std::vector<size_t> initial_path(2);
 					initial_path[0] = source_vertex_number;
 					initial_path[1] = *itr_edge_target;
-					paths_.push_back(initial_path);
+                    paths_.push_back(initial_path);
+
 				}
 			}
 		}
@@ -479,6 +484,8 @@ private:
 	boost::unordered_map<size_t, VD> index_to_vd_;
 
 	boost::unordered_map<VD, size_t> vd_to_index_;
+
+	//bool only_annotate_edges_;
 
 };
 

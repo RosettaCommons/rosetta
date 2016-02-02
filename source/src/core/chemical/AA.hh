@@ -40,6 +40,7 @@ enum AA {
 	aa_none = 0,
 	// protein 1-20
 	aa_ala = 1,
+	first_l_aa = aa_ala,
 	aa_cys,
 	aa_asp,
 	aa_glu,
@@ -154,6 +155,21 @@ aa_from_name( std::string const & name );
 //////////////////////////////////////////////////////////
 bool
 is_canonical_D_aa( AA aa );
+
+//////////////////////////////////////////////////////////
+/// @brief Given an enum type, return true if and only if
+/// it is a canonical L-amino acid.
+/// @author Steven Cobms (steven.combs1@gmail.com)
+//////////////////////////////////////////////////////////
+bool
+is_canonical_L_aa( AA aa);
+
+//////////////////////////////////////////////////////////
+/// @brief Given aa three letter string, return true if
+/// it is an unknown aa.
+/// @author Steven Cobms (steven.combs1@gmail.com)
+bool
+is_aa_name_unknown( std::string name);
 
 //////////////////////////////////////////////////////////
 /// @brief Given an enum type for a D-amino acid with a

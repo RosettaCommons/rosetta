@@ -140,9 +140,17 @@ POSSIBILITY THEREOF.
 
 
 #include <string.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+
+// Windows work around for Posix commands
+#ifndef WIN32
+#include <unistd.h>
+#else // On Win32
+#include <io.h>
+#define S_IRUSR _S_IREAD
+#define S_IWUSR _S_IWRITE
+#endif
 
 #include <iostream>
 #include <iomanip>

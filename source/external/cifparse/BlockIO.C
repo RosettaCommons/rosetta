@@ -148,8 +148,14 @@ POSSIBILITY THEREOF.
 #endif
 
 #include <string.h>
-#include <unistd.h>
 #include <fcntl.h>
+
+// Windows work around for Posix commands
+#ifndef WIN32
+#include <unistd.h>
+#else
+#include <io.h>
+#endif
 
 #include <string>
 

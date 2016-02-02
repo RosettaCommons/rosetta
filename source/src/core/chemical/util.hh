@@ -77,13 +77,13 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 	utility::vector1< std::string > const & atom_names,
 	bool const ignore_atom_named_H = false );
 
-// @brief Fang-Chieh Chou 8/10/2012. Use larger LJ_WDEPTH for protons to avoid clashes in RNA
+/// @brief Fang-Chieh Chou 8/10/2012. Use larger LJ_WDEPTH for protons to avoid clashes in RNA
 void enlarge_h_lj_wdepth( utility::vector1< Real > & lj_wdepth, AtomTypeSet const & atom_type_set );
 
-// @brief Fang-Chieh Chou 8/10/2012. Use larger LJ_WDEPTH for protons to avoid clashes in RNA
+/// @brief Fang-Chieh Chou 8/10/2012. Use larger LJ_WDEPTH for protons to avoid clashes in RNA
 void enlarge_h_lj_wdepth( AtomTypeSet & atom_type_set );
 
-// @brief Rhiju. O3', O4', O5' in nucleic acids are ethers -- should not be good acceptors for H-bonds.
+/// @brief Rhiju. O3', O4', O5' in nucleic acids are ethers -- should not be good acceptors for H-bonds.
 void
 turn_off_hbonds_to_ether_oxygens( AtomTypeSet & atom_type_set );
 
@@ -93,6 +93,10 @@ detect_ld_chirality_from_polymer_residue(
 	std::string const & name3,
 	bool & is_d_aa,
 	bool & is_l_aa );
+
+/// @brief Return true if the two residues have the same number and name of heavy atoms.
+bool
+heavy_atom_names_match( ResidueType const & first, ResidueType const & second );
 
 }  // namespace chemical
 }  // namespace core

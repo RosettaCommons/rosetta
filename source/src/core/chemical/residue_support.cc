@@ -363,6 +363,11 @@ void
 rosetta_recharge_fullatom( ResidueType & res ) {
 	ResidueGraph const & graph( res.graph() );
 	AtomTypeSet const & ats( res.atom_type_set() );
+	if( ! ats.has_extra_parameter( "CHARGE" ) ) {
+		TR.Warning << "Atom Type Set " << ats.name() << " is missing charging information - skipping recharging." << std::endl;
+		return;
+	}
+	int charge_extra_param_index( ats.extra_parameter_index("CHARGE") );
 	core::Real desired_net(0), current_net(0);
 	core::Size natoms(0);
 	VIter iter, iter_end;
@@ -371,8 +376,7 @@ rosetta_recharge_fullatom( ResidueType & res ) {
 		desired_net += atm.formal_charge();
 		core::Real charge(0);
 		if ( atm.atom_type_index() != 0 ) {
-			std::string const & type( ats[ atm.atom_type_index() ].name() );
-			charge = get_rpp_charge( type );
+			charge = ats[ atm.atom_type_index() ].extra_parameter( charge_extra_param_index );
 		}
 		atm.charge( charge );
 		TR.Debug << "Residue " << res.name() << ": Charging atom " << atm.name() << " type " << ats[ atm.atom_type_index() ].name() << " at " << atm.charge() << std::endl;
@@ -393,53 +397,6 @@ rosetta_recharge_fullatom( ResidueType & res ) {
 		}
 	}
 }
-
-/// @brief Get charge for atom type based on Rosetta++ aaproperties_pack.cc values
-core::Real get_rpp_charge( std::string const & type ) {
-	if ( type == "CNH2" ) { return 0.550; }
-	else if ( type == "COO" ) { return  0.620; }
-	else if ( type == "CH1" ) { return  -0.090; }
-	else if ( type == "CH2" ) { return  -0.180; }
-	else if ( type == "CH3" ) { return  -0.270; }
-	else if ( type == "aroC" ) { return  -0.115; }
-	else if ( type == "Ntrp" ) { return  -0.610; }
-	else if ( type == "Nhis" ) { return  -0.530; }
-	else if ( type == "NH2O" ) { return  -0.470; }
-	else if ( type == "Nlys" ) { return  -0.620; }
-	else if ( type == "Narg" ) { return  -0.750; }
-	else if ( type == "Npro" ) { return  -0.370; }
-	else if ( type == "OH" )   { return  -0.660; }
-	else if ( type == "Oaro" ) { return  -0.660; } // copied from OH
-	else if ( type == "ONH2" ) { return  -0.550; }
-	else if ( type == "OOC" )  { return  -0.760; }
-	else if ( type == "S" )    { return  -0.160; }
-	else if ( type == "Nbb" )  { return  -0.470; }
-	else if ( type == "CAbb" ) { return  0.070; }
-	else if ( type == "CObb" ) { return  0.510; }
-	else if ( type == "OCbb" ) { return  -0.510; }
-	else if ( type == "Phos" ) { return  1.500; }
-	else if ( type == "Hpol" ) { return  0.430; }
-	else if ( type == "Hapo" ) { return  0.095; }
-	else if ( type == "Haro" ) { return  0.115; }
-	else if ( type == "HNbb" ) { return  0.310; }
-	else if ( type == "H2O" )  { return  0.000; }
-	else if ( type == "F" )    { return  -0.250; }
-	else if ( type == "Cl" )   { return  -0.130; }
-	else if ( type == "Br" )   { return  -0.100; }
-	else if ( type == "I" )    { return  -0.090; }
-	else if ( type == "Zn2p" ) { return  2.000; }
-	else if ( type == "Fe2p" ) { return  2.000; }
-	else if ( type == "Fe3p" ) { return  3.000; }
-	else if ( type == "Mg2p" ) { return  2.000; }
-	else if ( type == "Ca2p" ) { return  2.000; }
-	else if ( type == "Na1p" ) { return  1.000; }
-	else if ( type == "K1p" )  { return  1.000; }
-	else if ( type == "VIRT" ) { return  0.000; }
-	// If we don't recognize it, don't charge it.
-	TR.Warning << "No charge listed for atom type '" << type << "'." << std::endl;
-	return 0.00;
-}
-
 
 } // chemical
 } // core

@@ -120,6 +120,9 @@ sources = {
 		"MolFileIOReader",
 		"SDFParser",
 	],
+	"core/chemical/mmCIF": [
+		"mmCIFParser",
+	],
 	"core/conformation": [
 		"AbstractRotamerTrie",
 		"Atom",

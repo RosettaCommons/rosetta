@@ -43,6 +43,7 @@
 #include <core/chemical/Patch.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/residue_io.hh>
+#include <core/chemical/sdf/MolFileIOReader.hh>
 #include <core/chemical/adduct_util.hh>
 #include <core/chemical/util.hh>
 //#include <core/chemical/Orbital.hh> /* for copying ResidueType */
@@ -51,6 +52,9 @@
 #include <core/chemical/ResidueConnection.hh> /* for copying ResidueType */
 
 #include <core/chemical/gasteiger/GasteigerAtomTyper.hh>
+#include <core/chemical/mmCIF/mmCIFParser.hh>
+
+
 
 // Basic headers
 #include <basic/database/open.hh>
@@ -97,7 +101,9 @@ ResidueTypeSet::ResidueTypeSet(
 	name_( name ),
 	database_directory_(directory),
 	cache_( ResidueTypeSetCacheOP( new ResidueTypeSetCache( *this ) ) )
-{}
+{
+	load_shadowed_ids( directory );
+}
 
 bool sort_patchop_by_name( PatchOP p, PatchOP q ) {
 	return ( p->name() < q->name() );
@@ -325,6 +331,11 @@ void ResidueTypeSet::init(
 		}
 	}
 
+	// Components file? (Willl be empty if we're not doing this.)
+	if( option[ OptionKeys::in::file::load_PDB_components ] || option[ OptionKeys::in::file::PDB_components_file ].user() ){
+		pdb_components_filename_ = option[ OptionKeys::in::file::PDB_components_file ].value();
+	}
+
 	tr << "Finished initializing " << name_ << " residue type set.  ";
 	tr << "Created " << residue_types.size() << " residue types" << std::endl;
 	tr << "Total time to initialize " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
@@ -477,15 +488,29 @@ ResidueTypeSet::update_info_on_name3_and_interchangeability_group( ResidueTypeCO
 /// @details since residue id is unique, it only returns
 /// one residue type or exit without match.
 ///
-/// MOST RESIDUE TYPES WILL BE GENERATED THROUGH THIS FUNCTION.
-///
 //////////////////////////////////////////////////////////////////
 ResidueType const &
 ResidueTypeSet::name_map( std::string const & name_in ) const
 {
+	ResidueTypeCOP restype( name_mapOP( name_in ) );
+	runtime_assert_string_msg( restype != 0, "The residue " + name_in + " could not be generated.  Has a suitable params file been loaded?  (Note that custom params files not in the Rosetta database can be loaded with the -extra_res or -extra_res_fa command-line flags.)"  );
+	return *restype;
+}
+
+//////////////////////////////////////////////////////////////////
+///
+/// MOST RESIDUE TYPES WILL BE GENERATED THROUGH THIS FUNCTION.
+///
+//////////////////////////////////////////////////////////////////
+ResidueTypeCOP
+ResidueTypeSet::name_mapOP( std::string const & name_in ) const
+{
 	std::string const name = fixup_patches( name_in );
-	runtime_assert_string_msg( generate_residue_type( name ), "The residue " + name + " could not be generated.  Has a suitable params file been loaded?  (Note that custom params files not in the Rosetta database can be loaded with the -extra_res or -extra_res_fa command-line flags.)"  );
-	return cache_->name_map( name );
+	if ( generate_residue_type( name ) ) {
+		return cache_->name_map( name );
+	} else {
+		return ResidueTypeCOP( 0 );
+	}
 }
 
 /// @details Instantiates ResidueType
@@ -497,9 +522,15 @@ ResidueTypeSet::generate_residue_type( std::string const & rsd_name ) const
 	// get name (which holds patch information)
 	std::string rsd_name_base, patch_name;
 	figure_out_last_patch_from_name( rsd_name, rsd_name_base, patch_name );
-	if ( patch_name.size() == 0 ) return false; // utility_exit_with_message( "Problem: " + rsd_name + " not instantiated." );
 
-	// now apply patch.
+	if ( patch_name.size() == 0 ) { // If this is the non-patched base type
+		if ( ! cache_->has_generated_residue_type( rsd_name_base ) ) {
+			lazy_load_base_type( rsd_name_base );
+		}
+		return cache_->has_generated_residue_type( rsd_name ); // Is generated?
+	}
+
+	// now apply patches.
 	ResidueType const & rsd_base = name_map( rsd_name_base );
 	runtime_assert( rsd_base.finalized() );
 
@@ -607,6 +638,9 @@ ResidueTypeSet::figure_out_last_patch_from_name( std::string const & rsd_name,
 	if ( pos != std::string::npos ) {
 		rsd_name_base = rsd_name.substr( 0, pos );
 		patch_name    = rsd_name.substr( pos + 1 );
+	} else { // Patch linker not found
+		rsd_name_base = rsd_name;
+		patch_name    = "";
 	}
 
 	// For D patch, it's the first letter.
@@ -845,7 +879,7 @@ ResidueTypeSet::add_custom_residue_type( ResidueTypeOP new_type )
 void
 ResidueTypeSet::remove_custom_residue_type( std::string const & name )
 {
-	ResidueTypeCOP rsd_type( (cache_->name_map( name )).get_self_weak_ptr() );
+	ResidueTypeCOP rsd_type( cache_->name_map( name ) );
 	ResidueTypeCOPs::iterator res_it = std::find( custom_residue_types_.begin(), custom_residue_types_.end(), rsd_type );
 	runtime_assert( res_it != custom_residue_types_.end() );
 	custom_residue_types_.erase( res_it );
@@ -855,7 +889,7 @@ ResidueTypeSet::remove_custom_residue_type( std::string const & name )
 void
 ResidueTypeSet::remove_base_residue_type_DO_NOT_USE( std::string const & name )
 {
-	ResidueTypeCOP rsd_type( (cache_->name_map( name )).get_self_weak_ptr() );
+	ResidueTypeCOP rsd_type( cache_->name_map( name ) );
 	ResidueTypeCOPs::iterator res_it = std::find( base_residue_types_.begin(), base_residue_types_.end(), rsd_type );
 	runtime_assert( res_it != base_residue_types_.end() );
 	base_residue_types_.erase( res_it );
@@ -863,6 +897,137 @@ ResidueTypeSet::remove_base_residue_type_DO_NOT_USE( std::string const & name )
 	// Note danger here -- could still have patched versions of residue in base_residue_types, but they may no longer be accessible.
 }
 
+/// @brief From a file, read which IDs shouldn't be loaded from the components.
+void
+ResidueTypeSet::load_shadowed_ids( std::string const & directory, std::string const & filename /* = "shadow_list.txt" */ ) {
+
+	tr.Debug << "Loading shadowed PDB IDs from " << directory + filename << std::endl;
+
+	shadowed_ids_.clear();
+
+	utility::io::izstream file( directory + filename );
+	if( ! file.good()  ) {
+		tr << "For ResidueTypeSet " << name() << " there is no " << filename << " file to list known PDB ids." << std::endl;
+		tr << "    This will turn off PDB component loading for ResidueTypeSet " << name() << std::endl;
+		tr << "    Expected file: " << directory + filename << std::endl;
+		return;
+	}
+	std::string line;
+	getline( file, line );
+	while( file.good() ) {
+		utility::trim( line ); // inplace;
+		if( line[0] != '#' ) {
+			shadowed_ids_.insert( line );
+		}
+		getline( file, line );
+	}
+	if( shadowed_ids_.size() == 0 ) {
+		tr.Warning << "For ResidueTypeSet " << name() << ", " << filename << " doesn't have any entries." << std::endl;
+		tr.Warning << "    This will turn off PDB component loading for ResidueTypeSet " << name() << std::endl;
+	}
+}
+
+/// @brief Attempt to lazily load the given residue type from data.
+bool
+ResidueTypeSet::lazy_load_base_type( std::string const & rsd_base_name ) const
+{
+	if ( cache_->has_generated_residue_type( rsd_base_name ) ) { return true; }
+	if ( cache_->is_prohibited( rsd_base_name ) ) { return false; }
+
+	core::chemical::ResidueTypeOP new_rsd_type;
+
+	// These are heuristics to figure out where to load the data from.
+
+	// Heuristic: if the ResidueTypeName begins with 'pdb_', then it's loaded from the chemical components directory
+	if ( rsd_base_name.find("pdb_") == 0 ) {
+		std::string short_name( utility::strip( rsd_base_name.substr( 4, rsd_base_name.size() ) ) );
+		if ( shadowed_ids_.size() > 0 && shadowed_ids_.count( short_name ) == 0 ) {
+			new_rsd_type = load_pdb_component( short_name );
+			if( new_rsd_type ) {
+				// Duplicate detection is handled by the shadowed file -- if it's not shadowed, we load the component
+				new_rsd_type->name( "pdb_" + short_name );
+				tr << "Loading '" << short_name << "' from the PDB components dictionary for residue type '" << rsd_base_name << "'" << std::endl;
+			}
+		} else {
+			if( shadowed_ids_.size() == 0 ) {
+				tr.Debug << "Not loading '" << short_name << "' from PDB components dictionary because components are turned off for this ResidueTypeSet." << std::endl;
+			} else {
+				tr.Debug << "Not loading '" << short_name << "' from PDB components dictionary because it is shadowed in the ResidueTypeSet." << std::endl;
+			}
+			cache_->add_prohibited( rsd_base_name );
+			return false;
+		}
+	}
+
+	// Finish up with the new residue type.
+	if ( new_rsd_type ) {
+		new_rsd_type->residue_type_set( this->get_self_weak_ptr() );
+		cache_->add_residue_type( new_rsd_type );
+	}
+	return cache_->has_generated_residue_type( rsd_base_name );
+
+}
+
+
+/// @brief Load a residue type from the components dictionary.
+ResidueTypeOP
+ResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
+	static THREAD_LOCAL bool warned_about_missing_file( false );
+	if( pdb_components_filename_.size()){
+		utility::io::izstream filestream( pdb_components_filename_ );
+		if( !filestream.good() ) {
+			std::string db_filename( basic::database::full_name( pdb_components_filename_, false ) );
+			filestream.open( db_filename );
+
+			if( !filestream.good() ){
+				if( ! warned_about_missing_file ) {
+					warned_about_missing_file = true;
+					tr.Warning << "PDB component dictionary file not found at (./)" << pdb_components_filename_ << std::endl;
+					tr.Warning << "   or in the Rosetta database at " << db_filename << std::endl;
+					tr.Warning << "   For information on how to obtain the file and set it for use with Rosetta, visit: \n\n";
+					tr.Warning << "  https://www.rosettacommons.org/docs/latest/build_documentation/Build-Documentation#setting-up-rosetta-3_obtaining-additional-files_pdb-chemical-components-dictionary  \n" << std::endl;
+				}
+				return ResidueTypeOP( 0 );
+			}
+		}
+
+		std::string entry( "data_" + pdb_id );
+		std::string line;
+		std::string lines;
+		//std::cout << "Finding '" << entry <<"' " << entry.size() << std::endl;
+		mmCIF::mmCIFParser mmCIF_parser;
+		while( filestream.good()){
+			getline( filestream, line );
+			if(line.size() == entry.size() ){
+				//std::cout << line << std::endl;
+				if(line == entry ){
+					lines += line;
+					//lines.push_back( line);
+					getline( filestream, line);
+					while( line.substr(0, 5) != "data_" && filestream.good()){
+						lines += line + '\n';
+						//lines.push_back( line);
+						getline( filestream, line);
+					}
+					break;
+				}
+			}
+		}
+
+		if( lines.size() == 0){
+			tr.Warning << "Could not find: '" << pdb_id << "' in pdb components file '" << pdb_components_filename_
+					<< "'! Skipping residue..." << std::endl;
+			return ResidueTypeOP(0);
+		}
+
+		utility::vector1< core::chemical::sdf::MolFileIOMoleculeOP> molecules;
+		molecules.push_back( mmCIF_parser.parse( lines, pdb_id) );
+		core::chemical::ResidueTypeOP new_rsd_type( core::chemical::sdf::convert_to_ResidueType( molecules ) );
+
+		return new_rsd_type;
+	}
+	return ResidueTypeOP(0);
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // functions to deprecate

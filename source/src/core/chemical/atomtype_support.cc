@@ -258,6 +258,8 @@ rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
 			restype.set_atom_type(vd, "Br  ");
 		} else if ( element::I  == element ) {
 			restype.set_atom_type(vd, "I   ");
+		} else if ( element::B  == element ) {
+			restype.set_atom_type(vd, "B   ");
 		} else if ( element::Na == element ) {
 			restype.set_atom_type(vd, "Na1p");
 		} else if ( element::K  == element ) {
@@ -270,8 +272,18 @@ rosetta_retype_fullatom(ResidueType & restype, bool preserve/*=false*/) {
 			restype.set_atom_type(vd, "Ca2p");
 		} else if ( element::Zn == element ) {
 			restype.set_atom_type(vd, "Zn2p");
+		} else if ( element::Co == element ) {
+			restype.set_atom_type(vd, "Co2p");
+		} else if ( element::Cu == element ) {
+			restype.set_atom_type(vd, "Cu2p");
 		} else {
-			utility_exit_with_message("Cannot type atom with element '"+element::name_from_elements(element)+"'");
+			std::string name( core::chemical::element::name_from_elements(element) );
+			if ( restype.atom_type_set().has_atom( name ) ) {
+				restype.set_atom_type(vd, name);
+			} else {
+				// This should probably never be triggered anymore
+				utility_exit_with_message("Cannot type atom with element '"+element::name_from_elements(element)+"'");
+			}
 		}
 	} // For vertices in graph
 

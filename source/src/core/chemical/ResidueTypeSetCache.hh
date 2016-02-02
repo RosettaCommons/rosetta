@@ -9,7 +9,7 @@
 
 /// @file core/chemical/ResidueTypeSetCache.hh
 /// @brief
-/// @details
+/// @details Internal implementation classs for ResidueTypeSet. Do not expose to the outside world.
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -23,6 +23,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AA.hh>
 #include <map>
+#include <set>
 
 namespace core {
 namespace chemical {
@@ -42,7 +43,7 @@ public:
 public:
 
 	/// @details Main accessor function into ResidueTypeSetCache
-	ResidueType const &
+	ResidueTypeCOP
 	name_map( std::string const & name_in ) const;
 
 	void
@@ -62,6 +63,12 @@ public:
 
 	ResidueTypeCOPs
 	generated_residue_types();
+
+	void
+	add_prohibited( std::string const & rsd_name );
+
+	bool
+	is_prohibited( std::string const & rsd_name ) const;
 
 	ResidueTypeCOPs
 	get_all_types_with_variants_aa( AA aa,
@@ -87,6 +94,10 @@ private:
 	////////////////////////////////////////////////////////////////////////////
 	/// @brief map to ResidueType pointers by unique residue id
 	std::map< std::string, ResidueTypeCOP > name_map_;
+
+	/// @brief annotation about types which theoretically may exist but we don't want
+	/// @details For example, for PDB components which duplicate standard types.
+	std::set< std::string > prohibited_types_;
 
 	////////////////////////////////////////////////////////////////////////////
 	// Following can get recomputed if custom_residue_types are

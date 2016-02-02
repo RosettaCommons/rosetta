@@ -40,7 +40,7 @@ MolFileIOReader::~MolFileIOReader()
 
 /// @details This has to take a filename, as autodetection of file type may require reopening the file
 
-utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::string const & filename, std::string type /*= "" */ ) {
+utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::string const & filename, std::string type /*= "" */, core::Size n_entries /* = 0 */ ) {
 
 	utility::io::izstream file( filename );
 	if ( ! file ) {
@@ -95,16 +95,16 @@ utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::string
 			}
 		} // if/else extension recognized
 	} // type = ""
-	return parse_file( file, type ); // file will be closed on destruction.
+	return parse_file( file, type, n_entries ); // file will be closed on destruction.
 }
 
-utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::istream & file, std::string type ) {
+utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::istream & file, std::string type, core::Size n_entries /*=0*/ ) {
 	ObjexxFCL::lowercase( type );
 	utility::vector1< MolFileIOMoleculeOP > molecules;
 
 	if ( type == "mol" || type == "sdf" ) {
 		SDFParser parser;
-		molecules = parser.parse( file );
+		molecules = parser.parse( file, n_entries );
 	} else if ( type == "mol2" ) {
 		TR.Error << "Loading of mol2 files via this method not currently supported." << std::endl;
 	} else if ( type == "pdb" ) {
@@ -139,11 +139,16 @@ ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > mo
 	MMAtomTypeSetCOP mm_atom_types) {
 
 	if ( molfile_data.size() == 0 ) {
+		// This indicates a bad call, rather than bad data - early error
 		utility_exit_with_message("ERROR: Cannot convert an empty vector of molecules to a ResidueType.");
 	}
 
 	std::map< core::chemical::sdf::AtomIndex, std::string > index_name_map;
 	ResidueTypeOP restype = molfile_data[1]->convert_to_ResidueType(index_name_map, atom_types, element_type_set, mm_atom_types);
+	if( ! restype ) {
+		TR.Info << "Could not load molecule '" << molfile_data[1]->name() << "' as a residue type." << std::endl;
+		return ResidueTypeOP(0);
+	}
 
 	if ( molfile_data.size() > 1 ) {
 		rotamers::StoredRotamerLibrarySpecificationOP rotlib( new rotamers::StoredRotamerLibrarySpecification );
@@ -210,7 +215,20 @@ convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 
 	utility::vector1< ResidueTypeOP > residue_types;
 	for ( core::Size jj(1); jj <= separated_molecules.size(); ++jj ) {
-		residue_types.push_back( convert_to_ResidueType(separated_molecules[jj], atom_types, element_types, mm_atom_types) );
+		TR.Debug << "Converting " << separated_molecules[jj][1]->name() << std::endl;
+		ResidueTypeOP restype;
+		try {
+			restype = convert_to_ResidueType(separated_molecules[jj], atom_types, element_types, mm_atom_types);
+		} catch( utility::excn::EXCN_Msg_Exception & e ) {
+			TR << ">>>>>> Skipping " << separated_molecules[jj][1]->name() << " due to Error: " << e.msg() << std::endl;
+			continue;
+		} catch (...) {
+			TR << ">>>>>> Skipping " << separated_molecules[jj][1]->name() << " due to unspecified error!" << std::endl;
+			continue;
+		}
+		if( restype ) {
+			residue_types.push_back( restype );
+		}
 	}
 
 	return residue_types;

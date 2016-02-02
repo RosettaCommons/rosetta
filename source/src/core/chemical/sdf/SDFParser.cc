@@ -35,14 +35,14 @@ namespace sdf {
 static THREAD_LOCAL basic::Tracer TR( "core.chemical.sdf.SDFParser" );
 
 utility::vector1< MolFileIOMoleculeOP >
-SDFParser::parse(std::istream & filein ) {
+SDFParser::parse(std::istream & filein, core::Size n_entries /*=0*/ ) {
 	CtabV2000Parser V2000parser;
 	CtabV3000Parser V3000parser;
 
 	utility::vector1< MolFileIOMoleculeOP > molecules;
 	std::string name, line2, comments, versionline;
 
-	while ( filein ) {
+	while ( filein && ( n_entries == 0 || molecules.size() < n_entries ) ) {
 		std::getline(filein,name);
 		utility::trim( name, " \n" ); //modify in place
 		std::getline(filein,line2);

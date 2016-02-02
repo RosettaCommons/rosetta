@@ -10,22 +10,26 @@
 /// @file   src/core/chemical/sdf/MolFileIOData.cc
 /// @author Rocco Moretti (rmorettiase@gmail.com)
 
+// Unit headers
 #include <core/chemical/sdf/MolFileIOData.hh>
 
+// Package headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
-
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
-
 #include <core/chemical/atomtype_support.hh>
 #include <core/chemical/residue_support.hh>
 #include <core/chemical/bond_support.hh>
 
+// Basic headers
 #include <basic/Tracer.hh>
+
+// Utility headers
 #include <utility/numbers.hh>
 
+// C++ headers
 #include <map>
 
 namespace core {
@@ -191,8 +195,38 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 		restype->add_bond( restype_from_mio[source], restype_from_mio[target], BondName(bond_type) );
 	}
 
+	//fix problem with residues that only have one or two atoms. Rosetta residuetypes need to have at least 3 atoms
+	// We're hoping that this isn't going to be colinear
+	if( restype->natoms() == 2){
+		//add one extra atom
+		create_dummy_atom( restype, "DX1",
+				restype->atom(2).ideal_xyz()-restype->atom(1).ideal_xyz()+Vector(1.0, 0.0, 0.0),
+				elements, mm_atom_types);
+	} else if ( restype->natoms() == 1){
+		//add two extra atoms
+		create_dummy_atom( restype, "DX1", core::Vector(1.0, 0.0, 0.0), elements, mm_atom_types);
+		create_dummy_atom( restype, "DX2", core::Vector(0.0, 1.0, 0.0), elements, mm_atom_types);
+	} else if ( restype->natoms() == 0 ) {
+		utility_exit_with_message( "Cannot load in ResidueType for entry with no atoms." );
+	}
+
 	// Pull extra data from annotations.
 	set_from_extra_data(*restype, restype_from_mio);
+
+	// If coordinates aren't set, we can't generate a restype from this molecule
+	// Also, if bonds are messed up (too many bonds to one atom) also kill the molecule
+	core::Size n_no_coords(0);
+	for ( core::Size ii(1); ii <= restype->natoms(); ++ii ) {
+		if ( restype->atom(ii).ideal_xyz().is_zero() ) { ++n_no_coords; }
+		if ( restype->nbonds( ii ) > 10 ) {
+			TR << "Input molecular structure '" << restype->name() << "' has too many bonds (" << restype->nbonds( ii ) << ") on atom " << restype->atom(ii).name() << std::endl;
+			return ResidueTypeOP( 0 );
+		}
+	}
+	if ( n_no_coords > 1 ) {
+		TR << "Input molecular structure '" << restype->name() << "' has too many zero coordinate atoms (" << n_no_coords << "): cannot convert to ResidueType." << std::endl;
+		return ResidueTypeOP( 0 );
+	}
 
 	// ///////////////////////
 	// Now compute missing data -- be careful not to overwrite things that have been set.
@@ -239,6 +273,19 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 
 	restype->finalize();
 	return restype;
+}
+
+void MolFileIOMolecule::create_dummy_atom(ResidueTypeOP restype, std::string atom_name, core::Vector const & xyz_offset, chemical::ElementSetCOP elements, chemical::MMAtomTypeSetCOP ){
+
+	VD vd = restype->add_atom(atom_name, "VIRT", "VIRT", 0.0 );
+	Atom & restype_atom( restype->atom( vd ) );
+
+	restype_atom.element_type( elements->element( "X" ) ); // Rosetta-specific non-atom
+	restype_atom.formal_charge( 0 );
+
+	restype_atom.ideal_xyz( restype->atom( 1 ).ideal_xyz() + xyz_offset );
+
+	restype->add_bond( vd, restype->atom_vertex( 1 ), UnknownBond );
 }
 
 void MolFileIOMolecule::set_from_extra_data(ResidueType & restype, std::map< mioAD, VD > & restype_from_mio) {

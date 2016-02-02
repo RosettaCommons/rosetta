@@ -165,7 +165,8 @@ POSSIBILITY THEREOF.
 
 typedef struct cifparser__buffer_state* CIFPARSER__BUFFER_STATE;
 
-extern FILE* cifparser_in;
+// WIN32 - move inside extern "C"
+extern "C" FILE* cifparser_in;
 
 extern "C"
 {
@@ -173,11 +174,14 @@ extern "C"
     void cifparser_restart(FILE*);
     CIFPARSER__BUFFER_STATE cifparser__scan_string(const char*);
     void cifparser__delete_buffer(CIFPARSER__BUFFER_STATE);
-}
+
+// WIN32 - move inside extern "C"
 
 char* Glob_tBufKeyword;
 char* Glob_pBufValue;
 char* Glob_dataBlockName = NULL;
+
+}
 
 CifParser* CifParserP = NULL;
 

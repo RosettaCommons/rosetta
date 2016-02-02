@@ -283,6 +283,31 @@ is_canonical_D_aa( AA aa )
 	return false;
 }
 
+//////////////////////////////////////////////////////////
+/// @brief Given an enum type, return true if and only if
+/// it is a canonical L-amino acid. Rocco approves.
+/// @author Steven Cobms (steven.combs1@gmail.com)
+//////////////////////////////////////////////////////////
+bool
+is_canonical_L_aa( AA aa){
+	if ( aa>=first_l_aa && aa<=num_canonical_aas) return true;
+	return false;
+}
+
+//////////////////////////////////////////////////////////
+/// @brief Given aa three letter string, return true if
+/// it is an unknown aa.
+/// @author Steven Cobms (steven.combs1@gmail.com)
+bool
+is_aa_name_unknown( std::string name){
+	std::map< std::string, AA >::const_iterator iter = name2aa().find( name );
+	if ( iter == name2aa().end() ) {
+		return true;
+	}
+	return false;
+}
+
+
 AA
 get_L_equivalent( AA aa ) {
 	if ( aa==aa_dal ) return aa_ala;

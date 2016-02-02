@@ -434,7 +434,7 @@ detect_ld_chirality_from_polymer_residue(
 	// So basically you could ask if a string has a given property
 	// this way we don't have to have these disgusting things
 	// We would populate this from the database.
-	
+
 	// Also, we need this function not to call on everything including e.g. water,
 	// ions...
 
@@ -446,20 +446,20 @@ detect_ld_chirality_from_polymer_residue(
 			name3 == "A98" || name3 == "B02" || name3 == "B06" ) {
 		return;
 	}
-	
+
 	// return false,false for peptoids and pna
 	if ( xyz.find( " NG " ) != xyz.end() && ( name3 == "UPN" || name3 == "APN" || name3 == "TPN" || name3 == "GPN" || name3 == "CPN" ) ) {
 		return;
 	}
-	
+
 	// If termini are missing, then properly speaking chirality can't be inferred at all.
 	// Let this be an unrecognized residue (as before).
-	
+
 	// Note that because there is that one phosphonate-Cterm residue
 	// we have to check for EITHER Pbb or C being there.
 
 	// AMW: no, we have to assume L or we break chainbreak stuff?
-	
+
 	// OK, we need ONE or more but not three protein bb atoms.
 	// This will protect against carbohydrates and nucleic acids.
 	Size bb_atoms_found = 0;
@@ -516,12 +516,39 @@ detect_ld_chirality_from_polymer_residue(
 		}
 		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
 	}
-	
+
 	//if ( characteristic_angle == 0 ) {
 	//	TR.Warning << "No chiral information detected for " << name3 << std::endl;
 	//}
 }
 
+bool
+heavy_atom_names_match( ResidueType const & first, ResidueType const & second ) {
+	if ( first.nheavyatoms() != second.nheavyatoms() ) {
+		return false;
+	}
+
+	std::set< std::string > names;
+	for( core::Size ii(1); ii <= first.nheavyatoms(); ++ii ) {
+		//if( first.atom_name(ii) == "OXT" ) { continue; }
+		std::string name( first.atom_name(ii) );
+		names.insert( utility::strip_whitespace( name ) );
+	}
+
+	for( core::Size jj(1); jj <= second.nheavyatoms(); ++jj ) {
+		std::string name( second.atom_name(jj) );
+		if ( ! names.count( utility::strip_whitespace( name ) ) ) {
+			//if( second.atom_name(jj) == "OXT" ) { continue; }
+			TR.Debug << "Name mismatch: '" << second.atom_name(jj) <<"'" << std::endl;
+			return false;
+		}
+	}
+
+	// Since they have the same number of heavy atoms,
+	// first can't have any names that second doesn't - at least without
+	// second having one that first doesn't (assuming unique names)
+	return true;
+}
 
 }  // namespace chemical
 }  // namespace core

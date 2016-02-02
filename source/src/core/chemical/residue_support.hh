@@ -62,10 +62,6 @@ void calculate_rigid_matrix( ResidueType const & res, utility::vector1< utility:
 core::Real
 find_nbr_dist( ResidueType const & res, VD & nbr_atom );
 
-/// @brief Get charge for atom type based on Rosetta++ aaproperties_pack.cc values
-core::Real
-get_rpp_charge( std::string const & type );
-
 /// @brief Apply molfile_to_params style partial charges to the ResidueType.
 /// @details These partial charges are based off of the Rosetta atom type,
 /// adjusted such that the net partial charge is equal to the net formal charge.

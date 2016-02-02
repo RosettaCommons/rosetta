@@ -17,6 +17,8 @@
 
 #include <core/chemical/sdf/MolFileIOData.fwd.hh>
 
+#include <core/types.hh>
+
 #include <utility/vector1.hh>
 
 namespace core {
@@ -30,7 +32,9 @@ public:
 
 	virtual ~SDFParser() {}
 
-	utility::vector1< MolFileIOMoleculeOP > parse( std::istream & filein );
+	/// @brief parse the given input stream.
+	/// n_entries are the maximum number of entries to parse - of zero parse all the remaining ones.
+	utility::vector1< MolFileIOMoleculeOP > parse( std::istream & filein, core::Size n_entries = 0 );
 
 private:
 

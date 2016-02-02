@@ -30,5 +30,7 @@ not to choke on the include search paths.
 
 5. I found that `#define _POSIX_C_SOURCE 1` needed to be added at the top of *Scanner.c files in order to silence some compiler warnings.
 
-6. Be sure to update the VERSION, LICENSE, and regex COPYRIGHT notices, if necessary, along with any other such file which might be added.
+6. Copy over some of the fixes for Windows build. e.g. You may need to handle includes of the Posix-only unistd.h. Other changes are lalso needed - grep the current codebase for WIN32 for more.
+
+7. Be sure to update the VERSION, LICENSE, and regex COPYRIGHT notices, if necessary, along with any other such file which might be added.
 (Some of the README files seems to be unnecessary, as they talk only about installation.) 

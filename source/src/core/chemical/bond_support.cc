@@ -23,6 +23,8 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
 
 #include <utility/graph/RingDetection.hh>
+#include <utility/graph/ring_detection.hh>
+
 #include <basic/Tracer.hh>
 
 namespace core {
@@ -48,7 +50,7 @@ gasteiger::GasteigerAtomTypeData::Properties bond_order_to_property( const core:
 	return properties[ BOND_ORDER_OR_AROMATIC];
 }
 
-void find_bonds_in_rings(ResidueType & res){
+void find_bonds_in_rings(ResidueType & res, bool const complex_ring){
 	//first, we assign all the bonds in the residue to having no rings
 	EIter edge_begin, edge_end;
 	boost::tie(edge_begin, edge_end) = boost::edges( res.graph() );
@@ -59,14 +61,24 @@ void find_bonds_in_rings(ResidueType & res){
 		bond.ringness( BondNotInRing );
 	}
 
+	complex_ring ? complex_ring_detection( res) : quick_ring_detection( res);
+
+}
+void
+complex_ring_detection( ResidueType & res){
+
 	//first we get the light weight residue graph
 	LightWeightResidueGraph lwrg = convert_residuetype_to_light_graph(res);
 	//now get the property maps
 	boost::property_map<LightWeightResidueGraph, boost::vertex_name_t>::type lwrg_vd_to_VD = boost::get(boost::vertex_name, lwrg);
 	//boost::property_map<LightWeightResidueGraph, boost::edge_name_t>::type lwrg_ed_to_ED = boost::get(boost::edge_name, lwrg);
 
+	//for ring systems that are complex, you only want to annotate edges that are in the given system.
+	//if you do not only annotate the edges, there is a combinatorial explosion, which results in
+	//lots of times enumerating all rings in the system.
+	utility::graph::RingDetection<LightWeightResidueGraph> ring_detect( lwrg); //initialize the ring detector. Automatically assigns rings
 
-	utility::graph::RingDetection<LightWeightResidueGraph> ring_detect(lwrg); //initialize the ring detector. Automatically assigns rings
+
 	utility::vector1<utility::vector1<lwrg_VD> > rings = ring_detect.GetRings(); //these are the path of the rings
 
 	//iterate through the rings, then assign the bonds for ringness
@@ -87,6 +99,34 @@ void find_bonds_in_rings(ResidueType & res){
 				bond.ringness(BondInRing);
 			} else {
 				utility_exit_with_message("In ring detection, cannot find bond for " + res.atom_name( source ) + " to " + res.atom_name( target ) );
+			}
+		}
+	}
+}
+
+void quick_ring_detection( ResidueType & res){
+	std::map< VD, std::map<VD, bool > >  ring_edges( utility::graph::annotate_ring_edges( res.graph()) );
+	//std::map< VD,std::map<VD, bool > >::const_iterator it_start, it_end;
+	//it_start = ring_edges.begin();
+	//it_end = ring_edges.end();
+	for(
+		std::map< VD,std::map<VD, bool > >::const_iterator it = ring_edges.begin();
+		it != ring_edges.end(); ++it
+		){
+		for(
+			std::map<VD, bool >::const_iterator second_it = it->second.begin();
+			second_it != it->second.end(); ++second_it
+			){
+			if( second_it->second){
+				ED bond_edge;
+				bool edge_exists;
+				boost::tie( bond_edge, edge_exists) = boost::edge( it->first, second_it->first, res.graph());
+				if( edge_exists){
+					Bond & bond = res.bond( bond_edge);
+					bond.ringness( BondInRing);
+				} else {
+					utility_exit_with_message("In quick ring detection, cannot find bond for " + res.atom_name( it->first ) + " to " + res.atom_name( second_it->first ) );
+				}
 			}
 		}
 	}
@@ -157,7 +197,7 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 			source = temp;
 		} else if ( restype.atom_base(target) != source ) {
 			TR << "Found non-tree bond " << restype.atom_name(source) << " --- " << restype.atom_name(target) << std::endl;
-			TR << "       Expected tree bond " << restype.atom_name( restype.atom_base(target) ) << " --- " << restype.atom_name(target) << std::endl;
+			TR << "	   Expected tree bond " << restype.atom_name( restype.atom_base(target) ) << " --- " << restype.atom_name(target) << std::endl;
 			utility_exit_with_message("Error: Non-ring bond not found in ResidueType atom tree.");
 		}
 

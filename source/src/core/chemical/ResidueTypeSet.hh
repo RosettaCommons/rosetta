@@ -154,6 +154,11 @@ public:
 	ResidueType const &
 	name_map( std::string const & name ) const;
 
+	/// @brief Get ResidueType by exact name, returning COP
+	/// Will return null pointer for no matches
+	ResidueTypeCOP
+	name_mapOP( std::string const & name ) const;
+
 	/// @brief Get the base ResidueType with the given aa type and variants
 	/// @details Returns 0 if one does not exist.
 	/// The returned type will have at least all the variants given, but may have more
@@ -325,6 +330,20 @@ private:
 	bool
 	update_base_residue_types_if_replaced( ResidueTypeCOP rsd_type, ResidueTypeCOP rsd_type_new );
 
+private:
+
+	/// @brief From a file, read which IDs shouldn't be loaded from the components.
+	void
+	load_shadowed_ids( std::string const & directory, std::string const & file = "shadow_list.txt" );
+
+	/// @brief Attempt to lazily load the given residue type from data.
+	bool
+	lazy_load_base_type( std::string const & rsd_base_name ) const;
+
+	/// @brief Load a residue type from the components dictionary.
+	ResidueTypeOP
+	load_pdb_component( std::string const & pdb_id ) const;
+
 	//////////////////
 	// data
 private:
@@ -361,6 +380,12 @@ private:
 	/// @brief patches indexed by name
 	std::map< std::string, utility::vector1< PatchCOP > > patch_map_;
 	std::map< std::string, MetapatchCOP > metapatch_map_;
+
+	/// @brief Which components shouldn't be loaded from the components file.
+	std::set< std::string > shadowed_ids_;
+
+	/// @brief data for lazy loading of PDB components
+	std::string pdb_components_filename_;
 
 	// @brief all cached residue_type information including generated residue_types, name3_map, etc.
 	// By making the following an OP (instead of COP) the cache effectively becomes mutable even when in a

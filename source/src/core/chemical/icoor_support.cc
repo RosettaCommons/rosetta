@@ -205,7 +205,7 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 	// as opposed to the Bonded atom that would be initialized by default in the DFS
 	core::kinematics::tree::AtomOP rootatom( new core::kinematics::tree::JumpAtom );
 	treeatom_map[ root ] = rootatom;
-	TR << "Rooting on atom: " << restype.atom_name(root) << std::endl;
+	TR.Debug << "Rooting on atom: " << restype.atom_name(root) << std::endl;
 
 	RerootRestypeVisitor visitor( treeatom_map, root, restype );
 

@@ -36,12 +36,12 @@ ResidueTypeSetCache::~ResidueTypeSetCache()
 {}
 
 /// @details Main accessor function into ResidueTypeSetCache
-ResidueType const &
+ResidueTypeCOP
 ResidueTypeSetCache::name_map( std::string const & name_in ) const
 {
 	std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.find( name_in );
 	runtime_assert( it != name_map_.end() );
-	return *( it->second );
+	return it->second;
 }
 
 void
@@ -100,6 +100,18 @@ ResidueTypeSetCache::generated_residue_types() {
 		residue_types.push_back( it->second );
 	}
 	return residue_types;
+}
+
+void
+ResidueTypeSetCache::add_prohibited( std::string const & rsd_name )
+{
+	prohibited_types_.insert( rsd_name );
+}
+
+bool
+ResidueTypeSetCache::is_prohibited( std::string const & rsd_name ) const
+{
+	return prohibited_types_.count( rsd_name );
 }
 
 ResidueTypeCOPs

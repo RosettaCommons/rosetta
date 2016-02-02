@@ -149,6 +149,13 @@ ResidueTypeCOPs
 ResidueTypeFinder::get_possible_base_residue_types( bool const include_custom /* = true */ ) const
 {
 	ResidueTypeCOPs rsd_types = residue_type_set_.base_residue_types();
+	// Also load the PDB component, if we're specifying a name3 search
+	if ( name3_.size() ) {
+		ResidueTypeCOP pdb_component( residue_type_set_.name_mapOP( "pdb_" + utility::strip(name3_) ) );
+		if ( pdb_component ) {
+			rsd_types.push_back( pdb_component );
+		}
+	}
 	if ( include_custom ) rsd_types.append( get_possible_base_custom_residue_types() );
 	rsd_types = apply_basic_filters( rsd_types );
 	return rsd_types;
@@ -316,12 +323,12 @@ ResidueTypeFinder::filter_by_name3( ResidueTypeCOPs const & rsd_types, bool cons
 	ResidueTypeCOPs rsd_types_new;
 	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
 		ResidueTypeCOP rsd_type( rsd_types[ n ] );
-
 		// For specialty amino acids, add them to the name three maps both with their PDB strings and
 		// with their specialty string -- the first three letters of the residue name.
 		// E.g., CYD will appear in both lists for name3_map_[ "CYS" ] and name3_map_[ "CYD" ]
 		if ( rsd_type->name3() == name3_ ||
-				rsd_type->name().substr(0,3) == name3_ ||
+				rsd_type->name().substr(0,3) == name3_ || // RM: Should be replaced by name3 alias within ResidueType
+				utility::strip( rsd_type->name3() ) == utility::strip( name3_ ) || // name3 may be whitespace padded
 				( keep_if_base_type_generates_name3 && residue_type_set_.generates_patched_residue_type_with_name3( rsd_type->name(), name3_ ) ) ) {
 			rsd_types_new.push_back( rsd_type );
 		}

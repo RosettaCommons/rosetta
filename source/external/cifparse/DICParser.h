@@ -68,6 +68,12 @@ typedef union YYSTYPE
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern YYSTYPE dicparser_lval;
+#ifdef __cplusplus
+}
+#endif
 
 

@@ -212,7 +212,7 @@ def main(args):
       action="store_true", default=False,
       help="Generate verbose output.",
     )
-    
+
     options = parser.parse_args(args=args[1:])
     logging.info("Options:\n%r", options)
 
@@ -756,7 +756,7 @@ class ModuleBuilder:
             "-fxml=%(out_xml)s "
             "%(src_cpp)s "
             "%(cpp_defines)s "
-            "-I. -I../external/include -I../external/boost_1_55_0  -I../external/dbio "
+            "-I. -I../external -I../external/include -I../external/boost_1_55_0  -I../external/dbio "
             "-I%(platform_include_path)s "
             "%(extra_include_paths)s "
             "%(gccxml_options)s "
@@ -769,7 +769,7 @@ class ModuleBuilder:
                 extra_include_paths = " ".join("-I%s" % p for p in self.include_paths)),
             self.options.continue_on_error)
 
-        if gen_xml_result: 
+        if gen_xml_result:
             return
 
         namespaces_to_wrap = ['::'+self.namespace_path.replace('/', '::')+'::']
@@ -830,7 +830,7 @@ class ModuleBuilder:
             return
 
         for (all_at_once_N_cpp, all_at_once_N_obj) in source_list:
-            compiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external/include -I../external/boost_1_55_0 -I../external/dbio %(include_paths)s "
+            compiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external -I../external/include -I../external/boost_1_55_0 -I../external/dbio %(include_paths)s "
             compiler_dict = dict(
                     add_option=self.add_option,
                     fname=all_at_once_N_cpp,

@@ -35,12 +35,15 @@ void ProcessSaveBeginFromDICParser();
 void ProcessSaveEndFromDICParser();
 void ProcessDataBlockNameFromDICParser();
 void dicparser_error(const char*);
-#ifdef __cplusplus
-}
-#endif
+
+/* WIN32 - move inside extern C */
 
 extern char* Glob_tBufKeywordSaveDIC;
 extern char* Glob_pBufValueDIC;
 extern char* Glob_dataBlockNameDIC;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* DIC_PARSER_INT_H */

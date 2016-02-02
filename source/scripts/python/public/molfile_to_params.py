@@ -47,6 +47,16 @@ class PreformattedDescFormatter (IndentedHelpFormatter):
     def format_description(self, description):
         return description.strip() + "\n" # Remove leading/trailing whitespace
 
+ATOMS = { 'HE':'He', 'LI':'Li', 'BE':'Be', 'B':'B', 'NE':'Ne', 'AL':'Al', 'SI':'Si', 'AR':'Ar', 'SC':'Sc', 'TI':'Ti',
+    'V':'V', 'CR':'Cr', 'MN':'Mn', 'NI':'Ni', 'GA':'Ga', 'GE':'Ge', 'AS':'As', 'SE':'Se', 'KR':'Kr', 'RB':'Rb', 'SR':'Sr',
+    'Y':'Y', 'ZR':'Zr', 'NB':'Nb', 'MO':'Mo', 'TC':'Tc', 'RU':'Ru', 'RH':'Rh', 'PD':'Pd', 'AG':'Ag', 'CD':'Cd',
+    'IN':'In', 'SN':'Sn', 'SB':'Sb', 'TE':'Te', 'XE':'Xe', 'CS':'Cs', 'BA':'Ba', 'LA':'La', 'CE':'Ce', 'PR':'Pr',
+    'ND':'Nd', 'PM':'Pm', 'SM':'Sm', 'EU':'Eu', 'GD':'Gd', 'TB':'Tb', 'DY':'Dy', 'HO':'Ho', 'ER':'Er', 'TM':'Tm',
+    'YB':'Yb', 'LU':'Lu', 'HF':'Hf', 'TA':'Ta', 'W':'W', 'RE':'Re', 'OS':'Os', 'IR':'Ir', 'PT':'Pt', 'AU':'Au',
+    'HG':'Hg', 'TL':'TL', 'PB':'Pb', 'BI':'Bi', 'PO':'Po', 'AT':'At', 'RN':'Rn', 'FR':'Fr', 'RA':'Ra', 'AC':'Ac',
+    'TH':'Th', 'PA':'Pa', 'U':'U', 'NP':'Np', 'PU':'Pu', 'AM':'Am', 'CM':'Cm', 'BK':'Bk', 'CF':'Cf', 'ES':'Es',
+    'FM':'Fm', 'MD':'Md', 'NO':'No', 'LW':'Lw', }
+
 # Quick and dirty memoize to speed up neighbor atom calculations
 def memoize(f):
     cache = {}
@@ -297,12 +307,17 @@ def assign_rosetta_types(atoms): #{{{
         elif "CL" == a.elem: a.ros_type = "Cl  "
         elif "BR" == a.elem: a.ros_type = "Br  "
         elif "I"  == a.elem: a.ros_type = "I   "
+        elif "B"  == a.elem: a.ros_type = "Bsp2"
         elif "NA" == a.elem: a.ros_type = "Na1p"
         elif "K"  == a.elem: a.ros_type = "K1p "
         elif "MG" == a.elem: a.ros_type = "Mg2p"
         elif "FE" == a.elem: a.ros_type = "Fe3p"
         elif "CA" == a.elem: a.ros_type = "Ca2p"
         elif "ZN" == a.elem: a.ros_type = "Zn2p"
+        elif "CO" == a.elem: a.ros_type = "Co2p"
+        elif "CU" == a.elem: a.ros_type = "Cu2p"
+        elif a.elem in ATOMS:
+            a.ros_type = ATOMS[a.elem] + ' '*(4-len(ATOMS[a.elem]))
         else: raise ValueError("Unknown element '%s'" % a.elem)
 #}}}
 def assign_mm_types(atoms,mm_as_virt): #{{{
@@ -422,11 +437,99 @@ def assign_partial_charges(atoms, net_charge=0.0, recharge=False): #{{{
         "Na1p" : 1.000,
         "K1p " : 1.000,
         "VIRT" : 0.000,
+        #From the UFF additions
+        "He  " :  0,
+        "Li  " :  1,
+        "Be  " :  2,
+        "Ne  " :  0,
+        "Al  " :  3,
+        "Ar  " :  0,
+        "Sc  " :  3,
+        "Ti  " :  4,
+        "V   " :  5,
+        "Cr  " :  3,
+        "Mn  " :  2,
+        "Ni  " :  2,
+        "Ga  " :  3,
+        "Ge  " :  3,
+        "As  " :  1.5,
+        "Se  " : -0.15,
+        "Kr  " :  0,
+        "Rb  " :  1,
+        "Sr  " :  2,
+        "Y   " :  3,
+        "Zr  " :  4,
+        "Nb  " :  5,
+        "Mo  " :  6,
+        "Tc  " :  5,
+        "Ru  " :  2,
+        "Rh  " :  3,
+        "Pd  " :  2,
+        "Ag  " :  1,
+        "Cd  " :  2,
+        "In  " :  3,
+        "Sn  " :  0.5,
+        "Sb  " :  1.5,
+        "Te  " :  0.15,
+        "Xe  " :  0,
+        "Cs  " :  1,
+        "Ba  " :  2,
+        "La  " :  3,
+        "Ce  " :  3,
+        "Pr  " :  3,
+        "Nd  " :  3,
+        "Pm  " :  3,
+        "Sm  " :  3,
+        "Eu  " :  3,
+        "Gd  " :  3,
+        "Tb  " :  3,
+        "Dy  " :  3,
+        "Ho  " :  3,
+        "Er  " :  3,
+        "Tm  " :  3,
+        "Yb  " :  3,
+        "Lu  " :  3,
+        "Hf  " :  4,
+        "Ta  " :  5,
+        "W   " :  6,
+        "Re  " :  7,
+        "Os  " :  6,
+        "Ir  " :  3,
+        "Pt  " :  2,
+        "Au  " :  3,
+        "Hg  " :  2,
+        "Tl  " :  3,
+        "Pb  " :  3,
+        "Bi  " :  3,
+        "Po  " :  0.5,
+        "At  " : -1,
+        "Rn  " :  0,
+        "Fr  " :  1,
+        "Ra  " :  2,
+        "Ac  " :  3,
+        "Th  " :  4,
+        "Pa  " :  4,
+        "U   " :  4,
+        "Np  " :  4,
+        "Pu  " :  4,
+        "Am  " :  4,
+        "Cm  " :  3,
+        "Bk  " :  3,
+        "Cf  " :  3,
+        "Es  " :  3,
+        "Fm  " :  3,
+        "Md  " :  3,
+        "No  " :  3,
+        "Lr  " :  3,
     }
     curr_net_charge = 0.0
     for a in atoms:
-        a.partial_charge = std_charges[ a.ros_type ]
-        curr_net_charge += a.partial_charge
+        if a.ros_type in std_charges:
+            a.partial_charge = std_charges[ a.ros_type ]
+            curr_net_charge += a.partial_charge
+        else:
+            a.partial_charge = 0
+            print "WARNING: Atom", a.name, "does not have naive partial charges - you may need to adjust partial charges in the params file for type '"+a.ros_type+"'"
     # We only want to operate on non-virtual atoms now:
     atoms = [a for a in atoms if not a.is_virtual]
     charge_correction = (net_charge - curr_net_charge) / len(atoms)

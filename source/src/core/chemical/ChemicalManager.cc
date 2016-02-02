@@ -43,6 +43,7 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/sdf/MolFileIOReader.hh>
+#include <core/chemical/mmCIF/mmCIFParser.hh>
 //#include <core/chemical/sdf/MolFileIOData.hh>
 #include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/util.hh>
@@ -405,6 +406,21 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 			utility::vector1< ResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( data, /* load_rotamers= */ true, atom_types, elements, mm_atom_types ) );
 			TR << "Reading " << rtvec.size() << " residue types from the " << data.size() << " models in " << filename << std::endl;
 			extra_residues.append( rtvec );
+		}
+
+
+
+		utility::options::FileVectorOption & mmCIFfilevec
+				= basic::options::option[basic::options::OptionKeys::in::file::extra_res_mmCIF];
+
+		//This function reads in the mmCIF file and constructs a residuetype based on data found in mmCIF.
+		//It uses the machinery found in MolFileIOReader for its construction
+		mmCIF::mmCIFParser mmCIF_parser;
+		for( core::Size i=1, e = mmCIFfilevec.size(); i<= e; ++i){
+			utility::file::FileName filename = mmCIFfilevec[i];
+			utility::vector1< sdf::MolFileIOMoleculeOP> molecules( mmCIF_parser.parse( filename));
+			utility::vector1< ResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( molecules, true, atom_types, elements, mm_atom_types ) );
+			extra_residues.append( rtvec);
 		}
 
 		if ( basic::options::option[basic::options::OptionKeys::in::file::extra_res_database].user() ) {

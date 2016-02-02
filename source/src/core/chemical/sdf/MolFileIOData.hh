@@ -78,7 +78,14 @@ public:
 
 	void index( AtomIndex index ) { index_ = index; }
 	void name(std::string const & name ) { name_ = name; }
-	void element(std::string const & element ) { element_ = element; }
+	void element(std::string const & element ) {
+        //dirty dirty hack to change deturium elements to hydrogen elements
+        if( element == "D" || element == "T"){
+            element_ = "H";
+        } else {
+            element_ = element;
+        }
+    }
 	//void rosetta_type(std::string const & rosetta_type ) { rosetta_type_ = rosetta_type; }
 	void position(Vector const & position ) { position_ = position; }
 	void formal_charge( int formal_charge ) { formal_charge_ = formal_charge; }
@@ -183,6 +190,8 @@ private:
 	void set_from_extra_data(ResidueType & restype, std::map< mioAD, core::chemical::VD > & restype_from_mio);
 
 	bool index_valid(AtomIndex index, ResidueType const & restype, std::map< mioAD, core::chemical::VD > & restype_from_mio);
+
+	void create_dummy_atom(ResidueTypeOP restype, std::string atom_name, core::Vector const & xyz_offset, chemical::ElementSetCOP elements, chemical::MMAtomTypeSetCOP mm_atom_types);
 
 private:
 	std::string name_;
