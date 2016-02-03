@@ -741,17 +741,17 @@ class XYZCoord:
     def __str__(self):
         return "(%8.3f, %8.3f, %8.3f)" % (self.x, self.y, self.z)
 
-class PlanePoints: 
+class PlanePoints:
     """
     Class for storing position of membrane planes
     """
 
-    def __init__(self): 
+    def __init__(self):
         self.upper_points = []
         self.lower_points = []
 
-class Matrix: 
-    """ 
+class Matrix:
+    """
     Class for storing a 3x3 matrix (used for rotation matrices
     in membranes)
     """
@@ -761,7 +761,7 @@ class Matrix:
         self.row2 = row2
         self.row3 = row3
 
-def add_vectors( v1, v2 ): 
+def add_vectors( v1, v2 ):
     """
     Add a pair of vectors represented as XYZcoord classes (see above)
     """
@@ -772,7 +772,7 @@ def add_vectors( v1, v2 ):
     vf = XYZCoord( x, y, z)
     return vf
 
-def scalar_multiply( v, n ): 
+def scalar_multiply( v, n ):
     """
     Multiply a vector by some scalar factor
     """
@@ -796,12 +796,12 @@ def rotation_matrix_radians( axis, theta ):
     the given axis by theta radians
     """
     x = math.sqrt( math.pow(axis.x, 2) + math.pow(axis.y, 2) + math.pow(axis.z, 2) )
-  
+
     a = math.cos(theta/2.0)
     b = -axis.x/x * math.sin(theta/2.0)
     c = -axis.y/x * math.sin(theta/2.0)
     d = -axis.z/x * math.sin(theta/2.0)
- 
+
     aa, bb, cc, dd = a*a, b*b, c*c, d*d
     bc, ad, ac, ab, bd, cd = b*c, a*d, a*c, a*b, b*d, c*d
 
@@ -811,7 +811,7 @@ def rotation_matrix_radians( axis, theta ):
 
     return Matrix( row1, row2, row3 )
 
-def multiply_matrix( matrix, vector ): 
+def multiply_matrix( matrix, vector ):
     """
     multiply matrix by 3D vector
     """
@@ -832,7 +832,7 @@ def rotate_vector( vector, theta, axis ):
     rotated_vec = multiply_matrix( rot_matrix, vector )
     return rotated_vec
 
-def compute_plane_positions( center, normal, thickness, rg, npoints=4 ): 
+def compute_plane_positions( center, normal, thickness, rg, npoints=4 ):
     """
     Compute the position of the membrane planes based on provided
     normal, center, thickness, and radius of gyration
@@ -842,18 +842,18 @@ def compute_plane_positions( center, normal, thickness, rg, npoints=4 ):
 
     # Pick a set of angles defining the planes based on number of desired points
     angles = []
-    for i in range(npoints): 
+    for i in range(npoints):
         angle = ((i+1)*2*math.pi)/npoints
         angles.append( angle )
 
     # Pick an arbitrary orthogonal unit vector
     tolerance = math.pow(10, -7)
     p = XYZCoord( 0, 0, 0 )
-    if ( math.fabs( normal.x + normal.y ) < tolerance ): 
+    if ( math.fabs( normal.x + normal.y ) < tolerance ):
         p.x = -normal.y - normal.z
         p.y = normal.x
         p.z = normal.x
-    else: 
+    else:
         p.x = normal.z
         p.y = normal.z
         p.z = -normal.x - normal.y
@@ -868,11 +868,11 @@ def compute_plane_positions( center, normal, thickness, rg, npoints=4 ):
     lower = add_vectors( center, XYZCoord( -normal.x*t, -normal.y*t, -normal.z*t ) )
 
     # For remaining angles, rotate p about the normal vector
-    for i in range( len(angles) ): 
+    for i in range( len(angles) ):
         new_point = add_vectors( rotate_vector( p, angles[i], normal ), upper )
         plane_position.upper_points.append( new_point )
 
-    for i in range( len(angles) ): 
+    for i in range( len(angles) ):
         new_point = add_vectors( rotate_vector( p, angles[i], normal ), lower )
         plane_position.lower_points.append( new_point )
 
