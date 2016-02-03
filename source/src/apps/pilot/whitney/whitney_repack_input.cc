@@ -16,7 +16,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -55,8 +55,8 @@ main( int argc, char * argv [] )
 
 	// create pose for wild type NGF/p75 complex and unbound pose and wild type NGF/TrkA complex and unbound
 	pose::Pose NGF_pose, NT3_pose;
-	core::import_pose::pose_from_pdb( NGF_pose, "/Users/whitneyS/Desktop/threading/NGF_alone.pdb" );
-	core::import_pose::pose_from_pdb( NT3_pose, "/Users/whitneyS/Desktop/threading/NT3.pdb" );
+	core::import_pose::pose_from_file( NGF_pose, "/Users/whitneyS/Desktop/threading/NGF_alone.pdb" , core::import_pose::PDB_file);
+	core::import_pose::pose_from_file( NT3_pose, "/Users/whitneyS/Desktop/threading/NT3.pdb" , core::import_pose::PDB_file);
 
 	// create and open file
 	utility::io::ozstream ddg_outstream, ddg_outstream2;

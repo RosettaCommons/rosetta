@@ -111,7 +111,7 @@ int main(int argc, char** argv) {
 	KinematicMoverOP mover = new KinematicMover();
 	KinematicPerturberOP perturber = new PathologicalKinematicPerturber();
 
-	import_pose::pose_from_pdb(pose, input_pdb);
+	import_pose::pose_from_file(pose, input_pdb, core::import_pose::PDB_file);
 	pose.dump_pdb("problem.pdb");
 
 	mover->set_pivots(2, 7, 12);

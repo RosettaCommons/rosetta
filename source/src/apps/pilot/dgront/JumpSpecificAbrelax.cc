@@ -114,7 +114,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -490,7 +490,7 @@ void JumpSpecificAbrelax::setup() {
 	// read native pose
 	if ( option[ in::file::native ].user() ) {
 		native_pose_ = new pose::Pose;
-		core::import_pose::pose_from_pdb( *native_pose_, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( *native_pose_, option[ in::file::native ]() , core::import_pose::PDB_file);
 
 		pose::set_ss_from_phipsi( *native_pose_ );
 
@@ -1479,7 +1479,7 @@ void JumpSpecificAbrelax::setup_fold( 	pose::Pose& extended_pose, ProtocolOP& pr
 	} else if ( option[ in::file::s ].user() ) {
 		core::pose::PoseOP tmp_pose( new core::pose::Pose );
 		std::string fn = option[ in::file::s ](1);
-		core::import_pose::pose_from_pdb( *tmp_pose, fn );
+		core::import_pose::pose_from_file( *tmp_pose, fn , core::import_pose::PDB_file);
 		copy_structure( extended_pose, *tmp_pose );
 	}
 	// ---------------------------------------------------------------------------------------------------------------
@@ -1538,12 +1538,12 @@ void JumpSpecificAbrelax::setup_fold( 	pose::Pose& extended_pose, ProtocolOP& pr
 		if ( option[ OptionKeys::loops::input_pdb ].user() ) {
 			if ( option[ in::file::fullatom ]() ) {
 				rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-				core::import_pose::pose_from_pdb( extended_pose, *rsd_set, option[ OptionKeys::loops::input_pdb ]().name() );
+				core::import_pose::pose_from_file( extended_pose, *rsd_set, option[ OptionKeys::loops::input_pdb ]().name() , core::import_pose::PDB_file);
 				if ( !extended_pose.is_fullatom() ) utility_exit_with_message(" this full-atom pose should be a full-atom pose, no? ");
 			} else {
 				// centroid starting structure for loop-modeling
 				rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
-				core::import_pose::pose_from_pdb( extended_pose, *rsd_set, option[ OptionKeys::loops::input_pdb ]().name() );
+				core::import_pose::pose_from_file( extended_pose, *rsd_set, option[ OptionKeys::loops::input_pdb ]().name() , core::import_pose::PDB_file);
 				if ( extended_pose.is_fullatom() ) utility_exit_with_message(" this centroid pose should not be a full-atom pose, no? ");
 			}
 			if( option[ OptionKeys::loops::random_grow_loops_by ].user() ){

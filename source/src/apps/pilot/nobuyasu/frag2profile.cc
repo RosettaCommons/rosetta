@@ -125,7 +125,7 @@ main( int argc, char * argv [] )
 
 	// read structure //////////////////////////////////////////////////////////////////////////////////////////////////
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, option[ s ]() );
+	core::import_pose::pose_from_file( pose, option[ s ]() , core::import_pose::PDB_file);
 
 	// read fragments //////////////////////////////////////////////////////////////////////////////////////////////////
 	using core::fragment::FragSetOP;

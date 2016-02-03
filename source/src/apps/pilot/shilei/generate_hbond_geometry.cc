@@ -40,7 +40,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/conformation/Residue.hh>

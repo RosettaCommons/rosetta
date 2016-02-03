@@ -22,7 +22,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <utility/options/keys/OptionKey.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

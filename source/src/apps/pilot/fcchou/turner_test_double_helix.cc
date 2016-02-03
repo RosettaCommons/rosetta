@@ -62,7 +62,7 @@
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/stepwise/sampling/rna/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
@@ -102,7 +102,7 @@ using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 using utility::vector1;
 using utility::tools::make_vector1;
 

@@ -84,8 +84,8 @@ main( int argc, char * argv [] )
 		pose::Pose pose_wt, pose_des;
 		std::string const wt_fname(  option[ revert_app::wt ] );
 		std::string const des_fname(  option[ revert_app::design ] );
-		core::import_pose::pose_from_pdb( pose_wt, wt_fname );
-		core::import_pose::pose_from_pdb( pose_des, des_fname );
+		core::import_pose::pose_from_file( pose_wt, wt_fname , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( pose_des, des_fname , core::import_pose::PDB_file);
 		pose::Pose pose_ref(pose_des);
 
 		ScoreFunctionOP scorefxn( core::scoring::get_score_function() ); // defaults to sc12

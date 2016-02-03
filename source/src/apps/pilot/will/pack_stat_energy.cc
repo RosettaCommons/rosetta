@@ -38,7 +38,7 @@ void test( std::string fname )
 	using namespace scoring;
 
 	Pose pose;
-	core::import_pose::pose_from_pdb(pose,fname);
+	core::import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
 
   ScoreFunctionOP sf( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 

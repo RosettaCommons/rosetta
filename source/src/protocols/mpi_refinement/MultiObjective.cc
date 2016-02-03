@@ -694,12 +694,12 @@ MultiObjective::add_objective_function_info(
 		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 
 	core::pose::Pose pose0;
-	core::import_pose::pose_from_pdb( pose0, *rsd_set, option[ in::file::s ](1) );
+	core::import_pose::pose_from_file( pose0, *rsd_set, option[ in::file::s ](1) , core::import_pose::PDB_file);
 	add_poseinfo_to_ss( *ss, pose0, "_i" );
 
 	if ( option[ in::file::native ].user() ) {
 		core::pose::Pose native_pose;
-		core::import_pose::pose_from_pdb( native_pose, *rsd_set, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 		add_poseinfo_to_ss( *ss, native_pose, "" );
 	}
 

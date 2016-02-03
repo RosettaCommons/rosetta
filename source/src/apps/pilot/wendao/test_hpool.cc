@@ -3,7 +3,7 @@
 //////////////////////////////
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

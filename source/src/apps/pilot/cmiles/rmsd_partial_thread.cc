@@ -39,8 +39,8 @@ int main(int argc, char* argv[]) {
   using namespace basic::options::OptionKeys;
   devel::init(argc, argv);
 
-  PoseCOP reference = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::s]()[1]);
-  PoseCOP partial_thread = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::s]()[2]);
+  PoseCOP reference = core::import_pose::pose_from_file(option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
+  PoseCOP partial_thread = core::import_pose::pose_from_file(option[OptionKeys::in::file::s]()[2], core::import_pose::PDB_file);
 
   map<Size, Size> residues;
 

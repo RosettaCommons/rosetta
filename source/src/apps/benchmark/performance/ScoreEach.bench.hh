@@ -72,9 +72,9 @@ public:
 		pose_ = core::pose::PoseOP( new core::pose::Pose );
 		if ( centroid_ ) {
 			core::chemical::ResidueTypeSetCOP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
-			core::import_pose::pose_from_pdb(*pose_, *rts, in_file_);
+			core::import_pose::pose_from_file(*pose_, *rts, in_file_, core::import_pose::PDB_file);
 		} else {
-			core::import_pose::pose_from_pdb(*pose_, in_file_);
+			core::import_pose::pose_from_file(*pose_, in_file_, core::import_pose::PDB_file);
 		}
 		core::scoring::methods::EnergyMethodOptions opts;
 		try {

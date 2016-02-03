@@ -101,7 +101,7 @@ PDBOutput::final_pose( JobOP job, Pose const & pose, std::string const & /*tag*/
 		utility_exit_with_message( "Unable to open file: " + extended_name(job) + "\n" );
 	}
 	pdbout << "REMARK BEGIN ROSETTA INFO\n";
-	extract_data_from_Job( job, pdbout );
+	pdbout << extract_data_from_Job( job );
 	output_pdb( pdbout );
 	// append job info to pdb (parent virtual function call)
 	pdbout.close();

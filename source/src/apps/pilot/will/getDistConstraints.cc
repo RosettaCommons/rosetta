@@ -12,7 +12,7 @@
 
 #include <core/id/AtomID_Map.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
@@ -70,7 +70,7 @@ void test( std::string fname ) {
 	using namespace basic::options::OptionKeys;
 
 	Pose pose;
-	core::import_pose::pose_from_pdb(pose,fname);
+	core::import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
 
 	utility::vector1<Size> cst_rsd( option[ in::target_residues ]() );
 	if( cst_rsd.size() == 0 ) {
@@ -80,7 +80,7 @@ void test( std::string fname ) {
 	PoseOP native;
 	if( option[ in::file::native ].user() ) {
 		native = new Pose;
-		core::import_pose::pose_from_pdb(*native,option[ in::file::native ]());
+		core::import_pose::pose_from_file(*native,option[ in::file::native ](), core::import_pose::PDB_file);
 		core::scoring::calpha_superimpose_pose( *native, pose );
 	}
 

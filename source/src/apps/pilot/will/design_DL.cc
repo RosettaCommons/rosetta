@@ -69,7 +69,7 @@ int main (int argc, char *argv[]) {
 	for(Size ifile = 1; ifile <= basic::options::option[basic::options::OptionKeys::in::file::s]().size(); ++ifile) {
 		std::string infile = basic::options::option[basic::options::OptionKeys::in::file::s]()[ifile];
 		Pose pose;
-		core::import_pose::pose_from_pdb(pose,infile);
+		core::import_pose::pose_from_file(pose,infile, core::import_pose::PDB_file);
 		infile = utility::file_basename(infile);
 
 		ScoreFunctionOP sf = core::scoring::get_score_function();

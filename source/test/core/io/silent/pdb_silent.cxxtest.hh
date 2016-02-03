@@ -42,7 +42,7 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init_with_additional_options( "-in::file::silent_struct_type pdb" );
+		core_init_with_additional_options( "-in::file::silent_struct_type pdb -out:level 500" );
 	}
 
 	// Shared finalization goes here.
@@ -54,7 +54,7 @@ public:
 	{
 		double rms_threshold = 1e-3;
 		pose::Pose start_pose(create_test_in_pdb_pose()), restored_pose;
-		//core::import_pose::pose_from_pdb( start_pose, "core/io/test_in.pdb" );
+		//core::import_pose::pose_from_file( start_pose, "core/io/test_in.pdb" , core::import_pose::PDB_file);
 
 		// Serialize the modified structure as a silent file
 		core::chemical::ResidueTypeSetCOP rsd_set

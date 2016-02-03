@@ -22,7 +22,7 @@
 #include <core/scoring/ScoringManager.hh>
 //#include <core/scoring/rms_util.hh>
 
-//#include <core/io/pdb/pose_io.hh>
+//
 
 //#include <basic/options/option.hh>
 //#include <basic/options/keys/OptionKeys.hh>

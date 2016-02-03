@@ -215,7 +215,7 @@ class MinimizationProtocols(ProtocolBaseClass):
                     os.system(scwrl_cmd)
                         
                     x = Pose()
-                    pose_from_pdb(x, (tempdir+"/new_temp.pdb"))
+                    pose_from_file(x, (tempdir+"/new_temp.pdb"))
                     self.pose.assign(x)
                     #Removes temp files
                     rmtree(tempdir)
@@ -227,7 +227,7 @@ class MinimizationProtocols(ProtocolBaseClass):
                     filein = tempdir+"/temp.pdb"
                     os.system(pwd+"/scwrl/"+plat+"/Scwrl4 -i "+filein+" -s "+seqFile+" -0 "+"-o "+tempdir+"/new_temp.pdb")
                     x = Pose()
-                    pose_from_pdb(x, (tempdir+"/new_temp.pdb"))
+                    pose_from_file(x, (tempdir+"/new_temp.pdb"))
                     self.pose.assign(x)
                     #Removes temp files
                     rmtree(tempdir)

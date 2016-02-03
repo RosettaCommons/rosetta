@@ -32,7 +32,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/tree/Atom.hh>
@@ -147,7 +147,7 @@ minimize_test()
 	Pose pose;
 	std::string pdbname = option[in::file::native]();
 	pdbname.replace( pdbname.rfind(".pdb", pdbname.length() ), 4, "" );
-	import_pose::pose_from_pdb ( pose, *rsd_set, option[in::file::native]() );
+	import_pose::pose_from_file ( pose, *rsd_set, option[in::file::native]() );
 	Pose start_pose = pose;
 	pose.dump_pdb( pdbname + "_start.pdb" );
 	std::cout << "Loaded in PDB file..." << std::endl;
@@ -331,7 +331,7 @@ repack_test () {
 	Pose pose;
 	std::string pdbname = option[in::file::native]();
 	pdbname.replace( pdbname.rfind(".pdb", pdbname.length() ), 4, "" );
-	import_pose::pose_from_pdb ( pose, *rsd_set, option[in::file::native]() );
+	import_pose::pose_from_file ( pose, *rsd_set, option[in::file::native]() );
 	Pose start_pose = pose;
 	pose.dump_pdb( pdbname + "_start.pdb" );
 	std::cout << "Loaded in PDB file..." << std::endl;

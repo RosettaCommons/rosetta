@@ -395,7 +395,7 @@ public:
 			TR << "///////////////////////////////////////////////////////////////////////////" << std::endl;
 			//read in native structure
 			core::pose::Pose native_pose;
-			core::import_pose::pose_from_pdb( native_pose, basic::options::option[local::evaluate_mutations_native_pdb].value() );
+			core::import_pose::pose_from_file( native_pose, basic::options::option[local::evaluate_mutations_native_pdb].value() , core::import_pose::PDB_file);
 			evaluate_mutations_native(pose, native_pose);
 			TR << std::endl << std::endl;
 		}

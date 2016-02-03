@@ -24,7 +24,7 @@
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
@@ -340,8 +340,8 @@ void run(  ) {
 
 
 	Pose t_in,p_in;
-	core::import_pose::pose_from_pdb(t_in,*crs,option[in::file::s]()[1]);
-	core::import_pose::pose_from_pdb(p_in,*crs,option[in::file::s]()[2]);
+	core::import_pose::pose_from_file(t_in,*crs,option[in::file::s]()[1], core::import_pose::PDB_file);
+	core::import_pose::pose_from_file(p_in,*crs,option[in::file::s]()[2], core::import_pose::PDB_file);
 
 	// set up geometry
 	Vecf taxs = Vec( 0.000000, 0.000000,1.000000).normalized();
@@ -699,7 +699,7 @@ void run(  ) {
 				for(core::Size i = 2; i <= p.n_residue()/5; ++i) symm.append_residue_by_bond(p.residue(i));
 
 				core::pose::symmetry::make_symmetric_pose(symm);
-				core::io::pdb::dump_pdb(symm,fname);
+				core::io::pdb::old_dump_pdb(symm,fname);
 
 			}
 		}

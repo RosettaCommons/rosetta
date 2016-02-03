@@ -46,7 +46,7 @@ int main(int argc, char*argv[])
 		std::vector<utility::json_spirit::Value> json_data;
 
 		for ( utility::vector1<std::string>::iterator file_it = file_names.begin(); file_it != file_names.end(); ++file_it ) {
-			core::pose::PoseOP current_pose(core::import_pose::pose_from_pdb(*file_it,false));
+			core::pose::PoseOP current_pose(core::import_pose::pose_from_file(*file_it,false, core::import_pose::PDB_file));
 
 			std::string protein_hash = core::pose::get_sha1_hash_excluding_chain(ligand_id,*current_pose);
 			if ( !core::pose::has_chain(ligand_id,*current_pose) ) {

@@ -111,7 +111,7 @@ class DesignBreakdown:
     def calculate_results(self):
         print "Calculating Results"
 
-        pose_from_pdb(self.reference_pose, self.reference_path)
+        pose_from_file(self.reference_pose, self.reference_path)
         print self.reference_pose
         self.reference_sequence = self.reference_pose.sequence()
         print self.reference_sequence

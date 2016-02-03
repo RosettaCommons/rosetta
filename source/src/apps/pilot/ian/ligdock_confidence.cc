@@ -25,7 +25,7 @@
 
 #include <devel/init.hh>
 #include <core/types.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <core/scoring/rms_util.hh>
 #include <basic/Tracer.hh>
@@ -45,7 +45,7 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/pose/Pose.hh>
 
 #include <utility/excn/Exceptions.hh>
@@ -75,7 +75,7 @@ main( int argc, char * argv [] )
 	core::pose::PoseOP native_pose;
 	if( option[ in::file::native ].user() ) {
 		native_pose = new core::pose::Pose();
-		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]().name() );
+		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
 	}
 
 	vector1< FileName > atom_tree_diffs_file_names;

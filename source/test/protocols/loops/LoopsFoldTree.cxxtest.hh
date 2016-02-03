@@ -47,8 +47,8 @@ private:
 public:
 	void setUp() {
 		protocols_init();
-		pose_ = core::import_pose::pose_from_pdb("protocols/loops/2GB3.pdb");
-		pose_multichain_ = core::import_pose::pose_from_pdb("protocols/loops/4DZM.pdb");
+		pose_ = core::import_pose::pose_from_file("protocols/loops/2GB3.pdb", core::import_pose::PDB_file);
+		pose_multichain_ = core::import_pose::pose_from_file("protocols/loops/4DZM.pdb", core::import_pose::PDB_file);
 	}
 
 	void test_SingleLoopFoldTree() {

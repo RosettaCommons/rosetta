@@ -106,7 +106,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
@@ -150,7 +150,7 @@ using namespace ObjexxFCL::format;
 
 using utility::vector1;
 using std::string;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -183,7 +183,7 @@ RunPepSpec()
 		std::string pdb_list_line;
 		getline( pdb_list_data, pdb_list_line, '\t' );
 		std::string filename( pdb_list_line );
-		core::import_pose::pose_from_pdb( pose, filename );
+		core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 	}
 
 	Size pep_anchor_in( option[ pep_spec::pep_anchor ] );
@@ -226,7 +226,7 @@ RunPepSpec()
 	while( !getline( pdb_list_data, pdb_list_line, '\t' ).eof() ) {
 		std::string filename( pdb_list_line );
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, filename );
+		core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 		( *scorefxn )( pose );
 		std::string data;
 		getline( pdb_list_data, data );

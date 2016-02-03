@@ -17,7 +17,7 @@
 #include <core/pose/symmetry/util.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -126,7 +126,7 @@ main( int argc, char * argv [] )
 	ScoreFunctionOP sf = core::scoring::get_score_function();
 
 	Pose pose;
-	import_pose::pose_from_pdb(pose,rs,basic::options::option[basic::options::OptionKeys::in::file::s]()[1]);
+	import_pose::pose_from_file(pose,rs,basic::options::option[basic::options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
 	pose.dump_pdb("init.pdb");
 
 	// replace_pose_residue_copying_existing_coordinates(pose,1,rs.name_map("NH5"));

@@ -75,7 +75,7 @@ public:
 		// Crearte a pose in the old fashioned way and make sure the contents of this pose and
 		// the pose from the Loader are identical.
 		core::pose::Pose reference_pose;
-		core::import_pose::pose_from_pdb( reference_pose, test_pdb_filename );
+		core::import_pose::pose_from_file( reference_pose, test_pdb_filename , core::import_pose::PDB_file);
 
 		TS_ASSERT(
 			core::pose::compare_binary_protein_silent_struct(

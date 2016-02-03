@@ -15,7 +15,7 @@
 
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
@@ -295,8 +295,8 @@ void run() {
 		protocols::jd2::JobDistributor::get_instance()->go( fit_tool );
 		if ( option[ in::file::native ].user() ) {
 			pose::Pose native_pose;
-			core::import_pose::pose_from_pdb( native_pose,
-				*core::chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ), option[ in::file::native ]() );
+			core::import_pose::pose_from_file( native_pose,
+				*core::chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ), option[ in::file::native ](), core::import_pose::PDB_file );
 			fit_tool->apply( native_pose );
 			native_pose.dump_pdb( "fit_native.pdb");
 		}

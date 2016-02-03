@@ -20,7 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 //#include <core/pose/util.hh>
 #include <devel/init.hh>
-//#include <core/io/pdb/pose_io.hh>
+//#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/scoring/ResidualDipolarCoupling.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -51,7 +51,7 @@
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -111,7 +111,7 @@ void run() {
 // 	if ( option[ in::file::s ].user() ) {
 // 		std::cerr << "here" << std::endl;
 // 		core::pose::Pose pose;
-// 		core::import_pose::pose_from_pdb( pose, "S_2_0091.pdb" );
+// 		core::import_pose::pose_from_file( pose, "S_2_0091.pdb" , core::import_pose::PDB_file);
 // 		core::io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_silent_struct_out();
 // 		pss->fill_struct( pose, "mala" );
 //  		std::cerr << "start output..." << std::endl;

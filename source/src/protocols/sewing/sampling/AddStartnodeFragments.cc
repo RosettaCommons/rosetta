@@ -108,7 +108,7 @@ AddStartnodeFragments::apply(
 	}
 
 	core::pose::PoseOP native_pose( new pose::Pose );
-	core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
+	core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 
 	core::Size start_window = protocols::rosetta_scripts::find_nearest_res( pose, *native_pose, start_res_);
 	core::Size end_window = protocols::rosetta_scripts::find_nearest_res( pose, *native_pose, end_res_);

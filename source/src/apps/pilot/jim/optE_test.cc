@@ -44,7 +44,7 @@
 #include <core/graph/Graph.hh>
 
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 
 #include <core/optimization/types.hh>
@@ -461,7 +461,7 @@ simple_opte_test()
 		Pose pose;
 		Pose native_pose;
 
-		core::import_pose::centroid_pose_from_pdb( pose, filename );
+		core::import_pose::centroid_pose_from_pdb( pose, filename , core::import_pose::PDB_file);
 		native_pose = pose;
 
 		//std::cout << "read file: " << filename << ' '<< pose.total_residue() << std::endl;
@@ -590,8 +590,8 @@ optimize_weights(
 
 		core::pose::Pose pose, native_pose;
 
-		core::import_pose::centroid_pose_from_pdb( pose, filename );
-		core::import_pose::centroid_pose_from_pdb( native_pose, native_filename );
+		core::import_pose::centroid_pose_from_pdb( pose, filename , core::import_pose::PDB_file);
+		core::import_pose::centroid_pose_from_pdb( native_pose, native_filename , core::import_pose::PDB_file);
 
 		std::cout << "read file: " << filename << " " << pose.total_residue() << " and native file: " << native_filename << std::endl;
 
@@ -790,9 +790,9 @@ measure_sequence_recovery(
 		/// read the pdb into a pose
 		core::pose::Pose pose;
 		if ( option[ in::file::centroid_input ] ) {
-			core::import_pose::centroid_pose_from_pdb( pose, native_pdb_names[ ii ] );
+			core::import_pose::centroid_pose_from_pdb( pose, native_pdb_names[ ii ] , core::import_pose::PDB_file);
 		} else {
-			core::import_pose::pose_from_pdb( pose, native_pdb_names[ ii ] );
+			core::import_pose::pose_from_file( pose, native_pdb_names[ ii ] , core::import_pose::PDB_file);
 		}
 
 		/// record original sequence

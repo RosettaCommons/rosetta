@@ -18,7 +18,7 @@
 #include <devel/init.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -58,7 +58,7 @@ main( int argc, char * argv [] )
 	TR << "About to read bound pose" << std::endl;
 	pose::Pose wt_NGFbound;
 	std::string const input_pdb_name( basic::options::start_file() );
-	core::import_pose::pose_from_pdb( wt_NGFbound, input_pdb_name );
+	core::import_pose::pose_from_file( wt_NGFbound, input_pdb_name , core::import_pose::PDB_file);
 
 	// Score for the wildtype
 	// Setup for scoring/repacking

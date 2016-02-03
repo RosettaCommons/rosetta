@@ -58,7 +58,7 @@ utility::vector1< core::Size > add_extra_bodies( core::pose::Pose & pose, basic:
 		//load in each body into a pose vector
 		utility::vector1< std::string > const extra_bodies_files( basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies]() );
 		typedef utility::vector1< core::pose::Pose > posevec;
-		posevec extra_bodies_vec(core::import_pose::poses_from_pdbs(extra_bodies_files));
+		posevec extra_bodies_vec(core::import_pose::poses_from_files(extra_bodies_files, core::import_pose::PDB_file));
 
 		//iterate through bodies adding them
 		for ( posevec::const_iterator it(extra_bodies_vec.begin()), end(extra_bodies_vec.end()); it!=end; ++it ) { //each in extra_bodies

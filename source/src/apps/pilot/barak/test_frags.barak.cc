@@ -32,7 +32,7 @@
 
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/options/util.hh>//option.hh>
 
@@ -93,7 +93,7 @@ main( int argc, char * argv [] )
   std::cout << "Part 2: " << std::endl;
   {
     pose::Pose pose;
-    core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+    core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
     std::string const sequence( pose.sequence() );
 
     TorsionFragmentLibrary lib;
@@ -130,7 +130,7 @@ main( int argc, char * argv [] )
     for ( Size i=1; i<= 20; ++i ) {
       pose.set_omega(i,180.0);
     }
-    io::pdb::dump_pdb( pose, "test_ideal.pdb" );
+    io::pdb::old_dump_pdb( pose, "test_ideal.pdb" );
   }
 
 

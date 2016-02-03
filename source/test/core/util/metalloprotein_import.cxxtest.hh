@@ -26,7 +26,7 @@
 #include <test/core/init_util.hh>
 
 // Package Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Project Headers
@@ -61,7 +61,7 @@ public:
 	void test_metalloprotein_import() {
 		pose::Pose pose;
 		const std::string original_file_name("core/util/2c9v_stripped.pdb");
-		import_pose::pose_from_pdb(pose, original_file_name);
+		import_pose::pose_from_file(pose, original_file_name, core::import_pose::PDB_file);
 
 		//Check that all the residues that should be bonded are bonded:
 		TS_ASSERT( pose.residue(46).is_bonded(154) );

@@ -19,7 +19,7 @@
 
 #include <devel/init.hh>
 #include <core/types.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -329,7 +329,7 @@ main( int argc, char * argv [] )
 		if( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
 			input_pose = new core::pose::Pose();
 			if( use_silent_in ) atdiff->read_pose( curr_job->input_tag(), *input_pose );
-			else core::import_pose::pose_from_pdb( *input_pose, curr_job->input_tag() );
+			else core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 
 			//if constraints are requested
 			if( option[basic::options::OptionKeys::enzdes::cstfile].user() ){

@@ -17,7 +17,7 @@
 #include <core/pack/task/PackerTask_.hh>
 
 //project Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>
 #include <core/pose/util.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -160,7 +160,7 @@ core::scoring::ScoreFunctionOP scorefxn( ( core::scoring::get_score_function_leg
   // do some stuff to the native
 
   core::pose::Pose nativepose;
-  core::import_pose::pose_from_pdb( nativepose, basic::options::option[ core::options::OptionKeys::in::file::native ]().name()  );
+  core::import_pose::pose_from_file( nativepose, basic::options::option[ core::options::OptionKeys::in::file::native ]().name()  , core::import_pose::PDB_file);
 
   core::Real seqlength = nativepose.n_residue();
   std::string nativesequence = nativepose.sequence();

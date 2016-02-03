@@ -6,4 +6,4 @@
 -mute 				core.conformation.Conformation 
 -mute 				core.io.silent
 -mute				core.io.pdb
-
+-mute                           core.io.pose_from_sfr

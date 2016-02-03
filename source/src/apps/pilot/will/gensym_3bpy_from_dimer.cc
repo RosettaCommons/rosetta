@@ -26,7 +26,7 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/graph/Graph.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -666,7 +666,7 @@ void run() {
 	core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 
 	Pose bpy,ala,tyr;
-	core::import_pose::pose_from_pdb(bpy ,*rs,"input/bpy_ideal.pdb");
+	core::import_pose::pose_from_file(bpy ,*rs,"input/bpy_ideal.pdb", core::import_pose::PDB_file);
 	core::pose::remove_lower_terminus_type_from_pose_residue(bpy,1);
 	core::pose::remove_upper_terminus_type_from_pose_residue(bpy,1);
 	int const iCZ = bpy.residue(1).atom_index("CZ");
@@ -694,7 +694,7 @@ void run() {
 	for(Size ifile = 1; ifile <= fnames.size(); ++ifile) {
 		string fname = fnames[ifile], infile = utility::file_basename(fnames[ifile]);
 		cout << "PROGRESS "<< ifile << " " << fname << endl;
-		Pose nat; core::import_pose::pose_from_pdb(nat,*rs,fname);
+		Pose nat; core::import_pose::pose_from_file(nat,*rs,fname, core::import_pose::PDB_file);
 		core::scoring::dssp::Dssp dssp(nat);
 		dssp.insert_ss_into_pose(nat);
 		if( nat.n_residue() > option[bpytoi::max_nres]() ) { /*SIZE*/ continue; };

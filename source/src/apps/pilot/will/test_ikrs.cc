@@ -9,7 +9,7 @@
 	#include <core/conformation/Residue.hh>
 	#include <core/import_pose/import_pose.hh>
 	#include <devel/init.hh>
-	#include <core/io/pdb/pose_io.hh>
+	#include <core/io/pdb/pdb_writer.hh>
 	#include <core/kinematics/Stub.hh>
 	#include <core/kinematics/MoveMap.hh>
 	#include <core/graph/Graph.hh>
@@ -103,7 +103,7 @@
 	using std::string;
 	using utility::vector1;
 	using numeric::min;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using basic::options::option;
 	using numeric::min;
 	using numeric::max;
@@ -1208,7 +1208,7 @@ int main (int argc, char *argv[]) {
 
 		const core::Real PI = numeric::NumericTraits<Real>::pi();
 
-		Pose ctp; pose_from_pdb(ctp,"input/ctp.pdb");
+		Pose ctp; pose_from_file(ctp,"input/ctp.pdb", core::import_pose::PDB_file);
 		Pose pose,ala,arg,asp,glu,lys;
 		core::chemical::ResidueTypeSetCOP frs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		core::pose::make_pose_from_sequence(ala,"A",*frs,false);
@@ -1218,7 +1218,7 @@ int main (int argc, char *argv[]) {
 		core::pose::make_pose_from_sequence(lys,"K",*frs,false); repack(lys);
 
 		string infile = basic::options::option[basic::options::OptionKeys::in::file::s]()[1];
-		core::import_pose::pose_from_pdb(pose,infile);
+		core::import_pose::pose_from_file(pose,infile, core::import_pose::PDB_file);
 		for(Size i = 1; i <= pose.n_residue(); ++i) {
 			if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
 			if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);

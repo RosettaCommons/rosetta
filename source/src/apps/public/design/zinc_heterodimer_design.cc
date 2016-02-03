@@ -20,7 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <core/conformation/Residue.hh>
 
@@ -114,7 +114,7 @@ main( int argc, char* argv[] )
 		//basic::options::option[ basic::options::OptionKeys::run::skip_set_reasonable_fold_tree ].value(true);
 		//read in our starting structures
 		core::pose::Pose match;
-		core::import_pose::pose_from_pdb( match, basic::options::option[local::match_pdb].value() );
+		core::import_pose::pose_from_file( match, basic::options::option[local::match_pdb].value() , core::import_pose::PDB_file);
 		core::Size const matchlength = match.total_residue();
 		assert(matchlength == /*MatchPosition*/metal); //5
 		//basic::options::option[ basic::options::OptionKeys::run::skip_set_reasonable_fold_tree ].value(false);
@@ -123,11 +123,11 @@ main( int argc, char* argv[] )
 		//match.dump_pdb("match_hydrogened.pdb");
 
 		core::pose::Pose partner2;
-		core::import_pose::pose_from_pdb( partner2, basic::options::option[local::partner2].value() );
+		core::import_pose::pose_from_file( partner2, basic::options::option[local::partner2].value() , core::import_pose::PDB_file);
 		core::Size const partner2length = partner2.total_residue();
 
 		core::pose::Pose partner1;
-		core::import_pose::pose_from_pdb( partner1, basic::options::option[local::partner1].value() );
+		core::import_pose::pose_from_file( partner1, basic::options::option[local::partner1].value() , core::import_pose::PDB_file);
 		core::Size const partner1length = partner1.total_residue();
 
 
@@ -321,7 +321,7 @@ main( int argc, char* argv[] )
 		///run movers
 
 		//HACK HACK HACK to get pose out so it can be read into job distributor
-		core::import_pose::pose_from_pdb(combined, whole_name.name());
+		core::import_pose::pose_from_file(combined, whole_name.name(), core::import_pose::PDB_file);
 		basic::options::option[ basic::options::OptionKeys::in::file::s ].value(whole_name.name());
 		//combined.dump_scored_pdb("reread_partner1_metal_partner2.pdb", *score_fxn);
 

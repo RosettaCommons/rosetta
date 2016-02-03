@@ -98,7 +98,7 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 
 		// set up for create from template pdb
 		if ( basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb ].user() ) {
-			core::import_pose::pose_from_pdb( template_pose,  basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb ].name() );
+			core::import_pose::pose_from_file( template_pose,  basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb ].name() , core::import_pose::PDB_file);
 
 			if ( basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::use_template_topology ].value() == true ) {
 

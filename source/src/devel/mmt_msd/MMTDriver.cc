@@ -22,7 +22,8 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/util.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -370,11 +371,7 @@ MMTDriver::retrieve_optimal_solutions()
 
 			TR << "Writing structure " << jj_out_name << " with score: " << (*sfxn_)( jj_pose ) << std::endl;
 
-			std::ostringstream ostr;
-			core::io::pdb::dump_pdb( jj_pose, ostr );
-			core::io::pdb::extract_scores( jj_pose, jj_out_name, ostr );
-
-			opt_sols[ jj_out_name ] = ostr.str();
+			core::io::pdb::dump_pdb( jj_pose, "", true, false, opt_sols[ jj_out_name ] /*opt_sols is output*/ );
 		}
 
 	}

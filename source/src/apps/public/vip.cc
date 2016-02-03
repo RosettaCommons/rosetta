@@ -64,9 +64,9 @@ main( int argc, char * argv [] )
 		core::Real old_energy = 0.0;
 
 		core::pose::Pose in_pose;
-		core::import_pose::pose_from_pdb(
+		core::import_pose::pose_from_file(
 			in_pose,
-			option[ OptionKeys::in::file::s ]().vector().front());
+			option[ OptionKeys::in::file::s ]().vector().front(), core::import_pose::PDB_file);
 
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( option[ cp::relax_sfxn ] );
 		protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );

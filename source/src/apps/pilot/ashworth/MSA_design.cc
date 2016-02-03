@@ -14,7 +14,7 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-#include <core/io/pdb/pose_io.hh> // pose_from_pdb
+#include <core/io/pdb/pdb_writer.hh> // pose_from_pdb
 #include <basic/options/option.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -185,7 +185,7 @@ MSA_design_main( void* )
 		std::cout << std::endl;
 		pose::PoseOP pose( new pose::Pose );
 		protocols::viewer::add_conformation_viewer( pose->conformation(), "Main Pose" );
-		core::import_pose::pose_from_pdb( *pose, *filename );
+		core::import_pose::pose_from_file( *pose, *filename , core::import_pose::PDB_file);
 		MSA_design( pose );
 	}
 

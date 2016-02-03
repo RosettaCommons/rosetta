@@ -1,0 +1,707 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file    core/io/pdb/pdb_reader.cc
+/// @brief   Function definitions for reading of .pdb files.
+/// @author  Sergey Lyskov (Sergey.Lyskov@jhu.edu)
+/// @author  Labonte <JWLabonte@jhu.edu>
+/// @note    We may perhaps decide in the future to wrap this functionality in a class.  ~Labonte
+
+
+// Unit headers
+#include <core/io/pdb/pdb_reader.hh>
+#include <core/io/pdb/pdb_writer.hh>
+#include <core/io/StructFileReaderOptions.hh>  // TODO: Rename after refactoring is complete.
+#include <core/io/pdb/Field.hh>
+#include <core/io/pdb/RecordCollection.hh>
+
+// Package header
+#include <core/io/StructFileRep.hh>
+
+// Project header
+#include <core/chemical/carbohydrates/CarbohydrateInfoManager.hh>  // TEMP
+#include <core/io/NomenclatureManager.hh>
+
+// Utility header
+#include <utility/string_util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+// Basic headers
+#include <basic/Tracer.hh>
+
+// External headers
+#include <ObjexxFCL/format.hh>
+
+// C++ header
+#include <algorithm>
+#include <sstream>
+#include <map>
+
+
+static THREAD_LOCAL basic::Tracer TR( "core.io.pdb.pdb_reader" );
+
+
+namespace core {
+namespace io {
+namespace pdb {
+
+Record
+get_record_from_string( std::string const & input_string )
+{
+	std::string resized_string( input_string ) ;
+	if ( resized_string.size() < 80 ) {  // allow for longer Rosetta-specific lines
+		resized_string.resize( 80, ' ' );  // standard .pdb line width
+	}
+
+	// All PDB record names are the first 6 characters of a line.
+	std::string const & record_type( resized_string.substr( 0, 6 ) );
+
+	Record record( RecordCollection::record_from_record_type( record_type ) );
+	for ( Record::iterator it = record.begin(), end = record.end(); it != end; ++it ) {
+		( *it ).second.set_value_from_string( resized_string );
+	}
+
+	return record;
+}
+
+utility::vector1< Record >
+create_records_from_pdb_file_contents( std::string const & pdb_contents )
+{
+	utility::vector1< std::string > lines( utility::split_by_newlines( pdb_contents ) );
+	return create_records_from_pdb_lines( lines );
+}
+
+// Create a list of .pdb format records from the lines from a .pdb file.
+utility::vector1< Record >
+create_records_from_pdb_lines( utility::vector1< std::string > const & lines )
+{
+	runtime_assert( ! lines.empty() );  // We're wasting time if there's no data here....
+
+	utility::vector1< Record > records( lines.size() );
+	std::transform( lines.begin(), lines.end(), records.begin(), get_record_from_string );
+	return records;
+}
+
+// Create a list of .pdb format records from the lines from a .pdb file.
+utility::vector1< Record >
+create_records_from_pdb_lines( std::string const & lines )
+{
+	runtime_assert( ! lines.empty() );  //we're wasting time if there's no data here....
+
+	utility::vector1< std::string> line_vector( utility::split_by_newlines( lines));
+	utility::vector1< Record > records( line_vector.size() );
+	std::transform( line_vector.begin(), line_vector.end(), records.begin(), get_record_from_string );
+	return records;
+}
+
+// Create a representation of structural file data from a list of .pdb format records with options.
+StructFileRep
+create_sfr_from_pdb_records( utility::vector1< Record > & records, StructFileReaderOptions const & options )
+{
+	using namespace std;
+	StructFileRep sfr;
+
+	map< char, ChainAtoms > chain_atoms_map;  // A map of chain ID to every atom in the chain.
+	Size ter_record_count = 0;
+	utility::vector1< char > chain_list;  // WHY DOES THIS KEEP SWITCHING?!?
+	std::map< char, Size > chain_to_idx;
+
+	// Prepare for multi-model .pdbs.
+	map< std::pair< Size, Size >, char > modelchain_to_chain;  // TODO: What is this?
+	string const chain_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";  // TODO: Is this constant also other places?
+	for ( Size i = 0; i < chain_letters.size(); ++i ) {
+		modelchain_to_chain[ std::pair< Size, Size >( 0, i ) ] = chain_letters[ i ];
+		modelchain_to_chain[ std::pair< Size, Size >( 1, i ) ] = chain_letters[ i ];
+	}
+	Size modelidx = 1;
+	bool modeltags_present = false;
+
+
+	// Loop over all PDB records.
+	Size const n_records( records.size() );
+	utility::vector1< Record > unknow_records;  // place to store unrecognized records for 2nd pass for non-RCSB
+	bool stop_reading_coordinate_section( false );  // might be set to true when ENDMDL is reached
+	for ( core::uint i = 1; i <= n_records; ++i ) {
+		std::string const record_type( records[ i ][ "type" ].value );
+		//std::cout << "Record type: \"" << record_type << "\"" << std::endl;
+
+		// TODO: Refactor to use enums.
+
+		// Title Section //////////////////////////////////////////////////////
+		// Record contains "header information", i.e., is from the Title Section of the PDB file.
+		if ( record_type == "HEADER" || record_type == "KEYWDS" ||
+				record_type == "TITLE " || record_type == "COMPND" ||
+				record_type == "EXPDTA" ) {
+			// TODO: Add rest of Title Section records.
+			sfr.header()->store_record( records[ i ] );
+
+			// Record contains a remark from the Title Section of the PDB file.
+		} else if ( record_type == "REMARK" )  {
+			RemarkInfo ri;
+			ri.num = atoi( records[ i ][ "remarkNum" ].value.c_str() ),
+				ri.value = records[ i ][ "value" ].value;
+
+			//Added by DANIEL to skip reading the PDBinfo-LABEL, which comes "nfo-LABEL:"
+			//Those are read in a different way, using: core.import_pose().read_additional_pdb_data()
+			if ( ( ri.value.size() >= 10 ) && ( ri.value.substr( 0, 10 ) == "nfo-LABEL:" ) ) {
+				continue;
+			}
+			sfr.remarks()->push_back( ri );
+
+
+			// Primary Structure Section //////////////////////////////////////////
+			// Record contains cross-references from PDB sequence fragments to a corresponding database sequence.
+		} else if ( record_type == "DBREF " || record_type == "DBREF1" || record_type == "DBREF2" ||
+				record_type == "SEQADV" ) {
+			//sfr.primary_struct_info()->store_sequence_database_refs( records[ i ] );  // TODO
+			continue;  // TEMP
+
+			// Record contains a linear (or cyclic) primary sequence declaration.
+		} else if ( record_type == "SEQRES" ) {
+			store_chain_sequence_record_in_sfr( records[ i ], sfr );
+
+			// Record that a residue is modified and how.
+		} else if ( record_type == "MODRES" ) {
+			store_mod_res_record_in_sfr( records[ i ], sfr );
+
+
+			// Heterogen Section //////////////////////////////////////////////////
+			// Record contains heterogen nomenclature information.
+		} else if ( record_type == "HETNAM" ) {
+			store_heterogen_names_in_sfr( records[ i ], sfr );
+
+			// Record contains heterogen synonym information.
+		} else if ( record_type == "HETSYN" ) {
+			store_heterogen_synonym_record_in_sfr( records[ i ], sfr );
+
+			// Record contains formula information.
+		} else if ( record_type == "FORMUL" ) {
+			store_formula_record_in_sfr( records[ i ], sfr );
+
+
+			// Secondary Structure Section ////////////////////////////////////////
+			// Record contains helix definitions.
+		} else if ( record_type == "HELIX " ) {
+			// TODO: Store HELIX record types here.
+			continue;
+
+			// Record contains sheet definitions.
+		} else if ( record_type == "SHEET " ) {
+			// TODO: Store SHEET record types here.
+			continue;
+
+
+			// Connectivity Annotation Section ////////////////////////////////////
+			// Record contains disulfide linkage information.
+		} else if ( record_type == "SSBOND" ) {
+			store_ssbond_record_in_sfr( records[ i ], sfr );
+
+			// Record contains nonstandard polymer linkage information.
+		} else if ( record_type == "LINK  " ) {
+			store_link_record_in_sfr( records[ i ], sfr );
+
+		} else if ( record_type == "CISPEP" ) {
+			store_cis_peptide_record_in_sfr( records[ i ], sfr );
+
+
+			// Miscellaneous Features Section /////////////////////////////////////
+		} else if ( record_type == "SITE  " ) {
+			// TODO: Store SITE record types here.
+			continue;
+
+			// Crystallographic and Coordinate Transformation Section /////////////
+			// Record contains crystal information.
+		} else if ( records[i]["type"].value == "CRYST1" )  {
+			store_crystallographic_parameter_record_in_sfr( records[ i ], sfr );
+
+
+			// Coordinate Section /////////////////////////////////////////////////
+			// Record contains multimodel PDBs.
+		} else if ( record_type == "MODEL " ) {
+			if ( stop_reading_coordinate_section ) continue;
+
+			// store the serial number as the filename, which will become the PDBInfo name of the pose
+			std::string temp_model = ObjexxFCL::strip_whitespace( records[i]["serial"].value ) ;
+			sfr.modeltag() = temp_model.c_str();
+			if ( options.new_chain_order() ) {
+				if ( modeltags_present ) {
+					// second model... all chains should be present...
+					for ( Size model_idx=2; model_idx*chain_to_idx.size()<chain_letters.size(); ++model_idx ) {
+						for ( Size chain_idx=1; chain_idx <= chain_to_idx.size(); ++chain_idx ) {
+							TR << "REARRANGE CHAINS " << model_idx << " " << chain_idx << " ";
+							TR << (model_idx-1)*chain_to_idx.size()+chain_idx << std::endl;
+							modelchain_to_chain[std::pair<Size, Size>(model_idx, chain_idx)] =
+								chain_letters[(model_idx-1)*chain_to_idx.size() + chain_idx - 1];
+						}
+					}
+					++modelidx;
+					if ( modelidx > 8 ) utility_exit_with_message("quitting: too many MODELs");
+				} else {
+					modeltags_present = true;
+				}
+			}
+
+			// Record contains atom information.
+		} else if ( record_type == "ATOM  " || record_type == "HETATM" ) {
+			if ( stop_reading_coordinate_section ) continue;
+
+			// TODO: Refactor?
+			Record & R( records[ i ] );
+
+			AtomInformation ai;
+			ai.isHet = ( R[ "type" ].value == "HETATM" );  // probably not worth storing here
+			ai.serial = atoi( R[ "serial" ].value.c_str() );
+			ai.name = R[ "name" ].value;
+			ai.altLoc = 0;
+			if ( R[ "altLoc" ].value.size() > 0 ) {
+				ai.altLoc = R[ "altLoc" ].value[ 0 ];
+			}
+
+			ai.resName = R[ "resName" ].value;
+			ai.chainID = 0;
+			if ( R[ "chainID" ].value.size() > 0 ) {
+				ai.chainID = R[ "chainID" ].value[ 0 ];
+			}
+			if ( options.new_chain_order() ) {
+				if ( R["chainID"].value.size() > 0 ) {
+					char chainid = R["chainID"].value[0];
+					if ( chain_to_idx.find(chainid) == chain_to_idx.end() ) {
+						chain_to_idx[chainid] = chain_to_idx.size()+1;
+						TR << "found new chain " << chainid << " " << chain_to_idx.size() << std::endl;
+					}
+					ai.chainID = modelchain_to_chain[std::pair<Size, Size>(modelidx, chain_to_idx[chainid])];
+				}
+			}
+
+			ai.resSeq = atoi( R["resSeq"].value.c_str() );
+			ai.iCode = 0;
+			if ( R["iCode"].value.size() > 0 ) ai.iCode = R["iCode"].value[0];
+
+			// how can you check properly if something will successfully convert to a number !?!?!?
+			bool force_no_occupancy = false;
+			if ( R["x"].value == "     nan" ) {
+				ai.x =0.0;
+				force_no_occupancy=true;
+			} else {
+				ai.x = atof( R["x"].value.c_str() );
+			}
+			if ( R["y"].value == "     nan" ) {
+				ai.y =0.0;
+				force_no_occupancy=true;
+			} else {
+				ai.y = atof( R["y"].value.c_str() );
+			}
+			if ( R["z"].value == "     nan" ) {
+				ai.z =0.0;
+				force_no_occupancy=true;
+			} else {
+				ai.z = atof( R["z"].value.c_str() );
+			}
+
+			// check that the occupancy column actually exists. If it doesn't, assume full occupancy.
+			// otherwise read it.
+			if ( R["occupancy"].value == "      " ) {
+				ai.occupancy = 1.0;
+			} else {
+				ai.occupancy = atof( R["occupancy"].value.c_str() );
+			}
+			if ( force_no_occupancy ) {
+				ai.occupancy = -1.0;
+			}
+
+			ai.temperature = atof( R["tempFactor"].value.c_str() );
+			// if ( ai.resName == "CYS" ) {
+			//  TR << "In reader " << R["tempFactor"] << endl;
+			// }
+			ai.segmentID = R["segmentID"].value;
+			ai.element = R["element"].value;
+			ai.terCount = ter_record_count;
+
+			chain_atoms_map[ ai.chainID ].push_back( ai );
+			if ( find( chain_list.begin(), chain_list.end(), ai.chainID ) == chain_list.end() ) {
+				chain_list.push_back( ai.chainID );
+			}
+
+		} else if ( ! stop_reading_coordinate_section && ( record_type == "TER   " || record_type == "END   " ) ) {
+			++ter_record_count;
+
+		} else if ( record_type == "ENDMDL" )  {
+			if ( options.obey_ENDMDL() )  {
+				TR.Warning << "Hit ENDMDL; not reading further coordinate section records." << endl;
+				stop_reading_coordinate_section = true;
+			}
+		} else /*UNKNOW record*/ {
+			unknow_records.push_back( records[ i ] );
+		}
+	}
+
+	sfr.header()->finalize_parse();
+
+	for ( Size i = 1; i <= chain_list.size(); ++i ) {
+		sfr.chains().push_back( chain_atoms_map.find( chain_list[ i ] )->second );
+	}
+
+	// Now check through the list of unknown record lines to see if there are any Rosetta-specific things that we care
+	// about loading.
+	if ( options.pdb_comments() ) {
+		store_unknown_records_in_sfr( unknow_records, sfr );
+	}
+
+	return sfr;
+}
+
+// Create a representation of structural file data from a list of .pdb format records.
+StructFileRep
+create_sfr_from_pdb_records( utility::vector1< Record > & records )
+{
+	StructFileReaderOptions options;
+	return create_sfr_from_pdb_records( records, options );
+}
+
+
+// Create a representation of structural file data from .pdb file contents with options.
+StructFileRep
+create_sfr_from_pdb_file_contents( std::string const & pdb_contents, StructFileReaderOptions const & options )
+{
+	utility::vector1< Record > records( create_records_from_pdb_file_contents( pdb_contents ) );
+	return create_sfr_from_pdb_records( records, options );
+}
+
+// Create a representation of structural file data from .pdb file contents.
+StructFileRep
+create_sfr_from_pdb_file_contents( std::string const & pdb_contents )
+{
+	StructFileReaderOptions options;
+	return create_sfr_from_pdb_file_contents( pdb_contents, options );
+}
+
+
+// The 2 functions below are covered by import_pose.cc.
+// Create a representation of structural file data from a .pdb file by file.
+//StructFileRep
+//create_sfr_from_pdb_file( utility::io::izstream const & file )
+//{
+// TODO: Slurp file
+//return ;
+//}
+
+// Create a representation of structural file data from a .pdb file by filename.
+//StructFileRep
+//create_sfr_from_pdb_file( std::string const & filename )
+//{
+// return create_sfr_from_pdb_file( utility::io::izstream( filename ) );
+//}
+
+
+// .pdb Record Storage Functions //////////////////////////////////////////////
+// Convert .pdb SEQRES record into SFR data.
+void
+store_chain_sequence_record_in_sfr( Record seqres_record, StructFileRep & sfr )
+{
+	sfr.chain_sequences()[ seqres_record[ "chainID" ].value[ 0 ] ].push_back( seqres_record[ "resName1" ].value );
+	for ( uint i( 2 ); i <= 13; ++i ) {  // There are 13 total resName fields per SEQRES record.
+		std::ostringstream field_name;
+		field_name << "resName" << i;
+		if ( seqres_record[ field_name.str() ].value == "   " ) {  // an empty field
+			break;
+		} else {
+			sfr.chain_sequences()[ seqres_record[ "chainID" ].value[ 0 ] ].push_back(
+				seqres_record[ field_name.str() ].value );
+		}
+	}
+	TR.Debug << "SEQRES record information stored successfully." << std::endl;
+}
+
+// Convert .pdb MODRES record into SFR data.
+void
+store_mod_res_record_in_sfr( Record modres_record, StructFileRep & sfr )
+{
+	using namespace std;
+
+	ModifiedResidueInformation modres_info;
+	modres_info.resName = modres_record[ "resName" ].value;
+	modres_info.chainID = modres_record[ "chainID" ].value[ 0 ];
+	modres_info.seqNum = atof( modres_record[ "seqNum" ].value.c_str() );
+	modres_info.iCode = modres_record[ "iCode" ].value[ 0 ];
+	modres_info.stdRes = modres_record[ "stdRes" ].value;
+	string const comment_w_spaces( modres_record[ "comment" ].value );
+	modres_info.comment = utility::trim( comment_w_spaces );
+
+	string const resID(
+		modres_record[ "seqNum" ].value + modres_record[ "iCode" ].value + modres_record[ "chainID" ].value );
+	sfr.modres_map()[ resID ] = modres_info;
+
+	TR.Debug << "MODRES record information stored successfully." << endl;
+}
+
+
+// Parse .pdb HETNAM text field to extract full resID and convert into SFR data.
+/// @remarks Called by store_heterogen_names_in_sfr().
+void
+store_base_residue_type_name_in_sfr( std::string const & text_field, StructFileRep & sfr )
+{
+	using namespace std;
+
+	string const chainID( string( text_field.begin(), text_field.begin() + 1 ) );  // 1 character for chainID
+	string const resSeq( string( text_field.begin() + 1, text_field.begin() + 5 ) );  // 4 characters for resSeq
+	string const iCode( string( text_field.begin() + 5, text_field.begin() + 6 ) );  // 1 character for iCode
+	string const key( resSeq + iCode + chainID );  // a resID, as defined elsewhere in StructFileRep
+
+	// name starts after 7th character
+	string const needed_residue_type_base_name( String( text_field.begin() + 7, text_field.end() ) );
+
+	sfr.residue_type_base_names()[ key ] = needed_residue_type_base_name;
+}
+
+// TODO: Refactor this further.
+// Convert .pdb HETNAM record into SFR data.
+/// @remarks  Heterogen "names" for carbohydrates (from "Rosetta-ready" PDB files) instead have the name field parsed
+/// to extract the base (non-variant) ResidueType needed for a particular residue.
+void
+store_heterogen_names_in_sfr( Record hetnam_record, StructFileRep & sfr )
+{
+	using namespace std;
+	using namespace core::chemical::carbohydrates;
+
+	string const & hetID( hetnam_record[ "hetID" ].value );
+	string text( hetnam_record[ "text" ].value );
+
+	if ( hetID.empty() ) {
+		TR.Warning << "PDB HETNAM record is missing an heterogen ID field." << endl;
+		return;
+	}
+	if ( text.empty() ) {
+		TR.Warning << "PDB HETNAM chemical name field is an empty string." << endl;
+		return;
+	}
+
+	// If the hetID is found in the map of Rosetta-allowed carbohydrate 3-letter codes....
+	if ( CarbohydrateInfoManager::is_valid_sugar_code( hetID ) ) {
+		ObjexxFCL::strip_whitespace( text );
+		store_base_residue_type_name_in_sfr( text, sfr );
+	} else {
+		// Search through current list of HETNAM records: append or create records as needed.
+		bool record_found( false );
+		Size const n_heterogen_names( sfr.heterogen_names().size() );
+		for ( uint i( 1 ); i <= n_heterogen_names; ++i ) {
+			// If a record already exists with this hetID, this is a continuation line; append.
+			if ( hetID == sfr.heterogen_names()[ i ].first ) {
+				sfr.heterogen_names()[ i ].second.append( ObjexxFCL::rstripped_whitespace( text ) );
+				record_found = true;
+				break;
+			}
+		}
+		if ( ! record_found ) {
+			// Non-carbohydrate heterogen names are simply stored in the standard PDB way.
+			ObjexxFCL::strip_whitespace( text );
+			sfr.heterogen_names().push_back( make_pair( hetID, text ) );
+		}
+	}
+}
+
+// Convert .pdb HETSYN record into SFR data.
+void
+store_heterogen_synonym_record_in_sfr( Record hetsyn_record, StructFileRep & sfr )
+{
+	using namespace std;
+	using namespace utility;
+
+	string const synonyms_field( hetsyn_record[ "hetSynonyms" ].value );
+	vector1< string > synonyms( string_split_simple( synonyms_field, ';' ) );
+	Size const n_synonyms( synonyms.size() );
+	for ( uint i( 1 ); i <= n_synonyms; ++i ) {
+		trim( synonyms[ i ] );
+	}
+
+	sfr.heterogen_synonyms()[ hetsyn_record[ "hetID" ].value ] = synonyms;
+
+	TR.Debug << "HETSYN record information stored successfully." << endl;
+}
+
+// Convert .pdb FORMUL record into SFR data.
+void
+store_formula_record_in_sfr( Record formul_record, StructFileRep & sfr )
+{
+	using namespace std;
+
+	string formula( formul_record[ "asterisk" ].value + formul_record[ "text" ].value  );
+	formula.erase( formula.find_last_not_of( " " ) + 1 );  // R-trim spaces.
+
+	sfr.heterogen_formulae()[ formul_record[ "hetID" ].value ] = formula;
+
+	TR.Debug << "FORMUL record information stored successfully." << endl;
+}
+
+
+// Convert .pdb SSBOND record into SFR data.
+/// @author Watkins
+void
+store_ssbond_record_in_sfr( Record ssbond_record, StructFileRep & sfr )
+{
+	using namespace std;
+	using namespace utility;
+
+	SSBondInformation ssbond;
+	vector1< SSBondInformation > ssbonds;
+
+	// Extract values from SSBOND ssbond_record fields.
+	ssbond.resName1 = ssbond_record[ "resName1" ].value;
+	ssbond.chainID1 = ssbond_record[ "chainID1" ].value[ 0 ];
+	ssbond.resSeq1 = atof( ssbond_record[ "resSeq1" ].value.c_str() );
+	ssbond.iCode1 = ssbond_record[ "iCode1" ].value[ 0 ];
+
+	ssbond.resID1 = ssbond_record[ "resSeq1" ].value + ssbond_record[ "iCode1" ].value + ssbond_record[ "chainID1" ].value;
+
+	ssbond.resName2 = ssbond_record[ "resName2" ].value;
+	ssbond.chainID2 = ssbond_record[ "chainID2" ].value[ 0 ];
+	ssbond.resSeq2 = atof( ssbond_record[ "resSeq2" ].value.c_str() );
+	ssbond.iCode2 = ssbond_record[ "iCode2" ].value[ 0 ];
+
+	ssbond.resID2 = ssbond_record[ "resSeq2" ].value + ssbond_record[ "iCode2" ].value + ssbond_record[ "chainID2" ].value;
+
+	// An old PDB standard would put two symmetry operations here;
+	// we do not support this (yet?)
+
+	ssbond.length = atof( ssbond_record[ "length" ].value.c_str() );  // bond length
+
+	// If key is found in the links map, add this new linkage information to the links already keyed to this residue.
+	if ( sfr.ssbond_map().count( ssbond.resID1 ) ) {
+		ssbonds = sfr.ssbond_map()[ ssbond.resID1 ];
+	}
+	ssbonds.push_back( ssbond );
+
+	sfr.ssbond_map()[ ssbond.resID1 ] = ssbonds;
+
+	TR.Debug << "SSBOND record information stored successfully." << endl;
+}
+
+// Convert .pdb LINK record into SFR data.
+void
+store_link_record_in_sfr( Record link_record, StructFileRep & sfr )
+{
+	using namespace std;
+	using namespace utility;
+
+	LinkInformation link;
+	vector1< LinkInformation > links;
+
+	// Extract values from LINK link_record fields.
+	link.name1 = link_record[ "name1" ].value;  // 1st atom name
+	link.resName1 = link_record[ "resName1" ].value;
+	link.chainID1 = link_record[ "chainID1" ].value[ 0 ];
+	link.resSeq1 = atof( link_record[ "resSeq1" ].value.c_str() );
+	link.iCode1 = link_record[ "iCode1" ].value[ 0 ];
+
+	link.resID1 = link_record[ "resSeq1" ].value + link_record[ "iCode1" ].value + link_record[ "chainID1" ].value;
+
+	link.name2 = link_record[ "name2" ].value;  // 2nd atom name
+	link.resName2 = link_record[ "resName2" ].value;
+	link.chainID2 = link_record[ "chainID2" ].value[ 0 ];
+	link.resSeq2 = atof( link_record[ "resSeq2" ].value.c_str() );
+	link.iCode2 = link_record[ "iCode2" ].value[ 0 ];
+
+	link.resID2 = link_record[ "resSeq2" ].value + link_record[ "iCode2" ].value + link_record[ "chainID2" ].value;
+
+	link.length = atof( link_record[ "length" ].value.c_str() );  // bond length
+
+	// If key is found in the links map, add this new linkage information to the links already keyed to this residue.
+	if ( sfr.link_map().count( link.resID1 ) ) {
+		links = sfr.link_map()[ link.resID1 ];
+	}
+	links.push_back( link );
+
+	sfr.link_map()[ link.resID1 ] = links;
+
+	TR.Debug << "LINK record information stored successfully." << endl;
+}
+
+// Convert .pdb CISPEP record into SFR data.
+void
+store_cis_peptide_record_in_sfr( Record cispep_record, StructFileRep & sfr )
+{
+	using namespace std;
+
+	CisPeptideInformation cis_pep;
+
+	cis_pep.pep1 = cispep_record[ "pep1" ].value;
+	cis_pep.chainID1 = cispep_record[ "chainID1" ].value[ 0 ];
+	cis_pep.seqNum1 = atof( cispep_record[ "seqNum1" ].value.c_str() );
+	cis_pep.icode1 = cispep_record[ "icode1" ].value[ 0 ];
+
+	cis_pep.pep2 = cispep_record[ "pep2" ].value;
+	cis_pep.chainID2 = cispep_record[ "chainID2" ].value[ 0 ];
+	cis_pep.seqNum2 = atof( cispep_record[ "seqNum2" ].value.c_str() );
+	cis_pep.icode2 = cispep_record[ "icode2" ].value[ 0 ];
+
+	cis_pep.measure = atof( cispep_record[ "measure" ].value.c_str() );
+
+	string const resID(
+		cispep_record[ "seqNum1" ].value + cispep_record[ "icode1" ].value + cispep_record[ "chainID1" ].value );
+
+	sfr.cispep_map()[ resID ] = cis_pep;
+	TR.Debug << "CISPEP record information stored successfully." << endl;
+}
+
+
+// Convert .pdb CRYST1 record into SFR data.
+void
+store_crystallographic_parameter_record_in_sfr( Record crystal_record, StructFileRep & sfr )
+{
+	CrystInfo ci;
+	ci.A( atof( crystal_record[ "a" ].value.c_str() ) );
+	ci.B( atof( crystal_record[ "b" ].value.c_str() ) );
+	ci.C( atof( crystal_record[ "c" ].value.c_str() ) );
+	ci.alpha( atof( crystal_record[ "alpha" ].value.c_str() ) );
+	ci.beta( atof( crystal_record[ "beta" ].value.c_str() ) );
+	ci.gamma( atof( crystal_record[ "gamma" ].value.c_str() ) );
+	ci.spacegroup( crystal_record[ "spacegroup" ].value );
+	sfr.crystinfo() = ci;
+
+	TR.Debug << "CRYST1 record information stored successfully." << std::endl;
+}
+
+// Parse and store unknown record types into SFR data.
+/// @details  When a .pdb file is converted into a vector1 of records, unrecognized record types are labeled and stored
+/// as UNKNOW records.  This function parses out Rosetta-specific information and stores it in the SFR.
+void
+store_unknown_records_in_sfr( utility::vector1< Record > unknown_records, StructFileRep & sfr )
+{
+	using namespace std;
+	using namespace utility;
+
+	// This is lame and hacky, but better than re-reading the whole file, which was happening before....  ~Labonte
+	string line;
+	bool reading_comments( false );
+	Size const n_unknown_records( unknown_records.size() );
+	TR << "Parsing " << n_unknown_records <<
+		" .pdb records with unknown format to search for Rosetta-specific comments." << endl;
+	for ( uint i( 1 ); i <= n_unknown_records; ++i ) {
+		cout << unknown_records[ i ] << endl;
+		line = create_pdb_line_from_record( unknown_records[ i ] );
+		cout << line << endl;
+		if ( startswith( line, "##Begin comments##" ) ) {
+			/*TR.Debug*/cout << "Comments found; reading..." << endl;
+			reading_comments = true;
+		} else if ( startswith( line, "##End comments##" ) ) {
+			/*TR.Debug*/cout << "Finished reading comments" << endl;
+			reading_comments = false;
+		} else if ( reading_comments ) {
+			uint const space_location( line.find_first_of( " " ) );
+			if ( space_location == string::npos ) { continue; }
+			string const & key( line.substr( 0, space_location ) );
+			string const & value( trim( line.substr( space_location + 1 ) ) );
+			sfr.pdb_comments()[ key ] = value ;
+		}
+	}
+}
+
+}  // namespace pdb
+}  // namespace io
+}  // namespace core

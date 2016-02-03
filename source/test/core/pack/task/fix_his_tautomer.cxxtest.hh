@@ -118,7 +118,7 @@ public:
 
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "core/pack/task/short_his.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pack/task/short_his.pdb" , core::import_pose::PDB_file);
 		core::pose::Pose const poseconst(pose);
 
 		//debugging

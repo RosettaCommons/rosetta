@@ -12,7 +12,7 @@
 
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
@@ -49,7 +49,7 @@ main( int argc, char * argv [] ) {
 	);
 
 	core::pose::Pose query_pose, template_pose;
-	core::import_pose::pose_from_pdb(
+	core::import_pose::pose_from_file(
 		template_pose,
 		*rsd_set,
 		option[ in::file::template_pdb ]()[1]

@@ -75,7 +75,7 @@ using utility::io::izstream;
 using utility::io::ozstream;
 using utility::vector1;
 using std::endl;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 
 static THREAD_LOCAL basic::Tracer TR( "CXdock" );
 static core::io::silent::SilentFileData sfd;
@@ -758,7 +758,7 @@ int main(int argc, char *argv[]) {
 		TR << "searching " << fn << " " << nfold << std::endl;
 
 		Pose pnat;
-		core::import_pose::pose_from_pdb(pnat,fn);
+		core::import_pose::pose_from_file(pnat,fn, core::import_pose::PDB_file);
 		core::scoring::dssp::Dssp dssp(pnat);
 		dssp.insert_ss_into_pose(pnat);
 

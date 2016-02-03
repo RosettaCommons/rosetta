@@ -42,7 +42,7 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
@@ -102,7 +102,7 @@ main( int argc, char* argv [] )
 
 		//std::string filename = outfile + "_" + right_string_of(++counter, 8, '0') + ".pdb";
 		std::string filename = outfile + iter->decoy_tag() + ".pdb";
-		core::io::pdb::dump_pdb( pose , filename );
+		core::io::pdb::old_dump_pdb( pose , filename );
 	}
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;

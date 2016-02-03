@@ -14,7 +14,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/id/AtomID_Map.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -248,7 +248,7 @@ apply(
 	using core::Size;
 
 	// Pose pose;
-	// core::import_pose::pose_from_pdb(pose,fname);
+	// core::import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
 
 	string fname = tag_from_pose(pose);
 
@@ -274,7 +274,7 @@ apply(
 	core::id::AtomID_Map<Real> absrms5,absrms7,absrms10,relrms5,relrms7,relrms10;
 	if( basic::options::option[OptionKeys::in::file::native].user() ) {
 		Pose native_pose;
-		core::import_pose::pose_from_pdb(native_pose,core::options::option[OptionKeys::in::file::native]());
+		core::import_pose::pose_from_file(native_pose,core::options::option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
 		assert(native_pose.n_residue()==pose.n_residue());
 		for( Size i = 1; i<= native_pose.n_residue(); ++i ) {
 			assert( native_pose.residue(i).name3()==pose.residue(i).name3() );

@@ -114,8 +114,8 @@ public:
 
 
 		core::pose::Pose match_pose, match1;
-		core::import_pose::pose_from_pdb( match_pose, "devel/znhash/1EER_A.pdb" );
-		core::import_pose::pose_from_pdb( match1, "devel/znhash/UM_1_H5E11_95_1EER_A_ZNX_1.pdb" );
+		core::import_pose::pose_from_file( match_pose, "devel/znhash/1EER_A.pdb" , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( match1, "devel/znhash/UM_1_H5E11_95_1EER_A_ZNX_1.pdb" , core::import_pose::PDB_file);
 
 		core::id::AtomID zn_atom_id( match1.residue(3).atom_index( "ZN" ), 3);
 
@@ -199,9 +199,9 @@ public:
 		/// 1EER_A.pdb given that they are being built on chain B of a
 
 		core::pose::Pose c4_centroid_pose;
-		core::import_pose::pose_from_pdb( c4_centroid_pose,
+		core::import_pose::pose_from_file( c4_centroid_pose,
 			* core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID ),
-			"devel/znhash/1EER_cn4_0043.pdb" );
+			"devel/znhash/1EER_cn4_0043.pdb", core::import_pose::PDB_file );
 		//core::pose::symmetry::make_symmetric_pose( c4_centroid_pose );
 
 		core::id::AtomID aunit_n(1,  1), aunit_ca(2,  1), aunit_c(3,  1);
@@ -264,9 +264,9 @@ public:
 	void test_ZnCoordConstraint_score_two_matches() {
 
 		core::pose::Pose c4_centroid_pose;
-		core::import_pose::pose_from_pdb( c4_centroid_pose,
+		core::import_pose::pose_from_file( c4_centroid_pose,
 			* core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID ),
-			"devel/znhash/1EER_cn4_0043.pdb" );
+			"devel/znhash/1EER_cn4_0043.pdb", core::import_pose::PDB_file );
 
 		devel::znhash::ZnCoordinationScorer znscore;
 		znscore.set_symm_resid( 167 );
@@ -325,9 +325,9 @@ public:
 	void test_score_zn_constraint_in_pose() {
 
 		core::pose::Pose c4_centroid_pose;
-		core::import_pose::pose_from_pdb( c4_centroid_pose,
+		core::import_pose::pose_from_file( c4_centroid_pose,
 			* core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID ),
-			"devel/znhash/1EER_cn4_0043.pdb" );
+			"devel/znhash/1EER_cn4_0043.pdb", core::import_pose::PDB_file );
 
 		devel::znhash::ZnCoordinationScorerOP znscore( new devel::znhash::ZnCoordinationScorer );
 		znscore->set_symm_resid( 167 );

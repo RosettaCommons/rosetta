@@ -121,7 +121,7 @@ def sample_docking(pdb_filename, partners,
     """
     # 1. creates a pose from the desired PDB file
     pose = Pose()
-    pose_from_pdb(pose, pdb_filename)
+    pose_from_file(pose, pdb_filename)
 
     # 2. setup the docking FoldTree
     # using this method, the jump number 1 is automatically set to be the

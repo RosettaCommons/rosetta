@@ -150,7 +150,7 @@ public:
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
 		the_pose = pose::PoseOP( new Pose );
-		core::import_pose::pose_from_pdb( *the_pose, "protocols/moves/test_in.pdb" );
+		core::import_pose::pose_from_file( *the_pose, "protocols/moves/test_in.pdb" , core::import_pose::PDB_file);
 
 		core::init::init_random_generators(1000, "mt19937");
 	}

@@ -90,7 +90,7 @@ CoarseRNA_Fragments::initialize_frag_source_pose(){
 
 	if ( frag_source_file_.substr( frag_source_file_.size()-4, frag_source_file_.size() ) == ".pdb" ) {
 		Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, frag_source_file_ );
+		import_pose::pose_from_file( pose, *rsd_set, frag_source_file_ , core::import_pose::PDB_file);
 		protocols::farna::figure_out_secstruct( pose );
 		frag_source_secstruct_ = protocols::farna::secstruct::get_rna_secstruct( pose );
 		frag_source_pose_ = core::pose::MiniPoseOP( new MiniPose( pose ) );

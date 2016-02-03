@@ -212,7 +212,7 @@ SelectByDeltaScoreOperation::parse_tag( TagCOP tag , DataMap & data)
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data );
 	} else if ( tag->hasOption("reference_pdb") ) {
 		std::string reference_pdb_filename( tag->getOption< std::string >( "reference_pdb", "" ) );
-		reference_pose_ = core::import_pose::pose_from_pdb( reference_pdb_filename );
+		reference_pose_ = core::import_pose::pose_from_file( reference_pdb_filename , core::import_pose::PDB_file);
 	}
 }
 

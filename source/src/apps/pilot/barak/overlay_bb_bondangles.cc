@@ -24,7 +24,7 @@
 #include <core/types.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>//option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -147,14 +147,14 @@ main( int argc, char * argv [] )
   pose::Pose pose;
 
   // read params and poses
-  core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+  core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
   if ( !option[ OptionKeys::in::file::native ].user() ) {
     TR << "specify reference native file (-native option)" << std::endl;
     exit(-1);
   }
   string native_fname = option[ OptionKeys::in::file::native ];
   pose::Pose ref_pose;
-  core::import_pose::pose_from_pdb( ref_pose, native_fname);
+  core::import_pose::pose_from_file( ref_pose, native_fname, core::import_pose::PDB_file);
   if ( !option[ OptionKeys::out::file::o ].user() ) {
     TR << "specify output file (-o option)" << std::endl;
     exit(-1);

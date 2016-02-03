@@ -115,8 +115,8 @@ main( int argc, char * argv [] ) {
 	devel::init(argc, argv);
 
 	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-	utility::vector1<core::pose::Pose> models = core::import_pose::poses_from_pdbs( *residue_set, option[OptionKeys::in::file::s](), false);
-	core::pose::PoseOP native = core::import_pose::pose_from_pdb(*residue_set, option[OptionKeys::in::file::native]());
+	utility::vector1<core::pose::Pose> models = core::import_pose::poses_from_files( *residue_set, option[OptionKeys::in::file::s](), false, core::import_pose::PDB_file);
+	core::pose::PoseOP native = core::import_pose::pose_from_file(*residue_set, option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
 
 	for (int i=1; i<=models.size(); ++i) {
 		superimpose_tmalign ( *native , models[i]);

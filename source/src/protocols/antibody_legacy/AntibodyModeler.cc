@@ -170,7 +170,7 @@ void AntibodyModeler::init_on_new_input() {
 
 	// read native_pose
 	if ( native_present_ ) {
-		core::import_pose::pose_from_pdb( native_pose_, native_filename_ );
+		core::import_pose::pose_from_file( native_pose_, native_filename_ , core::import_pose::PDB_file);
 		pose::set_ss_from_phipsi( native_pose_ );
 	} else {
 		native_pose_ = start_pose_;

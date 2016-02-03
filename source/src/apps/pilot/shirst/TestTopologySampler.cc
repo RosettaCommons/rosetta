@@ -30,7 +30,7 @@ Try:
 
 //Pose
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
 		std::string pdb=pdbs[0];
 
 		core::pose::Pose pose; // starts NULL, coords *never* modified!
-		core::import_pose::pose_from_pdb(pose, pdb);
+		core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
 
 		// Can we add the PyMOL mover here?
 		{

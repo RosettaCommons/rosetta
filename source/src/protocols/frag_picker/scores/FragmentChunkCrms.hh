@@ -45,8 +45,6 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-using namespace ObjexxFCL;
-
 typedef utility::vector1<utility::vector1<Real> > Matrix;
 
 /// @brief  scores a fragment by its tmscore to the given reference structure
@@ -55,7 +53,7 @@ public:
 
 	/// @brief  creates a tmscore-based scoring function.
 	/// @details fragments will be compared to a given pose, which should have the same number of residues a the query sequence
-	FragmentChunkCrms(Size, Real, bool, std::string, core::pose::PoseOP, FArray1D_int&);
+	FragmentChunkCrms(Size, Real, bool, std::string, core::pose::PoseOP, ObjexxFCL::FArray1D_int&);
 
 	~FragmentChunkCrms();
 
@@ -67,14 +65,14 @@ private:
 	//std::string query_sequence_;
 	pose::PoseOP reference_pose_;
 	pose::PoseOP fragment_pose_;
-	FArray2D_double reference_coordinates_;
-	FArray2D_double chunk_coordinates_;
-	FArray2D_double fragment_coordinates_;
-	FArray1D_double weights_;
-	FArray1D_int seqmapping_;
+	ObjexxFCL::FArray2D_double reference_coordinates_;
+	ObjexxFCL::FArray2D_double chunk_coordinates_;
+	ObjexxFCL::FArray2D_double fragment_coordinates_;
+	ObjexxFCL::FArray1D_double weights_;
+	ObjexxFCL::FArray1D_int seqmapping_;
 
-	void fill_bb_coords(core::pose::Pose const &, FArray2_double &, Size);
-	void fill_bb_coords(core::pose::Pose const &, FArray2_double &, FArray1D_int &);
+	void fill_bb_coords(core::pose::Pose const &, ObjexxFCL::FArray2_double &, Size);
+	void fill_bb_coords(core::pose::Pose const &, ObjexxFCL::FArray2_double &, ObjexxFCL::FArray1D_int &);
 };
 
 // Undefined, commenting out to fix PyRosetta build

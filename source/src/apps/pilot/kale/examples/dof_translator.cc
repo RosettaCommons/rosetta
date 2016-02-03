@@ -24,9 +24,9 @@ int main(int argc, char** argv) {
 	devel::init(argc, argv);
 
 	pose::Pose pose;
-	//import_pose::pose_from_pdb(pose, "structures/contrived/minimal.gly.pdb");
-	import_pose::pose_from_pdb(pose, "structures/contrived/one-residue.pdb");
-	//import_pose::pose_from_pdb(pose, "structures/contrived/linear.pdb");
+	//import_pose::pose_from_file(pose, "structures/contrived/minimal.gly.pdb", core::import_pose::PDB_file);
+	import_pose::pose_from_file(pose, "structures/contrived/one-residue.pdb", core::import_pose::PDB_file);
+	//import_pose::pose_from_file(pose, "structures/contrived/linear.pdb", core::import_pose::PDB_file);
 	pose.dump_pdb("not_messed_up.pdb");
 
 	id::NamedAtomID n_name ("N", 1);

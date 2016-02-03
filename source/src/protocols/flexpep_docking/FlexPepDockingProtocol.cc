@@ -20,7 +20,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Conformation.hh>
@@ -1300,7 +1300,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	// initial manupulation
 	pose::Pose start_pose_4stats;
 	if ( flags_.valid_ref_start_struct() ) {
-		core::import_pose::pose_from_pdb(start_pose_4stats, flags_.ref_start_struct());
+		core::import_pose::pose_from_file(start_pose_4stats, flags_.ref_start_struct(), core::import_pose::PDB_file);
 	} else {
 		start_pose_4stats = pose;
 	}
@@ -1357,7 +1357,6 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 		prepack_only(pose, !flags_.no_prepack1/*ppk_receptor*/, !flags_.no_prepack2/*ppk_peptide*/);
 	} else if ( flags_.min_only ) {
 		minimize_only(pose,"dfpmin_armijo_atol", 0.01/*tolerance*/);
-		// core::io::pdb::traced_dump_pdb(TR, pose, "./output/minimized.pdb"); // DEBUG
 	} else if ( flags_.torsionsMCM || flags_.rbMCM || flags_.lowres_preoptimize || flags_.lowres_abinitio ) {
 		// Main protocol:
 		bool passed_filter = false;
@@ -1768,9 +1767,9 @@ void FlexPepDockingProtocol::parse_my_tag(
 		core::chemical::ResidueTypeSetCOP rsd_set;
 		bool centroid_input = tag->getOption<bool>( "centroid_input", false );
 		if ( centroid_input ) {
-			core::import_pose::centroid_pose_from_pdb( *tmp_native_pose, tag->getOption<std::string>("native") );
+			core::import_pose::centroid_pose_from_pdb( *tmp_native_pose, tag->getOption<std::string>("native") , core::import_pose::PDB_file);
 		} else {
-			core::import_pose::pose_from_pdb( *tmp_native_pose, tag->getOption<std::string>("native") );
+			core::import_pose::pose_from_file( *tmp_native_pose, tag->getOption<std::string>("native") , core::import_pose::PDB_file);
 		}
 		this->set_native_pose( tmp_native_pose );
 	}

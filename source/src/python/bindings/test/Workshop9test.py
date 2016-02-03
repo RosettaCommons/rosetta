@@ -27,7 +27,7 @@ circle.draw(2)
 
 N_in_2 = 10
 X_in_2 = 45
-test_pose = pose_from_pdb("../test/data/workshops/1YY8.clean.pdb")
+test_pose = pose_from_file("../test/data/workshops/1YY8.clean.pdb")
 PhiNByX_1 = PhiNByXDegreesMover()
 PhiNByX_2 = PhiNByXDegreesMover()
 PhiNByX_2.N = N_in_2

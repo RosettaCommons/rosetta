@@ -76,7 +76,7 @@ using utility::vector1;
 using ObjexxFCL::string_of;
 using ObjexxFCL::lead_zero_string_of;
 using numeric::min;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using basic::options::option;
 using numeric::min;
 using numeric::max;
@@ -243,7 +243,7 @@ void run() {
     string infile = infiles[ifile];
     if( startfile != "" && startfile != infile ) continue; // CHECKPOINT
     Pose in_fa;
-    pose_from_pdb(in_fa, *fa_residue_set,infile);
+    pose_from_file(in_fa, *fa_residue_set,infile, core::import_pose::PDB_file);
 		if( in_fa.n_residue() > 300 ) continue;
     for(Size ir = 1; ir <= in_fa.n_residue(); ++ir) {
       if(in_fa.residue(ir).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(in_fa,ir);

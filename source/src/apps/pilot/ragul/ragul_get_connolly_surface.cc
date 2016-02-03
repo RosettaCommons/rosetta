@@ -31,7 +31,7 @@
 // Utility Headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -87,10 +87,10 @@ int main( int argc, char * argv [] ) {
 
 		protocols::pockets::NonPlaidFingerprint npf;
 		pose::Pose protein_pose;
-		core::import_pose::pose_from_pdb( protein_pose, input_protein );
+		core::import_pose::pose_from_file( protein_pose, input_protein , core::import_pose::PDB_file);
 
 		pose::Pose bound_ligand_pose;
-		core::import_pose::pose_from_pdb( bound_ligand_pose, bound_ligand_file );
+		core::import_pose::pose_from_file( bound_ligand_pose, bound_ligand_file , core::import_pose::PDB_file);
 		core::Size lig_res_num = 0;
 		for ( int j = 1, resnum = bound_ligand_pose.total_residue(); j <= resnum; ++j ) {
 			if ( !bound_ligand_pose.residue(j).is_protein() ) {

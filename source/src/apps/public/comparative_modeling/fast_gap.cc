@@ -32,7 +32,7 @@
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/PDBSilentStruct.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -137,7 +137,7 @@ main( int argc, char* argv [] ) {
 		output << "REMARK query_aln    " << aln.sequence(1)->to_string() << std::endl;
 		output << "REMARK template_aln " << aln.sequence(2)->to_string()<< std::endl;
 		output << std::endl;
-		core::io::pdb::dump_pdb( full_length_pose, output );
+		core::io::pdb::old_dump_pdb( full_length_pose, output );
 		output.close();
 		//full_length_pose.dump_pdb( output_prefix + "_full_length.pdb" );
 	} // has_another_pose()

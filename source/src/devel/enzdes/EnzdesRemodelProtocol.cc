@@ -58,7 +58,8 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/fragment/util.hh>
-#include <core/io/pdb/pose_io.hh>
+
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/datacache/cacheable_observers.hh>

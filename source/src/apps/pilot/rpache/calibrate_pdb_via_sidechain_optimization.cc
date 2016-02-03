@@ -20,7 +20,7 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -83,7 +83,7 @@ my_main( void* )
 		utility_exit_with_message( "Expected exactly one pdb to be specified from the -s or -l flags" );
 	}
 	pose::Pose pose;
-	import_pose::pose_from_pdb( pose, input_jobs[ 1 ]->input_tag() );
+	import_pose::pose_from_file( pose, input_jobs[ 1 ]->input_tag() , core::import_pose::PDB_file);
 	int const nres( pose.total_residue() );
 
 	//define score function

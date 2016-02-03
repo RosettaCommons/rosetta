@@ -420,7 +420,7 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
 
 	//fill native pose if needed
 	if ( basic::options::option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose_, basic::options::option[ in::file::native ]());
+		core::import_pose::pose_from_file( native_pose_, basic::options::option[ in::file::native ](), core::import_pose::PDB_file);
 		//parse_strand_ids( native_pose_, strand_def_vector_);
 	}
 

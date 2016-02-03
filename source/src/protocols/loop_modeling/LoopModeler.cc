@@ -91,7 +91,7 @@ using core::Size;
 using core::chemical::CENTROID;
 using core::chemical::FA_STANDARD;
 using core::pose::Pose;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::scoring::ScoreFunctionCOP;
 using core::scoring::ScoreFunctionOP;
 using core::util::switch_to_residue_type_set;
@@ -241,7 +241,7 @@ void LoopModeler::parse_my_tag( // {{{1
 bool LoopModeler::do_apply(Pose & pose) { // {{{1
 	Pose native_pose(pose);
 	if ( option[OptionKeys::in::file::native].user() ) {
-		pose_from_pdb(native_pose, option[OptionKeys::in::file::native]());
+		pose_from_file(native_pose, option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
 	}
 	prepare_for_fullatom_->set_original_pose(pose);
 

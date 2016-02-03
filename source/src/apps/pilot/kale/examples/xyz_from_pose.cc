@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
 		id::NamedAtomID atom;
 		core::PointPosition position;
 
-		import_pose::pose_from_pdb(pose, "structures/ubiquitin.pdb");
+		import_pose::pose_from_file(pose, "structures/ubiquitin.pdb", core::import_pose::PDB_file);
 
 		TR << pose.total_residue() << " residues loaded." << std::endl;
 

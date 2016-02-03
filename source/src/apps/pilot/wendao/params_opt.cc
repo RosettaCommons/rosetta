@@ -84,7 +84,7 @@ utility::vector1<core::pose::PoseOP>
 load_models () {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	utility::vector1<core::pose::PoseOP> models = core::import_pose::poseOPs_from_pdbs( option[OptionKeys::in::file::s]());
+	utility::vector1<core::pose::PoseOP> models = core::import_pose::poseOPs_from_files( option[OptionKeys::in::file::s](), core::import_pose::PDB_file);
 	return models;
 }
 

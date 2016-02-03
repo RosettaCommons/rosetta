@@ -28,7 +28,7 @@
 #include <core/fragment/FragSet.hh>
 #include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -146,7 +146,7 @@ static core::io::silent::SilentFileData sfd;
 // 		core::chemical::ResidueTypeSetCAP rtsfa = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 // 		rtsfa->name_map("CHC");
 
-// 		Pose p( *core::import_pose::pose_from_pdb(*rtsfa,"input/CHC_HUB_FA.pdb") );
+// 		Pose p( *core::import_pose::pose_from_file(*rtsfa,"input/CHC_HUB_FA.pdb") , core::import_pose::PDB_file);
 // 		core::pose::remove_upper_terminus_type_from_pose_residue(p,1);
 // 		Size nres = seq.size();
 // 		for(Size ir = 2; ir <= nres; ++ir) {
@@ -374,7 +374,7 @@ int main(int argc, char *argv[]) {
 	string tagpref = "";
 	Vec natcomca,natcom;
 	if(option[OptionKeys::in::file::native].user()) {
-		native = *core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
+		native = *core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
 		core::pose::remove_lower_terminus_type_from_pose_residue(native,1);
 		tagpref = utility::file_basename(option[OptionKeys::in::file::native]());
 		tagpref = tagpref.substr(0,tagpref.size()-4);
@@ -405,7 +405,7 @@ int main(int argc, char *argv[]) {
 	core::chemical::ResidueTypeSetCAP rtsfa = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 	rtsfa->name_map("CHC");
 
-	Pose p( *core::import_pose::pose_from_pdb(*rtsfa,"input/CHC_HUB_FA.pdb") );
+	Pose p( *core::import_pose::pose_from_file(*rtsfa,"input/CHC_HUB_FA.pdb") , core::import_pose::PDB_file);
 	core::pose::remove_upper_terminus_type_from_pose_residue(p,1);
 	Size nres = seq.size();
 	for(Size ir = 2; ir <= nres; ++ir) {

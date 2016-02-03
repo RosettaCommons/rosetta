@@ -71,7 +71,7 @@ using core::id::AtomID;
 	using utility::io::ozstream;
 	using utility::vector1;
 	using std::endl;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using namespace protocols::sic_dock;
 
 static THREAD_LOCAL basic::Tracer TR( "sicdock" );
@@ -575,7 +575,7 @@ int main(int argc, char *argv[]) {
 		TR << "searching " << fn <<' '<< nfold << std::endl;
 
 		Pose pnat;
-		core::import_pose::pose_from_pdb(pnat,fn);
+		core::import_pose::pose_from_file(pnat,fn, core::import_pose::PDB_file);
 		if(pnat.n_residue()>300){ cout << fn << " is too big" << endl; continue; }
 		core::scoring::dssp::Dssp dssp(pnat);
 		dssp.insert_ss_into_pose(pnat);

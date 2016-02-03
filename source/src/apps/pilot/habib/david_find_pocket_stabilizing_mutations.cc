@@ -18,7 +18,7 @@
 #include <devel/init.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/util.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -76,7 +76,7 @@ main( int argc, char * argv [] )
 
 		pose::Pose wt_pose;
 		std::string const input_pdb_name( basic::options::start_file() );
-		core::import_pose::pose_from_pdb( wt_pose, input_pdb_name );
+		core::import_pose::pose_from_file( wt_pose, input_pdb_name , core::import_pose::PDB_file);
 
 		// Setup for scoring/repacking
 		scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(SOFT_REP_DESIGN_WTS) );

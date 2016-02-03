@@ -29,7 +29,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/PDBInfo.hh>
@@ -79,8 +79,8 @@ public:
 		TS_ASSERT( read_perm );
 		TS_ASSERT( input_pose.pdb_info() );
 		TS_ASSERT( pdbpose->pdb_info() );
-		core::pose::Remarks const & rem1 = input_pose.pdb_info()->remarks();
-		core::pose::Remarks const & rem2 = pdbpose->pdb_info()->remarks();
+		core::io::Remarks const & rem1 = input_pose.pdb_info()->remarks();
+		core::io::Remarks const & rem2 = pdbpose->pdb_info()->remarks();
 		TS_ASSERT_EQUALS( rem1.size(), rem2.size() );
 		// start at 0 because Remarks derives from std::vector for some reason
 		for ( core::Size i=0; i<rem1.size(); ++i ) {
@@ -126,11 +126,11 @@ public:
 
 		TS_ASSERT( !remove( "test.silent" ) );
 
-		core::pose::Remarks const & rem3 = pdbpose->pdb_info()->remarks();
+		core::io::Remarks const & rem3 = pdbpose->pdb_info()->remarks();
 
 		// extract tags for both
 		utility::vector1< std::string > lines;
-		for ( core::pose::Remarks::const_iterator it_rem=rem1.begin(), it_end=rem1.end(); it_rem != it_end; ++it_rem ) {
+		for ( core::io::Remarks::const_iterator it_rem=rem1.begin(), it_end=rem1.end(); it_rem != it_end; ++it_rem ) {
 			if ( it_rem->num != StructureData::REMARK_NUM ) {
 				continue;
 			}
@@ -142,7 +142,7 @@ public:
 		utility::tag::TagOP tag1 = utility::tag::Tag::create( xmltag1 );
 
 		lines.clear();
-		for ( core::pose::Remarks::const_iterator it_rem=rem3.begin(), it_end=rem3.end(); it_rem != it_end; ++it_rem ) {
+		for ( core::io::Remarks::const_iterator it_rem=rem3.begin(), it_end=rem3.end(); it_rem != it_end; ++it_rem ) {
 			if ( it_rem->num != StructureData::REMARK_NUM ) {
 				continue;
 			}

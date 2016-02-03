@@ -298,8 +298,7 @@ MinimizeBackbone::create_fold_tree_with_ligand_jumps_from_attach_pts(
 
 	if ( pose.conformation().is_membrane() ) {
 		new_fold_tree = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( pose.fold_tree() ) );
-	}
-	else {
+	} else {
 
 		for (
 				core::kinematics::FoldTree::const_iterator e = f_const.begin(),

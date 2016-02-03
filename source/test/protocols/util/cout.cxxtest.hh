@@ -18,6 +18,7 @@
 
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/types.hh>
 
@@ -72,7 +73,7 @@ public:
 		core_init_with_additional_options( "-no_optH" );
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose, "protocols/util/test_in.pdb");
+		core::import_pose::pose_from_file(pose, "protocols/util/test_in.pdb", core::import_pose::PDB_file);
 		core::io::pdb::dump_pdb(pose, "._tmp_pdb_.pdb");
 		core::pose::Pose P2(pose);
 

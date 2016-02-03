@@ -16,7 +16,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -153,7 +153,7 @@ main( int argc, char* argv[] )
 	for( core::Size pdb_n(1); pdb_n <= numpdbs; ++pdb_n){
 		std::string const & pdb = pdbs[pdb_n];
 		T(pdb) << "start " << pdb << " number " << pdb_n << " of " << numpdbs << std::endl;
-		core::import_pose::pose_from_pdb(pose, pdb);
+		core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
 		backup = pose;
 		core::Energy const start_score((*score_fxn)(pose));
 		T(pdb) << "pose starting score: " << start_score << std::endl;

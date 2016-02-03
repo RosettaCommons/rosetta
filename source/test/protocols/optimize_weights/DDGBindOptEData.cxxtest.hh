@@ -104,10 +104,10 @@ public:
 		ddg_bind_position_data->tag( "1UAD.E38A.test_case" );
 
 		TR << "reading in test PDBs" << std::endl;
-		core::import_pose::pose_from_pdb( wt_complex, "protocols/optimize_weights/1UAD.wt_complex.pdb" );
-		core::import_pose::pose_from_pdb( mut_complex, "protocols/optimize_weights/1UAD.E38A.mut_complex.pdb" );
-		core::import_pose::pose_from_pdb( wt_unbounded, "protocols/optimize_weights/1UAD.wt_unbounded.pdb" );
-		core::import_pose::pose_from_pdb( mut_unbounded, "protocols/optimize_weights/1UAD.E38A.mut_unbounded.pdb" );
+		core::import_pose::pose_from_file( wt_complex, "protocols/optimize_weights/1UAD.wt_complex.pdb" , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( mut_complex, "protocols/optimize_weights/1UAD.E38A.mut_complex.pdb" , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( wt_unbounded, "protocols/optimize_weights/1UAD.wt_unbounded.pdb" , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( mut_unbounded, "protocols/optimize_weights/1UAD.E38A.mut_unbounded.pdb" , core::import_pose::PDB_file);
 
 		// sequences will be used to set the list of mutated amino acids held in the optE data object
 		std::string wt_complex_seq = wt_complex.sequence();

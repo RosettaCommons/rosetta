@@ -61,7 +61,7 @@
 #include <protocols/jd2/Job.hh>
 
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>

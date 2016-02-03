@@ -327,8 +327,8 @@ public:
 		core::Real total_unbound_sc(0);
 		core::pose::Pose r_ubd_pose, l_ubd_pose;
 
-		core::import_pose::pose_from_pdb(r_ubd_pose, unbound_pdbs_[1]);
-		core::import_pose::pose_from_pdb(l_ubd_pose, unbound_pdbs_[2]);
+		core::import_pose::pose_from_file(r_ubd_pose, unbound_pdbs_[1], core::import_pose::PDB_file);
+		core::import_pose::pose_from_file(l_ubd_pose, unbound_pdbs_[2], core::import_pose::PDB_file);
 
 		setup_task_and_repack (r_ubd_pose);
 		setup_task_and_repack (l_ubd_pose);

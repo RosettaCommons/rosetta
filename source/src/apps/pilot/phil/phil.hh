@@ -32,7 +32,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-//#include <core/io/pdb/pose_io.hh>
+//#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/dna/setup.hh>
@@ -449,18 +449,18 @@ init_torsions_still_present(
 
 /// read a centroid pose
 void
-cenpose_from_pdb( Pose & pose, string const filename )
+cenpose_from_file( Pose & pose, string const filename )
 {
 	ResidueTypeSetCAP rsd_set( ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
-	pose_from_pdb( pose, *rsd_set, filename );
+	pose_from_file( pose, *rsd_set, filename , core::import_pose::PDB_file);
 }
 
 /// read a centroid pose
 void
-cendnapose_from_pdb( Pose & pose, string const filename )
+cendnapose_from_file( Pose & pose, string const filename )
 {
 	ResidueTypeSetCAP rsd_set( ChemicalManager::get_instance()->residue_type_set( CENTROID_DNA ) );
-	pose_from_pdb( pose, *rsd_set, filename );
+	pose_from_file( pose, *rsd_set, filename , core::import_pose::PDB_file);
 }
 
 /// useful vector1 function

@@ -145,9 +145,9 @@ void CoordConstraintClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 void CoordConstraintClaimer::read_cst_pose() {
 	cst_pose_ = core::pose::PoseOP( new core::pose::Pose );
-	core::import_pose::pose_from_pdb( *cst_pose_,
+	core::import_pose::pose_from_file( *cst_pose_,
 		*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID ),
-		filename_ );
+		filename_, core::import_pose::PDB_file);
 	sequence_ = "";
 }
 

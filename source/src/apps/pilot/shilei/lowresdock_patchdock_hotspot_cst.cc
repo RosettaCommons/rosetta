@@ -32,7 +32,7 @@
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 //options
 #include <basic/options/keys/OptionKeys.hh>
@@ -120,7 +120,7 @@ class run_score_patchdock_hotspot : public protocols::moves::Mover {
 	std::string pdbname;
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::s ].user() ) {
 	pdbname=basic::options::option[ basic::options::OptionKeys::in::file::s ]()[1];
-	core::import_pose::pose_from_pdb( pose, pdbname.c_str() );
+	core::import_pose::pose_from_file( pose, pdbname.c_str() , core::import_pose::PDB_file);
 	original_pose=pose;
 	} else {
 	throw( utility::excn::EXCN_BadInput("expected -s for this app") );

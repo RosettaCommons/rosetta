@@ -7,7 +7,7 @@ from rosetta import *
 init()
 
 p = Pose()
-pose_from_pdb(p, "test_dock.pdb")
+pose_from_file(p, "test_dock.pdb")
 
 starting_p = Pose()
 starting_p.assign(p) #saving the starting structure

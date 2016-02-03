@@ -17,7 +17,7 @@
 
 #include <devel/init.hh>
 #include <core/types.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -92,7 +92,7 @@ main( int argc, char * argv [])
 		// we read each PDB just once to save on disk I/O
 		if( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
 			input_pose = new core::pose::Pose();
-			core::import_pose::pose_from_pdb( *input_pose, curr_job->input_tag() );
+			core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 		}
 
 		utility::file::FileName out_name( curr_job->input_tag() );

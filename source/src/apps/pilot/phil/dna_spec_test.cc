@@ -100,7 +100,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
@@ -166,7 +166,7 @@ using namespace basic::options;
 namespace OK = OptionKeys;
 using utility::vector1;
 using std::string;
-using io::pdb::dump_pdb; // but deprecated
+using io::pdb::old_dump_pdb; // but deprecated
 ////////////////////////////////////////////////
 
 
@@ -825,7 +825,7 @@ find_dna_rotamers(
 
 	for ( Size nn=1; nn<= files.size(); ++nn ) {
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, files[nn] );
+		core::import_pose::pose_from_file( pose, files[nn] , core::import_pose::PDB_file);
 		if ( pose.empty() ) continue;
 
 		set_base_partner( pose ); // fills base partner info
@@ -975,7 +975,7 @@ rescore_test()
 		std::string const & file( files[n] );
 
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, file );
+		core::import_pose::pose_from_file( pose, file , core::import_pose::PDB_file);
 		if ( pose.empty() ) continue;
 		scoring::dna::set_base_partner( pose );
 
@@ -1078,7 +1078,7 @@ motif_scan()
 		string const & file( files[m] );
 
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, file );
+		core::import_pose::pose_from_file( pose, file , core::import_pose::PDB_file);
 
 		// read the motif positions
 
@@ -1132,7 +1132,7 @@ intra_dna_stats()
 
 	for ( Size nn=1; nn<= files.size(); ++nn ) {
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, files[nn] );
+		core::import_pose::pose_from_file( pose, files[nn] , core::import_pose::PDB_file);
 		if ( pose.empty() ) continue;
 
 		set_base_partner( pose ); // fills base partner info
@@ -1144,7 +1144,7 @@ intra_dna_stats()
 
 		std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
 
-		io::pdb::dump_pdb( pose, tag );
+		io::pdb::old_dump_pdb( pose, tag );
 
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
 			Residue const & rsd( pose.residue(i) );
@@ -1266,7 +1266,7 @@ kono_sarai_stats()
 
 	for ( Size nn=1; nn<= files.size(); ++nn ) {
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, files[nn] );
+		core::import_pose::pose_from_file( pose, files[nn] , core::import_pose::PDB_file);
 		if ( pose.empty() ) continue;
 
 // 		set_base_partner( pose ); // fills base partner info
@@ -1274,7 +1274,7 @@ kono_sarai_stats()
 
 // 		std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
 
-// 		io::pdb::dump_pdb( pose, tag );
+// 		io::pdb::old_dump_pdb( pose, tag );
 
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
 
@@ -1353,7 +1353,7 @@ kono_sarai_zscore()
 
 	for ( Size nn=1; nn<= files.size(); ++nn ) {
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, files[nn] );
+		core::import_pose::pose_from_file( pose, files[nn] , core::import_pose::PDB_file);
 		if ( pose.empty() ) continue;
 		Pose start_pose = pose;
 
@@ -1364,7 +1364,7 @@ kono_sarai_zscore()
 
 // 		std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
 
-// 		io::pdb::dump_pdb( pose, tag );
+// 		io::pdb::old_dump_pdb( pose, tag );
 
 		utility::vector1< int > motif_pos;
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
@@ -1473,7 +1473,7 @@ phosphate_stats()
 
 	for ( Size nn=1; nn<= files.size(); ++nn ) {
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, files[nn] );
+		core::import_pose::pose_from_file( pose, files[nn] , core::import_pose::PDB_file);
 		if ( pose.empty() ) continue;
 
 		for ( Size i=2; i<= pose.total_residue(); ++i ) {
@@ -1953,9 +1953,9 @@ zif268_test()
 	std::string const filename( "input/1aay.pdb" ); //option[ phil::s ]+"_subset.pdb" );
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, filename );
+	core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 
-	io::pdb::dump_pdb( pose, "test_zif.pdb" );
+	io::pdb::old_dump_pdb( pose, "test_zif.pdb" );
 
 	// Output protein interface positions
 	Size const nres( pose.total_residue() );
@@ -2026,7 +2026,7 @@ bzip_test()
 	std::string const filename( basic::options::start_file()+"_subset.pdb" );
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, filename );
+	core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 
 	assert( pose.total_residue() == 32 );
 
@@ -2077,11 +2077,11 @@ endo_test()
 	std::string const filename( basic::options::start_file()+"_subset.pdb" ); // -s cmd input
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, filename );
+	core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 
 	assert( pose.total_residue() == 133 );
 
-	io::pdb::dump_pdb( pose, "test.pdb" );
+	io::pdb::old_dump_pdb( pose, "test.pdb" );
 
 	scoring::dna::set_base_partner( pose ); // finds base pairs
 
@@ -2126,7 +2126,7 @@ void
 cst_test()
 {
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/1aay.pdb");
+	core::import_pose::pose_from_file( pose, "input/1aay.pdb", core::import_pose::PDB_file);
 	idealize_tf_pose( pose );
 }
 
@@ -2198,7 +2198,7 @@ tf_specificity_test(
 	utility::vector1< Size > new_motif_positions; // in pose's numbering system
 	{
 		pose::Pose pdb_pose;
-		core::import_pose::pose_from_pdb( pdb_pose, pdb_file );
+		core::import_pose::pose_from_file( pdb_pose, pdb_file , core::import_pose::PDB_file);
 
 		if ( pdb_pose.total_residue() < 1 ) {
 			std::cout << "pdb io failed: " << pdb_file << std::endl;
@@ -2371,7 +2371,7 @@ dna_specificity_test(
 	using namespace scoring;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, filename );
+	core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 
 	if ( pose.total_residue() < 1 ) {
 		std::cout << "pdb io failed: " << filename << std::endl;
@@ -2505,7 +2505,7 @@ dna_nbr_radii_test()
 
 		// read the pose
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, filenames[n] );
+		core::import_pose::pose_from_file( pose, filenames[n] , core::import_pose::PDB_file);
 
 		std::cout << "READ FILE " << filenames[n] << ' ' << pose.total_residue() << std::endl;
 
@@ -2555,7 +2555,7 @@ loop_modeling_test()
 
 	// read the pose
 	Pose pose;
-	core::import_pose::centroid_pose_from_pdb( pose, basic::options::start_file() );
+	core::import_pose::centroid_pose_from_pdb( pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	dump_pdb( pose, "premap.pdb" );
 
@@ -2771,7 +2771,7 @@ luxr_setup()
 
 	// read the pose
 	Pose start_pose;
-	core::import_pose::pose_from_pdb( start_pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( start_pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	Pose pdb_pose;
 	pdb_pose = start_pose;
@@ -2876,7 +2876,7 @@ luxr_setup()
 		}
 	}
 
-	io::pdb::dump_pdb( start_pose, option[ out::file::o ] );
+	io::pdb::old_dump_pdb( start_pose, option[ out::file::o ] );
 	exit(0);
 
 }
@@ -2906,7 +2906,7 @@ luxr_test()
 
 	// read the pose
 	Pose start_pose;
-	core::import_pose::pose_from_pdb( start_pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( start_pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	set_base_partner( start_pose );
 
@@ -2993,7 +2993,7 @@ atom_vdw_test()
 		Pose pose;
 		std::cout << "try to read: " << pdb_files[n] << std::endl;
 
-		core::import_pose::centroid_pose_from_pdb( pose, pdb_files[n] );
+		core::import_pose::centroid_pose_from_pdb( pose, pdb_files[n] , core::import_pose::PDB_file);
 
 		Size const nres( pose.total_residue() );
 
@@ -3084,7 +3084,7 @@ dump_dna_kinemage()
 	using namespace basic::options::OptionKeys;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	kinematics::dump_pose_kinemage( "tmp.kin", pose );
 	exit(0);
@@ -3101,7 +3101,7 @@ read_write()
 	using namespace basic::options::OptionKeys;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
 	pose.dump_pdb( option[ out::file::o ] );
 
 }
@@ -3114,7 +3114,7 @@ analyze_interface_test()
 	using namespace basic::options;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	Real bsasa14, bsasa5;
 	utility::vector1< id::AtomID > bdon, bacc;
@@ -3176,7 +3176,7 @@ water_test()
 
 
 	Pose pdb_pose;
-	core::import_pose::pose_from_pdb( pdb_pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( pdb_pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 
 	// try packing waters
@@ -3327,7 +3327,7 @@ water_test_fixed_O()
 
 
 	Pose pdb_pose;
-	core::import_pose::pose_from_pdb( pdb_pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( pdb_pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	// 1st delete waters that arent with 12A of protein AND dna
 	Pose new_pose;
@@ -3452,7 +3452,7 @@ interface_repack_test()
 
 		// read the pose
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, filenames[n] );
+		core::import_pose::pose_from_file( pose, filenames[n] , core::import_pose::PDB_file);
 
 		Pose const start_pose( pose );
 
@@ -3547,7 +3547,7 @@ not1_test()
 	// read structure
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, start_file() );
+	core::import_pose::pose_from_file( pose, start_file() , core::import_pose::PDB_file);
 
 
 	ScoreFunctionOP scorefxn;
@@ -3710,7 +3710,7 @@ design_test()
 	// read structure
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, start_file() );
+	core::import_pose::pose_from_file( pose, start_file() , core::import_pose::PDB_file);
 
 
 	ScoreFunctionOP scorefxn;
@@ -3770,7 +3770,7 @@ compare_dna_energies()
 	// read structure
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, start_file() );
+	core::import_pose::pose_from_file( pose, start_file() , core::import_pose::PDB_file);
 
 
 	ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( "dna.wts" ) );
@@ -3824,7 +3824,7 @@ compare_energies()
 	// read structure
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, start_file() );
+	core::import_pose::pose_from_file( pose, start_file() , core::import_pose::PDB_file);
 
 
 	ScoreFunctionOP scorefxn( get_score_function_legacy( "pre_talaris_2013_standard.wts" ) );
@@ -3876,7 +3876,7 @@ zf_test()
 	// Read reference pose
 	Pose ref_pose;
 	std::string const filename( "1aay.pdb" );
-	core::import_pose::pose_from_pdb( ref_pose, filename );
+	core::import_pose::pose_from_file( ref_pose, filename , core::import_pose::PDB_file);
 	core::pose::PDBPoseMap ref_pose_map(ref_pose.pdb_info()->pdb2pose());
 
 
@@ -3904,7 +3904,7 @@ zf_test()
 		extract_pdb_id(file, pdb_id);
 
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, file );
+		core::import_pose::pose_from_file( pose, file , core::import_pose::PDB_file);
 		set_base_partner( pose );
 		core::pose::PDBPoseMap pose_map(pose.pdb_info()->pdb2pose());
 
@@ -4025,7 +4025,7 @@ hbond_stats()
 		tt << "try to read file: "<< file << std::endl;
 		std::cout << "try-sc to read file: "<< file << std::endl;
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, file );
+		core::import_pose::pose_from_file( pose, file , core::import_pose::PDB_file);
 		tt << "success: " << file << std::endl;
 		std::cout << "success-sc: " << file << std::endl;
 
@@ -4073,7 +4073,7 @@ dna_dr_test()
 	using namespace scoring;
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/1aay.pdb");
+	core::import_pose::pose_from_file( pose, "input/1aay.pdb", core::import_pose::PDB_file);
 
 	ScoreFunction scorefxn;
 	scorefxn.set_weight( dna_dr, 1.0 );
@@ -4199,7 +4199,7 @@ dna_chain_check()
 
 		pose::Pose pose;
 
-		core::import_pose::pose_from_pdb( pose, file );
+		core::import_pose::pose_from_file( pose, file , core::import_pose::PDB_file);
 		tt << "success: " << file << std::endl;
 
 		set_base_partner( pose );
@@ -4323,7 +4323,7 @@ not1_loop_test()
 	bool const design_loop( true );
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, start_file() );
+	core::import_pose::pose_from_file( pose, start_file() , core::import_pose::PDB_file);
 
 
 	// methylate if desired

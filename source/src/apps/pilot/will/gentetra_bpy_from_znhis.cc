@@ -339,15 +339,15 @@ void run() {
 
 	core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	Pose bpy;
-	core::import_pose::pose_from_pdb(bpy ,*rs,"input/bpy_ideal.pdb");
+	core::import_pose::pose_from_file(bpy ,*rs,"input/bpy_ideal.pdb", core::import_pose::PDB_file);
 	core::pose::remove_lower_terminus_type_from_pose_residue(bpy,1);
 	core::pose::remove_upper_terminus_type_from_pose_residue(bpy,1);
 
 	Pose nat;
-	core::import_pose::pose_from_pdb(nat,*rs,option[in::file::s]()[1]);
+	core::import_pose::pose_from_file(nat,*rs,option[in::file::s]()[1], core::import_pose::PDB_file);
 	std::string infile = utility::file_basename(option[in::file::s]()[1]);
 	vector1<Pose> m;
-	core::import_pose::pose_from_pdb(m,*rs,option[in::file::s]()[2]);
+	core::import_pose::pose_from_file(m,*rs,option[in::file::s]()[2], core::import_pose::PDB_file);
 	Pose base(nat);
 	for(Size ilig = 2; ilig <= m.size(); ++ilig) {
 		Pose lig(m[ilig]);

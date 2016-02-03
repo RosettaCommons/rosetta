@@ -29,7 +29,7 @@
 
 //Poses
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
@@ -78,7 +78,7 @@ int main( int argc, char * argv [] )
 	else return usage("No out file given: Use -o to designate an output file");
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, pdbs[1] );
+	core::import_pose::pose_from_file( pose, pdbs[1] , core::import_pose::PDB_file);
 
     //Assign secodary structure
     core::scoring::dssp::Dssp dssp(pose);

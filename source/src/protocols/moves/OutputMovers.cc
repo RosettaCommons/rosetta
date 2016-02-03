@@ -22,7 +22,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -63,7 +63,6 @@ void PDBDumpMover::apply( core::pose::Pose & pose )
 {
 	num_+=1;
 	std::string filename ( name_+ObjexxFCL::right_string_of(num_,2,'0')+".pdb" );
-	//core::io::pdb::traced_dump_pdb( tracer_, pose, filename );
 	core::io::pdb::dump_pdb( pose, filename );
 }
 

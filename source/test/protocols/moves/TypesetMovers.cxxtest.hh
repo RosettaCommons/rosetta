@@ -43,7 +43,7 @@ public:
 
 	void setUp() {
 		core_init();
-		core::import_pose::pose_from_pdb( pose, "protocols/moves/test_in_short.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/moves/test_in_short.pdb" , core::import_pose::PDB_file);
 	}
 
 	void tearDown() {

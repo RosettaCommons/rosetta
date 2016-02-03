@@ -191,7 +191,7 @@ pdb_filename = options.pdb_filename
 # -create an empty Pose object
 pose = Pose()
 # -load the data from pdb_file into the pose
-pose_from_pdb(pose, pdb_filename)
+pose_from_file(pose, pdb_filename)
 # PDB_out flag
 PDB_out = bool(options.PDB_out)
 

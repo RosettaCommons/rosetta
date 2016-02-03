@@ -48,7 +48,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/Remarks.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/chemical/ChemicalManager.hh>
 

@@ -102,7 +102,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 //Mmmm.. constraints.
 #include <core/scoring/constraints/CoordinateConstraint.hh>
@@ -145,7 +145,7 @@ using namespace protocols;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 ///////////////////////////////////////////////////////////////////////////////
 Real
@@ -514,7 +514,7 @@ repack_minimize_test( ){
 
 	//	std::string const pdb = "3bbp_threecoiledcoilturns";
 
-	io::pdb::pose_from_pdb( pose, pdb+".pdb" );
+	io::pdb::pose_from_file( pose, pdb+".pdb" , core::import_pose::PDB_file);
 
 	int const nres = pose.total_residue();
 	std::cout << "NRES: " << nres << std::endl;

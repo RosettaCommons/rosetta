@@ -296,7 +296,7 @@ core::pose::PoseOP get_pose_by_id(
 	ResidueTypeSetCOP rsd_set(
 		ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 	PoseOP pose_op( new Pose );
-	core::import_pose::pose_from_pdb( *pose_op, *rsd_set, full_fn );
+	core::import_pose::pose_from_file( *pose_op, *rsd_set, full_fn , core::import_pose::PDB_file);
 	protocols::jumping::assign_ss_dssp( *pose_op );
 	pose_map[ id ] = pose_op;
 	return pose_op;

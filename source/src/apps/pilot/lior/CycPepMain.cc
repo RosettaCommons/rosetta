@@ -11,7 +11,7 @@
 #include <devel/init.hh>
 #include <devel/init.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>//option.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <numeric/random/random.hh>
@@ -98,12 +98,12 @@
 //	pose::Pose workpose;
 //	pose::Pose orgpose;
 //	pose::Pose native;
-//	io::pdb::pose_from_pdb(orgpose, options::start_file());
+//	io::pdb::pose_from_file(orgpose, options::start_file(), core::import_pose::PDB_file);
 //	option[ out::file::fullatom ].value(true);
 //
 ////	std::string native_fname = option[ OptionKeys::in::file::native ];
 //
-////	io::pdb::pose_from_pdb( native, native_fname);
+////	io::pdb::pose_from_file( native, native_fname, core::import_pose::PDB_file);
 //	protocols::CycPepMover::CycPepMover cycmover;
 //	cycmover.apply(orgpose);
 //
@@ -135,7 +135,7 @@
 
 
 //Auto Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -205,13 +205,13 @@ int distribute_jobs(protocols::moves::Mover& mover, bool random_permutation)
     if( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
     	input_pose = new core::pose::Pose();
 //      if ( option[ in::file::centroid_input ].user() ) {
-//	core::io::pdb::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() );
+//	core::io::pdb::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 //	native_pose = new core::pose::Pose();
-//	core::io::pdb::centroid_pose_from_pdb( *native_pose, curr_job->native_tag() );
+//	core::io::pdb::centroid_pose_from_pdb( *native_pose, curr_job->native_tag() , core::import_pose::PDB_file);
 //      } else {
-    	core::import_pose::pose_from_pdb( *input_pose, curr_job->input_tag() );
+    	core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 		native_pose = new core::pose::Pose();
-		core::import_pose::pose_from_pdb( *native_pose, curr_job->native_tag() );
+		core::import_pose::pose_from_file( *native_pose, curr_job->native_tag() , core::import_pose::PDB_file);
 //      }
     }
     mover.set_input_pose( input_pose );
@@ -288,9 +288,9 @@ main( int argc, char * argv [] )
 	  new core::pose::Pose();
 	if (option[ in::file::native ].user()) {
 //	  if ( option[ in::file::centroid_input ].user() ) {
-//	    core::io::pdb::centroid_pose_from_pdb( *native_pose, option[ in::file::native ]() );
+//	    core::io::pdb::centroid_pose_from_pdb( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 //	  } else {
-	    core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
+	    core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 //	  }
 	}
 	cycpepMover->set_native_pose( native_pose );

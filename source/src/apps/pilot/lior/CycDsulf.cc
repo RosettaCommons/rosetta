@@ -38,7 +38,7 @@
 #include <devel/init.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>//option.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
@@ -308,7 +308,7 @@ int main (int argc, char** argv) {
 		basic::Tracer TR( "protocols.moves.CycPep" );
 		Size nstruct = option[out::nstruct];
 		pose::Pose nativePose;
-		core::import_pose::pose_from_pdb(nativePose, basic::options::start_file());
+		core::import_pose::pose_from_file(nativePose, basic::options::start_file(), core::import_pose::PDB_file);
 		for (Size s=0; s<nstruct; ++s){
 			pose::Pose workpose = nativePose;
 			core::pose::remove_lower_terminus_type_from_pose_residue(workpose,1);
@@ -400,7 +400,7 @@ int main (int argc, char** argv) {
 //	loop_relax_mover.copy_sidechains(false);
 //	basic::Tracer TR("protocols.moves.CycPep");
 //	pose::Pose mypose;
-//	core::import_pose::pose_from_pdb(mypose, options::start_file());
+//	core::import_pose::pose_from_file(mypose, options::start_file(), core::import_pose::PDB_file);
 //	Size pepsize = mypose.n_residue();
 //	pose::Pose temp = mypose;
 ////	temp.dump_pdb("temp_0.pdb");
@@ -478,6 +478,6 @@ int main (int argc, char** argv) {
 ////		loop_relax_mover.apply(mypose);
 ////
 ////	}
-//	io::pdb::dump_pdb(mypose,"test.pdb");
+//	io::pdb::old_dump_pdb(mypose,"test.pdb");
 //
 //}

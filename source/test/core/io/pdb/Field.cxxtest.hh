@@ -16,11 +16,10 @@
 #include <test/core/init_util.hh>
 
 // Unit headers
-#include <core/io/pdb/HeaderInformation.hh>
-
-// Program headers
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pdb_dynamic_reader.hh>
+#include <core/io/pdb/Field.hh>
+#include <core/io/pdb/PDBDataType.hh>
+#include <core/io/HeaderInformation.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 
 // Basic headers
 #include <basic/options/option.hh>
@@ -56,6 +55,7 @@ public:
 	/// @brief
 	void test_field_basic() {
 		using core::io::pdb::Field;
+		using core::io::pdb::String_type;
 		using core::Size;
 		using std::string;
 		using std::stringstream;
@@ -65,13 +65,13 @@ public:
 		Size start_third(12), end_third(16);
 		string record_string("FIRSTSECONDTHIRD");
 
-		Field first("FIRST_FIELD", start_first, end_first);
-		Field second("SECOND_FIELD", start_second, end_second);
-		Field third("THIRD_FIELD", start_third, end_third);
+		Field first( start_first, end_first, String_type );
+		Field second( start_second, end_second, String_type );
+		Field third( start_third, end_third, String_type );
 
-		first.getValueFrom(record_string);
-		second.getValueFrom(record_string);
-		third.getValueFrom(record_string);
+		first.set_value_from_string(record_string);
+		second.set_value_from_string(record_string);
+		third.set_value_from_string(record_string);
 
 		TS_ASSERT_EQUALS(first.value, "FIRST");
 		TS_ASSERT_EQUALS(second.value, "SECOND");

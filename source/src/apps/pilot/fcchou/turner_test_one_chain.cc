@@ -64,7 +64,7 @@
 #include <protocols/stepwise/StepWiseLegacyClusterer.hh>
 #include <protocols/stepwise/sampling/rna/util.hh>
 #include <core/init/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>

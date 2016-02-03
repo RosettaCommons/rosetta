@@ -49,7 +49,7 @@ using utility::vector1;
 using ObjexxFCL::string_of;
 using ObjexxFCL::lead_zero_string_of;
 using numeric::min;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using basic::options::option;
 
 typedef utility::vector1<core::Real> Sizes;
@@ -68,7 +68,7 @@ int main (int argc, char *argv[]) {
 
   vector1<Pose> poses;
   TR << "reading big data!" << std::endl;
-  pose_from_pdb(poses,option[in::file::s]()[1],false);
+  pose_from_file(poses,option[in::file::s]()[1],false, core::import_pose::PDB_file);
 
   for(Size ip = 1; ip <= poses.size(); ++ip) {
     Pose const & pose(poses[ip]);

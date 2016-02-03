@@ -162,7 +162,7 @@ MatchResidues::parse_my_tag(
 	core::pose::Pose const & )
 {
 	const std::string reference = tag->getOption< std::string >("reference");
-	core::import_pose::pose_from_pdb( reference_pose_, reference );
+	core::import_pose::pose_from_file( reference_pose_, reference , core::import_pose::PDB_file);
 
 	VecVecSize mod_match_segments;
 

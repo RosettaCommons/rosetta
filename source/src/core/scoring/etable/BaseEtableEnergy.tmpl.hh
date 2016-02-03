@@ -849,7 +849,7 @@ BaseEtableEnergy< Derived >::setup_for_minimizing(
 			Real const tolerated_narrow_nblist_motion = option[ run::nblist_autoupdate_narrow ];
 			Real XX, HH, XH;
 
-			if (option[ score::fa_Hatr ]()) {
+			if ( option[ score::fa_Hatr ]() ) {
 				HH = XH = XX = etable_.max_dis() + 2 * tolerated_narrow_nblist_motion;
 			} else {
 				XX = etable_.max_dis() + 2 * tolerated_narrow_nblist_motion;

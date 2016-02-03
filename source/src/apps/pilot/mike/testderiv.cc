@@ -74,7 +74,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
@@ -108,7 +108,7 @@ using namespace protocols;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,7 +132,7 @@ main( int argc, char * argv [] )
 
 	pose::PoseOP pose ( new pose::Pose );
 	std::cerr << "READING start.pdb" << std::endl;
-	core::import_pose::pose_from_pdb( *pose, "start.pdb" ); // default is standard fullatom residue_set
+	core::import_pose::pose_from_file( *pose, "start.pdb" , core::import_pose::PDB_file); // default is standard fullatom residue_set
 
 	kinematics::MoveMap mm;
 	// setup moving dofs

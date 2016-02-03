@@ -298,7 +298,7 @@ void checked_steal_fragment( Frame& frame, pose::Pose const& pose ) {
 //   }
 //   for ( Size ct = 1; ct <= rmsd_target.size(); ct ++ ) {
 //    pose::PoseOP rmsd_pose = new pose::Pose;
-//    core::import_pose::pose_from_pdb( *rmsd_pose, rmsd_target[ ct ] );
+//    core::import_pose::pose_from_file( *rmsd_pose, rmsd_target[ ct ] , core::import_pose::PDB_file);
 //    std::string tag("");
 //    if ( rmsd_col_name.size() >= ct ) tag = rmsd_col_name[ ct ];
 //    evaluator.add_evaluation( new protocols::simple_filters::SelectRmsdEvaluator( rmsd_pose, tag ) );
@@ -373,7 +373,7 @@ main( int argc, char * argv [] )
 		try {
 			//   if ( option[ OptionKeys::in::file::s ].user() ) {
 			//    core::pose::Pose pose;
-			//    core::import_pose::pose_from_pdb( pose, *core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
+			//    core::import_pose::pose_from_file( pose, *core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
 			//     option[ OptionKeys::in::file::s ]()[ 1 ] );
 			//    compute_chi( pose );
 			//   }

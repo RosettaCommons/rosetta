@@ -144,7 +144,7 @@ input_checker(input, constraints, frag3, frag9, disulf_file)
 print "Initializing poses..."
 start_pose = Pose()
 PDB = input[:-4]
-pose_from_pdb(start_pose, input)
+pose_from_file(start_pose, input)
 if disulf_file != '':
     make_ads_disulf(start_pose, disulf_file)
 

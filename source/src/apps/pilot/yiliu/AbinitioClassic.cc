@@ -68,7 +68,7 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -236,7 +236,7 @@ main( int argc, char * argv [] )
 	//core::pose::PoseOP native_pose;
 	//if ( option[ in::file::native ].user() ) {
 	//	native_pose = new pose::Pose;
-	//	core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
+	//	core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 	//	pose::set_ss_from_phipsi( *native_pose );
 	//}
 

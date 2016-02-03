@@ -118,7 +118,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -174,7 +174,7 @@ using namespace core::options::OptionKeys;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 typedef std::map< std::string, core::pose::PoseOP > PoseList;
@@ -459,7 +459,7 @@ rebuild_centroid_test()
 	if (option[ in::file::native ].user() ) {
 		native_pose = PoseOP( new Pose );
 		std::string native_pdb_file  = option[ in::file::native ];
-		io::pdb::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+		io::pdb::pose_from_file( *native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 		native_exists = true;
 		if ( min_res_ > 0 ) slice_pdb( *native_pose, min_res_, max_res_ );
 		//		native_pose->dump_pdb( "NATIVE.pdb" );

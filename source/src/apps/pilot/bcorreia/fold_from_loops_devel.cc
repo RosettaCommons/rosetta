@@ -39,7 +39,7 @@
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <utility/vector1.hh>
@@ -137,7 +137,7 @@ main( int argc, char* argv [] )
 	pose::Pose extended_pose;
 
 
-	core::import_pose::pose_from_pdb( nat_pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( nat_pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	extended_pose = nat_pose; //making working copy
 
@@ -167,7 +167,7 @@ main( int argc, char* argv [] )
 
 	std::string swap_loops = option [OptionKeys::fold_from_loops::swap_loops ]().name();
 
-	core::import_pose::pose_from_pdb( target_loops , swap_loops );
+	core::import_pose::pose_from_file( target_loops , swap_loops , core::import_pose::PDB_file);
 
 
 	fold_tree_cutpoints_generator(lr_loops_in, cut_points, extended_pose, f);

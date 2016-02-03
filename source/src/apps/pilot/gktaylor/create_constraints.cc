@@ -37,7 +37,7 @@
 
 #include <basic/database/open.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -98,7 +98,7 @@ main( int argc, char* argv [] )
 		}
 		core::pose::PoseOP mypose ( new core::pose::Pose );
 		std::cerr << "READING " << pdbfile << '\n';
-		core::import_pose::pose_from_pdb( *mypose, pdbfile ); // default is standard fullatom residue_set
+		core::import_pose::pose_from_file( *mypose, pdbfile , core::import_pose::PDB_file); // default is standard fullatom residue_set
 
 		std::string outfile  = pdbfile + ".distances";
 		std::ofstream output( outfile.c_str() );

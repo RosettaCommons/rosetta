@@ -119,7 +119,7 @@ public:
 		// should be extracted. This also has the advantage for different control flow for the
 		// 10-mer, which should be skipped because the peptide is not long enough (and is an
 		// edge case).
-		core::import_pose::pose_from_pdb( *test_pose_, "protocols/analysis/2hle_AB_mod.pdb" );
+		core::import_pose::pose_from_file( *test_pose_, "protocols/analysis/2hle_AB_mod.pdb" , core::import_pose::PDB_file);
 
 		peptiderive_ = protocols::analysis::PeptideDeriverFilterOP( new protocols::analysis::PeptideDeriverFilter() );
 

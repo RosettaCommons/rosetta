@@ -51,13 +51,13 @@ main( int argc, char *argv[] )
 
 		// Import test poses.
 		Pose pose, O_linked_glycan_pose, O_linked_centroid_glycan_pose, conjugated_pose1, conjugated_pose2, conjugated_pose3;
-		pose_from_pdb( pose, INPATH + "test_normal1.pdb" );
-		pose_from_pdb( conjugated_pose1, INPATH + "test_c_conj1.pdb" );
-		pose_from_pdb( conjugated_pose2, INPATH + "UBQ_E2_0001.pdb" );
-		pose_from_pdb( conjugated_pose3, INPATH + "UBQ_E2_0003.pdb" );
-		pose_from_pdb( O_linked_glycan_pose, INPATH + "test_O_glycan.pdb" );
+		pose_from_file( pose, INPATH + "test_normal1.pdb" , core::import_pose::PDB_file);
+		pose_from_file( conjugated_pose1, INPATH + "test_c_conj1.pdb" , core::import_pose::PDB_file);
+		pose_from_file( conjugated_pose2, INPATH + "UBQ_E2_0001.pdb" , core::import_pose::PDB_file);
+		pose_from_file( conjugated_pose3, INPATH + "UBQ_E2_0003.pdb" , core::import_pose::PDB_file);
+		pose_from_file( O_linked_glycan_pose, INPATH + "test_O_glycan.pdb" , core::import_pose::PDB_file);
 		chemical::ResidueTypeSetCOP centroid_rts = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::CENTROID);
-		pose_from_pdb( O_linked_centroid_glycan_pose, *centroid_rts, INPATH + "test_O_glycan_centroid.pdb" );
+		pose_from_file( O_linked_centroid_glycan_pose, *centroid_rts, INPATH + "test_O_glycan_centroid.pdb" , core::import_pose::PDB_file);
 
 		cout << "PDB file without LINK record" << endl;
 		cout << pose << endl;

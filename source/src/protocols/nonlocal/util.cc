@@ -36,7 +36,7 @@
 #include <core/types.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/id/SequenceMapping.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/pose/Pose.hh>

@@ -148,8 +148,8 @@ main( int argc, char * argv [] ) {
 	if(option[ccd::rmsd_matrix].user()) {
 		utility::vector1<std::string> files1 = option[in::file::s]();
 		utility::vector1<std::string> files2 = option[ccd::rmsd_matrix]();
-		utility::vector1< core::pose::PoseOP > poses1 = core::import_pose::poseOPs_from_pdbs(files1);
-		utility::vector1< core::pose::PoseOP > poses2 = core::import_pose::poseOPs_from_pdbs(files2);
+		utility::vector1< core::pose::PoseOP > poses1 = core::import_pose::poseOPs_from_files(files1, core::import_pose::PDB_file);
+		utility::vector1< core::pose::PoseOP > poses2 = core::import_pose::poseOPs_from_files(files2, core::import_pose::PDB_file);
 		for(int i = 1; i <= (int)poses1.size(); ++i) {
 			core::Real mn = 9e9;
 			int mj = 0;

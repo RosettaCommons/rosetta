@@ -73,7 +73,7 @@
 #include <fstream>
 
 //Temporary
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/scoring/rms_util.hh>
 #ifdef WIN32
 #include <time.h>
@@ -246,7 +246,7 @@ void CartesianMD::get_native_info( pose::Pose const &pose )
 	std::string nativepdb = basic::options::option[ basic::options::OptionKeys::in::file::native ]();
 	core::chemical::ResidueTypeSetCOP rsd_set
 		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	core::import_pose::pose_from_pdb( native_, *rsd_set, nativepdb );
+	core::import_pose::pose_from_file( native_, *rsd_set, nativepdb , core::import_pose::PDB_file);
 
 	// Set resmap
 	std::map< Size, Size > resmap;

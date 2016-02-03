@@ -44,7 +44,8 @@
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/io/pdb/file_data.hh>
+//#include <core/io/pdb/build_pose_as_is.hh>
+#include <core/io/StructFileRep.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/ScoreType.hh>
@@ -2555,11 +2556,11 @@ initialize_disulfide_bonds(
 }
 
 // This version is only suitable for being called from build_pdb_from_pose_as_is1
-// i.e. where the FileData exists!
+// i.e. where the StructFileRep exists!
 void
 initialize_disulfide_bonds(
 	Pose & pose,
-	io::pdb::FileData const & fd
+	io::StructFileRep const & sfr
 ) {
 	// disulfides
 	using basic::options::option;
@@ -2581,19 +2582,21 @@ initialize_disulfide_bonds(
 			utility::vector1< Size > disulf_two;
 
 			// Prepare a list of pose-numbered disulfides!
-			for ( std::map< std::string, utility::vector1< io::pdb::SSBondInformation > >::const_iterator
-					ssbond = fd.ssbond_map.begin(), end = fd.ssbond_map.end(); ssbond != end; ++ssbond ) {
+			for ( std::map< std::string, utility::vector1< io::SSBondInformation > >::const_iterator
+					ssbond = sfr.ssbond_map().begin(), end = sfr.ssbond_map().end(); ssbond != end; ++ssbond ) {
 				// For now we really hope the vector1 is just a single element!
 				if ( ssbond->second.size() != 1 ) {
 					TR.Error << "Error: SSBond records list multiple disulfides for this residue!" << std::endl;
 					utility_exit();
 				}
 
-				//disulfs.push_back( std::make_pair< Size, Size>(
-				// pose.pdb_info()->pdb2pose( ssbond->second[1].chainID1, ssbond->second[1].resSeq1 ),
-				// pose.pdb_info()->pdb2pose( ssbond->second[1].chainID2, ssbond->second[1].resSeq2 ) ) );
-				disulf_one.push_back( pose.pdb_info()->pdb2pose( ssbond->second[1].chainID1, ssbond->second[1].resSeq1 ) );
-				disulf_two.push_back( pose.pdb_info()->pdb2pose( ssbond->second[1].chainID2, ssbond->second[1].resSeq2 ) );
+				Size seqpos_one = pose.pdb_info()->pdb2pose( ssbond->second[1].chainID1, ssbond->second[1].resSeq1 );
+				Size seqpos_two = pose.pdb_info()->pdb2pose( ssbond->second[1].chainID2, ssbond->second[1].resSeq2 );
+
+				if ( seqpos_one != 0 && seqpos_two != 0 ) {
+					disulf_one.push_back( seqpos_one );
+					disulf_two.push_back( seqpos_two );
+				}
 			}
 
 			//pose.conformation().detect_disulfides( disulfs );
@@ -2927,7 +2930,7 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 }
 
 void
-get_constraints_from_link_records( core::pose::Pose & pose, io::pdb::FileData fd )
+get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep const & sfr )
 {
 	using namespace scoring::func;
 
@@ -2938,8 +2941,8 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::pdb::FileData fd
 	CircularHarmonicFuncOP ang90_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_2(), 0.02 ) );
 	CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
 
-	for ( std::map< std::string, utility::vector1<io::pdb::LinkInformation> >::iterator it = fd.link_map.begin(),
-			end = fd.link_map.end(); it != end; ++it ) {
+	for ( std::map< std::string, utility::vector1< io::LinkInformation > >::const_iterator it = sfr.link_map().begin(),
+			end = sfr.link_map().end(); it != end; ++it ) {
 		for ( Size ii = 1; ii <= it->second.size(); ++ii ) {
 			TR << "|"<<it->second[ii].chainID1 << "| |" << it->second[ii].resSeq1 << "|" << std::endl;
 			TR << "|"<<it->second[ii].chainID2 << "| |" << it->second[ii].resSeq2 << "|" << std::endl;
@@ -3266,6 +3269,20 @@ is_atom_axial_or_equatorial( Pose const & pose, id::AtomID const & query_atom )
 {
 return conformation::is_atom_axial_or_equatorial( pose.residue( query_atom.rsd() ), query_atom.atomno() );
 }*/
+
+/// @brief Set bfactors in a pose PDBInfo
+void
+set_bfactors_from_atom_id_map(Pose & pose, id::AtomID_Map< Real > const & bfactors){
+	for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
+		for ( core::Size atom_index = 1; atom_index <= pose.residue( resnum ).natoms(); ++atom_index ) {
+			id::AtomID atm = id::AtomID( atom_index, resnum );
+			if ( ! bfactors.has( atm ) ) continue;
+			pose.pdb_info()->bfactor( resnum, atom_index, bfactors[ atm ]);
+		}
+	}
+
+}
+
 
 
 } // pose

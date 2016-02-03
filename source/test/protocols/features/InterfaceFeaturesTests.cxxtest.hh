@@ -65,7 +65,7 @@ public:
 
 	void setUp(){
 		core_init();
-		core::import_pose::pose_from_pdb(multimer_, "protocols/features/2J88.pdb");
+		core::import_pose::pose_from_file(multimer_, "protocols/features/2J88.pdb", core::import_pose::PDB_file);
 		db_name_ =  "InterfaceFeaturesTest.db3";
 		reporter_ = InterfaceFeaturesOP( new protocols::features::InterfaceFeatures() );
 		utility::file::file_delete(db_name_);

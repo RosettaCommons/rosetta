@@ -16,10 +16,10 @@ int main(int argc, char *argv[]) {
 	devel::init(argc, argv);
 
 	using core::pose::Pose;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 
 	Pose pose;
-	pose_from_pdb(pose, "structures/kic/1srp.pdb");
+	pose_from_file(pose, "structures/kic/1srp.pdb", core::import_pose::PDB_file);
 
 	using core::scoring::ScoreFunctionOP;
 	using core::scoring::get_score_function;

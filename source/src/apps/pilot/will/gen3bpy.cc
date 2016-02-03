@@ -112,8 +112,8 @@ void run() {
 
   core::chemical::ResidueTypeSetCAP  rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose bpy1,bpy2;
-  core::import_pose::pose_from_pdb(bpy1,*rs,"input/bpy_aa_align_trimer_in.pdb");
-  core::import_pose::pose_from_pdb(bpy2,*rs,"input/bpy_aa_align_trimer_in2.pdb");
+  core::import_pose::pose_from_file(bpy1,*rs,"input/bpy_aa_align_trimer_in.pdb", core::import_pose::PDB_file);
+  core::import_pose::pose_from_file(bpy2,*rs,"input/bpy_aa_align_trimer_in2.pdb", core::import_pose::PDB_file);
   for(int ibpy = 1; ibpy <= 2; ++ibpy) {
     Pose & bpy( ibpy==1 ? bpy1 : bpy2 );
     core::pose::remove_lower_terminus_type_from_pose_residue(bpy,1);
@@ -129,7 +129,7 @@ void run() {
   for(Size ifile = 1; ifile <= option[in::file::s]().size(); ++ifile) {
     string infile = utility::file_basename(option[in::file::s]()[ifile]);
     Pose init;
-    core::import_pose::pose_from_pdb(init,*rs,option[in::file::s]()[ifile]);
+    core::import_pose::pose_from_file(init,*rs,option[in::file::s]()[ifile], core::import_pose::PDB_file);
     Size nres = init.n_residue();
 
     vector1<int> fres = option[willmatch::forbid_residues].user() ? option[willmatch::forbid_residues] : vector1<int>();

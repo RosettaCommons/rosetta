@@ -569,7 +569,7 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 
 		core::pose::PoseOP new_pose( new core::pose::Pose );
 		state_poses_.push_back( new_pose );
-		core::import_pose::pose_from_pdb( *new_pose, fname );
+		core::import_pose::pose_from_file( *new_pose, fname , core::import_pose::PDB_file);
 		saved_state_poses_.push_back( core::pose::PoseOP( new core::pose::Pose( *new_pose ) ) ); //deep copying new pose so that its saved throughout the run
 		state_unbound_.push_back( unbound );
 		state_unfolded_.push_back( unfolded );

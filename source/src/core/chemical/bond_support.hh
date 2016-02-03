@@ -27,7 +27,7 @@ namespace chemical {
 void find_bonds_in_rings(ResidueType & res, bool const complex_ring_detection = false);
 void complex_ring_detection( ResidueType & res);
 void quick_ring_detection( ResidueType & res);
-    
+
 utility::vector1<VD> get_connecting_atoms(ResidueType const & res, ED const & edge);
 utility::vector1<VD> get_connecting_atoms(ResidueGraph const & res, ED const & edge);
 ED get_bond(ResidueType const & res, VD const & source, VD const & target);

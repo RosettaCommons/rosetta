@@ -321,7 +321,7 @@ densityTools()
 			std::cout << "       : per-res" << std::endl;
 			core::chemical::ResidueTypeSetCAP rsd_set;
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-			core::import_pose::pose_from_pdb( fullpose, pdbfile );
+			core::import_pose::pose_from_file( fullpose, pdbfile , core::import_pose::PDB_file);
 
 			core::Size nres = fullpose.total_residue();
 			perResCC.resize( nres, 0.0 );

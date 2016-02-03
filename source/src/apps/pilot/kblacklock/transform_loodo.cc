@@ -91,7 +91,7 @@ int main( int argc, char * argv [] ) {
 		// Import native insert domain PDB & center.
 		std::string pdbfile = option[ OptionKeys::loodo::cap ]();
 		core::pose::Pose native_pose;
-		core::import_pose::pose_from_pdb( native_pose, pdbfile );
+		core::import_pose::pose_from_file( native_pose, pdbfile , core::import_pose::PDB_file);
 		native_pose.center();
 
 		core::pose::Pose moving_pose = native_pose;

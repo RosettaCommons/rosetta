@@ -57,7 +57,7 @@ using numeric::conversions::radians;
 using numeric::conversions::degrees;
 using utility::file_basename;
 using utility::vector1;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 
 namespace protocols {
 namespace sic_dock {
@@ -112,7 +112,7 @@ read_biounit(
 		if ( pose.n_residue()!=0 ) utility_exit_with_message("must fill empty pose");
 		core::chemical::ResidueTypeSetCOP fars = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		utility::vector1<Pose> poses;
-		pose_from_pdb( poses, *fars, fname, false );
+		pose_from_file( poses, *fars, fname, false , core::import_pose::PDB_file);
 		bool only_one_model = -12345==nresmodel1; nresmodel1 = 9999999;
 		for ( vector1<Pose>::const_iterator ip = poses.begin(); ip != poses.end(); ++ip ) {
 			if ( (int)ip->n_residue() > max_res ) { cout<<"SKIP max_res "<<max_res<<" "<<fname<<endl; return false; }

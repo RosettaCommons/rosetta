@@ -307,7 +307,7 @@ QuickRelaxPartnersSeparately::init_from_cmd() {
 
 	// native
 	if ( option[ OptionKeys::in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_, option[ OptionKeys::in::file::native ]() );
+		core::import_pose::pose_from_file( native_, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 	}
 
 }// init from cmd

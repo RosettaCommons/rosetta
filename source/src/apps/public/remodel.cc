@@ -28,7 +28,7 @@
 #include <utility/options/keys/OptionKey.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -303,7 +303,7 @@ void setup_segment_insert( protocols::forge::components::BDR & bdr ) {
 	using protocols::forge::build::SegmentInsertConnectionScheme::RANDOM_SIDE;
 	using core::scoring::dssp::Dssp;
 
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 
 	// option transmute; just for safety
 	String aa_during_build;
@@ -329,7 +329,7 @@ void setup_segment_insert( protocols::forge::components::BDR & bdr ) {
 	bool const use_attached = option[ ufv::insert::attached_pdb ].user();
 
 	Pose insert;
-	core::import_pose::pose_from_pdb( insert, option[ ufv::insert::insert_pdb ] );
+	core::import_pose::pose_from_file( insert, option[ ufv::insert::insert_pdb ] , core::import_pose::PDB_file);
 	Dssp dssp_i( insert );
 	dssp_i.insert_ss_into_pose( insert );
 
@@ -337,7 +337,7 @@ void setup_segment_insert( protocols::forge::components::BDR & bdr ) {
 
 	if ( use_attached ) {
 		Pose attached;
-		core::import_pose::pose_from_pdb( attached, option[ ufv::insert::attached_pdb ] );
+		core::import_pose::pose_from_file( attached, option[ ufv::insert::attached_pdb ] , core::import_pose::PDB_file);
 		Dssp dssp_a( attached );
 		dssp_a.insert_ss_into_pose( attached );
 

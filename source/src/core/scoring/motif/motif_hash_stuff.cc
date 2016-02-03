@@ -34,7 +34,10 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/xyzStripeHashPose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/util.hh>
+#include <core/io/pdb/pdb_writer.hh>
+
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -128,7 +131,7 @@ using utility::io::ozstream;
 using utility::file_basename;
 using utility::vector1;
 using std::endl;
-//using core::import_pose::pose_from_pdb;
+//using core::import_pose::pose_from_file;
 using numeric::geometry::hashing::Real3;
 using numeric::geometry::hashing::Real6;
 using core::pose::xyzStripeHashPoseCOP;
@@ -608,7 +611,7 @@ bool ResPairMotif::filter(RPM_FilterStats *s) const {
 	if ( o[f::not_restype_one].user() && (o[f::not_restype_one]().find(aa1_)!=N || o[f::not_restype_one]().find(aa2_)!=N) )               { if ( s ) { ++s->F_not_restype_one;} return false; } else if ( s ) { ++s->P_not_restype_one;}
 	return true;
 }
-Real ResPairMotif::dump_aligned_motif( ostream & out, Pose const & paln1, Size const & ir, Pose const & paln2, Size const & jr, Size & atomno, int const & tag, Xforms const & xforms ) const {
+Real ResPairMotif::dump_aligned_motif( ostream & out, Pose const & paln1, Size const & ir, Pose const & paln2, Size const & jr, Size & /* atomno */, int const & tag, Xforms const & xforms ) const {
 	using namespace core::id;
 	using namespace core::pose::motif;
 	Pose pose;
@@ -619,7 +622,8 @@ Real ResPairMotif::dump_aligned_motif( ostream & out, Pose const & paln1, Size c
 	utility::vector1<Size> resnums(pose.n_residue(),tag);
 	BOOST_FOREACH ( Xform const & x,xforms ) {
 		xform_pose(pose,x);
-		core::io::pdb::dump_pdb(pose,out,mask,atomno,string_of(tag),'~'/*,resnums*/);
+		//core::io::pdb::old_dump_pdb(pose,out,mask,atomno,string_of(tag),'~'/*,resnums*/); JAB XRW
+		core::io::pdb::old_dump_pdb(pose, out, mask, string_of(tag));
 		xform_pose(pose,~x);
 	}
 	return motif_align_rms;
@@ -688,10 +692,10 @@ void ResPairMotif::dump_pdb( ostream & out, Xform const & x, string tag ) const 
 	// cerr << "dump_pdb" << endl;
 	if ( tag=="" ) tag = this->tag();
 	out << "MODEL " << tag << endl;
-	Size atomno=0;
-	core::io::pdb::dump_pdb(pose,out,mask,atomno,string_of(tag),'~');
+	//Size atomno=0;
+	//core::io::pdb::old_dump_pdb(pose,out,mask,atomno,string_of(tag),'~');
+	core::io::pdb::old_dump_pdb(pose, out, mask, string_of(tag));
 
-	// core::io::pdb::dump_pdb(pose,out);
 	out << "ENDMDL" << endl;
 }
 void ResPairMotif::print_header(ostream & out){

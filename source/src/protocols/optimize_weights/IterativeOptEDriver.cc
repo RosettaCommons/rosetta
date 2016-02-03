@@ -338,9 +338,9 @@ IterativeOptEDriver::load_pose( pose::Pose & pose, std::string const & filename,
 		(*sfd)[ tag ]->fill_pose( pose );
 	} else {
 		if ( option[ in::file::centroid_input ] && !ignore_centroid_input_flag ) {
-			core::import_pose::centroid_pose_from_pdb( pose, filename );
+			core::import_pose::centroid_pose_from_pdb( pose, filename , core::import_pose::PDB_file);
 		} else {
-			core::import_pose::pose_from_pdb( pose, filename );
+			core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 
 			if ( option[ corrections::score::cenrot ] ) {
 				using namespace protocols::simple_moves;
@@ -972,9 +972,9 @@ IterativeOptEDriver::compute_rotamer_energies_for_assigned_pdbs()
 
 		if ( outer_loop_counter_ == 1 ) {
 			if ( option[ in::file::centroid_input ] ) {
-				core::import_pose::centroid_pose_from_pdb( native_pose, native_filename );
+				core::import_pose::centroid_pose_from_pdb( native_pose, native_filename , core::import_pose::PDB_file);
 			} else {
-				core::import_pose::pose_from_pdb( native_pose, native_filename );
+				core::import_pose::pose_from_file( native_pose, native_filename , core::import_pose::PDB_file);
 
 				if ( option[ corrections::score::cenrot ] ) {
 					using namespace protocols::simple_moves;
@@ -1555,7 +1555,7 @@ IterativeOptEDriver::compute_rotamers_around_ligands()
 
 		core::pose::Pose native_pose;//, pose;
 		if ( outer_loop_counter_ == 1 ) {
-			core::import_pose::pose_from_pdb( native_pose, native_filename );
+			core::import_pose::pose_from_file( native_pose, native_filename , core::import_pose::PDB_file);
 			//pose = native_pose;
 			ligand_repack_native_poses_.push_back( native_pose );
 			//ligand_repack_context_poses_.push_back( native_pose );
@@ -1669,9 +1669,9 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 
 			core::pose::Pose crystal_native;
 			//if ( option[ in::file::centroid_input ] ) {
-			// core::import_pose::centroid_pose_from_pdb( crystal_native, crystal_natives_[ ii ] );
+			// core::import_pose::centroid_pose_from_pdb( crystal_native, crystal_natives_[ ii ] , core::import_pose::PDB_file);
 			//} else {
-			core::import_pose::pose_from_pdb( crystal_native, ligand_crystal_natives_[ ii ] );
+			core::import_pose::pose_from_file( crystal_native, ligand_crystal_natives_[ ii ] , core::import_pose::PDB_file);
 			//}
 
 			utility::vector1< Real > free_data( free_score_list_.size() );
@@ -1682,9 +1682,9 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 				/// read the pdb into a pose
 				core::pose::Pose pose;
 				//if ( option[ in::file::centroid_input ] ) {
-				// core::import_pose::centroid_pose_from_pdb( pose, native_pdb_names[ jj ] );
+				// core::import_pose::centroid_pose_from_pdb( pose, native_pdb_names[ jj ] , core::import_pose::PDB_file);
 				//} else {
-				core::import_pose::pose_from_pdb( pose, native_pdb_names[ jj ] );
+				core::import_pose::pose_from_file( pose, native_pdb_names[ jj ] , core::import_pose::PDB_file);
 				//}
 
 				if ( jj == 1 ) {
@@ -1718,9 +1718,9 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 				core::pose::Pose pose;
 				//std::cout << " PROC #" << MPI_rank_ << " reading pdb: #" << jj << " " << decoy_pdb_names[ jj ] << std::endl;
 				//if ( option[ in::file::centroid_input ] ) {
-				// core::import_pose::centroid_pose_from_pdb( pose, decoy_pdb_names[ jj ] );
+				// core::import_pose::centroid_pose_from_pdb( pose, decoy_pdb_names[ jj ] , core::import_pose::PDB_file);
 				//} else {
-				core::import_pose::pose_from_pdb( pose, decoy_pdb_names[ jj ] );
+				core::import_pose::pose_from_file( pose, decoy_pdb_names[ jj ] , core::import_pose::PDB_file);
 				//}
 
 				if ( first_total_residue != pose.total_residue() ) {
@@ -3981,9 +3981,9 @@ IterativeOptEDriver::make_simple_ssd_from_pdb( std::string const & pdb_filename,
 
 	core::pose::Pose structure;
 	if ( option[ in::file::centroid_input ] ) {
-		core::import_pose::centroid_pose_from_pdb( structure, pdb_filename );
+		core::import_pose::centroid_pose_from_pdb( structure, pdb_filename , core::import_pose::PDB_file);
 	} else {
-		core::import_pose::pose_from_pdb( structure, pdb_filename );
+		core::import_pose::pose_from_file( structure, pdb_filename , core::import_pose::PDB_file);
 	}
 
 	/// score this pose, create SingleStructureData.
@@ -4171,9 +4171,9 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 					core::pose::Pose wt_structure;
 					if ( !read_silent ) {
 						if ( option[ in::file::centroid_input ] ) {
-							core::import_pose::centroid_pose_from_pdb( wt_structure, wt_pdb_names[ jj ] );
+							core::import_pose::centroid_pose_from_pdb( wt_structure, wt_pdb_names[ jj ] , core::import_pose::PDB_file);
 						} else {
-							core::import_pose::pose_from_pdb( wt_structure, wt_pdb_names[ jj ]  );
+							core::import_pose::pose_from_file( wt_structure, wt_pdb_names[ jj ]  , core::import_pose::PDB_file);
 						}
 					} else {
 						core::io::silent::SilentStructOP ss = sfd_wt[wt_pdb_names[ jj ]];
@@ -4272,9 +4272,9 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 				core::pose::Pose mut_structure;
 				if ( !read_silent ) {
 					if ( option[ in::file::centroid_input ] ) {
-						core::import_pose::centroid_pose_from_pdb( mut_structure, mut_pdb_names[ jj ] );
+						core::import_pose::centroid_pose_from_pdb( mut_structure, mut_pdb_names[ jj ] , core::import_pose::PDB_file);
 					} else {
-						core::import_pose::pose_from_pdb( mut_structure, mut_pdb_names[ jj ]  );
+						core::import_pose::pose_from_file( mut_structure, mut_pdb_names[ jj ]  , core::import_pose::PDB_file);
 					}
 				} else {
 					core::io::silent::SilentStructOP ss = sfd_mut[mut_pdb_names[ jj ]];
@@ -4496,7 +4496,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 				if ( structure_map.find( wt_complexes_list_file()+wt_complex_pdb_names[ jj ] ) == structure_map.end() ) { //wt_pdb_name not already in structure_map
 
 					pose::Pose wt_complex;
-					core::import_pose::pose_from_pdb( wt_complex, wt_complex_pdb_names[ jj ]  );
+					core::import_pose::pose_from_file( wt_complex, wt_complex_pdb_names[ jj ]  , core::import_pose::PDB_file);
 
 					/// make sure sequences match across the list of poses...
 					if ( jj == 1 ) {
@@ -4556,7 +4556,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 			for ( Size jj = 1; jj <= mut_complex_pdb_names.size(); ++jj ) {
 
 				pose::Pose mut_complex;
-				core::import_pose::pose_from_pdb( mut_complex, mut_complex_pdb_names[ jj ]  );
+				core::import_pose::pose_from_file( mut_complex, mut_complex_pdb_names[ jj ]  , core::import_pose::PDB_file);
 
 				/// make sure sequences match across poses...
 				if ( jj == 1 ) {
@@ -4600,7 +4600,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 				if ( structure_map.find( wt_unbounds_list_file()+wt_unbounded_pdb_names[ jj ] ) == structure_map.end() ) {
 
 					pose::Pose wt_unbounded;
-					core::import_pose::pose_from_pdb( wt_unbounded, wt_unbounded_pdb_names[ jj ]  );
+					core::import_pose::pose_from_file( wt_unbounded, wt_unbounded_pdb_names[ jj ]  , core::import_pose::PDB_file);
 
 					/// make sure these unbounded structure sequences match the complex sequences...
 					/// this will also check to make sure all of the unbounded structure match in sequence
@@ -4638,7 +4638,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 			for ( Size jj = 1; jj <= mut_unbounded_pdb_names.size(); ++jj ) {
 
 				pose::Pose mut_unbounded;
-				core::import_pose::pose_from_pdb( mut_unbounded, mut_unbounded_pdb_names[ jj ]  );
+				core::import_pose::pose_from_file( mut_unbounded, mut_unbounded_pdb_names[ jj ]  , core::import_pose::PDB_file);
 
 				/// make sure these unbounded structure sequences match the complex sequences...
 				/// this will also check to make sure all of the unbounded structure match in sequence
@@ -4791,7 +4791,7 @@ IterativeOptEDriver::measure_sequence_recovery(
 			TR << "measure_sequence_recovery(): design_first in use! pushing "
 				<< native_pdb_names[poseindex] << " onto native_poses_ vector." << std::endl;
 			core::pose::Pose native_pose;
-			core::import_pose::pose_from_pdb( native_pose, native_pdb_names[ poseindex ] );
+			core::import_pose::pose_from_file( native_pose, native_pdb_names[ poseindex ] , core::import_pose::PDB_file);
 			native_poses_.push_back( native_pose );
 			context_poses_.push_back( native_pose );
 
@@ -4804,9 +4804,9 @@ IterativeOptEDriver::measure_sequence_recovery(
 		pose = native_poses_[ poseindex ];
 
 		//if ( option[ in::file::centroid_input ] ) {
-		// core::import_pose::centroid_pose_from_pdb( pose, native_pdb_names[ poseindex ] );
+		// core::import_pose::centroid_pose_from_pdb( pose, native_pdb_names[ poseindex ] , core::import_pose::PDB_file);
 		//} else {
-		// core::import_pose::pose_from_pdb( pose, native_pdb_names[ poseindex ] );
+		// core::import_pose::pose_from_file( pose, native_pdb_names[ poseindex ] , core::import_pose::PDB_file);
 		//}
 
 		//Real score2 = (*sfxn2)( pose );

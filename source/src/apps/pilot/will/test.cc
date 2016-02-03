@@ -29,8 +29,8 @@ int main(int argc, char *argv[]) {
 
 	core::init::init(argc,argv);
 	core::pose::Pose p,q;
-	core::import_pose::pose_from_pdb(p,basic::options::option[basic::options::OptionKeys::in::file::s]()[1]);
-	core::import_pose::pose_from_pdb(q,basic::options::option[basic::options::OptionKeys::in::file::s]()[2]);
+	core::import_pose::pose_from_file(p,basic::options::option[basic::options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
+	core::import_pose::pose_from_file(q,basic::options::option[basic::options::OptionKeys::in::file::s]()[2], core::import_pose::PDB_file);
 	// core::pose::symmetry::make_symmetric_pose(p);
 	// core::pose::symmetry::make_symmetric_pose(q);
 	core::Real x = core::scoring::CA_rmsd(p,q);

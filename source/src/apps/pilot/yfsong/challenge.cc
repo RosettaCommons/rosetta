@@ -488,7 +488,7 @@ void read_template_structures(utility::vector1 <core::pose::PoseOP> & template_s
 	template_structures.resize(ref_filenames.size());
 	for (core::Size i_ref=1; i_ref<= ref_filenames.size(); ++i_ref) {
 		template_structures[i_ref] = new core::pose::Pose();
-		core::import_pose::pose_from_pdb( *(template_structures[i_ref]), ref_filenames[i_ref] );
+		core::import_pose::pose_from_file( *(template_structures[i_ref]), ref_filenames[i_ref] , core::import_pose::PDB_file);
 
 		core::scoring::dssp::Dssp dssp_obj( *template_structures[i_ref] );
 		dssp_obj.insert_ss_into_pose( *template_structures[i_ref] );

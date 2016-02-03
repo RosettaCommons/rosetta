@@ -27,7 +27,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 #ifdef USEMPI
-#include <core/io/pdb/pose_io.hh>
+
 #endif
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
@@ -35,6 +35,7 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/pack_rotamers.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/annealer/FASTERAnnealer.hh>
 #include <core/pack/interaction_graph/DensePDInteractionGraph.hh>
 #include <core/pack/interaction_graph/DoubleDensePDInteractionGraph.hh>
@@ -540,7 +541,7 @@ DaemonSet::add_pack_daemon(
 {
 	/// Read in the pdb
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, pdb_name );
+	core::import_pose::pose_from_file( pose, pdb_name , core::import_pose::PDB_file);
 
 	// Open the correspondence file
 	utility::io::izstream correspondence_file( correspondence_file_name );
@@ -1049,7 +1050,7 @@ void DaemonSet::process_pose_request_for_entity()
 	for ( std::list< std::pair< Size, PoseOP > >::const_iterator
 			iter = poses.begin(), iter_end = poses.end(); iter != iter_end; ++iter ) {
 		std::ostringstream oss;
-		core::io::pdb::dump_pdb( *( iter->second ), oss );
+		core::io::pdb::old_dump_pdb( *( iter->second ), oss );
 		utility::send_integer_to_node( 0, iter->first );
 		utility::send_string_to_node(  0, oss.str() );
 	}

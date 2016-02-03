@@ -650,7 +650,7 @@ void Splice::apply(core::pose::Pose & pose) {
 	tail_dofs.clear();
 	core::Size cut_site(0);
 	if ( torsion_database_fname_ == "" ) { // read dofs from source pose rather than database
-		//core::import_pose::pose_from_pdb(*source_pose_, source_pdb_);
+		//core::import_pose::pose_from_file(*source_pose_, source_pdb_, core::import_pose::PDB_file);
 		//Check if there are chain_breaks in the source PDB, if so exit with error msg. gideon 24jun14
 
 		if ( !superimposed() ) {
@@ -1802,7 +1802,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 	if ( tag->hasOption("source_pdb") ) {
 		source_pdb(tag->getOption<std::string>("source_pdb"));
 		source_pose_ = core::pose::PoseOP( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*source_pose_, source_pdb_);
+		core::import_pose::pose_from_file(*source_pose_, source_pdb_, core::import_pose::PDB_file);
 	}
 
 
@@ -1952,7 +1952,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 			TR << "using template pdb from datamap" << std::endl;
 		} else if ( tag->hasOption("template_file") ) {
 			template_pose_ = core::pose::PoseOP( new core::pose::Pose );
-			core::import_pose::pose_from_pdb(*template_pose_, template_file_);
+			core::import_pose::pose_from_file(*template_pose_, template_file_, core::import_pose::PDB_file);
 			data.add("poses", template_file_, template_pose_);
 			TR << "loading template_pose from " << template_file_ << std::endl;
 		}

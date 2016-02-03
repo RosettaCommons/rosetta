@@ -17,7 +17,7 @@
 // Project Headers
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -246,7 +246,7 @@ int main( int argc, char* argv[] ) {
 	// repack and score the wild type structure
 	// scoring isn't really necessary here, but scoring is fast and poses seem to be happier once they've been scored
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, pdb_file_name.name() );
+	core::import_pose::pose_from_file( pose, pdb_file_name.name() , core::import_pose::PDB_file);
 	(*scorefxn)( pose );
 
 	pose::metrics::PoseMetricCalculatorOP hpatch_calculator;

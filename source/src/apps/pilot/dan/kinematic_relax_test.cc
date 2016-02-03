@@ -16,7 +16,7 @@
 
 // Rosetta Headers
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 
@@ -57,7 +57,7 @@ my_main( void* )
 
 	// setup the starting pose and kinematic loop relaxer once
 	core::pose::Pose input_pose;
-	core::import_pose::pose_from_pdb( input_pose, option[ OptionKeys::loops::template_pdb ]().name() );
+	core::import_pose::pose_from_file( input_pose, option[ OptionKeys::loops::template_pdb ]().name() , core::import_pose::PDB_file);
 	devel::KinLooprelax::KinematicLooprelax kin_looprelaxer(true);
 
 	// setup job distributor
@@ -81,7 +81,7 @@ my_main( void* )
 		// jodist.dump won't have score vs. rmsd info we want. so do this for now:
 		std::string outname=option[ OptionKeys::out::path::path ]().name()+curr_job->output_tag(curr_nstruct)+".pdb";
 		std::ofstream out(outname.c_str(), std::ios::out | std::ios::binary);
-		core::io::pdb::dump_pdb( pose, out );
+		core::io::pdb::old_dump_pdb( pose, out );
 		out << "loop_rms: " << kin_looprelaxer.get_last_loop_rmsd() << std::endl;
 		out << "total_energy: " << kin_looprelaxer.get_last_total_energy() << std::endl;
 		out << "chainbreak: " << kin_looprelaxer.get_last_chainbreak() << std::endl;

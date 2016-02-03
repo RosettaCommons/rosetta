@@ -271,7 +271,7 @@ void buns_stats(
 ) {
 	for (core::Size i = 0, size = pdb_list.size(); i != size; i++) {
 		pose::Pose pose;
-		import_pose::pose_from_pdb(pose, pdb_list[i]);
+		import_pose::pose_from_file(pose, pdb_list[i], core::import_pose::PDB_file);
 		vsasa_bunsats(pose,
 		              AHdist_geom_eval_threshold,
 		              hb_eval,

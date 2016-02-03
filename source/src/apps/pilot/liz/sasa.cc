@@ -36,7 +36,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -90,7 +90,7 @@
 
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 //protocols
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
@@ -216,7 +216,7 @@ main( int argc, char* argv [] )
 	for(unsigned int f=1; f<=files.size();f++){
 		pose::Pose pose;
 		if( option[ in::file::s ].user() || option[ in::file::l ].user()){
-			core::import_pose::pose_from_pdb(pose, files[f]);
+			core::import_pose::pose_from_file(pose, files[f], core::import_pose::PDB_file);
 		}else{
 			SilentStructOP ss = sfd[files[f]];
 			ss->fill_pose( pose, *rsd_set );

@@ -27,7 +27,7 @@
 
 #include <core/id/SequenceMapping.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
@@ -292,7 +292,7 @@ int main( int argc, char * argv [] ) {
 	using namespace core::chemical;
 	using namespace core::import_pose::pose_stream;
 	using namespace protocols::comparative_modeling;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using core::sequence::read_fasta_file;
 	using utility::file_basename;
 	option.add (unalignedEvaluate::relaxed_native, "relaxed native");
@@ -306,19 +306,19 @@ int main( int argc, char * argv [] ) {
 	map< string, const Loops > unalignedLoopsMapped = get_unalignedLoopsMapped(alnDataMapped,query_sequence.size());
 	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
 	Pose native_pose;
-	pose_from_pdb(
+	pose_from_file(
 			native_pose,
 			*rsd_set,
 			option[ in::file::native ]()
 			);
 	Pose native_relaxed_pose;
-	pose_from_pdb(
+	pose_from_file(
 			native_relaxed_pose,
 			*rsd_set,
 			option[unalignedEvaluate::relaxed_native]()
 			);
 	Pose core_pose;
-	pose_from_pdb(
+	pose_from_file(
 			core_pose,
 			*rsd_set,
 			option[unalignedEvaluate::core_pdb]()

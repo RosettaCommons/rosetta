@@ -45,7 +45,7 @@ public:
 
 	void setUp() {
 		core_init();
-		core::import_pose::pose_from_pdb( pose, "protocols/rigid/RigidBodyMover.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/rigid/RigidBodyMover.pdb" , core::import_pose::PDB_file);
 		rb_jump = 1;
 
 		//setting up the fold tree as is used in docking

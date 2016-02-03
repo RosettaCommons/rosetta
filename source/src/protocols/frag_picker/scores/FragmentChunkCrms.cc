@@ -39,7 +39,7 @@
 //Auto Headers
 #include <core/id/NamedAtomID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <utility/io/izstream.hh>
@@ -62,6 +62,7 @@ namespace scores {
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace ObjexxFCL;
 
 static THREAD_LOCAL basic::Tracer trTmScore(
 	"protocols.frag_picker.scores.FragmentChunkCrms");
@@ -229,7 +230,7 @@ FragmentScoringMethodOP MakeFragmentChunkCrms::make(Size priority,
 			<< "Reference structure to score fragments by chunkrms loaded from: "
 			<< option[in::file::native]() << std::endl;
 		core::pose::PoseOP nativePose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
+		core::import_pose::pose_from_file(*nativePose, option[in::file::native](), core::import_pose::PDB_file);
 		seq2 = core::sequence::SequenceOP( new core::sequence::Sequence(*nativePose) );
 		seqmapping.redimension(std::max(seq1->length(),seq2->length()), 0);
 		sequencealign(seq1,seq2,seqmapping);
@@ -241,7 +242,7 @@ FragmentScoringMethodOP MakeFragmentChunkCrms::make(Size priority,
 			<< "Reference structure to score fragments by chunkrms loaded from: "
 			<< option[in::file::s]()[1] << std::endl;
 		core::pose::PoseOP nativePose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
+		core::import_pose::pose_from_file(*nativePose, option[in::file::s]()[1], core::import_pose::PDB_file);
 		seq2 = core::sequence::SequenceOP( new core::sequence::Sequence(*nativePose) );
 		seqmapping.redimension(std::max(seq1->length(),seq2->length()), 0);
 		sequencealign(seq1,seq2,seqmapping);

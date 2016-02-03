@@ -263,7 +263,7 @@ RelativePoseFilter::report( std::ostream & out, core::pose::Pose const & ) const
 
 void
 RelativePoseFilter::pdb_name( std::string const pdb_name ){
-	pose( core::import_pose::pose_from_pdb( pdb_name, false /*read foldtree*/ ) );
+	pose( core::import_pose::pose_from_file( pdb_name, false, core::import_pose::PDB_file /*read foldtree*/ ) );
 }
 
 
@@ -281,7 +281,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 	TR << "RelativePoseFilter"<<std::endl;
 	std::string pose_fname ("");
 	bool use_native ( tag->getOption< bool >( "use_native_pdb", false ));
-	if ( use_native ) pose( core::import_pose::pose_from_pdb(basic::options::option[ basic::options::OptionKeys::in::file::native ], false));
+	if ( use_native ) pose( core::import_pose::pose_from_file(basic::options::option[ basic::options::OptionKeys::in::file::native ], false, core::import_pose::PDB_file) );
 
 	if ( tag->hasOption( "pdb_name" ) ) {
 		pose_fname = tag->getOption< std::string >( "pdb_name" );

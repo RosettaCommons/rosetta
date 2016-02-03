@@ -20,7 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/StructFileRep.hh>
 
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
@@ -99,13 +99,13 @@ public:
 	virtual void print_conformation( std::ostream & output ) const;
 
 	/// @brief data getters/setters
-	core::io::pdb::FileData
-	file_data() const {
-		return fd_;
+	core::io::StructFileRep const
+	struct_file_rep() const {
+		return *sfr_;
 	}
 
-	void file_data( core::io::pdb::FileData new_fd ) {
-		fd_ = new_fd;
+	void struct_file_rep( core::io::StructFileRep new_sfr ) {
+		sfr_ = new_sfr.clone();
 	}
 
 	std::string get_pdb_lines() const {
@@ -121,7 +121,7 @@ public:
 	virtual Real get_debug_rmsd();
 
 protected:
-	mutable core::io::pdb::FileData fd_;
+	core::io::StructFileRepOP sfr_;
 	std::string pdb_lines_; // a concatenated version of all the lines in the pdb file
 }; // class PDBSilentStruct
 

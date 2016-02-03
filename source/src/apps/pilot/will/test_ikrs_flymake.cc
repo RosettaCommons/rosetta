@@ -23,7 +23,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pack/optimizeH.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
@@ -68,7 +68,7 @@ using protocols::scoring::ImplicitFastClashCheck;
 using std::string;
 using utility::vector1;
 using numeric::min;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using basic::options::option;
 using numeric::min;
 using numeric::max;
@@ -671,7 +671,7 @@ int main (int argc, char *argv[]) {
 
 
   Pose pose,arg,asp,glu,lys;
-  core::import_pose::pose_from_pdb(pose,"input/2vdf_nohet_1.pdb");
+  core::import_pose::pose_from_file(pose,"input/2vdf_nohet_1.pdb", core::import_pose::PDB_file);
   for(Size i = 1; i <= pose.n_residue(); ++i) {
     if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
     if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);

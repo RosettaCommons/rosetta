@@ -494,9 +494,9 @@ int main( int argc, char *argv [] ){
 
 	// Read and store init pose
   pose::Pose pose0, native_pose;
-	import_pose::pose_from_pdb( pose0, *rsd_set, option[ in::file::s ](1) );
+	import_pose::pose_from_file( pose0, *rsd_set, option[ in::file::s ](1) , core::import_pose::PDB_file);
 
-	import_pose::pose_from_pdb( native_pose, *rsd_set, option[ in::file::native ]() );
+	import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 
 	scoring::ScoreFunctionCOP sfxn 
     = scoring::ScoreFunctionFactory::create_score_function( option[ score::weights] );
@@ -535,7 +535,7 @@ int main( int argc, char *argv [] ){
 
 		} else if ( method == "recombine" ){
 			pose::Pose pose2;
-			import_pose::pose_from_pdb( pose2, *rsd_set, option[ in::file::s ](2) );
+			import_pose::pose_from_file( pose2, *rsd_set, option[ in::file::s ](2) , core::import_pose::PDB_file);
 			poses = test_recombine( pose0, pose2, sfxn, minoption, nstruct, repack );
 
 		} else if ( method == "bbgauss" ){

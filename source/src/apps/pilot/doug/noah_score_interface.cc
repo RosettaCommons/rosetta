@@ -12,7 +12,7 @@
 /// @author Noah Ollikainen
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <basic/MetricValue.hh>
@@ -131,7 +131,7 @@ int main( int argc, char * argv [] )
 	for(core::Size i = 1; i <= pdbs.size(); i++) {
 	
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose, pdbs[i]);
+		core::import_pose::pose_from_file(pose, pdbs[i], core::import_pose::PDB_file);
 		(*score_fxn)(pose);
 
 		core::Real interface_score = compute_interface_energy(pose);

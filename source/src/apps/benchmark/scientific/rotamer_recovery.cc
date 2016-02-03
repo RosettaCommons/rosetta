@@ -46,7 +46,7 @@ using std::ofstream;
 using std::string;
 using basic::Tracer;
 using core::pose::PoseOP;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::pack::task::TaskFactory;
 using core::pack::task::TaskFactoryOP;
 using core::pack::task::operation::InitializeFromCommandline;

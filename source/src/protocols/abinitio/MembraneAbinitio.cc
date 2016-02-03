@@ -1562,15 +1562,15 @@ bool MembraneAbinitio::recover_checkpoint( pose::Pose &pose, std::string const &
 //   utility::io::izstream izs(checkpoint_id + ".rng.state.gz");
 //   numeric::random::RandomGenerator::restoreAllStates(izs);
 //   izs.close();
-//   core::import_pose::centroid_pose_from_pdb( pose, checkpoint_id + ".pdb" );
+//   core::import_pose::centroid_pose_from_pdb( pose, checkpoint_id + ".pdb" , core::import_pose::PDB_file);
 //   if (utility::file::file_exists( checkpoint_id + ".mc_last.pdb" )) {
 //    pose::Pose recovered_mc_last;
-//    core::import_pose::centroid_pose_from_pdb( recovered_mc_last, checkpoint_id + ".mc_last.pdb" );
+//    core::import_pose::centroid_pose_from_pdb( recovered_mc_last, checkpoint_id + ".mc_last.pdb" , core::import_pose::PDB_file);
 //    mc_->set_last_accepted_pose( recovered_mc_last );
 //   }
 //   if (utility::file::file_exists( checkpoint_id + ".mc_low.pdb" )) {
 //    pose::Pose recovered_mc_low;
-//    core::import_pose::centroid_pose_from_pdb( recovered_mc_low, checkpoint_id + ".mc_low.pdb" );
+//    core::import_pose::centroid_pose_from_pdb( recovered_mc_low, checkpoint_id + ".mc_low.pdb" , core::import_pose::PDB_file);
 //    mc_->set_lowest_score_pose( recovered_mc_low );
 //   }
 //   checkpoint_ids_.push_back( checkpoint_id );
@@ -1596,9 +1596,7 @@ void MembraneAbinitio::checkpoint( pose::Pose &pose, std::string const & id ) {
 //  numeric::random::RandomGenerator::saveAllStates(ozs);
 //  ozs.close();
 
-//  io::pdb::dump_pdb( mc_->last_accepted_pose(), checkpoint_id + ".mc_last.pdb" );
-//  io::pdb::dump_pdb( mc_->lowest_score_pose(), checkpoint_id + ".mc_low.pdb" );
-//  io::pdb::dump_pdb( pose, checkpoint_id + ".pdb" );
+
 //  //  tr << "Created checkpoint: " << checkpoint_id << std::endl;
 
 //  protocols::checkpoint::Timer::reset(); // required for checkpoint

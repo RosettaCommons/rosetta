@@ -117,7 +117,7 @@ main( int argc, char * argv [] )
 		std::cout << "Working on file:  " << pdb_code << std::endl;
 
 		pose::Pose target_pose;
-		core::import_pose::pose_from_pdb( target_pose, pdb_path + pdb_code );
+		core::import_pose::pose_from_file( target_pose, pdb_path + pdb_code , core::import_pose::PDB_file);
 
 		std::cout << "Total residue count is " << target_pose.total_residue() << std::endl;
 

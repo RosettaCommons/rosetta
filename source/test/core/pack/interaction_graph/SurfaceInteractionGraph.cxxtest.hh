@@ -62,7 +62,6 @@
 #include <core/graph/UpperEdgeGraph.fwd.hh>
 #include <core/graph/unordered_object_pool.fwd.hpp>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/file_data.fwd.hh>
 #include <core/pack/annealer/AnnealerFactory.fwd.hh>
 #include <core/pack/annealer/SimAnnealerBase.fwd.hh>
 #include <core/pack/interaction_graph/AdditionalBackgroundNodesInteractionGraph.hh>
@@ -189,7 +188,7 @@ public:
 		// since this is a test suite, we don't want to read in PDB files from the command line.  just hardcode the tests to use
 		// a predefined test PDB file
 		//TR << "Reading in pose..." << std::endl;
-		core::import_pose::pose_from_pdb( pose, "core/pack/1l2y_renameH.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pack/1l2y_renameH.pdb" , core::import_pose::PDB_file);
 
 		// --- PackerTask ---
 		// create a custom PackerTask, no extra chi, include current, using the surface score and setting the weight

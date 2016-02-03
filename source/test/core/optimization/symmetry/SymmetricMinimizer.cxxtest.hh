@@ -118,8 +118,8 @@ public:
 
 		core_init_with_additional_options( "-symmetry:symmetry_definition core/optimization/symmetry/c2.sdef -symmetry:initialize_rigid_body_dofs" );
 		pose::Pose pose;
-		///core::import_pose::pose_from_pdb( pose, "core/optimization/symmetry/c2_INPUT.pdb" );
-		core::import_pose::pose_from_pdb( pose, "core/optimization/symmetry/c2_after_min.pdb" ); // the minimized structure gives better derivative agreement
+		///core::import_pose::pose_from_file( pose, "core/optimization/symmetry/c2_INPUT.pdb" , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( pose, "core/optimization/symmetry/c2_after_min.pdb" , core::import_pose::PDB_file); // the minimized structure gives better derivative agreement
 
 		core::pose::symmetry::make_symmetric_pose( pose );
 
@@ -164,8 +164,8 @@ public:
 
 		core_init_with_additional_options( "-symmetry:symmetry_definition core/optimization/symmetry/c3.sdef -symmetry:initialize_rigid_body_dofs" );
 		pose::Pose pose;
-		///core::import_pose::pose_from_pdb( pose, "core/optimization/symmetry/c3_INPUT.pdb" );
-		core::import_pose::pose_from_pdb( pose, "core/optimization/symmetry/c3_after_min.pdb" );
+		///core::import_pose::pose_from_file( pose, "core/optimization/symmetry/c3_INPUT.pdb" , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( pose, "core/optimization/symmetry/c3_after_min.pdb" , core::import_pose::PDB_file);
 		core::pose::symmetry::make_symmetric_pose( pose );
 		//pose.dump_pdb( "c3b_before_min.pdb" );
 
@@ -278,8 +278,8 @@ public:
 		using namespace scoring::symmetry;
 
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "core/optimization/symmetry/3dg1_INPUT.pdb" );
-		//core::import_pose::pose_from_pdb( pose, "core/optimization/symmetry/fibril_monomer.pdb" );
+		core::import_pose::pose_from_file( pose, "core/optimization/symmetry/3dg1_INPUT.pdb" , core::import_pose::PDB_file);
+		//core::import_pose::pose_from_file( pose, "core/optimization/symmetry/fibril_monomer.pdb" , core::import_pose::PDB_file);
 		core::pose::symmetry::make_symmetric_pose( pose );
 		//pose.dump_pdb( "fibril_before_min.pdb" );
 
@@ -343,7 +343,7 @@ public:
 
 		core_init_with_additional_options( "-symmetry:symmetry_definition core/optimization/symmetry/helix.symm -symmetry:initialize_rigid_body_dofs" );
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "core/optimization/symmetry/2bw9_INPUT.pdb" );
+		core::import_pose::pose_from_file( pose, "core/optimization/symmetry/2bw9_INPUT.pdb" , core::import_pose::PDB_file);
 		core::pose::symmetry::make_symmetric_pose( pose );
 
 		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
@@ -394,7 +394,7 @@ public:
 
 		// pose::Pose start_pose(create_test_in_pdb_pose());
 		pose::Pose start_pose;
-		core::import_pose::pose_from_pdb( start_pose, "core/scoring/symmetry/test_in.pdb" );
+		core::import_pose::pose_from_file( start_pose, "core/scoring/symmetry/test_in.pdb" , core::import_pose::PDB_file);
 		core::pose::symmetry::make_symmetric_pose( start_pose );
 
 		kinematics::MoveMapOP mm( new kinematics::MoveMap );

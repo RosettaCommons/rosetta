@@ -89,7 +89,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -129,7 +129,7 @@ using namespace protocols;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -185,7 +185,7 @@ main( int argc, char * argv [] )
   std::string silent_file( "fa_memb.out" );
 
   std::cout << "READING start.pdb" << std::endl;
-	core::import_pose::pose_from_pdb( pose, *rsd_set, "start.pdb" ); // default is standard fullatom residue_set
+	core::import_pose::pose_from_file( pose, *rsd_set, "start.pdb" , core::import_pose::PDB_file); // default is standard fullatom residue_set
 
 	kinematics::MoveMap mm;
 	// setup moving dofs

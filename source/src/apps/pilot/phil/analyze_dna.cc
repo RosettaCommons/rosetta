@@ -28,7 +28,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 
 #include <numeric/random/random.hh>
@@ -78,7 +78,7 @@ dna_geometry()
 	vector1< string > files( basic::options::start_files() );
 	for ( Size n=1; n<= files.size(); ++n ) {
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, files[n] );
+		core::import_pose::pose_from_file( pose, files[n] , core::import_pose::PDB_file);
 		std::cout << "DNA_GEOMETRY: " << files[n] << std::endl;
 		scoring::dna::set_base_partner( pose );
 		scoring::dna::show_dna_geometry( pose, std::cout );

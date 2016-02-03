@@ -67,7 +67,7 @@ public:
 		
 		core::pose::Pose pose;
 		
-		core::import_pose::pose_from_pdb(pose, "/Users/mpacella/Rosetta_Surface_Test/surf_orient_test_before.pdb");
+		core::import_pose::pose_from_file(pose, "/Users/mpacella/Rosetta_Surface_Test/surf_orient_test_before.pdb", core::import_pose::PDB_file);
 		
 		core::Vector protein_centroid, surf_centroid;
 		core::Size const rb_jump=pose.num_jump();

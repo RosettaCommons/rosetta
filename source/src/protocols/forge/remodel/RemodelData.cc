@@ -459,7 +459,7 @@ void RemodelData::collectInsertionPose(){
 
 	using namespace core;
 
-	import_pose::pose_from_pdb( insertPose,option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb] );
+	import_pose::pose_from_file( insertPose,option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb] , core::import_pose::PDB_file);
 	insertionSize = (int)insertPose.total_residue();
 	TR_REMODEL << "insertionSize: " << insertionSize << std::endl;
 

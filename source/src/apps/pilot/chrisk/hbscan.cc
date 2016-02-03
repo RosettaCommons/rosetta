@@ -28,7 +28,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/types.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
@@ -146,8 +146,8 @@ namespace OK = OptionKeys;
 using utility::vector1;
 using utility::to_string;
 using std::string;
-using import_pose::pose_from_pdb;
-using io::pdb::dump_pdb; // deprecated though
+using import_pose::pose_from_file;
+using io::pdb::old_dump_pdb; // deprecated though
 using namespace ObjexxFCL;
 using basic::T;
 using basic::Warning;

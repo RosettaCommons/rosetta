@@ -119,7 +119,7 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	}
 
 	// tag
-	core::pose::RemarkInfo remark;
+	core::io::RemarkInfo remark;
 	std::ostringstream oss;
 	core::Real maskwidth =  core::scoring::electron_density::getDensityMap().getAtomMask();
 

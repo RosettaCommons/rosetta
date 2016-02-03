@@ -115,7 +115,7 @@ public:
 		pose::Pose test_pose, compare_pose, parser_compare_pose;
 		core::Real const rad_per_deg = numeric::constants::f::degrees_to_radians;
 
-		core::import_pose::pose_from_pdb( test_pose, "protocols/enzdes/ligtest_it.pdb");
+		core::import_pose::pose_from_file( test_pose, "protocols/enzdes/ligtest_it.pdb", core::import_pose::PDB_file);
 		scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
 		scorefxn->reset();
 		//scorefxn->set_weight( scoring::fa_atr, 1.0);
@@ -166,7 +166,7 @@ public:
 		//now let's use the enzdes machinery to read in a cstfile and generate
 		//the constraint set, results should be identical to manually created constraints
 		enz_io->read_enzyme_cstfile("protocols/enzdes/ligtest_it.cst");
-		core::import_pose::pose_from_pdb( compare_pose, "protocols/enzdes/ligtest_it.pdb");
+		core::import_pose::pose_from_file( compare_pose, "protocols/enzdes/ligtest_it.pdb", core::import_pose::PDB_file);
 		core::pose::Pose parser_pose = compare_pose;
 
 

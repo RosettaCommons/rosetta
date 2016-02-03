@@ -31,7 +31,7 @@
 #include <core/chemical/AtomTypeSet.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/sasa.hh>
 
 #include <basic/Tracer.hh>
@@ -116,7 +116,7 @@ using namespace core::scoring::packstat;
 // 	using namespace core;
 //
 // 	pose::Pose pose;
-// 	core::import_pose::pose_from_pdb(pose,fname);
+// 	core::import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
 //
 // 	utility::vector1< Real > radii;
 // 	{
@@ -198,7 +198,7 @@ using namespace core::scoring::packstat;
 // Spheres pose_to_spheres( core::pose::Pose & pose ) {
 // 	using namespace std;
 // 	ostringstream oss;
-// 	core::io::pdb::dump_pdb(pose,oss);
+// 	core::io::pdb::old_dump_pdb(pose,oss);
 // 	istringstream iss( oss.str() );
 // 	AtomRadiusMap arm;
 //   SimplePDB pdb;
@@ -526,7 +526,7 @@ int main (int argc, char *argv[])
 //
 //
 // 		// Pose pose;
-// 		// core::import_pose::pose_from_pdb( pose, fname );
+// 		// core::import_pose::pose_from_file( pose, fname , core::import_pose::PDB_file);
 // 		//
 // 		// std::cerr << "PACKSCORE " << fname << " " << compute_packing_score(pose) << std::endl;
 // 		// return;

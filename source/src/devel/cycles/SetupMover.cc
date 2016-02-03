@@ -49,7 +49,7 @@ void SetupMover::remove_termini_patches(pose::Pose& pose) {
 	// needlessly worrisome.  There's no way to specifically mute the Residue 
 	// tracer, so it's necessary to temporarily mute all tracers globally.
 	//
-	// Note that the import_pose::pose_from_pdb() method also generates an error 
+	// Note that the import_pose::pose_from_file() method also generates an error 
 	// message when loading cyclic peptides.  Unfortunately, there's nothing that 
 	// can be done about that from within this mover.
 

@@ -162,7 +162,7 @@ path_rover::initialize_from_params(Params_handler& param_h)
 std::cout << "CENTROID mode" << std::endl;
 	std::cout << "Src pdb: " << _params_h.get_pdb_path("SRC");
 	bool is_ok;
-	is_ok = pose_from_pdb(
+	is_ok = pose_from_file(
 		_src_pose,
 		_params_h.get_pdb_path("SRC"), /* filename */
 		_full_atom,  /* fullatom*/
@@ -176,7 +176,7 @@ std::cout << "CENTROID mode" << std::endl;
 	// read target
 	if(_params_h.full_target_available)
 	{
-		is_ok = pose_from_pdb(
+		is_ok = pose_from_file(
 			_trg_pose,
 			_params_h.get_pdb_path("TRG"), /* filename */
 			_full_atom,  /* fullatom*/
@@ -194,7 +194,7 @@ std::cout << "CENTROID mode" << std::endl;
 	// read partial target
     if (_params_h.partial_target_available)
 	{
-		bool is_ok = pose_from_pdb(
+		bool is_ok = pose_from_file(
 			_trg_pose_partial,
 			_params_h.get_pdb_path("TRG_PARTIAL"), /* filename */
 			_full_atom,  /* fullatom*/

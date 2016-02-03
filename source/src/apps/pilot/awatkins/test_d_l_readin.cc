@@ -114,19 +114,19 @@ main( int argc, char* argv[] )
 		ResidueTypeSetCOP rts( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
 
 		Pose pose;
-		import_pose::pose_from_pdb( pose, "inputs/a98.pdb" );
+		import_pose::pose_from_file( pose, "inputs/a98.pdb" , core::import_pose::PDB_file);
 		TR << "Name of residue 2 is A98: " << pose.residue( 2 ).type().name() << std::endl;
 
 		pose.clear();
-		import_pose::pose_from_pdb( pose, "inputs/d98.pdb" );
+		import_pose::pose_from_file( pose, "inputs/d98.pdb" , core::import_pose::PDB_file);
 		TR << "Name of residue 2 is A98 (it's not chiral!): " << pose.residue( 2 ).type().name() << std::endl;
 
 		pose.clear();
-		import_pose::pose_from_pdb( pose, "inputs/nlu.pdb" );
+		import_pose::pose_from_file( pose, "inputs/nlu.pdb" , core::import_pose::PDB_file);
 		TR << "Name of residue 2 is NLU: " << pose.residue( 2 ).type().name() << std::endl;
 
 		pose.clear();
-		import_pose::pose_from_pdb( pose, "inputs/dnlu.pdb" );
+		import_pose::pose_from_file( pose, "inputs/dnlu.pdb" , core::import_pose::PDB_file);
 		TR << "Name of residue 2 is DNLU: " << pose.residue( 2 ).type().name() << std::endl;
 
 

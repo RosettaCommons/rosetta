@@ -11,7 +11,7 @@
 
 // Project Headers
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <basic/MetricValue.hh>
 
@@ -56,7 +56,7 @@
 #include <map>
 
 //Auto Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -145,8 +145,8 @@ int main( int argc, char * argv [] ){
 
 		pose::Pose rna_pose, complex_pose;
 
-		core::import_pose::pose_from_pdb( rna_pose, input_rna_pose );
-		core::import_pose::pose_from_pdb( complex_pose, input_complex_pose );
+		core::import_pose::pose_from_file( rna_pose, input_rna_pose , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( complex_pose, input_complex_pose , core::import_pose::PDB_file);
 
 		//Verify the number of RNA bases in complex and free RNA pose match
 		core::Size rsdcount = 0;

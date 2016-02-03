@@ -31,7 +31,7 @@
 #include <core/pose/Pose.hh>
 #include <core/init/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -177,7 +177,7 @@ rna_design_test()
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	core::import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	core::import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 	protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
 	dump_pdb( pose, "start.pdb");
@@ -270,7 +270,7 @@ ss_ds_ts_assign_test()
 
 	for ( Size n = 1; n <= pdb_files.size(); n++ )  {
 		std::string const & pdb_file = pdb_files[ n ] ;
-		core::import_pose::pose_from_pdb( *pose_op, *rsd_set, pdb_file );
+		core::import_pose::pose_from_file( *pose_op, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( *pose_op );
 
 		std::string sequence_recovery_file( pdb_file );

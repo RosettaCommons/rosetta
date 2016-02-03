@@ -45,7 +45,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
@@ -84,7 +84,7 @@ using utility::vector1;
 using std::string;
 using std::cout;
 using std::endl;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 using namespace ObjexxFCL::format;
 
 static THREAD_LOCAL basic::Tracer tt( "demo.phil.dna_design_test", basic::t_info );
@@ -215,7 +215,7 @@ design_test()
 
 		// read structure
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, filename );
+		core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 		Size const nres( pose.total_residue() );
 
 		tt << "read file: " << filename << ' ' << nres << std::endl;

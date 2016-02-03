@@ -51,7 +51,7 @@ public:
 
 	void setUp() {
 		core_init();
-		core::import_pose::pose_from_pdb(pose_, "core/kinematics/test.pdb");
+		core::import_pose::pose_from_file(pose_, "core/kinematics/test.pdb", core::import_pose::PDB_file);
 	}
 
 	void tearDown() {}

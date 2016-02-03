@@ -226,8 +226,8 @@ int main( int argc, char *argv [] ){
 
   core::pose::Pose pose, pose_ref;
 
-  core::import_pose::pose_from_pdb( pose_ref, *rsd_set, option[ in::file::s ](1) ); 
-  core::import_pose::pose_from_pdb( pose, *rsd_set, option[ in::file::s ](2) ); 
+  core::import_pose::pose_from_file( pose_ref, *rsd_set, option[ in::file::s ](1) , core::import_pose::PDB_file); 
+  core::import_pose::pose_from_file( pose, *rsd_set, option[ in::file::s ](2) , core::import_pose::PDB_file); 
 
 	//timeval time0, time1;
 	//gettimeofday(&time0, NULL );

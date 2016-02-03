@@ -38,7 +38,7 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -93,8 +93,8 @@ using namespace utility;
 using namespace numeric;
 using namespace core;
 using core::pose::Pose;
-using core::import_pose::pose_from_pdb;
-using core::io::pdb::dump_pdb;
+using core::import_pose::pose_from_file;
+using core::io::pdb::old_dump_pdb;
 using core::io::pdb::dump_bfactor_pdb;
 using ObjexxFCL::string_of;
 using core::id::AtomID;
@@ -114,7 +114,7 @@ test_suck_res( std::string fname ) {
 	using namespace core::scoring::packstat;
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, fname );
+	core::import_pose::pose_from_file( pose, fname , core::import_pose::PDB_file);
 
 	kinematics::MoveMapOP mm = new kinematics::MoveMap;
 	mm->set_bb ( true ); mm->set_chi( true );	mm->set_jump( true );
@@ -253,7 +253,7 @@ test_suck_res( std::string fname ) {
 // 	using namespace constraints;
 //
 // 	Pose pose;
-// 	core::import_pose::pose_from_pdb( pose, fname );
+// 	core::import_pose::pose_from_file( pose, fname , core::import_pose::PDB_file);
 //
 // 	kinematics::MoveMapOP mm = new kinematics::MoveMap;
 // 	mm->set_bb ( true );

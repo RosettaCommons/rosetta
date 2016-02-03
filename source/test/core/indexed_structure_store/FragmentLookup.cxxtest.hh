@@ -60,7 +60,7 @@ public:
 	void test_read_store()
 	{
 		using namespace core::indexed_structure_store;
-		core::pose::PoseOP test_pose = core::import_pose::pose_from_pdb("core/indexed_structure_store/test_structure.pdb");
+		core::pose::PoseOP test_pose = core::import_pose::pose_from_file("core/indexed_structure_store/test_structure.pdb", core::import_pose::PDB_file);
 
 		FragmentLookupOP full_lookup = StructureStoreManager::get_instance()->load_fragment_lookup(
 			"full_test_fragments", "core/indexed_structure_store/test_store");
@@ -110,7 +110,7 @@ public:
 	void test_binary_store()
 	{
 		using namespace core::indexed_structure_store;
-		core::pose::PoseOP test_pose = core::import_pose::pose_from_pdb("core/indexed_structure_store/test_structure.pdb");
+		core::pose::PoseOP test_pose = core::import_pose::pose_from_file("core/indexed_structure_store/test_structure.pdb", core::import_pose::PDB_file);
 
 		FragmentSpecification test_spec;
 		test_spec.fragment_atoms.push_back("N");

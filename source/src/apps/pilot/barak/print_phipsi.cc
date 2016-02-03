@@ -25,7 +25,7 @@
 #include <core/types.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>//option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -159,7 +159,7 @@ main( int argc, char * argv [] )
   devel::init(argc, argv);
 
   pose::Pose pose;
-  core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+  core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
   Size const nres( pose.total_residue() );
 
   std::cout << "chain tor_type res_id tor_angle" << std::endl;

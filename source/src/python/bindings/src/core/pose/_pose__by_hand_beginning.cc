@@ -24,14 +24,14 @@
 #include <core/pose/signals/GeneralEvent.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/pose_io.hh>
+////#include <core/io/pdb/pose_io.hh>
 #include "core/import_pose/import_pose.hh"
 
 #include <core/pose/datacache/CacheableObserver.hh>
 #include <basic/datacache/DataCache.hh>
 
 
-//#include <core/io/pdb/pose_io.hh>
+//////#include <core/io/pdb/pose_io.hh>
 //#include <core/scoring/ScoreFunctionInfo.hh>
 
 namespace bp = boost::python;
@@ -130,7 +130,7 @@ void PosePyObserverTesterFunction()
 	//observer.generalEvent( ge );
 
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb(pose, "test_in.pdb");
+	core::import_pose::pose_from_file(pose, "test_in.pdb", core::import_pose::PDB_file);
 
 
 	std::cout << "Creating PosePyObserver...\n";

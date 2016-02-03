@@ -57,8 +57,8 @@ public:
 		using namespace core;
 		using namespace core::scoring;
 		pose::Pose pose1, pose2;
-		core::import_pose::pose_from_pdb( pose1, "core/scoring/1pqc_0001.pdb" );
-		core::import_pose::pose_from_pdb( pose2, "core/scoring/1pqc_0003.pdb" );
+		core::import_pose::pose_from_file( pose1, "core/scoring/1pqc_0001.pdb" , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( pose2, "core/scoring/1pqc_0003.pdb" , core::import_pose::PDB_file);
 
 		UT << "Ligand RMS, heavy atoms only:\n";
 		UT << "    no superposition,   no automorphisms: " << rmsd_no_super(pose1, pose2, is_ligand_heavyatom) << "\n";
@@ -68,8 +68,8 @@ public:
 	}
 
 	void test_gdtsc() {
-		PoseOP ref = core::import_pose::pose_from_pdb("core/scoring/4dO8B.pdb");
-		PoseOP mod = core::import_pose::pose_from_pdb("core/scoring/model-5.pdb");
+		PoseOP ref = core::import_pose::pose_from_file("core/scoring/4dO8B.pdb", core::import_pose::PDB_file);
+		PoseOP mod = core::import_pose::pose_from_file("core/scoring/model-5.pdb", core::import_pose::PDB_file);
 
 		map<Size, Size> all_residues;
 		for ( Size i = 1; i <= ref->total_residue(); ++i ) {
@@ -80,7 +80,7 @@ public:
 	}
 
 	void test_gdtsc_self() {
-		PoseOP mod = core::import_pose::pose_from_pdb("core/scoring/model-5.pdb");
+		PoseOP mod = core::import_pose::pose_from_file("core/scoring/model-5.pdb", core::import_pose::PDB_file);
 
 		map<Size, Size> all_residues;
 		for ( Size i = 1; i <= mod->total_residue(); ++i ) {
@@ -91,21 +91,21 @@ public:
 	}
 
 	void test_superimpose_self() {
-		Pose pose = *core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
+		Pose pose = *core::import_pose::pose_from_file("core/scoring/2GB3.pdb", core::import_pose::PDB_file);
 		Real rmsd = core::scoring::CA_rmsd(pose, pose);
 		TS_ASSERT_DELTA(0, rmsd, 0.0001);
 	}
 
 	void test_superimpose_same() {
-		Pose pose1 = *core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
-		Pose pose2 = *core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
+		Pose pose1 = *core::import_pose::pose_from_file("core/scoring/2GB3.pdb", core::import_pose::PDB_file);
+		Pose pose2 = *core::import_pose::pose_from_file("core/scoring/2GB3.pdb", core::import_pose::PDB_file);
 		Real rmsd = core::scoring::CA_rmsd(pose1, pose2);
 		TS_ASSERT_DELTA(0, rmsd, 0.0001);
 	}
 
 	void test_ca_rmsd_with_mapping() {
-		Pose pose1 = *core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
-		Pose pose2 = *core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
+		Pose pose1 = *core::import_pose::pose_from_file("core/scoring/2GB3.pdb", core::import_pose::PDB_file);
+		Pose pose2 = *core::import_pose::pose_from_file("core/scoring/2GB3.pdb", core::import_pose::PDB_file);
 
 		std::map<Size, Size> residues;
 		for ( Size i = 1; i <= pose1.total_residue(); ++i ) {
@@ -123,9 +123,9 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu), Baker Laboratory
 	void test_DLbundle_rmsd_aligned_unaligned()
 	{
-		PoseOP pose_native = core::import_pose::pose_from_pdb( "core/scoring/native_for_rmstest.pdb", false );
-		PoseOP pose_unaligned = core::import_pose::pose_from_pdb( "core/scoring/unaligned_for_rmstest.pdb", false );
-		PoseOP pose_aligned = core::import_pose::pose_from_pdb( "core/scoring/aligned_for_rmstest.pdb", false );
+		PoseOP pose_native = core::import_pose::pose_from_file( "core/scoring/native_for_rmstest.pdb", false , core::import_pose::PDB_file);
+		PoseOP pose_unaligned = core::import_pose::pose_from_file( "core/scoring/unaligned_for_rmstest.pdb", false , core::import_pose::PDB_file);
+		PoseOP pose_aligned = core::import_pose::pose_from_file( "core/scoring/aligned_for_rmstest.pdb", false , core::import_pose::PDB_file);
 
 		Real rmsd_unaligned = core::scoring::CA_rmsd( *pose_unaligned, *pose_native );
 		Real rmsd_aligned = core::scoring::CA_rmsd( *pose_aligned, *pose_native );

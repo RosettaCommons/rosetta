@@ -61,7 +61,7 @@ int main (int argc, char *argv[])
 	devel::init(argc,argv);
 
 	core::pose::Pose test;
-	core::import_pose::pose_from_pdb(test,"test.pdb");
+	core::import_pose::pose_from_file(test,"test.pdb", core::import_pose::PDB_file);
 
 	utility::vector1< core::scoring::packstat::CavityBallCluster > cavs = sheffler_voids(test);
 

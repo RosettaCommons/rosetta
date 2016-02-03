@@ -51,7 +51,7 @@
 
 using namespace std;
 using namespace core;
-using namespace core::io::pdb;
+using namespace core::io;
 using namespace core::conformation;
 using namespace core::chemical;
 using namespace basic::options;
@@ -101,7 +101,7 @@ int main( int argc, char * argv [] )
 		pose::Pose scaffold;
 
 		if ( option[ in::file::s ].user() ) {
-			core::import_pose::pose_from_pdb( scaffold, option[ in::file::s ]()[1] );
+			core::import_pose::pose_from_file( scaffold, option[ in::file::s ]()[1] , core::import_pose::PDB_file);
 		} else {
 			TR.Error << "User did not specify the pdb file!" << endl;
 			exit( EXIT_FAILURE );

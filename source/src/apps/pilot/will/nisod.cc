@@ -25,7 +25,7 @@
 #include <core/fragment/FragSet.hh>
 #include <devel/init.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -142,7 +142,7 @@ inline void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & an
 core::pose::Pose make_helix(std::string seq) {
 	using namespace core::chemical;
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb(pose,"input/start_HC.pdb");
+	core::import_pose::pose_from_file(pose,"input/start_HC.pdb", core::import_pose::PDB_file);
 	core::pose::remove_lower_terminus_type_from_pose_residue(pose,1);
 	core::pose::remove_upper_terminus_type_from_pose_residue(pose,1);
 	ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );

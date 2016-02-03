@@ -1,0 +1,6 @@
+# This file helps to merge PDB residues that Rosetta prefers to represent with patches.
+# Its three fields are tab-separated. Try to keep this up to date with patches!
+ACE	merge_w_next	 C  - CO , O  - OP1, CH3- CP2,1HH3-1HP2,2HH3-2HP2,3HH3-3HP2
+NME	merge_w_prev	 N  - NM , C  - CN , H1 -1HN , H2 -2HN , H3 -3HN , HN2-HNM 
+ROH	merge_w_next	HO1 - HO , O1 - O   
+TBT	merge_w_next	 O1 - O  , C1 - CT , C2 - CA1, C3 - CA2, C4 - CA3, H1 -1HA1, H2 -2HA1, H3 -3HA1, H4 -1HA2, H5 -2HA2, H6 -3HA2, H7 -1HA3, H8 -2HA3, H9 -3HA3 

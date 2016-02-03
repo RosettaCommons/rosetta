@@ -73,7 +73,7 @@ using utility::io::izstream;
 using utility::io::ozstream;
 using utility::vector1;
 using std::endl;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 
 static THREAD_LOCAL basic::Tracer TR( "heterodock" );
 static core::io::silent::SilentFileData sfd;
@@ -376,7 +376,7 @@ get_tasks_from_command_line(
 
 Pose get_centered_pose(string fname, Vec & cen){
 	Pose todock;
-	core::import_pose::pose_from_pdb(todock,fname);
+	core::import_pose::pose_from_file(todock,fname, core::import_pose::PDB_file);
 	core::scoring::dssp::Dssp dssp(todock);
 	dssp.insert_ss_into_pose(todock);
 	cen = center_of_geom(todock,1,todock.n_residue());

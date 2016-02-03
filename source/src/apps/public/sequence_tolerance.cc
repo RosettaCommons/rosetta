@@ -136,7 +136,7 @@ sequence_tolerance_main( void * )
 	pdbnames = option[ in::file::s ]().vector();
 	// load pdb
 	pose::PoseOP pose( new pose::Pose );
-	core::import_pose::pose_from_pdb( *pose, pdbnames.front() );
+	core::import_pose::pose_from_file( *pose, pdbnames.front() , core::import_pose::PDB_file);
 	protocols::dna::add_constraints_from_file( *pose ); // (if specified by options)
 
 	// set up genetic algorithm

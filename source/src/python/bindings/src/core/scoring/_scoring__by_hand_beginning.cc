@@ -16,7 +16,7 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+//#include <core/io/pdb/pose_io.hh>
 #include <core/scoring/ScoreFunctionInfo.hh>
 
 

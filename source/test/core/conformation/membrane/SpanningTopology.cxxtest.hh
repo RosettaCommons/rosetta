@@ -234,7 +234,7 @@ public: // test functions
 
 		// Load in pose from pdb
 		Pose pose;
-		pose_from_pdb( pose, "core/conformation/membrane/1AFO_AB.pdb" );
+		pose_from_file( pose, "core/conformation/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
 
 		// get info from pose
 		std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( pose ));
@@ -342,7 +342,7 @@ public: // test functions
 
 		// Load in pose from pdb
 		Pose pose;
-		pose_from_pdb( pose, pdbfile );
+		pose_from_file( pose, pdbfile , core::import_pose::PDB_file);
 
 		// get info from pose
 		std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( pose ));

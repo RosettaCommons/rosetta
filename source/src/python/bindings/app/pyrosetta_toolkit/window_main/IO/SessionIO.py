@@ -165,7 +165,7 @@ class SessionIO:
         #Load Poses
         if os.path.exists(self.indir+"/pose_1.pdb"):
             self.toolkit.input_class.load_pose(self.indir+"/pose_1.pdb")
-            pose_from_pdb(self.toolkit.native_pose, self.indir+"/native_pose_1.pdb")
+            pose_from_file(self.toolkit.native_pose, self.indir+"/native_pose_1.pdb")
         
         #Load Score +Settings
         OUTFILE = open(self.indir+"/settings.txt", 'r')

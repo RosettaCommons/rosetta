@@ -28,7 +28,7 @@
 #include <utility/excn/Exceptions.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 //#include <core/scoring/ScoreFunction.hh>
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 	core::pose::Pose pose; // starts NULL, coords *never* modified!
 	{
 		std::string pdb=pdbs[0];
-		core::import_pose::pose_from_pdb(pose, pdb);
+		core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
 	}
 	core::kinematics::Jump jump;
 	int jump_num=1; // this assumes there is only 1 jump (2 molecules) in this PDB

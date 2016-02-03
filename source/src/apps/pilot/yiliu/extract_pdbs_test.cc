@@ -42,7 +42,7 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <protocols/moves/Mover.hh>
 

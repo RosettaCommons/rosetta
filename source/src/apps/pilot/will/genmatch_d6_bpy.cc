@@ -23,7 +23,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pack/optimizeH.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -62,7 +62,7 @@ using utility::vector1;
 using ObjexxFCL::string_of;
 using ObjexxFCL::lead_zero_string_of;
 using numeric::min;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using basic::options::option;
 using numeric::min;
 using numeric::max;
@@ -112,7 +112,7 @@ void run() {
 	for(Size ifile = 1; ifile <= infiles.size(); ifile++) {
 		string infile = infiles[ifile];
 		Pose in_fa;
-		pose_from_pdb(in_fa, *fa_residue_set,infile);
+		pose_from_file(in_fa, *fa_residue_set,infile, core::import_pose::PDB_file);
 		for(Size ir = 1; ir <= in_fa.size(); ++ir) {
 			if(in_fa.residue(ir).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(in_fa,ir);
 			if(in_fa.residue(ir).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(in_fa,ir);

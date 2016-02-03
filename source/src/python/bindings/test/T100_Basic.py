@@ -19,9 +19,9 @@ print 'Creating Pose object...'
 pose = Pose()
 
 print 'Pose from PDB...'
-pose = pose_from_pdb("../test/data/test_in.pdb")
+pose = pose_from_file("../test/data/test_in.pdb")
 
-# TODO: rename pose_from_pdb or make_pose_from_sequence to be parallel
+# TODO: rename pose_from_file or make_pose_from_sequence to be parallel
 
 print 'Building Pose from sequence...'
 pose3 = Pose()

@@ -23,7 +23,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/conformation/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 
 
 	core::pose::Pose mypose;
-	core::import_pose::pose_from_pdb (mypose, option[in::file::s]()[1]);
+	core::import_pose::pose_from_file (mypose, option[in::file::s]()[1]);
 	//const core::Size nres = mypose.n_residue();
 	printf("Import complete.\n"); fflush(stdout);
 

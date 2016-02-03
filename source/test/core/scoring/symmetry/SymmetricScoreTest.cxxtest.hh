@@ -263,7 +263,7 @@ public:
 		//std::cout << " Testing score: " << scoring::name_from_score_type(st) << "..." << std::endl;
 
 		Pose pose;
-		core::import_pose::pose_from_pdb(pose, pdb_file_name);
+		core::import_pose::pose_from_file(pose, pdb_file_name, core::import_pose::PDB_file);
 		core::pose::symmetry::make_symmetric_pose( pose );
 
 		SymmetricScoreFunction scorefxn;
@@ -308,7 +308,7 @@ public:
 		//std::cout << " Testing score: " << scoring::name_from_score_type(st) << "..." << std::endl;
 
 		Pose pose;
-		core::import_pose::pose_from_pdb(pose, pdb_file_name);
+		core::import_pose::pose_from_file(pose, pdb_file_name, core::import_pose::PDB_file);
 
 		SymmetricScoreFunction scorefxn;
 		scorefxn.set_weight(st, 1.0 );
@@ -331,11 +331,11 @@ public:
 	{
 		Real score_delta_threshold = 1.2;
 		Pose pose, pose_asym;
-		core::import_pose::pose_from_pdb(pose, "core/scoring/symmetry/test_in.pdb" );
+		core::import_pose::pose_from_file(pose, "core/scoring/symmetry/test_in.pdb" , core::import_pose::PDB_file);
 		core::pose::symmetry::make_symmetric_pose( pose );
 
 		// Note: hydrogens have been stripped from both pdbs so they are placed using the same logic
-		core::import_pose::pose_from_pdb(pose_asym, "core/scoring/symmetry/symm_test.pdb" );
+		core::import_pose::pose_from_file(pose_asym, "core/scoring/symmetry/symm_test.pdb" , core::import_pose::PDB_file);
 
 		pose.dump_pdb( "test_sym_vs_asym_score_sym_pose.pdb" );
 		pose_asym.dump_pdb( "test_sym_vs_asym_score_asym_pose.pdb" );

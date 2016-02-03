@@ -86,8 +86,8 @@ public:
 		msr_1_(5, protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue )),
 		msr_2_(5, protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ))
 	{
-		core::import_pose::pose_from_pdb( match1_, basic::options::option[match1].value() );
-		core::import_pose::pose_from_pdb( match2_, basic::options::option[match2].value() );
+		core::import_pose::pose_from_file( match1_, basic::options::option[match1].value() , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( match2_, basic::options::option[match2].value() , core::import_pose::PDB_file);
 
 		TR << "//////////////////////////////////////////////////////////////////////////////////////////////" << std::endl << std::endl;
 

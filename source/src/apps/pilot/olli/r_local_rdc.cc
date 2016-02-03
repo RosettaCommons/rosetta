@@ -37,7 +37,7 @@
 
 #include <core/scoring/rms_util.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
@@ -267,7 +267,7 @@ int main( int argc, char** argv ) {
   Pose native;
   //read it
   std::string const native_pdb ( option[ in::file::native ]() );
-  core::import_pose::pose_from_pdb( native, native_pdb );
+  core::import_pose::pose_from_file( native, native_pdb , core::import_pose::PDB_file);
   core::util::switch_to_residue_type_set( native, chemical::CENTROID );
 
   Pose test_pose;

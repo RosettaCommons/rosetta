@@ -275,7 +275,7 @@ def generate_resfile_from_pdb(pdbfilename, resfilename,
 	    TaskFactory
 
 	"""
-	p = pose_from_pdb(pdbfilename)
+	p = pose_from_file(pdbfilename)
 	generate_resfile_from_pose(p, resfilename, pack,design, input_sc, freeze, specific)
 
 ################################################################################
@@ -331,7 +331,7 @@ pdb_filename = options.pdb_filename
 # -create an empty Pose object
 pose = Pose()
 # -load the data from pdb_file into the pose
-pose_from_pdb(pose, pdb_filename)
+pose_from_file(pose, pdb_filename)
 # PDB_out flag
 PDB_out = bool(options.PDB_out)
 

@@ -20,7 +20,7 @@
 
 // Unit headers
 #include <core/import_pose/import_pose_options.fwd.hh>
-#include <core/io/pdb/pdb_dynamic_reader_options.hh>
+#include <core/io/StructFileReaderOptions.hh>
 
 // C++ headers
 #include <string>
@@ -32,7 +32,7 @@ namespace import_pose {
 /// @brief This class contains all of the data which is used in
 /// the process of reading a PDB into a Pose.  There is actually
 /// a substantial amount of data!
-class ImportPoseOptions : public io::pdb::PDB_DReaderOptions
+class ImportPoseOptions : public io::StructFileReaderOptions
 {
 public:
 	ImportPoseOptions();

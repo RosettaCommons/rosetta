@@ -35,7 +35,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/Jump.hh>
@@ -452,7 +452,7 @@ void
 
 		// Read in pose
 		Pose pose;
-		import_pose::pose_from_pdb(pose, file, resi_set);
+		import_pose::pose_from_file(pose, file, resi_set, core::import_pose::PDB_file);
 		// Make a copy so we can dump original resi names at end
 		Pose original_pose = pose;
 

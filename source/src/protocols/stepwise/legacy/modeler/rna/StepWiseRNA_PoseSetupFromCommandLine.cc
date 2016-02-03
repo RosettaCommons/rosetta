@@ -83,7 +83,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/rna/util.hh>
 
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/util.hh>
@@ -148,7 +148,6 @@ using namespace protocols::stepwise::modeler;
 using namespace protocols::stepwise::modeler::rna;
 using namespace protocols::stepwise::legacy::modeler::rna;
 using utility::vector1;
-using io::pdb::dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -607,7 +606,7 @@ setup_simple_full_length_rna_working_parameters(){
 	PoseOP native_pose_OP;
 	if ( option[ in::file::native ].user() ) {
 		native_pose_OP = PoseOP( new Pose );
-		import_pose::pose_from_pdb( *native_pose_OP, *rsd_set, option[ in::file::native ]() );
+		import_pose::pose_from_file( *native_pose_OP, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 		protocols::farna::make_phosphate_nomenclature_matches_mini( *native_pose_OP );
 
 		utility::vector1< core::Size > const native_virtual_res_list = option[ OptionKeys::stepwise::rna::native_virtual_res]();
@@ -871,7 +870,7 @@ setup_pose_setup_class( stepwise::modeler::working_parameters::StepWiseWorkingPa
 	PoseOP native_pose;
 	if ( option[ in::file::native ].user() ) {
 		native_pose = PoseOP( new Pose );
-		import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
+		import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 		TR.Debug << "native_pose->fold_tree(): " << native_pose->fold_tree();
 		TR.Debug << "native_pose->annotated_sequence( true ): " << native_pose->annotated_sequence( true ) << std::endl;
 		protocols::farna::make_phosphate_nomenclature_matches_mini( *native_pose );

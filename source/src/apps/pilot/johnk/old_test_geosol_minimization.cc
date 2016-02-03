@@ -13,7 +13,7 @@
 // Project Headers
 #include <devel/init.hh>
 #include <core/types.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
@@ -87,7 +87,7 @@ main( int argc, char * argv [] )
 	// Build a peptide with multiple aa's, to use as a template for measuring bond lengths and angles...
 	pose::Pose pose;
 	std::string const input_pdb_name ( basic::options::start_file() );
-	core::import_pose::pose_from_pdb( pose, input_pdb_name );
+	core::import_pose::pose_from_file( pose, input_pdb_name , core::import_pose::PDB_file);
 
 	// setting degrees of freedom which can move during minimization - everything
 	kinematics::MoveMap mm_all;

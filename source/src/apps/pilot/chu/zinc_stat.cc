@@ -15,7 +15,7 @@
 
 // Rosetta Headers
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -87,7 +87,7 @@ main( int argc, char * argv [] )
 		std::string base_name = i->base();
 		std::cerr << "starting " << i->name() << std::endl;
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, i->name() );
+		core::import_pose::pose_from_file( pose, i->name() , core::import_pose::PDB_file);
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		(*scorefxn)(pose); //scoring for tenA neighbor graph
 

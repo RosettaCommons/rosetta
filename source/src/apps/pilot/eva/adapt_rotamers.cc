@@ -29,7 +29,7 @@
 #include <basic/options/util.hh>
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -91,8 +91,8 @@ main( int argc, char * argv [] )
 	// read the pose
 	pose::Pose pose_ori;
 	pose::Pose pose_adpt;
-	core::import_pose::pose_from_pdb( pose_ori, option[ adapt_rotamers::ori ] );
-	core::import_pose::pose_from_pdb( pose_adpt, option[ adapt_rotamers::adapting ] );
+	core::import_pose::pose_from_file( pose_ori, option[ adapt_rotamers::ori ] , core::import_pose::PDB_file);
+	core::import_pose::pose_from_file( pose_adpt, option[ adapt_rotamers::adapting ] , core::import_pose::PDB_file);
 
 	typedef conformation::Residue Residue;
 

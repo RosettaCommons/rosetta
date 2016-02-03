@@ -24,7 +24,7 @@
 #include <core/chemical/VariantType.hh>
 //#include <core/chemical/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -81,7 +81,7 @@ main( int argc, char * argv [] )
 
   // read params and poses
 	std::string start_file = option[ OptionKeys::in::file::s ][0];
-	core::import_pose::pose_from_pdb( pose, start_file );
+	core::import_pose::pose_from_file( pose, start_file , core::import_pose::PDB_file);
   string chain = option[ OptionKeys::run::chain ];
   Size pdb_res = option[ OptionKeys::threadsc::nres ];
   string output_fname = option[ OptionKeys::out::file::o ];
@@ -90,7 +90,7 @@ main( int argc, char * argv [] )
   core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
   Size pose_res = pdbinfo->pdb2pose(chain[0], pdb_res);
 	core::pose::add_variant_type_to_pose_residue( pose , chemical::PHOSPHORYLATION, pose_res );
-  core::io::pdb::dump_pdb(pose, output_fname);
+  core::io::pdb::old_dump_pdb(pose, output_fname);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

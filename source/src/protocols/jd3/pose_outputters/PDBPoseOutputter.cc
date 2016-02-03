@@ -19,8 +19,8 @@
 
 //project headers
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/pdb/file_data.hh>
+//#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 
 // ObjexxFCL
 #include <ObjexxFCL/string.functions.hh>
@@ -53,9 +53,15 @@ void PDBPoseOutputter::write_output_pose( LarvalJob const & job, core::pose::Pos
 	std::string out_fname = output_pdb_name( job );
 	utility::io::ozstream ostream( out_fname );
 
-	core::io::pdb::FileData::dump_pdb( pose, ostream );
-	core::io::pdb::extract_scores( pose, ostream );
-	core::io::pdb::extract_extra_scores( pose, ostream );
+	/// Modified by VKM, 31 January 2016, Chemical XRW 2016.	
+	core::io::pdb::dump_pdb(
+		pose,
+		"",
+		true,
+		true,
+		ostream
+	);
+
 }
 
 std::string

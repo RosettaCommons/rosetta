@@ -14,7 +14,7 @@
 // core headers
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -182,7 +182,6 @@ min_rotamers( RotVec & rotamers,  core::scoring::ScoreFunctionOP scrfxn, std::st
 		}
 
 		// output starting pose
-		//core::io::pdb::dump_pdb( pose, start_filename );
 
 		// score the pose
 		Real orig_ener( (*scrfxn)( pose ) );
@@ -215,7 +214,6 @@ min_rotamers( RotVec & rotamers,  core::scoring::ScoreFunctionOP scrfxn, std::st
 		Real min_ener( pose.energies().total_energy() );
 
 		// output ending pose
-		//core::io::pdb::dump_pdb( pose, end_filename );
 
 		std::cout << "MIN ENER: " << min_ener << " found in " << iter << " steps" << std::endl;
 
@@ -682,9 +680,6 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 		final_name << "final.pdb";
 		*/
 		//std::string final_filename( final_name.str() );
-
-		// Dump a pdb
-		//core::io::pdb::dump_pdb( pose, final_filename );
 
 		//set energy barrier to stop at
 		Real cut_off_ener (final_rotamers[i].get_energy() + 0.5);

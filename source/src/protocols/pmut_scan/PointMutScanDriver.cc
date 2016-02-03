@@ -89,7 +89,7 @@ using namespace core::pack::task::operation;
 using namespace core::pack::task;
 
 using namespace protocols;
-using namespace ObjexxFCL::format;
+using namespace ObjexxFCL;
 using namespace utility;
 
 
@@ -226,7 +226,7 @@ void PointMutScanDriver::read_in_structures() {
 	utility::vector1< std::string >::iterator input_pdb_filename, last_pdb;
 	for ( input_pdb_filename = pdb_file_names_.begin(), last_pdb = pdb_file_names_.end(); input_pdb_filename != last_pdb; ++input_pdb_filename ) {
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *input_pdb_filename );
+		core::import_pose::pose_from_file( pose, *input_pdb_filename , core::import_pose::PDB_file);
 		input_poses_.push_back( pose );
 	}
 
@@ -690,7 +690,7 @@ void PointMutScanDriver::make_mutants() {
 
 	// print out a header to the terminal
 	if ( MPI_rank_ == 0 ) {
-		TR << A( "mutation" ) << X(3) << A( "mutation_PDB_numbering" ) << X(3) << A( "average_ddG" ) << X(3) << A( "average_total_energy" ) << std::endl;
+		TR << format::A( "mutation" ) << format::X(3) << format::A( "mutation_PDB_numbering" ) << format::X(3) << format::A( "average_ddG" ) << format::X(3) << format::A( "average_total_energy" ) << std::endl;
 	}
 
 	for ( Size ii=1; ii <= mutants_list_.size(); ++ii ) {
@@ -820,7 +820,7 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 		std::string final_mutation_string_PDB_numbering = out.str();
 
 
-		TR << final_mutation_string << X(3) << final_mutation_string_PDB_numbering << X(3) << F( 9,3,ddG_mutation ) << X(3) << F( 9,2,average_mutant_score ) << std::endl;
+		TR << final_mutation_string << format::X(3) << final_mutation_string_PDB_numbering << format::X(3) << format::F( 9,3,ddG_mutation ) << format::X(3) << format::F( 9,2,average_mutant_score ) << std::endl;
 
 
 		/*TR << "native poses total energies: ";

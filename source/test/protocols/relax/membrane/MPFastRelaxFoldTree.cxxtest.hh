@@ -62,14 +62,14 @@ public: // test functions
 
 		// Load in 1C3W (Bacteriorhodopsin) Test case: single chain
 		pose_1c3w_ = core::pose::PoseOP( new Pose() );
-		pose_from_pdb( *pose_1c3w_, "protocols/membrane/1C3W_TR_A.pdb" );
+		pose_from_file( *pose_1c3w_, "protocols/membrane/1C3W_TR_A.pdb" , core::import_pose::PDB_file);
 		std::string spanfile = "protocols/membrane/1C3W_A.span";
 		AddMembraneMoverOP add_memb1( new AddMembraneMover( spanfile ) );
 		add_memb1->apply( *pose_1c3w_ );
 
 		// Load in 2mpn (Inner membrane protein YgaP) Test case: two chains (docking...?)
 		pose_2mpn_ = core::pose::PoseOP( new Pose() );
-		pose_from_pdb( *pose_2mpn_, "protocols/relax/membrane/2mpn_tr_native.pdb" );
+		pose_from_file( *pose_2mpn_, "protocols/relax/membrane/2mpn_tr_native.pdb" , core::import_pose::PDB_file);
 		std::string spanfile2 = "protocols/relax/membrane/2mpn_tr.span";
 		AddMembraneMoverOP add_memb2( new AddMembraneMover( spanfile2 ) );
 		add_memb2->apply( *pose_2mpn_ );

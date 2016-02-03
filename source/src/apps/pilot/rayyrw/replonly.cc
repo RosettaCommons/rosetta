@@ -51,7 +51,7 @@ main (int argc, char *argv[])
 		chemical::ResidueTypeSetCAP centroid_residue_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::CENTROID );
 
 	//Will changed the sequence of the argument here by checking out src/core/io/pdb/pose_io.hh
-		core::import_pose::pose_from_pdb( pose, *centroid_residue_set, basic::options::option[basic::options::OptionKeys::in::file::s][1]) ;
+		core::import_pose::pose_from_file( pose, *centroid_residue_set, basic::options::option[basic::options::OptionKeys::in::file::s][1]) ;
 
 
 		score->show(pose);

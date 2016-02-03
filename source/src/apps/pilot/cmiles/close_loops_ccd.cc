@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
   FragSetOP frag_sm = core::fragment::FragmentIO().read_data(option[in::file::frag3]());
   FragSetOP frag_lg = core::fragment::FragmentIO().read_data(option[in::file::frag9]());
 
-  PoseOP pose = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::s]()[1]);
+  PoseOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
   SwitchResidueTypeSetMover to_centroid(core::chemical::CENTROID);
   to_centroid.apply(*pose);
   pose->dump_pdb("starting_ccd.pdb");

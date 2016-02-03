@@ -61,7 +61,7 @@ public: // test functions
 		      
         // Load in pose from pdb
         pose_ = core::pose::PoseOP( new Pose() );
-        pose_from_pdb( *pose_, "protocols/membrane/1C3W_TR_A.pdb" );
+        pose_from_file( *pose_, "protocols/membrane/1C3W_TR_A.pdb" , core::import_pose::PDB_file);
 		
 		// Add virtual atom to the root of the pose
 		setup_virtual( *pose_ );

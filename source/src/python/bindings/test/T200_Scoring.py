@@ -13,7 +13,7 @@ import os; os.chdir('.test.output')
 
 
 print 'Scoring ----------------------------------------------'
-pose = pose_from_pdb("../test/data/test_fragments.pdb")
+pose = pose_from_file("../test/data/test_fragments.pdb")
 
 print 'Creating standard fullatom score function and scoring'
 scorefxn = create_score_function('talaris2013')
@@ -81,7 +81,7 @@ for i in range(1, rosetta.core.scoring.end_of_score_type_enumeration+1):
 print
 print 'identifying hydrogen bonds in structure'
 
-pose = pose_from_pdb("../test/data/test_in.pdb")
+pose = pose_from_file("../test/data/test_in.pdb")
 scorefxn = get_fa_scorefxn() #  create_score_function('standard')
 scorefxn(pose)
 

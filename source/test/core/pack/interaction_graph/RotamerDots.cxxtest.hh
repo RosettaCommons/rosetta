@@ -69,7 +69,7 @@ public:
 		// --- Pose ---
 		// since this is a test suite, we don't want to read in PDB files from the command line.  just hardcode the tests to use
 		// a predefined test PDB file
-		core::import_pose::pose_from_pdb( pose, "core/pack/1l2y_renameH.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pack/1l2y_renameH.pdb" , core::import_pose::PDB_file);
 
 		num_bytes = 21;
 		exclude_hydrogens = true;
@@ -803,7 +803,7 @@ public:
 		using namespace core::id;
 
 		pose::Pose second_pose;
-		core::import_pose::pose_from_pdb( second_pose, "core/pack/1FKB.pdb.gz" );
+		core::import_pose::pose_from_file( second_pose, "core/pack/1FKB.pdb.gz" , core::import_pose::PDB_file);
 
 		utility::vector1< RotamerDotsOP > rdots( 107 );
 		utility::vector1< InvRotamerDotsOP > invdots( 107 );

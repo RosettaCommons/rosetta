@@ -31,7 +31,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/util.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
@@ -1662,7 +1662,7 @@ void RemodelLoopMover::loophash_stage(
 		ResidueTypeSetCOP residue_set(
 			ChemicalManager::get_instance()->residue_type_set( CENTROID )
 		);
-		core::io::pdb::pose_from_pose(*pose_for_rt, constantPose, *residue_set, residue_indices);
+		core::io::pose_from_pose(*pose_for_rt, constantPose, *residue_set, residue_indices);
 
 		core::kinematics::FoldTree f;
 		f.simple_tree(pose_for_rt->total_residue());
@@ -3293,7 +3293,7 @@ void RemodelLoopMover::set_starting_pdb(Pose & pose){
 	using namespace basic::options;
 	using namespace OptionKeys::remodel;
 	using core::Size;
-	PoseOP inputPose = core::import_pose::pose_from_pdb(option[OptionKeys::remodel::staged_sampling::starting_pdb]);
+	PoseOP inputPose = core::import_pose::pose_from_file(option[OptionKeys::remodel::staged_sampling::starting_pdb], core::import_pose::PDB_file);
 	assert(inputPose->total_residue() == pose.total_residue());
 	for ( Size ii=2; ii<pose.total_residue(); ++ii ) {
 		pose.set_phi(ii,inputPose->phi(ii));

@@ -28,7 +28,7 @@ public:
 
 	void test_serialization() {
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose, "core/conformation/4gatA.pdb");
+		core::import_pose::pose_from_file(pose, "core/conformation/4gatA.pdb", core::import_pose::PDB_file);
 		core::conformation::Residue original(pose.residue(1));
 		std::string serialized_data(protocols::features::serialize_residue_xyz_coords(original));
 		utility::vector1< numeric::xyzVector<core::Real> > coord_data(protocols::features::deserialize_xyz_coords(serialized_data,original.natoms()));

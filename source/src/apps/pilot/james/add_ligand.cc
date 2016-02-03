@@ -17,7 +17,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>
 #include <basic/options/after_opts.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -88,8 +88,8 @@ main( int argc, char* argv[] ) {
 	std::string query_pose_file  = option[ in::file::s ]()[1];
 	std::string ligand_pose_file = option[ in::file::template_pdb ]()[1];
 
-	core::import_pose::pose_from_pdb( query_pose , query_pose_file );
-	core::import_pose::pose_from_pdb( ligand_pose, ligand_pose_file );
+	core::import_pose::pose_from_file( query_pose , query_pose_file , core::import_pose::PDB_file);
+	core::import_pose::pose_from_file( ligand_pose, ligand_pose_file , core::import_pose::PDB_file);
 
 	tr.Error << ligand_pose.fold_tree() << std::endl;
 

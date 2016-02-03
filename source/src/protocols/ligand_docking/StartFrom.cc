@@ -29,8 +29,9 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pdb_dynamic_reader.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
+#include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
+#include <core/io/pdb/pdb_reader.hh>
 
 // Utility Headers
 
@@ -329,14 +330,14 @@ void StartFrom::parse_pdb_file(std::string const & filename, std::string const &
 	}
 	std::string file_content;
 	utility::slurp( file, file_content );
-	core::io::pdb::FileData fd = core::io::pdb::PDB_DReader::createFileData( file_content );
-
-	utility::vector1< core::io::pdb::ResidueInformation > rinfos;
-	fd.create_working_data( rinfos );
+	core::io::StructFileRepOptions options;
+	core::io::StructFileRep sfr( core::io::pdb::create_sfr_from_pdb_file_contents( file_content ) );
+	utility::vector1< core::io::ResidueInformation > rinfos;
+	core::io::pose_from_sfr::create_working_data( options, sfr, rinfos );
 
 	for ( core::Size rr(1); rr <= rinfos.size(); ++rr ) {
-		for ( core::Size aa(1); aa <= rinfos[rr].atoms.size(); ++aa ) {
-			core::io::pdb::AtomInformation const & atom( rinfos[rr].atoms[aa] );
+		for ( core::Size aa(1); aa <= rinfos[rr].atoms().size(); ++aa ) {
+			core::io::AtomInformation const & atom( rinfos[rr].atoms()[aa] );
 			std::string element( utility::stripped_whitespace( atom.element ) );
 			std::string name( utility::stripped_whitespace( atom.name ) );
 			if ( element.size() == 0 ) {

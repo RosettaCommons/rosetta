@@ -54,7 +54,7 @@ int main(int argc, char * argv[]) {
 
   pose::Pose init_pose;
   if (option[in::file::native].user()) {
-    core::import_pose::pose_from_pdb(init_pose, option[in::file::native]());
+    core::import_pose::pose_from_file(init_pose, option[in::file::native](), core::import_pose::PDB_file);
   }
 
   (*sfstd)(init_pose);

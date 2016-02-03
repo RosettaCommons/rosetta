@@ -31,7 +31,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
@@ -66,7 +66,7 @@ using namespace core;
 using namespace protocols;
 
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 struct PoseAndData {
 public:
@@ -107,7 +107,7 @@ void readPoseAndData_PDB(
 ) {
 
 	pad.set_file_name( filename );
-	core::import_pose::pose_from_pdb( pad.pose, pad.filename );
+	core::import_pose::pose_from_file( pad.pose, pad.filename , core::import_pose::PDB_file);
 	pad.energy = (*scorefxn)(pad.pose);
 	pad.rms = -1;
 	pad.silent_index = -1;
@@ -150,7 +150,7 @@ void fillPoseAndDataList(
 	bool havenative = false;
 	pose::PoseOP native_pose = new pose::Pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() ); // default is standard fullatom residue_set
+		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file); // default is standard fullatom residue_set
 		havenative = true;
 	}
 
@@ -277,7 +277,7 @@ void processChildren(
 	bool havenative = false;
 	pose::PoseOP native_pose = new pose::Pose;
 	if ( option[ in::file::native ].active() ) {
-		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() ); // default is standard fullatom residue_set
+		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file); // default is standard fullatom residue_set
 		havenative = true;
 	}
 
@@ -344,7 +344,7 @@ void processChildrenIntensification(
 	bool havenative = false;
 	pose::PoseOP native_pose = new pose::Pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() ); // default is standard fullatom residue_set
+		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file); // default is standard fullatom residue_set
 		havenative = true;
 	}
 

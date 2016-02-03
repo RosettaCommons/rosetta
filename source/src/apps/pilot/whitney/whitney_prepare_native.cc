@@ -14,7 +14,7 @@
 #include <iomanip>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -77,7 +77,7 @@ main( int argc, char * argv [] )
 	// create pose for native pose from pdb
 	pose::Pose native_pose;
 	std::string const input_pdb_name ( basic::options::start_file() );
-	core::import_pose::pose_from_pdb( native_pose, input_pdb_name );
+	core::import_pose::pose_from_file( native_pose, input_pdb_name , core::import_pose::PDB_file);
 
 	(*scorefxn)(native_pose);
 	native_pose.dump_scored_pdb( "init_pose.pdb", *scorefxn );

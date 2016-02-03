@@ -56,7 +56,7 @@ public:
 
 	void setUp(){
 		core_init();
-		core::import_pose::pose_from_pdb(pose, "protocols/antibody/aho_with_antigen.pdb"); //AHO renumbered pose
+		core::import_pose::pose_from_file(pose, "protocols/antibody/aho_with_antigen.pdb", core::import_pose::PDB_file); //AHO renumbered pose
 		ab_info = AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) );
 
 	}

@@ -136,7 +136,7 @@ morph_pdbs_test()
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 	for ( Size n = 1; n <= infiles.size(); n++ ) {
 		std::string infile  = infiles[ n ];
-		import_pose::pose_from_pdb( pose, *rsd_set_op, infile );
+		import_pose::pose_from_file( pose, *rsd_set_op, infile , core::import_pose::PDB_file);
 		poses.push_back( pose.clone() );
 	}
 

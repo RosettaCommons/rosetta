@@ -60,7 +60,7 @@ int main( int argc, char * argv [] ) {
 	devel::init(argc, argv);
 
 	core::pose::PoseOP pose = new core::pose::Pose();
-	core::import_pose::pose_from_pdb( *pose, "./5A_low_1");
+	core::import_pose::pose_from_file( *pose, "./5A_low_1", core::import_pose::PDB_file);
 
 
 	core::scoring::ScoreFunctionCOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "mm_std") ;

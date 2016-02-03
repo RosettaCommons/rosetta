@@ -194,7 +194,7 @@ AppendAssemblyMover::apply(
 
 		////**** Initialize the partner pose ****////
 		if ( option[OptionKeys::sewing::partner_pdb].user() ) {
-			partner_pose_ = core::import_pose::pose_from_pdb(option[OptionKeys::sewing::partner_pdb].value());
+			partner_pose_ = core::import_pose::pose_from_file(option[OptionKeys::sewing::partner_pdb].value(), core::import_pose::PDB_file);
 		}
 
 		hash_pdb_model(pdb_model);

@@ -26,8 +26,7 @@
 #include <core/conformation/signals/IdentityEvent.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.hh>
-
-
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
 
 
@@ -127,7 +126,7 @@ public:
 		test::UTracer UT("core/conformation/test_simple_conformation.u");
 
 		//pose::Pose pose;
-		//pose_from_pdb( pose, "core/conformation/test_in.pdb" );
+		//pose_from_file( pose, "core/conformation/test_in.pdb" , core::import_pose::PDB_file);
 		pose::Pose pose( create_test_in_pdb_pose());
 
 		kinematics::FoldTree f( pose.total_residue() );
@@ -193,7 +192,7 @@ public:
 		ResidueOP ala_rsd( ResidueFactory::create_residue( residue_set->name_map( "ALA" ) ) );
 
 		//Pose pose;
-		//pose_from_pdb( pose, "core/conformation/test_in.pdb" );
+		//pose_from_file( pose, "core/conformation/test_in.pdb" , core::import_pose::PDB_file);
 		pose::Pose pose( create_test_in_pdb_pose());
 		ConformationOP conf_op = pose.conformation().clone();
 		Conformation & conf = *conf_op;

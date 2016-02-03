@@ -244,7 +244,7 @@ int main( int argc, char * argv [] )
   
   for( Size i = 1; i <= inputs.size(); ++i ){
     pose::Pose pose;
-    //import_pose::pose_from_pdb( pose, *rsd_set, inputs[i].pdbname ); 
+    //import_pose::pose_from_file( pose, *rsd_set, inputs[i].pdbname , core::import_pose::PDB_file); 
     std::cout << "Reading input " << i << std::endl;
     pose = pose_from_scratch( inputs[i] );
     scan_Evalue( pose, score_in, rsd_set, rotlib, inputs[i] );

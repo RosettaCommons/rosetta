@@ -39,7 +39,7 @@
 #include <core/fragment/FragSet.hh>
 #include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
@@ -2026,7 +2026,7 @@ PoseWrap posewrap_from_command_line(string symm_def_template = "", string symm_d
 			if(tag.size() > 1) tag += "-";
 			tag += utility::file_basename(posefile.substr(0,posefile.size()-4));
 		}
-		core::io::pdb::pose_from_pdb(tmp,posefile);
+		core::io::pdb::pose_from_file(tmp,posefile, core::import_pose::PDB_file);
 		filepick.push_back(fp);
 		// TR << pdbs[i] << " " << select_string(pdbs[i]) << std::endl;
 		poses.push_back( tmp );
@@ -3971,7 +3971,7 @@ void* doit_refine(void* /*x = NULL*/) {
 			pw.check_scattach_res();
 
 			Pose ref;
-			pose_from_pdb(ref,fname);
+			pose_from_file(ref,fname, core::import_pose::PDB_file);
 			for(Size ir = 1; ir <= pw.pose.n_residue(); ++ir) {
 				pw.pose.replace_residue(ir,ref.residue(ir),false);
 				for(Size ia = 1; ia <= ref.residue(ir).natoms(); ++ia) {

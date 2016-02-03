@@ -38,7 +38,7 @@ public:
 
 	virtual void setUp() {
 		pose = pose::PoseOP( new pose::Pose() );
-		core::import_pose::pose_from_pdb(*pose, "test_in.pdb");
+		core::import_pose::pose_from_file(*pose, "test_in.pdb", core::import_pose::PDB_file);
 
 		movemap = kinematics::MoveMapOP( new kinematics::MoveMap() );
 		movemap->set_chi( true );

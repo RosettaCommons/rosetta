@@ -60,7 +60,7 @@ public: // tests
 		using namespace core::scoring::symmetry;
 
 		Pose pose;
-		core::import_pose::pose_from_pdb(pose, "core/scoring/symmetry/test_in.pdb");
+		core::import_pose::pose_from_file(pose, "core/scoring/symmetry/test_in.pdb", core::import_pose::PDB_file);
 
 		core::pose::Pose symm_pose( pose );
 		std::string symm_def("core/scoring/symmetry/sym_def.dat");

@@ -178,7 +178,7 @@ lariat_modeling ()
 	std::string pdb_name;
 	if ( option[ in::file::native ].user() ) {
 		pdb_name = option[in::file::native]();
-		import_pose::pose_from_pdb ( pose, *rsd_set, pdb_name );
+		import_pose::pose_from_file ( pose, *rsd_set, pdb_name );
 		protocols::farna::make_phosphate_nomenclature_matches_mini(pose);
 	} else {
 		utility_exit_with_message("User must specify -native option!");

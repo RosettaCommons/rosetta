@@ -290,7 +290,7 @@ is_canonical_D_aa( AA aa )
 //////////////////////////////////////////////////////////
 bool
 is_canonical_L_aa( AA aa){
-	if ( aa>=first_l_aa && aa<=num_canonical_aas) return true;
+	if ( aa>=first_l_aa && aa<=num_canonical_aas ) return true;
 	return false;
 }
 

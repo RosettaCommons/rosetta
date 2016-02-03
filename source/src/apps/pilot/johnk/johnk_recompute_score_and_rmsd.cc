@@ -17,7 +17,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -72,7 +72,7 @@ main( int argc, char * argv [] )
 
 	// create pose from pdb
 	pose::Pose ref_pose;
-	core::import_pose::pose_from_pdb( ref_pose, ref_decoy_fname );
+	core::import_pose::pose_from_file( ref_pose, ref_decoy_fname , core::import_pose::PDB_file);
 	(*scorefxn)(ref_pose);
 	core::Real ref_score = ref_pose.energies().total_energies()[ total_score ];
 
@@ -89,7 +89,7 @@ main( int argc, char * argv [] )
 		TR << "Processing decoy " << curr_decoy_fname << std::endl;
 
 		pose::Pose curr_pose;
-		core::import_pose::pose_from_pdb( curr_pose, curr_decoy_fname );
+		core::import_pose::pose_from_file( curr_pose, curr_decoy_fname , core::import_pose::PDB_file);
 		(*scorefxn)(curr_pose);
 
 		core::Real score_diff = curr_pose.energies().total_energies()[ total_score ] - ref_score;

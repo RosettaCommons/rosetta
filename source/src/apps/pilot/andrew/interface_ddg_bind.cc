@@ -429,7 +429,7 @@ InterfaceDDGBindJobInputter::pose_from_job( core::pose::Pose & pose, protocols::
 		InterfaceDDGBindInnerJobOP reference_job( inner_job->reference_job() );
 		if ( ! reference_job || ! reference_job->get_pose() ) {
 			utility::file::FileName const & fname( reference_job ? reference_job->input_pdb() : inner_job->input_pdb() );
-			core::import_pose::pose_from_pdb( pose, fname );
+			core::import_pose::pose_from_file( pose, fname , core::import_pose::PDB_file);
 			core::pose::PoseCOP pose_cop( core::pose::PoseOP( new core::pose::Pose( pose ) ));
 			if ( reference_job ) {
 				protocols::jd2::JobOP dummy_job( new protocols::jd2::Job( reference_job, 1 ));

@@ -50,7 +50,7 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
@@ -124,7 +124,7 @@ main( int argc, char* argv [] )
 	// initialize native pose (if user specifies to do so)
 	core::pose::Pose native_pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose, *rsd_set, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
 	utility::vector1< FileName > pdb_file_names;
@@ -136,7 +136,7 @@ main( int argc, char* argv [] )
 				it != end;
 				++it ) {
 		core::pose::Pose target_pose;
-		core::import_pose::pose_from_pdb( target_pose, *rsd_set, (std::string) *it );
+		core::import_pose::pose_from_file( target_pose, *rsd_set, (std::string) *it , core::import_pose::PDB_file);
 		if ( !cstset_ ) {
 			cstset_ = ConstraintIO::read( cstfile, new ConstraintSet, target_pose );
 		} else {

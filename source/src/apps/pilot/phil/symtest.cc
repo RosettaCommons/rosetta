@@ -108,7 +108,7 @@
 // #include <core/init/init.hh>
 #include <devel/init.hh>
 
-// #include <core/io/pdb/pose_io.hh>
+// #include <core/io/pdb/pdb_writer.hh>
 
 // #include <utility/vector1.hh>
 
@@ -159,8 +159,8 @@
 // using std::string;
 // using namespace ObjexxFCL;
 // using namespace ObjexxFCL::format;
-// using core::import_pose::pose_from_pdb;
-// using io::pdb::dump_pdb; // deprecated though
+// using core::import_pose::pose_from_file;
+// using io::pdb::old_dump_pdb; // deprecated though
 static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phil.symtest" );
 
 
@@ -278,7 +278,7 @@ bk_test()
 {
 	// load monomer
 	Pose monomer;
-	pose_from_pdb( monomer, start_file() );
+	pose_from_file( monomer, start_file() , core::import_pose::PDB_file);
 
 	monomer.dump_pdb("monomer.pdb");
 

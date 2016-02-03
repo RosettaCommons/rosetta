@@ -17,7 +17,7 @@
 #include <protocols/moves/PyMolMover.hh>
 #include <core/pose/Pose.hh>
 //#include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -53,7 +53,7 @@ int main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb(pose, "src/python/bindings/test/data/test_in.pdb");
+	core::import_pose::pose_from_file(pose, "src/python/bindings/test/data/test_in.pdb", core::import_pose::PDB_file);
 
 	protocols::moves::AddPyMolObserver( pose );
 	for(int j=0; j<32; j++) {

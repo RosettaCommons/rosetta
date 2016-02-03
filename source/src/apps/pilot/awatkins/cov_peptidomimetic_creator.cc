@@ -207,8 +207,8 @@ CovalentPeptidomimeticCreator::apply(
 			option[ cov_creator::peptide_pdb ].user() ) {
 		pose.clear();
 
-		import_pose::pose_from_pdb( protein, option[ cov_creator::protein_pdb ].value() );
-		import_pose::pose_from_pdb( peptide, option[ cov_creator::peptide_pdb ].value() );
+		import_pose::pose_from_file( protein, option[ cov_creator::protein_pdb ].value() , core::import_pose::PDB_file);
+		import_pose::pose_from_file( peptide, option[ cov_creator::peptide_pdb ].value() , core::import_pose::PDB_file);
 
 		runtime_assert( protein.conformation().num_chains() == 1 );
 

@@ -332,7 +332,7 @@ void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP tag,
 	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data_map );
 	} else if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
+		core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 	} else {
 		utility_exit_with_message("Not reference structure defined! Use [reference_name] or [-in::file::native] ");
 	}

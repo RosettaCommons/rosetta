@@ -64,7 +64,7 @@ public:
 		TR << "pose object, or that refence pose numbers were not properly initialized." << std::endl;
 		TR << "Importing 1AFO_AB.pdb." << std::endl;
 		core::pose::PoseOP pose(new core::pose::Pose);
-		core::import_pose::pose_from_pdb( *pose, "core/pose/reference_pose/1AFO_AB.pdb" );
+		core::import_pose::pose_from_file( *pose, "core/pose/reference_pose/1AFO_AB.pdb" , core::import_pose::PDB_file);
 
 		TR << "Setting up reference pose from imported pose." << std::endl;
 		pose->reference_pose_from_current("refpose1");
@@ -88,7 +88,7 @@ public:
 		TR << "residue indices when we deleted a residue." << std::endl;
 		TR << "Importing 1AFO_AB.pdb." << std::endl;
 		core::pose::PoseOP pose(new core::pose::Pose);
-		core::import_pose::pose_from_pdb( *pose, "core/pose/reference_pose/1AFO_AB.pdb" );
+		core::import_pose::pose_from_file( *pose, "core/pose/reference_pose/1AFO_AB.pdb" , core::import_pose::PDB_file);
 
 		core::Size const nres_original( pose->n_residue() );
 		TR << "There are " << nres_original << " residues in the original pose." << std::endl;

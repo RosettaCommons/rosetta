@@ -21,8 +21,8 @@
 #include <protocols/loops/ccd_closure.hh>
 #include <protocols/relax_protocols.hh>
 #include <core/sequence/MatrixScoringScheme.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/pdb_writer.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/id/AtomID.hh>
 #include <utility/file/FileName.hh>
 #include <utility/excn/Exceptions.hh>
@@ -43,7 +43,6 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
 
-#include <core/io/pdb/pdb_dynamic_reader.hh>
 //#include <core/chemical/residue_io.hh>
 
 #include <core/scoring/etable/Etable.hh>
@@ -81,7 +80,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
@@ -122,7 +121,7 @@ using namespace utility;
 
 using utility::vector1;
 
-using core::io::pdb::dump_pdb;
+using core::io::pdb::old_dump_pdb;
 
 
 float cost(	vector1< vector1< float >  > &quality_vs_ir,
@@ -178,7 +177,7 @@ main( int argc, char * argv [] )
 		std::cout << it->id() << std::endl;
 
 		 pose::Pose pose;
-		 core::import_pose::pose_from_pdb(pose, it->id() + ".pdb.super.pdb" );
+		 core::import_pose::pose_from_file(pose, it->id() + ".pdb.super.pdb" , core::import_pose::PDB_file);
 
 		 structures.push_back( pose );
 		 std::cout << "Adding " <<  it->id() << "  " << structures.size() << " Size" << pose.total_residue() << std::endl;

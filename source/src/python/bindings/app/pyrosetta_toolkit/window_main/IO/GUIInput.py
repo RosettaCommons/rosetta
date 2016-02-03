@@ -150,9 +150,9 @@ class GUIInput:
             
         #Load Pose
         if self.nonstandard_ResidueTypeSet:
-            self.toolkit.pose.assign(pose_from_pdb(self.nonstandard_ResidueTypeSet, path))
+            self.toolkit.pose.assign(pose_from_file(self.nonstandard_ResidueTypeSet, path))
         else:
-            pose_from_pdb(self.toolkit.pose, self.pdb_path.get())
+            pose_from_file(self.toolkit.pose, self.pdb_path.get())
         self.toolkit.native_pose.assign(self.toolkit.pose); #Set native pose for RMSD.
 
         print self.toolkit.pose
@@ -187,9 +187,9 @@ class GUIInput:
         """
         p = Pose()
         if self.nonstandard_ResidueTypeSet:
-            p.assign(pose_from_pdb(self.nonstandard_ResidueTypeSet, path))
+            p.assign(pose_from_file(self.nonstandard_ResidueTypeSet, path))
         else:
-            pose_from_pdb(p, self.pdb_path.get())
+            pose_from_file(p, self.pdb_path.get())
         return p
     
     def set_PDBLIST(self):

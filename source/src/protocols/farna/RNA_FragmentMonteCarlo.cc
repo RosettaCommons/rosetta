@@ -34,7 +34,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/stepwise/modeler/align/util.hh> //move this to toolbox/
 #include <protocols/stepwise/modeler/rna/util.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/pose/Pose.hh>
@@ -52,7 +52,6 @@ static basic::Tracer TR( "protocols.farna.RNA_FragmentMonteCarlo" );
 
 using namespace core;
 using namespace ObjexxFCL::format; // AUTO USING NS
-using core::io::pdb::dump_pdb;
 
 namespace protocols {
 namespace farna {
@@ -721,7 +720,6 @@ void
 RNA_FragmentMonteCarlo::apply_chem_shift_data( core::pose::Pose & pose ){
 
 	using namespace core::scoring;
-	using namespace core::io::pdb;
 
 	runtime_assert( options_->use_chem_shift_data() );
 

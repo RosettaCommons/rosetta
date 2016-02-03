@@ -114,7 +114,7 @@ public:
 
 		// read in pose
 		Pose pose(create_test_in_pdb_pose());
-		//core::import_pose::pose_from_pdb( pose, "core/pack/test_in.pdb" );
+		//core::import_pose::pose_from_file( pose, "core/pack/test_in.pdb" , core::import_pose::PDB_file);
 
 		// calculate original score
 		Energy score_orig = scorefxn( pose );

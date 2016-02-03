@@ -31,7 +31,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
@@ -118,7 +118,7 @@ main(int argc, char* argv[]){
 	pose::Pose input_pose;
 	std::string input_pdb_name (basic::options::start_file());
 	std::string input_pdb_atom = input_pdb_name; input_pdb_atom.append("_atom.pdb");
-	core::import_pose::pose_from_pdb(input_pose, input_pdb_atom);
+	core::import_pose::pose_from_file(input_pose, input_pdb_atom, core::import_pose::PDB_file);
 
 	scoring::ScoreFunctionOP scorefxn(get_score_function());
 	(*scorefxn)(input_pose);

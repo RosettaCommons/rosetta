@@ -181,7 +181,7 @@ abego_vector( std::string const & ab )
 }
 
 // gets a remark line, pasting multiple lines together if necessary
-std::string get_remark_line( core::pose::Remarks::const_iterator & it_rem, core::pose::Remarks::const_iterator const & end )
+std::string get_remark_line( core::io::Remarks::const_iterator & it_rem, core::io::Remarks::const_iterator const & end )
 {
 	std::string line = it_rem->value;
 	int num = it_rem->num;
@@ -195,11 +195,11 @@ std::string get_remark_line( core::pose::Remarks::const_iterator & it_rem, core:
 }
 
 /// @brief adds a remark to a Remarks object, splitting it into multiple remarks if it is too long
-void add_remark( core::pose::Remarks & remarks, core::Size const num, std::string const & str_val )
+void add_remark( core::io::Remarks & remarks, core::Size const num, std::string const & str_val )
 {
 	core::Size i = 0;
 	while ( i < str_val.size() ) {
-		core::pose::RemarkInfo remark;
+		core::io::RemarkInfo remark;
 		remark.num = num;
 		int chunksize = str_val.size() - i;
 		bool add_pound = false;
@@ -598,7 +598,7 @@ add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined )
 	}
 	// copy remarks
 	if ( to_add->pdb_info() ) {
-		for ( core::pose::Remarks::const_iterator r=to_add->pdb_info()->remarks().begin(); r!=to_add->pdb_info()->remarks().end(); ++r ) {
+		for ( core::io::Remarks::const_iterator r=to_add->pdb_info()->remarks().begin(); r!=to_add->pdb_info()->remarks().end(); ++r ) {
 			TR.Debug << "Copying remark to new pose: " << r->value << std::endl;
 			if ( !combined->pdb_info() ) {
 				combined->pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( *combined, true ) ) );

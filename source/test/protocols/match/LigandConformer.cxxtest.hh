@@ -105,9 +105,9 @@ public:
 		using namespace core::pose;
 
 		Pose carbaryl_pose;
-		core::import_pose::pose_from_pdb( carbaryl_pose,
+		core::import_pose::pose_from_file( carbaryl_pose,
 			*(ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )),
-			"protocols/match/E1cb_carbaryl_1his_oxy_1bb_10_2.pdb" );
+			"protocols/match/E1cb_carbaryl_1his_oxy_1bb_10_2.pdb", core::import_pose::PDB_file );
 
 		std::string const  at4( "C12" ),  at5( "C9" ),   at6( "C13" );
 		std::string const oat1( "C17" ), oat2( "C19" ), oat3( "C22" ); // orientation atoms, oats
@@ -196,9 +196,9 @@ public:
 		using namespace core::pose;
 
 		Pose carbaryl_pose;
-		core::import_pose::pose_from_pdb( carbaryl_pose,
+		core::import_pose::pose_from_file( carbaryl_pose,
 			*(ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )),
-			"protocols/match/E1cb_carbaryl_1his_oxy_1bb_10_2.pdb" );
+			"protocols/match/E1cb_carbaryl_1his_oxy_1bb_10_2.pdb", core::import_pose::PDB_file );
 
 		std::string const dat1( "C12" ), dat2( "C9" ),  dat3( "C13" );
 		std::string const oat1( "C17" ), oat2( "C19" ), oat3( "C22" ); // orientation atoms, oats

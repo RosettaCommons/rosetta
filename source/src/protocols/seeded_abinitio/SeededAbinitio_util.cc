@@ -48,7 +48,7 @@
 //#include <core/id/AtomID_Map.hh>
 //#include <core/import_pose/import_pose.hh>
 //#include <core/init/init.hh>
-//#include <core/io/pdb/pose_io.hh>
+//
 //#include <core/scoring/rms_util.hh>
 
 #include <core/conformation/ResidueFactory.hh>

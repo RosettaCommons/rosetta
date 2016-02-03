@@ -113,7 +113,7 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
 
 	core::pose::Pose native_pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 	} else {
 		native_pose = pose; // jsut make a copy of the current pose - rmses will be relative to starts
 	}

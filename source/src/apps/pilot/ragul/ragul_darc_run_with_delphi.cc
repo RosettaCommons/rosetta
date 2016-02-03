@@ -134,7 +134,7 @@ int main( int argc, char * argv [] ) {
 
   protocols::pockets::NonPlaidFingerprint npf;
   pose::Pose protein_pose;
-  core::import_pose::pose_from_pdb( protein_pose, input_protein );
+  core::import_pose::pose_from_file( protein_pose, input_protein , core::import_pose::PDB_file);
   pose::Pose bound_pose = protein_pose;
 
   //use input eggshell triplet file to setup nonplaid fingerprint (pocket)
@@ -168,7 +168,7 @@ int main( int argc, char * argv [] ) {
 			std::string const input_ligand_name = input_ligand_list[f];
 			std::cout<<"Reading ligand " << input_ligand_name <<std::endl;
 			core::pose::Pose ligand_pose;
-			core::import_pose::pose_from_pdb( ligand_pose, input_ligand_name );
+			core::import_pose::pose_from_file( ligand_pose, input_ligand_name , core::import_pose::PDB_file);
 			ligand_poses.push_back( ligand_pose );
 		}
 	}
@@ -195,7 +195,7 @@ int main( int argc, char * argv [] ) {
 			}
 			std::cout<< "Reading in pose " << *ligand_pdb << std::endl;
 			core::pose::Pose ligand_pose;
-			core::import_pose::pose_from_pdb( ligand_pose, *ligand_pdb );
+			core::import_pose::pose_from_file( ligand_pose, *ligand_pdb , core::import_pose::PDB_file);
 			ligand_poses.push_back( ligand_pose );
 			ligand_pdb++;
 		}

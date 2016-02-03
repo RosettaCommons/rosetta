@@ -90,7 +90,7 @@ main (int argc, char *argv[]){
 
   devel::init( argc, argv );
   pose::Pose cc3;
-  import_pose::pose_from_pdb(cc3,"input/cc3.pdb"); strip_termini(cc3);
+  import_pose::pose_from_file(cc3,"input/cc3.pdb"); strip_termini(cc3, core::import_pose::PDB_file);
   cc3.set_xyz(AtomID(cc3.residue(1).atom_index("H"),1),Vec(0,0,0));
   cc3.set_xyz(AtomID(cc3.residue(2).atom_index("H"),2),Vec(0,0,1));
 
@@ -98,7 +98,7 @@ main (int argc, char *argv[]){
     string fname = option[in::file::s]()[ifile];
     TR << fname << std::endl;
     pose::Pose pose;
-    import_pose::pose_from_pdb(pose,fname);
+    import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
     if(!strip_termini(pose)) continue;
     if(pose.n_residue() < 40) continue;
 

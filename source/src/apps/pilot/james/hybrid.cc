@@ -36,7 +36,7 @@
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
@@ -133,7 +133,7 @@ poses_from_cmd_line(
 	using std::string;
 	using core::pose::Pose;
 	using utility::file::file_exists;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using namespace core::chemical;
 
 	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
@@ -143,7 +143,7 @@ poses_from_cmd_line(
 	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
 		if ( file_exists(*it) ) {
 			Pose pose;
-			core::import_pose::pose_from_pdb( pose, *rsd_set, *it );
+			core::import_pose::pose_from_file( pose, *rsd_set, *it , core::import_pose::PDB_file);
 			string name = utility::file_basename( *it );
 			name = name.substr( 0, 5 );
 			poses[name] = pose;
@@ -180,7 +180,7 @@ main( int argc, char* argv [] ) {
 	using core::pose::Pose;
 	using utility::vector1;
 	using core::sequence::SequenceAlignment;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using namespace core::chemical;
 	using namespace core::io::silent;
 
@@ -188,7 +188,7 @@ main( int argc, char* argv [] ) {
 	vector1< std::string > align_fns = option[ in::file::alignment ]();
 
 	Pose native_pose;
-	core::import_pose::pose_from_pdb(
+	core::import_pose::pose_from_file(
 		native_pose, *(rsd_set_from_cmd_line()), option[ in::file::native ]()
 	);
 

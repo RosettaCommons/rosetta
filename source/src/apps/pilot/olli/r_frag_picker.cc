@@ -32,7 +32,7 @@
 
 #include <core/scoring/rms_util.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -134,7 +134,7 @@ void make_your_own_alignment( id::SequenceMapping &mapping ) {
 void ThisApplication::setup() {
   //read it
 	std::string pdb_file( option[ pick::f ]() );
-  core::import_pose::pose_from_pdb( aligned_, pdb_file );
+  core::import_pose::pose_from_file( aligned_, pdb_file , core::import_pose::PDB_file);
   //core::util::switch_to_residue_type_set( aligned_, chemical::CENTROID );
 
   //idealize

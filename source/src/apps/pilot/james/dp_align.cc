@@ -32,7 +32,7 @@
 #include <core/sequence/MatrixScoringScheme.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
@@ -118,7 +118,7 @@ main( int argc, char* argv [] )
 			it != end; ++it
 	) {
 			std::string template_id = it->sequence(2).id();
-			core::import_pose::pose_from_pdb(
+			core::import_pose::pose_from_file(
 				template_pose,
 				template_id
 			);

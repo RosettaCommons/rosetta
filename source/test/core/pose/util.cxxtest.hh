@@ -325,7 +325,7 @@ public: // tests
 	void test_unique_chains() {
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "core/pose/2WDQ__tr.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pose/2WDQ__tr.pdb" , core::import_pose::PDB_file);
 
 		utility::vector1< bool > uniq_chains( compute_unique_chains( pose ) );
 

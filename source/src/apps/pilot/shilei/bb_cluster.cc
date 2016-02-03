@@ -18,7 +18,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 			std::string pdbnamei=basic::options::option[ basic::options::OptionKeys::in::file::s ]()[i];
 			//  TR << pdbnamei << endl;
 			pose = core::pose::PoseOP( new core::pose::Pose );
-			core::import_pose::pose_from_pdb( *pose, pdbnamei.c_str() );
+			core::import_pose::pose_from_file( *pose, pdbnamei.c_str() , core::import_pose::PDB_file);
 			PoseVec.push_back(pose);
 		}
 

@@ -53,7 +53,7 @@
 #include <core/conformation/Residue.hh>
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -165,11 +165,11 @@ int main( int argc, char * argv [] ) {
 	protocols::pockets::NonPlaidFingerprint npf;
 
 	pose::Pose protein_pose;
-	core::import_pose::pose_from_pdb( protein_pose, input_protein );
+	core::import_pose::pose_from_file( protein_pose, input_protein , core::import_pose::PDB_file);
 
 	if (option[ pre_align ]()){
 		pose::Pose template_pose;
-		core::import_pose::pose_from_pdb( template_pose, template_pdb );
+		core::import_pose::pose_from_file( template_pose, template_pdb , core::import_pose::PDB_file);
 		protocols::moves::SuperimposeMoverOP sp_mover = new protocols::moves::SuperimposeMover( template_pose );
 		sp_mover->apply( protein_pose );
 		std::string aligned_pose_name = "aligned_pose.pdb";
@@ -267,7 +267,7 @@ int main( int argc, char * argv [] ) {
 	if (option[ trim_pocket ]()){
 		//calc lig_COM and move pock_COM to lig_com of known ligand
 		pose::Pose known_ligand_pose;
-		core::import_pose::pose_from_pdb( known_ligand_pose, known_ligand );
+		core::import_pose::pose_from_file( known_ligand_pose, known_ligand , core::import_pose::PDB_file);
 		core::Size lig_res_num = 0;
 		for ( int j = 1, resnum = known_ligand_pose.total_residue(); j <= resnum; ++j ) {
 			if (!known_ligand_pose.residue(j).is_protein()){
@@ -292,7 +292,7 @@ int main( int argc, char * argv [] ) {
 	}
 
 	pose::Pose small_mol_pose;
-	core::import_pose::pose_from_pdb( small_mol_pose, input_ligand );
+	core::import_pose::pose_from_file( small_mol_pose, input_ligand , core::import_pose::PDB_file);
 	core::pose::Pose original_pose = small_mol_pose;
 	numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_radians(original_pocket_angle_transform[1] ) );
 	numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_radians(original_pocket_angle_transform[2] ) );
@@ -453,7 +453,7 @@ int main( int argc, char * argv [] ) {
 
 	//setup the bound pose
 	pose::Pose bound_pose;
-	core::import_pose::pose_from_pdb( bound_pose, complex_filename );
+	core::import_pose::pose_from_file( bound_pose, complex_filename , core::import_pose::PDB_file);
 
 	//Apply constraint
   if ( bound_pose.residue( bound_pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
@@ -540,7 +540,7 @@ int main( int argc, char * argv [] ) {
 
 		//calculate RMSD and print into a file
 		pose::Pose minimized_ligand_pose;
-		core::import_pose::pose_from_pdb( minimized_ligand_pose, Mini_Lig_File );
+		core::import_pose::pose_from_file( minimized_ligand_pose, Mini_Lig_File , core::import_pose::PDB_file);
 		core::Real rmsd_value = pf.rmsd(original_pose, minimized_ligand_pose);
 		std::string rmsd_file = "rmsd.out";
 		ofstream RMSDfile(rmsd_file.c_str(), ofstream::app);

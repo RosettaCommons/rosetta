@@ -36,7 +36,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/util.hh>
@@ -94,7 +94,7 @@
 
 //silly using/typedef
 #include <core/id/AtomID_Map.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/chemical/AA.hh>
 
 #include <core/pack/task/TaskFactory.hh>

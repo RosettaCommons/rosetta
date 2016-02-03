@@ -311,7 +311,7 @@ core::import_pose::pose_stream::MetaPoseInputStream input
 ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
 
 Pose native;
-core::io::pdb::pose_from_pdb(
+core::io::pdb::pose_from_file(
 native, option[ in::file::native ]()
 );
 

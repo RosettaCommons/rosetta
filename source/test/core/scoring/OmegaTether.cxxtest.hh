@@ -67,7 +67,7 @@ public:
 
 		//Set up the pose
 		pose_->clear();
-		pose_ = core::import_pose::pose_from_pdb("core/scoring/betapose.pdb");
+		pose_ = core::import_pose::pose_from_file("core/scoring/betapose.pdb", core::import_pose::PDB_file);
 		pose_->set_phi(3, 140.0);
 		pose_->set_theta(3, 140.0);
 		pose_->set_psi(3, 140.0);

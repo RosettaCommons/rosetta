@@ -309,7 +309,7 @@ class SamplingManager { // {{{1
 			if (weights[1] == 0) closure_move = "off";
 			if (weights[2] == 0) breadth_move = "off";
 
-			core::import_pose::pose_from_pdb(pose, pdb_path);
+			core::import_pose::pose_from_file(pose, pdb_path, core::import_pose::PDB_file);
 
 			score_function = new ScoreFunction;
 

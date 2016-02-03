@@ -162,9 +162,9 @@ bool StartStructClaimer::read_tag( std::string tag, std::istream& is ) {
 		is >> filename;
 		tr.Debug << type() << " initialized with file " << filename << std::endl;
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( start_pose_,
+		core::import_pose::pose_from_file( start_pose_,
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID ),
-			filename );
+			filename, core::import_pose::PDB_file );
 	} else if ( tag == "PERTURB" ) {
 		is >> perturb_;
 	} else if ( tag =="NO_USE_INPUT_POSE" ) {

@@ -101,9 +101,9 @@ main( int argc, char * argv [] )
 			core::pose::PoseOP native_pose( new core::pose::Pose );
 			core::chemical::ResidueTypeSetCAP rsd_set;
 			if ( option[ in::file::centroid_input ].user() ) {
-				core::import_pose::centroid_pose_from_pdb( *native_pose, option[ in::file::native ]() );
+				core::import_pose::centroid_pose_from_pdb( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 			} else {
-				core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
+				core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 			}
 			fpDock->set_native_pose( native_pose );
 		}

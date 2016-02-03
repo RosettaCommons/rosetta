@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
   // get name of pdb file from command line option -s
   std::string pdb_file = basic::options::option[ basic::options::OptionKeys::in::file::s ]()[1];
   // load pdb file into pose
-  core::import_pose::pose_from_pdb( p, pdb_file );
+  core::import_pose::pose_from_file( p, pdb_file , core::import_pose::PDB_file);
   // initialize score function
   ////core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
   // score pose

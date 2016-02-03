@@ -79,7 +79,7 @@ public:
 		core::pose::Pose ref_pose, restored_pose;
 		core::chemical::ResidueTypeSetCAP rsd =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-		core::import_pose::pose_from_pdb( ref_pose, *rsd, std::string("core/io/bin_silentfile_test.pdb"));
+		core::import_pose::pose_from_file( ref_pose, *rsd, std::string("core/io/bin_silentfile_test.pdb"), core::import_pose::PDB_file);
 		std::string const silent_outfile( "core/io/bin_silentfile_test.out" ); // read file w/ non-ideal geometry
 		utility::file::file_delete( silent_outfile );
 		core::io::silent::SilentFileData sfd;

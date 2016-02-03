@@ -38,7 +38,7 @@
 #include <core/types.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/util/disulfide_util.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>

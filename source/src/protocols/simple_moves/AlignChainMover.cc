@@ -131,7 +131,7 @@ AlignChainMover::parse_my_tag(
 	target_chain( tag->getOption< core::Size >( "target_chain", 0 ) );
 	std::string const fname( tag->getOption< std::string >( "target_name" ) );
 
-	pose( core::import_pose::pose_from_pdb( fname ) );
+	pose( core::import_pose::pose_from_file( fname ) );
 
 	TR<<"source_chain: "<<source_chain()<<" target_chain: "<<target_chain()<<" pdb name: "<<fname<<std::endl;
 }

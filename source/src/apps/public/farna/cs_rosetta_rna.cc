@@ -31,7 +31,7 @@
 #include <core/pose/rna/BasePair.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/init/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/sequence/Sequence.hh>
 
 #include <protocols/toolbox/AtomLevelDomainMap.hh>
@@ -295,7 +295,7 @@ cs_rosetta_rna_pdb(bool perform_minimize)
 	}
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	core::import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(),
 		"current", 600, 600 );

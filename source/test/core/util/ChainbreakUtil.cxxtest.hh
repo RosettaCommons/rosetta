@@ -32,7 +32,7 @@ class ChainbreakUtilTest : public CxxTest::TestSuite {
 
   void setUp() {
     core_init();
-    core::import_pose::pose_from_pdb(pose_, "core/kinematics/test.pdb");
+    core::import_pose::pose_from_file(pose_, "core/kinematics/test.pdb", core::import_pose::PDB_file);
     core::util::switch_to_residue_type_set(pose_, core::chemical::CENTROID);
   }
 

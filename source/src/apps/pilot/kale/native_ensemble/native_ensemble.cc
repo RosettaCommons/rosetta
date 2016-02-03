@@ -68,7 +68,7 @@ using namespace basic::options;
 using core::Size;
 using core::Real;
 using core::pose::Pose;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::pack::task::TaskFactory;
 using core::pack::task::TaskFactoryOP;
 using core::pack::task::operation::RestrictToRepacking;
@@ -572,7 +572,7 @@ int main(int argc, char * argv[]) { // {{{1
 	}
 
 	Pose pose;
-	pose_from_pdb(pose, option[OptionKeys::in::file::s][1].name());
+	pose_from_file(pose, option[OptionKeys::in::file::s][1].name(), core::import_pose::PDB_file);
 
 	if (option[OptionKeys::native_ensemble::loop].active()) {
 		app->set_loop(option[OptionKeys::native_ensemble::loop]());

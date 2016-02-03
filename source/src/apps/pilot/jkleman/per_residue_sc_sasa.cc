@@ -62,7 +62,7 @@ main( int argc, char * argv [] )
 
 		// read in pose
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, option[OptionKeys::in::file::s].value_string() );
+		core::import_pose::pose_from_file( pose, option[OptionKeys::in::file::s].value_string() , core::import_pose::PDB_file);
 
 		// get residue SASA
 		utility::vector1< Real > res_sasa = per_res_sc_sasa( pose );

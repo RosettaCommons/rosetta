@@ -15,7 +15,7 @@
 #include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <devel/init.hh>
@@ -69,7 +69,7 @@ main(int argc, char* argv []){
 	core::Real within = option[ test::within ];
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose , "test.pdb" );
+	core::import_pose::pose_from_file( pose , "test.pdb" , core::import_pose::PDB_file);
 	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 	//SilentStructOP ssin = SilentStructFactory::get_silent_struct_in();
 	if( !sidechainmover ){ //38.0 accorind to util.prof

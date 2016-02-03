@@ -122,7 +122,7 @@ public:
 		core::Real tol = 1e-6;
 
 		pose::Pose pose( create_test_in_pdb_pose() );
-		//core::import_pose::pose_from_pdb( pose,"core/scoring/test_in.pdb");
+		//core::import_pose::pose_from_file( pose,"core/scoring/test_in.pdb", core::import_pose::PDB_file);
 
 		core::scoring::ScoreFunctionOP scorefxn
 			= core::scoring::ScoreFunctionFactory::create_score_function( "score13_env_hb" );

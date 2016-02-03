@@ -30,7 +30,7 @@
 
 
 #include <core/kinematics/RT.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 
 
@@ -165,7 +165,7 @@ main( int argc, char* argv [] )
 	bool has_native(false);
 	pose::Pose native;
 	if (basic::options::option[ basic::options::OptionKeys::in::file::native ].user()) {
-		core::import_pose::pose_from_pdb( native, *rsd_set, basic::options::option[ in::file::native ]()
+		core::import_pose::pose_from_file( native, *rsd_set, basic::options::option[ in::file::native ]()
 		);
 		has_native = true;
 		fasta = native.sequence();

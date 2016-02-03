@@ -34,8 +34,8 @@ int main(int argc, char* argv[]) {
   using namespace std;
   devel::init(argc, argv);
 
-  PoseOP ref = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
-  utility::vector1<PoseOP> models = core::import_pose::poseOPs_from_pdbs(option[OptionKeys::in::file::s]());
+  PoseOP ref = core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
+  utility::vector1<PoseOP> models = core::import_pose::poseOPs_from_files(option[OptionKeys::in::file::s](), core::import_pose::PDB_file);
 
   map<core::Size, core::Size> all_residues;
   for (core::Size i = 1; i <= ref->total_residue(); ++i) {

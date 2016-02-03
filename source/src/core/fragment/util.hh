@@ -29,6 +29,8 @@
 #include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FrameList.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
+#include <core/io/pdb/pdb_writer.hh>
+
 #include <utility/vector1.hh>
 #include <set>
 

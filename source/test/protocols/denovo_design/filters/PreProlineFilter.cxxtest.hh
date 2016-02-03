@@ -25,7 +25,7 @@
 #include <protocols/simple_moves/MutateResidue.hh>
 
 // Core headers
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/select/residue_selector/ChainSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>

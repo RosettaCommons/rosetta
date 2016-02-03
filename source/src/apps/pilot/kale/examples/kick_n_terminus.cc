@@ -117,7 +117,7 @@ void devel_main(int argc, char** argv) { // {{{1
 		                 << second_pivot << "/"
 		                 << third_pivot << endl << endl;
 
-	import_pose::pose_from_pdb(pose, input_pdb);
+	import_pose::pose_from_file(pose, input_pdb, core::import_pose::PDB_file);
 
 	cout << "Before Anything" << endl;
 	cout << "===============" << endl;
@@ -330,7 +330,7 @@ void protocols_main(int argc, char** argv) { // {{{1
 		                 << second_pivot << "/"
 		                 << third_pivot << endl << endl;
 
-	import_pose::pose_from_pdb(pose, input_pdb);
+	import_pose::pose_from_file(pose, input_pdb, core::import_pose::PDB_file);
 
 	mover->apply(pose);
 

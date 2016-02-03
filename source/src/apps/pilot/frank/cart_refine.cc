@@ -46,7 +46,7 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -87,7 +87,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 
 OPT_1GRP_KEY(String, cartrefine, residues)

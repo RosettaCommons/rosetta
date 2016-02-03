@@ -156,7 +156,7 @@ void
 RBOutMover::apply( Pose & pose )
 {
 	core::pose::Pose template_pose;
-	core::import_pose::pose_from_pdb( template_pose, template_pdb_fname() );
+	core::import_pose::pose_from_file( template_pose, template_pdb_fname() , core::import_pose::PDB_file);
 
 	core::kinematics::Jump const pose_disulf_jump = ( jump_from_foldtree() ? pose.jump( 1 ) : get_disulf_jump( pose, template_pose ) );
 	//write to file

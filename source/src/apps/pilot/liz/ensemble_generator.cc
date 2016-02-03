@@ -41,7 +41,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -111,7 +111,7 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 
@@ -338,7 +338,7 @@ run_mc(pose::Pose & p, ScoreFunction & s,
 
 
 			if(output_pdbs){
-				core::io::pdb::dump_pdb(last_accepted, basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"last_accepted_high_temp."+curr.str()+".pdb");
+				core::io::pdb::old_dump_pdb(last_accepted, basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"last_accepted_high_temp."+curr.str()+".pdb");
 			}
 
 			mc->reset_counters();
@@ -361,8 +361,8 @@ run_mc(pose::Pose & p, ScoreFunction & s,
 			//		std::cout << "end show monte-carlo stats" << std::endl;
 
 			if(output_pdbs){
-				core::io::pdb::dump_pdb(mc->last_accepted_pose(), basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"last_accepted."+curr.str()+".pdb");
-				core::io::pdb::dump_pdb(mc->lowest_score_pose(), basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb");
+				core::io::pdb::old_dump_pdb(mc->last_accepted_pose(), basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"last_accepted."+curr.str()+".pdb");
+				core::io::pdb::old_dump_pdb(mc->lowest_score_pose(), basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb");
 			}
 			pose::Pose lowest_score_pose = mc->lowest_score_pose();
 			//		std::cout << "CA rmsd from start being stored: " << core::scoring::CA_rmsd(lowest_score_pose,init_pose) << std::endl;
@@ -492,7 +492,7 @@ main( int argc, char* argv [] )
 	}
 	for(unsigned int f=1; f<=files.size();f++){
 //		std::cout << "examining file: " << files[f] << std::endl;
-		core::import_pose::pose_from_pdb(pose, files[f]);
+		core::import_pose::pose_from_file(pose, files[f], core::import_pose::PDB_file);
 		setup_ca_constraints(pose,(*scorefxn),9.0,cst_tol);
 		ConstraintSetCOP cs = pose.constraint_set();
 		cs->show_definition(std::cout,pose);

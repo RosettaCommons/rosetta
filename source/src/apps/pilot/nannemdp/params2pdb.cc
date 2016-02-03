@@ -28,9 +28,8 @@
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pdb_dynamic_reader.hh>
+#include <core/io/pdb/pdb_writer.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 

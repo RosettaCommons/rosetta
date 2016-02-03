@@ -60,9 +60,9 @@ public:
 	virtual void set_cen_scorefxn(core::scoring::ScoreFunctionOP const cen_scorefunction);
 
 	virtual void apply( core::pose::Pose & pose );
-	
+
 	virtual void low_res( core::pose::Pose & pose );
-	
+
 	virtual void high_res( core::pose::Pose & pose );
 
 	virtual std::string get_name() const { return "FloppyTailMover"; }

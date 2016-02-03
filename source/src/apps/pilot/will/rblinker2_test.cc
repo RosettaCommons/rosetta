@@ -282,8 +282,8 @@ void* doit(void*) {
 	sf = core::scoring::get_score_function();
 
 	Pose test,hyd;
-	core::import_pose::pose_from_pdb(test,*cenresset,"input/psI_0001_strip_0001.pdb");
-	core::import_pose::pose_from_pdb(hyd ,*cenresset,"input/hyda1_0001_strip_0001.pdb");
+	core::import_pose::pose_from_file(test,*cenresset,"input/psI_0001_strip_0001.pdb", core::import_pose::PDB_file);
+	core::import_pose::pose_from_file(hyd ,*cenresset,"input/hyda1_0001_strip_0001.pdb", core::import_pose::PDB_file);
 	Size st = test.n_residue();
 
 	core::pose::remove_upper_terminus_type_from_pose_residue(test,test.n_residue());

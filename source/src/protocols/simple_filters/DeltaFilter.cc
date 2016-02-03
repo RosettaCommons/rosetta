@@ -227,7 +227,7 @@ DeltaFilter::parse_my_tag( utility::tag::TagCOP tag,
 		TR << "baseline will be caculated once, when first needed..." << std::endl;
 	} else if ( tag->hasOption("reference_pdb") ) {
 		std::string reference_pdb_filename( tag->getOption< std::string >( "reference_pdb", "" ) );
-		reference_pose_ = core::import_pose::pose_from_pdb( reference_pdb_filename );
+		reference_pose_ = core::import_pose::pose_from_file( reference_pdb_filename , core::import_pose::PDB_file);
 		TR << "baseline will be caculated once, when first needed..." << std::endl;
 	} else if ( tag->hasOption( "relax_mover" ) ) {
 		core::pose::Pose p( pose );

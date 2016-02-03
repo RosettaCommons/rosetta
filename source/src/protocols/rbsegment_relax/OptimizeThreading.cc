@@ -25,7 +25,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/Remarks.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -511,7 +511,7 @@ void OptimizeThreadingMover::parse_my_tag(
 	if ( tag->hasOption( "native" ) ) {
 		std::string ref_model_pdb = tag->getOption<std::string>( "native" );
 		native_ = core::pose::PoseOP( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *native_, ref_model_pdb );
+		core::import_pose::pose_from_file( *native_, ref_model_pdb , core::import_pose::PDB_file);
 	}
 
 	if ( tag->hasOption( "chains" ) ) {

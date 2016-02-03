@@ -35,7 +35,7 @@
 #include <numeric/xyz.io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
@@ -72,7 +72,7 @@ public:
     assert(match.total_residue() == 3); // Two ligands plus zinc
 
     core::pose::Pose scaffold;
-    core::import_pose::pose_from_pdb( scaffold, basic::options::option[scaffold_pdb].value() );
+    core::import_pose::pose_from_file( scaffold, basic::options::option[scaffold_pdb].value() , core::import_pose::PDB_file);
 
 
     ///////////////////////////Graft match onto scaffold///////////////////////////////////////////////////////////

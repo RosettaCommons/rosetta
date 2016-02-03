@@ -40,7 +40,7 @@
 #include <basic/database/open.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/pdb/pose_io.hh>
+//#include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 

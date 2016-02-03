@@ -39,7 +39,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/id/AtomID.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/kinematics/Jump.hh>
@@ -318,7 +318,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	// load native pose (if provided)
 	core::pose::Pose native_pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 		core::pose::set_ss_from_phipsi( native_pose );
 	} else {
 		native_pose = start_pose;

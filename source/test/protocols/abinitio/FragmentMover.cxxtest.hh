@@ -76,7 +76,6 @@
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/file_data.fwd.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/Edge.fwd.hh>
 #include <core/kinematics/Edge.hh>
@@ -211,7 +210,7 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		core_init();
-		core::import_pose::pose_from_pdb( pose_, "protocols/abinitio/2GB3.pdb" );
+		core::import_pose::pose_from_file( pose_, "protocols/abinitio/2GB3.pdb" , core::import_pose::PDB_file);
 
 		fragset3mer_ = ConstantLengthFragSetOP( new ConstantLengthFragSet );
 		fragset3mer_->read_fragment_file( "protocols/abinitio/mfr_aa2GB3_03_05.200_v1_3" );

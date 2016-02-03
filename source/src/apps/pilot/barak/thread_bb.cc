@@ -23,7 +23,7 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/options/util.hh>//option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -90,9 +90,9 @@ main( int argc, char * argv [] )
     exit(-1);
   }
   // read poses
-  core::import_pose::pose_from_pdb( trg_pose, basic::options::start_file() );
+  core::import_pose::pose_from_file( trg_pose, basic::options::start_file() , core::import_pose::PDB_file);
   string native_fname = option[ OptionKeys::in::file::native ];
-  core::import_pose::pose_from_pdb( src_pose, native_fname);
+  core::import_pose::pose_from_file( src_pose, native_fname, core::import_pose::PDB_file);
   string output_fname = option[ OptionKeys::out::file::o ];
   // compute threading range
   string schain_pdb = option[ OptionKeys::threadsc::src_chain ];
@@ -148,7 +148,7 @@ main( int argc, char * argv [] )
 
   // output overlayed pose
   TR << "Output to [" << output_fname << "]" << endl;
-  core::io::pdb::dump_pdb(trg_pose, output_fname);
+  core::io::pdb::old_dump_pdb(trg_pose, output_fname);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

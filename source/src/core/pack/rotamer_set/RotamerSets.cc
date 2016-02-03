@@ -38,7 +38,8 @@
 #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
-#include <core/io/pdb/pose_io.hh>
+
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/symmetry/util.hh>
 
 #include <ObjexxFCL/format.hh>

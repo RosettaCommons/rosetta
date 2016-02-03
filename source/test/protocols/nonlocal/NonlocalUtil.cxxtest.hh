@@ -99,7 +99,7 @@ public:
 
 	/// @brief Unit test for method in core/pose/util.cc
 	void test_remove_virtual_residues() {
-		Pose pose = *core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
+		Pose pose = *core::import_pose::pose_from_file("protocols/nonlocal/2GB3.pdb", core::import_pose::PDB_file);
 
 		Loops chunks;
 		chunks.push_back(1, 20);
@@ -119,7 +119,7 @@ public:
 	/// @detail Pose with no jumps => No RMSD calculations
 	/// core < protocols leveling prevents use of StarTreeBuilder functionality
 	void test_compute_jump_rmsd_with_no_jumps() {
-		Pose model = *core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
+		Pose model = *core::import_pose::pose_from_file("protocols/nonlocal/2GB3.pdb", core::import_pose::PDB_file);
 
 		unordered_map<Size, Real> rmsds;
 		core::scoring::compute_jump_rmsd(model, model, &rmsds);
@@ -130,8 +130,8 @@ public:
 	/// @detail Same pose, different fold trees => RMSD of 0
 	/// core < protocols leveling prevents use of StarTreeBuilder functionality
 	void test_compute_jump_rmsd_identity() {
-		Pose model  = *core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
-		Pose native = *core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
+		Pose model  = *core::import_pose::pose_from_file("protocols/nonlocal/2GB3.pdb", core::import_pose::PDB_file);
+		Pose native = *core::import_pose::pose_from_file("protocols/nonlocal/2GB3.pdb", core::import_pose::PDB_file);
 
 		Loops chunks;
 		chunks.push_back(1, 20);

@@ -411,12 +411,12 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 
 
 		utility::options::FileVectorOption & mmCIFfilevec
-				= basic::options::option[basic::options::OptionKeys::in::file::extra_res_mmCIF];
+			= basic::options::option[basic::options::OptionKeys::in::file::extra_res_mmCIF];
 
 		//This function reads in the mmCIF file and constructs a residuetype based on data found in mmCIF.
 		//It uses the machinery found in MolFileIOReader for its construction
 		mmCIF::mmCIFParser mmCIF_parser;
-		for( core::Size i=1, e = mmCIFfilevec.size(); i<= e; ++i){
+		for ( core::Size i=1, e = mmCIFfilevec.size(); i<= e; ++i ) {
 			utility::file::FileName filename = mmCIFfilevec[i];
 			utility::vector1< sdf::MolFileIOMoleculeOP> molecules( mmCIF_parser.parse( filename));
 			utility::vector1< ResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( molecules, true, atom_types, elements, mm_atom_types ) );

@@ -31,7 +31,7 @@
 
 #include <core/conformation/ResidueFactory.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
 		devel::init( argc,argv );
 
 		core::pose::Pose native_pose;
-		core::import_pose::centroid_pose_from_pdb( native_pose, option[ in::file::native ]() );
+		core::import_pose::centroid_pose_from_pdb( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 
 		core::Size nres = native_pose.total_residue();
 		core::Size fraglength = option[ OptionKeys::fpd::fraglen ];

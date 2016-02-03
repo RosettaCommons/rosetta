@@ -301,7 +301,7 @@ void run() {
     string fn = fns[ifn];
 
     Pose init;
-    core::import_pose::pose_from_pdb(init,*rs,fn);
+    core::import_pose::pose_from_file(init,*rs,fn, core::import_pose::PDB_file);
 
     Size nres = init.n_residue();
     // ScoreFunctionOP sf = core::scoring::get_score_function();

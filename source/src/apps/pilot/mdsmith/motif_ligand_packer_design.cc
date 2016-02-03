@@ -16,7 +16,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/io/pdb/pose_io.hh> // pose_from_pdb
+#include <core/io/pdb/pdb_writer.hh> // pose_from_pdb
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -138,11 +138,11 @@ main( int argc, char * argv [] )
 			continue;
 		}
 		pose::Pose pose;
-		//devel::blab::motif::motif_pose_from_pdb( pose, *filename, true );
+		//devel::blab::motif::motif_pose_from_file( pose, *filename, true , core::import_pose::PDB_file);
 		//devel::blab::viewer::add_conformation_viewer( pose.conformation(), pose.conformation() );
 
-	//	io::pdb::pose_from_pdb( pose, *filename ); //Doesn't work anymore since refactor
-		   core::import_pose::pose_from_pdb( pose, *filename );
+	//	io::pdb::pose_from_file( pose, *filename , core::import_pose::PDB_file); //Doesn't work anymore since refactor
+		   core::import_pose::pose_from_file( pose, *filename , core::import_pose::PDB_file);
 		std::string pdbprefix( string_split( string_split( *filename, '/' ).back(), '.' ).front() );
 		bool minimize( false );
 		if ( option[ OptionKeys::out::prefix ].user() ) pdbprefix = option[ OptionKeys::out::prefix ]();

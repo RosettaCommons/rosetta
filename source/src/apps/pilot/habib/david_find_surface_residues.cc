@@ -20,7 +20,7 @@
 #include <core/chemical/AA.hh>
 #include <basic/MetricValue.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -114,7 +114,7 @@ main( int argc, char * argv [] )
 		register_metrics();
 		pose::Pose pose;
 		std::string const input_pdb_name ( basic::options::start_file() );
-		core::import_pose::pose_from_pdb( pose, input_pdb_name );
+		core::import_pose::pose_from_file( pose, input_pdb_name , core::import_pose::PDB_file);
 
 		std::string const cfilename = option[ contact_list ];
 		if ( cfilename != "" ) {

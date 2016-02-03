@@ -247,7 +247,7 @@ main( int argc, char * argv [] )
 
 		if ( option[in::file::native].user() ) {
 			core::pose::PoseOP nativePose( new core::pose::Pose );
-			core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
+			core::import_pose::pose_from_file(*nativePose, option[in::file::native](), core::import_pose::PDB_file);
 			core::scoring::dssp::Dssp dssp_obj( *nativePose );
 			dssp_obj.insert_ss_into_pose( *nativePose );
 			// native ss

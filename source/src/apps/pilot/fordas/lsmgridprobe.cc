@@ -166,7 +166,7 @@ int main( int argc, char * argv [] )
 	if ( option[hotspot::target].user() )
 	{
 		targetFilename = option[ hotspot::target ]();
-		core::import_pose::pose_from_pdb( targetPose, targetFilename );
+		core::import_pose::pose_from_file( targetPose, targetFilename , core::import_pose::PDB_file);
 	}
 	else
 	{

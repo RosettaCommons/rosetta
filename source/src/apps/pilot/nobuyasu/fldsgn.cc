@@ -107,7 +107,7 @@ void * graphics_main( void * ) {
 #if defined GL_GRAPHICS
 
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, option[ in::file::s ].value().at( 1 ) );
+	core::import_pose::pose_from_file( pose, option[ in::file::s ].value().at( 1 ) , core::import_pose::PDB_file);
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "fldsgn" );
 	return 0;
 

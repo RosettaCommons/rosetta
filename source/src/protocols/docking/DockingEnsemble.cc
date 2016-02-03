@@ -122,8 +122,8 @@ void DockingEnsemble::load_ensemble()
 		}
 	}
 
-	ensemble_list_ = core::import_pose::poses_from_pdbs( pdb_filenames_ );
-	ensemble_list_cen_ = core::import_pose::poses_from_pdbs( pdb_filenames_ ); // Add by DK
+	ensemble_list_ = core::import_pose::poses_from_files( pdb_filenames_ , core::import_pose::PDB_file);
+	ensemble_list_cen_ = core::import_pose::poses_from_files( pdb_filenames_ , core::import_pose::PDB_file); // Add by DK
 
 	//Add by DK
 	for ( Size i = 1; i <= ensemble_list_cen_.size(); i++ ) {

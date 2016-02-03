@@ -50,6 +50,7 @@ namespace scores {
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace ObjexxFCL;
 
 static THREAD_LOCAL basic::Tracer trRmsScore(
 	"protocols.frag_picker.scores.FragmentAllAtomCrmsd");
@@ -171,7 +172,7 @@ FragmentScoringMethodOP MakeFragmentAllAtomCrmsd::make(Size priority,
 			<< "Reference structure to score fragments by crmsd loaded from: "
 			<< option[in::file::native]() << std::endl;
 		core::pose::PoseOP nativePose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
+		core::import_pose::pose_from_file(*nativePose, option[in::file::native](), core::import_pose::PDB_file);
 
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentAllAtomCrmsd(priority,
 			lowest_acceptable_value, use_lowest, nativePose->sequence(), nativePose) );
@@ -181,7 +182,7 @@ FragmentScoringMethodOP MakeFragmentAllAtomCrmsd::make(Size priority,
 			<< "Reference structure to score fragments by crmsd loaded from: "
 			<< option[in::file::s]()[1] << std::endl;
 		core::pose::PoseOP nativePose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
+		core::import_pose::pose_from_file(*nativePose, option[in::file::s]()[1], core::import_pose::PDB_file);
 
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentAllAtomCrmsd(priority,
 			lowest_acceptable_value, use_lowest, nativePose->sequence(), nativePose) );

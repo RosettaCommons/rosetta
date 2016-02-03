@@ -14,8 +14,8 @@
 #include <core/chemical/ResidueType.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
@@ -33,7 +33,6 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <core/io/pdb/pdb_dynamic_reader.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>

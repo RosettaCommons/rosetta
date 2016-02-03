@@ -34,7 +34,7 @@
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
@@ -99,7 +99,7 @@ main( int argc, char * argv [] )
 	// read in a native pose
 	core::pose::Pose pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( pose, *rsd_set, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
 	// set up score function

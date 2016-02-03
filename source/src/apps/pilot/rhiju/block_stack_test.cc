@@ -111,7 +111,7 @@ block_stack_test()
   using namespace core::kinematics;
 
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	PoseOP pose_op =	pose_from_pdb( "ucga_ucga_helix.pdb" );
+	PoseOP pose_op =	pose_from_file( "ucga_ucga_helix.pdb" , core::import_pose::PDB_file);
 	Pose & pose = *pose_op;
 
 	EnergyBaseStackList energy_stack_list = get_scored_base_stack_list( pose );

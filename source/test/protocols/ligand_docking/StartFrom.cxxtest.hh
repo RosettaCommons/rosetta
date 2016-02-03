@@ -54,7 +54,7 @@ public:
 		using namespace protocols::ligand_docking;
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" , core::import_pose::PDB_file);
 
 		StartFrom mover;
 		mover.chain("X");
@@ -75,7 +75,7 @@ public:
 		using namespace protocols::ligand_docking;
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" , core::import_pose::PDB_file);
 
 		StartFrom mover;
 		mover.chain("X");
@@ -96,7 +96,7 @@ public:
 		using namespace protocols::ligand_docking;
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" , core::import_pose::PDB_file);
 
 		StartFrom mover;
 		mover.chain("X");
@@ -129,7 +129,7 @@ public:
 		using namespace protocols::ligand_docking;
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" , core::import_pose::PDB_file);
 
 		StartFrom mover;
 		mover.chain("X");
@@ -158,7 +158,7 @@ public:
 		using namespace protocols::ligand_docking;
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" , core::import_pose::PDB_file);
 
 		StartFrom mover;
 		mover.chain("X");
@@ -185,7 +185,7 @@ public:
 		using namespace protocols::ligand_docking;
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" , core::import_pose::PDB_file);
 
 		StartFrom mover;
 		mover.chain("X");
@@ -213,7 +213,7 @@ public:
 		using namespace protocols::ligand_docking;
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" , core::import_pose::PDB_file);
 
 		StartFrom mover;
 		mover.chain("X");
@@ -250,7 +250,7 @@ public:
 		using namespace protocols::ligand_docking;
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" , core::import_pose::PDB_file);
 
 		StartFrom mover;
 		mover.chain("X");
@@ -287,7 +287,7 @@ public:
 		using namespace protocols::ligand_docking;
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" , core::import_pose::PDB_file);
 
 		StartFrom mover;
 		mover.chain("X");

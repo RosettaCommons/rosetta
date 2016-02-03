@@ -103,7 +103,7 @@ public:
 
 		// read in pose
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "core/pack/1l2y_renameH.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pack/1l2y_renameH.pdb" , core::import_pose::PDB_file);
 
 		//pose.dump_pdb("/Users/flo/rosetta/rosetta_source/test/1l2y_rename_H.pdb");
 
@@ -179,7 +179,7 @@ public:
 		}
 
 		utility::vector1< pose::Pose > ref_poses;
-		core::import_pose::pose_from_pdb( ref_poses, "core/pack/rotamer_set/test_rotamer_sets.pdb" );
+		core::import_pose::pose_from_file( ref_poses, "core/pack/rotamer_set/test_rotamer_sets.pdb" , core::import_pose::PDB_file);
 
 		for ( Size i = 1; i <= ref_poses.size(); ++i ) {
 			for ( Size j = 1; j <= ref_poses[ i ].total_residue(); ++j ) {

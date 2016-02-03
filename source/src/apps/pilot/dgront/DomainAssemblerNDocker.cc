@@ -26,7 +26,7 @@
 #include <core/sequence/Sequence.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -127,7 +127,7 @@ public:
 	has_native_ = false;
         if ( option[ in::file::native ].user() ) {
     	    core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-    	    core::import_pose::pose_from_pdb( native_pose_, *rsd_set, option[ in::file::native ]() );
+    	    core::import_pose::pose_from_file( native_pose_, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
     	    has_native_ = true;
 	}
     }
@@ -211,7 +211,7 @@ private:
 	    Size resj;
 	    line_stream >> fname >> resi >> resj;
 	    core::pose::Pose tmp_pose;
-	    core::import_pose::pose_from_pdb( tmp_pose, *rsd_set_fa,  fname);
+	    core::import_pose::pose_from_file( tmp_pose, *rsd_set_fa,  fname, core::import_pose::PDB_file);
 
 	    for(Size ir = 1; ir <= tmp_pose.total_residue(); ir++ ) {
 		cen_pose_.set_phi( ir + resi, tmp_pose.phi( ir ) );

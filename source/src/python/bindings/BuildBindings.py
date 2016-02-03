@@ -2778,6 +2778,3 @@ def build():
 '''
 
 if __name__ == "__main__": main(sys.argv)
-
-# class revision 26929
-# ? Score Function, Conformation?

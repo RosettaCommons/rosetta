@@ -270,7 +270,7 @@ SymDofMover::add_components_to_pose_if_necessary(Pose & pose){
 	if ( option[OptionKeys::in::file::t].user() ) {
 		runtime_assert_msg(option[OptionKeys::in::file::t]().size() == 1,
 			"SymDofMover must have one or no inputs in -t");
-		core::pose::PoseCOP b = core::import_pose::pose_from_pdb( option[OptionKeys::in::file::t]().front() );
+		core::pose::PoseCOP b = core::import_pose::pose_from_file( option[OptionKeys::in::file::t]().front() , core::import_pose::PDB_file);
 		Size nres1 = pose.n_residue();
 		core::pose::append_pose_to_pose( pose, *b, true );
 		for ( core::uint ir =         1; ir <= nres1           ; ++ir ) {

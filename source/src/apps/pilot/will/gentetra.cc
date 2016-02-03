@@ -29,7 +29,7 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -310,12 +310,12 @@ void run() {
 
   core::chemical::ResidueTypeSetCAP  rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose bpy;
-  core::import_pose::pose_from_pdb(bpy ,*rs,option[in::file::s]()[1]);
+  core::import_pose::pose_from_file(bpy ,*rs,option[in::file::s]()[1], core::import_pose::PDB_file);
 
   for(Size ifile = 2; ifile <= option[in::file::s]().size(); ++ifile) {
     string infile = utility::file_basename(option[in::file::s]()[ifile]);
     Pose init;
-    core::import_pose::pose_from_pdb(init,*rs,option[in::file::s]()[ifile]);
+    core::import_pose::pose_from_file(init,*rs,option[in::file::s]()[ifile], core::import_pose::PDB_file);
     core::pose::remove_lower_terminus_type_from_pose_residue(bpy,1);
     core::pose::remove_upper_terminus_type_from_pose_residue(bpy,1);
     bpy.append_residue_by_jump( *core::conformation::ResidueFactory::create_residue(rs->name_map("VRT")),1,"NN1","ORIG");

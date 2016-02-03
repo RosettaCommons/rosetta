@@ -66,7 +66,7 @@ SidechainRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 	} else {
 		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-			core::import_pose::pose_from_pdb( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
+			core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 		}
 	}
 

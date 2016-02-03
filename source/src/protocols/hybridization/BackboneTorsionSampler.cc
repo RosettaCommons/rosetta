@@ -340,7 +340,7 @@ BackboneTorsionSampler::parse_my_tag(
 	}
 	if ( tag->hasOption( "native") ) {
 		native_ = core::pose::PoseOP( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *native_, tag->getOption< std::string >( "native" ) );
+		core::import_pose::pose_from_file( *native_, tag->getOption< std::string >( "native" ) , core::import_pose::PDB_file);
 	}
 
 	//String const  user_defined_mover_name_( tag->getOption< String >( "mover_name" ,""));

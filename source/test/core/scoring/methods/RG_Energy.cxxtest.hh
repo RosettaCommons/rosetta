@@ -85,7 +85,7 @@ public:
 		EnergyMap emap;
 		emap.zero();
 		pose = create_test_in_pdb_pose();
-		//core::import_pose::pose_from_pdb( pose, "core/io/test_in.pdb" );
+		//core::import_pose::pose_from_file( pose, "core/io/test_in.pdb" , core::import_pose::PDB_file);
 		rg_energy_fast.finalize_total_energy( pose, *scorefxn, emap );
 		rg_fast = emap[ rg ];
 		TS_ASSERT_DELTA( rg_fast, rg_correct, TOLERATED_ERROR );

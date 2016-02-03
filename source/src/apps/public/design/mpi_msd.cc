@@ -25,7 +25,8 @@
 
 /// Core headers
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/util.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/MetricValue.hh>
@@ -168,7 +169,7 @@ read_native_sequence_for_entity_elements( core::Size n_designed_positions )
 
 	/// Read in the pdb
 	pose::Pose pose;
-	import_pose::pose_from_pdb( pose, pdb_name );
+	import_pose::pose_from_file( pose, pdb_name , core::import_pose::PDB_file);
 
 	utility::io::izstream correspondence_file( correspondence_file_name );
 	if ( ! correspondence_file ) {
@@ -575,8 +576,8 @@ int main( int argc, char ** argv )
 					output_name += "_" + daf->state_name( iter->first ) + ".pdb";
 					TR << "Writing structure " << output_name << " with score: " << (*sfxn)( *(iter->second) ) << std::endl;
 					utility::io::ozstream outfile( output_name );
-					core::io::pdb::dump_pdb( *(iter->second), outfile );
-					core::io::pdb::extract_scores( *(iter->second), outfile );
+
+					core::io::pdb::dump_pdb( *(iter->second), "", true, false, outfile, output_name );
 				}
 			}
 

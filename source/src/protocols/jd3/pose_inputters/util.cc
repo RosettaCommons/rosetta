@@ -215,7 +215,7 @@ namespace protein {
 		for ( Size n = 1; n <= in_files.size(); n++ ) {
 
 			std::cout << "-------- " << in_files[n] << "----------" << std::endl;
-			import_pose::pose_from_pdb( pose, *rsd_set, in_files[ n ] );
+			import_pose::pose_from_file( pose, *rsd_set, in_files[ n ] , core::import_pose::PDB_file);
 
 			// Look for beta pairings (antiparallel for now)
 			(*scorefxn)(pose);

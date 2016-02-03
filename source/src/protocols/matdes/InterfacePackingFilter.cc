@@ -34,7 +34,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 namespace protocols {
@@ -172,7 +172,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
 			pose.fold_tree().partition_by_jump( sym_aware_jump_id, is_upstream );
 			sub_pose_resis = core::pose::symmetry::get_intracomponent_and_neighbor_resis(pose, sym_dof_name_list[i], contact_dist_);
-			core::io::pdb::pose_from_pose(sub_pose, pose, sub_pose_resis);
+			core::io::pose_from_pose(sub_pose, pose, sub_pose_resis);
 
 			//pose.dump_pdb("pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
 			//sub_pose.dump_pdb("sub_pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");

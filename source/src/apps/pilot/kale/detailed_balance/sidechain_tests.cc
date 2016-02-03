@@ -98,7 +98,7 @@ class SamplingManager { // {{{1
 			last_residue = option[OptionKeys::kale::in::residues]()[2];
 			iterations = option[OptionKeys::kale::in::iterations]();
 
-			core::import_pose::pose_from_pdb(pose, pdb_path);
+			core::import_pose::pose_from_file(pose, pdb_path, core::import_pose::PDB_file);
 
 			TaskFactoryOP task_factory = new TaskFactory;
 			PreventRepackingOP prevent_repacking = new PreventRepacking();

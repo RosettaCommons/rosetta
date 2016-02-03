@@ -56,7 +56,7 @@ public:
 	Neighbor_CalculatorsTests() {
 		core_init();
 
-		core::import_pose::pose_from_pdb( pose, "core/conformation/dock_in.pdb" );
+		core::import_pose::pose_from_file( pose, "core/conformation/dock_in.pdb" , core::import_pose::PDB_file);
 		//213, 204, and 265 are appropriate residues from the dock_in pdb
 
 		//set up the Neighbors calculators

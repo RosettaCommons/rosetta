@@ -21,7 +21,7 @@
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -31,7 +31,7 @@
 
 //pose
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 //score
 #include <core/scoring/rms_util.hh>
@@ -142,14 +142,14 @@ void run() {
         std::string pdbname;
         if ( basic::options::option[ basic::options::OptionKeys::in::file::s ].user() ) {
               pdbname=basic::options::option[ basic::options::OptionKeys::in::file::s ]()[1];
-              core::import_pose::pose_from_pdb( pose, pdbname.c_str() );
+              core::import_pose::pose_from_file( pose, pdbname.c_str() , core::import_pose::PDB_file);
               ref_pose=pose;
         } else {
               throw( utility::excn::EXCN_BadInput("expected -s for this app") );
         }
 
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-                core::import_pose::pose_from_pdb( ref_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() );
+                core::import_pose::pose_from_file( ref_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
         }
 
 	utility::vector1< core::Real > saved_transformations_;

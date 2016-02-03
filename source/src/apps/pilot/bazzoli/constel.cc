@@ -192,7 +192,7 @@ int main( int argc, char * argv [] )
 		// create native pose from pdb
 		core::pose::Pose pose_init;
 		std::string const input_pdb_name( basic::options::start_file() );
-		core::import_pose::pose_from_pdb( pose_init, input_pdb_name );
+		core::import_pose::pose_from_file( pose_init, input_pdb_name , core::import_pose::PDB_file);
 
 		// select constellation-size class
 		SingResCnlCrea::init(option[cnl_stripped]);

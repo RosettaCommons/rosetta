@@ -78,7 +78,7 @@ public:
 		pose::Pose ref_pose, restored_pose;
 		core::chemical::ResidueTypeSetCOP rsd =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-		core::import_pose::pose_from_pdb( ref_pose, *rsd, std::string("core/scoring/symmetry/fibril_in.pdb"));
+		core::import_pose::pose_from_file( ref_pose, *rsd, std::string("core/scoring/symmetry/fibril_in.pdb"), core::import_pose::PDB_file);
 		pose::set_ss_from_phipsi( ref_pose );
 		core::pose::symmetry::make_symmetric_pose( ref_pose );
 

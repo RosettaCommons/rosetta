@@ -37,7 +37,7 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/Tracer.hh>
 
@@ -91,7 +91,7 @@ main( int argc, char * argv [] ) {
 	// read in a dummy pose
   core::pose::Pose native_pose;
   if ( option[ in::file::native ].user() ) {
-    core::import_pose::pose_from_pdb(
+    core::import_pose::pose_from_file(
 			native_pose,
 			*rsd_set,
 			option[ in::file::native ]()

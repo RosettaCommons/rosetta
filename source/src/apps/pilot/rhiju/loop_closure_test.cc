@@ -74,7 +74,7 @@
 #include <core/pose/util.hh>
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 
@@ -126,7 +126,7 @@ using core::util::Error;
 using core::util::Warning;
 using ObjexxFCL::format::F;
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 //typedef std::map< std::string, core::pose::PoseOP > PoseList;
@@ -182,7 +182,7 @@ read_native_pose(  pose::PoseOP & native_pose,
 	if (option[ in::file::native ].user() ) {
 		native_pose = PoseOP( new Pose );
 		std::string native_pdb_file  = option[ in::file::native ];
-		io::pdb::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+		io::pdb::pose_from_file( *native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 	}
 }
 
@@ -460,7 +460,7 @@ loop_closure_test(){
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	Pose pose, pose_input;
-	io::pdb::pose_from_pdb( pose_input, *rsd_set, option[ in::file::s]()[1] );
+	io::pdb::pose_from_file( pose_input, *rsd_set, option[ in::file::s]()[1] , core::import_pose::PDB_file);
 	pose = pose_input;
 
 	// Read in native
@@ -548,7 +548,7 @@ modeler_closure_test(){
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	Pose pose, pose_input;
-	io::pdb::pose_from_pdb( pose_input, *rsd_set, option[ in::file::s]()[1] );
+	io::pdb::pose_from_file( pose_input, *rsd_set, option[ in::file::s]()[1] , core::import_pose::PDB_file);
 	pose = pose_input;
 
 	// Read in native

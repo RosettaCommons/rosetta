@@ -17,7 +17,7 @@
 #include <devel/init.hh>
 
 // Project Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/util.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -162,7 +162,7 @@ void MinPackMinMover::apply (pose::Pose& pose ) {
 	//define a native pose if given one for RMSD calc later...
 	pose::Pose native_pose;
 	if ( basic::options::option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose, basic::options::option[ in::file::native ]());
+		core::import_pose::pose_from_file( native_pose, basic::options::option[ in::file::native ](), core::import_pose::PDB_file);
 	}
 
 	// setup for bb-bb pair energies

@@ -26,7 +26,7 @@
 
 #include <devel/init.hh>
 #include <core/types.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>//option.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -64,7 +64,7 @@ main( int argc, char * argv [] )
     devel::init(argc, argv);
 
     pose::Pose pose;
-    core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+    core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
     using namespace core::scoring;
     // standard packer wts
     std::cout << "Standard packer weights without fa_rep term:" << std::endl;

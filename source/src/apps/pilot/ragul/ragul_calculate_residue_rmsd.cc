@@ -61,7 +61,7 @@ int main( int argc, char * argv [] ) {
 		std::string const reference_res_num = option[ res_num ];
 
 		core::pose::Pose reference_pose;
-		core::import_pose::pose_from_pdb( reference_pose, reference_pose_name );
+		core::import_pose::pose_from_file( reference_pose, reference_pose_name , core::import_pose::PDB_file);
 		core::Size reference_res = core::pose::parse_resnum( reference_res_num, reference_pose);
 		core::conformation::Residue const res_res1( reference_pose.conformation().residue( reference_res ) );
 
@@ -70,7 +70,7 @@ int main( int argc, char * argv [] ) {
 			std::string const input_decoy_name = input_decoy_list[f];
 			std::cout<<"Reading decoy " << input_decoy_name <<std::endl;
 			core::pose::Pose decoy_pose;
-			core::import_pose::pose_from_pdb( decoy_pose, input_decoy_name );
+			core::import_pose::pose_from_file( decoy_pose, input_decoy_name , core::import_pose::PDB_file);
 			core::conformation::Residue const res_res2( decoy_pose.conformation().residue( reference_res ) );
 			core::Real rmsd (0.0);
 			// make sure we're comparing the same amino acid type

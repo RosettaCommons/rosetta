@@ -15,8 +15,8 @@
 
 #include <devel/init.hh>
 #include <core/types.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -97,7 +97,7 @@ int main( int argc, char * argv [] )
     TR << "[get pdb] Get the pose from pdb ..." << endl;
     if ( option[ in::file::s ].user() )
     {
-        core::import_pose::pose_from_pdb( pose, option[ in::file::s ]().vector()[ 0 ] );
+        core::import_pose::pose_from_file( pose, option[ in::file::s ]().vector()[ 0 ] , core::import_pose::PDB_file);
     }
     else
     {

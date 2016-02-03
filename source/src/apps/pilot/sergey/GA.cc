@@ -28,7 +28,7 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -103,7 +103,7 @@ void real_test_GA()
 	core::optimization::AtomTreeMinimizer minimizer;
 
 	start_pose = new pose::Pose();
-	core::import_pose::pose_from_pdb(*start_pose, "test_in.pdb");
+	core::import_pose::pose_from_file(*start_pose, "test_in.pdb", core::import_pose::PDB_file);
 
 	scorefxn = core::scoring::get_score_function_legacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
 

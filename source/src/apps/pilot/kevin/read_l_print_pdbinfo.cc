@@ -279,8 +279,8 @@ int main( int argc, char* argv[] )
 	pose::Pose pose;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	import_pose::pose_from_pdb(pose, option[in::file::s]()[1]);
-	import_pose::pose_from_pdb(pose, option[in::file::s]()[1]);
+	import_pose::pose_from_file(pose, option[in::file::s]()[1], core::import_pose::PDB_file);
+	import_pose::pose_from_file(pose, option[in::file::s]()[1], core::import_pose::PDB_file);
 	xtal_water_bunsat xwb;
 	xwb.apply(pose);
 

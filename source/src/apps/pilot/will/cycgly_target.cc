@@ -546,7 +546,7 @@ int main( int argc, char * argv [] ) {
 	std::map<BINTYPE,Pose> targets;
 	std::map<BINTYPE,Pose> closest,furthest;
 	if( option[in::file::s].user() ) {
-		targets_in = core::import_pose::poses_from_pdbs( option[in::file::s]() );
+		targets_in = core::import_pose::poses_from_files( option[in::file::s]() , core::import_pose::PDB_file);
 		for(Size i = 1; i <= targets_in.size(); i++) {
 			if( targets_in[i].n_residue() != N ) {
 				utility_exit_with_message("wrong number of residues (not "+ObjexxFCL::string_of(N)+") in target " + std::string(option[in::file::s]()[i]) );

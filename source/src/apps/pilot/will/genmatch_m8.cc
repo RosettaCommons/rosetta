@@ -40,7 +40,7 @@
 #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
@@ -461,8 +461,8 @@ void run_m8() {
 	TR << "MATCH_OVERLAP_DOT: " << MATCH_OVERLAP_DOT << std::endl;
 	string infile = option[in::file::s]()[1];
 	Pose in_cen,in_fa;
-	pose_from_pdb(in_fa, *fa_residue_set,infile);
-	pose_from_pdb(in_cen,*cen_residue_set,infile);
+	pose_from_file(in_fa, *fa_residue_set,infile, core::import_pose::PDB_file);
+	pose_from_file(in_cen,*cen_residue_set,infile, core::import_pose::PDB_file);
 	Size nres = in_cen.n_residue();
 	core::chemical::ResidueType const & ala( in_cen.residue(1).residue_type_set().name_map("ALA") );
 	core::chemical::ResidueType const & alafa( in_fa.residue(1).residue_type_set().name_map("ALA") );

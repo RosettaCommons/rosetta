@@ -105,7 +105,7 @@ public: //
 	{
 		// read pose
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/moves/test_in.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/moves/test_in.pdb" , core::import_pose::PDB_file);
 		pose.update_residue_neighbors();
 
 		// the residue number for this test is 10

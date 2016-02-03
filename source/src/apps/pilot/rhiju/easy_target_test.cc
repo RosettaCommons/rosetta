@@ -86,7 +86,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -139,7 +139,7 @@ using namespace core::options::OptionKeys;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -1606,11 +1606,11 @@ easy_target_test(){
 	Pose & pose( *pose_op );
 
 	std::string native_file = option[ in::file::native ];
-	io::pdb::pose_from_pdb( native_pose, native_file );
+	io::pdb::pose_from_file( native_pose, native_file , core::import_pose::PDB_file);
 
 	//Read in template pdb.
 	std::string template_file = option[ in::file::s ][1];
-	io::pdb::pose_from_pdb( template_pose, template_file );
+	io::pdb::pose_from_file( template_pose, template_file , core::import_pose::PDB_file);
 
 	//Read in secstruct?
 	//	std::string template_secstruct_file = option[ secstruct_file ];
@@ -1835,11 +1835,11 @@ easy_loop_model_test(){
 	Pose & pose( *pose_op );
 
 	std::string native_file = option[ in::file::native ];
-	io::pdb::pose_from_pdb( native_pose, native_file );
+	io::pdb::pose_from_file( native_pose, native_file , core::import_pose::PDB_file);
 
 	//Read in template pdb.
 	std::string template_file = option[ in::file::s ][1];
-	io::pdb::pose_from_pdb( template_pose, template_file );
+	io::pdb::pose_from_file( template_pose, template_file , core::import_pose::PDB_file);
 
 	prepare_full_length_start_model( template_pose, pose, sequences, sequence_mask,  alignment2sequence, pdb_names, template_file );
 
@@ -1890,7 +1890,7 @@ chi_stats_test()
 
 	pose::Pose native_pose;
 	std::string native_file = option[ in::file::native ];
-	io::pdb::pose_from_pdb( native_pose, native_file );
+	io::pdb::pose_from_file( native_pose, native_file , core::import_pose::PDB_file);
 
 	///////////////////////////////////
 	// To setup neighbors, burial info.
@@ -1914,7 +1914,7 @@ chi_stats_test()
 		std::string const pdb_file = pdb_files[n];
 
 		std::cout << " About to read in: " << pdb_file << std::endl;
-		io::pdb::pose_from_pdb( pose, pdb_file );
+		io::pdb::pose_from_file( pose, pdb_file , core::import_pose::PDB_file);
 
 		//if ( pose.sequence() != native_pose.sequence() ) continue;
 		output_chi_stats( native_pose, pose, sequence_mask, out, pdb_file, n );
@@ -1940,7 +1940,7 @@ cst_relax_test()
 	bool use_native( false );
 	if ( option[ in::file::native  ].user() ) {
 		std::string native_file = option[ in::file::native ];
-		io::pdb::pose_from_pdb( *native_pose_op, native_file );
+		io::pdb::pose_from_file( *native_pose_op, native_file , core::import_pose::PDB_file);
 		use_native = true;
 	}
 
@@ -1960,14 +1960,14 @@ cst_relax_test()
 
 	//READ IN FIRST POSE.
 	Pose pose, input_pose;
-	io::pdb::pose_from_pdb( input_pose, start_files[1] );
+	io::pdb::pose_from_file( input_pose, start_files[1] , core::import_pose::PDB_file);
 	pose = input_pose;
 	//graphics!
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 	for (Size j = 1; j <= start_files.size(); j++ ) {
 
-		if ( j > 1 ) io::pdb::pose_from_pdb( input_pose, start_files[j] );
+		if ( j > 1 ) io::pdb::pose_from_file( input_pose, start_files[j] , core::import_pose::PDB_file);
 		//		pose.dump_pdb( "start.pdb" );
 
 		// Main loop

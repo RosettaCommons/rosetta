@@ -11,7 +11,7 @@
 /// @brief samples coiled coils
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/sasa.hh>
 #include <numeric/random/random.hh>
@@ -94,7 +94,7 @@ int main (int argc, char *argv[])
 	devel::init(argc,argv);
 
 	Pose pose;
-	core::import_pose::pose_from_pdb(pose,core::options::option[core::options::OptionKeys::in::file::s]()[1]);
+	core::import_pose::pose_from_file(pose,core::options::option[core::options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
 
 	clock_t tot1=0,tot2=0;
 	for(Size i = 1; i <= 10; ++i){

@@ -40,7 +40,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -73,7 +73,7 @@ using namespace core;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef std::map< std::string, std::map< std::string, numeric::xyzVector< Real > > > Coords;
 
@@ -93,7 +93,7 @@ score_pdb( std::string pdb )
 	ScoreFunctionOP scorefxn( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, pdb );
+	core::import_pose::pose_from_file( pose, pdb , core::import_pose::PDB_file);
 
 	/*Energy score_orig = */ (*scorefxn)( pose );
 	EnergyMap emap_orig = pose.energies().total_energies();

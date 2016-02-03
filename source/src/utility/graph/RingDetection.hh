@@ -67,13 +67,13 @@ public:
 	{
 		// initialize paths_ with all edges
 		Initialize( graph);
-			// remove all vertices, update paths, collect rings
-			while ( !paths_.empty() )
-			{
-				// in the paper it's suggested to remove vertices with smaller amount of edges first
-				// such a heuristic should go here instead of taking the 'next' vertex
-				Remove( paths_.front().front());
-			}
+		// remove all vertices, update paths, collect rings
+		while ( !paths_.empty() )
+				{
+			// in the paper it's suggested to remove vertices with smaller amount of edges first
+			// such a heuristic should go here instead of taking the 'next' vertex
+			Remove( paths_.front().front());
+		}
 
 	}
 
@@ -169,13 +169,13 @@ private:
 				if ( shortest_cycles[ *itr_edge_target ] > graph_size ) { // the edge target vertex is not part of any cycle
 					continue;
 				}
-//continue;
+				//continue;
 
 				if ( source_vertex_number <= *itr_edge_target ) {
 					std::vector<size_t> initial_path(2);
 					initial_path[0] = source_vertex_number;
 					initial_path[1] = *itr_edge_target;
-                    paths_.push_back(initial_path);
+					paths_.push_back(initial_path);
 
 				}
 			}

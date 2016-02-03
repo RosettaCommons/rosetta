@@ -414,7 +414,7 @@ void DockFragmentsMover::run() {
 	std::string sequence;
 	core::pose::Pose native_pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]().name() );
+		core::import_pose::pose_from_file( native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
 		sequence = native_pose.sequence();
 	} else {
 		sequence = core::sequence::read_fasta_file( option[ in::file::fasta ]()[1])[1]->sequence();
@@ -462,7 +462,7 @@ void DockFragmentsMover::run() {
 	std::map<int,int> initial_pose_seqmap;
 	core::Size nsteal=0;
 	if ( have_initial_pose ) {
-		core::import_pose::pose_from_pdb( initial_pose, option[ startmodel ]() );
+		core::import_pose::pose_from_file( initial_pose, option[ startmodel ]() , core::import_pose::PDB_file);
 
 		// trim map
 		cut_from_map( initial_pose );

@@ -17,7 +17,7 @@
 //project Headers
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -674,9 +674,9 @@ int main( int argc, char* argv[] ) {
 
 		TR << "Reading in poses " << *native_pdb << " and " << *redesign_pdb << std::endl;
 		core::pose::Pose native_pose, redesign_pose;
-		core::import_pose::pose_from_pdb( native_pose, *native_pdb );
-		core::import_pose::pose_from_pdb(redesign_pose, *redesign_pdb );
-		//core::io::pdb::pose_from_pdb( redesign_pose, *redesign_pdb );
+		core::import_pose::pose_from_file( native_pose, *native_pdb , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file(redesign_pose, *redesign_pdb , core::import_pose::PDB_file);
+		//core::io::pdb::pose_from_file( redesign_pose, *redesign_pdb , core::import_pose::PDB_file);
 
 		native_poses.push_back( native_pose ); redesign_poses.push_back( redesign_pose );
 		native_pdb++; redesign_pdb++;

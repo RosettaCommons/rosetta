@@ -75,7 +75,7 @@
 #include <core/pose/Pose.hh>
 #include <core/options/util.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
 #include <core/options/keys/in.OptionKeys.gen.hh>
@@ -184,7 +184,7 @@ main( int argc, char * argv [] )
         pose::Pose pose;
 
         //original protein pose
-      	io::pdb::pose_from_pdb( pose, options::start_file() ); // gets filename from -s option
+      	io::pdb::pose_from_file( pose, options::start_file() , core::import_pose::PDB_file); // gets filename from -s option
 				Size origPoseLen = pose.total_residue();
 
         //read peptides fasta file

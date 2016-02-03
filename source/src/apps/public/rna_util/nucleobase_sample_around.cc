@@ -150,7 +150,7 @@ nucleobase_probe_score_test()
 	core::chemical::ResidueTypeSetCOP rsd_set_op( rsd_set );
 	if ( option[ in::file::s ].user() ) {
 		std::string infile  = option[ in::file::s ][1];
-		import_pose::pose_from_pdb( pose, *rsd_set_op, infile );
+		import_pose::pose_from_file( pose, *rsd_set_op, infile , core::import_pose::PDB_file);
 	} else {
 		std::string const sequence = option[ nucleobase ]();
 		runtime_assert( sequence.size() == 1 );
@@ -224,7 +224,7 @@ nucleobase_probe_score_test()
 
 	if ( option[ copy_adenosine_adenosine_file ].user() ) {
 		pose::Pose pose_reference;
-		import_pose::pose_from_pdb( pose_reference, *rsd_set_op, option[copy_adenosine_adenosine_file]() );
+		import_pose::pose_from_file( pose_reference, *rsd_set_op, option[copy_adenosine_adenosine_file]() , core::import_pose::PDB_file);
 		rotate_into_nucleobase_frame( pose_reference );
 
 		// copy over coordinates.
@@ -399,7 +399,7 @@ quick_score_test(){
 	//         -extra_res_fa CH4.params -s two_methane.pdb
 	pose::Pose pose;
 	std::string infile  = option[ in ::file::s ][1];
-	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 		if ( pose.residue(i).is_RNA() ) {

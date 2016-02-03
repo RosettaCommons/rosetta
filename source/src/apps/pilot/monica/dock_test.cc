@@ -33,10 +33,9 @@
 
 #include <protocols/rigid/RB_geometry.hh>
 
-#include <core/io/pdb/pdb_dynamic_reader.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 //#include <core/pose/PScene.hh>
 
@@ -94,7 +93,7 @@ rb_test ()
 	using namespace protocols::moves;
 	using namespace protocols::geometry;
 
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 
 	// PHIL temporarily hacking for Jeff until file_data is rehabilitated
 
@@ -115,13 +114,13 @@ rb_test ()
 	core::pose::Pose pose;
 	// somehow create a pose from the two pdbs that were read in
 	//fd_one.build_pose(pose, residue_set);
-	core::import_pose::pose_from_pdb( pose, "dock_protein1.pdb");
+	core::import_pose::pose_from_file( pose, "dock_protein1.pdb", core::import_pose::PDB_file);
 	std::cout << "total_residue = " << pose.total_residue() << "\n";
 	std::cout << "###########################################" << std::endl;
 
 	core::pose::Pose tmp_pose;
 	//fd_two.build_pose(tmp_pose, residue_set);
-	core::import_pose::pose_from_pdb( tmp_pose, "dock_protein2.pdb");
+	core::import_pose::pose_from_file( tmp_pose, "dock_protein2.pdb", core::import_pose::PDB_file);
 
 	std::cout << "total_residue = " << pose.total_residue() << "\n";
 	int cutpoint ( pose.total_residue() );

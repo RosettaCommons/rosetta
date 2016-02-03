@@ -69,7 +69,7 @@ poses_from_cmd_line(
 	using core::pose::Pose;
 	using utility::vector1;
 	using utility::file::file_exists;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 
 	using namespace core::chemical;
 	using namespace basic::options;
@@ -82,7 +82,7 @@ poses_from_cmd_line(
 	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
 		if ( file_exists(*it) ) {
 			Pose pose;
-			core::import_pose::pose_from_pdb( pose, *rsd_set, *it );
+			core::import_pose::pose_from_file( pose, *rsd_set, *it , core::import_pose::PDB_file);
 			string name = utility::file_basename( *it );
 			name = name.substr( 0, 5 );
 			poses[name] = pose;
@@ -107,7 +107,7 @@ main( int argc, char * argv [] ) {
 		using core::sequence::SequenceAlignment;
 		using core::sequence::SequenceProfile;
 		using core::id::SequenceMapping;
-		using core::import_pose::pose_from_pdb;
+		using core::import_pose::pose_from_file;
 		using namespace core::chemical;
 		using namespace core::sequence;
 		using namespace core::io::silent;

@@ -77,7 +77,7 @@ create_theozyme_pdb()
 		utility::vector1< std::string > input_files = basic::options::start_files();
 		if ( input_files.size() == 1 ) {
 			core::pose::PoseOP pose( new core::pose::Pose() );
-			core::import_pose::pose_from_pdb( *pose, input_files[ 1 ] );
+			core::import_pose::pose_from_file( *pose, input_files[ 1 ] , core::import_pose::PDB_file);
 			protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP allowed_seqpos( new protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst() );
 			allowed_seqpos->initialize_from_command_line( pose );
 			protocols::toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover align_pose( invrot_tree, allowed_seqpos);

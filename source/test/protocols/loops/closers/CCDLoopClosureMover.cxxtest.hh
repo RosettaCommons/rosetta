@@ -62,7 +62,7 @@ private:
 public:
 	void setUp() {
 		protocols_init();
-		pose_ = core::import_pose::pose_from_pdb( "protocols/loops/2GB3.pdb" );
+		pose_ = core::import_pose::pose_from_file( "protocols/loops/2GB3.pdb" , core::import_pose::PDB_file);
 	}
 
 	// TODO: test both flavors of rama check -- this should probably be a separate unit test suite.

@@ -50,7 +50,7 @@
 #ifdef WIN32
 #include <protocols/init/init.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #endif
 
 #include <core/types.hh>
@@ -64,7 +64,7 @@
 #ifdef BOINC
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/util.hh>
 #include <core/pose/util.hh>
 #endif
@@ -234,7 +234,7 @@ main( int argc, char * argv [] )
 		// set native for graphics
 		if ( option[ in::file::native ].user() ) {
 			core::pose::PoseOP native_pose_( new core::pose::Pose );
-			core::import_pose::pose_from_pdb( *native_pose_, option[ in::file::native ]() );
+			core::import_pose::pose_from_file( *native_pose_, option[ in::file::native ]() , core::import_pose::PDB_file);
 			if ( native_pose_->total_residue() <= protocols::boinc::MAX_NATIVE_POSE_RESIDUES ) {
 				core::pose::set_ss_from_phipsi( *native_pose_ );
 				protocols::boinc::Boinc::set_graphics_native_pose( *native_pose_ );

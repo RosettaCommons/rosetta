@@ -58,7 +58,7 @@ public:
 	void setUp() {
 		//core_init();
 		core_init_with_additional_options( "-mute core.init core.pack.task core.conformation" );
-		core::import_pose::pose_from_pdb( pose, "core/pack/task/resfile_test.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pack/task/resfile_test.pdb" , core::import_pose::PDB_file);
 	}
 	void tearDown() {}
 
@@ -121,7 +121,7 @@ public:
 		//this test makes sure the overall logic is the same even though the sequence is not
 		pose::Pose mut_pose;
 		TaskFactoryOP mut_tf( new TaskFactory );
-		core::import_pose::pose_from_pdb( mut_pose, "core/pack/task/resfile_test_mut.pdb" );
+		core::import_pose::pose_from_file( mut_pose, "core/pack/task/resfile_test_mut.pdb" , core::import_pose::PDB_file);
 		PackerTaskOP mut_task = mut_tf->create_task_and_apply_taskoperations( mut_pose );
 		//TR << "MUT TASK BEFORE ReplicateTask: " << *(mut_task)<< std::endl;
 		//now make the same logic as the native

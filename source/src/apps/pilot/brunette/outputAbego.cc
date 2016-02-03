@@ -57,7 +57,7 @@ int main( int argc, char * argv [] ) {
 	try{
 		using namespace core::chemical;
 		using namespace core::import_pose::pose_stream;
-		using core::import_pose::pose_from_pdb;
+		using core::import_pose::pose_from_file;
 		devel::init(argc, argv);
 		MetaPoseInputStream input = streams_from_cmd_line();
     		ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );

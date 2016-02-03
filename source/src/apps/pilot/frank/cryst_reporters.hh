@@ -58,7 +58,6 @@
 using namespace basic;
 using namespace core;
 using namespace core::pose;
-using namespace ObjexxFCL;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 

@@ -24,7 +24,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/Remarks.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>

@@ -90,7 +90,7 @@ class My_New_Mover(rosetta.protocols.moves.Mover):
 
 new_mover = My_New_Mover()
 
-pose = rosetta.pose_from_pdb("../test/data/test_in.pdb")
+pose = rosetta.pose_from_file("../test/data/test_in.pdb")
 sf_new = rosetta.core.scoring.ScoreFunction()
 
 #new_mover.apply(pose)

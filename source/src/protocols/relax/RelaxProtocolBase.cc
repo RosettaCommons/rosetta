@@ -22,7 +22,7 @@
 
 #include <core/kinematics/MoveMap.hh>
 
-#include <core/io/pdb/pose_io.hh>
+
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -86,7 +86,6 @@ using basic::Warning;
 static THREAD_LOCAL basic::Tracer TR( "protocols.relax.ClassicRelax" );
 
 using namespace core;
-using io::pdb::dump_pdb;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace protocols {

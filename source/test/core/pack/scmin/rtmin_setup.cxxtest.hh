@@ -664,7 +664,7 @@ public:
 		for ( core::Size ii = 1; ii <= pdbs.size(); ++ii ) {
 			pose::Pose orig_pose;
 			scoring::ScoreFunctionOP sfxn = scoring::get_score_function();
-			core::import_pose::pose_from_pdb( orig_pose, "core/pack/" + pdbs[ ii ] );
+			core::import_pose::pose_from_file( orig_pose, "core/pack/" + pdbs[ ii ] , core::import_pose::PDB_file);
 			(*sfxn)( orig_pose );
 			//clock_t start_time = clock();
 			for ( core::Size jj = 1; jj <= niterations; ++jj ) {

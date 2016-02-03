@@ -16,7 +16,7 @@ import os
 import urllib
 
 from rosetta import Pose
-from rosetta import pose_from_pdb
+from rosetta import pose_from_file
 
 # other tools
 from cleaning import cleanATOM
@@ -32,7 +32,7 @@ def load_from_rcsb( pdb_code , pdb_outfile = '' ):
         load_from_rcsb('1YY8')
     See also:
         Pose
-        pose_from_pdb
+        pose_from_file
         pose_from_rcsb
         pose_from_sequence
         cleanATOM
@@ -80,7 +80,7 @@ def pose_from_rcsb( pdb_code , ATOM = True , CRYS = False , pdb_outfile = '' ):
         pose=pose_from_rcsb('1YY8')
     See also:
         Pose
-        pose_from_pdb
+        pose_from_file
         pose_from_sequence
         load_from_rcsb
         cleanATOM
@@ -102,7 +102,7 @@ def pose_from_rcsb( pdb_code , ATOM = True , CRYS = False , pdb_outfile = '' ):
     if CRYS:
         cleanCRYS(pdb_outfile)
         pdb_outfile = pdb_outfile[:edit]+'.mono.pdb'
-    pose = pose_from_pdb(pdb_outfile)
+    pose = pose_from_file(pdb_outfile)
     return pose
 
 # retreives pdbData from rcsb for  <pdb_code>

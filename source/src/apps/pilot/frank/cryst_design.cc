@@ -1,5 +1,15 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
 /// @file
 /// @brief
+/// @Author Frank Dimaio
 
 
 #include <protocols/cryst/spacegroup.hh>
@@ -17,14 +27,14 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/Remarks.hh>
-#include <core/pose/CrystInfo.hh>
+#include <core/io/Remarks.hh>
+#include <core/io/CrystInfo.hh>
 #include <core/pose/motif/reference_frames.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -114,6 +124,8 @@
 using namespace basic;
 using namespace core;
 using namespace core::pose;
+using namespace core::io::pdb;
+using namespace core::io;
 using namespace ObjexxFCL;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -411,7 +423,7 @@ public:
 	void apply( Pose & pose) {
 		if ( !native ) {
 			native = core::pose::PoseOP( new core::pose::Pose() );
-			core::import_pose::pose_from_pdb( *native, option[in::file::native]() );
+			core::import_pose::pose_from_file( *native, option[in::file::native]() , core::import_pose::PDB_file);
 		}
 
 		core::Real rms = protocols::cryst::crystRMS( *native, pose ); // will symmetrize once
@@ -558,7 +570,7 @@ public:
 		}
 
 		// report in PDB header
-		core::pose::RemarkInfo remark;
+		core::io::RemarkInfo remark;
 		remark.num = 1; remark.value = "ENERGIES:   totE "+utility::to_string(total_score)+"   intE "+utility::to_string(total_interfaceE)
 			+"   weakE "+utility::to_string(best_score_weakint);
 		pose.pdb_info()->remarks().push_back( remark );
@@ -1077,7 +1089,7 @@ public:
 		//// //////////////// ////
 		// 1: mutate to native
 		if ( option[ in::file::native ].user() ) {
-			core::import_pose::pose_from_pdb( native_, option[in::file::native]() );
+			core::import_pose::pose_from_file( native_, option[in::file::native]() , core::import_pose::PDB_file);
 			runtime_assert( native_.total_residue() == pose.total_residue() );
 
 			if ( !revertonly_ ) {
@@ -1225,7 +1237,7 @@ public:
 
 		core::Real total_score, total_interfaceE, best_score_weakint;
 		get_interface_energies( setup, pose, sf, total_score, total_interfaceE, best_score_weakint);
-		core::pose::RemarkInfo remark;
+		core::io::RemarkInfo remark;
 		remark.num = 1; remark.value = "score(relax) = "+utility::to_string(total_score)+" | "+utility::to_string(total_interfaceE)
 			+" | "+utility::to_string(best_score_weakint);
 		pose.pdb_info()->remarks().push_back( remark );
@@ -1631,7 +1643,7 @@ public:
 				continue;
 			}
 
-			core::pose::RemarkInfo remark;
+			core::io::RemarkInfo remark;
 			remark.num = 1;
 			remark.value = "score = "
 				+ utility::to_string(ncontacts) + " | "
@@ -1643,7 +1655,7 @@ public:
 			remark.num = 2;
 
 			for ( int k=2; k<=(int)score_perinterface.size(); ++k ) {
-				core::pose::RemarkInfo remark;
+				core::io::RemarkInfo remark;
 				remark.value = "score [" + utility::to_string(k) + "] = "
 					+ utility::to_string(score_perinterface[k]) + " | "
 					+ utility::to_string(ncontacts_per_interface[k]);
@@ -2195,7 +2207,7 @@ CrystFFTDock::dump_transformed_pdb( Pose pose, InterfaceHit ih, numeric::Uniform
 	numeric::xyzVector<Real> T (ih.x, ih.y, ih.z);
 
 	// add score to header
-	core::pose::RemarkInfo remark;
+	core::io::RemarkInfo remark;
 	std::ostringstream oss;
 	oss << "  score = " << ih.score;
 	remark.num = 1; remark.value = oss.str();

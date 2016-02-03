@@ -23,7 +23,7 @@
 #include <apps/pilot/blivens/disulfides.hh>
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -82,7 +82,7 @@ int main( int argc, char * argv [] )
 
 	//read in pose
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, pdbfile );
+	core::import_pose::pose_from_file( pose, pdbfile , core::import_pose::PDB_file);
 
 	ofstream out(outfile.c_str());
 	if(!out.good()) {

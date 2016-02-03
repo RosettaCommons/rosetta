@@ -70,7 +70,7 @@
 #include <protocols/relax/FastRelax.hh>
 
 
-#include <core/io/pdb/pose_io.hh>
+
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -188,7 +188,7 @@ UpdateCrystInfo::apply( core::pose::Pose & pose ) {
 	Bxform = Vector( Bxform[1], Bxform[2], Bxform[0] );
 	Cxform = Vector( Cxform[2], Cxform[0], Cxform[1] );
 
-	pose::CrystInfo ci = pose.pdb_info()->crystinfo();
+	io::CrystInfo ci = pose.pdb_info()->crystinfo();
 
 	bool need_angles=false;
 	numeric::xyzVector<Size> grid;
@@ -630,7 +630,7 @@ DockLatticeMover::parse_my_tag(
 void
 MakeLatticeMover::apply( core::pose::Pose & pose ) {
 	// initialize sg_ from pose CRYST1 line
-	pose::CrystInfo ci = pose.pdb_info()->crystinfo();
+	io::CrystInfo ci = pose.pdb_info()->crystinfo();
 	runtime_assert(ci.A()*ci.B()*ci.C() != 0);  // TODO: allow these to be randomized
 
 	sg_.set_spacegroup(ci.spacegroup());

@@ -410,7 +410,7 @@ dump_gws( core::pose::Pose const & pose, std::string const & filename )
 /// @details Returns 0 for anything outside of the range 1-9.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 core::uint char_to_int( char const char_in ) {
-	if(char_in > '9' || char_in < '1') return 0;
+	if ( char_in > '9' || char_in < '1' ) return 0;
 	return static_cast<core::uint>( char_in - '0' );
 }
 

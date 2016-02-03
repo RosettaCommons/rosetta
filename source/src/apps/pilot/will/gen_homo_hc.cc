@@ -26,7 +26,7 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pack/optimizeH.hh>
@@ -70,7 +70,7 @@ using protocols::scoring::ImplicitFastClashCheck;
 using std::string;
 using utility::vector1;
 using numeric::min;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using basic::options::option;
 using numeric::min;
 using numeric::max;
@@ -332,8 +332,8 @@ void run(std::string fname) {
   make_pose_from_sequence(his,"H",core::chemical::FA_STANDARD,false);
   make_pose_from_sequence(ala,"A",core::chemical::FA_STANDARD,false);
   make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
-  pose_from_pdb(cenp,*crs,fname);
-  pose_from_pdb(natp,*frs,fname);
+  pose_from_file(cenp,*crs,fname, core::import_pose::PDB_file);
+  pose_from_file(natp,*frs,fname, core::import_pose::PDB_file);
   Size nres=cenp.n_residue();
   core::scoring::dssp::Dssp dssp(natp);
   dssp.insert_ss_into_pose(natp);

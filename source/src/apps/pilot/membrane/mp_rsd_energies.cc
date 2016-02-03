@@ -96,7 +96,7 @@ main( int argc, char* argv [] ) {
     }
 
     // Load in Pose from PDB
-    core::pose::PoseOP pose = core::import_pose::pose_from_pdb( pdbfile ); 
+    core::pose::PoseOP pose = core::import_pose::pose_from_file( pdbfile , core::import_pose::PDB_file); 
 
     std::cout << pose->total_residue() << std::endl;
 

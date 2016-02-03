@@ -45,7 +45,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -124,7 +124,7 @@ main( int argc, char * argv [] )
 	// read the pose
 	pose::Pose pose;
 	// gets filename from -s option
-	core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	//if optimization_radius > 100, then repack/sc_min entire structure
 	core::Real optimization_radius = option[ casp::opt_radius ]();

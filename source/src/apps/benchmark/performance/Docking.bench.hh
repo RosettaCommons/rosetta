@@ -42,7 +42,7 @@ public:
 		if ( dock == Low ) core_init_with_additional_options( "-low_res_protocol_only -dock_pert 3 8 -run:constant_seed" );
 		if ( dock == High ) core_init_with_additional_options( "-docking_local_refine -run:constant_seed" );
 		start_pose = core::pose::PoseOP( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb(*start_pose, "dock_in.pdb");
+		core::import_pose::pose_from_file(*start_pose, "dock_in.pdb", core::import_pose::PDB_file);
 		docking = protocols::docking::DockingProtocolOP( new protocols::docking::DockingProtocol() );
 		docking->set_native_pose(start_pose);
 		docking->set_input_pose(start_pose);

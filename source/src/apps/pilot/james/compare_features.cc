@@ -142,7 +142,7 @@ main( int argc, char * argv [] ) {
 	MetaPoseInputStream input = streams_from_cmd_line();
 
   Pose native;
-  core::import_pose::pose_from_pdb(
+  core::import_pose::pose_from_file(
     native, option[ in::file::native ]()
   );
 

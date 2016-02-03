@@ -24,7 +24,7 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/util.hh>//option.hh>
 #include <core/pose/Pose.hh>
@@ -147,9 +147,9 @@ main( int argc, char * argv [] )
 	core::pose::PoseOP native_pose = new core::pose::Pose();
 	if (option[ in::file::native ].user()) {
 	  if ( option[ in::file::centroid_input ].user() ) {
-	    core::import_pose::centroid_pose_from_pdb( *native_pose, option[ in::file::native ]() );
+	    core::import_pose::centroid_pose_from_pdb( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 	  } else {
-	    core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
+	    core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 	  }
 	}
 	rmsCalculator->set_native_pose( native_pose );

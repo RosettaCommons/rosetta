@@ -14,12 +14,13 @@
 #include <core/id/AtomID_Map.hh>
 #include <devel/init.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/packing/compute_holes_score.hh>
@@ -128,7 +129,7 @@ public:
 		Real rms = -1;
 		if ( basic::options::option[ OptionKeys::in::file::native ].user() ) {
 			Pose native;
-			core::import_pose::pose_from_pdb( native, basic::options::option[ OptionKeys::in::file::native ]() );
+			core::import_pose::pose_from_file( native, basic::options::option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 			rms = scoring::CA_rmsd( native, pose );
 		}
 
@@ -170,7 +171,12 @@ public:
 
 			// ONE OR THE OTHER OF THESE BLOCKS BELOW!
 			TR << "dumping pdb to " << fname << std::endl;
-			dump_bfactor_pdb(pose,result.atom_scores,out,"NO_MODEL_LINE_IN_OUTPUT");
+
+			//JAB -XRW 2016
+			core::pose::set_bfactors_from_atom_id_map(pose, result.atom_scores);
+			pose.dump_pdb(out, "NO_MODEL_LINE_IN_OUTPUT");
+
+			//dump_bfactor_pdb(pose,result.atom_scores,out,"NO_MODEL_LINE_IN_OUTPUT");
 
 			if ( make_voids_ ) {
 				TR << "dumping cavities " << std::endl;

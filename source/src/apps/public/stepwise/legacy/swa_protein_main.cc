@@ -92,7 +92,7 @@
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
 
 #include <numeric/xyzVector.hh>
@@ -137,7 +137,7 @@ using namespace protocols::stepwise::legacy::modeler::protein;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 //typedef std::map< std::string, core::pose::PoseOP > PoseList;
@@ -306,7 +306,7 @@ initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::Residu
 	native_pose = core::pose::PoseOP( new Pose );
 
 	std::string native_pdb_file  = option[ in::file::native ];
-	import_pose::pose_from_pdb( *native_pose, *rsd_set.lock(), native_pdb_file );
+	import_pose::pose_from_file( *native_pose, *rsd_set.lock(), native_pdb_file , core::import_pose::PDB_file);
 
 	native_pose->conformation().detect_disulfides();
 	if ( !option[ OptionKeys::stepwise::protein::disulfide_file ].user() ) {
@@ -316,7 +316,7 @@ initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::Residu
 	}
 
 	// this is weird, but I'm trying to reduce memory footprint by not saving the big 2-body energy arrays that get allocated
-	// when native_poses with missing atoms are 'packed' during pose_from_pdb().
+	// when native_poses with missing atoms are 'packed' during pose_from_file().
 	// native_pose->set_new_energies_object( 0 );
 	if ( option[ basic::options::OptionKeys::stepwise::dump ]() ) native_pose->dump_pdb("full_native.pdb");
 
@@ -384,7 +384,7 @@ calc_rms_test(){
 
 	native_pose = PoseOP( new Pose );
 	std::string native_pdb_file  = option[ in::file::native ];
-	import_pose::pose_from_pdb( *native_pose, *rsd_set.lock(), native_pdb_file );
+	import_pose::pose_from_file( *native_pose, *rsd_set.lock(), native_pdb_file , core::import_pose::PDB_file);
 
 	std::string const silent_file_out( option[ out::file::silent  ]() );
 	core::io::silent::SilentFileDataOP sfd_dummy;

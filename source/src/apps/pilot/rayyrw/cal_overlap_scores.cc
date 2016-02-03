@@ -126,7 +126,7 @@ int main( int argc, char* argv[] )
 			// native pose
 			core::pose::Pose native_pose;
 			core::chemical::ResidueTypeSetCOP cen_rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
-			core::import_pose::pose_from_pdb( native_pose, *cen_rsd_set, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() );
+			core::import_pose::pose_from_file( native_pose, *cen_rsd_set, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() , core::import_pose::PDB_file);
 
 			get_frag_rmsd( ref_fragpdb_rmsds, ref_fragpdb_positions, ref_fragpdb_poses, native_pose );
 			get_frag_rmsd( fragpdb_rmsds, fragpdb_positions, fragpdb_poses, native_pose );

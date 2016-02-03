@@ -23,7 +23,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/kinematics/MoveMap.hh>
 
-#include <core/io/pdb/pose_io.hh>
+
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -86,7 +86,6 @@ using basic::Warning;
 static THREAD_LOCAL basic::Tracer TR( "protocols.relax.ClassicRelax" );
 
 using namespace core;
-using io::pdb::dump_pdb;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace protocols {

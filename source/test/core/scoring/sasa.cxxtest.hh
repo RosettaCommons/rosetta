@@ -276,7 +276,7 @@ public:
 
 		//chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		//core::pose::make_pose_from_sequence( pose, "G", *rsd_set );
-		core::import_pose::pose_from_pdb( pose, "core/scoring/nonideal_glycine.pdb" );
+		core::import_pose::pose_from_file( pose, "core/scoring/nonideal_glycine.pdb" , core::import_pose::PDB_file);
 
 		for ( Size ii=1; ii <= pose.n_residue(); ii+=3 ) {
 			pose.set_phi( ii, -150.0 );

@@ -114,7 +114,7 @@ public:
 		//Import the test scaffold
 		TR << "Importing Pose" << std::endl;
 		core::pose::Pose testPose;
-		core::import_pose::pose_from_pdb( testPose, "protocols/motif_grafting/1zx3a_translated_and_rotated.pdb" );
+		core::import_pose::pose_from_file( testPose, "protocols/motif_grafting/1zx3a_translated_and_rotated.pdb" , core::import_pose::PDB_file);
 
 		//Get the original sequence
 		std::string seq_motif_before=testPose.chain_sequence(1);
@@ -135,7 +135,7 @@ public:
 
 		/////Import the target scaffold "Real Answer"
 		core::pose::Pose challengePose;
-		core::import_pose::pose_from_pdb( challengePose, "protocols/motif_grafting/2nm1_1zx3a_hybrid.pdb" );
+		core::import_pose::pose_from_file( challengePose, "protocols/motif_grafting/2nm1_1zx3a_hybrid.pdb" , core::import_pose::PDB_file);
 
 
 		/////Check that "Answer" and the "Real Answer" sequences are equal size:
@@ -208,7 +208,7 @@ public:
 		//Import the test scaffold
 		TR << "Importing Pose" << std::endl;
 		core::pose::Pose testPose;
-		core::import_pose::pose_from_pdb( testPose, "protocols/motif_grafting/1zx3a_translated_and_rotated.pdb" );
+		core::import_pose::pose_from_file( testPose, "protocols/motif_grafting/1zx3a_translated_and_rotated.pdb" , core::import_pose::PDB_file);
 
 		//Get the original sequence
 		std::string seq_motif_before=testPose.chain_sequence(1);
@@ -231,7 +231,7 @@ public:
 
 		/////Import the target scaffold "Real Answer"
 		core::pose::Pose challengePose;
-		core::import_pose::pose_from_pdb( challengePose, "protocols/motif_grafting/2nm1_1zx3a_hybrid.pdb" );
+		core::import_pose::pose_from_file( challengePose, "protocols/motif_grafting/2nm1_1zx3a_hybrid.pdb" , core::import_pose::PDB_file);
 
 
 		/////Check that "Answer" and the "Real Answer" sequences are equal size:
@@ -303,7 +303,7 @@ public:
 		//Import the test scaffold
 		TR << "Importing Pose" << std::endl;
 		core::pose::Pose testPose;
-		core::import_pose::pose_from_pdb( testPose, "protocols/motif_grafting/1zx3a_translated_and_rotated.pdb" );
+		core::import_pose::pose_from_file( testPose, "protocols/motif_grafting/1zx3a_translated_and_rotated.pdb" , core::import_pose::PDB_file);
 
 		//Get the original sequence
 		std::string seq_motif_before=testPose.chain_sequence(1);
@@ -324,7 +324,7 @@ public:
 
 		/////Import the target scaffold "Real Answer"
 		core::pose::Pose challengePose;
-		core::import_pose::pose_from_pdb( challengePose, "protocols/motif_grafting/2nm1_1zx3a_hybrid.pdb" );
+		core::import_pose::pose_from_file( challengePose, "protocols/motif_grafting/2nm1_1zx3a_hybrid.pdb" , core::import_pose::PDB_file);
 
 
 		/////Check that "Answer" and the "Real Answer" sequences are equal size:
@@ -397,7 +397,7 @@ public:
 		//Import the test scaffold
 		TR << "Importing Pose" << std::endl;
 		core::pose::Pose testPose;
-		core::import_pose::pose_from_pdb( testPose, "protocols/motif_grafting/1zx3a_translated_and_rotated.pdb" );
+		core::import_pose::pose_from_file( testPose, "protocols/motif_grafting/1zx3a_translated_and_rotated.pdb" , core::import_pose::PDB_file);
 
 		//Get the original sequence
 		std::string seq_motif_before=testPose.chain_sequence(1);
@@ -418,7 +418,7 @@ public:
 
 		/////Import the target scaffold "Real Answer"
 		core::pose::Pose challengePose;
-		core::import_pose::pose_from_pdb( challengePose, "protocols/motif_grafting/2nm1_1zx3a_hybrid.pdb" );
+		core::import_pose::pose_from_file( challengePose, "protocols/motif_grafting/2nm1_1zx3a_hybrid.pdb" , core::import_pose::PDB_file);
 
 
 		/////Check that "Answer" and the "Real Answer" sequences are equal size:

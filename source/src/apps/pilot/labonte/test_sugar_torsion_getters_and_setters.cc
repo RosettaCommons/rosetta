@@ -39,7 +39,7 @@ main( int argc, char *argv[] )
 
 		// Import test pose.
 		Pose pose;
-		pose_from_pdb( pose, "../test/core/chemical/carbohydrates/Lex.pdb" );
+		pose_from_file( pose, "../test/core/chemical/carbohydrates/Lex.pdb" , core::import_pose::PDB_file);
 
 		cout << "Lewisx:" << endl << pose << endl << endl;
 

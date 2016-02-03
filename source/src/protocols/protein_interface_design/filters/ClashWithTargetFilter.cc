@@ -81,14 +81,14 @@ core::Size ClashWithTargetFilter::compute( core::pose::Pose const & pose ) const
 
 	//pose_copy.dump_pdb("input.pdb");
 	if ( !align_to_pdbname_.empty() ) {
-		core::pose::PoseOP ref_pose= core::import_pose::pose_from_pdb( align_to_pdbname_, false );
+		core::pose::PoseOP ref_pose= core::import_pose::pose_from_file( align_to_pdbname_, false , core::import_pose::PDB_file);
 		protocols::simple_moves::SuperimposeMoverOP SuperimposeMoverOP( new protocols::simple_moves::SuperimposeMover(*ref_pose, ref_start_, ref_end_, pose_start_, pose_end_, true) );
 		SuperimposeMoverOP->apply(pose_copy);
 	}
 	//pose_copy.dump_pdb("inputAlign.pdb");
 
 	//Append target pose
-	core::pose::PoseOP context_pose= core::import_pose::pose_from_pdb( context_pdbname_, false );
+	core::pose::PoseOP context_pose= core::import_pose::pose_from_file( context_pdbname_, false , core::import_pose::PDB_file);
 	Size chain1end(pose_copy.conformation().chain_end( 1 ) );
 	pose_copy.append_pose_by_jump(*context_pose,chain1end);
 	//pose_copy.dump_pdb("target_inputAlign.pdb");

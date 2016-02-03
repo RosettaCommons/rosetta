@@ -344,9 +344,9 @@ void* doit(void*) {
 	ResidueTypeSetCAP cenresset = ChemicalManager::get_instance()->residue_type_set( CENTROID );
 
 	Pose lnk1,lnk2,hydinit,psIinit,petfinit;
-	pose_from_pdb(psIinit ,*cenresset,"input/psI_0001_strip_0001.pdb");
-	pose_from_pdb(hydinit ,*cenresset,"input/hyda1_0001_strip_0001.pdb");
-	pose_from_pdb(petfinit,*cenresset,"input/PetF_0001.pdb");
+	pose_from_file(psIinit ,*cenresset,"input/psI_0001_strip_0001.pdb", core::import_pose::PDB_file);
+	pose_from_file(hydinit ,*cenresset,"input/hyda1_0001_strip_0001.pdb", core::import_pose::PDB_file);
+	pose_from_file(petfinit,*cenresset,"input/PetF_0001.pdb", core::import_pose::PDB_file);
 	Pose const psI(psIinit),hyd(hydinit),petf(petfinit);
 	ClashCheck clashpsI (psI ,3.5);
 	ClashCheck clashhyd (hyd ,3.5);

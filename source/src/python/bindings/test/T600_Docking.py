@@ -14,7 +14,7 @@ import os; os.chdir('.test.output')
 
 print 'Docking ----------------------------------------------------'
 
-dock_p = pose_from_pdb("../test/data/test_dock.pdb")
+dock_p = pose_from_file("../test/data/test_dock.pdb")
 dock_jump = 1
 #DockingProtocol().setup_foldtree(dock_p)
 

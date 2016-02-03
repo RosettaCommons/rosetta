@@ -29,7 +29,7 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
@@ -94,7 +94,7 @@ using protocols::scoring::ImplicitFastClashCheck;
 using std::string;
 using utility::vector1;
 using numeric::min;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using basic::options::option;
 using numeric::min;
 using numeric::max;
@@ -882,7 +882,7 @@ void run(std::string fname) {
   if(his.residue(1).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(his,1);
   if(ala.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(ala,1);
   if(ala.residue(1).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(ala,1);
-  pose_from_pdb(natp,*frs,fname);
+  pose_from_file(natp,*frs,fname, core::import_pose::PDB_file);
   Size nres=natp.n_residue();
   core::scoring::dssp::Dssp dssp(natp);
   dssp.insert_ss_into_pose(natp);

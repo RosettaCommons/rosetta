@@ -16,7 +16,7 @@
 #include <devel/init.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -90,7 +90,7 @@ main( int argc, char * argv [] )
 
 	pose::Pose input_pose;
 	std::string const input_pdb_name( basic::options::start_file() );
-	core::import_pose::pose_from_pdb( input_pose, input_pdb_name );
+	core::import_pose::pose_from_file( input_pose, input_pdb_name , core::import_pose::PDB_file);
 
 	Size const totres = input_pose.total_residue();
 	pose::Pose pose = input_pose;

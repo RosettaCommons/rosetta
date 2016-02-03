@@ -489,7 +489,7 @@ int main(int argv, char **argc){
 		utility_exit_with_message("no linker params specified!!");
 	}
 	vector1<core::Size> target_residues = option[flail::target_residues]();
-	vector1<PoseOP> poses = core::import_pose::poseOPs_from_pdbs(option[in::file::s](),"centroid");
+	vector1<PoseOP> poses = core::import_pose::poseOPs_from_files(option[in::file::s](),"centroid", core::import_pose::PDB_file);
 
 	Bola bola(poses,linker_seqs,target_residues,rama);
 	// bola.random_nonclashing_move();

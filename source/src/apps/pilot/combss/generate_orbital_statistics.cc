@@ -27,7 +27,7 @@
 #include <map>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
@@ -122,7 +122,7 @@ int main( int argc, char * argv [] )
 	//begin iterating through list of files and composing statistics
 	for(std::vector< utility::file::FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i) {
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose, i->name());
+		core::import_pose::pose_from_file(pose, i->name(), core::import_pose::PDB_file);
 
 		if(basic::options::option[basic::options::OptionKeys::orbitals::sc_stats]){
 			orbital_stats.sc_H_orbital(pose); //where the magic happens

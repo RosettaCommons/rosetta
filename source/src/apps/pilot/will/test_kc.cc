@@ -231,7 +231,7 @@ void test_kc() {
 	using namespace basic::options::OptionKeys;
 
 	Pose pose;
-	core::import_pose::pose_from_pdb(pose,option[in::file::s]()[1]);
+	core::import_pose::pose_from_file(pose,option[in::file::s]()[1], core::import_pose::PDB_file);
 
 
 	Size start_res_  = 4;
@@ -321,7 +321,7 @@ void test_kc2() {
 	//        109.5  109.5  100.0 109.5  100.0   109.5   109.5
 
 	Pose pose;
-	core::import_pose::pose_from_pdb(pose,option[in::file::s]()[1]);
+	core::import_pose::pose_from_file(pose,option[in::file::s]()[1], core::import_pose::PDB_file);
 
 
 	for(int i = 1; i <= 8; ++i) {

@@ -44,7 +44,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <devel/init.hh>
 
@@ -56,7 +56,7 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 
@@ -134,7 +134,7 @@ main( int argc, char* argv [] )
 		}
 	}
 	for(unsigned int f=1; f<=files.size();f++){
-		core::import_pose::pose_from_pdb(pose, files[f]);
+		core::import_pose::pose_from_file(pose, files[f], core::import_pose::PDB_file);
 		int num_struct = 10;
 		ShakeStructureMover ssm; //don't initialize with a scorefunction,
 		//scorefunction with rama,omega,fa_dun,p_aa_pp terms will be created for you

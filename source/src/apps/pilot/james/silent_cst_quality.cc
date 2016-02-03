@@ -31,7 +31,7 @@
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 
@@ -290,7 +290,7 @@ main( int argc, char * argv [] )
 		ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	// read in a native pose
 	core::pose::Pose native_pose;
-	core::import_pose::pose_from_pdb(
+	core::import_pose::pose_from_file(
 		native_pose, *rsd_set, option[ in::file::native ]()
 	);
 	MetaPoseInputStream input = streams_from_cmd_line();

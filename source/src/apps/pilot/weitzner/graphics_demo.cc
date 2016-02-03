@@ -17,7 +17,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/loops/Loop.hh>
@@ -79,7 +79,7 @@ void*
 my_main( void* ) {
 	pose::PoseOP pose = new pose::Pose();
 
-	core::import_pose::pose_from_pdb(*pose, "src/apps/pilot/weitzner/1bzq.pdb");// changing to relative path, so it could work from diff places... "/work/rosetta/rosetta_source/src/apps/pilot/weitzner/1bzq.pdb");
+	core::import_pose::pose_from_file(*pose, "src/apps/pilot/weitzner/1bzq.pdb");// changing to relative path, so it could work from diff places... "/work/rosetta/rosetta_source/src/apps/pilot/weitzner/1bzq.pdb", core::import_pose::PDB_file);
 
 	TR << "The pose's sequence is: " << pose->sequence() << std::endl;
 

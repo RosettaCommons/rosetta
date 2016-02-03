@@ -59,7 +59,7 @@ using utility::io::izstream;
 using utility::io::ozstream;
 using utility::vector1;
 using std::endl;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::kinematics::Stub;
 using core::conformation::ResidueOP;
 

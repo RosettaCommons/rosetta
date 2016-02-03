@@ -324,7 +324,7 @@ public:
 	{
 		using namespace core::id;
 
-		core::import_pose::pose_from_pdb( pose, "core/scoring/hbonds/1ubq_23_to_34.pdb" ); // read in the helix from ubiquitin
+		core::import_pose::pose_from_file( pose, "core/scoring/hbonds/1ubq_23_to_34.pdb" , core::import_pose::PDB_file); // read in the helix from ubiquitin
 		core::scoring::ScoreFunction sfxn;
 		initialize_lj_hbond_sfxn( sfxn );
 

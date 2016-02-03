@@ -205,7 +205,7 @@ FragmentReader::apply( FragSetOP & fragset )
 		utility::vector1< String > fs ( utility::string_split( filename_, ',' ) );
 		for ( utility::vector1< String>::const_iterator it( fs.begin() ), end( fs.end() ); it!=end; ++it ) {
 			String filename( *it );
-			core::import_pose::centroid_pose_from_pdb( pose_in, filename );
+			core::import_pose::centroid_pose_from_pdb( pose_in, filename , core::import_pose::PDB_file);
 			runtime_assert( end_ <= pose_in.total_residue() );
 			for ( Size c=0; c<steal_times_; c++ ) {
 				set_fragments( pose_in, fragset );

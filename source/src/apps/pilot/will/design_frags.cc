@@ -88,7 +88,7 @@ main (int argc, char *argv[]) {
 	utility::vector1<std::string> files = option[OptionKeys::in::file::s]();
 	for(Size i = 1; i <= files.size(); ++i) {
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose,files[i]);
+		core::import_pose::pose_from_file(pose,files[i], core::import_pose::PDB_file);
 		std::string tag = utility::file_basename(files[i]).substr(3,4);
 		pose2frags(pose,1,20,tag);
 	}

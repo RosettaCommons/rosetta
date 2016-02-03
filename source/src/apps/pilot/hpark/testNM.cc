@@ -230,7 +230,7 @@ int main( int argc, char *argv [] ){
   core::chemical::ResidueTypeSetCAP rsd_set
 		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 
-  core::import_pose::pose_from_pdb( pose, *rsd_set, option[ in::file::s ](1) ); 
+  core::import_pose::pose_from_file( pose, *rsd_set, option[ in::file::s ](1) , core::import_pose::PDB_file); 
 
 	//test_NMmin( pose );
 	test_NMrelaxer( pose );

@@ -17,7 +17,6 @@
 
 #include <core/svn_version.hh>
 #include <core/types.hh>
-#include <core/io/pdb/file_data.hh>
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
@@ -30,6 +29,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <numeric/random/random.hh>
 #include <numeric/numeric.functions.hh>
@@ -692,7 +692,7 @@ void PlainPdbJobDistributor::dump_pose_and_map(
 	if ( !out.good() ) {
 		utility_exit_with_message( "Unable to open file: " + outfile_name + "\n" );
 	}
-	core::io::pdb::FileData::dump_pdb( pose, out );
+	core::io::pdb::dump_pdb( pose, out );
 	dump_scores(out, tag, pose);
 	out.close();
 

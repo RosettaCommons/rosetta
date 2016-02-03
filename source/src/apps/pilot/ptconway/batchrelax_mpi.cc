@@ -347,7 +347,7 @@ int main(int argc, char *argv[]) {
 				sfd_in->read_file( silent_filename );
 
 				string native_pdb_file = split_string(batches[batch_id],1);
-				native_pose = core::import_pose::pose_from_pdb( native_pdb_file );
+				native_pose = core::import_pose::pose_from_file( native_pdb_file , core::import_pose::PDB_file);
 			}
 			int start = atof(split_string(batches[batch_id],2).c_str());
 			int end = atof(split_string(batches[batch_id],3).c_str());

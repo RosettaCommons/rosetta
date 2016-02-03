@@ -91,7 +91,7 @@ namespace protocols {
       if (option[in::file::native].user()) {
         nativePose_ = new core::pose::Pose;
         tr.Info << "in::file::native noticed at command line" << std::endl;
-        core::import_pose::pose_from_pdb(*nativePose_, option[in::file::native]());
+        core::import_pose::pose_from_file(*nativePose_, option[in::file::native](), core::import_pose::PDB_file);
         pose::set_ss_from_phipsi(*nativePose_);
         sequence_ = nativePose_->sequence();
       }
@@ -104,7 +104,7 @@ namespace protocols {
       } else if (option[in::file::s].user()) {
         core::pose::PoseOP tmp_pose(new core::pose::Pose);
         std::string fn = option[in::file::s](1);
-        core::import_pose::pose_from_pdb(*tmp_pose, fn);
+        core::import_pose::pose_from_file(*tmp_pose, fn, core::import_pose::PDB_file);
         copyStructure(*startingPose_, *tmp_pose);
       }
 
@@ -114,7 +114,7 @@ namespace protocols {
       //        core::chemical::ResidueTypeSetCAP rsd_set =
       //            core::chemical::ChemicalManager::get_instance()->residue_type_set(
       //                core::chemical::CENTROID);
-      //        core::import_pose::pose_from_pdb(*startingPose_, *rsd_set, fn);
+      //        core::import_pose::pose_from_file(*startingPose_, *rsd_set, fn, core::import_pose::PDB_file);
       //      }
 
       if (option[start_native]()) {

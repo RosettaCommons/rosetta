@@ -128,8 +128,8 @@ int main( int argc, char *argv [] ){
   Size npdb = option[ in::file::s ]().size();
   std::string const pose_init = option[ in::file::s ](1);
   
-  core::import_pose::pose_from_pdb( native, *rsd_set, option[ in::file::native ]() ); 
-  core::import_pose::pose_from_pdb( pose0, *rsd_set, pose_init ); 
+  core::import_pose::pose_from_file( native, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file); 
+  core::import_pose::pose_from_file( pose0, *rsd_set, pose_init , core::import_pose::PDB_file); 
 
   std::map< Size, Size > resmap;
   get_resmap( pose0, native, resmap );
@@ -141,7 +141,7 @@ int main( int argc, char *argv [] ){
   //decompose
   for( Size i = 1; i <= npdb; ++i ){
     std::string const pdbname = option[ in::file::s ](i);
-    core::import_pose::pose_from_pdb( pose_work, *rsd_set, pdbname ); 
+    core::import_pose::pose_from_file( pose_work, *rsd_set, pdbname , core::import_pose::PDB_file); 
     decompose( pose0, pose_work, native, pdbname, resmap, false );
   }
 

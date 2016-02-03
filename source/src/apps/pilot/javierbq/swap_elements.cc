@@ -63,7 +63,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <fstream>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/util.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/conformation/symmetry/SymmData.hh>
@@ -517,7 +517,7 @@ public:
 
 					/*
 					std::ofstream transformed( "transformed.pdb");
-					core::io::pdb::dump_pdb(pose_for_rotation, transformed);
+					core::io::pdb::old_dump_pdb(pose_for_rotation, transformed);
 					const Vector p2a = pose_for_rotation.residue( idx_center_to_a ).xyz("X");
 					const Vector p2b = pose_for_rotation.residue( idx_center_to_b ).xyz("X");
 					const Vector c2a = pose_for_rotation.residue( idx_a ).xyz("X");
@@ -537,7 +537,7 @@ public:
 					pose_for_rotation.apply_transform_Rx_plus_v( z_rot  , Vector(0,0,0)	);
 					/*
 					std::ofstream transformed_z( "transformed_z.pdb");
-					core::io::pdb::dump_pdb(pose_for_rotation, transformed_z);
+					core::io::pdb::old_dump_pdb(pose_for_rotation, transformed_z);
 					const Vector p2a_z = pose_for_rotation.residue( idx_center_to_a ).xyz("X");
 					const Vector p2b_z = pose_for_rotation.residue( idx_center_to_b ).xyz("X");
 					const Vector c3a = pose_for_rotation.residue( idx_a ).xyz("X");

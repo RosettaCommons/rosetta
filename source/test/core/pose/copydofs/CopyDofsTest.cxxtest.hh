@@ -63,7 +63,7 @@ public:
 		using namespace core::scoring;
 		using namespace core::kinematics;
 
-		PoseOP pose_op = pose_from_pdb( "core/pose/copydofs/excise_bp_7_14_min_again_relax_full_RNA_P_overlap_reR-hbond_sc_wildtype_bound.pdb" ); // mixed RNA, protein, cutpoints.
+		PoseOP pose_op = pose_from_file( "core/pose/copydofs/excise_bp_7_14_min_again_relax_full_RNA_P_overlap_reR-hbond_sc_wildtype_bound.pdb" , core::import_pose::PDB_file); // mixed RNA, protein, cutpoints.
 		Pose & pose = *pose_op;
 		figure_out_reasonable_rna_fold_tree( pose );
 		virtualize_5prime_phosphates( pose );

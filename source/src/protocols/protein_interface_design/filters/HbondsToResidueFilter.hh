@@ -176,7 +176,7 @@ public :
 	/// @brief Set the scorefunction to use for hbond calculation.
 	///
 	void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in);
-	
+
 	/// @brief Set the ResidueSelector to use.
 	/// @details Only hydrogen bonds between this residue and the residues selected by the ResidueSelector will be counted,
 	/// if a ResidueSelector is provided.
@@ -219,7 +219,7 @@ private:
 	/// @brief Owning pointer to the scorefunction to use.
 	///
 	core::scoring::ScoreFunctionOP sfxn_;
-	
+
 	/// @brief Owning pointer to a ResidueSelector, optionally used to select the residues to count.
 	/// @details Only hydrogen bonds between this residue and the residues selected by the ResidueSelector will be counted,
 	/// if a ResidueSelector is provided.

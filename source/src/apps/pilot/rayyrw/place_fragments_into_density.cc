@@ -430,7 +430,7 @@ int main(int argc, char* argv[]) {
 		std::string sequence;
 		core::pose::Pose native_pose;
 		if ( option[ in::file::native ].user() ) {
-			core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]().name() );
+			core::import_pose::pose_from_file( native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
 			sequence = native_pose.sequence();
 		} else {
 			sequence = core::sequence::read_fasta_file( option[ in::file::fasta ]()[1])[1]->sequence();

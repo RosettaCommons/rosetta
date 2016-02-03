@@ -30,7 +30,7 @@
 #include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
 
 // Package headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -83,7 +83,7 @@ public:
 		residue_set->init();
 
 		// read pdb file
-		core::import_pose::pose_from_pdb( pose, *residue_set, "protocols/simple_moves/oop/oop_test.pdb" );
+		core::import_pose::pose_from_file( pose, *residue_set, "protocols/simple_moves/oop/oop_test.pdb" , core::import_pose::PDB_file);
 		//scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
 		core::init::init_random_generators(1000, "mt19937");

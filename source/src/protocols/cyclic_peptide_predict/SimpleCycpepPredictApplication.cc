@@ -719,7 +719,7 @@ SimpleCycpepPredictApplication::import_and_set_up_native (
 	core::pose::PoseOP native_pose,
 	core::Size const expected_residue_count
 ) const {
-	core::import_pose::pose_from_pdb(*native_pose, native_file);
+	core::import_pose::pose_from_file(*native_pose, native_file, core::import_pose::PDB_file);
 	TR << "Improrting native structure from " << native_file << "." << std::endl;
 	runtime_assert_string_msg( native_pose->n_residue() == expected_residue_count, "Error in simple_cycpep_predict app!  The imported native pose has a different number of residues than the sequence provided." );
 

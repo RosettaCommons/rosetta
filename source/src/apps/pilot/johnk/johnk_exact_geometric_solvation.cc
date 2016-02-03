@@ -15,7 +15,7 @@
 
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -102,7 +102,7 @@ main( int argc, char * argv [] )
 		TR << "Processing decoy " << curr_decoy_fname << std::endl;
 
 		pose::Pose curr_pose;
-		core::import_pose::pose_from_pdb( curr_pose, curr_decoy_fname );
+		core::import_pose::pose_from_file( curr_pose, curr_decoy_fname , core::import_pose::PDB_file);
 
 		// score with LK, turning off geosol because we change the weights later in this loop
 		(*LK_scorefxn)(curr_pose);

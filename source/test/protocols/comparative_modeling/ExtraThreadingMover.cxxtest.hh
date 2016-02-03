@@ -64,7 +64,6 @@
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
-#include <core/io/pdb/file_data.fwd.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/Jump.fwd.hh>
@@ -168,7 +167,7 @@ public:
 		using core::Real;
 		using utility::vector1;
 		using core::pose::Pose;
-		using core::import_pose::pose_from_pdb;
+		using core::import_pose::pose_from_file;
 		using core::pose::make_pose_from_sequence;
 
 		SequenceOP query( new Sequence( "MKNGEQNGPTTCTNCFTQTTPLWRRNPEGQPLCNACGLFLKLHGVVRPLSLKTDVIKKRNRNSANS", "4gat_prot" ) );
@@ -179,8 +178,8 @@ public:
 		align.add_sequence(query);
 
 		Pose query_pose, template_pose;
-		core::import_pose::pose_from_pdb( query_pose, "protocols/comparative_modeling/4gat_protein.pdb" );
-		core::import_pose::pose_from_pdb( template_pose, "protocols/comparative_modeling/4gat_all.pdb" );
+		core::import_pose::pose_from_file( query_pose, "protocols/comparative_modeling/4gat_protein.pdb" , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( template_pose, "protocols/comparative_modeling/4gat_all.pdb" , core::import_pose::PDB_file);
 
 		utility::vector1< Size > residues_to_steal;
 

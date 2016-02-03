@@ -56,7 +56,7 @@ main( int argc, char * argv [] ) {
 //------------- Read the native pose  ----------
     core::pose::Pose native_pose;
     if ( option[ in::file::native ].user() )
-        core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]().name() );
+        core::import_pose::pose_from_file( native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
 
 
     core::scoring::ResidualDipolarCoupling rdc;
@@ -67,7 +67,7 @@ main( int argc, char * argv [] ) {
     core::pose::Pose fa_pose;
     utility::vector1<utility::file::FileName> s = option[in::file::s]();
     for(core::Size i=1;i<=s.size();i++) {
-	core::import_pose::pose_from_pdb( fa_pose, s[i].name());
+	core::import_pose::pose_from_file( fa_pose, s[i].name(), core::import_pose::PDB_file);
 	std::cout << s[i].name() << ":\t" << rdc.compute_dipscore(fa_pose) << std::endl;
     }
 

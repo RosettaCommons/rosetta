@@ -22,7 +22,7 @@ rosetta.init()
 
 jumps = rosetta.utility.vector1_int()
 
-pose = rosetta.pose_from_pdb('/Users/sergey/rosie_uploads/docking/1brs.pdb')
+pose = rosetta.pose_from_file('/Users/sergey/rosie_uploads/docking/1brs.pdb')
 pose.pdb_info().name('D')  # changing name so PyMOL does not complain
 
 scorefxn = rosetta.get_fa_scorefxn()

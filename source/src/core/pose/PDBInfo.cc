@@ -172,7 +172,7 @@ PDBInfo::operator =( PDBInfo const & info )
 		modeltag_ = info.modeltag_;
 		remarks_ = info.remarks_;
 		if ( info.header_information_ ) {
-			header_information_ = io::pdb::HeaderInformationOP( new io::pdb::HeaderInformation(*info.header_information_) );
+			header_information_ = io::HeaderInformationOP( new io::HeaderInformation(*info.header_information_) );
 		}
 
 		residue_rec_ = info.residue_rec_;
@@ -828,24 +828,21 @@ PDBInfo::delete_res(
 }
 
 
-// added by sheffler
-/// @brief remembers info about atoms not read into the pose
+/// @brief remembers info about all atoms not read into the pose
 void
-PDBInfo::add_unrecognized_atom(
-	Size resnum,
-	std::string resname,
-	std::string atomname,
-	numeric::xyzVector<Real> coords,
-	Real temp
+PDBInfo::add_unrecognized_atoms(
+	utility::vector1< UnrecognizedAtomRecord > UAs
 ) {
-	unrecognized_atoms_.push_back( UnrecognizedAtomRecord(resnum,resname,atomname,coords,temp) );
-	unrecognized_res_num2name_[resnum] = resname;
-	if ( unrecognized_res_size_.find(resnum) == unrecognized_res_size_.end() ) {
-		unrecognized_res_size_[resnum] = 0;
-		num_unrecognized_res_++;
+	unrecognized_atoms_ = UAs;
+	num_unrecognized_atoms_ = unrecognized_atoms_.size();
+	for ( Size ii = 1; ii <= num_unrecognized_atoms_; ++ii ) {
+		unrecognized_res_num2name_[ UAs[ ii ].res_num() ] = UAs[ ii ].res_name();
+		if ( unrecognized_res_size_.find( UAs[ ii ].res_num() ) == unrecognized_res_size_.end() ) {
+			unrecognized_res_size_[ UAs[ ii ].res_num() ] = 0;
+			num_unrecognized_res_++;
+		}
+		unrecognized_res_size_[ UAs[ ii ].res_num() ] += 1;
 	}
-	num_unrecognized_atoms_++;
-	unrecognized_res_size_[resnum] += 1;
 }
 
 
@@ -968,7 +965,7 @@ core::pose::PDBInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( obsolete_ ) ); // _Bool
 	arc( CEREAL_NVP( name_ ) ); // String
 	arc( CEREAL_NVP( modeltag_ ) ); // String
-	arc( CEREAL_NVP( header_information_ ) ); // io::pdb::HeaderInformationOP
+	arc( CEREAL_NVP( header_information_ ) ); // io::HeaderInformationOP
 	arc( CEREAL_NVP( remarks_ ) ); // Remarks
 	arc( CEREAL_NVP( residue_rec_ ) ); // ResidueRecords
 	arc( CEREAL_NVP( pdb2pose_ ) ); // class core::pose::PDBPoseMap
@@ -978,7 +975,7 @@ core::pose::PDBInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( unrecognized_res_size_ ) ); // std::map<core::Size, core::Size>
 	arc( CEREAL_NVP( num_unrecognized_res_ ) ); // core::Size
 	arc( CEREAL_NVP( num_unrecognized_atoms_ ) ); // core::Size
-	arc( CEREAL_NVP( crystinfo_ ) ); // class core::pose::CrystInfo
+	arc( CEREAL_NVP( crystinfo_ ) ); // class core::io::CrystInfo
 }
 
 /// @brief Automatically generated deserialization method
@@ -988,7 +985,7 @@ core::pose::PDBInfo::load( Archive & arc ) {
 	arc( obsolete_ ); // _Bool
 	arc( name_ ); // String
 	arc( modeltag_ ); // String
-	arc( header_information_ ); // io::pdb::HeaderInformationOP
+	arc( header_information_ ); // io::HeaderInformationOP
 	arc( remarks_ ); // Remarks
 	arc( residue_rec_ ); // ResidueRecords
 	arc( pdb2pose_ ); // class core::pose::PDBPoseMap
@@ -1002,7 +999,7 @@ core::pose::PDBInfo::load( Archive & arc ) {
 	arc( unrecognized_res_size_ ); // std::map<core::Size, core::Size>
 	arc( num_unrecognized_res_ ); // core::Size
 	arc( num_unrecognized_atoms_ ); // core::Size
-	arc( crystinfo_ ); // class core::pose::CrystInfo
+	arc( crystinfo_ ); // class core::io::CrystInfo
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pose::PDBInfo );

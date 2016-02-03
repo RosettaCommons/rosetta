@@ -66,7 +66,7 @@ test_sugar( Pose const & sugar )
 	file::FileName filename( sugar.pdb_info()->name() );
 	filename.path( "output/" );
 	cout << "Writing file: " << filename.ext( "gws" ) << endl;
-	io::carbohydrates::dump_gws( sugar, filename.ext( "gws" ) );
+	core::io::carbohydrates::dump_gws( sugar, filename.ext( "gws" ) );
 	cout << "Writing file: " << filename.ext( "pdb" ) << endl;
 	sugar.dump_pdb( filename.ext( "pdb" ) );
 
@@ -96,7 +96,7 @@ main( int argc, char *argv[] )
 
 		cout << "Importing maltotriose:" << endl;
 
-		pose_from_pdb( maltotriose, PATH + "maltotriose.pdb" );
+		pose_from_file( maltotriose, PATH + "maltotriose.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( maltotriose );
 
@@ -104,7 +104,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing isomaltose:" << endl;
 
-		pose_from_pdb( isomaltose, PATH + "isomaltose.pdb" );
+		pose_from_file( isomaltose, PATH + "isomaltose.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( isomaltose );
 
@@ -112,7 +112,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing lactose (with a wonky 4H5 ring):" << endl;
 
-		pose_from_pdb( lactose, PATH + "lactose.pdb" );
+		pose_from_file( lactose, PATH + "lactose.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( lactose );
 
@@ -130,7 +130,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing branched amylopectin fragment:" << endl;
 
-		pose_from_pdb( amylopectin, PATH + "amylopectin_fragment.pdb" );
+		pose_from_file( amylopectin, PATH + "amylopectin_fragment.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( amylopectin );
 
@@ -138,7 +138,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing glucosamine:" << endl;
 
-		pose_from_pdb( glucosamine, PATH + "GlcN.pdb" );
+		pose_from_file( glucosamine, PATH + "GlcN.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( glucosamine );
 
@@ -155,7 +155,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing N-glycosylated 14-mer:" << endl;
 
-		pose_from_pdb( N_linked_14_mer, PATH + "N-linked_14-mer_glycan.pdb" );
+		pose_from_file( N_linked_14_mer, PATH + "N-linked_14-mer_glycan.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( N_linked_14_mer );
 
@@ -207,7 +207,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing beta-D-psicopyranose:" << endl;
 
-		pose_from_pdb(psicose, PATH + "beta-psicose.pdb");
+		pose_from_file(psicose, PATH + "beta-psicose.pdb", core::import_pose::PDB_file);
 
 		test_sugar( psicose );
 
@@ -215,7 +215,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing alpha-neuraminic acid:" << endl;
 
-		pose_from_pdb( neuraminate, PATH + "Neu.pdb" );
+		pose_from_file( neuraminate, PATH + "Neu.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( neuraminate );
 
@@ -223,7 +223,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing Lewisx:" << endl;
 
-		pose_from_pdb( Lex, PATH + "Lex.pdb" );
+		pose_from_file( Lex, PATH + "Lex.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( Lex );
 
@@ -239,7 +239,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing Lewisx with alternate GlcNAc atom names:" << endl;
 
-		pose_from_pdb( Lex, PATH + "Lex_alternate_names.pdb" );
+		pose_from_file( Lex, PATH + "Lex_alternate_names.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( Lex );
 
@@ -247,7 +247,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing Sialyl-Lewisx:" << endl;
 
-		pose_from_pdb( SLex, PATH + "SLex.pdb" );
+		pose_from_file( SLex, PATH + "SLex.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( SLex );
 
@@ -255,7 +255,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing maltobiose using GLYCAM residue names:" << endl;
 
-		pose_from_pdb( maltobiose, PATH + "GLYCAM_maltobiose.pdb" );
+		pose_from_file( maltobiose, PATH + "GLYCAM_maltobiose.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( maltobiose );
 
@@ -263,7 +263,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing GalCer:" << endl;
 
-		pose_from_pdb( GalCer, PATH + "GalCer.pdb" );
+		pose_from_file( GalCer, PATH + "GalCer.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( GalCer );
 
@@ -272,7 +272,7 @@ main( int argc, char *argv[] )
 		cout << "Importing CAPRI Round 27 Target 57, a crazy, heparin-like hexamer with uronic acids, sulfates, and "
 			"sulfonamidos:" << endl;
 
-		pose_from_pdb( target57, PATH + "target57.pdb" );
+		pose_from_file( target57, PATH + "target57.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( target57 );
 
@@ -281,7 +281,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing a sample methyl glycoside:" << endl;
 
-		pose_from_pdb( Me_glycoside, PATH + "Me_glycoside.pdb" );
+		pose_from_file( Me_glycoside, PATH + "Me_glycoside.pdb" , core::import_pose::PDB_file);
 
 		test_sugar( Me_glycoside );
 		*/

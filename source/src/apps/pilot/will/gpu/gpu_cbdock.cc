@@ -12,7 +12,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -143,7 +143,7 @@ int main(int argc, char *argv[]) {
   using namespace basic::options;
   using namespace core::scoring::packing;
 
-  Pose p; core::import_pose::pose_from_pdb(p,option[OptionKeys::in::file::s]()[1]);
+  Pose p; core::import_pose::pose_from_file(p,option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
 
   PoseHash clash(3.4,p);
   PoseHash ctact(5.0,p);

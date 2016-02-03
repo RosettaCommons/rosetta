@@ -31,7 +31,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/types.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>

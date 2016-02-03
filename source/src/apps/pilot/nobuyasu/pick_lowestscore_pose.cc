@@ -18,7 +18,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 
@@ -103,7 +103,7 @@ main( int argc, char * argv [] )
 	core::pose::Pose native_pose;
 	utility::vector1< Size > positions;
 	if( option[ in::file::native ].user() ){
-		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 		for( Size i=1; i<=native_pose.total_residue(); i++ ){
 			positions.push_back( i );
 		}
@@ -180,9 +180,9 @@ main( int argc, char * argv [] )
 				file << "REMARK model_1: native, model_2: decoy, rms= " << rms_calc << std::endl;
 				core::id::AtomID_Mask mask( true );
 				core::pose::initialize_atomid_map( mask, native_pose );
-				core::io::pdb::dump_pdb( native_pose, file, mask, "1" );
+				core::io::pdb::old_dump_pdb( native_pose, file, mask, "1" );
 				core::pose::initialize_atomid_map( mask, pose );
-				core::io::pdb::dump_pdb( pose, file, mask, "2" );
+				core::io::pdb::old_dump_pdb( pose, file, mask, "2" );
 				file.close();
 				// print data in out2
 				out2 << rms_calc << ' ' << score << ' ' << tag << ' ' << out.str() << std::endl;

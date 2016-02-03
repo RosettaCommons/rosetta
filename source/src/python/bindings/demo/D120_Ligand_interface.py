@@ -55,7 +55,7 @@ This sample script is setup for usage with
 
 The method sample_ligand_interface:
 1.  creates a pose from the desired PDB file, if ligand_params are specified,
-        use these when loading the pose_from_pdb
+        use these when loading the pose_from_file
 2.  sets up the pose FoldTree for docking
 3.  creates a copy of the pose to be modified
 4.  creates a ScoreFunctions for scoring ligand-protein complexes
@@ -112,9 +112,9 @@ def sample_ligand_interface(pdb_filename, partners,
     if ligand_params[0]:    # the params list has contents
         ligand_params = Vector1(ligand_params)
         new_res_set = generate_nonstandard_residue_set(ligand_params)
-        pose_from_pdb(pose, new_res_set, pdb_filename)
+        pose_from_file(pose, new_res_set, pdb_filename)
     else:
-        pose_from_pdb(pose, pdb_filename)
+        pose_from_file(pose, pdb_filename)
 
     # 2. setup the docking FoldTree
     # using this method, the jump number 1 is automatically set to be the
@@ -374,7 +374,7 @@ python molfile_to_params.py <MDL filename> -n <ResidueType name>
             -create a ResidueTypeSet using generate_nonstandard_residue_set,
                 providing it a Vector1 of .params filenames
             -create an empty Pose object
-            -load the PDB file data into the pose using pose_from_pdb providing
+            -load the PDB file data into the pose using pose_from_file providing
                 the ResidueTypeSet as the second argument
         >Permanently modifying the chemical database (Method 2)
             -if using a new ligand/ResidueType:
@@ -437,8 +437,8 @@ ID. As with DNA-protein PDB files, the ligand chain should be last**.
 
 == Method 1: Temporarily using generate_nonstandard_residue_set ==
 Inside the relevant script or interpreter, create a non-standard ResidueTypeSet
-using the method generate_nonstandard_residue_set and use use pose_from_pdb to
-load data into to a pose object. The method pose_from_pdb is overloaded
+using the method generate_nonstandard_residue_set and use use pose_from_file to
+load data into to a pose object. The method pose_from_file is overloaded
 such that it can accept a Pose (poses), a ResidueTypeSet (residue_set), and a
 string (filename) and load into the poses the data in the PDB file filename
 using residue_set to define any unknown residues. This method is preferred when

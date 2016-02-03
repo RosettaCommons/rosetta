@@ -23,7 +23,7 @@
 #include <core/conformation/util.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/types.hh>
@@ -1177,7 +1177,7 @@ my_main( void* ) {
 			//read as centroid, only bb info needed
 			ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
 			core::pose::PoseOP native_pose( new Pose() );
-			core::import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
+			core::import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 			rescore->set_native(native_pose);
 		}
 		do_cenrot->add_mover(rescore);

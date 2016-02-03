@@ -96,7 +96,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
@@ -150,7 +150,7 @@ using utility::vector1;
 using std::string;
 using std::cout;
 using std::endl;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 
 static THREAD_LOCAL basic::Tracer tt( "demo.phil.dna_dr_test", basic::t_info );
@@ -174,7 +174,7 @@ kono_sarai_stats()
 
 	for ( Size nn=1; nn<= files.size(); ++nn ) {
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, files[nn] );
+		core::import_pose::pose_from_file( pose, files[nn] , core::import_pose::PDB_file);
 		if ( pose.empty() ) continue;
 
 // 		set_base_partner( pose ); // fills base partner info
@@ -182,7 +182,7 @@ kono_sarai_stats()
 
 // 		std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
 
-// 		io::pdb::dump_pdb( pose, tag );
+// 		io::pdb::old_dump_pdb( pose, tag );
 
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
 
@@ -261,7 +261,7 @@ kono_sarai_zscore()
 
 	for ( Size nn=1; nn<= files.size(); ++nn ) {
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, files[nn] );
+		core::import_pose::pose_from_file( pose, files[nn] , core::import_pose::PDB_file);
 		if ( pose.empty() ) continue;
 		Pose start_pose = pose;
 
@@ -272,7 +272,7 @@ kono_sarai_zscore()
 
 // 		std::string const tag( lead_zero_string_of( nn, 4 )+".pdb" );
 
-// 		io::pdb::dump_pdb( pose, tag );
+// 		io::pdb::old_dump_pdb( pose, tag );
 
 		utility::vector1< int > motif_pos;
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
@@ -379,7 +379,7 @@ loop_modeling_test()
 
 	// read the pose
 	Pose pose;
-	core::import_pose::centroid_pose_from_pdb( pose, basic::options::start_file() );
+	core::import_pose::centroid_pose_from_pdb( pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	dump_pdb( pose, "premap.pdb" );
 
@@ -625,7 +625,7 @@ loop_rebuilding_test()
 
 	// read the pose
 	Pose pose;
-	core::import_pose::centroid_pose_from_pdb( pose, basic::options::start_file() );
+	core::import_pose::centroid_pose_from_pdb( pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	// setup Chu's loops object
 	Loops loops;
@@ -713,7 +713,7 @@ dna_dr_test()
 	using namespace scoring;
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/1a3q.pdb");
+	core::import_pose::pose_from_file( pose, "input/1a3q.pdb", core::import_pose::PDB_file);
 	pose.dump_pdb( "tmp.pdb" );
 
 	ScoreFunction scorefxn;
@@ -744,8 +744,8 @@ dna_dr_loop_test()
   using namespace protocols::frags;
 
   Pose pose;
-	//core::import_pose::pose_from_pdb( pose, "input/1aay.pdb");
-	core::import_pose::centroid_pose_from_pdb( pose, basic::options::start_file() );
+	//core::import_pose::pose_from_file( pose, "input/1aay.pdb", core::import_pose::PDB_file);
+	core::import_pose::centroid_pose_from_pdb( pose, basic::options::start_file() , core::import_pose::PDB_file);
   //pose.dump_pdb( "tmp.pdb" );
 
 	// read the loop file

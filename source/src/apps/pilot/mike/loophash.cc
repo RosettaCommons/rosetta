@@ -153,7 +153,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 	lsampler.set_max_struct( skim_size );
 	core::pose::Pose native_pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 	} else {
 		utility_exit_with_message("This app requires specifying the -in:file:native flag.");
 	}
@@ -245,7 +245,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 
 		core::pose::Pose ref_pose;
 		if ( option[ lh::refstruct].user() ) {
-			core::import_pose::pose_from_pdb( ref_pose, option[ lh::refstruct ]() );
+			core::import_pose::pose_from_file( ref_pose, option[ lh::refstruct ]() , core::import_pose::PDB_file);
 		}
 
 		core::Real bestcenscore = MAXIMAL_FLOAT;
@@ -395,8 +395,8 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 void run_sandbox( LoopHashLibraryOP /*loop_hash_library*/ ){
 
 	core::pose::Pose tgtpose, srcpose;
-	core::import_pose::pose_from_pdb( tgtpose, "input/S_00001_0000001_0_0001.pdb" );
-	core::import_pose::pose_from_pdb( srcpose, "input/S_00001_0000001_0_1_0001.pdb" );
+	core::import_pose::pose_from_file( tgtpose, "input/S_00001_0000001_0_0001.pdb" , core::import_pose::PDB_file);
+	core::import_pose::pose_from_file( srcpose, "input/S_00001_0000001_0_1_0001.pdb" , core::import_pose::PDB_file);
 
 	// test silent store class
 	/*

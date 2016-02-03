@@ -188,7 +188,7 @@ int main( int argc, char * argv [] ) {
     // pose pose
     std::string pdb_file_name = basic::options::option[ basic::options::OptionKeys::in::file::s ]()[1];
     core::pose::Pose pose;
-    core::import_pose::pose_from_pdb( pose, pdb_file_name );
+    core::import_pose::pose_from_file( pose, pdb_file_name , core::import_pose::PDB_file);
     pose.update_residue_neighbors();
 
     

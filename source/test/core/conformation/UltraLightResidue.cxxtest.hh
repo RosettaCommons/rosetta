@@ -25,7 +25,7 @@ public:
 	core::pose::Pose pose_;
 	void setUp() {
 		core_init();
-		core::import_pose::pose_from_pdb(pose_, "core/conformation/4gatA.pdb");
+		core::import_pose::pose_from_file(pose_, "core/conformation/4gatA.pdb", core::import_pose::PDB_file);
 	}
 
 	void test_ultralight() {

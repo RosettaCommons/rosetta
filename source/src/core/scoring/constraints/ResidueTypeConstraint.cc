@@ -16,7 +16,7 @@
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
 #include <core/conformation/Residue.hh>
-//#include <core/io/pdb/pose_io.hh> -- REALLY?
+//  -- REALLY?
 #include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>
 

@@ -138,7 +138,7 @@ public: // constructor/deconstructor
 		output_.open( filename.str().c_str() ,std::ios::out );
 
 		if ( option[ in::file::native ].user() ) {
-			core::import_pose::pose_from_pdb( native_, option[ basic::options::OptionKeys::in::file::native ] );
+			core::import_pose::pose_from_file( native_, option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 		}
 
 		std::ostringstream header;

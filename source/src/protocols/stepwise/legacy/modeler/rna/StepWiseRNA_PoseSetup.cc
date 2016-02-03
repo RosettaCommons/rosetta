@@ -289,7 +289,7 @@ StepWiseRNA_PoseSetup::Import_pose( Size const & i, core::pose::Pose & import_po
 
 		//  if(verbose) TR.Debug << " The following pose will be imported :" << pose_name << std::endl;
 		core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
-		import_pose::pose_from_pdb( import_pose, *rsd_set, pose_name );
+		import_pose::pose_from_file( import_pose, *rsd_set, pose_name , core::import_pose::PDB_file);
 		protocols::farna::make_phosphate_nomenclature_matches_mini( import_pose );
 	} else {
 		import_pose_from_silent_file( import_pose, silent_files_in_[ i ], input_tags_[i] );

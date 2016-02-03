@@ -29,7 +29,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/io/pdb/file_data.hh> //reading remarks
+#include <core/io/pdb/build_pose_as_is.hh> //reading remarks
 
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -663,7 +663,7 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 		other_name3 = outpose.residue_type( other_positions[1] ).name3();
 		other_chain = outpose.pdb_info()->chain( other_positions[1] );
 
-		core::pose::RemarkInfo ri;
+		core::io::RemarkInfo ri;
 
 		if ( match_params[i]->resA() == match_params[i]->get_missing_template_res( outpose ) ) {
 			//ri.value = "BONE TEMPLATE "+mis_remark+" MATCH MOTIF "+other_remark;

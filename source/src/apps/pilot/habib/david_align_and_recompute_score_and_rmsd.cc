@@ -18,7 +18,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
 #include <core/init/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -259,7 +259,7 @@ main( int argc, char * argv [] )
 
 		// create pose from pdb
 		pose::Pose ref_pose;
-		core::import_pose::pose_from_pdb( ref_pose, ref_decoy_fname );
+		core::import_pose::pose_from_file( ref_pose, ref_decoy_fname , core::import_pose::PDB_file);
 
 		std::string const cfilename = option[ contact_list ];
 		if ( cfilename != "" ) {
@@ -301,7 +301,7 @@ main( int argc, char * argv [] )
 			TR << "Processing decoy " << curr_decoy_fname << std::endl;
 
 			pose::Pose curr_pose;
-			core::import_pose::pose_from_pdb( curr_pose, curr_decoy_fname );
+			core::import_pose::pose_from_file( curr_pose, curr_decoy_fname , core::import_pose::PDB_file);
 
 			core::Real CA_rms = calpha_pdb_superimpose_pose( curr_pose, ref_pose);
 			CA_rms = core::scoring::CA_rmsd( curr_pose, ref_pose );

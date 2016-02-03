@@ -178,7 +178,7 @@ FragmentScoringMethodOP MakeGunnCostScore::make(Size priority,
 			<< "Reference structure to score fragments by Gunn cost loaded from: "
 			<< option[in::file::s]()[1] << std::endl;
 		core::pose::PoseOP nativePose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
+		core::import_pose::pose_from_file(*nativePose, option[in::file::s]()[1], core::import_pose::PDB_file);
 
 		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new GunnCostScore(priority,
 			lowest_acceptable_value, use_lowest, nativePose,

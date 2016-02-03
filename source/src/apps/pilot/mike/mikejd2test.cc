@@ -80,7 +80,7 @@
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>

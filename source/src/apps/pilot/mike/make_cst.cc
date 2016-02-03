@@ -24,7 +24,7 @@
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <utility/file/FileName.hh>
 #include <utility/excn/Exceptions.hh>

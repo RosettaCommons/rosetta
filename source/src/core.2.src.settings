@@ -33,8 +33,9 @@ sources = {
 		"ElectronConfiguration",
 		"icoor_support",
 		"IdealBondLengthSet",
-		"Metapatch",
 	    "legacy_types",
+		"Metapatch",
+		"MergeBehaviorManager",
 		"MMAtomType",
 		"MMAtomTypeSet",
 		"Orbital",
@@ -221,4 +222,5 @@ subprojects = [
 	"core.1",
 	"utility",
 	"ObjexxFCL",
+	"cifparse"
 ]

@@ -19,7 +19,7 @@
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/sequence/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -73,7 +73,7 @@ main( int argc, char * argv [] )
 	core::chemical::ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 	core::pose::Pose pose, extended_pose;
-	core::import_pose::pose_from_pdb( pose, *rsd_set, option [ OptionKeys::looprelax::input_pdb ]().name() );
+	core::import_pose::pose_from_file( pose, *rsd_set, option [ OptionKeys::looprelax::input_pdb ]().name() , core::import_pose::PDB_file);
 	core::pose::make_pose_from_sequence( 	extended_pose, sequence,
 		*( core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" ))
 	);

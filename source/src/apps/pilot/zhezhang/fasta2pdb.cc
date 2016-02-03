@@ -16,7 +16,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
 
 #include <protocols/jd2/JobDistributor.hh>

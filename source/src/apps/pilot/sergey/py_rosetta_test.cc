@@ -41,7 +41,7 @@ void T400_Refinement()
 	movemap->set_bb(true);
 	movemap->set_bb(10, false);
 
-	core::pose::PoseOP pose_frag = core::import_pose::pose_from_pdb("src/python/bindings/test/data/test_fragments.pdb"); // pose_frag = pose_from_pdb("../test/data/test_fragments.pdb")
+	core::pose::PoseOP pose_frag = core::import_pose::pose_from_file("src/python/bindings/test/data/test_fragments.pdb", core::import_pose::PDB_file); // pose_frag = pose_from_file("../test/data/test_fragments.pdb")
 
 	core::fragment::ConstantLengthFragSetOP fragset3mer( new core::fragment::ConstantLengthFragSet(3, "src/python/bindings/test/data/test3_fragments") ); 	// fragset3mer = ConstantLengthFragSet(3, "../test/data/test3_fragments")# "aatestA03_05.200_v1_3")
 	core::fragment::ConstantLengthFragSetOP fragset9mer( new core::fragment::ConstantLengthFragSet(9, "src/python/bindings/test/data/test9_fragments") ); 	// fragset9mer = ConstantLengthFragSet(9, "../test/data/test9_fragments")# "aatestA09_05.200_v1_3")
@@ -62,7 +62,7 @@ int main( int argc, char * argv [] )
 	T400_Refinement();
 
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb(pose, "src/python/bindings/test/data/test_in.pdb");
+	core::import_pose::pose_from_file(pose, "src/python/bindings/test/data/test_in.pdb", core::import_pose::PDB_file);
 
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function_legacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
 

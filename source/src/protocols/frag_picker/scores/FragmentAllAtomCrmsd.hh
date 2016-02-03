@@ -34,8 +34,6 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-using namespace ObjexxFCL;
-
 typedef utility::vector1<utility::vector1<Real> > Matrix;
 
 /// @brief  scores a fragment by its crmsd to the given reference structure
@@ -65,13 +63,13 @@ private:
 	std::string query_sequence_;
 	pose::PoseOP reference_pose_;
 	pose::PoseOP fragment_pose_;
-	FArray2D_double reference_coordinates_;
-	FArray2D_double chunk_coordinates_;
-	FArray2D_double fragment_coordinates_;
-	FArray2D_double frag_pos_coordinates_;
-	FArray1D_double weights_;
+	ObjexxFCL::FArray2D_double reference_coordinates_;
+	ObjexxFCL::FArray2D_double chunk_coordinates_;
+	ObjexxFCL::FArray2D_double fragment_coordinates_;
+	ObjexxFCL::FArray2D_double frag_pos_coordinates_;
+	ObjexxFCL::FArray1D_double weights_;
 
-	void fill_coords(core::pose::Pose const &, FArray2_double &, Size, std::string);
+	void fill_coords(core::pose::Pose const &, ObjexxFCL::FArray2_double &, Size, std::string);
 };
 
 /// @brief  Maker class that produces a new FragmentAllAtomCrmsd object

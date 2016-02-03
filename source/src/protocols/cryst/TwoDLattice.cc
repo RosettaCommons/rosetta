@@ -67,7 +67,7 @@
 #include <protocols/relax/FastRelax.hh>
 
 
-#include <core/io/pdb/pose_io.hh>
+
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -139,7 +139,7 @@ MakeLayerMoverCreator::mover_name() { return "MakeLayerMover"; }
 void
 MakeLayerMover::apply( core::pose::Pose & pose ) {
 	// initialize wg_ from pose CRYST1 line
-	pose::CrystInfo ci = pose.pdb_info()->crystinfo();
+	io::CrystInfo ci = pose.pdb_info()->crystinfo();
 	runtime_assert(ci.A()*ci.B()*ci.C() != 0);  // TODO: allow these to be randomized
 
 	wg_.set_wallpaper_group(ci.spacegroup());

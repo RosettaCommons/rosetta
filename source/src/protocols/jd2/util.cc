@@ -258,7 +258,7 @@ void set_native_in_mover( protocols::moves::Mover &mover ){
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 		}
 		std::string native_pdb_file  = option[ in::file::native ]();
-		core::import_pose::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+		core::import_pose::pose_from_file( *native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 		mover.set_native_pose( native_pose );
 	}
 }

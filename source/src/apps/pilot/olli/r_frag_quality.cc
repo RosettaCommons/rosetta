@@ -727,7 +727,7 @@ int main( int argc, char** argv ) {
 			for ( Size ct=1; ct <= option[ in::file::s ]().size(); ct++ ) {
 				Pose pose;
 				//read it
-				core::import_pose::pose_from_pdb( pose, option[ in::file::s ]()[ ct ] );
+				core::import_pose::pose_from_file( pose, option[ in::file::s ]()[ ct ] , core::import_pose::PDB_file);
 				for ( Size pos=1; pos <= pose.total_residue(); pos++ ) {
 					out_phi << RJ( 6, pos ) <<  RJ(6, ct) << F(10,4, pose.phi( pos ) ) << std::endl;
 					out_psi << RJ( 6, pos ) <<  RJ(6, ct) << F(10,4, pose.psi( pos ) ) << std::endl;
@@ -750,7 +750,7 @@ int main( int argc, char** argv ) {
 
 		Pose native;
 		//read it
-		core::import_pose::pose_from_pdb( native, native_pdb );
+		core::import_pose::pose_from_file( native, native_pdb , core::import_pose::PDB_file);
 		core::util::switch_to_residue_type_set( native, chemical::CENTROID );
 
 		Pose test_pose;

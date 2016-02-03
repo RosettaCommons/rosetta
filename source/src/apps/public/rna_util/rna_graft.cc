@@ -29,7 +29,7 @@
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/viewer/viewers.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -54,7 +54,7 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -99,7 +99,7 @@ get_pose_and_numbering( std::string const & pdb_file, pose::Pose & pose, utility
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-	import_pose::pose_from_pdb( pose, *rsd_set,  pdb_file );
+	import_pose::pose_from_file( pose, *rsd_set,  pdb_file , core::import_pose::PDB_file);
 
 	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 	core::pose::rna::virtualize_5prime_phosphates( pose );

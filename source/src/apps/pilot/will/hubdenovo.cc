@@ -32,7 +32,7 @@
 #include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -594,8 +594,8 @@ struct ConstraintConfig {
 				read_ignore_comments(in,tpdb);
 				if(tpdb.substr(tpdb.size()-4,4)!=".pdb"&&tpdb.substr(tpdb.size()-7,7)!=".pdb") utility_exit_with_message("bad pdb: "+tpdb);
 				templates_fname.push_back(tpdb);
-				templates_fa .push_back( pose_from_pdb(*frs,tpdb) );
-				templates_cen.push_back( pose_from_pdb(*crs,tpdb) );
+				templates_fa .push_back( pose_from_file(*frs,tpdb) , core::import_pose::PDB_file);
+				templates_cen.push_back( pose_from_file(*crs,tpdb) , core::import_pose::PDB_file);
 				Size wcount = 0;
 				while(true) {
 					if("TEMPLATE"==peek(in)) break;
@@ -947,10 +947,10 @@ struct HubDenovo {
 		famin = protocols::moves::MoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsymnocst, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ) );
 
 		if(option[OptionKeys::hub_pdb].user()){
-			hub_ = *core::import_pose::pose_from_pdb(*rtsfa, option[OptionKeys::hub_pdb]() );
+			hub_ = *core::import_pose::pose_from_file(*rtsfa, option[OptionKeys::hub_pdb]() , core::import_pose::PDB_file);
 		}
 		if( option[OptionKeys::target].user() ){
-			core::import_pose::pose_from_pdb(target_,option[OptionKeys::target]());
+			core::import_pose::pose_from_file(target_,option[OptionKeys::target](), core::import_pose::PDB_file);
 		}
 	}
 	Pose make_start_pose() {

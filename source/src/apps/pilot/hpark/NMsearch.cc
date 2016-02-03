@@ -740,8 +740,8 @@ int main( int argc, char *argv [] ){
   core::chemical::ResidueTypeSetCAP rsd_set
     = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
   
-  core::import_pose::pose_from_pdb( pose, *rsd_set, option[ in::file::s ](1) ); 
-  core::import_pose::pose_from_pdb( native, *rsd_set, option[ in::file::native ]() ); 
+  core::import_pose::pose_from_file( pose, *rsd_set, option[ in::file::s ](1) , core::import_pose::PDB_file); 
+  core::import_pose::pose_from_file( native, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file); 
 
 	Scheduler scheduler( pose, native, mode );
 

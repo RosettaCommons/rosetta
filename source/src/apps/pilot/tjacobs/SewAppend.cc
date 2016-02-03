@@ -111,7 +111,7 @@ main( int argc, char * argv [] ) {
 		segments.push_back(std::make_pair(segment_starts[i], segment_ends[i]));
 	}
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, starting_pdb );
+	core::import_pose::pose_from_file( pose, starting_pdb , core::import_pose::PDB_file);
 	Model pdb_model = create_model_from_pose(pose, segments, models);
 	models.insert(std::make_pair(pdb_model.model_id_, pdb_model));
 

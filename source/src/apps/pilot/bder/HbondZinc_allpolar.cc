@@ -115,7 +115,7 @@ public:
 	void
 	graft_match(core::pose::Pose & pose) {
 		pose::Pose scaffold;
-		core::import_pose::pose_from_pdb( scaffold, basic::options::option[scaffold_protein].value() );
+		core::import_pose::pose_from_file( scaffold, basic::options::option[scaffold_protein].value() , core::import_pose::PDB_file);
 		
 		TR << "Scaffold: " << scaffold.pdb_info()->name() << std::endl;
 		

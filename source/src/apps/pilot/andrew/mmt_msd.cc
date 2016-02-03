@@ -29,7 +29,7 @@
 
 /// Core headers
 #include <devel/init.hh>
-//#include <core/io/pdb/pose_io.hh>
+//#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/MetricValue.hh>
@@ -167,7 +167,7 @@ return two_vec;
 //
 // /// Read in the pdb
 // pose::Pose pose;
-// import_pose::pose_from_pdb( pose, pdb_name );
+// import_pose::pose_from_file( pose, pdb_name , core::import_pose::PDB_file);
 //
 // utility::io::izstream correspondence_file( correspondence_file_name );
 // if ( ! correspondence_file ) {

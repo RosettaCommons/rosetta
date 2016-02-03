@@ -28,7 +28,7 @@
 
 // Core headers
 #include <core/kinematics/FoldTree.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>

@@ -721,9 +721,12 @@ read_topology_file(
 			rsd->set_disulfide_atom_name( tag );
 		} else if ( tag == "ATOM_ALIAS" ) {
 			if ( line.size() < 20 ) {
-				utility_exit_with_message("ATOM_ALIAS line too short");
+				utility_exit_with_message("ATOM_ALIAS line too short in " + filename + ":\n" + line );
 			}
 			atom1 = line.substr( 11, 4 ); // Rosetta atom
+			if ( ! rsd->has( atom1 ) ) {
+				utility_exit_with_message( "ATOM_ALIAS line in " + filename + " attempts to add atom " + atom1 + " which is not a member of " + rsd->name() );
+			}
 			core::Size pos(16);
 			while ( line.size() >= pos+4 ) {
 				atom2 = line.substr(pos, 4);
@@ -744,7 +747,7 @@ read_topology_file(
 				l >> value;
 				rsd->atom( atom1 ).formal_charge( int(value) );
 			} else {
-				utility_exit_with_message("ERROR: Invalid charge type '"+tag+"' in topology file.");
+				utility_exit_with_message("ERROR: Invalid charge type '"+tag+"' in topology file, " + filename );
 			}
 		} else if ( tag == "CUT_BOND" ) {
 			l >> atom1 >> atom2;
@@ -828,7 +831,7 @@ read_topology_file(
 			} else if ( tag == "DEFAULT" ) {
 				rsd->force_nbr_atom_orient(false);
 			} else {
-				utility_exit_with_message("Unknown ORIENT_ATOM mode: " + tag );
+				utility_exit_with_message("Unknown ORIENT_ATOM mode: " + tag + " in " + filename );
 			}
 		} else if ( tag == "PROPERTIES" ) {
 			l >> tag;
@@ -951,17 +954,17 @@ read_topology_file(
 			using namespace core::chemical::rotamers;
 			if ( rsd->rotamer_library_specification() ) {
 				tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname() << " when attempting to set ROTAMERS specification" << std::endl;
-				utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
+				utility_exit_with_message("Cannot have multiple rotamer specifications in params file, " + filename );
 			}
 			l >> tag;
-			if ( ! l ) { utility_exit_with_message("Must provide rotamer library type in ROTAMERS line."); }
+			if ( ! l ) { utility_exit_with_message("Must provide rotamer library type in ROTAMERS line, from " + filename ); }
 			RotamerLibrarySpecificationOP rls( RotamerLibrarySpecificationFactory::get_instance()->get( tag, l ) ); // Create with remainder of line.
 			rsd->rotamer_library_specification( rls );
 		} else if ( tag == "ROTAMER_AA" ) {
 			using namespace core::chemical::rotamers;
 			if ( rsd->rotamer_library_specification() ) {
 				tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname() << " when attempting to set ROTAMERS specification" << std::endl;
-				utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
+				utility_exit_with_message("Cannot have multiple rotamer specifications in params file, " + filename );
 			}
 			tag = DunbrackRotamerLibrarySpecification::library_name();
 			RotamerLibrarySpecificationOP rls( RotamerLibrarySpecificationFactory::get_instance()->get( tag, l ) ); // Create with remainder of line (aa)
@@ -978,7 +981,7 @@ read_topology_file(
 
 			if ( rsd->rotamer_library_specification() ) {
 				tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname() << " when attempting to set PDB_ROTAMERS parameters." << std::endl;
-				utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
+				utility_exit_with_message("Cannot have multiple rotamer specifications in params file, " + filename );
 			}
 			rsd->rotamer_library_specification( core::chemical::rotamers::PDBRotamerLibrarySpecificationOP( new core::chemical::rotamers::PDBRotamerLibrarySpecification( rot_file() ) ) );
 
@@ -993,7 +996,7 @@ read_topology_file(
 				if ( ! old_libspec ) {
 					tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname();
 					tr.Error << " when attempting to set " << tag << " parameter for NCAA rotamer libraries." << std::endl;
-					utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
+					utility_exit_with_message("Cannot have multiple rotamer specifications in params file, " + filename );
 				}
 				ncaa_libspec = NCAARotamerLibrarySpecificationOP( new NCAARotamerLibrarySpecification( *old_libspec ) );
 			} else {
@@ -1027,7 +1030,7 @@ read_topology_file(
 				ncaa_libspec->nrchi_start_angle( angle );
 			} else {
 				tr.Error << "Did not expect " << tag << " when reading NCAA rotamer info." << std::endl;
-				utility_exit_with_message("Logic error in params file reading.");
+				utility_exit_with_message("Logic error in params file, " + filename + " reading.");
 			}
 
 			rsd->rotamer_library_specification( ncaa_libspec );
@@ -1041,7 +1044,7 @@ read_topology_file(
 				if ( ! old_libspec ) {
 					tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname();
 					tr.Error << " when attempting to set " << tag << " parameter for peptoid rotamer libraries." << std::endl;
-					utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
+					utility_exit_with_message("Cannot have multiple rotamer specifications in params file, " + filename );
 				}
 				peptoid_libspec = PeptoidRotamerLibrarySpecificationOP( new PeptoidRotamerLibrarySpecification( *old_libspec ) );
 			} else {
@@ -1065,7 +1068,7 @@ read_topology_file(
 				peptoid_libspec->peptoid_rotlib_n_bin_per_rot( n_bins_per_rot );
 			} else {
 				tr.Error << "Did not expect " << tag << " when reading peptoid rotamer info." << std::endl;
-				utility_exit_with_message("Logic error in params file reading.");
+				utility_exit_with_message("Logic error in params file reading, " + filename );
 			}
 
 			rsd->rotamer_library_specification( peptoid_libspec );
@@ -1137,33 +1140,33 @@ read_topology_file(
 				// build the Cartesian coords for the new atom:
 				if ( child_atom == parent_atom ) {
 					if ( ! rsd_xyz.empty() ) {
-						utility_exit_with_message("Only the first ICOOR atom in a topology file should list itself as its own parent atom.");
+						utility_exit_with_message("Only the first ICOOR atom in a topology file should list itself as its own parent atom, from file " + filename );
 					}
 					rsd_xyz[ child_atom ] = Vector( 0.0 );
 
 				} else if ( child_atom == angle_atom ) {
 					if ( rsd_xyz.size() != 1 ) {
-						utility_exit_with_message("Only the second ICOOR atom in a topology file should list itself as its own angle atom.");
+						utility_exit_with_message("Only the second ICOOR atom in a topology file should list itself as its own angle atom, from file " + filename  );
 					}
 					if ( ! rsd_xyz.count( parent_atom ) ) {
-						utility_exit_with_message("In second ICOOR atom in topology file - parent atom not found.");
+						utility_exit_with_message("In second ICOOR atom in topology file - parent atom not found, from file " + filename );
 					}
 					rsd_xyz[ child_atom ] = Vector( d, 0.0, 0.0 );
 				} else {
 					Vector torsion_xyz;
 					if ( child_atom == torsion_atom ) {
 						if ( rsd_xyz.size() != 2 ) {
-							utility_exit_with_message("Only the third ICOOR atom in a topology file should list itself as its own dihedral atom.");
+							utility_exit_with_message("Only the third ICOOR atom in a topology file should list itself as its own dihedral atom, from file " + filename );
 						}
 						if ( ! rsd_xyz.count( parent_atom ) || ! rsd_xyz.count( angle_atom ) ) {
-							utility_exit_with_message("In third ICOOR atom in topology file - parent and/or angle atom not found.");
+							utility_exit_with_message("In third ICOOR atom in topology file - parent and/or angle atom not found, from file " + filename );
 						}
 						torsion_xyz = Vector( 1.0, 1.0, 0.0 );
 					} else {
 						if ( ! ( rsd_xyz.count( parent_atom ) && rsd_xyz.count( angle_atom ) &&
 								rsd_xyz.count( torsion_atom ) ) ) {
-							utility_exit_with_message("In ICOOR atom line in topology file:"
-								"reference atoms must be specified in earlier line.  Missing " +
+							utility_exit_with_message("In ICOOR atom line in topology file: " + filename +
+								"; reference atoms must be specified in earlier line.  Missing " +
 								parent_atom + " or " + angle_atom + " or " + torsion_atom);
 						}
 						torsion_xyz = rsd_xyz[ torsion_atom ];
@@ -1415,7 +1418,7 @@ write_topology_file(
 class GraphvizPropertyWriter {
 public:
 	GraphvizPropertyWriter( ResidueType const & rsd ):
-			rsd_(rsd)
+		rsd_(rsd)
 	{}
 
 	/// @brief write properties for the graph as a whole
@@ -1431,7 +1434,7 @@ public:
 		out << "label=\"" << aa.name() << "\"";
 
 		element::Elements elem = aa.element_type()->element();
-		if( elem == element::H ) {
+		if ( elem == element::H ) {
 			out << ",color=lightgrey";
 		} else if ( elem == element::C ) {
 			out << ",color=black";
@@ -1445,9 +1448,9 @@ public:
 			out << ",color=orange";
 		} else if ( elem == element::F ) {
 			out << ",color=chartreuse";
-		} else if ( elem == element::Cl) {
+		} else if ( elem == element::Cl ) {
 			out << ",color=green";
-		} else if ( elem == element::Br) {
+		} else if ( elem == element::Br ) {
 			out << ",color=indianred";
 		} else if ( elem == element::I ) {
 			out << ",color=indigo";
@@ -1463,17 +1466,17 @@ public:
 		out << "[";
 		Bond const & ee( rsd_.bond(ed) );
 		switch ( ee.order() ) {
-			case SingleBondOrder : out << "color=black"; break;
-			case DoubleBondOrder : out << "color=\"black:white:black\""; break;
-			case TripleBondOrder : out << "color=\"black:white:black:white:black\""; break;
-			case OrbitalBondOrder: out << "style=dotted"; break;
-			case PseudoBondOrder : out << "style=dotted"; break;
-			default:
-				if( ee.aromaticity() == IsAromaticBond ) {
-					out << "style=dashed";
-				} else {
-					out << "style=dotted";
-				}
+		case SingleBondOrder : out << "color=black"; break;
+		case DoubleBondOrder : out << "color=\"black:white:black\""; break;
+		case TripleBondOrder : out << "color=\"black:white:black:white:black\""; break;
+		case OrbitalBondOrder : out << "style=dotted"; break;
+		case PseudoBondOrder : out << "style=dotted"; break;
+		default :
+			if ( ee.aromaticity() == IsAromaticBond ) {
+				out << "style=dashed";
+			} else {
+				out << "style=dotted";
+			}
 		}
 		out << "]";
 	}

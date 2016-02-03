@@ -15,7 +15,7 @@
 /// @author Jianqing Xu ( xubest@gmail.com )
 
 
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -191,7 +191,7 @@ void GraftCDRLoopsProtocol::init_from_options() {
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb( *native_pose, option[ OptionKeys::in::file::native ]() );
+		core::import_pose::pose_from_file( *native_pose, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 		set_native_pose( native_pose );
 	} else {
 		set_native_pose(NULL);

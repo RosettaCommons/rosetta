@@ -41,7 +41,7 @@
 
 #include <core/pose/Pose.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
@@ -133,7 +133,7 @@ main( int argc, char* argv [] ) {
 
 	core::pose::Pose template_pose;
 	if ( option[ in::file::template_pdb ].user() ) {
-		core::import_pose::pose_from_pdb(
+		core::import_pose::pose_from_file(
 			template_pose,
 			*rsd_set,
 			option[ in::file::template_pdb ]()[1]

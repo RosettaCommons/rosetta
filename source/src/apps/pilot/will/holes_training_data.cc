@@ -14,7 +14,7 @@
 #include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/packing/PoseBalls.hh>
 
 #include <basic/options/option.hh>
@@ -46,7 +46,7 @@ void test( std::string fname ) {
 	using namespace packing;
 
 	Pose pose;
-	core::import_pose::pose_from_pdb(pose,fname);
+	core::import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
 
 	PoseBalls pb( pose );
 

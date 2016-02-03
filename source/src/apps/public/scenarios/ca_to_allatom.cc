@@ -160,7 +160,7 @@ CaToAllAtom::CaToAllAtom(){
 
 	// Native pose
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 		core::pose::set_ss_from_phipsi( native_pose_ ); /// Is this necessary? Done by import pose?
 	}
 }
@@ -257,7 +257,7 @@ ca_to_allatom_main( void * )
 	//
 	//  // read as-needed
 	//  if ( !prev_job || curr_job->input_tag() != prev_job->input_tag() ) {
-	//   core::import_pose::pose_from_pdb( start_pose, curr_job->input_tag() );
+	//   core::import_pose::pose_from_file( start_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 
 	//   for (int i=1; i<=start_pose.fold_tree().num_cutpoint() ; ++i)
 	//    cutpts.push_back( start_pose.fold_tree().cutpoint(i) );

@@ -21,7 +21,7 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/after_opts.hh>
 //Auto Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
@@ -101,8 +101,8 @@ int main( int argc, char * argv [] ){
 		}
 
 		pose::Pose rna_pose, protein_pose;
-		core::import_pose::pose_from_pdb( rna_pose, input_rna_pose );
-		core::import_pose::pose_from_pdb( protein_pose, input_protein_pose );
+		core::import_pose::pose_from_file( rna_pose, input_rna_pose , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( protein_pose, input_protein_pose , core::import_pose::PDB_file);
 
 		std::string keyFeatures_hbond = rphr.extract_Hbond_atoms_from_protein_rna_complex(protein_pose, rna_pose);
 		//rphr.print_string_to_PDBfile(keyFeatures_hbond, "hbond.pdb");

@@ -17,7 +17,7 @@
 #include <devel/denovo_protein_design/util.hh>
 
 //project Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
@@ -68,7 +68,7 @@ main( int argc, char * argv [] )
 
 	core::pose::Pose pose;
 
-	core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	core::scoring::ScoreFunctionOP fullfxn(core::scoring::get_score_function());
 

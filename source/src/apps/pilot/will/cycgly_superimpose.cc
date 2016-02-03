@@ -405,7 +405,7 @@ int main( int argc, char * argv [] ) {
 	devel::init(argc,argv);
 
 	utility::vector1<Pose> targets_in;
-	targets_in = core::import_pose::poses_from_pdbs( option[in::file::s]() );
+	targets_in = core::import_pose::poses_from_files( option[in::file::s]() , core::import_pose::PDB_file);
 	for(Size i = 1; i <= targets_in.size(); i++) {
 		core::pose::remove_lower_terminus_type_from_pose_residue(targets_in[i],           1             );
 		core::pose::remove_upper_terminus_type_from_pose_residue(targets_in[i],targets_in[i].n_residue());

@@ -98,8 +98,8 @@ main ( int argc, char* argv[] ){
 		ThisApplication::register_options();
 		devel::init(argc, argv);
 		TR << "Reaading File " << option[pdb]() << std::endl;
-		//core::pose::PoseOP p = import_pose::pose_from_pdb( option[pdb]());
-		core::pose::PoseOP pop = import_pose::pose_from_pdb( option[pdb]());
+		//core::pose::PoseOP p = import_pose::pose_from_file( option[pdb](), core::import_pose::PDB_file);
+		core::pose::PoseOP pop = import_pose::pose_from_file( option[pdb](), core::import_pose::PDB_file);
 		SerializablePose p(*pop);
 
 

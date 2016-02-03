@@ -73,7 +73,7 @@ motif_dna_packer_design()
 		}
 
 		core::pose::PoseOP pose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *pose, pdb_name );
+		core::import_pose::pose_from_file( *pose, pdb_name , core::import_pose::PDB_file);
 		protocols::motifs::make_dna_mutations( *pose );
 		// This sets BasePartner in pose cacheable data
 		core::scoring::dna::set_base_partner( *pose ); // For some reason I am resetting this after making a DNA mutation, I think it's a bug fix

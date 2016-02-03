@@ -92,7 +92,7 @@ main( int argc, char * argv[] ) {
 
 		// create a pose
 		// pose::Pose orig_pose;
-		// core::import_pose::pose_from_pdb(orig_pose, start_file());
+		// core::import_pose::pose_from_file(orig_pose, start_file(), core::import_pose::PDB_file);
 		protocols::analysis::PeptideDeriverFilterOP filter =
 			protocols::analysis::PeptideDeriverFilterOP(
 			new protocols::analysis::PeptideDeriverFilter );

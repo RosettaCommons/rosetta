@@ -307,7 +307,7 @@ int main(int argc, char * argv[]) {
   DisulfideBondEnergy* ssEn = new DisulfideBondEnergy(1.5, 1.5, 1.5);
 
   if (option[in::file::native].user()) {
-    core::import_pose::pose_from_pdb(init_pose, option[in::file::native]());
+    core::import_pose::pose_from_file(init_pose, option[in::file::native](), core::import_pose::PDB_file);
     std::cout << ssEn->evaluate(init_pose, id1, id2) << std::endl;
     std::cout << ssEn->rebuildAndDetectDisulfideBond(init_pose, id1, id2) << std::endl;
     std::cout << ssEn->rebuildAndDetectDisulfideBond(init_pose, id1, -72.029, id2, -69.2231) << std::endl;

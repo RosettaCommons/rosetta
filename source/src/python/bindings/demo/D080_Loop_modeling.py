@@ -158,7 +158,7 @@ def sample_single_loop_modeling(pdb_filename,
     """
     # 1. create a pose from the desired PDB file
     p = Pose()
-    pose_from_pdb(p , pdb_filename)
+    pose_from_file(p , pdb_filename)
 
     # 2. create a reference copy of the pose in fullatom
     starting_p = Pose()

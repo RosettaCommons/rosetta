@@ -73,7 +73,7 @@ public: // test functions
 
 		// Load in poses from pdb (general case)
 		symmetric_pose_ = core::pose::PoseOP( new Pose() );
-		pose_from_pdb( *symmetric_pose_, "protocols/membrane/symmetry/1afo_tr_input.pdb" );
+		pose_from_file( *symmetric_pose_, "protocols/membrane/symmetry/1afo_tr_input.pdb" , core::import_pose::PDB_file);
 
 		// Load symmdata object from symmetry definition file
 		SymmDataOP symm_data = SymmDataOP( new SymmData() );

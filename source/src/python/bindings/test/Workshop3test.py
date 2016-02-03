@@ -10,7 +10,7 @@ init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is fo
 import os; os.chdir('.test.output')
 
 # Scoring Poses
-ras = pose_from_pdb("../test/data/workshops/6Q21.clean.pdb")
+ras = pose_from_file("../test/data/workshops/6Q21.clean.pdb")
 
 scorefxn = create_score_function("talaris2013")
 
@@ -44,7 +44,7 @@ hset = get_hbonds(ras)
 hset.show(ras)
 hset.show(ras, 24)
 
-pose = pose_from_pdb("../test/data/workshops/1YY9.clean.pdb")
+pose = pose_from_file("../test/data/workshops/1YY9.clean.pdb")
 
 rsd1_num = pose.pdb_info().pdb2pose('D', 102)
 rsd2_num = pose.pdb_info().pdb2pose('A', 408)

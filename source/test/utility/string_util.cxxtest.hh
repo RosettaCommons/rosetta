@@ -16,9 +16,11 @@
 // Testing headers
 #include <cxxtest/TestSuite.h>
 
+
 // Project headers
 #include <utility/string_util.hh>
 #include <utility/tools/make_vector1.hh>
+#include <core/types.hh>
 
 // C/C++ headers
 #include <iostream>
@@ -62,18 +64,6 @@ class StringUtilTests : public CxxTest::TestSuite {
 		unsigned int i;
 		utility::string2uint(s, &i);
 		TS_ASSERT_EQUALS(i, 42);
-	}
-
-	void test_readfromfileordie() {
-		string contents;
-		utility::ReadFromFileOrDie("utility/io/no_final_newline.txt", &contents);
-
-		stringstream result;
-		result << "foo" << endl
-		       << "bar" << endl
-		       << "baz has no newline!" << endl;
-
-		TS_ASSERT_EQUALS(contents, result.str());
 	}
 
 	void test_string_to_sha1() {
@@ -188,6 +178,34 @@ class StringUtilTests : public CxxTest::TestSuite {
 		// how the tag might look from, e.g., a silent file -- weird spaces.
 		tag = ":-5--4   A:2-3 X   :0    Y   :0    BLAH:1-2";
 		run_test_of_get_resnum_and_segid( tag );
+
+	}
+
+	void test_padding() {
+		std::string sL = "padL";
+		std::string new_strL = utility::pad_left(sL, 6, ' ');
+		//std::cout << ":" << sL << ":" << std::endl;
+		TS_ASSERT_EQUALS( new_strL, "  padL");
+
+		std::string sR = "padR";
+		std::string new_strR = utility::pad_right(sR, 6, ' ');
+		//std::cout << ":" << sR << ":" << std::endl;
+		TS_ASSERT_EQUALS( new_strR, "padR  ");
+
+	}
+
+	void test_real_format() {
+		core::Real n = 1.23456;
+		core::Real o = 11;
+		//core::Real n2 = 22.23456;
+
+		
+		//std::cout << "2Decimal:"<<utility::Real2string(n, 2) << std::endl;
+		//std::cout << "3Decimal:"<<utility::Real2string(n2, 3) << std::endl;
+		//std::cout << "padded2:"<<  utility::fmt_real(n, 2, 3) << std::endl;
+		TS_ASSERT_EQUALS( utility::Real2string(n, 2), "1.23" );
+		TS_ASSERT_EQUALS( utility::fmt_real(n, 2, 3), " 1.235" );
+		TS_ASSERT_EQUALS( utility::fmt_real(o, 2, 3), "11.000" );
 
 	}
 

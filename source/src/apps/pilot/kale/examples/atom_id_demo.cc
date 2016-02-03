@@ -121,15 +121,15 @@ int not_main(int argc, char** argv) {
 	core::pose::Pose pose_b;
 
 	// 5 Residue
-	//core::import_pose::pose_from_pdb(pose_a,
+	//core::import_pose::pose_from_file(pose_a,
 	//	"/home/kale/rosetta/main/apps/monte_carlo/jobs/tests/5-residue/trajectory/013.pdb");
 
 	// 6 Residue
-	//core::import_pose::pose_from_pdb(pose_a,
+	//core::import_pose::pose_from_file(pose_a,
 	//	"/home/kale/rosetta/main/apps/monte_carlo/jobs/tests/6-residue/trajectory/003.pdb");
 
 	// 7 Residue
-	core::import_pose::pose_from_pdb(pose_a,
+	core::import_pose::pose_from_file(pose_a,
 		"/home/kale/rosetta/main/apps/monte_carlo/jobs/tests/7-residue/trajectory/005.pdb");
 
 	Conformation &conformation_a = pose_a.conformation();

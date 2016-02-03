@@ -15,7 +15,7 @@
 #include <core/types.hh>
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -58,7 +58,7 @@ public:
 
 	frag_size_ = 9;
 	native = new core::pose::Pose;
-	core::import_pose::pose_from_pdb(*native, option[ in::file::native ]());
+	core::import_pose::pose_from_file(*native, option[ in::file::native ](), core::import_pose::PDB_file);
 
 	for(Size i=1;i<=native->total_residue()-frag_size_+1;i++) {
 	    data_p.push_back( new protocols::abinitio::GunnTuple );

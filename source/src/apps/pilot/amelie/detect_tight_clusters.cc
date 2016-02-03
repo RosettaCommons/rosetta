@@ -16,7 +16,7 @@
 // Core Headers
 // AS -- it's quite possible that a lot of the includes aren't needed...
 #include <devel/init.hh>
-//#include <core/io/pdb/pose_io.hh>
+//#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
@@ -1031,7 +1031,7 @@ int main( int argc, char * argv [] )
 		core::pose::Pose p;
 		std::string p_name = pdbs[1]; // warning -- this just handles one PDB...
 
-		core::import_pose::pose_from_pdb( p, p_name );
+		core::import_pose::pose_from_file( p, p_name , core::import_pose::PDB_file);
 
 		std::string outfile_core = p_name;
 
@@ -1098,7 +1098,7 @@ int main( int argc, char * argv [] )
 					return 2;
 				}
 				native_p.clear();
-				core::import_pose::pose_from_pdb(native_p, option[ in::file::native ]()); // does this work?
+				core::import_pose::pose_from_file(native_p, option[ in::file::native ](), core::import_pose::PDB_file); // does this work?
 				(*score_fxn)(native_p); // initial scoring is required to get actual energies
 			}
 

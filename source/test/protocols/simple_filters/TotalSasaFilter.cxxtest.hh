@@ -67,7 +67,7 @@ public:
 
 	void test_calc_total_sasa_glycine() {
 
-		core::import_pose::pose_from_pdb( pose, "core/scoring/nonideal_glycine.pdb" );
+		core::import_pose::pose_from_file( pose, "core/scoring/nonideal_glycine.pdb" , core::import_pose::PDB_file);
 
 		for ( Size ii=1; ii <= pose.n_residue(); ii+=3 ) {
 			pose.set_phi( ii, -150.0 );
@@ -116,6 +116,8 @@ public:
 	void test_calc_per_res_hydrophobic_sasa() {
 
 		pose = create_1ten_pdb_pose();
+		pose.dump_pdb( "1ten_from_total_sasa_filter.pdb" );
+		std::cout << "Nresidues: " << pose.total_residue() << std::endl;
 
 		protocols::simple_filters::TotalSasaFilter test(0, /*hydrophobic=*/ true, /*polar=*/ false );
 

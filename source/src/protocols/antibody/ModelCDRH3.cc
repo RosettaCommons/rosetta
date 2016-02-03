@@ -233,7 +233,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 	if ( bad_nter_ ) {
 		Size unaligned_cdr_loop_begin(0), unaligned_cdr_loop_end(0);
 		std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
-		core::import_pose::pose_from_pdb( hfr_pose_, path+"hfr.pdb" );
+		core::import_pose::pose_from_file( hfr_pose_, path+"hfr.pdb" , core::import_pose::PDB_file);
 		unaligned_cdr_loop_begin = hfr_pose_.pdb_info()->pdb2pose('H', 95) ;
 		unaligned_cdr_loop_end   = hfr_pose_.pdb_info()->pdb2pose('H', 103);
 		unaligned_cdr_loop_end -= 1 ;

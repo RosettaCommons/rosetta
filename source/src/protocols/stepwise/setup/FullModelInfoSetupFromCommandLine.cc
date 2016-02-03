@@ -97,7 +97,7 @@ get_pdb_and_cleanup( std::string const & input_file,
 	using namespace core::pose;
 	PoseOP input_pose( new Pose );
 	core::chemical::ResidueTypeSetCOP rsd_set_op( rsd_set );
-	import_pose::pose_from_pdb( *input_pose, *rsd_set_op, input_file );
+	import_pose::pose_from_file( *input_pose, *rsd_set_op, input_file , core::import_pose::PDB_file);
 	tag_into_pose( *input_pose, input_file );
 	cleanup( *input_pose );
 	make_sure_full_model_info_is_setup( *input_pose );

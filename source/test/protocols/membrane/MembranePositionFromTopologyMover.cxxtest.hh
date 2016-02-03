@@ -66,7 +66,7 @@ public:
 
 		// Load Pose from pdb
 		std::string input_pose = "protocols/membrane/1C3W_TR_A.pdb";
-		pose_ = core::import_pose::pose_from_pdb( input_pose );
+		pose_ = core::import_pose::pose_from_file( input_pose , core::import_pose::PDB_file);
 
 		// Load span object from spanfile
 		std::string spanfile = "protocols/membrane/1C3W_A.span";

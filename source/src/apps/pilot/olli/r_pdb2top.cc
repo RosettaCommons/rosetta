@@ -84,7 +84,7 @@ int main( int argc, char** argv ) {
 
 		if ( option[ in::file::s ].user() ) {
 			Pose pose;
-			core::import_pose::pose_from_pdb( pose, option[ in::file::s ]()[ 1 ] );
+			core::import_pose::pose_from_file( pose, option[ in::file::s ]()[ 1 ] , core::import_pose::PDB_file);
 
 			// get strand pairings
 			StrandPairingSet strand_pairings( pose );

@@ -19,7 +19,7 @@
 #include <map>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -165,13 +165,13 @@ int main( int argc, char * argv [] ) {
 		TR << "set template pdb" << template_fname << std::endl;
 		//sets pdb as a Rosetta pose
 		pose::Pose template_pose;
-		core::import_pose::pose_from_pdb( template_pose, template_fname );
+		core::import_pose::pose_from_file( template_pose, template_fname , core::import_pose::PDB_file);
 		TR << "set template pdb" << "    Number of residues: " << template_pose.total_residue() << std::endl;
 
 		// create pose for comparison pose from pdb
 		std::string const comparison_pdb_name ( basic::options::start_file() );
 		pose::Pose comparison_pose;
-		core::import_pose::pose_from_pdb( comparison_pose, comparison_pdb_name );
+		core::import_pose::pose_from_file( comparison_pose, comparison_pdb_name , core::import_pose::PDB_file);
 		TR << "set comparison pdb"<< "    Number of residues: " << comparison_pose.total_residue() << std::endl;
 
 		std::string tag = "";

@@ -110,7 +110,7 @@ class SimpleAnalysisFrame(TkFrame):
             infilename = tkFileDialog.askopenfilename(initialdir=global_variables.current_directory, title='Choose PDB')
         if not infilename:return
         global_variables.current_directory = os.path.dirname(infilename)
-        pose_from_pdb(self.rmsdP, infilename)
+        pose_from_file(self.rmsdP, infilename)
         print "Pose to compare loaded..."
         return
       

@@ -22,7 +22,7 @@
 
 
 #include <core/kinematics/RT.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 
 #include <numeric/constants.hh>
@@ -251,7 +251,7 @@ main( int argc, char* argv [] )
 		pose::Pose pdb;
 
 		std::cout << "PROCESSING PDB: " << pdb_file_location << std::endl;
-		core::import_pose::centroid_pose_from_pdb( pdb, pdb_file_location );
+		core::import_pose::centroid_pose_from_pdb( pdb, pdb_file_location , core::import_pose::PDB_file);
 		std::cout << "PROCESSING COMPLETE: " << pdb_file_location << std::endl;
 
 		core::scoring::dssp::Dssp dssp( pdb );

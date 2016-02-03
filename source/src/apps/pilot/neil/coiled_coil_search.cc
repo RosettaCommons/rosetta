@@ -130,7 +130,7 @@ main (int argc, char *argv[]){
   for(Size ifile = 1; ifile <= option[in::file::s]().size(); ++ifile) {
     string fname = option[in::file::s]()[ifile];
     pose::Pose pose;
-    import_pose::pose_from_pdb(pose,fname);
+    import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
 
 		// Get the starting and ending positions of the first and last helices
     core::scoring::dssp::Dssp dssp(pose);

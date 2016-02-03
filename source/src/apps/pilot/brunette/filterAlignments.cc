@@ -27,7 +27,7 @@
 
 #include <core/id/SequenceMapping.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
@@ -285,7 +285,7 @@ int main( int argc, char * argv [] ) {
 	using namespace core::chemical;
 	using namespace core::import_pose::pose_stream;
 	using namespace protocols::comparative_modeling;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using core::sequence::read_fasta_file;
 	using utility::file_basename;
 	option.add (filterAlignments::core_pdb,"core pdb");
@@ -295,7 +295,7 @@ int main( int argc, char * argv [] ) {
 	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
 	//get unconverged loops
 	Pose core_pose;
-	pose_from_pdb(
+	pose_from_file(
 			core_pose,
 			*rsd_set,
 			option[filterAlignments::core_pdb]()

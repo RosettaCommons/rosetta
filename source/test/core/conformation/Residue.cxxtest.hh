@@ -50,7 +50,7 @@ public:
 
 	void test_isDNA() {
 		Pose pose;
-		core::import_pose::pose_from_pdb(pose, "core/conformation/4gatA.pdb");
+		core::import_pose::pose_from_file(pose, "core/conformation/4gatA.pdb", core::import_pose::PDB_file);
 
 
 		unsigned dna_start = 68;
@@ -67,7 +67,7 @@ public:
 
 	void test_isLigand() {
 		Pose pose;
-		core::import_pose::pose_from_pdb(pose, "core/conformation/4gatA.pdb");
+		core::import_pose::pose_from_file(pose, "core/conformation/4gatA.pdb", core::import_pose::PDB_file);
 		TS_ASSERT(pose.residue(67).is_ligand());
 	}
 

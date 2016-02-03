@@ -21,7 +21,7 @@
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -31,7 +31,7 @@
 
 //pose
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 //score
 #include <core/scoring/rms_util.hh>
@@ -227,16 +227,16 @@ void run_parallel_docking() {
 	Size input_pdb_size=basic::options::option[ basic::options::OptionKeys::in::file::s ]().size();
 	Size random_index=numeric::random::random_range(1,input_pdb_size);
 	std::string pdbnamei=basic::options::option[ basic::options::OptionKeys::in::file::s ]()[random_index];
-	core::import_pose::pose_from_pdb( pose, pdbnamei.c_str() );
+	core::import_pose::pose_from_file( pose, pdbnamei.c_str() , core::import_pose::PDB_file);
 	//std::cout << " node: " << my_rank << " random_index: "  << random_index << std::endl;
 
 	//keep in the same reference poses
 	std::string pdbname1=basic::options::option[ basic::options::OptionKeys::in::file::s ]()[1];
-	core::import_pose::pose_from_pdb( original_pose, pdbname1.c_str() );
+	core::import_pose::pose_from_file( original_pose, pdbname1.c_str() , core::import_pose::PDB_file);
 
 	//read in the native pose
         if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-                core::import_pose::pose_from_pdb( native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() );
+                core::import_pose::pose_from_file( native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
         } else {
                 throw( utility::excn::EXCN_BadInput("native expected for this app") );
         }
@@ -306,7 +306,7 @@ void run_parallel_docking() {
 		random_index=numeric::random::random_range(1,input_pdb_size);
 		//std::cout << "curr_struct: " << curr_struct << " node: " << my_rank << " random_index: "  << random_index << std::endl;
 		pdbnamei=basic::options::option[ basic::options::OptionKeys::in::file::s ]()[random_index];
-		core::import_pose::pose_from_pdb( pose, pdbnamei.c_str() );
+		core::import_pose::pose_from_file( pose, pdbnamei.c_str() , core::import_pose::PDB_file);
 		previous_pose=pose;
 		current_trans_magnitude=initial_trans_magnitude;
 		current_rot_magnitude=initial_rot_magnitude;

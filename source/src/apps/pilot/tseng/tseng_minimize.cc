@@ -34,7 +34,7 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <utility/file/FileName.hh>
@@ -106,7 +106,7 @@ void test( std::string fname ) {
 	movemap.set_chi( true );
 
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb(pose,fname);
+	core::import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
 
 	Real eps,meps,maxpert,lmdel,pert,diff,score;
 	core::Size ntrial,trial,nlm,k,chino;

@@ -115,7 +115,7 @@ model_cdrs(core::pose::Pose & pose, AntibodyInfoCOP ab_info){
 		//Graft CDR?
 		if (pdbfiles[ i ] != "" ){
 			
-			core::pose::PoseOP cdr_pose = pose_from_pdb(pdbfiles[ i ]);
+			core::pose::PoseOP cdr_pose = pose_from_file(pdbfiles[ i ], core::import_pose::PDB_file);
 			keep_cdr(*cdr_pose, *ab_info, cdr)
 			graft_in_cdr(pose, *ab_info, cdr, cdr_pose);
 		}
@@ -246,7 +246,7 @@ int main(int argc, char* argv[])
 
 		utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, input_jobs[ 1 ]->input_tag() );
+		core::import_pose::pose_from_file( pose, input_jobs[ 1 ]->input_tag() , core::import_pose::PDB_file);
 
 		using namespace protocols::antibody;
 		using namespace basic::options;

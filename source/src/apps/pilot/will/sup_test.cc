@@ -35,8 +35,8 @@ int main (int argc, char *argv[])
 
 	core::pose::Pose mod_pose,ref_pose;
 
-	core::import_pose::pose_from_pdb(mod_pose,basic::options::option[basic::options::OptionKeys::in::file::s]()[1]);
-	core::import_pose::pose_from_pdb(ref_pose,basic::options::option[basic::options::OptionKeys::in::file::s]()[2]);
+	core::import_pose::pose_from_file(mod_pose,basic::options::option[basic::options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
+	core::import_pose::pose_from_file(ref_pose,basic::options::option[basic::options::OptionKeys::in::file::s]()[2], core::import_pose::PDB_file);
 
 	using namespace core::id;
 	AtomID_Map<AtomID> atom_map;

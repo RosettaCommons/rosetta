@@ -63,7 +63,7 @@
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/Remarks.hh>
 #include <core/pose/util.hh> // for pdbinfo
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -2096,7 +2096,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 
 	pose::PDBInfoOP temp_pdbinfo = pose.pdb_info();
 
-	pose::RemarkInfo remark;
+	io::RemarkInfo remark;
 	remark.value = "KIC confirmation RMSD: " + utility::to_string( rmsd ) + " to native RMSD: " + utility::to_string( rmsd_native );
 	temp_pdbinfo->remarks().push_back( remark );
 

@@ -13,7 +13,7 @@
 
 #include <core/id/AtomID_Map.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -127,7 +127,7 @@ apply(
    Real rms = -1;
    if( basic::options::option[ OptionKeys::in::file::native ].user() ) {
       Pose native;
-      core::import_pose::pose_from_pdb( native, basic::options::option[ OptionKeys::in::file::native ]() );
+      core::import_pose::pose_from_file( native, basic::options::option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
       rms = scoring::CA_rmsd( native, pose );
    }
 

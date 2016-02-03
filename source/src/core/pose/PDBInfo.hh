@@ -32,10 +32,10 @@
 #include <core/conformation/signals/LengthEvent.fwd.hh>
 
 #include <core/pose/PDBPoseMap.hh>
-#include <core/pose/CrystInfo.hh>
 
-#include <core/io/pdb/HeaderInformation.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/CrystInfo.hh>
+#include <core/io/HeaderInformation.hh>
+#include <core/io/Remarks.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -126,7 +126,8 @@ public: // typedefs
 	typedef core::Size Size;
 	typedef core::Real Real;
 	typedef std::string String;
-	typedef core::pose::Remarks Remarks;
+	typedef core::io::Remarks Remarks;
+	typedef core::io::CrystInfo CrystInfo;
 
 
 private: // forward declarations
@@ -562,18 +563,18 @@ public: // pdb-wide accessors/mutators
 	/// Generally this requires using the -run:preserve_header options flag.
 	inline
 	void
-	header_information(io::pdb::HeaderInformationOP header_information){
+	header_information(io::HeaderInformationOP header_information){
 		header_information_ = header_information;
 	}
 
 	inline
-	io::pdb::HeaderInformationCOP
+	io::HeaderInformationCOP
 	header_information() const {
 		return header_information_;
 	}
 
 	inline
-	io::pdb::HeaderInformationOP
+	io::HeaderInformationOP
 	header_information() {
 		return header_information_;
 	}
@@ -889,6 +890,25 @@ public: // atom accessors
 		return residue_rec_[ res ].atomRec[ atom_index ].temperature;
 	}
 
+	/// @brief Returns the temperature for the  <atom_index>  atom of pose residue  <res>
+	///
+	/// example(s):
+	///     pose.pdb_info().temperature(1,1)
+	/// See also:
+	///     Pose
+	///     PDBInfo
+	///     PDBInfo.pdb2pose
+	///     PDBInfo.pose2pdb
+	inline
+	Real const &
+	bfactor(
+		Size const res,
+		Size const atom_index
+	) const
+	{
+		return residue_rec_[ res ].atomRec[ atom_index ].temperature;
+	}
+
 
 public: // atom mutators
 
@@ -952,6 +972,18 @@ public: // atom mutators
 		residue_rec_[ res ].atomRec[ atom_index ].temperature = t;
 	}
 
+	/// @brief Sets the temperature of the  <atom_index>  atom of pose residue
+	/// <res>  to  <t>
+	inline
+	void
+	bfactor(
+		Size const res,
+		Size const atom_index,
+		Real const t
+	)
+	{
+		residue_rec_[ res ].atomRec[ atom_index ].temperature = t;
+	}
 
 public: // residue accessors en masse
 
@@ -1257,12 +1289,8 @@ public: // residue insertion/deletion
 	// added by sheffler
 	/// @brief remembers info about atoms not read into the pose
 	void
-	add_unrecognized_atom(
-		Size resnum,
-		std::string resname,
-		std::string atomname,
-		numeric::xyzVector<Real> coords,
-		Real temp
+	add_unrecognized_atoms(
+		utility::vector1< UnrecognizedAtomRecord > UAs
 	);
 
 	/// @brief rebuilds PDBPoseMap from scratch
@@ -1297,7 +1325,7 @@ private: // data
 
 
 	/// @brief header information
-	io::pdb::HeaderInformationOP header_information_;
+	io::HeaderInformationOP header_information_;
 
 	/// @brief pdb remarks
 	Remarks remarks_;
@@ -1325,6 +1353,8 @@ private: // data
 
 	// fpd spacegroup and crystal parameters
 	CrystInfo crystinfo_;
+
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

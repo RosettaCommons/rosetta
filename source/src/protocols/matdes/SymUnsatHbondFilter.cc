@@ -393,7 +393,7 @@ SymUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 			if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 				std::string const reference_pdb = basic::options::option[ basic::options::OptionKeys::in::file::native ]();
 				core::pose::PoseOP temp_pose( new core::pose::Pose );
-				core::import_pose::pose_from_pdb( *temp_pose, reference_pdb );
+				core::import_pose::pose_from_file( *temp_pose, reference_pdb , core::import_pose::PDB_file);
 				reference_pose_ = temp_pose;
 			} else {
 				utility_exit_with_message("Native PDB not specified on command line.");
@@ -403,7 +403,7 @@ SymUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 			reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data );
 		} else if ( tag->hasOption("reference_pdb") ) {
 			std::string reference_pdb_filename( tag->getOption< std::string >( "reference_pdb", "" ) );
-			reference_pose_ = core::import_pose::pose_from_pdb( reference_pdb_filename );
+			reference_pose_ = core::import_pose::pose_from_file( reference_pdb_filename , core::import_pose::PDB_file);
 		} else {
 			utility_exit_with_message("No valid reference pdb or pose specified for SymUnsatHbondFilter.");
 		}

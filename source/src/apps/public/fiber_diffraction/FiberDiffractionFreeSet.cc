@@ -34,8 +34,8 @@
 
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/pdb_writer.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 
 #include <numeric/random/random.hh>
 

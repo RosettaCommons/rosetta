@@ -145,7 +145,7 @@ ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > mo
 
 	std::map< core::chemical::sdf::AtomIndex, std::string > index_name_map;
 	ResidueTypeOP restype = molfile_data[1]->convert_to_ResidueType(index_name_map, atom_types, element_type_set, mm_atom_types);
-	if( ! restype ) {
+	if ( ! restype ) {
 		TR.Info << "Could not load molecule '" << molfile_data[1]->name() << "' as a residue type." << std::endl;
 		return ResidueTypeOP(0);
 	}
@@ -226,7 +226,7 @@ convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 			TR << ">>>>>> Skipping " << separated_molecules[jj][1]->name() << " due to unspecified error!" << std::endl;
 			continue;
 		}
-		if( restype ) {
+		if ( restype ) {
 			residue_types.push_back( restype );
 		}
 	}

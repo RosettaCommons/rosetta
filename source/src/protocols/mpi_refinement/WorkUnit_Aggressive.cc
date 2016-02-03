@@ -25,7 +25,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/rms_util.hh>
 //#include <protocols/wum/SilentStructStore.hh>

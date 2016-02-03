@@ -80,8 +80,8 @@ public:
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 		//Import the poses:
-		core::import_pose::pose_from_pdb( ref_pose, *rsd, std::string("core/io/test_in.pdb"));
-		core::import_pose::pose_from_pdb( ref_pose_2, *rsd, std::string("core/io/bin_silentfile_test.pdb"));
+		core::import_pose::pose_from_file( ref_pose, *rsd, std::string("core/io/test_in.pdb"), core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( ref_pose_2, *rsd, std::string("core/io/bin_silentfile_test.pdb"), core::import_pose::PDB_file);
 
 		//Write out the poses:
 		std::string const silent_outfile( "core/io/bin_silentfile_multipose_test.out" );
@@ -151,8 +151,8 @@ public:
 		pose::Pose ref_pose, restored_pose, ref_pose_2, restored_pose_2;
 		core::chemical::ResidueTypeSetCOP rsd =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-		core::import_pose::pose_from_pdb( ref_pose, *rsd, std::string("core/io/test_in.pdb"));
-		core::import_pose::pose_from_pdb( ref_pose_2, *rsd, std::string("core/io/bin_silentfile_test.pdb"));
+		core::import_pose::pose_from_file( ref_pose, *rsd, std::string("core/io/test_in.pdb"), core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( ref_pose_2, *rsd, std::string("core/io/bin_silentfile_test.pdb"), core::import_pose::PDB_file);
 
 		//Add a residue to ref_pose_2 ONLY (and leave ref_pose alone!)
 		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd->name_map( "ALA" ) ) );

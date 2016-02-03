@@ -1224,7 +1224,7 @@ StepWiseProteinPoseSetup::align_poses( pose::Pose & pose ){
 	if ( align_file_.size() > 0 ) {
 		Pose full_align_pose;
 		core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
-		import_pose::pose_from_pdb( full_align_pose, *rsd_set, align_file_ );
+		import_pose::pose_from_file( full_align_pose, *rsd_set, align_file_ , core::import_pose::PDB_file);
 
 		working_align_pose_ = core::pose::PoseOP( new pose::Pose );
 		get_working_pose( full_align_pose, *working_align_pose_ );

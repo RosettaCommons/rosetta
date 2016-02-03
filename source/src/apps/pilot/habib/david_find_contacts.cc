@@ -17,7 +17,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -79,7 +79,7 @@ main( int argc, char * argv [] )
 
 		//read in pdb file from command line
 		std::string const input_pdb_name ( basic::options::start_file() );
-		core::import_pose::pose_from_pdb( input_pose, input_pdb_name );
+		core::import_pose::pose_from_file( input_pose, input_pdb_name , core::import_pose::PDB_file);
 
 
 		core::Size lig_res_num = 0;
@@ -154,7 +154,7 @@ main( int argc, char * argv [] )
 		TR << "Processing decoy " << curr_decoy_fname << std::endl;
 
 		pose::Pose curr_pose;
-		core::import_pose::pose_from_pdb( curr_pose, curr_decoy_fname );
+		core::import_pose::pose_from_file( curr_pose, curr_decoy_fname , core::import_pose::PDB_file);
 
 		// This is the residue we'll use for PocketConstraint
 		central_relax_res = 0;

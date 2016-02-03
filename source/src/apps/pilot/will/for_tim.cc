@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 	using namespace core::scoring::motif;
 
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb(pose,option[in::file::s]()[1]);
+	core::import_pose::pose_from_file(pose,option[in::file::s]()[1], core::import_pose::PDB_file);
 	core::scoring::dssp::Dssp(pose).insert_ss_into_pose(pose);
 
 	core::scoring::motif::MotifHashManager & mman(*core::scoring::motif::MotifHashManager::get_instance());

@@ -17,7 +17,7 @@ import os; os.chdir('.test.output')
 
 print 'testing ClassicRelax'
 relax_p = Pose()
-pose_from_pdb(relax_p, "../test/data/test_in.pdb")
+pose_from_file(relax_p, "../test/data/test_in.pdb")
 scorefxn = get_fa_scorefxn() #  create_score_function_ws_patch('standard', 'score12')
 relax = ClassicRelax(scorefxn)
 relax.set_lj_ramp_cycles(3)

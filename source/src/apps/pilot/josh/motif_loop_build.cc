@@ -25,7 +25,7 @@ int main( int argc, char * argv[] )
 			utility_exit_with_message("No input pdb provided. Use \"-s\" name.pdb flag.");
 		}
 		std::string pdb_name( basic::options::start_file() );
-		core::import_pose::pose_from_pdb(pose, pdb_name);
+		core::import_pose::pose_from_file(pose, pdb_name, core::import_pose::PDB_file);
 
 		this_run.apply(pose);
 		//pose.dump_pdb("final_model.pdb");

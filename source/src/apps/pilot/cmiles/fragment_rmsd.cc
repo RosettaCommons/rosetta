@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 		devel::init(argc, argv);
 
 		FragSetCOP fragments = core::fragment::FragmentIO().read_data(option[in::file::frag3]());
-		PoseCOP pose = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::s]()[1]);
+		PoseCOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
 		check_lengths(fragments, pose);
 
 		const Size last = fragments->max_pos() - fragments->max_frag_length() + 1;

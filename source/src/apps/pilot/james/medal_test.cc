@@ -43,7 +43,7 @@
 #include <basic/options/util.hh>
 #include <basic/options/after_opts.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/sequence/Sequence.hh>
 #include <core/id/SequenceMapping.hh>
@@ -112,7 +112,7 @@ class ConstraintMinimizer : public protocols::moves::Mover {
 		mss_cstset = new MaxSeqSepConstraintSet( *orig_cstset, pose.fold_tree() );
 		core::pose::Pose native_pose;
 		if ( option[ in::file::native ].user() ) {
-			core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
+			core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 		}
 
 		protocols::comparative_modeling::ConstraintRemodelMover my_mover;

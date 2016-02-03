@@ -16,7 +16,7 @@
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>

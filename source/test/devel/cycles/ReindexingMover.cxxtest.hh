@@ -39,8 +39,8 @@ public:
 		pose::Pose original_pose, reindexed_pose;
 		string pdb_path = "devel/cycles/peptides/8.unmarked.pdb";
 
-		import_pose::pose_from_pdb(original_pose, pdb_path);
-		import_pose::pose_from_pdb(reindexed_pose, pdb_path);
+		import_pose::pose_from_file(original_pose, pdb_path, core::import_pose::PDB_file);
+		import_pose::pose_from_file(reindexed_pose, pdb_path, core::import_pose::PDB_file);
 
 		cycles::SetupMover initializer;
 

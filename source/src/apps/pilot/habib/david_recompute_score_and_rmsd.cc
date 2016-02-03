@@ -17,7 +17,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -194,7 +194,7 @@ main( int argc, char * argv [] )
 
 		// create pose from pdb
 		pose::Pose ref_pose;
-		core::import_pose::pose_from_pdb( ref_pose, ref_decoy_fname );
+		core::import_pose::pose_from_file( ref_pose, ref_decoy_fname , core::import_pose::PDB_file);
 
 		// This is the residue we'll use for the pocket constraint
 		/*        std::string resid(option[ OptionKeys::pocket_grid::central_relax_pdb_num ]);
@@ -303,7 +303,7 @@ main( int argc, char * argv [] )
 			TR << "Processing decoy " << curr_decoy_fname << std::endl;
 
 			pose::Pose curr_pose;
-			core::import_pose::pose_from_pdb( curr_pose, curr_decoy_fname );
+			core::import_pose::pose_from_file( curr_pose, curr_decoy_fname , core::import_pose::PDB_file);
 
 			// This is the residue we'll use for PocketConstraint
 			//central_relax_res = 0;

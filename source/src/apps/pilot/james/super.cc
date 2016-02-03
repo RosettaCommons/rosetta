@@ -19,7 +19,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -126,7 +126,7 @@ main( int argc, char * argv [] ) {
 		ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	// read in a native pose
 	core::pose::Pose native_pose;
-	core::import_pose::pose_from_pdb(
+	core::import_pose::pose_from_file(
 		native_pose, *rsd_set, option[ in::file::native ]()
 	);
 

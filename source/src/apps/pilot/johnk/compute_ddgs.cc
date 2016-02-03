@@ -16,7 +16,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -63,8 +63,8 @@ main( int argc, char * argv [] )
 
 	pose::Pose bound_pose, native_pose;
 
-	core::import_pose::pose_from_pdb( bound_pose, "bound.pdb" );
-	core::import_pose::pose_from_pdb( native_pose, "native.pdb" );
+	core::import_pose::pose_from_file( bound_pose, "bound.pdb" , core::import_pose::PDB_file);
+	core::import_pose::pose_from_file( native_pose, "native.pdb" , core::import_pose::PDB_file);
 
 	if ( bound_pose.total_residue() != native_pose.total_residue() ) {
 		std::cout << "ERROR - number of residues in bound PDB and native PDB do not match" << std::endl;

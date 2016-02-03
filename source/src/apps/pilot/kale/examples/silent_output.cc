@@ -32,7 +32,7 @@ using namespace core::io::silent;
 using core::Size;
 using core::Real;
 using core::pose::Pose;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 using utility::vector1;
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
 	devel::init(argc, argv);
 
 	// Load pose from pdb
-	Pose pose; pose_from_pdb(pose, "structures/linear/5.1ubq.pdb");
+	Pose pose; pose_from_file(pose, "structures/linear/5.1ubq.pdb", core::import_pose::PDB_file);
 	ScoreFunctionOP score_function = core::scoring::get_score_function();
 	score_function->score(pose);
 	cout << "Original Score: " << pose.energies().total_energy() << endl;

@@ -11,7 +11,7 @@
 /// @brief
 
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/util.hh>
 #include <protocols/wum/WorkUnitList.hh>
 #include <protocols/wum/WorkUnitManager.hh>
@@ -53,7 +53,7 @@ class MPI_LoopHash_Launcher {
 		core::pose::PoseOP native_pose_;
 		if ( option[ in::file::native ].user() ) {
 			native_pose_ = new core::pose::Pose();
-			core::import_pose::pose_from_pdb( *native_pose_, option[ in::file::native ]() );
+			core::import_pose::pose_from_file( *native_pose_, option[ in::file::native ]() , core::import_pose::PDB_file);
 			core::pose::set_ss_from_phipsi( *native_pose_ );
 			core::util::switch_to_residue_type_set( *native_pose_, core::chemical::CENTROID);
 		}

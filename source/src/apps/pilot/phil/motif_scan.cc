@@ -55,7 +55,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
@@ -430,7 +430,7 @@ motif_scan()
 		string const & filename( files[m] );
 
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, filename );
+		core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 		Size const nres( pose.total_residue() );
 		core::pose::PDBPoseMap pose_map(pose.pdb_info()->pdb2pose());
 

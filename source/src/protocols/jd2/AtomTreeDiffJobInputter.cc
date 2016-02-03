@@ -62,7 +62,7 @@ void protocols::jd2::AtomTreeDiffJobInputter::pose_from_job(
 	tr.Debug << "AtomTreeDiffJobInputter::pose_from_job" << std::endl;
 
 	if ( !job->inner_job()->get_pose() ) {
-		//core::import_pose::pose_from_pdb( pose, job->inner_job()->input_tag() );
+		//core::import_pose::pose_from_file( pose, job->inner_job()->input_tag() , core::import_pose::PDB_file);
 		//  core::io::silent::SilentStructOP ss = atom_tree_diff_[ job->inner_job()->input_tag() ];
 		tr.Debug << "filling pose from AtomTree (tag = " << job->input_tag() << ")" << std::endl;
 		pose.clear();
@@ -74,7 +74,7 @@ void protocols::jd2::AtomTreeDiffJobInputter::pose_from_job(
 			// This used to be required but will be rarely used now.
 			tr << "Using -in:file:native for reference pose with AtomTreeDiff input format.";
 			core::pose::Pose native_pose;
-			core::import_pose::pose_from_pdb( native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() );
+			core::import_pose::pose_from_file( native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() , core::import_pose::PDB_file);
 			atom_tree_diff_.read_pose(job->input_tag(), pose, native_pose);
 		} else {
 			utility_exit_with_message("Can't find the reference structure for job with input tag " + job->input_tag());

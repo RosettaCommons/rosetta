@@ -31,7 +31,7 @@
 #include <devel/init.hh>
 #include <devel/init.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -192,7 +192,7 @@ void* doit(void* /*x = NULL*/) {
 	// pose.dump_pdb("helix.pdb");
 	// std::exit(-1);
 
-	// io::pdb::pose_from_pdb(pose,"params/pyr_0001.pdb");
+	// io::pdb::pose_from_file(pose,"params/pyr_0001.pdb", core::import_pose::PDB_file);
 	// chemical::remove_lower_terminus_type_from_pose_residue(pose,1);
 	// chemical::remove_upper_terminus_type_from_pose_residue(pose,1);
 	// for(Size i = 1; i <= 36; ++i) {
@@ -202,7 +202,7 @@ void* doit(void* /*x = NULL*/) {
 	// std::exit(-1);
 
 
-	io::pdb::pose_from_pdb(pose,"input/helix_pyr.pdb");
+	io::pdb::pose_from_file(pose,"input/helix_pyr.pdb", core::import_pose::PDB_file);
 	chemical::remove_lower_terminus_type_from_pose_residue(pose,1);
 	chemical::remove_upper_terminus_type_from_pose_residue(pose,2);
 	// chemical::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, 2 );

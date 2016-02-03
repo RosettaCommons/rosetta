@@ -40,7 +40,7 @@
 #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
@@ -289,7 +289,7 @@ void run_sf4h() {
 		string infile = utility::file_basename(infiles[ifile]);
 		TR << "scaning pdb " << infiles[ifile] << std::endl;
 		Pose pose;
-		core::import_pose::pose_from_pdb(pose,*fa_residue_set,infiles[ifile]);
+		core::import_pose::pose_from_file(pose,*fa_residue_set,infiles[ifile], core::import_pose::PDB_file);
 		Size gap = 0;
 		for(Size ir = 1; ir <= pose.n_residue()-2; ++ir) {
 			if(pose.residue(ir).name3()=="GLY" || pose.residue(ir).name3()=="PRO") continue;

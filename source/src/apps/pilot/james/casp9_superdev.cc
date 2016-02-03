@@ -20,7 +20,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -31,7 +31,7 @@
 #include <numeric/xyzVector.hh>
 
 #include <core/id/AtomID_Map.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -215,7 +215,7 @@ main( int argc, char * argv [] ) {
 		ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	// read in a native pose
 	core::pose::Pose native_pose;
-	core::import_pose::pose_from_pdb(
+	core::import_pose::pose_from_file(
 		native_pose, *rsd_set, option[ in::file::native ]()
 	);
 	core::pose::tag_into_pose( native_pose, option[ in::file::native ]() );

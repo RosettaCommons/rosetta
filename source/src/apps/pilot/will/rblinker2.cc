@@ -311,7 +311,7 @@ void* doit(void*) {
 	// 	if(count!=1) utility_exit_with_message("require exactly one line in fastclash aln config");
 	// 	if( c1 != 1 || t1 != 'C' || t2 != 'N' || t3 != 'C' || t4 != 'N' || c4 != 2 ) utility_exit_with_message("improper fastclash aln config for 2 linker system!");
 	// 	Pose alnpose;
-	// 	core::import_pose::pose_from_pdb(alnpose,fn);
+	// 	core::import_pose::pose_from_file(alnpose,fn, core::import_pose::PDB_file);
 	// 	Size aln_resi_lnk_ref = get_aln_resi(lnk,c1,t1);
 	// 	Size aln_resi_lnk_mov = get_aln_resi(lnk,c4,t4);
 	// 	Size aln_resi_other_ref = get_aln_resi(alnpose,c3,t3);
@@ -357,7 +357,7 @@ void* doit(void*) {
 			std::string fn = fns[ifn];
 			// if(fns.size() != 1) utility_exit_with_message("rblinker2 currently only accepts 1 in:file:s input");
 			Pose alnpose;
-			core::import_pose::pose_from_pdb(alnpose,fn);
+			core::import_pose::pose_from_file(alnpose,fn, core::import_pose::PDB_file);
 			if(alnpose.n_residue() != 2) utility_exit_with_message("reference pose must have only two residues");
 
 			try {

@@ -178,7 +178,7 @@ return model_is_H_bonded_by_terminal_strands;
 
 
 core::pose::Pose pose;
-core::import_pose::pose_from_pdb( pose, model.pdb_code_ );
+core::import_pose::pose_from_file( pose, model.pdb_code_ , core::import_pose::PDB_file);
 if(TR.Debug.visible()){
 TR << "pose.pdb_info()->name(): " << pose.pdb_info()->name() << std::endl;
 TR << "model.segments_[1].residues_.front().resnum_: " << model.segments_[1].residues_.front().resnum_ << std::endl;
@@ -248,7 +248,7 @@ see_whether_model_is_H_bonded_by_terminal_strands(
 	}
 
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, model.pdb_code_ );
+	core::import_pose::pose_from_file( pose, model.pdb_code_ , core::import_pose::PDB_file);
 	if ( TR.Debug.visible() ) {
 		TR << "pose.pdb_info()->name(): " << pose.pdb_info()->name() << std::endl;
 		TR << "model.segments_[1].residues_.front().resnum_: " << model.segments_[1].residues_.front().resnum_ << std::endl;

@@ -101,7 +101,7 @@ int main( int argc, char * argv [] ) {
     using namespace core::sequence;
 	using namespace core::chemical;
 	using namespace core::import_pose::pose_stream;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using namespace core::scoring;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -109,7 +109,7 @@ int main( int argc, char * argv [] ) {
     Real threshold = 0.5;
 	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
     Pose native_pose;
-    pose_from_pdb(
+    pose_from_file(
 			native_pose,
 			*rsd_set,
 			option[ in::file::native ]()

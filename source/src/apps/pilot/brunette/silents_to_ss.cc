@@ -72,7 +72,7 @@ char get_label(vector1 <Real> ss_pred_pos){
 vector1<vector1 <Real> > gather_ss_pct(){
 		using namespace core::chemical;
 		using namespace core::import_pose::pose_stream;
-		using core::import_pose::pose_from_pdb;
+		using core::import_pose::pose_from_file;
 		MetaPoseInputStream input = streams_from_cmd_line();
     ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 		vector1<vector1 <Size> > counts; //H=0,L=1,E=2

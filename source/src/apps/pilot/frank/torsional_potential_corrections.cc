@@ -13,7 +13,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -35,7 +35,7 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/optimizeH.hh>
 #include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
-#include <core/pose/CrystInfo.hh>
+#include <core/io/CrystInfo.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>

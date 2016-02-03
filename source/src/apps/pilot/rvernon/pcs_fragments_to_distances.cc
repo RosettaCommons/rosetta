@@ -30,7 +30,7 @@
 
 
 #include <core/kinematics/RT.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 
 #include <numeric/constants.hh>
@@ -160,7 +160,7 @@ main( int argc, char* argv [] )
 	bool has_native(false);
 	pose::Pose native;
 	if (basic::options::option[ basic::options::OptionKeys::in::file::native ].user()) {
-		core::import_pose::pose_from_pdb( native, *rsd_set, basic::options::option[ in::file::native ]()
+		core::import_pose::pose_from_file( native, *rsd_set, basic::options::option[ in::file::native ]()
 		);
 		has_native = true;
 	}
@@ -215,7 +215,7 @@ main( int argc, char* argv [] )
 		utility::vector1< pose::Pose > cluster_list( largest_cluster( forcluster_list ) );
 
 		pose::Pose fragnative;
-		core::import_pose::pose_from_pdb(fragnative, native_location);
+		core::import_pose::pose_from_file(fragnative, native_location, core::import_pose::PDB_file);
 		Real natmaxsub = core::scoring::CA_maxsub( cluster_list[1], fragnative );
 
 		std::cout << "CLUSTERING: " << outfile_location << " " << cluster_list.size() << " / " << forcluster_list.size() << "   " << natmaxsub << " / " << fragnative.total_residue() << std::endl;

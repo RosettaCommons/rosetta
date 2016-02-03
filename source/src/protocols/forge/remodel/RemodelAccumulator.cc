@@ -230,7 +230,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 {
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using namespace protocols::simple_filters;
 	using namespace basic::options;
 
@@ -258,7 +258,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 
 		if ( boolReturn == true ) {
 			core::pose::Pose dummyPose;
-			core::import_pose::pose_from_pdb( dummyPose, filename.c_str(),false); //fullatom, ideal, readAllChain
+			core::import_pose::pose_from_file( dummyPose, filename.c_str(),false, core::import_pose::PDB_file); //fullatom, ideal, readAllChain
 
 			//RemodelDesignMover designMover(remodel_data_, working_model_);
 			//designMover.set_state("stage");

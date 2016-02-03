@@ -164,7 +164,7 @@
   //   movemap->set_jump(4,true);
   //   protocols::moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 
-  //   Pose ctp; pose_from_pdb(ctp,"inrut/ctp.pdb");
+  //   Pose ctp; pose_from_file(ctp,"inrut/ctp.pdb", core::import_pose::PDB_file);
   //   Size iO2=ctp.residue(1).atom_index("O2"), iC5=ctp.residue(1).atom_index("C5"), iO1=ctp.residue(1).atom_index("O1");
 
   //   Vec or2 = hi.ori.cross(hi.axs);

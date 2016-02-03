@@ -426,7 +426,7 @@ main( int argc, char* argv[] )
 		Pose pose;
 		std::string filename = option[in::file::s].value()[1];
 
-		import_pose::pose_from_pdb( pose, filename );
+		import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 		TR << "Importing pose from " << filename << std::endl;
 		filename.erase( filename.size()-4 );
 

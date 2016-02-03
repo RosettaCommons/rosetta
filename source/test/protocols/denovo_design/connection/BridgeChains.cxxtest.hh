@@ -35,7 +35,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

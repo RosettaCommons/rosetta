@@ -58,7 +58,7 @@ using std::cout;
 using std::string;
 using utility::vector1;
 using std::endl;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::kinematics::Stub;
 
 #define MAX_CYS_RES 0
@@ -84,7 +84,7 @@ test_replicate_xform(){
 	using namespace core::kinematics;
 
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, option[in::file::s]()[1] );
+	core::import_pose::pose_from_file( pose, option[in::file::s]()[1] , core::import_pose::PDB_file);
 
 	for(Size lstart =        2; lstart < pose.n_residue()-1; ++lstart ){
 	for(Size lstop  = lstart+1; lstop  < pose.n_residue()  ; ++lstop  ){
@@ -188,7 +188,7 @@ int main(int argc, char *argv[]) {
 
 	std::string fname = option[in::file::s]()[1];
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, fname );
+	core::import_pose::pose_from_file( pose, fname , core::import_pose::PDB_file);
 	core::pose::remove_upper_terminus_type_from_pose_residue(pose,2);
 	core::pose::remove_lower_terminus_type_from_pose_residue(pose,3);
 

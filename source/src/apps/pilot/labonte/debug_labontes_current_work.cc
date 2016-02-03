@@ -73,12 +73,12 @@ main( int argc, char *argv[] )
 		// Make a test pose.
 		//make_pose_from_sequence( pose, "AAAAAAAAAA", core::chemical::FA_STANDARD );
 
-		pose_from_pdb( pose, "/home/labonte/Workspace/Carbohydrates/4NCO_fixed3.pdb" );
+		pose_from_file( pose, "/home/labonte/Workspace/Carbohydrates/4NCO_fixed3.pdb" , core::import_pose::PDB_file);
 		core::io::carbohydrates::dump_gws( pose, "/home/labonte/Workspace/Carbohydrates/4NCO_fixed3.gws" );
 		cout << "GWS file generated." << endl;
 
 		/*
-		pose_from_pdb( pose, "/home/labonte/Workspace/Carbohydrates/MBP-G4_ref.pdb" );
+		pose_from_file( pose, "/home/labonte/Workspace/Carbohydrates/MBP-G4_ref.pdb" , core::import_pose::PDB_file);
 
 		vector1< int > movable_jumps( 1, 1 );
 		docking::setup_foldtree( pose, "A_B", movable_jumps );

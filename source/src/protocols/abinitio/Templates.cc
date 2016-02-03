@@ -126,7 +126,7 @@ void StructureStore::add( std::string const& file_name ) {
 		pose::PoseOP pose( new pose::Pose );
 
 		//read structure
-		core::import_pose::pose_from_pdb( *pose, file_name );
+		core::import_pose::pose_from_file( *pose, file_name , core::import_pose::PDB_file);
 
 		// switch to centroid --- such that constraints get correct atom numbers assigned
 		core::util::switch_to_residue_type_set( *pose, chemical::CENTROID );

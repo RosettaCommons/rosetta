@@ -32,7 +32,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/scoring/Energies.hh>

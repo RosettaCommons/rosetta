@@ -264,7 +264,7 @@ void AnchoredDesignMover::init_on_new_input(core::pose::Pose const & pose) {
 	//If we are in RMSD_only_this_ mode, we will need to set up that cached comparison pose
 	if ( RMSD_only_this_ != EMPTY_STRING ) {
 		core::pose::Pose dummy;
-		core::import_pose::pose_from_pdb(dummy, RMSD_only_this_);
+		core::import_pose::pose_from_file(dummy, RMSD_only_this_, core::import_pose::PDB_file);
 		RMSD_only_this_pose_ = core::pose::PoseCOP( core::pose::PoseOP( new core::pose::Pose(dummy) ) );
 	}
 
@@ -287,7 +287,7 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 
 	if ( RMSD_only_this_ != EMPTY_STRING ) {
 		core::pose::Pose dummy;
-		core::import_pose::pose_from_pdb(dummy, RMSD_only_this_);
+		core::import_pose::pose_from_file(dummy, RMSD_only_this_, core::import_pose::PDB_file);
 		start_pose = RMSD_only_this_pose_;
 	} else { //if RMSD_only_this is active, we skip all the meat steps
 

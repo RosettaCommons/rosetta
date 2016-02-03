@@ -114,7 +114,7 @@ static std::string const chr_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<
 	using utility::file_basename;
 	using utility::vector1;
 	using std::endl;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using numeric::geometry::hashing::Real3;
 	using numeric::geometry::hashing::Real6;
 
@@ -425,7 +425,7 @@ int main(int argc, char *argv[]) {
 		core::scoring::dssp::Dssp dssp(pose);
 		dssp.insert_ss_into_pose(pose);
 
-		// core::import_pose::pose_from_pdb(pose,pdb);
+		// core::import_pose::pose_from_file(pose,pdb, core::import_pose::PDB_file);
 		// core::scoring::dssp::Dssp dssp(pose);
 		// dssp.insert_ss_into_pose(pose);
 		// if(DEBUG) pose.dump_pdb("test0.pdb");

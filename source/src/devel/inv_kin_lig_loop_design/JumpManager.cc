@@ -263,7 +263,7 @@ ResID const res_id_to   = tag_segment->getTag("template")->getOption<ResID>("to"
 
 cout << "reading filename " << filename << endl;
 
-core::io::pdb::pose_from_pdb( *pose, filename );
+core::io::pdb::pose_from_file( *pose, filename , core::import_pose::PDB_file);
 
 cout << "getting resid map" << endl;
 
@@ -336,7 +336,7 @@ core::kinematics::RT JumpManager::get_template_rt( TagCOP tag_segment ) {
 
 	cout << "reading filename " << filename << endl;
 
-	core::import_pose::pose_from_pdb( *pose, filename );
+	core::import_pose::pose_from_file( *pose, filename , core::import_pose::PDB_file);
 
 	cout << "getting residues" << endl;
 	devel::inv_kin_lig_loop_design::resids_type resids = ResID::get_resids( *pose );

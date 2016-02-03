@@ -21,7 +21,7 @@
 #include <core/sequence/Sequence.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 
@@ -160,7 +160,7 @@ private:
 
 		core::pose::PoseOP tmp_pose(new core::pose::Pose);
 		std::string fn = option[in::file::s](1);
-		core::import_pose::pose_from_pdb(*tmp_pose, fn);
+		core::import_pose::pose_from_file(*tmp_pose, fn, core::import_pose::PDB_file);
 
 		sequence = tmp_pose->sequence();
 		core::pose::make_pose_from_sequence(cen_pose_, sequence,*rsd_set);

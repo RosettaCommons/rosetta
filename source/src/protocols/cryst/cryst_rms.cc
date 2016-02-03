@@ -1,3 +1,12 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
 /// @file
 /// @brief
 
@@ -10,7 +19,7 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/CrystInfo.hh>
+#include <core/io/CrystInfo.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 
@@ -98,7 +107,7 @@ crystRMSfast (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy) {
 	for ( core::Size i=1; i<= nres_decoy; ++i ) radius_decoy = std::max( radius_decoy, (pose_decoy.residue(i).xyz(2)-com_decoy).length() );
 
 	// apply symmops
-	core::pose::CrystInfo ci_native = pose_native.pdb_info()->crystinfo();
+	core::io::CrystInfo ci_native = pose_native.pdb_info()->crystinfo();
 	protocols::cryst::Spacegroup sg_native;
 	sg_native.set_spacegroup(ci_native.spacegroup());
 	sg_native.set_parameters(ci_native.A(),ci_native.B(),ci_native.C(), ci_native.alpha(), ci_native.beta(), ci_native.gamma());
@@ -123,7 +132,7 @@ crystRMSfast (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy) {
 		}
 	}
 
-	core::pose::CrystInfo ci_decoy = pose_decoy.pdb_info()->crystinfo();
+	core::io::CrystInfo ci_decoy = pose_decoy.pdb_info()->crystinfo();
 	protocols::cryst::Spacegroup sg_decoy;
 	sg_decoy.set_spacegroup(ci_decoy.spacegroup());
 	sg_decoy.set_parameters(ci_decoy.A(),ci_decoy.B(),ci_decoy.C(), ci_decoy.alpha(), ci_decoy.beta(), ci_decoy.gamma());

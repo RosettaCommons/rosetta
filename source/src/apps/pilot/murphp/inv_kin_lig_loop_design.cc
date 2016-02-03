@@ -21,7 +21,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/datacache/CacheableString.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jobdist/JobDistributors.hh>
@@ -95,7 +95,7 @@ int main( int argc, char ** argv ) {
 		// Step 1 - initialize pose0 and pose1
 
 		core::pose::PoseOP pose0( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *pose0, infile );
+		core::import_pose::pose_from_file( *pose0, infile , core::import_pose::PDB_file);
 
 
 		// Step 2 - start up job distributor

@@ -73,7 +73,7 @@ int main(int argv, char **argc){
 
 	if( option[in::file::s]().size() < 2 ) return 0;
 
-	vector1<PoseOP> poses = core::import_pose::poseOPs_from_pdbs(option[in::file::s]());
+	vector1<PoseOP> poses = core::import_pose::poseOPs_from_files(option[in::file::s](), core::import_pose::PDB_file);
 	Rose r(poses[1]);
 	Rose s(poses[2]);
 	// bool dumpcl=true,dumpnc=true;

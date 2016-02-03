@@ -11,7 +11,7 @@
 /// @author Daniel J. Mandell
 
 #include <protocols/viewer/viewers.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
@@ -35,7 +35,7 @@ anglestats_local( void* ) {
 	using namespace basic::options;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, option[ OptionKeys::in::file::s ]().vector().front() );
+	core::import_pose::pose_from_file( pose, option[ OptionKeys::in::file::s ]().vector().front() , core::import_pose::PDB_file);
 	for (Size i=2; i<= pose.total_residue()-1; i++) {
 		if (std::abs(pose.omega(i)) < 150) {
 			TR << "cis ";

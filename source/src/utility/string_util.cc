@@ -26,6 +26,7 @@
 // C/C++ headers
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <string>
 #include <cmath>
@@ -33,28 +34,6 @@
 
 namespace utility {
 
-void ReadFromFileOrDie(const std::string& filename, std::string* contents) {
-	using std::ifstream;
-	using std::string;
-	using std::stringstream;
-
-	assert(contents);
-
-	ifstream in(filename.c_str());
-	if ( !in ) {
-		stringstream ss;
-		ss << "The specified file " << filename
-			<< "does not exist or lacks sufficient permissions";
-		utility_exit_with_message(ss.str());
-	}
-
-	string line;
-	while ( in.good() ) {
-		getline(in, line);
-		(*contents) +=line + "\n";
-	}
-	in.close();
-}
 
 utility::vector1< std::string > split(const std::string &s)
 {
@@ -87,6 +66,29 @@ utility::vector1< std::string > split_whitespace(const std::string &s){
 	}
 	return r;
 }
+
+/// @note    This function also removes empty lines.
+std::vector< std::string > split_by_newlines( std::string const & s )
+{
+	std::vector< std::string > r;
+	platform::Size start=0, i=0;
+	while ( start < s.size() ) {
+		if ( s[i] == '\n' || s[i] == '\r' /* || i==s.size()-1 */ ) {
+			r.push_back( std::string(s.begin()+start, s.begin()+i) );
+			start = i+1;
+		}
+		i++;
+		if ( i == s.size() ) {
+			r.push_back( std::string(s.begin()+start, s.begin()+i) );
+			break;
+		}
+	}
+	for ( platform::SSize i=r.size()-1; i>=0; i-- ) {  // removing empty lines
+		if ( r[i].size() == 0 ) r.erase( r.begin()+i );
+	}
+	return r;
+}
+
 
 std::string join(utility::vector1<std::string> const & s, std::string const & connector){
 	std::ostringstream os;
@@ -246,6 +248,23 @@ platform::Real string2Real( std::string st ){
 	return i;
 }
 
+std::string Real2string ( platform::Real num, std::size_t const decimal_places)
+{
+
+	std::ostringstream converter;
+	converter << std::fixed << std::setprecision(decimal_places) << num;
+	return converter.str();
+}
+
+std::string fmt_real ( platform::Real num, platform::Size pad_left_n, std::size_t const decimal_places)
+{
+	std::string s =  Real2string( num, decimal_places);
+	//platform::Size total_pad_left = s.length() - 1 + pad_left_n;
+	platform::Real newlen = decimal_places + pad_left_n +1;
+
+	return pad_left(s, newlen );
+}
+
 // @brief Reads an unsigned int from string <x>, writing the result
 // to output parameter <y>, which must be non-NULL. The result is
 // undefined if the input string is malformed.
@@ -308,6 +327,25 @@ strip( std::string const & s, std::string const & drop )
 	return copystr;
 }
 
+std::string
+pad_left( std::string s, platform::Size const newlen, char pad_with ){
+
+	std::ostringstream converter;
+	converter << std::setfill( pad_with ) << std::setw( newlen ) << std::right << s;
+	//std::cout << ":" << converter.str() << ":"<<std::endl;
+	return converter.str();
+}
+
+std::string
+pad_right( std::string s, platform::Size const newlen, char pad_with ){
+
+	std::ostringstream converter;
+	converter << std::setfill( pad_with ) << std::setw( newlen ) << std::left << s;
+	//std::cout << ":" << converter.str() << ":"<<std::endl;
+	return converter.str();
+}
+
+
 // @brief Return a copy of the string with leading and trailing characters removed
 std::string strip(std::string const & source, char c)
 {
@@ -326,26 +364,28 @@ std::string strip(std::string const & source, char c)
 	return std::string(begin, end);
 }
 
-
+/*
 void add_spaces_left_align( std::string & st, std::size_t const newlen )
 {
-	std::size_t const to_add = newlen - st.length();
-	if ( to_add > 0 ) {
-		std::string st_to_add("");
-		st_to_add.append(to_add,' ');
-		st = st + st_to_add;
-	}
+std::size_t const to_add = newlen - st.length();
+if ( to_add > 0 ) {
+std::string st_to_add("");
+st_to_add.append(to_add,' ');
+st = st + st_to_add;
+}
 }
 
 void add_spaces_right_align( std::string & st, std::size_t const newlen )
 {
-	std::size_t const to_add = newlen - st.length();
-	if ( to_add > 0 ) {
-		std::string st_to_add("");
-		st_to_add.append(to_add,' ');
-		st = st_to_add + st;
-	}
+std::size_t const to_add = newlen - st.length();
+if ( to_add > 0 ) {
+std::string st_to_add("");
+st_to_add.append(to_add,' ');
+st = st_to_add + st;
 }
+}
+*/
+
 
 bool is_string_numeric(std::string const & input)
 {
@@ -742,6 +782,5 @@ replace_in( std::string const & name_in, std::string const & find_string, std::s
 	}
 	return name;
 }
-
 
 } // namespace utility

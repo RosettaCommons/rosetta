@@ -222,7 +222,7 @@ core::Size numberhelices( core::pose::Pose & pose ){
 void create_nucleated_sequence_from_template_pdb( std::string & nucleated_sequence , utility::vector1< bool > & KeepNativeTorsions ){
 	core::pose::Pose template_pose;
 	std::string template_pdb = basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb ]().name();
-	core::import_pose::pose_from_pdb( template_pose, template_pdb );
+	core::import_pose::pose_from_file( template_pose, template_pdb , core::import_pose::PDB_file);
 
 	// get the template poses secondary structure information
 	core::scoring::dssp::Dssp dssp( template_pose );

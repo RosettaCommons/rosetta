@@ -20,7 +20,7 @@
 #include <core/chemical/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -45,6 +45,7 @@
 
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
+#include <core/pose/util.hh>
 
 #include <utility/excn/Exceptions.hh>
 
@@ -137,7 +138,11 @@ public:
 
 			string output_fn( tag + ".superdev.pdb" );
 			utility::io::ozstream output_stream( output_fn );
-			core::io::pdb::dump_bfactor_pdb( pose, bfactors, output_stream );
+			//JAB -XRW 2016
+			core::pose::set_bfactors_from_atom_id_map(pose, bfactors);
+			pose.dump_pdb(output_stream);
+
+			//core::io::pdb::dump_bfactor_pdb( pose, bfactors, output_stream );
 			output_stream.close();
 		}
 	} // apply
@@ -191,7 +196,13 @@ public:
 
 		std::string output_fn( tag + ".superdev.pdb" );
 		utility::io::ozstream output_stream( output_fn );
-		core::io::pdb::dump_bfactor_pdb( native_pose_, bfactors, output_stream );
+
+		//JAB - XRW 2016
+		core::pose::Pose temp_pose = native_pose_;
+		core::pose::set_bfactors_from_atom_id_map( temp_pose, bfactors );
+		temp_pose.dump_pdb( output_stream );
+
+		//core::io::pdb::dump_bfactor_pdb( native_pose_, bfactors, output_stream );
 		output_stream.close();
 	} // print_stats
 
@@ -218,8 +229,8 @@ main( int argc, char * argv [] ) {
 		ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 		// read in a native pose
 		core::pose::Pose native_pose;
-		core::import_pose::pose_from_pdb(
-			native_pose, *rsd_set, option[ in::file::native ]()
+		core::import_pose::pose_from_file(
+			native_pose, *rsd_set, option[ in::file::native ](), core::import_pose::PDB_file
 		);
 		core::pose::tag_into_pose( native_pose, option[ in::file::native ]() );
 

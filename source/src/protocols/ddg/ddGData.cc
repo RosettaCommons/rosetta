@@ -101,7 +101,7 @@ utility::vector1<pose::Pose> ddGData::read_mut_data()
 				istream >> curr_filename;
 				if ( curr_filename.compare("") != 0 ) {
 					std::cout << "opening file: " << curr_filename << std::endl;
-					core::import_pose::pose_from_pdb(newpose,(*rsd_set),curr_filename,false);
+					core::import_pose::pose_from_file(newpose,(*rsd_set),curr_filename,false, core::import_pose::PDB_file);
 					curr_mut.push_back(newpose);
 				}
 			}
@@ -138,7 +138,7 @@ utility::vector1<pose::Pose> ddGData::read_wt_data(){
 				std::string curr_filename;
 				istream >> curr_filename;
 				if ( curr_filename.compare("") != 0 ) {
-					core::import_pose::pose_from_pdb(newpose,(*rsd_set),curr_filename,false);
+					core::import_pose::pose_from_file(newpose,(*rsd_set),curr_filename,false, core::import_pose::PDB_file);
 					curr_wt.push_back(newpose);
 				}
 			}

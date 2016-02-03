@@ -21,7 +21,7 @@
 #include <core/chemical/util.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
@@ -102,7 +102,7 @@ namespace OK = OptionKeys;
 using utility::vector1;
 using std::string;
 using import_pose::pose_from_pdb;
-using io::pdb::dump_pdb; // deprecated though
+using io::pdb::old_dump_pdb; // deprecated though
 using namespace ObjexxFCL;
 using basic::T;
 using basic::Warning;
@@ -936,7 +936,7 @@ RotamerAnalysis()
 	if( pdbname.find_last_of( "/" ) < ( pdbname.size() - 1 ) ) pdbnamestart = pdbname.find_last_of( "/" ) + 1;
 	std::string pdbnametag( pdbname, pdbnamestart, pdbname.size() - pdbnamestart - 4 );
 	Pose pose;
-	pose_from_pdb( pose, pdbname );
+	pose_from_file( pose, pdbname , core::import_pose::PDB_file);
 
 	//create a ScoreFunction from commandline options
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
@@ -958,7 +958,7 @@ RotamerAnalysis()
 	Pose native_pose( pose );
 	if( option[ in::file::native ].user() ){
 		native_pdbname = option[ in::file::native ]();
-		pose_from_pdb( native_pose, native_pdbname );
+		pose_from_file( native_pose, native_pdbname , core::import_pose::PDB_file);
 		if( option[ edensity::mapfile ].user() ) core::scoring::calpha_superimpose_pose( native_pose, pose );
 	}
 	set_pose_occ_and_bfac( pose, native_pose );

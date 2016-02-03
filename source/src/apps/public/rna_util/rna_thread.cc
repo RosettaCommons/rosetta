@@ -41,7 +41,7 @@
 #include <core/pose/rna/util.hh>
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -76,7 +76,7 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -345,7 +345,7 @@ rna_thread_test(){
 	Pose pose;
 	std::string template_file = option[ in::file::s ][1];
 	core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	core::import_pose::pose_from_pdb( pose, *rsd_set, template_file );
+	core::import_pose::pose_from_file( pose, *rsd_set, template_file , core::import_pose::PDB_file);
 	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
 	////////////////////////////////////////////////

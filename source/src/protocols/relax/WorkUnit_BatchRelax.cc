@@ -143,7 +143,7 @@ WorkUnit_BatchRelax_and_PostRescore::set_defaults(){
 	trim_proportion_ = option[ OptionKeys::wum::trim_proportion ]();
 
 	if (  option[ OptionKeys::wum::extra_scorefxn_ref_structure ].user() ) {
-		core::import_pose::pose_from_pdb( ref_pose_, option[ OptionKeys::wum::extra_scorefxn_ref_structure ]() );
+		core::import_pose::pose_from_file( ref_pose_, option[ OptionKeys::wum::extra_scorefxn_ref_structure ]() , core::import_pose::PDB_file);
 		// We do the following to save memory, since we dont actually need anything but the backbone coordiantes from this pose.
 		//core::util::switch_to_residue_type_set( ref_pose_, core::chemical::CENTROID);
 		if ( !ref_pose_.is_fullatom() ) {

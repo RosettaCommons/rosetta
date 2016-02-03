@@ -32,7 +32,7 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/Remarks.fwd.hh>
+#include <core/io/Remarks.fwd.hh>
 #include <core/types.hh>
 
 // Basic/Numeric/Utility Headers
@@ -111,10 +111,10 @@ public:
 	static StructureDataOP create_from_pose( core::pose::Pose const & pose, std::string const & id );
 
 	/// @brief parses PDB remarks and creates a permutation from them
-	static StructureDataOP create_from_remarks( core::pose::Remarks const & rem, std::string const & newid );
+	static StructureDataOP create_from_remarks( core::io::Remarks const & rem, std::string const & newid );
 
 	/// @brief loads data from pdb remarks into this permutation
-	static StructureDataOP parse_remarks( core::pose::Remarks const & rem, std::string const & newid );
+	static StructureDataOP parse_remarks( core::io::Remarks const & rem, std::string const & newid );
 
 	/// @brief creates a StructureData from an xml stringstream
 	static StructureDataOP create_from_xml( std::istream & xmltag, std::string const & newid );
@@ -409,10 +409,10 @@ protected:
 	static std::string cached_string( core::pose::Pose const & pose, std::string const & data_name );
 
 	/// @brief retrieves cached remarks from pose datacache
-	core::pose::Remarks cached_remarks() const;
+	core::io::Remarks cached_remarks() const;
 
 	/// @brief retrieves cached remarks from pose datacache
-	core::pose::Remarks cached_remarks( core::pose::Pose const & pose ) const;
+	core::io::Remarks cached_remarks( core::pose::Pose const & pose ) const;
 
 	/// @brief stores a string in the pose's datacache
 	void set_cached_string( std::string const & ss );
@@ -425,7 +425,7 @@ protected:
 
 private:
 	/// @brief loads data from pdb remarks into this permutation
-	void load_pdb_info_old( core::pose::Remarks const & rem, std::string const & prefix );
+	void load_pdb_info_old( core::io::Remarks const & rem, std::string const & prefix );
 
 	/////////////////////////////////////////////////////////////////////////////
 	/// Data storage/access
@@ -697,10 +697,10 @@ protected:
 	void add_prefix_to_segments( std::string const & prefix, char const delimeter );
 
 	/// @brief adds a remark to remarks object
-	void add_perm_remark( core::pose::Remarks & remarks, std::string const & rem_value ) const;
+	void add_perm_remark( core::io::Remarks & remarks, std::string const & rem_value ) const;
 
 	/// @brief Saves remarks of the given pose into the pose's datacache -- changes enzdes residues to segment name/number
-	void save_remarks_to_datacache( core::pose::Remarks const & remarks );
+	void save_remarks_to_datacache( core::io::Remarks const & remarks );
 
 	/// @brief moves around jumps so that movable groups will all move together during folding
 	void consolidate_movable_groups( core::pose::PoseOP pose, utility::vector1< std::string > const & root_segments );

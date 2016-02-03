@@ -17,7 +17,7 @@
 
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/loops/Loops.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 
 	core::pose::Pose native_pose, current_pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose, *rsd_set, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
 	// rbsegfile

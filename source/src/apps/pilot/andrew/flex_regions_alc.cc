@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 #include <devel/init.hh>
 
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -34,7 +34,7 @@ int main( int argc, char * argv [] )
 	devel::init( argc, argv );
 	utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, input_jobs[ 1 ]->input_tag() );
+	core::import_pose::pose_from_file( pose, input_jobs[ 1 ]->input_tag() , core::import_pose::PDB_file);
 
 	protocols::loops::loop_closure::kinematic_closure::KinematicMover myKinematicMover( 0.6 );
 	myKinematicMover.set_rama_check( true );

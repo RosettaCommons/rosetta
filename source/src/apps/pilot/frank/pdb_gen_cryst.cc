@@ -11,12 +11,12 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/CrystInfo.hh>
+#include <core/io/CrystInfo.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
 #include <core/pack/task/ResfileReader.hh>
 

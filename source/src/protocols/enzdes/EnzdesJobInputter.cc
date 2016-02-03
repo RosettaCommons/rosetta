@@ -71,7 +71,7 @@ EnzdesJobInputter::pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP
 	TR << "EnzdesJobInputter::pose_from_job" << std::endl;
 
 	std::string input_tag( job->input_tag() );
-	protocols::enzdes::enzutil::read_pose_from_pdb( pose, input_tag );
+	protocols::enzdes::enzutil::read_pose_from_file( pose, input_tag);
 	if ( enz_loops_file_ ) {
 		protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_enzdes_loops_file( enz_loops_file_ );
 		core::pose::datacache::SpecialSegmentsObserverOP segob( new core::pose::datacache::SpecialSegmentsObserver() );

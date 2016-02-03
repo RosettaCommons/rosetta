@@ -44,7 +44,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/Remarks.hh>
 
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
@@ -792,7 +792,7 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 		scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
 	}
 	core::Real score = (*scorefxn)(pose);
-	core::pose::RemarkInfo remark;
+	core::io::RemarkInfo remark;
 
 	std::ostringstream oss;
 

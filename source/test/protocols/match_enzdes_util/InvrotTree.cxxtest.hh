@@ -99,7 +99,7 @@ public:
 
 		pose::Pose tim_pose;
 
-		core::import_pose::pose_from_pdb( tim_pose, "protocols/match_enzdes_util/1ney_invtree_unittest.pdb");
+		core::import_pose::pose_from_file( tim_pose, "protocols/match_enzdes_util/1ney_invtree_unittest.pdb", core::import_pose::PDB_file);
 		scoring::ScoreFunctionOP scorefxn = scoring::ScoreFunctionFactory::create_score_function("enzdes");
 		scorefxn->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
 		(*scorefxn)(tim_pose);

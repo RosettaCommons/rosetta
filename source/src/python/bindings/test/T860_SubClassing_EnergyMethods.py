@@ -17,7 +17,7 @@ import rosetta.core.scoring.methods
 rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
 
-pose = rosetta.pose_from_pdb("../test/data/test_in.pdb")
+pose = rosetta.pose_from_file("../test/data/test_in.pdb")
 
 
 some_storage = []

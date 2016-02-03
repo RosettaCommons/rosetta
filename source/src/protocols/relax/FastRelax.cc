@@ -143,7 +143,7 @@ endrepeat
 
 //Core Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -215,7 +215,6 @@ static THREAD_LOCAL basic::Tracer TR( "protocols.relax.FastRelax" );
 
 using namespace core;
 using namespace core::io::silent;
-using core::io::pdb::dump_pdb;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace protocols {

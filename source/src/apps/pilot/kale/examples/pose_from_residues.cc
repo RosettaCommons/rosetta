@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 	Size source_index, target_index;
 	Size residues, offset = 3;
 
-	import_pose::pose_from_pdb(source_pose, "structures/marked_loop.8.pdb");
+	import_pose::pose_from_file(source_pose, "structures/marked_loop.8.pdb", core::import_pose::PDB_file);
 
 	pose::remove_variant_type_from_pose_residue(
 			source_pose, "LOWER_TERMINUS", 1);

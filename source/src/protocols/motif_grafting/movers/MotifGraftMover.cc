@@ -1543,10 +1543,10 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 	bool        const & b_allow_repeat_same_graft_output)
 {
 	//REQUIRED: context structure
-	gp_p_contextStructure_ = core::import_pose::pose_from_pdb( s_contextStructure, false );
+	gp_p_contextStructure_ = core::import_pose::pose_from_file( s_contextStructure, false , core::import_pose::PDB_file);
 
 	//REQUIRED: motif structure
-	gp_p_motif_ = core::import_pose::pose_from_pdb( s_motif, false );
+	gp_p_motif_ = core::import_pose::pose_from_file( s_motif, false , core::import_pose::PDB_file);
 
 	//REQUIRED: RMSD_tolerance
 	gp_r_RMSD_tolerance_= r_RMSD_tolerance;

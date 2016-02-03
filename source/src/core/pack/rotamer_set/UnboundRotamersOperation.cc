@@ -16,7 +16,7 @@
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <basic/options/option.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -85,7 +85,7 @@ void UnboundRotamersOperation::initialize_from_command_line()
 		std::string filename = option[ OptionKeys::packing::unboundrot ]()[i].name();
 		TR << "Adding 'unbound' rotamers from " << filename << std::endl;
 		core::pose::PoseOP pose( new core::pose::Pose() );
-		//core::import_pose::pose_from_pdb( *pose, filename );
+		//core::import_pose::pose_from_file( *pose, filename , core::import_pose::PDB_file);
 		core::io::pdb::build_pose_from_pdb_as_is( *pose, filename );
 		this->add_pose( pose );
 	}

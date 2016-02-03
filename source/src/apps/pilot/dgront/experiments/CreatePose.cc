@@ -21,7 +21,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/io/izstream.hh>
 
 #include <core/sequence/util.hh>
@@ -87,7 +87,7 @@ int main(int argc, char * argv[]) {
 
 		core::pose::PoseOP tmp_pose(new core::pose::Pose);
 		std::string fn = option[in::file::s](1);
-		core::import_pose::pose_from_pdb(*tmp_pose, fn);
+		core::import_pose::pose_from_file(*tmp_pose, fn, core::import_pose::PDB_file);
 
 		sequence = tmp_pose->sequence();
 		core::pose::make_pose_from_sequence(extended_pose, sequence,

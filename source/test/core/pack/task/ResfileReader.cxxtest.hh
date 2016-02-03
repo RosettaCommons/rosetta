@@ -59,7 +59,7 @@ public:
 
 	void setUp() {
 		core_init();
-		core::import_pose::pose_from_pdb( pose, "core/pack/task/resfile_test.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pack/task/resfile_test.pdb" , core::import_pose::PDB_file);
 		the_task = TaskFactory::create_packer_task( pose );
 
 		cache_option__interactive_ = basic::options::option[ basic::options::OptionKeys::run::interactive ].value();

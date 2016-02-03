@@ -72,30 +72,30 @@ Ab_TemplateInfo::load_templates_from_pdbs(bool load_L1, bool load_L2, bool load_
 
 	if ( !camelid_ ) {
 		if ( load_L1_ ) {
-			import_pose::pose_from_pdb( L1_t_pose_, "./L1.pdb" );
+			import_pose::pose_from_file( L1_t_pose_, "./L1.pdb" , core::import_pose::PDB_file);
 			templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("L1", L1_t_pose_) );
 		}
 		if ( load_L2_ ) {
-			import_pose::pose_from_pdb( L2_t_pose_, "./L2.pdb" );
+			import_pose::pose_from_file( L2_t_pose_, "./L2.pdb" , core::import_pose::PDB_file);
 			templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("L2", L2_t_pose_) );
 		}
 		if ( load_L3_ ) {
-			import_pose::pose_from_pdb( L3_t_pose_, "./L3.pdb" );
+			import_pose::pose_from_file( L3_t_pose_, "./L3.pdb" , core::import_pose::PDB_file);
 			templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("L3", L3_t_pose_) );
 		}
 	}
 
 
 	if ( load_H1_ ) {
-		import_pose::pose_from_pdb( H1_t_pose_, "./H1.pdb" );
+		import_pose::pose_from_file( H1_t_pose_, "./H1.pdb" , core::import_pose::PDB_file);
 		templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("H1", H1_t_pose_) );
 	}
 	if ( load_H2_ ) {
-		import_pose::pose_from_pdb( H2_t_pose_, "./H2.pdb" );
+		import_pose::pose_from_file( H2_t_pose_, "./H2.pdb" , core::import_pose::PDB_file);
 		templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("H2", H2_t_pose_) );
 	}
 	if ( load_H3_ ) {
-		import_pose::pose_from_pdb( H3_t_pose_, "./H3.pdb" );
+		import_pose::pose_from_file( H3_t_pose_, "./H3.pdb" , core::import_pose::PDB_file);
 		templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("H3", H3_t_pose_) );
 	}
 
@@ -167,12 +167,11 @@ Ab_TemplateInfo::show( std::ostream & out ) {
 }
 
 std::ostream & operator<<(std::ostream& out, const Ab_TemplateInfo & ab_t_info ) {
-	using namespace ObjexxFCL::format;
 	// All output will be 80 characters - 80 is a nice number, don't you think?
 	std::string line_marker = "///";
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
-	out << line_marker << A( 47, "Rosetta Antibody Template Info" ) << space( 27 ) << line_marker << std::endl;
-	out << line_marker << space( 74 ) << line_marker << std::endl;
+	out << line_marker << ObjexxFCL::format::A( 47, "Rosetta Antibody Template Info" ) << ObjexxFCL::format::space( 27 ) << line_marker << std::endl;
+	out << line_marker << ObjexxFCL::format::space( 74 ) << line_marker << std::endl;
 
 	if ( ab_t_info.load_L1_ ) {
 		out << line_marker << " L1 template: "<<std::endl;

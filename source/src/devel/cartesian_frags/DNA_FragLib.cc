@@ -77,7 +77,7 @@ build_frag_libraries(
 		Pose pose;
 		td << "Reading " << files[n] << std::endl;
 
-		core::import_pose::pose_from_pdb( pose, files[n] );
+		core::import_pose::pose_from_file( pose, files[n] , core::import_pose::PDB_file);
 
 		set_base_partner( pose ); // fills base partner info
 

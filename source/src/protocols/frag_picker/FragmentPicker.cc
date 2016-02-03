@@ -496,11 +496,11 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 	core::pose::PoseOP nativePose;
 	if ( option[in::file::native].user() ) {
 		nativePose = core::pose::PoseOP( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
+		core::import_pose::pose_from_file(*nativePose, option[in::file::native](), core::import_pose::PDB_file);
 		has_native = true;
 	} else if ( option[in::file::s].user() ) {
 		nativePose = core::pose::PoseOP( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
+		core::import_pose::pose_from_file(*nativePose, option[in::file::s]()[1], core::import_pose::PDB_file);
 		has_native = true;
 	}
 

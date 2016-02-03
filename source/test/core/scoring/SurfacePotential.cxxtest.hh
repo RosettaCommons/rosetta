@@ -142,7 +142,7 @@ public:
 
 	void test_compute_residue_surface_energy() {
 
-		core::import_pose::pose_from_pdb( pose, "core/pack/1l2y_renameH.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pack/1l2y_renameH.pdb" , core::import_pose::PDB_file);
 
 		// create a score function using the standard packer weights
 		sf = scoring::get_score_function();
@@ -201,7 +201,7 @@ public:
 
 	void test_compute_pose_surface_energy_smallprotein() {
 
-		core::import_pose::pose_from_pdb( pose, "core/pack/1l2y_renameH.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pack/1l2y_renameH.pdb" , core::import_pose::PDB_file);
 
 		Real total_surfaceE = -1.0;
 		utility::vector1< Real > residue_surfaceE( pose.n_residue(), 0.0 );
@@ -239,7 +239,7 @@ public:
 
 	void test_compute_pose_hpatch_energy() {
 
-		core::import_pose::pose_from_pdb( pose, "core/pack/1l2y_renameH.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pack/1l2y_renameH.pdb" , core::import_pose::PDB_file);
 
 		Real total_hpatch_score = 0.0;
 		std::map< Size, std::pair< Real, Real > > patch_scores;
@@ -269,7 +269,7 @@ public:
 	void test_compute_pose_with_HETATM_hpatch_energy() {
 
 		// the following PDB has Ca and some other HETATMs in it
-		core::import_pose::pose_from_pdb( pose, "core/pack/2mcm_0001.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pack/2mcm_0001.pdb" , core::import_pose::PDB_file);
 
 		Real total_hpatch_score = 0.0;
 		std::map< Size, std::pair< Real, Real > > patch_scores;

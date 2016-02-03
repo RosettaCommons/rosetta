@@ -439,7 +439,7 @@ void* doit(void*) {
 	TR << "setup pose & constraints" << std::endl;
 	Pose pose;
 	// core::pose::make_pose_from_sequence(pose,seq,core::chemical::CENTROID,false);
-	core::import_pose::pose_from_pdb(pose,option[in::file::s]()[1]);
+	core::import_pose::pose_from_file(pose,option[in::file::s]()[1], core::import_pose::PDB_file);
 	Size N = pose.n_residue();
 	if( N > 4 * (Size)sizeof(BINTYPE) ) {
 		utility_exit_with_message("my stupid way of binning chis uses an unsigned short/long, and can't handle that many residues!\nthere is probably a way around this to get maybe 3 more residues easily, or by making the key a pair of longs o rthe bins smaller....");

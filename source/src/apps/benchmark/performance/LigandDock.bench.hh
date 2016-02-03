@@ -37,7 +37,7 @@ public:
 		basic::options::option.load_options_from_file("ligand_dock/ligand_dock_flags.txt");
 
 		std::string pdb_file_name= basic::options::option[ basic::options::OptionKeys::in::file::s ]()[1];
-		core::import_pose::pose_from_pdb(ligand_dock_pose, pdb_file_name);
+		core::import_pose::pose_from_file(ligand_dock_pose, pdb_file_name, core::import_pose::PDB_file);
 	};
 
 	virtual void run(core::Real scaleFactor) {

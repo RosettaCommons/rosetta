@@ -48,7 +48,7 @@ public:
 	//ctor sets up the pose once
 	RestrictToCDRH3LoopTest(){
 		core_init();
-		core::import_pose::pose_from_pdb( pose, "protocols/util/aHo_antibody.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/util/aHo_antibody.pdb" , core::import_pose::PDB_file);
 	}
 	virtual ~RestrictToCDRH3LoopTest() {}
 	static RestrictToCDRH3LoopTest* createSuite() {

@@ -91,7 +91,7 @@ main( int argc, char * argv [] )
 		pose::Pose tgt_pose;
 		if ( option[ hotspot::target ].user() ) {
 			tgt= option[ hotspot::target ]();
-			core::import_pose::pose_from_pdb( tgt_pose, tgt );
+			core::import_pose::pose_from_file( tgt_pose, tgt , core::import_pose::PDB_file);
 		}
 
 		utility::vector1< std::string > resnames;

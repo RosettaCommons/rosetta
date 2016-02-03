@@ -39,7 +39,6 @@
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/types.hh>
-#include <core/io/pdb/file_data.fwd.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/Jump.fwd.hh>
@@ -134,7 +133,7 @@ public:
 	}
 
 	void testSafeExtendLoopsAndIdealize() {
-		PoseOP pose = core::import_pose::pose_from_pdb("protocols/loops/2GB3.pdb");
+		PoseOP pose = core::import_pose::pose_from_file("protocols/loops/2GB3.pdb", core::import_pose::PDB_file);
 		Pose other = *pose;
 
 		Loops loops;

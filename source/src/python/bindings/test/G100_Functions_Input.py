@@ -23,7 +23,7 @@ from app.pyrosetta_toolkit.modules.tools import input as input_tools
 from rosetta import *
 rosetta.init()
 
-p = pose_from_pdb(os.path.dirname(os.path.abspath(__file__))+"/data/gui/2j88.pdb")
+p = pose_from_file(os.path.dirname(os.path.abspath(__file__))+"/data/gui/2j88.pdb")
 score = get_score_function()
 
 

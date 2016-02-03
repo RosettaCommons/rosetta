@@ -97,9 +97,9 @@ main( int argc, char * argv [] )
 			// load the PDB file
 			input_pose = core::pose::PoseOP( new core::pose::Pose() );
 			if ( option[ in::file::centroid_input ].user() ) {
-				core::import_pose::centroid_pose_from_pdb( *input_pose, input_jobs[i]->input_tag() );
+				core::import_pose::centroid_pose_from_pdb( *input_pose, input_jobs[i]->input_tag() , core::import_pose::PDB_file);
 			} else {
-				core::import_pose::pose_from_pdb( *input_pose, input_jobs[i]->input_tag() );
+				core::import_pose::pose_from_file( *input_pose, input_jobs[i]->input_tag() , core::import_pose::PDB_file);
 			}
 
 			std::string output_tag(input_jobs[i]->output_tag(1));

@@ -174,7 +174,7 @@ void UnbiasedRigidBodyPerturbNoCenterMover::initialize ( core::pose::Pose const 
 
 	if ( restrict_ ) {
 		core::pose::PoseOP ref_pose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *ref_pose, ref_file_ );
+		core::import_pose::pose_from_file( *ref_pose, ref_file_ , core::import_pose::PDB_file);
 		ref_pose->fold_tree( pose.fold_tree() ); // set its fold_tree same as the docking pose
 		core::kinematics::Jump ref_jump = ref_pose->jump( rb_jump_ );
 		ref_R_ = ref_jump.get_rotation();

@@ -67,7 +67,7 @@
 //temp includes krishna
 #include <iostream>
 #include <fstream>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/string_util.hh>
 
 //JD headers
@@ -456,7 +456,7 @@ public:
 			setup_task_and_repack (separated_pose);
 			Real const separated_repack_energy = (*docking_scorefxn)( separated_pose );
 			binding_energy += (complex_energy - separated_repack_energy);
-			//core::io::pdb::dump_pdb( separated_pose, "separated_pose.pdb" );
+			//core::io::pdb::old_dump_pdb( separated_pose, "separated_pose.pdb" );
 		}
 
 		energies_and_sasa.push_back(interaction_energy);
@@ -550,7 +550,7 @@ public:
 			utility::vector1< std::string > cognate_chains = partners_from_info(cognate_partner_info_);
 			utility::vector1< std::string > decoy_chains = partners_from_info(partner_info_);
 			core::pose::Pose cognate_pose;
-			core::import_pose::pose_from_pdb(cognate_pose, cognate_pdb_);
+			core::import_pose::pose_from_file(cognate_pose, cognate_pdb_, core::import_pose::PDB_file);
 			superimpose_antigen(cognate_pose, pose, cognate_chains[2], decoy_chains[2]);
 			frmk_rms_ = rmsd_frmk_chothia_num_ab(cognate_pose, pose, cognate_chains[1], decoy_chains[1]);
 		}

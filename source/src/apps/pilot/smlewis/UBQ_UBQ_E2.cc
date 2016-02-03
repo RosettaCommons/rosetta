@@ -174,11 +174,11 @@ public:
 
 		//read poses
 		core::pose::Pose E2;
-		core::import_pose::pose_from_pdb( E2, basic::options::option[E2pdb].value() );
+		core::import_pose::pose_from_file( E2, basic::options::option[E2pdb].value() , core::import_pose::PDB_file);
 		core::Size const E2length = E2.total_residue();
 
 		core::pose::Pose UBQ;
-		core::import_pose::pose_from_pdb( UBQ, basic::options::option[UBQpdb].value() );
+		core::import_pose::pose_from_file( UBQ, basic::options::option[UBQpdb].value() , core::import_pose::PDB_file);
 		core::Size const UBQlength = UBQ.total_residue();
 		core::pose::Pose UBQ_second(UBQ);
 

@@ -76,24 +76,24 @@ public: // test functions
 		// Test Cases for calc angles & moveable membranes:
 		// 1. TM domain of the M2 proton channel (single helix)
 		//        PoseOP m2_pose ( new Pose() );
-		//        pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+		//        pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
 		//        AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
 		//        add_memb1->apply( *m2_pose );
 		//
 		//        // 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		//        PoseOP glpA_pose( new Pose() );
-		//        pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+		//        pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
 		//        AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
 		//        add_memb2->apply( *glpA_pose );
 		//
 		//  // Test Cases for membrane rmsd calculations
 		//  // 3. Native Glycophprin A
 		//  core::pose::PoseOP native_pose( new Pose() );
-		//        pose_from_pdb( *native_pose, "protocols/membrane/1afo_in.pdb" );
+		//        pose_from_file( *native_pose, "protocols/membrane/1afo_in.pdb" , core::import_pose::PDB_file);
 		//
 		//  // 4. Transformed glycophorin A
 		//        core::pose::PoseOP test_pose( new Pose() );
-		//        pose_from_pdb( *test_pose, "protocols/membrane/1afo_decoy.pdb" );
+		//        pose_from_file( *test_pose, "protocols/membrane/1afo_decoy.pdb" , core::import_pose::PDB_file);
 		//
 		//        AddMembraneMoverOP add_memb3( new AddMembraneMover( "protocols/membrane/1afo_tr.span", 1 ) );
 		//        add_memb3->apply( *native_pose );
@@ -111,13 +111,13 @@ public: // test functions
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
-		pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
-		pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
 		add_memb2->apply( *glpA_pose );
 
@@ -146,13 +146,13 @@ public: // test functions
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
-		pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
-		pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
 		add_memb2->apply( *glpA_pose );
 
@@ -205,13 +205,13 @@ public: // test functions
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
-		pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
-		pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
 		add_memb2->apply( *glpA_pose );
 
@@ -243,13 +243,13 @@ public: // test functions
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
-		pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
-		pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
 		add_memb2->apply( *glpA_pose );
 
@@ -266,13 +266,13 @@ public: // test functions
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
-		pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
-		pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
 		add_memb2->apply( *glpA_pose );
 
@@ -287,13 +287,13 @@ public: // test functions
 
 		// 1. TM domain of the M2 proton channel (single helix)
 		PoseOP m2_pose ( new Pose() );
-		pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+		pose_from_file( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
 		add_memb1->apply( *m2_pose );
 
 		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
 		PoseOP glpA_pose( new Pose() );
-		pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+		pose_from_file( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
 		add_memb2->apply( *glpA_pose );
 
@@ -327,11 +327,11 @@ public: // test functions
 		// Test Cases for membrane rmsd calculations
 		// 3. Native Glycophprin A
 		core::pose::PoseOP native_pose( new Pose() );
-		pose_from_pdb( *native_pose, "protocols/membrane/1afo_in.pdb" );
+		pose_from_file( *native_pose, "protocols/membrane/1afo_in.pdb" , core::import_pose::PDB_file);
 
 		// 4. Transformed glycophorin A
 		core::pose::PoseOP test_pose( new Pose() );
-		pose_from_pdb( *test_pose, "protocols/membrane/1afo_decoy.pdb" );
+		pose_from_file( *test_pose, "protocols/membrane/1afo_decoy.pdb" , core::import_pose::PDB_file);
 
 		AddMembraneMoverOP add_memb3( new AddMembraneMover( "protocols/membrane/1afo_tr.span", 1 ) );
 		add_memb3->apply( *native_pose );
@@ -350,11 +350,11 @@ public: // test functions
 		// Test Cases for membrane rmsd calculations
 		// 3. Native Glycophprin A
 		core::pose::PoseOP native_pose( new Pose() );
-		pose_from_pdb( *native_pose, "protocols/membrane/1afo_in.pdb" );
+		pose_from_file( *native_pose, "protocols/membrane/1afo_in.pdb" , core::import_pose::PDB_file);
 
 		// 4. Transformed glycophorin A
 		core::pose::PoseOP test_pose( new Pose() );
-		pose_from_pdb( *test_pose, "protocols/membrane/1afo_decoy.pdb" );
+		pose_from_file( *test_pose, "protocols/membrane/1afo_decoy.pdb" , core::import_pose::PDB_file);
 
 		AddMembraneMoverOP add_memb3( new AddMembraneMover( "protocols/membrane/1afo_tr.span", 1 ) );
 		add_memb3->apply( *native_pose );
@@ -373,11 +373,11 @@ public: // test functions
 		// Test Cases for membrane rmsd calculations
 		// 3. Native Glycophprin A
 		core::pose::PoseOP native_pose( new Pose() );
-		pose_from_pdb( *native_pose, "protocols/membrane/1afo_in.pdb" );
+		pose_from_file( *native_pose, "protocols/membrane/1afo_in.pdb" , core::import_pose::PDB_file);
 
 		// 4. Transformed glycophorin A
 		core::pose::PoseOP test_pose( new Pose() );
-		pose_from_pdb( *test_pose, "protocols/membrane/1afo_decoy.pdb" );
+		pose_from_file( *test_pose, "protocols/membrane/1afo_decoy.pdb" , core::import_pose::PDB_file);
 
 		AddMembraneMoverOP add_memb3( new AddMembraneMover( "protocols/membrane/1afo_tr.span", 1 ) );
 		add_memb3->apply( *native_pose );
@@ -396,11 +396,11 @@ public: // test functions
 		// Test Cases for membrane rmsd calculations
 		// 3. Native Glycophprin A
 		core::pose::PoseOP native_pose( new Pose() );
-		pose_from_pdb( *native_pose, "protocols/membrane/1afo_in.pdb" );
+		pose_from_file( *native_pose, "protocols/membrane/1afo_in.pdb" , core::import_pose::PDB_file);
 
 		// 4. Transformed glycophorin A
 		core::pose::PoseOP test_pose( new Pose() );
-		pose_from_pdb( *test_pose, "protocols/membrane/1afo_decoy.pdb" );
+		pose_from_file( *test_pose, "protocols/membrane/1afo_decoy.pdb" , core::import_pose::PDB_file);
 
 		AddMembraneMoverOP add_memb3( new AddMembraneMover( "protocols/membrane/1afo_tr.span", 1 ) );
 		add_memb3->apply( *native_pose );
@@ -422,7 +422,7 @@ public: // test functions
 		// read in pose and create topology object
 		TS_TRACE("1AFO");
 		Pose pose1;
-		core::import_pose::pose_from_pdb( pose1, "protocols/membrane/geometry/1AFO_.pdb" );
+		core::import_pose::pose_from_file( pose1, "protocols/membrane/geometry/1AFO_.pdb" , core::import_pose::PDB_file);
 
 		// create membrane pose
 		AddMembraneMoverOP addmem1( new AddMembraneMover( "protocols/membrane/geometry/1AFO__tr.span" ) );
@@ -453,7 +453,7 @@ public: // test functions
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose2;
-		core::import_pose::pose_from_pdb( pose2, "protocols/membrane/geometry/1BL8_.pdb" );
+		core::import_pose::pose_from_file( pose2, "protocols/membrane/geometry/1BL8_.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem2( new AddMembraneMover( "protocols/membrane/geometry/1BL8__tr.span" ) );
 		addmem2->apply(pose2);
 		Vector center2(73.9421, 26.7549, 24.4493);
@@ -476,7 +476,7 @@ public: // test functions
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose3;
-		core::import_pose::pose_from_pdb( pose3, "protocols/membrane/geometry/1QJP_.pdb" );
+		core::import_pose::pose_from_file( pose3, "protocols/membrane/geometry/1QJP_.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem3( new AddMembraneMover( "protocols/membrane/geometry/1QJP__tr.span" ) );
 		addmem3->apply(pose3);
 		Vector center3(31.2161, 16.9685, 37.6119);
@@ -499,7 +499,7 @@ public: // test functions
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose4;
-		core::import_pose::pose_from_pdb( pose4, "protocols/membrane/geometry/2BS2_CF.pdb" );
+		core::import_pose::pose_from_file( pose4, "protocols/membrane/geometry/2BS2_CF.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem4( new AddMembraneMover( "protocols/membrane/geometry/2BS2_CF_tr.span" ) );
 		addmem4->apply(pose4);
 		Vector center4(21.4326, 6.0464, -41.0573);
@@ -522,7 +522,7 @@ public: // test functions
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose5;
-		core::import_pose::pose_from_pdb( pose5, "protocols/membrane/geometry/2MPN_.pdb" );
+		core::import_pose::pose_from_file( pose5, "protocols/membrane/geometry/2MPN_.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem5( new AddMembraneMover( "protocols/membrane/geometry/2MPN__tr.span" ) );
 		addmem5->apply(pose5);
 		Vector center5(0.3645, 3.66025, 41.345);
@@ -545,7 +545,7 @@ public: // test functions
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose6;
-		core::import_pose::pose_from_pdb( pose6, "protocols/membrane/geometry/2OAR_.pdb" );
+		core::import_pose::pose_from_file( pose6, "protocols/membrane/geometry/2OAR_.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem6( new AddMembraneMover( "protocols/membrane/geometry/2OAR__tr.span" ) );
 		addmem6->apply(pose6);
 		Vector center6(18.8453, 122.117, 1.079);
@@ -568,7 +568,7 @@ public: // test functions
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose7;
-		core::import_pose::pose_from_pdb( pose7, "protocols/membrane/geometry/2UUH__tr.pdb" );
+		core::import_pose::pose_from_file( pose7, "protocols/membrane/geometry/2UUH__tr.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem7( new AddMembraneMover( "protocols/membrane/geometry/2UUH__tr.span" ) );
 		addmem7->apply(pose7);
 		Vector center7(-0.000166667, -0.000125, 0.295625);
@@ -591,7 +591,7 @@ public: // test functions
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		Pose pose8;
-		core::import_pose::pose_from_pdb( pose8, "protocols/membrane/geometry/3PXO_.pdb" );
+		core::import_pose::pose_from_file( pose8, "protocols/membrane/geometry/3PXO_.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem8( new AddMembraneMover( "protocols/membrane/geometry/3PXO__tr.span" ) );
 		addmem8->apply(pose8);
 		Vector center8(-36.1201, -7.59636, 37.6713);
@@ -689,7 +689,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose, pose_up, pose_down;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/geometry/1AFO_.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/geometry/1AFO_.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem9( new AddMembraneMover( "protocols/membrane/geometry/1AFO__tr.span" ) );
 		addmem9->apply(pose);
 
@@ -713,7 +713,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/geometry/1AFO_.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/geometry/1AFO_.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP addmem10( new AddMembraneMover( "protocols/membrane/geometry/1AFO__tr.span" ) );
 		addmem10->apply(pose);
 
@@ -738,7 +738,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/1C17_tr.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/1C17_tr.pdb" , core::import_pose::PDB_file);
 		SpanningTopologyOP topo( new SpanningTopology( "protocols/membrane/1C17_tr.span" ) );
 
 		// call function
@@ -823,7 +823,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/1C17_tr.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/1C17_tr.pdb" , core::import_pose::PDB_file);
 
 		// call AddMembraneMover for spanfile
 		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/1C17_tr.span" ) );
@@ -899,7 +899,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/3EFF_TR.pdb" , core::import_pose::PDB_file);
 
 		// call AddMembraneMover for spanfile
 		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
@@ -937,7 +937,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/3EFF_TR.pdb" , core::import_pose::PDB_file);
 
 		// call AddMembraneMover for spanfile
 		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
@@ -970,7 +970,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/3EFF_TR.pdb" , core::import_pose::PDB_file);
 
 		// call AddMembraneMover for spanfile
 		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
@@ -1009,7 +1009,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/3EFF_TR.pdb" , core::import_pose::PDB_file);
 
 		// call AddMembraneMover for spanfile
 		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
@@ -1042,7 +1042,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/3EFF_TR.pdb" , core::import_pose::PDB_file);
 
 		// call AddMembraneMover for spanfile
 		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
@@ -1073,7 +1073,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/3EFF_TR.pdb" , core::import_pose::PDB_file);
 
 		// call AddMembraneMover for spanfile
 		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
@@ -1104,7 +1104,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/3EFF_TR.pdb" , core::import_pose::PDB_file);
 
 		// call AddMembraneMover for spanfile
 		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
@@ -1129,7 +1129,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/3EFF_TR.pdb" , core::import_pose::PDB_file);
 
 		// call AddMembraneMover for spanfile
 		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
@@ -1150,7 +1150,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/3EFF_TR.pdb" , core::import_pose::PDB_file);
 
 		// call AddMembraneMover for spanfile
 		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
@@ -1182,7 +1182,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/3EFF_TR.pdb" , core::import_pose::PDB_file);
 
 		// call AddMembraneMover for spanfile
 		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
@@ -1214,7 +1214,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/1H2S__tr.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/1H2S__tr.pdb" , core::import_pose::PDB_file);
 
 		// call AddMembraneMover for spanfile
 		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/1H2S__tr.span" ) );
@@ -1258,7 +1258,7 @@ public: // test functions
 
 		// read in pose and create topology object
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/1H2S__tr.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/1H2S__tr.pdb" , core::import_pose::PDB_file);
 
 		// call AddMembraneMover for spanfile
 		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/1H2S__tr.span" ) );

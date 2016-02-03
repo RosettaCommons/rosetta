@@ -119,9 +119,9 @@ public:
 
 		// read in pose
 		//Pose pose(create_test_in_pdb_pose());
-		//core::import_pose::pose_from_pdb( pose, "core/pack/test_in.pdb" );
+		//core::import_pose::pose_from_file( pose, "core/pack/test_in.pdb" , core::import_pose::PDB_file);
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "core/scoring/symmetry/test_in.pdb" );
+		core::import_pose::pose_from_file( pose, "core/scoring/symmetry/test_in.pdb" , core::import_pose::PDB_file);
 		core::pose::symmetry::make_symmetric_pose( pose );
 
 		// calculate original score

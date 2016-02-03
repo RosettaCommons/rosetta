@@ -269,7 +269,7 @@ void MPDockingMover::init_from_cmd(){
 	// if native flag given, set native from flag
 	if ( option[OptionKeys::in::file::native].user() ) {
 		TR << "Setting native from flag -in::file::native" << std::endl;
-		native_ = pose_from_pdb(option[OptionKeys::in::file::native].value_string() );
+		native_ = pose_from_file(option[OptionKeys::in::file::native].value_string() , core::import_pose::PDB_file);
 	}
 
 	// if local_refine flag on, only do high-res

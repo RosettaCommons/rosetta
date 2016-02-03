@@ -34,7 +34,7 @@
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <protocols/moves/NullMover.hh>
 #include <protocols/jobdist/standard_mains.hh>
@@ -98,7 +98,7 @@ main( int argc, char* argv [] ) {
 	core::pose::Pose native_pose, current_pose;
 	if ( option[ in::file::native ].user() ) {
 		TR << option[ in::file::native].user() << std::endl;
-		core::import_pose::pose_from_pdb( native_pose, *rsd_set, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
 	//YL, declare score function

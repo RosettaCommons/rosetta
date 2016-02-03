@@ -24,7 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/types.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 

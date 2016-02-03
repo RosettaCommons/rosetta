@@ -93,7 +93,7 @@ int main( int argc, char * argv [] )
 	if ( option[hotspot::target].user() )
 	{
 		targetFilename = option[ hotspot::target ]();
-		core::import_pose::pose_from_pdb( target_pose, targetFilename );
+		core::import_pose::pose_from_file( target_pose, targetFilename , core::import_pose::PDB_file);
 	}
 	else
 	{
@@ -133,7 +133,7 @@ int main( int argc, char * argv [] )
     std::getline(stubinput, filename);
 
     core::pose::Pose stubpose;
-    core::import_pose::pose_from_pdb( stubpose, filename);
+    core::import_pose::pose_from_file( stubpose, filename, core::import_pose::PDB_file);
 
     if(!stubpose.total_residue() == 1)
     {

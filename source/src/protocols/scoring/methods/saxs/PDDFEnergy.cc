@@ -136,7 +136,7 @@ PDDFEnergy::PDDFEnergy() : WholeStructureEnergy( core::scoring::methods::EnergyM
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
 				basic::options::option[ in::file::residue_type_set ]());
 
-			core::import_pose::pose_from_pdb(reference_pose, *rsd_set,
+			core::import_pose::pose_from_file(reference_pose, *rsd_set,
 				basic::options::option[in::file::native]());
 
 			core::util::switch_to_residue_type_set( reference_pose, core::chemical::CENTROID );

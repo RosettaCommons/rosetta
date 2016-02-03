@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
 	// due to some fluky feature of the `11.unmarked.pdb' structure.
 
 	std::string input_pdb = "structures/cyclic/14.marked.pdb";
-	import_pose::pose_from_pdb(pose, input_pdb);
+	import_pose::pose_from_file(pose, input_pdb, core::import_pose::PDB_file);
 
 	initializer.apply(pose);
 	reindexer.apply(pose);

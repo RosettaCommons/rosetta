@@ -105,7 +105,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
@@ -157,7 +157,7 @@ using namespace ObjexxFCL::format;
 
 using utility::vector1;
 using std::string;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -424,7 +424,7 @@ RunPepSpec()
 			std::string this_filename( pdb_list_line );
 			pdb_filenames.push_back( this_filename );
 			Pose this_pose;
-			core::import_pose::pose_from_pdb( this_pose, this_filename );
+			core::import_pose::pose_from_file( this_pose, this_filename , core::import_pose::PDB_file);
 			poses.push_back( this_pose );
 		}
 		input_name = pdb_filenames[ 1 ];
@@ -446,7 +446,7 @@ RunPepSpec()
 		input_name = basic::options::start_file();
 		pdb_filenames.push_back( input_name );
 		Pose this_pose;
-		core::import_pose::pose_from_pdb( this_pose, input_name );
+		core::import_pose::pose_from_file( this_pose, input_name , core::import_pose::PDB_file);
 		poses.push_back( this_pose );
 
 	}
@@ -454,13 +454,13 @@ RunPepSpec()
 		cst_filenames.push_back( option[ OptionKeys::constraints::cst_file ] );
 	}
 
-	core::import_pose::pose_from_pdb( pose, input_name );
+	core::import_pose::pose_from_file( pose, input_name , core::import_pose::PDB_file);
 	pose::Pose start_pose( pose );
 
 	pose::Pose ref_pose;
 	if( option[ pep_spec::rmsd ] ){
 		std::string ref_name( option[ pep_spec::rmsd_ref ] );
-		core::import_pose::pose_from_pdb( ref_pose, ref_name );
+		core::import_pose::pose_from_file( ref_pose, ref_name , core::import_pose::PDB_file);
 	}
 
 	//convert user input to internal values//

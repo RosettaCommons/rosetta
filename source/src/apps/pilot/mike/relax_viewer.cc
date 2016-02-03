@@ -36,7 +36,7 @@
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
@@ -69,7 +69,7 @@ using namespace core;
 using namespace protocols;
 
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ relax_test()
 
 	pose::Pose pose;
 	std::cerr << "READING " << pdbfile << std::endl;
-	core::import_pose::pose_from_pdb( pose, pdbfile ); // default is standard fullatom residue_set
+	core::import_pose::pose_from_file( pose, pdbfile , core::import_pose::PDB_file); // default is standard fullatom residue_set
 
 	std::cerr << "SETUP SCORE FUNCTION" << std::endl;
 	core::scoring::ScoreFunctionOP scorefxn( new ScoreFunction() );

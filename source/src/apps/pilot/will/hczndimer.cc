@@ -94,7 +94,7 @@ using utility::io::izstream;
 using utility::io::ozstream;
 using utility::vector1;
 using std::endl;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::kinematics::Stub;
 
 static THREAD_LOCAL basic::Tracer tr( "hczndimer" );
@@ -536,7 +536,7 @@ int main(int argc, char *argv[]) {
     string fn = option[in::file::s]()[ifn];
     Pose pnat;
     tr << "checking " << fn << std::endl;
-    core::import_pose::pose_from_pdb(pnat,fn);
+    core::import_pose::pose_from_file(pnat,fn, core::import_pose::PDB_file);
     if(pnat.n_residue() < 20) continue;
     if(pnat.n_residue() > 250) continue;
     core::scoring::dssp::Dssp dssp(pnat);

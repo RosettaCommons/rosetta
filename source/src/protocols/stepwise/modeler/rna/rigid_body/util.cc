@@ -39,7 +39,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>

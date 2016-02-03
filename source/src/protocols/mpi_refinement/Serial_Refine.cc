@@ -100,7 +100,7 @@ Serial_Refine::init(){
 		native_given_ = true;
 		core::chemical::ResidueTypeSetCOP rsd_set
 			= core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-		core::import_pose::pose_from_pdb( native_pose_, *rsd_set, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose_, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
 	fobj_ = MultiObjectiveOP( new MultiObjective() );

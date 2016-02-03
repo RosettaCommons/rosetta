@@ -106,7 +106,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
@@ -167,7 +167,7 @@ using namespace ObjexxFCL::format;
 
 using utility::vector1;
 using std::string;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -461,7 +461,7 @@ pep_rmsd_analysis(
 
 	pose::Pose ref_pose;
 	std::string ref_name( option[ pep_spec::ref_pose ] );
-	core::import_pose::pose_from_pdb( ref_pose, ref_name );
+	core::import_pose::pose_from_file( ref_pose, ref_name , core::import_pose::PDB_file);
 
 	Size ref_pep_anchor_in( option[ pep_spec::pep_anchor ] );
 	if( option[ pep_spec::ref_pep_anchor ].user() ) ref_pep_anchor_in = option[ pep_spec::ref_pep_anchor ];
@@ -542,7 +542,7 @@ pep_phipsi_analysis(
 
 	pose::Pose ref_pose;
 	std::string ref_name( option[ pep_spec::ref_pose ] );
-	core::import_pose::pose_from_pdb( ref_pose, ref_name );
+	core::import_pose::pose_from_file( ref_pose, ref_name , core::import_pose::PDB_file);
 
 	Size ref_pep_anchor_in( option[ pep_spec::pep_anchor ] );
 	if( option[ pep_spec::ref_pep_anchor ].user() ) ref_pep_anchor_in = option[ pep_spec::ref_pep_anchor ];
@@ -908,7 +908,7 @@ RunPepSpec()
 
 	}
 
-	core::import_pose::pose_from_pdb( pose, pdb_filenames[ 1 ] );
+	core::import_pose::pose_from_file( pose, pdb_filenames[ 1 ] , core::import_pose::PDB_file);
 	ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
 
 	//convert user input to internal values//
@@ -995,7 +995,7 @@ RunPepSpec()
 		int pose_index( static_cast< int >( numeric::random::rg().uniform() * pdb_filenames.size() + 1 ) );
 		std::string pdb_filename( pdb_filenames[ pose_index ] );
 		std::cout<<"Initializing "<< out_nametag + "_" + string_of( peptide_loop ) + " with " + pdb_filename << std::endl;
-		core::import_pose::pose_from_pdb( pose, pdb_filename );
+		core::import_pose::pose_from_file( pose, pdb_filename , core::import_pose::PDB_file);
 		pose::Pose start_pose( pose );
 
 		protocols::viewer::add_conformation_viewer( pose.conformation(), "pep_spec_pose" );

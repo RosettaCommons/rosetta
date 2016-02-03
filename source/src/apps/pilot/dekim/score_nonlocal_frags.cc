@@ -119,7 +119,7 @@ MyScoreMover::MyScoreMover():
 
 	if ( option[ in::file::native ].user() ) {
 		// read native structure
-		import_pose::pose_from_pdb( native_, option[ basic::options::OptionKeys::in::file::native ] );
+		import_pose::pose_from_file( native_, option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 		has_native_ = true;
 	}
 

@@ -677,7 +677,7 @@ load_checkpoint( pose::Pose & pose, Size & iter )
 
 	if ( option[ OptionKeys::out::pdb_gz ]() ) pdbfile += ".gz";
 	pose::Pose temp_pose;
-	core::import_pose::pose_from_pdb( temp_pose, filename );
+	core::import_pose::pose_from_file( temp_pose, filename , core::import_pose::PDB_file);
 
 	pose = temp_pose;
 	// here iter should refer to the last complete iteration

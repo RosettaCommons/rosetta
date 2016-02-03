@@ -456,7 +456,7 @@ GrowPeptides::parse_my_tag(
 	if ( tag->hasOption( "template_pdb" ) ) {
 		std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
 		template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
-		core::import_pose::pose_from_pdb( *template_pdb_, template_pdb_fname );
+		core::import_pose::pose_from_file( *template_pdb_, template_pdb_fname , core::import_pose::PDB_file);
 		TR<<"read in a template pdb with " <<template_pdb_->total_residue() <<"residues"<<std::endl;
 		template_presence = true;
 	}

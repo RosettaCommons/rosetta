@@ -9,7 +9,7 @@ import math
 init()
 
 p = Pose()
-pose_from_pdb(p, "test_in.pdb")
+pose_from_file(p, "test_in.pdb")
 
 starting_p = Pose()
 starting_p.assign(p)

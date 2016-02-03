@@ -20,7 +20,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
@@ -101,7 +101,7 @@ int main( int argc, char * argv [] ) {
 
 	Pose p;
 	//read in a fullatom pose
-	core::import_pose::pose_from_pdb( p, *rsd_set, option[ in::file::native ]() );
+	core::import_pose::pose_from_file( p, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	//convert it to cenrot
 	to_cenrot.apply(p);
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::ScoreFunctionFactory::create_score_function( "test" );

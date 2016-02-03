@@ -41,7 +41,7 @@ DONE
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
@@ -426,8 +426,8 @@ struct TCDock {
 		cmp1in_ = pose1;
 		cmp2in_ = pose2;
 		// core::chemical::ResidueTypeSetCAP crs=core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD);
-		// core::import_pose::pose_from_pdb(cmp1in_,*crs,cmp1pdb);
-		// core::import_pose::pose_from_pdb(cmp2in_,*crs,cmp2pdb);
+		// core::import_pose::pose_from_file(cmp1in_,*crs,cmp1pdb, core::import_pose::PDB_file);
+		// core::import_pose::pose_from_file(cmp2in_,*crs,cmp2pdb, core::import_pose::PDB_file);
 
 		cmp1diapos_=0.0,cmp1dianeg_=0.0,cmp2diapos_=0.0,cmp2dianeg_=0.0;
 		for(Size i = 1; i <= cmp1in_.n_residue(); ++i) {
@@ -874,7 +874,7 @@ struct TCDock {
 			core::pose::symmetry::make_symmetric_pose(symm);
 			// symm.dump_pdb("test_sym.pdb");
 		}
-		core::io::pdb::dump_pdb(symm,option[out::file::o]()+"/"+fname);
+		core::io::pdb::old_dump_pdb(symm,option[out::file::o]()+"/"+fname);
 
 
 		if(lnscore_){
@@ -921,7 +921,7 @@ struct TCDock {
 						#ifdef USE_OPENMP
 						#pragma omp critical
 						#endif
-						core::io::pdb::dump_pdb(asym,option[out::file::o]()+"/"+fname+"_"+string_of(ia1)+"_"+string_of(ia2)+"_"+string_of(ir)+".pdb"+(option[tcdock::dump_gz]()?".gz":""));
+						core::io::pdb::old_dump_pdb(asym,option[out::file::o]()+"/"+fname+"_"+string_of(ia1)+"_"+string_of(ia2)+"_"+string_of(ir)+".pdb"+(option[tcdock::dump_gz]()?".gz":""));
 						trans_pose(asym,cmp1axs_*dr1,1, p1.n_residue());
 						trans_pose(asym,cmp2axs_*dr2,p1.n_residue()+1,asym.n_residue());
 					}
@@ -1563,7 +1563,7 @@ int main (int argc, char *argv[]) {
 // 	for(Size i = 1; i <= option[tcdock::I5]().size(); ++i) {
 // 		Pose pose1;
 // 		std::cout << option[tcdock::I5]()[i];
-// 		core::import_pose::pose_from_pdb(pose1,option[tcdock::I5]()[i]);
+// 		core::import_pose::pose_from_file(pose1,option[tcdock::I5]()[i], core::import_pose::PDB_file);
 // 		std::cout << " " << pose1.n_residue() << " DONE" << std::endl;
 // 		continue;
 // 	}
@@ -1585,7 +1585,7 @@ int main (int argc, char *argv[]) {
 	Real ttrim_cut = option[tcdock::trim_floppy_termini]();
 	for(Size i = 1; i <= compfiles[1].size(); ++i) {
 		Pose pose1;
-		core::import_pose::pose_from_pdb(pose1,compfiles[1][i]);
+		core::import_pose::pose_from_file(pose1,compfiles[1][i], core::import_pose::PDB_file);
 		if(ttrim_cut > 0.001){
 			TR << "triming tails on " << compfiles[1][i] << std::endl;
 			protocols::sic_dock::auto_trim_floppy_termini(pose1,ttrim_cut,compnfold[1]);
@@ -1596,7 +1596,7 @@ int main (int argc, char *argv[]) {
 		}
 		for(Size j = 1; j <= compfiles[2].size(); ++j) {
 			Pose pose2;
-			core::import_pose::pose_from_pdb(pose2,compfiles[2][j]);
+			core::import_pose::pose_from_file(pose2,compfiles[2][j], core::import_pose::PDB_file);
 			if(ttrim_cut > 0.001){
 				TR << "triming tails on " << compfiles[2][j] << std::endl;
 				protocols::sic_dock::auto_trim_floppy_termini(pose2,ttrim_cut,compnfold[2]);

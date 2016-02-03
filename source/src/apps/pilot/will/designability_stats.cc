@@ -56,7 +56,7 @@ using utility::io::izstream;
 using utility::io::ozstream;
 using utility::vector1;
 using std::endl;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::kinematics::Stub;
 
 #define MAX_CYS_RES 0
@@ -335,7 +335,7 @@ int main(int argc, char *argv[]) {
 		for(Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn) {
 			string fn = option[in::file::s]()[ifn];
 			Pose pose;
-			core::import_pose::pose_from_pdb(pose,fn);
+			core::import_pose::pose_from_file(pose,fn, core::import_pose::PDB_file);
 			// std::cout << fn << " " << xfs.score(pose,true) << std::endl;
 			Size count = 0;
 			Real tot = 0.0;
@@ -471,7 +471,7 @@ int main(int argc, char *argv[]) {
 		for(Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn) {
 			string fn = option[in::file::s]()[ifn];
 			Pose p;
-			core::import_pose::pose_from_pdb(p,fn);
+			core::import_pose::pose_from_file(p,fn, core::import_pose::PDB_file);
 			core::scoring::dssp::Dssp dssp(p);
 			dssp.insert_ss_into_pose(p);
 			if( p.n_residue() > MAX_NRES ) continue;

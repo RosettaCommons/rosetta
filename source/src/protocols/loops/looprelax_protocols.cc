@@ -34,7 +34,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <utility/file/FileName.hh>
 #include <core/types.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
@@ -91,7 +91,6 @@ namespace protocols {
 static THREAD_LOCAL basic::Tracer TR( "protocols.looprelax_protocols" );
 
 using namespace core;
-using io::pdb::dump_pdb;
 
 
 using namespace protocols::loops;

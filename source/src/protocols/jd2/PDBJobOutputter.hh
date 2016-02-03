@@ -79,27 +79,24 @@ protected:
 	////////////////////////////////////////score-related functions///////////////////////////////////
 
 	/// @brief this function extracts the pose's scores for printing
-	virtual
-	void extract_scores( core::pose::Pose const & pose, utility::io::ozstream & out );
+	//virtual
+	//void extract_scores( core::pose::Pose const & pose, utility::io::ozstream & out );
 
 	/// @brief this function extracts data from pose's data cache
-	virtual
-	void extract_extra_scores( core::pose::Pose const & pose, utility::io::ozstream & out );
+	//virtual
+	//void extract_extra_scores( core::pose::Pose const & pose, utility::io::ozstream & out );
 
-	//THIS FUNCTION WILL MOVE HIGHER IN THE HIERARCHY AT SOME POINT
-	/// @brief this function extracts the pose's scores for printing
+	/// @brief this function extracts the pose's scores and outputs them as a string to be packaged in an output structure.
+	/// @details Refactored in the 2016 Chemical XRW (eXtreme Rosetta Workshop) by Vikram K. Mulligan (vmullig@uw.edu).
+	/// @param[in] job Const-access owning pointer to the job from which the data will be extracted.
+	/// @param[out] data_out A string in which the data will be stored, that can later be passed to whatever container wants it.
 	virtual
-	void extract_data_from_Job( JobCOP job, utility::io::ozstream & out );
-
-	//This function is deprecated for now - might return in the future
-	//  /// @brief this function extracts the pose's extra data/scores for printing
-	//  virtual
-	//  void extract_extra_scores( core::pose::Pose const & pose, utility::io::ozstream & out );
+	std::string extract_data_from_Job( JobCOP job );
 
 	//////////////////////////////////////protected PDB output/////////////////////////////////////
 	/// @brief handles ozstream output; shared by both pdb output functions
 	virtual
-	void dump_pose( JobCOP job, core::pose::Pose const & pose, utility::io::ozstream & out );
+	void dump_pose( JobCOP job, core::pose::Pose const & pose, utility::io::ozstream & out, std::string const &filename="" );
 
 	////////////////////////////////////////data////////////////////////////////////////
 private:

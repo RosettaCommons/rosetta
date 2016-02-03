@@ -40,7 +40,7 @@
 #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
@@ -438,15 +438,15 @@ void run_3bpy() {
   core::chemical::ResidueTypeSetCAP  fa_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose init_fa;
   vector1<Pose> bpys(2);
-  core::import_pose::pose_from_pdb(bpys[1] ,*fa_residue_set,option[in::file::s]()[2]);
-  core::import_pose::pose_from_pdb(bpys[2] ,*fa_residue_set,option[in::file::s]()[3]);
+  core::import_pose::pose_from_file(bpys[1] ,*fa_residue_set,option[in::file::s]()[2], core::import_pose::PDB_file);
+  core::import_pose::pose_from_file(bpys[2] ,*fa_residue_set,option[in::file::s]()[3], core::import_pose::PDB_file);
   core::pose::remove_lower_terminus_type_from_pose_residue(bpys[1],1);
   core::pose::remove_lower_terminus_type_from_pose_residue(bpys[2],1);
   core::pose::remove_upper_terminus_type_from_pose_residue(bpys[1],1);
   core::pose::remove_upper_terminus_type_from_pose_residue(bpys[2],1);
-  pose_from_pdb(init_fa,   *fa_residue_set,option[in::file::s]()[1]);
+  pose_from_file(init_fa,   *fa_residue_set,option[in::file::s]()[1], core::import_pose::PDB_file);
   Pose orig = init_fa;
-  // pose_from_pdb(init_pose,*cen_residue_set,option[in::file::s]()[1]);
+  // pose_from_file(init_pose,*cen_residue_set,option[in::file::s]()[1], core::import_pose::PDB_file);
   Size nres = init_fa.n_residue();
   core::chemical::ResidueType const & ala( init_fa.residue(1).residue_type_set().name_map("ALA") );
   for(Size i = 1; i <= nres; ++i) {
@@ -586,8 +586,8 @@ void run_zn2his() {
   TR << "MATCH_OVERLAP_DOT: " << MATCH_OVERLAP_DOT << std::endl;
   string infile = option[in::file::s]()[1];
   Pose in_cen,in_fa;
-  pose_from_pdb(in_fa, *fa_residue_set,infile);
-  pose_from_pdb(in_cen,*cen_residue_set,infile);
+  pose_from_file(in_fa, *fa_residue_set,infile, core::import_pose::PDB_file);
+  pose_from_file(in_cen,*cen_residue_set,infile, core::import_pose::PDB_file);
   Size nres = in_cen.n_residue();
   core::chemical::ResidueType const & ala( in_cen.residue(1).residue_type_set().name_map("ALA") );
   core::chemical::ResidueType const & alafa( in_fa.residue(1).residue_type_set().name_map("ALA") );
@@ -841,9 +841,9 @@ void run_tyr_his() {
   TR << "MATCH_OVERLAP_DOT: " << MATCH_OVERLAP_DOT << std::endl;
   string infile = option[in::file::s]()[1];
   Pose in_cen,in_fa;
-  pose_from_pdb(in_fa, *fa_residue_set,infile);
+  pose_from_file(in_fa, *fa_residue_set,infile, core::import_pose::PDB_file);
   Pose native = in_fa;
-  pose_from_pdb(in_cen,*cen_residue_set,infile);
+  pose_from_file(in_cen,*cen_residue_set,infile, core::import_pose::PDB_file);
   Size nres = in_cen.n_residue();
   core::chemical::ResidueType const & ala  ( in_cen.residue(1).residue_type_set().name_map("ALA") );
   core::chemical::ResidueType const & alafa( in_fa.residue(1).residue_type_set().name_map("ALA") );
@@ -1333,8 +1333,8 @@ void run_diiron_glu() {
   TR << "MATCH_OVERLAP_DOT: " << MATCH_OVERLAP_DOT << std::endl;
   string infile = option[in::file::s]()[1];
   Pose in_cen,in_fa;
-  pose_from_pdb(in_fa, *fa_residue_set,infile);
-  pose_from_pdb(in_cen,*cen_residue_set,infile);
+  pose_from_file(in_fa, *fa_residue_set,infile, core::import_pose::PDB_file);
+  pose_from_file(in_cen,*cen_residue_set,infile, core::import_pose::PDB_file);
   Size nres = in_cen.n_residue();
   core::chemical::ResidueType const & ala( in_cen.residue(1).residue_type_set().name_map("ALA") );
   core::chemical::ResidueType const & alafa( in_fa.residue(1).residue_type_set().name_map("ALA") );

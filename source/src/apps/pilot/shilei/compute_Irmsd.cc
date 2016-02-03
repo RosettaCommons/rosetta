@@ -34,7 +34,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/scoring/Energies.hh>
@@ -111,7 +111,7 @@ public:
 
 		//set native pose if asked for
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-			core::import_pose::pose_from_pdb( *native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() );
+			core::import_pose::pose_from_file( *native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 			set_native_pose( native_pose );
 		} else {
 			throw( utility::excn::EXCN_BadInput("native expected for this app") );

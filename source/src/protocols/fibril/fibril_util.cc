@@ -134,7 +134,7 @@ make_symmetric_fibril(
 	symmdata.read_symmetry_data_from_file(symm_def);
 	if ( option[ in::file::native ].user() ) {
 		pose::Pose monomer_pose;
-		core::import_pose::pose_from_pdb( monomer_pose, option[ in::file::native ]().name() );
+		core::import_pose::pose_from_file( monomer_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
 		protocols::loops::Loops loop1, loop2;
 		bool default_loop_file_is_present = option[ OptionKeys::loops::loop_file ].user();
 		loop1 = protocols::loops::Loops( default_loop_file_is_present );

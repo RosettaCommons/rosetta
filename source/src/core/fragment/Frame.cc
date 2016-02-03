@@ -404,7 +404,7 @@ void Frame::fragment_as_pose(
 	make_pose_from_sequence_( frag_list_[ frag_num ]->sequence(),
 		*(restype_set.lock()),
 		pose );
-	//  core::import_pose::pose_from_pdb( *my_static_pose_for_testing_, pdbfile );
+	//  core::import_pose::pose_from_file( *my_static_pose_for_testing_, pdbfile , core::import_pose::PDB_file);
 	fragment( frag_num ).apply( pose, 1, length() );
 }
 

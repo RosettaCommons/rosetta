@@ -32,7 +32,7 @@ using namespace protocols::dna;
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -191,7 +191,7 @@ ga_main( void * )
 	pdbnames = option[ in::file::s ]().vector();
 	// load pdb
 	pose::PoseOP pose = new pose::Pose;
-	core::import_pose::pose_from_pdb( *pose, pdbnames.front() );
+	core::import_pose::pose_from_file( *pose, pdbnames.front() , core::import_pose::PDB_file);
 	add_constraints_from_file( *pose ); // (if specified by options)
 
 	// initialization necessary for scoring of (with?) DNA

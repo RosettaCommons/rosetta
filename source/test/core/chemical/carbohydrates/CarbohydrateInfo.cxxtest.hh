@@ -38,26 +38,26 @@ public:  // Standard methods //////////////////////////////////////////////////
 		using namespace core::import_pose;
 		using namespace basic::options;
 
-		core_init();
+		core_init_with_additional_options( "-out:level 500" );
 
 		option[ OptionKeys::in::include_sugars ]( true );
 		option[ OptionKeys::in::file::read_pdb_link_records ]( true );
 
 		// Test that oligosaccharides are loaded correctly.
-		pose_from_pdb( maltotriose_, "core/chemical/carbohydrates/maltotriose.pdb" );
-		pose_from_pdb( isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb" );
+		pose_from_file( maltotriose_, "core/chemical/carbohydrates/maltotriose.pdb" , core::import_pose::PDB_file);
+		pose_from_file( isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb" , core::import_pose::PDB_file);
 
 		// Test branched oligosaccharide.
-		pose_from_pdb( branched_fragment_, "core/chemical/carbohydrates/amylopectin_fragment.pdb" );
+		pose_from_file( branched_fragment_, "core/chemical/carbohydrates/amylopectin_fragment.pdb" , core::import_pose::PDB_file);
 
 		// Test N-linked glycosylation.
-		pose_from_pdb( N_linked_, "core/chemical/carbohydrates/glycosylated_peptide.pdb" );
+		pose_from_file( N_linked_, "core/chemical/carbohydrates/glycosylated_peptide.pdb" , core::import_pose::PDB_file);
 
 		// Test modified sugar patch system.
-		pose_from_pdb( glucosamine_, "core/chemical/carbohydrates/GlcN.pdb" );
+		pose_from_file( glucosamine_, "core/chemical/carbohydrates/GlcN.pdb" , core::import_pose::PDB_file);
 
 		// Test a combination of the above.
-		pose_from_pdb( Lex_, "core/chemical/carbohydrates/Lex.pdb" );
+		pose_from_file( Lex_, "core/chemical/carbohydrates/Lex.pdb" , core::import_pose::PDB_file);
 
 		// Test that oligosaccharides can be created from a given sequence.
 		//make_pose_from_saccharide_sequence( lactose_, "beta-D-Galp-(1->4)-Glcp" );

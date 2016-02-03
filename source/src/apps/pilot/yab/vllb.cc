@@ -16,7 +16,7 @@
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/conformation/ResidueFactory.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
@@ -52,7 +52,7 @@ static THREAD_LOCAL basic::Tracer TR( "apps.pilot.yab.vllb" );
 
 void * ligand_test( void * ) {
 	using core::pose::Pose;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using core::scoring::dssp::Dssp;
 	using protocols::moves::MS_SUCCESS;
 
@@ -64,7 +64,7 @@ void * ligand_test( void * ) {
 	typedef std::string String;
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "1mau_CHC_d1.pdb" );
+	core::import_pose::pose_from_file( pose, "1mau_CHC_d1.pdb" , core::import_pose::PDB_file);
 
 #if defined GL_GRAPHICS
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "Ligand Test" );
@@ -96,7 +96,7 @@ void * ligand_test( void * ) {
 
 void * vlb_test( void * ) {
 	using core::pose::Pose;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using core::scoring::dssp::Dssp;
 	using protocols::moves::MS_SUCCESS;
 
@@ -108,7 +108,7 @@ void * vlb_test( void * ) {
 
 	// input pose
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "2bodx.pdb" );
+	core::import_pose::pose_from_file( pose, "2bodx.pdb" , core::import_pose::PDB_file);
 
 #if defined GL_GRAPHICS
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "VLB Test" );
@@ -151,7 +151,7 @@ void * vlb_test( void * ) {
 void * connect_test( void * ) {
 	using core::chemical::ResidueTypeSetCAP;
 	using core::pose::Pose;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using core::scoring::dssp::Dssp;
 	using protocols::moves::MS_SUCCESS;
 
@@ -165,8 +165,8 @@ void * connect_test( void * ) {
 
 	// load structures
 	Pose brsA, brsD;
-	core::import_pose::pose_from_pdb( brsA, "1brsA.pdb" );
-	core::import_pose::pose_from_pdb( brsD, "1brsD.pdb" );
+	core::import_pose::pose_from_file( brsA, "1brsA.pdb" , core::import_pose::PDB_file);
+	core::import_pose::pose_from_file( brsD, "1brsD.pdb" , core::import_pose::PDB_file);
 
 #if defined GL_GRAPHICS
 	protocols::viewer::add_conformation_viewer( brsA.conformation(), "Connect Test" );
@@ -211,7 +211,7 @@ void * picking_test( void * ) {
 	using core::fragment::picking::vall::gen::LengthGen;
 	using core::fragment::picking::vall::scores::VallFragmentScore;
 	using core::pose::Pose;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using core::scoring::ScoreFunction;
 	using protocols::forge::build::SegmentRebuild;
 	using protocols::forge::components::Interval;
@@ -220,7 +220,7 @@ void * picking_test( void * ) {
 
 	// input pose
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "2bodx.pdb" );
+	core::import_pose::pose_from_file( pose, "2bodx.pdb" , core::import_pose::PDB_file);
 
 	// fake a 6-mer section
 	SegmentRebuild rebuild( Interval( 18, 23 ), String( 6, 'H' ), &pose.residue( 1 ).residue_type_set(), false );

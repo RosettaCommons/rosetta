@@ -58,7 +58,7 @@ read_pdbs(
 	for ( core::Size i=1; i<=frag_files.size(); ++i ) {
 		//  frag_poses
 		core::pose::Pose frag_pose;
-		core::import_pose::pose_from_pdb( frag_pose, *cen_rsd_set, frag_files[i] );
+		core::import_pose::pose_from_file( frag_pose, *cen_rsd_set, frag_files[i] , core::import_pose::PDB_file);
 		frag_poses[i] = frag_pose;
 
 		core::Size pos = get_pos_from_fragfn( frag_files[i] );

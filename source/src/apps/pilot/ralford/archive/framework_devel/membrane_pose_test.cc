@@ -93,7 +93,7 @@ int main( int argc, char* argv[] )
     devel::init( argc, argv );
     
     core::pose::PoseOP pose = new Pose();
-    pose_from_pdb( *pose, "test/core/membrane/io/1afo_A.pdb");
+    pose_from_file( *pose, "test/core/membrane/io/1afo_A.pdb", core::import_pose::PDB_file);
     
     // Membrane Residue Factory
     MembraneResidueFactory mrf;

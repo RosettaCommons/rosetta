@@ -29,7 +29,7 @@
 #include <basic/options/option.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 
 using namespace core;
@@ -101,7 +101,7 @@ int main( int argc, char * argv [] )
 		chemical::ChemicalManager::get_instance()->residue_type_set(in_rsd_set);
 	pose::Pose pose;
 
-	core::import_pose::pose_from_pdb( pose, *rsd_set, pdb, false);
+	core::import_pose::pose_from_file( pose, *rsd_set, pdb, false, core::import_pose::PDB_file);
 	core::util::switch_to_residue_type_set( pose, out_rsd_set);
 	pose.dump_pdb(out);
 

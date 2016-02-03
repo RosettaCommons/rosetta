@@ -25,6 +25,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <boost/foreach.hpp>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
@@ -37,8 +38,6 @@
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -908,7 +907,7 @@ MatDesGreedyOptMutationMover::add_filter( protocols::filters::FilterOP filter, s
 void
 MatDesGreedyOptMutationMover::reset_delta_filter_baselines( core::pose::Pose & pose )
 {
-	foreach ( protocols::simple_filters::DeltaFilterOP const delta_filter, reset_delta_filters_ ) {
+	BOOST_FOREACH ( protocols::simple_filters::DeltaFilterOP const delta_filter, reset_delta_filters_ ) {
 		std::string const fname( delta_filter->get_user_defined_name() );
 		core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
 		delta_filter->baseline( fbaseline );
@@ -916,12 +915,12 @@ MatDesGreedyOptMutationMover::reset_delta_filter_baselines( core::pose::Pose & p
 		TR<<"Reset baseline for DeltaFilter "<<fname<<" to "<<fbaseline<<std::endl;
 	}
 	//Note: CompoundStatement and CombinedStatement filters create a filterOP clones at parsetime for each filter and thus these clones need to be reset when the delta filter baselines are updated.
-	foreach ( protocols::filters::CompoundFilterOP const compound_filter, compound_filters_ ) {
+	BOOST_FOREACH ( protocols::filters::CompoundFilterOP const compound_filter, compound_filters_ ) {
 		compound_filter->set_reset_filters( reset_delta_filters_ );
 		compound_filter->reset_filters();
 		compound_filter->clear_reset_filters();
 	}
-	foreach ( protocols::filters::CombinedFilterOP const combined_filter, combined_filters_ ) {
+	BOOST_FOREACH ( protocols::filters::CombinedFilterOP const combined_filter, combined_filters_ ) {
 		combined_filter->set_reset_filters( reset_delta_filters_ );
 		combined_filter->reset_filters();
 		combined_filter->clear_reset_filters();
@@ -962,10 +961,10 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 
 	//load multiple filters from branch tags
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
-	foreach ( utility::tag::TagCOP const btag, branch_tags ) {
+	BOOST_FOREACH ( utility::tag::TagCOP const btag, branch_tags ) {
 		if ( btag->getName() == "Filters" ) {
 			utility::vector1< utility::tag::TagCOP > const filters_tags( btag->getTags() );
-			foreach ( utility::tag::TagCOP const ftag, filters_tags ) {
+			BOOST_FOREACH ( utility::tag::TagCOP const ftag, filters_tags ) {
 				std::string const filter_name( ftag->getOption< std::string >( "filter_name" ) );
 				Filters_map::const_iterator find_filt( filters.find( filter_name ));
 				if ( find_filt == filters.end() ) {
@@ -1000,7 +999,7 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	delta_filter_names.clear();
 	if ( tag->hasOption( "reset_delta_filters" ) ) {
 		delta_filter_names = utility::string_split( tag->getOption< std::string >( "reset_delta_filters" ), ',' );
-		foreach ( std::string const fname, delta_filter_names ) {
+		BOOST_FOREACH ( std::string const fname, delta_filter_names ) {
 			reset_delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
 			TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
 		}
@@ -1015,7 +1014,7 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	}
 	if ( tag->hasOption( "set_task_for_filters" ) ) {
 		utility::vector1< std::string > filter_names = utility::string_split( tag->getOption< std::string >( "set_task_for_filters" ), ',' );
-		foreach ( std::string const fname, filter_names ) {
+		BOOST_FOREACH ( std::string const fname, filter_names ) {
 			set_task_for_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::TaskAwareScoreTypeFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) ); //Note: Returns a Null pointer if incompatible filter type is passed through the xml.
 			//Would be nice if task_factory() was a standard method of the filter class, so that we could make a Virtual task_factory() method in the Filter base class and not have to have this specific to TaskAwareScoreTypeFilter.  If this proves useful, then perhaps we could consider that...
 			TR<<"The task for filter "<<fname<<" will be set to only allow repacking at the mutated positions."<<std::endl;
@@ -1032,7 +1031,7 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 			if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 				std::string const reference_pdb = basic::options::option[ basic::options::OptionKeys::in::file::native ]();
 				core::pose::PoseOP temp_pose( new core::pose::Pose );
-				core::import_pose::pose_from_pdb( *temp_pose, reference_pdb );
+				core::import_pose::pose_from_file( *temp_pose, reference_pdb, core::import_pose::PDB_file );
 				reference_pose_ = temp_pose;
 			} else {
 				utility_exit_with_message("Native PDB not specified on command line.");
@@ -1042,7 +1041,7 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 			reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data );
 		} else if ( tag->hasOption("reference_pdb") ) {
 			std::string reference_pdb_filename( tag->getOption< std::string >( "reference_pdb", "" ) );
-			reference_pose_ = core::import_pose::pose_from_pdb( reference_pdb_filename );
+			reference_pose_ = core::import_pose::pose_from_file( reference_pdb_filename, core::import_pose::PDB_file );
 		} else {
 			utility_exit_with_message("No valid reference pdb or pose specified for MatDesGreedyOptMutationMover.");
 		}

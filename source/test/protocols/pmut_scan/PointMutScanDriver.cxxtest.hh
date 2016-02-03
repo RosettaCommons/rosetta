@@ -78,10 +78,10 @@ public:
 
 		// read in poses. only needed for 3 of the tests, but this is better than reading the PDBs in 3 times.
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/pmut_scan/shortloop.01.pdb.gz" );
+		core::import_pose::pose_from_file( pose, "protocols/pmut_scan/shortloop.01.pdb.gz" , core::import_pose::PDB_file);
 		input_poses.push_back( pose );
 
-		core::import_pose::pose_from_pdb( pose, "protocols/pmut_scan/shortloop.02.pdb.gz" );
+		core::import_pose::pose_from_file( pose, "protocols/pmut_scan/shortloop.02.pdb.gz" , core::import_pose::PDB_file);
 		input_poses.push_back( pose );
 
 		pdb_file_names.push_back( "protocols/pmut_scan/shortloop.01.pdb.gz" );

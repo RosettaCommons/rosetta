@@ -73,7 +73,7 @@ int main( int argc, char * argv [] )
 		using namespace core::chemical;
 		using namespace core::conformation;
 		using namespace core::id;
-		using namespace core::io::pdb;
+		using namespace core::io;
 		using namespace core::graph;
 		using namespace core::pose;
 		using namespace core::scoring;
@@ -98,7 +98,7 @@ int main( int argc, char * argv [] )
 		}
 
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, input_jobs[ 1 ]->input_tag() );
+		core::import_pose::pose_from_file( pose, input_jobs[ 1 ]->input_tag() , core::import_pose::PDB_file);
 		ScoreFunctionOP sfxn = get_score_function();
 		(*sfxn)(pose);
 

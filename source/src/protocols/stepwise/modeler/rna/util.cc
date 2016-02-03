@@ -522,7 +522,6 @@ void
 output_seq_num_list( std::string const & tag, utility::vector1< core::Size > const & seq_num_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
 
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::format;
 
 	outstream <<  std::setw( spacing ) << tag;
 
@@ -533,10 +532,10 @@ output_seq_num_list( std::string const & tag, utility::vector1< core::Size > con
 	for ( Size n = 1; n <= sorted_seq_num_list.size(); n++ ) {
 
 		while ( seq_num < sorted_seq_num_list[n] ) {
-			outstream << A( 4, " " );
+			outstream << format::A( 4, " " );
 			seq_num++;
 		}
-		outstream << I( 4, sorted_seq_num_list[n] );
+		outstream << format::I( 4, sorted_seq_num_list[n] );
 		seq_num++;
 	}
 

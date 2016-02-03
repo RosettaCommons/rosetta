@@ -135,7 +135,7 @@ main( int argc, char *argv[] )
 
 		cout << "Importing maltotriose (D-alpha1->4eq linkage):" << endl;
 
-		pose_from_pdb( maltotriose, PATH + "maltotriose.pdb" );
+		pose_from_file( maltotriose, PATH + "maltotriose.pdb" , core::import_pose::PDB_file);
 
 		sample_torsions( maltotriose, 2, *sf_full );
 		cout << "(The best angles should be close to 60/90.)" << endl;
@@ -153,7 +153,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing lactose (D-beta1->4eq linkage):" << endl;
 
-		pose_from_pdb( lactose, PATH + "lactose.pdb" );
+		pose_from_file( lactose, PATH + "lactose.pdb" , core::import_pose::PDB_file);
 
 		sample_torsions( lactose, 2, *sf_full );
 		cout << "(The best angles should be close to -60/90.)" << endl;
@@ -190,7 +190,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing LewisX (D-beta1->4eq main-chain linkage and L-alpha1->3eq branch linkage):" << endl;
 
-		pose_from_pdb( LeX, PATH + "Lex.pdb" );
+		pose_from_file( LeX, PATH + "Lex.pdb" , core::import_pose::PDB_file);
 
 		output_score( LeX, 3, *sf_full );
 
@@ -226,7 +226,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing sample O-linked glycan (D-alpha1->OSer linkage):" << endl;
 
-		pose_from_pdb( O_linked_glycan, PATH + "O_glycan.pdb" );
+		pose_from_file( O_linked_glycan, PATH + "O_glycan.pdb" , core::import_pose::PDB_file);
 
 		output_score( O_linked_glycan, 4, *sf_full );
 

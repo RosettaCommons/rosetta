@@ -32,7 +32,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <utility/io/izstream.hh>
@@ -209,12 +209,12 @@ int main(int argc, char * argv[]) {
         }
         core::pose::PoseOP tmp_pose(new core::pose::Pose);
         std::string fn = option[in::file::s](1);
-        core::import_pose::pose_from_pdb(*tmp_pose, fn);
+        core::import_pose::pose_from_file(*tmp_pose, fn, core::import_pose::PDB_file);
         std::cerr <<"Input structure with "<<tmp_pose->total_residue()<<" residues\n";
 
         core::pose::PoseOP reference_pose(new core::pose::Pose);
         std::string fnn = option[in::file::native];
-        core::import_pose::pose_from_pdb(*reference_pose, fnn);
+        core::import_pose::pose_from_file(*reference_pose, fnn, core::import_pose::PDB_file);
 
 
         if (!option[tnm::input_modes].user()) {
@@ -234,7 +234,7 @@ int main(int argc, char * argv[]) {
         core::Real step = option[tnm::scaling]();
         core::Size n_modes = option[tnm::n_modes]();
         for(core::Size i_mode=1;i_mode<=n_modes;++i_mode) {
-          core::import_pose::pose_from_pdb(*tmp_pose, fn);
+          core::import_pose::pose_from_file(*tmp_pose, fn, core::import_pose::PDB_file);
           cout << "Loaded pose from: "<<fn<<", en = "<<" "<<scorefxn(*tmp_pose) << endl;
 
           for(int i=-n_steps;i<=n_steps; ++i) {

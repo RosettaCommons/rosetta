@@ -438,7 +438,7 @@ IterativeBase::IterativeBase(std::string name_in )
 	/// -- setup native pose
 	if ( option[ in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 		reference_pose_ = native_pose;
 		mem_tr << "setup native pose" << std::endl;
 	}

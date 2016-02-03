@@ -153,7 +153,7 @@ using namespace ObjexxFCL;
 
 using utility::vector1;
 using std::string;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -630,7 +630,7 @@ pep_rmsd_analysis(
 
 	pose::Pose ref_pose;
 	std::string ref_name( option[ in::file::native ]() );
-	import_pose::pose_from_pdb( ref_pose, ref_name );
+	import_pose::pose_from_file( ref_pose, ref_name , core::import_pose::PDB_file);
 
 	Size ref_pep_anchor_in( option[ pepspec::pep_anchor ] );
 	if( option[ pepspec::native_pep_anchor ].user() ) ref_pep_anchor_in = option[ pepspec::native_pep_anchor ];
@@ -710,7 +710,7 @@ pep_phipsi_analysis(
 
 	pose::Pose ref_pose;
 	std::string ref_name( option[ in::file::native ]() );
-	import_pose::pose_from_pdb( ref_pose, ref_name );
+	import_pose::pose_from_file( ref_pose, ref_name , core::import_pose::PDB_file);
 
 	Size ref_pep_anchor_in( option[ pepspec::pep_anchor ] );
 	if( option[ pepspec::native_pep_anchor ].user() ) ref_pep_anchor_in = option[ pepspec::native_pep_anchor ];
@@ -1628,7 +1628,7 @@ RunPepSpec()
 		else pose_index = static_cast< int >( numeric::random::rg().uniform() * pdb_filenames.size() + 1 );
 		std::string pdb_filename( pdb_filenames[ pose_index ] );
 		TR<<"Initializing "<< out_nametag + "_" + string_of( peptide_loop ) + " with " + pdb_filename << std::endl;
-		import_pose::pose_from_pdb( pose, pdb_filename );
+		import_pose::pose_from_file( pose, pdb_filename , core::import_pose::PDB_file);
 
 //		ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
 		//convert user input to internal values//

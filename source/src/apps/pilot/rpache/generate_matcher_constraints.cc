@@ -24,8 +24,8 @@
 #include <core/conformation/Atom.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/Tracer.hh>
 
@@ -45,9 +45,8 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/pdb/pdb_dynamic_reader.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/pdb_writer.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -112,7 +111,7 @@ int main( int argc, char * argv [] )
 		}
 
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, input_jobs[ 1 ]->input_tag() );
+		core::import_pose::pose_from_file( pose, input_jobs[ 1 ]->input_tag() , core::import_pose::PDB_file);
 
 
 		Size upres, downres;

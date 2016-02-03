@@ -25,7 +25,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

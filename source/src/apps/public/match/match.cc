@@ -84,7 +84,7 @@ match_main()
 	using namespace core;
 	using namespace core::chemical;
 	using namespace core::id;
-	using namespace core::io::pdb;
+	using namespace core::io;
 	using namespace core::pose;
 	using namespace protocols::match;
 	using namespace protocols::match::downstream;
@@ -106,7 +106,7 @@ match_main()
 
 
 	pose::Pose scaffold;
-	core::import_pose::pose_from_pdb( scaffold, input_jobs[ 1 ] );
+	core::import_pose::pose_from_file( scaffold, input_jobs[ 1 ] , core::import_pose::PDB_file);
 	scaffold.update_residue_neighbors();
 
 	pose::Pose ligpose;

@@ -31,7 +31,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
@@ -118,10 +118,10 @@ int main( int argc, char * argv [] )
 	chemical::ResidueTypeSetCAP rsd_set =
 		chemical::ChemicalManager::get_instance()->residue_type_set(in_rsd_set);
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, *rsd_set, pdb, false);
+	core::import_pose::pose_from_file( pose, *rsd_set, pdb, false, core::import_pose::PDB_file);
 
 	pose::Pose start_pose;
-	core::import_pose::pose_from_pdb( start_pose, *rsd_set, pdb, false);
+	core::import_pose::pose_from_file( start_pose, *rsd_set, pdb, false, core::import_pose::PDB_file);
 
 	utility::vector1< core::Size > positions;
 	for (Size ii = 1; ii <= pose.total_residue(); ii++){
@@ -161,7 +161,7 @@ int main( int argc, char * argv [] )
 	in_rsd_set = chemical::CENTROID;
 	out_rsd_set = chemical::FA_STANDARD;
 	rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set(in_rsd_set);
-	core::import_pose::pose_from_pdb( pose, *rsd_set, cysfile, false);
+	core::import_pose::pose_from_file( pose, *rsd_set, cysfile, false, core::import_pose::PDB_file);
 
 	option[ basic::options::OptionKeys::in::detect_disulf ].value( true );
 	option[ basic::options::OptionKeys::run::rebuild_disulf ].value( true );
@@ -187,7 +187,7 @@ int main( int argc, char * argv [] )
 	pose::Pose pdbPose;
 	in_rsd_set = chemical::FA_STANDARD;
 	rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set(in_rsd_set);
-	core::import_pose::pose_from_pdb( pdbPose, *rsd_set, pdb, false);
+	core::import_pose::pose_from_file( pdbPose, *rsd_set, pdb, false, core::import_pose::PDB_file);
 
 
 	option[ basic::options::OptionKeys::docking::symmetry::minimize_sidechains ].value( true );

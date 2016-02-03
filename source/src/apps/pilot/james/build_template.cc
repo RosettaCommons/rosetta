@@ -37,7 +37,7 @@
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
@@ -93,7 +93,7 @@ build_template( void* )
 	core::pose::Pose native_pose, fold_pose;
 	if ( option[ in::file::native ].user() ) {
 		std::string native_fn = option[ in::file::native  ]();
-		core::import_pose::pose_from_pdb( native_pose, native_fn );
+		core::import_pose::pose_from_file( native_pose, native_fn , core::import_pose::PDB_file);
 	}
 
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();

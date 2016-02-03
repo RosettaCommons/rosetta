@@ -19,8 +19,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
-
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -532,7 +531,7 @@ main( int argc, char * argv [] )
 			TR << "PDB file " << pdb_file << std::endl;
 
 			Pose pose;
-			pose_from_pdb( pose, pdb_file );
+			pose_from_file( pose, pdb_file , core::import_pose::PDB_file);
 
 			process_for_motifs( pose, pdb_code, target_aa, motif_lib );
 

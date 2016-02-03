@@ -16,7 +16,7 @@
 
 // Project Headers
 //#include <core/chemical/AA.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <numeric/xyzVector.io.hh>
 #include <numeric/xyzVector.hh>
 //#include <core/kinematics/MoveMap.hh>

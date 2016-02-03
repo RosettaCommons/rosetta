@@ -97,7 +97,7 @@ main( int argc, char * argv [] )
         core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
         core::pose::PoseOP pose = new core::pose::Pose();
         core::pose::Pose &p(*pose);
-        core::import_pose::pose_from_pdb( p, *rsd_set, option[ in::file::s ]().vector()[ 0 ] );
+        core::import_pose::pose_from_file( p, *rsd_set, option[ in::file::s ]().vector()[ 0 ] , core::import_pose::PDB_file);
 
 	use_backrub(pose,scorefxn);
 

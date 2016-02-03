@@ -51,7 +51,7 @@
 using namespace std;
 using namespace protocols::loop_modeling;
 using namespace protocols::rosetta_scripts;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 
 using utility::excn::EXCN_Msg_Exception;
 
@@ -559,7 +559,7 @@ public:
 		string loops_path = "protocols/loop_modeling/inputs/2pia.loop";
 
 		LoopModelerOP modeler( new LoopModeler() );
-		Pose pose; pose_from_pdb(pose, pdb_path);
+		Pose pose; pose_from_file(pose, pdb_path, core::import_pose::PDB_file);
 		LoopsOP loops( new Loops(loops_path) );
 
 		modeler->set_loops(loops);

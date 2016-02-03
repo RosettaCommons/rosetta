@@ -168,7 +168,7 @@ AntibodyCDRGrafter::parse_my_tag(
 		utility_exit_with_message("Cannot pass both donor_structure_from_pdb and donor_structure_from_spm");
 	} else if ( tag->hasOption( "donor_structure_from_pdb" ) ) {
 		std::string pdb_file = tag->getOption< std::string >( "donor_structure_from_pdb" );
-		donor_structure_ = core::import_pose::pose_from_pdb( pdb_file );
+		donor_structure_ = core::import_pose::pose_from_file( pdb_file , core::import_pose::PDB_file);
 	} else if ( tag->hasOption( "donor_structure_from_spm" ) ) {
 		donor_structure_ = protocols::rosetta_scripts::saved_reference_pose(tag, data, "donor_structure_from_spm");
 	} else {

@@ -52,7 +52,7 @@
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
-#include <core/io/pdb/pose_io.hh>
+
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>

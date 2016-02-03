@@ -204,7 +204,7 @@ SuperimposeMover::apply( Pose & pose ) {
 
 	if ( ref_pose_ == 0 ) {
 		TR << "using -in:file:native as the reference pose " <<  std::endl;
-		ref_pose_ = core::import_pose::pose_from_pdb( option[ OptionKeys::in::file::native ].value() );
+		ref_pose_ = core::import_pose::pose_from_file( option[ OptionKeys::in::file::native ].value() , core::import_pose::PDB_file);
 	}
 
 	const Size ref_start = ref_start_;
@@ -243,7 +243,7 @@ SuperimposeMover::parse_my_tag( utility::tag::TagCOP tag,
 	target_start_ = tag->getOption< Size >("target_start",1);
 	target_end_ = tag->getOption< Size >("target_end",0);
 	CA_only_ = tag->getOption< bool >("CA_only",1);
-	if ( tag->hasOption("ref_pose") ) ref_pose_ = core::import_pose::pose_from_pdb(tag->getOption< std::string >("ref_pose"));
+	if ( tag->hasOption("ref_pose") ) ref_pose_ = core::import_pose::pose_from_file(tag->getOption< std::string >("ref_pose"), core::import_pose::PDB_file);
 	else if ( tag->hasOption("spm_reference_name") ) {
 		ref_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data, "spm_reference_name");
 	}

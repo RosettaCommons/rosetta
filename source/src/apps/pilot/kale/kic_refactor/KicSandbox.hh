@@ -65,7 +65,7 @@ KicSandbox::KicSandbox(int argc, char *argv[]) {
 
 	// Namespaces (within main) {{{1
 	using core::Size;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 
 	using protocols::loops::Loop;
 	using protocols::loop_modeling::LoopProtocol;
@@ -118,7 +118,7 @@ KicSandbox::KicSandbox(int argc, char *argv[]) {
 
 	// Configure the pose {{{1
 
-	pose_from_pdb(pose, pdb_path);
+	pose_from_file(pose, pdb_path, core::import_pose::PDB_file);
 
 	// Configure the loop region {{{1
 

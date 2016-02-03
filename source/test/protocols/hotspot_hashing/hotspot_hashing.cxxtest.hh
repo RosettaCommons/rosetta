@@ -606,7 +606,7 @@ public:
 	using namespace protocols::hotspot_hashing;
 	// Initialize target pose
 	core::pose::Pose targetPose;
-	core::import_pose::pose_from_pdb( targetPose, "protocols/hotspot_hashing/3ve0_IJ.pdb" );
+	core::import_pose::pose_from_file( targetPose, "protocols/hotspot_hashing/3ve0_IJ.pdb" , core::import_pose::PDB_file);
 
 	// Initialize residue representation
 	core::conformation::ResidueOP residue;

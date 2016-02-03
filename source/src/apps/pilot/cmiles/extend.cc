@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
   devel::init(argc, argv);
 
   // structure to borrow from
-  PoseOP reference = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
+  PoseOP reference = core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
   core::util::switch_to_residue_type_set(*reference, "centroid");
   reference->dump_pdb("reference.pdb");
 

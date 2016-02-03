@@ -209,7 +209,7 @@ void run_old() {
 	//  }
 
 	//  core::pose::Pose pose;
-	//  core::import_pose::pose_from_pdb( pose, basic::core::options::option[ options::OptionKeys::in::file::s ]()[ 1 ] );
+	//  core::import_pose::pose_from_file( pose, basic::core::options::option[ options::OptionKeys::in::file::s ]()[ 1 ] , core::import_pose::PDB_file);
 
 	//  core::scoring::constraints::ConstraintSetOP cstset = cpl.generate_constraints( pose );
 	//  core::scoring::constraints::ConstraintIO::write_constraints(  basic::options::option[ basic::options::OptionKeys::cst_out ](), *cstset, pose );
@@ -317,7 +317,7 @@ void run() {
 	nm.assign();
 
 	core::pose::Pose pose;
-	//  core::import_pose::pose_from_pdb( pose, option[ options::OptionKeys::in::file::s ]()[ 1 ] );
+	//  core::import_pose::pose_from_file( pose, option[ options::OptionKeys::in::file::s ]()[ 1 ] , core::import_pose::PDB_file);
 
 	core::pose::make_pose_from_sequence(
 		pose,
@@ -343,7 +343,7 @@ void run() {
 
 	if ( option[ OptionKeys::in::file::native ].user() ) {
 		core::pose::Pose native_pose;
-		core::import_pose::pose_from_pdb( native_pose, option[ OptionKeys::in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 		nm.add_dist_viol_to_assignments(native_pose);
 	}
 

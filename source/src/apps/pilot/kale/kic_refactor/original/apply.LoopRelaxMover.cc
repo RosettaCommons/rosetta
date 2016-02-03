@@ -41,7 +41,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	// load native pose (if provided)
 	core::pose::Pose native_pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 		core::pose::set_ss_from_phipsi( native_pose );
 	} else	{
 		native_pose = start_pose;

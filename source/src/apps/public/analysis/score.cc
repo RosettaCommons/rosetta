@@ -235,7 +235,7 @@ catch ( utility::excn::EXCN_Exception &excn )  {
 			} else {
 				// read native structure
 				core::pose::Pose native;
-				core::import_pose::pose_from_pdb( native, option[ basic::options::OptionKeys::in::file::native ] );
+				core::import_pose::pose_from_file( native, option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 				protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
 				seqmov->add_mover( MoverOP( new protocols::simple_moves::SuperimposeMover( native ) ) );
 				seqmov->add_mover( mover );

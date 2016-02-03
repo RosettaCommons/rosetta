@@ -24,7 +24,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/CrystInfo.hh>
+#include <core/io/CrystInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -189,7 +189,7 @@ PeriodicBoxMover::dump_ASU( Pose & pose, core::Size &lattice_jump, std::string f
 	pose_asu = pose;
 
 	core::Real lattice = std::abs( pose.jump(lattice_jump).get_translation()[0] );
-	core::pose::CrystInfo ci;
+	core::io::CrystInfo ci;
 	ci.A(lattice); ci.B(lattice); ci.C(lattice);
 	ci.alpha(90.0); ci.beta(90.0); ci.gamma(90.0);
 	ci.spacegroup("P 1");
@@ -258,7 +258,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 						core::chemical::ResidueTypeSetCOP rsd_set =
 							core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 						core::pose::Pose pose_central;
-						core::import_pose::pose_from_pdb( pose_central, *rsd_set, central_molecule_pdb_ );
+						core::import_pose::pose_from_file( pose_central, *rsd_set, central_molecule_pdb_ , core::import_pose::PDB_file);
 
 						runtime_assert( pose_central.total_residue() == 1 );
 						core::conformation::Residue rsd_new = pose_central.residue(1);
@@ -282,7 +282,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 		}
 	} else {
 		pose_asu = pose;
-		pose::CrystInfo ci = pose.pdb_info()->crystinfo();
+		io::CrystInfo ci = pose.pdb_info()->crystinfo();
 		runtime_assert(ci.A()*ci.B()*ci.C() != 0 && ci.A()==ci.B() && ci.A()==ci.C());
 
 		sidelen = ci.A();
@@ -1009,7 +1009,7 @@ PeriodicBoxMover::apply( Pose & pose ) {
 				core::pose::Pose pose_asu;
 				core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
 				core::Real lattice = std::abs( pose.jump(lattice_jump).get_translation()[0] );
-				core::pose::CrystInfo ci;
+				core::io::CrystInfo ci;
 				ci.A(lattice); ci.B(lattice); ci.C(lattice);
 				ci.alpha(90.0); ci.beta(90.0); ci.gamma(90.0);
 				ci.spacegroup("P 1");

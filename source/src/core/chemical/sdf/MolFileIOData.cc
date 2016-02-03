@@ -197,12 +197,12 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
 
 	//fix problem with residues that only have one or two atoms. Rosetta residuetypes need to have at least 3 atoms
 	// We're hoping that this isn't going to be colinear
-	if( restype->natoms() == 2){
+	if ( restype->natoms() == 2 ) {
 		//add one extra atom
 		create_dummy_atom( restype, "DX1",
-				restype->atom(2).ideal_xyz()-restype->atom(1).ideal_xyz()+Vector(1.0, 0.0, 0.0),
-				elements, mm_atom_types);
-	} else if ( restype->natoms() == 1){
+			restype->atom(2).ideal_xyz()-restype->atom(1).ideal_xyz()+Vector(1.0, 0.0, 0.0),
+			elements, mm_atom_types);
+	} else if ( restype->natoms() == 1 ) {
 		//add two extra atoms
 		create_dummy_atom( restype, "DX1", core::Vector(1.0, 0.0, 0.0), elements, mm_atom_types);
 		create_dummy_atom( restype, "DX2", core::Vector(0.0, 1.0, 0.0), elements, mm_atom_types);

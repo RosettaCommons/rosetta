@@ -16,7 +16,7 @@
 
 // Rosetta Headers
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 
@@ -42,7 +42,7 @@ my_main( void* )
 	std::cout << "start loops modeling\n";
 
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, option[ OptionKeys::loops::template_pdb ]().name() ); //"input/test_in.pdb");
+	core::import_pose::pose_from_file( pose, option[ OptionKeys::loops::template_pdb ]().name() ); //"input/test_in.pdb", core::import_pose::PDB_file);
 
 	protocols::loops::loops_main( pose );
 	return 0;

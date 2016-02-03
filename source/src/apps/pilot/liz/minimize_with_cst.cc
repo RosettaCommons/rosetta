@@ -44,7 +44,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
@@ -108,7 +108,7 @@
 //#include <core/util/basic.hh>
 #include <basic/Tracer.hh>
 //#include <core/io/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 
@@ -345,7 +345,7 @@ main( int argc, char* argv [] )
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 	}
 
-	//	io::pdb::pose_from_pdb( pose, options::start_file() ); // gets filename from -s option
+	//	io::pdb::pose_from_file( pose, options::start_file() , core::import_pose::PDB_file); // gets filename from -s option
 
 	ScoreFunctionOP scorefxn = get_score_function();
 
@@ -407,7 +407,7 @@ main( int argc, char* argv [] )
 				}
 			}
 		}else{
-			core::import_pose::pose_from_pdb(pose, files[f]);
+			core::import_pose::pose_from_file(pose, files[f], core::import_pose::PDB_file);
 			std::string output = pose.pdb_info()->name();
 			optimize_pose(pose,scorefxn,(output.erase(output.find(".pdb",0))));
 			//create constraints for all residues

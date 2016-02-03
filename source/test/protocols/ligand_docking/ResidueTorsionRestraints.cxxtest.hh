@@ -59,7 +59,7 @@ public:
 		core::Real const score_eps = 1e-6;
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" , core::import_pose::PDB_file);
 
 		ScoreFunctionOP sfxn( new ScoreFunction() );
 		sfxn->set_weight(dihedral_constraint, 1.0);

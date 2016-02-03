@@ -363,7 +363,7 @@ void
 rosetta_recharge_fullatom( ResidueType & res ) {
 	ResidueGraph const & graph( res.graph() );
 	AtomTypeSet const & ats( res.atom_type_set() );
-	if( ! ats.has_extra_parameter( "CHARGE" ) ) {
+	if ( ! ats.has_extra_parameter( "CHARGE" ) ) {
 		TR.Warning << "Atom Type Set " << ats.name() << " is missing charging information - skipping recharging." << std::endl;
 		return;
 	}

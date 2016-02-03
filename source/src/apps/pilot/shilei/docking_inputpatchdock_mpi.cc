@@ -21,7 +21,7 @@
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -31,7 +31,7 @@
 
 //pose
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 //score
 #include <core/scoring/rms_util.hh>
@@ -323,7 +323,7 @@ void run_parallel_docking() {
         std::string pdbname;
         if ( basic::options::option[ basic::options::OptionKeys::in::file::s ].user() ) {
               pdbname=basic::options::option[ basic::options::OptionKeys::in::file::s ]()[1];
-              core::import_pose::pose_from_pdb( pose, pdbname.c_str() );
+              core::import_pose::pose_from_file( pose, pdbname.c_str() , core::import_pose::PDB_file);
               original_pose=pose;
         } else {
               throw( utility::excn::EXCN_BadInput("expected -s for this app") );
@@ -331,7 +331,7 @@ void run_parallel_docking() {
 
 	//read in the native pose
         if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-                core::import_pose::pose_from_pdb( native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() );
+                core::import_pose::pose_from_file( native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
         } else {
                 throw( utility::excn::EXCN_BadInput("native expected for this app") );
         }

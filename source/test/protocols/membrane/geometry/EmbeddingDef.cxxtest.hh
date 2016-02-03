@@ -101,7 +101,7 @@ public: // test functions
 
 		// read in pose
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/membrane/geometry/1AFO_AB.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/membrane/geometry/1AFO_AB.pdb" , core::import_pose::PDB_file);
 
 		// create object
 		Size res1(15);

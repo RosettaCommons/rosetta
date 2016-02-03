@@ -79,13 +79,13 @@ public:
 	void index( AtomIndex index ) { index_ = index; }
 	void name(std::string const & name ) { name_ = name; }
 	void element(std::string const & element ) {
-        //dirty dirty hack to change deturium elements to hydrogen elements
-        if( element == "D" || element == "T"){
-            element_ = "H";
-        } else {
-            element_ = element;
-        }
-    }
+		//dirty dirty hack to change deturium elements to hydrogen elements
+		if ( element == "D" || element == "T" ) {
+			element_ = "H";
+		} else {
+			element_ = element;
+		}
+	}
 	//void rosetta_type(std::string const & rosetta_type ) { rosetta_type_ = rosetta_type; }
 	void position(Vector const & position ) { position_ = position; }
 	void formal_charge( int formal_charge ) { formal_charge_ = formal_charge; }

@@ -33,7 +33,8 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/xyzStripeHashPose.hh>
-#include <core/io/pdb/pose_io.hh>
+
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

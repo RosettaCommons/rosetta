@@ -142,7 +142,7 @@ main( int argc, char* argv[] )
 		for ( Size i = 1; i <= infiles.size(); ++i ) {
 			// Do something to each file
 			core::pose::Pose pose;
-			core::import_pose::pose_from_pdb( pose, infiles[ i ] );
+			core::import_pose::pose_from_file( pose, infiles[ i ] , core::import_pose::PDB_file);
 
 			if ( nres == 0 ) {
 				nres = pose.pdb_info()->nres();

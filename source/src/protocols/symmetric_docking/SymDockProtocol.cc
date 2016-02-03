@@ -307,7 +307,7 @@ SymDockProtocol::register_options()
 	//set native pose
 	if ( basic::options::option[basic::options::OptionKeys::in::file::native].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb( *native_pose, basic::options::option[basic::options::OptionKeys::in::file::native].value() );
+		core::import_pose::pose_from_file( *native_pose, basic::options::option[basic::options::OptionKeys::in::file::native].value() , core::import_pose::PDB_file);
 		this->set_native_pose( native_pose );
 	}
 

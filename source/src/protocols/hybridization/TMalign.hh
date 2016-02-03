@@ -71,11 +71,11 @@ public:
 		int const len1, int const len2,
 		numeric::xyzVector <core::Real> const & t, numeric::xyzMatrix <core::Real> const & u,
 		double d02, double gap_open, std::vector < int > & j2i);
-		//NW dynamic programming for alignment
-		//not a standard implementation of NW algorithm
-		//Input: vectors x, y, rotation matrix t, u, scale factor d02, and gap_open
-		//Output: j2i[1:len2] \in {1:len1} U {-1}
-		//path[0:len1, 0:len2]=1,2,3, from diagonal, horizontal, vertical
+	//NW dynamic programming for alignment
+	//not a standard implementation of NW algorithm
+	//Input: vectors x, y, rotation matrix t, u, scale factor d02, and gap_open
+	//Output: j2i[1:len2] \in {1:len1} U {-1}
+	//path[0:len1, 0:len2]=1,2,3, from diagonal, horizontal, vertical
 
 
 
@@ -84,11 +84,11 @@ public:
 		std::vector < int > const & secy,
 		int const len1, int const len2,
 		double gap_open, std::vector < int > & j2i);
-		//NW dynamic programming for alignment
-		//not a standard implementation of NW algorithm
-		//Input: secondary structure secx, secy, and gap_open
-		//Output: j2i[1:len2] \in {1:len1} U {-1}
-		//path[0:len1, 0:len2]=1,2,3, from diagonal, horizontal, vertical
+	//NW dynamic programming for alignment
+	//not a standard implementation of NW algorithm
+	//Input: secondary structure secx, secy, and gap_open
+	//Output: j2i[1:len2] \in {1:len1} U {-1}
+	//path[0:len1, 0:len2]=1,2,3, from diagonal, horizontal, vertical
 
 	void
 	convert_xyz_to_vector(
@@ -124,7 +124,7 @@ public:
 		int const mode,
 		double *rms,
 		numeric::xyzVector <core::Real> & t,
-		numeric::xyzMatrix <core::Real> & u ); 
+		numeric::xyzMatrix <core::Real> & u );
 
 
 	// Implemetation of Kabsch algoritm for finding the best rotation matrix
@@ -319,7 +319,7 @@ public:
 		int const g1, int const g2, int const iteration_max );
 
 
-// Adding signature that will work with Pyrosetta ( ie. can't pass in n_mapped_resiudes by refs from python)
+	// Adding signature that will work with Pyrosetta ( ie. can't pass in n_mapped_resiudes by refs from python)
 	void alignment2AtomMap(
 		core::pose::Pose const & pose1,
 		core::pose::Pose const & pose2,

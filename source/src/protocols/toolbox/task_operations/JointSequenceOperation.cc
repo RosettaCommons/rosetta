@@ -202,7 +202,7 @@ JointSequenceOperation::add_pdb( std::string filename )
 {
 
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, filename );
+	core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 	add_pose( pose );
 }
 
@@ -232,7 +232,7 @@ JointSequenceOperation::add_pose( Pose const & pose )
 void
 JointSequenceOperation::add_native_pdb( std::string filename ) {
 	core::pose::PoseOP poseop( new core::pose::Pose );
-	core::import_pose::pose_from_pdb( *poseop, filename );
+	core::import_pose::pose_from_file( *poseop, filename , core::import_pose::PDB_file);
 	add_native_pose( poseop );
 }
 
@@ -281,7 +281,7 @@ JointSequenceOperation::add_native_fasta( std::string fasta_file ) {
 
 	//string query_sequence ( read_fasta_file( option[ in::file::fasta ]()[1])[1]->sequence() );
 	//core::pose::PoseOP poseop(new core::pose::Pose);
-	//core::import_pose::pose_from_pdb( *poseop, filename );
+	//core::import_pose::pose_from_file( *poseop, filename , core::import_pose::PDB_file);
 	//add_native_pose( poseop );
 
 	//using core::sequence::read_fasta_file;

@@ -61,6 +61,8 @@
 #include <utility/serialization/serialization.hh>
 #endif // SERIALIZATION
 
+using namespace ObjexxFCL;
+
 namespace basic {
 namespace svd {
 

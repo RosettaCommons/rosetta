@@ -1130,7 +1130,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_line(
 	input_line >> pdb_name;
 
 	TR << "  Importing pose from pdb file '" << pdb_name << "'" << std::endl;
-	//core::import_pose::pose_from_pdb( pose, pdb_name );
+	//core::import_pose::pose_from_file( pose, pdb_name , core::import_pose::PDB_file);
 	std::string pdb_string;
 	try {
 		pdb_string = file_contents_->get_file_contents( pdb_name );
@@ -1218,7 +1218,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 		++count_pdbs;
 		assert( count_pdbs <= pose_energy_variables.size() );
 		TR << "  Importing pose from pdb file " << *iter << std::endl;
-		//core::import_pose::pose_from_pdb( pose, pdb_name );
+		//core::import_pose::pose_from_file( pose, pdb_name , core::import_pose::PDB_file);
 		std::string pdb_string;
 		try {
 			pdb_string = file_contents_->get_file_contents( *iter );

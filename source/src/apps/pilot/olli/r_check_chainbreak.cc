@@ -55,7 +55,7 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -167,7 +167,7 @@ void Application::setup() {
   // read native pose
   if ( option[ in::file::native ].user() ) {
     native_pose_ = new pose::Pose;
-    core::import_pose::pose_from_pdb( *native_pose_, option[ in::file::native ]() );
+    core::import_pose::pose_from_file( *native_pose_, option[ in::file::native ]() , core::import_pose::PDB_file);
     core::util::switch_to_residue_type_set( *native_pose_, chemical::CENTROID ); //so that in do_rerun the native pose is the same as the other poses
     pose::set_ss_from_phipsi( *native_pose_ );
   }

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 
 #include <core/types.hh>
@@ -36,7 +36,7 @@ int main( int argc, char * argv [] )
 	basic::Tracer::set_ios_hook(tr, basic::Tracer::AllChannels);
 
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb(pose, "test_in.pdb");
+	core::import_pose::pose_from_file(pose, "test_in.pdb", core::import_pose::PDB_file);
 
 	basic::Tracer::set_ios_hook(0, "");  // Turn off channels monitoring
 

@@ -28,7 +28,7 @@
 #include <core/util/Tracer.hh>
 #include <core/util/datacache/BasicDataCache.hh>
 #include <core/util/datacache/CacheableString.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/pose_stream/PoseInputStream.fwd.hh>
 #include <core/io/pose_stream/PDBPoseInputStream.hh>
 #include <core/io/pose_stream/SilentFilePoseInputStream.hh>
@@ -301,7 +301,7 @@ get_info_test(){
 	//////////////////////////////////////////////
 	if ( option[ in::file::native ].user() ){
 
-		io::pdb::pose_from_pdb( pose, *rsd_set, option[ in::file::native ]());
+		io::pdb::pose_from_file( pose, *rsd_set, option[ in::file::native ](), core::import_pose::PDB_file);
 
 		output_native_ss_info( pose, out );
 

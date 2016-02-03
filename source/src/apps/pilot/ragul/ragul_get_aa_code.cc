@@ -31,7 +31,7 @@
 #include <basic/options/after_opts.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
@@ -83,7 +83,7 @@ int main( int argc, char * argv [] ) {
 			std::string const input_decoy_name = decoy_files[f];
 			std::cout<<"Reading decoy " << input_decoy_name <<std::endl;
 			core::pose::Pose decoy_pose;
-			core::import_pose::pose_from_pdb(decoy_pose, decoy_files[f]);
+			core::import_pose::pose_from_file(decoy_pose, decoy_files[f], core::import_pose::PDB_file);
 			std::cout<<"SEQUENCE "<<input_decoy_name<<" ";
 			for ( core::Size g=1; g <= res_pos.size(); g++ ) {
 				core::Size h = option[list_of_residues][g];

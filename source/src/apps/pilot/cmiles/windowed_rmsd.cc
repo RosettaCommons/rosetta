@@ -73,8 +73,8 @@ int main(int argc, char* argv[]) {
   using namespace basic::options::OptionKeys;
   devel::init(argc, argv);
 
-  PoseOP reference = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
-  vector1<PoseOP> models = core::import_pose::poseOPs_from_pdbs(option[OptionKeys::in::file::s]());
+  PoseOP reference = core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
+  vector1<PoseOP> models = core::import_pose::poseOPs_from_files(option[OptionKeys::in::file::s](), core::import_pose::PDB_file);
   check_lengths(reference, models);
 
   const Size window = option[OptionKeys::evaluation::window_size]();

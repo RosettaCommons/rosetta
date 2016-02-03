@@ -24,7 +24,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <protocols/viewer/viewers.hh>
 #include <numeric/random/random.hh>
 
@@ -92,7 +92,7 @@ run()
 		while ( list >> fname ) {
 			tr << "reading pose from " << fname << std::endl;
 			core::pose::Pose tmp;
-			core::import_pose::pose_from_pdb(tmp,fname);
+			core::import_pose::pose_from_file(tmp,fname, core::import_pose::PDB_file);
 			core::scoring::dssp::Dssp dssp(tmp);
 			dssp.insert_ss_into_pose(tmp);
 			poses.push_back( tmp );

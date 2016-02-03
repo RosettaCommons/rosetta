@@ -25,7 +25,7 @@
 
 //Core Chemistry
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
@@ -110,7 +110,7 @@ int main( int argc, char * argv [] )
 	//done with options
 
 	pose::PoseOP pose(new pose::Pose);
-	core::import_pose::pose_from_pdb( *pose, infile );
+	core::import_pose::pose_from_file( *pose, infile , core::import_pose::PDB_file);
 
 	scoring::ScoreFunctionOP sfxn = scoring::get_score_function();
 

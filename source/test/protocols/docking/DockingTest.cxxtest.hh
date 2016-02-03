@@ -69,7 +69,7 @@ class DockingTest : public CxxTest::TestSuite {
 public:
 	void setUp() {
 		core_init();
-		core::import_pose::pose_from_pdb( fullatom_pose, "protocols/docking/DockingTest.pdb" );
+		core::import_pose::pose_from_file( fullatom_pose, "protocols/docking/DockingTest.pdb" , core::import_pose::PDB_file);
 		rb_jump = 1;
 
 		//setting up the fold tree as is used in docking
@@ -125,7 +125,7 @@ public:
 		UT << fullatom_pose.fold_tree() << std::endl;
 
 		UT << "Testing DockingProtocol.setup_foldtree()for multichain..."<< std::endl;
-		core::import_pose::pose_from_pdb( multichain_pose, "protocols/docking/DockingMultiChain.pdb" );
+		core::import_pose::pose_from_file( multichain_pose, "protocols/docking/DockingMultiChain.pdb" , core::import_pose::PDB_file);
 		DockingProtocolOP docking_protocol2( new DockingProtocol() );
 		protocols::docking::setup_foldtree( multichain_pose, "AB_E", docking_protocol2->movable_jumps() );
 		UT << multichain_pose.fold_tree() << std::endl;
@@ -141,7 +141,7 @@ public:
 		UT << int_energy << std::endl;
 
 		UT << "Testing DockingProtocol.recover_sidechains()..."<<std::endl;
-		core::import_pose::pose_from_pdb( decoy_pose, "protocols/docking/DockingDecoy.pdb" );
+		core::import_pose::pose_from_file( decoy_pose, "protocols/docking/DockingDecoy.pdb" , core::import_pose::PDB_file);
 		protocols::docking::setup_foldtree( decoy_pose, docking_protocol->partners(), docking_protocol->movable_jumps() );
 
 		UT << "Testing DockingProtocol.calc_Lrmsd()..."<<std::endl;

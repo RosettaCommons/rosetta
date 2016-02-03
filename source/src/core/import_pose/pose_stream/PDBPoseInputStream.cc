@@ -73,7 +73,7 @@ void PDBPoseInputStream::fill_pose(
 		);
 	}
 
-	core::import_pose::pose_from_pdb( pose, residue_set, *current_position_ );
+	core::import_pose::pose_from_file( pose, residue_set, *current_position_ , core::import_pose::PDB_file);
 
 	// set up a tag using input filename.
 	using namespace basic::datacache;
@@ -95,7 +95,7 @@ void PDBPoseInputStream::fill_pose(
 		);
 	}
 
-	core::import_pose::pose_from_pdb( pose, *current_position_ );
+	core::import_pose::pose_from_file( pose, *current_position_ , core::import_pose::PDB_file);
 
 	// set up a tag using input filename.
 	using namespace basic::datacache;

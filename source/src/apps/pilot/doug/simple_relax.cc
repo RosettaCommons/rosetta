@@ -16,7 +16,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
@@ -106,7 +106,7 @@ void simple_relax( std::string pdb_filename, ScoreFunctionOP scorefxn )
 {
 	// read in pose
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, pdb_filename );
+	core::import_pose::pose_from_file( pose, pdb_filename , core::import_pose::PDB_file);
 
 	// create relax mover
 	protocols::relax::ClassicRelax relax( scorefxn );
@@ -126,7 +126,7 @@ void simple_relax( std::string pdb_filename, ScoreFunctionOP scorefxn )
 	std::cout << "Score before: " << orig_score << "\tScore after: " << relax_score << std::endl;
 
 	// output pdb file
-	io::pdb::dump_pdb( pose, pdb_filename + "_relax.pdb" );
+	io::pdb::old_dump_pdb( pose, pdb_filename + "_relax.pdb" );
 
 	// ADD HBOND ANALYSIS CODE HERE
 	// ADD HBOND ANALYSIS CODE HERE

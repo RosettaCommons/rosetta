@@ -295,7 +295,7 @@ main( int argc, char* argv [] )
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 		}
 
-		// io::pdb::pose_from_pdb( pose, options::start_file() ); // gets filename from -s option
+		// io::pdb::pose_from_file( pose, options::start_file() , core::import_pose::PDB_file); // gets filename from -s option
 
 		ScoreFunctionOP scorefxn = get_score_function();
 
@@ -357,7 +357,7 @@ main( int argc, char* argv [] )
 					}
 				}
 			} else {
-				core::import_pose::pose_from_pdb(pose, files[f]);
+				core::import_pose::pose_from_file(pose, files[f], core::import_pose::PDB_file);
 				std::string output = pose.pdb_info()->name();
 				std::string pdb_prefix( utility::string_split( utility::string_split( output, '/' ).back(), '.' ).front() );
 				optimize_pose(pose, scorefxn, pdb_prefix);

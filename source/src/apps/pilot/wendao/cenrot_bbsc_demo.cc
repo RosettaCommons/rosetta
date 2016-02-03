@@ -23,7 +23,7 @@
 #include <core/conformation/util.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/types.hh>
@@ -134,7 +134,7 @@ int main( int argc, char * argv [] ) {
 	PoseOP native_pose;
 	if (option[in::file::native].user()) {
 		native_pose = new Pose();
-		core::import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
 	if (option[ in::file::s ].user()) {
@@ -143,7 +143,7 @@ int main( int argc, char * argv [] ) {
 		{
 			PoseOP pose = new Pose();
 			Pose &p(*pose);
-			pose_from_pdb( p, *rsd_set, option[ in::file::s ]()[npdb] );
+			pose_from_file( p, *rsd_set, option[ in::file::s ]()[npdb] , core::import_pose::PDB_file);
 
 			to_cenrot.apply(p); //switch_to_residue_type_set_cenrot(p);
 

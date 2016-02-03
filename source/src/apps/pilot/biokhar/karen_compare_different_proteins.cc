@@ -19,7 +19,7 @@
 #include <map>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/options/util.hh>
@@ -215,7 +215,7 @@ int main( int argc, char * argv [] ) {
 		//sets pdb as a Rosetta pose
 		std::string const template_fname ( option[ template_pdb_name ] );
 		pose::Pose template_pose;
-		core::import_pose::pose_from_pdb( template_pose, template_fname );
+		core::import_pose::pose_from_file( template_pose, template_fname , core::import_pose::PDB_file);
 		TR << "set template pdb" << std::endl;
 
 		// set the template target residue
@@ -267,7 +267,7 @@ int main( int argc, char * argv [] ) {
 		// create pose for comparison pose from pdb
 		std::string const comparison_pdb_name ( basic::options::start_file() );
 		pose::Pose comparison_pose;
-		core::import_pose::pose_from_pdb( comparison_pose, comparison_pdb_name );
+		core::import_pose::pose_from_file( comparison_pose, comparison_pdb_name , core::import_pose::PDB_file);
 		TR << "set comparison pdb" << std::endl;
 
 		// set the comparison target residue

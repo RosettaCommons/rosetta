@@ -16,7 +16,7 @@ Author:  Jason W. Labonte
 # Imports
 import sys
 import argparse
-from rosetta import init, pose_from_pdb, get_fa_scorefxn, \
+from rosetta import init, pose_from_file, get_fa_scorefxn, \
                     standard_packer_task, change_cys_state, \
                     Pose, MoveMap, RotamerTrialsMover, MinMover
 from toolbox import mutate_residue
@@ -44,7 +44,7 @@ init(extra_options='-mute basic -mute core')
 data = ['Variant,Rosetta Score,"delta-delta-G"\n']
 
 # Load pdb file.
-initial_pose = pose_from_pdb(args.pdb_filename)
+initial_pose = pose_from_file(args.pdb_filename)
 
 # Set up ScoreFunction.
 sf = get_fa_scorefxn()

@@ -61,7 +61,7 @@
 
 #include <basic/database/open.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <protocols/idealize/idealize.hh>
 #include <protocols/viewer/viewers.hh>
@@ -128,7 +128,7 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -201,7 +201,7 @@ coarse_frag_test(){
 	// read in source of fragments
 	std::string infile  = option[ in ::file::s ][1];
 	Pose frag_source_pose;
-	import_pose::pose_from_pdb( frag_source_pose, *rsd_set, infile );
+	import_pose::pose_from_file( frag_source_pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 	// start doing some copy_dofs at an arbitrary position
 	Size insert_res( 4 );
@@ -415,7 +415,7 @@ convert_to_coarse_test(){
 	pose::Pose pose, coarse_pose;
 
 	std::string infile  = option[ in ::file::s ][1];
-	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 	figure_out_reasonable_rna_fold_tree( pose );
 
 	protocols::farna::make_coarse_pose( pose, coarse_pose );
@@ -449,7 +449,7 @@ output_minipose_coords_test(){
 
 	pose::Pose pose;
 	std::string infile  = option[ in ::file::s ][1];
-	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 	protocols::farna::figure_out_secstruct( pose );
 	std::string secstruct( protocols::farna::get_rna_secstruct( pose ) );
@@ -489,7 +489,7 @@ pdbstats_test(){
 	////////////////////////////////
 	Pose pose, coarse_pose;
 	std::string infile  = option[ in ::file::s ][1];
-	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 	utility::vector1< PuckerState > pucker_states;
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) pucker_states.push_back( Get_residue_pucker_state( pose, n ) );
@@ -521,7 +521,7 @@ create_bp_jump_database_test( ){
 	std::string outfile  = option[ out::file::o ];
 
 	pose::Pose pose;
-	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 	// Fill base pairing information... these are
 	// all functions used in scoring... see RNA_BaseBaseEnergy.cc
@@ -616,7 +616,7 @@ general_initialize( 	pose::Pose & pose,
 		ResidueTypeSetCAP rsd_set_coarse = ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
 		std::string native_pdb_file  = option[ in::file::native ];
 		native_pose = new pose::Pose;
-		import_pose::pose_from_pdb( *native_pose, *rsd_set_coarse, native_pdb_file );
+		import_pose::pose_from_file( *native_pose, *rsd_set_coarse, native_pdb_file , core::import_pose::PDB_file);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -892,7 +892,7 @@ pdb_little_motif_test(){
 
 	ResidueTypeSetCAP rsd_set_coarse = ChemicalManager::get_instance()->residue_type_set( RNA );
 	std::string infile  = option[ in::file::s ][1];
-	import_pose::pose_from_pdb( pose, *rsd_set_coarse, infile );
+	import_pose::pose_from_file( pose, *rsd_set_coarse, infile , core::import_pose::PDB_file);
 
 	protocols::farna::make_coarse_pose( pose, coarse_pose );
 
@@ -1106,7 +1106,7 @@ tar_motif_test(){
 		std::string infile  = infiles[n];
 		std::cout << " about to read from: " << infile << std::endl;
 
-		import_pose::pose_from_pdb( pose, *rsd_set, infile );
+		import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 		std::map< Size, Size > partner;
 
@@ -1189,7 +1189,7 @@ mismatch_test(){
 		std::string infile  = infiles[n];
 		std::cout << " about to read from: " << infile << std::endl;
 
-		import_pose::pose_from_pdb( pose, *rsd_set, infile );
+		import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 		std::map< Size, Size > partner;
 
@@ -1425,7 +1425,7 @@ coarse_close_loop_test( ){
 
 	// initialize helix pose
 	Pose pose;
-	import_pose::pose_from_pdb( pose, *rsd_set_coarse, "ggaauucc_coarse_RNA.pdb" );
+	import_pose::pose_from_file( pose, *rsd_set_coarse, "ggaauucc_coarse_RNA.pdb" , core::import_pose::PDB_file);
 
 	FoldTree f( pose.total_residue() );
 
@@ -1491,7 +1491,7 @@ coarse_to_full_test( ){
 	// initialize helix pose
 	Pose pose_coarse;
 	std::string infile  = option[ in::file::s ][1];
-	import_pose::pose_from_pdb( pose_coarse, *rsd_set_coarse, infile );
+	import_pose::pose_from_file( pose_coarse, *rsd_set_coarse, infile , core::import_pose::PDB_file);
 
 	Pose pose_scratch, pose_scratch_coarsened;
 	make_pose_from_sequence( pose_scratch, pose_coarse.sequence(), *rsd_set_full );
@@ -1555,7 +1555,7 @@ coarse_rna_denovo_test(){
 	if ( option[ in::file::native ].user() ) {
 		std::string native_pdb_file  = option[ in::file::native ];
 		native_pose = new pose::Pose;
-		import_pose::pose_from_pdb( *native_pose, *rsd_set_coarse, native_pdb_file );
+		import_pose::pose_from_file( *native_pose, *rsd_set_coarse, native_pdb_file , core::import_pose::PDB_file);
 	}
 
 		//Constraints?

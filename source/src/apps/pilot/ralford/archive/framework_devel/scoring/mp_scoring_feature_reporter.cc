@@ -192,7 +192,7 @@ int main( int argc, char* argv[] )
 
         // Set up a pose from pdb
         core::pose::PoseOP pose = new core::pose::Pose(); 
-        core::import_pose::pose_from_pdb( *pose, pdbfile ); 
+        core::import_pose::pose_from_file( *pose, pdbfile , core::import_pose::PDB_file); 
 
         // Create six A neighbor point graph
         PointGraphOP sixPg( new PointGraph );

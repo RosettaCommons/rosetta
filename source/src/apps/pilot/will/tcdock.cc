@@ -45,7 +45,7 @@
 	// #include <core/conformation/symmetry/SymDof.hh>
 	#include <core/id/AtomID.hh>
 	#include <core/import_pose/import_pose.hh>
-	#include <core/io/pdb/pose_io.hh>
+	#include <core/io/pdb/pdb_writer.hh>
 	#include <core/pose/Pose.hh>
 	#include <core/pose/symmetry/util.hh>
 	#include <core/pose/util.hh>
@@ -884,8 +884,8 @@ struct TCDock {
 		cmp1olig_ = _pose1;
 		cmp2olig_ = _pose2;
 		// core::chemical::ResidueTypeSetCAP crs=core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD);
-		// core::import_pose::pose_from_pdb(cmp1olig_,*crs,_cmp1pdb);
-		// core::import_pose::pose_from_pdb(cmp2olig_,*crs,_cmp2pdb);
+		// core::import_pose::pose_from_file(cmp1olig_,*crs,_cmp1pdb, core::import_pose::PDB_file);
+		// core::import_pose::pose_from_file(cmp2olig_,*crs,_cmp2pdb, core::import_pose::PDB_file);
 
 		cmp1diapos_=0.0,cmp1dianeg_=0.0,cmp2diapos_=0.0,cmp2dianeg_=0.0;
 		for(Size i = 1; i <= cmp1olig_.n_residue(); ++i) {
@@ -1412,7 +1412,7 @@ struct TCDock {
 
 		{
 			utility::io::ozstream out(option[out::file::o]()+"/"+fname);
-			core::io::pdb::dump_pdb(symm,out);
+			core::io::pdb::old_dump_pdb(symm,out);
 			out.close();
 		}
 
@@ -1437,7 +1437,7 @@ struct TCDock {
 					protocols::sic_dock::xform_pose(symm, x * ~xlast);
 					xlast = x;
 					out<<"MODEL S"+ObjexxFCL::string_of(++xcount)<<endl;
-					core::io::pdb::dump_pdb(symm,out);
+					core::io::pdb::old_dump_pdb(symm,out);
 					out<<"ENDMDL"<<endl;
 					// cout << xcount << " " << *ix << endl;
 				}
@@ -2175,7 +2175,7 @@ int main (int argc, char *argv[]) {
 	// Real ttrim_cut = option[tcdock::trim_floppy_termini]();
 	for(Size i = 1; i <= comp1pdbs.size(); ++i) {
 		Pose pose1;
-		core::import_pose::pose_from_pdb(pose1,comp1pdbs[i]);
+		core::import_pose::pose_from_file(pose1,comp1pdbs[i], core::import_pose::PDB_file);
 		// if(ttrim_cut > 0.001){
 		// 	TR << "triming tails on " << comp1pdbs[i] << std::endl;
 		// 	protocols::sic_dock::auto_trim_floppy_termini(pose1,ttrim_cut,compnfold[1]);
@@ -2186,7 +2186,7 @@ int main (int argc, char *argv[]) {
 		}
 		for(Size j = 1; j <= comp2pdbs.size(); ++j) {
 			Pose pose2;
-			core::import_pose::pose_from_pdb(pose2,comp2pdbs[j]);
+			core::import_pose::pose_from_file(pose2,comp2pdbs[j], core::import_pose::PDB_file);
 			// if(ttrim_cut > 0.001){
 			// 	TR << "triming tails on " << comp2pdbs[j] << std::endl;
 			// 	protocols::sic_dock::auto_trim_floppy_termini(pose2,ttrim_cut,compnfold[2]);

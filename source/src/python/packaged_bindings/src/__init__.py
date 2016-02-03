@@ -20,7 +20,7 @@ logger = logging.getLogger("rosetta")
 import warnings
 warnings.filterwarnings("ignore", "to-Python converter for .+ already registered; second conversion method ignored.", RuntimeWarning, "^rosetta\\.")
 
-#from rosetta.core.import_pose import pose_from_pdb
+#from rosetta.core.import_pose import pose_from_file
 #from rosetta.core.io.pdb import dump_pdb
 
 # Version and build information for module consumers
@@ -61,7 +61,7 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
     See also:
         Pose
         make_pose_from_sequence()
-        pose_from_pdb()
+        pose_from_file()
         pose_from_rcsb()
     """
 

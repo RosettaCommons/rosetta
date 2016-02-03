@@ -102,17 +102,12 @@
 #include <ostream>
 #include <set>
 
-
-//using namespace ObjexxFCL;
-//using namespace ObjexxFCL::format;
-
 // option key includes
 namespace core {
 namespace io {
 namespace silent {
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::format;
 static THREAD_LOCAL basic::Tracer pss_tr( "core.io.silent" );
 
 //explciit instantiation
@@ -563,14 +558,14 @@ void ProteinSilentStruct_Template<T>::print_conformation( std::ostream & output 
 	//pss_tr.Debug << "FOLD_TREE Size: " << fold_tree().size() << " " << fold_tree() << std::endl;
 	for ( Size i = 1; i <= nres(); ++i ) {
 		output
-			<< I( 4, i ) << ' '
+			<< ObjexxFCL::format::I( 4, i ) << ' '
 			<< secstruct(i) << ' '
-			<< F( 9, 3, phi(i) )
-			<< F( 9, 3, psi(i) )
-			<< F( 9, 3, omega(i) )
-			<< F( 9, 3, coords(i).x() )
-			<< F( 9, 3, coords(i).y() )
-			<< F( 9, 3, coords(i).z() );
+			<< ObjexxFCL::format::F( 9, 3, phi(i) )
+			<< ObjexxFCL::format::F( 9, 3, psi(i) )
+			<< ObjexxFCL::format::F( 9, 3, omega(i) )
+			<< ObjexxFCL::format::F( 9, 3, coords(i).x() )
+			<< ObjexxFCL::format::F( 9, 3, coords(i).y() )
+			<< ObjexxFCL::format::F( 9, 3, coords(i).z() );
 
 		if ( fullatom() ) {
 			for ( Size chino = 1; chino <= max_chi(); ++chino ) {
@@ -578,7 +573,7 @@ void ProteinSilentStruct_Template<T>::print_conformation( std::ostream & output 
 				if ( chino <= n_chi(i) ) {
 					chi_to_print = chi(i,chino);
 				}
-				output << F( 9, 3, chi_to_print );
+				output << ObjexxFCL::format::F( 9, 3, chi_to_print );
 			}
 		} // if fullatom()
 

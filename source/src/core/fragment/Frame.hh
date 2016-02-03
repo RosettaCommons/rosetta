@@ -28,7 +28,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-//#include <core/io/pdb/pose_io.hh> //needed for hack in fragment_as_pose
+//  //needed for hack in fragment_as_pose
 #include <core/id/SequenceMapping.fwd.hh>
 
 // Utility headers

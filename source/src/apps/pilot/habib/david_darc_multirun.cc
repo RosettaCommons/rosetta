@@ -31,7 +31,7 @@
 #include <core/init/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -177,11 +177,11 @@ int main( int argc, char * argv [] ) {
 	protocols::pockets::NonPlaidFingerprint npf;
 
 	pose::Pose protein_pose;
-	core::import_pose::pose_from_pdb( protein_pose, input_protein );
+	core::import_pose::pose_from_file( protein_pose, input_protein , core::import_pose::PDB_file);
 
 	if (option[ pre_align ]()){
 	pose::Pose template_pose;
-	core::import_pose::pose_from_pdb( template_pose, template_pdb );
+	core::import_pose::pose_from_file( template_pose, template_pdb , core::import_pose::PDB_file);
 
 
   //SuperimposeMover does not align when nres is different
@@ -286,7 +286,7 @@ int main( int argc, char * argv [] ) {
 	if (option[ trim_pocket ]()){
 		//calc lig_COM and move pock_COM to lig_com of known ligand
 		pose::Pose known_ligand_pose;
-		core::import_pose::pose_from_pdb( known_ligand_pose, known_ligand );
+		core::import_pose::pose_from_file( known_ligand_pose, known_ligand , core::import_pose::PDB_file);
 		core::Size lig_res_num = 0;
 		for ( int j = 1, resnum = known_ligand_pose.total_residue(); j <= resnum; ++j ) {
 			if (!known_ligand_pose.residue(j).is_protein()){
@@ -311,7 +311,7 @@ int main( int argc, char * argv [] ) {
 	}
 
 	pose::Pose small_mol_pose;
-	core::import_pose::pose_from_pdb( small_mol_pose, input_ligand );
+	core::import_pose::pose_from_file( small_mol_pose, input_ligand , core::import_pose::PDB_file);
 	core::pose::Pose original_pose = small_mol_pose;
 	numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_radians(original_pocket_angle_transform[1] ) );
 	numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_radians(original_pocket_angle_transform[2] ) );

@@ -60,7 +60,7 @@ public:
 	//ctor sets up the pose once
 	RestrictNonSurfaceToRepackingOperationTests(){
 		core_init_with_additional_options( "-no_optH -mute core.io core.init core.scoring core.mm core.pack.task" );
-		core::import_pose::pose_from_pdb( pose, "protocols/util/test_in.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/util/test_in.pdb" , core::import_pose::PDB_file);
 	}
 	virtual ~RestrictNonSurfaceToRepackingOperationTests() {}
 	static RestrictNonSurfaceToRepackingOperationTests* createSuite() {

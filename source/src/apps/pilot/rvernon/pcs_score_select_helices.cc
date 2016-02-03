@@ -22,7 +22,7 @@
 // Auto-header: duplicate removed #include <devel/init.hh>
 
 #include <core/kinematics/RT.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 
 #include <basic/options/option.hh>
@@ -57,7 +57,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
@@ -222,7 +222,7 @@ main( int argc, char* argv [] )
 
 	if ( option[ in::file::native ].user() ) {
 		// read in pdb and constraints if necessary
-		core::import_pose::pose_from_pdb(
+		core::import_pose::pose_from_file(
 			native_pose, *rsd_set, option[ in::file::native ]()
 		);
 	}

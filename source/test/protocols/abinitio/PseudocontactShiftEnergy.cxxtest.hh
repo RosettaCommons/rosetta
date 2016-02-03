@@ -272,7 +272,7 @@ catch ( utility::excn::EXCN_Exception &excn )  {
 	// If the break is legitimate, please, update the expected value.
 	void test_eval_pcs_energy_on_abinitio_output(){
 
-		core::import_pose::pose_from_pdb( *the_pose_, "PCS_S_0001.pdb" );
+		core::import_pose::pose_from_file( *the_pose_, "PCS_S_0001.pdb" , core::import_pose::PDB_file);
 		core::Real pcs_score_total = pcs_energy_->calculate_pcs_score(*the_pose_, false);
 		core::Real expected_value(0.7588863408);
 		core::Real tolerance(0.001);
@@ -289,7 +289,7 @@ catch ( utility::excn::EXCN_Exception &excn )  {
 	// It could break if some stuffs have been changed in the minimizer
 	void test_eval_pcs_energy_on_native(){
 
-		core::import_pose::pose_from_pdb( *the_pose_, "protocols/abinitio/pdb_idealized_for_pcs_test.pdb" );
+		core::import_pose::pose_from_file( *the_pose_, "protocols/abinitio/pdb_idealized_for_pcs_test.pdb" , core::import_pose::PDB_file);
 		core::Real pcs_score_total = pcs_energy_->calculate_pcs_score(*the_pose_, false);
 		core::Real expected_value(0.5398201739);
 		core::Real tolerance(0.0001);

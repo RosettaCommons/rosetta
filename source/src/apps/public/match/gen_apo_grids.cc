@@ -31,7 +31,7 @@
 
 #include <devel/init.hh>
 #include <core/types.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -120,7 +120,7 @@ int main( int argc, char * argv [] )
 		string filename = option[ in::file::s ]().vector()[ 0 ];
 		TR << "[get pdb] Get the pose from pdb ..." << endl;
 		if ( option[ in::file::s ].user() ) {
-			core::import_pose::pose_from_pdb( pose, filename );
+			core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 		} else {
 			utility_exit_with_message("User did not specify the pdb file!");
 		}

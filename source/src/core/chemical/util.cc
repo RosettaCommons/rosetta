@@ -518,7 +518,7 @@ detect_ld_chirality_from_polymer_residue(
 	}
 
 	//if ( characteristic_angle == 0 ) {
-	//	TR.Warning << "No chiral information detected for " << name3 << std::endl;
+	// TR.Warning << "No chiral information detected for " << name3 << std::endl;
 	//}
 }
 
@@ -529,13 +529,13 @@ heavy_atom_names_match( ResidueType const & first, ResidueType const & second ) 
 	}
 
 	std::set< std::string > names;
-	for( core::Size ii(1); ii <= first.nheavyatoms(); ++ii ) {
+	for ( core::Size ii(1); ii <= first.nheavyatoms(); ++ii ) {
 		//if( first.atom_name(ii) == "OXT" ) { continue; }
 		std::string name( first.atom_name(ii) );
 		names.insert( utility::strip_whitespace( name ) );
 	}
 
-	for( core::Size jj(1); jj <= second.nheavyatoms(); ++jj ) {
+	for ( core::Size jj(1); jj <= second.nheavyatoms(); ++jj ) {
 		std::string name( second.atom_name(jj) );
 		if ( ! names.count( utility::strip_whitespace( name ) ) ) {
 			//if( second.atom_name(jj) == "OXT" ) { continue; }

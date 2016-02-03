@@ -68,7 +68,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/id/AtomID_Map.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/mm/MMTorsionLibrary.hh>
 #include <core/mm/MMTorsionLibrary.fwd.hh>
@@ -202,7 +202,7 @@ build_asn_motifs()
 	using namespace optimization;
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "2GTX_asn_ala3.pdb" );
+	core::import_pose::pose_from_file( pose, "2GTX_asn_ala3.pdb" , core::import_pose::PDB_file);
 
   std::string weights( "soft_rep_design" );
   ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( weights ) );

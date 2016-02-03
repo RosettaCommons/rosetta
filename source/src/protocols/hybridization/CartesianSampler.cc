@@ -66,14 +66,14 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/Remarks.hh>
 #include <core/pose/selection.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
 
 // dump intermediate pdb
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/util.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/io/ozstream.hh>
 
 #include <core/pose/util.hh>
@@ -762,8 +762,7 @@ apply(
 	if ( dump_pdb_ ) {
 		std::string outfile = ("intermediate_" + dump_pdb_tag_ + ".pdb");
 		utility::io::ozstream out( outfile );
-		core::io::pdb::FileData::dump_pdb( pose, out );
-		core::io::pdb::extract_scores( pose, out );
+		core::io::pdb::dump_pdb( pose, "", true, false, out );
 	}
 
 	// autogenerate fragments if they are not loaded yet
@@ -1077,7 +1076,7 @@ CartesianSampler::parse_my_tag(
 	if ( tag->hasOption( "reference_model" ) ) {
 		std::string ref_model_pdb = tag->getOption<std::string>( "reference_model" );
 		if ( ref_model_pdb != "input" ) {
-			core::import_pose::pose_from_pdb( ref_model_, ref_model_pdb );
+			core::import_pose::pose_from_file( ref_model_, ref_model_pdb , core::import_pose::PDB_file);
 		} else {
 			input_as_ref_ = true;
 		}

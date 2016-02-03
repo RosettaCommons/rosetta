@@ -29,7 +29,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/rna/util.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>

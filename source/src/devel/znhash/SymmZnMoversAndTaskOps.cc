@@ -63,7 +63,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/Remarks.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 
 #include <core/scoring/Energies.hh>
@@ -370,11 +370,11 @@ add_znx_coordination_remark_lines_to_pose(
 {
 	// REMARK 666 MATCH TEMPLATE X ZNX    0 MATCH MOTIF A HIS  140  1  1
 
-	core::pose::Remarks match_remarks;
+	core::io::Remarks match_remarks;
 	for ( core::Size ii = 1; ii <= 6; ++ii ) {
 		core::Size znind = ( ii + 1 ) / 2;
 
-		core::pose::RemarkInfo rinfo;
+		core::io::RemarkInfo rinfo;
 		rinfo.num = 666;
 		std::ostringstream ss;
 		ss << "MATCH TEMPLATE "
@@ -589,7 +589,7 @@ ZNCoordinationConstraintPlacerMover::add_matcher_remark_lines_for_zn_coordinatio
 	// Read in the original remark lines from the m1 match constraint file and translate them
 	// into new
 	std::ifstream m1matchfile(m1_.match_pdb_file().c_str());
-	core::pose::Remarks match_remarks;
+	core::io::Remarks match_remarks;
 
 	coordination_data.zinc_data_[ 1 ].chain_ = 'B';
 	coordination_data.zinc_data_[ 1 ].resind_ = nres_asu;
@@ -610,7 +610,7 @@ ZNCoordinationConstraintPlacerMover::add_matcher_remark_lines_for_zn_coordinatio
 
 		// OK: now what?
 
-		//core::pose::RemarkInfo rinfo;
+		//core::io::RemarkInfo rinfo;
 		//rinfo.num = 666;
 		//std::ostringstream ss;
 		//ss << "MATCH TEMPLATE B ZNX " << nres_asu << " MATCH MOTIF A "
@@ -650,7 +650,7 @@ ZNCoordinationConstraintPlacerMover::add_matcher_remark_lines_for_zn_coordinatio
 
 		matchfile_header header = read_match_header_line_from_pdb( m2_.match_pdb_file(), ii, matchline_stream );
 
-		//core::pose::RemarkInfo rinfo;
+		//core::io::RemarkInfo rinfo;
 		//rinfo.num = 666;
 		//std::ostringstream ss;
 		//ss << "MATCH TEMPLATE " << char( int('A') + 2*nsubunits - 1 )

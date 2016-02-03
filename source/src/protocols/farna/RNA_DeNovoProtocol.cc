@@ -51,7 +51,7 @@
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/pose/rna/RNA_BaseDoubletClasses.hh>
 

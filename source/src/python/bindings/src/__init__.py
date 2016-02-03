@@ -63,7 +63,7 @@ if '__file__' in vars():
 #     add_modules(_rosetta_, __name__) #if config[m]: sys.modules[__name__+'.' + m] = eval(m)  # emulate imports
 
 #     # from rosetta.core.pose import Pose
-#     # from rosetta.core.import_pose import pose_from_pdb
+#     # from rosetta.core.import_pose import pose_from_file
 #     # from rosetta.core.io.pdb import dump_pdb
 #     # from rosetta.core.pose import make_pose_from_sequence
 
@@ -149,7 +149,7 @@ else:
         from rosetta.core.chemical import *
         from rosetta.core.pose import Pose
 
-        from rosetta.core.import_pose import pose_from_pdb
+        from rosetta.core.import_pose import pose_from_file
         from rosetta.core.io.pdb import dump_pdb
         from rosetta.core.pose import make_pose_from_sequence
 
@@ -510,11 +510,11 @@ def generate_nonstandard_residue_set(params_list):
     Example:
         params = ["penicillin.params", "amoxicillin.params"]
         type_set = generate_nonstandard_residue_set(params)
-        pose = pose_from_pdb(type_set, "TEM-1_with_substrates.pdb")
+        pose = pose_from_file(type_set, "TEM-1_with_substrates.pdb")
     See also:
         ResidueTypeSet
         Vector1()
-        pose_from_pdb()
+        pose_from_file()
     """
     res_set = ChemicalManager.get_instance().nonconst_residue_type_set("fa_standard")
     # res_set.read_files(Vector1(params_list),
@@ -560,7 +560,7 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
     See also:
         Pose
         make_pose_from_sequence()
-        pose_from_pdb()
+        pose_from_file()
         pose_from_rcsb()
     """
     pose = Pose()

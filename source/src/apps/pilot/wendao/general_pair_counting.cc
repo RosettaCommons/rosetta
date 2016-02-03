@@ -23,7 +23,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -298,7 +298,7 @@ void my_main()
 	{
 		PoseOP pose = new Pose();
 		Pose &p(*pose);
-		pose_from_pdb( p, *rsd_set, option[ in::file::l ]()[npdb] );
+		pose_from_file( p, *rsd_set, option[ in::file::l ]()[npdb] , core::import_pose::PDB_file);
 		std::cerr << option[ in::file::l ]()[npdb] << std::endl;
 
 		utility::vector1<Size> rotliblst; //residue type index for each residue

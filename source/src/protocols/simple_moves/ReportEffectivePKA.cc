@@ -204,7 +204,7 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 
 
 				// tag
-				core::pose::RemarkInfo remark;
+				core::io::RemarkInfo remark;
 				std::stringstream oss;
 
 				protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());

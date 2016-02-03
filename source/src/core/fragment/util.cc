@@ -28,7 +28,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh> //for reading in fragsets from a pdb
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/pose/annotated_sequence.hh>
 #include <core/conformation/util.hh>
 
@@ -365,7 +365,7 @@ bool fill_template_frames_from_pdb(
 
 	//we rely on the multimodel pdb reader for file processing
 	utility::vector1< pose::Pose > in_poses;
-	core::import_pose::pose_from_pdb( in_poses, filename );
+	core::import_pose::pose_from_file( in_poses, filename , core::import_pose::PDB_file);
 
 	Size frame_counter(1);
 	bool return_val( true );
@@ -442,7 +442,7 @@ void read_std_frags_from_cmd( FragSetOP& fragset_large, FragSetOP& fragset_small
 		// read native pose to get sequence
 		pose::PoseOP native_pose( new pose::Pose );
 		if ( option[ in::file::native ].user() ) {
-			core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
+			core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 			pose::set_ss_from_phipsi( *native_pose );
 		} else {
 			utility_exit_with_message(" can't steal natie fragments without in:file:native " );

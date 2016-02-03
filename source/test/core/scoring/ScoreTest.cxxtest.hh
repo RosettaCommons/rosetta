@@ -155,7 +155,7 @@ public:
 		TR << " Testing score: " << scoring::name_from_score_type(st) << "..." << std::endl;
 
 		Pose pose;
-		core::import_pose::pose_from_pdb(pose, pdb_file_name);
+		core::import_pose::pose_from_file(pose, pdb_file_name, core::import_pose::PDB_file);
 
 		ScoreFunction scorefxn;
 		scorefxn.set_weight(st, 1.0 );
@@ -203,7 +203,7 @@ public:
 		TR << " Testing score: " << scoring::name_from_score_type(st) << "..." << std::endl;
 
 		Pose pose;
-		core::import_pose::pose_from_pdb(pose, pdb_file_name);
+		core::import_pose::pose_from_file(pose, pdb_file_name, core::import_pose::PDB_file);
 
 		ScoreFunction scorefxn;
 		scorefxn.set_weight(st, 1.0 );

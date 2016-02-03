@@ -120,7 +120,7 @@ RestrictIdentitiesAtAlignedPositionsOperation::apply( core::pose::Pose const & p
 
 void
 RestrictIdentitiesAtAlignedPositionsOperation::source_pose( std::string const s ) {
-	core::import_pose::pose_from_pdb( *source_pose_, s );
+	core::import_pose::pose_from_file( *source_pose_, s , core::import_pose::PDB_file);
 }
 
 void

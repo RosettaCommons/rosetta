@@ -27,7 +27,7 @@
 #include <protocols/moves/Mover.hh>
 
 // Core headers
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>

@@ -38,7 +38,7 @@
 #include <core/pose/Pose.hh>
 #include <core/options/util.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
 #include <core/options/keys/in.OptionKeys.gen.hh>
@@ -95,7 +95,7 @@ main( int argc, char * argv [] )
 		core::scoring::ScoreFunctionOP scorefxn(get_score_function());
 		//create a pose
 		pose::Pose pose;
-		io::pdb::pose_from_pdb(pose, options::start_file());
+		io::pdb::pose_from_file(pose, options::start_file(), core::import_pose::PDB_file);
 
 		//////////////// set native constraints prior to minimization
 		ConstraintSetOP cst_set( new ConstraintSet() );

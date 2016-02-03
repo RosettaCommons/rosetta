@@ -319,7 +319,7 @@ int main( int argc, char * argv [] )
 		TR << "before the loop" << std::endl;
 		for ( Size i=1; i <= pdb_codes.size(); ++i ) {
 			pose::Pose single_in_pose, single_out_pose;
-			core::import_pose::pose_from_pdb(single_in_pose, in_pdb_names[i]);
+			core::import_pose::pose_from_file(single_in_pose, in_pdb_names[i], core::import_pose::PDB_file);
 			single_out_pose = single_in_pose;
 			// Fixbb run
 			pack_mover->apply(single_out_pose);

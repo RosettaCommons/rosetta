@@ -17,7 +17,7 @@ from rosetta.core.scoring.methods import *
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
 
-pose = pose_from_pdb("../test/data/test_in.pdb")
+pose = pose_from_file("../test/data/test_in.pdb")
 
 
 @rosetta.EnergyMethod()

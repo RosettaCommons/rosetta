@@ -24,7 +24,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/conformation/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 
 	//read file and check if there is disulfide
 	core::pose::Pose pose1;
-	core::import_pose::pose_from_pdb(pose1,input_disulfide);
+	core::import_pose::pose_from_file(pose1,input_disulfide, core::import_pose::PDB_file);
 
 	core::scoring::ScoreFunctionOP disulfide_scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "empty" ) );
   	disulfide_scorefxn->set_weight( dslf_ss_dst, 1.0);
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
 
 		cout << "BEGIN " << fn << endl;
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose,fnames[ifile]); //Import the current PDB file
+		core::import_pose::pose_from_file(pose,fnames[ifile], core::import_pose::PDB_file); //Import the current PDB file
 		for(int ir=1; ir <= (int)pose.n_residue(); ++ir) { //Loop through all residues
 			if(pose.residue(ir).aa() != core::chemical::aa_cys) continue; //If the current residue isn't a cys, go on to the next.
 			for(int jr=ir+3; jr < ir+option[cdsf_max_res](); ++jr) {

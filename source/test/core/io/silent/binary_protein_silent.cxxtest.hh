@@ -75,7 +75,7 @@ public:
 			"centroid"
 		);
 		pose::Pose ref_pose, restored_pose;
-		core::import_pose::pose_from_pdb( ref_pose, *cen_rsd_set, "core/io/bin_silentfile_test.pdb");
+		core::import_pose::pose_from_file( ref_pose, *cen_rsd_set, "core/io/bin_silentfile_test.pdb", core::import_pose::PDB_file);
 		double rms_threshold = 1e-2;
 		double score_threshold = 1e-1;
 		TS_ASSERT( !ref_pose.is_fullatom() );
@@ -115,7 +115,7 @@ public:
 		pose::Pose ref_pose, restored_pose;
 		core::chemical::ResidueTypeSetCOP rsd =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-		core::import_pose::pose_from_pdb( ref_pose, *rsd, std::string("core/io/bin_silentfile_test.pdb"));
+		core::import_pose::pose_from_file( ref_pose, *rsd, std::string("core/io/bin_silentfile_test.pdb"), core::import_pose::PDB_file);
 		std::string const silent_outfile( "core/io/bin_silentfile_test.out" ); // read file w/ non-ideal geometry
 		utility::file::file_delete( silent_outfile );
 		core::io::silent::SilentFileData sfd;
@@ -163,7 +163,7 @@ public:
 		pose::Pose ref_pose, restored_pose;
 		core::chemical::ResidueTypeSetCOP rsd =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-		core::import_pose::pose_from_pdb( ref_pose, *rsd, std::string("core/io/bin_silentfile_test.pdb"));
+		core::import_pose::pose_from_file( ref_pose, *rsd, std::string("core/io/bin_silentfile_test.pdb"), core::import_pose::PDB_file);
 
 		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd->name_map( "ALA" ) ) );
 		core::Size nres = ref_pose.n_residue();

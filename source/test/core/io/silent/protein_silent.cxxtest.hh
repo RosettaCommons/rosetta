@@ -47,7 +47,6 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/graph/UpperEdgeGraph.fwd.hh>
-#include <core/io/pdb/file_data.fwd.hh>
 #include <core/io/silent/EnergyNames.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>
@@ -97,8 +96,8 @@ public:
 			core::chemical::ChemicalManager::get_instance()->residue_type_set(
 			"centroid"
 		);
-		start_pose = core::import_pose::pose_from_pdb("core/io/test_in_idealized.pdb");
-		centroid_pose_ = core::import_pose::pose_from_pdb(*cen_rsd_set_, "core/io/test_in_idealized.pdb");
+		start_pose = core::import_pose::pose_from_file("core/io/test_in_idealized.pdb", core::import_pose::PDB_file);
+		centroid_pose_ = core::import_pose::pose_from_file(*cen_rsd_set_, "core/io/test_in_idealized.pdb", core::import_pose::PDB_file);
 
 	}
 

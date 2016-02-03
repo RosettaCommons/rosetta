@@ -120,7 +120,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -175,7 +175,7 @@ using namespace core::options::OptionKeys;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 //typedef std::map< std::string, core::pose::PoseOP > PoseList;
@@ -272,7 +272,7 @@ sample_rama_test()
 	pose::Pose & pose( *pose_op );
 
 	std::string pdb_file  = option[ in::file::s ][1];
-	io::pdb::pose_from_pdb( pose, *rsd_set, pdb_file );
+	io::pdb::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 	Size n1 = option[ sample_residue ]();
 	if ( option[ start_res ].user() ){
@@ -382,7 +382,7 @@ minimizer_test()
 	if ( option[ in::file::native ].user() ) {
 		std::string native_pdb_file  = option[ in::file::native ];
 		native_pose_op = new Pose;
-		io::pdb::pose_from_pdb( *native_pose_op, *rsd_set, native_pdb_file );
+		io::pdb::pose_from_file( *native_pose_op, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 	}
 
 
@@ -404,7 +404,7 @@ minimizer_test()
 	if ( option[ in::file::s].user() ) {
 
 		std::string pdb_file  = option[ in::file::s ][1];
-		io::pdb::pose_from_pdb( pose, *rsd_set, pdb_file );
+		io::pdb::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 		if ( option[ trans_omega ]() ) for ( Size n = 1; n <= pose.total_residue(); n++ ) pose.set_omega( n, 180.0 );
 
@@ -473,7 +473,7 @@ repack_test(){
 	//rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( CENTROID );
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	io::pdb::pose_from_pdb( pose, *rsd_set, pdb_file );
+	io::pdb::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
@@ -531,7 +531,7 @@ sample_trp_test()
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	io::pdb::pose_from_pdb( pose, *rsd_set, pdb_file );
+	io::pdb::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 	Size n = option[ sample_residue ](); //tryptophan.
 
@@ -569,7 +569,7 @@ sample_trp_test()
 
 	PoseOP native_pose_op = new Pose;
 	std::string native_pdb_file  = option[ in::file::native ];
-	io::pdb::pose_from_pdb( *native_pose_op, *rsd_set, native_pdb_file );
+	io::pdb::pose_from_file( *native_pose_op, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
@@ -639,7 +639,7 @@ sample_trp_tyr_test()
 
 	pose::Pose pose, pose_trp_tyr, pose_trp, pose_tyr, pose_null, pose_input;
 	std::string pdb_file  = option[ in::file::s ][1];
-	io::pdb::pose_from_pdb( pose_input, *rsd_set, pdb_file );
+	io::pdb::pose_from_file( pose_input, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
@@ -852,7 +852,7 @@ rebuild_test(){
 	if (option[ in::file::native ].user() ) {
 		native_pose = PoseOP( new Pose );
 		std::string native_pdb_file  = option[ in::file::native ];
-		io::pdb::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+		io::pdb::pose_from_file( *native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 		native_exists = true;
 	}
 

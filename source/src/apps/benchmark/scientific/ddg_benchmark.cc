@@ -284,7 +284,7 @@ main( int argc, char * argv [] )
 
 		// read the pose
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, basic::options::start_file() ); // gets filename from -s option
+		import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file); // gets filename from -s option
 
 		// this is the numbering system relevant for the resfiles (currently... ie not pdb resnums)
 

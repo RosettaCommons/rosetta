@@ -33,12 +33,12 @@
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
+#include <core/io/StructFileRep.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/RT.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
-#include <core/io/pdb/file_data.hh>
 #include <core/scoring/ScoreType.hh>
 
 // Utility headers
@@ -649,7 +649,7 @@ initialize_disulfide_bonds(
 void
 initialize_disulfide_bonds(
 	Pose & pose,
-	io::pdb::FileData const & fd
+	io::StructFileRep const & fd
 );
 
 /// @brief Returns a string giving the pose's tag if there is such a thing or "UnknownTag" otherwise.
@@ -733,7 +733,7 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 
 
 void
-get_constraints_from_link_records( core::pose::Pose & pose, io::pdb::FileData fd );
+get_constraints_from_link_records( core::pose::Pose & pose, io::StructFileRep const & sfr );
 
 /// @brief Convert PDB numbering to pose numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
 utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, utility::vector1< int > const & pdb_res );
@@ -779,6 +779,11 @@ utility::vector1< id::AtomID > const & ring_atoms );*/
 
 /// @brief  Is the query atom in this pose axial or equatorial or neither?
 //chemical::rings::AxEqDesignation is_atom_axial_or_equatorial( Pose const & pose, id::AtomID const & query_atom );
+
+/// @brief Set bfactors in a pose PDBInfo
+void
+set_bfactors_from_atom_id_map(Pose & pose, id::AtomID_Map< Real > const & bfactors);
+
 
 
 } // pose

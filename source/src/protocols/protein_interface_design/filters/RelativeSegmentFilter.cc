@@ -38,7 +38,7 @@ RelativeSegmentFilterCreator::keyname() const { return "RelativeSegment"; }
 bool
 RelativeSegmentFilter::apply( Pose const & pose ) const {
 	core::pose::Pose source_pose;
-	core::import_pose::pose_from_pdb( source_pose, source_pose_ );
+	core::import_pose::pose_from_file( source_pose, source_pose_ , core::import_pose::PDB_file);
 
 	core::Size const nearest_to_from( protocols::rosetta_scripts::find_nearest_res( pose, source_pose, start_res() ) );
 	core::Size const nearest_to_to( protocols::rosetta_scripts::find_nearest_res( pose, source_pose, stop_res() ) );

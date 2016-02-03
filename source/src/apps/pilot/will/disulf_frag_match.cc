@@ -10,7 +10,7 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/conformation/util.hh>
 #include <core/id/AtomID.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
 
 
 	core::pose::Pose svd;
-	core::import_pose::pose_from_pdb(svd,option[cdsf_match_pdb]());
+	core::import_pose::pose_from_file(svd,option[cdsf_match_pdb](), core::import_pose::PDB_file);
 	core::pose::remove_lower_terminus_type_from_pose_residue(svd,         1     );
 	core::pose::remove_upper_terminus_type_from_pose_residue(svd,svd.n_residue());
 
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 	for(int ifile=1; ifile <= fnames.size(); ++ifile) {
 		string fn = utility::file_basename(fnames[ifile]);
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose,fnames[ifile]);
+		core::import_pose::pose_from_file(pose,fnames[ifile], core::import_pose::PDB_file);
 		for(int ir=2; ir <= pose.n_residue()-4; ++ir) {
 			std::map< core::id::AtomID, core::id::AtomID > m;
 			for(int ii=1;ii<=5;++ii) m[core::id::AtomID(ii,ir+0)] = core::id::AtomID(ii,1);

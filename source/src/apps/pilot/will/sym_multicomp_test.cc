@@ -23,7 +23,7 @@
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
@@ -110,7 +110,7 @@ int main (int argc, char *argv[]) {
 		utility::vector1<std::string> files = option[in::file::s]();
 		for ( int ifile = 1; ifile <= (int)files.size(); ++ifile ) {
 			core::pose::Pose pose;
-			core::import_pose::pose_from_pdb(pose,files[ifile]);
+			core::import_pose::pose_from_file(pose,files[ifile], core::import_pose::PDB_file);
 			core::Size nres = pose.n_residue();
 			Pose init(pose);
 			core::pose::symmetry::make_symmetric_pose(pose);

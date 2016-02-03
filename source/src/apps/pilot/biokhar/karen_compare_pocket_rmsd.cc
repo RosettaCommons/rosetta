@@ -17,7 +17,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -113,9 +113,9 @@ main( int argc, char * argv [] ){
 
 		// create pose from pdb
 		pose::Pose pose1;
-		core::import_pose::pose_from_pdb( pose1, structure1 );
+		core::import_pose::pose_from_file( pose1, structure1 , core::import_pose::PDB_file);
 		pose::Pose pose2;
-		core::import_pose::pose_from_pdb( pose2, structure2 );
+		core::import_pose::pose_from_file( pose2, structure2 , core::import_pose::PDB_file);
 
 
 		TR << "Defined interface" << std::endl;

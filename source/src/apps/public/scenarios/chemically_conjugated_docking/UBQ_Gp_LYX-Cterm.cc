@@ -153,11 +153,11 @@ public:
 
 		//read poses
 		core::pose::Pose GTPase;
-		core::import_pose::pose_from_pdb( GTPase, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::GTPasepdb].value() );
+		core::import_pose::pose_from_file( GTPase, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::GTPasepdb].value() , core::import_pose::PDB_file);
 		core::Size const GTPaselength = GTPase.total_residue();
 
 		core::pose::Pose UBQ;
-		core::import_pose::pose_from_pdb( UBQ, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQpdb].value() );
+		core::import_pose::pose_from_file( UBQ, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQpdb].value() , core::import_pose::PDB_file);
 		core::Size const UBQlength = UBQ.total_residue();
 
 		//determine cysteine target

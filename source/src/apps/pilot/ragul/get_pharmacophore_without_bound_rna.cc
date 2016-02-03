@@ -12,7 +12,7 @@
 
 // Project Headers
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <basic/MetricValue.hh>
 
@@ -59,7 +59,7 @@
 #include <map>
 
 //Auto Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -167,7 +167,7 @@ int main( int argc, char * argv [] ){
 
 
 		pose::Pose protein_pose;
-		core::import_pose::pose_from_pdb( protein_pose, input_protein_pose );
+		core::import_pose::pose_from_file( protein_pose, input_protein_pose , core::import_pose::PDB_file);
 
 		//ideal H-bond distance
 		core::Real const opt_distance( 2.75 );

@@ -28,9 +28,10 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/util.hh>
 #include <core/chemical/AA.hh>
-#include <core/io/pdb/pdb_dynamic_reader.hh>
+#include <core/io/pdb/pdb_writer.hh>
+#include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
 #include <numeric/xyzVector.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <basic/Tracer.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
@@ -173,13 +174,13 @@ void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum, 
 	}
 
 	// print constellation
-	core::io::pdb::FileData fd;
 	std::string data;
 	utility::vector1< core::Size > residues_to_print;
 	residues_to_print.push_back(mut1.psn);
 	residues_to_print.push_back(mut2.psn);
-	fd.init_from_pose( ps, residues_to_print );
-	data = core::io::pdb::PDB_DReader::createPDBData(fd);
+	core::io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
+	pose_to_sfr.init_from_pose( ps, residues_to_print );
+	data = core::io::pdb::create_pdb_contents_from_sfr( *pose_to_sfr.sfr() );
 	outPDB_stream.write( data.c_str(), data.size() );
 	outPDB_stream.close();
 	outPDB_stream.clear();
@@ -322,14 +323,14 @@ void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
 	}
 
 	// print constellation
-	core::io::pdb::FileData fd;
 	std::string data;
 	utility::vector1< core::Size > residues_to_print;
 	residues_to_print.push_back(mut1.psn);
 	residues_to_print.push_back(mut2.psn);
 	residues_to_print.push_back(mut3.psn);
-	fd.init_from_pose( ps, residues_to_print );
-	data = core::io::pdb::PDB_DReader::createPDBData(fd);
+	core::io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
+	pose_to_sfr.init_from_pose( ps, residues_to_print );
+	data = core::io::pdb::create_pdb_contents_from_sfr( *pose_to_sfr.sfr() );
 	outPDB_stream.write( data.c_str(), data.size() );
 	outPDB_stream.close();
 	outPDB_stream.clear();

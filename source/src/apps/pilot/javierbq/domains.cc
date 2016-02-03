@@ -273,7 +273,7 @@ main ( int argc, char* argv[] ){
 		devel::init(argc, argv);
 		TR << "Reaading File " << option[pdb]() << std::endl;
 		core::pose::PoseOP p;
-		import_pose::pose_from_pdb(*p, option[pdb]());
+		import_pose::pose_from_file(*p, option[pdb](), core::import_pose::PDB_file);
 		core::scoring::dssp::Dssp dssp(*p);
 		dssp.insert_ss_into_pose(*p);
 		DomainDescription dd("Ploop2x3", "5-4.P,4-1.P,1-3.P,3-2.P", "E+L+H+L+E+L+H+L+E+L+H+L+E+L+H+L+E+L+H+");

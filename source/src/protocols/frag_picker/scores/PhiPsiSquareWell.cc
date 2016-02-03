@@ -292,7 +292,7 @@ FragmentScoringMethodOP MakePhiPsiSquareWell::make(Size priority,
 		Size pos = input_file.find(".pdb");
 		if ( pos != std::string::npos ) {
 			core::pose::PoseOP nativePose( new core::pose::Pose );
-			core::import_pose::pose_from_pdb(*nativePose, input_file);
+			core::import_pose::pose_from_file(*nativePose, input_file, core::import_pose::PDB_file);
 			tr.Info
 				<< "Reference file for Phi,Psi scoring loaded from "
 				<< input_file << std::endl;
@@ -325,7 +325,7 @@ FragmentScoringMethodOP MakePhiPsiSquareWell::make(Size priority,
 	}
 	if ( option[in::file::s].user() ) {
 		core::pose::PoseOP nativePose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
+		core::import_pose::pose_from_file(*nativePose, option[in::file::s]()[1], core::import_pose::PDB_file);
 		tr.Info << "Reference file for Phi,Psi scoring loaded from "
 			<< option[in::file::s]()[1] << std::endl;
 		tr.Debug << "its sequence is:\n"
@@ -336,7 +336,7 @@ FragmentScoringMethodOP MakePhiPsiSquareWell::make(Size priority,
 	}
 	if ( option[in::file::native].user() ) {
 		core::pose::PoseOP nativePose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
+		core::import_pose::pose_from_file(*nativePose, option[in::file::native](), core::import_pose::PDB_file);
 		tr.Info << "Reference file for Phi,Psi scoring loaded from "
 			<< option[in::file::native]() << std::endl;
 		tr.Debug << "its sequence is:\n"

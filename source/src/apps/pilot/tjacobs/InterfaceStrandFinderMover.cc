@@ -18,7 +18,7 @@
 //core library
 #include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
@@ -387,7 +387,7 @@ void InterfaceStrandFinderMover::apply (pose::Pose& pose ) {
                   strand_filenames.push_back( name );
 
                   Pose strandPose;
-                  core::import_pose::pose_from_pdb(strandPose, name, false);
+                  core::import_pose::pose_from_file(strandPose, name, false, core::import_pose::PDB_file);
                   std::pair<Pose,Size> strand_pair = make_pair(strandPose, outwardCarboxylIndex);
 
                   known_strands.push_back(strand_pair);
@@ -411,8 +411,8 @@ void InterfaceStrandFinderMover::apply (pose::Pose& pose ) {
   else{
       utility_exit_with_message_status( "need to define -is_known_strands & -is_complexes\n", 1 );
   }
-  //known_strands = core::import_pose::poses_from_pdbs(strand_filenames, false/*read_fold_tree?*/);
-  known_complexes = core::import_pose::poses_from_pdbs(complex_filenames, false/*read_fold_tree?*/);
+  //known_strands = core::import_pose::poses_from_files(strand_filenames, false/*read_fold_tree?*/, core::import_pose::PDB_file);
+  known_complexes = core::import_pose::poses_from_files(complex_filenames, false/*read_fold_tree?*/, core::import_pose::PDB_file);
   //	for (core::Size p = 1; p <= known_complexes.size(); p++){
   //	    std::stringstream temp;
   //	    temp << "TEST_" << p << ".pdb";

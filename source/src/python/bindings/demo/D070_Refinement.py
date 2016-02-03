@@ -121,7 +121,7 @@ def sample_refinement(pdb_filename,
     """
     # 1. create a pose from the desired PDB file
     pose = Pose()
-    pose_from_pdb(pose, pdb_filename)
+    pose_from_file(pose, pdb_filename)
 
     # 2. create a reference copy of the pose in fullatom
     starting_pose = Pose()

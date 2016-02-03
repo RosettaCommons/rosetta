@@ -109,19 +109,19 @@ void quick_ring_detection( ResidueType & res){
 	//std::map< VD,std::map<VD, bool > >::const_iterator it_start, it_end;
 	//it_start = ring_edges.begin();
 	//it_end = ring_edges.end();
-	for(
-		std::map< VD,std::map<VD, bool > >::const_iterator it = ring_edges.begin();
-		it != ring_edges.end(); ++it
-		){
-		for(
-			std::map<VD, bool >::const_iterator second_it = it->second.begin();
-			second_it != it->second.end(); ++second_it
-			){
-			if( second_it->second){
+	for (
+			std::map< VD,std::map<VD, bool > >::const_iterator it = ring_edges.begin();
+			it != ring_edges.end(); ++it
+			) {
+		for (
+				std::map<VD, bool >::const_iterator second_it = it->second.begin();
+				second_it != it->second.end(); ++second_it
+				) {
+			if ( second_it->second ) {
 				ED bond_edge;
 				bool edge_exists;
 				boost::tie( bond_edge, edge_exists) = boost::edge( it->first, second_it->first, res.graph());
-				if( edge_exists){
+				if ( edge_exists ) {
 					Bond & bond = res.bond( bond_edge);
 					bond.ringness( BondInRing);
 				} else {
@@ -197,7 +197,7 @@ utility::vector1<VDs> find_chi_bonds( ResidueType const & restype ) {
 			source = temp;
 		} else if ( restype.atom_base(target) != source ) {
 			TR << "Found non-tree bond " << restype.atom_name(source) << " --- " << restype.atom_name(target) << std::endl;
-			TR << "	   Expected tree bond " << restype.atom_name( restype.atom_base(target) ) << " --- " << restype.atom_name(target) << std::endl;
+			TR << "\t   Expected tree bond " << restype.atom_name( restype.atom_base(target) ) << " --- " << restype.atom_name(target) << std::endl;
 			utility_exit_with_message("Error: Non-ring bond not found in ResidueType atom tree.");
 		}
 

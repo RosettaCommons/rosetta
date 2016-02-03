@@ -19,7 +19,7 @@ rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_see
 import os; os.chdir('.test.output')
 
 
-pose = rosetta.pose_from_pdb("../test/data/test_in.pdb")
+pose = rosetta.pose_from_file("../test/data/test_in.pdb")
 
 print '\nCaptured IO:'
 print T.buf()

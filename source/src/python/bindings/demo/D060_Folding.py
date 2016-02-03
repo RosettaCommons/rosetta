@@ -452,7 +452,7 @@ elif options.sequence:
     sequence = options.sequence
 else:
     pdb_filename = options.pdb_filename; #Default is the test PDB, not an empty string.
-    pose_from_pdb(pose, pdb_filename)
+    pose_from_file(pose, pdb_filename)
     sequence = pose.sequence()
 #Checks for the sequence in a fasta, then direct, and finally from a PDB file.  If no PDB file is given, it will load the default.
 

@@ -40,7 +40,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <devel/init.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
@@ -669,14 +669,14 @@ my_main( void* )
 	PoseOP native_pose;
 	if ( option[in::file::native].user() ) {
 		native_pose = PoseOP( new Pose() );
-		core::import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
 	//setup starting pose
 	PoseOP pose( new Pose() );
 	Pose &p(*pose);
 	if ( option[ in::file::s ].user() ) {
-		core::import_pose::pose_from_pdb( p, *rsd_set, option[ in::file::s ]().vector()[ 0 ] );
+		core::import_pose::pose_from_file( p, *rsd_set, option[ in::file::s ]().vector()[ 0 ] , core::import_pose::PDB_file);
 	}
 	else if ( option[ mc::re_pdb_prefix ].user() ) {
 		std::ostringstream infn;
@@ -687,7 +687,7 @@ my_main( void* )
 		}
 		infn << ".pdb";
 		std::cout << "Loading " << infn.str() << std::endl;
-		core::import_pose::pose_from_pdb( p, *rsd_set, infn.str());
+		core::import_pose::pose_from_file( p, *rsd_set, infn.str(), core::import_pose::PDB_file);
 	}
 	else {
 		std::cerr << "User did not specify the pdb file!" << std::endl;

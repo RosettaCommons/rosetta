@@ -58,7 +58,7 @@ mmCIFParser::parse(  std::string const &lines, std::string const &pdb_id){
 	{
 		CifParserOP cifParser( new CifParser(cifFile.get()) );
 		cifParser->ParseString( lines, diagnostics);
-		if( !diagnostics.empty() ) {
+		if ( !diagnostics.empty() ) {
 			TR.Error << diagnostics << std::endl;
 		} else {
 			std::vector< std::string> blocks;
@@ -67,7 +67,7 @@ mmCIFParser::parse(  std::string const &lines, std::string const &pdb_id){
 			//the cifFile parser interpets the lines. For whatever reason, it adds
 			//a # to the data_??? block, where ??? is the 3 letter code for the
 			//file
-			if( !cifFile->IsBlockPresent( pdb_id+"#")){
+			if ( !cifFile->IsBlockPresent( pdb_id+"#") ) {
 				TR.Error << pdb_id << " not found in components.cif" << std::endl;
 			} else {
 				Block& block = cifFile->GetBlock( pdb_id+"#");
@@ -92,7 +92,7 @@ mmCIFParser::parse(std::string const &filename){
 		//this assumes that the very first block being passed is the one being used.
 		std::vector< std::string> block_names;
 		cifFile->GetBlockNames( block_names);
-		for( unsigned int ii=0; ii< block_names.size(); ++ii){
+		for ( unsigned int ii=0; ii< block_names.size(); ++ii ) {
 			Block& block = cifFile->GetBlock( block_names[ ii]);
 			molecule = get_molfile_molecule( block);
 			molecule->name( block_names[ ii]);
@@ -106,7 +106,7 @@ sdf::MolFileIOMoleculeOP
 mmCIFParser::get_molfile_molecule(Block& block){
 	sdf::MolFileIOMoleculeOP molecule( new sdf::MolFileIOMolecule());
 	//only proceed if the tables for bonds and atoms are present
-	if( block.IsTablePresent("chem_comp_atom") ){
+	if ( block.IsTablePresent("chem_comp_atom") ) {
 		//get the atom and bond composition table
 		ISTable& atom_comp = block.GetTable("chem_comp_atom");
 
@@ -117,10 +117,10 @@ mmCIFParser::get_molfile_molecule(Block& block){
 
 		//prefer the ideal coordinates, but if not found, use cartesian coordinates
 		std::string xyz_start_type, xyz_end_type;
-		if( atom_comp.IsColumnPresent( "pdbx_model_Cartn_x_ideal") ) {
+		if ( atom_comp.IsColumnPresent( "pdbx_model_Cartn_x_ideal") ) {
 			xyz_start_type = "pdbx_model_Cartn_x_ideal";
 			xyz_end_type = "pdbx_model_Cartn_z_ideal";
-			if( atom_comp( 0, xyz_start_type ) == "?" ) {
+			if ( atom_comp( 0, xyz_start_type ) == "?" ) {
 				// for some entries they're present but undefined - try the model coordinates instead
 				xyz_start_type = "model_Cartn_x";
 				xyz_end_type = "model_Cartn_z";
@@ -129,7 +129,7 @@ mmCIFParser::get_molfile_molecule(Block& block){
 			xyz_start_type = "model_Cartn_x";
 			xyz_end_type = "model_Cartn_z";
 		}
-		if( atom_comp( 0, xyz_end_type ) == "?" ) {
+		if ( atom_comp( 0, xyz_end_type ) == "?" ) {
 			utility_exit_with_message( "No usable coordinates for mmCIF file for " + block.GetName() );
 		}
 
@@ -137,7 +137,7 @@ mmCIFParser::get_molfile_molecule(Block& block){
 		std::string atom_name_type( atom_comp.IsColumnPresent( "atom_id") ? "atom_id" : "pdbx_component_atom_id");
 
 		//start atom block
-		for( unsigned int ii = 0; ii< atom_comp.GetNumRows(); ++ii){
+		for ( unsigned int ii = 0; ii< atom_comp.GetNumRows(); ++ii ) {
 			sdf::MolFileIOAtomOP atom( new sdf::MolFileIOAtom());
 			//atom id is whatever the number we are on +1, because we dont do 0 based index
 			atom->index( utility::string2int( atom_comp(ii, "pdbx_ordinal")));
@@ -162,7 +162,7 @@ mmCIFParser::get_molfile_molecule(Block& block){
 			atom->position( core::Vector(x, y, z));
 
 			std::string charge( atom_comp(ii, "charge"));
-			if( charge == "?"){
+			if ( charge == "?" ) {
 				atom->formal_charge( 0 );
 			} else {
 				atom->formal_charge( utility::string2int( charge ) );
@@ -171,11 +171,11 @@ mmCIFParser::get_molfile_molecule(Block& block){
 			molecule->add_atom( atom);
 		}
 
-		if( block.IsTablePresent( "chem_comp_bond" ) ){
+		if ( block.IsTablePresent( "chem_comp_bond" ) ) {
 			ISTable& bond_comp = block.GetTable("chem_comp_bond");
 
 			//start bond block
-			for( unsigned int ii=0; ii < bond_comp.GetNumRows(); ++ii){
+			for ( unsigned int ii=0; ii < bond_comp.GetNumRows(); ++ii ) {
 				sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond());
 
 				std::string source( bond_comp(ii, "atom_id_1")); //atom 1

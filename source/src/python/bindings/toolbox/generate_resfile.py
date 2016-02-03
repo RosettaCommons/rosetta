@@ -15,7 +15,7 @@
 # adapted from original code by Sid Chaudhury
 
 from rosetta import Pose
-from rosetta import pose_from_pdb
+from rosetta import pose_from_file
 
 # writes a specified resfile for the user, defaults to packing w/ input SC
 def generate_resfile_from_pose( pose , resfilename ,
@@ -98,7 +98,7 @@ def generate_resfile_from_pdb( pdbfilename , resfilename ,
 	    PackRotamersMover
 	    TaskFactory
 	"""
-	p = pose_from_pdb(pdbfilename)
+	p = pose_from_file(pdbfilename)
 	generate_resfile_from_pose(p,resfilename,pack,design,input_sc,freeze,specific)
 
 # this class currently supports NOTHING more than the options above...but that will change! soon?

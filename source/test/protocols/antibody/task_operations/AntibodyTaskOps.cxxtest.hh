@@ -77,8 +77,8 @@ public:
 
 	void setUp(){
 		core_init();
-		core::import_pose::pose_from_pdb(pose_, "protocols/antibody/aho_with_antigen.pdb"); //AHO renumbered pose
-		core::import_pose::pose_from_pdb(pose_chothia_, "protocols/antibody/1bln_AB_chothia.pdb");
+		core::import_pose::pose_from_file(pose_, "protocols/antibody/aho_with_antigen.pdb", core::import_pose::PDB_file); //AHO renumbered pose
+		core::import_pose::pose_from_file(pose_chothia_, "protocols/antibody/1bln_AB_chothia.pdb", core::import_pose::PDB_file);
 
 		//TenA NeighborGraph setup
 		core::scoring::ScoreFunctionOP score = core::scoring::get_score_function();

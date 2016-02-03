@@ -82,13 +82,13 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 	string frl_pdb_name = database + "/antibody_database/pdb" + scs.frl->pdb + "_chothia.pdb";
 	string orientation_pdb_name = database + "/antibody_database/pdb" + scs.orientation->pdb + "_chothia.pdb";
 
-	PoseOP frh = core::import_pose::pose_from_pdb( frh_pdb_name );
-	PoseOP frl = core::import_pose::pose_from_pdb( frl_pdb_name );
+	PoseOP frh = core::import_pose::pose_from_file( frh_pdb_name , core::import_pose::PDB_file);
+	PoseOP frl = core::import_pose::pose_from_file( frl_pdb_name , core::import_pose::PDB_file);
 
 	frh->dump_pdb(prefix + "frh.pdb");
 	frl->dump_pdb(prefix + "frl.pdb");
 
-	core::pose::PoseOP orientation = core::import_pose::pose_from_pdb( orientation_pdb_name );
+	core::pose::PoseOP orientation = core::import_pose::pose_from_file( orientation_pdb_name , core::import_pose::PDB_file);
 	orientation->dump_pdb(prefix + "orientation.pdb");
 
 	AntibodyFramework trimmed_heavy_fr = A.heavy_framework();
@@ -179,7 +179,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		TR << "Attaching CDR loop: " << TR.Bold << g.name << std::endl;
 
 		string pdb_name = database + "/antibody_database/pdb" + g.pdb + "_chothia.pdb";
-		core::pose::PoseOP cdr = core::import_pose::pose_from_pdb(pdb_name);
+		core::pose::PoseOP cdr = core::import_pose::pose_from_file(pdb_name, core::import_pose::PDB_file);
 
 		const int overlap = 2;
 

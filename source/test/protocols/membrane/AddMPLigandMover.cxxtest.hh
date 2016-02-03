@@ -64,7 +64,7 @@ public: // test functions
 
 		// Load in poses from pdb (general case)
 		pose_with_ligand_ = core::pose::PoseOP( new Pose() );
-		pose_from_pdb( *pose_with_ligand_, "protocols/membrane/3PXO_A_tr.pdb" );
+		pose_from_file( *pose_with_ligand_, "protocols/membrane/3PXO_A_tr.pdb" , core::import_pose::PDB_file);
 
 		// Initialize Spans from spanfile
 		std::string spanfile = "protocols/membrane/3PXO_A_tr.span";

@@ -55,8 +55,8 @@ public:
 	void setUp(){
 
 		core_init();
-		core::import_pose::pose_from_pdb(scaffold_pose, "protocols/antibody/2j88.pdb");
-		core::import_pose::pose_from_pdb(piece, "protocols/grafting/2aabL_L1.pdb");
+		core::import_pose::pose_from_file(scaffold_pose, "protocols/antibody/2j88.pdb", core::import_pose::PDB_file);
+		core::import_pose::pose_from_file(piece, "protocols/grafting/2aabL_L1.pdb", core::import_pose::PDB_file);
 
 		starting_residues = scaffold_pose.total_residue();
 		nter_overhang=3;

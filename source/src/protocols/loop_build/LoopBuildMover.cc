@@ -92,8 +92,9 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 
 	core::pose::Pose native_pose;
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb(
-			native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]()
+		core::import_pose::pose_from_file(
+			native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ](),
+			core::import_pose::PDB_file
 		);
 		core::pose::set_ss_from_phipsi( native_pose );
 	} else {

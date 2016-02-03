@@ -33,7 +33,7 @@
 
 
 // Project Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/sequence_comparation/DesignContrast.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -76,7 +76,7 @@ int main( int argc, char * argv [] )
 
   using namespace core;
 	using namespace core::io;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 
   devel::init(argc, argv);
 
@@ -102,8 +102,8 @@ int main( int argc, char * argv [] )
 		pose::Pose single_in_pose, single_out_pose;
 		std::string out_pdb_name;
 		out_pdb_name = out_path + pdb_codes[i] + "_0001.pdb";
-		core::import_pose::pose_from_pdb(single_in_pose, in_pdb_names[i]);
-		core::import_pose::pose_from_pdb(single_out_pose, out_pdb_name);
+		core::import_pose::pose_from_file(single_in_pose, in_pdb_names[i], core::import_pose::PDB_file);
+		core::import_pose::pose_from_file(single_out_pose, out_pdb_name, core::import_pose::PDB_file);
 		dc.setNeighbors(single_in_pose);
 		native_poses.push_back(single_in_pose);
 		decoy_poses.push_back(single_out_pose);

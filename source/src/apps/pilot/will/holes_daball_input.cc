@@ -62,14 +62,14 @@ void test( std::string fname ) {
 
 	using namespace std;
 	using namespace core;
-	using namespace io::pdb;
+	using namespace io;
 	using namespace pose;
 	using namespace scoring;
 	using namespace packing;
 	using namespace basic::options;
 
 	Pose pose;
-	core::import_pose::pose_from_pdb(pose,fname);
+	core::import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
 
 	int hmode = basic::options::option[ OptionKeys::holes::h_mode ](); // default 0
 	PoseBalls pb( pose, hmode );

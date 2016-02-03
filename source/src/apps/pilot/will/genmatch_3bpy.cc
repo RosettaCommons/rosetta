@@ -29,7 +29,7 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -332,8 +332,8 @@ void run() {
 
   core::chemical::ResidueTypeSetCAP  rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose bpy1,bpy2;
-  core::import_pose::pose_from_pdb(bpy1,*rs,"input/py_aa_align_trimer_in.pdb");
-  core::import_pose::pose_from_pdb(bpy2,*rs,"input/py_aa_align_trimer_in.pdb");
+  core::import_pose::pose_from_file(bpy1,*rs,"input/py_aa_align_trimer_in.pdb", core::import_pose::PDB_file);
+  core::import_pose::pose_from_file(bpy2,*rs,"input/py_aa_align_trimer_in.pdb", core::import_pose::PDB_file);
 	for(int i = 1; i <= 2; ++i) {
 		Pose & bpy( i==1 ? bpy1 : bpy2 );
 		core::pose::remove_lower_terminus_type_from_pose_residue(bpy,1);
@@ -347,7 +347,7 @@ void run() {
   for(Size ifile = 1; ifile <= option[in::file::s]().size(); ++ifile) {
     string infile = utility::file_basename(option[in::file::s]()[ifile]);
     Pose init;
-    core::import_pose::pose_from_pdb(init,*rs,option[in::file::s]()[ifile]);
+    core::import_pose::pose_from_file(init,*rs,option[in::file::s]()[ifile], core::import_pose::PDB_file);
 
 
     Size nres = init.n_residue();

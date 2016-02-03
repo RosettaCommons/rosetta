@@ -35,7 +35,7 @@
 #include <devel/init.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <string>
 
@@ -61,7 +61,7 @@ int main( int argc, char * argv [] )
 		// load bound pose from pdb file
 		core::pose::Pose bou_ps;
 		std::string const input_pdb_name( basic::options::start_file() );
-		core::import_pose::pose_from_pdb( bou_ps, input_pdb_name );
+		core::import_pose::pose_from_file( bou_ps, input_pdb_name , core::import_pose::PDB_file);
 
 		// create score function
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();

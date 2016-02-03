@@ -250,7 +250,7 @@ int main( int argc, char * argv [] ) {
     try {
 	using namespace core::chemical;
 	using namespace core::import_pose::pose_stream;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using protocols::loops::Loops;
 	using namespace core::scoring;
 	using namespace basic::options;

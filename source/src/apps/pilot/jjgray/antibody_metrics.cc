@@ -57,7 +57,7 @@ main( int argc, char* argv[] ){
 		//-s read in PDB
 		core::pose::Pose pose;
 		std::string pdbname(basic::options::option[ basic::options::OptionKeys::in::file::s ].value()[1]);
-		core::import_pose::pose_from_pdb( pose, pdbname );
+		core::import_pose::pose_from_file( pose, pdbname , core::import_pose::PDB_file);
 
 		// Build atom subsets for computing SASA
 		AntibodyInfo ab_info = AntibodyInfo(pose);

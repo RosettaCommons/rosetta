@@ -111,7 +111,7 @@ ThreadingJobInputter::ThreadingJobInputter() :
 	if ( option[ in::file::template_pdb ].user() ) {
 		FileList template_pdb_filenames = option[ in::file::template_pdb ]();
 		typedef utility::vector1< pose::PoseOP > PoseOPvec;
-		PoseOPvec poses = core::import_pose::poseOPs_from_pdbs( template_pdb_filenames );
+		PoseOPvec poses = core::import_pose::poseOPs_from_files( template_pdb_filenames , core::import_pose::PDB_file);
 
 		/// put template-pdbs into map --- use filename as key --- this is used to match pdb and alignment
 		for ( PoseOPvec::const_iterator it = poses.begin(); it != poses.end(); ++it ) {

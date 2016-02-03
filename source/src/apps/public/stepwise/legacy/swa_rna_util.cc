@@ -35,8 +35,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/init/init.hh>
-#include <core/io/pdb/pose_io.hh>
-
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -97,7 +96,7 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 // C++ headers
 //#include <cstdlib>
@@ -514,7 +513,7 @@ align_pdbs(){
 	std::string silent_file = "aligned_to_" + get_tag_from_pdb_filename( static_pdb_tag ) + ".out";
 
 	pose::Pose static_pose;
-	import_pose::pose_from_pdb( static_pose, *rsd_set, static_pdb_tag );
+	import_pose::pose_from_file( static_pose, *rsd_set, static_pdb_tag , core::import_pose::PDB_file);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	///By applying the virtual_res, align_pose_general()/setup_suite_atom_id_map() will skip over the virtual_atoms///
@@ -531,7 +530,7 @@ align_pdbs(){
 		std::string const moving_pdb_tag = moving_pdb_tag_list[n];
 
 		pose::Pose moving_pose;
-		import_pose::pose_from_pdb( moving_pose, *rsd_set, moving_pdb_tag );
+		import_pose::pose_from_file( moving_pose, *rsd_set, moving_pdb_tag , core::import_pose::PDB_file);
 
 		align_pose_general( static_pose, static_tag_name, moving_pose, get_tag_from_pdb_filename( moving_pdb_tag ), alignment_res_pair_list, align_base_only );
 
@@ -709,7 +708,7 @@ import_and_dump_pdb(){
 		std::string const pdb_file = pdb_file_list[pdb_ID];
 
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 		std::string const output_pdb_file = "rosetta_" + pdb_file;
 
@@ -751,7 +750,7 @@ o2prime_packer(){
 		std::string pose_name = pdb_tags_from_disk[n];
 		std::cout << pose_name << std::endl;
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pose_name );
+		import_pose::pose_from_file( pose, *rsd_set, pose_name , core::import_pose::PDB_file);
 
 		if ( option[reset_o2prime_torsion]() ) {
 			for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
@@ -837,7 +836,7 @@ mutate_residues_wrapper()
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 	protocols::farna::make_phosphate_nomenclature_matches_mini( pose );
 
 	// pose::Pose start_pose= pose; //Hard copy
@@ -892,7 +891,7 @@ slice_ellipsoid_envelope(){
 	std::cout << "importing " << pdb_file << std::endl;
 	pose::Pose pose;
 
-	import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 
 	setup_simple_fold_tree( pose );
@@ -1150,7 +1149,7 @@ slice_sample_res_and_surrounding(){
 	std::cout << "importing " << pdb_file << std::endl;
 	pose::Pose pose;
 
-	import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 
 	setup_simple_fold_tree( pose );
@@ -1365,7 +1364,7 @@ pdb_to_silent_file(){
 
 		pose::Pose pose;
 
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 		protocols::farna::make_phosphate_nomenclature_matches_mini( pose );
 

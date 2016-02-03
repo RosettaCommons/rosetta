@@ -34,7 +34,7 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/exit.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -108,7 +108,7 @@ int main( int argc, char * argv [] )
 
 	pose::Pose pose;
 
-	core::import_pose::pose_from_pdb( pose, pdb );
+	core::import_pose::pose_from_file( pose, pdb , core::import_pose::PDB_file);
 	pose.update_residue_neighbors();
 
 //	string res_name = pose.residue(target).name3();

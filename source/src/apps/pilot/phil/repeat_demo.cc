@@ -170,7 +170,7 @@ rebuild_test()
 	string const filename( start_file() );
 	Pose pose;
 
-	import_pose::pose_from_pdb( pose, filename );
+	import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 
 	pose.dump_pdb( "start.pdb" );
 	Pose const pdb_pose( pose );

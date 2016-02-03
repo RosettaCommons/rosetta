@@ -69,7 +69,7 @@ public:
 		// Test coordinate transformation applied to individual residues is correct
 		// Case: Glycophorin A
 		std::string pdbfile = "protocols/membrane/1AFO_AB_before_out.pdb";
-		pose_ = core::import_pose::pose_from_pdb( pdbfile );
+		pose_ = core::import_pose::pose_from_file( pdbfile , core::import_pose::PDB_file);
 		Vector m_center( 0, 0, 0 );
 		Vector m_normal( 0, 0, 1 );
 		AddMembraneMoverOP add_memb( new AddMembraneMover( m_center, m_normal, "protocols/membrane/1AFO_AB.span", 0 ) );
@@ -79,7 +79,7 @@ public:
 		// Case: TM domain of the M2 proton channel (single helix)
 
 		m2_pose_ = core::pose::PoseOP( new Pose() );
-		core::import_pose::pose_from_pdb( *m2_pose_, "protocols/membrane/1mp6.pdb" );
+		core::import_pose::pose_from_file( *m2_pose_, "protocols/membrane/1mp6.pdb" , core::import_pose::PDB_file);
 		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
 		add_memb1->apply( *m2_pose_ );
 

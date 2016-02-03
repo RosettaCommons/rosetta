@@ -63,7 +63,7 @@ void simple_rotamer_recovery(){
 	// if single PDB
 	if ( option[OptionKeys::in::file::s].user() ) {
 		std::string filename = option[ OptionKeys::in::file::s ].value_string();
-		core::import_pose::pose_from_pdb( pose, filename );
+		core::import_pose::pose_from_file( pose, filename , core::import_pose::PDB_file);
 		poses.push_back( pose );
 		filenames.push_back( filename );
 	} else if ( option[OptionKeys::in::file::l].user() ) {
@@ -75,7 +75,7 @@ void simple_rotamer_recovery(){
 		// add pose to vector of poses
 		for ( core::Size i = 1; i <= filenames.size(); ++i ) {
 			Pose pdb;
-			core::import_pose::pose_from_pdb( pdb, filenames[ i ] );
+			core::import_pose::pose_from_file( pdb, filenames[ i ] , core::import_pose::PDB_file);
 			poses.push_back( pdb );
 		}
 	} else {
@@ -85,7 +85,7 @@ void simple_rotamer_recovery(){
 	// read in native
 	if ( option[ OptionKeys::in::file::native ].user() ) {
 		native_file = option[ OptionKeys::in::file::native ].value_string();
-		core::import_pose::pose_from_pdb( native, native_file );
+		core::import_pose::pose_from_file( native, native_file , core::import_pose::PDB_file);
 	} else {
 		utility_exit_with_message( "Please provide a native PDB file with the option -in:file:native. Quitting." );
 	}

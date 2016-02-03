@@ -286,8 +286,8 @@ void run(std::string fname) {
   make_pose_from_sequence(ile,"I",core::chemical::CENTROID   ,false);
   if(ile.residue(1).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(cenp,1);
   if(ile.residue(1).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(cenp,1);
-  pose_from_pdb(cenp,*crs,fname);
-  pose_from_pdb(natp,*frs,fname);
+  pose_from_file(cenp,*crs,fname, core::import_pose::PDB_file);
+  pose_from_file(natp,*frs,fname, core::import_pose::PDB_file);
   Size nres=cenp.n_residue();
   for(Size ir=1; ir<=nres; ++ir) {
     if(cenp.residue(ir).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(cenp,ir);

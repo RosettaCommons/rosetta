@@ -386,7 +386,7 @@ void ZnCoordinationScorer::set_reference_pdb(
 )
 {
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, start_pdb );
+	core::import_pose::pose_from_file( pose, start_pdb , core::import_pose::PDB_file);
 	reference_frame_ = HTReal( pose.xyz( asymm_atids_[1] ),pose.xyz( asymm_atids_[2] ),pose.xyz( asymm_atids_[3] ) );
 	inv_reference_frame_ = reference_frame_.inverse();
 }
@@ -418,7 +418,7 @@ void ZnCoordinationScorer::add_match_from_file(
 	name_map( "ZNX" ); */ // Unused variable causes warning.
 
 	core::pose::Pose match_pose;
-	core::import_pose::pose_from_pdb( match_pose, match_file_name );
+	core::import_pose::pose_from_file( match_pose, match_file_name , core::import_pose::PDB_file);
 
 	/// Input validation.
 	if ( match_pose.total_residue() != 3 || match_pose.residue(3).name() != "ZNX" ) {

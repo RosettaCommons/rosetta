@@ -28,7 +28,7 @@
 #include <devel/init.hh>
 #include <devel/init.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -402,7 +402,7 @@ PoseWrap make_pose(Size Nprev, Size Npost) {
 	pw.nsub = 3;
 	pw.nres = 1 + Nprev + Npost;
 
-	core::import_pose::pose_from_pdb(pw.pose,options::option[options::OptionKeys::in::file::s]()[1]);
+	core::import_pose::pose_from_file(pw.pose,options::option[options::OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
 
 	core::pose::remove_lower_terminus_type_from_pose_residue(pw.pose,1);
 	core::pose::remove_upper_terminus_type_from_pose_residue(pw.pose,pw.pose.n_residue());

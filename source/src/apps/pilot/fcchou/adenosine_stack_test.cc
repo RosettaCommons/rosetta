@@ -158,7 +158,7 @@ methane_pair_score_test()
 	//         -extra_res_fa CH4.params -s two_methane.pdb
 	pose::Pose pose;
 	std::string infile  = option[ in ::file::s ][1];
-	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 	rotate_into_nucleobase_frame( pose );
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();

@@ -35,7 +35,7 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -123,7 +123,7 @@ using utility::pointer::access_ptr;
 using utility::pointer::ReferenceCount;
 using utility::vector1;
 using std::endl;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using ObjexxFCL::lead_zero_string_of;
 using ObjexxFCL::string_of;
 
@@ -321,7 +321,7 @@ int main(int argc, char *argv[]) {
     string fn = option[in::file::s]()[ifn];
     Pose pnat;
     TR << "searching " << fn << std::endl;
-    core::import_pose::pose_from_pdb(pnat,fn);
+    core::import_pose::pose_from_file(pnat,fn, core::import_pose::PDB_file);
     trans_pose(pnat,-center_of_geom(pnat,1,pnat.n_residue()));
     core::scoring::dssp::Dssp dssp(pnat);
     dssp.insert_ss_into_pose(pnat);

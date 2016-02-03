@@ -114,7 +114,7 @@ void RmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 		}
 		for ( Size ct = 1; ct <= rmsd_target.size(); ct ++ ) {
 			pose::PoseOP rmsd_pose( new pose::Pose );
-			core::import_pose::pose_from_pdb( *rmsd_pose, rmsd_target[ ct ] );
+			core::import_pose::pose_from_file( *rmsd_pose, rmsd_target[ ct ] , core::import_pose::PDB_file);
 			std::string tag( ObjexxFCL::string_of( ct ) );
 			if ( rmsd_col_name.size() >= ct ) tag = rmsd_col_name[ ct ];
 			eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( rmsd_pose, tag ) ) );

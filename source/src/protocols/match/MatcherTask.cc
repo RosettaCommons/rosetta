@@ -1049,7 +1049,7 @@ MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 
 	core::pose::PDBInfoCOP pose_pdbinfo = upstream_pose_->pdb_info();
 
-	core::pose::Remarks const & pose_remarks = pose_pdbinfo->remarks();
+	core::io::Remarks const & pose_remarks = pose_pdbinfo->remarks();
 
 	bool change_build_point_lists( false );
 	bool switch_to_different_build_points_required( share_build_points_for_geomcsts_ );
@@ -1058,7 +1058,7 @@ MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 	Size n_geometric_constraints( enz_input_data_->mcfi_lists_size() );
 
 	// Loop over all the remarks in pdb file
-	for ( std::vector< core::pose::RemarkInfo >::const_iterator remark_it = pose_remarks.begin(), end = pose_remarks.end(); remark_it != end; ++remark_it ) {
+	for ( std::vector< core::io::RemarkInfo >::const_iterator remark_it = pose_remarks.begin(), end = pose_remarks.end(); remark_it != end; ++remark_it ) {
 
 		std::string resA_type(""), resB_type("");
 		int resA_num(0), resB_num(0);

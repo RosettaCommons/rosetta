@@ -10,67 +10,69 @@
 /// @file   core/io/pdb/Field.hh
 /// @brief Each line of a PDB file is a Record which is divided into Fields
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
+/// @author Labonte <JWLabonte@jhu.edu>
 
-#ifndef INCLUDED_core_io_pdb_Field_hh
-#define INCLUDED_core_io_pdb_Field_hh
 
+#ifndef INCLUDED_core_io_pdb_Field_HH
+#define INCLUDED_core_io_pdb_Field_HH
 
 // Unit headers
 #include <core/io/pdb/Field.fwd.hh>
+#include <core/io/pdb/PDBDataType.hh>
+
+// Project header
 #include <core/types.hh>
 
-// Utility headers
-#include <utility/Show.hh>
-
-// c++ headers
+// C++ headers
 #include <iostream>
 #include <string>
+
 
 namespace core {
 namespace io {
 namespace pdb {
 
-
 /// @brief Data type Class to represent one field in PDB file.
-class Field : public utility::Show {
+class Field {
 public:
 
 	Field();
-	Field(Size s, Size e);
-	Field(std::string type_, Size s, Size e);
+	Field( core::uint start_in, core::uint end_in, PDBDataType data_type_in );
 
-	/// @brief read field value from given string.
-	void getValueFrom(std::string source);
+	/// @brief Read field value from given string and set.
+	void set_value_from_string( std::string source );
 
 	/// This class is intended to be just 'data' type class
 	/// no need to make it private.
 public:
+	/// @brief String value of field
+	std::string value;
 
-	/// @brief string value of field, type of the field.
-	std::string type, value;
+	/// @brief PDB-defined data type for this field
+	PDBDataType data_type;
 
 	/// @brief beginning position in line, ending position in line
-	Size start, end;
-
-	/// @brief Debug output.
-	friend
-	std::ostream&
-	operator <<(std::ostream &os, Field const & F);
+	core::uint start, end;
 
 	/// @brief collection builder
-	static RecordRef & getRecordCollection();
-
-private:
-
+	//static RecordRef & getRecordCollection();
 };
 
+// Helper functions
+/// @brief Get the PDBDataType value from the corresponding string.
+PDBDataType get_pdb_data_type_from_string( std::string const & type );
 
-/// @brief Debug printing, serialazing to Tracer like object.
-std::ostream&
-operator <<(std::ostream &os, Record const & R);
+/// @brief Get the string from the corresponding PDBDataType value.
+std::string get_pdb_data_type_from_string( PDBDataType type );
 
-} // pdb
-} // io
-} // core
+/// @brief Debug output.
+std::ostream & operator<<(std::ostream & os, Field const & F );
 
-#endif // INCLUDED_core_io_pdb_Field_hh
+/// @brief Debug printing, serializing to Tracer like object.
+std::ostream & operator<<( std::ostream & os, Record const & R );
+
+}  // pdb
+}  // io
+}  // core
+
+#endif // INCLUDED_core_io_pdb_Field_HH

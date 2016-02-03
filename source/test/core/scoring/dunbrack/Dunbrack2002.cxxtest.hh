@@ -99,7 +99,7 @@ public:
 		using namespace pack::dunbrack;
 
 		pose::Pose pose( create_test_in_pdb_pose() );
-		//core::import_pose::pose_from_pdb( pose, "core/scoring/test_in.pdb" );
+		//core::import_pose::pose_from_file( pose, "core/scoring/test_in.pdb" , core::import_pose::PDB_file);
 
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 		// just use standard task no command-line parsing to make test robust against commandline changes
@@ -204,7 +204,7 @@ public:
 		test::UTracer UT("core/scoring/dunbrack/best_rotamer_energy.u"); // the name "UT" matters -- it goes with the UTRACE macro
 
 		pose::Pose pose(create_test_in_pdb_pose() );
-		//core::import_pose::pose_from_pdb( pose, "core/scoring/test_in.pdb" );
+		//core::import_pose::pose_from_file( pose, "core/scoring/test_in.pdb" , core::import_pose::PDB_file);
 
 		for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
 			Residue const & residue( pose.residue( pos ) );

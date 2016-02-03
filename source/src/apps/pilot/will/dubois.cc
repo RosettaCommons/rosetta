@@ -25,7 +25,7 @@
 #include <core/fragment/FragSet.hh>
 #include <devel/init.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -229,7 +229,7 @@ core::pose::Pose make_pose(std::string seq) {
 	Size nres = seq.size();
 	ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb(pose,"input/nipphgly.pdb",residue_set);
+	core::import_pose::pose_from_file(pose,"input/nipphgly.pdb",residue_set, core::import_pose::PDB_file);
 	core::pose::remove_upper_terminus_type_from_pose_residue(pose,2);
 	core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_NTERM",2);
 	pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::PHI  ),0);

@@ -42,7 +42,7 @@ public:
 			lib_instance_ = new Sparta::SpartaLib;
 			std::string const cs_file ( "protocols/sparta/data_16988.tab" );
 			std::string const pdb_file( "protocols/sparta/2kywA.pdb" );
-			core::import_pose::pose_from_pdb( test_pose_, pdb_file );
+			core::import_pose::pose_from_file( test_pose_, pdb_file , core::import_pose::PDB_file);
 			lib_instance_->setup_for_scoring( test_pose_ );
 			lib_instance_->getResInfo( false );
 		}
@@ -403,7 +403,7 @@ public:
 		using std::string;
 		using utility::vector1;
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose,pdb_file);
+		core::import_pose::pose_from_file(pose,pdb_file, core::import_pose::PDB_file);
 		Sparta sparta(cs_file);
 
 		Real const sparta_score(sparta.score_pose(pose));
@@ -446,7 +446,7 @@ public:
 		string const cs_file ( "protocols/sparta/data_17280.tab" );
 		string const pdb_file( "protocols/sparta/solution_0022372568.ir_solution.pdb" );
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose,pdb_file);
+		core::import_pose::pose_from_file(pose,pdb_file, core::import_pose::PDB_file);
 		Sparta sparta(cs_file);
 
 		Real const sparta_score(sparta.score_pose(pose));

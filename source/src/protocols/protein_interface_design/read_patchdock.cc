@@ -273,14 +273,14 @@ PatchdockReader::read_poses( core::pose::Pose & input_pose, core::pose::Pose & n
 		TR<<"Reading pose from disk"<<std::endl;
 		if ( option[ in::file::centroid_input ].user() ) {
 			core::import_pose::centroid_pose_from_pdb( input_pose, input_tag );
-			core::import_pose::centroid_pose_from_pdb( native_pose,  native_tag );
+			core::import_pose::centroid_pose_from_pdb( native_pose,  native_tag);
 		} else {
 			core::chemical::ResidueTypeSetCOP rsd_set(
 				core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" )
 			);
 
-			core::import_pose::pose_from_pdb( input_pose, *rsd_set, input_tag );
-			core::import_pose::pose_from_pdb( native_pose, *rsd_set, native_tag );
+			core::import_pose::pose_from_file( input_pose, *rsd_set, input_tag , core::import_pose::PDB_file);
+			core::import_pose::pose_from_file( native_pose, *rsd_set, native_tag , core::import_pose::PDB_file);
 		}//else
 		if ( option[ in::file::fold_tree ].user() ) {
 			std::string const fold_tree_fname( option[ in::file::fold_tree ]() );

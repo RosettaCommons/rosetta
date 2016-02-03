@@ -145,11 +145,11 @@ InterfaceScoreCalculator::parse_my_tag(
 		std::string natives_str = utility::join(natives_strs, " ");
 
 		native_ = core::pose::PoseOP( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*native_, natives_str);
+		core::import_pose::pose_from_file(*native_, natives_str, core::import_pose::PDB_file);
 	} else if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 		std::string const & native_str= basic::options::option[ basic::options::OptionKeys::in::file::native ]().name();
 		native_ = core::pose::PoseOP( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*native_, native_str);
+		core::import_pose::pose_from_file(*native_, native_str, core::import_pose::PDB_file);
 	}
 	if ( tag->hasOption("normalize") ) {
 		std::string const & normalization_mode = tag->getOption<std::string>("normalize");
@@ -168,7 +168,7 @@ void InterfaceScoreCalculator::apply(core::pose::Pose & pose) {
 	if ( string_string_pairs.find("native_path") != string_string_pairs.end() ) {
 		std::string native_string(string_string_pairs.find("native_path")->second);
 		native_ = core::pose::PoseOP( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*native_,native_string);
+		core::import_pose::pose_from_file(*native_,native_string, core::import_pose::PDB_file);
 	}
 	add_scores_to_job(pose, job);
 	append_ligand_docking_scores(pose, job);

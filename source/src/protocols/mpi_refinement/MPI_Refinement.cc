@@ -73,7 +73,6 @@
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <utility/vector1.hh>
 
-using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
 namespace protocols {
@@ -120,11 +119,11 @@ MPI_Refinement::set_defaults(){
 	native_given_ = false;
 	if ( option[ in::file::native ].user() ) {
 		native_given_ = true;
-		core::import_pose::pose_from_pdb( native_pose_, *rsd_set, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose_, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
 	// initial "reference" structure should be provided as the first at -in:file:s
-	core::import_pose::pose_from_pdb( pose0_, *rsd_set, option[ in::file::s ](1) );
+	core::import_pose::pose_from_file( pose0_, *rsd_set, option[ in::file::s ](1) , core::import_pose::PDB_file);
 
 	fobj_ = MultiObjectiveOP( new MultiObjective() );
 
@@ -220,7 +219,7 @@ MPI_Refinement::load_structures_from_cmdline_into_library(
 		ss->add_energy( "iter", 0 );     // round is the number of consecutive loophashes this structure has gone through
 		ss->add_energy( "expire", 0 );    // how many times has this structure been retired to the temporor ? >1 means it's been sent out again
 		//if(  ss->get_string_value("usid") == "" ){
-		//  ss->add_string_value( "usid", "_" + string_of(count)); // A unique structure id (usid) that will identify the structure until it is modified.
+		//  ss->add_string_value( "usid", "_" + ObjexxFCL::string_of(count)); // A unique structure id (usid) that will identify the structure until it is modified.
 		//}
 		//ss->add_string_value( "husid", ss->get_string_value("usid") ); // history of usids
 
@@ -249,8 +248,8 @@ void
 MPI_Refinement::save_state(std::string prefix ){
 	start_timer( TIMING_IO_WRITE );
 	long starttime = time(NULL);
-	write_queues_to_file( prefix + "." + string_of(mpi_rank()) );
-	library_central_.serialize_to_file( prefix + "." + string_of(mpi_rank())+ ".lib.library_central" );
+	write_queues_to_file( prefix + "." + ObjexxFCL::string_of(mpi_rank()) );
+	library_central_.serialize_to_file( prefix + "." + ObjexxFCL::string_of(mpi_rank())+ ".lib.library_central" );
 	long endtime = time(NULL);
 	TR << "Saved state: " << endtime - starttime << "s " << inbound().size() << " + " << outbound().size() << " + " <<  library_central_.size() << " + " << ( inbound().size() + outbound().size() + library_central_.size() ) << std::endl;
 	start_timer( TIMING_CPU );
@@ -270,9 +269,9 @@ MPI_Refinement::load_state(std::string prefix ){
 	start_timer( TIMING_IO_READ );
 	inbound().clear();
 	outbound().clear();
-	read_queues_from_file( prefix + "." + string_of(mpi_rank()) );
+	read_queues_from_file( prefix + "." + ObjexxFCL::string_of(mpi_rank()) );
 	library_central_.clear();
-	library_central_.read_from_file( prefix +  "." + string_of(mpi_rank()) + ".lib.library_central" );
+	library_central_.read_from_file( prefix +  "." + ObjexxFCL::string_of(mpi_rank()) + ".lib.library_central" );
 	start_timer( TIMING_CPU );
 }
 
@@ -605,7 +604,7 @@ MPI_Refinement::dump_structures( const SilentStructStore &new_structs,
 {
 	start_timer( TIMING_IO_WRITE  );
 	core::io::silent::SilentFileData sfd;
-	std::string filename = jobname_ + "." + prefix + string_of( mpi_rank() ) + ".out";
+	std::string filename = jobname_ + "." + prefix + ObjexxFCL::string_of( mpi_rank() ) + ".out";
 
 	core::Size istr( 0 );
 	for ( SilentStructStore::const_iterator it = new_structs.begin();
@@ -808,22 +807,22 @@ MPI_Refinement::format_silent_struct( const core::io::silent::SilentStruct &ss )
 	//sstream << "["  <<I(4, ss.get_energy("ssid") )
 	//    << " "  << std::setw(3) << ss.get_energy("usid");
 
-	sstream << "[" << A(15, ss.decoy_tag() );
+	sstream << "[" << ObjexxFCL::format::A(15, ss.decoy_tag() );
 
 	sstream << fobj_->formatted_objs_values( ss );
 
-	sstream << " | " << I(3, ss.get_energy("frontier") )
-		//<< " | " << I(3, ss.get_energy("iter") )
-		<< " | " << I(3, ss.get_energy("round") )
-		//<< " |"    << I(5,   time(NULL) - ss.get_energy("ltime") )
-		//<< " |" << I(3, ss.get_energy("master") )
-		<< " | " << I(2, ss.get_energy("nuse"));
+	sstream << " | " << ObjexxFCL::format::I(3, ss.get_energy("frontier") )
+		//<< " | " << ObjexxFCL::format::I(3, ss.get_energy("iter") )
+		<< " | " << ObjexxFCL::format::I(3, ss.get_energy("round") )
+		//<< " |"    << ObjexxFCL::format::I(5,   time(NULL) - ss.get_energy("ltime") )
+		//<< " |" << ObjexxFCL::format::I(3, ss.get_energy("master") )
+		<< " | " << ObjexxFCL::format::I(2, ss.get_energy("nuse"));
 
 	if ( native_given_ ) {
-		sstream << " | " << F(6,2, ss.get_energy("gdttm"))
-			<< " | " << F(6,2, ss.get_energy("gdtha"));
+		sstream << " | " << ObjexxFCL::format::F(6,2, ss.get_energy("gdttm"))
+			<< " | " << ObjexxFCL::format::F(6,2, ss.get_energy("gdtha"));
 	}
-	sstream  << " | " << F(6,2, ss.get_energy("gdtha_i"));
+	sstream  << " | " << ObjexxFCL::format::F(6,2, ss.get_energy("gdtha_i"));
 
 	sstream << " ]";
 	//sstream << "  " << ss.get_string_value("added");

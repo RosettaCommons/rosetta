@@ -67,9 +67,9 @@ public:
 	{
 		//set up our three poses
 		using namespace basic::options::OptionKeys::AnchoredPDBCreator;
-		core::import_pose::pose_from_pdb( scaffold, basic::options::option[ scaffold_pdb ].value() );
-		core::import_pose::pose_from_pdb( anchor, basic::options::option[ anchor_pdb ].value() );
-		core::import_pose::pose_from_pdb( target, basic::options::option[ target_pdb ].value() );
+		core::import_pose::pose_from_file( scaffold, basic::options::option[ scaffold_pdb ].value() , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( anchor, basic::options::option[ anchor_pdb ].value() , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( target, basic::options::option[ target_pdb ].value() , core::import_pose::PDB_file);
 
 		read_in_insert_loop_info();
 	}

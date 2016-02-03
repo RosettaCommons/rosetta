@@ -24,7 +24,7 @@ main( int argc, char * argv [] ) {
 		using namespace basic::options::OptionKeys;
 		devel::init(argc, argv);
 
-		utility::vector1<core::pose::PoseOP> models = core::import_pose::poseOPs_from_pdbs(option[OptionKeys::in::file::s]());
+		utility::vector1<core::pose::PoseOP> models = core::import_pose::poseOPs_from_files(option[OptionKeys::in::file::s](), core::import_pose::PDB_file);
 		core::Real mapreso = option[OptionKeys::edensity::mapreso]();
 		core::Real gridspacing = option[OptionKeys::edensity::grid_spacing]();
 		core::scoring::electron_density::ElectronDensity edens( models, mapreso, gridspacing );

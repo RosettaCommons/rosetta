@@ -73,7 +73,7 @@ void dna_motif_matcher()
 
     // Create the pose object from pdb file
     core::pose::PoseOP pose( new core::pose::Pose );
-    core::import_pose::pose_from_pdb( *pose, pdb_name );
+    core::import_pose::pose_from_file( *pose, pdb_name , core::import_pose::PDB_file);
     core::scoring::dna::set_base_partner( *pose );//Copied from sthyme's code. She said that she added this for bug fixing. This function adds to the pose a BasePartner object which is a vector of length #residues that records which base is paired to which.
     
     // Get protein positions

@@ -292,11 +292,11 @@ FoldTreeHybridize::init() {
 	// native
 	if ( option[ in::file::native ].user() ) {
 		native_ = core::pose::PoseOP( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( *native_, option[ in::file::native ]() , core::import_pose::PDB_file);
 	} else if ( option[ evaluation::align_rmsd_target ].user() ) {
 		native_ = core::pose::PoseOP( new core::pose::Pose );
 		utility::vector1< std::string > const & align_rmsd_target( option[ evaluation::align_rmsd_target ]() );
-		core::import_pose::pose_from_pdb( *native_, align_rmsd_target[1] ); // just use the first one for now
+		core::import_pose::pose_from_file( *native_, align_rmsd_target[1] , core::import_pose::PDB_file); // just use the first one for now
 	}
 }
 

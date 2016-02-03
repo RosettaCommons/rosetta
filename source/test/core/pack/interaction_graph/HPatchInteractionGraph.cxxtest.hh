@@ -131,7 +131,7 @@ public:
 		// since this is a test suite, we don't want to read in PDB files from the command line.  just hardcode the tests to use
 		// a predefined test PDB file
 		TR << "Reading in pose..." << std::endl;
-		core::import_pose::pose_from_pdb( pose, "core/pack/1l2y_renameH.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pack/1l2y_renameH.pdb" , core::import_pose::PDB_file);
 
 		// --- PackerTask ---
 		// create a custom PackerTask, no extra chi, include current, using the surface score and setting the weight

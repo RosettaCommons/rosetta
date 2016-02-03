@@ -37,7 +37,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/after_opts.hh>
@@ -269,11 +269,11 @@ main( int argc, char * argv [] )
 				utility::vector1< std::string > pdbnames = basic::options::start_files() ;
 				for ( utility::vector1<std::string>::iterator filename( pdbnames.begin() );
 						filename != pdbnames.end(); ++filename ) {
-					core::import_pose::pose_from_pdb( pose, *filename );
+					core::import_pose::pose_from_file( pose, *filename , core::import_pose::PDB_file);
 					benchmark_contacts( pose, scorefxn );
 				}
 			} else if ( option[in::file::s].user() ) {
-				core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+				core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
 				benchmark_contacts( pose, scorefxn );
 
 			} else {
@@ -331,7 +331,7 @@ main( int argc, char * argv [] )
 		std::string target_fname;
 		if ( option[hotspot::target].user() ) {
 			target_fname = option[ hotspot::target ]();
-			core::import_pose::pose_from_pdb( pose, target_fname );
+			core::import_pose::pose_from_file( pose, target_fname , core::import_pose::PDB_file);
 		} else {
 			utility_exit_with_message("You must specify a target to hash using -target <filename>");
 		}

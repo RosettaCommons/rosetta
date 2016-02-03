@@ -267,7 +267,7 @@ void MPDockingSetupMover::read_poses() {
 
 	// put poses into private vector
 	for ( Size i = 1; i <= pdbs.size(); ++i ) {
-		PoseOP pose = core::import_pose::pose_from_pdb( pdbs[i] );
+		PoseOP pose = core::import_pose::pose_from_file( pdbs[i] , core::import_pose::PDB_file);
 		poses_.push_back( pose );
 	}
 

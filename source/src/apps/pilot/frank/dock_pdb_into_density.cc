@@ -128,7 +128,7 @@ try {
 
 	if( option[ in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]().name() );
+		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
 		dock->setNative( native_pose );
 	}
 

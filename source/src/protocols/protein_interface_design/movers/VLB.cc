@@ -190,7 +190,7 @@ VLB::parse_my_tag(
 			string const pose_fname( tag->getOption< std::string >( "pdb", "" ) );
 			runtime_assert( pose_fname != "" );
 			pose::Pose connect_pose;
-			core::import_pose::pose_from_pdb( connect_pose, pose_fname );
+			core::import_pose::pose_from_file( connect_pose, pose_fname , core::import_pose::PDB_file);
 			instruction = BuildInstructionOP( new ConnectRight( left, right, connect_pose ) );
 		}
 		if ( tag->getName() == "GrowLeft" ) {
@@ -251,7 +251,7 @@ VLB::parse_my_tag(
 
 			runtime_assert( pose_fname != "" );
 			pose::Pose insert_pose;
-			core::import_pose::pose_from_pdb( insert_pose, pose_fname );
+			core::import_pose::pose_from_file( insert_pose, pose_fname , core::import_pose::PDB_file);
 
 			string const side( tag->getOption< std::string >( "side", "" ) );
 			SegmentInsertConnectionScheme::Enum connect_side;
@@ -292,7 +292,7 @@ VLB::parse_my_tag(
 			string const pose_fname( tag->getOption< std::string >( "pdb", "" ) );
 			runtime_assert( pose_fname != "" );
 			pose::Pose swap_pose;
-			core::import_pose::pose_from_pdb( swap_pose, pose_fname );
+			core::import_pose::pose_from_file( swap_pose, pose_fname , core::import_pose::PDB_file);
 
 			core::kinematics::MoveMap movemap; // empty = place jump anywhere
 			SegmentSwap( ival, movemap, swap_pose );

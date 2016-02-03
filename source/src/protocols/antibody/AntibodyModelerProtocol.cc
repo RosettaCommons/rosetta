@@ -28,7 +28,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
@@ -257,7 +257,7 @@ void AntibodyModelerProtocol::init_from_options() {
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb( *native_pose, option[ OptionKeys::in::file::native ]() );
+		core::import_pose::pose_from_file( *native_pose, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 		set_native_pose( native_pose );
 	} else {
 		set_native_pose(NULL);

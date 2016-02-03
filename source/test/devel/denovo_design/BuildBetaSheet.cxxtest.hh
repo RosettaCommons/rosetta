@@ -76,7 +76,7 @@ public:
 		scorefxn = core::scoring::get_score_function( true );
 
 		std::string const pdb_file( "devel/denovo_design/test_input.pdb" );
-		core::import_pose::pose_from_pdb( input_pose, pdb_file );
+		core::import_pose::pose_from_file( input_pose, pdb_file , core::import_pose::PDB_file);
 
 		core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( input_pose ) );
 		task->initialize_from_command_line();

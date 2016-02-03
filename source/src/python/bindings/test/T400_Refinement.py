@@ -21,8 +21,8 @@ print 'Refinement ----------------------------------------------'
 kT=1.0
 n_moves=10
 
-pose = pose_from_pdb("../test/data/test_fragments.pdb")
-pose_frag = pose_from_pdb("../test/data/test_fragments.pdb")
+pose = pose_from_file("../test/data/test_fragments.pdb")
+pose_frag = pose_from_file("../test/data/test_fragments.pdb")
 
 
 print 'setting up a move map'

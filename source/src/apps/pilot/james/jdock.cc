@@ -147,7 +147,7 @@ main( int argc, char * argv [] ) {
 		devel::init(argc, argv);
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose, option[ in::file::s ]()[1]);
+		core::import_pose::pose_from_file(pose, option[ in::file::s ]()[1], core::import_pose::PDB_file);
 		core::pose::Pose const orig_pose(pose);
 
 		core::scoring::ScoreFunctionOP scorefxn( core::scoring::get_score_function() );

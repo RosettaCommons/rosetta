@@ -21,7 +21,7 @@
 #include <protocols/simple_moves/MinMover.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -56,7 +56,7 @@ using utility::vector1;
 using ObjexxFCL::string_of;
 using ObjexxFCL::lead_zero_string_of;
 using numeric::min;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using basic::options::option;
 
 typedef numeric::xyzVector<Real> Vec;
@@ -86,7 +86,7 @@ void run() {
 	for(Size ifile = 1; ifile <= infiles.size(); ifile++) {
 		string infile = infiles[ifile];
 		Pose pose;
-		pose_from_pdb(pose,infile);
+		pose_from_file(pose,infile, core::import_pose::PDB_file);
 
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 		movemap->set_chi(true);

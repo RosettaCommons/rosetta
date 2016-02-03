@@ -122,7 +122,7 @@ ligand_dock_main_jd1()
 	core::pose::PoseOP rms_native_pose;
 	if ( option[ in::file::native ].user() ) {
 		rms_native_pose = core::pose::PoseOP( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb( *rms_native_pose, option[ in::file::native ]().name() );
+		core::import_pose::pose_from_file( *rms_native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
 	}
 
 	protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraint_io = NULL;
@@ -151,7 +151,7 @@ ligand_dock_main_jd1()
 		if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
 			input_pose = core::pose::PoseOP( new core::pose::Pose() );
 			if ( use_silent_in ) atdiff->read_pose( curr_job->input_tag(), *input_pose );
-			else core::import_pose::pose_from_pdb( *input_pose, curr_job->input_tag() );
+			else core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 
 			//if constraints are requested
 			if ( option[basic::options::OptionKeys::enzdes::cstfile].user() ) {

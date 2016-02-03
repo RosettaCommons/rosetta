@@ -1,7 +1,7 @@
 using namespace basic::options;
 using core::id::AtomID;
 using core::id::DOF_ID;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::kinematics::FoldTree;
 using core::pose::Pose;
 using core::pose::PoseAP;

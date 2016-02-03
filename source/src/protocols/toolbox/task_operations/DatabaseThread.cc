@@ -161,7 +161,7 @@ DatabaseThread::parse_tag(TagCOP tag, DataMap &)
 	target_sequence( tag->getOption< std::string >( "target_sequence","" ) );
 	template_file( tag->getOption< std::string >( "template_file") );
 	template_pose_ = core::pose::PoseOP( new core::pose::Pose );
-	core::import_pose::pose_from_pdb( *template_pose_, template_file_ );
+	core::import_pose::pose_from_file( *template_pose_, template_file_ , core::import_pose::PDB_file);
 	database_fname( tag->getOption< std::string >( "database","" ) );
 	if ( target_sequence()=="" ) {
 		if ( database_fname()=="" ) {

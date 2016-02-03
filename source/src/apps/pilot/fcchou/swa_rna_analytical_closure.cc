@@ -36,7 +36,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/init/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 //////////////////////////////////////////////////
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -133,7 +133,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL;
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -568,7 +568,7 @@ setup_pose_setup_class(protocols::stepwise::sampling::rna::working_parameters::S
 	PoseOP native_pose;
 	if (option[ in::file::native ].user() ) {
 		native_pose = PoseOP( new Pose );
-		import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
+		import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 		std::cout << "native_pose->fold_tree(): " << native_pose->fold_tree();
 		std::cout << "native_pose->annotated_sequence(true): " << native_pose->annotated_sequence( true ) << std::endl;
 		protocols::farna::make_phosphate_nomenclature_matches_mini( *native_pose);

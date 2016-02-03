@@ -418,7 +418,7 @@ vector1<AlignmentClusterOP> AlignmentClustering::cluster(vector1< vector1< Real 
 map< string, Pose > AlignmentClustering::poses_from_cmd_line(utility::vector1< std::string > const & fn_list){
 
 	using utility::file::file_exists;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using namespace core::chemical;
 
 	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
@@ -427,7 +427,7 @@ map< string, Pose > AlignmentClustering::poses_from_cmd_line(utility::vector1< s
 	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
 		if ( file_exists(*it) ) {
 			Pose pose;
-			core::import_pose::pose_from_pdb( pose, *rsd_set, *it );
+			core::import_pose::pose_from_file( pose, *rsd_set, *it , core::import_pose::PDB_file);
 			string name = utility::file_basename( *it );
 			name = name.substr( 0, 5 );
 			poses[name] = pose;

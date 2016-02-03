@@ -71,7 +71,7 @@ public:
 		bool name_next_line = true;
 		core::Size n_lines = 0;
 		while ( getline( filestream, line ) ) {
-			if( name_next_line ) {
+			if ( name_next_line ) {
 				std::string name( utility::strip_whitespace( line ) );
 				if ( name.size() <= 3 ) { // The database file has some modified standard residues with more than 3 letters
 					TR << name << " : " << n_lines << std::endl;
@@ -80,7 +80,7 @@ public:
 				name_next_line = false;
 			}
 			++n_lines;
-			if( utility::startswith(line, "$$$$") ) {
+			if ( utility::startswith(line, "$$$$") ) {
 				name_next_line = true;
 			}
 		}
@@ -89,7 +89,7 @@ public:
 		core::chemical::sdf::MolFileIOReader sdf_reader;
 		TR << "Position for WOW: " << location_map["WOW"] << std::endl;
 		// "Quickly" advance to the appropriate location
-		for( core::Size ii(1); ii <= location_map["WOW"]; ++ii ) {
+		for ( core::Size ii(1); ii <= location_map["WOW"]; ++ii ) {
 			getline( filestream2, line );
 		}
 		TR << ">>>>WOW<<<" << std::endl;

@@ -13,7 +13,7 @@
 	#include <core/conformation/ResidueFactory.hh>
 	#include <core/import_pose/import_pose.hh>
 	#include <devel/init.hh>
-	#include <core/io/pdb/pose_io.hh>
+	#include <core/io/pdb/pdb_writer.hh>
 	#include <core/kinematics/Stub.hh>
 	#include <core/kinematics/MoveMap.hh>
 	#include <core/graph/Graph.hh>
@@ -71,7 +71,7 @@
 	using std::string;
 	using utility::vector1;
 	using numeric::min;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using basic::options::option;
 	using numeric::min;
 	using numeric::max;
@@ -1166,10 +1166,10 @@ int main (int argc, char *argv[]) {
   devel::init(argc,argv);
 
 	const core::Real PI = numeric::NumericTraits<Real>::pi();
-	Pose ctp; pose_from_pdb(ctp,"input/ctp.pdb");
+	Pose ctp; pose_from_file(ctp,"input/ctp.pdb", core::import_pose::PDB_file);
 	Pose pose,arg,asp,glu,lys,ala;
 	string infile = basic::options::option[basic::options::OptionKeys::in::file::s]()[1];
-	core::import_pose::pose_from_pdb(pose,infile);
+	core::import_pose::pose_from_file(pose,infile, core::import_pose::PDB_file);
 	for(Size i = 1; i <= pose.n_residue(); ++i) {
 		if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
 		if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
@@ -1774,7 +1774,7 @@ int main (int argc, char *argv[]) {
 	//   movemap->set_jump(4,true);
 	//   protocols::simple_moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 
-	//   Pose ctp; pose_from_pdb(ctp,"inrut/ctp.pdb");
+	//   Pose ctp; pose_from_file(ctp,"inrut/ctp.pdb", core::import_pose::PDB_file);
 	//   Size iO2=ctp.residue(1).atom_index("O2"), iC5=ctp.residue(1).atom_index("C5"), iO1=ctp.residue(1).atom_index("O1");
 
 	//   Vec or2 = hi.ori.cross(hi.axs);

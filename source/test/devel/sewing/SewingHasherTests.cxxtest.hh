@@ -122,11 +122,11 @@ public:
         segments.push_back(std::make_pair(29,42));
 
         core::pose::Pose bundle_1_pose;
-        core::import_pose::pose_from_pdb( bundle_1_pose, "devel/sewing/inputs/bundle1.pdb" );
+        core::import_pose::pose_from_file( bundle_1_pose, "devel/sewing/inputs/bundle1.pdb" , core::import_pose::PDB_file);
         Model bundle_1_model = create_model_from_pose(bundle_1_pose, segments, 1);
 
         core::pose::Pose bundle_2_pose;
-        core::import_pose::pose_from_pdb( bundle_2_pose, "devel/sewing/inputs/bundle2.pdb" );
+        core::import_pose::pose_from_file( bundle_2_pose, "devel/sewing/inputs/bundle2.pdb" , core::import_pose::PDB_file);
         Model bundle_2_model = create_model_from_pose(bundle_2_pose, segments, 2);
 
         hasher.insert(bundle_1_model); 

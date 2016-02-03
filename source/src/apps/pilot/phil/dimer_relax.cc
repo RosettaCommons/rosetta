@@ -49,7 +49,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 
 #include <numeric/random/random.hh>
@@ -103,7 +103,7 @@ using namespace scoring;
 using namespace basic::options;
 using namespace optimization;
 using namespace id;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 namespace OK = OptionKeys;
 using utility::vector1;
 using std::string;
@@ -168,7 +168,7 @@ my_main( void* )
 {
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, start_file() );
+	core::import_pose::pose_from_file( pose, start_file() , core::import_pose::PDB_file);
 
 	ScoreFunction scorefxn;
 
@@ -217,7 +217,7 @@ my_main( void* )
 	}
 
 // 	Pose pose;
-// 	core::import_pose::pose_from_pdb( pose, start_file() );
+// 	core::import_pose::pose_from_file( pose, start_file() , core::import_pose::PDB_file);
 
 // 	pose.dump_pdb("test.pdb");
 

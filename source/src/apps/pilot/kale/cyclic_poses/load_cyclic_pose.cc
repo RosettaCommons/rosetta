@@ -63,7 +63,7 @@ int main(int argc, char* argv []) {
 
 	// Read the pose into memory and immediately write it out again.
 
-	import_pose::pose_from_pdb(model, input_path);
+	import_pose::pose_from_file(model, input_path, core::import_pose::PDB_file);
 	model.dump_pdb(output_path);
 }
 

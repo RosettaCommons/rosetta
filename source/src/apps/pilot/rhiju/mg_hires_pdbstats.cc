@@ -23,7 +23,7 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/id/AtomID.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <core/pose/Pose.hh>
@@ -55,7 +55,7 @@ using namespace ObjexxFCL::format;
 using namespace basic::options::OptionKeys;
 
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 
 typedef  numeric::xyzMatrix< Real > Matrix;
@@ -226,7 +226,7 @@ mg_pdbstats_test()
 		line_stream >> pdb_file;
 
 		clock_t start_time = clock();
-		import_pose::pose_from_pdb( pose, *rsd_set,  file_path + '/' + pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set,  file_path + '/' + pdb_file , core::import_pose::PDB_file);
 		clock_t end_time = clock();
 		std::cout << "pdb readin finished in " << double(end_time - start_time) / CLOCKS_PER_SEC << " seconds." << std::endl;
 

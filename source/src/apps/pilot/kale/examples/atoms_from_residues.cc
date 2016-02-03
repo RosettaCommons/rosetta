@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 	devel::init(argc, argv);
 
 	pose::Pose pose;
-	import_pose::pose_from_pdb(pose, "structures/marked_loop.8.pdb");
+	import_pose::pose_from_file(pose, "structures/marked_loop.8.pdb", core::import_pose::PDB_file);
 
 	for (Size i = 1; i <= pose.n_residue(); i++) {
 		conformation::Residue residue = pose.residue(i);

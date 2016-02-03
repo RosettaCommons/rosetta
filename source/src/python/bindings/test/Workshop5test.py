@@ -7,7 +7,7 @@ init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is fo
 import os; os.chdir('.test.output')
 
 
-start = pose_from_pdb("../test/data/workshops/1YY8.clean.pdb")
+start = pose_from_file("../test/data/workshops/1YY8.clean.pdb")
 test = Pose()
 test.assign(start)
 

@@ -25,7 +25,7 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/graph/Graph.hh>
@@ -102,7 +102,7 @@ using protocols::scoring::ImplicitFastClashCheck;
 using std::string;
 using utility::vector1;
 using numeric::min;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using basic::options::option;
 using numeric::min;
 using numeric::max;
@@ -426,7 +426,7 @@ void run(std::string fname) {
   ScoreFunctionOP sfcen=ScoreFunctionFactory::create_score_function("score3");
 
   Pose pose;
-  pose_from_pdb(pose,option[in::file::s]()[1]);
+  pose_from_file(pose,option[in::file::s]()[1], core::import_pose::PDB_file);
   pose = alapose(pose);
   FunGroupTK & krs(*(new   KinFunGroupTK(pose)));
   FunGroupTK & brs(*(new BruteFunGroupTK(pose)));

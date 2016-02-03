@@ -46,7 +46,7 @@
 #include <basic/Tracer.hh>
 #include <basic/MetricValue.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+//#include <core/io/pdb/pose_io.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -109,7 +109,7 @@ main( int argc, char* argv [] )
 	Size cut=(p1+p2)/2;
 	core::pose::Pose start_pose;
 	std::string infile  = *(option[ in::file::silent ]().begin());
-	core::import_pose::pose_from_pdb( start_pose, infile);
+	core::import_pose::pose_from_file( start_pose, infile, core::import_pose::PDB_file);
 	core::pose::Pose pose(start_pose);
 	Size nres=pose.total_residue();
 	core::kinematics::FoldTree f(nres);

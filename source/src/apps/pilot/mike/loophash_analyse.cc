@@ -28,7 +28,7 @@
 #include <core/kinematics/RT.hh>
 #include <basic/options/option.hh>
 #include <core/import_pose/pose_stream/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -155,7 +155,7 @@ LoopHash_Analyze::apply( core::pose::Pose& pose )
   using namespace basic::options::OptionKeys;
 
 	core::pose::Pose native;
-	core::import_pose::pose_from_pdb( native, option[ basic::options::OptionKeys::in::file::native ] );
+	core::import_pose::pose_from_file( native, option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 
 	core::Size nres = pose.total_residue();
 

@@ -18,7 +18,7 @@
 
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+
 
 #include <protocols/loophash/LoopHashSampler.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
@@ -48,7 +48,6 @@ namespace loophash {
 
 using namespace core;
 using namespace io;
-using namespace pdb;
 using namespace chemical;
 using namespace conformation;
 using namespace protocols::loophash;

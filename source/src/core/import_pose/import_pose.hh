@@ -28,15 +28,27 @@
 #include <core/types.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
-#include <core/io/pdb/file_data.fwd.hh>
-#include <core/io/pdb/pdb_dynamic_reader_options.fwd.hh>
+#include <core/io/StructFileRep.hh>
+#include <core/io/StructFileReaderOptions.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
 
+class CifFile;
+class CifParser;
+typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
+typedef utility::pointer::shared_ptr< CifParser > CifParserOP;
+
 
 namespace core {
 namespace import_pose {
+
+enum FileType{
+	PDB_file,
+	CIF_file,
+	Unknown_file
+};
+
 
 typedef std::string String;
 
@@ -45,13 +57,14 @@ typedef std::string String;
 void
 read_all_poses(
 	const utility::vector1<std::string>& filenames,
-	utility::vector1<core::pose::Pose>* poses);
+	utility::vector1<core::pose::Pose>* poses
+);
 
 void
 read_additional_pdb_data(
 	std::string const & file,
 	pose::Pose & pose,
-	io::pdb::FileData const & fd,
+	io::StructFileRepCOP fd,
 	bool read_fold_tree = false
 );
 
@@ -69,45 +82,55 @@ read_additional_pdb_data(
 /// @note: in PyRosetta, this will return a Pose object
 ///
 /// example(s):
-///     pose = pose_from_pdb("YFP.pdb")
+///     pose = pose_from_file("YFP.pdb")
 /// See also:
 ///     Pose
 ///     PDBInfo
 ///     make_pose_from_sequence
 ///     pose_from_rcsb
 ///     pose_from_sequence
-pose::PoseOP pose_from_pdb(
+pose::PoseOP pose_from_file(
 	std::string const & filename,
-	bool read_fold_tree = false
+	bool read_fold_tree = false,
+	FileType type = Unknown_file
 );
 
 /// @brief Returns a PoseOP object from the Pose created by reading the input
 /// PDB  <filename>, this constructor allows for a non-default ResidueTypeSet
 /// <residue_set>
-pose::PoseOP pose_from_pdb(
+pose::PoseOP pose_from_file(
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename,
-	bool read_fold_tree = false
+	bool read_fold_tree = false,
+	FileType type = Unknown_file
 );
 
+/// @brief Determine what file type is passed to function
+/// there should only be one function that calls this, pose_from_file
+/// and only calls it when the filetype is unknown
+FileType
+determine_file_type( std::string const &contents_of_file);
+
 void
-pose_from_pdb(
+pose_from_file(
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename,
 	ImportPoseOptions const & options,
-	bool read_fold_tree = false
+	bool read_fold_tree = false,
+	FileType file_type = Unknown_file
 );
 
 /// @brief Reads in data from input PDB  <filename>  and stores it in the Pose
 /// <pose>, this constructor allows for a non-default ResidueTypeSet
 /// <residue_set>
 void
-pose_from_pdb(
+pose_from_file(
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename,
-	bool read_fold_tree = false
+	bool read_fold_tree = false,
+	FileType type = Unknown_file
 );
 
 /// @brief Reads in data from input PDB  <filename>  and stores it in the Pose
@@ -115,77 +138,86 @@ pose_from_pdb(
 /// @note: will use centroid if in::file::centroid_input is true
 ///
 /// example(s):
-///     pose_from_pdb(pose,"YFP.pdb")
+///     pose_from_file(pose,"YFP.pdb")
 /// See also:
 ///     Pose
 ///     PDBInfo
 void
-pose_from_pdb(
+pose_from_file(
 	pose::Pose & pose,
 	std::string const & filename,
-	bool read_fold_tree = false
+	bool read_fold_tree = false,
+	FileType type = Unknown_file
 );
 
 void
-pose_from_pdb(
+pose_from_file(
 	pose::Pose & pose,
 	std::string const & filename,
 	ImportPoseOptions const & options,
-	bool read_fold_tree = false
+	bool read_fold_tree = false,
+	FileType type = Unknown_file
 );
 
 /// @brief Reads data from an input PDB containing multiple models named
 /// <filename>  and stores it in a vector of Pose objects named  <poses>  using
 /// ResidueTypeSet  <residue_set>
 void
-pose_from_pdb(
+pose_from_file(
 	utility::vector1< pose::Pose > & poses,
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename,
-	bool read_fold_tree = false
+	bool read_fold_tree = false,
+	FileType type = Unknown_file
 );
 
 void
-pose_from_pdb(
+pose_from_file(
 	utility::vector1< pose::Pose > & poses,
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename,
 	ImportPoseOptions const & options,
-	bool read_fold_tree = false
+	bool read_fold_tree = false,
+	FileType type = Unknown_file
 );
 
 utility::vector1< core::pose::PoseOP >
-poseOPs_from_pdbs(
+poseOPs_from_files(
 	utility::vector1< std::string > const & filenames,
-	bool read_fold_tree = false
+	bool read_fold_tree = false,
+	FileType type = Unknown_file
 );
 
 utility::vector1< core::pose::PoseOP >
-poseOPs_from_pdbs(
+poseOPs_from_files(
 	utility::vector1< std::string > const & filenames,
 	ImportPoseOptions const & options,
-	bool read_fold_tree = false
+	bool read_fold_tree = false,
+	FileType type = Unknown_file
 );
 
 utility::vector1< core::pose::PoseOP >
-poseOPs_from_pdbs(
+poseOPs_from_files(
 	chemical::ResidueTypeSet const & residue_set,
 	utility::vector1< std::string > const & filenames,
 	ImportPoseOptions const & options,
-	bool read_fold_tree
+	bool read_fold_tree,
+	FileType type = Unknown_file
 );
 
 utility::vector1< core::pose::Pose >
-poses_from_pdbs(
+poses_from_files(
 	utility::vector1< std::string > const & filenames,
-	bool read_fold_tree = false
+	bool read_fold_tree = false,
+	FileType type = Unknown_file
 );
 
 utility::vector1< core::pose::Pose >
-poses_from_pdbs(
+poses_from_files(
 	chemical::ResidueTypeSet const & residue_set,
 	utility::vector1< std::string > const & filenames,
-	bool read_fold_tree
+	bool read_fold_tree,
+	FileType type = Unknown_file
 );
 
 
@@ -195,10 +227,11 @@ poses_from_pdbs(
 /// <filename>  and stores it in a vector of Pose objects named  <poses>
 /// using the FA_STANDARD ResidueTypeSet (fullatom)
 void
-pose_from_pdb(
+pose_from_file(
 	utility::vector1< pose::Pose > & poses,
 	std::string const & filename,
-	bool read_fold_tree = false
+	bool read_fold_tree = false,
+	FileType type = Unknown_file
 );
 
 void
@@ -251,36 +284,35 @@ centroid_pose_from_pdb(
 	bool read_fold_tree = false
 );
 
-
-/// @brief Create pose object, using given FileData object.
+/// @brief Create pose object, using given StructFileRep object.
 /// If PDB cleanin specified - it will be applied first.
 /// Constructs a ImportPoseOptions object from the command line
 void build_pose(
-	io::pdb::FileData & fd, // const?  naaaaah
+	io::StructFileRepOP fd, // const?  naaaaah
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set
 );
 
-/// @brief Create pose object, using given FileData object.
+/// @brief Create pose object, using given StructFileRep object.
 /// If PDB cleanin specified - it will be applied first
 void build_pose(
-	io::pdb::FileData & fd, // const?  naaaaah
+	io::StructFileRepOP fd, // const?  naaaaah
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
 	ImportPoseOptions const & options
 );
 
-/// @brief Create pose object, using given FileData object.
+/// @brief Create pose object, using given StructFileRep object.
 /// No PDB cleanin will be appliend.
 void build_pose_as_is(
-	io::pdb::FileData & fd, // const?  naaaaah
+	io::StructFileRepOP fd,
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
 	ImportPoseOptions const & options
 );
 
 void build_pose_as_is2(
-	io::pdb::FileData & fd,
+	io::StructFileRepCOP fd,
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
 	id::AtomID_Mask & missing,

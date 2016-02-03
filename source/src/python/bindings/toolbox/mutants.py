@@ -116,7 +116,7 @@ def pose_from_sequence( seq , res_type = 'fa_standard' , name = '' , chain_id = 
     See also:
         Pose
         make_pose_from_sequence
-        pose_from_pdb
+        pose_from_file
         pose_from_rcsb
     """
     pose=Pose()

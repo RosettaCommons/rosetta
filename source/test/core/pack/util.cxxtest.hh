@@ -53,8 +53,8 @@ public:
 
 		// get poses
 		Pose pose, native;
-		core::import_pose::pose_from_pdb( pose, "core/pack/4MRS__opm_0001.pdb" );
-		core::import_pose::pose_from_pdb( native, "core/pack/4MRS__opm.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pack/4MRS__opm_0001.pdb" , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( native, "core/pack/4MRS__opm.pdb" , core::import_pose::PDB_file);
 
 		// compute rotamer recovery
 		core::Real difference = 10.0;
@@ -72,8 +72,8 @@ public:
 
 		// get poses
 		Pose pose, native;
-		core::import_pose::pose_from_pdb( pose, "core/pack/4MRS__opm_0001.pdb" );
-		core::import_pose::pose_from_pdb( native, "core/pack/4MRS__opm.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pack/4MRS__opm_0001.pdb" , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( native, "core/pack/4MRS__opm.pdb" , core::import_pose::PDB_file);
 
 		// compute residue rotamer recovery
 		core::Real difference = 10.0;

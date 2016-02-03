@@ -16,7 +16,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/moves/Mover.hh>
 // Numeric Headers

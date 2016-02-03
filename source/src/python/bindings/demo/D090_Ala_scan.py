@@ -116,7 +116,7 @@ def scanning(pdb_filename, partners, mutant_aa = 'A',
     """
     # 1. create a pose from the desired PDB file
     pose = Pose()
-    pose_from_pdb(pose, pdb_filename)
+    pose_from_file(pose, pdb_filename)
 
     # 2. setup the docking FoldTree and other related parameters
     dock_jump = 1

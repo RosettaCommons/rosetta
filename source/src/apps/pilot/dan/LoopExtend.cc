@@ -16,7 +16,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 
 #include <protocols/loops/Loops.hh>
@@ -64,7 +64,7 @@ main( int argc, char* argv[] )
 
 	// read pdb file
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, core::options::option[ basic::options::OptionKeys::loops::input_pdb ]().name() );
+	core::import_pose::pose_from_file( pose, core::options::option[ basic::options::OptionKeys::loops::input_pdb ]().name() , core::import_pose::PDB_file);
 
 	// read loops file
 	protocols::loops::Loops loops;

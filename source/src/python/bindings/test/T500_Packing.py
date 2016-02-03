@@ -15,7 +15,7 @@ import os; os.chdir('.test.output')
 print 'Packing and Design ----------------------------------------------'
 
 print 'mover: PackRotamersMover'
-pose = pose_from_pdb("../test/data/test_in.pdb")
+pose = pose_from_file("../test/data/test_in.pdb")
 scorefxn = get_fa_scorefxn() #  create_score_function('standard')
 #task_pack = TaskFactory.create_packer_task(pose)
 task_pack = standard_packer_task(pose)

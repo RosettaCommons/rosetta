@@ -19,7 +19,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -309,7 +309,7 @@ int main (int argc, char *argv[]) {
   using namespace basic::options::OptionKeys;
   std::string fn = basic::options::option[in::file::s]()[1];
   Pose pose;
-  core::import_pose::pose_from_pdb(pose,fn);
+  core::import_pose::pose_from_file(pose,fn, core::import_pose::PDB_file);
   for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
     core::pose::replace_pose_residue_copying_existing_coordinates(pose,ir,pose.residue(ir).residue_type_set().name_map("ALA"));
   }

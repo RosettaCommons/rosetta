@@ -74,7 +74,7 @@ int main( int argc, char * argv [] )
 			utility_exit_with_message( "Expected exactly one pdb to be specified from the -s or -l flags" );
 		}
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, input_jobs[ 1 ]->input_tag() );
+		core::import_pose::pose_from_file( pose, input_jobs[ 1 ]->input_tag() , core::import_pose::PDB_file);
 		core::Size const nres( pose.total_residue() );
 
 		//define score function

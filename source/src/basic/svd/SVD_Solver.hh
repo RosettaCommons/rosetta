@@ -31,7 +31,7 @@
 /// Once the matrix is decomposed, you can change the vector b and solve Ax=b with the new vector. (That's why those 2 functions are separated)
 /// The matrix A is necessary to calculate the score (argument of run_score_svd_on_matrix), but the matrix A is not stored within
 /// the SVD_solver object, so make sure you have it available when scoring (this is done on purpose for speed up)
-/// Is it possible to speed up calculations by using FArraynD.index() call? ObjexxFCL doc is not really clear.
+/// Is it possible to speed up calculations by using ObjexxFCL::FArraynD.index() call? ObjexxFCL doc is not really clear.
 ///
 /// @references
 ///
@@ -55,8 +55,6 @@
 
 namespace basic {
 namespace svd {
-
-using namespace ObjexxFCL;
 
 class SVD_Solver {
 
@@ -99,13 +97,13 @@ public:
 	void
 	set_matrix_A( utility::vector1< utility::vector1<double> >  const & A);
 
-	/// @brief set the vector b of Ax=b (FArray1D version)
+	/// @brief set the vector b of Ax=b (ObjexxFCL::FArray1D version)
 	void
-	set_vector_b( FArray1D< double > const & b );
+	set_vector_b( ObjexxFCL::FArray1D< double > const & b );
 
-	/// @brief set the matrix A of Ax=b (FArray2D version)
+	/// @brief set the matrix A of Ax=b (ObjexxFCL::FArray2D version)
 	void
-	set_matrix_A( FArray2D< double > const & A );
+	set_matrix_A( ObjexxFCL::FArray2D< double > const & A );
 
 
 	/// @brief decompose the matrix A.
@@ -123,10 +121,10 @@ public:
 	double
 	run_score_svd_on_matrix(utility::vector1< utility::vector1<double> > const & cppstyle_A) const;
 
-	/// @brief return the score given the matrix A (FArray2D version)
+	/// @brief return the score given the matrix A (ObjexxFCL::FArray2D version)
 	/// Can be called after run_decomp_svd()
 	double
-	run_score_svd_on_matrix(FArray2D< double > const & A) const;
+	run_score_svd_on_matrix(ObjexxFCL::FArray2D< double > const & A) const;
 
 	/// @brief return the minimzed score without the need to call run_solve_svd()
 	/// Can be called after run_decomp_svd()

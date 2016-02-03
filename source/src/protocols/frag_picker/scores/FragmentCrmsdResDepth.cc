@@ -37,7 +37,7 @@
 //Auto Headers
 #include <core/id/NamedAtomID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/pose/Pose.hh>
 #include <utility/io/izstream.hh>
 #include <iostream>
@@ -50,6 +50,7 @@ namespace scores {
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace ObjexxFCL;
 
 static THREAD_LOCAL basic::Tracer trRmsScore(
 	"protocols.frag_picker.scores.FragmentCrmsdResDepth");
@@ -214,7 +215,7 @@ FragmentScoringMethodOP MakeFragmentCrmsdResDepth::make(Size priority,
 			<< "Reference structure to score fragments by crmsd loaded from: "
 			<< option[in::file::native]() << std::endl;
 		core::pose::PoseOP nativePose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
+		core::import_pose::pose_from_file(*nativePose, option[in::file::native](), core::import_pose::PDB_file);
 
 		if ( nativePose->total_residue() != picker->get_query_residue_depth().size() ) {
 			utility_exit_with_message("MakeFragmentCrmsdResDepth native total residue != query residue depth length");
@@ -228,7 +229,7 @@ FragmentScoringMethodOP MakeFragmentCrmsdResDepth::make(Size priority,
 			<< "Reference structure to score fragments by crmsd loaded from: "
 			<< option[in::file::s]()[1] << std::endl;
 		core::pose::PoseOP nativePose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
+		core::import_pose::pose_from_file(*nativePose, option[in::file::s]()[1], core::import_pose::PDB_file);
 
 		if ( nativePose->total_residue() != picker->get_query_residue_depth().size() ) {
 			utility_exit_with_message("MakeFragmentCrmsdResDepth native total residue != query residue depth length");

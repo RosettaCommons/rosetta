@@ -182,7 +182,7 @@ public:
 
 		std::string pdb_file_name= basic::options::option[ basic::options::OptionKeys::in::file::s ]()[1];
 		ligand_dock_pose_ = core::pose::PoseOP( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*ligand_dock_pose_, pdb_file_name);
+		core::import_pose::pose_from_file(*ligand_dock_pose_, pdb_file_name, core::import_pose::PDB_file);
 	};
 
 	virtual void run(core::Real scaleFactor) {

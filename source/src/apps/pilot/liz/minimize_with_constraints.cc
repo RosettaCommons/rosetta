@@ -36,7 +36,7 @@
 #include <basic/options/util.hh>
 
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/PDBSilentStruct.hh>
 
@@ -108,9 +108,9 @@ main( int argc, char* argv [] )
 	//read in pose
 	core::pose::Pose pose, native_pose;
 	std::string input_filename = basic::options::start_file();
-	core::import_pose::pose_from_pdb( pose, input_filename );
+	core::import_pose::pose_from_file( pose, input_filename , core::import_pose::PDB_file);
 	if (option[ in::file::native ].user() )
-		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 
 	// setup ScoreFunction and constraints for minimization.
 	core::scoring::constraints::ConstraintSetOP cstset

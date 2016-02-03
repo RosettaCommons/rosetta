@@ -288,7 +288,7 @@ main( int argc, char * argv [] )
 			std::string ref_filename;
 			if (  option[ OptionKeys::relax::superimpose_to_file ].user() ) ref_filename = option[ basic::options::OptionKeys::relax::superimpose_to_file ]();
 			if (  option[ OptionKeys::relax::superimpose_to_native ].user() ) ref_filename =  option[ basic::options::OptionKeys::in::file::native ]();
-			core::import_pose::pose_from_pdb( ref_pose, ref_filename );
+			core::import_pose::pose_from_file( ref_pose, ref_filename , core::import_pose::PDB_file);
 			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
 			protocols::simple_moves::SuperimposeMoverOP sm( new protocols::simple_moves::SuperimposeMover );
 			sm->set_reference_pose( ref_pose );

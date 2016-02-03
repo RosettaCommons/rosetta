@@ -39,10 +39,14 @@
 #include <core/pack/pack_missing_sidechains.hh>
 #include <core/pack/optimizeH.hh>
 
-#include <core/io/pdb/pdb_dynamic_reader.hh>
-#include <core/io/pdb/pdb_dynamic_reader_options.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/file_data_options.hh>
+#include <core/io/pdb/pdb_reader.hh>
+#include <core/io/StructFileReaderOptions.hh>  // TODO: Rename after refactor.
+#include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
+#include <core/io/mmcif/cif_reader.hh>
+#include <core/io/StructFileRep.hh>
+#include <core/io/StructFileRepOptions.hh>
+
+#include <core/io/pdb/pdb_reader.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -56,6 +60,10 @@
 // External headers
 #include <ObjexxFCL/string.functions.hh>
 #include <boost/foreach.hpp>
+#include <cifparse/CifFile.h>
+#include <cifparse/CifParserBase.h>
+typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
+typedef utility::pointer::shared_ptr< CifParser > CifParserOP;
 
 
 namespace core {
@@ -68,19 +76,37 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-using namespace core::io::pdb;
+using namespace core::io;
 using namespace ObjexxFCL;
 
 static THREAD_LOCAL basic::Tracer TR( "core.import_pose.import_pose" );
 
 using utility::vector1;
 
+void
+read_all_poses(
+	const utility::vector1<std::string>& filenames,
+	utility::vector1<core::pose::Pose>* poses
+)
+{
+	using core::pose::Pose;
+	using std::string;
+	using utility::vector1;
+	debug_assert(poses);
+
+	for ( vector1<string>::const_iterator i = filenames.begin(); i != filenames.end(); ++i ) {
+		Pose pose;
+		pose_from_file(pose, *i, core::import_pose::PDB_file);
+		poses->push_back(pose);
+	}
+}
+
 
 void
 read_additional_pdb_data(
 	std::string const & s,
 	pose::Pose & pose,
-	io::pdb::FileData const &,
+	io::StructFileRepCOP ,
 	bool read_fold_tree
 )
 {
@@ -167,95 +193,146 @@ read_additional_pdb_data(
 }
 
 
-pose::PoseOP pose_from_pdb( std::string const & filename, bool read_fold_tree )
+pose::PoseOP pose_from_file( std::string const & filename, bool read_fold_tree, FileType type )
 {
 	pose::PoseOP pose( new pose::Pose() );
-	pose_from_pdb( *pose, filename, read_fold_tree);
+	pose_from_file( *pose, filename, read_fold_tree, type);
 	return pose;
 }
 
 
-pose::PoseOP pose_from_pdb(chemical::ResidueTypeSet const & residue_set, std::string const & filename,  bool read_fold_tree)
+pose::PoseOP pose_from_file(chemical::ResidueTypeSet const & residue_set, std::string const & filename,  bool read_fold_tree, FileType type)
 {
 	pose::PoseOP pose( new pose::Pose() );
-	pose_from_pdb( *pose, residue_set, filename, read_fold_tree);
+	pose_from_file( *pose, residue_set, filename, read_fold_tree, type);
 	return pose;
 }
 
-void
-pose_from_pdb(
-	pose::Pose & pose,
-	chemical::ResidueTypeSet const & residue_set,
-	std::string const & filenames_string,
-	bool read_fold_tree
-)
-{
-	ImportPoseOptions options;
-	pose_from_pdb(pose, residue_set, filenames_string, options, read_fold_tree);
+FileType
+determine_file_type( std::string const &contents_of_file){
+
+	//See if this is a pdb file
+	//code to determine the type of file
+	utility::vector1< io::pdb::Record> records( io::pdb::create_records_from_pdb_lines( contents_of_file));
+	for ( core::Size ii=1; ii<= records.size(); ++ii ) {
+		if ( records[ ii][ "type"].value != "UNKNOW" ) {
+			return PDB_file;
+		}
+	}
+	//See if this is a CIF file
+	std::string diagnostics;
+	CifFileOP cifFile( new CifFile );
+
+	CifParserOP cifParser( new CifParser( cifFile.get() ) );
+
+	cifParser->ParseString( contents_of_file, diagnostics );
+	if ( diagnostics.empty() ) {
+		return CIF_file;
+	}
+
+	return Unknown_file;
 }
 
+
 void
-pose_from_pdb(
+pose_from_file(
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filenames_string,
 	ImportPoseOptions const & options,
-	bool read_fold_tree
+	bool read_fold_tree,
+	FileType file_type
 )
 {
 	utility::vector1< std::string > filenames = utility::split(filenames_string);
 
-	std::string res;
+	std::string contents_of_file;
 
 	BOOST_FOREACH ( std::string filename, filenames ) {
 		utility::io::izstream file( filename );
 		if ( !file ) {
-			TR.Error << "PDB File:" << filename << " not found!" << std::endl;
-			utility_exit_with_message( "Cannot open PDB file \"" + filename + "\"" );
+			TR.Error << "File: " << filename << " not found!" << std::endl;
+			utility_exit_with_message( "Cannot open file \"" + filename + "\"" );
 		} else {
 			TR.Debug << "read file: " << filename << std::endl;
 		}
-		utility::slurp( file, res );
+		utility::slurp( file, contents_of_file );
 	}
 
-	//fpd If the conformation is not of type core::Conformation, reset it
-	conformation::ConformationOP conformation_op( new conformation::Conformation() );
-	if ( !pose.conformation().same_type_as_me( *conformation_op, true ) ) {
-		pose.set_new_conformation( conformation_op );
+	if ( file_type == Unknown_file ) {
+		file_type = determine_file_type( contents_of_file);
 	}
 
-	io::pdb::FileData fd = core::import_pose::PDB_DReader::createFileData(res, options);
-	if ( fd.filename == "" ) {
-		fd.filename = utility::join(filenames, "_");
-	}
-	build_pose(fd, pose, residue_set, options);
+	if ( file_type == Unknown_file ) {
+		utility_exit_with_message( "Cannot determine file type. Current supported types are: PDB, CIF");
+	} else if ( file_type == PDB_file ) {
+		//fpd If the conformation is not of type core::Conformation, reset it
+		conformation::ConformationOP conformation_op( new conformation::Conformation() );
+		if ( !pose.conformation().same_type_as_me( *conformation_op, true ) ) {
+			pose.set_new_conformation( conformation_op );
+		}
 
-	// set secondary structure for centroid PDBs
-	if ( residue_set.name() == core::chemical::CENTROID ) {
-		core::pose::set_ss_from_phipsi( pose );
+		io::StructFileRepOP sfr( io::pdb::create_sfr_from_pdb_file_contents(contents_of_file, options).clone() );
+		if ( sfr->filename() == "" ) {
+			sfr->filename() = utility::join(filenames, "_");
+		}
+
+		build_pose( sfr, pose, residue_set, options );
+
+		// set secondary structure for centroid PDBs
+		if ( residue_set.name() == core::chemical::CENTROID ) {
+			core::pose::set_ss_from_phipsi( pose );
+		}
+
+		// check for foldtree info
+		read_additional_pdb_data( contents_of_file, pose, options, read_fold_tree );
+
+	} else if ( file_type == CIF_file ) {
+		std::string diagnostics;
+		CifFileOP cifFile( new CifFile );
+		CifParserOP cifParser( new CifParser( cifFile.get() ) );
+		cifParser->ParseString( contents_of_file, diagnostics );
+		io::StructFileRepOP sfr ( io::mmcif::create_sfr_from_cif_file_op( cifFile, options ) );
+		build_pose( sfr, pose, residue_set, options );
+
 	}
 
-	// check for foldtree info
-	read_additional_pdb_data( res, pose, options, read_fold_tree );
+
+}
+
+void
+pose_from_file(
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set,
+	std::string const & filenames_string,
+	bool read_fold_tree,
+	FileType type
+)
+{
+	ImportPoseOptions options;
+	pose_from_file(pose, residue_set, filenames_string, options, read_fold_tree, type);
 }
 
 
+
 void
-pose_from_pdb(
+pose_from_file(
 	core::pose::Pose & pose,
 	std::string const & filename,
-	bool read_fold_tree
+	bool read_fold_tree,
+	FileType type
 ) {
 	ImportPoseOptions options;
-	pose_from_pdb( pose, filename, options, read_fold_tree );
+	pose_from_file( pose, filename, options, read_fold_tree , type);
 }
 
 void
-pose_from_pdb(
+pose_from_file(
 	pose::Pose & pose,
 	std::string const & filename,
 	ImportPoseOptions const & options,
-	bool read_fold_tree
+	bool read_fold_tree,
+	FileType type
 ) {
 	using namespace chemical;
 
@@ -264,23 +341,25 @@ pose_from_pdb(
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
 	);
 
-	core::import_pose::pose_from_pdb( pose, *residue_set, filename, options, read_fold_tree );
+	core::import_pose::pose_from_file( pose, *residue_set, filename, options, read_fold_tree, type);
 }
 
 utility::vector1< core::pose::PoseOP >
-poseOPs_from_pdbs(
+poseOPs_from_files(
 	utility::vector1< std::string > const & filenames,
-	bool read_fold_tree
+	bool read_fold_tree,
+	FileType type
 ) {
 	ImportPoseOptions options;
-	return poseOPs_from_pdbs( filenames, options, read_fold_tree );
+	return poseOPs_from_files( filenames, options, read_fold_tree, type );
 }
 
 utility::vector1< core::pose::PoseOP >
-poseOPs_from_pdbs(
+poseOPs_from_files(
 	utility::vector1< std::string > const & filenames,
 	ImportPoseOptions const & options,
-	bool read_fold_tree
+	bool read_fold_tree,
+	FileType type
 ) {
 	using namespace chemical;
 
@@ -289,27 +368,29 @@ poseOPs_from_pdbs(
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
 	);
 
-	return core::import_pose::poseOPs_from_pdbs( *residue_set, filenames, options, read_fold_tree );
+	return core::import_pose::poseOPs_from_files( *residue_set, filenames, options, read_fold_tree, type);
 }
 
 /// @details Only returns full-atom poses
 utility::vector1< core::pose::Pose >
-poses_from_pdbs(
+poses_from_files(
 	utility::vector1< std::string > const & filenames,
-	bool read_fold_tree
+	bool read_fold_tree,
+	FileType type
 ) {
 	using namespace chemical;
 	ResidueTypeSetCOP residue_set
 		( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 
-	return core::import_pose::poses_from_pdbs( *residue_set, filenames, read_fold_tree );
+	return core::import_pose::poses_from_files( *residue_set, filenames, read_fold_tree, type);
 }
 
 utility::vector1< core::pose::Pose >
-poses_from_pdbs(
+poses_from_files(
 	chemical::ResidueTypeSet const & residue_set,
 	utility::vector1< std::string > const & filenames,
-	bool read_fold_tree
+	bool read_fold_tree,
+	FileType type
 ) {
 	using namespace chemical;
 
@@ -323,37 +404,21 @@ poses_from_pdbs(
 	typedef vector1< string >::const_iterator vec_it;
 	for ( vec_it it = filenames.begin(), end = filenames.end(); it != end; ++it ) {
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, residue_set, *it, options, read_fold_tree );
+		core::import_pose::pose_from_file( pose, residue_set, *it, options, read_fold_tree, type);
 		poses.push_back( pose );
 	}
 
 	return poses;
 }
 
-void
-read_all_poses(
-	const utility::vector1<std::string>& filenames,
-	utility::vector1<core::pose::Pose>* poses
-)
-{
-	using core::pose::Pose;
-	using std::string;
-	using utility::vector1;
-	debug_assert(poses);
-
-	for ( vector1<string>::const_iterator i = filenames.begin(); i != filenames.end(); ++i ) {
-		Pose pose;
-		pose_from_pdb(pose, *i);
-		poses->push_back(pose);
-	}
-}
 
 utility::vector1< core::pose::PoseOP >
-poseOPs_from_pdbs(
+poseOPs_from_files(
 	chemical::ResidueTypeSet const & residue_set,
 	utility::vector1< std::string > const & filenames,
 	ImportPoseOptions const & options,
-	bool read_fold_tree
+	bool read_fold_tree,
+	FileType type
 ) {
 	using namespace chemical;
 
@@ -365,7 +430,7 @@ poseOPs_from_pdbs(
 	typedef vector1< string >::const_iterator vec_it;
 	for ( vec_it it = filenames.begin(), end = filenames.end(); it != end; ++it ) {
 		pose::PoseOP pose( new pose::Pose );
-		core::import_pose::pose_from_pdb( *pose, residue_set, *it, options, read_fold_tree );
+		core::import_pose::pose_from_file( *pose, residue_set, *it, options, read_fold_tree, type);
 		poses.push_back( pose );
 	}
 
@@ -374,39 +439,42 @@ poseOPs_from_pdbs(
 
 
 void
-pose_from_pdb(
+pose_from_file(
 	utility::vector1< pose::Pose > & poses,
 	std::string const & filename,
-	bool read_fold_tree
+	bool read_fold_tree,
+	FileType type
 )
 {
 	using namespace chemical;
 	ResidueTypeSetCOP residue_set(
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
 	);
-	core::import_pose::pose_from_pdb( poses, *residue_set, filename, read_fold_tree );
+	core::import_pose::pose_from_file( poses, *residue_set, filename, read_fold_tree, type);
 }
 
 
 void
-pose_from_pdb(
+pose_from_file(
 	utility::vector1< pose::Pose > & poses,
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename,
-	bool read_fold_tree
+	bool read_fold_tree,
+	FileType type
 )
 {
 	ImportPoseOptions options;
-	pose_from_pdb( poses, residue_set, filename, options, read_fold_tree );
+	pose_from_file( poses, residue_set, filename, options, read_fold_tree, type);
 }
 
 void
-pose_from_pdb(
+pose_from_file(
 	utility::vector1< pose::Pose > & poses,
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename,
 	ImportPoseOptions const & options,
-	bool read_fold_tree
+	bool read_fold_tree,
+	FileType type
 )
 {
 	// Size fsize;
@@ -422,60 +490,64 @@ pose_from_pdb(
 	}
 
 	utility::slurp( file, all_lines );
-	// Hacky way to make sure that we find all models. I blame society.
-	all_lines = "\n" + all_lines;
 
-	Size pos1 = 0;
-	Size pos2 = 0;
-	Size n_models = 0;
 
-	// count the number of poses will be reading
-	while ( pos1 != std::string::npos )
-			{
-		pos1 = all_lines.find( "\nMODEL ", pos1 );
-		if ( pos1 != std::string::npos ) {
-			++n_models;
-			++pos1;
+	if ( type == PDB_file || type == Unknown_file ) {
+		// Hacky way to make sure that we find all models. I blame society.
+		all_lines = "\n" + all_lines;
+
+		Size pos1 = 0;
+		Size pos2 = 0;
+		Size n_models = 0;
+
+		// count the number of poses will be reading
+		while ( pos1 != std::string::npos )
+				{
+			pos1 = all_lines.find( "\nMODEL ", pos1 );
+			if ( pos1 != std::string::npos ) {
+				++n_models;
+				++pos1;
+			}
 		}
-	}
 
-	TR.Debug << "Reading " << n_models << " poses." << std::endl;
-	// make space for all of our poses
-	if ( n_models == 0 ) n_models = 1;
-	poses.reserve( poses.size() + n_models );
+		TR.Debug << "Reading " << n_models << " poses." << std::endl;
+		// make space for all of our poses
+		if ( n_models == 0 ) n_models = 1;
+		poses.reserve( poses.size() + n_models );
 
-	pos1 = 0;
+		pos1 = 0;
 
-	pos1 = all_lines.find( "\nMODEL ", pos1 );
+		pos1 = all_lines.find( "\nMODEL ", pos1 );
 
-	if ( pos1 != std::string::npos ) {
-		pos2 = 0;
-		while ( pos2 != std::string::npos ) {
-			// set pos1 == "M" in MODEL
-			++pos1;
+		if ( pos1 != std::string::npos ) {
+			pos2 = 0;
+			while ( pos2 != std::string::npos ) {
+				// set pos1 == "M" in MODEL
+				++pos1;
 
-			// pos2 = position of newline character, start somewhere after pos1
-			pos2 = all_lines.find( "\nMODEL ", pos1);
-			sub_lines = all_lines.substr( pos1, pos2-pos1 ) ;
-			pos1 = pos2;
+				// pos2 = position of newline character, start somewhere after pos1
+				pos2 = all_lines.find( "\nMODEL ", pos1);
+				sub_lines = all_lines.substr( pos1, pos2-pos1 ) ;
+				pos1 = pos2;
 
-			io::pdb::FileData fd = core::import_pose::PDB_DReader::createFileData( sub_lines, options );
-			fd.filename = filename;
-			build_pose( fd, pose, residue_set, options );
+				io::StructFileRepOP sfr( io::pdb::create_sfr_from_pdb_file_contents( sub_lines, options ).clone() );
+				sfr->filename() = filename;
+				build_pose( sfr, pose, residue_set, options );
 
+				// check for foldtree info
+				core::import_pose::read_additional_pdb_data( sub_lines, pose, options, read_fold_tree);
+				poses.push_back( pose );
+			}
+		} else {
+			StructFileRepOP sfr( io::pdb::create_sfr_from_pdb_file_contents( all_lines, options ).clone() );
+			if ( sfr->filename() == "" ) {
+				sfr->filename() = filename;
+			}
+			core::import_pose::build_pose( sfr, pose, residue_set, options );
 			// check for foldtree info
-			core::import_pose::read_additional_pdb_data( sub_lines, pose, options, read_fold_tree);
+			core::import_pose::read_additional_pdb_data( all_lines, pose, options, read_fold_tree);
 			poses.push_back( pose );
 		}
-	} else {
-		FileData fd = core::import_pose::PDB_DReader::createFileData( all_lines, options );
-		if ( fd.filename == "" ) {
-			fd.filename = filename;
-		}
-		core::import_pose::build_pose( fd, pose, residue_set, options );
-		// check for foldtree info
-		core::import_pose::read_additional_pdb_data( all_lines, pose, options, read_fold_tree);
-		poses.push_back( pose );
 	}
 }
 
@@ -487,11 +559,11 @@ pose_from_pdbstring(
 	std::string const & filename
 )
 {
-	io::pdb::FileData fd = import_pose::PDB_DReader::createFileData( pdbcontents, options );
-	fd.filename = filename;
+	io::StructFileRepOP sfr( io::pdb::create_sfr_from_pdb_file_contents( pdbcontents, options ).clone() );
+	sfr->filename() = filename;
 	chemical::ResidueTypeSetCOP residue_set
 		( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
-	core::import_pose::build_pose( fd, pose, *residue_set, options );
+	core::import_pose::build_pose( sfr, pose, *residue_set, options );
 
 }
 
@@ -526,9 +598,9 @@ pose_from_pdbstring(
 	ImportPoseOptions const & options,
 	std::string const & filename
 ){
-	io::pdb::FileData fd = import_pose::PDB_DReader::createFileData( pdbcontents, options );
-	fd.filename = filename;
-	core::import_pose::build_pose( fd, pose, residue_set, options);
+	io::StructFileRepOP sfr( io::pdb::create_sfr_from_pdb_file_contents( pdbcontents, options ).clone() );
+	sfr->filename() = filename;
+	core::import_pose::build_pose( sfr, pose, residue_set, options);
 }
 
 void pose_from_pdb_stream(
@@ -556,11 +628,11 @@ centroid_pose_from_pdb(
 	ResidueTypeSetCOP residue_set
 		( ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
 
-	core::import_pose::pose_from_pdb( pose, *residue_set, filename, read_fold_tree);
+	core::import_pose::pose_from_file( pose, *residue_set, filename, read_fold_tree, core::import_pose::PDB_file);
 }
 
 void build_pose(
-	io::pdb::FileData & fd,
+	io::StructFileRepOP fd,
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set
 )
@@ -569,9 +641,9 @@ void build_pose(
 	build_pose( fd, pose, residue_set, options);
 }
 
-/// @brief Build Rosetta 3 Pose object from FileData.
+/// @brief Build Rosetta 3 Pose object from StructFileRep.
 void build_pose(
-	io::pdb::FileData & fd,
+	io::StructFileRepOP fd,
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
 	ImportPoseOptions const & options
@@ -582,17 +654,10 @@ void build_pose(
 	TR.Debug << "build_pose... Ok." << std::endl;
 }
 
-void build_pose_as_is2(
-	io::pdb::FileData & fd,
-	pose::Pose & pose,
-	chemical::ResidueTypeSet const & residue_set,
-	id::AtomID_Mask & missing,
-	ImportPoseOptions const & options );
-
 // "super-simple" (C) by Phil
 /// @brief Try to Build pose object from pdb 'as-is'. PDB file must be _really_ clean.
 void build_pose_as_is(
-	io::pdb::FileData & fd,
+	io::StructFileRepOP sfr,
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
 	ImportPoseOptions const & options
@@ -600,12 +665,15 @@ void build_pose_as_is(
 {
 	id::AtomID_Mask missing( false );
 
-	io::pdb::build_pose_as_is1( fd, pose, residue_set, missing, options );
-	build_pose_as_is2( fd, pose, residue_set, missing, options );
+	//io::pdb::build_pose_as_is1( fd, pose, residue_set, missing, options );
+	io::pose_from_sfr::PoseFromSFRBuilder builder( residue_set.get_self_ptr(), options );
+	builder.build_pose( *sfr, pose );
+	missing = builder.missing_atoms();
+	build_pose_as_is2( sfr, pose, residue_set, missing, options );
 }
 
 void build_pose_as_is2(
-	io::pdb::FileData & /*fd*/,
+	io::StructFileRepCOP /*fd*/,
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
 	id::AtomID_Mask & missing,

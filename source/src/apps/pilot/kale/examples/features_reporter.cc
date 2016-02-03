@@ -44,7 +44,7 @@ using namespace basic::options;
 
 using core::Size;
 using core::pose::Pose;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using protocols::moves::Mover;
 using protocols::features::ReportToDB;
 using protocols::features::ReportToDBOP;

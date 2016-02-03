@@ -47,7 +47,7 @@ int main(int argc, char* argv []) {
 
 	// Initialize the variables used in this function.
 
-	import_pose::pose_from_pdb(pose, "structures/ideal_chain.7.pdb");
+	import_pose::pose_from_file(pose, "structures/ideal_chain.7.pdb", core::import_pose::PDB_file);
 
 	first_index = 2;
 	cut_index = 4;

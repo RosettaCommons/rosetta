@@ -26,7 +26,7 @@
 #include <core/fragment/OrderedFragSet.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
-
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/util.hh>
 
@@ -74,7 +74,7 @@ public:
 		core_init();
 		residue_set_ = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID );
 
-		//core::import_pose::pose_from_pdb( pose_, "core/pack/test_in.pdb" );
+		//core::import_pose::pose_from_file( pose_, "core/pack/test_in.pdb" , core::import_pose::PDB_file);
 		pose_ = create_test_in_pdb_pose();
 
 	}

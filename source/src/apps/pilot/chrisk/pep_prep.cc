@@ -156,7 +156,7 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 using std::string;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 static THREAD_LOCAL basic::Tracer TR( "apps.pilot.chrisk/pep_prep" );
 
@@ -329,7 +329,7 @@ pep_rmsd_analysis(
 
 	pose::Pose ref_pose;
 	std::string ref_name( option[ in::file::native ]() );
-	import_pose::pose_from_pdb( ref_pose, ref_name );
+	import_pose::pose_from_file( ref_pose, ref_name , core::import_pose::PDB_file);
 
 	Size ref_pep_anchor( pep_anchor );
 	if( option[ pepspec::native_pep_anchor ].user() ){
@@ -551,7 +551,7 @@ run_pep_prep()
 
 	}
 	Pose pose;
-	import_pose::pose_from_pdb( pose, pdb_filenames[ 1 ] );
+	import_pose::pose_from_file( pose, pdb_filenames[ 1 ] , core::import_pose::PDB_file);
 
 	ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
 
@@ -591,7 +591,7 @@ run_pep_prep()
 		else pose_index = static_cast< int >( numeric::random::rg().uniform() * pdb_filenames.size() + 1 );
 		std::string pdb_filename( pdb_filenames[ pose_index ] );
 		TR<<"Initializing "<< "prep_" + string_of( peptide_loop ) + ".pdb with " + pdb_filename << std::endl;
-		import_pose::pose_from_pdb( pose, pdb_filename );
+		import_pose::pose_from_file( pose, pdb_filename , core::import_pose::PDB_file);
 
 		// set the new foldtree in the pose
 		pose.fold_tree( f );
@@ -626,7 +626,7 @@ run_pep_prep()
 		if( option[ pepspec::prep_align_prot_to ].user() ){
 			std::string align_name( option[ pepspec::prep_align_prot_to ] );
 			Pose align_pose;
-			import_pose::pose_from_pdb( align_pose, align_name );
+			import_pose::pose_from_file( align_pose, align_name , core::import_pose::PDB_file);
 			id::AtomID_Map< id::AtomID > atom_map;
 			pose::initialize_atomid_map( atom_map, pose, id::BOGUS_ATOM_ID );
 			for ( Size i = prot_begin; i <= prot_end; ++i ) {
@@ -690,7 +690,7 @@ run_pep_prep()
 
 			//load ref pdb
 			Pose ref_pose;
-			import_pose::pose_from_pdb( ref_pose, ref_input_name );
+			import_pose::pose_from_file( ref_pose, ref_input_name , core::import_pose::PDB_file);
 
 			Size const ref_pep_anchor( ref_pose.pdb_info()->pdb2pose( ref_pep_chain_in[0], ref_pep_anchor_int ) );
 			//if gly, just change to ala, orient and calc data, then change back

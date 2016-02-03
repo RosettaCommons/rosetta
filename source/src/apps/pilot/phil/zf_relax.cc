@@ -55,7 +55,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 
 #include <numeric/random/random.hh>
@@ -406,7 +406,7 @@ zf_relax_test()
 
 	// the simulation pose
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "zf_relax_pose" );
 

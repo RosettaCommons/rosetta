@@ -18,7 +18,7 @@
 #include <protocols/pack_daemon/EntityCorrespondence.hh>
 
 // Core headers
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>

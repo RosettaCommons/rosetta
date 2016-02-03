@@ -24,7 +24,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/util.hh>
@@ -84,7 +84,7 @@
 
 //silly using/typedef
 #include <core/id/AtomID_Map.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/chemical/AA.hh>
 
 #include <core/pack/task/TaskFactory.hh>
@@ -323,13 +323,13 @@ LoopBuild_main() {
 		// sidechains later
 		rsd_set
 			= ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-		core::import_pose::pose_from_pdb(
+		core::import_pose::pose_from_file(
 			start_pose, *rsd_set, option[ OptionKeys::loops::input_pdb ]().name()
 		);
 	} else { // no full-atom, create a centroid PDB
 		rsd_set
 			= ChemicalManager::get_instance()->residue_type_set( "centroid" );
-		core::import_pose::pose_from_pdb(
+		core::import_pose::pose_from_file(
 			start_pose, *rsd_set, option[ OptionKeys::loops::input_pdb ]().name()
 		);
 	}
@@ -360,7 +360,7 @@ LoopBuild_main() {
 
 	core::pose::Pose native_pose;
 	if ( option[ OptionKeys::in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb(
+		core::import_pose::pose_from_file(
 			native_pose, option[ OptionKeys::in::file::native ]()
 		);
 		core::pose::set_ss_from_phipsi( native_pose );

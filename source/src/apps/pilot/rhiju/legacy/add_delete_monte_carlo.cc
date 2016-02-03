@@ -73,7 +73,7 @@
 #include <core/pose/MiniPose.hh>
 #include <core/pose/util.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
@@ -135,7 +135,7 @@ using namespace ObjexxFCL;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 

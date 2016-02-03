@@ -34,7 +34,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 
@@ -69,7 +69,7 @@ RMS_Energy::RMS_Energy() :
 	// guaranteeing that the native pose and pose provided for scoring have
 	// the same ResidueTypeSet.
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-		//core::import_pose::pose_from_pdb( native_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ]() );
+		//core::import_pose::pose_from_file( native_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 		core::io::pdb::build_pose_from_pdb_as_is(native_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ]() );
 	} else {
 		utility_exit_with_message( "Error: must provide native pose when scoring with RMS_Energy!\n" );

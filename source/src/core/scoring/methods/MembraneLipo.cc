@@ -23,7 +23,7 @@
 #include <core/scoring/ScoringManager.hh>
 //#include <core/scoring/rms_util.hh>
 
-//#include <core/io/pdb/pose_io.hh>
+//
 
 //symmetry
 #include <core/pose/symmetry/util.hh>

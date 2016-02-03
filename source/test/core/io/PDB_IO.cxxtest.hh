@@ -16,7 +16,7 @@
 #include <test/core/init_util.hh>
 
 // Package Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Project Headers
@@ -53,7 +53,7 @@ public:
 	void test_pdb_io() {
 		pose::Pose pose;
 		const std::string original_file_name("core/io/test_in.pdb");
-		import_pose::pose_from_pdb(pose, original_file_name);
+		import_pose::pose_from_file(pose, original_file_name, core::import_pose::PDB_file);
 
 		// see if number of residues is correct
 		TS_ASSERT_EQUALS( pose.total_residue(), 116u );
@@ -66,7 +66,7 @@ public:
 
 		// read written file as new pose object
 		pose::Pose P2;
-		import_pose::pose_from_pdb(P2, tmp_file_name);
+		import_pose::pose_from_file(P2, tmp_file_name, core::import_pose::PDB_file);
 
 		// see if number of residues is correct
 		TS_ASSERT_EQUALS( P2.total_residue(), 116u );
@@ -107,7 +107,7 @@ public:
 	void test_pdb_read_partial_residues() {
 		pose::Pose pose;
 		// This file has a leading fragment of an Arg residue that needs to be ignored.
-		import_pose::pose_from_pdb(pose, "core/io/1ten.pdb");
+		import_pose::pose_from_file(pose, "core/io/1ten.pdb", core::import_pose::PDB_file);
 		TS_ASSERT_EQUALS( pose.total_residue(), 89 );
 		TS_TRACE(pose.annotated_sequence());
 		TS_ASSERT_EQUALS( pose.annotated_sequence(),

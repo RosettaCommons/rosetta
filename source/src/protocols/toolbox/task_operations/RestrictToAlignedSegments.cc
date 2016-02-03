@@ -175,7 +175,7 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagCOP tag , DataMap & )
 	for ( core::Size i = 1; i <= pdb_names.size(); ++i ) {
 		if ( i == 1 || pdb_names[ i ] != pdb_names[ i - 1 ] ) { // scrimp on reading from disk
 			source_pose_.push_back( core::pose::PoseOP( new core::pose::Pose ) );
-			core::import_pose::pose_from_pdb( *source_pose_[ i ], pdb_names[ i ] );
+			core::import_pose::pose_from_file( *source_pose_[ i ], pdb_names[ i ] , core::import_pose::PDB_file);
 		} else {
 			source_pose_.push_back( source_pose_[ i - 1 ] );
 		}

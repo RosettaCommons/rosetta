@@ -31,7 +31,7 @@
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 //options
 #include <basic/options/keys/OptionKeys.hh>

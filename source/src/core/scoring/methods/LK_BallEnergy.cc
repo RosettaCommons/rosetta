@@ -49,7 +49,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-// #include <core/io/pdb/pose_io.hh> // HACK
+//   // HACK
 // #include <fstream> // HACK
 
 #include <core/scoring/constraints/AngleConstraint.hh>
@@ -1698,13 +1698,13 @@ LK_BallEnergy::finalize_total_energy(
 						lk_desolvation_of_atom2_by_atom1 = cp_weight * ( ( 1. - frac ) * solv2_[ l1 ] + frac * solv2_[ l1+1 ] );
 					}
 
-					if (atom1_waters.size() > 0) {
+					if ( atom1_waters.size() > 0 ) {
 						accumulate_single_atom_contributions( ii, atom1_type_index, atom1_waters, atom1_weights,
 							rsd1, atom2_type_index, atom2_xyz,
 							lk_desolvation_of_atom1_by_atom2, tbenergy_map );
 					}
 
-					if (atom2_waters.size() > 0) {
+					if ( atom2_waters.size() > 0 ) {
 						accumulate_single_atom_contributions( jj, atom2_type_index, atom2_waters, atom2_weights,
 							rsd2, atom1_type_index, atom1_xyz,
 							lk_desolvation_of_atom2_by_atom1, tbenergy_map );
@@ -1756,7 +1756,7 @@ LK_BallEnergy::eval_atom_derivative(
 				if ( rsd2.atom_is_hydrogen( heavyatom2 ) ) continue;
 
 				LKB_ResidueInfo const & rsd2_info( retrieve_lkb_residue_info( pose, nbrresid ) );
-				if ( rsd2_info.waters()[heavyatom2].size() == 0) continue;
+				if ( rsd2_info.waters()[heavyatom2].size() == 0 ) continue;
 
 				Real const d2( rsd1.xyz( atom1 ).distance_squared( rsd2.xyz( heavyatom2 ) ) );
 
@@ -1802,7 +1802,7 @@ LK_BallEnergy::eval_atom_derivative(
 
 				if ( ( d2 >= safe_max_dis2_ ) || ( d2 == Real(0.0) ) ) continue; // no contribution
 
-				if ( rsd1_info.waters()[i].size() == 0) continue;
+				if ( rsd1_info.waters()[i].size() == 0 ) continue;
 
 				utility::vector1< DerivVectorPair > r1_at_derivs(rsd1.natoms()), r2_at_derivs(rsd2.natoms());
 				sum_deriv_contributions_for_heavyatom_pair_one_way(

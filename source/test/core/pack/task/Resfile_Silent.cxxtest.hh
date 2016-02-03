@@ -106,7 +106,7 @@ public:
 		// set packer task from pdb
 		Pose pdb_pose;
 		std::string pdb_file_name( "core/pack/task/test_in.pdb" );
-		core::import_pose::pose_from_pdb( pdb_pose, pdb_file_name );
+		core::import_pose::pose_from_file( pdb_pose, pdb_file_name , core::import_pose::PDB_file);
 		PackerTaskOP task_pdb( TaskFactory::create_packer_task( pdb_pose ) );
 		rrop->apply( pdb_pose, *task_pdb );
 

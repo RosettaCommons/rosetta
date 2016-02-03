@@ -18,7 +18,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
@@ -168,7 +168,7 @@ main( int argc, char* argv[] )
 	//-s read in "master" PDB
 	core::pose::Pose master_pose;
 	std::string pdbname(basic::options::option[ basic::options::OptionKeys::in::file::s ].value()[1]);
-	core::import_pose::pose_from_pdb( master_pose, pdbname );
+	core::import_pose::pose_from_file( master_pose, pdbname , core::import_pose::PDB_file);
 
 	//-l read in list of pdbs
 	core::pose::Pose list_pose;
@@ -177,7 +177,7 @@ main( int argc, char* argv[] )
 	//-native for rmsd calculations
 	core::pose::Pose nativepose;
 	if ( option[ in::file::native ].active() ){
-		core::import_pose::pose_from_pdb( nativepose, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() );
+		core::import_pose::pose_from_file( nativepose, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() , core::import_pose::PDB_file);
 	}
 
 	//PDBs read in through -l
@@ -217,7 +217,7 @@ main( int argc, char* argv[] )
 	//Begin loop over -l pdbs
 	for(core::Size j = 1; j < numpdbs; ++j){
 		std::cout << "Begin loop " << j << std::endl;
-		core::import_pose::pose_from_pdb( list_pose, pdbs[j] );
+		core::import_pose::pose_from_file( list_pose, pdbs[j] , core::import_pose::PDB_file);
 
 		std::cout << "master PDB read in " << pdbname << std::endl;
 		std::cout << "list PDB read in " << pdbs[j] << std::endl;

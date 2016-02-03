@@ -18,7 +18,7 @@
 #include <core/graph/Graph.hh>
 #include <core/conformation/find_neighbors.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <basic/MetricValue.hh>
 #include <core/pose/PDBInfo.hh>
@@ -183,7 +183,7 @@ main( int argc, char * argv [] )
 				it != end; ++it ) {
 
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *it );
+		core::import_pose::pose_from_file( pose, *it , core::import_pose::PDB_file);
 		core::scoring::ScoreFunctionOP scorefxn =
 					core::scoring::get_score_function();
 		(*scorefxn)(pose);

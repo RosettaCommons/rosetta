@@ -14,22 +14,25 @@
 #ifndef INCLUDED_core_graph_ArrayPool_hh
 #define INCLUDED_core_graph_ArrayPool_hh
 
-/// Project Headers
-#include <platform/types.hh>
+// Project Headers
+#include <core/types.hh>
 
-/// Utility headers
+// Utility headers
+#include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 
-/// C++ headers
+// C++ headers
 #include <list>
-
-#include <utility/vector1.hh>
-
 
 namespace core {
 namespace graph {
+
+std::string
+neg_space_element_allocation_error_message( Size block_size, Size neg_space_element_size );
+
+std::string
+block_allocation_error_message( Size block_size, Size array_size, Size neg_space_element_size );
 
 /// @brief Class Array0 is a c-style array wrapper that does bounds checking in debug mode.
 /// It indexes from 0 just like regular c-arrays.  Class Array0 does not manage it's own
@@ -400,19 +403,13 @@ private:
 			NegSpaceElement< T > * const neg_block = new NegSpaceElement< T >[ block_size_ ];
 
 			if ( neg_block == 0 ) {
-				utility_exit_with_message( "ERROR: new failed in ArrayPool when requesting neg space block of size " +
-					utility::to_string( block_size_ ) + " (" +
-					utility::to_string( block_size_ * sizeof( NegSpaceElement< T > )) +
-					" bytes)" );
+				utility_exit_with_message( neg_space_element_allocation_error_message( block_size_, sizeof( NegSpaceElement< T > )));
 			}
 
 			T * const t_block = new T[ block_size_ * array_size_ ];
 
 			if ( t_block == 0 ) {
-				utility_exit_with_message( "ERROR: new failed in ArrayPool when requesting Array block of size " +
-					utility::to_string( block_size_ ) + "x" + utility::to_string( array_size_ ) + " (" +
-					utility::to_string( block_size_ * array_size_ * sizeof( T )) +
-					" bytes)" );
+				utility_exit_with_message( block_allocation_error_message( block_size_, array_size_, sizeof( T )));
 			}
 
 			NegSpaceElement< T > * neg_iter  = neg_block;
@@ -441,10 +438,7 @@ private:
 			NegSpaceElement< T > * const neg_block = new NegSpaceElement< T >[ block_size_ ];
 
 			if ( neg_block == 0 ) {
-				utility_exit_with_message( "ERROR: new failed in ArrayPool when requesting neg space block of size " +
-					utility::to_string( block_size_ ) + " (" +
-					utility::to_string( block_size_ * sizeof( NegSpaceElement< T > )) +
-					" bytes)" );
+				utility_exit_with_message( neg_space_element_allocation_error_message( block_size_, sizeof( NegSpaceElement< T > )));
 			}
 
 			T * const t_block = 0;
@@ -529,7 +523,6 @@ private:
 	std::list< T * > array_blocks_;
 
 };
-
 
 }
 }

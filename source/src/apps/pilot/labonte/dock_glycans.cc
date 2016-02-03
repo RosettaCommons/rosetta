@@ -312,7 +312,7 @@ public:  // Standard Rosetta methods
 	void
 	set_ref_pose_from_filename( std::string const & filename )
 	{
-		ref_pose_ = import_pose::pose_from_pdb( filename );
+		ref_pose_ = import_pose::pose_from_file( filename , core::import_pose::PDB_file);
 	}
 
 

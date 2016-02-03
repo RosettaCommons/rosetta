@@ -8,7 +8,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -425,7 +425,7 @@ int main( int argc, char * argv [] )
     for( Size i = 1; i <= pdbs.size(); ++i ){
       std::cerr << "Scanning " << i << " th pdb: " << pdbs[i] << std::endl; 
       pose::Pose pose;
-      import_pose::pose_from_pdb( pose, *rsd_set, pdbs[i] );
+      import_pose::pose_from_file( pose, *rsd_set, pdbs[i] , core::import_pose::PDB_file);
       scan_contact( pose, window_size, data );
     }
   }
@@ -433,7 +433,7 @@ int main( int argc, char * argv [] )
   for( Size i = 1; i <= pdbs.size(); ++i ){
     std::cerr << "collecting " << i << " th pdb: " << pdbs[i] << std::endl; 
     pose::Pose pose;
-    import_pose::pose_from_pdb( pose, *rsd_set, pdbs[i] );
+    import_pose::pose_from_file( pose, *rsd_set, pdbs[i] , core::import_pose::PDB_file);
     collect_silent( pose, window_size, data );
   }
 

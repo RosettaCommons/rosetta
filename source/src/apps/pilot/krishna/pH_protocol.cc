@@ -44,7 +44,7 @@
 //temp includes krishna
 #include <iostream>
 #include <fstream>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
 
@@ -274,7 +274,7 @@ public:
 
 			(*score_fxn)(curr_pose_);
 
-			//      core::io::pdb::dump_pdb( curr_pose_, "packed" + utility::to_string( curr_pH ) + ".pdb" );
+			//      core::io::pdb::old_dump_pdb( curr_pose_, "packed" + utility::to_string( curr_pH ) + ".pdb" );
 			//   TR << "Res_E of pose2:" << pdb_file_name_ << "\t" << curr_pose_.residue( res_no ).name() << "\t" << curr_pose_.pdb_info()->pose2pdb( res_no ) << "\tweighted_scores:\t" << curr_pose_.energies().residue_total_energies( res_no ).weighted_string_of( score_fxn->weights() ) <<"\ttotal_score:\t"<< curr_pose_.energies().residue_total_energies( res_no ).dot( score_fxn->weights() ) << std::endl;
 
 			if ( (!refine_stage_) && (!rotamer_prot_stats_) ) {

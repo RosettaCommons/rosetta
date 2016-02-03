@@ -56,7 +56,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/CrystInfo.hh>
+#include <core/io/CrystInfo.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -299,15 +299,15 @@ HybridizeProtocol::init() {
 	if ( option[ in::file::native ].user() ) {
 		native_ = core::pose::PoseOP( new core::pose::Pose );
 		if ( option[in::file::fullatom]() ) {
-			core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
+			core::import_pose::pose_from_file( *native_, option[ in::file::native ]() , core::import_pose::PDB_file);
 		} else {
 			core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-			core::import_pose::pose_from_pdb( *native_, *residue_set, option[ in::file::native ]()  );
+			core::import_pose::pose_from_file( *native_, *residue_set, option[ in::file::native ]()  , core::import_pose::PDB_file);
 		}
 	} else if ( option[ evaluation::align_rmsd_target ].user() ) {
 		native_ = core::pose::PoseOP( new core::pose::Pose );
 		utility::vector1< std::string > const & align_rmsd_target( option[ evaluation::align_rmsd_target ]() );
-		core::import_pose::pose_from_pdb( *native_, align_rmsd_target[1] ); // just use the first one for now
+		core::import_pose::pose_from_file( *native_, align_rmsd_target[1] , core::import_pose::PDB_file); // just use the first one for now
 	}
 
 	// strand pairings
@@ -680,7 +680,7 @@ void HybridizeProtocol::add_template(
 		add_null_template( template_pose, cst_fn, symm_file, weight );
 	} else {
 		core::pose::PoseOP template_pose( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb( *template_pose, *residue_set, template_fn );
+		core::import_pose::pose_from_file( *template_pose, *residue_set, template_fn , core::import_pose::PDB_file);
 
 		add_template( template_pose, cst_fn, symm_file, weight, cst_reses, template_fn );
 	}
@@ -826,7 +826,7 @@ void HybridizeProtocol::validate_template(
 		core::Size nres = template_pose->total_residue();
 		for ( Size i=1; i<=nres; i++ ) {
 			Size pdbnumber = template_pose->pdb_info()->number(i);
-			if ( sequencemap[i] == 0) { // extra residues in template
+			if ( sequencemap[i] == 0 ) { // extra residues in template
 				template_pose->delete_residue_range_slow( currres,currres );
 				ndel++;
 				continue;
@@ -837,7 +837,7 @@ void HybridizeProtocol::validate_template(
 			}
 			currres++;
 		}
-		if (ndel > 0) {
+		if ( ndel > 0 ) {
 			TR.Error << "WARNING! Realignment removed " << ndel << " residues!" << std::endl;
 		}
 	} else {
@@ -1057,7 +1057,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// (7) steal crystal parameters (if specified)
 		if ( templates_[initial_template_index]->pdb_info() ) {
-			core::pose::CrystInfo ci = templates_[initial_template_index]->pdb_info()->crystinfo();
+			core::io::CrystInfo ci = templates_[initial_template_index]->pdb_info()->crystinfo();
 			if ( ci.A()*ci.B()*ci.C() != 0 ) {
 				pose.pdb_info()->set_crystinfo( ci );
 			}

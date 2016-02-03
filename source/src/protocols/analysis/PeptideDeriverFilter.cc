@@ -26,7 +26,8 @@
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/util.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -332,7 +333,7 @@ void PeptideDeriverPoseOutputter::output_pose( core::pose::Pose & pose, std::str
 	} else {
 		std::string const file_name(pose_name + ".pdb");
 		utility::io::ozstream out_stream( file_name );
-		core::io::pdb::FileData::dump_pdb( pose, out_stream );
+		core::io::pdb::dump_pdb( pose, out_stream );
 	}
 }
 
@@ -762,7 +763,7 @@ PeptideDeriverFilter::derive_peptide(
 
 	core::pose::Pose chain_pair_pose;
 
-	core::io::pdb::pose_from_pose( chain_pair_pose, pose, residue_indices );
+	core::io::pose_from_pose( chain_pair_pose, pose, residue_indices );
 
 	// prepare the chain pair pose
 	prepare_pose(output, chain_pair_pose);

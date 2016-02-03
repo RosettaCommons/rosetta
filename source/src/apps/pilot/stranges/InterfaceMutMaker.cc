@@ -20,7 +20,7 @@
 
 // Project Headers
 #include <core/chemical/AA.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Edge.hh>
@@ -317,7 +317,7 @@ main( int argc, char* argv[] ) {
 	pose::Pose native_pose;
 
 	if (basic::options::option[ in::file::native ].user()){
-			core::import_pose::pose_from_pdb( native_pose, basic::options::option[ in::file::native ]());
+			core::import_pose::pose_from_file( native_pose, basic::options::option[ in::file::native ](), core::import_pose::PDB_file);
 	}
 
   scoring::ScoreFunctionOP scorefxn;
@@ -327,7 +327,7 @@ main( int argc, char* argv[] ) {
   scorefxn->set_energy_method_options( energymethodoptions );
 
   pose::Pose pose;
-  core::import_pose::pose_from_pdb( pose, pdb_file_name.name() );
+  core::import_pose::pose_from_file( pose, pdb_file_name.name() , core::import_pose::PDB_file);
 
   // score the input pose for kicks and giggles
   (*scorefxn)( pose );

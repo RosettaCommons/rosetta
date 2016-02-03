@@ -217,7 +217,7 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
 			template_ = NULL;
 		} else {
 			core::pose::PoseOP p( new core::pose::Pose() );
-			core::import_pose::pose_from_pdb( *p,
+			core::import_pose::pose_from_file( *p,
 				*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
 				file );
 

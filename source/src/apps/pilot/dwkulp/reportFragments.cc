@@ -15,7 +15,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/pack/pack_rotamers.hh>
@@ -102,7 +102,7 @@ using namespace core::fragment;
 using namespace protocols::frag_picker;
 using namespace protocols::frag_picker::scores;
 using namespace core::chemical;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 
 typedef utility::pointer::owning_ptr< AnnotatedFragData > AnnotatedFragDataOP;
 typedef utility::pointer::owning_ptr< AnnotatedFragData const > AnnotatedFragDataCOP;
@@ -119,7 +119,7 @@ int main( int argc, char * argv[] ) {
 
   // Read in a pdb (assume pre-relaxed structure)
   core::pose::Pose pose;
-  core::import_pose::pose_from_pdb(pose,basic::options::start_file());
+  core::import_pose::pose_from_file(pose,basic::options::start_file(), core::import_pose::PDB_file);
 
   // poly-Val or poly-Ala sequence for testing fragment picker while designing.
   string forcePolyAAsequence = "";

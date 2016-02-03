@@ -12,6 +12,11 @@
 /// @brief --brief--
 /// @author --name-- (--email--)
 
+#include <--path--/util.hh>
+
+#include <basic/Tracer.hh>
+
+static THREAD_LOCAL basic::Tracer TR( "--namespace_dot--.util.hh" );
 
 --namespace--
 

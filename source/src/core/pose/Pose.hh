@@ -141,6 +141,8 @@ Pose.assign
 Pose.atom_tree
 Pose.conformation
 Pose.dump_pdb
+Pose.dump_cif
+Pose.dump_file
 Pose.energies
 Pose.fold_tree
 Pose.pdb_info
@@ -1437,6 +1439,30 @@ public:
 	void
 	clear();
 
+	/// @brief Export pose data to a file, <file_name>, determining which type of file format to write based on the file extension
+	///
+	/// example(s):
+	///     pose.dump_file('new_01.pdb')
+	///     pose.dump_file('new_01.cif')
+	/// See also:
+	///     Pose
+	///     dump_cif
+	///     dump_file
+	void
+	dump_file( std::string const & file_name ) const;
+
+	/// @brief Export pose data to the mmCIF file  <file_name>
+	///
+	/// example(s):
+	///     pose.dump_cif('new_01.cif')
+	/// See also:
+	///     Pose
+	///     pose_from_cif
+	///     dump_file
+	void
+	dump_cif( std::string const & file_name) const;
+
+
 	/// @brief Export pose data to the PDB file  <file_name>
 	///
 	/// example(s):
@@ -1444,10 +1470,13 @@ public:
 	/// See also:
 	///     Pose
 	///     pose_from_pdb
+	///     dump_cif
+	///     dump_file
 	bool
 	dump_pdb(std::string const & file_name, std::string const & tag="1") const;
 
-	void dump_pdb(std::ostream & out, std::string const & tag="1") const;
+	void
+	dump_pdb(std::ostream & out, std::string const & tag="1") const;
 
 	/// @brief for writing a specified subset of residues in pdb format
 	void
@@ -1462,6 +1491,9 @@ public:
 	/// add some score output
 	void
 	dump_scored_pdb( std::string const & file_name, scoring::ScoreFunction const & scorefxn, std::string const & tag="1" );
+
+
+
 
 public: // observer attach/detach
 

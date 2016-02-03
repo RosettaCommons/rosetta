@@ -123,7 +123,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -372,7 +372,7 @@ figure_out_icoord_test( ){
 	std::string infile  = option[ in ::file::s ][1];
 
 	pose::Pose pose,start_pose;
-	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 	/////////////////////////////////////////
 	protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 	/////////////////////////////////////////
@@ -463,8 +463,8 @@ rna_fullatom_score_test()
 		std::string const pdb_file = pdb_files[i];
 
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
-		//import_pose::pose_from_pdb( pose, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
+		//import_pose::pose_from_file( pose, pdb_file , core::import_pose::PDB_file);
 		/////////////////////////////////////////
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////
@@ -815,7 +815,7 @@ rna_fullatom_multiscore_test()
 	pose::Pose pose;
 	std::string const pdb_file = pdb_files[1];
 
-	import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 	/////////////////////////////////////////
 	protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 	/////////////////////////////////////////
@@ -891,7 +891,7 @@ convert_to_native_test()
 		std::string const pdb_file = pdb_files[i];
 
 		pose::Pose pose, start_pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		/////////////////////////////////////////
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////
@@ -930,7 +930,7 @@ rna_fullatom_minimize_silent_test()
 
 	pose::Pose native_pose;
 	std::string native_pdb_file  = option[ in::file::native ];
-	import_pose::pose_from_pdb( native_pose, *rsd_set, native_pdb_file );
+	import_pose::pose_from_file( native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 	/////////////////////////////////////////
 	protocols::farna::ensure_phosphate_nomenclature_matches_mini( native_pose );
 	/////////////////////////////////////////
@@ -949,7 +949,7 @@ rna_fullatom_minimize_silent_test()
 	bool const use_input_pose = option[ in::file::s ].active();
 	if ( use_input_pose ) {
 		std::string ideal_pdb_file  = option[ in::file::s ][1];
-		import_pose::pose_from_pdb( ideal_pose, *rsd_set, ideal_pdb_file );
+		import_pose::pose_from_file( ideal_pose, *rsd_set, ideal_pdb_file , core::import_pose::PDB_file);
 		/////////////////////////////////////////
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( ideal_pose );
 		/////////////////////////////////////////
@@ -1023,7 +1023,7 @@ rna_o2prime_test()
 		std::string const pdb_file = pdb_files[i];
 
 		pose::Pose pose, start_pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		/////////////////////////////////////////
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////
@@ -1080,7 +1080,7 @@ rna_lores_score_test()
 		std::string const pdb_file = pdb_files[i];
 
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		/////////////////////////////////////////
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////
@@ -1119,7 +1119,7 @@ rna_lores_score_silent_test()
 	pose::Pose native_pose;
 	bool const use_native = option[in::file::native].active();
 	if ( use_native )  {
-		import_pose::pose_from_pdb( native_pose, *rsd_set, option( in::file::native ) );
+		import_pose::pose_from_file( native_pose, *rsd_set, option( in::file::native ) , core::import_pose::PDB_file);
 		/////////////////////////////////////////
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( native_pose );
 		/////////////////////////////////////////
@@ -1130,7 +1130,7 @@ rna_lores_score_silent_test()
 	bool const use_input_pose = option[ in::file::s ].active();
 	if ( use_input_pose ) {
 		std::string ideal_pdb_file  = option[ in::file::s ][1];
-		import_pose::pose_from_pdb( ideal_pose, *rsd_set, ideal_pdb_file );
+		import_pose::pose_from_file( ideal_pose, *rsd_set, ideal_pdb_file , core::import_pose::PDB_file);
 		/////////////////////////////////////////
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( ideal_pose );
 		/////////////////////////////////////////
@@ -1202,7 +1202,7 @@ pymol_struct_type_test()
 
 	pose::Pose pose;
 	std::string infile  = option[ in::file::s ][1];
-	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 	Size const nres = pose.total_residue();
 	FArray1D_int struct_type( nres, -1 );
@@ -1269,7 +1269,7 @@ rna_design_gap_test()
 		std::string const pdb_file = pdb_files[i];
 
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, in_path + pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, in_path + pdb_file , core::import_pose::PDB_file);
 		/////////////////////////////////////////
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////
@@ -1340,7 +1340,7 @@ print_internal_coord_test()
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 	/////////////////////////////////////////
 	if ( option[ rsd_type_set]() == core::chemical::FA_STANDARD ) {
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
@@ -1419,7 +1419,7 @@ set_ideal_geometry( pose::Pose & pose, pose::Pose const & extended_pose, chemica
 
 		pose::Pose ideal_pose;
 		std::string ideal_pdb_file  = option[ in::file::s ][1];
-		import_pose::pose_from_pdb( ideal_pose, *rsd_set, ideal_pdb_file );
+		import_pose::pose_from_file( ideal_pose, *rsd_set, ideal_pdb_file , core::import_pose::PDB_file);
 		/////////////////////////////////////////
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( ideal_pose );
 		/////////////////////////////////////////
@@ -1482,7 +1482,7 @@ rna_idealize_test() {
 		std::string const pdb_file = pdb_files[n];
 
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		/////////////////////////////////////////
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////
@@ -1617,7 +1617,7 @@ rna_close_chainbreaks_test(){
 
 	std::string infile  = option[ in::file::s ][1];
 	Pose pose;
-	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 	/////////////////////////////////////////
 	protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 	/////////////////////////////////////////
@@ -2109,7 +2109,7 @@ create_rna_benchmark_test(){
 		std::string infile  = infiles[i];
 
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, infile );
+		import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 		/////////////////////////////////////////
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////
@@ -2186,7 +2186,7 @@ rna_chain_closure_test()
 	std::string infile  = option[ in::file::s ][1];
 
 	pose::Pose pose;
-	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 	/////////////////////////////////////////
 	protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 	/////////////////////////////////////////
@@ -2322,7 +2322,7 @@ rna_backbone_rebuild_test()
 
 	//Input pose, tack on virtual atom.
 	pose::Pose pose;
-	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 	/////////////////////////////////////////
 	protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 	/////////////////////////////////////////
@@ -2595,7 +2595,7 @@ sasa_test()
 		std::string const pdb_file = pdb_files[n];
 
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		//  protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
 		id::AtomID_Map< Real > atom_sasa;
@@ -2669,7 +2669,7 @@ env_sugar_test()
 		std::string const pdb_file = pdb_files[n];
 
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		//  protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
 		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
@@ -2762,7 +2762,7 @@ print_hbonds_test()
 		std::string const pdb_file = pdb_files[n];
 
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 		(*scorefxn)(pose);
 		hbonds::HBondOptionsOP hbond_options( new hbonds::HBondOptions() );
@@ -3180,11 +3180,11 @@ build_next_nucleotide_test()
 	bool const prepend_res = option[ prepend_residue] ;
 
 	std::string infile  = option[ in ::file::s ][1];
-	import_pose::pose_from_pdb( pose_start, *rsd_set, infile );
+	import_pose::pose_from_file( pose_start, *rsd_set, infile , core::import_pose::PDB_file);
 
 	//This is a bit complicated...
 	if ( option[in::file::native].user() ) {
-		import_pose::pose_from_pdb( pose_reference, *rsd_set, option[in::file::native] );
+		import_pose::pose_from_file( pose_reference, *rsd_set, option[in::file::native] , core::import_pose::PDB_file);
 		if ( prepend_res ) {
 			ResidueType rsd_type =  pose_reference.residue( 1 ).type();
 			ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type ) ;
@@ -3511,7 +3511,7 @@ rotamerize_rna_test()
 
 	pose::Pose source_pose,pose;
 	std::string infile  = option[ in ::file::s ][1];
-	import_pose::pose_from_pdb( source_pose, *rsd_set, infile );
+	import_pose::pose_from_file( source_pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 	std::string sequence = source_pose.sequence();
 
@@ -3645,7 +3645,7 @@ calc_rmsd_test()
 
 	pose::Pose native_pose;
 	std::string native_pdb_file  = option[ in::file::native ];
-	import_pose::pose_from_pdb( native_pose, *rsd_set, native_pdb_file );
+	import_pose::pose_from_file( native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 	protocols::farna::ensure_phosphate_nomenclature_matches_mini( native_pose );
 
 	Real rmsd( 0.0 );
@@ -3653,7 +3653,7 @@ calc_rmsd_test()
 		std::string const pdb_file = pdb_files[n];
 
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
 		rmsd = all_atom_rmsd( native_pose, pose );
@@ -4073,7 +4073,7 @@ sugar_geometry_RNA_test()
 	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 		std::string const pdb_file = pdb_files[n];
 
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
 
@@ -4164,7 +4164,7 @@ color_by_geom_sol_RNA_test()
 
 	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 		std::string const pdb_file = pdb_files[n];
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
 		PDBInfoOP pdb_info( new PDBInfo( pose, true ) );
@@ -4215,7 +4215,7 @@ color_by_lj_base_RNA_test()
 
 	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 		std::string const pdb_file = pdb_files[n];
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
 		PDBInfoOP pdb_info( new PDBInfo( pose, true ) );
@@ -4266,7 +4266,7 @@ rna_stats_test()
 
 	if ( option[ in::file::native ].active() ) {
 		std::string native_pdb_file  = option[ in::file::native ];
-		import_pose::pose_from_pdb( native_pose, *rsd_set, native_pdb_file );
+		import_pose::pose_from_file( native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( native_pose );
 		rna_de_novo_protocol.set_native_pose( native_pose_OP );
 	}
@@ -4275,7 +4275,7 @@ rna_stats_test()
 
 	for ( Size n = 1; n <= pdb_files.size(); n++ ) {
 		std::string const pdb_file = pdb_files[n];
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
 		utility::vector1< core::pose::rna::BasePair > base_pair_list;
@@ -4309,7 +4309,7 @@ files_for_openMM_test(){
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 	std::string const pdb_file = pdb_files[1];
 	Pose pose_start;
-	import_pose::pose_from_pdb( pose_start, *rsd_set, pdb_file );
+	import_pose::pose_from_file( pose_start, *rsd_set, pdb_file , core::import_pose::PDB_file);
 	protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose_start );
 
 	Pose pose;
@@ -4433,7 +4433,7 @@ print_secstruct_test(){
 
 	pose::Pose pose;
 	std::string infile  = option[ in ::file::s ][1];
-	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 	utility::vector1< std::pair<Size, Size> > base_pairing_list;
 	protocols::farna::get_base_pairing_list( pose, base_pairing_list );
@@ -4459,7 +4459,7 @@ print_all_torsions_test(){
 
 	pose::Pose pose;
 	std::string infile  = option[ in ::file::s ][1];
-	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 
 	std::cout << "  N    ALPHA     BETA    GAMMA    DELTA  EPSILON     ZETA         CHI" << std::endl;
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {

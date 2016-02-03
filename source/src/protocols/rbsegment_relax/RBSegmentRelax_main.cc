@@ -78,7 +78,7 @@ RBSegmentRelaxImpl::RBSegmentRelaxImpl(){
 
 	// native structure
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 		core::pose::set_ss_from_phipsi( native_pose );
 
 #ifdef BOINC_GRAPHICS
@@ -156,9 +156,9 @@ RBSegmentRelax_main() {
 
 	// if full-atom load starting structure as full-atom to recover sidechains later
 	//if ( option[ in::file::fullatom ]() ) {
-	// core::import_pose::pose_from_pdb( start_pose, pdbfilename );
+	// core::import_pose::pose_from_file( start_pose, pdbfilename , core::import_pose::PDB_file);
 	//} else {
-	// core::import_pose::centroid_pose_from_pdb( start_pose, pdbfilename );
+	// core::import_pose::centroid_pose_from_pdb( start_pose, pdbfilename , core::import_pose::PDB_file);
 	//}
 
 	// roughly guess at secondary structure

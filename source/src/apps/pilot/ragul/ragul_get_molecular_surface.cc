@@ -31,7 +31,7 @@
 // Utility Headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -77,7 +77,7 @@ int main( int argc, char * argv [] ) {
 
 		std::string const input_protein = option[ protein ];
 		pose::Pose protein_pose;
-		core::import_pose::pose_from_pdb( protein_pose, input_protein );
+		core::import_pose::pose_from_file( protein_pose, input_protein , core::import_pose::PDB_file);
 
 		//create 'tag' for eggshell output filename
 		int pfounddir = input_protein.find_last_of("/\\");

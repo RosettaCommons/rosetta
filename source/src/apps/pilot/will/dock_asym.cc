@@ -84,7 +84,7 @@ using utility::io::izstream;
 using utility::io::ozstream;
 using utility::vector1;
 using std::endl;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using Xform;
 using core::conformation::ResidueOP;
 
@@ -257,7 +257,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	Pose native;
-	core::import_pose::pose_from_pdb(native,"input/native.pdb");
+	core::import_pose::pose_from_file(native,"input/native.pdb", core::import_pose::PDB_file);
 
 
 	for(Size ifn = 1; ifn <= option[in::file::s]().size(); ifn+=2) {
@@ -266,12 +266,12 @@ int main(int argc, char *argv[]) {
 		Pose pnat1,pnat2;
 		TR << "searching " << fn1 << " vs " << fn2 << std::endl;
 		{
-			core::import_pose::pose_from_pdb(pnat1,fn1);
+			core::import_pose::pose_from_file(pnat1,fn1, core::import_pose::PDB_file);
 			trans_pose(pnat1,-center_of_geom(pnat1,1,pnat1.n_residue()));
 			core::scoring::dssp::Dssp dssp(pnat1);
 			dssp.insert_ss_into_pose(pnat1);
 		}{
-			core::import_pose::pose_from_pdb(pnat2,fn2);
+			core::import_pose::pose_from_file(pnat2,fn2, core::import_pose::PDB_file);
 			trans_pose(pnat2,-center_of_geom(pnat2,1,pnat2.n_residue()));
 			core::scoring::dssp::Dssp dssp(pnat2);
 			dssp.insert_ss_into_pose(pnat2);

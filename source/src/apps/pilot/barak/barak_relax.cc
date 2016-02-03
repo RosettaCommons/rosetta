@@ -17,7 +17,7 @@
 
 #include <core/pose/Pose.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -62,7 +62,7 @@ main( int argc, char * argv [] )
 
 	// read the pose
 	 core::pose::Pose pose;
-	 core::import_pose::pose_from_pdb( pose, basic::options::start_file() ); // gets filename from -s option
+	 core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file); // gets filename from -s option
 
 	using namespace core::pack::task;
 	TaskFactoryOP main_task_factory = new TaskFactory;

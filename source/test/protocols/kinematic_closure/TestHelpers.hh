@@ -43,7 +43,7 @@ using namespace core;
 using core::PointPosition;
 using core::pose::Pose;
 using core::id::AtomID;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::kinematics::FoldTree;
 using protocols::kinematic_closure::ClosureProblemOP;
 using protocols::kinematic_closure::ClosureProblemCOP;
@@ -103,7 +103,7 @@ ClosureTest::ClosureTest( // {{{1
 		string name_, string pdb_path_, Loop loop_, Size num_solutions_) {
 
 	name = name_;
-	pose_from_pdb(pose, "protocols/kinematic_closure/inputs/" + pdb_path_);
+	pose_from_file(pose, "protocols/kinematic_closure/inputs/" + pdb_path_, core::import_pose::PDB_file);
 	original_pose = pose;
 	loop = loop_;
 	if (loop.cut() == 0) loop.set_cut(loop.midpoint());

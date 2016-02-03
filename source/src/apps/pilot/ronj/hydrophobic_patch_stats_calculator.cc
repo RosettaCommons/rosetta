@@ -22,7 +22,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/TenANeighborGraph.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/sasa.hh>
@@ -147,7 +147,7 @@ find_hppatches_nb_graph( std::vector< FileName > & pdb_file_names ) {
 			continue;
 		}
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 
 		//TR << "Read in pdb file '" << pose.name() << "'" << std::endl;
 
@@ -239,7 +239,7 @@ find_hppatches_nb_graph( std::vector< FileName > & pdb_file_names ) {
 		countSEHydrophobic.push_back( std::pair<std::string,int>( pose.pdb_info()->name(), countSEHydrophobicPerStructure ) );
 
 		// output pdb file
-		//core::io::pdb::dump_pdb( pose, file_basename( pose.name()) + "_hp.pdb" );
+		//core::io::pdb::old_dump_pdb( pose, file_basename( pose.name()) + "_hp.pdb" );
 
 	} // end for loop over multiple input pdb files
 
@@ -282,7 +282,7 @@ find_hppatches_distance( std::vector< FileName > & pdb_file_names ) {
 			continue;
 		}
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 
 		//TR << "Read in pdb file '" << pose.name() << "'" << std::endl;
 
@@ -395,7 +395,7 @@ find_hppatches_distance( std::vector< FileName > & pdb_file_names ) {
 			countSEHydrophobic.push_back( std::pair<std::string,int>( pose.pdb_info()->name(), countSEHydrophobicPerStructure ) );
 
 			// output pdb file
-			//core::io::pdb::dump_pdb( pose, file_basename( pose.name()) + "_hp.pdb" );
+			//core::io::pdb::old_dump_pdb( pose, file_basename( pose.name()) + "_hp.pdb" );
 
 		} // end thresholdRadius
 
@@ -428,7 +428,7 @@ calculate_percent_hydrophobic_stats( std::vector< FileName > & pdb_file_names )
 			continue;
 		}
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 
 		TR << pose.pdb_info()->name() << std::endl;
 
@@ -597,7 +597,7 @@ calculate_percent_hydrophobic_distribution( std::vector< FileName > & pdb_file_n
 			continue;
 		}
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 
 		TR << pose.pdb_info()->name() << std::endl;
 
@@ -767,7 +767,7 @@ calculate_hydrophobic_accessible_surface_area( std::vector< FileName > & pdb_fil
 
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 
 		scorefxn->score( pose );
 
@@ -982,7 +982,7 @@ calculate_hASA_by_type_and_exposure( std::vector< FileName > & pdb_file_names ) 
 		}
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 		// First, don't include the 3-residue chain termini. That could skew the distributions.  People add purification
 		// tags and extra residues on proteins all the time.
 		if ( pose.n_residue() <= 4 ) {
@@ -1199,7 +1199,7 @@ calculate_hASA_by_type_and_attractiveE( std::vector< FileName > & pdb_file_names
 		}
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 
 		scorefxn->score( pose );
 
@@ -1455,7 +1455,7 @@ calculate_total_hASA_within_distance_exact_hASA_values( std::vector< FileName > 
 		}
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 
 		scorefxn->score( pose );
 
@@ -1653,7 +1653,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs( std::vector< File
 		}
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 
 		scorefxn->( pose );
 
@@ -1844,7 +1844,7 @@ calculate_total_hASA_within_distance_exact_hASA_values_allnbs_exposedornot_condi
 		}
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 		if ( pose.n_residue() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);
@@ -1999,7 +1999,7 @@ calculate_total_hASA_within_distance_miniSASAvalues_allnbs_exposedornot_conditio
 		}
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 		if ( pose.n_residue() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);
@@ -2163,7 +2163,7 @@ calculate_total_hASA_within_distance_avg_values( std::vector< FileName > & pdb_f
 		}
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 
 		scorefxn->score( pose );
 
@@ -2305,7 +2305,7 @@ void calculate_hASA_by_type_and_nbcount( std::vector< FileName > & pdb_file_name
 		}
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 		if ( pose.n_residue() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);
@@ -2489,7 +2489,7 @@ calculate_total_hASA_within_distance_avgresiduevalues_allnbs_conditionalonnumnbs
 		}
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 		if ( pose.n_residue() <= 4 ) {
 			std::cerr << "PDB not big enough. Quitting.";
 			exit(1);

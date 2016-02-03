@@ -26,7 +26,9 @@
 #include <basic/database/open.hh>
 
 
-#include <core/io/pdb/pose_io.hh> // HACK
+// HACK
+#include <core/io/pdb/pdb_writer.hh>
+
 #include <fstream> // HACK
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>

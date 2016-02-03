@@ -72,7 +72,7 @@ public:
 			core::pose::Pose pose;
 			int r;
 
-			core::import_pose::pose_from_pdb( pose, test_structures[i].fn );
+			core::import_pose::pose_from_file( pose, test_structures[i].fn , core::import_pose::PDB_file);
 
 			// Test standard mode
 			{

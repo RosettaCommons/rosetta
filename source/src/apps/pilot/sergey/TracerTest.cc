@@ -48,9 +48,8 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/database/open.hh>
-#include <core/io/pdb/pdb_dynamic_reader.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 
@@ -246,7 +245,7 @@ int main( int argc, char * argv [] )
 		using basic::T;
 		{
 			core::pose::Pose pose;
-			core::import_pose::pose_from_pdb(pose, "test_in.pdb");
+			core::import_pose::pose_from_file(pose, "test_in.pdb", core::import_pose::PDB_file);
 
 			core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function_legacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
 			T("Score:") << scorefxn->score(pose)  << std::endl;

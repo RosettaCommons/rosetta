@@ -50,7 +50,7 @@ public:
 		pose::Pose pose;
 		KinematicMover mover;
 
-		import_pose::pose_from_pdb(pose, "devel/balanced_kic/loop.pdb");
+		import_pose::pose_from_file(pose, "devel/balanced_kic/loop.pdb", core::import_pose::PDB_file);
 
 		mover.set_pivots(2, 3, 4);
 

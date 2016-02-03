@@ -26,7 +26,7 @@
 #include <numeric/xyz.functions.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/ScoreFunction.hh>

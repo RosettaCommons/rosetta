@@ -20,7 +20,7 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -266,7 +266,7 @@ my_main( void* )
 	using namespace optimization;
 
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, option[ OptionKeys::loops::input_pdb ]().name() );
+	core::import_pose::pose_from_file( pose, option[ OptionKeys::loops::input_pdb ]().name() , core::import_pose::PDB_file);
  	int const nres( pose.total_residue() );
 
  	scoring::ScoreFunctionOP scorefxn( get_score_function() );
@@ -321,7 +321,7 @@ my_main( void* )
 	std::string out_tag = option[ OptionKeys::out::output_tag ];
 	std::string outname=option[ OptionKeys::out::path::path ]().name()+out_tag+"_min.pdb";
 	std::ofstream out(outname.c_str(), std::ios::out | std::ios::binary);
-	core::io::pdb::dump_pdb( pose, out );
+	core::io::pdb::old_dump_pdb( pose, out );
 	out << "total_energy_before_minimize: " << starting_total_energy << std::endl;
 	out << "total_energy_after_minimize: " << last_total_energy << std::endl;
 

@@ -67,7 +67,7 @@ public:
 		protocols_init();
 
 		// load pose
-		pose_ = core::import_pose::pose_from_pdb( "protocols/membrane/1AFO_AB.pdb" );
+		pose_ = core::import_pose::pose_from_file( "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
 		std::string spanfile = "protocols/membrane/1AFO_AB.span";
 
 		// Add Membrane to pose

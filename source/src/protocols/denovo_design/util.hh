@@ -28,7 +28,7 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/Remarks.hh>
 #include <core/types.hh>
 
 // Basic/Numeric/Utility Headers
@@ -74,10 +74,10 @@ utility::vector1< std::string >
 abego_vector( std::string const & ab );
 
 // gets a remark line, pasting multiple lines together if necessary
-std::string get_remark_line( core::pose::Remarks::const_iterator & it_rem, core::pose::Remarks::const_iterator const & end );
+std::string get_remark_line( core::io::Remarks::const_iterator & it_rem, core::io::Remarks::const_iterator const & end );
 
 /// @brief adds a remark to a Remarks object, splitting it into multiple remarks if it is too long
-void add_remark( core::pose::Remarks & remarks, core::Size const num, std::string const & str_val );
+void add_remark( core::io::Remarks & remarks, core::Size const num, std::string const & str_val );
 
 // helper function to calculate stop of loop without overlap
 core::Size

@@ -25,7 +25,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
@@ -147,7 +147,7 @@ namespace OK = OptionKeys;
 using utility::vector1;
 using std::string;
 using import_pose::pose_from_pdb;
-using io::pdb::dump_pdb; // deprecated though
+using io::pdb::old_dump_pdb; // deprecated though
 using namespace ObjexxFCL;
 using basic::T;
 using basic::Warning;
@@ -1755,7 +1755,7 @@ byres_analysis(
 	if( pdbname.find_last_of( "/" ) < ( pdbname.size() - 1 ) ) pdbnamestart = pdbname.find_last_of( "/" ) + 1;
 	std::string pdbname( pdbname, pdbnamestart, pdbname.size() - pdbnamestart - 4 );
 	Pose pose;
-	pose_from_pdb( pose, pdbname );
+	pose_from_file( pose, pdbname , core::import_pose::PDB_file);
 	*/
 
 	//create a ScoreFunction from commandline options
@@ -1791,7 +1791,7 @@ byres_analysis(
 	//actually have a diff native pose?
 	if( option[ in::file::native ].user() ){
 		native_pdbname = option[ in::file::native ]();
-		pose_from_pdb( native_pose, native_pdbname );
+		pose_from_file( native_pose, native_pdbname , core::import_pose::PDB_file);
 		//align structures for edensity cals?
 		if( option[ edensity::mapfile ].user() ) core::scoring::calpha_superimpose_pose( native_pose, pose );
 		//get sequence mapping?

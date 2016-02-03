@@ -38,7 +38,7 @@
 #include <devel/init.hh>
 #include <core/init/init.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+////#include <core/io/pdb/pose_io.hh>
 #include <basic/options/util.hh>//option.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>

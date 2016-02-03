@@ -30,13 +30,15 @@
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pdb_dynamic_reader.hh>
+#include <core/io/pdb/pdb_writer.hh>
+#include <core/io/pdb/pdb_reader.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/SharedSilentData.hh>
 #include <core/import_pose/PDBSilentStruct.hh>
+#include <core/io/pose_to_sfr/PoseToStructFileRepConverter.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 
@@ -86,7 +88,9 @@ void PDBSilentStruct::fill_struct(
 
 	energies_from_pose( pose );
 
-	fd_.init_from_pose( pose );
+	io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
+	pose_to_sfr.init_from_pose( pose );
+	sfr_ = pose_to_sfr.sfr();
 
 	sequence( pose.sequence() );
 }
@@ -160,7 +164,7 @@ bool PDBSilentStruct::init_from_lines(
 	} // for ( iter ... )
 
 	pdb_lines_ = concatenated_pdb_info;
-	fd_ = core::io::pdb::PDB_DReader::createFileData( concatenated_pdb_info );
+	sfr_ = core::io::pdb::create_sfr_from_pdb_file_contents( concatenated_pdb_info ).clone();
 
 	success = true;
 	return success;
@@ -170,8 +174,10 @@ void PDBSilentStruct::fill_pose(
 	core::pose::Pose & pose,
 	core::chemical::ResidueTypeSet const & residue_set
 ) const {
-	core::import_pose::build_pose( fd_, pose, residue_set );
-	core::import_pose::read_additional_pdb_data( pdb_lines_, pose, fd_ );
+	// TODO: TEMP: for Andy to fix.
+	io::StructFileRepOP sfr_op = sfr_->clone();
+	core::import_pose::build_pose( sfr_op, pose, residue_set );
+	core::import_pose::read_additional_pdb_data( pdb_lines_, pose, sfr_op );
 } // fill_pose
 
 void PDBSilentStruct::fill_pose(
@@ -188,8 +194,9 @@ void PDBSilentStruct::fill_pose(
 
 void PDBSilentStruct::print_conformation( std::ostream & output ) const {
 	using std::string;
-
-	string data = core::io::pdb::PDB_DReader::createPDBData(fd_);
+	// TODO: TEMP: for Andy to fix.
+	io::StructFileRepOP sfr_op = sfr_->clone();
+	string data = core::io::pdb::create_pdb_contents_from_sfr(*sfr_);
 	output.write( data.c_str(), data.size() );
 } // print_conformation
 

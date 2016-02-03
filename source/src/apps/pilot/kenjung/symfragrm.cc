@@ -27,7 +27,7 @@
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <numeric/geometry/hashing/SixDHasher.hh>
 
 

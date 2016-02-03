@@ -287,13 +287,13 @@ int vsasa_separation(
 		//pose::Pose& pose = *poses.back();
 		//std::cout << i << std::endl;
 		//std::cout << nat_list[i] << std::endl;
-		import_pose::pose_from_pdb(pose, nat_list[i]);
+		import_pose::pose_from_file(pose, nat_list[i], core::import_pose::PDB_file);
 		core::Size nat_buns = vsasa_bunsats(pose,
 		                        AHdist_geom_eval_threshold,
 		                        hb_eval,
 					            vsasa_calc,
 			                    burial_cutoff);
-		import_pose::pose_from_pdb(pose, rlx_list[i]);
+		import_pose::pose_from_file(pose, rlx_list[i], core::import_pose::PDB_file);
 		core::Size rlx_buns = vsasa_bunsats(pose,
 		                        AHdist_geom_eval_threshold,
 		                        hb_eval,

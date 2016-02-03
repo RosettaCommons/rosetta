@@ -280,7 +280,7 @@ AlignEndsMover::parse_my_tag(
 	odd( tag->getOption< bool >( "odd", true ) );
 	even( tag->getOption< bool >( "even", true ) );
 	std::string const template_fname( tag->getOption< std::string >( "template_pose" ) );
-	template_pose( core::import_pose::pose_from_pdb( template_fname ) );
+	template_pose( core::import_pose::pose_from_file( template_fname ) );
 	stagger( tag->getOption< core::Size >( "stagger", 0 ) );
 	strand_length( tag->getOption< core::Size >( "strand_length", 3 ) );
 	max_strands( tag->getOption< core::Size >( "max_strands", 10 ) );

@@ -83,9 +83,9 @@ bool FibrilModelingClaimer::read_tag( std::string tag, std::istream& is ) {
 	if ( tag == "pdb" || tag == "PDB" || tag == "pdb:" || tag == "PDB_FILE" ) {
 		std::string file;
 		is >> file;
-		core::import_pose::pose_from_pdb( input_pose_,
+		core::import_pose::pose_from_file( input_pose_,
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
-			file );
+			file, core::import_pose::PDB_file );
 		bAlign_ = true;
 		runtime_assert( input_pose_.is_fullatom() );
 	} else if ( tag == "sequence_shift" ) {

@@ -214,7 +214,7 @@ RestrictNativeResiduesOperation::parse_tag( TagCOP tag , DataMap & )
 	}
 	if ( reference_pdb != "" ) {
 		core::pose::PoseOP temp_pose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *temp_pose, reference_pdb );
+		core::import_pose::pose_from_file( *temp_pose, reference_pdb , core::import_pose::PDB_file);
 		reference_pose( temp_pose );
 		TR<<"Using pdb "<<reference_pdb<<" as reference."<<std::endl;
 	} else {

@@ -136,7 +136,7 @@ int main( int argc, char * argv [] ) {
 
   protocols::pockets::NonPlaidFingerprint npf;
   pose::Pose protein_pose;
-  core::import_pose::pose_from_pdb( protein_pose, input_protein );
+  core::import_pose::pose_from_file( protein_pose, input_protein , core::import_pose::PDB_file);
   pose::Pose bound_pose = protein_pose;
 
 	numeric::xyzVector<core::Real> protein_com(0.);

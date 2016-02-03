@@ -117,7 +117,7 @@ public:
 
 		the_pose = pose::PoseOP( new Pose );
 		//the_pose = create_test_in_pdb_poseop(); slightly different chain IDs
-		core::import_pose::pose_from_pdb( *the_pose, "protocols/moves/test_in.pdb" );
+		core::import_pose::pose_from_file( *the_pose, "protocols/moves/test_in.pdb" , core::import_pose::PDB_file);
 	}
 
 	void tearDown() {

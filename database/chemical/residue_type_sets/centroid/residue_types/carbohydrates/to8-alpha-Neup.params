@@ -16,7 +16,6 @@ ATOM  O8  OOC   OS  -0.66
 
 # Other backbone heavy atoms:
 ATOM  O6  OOC   OS  -0.13
-ATOM_ALIAS  O6   O  
 ATOM  VO6 VIRT VIRT  0.00  # to superimpose with O6
 ATOM  VC2 VIRT VIRT  0.00  # to C2; required for ring flipping
 

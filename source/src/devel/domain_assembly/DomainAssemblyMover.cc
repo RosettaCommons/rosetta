@@ -640,9 +640,9 @@ DomainAssemblyMover::initialize()
 
 void DomainAssemblyMover::initialize_target_pose() {
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( target_pose_,
+		core::import_pose::pose_from_file( target_pose_,
 			*(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )),
-			basic::options::option[ basic::options::OptionKeys::in::file::native ]() );
+			basic::options::option[ basic::options::OptionKeys::in::file::native ](), false, core::import_pose::PDB_file );
 	} else {
 		throw utility::excn::EXCN_Msg_Exception( "No native pose specified! Use -in::file::native\n" );
 	}
@@ -697,7 +697,7 @@ void DomainAssemblyMover::initialize_buried_from_commandline() {
 }
 
 void DomainAssemblyMover::initialize_start_pose_from_commandline() {
-	core::import_pose::pose_from_pdb( starting_pose_, basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ]() );
+	core::import_pose::pose_from_file( starting_pose_, basic::options::option[ basic::options::OptionKeys::DomainAssembly::da_start_pdb ]() , core::import_pose::PDB_file);
 }
 
 void

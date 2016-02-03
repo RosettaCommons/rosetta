@@ -19,7 +19,8 @@
 ///Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/util.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
@@ -45,7 +46,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <utility/vector1.hh>
 
 
@@ -90,10 +91,11 @@ void protocols::jd2::PDBJobOutputter::final_pose(
 	TR.Debug << "PDBJobOutputter::final_pose" << std::endl;
 
 	call_output_observers( pose, job );
-	std::string const file(path_ + extended_name(job, tag));
+	std::string const base_file ( extended_name(job, tag) );
+	std::string const file(path_ + base_file );
 	utility::io::ozstream out( file );
 	if ( !out.good() ) utility_exit_with_message( "Unable to open file: " + file + "\n" );
-	dump_pose(job, pose, out);
+	dump_pose(job, pose, out, base_file );
 	out.close();
 	scorefile(job, pose, "", (tag.empty() ? "" : std::string("_") + tag));
 }
@@ -109,10 +111,11 @@ void protocols::jd2::PDBJobOutputter::other_pose(
 	runtime_assert( !tag.empty() ); //else you'll overwrite your pdb when the job finishes
 
 	call_output_observers( pose, job );
-	std::string const file(path_ + tag + "_" + extended_name(job));
+	std::string const base_file( tag + "_" + extended_name(job) );
+	std::string const file(path_ + base_file );
 	utility::io::ozstream out( file );
 	if ( !out.good() ) utility_exit_with_message( "Unable to open file: " + file + "\n" );
-	dump_pose(job, pose, out);
+	dump_pose(job, pose, out, base_file );
 	out.close();
 
 	//these are separate options because leaving the default on other_pose_scorefile is totally valid, but you can't both specify it on the command line and leave it blank
@@ -126,15 +129,20 @@ void protocols::jd2::PDBJobOutputter::other_pose(
 void protocols::jd2::PDBJobOutputter::dump_pose(
 	JobCOP job,
 	core::pose::Pose const & pose,
-	utility::io::ozstream & out
+	utility::io::ozstream & out,
+	std::string const &filename
 )
 {
-	core::io::pdb::FileData::dump_pdb( pose, out );
-	if ( !  basic::options::option[ basic::options::OptionKeys::out::file::no_scores_in_pdb ] ) {
-		extract_scores(pose, out);
-		extract_extra_scores( pose, out );
-		extract_data_from_Job( job, out );
-	}
+	bool no_scores_in_pdb( basic::options::option[ basic::options::OptionKeys::out::file::no_scores_in_pdb ] );
+
+	core::io::pdb::dump_pdb(
+		pose,
+		no_scores_in_pdb ? "" : extract_data_from_Job(job),
+		!no_scores_in_pdb,
+		!no_scores_in_pdb,
+		out,
+		filename
+	);
 }
 
 /////////////////////////////////state of output functions/////////////////////////////////
@@ -159,18 +167,25 @@ protocols::jd2::PDBJobOutputter::extended_name( JobCOP job, std::string const su
 /// must match up with the (current) conformation.
 /// A good time to do this is at the end of your protocol's apply() method:
 ///   scorefxn( pose );
-void protocols::jd2::PDBJobOutputter::extract_scores(
-	core::pose::Pose const & pose,
-	utility::io::ozstream & out
-)
-{
-	core::io::pdb::extract_scores( pose, out );
-}
+//void protocols::jd2::PDBJobOutputter::extract_scores(
+// core::pose::Pose const & pose,
+// utility::io::ozstream & out
+//)
+//{
+// core::io::extract_scores( pose, out );
+//}
 
-//THIS FUNCTION WILL MOVE HIGHER IN THE HIERARCHY AT SOME POINT
-/// @brief this function extracts the pose's scores and outputs them into the PDB
-void protocols::jd2::PDBJobOutputter::extract_data_from_Job( JobCOP job, utility::io::ozstream & out ){
+/// @brief this function extracts the pose's scores and outputs them as a string to be packaged in an output structure.
+/// @details Refactored in the 2016 Chemical XRW (eXtreme Rosetta Workshop) by Vikram K. Mulligan (vmullig@uw.edu).
+/// @param[in] job Const-access owning pointer to the job from which the data will be extracted.
+/// @return A string in which the data will be stored, that can later be passed to whatever container wants it.
+std::string
+protocols::jd2::PDBJobOutputter::extract_data_from_Job(
+	JobCOP job
+) {
 	//TR << "protocols::jd2::PDBJobOutputter::extract_data_from_Job" << std::endl;
+
+	std::stringstream out;
 
 	for ( Job::Strings::const_iterator it(job->output_strings_begin()), end(job->output_strings_end());
 			it != end;
@@ -192,19 +207,21 @@ void protocols::jd2::PDBJobOutputter::extract_data_from_Job( JobCOP job, utility
 		out << it->first << " " << it->second << std::endl;
 		//TR << it->first << " " << it->second << std::endl;
 	}
+
+	return out.str();
 }
 
 
 /// @brief This function extracts the pose's extra data/scores and outputs them into the PDB
 /// @details YOU are responsible for putting things into the pose's DataCache using core::pose::util::setPoseExtraScore().
 /// Both string_real and string_real pairs can be stored using setPoseExtraScore().
-void protocols::jd2::PDBJobOutputter::extract_extra_scores(
-	core::pose::Pose const & pose,
-	utility::io::ozstream & out
-)
-{
-	core::io::pdb::extract_extra_scores( pose, out );
-}
+//void protocols::jd2::PDBJobOutputter::extract_extra_scores(
+// core::pose::Pose const & pose,
+// utility::io::ozstream & out
+//)
+//{
+// core::io::extract_extra_scores( pose, out );
+//}
 
 //CREATOR SECTION
 std::string

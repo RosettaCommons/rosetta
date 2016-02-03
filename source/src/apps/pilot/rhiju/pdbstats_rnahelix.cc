@@ -24,7 +24,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
@@ -78,7 +78,7 @@ using namespace core;
 using namespace basic::options::OptionKeys;
 
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -182,7 +182,7 @@ rhiju_pdbstats()
 
 		if (chain == '_' ) chain = ' ';
 
-		pose_from_pdb( pose, *rsd_set, file_path + '/' + pdb_file );
+		pose_from_file( pose, *rsd_set, file_path + '/' + pdb_file , core::import_pose::PDB_file);
 
 		count++;
 		std::cout << "Doing input file " << I(4,count) << " ==> " << pdb_file << " " << chain << std::endl;

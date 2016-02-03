@@ -31,7 +31,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/rms_util.hh>
@@ -69,7 +69,7 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 using std::string;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 
 static THREAD_LOCAL basic::Tracer TR( "apps.pilot.lin.symmsilentfile" );
 
@@ -87,7 +87,7 @@ SymmSilentFileTest()
   //core_init_with_additional_options( "-out:file:output_virtual" ); // debug purpose
 
   Pose pdb_pose;
-  core::import_pose::pose_from_pdb( pdb_pose, start_file() );
+  core::import_pose::pose_from_file( pdb_pose, start_file() , core::import_pose::PDB_file);
 
   if ( option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
     protocols::loops::set_secstruct_from_psipred_ss2(pdb_pose);

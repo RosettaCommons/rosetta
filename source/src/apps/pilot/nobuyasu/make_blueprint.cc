@@ -89,7 +89,7 @@ main( int argc, char * argv [] )
 
 		// calc secondary structure info
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, option[ in::file::s ].value().at( 1 ) );
+		core::import_pose::pose_from_file( pose, option[ in::file::s ].value().at( 1 ) , core::import_pose::PDB_file);
 		protocols::moves::DsspMover dsm;
 		dsm.apply( pose );
 

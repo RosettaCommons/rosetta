@@ -235,7 +235,7 @@ main( int argc, char * argv [] )
 
 		// read the pose
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, basic::options::start_file() ); // gets filename from -s option
+		core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file); // gets filename from -s option
 
 		// weights file
 		std::string weight_file = option[ OptionKeys::ddg::weight_file ]();

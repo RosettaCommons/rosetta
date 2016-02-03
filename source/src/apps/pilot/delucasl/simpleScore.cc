@@ -19,7 +19,7 @@
 #include <utility/vector0.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -54,13 +54,13 @@ int main(int argc, char* argv[])
 	core::pose::Pose pose;
 	for(int structIndex = 0; structIndex < pdbs.size(); ++structIndex)
 	{
-		core::import_pose::pose_from_pdb(pose,pdbs[structIndex]);
+		core::import_pose::pose_from_file(pose,pdbs[structIndex], core::import_pose::PDB_file);
 		pose.dump_scored_pdb(pdbs[structIndex],scoreFunction);
 	}
 	/*
 	 {
 	 std::string pdb = pdbs[0];
-	 core::import_pose::pose_from_pdb(pose,pdb);
+	 core::import_pose::pose_from_file(pose,pdb, core::import_pose::PDB_file);
 	 }
 
 	 {

@@ -134,8 +134,8 @@ main( int argc, char * argv [])
 			// we read each PDB just once to save on disk I/O
 			if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
 				input_pose = core::pose::PoseOP( new core::pose::Pose() );
-				//core::import_pose::pose_from_pdb( *input_pose, curr_job->input_tag() );
-				protocols::enzdes::enzutil::read_pose_from_pdb(  *input_pose, curr_job->input_tag() );
+				//core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
+				protocols::enzdes::enzutil::read_pose_from_file(  *input_pose, curr_job->input_tag() );
 			}
 
 			// Make a modifiable copy of the pose read from disk

@@ -73,7 +73,7 @@
 #include <protocols/stepwise/modeler/rna/RNA_AnalyticLoopCloser.hh>
 #include <protocols/stepwise/modeler/rna/RNA_LoopCloseSampler.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
@@ -117,7 +117,7 @@ using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 using utility::vector1;
 using utility::tools::make_vector1;
 typedef  numeric::xyzMatrix< Real > Matrix;
@@ -2640,7 +2640,7 @@ sample_state_to_state(
 	if ( option[ in::file::native ].user() )	{
 		native_pose = new Pose;
 		ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-		io::pdb::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
+		io::pdb::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 		rna_loop_close_sampler.set_native_pose( native_pose );
 	}
 	/////////////////////////////////////////////////

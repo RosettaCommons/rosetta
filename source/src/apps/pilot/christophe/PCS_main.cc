@@ -41,7 +41,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 
 ////
@@ -144,7 +144,7 @@
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -290,7 +290,7 @@ main( int argc, char* argv [] )
 	devel::init( argc, argv );
 
 	std::string const native( option[ OptionKeys::in::file::native ]() );
-	core::import_pose::pose_from_pdb( pdb, native );
+	core::import_pose::pose_from_file( pdb, native , core::import_pose::PDB_file);
 
 	PCS_Energy PCS_e = PCS_Energy();
 

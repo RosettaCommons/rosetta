@@ -24,7 +24,7 @@
 #include <protocols/denovo_design/util.hh>
 
 // Core headers
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>

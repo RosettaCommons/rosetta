@@ -39,8 +39,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
-
+#include <core/io/pdb/pdb_writer.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
 #include <core/pack/task/ResfileReader.hh>
@@ -110,7 +109,7 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 
@@ -456,7 +455,7 @@ main( int argc, char* argv [] )
 
 
 		for ( unsigned int f=1; f<=files.size(); f++ ) {
-			core::import_pose::pose_from_pdb(pose, files[f]);
+			core::import_pose::pose_from_file(pose, files[f], core::import_pose::PDB_file);
 			setup_ca_constraints(pose,(*scorefxn),9.0,cst_tol);
 			ConstraintSetCOP cs = pose.constraint_set();
 			std::string output = pose.pdb_info()->name();

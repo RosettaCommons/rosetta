@@ -30,7 +30,7 @@
 #include <test/core/init_util.hh>
 
 #include <core/kinematics/DomainMap.hh>
-// Auto-header: duplicate removed #include <core/io/pdb/pose_io.hh>
+// Auto-header: duplicate removed #include <core/io/pdb/pdb_writer.hh>
 
 // Utility headers
 
@@ -133,7 +133,7 @@ public:
 	void setUp() {
 		// init pose
 		pose = create_test_in_pdb_poseop();
-		//core::import_pose::pose_from_pdb( *pose, "core/scoring/methods/test_in.pdb" );
+		//core::import_pose::pose_from_file( *pose, "core/scoring/methods/test_in.pdb" , core::import_pose::PDB_file);
 		pose_ideal = PoseOP( new Pose() );
 		core::pose::make_pose_from_sequence(*pose_ideal, "ACDEFGHIKLMNQRSTVWY", "fa_standard");
 

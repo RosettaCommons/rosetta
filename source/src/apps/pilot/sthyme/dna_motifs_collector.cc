@@ -27,7 +27,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -384,7 +384,7 @@ process_file_list()
 		std::string pdb_prefix( utility::string_split( utility::string_split( pdb_name, '/' ).back(), '.' ).front() );
 
 		core::pose::PoseOP pose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *pose, pdb_name );
+		core::import_pose::pose_from_file( *pose, pdb_name , core::import_pose::PDB_file);
 
 		process_for_motifs( *pose, pdb_prefix, motifs, motif_output_file );
 	}

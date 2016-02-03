@@ -200,7 +200,7 @@ public:
 
 		//read native structure for CA RMSD
 		core::pose::Pose xtal_pose;
-		core::import_pose::pose_from_pdb(xtal_pose, basic::options::option[basic::options::OptionKeys::in::file::native].value());
+		core::import_pose::pose_from_file(xtal_pose, basic::options::option[basic::options::OptionKeys::in::file::native].value(), core::import_pose::PDB_file);
 		xtal_pose_ = new core::pose::Pose(xtal_pose);
 	}
 

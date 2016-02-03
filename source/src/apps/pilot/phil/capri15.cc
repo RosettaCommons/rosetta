@@ -105,7 +105,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
@@ -159,7 +159,7 @@ using utility::vector1;
 using std::string;
 using std::cout;
 using std::endl;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 
 static THREAD_LOCAL basic::Tracer TR( "apps.pilot.phil.loop_model" );
@@ -830,10 +830,10 @@ capri_t033_centroid_trim_dock_test()
 
 			/// read the homology model
 			Pose protein_pose;
-			core::import_pose::pose_from_pdb( protein_pose, protein_files[n] );
+			core::import_pose::pose_from_file( protein_pose, protein_files[n] , core::import_pose::PDB_file);
 
 			Pose rna_pose;
-			core::import_pose::pose_from_pdb( rna_pose, "input/bound_rna.pdb" );
+			core::import_pose::pose_from_file( rna_pose, "input/bound_rna.pdb" , core::import_pose::PDB_file);
 
 
 			std::string const tag( output_tag +
@@ -883,10 +883,10 @@ trim_dock_rebuild_relax_test_rhiju()
 
 			/// read the homology model
 			Pose protein_pose;
-			core::import_pose::pose_from_pdb( protein_pose, protein_files[n] );
+			core::import_pose::pose_from_file( protein_pose, protein_files[n] , core::import_pose::PDB_file);
 
 			Pose rna_pose;
-			core::import_pose::pose_from_pdb( rna_pose, "input/bound_rna.pdb" );
+			core::import_pose::pose_from_file( rna_pose, "input/bound_rna.pdb" , core::import_pose::PDB_file);
 
 
 			std::string const tag( output_tag +
@@ -944,10 +944,10 @@ trim_dock_rebuild_relax_test()
 
 			/// read the homology model
 			Pose protein_pose;
-			core::import_pose::pose_from_pdb( protein_pose, protein_files[ n ] );
+			core::import_pose::pose_from_file( protein_pose, protein_files[ n ] , core::import_pose::PDB_file);
 
 			Pose rna_pose;
-			core::import_pose::pose_from_pdb( rna_pose, "input/bound_rna.pdb" );
+			core::import_pose::pose_from_file( rna_pose, "input/bound_rna.pdb" , core::import_pose::PDB_file);
 
 
 			std::string const tag( output_tag + "relax"
@@ -1094,7 +1094,7 @@ setup_sam_constraints_for_t033(
 	if ( !init ) {
 		init = true;
 
-		core::import_pose::pose_from_pdb( p91A_pose, "input/1P91_chainA_w_1qao_SAM.pdb" );
+		core::import_pose::pose_from_file( p91A_pose, "input/1P91_chainA_w_1qao_SAM.pdb" , core::import_pose::PDB_file);
 
 		std::string source_seq, target_seq;
 		read_alignment_file( "input/alignment_for_trimming.txt", source_seq, target_seq, mapping_from_p91A_to_t033 );
@@ -1439,7 +1439,7 @@ relax_test()
 	ScoreFunctionOP scorefxn( get_relax_scorefxn() );
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 
 	// identify root and anchor positions
@@ -1481,7 +1481,7 @@ relax_test()
 	protocols::loops::Loops loops;
 	{
 		Pose p91A_pose;
-		core::import_pose::pose_from_pdb( p91A_pose, "input/1P91_chainA_w_1qao_SAM.pdb" );
+		core::import_pose::pose_from_file( p91A_pose, "input/1P91_chainA_w_1qao_SAM.pdb" , core::import_pose::PDB_file);
 
 		id::SequenceMapping mapping;
 		std::string source_seq, target_seq;
@@ -1534,7 +1534,7 @@ centroid_rescore_test()
 	for ( Size n=1; n<= start_files().size(); ++n ) {
 
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, start_files()[n] );
+		core::import_pose::pose_from_file( pose, start_files()[n] , core::import_pose::PDB_file);
 
 		// identify root and anchor positions
 		Size const nres( pose.total_residue() );
@@ -1628,7 +1628,7 @@ diversify_sam_loop_test()
 
 	std::string const loopseq( "IFSPANY" );
 	Pose p91A_pose, pose;
-	core::import_pose::pose_from_pdb( p91A_pose, "input/1P91_chainA_w_1qao_SAM.pdb" );
+	core::import_pose::pose_from_file( p91A_pose, "input/1P91_chainA_w_1qao_SAM.pdb" , core::import_pose::PDB_file);
 
 	pose = p91A_pose;
 
@@ -1738,7 +1738,7 @@ capri_t033_trim_dock_test()
 {
 	// read the pose -- 1P91.pdb, chain A  with SAM group
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 
 	/// read in the original full crazy alignment
@@ -1864,8 +1864,8 @@ capri_t033_trim_dock_test()
 
 	/// read rhiju's model for the hairpin
 	Pose rna_pose;
-	core::import_pose::pose_from_pdb( rna_pose, "rna_full_model.pdb");
-	//core::import_pose::pose_from_pdb( rna_pose, "rna_hairpin_model.pdb");
+	core::import_pose::pose_from_file( rna_pose, "rna_full_model.pdb", core::import_pose::PDB_file);
+	//core::import_pose::pose_from_file( rna_pose, "rna_hairpin_model.pdb", core::import_pose::PDB_file);
 
 	assert( false );
 	Size const rna_root_pos( 54 );
@@ -1980,7 +1980,7 @@ capri_t033_loop_test()
 
 	// read the pose
 	Pose pdb_pose;
-	core::import_pose::pose_from_pdb( pdb_pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( pdb_pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	// starting point for each nstruct loop
 	Pose const start_pose( pdb_pose );

@@ -193,7 +193,7 @@ HbondsToResidueFilter::parse_my_tag(
 	if ( tag->hasOption("scorefxn") ) {
 		set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	}
-	
+
 	if ( tag->hasOption("residue_selector") ) {
 		set_selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );
 	}
@@ -241,10 +241,10 @@ HbondsToResidueFilter::compute( Pose const & pose, core::Size const resnum_roset
 	}
 	(*scorefxn)(temp_pose);
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( temp_pose );
-	
+
 	//Get the ResidueSubset that could form hydrogen bonds with this residue:
 	core::select::residue_selector::ResidueSubset selection( pose.n_residue(), true );
-	if( selector_ ) {
+	if ( selector_ ) {
 		selection = selector_->apply( pose );
 	}
 
@@ -280,7 +280,7 @@ void
 HbondsToResidueFilter::set_selector(
 	core::select::residue_selector::ResidueSelectorCOP selector_in
 ) {
-	if(selector_in) {
+	if ( selector_in ) {
 		selector_ = selector_in;
 	} else {
 		utility_exit_with_message("Error in protocols::protein_interface_design::filters::HbondsToResidueFilter::set_selector(): Null pointer passed to function!");

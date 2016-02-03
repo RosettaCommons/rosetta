@@ -67,7 +67,7 @@ using protocols::scoring::ImplicitFastClashCheck;
 using std::string;
 using utility::vector1;
 using numeric::min;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using basic::options::option;
 using numeric::min;
 using numeric::max;
@@ -249,7 +249,7 @@ void run(std::string fname) {
   ScoreFunctionOP sfcen=ScoreFunctionFactory::create_score_function("score3");
 
   Pose pose;
-  pose_from_pdb(pose,option[in::file::s]()[1]);
+  pose_from_file(pose,option[in::file::s]()[1], core::import_pose::PDB_file);
   pose = alapose(pose);
   RotSel & krs(*(new   KinRotSel(pose)));
   RotSel & brs(*(new BruteRotSel(pose)));

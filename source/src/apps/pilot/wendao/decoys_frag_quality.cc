@@ -10,7 +10,7 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
@@ -56,10 +56,10 @@ int main( int argc, char** argv ) {
 		devel::init( argc, argv );
 
 		//decoys
-		utility::vector1<pose::PoseOP> models = import_pose::poseOPs_from_pdbs( option[OptionKeys::in::file::s]());
+		utility::vector1<pose::PoseOP> models = import_pose::poseOPs_from_files( option[OptionKeys::in::file::s](), core::import_pose::PDB_file);
 		//native
 		pose::Pose native;
-		import_pose::pose_from_pdb( native, option[ in::file::native ]() );
+		import_pose::pose_from_file( native, option[ in::file::native ]() , core::import_pose::PDB_file);
 		util::switch_to_residue_type_set( native, chemical::CENTROID );
 
 		Size N_frag( option[ decoys_frag_len ]().size() );

@@ -16,7 +16,7 @@ for _i in range(10):
 '''
 
 # Docking Moves in Rosetta
-pose = pose_from_pdb("../test/data/workshops/complex.start.pdb")
+pose = pose_from_file("../test/data/workshops/complex.start.pdb")
 
 print pose.fold_tree()
 
@@ -92,7 +92,7 @@ output = tempfile.mkstemp()[1]
 
 jd = PyJobDistributor(output, 10, scorefxn_low)
 
-native_pose = pose_from_pdb("../test/data/workshops/complex.high.pdb")
+native_pose = pose_from_file("../test/data/workshops/complex.high.pdb")
 jd.native_pose = native_pose
 
 starting_pose = Pose()

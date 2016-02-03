@@ -372,7 +372,7 @@ GraftOneMover::GraftOneMover(
 void GraftOneMover::set_default() {
 	TRO << "Reading in template: " << template_name_ << ".pdb "
 		<< std::endl;
-	core::import_pose::pose_from_pdb( template_pose_, template_name_ + ".pdb" );
+	core::import_pose::pose_from_file( template_pose_, template_name_ + ".pdb" , core::import_pose::PDB_file);
 	Antibody antibody( template_pose_, template_name_ );
 	template_start_ = antibody.current_start;
 	template_end_ = antibody.current_end;

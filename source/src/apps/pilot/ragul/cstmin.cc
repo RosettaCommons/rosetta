@@ -61,7 +61,7 @@ int main( int argc, char * argv [] )
 		// load pose from pdb file
 		core::pose::Pose ps;
 		std::string const input_pdb_name( basic::options::start_file() );
-		core::import_pose::pose_from_pdb( ps, input_pdb_name );
+		core::import_pose::pose_from_file( ps, input_pdb_name , core::import_pose::PDB_file);
 
 		// prepare prefix for output file names
 		string::size_type pfxsta = input_pdb_name.find_last_of('/');

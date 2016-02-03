@@ -20,7 +20,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/pose/PDBInfo.hh>
 //#include <core/pose/util.hh>
@@ -134,14 +134,14 @@ main( int argc, char * argv [] ) {
 	}
 
 	//Creates Remarks object from template pose remarks
-	core::pose::Remarks remarks( template_pose.pdb_info()->remarks() );
+	core::io::pdb::Remarks remarks( template_pose.pdb_info()->remarks() );
 	std::cout << "currently have " << remarks.size() << " remarks." << std::endl;
 
 	//Create sequence alignment from template(2) to query(1)
 	SequenceMapping template_to_query( aln.sequence_mapping(2,1) );
 
 	//Creates comparative remarks in a std::vector by converting from template remarks
-	std::vector <core::pose::RemarkInfo> remark_vector;
+	std::vector <core::io::pdb::RemarkInfo> remark_vector;
   for( core::Size i = 0; i < remarks.size(); ++i ){
  		int pdbposA(0), pdbposB(0);
 	  std::string chainA(""), chainB(""), resA(""), resB("");
@@ -172,7 +172,7 @@ main( int argc, char * argv [] ) {
     query_chainA = chainA;
 		query_resB = resB;
     query_chainB = chainB;
-		core::pose::RemarkInfo cm_remark;
+		core::io::pdb::RemarkInfo cm_remark;
 		cm_remark.num = 0;
 		//cm_remark.value = protocols::enzdes::enzutil::assemble_remark_line(query_chainA, query_resA,
 		cm_remark.value = protocols::toolbox::match_enzdes_util::assemble_remark_line(query_chainA, query_resA,
@@ -221,7 +221,7 @@ main( int argc, char * argv [] ) {
   }
 
 	//Place remarks into comparative modeling pose
-  core::pose::Remarks query_remarks;
+  core::io::pdb::Remarks query_remarks;
 	for (core::Size ii = 0; ii < remark_vector.size(); ++ii) {
 		std::cout << remark_vector[ii] << std::endl;
 		query_remarks.push_back(remark_vector[ii]);

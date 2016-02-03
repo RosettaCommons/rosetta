@@ -74,7 +74,7 @@ public:
 		utility::file::file_delete(database_filename_);
 		db_session_OP = basic::database::get_db_session(database_filename_);
 
-		pose_3B83_OP = core::import_pose::pose_from_pdb("protocols/features/3B83_nochain.pdb");
+		pose_3B83_OP = core::import_pose::pose_from_file("protocols/features/3B83_nochain.pdb", core::import_pose::PDB_file);
 		relevant_residues_3B83_ = utility::vector1< bool >(pose_3B83_OP->total_residue(), true);
 		batch_id_ = 0;
 

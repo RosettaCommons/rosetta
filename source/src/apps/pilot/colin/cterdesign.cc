@@ -27,7 +27,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -262,9 +262,9 @@ my_main( void* )
 		core::pose::PoseOP input_pose(new core::pose::Pose());
 		if ( option[ in::file::centroid_input ].user() ) {
 			TR.Warning << "*** This is untested with centroid mode! ***" << std::endl;
-			core::import_pose::centroid_pose_from_pdb( *input_pose, input_jobs[jobnum]->input_tag() );
+			core::import_pose::centroid_pose_from_pdb( *input_pose, input_jobs[jobnum]->input_tag() , core::import_pose::PDB_file);
 		} else {
-			core::import_pose::pose_from_pdb( *input_pose, input_jobs[jobnum]->input_tag() );
+			core::import_pose::pose_from_file( *input_pose, input_jobs[jobnum]->input_tag() , core::import_pose::PDB_file);
 		}
 
 		backrubmover.clear_segments();

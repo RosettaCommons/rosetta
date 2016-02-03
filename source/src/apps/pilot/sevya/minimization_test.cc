@@ -258,10 +258,10 @@ main( int argc, char * argv [] )
 		utility::vector1<std::pair < core::pose::PoseOP, bool > > poses;
 
 		for (core::Size i = 1; i <= pdb_positive.size(); ++i) {
-			poses.push_back(std::make_pair( core::import_pose::pose_from_pdb( pdb_positive[ i ], false), 1 ) );
+			poses.push_back(std::make_pair( core::import_pose::pose_from_file( pdb_positive[ i ], false), 1 ) , core::import_pose::PDB_file);
 		}
 		for (core::Size i = 1; i <= pdb_negative.size(); ++i) {
-			poses.push_back(std::make_pair( core::import_pose::pose_from_pdb( pdb_negative[ i ], false), 0 ) );
+			poses.push_back(std::make_pair( core::import_pose::pose_from_file( pdb_negative[ i ], false), 0 ) , core::import_pose::PDB_file);
 		}
 
 		// Get multiple resfiles if these are provided, or single resfile

@@ -17,7 +17,7 @@
 #include <test/core/init_util.hh>
 //#include <core/conformation/Residue.hh>
 
-//#include <core/io/pdb/pose_io.hh>
+//#include <core/io/pdb/pdb_writer.hh>
 
 //#include <core/kinematics/MoveMap.hh>
 

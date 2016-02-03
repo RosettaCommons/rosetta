@@ -55,7 +55,7 @@
 //#include <core/id/TorsionID.hh>
 //#include <core/id/types.hh>
 //#include <core/import_pose/file_data.fwd.hh>
-//#include <core/io/pdb/file_data.hh>
+//#include <core/io/pdb/build_pose_as_is.hh>
 //#include <core/kinematics/AtomTree.fwd.hh>
 //#include <core/kinematics/FoldTree.fwd.hh>
 //#include <core/kinematics/Jump.fwd.hh>
@@ -159,7 +159,7 @@ public:
 
 	virtual void setUp() {
 		pose = pose::PoseOP( new pose::Pose() );
-		core::import_pose::pose_from_pdb(*pose, "test_in.pdb");
+		core::import_pose::pose_from_file(*pose, "test_in.pdb", core::import_pose::PDB_file);
 
 		movemap = kinematics::MoveMapOP( new kinematics::MoveMap() );
 		movemap->set_chi( true );

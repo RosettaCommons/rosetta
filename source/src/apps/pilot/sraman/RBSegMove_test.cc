@@ -17,7 +17,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>
 #include <basic/options/after_opts.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -86,7 +86,7 @@ main( int argc, char * argv [] )
 
 	//	std::string inpdb = option[ in::file::s ]()[1];  // only care about first input file
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, option[ OptionKeys::RBSegmentRelax::input_pdb ]().name() );
+	core::import_pose::pose_from_file( pose, option[ OptionKeys::RBSegmentRelax::input_pdb ]().name() , core::import_pose::PDB_file);
 
 	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 
@@ -153,7 +153,7 @@ main( int argc, char * argv [] )
 	rb_mover.apply( pose );
 
 	std::string outfile = option[ out::file::o ]();
-	core::io::pdb::dump_pdb( pose , outfile );
+	core::io::pdb::old_dump_pdb( pose , outfile );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

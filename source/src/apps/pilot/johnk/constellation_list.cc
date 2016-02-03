@@ -18,7 +18,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -43,8 +43,7 @@
 #include <core/scoring/methods/ShortRangeTwoBodyEnergy.fwd.hh>
 #include <core/scoring/util.hh>
 
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pdb_dynamic_reader.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
@@ -261,7 +260,7 @@ main( int argc, char * argv [] )
 	// create pose for native pose from pdb
 	pose::Pose pose_init;
 	std::string const input_pdb_name ( basic::options::start_file() );
-	core::import_pose::pose_from_pdb( pose_init, input_pdb_name );
+	core::import_pose::pose_from_file( pose_init, input_pdb_name , core::import_pose::PDB_file);
 
 	// set target_rosetta_resnum to Rosetta internal resid for the residue to be mutated
 	core::Size target_rosetta_resnum = 0;

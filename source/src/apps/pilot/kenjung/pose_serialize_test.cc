@@ -55,7 +55,7 @@ main( int argc, char * argv [] )
 
 		core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		PoseOP tmppose(new Pose());
-		core::import_pose::pose_from_pdb( *tmppose, *residue_set, option[ m::file]().name() );
+		core::import_pose::pose_from_file( *tmppose, *residue_set, option[ m::file]().name() , core::import_pose::PDB_file);
 		tmppose->dump_pdb(option[ m::file]().name()+".dump");
 
 		ScoreFunctionOP scorefxn = get_score_function();

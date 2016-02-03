@@ -36,7 +36,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/init/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
@@ -80,7 +80,7 @@ using namespace core::pose::rna;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 using protocols::farna::libraries::MAX_BULGE_LENGTH;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
@@ -114,7 +114,7 @@ create_rna_vall_torsions_test( ){
 
 	for ( Size n = 1; n <= infiles.size(); n++ ) {
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *rsd_set, infiles[n] );
+		core::import_pose::pose_from_file( pose, *rsd_set, infiles[n] , core::import_pose::PDB_file);
 		/////////////////////////////////////////
 		protocols::farna::make_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////
@@ -292,7 +292,7 @@ create_bp_jump_database_test( ){
 	std::string outfile  = option[ out::file::o ];
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	core::import_pose::pose_from_file( pose, *rsd_set, infile , core::import_pose::PDB_file);
 	make_phosphate_nomenclature_matches_mini( pose );
 
 	// core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
@@ -615,7 +615,7 @@ create_base_pair_step_database_test( ){
 		intag.replace( pos, 4, "" );
 
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *rsd_set, std::string( option[ in::path::pdb ](1) ) + infile );
+		core::import_pose::pose_from_file( pose, *rsd_set, std::string( option[ in::path::pdb ](1) ) + infile , core::import_pose::PDB_file);
 		core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 		std::string const sequence = pose.sequence();
 

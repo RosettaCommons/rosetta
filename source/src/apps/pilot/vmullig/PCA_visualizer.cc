@@ -367,7 +367,7 @@ int main( int argc, char * argv [] ) {
 		}
 
 		//Import the pose:
-		core::import_pose::pose_from_pdb(inputpose, pdbfiles[istruct]);
+		core::import_pose::pose_from_file(inputpose, pdbfiles[istruct], core::import_pose::PDB_file);
 		//Check that the number of residues matches the perturbation file:
 		if(!checkresiduecount(inputpose, PCA_vectors[1])) {
 			printf("Error!  Input pdb %s is a different size than the backbones corresponding to PCA file %s.\nCrashing.\n", pcafiles[istruct].c_str(), pdbfiles[istruct].c_str()); fflush(stdout);

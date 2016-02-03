@@ -154,7 +154,7 @@ void read_loop_fragments(
 			std::string infile  = *file_it;
 
 			core::pose::Pose stealpose;
-			core::import_pose::centroid_pose_from_pdb( stealpose, infile );
+			core::import_pose::centroid_pose_from_pdb( stealpose, infile , core::import_pose::PDB_file);
 
 			for ( std::vector< FragSetOP >::const_reverse_iterator
 					it = frag_libs.rbegin(),

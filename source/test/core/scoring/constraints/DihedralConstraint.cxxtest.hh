@@ -160,7 +160,7 @@ public:
 		using core::id::AtomID;
 
 		pose::Pose start_pose( create_test_in_pdb_pose() );
-		//core::import_pose::pose_from_pdb( start_pose, "core/scoring/constraints/test_in.pdb" );
+		//core::import_pose::pose_from_file( start_pose, "core/scoring/constraints/test_in.pdb" , core::import_pose::PDB_file);
 		pose::Pose pose = start_pose; // a copy
 
 		scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );

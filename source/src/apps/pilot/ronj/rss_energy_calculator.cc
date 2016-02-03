@@ -16,7 +16,7 @@
 
 //project Headers
 #include <core/chemical/AA.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -131,7 +131,7 @@ create_and_score_fragments( std::string pdb_filename, scoring::ScoreFunctionOP s
 	TR << "create_and_score_fragments(): creating pose object from file " << pdb_filename << std::endl;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, pdb_filename );
+	core::import_pose::pose_from_file( pose, pdb_filename , core::import_pose::PDB_file);
 
 	if ( !( option[ rss_energy_calculator::no_repack_before_fragmenting ] ) ) {
 		repack_pose( pose, scorefxn );
@@ -282,7 +282,7 @@ score_folded_residues( std::string pdb_filename, scoring::ScoreFunctionOP scoref
 	TR << "score_folded_residues(): creating pose object from file " << pdb_filename << std::endl;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, pdb_filename );
+	core::import_pose::pose_from_file( pose, pdb_filename , core::import_pose::PDB_file);
 
 	if ( !( option[ rss_energy_calculator::no_repack_before_fragmenting ] ) ) {
 		TR << "score_folded_residues(): repacking pose..." << std::endl;

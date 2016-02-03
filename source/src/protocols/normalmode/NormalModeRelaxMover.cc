@@ -55,7 +55,7 @@
 #endif
 
 //Temporary
-//#include <core/io/pdb/pose_io.hh>
+//
 //#include <sys/time.h>
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.normalmode.NormalModeRelaxMover" );

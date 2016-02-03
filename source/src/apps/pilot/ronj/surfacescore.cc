@@ -16,7 +16,7 @@
 #include <devel/init.hh>
 
 //project Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -432,7 +432,7 @@ main( int argc, char* argv[] ) {
 	basic::MetricValue< utility::vector1< core::Real > > native_pose_residue_surface;
 
 	if ( option[ surface_app::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose, option[ surface_app::native ] );
+		core::import_pose::pose_from_file( native_pose, option[ surface_app::native ] , core::import_pose::PDB_file);
 		repack_pose( native_pose, scorefxn );
 		native_pose.metric( "surface", "residue_surface", native_pose_residue_surface );
 		Energy native_score = (*scorefxn)( native_pose );
@@ -449,7 +449,7 @@ main( int argc, char* argv[] ) {
 		}
 
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *input_pdb_filename );
+		core::import_pose::pose_from_file( pose, *input_pdb_filename , core::import_pose::PDB_file);
 
 		// score the wt pose, so that the metrics can be computed - inefficient but scoring is really fast so...
 		TR << "Scoring pose so that metrics can be calculated." << std::endl;

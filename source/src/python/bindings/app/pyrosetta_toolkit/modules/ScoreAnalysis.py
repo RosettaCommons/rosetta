@@ -151,7 +151,7 @@ class ScoreAnalysis:
             fullpath = pair[1]
             score = pair[0]
             p = Pose()
-            pose_from_pdb(p, fullpath)
+            pose_from_file(p, fullpath)
             rms, loop_rms_map = rmsd(native_pose, p, loops_as_strings)
             triplet = [score, rms, fullpath]
             self.score_rmsd_triplet.append(triplet)

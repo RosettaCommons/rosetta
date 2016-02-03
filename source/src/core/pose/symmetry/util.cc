@@ -41,7 +41,7 @@
 
 // Package Headers
 #include <core/kinematics/Edge.hh>
-#include <core/io/pdb/HeaderInformation.hh>
+#include <core/io/HeaderInformation.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <basic/Tracer.hh>
@@ -502,7 +502,7 @@ make_symmetric_pdb_info(
 
 	// copy header and remark lines
 	if ( pdb_info_src->header_information() ) {
-		pdb_info_target->header_information( io::pdb::HeaderInformationOP( new io::pdb::HeaderInformation(*pdb_info_src->header_information()) ));
+		pdb_info_target->header_information( io::HeaderInformationOP( new io::HeaderInformation(*pdb_info_src->header_information()) ));
 	}
 	pdb_info_target->remarks( pdb_info_src->remarks() );
 }
@@ -564,7 +564,7 @@ extract_asymmetric_unit_pdb_info(
 
 	// copy header and remark lines
 	if ( pdb_info_src->header_information() ) {
-		pdb_info_target->header_information( io::pdb::HeaderInformationOP( new io::pdb::HeaderInformation(*pdb_info_src->header_information() ) ));
+		pdb_info_target->header_information( io::HeaderInformationOP( new io::HeaderInformation(*pdb_info_src->header_information() ) ));
 	}
 	pdb_info_target->remarks( pdb_info_src->remarks() );
 }

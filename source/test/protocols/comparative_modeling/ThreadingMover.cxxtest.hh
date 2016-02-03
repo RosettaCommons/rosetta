@@ -70,7 +70,6 @@
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/file_data.fwd.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/Jump.fwd.hh>
@@ -179,7 +178,7 @@ public:
 		using core::Size;
 		using core::Real;
 		using core::pose::Pose;
-		using core::import_pose::pose_from_pdb;
+		using core::import_pose::pose_from_file;
 		using core::pose::make_pose_from_sequence;
 
 		SequenceOP query( new Sequence( "LNE-DILILGCSAMGDEVLE-ESEFEPFIEEI-STKISGKKVALFG", "4fxn_", 0 ) );
@@ -189,7 +188,7 @@ public:
 		align.add_sequence(templ);
 
 		Pose template_pose;
-		core::import_pose::pose_from_pdb( template_pose, "protocols/comparative_modeling/1f4pA.pdb" );
+		core::import_pose::pose_from_file( template_pose, "protocols/comparative_modeling/1f4pA.pdb" , core::import_pose::PDB_file);
 
 		// test basic threading
 		Pose query_pose;

@@ -29,7 +29,7 @@
 
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -105,7 +105,7 @@ public:
 
         core::chemical::ResidueTypeSetCAP rsd_set_cen = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
         core::chemical::ResidueTypeSetCAP rsd_set_fa = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	core::import_pose::pose_from_pdb( cen_pose_, option[in::file::s]()[1].name());
+	core::import_pose::pose_from_file( cen_pose_, option[in::file::s]()[1].name(), core::import_pose::PDB_file);
 	core::util::switch_to_residue_type_set(cen_pose_, core::chemical::CENTROID);
 
 
@@ -129,7 +129,7 @@ public:
 
 	has_native_ = false;
         if ( option[ in::file::native ].user() ) {
-    	    core::import_pose::pose_from_pdb( native_pose_, option[ in::file::native ]().name() );
+    	    core::import_pose::pose_from_file( native_pose_, option[ in::file::native ]().name() , core::import_pose::PDB_file);
     	    has_native_ = true;
 	}
     }

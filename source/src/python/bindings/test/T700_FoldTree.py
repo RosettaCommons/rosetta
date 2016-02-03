@@ -13,7 +13,7 @@ import os; os.chdir('.test.output')
 
 print 'Fold tree --------------------------------------------------'
 
-pose = pose_from_pdb("../test/data/test_in.pdb")
+pose = pose_from_file("../test/data/test_in.pdb")
 
 
 #NEEDED: Fold tree, getting, printing, setting jumps and cuts

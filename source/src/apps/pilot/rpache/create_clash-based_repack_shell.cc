@@ -64,7 +64,7 @@ main( int argc, char * argv [] )
 		// setup pose and score function
 		core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
 		core::pose::Pose starting_pose = core::pose::Pose();
-		core::import_pose::pose_from_pdb( starting_pose, option[ in::file::s ]()[1] );
+		core::import_pose::pose_from_file( starting_pose, option[ in::file::s ]()[1] , core::import_pose::PDB_file);
 		core::pack::task::PackerTaskOP task( main_task_factory->create_task_and_apply_taskoperations( starting_pose ) );
 
 		// make a copy of the original pose

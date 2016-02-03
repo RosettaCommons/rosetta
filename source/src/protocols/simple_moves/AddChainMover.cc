@@ -98,7 +98,7 @@ void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is p
 	TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
 
 	TR<<"Before addchain, total residues: "<<pose.total_residue()<<std::endl;
-	core::import_pose::pose_from_pdb( new_pose, curr_fname );
+	core::import_pose::pose_from_file( new_pose, curr_fname , core::import_pose::PDB_file);
 	new_pose.conformation().detect_disulfides();
 	(*scorefxn()) ( new_pose );
 
@@ -132,7 +132,7 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
 	TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
 
 	TR<<"Before addchain, total residues: "<<pose.total_residue()<<std::endl;
-	core::import_pose::pose_from_pdb( new_chain, curr_fname );
+	core::import_pose::pose_from_file( new_chain, curr_fname , core::import_pose::PDB_file);
 	new_chain.conformation().detect_disulfides();
 	(*scorefxn()) ( new_chain );
 

@@ -21,7 +21,7 @@
 
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/scoring/constraints/util.hh>
@@ -330,7 +330,7 @@ main( int argc, char * argv [] ) {
 	// read in a native pose
 	core::pose::Pose native_pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb(
+		core::import_pose::pose_from_file(
 			native_pose,
 			*rsd_set,
 			option[ in::file::native ]()

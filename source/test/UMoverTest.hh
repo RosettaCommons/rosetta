@@ -24,7 +24,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/types.hh>
@@ -89,10 +89,10 @@ public:
 
 		PoseOP pose( new Pose );
 		PoseOP n_pose( new Pose ); // native pose
-		core::import_pose::pose_from_pdb( *pose, original_file_name );
+		core::import_pose::pose_from_file( *pose, original_file_name , core::import_pose::PDB_file);
 		if ( nativeFileIn ) {
 			const std::string native_file_name( nativeFileIn );
-			core::import_pose::pose_from_pdb( *n_pose, native_file_name );
+			core::import_pose::pose_from_file( *n_pose, native_file_name , core::import_pose::PDB_file);
 		} else {
 			n_pose = pose;
 		}

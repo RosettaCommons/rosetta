@@ -85,7 +85,7 @@ void gpu_refold_test(uint const NITER) {
   CL cl(TR);
 
   TR << "setup poses" << endl;
-  Pose p( *core::import_pose::pose_from_pdb(*crs,option[in::file::s]()[1],false) ); 
+  Pose p( *core::import_pose::pose_from_file(*crs,option[in::file::s]()[1],false) , core::import_pose::PDB_file); 
   for(Size i = 1; i <= p.n_residue(); ++i) {
     if(p.residue(i).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(p,i);
     if(p.residue(i).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(p,i);

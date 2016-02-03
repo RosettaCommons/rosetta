@@ -26,7 +26,7 @@ using namespace std;
 using namespace core;
 using core::conformation::Conformation;
 using core::id::AtomID;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::kinematics::FoldTree;
 using core::pose::Pose;
 using protocols::loops::Loop;
@@ -44,9 +44,9 @@ AtomID id_from_index(Size index, Size first_residue) {
 int main(int argc, char** argv) {
 	devel::init(argc, argv);
 
-	//Pose pose; pose_from_pdb(pose, "structures/linear/6.1ubq.pdb");
+	//Pose pose; pose_from_file(pose, "structures/linear/6.1ubq.pdb", core::import_pose::PDB_file);
 	//Loop pivots(3, 4, 4);
-	Pose pose; pose_from_pdb(pose, "structures/kic/1srp.pdb");
+	Pose pose; pose_from_file(pose, "structures/kic/1srp.pdb", core::import_pose::PDB_file);
 	Loop pivots(308, 319, 319);
 	Loops pivots_wrapper; pivots_wrapper.add_loop(pivots);
 

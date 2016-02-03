@@ -224,7 +224,7 @@ void JumpingTest::test_save_and_restore_silentio_with_jumps()
 	//should live in core/io/silent but I'd like to use the JumpSetup stuff
 	pose::Pose native_pose;
 	//pose::Pose native_pose( create_test_in_pdb_pose() ); // jumping/test_in.pdb is different from all the other test_in.pdbs
-	core::import_pose::pose_from_pdb( native_pose, "protocols/jumping/test_in.pdb" ); //has to be idealized or a decoy
+	core::import_pose::pose_from_file( native_pose, "protocols/jumping/test_in.pdb" , core::import_pose::PDB_file); //has to be idealized or a decoy
 
 	JumpSetup jump_def( native_pose.total_residue() );
 	jump_def.read_file( "protocols/jumping/jumps.def" );
@@ -375,7 +375,7 @@ void JumpingTest::test_jump_geometry() {
 
 	pose::Pose native_pose;
 	//pose::Pose native_pose( create_test_in_pdb_pose() ); // jumping/test_in.pdb is different from all the other test_in.pdbs
-	core::import_pose::pose_from_pdb( native_pose, "protocols/jumping/test_in.pdb" ); //has to be idealized or a decoy
+	core::import_pose::pose_from_file( native_pose, "protocols/jumping/test_in.pdb" , core::import_pose::PDB_file); //has to be idealized or a decoy
 
 	JumpSetup jump_def( native_pose.total_residue() );
 	jump_def.read_file( "protocols/jumping/jumps.def" );
@@ -449,6 +449,6 @@ void JumpingTest::setUp() {
 	core_init();
 	fragset3mer_.read_fragment_file( "protocols/abinitio/mfr_aa2GB3_03_05.200_v1_3" );
 
-	core::import_pose::pose_from_pdb( pose_, "protocols/jumping/jump_test.pdb" );
+	core::import_pose::pose_from_file( pose_, "protocols/jumping/jump_test.pdb" , core::import_pose::PDB_file);
 
 }

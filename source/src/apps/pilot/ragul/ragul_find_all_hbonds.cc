@@ -29,7 +29,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -50,8 +50,7 @@
 
 #include <core/pose/util.hh>
 #include <core/scoring/sasa.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pdb_dynamic_reader.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 
 #include <numeric/xyzVector.hh>
 
@@ -77,7 +76,7 @@ int main( int argc, char * argv [] )
 		// create native pose from pdb
 		pose::Pose pose_init;
 		std::string const input_pdb_name( basic::options::start_file() );
-		core::import_pose::pose_from_pdb( pose_init, input_pdb_name );
+		core::import_pose::pose_from_file( pose_init, input_pdb_name , core::import_pose::PDB_file);
 
 		// fill hbond set
 		core::scoring::hbonds::HBondSet hbs1;

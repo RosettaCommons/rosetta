@@ -22,7 +22,7 @@
 
 //Core Chemistry
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
@@ -102,7 +102,7 @@ int main( int argc, char * argv [] )
 	//done with options
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, infile );
+	core::import_pose::pose_from_file( pose, infile , core::import_pose::PDB_file);
 
 	scoring::ScoreFunctionOP fa_sfxn = scoring::get_score_function_legacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	scoring::ScoreFunctionOP cen_sfxn =scoring::ScoreFunctionFactory::create_score_function(scoring::CENTROID_WTS);

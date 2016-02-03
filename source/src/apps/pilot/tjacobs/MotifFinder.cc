@@ -93,7 +93,7 @@ main( int argc, char * argv [] ) {
 
 		for(core::Size i=1; i<=pdb_library.size(); ++i) {
 			core::pose::Pose pose;
-			core::import_pose::pose_from_pdb(pose, pdb_library[i]);
+			core::import_pose::pose_from_file(pose, pdb_library[i], core::import_pose::PDB_file);
 			if(pose.total_residue() <= 1){ continue; }
 			utility::vector1< std::pair<core::Size,core::Size> > segments;
 			segments.push_back(std::make_pair(1, pose.total_residue()));
@@ -110,7 +110,7 @@ main( int argc, char * argv [] ) {
 	}
 	utility::file::FileName query_pdb = option[ in::file::s ]()[1];
 	core::pose::Pose query_pose;
-	core::import_pose::pose_from_pdb(query_pose, query_pdb);
+	core::import_pose::pose_from_file(query_pose, query_pdb, core::import_pose::PDB_file);
 	utility::vector1< std::pair<core::Size,core::Size> > segments;
 	segments.push_back(std::make_pair(1, query_pose.total_residue()));
 	query_model = create_model_from_pose(query_pose, segments, -1);
@@ -147,7 +147,7 @@ main( int argc, char * argv [] ) {
 		if(matched_residues < n_residues-1) { continue; }
 
 		core::pose::Pose hit_pose;
-		core::import_pose::pose_from_pdb(hit_pose, pdb_library[hit_model_id]);
+		core::import_pose::pose_from_file(hit_pose, pdb_library[hit_model_id], core::import_pose::PDB_file);
 		core::conformation::remove_upper_terminus_type_from_conformation_residue(hit_pose.conformation(), 1);
 		core::conformation::remove_lower_terminus_type_from_conformation_residue(hit_pose.conformation(), 1);
 		core::conformation::remove_upper_terminus_type_from_conformation_residue(hit_pose.conformation(), hit_pose.total_residue());

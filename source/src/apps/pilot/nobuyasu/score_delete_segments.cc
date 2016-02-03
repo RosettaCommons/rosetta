@@ -121,7 +121,7 @@ public: // constructor/deconstructor
 		scorefxn_ = core::scoring::get_score_function();
 
 		if ( option[ in::file::native ].user() ) {
-			core::import_pose::pose_from_pdb( native_, option[ basic::options::OptionKeys::in::file::native ] );
+			core::import_pose::pose_from_file( native_, option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 		}
 	}
 	virtual ~DeleteSegments(){}

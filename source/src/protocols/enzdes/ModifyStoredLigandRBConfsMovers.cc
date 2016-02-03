@@ -31,6 +31,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -47,7 +48,7 @@
 
 //debug headers
 //#include <fstream>
-//#include <core/io/pdb/pose_io.hh>
+//
 //#include <utility/string_util.hh>
 
 namespace protocols {

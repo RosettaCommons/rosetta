@@ -67,7 +67,7 @@ public:
 		using namespace core::conformation;
 
 		core_init();
-		core::import_pose::pose_from_pdb( pose, "core/pose/pdbinfo_test_in.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pose/pdbinfo_test_in.pdb" , core::import_pose::PDB_file);
 
 		ResidueTypeSetCOP residue_set
 			( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );

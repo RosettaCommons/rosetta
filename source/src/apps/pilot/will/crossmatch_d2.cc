@@ -32,7 +32,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -125,7 +125,7 @@ using utility::pointer::access_ptr;
 using utility::pointer::ReferenceCount;
 using utility::vector1;
 using std::endl;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 typedef numeric::xyzMatrix<Real> Mat;
 typedef numeric::xyzVector<Real> Vec;
 typedef utility::vector1<Vec>    Vecs;
@@ -911,7 +911,7 @@ struct MatchSet {
     utility::io::ozstream out(fname);
     TR << "writing " << fname << " BASE" << std::endl;
     out << "MODEL BASE" << endl;
-    core::io::pdb::dump_pdb(base.pose,out);
+    core::io::pdb::old_dump_pdb(base.pose,out);
     out << "ENDMDL" << endl;
     for(Size i = 1; i <= ligs.size(); ++i) {
       TR << "writing " << fname << " " << ligs[i].tag << std::endl;
@@ -921,7 +921,7 @@ struct MatchSet {
       if(!tmp.residue(1).is_upper_terminus()) core::pose::add_upper_terminus_type_to_pose_residue(tmp,1);
       if(!tmp.residue(1).is_lower_terminus()) core::pose::add_lower_terminus_type_to_pose_residue(tmp,2);
       if(!tmp.residue(1).is_upper_terminus()) core::pose::add_upper_terminus_type_to_pose_residue(tmp,2);
-      core::io::pdb::dump_pdb(tmp,out);
+      core::io::pdb::old_dump_pdb(tmp,out);
       out << "ENDMDL" << endl;
     }
     out.close();
@@ -1919,7 +1919,7 @@ int main (int argc, char *argv[])
     poses.resize(v.size()-1);
     for(Size i = 2; i <= v.size(); ++i){
       TR << "reading pose " << v[i] << std::endl;
-      core::import_pose::pose_from_pdb(poses[i-1],v[i]);
+      core::import_pose::pose_from_file(poses[i-1],v[i], core::import_pose::PDB_file);
     }
     MatchSet ms1(poses,mop,poses[1]);
     ms1.write_to_file(fname);
@@ -1928,8 +1928,8 @@ int main (int argc, char *argv[])
       core::chemical::ResidueTypeSetCAP  fa_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
       vector1< Pose > poses;
       Pose native;
-      core::import_pose::pose_from_pdb(poses,option[in::file::s][1]);
-      core::import_pose::pose_from_pdb(native,option[willmatch::native1]());
+      core::import_pose::pose_from_file(poses,option[in::file::s][1], core::import_pose::PDB_file);
+      core::import_pose::pose_from_file(native,option[willmatch::native1](), core::import_pose::PDB_file);
       MatchSet ms(poses,mop,native);
       std::pair<vector1<Size>,vector1<Size> > splitwork = makesplitwork(ms.ligs.size());
       vector1<Size> ILIG1 = splitwork.first;
@@ -2301,8 +2301,8 @@ int main (int argc, char *argv[])
   if(!basic::options::option[basic::options::OptionKeys::willmatch::symmetry_d2]()) {
     vector1< Pose > poses1,poses2;
     Pose native1,native2;
-    core::import_pose::pose_from_pdb(poses1,option[in::file::s][1]);
-    core::import_pose::pose_from_pdb(native1,option[willmatch::native1]());
+    core::import_pose::pose_from_file(poses1,option[in::file::s][1], core::import_pose::PDB_file);
+    core::import_pose::pose_from_file(native1,option[willmatch::native1](), core::import_pose::PDB_file);
     vector1<Size> allowed_res1,allowed_res2;
     if( option[crossmatch::allowed_res1].user() ) allowed_res1 = option[crossmatch::allowed_res1]();
     if( option[crossmatch::allowed_res2].user() ) allowed_res2 = option[crossmatch::allowed_res2]();
@@ -2318,8 +2318,8 @@ int main (int argc, char *argv[])
       native2 = native1;
       ms2 = ms1;
     } else {
-      core::import_pose::pose_from_pdb(poses2,option[in::file::s][2]);
-      core::import_pose::pose_from_pdb(native2,option[willmatch::native2]());
+      core::import_pose::pose_from_file(poses2,option[in::file::s][2], core::import_pose::PDB_file);
+      core::import_pose::pose_from_file(native2,option[willmatch::native2](), core::import_pose::PDB_file);
       ms2.init(poses2,mop,native2,allowed_res2);
       tmp = read_res_list(basic::options::option[basic::options::OptionKeys::willmatch::exclude_res2]());
       for(Size i = 1; i <= native2.n_residue(); ++i) if(std::find(tmp.begin(),tmp.end(),i)==tmp.end()) iface_candidates2.push_back(i);

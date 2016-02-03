@@ -106,7 +106,7 @@ public:
 		using core::Real;
 
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "core/scoring/symmetry/test_in.pdb" );
+		core::import_pose::pose_from_file( pose, "core/scoring/symmetry/test_in.pdb" , core::import_pose::PDB_file);
 		core::pose::symmetry::make_symmetric_pose( pose );
 		SymmetricConformation const & symconf( static_cast< SymmetricConformation const & > (pose.conformation() ));
 		SymmetryInfoCOP symm_info = symconf.Symmetry_Info();

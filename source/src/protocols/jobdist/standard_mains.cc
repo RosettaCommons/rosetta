@@ -20,7 +20,7 @@
 //#include <core/init/init.hh>
 #include <core/types.hh>
 
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
@@ -194,7 +194,7 @@ int universal_main(
 	// open native pose if it exists
 	core::pose::Pose native_pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 		// Set the native pose into the mover
 		mover.set_native_pose( PoseCOP( PoseOP( new core::pose::Pose(native_pose) ) ) );
 #ifdef BOINC_GRAPHICS
@@ -525,9 +525,9 @@ int universal_main(
 			if ( utility::file::file_exists( curr_job->native_tag() ) ) {
 
 				if ( option[ in::file::centroid_input ].user() ) {
-					core::import_pose::centroid_pose_from_pdb( native_pose, curr_job->native_tag() );
+					core::import_pose::centroid_pose_from_pdb( native_pose, curr_job->native_tag() , core::import_pose::PDB_file);
 				} else {
-					core::import_pose::pose_from_pdb( native_pose, curr_job->native_tag() );
+					core::import_pose::pose_from_file( native_pose, curr_job->native_tag() , core::import_pose::PDB_file);
 				}
 				// Set the native pose into the mover
 				mover.set_native_pose( PoseCOP( PoseOP( new core::pose::Pose(native_pose) ) ) );
@@ -547,9 +547,9 @@ int universal_main(
 			if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
 				input_pose = core::pose::PoseOP( new core::pose::Pose() );
 				if ( option[ in::file::centroid_input ].user() ) {
-					core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() );
+					core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 				} else {
-					core::import_pose::pose_from_pdb( *input_pose, curr_job->input_tag() );
+					core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 				}
 			}
 
@@ -711,13 +711,13 @@ int main_plain_mover(
 		if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
 			input_pose = core::pose::PoseOP( new core::pose::Pose() );
 			if ( option[ in::file::centroid_input ].user() ) {
-				core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() );
+				core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 				native_pose = core::pose::PoseOP( new core::pose::Pose() );
-				core::import_pose::centroid_pose_from_pdb( *native_pose, curr_job->native_tag() );
+				core::import_pose::centroid_pose_from_pdb( *native_pose, curr_job->native_tag() , core::import_pose::PDB_file);
 			} else {
-				core::import_pose::pose_from_pdb( *input_pose, curr_job->input_tag() );
+				core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 				native_pose = core::pose::PoseOP( new core::pose::Pose() );
-				core::import_pose::pose_from_pdb( *native_pose, curr_job->native_tag() );
+				core::import_pose::pose_from_file( *native_pose, curr_job->native_tag() , core::import_pose::PDB_file);
 			}
 		}
 		mover.set_input_pose( input_pose );
@@ -802,7 +802,7 @@ int main_plain_pdb_mover(
 	// load native pose (if provided)
 	core::pose::Pose native_pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
 	BasicJobOP curr_job, prev_job;
@@ -817,9 +817,9 @@ int main_plain_pdb_mover(
 		if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
 			input_pose = core::pose::PoseOP( new core::pose::Pose() );
 			if ( option[ in::file::centroid_input ].user() ) {
-				core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() );
+				core::import_pose::centroid_pose_from_pdb( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 			} else {
-				core::import_pose::pose_from_pdb( *input_pose, curr_job->input_tag() );
+				core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 			}
 		}
 
@@ -903,7 +903,7 @@ int main_atom_tree_diff_mover(
 		// we read each PDB just once to save on disk I/O
 		if ( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
 			input_pose = core::pose::PoseOP( new core::pose::Pose() );
-			core::import_pose::pose_from_pdb( *input_pose, curr_job->input_tag() );
+			core::import_pose::pose_from_file( *input_pose, curr_job->input_tag() , core::import_pose::PDB_file);
 		}
 
 		// Make a modifiable copy of the pose read from disk

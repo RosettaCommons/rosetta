@@ -201,7 +201,7 @@ NodeConstraintAssemblyMover::apply(
 	if(option[in::file::native].user()) {
 		core::chemical::ResidueTypeSetCOP res_type_set =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-		template_pose = core::import_pose::pose_from_pdb( *res_type_set, option[ in::file::native ]() );
+		template_pose = core::import_pose::pose_from_file( *res_type_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 	else {
 		utility_exit_with_message("You must provide a template with the in:file:native option");

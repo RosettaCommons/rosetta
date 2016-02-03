@@ -778,7 +778,7 @@ SeedFoldTree::parse_my_tag( TagCOP const tag,
 
 	std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
 	template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
-	core::import_pose::pose_from_pdb( *template_pdb_, template_pdb_fname );
+	core::import_pose::pose_from_file( *template_pdb_, template_pdb_fname , core::import_pose::PDB_file);
 
 }//end parse my tag
 }//end seeded_abinitio

@@ -50,7 +50,7 @@ PDB::domain_action(
 	std::string const & pdb_path = tokens[ ++which_token ];
 	core::pose::Pose temp_pose;
 	std::cout << "Reading in PDB file " << pdb_path << std::endl;
-	core::import_pose::pose_from_pdb( temp_pose, pdb_path.c_str() );
+	core::import_pose::pose_from_file( temp_pose, pdb_path.c_str() , false, core::import_pose::PDB_file);
 	domain.set_input_pose(temp_pose);
 	++which_token;
 }

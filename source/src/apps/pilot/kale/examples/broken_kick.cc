@@ -212,7 +212,7 @@ int main(int argc, char** argv) {
 
 	pose::Pose pose;
 	string input_pdb = "structures/cyclic/14.marked.pdb";
-	import_pose::pose_from_pdb(pose, input_pdb);
+	import_pose::pose_from_file(pose, input_pdb, core::import_pose::PDB_file);
 
 	ClosureProblem problem;
 	ClosureSolution const *solution = NULL;

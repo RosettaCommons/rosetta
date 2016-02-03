@@ -31,7 +31,7 @@ init(extra_options='-constant_seed -run:test_cycles True')  # -loops:test_cycles
 # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
 
-p = pose_from_pdb( "../test/data/2cpl_min.pdb" )
+p = pose_from_file( "../test/data/2cpl_min.pdb" )
 
 starting_p = Pose()
 starting_p.assign( p )

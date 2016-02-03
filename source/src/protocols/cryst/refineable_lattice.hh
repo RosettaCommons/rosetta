@@ -54,7 +54,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 
 
-#include <core/io/pdb/pose_io.hh>
+
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>

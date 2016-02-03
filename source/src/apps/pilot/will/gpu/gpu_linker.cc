@@ -13,7 +13,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -108,7 +108,7 @@ utility::vector1<numeric::xyzVector<Real> > array2vecs(float const *xyz, int N) 
  // radians!
 void fere_torsions(int N, float *tor) {
 	core::pose::Pose tmp;
-	core::import_pose::pose_from_pdb(tmp,"input/fr52re.pdb");
+	core::import_pose::pose_from_file(tmp,"input/fr52re.pdb", core::import_pose::PDB_file);
 	for(int i = 0; i < N; ++i) {
 		tor[3*i+0] = numeric::conversions::radians(tmp.phi  (i+1));
 		tor[3*i+1] = numeric::conversions::radians(tmp.psi  (i+1));

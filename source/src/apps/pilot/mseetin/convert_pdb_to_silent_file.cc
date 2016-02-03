@@ -39,7 +39,7 @@
 #include <core/id/DOF_ID.hh>
 #include <basic/database/open.hh>
 #include <core/init/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
@@ -115,7 +115,7 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 // C++ headers
 //#include <cstdlib>
@@ -148,7 +148,7 @@ using namespace protocols;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -214,7 +214,7 @@ pdb_to_silent_file_simple(){
 
 	pose::Pose pose;
 
-	core::import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	core::import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 	// NEW! from rhiju -- pay attention to chain breaks.
 	protocols::farna::figure_out_reasonable_rna_fold_tree( pose );

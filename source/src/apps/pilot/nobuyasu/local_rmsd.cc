@@ -20,7 +20,7 @@
 #include <protocols/jd2/Job.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -75,7 +75,7 @@ public:
 		// set native pose
 		core::pose::Pose native_pose;
 		if ( option[ in::file::native ].user() ) {
-			core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
+			core::import_pose::pose_from_file( native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 			set_native_pose( new core::pose::Pose(native_pose) );
 		}
 

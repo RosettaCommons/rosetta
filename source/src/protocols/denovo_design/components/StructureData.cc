@@ -28,13 +28,13 @@
 //Core Headers
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/OptCysHG.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/Remarks.hh>
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -65,6 +65,7 @@ static basic::Tracer TR( "protocols.denovo_design.components.StructureData" );
 namespace protocols {
 namespace denovo_design {
 namespace components {
+using core::io::Remarks;
 
 int const StructureData::REMARK_NUM = 994;
 std::string const StructureData::DATA_NAME = "PERMUTATION";
@@ -307,7 +308,7 @@ StructureDataOP
 StructureData::create_from_pose( core::pose::Pose const & pose, std::string const & id )
 {
 	StructureDataOP newperm;
-	core::pose::Remarks remarks;
+	core::io::Remarks remarks;
 	if ( has_cached_string(pose) ) {
 		std::stringstream ss;
 		ss << cached_string( pose );
@@ -349,11 +350,11 @@ StructureData::create_from_pose( core::pose::Pose const & pose, std::string cons
 }
 
 StructureDataOP
-StructureData::create_from_remarks( core::pose::Remarks const & rem, std::string const & newid )
+StructureData::create_from_remarks( core::io::Remarks const & rem, std::string const & newid )
 {
 	StructureDataOP newperm = NULL;
 	core::Size read_lines = 0;
-	for ( core::pose::Remarks::const_iterator it_rem=rem.begin(); it_rem != rem.end(); ++it_rem ) {
+	for ( core::io::Remarks::const_iterator it_rem=rem.begin(); it_rem != rem.end(); ++it_rem ) {
 		if ( ( it_rem->num != 991 ) && ( it_rem->num != REMARK_NUM ) ) {
 			continue;
 		}
@@ -393,12 +394,12 @@ StructureData::create_from_remarks( core::pose::Remarks const & rem, std::string
 
 /// @brief creates a permutation from pdb remarks
 StructureDataOP
-StructureData::parse_remarks( core::pose::Remarks const & rem, std::string const & newid )
+StructureData::parse_remarks( core::io::Remarks const & rem, std::string const & newid )
 {
 	TR << "Parsing remarks!" << std::endl;
 	// create list of strings
 	utility::vector1< std::string > lines;
-	for ( core::pose::Remarks::const_iterator it_rem=rem.begin(), it_end=rem.end(); it_rem != it_end; ++it_rem ) {
+	for ( core::io::Remarks::const_iterator it_rem=rem.begin(), it_end=rem.end(); it_rem != it_end; ++it_rem ) {
 		if ( it_rem->num != REMARK_NUM ) {
 			continue;
 		}
@@ -481,11 +482,11 @@ StructureData::create_from_xml( std::istream & xmltag, std::string const & newid
 
 /// @brief Saves remarks of the given pose into the pose's datacache -- changes enzdes residues to segment name/number
 void
-StructureData::save_remarks_to_datacache( core::pose::Remarks const & remarks )
+StructureData::save_remarks_to_datacache( core::io::Remarks const & remarks )
 {
 	debug_assert( pose_ );
 	core::Size remcount = 1;
-	for ( core::pose::Remarks::const_iterator r=remarks.begin(), endr=remarks.end(); r != endr; ++r ) {
+	for ( core::io::Remarks::const_iterator r=remarks.begin(), endr=remarks.end(); r != endr; ++r ) {
 		if ( r->num == REMARK_NUM ) {
 			continue;
 		}
@@ -534,10 +535,10 @@ StructureData::save_remarks_to_datacache( core::pose::Remarks const & remarks )
 /// @brief loads data from pdb remarks into this permutation
 void
 StructureData::load_pdb_info_old(
-	core::pose::Remarks const & rem,
+	core::io::Remarks const & rem,
 	std::string const & prefix )
 {
-	for ( core::pose::Remarks::const_iterator it_rem=rem.begin(); it_rem!=rem.end(); ++it_rem ) {
+	for ( core::io::Remarks::const_iterator it_rem=rem.begin(); it_rem!=rem.end(); ++it_rem ) {
 		if ( it_rem->num != 991 ) {
 			continue;
 		}
@@ -738,7 +739,7 @@ StructureData::cached_string() const
 }
 
 /// @brief retrieves cached remarks from pose datacache
-core::pose::Remarks
+core::io::Remarks
 StructureData::cached_remarks() const
 {
 	debug_assert( pose_ );
@@ -755,7 +756,7 @@ clean_from_storage( std::string & st )
 }
 
 /// @brief retrieves cached remarks from pose datacache
-core::pose::Remarks
+core::io::Remarks
 StructureData::cached_remarks( core::pose::Pose const & pose ) const
 {
 	debug_assert( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) );
@@ -764,7 +765,7 @@ StructureData::cached_remarks( core::pose::Pose const & pose ) const
 	basic::datacache::CacheableStringMap const & stringcache =
 		static_cast< basic::datacache::CacheableStringMap const & >( cachable );
 	std::map< std::string, std::string > const & smap = stringcache.map();
-	core::pose::Remarks retval;
+	core::io::Remarks retval;
 	for ( std::map< std::string, std::string >::const_iterator rem=smap.begin(); rem != smap.end(); ++rem ) {
 		if ( boost::starts_with( rem->first, DATA_NAME + '.' ) ) {
 			std::string val = rem->second;
@@ -772,7 +773,7 @@ StructureData::cached_remarks( core::pose::Pose const & pose ) const
 			boost::trim_right(val);
 			TR.Debug << "Cached line = " << val << std::endl;
 			utility::vector1< std::string > fields = utility::string_split_simple( val );
-			core::pose::RemarkInfo me;
+			core::io::RemarkInfo me;
 			me.num = boost::lexical_cast< int >( fields[1] );
 			std::stringstream ss;
 			if ( me.num == 666 ) { // enzdes header
@@ -895,7 +896,7 @@ StructureData::set_cached_string( core::pose::Pose & pose, std::string const & s
 
 /// @brief adds a remark to remarks object
 void
-StructureData::add_perm_remark( core::pose::Remarks & remarks, std::string const & rem_value ) const
+StructureData::add_perm_remark( core::io::Remarks & remarks, std::string const & rem_value ) const
 {
 	add_remark( remarks, REMARK_NUM, rem_value );
 }

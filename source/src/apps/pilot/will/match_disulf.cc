@@ -22,7 +22,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <iostream>
 #include <core/kinematics/FoldTree.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <protocols/relax/FastMultiRelax.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
 
 	pose::Pose pose;
 	std::cerr << "reading pdb input/if_x.pdb" << std::endl;
-	core::import_pose::pose_from_pdb(pose,"input/if_x.pdb");
+	core::import_pose::pose_from_file(pose,"input/if_x.pdb", core::import_pose::PDB_file);
 	using core::conformation::ResidueFactory;
 	ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	pose.append_residue_by_jump(*ResidueFactory::create_residue(residue_set->name_map("VRT")),1);

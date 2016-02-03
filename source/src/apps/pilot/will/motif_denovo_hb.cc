@@ -34,7 +34,7 @@
 	#include <core/pose/motif/reference_frames.hh>
 	// #include <core/pose/util.hh>
 	// #include <core/pose/symmetry/util.hh>
-	#include <core/io/pdb/pose_io.hh>
+	#include <core/io/pdb/pdb_writer.hh>
 	// #include <core/kinematics/MoveMap.hh>
 	// #include <core/scoring/Energies.hh>
 	// #include <core/scoring/EnergyGraph.hh>
@@ -132,7 +132,7 @@ static basic::Tracer TR("motif_hash_util");
 	using utility::file_basename;
 	using utility::vector1;
 	using std::endl;
-	// using core::import_pose::pose_from_pdb;
+	// using core::import_pose::pose_from_file;
 	using numeric::geometry::hashing::Real3;
 	using numeric::geometry::hashing::Real6;
 	using core::pose::xyzStripeHashPoseCOP;

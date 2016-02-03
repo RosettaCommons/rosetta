@@ -22,7 +22,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -102,7 +102,7 @@ void run() {
 
   core::chemical::ResidueTypeSetCAP  rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose init,cys;
-  core::import_pose::pose_from_pdb(init,*rs,option[in::file::s]()[1]);
+  core::import_pose::pose_from_file(init,*rs,option[in::file::s]()[1], core::import_pose::PDB_file);
   make_pose_from_sequence(cys,"C",core::chemical::FA_STANDARD,false);
   remove_lower_terminus_type_from_pose_residue(cys,1);
   remove_upper_terminus_type_from_pose_residue(cys,1);

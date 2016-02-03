@@ -35,7 +35,7 @@
 // Utility Headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -82,7 +82,7 @@ int main( int argc, char * argv [] ) {
 		//setup reference ligand
 		pose::Pose ref_pose;
 		std::string const ref_ligand = option[ reference_ligand ];
-		core::import_pose::pose_from_pdb( ref_pose, ref_ligand );
+		core::import_pose::pose_from_file( ref_pose, ref_ligand , core::import_pose::PDB_file);
 		core::Size ref_res_num = 0;
 		for ( int j = 1, resnum = ref_pose.total_residue(); j <= resnum; ++j ) {
 			if ( !ref_pose.residue(j).is_protein() ) {
@@ -99,7 +99,7 @@ int main( int argc, char * argv [] ) {
 		//setup input ligand
 		pose::Pose inp_pose;
 		std::string const inp_ligand = option[ input_ligand ];
-		core::import_pose::pose_from_pdb( inp_pose, inp_ligand );
+		core::import_pose::pose_from_file( inp_pose, inp_ligand , core::import_pose::PDB_file);
 		core::Size inp_res_num = 0;
 		for ( int j = 1, resnum = inp_pose.total_residue(); j <= resnum; ++j ) {
 			if ( !inp_pose.residue(j).is_protein() ) {

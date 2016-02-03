@@ -44,7 +44,7 @@ public:
 	virtual void setUp() {
 		start_pose = pose::PoseOP( new pose::Pose() );
 		// Use smaller PDB to test minimizer
-		core::import_pose::pose_from_pdb(*start_pose, "test_in2.pdb");
+		core::import_pose::pose_from_file(*start_pose, "test_in2.pdb", core::import_pose::PDB_file);
 
 		scorefxn = core::scoring::get_score_function();
 

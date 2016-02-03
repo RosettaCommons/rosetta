@@ -17,7 +17,7 @@ import os; os.chdir('.test.output')
 print 'Loop building --------------------------------------------------'
 
 #loop functions
-loop_p =  pose_from_pdb("../test/data/test_in.pdb")
+loop_p =  pose_from_file("../test/data/test_in.pdb")
 
 loop = Loop(70,80,75)
 loops = Loops()

@@ -623,7 +623,7 @@ assemble_domains_optimize()
 {
 	pose::Pose full_pose, start_pose;
 	std::string filename_start = option[ OptionKeys::DomainAssembly::da_start_pdb ]();
-	core::import_pose::pose_from_pdb( start_pose, filename_start );
+	core::import_pose::pose_from_file( start_pose, filename_start , core::import_pose::PDB_file);
 	RNA_FragmentsOP all_rna_fragments;
 	utility::vector1< std::pair < Size, Size > > linker_ranges_rna;
 	full_pose = start_pose;
@@ -662,7 +662,6 @@ assemble_domains_optimize()
 		std::ostringstream outputfilename;
 		outputfilename << "test_stage3_" << setw(6) << setfill('0') << start_pdb_num+i << ".pdb";
 		std::string fname = outputfilename.str();
-		//core::io::pdb::dump_pdb( full_pose, out );
 		full_pose.dump_scored_pdb( fname, *scorefxn );
 		//std::ofstream out( fname.c_str() );
 		//out << "total_energy: " << (*scorefxn)(full_pose) << std::endl;

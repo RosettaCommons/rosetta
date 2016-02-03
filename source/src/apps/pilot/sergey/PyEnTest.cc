@@ -111,7 +111,7 @@ int main( int argc, char * argv [] )
 
 	devel::init(argc, argv);
 
-	core::pose::PoseOP pose = core::import_pose::pose_from_pdb("src/python/bindings/test/data/test_in.pdb");
+	core::pose::PoseOP pose = core::import_pose::pose_from_file("src/python/bindings/test/data/test_in.pdb", core::import_pose::PDB_file);
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("python");
 
 	//scorefxn->set_weight(core::scoring::python, 1.0);

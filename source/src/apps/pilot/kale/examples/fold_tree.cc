@@ -20,7 +20,7 @@ using namespace std;
 using core::Size;
 using core::Real;
 using core::pose::Pose;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::conformation::Conformation;
 using core::conformation::Residue;
 using core::id::AtomID;
@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
 	Loop loop(308, 319, 314);
 	cout << loop.cut() << endl;
 
-	pose_from_pdb(full_pose, "structures/kic/1srp.pdb");
+	pose_from_file(full_pose, "structures/kic/1srp.pdb", core::import_pose::PDB_file);
 	set_single_loop_fold_tree(full_pose, loop);
 
 	full_pose.set_phi(308, 0);

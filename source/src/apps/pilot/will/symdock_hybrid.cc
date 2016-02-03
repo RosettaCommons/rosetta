@@ -90,8 +90,8 @@ main (int argc, char *argv[]){
 
   devel::init( argc, argv );
   pose::Pose ccpp,ccap;
-  import_pose::pose_from_pdb(ccpp,"input/ccpp.pdb"); strip_termini(ccpp);
-  import_pose::pose_from_pdb(ccap,"input/ccap.pdb"); strip_termini(ccap);
+  import_pose::pose_from_file(ccpp,"input/ccpp.pdb"); strip_termini(ccpp, core::import_pose::PDB_file);
+  import_pose::pose_from_file(ccap,"input/ccap.pdb"); strip_termini(ccap, core::import_pose::PDB_file);
   ccpp.set_xyz(AtomID(ccpp.residue(1).atom_index("H"),1),Vec(0,0,0));
   ccpp.set_xyz(AtomID(ccpp.residue(2).atom_index("H"),2),Vec(0,0,1));
   ccap.set_xyz(AtomID(ccap.residue(1).atom_index("H"),1),Vec(0,0,0));
@@ -101,7 +101,7 @@ main (int argc, char *argv[]){
     string fname = option[in::file::s]()[ifile];
     //TR << fname << std::endl;
     pose::Pose pose;
-    import_pose::pose_from_pdb(pose,fname);
+    import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
     if(!strip_termini(pose)) continue;
     if(pose.n_residue() < 40) continue;
 

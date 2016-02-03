@@ -30,7 +30,7 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/rms_util.hh>
@@ -83,7 +83,7 @@ void
 CutOutDomain::apply( core::pose::Pose & pose )
 {
 	core::pose::Pose Temp_pose;
-	core::import_pose::pose_from_pdb( Temp_pose, source_pdb_name_ );
+	core::import_pose::pose_from_file( Temp_pose, source_pdb_name_ , core::import_pose::PDB_file);
 	core::Size from = find_nearest_res(Temp_pose,pose,start_res_, 1/*chain*/ );
 	TR<<from<<std::endl;
 	core::Size to  = find_nearest_res(Temp_pose,pose,end_res_, 1/*chain*/ );

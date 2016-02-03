@@ -38,7 +38,7 @@ namespace protocols {
 namespace pockets {
 
 PocketExemplarMultifunc::PocketExemplarMultifunc(std::string const input_pdb_name, std::string const resid, core::Real const c_rad, core::Real const rep_weight, utility::vector1<core::Real> & p_min, utility::vector1<core::Real> & p_max) {
-	core::import_pose::pose_from_pdb( input_pose, input_pdb_name );
+	core::import_pose::pose_from_file( input_pose, input_pdb_name , core::import_pose::PDB_file);
 	residues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
 	cRad = c_rad;
 	repW = rep_weight;

@@ -122,7 +122,7 @@ VDW_CachedRepScreenInfo::read_in_VDW_rep_screen_pose( VDW_RepScreenInfo & VDW_re
 	if ( VDW_rep_screen_info.pose_name == "" ) utility_exit_with_message( VDW_rep_screen_info.pose_name == "" );
 	VDW_rep_screen_info.VDW_pose = core::pose::PoseOP( new core::pose::Pose );
 
-	import_pose::pose_from_pdb( *VDW_rep_screen_info.VDW_pose, *rsd_set, VDW_rep_screen_info.pose_name );
+	import_pose::pose_from_file( *VDW_rep_screen_info.VDW_pose, *rsd_set, VDW_rep_screen_info.pose_name , core::import_pose::PDB_file);
 	protocols::farna::make_phosphate_nomenclature_matches_mini( *VDW_rep_screen_info.VDW_pose );
 	add_virtual_O2Prime_hydrogen( *VDW_rep_screen_info.VDW_pose );
 }

@@ -204,6 +204,8 @@ Options = Option_Group( '',
 					default="1.0" ),
 
 		# Other input options -------------------------------------------------
+		Option("name3_property_codes", "StringVector",
+			desc="File that describes name3-property correspondence to fix up atom assignments", default='utility::vector1<std::string>(1,"code_properties.codes")' ),
 		Option("alternate_3_letter_codes", "StringVector",
 			desc="Specify the filename(s) of (a) *.codes files that includes "
 				"a list of alternative 3-letter codes.  "

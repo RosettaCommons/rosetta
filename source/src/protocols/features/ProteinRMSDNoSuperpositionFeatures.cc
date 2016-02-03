@@ -69,7 +69,7 @@ using std::string;
 using std::list;
 using std::endl;
 using core::Size;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::pose::Pose;
 using core::pose::PoseCOP;
 using core::pose::PoseOP;
@@ -187,7 +187,7 @@ ProteinRMSDNoSuperpositionFeatures::reference_pose_from_options(core::pose::Pose
 	if ( option[OptionKeys::in::file::native].user() ) {
 		PoseOP ref_pose( new core::pose::Pose() );
 		string native_pdb_fname(option[OptionKeys::in::file::native]());
-		pose_from_pdb(*ref_pose, native_pdb_fname);
+		pose_from_file(*ref_pose, native_pdb_fname, core::import_pose::PDB_file);
 		tr << "Adding features reporter '" << type_name() << "' referencing '"
 			<< " the -in:file:native='" << native_pdb_fname << "'" << endl;
 		reference_pose(ref_pose);

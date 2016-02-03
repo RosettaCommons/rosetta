@@ -182,11 +182,10 @@ assemble_remark_line(
 	core::Size ex_geom_id
 )
 {
-	std::string posA = utility::to_string( seqposA );
-	utility::add_spaces_right_align( posA, 4 );
 
-	std::string posB = utility::to_string( seqposB );
-	utility::add_spaces_right_align( posB, 4 );
+	std::string posA = utility::pad_left( seqposA, 4 );
+
+	std::string posB = utility::pad_left( seqposB, 4 );
 
 	return "MATCH TEMPLATE "+ chainA +" "+ resA +" "+ posA +  " MATCH MOTIF "+ chainB + " " + resB + " "+posB + "  " + utility::to_string( cst_block ) + "  " + utility::to_string( ex_geom_id );
 

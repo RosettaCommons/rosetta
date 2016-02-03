@@ -15,7 +15,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -73,7 +73,7 @@ main( int argc, char* argv[] )
 	for(utility::vector1< std::string >::const_iterator pdbname(pdbs.begin()), end(pdbs.end()); pdbname != end; ++pdbname){
 		std::string const & pdb = *pdbname;
 		TR << "we are on PDB: " << pdb << std::endl;
-		core::import_pose::pose_from_pdb(pose, pdb);
+		core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
 
 		for(core::Size res(1); res <= pose.total_residue(); ++res){
 			if(biggest_calc < res){ //create calculator

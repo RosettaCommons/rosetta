@@ -27,7 +27,7 @@
 
 using namespace std;
 using core::pose::Pose;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using core::kinematics::FoldTree;
 using core::scoring::ScoreFunctionOP;
 using protocols::loops::Loop;
@@ -37,7 +37,7 @@ using protocols::loops::fold_tree_from_loops;
 int main(int argc, char** argv) {
 	devel::init(argc, argv);
 
-	Pose pose; pose_from_pdb(pose, "chain_break_input.pdb");
+	Pose pose; pose_from_file(pose, "chain_break_input.pdb", core::import_pose::PDB_file);
 	Loop loop(36, 47, 47);
 	Loops loops; loops.add_loop(loop);
 	ScoreFunctionOP score_function = core::scoring::get_score_function();

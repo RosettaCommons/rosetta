@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
   using namespace basic::options::OptionKeys;
   devel::init(argc, argv);
 
-  PoseOP pose = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::s]()[1]);
+  PoseOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
   SwitchResidueTypeSetMover to_centroid(core::chemical::CENTROID);
   to_centroid.apply(*pose);
   pose->dump_pdb("starting_cart.pdb");

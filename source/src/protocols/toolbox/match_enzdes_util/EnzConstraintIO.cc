@@ -204,12 +204,12 @@ EnzConstraintIO::process_pdb_header(
 
 	//basic::datacache::BasicDataCache const & pose_cache = pose.data();
 	core::pose::PDBInfoCOP pose_pdbinfo = pose.pdb_info();
-	core::pose::Remarks const & pose_remarks = pose_pdbinfo->remarks();
+	core::io::Remarks const & pose_remarks = pose_pdbinfo->remarks();
 	std::string /*line, */buffer(""), tag("");
 	Size cst_block(0), counted_blocks(0);
 
 	//std::cerr << "There are " << pose_remarks->size() << " remark lines." << std::endl;
-	for ( std::vector< core::pose::RemarkInfo >::const_iterator remark_it = pose_remarks.begin(), end = pose_remarks.end(); remark_it != end; ++remark_it ) {
+	for ( std::vector< core::io::RemarkInfo >::const_iterator remark_it = pose_remarks.begin(), end = pose_remarks.end(); remark_it != end; ++remark_it ) {
 
 		//line_stream.clear();
 		//line_stream.str( remark_it->value );

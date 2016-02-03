@@ -47,8 +47,8 @@ void* viewer_main(void* ) {
   using protocols::moves::MoverOP;
   using protocols::moves::SheetTranslate;
 
-  Pose input  = *core::import_pose::pose_from_pdb("/work/tex/casp9_benchmark/meval/fast_cm/T0552/2oxgZ_1.pdb_full_length.pdb");
-  Pose output = *core::import_pose::pose_from_pdb("/work/tex/casp9_benchmark/meval/fast_cm/T0552/2oxgZ_1.pdb_full_length.pdb");
+  Pose input  = *core::import_pose::pose_from_file("/work/tex/casp9_benchmark/meval/fast_cm/T0552/2oxgZ_1.pdb_full_length.pdb", core::import_pose::PDB_file);
+  Pose output = *core::import_pose::pose_from_file("/work/tex/casp9_benchmark/meval/fast_cm/T0552/2oxgZ_1.pdb_full_length.pdb", core::import_pose::PDB_file);
 
   core::util::switch_to_residue_type_set(input, core::chemical::CENTROID);
   core::util::switch_to_residue_type_set(output, core::chemical::CENTROID);

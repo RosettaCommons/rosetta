@@ -52,7 +52,7 @@ public:
 		// DockingTest.pdb has two chains
 		//  E <- pdb numbering residues 1 through 245
 		//  I <- pdb numbering residues 1 through 56
-		core::import_pose::pose_from_pdb(pose, "protocols/docking/DockingTest.pdb");
+		core::import_pose::pose_from_file(pose, "protocols/docking/DockingTest.pdb", core::import_pose::PDB_file);
 		core::Size const rb_jump(1);
 
 		//setting up the fold tree as is used in docking
@@ -93,7 +93,7 @@ public:
 	void test_residue_selector_based_setup(){
 		core::pose::Pose pose;
 		tr << "Test setup for multichain pose..."<< std::endl;
-		core::import_pose::pose_from_pdb(pose, "protocols/docking/DockingMultiChain.pdb" );
+		core::import_pose::pose_from_file(pose, "protocols/docking/DockingMultiChain.pdb" , core::import_pose::PDB_file);
 		protocols::docking::DockJumps movable_jumps;
 		movable_jumps.push_back( 1 );
 

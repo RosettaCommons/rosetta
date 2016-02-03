@@ -38,7 +38,7 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
@@ -1011,9 +1011,7 @@ LigandMotifSearch::incorporate_motifs(
 						std::stringstream pose3_name_full;
 						pose2_name_full << "AfterReplace_" << bh2->first << ".pdb";
 						pose_name_full << "BeforeReplace_" << bh2->first << ".pdb";
-						pose3_name_full << "AfterMinBeforeReplace_" << bh2->first << ".pdb";
-						core::io::pdb::dump_pdb( pose_dump2, pose2_name_full.str() );
-						core::io::pdb::dump_pdb( pose_dump, pose_name_full.str() );*/
+						pose3_name_full << "AfterMinBeforeReplace_" << bh2->first << ".pdb";*/
 
 						constraints::ConstraintSetOP sc_cst_set( new constraints::ConstraintSet() );
 						add_motif_sc_constraints( sc_cst_set, pose_dump, (*ir)->seqpos(), *build_rotamer, motifhitop->motifcop(), false );
@@ -1028,14 +1026,13 @@ LigandMotifSearch::incorporate_motifs(
 						//core::Real pre_sc_constraint_check2( pose_dump2.energies().total_energies()[ coordinate_constraint ] );
 						//ms_tr << "Before sidechain refinement constraints score is " << pre_sc_constraint_check << std::endl;
 						//ms_tr << "2Before sidechain refinement constraints score is " << pre_sc_constraint_check2 << std::endl;
-						/*if( data_ ) {
+						/* if( data_ ) {
 						data_output_file << "Before sidechain refinement constraints score is " << pre_sc_constraint_check << std::endl;
-						}*/
+						} */
 						core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 						movemap->set_chi( (*ir)->seqpos(), true );
 						protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, score_fxn, "dfpmin_armijo_nonmonotone_atol", 0.000001, true ) );
 						minmover->apply( pose_dump );
-						//core::io::pdb::dump_pdb( pose_dump, pose3_name_full.str() );
 						core::Real sc_constraint_check( pose_dump.energies().total_energies()[ coordinate_constraint ] );
 						ms_tr << "After sidechain refinement constraints score is " << sc_constraint_check << std::endl;
 						/*if( data_ ) {

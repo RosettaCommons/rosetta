@@ -26,7 +26,7 @@
 #include <core/fragment/FragSet.hh>
 #include <devel/init.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -198,7 +198,7 @@ PoseWrap make_pose(std::string seq) {
 	pw.nsub = 2;
 	pw.nres = seq.size();
 	ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
-	core::import_pose::pose_from_pdb(pw.pose,"input/start_gly.pdb" ,residue_set);
+	core::import_pose::pose_from_file(pw.pose,"input/start_gly.pdb" ,residue_set, core::import_pose::PDB_file);
 	// pw.pose.dump_pdb("init0.pdb");
 	// core::pose::remove_lower_terminus_type_from_pose_residue(pw.pose,2);
 	core::pose::remove_upper_terminus_type_from_pose_residue(pw.pose,pw.pose.n_residue());

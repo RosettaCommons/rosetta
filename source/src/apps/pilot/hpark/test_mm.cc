@@ -15,7 +15,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 //#include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -282,7 +282,7 @@ int main( int argc, char * argv [] )
   chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
   pose::Pose pose;
-  import_pose::pose_from_pdb( pose, *rsd_set, option[ in::file::s ](1) );
+  import_pose::pose_from_file( pose, *rsd_set, option[ in::file::s ](1) , core::import_pose::PDB_file);
 
   std::stringstream ss;
 

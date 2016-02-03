@@ -33,7 +33,7 @@
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/PDBSilentStruct.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -225,7 +225,7 @@ main( int argc, char* argv [] ) {
 				get_score_function()
 			);
 			restore_hack( full_length_pose );
-			//core::import_pose::pose_from_pdb( pose, *rsd_set, "debug.pdb" );
+			//core::import_pose::pose_from_file( pose, *rsd_set, "debug.pdb" , core::import_pose::PDB_file);
 
 			//(*scorefxn)(full_length_pose);
 			//pack_rotamers( full_length_pose, *scorefxn, task );

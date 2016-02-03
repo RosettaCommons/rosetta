@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
 	pose::Pose pose;
 	KinematicMover mover;
 
-	import_pose::pose_from_pdb(pose, "structures/ideal_chain.5.pdb");
+	import_pose::pose_from_file(pose, "structures/ideal_chain.5.pdb", core::import_pose::PDB_file);
 
 	mover.set_pivots(2, 3, 4);
 	mover.apply(pose);

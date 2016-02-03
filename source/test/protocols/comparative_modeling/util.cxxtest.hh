@@ -41,7 +41,7 @@ public:
 	void setUp() {
 		core_init();
 		query_pose_ = create_test_in_pdb_pose(); // 116 residues
-		//core::import_pose::pose_from_pdb( query_pose_, "core/io/test_in.pdb" );
+		//core::import_pose::pose_from_file( query_pose_, "core/io/test_in.pdb" , core::import_pose::PDB_file);
 	}
 
 	void tearDown() {}

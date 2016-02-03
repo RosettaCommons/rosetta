@@ -15,7 +15,7 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <protocols/magnesium/util.hh>
@@ -47,7 +47,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 static THREAD_LOCAL basic::Tracer TR( "mg_modeler" );
 
@@ -85,7 +85,7 @@ mg_modeler_test()
 
 	for ( Size q = 1; q <= input_pdb_files.size(); q++ ) {
 		std::string const pdb_file = input_pdb_files[ q ];
-		import_pose::pose_from_pdb( pose, *rsd_set,  file_path + '/' + pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set,  file_path + '/' + pdb_file , core::import_pose::PDB_file);
 		PoseCOP reference_pose( pose.clone() ); // can update to actual user-supplied native later.
 		std::cout << "Doing input file  ==> " << pdb_file << std::endl;
 

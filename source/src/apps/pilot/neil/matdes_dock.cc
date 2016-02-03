@@ -31,7 +31,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -165,7 +165,7 @@ main (int argc, char *argv[])
 
   // Read in pose
   Pose pose;
-  import_pose::pose_from_pdb(pose, option[in::file::s]()[1], resi_set);
+  import_pose::pose_from_file(pose, option[in::file::s]()[1], resi_set, core::import_pose::PDB_file);
 
   // If you are docking, change all non-glycine residues to ala to cut down on the size of the pose.
   if (!options::option[matdes::dock::dump_pdb]()) {

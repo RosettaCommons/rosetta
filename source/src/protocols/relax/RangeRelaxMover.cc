@@ -509,7 +509,7 @@ void RangeRelaxMover::init_from_cmd() {
 
 	// read native and attach membrane to it
 	if ( option[ OptionKeys::in::file::native ].user() ) {
-		native_ = core::import_pose::pose_from_pdb( option[ OptionKeys::in::file::native ]() );
+		native_ = core::import_pose::pose_from_file( option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 
 		if ( addmem_ == true ) {
 			AddMembraneMoverOP addmem( new AddMembraneMover() );

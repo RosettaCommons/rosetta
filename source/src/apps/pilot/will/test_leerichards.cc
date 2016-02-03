@@ -16,7 +16,7 @@
 #include <basic/options/option.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -312,7 +312,7 @@ void test( std::string fname )
 	using namespace basic::options;
 
 	// Pose pose;
-	// core::import_pose::pose_from_pdb(pose,fname);
+	// core::import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
 	// PosePackDataOP pd = new PosePackData( pose_to_pack_data(pose) );
 
 	if(1) {
@@ -329,7 +329,7 @@ void test( std::string fname )
 
 		Pose pose;
 		std::cerr << fname << std::endl;
-		core::import_pose::pose_from_pdb(pose,fname);
+		core::import_pose::pose_from_file(pose,fname, core::import_pose::PDB_file);
 		// std::cerr << "test_leerichards: PDBInfo: " << pose.pdb_info()() << std::endl;
 		// std::cerr << "test_leerichards: pose has " << pose.pdb_info()->get_unrecognized_atoms().size() << " unrecognized atoms" << std::endl;
 		MultiProbePoseAccumulator *accum = new MultiProbePoseAccumulator(pose,fname);
@@ -506,7 +506,7 @@ main (int argc, char *argv[])
 	// test_sasa_dots();
 
 	// core::pose::Pose native_pose;
-	// core::import_pose::pose_from_pdb( native_pose, core::options::option[ core::options::OptionKeys::in::file::native ]() );
+	// core::import_pose::pose_from_file( native_pose, core::options::option[ core::options::OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 
 	if( option[ in::file::s ].user() ) {
   	vector1<file::FileName> files( option[ in::file::s ]() );

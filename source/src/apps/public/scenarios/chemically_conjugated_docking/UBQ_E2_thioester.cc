@@ -175,16 +175,16 @@ public:
 
 		//read poses
 		core::pose::Pose E2;
-		core::import_pose::pose_from_pdb( E2, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::E2pdb].value() );
+		core::import_pose::pose_from_file( E2, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::E2pdb].value() , core::import_pose::PDB_file);
 		core::Size const E2length = E2.total_residue();
 
 		core::pose::Pose UBQ;
-		core::import_pose::pose_from_pdb( UBQ, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQpdb].value() );
+		core::import_pose::pose_from_file( UBQ, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQpdb].value() , core::import_pose::PDB_file);
 		core::Size const UBQlength = UBQ.total_residue();
 		core::pose::PoseOP UBQ_second;
 		if ( two_ubiquitins_ ) UBQ_second = core::pose::PoseOP( new core::pose::Pose(UBQ) );
 		if ( basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_pdb].user() ) {
-			core::import_pose::pose_from_pdb( *UBQ_second, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_pdb].value() );
+			core::import_pose::pose_from_file( *UBQ_second, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_pdb].value() , core::import_pose::PDB_file);
 		}
 
 		//determine cysteine target

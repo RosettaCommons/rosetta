@@ -17,23 +17,41 @@ sources = {
 		"BinaryFragmentStoreBackend",
 		"StructureStoreManager",
 	],
+	"core/io": [
+		"alt_codes_io",
+		"CrystInfo",
+		"HeaderInformation",
+		"NomenclatureManager",
+		"Remarks",
+		"StructFileRep",
+		"StructFileRepOptions",
+		"StructFileReaderOptions",
+		"util",
+	],
 	"core/io/carbohydrates": [
 		"pose_io",
 	],
 	"core/io/ddg": [
 		"PositionDdGInfo",
 	],
+	"core/io/mmcif": [
+		"cif_reader",
+		"cif_writer",
+	],
 	"core/io/pdb": [
-		"alt_codes_io",
 		"Field",
-		"file_data",
-		"file_data_fixup",
-		"file_data_options",
-		"HeaderInformation",
-		"NomenclatureManager",
-		"pdb_dynamic_reader",
-		"pdb_dynamic_reader_options",
-		"pose_io",
+		"build_pose_as_is",
+		"pdb_reader",
+		"pdb_writer",
+		"RecordCollection",
+		"record_def_io",
+	],
+	"core/io/pose_from_sfr": [
+		"chirality_resolution",
+		"PoseFromSFRBuilder",
+	],
+	"core/io/pose_to_sfr": [
+		"PoseToStructFileRepConverter",
 	],
 	"core/io/raw_data": [
 		"DecoyFileData",
@@ -72,12 +90,10 @@ sources = {
 	],
 	"core/pose": [
 		"annotated_sequence",
-		"CrystInfo",
 		"MiniPose",
 		"PDBInfo",
 		"PDBPoseMap",
 		"Pose",
-		"Remarks",
 		"ResidueIndexDescription",
 		"selection",
 		"util",
@@ -815,4 +831,5 @@ subprojects = [
 	"core.2",
 	"utility",
 	"ObjexxFCL",
+	"cifparse"
 ]

@@ -520,7 +520,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 	if ( basic::options::option[ in::file::native ].user() ) {
 		Real rms(0.0);
 		pose::Pose native_pose; //native pose should be symmetry mate dimer!
-		core::import_pose::pose_from_pdb( native_pose, basic::options::option[ in::file::native ]());
+		core::import_pose::pose_from_file( native_pose, basic::options::option[ in::file::native ](), core::import_pose::PDB_file);
 		// allow superposition because RB min is allowed
 		rms = scoring::CA_rmsd( native_pose, pose /*, 1, monomer_nres_ */ ) ;
 		job_me->add_string_real_pair("rms_sym", rms );

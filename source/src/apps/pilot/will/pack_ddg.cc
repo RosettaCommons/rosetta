@@ -20,7 +20,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -204,7 +204,7 @@ test_ddg( Pose const orig, std::string pdb, int seqpos,
 void
 read_ddg_file( std::string pdb, std::string fname ) {
 	Pose orig;
-	core::import_pose::pose_from_pdb( orig, pdb+".pdb" );
+	core::import_pose::pose_from_file( orig, pdb+".pdb" , core::import_pose::PDB_file);
 	using namespace std;
 	ifstream in( fname.c_str() );
 	char buf[999];

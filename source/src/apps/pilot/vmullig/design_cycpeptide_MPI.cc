@@ -111,7 +111,7 @@
 //#include <core/scoring/hbonds/HBondSet.hh>
 //#include <core/scoring/hbonds/hbonds.hh>
 #include <core/conformation/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
@@ -2114,7 +2114,7 @@ int main(int argc, char *argv[]) {
 			printf("Importing POSITIVE backbone configuration from %s.\n", posfile.c_str()); fflush(stdout);
 			sprintf(curstructtag_positive, "POSITIVE_%s", posfile.c_str());
 			//Only the master proc imports the positive state, then transmits it to all others.
-			core::import_pose::pose_from_pdb(positive_master, posfile);
+			core::import_pose::pose_from_file(positive_master, posfile, core::import_pose::PDB_file);
 			//Store the file name:
 			allfiles.push_back(posfile);
 		} else if (posstruct_tag!="") { //If the index of the positive state in the silent files has been specified.
@@ -2143,7 +2143,7 @@ int main(int argc, char *argv[]) {
 					for(core::Size i=1, imax=filenames.size(); i<=imax; ++i) {
 						if(filenames[i].base() == posstruct_tag) {
 							printf("Importing POSITIVE backbone configuration from %s.", filenames[i].name().c_str());
-							core::import_pose::pose_from_pdb(positive_master, filenames[i]);
+							core::import_pose::pose_from_file(positive_master, filenames[i], core::import_pose::PDB_file);
 							foundit=true;
 							break;
 						}
@@ -2405,7 +2405,7 @@ int main(int argc, char *argv[]) {
 
 				core::pose::Pose importpose; //A pose to store the pose as it is imported.
 				if (procnum==0) printf("\tImporting %s.\n", negstate_name.c_str());
-				//core::import_pose::pose_from_pdb(importpose, negfiles[ifile]);
+				//core::import_pose::pose_from_file(importpose, negfiles[ifile], core::import_pose::PDB_file);
 				if(silentstream) {
 					silentstream->silent_file_data()->structure_list()[posecount]->fill_pose( importpose );
 					silentstream->next_struct();

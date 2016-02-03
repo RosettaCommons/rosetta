@@ -701,12 +701,12 @@ int main(int argc, char *argv[])
 		// Input cap pdb
 		std::string cap = option[ OptionKeys::loodo::cap ]();
 		core::pose::Pose cap_pose;
-		core::import_pose::pose_from_pdb( cap_pose, cap );
+		core::import_pose::pose_from_file( cap_pose, cap , core::import_pose::PDB_file);
 
 		// Input bottom pdb
 		std::string bot = option[ OptionKeys::loodo::bot ]();
 		core::pose::Pose bot_pose;
-		core::import_pose::pose_from_pdb( bot_pose, bot );
+		core::import_pose::pose_from_file( bot_pose, bot , core::import_pose::PDB_file);
 
 		// The fragA and fragB vectors contain lengths of loop fragments to insert.
 		utility::vector1< int > fragAvector;
@@ -816,7 +816,7 @@ int main(int argc, char *argv[])
 
 		// Center the Native Cap for STUB calculations.
 		core::pose::Pose centered_cap;
-		core::import_pose::pose_from_pdb( centered_cap, cap );
+		core::import_pose::pose_from_file( centered_cap, cap , core::import_pose::PDB_file);
 		centered_cap.center();
 		//centered_cap.dump_pdb("Centered_Native.pdb");
 
@@ -879,7 +879,7 @@ int main(int argc, char *argv[])
 					int known = option[ OptionKeys::loodo::known ]();
 					std::string fragA_nat = option[ OptionKeys::loodo::fragAnative ]();
 					core::pose::Pose fragA_native;
-					core::import_pose::pose_from_pdb( fragA_native, fragA_nat);
+					core::import_pose::pose_from_file( fragA_native, fragA_nat, core::import_pose::PDB_file);
 					core::scoring::dssp::Dssp DSSP_fragA(fragA_native);
 					DSSP_fragA.insert_ss_into_pose(fragA_native);
 					std::string fragAnat_ss = fragA_native.secstruct();
@@ -975,7 +975,7 @@ int main(int argc, char *argv[])
 					int known = option[ OptionKeys::loodo::known ]();
 					std::string fragB_nat = option[ OptionKeys::loodo::fragBnative ]();
 					core::pose::Pose fragB_native;
-					core::import_pose::pose_from_pdb( fragB_native, fragB_nat);
+					core::import_pose::pose_from_file( fragB_native, fragB_nat, core::import_pose::PDB_file);
 					core::scoring::dssp::Dssp DSSP_fragB( fragB_native );
 					DSSP_fragB.insert_ss_into_pose( fragB_native );
 					std::string fragBnat_ss = fragB_native.secstruct();

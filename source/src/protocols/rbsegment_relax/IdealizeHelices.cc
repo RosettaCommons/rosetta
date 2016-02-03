@@ -26,7 +26,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/Remarks.hh>
 #include <core/pose/util.hh>
 
 #include <protocols/moves/MonteCarlo.hh>

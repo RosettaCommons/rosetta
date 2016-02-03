@@ -23,7 +23,7 @@
 
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>
@@ -158,7 +158,7 @@ main( int argc, char* argv[] )
 	TwoChainTenANeighbors two_chain_interface;
 	std::pair< utility::vector1<Size>, utility::vector1<Size> > interface;
 
-	core::import_pose::pose_from_pdb( pose, "/Users/jcorn/svn/workspaces/jcorn/LJ111.pdb" );
+	core::import_pose::pose_from_file( pose, "/Users/jcorn/svn/workspaces/jcorn/LJ111.pdb" , core::import_pose::PDB_file);
 
 	//utility::vector1 < char > pdb_chains = pose.pdb_chains();
 	search_chain_letters.push_back('A');

@@ -79,7 +79,7 @@
 #include <core/id/AtomID_Map.hh>
 //#include <core/id/AtomID_Map.Pose.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/scoring/mm/MMTorsionLibrary.hh>
 #include <core/scoring/mm/MMTorsionLibrary.fwd.hh>
@@ -183,7 +183,7 @@ output_single_motif(
 		std::string motif_file_name_3 = motif_file_name_2 + pdb_name + extension;
 
 		std::cout << "Writing " << motif_file_name_3 << std::endl;
-		io::pdb::dump_pdb( pose, motif_file_name_3 );
+		io::pdb::old_dump_pdb( pose, motif_file_name_3 );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -231,14 +231,14 @@ place_waters_and_minimize( Pose & pose )
 
 	Energy end_score = scorefxn( pose );
 	std::cout << "Score after pack " << end_score << std::endl;
-	//io::pdb::dump_pdb( pose, "post_pack.pdb" );
+	//io::pdb::old_dump_pdb( pose, "post_pack.pdb" );
 
 	// Minimization depends on the weight set used, so therefore I am nervous to use it at all, in case it disturbs native interactions
 	//MinimizerOptions options( "dfpmin_armijo_nonmonotone", 1.0e-3, true /*use_nblist*/, false /*deriv_check*/ );
 
 	//AtomTreeMinimizer minimizer;
 	//minimizer.run( pose, mm, scorefxn, options );
-  //io::pdb::dump_pdb( pose, "post_minimization.pdb" );
+  //io::pdb::old_dump_pdb( pose, "post_minimization.pdb" );
 
 	//Energy min_score = scorefxn( pose );
 	//std::cout << "Score after minimization " << min_score << std::endl;
@@ -597,7 +597,7 @@ process_file_list()
 
 		Pose pose;
    try{
-		core::import_pose::pose_from_pdb( pose, pdb_name );
+		core::import_pose::pose_from_file( pose, pdb_name , core::import_pose::PDB_file);
 				    } catch( utility::excn::EXCN_BadInput excn ) {
 											std::cout << "Got stuck in missing heavyatom loop, continuing" <<  std::endl;
 											continue; }

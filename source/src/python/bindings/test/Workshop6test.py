@@ -9,7 +9,7 @@ import os; os.chdir('.test.output')
 
 
 # Side Chain Conformations, the Rotamer Library, and Dunbrack Energies
-pose = pose_from_pdb("../test/data/workshops/1YY8.clean.pdb")
+pose = pose_from_file("../test/data/workshops/1YY8.clean.pdb")
 scorefxn = create_score_function("talaris2013")
 
 for i in range(1, 3):

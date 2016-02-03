@@ -28,7 +28,7 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -520,7 +520,7 @@ int main (int argc, char *argv[]) {
 	for(Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn) {
 		string fn = option[in::file::s]()[ifn];
 		Pose pnat;
-		core::import_pose::pose_from_pdb(pnat,fn);
+		core::import_pose::pose_from_file(pnat,fn, core::import_pose::PDB_file);
 		Size N = get_N(pnat);
 		Size icys = 1; for(icys = 1; icys < N; ++icys) if(pnat.residue(icys).aa() == core::chemical::aa_cys) break;
 		Pose tri2 = make_two_trimers(pnat,icys,N);

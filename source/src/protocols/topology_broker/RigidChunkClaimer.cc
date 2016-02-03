@@ -128,9 +128,9 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is )
 	if ( tag == "pdb" || tag == "PDB" || tag == "pdb:" || tag == "PDB_FILE" ) {
 		std::string file;
 		is >> file;
-		core::import_pose::pose_from_pdb( input_pose_,
+		core::import_pose::pose_from_file( input_pose_,
 			*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
-			file );
+			file, core::import_pose::PDB_file );
 		runtime_assert( input_pose_.is_fullatom() );
 	} else if ( tag == "REGION" ) {
 		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( is, type(), false /*no strict checking */ );

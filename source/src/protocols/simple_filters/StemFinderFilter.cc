@@ -106,7 +106,7 @@ load_poses( utility::vector1< std::string > const filenames ){
 	TR<<"Loading "<<filenames.size()<<" poses from disk: ";
 	BOOST_FOREACH ( std::string const f, filenames ) {
 		core::pose::PoseOP new_pose( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *new_pose, f );
+		core::import_pose::pose_from_file( *new_pose, f , core::import_pose::PDB_file);
 		poses.push_back( new_pose );
 		TR<<f<<' ';
 	}

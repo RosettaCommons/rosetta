@@ -26,7 +26,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/io/pdb/pose_io.hh> // pose_from_pdb
+#include <core/io/pdb/pdb_writer.hh> // pose_from_pdb
 #include <basic/options/option.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -193,7 +193,7 @@ main( int argc, char * argv [] )
 
 
 				pose::Pose pose;
-				core::import_pose::pose_from_pdb( pose, *filename );
+				core::import_pose::pose_from_file( pose, *filename , core::import_pose::PDB_file);
 				input_poses.push_back( pose );
 
 

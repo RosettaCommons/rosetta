@@ -320,8 +320,9 @@ void BackboneMover::apply( core::pose::Pose & pose )
 			//if ( resnum > end && static_cast< int >(ran3()*5) + end <= resnum ) goto L401;
 
 			// maybe we've already moved this position ?
-			if ( already_moved.find( resnum_ ) != already_moved.end() )
+			if ( already_moved.find( resnum_ ) != already_moved.end() ) {
 				continue;
+			}
 
 			if ( !make_move( pose ) ) continue;
 			already_moved.insert( resnum_ );

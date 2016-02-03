@@ -91,7 +91,7 @@ single_motif_from_filename(
 )
 {
 	core::pose::PoseOP pose( new core::pose::Pose );
-	core::import_pose::pose_from_pdb( *pose, motif_filename );
+	core::import_pose::pose_from_file( *pose, motif_filename , core::import_pose::PDB_file);
 	core::conformation::Residue res1( pose->residue(1) ); //the motifs in my motif pdbs are setup so that residue #1 is the amino acid and #2 is the base
 	core::conformation::Residue res2( pose->residue(2) ); //this function at some point include some checks to see what residue is base or amino acid or both bases, both amino acids (or something else, like a ligand, etc)
 
@@ -547,7 +547,7 @@ get_targetconformers_user()
 				continue;
 			}
 			core::pose::PoseOP pose( new core::pose::Pose );
-			core::import_pose::pose_from_pdb( *pose, *filename );
+			core::import_pose::pose_from_file( *pose, *filename , core::import_pose::PDB_file);
 			if ( pose->total_residue() > 1 ) {
 				std::cerr << "WARNING!!! Conformer PDB contains more than one residue, loading all residues in PDB as conformers." << std::endl;
 			}

@@ -11,6 +11,8 @@
 ///
 /// @brief  Some std::string helper functions.
 /// @author Sergey Lyskov
+/// @uathor Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+
 #ifndef INCLUDED_utility_string_util_hh
 #define INCLUDED_utility_string_util_hh
 
@@ -45,17 +47,69 @@ using ObjexxFCL::uppercased;
 using ObjexxFCL::lowercased;
 using ObjexxFCL::stripped_whitespace;
 
+template <class T>
+inline std::string
+to_string (const T & t)
+{
+	std::ostringstream ss;
+	ss << t;
+	return ss.str();
+}
 
-/// @brief Reads the contents of <filename> into <contents>, preserving newline
-/// characters. Aborts if an error is encoutered.
-void ReadFromFileOrDie(const std::string& filename, std::string* contents);
+template <class T>
+inline T const
+from_string (std::string const & s, T )
+{
+	T t;
+	std::istringstream ss(s);
+	ss >> t;
+	if ( ss.fail() ) {
+		const char* type = typeid(T).name();
+		utility_exit_with_message("cannot convert string "+s+" to type "+type);
+	}
+
+	return t;
+}
+
+template <class T>
+inline utility::vector1<T> const
+string_split (std::string const &in,char splitchar,T)
+{
+	utility::vector1<T> parts;
+	if ( in.size()==0 ) {
+		return parts;
+	}
+
+	size_t i(0), j(0);
+	while ( j != std::string::npos ) {
+		j = in.find( splitchar, i );
+		std::string item = in.substr(i,j-i);
+		T t;
+		std::istringstream ss(item);
+		ss >> t;
+		if ( ss.fail() ) {
+			const char* type = typeid(T).name();
+			utility_exit_with_message("cannot convert string '"+item+"' to type "+type);
+		}
+
+		parts.push_back( t );
+		i = j+1;
+	}
+	return parts;
+}
+
 
 /// @brief split given std::string using ' ' symbol.
-utility::vector1< std::string > split(const std::string &s);
+utility::vector1< std::string >
+split(const std::string &s);
 
 /// @brief split given std::string using whitespace as a separator.
 /// Unlike string_split_multi_delim(), any group of mixed whitespace counts only as a single seperator.
-utility::vector1< std::string > split_whitespace(const std::string &s);
+utility::vector1< std::string >
+split_whitespace(const std::string &s);
+
+/// @details Split string by new line symbols, return vector of string.
+std::vector< std::string > split_by_newlines( std::string const & s );
 
 /// @brief combine strings with anything
 std::string join(utility::vector1<std::string> const & s, std::string const & connector);
@@ -90,13 +144,16 @@ std::string join(vectorL<L, std::string> const & s, std::string const & connecto
 
 
 /// @brief replace space separations in a string with a connector such as '_'
-std::string replace_spaces(std::string const & string_w_spaces, std::string const & replacement);
+std::string
+replace_spaces(std::string const & string_w_spaces, std::string const & replacement);
 
 /// @brief split given std::string using ' ' symbol.
-std::list< std::string > split_to_list(const std::string &s);
+std::list< std::string >
+split_to_list(const std::string &s);
 
 /// @brief split given std::string to a set using ' ' symbol.
-std::set< std::string > split_to_set(std::string const & s);
+std::set< std::string >
+split_to_set(std::string const & s);
 
 /// @details split to vector1< std::string > using arbitrary split character
 utility::vector1< std::string >
@@ -111,33 +168,49 @@ utility::vector1< std::string >
 string_split_multi_delim( std::string const & in, std::string splitchars = " \t" );
 
 /// @brief convert a string to a float, returns -1 on failure
-float string2float( std::string st );
+float
+string2float( std::string st );
 
 /// @brief convert a string to an int, returns -1 on failure
-int string2int( std::string st );
+int
+string2int( std::string st );
 
 /// @brief convert a string to a Size, returns numeric::get_undefined_size() on failure
-platform::Size string2Size( std::string st );
+platform::Size
+string2Size( std::string st );
 
 /// @brief convert a string to a Real, returns numeric::get_undefined_real() on failure
-platform::Real string2Real( std::string st );
+platform::Real
+string2Real( std::string st );
+
+/// @brief convert a Real to string at a number of decimal places, optionally pad left.
+std::string
+Real2string( platform::Real, std::size_t const decimal_places);
+
+/// @breif convert a Real to a string, padding left with spaces until total number of char on left is equal to pad_lef_n
+std::string
+fmt_real( platform::Real, platform::Size const pad_left_newlen, std::size_t const decimal_places);
 
 // @brief Reads an unsigned int from string <x>, writing the result
 // to output parameter <y>, which must be non-NULL. If the read was not
 // successful, this function call has no effect on the value of <y> that
 // was present prior to invokation.
-void string2uint(const std::string& x, unsigned int *y);
+void
+string2uint(const std::string& x, unsigned int *y);
 
 /// @brief True iff haystack starts with needle
-bool startswith(std::string const & haystack, std::string const & needle);
+bool
+startswith(std::string const & haystack, std::string const & needle);
 
 /// @brief True iff haystack ends with needle
-bool endswith(std::string const & haystack, std::string const & needle);
+bool
+endswith(std::string const & haystack, std::string const & needle);
 
-void slurp(std::istream & in, std::string & out);
+void
+slurp(std::istream & in, std::string & out);
 
-/// @brief Remove any charachters in drop from the front and back of the string
-/// Use strip() for the value return version
+/// @brief Remove any charachters in "drop" from the front and back of the string.
+/// Use strip() for the value-return version
 void trim( std::string & s, const std::string & drop = " " );
 
 /// @brief Return a copy of the string with leading and trailing characters removed
@@ -157,52 +230,81 @@ trim( std::string const & s, std::string const & drop = " " ) {
 }
 
 /// @brief compares two strings ignoring leading and trailing spaces
-bool trimmed_compare( std::string const & s1, std::string const & s2 );
+bool
+trimmed_compare( std::string const & s1, std::string const & s2 );
 
-/// @brief adds spaces to a left aligned string until a given length is reached
-void add_spaces_left_align( std::string & st, std::size_t const newlen );
 
-/// @brief adds spaces to a right aligned string until a given length is reached
-void add_spaces_right_align( std::string & st, std::size_t const newlen );
+///@brief Add char to the left of the string
+std::string
+pad_left( std::string s, platform::Size const newlen, char pad_with=' ');
+
+/// @brief Add char to the right of a string
+std::string
+pad_right( std::string s, platform::Size const newlen, char pad_with=' ');
+
+///@brief Add char to the left of the string
+template <class T>
+std::string
+pad_left( const T & t, platform::Size const newlen, char pad_width= ' '){
+	std::string s = to_string( t );
+	return pad_left( s, newlen, pad_width );
+}
+
+/// @brief Add char to the right of a string
+template <class T>
+std::string
+pad_right( const T & t, platform::Size const newlen, char pad_width= ' '){
+	std::string s = to_string( t );
+	return pad_right( s, newlen, pad_width);
+}
+
 
 // @brief return true of the string has only [0-9], ,'+','-','.' or '[Ee]'
 bool is_string_numeric(std::string const & input);
 
 /// @brief Read the entire contents of a file into a string.  All end-of-line characters are replaced
 /// by "\n".  Throws a utility::excn::EXCN_msg_exception if the file cannot be opened.
-std::string file_contents( std::string const & file_name );
+std::string
+file_contents( std::string const & file_name );
 
-std::string file_basename( std::string const & full_path );
+std::string
+file_basename( std::string const & full_path );
 
 // "/foo/bar/baz" => "baz"
 // "/foo/bar/baz.cc" => "baz.cc"
-std::string filename(const std::string& path);
+std::string
+filename(const std::string& path);
 
 // "/foo/bar/baz" => "/foo/bar/"
-std::string pathname(const std::string& path);
+std::string
+pathname(const std::string& path);
 
 
 /// @brief find all environment variables with the form ${VARIABLE}
 /// and replace with the contents of that environment variable.
 /// if the environment variable does not exist, return string::npos
-std::string replace_environment_variables(std::string input);
+std::string
+replace_environment_variables(std::string input);
 
 /// @brief Compares two strings, ignoring spaces.  Useful for comparing atom
 /// name strings which have pdb-alignment built into them.  Slightly dangerous
 /// if you consider the fact that atom names in the PDB are different for
 /// different indentation rules: ' CA ' is c-alpha.  'CA  ' is calcium.
 inline
-bool same_ignoring_spaces( std::string const & s1, std::string const & s2 ) {
+bool
+same_ignoring_spaces( std::string const & s1, std::string const & s2 ) {
 	std::string t1 = boost::algorithm::erase_all_copy(s1, " ");
 	std::string t2 = boost::algorithm::erase_all_copy(s2, " ");
 	return t1 == t2;
 }
 
 //@brief compute the sha1 hash of a string and return it as a string in hexadecimal form
-std::string string_to_sha1(std::string const & input_string);
+std::string
+string_to_sha1(std::string const & input_string);
 
 inline
-void replace_in( std::string & s, const char from, const char *to )
+void
+replace_in( std::string & s, const char from, const char *to )
 {
 	// fix string
 	for ( unsigned int c = 0; c < s.length(); ++c ) {
@@ -211,56 +313,11 @@ void replace_in( std::string & s, const char from, const char *to )
 }
 
 /// @brief Generate new string from 'source' by replacing all occurrences of 'from' to 'to' string.
-std::string replace_in( std::string const & source, std::string const & from, std::string const & to );
+std::string
+replace_in( std::string const & source, std::string const & from, std::string const & to );
 
 
-template <class T>
-inline std::string to_string (const T & t)
-{
-	std::ostringstream ss;
-	ss << t;
-	return ss.str();
-}
 
-template <class T>
-inline T const from_string (std::string const & s, T )
-{
-	T t;
-	std::istringstream ss(s);
-	ss >> t;
-	if ( ss.fail() ) {
-		const char* type = typeid(T).name();
-		utility_exit_with_message("cannot convert string "+s+" to type "+type);
-	}
-
-	return t;
-}
-
-template <class T>
-inline utility::vector1<T> const string_split (std::string const &in,char splitchar,T)
-{
-	utility::vector1<T> parts;
-	if ( in.size()==0 ) {
-		return parts;
-	}
-
-	size_t i(0), j(0);
-	while ( j != std::string::npos ) {
-		j = in.find( splitchar, i );
-		std::string item = in.substr(i,j-i);
-		T t;
-		std::istringstream ss(item);
-		ss >> t;
-		if ( ss.fail() ) {
-			const char* type = typeid(T).name();
-			utility_exit_with_message("cannot convert string '"+item+"' to type "+type);
-		}
-
-		parts.push_back( t );
-		i = j+1;
-	}
-	return parts;
-}
 
 /// @brief String accepted as a true value?
 bool inline

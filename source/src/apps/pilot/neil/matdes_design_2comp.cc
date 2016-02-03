@@ -35,7 +35,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/Jump.hh>
@@ -650,8 +650,8 @@ void *dostuff(void*) {
 		Pose pose,mono,p1,p2;
 		utility::vector1<Real> sc_sasa1,sc_sasa2,sc_sasa;
 		{
-			import_pose::pose_from_pdb(p1, file1, resi_set);
-			import_pose::pose_from_pdb(p2, file2, resi_set);
+			import_pose::pose_from_file(p1, file1, resi_set, core::import_pose::PDB_file);
+			import_pose::pose_from_file(p2, file2, resi_set, core::import_pose::PDB_file);
 			sc_sasa1 = sidechain_sasa(p1,2.2); // 110728 -- WAS 2.5 -- Changed for xtal design
 			sc_sasa2 = sidechain_sasa(p2,2.2);
 			if(sc_sasa1.size() != p1.n_residue()) utility_exit_with_message("SASA BAD");

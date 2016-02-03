@@ -36,7 +36,8 @@
 #include <core/init/init.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/types.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
+
 #include <core/chemical/AtomType.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/dna/setup.hh>
@@ -136,7 +137,7 @@ using utility::vector1;
 using std::string;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using io::pdb::dump_pdb; // deprecated though
 static THREAD_LOCAL basic::Tracer tt( "demo.phil.test1", basic::t_trace );
 
@@ -309,7 +310,7 @@ test_dunbrack_io()
 	RotamerLibrary const & rot_lib( *RotamerLibrary::get_instance() );
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	RotamerLibraryScratchSpace scratch;
 
@@ -330,7 +331,7 @@ test_gb()
 	using namespace core::pose::datacache;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, start_file() );
+	core::import_pose::pose_from_file( pose, start_file() , core::import_pose::PDB_file);
 
 	ScoreFunction scorefxn;
 	scorefxn.set_weight( gb_elec, 1.0 );
@@ -394,7 +395,7 @@ test_rama()
 	std::cout << "test rama" << std::endl;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	ScoreFunction scorefxn;
 	scorefxn.set_weight( rama , 0.2 );
@@ -411,7 +412,7 @@ test_scorefxn_io()
 {
 	using namespace scoring;
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	// standard packer wts
 	ScoreFunctionOP scorefxn( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
@@ -440,7 +441,7 @@ simple_rotamer_test()
 	using namespace conformation;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	ResidueOP ile_rsd( pose.residue(3).clone() );
 	ResidueOP pro_rsd( pose.residue(70).clone() );
@@ -500,7 +501,7 @@ set_fullatom_flag_test()
 
 	{ // if we dont already have a fullatom pose
 		pose::Pose pose;
-		core::import_pose::centroid_pose_from_pdb( pose, "input/test_in.pdb" );
+		core::import_pose::centroid_pose_from_pdb( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 		// now convert to fullatom:
 		ResidueTypeSetCOP fullatom_residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
@@ -526,10 +527,10 @@ set_fullatom_flag_test()
 	{
 
 		pose::Pose fullatom_pose;
-		core::import_pose::pose_from_pdb( fullatom_pose, "input/test_in.pdb" );
+		core::import_pose::pose_from_file( fullatom_pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 		pose::Pose pose;
-		core::import_pose::centroid_pose_from_pdb( pose, "input/test_in.pdb" );
+		core::import_pose::centroid_pose_from_pdb( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 		// now convert to fullatom:
 		// only tricky thing -- cutpoint residue types might not be preserved...
@@ -549,7 +550,7 @@ delete_test()
 {
 
 	Pose start_pose;
-	core::import_pose::pose_from_pdb( start_pose, "input/1aay.pdb" );
+	core::import_pose::pose_from_file( start_pose, "input/1aay.pdb" , core::import_pose::PDB_file);
 
 	Size const nres( start_pose.total_residue() );
 
@@ -608,7 +609,7 @@ simple_loop_modeling_test()
 	// get rid of this crap when the MonteCarlo changes are reverted
 	pose::PoseOP pose_ptr( new pose::Pose() );
 	pose::Pose & pose( *pose_ptr );
-	core::import_pose::centroid_pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::centroid_pose_from_pdb( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	std::cout << pose.sequence() << std::endl;
 
@@ -875,7 +876,7 @@ dna_deriv_test_old()
 
 
 	Pose pdb_pose;
-	core::import_pose::pose_from_pdb( pdb_pose, start_file()); // eg 1qn4
+	core::import_pose::pose_from_file( pdb_pose, start_file(), core::import_pose::PDB_file); // eg 1qn4
 	Size const nres( pdb_pose.total_residue() );
 
 	set_base_partner( pdb_pose );
@@ -1004,7 +1005,7 @@ dna_deriv_test()
 
 
 	Pose pdb_pose;
-	core::import_pose::pose_from_pdb( pdb_pose, "input/1aay.pdb" ); // use 1qn4 for massive dna bend
+	core::import_pose::pose_from_file( pdb_pose, "input/1aay.pdb" , core::import_pose::PDB_file); // use 1qn4 for massive dna bend
 	Size const nres( pdb_pose.total_residue() );
 
 	set_base_partner( pdb_pose );
@@ -1126,7 +1127,7 @@ dna_io_test()
 	for ( Size n=1; n<= files.size(); ++n ) {
 		Pose pose;
 		std::cout << "Reading file: " << files[n] << std::endl;
-		core::import_pose::pose_from_pdb( pose, files[n] );
+		core::import_pose::pose_from_file( pose, files[n] , core::import_pose::PDB_file);
 		for ( Size i=1; i<= pose.conformation().num_chains(); ++i ) {
 			std::cout << "chain_sequence: " << files[n] << ' ' << i << ' ' << pose.chain_sequence(i) << std::endl;
 		}
@@ -1144,7 +1145,7 @@ old_simple_conformation_test()
 
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	pose.set_phi( 3, pose.phi(3) );
 
@@ -1181,8 +1182,8 @@ simple_centroid_test()
 	ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
 
 	pose::Pose pose;
-	//core::import_pose::pose_from_pdb( pose, *rsd_set, "input/test_in_cen.pdb" );
-	core::import_pose::pose_from_pdb( pose, *rsd_set, "input/test_in.pdb" );
+	//core::import_pose::pose_from_file( pose, *rsd_set, "input/test_in_cen.pdb" , core::import_pose::PDB_file);
+	core::import_pose::pose_from_file( pose, *rsd_set, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	scoring::ScoreFunction scorefxn;
 	scorefxn.set_weight( scoring::env, 1.0 );
@@ -1231,7 +1232,7 @@ simple_frag_test()
 	chemical::ResidueTypeSetCOP rsd_set( chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, *rsd_set, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, *rsd_set, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	std::string const sequence( pose.sequence() );
 
@@ -1336,7 +1337,7 @@ dna_coupled_rotamer_design_test()
 	using namespace basic::options;
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/1aay.pdb" );
+	core::import_pose::pose_from_file( pose, "input/1aay.pdb" , core::import_pose::PDB_file);
 	Size const nres( pose.total_residue() );
 
 	set_base_partner( pose );
@@ -1458,7 +1459,7 @@ dna_design_test()
 	for ( Size n=1; n<= files.size(); ++n ) {
 		pose::Pose pose;
 		std::cout << "Reading file: " << files[n] << std::endl;
-		core::import_pose::pose_from_pdb( pose, files[n] );
+		core::import_pose::pose_from_file( pose, files[n] , core::import_pose::PDB_file);
 		std::cout << "file total_residue: " << pose.total_residue() << std::endl;
 		if ( pose.total_residue() ) {
 			dna_design_test_old( pose );
@@ -1482,7 +1483,7 @@ simple_dna_test()
 	Pose pose;
 
 
-	core::import_pose::pose_from_pdb( pose, /*residue_set, */ "input/1aay.pdb" );
+	core::import_pose::pose_from_file( pose, /*residue_set, */ "input/1aay.pdb" , core::import_pose::PDB_file);
 
 	std::cout << pose.sequence() << std::endl;
 
@@ -1544,7 +1545,7 @@ simple_copy_test()
 {
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	pose::Pose new_pose;
 	new_pose = pose;
@@ -1565,7 +1566,7 @@ simple_hbond_test()
 	using id::D;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	dump_hbond_pdb( pose, "test_out.hbonds.pdb" );
 
@@ -1631,7 +1632,7 @@ atom_tree_torsion_test()
 	using id::AtomID;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	pose.conformation().debug_residue_torsions();
 
@@ -1707,7 +1708,7 @@ fa_scorefxn_test()
 	scorefxn.set_weight( hbond_sc, 1.0 );
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	std::cout << "pose-score: " << scorefxn( pose ) << std::endl;
 
@@ -1742,8 +1743,8 @@ rotamer_trials_test()
 
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
-	//  core::import_pose::pose_from_pdb( pose, "input/test_in_noPRO.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
+	//  core::import_pose::pose_from_file( pose, "input/test_in_noPRO.pdb" , core::import_pose::PDB_file);
 	Energy score_orig = scorefxn( pose );
 
 	scorefxn.show( std::cout, pose );
@@ -1801,7 +1802,7 @@ pack_rotamers_test()
 
 	{ /* test 1 */
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+		core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 		Energy score_orig = scorefxn( pose );
 
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
@@ -1825,7 +1826,7 @@ pack_rotamers_test()
 
 	{ /* test2: design */
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+		core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 		Energy score_orig = scorefxn( pose );
 		pack::task::PackerTaskOP designtask( pack::task::TaskFactory::create_packer_task( pose ));
 		designtask->initialize_from_command_line().or_include_current( true );
@@ -1846,7 +1847,7 @@ pack_rotamers_test()
 
 	{ /* test3: resfile */
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+		core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 		Energy score_orig = scorefxn( pose );
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 		task->initialize_from_command_line();
@@ -1876,7 +1877,7 @@ small_min_test()
 	using namespace basic::options;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, start_file() );
+	core::import_pose::pose_from_file( pose, start_file() , core::import_pose::PDB_file);
 
 	std::string const outfile_prefix( option[ OptionKeys::out::file::o ] );
 
@@ -1994,7 +1995,7 @@ rb_test()
 	using namespace chemical;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	int const nres( pose.total_residue() );
 	assert( nres > 40 );
@@ -2112,7 +2113,7 @@ ccd_test()
 	using namespace id;
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	int const nres( pose.total_residue() );
 	assert( nres > 40 );
@@ -2188,7 +2189,7 @@ sasa_test()
 	using namespace conformation;
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in_w_termini.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in_w_termini.pdb" , core::import_pose::PDB_file);
 
 	id::AtomID_Map< Real > atom_sasa;
 	utility::vector1< Real > rsd_sasa;
@@ -2269,7 +2270,7 @@ mm_pack_test()
 
 	// weighting
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	Energy ener_12  = (*score_12)(pose);
 	Energy ener_mod = (*score_mod)(pose);
@@ -2282,13 +2283,13 @@ mm_pack_test()
 
 	// pack
 	Pose pose_12;
-	core::import_pose::pose_from_pdb( pose_12, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose_12, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	Pose pose_mm;
-	core::import_pose::pose_from_pdb( pose_mm, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose_mm, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	//  Pose pose_mod;
-	//  core::import_pose::pose_from_pdb( pose_mod, "input/test_in.pdb" );
+	//  core::import_pose::pose_from_file( pose_mod, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	pack::task::PackerTaskOP task_12( pack::task::TaskFactory::create_packer_task( pose_12 ));
 	task_12->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
@@ -2370,7 +2371,7 @@ ss_test()
 		pose::Pose pose;
 		std::string const pdbname = pdbnames[ii];
 
-		core::import_pose::pose_from_pdb( pose, *rsd_set, pdbname );
+		core::import_pose::pose_from_file( pose, *rsd_set, pdbname , core::import_pose::PDB_file);
 
 		// protocols::loops::set_secstruct_from_psipred_ss2( pose ); // uses -in::file::psipred_ss2 <ss-filename>
 
@@ -2399,7 +2400,7 @@ backrub_min_test()
 	using namespace kinematics;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_short.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_short.pdb" , core::import_pose::PDB_file);
 
 	utility::vector1< AtomID > mainchain;
 	Size const seqpos( 3 );
@@ -2508,7 +2509,7 @@ void
 bk_test()
 {
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	Size const nres( pose.total_residue() );
 	pose.dump_pdb("test1.pdb");
@@ -2516,7 +2517,7 @@ bk_test()
 	pose.dump_pdb("test2.pdb");
 
 	pose::Pose pose2;
-	core::import_pose::pose_from_pdb( pose2, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose2, "input/test_in.pdb" , core::import_pose::PDB_file);
 	core::pose::remove_lower_terminus_type_from_pose_residue( pose2, 1 );
 
 	for ( Size i=1; i<= nres; ++i ) {
@@ -2547,8 +2548,8 @@ bk_test2()
 	using numeric::conversions::radians;
 
 	pose::Pose pose1, pose2;
-	core::import_pose::pose_from_pdb( pose1, start_files()[1] );
-	core::import_pose::pose_from_pdb( pose2, start_files()[2] );
+	core::import_pose::pose_from_file( pose1, start_files()[1] , core::import_pose::PDB_file);
+	core::import_pose::pose_from_file( pose2, start_files()[2] , core::import_pose::PDB_file);
 
 	ResidueTypeSet const & rsd_set( *pose1.residue(1).residue_type_set() );
 	Size const nres1( pose1.total_residue() );
@@ -2701,7 +2702,7 @@ ligrot_test()
 	std::ofstream out( "AKG_rotamers.pdb" );
 	for ( Size n=1; n<= files.size(); ++n ) {
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, files[n] );
+		core::import_pose::pose_from_file( pose, files[n] , core::import_pose::PDB_file);
 
 		conformation::Residue const & rsd( pose.residue(1) );
 		for ( Size i=1; i<= rsd.nchi(); ++i ) {
@@ -2725,7 +2726,7 @@ proclose_test()
 	ScoreFunctionOP scorefxn( get_score_function_legacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, start_file() );
+	core::import_pose::pose_from_file( pose, start_file() , core::import_pose::PDB_file);
 
 	Size const nres( pose.total_residue() );
 
@@ -2769,7 +2770,7 @@ set_stub_transform_test()
 	using kinematics::Stub;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	// set a new foldtree
 	Size const nres( pose.total_residue() );
@@ -2821,7 +2822,7 @@ lk_ball_wtd_deriv_test()
 
 	Pose pose;
 	string const filename( start_file() );
-	pose_from_pdb( pose, filename );
+	pose_from_file( pose, filename , core::import_pose::PDB_file);
 
 
 	kinematics::MoveMap mm;

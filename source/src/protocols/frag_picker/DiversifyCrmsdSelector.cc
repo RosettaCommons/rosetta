@@ -19,7 +19,7 @@
 #include <core/pose/Pose.hh>
 
 #include <core/id/NamedAtomID.hh>
-//#include <core/io/pdb/pose_io.hh>
+//
 #include <numeric/model_quality/rms.hh>
 #include <basic/Tracer.hh>
 

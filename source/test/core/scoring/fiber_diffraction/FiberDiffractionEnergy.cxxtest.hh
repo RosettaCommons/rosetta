@@ -79,7 +79,7 @@ public:
 
 		std::string pdb_file_name = "core/scoring/fiber_diffraction/data/1IFP.mini.pdb";
 		Pose pose;
-		core::import_pose::pose_from_pdb(pose, pdb_file_name);
+		core::import_pose::pose_from_file(pose, pdb_file_name, core::import_pose::PDB_file);
 		core::pose::symmetry::make_symmetric_pose( pose );
 
 		core::Real const TOL(1e-5);
@@ -98,7 +98,7 @@ public:
 
 		std::string pdb_file_name = "core/scoring/fiber_diffraction/data/1IFP.mini.pdb";
 		Pose pose;
-		core::import_pose::pose_from_pdb(pose, pdb_file_name);
+		core::import_pose::pose_from_file(pose, pdb_file_name, core::import_pose::PDB_file);
 		core::pose::symmetry::make_symmetric_pose( pose );
 
 		core::Real const TOL(1e-5);

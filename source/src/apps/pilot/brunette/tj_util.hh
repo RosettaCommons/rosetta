@@ -13,7 +13,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/pose/Pose.hh>
@@ -115,7 +115,7 @@ std::map< std::string, core::pose::Pose > poses_from_cmd_line(
   using std::string;
   using core::pose::Pose;
   using utility::file::file_exists;
-  using core::import_pose::pose_from_pdb;
+  using core::import_pose::pose_from_file;
   using namespace core::chemical;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -127,7 +127,7 @@ std::map< std::string, core::pose::Pose > poses_from_cmd_line(
   for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
     if ( file_exists(*it) ) {
       Pose pose;
-      core::import_pose::pose_from_pdb( pose, *rsd_set, *it );
+      core::import_pose::pose_from_file( pose, *rsd_set, *it , core::import_pose::PDB_file);
       string name = utility::file_basename( *it );
       name = name.substr( 0, 5 );
       poses[name] = pose;
@@ -142,7 +142,7 @@ std::map< std::string, core::pose::Pose > poses_from_cmd_line_noPDBtag(
   using std::string;
   using core::pose::Pose;
   using utility::file::file_exists;
-  using core::import_pose::pose_from_pdb;
+  using core::import_pose::pose_from_file;
   using namespace core::chemical;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -154,7 +154,7 @@ std::map< std::string, core::pose::Pose > poses_from_cmd_line_noPDBtag(
   for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
     if ( file_exists(*it) ) {
       Pose pose;
-      core::import_pose::pose_from_pdb( pose, *rsd_set, *it );
+      core::import_pose::pose_from_file( pose, *rsd_set, *it , core::import_pose::PDB_file);
       string name = utility::file_basename( *it );
       name = name.substr( 0, 9 );
       std::transform(name.begin(), name.end(), name.begin(), toupper);

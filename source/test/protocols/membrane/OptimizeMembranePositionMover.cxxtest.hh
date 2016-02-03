@@ -62,7 +62,7 @@ public: // test functions
 
 		// Load in pose from pdb
 		pose_ = Pose();
-		core::import_pose::pose_from_pdb( pose_, "protocols/membrane/1AFO_AB.pdb" );
+		core::import_pose::pose_from_file( pose_, "protocols/membrane/1AFO_AB.pdb" , core::import_pose::PDB_file);
 
 		// Initialize Spans from spanfile
 		std::string spanfile = "protocols/membrane/1AFO_AB.span";

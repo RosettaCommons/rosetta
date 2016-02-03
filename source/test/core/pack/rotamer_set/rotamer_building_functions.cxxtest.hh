@@ -76,7 +76,7 @@ public:
 
 		// Load a pose with a single glycerol residue.
 		Pose glycerol;
-		pose_from_pdb(glycerol, res_type_set, "core/pack/rotamer_set/glycerol.pdb");
+		pose_from_file(glycerol, res_type_set, "core/pack/rotamer_set/glycerol.pdb", core::import_pose::PDB_file);
 
 		// Extract out the residue for rotamer testing.
 		Residue const & GOL = glycerol.residue(1);  // C3H8O3

@@ -12,7 +12,7 @@
 
 // Project Headers
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <basic/MetricValue.hh>
 
@@ -60,7 +60,7 @@
 #include <map>
 
 //Auto Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -304,7 +304,7 @@ int main( int argc, char * argv [] ){
 		std::string outfname;
 		utility::io::ozstream outstream;
 		if (option[ iface_rmsd ]){
-			core::import_pose::pose_from_pdb( ref_pose, ref_decoy_fname );
+			core::import_pose::pose_from_file( ref_pose, ref_decoy_fname , core::import_pose::PDB_file);
 			(*scorefxn)(ref_pose);
 			define_interface( ref_pose );
 
@@ -319,7 +319,7 @@ int main( int argc, char * argv [] ){
 
 		}
 		if (option[ lig_rmsd ]){
-			core::import_pose::pose_from_pdb( ref_pose, ref_decoy_fname ); //ref_decoy_fname );
+			core::import_pose::pose_from_file( ref_pose, ref_decoy_fname ); //ref_decoy_fname , core::import_pose::PDB_file);
 			(*scorefxn)(ref_pose);
 			define_interface( ref_pose );
 		}
@@ -346,7 +346,7 @@ int main( int argc, char * argv [] ){
 				//setup the bound pose
 				pose::Pose bound_pose;
 				std::string const input_pdb_name = basic::options::start_files().at(f);
-				core::import_pose::pose_from_pdb( bound_pose, input_pdb_name );
+				core::import_pose::pose_from_file( bound_pose, input_pdb_name , core::import_pose::PDB_file);
 				//create tag for output filename
 				int dot_index1 = input_pdb_name.rfind(".", input_pdb_name.size());
 				assert(dot_index1 != -1 && "No dot found in filename");

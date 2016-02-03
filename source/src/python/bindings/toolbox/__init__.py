@@ -82,7 +82,7 @@ def generate_resfile_from_pdb(pdbfilename, resfilename, input_sc = True ):
 	    PackRotamersMover
 	    TaskFactory
 	"""
-	p = rosetta.pose_from_pdb(pdbfilename)
+	p = rosetta.pose_from_file(pdbfilename)
 	generate_resfile_from_pose(p, resfilename, input_sc)
 
 
@@ -169,7 +169,7 @@ def cleanATOM(pdb_file, edit = -4):
     See also:
         Pose
         Pose.dump_pdb
-        pose_from_pdb
+        pose_from_file
         pose_from_rcsb
         cleanCRYS
     """
@@ -203,14 +203,14 @@ def cleanCRYS(pdb_file, olig = 2):
     See also:
         Pose
         Pose.dump_pdb
-        pose_from_pdb
+        pose_from_file
         pose_from_rcsb
         cleanATOM
     """
     if os.path.exists(os.getcwd() + '/' + pdb_file):
         print "If the file", pdb_file[:-4] + ".mono.pdb already exists, " + \
               "it will be overwritten."
-        pose = rosetta.pose_from_pdb(pdb_file)
+        pose = rosetta.pose_from_file(pdb_file)
         tot = pose.total_residue()
         seq = pose.sequence()
         frags = [''] * olig
@@ -244,7 +244,7 @@ def load_from_rcsb(pdb_code, pdb_filename = None):
         load_from_rcsb("1YY8")
     See also:
         Pose
-        pose_from_pdb
+        pose_from_file
         pose_from_rcsb
         pose_from_sequence
         cleanATOM
@@ -289,7 +289,7 @@ def pose_from_rcsb(pdb_code, ATOM = True, CRYS = False):
         pose = pose_from_rcsb("1YY8")
     See also:
         Pose
-        pose_from_pdb
+        pose_from_file
         pose_from_sequence
         load_from_rcsb
         cleanATOM
@@ -302,7 +302,7 @@ def pose_from_rcsb(pdb_code, ATOM = True, CRYS = False):
     if CRYS:
         cleanCRYS(pdb_code + ".pdb")
         pdb_code = pdb_code + ".mono"
-    pose = rosetta.pose_from_pdb(pdb_code + ".pdb")
+    pose = rosetta.pose_from_file(pdb_code + ".pdb")
     return pose
 
 
@@ -320,7 +320,7 @@ def get_secstruct(pose, output=True, space=8, page=80):
         Pose
         Pose.secstruct
         Pose.sequence
-        pose_from_pdb
+        pose_from_file
         pose_from_sequence
         pose_from_rcsb
     """

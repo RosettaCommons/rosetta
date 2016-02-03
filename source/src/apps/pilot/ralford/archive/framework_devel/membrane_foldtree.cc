@@ -61,7 +61,7 @@ core::pose::PoseOP load_pose() {
 
     TR << "Loading 1afo from PDB" << std::endl;
     PoseOP pose = new Pose();
-    pose_from_pdb( *pose, "test/core/membrane/io/1afo_test.pdb" );
+    pose_from_file( *pose, "test/core/membrane/io/1afo_test.pdb" , core::import_pose::PDB_file);
 
     return pose;
 }

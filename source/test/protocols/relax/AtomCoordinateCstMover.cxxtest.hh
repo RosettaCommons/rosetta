@@ -126,7 +126,7 @@ public:
 		core::pose::addVirtualResAsRoot(pose);
 
 		core::pose::PoseOP native( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *native, "protocols/relax/AtomCoordinateCstMover_native.pdb" );
+		core::import_pose::pose_from_file( *native, "protocols/relax/AtomCoordinateCstMover_native.pdb" , core::import_pose::PDB_file);
 
 		//option[ OptionKeys::relax::constrain_relax_to_native_coords ].value( true );
 		//option[ OptionKeys::relax::coord_constrain_sidechains ].value( false );
@@ -178,7 +178,7 @@ public:
 		core::pose::addVirtualResAsRoot(pose);
 
 		core::pose::PoseOP native( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *native, "protocols/relax/AtomCoordinateCstMover_native.pdb" );
+		core::import_pose::pose_from_file( *native, "protocols/relax/AtomCoordinateCstMover_native.pdb" , core::import_pose::PDB_file);
 
 		//option[ OptionKeys::relax::constrain_relax_to_native_coords ].value( true );
 		//option[ OptionKeys::relax::coord_constrain_sidechains ].value( true );
@@ -204,12 +204,12 @@ public:
 		using namespace protocols::relax;
 
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/relax/1a19.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/relax/1a19.pdb" , core::import_pose::PDB_file);
 
 		core::pose::addVirtualResAsRoot(pose);
 
 		core::pose::PoseOP native( new core::pose::Pose );
-		core::import_pose::pose_from_pdb( *native, "protocols/relax/1a19_trunc.pdb" );
+		core::import_pose::pose_from_file( *native, "protocols/relax/1a19_trunc.pdb" , core::import_pose::PDB_file);
 
 		//option[ OptionKeys::relax::constrain_relax_to_native_coords ].value( true );
 		//option[ OptionKeys::relax::coord_constrain_sidechains ].value( true );

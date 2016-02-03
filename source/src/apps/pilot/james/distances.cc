@@ -86,7 +86,7 @@ main( int argc, char* argv [] )
 			}
 			core::pose::Pose pose;
 			//std::cerr << "READING " << pdbfile << std::endl;
-			core::import_pose::pose_from_pdb( pose, pdbfile ); // default is standard fullatom residue_set
+			core::import_pose::pose_from_file( pose, pdbfile , core::import_pose::PDB_file); // default is standard fullatom residue_set
 
 			//std::string outfile  = pdbfile + ".distances";
 			//std::ofstream output( outfile.c_str() );

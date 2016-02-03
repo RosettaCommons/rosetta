@@ -71,7 +71,7 @@ DesignVsNativeComparison::compare_to_native(
 		std::string native_filename = native_path + pdb_code + ".pdb";
 		core::pose::PoseOP new_native( new core::pose::Pose() );
 
-		core::import_pose::pose_from_pdb( *new_native, native_filename );
+		core::import_pose::pose_from_file( *new_native, native_filename , core::import_pose::PDB_file);
 
 		//need to score the native, in case the calculators rely on cached energies
 		//also need to remove non protein residues, just to make sure

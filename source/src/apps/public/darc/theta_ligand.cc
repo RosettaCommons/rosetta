@@ -11,7 +11,7 @@
 
 // Project Headers
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <basic/MetricValue.hh>
 
@@ -58,7 +58,7 @@
 #include <map>
 
 //Auto Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -132,9 +132,9 @@ int main( int argc, char * argv [] ){
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( burunsat_calc_name, burunsat_calc );
 
 		pose::Pose bound_protein_pose, unbound_protein_pose, ligand_pose;
-		core::import_pose::pose_from_pdb( bound_protein_pose, bound_protein );
-		core::import_pose::pose_from_pdb( unbound_protein_pose, unbound_protein );
-		core::import_pose::pose_from_pdb( ligand_pose, inp_ligand );
+		core::import_pose::pose_from_file( bound_protein_pose, bound_protein , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( unbound_protein_pose, unbound_protein , core::import_pose::PDB_file);
+		core::import_pose::pose_from_file( ligand_pose, inp_ligand , core::import_pose::PDB_file);
 		basic::MetricValue<Real> total_sasa_mval;
 		core::Real ligand_pose_sasa = 0.0, bound_pose_sasa = 0.0, unbound_pose_sasa = 0.0, Total_pose_exposed_SASA = 0.0;
 		ligand_pose.metric(sasa_calc_name,"total_sasa",total_sasa_mval);

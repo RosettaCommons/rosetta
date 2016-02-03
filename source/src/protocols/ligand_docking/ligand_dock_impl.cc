@@ -62,7 +62,7 @@ public:
 	{
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 			native_ = core::pose::PoseOP( new core::pose::Pose() );
-			core::import_pose::pose_from_pdb( *native_, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() );
+			core::import_pose::pose_from_file( *native_, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() , core::import_pose::PDB_file);
 		}
 
 		if ( basic::options::option[ basic::options::OptionKeys::enzdes::cstfile].user() ) {

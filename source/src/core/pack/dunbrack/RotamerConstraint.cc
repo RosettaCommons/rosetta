@@ -28,7 +28,7 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -71,7 +71,7 @@ void load_unboundrot(pose::Pose & pose)
 			std::string filename = option[ OptionKeys::packing::unboundrot ]()[i].name();
 			TR << "Adding 'unbound' rotamers from " << filename << std::endl;
 			PoseOP pose( new Pose() );
-			//core::import_pose::pose_from_pdb( *pose, filename );
+			//core::import_pose::pose_from_file( *pose, filename , core::import_pose::PDB_file);
 			core::io::pdb::build_pose_from_pdb_as_is( *pose, filename );
 			unboundrot_poses.push_back( pose );
 		}

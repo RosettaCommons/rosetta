@@ -67,7 +67,7 @@
 #include <basic/options/option.hh>
 
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
@@ -782,7 +782,7 @@ main( int argc, char* argv [] )
 	pose::Pose extended_pose;
 
 
-	core::import_pose::pose_from_pdb( nat_pose, basic::options::start_file() );
+	core::import_pose::pose_from_file( nat_pose, basic::options::start_file() , core::import_pose::PDB_file);
 
 	extended_pose = nat_pose; //making working copy
 
@@ -919,7 +919,7 @@ main( int argc, char* argv [] )
 
 		std::string swap_loops = option [OptionKeys::fold_from_loops::swap_loops ]().name();
 
-		core::import_pose::pose_from_pdb( target_loops , swap_loops );
+		core::import_pose::pose_from_file( target_loops , swap_loops , core::import_pose::PDB_file);
 
 		nat_target_loops = target_loops; // keep copy to recover side chains later
 
@@ -1195,7 +1195,7 @@ main( int argc, char* argv [] )
 
 		if ( option[out::pdb].user()){
 			utility::io::ozstream outfile( outfilename ); // outputing gzip pdbs
-			core::io::pdb::dump_pdb( fold_pose, outfile );
+			core::io::pdb::old_dump_pdb( fold_pose, outfile );
 			outfile.close();
 		}
 

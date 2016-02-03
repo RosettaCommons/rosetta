@@ -169,7 +169,7 @@ public:
 	void test_compute_centroid_environment() {
 		//using core::pose::datacache::CacheableDataType::CEN_LIST_INFO;
 		pose::Pose pose;
-		core::import_pose::centroid_pose_from_pdb( pose,"core/scoring/test_in.pdb");
+		core::import_pose::centroid_pose_from_pdb( pose,"core/scoring/test_in.pdb", core::import_pose::PDB_file);
 		Real fcen_gold[][3] = {
 			{ 4, 16, 18 },
 			{ 4, 10, 11 },

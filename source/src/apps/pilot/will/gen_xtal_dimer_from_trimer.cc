@@ -27,7 +27,7 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -614,7 +614,7 @@ int main (int argc, char *argv[]) {
   for(Size ifn = 1; ifn <= option[in::file::s]().size(); ++ifn) {
     string fn = option[in::file::s]()[ifn];
     Pose pnat;
-    core::import_pose::pose_from_pdb(pnat,fn);
+    core::import_pose::pose_from_file(pnat,fn, core::import_pose::PDB_file);
     // if( pnat.n_residue() > 300 ) continue;
     for(Size ir = 2; ir <= pnat.n_residue()-1; ++ir) {
       if(!pnat.residue(ir).is_protein()) goto cont1;

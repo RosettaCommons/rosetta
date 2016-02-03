@@ -76,7 +76,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 		core::pose::PoseOP native_pose = NULL;
 		if ( option[ in::file::native ].user() ) {
 			native_pose = core::pose::PoseOP( new core::pose::Pose );
-			core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
+			core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);
 		}
 
 		typedef utility::vector1< std::string > RmsdVector;
@@ -130,7 +130,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 			if ( fname == "NATIVE" ) target_pose = native_pose;
 			else if ( fname != "IRMS" ) {
 				target_pose = core::pose::PoseOP( new pose::Pose );
-				core::import_pose::pose_from_pdb( *target_pose, fname );
+				core::import_pose::pose_from_file( *target_pose, fname , core::import_pose::PDB_file);
 			}
 
 			if ( selection_file == "EXCLUDE" ) {

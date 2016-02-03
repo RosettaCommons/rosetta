@@ -50,7 +50,7 @@ public:
 	void setUp() { // {{{1
 		core_init();
 
-		import_pose::pose_from_pdb(pose, "devel/balanced_kic/loop.pdb");
+		import_pose::pose_from_file(pose, "devel/balanced_kic/loop.pdb", core::import_pose::PDB_file);
 
 		define_closure_problem(problem, pose, 2, 3, 4);
 		solve_closure_problem(problem, solutions);

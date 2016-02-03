@@ -12,7 +12,7 @@
 
 // Project Headers
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <basic/MetricValue.hh>
 
@@ -91,7 +91,7 @@ main( int argc, char * argv [] )
 	std::cout << "JK Starting hotspot test" << std::endl;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "LJ111.pdb" );
+	core::import_pose::pose_from_file( pose, "LJ111.pdb" , core::import_pose::PDB_file);
 
 	std::cout << "JK about to print total SASA directly as a string" << std::endl;
 	std::string sasa_val = pose.print_metric("sasa","total_sasa");

@@ -96,7 +96,7 @@ try {
   pose::Pose init_pose;
 
   if (option[in::file::native].user()) {
-    core::import_pose::pose_from_pdb(init_pose, option[in::file::native]());
+    core::import_pose::pose_from_file(init_pose, option[in::file::native](), core::import_pose::PDB_file);
     //    pose::set_ss_from_phipsi(init_pose);
 
     init_pose.dump_pdb("input.pdb", "");

@@ -101,7 +101,7 @@ void PartialThreadingMover::parse_my_tag(
 	using std::string;
 	using utility::vector1;
 	using core::pose::Pose;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using core::sequence::read_aln;
 	using core::sequence::SequenceAlignment;
 
@@ -109,7 +109,7 @@ void PartialThreadingMover::parse_my_tag(
 		tag->getOption< string >("template_pdb_fn")
 	);
 	Pose template_pose;
-	core::import_pose::pose_from_pdb(template_pose,template_pdb_fn);
+	core::import_pose::pose_from_file(template_pose,template_pdb_fn, core::import_pose::PDB_file);
 	ThreadingMover::template_pose(template_pose);
 
 	string const aln_fn( tag->getOption< string >("aln_fn") );

@@ -343,7 +343,7 @@ void scheme_score(){
 		Real scheme_score = 0; {
 			// Bouquet b;
 			// Pose tmp;
-			// core::pose::PoseOP sicpose = core::import_pose::pose_from_pdb(path);		
+			// core::pose::PoseOP sicpose = core::import_pose::pose_from_file(path, core::import_pose::PDB_file);		
 			// for(unsigned ichain = 1; ichain <= sicpose->conformation().num_chains(); ++ichain){
 			// 	core::pose::extract_pose_chain(*sicpose,ichain,tmp);
 			// 	std::string rosepath = path;
@@ -359,7 +359,7 @@ void scheme_score(){
 			// scheme_score = assay.score(b);
 		}
 	
-		core::pose::PoseOP pose = core::import_pose::pose_from_pdb(path);
+		core::pose::PoseOP pose = core::import_pose::pose_from_file(path, core::import_pose::PDB_file);
 		if( basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].user() ){
 			core::pose::symmetry::make_symmetric_pose(*pose,"");
 		}

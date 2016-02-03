@@ -162,7 +162,7 @@ HotspotPlacementMover::apply(
 
 	//core::pose::Pose start_pose = core::pose::Pose(scaffold_pose);
 	core::pose::Pose target_pose;
-	core::import_pose::pose_from_pdb(target_pose, option[ scaffold_matcher::hstarget].value() );
+	core::import_pose::pose_from_file(target_pose, option[ scaffold_matcher::hstarget].value() , core::import_pose::PDB_file);
 
 	//kdrew: create starting pose by combining the target pose and the scaffold pose
 	core::pose::Pose combined_pose = core::pose::Pose(target_pose);
@@ -179,7 +179,7 @@ HotspotPlacementMover::apply(
 	combined_pose.dump_pdb( startpdbname.str() );
 
 	core::pose::Pose start_pose;
-	core::import_pose::pose_from_pdb(start_pose, startpdbname.str() );
+	core::import_pose::pose_from_file(start_pose, startpdbname.str() , core::import_pose::PDB_file);
 
 	setup_pert_foldtree(start_pose);
 

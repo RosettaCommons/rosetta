@@ -81,7 +81,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 // #include <utility/vector1.hh>
 
@@ -203,7 +203,7 @@ dna_stats()
 		std::string const & input_file( input_files[nn] );
 		Pose pdb_pose;
 		std::cout << "Reading input_file= " << input_file << std::endl;
-		core::import_pose::pose_from_pdb( pdb_pose, input_file );
+		core::import_pose::pose_from_file( pdb_pose, input_file , core::import_pose::PDB_file);
 		set_base_partner( pdb_pose ); // fills base partner inf
 
 		//pdb_pose.dump_pdb("test"+filebase( input_file ));

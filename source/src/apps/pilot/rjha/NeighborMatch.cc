@@ -15,7 +15,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -60,7 +60,7 @@ main( int argc, char* argv[] )
 
 	//pose containing res
 	core::pose::Pose master;
-	core::import_pose::pose_from_pdb(master, basic::options::option[local::master].value());
+	core::import_pose::pose_from_file(master, basic::options::option[local::master].value(), core::import_pose::PDB_file);
 	core::Size const mastersize(master.total_residue());
 
 	//containers for other poses
@@ -75,7 +75,7 @@ main( int argc, char* argv[] )
 	for(utility::vector1< std::string >::const_iterator pdbname(pdbs.begin()), end(pdbs.end()); pdbname != end; ++pdbname){
 		std::string const & pdb = *pdbname;
 		TR << "we are on PDB: " << pdb << std::endl;
-		core::import_pose::pose_from_pdb(pose, pdb);
+		core::import_pose::pose_from_file(pose, pdb, core::import_pose::PDB_file);
 
 		combined = master;
 		combined.append_residue_by_jump(pose.residue(1), 1);

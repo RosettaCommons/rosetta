@@ -43,7 +43,7 @@ def dumpPDB(p, native_pose, filepath, score, overwrite=False):
     if not overwrite:
         jd=PyJobDistributor(filepath, 100000, score); #This number is high so that it outputs a pose even if one with the name already exists...
         #native_pose = Pose()
-        #pose_from_pdb(native_pose, infile)
+        #pose_from_file(native_pose, infile)
         jd.native_pose=native_pose
         jd.output_decoy(p)
         os.remove(jd.current_name+".in_progress")
@@ -456,7 +456,7 @@ def rescore_single_pdb(path, scorefunction, manager_dict):
     """
     p = Pose()
     try:
-        pose_from_pdb(p, path)
+        pose_from_file(p, path)
 
     except PyRosettaException:
         print "Cannot Load "+path+ " Try using -ignore_unrecognized_residues in options window..."
@@ -492,7 +492,7 @@ def score_PDBLIST(pdblist_path, score, processors, output_class = None):
             print path
             p = Pose()
             try:
-                pose_from_pdb(p, path)
+                pose_from_file(p, path)
             except PyRosettaException:
                 print "Cannot Load "+path+ " Try using -ignore_unrecognized_residues in options window..."
                 continue
@@ -639,7 +639,7 @@ def save_FASTA_PDBLIST(pdblist_path, outfilename=None, regions=None):
         pose = Pose()
         region_array = regions.get_regions()
         try:
-            pose_from_pdb(pose, pdbpath)
+            pose_from_file(pose, pdbpath)
         except PyRosettaException:
             print "Could not load.. "+pdbID+"..continueing.."
             continue
@@ -681,7 +681,7 @@ def exportPDBSCORE(score):
         PDBPath = PDBPath.strip()
         
         p = Pose()
-        pose_from_pdb(p, PDBPath)
+        pose_from_file(p, PDBPath)
         SCORE = score(p)
         print SCORE
         OUTFILE.write(PDBPath+":%.3f"%SCORE+"\n")

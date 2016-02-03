@@ -42,7 +42,7 @@
 #include <core/chemical/ResidueType.hh>
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
@@ -315,11 +315,11 @@ BackrubProtocol::apply( core::pose::Pose& pose ){
 	std::string input_tag = protocols::jd2::JobDistributor::get_instance()->current_job()->inner_job()->input_tag();
 	if ( pose.is_centroid() ) {
 		TR.Warning << "*** This is untested with centroid mode! ***" << std::endl;
-		//core::import_pose::centroid_pose_from_pdb( *input_pose, input_jobs[jobnum]->input_tag() );
+		//core::import_pose::centroid_pose_from_pdb( *input_pose, input_jobs[jobnum]->input_tag() , core::import_pose::PDB_file);
 		custom_fold_tree = read_fold_tree_from_file( pose, input_tag );
 		core::scoring::constraints::add_constraints_from_cmdline_to_pose(pose);
 	} else {
-		//core::import_pose::pose_from_pdb( *input_pose, input_jobs[jobnum]->input_tag() );
+		//core::import_pose::pose_from_file( *input_pose, input_jobs[jobnum]->input_tag() , core::import_pose::PDB_file);
 		custom_fold_tree = read_fold_tree_from_file( pose, input_tag );
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 	}

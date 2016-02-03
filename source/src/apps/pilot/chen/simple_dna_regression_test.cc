@@ -47,7 +47,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
@@ -93,7 +93,7 @@ using namespace scoring;
 using namespace basic::options;
 using utility::vector1;
 using std::string;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 ////////////////////////////////////////////////
 
 
@@ -186,7 +186,7 @@ run_tests()
 
 	// reads a single dna-containing pose
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, "input/1aay.pdb" );
+	core::import_pose::pose_from_file( pose, "input/1aay.pdb" , core::import_pose::PDB_file);
 
 	scoring::dna::set_base_partner( pose );
 

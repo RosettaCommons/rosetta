@@ -23,7 +23,7 @@ args = [ "app",
 init( *args )
 
 p = Pose()
-pose_from_pdb( p, "2cpl_min.pdb" )
+pose_from_file( p, "2cpl_min.pdb" )
 
 starting_p = Pose()
 starting_p.assign( p )

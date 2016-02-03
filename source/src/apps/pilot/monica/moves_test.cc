@@ -27,7 +27,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -133,7 +133,7 @@ main( int argc, char * argv [] )
 
 	Pose pose, start_pose;
 	ResidueTypeSet const & residue_set( *(ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) ) );
-	core::import_pose::pose_from_pdb( pose, residue_set, "input/test_in.pdb" );
+	core::import_pose::pose_from_file( pose, residue_set, "input/test_in.pdb" , core::import_pose::PDB_file);
 
 	scoring_test( pose );
 

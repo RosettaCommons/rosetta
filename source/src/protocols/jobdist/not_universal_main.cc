@@ -14,7 +14,7 @@
 
 #include <core/types.hh>
 
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -111,8 +111,8 @@ int not_universal_main(
 
 	core::pose::Pose native_pose, current_pose;
 	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb(
-			native_pose, *rsd_set, option[ in::file::native ]()
+		core::import_pose::pose_from_file(
+			native_pose, *rsd_set, option[ in::file::native ](), core::import_pose::PDB_file
 		);
 	}
 

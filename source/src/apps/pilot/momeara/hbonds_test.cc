@@ -117,7 +117,7 @@ void dump_hbonds( std::string pdb_filename )
 
 	// read in pose
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, pdb_filename );
+	core::import_pose::pose_from_file( pose, pdb_filename , core::import_pose::PDB_file);
 	HBondDatabaseCOP hb_database( HBondDatabase::get_database());
 	HBondOptions hboptions;
 	HBondSet set1;

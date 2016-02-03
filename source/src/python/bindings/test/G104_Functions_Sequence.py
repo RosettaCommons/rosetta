@@ -21,7 +21,7 @@ from app.pyrosetta_toolkit.modules.tools import sequence
 from rosetta import *
 rosetta.init()
 
-p = pose_from_pdb(os.path.dirname(os.path.abspath(__file__))+"/data/gui/2j88.pdb")
+p = pose_from_file(os.path.dirname(os.path.abspath(__file__))+"/data/gui/2j88.pdb")
 
 print "Testing alternative way to get sequence:"
 print sequence.get_sequence(p, "24:42:L")

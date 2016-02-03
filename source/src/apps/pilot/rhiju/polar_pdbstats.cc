@@ -40,7 +40,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
@@ -77,7 +77,7 @@ using namespace ObjexxFCL::format;
 using namespace basic::options::OptionKeys;
 
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 
 typedef  numeric::xyzMatrix< Real > Matrix;
@@ -274,7 +274,7 @@ polar_pdbstats_test()
 
 		line_stream >> pdb_file;
 
-		import_pose::pose_from_pdb( pose, *rsd_set,  file_path + '/' + pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set,  file_path + '/' + pdb_file , core::import_pose::PDB_file);
 
 		if ( option[dump]() ) pose.dump_pdb( "imported_"+pdb_file );
 

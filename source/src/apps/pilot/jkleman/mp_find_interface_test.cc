@@ -154,7 +154,7 @@ public:
 
 		// read in native and superimpose the first partner of the pose with the native
 		if( option[ OptionKeys::in::file::native ].user() ) {
-			core::import_pose::pose_from_pdb( native_, option[ OptionKeys::in::file::native ]() );
+			core::import_pose::pose_from_file( native_, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 
 			// call AddMembraneMover on native for RMSD calculation
 			AddMembraneMoverOP addmem( new AddMembraneMover() );

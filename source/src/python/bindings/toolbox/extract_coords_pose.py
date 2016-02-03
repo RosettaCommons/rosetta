@@ -29,7 +29,7 @@ def extract_coordinates_from_pose_3x1( pose , selection = [] ,
         xyz = extract_coordinates_from_pose(pose)
     See Also:
         extract_coordinates_from_pdb
-        pose_from_pdb
+        pose_from_file
         mean
         moment
         vector_moment
@@ -70,7 +70,7 @@ def extract_coordinates_from_pose_1x3( pose , selection = [] ,
         xyz = extract_coordinates_from_pose(pose)
     See Also:
         extract_coordinates_from_pdb
-        pose_from_pdb
+        pose_from_file
         mean
         moment
         vector_moment

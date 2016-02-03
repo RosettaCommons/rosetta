@@ -28,10 +28,11 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/Tracer.hh>
 
-//#include <core/io/pdb/pose_io.hh> //debug only include
+//  //debug only include
 //#include <fstream> //debug only include
 //#include <utility/string_util.hh> //debug only include
 

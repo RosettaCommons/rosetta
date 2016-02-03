@@ -26,9 +26,10 @@
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/Energies.hh>
@@ -1139,7 +1140,11 @@ output_local_minima(
 
 		std::string out_fname = acc3let + "_" + don3let + "_minima_" + ObjexxFCL::format::I( max_digits, max_digits, ++count ) + ".pdb";
 		std::ofstream out( out_fname.c_str() );
-		core::io::pdb::dump_bfactor_pdb( pose, bfactors, out, "model_" + utility::to_string(count));
+		//JAB -XRW 2016
+		core::pose::set_bfactors_from_atom_id_map( pose, bfactors );
+		pose.dump_pdb(out, "model_" + utility::to_string(count));
+
+		//core::io::pdb::dump_bfactor_pdb( pose, bfactors, out, "model_" + utility::to_string(count));
 	}
 }
 

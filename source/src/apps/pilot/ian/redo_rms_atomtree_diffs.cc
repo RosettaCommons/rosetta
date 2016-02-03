@@ -30,7 +30,7 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <core/scoring/rms_util.hh>
 #include <basic/Tracer.hh>
@@ -85,7 +85,7 @@ main( int argc, char * argv [] )
 	//core::pose::PoseOP native_pose;
 	//if( option[ in::file::native ].user() ) {
 	//	native_pose = new core::pose::Pose();
-	//	core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]().name() );
+	//	core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
 	//}
 
 	// Tags to be compared to.
@@ -97,7 +97,7 @@ main( int argc, char * argv [] )
 	core::pose::PoseOP native_pose;
 	if( option[ in::file::native ].user() ) {
 		native_pose = new core::pose::Pose();
-		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]().name() );
+		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
 	}
 	if( ref_tags.empty() && native_pose() == NULL ) utility_exit_with_message("Must provide list of tags to compare to!");
 

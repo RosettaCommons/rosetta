@@ -17,7 +17,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -157,8 +157,8 @@ void rotamer_prediction_benchmark( std::string pdb_filename, ScoreFunctionOP sco
 
 	// create 2 poses from the same pdb file
 	Pose pose_orig, pose_pack;
-	core::import_pose::pose_from_pdb( pose_orig, pdb_filename + ".pdb");
-	core::import_pose::pose_from_pdb( pose_pack, pdb_filename + ".pdb");
+	core::import_pose::pose_from_file( pose_orig, pdb_filename + ".pdb", core::import_pose::PDB_file);
+	core::import_pose::pose_from_file( pose_pack, pdb_filename + ".pdb", core::import_pose::PDB_file);
 
 	// create a packer task
 	pack::task::PackerTaskOP repacktask( pack::task::TaskFactory::create_packer_task( pose_pack ));
@@ -170,7 +170,7 @@ void rotamer_prediction_benchmark( std::string pdb_filename, ScoreFunctionOP sco
 	clock_t starttime = clock(); pack::pack_rotamers( pose_pack, *scorefxn, repacktask); clock_t stoptime = clock();
 	Energy pack_score = (*scorefxn)( pose_pack );
 	std::cout << "pack score: " << pack_score << " orig score: " << orig_score << " " << ((double) stoptime - starttime)/CLOCKS_PER_SEC << "seconds" << std::endl;
-	io::pdb::dump_pdb( pose_pack, pdb_filename + id + "_packed.pdb" );
+	io::pdb::old_dump_pdb( pose_pack, pdb_filename + id + "_packed.pdb" );
 
 	// loop over all residues and calculate the chi angle differences between pose_orig and pose_pack and output the results
 

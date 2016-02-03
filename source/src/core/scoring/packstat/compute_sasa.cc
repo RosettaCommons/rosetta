@@ -17,7 +17,7 @@
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>

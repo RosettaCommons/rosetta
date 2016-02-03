@@ -9,7 +9,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/conformation/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
 		if(done.count(fn)!=0) continue;
 		cout << "BEGIN " << fn << endl;
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose,fnames[ifile]);
+		core::import_pose::pose_from_file(pose,fnames[ifile], core::import_pose::PDB_file);
 		for(int ir=1; ir <= (int)pose.n_residue(); ++ir) {
 			if(pose.residue(ir).aa() != core::chemical::aa_cys) continue;
 			for(int jr=ir+3; jr < ir+option[cdsf_max_res](); ++jr) {

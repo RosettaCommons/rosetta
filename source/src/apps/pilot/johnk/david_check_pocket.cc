@@ -20,7 +20,7 @@
 
 // Core Headers
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -81,7 +81,7 @@ main( int argc, char * argv [] )
 
 	//read in pdb file from command line
 	std::string const input_pdb_name ( basic::options::start_file() );
-	core::import_pose::pose_from_pdb( input_pose, input_pdb_name );
+	core::import_pose::pose_from_file( input_pose, input_pdb_name , core::import_pose::PDB_file);
 
 	// This is the residue we'll backrub around!!
 	int const central_relax_pdb_number = option[ central_relax_pdb_num ];

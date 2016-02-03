@@ -59,7 +59,7 @@ core::pose::PoseOP
 PDBPoseInputter::pose_from_input_source( PoseInputSource const & input_source )
 {
 	assert( input_source.string_string_map().find( "filename" ) != input_source.string_string_map().end() );
-	return core::import_pose::pose_from_pdb( input_source.string_string_map().find( "filename" )->second );
+	return core::import_pose::pose_from_file( input_source.string_string_map().find( "filename" )->second , core::import_pose::PDB_file);
 }
 
 // PDBPoseInputterCreator::PDBPoseInputterCreator() {}

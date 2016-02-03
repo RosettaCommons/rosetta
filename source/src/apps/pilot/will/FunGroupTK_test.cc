@@ -62,7 +62,7 @@ using core::conformation::ResidueOP;
 using std::string;
 using utility::vector1;
 using numeric::min;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using basic::options::option;
 using numeric::min;
 using numeric::max;
@@ -131,7 +131,7 @@ void run_hh(std::string fname) {
   ScoreFunctionOP sfcen=ScoreFunctionFactory::create_score_function("score3");
 
   Pose pose;
-  pose_from_pdb(pose,option[in::file::s]()[1]);
+  pose_from_file(pose,option[in::file::s]()[1], core::import_pose::PDB_file);
 		for(Size i=1; i<=pose.n_residue(); ++i) {
 				core::pose::replace_pose_residue_copying_existing_coordinates(pose,i,pose.residue(i).residue_type_set().name_map("ALA"));
 		}
@@ -237,7 +237,7 @@ void run_hd(std::string fname) {
   //ScoreFunctionOP sfcen=ScoreFunctionFactory::create_score_function("score3");
 
   Pose pose;
-  pose_from_pdb(pose,option[in::file::s]()[1]);
+  pose_from_file(pose,option[in::file::s]()[1], core::import_pose::PDB_file);
 		for(Size i=1; i<=pose.n_residue(); ++i) {
 				core::pose::replace_pose_residue_copying_existing_coordinates(pose,i,pose.residue(i).residue_type_set().name_map("ALA"));
 		}

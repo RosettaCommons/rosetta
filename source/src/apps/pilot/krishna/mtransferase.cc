@@ -45,7 +45,7 @@
 //temp includes krishna
 #include <iostream>
 #include <fstream>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/string_util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>

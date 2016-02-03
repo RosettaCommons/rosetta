@@ -196,7 +196,7 @@ void create_starting_template (
 	pose.constraint_set( cst_set );
 
 	mapping.show();
-	core::import_pose::pose_from_pdb( *template_pose, template_id );
+	core::import_pose::pose_from_file( *template_pose, template_id , core::import_pose::PDB_file);
 	template_pose->dump_pdb("template.pdb");
 
 	// thread the input sequence onto the template_pose

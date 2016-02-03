@@ -17,7 +17,7 @@
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <protocols/loophash/LoopHashSampler.hh>
@@ -130,7 +130,7 @@ using namespace id;
 //	if(  option[ in::file::s ]().size() != 1){
 //		TR.Error << "Please supply a single inputfile with -in:file:s " << std::endl;
 //	}
-//	core::import_pose::pose_from_pdb( sample_pose, option[ in::file::s ]()[1] );
+//	core::import_pose::pose_from_file( sample_pose, option[ in::file::s ]()[1] , core::import_pose::PDB_file);
 
 		utility::vector1 < core::Size > loop_sizes;
 		loop_sizes.push_back( 10 );

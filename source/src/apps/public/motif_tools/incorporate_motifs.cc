@@ -25,7 +25,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
@@ -155,7 +155,7 @@ find_close_motifs()
 
 	Pose pose;
 	std::string template_structure_file( option[ in::file::s ]()[1] );
-	pose_from_pdb( pose,  template_structure_file.c_str() );
+	pose_from_file( pose,  template_structure_file.c_str() , core::import_pose::PDB_file);
 
 	std::string weights( "talaris2013" );
 	ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( weights ) );

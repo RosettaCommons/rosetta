@@ -181,7 +181,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 	// Load the native structure (if available) to compute trajectory analytics
 	PoseOP native;
 	if ( option[OptionKeys::in::file::native].user() ) {
-		native = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
+		native = core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
 	}
 
 	// Build up a threading model

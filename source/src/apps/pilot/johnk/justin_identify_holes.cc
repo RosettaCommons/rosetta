@@ -15,7 +15,7 @@
 
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/database/open.hh>
 //#include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -84,7 +84,7 @@ main( int argc, char * argv [] )
 		TR << "Processing decoy " << curr_decoy_fname << std::endl;
 
 		pose::Pose curr_pose;
-		core::import_pose::pose_from_pdb( curr_pose, curr_decoy_fname );
+		core::import_pose::pose_from_file( curr_pose, curr_decoy_fname , core::import_pose::PDB_file);
 		(*scorefxn)(curr_pose);
 
 		core::scoring::packing::HolesResult holes_result = core::scoring::packing::compute_rosettaholes_score(curr_pose,hp_resl,hp_dec,hp_dec15);

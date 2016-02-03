@@ -110,7 +110,7 @@ public:
 
 		pose::Pose pose( create_test_in_pdb_pose() );
 		core::id::AtomID fixed_pt( pose.atom_tree().root()->atom_id() );
-		//core::import_pose::pose_from_pdb( pose, "core/scoring/constraints/test_in.pdb" );
+		//core::import_pose::pose_from_file( pose, "core/scoring/constraints/test_in.pdb" , core::import_pose::PDB_file);
 
 
 		scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );

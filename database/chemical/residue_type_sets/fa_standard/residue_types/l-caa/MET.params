@@ -21,6 +21,10 @@ ATOM 2HG  Hapo HA   0.09   0.000
 ATOM 1HE  Hapo HA   0.09   0.000
 ATOM 2HE  Hapo HA   0.09   0.000
 ATOM 3HE  Hapo HA   0.09   0.000
+
+# For MSE recognition
+ATOM_ALIAS  SD   SE  
+
 LOWER_CONNECT N
 UPPER_CONNECT C
 BOND  N    CA 

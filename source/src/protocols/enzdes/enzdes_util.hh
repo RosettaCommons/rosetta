@@ -67,7 +67,7 @@ sum_constraint_scoreterms(
 
 
 void
-read_pose_from_pdb(
+read_pose_from_file(
 	core::pose::Pose & pose,
 	std::string const & filename
 );

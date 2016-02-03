@@ -21,7 +21,7 @@
 
 #include <core/id/SequenceMapping.hh>
 #include <basic/options/option.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/io/ozstream.hh>
 
 #include <core/sequence/util.hh>
@@ -105,7 +105,7 @@ poses_from_cmd_line(
 	using core::pose::Pose;
 	using utility::file::file_exists;
 	using utility::vector1;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using namespace core::chemical;
 
 	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
@@ -115,7 +115,7 @@ poses_from_cmd_line(
 	for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {
 		if ( file_exists(*it) ) {
 			Pose pose;
-			core::import_pose::pose_from_pdb( pose, *rsd_set, *it );
+			core::import_pose::pose_from_file( pose, *rsd_set, *it , core::import_pose::PDB_file);
 			string name = utility::file_basename( *it );
 			name = name.substr( 0, 5 );
 			poses[name] = pose;
@@ -139,7 +139,7 @@ main( int argc, char* argv [] ) {
 	using core::pose::Pose;
 	using core::pose::PoseOP;
 	using utility::vector1;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using core::pose::make_pose_from_sequence;
 
 	using namespace basic::options;

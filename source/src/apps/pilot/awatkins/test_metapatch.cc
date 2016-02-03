@@ -147,7 +147,7 @@ main( int argc, char* argv[] )
 		score_fxn->set_weight( fa_rep, 0.1 );
 
 		Pose pose;
-		import_pose::pose_from_pdb( pose, option[ in::file::s ].value()[1] );
+		import_pose::pose_from_file( pose, option[ in::file::s ].value()[1] , core::import_pose::PDB_file);
 
 		Size ligand_begin = option[ metapatch::first_ligand_res ].value();
 		Size ligand_end = option[ metapatch::last_ligand_res ].value();

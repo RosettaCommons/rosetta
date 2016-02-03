@@ -42,7 +42,7 @@ main( int argc, char *argv[] )
 		Pose crazy_sugar;
 
 		// Try to load and output the Pose.
-		pose_from_pdb( crazy_sugar, PATH + "fix5-trimerized_chainA_w_LINKs.pdb" );
+		pose_from_file( crazy_sugar, PATH + "fix5-trimerized_chainA_w_LINKs.pdb" , core::import_pose::PDB_file);
 		cout << crazy_sugar << endl;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

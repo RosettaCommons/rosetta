@@ -46,7 +46,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
@@ -100,7 +100,7 @@ main( int argc, char* argv [] ) {
 	core::pose::Pose template_pose;
 	string const templ_fn( option[ in::file::template_pdb ]()[1] );
 	string const templ_prefix( utility::file_basename( templ_fn ) );
-	core::import_pose::pose_from_pdb( template_pose, *rsd_set, templ_fn );
+	core::import_pose::pose_from_file( template_pose, *rsd_set, templ_fn , core::import_pose::PDB_file);
 
 	typedef vector1< SequenceOP >::const_iterator iter;
 	for ( iter sequence = seqs.begin(), end = seqs.end(); sequence != end; ++sequence ) {

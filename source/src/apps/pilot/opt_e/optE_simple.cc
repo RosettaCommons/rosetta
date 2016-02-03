@@ -42,7 +42,7 @@
 #include <core/graph/Graph.hh>
 
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 
 #include <core/optimization/types.hh>
@@ -344,7 +344,7 @@ simple_opte_test()
 			std::cout << "Working on file: " << *pdb_file << std::endl;
 
 			Pose pose;
-			pose_from_pdb( pose, *pdb_file );
+			pose_from_file( pose, *pdb_file , core::import_pose::PDB_file);
 
 			std::cout << "read file: " << *pdb_file << ' '<< pose.total_residue() << std::endl;
 			std::cout << "SEQUENCE: " << *pdb_file << ' ' << pose.sequence() << std::endl;

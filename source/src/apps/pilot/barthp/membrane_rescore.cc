@@ -44,7 +44,7 @@
 #include <basic/Tracer.hh>
 #include <basic/MetricValue.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -148,7 +148,7 @@ main( int argc, char* argv [] )
 			//core::Real memb_pair=iter->get_energy("MEMB_PAI");
 			//core::Real memb_cb=iter->get_energy("MEMB_CB");
 			//iter->fill_pose( pose,*rsd_set) //, *rsd_set );
-			//core::import_pose::pose_from_pdb(pose,*rsd_set,"S_49.pdb.mini");
+			//core::import_pose::pose_from_file(pose,*rsd_set,"S_49.pdb.mini", core::import_pose::PDB_file);
 				iter->fill_pose( pose,
 							 option[ in::file::fullatom ] ?
 												 *(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )) :

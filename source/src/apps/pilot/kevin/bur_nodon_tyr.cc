@@ -15,7 +15,7 @@
 #include <devel/init.hh>
 
 //project Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
@@ -261,7 +261,7 @@ int main( int argc, char* argv[] ) {
 
 		TR << "Reading in pose " << *pdb << std::endl;
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, *pdb );
+		core::import_pose::pose_from_file( pose, *pdb , core::import_pose::PDB_file);
 		//TR << "Looking for bad tyrosines." << std::endl;
 		measure_sequence_recovery( pose );
 

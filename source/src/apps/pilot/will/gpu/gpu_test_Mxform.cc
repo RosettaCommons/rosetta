@@ -12,7 +12,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
   Real ERRTH = 0.0003;
 
   Pose hmd,hme,dm1,dm2,em1,em2,cys,p;
-  pose_from_pdb(p,option[OptionKeys::in::file::s]()[1]);
+  pose_from_file(p,option[OptionKeys::in::file::s]()[1], core::import_pose::PDB_file);
   make_pose_from_sequence(cys,"C[CYS_M]" ,core::chemical::FA_STANDARD,false); remove_termini(cys); to_canonical_sc_frame(cys);
   make_pose_from_sequence(dm1,"D[ASP_M1]",core::chemical::FA_STANDARD,false); remove_termini(dm1); to_canonical_sc_frame(dm1);
   make_pose_from_sequence(dm2,"D[ASP_M2]",core::chemical::FA_STANDARD,false); remove_termini(dm2); to_canonical_sc_frame(dm2);

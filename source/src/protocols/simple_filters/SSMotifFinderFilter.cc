@@ -77,7 +77,7 @@ SSMotifFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap
 
 	std::string template_pose_filename( tag->getOption< std::string >( "template_pose" ) );
 	template_pose_ = core::pose::PoseOP( new core::pose::Pose );
-	core::import_pose::pose_from_pdb( *template_pose_, template_pose_filename );
+	core::import_pose::pose_from_file( *template_pose_, template_pose_filename , core::import_pose::PDB_file);
 	template_stem1(core::pose::parse_resnum(tag->getOption<std::string>("template_stem1", "0"), *template_pose_));
 	template_stem2(core::pose::parse_resnum(tag->getOption<std::string>("template_stem2", "0"), *template_pose_));
 

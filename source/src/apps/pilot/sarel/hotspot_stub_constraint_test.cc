@@ -54,7 +54,7 @@ void run_test() {
 	using namespace protocols::moves;
 
 	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "1a22_prot.pdb" );
+	core::import_pose::pose_from_file( pose, "1a22_prot.pdb" , core::import_pose::PDB_file);
 
 	core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 	scorefxn->reset();

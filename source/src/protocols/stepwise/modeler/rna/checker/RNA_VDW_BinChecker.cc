@@ -607,7 +607,7 @@ RNA_VDW_BinChecker::read_in_VDW_rep_screen_pose( VDW_RepScreenInfo & VDW_rep_scr
 
 	////////import VDW_rep_screen_pose.////////////////////////////////////////
 	VDW_rep_screen_info.VDW_pose = pose::PoseOP( new Pose );
-	import_pose::pose_from_pdb( *VDW_rep_screen_info.VDW_pose, *rsd_set, VDW_rep_screen_info.pose_name );
+	import_pose::pose_from_file( *VDW_rep_screen_info.VDW_pose, *rsd_set, VDW_rep_screen_info.pose_name , core::import_pose::PDB_file);
 	protocols::farna::make_phosphate_nomenclature_matches_mini( *VDW_rep_screen_info.VDW_pose );
 	///////////////////////////////////////////////////////////////////////////
 

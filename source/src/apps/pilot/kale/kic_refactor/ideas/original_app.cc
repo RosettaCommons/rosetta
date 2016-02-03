@@ -156,7 +156,7 @@ class SamplingManager { // {{{1
 		}
 
 		void setup() { // {{{2
-			import_pose::pose_from_pdb(pose, pdb_path);
+			import_pose::pose_from_file(pose, pdb_path, core::import_pose::PDB_file);
 
 			Size first = first_index;
 			Size cut = cut_index;

@@ -39,6 +39,7 @@
 #include <core/chemical/ResidueTypeSetCache.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/MergeBehaviorManager.hh>
 #include <core/chemical/Metapatch.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -46,8 +47,6 @@
 #include <core/chemical/sdf/MolFileIOReader.hh>
 #include <core/chemical/adduct_util.hh>
 #include <core/chemical/util.hh>
-//#include <core/chemical/Orbital.hh> /* for copying ResidueType */
-//#include <core/chemical/ResidueConnection.hh> /* for copying ResidueType */
 #include <core/chemical/Orbital.hh> /* for copying ResidueType */
 #include <core/chemical/ResidueConnection.hh> /* for copying ResidueType */
 
@@ -75,7 +74,6 @@
 // option key includes
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
-//#include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/chemical/orbitals/AssignOrbitals.hh>
 
@@ -100,6 +98,7 @@ ResidueTypeSet::ResidueTypeSet(
 ) :
 	name_( name ),
 	database_directory_(directory),
+	merge_behavior_manager_( new MergeBehaviorManager( directory ) ),
 	cache_( ResidueTypeSetCacheOP( new ResidueTypeSetCache( *this ) ) )
 {
 	load_shadowed_ids( directory );
@@ -332,7 +331,7 @@ void ResidueTypeSet::init(
 	}
 
 	// Components file? (Willl be empty if we're not doing this.)
-	if( option[ OptionKeys::in::file::load_PDB_components ] || option[ OptionKeys::in::file::PDB_components_file ].user() ){
+	if ( option[ OptionKeys::in::file::load_PDB_components ] || option[ OptionKeys::in::file::PDB_components_file ].user() ) {
 		pdb_components_filename_ = option[ OptionKeys::in::file::PDB_components_file ].value();
 	}
 
@@ -811,6 +810,19 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 	return *rsd_type;
 }
 
+std::string const &
+ResidueTypeSet::database_directory() const
+{
+	return database_directory_;
+}
+
+MergeBehaviorManager const &
+ResidueTypeSet::merge_behavior_manager() const
+{
+	return *merge_behavior_manager_;
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 /// @note    Currently, this will not work for variant types defined as alternate base residues (i.e., different .params
 ///          files).
@@ -906,7 +918,7 @@ ResidueTypeSet::load_shadowed_ids( std::string const & directory, std::string co
 	shadowed_ids_.clear();
 
 	utility::io::izstream file( directory + filename );
-	if( ! file.good()  ) {
+	if ( ! file.good()  ) {
 		tr << "For ResidueTypeSet " << name() << " there is no " << filename << " file to list known PDB ids." << std::endl;
 		tr << "    This will turn off PDB component loading for ResidueTypeSet " << name() << std::endl;
 		tr << "    Expected file: " << directory + filename << std::endl;
@@ -914,14 +926,14 @@ ResidueTypeSet::load_shadowed_ids( std::string const & directory, std::string co
 	}
 	std::string line;
 	getline( file, line );
-	while( file.good() ) {
+	while ( file.good() ) {
 		utility::trim( line ); // inplace;
-		if( line[0] != '#' ) {
+		if ( line[0] != '#' ) {
 			shadowed_ids_.insert( line );
 		}
 		getline( file, line );
 	}
-	if( shadowed_ids_.size() == 0 ) {
+	if ( shadowed_ids_.size() == 0 ) {
 		tr.Warning << "For ResidueTypeSet " << name() << ", " << filename << " doesn't have any entries." << std::endl;
 		tr.Warning << "    This will turn off PDB component loading for ResidueTypeSet " << name() << std::endl;
 	}
@@ -943,13 +955,13 @@ ResidueTypeSet::lazy_load_base_type( std::string const & rsd_base_name ) const
 		std::string short_name( utility::strip( rsd_base_name.substr( 4, rsd_base_name.size() ) ) );
 		if ( shadowed_ids_.size() > 0 && shadowed_ids_.count( short_name ) == 0 ) {
 			new_rsd_type = load_pdb_component( short_name );
-			if( new_rsd_type ) {
+			if ( new_rsd_type ) {
 				// Duplicate detection is handled by the shadowed file -- if it's not shadowed, we load the component
 				new_rsd_type->name( "pdb_" + short_name );
 				tr << "Loading '" << short_name << "' from the PDB components dictionary for residue type '" << rsd_base_name << "'" << std::endl;
 			}
 		} else {
-			if( shadowed_ids_.size() == 0 ) {
+			if ( shadowed_ids_.size() == 0 ) {
 				tr.Debug << "Not loading '" << short_name << "' from PDB components dictionary because components are turned off for this ResidueTypeSet." << std::endl;
 			} else {
 				tr.Debug << "Not loading '" << short_name << "' from PDB components dictionary because it is shadowed in the ResidueTypeSet." << std::endl;
@@ -973,14 +985,14 @@ ResidueTypeSet::lazy_load_base_type( std::string const & rsd_base_name ) const
 ResidueTypeOP
 ResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 	static THREAD_LOCAL bool warned_about_missing_file( false );
-	if( pdb_components_filename_.size()){
+	if ( pdb_components_filename_.size() ) {
 		utility::io::izstream filestream( pdb_components_filename_ );
-		if( !filestream.good() ) {
+		if ( !filestream.good() ) {
 			std::string db_filename( basic::database::full_name( pdb_components_filename_, false ) );
 			filestream.open( db_filename );
 
-			if( !filestream.good() ){
-				if( ! warned_about_missing_file ) {
+			if ( !filestream.good() ) {
+				if ( ! warned_about_missing_file ) {
 					warned_about_missing_file = true;
 					tr.Warning << "PDB component dictionary file not found at (./)" << pdb_components_filename_ << std::endl;
 					tr.Warning << "   or in the Rosetta database at " << db_filename << std::endl;
@@ -996,15 +1008,15 @@ ResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 		std::string lines;
 		//std::cout << "Finding '" << entry <<"' " << entry.size() << std::endl;
 		mmCIF::mmCIFParser mmCIF_parser;
-		while( filestream.good()){
+		while ( filestream.good() ) {
 			getline( filestream, line );
-			if(line.size() == entry.size() ){
+			if ( line.size() == entry.size() ) {
 				//std::cout << line << std::endl;
-				if(line == entry ){
+				if ( line == entry ) {
 					lines += line;
 					//lines.push_back( line);
 					getline( filestream, line);
-					while( line.substr(0, 5) != "data_" && filestream.good()){
+					while ( line.substr(0, 5) != "data_" && filestream.good() ) {
 						lines += line + '\n';
 						//lines.push_back( line);
 						getline( filestream, line);
@@ -1014,9 +1026,9 @@ ResidueTypeSet::load_pdb_component( std::string const & pdb_id ) const {
 			}
 		}
 
-		if( lines.size() == 0){
+		if ( lines.size() == 0 ) {
 			tr.Warning << "Could not find: '" << pdb_id << "' in pdb components file '" << pdb_components_filename_
-					<< "'! Skipping residue..." << std::endl;
+				<< "'! Skipping residue..." << std::endl;
 			return ResidueTypeOP(0);
 		}
 

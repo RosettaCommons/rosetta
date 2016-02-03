@@ -28,7 +28,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/init/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/rna/RNA_DataReader.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -100,7 +100,7 @@ rna_denovo_test()
 		native_exists = true;
 		//Read in native if it exists.
 		std::string native_pdb_file  = option[ in::file::native ];
-		core::import_pose::pose_from_pdb( native_pose, *rsd_set, in_path + native_pdb_file );
+		core::import_pose::pose_from_file( native_pose, *rsd_set, in_path + native_pdb_file , core::import_pose::PDB_file);
 	} else {
 		runtime_assert( !option[ OptionKeys::rna::farna::refine_native ]() );
 	}

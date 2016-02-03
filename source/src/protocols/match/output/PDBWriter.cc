@@ -25,9 +25,10 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/pose/Remarks.hh>
+
+#include <core/io/pdb/pdb_writer.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
+#include <core/io/Remarks.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/func/Func.hh>
@@ -253,13 +254,13 @@ PDBWriter::assemble_remark_lines(
 
 	using namespace core::io::pdb;
 
-	core::pose::Remarks rems;
+	core::io::Remarks rems;
 
 	std::string ds_resname = downstream_pose_from_task_->residue(1).name3();
 
 	for ( core::Size i = 1; i <= upstream_matchres.size(); ++i ) {
 
-		core::pose::RemarkInfo ri;
+		core::io::RemarkInfo ri;
 		ri.num = 666; /// really now?
 		std::string upname3( upstream_matchres[ i ]->name3() );
 		std::map< core::Size, core::Size >::const_iterator red_it = redundant_upstream_res.find( i );
@@ -282,7 +283,7 @@ PDBWriter::assemble_remark_lines(
 		rems.push_back( ri );
 
 	}
-	for ( core::pose::Remarks::const_iterator r = orig_upstream_pose_->pdb_info()->remarks().begin();
+	for ( core::io::Remarks::const_iterator r = orig_upstream_pose_->pdb_info()->remarks().begin();
 			r != orig_upstream_pose_->pdb_info()->remarks().end(); ++r ) {
 		if ( r->num != 666 ) {
 			rems.push_back( *r );

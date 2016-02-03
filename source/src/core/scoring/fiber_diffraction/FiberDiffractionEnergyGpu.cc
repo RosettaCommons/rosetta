@@ -28,8 +28,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>

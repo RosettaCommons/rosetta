@@ -78,7 +78,7 @@ main( int argc, char * argv [] )
 
 		//protein pose
 		//pose::Pose prot_pose;
-		//io::pdb::pose_from_pdb( prot_pose, options::start_file() ); // gets filename from -s option
+		//io::pdb::pose_from_file( prot_pose, options::start_file() , core::import_pose::PDB_file); // gets filename from -s option
 
 		//read peptides fasta file
 		std::string pepSeq = core::sequence::read_fasta_file( basic::options::option[ in::file::fasta ]()[1] )[1]->sequence();

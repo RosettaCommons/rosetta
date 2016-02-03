@@ -15,7 +15,7 @@
 
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -109,14 +109,14 @@ int main( int argc, char * argv [] ) {
     bool if_native = false;
 //------------- Read the native pose  ----------
     if ( option[ in::file::native ].user() )
-        core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]().name() );
+        core::import_pose::pose_from_file( native_pose, option[ in::file::native ]().name() , core::import_pose::PDB_file);
 
 //------------- Read the pose for scoring ----------
 //    core::chemical::ResidueTypeSetCAP rsd_set_fa = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
     core::pose::Pose fa_pose;
     utility::vector1<utility::file::FileName> s = option[in::file::s]();
     for(Size i=1;i<=s.size();i++) {
-	core::import_pose::pose_from_pdb( fa_pose, s[i].name());
+	core::import_pose::pose_from_file( fa_pose, s[i].name(), core::import_pose::PDB_file);
 	std::cout<< saxs_energy(fa_pose);
 	if( if_native )
 	    std::cout << ' ' << core::scoring::CA_rmsd( native_pose, fa_pose ) << std::endl;

@@ -294,7 +294,7 @@ void CDRH3Modeler::build_centroid_loop() {
 	*/
 
 	Size unaligned_cdr_loop_begin(0)/*, unaligned_cdr_loop_end(0)*/;
-	core::import_pose::pose_from_pdb( template_pose_, "hfr.pdb" );
+	core::import_pose::pose_from_file( template_pose_, "hfr.pdb" , core::import_pose::PDB_file);
 	std::string template_name = "h3";
 	Antibody hfr_template( template_pose_, template_name );
 	unaligned_cdr_loop_begin = hfr_template.current_start;

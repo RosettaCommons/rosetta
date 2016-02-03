@@ -69,7 +69,7 @@ FnatFilter::FnatFilter() :
 		native_contacts_ = option[ in::file::native_contacts ]();
 	} else if ( option[ in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]());
+		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ](), core::import_pose::PDB_file);
 		native_pose_ = native_pose;
 	} else {
 		utility_exit_with_message("need to specify native pdb to calculate Fnat");
@@ -93,14 +93,14 @@ FnatFilter::FnatFilter( core::scoring::ScoreFunctionOP sfxn, core::Size const rb
 		native_contacts_ = option[ in::file::native_contacts ]();
 	} else if ( option[ in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]());
+		core::import_pose::pose_from_file( *native_pose, option[ in::file::native ](), core::import_pose::PDB_file);
 		native_pose_ = native_pose;
 	} else {
 		utility_exit_with_message("need to specify native pdb to calculate Fnat");
 	}
 	//  if ( option[ in::file::native ].user() ) {
 	//   core::pose::PoseOP native_pose = new core::pose::Pose();
-	//   core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]);
+	//   core::import_pose::pose_from_file( *native_pose, option[ in::file::native ], core::import_pose::PDB_file);
 	//    native_pose_ = native_pose;
 	//  } else {
 	//   utility_exit_with_message("need to specify native pdb to calculate Fnat");

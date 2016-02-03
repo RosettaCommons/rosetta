@@ -18,7 +18,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -319,7 +319,7 @@ main( int argc, char * argv [] )
 	// create pose for native pose from pdb
 	pose::Pose wt_pose_init;
 	std::string const input_pdb_name ( basic::options::start_file() );
-	core::import_pose::pose_from_pdb( wt_pose_init, input_pdb_name );
+	core::import_pose::pose_from_file( wt_pose_init, input_pdb_name , core::import_pose::PDB_file);
 	(*scorefxn)( wt_pose_init );
 
 	// set mut_rosetta_resnum to Rosetta internal resid for the residue to be mutated

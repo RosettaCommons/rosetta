@@ -37,7 +37,7 @@ protected:
 public:
 	void setUp() {
 		protocols_init();
-		pose_ = core::import_pose::pose_from_pdb("protocols/nonlocal/2GB3.pdb");
+		pose_ = core::import_pose::pose_from_file("protocols/nonlocal/2GB3.pdb", core::import_pose::PDB_file);
 	}
 
 	void test_center_of_mass() {

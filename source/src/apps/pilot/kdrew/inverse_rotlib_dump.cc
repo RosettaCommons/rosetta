@@ -37,7 +37,7 @@
 //#include <core/scoring/constraints/BackboneStubConstraint.hh>
 //#include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/pack/rotamer_set/bb_independent_rotamers.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 //#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -142,7 +142,7 @@ InverseRotlibDumpMover::apply(core::pose::Pose& pose)
 	//core::pose::Pose start_pose = core::pose::Pose(scaffold_pose);
 
 	core::pose::Pose primary_hs_pose;
-	core::import_pose::pose_from_pdb(primary_hs_pose, option[ inverse_rotlib_dump::primary_hs].value() );
+	core::import_pose::pose_from_file(primary_hs_pose, option[ inverse_rotlib_dump::primary_hs].value() , core::import_pose::PDB_file);
 	core::pose::add_variant_type_to_pose_residue( primary_hs_pose, "SHOVE_BB", primary_hs_pose.total_residue());
 	//kdrew: create starting pose by combining the target pose and the scaffold pose
 
@@ -170,7 +170,7 @@ InverseRotlibDumpMover::apply(core::pose::Pose& pose)
 	for (core::Size iii = 1; iii <= ancillary_locations.size(); iii++) {
 
 		core::pose::Pose secondary_hs_pose;
-		core::import_pose::pose_from_pdb(secondary_hs_pose, ancillary_locations[iii]);
+		core::import_pose::pose_from_file(secondary_hs_pose, ancillary_locations[iii], core::import_pose::PDB_file);
 		core::pose::add_variant_type_to_pose_residue( secondary_hs_pose, "SHOVE_BB", secondary_hs_pose.total_residue());
 
 		core::conformation::ResidueCOP secondary_hs_residue  =  &primary_hs_pose.residue(secondary_hs_pose.total_residue());

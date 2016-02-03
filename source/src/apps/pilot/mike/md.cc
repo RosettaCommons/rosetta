@@ -25,7 +25,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <utility/excn/Exceptions.hh>
 
 #include <core/chemical/AA.hh>
@@ -70,7 +70,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
@@ -97,7 +97,7 @@ using namespace protocols;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 
 class Protocol_MolecularDynamics: public moves::Mover {
@@ -190,7 +190,7 @@ main( int argc, char * argv [] )
 
 	if(  option[ OptionKeys::in::file::native ].active() ){
 		pose::PoseOP npose = new pose::Pose;
-		core::import_pose::pose_from_pdb( *npose, option[ OptionKeys::in::file::native ]() ); // default is standard fullatom residue_set
+		core::import_pose::pose_from_file( *npose, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file); // default is standard fullatom residue_set
 		md->set_native_pose( npose );
 	}
 

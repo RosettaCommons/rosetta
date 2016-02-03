@@ -72,7 +72,7 @@ void protocols::jd2::SilentFileJobInputter::pose_from_job(
 	tr.Debug << "SilentFileJobInputter::pose_from_job" << std::endl;
 
 	if ( !job->inner_job()->get_pose() ) {
-		//core::import_pose::pose_from_pdb( pose, job->inner_job()->input_tag() );
+		//core::import_pose::pose_from_file( pose, job->inner_job()->input_tag() , core::import_pose::PDB_file);
 		//  core::io::silent::SilentStructOP ss = sfd_[ job->inner_job()->input_tag() ];
 		tr.Debug << "filling pose from SilentFile (tag = " << job->inner_job()->input_tag()
 			<< ")" << std::endl;

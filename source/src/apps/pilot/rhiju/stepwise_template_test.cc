@@ -111,7 +111,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -166,7 +166,7 @@ using namespace core::options::OptionKeys;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 //typedef std::map< std::string, core::pose::PoseOP > PoseList;
@@ -300,7 +300,7 @@ parse_pathway_test(){
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	Pose start_pose;
 	std::string const input_pdb_file = option[ in::file::s]()[1];
-	io::pdb::pose_from_pdb( start_pose, *rsd_set, input_pdb_file );
+	io::pdb::pose_from_file( start_pose, *rsd_set, input_pdb_file , core::import_pose::PDB_file);
 
 	Size const nres( start_pose.total_residue() );
 
@@ -406,7 +406,7 @@ stepwise_template_test(){
 	make_pose_from_sequence( full_pose, desired_sequence, *rsd_set );
 	bool read_start_pdb_from_disk( false );
 	//	if ( option[ in::file::s ].user() ) {
-		//		io::pdb::pose_from_pdb( full_pose, *rsd_set, option[ in::file::s]()[1] );
+		//		io::pdb::pose_from_file( full_pose, *rsd_set, option[ in::file::s]()[1] , core::import_pose::PDB_file);
 		//		read_start_pdb_from_disk = true;
 	//	}
 
@@ -416,13 +416,13 @@ stepwise_template_test(){
 	if (option[ in::file::native ].user() ) {
 		native_pose = PoseOP( new Pose );
 		std::string native_pdb_file  = option[ in::file::native ];
-		io::pdb::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+		io::pdb::pose_from_file( *native_pose, *rsd_set, native_pdb_file , core::import_pose::PDB_file);
 		if ( desired_sequence != native_pose->sequence() ) utility_exit_with_message( "Native pose sequence looks wrong." );
 	}
 	if (option[ align_pdb ].user() ) {
 		align_pose = PoseOP( new Pose );
 		std::string align_pdb_file  = option[ align_pdb ]();
-		io::pdb::pose_from_pdb( *align_pose, *rsd_set, align_pdb_file );
+		io::pdb::pose_from_file( *align_pose, *rsd_set, align_pdb_file , core::import_pose::PDB_file);
 	}
 
 

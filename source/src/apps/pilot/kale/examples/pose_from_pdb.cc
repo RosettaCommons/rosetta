@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
 
 	core::pose::Pose pose;
 
-	core::import_pose::pose_from_pdb(pose, "structures/linear/6.symmetry.pdb");
+	core::import_pose::pose_from_file(pose, "structures/linear/6.symmetry.pdb", core::import_pose::PDB_file);
 
 	pose.dump_pdb("pdb_from_pose.pdb");
 }

@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 //#include <core/kinematics/FoldTree.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>

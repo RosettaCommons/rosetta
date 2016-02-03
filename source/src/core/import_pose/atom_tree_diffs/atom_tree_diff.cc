@@ -23,8 +23,9 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pdb_dynamic_reader.hh>
+#include <core/io/pdb/Field.hh>
+#include <core/io/pdb/pdb_writer.hh>
+#include <core/io/pdb/pdb_reader.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -246,7 +247,7 @@ void dump_reference_pose(
 	dump_score_line(out, pose_tag, mod_scores);
 
 	out << "BEGIN_PDB_FORMAT " << pose_tag << '\n';
-	core::io::pdb::FileData::dump_pdb( pose, out );
+	io::pdb::dump_pdb( pose, out );
 	out << "END_PDB_FORMAT " << pose_tag << '\n';
 
 	// Some variants introduce extra DOFs but do not change the three-letter name.
@@ -539,22 +540,26 @@ bool pose_from_atom_tree_diff(
 				using namespace core::chemical;
 				using namespace core::import_pose;
 				std::string const end_pdb_key = "END_PDB_FORMAT";
-				std::vector< io::pdb::Record > pdb_data;
+				utility::vector1< io::pdb::Record > pdb_data;
 				while ( in.good() ) {
 					getline(in, line);
 					if ( in.fail() ) {
 						TR << "getline() failed while reading embedded PDB" << std::endl;
 						return false;
 					}
-					if ( line.size() >= end_pdb_key.size() && line.compare(0, end_pdb_key.size(), end_pdb_key) == 0 ) break; // my kingdom for startswith()!
-					// I can't figure out if getline() might leave behind a \n or \r\n,
-					// but all real PDB records are longer than 2 characters anyway.
-					else if ( line.size() > 2 ) pdb_data.push_back( io::pdb::PDB_DReader::mapStringToRecord(line) );
+					if ( line.size() >= end_pdb_key.size() && line.compare(0, end_pdb_key.size(), end_pdb_key) == 0 ) {
+						break; // my kingdom for startswith()!
+
+						// I can't figure out if getline() might leave behind a \n or \r\n,
+						// but all real PDB records are longer than 2 characters anyway.
+					} else if ( line.size() > 2 ) {
+						pdb_data.push_back( io::pdb::get_record_from_string( line ) );
+					}
 				}
-				core::io::pdb::FileData fd = core::io::pdb::PDB_DReader::createFileData(pdb_data);
-				fd.filename = "atom_tree_diff.pdb"; // I'm afraid to leave this empty...
+				core::io::StructFileRep sfr( core::io::pdb::create_sfr_from_pdb_records(pdb_data) );
+				sfr.filename() = "atom_tree_diff.pdb"; // I'm afraid to leave this empty...
 				pose.clear();
-				core::import_pose::build_pose(fd, pose, *(ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )));
+				core::import_pose::build_pose( sfr.clone(), pose, *(ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) ) );
 			}
 		} else { // it's an atom line...
 			if ( rsd_no < 1 || rsd_no > pose.total_residue() ) {

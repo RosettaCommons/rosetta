@@ -8,13 +8,13 @@ using namespace std;
 using core::pose::Pose;
 using core::id::TorsionID;
 using core::id::BB;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 
 int main(int argc, char** argv) {
 	devel::init(argc, argv);
 	Pose pose;
 
-	pose_from_pdb(pose, "structures/linear/6.symmetry.pdb");
+	pose_from_file(pose, "structures/linear/6.symmetry.pdb", core::import_pose::PDB_file);
 
 	cout << "Phi:   " << pose.phi(1) << endl;
 	cout << "Psi:   " << pose.psi(1) << endl;

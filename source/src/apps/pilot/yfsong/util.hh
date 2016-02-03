@@ -50,7 +50,6 @@ namespace pilot {
 using namespace core;
 using namespace core::chemical;
 using namespace core::kinematics;
-using namespace ObjexxFCL;
 using namespace protocols::moves;
 using namespace protocols::loops;
 using namespace basic::options;
@@ -74,7 +73,7 @@ SampleSecondaryStructureAlignmentMover(numeric::random::RandomGenerator & RG,
 		template_structures.resize(template_filenames.size());
 		for (core::Size i_ref=1; i_ref<= template_filenames.size(); ++i_ref) {
 			template_structures[i_ref] = new core::pose::Pose();
-			core::import_pose::pose_from_pdb( *(template_structures[i_ref]), template_filenames[i_ref] );
+			core::import_pose::pose_from_file( *(template_structures[i_ref]), template_filenames[i_ref] , core::import_pose::PDB_file);
 
 			protocols::jumping::Dssp dssp_obj( *template_structures[i_ref] );
 			dssp_obj.insert_ss_into_pose( *template_structures[i_ref] );

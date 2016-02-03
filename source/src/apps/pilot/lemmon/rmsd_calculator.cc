@@ -29,7 +29,7 @@
 #include <utility/vector0.hh>
 
 #include <devel/init.hh>
-//#include <core/io/pdb/pose_io.hh>
+//#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
 	devel::init(argc, argv);
 
 	std::string native_name= basic::options::option[basic::options::OptionKeys::in::file::native]();
-	core::pose::PoseOP native = core::import_pose::pose_from_pdb(native_name);
+	core::pose::PoseOP native = core::import_pose::pose_from_file(native_name, core::import_pose::PDB_file);
 
 	utility::vector1< std::string > pdb_names= basic::options::start_files();
 
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
 	utility::vector0<std::string>::iterator begin= pdb_names.begin();
 	for(; begin != pdb_names.end(); ++begin){
 		std::cout<< *begin << std::endl;
-		core::pose::PoseOP pose = core::import_pose::pose_from_pdb(*begin); // no super
+		core::pose::PoseOP pose = core::import_pose::pose_from_file(*begin, core::import_pose::PDB_file); // no super
 		chain_rmsd(*pose, *native, jump_id, false); // no super
 		chain_rmsd(*pose, *native, jump_id, true); // super
 		automorph_rmsd(*pose, *native, res_id, false);// no super

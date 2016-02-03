@@ -350,8 +350,8 @@ void* doit(void*) {
 
 	core::pose::Pose psi_ori, hyd_ori, psi, hyd;
 
-	core::import_pose::pose_from_pdb(psi,"input/psI_0001_strip_0001.pdb");
-	core::import_pose::pose_from_pdb(hyd,"input/hyda1_0001_strip_0001.pdb");
+	core::import_pose::pose_from_file(psi,"input/psI_0001_strip_0001.pdb", core::import_pose::PDB_file);
+	core::import_pose::pose_from_file(hyd,"input/hyda1_0001_strip_0001.pdb", core::import_pose::PDB_file);
 	Size psialnlnk=0,psialnpsi=0, hydalnlnk=0,hydalnhyd=0;
 	get_aln(lnk,psi,hyd,psialnlnk,psialnpsi,hydalnlnk,hydalnhyd);
 	TR << "PSI ALN " << psialnlnk << " " << psialnpsi << std::endl;
@@ -360,8 +360,8 @@ void* doit(void*) {
 	// protocols::scoring::ImplicitFastClashCheck hyd_ifc( hyd, 3.0 );
 
 	// // should contain xform from hdya attachment point on linker pose to attachment point of petf in hyda/petf cloud
-	// core::import_pose::pose_from_pdb(psi_ori,option[in::file::s]()[1]);
-	// core::import_pose::pose_from_pdb(hyd_ori,option[in::file::s]()[2]);
+	// core::import_pose::pose_from_file(psi_ori,option[in::file::s]()[1], core::import_pose::PDB_file);
+	// core::import_pose::pose_from_file(hyd_ori,option[in::file::s]()[2], core::import_pose::PDB_file);
 	// core::kinematics::Stub psi2petf = getxform( psi_ori.residue(1), psi_ori.residue(2) );
 	// core::kinematics::Stub hyd2petf = getxform( hyd_ori.residue(1), hyd_ori.residue(2) );
 
@@ -376,8 +376,8 @@ void* doit(void*) {
 	// bool CHAINBREAK = false;
 	vector1<Size> ignore; ignore.push_back(1); ignore.push_back(2);
 	TR << "reading in poses..." << std::endl;
-	vector1<Pose> psi_petf_poses = core::import_pose::poses_from_pdbs( option[rblinker::psi_petf_cloud]() );
-	vector1<Pose> hyd_petf_poses = core::import_pose::poses_from_pdbs( option[rblinker::hyd_petf_cloud]() );
+	vector1<Pose> psi_petf_poses = core::import_pose::poses_from_files( option[rblinker::psi_petf_cloud]() , core::import_pose::PDB_file);
+	vector1<Pose> hyd_petf_poses = core::import_pose::poses_from_files( option[rblinker::hyd_petf_cloud]() , core::import_pose::PDB_file);
 	TR << "creating clash checker..." << std::endl;
 	protocols::scoring::ImplicitFastClashCheck psi_petf_ifc(psi_petf_poses, 3.0, ignore);
 	protocols::scoring::ImplicitFastClashCheck hyd_petf_ifc(hyd_petf_poses, 3.0, ignore);

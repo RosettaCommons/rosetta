@@ -20,7 +20,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/Energies.hh>
 
 #include <protocols/moves/Mover.hh>

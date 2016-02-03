@@ -100,7 +100,7 @@ public:
 		pose::Pose test_pose;
 		core::pack::task::TaskFactory task_factory, task_factory_compare;
 
-		core::import_pose::pose_from_pdb( test_pose, "protocols/enzdes/ligtest_it.pdb");
+		core::import_pose::pose_from_file( test_pose, "protocols/enzdes/ligtest_it.pdb", core::import_pose::PDB_file);
 		scoring::ScoreFunctionOP scorefxn = scoring::ScoreFunctionFactory::create_score_function("enzdes");
 
 		//now let's use the enzdes machinery to read in a cstfile and generate

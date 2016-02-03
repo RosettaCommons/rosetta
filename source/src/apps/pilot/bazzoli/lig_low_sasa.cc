@@ -55,7 +55,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/vector1.hh>
@@ -110,7 +110,7 @@ int main( int argc, char * argv [] )
 		// create pose from pdb
 		core::pose::Pose ps;
 		string const input_pdb_name( basic::options::start_file() );
-		core::import_pose::pose_from_pdb( ps, input_pdb_name );
+		core::import_pose::pose_from_file( ps, input_pdb_name , core::import_pose::PDB_file);
 
 
 		// score pose

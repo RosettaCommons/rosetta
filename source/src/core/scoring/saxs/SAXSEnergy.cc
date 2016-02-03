@@ -29,7 +29,7 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/build_pose_as_is.hh>
 
 #include <numeric/interpolation/spline/Interpolator.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
@@ -106,7 +106,7 @@ SAXSEnergy::SAXSEnergy(std::string & config_file,core::chemical::ResidueTypeSetC
 		if ( basic::options::option[in::file::native].user() ) {
 			core::pose::Pose reference_pose;
 			trSAXSEnergy << "Using "<<basic::options::option[in::file::native]()<<" as a reference for SAXS energy"<<std::endl;
-			//core::import_pose::pose_from_pdb(reference_pose, *rsd_set,basic::options::option[in::file::native]());
+			//core::import_pose::pose_from_file(reference_pose, *rsd_set,basic::options::option[in::file::native](), core::import_pose::PDB_file);
 			core::io::pdb::build_pose_from_pdb_as_is(reference_pose, *rsd_set, basic::options::option[in::file::native]());
 			compute_intensities(reference_pose,reference_intensities_);
 			trSAXSEnergy << "Calculated reference spectrum from a native: "

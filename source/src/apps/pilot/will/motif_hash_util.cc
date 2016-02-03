@@ -35,7 +35,7 @@
 	#include <core/pose/motif/reference_frames.hh>
 	#include <core/pose/util.hh>
 	#include <core/pose/symmetry/util.hh>
-	#include <core/io/pdb/pose_io.hh>
+	#include <core/io/pdb/pdb_writer.hh>
 	#include <core/kinematics/MoveMap.hh>
 	#include <core/scoring/Energies.hh>
 	#include <core/scoring/EnergyGraph.hh>
@@ -120,7 +120,7 @@ static THREAD_LOCAL basic::Tracer TR( "motif_hash_util" );
 	using utility::file_basename;
 	using utility::vector1;
 	using std::endl;
-	using core::import_pose::pose_from_pdb;
+	using core::import_pose::pose_from_file;
 	using numeric::geometry::hashing::Real3;
 	using numeric::geometry::hashing::Real6;
 	using core::pose::xyzStripeHashPoseCOP;
@@ -532,13 +532,13 @@ void dump_matching_motifs(){
 	for(int ifile = 1; ifile <= (int)pdbfiles.size(); ++ifile ){
 		string fname = pdbfiles[ifile];
 		std::string outfile = utility::file_basename(fname) + "_motifs.pdb.gz";
-		core::pose::PoseOP pose = core::import_pose::pose_from_pdb(fname);
+		core::pose::PoseOP pose = core::import_pose::pose_from_file(fname, core::import_pose::PDB_file);
 		if(option[basic::options::OptionKeys::symmetry::symmetry_definition].user())
 			core::pose::symmetry::make_symmetric_pose(*pose);
 		core::pose::PoseOP pose2 = pose;
 		if(pdbfiles2.size()){
 			cout << "2nd file " << pdbfiles2[ifile] << endl;
-			pose2 = core::import_pose::pose_from_pdb(pdbfiles2[ifile]);
+			pose2 = core::import_pose::pose_from_file(pdbfiles2[ifile], core::import_pose::PDB_file);
 		}
 		ResPairMotifQuery opt(*pose,*pose2);
 		cout << opt << endl;
@@ -978,7 +978,7 @@ void harvest_motifs(){
 			runtime_assert( utility::file::file_exists(fcache) );
 			cout << "using cached ideal coods from " << fcache << endl;
 			Pose tmp;
-			core::import_pose::pose_from_pdb(tmp,fcache);
+			core::import_pose::pose_from_file(tmp,fcache, core::import_pose::PDB_file);
 			if( tmp.sequence() != pose.sequence() ) utility_exit_with_message("cached ideal coordts, sequence doesn't match");
 			pose = tmp;
 		} else if( option[mh::harvest::idealize]() ) {

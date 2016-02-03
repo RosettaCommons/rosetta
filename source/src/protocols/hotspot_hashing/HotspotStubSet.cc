@@ -28,7 +28,8 @@
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/id/AtomID_Map.hh>
-#include <core/io/pdb/pose_io.hh>
+
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/chemical/AA.hh>
 
 #include <core/pack/task/TaskFactory.hh>
@@ -77,7 +78,7 @@
 #include <utility/io/ozstream.hh>
 #include <core/types.hh>
 
-#include <core/pose/Remarks.hh>
+#include <core/io/Remarks.hh>
 #include <core/conformation/Atom.hh>
 #include <numeric/random/random.hh>
 #include <utility/vector1.hh>
@@ -570,15 +571,15 @@ void HotspotStubSet::read_data( std::string const filename ) {
 
 	// read all the poses in filename
 	utility::vector1< core::pose::Pose > poses;
-	core::import_pose::pose_from_pdb( poses, filename );
+	core::import_pose::pose_from_file( poses, filename , core::import_pose::PDB_file);
 
 	core::pose::PoseOP nonconstpose( NULL );//SJF pose will be attached later
 	for ( utility::vector1<core::pose::Pose>::iterator it = poses.begin(); it!= poses.end(); ++it ) {
 		// get REMARKS associated with the pose
 		core::pose::PDBInfoCOP pdbinfo = it->pdb_info();
-		core::pose::Remarks const & remarks ( pdbinfo->remarks() );
+		core::io::Remarks const & remarks ( pdbinfo->remarks() );
 		core::Real score = 0;
-		for ( std::vector< core::pose::RemarkInfo >::const_iterator remark_it = remarks.begin(); remark_it != remarks.end(); ++remark_it ) {
+		for ( std::vector< core::io::RemarkInfo >::const_iterator remark_it = remarks.begin(); remark_it != remarks.end(); ++remark_it ) {
 			// special remark code for theoretical scores
 			if ( remark_it->num == 221 ) {
 				score = std::atof( remark_it->value.c_str() );

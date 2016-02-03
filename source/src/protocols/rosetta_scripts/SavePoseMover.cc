@@ -81,7 +81,7 @@ SavePoseMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data_
 
 	if ( tag->hasOption( "pdb_file" ) ) {
 		std::string const template_pdb_fname( tag->getOption< std::string >( "pdb_file" ));
-		core::import_pose::pose_from_pdb( *reference_pose_, template_pdb_fname );
+		core::import_pose::pose_from_file( *reference_pose_, template_pdb_fname , core::import_pose::PDB_file);
 		TR <<"reading in " << template_pdb_fname << " pdb with " << reference_pose_->total_residue() <<" residues"<<std::endl;
 	}
 

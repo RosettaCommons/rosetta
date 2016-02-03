@@ -100,7 +100,7 @@ public:
 			999999.9 ) );
 
 		std::string const pdb_file( "devel/denovo_design/test_input.pdb" );
-		core::import_pose::pose_from_pdb( input_pose, pdb_file );
+		core::import_pose::pose_from_file( input_pose, pdb_file , core::import_pose::PDB_file);
 		mut_to_trp->apply( input_pose );
 		mut_to_trp2->apply( input_pose );
 	}

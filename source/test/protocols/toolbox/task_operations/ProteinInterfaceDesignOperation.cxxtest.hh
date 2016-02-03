@@ -54,7 +54,7 @@ public:
 		//reuse for comparison with Interface class
 		pose = core::pose::PoseOP( new core::pose::Pose() );
 		scfxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
-		core::import_pose::pose_from_pdb( *pose, "core/conformation/dock_in.pdb" );
+		core::import_pose::pose_from_file( *pose, "core/conformation/dock_in.pdb" , core::import_pose::PDB_file);
 
 		//need to score the pose to find the interface in this case
 		scfxn->set_weight( core::scoring::fa_atr, 0.8  );

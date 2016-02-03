@@ -33,7 +33,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 // packing
 #include <protocols/moves/Mover.hh>
@@ -84,7 +84,7 @@ using namespace protocols::jumping;
 
 using utility::vector1;
 using std::string;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 
 static THREAD_LOCAL basic::Tracer TR( "apps.pilot.lin.symmabrelax" );
 
@@ -207,7 +207,7 @@ SymmAbRelaxTest()
       extended_pose.set_omega( pos, 180 );
     }
   } else {
-    core::import_pose::pose_from_pdb( extended_pose, start_file() );
+    core::import_pose::pose_from_file( extended_pose, start_file() , core::import_pose::PDB_file);
   }
 
   if ( option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
@@ -234,7 +234,7 @@ SymmAbRelaxTest()
   return;
 
   Pose jump_pose;
-  core::import_pose::pose_from_pdb( jump_pose, "fibril_jump.pdb" );
+  core::import_pose::pose_from_file( jump_pose, "fibril_jump.pdb" , core::import_pose::PDB_file);
   //jump_pose.dump_pdb("fibril_jump_dump.pdb");
 
   Size jump_res1 = 3;
@@ -272,7 +272,7 @@ SymmAbRelaxTest()
   if( false ) {
     // beta_jump
     Pose jump_pose;
-    core::import_pose::pose_from_pdb( jump_pose, start_file() );
+    core::import_pose::pose_from_file( jump_pose, start_file() , core::import_pose::PDB_file);
     core::kinematics::Jump beta_jump;
 
     ProtocolOP prot_ptr;

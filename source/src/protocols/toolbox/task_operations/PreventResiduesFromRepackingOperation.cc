@@ -118,7 +118,7 @@ PreventResiduesFromRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 
 		core::pose::Pose reference_pose;
 		if ( reference_pdb_id_ != "" ) {
-			core::import_pose::pose_from_pdb( reference_pose, reference_pdb_id_ );
+			core::import_pose::pose_from_file( reference_pose, reference_pdb_id_ , core::import_pose::PDB_file);
 		}
 
 		utility::vector1< std::string > const res_keys( utility::string_split( unparsed_residues_ , ',' ) );

@@ -30,7 +30,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
@@ -80,7 +80,7 @@ using namespace ObjexxFCL;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -139,7 +139,7 @@ erraser_monte_carlo()
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	pose::Pose pose;
-	import_pose::pose_from_pdb( pose, *rsd_set, option[ in::file::s ][1] );
+	import_pose::pose_from_file( pose, *rsd_set, option[ in::file::s ][1] , core::import_pose::PDB_file);
 	protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
 	protocols::farna::virtualize_5prime_phosphates( pose );
 	setup_design_res( pose );
@@ -149,7 +149,7 @@ erraser_monte_carlo()
 	PoseOP native_pose;
 	if (option[ in::file::native ].user() ) {
 		native_pose = PoseOP( new Pose );
-		import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
+		import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
 	// what are residues that can move? Assume they are contiguous. Can later put in a check!

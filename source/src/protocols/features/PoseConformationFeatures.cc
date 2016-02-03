@@ -22,7 +22,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
@@ -87,7 +87,7 @@ using core::chemical::ResidueTypeCOPs;
 using core::chemical::ChemicalManager;
 using core::chemical::FA_STANDARD;
 using core::chemical::CENTROID;
-using core::io::pdb::pose_from_pose;
+using core::io::pose_from_pose;
 using core::kinematics::FoldTree;
 using core::kinematics::Edge;
 using core::kinematics::Jump;

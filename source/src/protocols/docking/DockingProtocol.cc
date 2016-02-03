@@ -405,7 +405,7 @@ DockingProtocol::init_from_options()
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
 		core::pose::PoseOP native_pose( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb( *native_pose, option[ OptionKeys::in::file::native ]() );
+		core::import_pose::pose_from_file( *native_pose, option[ OptionKeys::in::file::native ]() , core::import_pose::PDB_file);
 		set_native_pose( native_pose );
 	} else {
 		set_native_pose(NULL);
@@ -540,7 +540,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		if ( recover_sidechains_filename_ != "" ) {
 			if ( !recover_sidechains_ ) {
 				core::pose::Pose a_pose;
-				core::import_pose::pose_from_pdb( a_pose, recover_sidechains_filename_ );
+				core::import_pose::pose_from_file( a_pose, recover_sidechains_filename_ , core::import_pose::PDB_file);
 				recover_sidechains_ = protocols::simple_moves::ReturnSidechainMoverOP( new protocols::simple_moves::ReturnSidechainMover( a_pose ) );
 			} //first initialization ?
 		} else if ( get_input_pose() && get_input_pose()->is_fullatom() ) {
@@ -1096,13 +1096,12 @@ void DockingProtocol::add_additional_low_resolution_step( protocols::moves::Move
 /// @details  Show the complete setup of the docking protocol
 void
 DockingProtocol::show( std::ostream & out ) const {
-	using namespace ObjexxFCL::format;
 
 	// All output will be 80 characters - 80 is a nice number, don't you think?
 	std::string line_marker = "///";
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
-	out << line_marker << A( 47, "Rosetta 3 Docking Protocol" ) << space( 27 ) << line_marker << std::endl;
-	out << line_marker << space( 74 ) << line_marker << std::endl;
+	out << line_marker << ObjexxFCL::format::A( 47, "Rosetta 3 Docking Protocol" ) << ObjexxFCL::format::space( 27 ) << line_marker << std::endl;
+	out << line_marker << ObjexxFCL::format::space( 74 ) << line_marker << std::endl;
 	// Display the movable jumps that will be used in docking
 	out << line_marker << " Dockable Jumps: ";
 
@@ -1115,28 +1114,28 @@ DockingProtocol::show( std::ostream & out ) const {
 			spaces_so_far += 2;
 		} else first = false;
 
-		out << I( 1, *it );
+		out << ObjexxFCL::format::I( 1, *it );
 		spaces_so_far += 1;
 	}
 
 	int remaining_spaces = 80 - spaces_so_far;
 
-	if ( remaining_spaces > 0 ) out << space( 80 - spaces_so_far );
+	if ( remaining_spaces > 0 ) out << ObjexxFCL::format::space( 80 - spaces_so_far );
 	out << line_marker << std::endl;
 
 	// Display the state of the low resolution docking protocol that will be used
 	out << line_marker << " Low Resolution Docking Protocol:  " << ( ( docking_lowres_mover_ ) ? ( " on " ) : ( "off " ) );
-	out << space( 35 ) << line_marker << std::endl;
+	out << ObjexxFCL::format::space( 35 ) << line_marker << std::endl;
 
 	// Display the state of the low resolution docking protocol that will be used
 	out << line_marker << " High Resolution Docking Protocol: " << ( ( docking_highres_mover_ ) ? ( " on " ) : ( "off " ) );
-	out << space( 35 ) << line_marker << std::endl;
+	out << ObjexxFCL::format::space( 35 ) << line_marker << std::endl;
 
 	// Display the state of the filters (on or off)
 	out << line_marker << " Low Resolution Filter:  " << ( ( lowres_filter_ ) ? ( " on " ) : ( "off " ) );
-	out << space( 45 ) << line_marker << std::endl;
+	out << ObjexxFCL::format::space( 45 ) << line_marker << std::endl;
 	out << line_marker << " High Resolution Filter: " << ( ( highres_filter_ ) ? ( " on " ) : ( "off " ) );
-	out << space( 45 ) << line_marker << std::endl;
+	out << ObjexxFCL::format::space( 45 ) << line_marker << std::endl;
 
 	// Close the box I have drawn
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;

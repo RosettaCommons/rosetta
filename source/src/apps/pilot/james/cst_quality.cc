@@ -86,7 +86,7 @@ main( int argc, char * argv [] )
 		// read in a native pose
 		core::pose::Pose pose;
 		if ( option[ in::file::native ].user() ) {
-			core::import_pose::pose_from_pdb( pose, *rsd_set, option[ in::file::native ]() );
+			core::import_pose::pose_from_file( pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 		}
 
 		// set up score function

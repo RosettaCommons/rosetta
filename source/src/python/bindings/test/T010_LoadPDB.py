@@ -21,7 +21,7 @@ import os; os.chdir('.test.output')
 
 print version()
 
-pose = pose_from_pdb("../test/data/test_in.pdb")
+pose = pose_from_file("../test/data/test_in.pdb")
 
 scorefxn = get_score_function()
 scorefxn(pose)

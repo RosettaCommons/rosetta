@@ -49,7 +49,7 @@ main( int argc, char *argv[] )
 
 		// Import test poses.
 		Pose lactam;
-		pose_from_pdb( lactam, INPATH + "lactam.pdb" );
+		pose_from_file( lactam, INPATH + "lactam.pdb" , core::import_pose::PDB_file);
 
 		cout << "Intra-peptide lactam PDB file" << endl;
 		cout << lactam << endl;

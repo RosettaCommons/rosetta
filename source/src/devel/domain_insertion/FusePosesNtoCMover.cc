@@ -201,7 +201,7 @@ FusePosesNtoCMover::parse_my_tag(
 {
 	if ( tag->hasOption("fuse_pose") ) {
 		fuse_pose_ = core::pose::PoseOP( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb( *fuse_pose_, tag->getOption<std::string>( "fuse_pose") );
+		core::import_pose::pose_from_file( *fuse_pose_, tag->getOption<std::string>( "fuse_pose") , core::import_pose::PDB_file);
 	} else utility_exit_with_message("FusePosesNtoCMover needs to be supplied with a fuse_pose.");
 
 	if ( tag->hasOption("chains") ) {

@@ -32,7 +32,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -126,7 +126,7 @@ using utility::pointer::access_ptr;
 using utility::pointer::ReferenceCount;
 using utility::vector1;
 using std::endl;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 typedef numeric::xyzMatrix<Real> Mat;
 typedef numeric::xyzVector<Real> Vec;
 typedef utility::vector1<Vec>    Vecs;
@@ -233,9 +233,9 @@ int main (int argc, char *argv[])
 	ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction( core::scoring::get_score_function() );
 
 	Pose nat;
-	core::import_pose::pose_from_pdb(nat,option[willmatch::native1]());
+	core::import_pose::pose_from_file(nat,option[willmatch::native1](), core::import_pose::PDB_file);
 	vector1<Pose> m;
-	core::import_pose::pose_from_pdb(m,*core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD),option[in::file::s]()[1]);
+	core::import_pose::pose_from_file(m,*core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD),option[in::file::s]()[1], core::import_pose::PDB_file);
 	for(Size ilig = 2; ilig <= m.size(); ++ilig) {
 		Pose base(nat);
 		Pose lig(m[ilig]);

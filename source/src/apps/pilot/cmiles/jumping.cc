@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
   using namespace basic::options::OptionKeys;
   devel::init(argc, argv);
 
-  core::pose::PoseCOP pose = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
+  core::pose::PoseCOP pose = core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
 
   core::Size i = option[OptionKeys::cmiles::jumping::resi]();
   core::Size j = option[OptionKeys::cmiles::jumping::resj]();

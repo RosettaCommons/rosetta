@@ -234,7 +234,7 @@ catch ( utility::excn::EXCN_Exception &excn )  {
 
 			// transform the protein into the membrane and optimize embedding
 			if ( option[ OptionKeys::mp::transform::optimize_embedding ].user() &&
-			option[ OptionKeys::mp::transform::optimize_embedding ]() == true ) {
+					option[ OptionKeys::mp::transform::optimize_embedding ]() == true ) {
 				seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::OptimizeProteinEmbeddingMover ) );
 			}
 

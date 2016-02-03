@@ -23,7 +23,7 @@
 
 //Core Chemistry
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 //Command line Options
 #include <basic/options/util.hh>
@@ -98,7 +98,7 @@ main( int argc, char * argv [] )
 
 		TR << "Analyzing "<<*infile_it<<endl;
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose, *infile_it);
+		core::import_pose::pose_from_file(pose, *infile_it, core::import_pose::PDB_file);
 
 		//Look for disulfide bonds
 		int trueDS=0; // actual && possible

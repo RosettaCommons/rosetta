@@ -22,7 +22,7 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -457,7 +457,7 @@ int main(int argc, char *argv[]) {
 		option[OptionKeys::symmetry::symmetry_definition]("input/sym/C"+str(ic)+".sym");
     if(NSS != nss) utility_exit_with_message("wrong ssamp!!!");
     Pose pnat;
-		pose_from_pdb(pnat,fn);
+		pose_from_file(pnat,fn, core::import_pose::PDB_file);
     trans_pose(pnat,-center_of_geom(pnat,1,pnat.n_residue()));
     core::scoring::dssp::Dssp dssp(pnat);
     dssp.insert_ss_into_pose(pnat);

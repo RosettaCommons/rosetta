@@ -27,7 +27,7 @@
 #include <core/graph/Graph.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -298,7 +298,7 @@ main( int argc, char * argv [] ) {
 	// the reference structure contains the antibody and the glycosylated epitope.
 	// read it in up here, outside of the loop of all scaffolds to match
 	pose::Pose reference_structure;
-	import_pose::pose_from_pdb( reference_structure, option[ find_position_matches_using_inverse_rotamers::reference_structure ]() );
+	import_pose::pose_from_file( reference_structure, option[ find_position_matches_using_inverse_rotamers::reference_structure ]() , core::import_pose::PDB_file);
 
 	// need to convert the StringVectorOptionKey option to start and stop residues, because that's what we'll align on later.
 	// we'll assume that the user specified the range as start to stop.
@@ -423,7 +423,7 @@ main( int argc, char * argv [] ) {
 
 		// Read in the scaffold pdb with the aligned (rechained) epitope (i.e. the hybrid PDB file which has the epitope as chain Z and the rest of the scaffold)
 		pose::Pose scaffold;
-		import_pose::pose_from_pdb( scaffold, scaffold_filename );
+		import_pose::pose_from_file( scaffold, scaffold_filename , core::import_pose::PDB_file);
 		TR << "matching on scaffold '" << scaffold_filename << "'" << std::endl;
 
 		// the option -scaffold_epitope_residue_range will have the stretch of residues (inclusive) that should be used to do the alignment. the remaining residues

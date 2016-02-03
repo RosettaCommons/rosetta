@@ -10,7 +10,7 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/conformation/util.hh>
 #include <core/id/AtomID.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>

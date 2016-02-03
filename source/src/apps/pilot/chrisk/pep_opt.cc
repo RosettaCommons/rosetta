@@ -107,7 +107,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
@@ -165,7 +165,7 @@ using namespace ObjexxFCL::format;
 
 using utility::vector1;
 using std::string;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -483,7 +483,7 @@ RunPepSpec()
 	}
 
 	Pose start_pose;
-	core::import_pose::pose_from_pdb( start_pose, pdb_filenames[ 1 ] );
+	core::import_pose::pose_from_file( start_pose, pdb_filenames[ 1 ] , core::import_pose::PDB_file);
 
 	//data out
 	std::string out_nametag( "data" );
@@ -509,7 +509,7 @@ RunPepSpec()
 			Pose pose;
 			//std::string pdb_filename( pdb_filenames[ static_cast< int >( numeric::random::rg().uniform() * pdb_filenames.size() + 1 ) ] );
 			std::string pdb_filename( pdb_filenames[ peptide_loop ] );
-			core::import_pose::pose_from_pdb( pose, pdb_filename );
+			core::import_pose::pose_from_file( pose, pdb_filename , core::import_pose::PDB_file);
 
 			if( option[ pep_spec::pep_chain ].user() ){
 				Size pep_anchor_in( option[ pep_spec::pep_anchor ] );

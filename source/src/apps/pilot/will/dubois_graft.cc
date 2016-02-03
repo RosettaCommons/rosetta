@@ -22,7 +22,7 @@
 
 #include <devel/init.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -141,7 +141,7 @@ main( int argc, char * argv [] )
 
 	// init pose from dubois catalyst ncaa
 	Pose init;
-	import_pose::pose_from_pdb(init,"input/pdb/NPH_0001.pdb");
+	import_pose::pose_from_file(init,"input/pdb/NPH_0001.pdb", core::import_pose::PDB_file);
 
 	core::chemical::ResidueTypeSetCAP fa_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	core::chemical::ResidueType const & alatype( fa_residue_set->name_map("ALA") );
@@ -158,7 +158,7 @@ main( int argc, char * argv [] )
 	for(Size ifile = 1; ifile <= option[in::file::s]().size(); ++ifile) {
 		// add pept res
 		utility::vector1<Pose> pepts;
-		import_pose::pose_from_pdb(pepts,*fa_residue_set,option[in::file::s]()[ifile]);
+		import_pose::pose_from_file(pepts,*fa_residue_set,option[in::file::s]()[ifile], core::import_pose::PDB_file);
 
 		for(Size imodel = 1; imodel <= pepts.size(); ++imodel) {
 			Pose pept = pepts[imodel];

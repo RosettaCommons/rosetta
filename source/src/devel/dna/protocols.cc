@@ -18,7 +18,7 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
@@ -515,7 +515,6 @@ packing_specificity_test(
 
 
 		tt << "score before packing: " << scorefxn( pose ) << std::endl; // hack -- needed to fill tenA graph
-		//io::pdb::dump_pdb( pose, combo_tag+"_prepacked.pdb" );
 
 		tt << "packing with motif sequence: " << output_tag << ' ' << combo_tag << std::endl;
 		pack::task::PackerTaskOP task

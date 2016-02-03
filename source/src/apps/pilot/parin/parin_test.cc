@@ -40,7 +40,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/init/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
@@ -111,7 +111,7 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 // C++ headers
 //#include <cstdlib>
@@ -139,7 +139,7 @@ using namespace ObjexxFCL;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 using namespace protocols::stepwise::sampling::rna;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
@@ -257,7 +257,7 @@ multiple_variant_type_test(){
 		Size seq_num=5;
 
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set,  pdb_tag );
+		import_pose::pose_from_file( pose, *rsd_set,  pdb_tag , core::import_pose::PDB_file);
 		std::string output_pose_name="";
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -612,7 +612,7 @@ hermann_phase_two_minimize(){
 
 		copy_DOF=true;
 		std::string const helical_ends_pdb=option[ helical_ends ]();
-		import_pose::pose_from_pdb( helical_ends_pose, *rsd_set, helical_ends_pdb );
+		import_pose::pose_from_file( helical_ends_pose, *rsd_set, helical_ends_pdb , core::import_pose::PDB_file);
 	}
 
 
@@ -657,7 +657,7 @@ hermann_phase_two_minimize(){
 	std::string const native_filename = option[ in::file::native ]();
 
 	pose::Pose native_pose_ACT;
-	import_pose::pose_from_pdb( native_pose_ACT, *rsd_set, native_filename );
+	import_pose::pose_from_file( native_pose_ACT, *rsd_set, native_filename , core::import_pose::PDB_file);
 
 	if(native_pose_ACT.sequence()!=full_sequence){
 		std::cout << "native_pose_ACT.sequence()= " << native_pose_ACT.sequence() << std::endl;
@@ -987,7 +987,7 @@ hermann_phase_two_minimize(){
 			std::cout << "importing " << import_pose_tag << std::endl;
 
 			pose::Pose import_pose;
-			import_pose::pose_from_pdb( import_pose, *rsd_set, import_pose_tag );
+			import_pose::pose_from_file( import_pose, *rsd_set, import_pose_tag , core::import_pose::PDB_file);
 
 			full_pose=import_pose; //This ensures that everything in full_pose is initialized from scratch
 
@@ -1269,7 +1269,7 @@ hermann_phase_two(){
 
 
 	pose::Pose static_pose;
-	import_pose::pose_from_pdb( static_pose, *rsd_set, static_pdb_tag );
+	import_pose::pose_from_file( static_pose, *rsd_set, static_pdb_tag , core::import_pose::PDB_file);
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1735,7 +1735,7 @@ extract_clash_list(){
 	std::cout << "importing " << pdb_file << std::endl;
 	pose::Pose pose;
 
-	import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 
 	utility::vector1< core::Size > sample_res_list= option[ sample_res ]();
@@ -1866,7 +1866,7 @@ extract_hydrogen_bonds_statistic(){
 	std::cout << "importing " << pdb_file << std::endl;
 	pose::Pose pose;
 
-	import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 
 	utility::vector1< core::Size > input_sample_res_list= option[ sample_res ]();
@@ -2119,7 +2119,7 @@ test_function(){
 	std::cout << "importing " << pdb_file << std::endl;
 	pose::Pose pose;
 
-	import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 	protocols::farna::make_phosphate_nomenclature_matches_mini( pose);
 
@@ -2206,7 +2206,7 @@ get_pose_energy_breakdown(){
 
 		std::cout << "importing pose from pdb_file: " << pdb_file << std::endl;
 
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 		protocols::farna::make_phosphate_nomenclature_matches_mini( pose);
 
@@ -2284,7 +2284,7 @@ minimize_pdb(){
 		std::string const output_pdb_tag= "minimize_res_" + minimize_res_string + get_tag_from_pdb_filename(pdb_tag);
 
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_tag );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_tag , core::import_pose::PDB_file);
 
 		if(option[ graphic ]()) protocols::viewer::add_conformation_viewer( pose.conformation(), pdb_tag, 400, 400 );
 
@@ -3367,7 +3367,7 @@ rna_idealize_test() {
 		std::string const pdb_file = pdb_files[n];
 
 		pose::Pose pose;
-		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		import_pose::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 		/////////////////////////////////////////
 		protocols::farna::make_phosphate_nomenclature_matches_mini( pose );
 		/////////////////////////////////////////

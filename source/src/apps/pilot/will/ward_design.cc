@@ -27,7 +27,7 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -229,7 +229,7 @@ main( int argc, char * argv [] )
 		std::string out_fname = utility::file_basename(in_fname);
 
 		Pose init;
-		import_pose::pose_from_pdb(init,in_fname);
+		import_pose::pose_from_file(init,in_fname, core::import_pose::PDB_file);
 
 		Pose init_sym = init;
 		core::pose::symmetry::make_symmetric_pose(init_sym);

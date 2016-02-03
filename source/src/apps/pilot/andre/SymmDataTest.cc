@@ -18,7 +18,7 @@
 #include <basic/options/util.hh>//option.hh>
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 // packing
 
@@ -44,7 +44,7 @@ using namespace basic::options;
 using namespace optimization;
 using utility::vector1;
 using std::string;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 
 static THREAD_LOCAL basic::Tracer TR( "apps.pilot.ingemar.symm_test" );
 
@@ -58,7 +58,7 @@ SymmDataTest()
 	using namespace conformation::symmetry;
 
 	Pose pdb_pose;
-	core::import_pose::pose_from_pdb( pdb_pose, start_file() );
+	core::import_pose::pose_from_file( pdb_pose, start_file() , core::import_pose::PDB_file);
 
 	Pose pose = pdb_pose;
 	make_symmetric_pose( pose );
@@ -67,7 +67,7 @@ SymmDataTest()
 	scorefxn_sym->show( std::cout, pose );
 	pose.dump_pdb("tmp.pdb");
 	Pose pose_asym;
-	core::import_pose::pose_from_pdb( pose_asym, "tmp.pdb" );
+	core::import_pose::pose_from_file( pose_asym, "tmp.pdb" , core::import_pose::PDB_file);
 	scorefxn_sym->show( std::cout, pose_asym );
 /*
 	SymmetricConformationOP symm_conf (
@@ -100,7 +100,7 @@ SymmDataTest()
   }
 Pose min_pose;
 pose.dump_pdb("after_dofmover.pdb");
-pose_from_pdb( min_pose, "after_dofmover.pdb" );
+pose_from_file( min_pose, "after_dofmover.pdb" , core::import_pose::PDB_file);
 //core::scoring::ScoreFunctionOP scorefxn_asym ( get_score_function_legacy( "score13" ) );
 std::cout << "score asym, sym " << std::endl;
 //scorefxn_asym->show( std::cout, min_pose );

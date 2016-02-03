@@ -56,7 +56,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -110,7 +110,7 @@ using namespace core::options::OptionKeys;
 
 using utility::vector1;
 
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -144,7 +144,7 @@ rna_protein_repack_test()
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	io::pdb::pose_from_pdb( pose, *rsd_set, pdb_file );
+	io::pdb::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 	dump_pdb( pose, "start.pdb");
 
@@ -185,7 +185,7 @@ rna_protein_prepack_test()
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	io::pdb::pose_from_pdb( pose, *rsd_set, pdb_file );
+	io::pdb::pose_from_file( pose, *rsd_set, pdb_file , core::import_pose::PDB_file);
 
 	dump_pdb( pose, "start.pdb");
 
@@ -381,7 +381,7 @@ rna_protein_rb_test(){
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	io::pdb::pose_from_pdb( pose, pdb_file );
+	io::pdb::pose_from_file( pose, pdb_file , core::import_pose::PDB_file);
 
 	Size const nres = pose.total_residue();
 
@@ -449,7 +449,7 @@ rna_protein_rb_test(){
 	//  hey, this probably goes well in the job distributor? anyway.
 	pose::Pose native_pose;
 	bool const use_native = option[in::file::native].active();
-	if (use_native) 	io::pdb::pose_from_pdb( native_pose, option( in::file::native ) );
+	if (use_native) 	io::pdb::pose_from_file( native_pose, option( in::file::native ) , core::import_pose::PDB_file);
 
 	////////////////////////////////////////////////////////////////////
 	// MAIN LOOP
@@ -661,7 +661,7 @@ rna_protein_pdbstats_test(){
 	//Should make this a loop over several pdb files.
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	io::pdb::pose_from_pdb( pose, pdb_file );
+	io::pdb::pose_from_file( pose, pdb_file , core::import_pose::PDB_file);
 
 	Size const nres = pose.total_residue();
 
@@ -781,7 +781,7 @@ juke_sam_test(){
 	for (Size n = 1; n <= pdb_files.size(); n++ ){
 
 		std::string const pdb_file = pdb_files[n];
-		io::pdb::pose_from_pdb( pose, pdb_file );
+		io::pdb::pose_from_file( pose, pdb_file , core::import_pose::PDB_file);
 
 		Size const nres = pose.total_residue();
 

@@ -35,7 +35,7 @@ public:
 
 	virtual void setUp() {
 		//core_init_with_additional_options( "-ex1" );// I can't get this to work
-		core::import_pose::pose_from_pdb(design_pose, "design_in.pdb");
+		core::import_pose::pose_from_file(design_pose, "design_in.pdb", core::import_pose::PDB_file);
 	};
 
 	virtual void run(core::Real scaleFactor) {

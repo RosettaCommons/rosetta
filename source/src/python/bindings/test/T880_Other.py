@@ -15,14 +15,14 @@ import os; os.chdir('.test.output')
 print 'testing ligand modeling'
 params_list = Vector1(['../test/data/ligand.params'])
 res_set = generate_nonstandard_residue_set(params_list)
-ligand_p = pose_from_pdb(res_set, "../test/data/ligand_test.pdb")
+ligand_p = pose_from_file(res_set, "../test/data/ligand_test.pdb")
 
 scorefxn = create_score_function("ligand")
 scorefxn(ligand_p)
 
 print 'testing DNA modeling'
 dna_p = Pose()
-pose_from_pdb(dna_p, "../test/data/dna_test.pdb")
+pose_from_file(dna_p, "../test/data/dna_test.pdb")
 
 scorefxn = create_score_function("dna")
 scorefxn(dna_p)

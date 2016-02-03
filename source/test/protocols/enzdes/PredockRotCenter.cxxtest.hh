@@ -92,7 +92,7 @@ public:
 	void test_predock_rotcenter()
 	{
 		pose::Pose pose;
-		core::import_pose::pose_from_pdb(pose, "protocols/enzdes/ligtest_it.pdb");
+		core::import_pose::pose_from_file(pose, "protocols/enzdes/ligtest_it.pdb", core::import_pose::PDB_file);
 		scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
 		scorefxn->reset();
 		enz_io->read_enzyme_cstfile("protocols/enzdes/ligtest_it.cst");

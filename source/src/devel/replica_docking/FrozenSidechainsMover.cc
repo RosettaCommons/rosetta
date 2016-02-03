@@ -173,7 +173,7 @@ FrozenSidechainsMover::parse_my_tag(
 ) {
   if ( tag->hasOption("recover_sidechains_pdb")) {
     std::string pdbfile = tag->getOption< std::string > ( "recover_sidechains_pdb" );
-    core::import_pose::pose_from_pdb( recover_sidechains_pose_, pdbfile );
+    core::import_pose::pose_from_file( recover_sidechains_pose_, pdbfile , core::import_pose::PDB_file);
     tr.Debug << "sidechains of non-interface residues will be frozen back to the sidechains of the given recover_sidechains pdb file" << std::endl;
   } else {
     recover_sidechains_pose_ = pose;

@@ -19,7 +19,7 @@
 #include <map>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -97,7 +97,7 @@ int main( int argc, char * argv [] ) {
 			pose::Pose input_pose;
 
 			//read in pdb file from command line
-			core::import_pose::pose_from_pdb( input_pose, fname1 );
+			core::import_pose::pose_from_file( input_pose, fname1 , core::import_pose::PDB_file);
 			std::vector< conformation::ResidueCOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
 
 

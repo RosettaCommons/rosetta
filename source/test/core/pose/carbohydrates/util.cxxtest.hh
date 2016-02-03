@@ -53,10 +53,10 @@ public:  // Standard methods //////////////////////////////////////////////////
 		option[ OptionKeys::in::file::read_pdb_link_records ]( true );
 
 		// Test branched oligosaccharide.
-		pose_from_pdb( Lex_, "core/chemical/carbohydrates/Lex.pdb" );
+		pose_from_file( Lex_, "core/chemical/carbohydrates/Lex.pdb" , core::import_pose::PDB_file);
 
 		// Test oligosaccharide with exocyclic linkage.
-		pose_from_pdb( isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb" );
+		pose_from_file( isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb" , core::import_pose::PDB_file);
 	}
 
 	// Destruction

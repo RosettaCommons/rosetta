@@ -51,10 +51,10 @@ main( int argc, char * argv [] )
 		TR << "Hello to loading in poses" << std::endl;
 		
   		core::pose::PoseOP native_pose = new Pose();
-    	pose_from_pdb( *native_pose, "1afo_in.pdb" );
+    	pose_from_file( *native_pose, "1afo_in.pdb" , core::import_pose::PDB_file);
 
     	core::pose::PoseOP test_pose = new Pose(); 
-    	pose_from_pdb( *test_pose, "1afo_decoy.pdb" ); 
+    	pose_from_file( *test_pose, "1afo_decoy.pdb" , core::import_pose::PDB_file); 
 
     	// Calculate rmsd
     	//TR << "RMSD is: " << compute_mp_rmsd_with_super( *native_pose, *test_pose ) << std::endl;

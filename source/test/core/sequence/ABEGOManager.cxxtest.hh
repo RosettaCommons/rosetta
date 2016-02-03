@@ -142,7 +142,7 @@ public:
 		TS_ASSERT( "AB[SP][MN]EO" == abm.get_abego_string( abego ) );
 
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "core/sequence/abego_test.pdb" );
+		core::import_pose::pose_from_file( pose, "core/sequence/abego_test.pdb" , core::import_pose::PDB_file);
 		// check get abego from pose
 		TS_ASSERT( abm.get_abego_string( core::sequence::get_abego( pose, /* level */ 1 ) ) == "EBAAAGBO" );
 		TS_ASSERT( abm.get_abego_string( core::sequence::get_abego( pose, /* level */ 3 ) ) == "EZAAAGSO" );

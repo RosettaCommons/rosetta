@@ -29,7 +29,8 @@
 #include <core/conformation/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/Remarks.hh>
+#include <core/io/StructFileRep.hh>
 #include <core/pose/util.hh> // for pdbinfo
 #include <core/id/AtomID.hh>
 
@@ -40,7 +41,7 @@
 #include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/io/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -69,6 +70,7 @@
 #include <math.h>
 
 using namespace basic::options;
+using namespace Eigen;
 
 namespace protocols {
 namespace forge {
@@ -164,7 +166,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	// dumping information into PDB header
 	core::pose::PDBInfoOP temp_pdbinfo( new core::pose::PDBInfo(pose,true) );
 
-	core::pose::RemarkInfo remark;
+	core::io::RemarkInfo remark;
 	//capture stream
 	std::stringstream capture_stream;
 
@@ -558,7 +560,7 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 	}
 	PoseOP singleton_pose( new Pose );
 	core::chemical::ResidueTypeSetCOP type_set = (pose.residue(1).residue_type_set());
-	core::io::pdb::pose_from_pose( *singleton_pose, pose, *type_set, residue_indices);
+	core::io::pose_from_pose( *singleton_pose, pose, *type_set, residue_indices);
 
 	// However the constraint type maps the same atoms, so we actually need yet another pose, with two copies.
 	// the strategy is to use the singleton to figure out the coordinates, and dump the xyz to the second segment.
@@ -570,7 +572,7 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 	}
 
 	PoseOP double_pose( new Pose );
-	core::io::pdb::pose_from_pose( *double_pose, pose, *type_set, residue_indices);
+	core::io::pose_from_pose( *double_pose, pose, *type_set, residue_indices);
 
 	TR.Debug << "setup RGF cst 2" << std::endl;
 	// make residue list, needed for rotational transformation

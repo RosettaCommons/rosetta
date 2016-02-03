@@ -156,7 +156,7 @@ public:
 	}
 	//"/home/jadolfbr/Documents/modeling/databases/antibody_databases/PyIgClassify/DBOUT/renumbered_pdbs/1pg7L-1pg7H.pdb"
 	void setUp() {
-		//core::import_pose::pose_from_pdb(multimer_, );
+		//core::import_pose::pose_from_file(multimer_, , core::import_pose::PDB_file);
 		db_name_ =  "InterfaceFeaturesTest2.db3";
 		reporter_ = new protocols::features::InterfaceFeatures();
 		utility::file::file_delete(db_name_);

@@ -544,8 +544,6 @@ build_random_dna_rotamers(
 
 			rotamers.push_back( mini_pose.residue(seqpos).clone() );
 
-			// io::pdb::dump_pdb ( mini_pose, lead_zero_string_of(r, 4) );
-
 			// this is a little tricky... maybe have to do more initialization here to match the "rotamer-constructor"
 			// behavior??
 			debug_assert( Size(rot->seqpos()) == resid );
@@ -679,7 +677,7 @@ build_rotamers_from_rotamer_bins( conformation::Residue const & residue,
 		// If the current chi index is greater than the number of chis, every index has been changed, and it is time to
 		// cease recursing and make a rotamer from the current state of the bin indices.
 	} else {
-		tt.Trace << "Current bin index for rotamer generation: " << *current_bin_indices << endl;
+		// tt.Trace << "Current bin index for rotamer generation: " << *current_bin_indices << endl;
 		rotamers.push_back( residue.create_rotamer() );  // Clone current residue.
 		// Set the torsions of the new rotamer to values indexed by current_bin_indices.
 		tt.Debug << "Selecting ";

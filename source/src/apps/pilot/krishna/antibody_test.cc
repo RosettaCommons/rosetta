@@ -35,7 +35,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/file/FileName.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 
 static THREAD_LOCAL basic::Tracer TR( "protocols.antibody2" );
@@ -66,8 +66,8 @@ main( int argc, char * argv [] )
 
 	core::pose::Pose pose;
 	core::pose::Pose native_pose;
-	core::import_pose::pose_from_pdb(pose, pdb_name);
-	core::import_pose::pose_from_pdb(native_pose, native_pdb_name);
+	core::import_pose::pose_from_file(pose, pdb_name, core::import_pose::PDB_file);
+	core::import_pose::pose_from_file(native_pose, native_pdb_name, core::import_pose::PDB_file);
 
 /*	Size align_residue_list [] = {10,20,30,40};
 	Size rmsd_residue_list [] = {50,60,70,80};
@@ -98,7 +98,7 @@ main( int argc, char * argv [] )
 //	protocols::rigid::RigidBodyTransMoverOP translate_away ( new protocols::rigid::RigidBodyTransMover( pose, 1 ) );
 //	translate_away->step_size( 100 );
 //	translate_away->apply( pose );
-//	core::io::pdb::dump_pdb( pose, "separated_pose.pdb" );
+//	core::io::pdb::old_dump_pdb( pose, "separated_pose.pdb" );
 //	exit(-1);
 }
 

@@ -24,7 +24,7 @@
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 #include <Objecxx/FArray1D.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/option.hh>
 
 
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 
   core::pose::Pose pose; // starts NULL, coords *never* modified!
   std::string pdb=pdbs[0];
-  core::import_pose::pose_from_pdb( pose, pdb);
+  core::import_pose::pose_from_file( pose, pdb, core::import_pose::PDB_file);
 
 	protocols::ligand_docking::LigandBaseProtocol protocol();
 

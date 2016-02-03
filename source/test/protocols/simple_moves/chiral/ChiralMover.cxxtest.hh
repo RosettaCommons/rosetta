@@ -29,7 +29,7 @@
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 
 // Package headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -77,7 +77,7 @@ public:
 		scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( scoring::MM_STD_WTS) );
 
 		// read pdb file
-		core::import_pose::pose_from_pdb( pose, "protocols/simple_moves/chiral/AAdAdA.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/simple_moves/chiral/AAdAdA.pdb" , core::import_pose::PDB_file);
 
 		core::init::init_random_generators(1000, "mt19937");
 	}

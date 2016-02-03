@@ -226,8 +226,8 @@ test_gradient() {
 	core::scoring::packing::HolesParams params;
 
 	Pose bad,good;
-	core::import_pose::pose_from_pdb(bad ,"hivp_low_1rv7.pdb.clean.align");
-	core::import_pose::pose_from_pdb(good,"hivp_high_1tw7.pdb.clean.align");
+	core::import_pose::pose_from_file(bad ,"hivp_low_1rv7.pdb.clean.align", core::import_pose::PDB_file);
+	core::import_pose::pose_from_file(good,"hivp_high_1tw7.pdb.clean.align", core::import_pose::PDB_file);
 
 	PoseBalls bbad(bad);
 	PoseBalls bgood(good);

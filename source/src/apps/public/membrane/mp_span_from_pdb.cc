@@ -85,7 +85,7 @@ Pose read_pose() {
 
 	// read in pose
 	Pose pose;
-	core::import_pose::pose_from_pdb( pose, option[OptionKeys::in::file::s].value_string() );
+	core::import_pose::pose_from_file( pose, option[OptionKeys::in::file::s].value_string() , core::import_pose::PDB_file);
 	TR.Debug << "got pose of length " << pose.total_residue() << std::endl;
 
 	return pose;

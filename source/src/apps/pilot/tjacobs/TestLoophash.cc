@@ -79,7 +79,7 @@ main( int argc, char * argv [] )
 //	core::chemical::ResidueTypeSetCAP res_type_set =
 //		core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
 //
-//	core::pose::PoseOP pose = core::import_pose::pose_from_pdb(*res_type_set, "/Users/tjacobs2/PROJECTS/sewing2/refactor/discontinuous/1yzm_test/inputs/1yzm_no_loop.pdb");
+//	core::pose::PoseOP pose = core::import_pose::pose_from_file(*res_type_set, "/Users/tjacobs2/PROJECTS/sewing2/refactor/discontinuous/1yzm_test/inputs/1yzm_no_loop.pdb", core::import_pose::PDB_file);
 //
 //	for(core::Size i=1; i <= pose->total_residue(); ++i) {
 //		core::conformation::remove_upper_terminus_type_from_conformation_residue( pose->conformation(), i );
@@ -98,7 +98,7 @@ main( int argc, char * argv [] )
 //	LoopHashMap &hashmap = lh_library->gethash( 3 );
 //	std::cout << "Number of loops in db of size 3: " << hashmap.n_loops() << std::endl;
 //	
-//	core::pose::PoseOP pose = core::import_pose::pose_from_pdb("1tua_clean_mpm.pdb");
+//	core::pose::PoseOP pose = core::import_pose::pose_from_file("1tua_clean_mpm.pdb", core::import_pose::PDB_file);
 //	
 //	numeric::geometry::hashing::Real6 loop_transform;
 //	//TR << "Getting transform from residues " << lh_fragment_begin << " and " << lh_fragment_end+1 << std::endl;

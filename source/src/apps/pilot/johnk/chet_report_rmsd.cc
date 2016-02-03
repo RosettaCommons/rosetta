@@ -18,7 +18,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/pose/Pose.hh>
@@ -88,12 +88,12 @@ main( int argc, char * argv [] )
 	// create pose for native pose
 	pose::Pose native_pose;
 	std::string const native_pdb_name ( option[ native_pdb ] );
-	core::import_pose::pose_from_pdb( native_pose, native_pdb_name );
+	core::import_pose::pose_from_file( native_pose, native_pdb_name , core::import_pose::PDB_file);
 
 	// create pose for curr_pose
 	pose::Pose curr_pose;
 	std::string const input_pdb_name ( basic::options::start_file() );
-	core::import_pose::pose_from_pdb( curr_pose, input_pdb_name );
+	core::import_pose::pose_from_file( curr_pose, input_pdb_name , core::import_pose::PDB_file);
 
 	if ( curr_pose.total_residue() != native_pose.total_residue() ) {
 		TR << "ERROR!! Native and comparison pose do not have the same number of residues!!" << std::endl;

@@ -1100,10 +1100,10 @@ print_internal_coords( core::pose::Pose const & pose ) {
 
 			} else {
 				std::cout << "ICOOR_INTERNAL  " <<
-					A( 5, rsd.atom_name( j )) << " " <<
-					F(11,6, degrees( pose.atom_tree().dof( DOF_ID( current_atom->id(), id::PHI ) ) ) )  << " " <<
-					F(11,6, degrees(  pose.atom_tree().dof( DOF_ID( current_atom->id(), id::THETA ) ) ) ) << " " <<
-					F(11,6, pose.atom_tree().dof( DOF_ID( current_atom->id(), id::D ) ) )    << "  " <<
+					ObjexxFCL::format::A( 5, rsd.atom_name( j )) << " " <<
+					ObjexxFCL::format::F(11,6, degrees( pose.atom_tree().dof( DOF_ID( current_atom->id(), id::PHI ) ) ) )  << " " <<
+					ObjexxFCL::format::F(11,6, degrees(  pose.atom_tree().dof( DOF_ID( current_atom->id(), id::THETA ) ) ) ) << " " <<
+					ObjexxFCL::format::F(11,6, pose.atom_tree().dof( DOF_ID( current_atom->id(), id::D ) ) )    << "  " <<
 					pose.residue( (input_stub_atom1->id()).rsd() ).atom_name( (input_stub_atom1->id()).atomno() ) << "  " <<
 					pose.residue( (input_stub_atom2->id()).rsd() ).atom_name( (input_stub_atom2->id()).atomno() ) << "  " <<
 					pose.residue( (input_stub_atom3->id()).rsd() ).atom_name( (input_stub_atom3->id()).atomno() ) << "  " <<
@@ -1339,7 +1339,7 @@ process_input_file( std::string const & input_file,
 	if ( is_pdb ) {
 
 		pose::PoseOP pose_op( new pose::Pose );
-		core::import_pose::pose_from_pdb( *pose_op, *rsd_set, input_file );
+		core::import_pose::pose_from_file( *pose_op, *rsd_set, input_file , core::import_pose::PDB_file);
 		//   ensure_phosphate_nomenclature_matches_mini( *pose_op );
 		core::pose::rna::figure_out_reasonable_rna_fold_tree( *pose_op );
 		pose_list.push_back( pose_op );

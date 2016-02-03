@@ -592,7 +592,7 @@ SymmetricMotifFilter::parse_my_tag(
 	utility::vector1<std::string> motif_files( utility::string_split( tag->getOption< std::string >("motifs"), ',') );
 	for ( Size i=1; i<=motif_files.size(); ++i ) {
 		core::pose::PoseOP motif( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb( *motif, motif_files[i] );
+		core::import_pose::pose_from_file( *motif, motif_files[i] , core::import_pose::PDB_file);
 		ref_motifs_.push_back( motif );
 	}
 	core::Size nmotifs = ref_motifs_.size();

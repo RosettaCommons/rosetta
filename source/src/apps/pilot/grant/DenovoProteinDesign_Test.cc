@@ -17,7 +17,7 @@
 #include <core/pack/task/PackerTask_.hh>
 
 //project Headers
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>
 #include <core/pose/util.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -125,7 +125,7 @@ main( int argc, char * argv [] )
 
 	  for( std::vector< FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i ){
 
-	    core::import_pose::pose_from_pdb( pose, *i);
+	    core::import_pose::pose_from_file( pose, *i, core::import_pose::PDB_file);
 
 	  protocols::moves::SequenceMover DenovoDesignProtocol_template( myCreateStartingStructureMover, myDesignRelaxMover );
 	  protocols::jobdist::main_plain_pdb_mover(DenovoDesignProtocol_template, fullfxn);

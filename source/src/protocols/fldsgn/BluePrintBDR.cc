@@ -380,7 +380,7 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 				insnum ++;
 				ins_sec = blueprint_->secstruct( i );
 				insert_name = blueprint_->insertion( insnum );
-				core::import_pose::pose_from_pdb( insert_pose, insert_name );
+				core::import_pose::pose_from_file( insert_pose, insert_name , core::import_pose::PDB_file);
 				aa += '^';
 				ss += '^';
 			} else if ( blueprint_->buildtype( i ) == 'I' ) {

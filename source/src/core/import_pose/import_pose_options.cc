@@ -66,7 +66,7 @@ std::string ImportPoseOptions::type() const { return "ImportPoseOptions"; }
 
 void ImportPoseOptions::parse_my_tag( utility::tag::TagCOP tag )
 {
-	PDB_DReaderOptions::parse_my_tag( tag );
+	StructFileReaderOptions::parse_my_tag( tag );
 
 	set_centroid( tag->getOption< bool >( "centroid", 0 ));
 	set_fold_tree_io( tag->getOption< bool >( "fold_tree_io", 0 ));

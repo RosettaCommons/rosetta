@@ -105,7 +105,7 @@ public:
 		//typedef core::id::AtomID AtomID;
 
 		core::pose::Pose test_pose;
-		core::import_pose::pose_from_pdb( test_pose, "protocols/enzdes/ligtest_it.pdb");
+		core::import_pose::pose_from_file( test_pose, "protocols/enzdes/ligtest_it.pdb", core::import_pose::PDB_file);
 		scoring::ScoreFunctionOP scorefxn;
 		scorefxn = core::scoring::get_score_function();
 		(*scorefxn)(test_pose);

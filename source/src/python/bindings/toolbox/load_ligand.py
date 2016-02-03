@@ -19,7 +19,7 @@ import os
 import openbabel
 import molfile_to_params
 from rosetta import Pose
-from rosetta import pose_from_pdb
+from rosetta import pose_from_file
 from rosetta import init
 
 ################################################################################
@@ -190,19 +190,19 @@ def pose_from_pubchem( cid , name , temporary = True ):
         res_set = generate_nonstandard_residue_set( [name] )
 
         # fill the pose
-        pose_from_pdb( pose , res_set , name + '_0001.pdb')
+        pose_from_file( pose , res_set , name + '_0001.pdb')
     else:
     # permanent solution, add to .params list
         add_cid_to_database( cid , name )
 
         # fill the pose
-        pose_from_pdb( pose , name + '_0001.pdb' )
+        pose_from_file( pose , name + '_0001.pdb' )
     return pose
 
 # returns a pose containing a ligand
 def pose_from_params( filename , params_list ):
     res_set = generate_nonstandard_residue_set( params_list )
     pose = Pose()
-    pose_from_pdb( pose , res_set , filename )
+    pose_from_file( pose , res_set , filename )
     return pose
 

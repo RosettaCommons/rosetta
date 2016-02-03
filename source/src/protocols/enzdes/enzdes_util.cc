@@ -27,7 +27,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/graph/Graph.hh>
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -139,13 +139,13 @@ sum_constraint_scoreterms(
 /// ligand rigid body confs will be generated and added to the cacheable
 /// observer
 void
-read_pose_from_pdb(
+read_pose_from_file(
 	core::pose::Pose & pose,
 	std::string const & filename
 )
 {
 	utility::vector1< core::pose::Pose > input_poses;
-	core::import_pose::pose_from_pdb( input_poses, filename );
+	core::import_pose::pose_from_file( input_poses, filename );
 	runtime_assert( input_poses.size() > 0 );
 	pose = input_poses[1];
 	toolbox::match_enzdes_util::EnzdesCacheableObserverOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
@@ -374,8 +374,8 @@ remove_remark_header_for_geomcst(
 )
 {
 
-	core::pose::Remarks remarks( pose.pdb_info()->remarks() );
-	core::pose::Remarks newremarks;
+	core::io::Remarks remarks( pose.pdb_info()->remarks() );
+	core::io::Remarks newremarks;
 	for ( core::Size i = 0; i < remarks.size(); ++i ) {
 
 		std::string chainA(""), chainB(""), resA(""), resB("");
@@ -394,8 +394,8 @@ create_remark_headers_from_cstcache(
 	core::pose::Pose & pose
 )
 {
-	core::pose::Remarks remarks( pose.pdb_info()->remarks() );
-	core::pose::Remarks newremarks;
+	core::io::Remarks remarks( pose.pdb_info()->remarks() );
+	core::io::Remarks newremarks;
 
 	toolbox::match_enzdes_util::EnzdesCstCacheCOP cstcache( toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache() );
 
@@ -419,7 +419,7 @@ create_remark_headers_from_cstcache(
 			resA = pose.residue( seqposA ).name3();
 			resB = pose.residue( seqposB ).name3();
 
-			core::pose::RemarkInfo ri;
+			core::io::RemarkInfo ri;
 			ri.num = 666;
 			ri.value = toolbox::match_enzdes_util::assemble_remark_line( chainA, resA, pdbposA, chainB, resB, pdbposB, i, 1 );
 			//std::cout << "adding " << ri.value << " to header... " << std::endl;

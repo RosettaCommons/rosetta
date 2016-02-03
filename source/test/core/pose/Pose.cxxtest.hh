@@ -109,7 +109,7 @@ public: // tests
 		ScoreFunctionOP scorefxn = get_score_function();
 
 		Pose * pose = new Pose;
-		core::import_pose::pose_from_pdb( *pose, "core/pose/pdbinfo_test_in.pdb" );
+		core::import_pose::pose_from_file( *pose, "core/pose/pdbinfo_test_in.pdb" , core::import_pose::PDB_file);
 
 		// attach observer
 		Obs obs;
@@ -189,7 +189,7 @@ public: // tests
 		empty.update_residue_neighbors();
 
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, "core/pose/pdbinfo_test_in.pdb" );
+		core::import_pose::pose_from_file( pose, "core/pose/pdbinfo_test_in.pdb" , core::import_pose::PDB_file);
 		pose.update_residue_neighbors();
 	}
 

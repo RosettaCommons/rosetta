@@ -22,6 +22,7 @@
 #include <core/chemical/AA.hh>
 //#include <core/chemical/ResidueTypeSelector.fwd.hh>
 #include <core/chemical/ResidueTypeSetCache.fwd.hh>
+#include <core/chemical/MergeBehaviorManager.fwd.hh>
 
 // STL headers
 #include <list>
@@ -223,9 +224,11 @@ public:
 	///           be standard types, listed in VariantType.hh.
 	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
 	ResidueTypeCOPs
-	get_all_types_with_variants_aa( AA aa,
+	get_all_types_with_variants_aa(
+		AA aa,
 		utility::vector1< std::string > const & variants,
-		utility::vector1< VariantType > const & exceptions ) const;
+		utility::vector1< VariantType > const & exceptions
+	) const;
 
 	/// @brief Get all non-patched ResidueTypes with the given name1
 	/// @details The number of variants must match exactly.
@@ -237,8 +240,10 @@ public:
 	/// @details The number of variants must match exactly.
 	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
 	ResidueTypeCOPs
-	get_all_types_with_variants_name3( std::string const & name3,
-		utility::vector1< std::string > const & variants ) const;
+	get_all_types_with_variants_name3(
+		std::string const & name3,
+		utility::vector1< std::string > const & variants
+	) const;
 
 	/// @brief query if a ResidueType of the unique residue id (name) is present.
 	bool has_name( std::string const & name ) const;
@@ -251,21 +256,26 @@ public:
 	has_interchangeability_group( std::string const & name ) const;
 
 	/// @brief Query a variant ResidueType by its base ResidueType and VariantType
-	ResidueType const & get_residue_type_with_variant_added(
+	ResidueType const &
+	get_residue_type_with_variant_added(
 		ResidueType const & init_rsd,
-		VariantType const new_type ) const;
+		VariantType const new_type
+	) const;
 
 	/// @brief return the residuetype we get from variant rsd type after removing the desired variant type
-	ResidueType const & get_residue_type_with_variant_removed(
+	ResidueType const &
+	get_residue_type_with_variant_removed(
 		ResidueType const & init_rsd,
-		VariantType const old_type ) const;
+		VariantType const old_type
+	) const;
 
 	/// @brief accessor for database_directory
-	std::string const&
-	database_directory() const
-	{
-		return database_directory_;
-	}
+	std::string const &
+	database_directory() const;
+
+	/// @brief accessor for merge behavior manager
+	MergeBehaviorManager const &
+	merge_behavior_manager() const;
 
 	/// @brief the residues with no patches applied
 	ResidueTypeCOPs base_residue_types() const { return base_residue_types_; }
@@ -372,6 +382,8 @@ private:
 
 	/// @brief the database directory of the generating files ---> allows to use cached dunbrack libs
 	const std::string database_directory_;
+
+	MergeBehaviorManagerCOP merge_behavior_manager_;
 
 	/// @brief the patches
 	utility::vector1< PatchCOP > patches_;

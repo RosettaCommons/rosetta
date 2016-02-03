@@ -19,7 +19,7 @@
 //#include <core/sequence/util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/Tracer.hh>
 
 #include <core/scoring/ResidualDipolarCoupling.hh>
@@ -118,7 +118,7 @@ int main(int argc, char * argv[]) {
 //		trace << "Input PDB file: " << option[in::file::s](1) << std::endl;
 //		pose = new core::pose::Pose;
 //		std::string fn = option[in::file::s](1);
-//		core::import_pose::pose_from_pdb(*pose, fn);
+//		core::import_pose::pose_from_file(*pose, fn, core::import_pose::PDB_file);
 //	}
 //
 //	utility::vector1<core::scoring::RDC> data_sink;

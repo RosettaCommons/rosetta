@@ -90,7 +90,7 @@ int main( int argc, char* argv [] ) {
 				utility_exit_with_message( "Unable to open file: " + pdbfile + '\n' );
 			}
 			core::pose::PoseOP mypose( new core::pose::Pose );
-			core::import_pose::pose_from_pdb( *mypose, pdbfile ); // default is standard fullatom residue_set
+			core::import_pose::pose_from_file( *mypose, pdbfile , core::import_pose::PDB_file); // default is standard fullatom residue_set
 
 			std::ostream & output( std::cout );
 

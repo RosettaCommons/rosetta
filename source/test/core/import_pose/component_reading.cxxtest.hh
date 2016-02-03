@@ -47,7 +47,7 @@ public:
 	void test_load_components() {
 		core::pose::PoseOP pose;
 
-		pose = core::import_pose::pose_from_pdb("core/import_pose/3KBA.pdb");
+		pose = core::import_pose::pose_from_file("core/import_pose/3KBA.pdb", core::import_pose::PDB_file);
 
 		TS_ASSERT_EQUALS( pose->total_residue(), 496 ); // No Waters
 		TS_ASSERT_EQUALS( pose->residue(244).name3(), "WOW"); // Actually the 494th residue in file

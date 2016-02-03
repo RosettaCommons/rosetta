@@ -35,7 +35,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/Jump.hh>
@@ -164,7 +164,7 @@ main (int argc, char *argv[])
   for(Size ifile = 1; ifile <= option[OptionKeys::in::file::s]().size(); ++ifile) {
     string fname = option[OptionKeys::in::file::s]()[ifile];
     Pose p;
-    core::import_pose::pose_from_pdb(p,fname);
+    core::import_pose::pose_from_file(p,fname, core::import_pose::PDB_file);
     Size nsub = p.n_residue()/6;
     Size nsym = 3;
 

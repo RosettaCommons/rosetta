@@ -12,7 +12,7 @@
 /// @author Ragul Gowthaman
 
 // Protocol Headers
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/pose/Pose.hh>
 #include <basic/MetricValue.hh>
 
@@ -64,7 +64,7 @@
 #include <map>
 
 //Auto Headers
-#include <core/io/pdb/pose_io.hh>
+
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>

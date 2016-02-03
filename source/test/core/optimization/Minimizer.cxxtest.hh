@@ -183,7 +183,7 @@ public:
 		using id::D;
 
 		pose::Pose start_pose(create_test_in_pdb_pose());
-		//core::import_pose::pose_from_pdb( start_pose, "core/optimization/test_in.pdb" );
+		//core::import_pose::pose_from_file( start_pose, "core/optimization/test_in.pdb" , core::import_pose::PDB_file);
 
 		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 

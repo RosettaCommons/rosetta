@@ -27,7 +27,7 @@
 
 using namespace std;
 using core::pose::Pose;
-using core::import_pose::pose_from_pdb;
+using core::import_pose::pose_from_file;
 using protocols::features::ReportToDB;
 using protocols::features::ReportToDBOP;
 using protocols::features::PoseConformationFeatures;
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 	devel::init(argc, argv);
 
 	Pose pose;
-	pose_from_pdb(pose, "structures/linear/4.symmetry.pdb");
+	pose_from_file(pose, "structures/linear/4.symmetry.pdb", core::import_pose::PDB_file);
 
 	//ReportToDBOP reporter = new ReportToDB;
 	//reporter->add_features_reporter(new PoseConformationFeatures);

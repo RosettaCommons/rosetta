@@ -575,7 +575,7 @@ int main( int argc, char * argv [] ) {
     try {
     using namespace core::chemical;
     using namespace core::import_pose::pose_stream;
-    using core::import_pose::pose_from_pdb;
+    using core::import_pose::pose_from_file;
     using namespace core::scoring;
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
@@ -590,7 +590,7 @@ int main( int argc, char * argv [] ) {
     core::pose::Pose current_pose;
     core::pose::Pose native_pose;
     ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
-	pose_from_pdb(
+	pose_from_file(
 			native_pose,
 			*rsd_set,
 			option[ in::file::native ]()

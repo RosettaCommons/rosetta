@@ -112,7 +112,7 @@ pdb_scoring() {
 
 	if ( option[ in::file::native ].user() ) {
 		pose = PoseOP ( new Pose );
-		import_pose::pose_from_pdb ( *pose, *rsd_set, option[in::file::native]() );
+		import_pose::pose_from_file ( *pose, *rsd_set, option[in::file::native]() );
 	}
 
 	add_virtual_res ( *pose, true );

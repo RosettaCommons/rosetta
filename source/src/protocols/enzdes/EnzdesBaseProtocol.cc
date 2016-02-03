@@ -194,7 +194,7 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 	//set the native pose if requested
 	if ( basic::options::option[basic::options::OptionKeys::in::file::native].user() ) {
 		core::pose::PoseOP natpose( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb( *natpose, basic::options::option[basic::options::OptionKeys::in::file::native].value() );
+		core::import_pose::pose_from_file( *natpose, basic::options::option[basic::options::OptionKeys::in::file::native].value() , core::import_pose::PDB_file);
 		(*scorefxn_)( *natpose);
 		this->set_native_pose( natpose );
 	}
@@ -771,8 +771,8 @@ EnzdesBaseProtocol::exchange_ligands_in_pose(
 		}
 
 		//now we also have to change the remarks
-		core::pose::Remarks & remarks = pose.pdb_info()->remarks();
-		for ( std::vector< core::pose::RemarkInfo >::iterator rem_it = remarks.begin(); rem_it != remarks.end(); ++rem_it ) {
+		core::io::Remarks & remarks = pose.pdb_info()->remarks();
+		for ( std::vector< core::io::RemarkInfo >::iterator rem_it = remarks.begin(); rem_it != remarks.end(); ++rem_it ) {
 
 			std::string chainA(""), resA(""),chainB(""),resB("");
 			core::Size cst_block(0), exgeom_id(0);

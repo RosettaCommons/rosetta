@@ -22,7 +22,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/Remarks.hh>
+#include <core/io/pdb/Remarks.hh>
 #include <core/id/AtomID.hh>
 
 #include <core/pack/task/PackerTask.hh>

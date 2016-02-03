@@ -106,7 +106,7 @@
 
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 
 #include <utility/vector1.hh>
 
@@ -164,7 +164,7 @@ using namespace ObjexxFCL::format;
 
 using utility::vector1;
 using std::string;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -378,7 +378,7 @@ pep_rmsd_analysis(
 
 	pose::Pose ref_pose;
 	std::string ref_name( option[ pep_spec::ref_pose ] );
-	core::import_pose::pose_from_pdb( ref_pose, ref_name );
+	core::import_pose::pose_from_file( ref_pose, ref_name , core::import_pose::PDB_file);
 
 	Size ref_pep_anchor_in( option[ pep_spec::pep_anchor ] );
 	if( option[ pep_spec::ref_pep_anchor ].user() ) ref_pep_anchor_in = option[ pep_spec::ref_pep_anchor ];
@@ -461,7 +461,7 @@ pep_phipsi_analysis(
 
 	pose::Pose ref_pose;
 	std::string ref_name( option[ pep_spec::ref_pose ] );
-	core::import_pose::pose_from_pdb( ref_pose, ref_name );
+	core::import_pose::pose_from_file( ref_pose, ref_name , core::import_pose::PDB_file);
 
 	Size ref_pep_anchor_in( option[ pep_spec::pep_anchor ] );
 	if( option[ pep_spec::ref_pep_anchor ].user() ) ref_pep_anchor_in = option[ pep_spec::ref_pep_anchor ];
@@ -726,7 +726,7 @@ RunPepSpec()
 
 	std::string input_name ( basic::options::start_file() );
 	Pose start_pose;
-	core::import_pose::pose_from_pdb( start_pose, input_name );
+	core::import_pose::pose_from_file( start_pose, input_name , core::import_pose::PDB_file);
 	ResidueTypeSet const & rsd_set( start_pose.residue(1).residue_type_set() );
 
 	//data out

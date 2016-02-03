@@ -210,7 +210,7 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	matrix_ = tag->getOption< std::string >( "matrix", "BLOSUM62" );
 	if ( tag->getOption< bool >( "use_native", false ) ) {
 		core::pose::Pose nat_pose;
-		core::import_pose::pose_from_pdb( nat_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
+		core::import_pose::pose_from_file( nat_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
 		core::sequence::Sequence seq(nat_pose.sequence(), basic::options::option[ basic::options::OptionKeys::in::file::native ]);
 		set_sequence( seq, matrix_ );
 	}
@@ -230,7 +230,7 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 	}
 	if ( tag->hasOption("pdbname") ) {
 		core::pose::Pose ref_pose;
-		core::import_pose::pose_from_pdb( ref_pose, tag->getOption<std::string>( "pdbname" ) );
+		core::import_pose::pose_from_file( ref_pose, tag->getOption<std::string>( "pdbname" ) , core::import_pose::PDB_file);
 		core::sequence::Sequence seq(ref_pose.sequence(), tag->getOption<std::string>( "pdbname" ) );
 		set_sequence( seq, matrix_ );
 	}

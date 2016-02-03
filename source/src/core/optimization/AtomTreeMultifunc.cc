@@ -112,7 +112,7 @@ AtomTreeMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const {
 	Real score_vars2( score_function_( pose_ ) );
 
 	Real alt_score_vars = score_function_( pose1 );
-	if (dump_silent) {
+	if ( dump_silent ) {
 		std::string outfile = "atomtree_multifunc_error_pose_before" + utility::to_string( count_dumped  ) + ".silent";
 		core::io::silent::SilentFileData sfd_out( outfile, false, false, "binary" ); //true to store argv in silent file
 		core::io::silent::BinarySilentStruct silent_stream( pose1, "S_1" );
@@ -122,7 +122,7 @@ AtomTreeMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const {
 	}
 
 	Real alt_score_vars2 = score_function_( pose2 );
-	if (dump_silent) {
+	if ( dump_silent ) {
 		std::string outfile = "atomtree_multifunc_error_pose_after" + utility::to_string( count_dumped  ) + ".silent";
 		core::io::silent::SilentFileData sfd_out( outfile, false, false, "binary" ); //true to store argv in silent file
 		core::io::silent::BinarySilentStruct silent_stream( pose2, "S_1" );

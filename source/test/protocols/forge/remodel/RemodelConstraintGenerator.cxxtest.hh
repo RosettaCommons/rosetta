@@ -92,7 +92,7 @@ public:
 	void Ntest_hsstriplet_constraints()
 	{
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, "protocols/forge/remodel/test.pdb" );
+	core::import_pose::pose_from_file( pose, "protocols/forge/remodel/test.pdb" , core::import_pose::PDB_file);
 	core::Real score( scorefxn->score( pose ) );
 	TS_ASSERT_DELTA( pose.energies().total_energies()[ scoring::atom_pair_constraint ], 0.0, 1e-4 );
 
@@ -129,7 +129,7 @@ public:
 	{
 		// first, we should try scoring a pose without constraints
 		core::pose::Pose pose_nocst;
-		core::import_pose::pose_from_pdb(pose_nocst, "protocols/forge/remodel/test.pdb" );
+		core::import_pose::pose_from_file(pose_nocst, "protocols/forge/remodel/test.pdb" , core::import_pose::PDB_file);
 		//core::Real no_cst_score( scorefxn->score( pose_nocst ) );
 		TR << "Before adding csts" << std::endl;
 		//scorefxn->show( TR, pose_nocst );  TR.flush();
@@ -137,7 +137,7 @@ public:
 		TS_ASSERT_DELTA( dihedral_cst, 0.0, 1e-4 );
 
 		core::pose::Pose testpose;
-		core::import_pose::pose_from_pdb( testpose, "protocols/forge/remodel/test.pdb" );
+		core::import_pose::pose_from_file( testpose, "protocols/forge/remodel/test.pdb" , core::import_pose::PDB_file);
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)0 );
 		sheet_csts->set_angle_tolerance( 0.9 );
 		sheet_csts->set_cacb_dihedral_tolerance( 0.9 );
@@ -164,7 +164,7 @@ public:
 		// now, import a new pose and use tighter constraints
 		TS_ASSERT( testpose.remove_constraints() );
 		testpose.clear();
-		core::import_pose::pose_from_pdb( testpose, "protocols/forge/remodel/test.pdb" );
+		core::import_pose::pose_from_file( testpose, "protocols/forge/remodel/test.pdb" , core::import_pose::PDB_file);
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)0 );
 
 		// set constraints to tighter values than defaults
@@ -241,7 +241,7 @@ public:
 		// clear csts and test only adding atom pair csts
 		TS_ASSERT( testpose.remove_constraints() );
 		testpose.clear();
-		core::import_pose::pose_from_pdb( testpose, "protocols/forge/remodel/test.pdb" );
+		core::import_pose::pose_from_file( testpose, "protocols/forge/remodel/test.pdb" , core::import_pose::PDB_file);
 		sheet_csts->set_constrain_dist_only( true );
 		sheet_csts->apply( testpose );
 		TS_ASSERT_EQUALS( testpose.constraint_set()->get_all_constraints().size(), (core::Size)16 );
@@ -259,7 +259,7 @@ public:
 		// reset the pose
 		TS_ASSERT( testpose.remove_constraints() );
 		testpose.clear();
-		core::import_pose::pose_from_pdb( testpose, "protocols/forge/remodel/test.pdb" );
+		core::import_pose::pose_from_file( testpose, "protocols/forge/remodel/test.pdb" , core::import_pose::PDB_file);
 
 		// add a random constraint
 		core::scoring::constraints::BoundFuncOP bound_func( new core::scoring::constraints::BoundFunc( 0.0, 4.0, 1.0, "random_constraint" ) );

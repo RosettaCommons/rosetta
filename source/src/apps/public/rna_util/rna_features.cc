@@ -48,7 +48,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/init/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
@@ -118,7 +118,7 @@ using utility::vector1;
 using utility::tools::make_vector1;
 using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
-using io::pdb::dump_pdb;
+using io::pdb::old_dump_pdb;
 
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 
@@ -401,7 +401,7 @@ rhiju_pdbstats()
 
 		std::string pdb_file_load = pdb_file;
 		if ( file_path  != "./" ) pdb_file_load = file_path + '/' + pdb_file;
-		pose_from_pdb( pose, *rsd_set, pdb_file_load );
+		pose_from_file( pose, *rsd_set, pdb_file_load , core::import_pose::PDB_file);
 
 		count++;
 		std::cout << "Doing input file " << I(4,count) << " ==> " << pdb_file << std::endl;

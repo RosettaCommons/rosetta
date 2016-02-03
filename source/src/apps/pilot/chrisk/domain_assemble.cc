@@ -37,7 +37,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
@@ -134,7 +134,7 @@ namespace OK = OptionKeys;
 using utility::vector1;
 using std::string;
 using import_pose::pose_from_pdb;
-using io::pdb::dump_pdb; // deprecated though
+using io::pdb::old_dump_pdb; // deprecated though
 using namespace ObjexxFCL;
 using basic::T;
 using basic::Warning;
@@ -712,7 +712,7 @@ go(
 
 	pose::Pose inpose;
 	std::string inpose_fname( option[ chrisk::insert_pdb ]() );
-	core::import_pose::pose_from_pdb( inpose, inpose_fname );
+	core::import_pose::pose_from_file( inpose, inpose_fname , core::import_pose::PDB_file);
 
 	//create a ScoreFunction from commandline options (default is score12)
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();

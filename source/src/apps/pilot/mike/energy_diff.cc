@@ -22,7 +22,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/types.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DiagnosticData.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -87,8 +87,8 @@ main( int argc, char * argv [] )
 	core::pose::Pose pose1;
 	core::pose::Pose pose2;
 
-	core::import_pose::pose_from_pdb( pose1, *rsd_set_full, pdb1_filename );
-	core::import_pose::pose_from_pdb( pose2, *rsd_set_full, pdb2_filename );
+	core::import_pose::pose_from_file( pose1, *rsd_set_full, pdb1_filename , core::import_pose::PDB_file);
+	core::import_pose::pose_from_file( pose2, *rsd_set_full, pdb2_filename , core::import_pose::PDB_file);
 
 	runtime_assert( pose1.total_residue() == pose2.total_residue() );
 

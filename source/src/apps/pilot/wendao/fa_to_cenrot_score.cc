@@ -23,7 +23,7 @@
 #include <core/conformation/util.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/types.hh>
@@ -340,7 +340,7 @@ void * my_main( void* ) {
 	PoseOP native_pose;
 	if (option[in::file::native].user()) {
 		native_pose = new Pose();
-		core::import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( *native_pose, *rsd_set, option[ in::file::native ]() , core::import_pose::PDB_file);
 	}
 
 	if (option[in::file::silent].user()) {
@@ -389,7 +389,7 @@ void * my_main( void* ) {
 		{
 			PoseOP pose = new Pose();
 			Pose &p(*pose);
-			pose_from_pdb( p, *rsd_set, option[ in::file::l ]()[npdb] );
+			pose_from_file( p, *rsd_set, option[ in::file::l ]()[npdb] , core::import_pose::PDB_file);
 
 			//std::cerr << option[ in::file::l ]()[npdb] << " start..." << std::endl;
 			if (option[switch_to_centroid]) {

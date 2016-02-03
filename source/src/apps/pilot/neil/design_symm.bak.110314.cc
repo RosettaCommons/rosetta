@@ -33,7 +33,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pdb_writer.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/Jump.hh>
@@ -324,7 +324,7 @@ void
 
 		// Read in pose
 		Pose pose;
-		import_pose::pose_from_pdb(pose, file, resi_set);
+		import_pose::pose_from_file(pose, file, resi_set, core::import_pose::PDB_file);
 		Pose mono = pose;
 		utility::vector1<Real> sc_sasa = sidechain_sasa(mono,2.5);
 		core::id::AtomID_Map<Real> bfac;

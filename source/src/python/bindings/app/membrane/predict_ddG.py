@@ -104,7 +104,7 @@ def main( args ):
     rosetta.init( extra_options=rosetta_options )
 	
     # Load Pose, & turn on the membrane
-    pose = pose_from_pdb( Options.in_pdb )
+    pose = pose_from_file( Options.in_pdb )
 
     # Add Membrane to Pose
     add_memb = rosetta.protocols.membrane.AddMembraneMover()

@@ -49,7 +49,7 @@ public:
 	void test_DsspDesignOperation() {
 		// check output of DsspDesignOperation Tracer
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdb( pose, "protocols/toolbox/task_operations/dssp_in.pdb" );
+		core::import_pose::pose_from_file( pose, "protocols/toolbox/task_operations/dssp_in.pdb" , core::import_pose::PDB_file);
 
 		basic::otstreamOP UT( new test::UTracer( "protocols/toolbox/task_operations/DsspDesignOperation.u" ) );
 		basic::Tracer::set_ios_hook( UT, "protocols.toolbox.TaskOperations.DsspDesignOperation" );

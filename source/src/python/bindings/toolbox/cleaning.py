@@ -15,7 +15,7 @@
 import os
 
 from rosetta import Pose
-from rosetta import pose_from_pdb
+from rosetta import pose_from_file
 
 # removes non ATOM lines from  <pdb_file>  and writes to  <out_file>
 def cleanATOM( pdb_file , out_file = '', edit = -4 ):
@@ -29,7 +29,7 @@ def cleanATOM( pdb_file , out_file = '', edit = -4 ):
     See also:
         Pose
         Pose.dump_pdb
-        pose_from_pdb
+        pose_from_file
         pose_from_rcsb
         cleanCRYS
     """
@@ -76,14 +76,14 @@ def cleanCRYS( pdb_file , olig = 2 , out_file = '' ):
     See also:
         Pose
         Pose.dump_pdb
-        pose_from_pdb
+        pose_from_file
         pose_from_rcsb
         cleanATOM
     """
     # if the file exists
     if os.path.exists( os.getcwd() + '/' + pdb_file ):
         # load in the PDB...this is really just to get the sequence
-        pose = pose_from_pdb(pdb_file)
+        pose = pose_from_file(pdb_file)
         tot = pose.total_residue()
         seq = pose.sequence()
         # generate sequence fragments until

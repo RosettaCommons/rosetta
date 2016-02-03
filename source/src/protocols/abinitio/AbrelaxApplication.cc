@@ -346,7 +346,7 @@ void AbrelaxApplication::setup() {
 	// read native pose
 	if ( option[ in::file::native ].user() ) {
 		native_pose_ = core::pose::PoseOP( new pose::Pose );
-		core::import_pose::pose_from_pdb( *native_pose_, option[ in::file::native ]() );
+		core::import_pose::pose_from_file( *native_pose_, option[ in::file::native ]() , core::import_pose::PDB_file);
 
 		pose::set_ss_from_phipsi( *native_pose_ );
 
@@ -1310,7 +1310,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 	} else if ( option[ in::file::s ].user() ) {
 		core::pose::PoseOP tmp_pose( new core::pose::Pose );
 		std::string fn = option[ in::file::s ](1);
-		core::import_pose::pose_from_pdb( *tmp_pose, fn );
+		core::import_pose::pose_from_file( *tmp_pose, fn , core::import_pose::PDB_file);
 		copy_structure( extended_pose, *tmp_pose );
 	}
 
@@ -1393,12 +1393,12 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 		if ( option[ OptionKeys::loops::input_pdb ].user() ) {
 			if ( option[ in::file::fullatom ]() ) {
 				core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-				core::import_pose::pose_from_pdb( extended_pose, *rsd_set, option[ OptionKeys::loops::input_pdb ]().name() );
+				core::import_pose::pose_from_file( extended_pose, *rsd_set, option[ OptionKeys::loops::input_pdb ]().name() , core::import_pose::PDB_file);
 				if ( !extended_pose.is_fullatom() ) utility_exit_with_message(" this full-atom pose should be a full-atom pose, no? ");
 			} else {
 				// centroid starting structure for loop-modeling
 				core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
-				core::import_pose::pose_from_pdb( extended_pose, *rsd_set, option[ OptionKeys::loops::input_pdb ]().name() );
+				core::import_pose::pose_from_file( extended_pose, *rsd_set, option[ OptionKeys::loops::input_pdb ]().name() , core::import_pose::PDB_file);
 				if ( extended_pose.is_fullatom() ) utility_exit_with_message(" this centroid pose should not be a full-atom pose, no? ");
 			}
 			loops_in_.verify_against( extended_pose );

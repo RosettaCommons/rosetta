@@ -570,7 +570,7 @@ void set_up_pose (
 	const core::Size startpos = option[newloopstart]();
 
 	printf("Importing pose from %s\n", infile.c_str()); fflush(stdout);
-	core::import_pose::pose_from_pdb(masterpose, infile);
+	core::import_pose::pose_from_file(masterpose, infile, core::import_pose::PDB_file);
 
 	utility::vector1 < core::pose::PoseOP > posechains = masterpose.split_by_chain();
 	core::pose::Pose newpose;

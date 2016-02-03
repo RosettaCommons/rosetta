@@ -60,9 +60,9 @@ public:
 	void setUp(){
 
 		core_init();
-		core::import_pose::pose_from_pdb(ab_pose_aho, "protocols/antibody/1bln_AB_aho.pdb");
-		core::import_pose::pose_from_pdb(ab_pose_chothia, "protocols/antibody/1bln_AB_chothia.pdb");
-		core::import_pose::pose_from_pdb(ab_pose_aho_antigen, "protocols/antibody/aho_with_antigen.pdb");
+		core::import_pose::pose_from_file(ab_pose_aho, "protocols/antibody/1bln_AB_aho.pdb", core::import_pose::PDB_file);
+		core::import_pose::pose_from_file(ab_pose_chothia, "protocols/antibody/1bln_AB_chothia.pdb", core::import_pose::PDB_file);
+		core::import_pose::pose_from_file(ab_pose_aho_antigen, "protocols/antibody/aho_with_antigen.pdb", core::import_pose::PDB_file);
 		ab_info_north_aho = AntibodyInfoOP(new AntibodyInfo(ab_pose_aho, AHO_Scheme, North));
 		ab_info_chothia = AntibodyInfoOP( new AntibodyInfo(ab_pose_chothia, Chothia_Scheme, Chothia));
 		ab_info_aroop = AntibodyInfoOP( new AntibodyInfo(ab_pose_chothia, Chothia_Scheme, Aroop) );
