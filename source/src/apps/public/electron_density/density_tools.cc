@@ -73,9 +73,11 @@ OPT_1GRP_KEY(Boolean, denstools, super_verbose)
 OPT_1GRP_KEY(Boolean, denstools, dump_map_and_mask)
 OPT_1GRP_KEY(Boolean, denstools, mask)
 OPT_1GRP_KEY(Boolean, denstools, mask_modelmap)
-OPT_1GRP_KEY(Real, denstools, mask_radius)
+OPT_1GRP_KEY(Real, denstools, mask_resolution)
 OPT_1GRP_KEY(Boolean, denstools, perres)
 OPT_1GRP_KEY(Boolean, denstools, bin_squared)
+OPT_1GRP_KEY(Boolean, denstools, maskonly)
+OPT_1GRP_KEY(Boolean, denstools, cutonly)
 
 
 using core::scoring::electron_density::poseCoords;
@@ -208,7 +210,7 @@ densityTools()
 	core::Real lowres = option[ denstools::lowres ]();
 	core::Real truncate_hires = option[ denstools::truncate_hires ]();
 	core::Real truncate_lowres = option[ denstools::truncate_lowres ]();
-	core::Real mask_radius = option[ denstools::mask_radius ]();
+	core::Real mask_resolution = option[ denstools::mask_resolution ]();
 	bool perres =option[ denstools::perres ]();
 
 	ObjexxFCL::FArray3D< double > rhoC, rhoMask, rhoOmask, rhoO2mask;
@@ -235,15 +237,71 @@ densityTools()
 	std::cout << "Stage 2: model processing" << std::endl;
 	bool userpose = (option[ in::file::s ].user());
 
+	core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins, lowres, hires, resobins, resobin_counts, bin_squared);
+
+	// Truncate map only
+	if ( option[ denstools::truncate_map ] ) {
+		utility::vector1< core::Real > trunc = mapI;
+		for ( int i=1; i<=(int)mapI.size(); ++i ) {
+			if ( resobins[i] <= truncate_lowres || resobins[i] >= truncate_hires ) {
+				trunc[i] = 0;
+			} else {
+				trunc[i] = 1;
+			}
+		}
+
+		core::scoring::electron_density::getDensityMap().scaleIntensities( trunc, lowres, hires, bin_squared );
+		core::scoring::electron_density::getDensityMap().writeMRC( "map_trunc.mrc" );
+		std::cout << "Wrote truncated map" << std::endl;
+		return;
+	}
+
 	poseCoords pose;
 	core::pose::Pose fullpose;  // needed for per-residue stats (if requested)
 	std::string pdbfile;
-	if ( userpose && !option[ denstools::truncate_map ] ) {
+	if ( userpose ) {
 		pdbfile = basic::options::start_file();
 		readPDBcoords( pdbfile, pose );
 
-		std::cout << "       : calc rho_c + FFT" << std::endl;
-		core::scoring::electron_density::getDensityMap().calcRhoC( pose, mask_radius, rhoC, rhoMask );
+		std::cout << "       : calc rho_c" << std::endl;
+		core::scoring::electron_density::getDensityMap().calcRhoC( pose, mask_resolution, rhoC, rhoMask );
+	}
+
+	// Mask map only
+	if ( option[ denstools::maskonly ] ) {
+		if (!userpose) {
+			utility_exit_with_message(" -maskonly given but no PDB file provided!");
+		}
+
+		rhoOmask = rhoMask;
+		for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) {
+			rhoOmask[i] *= core::scoring::electron_density::getDensityMap().data()[i];
+		}
+
+		core::scoring::electron_density::getDensityMap().set_data(rhoOmask);
+		core::scoring::electron_density::getDensityMap().writeMRC( option[ edensity::mapfile]+"_masked.mrc" );
+		return;
+	}
+
+	// Cut map only
+	if ( option[ denstools::cutonly ] ) {
+		if (!userpose) {
+			utility_exit_with_message(" -maskonly given but no PDB file provided!");
+		}
+
+		rhoOmask = rhoMask;
+		for ( int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i ) {
+			rhoOmask[i] = (1-rhoOmask[i])*core::scoring::electron_density::getDensityMap().data()[i];
+		}
+
+		core::scoring::electron_density::getDensityMap().set_data(rhoOmask);
+		core::scoring::electron_density::getDensityMap().writeMRC( option[ edensity::mapfile]+"_cut.mrc" );
+		return;
+	}
+
+	// collect masked map statistics
+	if ( userpose ) {
+		std::cout << "       : FFT" << std::endl;
 		numeric::fourier::fft3(rhoC, FrhoC);
 		numeric::fourier::fft3(rhoMask, FrhoMask);
 
@@ -262,24 +320,6 @@ densityTools()
 		core::scoring::electron_density::getDensityMap().getIntensities(FrhoOmask, nresobins, lowres, hires, maskedmapI, bin_squared);
 	}
 
-	core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins, lowres, hires, resobins, resobin_counts, bin_squared);
-
-	// rescale
-	if ( option[ denstools::truncate_map ] ) {
-		utility::vector1< core::Real > trunc = mapI;
-		for ( int i=1; i<=(int)mapI.size(); ++i ) {
-			if ( resobins[i] <= truncate_lowres || resobins[i] >= truncate_hires ) {
-				trunc[i] = 0;
-			} else {
-				trunc[i] = 1;
-			}
-		}
-
-		core::scoring::electron_density::getDensityMap().scaleIntensities( trunc, lowres, hires, bin_squared );
-		core::scoring::electron_density::getDensityMap().writeMRC( "map_trunc.mrc" );
-		std::cout << "Wrote truncated map" << std::endl;
-		return;
-	}
 
 	// map vs map stats
 	std::cout << "Stage 3: map vs map" << std::endl;
@@ -425,12 +465,14 @@ main( int argc, char * argv [] )
 		NEW_OPT(denstools::dump_map_and_mask, "dump mrc of rho_calc and eps_calc", false);
 		NEW_OPT(denstools::mask, "mask all calcs", false);
 		NEW_OPT(denstools::mask_modelmap, "mask model-map calcs only", false);
-		NEW_OPT(denstools::mask_radius, "radius for masking", 0.0);
+		NEW_OPT(denstools::mask_resolution, "radius for masking", 0.0);
 		NEW_OPT(denstools::perres, "output per-residue stats", false);
 		NEW_OPT(denstools::verbose, "dump extra output", false);
 		NEW_OPT(denstools::super_verbose, "dump a lot of extra output", false);
 		NEW_OPT(denstools::bin_squared, "bin uniformly in 1/res^2 (default bins 1/res)", false);
 		NEW_OPT(denstools::rscc_wdw, "sliding window to calculate rscc", 3);
+		NEW_OPT(denstools::maskonly, "mask", false);
+		NEW_OPT(denstools::cutonly, "cut", false);
 
 		devel::init( argc, argv );
 		densityTools();
