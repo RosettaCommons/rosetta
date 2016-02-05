@@ -113,6 +113,7 @@
 #include <set>
 #include <sstream>
 #include <utility>
+#include <utility/io/izstream.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -1078,6 +1079,11 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	// within simultaneous and independent stages
 	ScoreFunctionOP sfxOP = sfx_;
 	sfxOP->set_weight( scoring::linear_chainbreak, 0.0 );
+
+	// setup monte carlo
+	Real const temp = temperature_;
+	MonteCarlo mc( *sfxOP, temp ); // init without pose
+
 	if ( option[OptionKeys::remodel::staged_sampling::staged_sampling].user() ) {
 		//initialize options
 		std::cout << "************************INSIDE STAGED SAMPLING" << std::endl;
@@ -1202,9 +1208,9 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		} else {
 			TR << "Randomize stage was skipped " << std::endl;
 		}
-		// setup monte carlo
-		Real const temp = temperature_;
-		MonteCarlo mc( *sfxOP, temp ); // init without pose
+		// setup monte carlo -- test taking this out.
+		//  Real const temp = temperature_;
+		//  MonteCarlo mc( *sfxOP, temp ); // init without pose
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 			repeat_propagation(pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 			(*sfxOP)(repeat_pose_);
@@ -1223,6 +1229,12 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 			// reset score function at the beginning of each attempt
 			mc.score_function( *sfxOP );
+
+
+			if ( option[OptionKeys::remodel::RemodelLoopMover::set_segment].user() ) {
+				set_segment_stage(pose, mc);
+			}
+
 			if ( option[OptionKeys::remodel::RemodelLoopMover::use_loop_hash].user() ) {
 				loophash_stage(pose, mc, cbreak_increment );
 			}
@@ -1280,13 +1292,17 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				// loop before cycling again, otherwise too easy for the trajectory to
 				// get trapped.
 
-				insert_random_smallestmer_per_loop( pose, true );
-				if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-					repeat_propagation(pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure] );
-					(*sfxOP)(repeat_pose_);
-					mc.reset( repeat_pose_ );
+				if ( attempt == allowed_closure_attempts_ ) { // if this is the last cycle, don't do the scrambling, so at least VLB sees the same bad answer
+					// do nothing.
 				} else {
-					mc.reset( pose);
+					insert_random_smallestmer_per_loop( pose, true );
+					if ( option[OptionKeys::remodel::repeat_structure].user() ) {
+						repeat_propagation(pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure] );
+						(*sfxOP)(repeat_pose_);
+						mc.reset( repeat_pose_ );
+					} else {
+						mc.reset( pose);
+					}
 				}
 			}
 
@@ -1316,7 +1332,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				pre_mover.apply(pose);
 				pose.pdb_info()->obsolete(true);
 			} else {
-				pose = repeat_pose_;
+				repeat_pose_.pdb_info()->obsolete(true);
+				pose = *(repeat_pose_.clone());
 			}
 		} else {
 			pose = *( accumulator.begin()->second );
@@ -1345,6 +1362,31 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		pose = repeat_pose_;
 		}
 		*/
+
+		// although the loop can't be closed, switch the pose to the current best
+		// answer
+		//
+		// recover low
+		//
+		//
+		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
+			Size copy_size =0;
+			if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
+				copy_size = unit_length_-1;
+			} else {
+				copy_size = unit_length_;
+			}
+			for ( Size res = 1; res<=copy_size; res++ ) {
+				pose.set_phi(res,mc.lowest_score_pose().phi(res));
+				pose.set_psi(res,mc.lowest_score_pose().psi(res));
+				pose.set_omega(res,mc.lowest_score_pose().omega(res));
+				pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
+			}
+			repeat_propagation(pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
+		} else {
+			pose = mc.lowest_score_pose();
+		}
+
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 		if ( option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() &&
 				option[OptionKeys::remodel::lh_filter_string].user() ) {
@@ -1509,6 +1551,310 @@ fast_clash_check(
 	}
 	return false;
 }
+
+
+/// @brief independent stage: single loop movement prior to MC accept/reject
+void RemodelLoopMover::set_segment_stage(
+	Pose & pose,
+	MonteCarlo & mc
+)
+{
+	using protocols::forge::methods::linear_chainbreak;
+	using protocols::loops::add_cutpoint_variants;
+	using namespace basic::options;
+	using namespace OptionKeys::remodel;
+	using namespace protocols::loophash;
+	using namespace numeric::geometry::hashing;
+	using protocols::loops::remove_cutpoint_variants;
+
+	TR << "** set_segment_stage" << std::endl;
+
+	// setup loops
+	loops::LoopsOP loops_to_model( new loops::Loops() );
+	//find terminal loops and skip them; loophash can't handle terminal loops
+	for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
+		bool skip_loop = false;
+		if ( l->is_terminal( pose ) || l->start() == 1 ) {
+			skip_loop = true;
+		}
+		if ( !skip_loop ) {
+			loops_to_model->add_loop( *l );
+		}
+	}
+
+	TR << "   n_loops = " << loops_to_model->size() << std::endl;
+
+	if ( loops_to_model->size() == 0 ) { // nothing to do...
+		return;
+	}
+
+	utility::vector1<core::Size> loopsizes;
+
+	//find the loopsize
+
+	for ( Loops::iterator l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
+		Loop & loop = *l;
+		Size db_to_use = loop.stop() - loop.start() + 2; // +2 for the strange way loophash RT is setup.
+		loopsizes.push_back(db_to_use);
+	}
+
+	// handling segment
+	std::vector < BackboneSegment > bs_vec_;
+
+	//read segment
+	//
+	std::vector<core::Real> phi;
+	std::vector<core::Real> psi;
+	std::vector<core::Real> omega;
+
+	std::string segment_file = option[OptionKeys::remodel::RemodelLoopMover::set_segment]();
+	std::string line;
+
+	utility::io::izstream file_data( segment_file.c_str() );
+
+	while ( getline( file_data, line) ) {
+
+		if ( (int)line.find('#') != -1 ) {
+
+			/*   //debug
+			for (int i = 0; i< (int)phi.size(); i++){
+			std::cout << phi[i] << " ";
+			std::cout << psi[i] << " ";
+			std::cout << omega[i] << std::endl;
+			}
+			*/
+			BackboneSegment  BS(phi, psi, omega);
+			bs_vec_.push_back(BS);
+			phi.clear();
+			psi.clear();
+			omega.clear();
+			continue;
+		}
+
+		char seg_phi[100];
+		char seg_psi[100];
+		char seg_omega[100];
+
+		std::stringstream segment;
+		// copy line into segment stream
+		segment << line << std::endl;
+		// walk through the stream by space and load phi-pshi omega into
+		// BackboneSegment
+		segment.getline(seg_phi, 100, ' ');
+		segment.getline(seg_psi, 100, ' ');
+		segment.getline(seg_omega, 100, ' ');
+
+		phi.push_back(atof(seg_phi));
+		psi.push_back(atof(seg_psi));
+		omega.push_back(atof(seg_omega));
+	}
+
+	// make sure read in the right number of segments
+	runtime_assert(bs_vec_.size() == loops_to_model->size());
+
+
+	Size loop_number = 1; // for lh_filter_string index
+
+	for ( Loops::iterator l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l, loop_number++ ) {
+		Loop & loop = *l;
+
+		utility::vector1<core::Size> local_loopsizes;
+		local_loopsizes.push_back(loopsizes[loop_number]);
+
+		//test loophashing
+		//LoopHashLibraryOP loop_hash_library = new LoopHashLibrary ( local_loopsizes , 1, 0 );
+
+		// alter cutpoint to one before the end of the loop (either direction,
+		// based on option) if closure is bypassed.  this is already set in VLB,
+		// but reenforce here.
+		if ( option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
+			// if(option[OptionKeys::RemodelLoopMover::force_cutting_N].user()){
+			//  loop.set_cut(loop.start()+1); //1 because remodel needs one residue flanking
+			// }
+			// else {
+			// }
+		}
+
+		// movemap
+		MoveMap movemap;
+		mark_loop_moveable( loop, movemap, true );
+		enforce_false_movemap( movemap );
+
+		// fragment movers
+		FragmentMoverOPs frag_movers = create_fragment_movers( movemap );
+		assert( !frag_movers.empty() );
+
+		// parameters
+		//Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
+		//currently looping over all the hashed loops
+		//Size const max_inner_cycles = std::max( static_cast< Size >( 50 ), 10 * n_moveable );
+
+		// set appropriate topology
+		if ( keep_input_foldtree_ ) {}
+		else {
+			if ( core::pose::symmetry::is_symmetric( pose ) ) {
+				protocols::loops::set_single_loop_fold_tree( pose, loop );
+			} else {
+				if ( option[OptionKeys::remodel::repeat_structure].user() ) {
+					//do nothing. remake foldtree will destroy the pose when propagate across unconnected segments
+				} else {
+					protocols::forge::methods::set_single_loop_fold_tree( pose, loop );
+				}
+			}
+		}
+
+		TR << pose.fold_tree() << std::endl;
+
+		// add cutpoint variants
+		add_cutpoint_variants( pose );
+		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
+			repeat_propagation(pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
+			add_cutpoint_variants( repeat_pose_ );
+			mc.reset(repeat_pose_);
+		} else {
+			mc.reset( pose );
+		}
+		// reset counters
+		mc.reset_counters();
+
+		Size loopsize = loopsizes[loop_number];
+
+		TR << "set segment from " << loop.start() << " to " << loop.stop() << " using " << loop.stop() - loop.start()+1 << " residue loops." << std::endl;
+
+
+		if ( bs_vec_.size() == 0 ) {
+			TR.Warning << "No fragment found for setting segment=" << loopsize << ".  Skip closure..." << std::endl;
+			return;
+		}
+
+		// set the chainbreak weight
+		ScoreFunctionOP sfxOP = mc.score_function().clone();
+		sfxOP->set_weight( core::scoring::linear_chainbreak, 1);
+
+		if ( option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
+			sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
+		}
+
+		mc.score_function( *sfxOP );
+		// recover low
+		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
+			Size copy_size =0;
+			if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
+				copy_size = unit_length_-1;
+			} else {
+				copy_size = unit_length_;
+			}
+			for ( Size res = 1; res<=copy_size; res++ ) {
+				pose.set_phi(res,mc.lowest_score_pose().phi(res));
+				pose.set_psi(res,mc.lowest_score_pose().psi(res));
+				pose.set_omega(res,mc.lowest_score_pose().omega(res));
+				pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
+			}
+			repeat_propagation(pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
+		} else {
+			pose = mc.lowest_score_pose();
+		}
+
+		//apply the segment to its matching loopnumber
+		BackboneSegment BS = bs_vec_[loop_number-1]; // bs_vec_ is standard vector from 0, loop_number from 1
+
+		std::vector<core::Real> phi = BS.phi();
+		std::vector<core::Real> psi = BS.psi();
+		std::vector<core::Real> omega = BS.omega();
+		Size seg_length = BS.length();
+
+
+		for ( Size i = 0; i < seg_length; i++ ) {
+			Size ires = (int)loop.start()+i;  // different behavior than loophash, as we don't need one more res.
+			if ( ires > unit_length_ ) break;
+			//debug
+			//   std::cout << phi[i] << " " << psi[i] << " " << omega[i] << " " << ires << std::endl;
+			pose.set_phi( ires, phi[i]);
+			pose.set_psi( ires, psi[i]);
+			pose.set_omega( ires, omega[i]);
+		}
+
+		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
+			for ( Size i = 0; i < seg_length; i++ ) {
+				Size ires = (int)loop.start()+i;  // different behavior than loophash, as we don't need one more res.
+				if ( ires > repeat_length_ ) break;
+				// std::cout << phi[i] << " " << psi[i] << " " << omega[i] << " " << ires << std::endl;
+				repeat_pose_.set_phi( ires, phi[i]);
+				repeat_pose_.set_psi( ires, psi[i]);
+				repeat_pose_.set_omega( ires, omega[i]);
+			}
+			repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
+
+			//pass every build through ccd for now
+			if ( !option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
+				//ccd_moves( 50, repeat_pose_, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
+			}
+			repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
+			//mc.boltzmann( repeat_pose_, "seg_segment-ccd");
+		} else {
+			for ( Size i = 0; i < seg_length; i++ ) {
+				Size ires = (int)loop.start()+i;  // different behavior than loophash, as we don't need one more res
+				if ( ires > unit_length_ ) break;
+				// std::cout << phi[i] << " " << psi[i] << " " << omega[i] << " " << ires << std::endl;
+				pose.set_phi( ires, phi[i]);
+				pose.set_psi( ires, psi[i]);
+				pose.set_omega( ires, omega[i]);
+			}
+			//mc.boltzmann( pose, "loophash" );
+			if ( !option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
+				//ccd_moves( 50, pose, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
+			}
+			//mc.boltzmann( pose, "set segment ccd");
+		}
+		/*
+		// recover low
+		if(option[OptionKeys::remodel::repeat_structure].user()){
+		Size copy_size =0;
+		if(option[OptionKeys::remodel::repeat_structure] == 1){
+		copy_size = unit_length_-1;
+		} else {
+		copy_size = unit_length_;
+		}
+		for (Size res = 1; res<=copy_size; res++){
+		pose.set_phi(res,mc.lowest_score_pose().phi(res));
+		pose.set_psi(res,mc.lowest_score_pose().psi(res));
+		pose.set_omega(res,mc.lowest_score_pose().omega(res));
+		//mc.lowest_score_pose().dump_pdb("independent_stage.pdb");
+		}
+		} else{
+		pose = mc.lowest_score_pose();
+		}
+
+		if(option[OptionKeys::remodel::repeat_structure].user()){
+		mc.score_function().show( TR, repeat_pose_ );
+		remove_cutpoint_variants( repeat_pose_ );
+		remove_cutpoint_variants( pose );
+		} else {
+		mc.score_function().show( TR, pose );
+		remove_cutpoint_variants( pose );
+		}
+
+		TR << std::endl;
+		mc.show_state();
+		*/
+	}// for each loop
+
+	//try setting MC object so can turn on boost if want to try closure
+	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
+		//debug. probably don't need to rebuild the repeat_pose, as it was built
+		//directly with seg_segment angles.
+		// repeat_propagation(pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
+		// add_cutpoint_variants( repeat_pose_ );
+		TR << "REPEAT_POSE tree before finishing loop:" << repeat_pose_.fold_tree() << std::endl;
+		mc.reset(repeat_pose_);
+	} else {
+		mc.reset( pose );
+	}
+
+	check_closure_criteria( pose, true );
+
+}
+
 
 
 /// @brief independent stage: single loop movement prior to MC accept/reject
@@ -1809,18 +2155,44 @@ void RemodelLoopMover::loophash_stage(
 						}
 						runtime_assert(alphabet.length() == target.length());
 
-						// if X is contained in the filter string, don't filter
-						if ( target.find('X') != std::string::npos ) { // X found
-							//do nothing
-						} else if ( alphabet.compare( target ) != 0 && target.find('X') == std::string::npos ) { //No X in filter and if alphabet and target don't match, skip segment
-							TR.Debug << "lh frag at " << idxresStart << " and " << idxresStop << " not as " << target <<  ": " <<  alphabet << std::endl;
+
+						bool reject = false;
+						for ( Size idx = 0; idx < alphabet.length(); idx++ ) {
+							if ( target[idx] == '?' ) { //if question mark, then don't matter
+								continue;
+							} else if ( target[idx] != '?' && alphabet[idx] == target[idx] ) { // found matching element, don't skip
+							} else if ( target[idx] != '?' && alphabet[idx] != target[idx] ) { // didn't match, skip
+								TR << "rejecting fragment due to mismatch in alphabet: " << alphabet << " and " << target << std::endl;
+								reject = true;
+								break;
+							}
+						}
+
+						if ( reject ) {
 							lh_frag_count--;
 							continue;
-						} else if ( alphabet.compare(target ) == 0 && target.find('X') == std::string::npos ) {
-							//found a match string, do nothing
-						} else {
-							TR.Debug << "logic error somewhere in lh filter string" << std::endl;
 						}
+
+						if ( !reject ) {
+							TR << "passing lh_filter: " << alphabet << std::endl;
+						}
+
+
+						/*
+						// if X is contained in the filter string, don't filter
+						if ( target.find('X') != std::string::npos){ // X found
+						//do nothing
+						} else if ( alphabet.compare( target ) != 0 && target.find('X') == std::string::npos ){ //No X in filter and if alphabet and target don't match, skip segment
+						TR.Debug << "lh frag at " << idxresStart << " and " << idxresStop << " not as " << target <<  ": " <<  alphabet << std::endl;
+						lh_frag_count--;
+						continue;
+						} else if ( alphabet.compare(target ) == 0 && target.find('X') == std::string::npos ){
+						//found a match string, do nothing
+						}
+						else {
+						TR.Debug << "logic error somewhere in lh filter string" << std::endl;
+						}
+						*/
 					}
 
 					for ( Size i = 0; i < seg_length; i++ ) {
@@ -1846,7 +2218,7 @@ void RemodelLoopMover::loophash_stage(
 						repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 
 						//pass every build through ccd for now
-						if ( !option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() ) {
+						if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() || option[OptionKeys::remodel::no_jumps].user() ) ) {
 							ccd_mover.apply( repeat_pose_ );
 						}
 						repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
@@ -1860,7 +2232,7 @@ void RemodelLoopMover::loophash_stage(
 							pose.set_psi( ires, psi[i]);
 							pose.set_omega( ires, omega[i]);
 						}
-						if ( !option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() ) {
+						if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() || option[OptionKeys::remodel::no_jumps].user() ) ) {
 							ccd_mover.apply( pose );
 						}
 						mc.boltzmann( pose, "loop_hash ccd");
@@ -2412,13 +2784,13 @@ void RemodelLoopMover::simultaneous_stage(
 						CCDLoopClosureMover ccd_mover( *l, core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap( movemap ) ) ) );
 						ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 						if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-							if ( !option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() ) {
+							if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() || option[OptionKeys::remodel::no_jumps].user() ) ) {
 								ccd_mover.apply( repeat_pose_ );
 							}
 							repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 							mc.boltzmann( repeat_pose_, "ccd_move" );
 						} else {
-							if ( !option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() ) {
+							if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() || option[OptionKeys::remodel::no_jumps].user() ) ) {
 								ccd_mover.apply( pose );
 							}
 							mc.boltzmann( pose, "ccd_move" );
@@ -2674,13 +3046,13 @@ void RemodelLoopMover::independent_stage(
 					CCDLoopClosureMover ccd_mover( loop, core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap( movemap ) ) ) );
 					ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 					if ( option[ OptionKeys::remodel::repeat_structure ].user() ) {
-						if ( !option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() ) {
+						if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() || option[OptionKeys::remodel::no_jumps].user() ) ) {
 							ccd_mover.apply( repeat_pose_ );
 						}
 						repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 						mc.boltzmann( repeat_pose_, "ccd_move" );
 					} else {
-						if ( !option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() ) {
+						if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() || option[OptionKeys::remodel::no_jumps].user() ) ) {
 							ccd_mover.apply( pose );
 						}
 						mc.boltzmann( pose, "ccd_move" );
@@ -2783,7 +3155,8 @@ void RemodelLoopMover::boost_closure_stage(
 	loops::LoopsOP loops_to_model( new loops::Loops() );
 
 	// filter for non-terminal loops that are within tolerance
-	Real const cbreak_tolerance = 1.0;
+	//Real const cbreak_tolerance = 1.0;
+	Real const cbreak_tolerance = option[OptionKeys::remodel::RemodelLoopMover::threshold_for_boost_closure];
 	for ( Loops::const_iterator l = pre_loops_to_model->begin(), le = pre_loops_to_model->end(); l != le; ++l ) {
 		if ( !l->is_terminal( pose ) || l->start() != 1 ) {
 			Real const cbreak = linear_chainbreak( pose, l->cut() );
@@ -2929,13 +3302,13 @@ void RemodelLoopMover::boost_closure_stage(
 					CCDLoopClosureMover ccd_mover( loop, core::kinematics::MoveMapCOP( core::kinematics::MoveMapOP( new MoveMap( movemap ) ) ) );
 					ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 					if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-						if ( !option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() ) {
+						if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() || option[OptionKeys::remodel::no_jumps].user() ) ) {
 							ccd_mover.apply( repeat_pose_ );
 						}
 						repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 						mc.boltzmann( repeat_pose_, "frag1" );
 					} else {
-						if ( !option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() ) {
+						if ( !( option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure ].user() || option[OptionKeys::remodel::no_jumps].user() ) ) {
 							ccd_mover.apply( pose );
 						}
 						mc.boltzmann( pose, "ccd_move" );

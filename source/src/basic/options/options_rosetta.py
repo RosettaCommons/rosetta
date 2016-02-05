@@ -6209,7 +6209,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 #		Option(  'help', 'Boolean', desc='help menu.'),
 #		Option(  'autopilot', 'Boolean', desc='autopilot'),
 		Option(  'blueprint', 'File', desc='blueprint file name'),
-#		Option(  'cstfile', 'File', desc='description'),
+		Option(  'cstfile', 'File', desc='description'),
+                Option(  'cst_fa_only', 'Boolean', desc='false'),
 		Option(  'cstfilter', 'Integer', desc='filter cst energy', default='10'),
 		Option(  'cen_sfxn', 'String', desc = 'centroid score function to be used for building', default='remodel_cen'),
 		Option( 'check_scored_centroid', 'Boolean', desc = 'dump centroid structures after build'),
@@ -6221,6 +6222,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option(  'use_same_length_fragments', 'Boolean' , desc= 'harvest fragments that matches the length to rebuild', default = 'true'),
 #		Option(  'enable_ligand_aa', 'Boolean' , desc= 'handles ligand attachment and clash check after centroid build.'),
 		Option(  'no_jumps', 'Boolean', desc= 'will setup simple foldtree and fold through it during centroid build.'),
+                Option(  'reroot_tree', 'Integer', desc= 'rerooting the tree for the build.', default = '1'),
 #		Option(  'backrub', 'Boolean', desc= 'run backrub MC trajectory after every completed loop building attempt'),
 		Option(  'use_blueprint_sequence ', 'Boolean', desc=' picks fragments based on both secondary structure and the second column (sequence) in blueprint file'),
 #		Option(  'randomize_equivalent_fragments ', 'Boolean', desc=' will randomize identical scoring fragments; without either this flag or'),
@@ -6250,11 +6252,21 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option(  'cen_minimize', 'Boolean' , desc= 'centroid minimization after fragment building', default = 'false'),
 		Option(  'core_cutoff', 'Integer', desc='number of neighbors required to consider core in auto design', default = '18'),
 		Option(  'boundary_cutoff', 'Integer', desc='number of neighbors required to consider boundary in auto design', default = '15'),
+                Option(  'coreAA', 'String', desc = 'amino acid set for core', default=''),
+                Option(  'boundaryAA', 'String', desc = 'amino acid set for boundary', default=''),
+                Option(  'surfaceAA', 'String', desc = 'amino acid set for surface', default=''),
+#                Option(  'use_LD_operation', 'Boolean' , desc= 'enable operation described by LayerDesignOperation', default = 'true'),
+                Option(  'design_around_ligand', 'Boolean' , desc= 'apply manual design mode around the ligand', default = 'false'),
+                Option(  'move_ligand', 'Boolean' , desc= 'apply ligand handler to move ligand', default = 'false'),
+
 		Option(  'resclass_by_sasa', 'Boolean' , desc= 'switch to use sasa for residue classification', default = 'false'),
 
 		Option(  'helical_rise', 'Real', desc='helical parameter: rise', default = '0.0'),
 		Option(  'helical_radius', 'Real', desc='helical parameter: radius', default = '0.0'),
 		Option(  'helical_omega', 'Real', desc='helical parameter: omega', default = '0.0'),
+                Option(  'filter_rise', 'RealVector', desc='filter value range for helical params rise', n = '2'),
+                Option(  'filter_radius', 'RealVector', desc='filter value range for helical params radius', n = '2'),
+                Option(  'filter_omega', 'RealVector', desc='filter value range for helical params omega', n = '2'),
 		Option(  'COM_sd', 'Real', desc='center of mass coordinate constraint sd value', default = '1.0'),
 		Option(  'COM_tolerance', 'Real', desc='center of mass coordinate constraint tolerance value', default = '0.0'),
 
@@ -6272,7 +6284,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 #		Option(  'max_disulf_allowed', 'Integer', desc='number of disulf pairs can be generated at a time', default = '1'),
 		Option(  'match_rt_limit', 'Real', desc='match RT score cutoff', default = '0.4'),
 		Option(  'disulf_landing_range', 'IntegerVector', desc='residue range for disulf landing sites', n = '2'),
-#		Option( 'rank_by_bsasa' ,'Boolean', desc= 'rank results by bsasa.'),
+		Option(  'rank_by_bsasa' ,'Boolean', desc= 'rank results by bsasa.'),
 
 		Option_Group( 'staged_sampling',
 			Option(  'staged_sampling', 'Boolean', desc = 'sampling first with 9mers then 3mers. Staged energies. For rebuilding entire structure not loop closure', default = 'false'),
@@ -6287,6 +6299,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		), # -remodel:staged_sampling
 		Option_Group( 'domainFusion',
 			Option(  'insert_segment_from_pdb', 'File', desc='segment pdb file to be inserted [insert pdb file name].', default=''),
+                        Option(  'insert_segment2_from_pdb', 'File', desc='segment2 pdb file to be inserted [insert pdb file name].', default=''),
 			#Option(  'rigid_segment_in_refinement', 'Boolean', desc=' rigid segment in refinement.'),
 		), # -remodel:domainFusion
 		Option_Group( 'design',
@@ -6297,6 +6310,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option(  'skip_partial', 'Boolean', desc=' skip design stage that operate only on burial positions', default = 'false' ),
 			Option(  'design_neighbors', 'Boolean', desc= 'design neighbors.', default='false'),
 			Option(  'find_neighbors', 'Boolean', desc = 'find neighbors for design/repack' ,default= 'false' ),
+                        Option(  'include_current', 'Boolean', desc = 'include current rotamers' ,default= 'true' ),
 		), # -remodel:design
 
 		## remodel loop mover options
@@ -6304,11 +6318,15 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'max_linear_chainbreak', 'Real', desc="linear chainbreak is <= this value, loop is considered closed (default 0.07) ", default = '0.07' ),
 			Option( 'randomize_loops', 'Boolean', desc="randomize loops prior to running main protocol (default true)", default='true' ),
 			Option( 'use_loop_hash', 'Boolean', desc="centroid build with loop hash (default false)", default='false' ),
+                        Option( 'set_segment', 'File', desc="directly set segment phi-psi-omega from file", default='' ),
+
 			Option( 'allowed_closure_attempts', 'Integer', desc="the allowed number of overall closure attempts (default 1)", default='1' ),
 			Option( 'loophash_cycles', 'Integer', desc="the number of loophash closure cycles to perform (default 8)", default='8' ),
 			Option( 'simultaneous_cycles', 'Integer', desc="the number of simultaneous closure cycles to perform (default 2)", default='2' ),
 			Option( 'independent_cycles', 'Integer', desc="the number of independent closure cycles to perform (default 8)", default='8' ),
 			Option( 'boost_closure_cycles', 'Integer', desc="the maximum number of possible lockdown closure cycles to perform (default 30)", default='30' ) ,
+                        Option( 'threshold_for_boost_closure', 'Real', desc="numerical chainbreak threshold for entering boost_closure_stage", default='1.0' ) ,
+                        Option( 'force_cutting_index', 'Integer', desc="force a cutpoint shift index of blueprint assignment", default='1' ) ,
 			Option( 'force_cutting_N', 'Boolean', desc="force a cutpoint at N-term side of blueprint assignment", default='false' ) ,
 			Option( 'bypass_closure', 'Boolean', desc="turning off CCD closure in the mover for tethered docking purpose", default='false' ),
 			Option( 'cyclic_peptide', 'Boolean', desc="circularize structure joining N and C-term.", default='false' ),

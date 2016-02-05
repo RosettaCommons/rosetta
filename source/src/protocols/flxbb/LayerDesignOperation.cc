@@ -145,7 +145,71 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	use_symmetry_(true)
 {
 	design_layer( dsgn_core, dsgn_boundary, dsgn_surface );
+	/*
+	design_layer_[std::string("core")]=dsgn_core;
+	design_layer_[std::string("boundary")]=dsgn_boundary;
+	design_layer_[std::string("surface")]=dsgn_surface;
+	*/
 	set_default_layer_residues();
+}
+
+/// @brief value constructor
+LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, bool dsgn_surface, bool Nt, bool Ct, Real core_score, Real surf_score, std::string coreAA, std::string boundaryAA, std::string surfaceAA ):
+	TaskOperation(),
+	add_helix_capping_( true ),
+	use_original_( true ),
+	repack_non_designed_residues_( true ),
+	verbose_( false ),
+	restrict_restypes_( true ),
+	make_pymol_script_( false ),
+	srbl_( core::select::util::SelectResiduesByLayerOP( new core::select::util::SelectResiduesByLayer ) ),
+	blueprint_( NULL )
+{
+	design_layer( dsgn_core, dsgn_boundary, dsgn_surface );
+	design_layer_[std::string("core")]=dsgn_core;
+	design_layer_[std::string("boundary")]=dsgn_boundary;
+	design_layer_[std::string("surface")]=dsgn_surface;
+	design_layer_[std::string("Nterm")]=Nt;
+	design_layer_[std::string("Cterm")]=Ct;
+	srbl_->sasa_surface( surf_score, String(""));
+	srbl_->sasa_core( core_score, String(""));
+
+	set_default_layer_residues();
+
+	//if these flags are set, swap out the default residies
+	if ( coreAA != "" ) {
+		layer_residues_[String("core")][String("all")] = coreAA;
+		layer_residues_[String("core")][String("Loop")] = coreAA;
+		layer_residues_[String("core")][String("Strand")] = coreAA;
+		layer_residues_[String("core")][String("Helix")] = coreAA;
+		//  layer_residues_[String("core")][String("HelixStart")] = String("P");
+		//making sure Pro is available
+		if ( coreAA.find("P") == std::string::npos ) coreAA = coreAA + "P";
+		layer_residues_[String("core")][String("HelixStart")] = coreAA;
+	}
+	if ( boundaryAA != "" ) {
+		layer_residues_[String("boundary")][String("all")] = boundaryAA;
+		layer_residues_[String("boundary")][String("Loop")] = boundaryAA;
+		layer_residues_[String("boundary")][String("Strand")] = boundaryAA;
+		layer_residues_[String("boundary")][String("Helix")] = boundaryAA;
+		// layer_residues_[String("boundary")][String("HelixStart")] = String("P");
+		//making sure Pro is available
+		if ( boundaryAA.find("P") == std::string::npos ) boundaryAA = boundaryAA + "P";
+		layer_residues_[String("boundary")][String("HelixStart")] = boundaryAA;
+	}
+	if ( surfaceAA != "" ) {
+		layer_residues_[String("surface")][String("all")] = surfaceAA;
+		layer_residues_[String("surface")][String("Loop")] = surfaceAA;
+		layer_residues_[String("surface")][String("Strand")] = surfaceAA;
+		layer_residues_[String("surface")][String("Helix")] = surfaceAA;
+		//  layer_residues_[String("surface")][String("HelixStart")] = String("P");
+		//making sure Pro is available
+		if ( surfaceAA.find("P") == std::string::npos ) surfaceAA = surfaceAA + "P";
+		layer_residues_[String("surface")][String("HelixStart")] = surfaceAA;
+	}
+
+
+
 }
 
 /// @brief Copy constructor.
@@ -334,9 +398,11 @@ LayerDesignOperation::set_default_layer_residues() {
 		))
 		(std::string("Nterm"), makeMap( boost::assign::map_list_of
 		(std::string("all"),              std::string("ACDEFGHIKLMNPQRSTVWY"))
+		//(std::string("all"),     std::string("DNST"))
 		))
 		(std::string("Cterm"), makeMap( boost::assign::map_list_of
 		(std::string("all"),              std::string("ACDEFGHIKLMNPQRSTVWY"))
+		//(std::string("all"),              std::string("DEGNPQRK"))
 		));
 
 	// Note: by default, the layer_nc_residues_ object contains empty NCAA lists, since we're not designing with noncanonicals by default. --VKM

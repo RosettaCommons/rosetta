@@ -27,6 +27,9 @@
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/util.hh>
 #include <core/graph/DisjointSets.hh>
 #include <core/id/types.hh>
 #include <core/types.hh>
@@ -307,12 +310,14 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 		utility::vector1< string > tokens( tokenize_line( resfile ));
 		++lineno;
 
+		/*
 		// for debug
-		//std::cout << "line->";
-		//for( Size i=1; i <= tokens.size(); i++){
-		// std::cout << tokens[ i ] << ", ";
-		//}
-		//std::cout << std::endl;
+		std::cout << "line->";
+		for ( Size i=1; i <= tokens.size(); i++ ) {
+			std::cout << tokens[ i ] << ", ";
+		}
+		std::cout << std::endl;
+		*/
 
 		Size ntokens( tokens.size() );
 		if ( ntokens == 0 ) continue;
@@ -446,7 +451,9 @@ remodel_generic_taskfactory(){
 	core::pack::task::TaskFactoryOP TF( new core::pack::task::TaskFactory() );
 
 	TF->push_back( TaskOperationCOP( new InitializeFromCommandline() ) ); // also inits -ex options
-	TF->push_back( TaskOperationCOP( new IncludeCurrent() ) ); // enforce keeping of input sidechains
+	if ( basic::options::option[basic::options::OptionKeys::remodel::design::include_current] ) {
+		TF->push_back( TaskOperationCOP( new IncludeCurrent() ) ); // enforce keeping of input sidechains
+	}
 	TF->push_back( TaskOperationCOP( new NoRepackDisulfides() ) );
 	if ( !basic::options::option[basic::options::OptionKeys::remodel::design::allow_rare_aro_chi].user() ) {
 		TF->push_back( TaskOperationCOP( new LimitAromaChi2Operation() ) );
@@ -460,6 +467,7 @@ fill_non_loop_cst_set(
 	core::pose::Pose & pose,
 	protocols::loops::Loops loops)
 {
+	using namespace core::pose::symmetry;
 	using namespace core::id;
 	using namespace core::conformation;
 	using namespace core::scoring::constraints;
@@ -479,7 +487,16 @@ fill_non_loop_cst_set(
 
 		}
 	}
-	core::Size const nres( pose.total_residue());
+
+	// check pose_length. total_residue() has problem with symmetry.  should only
+	// apply constraints to the asym unit.
+	core::Size asym_length = 0;
+	if ( is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+		asym_length = symm_info->num_independent_residues();
+	}
+
+	core::Size const nres( asym_length );
 	for ( core::Size i =1 ; i<=nres ; ++i ) {
 		if ( loopRange.find(i) != loopRange.end() ) { //value exist(check!)
 			continue;

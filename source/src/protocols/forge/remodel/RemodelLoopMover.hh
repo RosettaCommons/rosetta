@@ -390,6 +390,12 @@ protected: // loop modeling stages
 		bool const only_broken_loops = true
 	);
 
+	void set_segment_stage(
+		Pose & pose,
+		MonteCarlo & mc
+	);
+
+
 	void loophash_stage(
 		Pose & pose,
 		MonteCarlo & mc,

@@ -277,6 +277,10 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 
 	capture_stream <<"L: " << L << endl << "rise: "<<rise<<endl<<"radius: "<<radius<<endl<<"omega: "<<omega<<endl;
 
+	rise_=rise;
+	radius_=radius;
+	omega_=omega;
+
 	std::cout << capture_stream.str()<< endl;
 
 	while ( capture_stream.good() ) {

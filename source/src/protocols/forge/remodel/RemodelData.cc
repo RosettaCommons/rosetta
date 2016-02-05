@@ -29,6 +29,7 @@
 #include <core/pack/task/ResfileReader.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/dssp/Dssp.hh>
+#include <core/chemical/ChemicalManager.hh> // for ncaa handling
 
 #include <protocols/forge/remodel/RemodelData.hh>
 
@@ -130,6 +131,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 		protocols::forge::remodel::LineObject line;
 		line.index = index;
 		line.isDesignable = false; // initialize design by default to false
+		line.has_ncaa = false;
 
 		// debug
 		//line_stream >> line.original_index >> line.resname >> line.sstype >> skip;
@@ -221,7 +223,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 					std::string const chain(option[OptionKeys::run::chain] );
 					oss << line.index << " " << chain << " " ;
 				} else {
-					oss << line.index << " _ " ;
+					oss << line.index << " A " ; //default to chain A, Jan 2016
 				}
 			}
 
@@ -237,6 +239,15 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 					pickaa = true;
 					continue;
 				}
+				if ( split_info[i].substr(0,5) == "EMPTY" ) {
+          line.has_ncaa = true;
+          // get the list of ncaa
+          for ( int j = i+1; j < (int)split_info.size() - 1; j = j+2){
+            if ( split_info[j] == "NC" ){
+              line.ncaaList.push_back(split_info[j+1]);
+            }
+          }
+        }
 				if ( pickaa ) { // the column following PIKAA
 					for ( int j=0; j < (int)split_info[i].size(); ++j ) { // only find string element size
 
@@ -471,6 +482,22 @@ void RemodelData::collectInsertionPose(){
 		insertionSS.push_back( dsspSS(i) );
 	}
 	TR_REMODEL << "insertion SS: " << insertionSS << " " << std::endl;
+	//hack for jack
+	/*
+	import_pose::pose_from_pdb( insertPose2,option[OptionKeys::remodel::domainFusion::insert_segment2_from_pdb] );
+	insertion2Size = (int)insertPose2.total_residue();
+	TR_REMODEL << "insertionSize: " << insertion2Size << std::endl;
+
+	scoring::dssp::Dssp dssp2( insertPose2 );
+	ObjexxFCL::FArray1D_char dssp2SS( (int)insertPose2.total_residue() );
+	dssp2.dssp_reduced( dssp2SS );
+	TR_REMODEL << "dsspSS.size(): " << dssp2SS.size() << std::endl;
+	for ( int i = 1; i <= (int)dssp2SS.size(); i++ ) {
+		insertion2SS.push_back( dssp2SS(i) );
+	}
+	TR_REMODEL << "insertion2 SS: " << insertion2SS << " " << std::endl;
+	*/
+
 
 }
 

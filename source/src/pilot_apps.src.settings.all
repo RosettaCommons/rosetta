@@ -702,6 +702,8 @@ sources = {
 		#"zf_relax", # /* Phil Bradley,Documentation Location,Demo Location */
 	],
 	"pilot/possu" : [
+               # "build_repeats",
+               # "helical_param",
 	],
 	"pilot/ptconway" : [
 		#"batchrelax_mpi",

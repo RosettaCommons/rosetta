@@ -374,7 +374,7 @@ CCDLoopClosureMover::init( protocols::loops::Loop const & loop, kinematics::Move
 	type("CCDLoopClosureMover");
 	loop_ = loop;
 	movemap_ = movemap;
-	verbose_ = true;
+	verbose_ = false;
 
 	// These defaults are copied from Rosetta++: map_squence.cc::scored_frag_close()
 	max_per_move_torsion_delta_.resize( n_secondary_structure_types );

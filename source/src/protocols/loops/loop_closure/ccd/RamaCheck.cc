@@ -114,7 +114,7 @@ void RamaCheckBase::register_options()
 void RamaCheckBase::initialize_starting_rama_scores( core::pose::Pose const & pose ) const
 {
 	if ( TR.Warning.visible() ) {
-		TR.Warning << "Initializing starting_rama_scores with current conformation." << std::endl;
+		TR.Trace << "Initializing starting_rama_scores with current conformation." << std::endl;
 	}
 	starting_rama_scores_ = RamaScoreVector( pose.total_residue(), BAD_SCORE ); // init with high value
 	for ( core::uint seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ) {
@@ -194,8 +194,8 @@ RamaCheckBase::total_net_change_in_rama_score_over_range(
 	// Make sure starting_rama_scores_ has been initialized. If not, initialize it with the current conformation.
 	// This will result in this metric evaluating to exactly 0.
 	if ( starting_rama_scores_.size() != pose.total_residue() ) {
-		if ( TR.Warning.visible() ) {
-			TR.Warning << "Starting Rama scores have not been initialized!" << std::endl;
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "Starting Rama scores have not been initialized!" << std::endl;
 		}
 		initialize_starting_rama_scores( pose );
 	}
@@ -332,7 +332,16 @@ RamaCheck1B::compute_rama_score(
 	core::Real const psi
 ) const
 {
-	return rama_->eval_rama_score_residue( pose.aa( seqpos ), phi, psi );
+	// if the AA is aa_unk, then try using backbone_aa. This is useful for ncaa.
+	core::chemical::AA currAA;
+
+	if ( pose.aa(seqpos) == core::chemical::aa_unk ) {
+		currAA = pose.residue(seqpos).backbone_aa();
+	} else {
+			currAA = pose.aa(seqpos);
+	}
+
+	return rama_->eval_rama_score_residue( currAA, phi, psi );
 }
 
 void RamaCheck1B::copy_data( RamaCheck1B & to, RamaCheck1B const & from ) const

@@ -121,6 +121,8 @@ public:
 	///
 	LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, bool dsgn_surface );
 
+	LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, bool dsgn_surface, bool Nt, bool Ct, Real core_score, Real surf_score, std::string coreAA, std::string boundaryAA, std::string surfaceAA );
+
 	/// @brief Copy constructor.
 	///
 	LayerDesignOperation( LayerDesignOperation const & rval );

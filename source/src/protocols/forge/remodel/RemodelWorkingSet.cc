@@ -24,7 +24,9 @@
 #include <utility/vector1.hh>
 
 // project headers
+#include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 #include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/OrderedFragSet.fwd.hh>
@@ -32,6 +34,7 @@
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
 // for switch typeset
+#include <core/pose/annotated_sequence.hh>
 
 // for resfile command map
 #include <core/pack/task/ResfileReader.hh>
@@ -192,8 +195,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		}
 	}
 
-	TR << "temp_for_truncation.size():" << temp_for_truncation.size() << std::endl;
-	TR << "Setting up translate_index." << std::endl;
+	TR.Trace << "temp_for_truncation.size():" << temp_for_truncation.size() << std::endl;
+	TR.Trace << "Setting up translate_index." << std::endl;
 
 	// std::map<int,int> translate_index is now a class member variable
 	utility::vector1< bool > keep( input_pose.total_residue(), false ); // by default, don't keep anything? this vector isn't used anyway so whatever.
@@ -270,11 +273,11 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		safe_root_ = 1;
 	}
 
-	TR << "temp_for_copy (lines_residues_to_remodel): [ ";
+	TR.Trace << "temp_for_copy (lines_residues_to_remodel): [ ";
 	for ( Size ii=0; ii < temp_for_copy.size(); ++ii ) {
-		TR << temp_for_copy[ ii ].original_index << "-" << temp_for_copy[ ii ].index << ", ";
+		TR.Trace << temp_for_copy[ ii ].original_index << "-" << temp_for_copy[ ii ].index << ", ";
 	}
-	TR << "]" << std::endl;
+	TR.Trace << "]" << std::endl;
 
 	// break up 'temp' into small segments
 	protocols::forge::remodel::Segment segment;
@@ -317,15 +320,15 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		}
 	}
 
-	TR << "segmentStorageVector: [ ";
+	TR.Trace << "segmentStorageVector: [ ";
 	for ( Size ii=0; ii < segmentStorageVector.size(); ++ii ) {
-		TR << "segment " << ii << ": [ ";
+		TR.Trace << "segment " << ii << ": [ ";
 		for ( Size jj=0; jj < segmentStorageVector[ ii ].residues.size(); ++jj ) {
-			TR << segmentStorageVector[ ii ].residues[ jj ] << ", ";
+			TR.Trace << segmentStorageVector[ ii ].residues[ jj ] << ", ";
 		}
-		TR << "], ";
+		TR.Trace << "], ";
 	}
-	TR << "]" << std::endl;
+	TR.Trace << "]" << std::endl;
 
 	using protocols::forge::build::BuildManager;
 	using protocols::forge::build::Interval;
@@ -357,6 +360,18 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		insertEndIndex = data.dssp_updated_ss.find_last_of("I");
 		TR << "Found insertion with insertStartIndex: " << insertStartIndex << " and insertEndIndex: " << insertEndIndex << std::endl;
 	}
+	// hack for jack
+	/*
+	Size insert2StartIndex = 0;
+	Size insert2EndIndex = 0;
+	TR << "data.dssp_updated_ss: " << data.dssp_updated_ss << std::endl;
+	if ( option[OptionKeys::remodel::domainFusion::insert_segment2_from_pdb].user() ) {
+		TR << "Processing insertion SS info..." << std::endl;
+		insert2StartIndex = data.dssp_updated_ss.find_first_of("J");
+		insert2EndIndex = data.dssp_updated_ss.find_last_of("J");
+		TR << "Found second insertion with insert2StartIndex: " << insert2StartIndex << " and insert2EndIndex: " << insert2EndIndex << std::endl;
+	}
+	*/
 
 	// set generic aa type before assigning manager tasks.
 
@@ -379,8 +394,17 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		if ( build_aa_type.compare("A") != 0 ) {
 			//build the aa string to be the same length as dssp updated ss
 			//use that length because repeat structures are bigger than blueprint
-			for ( int i = 1; i<= (int)data.dssp_updated_ss.size(); i++ ) {
-				aa.append(build_aa_type);
+			for ( int i = 0; i < (int)data.dssp_updated_ss.size(); i++ ) {
+				// handle ncaa
+				if ( data.blueprint[i].has_ncaa ) {
+						core::chemical::ResidueTypeSetCOP res_type_set( input_pose.residue(1).residue_type_set() );
+						std::string ncaa_fullname = "Z[" + data.blueprint[i].ncaaList[0] + "]"; //'Z' is just a placeholder so that the below function works to retrieve the correct one letter code
+						char one_let_name = core::pose::residue_types_from_sequence( ncaa_fullname, *res_type_set, false )[1]->name1();
+						aa += one_let_name;
+						aa += "[" + data.blueprint[i].ncaaList[0] + "]";
+				} else {
+						aa.append(build_aa_type);
+				}
 			}
 		}
 	}
@@ -501,6 +525,37 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			continue;
 		}
 
+		// hack for jack process regions containing insertion
+		/*
+		if ( insert2StartIndex != 0 && insert2EndIndex != 0 ) {
+			if ( headNew <= static_cast<int>(insert2StartIndex) && tailNew >= static_cast<int>(insert2EndIndex) &&
+					( (insert2EndIndex - insert2StartIndex) != 0 ) ) {
+				TR << "segment contains insertion, skip normal SegmentRebuild instructions, use SegmentInsert instructions instead" << std::endl;
+
+				String beforeInsert = data.dssp_updated_ss.substr( headNew-1, insert2StartIndex-head + 1 ); // if we subtract 'head' and the first position was an extension, you get a really long string here
+				//std::string beforeInsert = data.dssp_updated_ss.substr( headNew-1, insertStartIndex-headNew + 1 );
+				String afterInsert = data.dssp_updated_ss.substr( insert2EndIndex+1, tailNew-insert2EndIndex - 1 );
+				TR << "beforeInsert: " << beforeInsert << std::endl;
+				TR << "afterInsert: " << afterInsert << std::endl;
+				String blank;
+
+			//	for (Size i=1; i<= data.insertionSS.size(); i++){
+			//	blank.append("^");
+			//	} // can't append extra ^ characters because insert_SS_string gets stored in SegmentInsert and used by the manager
+
+				blank.append("^");
+				std::string insert_SS_string = beforeInsert + blank + afterInsert;
+				TR << "insert_SS_string: " << insert_SS_string << std::endl;
+
+				using protocols::forge::build::SegmentInsertConnectionScheme::N; // default N2C insertion
+
+				protocols::forge::build::SegmentInsertConnectionScheme::Enum connection_scheme = N; // default N2C insertion
+				segIns = SegmentInsertOP( new SegmentInsert( Interval(head,tail), insert_SS_string , data.insertPose2, false , connection_scheme ) );
+				manager.add( segIns );
+				continue;
+			}
+		}*/
+
 		if ( head == 0 && segmentStorageVector[i].residues.front() == 1 ) { // N-term extension
 			TR << "N-terminal extension found" << std::endl;
 			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(1,tail),  data.dssp_updated_ss.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) ) );
@@ -518,7 +573,35 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			this->manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) ) );
 		} else {
 			TR << "normal rebuild" << std::endl;
-			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head, tail), DSSP.substr( headNew-1, gap ), aa.substr( headNew-1, gap )) ) );
+      // if the sequence contains ncaa, handle it properly
+			// one has to construct the string with ncaa expressed between brackets
+			// each NCAA will be defined as, for example, Z[BPY]  <= counting as one residue.
+			// the string will be further processed in SegmentRebuild to get the proper one letter code and length.
+      std::string mod_region_aa;
+			if ((int)aa.substr( headNew-1, gap ).find('[') != -1) {
+				int count = 0;
+				for (int i = 1; i <= gap; i++){
+					if ( aa[headNew+count-1] != '['){
+						mod_region_aa += aa[headNew+count-1];
+						count++;
+					} else {
+						while ( aa[headNew+count-1] != ']' ) {
+							mod_region_aa += aa[headNew+count-1];
+							count++;
+							if ( aa[headNew+count-1] == ']' ) {
+								mod_region_aa += aa[headNew+count-1];
+								count++;
+								mod_region_aa += aa[headNew+count-1];
+								count++;
+								break;
+							}
+						}
+					}
+				}
+			} else {
+					mod_region_aa = aa.substr( headNew-1, gap );
+			}
+			manager.add( BuildInstructionOP( new SegmentRebuild( Interval(head, tail), DSSP.substr( headNew-1, gap ), mod_region_aa) ) );
 		}
 	}
 

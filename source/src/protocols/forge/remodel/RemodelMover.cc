@@ -17,6 +17,7 @@
 #include <protocols/forge/remodel/RemodelMover.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <protocols/forge/remodel/RemodelGlobalFrame.hh>
+#include <protocols/forge/remodel/RemodelLigandHandler.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.fwd.hh>
 #include <protocols/forge/remodel/RemodelMoverCreator.hh>
 
@@ -37,6 +38,7 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -79,6 +81,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/rms_util.hh>
 
 #include <core/util/SwitchResidueTypeSet.hh>
 
@@ -620,7 +623,6 @@ void RemodelMover::apply( Pose & pose ) {
 				working_model.manager.dummy_modify(pose.total_residue());
 
 			}
-
 			scoring::dssp::Dssp dssp( pose );
 			dssp.insert_ss_into_pose( pose );
 
@@ -688,7 +690,7 @@ void RemodelMover::apply( Pose & pose ) {
 		// initialize symmetry
 
 		// only symmetrize here if not in the repeat structure mode. for repeats, stay monomer until repeat generation.
-		if ( option[OptionKeys::symmetry::symmetry_definition].user() && !option[OptionKeys::remodel::repeat_structure] )  {
+		if ( option[OptionKeys::symmetry::symmetry_definition].user() && !option[OptionKeys::remodel::repeat_structure].user() )  {
 			simple_moves::symmetry::SetupForSymmetryMover pre_mover;
 			pre_mover.apply( pose );
 			// Remodel assumes chain ID is ' '
@@ -1038,9 +1040,9 @@ void RemodelMover::apply( Pose & pose ) {
 					centroid_sfx_->set_weight( core::scoring::coordinate_constraint, 1.0);
 					centroid_sfx_->set_weight(core::scoring::dihedral_constraint, 10.0 );
 					//enable cartesian bond terms
-					centroid_sfx_->set_weight(core::scoring::cart_bonded_angle,  0.1 );
-					centroid_sfx_->set_weight(core::scoring::cart_bonded_length,  0.1 );
-					centroid_sfx_->set_weight(core::scoring::cart_bonded_torsion,  0.1 );
+					centroid_sfx_->set_weight(core::scoring::cart_bonded_angle,  5.0 );
+					centroid_sfx_->set_weight(core::scoring::cart_bonded_length,  1.0 );
+					centroid_sfx_->set_weight(core::scoring::cart_bonded_torsion,  5.0 );
 					centroid_sfx_->set_weight(core::scoring::omega, 0.2 );
 
 					//only use smooth hb if either of the term is used in centroid build level
@@ -1072,6 +1074,9 @@ void RemodelMover::apply( Pose & pose ) {
 
 				}
 
+
+
+
 				TR << "apply(): calling RemodelDesignMover apply function." << std::endl;
 
 				//****Previously this loop didn't maintain the pose correctly which resulted in a difficult to track down seg fault.  Fixed, but it's questionable weather you would want to filter poses based on constraints.
@@ -1088,6 +1093,7 @@ void RemodelMover::apply( Pose & pose ) {
 						} else {
 							pose.fold_tree(originalTree);
 						}
+						i--; //decrement the number of tries, so it won't run into an infinite loop if -bypass_fragments
 						continue;
 					} else {
 						designMover.apply(pose);
@@ -1096,6 +1102,14 @@ void RemodelMover::apply( Pose & pose ) {
 				} else {
 					designMover.apply(pose);
 					accumulator_.apply(pose);
+				}
+
+				//put this ligand test here for now.
+				if ( option[OptionKeys::in::file::extra_res_fa].user() && option[OptionKeys::remodel::move_ligand].user() ) {
+					TR << "ligand handler" << std::endl;
+					RemodelLigandHandler ligand_handler;
+					ligand_handler.minimize(pose);
+					pose.dump_pdb("ligand1.pdb");
 				}
 				//*****
 			}
@@ -1143,6 +1157,8 @@ void RemodelMover::apply( Pose & pose ) {
 		TR << "clustered poses count: " << results.size() << std::endl;
 
 		for ( std::vector< pose::PoseOP >::iterator it = results.begin(), end= results.end(); it!= end; ++it ) {
+
+			TR << "clustered poses count: " << results.size() << std::endl;
 
 			bool bypass_refinement = option[OptionKeys::remodel::quick_and_dirty].user();
 			if ( rosetta_scripts_quick_and_dirty_ || rosetta_scripts_fast_disulfide_ ) {
@@ -1204,6 +1220,21 @@ void RemodelMover::apply( Pose & pose ) {
 				}
 			}
 
+			//TR << "CARMSD" << core::scoring::CA_rmsd( native_pose_, *(*it) ) << std::endl;
+			//setPoseExtraScores( *(*it), "ca_rms",  core::scoring::CA_rmsd( native_pose_, *(*it) ));
+
+			//save remarks
+
+			pose.pdb_info( pose::PDBInfoOP( new core::pose::PDBInfo(pose) ));
+
+			pose::PDBInfoOP temp_pdbinfo = pose.pdb_info();
+
+			core::io::RemarkInfo remark;
+			remark.value = "RMSD to starting structure: " + utility::to_string(core::scoring::CA_rmsd( native_pose_, *(*it) ));
+			temp_pdbinfo->remarks().push_back( remark );
+
+			(*(*it)).pdb_info(temp_pdbinfo);
+
 			std::stringstream SS;
 			std::string prefix = option[OptionKeys::out::prefix];
 			if ( !prefix.empty() ) {
@@ -1214,18 +1245,50 @@ void RemodelMover::apply( Pose & pose ) {
 			// this is to make sure that the final scoring is done with SCORE12
 			scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 
+			bool pass_RGF_filter=true; //default to true
+
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 				//Experiment with RemodelGlobalFrame
 				RemodelGlobalFrame RGF(remodel_data, working_model, scorefxn);
 				RGF.align_segment(*(*it));
 				RGF.apply(*(*it));
 
+				Real rise = RGF.rise();
+				Real radius = RGF.radius();
+				Real omega = RGF.omega();
+
+				//filter on the values; this really should be turned into a separate
+				//class
+				if ( option[OptionKeys::remodel::filter_rise].user() ) {
+					utility::vector1<Real> values = option[OptionKeys::remodel::filter_rise];
+					if ( values[1] > rise || values[2] < rise ) {
+						pass_RGF_filter=false;
+						TR << "failed rise filter" << std::endl;
+					}
+				}
+				if ( option[OptionKeys::remodel::filter_radius].user() ) {
+					utility::vector1<Real> values = option[OptionKeys::remodel::filter_radius];
+					if ( values[1] > radius || values[2] < radius ) {
+						pass_RGF_filter=false;
+						TR << "failed radius filter" << std::endl;
+					}
+				}
+				if ( option[OptionKeys::remodel::filter_omega].user() ) {
+					utility::vector1<Real> values = option[OptionKeys::remodel::filter_omega];
+					if ( values[1] > omega || values[2] < omega ) {
+						pass_RGF_filter=false;
+						TR << "failed omega filter" << std::endl;
+					}
+				}
 			}
 
 			//save structure, unless doing fast_disulfide.
 			//with fast disulfide, structures are being passed along in rosetta scripts, so no need to output a second PDB.
 			if ( !rosetta_scripts_fast_disulfide_ ) {
-				(*(*it)).dump_scored_pdb(SS.str(), *scorefxn);
+				if ( pass_RGF_filter ) {
+				  (*(*it)).pdb_info()->obsolete(true);
+					(*(*it)).dump_scored_pdb(SS.str(), *scorefxn);
+				}
 			}
 
 
@@ -1254,8 +1317,6 @@ void RemodelMover::apply( Pose & pose ) {
 
 
 	TR << "Remodel poses remaining from original run: " << accumulator_.size() << std::endl;
-	// update PDBinfo
-	pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( pose ) ));
 
 	// setup calculators
 	pose::metrics::CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
@@ -1309,6 +1370,51 @@ bool RemodelMover::centroid_build( Pose & pose, protocols::forge::build::BuildMa
 	manager_ = manager;
 	if ( option[OptionKeys::remodel::bypass_fragments] || rosetta_scripts_bypass_fragments_ || rosetta_scripts_fast_disulfide_ ) {
 		TR << "-=BYPASSING FRAGMENT BUILD (REFINE ONLY) =-" << std::endl;
+
+		if ( option[OptionKeys::remodel::repeat_structure].user() ) { // make sure that the repeats are created even if fragments are bypassed
+
+			bool denovo = true;
+			//find out if it's actually denovo
+			for ( int i = 0, ie = (int)remodel_data_.blueprint.size(); i < ie; i++ ) {
+				if ( remodel_data_.blueprint[i].sstype == "." ) { //if anywhere hits this assignment, not de novo
+					denovo = false;
+				}
+			}
+			if ( denovo ) {
+				//this part really needs work....  currently doesn't allow growing a loop
+				//in regional repeat building.  This section is used in de novo rebuild
+				//cases where the monomer pose is extended, so to restore the sidechain,
+				//the source of the sidechains has to be extended too in de novo cases.
+				//but with refining an existing repeat pose, still need to extend here, unlike the other RLM instance later
+				using namespace protocols::loops;
+				using protocols::forge::methods::intervals_to_loops;
+				std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
+
+				LoopsOP loops( new Loops() );
+
+				//Temporary fix: special case for denovo type, needed artificially
+				//padding residues.  in reality all loops would be padded, but for
+				//archive pose extension, it is only special for de novo case
+				if ( loop_intervals.size() == 1 && (*(loop_intervals.begin())).left == 1 && (*(loop_intervals.begin())).right == remodel_data_.blueprint.size() ) {
+					loops->add_loop( Loop(1, remodel_data_.blueprint.size()+2, 0, 0, true) );
+				} else {
+					loops = LoopsOP( new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) ));
+				}
+
+				RemodelLoopMover RLM(loops);
+				RLM.set_repeat_tail_length(remodel_data_.sequence.length());
+				Pose bufferPose(pose);
+				//due to code change, modified_archive_pose would always be 2x length now
+				RLM.repeat_generation_with_additional_residue( bufferPose, pose );
+				if ( option[OptionKeys::symmetry::symmetry_definition].user() ) {
+					//symmetrize if both rep+sym are used
+					simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+					pre_mover.apply(pose);
+					pose.pdb_info()->obsolete(true);
+				}
+			}
+		}
+
 		return true;
 	}
 
@@ -1538,10 +1644,10 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 
 
 	scoring::constraints::ConstraintSetOP cst_set_post_built;
-	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-		// at this stage it should hold generic cstfile and res_type_linking constraints
-		cst_set_post_built = scoring::constraints::ConstraintSetOP( new scoring::constraints::ConstraintSet( *pose.constraint_set() ) );
-	}
+	//if (option[OptionKeys::remodel::repeat_structure].user() ) {
+	// at this stage it should hold generic cstfile and res_type_linking constraints
+	cst_set_post_built = scoring::constraints::ConstraintSetOP( new scoring::constraints::ConstraintSet( *pose.constraint_set() ) );
+	//}
 
 	Size asym_length;
 	if ( is_symmetric(pose) ) {
@@ -1703,7 +1809,10 @@ bool RemodelMover::design_refine_cart_relax(
 	sfx->set_weight(core::scoring::dihedral_constraint, 10.0 ); // 1.0 originally
 	sfx->set_weight(core::scoring::res_type_constraint, 1.0);
 	sfx->set_weight(core::scoring::res_type_linking_constraint, 1.0);
-	sfx->set_weight(core::scoring::cart_bonded, 0.5);
+	//sfx->set_weight(core::scoring::cart_bonded, 0.5);
+	sfx->set_weight(core::scoring::cart_bonded_angle,  5.0 );
+	sfx->set_weight(core::scoring::cart_bonded_length,  1.0 );
+	sfx->set_weight(core::scoring::cart_bonded_torsion,  5.0 );
 
 
 	core::kinematics::MoveMapOP cmmop( new core::kinematics::MoveMap );
@@ -1720,28 +1829,23 @@ bool RemodelMover::design_refine_cart_relax(
 	}
 
 	for ( Size i = 1; i<= asym_length; ++i ) {
-		std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
-		std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
+		// std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
+		// std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
 		cmmop->set_chi(i,true);
-		std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
+		// std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
 	}
 
-	for ( Size i = 1; i<= asym_length; ++i ) {
-		std::cout << "bbM at " << i << " " << manager_.movemap().get_bb(i) << std::endl;
-		std::cout << "chiM at " << i << " " << manager_.movemap().get_chi(i) << std::endl;
-	}
+	//for (Size i = 1; i<= asym_length; ++i){
+	// std::cout << "bbM at " << i << " " << manager_.movemap().get_bb(i) << std::endl;
+	// std::cout << "chiM at " << i << " " << manager_.movemap().get_chi(i) << std::endl;
+	//}
 
-	simple_moves::MinMoverOP minMover( new simple_moves::MinMover( cmmop , sfx , "lbfgs_armijo", 0.01, true) );
-	minMover->cartesian(true);
+	//if(option[OptionKeys::remodel::repeat_structure].user()){
 
-
-	ConstraintSetOP cst_set_post_built;
-	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-
-		// at this stage it should hold generic cstfile and res_type_linking
-		// constraints
-		cst_set_post_built = ConstraintSetOP( new ConstraintSet( *pose.constraint_set() ) );
-	}
+	// at this stage it should hold generic cstfile and res_type_linking
+	// constraints
+	ConstraintSetOP cst_set_post_built( new ConstraintSet( *pose.constraint_set() ));
+	//}
 
 	protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
@@ -1750,6 +1854,15 @@ bool RemodelMover::design_refine_cart_relax(
 		Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 		Size segment_length = asym_length/repeat_number;
 
+
+		//handle movemap
+		for ( Size rep = 1; rep < repeat_number; rep++ ) { // from 1 since first segment don't need self-linking
+			for ( Size residue = 1; residue <= segment_length ; residue++ ) {
+				if ( cmmop->get_bb(residue) ) {
+					cmmop->set_bb(residue+(segment_length*rep),true);
+				}
+			}
+		}
 
 		for ( Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
 			std::stringstream templateRangeSS;
@@ -1779,6 +1892,14 @@ bool RemodelMover::design_refine_cart_relax(
 		setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
 
 	}
+
+	for ( Size i = 1; i<= asym_length; ++i ) {
+		std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
+		std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
+	}
+
+	simple_moves::MinMoverOP minMover( new simple_moves::MinMover( cmmop , sfx , "lbfgs_armijo", 0.01, true ));
+	minMover->cartesian(true);
 
 	// run design-refine cycle
 	for ( Size i = 0; i < dr_cycles_; ++i ) {

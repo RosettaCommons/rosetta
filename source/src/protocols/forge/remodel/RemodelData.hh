@@ -40,6 +40,8 @@ struct LineObject {
 	std::string design_type;
 	bool isDesignable;
 	bool has_constraints;
+	bool has_ncaa;
+	std::vector< std::string > ncaaList;
 	std::vector< std::string > constraint_definition;
 	std::vector< core::chemical::AA > aminoAcidList;
 };
@@ -102,7 +104,11 @@ public:
 	core::pose::Pose insertPose;
 	int insertionSize;
 	std::string insertionSS;
-
+/*
+	core::pose::Pose insertPose2;
+	int insertion2Size;
+	std::string insertion2SS;
+*/
 	float total_chain_break_score;
 
 };

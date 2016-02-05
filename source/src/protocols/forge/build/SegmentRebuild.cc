@@ -612,6 +612,8 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		if ( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() ) {
 			if ( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::force_cutting_N].user() ) {
 				cut_index = 1;
+			} else if ( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::force_cutting_index].user() ) {
+				cut_index = basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::force_cutting_index];
 			} else {
 				cut_index = r_types.size()-1;
 			}
@@ -825,7 +827,14 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 		// 4 make the foldtree
 		FoldTree nojump_ft;
-		nojump_ft.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps_pre_processing, Fjumps, Fcuts, ft.root(), true ); // true );
+
+		if ( basic::options::option[basic::options::OptionKeys::remodel::reroot_tree].user() ) { //rerooting tree so can anchor in stationary part of structure.
+			Size new_root =  basic::options::option[basic::options::OptionKeys::remodel::reroot_tree];
+			nojump_ft.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps_pre_processing, Fjumps, Fcuts, new_root , true ); // true );
+		} else { //default
+			nojump_ft.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps_pre_processing, Fjumps, Fcuts, ft.root(), true ); // true );
+		}
+
 		//std::cout << nojump_ft << std::endl;
 
 		pose.fold_tree(nojump_ft);
@@ -834,7 +843,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		for ( Size i = interval_.left; i <= interval_.right; i++ ) {
 			core::conformation::idealize_position(i, pose.conformation());
 		}
-		pose.dump_pdb("test_idl.pdb");
+		//pose.dump_pdb("test_idl.pdb");
 	}
 
 

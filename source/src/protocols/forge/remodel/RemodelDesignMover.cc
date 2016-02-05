@@ -38,12 +38,17 @@
 #include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/util/disulfide_util.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/pose/PDBInfo.hh>
 
 // unit headers
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
 #include <protocols/forge/remodel/RemodelRotamerLinks.hh>
 #include <protocols/forge/methods/util.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+//#include <protocols/flxbb/LayerDesignOperation.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
 // C++ headers
@@ -234,12 +239,14 @@ void RemodelDesignMover::apply( Pose & pose ) {
 		if ( manual ) {
 			//do nothing
 		} else {  //auto build always reduce task
-
-			if ( !option[OptionKeys::remodel::design::skip_partial].user() ) {
-				reduce_task(pose, working_model_.task, true, true, false);
-			} else {
-				reduce_task(pose, working_model_.task, true, true, true);
-			}
+			//if ( option[OptionKeys::remodel::use_LD_operation] ) {}
+			//else {
+				if ( !option[OptionKeys::remodel::design::skip_partial].user() ) {
+					reduce_task(pose, working_model_.task, true, true, false);
+				} else {
+					reduce_task(pose, working_model_.task, true, true, true);
+				}
+			//}
 		}
 	} else if ( !strcmp(state_.c_str(), "finish") ) {
 		if ( manual ) {
@@ -247,7 +254,7 @@ void RemodelDesignMover::apply( Pose & pose ) {
 		} else {
 			// if finishing design, no need to reduce, but require resetting positios
 			//if (!option[OptionKeys::remodel::design::skip_partial].user()){
-			reduce_task(pose, working_model_.task, true, true, true);
+			//reduce_task(pose, working_model_.task, true, true, true);
 		}
 	}
 
@@ -329,8 +336,8 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 	utility::vector1<Size> boundaryPos;
 	utility::vector1<Size> surfPos;
 
-	Size CORE_CUTOFF =option[OptionKeys::remodel::core_cutoff];
-	Size BOUNDARY_CUTOFF =option[OptionKeys::remodel::boundary_cutoff];
+	Size CORE_CUTOFF =option[OptionKeys::remodel::core_cutoff]();
+	Size BOUNDARY_CUTOFF =option[OptionKeys::remodel::boundary_cutoff]();
 
 	//get num_neighbors for each position
 	basic::MetricValue< std::map< core::Size, core::Size > >nbr_map;
@@ -550,6 +557,8 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 			command->residue_action(*task, resid); //not sure about this token thing...
 		}
 	}
+	//protocols::flxbb::LayerDesignOperationOP layer = new protocols::flxbb::LayerDesignOperation( true, true, true );
+	// layer->apply(pose, *task);
 
 	//std::cout << "END REDUCE" << std::endl;
 	//std::cout << *task << std::endl;
@@ -845,7 +854,17 @@ void RemodelDesignMover::mode1_packertask(Pose & pose){ // auto loop only
 	core::pack::task::TaskFactoryOP TF = protocols::forge::methods::remodel_generic_taskfactory();
 
 	//if need more operations added, put them here.
-
+/*
+	if ( option[OptionKeys::remodel::use_LD_operation] ) {
+		if (!option[OptionKeys::remodel::core_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::core_cutoff].value(20);
+		}
+		if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::boundary_cutoff].value(40);
+		}
+		TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
+	}
+*/
 	//create the real task
 	working_model_.task = TF->create_task_and_apply_taskoperations( pose );
 	utility::vector1_bool additional_sites(pose.total_residue(), false);
@@ -866,11 +885,26 @@ void RemodelDesignMover::mode1_1_packertask(Pose & pose){ // auto loop only
 
 	//if need more operations added, put them here.
 
+	// TF->push_back(new protocols::flxbb::LayerDesignOperation( true, true, true ));
+/*
+	if ( option[OptionKeys::remodel::use_LD_operation] ) {
+		if (!option[OptionKeys::remodel::core_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::core_cutoff].value(20);
+		}
+		if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::boundary_cutoff].value(40);
+		}
+		TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
+	}
+*/
 	//create the real task
 	working_model_.task = TF->create_task_and_apply_taskoperations( pose );
 	utility::vector1_bool additional_sites(pose.total_residue(), true);
 
 	working_model_.task->restrict_to_residues( additional_sites );
+
+	//protocols::flxbb::LayerDesignOperationOP layer = new protocols::flxbb::LayerDesignOperation( true, true, true );
+	//layer->apply(pose, *(working_model_.task));
 
 	TR << "number to be packed after adding sites: " << working_model_.task->num_to_be_packed() << std::endl;
 
@@ -883,6 +917,18 @@ void RemodelDesignMover::mode2_packertask(Pose & pose){ // auto loop with design
 
 	//if need more operations added, put them here.
 
+	//TF->push_back(new protocols::flxbb::LayerDesignOperation( true, true, true ));
+/*
+	if ( option[OptionKeys::remodel::use_LD_operation] ) {
+		if (!option[OptionKeys::remodel::core_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::core_cutoff].value(20);
+		}
+		if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::boundary_cutoff].value(40);
+		}
+		TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
+	}
+*/
 	//create the real task
 	working_model_.task = TF->create_task_and_apply_taskoperations( pose );
 	utility::vector1_bool additional_sites(pose.total_residue(), false);
@@ -902,6 +948,18 @@ void RemodelDesignMover::mode3_packertask(Pose & pose){ // auto loop with repack
 
 	//if need more operations added, put them here.
 
+	//TF->push_back(new protocols::flxbb::LayerDesignOperation( true, true, true ));
+	/*
+	if ( option[OptionKeys::remodel::use_LD_operation] ) {
+		if (!option[OptionKeys::remodel::core_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::core_cutoff].value(20);
+		}
+		if (!option[OptionKeys::remodel::boundary_cutoff].user()){  // set default values if not set by user -- need to overwrite the default switch from neighbor counts to SASA
+			option[OptionKeys::remodel::boundary_cutoff].value(40);
+		}
+		TF->push_back( core::pack::task::operation::TaskOperationCOP( new protocols::flxbb::LayerDesignOperation( true, true, true, true, true, Real( option[OptionKeys::remodel::core_cutoff]() ), Real( option[OptionKeys::remodel::boundary_cutoff]() ), std::string( option[OptionKeys::remodel::coreAA]() ), std::string( option[OptionKeys::remodel::boundaryAA]() ), std::string( option[OptionKeys::remodel::surfaceAA]() ) )));
+	}
+*/
 	//create the real task
 	working_model_.task = TF->create_task_and_apply_taskoperations( pose );
 	utility::vector1_bool additional_sites(pose.total_residue(), false);
@@ -937,6 +995,27 @@ void RemodelDesignMover::mode4_packertask(Pose & pose){ // full manuaing namespa
 
 void RemodelDesignMover::mode5_packertask(Pose & pose){ // manual with auto design neighbor
 
+	using core::pose::metrics::CalculatorFactory;
+	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
+	using core::pose::metrics::PoseMetricCalculatorOP;
+	using namespace core::pose::symmetry;
+	using namespace core::scoring::constraints;
+
+	bool is_sym(false);
+	Size asym_length=pose.total_residue();
+
+	//extract asymmetric unit
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		is_sym=true;
+		Pose junk_for_copy;
+		// core::scoring::constraints::ConstraintSetOP pose_cst_set = new core::scoring::constraints::ConstraintSet( *pose.constraint_set() );
+		core::pose::symmetry::extract_asymmetric_unit( pose, junk_for_copy, false);
+		asym_length=junk_for_copy.total_residue();
+		//  pose = junk_for_copy;
+		//  pose.constraint_set(pose_cst_set);
+		//  pose.pdb_info()->obsolete(true);
+	}
+
 	TR << "MODE 5: Manual DESIGN REMODEL with DESIGN NEIGHBOR" << std::endl;
 
 	core::pack::task::TaskFactoryOP TF = protocols::forge::methods::remodel_generic_taskfactory();
@@ -946,17 +1025,56 @@ void RemodelDesignMover::mode5_packertask(Pose & pose){ // manual with auto desi
 	//create the real task
 	working_model_.task = TF->create_task_and_apply_taskoperations( pose );
 
+	// process the information in blueprint and save the positions touched.
+	non_default_positions_ = protocols::forge::methods::parse_resfile_string_with_no_lockdown(pose, *working_model_.task, remodel_data_.parsed_string_for_resfile );
+
 	utility::vector1_bool additional_sites(pose.total_residue(), false);
 
-	//debug run_calculator(pose, "neighborhood_calc", "central_residues", additional_sites);
-	run_calculator(pose, "neighborhood_calc", "neighbors", additional_sites);
+	//need to convert the vector to a set for calculator use
+	std::set<Size> manual_positions;
+
+	for ( Size i = 1; i<= Size(non_default_positions_.size()); ++i ) {
+		if ( non_default_positions_[i] == 1 ) {
+			TR.Debug << "nondefault_pos: " << non_default_positions_[i] << " at " << i << std::endl;
+			manual_positions.insert(i);
+		}
+	}
+
+	CalculatorFactory::Instance().remove_calculator( "neighborhood_calc" );
+
+	std::set<Size> ligand_positions;
+	if ( option[OptionKeys::remodel::design_around_ligand].user() ) {
+		//find the ligand position
+		ligand_positions.insert(asym_length);
+		CalculatorFactory::Instance().register_calculator( "neighborhood_calc", PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( ligand_positions ) ));
+		//debug run_calculator(pose, "neighborhood_calc", "central_residues", additional_sites);
+		run_calculator(pose, "neighborhood_calc", "neighbors", additional_sites);
+	} else {
+		CalculatorFactory::Instance().register_calculator( "neighborhood_calc", PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( manual_positions ) ));
+		//debug run_calculator(pose, "neighborhood_calc", "central_residues", additional_sites);
+		run_calculator(pose, "neighborhood_calc", "neighbors", additional_sites);
+	}
+
+	for ( Size i = 1; i<= Size(additional_sites.size()); ++i ) {
+		TR.Debug << "neighbors sites: " << additional_sites[i]<< " at " << i << std::endl;
+		if ( i > asym_length ) {
+			additional_sites[i] = 0;
+		}
+	}
 
 	// identify all the positions to change -- this includes central_residues and
 	// neighbors from calculator runs
 	working_model_.task->restrict_to_residues( additional_sites );
 
 	// process the information in blueprint and save the positions touched.
-	non_default_positions_ = protocols::forge::methods::parse_resfile_string_with_no_lockdown(pose, *working_model_.task, remodel_data_.parsed_string_for_resfile );
+	//non_default_positions_ = protocols::forge::methods::parse_resfile_string_with_no_lockdown(pose, *working_model_.task, remodel_data_.parsed_string_for_resfile );
+
+	if ( is_sym ) {
+		//resymmetrize
+		// protocols::simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+		// pre_mover.apply(pose);
+		// pose.pdb_info()->obsolete(true);
+	}
 
 	TR << "number to be packed after adding sites: " << working_model_.task->num_to_be_packed() << std::endl;
 }
@@ -974,7 +1092,8 @@ void RemodelDesignMover::mode6_packertask(Pose & pose){ // manual with auto repa
 		if ( !non_default_positions_[ii] ) {
 			if ( working_model_.task->nonconst_residue_task(ii).being_packed() ) {
 				working_model_.task->nonconst_residue_task(ii).restrict_to_repacking();
-				//debug TR << "restrict position " << ii << " to repack only" << std::endl;
+				//debug
+				TR.Debug << "restrict position " << ii << " to repack only" << std::endl;
 			}
 		}
 	}

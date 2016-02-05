@@ -3,3 +3,4 @@ hbond_lr_bb 1.0
 hbond_sr_bb 1.0
 rama        0.1
 rg          1.0
+omega       1.0

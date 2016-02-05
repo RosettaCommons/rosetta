@@ -94,6 +94,7 @@ linear_chainbreak(
 
 	// evaluate the break
 	// TL: Why did num_cutpoint() have to be 1?? if ( pose.fold_tree().is_cutpoint( pos ) && pose.fold_tree().num_cutpoint() == 1 ) {
+	//if ( pose.fold_tree().is_cutpoint( pos ) && pose.fold_tree().num_cutpoint() == 1 ) {
 	if ( pose.fold_tree().is_cutpoint( pos ) ) {
 
 		bool cutpoints_added = add_cutpoint_variants( pose, pos );
@@ -117,7 +118,46 @@ linear_chainbreak(
 	// return the energy
 	return emap[ core::scoring::linear_chainbreak ];
 }
+/*
+/// @brief evaluate linear chainbreak at a position
+/// @remarks If necessary, will evaluate using a copy of the Pose with a cut
+///  fold tree.  If cutpoint variants are present at chainbreak, will use
+///  existing variants and not modify them.  If cutpoint variants are not
+///  found will add them and then remove them once calculation is finished.
+core::Real
+linear_chainbreak(
+  core::pose::Pose & pose,
+  core::Size const pos
+)
+{
+  using core::kinematics::FoldTree;
+  using core::pose::Pose;
+  using core::scoring::EnergyMap;
+  using core::scoring::ScoreFunction;
+  using core::scoring::methods::LinearChainbreakEnergy;
 
+  if ( pose.fold_tree().num_cutpoint() == 0 ) {
+    return core::Real( 0.0 );
+  }
+  debug_assert( pos > 0 );
+  debug_assert( pos < pose.n_residue() );
+
+  Pose scratch = pose;
+
+  FoldTree ft;
+  ft.add_edge( 1, scratch.n_residue(), core::kinematics::Edge::PEPTIDE );
+  ft.new_jump( pos, pos + 1, pos );
+
+  add_cutpoint_variants( scratch, pos );
+
+  EnergyMap emap;
+  ScoreFunction const fx; // dummy, needed for function call
+  LinearChainbreakEnergy energy;
+  energy.finalize_total_energy( scratch, fx, emap );
+
+  return emap[ core::scoring::linear_chainbreak ];
+}
+*/
 
 /// @brief evaluate overlap chainbreak at a position
 /// @remarks Copies the Pose, if necessary swaps the Pose with a cut fold tree,

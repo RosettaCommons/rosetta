@@ -783,7 +783,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		cstOP->enable_constraint_scoreterms(sfx_);
 	}
 
-	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() && !basic::options::option[basic::options::OptionKeys::remodel::cst_fa_only].user() ) {
 		//safety
 		pose.remove_constraints();
 
@@ -998,10 +998,11 @@ VarLengthBuild::FrameList VarLengthBuild::pick_fragments(
 		} else {
 			aa_sub = "";
 		}
-		//TR << "complete_ss length: " << complete_ss.length() << " complete_abego size: " << complete_abego.size() << std::endl;
+		TR << "complete_ss length: " << complete_ss.length() << " complete_abego size: " << complete_abego.size() << std::endl;
 		utility::vector1< String > abego_sub;
 		if ( complete_abego.size() > 0 ) {
-			runtime_assert( complete_ss.length() == complete_abego.size() );
+			//runtime_assert( complete_ss.length() == complete_abego.size() );
+			//causing issues with symmetry
 			Size pos( 1 );
 			abego_sub.resize( frag_length );
 			for ( Size ii = interval.left + j; ii <= interval.left + j + frag_length - 1; ++ii, ++pos ) {

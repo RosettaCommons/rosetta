@@ -1461,11 +1461,11 @@ sealed_symmetric_fold_tree( core::pose::Pose & pose ) {
 	conformation::symmetry::SymmetricConformation const & symm_conf (
 		dynamic_cast<conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 	conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-	Size nres_subunit ( symm_info->num_independent_residues() );
+	//Size nres_subunit ( symm_info->num_independent_residues() );
 
 	// mjo commenting out 'nsubunits' because it is not used and casus a warning
 	//Size nsubunits ( symm_info->subunits() );
-	Size num_nonvrt = symm_info->num_total_residues_without_pseudo();
+	//Size num_nonvrt = symm_info->num_total_residues_without_pseudo();
 
 	// 1 - Get monomer jumps, cuts, and anchor
 
@@ -1481,28 +1481,46 @@ sealed_symmetric_fold_tree( core::pose::Pose & pose ) {
 	for ( Size i = 1; i<= f_orig.num_jump(); ++i ) {
 		Size down ( f_orig.downstream_jump_residue(i) );
 		Size up ( f_orig.upstream_jump_residue(i) );
+		/*
 		// connections between VRTs are unchanged
-		if ( up > num_nonvrt && down > num_nonvrt ) {
-			new_jumps.push_back( std::pair<Size,Size>(up,down) );
+		if ( up > num_nonvrt && down > num_nonvrt) {
+		new_jumps.push_back( std::pair<Size,Size>(up,down) );
 		}
 		// jumps to anchor
-		if ( up > num_nonvrt && down <= num_nonvrt ) {
-			new_jumps.push_back( std::pair<Size,Size>( up, down ) );
+		if ( up > num_nonvrt && down <= num_nonvrt) {
+		new_jumps.push_back( std::pair<Size,Size>( up, down ) );
 		}
 		// jumps from anchor
-		if ( up <= num_nonvrt && down > num_nonvrt ) {
-			new_jumps.push_back( std::pair<Size,Size>( up, down ) );
+		if ( up <= num_nonvrt && down > num_nonvrt) {
+		new_jumps.push_back( std::pair<Size,Size>( up, down ) );
 		}
+		*/
+		// all virts are of type ligand, so just use it to catch all the jumps
+		if ( pose.conformation().residue(up).is_ligand() == true || pose.conformation().residue(down).is_ligand() == true ) {
+			new_jumps.push_back( std::pair<Size,Size>( up, down) );
+		}
+
 	}
 
 	// cuts
 	cuts_vector = f_orig.cutpoints();
 	for ( Size i = 1; i<=cuts_vector.size(); ++i ) {
 		// cuts between vrts and jumps between chains
-		if ( cuts_vector[i] >= (int) num_nonvrt || cuts_vector[i]%nres_subunit == 0 ) {
+		//  if ( cuts_vector[i] >= (int) num_nonvrt || cuts_vector[i]%nres_subunit == 0 ) // not good if ligand is present.
+
+		//if terminus
+		if ( pose.conformation().residue(cuts_vector[i]).is_terminus() ) {
+			new_cuts.push_back( cuts_vector[i] );
+		}
+
+		//if virtural or ligand
+		if ( pose.conformation().residue(cuts_vector[i]).is_ligand() ) {
 			new_cuts.push_back( cuts_vector[i] );
 		}
 	}
+
+
+	// scan for ligands
 
 	// 3 - put them in FArrays
 	ObjexxFCL::FArray1D_int cuts( new_cuts.size() );

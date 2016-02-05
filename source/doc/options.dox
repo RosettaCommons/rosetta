@@ -11350,6 +11350,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>will setup simple foldtree and fold through it during centroid build.</dd><br>
 </dl>
 <dl>
+<dt><b>-reroot_tree</b> \<Integer\><dt>
+<dd>rerooting the tree for the build.</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
 <dt><b>-backrub</b> \<Boolean\><dt>
 <dd>run backrub MC trajectory after every completed loop building attempt</dd><br>
 </dl>
@@ -11480,6 +11485,31 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 15</dd><br>
 </dl>
 <dl>
+<dt><b>-coreAA</b> \<String\><dt>
+<dd>amino acid set for core</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-boundaryAA</b> \<String\><dt>
+<dd>amino acid set for boundary</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-surfaceAA</b> \<String\><dt>
+<dd>amino acid set for surface</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-use_LD_operation</b> \<Boolean\><dt>
+<dd>enable operation described by LayerDesignOperation</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-design_around_ligand</b> \<Boolean\><dt>
+<dd>apply manual design mode around the ligand</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-resclass_by_sasa</b> \<Boolean\><dt>
 <dd>switch to use sasa for residue classification</dd><br>
 <dd>Default: false</dd><br>
@@ -11498,6 +11528,18 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-helical_omega</b> \<Real\><dt>
 <dd>helical parameter: omega</dd><br>
 <dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-filter_rise</b> \<RealVector\><dt>
+<dd>filter value range for helical params rise</dd><br>
+</dl>
+<dl>
+<dt><b>-filter_radius</b> \<RealVector\><dt>
+<dd>filter value range for helical params radius</dd><br>
+</dl>
+<dl>
+<dt><b>-filter_omega</b> \<RealVector\><dt>
+<dd>filter value range for helical params omega</dd><br>
 </dl>
 <dl>
 <dt><b>-COM_sd</b> \<Real\><dt>
@@ -11565,6 +11607,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-insert_segment_from_pdb</b> \<File\><dt>
 <dd>segment pdb file to be inserted [insert pdb file name].</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-insert_segment2_from_pdb</b> \<File\><dt>
+<dd>segment2 pdb file to be inserted [insert pdb file name].</dd><br>
 <dd>Default: ""</dd><br>
 </dl>
  </li>
@@ -11675,6 +11722,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>find neighbors for design/repack</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-include_current</b> \<Boolean\><dt>
+<dd>include current rotamers</dd><br>
+<dd>Default: true</dd><br>
+</dl>
  </li>
 <li><h2>remodel</h2>
 <dl>
@@ -11703,6 +11755,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-set_segment</b> \<File\><dt>
+<dd>directly set segment phi-psi-omega from file</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
 <dt><b>-allowed_closure_attempts</b> \<Integer\><dt>
 <dd>the allowed number of overall closure attempts (default 1)</dd><br>
 <dd>Default: 1</dd><br>
@@ -11728,9 +11785,19 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 30</dd><br>
 </dl>
 <dl>
+<dt><b>-threshold_for_boost_closure</b> \<Real\><dt>
+<dd>numerical chainbreak threshold for entering boost_closure_stage</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
 <dt><b>-force_cutting_N</b> \<Boolean\><dt>
 <dd>force a cutpoint at N-term side of blueprint assignment</dd><br>
 <dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-force_cutting_index</b> \<Integer\><dt>
+<dd>force a cutpoint shift index of blueprint assignment</dd><br>
+<dd>Default: 1</dd><br>
 </dl>
 <dl>
 <dt><b>-bypass_closure</b> \<Boolean\><dt>
