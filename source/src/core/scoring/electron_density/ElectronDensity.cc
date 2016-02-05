@@ -1554,7 +1554,7 @@ ElectronDensity::scaleIntensities(
 
 void
 ElectronDensity::reciprocalSpaceFilter( core::Real maxreso, core::Real minreso, core::Real fadewidth ) {
-	if ( Fdensity.u1() == 0 ) numeric::fourier::fft3(density, Fdensity);
+	numeric::fourier::fft3(density, Fdensity);
 
 	//int H,K,L;
 	for ( int z=1; z<=(int)density.u3(); ++z ) {
@@ -1567,22 +1567,28 @@ ElectronDensity::reciprocalSpaceFilter( core::Real maxreso, core::Real minreso, 
 				Real r_i = 1.0 / sqrt(S2(H,K,L));
 
 				Real fade = 1.0;
-				if ( r_i > minreso+fadewidth/2.0 || r_i < maxreso-fadewidth/2.0 ) {
+				if ( r_i < minreso-fadewidth/2.0 || r_i > maxreso+fadewidth/2.0 ) {
 					fade = 0.0;
-				} else if ( r_i > minreso-fadewidth/2.0 ) {
-					Real del = (r_i-(minreso-fadewidth/2.0))/fadewidth;
+				} else if ( r_i < minreso+fadewidth/2.0 ) {
+					Real del = (r_i-(minreso+fadewidth/2.0))/fadewidth;
 					fade = (1-del*del);
 					fade = fade*fade;
-				} else if ( r_i < minreso+fadewidth/2.0 ) {
-					Real del = (r_i-(minreso-fadewidth/2.0))/fadewidth;
+				} else if ( r_i > maxreso-fadewidth/2.0 ) {
+					Real del = (r_i-(maxreso-fadewidth/2.0))/fadewidth;
 					fade = (del*del-1);
 					fade = fade*fade;
 				}
 
-				Fdensity(x,y,z) *= fade;
+				if (H!=0 || K!=0 || L!=0) {
+					Fdensity(x,y,z) *= fade;
+				}
 			}
 		}
 	}
+	numeric::fourier::ifft3(Fdensity, density);
+
+	// clear derived data
+	density_change_trigger();
 }
 
 
@@ -5158,7 +5164,7 @@ bool ElectronDensity::writeMRC(std::string mapfilename, bool writeRhoCalc, bool 
 	outx.write(reinterpret_cast <char*>(ori_float), sizeof(float)*3);
 
 	// Write "MAP" at byte 208, indicating a CCP4 file.
-	char buff_s[80]; strcpy(buff_s, "MAP DD");
+	char buff_s[80]; strcpy(buff_s, "MAP DD  ");
 	outx.write(reinterpret_cast <char*>(buff_s), 8);
 
 	// fill remainder of head with junk

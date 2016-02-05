@@ -69,6 +69,7 @@ void ScaleMapIntensities::init() {
 	outmap_name_="";
 	bin_squared_=true;
 	b_sharpen_=0.0;
+	truncate_only_=false;
 }
 
 void ScaleMapIntensities::apply(core::pose::Pose & pose) {
@@ -157,14 +158,22 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 0.0, 0.0, mapI, bin_squared_);
 
 		for ( Size i=1; i<=nresbins_; ++i ) {
-			rescale_factor[i] = std::sqrt( exp(-b_sharpen_*resobins[i]*resobins[i]) );
+			rescale_factor[i] = std::sqrt( exp(-b_sharpen_*resobins[i]*resobins[i]/4.0) );
 		}
 	}
 
-	TR << "SCALING MAP:" << std::endl;
-	TR << "resbin   model   map   rescale" << std::endl;
-	for ( Size i=1; i<=nresbins_; ++i ) {
-		TR << resobins[i] << "  " << modelI[i] << " " << mapI[i] << " " << rescale_factor[i] << std::endl;
+	if (b_sharpen_ == 0) {
+		TR << "SCALING MAP:" << std::endl;
+		TR << "resbin   model   map   rescale" << std::endl;
+		for ( Size i=1; i<=nresbins_; ++i ) {
+			TR << resobins[i] << "  " << modelI[i] << " " << mapI[i] << " " << rescale_factor[i] << std::endl;
+		}
+	} else {
+		TR << "SCALING MAP:" << std::endl;
+		TR << "resbin    map   rescale" << std::endl;
+		for ( Size i=1; i<=nresbins_; ++i ) {
+			TR << resobins[i] << "  " << mapI[i] << " " << rescale_factor[i] << std::endl;
+		}
 	}
 
 	core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, 0.0, 0.0, bin_squared_ );
