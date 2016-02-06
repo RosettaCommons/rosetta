@@ -43,6 +43,8 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 
+#include <basic/options/option_macros.hh>
+
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
@@ -59,6 +61,9 @@ using namespace core;
 using namespace basic::options;
 using namespace OptionKeys;
 
+OPT_KEY( Boolean, helix )
+OPT_KEY( Real,  phi )
+OPT_KEY( Real,  psi )
 
 ///////////////////////////////////////////////////////////////////////////////
 int
@@ -69,6 +74,10 @@ main( int argc, char * argv [] )
 		using namespace scoring;
 		using namespace conformation;
 		using namespace core::chemical;
+
+		NEW_OPT( helix, "Make helical peptide", false );
+		NEW_OPT( phi, "Repeated value for phi", -135.0 );
+		NEW_OPT( psi, "Repeated value for psi", 135.0 );
 
 		//setup random numbers and options
 		devel::init(argc, argv);
@@ -88,9 +97,19 @@ main( int argc, char * argv [] )
 
 		//make peptide extended
 		for ( int i=1; i<=seqLen; i++ ) {
-			pose.set_phi(i,-135.0);
-			pose.set_psi(i,135.0);
-			pose.set_omega(i,180.0);
+			if ( basic::options::option[ phi ].user() || basic::options::option[ psi ].user() ) {
+				pose.set_phi(i, basic::options::option[ phi ]() );
+				pose.set_psi(i, basic::options::option[ psi ]() );
+				pose.set_omega(i,180.0);
+			} else if ( basic::options::option[ helix ]() ) {
+				pose.set_phi(i,-57.8); // geometrically ideal values from http://www.cryst.bbk.ac.uk/PPS2/course/section8/ss-960531_6.html
+				pose.set_psi(i,-47.0);
+				pose.set_omega(i,180.0);
+			} else {
+				pose.set_phi(i,-135.0);
+				pose.set_psi(i,135.0);
+				pose.set_omega(i,180.0);
+			}
 		}
 
 		//dump pdb to output
