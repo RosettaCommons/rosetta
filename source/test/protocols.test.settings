@@ -156,6 +156,10 @@ sources = {
 		"ExtendChain",
 	],
 
+	"denovo_design/residue_selectors" :[
+		"TaskSelector",
+	],
+
 	"generalized_kinematic_closure" : [
 		"GeneralizedKIC",
 	],

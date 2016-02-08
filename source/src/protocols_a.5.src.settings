@@ -42,6 +42,9 @@ sources = {
 		"PsiPredInterface",
 		"SSPredictionFilter",
 	],
+	"protocols/denovo_design/residue_selectors": [
+		"TaskSelector",
+	],
 	"protocols/denovo_design/task_operations": [
 		"ConsensusLoopDesign",
 	],

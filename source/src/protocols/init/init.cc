@@ -69,6 +69,9 @@
 #include <protocols/init/init.LoopsDefinerCreators.ihh>
 #include <protocols/init/init.LoopsDefinerRegistrators.ihh>
 
+#include <protocols/init/init.ResidueSelectorCreators.ihh>
+#include <protocols/init/init.ResidueSelectorRegistrators.ihh>
+
 #include <protocols/init/init.TaskOperationCreators.ihh>
 #include <protocols/init/init.TaskOperationRegistrators.ihh>
 

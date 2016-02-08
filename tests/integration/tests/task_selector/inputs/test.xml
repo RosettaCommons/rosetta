@@ -1,0 +1,25 @@
+<ROSETTASCRIPTS>
+	<TASKOPERATIONS>
+		<DesignAround name="around_res_3" resnums="3" />
+	</TASKOPERATIONS>
+	<RESIDUE_SELECTORS>
+		<Task name="select_by_task" fixed="1" task_operations="around_res_3" />
+		<Task name="select_by_task2" packable="1" task_operations="around_res_3" />
+	</RESIDUE_SELECTORS>
+	<TASKOPERATIONS>
+		<OperateOnResidueSubset name="repack_close_to_res3" selector="select_by_task" >
+			<PreventRepackingRLT/>
+		</OperateOnResidueSubset>
+		<OperateOnResidueSubset name="repack_far_from_res3" selector="select_by_task2" >
+			<PreventRepackingRLT/>
+		</OperateOnResidueSubset>
+	</TASKOPERATIONS>
+	<MOVERS>
+		<FastDesign name="fastdes" task_operations="repack_close_to_res3" repeats="1" />
+		<FastDesign name="fastdes2" task_operations="repack_far_from_res3" repeats="1" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="fastdes" />
+		<Add mover="fastdes2" />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
