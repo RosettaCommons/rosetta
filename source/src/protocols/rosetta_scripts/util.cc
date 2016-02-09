@@ -167,12 +167,11 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 core::select::residue_selector::ResidueSelectorCOP
 parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
 {
-	if ( tag->hasOption( "residue_selector" ) ) {
-		std::string const selectorname = tag->getOption< std::string >( "residue_selector" );
-		return get_residue_selector( selectorname, data );
-	} else {
+	std::string const selectorname = tag->getOption< std::string >( "residue_selector", "" );
+	if ( selectorname.empty() ) {
 		return core::select::residue_selector::ResidueSelectorCOP();
 	}
+	return get_residue_selector( selectorname, data );
 }
 
 core::select::residue_selector::ResidueSelectorCOP
