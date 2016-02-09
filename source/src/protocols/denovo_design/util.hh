@@ -87,6 +87,9 @@ loop_stop_without_overlap( core::pose::Pose const & pose, core::Size stopres, co
 core::Size
 loop_start_without_overlap( core::pose::Pose const & pose, core::Size startres, core::Size const overlap );
 
+core::kinematics::FoldTree
+remove_jump_atoms( core::kinematics::FoldTree const & orig );
+
 /// @brief given a residue, rebuilds all missing atoms
 void rebuild_missing_atoms( core::pose::Pose & pose, core::Size const resi );
 
@@ -113,6 +116,10 @@ extract_int( core::Real & num, core::Size const m, core::Size const n );
 void
 copy_rotamers( components::StructureData & dest, core::pose::Pose const & src );
 
+/// @brief counts the beta-bulges in the given segment. This simply counts all abego A's in the segment
+core::Size
+count_bulges( components::StructureData const & perm, std::string const & segment );
+
 /// @brief gets all strand pairings from a perm
 /// @details if use_register_shift=0, the returned register shift is 99
 std::string get_strandpairings(
@@ -130,6 +137,9 @@ add_chain_from_pose( core::pose::PoseCOP to_add, core::pose::PoseOP combined );
 /// Output operators for std template classes                          ///
 //////////////////////////////////////////////////////////////////////////
 namespace std {
+
+/// @brief outputs a set
+std::ostream & operator<<( std::ostream & os, std::set< int > const & set );
 
 /// @brief outputs a set
 std::ostream & operator<<( std::ostream & os, std::set< core::Size > const & set );

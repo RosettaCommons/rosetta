@@ -83,6 +83,24 @@ bool same_pose( core::pose::Pose const & pose1, core::pose::Pose const & pose2 )
 	return true;
 }
 
+core::kinematics::FoldTree
+remove_jump_atoms( core::kinematics::FoldTree const & orig )
+{
+	core::kinematics::FoldTree ft;
+	for ( core::kinematics::FoldTree::EdgeList::const_iterator e=orig.begin(); e!=orig.end(); ++e ) {
+		if ( e->is_jump() && e->has_atom_info() ) {
+			core::kinematics::Edge newedge = *e;
+			newedge.start_atom() = "";
+			newedge.stop_atom() = "";
+			ft.add_edge( newedge );
+		} else {
+			ft.add_edge( *e );
+		}
+	}
+	TR.Debug << "Removed jump atoms, fold tree=" << ft << std::endl;
+	return ft;
+}
+
 /// @brief creates a poly-ala pose where every non-gly, non-cyd, protein residue except those in the given set are converted to alanine
 /// @details If keep_chirality is true, the D-amino acids are mutated to D-alanine.
 void construct_poly_ala_pose(
@@ -110,6 +128,9 @@ void construct_poly_ala_pose(
 	utility::vector1< core::Size > positions;
 	utility::vector1< core::Size > d_positions;
 
+	// remove jump atoms, which may cause problems in mutating residues
+	pose.fold_tree( remove_jump_atoms( pose.fold_tree() ) );
+
 	for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
 		if ( pose.residue(i).is_protein() && ( res_set.find(i) != res_set.end() ) ) {
 			if ( !keep_chirality || !pose.residue(i).type().is_d_aa() ) positions.push_back(i);
@@ -125,6 +146,7 @@ void construct_poly_ala_pose(
 			}
 		}
 	}
+
 	protocols::toolbox::pose_manipulation::construct_poly_ala_pose(
 		pose, positions,
 		false, // bool keep_pro,
@@ -443,6 +465,19 @@ parse_strand_pair( std::string const & strand_pair_str )
 	return std::make_pair( strandvec[ 1 ], strandvec[ 2 ] );
 }
 
+core::Size
+count_bulges( components::StructureData const & perm, std::string const & segment )
+{
+	std::string const & ss = perm.segment( segment ).ss();
+	utility::vector1< std::string > const & abego = perm.segment( segment ).abego();
+	core::Size bulges = 0;
+	for ( core::Size resid=perm.segment( segment ).start(); resid<=perm.segment( segment ).stop(); ++resid ) {
+		if ( ( ss[ resid - 1 ] == 'E' ) && ( abego[ resid ] == "A" ) )
+			++bulges;
+	}
+	return bulges;
+}
+
 std::string
 strand_pair_str(
 	components::StructureData const & perm,
@@ -476,6 +511,9 @@ strand_pair_str(
 	int prevorientation = 1;
 	if ( perm.has_data_int( strand1, "orientation" ) ) prevorientation = perm.get_data_int( strand1, "orientation" );
 
+	core::Size const bulges1 = count_bulges( perm, strand1 );
+	core::Size const bulges2 = count_bulges( perm, strand2 );
+
 	bool parallel = true;
 	out << '.';
 	if ( orientation == prevorientation ) {
@@ -502,9 +540,10 @@ strand_pair_str(
 			out << shift;
 		} else {
 			// most complicated
-			int const len1 = static_cast< int >( perm.segment( strand2 ).length() );
-			int const len2 = static_cast< int >( perm.segment( strand1 ).length() );
+			int const len1 = static_cast< int >( perm.segment( strand2 ).length() ) - bulges2;
+			int const len2 = static_cast< int >( perm.segment( strand1 ).length() ) - bulges1;
 			out << len2 - len1 - shift;
+			TR.Debug << "len1=" << len1 << " bulges1=" << bulges1 << " len2=" << len2 << " bulges2=" << bulges2 << " shift=" << shift << " value=" << len2 - len1 - shift << std::endl;
 		}
 	} else {
 		out << 99;
@@ -538,7 +577,7 @@ get_strandpairings(
 		name_to_strandnum[ *s ] = strandcount;
 		strandnames.push_back( *s );
 	}
-	TR << "name_to_strandnum=" << name_to_strandnum << " name_to_compidx=" << strandnames << std::endl;
+	TR.Debug << "name_to_strandnum=" << name_to_strandnum << " name_to_compidx=" << strandnames << std::endl;
 
 	// now build sheet topology string
 	std::stringstream sheet_str;
@@ -549,7 +588,7 @@ get_strandpairings(
 		}
 		std::pair< std::string, std::string > const spair =
 			parse_strand_pair( perm.get_data_str( *s, "paired_strands" ) );
-		TR << "Found strand pair " << spair.first << " : " << spair.second << std::endl;
+		TR.Debug << "Found strand pair " << spair.first << " : " << spair.second << std::endl;
 
 		if ( visited.find( std::make_pair( spair.first, *s ) ) == visited.end() ) {
 			visited.insert( std::make_pair( spair.first, *s ) );
@@ -625,6 +664,17 @@ operator<<( std::ostream & os, numeric::xyzMatrix< core::Real > const & mat ) {
 	os << "[ [" << mat.xx() << ", " << mat.xy() << ", " << mat.xz() << "]" << std::endl;
 	os << "  [" << mat.yx() << ", " << mat.yy() << ", " << mat.yz() << "]" << std::endl;
 	os << "  [" << mat.zx() << ", " << mat.zy() << ", " << mat.zz() << "] ]";
+	return os;
+}
+
+/// @brief outputs a set
+std::ostream &
+operator<<( std::ostream & os, std::set< int > const & set ) {
+	os << "[ ";
+	for ( std::set< int >::const_iterator it=set.begin(); it != set.end(); ++it ) {
+		os << *it << " ";
+	}
+	os << "]";
 	return os;
 }
 

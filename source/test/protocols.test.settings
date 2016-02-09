@@ -144,6 +144,7 @@ sources = {
 		"DisulfidizeMover",
 		"StructureData",
 		"Segment",
+		"utils",
 	],
 
 	"denovo_design/filters" :[

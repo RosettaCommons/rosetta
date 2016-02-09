@@ -98,7 +98,9 @@ FoldGraph::FoldGraph( StructureData const & perm, core::pose::PoseCOP pose ) :
 	for ( utility::vector1< BondInfo >::const_iterator bi = perm.covalent_bonds_begin(); bi != perm.covalent_bonds_end(); ++bi ) {
 		TR << "Found non-canonical connection from " << bi->seg1 << ":" << bi->res1 << ":" << bi->atom1
 			<<" to " << bi->seg2 << ":" << bi->res2 << ":" << bi->atom2 << std::endl;
-		add_edge( bi->seg1, bi->seg2 );
+		if ( bi->seg1 != bi->seg2 ) {
+			add_edge( bi->seg1, bi->seg2 );
+		}
 	}
 
 	// add peptide edges
@@ -120,6 +122,8 @@ FoldGraph::FoldGraph( StructureData const & perm, core::pose::PoseCOP pose ) :
 		}
 	}
 }
+
+FoldGraph::~FoldGraph() {}
 
 /// @brief given a segment name, returns the associated graph node index
 core::Size
@@ -204,16 +208,15 @@ FoldGraph::fold_tree( StructureData const & perm, utility::vector1< std::string 
 	std::stack< core::Size > to_search;
 
 	// add to fold tree based on peptide graph
-	fold_tree_rec( ft, visited, to_search, perm, root_segments[1], 0, true );
-	Segment root_resis = perm.segment(root_segments[1]);
-	for ( core::Size i=2; i<=root_segments.size(); ++i ) {
-		Segment const & resis = perm.segment(root_segments[i]);
-		if ( visited.find( nodeidx(root_segments[i]) ) == visited.end() ) {
-			core::kinematics::Edge e( root_resis.safe(), resis.safe(), ft.num_jump()+1 );
-			TR.Debug << " adding unconnected segment from peptide graph rooted at " << root_segments[i] << " " << e << std::endl;
-			ft.add_edge( e );
-			fold_tree_rec( ft, visited, to_search, perm, root_segments[i], 0, true );
-		}
+	Segment const & root_resis = perm.segment( *root_segments.begin() );
+	fold_tree_rec( ft, visited, to_search, perm, *root_segments.begin(), root_resis.safe(), 0, true );
+	for ( utility::vector1< std::string >::const_iterator s=++root_segments.begin(); s!=root_segments.end(); ++s ) {
+		if ( visited.find( nodeidx( *s ) ) != visited.end() ) continue;
+		Segment const & resis = perm.segment( *s );
+		core::kinematics::Edge e( root_resis.safe(), resis.safe(), ft.num_jump()+1 );
+		TR.Debug << " adding unconnected segment from peptide graph rooted at " << *s << " " << e << std::endl;
+		ft.add_edge( e );
+		fold_tree_rec( ft, visited, to_search, perm, *s, e.stop(), 0, true );
 	}
 
 	// add to fold tree based on interaction graph -- look for reachable nodes that are not yet visited.
@@ -221,7 +224,7 @@ FoldGraph::fold_tree( StructureData const & perm, utility::vector1< std::string 
 		core::Size const node = to_search.top();
 		to_search.pop();
 		core::graph::Node const * n = g_.get_node(node);
-		assert( n );
+		debug_assert( n );
 		for ( core::graph::Graph::EdgeListConstIter e=n->const_edge_list_begin(); e != n->const_edge_list_end(); ++e ) {
 			core::Size const othernode = (*e)->get_other_ind(node);
 			if ( visited.find(othernode) != visited.end() ) {
@@ -294,7 +297,7 @@ FoldGraph::fold_tree( StructureData const & perm, utility::vector1< std::string 
 				}
 			}
 			ft.add_edge( edge );
-			fold_tree_rec( ft, visited, to_search, perm, segment(othernode), 0, true );
+			fold_tree_rec( ft, visited, to_search, perm, segment(othernode), edge.stop(), 0, true );
 		}
 	}
 
@@ -306,7 +309,7 @@ FoldGraph::fold_tree( StructureData const & perm, utility::vector1< std::string 
 			core::kinematics::Edge e( root_resis.safe(), resis.safe(), ft.num_jump()+1 );
 			TR.Debug << " unconnected_comp = " << unconnected_seg << " " << e << std::endl;
 			ft.add_edge( e );
-			fold_tree_rec( ft, visited, to_search, perm, unconnected_seg, 0, true );
+			fold_tree_rec( ft, visited, to_search, perm, unconnected_seg, e.stop(), 0, true );
 		}
 	}
 
@@ -326,6 +329,7 @@ FoldGraph::fold_tree_rec(
 	std::stack< core::Size > & node_stack,
 	StructureData const & perm,
 	std::string const & segment_name,
+	core::Size const parent_residue,
 	int const parent_direction,
 	bool const polymer_only ) const
 {
@@ -334,27 +338,50 @@ FoldGraph::fold_tree_rec(
 		return;
 	}
 
-	TR.Debug << "Starting traversal at " << segment_name <<  " node " << nodenum << " visited " << visited << std::endl;
+	TR.Debug << "Starting traversal at " << segment_name <<  " node " << nodenum << " visited " << visited << " parent=" << parent_residue << " direction=" << parent_direction << std::endl;
 
 	Segment const & resis = perm.segment(segment_name);
-	if ( resis.safe() != resis.cterm_resi() ) {
-		if ( parent_direction > -1 ) {
-			TR.Debug << "Adding " << resis.safe() << " " << resis.cterm_resi() << " -1 for " << segment_name << std::endl;
-			ft.add_edge( resis.safe(), resis.cterm_resi(), core::kinematics::Edge::PEPTIDE );
-		} else {
-			TR.Debug << "Adding " << resis.cterm_resi() << " " << resis.safe() << " -1 for " << segment_name << std::endl;
-			ft.add_edge( resis.cterm_resi(), resis.safe(), core::kinematics::Edge::PEPTIDE );
+	debug_assert( resis.nterm_resi() <= parent_residue );
+	debug_assert( parent_residue <= resis.cterm_resi() );
+
+	if ( parent_direction == 0 ) {
+		//previous residue is jump
+		if ( parent_residue != resis.safe() ) {
+			TR.Debug << "Adding " << parent_residue << " " << resis.safe() << " -1 for " << segment_name << std::endl;
+			ft.add_edge( parent_residue, resis.safe(), core::kinematics::Edge::PEPTIDE );
 		}
-	}
-	if ( resis.safe() != resis.nterm_resi() ) {
-		if ( parent_direction < 1 ) {
+		if ( parent_residue > resis.safe() ) {
+			TR.Debug << "Adding " << parent_residue << " " << resis.cterm_resi() << " -1 for " << segment_name << std::endl;
+			ft.add_edge( parent_residue, resis.cterm_resi(), core::kinematics::Edge::PEPTIDE );
 			TR.Debug << "Adding " << resis.safe() << " " << resis.nterm_resi() << " -1 for " << segment_name << std::endl;
 			ft.add_edge( resis.safe(), resis.nterm_resi(), core::kinematics::Edge::PEPTIDE );
 		} else {
+			TR.Debug << "Adding " << parent_residue << " " << resis.nterm_resi() << " -1 for " << segment_name << std::endl;
+			ft.add_edge( parent_residue, resis.nterm_resi(), core::kinematics::Edge::PEPTIDE );
+			TR.Debug << "Adding " << resis.safe() << " " << resis.cterm_resi() << " -1 for " << segment_name << std::endl;
+			ft.add_edge( resis.safe(), resis.cterm_resi(), core::kinematics::Edge::PEPTIDE );
+		}
+	} else if ( parent_direction > 0 ) {
+		// previous is a peptide edge going up
+		if ( resis.safe() != resis.nterm_resi() ) {
 			TR.Debug << "Adding " << resis.nterm_resi() << " " << resis.safe() << " -1 for " << segment_name << std::endl;
 			ft.add_edge( resis.nterm_resi(), resis.safe(), core::kinematics::Edge::PEPTIDE );
 		}
-	}
+		if ( resis.safe() != resis.cterm_resi() ) {
+			TR.Debug << "Adding " << resis.safe() << " " << resis.cterm_resi() << " -1 for " << segment_name << std::endl;
+			ft.add_edge( resis.safe(), resis.cterm_resi(), core::kinematics::Edge::PEPTIDE );
+		}
+	} else {
+		// previous is a peptide edge going down
+		if ( resis.safe() != resis.cterm_resi() ) {
+			TR.Debug << "Adding " << resis.cterm_resi() << " " << resis.safe() << " -1 for " << segment_name << std::endl;
+			ft.add_edge( resis.cterm_resi(), resis.safe(), core::kinematics::Edge::PEPTIDE );
+		}
+		if ( resis.safe() != resis.nterm_resi() ) {
+			TR.Debug << "Adding " << resis.safe() << " " << resis.nterm_resi() << " -1 for " << segment_name << std::endl;
+			ft.add_edge( resis.safe(), resis.nterm_resi(), core::kinematics::Edge::PEPTIDE );
+		}
+	} // if direction
 
 	visited.insert( nodenum );
 	node_stack.push( nodenum );
@@ -366,7 +393,7 @@ FoldGraph::fold_tree_rec(
 	} else {
 		n = g_.get_node(nodenum);
 	}
-	assert( n );
+	debug_assert( n );
 	for ( core::graph::Graph::EdgeListConstIter e=n->const_edge_list_begin(); e != n->const_edge_list_end(); ++e ) {
 		core::Size const othernode = (*e)->get_other_ind(nodenum);
 		if ( visited.find(othernode) != visited.end() ) {
@@ -386,7 +413,7 @@ FoldGraph::fold_tree_rec(
 			}
 			TR.Debug << "Adding " << e << " for " << segment_name << "-->" << otherseg << std::endl;
 			ft.add_edge( e );
-			fold_tree_rec( ft, visited, node_stack, perm, otherseg, direction, true );
+			fold_tree_rec( ft, visited, node_stack, perm, otherseg, e.stop(), direction, true );
 		} else if ( resis.nterm_resi() >= other_resis.cterm_resi() ) {
 			int direction = -1;
 			core::kinematics::Edge e( resis.nterm_resi(), other_resis.cterm_resi(), core::kinematics::Edge::PEPTIDE );
@@ -396,10 +423,10 @@ FoldGraph::fold_tree_rec(
 			}
 			TR.Debug << "Adding " << e << " for " << segment_name << "-->" << otherseg << std::endl;
 			ft.add_edge( e );
-			fold_tree_rec( ft, visited, node_stack, perm, otherseg, direction, true );
+			fold_tree_rec( ft, visited, node_stack, perm, otherseg, e.stop(), direction, true );
 		} else {
 			TR << "Something is wrong. THere are probably two segments that overlap in residue numbering. Nterm=" << resis.nterm_resi() << " Cterm=" << resis.cterm_resi() << " safe=" << resis.safe() << " otherNterm=" << other_resis.nterm_resi() << " otherCterm=" << other_resis.cterm_resi() << " safe=" << other_resis.safe() << std::endl;
-			assert( false );
+			debug_assert( false );
 		}
 	}
 }

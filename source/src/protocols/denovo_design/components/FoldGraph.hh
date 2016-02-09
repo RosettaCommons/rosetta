@@ -49,6 +49,7 @@ typedef utility::vector1< NamedNodeSet > NamedSolution;
 class FoldGraph : public utility::pointer::ReferenceCount {
 public:
 	FoldGraph( StructureData const & perm, core::pose::PoseCOP pose );
+	virtual ~FoldGraph();
 
 	/// @brief gives a fold tree based on the segments in the given permutation
 	core::kinematics::FoldTree
@@ -97,12 +98,14 @@ public:
 private:
 	/// @brief recursive function to traverse graphs and build fold tree
 	/// @param[parent_direction] -1 if the previous edge is a peptide edge going backward, 1 if the previous edge is going forward, and 0 if the previous edge is a jump
+	/// @param[parent_resid] parent residue
 	void fold_tree_rec(
 		core::kinematics::FoldTree & ft,
 		NodeSet & visited,
 		std::stack< core::Size > & node_stack,
 		StructureData const & perm,
 		std::string const & segment_name,
+		core::Size const parent_resid,
 		int const parent_direction,
 		bool const polymer_only ) const;
 

@@ -2072,7 +2072,9 @@ ConnectTerminiWithDisulfideCreator::mover_name()
 
 // default constructor
 ConnectTerminiWithDisulfide::ConnectTerminiWithDisulfide() :
-	BridgeTomponents()
+	BridgeTomponents(),
+	disulf1_( "" ),
+	disulf2_( "" )
 {
 	set_connecting_bond_dist( 6 );
 }
@@ -2102,6 +2104,20 @@ ConnectTerminiWithDisulfide::clone() const
 	return protocols::moves::MoverOP( new ConnectTerminiWithDisulfide( *this ) );
 }
 
+/// @brief setup the parameters via an xml tag
+void
+ConnectTerminiWithDisulfide::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map const & filters,
+	protocols::moves::Movers_map const & movers,
+	core::pose::Pose const & pose )
+{
+	BridgeTomponents::parse_my_tag( tag, data, filters, movers, pose );
+	disulf1_ = tag->getOption< std::string >( "disulf1", disulf1_ );
+	disulf2_ = tag->getOption< std::string >( "disulf2", disulf2_ );
+}
+
 /// @brief given a pose and list of loop residues, creates a CYD pair
 std::pair< core::Size, core::Size >
 ConnectTerminiWithDisulfide::create_cyd_pair( components::StructureData & perm, utility::vector1< core::Size > const & loop_residues ) const
@@ -2109,8 +2125,17 @@ ConnectTerminiWithDisulfide::create_cyd_pair( components::StructureData & perm, 
 	assert( cut_resi(perm) );
 	assert( loop_residues.size() >= cut_resi(perm)+2 );
 	TR << "LOop residues are: " << loop_residues << std::endl;
-	core::Size const pos1 = loop_residues[cut_resi(perm)+1];
-	core::Size const pos2 = loop_residues[cut_resi(perm)+2];
+	core::Size pos1 = loop_residues[cut_resi(perm)+1];
+	core::Size pos2 = loop_residues[cut_resi(perm)+2];
+	if ( !disulf1_.empty() ) {
+		std::stringstream d1( disulf1_ );
+		pos1 = boost::lexical_cast< core::Size >( perm.substitute_variables( d1 ) );
+	}
+	if ( !disulf2_.empty() ) {
+		std::stringstream d2( disulf2_ );
+		pos2 = boost::lexical_cast< core::Size >( perm.substitute_variables( d2 ) );
+	}
+
 	TR << "Making CYS:disulfide at positions " << pos1 << " and " << pos2 << std::endl;
 	using namespace protocols::simple_moves;
 	protocols::simple_moves::MutateResidueOP make_cyd1 = MutateResidueOP( new MutateResidue( pos1, "CYS:disulfide" ) );

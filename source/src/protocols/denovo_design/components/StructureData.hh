@@ -478,6 +478,8 @@ public:
 
 	/// @brief return secondary structure string
 	inline utility::vector1< std::string > const & abego() const { return abego_; }
+	//void set_abego( utility::vector1< std::string > const & abego ) { debug_assert( abego_.size() == abego.size() ); abego_ = abego; }
+	void set_abego( std::string const & segment, utility::vector1< std::string > const & abego );
 
 	/// @brief given an input stream, substitute all variables
 	/// @details variables are of the form: %%SEGMENTNAME#residue%%
@@ -630,6 +632,14 @@ protected:
 	void set_data_str( std::string const & data_name, std::string const & val );
 
 protected:
+	/// @brief safely slide a jump, avoiding foldtree segmentation faults
+	core::kinematics::FoldTree
+	slide_jump(
+		core::kinematics::FoldTree const & ft_orig,
+		core::Size const jump_idx,
+		core::Size const new_start,
+		core::Size const new_stop ) const;
+
 	/// @brief returns constant list of residue ranges
 	inline SegmentMap const & segments() const { return segments_; }
 

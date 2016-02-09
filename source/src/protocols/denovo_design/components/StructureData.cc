@@ -486,7 +486,7 @@ StructureData::save_remarks_to_datacache( core::io::Remarks const & remarks )
 {
 	debug_assert( pose_ );
 	core::Size remcount = 1;
-	for ( core::io::Remarks::const_iterator r=remarks.begin(), endr=remarks.end(); r != endr; ++r ) {
+	for ( core::io::Remarks::const_iterator r=remarks.begin(); r!=remarks.end(); ++r ) {
 		if ( r->num == REMARK_NUM ) {
 			continue;
 		}
@@ -1158,17 +1158,18 @@ StructureData::delete_jump_and_intervening_cutpoint(
 		core::pose::remove_variant_type_from_pose_residue( *pose_, core::chemical::CUTPOINT_UPPER, cut_resi2 );
 	}
 
-	core::kinematics::FoldTree ft = pose()->fold_tree();
-	// move jump so it surrounds cutpoint
-	debug_assert( jnum <= static_cast< int >(ft.num_jump()) );
-	debug_assert( jnum > 0 );
-	TR.Debug << "Sliding jump " << jnum << " to " << cut_resi1 << "__" << cut_resi2 << std::endl;
-	TR.Debug << pose_->fold_tree() << std::endl;
-	ft.slide_jump( jnum, cut_resi1, cut_resi2 );
+	//move jump so it surrounds cutpoint
+	core::kinematics::FoldTree ft = slide_jump( pose()->fold_tree(), jnum, cut_resi1, cut_resi2 );
 	// delete jump+cutpoint
 	ft.delete_jump_and_intervening_cutpoint( jnum );
 	debug_assert( ft.check_fold_tree() );
 	pose_->fold_tree( ft );
+}
+
+void
+StructureData::set_abego( std::string const & segment, utility::vector1< std::string > const & abego )
+{
+	segment_nonconst( segment ).set_abego( abego );
 }
 
 void
@@ -1183,6 +1184,9 @@ void
 StructureData::switch_residue_type_set( std::string const & typeset )
 {
 	debug_assert( pose_ );
+	if ( typeset == "centroid" ) {
+		set_fold_tree( remove_jump_atoms( pose_->fold_tree() ) );
+	}
 	core::util::switch_to_residue_type_set( *pose_, typeset );
 }
 
@@ -1293,11 +1297,48 @@ StructureData::slide_jump(
 		TR.Warning << "Parent jump and child jump are the same while sliding jump for " << child_segment << " to have parent " << parent_segment << " --  not doing anything." << std::endl;
 		return;
 	}
-	core::kinematics::FoldTree ft = pose_->fold_tree();
-	core::kinematics::Edge jedge = ft.jump_edge(childjump);
-	ft.slide_jump( childjump, segment(parent_segment).safe(), jedge.stop() );
+	core::kinematics::Edge const jedge = pose_->fold_tree().jump_edge(childjump);
+	pose_->fold_tree( slide_jump( pose_->fold_tree(), childjump, segment(parent_segment).safe(), jedge.stop() ) );
+}
+
+core::kinematics::FoldTree
+StructureData::slide_jump(
+		core::kinematics::FoldTree const & ft_orig,
+		core::Size const jump_idx,
+		core::Size const new_start,
+		core::Size const new_stop ) const
+{
+	core::kinematics::FoldTree ft;
+	TR << "Sliding jump " << jump_idx << " to " << new_start << " --> " << new_stop << " in " << ft_orig << std::endl;
+	debug_assert( jump_idx > 0 );
+	debug_assert( jump_idx <= ft_orig.num_jump() );
+	core::kinematics::Edge jedge = ft_orig.jump_edge( jump_idx );
+	core::kinematics::FoldTree::EdgeList::const_iterator begin_edge = ft_orig.begin();
+	debug_assert( begin_edge != ft_orig.end() );
+
+	if ( ft_orig.root() == jedge.start() ) {
+		for ( core::kinematics::FoldTree::EdgeList::const_iterator e=ft_orig.begin(); e!=ft_orig.end(); ++e ) {
+			if ( ( e->start() == ft_orig.root() ) && ( *e != jedge ) &&
+					( static_cast< core::Size >( e->stop() ) != new_start ) &&
+					( static_cast< core::Size >( e->stop() ) != new_stop ) ) {
+				begin_edge = e;
+				break;
+			}
+		}
+	}
+	TR << "Selected new begin edge: " << *begin_edge << std::endl;
+
+	ft.add_edge( *begin_edge );
+	for ( core::kinematics::FoldTree::EdgeList::const_iterator e=ft_orig.begin(); e!=ft_orig.end(); ++e ) {
+		if ( (e != begin_edge) && (*e != jedge) ) {
+			ft.add_edge( *e );
+		}
+	}
+	ft.add_edge( jedge );
+	TR.Debug << "Sliding jump " << jump_idx << " to " << new_start << " --> " << new_stop << " in " << ft << std::endl;
+	ft.slide_jump( jump_idx, new_start, new_stop );
 	debug_assert( ft.check_fold_tree() );
-	pose_->fold_tree( ft );
+	return ft;
 }
 
 /// @brief aligns two residues so their backbones are completely superimposed
@@ -1309,14 +1350,10 @@ StructureData::align_residues(
 	core::Size const res_with_torsions )
 {
 	debug_assert( pose_ );
+
 	// move the jump temporarily
-	core::kinematics::FoldTree ft = pose_->fold_tree();
-	core::kinematics::FoldTree const ft_backup = ft;
-	TR << "Sliding jump " << jump_idx << " to " << align_res_target << " --> " << align_res_movable << " in " << ft << std::endl;
-	core::kinematics::Edge jedge = ft.jump_edge( jump_idx );
-	ft.slide_jump( jump_idx, align_res_target, align_res_movable );
-	debug_assert( ft.check_fold_tree() );
-	pose_->fold_tree( ft );
+	core::kinematics::FoldTree const ft_backup = pose_->fold_tree();
+	pose_->fold_tree( slide_jump( ft_backup, jump_idx, align_res_target, align_res_movable ) );
 
 	//setup torsions
 	if ( res_with_torsions ) {
@@ -2340,6 +2377,9 @@ StructureData::consolidate_movable_groups(
 	if ( ft.nres() != pose->total_residue() ) {
 		TR.Error << "FT nres " << ft.nres() << " != pose nres " << pose->total_residue() << " FT: " << ft << std::endl;
 		throw utility::excn::EXCN_Msg_Exception( "Bad nres" );
+	}
+	if ( pose->is_centroid() ) {
+		remove_jump_atoms( ft );
 	}
 	pose->fold_tree( ft );
 	TR.Debug << "Created fold tree: " << pose->fold_tree() << std::endl;

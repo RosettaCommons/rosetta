@@ -392,6 +392,13 @@ Segment::delete_residues( core::Size const local_resnum_start, core::Size const 
 	abego_ = newabego;
 }
 
+void
+Segment::set_abego( utility::vector1< std::string > const & abego )
+{
+	debug_assert( abego.size() == length() );
+	abego_ = abego;
+}
+
 /// output residueinfo
 std::ostream &
 operator<<( std::ostream & os, Segment const & res )

@@ -69,6 +69,7 @@ public:
 	inline std::string const & ss() const { return ss_; }
 	inline utility::vector1< std::string > const & abego() const { return abego_; }
 	inline utility::vector1< std::string > & abego_nonconst() { return abego_; }
+	void set_abego( utility::vector1< std::string > const & abego );
 
 	inline bool nterm_included() const { return nterm_included_; }
 	inline bool cterm_included() const { return cterm_included_; }

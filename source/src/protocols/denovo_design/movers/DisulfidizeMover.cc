@@ -30,6 +30,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/util.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
@@ -300,6 +301,9 @@ DisulfidizeMover::process_pose(
 	utility::vector1 < core::pose::PoseOP > & additional_poses )
 {
 	bool const is_symmetric( core::pose::symmetry::is_symmetric(pose) ); //Is the pose symmetric?
+
+	// remove any jump atoms from the fold tree which might cause problems when converting pose to poly-ala
+	pose.fold_tree( remove_jump_atoms( pose.fold_tree() ) );
 
 	core::scoring::ScoreFunctionOP sfxn( sfxn_ ? sfxn_->clone() : core::scoring::get_score_function() );
 	if ( is_symmetric ) {

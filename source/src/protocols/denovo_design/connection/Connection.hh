@@ -634,6 +634,15 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual protocols::moves::MoverOP clone() const;
 
+	/// @brief setup the parameters via an xml tag
+	virtual void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		core::pose::Pose const & pose );
+
+
 	virtual void
 	setup_from_random( components::StructureData & perm, core::Real random ) const;
 
@@ -661,6 +670,9 @@ public:
 		protocols::generalized_kinematic_closure::GeneralizedKICOP kic,
 		utility::vector1< core::Size > const & lres,
 		core::Size const pre_overlap ) const;
+private:
+	std::string disulf1_;
+	std::string disulf2_;
 };
 
 void staple_work_function(

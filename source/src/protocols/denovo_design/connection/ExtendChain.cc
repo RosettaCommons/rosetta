@@ -364,6 +364,12 @@ ExtendChain::apply_connection( components::StructureData & perm ) const
 		throw EXCN_ConnectionFailed( "Failed to close loop during remodel in " + id() );
 	}
 
+	// switch back to FA if necessary
+	if ( !input_centroid ) {
+		perm.switch_residue_type_set( "fa_standard" );
+		copy_rotamers( perm, stored );
+	}
+
 	// Rebuild fold tree
 	utility::vector1< std::string > roots;
 	if ( !lower_segment_id( perm ).empty() ) {
@@ -375,11 +381,6 @@ ExtendChain::apply_connection( components::StructureData & perm ) const
 	perm.consolidate_movable_groups( roots );
 	TR << "CLOSED THE LOOP. After remodel: " << perm.pose()->fold_tree() << std::endl;
 
-	// switch back to FA if necessary
-	if ( !input_centroid ) {
-		perm.switch_residue_type_set( "fa_standard" );
-		copy_rotamers( perm, stored );
-	}
 	perm.chains_from_termini();
 }
 
