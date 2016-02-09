@@ -410,6 +410,9 @@
 #include <protocols/membrane/TiltMoverCreator.hh>
 #include <protocols/membrane/TransformIntoMembraneMoverCreator.hh>
 
+#include <protocols/membrane/benchmark/SampleTiltAnglesCreator.hh>
+#include <protocols/membrane/benchmark/MakeCanonicalHelixCreator.hh>
+
 #include <protocols/membrane/symmetry/SymmetricAddMembraneMoverCreator.hh>
 
 #include <protocols/membrane/visualize/VisualizeMembraneMoverCreator.hh>

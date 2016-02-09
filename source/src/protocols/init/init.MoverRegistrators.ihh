@@ -430,6 +430,9 @@ static MoverRegistrator< membrane::TransformIntoMembraneMoverCreator > reg_Trans
 
 static MoverRegistrator< membrane::symmetry::SymmetricAddMembraneMoverCreator > reg_SymmetricAddMembraneMembraneMoverCreator;
 
+static MoverRegistrator< membrane::benchmark::SampleTiltAnglesCreator > reg_SampleTiltAnglesCreator;
+static MoverRegistrator< membrane::benchmark::MakeCanonicalHelixCreator > reg_MakeCanonicalHelixCreator;
+
 static MoverRegistrator< membrane::visualize::VisualizeMembraneMoverCreator > reg_VisualizeMembraneMoverCreator;
 static MoverRegistrator< membrane::visualize::VisualizeEmbeddingMoverCreator > reg_VisualizeEmbeddingMoverCreator;
 

@@ -1,0 +1,3 @@
+-in:file:s m13coat.pdb
+-mp:setup:spanfiles m13coat.span
+-parser:protocol angle_vs_energy.xml

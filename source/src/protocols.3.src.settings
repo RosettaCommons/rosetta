@@ -317,6 +317,10 @@ sources = {
 		"TranslationRotationMover",
 		"util",
     ],
+    "protocols/membrane/benchmark" :[
+    	"MakeCanonicalHelix",
+    	"SampleTiltAngles",
+    ],
     "protocols/membrane/geometry" :[
 		"EmbeddingDef",
 		"Embedding",

@@ -2746,6 +2746,22 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 		),
 
+		### Options For Benchmarking
+		### @author Rebecca Alford (rfalford12@gmail.com)
+		Option_Group( 'benchmark', 
+
+			## Build Ideal/Canonical Alpha helices
+			Option_Group( 'ideal_helix', 
+				Option( 'helix_start', 'Real', desc="Start position for ideal helix dihedral angles" ), 
+				Option( 'helix_end', 'Real', desc="End position for ideal helix dihedral angles" )
+			),
+
+			## Sampling of per-helix tilt angles
+			Option_Group( 'tilt_angle', 
+				Option( 'output', 'String', desc="Path to tilt angle vs. score output file" ),
+			),
+		),
+
 		## Options for membrane specific output. Currently controlled by file_data, will eventually
 		## become an extension of JD2/JD3 - Added 8/3/15
 		Option_Group( 'output',

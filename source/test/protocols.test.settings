@@ -279,6 +279,9 @@ sources = {
 		"TransformIntoMembraneMover",
 		"TranslationRotationMover",
     ],
+    "membrane/benchmark" : [
+    	"MakeCanonicalHelixTest",
+    ],
     "membrane/geometry" : [
         "EmbeddingDef",
 		"Embedding",

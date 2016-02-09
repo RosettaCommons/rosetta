@@ -252,8 +252,8 @@ calc_helix_tilt_angle(
 	helix_axis.normalize();
 
 	// Check that both vectors have a positive orientation
-	if ( normal.z() < 0 ) normal.negate();
-	if ( helix_axis.z() < 0 ) helix_axis.negate();
+	//if ( normal.z() < 0 ) normal.negate();
+	//if ( helix_axis.z() < 0 ) helix_axis.negate();
 
 	// Calculate the angle between the normal & helix
 	core::Real tilt_angle( angle_of( normal, helix_axis ) );
